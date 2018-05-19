@@ -153,6 +153,30 @@ bool SerialServoBoard::stop() {
     return true;
 }
 
+bool SerialServoBoard::positionMove(const int n_joint, const int *joints, const double *refs) {
+    return true;
+}
+bool SerialServoBoard::relativeMove(const int n_joint, const int *joints, const double *deltas) {
+    return true;
+}
+bool SerialServoBoard::checkMotionDone(const int n_joint, const int *joints, bool *flags) {
+    return true;
+}
+bool SerialServoBoard::setRefSpeeds(const int n_joint, const int *joints, const double *spds) {
+    return true;
+}
+bool SerialServoBoard::setRefAccelerations(const int n_joint, const int *joints, const double *accs) {
+    return true;
+}
+bool SerialServoBoard::getRefSpeeds(const int n_joint, const int *joints, double *spds) {
+    return true;
+}
+bool SerialServoBoard::getRefAccelerations(const int n_joint, const int *joints, double *accs) {
+    return true;
+}
+bool SerialServoBoard::stop(const int n_joint, const int *joints) {
+    return true;
+}
 
 
 
