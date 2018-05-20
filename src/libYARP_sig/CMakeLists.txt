@@ -51,7 +51,12 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
-include_directories(${YARP_TREE_INCLUDE_DIRS})
+if (YARP_HAS_JPEG)
+   include_directories(${YARP_TREE_INCLUDE_DIRS} ${JPEG_INCLUDE_DIR})
+else()
+   include_directories(${YARP_TREE_INCLUDE_DIRS})
+endif()
+
 # YARP_sig library uses headers from YARP_OS impl, and therefore ACE headers
 # are also required.
 include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
@@ -64,9 +69,12 @@ add_library(YARP::YARP_sig ALIAS YARP_sig)
 target_include_directories(YARP_sig PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-target_link_libraries(YARP_sig PRIVATE ${ACE_LIBRARIES}
-                               PUBLIC YARP::YARP_conf
-                                      YARP::YARP_OS)
+if (YARP_HAS_JPEG)
+   target_compile_definitions(YARP_sig PRIVATE YARP_HAS_JPEG_C=1)
+   target_link_libraries(YARP_sig PRIVATE ${ACE_LIBRARIES} PUBLIC YARP::YARP_conf YARP::YARP_OS ${JPEG_LIBRARY})
+else()
+   target_link_libraries(YARP_sig PRIVATE ${ACE_LIBRARIES} PUBLIC YARP::YARP_conf YARP::YARP_OS)
+endif()
 
 if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
   message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
