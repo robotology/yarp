@@ -64,7 +64,7 @@ void yarp::os::Network::init(yarp::os::yarpClockType clockType, yarp::os::Clock 
         // calling again the initMinimun, ending with __yarp_is_initialized counter
         // increased twice.
         yarpCustomInit();
-        // Network::yarpClockInit(clockType, custom);
+        // NetworkBase::yarpClockInit(clockType, custom);
     }
     __custom_yarp_is_initialized++;
 }

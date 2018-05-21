@@ -497,7 +497,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     // Using the YARP_CLOCK_DEFAULT the behaviour will be determined by the
     // environment variable.
     //
-    yarp::os::Network::yarpClockInit(yarp::os::YARP_CLOCK_DEFAULT);
+    yarp::os::NetworkBase::yarpClockInit(yarp::os::YARP_CLOCK_DEFAULT);
 
     PolyDriver dd(options);
     if (verbose) {

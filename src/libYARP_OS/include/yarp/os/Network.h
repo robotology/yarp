@@ -75,6 +75,27 @@ public:
     static void autoInitMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom=nullptr);
 
     /**
+    * This function specifically initialize the clock
+    * In case clockType is one of the valid cases:
+    *      YARP_CLOCK_SYSTEM,
+    *      YARP_CLOCK_NETWORK,
+    *      YARP_CLOCK_CUSTOM
+    * (see yarp::os::Time for more), the corresponding clock will be initialized.
+    *
+    * In case the clockType is YARP_CLOCK_DEFAULT, the environment variable
+    * YARP_CLOCK will be used to choose between system or network clock.
+    *
+    * See description of yarp::os::Time::useNetworkClock() for more details about the
+    * network clock.
+    *
+    * This function is called by Network constructor and by Network::init(),
+    * and Network::initMinimum().
+    *
+    * In case of failure calls YARP_FAIL assert.
+    **/
+    static void yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom = nullptr);
+
+    /**
      * Deinitialization, excluding plugins.
      */
     static void finiMinimum();
@@ -664,27 +685,6 @@ public:
      * your program, and to call this method towards the end.
      */
     static void fini();
-
-    /**
-     * This function specifically initialize the clock
-     * In case clockType is one of the valid cases:
-     *      YARP_CLOCK_SYSTEM,
-     *      YARP_CLOCK_NETWORK,
-     *      YARP_CLOCK_CUSTOM
-     * (see yarp::os::Time for more), the corresponding clock will be initialized.
-     *
-     * In case the clockType is YARP_CLOCK_DEFAULT, the environment variable
-     * YARP_CLOCK will be used to choose between system or network clock.
-     *
-     * See description of yarp::os::Time::useNetworkClock() for more details about the
-     * network clock.
-     *
-     * This function is called by Network constructor and by Network::init(),
-     * and Network::initMinimum().
-     *
-     * In case of failure calls YARP_FAIL assert.
-     **/
-    static void yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom=nullptr);
 };
 
 #endif // YARP_OS_NETWORK_H

@@ -796,7 +796,7 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
         Carriers::getInstance();
         __yarp_is_initialized++;
         if(yarp::os::Time::getClockType() == YARP_CLOCK_UNINITIALIZED)
-            Network::yarpClockInit(clockType, nullptr);
+            NetworkBase::yarpClockInit(clockType, nullptr);
     }
     else
         __yarp_is_initialized++;
@@ -817,7 +817,7 @@ void NetworkBase::finiMinimum() {
     if (__yarp_is_initialized>0) __yarp_is_initialized--;
 }
 
-void yarp::os::Network::yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom)
+void yarp::os::NetworkBase::yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom)
 {
     std::string clock="";
     if(clockType == YARP_CLOCK_DEFAULT)
