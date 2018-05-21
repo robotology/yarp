@@ -192,6 +192,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/SemaphoreImpl.h
                       include/yarp/os/impl/SocketTwoWayStream.h
                       include/yarp/os/impl/SplitString.h
+                      include/yarp/os/impl/Storable.h
                       include/yarp/os/impl/StreamConnectionReader.h
                       include/yarp/os/impl/TcpAcceptor.h
                       include/yarp/os/impl/TcpCarrier.h
@@ -303,6 +304,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/SocketTwoWayStream.cpp
                  src/SplitString.cpp
                  src/Stamp.cpp
+                 src/Storable.cpp
                  src/StreamConnectionReader.cpp
                  src/SystemClock.cpp
                  src/SystemInfo.cpp
