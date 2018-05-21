@@ -52,7 +52,6 @@ class yarp::dev::USBCameraDriver :
     public IFrameGrabber,
     public IFrameGrabberRgb,
     public IFrameGrabberControls,
-    public IFrameGrabberControls2,
     public IRgbVisualParams
 {
 protected:

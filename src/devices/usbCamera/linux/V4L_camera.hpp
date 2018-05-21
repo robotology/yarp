@@ -150,7 +150,6 @@ class yarp::dev::V4L_camera :   public yarp::dev::DeviceDriver,
                                 public yarp::dev::IFrameGrabberRgb,
                                 public yarp::dev::IFrameGrabber,
                                 public yarp::dev::IFrameGrabberControls,
-                                public yarp::dev::IFrameGrabberControls2,
                                 public yarp::dev::IPreciselyTimed,
                                 public yarp::os::RateThread,
                                 public IRgbVisualParams
