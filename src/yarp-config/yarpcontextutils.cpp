@@ -25,6 +25,7 @@
 
 #if defined(_WIN32)
 #pragma warning (disable : 4018)
+#pragma warning (disable : 4267)
 
 #ifdef DELETE
 #undef DELETE
@@ -44,6 +45,7 @@
 
 #if defined(_WIN32)
 #pragma warning(default:4018)
+#pragma warning(default:4267)
 #endif
 
 

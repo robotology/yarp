@@ -32,6 +32,8 @@ if(NOT MSVC)
   if(CXX_HAS_WNO_UNUSED_PARAMETER)
     set_property(SOURCE ${xmlrpcpp_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-unused-parameter")
   endif()
+else()
+    set_property(SOURCE ${xmlrpcpp_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " /wd4267")
 endif()
 
 set(YARP_priv_xmlrpcpp_TYPE "STATIC" CACHE STRING "YARP_priv_xmlrpcpp (LGPL2.1+) library type (STATIC or SHARED)" )
