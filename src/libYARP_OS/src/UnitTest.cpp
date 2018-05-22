@@ -187,24 +187,6 @@ void UnitTest::stopTestSystem() {
     }
 }
 
-
-bool UnitTest::checkEqualImpl(int x, int y,
-                              const char *desc,
-                              const char *txt1,
-                              const char *txt2,
-                              const char *fname,
-                              int fline) {
-    char buf[1000];
-    sprintf(buf, "in file %s:%d [%s] %s (%d) == %s (%d)",
-                    fname, fline, desc, txt1, x, txt2, y);
-    if (x==y) {
-        report(0, std::string("  [") + desc + "] passed ok");
-    } else {
-        report(1, std::string("  FAILURE ") + buf);
-    }
-    return x==y;
-}
-
 bool UnitTest::checkEqualishImpl(double x, double y,
                                  const char *desc,
                                  const char *txt1,

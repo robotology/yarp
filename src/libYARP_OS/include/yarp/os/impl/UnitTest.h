@@ -10,9 +10,10 @@
 #ifndef YARP_OS_IMPL_UNITTEST_H
 #define YARP_OS_IMPL_UNITTEST_H
 
-#include <string>
 #include <yarp/os/Bottle.h>
 
+#include <string>
+#include <sstream>
 #include <vector>
 
 namespace yarp {
@@ -61,13 +62,32 @@ public:
 
     virtual void runSubTests(int argc, char *argv[]);
 
-
-    bool checkEqualImpl(int x, int y,
+    template< class T >
+    struct is_supported : std::integral_constant<bool,
+                                                 std::is_arithmetic<T>::value ||
+                                                 std::is_enum<T>::value ||
+                                                 std::is_same<T, bool>::value> {};
+    template<typename T1,
+             typename T2,
+             typename = typename std::enable_if<is_supported<T1>::value && is_supported<T2>::value>::type>
+    bool checkEqualImpl(T1 x, T2 y,
                         const char *desc,
                         const char *txt1,
                         const char *txt2,
                         const char *fname,
-                        int fline);
+                        int fline)
+    {
+        std::ostringstream ost;
+        if (x == y) {
+            ost << "  [" << desc << "] passed ok";
+            report(0, ost.str());
+            return true;
+        } else {
+            ost << "  FAILURE in file " << fname << ":" << fline << " [" << desc << "] " << txt1 << " (" << x << ") == " << txt2 << " (" << y << ")";
+            report(1, ost.str());
+            return false;
+        }
+    }
 
     bool checkEqualishImpl(double x, double y,
                            const char *desc,
