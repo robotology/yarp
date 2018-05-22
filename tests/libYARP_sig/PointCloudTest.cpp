@@ -26,7 +26,7 @@
 using namespace yarp::sig;
 using namespace yarp::os;
 
-float acceptedDiff = 1e-6;
+float acceptedDiff = 1e-6f;
 
 class PointCloudTest : public yarp::os::impl::UnitTest
 {
@@ -50,9 +50,9 @@ public:
 
         for (int i=0; i<width*height; i++)
         {
-            testPC(i).x = i;
-            testPC(i).y = i + 1;
-            testPC(i).z = i + 2;
+            testPC(i).x = static_cast<float>(i);
+            testPC(i).y = static_cast<float>(i + 1);
+            testPC(i).z = static_cast<float>(i + 2);
             testPC(i).r = '1';
             testPC(i).g = '2';
             testPC(i).b = '3';
@@ -106,9 +106,9 @@ public:
 
         for (int i=0; i<width*height; i++)
         {
-            testPC(i).x = i;
-            testPC(i).y = i + 1;
-            testPC(i).z = i + 2;
+            testPC(i).x = static_cast<float>(i);
+            testPC(i).y = static_cast<float>(i + 1);
+            testPC(i).z = static_cast<float>(i + 2);
             testPC(i).r = '1';
             testPC(i).g = '2';
             testPC(i).b = '3';
@@ -155,13 +155,13 @@ public:
 
         for (int i=0; i<width*height; i++)
         {
-            testPC(i).x = i;
-            testPC(i).y = i + 1;
-            testPC(i).z = i + 2;
-            testPC(i).normal_x = i * 2;
-            testPC(i).normal_y = i * 3;
-            testPC(i).normal_z = i * 4;
-            testPC(i).curvature = i * 5;
+            testPC(i).x = static_cast<float>(i);
+            testPC(i).y = static_cast<float>(i + 1);
+            testPC(i).z = static_cast<float>(i + 2);
+            testPC(i).normal_x = static_cast<float>(i * 2);
+            testPC(i).normal_y = static_cast<float>(i * 3);
+            testPC(i).normal_z = static_cast<float>(i * 4);
+            testPC(i).curvature = static_cast<float>(i * 5);
         }
 
         yarp::os::Time::delay(0.3);
@@ -206,9 +206,9 @@ public:
 
         for (int i=0; i<width*height; i++)
         {
-            testPC(i).x = i;
-            testPC(i).y = i + 1;
-            testPC(i).z = i + 2;
+            testPC(i).x = static_cast<float>(i);
+            testPC(i).y = static_cast<float>(i + 1);
+            testPC(i).z = static_cast<float>(i + 2);
             testPC(i).r = '1';
             testPC(i).g = '2';
             testPC(i).b = '3';
@@ -305,17 +305,17 @@ public:
 
         for (int i=0; i<width*height; i++)
         {
-            testPC6(i).x = i;
-            testPC6(i).y = i + 1;
-            testPC6(i).z = i + 2;
+            testPC6(i).x = static_cast<float>(i);
+            testPC6(i).y = static_cast<float>(i + 1);
+            testPC6(i).z = static_cast<float>(i + 2);
             testPC6(i).r = '1';
             testPC6(i).g = '2';
             testPC6(i).b = '3';
             testPC6(i).a = '4';
-            testPC6(i).normal_x = i*2;
-            testPC6(i).normal_y = i*3;
-            testPC6(i).normal_z = i*4;
-            testPC6(i).curvature = i*5;
+            testPC6(i).normal_x = static_cast<float>(i*2);
+            testPC6(i).normal_y = static_cast<float>(i*3);
+            testPC6(i).normal_z = static_cast<float>(i*4);
+            testPC6(i).curvature = static_cast<float>(i*5);
         }
 
         PointCloud<DataXYZNormal> testPC7(testPC6);
@@ -395,9 +395,9 @@ public:
 
         for (int i=0; i<width*height; i++)
         {
-            testPC(i).x = i;
-            testPC(i).y = i + 1;
-            testPC(i).z = i + 2;
+            testPC(i).x = static_cast<float>(i);
+            testPC(i).y = static_cast<float>(i + 1);
+            testPC(i).z = static_cast<float>(i + 2);
             testPC(i).r = '1';
             testPC(i).g = '2';
             testPC(i).b = '3';
@@ -481,13 +481,13 @@ public:
 
         for (int i=0; i<width*height; i++)
         {
-            testPC(i).x = i;    testPC2(i).x = i;
-            testPC(i).y = i + 1;testPC2(i).y = i*2;
-            testPC(i).z = i + 2;testPC2(i).z = i*3;
-            testPC(i).r = '1';  testPC2(i).r = 'r';
-            testPC(i).g = '2';  testPC2(i).g = 'g';
-            testPC(i).b = '3';  testPC2(i).b = 'b';
-            testPC(i).a = '4';  testPC2(i).a = 'a';
+            testPC(i).x = static_cast<float>(i);     testPC2(i).x = static_cast<float>(i);
+            testPC(i).y = static_cast<float>(i + 1); testPC2(i).y = static_cast<float>(i*2);
+            testPC(i).z = static_cast<float>(i + 2); testPC2(i).z = static_cast<float>(i*3);
+            testPC(i).r = '1';                       testPC2(i).r = 'r';
+            testPC(i).g = '2';                       testPC2(i).g = 'g';
+            testPC(i).b = '3';                       testPC2(i).b = 'b';
+            testPC(i).a = '4';                       testPC2(i).a = 'a';
         }
 
         PointCloud<DataXYZNormalRGBA> sumPC;
@@ -530,8 +530,8 @@ public:
         testPC += testPC2;
 
         DataXYZNormalRGBA point;
-        point.x = 1.1; point.y = 1.2; point.z = 1.3;
-        point.normal_x = 2.1; point.normal_y = 2.2; point.normal_z = 2.3;
+        point.x = 1.1f; point.y = 1.2f; point.z = 1.3f;
+        point.normal_x = 2.1f; point.normal_y = 2.2f; point.normal_z = 2.3f;
         point.r = 'r'; point.g = 'g'; point.b = 'b'; point.a = 'a';
 
         testPC.push_back(point);
@@ -594,13 +594,13 @@ public:
             testPC.resize(width, height);
             for (size_t i=0; i<width*height; i++)
             {
-                testPC(i).x = i;
-                testPC(i).y = i + 1;
-                testPC(i).z = i + 2;
-                testPC(i).normal_x = i*2;
-                testPC(i).normal_y = i*3;
-                testPC(i).normal_z = i*4;
-                testPC(i).curvature =i*5;
+                testPC(i).x = static_cast<float>(i);
+                testPC(i).y = static_cast<float>(i + 1);
+                testPC(i).z = static_cast<float>(i + 2);
+                testPC(i).normal_x = static_cast<float>(i*2);
+                testPC(i).normal_y = static_cast<float>(i*3);
+                testPC(i).normal_z = static_cast<float>(i*4);
+                testPC(i).curvature = static_cast<float>(i*5);
                 testPC(i).r = 'r';
                 testPC(i).g = 'g';
                 testPC(i).b = 'b';
@@ -641,13 +641,13 @@ public:
              testPC.resize(width, height);
              for (size_t i=0; i<width*height; i++)
              {
-                 testPC(i).x = i;
-                 testPC(i).y = i + 1;
-                 testPC(i).z = i + 2;
-                 testPC(i).normal_x = i*2;
-                 testPC(i).normal_y = i*3;
-                 testPC(i).normal_z = i*4;
-                 testPC(i).curvature =i*5;
+                 testPC(i).x = static_cast<float>(i);
+                 testPC(i).y = static_cast<float>(i + 1);
+                 testPC(i).z = static_cast<float>(i + 2);
+                 testPC(i).normal_x = static_cast<float>(i*2);
+                 testPC(i).normal_y = static_cast<float>(i*3);
+                 testPC(i).normal_z = static_cast<float>(i*4);
+                 testPC(i).curvature = static_cast<float>(i*5);
              }
              PointCloud<DataXYZNormal> testPC2;
              Bottle bt = testPC.toBottle();
@@ -677,9 +677,9 @@ public:
              testPC.resize(width, height);
              for (size_t i=0; i<width*height; i++)
              {
-                 testPC(i).x = i;
-                 testPC(i).y = i + 1;
-                 testPC(i).z = i + 2;
+                 testPC(i).x = static_cast<float>(i);
+                 testPC(i).y = static_cast<float>(i + 1);
+                 testPC(i).z = static_cast<float>(i + 2);
                  testPC(i).r = 'r';
                  testPC(i).g = 'g';
                  testPC(i).b = 'b';
@@ -713,9 +713,9 @@ public:
              testPC.resize(width, height);
              for (size_t i=0; i<width*height; i++)
              {
-                 testPC(i).x = i;
-                 testPC(i).y = i + 1;
-                 testPC(i).z = i + 2;
+                 testPC(i).x = static_cast<float>(i);
+                 testPC(i).y = static_cast<float>(i + 1);
+                 testPC(i).z = static_cast<float>(i + 2);
              }
              PointCloud<DataXYZ> testPC2;
              Bottle bt = testPC.toBottle();
@@ -737,14 +737,15 @@ public:
         {
              report(0,"Testing fromBottle(toBottle) NORMAL");
              PointCloud<DataNormal> testPC;
-             size_t width = 3; size_t height = 3;
+             size_t width = 3;
+             size_t height = 3;
              testPC.resize(width, height);
              for (size_t i=0; i<width*height; i++)
              {
-                 testPC(i).normal_x = i*2;
-                 testPC(i).normal_y = i*3;
-                 testPC(i).normal_z = i*4;
-                 testPC(i).curvature =i*5;
+                 testPC(i).normal_x = static_cast<float>(i*2);
+                 testPC(i).normal_y = static_cast<float>(i*3);
+                 testPC(i).normal_z = static_cast<float>(i*4);
+                 testPC(i).curvature = static_cast<float>(i*5);
              }
              PointCloud<DataNormal> testPC2;
              Bottle bt = testPC.toBottle();
