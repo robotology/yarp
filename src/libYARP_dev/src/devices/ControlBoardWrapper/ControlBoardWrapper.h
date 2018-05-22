@@ -1090,7 +1090,7 @@ public:
     virtual bool quitPark() override;
 
     /* IControlCalibration */
-
+    using yarp::dev::IControlCalibration::calibrate;
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     /**
     * Calibrate a single joint, the calibration method accepts a parameter

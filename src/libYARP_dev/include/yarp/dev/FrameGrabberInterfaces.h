@@ -66,9 +66,6 @@ typedef struct {
 
 
 #define VOCAB_FRAMEGRABBER_CONTROL      VOCAB3('f','g','c')
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-#define VOCAB_FRAMEGRABBER_CONTROL2     VOCAB4('f','g','c','2')
-#endif
 #define VOCAB_CAMERA_DESCRIPTION        VOCAB4('c','a','m','d')
 #define VOCAB_HAS                       VOCAB3('h','a','s')
 #define VOCAB_FEATURE                   VOCAB4('f','e','a','t')
