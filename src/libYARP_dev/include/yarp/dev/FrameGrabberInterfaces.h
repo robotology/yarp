@@ -66,6 +66,7 @@ typedef struct {
 
 
 #define VOCAB_FRAMEGRABBER_CONTROL      VOCAB3('f','g','c')
+#define VOCAB_FRAMEGRABBER_CONTROL_DC1394      VOCAB4('f','g','f','w')
 #define VOCAB_CAMERA_DESCRIPTION        VOCAB4('c','a','m','d')
 #define VOCAB_HAS                       VOCAB3('h','a','s')
 #define VOCAB_FEATURE                   VOCAB4('f','e','a','t')

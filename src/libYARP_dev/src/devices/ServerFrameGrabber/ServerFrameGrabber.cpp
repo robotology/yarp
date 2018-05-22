@@ -243,9 +243,13 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
         //////////////////
         // DC1394 COMMANDS
         //////////////////
-    default:
-        if (fgCtrlDC1394) switch(code)
+    case VOCAB_FRAMEGRABBER_CONTROL_DC1394:
+    {
+        if (fgCtrlDC1394)
         {
+            int codeDC1394 = cmd.get(1).asVocab();
+            switch(codeDC1394)
+            {
             case VOCAB_DRGETMSK: // VOCAB_DRGETMSK 12
                 response.addInt32(int(fgCtrlDC1394->getVideoModeMaskDC1394()));
                 return true;
@@ -351,9 +355,11 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
                 return true;
             default:
                 return DeviceResponder::respond(cmd,response);
+            }
         }
     }
-
+    }
+    yError() << "ServerFrameGrabber: command not recognized" << cmd.toString();
     return DeviceResponder::respond(cmd,response);
 }
 

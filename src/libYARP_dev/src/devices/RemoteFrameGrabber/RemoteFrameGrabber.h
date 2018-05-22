@@ -41,6 +41,7 @@ public:
 private:
     bool setCommand(int code, double v) {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
         cmd.addFloat64(v);
@@ -50,6 +51,7 @@ private:
 
     bool setCommand(int code, double b, double r) {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
         cmd.addFloat64(b);
@@ -60,6 +62,7 @@ private:
 
     double getCommand(int code) const {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
         _port->write(cmd,response);
@@ -70,6 +73,7 @@ private:
     bool getCommand(int code, double &b, double &r) const
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
         _port->write(cmd,response);
@@ -85,6 +89,7 @@ public:
     virtual unsigned int getVideoModeMaskDC1394() override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRGETMSK);
         _port->write(cmd,response);
 
@@ -96,6 +101,7 @@ public:
     virtual unsigned int getVideoModeDC1394() override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRGETVMD);
         _port->write(cmd,response);
 
@@ -107,6 +113,7 @@ public:
     virtual bool setVideoModeDC1394(int video_mode) override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRSETVMD);
         cmd.addInt32(video_mode);
         _port->write(cmd,response);
@@ -117,6 +124,7 @@ public:
     virtual unsigned int getFPSMaskDC1394() override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRGETFPM);
         _port->write(cmd,response);
 
@@ -128,6 +136,7 @@ public:
     virtual unsigned int getFPSDC1394() override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRGETFPS);
         _port->write(cmd,response);
 
@@ -139,6 +148,7 @@ public:
     virtual bool setFPSDC1394(int fps) override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRSETFPS);
         cmd.addInt32(fps);
         _port->write(cmd,response);
@@ -149,6 +159,7 @@ public:
     virtual unsigned int getISOSpeedDC1394() override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRGETISO);
         _port->write(cmd,response);
 
@@ -160,6 +171,7 @@ public:
     virtual bool setISOSpeedDC1394(int speed) override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRSETISO);
         cmd.addInt32(speed);
         _port->write(cmd,response);
@@ -170,6 +182,7 @@ public:
     virtual unsigned int getColorCodingMaskDC1394(unsigned int video_mode) override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRGETCCM);
         cmd.addInt32(video_mode);
         _port->write(cmd,response);
@@ -182,6 +195,7 @@ public:
     virtual unsigned int getColorCodingDC1394() override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRGETCOD);
         _port->write(cmd,response);
 
@@ -193,6 +207,7 @@ public:
     virtual bool setColorCodingDC1394(int coding) override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRSETCOD);
         cmd.addInt32(coding);
         _port->write(cmd,response);
@@ -202,6 +217,7 @@ public:
     virtual bool getFormat7MaxWindowDC1394(unsigned int &xdim,unsigned int &ydim,unsigned int &xstep,unsigned int &ystep,unsigned int &xoffstep,unsigned int &yoffstep) override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRGETF7M);
         _port->write(cmd,response);
 
@@ -217,6 +233,7 @@ public:
     virtual bool getFormat7WindowDC1394(unsigned int &xdim,unsigned int &ydim,int &x0,int &y0) override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRGETWF7);
         _port->write(cmd,response);
         xdim=response.get(0).asInt32();
@@ -229,6 +246,7 @@ public:
     virtual bool setFormat7WindowDC1394(unsigned int xdim,unsigned int ydim,int x0,int y0) override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRSETWF7);
         cmd.addInt32(xdim);
         cmd.addInt32(ydim);
@@ -242,6 +260,7 @@ public:
     virtual bool setOperationModeDC1394(bool b1394b) override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRSETOPM);
         cmd.addInt32(int(b1394b));
         _port->write(cmd,response);
@@ -251,6 +270,7 @@ public:
     virtual bool getOperationModeDC1394() override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRGETOPM);
         _port->write(cmd,response);
         return response.get(0).asInt32()!=0? true:false;
@@ -260,6 +280,7 @@ public:
     virtual bool setTransmissionDC1394(bool bTxON) override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRSETTXM);
         cmd.addInt32(int(bTxON));
         _port->write(cmd,response);
@@ -269,6 +290,7 @@ public:
     virtual bool getTransmissionDC1394() override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRGETTXM);
         _port->write(cmd,response);
         return response.get(0).asInt32()!=0? true:false;
@@ -278,6 +300,7 @@ public:
     virtual bool setBroadcastDC1394(bool onoff) override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRSETBCS);
         cmd.addInt32((int)onoff);
         _port->write(cmd,response);
@@ -287,6 +310,7 @@ public:
     virtual bool setDefaultsDC1394() override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRSETDEF);
         _port->write(cmd,response);
         return response.get(0).asInt32()!=0? true:false;
@@ -295,6 +319,7 @@ public:
     virtual bool setResetDC1394() override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRSETRST);
         _port->write(cmd,response);
         return response.get(0).asInt32()!=0? true:false;
@@ -303,6 +328,7 @@ public:
     virtual bool setPowerDC1394(bool onoff) override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRSETPWR);
         cmd.addInt32((int)onoff);
         _port->write(cmd,response);
@@ -313,6 +339,7 @@ public:
     virtual bool setCaptureDC1394(bool bON) override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRSETCAP);
         cmd.addInt32(int(bON));
         _port->write(cmd,response);
@@ -323,6 +350,7 @@ public:
     virtual bool setBytesPerPacketDC1394(unsigned int bpp) override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRSETBPP);
         cmd.addInt32(int(bpp));
         _port->write(cmd,response);
@@ -333,6 +361,7 @@ public:
     virtual unsigned int getBytesPerPacketDC1394() override
     {
         yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_DRGETBPP);
         _port->write(cmd,response);
         return (unsigned)response.get(0).asInt32();

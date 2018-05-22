@@ -39,7 +39,7 @@ bool yarp::dev::DC1394::DC1394Parser::configure(IFrameGrabberControlsDC1394 *int
 
 bool yarp::dev::DC1394::DC1394Parser::respond(const Bottle& cmd, Bottle& response)
 {
-    int code = cmd.get(0).asVocab();
+    int code = cmd.get(1).asVocab();
     if (fgCtrl_DC1394)
     {
         switch(code)
@@ -175,7 +175,16 @@ bool yarp::dev::impl::ServerGrabberResponder::configure(yarp::dev::ServerGrabber
 }
 bool yarp::dev::impl::ServerGrabberResponder::respond(const os::Bottle &command, os::Bottle &reply){
     if(server)
-        return server->respond(command,reply,left,false);
+    {
+        if(server->respond(command,reply,left,false))
+        {
+            return true;
+        }
+        else
+        {
+            return DeviceResponder::respond(command, reply);
+        }
+    }
     else
         return false;
 }
@@ -724,7 +733,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
         //////////////////
         // DC1394 COMMANDS
         //////////////////
-    default:
+    case VOCAB_FRAMEGRABBER_CONTROL_DC1394:
     {
         if(param.twoCameras)
         {
@@ -759,6 +768,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
             return ifgCtrl_DC1394_Parser.respond(cmd, response);
     } break;
     }
+    yError() << "ServerGrabber: command not recognized" << cmd.toString();
     return false;
 }
 
