@@ -22,6 +22,7 @@
 #include <yarp/sig/Matrix.h>
 
 #include <vector>
+#include <cinttypes>
 #include <cstdio>
 #include <cstdlib>
 #include <map>
@@ -42,11 +43,11 @@ public:
 YARP_END_PACK
 
 const std::map<int, std::string> tag2FormatStr = {
-    {BOTTLE_TAG_INT, "d"},
-    {BOTTLE_TAG_INT64, "ld"},
+    {BOTTLE_TAG_INT32, PRId32},
+    {BOTTLE_TAG_INT64, PRId64},
     {BOTTLE_TAG_VOCAB, "c"},
     {BOTTLE_TAG_STRING, "s"},
-    {BOTTLE_TAG_DOUBLE, "lf"},
+    {BOTTLE_TAG_FLOAT64, "lf"},
 };
 
 bool VectorBase::read(yarp::os::ConnectionReader& connection) {

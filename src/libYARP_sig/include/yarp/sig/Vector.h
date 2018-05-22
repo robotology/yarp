@@ -359,7 +359,7 @@ public:
         const size_t buffSize = 256;
         char tmp[buffSize];
         std::string formatStr;
-        if (getBottleTag() == BOTTLE_TAG_DOUBLE) {
+        if (getBottleTag() == BOTTLE_TAG_FLOAT64) {
             if (width<0) {
                 formatStr = "% .*lf\t";
                 for (c=0;c<length();c++) {
@@ -467,7 +467,7 @@ public:
         first = nullptr;
     }
 
-    virtual yarp::os::Type getType() override {
+    virtual yarp::os::Type getType() const override {
         return yarp::os::Type::byName("yarp/vector");
     }
 };
