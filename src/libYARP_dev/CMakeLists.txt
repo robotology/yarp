@@ -25,13 +25,14 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/DriverLinkCreator.h
                   include/yarp/dev/Drivers.h
                   include/yarp/dev/FrameGrabberControl2.h
-                  include/yarp/dev/FrameGrabberControl2Impl.h
+                  include/yarp/dev/FrameGrabberControlImpl.h
                   include/yarp/dev/FrameGrabberInterfaces.h
                   include/yarp/dev/GazeControl.h
                   include/yarp/dev/GenericSensorInterfaces.h
                   include/yarp/dev/GPUInterface.h
                   include/yarp/dev/IAnalogSensor.h
                   include/yarp/dev/IBattery.h
+                  include/yarp/dev/IControlLimitsImpl.h
                   include/yarp/dev/IControlLimits2.h
                   include/yarp/dev/IControlLimits2Impl.h
                   include/yarp/dev/IControlMode2.h
@@ -61,9 +62,10 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IPidControl.h
                   include/yarp/dev/PidEnums.h
                   include/yarp/dev/IPidControlImpl.h
+                  include/yarp/dev/IPositionControl.h
+                  include/yarp/dev/IPositionControlImpl.h
                   include/yarp/dev/IPositionControl2.h
                   include/yarp/dev/IPositionControl2Impl.h
-                  include/yarp/dev/IPositionControl.h
                   include/yarp/dev/IPositionDirect.h
                   include/yarp/dev/IPositionDirectImpl.h
                   include/yarp/dev/IPWMControl.h
@@ -72,9 +74,10 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IRGBDSensor.h
                   include/yarp/dev/IRobotDescription.h
                   include/yarp/dev/ITorqueControl.h
-                  include/yarp/dev/IVelocityControl2.h
-                  include/yarp/dev/IVelocityControl2Impl.h
                   include/yarp/dev/IVelocityControl.h
+                  include/yarp/dev/IVelocityControl2.h
+                  include/yarp/dev/IVelocityControlImpl.h
+                  include/yarp/dev/IVelocityControl2Impl.h
                   include/yarp/dev/IVirtualAnalogSensor.h
                   include/yarp/dev/IVisualParams.h
                   include/yarp/dev/IVisualParamsImpl.h
@@ -85,7 +88,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/PolyDriver.h
                   include/yarp/dev/PolyDriverList.h
                   include/yarp/dev/PreciselyTimed.h
-                  include/yarp/dev/RemoteFrameGrabberDC1394.h
                   include/yarp/dev/RGBDSensorParamParser.h
                   include/yarp/dev/SerialInterfaces.h
                   include/yarp/dev/ServiceInterfaces.h
@@ -107,15 +109,14 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/ControlBoardHelper.cpp
                   src/ControlBoardPid.cpp
                   src/ControlCalibrationImpl.cpp
-                  src/ControlMode2Impl.cpp
                   src/ControlModeImpl.cpp
                   src/CurrentControlImpl.cpp
                   src/DeviceDriver.cpp
                   src/Drivers.cpp
-                  src/FrameGrabberControl2Impl.cpp
+                  src/FrameGrabberControlImpl.cpp
                   src/IAxisInfoImpl.cpp
                   src/IBattery.cpp
-                  src/IControlLimit2sImpl.cpp
+                  src/IControlLimitsImpl.cpp
                   src/IEncodersTimedImpl.cpp
                   src/IInteractionModeImpl.cpp
                   src/IJoypadController.cpp
@@ -123,11 +124,11 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/IMotorImpl.cpp
                   src/ImpedanceControlImpl.cpp
                   src/IPidControlImpl.cpp
-                  src/IPositionControl2Impl.cpp
+                  src/IPositionControlImpl.cpp
                   src/IPositionDirectImpl.cpp
                   src/IRangefinder2D.cpp
                   src/IRemoteVariablesImpl.cpp
-                  src/IVelocityControl2Impl.cpp
+                  src/IVelocityControlImpl.cpp
                   src/IVisualParamsImpl.cpp
                   src/LaserMeasurementData.cpp
                   src/MultipleAnalogSensorsInterfaces.cpp

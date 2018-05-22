@@ -23,21 +23,20 @@ RemappedSubControlBoard::RemappedSubControlBoard()
     id = "";
 
     pid = nullptr;
-    pos2 = nullptr;
+    pos = nullptr;
     posDir = nullptr;
-    vel2 = nullptr;
+    vel = nullptr;
     iJntEnc = nullptr;
     iMotEnc = nullptr;
     amp = nullptr;
-    lim2 = nullptr;
+    lim = nullptr;
     calib = nullptr;
-    calib2 = nullptr;
     remcalib = nullptr;
     iTimed= nullptr;
     info = nullptr;
     iTorque=nullptr;
     iImpedance=nullptr;
-    iMode2=nullptr;
+    iMode=nullptr;
     iInteract=nullptr;
     imotor=nullptr;
     iVar = nullptr;
@@ -57,19 +56,18 @@ void RemappedSubControlBoard::detach()
     subdevice=nullptr;
 
     pid=nullptr;
-    pos2=nullptr;
+    pos=nullptr;
     posDir=nullptr;
-    vel2=nullptr;
+    vel=nullptr;
     amp = nullptr;
     iJntEnc=nullptr;
     iMotEnc=nullptr;
-    lim2=nullptr;
+    lim=nullptr;
     calib=nullptr;
-    calib2=nullptr;
     info=nullptr;
     iTorque=nullptr;
     iImpedance=nullptr;
-    iMode2=nullptr;
+    iMode=nullptr;
     iTimed=nullptr;
     iInteract=nullptr;
     imotor=nullptr;
@@ -99,19 +97,18 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
     if (subdevice->isValid())
     {
         subdevice->view(pid);
-        subdevice->view(pos2);
+        subdevice->view(pos);
         subdevice->view(posDir);
-        subdevice->view(vel2);
+        subdevice->view(vel);
         subdevice->view(amp);
-        subdevice->view(lim2);
+        subdevice->view(lim);
         subdevice->view(calib);
-        subdevice->view(calib2);
         subdevice->view(remcalib);
         subdevice->view(info);
         subdevice->view(iTimed);
         subdevice->view(iTorque);
         subdevice->view(iImpedance);
-        subdevice->view(iMode2);
+        subdevice->view(iMode);
         subdevice->view(iJntEnc);
         subdevice->view(iMotEnc);
         subdevice->view(iInteract);
@@ -173,13 +170,13 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
 
 
     // checking minimum set of intefaces required
-    if( !(pos2) )
+    if( !(pos) )
     {
         yError("ControlBoardRemapper: IPositionControl2 interface was not found in subdevice. Quitting");
         return false;
     }
 
-    if( ! (vel2) )
+    if( ! (vel) )
     {
         yError("ControlBoardRemapper: IVelocityControl2 interface was not found in subdevice. Quitting");
         return false;
@@ -191,16 +188,16 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
         return false;
     }
 
-    if(!iMode2)
+    if(!iMode)
     {
         yError("ControlBoardRemapper: IControlMode2 interface was not found in subdevice, exiting.");
         return false;
     }
 
     int deviceJoints=0;
-    if (pos2!=nullptr)
+    if (pos!=nullptr)
     {
-        if (!pos2->getAxes(&deviceJoints))
+        if (!pos->getAxes(&deviceJoints))
         {
             yError() << "ControlBoardRemapper: failed to get axes number for subdevice " << k.c_str();
             return false;

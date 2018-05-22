@@ -45,53 +45,7 @@ bool IControlCalibration::calibrate()
     return ret;
 }
 
-bool IControlCalibration::park(bool wait)
-{
-    bool ret=false;
-    if (calibrator!=nullptr)
-    {
-        yDebug("Going to call calibrator\n");
-        ret=calibrator->park(dynamic_cast<DeviceDriver *>(this), wait);
-    }
-    else
-        yWarning("Warning called park but no calibrator was set\n");
-
-    return ret;
-}
-
-
-/// IControlCalibration2
-IControlCalibration2::IControlCalibration2()
-{
-    calibrator=nullptr;
-}
-
-bool IControlCalibration2::setCalibrator(ICalibrator *c)
-{
-    if (c!=nullptr)
-    {
-        calibrator=c;
-        return true;
-    }
-
-    return false;
-}
-
-bool IControlCalibration2::calibrate()
-{
-    bool ret = false;
-    if (calibrator!=nullptr)
-    {
-        yDebug("Going to call calibrator\n");
-        ret=calibrator->calibrate(dynamic_cast<DeviceDriver *>(this));
-    }
-    else
-        yWarning("Warning called calibrate but no calibrator was set\n");
-
-    return ret;
-}
-
-bool IControlCalibration2::abortCalibration()
+bool IControlCalibration::abortCalibration()
 {
     bool ret=false;
     if (calibrator!=nullptr)
@@ -99,7 +53,7 @@ bool IControlCalibration2::abortCalibration()
     return ret;
 }
 
-bool IControlCalibration2::abortPark()
+bool IControlCalibration::abortPark()
 {
     bool ret=false;
     if (calibrator!=nullptr)
@@ -107,7 +61,7 @@ bool IControlCalibration2::abortPark()
     return ret;
 }
 
-bool IControlCalibration2::park(bool wait)
+bool IControlCalibration::park(bool wait)
 {
     bool ret=false;
     if (calibrator!=nullptr)

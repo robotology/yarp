@@ -20,7 +20,7 @@
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/dev/IVisualParamsImpl.h>
 #include <yarp/dev/FrameGrabberControl2.h>
-#include <yarp/dev/FrameGrabberControl2Impl.h>
+#include <yarp/dev/FrameGrabberControlImpl.h>
 
 #define DEFAULT_THREAD_PERIOD       20    //ms
 #define RGBDSENSOR_TIMEOUT_DEFAULT  100   //ms
@@ -89,7 +89,7 @@ namespace yarp {
  */
 
 class yarp::dev::RGBDSensorClient:  public DeviceDriver,
-                                    public FrameGrabberControls2_Sender,
+                                    public FrameGrabberControls_Sender,
                                     public IRGBDSensor
 {
 
@@ -280,19 +280,19 @@ public:
     //
     // Implemented by FrameGrabberControls2_Sender
     //
-    using FrameGrabberControls2_Sender::getCameraDescription;
-    using FrameGrabberControls2_Sender::hasFeature;
-    using FrameGrabberControls2_Sender::setFeature;
-    using FrameGrabberControls2_Sender::getFeature;
-    using FrameGrabberControls2_Sender::hasOnOff;
-    using FrameGrabberControls2_Sender::setActive;
-    using FrameGrabberControls2_Sender::getActive;
-    using FrameGrabberControls2_Sender::hasAuto;
-    using FrameGrabberControls2_Sender::hasManual;
-    using FrameGrabberControls2_Sender::hasOnePush;
-    using FrameGrabberControls2_Sender::setMode;
-    using FrameGrabberControls2_Sender::getMode;
-    using FrameGrabberControls2_Sender::setOnePush;
+    using FrameGrabberControls_Sender::getCameraDescription;
+    using FrameGrabberControls_Sender::hasFeature;
+    using FrameGrabberControls_Sender::setFeature;
+    using FrameGrabberControls_Sender::getFeature;
+    using FrameGrabberControls_Sender::hasOnOff;
+    using FrameGrabberControls_Sender::setActive;
+    using FrameGrabberControls_Sender::getActive;
+    using FrameGrabberControls_Sender::hasAuto;
+    using FrameGrabberControls_Sender::hasManual;
+    using FrameGrabberControls_Sender::hasOnePush;
+    using FrameGrabberControls_Sender::setMode;
+    using FrameGrabberControls_Sender::getMode;
+    using FrameGrabberControls_Sender::setOnePush;
 };
 
 #endif // YARP_DEV_RGBDSENSORCLIENT_RGBDSENSORCLIENT_H

@@ -26,7 +26,7 @@
 #include <yarp/dev/IPidControlImpl.h>
 #include <yarp/dev/IPositionControl2Impl.h>
 #include <yarp/dev/IVelocityControl2Impl.h>
-#include <yarp/dev/IControlLimits2Impl.h>
+#include <yarp/dev/IControlLimitsImpl.h>
 #include <yarp/dev/IPositionDirectImpl.h>
 #include <yarp/dev/IInteractionModeImpl.h>
 

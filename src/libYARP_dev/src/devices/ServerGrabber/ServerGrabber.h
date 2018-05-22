@@ -14,7 +14,7 @@
 
 #include <yarp/dev/DataSource.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
-#include <yarp/dev/FrameGrabberControl2Impl.h>
+#include <yarp/dev/FrameGrabberControlImpl.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/ServiceInterfaces.h>
@@ -209,13 +209,13 @@ private:
     yarp::dev::IFrameGrabberImageRaw *fgImageRaw2;
     //yarp::sig::FlexImage  doubleImage, doubleImage2;
 //    IAudioVisualGrabber *fgAv; //TODO: manage the AV
-    yarp::dev::IFrameGrabberControls2 *fgCtrl;
-    yarp::dev::IFrameGrabberControls2 *fgCtrl2;
+    yarp::dev::IFrameGrabberControls *fgCtrl;
+    yarp::dev::IFrameGrabberControls *fgCtrl2;
     yarp::dev::IFrameGrabberControlsDC1394* fgCtrl_DC1394;
     yarp::dev::IFrameGrabberControlsDC1394* fgCtrl2_DC1394;
     yarp::dev::IPreciselyTimed *fgTimed;
-    yarp::dev::FrameGrabberControls2_Parser ifgCtrl_Parser;
-    yarp::dev::FrameGrabberControls2_Parser ifgCtrl2_Parser;
+    yarp::dev::FrameGrabberControls_Parser ifgCtrl_Parser;
+    yarp::dev::FrameGrabberControls_Parser ifgCtrl2_Parser;
     yarp::dev::DC1394::DC1394Parser ifgCtrl_DC1394_Parser;
     yarp::dev::DC1394::DC1394Parser ifgCtrl2_DC1394_Parser;
     Configuration param;

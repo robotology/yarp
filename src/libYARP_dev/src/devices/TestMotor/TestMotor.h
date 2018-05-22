@@ -208,6 +208,65 @@ public:
         return true;
     }
 
+    virtual bool positionMove(const int n_joint, const int *joints, const double *refs) override
+    {
+        return false;
+    }
+
+    virtual bool relativeMove(const int n_joint, const int *joints, const double *deltas) override
+    {
+        return false;
+    }
+
+    virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flags) override
+    {
+        return false;
+    }
+
+    virtual bool setRefSpeeds(const int n_joint, const int *joints, const double *spds) override
+    {
+        return false;
+    }
+
+    virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs) override
+    {
+        return false;
+    }
+
+    virtual bool getRefSpeeds(const int n_joint, const int *joints, double *spds) override
+    {
+        return false;
+    }
+
+    virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs) override
+    {
+        return false;
+    }
+
+    virtual bool stop(const int n_joint, const int *joints) override
+    {
+        return false;
+    }
+
+    virtual bool getTargetPosition(const int joint, double *ref) override
+    {
+        return false;
+    }
+
+    virtual bool getTargetPositions(double *refs) override
+    {
+        return false;
+    }
+
+    virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs) override
+    {
+        return false;
+    }
+
+    virtual bool velocityMove(const int n_joint, const int *joints, const double *spds) override
+    {
+        return false;
+    }
 
     virtual bool close() override {
         return true;

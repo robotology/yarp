@@ -73,22 +73,21 @@ namespace dev {
 
 class ControlBoardRemapper : public yarp::dev::DeviceDriver,
                              public yarp::dev::IPidControl,
-                             public yarp::dev::IPositionControl2,
+                             public yarp::dev::IPositionControl,
                              public yarp::dev::IPositionDirect,
-                             public yarp::dev::IVelocityControl2,
+                             public yarp::dev::IVelocityControl,
                              public yarp::dev::IPWMControl,
                              public yarp::dev::ICurrentControl,
                              public yarp::dev::IEncodersTimed,
                              public yarp::dev::IMotor,
                              public yarp::dev::IMotorEncoders,
                              public yarp::dev::IAmplifierControl,
-                             public yarp::dev::IControlLimits2,
+                             public yarp::dev::IControlLimits,
                              public yarp::dev::IRemoteCalibrator,
                              public yarp::dev::IControlCalibration,
-                             public yarp::dev::IControlCalibration2,
                              public yarp::dev::ITorqueControl,
                              public yarp::dev::IImpedanceControl,
-                             public yarp::dev::IControlMode2,
+                             public yarp::dev::IControlMode,
                              public yarp::dev::IMultipleWrapper,
                              public yarp::dev::IAxisInfo,
                              public yarp::dev::IPreciselyTimed,
@@ -444,11 +443,11 @@ public:
 
     /* IControlCalibration */
 
-    using yarp::dev::IControlCalibration2::calibrate;
-
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     virtual bool calibrate(int j, double p) override;
+#endif
 
-    virtual bool calibrate2(int j, unsigned int ui, double v1, double v2, double v3) override;
+    virtual bool calibrate(int j, unsigned int ui, double v1, double v2, double v3) override;
 
     virtual bool setCalibrationParameters(int j, const CalibrationParameters &params) override;
 

@@ -29,7 +29,7 @@ yarp::dev::DriverCreator *createServerGrabber()
             ("grabberDual", "grabberDual", "yarp::dev::ServerGrabber");
 }
 
-yarp::dev::DC1394::DC1394Parser::DC1394Parser() : fgCtrl_DC1394(nullptr) {};
+yarp::dev::DC1394::DC1394Parser::DC1394Parser() : fgCtrl_DC1394(nullptr) {}
 
 bool yarp::dev::DC1394::DC1394Parser::configure(IFrameGrabberControlsDC1394 *interface)
 {
@@ -39,49 +39,11 @@ bool yarp::dev::DC1394::DC1394Parser::configure(IFrameGrabberControlsDC1394 *int
 
 bool yarp::dev::DC1394::DC1394Parser::respond(const Bottle& cmd, Bottle& response)
 {
-    int code = cmd.get(0).asVocab();
+    int code = cmd.get(1).asVocab();
     if (fgCtrl_DC1394)
     {
         switch(code)
         {
-        case VOCAB_DRHASFEA: // VOCAB_DRHASFEA 00
-            response.addInt32(int(fgCtrl_DC1394->hasFeatureDC1394(cmd.get(1).asInt32())));
-            return true;
-        case VOCAB_DRSETVAL: // VOCAB_DRSETVAL 01
-            response.addInt32(int(fgCtrl_DC1394->setFeatureDC1394(cmd.get(1).asInt32(),cmd.get(2).asFloat64())));
-            return true;
-        case VOCAB_DRGETVAL: // VOCAB_DRGETVAL 02
-            response.addFloat64(fgCtrl_DC1394->getFeatureDC1394(cmd.get(1).asInt32()));
-            return true;
-
-        case VOCAB_DRHASACT: // VOCAB_DRHASACT 03
-            response.addInt32(int(fgCtrl_DC1394->hasOnOffDC1394(cmd.get(1).asInt32())));
-            return true;
-        case VOCAB_DRSETACT: // VOCAB_DRSETACT 04
-            response.addInt32(int(fgCtrl_DC1394->setActiveDC1394(cmd.get(1).asInt32(),(cmd.get(2).asInt32()!=0))));
-            return true;
-        case VOCAB_DRGETACT: // VOCAB_DRGETACT 05
-            response.addInt32(int(fgCtrl_DC1394->getActiveDC1394(cmd.get(1).asInt32())));
-            return true;
-
-        case VOCAB_DRHASMAN: // VOCAB_DRHASMAN 06
-            response.addInt32(int(fgCtrl_DC1394->hasManualDC1394(cmd.get(1).asInt32())));
-            return true;
-        case VOCAB_DRHASAUT: // VOCAB_DRHASAUT 07
-            response.addInt32(int(fgCtrl_DC1394->hasAutoDC1394(cmd.get(1).asInt32())));
-            return true;
-        case VOCAB_DRHASONP: // VOCAB_DRHASONP 08
-            response.addInt32(int(fgCtrl_DC1394->hasOnePushDC1394(cmd.get(1).asInt32())));
-            return true;
-        case VOCAB_DRSETMOD: // VOCAB_DRSETMOD 09
-            response.addInt32(int(fgCtrl_DC1394->setModeDC1394(cmd.get(1).asInt32(),(cmd.get(2).asInt32()!=0))));
-            return true;
-        case VOCAB_DRGETMOD: // VOCAB_DRGETMOD 10
-            response.addInt32(int(fgCtrl_DC1394->getModeDC1394(cmd.get(1).asInt32())));
-            return true;
-        case VOCAB_DRSETONP: // VOCAB_DRSETONP 11
-            response.addInt32(int(fgCtrl_DC1394->setOnePushDC1394(cmd.get(1).asInt32())));
-            return true;
         case VOCAB_DRGETMSK: // VOCAB_DRGETMSK 12
             response.addInt32(int(fgCtrl_DC1394->getVideoModeMaskDC1394()));
             return true;
@@ -116,18 +78,6 @@ bool yarp::dev::DC1394::DC1394Parser::respond(const Bottle& cmd, Bottle& respons
             return true;
         case VOCAB_DRSETCOD: // VOCAB_DRSETCOD 22
             response.addInt32(int(fgCtrl_DC1394->setColorCodingDC1394(cmd.get(1).asInt32())));
-            return true;
-
-        case VOCAB_DRSETWHB: // VOCAB_DRSETWHB 23
-            response.addInt32(int(fgCtrl_DC1394->setWhiteBalanceDC1394(cmd.get(1).asFloat64(),cmd.get(2).asFloat64())));
-            return true;
-        case VOCAB_DRGETWHB: // VOCAB_DRGETWHB 24
-            {
-                double b,r;
-                fgCtrl_DC1394->getWhiteBalanceDC1394(b,r);
-                response.addFloat64(b);
-                response.addFloat64(r);
-            }
             return true;
 
         case VOCAB_DRGETF7M: // VOCAB_DRGETF7M 25
@@ -225,7 +175,16 @@ bool yarp::dev::impl::ServerGrabberResponder::configure(yarp::dev::ServerGrabber
 }
 bool yarp::dev::impl::ServerGrabberResponder::respond(const os::Bottle &command, os::Bottle &reply){
     if(server)
-        return server->respond(command,reply,left,false);
+    {
+        if(server->respond(command,reply,left,false))
+        {
+            return true;
+        }
+        else
+        {
+            return DeviceResponder::respond(command, reply);
+        }
+    }
     else
         return false;
 }
@@ -699,7 +658,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
     } break;
 
     // first check if requests are coming from new iFrameGrabberControl2 interface and process them
-    case VOCAB_FRAMEGRABBER_CONTROL2:
+    case VOCAB_FRAMEGRABBER_CONTROL:
     {
         if(param.twoCameras)
         {
@@ -774,7 +733,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
         //////////////////
         // DC1394 COMMANDS
         //////////////////
-    default:
+    case VOCAB_FRAMEGRABBER_CONTROL_DC1394:
     {
         if(param.twoCameras)
         {
@@ -809,6 +768,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
             return ifgCtrl_DC1394_Parser.respond(cmd, response);
     } break;
     }
+    yError() << "ServerGrabber: command not recognized" << cmd.toString();
     return false;
 }
 

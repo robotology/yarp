@@ -8,13 +8,13 @@
 
 #include <cstdio>
 
-#include <yarp/dev/ControlBoardInterfacesImpl.h>
+#include <yarp/dev/IControlLimitsImpl.h>
 #include <yarp/dev/ControlBoardHelper.h>
 
 using namespace yarp::dev;
 
 
-ImplementControlLimits2::ImplementControlLimits2(yarp::dev::IControlLimits2Raw *y) :
+ImplementControlLimits::ImplementControlLimits(yarp::dev::IControlLimitsRaw *y) :
     iLimits2(y),
     helper(nullptr),nj(0)
 {
@@ -22,7 +22,7 @@ ImplementControlLimits2::ImplementControlLimits2(yarp::dev::IControlLimits2Raw *
 }
 
 
-ImplementControlLimits2::~ImplementControlLimits2()
+ImplementControlLimits::~ImplementControlLimits()
 {
     uninitialize();
 }
@@ -31,7 +31,7 @@ ImplementControlLimits2::~ImplementControlLimits2()
  * Clean up internal data and memory.
  * @return true if uninitialization is executed, false otherwise.
  */
-bool ImplementControlLimits2::uninitialize()
+bool ImplementControlLimits::uninitialize()
 {
     if(helper != nullptr)
     {
@@ -41,7 +41,7 @@ bool ImplementControlLimits2::uninitialize()
     return true;
 }
 
-bool ImplementControlLimits2::initialize(int size, const int *amap, const double *enc, const double *zos)
+bool ImplementControlLimits::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
     if(helper != nullptr)
         return false;
@@ -53,7 +53,7 @@ bool ImplementControlLimits2::initialize(int size, const int *amap, const double
 }
 
 
-bool ImplementControlLimits2::setLimits(int axis, double min, double max)
+bool ImplementControlLimits::setLimits(int axis, double min, double max)
 {
     double minEnc=0;
     double maxEnc=0;
@@ -74,7 +74,7 @@ bool ImplementControlLimits2::setLimits(int axis, double min, double max)
 }
 
 
-bool ImplementControlLimits2::getLimits(int axis, double *min, double *max)
+bool ImplementControlLimits::getLimits(int axis, double *min, double *max)
 {
     double minEnc=0;
     double maxEnc=0;
@@ -95,7 +95,7 @@ bool ImplementControlLimits2::getLimits(int axis, double *min, double *max)
     return ret;
 }
 
-bool ImplementControlLimits2::setVelLimits(int axis, double min, double max)
+bool ImplementControlLimits::setVelLimits(int axis, double min, double max)
 {
     double minEnc=0;
     double maxEnc=0;
@@ -107,7 +107,7 @@ bool ImplementControlLimits2::setVelLimits(int axis, double min, double max)
     return iLimits2->setVelLimitsRaw(k, minEnc, maxEnc);
 }
 
-bool ImplementControlLimits2::getVelLimits(int axis, double *min, double *max)
+bool ImplementControlLimits::getVelLimits(int axis, double *min, double *max)
 {
     double minEnc=0;
     double maxEnc=0;

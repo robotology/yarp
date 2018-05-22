@@ -54,19 +54,18 @@ public:
 
     yarp::dev::PolyDriver            *subdevice;
     yarp::dev::IPidControl           *pid;
-    yarp::dev::IPositionControl2     *pos2;
-    yarp::dev::IVelocityControl2     *vel2;
+    yarp::dev::IPositionControl      *pos;
+    yarp::dev::IVelocityControl      *vel;
     yarp::dev::IEncodersTimed        *iJntEnc;
     yarp::dev::IMotorEncoders        *iMotEnc;
     yarp::dev::IAmplifierControl     *amp;
-    yarp::dev::IControlLimits2       *lim2;
+    yarp::dev::IControlLimits        *lim;
     yarp::dev::IControlCalibration   *calib;
-    yarp::dev::IControlCalibration2  *calib2;
     yarp::dev::IRemoteCalibrator     *remcalib;
     yarp::dev::IPreciselyTimed       *iTimed;
     yarp::dev::ITorqueControl        *iTorque;
     yarp::dev::IImpedanceControl     *iImpedance;
-    yarp::dev::IControlMode2         *iMode2;
+    yarp::dev::IControlMode          *iMode;
     yarp::dev::IAxisInfo             *info;
     yarp::dev::IPositionDirect       *posDir;
     yarp::dev::IInteractionMode      *iInteract;

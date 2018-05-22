@@ -257,20 +257,19 @@ public:
 class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
                                         public yarp::os::RateThread,
                                         public yarp::dev::IPidControl,
-                                        public yarp::dev::IPositionControl2,
+                                        public yarp::dev::IPositionControl,
                                         public yarp::dev::IPositionDirect,
-                                        public yarp::dev::IVelocityControl2,
+                                        public yarp::dev::IVelocityControl,
                                         public yarp::dev::IEncodersTimed,
                                         public yarp::dev::IMotor,
                                         public yarp::dev::IMotorEncoders,
                                         public yarp::dev::IAmplifierControl,
-                                        public yarp::dev::IControlLimits2,
+                                        public yarp::dev::IControlLimits,
                                         public yarp::dev::IRemoteCalibrator,
                                         public yarp::dev::IControlCalibration,
-                                        public yarp::dev::IControlCalibration2,
                                         public yarp::dev::ITorqueControl,
                                         public yarp::dev::IImpedanceControl,
-                                        public yarp::dev::IControlMode2,
+                                        public yarp::dev::IControlMode,
                                         public yarp::dev::IMultipleWrapper,
                                         public yarp::dev::IAxisInfo,
                                         public yarp::dev::IPreciselyTimed,
@@ -1091,9 +1090,8 @@ public:
     virtual bool quitPark() override;
 
     /* IControlCalibration */
-
-    using yarp::dev::IControlCalibration2::calibrate;
-
+    using yarp::dev::IControlCalibration::calibrate;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     /**
     * Calibrate a single joint, the calibration method accepts a parameter
     * that is used to accomplish various things internally and is implementation
@@ -1103,8 +1101,8 @@ public:
     * @return true/false on success/failure.
     */
     virtual bool calibrate(int j, double p) override;
-
-    virtual bool calibrate2(int j, unsigned int ui, double v1, double v2, double v3) override;
+#endif
+    virtual bool calibrate(int j, unsigned int ui, double v1, double v2, double v3) override;
 
     virtual bool setCalibrationParameters(int j, const CalibrationParameters& params) override;
 

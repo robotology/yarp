@@ -12,26 +12,27 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Image.h>
-#include <yarp/dev/FrameGrabberControl2.h>
 #include <yarp/sig/Vector.h>
-
 
 /*! \file FrameGrabberInterfaces.h define common interfaces for frame
   grabber devices */
 
-namespace yarp{
-    namespace dev {
-        class IFrameGrabberImageSize;
-        class IFrameGrabber;
-        class IFrameGrabberRgb;
-        class IFrameGrabberImage;
-        class IFrameGrabberImageRaw;
-        class IFrameGrabberControls;
-        class IFrameGrabberControlsDC1394;
-        class FrameGrabberOpenParameters;
-        class IFrameWriterImage;
-    }
-}
+typedef enum {
+    BUS_UNKNOWN = 0,
+    BUS_FIREWIRE,
+    BUS_USB
+} BusType;
+
+typedef enum {
+    MODE_UNKNOWN = 0,
+    MODE_MANUAL,
+    MODE_AUTO
+} FeatureMode;
+
+typedef struct {
+    BusType busType;
+    std::string deviceDescription;
+} CameraDescriptor;
 
 /*
  *  Vocab for interfaces
@@ -64,6 +65,20 @@ namespace yarp{
 #define VOCAB_CROP                      VOCAB4('c','r','o','p')
 
 
+#define VOCAB_FRAMEGRABBER_CONTROL      VOCAB3('f','g','c')
+#define VOCAB_FRAMEGRABBER_CONTROL_DC1394      VOCAB4('f','g','f','w')
+#define VOCAB_CAMERA_DESCRIPTION        VOCAB4('c','a','m','d')
+#define VOCAB_HAS                       VOCAB3('h','a','s')
+#define VOCAB_FEATURE                   VOCAB4('f','e','a','t')
+#define VOCAB_FEATURE2                  VOCAB4('f','e','a','2')
+#define VOCAB_ONOFF                     VOCAB4('o','n','o','f')
+#define VOCAB_AUTO                      VOCAB4('a','u','t','o')
+#define VOCAB_MANUAL                    VOCAB3('m','a','n')
+#define VOCAB_ONEPUSH                   VOCAB4('o','n','e','p')
+#define VOCAB_ACTIVE                    VOCAB4('a','c','t','v')
+#define VOCAB_MODE                      VOCAB4('m','o','d','e')
+
+
 typedef enum {
     YARP_CROP_RECT = 0,             // Rectangular region of interest style, requires the two corner as a parameter
     YARP_CROP_LIST                  // Unordered list of points, the returned image will be a nx1 image with n the
@@ -72,6 +87,7 @@ typedef enum {
 } cropType_id_t;
 
 typedef enum {
+    YARP_FEATURE_INVALID=-1,
     YARP_FEATURE_BRIGHTNESS=0,
     YARP_FEATURE_EXPOSURE,
     YARP_FEATURE_SHARPNESS,
@@ -156,13 +172,15 @@ typedef enum {
 #define VOCAB_DRSETBPP VOCAB4('D','R','2','N') // 39
 #define VOCAB_DRGETBPP VOCAB4('D','R','2','O') // 40
 
+namespace yarp{
+namespace dev {
 
 /**
  * @ingroup dev_iface_media
  *
  * Common interface to a FrameGrabber.
  */
-class YARP_dev_API yarp::dev::IFrameGrabber
+class YARP_dev_API IFrameGrabber
 {
 public:
     virtual ~IFrameGrabber(){}
@@ -203,7 +221,7 @@ public:
  *
  * RGB Interface to a FrameGrabber device.
  */
-class YARP_dev_API yarp::dev::IFrameGrabberRgb
+class YARP_dev_API IFrameGrabberRgb
 {
 public:
     virtual ~IFrameGrabberRgb(){}
@@ -234,7 +252,7 @@ public:
  *
  * Read a YARP-format image from a device.
  */
-class YARP_dev_API yarp::dev::IFrameGrabberImage
+class YARP_dev_API IFrameGrabberImage
 {
 public:
     /**
@@ -286,7 +304,7 @@ public:
  *
  * Read a YARP-format image from a device.
  */
-class YARP_dev_API yarp::dev::IFrameGrabberImageRaw
+class YARP_dev_API IFrameGrabberImageRaw
 {
 public:
     /**
@@ -336,7 +354,7 @@ public:
  *
  * Read a YARP-format image to a device.
  */
-class YARP_dev_API yarp::dev::IFrameWriterImage
+class YARP_dev_API IFrameWriterImage
 {
 public:
     /**
@@ -358,164 +376,359 @@ public:
  *
  * Control interface for frame grabber devices.
  */
-class YARP_dev_API yarp::dev::IFrameGrabberControls
+class YARP_dev_API IFrameGrabberControls
 {
 public:
     /**
      * Destructor.
      */
     virtual ~IFrameGrabberControls(){}
-
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 // set
     /**
      * Set the brightness.
      * @param v new value for parameter.
      * @return true on success.
      */
-    virtual bool setBrightness(double v)=0;
+    YARP_DEPRECATED_MSG("Use setFeature(YARP_FEATURE_BRIGHTNESS, v) instead")
+    virtual bool setBrightness(double v) { return false; }
     /**
      * Set the exposure.
      * @param v new value for parameter.
      * @return true on success.
      */
-    virtual bool setExposure(double v)=0;
+    YARP_DEPRECATED_MSG("Use setFeature(YARP_FEATURE_EXPOSURE, v) instead")
+    virtual bool setExposure(double v) { return false; }
     /**
      * Set the sharpness.
      * @param v new value for parameter.
      * @return true on success.
      */
-    virtual bool setSharpness(double v)=0;
+    YARP_DEPRECATED_MSG("Use setFeature(YARP_FEATURE_SHARPNESS, v) instead")
+    virtual bool setSharpness(double v) { return false; }
     /**
      * Set the white balance for the frame grabber.
      * @param blue component gain.
      * @param red component gain.
      * @return true/false if successful or not.
      */
-    virtual bool setWhiteBalance(double blue, double red)=0;
+    YARP_DEPRECATED_MSG("Use setFeature(YARP_FEATURE_WHITE_BALANCE, blue, red) instead")
+    virtual bool setWhiteBalance(double blue, double red) { return false; }
     /**
      * Set the hue.
      * @param v new value for parameter.
      * @return true on success.
      */
-    virtual bool setHue(double v)=0;
+    YARP_DEPRECATED_MSG("Use setFeature(YARP_FEATURE_HUE, v) instead")
+    virtual bool setHue(double v) { return false; }
     /**
      * Set the saturation.
      * @param v new value for parameter.
      * @return true on success.
      */
-    virtual bool setSaturation(double v)=0;
+    YARP_DEPRECATED_MSG("Use setFeature(YARP_FEATURE_SATURATION, v) instead")
+    virtual bool setSaturation(double v) { return false; }
     /**
      * Set the gamma.
      * @param v new value for parameter.
      * @return true on success.
      */
-    virtual bool setGamma(double v)=0;
+    YARP_DEPRECATED_MSG("Use setFeature(YARP_FEATURE_GAMMA, v) instead")
+    virtual bool setGamma(double v) { return false; }
     /**
      * Set the shutter parameter.
      * @param v new value for parameter.
      * @return true on success.
      */
-    virtual bool setShutter(double v)=0;
+    YARP_DEPRECATED_MSG("Use setFeature(YARP_FEATURE_SHUTTER, v) instead")
+    virtual bool setShutter(double v) { return false; }
     /**
      * Set the gain.
      * @param v new value for parameter.
      * @return true on success.
      */
-    virtual bool setGain(double v)=0;
+    YARP_DEPRECATED_MSG("Use setFeature(YARP_FEATURE_GAIN, v) instead")
+    virtual bool setGain(double v) { return false; }
     /**
      * Set the iris.
      * @param v new value for parameter.
      * @return true on success.
      */
-    virtual bool setIris(double v)=0;
-
-    // not implemented
-    //virtual bool setTemperature(double v)=0;
-    //virtual bool setWhiteShading(double r,double g,double b)=0;
-    //virtual bool setOpticalFilter(double v)=0;
-    //virtual bool setCaptureQuality(double v)=0;
+    YARP_DEPRECATED_MSG("Use setFeature(YARP_FEATURE_IRIS, v) instead")
+    virtual bool setIris(double v) { return false; }
 
 // get
     /**
      * Read the brightness parameter.
      * @return the current brightness value.
      */
-    virtual double getBrightness()=0;
+    YARP_DEPRECATED_MSG("Use getFeature(YARP_FEATURE_BRIGHTNESS, v) instead")
+    virtual double getBrightness() { return -1.0; }
     /**
      * Read the exposure parameter.
      * @return the current exposure value.
      */
-    virtual double getExposure()=0;
+    YARP_DEPRECATED_MSG("Use getFeature(YARP_FEATURE_EXPOSURE, v) instead")
+    virtual double getExposure() { return -1.0; }
     /**
      * Read the sharpness parameter.
      * @return the current sharpness value.
      */
-    virtual double getSharpness()=0;
+    YARP_DEPRECATED_MSG("Use getFeature(YARP_FEATURE_SHARPNESS, v) instead")
+    virtual double getSharpness() { return -1.0; }
     /**
      * Read the white balance parameters.
      * @param blue reference to return value for the red parameter.
      * @param red reference to return value for the green parameter.
      * @return true/false.
      */
-    virtual bool getWhiteBalance(double &blue, double &red)=0;
+    YARP_DEPRECATED_MSG("Use getFeature(YARP_FEATURE_WHITE_BALANCE, blue, red) instead")
+    virtual bool getWhiteBalance(double &blue, double &red) { return false; }
     /**
      * Read the hue parameter.
      * @return the current hue value.
      */
-    virtual double getHue()=0;
+    YARP_DEPRECATED_MSG("Use getFeature(YARP_FEATURE_HUE, v) instead")
+    virtual double getHue() { return -1.0; }
     /**
      * Read the saturation parameter.
      * @return the current saturation value.
      */
-    virtual double getSaturation()=0;
+    YARP_DEPRECATED_MSG("Use getFeature(YARP_FEATURE_SATURATION, v) instead")
+    virtual double getSaturation() { return -1.0; }
     /**
      * Read the gamma parameter.
      * @return the current gamma value.
      */
-    virtual double getGamma()=0;
+    YARP_DEPRECATED_MSG("Use getFeature(YARP_FEATURE_GAMMA, v) instead")
+    virtual double getGamma() { return -1.0; }
     /**
      * Read the shutter parameter.
      * @return the current shutter value.
      */
-    virtual double getShutter()=0;
+    YARP_DEPRECATED_MSG("Use getFeature(YARP_FEATURE_SHUTTER, v) instead")
+    virtual double getShutter() { return -1.0; }
     /**
      * Read the gain parameter.
      * @return the current gain value.
      */
-    virtual double getGain()=0;
+    YARP_DEPRECATED_MSG("Use getFeature(YARP_FEATURE_GAIN, v) instead")
+    virtual double getGain() { return -1.0; }
     /**
      * Read the iris parameter.
      * @return the current iris value.
      */
-    virtual double getIris()=0;
+    YARP_DEPRECATED_MSG("Use getFeature(YARP_FEATURE_IRIS, v) instead")
+    virtual double getIris() { return -1.0; }
+#endif
 
-    // not implemented
-    //virtual double getTemperature() const=0;
-    //virtual bool getWhiteShading(double &r,double &g,double &b) const=0;
-    //virtual double getOpticalFilter() const=0;
-    //virtual double getCaptureQuality() const=0;
+    cameraFeature_id_t featureVocab2Enum(int vocab)
+    {
+        switch (vocab) {
+        case VOCAB_BRIGHTNESS:
+            return YARP_FEATURE_BRIGHTNESS;
+        case VOCAB_EXPOSURE:
+            return YARP_FEATURE_EXPOSURE;
+        case VOCAB_SHARPNESS:
+            return YARP_FEATURE_SHARPNESS;
+        case VOCAB_WHITE:
+            return YARP_FEATURE_WHITE_BALANCE;
+        case VOCAB_HUE:
+            return YARP_FEATURE_HUE;
+        case VOCAB_SATURATION:
+            return YARP_FEATURE_SATURATION;
+        case VOCAB_GAMMA:
+            return YARP_FEATURE_GAMMA;
+        case VOCAB_SHUTTER:
+            return YARP_FEATURE_SHUTTER;
+        case VOCAB_GAIN:
+            return YARP_FEATURE_GAIN;
+        case VOCAB_IRIS:
+            return YARP_FEATURE_IRIS;
+        default:
+            return YARP_FEATURE_INVALID;
+        }
+
+    }
+
+    int featureEnum2Vocab(cameraFeature_id_t _enum)
+    {
+        switch (_enum) {
+        case YARP_FEATURE_BRIGHTNESS:
+            return VOCAB_BRIGHTNESS;
+        case YARP_FEATURE_EXPOSURE:
+            return VOCAB_EXPOSURE;
+        case YARP_FEATURE_SHARPNESS:
+            return VOCAB_SHARPNESS;
+        case YARP_FEATURE_WHITE_BALANCE:
+            return VOCAB_WHITE;
+        case YARP_FEATURE_HUE:
+            return VOCAB_HUE;
+        case YARP_FEATURE_SATURATION:
+            return VOCAB_SATURATION;
+        case YARP_FEATURE_GAMMA:
+            return VOCAB_GAMMA;
+        case YARP_FEATURE_SHUTTER:
+            return VOCAB_SHUTTER;
+        case YARP_FEATURE_GAIN:
+            return VOCAB_GAIN;
+        case YARP_FEATURE_IRIS:
+            return VOCAB_IRIS;
+        default:
+            return -1;
+        }
+
+    }
+
+    std::string busType2String(BusType type)
+    {
+        switch (type) {
+            case BUS_FIREWIRE:
+                return "FireWire";
+            break;
+
+            case BUS_USB:
+                return "USB";
+            break;
+
+            default:
+                return "bus type undefined";
+            break;
+        }
+    }
+
+    inline FeatureMode toFeatureMode(bool _auto)
+    {
+        return _auto ? MODE_AUTO : MODE_MANUAL;
+    }
+    /**
+     * Get a basic description of the camera hw. This is mainly used to determine the
+     * HW bus type in order to choose the corresponding interface for advanced controls.
+     * @param device returns an identifier for the bus
+     * @return returns true if success, false otherwise (e.g. the interface is not implemented)
+     */
+    virtual bool getCameraDescription(CameraDescriptor *camera)=0;
+
+    /**
+     * Check if camera has the requested feature (saturation, brightness ... )
+     * @param feature the identifier of the feature to check
+     * @param hasFeature flag value: true if the feature is present, false otherwise
+     * @return returns true if success, false otherwise (e.g. the interface is not implemented)
+     */
+    virtual bool hasFeature(int feature, bool *hasFeature)=0;
+
+    /**
+     * Set the requested feature to a value (saturation, brightness ... )
+     * @param feature the identifier of the feature to change
+     * @param value new value of the feature, range from 0 to 1 expressed as a percentage
+     * @return returns true if success, false otherwise (e.g. the interface is not implemented)
+     */
+    virtual bool setFeature(int feature, double value)=0;
+
+    /**
+     * Get the current value for the requested feature.
+     * @param feature the identifier of the feature to read
+     * @param value  pointer to current value of the feature, from 0 to 1 expressed as a percentage
+     * @return returns true on success, false on failure.
+     */
+    virtual bool getFeature(int feature, double *value)=0;
+
+    /**
+     * Set the requested feature to a value using 2 params (like white balance)
+     * @param feature the identifier of the feature to change
+     * @param value1  first param,  from 0 to 1 expressed as a percentage
+     * @param value2  second param, from 0 to 1 expressed as a percentage
+     *
+     * @return returns true if success, false otherwise (e.g. the interface is not implemented)
+     */
+    virtual bool setFeature(int feature, double value1, double value2)=0;
+
+    /**
+     * Get the current value for the requested feature.
+     * @param feature the identifier of the feaature to read
+     * @param value1  returns the current value of the feature, from 0 to 1 expressed as a percentage
+     * @param value2  returns the current value of the feature, from 0 to 1 expressed as a percentage
+     * @return returns true on success, false on failure.
+     */
+    virtual bool getFeature(int feature, double *value1, double *value2)=0;
+
+    /**
+     * Check if the camera has the ability to turn on/off the requested feature
+     * @param feature the identifier of the feature to change
+     * @param hasOnOff flag true if this feature can be turned on/off, false otherwise.
+     * @return returns true if success, false otherwise (e.g. the interface is not implemented)
+     */
+    virtual bool hasOnOff(int feature, bool *HasOnOff)=0;
+
+    /**
+     * Set the requested feature on or off
+     * @param feature the identifier of the feature to change
+     * @param onoff true to activate, off to deactivate the feature
+     * @return returns true on success, false on failure.
+     */
+    virtual bool setActive(int feature, bool onoff)=0;
+
+    /**
+     * Get the current status of the feature, on or off
+     * @param feature the identifier of the feature to check
+     * @param isActive flag true if the feature is active, false otherwise
+     * @return returns true if success, false otherwise (e.g. the interface is not implemented)
+     */
+    virtual bool getActive(int feature, bool *isActive)=0;
+
+    /**
+     * Check if the requested feature has the 'auto' mode
+     * @param feature the identifier of the feature to check
+     * @param hasAuto flag true if the feature is has 'auto' mode, false otherwise
+     * @return returns true if success, false otherwise (e.g. the interface is not implemented)
+     */
+    virtual bool hasAuto(int feature, bool *hasAuto)=0;
+
+    /**
+     * Check if the requested feature has the 'manual' mode
+     * @param feature the identifier of the feature to check
+     * @param hasAuto flag true if the feature is has 'manual' mode, false otherwise
+     * @return returns true if success, false otherwise (e.g. the interface is not implemented)
+     */
+    virtual bool hasManual(int feature, bool *hasManual)=0;
+
+    /**
+     * Check if the requested feature has the 'onePush' mode
+     * @param feature the identifier of the feature to check
+     * @param hasAuto flag true if the feature is has 'onePush' mode, false otherwise
+     * @return returns true if success, false otherwise (e.g. the interface is not implemented)
+     */
+    virtual bool hasOnePush(int feature, bool *hasOnePush)=0;
+
+    /**
+     * Set the requested mode for the feature
+     * @param feature the identifier of the feature to change
+     * @param auto_onoff true to activate 'auto' mode, false to activate 'manual' mode
+     * @return returns true on success, false on failure.
+     */
+    virtual bool setMode(int feature, FeatureMode mode)=0;
+
+    /**
+     * Get the current mode for the feature
+     * @param feature the identifier of the feature to change
+     * @param hasAuto flag true if the feature is has 'auto' mode, false otherwise
+     * @return returns true if success, false otherwise (e.g. the interface is not implemented)
+     */
+    virtual bool getMode(int feature, FeatureMode *mode)=0;
+
+    /**
+     * Set the requested feature to a value (saturation, brightness ... )
+     * @param feature the identifier of the feature to change
+     * @param value new value of the feature, from 0 to 1 as a percentage of param range
+     * @return returns true on success, false on failure.
+     */
+    virtual bool setOnePush(int feature)=0;
 };
 
-class YARP_dev_API yarp::dev::IFrameGrabberControlsDC1394 : public yarp::dev::IFrameGrabberControls
+class YARP_dev_API IFrameGrabberControlsDC1394
 {
 public:
-    // 00 01 02
-    virtual bool hasFeatureDC1394(int feature)=0;//{ return true; }
-    virtual bool setFeatureDC1394(int feature,double value)=0;//{ return true; }
-    virtual double getFeatureDC1394(int feature)=0;//{ return 0.5; }
-
-    // 03 04 05
-    virtual bool hasOnOffDC1394(int feature)=0;//{ return true; }
-    virtual bool setActiveDC1394(int feature, bool onoff)=0;//{ return true; }
-    virtual bool getActiveDC1394(int feature)=0;//{ return true; }
-
-    // 06 07 08 09 10 11
-    virtual bool hasAutoDC1394(int feature)=0;//{ return true; }
-    virtual bool hasManualDC1394(int feature)=0;//{ return true; }
-    virtual bool hasOnePushDC1394(int feature)=0;//{ return true; }
-    virtual bool setModeDC1394(int feature, bool auto_onoff)=0;//{ return true; }
-    virtual bool getModeDC1394(int feature)=0;//{ return true; }
-    virtual bool setOnePushDC1394(int feature)=0;//{ return true; }
+    virtual ~IFrameGrabberControlsDC1394() {}
 
     // 12 13 14
     virtual unsigned int getVideoModeMaskDC1394()=0;//{ return 0xFFFFFFFF; }
@@ -535,10 +748,6 @@ public:
     virtual unsigned int getColorCodingMaskDC1394(unsigned int video_mode)=0;//{ return 0xFFFFFFFF; }
     virtual unsigned int getColorCodingDC1394()=0;//{ return 0; }
     virtual bool setColorCodingDC1394(int coding)=0;//{ return true; }
-
-    // 23 24
-    virtual bool setWhiteBalanceDC1394(double b, double r)=0;//{ return true; }
-    virtual bool getWhiteBalanceDC1394(double &b, double &r)=0;
     /*{
         b=r=0.5;
         return true;
@@ -585,5 +794,11 @@ public:
     // 40
     virtual bool setBytesPerPacketDC1394(unsigned int bpp)=0;//{ return true; }
 };
+
+} // namespace dev
+} // namespace yarp
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+#include <yarp/dev/FrameGrabberControl2.h>
+#endif
 
 #endif // YARP_FRAMEGRABBERINTERFACES_H

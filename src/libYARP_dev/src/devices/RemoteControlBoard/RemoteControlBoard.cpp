@@ -140,20 +140,19 @@ YARP_DISABLE_DEPRECATED_WARNING
 */
 class yarp::dev::RemoteControlBoard :
     public IPidControl,
-    public IPositionControl2,
-    public IVelocityControl2,
+    public IPositionControl,
+    public IVelocityControl,
     public IEncodersTimed,
     public IMotorEncoders,
     public IMotor,
     public IAmplifierControl,
-    public IControlLimits2,
+    public IControlLimits,
     public IAxisInfo,
     public IPreciselyTimed,
-    public IControlCalibration2,
+    public IControlCalibration,
     public ITorqueControl,
     public IImpedanceControl,
-//    public IControlMode,
-    public IControlMode2,
+    public IControlMode,
     public DeviceDriver,
     public IPositionDirect,
     public IInteractionMode,
@@ -2491,7 +2490,7 @@ public:
     bool virtual park(bool wait=true) override
     { return send1V(VOCAB_PARK); }
 
-    bool virtual calibrate2(int j, unsigned int ui, double v1, double v2, double v3) override
+    bool virtual calibrate(int j, unsigned int ui, double v1, double v2, double v3) override
     {
         Bottle cmd, response;
 

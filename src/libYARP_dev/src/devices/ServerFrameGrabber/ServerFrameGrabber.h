@@ -14,7 +14,7 @@
 
 #include <yarp/dev/DataSource.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
-#include <yarp/dev/FrameGrabberControl2Impl.h>
+#include <yarp/dev/FrameGrabberControlImpl.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/ServiceInterfaces.h>
@@ -83,7 +83,6 @@ class YARP_dev_API yarp::dev::ServerFrameGrabber : public DeviceDriver,
             public IFrameGrabberImage,
             public IAudioGrabberSound,
             public IAudioVisualGrabber,
-            public IFrameGrabberControls,
             public IService,
             public DataSource<yarp::sig::ImageOf<yarp::sig::PixelRgb> >,
             public DataSource<yarp::sig::ImageOf<yarp::sig::PixelMono> >,
@@ -103,7 +102,6 @@ private:
     IAudioGrabberSound *fgSound;
     IAudioVisualGrabber *fgAv;
     IFrameGrabberControls  *fgCtrl;
-    IFrameGrabberControls2 *fgCtrl2;
     IPreciselyTimed *fgTimed;
     bool spoke; // location of this variable tickles bug on Solaris/gcc3.2
     bool canDrop;
@@ -111,7 +109,7 @@ private:
     bool active;
     bool singleThreaded;
 
-    FrameGrabberControls2_Parser ifgCtrl2_Parser;
+    FrameGrabberControls_Parser ifgCtrl_Parser;
 
 public:
     /**
@@ -164,49 +162,6 @@ public:
     virtual int height() const override;
 
     virtual int width() const override;
-
-// set
-    virtual bool setBrightness(double v) override;
-
-    virtual bool setExposure(double v) override;
-
-    virtual bool setSharpness(double v) override;
-
-    virtual bool setWhiteBalance(double blue, double red) override;
-
-    virtual bool setHue(double v) override;
-
-    virtual bool setSaturation(double v) override;
-
-    virtual bool setGamma(double v) override;
-
-    virtual bool setShutter(double v) override;
-
-    virtual bool setGain(double v) override;
-
-    virtual bool setIris(double v) override;
-
-// get
-
-    virtual double getBrightness() override;
-
-    virtual double getExposure() override;
-
-    virtual double getSharpness() override;
-
-    virtual bool getWhiteBalance(double &blue, double &red) override;
-
-    virtual double getHue() override;
-
-    virtual double getSaturation() override;
-
-    virtual double getGamma() override;
-
-    virtual double getShutter() override;
-
-    virtual double getGain() override;
-
-    virtual double getIris() override;
 
     virtual bool startService() override;
 

@@ -133,9 +133,9 @@ private:
     Port            m_sequence_port;
     bool            m_interfaceError;
 
-    IPositionControl2  *m_iPos;
+    IPositionControl   *m_iPos;
     IPositionDirect    *m_iDir;
-    IVelocityControl2  *m_iVel;
+    IVelocityControl  *m_iVel;
     IRemoteVariables   *m_iVar;
     IEncoders          *m_iencs;
     IMotorEncoders     *m_iMot;
@@ -146,9 +146,9 @@ private:
     ITorqueControl     *m_iTrq;
     IImpedanceControl  *m_iImp;
     IAxisInfo         *m_iinfo;
-    IControlLimits2          *m_iLim;
-    IControlCalibration2     *m_ical;
-    IControlMode2           *m_ictrlmode2;
+    IControlLimits          *m_iLim;
+    IControlCalibration    *m_ical;
+    IControlMode           *m_ictrlmode;
     IInteractionMode        *m_iinteract;
     IRemoteCalibrator   *m_iremCalib;
     int m_slow_k;

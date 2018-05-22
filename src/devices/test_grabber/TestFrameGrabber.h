@@ -119,46 +119,6 @@ public:
 
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
 
-    virtual bool setBrightness(double v) override;
-
-    virtual bool setExposure(double v) override;
-
-    virtual bool setSharpness(double v) override;
-
-    virtual bool setWhiteBalance(double blue, double red) override;
-
-    virtual bool setHue(double v) override;
-
-    virtual bool setSaturation(double v) override;
-
-    virtual bool setGamma(double v) override;
-
-    virtual bool setShutter(double v) override;
-
-    virtual bool setGain(double v) override;
-
-    virtual bool setIris(double v) override;
-
-    virtual double getBrightness() override;
-
-    virtual double getExposure() override;
-
-    virtual double getSharpness() override;
-
-    virtual bool getWhiteBalance(double &blue, double &red) override;
-
-    virtual double getHue() override;
-
-    virtual double getSaturation() override;
-
-    virtual double getGamma() override;
-
-    virtual double getShutter() override;
-
-    virtual double getGain() override;
-
-    virtual double getIris() override;
-
     virtual yarp::os::Stamp getLastInputStamp() override;
 
     virtual bool hasAudio() override;
@@ -166,6 +126,36 @@ public:
     virtual bool hasVideo() override;
 
     virtual bool hasRawVideo() override;
+
+    virtual bool getCameraDescription(CameraDescriptor *camera) override;
+
+    virtual bool hasFeature(int feature, bool *hasFeature) override;
+
+    virtual bool setFeature(int feature, double value) override;
+
+    virtual bool getFeature(int feature, double *value) override;
+
+    virtual bool setFeature(int feature, double  value1, double  value2) override;
+
+    virtual bool getFeature(int feature, double *value1, double *value2) override;
+
+    virtual bool hasOnOff(int feature, bool *HasOnOff) override;
+
+    virtual bool setActive(int feature, bool onoff) override;
+
+    virtual bool getActive(int feature, bool *isActive) override;
+
+    virtual bool hasAuto(int feature, bool *hasAuto) override;
+
+    virtual bool hasManual(int feature, bool *hasManual) override;
+
+    virtual bool hasOnePush(int feature, bool *hasOnePush) override;
+
+    virtual bool setMode(int feature, FeatureMode mode) override;
+
+    virtual bool getMode(int feature, FeatureMode *mode) override;
+
+    virtual bool setOnePush(int feature) override;
 
 private:
     yarp::sig::ImageOf<yarp::sig::PixelRgb> background, rgb_image;

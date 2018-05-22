@@ -353,7 +353,7 @@ bool RobotInterface::Device::calibrate(const RobotInterface::Device &target) con
         return false;
     }
 
-    yarp::dev::IControlCalibration2 *controlCalibrator;
+    yarp::dev::IControlCalibration *controlCalibrator;
     if (!target.driver()->view(controlCalibrator)) {
         yError() << target.name() << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
         return false;
@@ -459,7 +459,7 @@ bool RobotInterface::Device::park(const Device &target) const
         return false;
     }
 
-    yarp::dev::IControlCalibration2 *controlCalibrator;
+    yarp::dev::IControlCalibration *controlCalibrator;
     if (!target.driver()->view(controlCalibrator)) {
         yError() << target.name() << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
         return false;

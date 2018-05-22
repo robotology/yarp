@@ -355,17 +355,17 @@ bool FakeMotionControl::dealloc()
 
 FakeMotionControl::FakeMotionControl() :
     RateThread(10.0),
-    ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>(this),
+    ImplementControlCalibration<FakeMotionControl, IControlCalibration>(this),
     ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>(this),
     ImplementPidControl(this),
     ImplementEncodersTimed(this),
-    ImplementPositionControl2(this),
-    ImplementVelocityControl2(this),
-    ImplementControlMode2(this),
+    ImplementPositionControl(this),
+    ImplementVelocityControl(this),
+    ImplementControlMode(this),
     ImplementImpedanceControl(this),
     ImplementMotorEncoders(this),
     ImplementTorqueControl(this),
-    ImplementControlLimits2(this),
+    ImplementControlLimits(this),
     ImplementPositionDirect(this),
     ImplementInteractionMode(this),
     ImplementCurrentControl(this),
@@ -583,17 +583,17 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
 
     ControlBoardHelper cb(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM);
     ControlBoardHelper cb_copy_test(cb);
-    ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementControlCalibration<FakeMotionControl, IControlCalibration>::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementEncodersTimed::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementMotorEncoders::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
-    ImplementPositionControl2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementPositionControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementPidControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM);
     ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
     ImplementPidControl::setConversionUnits(PidControlTypeEnum::VOCAB_PIDTYPE_TORQUE, PidFeedbackUnitsEnum::METRIC, PidOutputUnitsEnum::DUTYCYCLE_PWM_PERCENT);
-    ImplementControlMode2::initialize(_njoints, _axisMap);
-    ImplementVelocityControl2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
-    ImplementControlLimits2::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementControlMode::initialize(_njoints, _axisMap);
+    ImplementVelocityControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementControlLimits::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementImpedanceControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor);
     ImplementTorqueControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM, bemfToRaw.data(), ktauToRaw.data());
     ImplementPositionDirect::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
@@ -1453,16 +1453,16 @@ bool FakeMotionControl::close()
 {
     yTrace() << " FakeMotionControl::close()";
 
-    ImplementControlMode2::uninitialize();
+    ImplementControlMode::uninitialize();
     ImplementEncodersTimed::uninitialize();
     ImplementMotorEncoders::uninitialize();
-    ImplementPositionControl2::uninitialize();
-    ImplementVelocityControl2::uninitialize();
+    ImplementPositionControl::uninitialize();
+    ImplementVelocityControl::uninitialize();
     ImplementPidControl::uninitialize();
-    ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>::uninitialize();
+    ImplementControlCalibration<FakeMotionControl, IControlCalibration>::uninitialize();
     ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>::uninitialize();
     ImplementImpedanceControl::uninitialize();
-    ImplementControlLimits2::uninitialize();
+    ImplementControlLimits::uninitialize();
     ImplementTorqueControl::uninitialize();
     ImplementPositionDirect::uninitialize();
     ImplementInteractionMode::uninitialize();
@@ -1882,9 +1882,9 @@ bool FakeMotionControl::setCalibrationParametersRaw(int j, const CalibrationPara
     return true;
 }
 
-bool FakeMotionControl::calibrate2Raw(int j, unsigned int type, double p1, double p2, double p3)
+bool FakeMotionControl::calibrateRaw(int j, unsigned int type, double p1, double p2, double p3)
 {
-    yTrace() << "calibrate2Raw for joint" << j;
+    yTrace() << "calibrateRaw for joint" << j;
     return true;
 }
 

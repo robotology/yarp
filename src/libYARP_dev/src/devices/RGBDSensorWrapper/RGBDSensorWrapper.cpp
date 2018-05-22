@@ -49,7 +49,7 @@ bool RGBDSensorParser::configure(IRgbVisualParams *rgbInterface, IDepthVisualPar
     return ret;
 }
 
-bool RGBDSensorParser::configure(IFrameGrabberControls2* _fgCtrl)
+bool RGBDSensorParser::configure(IFrameGrabberControls *_fgCtrl)
 {
     return fgCtrlParsers.configure(_fgCtrl);
 }
@@ -76,7 +76,7 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
         }
         break;
 
-        case VOCAB_FRAMEGRABBER_CONTROL2:
+        case VOCAB_FRAMEGRABBER_CONTROL:
         {
             // forwarding to the proper parser.
             ret = fgCtrlParsers.respond(cmd, response);

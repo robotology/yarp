@@ -72,6 +72,14 @@ public:
     bool getRefAccelerations(double *accs) override;
     bool stop(int j) override;
     bool stop() override;
+    virtual bool positionMove(const int n_joint, const int *joints, const double *refs) override;
+    virtual bool relativeMove(const int n_joint, const int *joints, const double *deltas) override;
+    virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flags) override;
+    virtual bool setRefSpeeds(const int n_joint, const int *joints, const double *spds) override;
+    virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs) override;
+    virtual bool getRefSpeeds(const int n_joint, const int *joints, double *spds) override;
+    virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs) override;
+    virtual bool stop(const int n_joint, const int *joints) override;
 
     virtual bool open(Searchable& config) override {
         if(config.check("help")==true) {

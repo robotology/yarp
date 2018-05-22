@@ -38,7 +38,7 @@ namespace yarp
  *  @ingroup dev_impl_media
  *
  *
- * This device is a YARP plugin for realsense2 compatible devices, and exposes the IRGBDSensor and IFrameGrabberControls2
+ * This device is a YARP plugin for realsense2 compatible devices, and exposes the IRGBDSensor and IFrameGrabberControls
  * interfaces to read the images and operate on the available settings.
  *
  * See the documentation for more details about each interface.
@@ -103,7 +103,7 @@ clipPlanes (0.2 10.0)
 
 
 class yarp::dev::realsense2Driver :  public yarp::dev::DeviceDriver,
-                                     public yarp::dev::IFrameGrabberControls2,
+                                     public yarp::dev::IFrameGrabberControls,
                                      public yarp::dev::IFrameGrabberImageRaw,
                                      public yarp::dev::IRGBDSensor
 {
@@ -157,7 +157,7 @@ public:
     virtual RGBDSensor_status     getSensorStatus() override;
     virtual std::string getLastErrorMsg(Stamp* timeStamp = NULL) override;
 
-    //IFrameGrabberControls2
+    //IFrameGrabberControls
     virtual bool   getCameraDescription(CameraDescriptor *camera) override;
     virtual bool   hasFeature(int feature, bool*   hasFeature) override;
     virtual bool   setFeature(int feature, double  value) override;

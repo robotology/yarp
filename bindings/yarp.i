@@ -420,7 +420,9 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/CalibratorInterfaces.h>
 %include <yarp/dev/ControlBoardPid.h>
 %include <yarp/dev/IControlMode.h>
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 %include <yarp/dev/IControlMode2.h>
+#endif
 %include <yarp/dev/IEncoders.h>
 %include <yarp/dev/IMotorEncoders.h>
 %include <yarp/dev/ITorqueControl.h>
@@ -430,7 +432,9 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/ICurrentControl.h>
 %include <yarp/dev/IAnalogSensor.h>
 %include <yarp/dev/IRemoteVariables.h>
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 %include <yarp/dev/FrameGrabberControl2.h>
+#endif
 %include <yarp/dev/IPidControl.h>
 %include <yarp/dev/IPositionDirect.h>
 
@@ -786,12 +790,13 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         self->view(result);
         return result;
     }
-
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     yarp::dev::IControlMode2 *viewIControlMode2() {
         yarp::dev::IControlMode2 *result;
         self->view(result);
         return result;
     }
+#endif
 
     yarp::dev::IPWMControl *viewIPWMControl() {
             yarp::dev::IPWMControl *result;
@@ -810,9 +815,15 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         self->view(result);
         return result;
     }
-
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     yarp::dev::IFrameGrabberControls2 *viewIFrameGrabberControls2() {
         yarp::dev::IFrameGrabberControls2 *result;
+        self->view(result);
+        return result;
+    }
+#endif
+    yarp::dev::IFrameGrabberControls *viewIFrameGrabberControls() {
+        yarp::dev::IFrameGrabberControls *result;
         self->view(result);
         return result;
     }
@@ -1065,8 +1076,21 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     bool getControlModes(std::vector<int>& data) {
         return self->getControlModes(&data[0]);
     }
+
+    bool getControlModes(int n_joint, std::vector<int>& joints, std::vector<int>& data) {
+        return self->getControlModes(n_joint, &joints[0], &data[0]);
+    }
+
+    bool setControlModes(std::vector<int>& data) {
+        return self->setControlModes(&data[0]);
+    }
+
+    bool setControlModes(int n_joint, std::vector<int>& joints, std::vector<int>& data) {
+        return self->setControlModes(n_joint, &joints[0], &data[0]);
+    }
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 %extend yarp::dev::IControlMode2 {
     bool getControlModes(int n_joint, std::vector<int>& joints, std::vector<int>& data) {
         return self->getControlModes(n_joint, &joints[0], &data[0]);
@@ -1080,6 +1104,7 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return self->setControlModes(n_joint, &joints[0], &data[0]);
     }
 }
+#endif
 
 %extend yarp::dev::IPositionDirect {
     int getAxes() {
@@ -1383,7 +1408,63 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 // Deal with IFrameGrabberControls2 pointer arguments that don't translate
+      %extend yarp::dev::IFrameGrabberControls {
+        CameraDescriptor getCameraDescription() {
+            CameraDescriptor result;
+            self->getCameraDescription(&result);
+            return result;
+        }
 
+        bool hasFeature(int feature) {
+            bool result;
+            self->hasFeature(feature, &result);
+            return result;
+        }
+
+        double getFeature(int feature) {
+            double result;
+            self->getFeature(feature, &result);
+            return result;
+        }
+
+        bool hasOnOff(int feature) {
+            bool result;
+            self->hasOnOff(feature, &result);
+            return result;
+        }
+
+        bool getActive(int feature) {
+            bool result;
+            self->getActive(feature, &result);
+            return result;
+        }
+
+        bool hasAuto(int feature) {
+            bool result;
+            self->hasAuto(feature, &result);
+            return result;
+        }
+
+        bool hasManual(int feature) {
+            bool result;
+            self->hasManual(feature, &result);
+            return result;
+        }
+
+        bool hasOnePush(int feature) {
+            bool result;
+            self->hasOnePush(feature, &result);
+            return result;
+        }
+
+        FeatureMode getMode(int feature) {
+            FeatureMode result;
+            self->getMode(feature, &result);
+            return result;
+        }
+      }
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 %extend yarp::dev::IFrameGrabberControls2 {
   CameraDescriptor getCameraDescription() {
       CameraDescriptor result;
@@ -1439,3 +1520,4 @@ public:
       return result;
   }
 }
+#endif

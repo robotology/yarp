@@ -89,15 +89,15 @@ class yarp::dev::FakeMotionControl :    public DeviceDriver,
 //                                         public DeviceResponder,
                                         public yarp::os::RateThread,
                                         public IPidControlRaw,
-                                        public IControlCalibration2Raw,
+                                        public IControlCalibrationRaw,
                                         public IAmplifierControlRaw,
                                         public IEncodersTimedRaw,
                                         public IMotorEncodersRaw,
                                         public IMotorRaw,
-                                        public IPositionControl2Raw,
-                                        public IVelocityControl2Raw,
-                                        public IControlMode2Raw,
-                                        public IControlLimits2Raw,
+                                        public IPositionControlRaw,
+                                        public IVelocityControlRaw,
+                                        public IControlModeRaw,
+                                        public IControlLimitsRaw,
                                         public IPositionDirectRaw,
                                         public ITorqueControlRaw,
                                         public ICurrentControlRaw,
@@ -106,17 +106,17 @@ class yarp::dev::FakeMotionControl :    public DeviceDriver,
                                         public IInteractionModeRaw,
                                         public IAxisInfoRaw,
                                         public IVirtualAnalogSensorRaw, //*
-                                        public ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>,
+                                        public ImplementControlCalibration<FakeMotionControl, IControlCalibration>,
                                         public ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>,
                                         public ImplementPidControl,
                                         public ImplementEncodersTimed,
-                                        public ImplementPositionControl2,
-                                        public ImplementVelocityControl2,
-                                        public ImplementControlMode2,
+                                        public ImplementPositionControl,
+                                        public ImplementVelocityControl,
+                                        public ImplementControlMode,
                                         public ImplementImpedanceControl,
                                         public ImplementMotorEncoders,
                                         public ImplementTorqueControl,
-                                        public ImplementControlLimits2,
+                                        public ImplementControlLimits,
                                         public ImplementPositionDirect,
                                         public ImplementInteractionMode,
                                         public ImplementCurrentControl,
@@ -323,7 +323,7 @@ public:
 
     // calibration2raw
     virtual bool setCalibrationParametersRaw(int axis, const CalibrationParameters& params) override;
-    virtual bool calibrate2Raw(int axis, unsigned int type, double p1, double p2, double p3) override;
+    virtual bool calibrateRaw(int axis, unsigned int type, double p1, double p2, double p3) override;
     virtual bool doneRaw(int j) override;
 
 
