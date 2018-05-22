@@ -70,7 +70,7 @@ public:
         }
 
         // *** child_frame_id ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         child_frame_id.resize(len);
         if (!connection.expectBlock((char*)child_frame_id.c_str(), len)) {
             return false;
@@ -125,7 +125,7 @@ public:
         }
 
         // *** child_frame_id ***
-        connection.appendInt(child_frame_id.length());
+        connection.appendInt32(child_frame_id.length());
         connection.appendExternalBlock((char*)child_frame_id.c_str(), child_frame_id.length());
 
         // *** transform ***
@@ -138,8 +138,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(3);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(3);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -147,8 +147,8 @@ public:
         }
 
         // *** child_frame_id ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(child_frame_id.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(child_frame_id.length());
         connection.appendExternalBlock((char*)child_frame_id.c_str(), child_frame_id.length());
 
         // *** transform ***

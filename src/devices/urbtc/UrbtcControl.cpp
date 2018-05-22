@@ -98,7 +98,7 @@ bool yarp::dev::UrbtcControl::open(yarp::os::Searchable& config)
         Bottle botEncoderFactors = config.findGroup("encoderFactors");
         if (botEncoderFactors.size() > _intNumControllers) { // bottle contains key as well
             for (int i = 1; i <= _intNumControllers; i++)
-                encoderFactors[i-1] = botEncoderFactors.get(i).asDouble();
+                encoderFactors[i-1] = botEncoderFactors.get(i).asFloat64();
         } else {
             configValid = false;
             printf("Caution: UrbtcControl::open(): encoderFactors set to default, number of encoder factors in configuration too low.\n");
@@ -120,7 +120,7 @@ bool yarp::dev::UrbtcControl::open(yarp::os::Searchable& config)
         Bottle botAxisMap = config.findGroup("axisMap");
         if (botAxisMap.size() > _intNumControllers) { // bottle contains key as well
             for (int i = 1; i <= _intNumControllers; i++)
-                    axisMap[i-1] = botAxisMap.get(i).asInt();
+                    axisMap[i-1] = botAxisMap.get(i).asInt32();
         } else {
             configValid = false;
             printf("Caution: UrbtcControl::open(): axisMap set to default, number of values in configuration too low.\n");
@@ -148,8 +148,8 @@ bool yarp::dev::UrbtcControl::open(yarp::os::Searchable& config)
         Bottle botLimitsMax = config.findGroup("limitsMax");
         if (botLimitsMin.size() > _intNumControllers && botLimitsMax.size() > _intNumControllers) { // bottle contains key as well
             for (int i = 1; i <= _intNumControllers; i++) {
-                _limitsMin[i-1] = (int)(botLimitsMin.get(i).asDouble() * encoderFactors[i-1]);
-                _limitsMax[i-1] = (int)(botLimitsMax.get(i).asDouble() * encoderFactors[i-1]);
+                _limitsMin[i-1] = (int)(botLimitsMin.get(i).asFloat64() * encoderFactors[i-1]);
+                _limitsMax[i-1] = (int)(botLimitsMax.get(i).asFloat64() * encoderFactors[i-1]);
             }
         } else {
             configValid = false;
@@ -184,15 +184,15 @@ bool yarp::dev::UrbtcControl::open(yarp::os::Searchable& config)
                 for (int j=0; j<4; j++) {
                     _out[i-1].ch[j].x = 0;          // target position
                     _out[i-1].ch[j].d = 0;          // target velocity
-                    _out[i-1].ch[j].kp = (signed short)(botKp.get(i).asDouble() * _pidAccuracy);
+                    _out[i-1].ch[j].kp = (signed short)(botKp.get(i).asFloat64() * _pidAccuracy);
                     _out[i-1].ch[j].kpx = (unsigned short) _pidAccuracy;        // P gain  = 5/1 = 5
-                    _out[i-1].ch[j].kd = (signed short)(botKd.get(i).asDouble() * _pidAccuracy);
+                    _out[i-1].ch[j].kd = (signed short)(botKd.get(i).asFloat64() * _pidAccuracy);
                     _out[i-1].ch[j].kdx =(unsigned short) _pidAccuracy;        // D gain = 2/1 = 2
-                    _out[i-1].ch[j].ki = (signed short)(botKi.get(i).asDouble() * _pidAccuracy);
+                    _out[i-1].ch[j].ki = (signed short)(botKi.get(i).asFloat64() * _pidAccuracy);
                     _out[i-1].ch[j].kix = (unsigned short)_pidAccuracy;        // I gain = 0/1 = 0
-                    //printf ("kp nomin: %lf\n" , (botKp.get(i).asDouble() * _pidAccuracy));
-                    //printf ("kd nomin: %lf\n" , (botKd.get(i).asDouble() * _pidAccuracy));
-                    //printf ("ki nomin: %lf\n" , (botKi.get(i).asDouble() * _pidAccuracy));
+                    //printf ("kp nomin: %lf\n" , (botKp.get(i).asFloat64() * _pidAccuracy));
+                    //printf ("kd nomin: %lf\n" , (botKd.get(i).asFloat64() * _pidAccuracy));
+                    //printf ("ki nomin: %lf\n" , (botKi.get(i).asFloat64() * _pidAccuracy));
                 }
             }
         } else {
@@ -223,7 +223,7 @@ bool yarp::dev::UrbtcControl::open(yarp::os::Searchable& config)
     // motion done accuracy
     _posAccuracy = config.check("motionDoneAccuracy",
                                 Value(1000),
-                                "Integer value specifying +/- range of encoder tics").asInt();
+                                "Integer value specifying +/- range of encoder tics").asInt32();
 
 
    // encoder zeros

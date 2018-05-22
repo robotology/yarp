@@ -81,14 +81,14 @@ namespace visualization_msgs {
 class MenuEntry : public yarp::os::idl::WirePortable
 {
 public:
-    yarp::os::NetUint32 id;
-    yarp::os::NetUint32 parent_id;
+    std::uint32_t id;
+    std::uint32_t parent_id;
     std::string title;
     std::string command;
-    static const unsigned char FEEDBACK = 0;
-    static const unsigned char ROSRUN = 1;
-    static const unsigned char ROSLAUNCH = 2;
-    unsigned char command_type;
+    static const std::uint8_t FEEDBACK = 0;
+    static const std::uint8_t ROSRUN = 1;
+    static const std::uint8_t ROSLAUNCH = 2;
+    std::uint8_t command_type;
 
     MenuEntry() :
             id(0),
@@ -126,29 +126,27 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** id ***
-        id = connection.expectInt();
+        id = connection.expectInt32();
 
         // *** parent_id ***
-        parent_id = connection.expectInt();
+        parent_id = connection.expectInt32();
 
         // *** title ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         title.resize(len);
         if (!connection.expectBlock((char*)title.c_str(), len)) {
             return false;
         }
 
         // *** command ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         command.resize(len);
         if (!connection.expectBlock((char*)command.c_str(), len)) {
             return false;
         }
 
         // *** command_type ***
-        if (!connection.expectBlock((char*)&command_type, 1)) {
-            return false;
-        }
+        command_type = connection.expectInt8();
 
         return !connection.isError();
     }
@@ -162,10 +160,10 @@ public:
         }
 
         // *** id ***
-        id = reader.expectInt();
+        id = reader.expectInt32();
 
         // *** parent_id ***
-        parent_id = reader.expectInt();
+        parent_id = reader.expectInt32();
 
         // *** title ***
         if (!reader.readString(title)) {
@@ -178,7 +176,7 @@ public:
         }
 
         // *** command_type ***
-        command_type = reader.expectInt();
+        command_type = reader.expectInt8();
 
         return !connection.isError();
     }
@@ -193,51 +191,51 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** id ***
-        connection.appendInt(id);
+        connection.appendInt32(id);
 
         // *** parent_id ***
-        connection.appendInt(parent_id);
+        connection.appendInt32(parent_id);
 
         // *** title ***
-        connection.appendInt(title.length());
+        connection.appendInt32(title.length());
         connection.appendExternalBlock((char*)title.c_str(), title.length());
 
         // *** command ***
-        connection.appendInt(command.length());
+        connection.appendInt32(command.length());
         connection.appendExternalBlock((char*)command.c_str(), command.length());
 
         // *** command_type ***
-        connection.appendBlock((char*)&command_type, 1);
+        connection.appendInt8(command_type);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(8);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(8);
 
         // *** id ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)id);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(id);
 
         // *** parent_id ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)parent_id);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(parent_id);
 
         // *** title ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(title.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(title.length());
         connection.appendExternalBlock((char*)title.c_str(), title.length());
 
         // *** command ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(command.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(command.length());
         connection.appendExternalBlock((char*)command.c_str(), command.length());
 
         // *** command_type ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)command_type);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(command_type);
 
         connection.convertTextMode();
         return !connection.isError();

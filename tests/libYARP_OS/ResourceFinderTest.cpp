@@ -118,7 +118,7 @@ public:
 
             ResourceFinder rf1;
             rf1.configure(argc,(char **)argv);
-            checkEqual(rf1.find("x").asInt(),14,"found x");
+            checkEqual(rf1.find("x").asInt32(),14,"found x");
 
             const char *argv2[] = { "ignore",
                                     "--_yarp_regression_test", ".",
@@ -131,8 +131,8 @@ public:
 
             ResourceFinder rf2;
             rf2.configure(argc2,(char **)argv2);
-            checkEqual(rf2.find("y").asInt(),30,"found y");
-            checkEqual(rf2.find("x").asInt(),20,"override x");
+            checkEqual(rf2.find("y").asInt32(),30,"found y");
+            checkEqual(rf2.find("x").asInt32(),20,"override x");
         }
 
     }
@@ -213,8 +213,8 @@ public:
         rf.setDefault("constchar", defString.c_str());
         rf.setDefault("list", defList.toString());
         rf.configure(argc,(char **)argv);
-        checkEqual(rf.find("int").asInt(), defInt, "default integer set correctly");
-        checkEqualish(rf.find("double").asDouble(), defDouble, "default double set correctly");
+        checkEqual(rf.find("int").asInt32(), defInt, "default integer set correctly");
+        checkEqualish(rf.find("double").asFloat64(), defDouble, "default double set correctly");
         checkEqual(rf.find("string").asString(), defString, "default string set correctly");
         checkEqual(rf.find("constchar").asString(), defString, "default string (passed as const char*) set correctly");
         Bottle *foundList=rf.find("list").asList();
@@ -621,7 +621,7 @@ public:
             bool ok = rf.readConfig(p,"data.ini",
                                     ResourceFinderOptions::findFirstMatch());
             checkTrue(ok,"read a data.ini");
-            checkEqual(p.find("magic_number").asInt(),42,"right version found");
+            checkEqual(p.find("magic_number").asInt32(),42,"right version found");
             checkTrue(p.check("data_home"),"data_home found");
             checkFalse(p.check("data_dir0"),"data_dirs not found");
             checkFalse(p.check("project1"),"project1 not found");
@@ -629,7 +629,7 @@ public:
             //rf.setVerbose(true);
             rf.readConfig(p,"data.ini",
                           ResourceFinderOptions::findAllMatch());
-            checkEqual(p.find("magic_number").asInt(),42,"right priority");
+            checkEqual(p.find("magic_number").asInt32(),42,"right priority");
             checkTrue(p.check("data_home"),"data_home found");
             checkTrue(p.check("data_dir0"),"data_dirs found");
             checkTrue(p.check("project1"),"project1 found");
@@ -649,7 +649,7 @@ public:
             bool ok = rf.readConfig(p,"my_app.ini",
                                     ResourceFinderOptions::findFirstMatch());
             checkTrue(ok,"read a my_app.ini");
-            checkEqual(p.find("magic_number").asInt(),1000,"right version found");
+            checkEqual(p.find("magic_number").asInt32(),1000,"right version found");
         }
 
         {
@@ -657,7 +657,7 @@ public:
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app.ini");
             rf.configure(0,nullptr);
-            checkEqual(rf.find("magic_number").asInt(),1000,"my_app.ini found as default config file");
+            checkEqual(rf.find("magic_number").asInt32(),1000,"my_app.ini found as default config file");
         }
 
         {
@@ -666,7 +666,7 @@ public:
             rf.setDefaultContext(contextName);
             rf.setDefaultConfigFile("my_app.ini");
             rf.configure(0,nullptr);
-            checkEqual(rf.find("magic_number").asInt(),1000,"my_app.ini found as default config file");
+            checkEqual(rf.find("magic_number").asInt32(),1000,"my_app.ini found as default config file");
         }
 
         {
@@ -675,7 +675,7 @@ public:
             rf.setDefaultContext(contextName.c_str());
             rf.setDefaultConfigFile("my_app.ini");
             rf.configure(0,nullptr);
-            checkEqual(rf.find("magic_number").asInt(),1000,"my_app.ini found as default config file");
+            checkEqual(rf.find("magic_number").asInt32(),1000,"my_app.ini found as default config file");
         }
 
         {
@@ -683,7 +683,7 @@ public:
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("shadow.ini");
             rf.configure(0,nullptr);
-            checkEqual(rf.find("magic_number").asInt(),5001,"shadow.ini found as correct location");
+            checkEqual(rf.find("magic_number").asInt32(),5001,"shadow.ini found as correct location");
         }
 
         {
@@ -691,7 +691,7 @@ public:
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("noshadow.ini");
             rf.configure(0,nullptr);
-            checkEqual(rf.find("magic_number").asInt(),5002,"noshadow.ini found as correct location");
+            checkEqual(rf.find("magic_number").asInt32(),5002,"noshadow.ini found as correct location");
         }
 
         {
@@ -699,11 +699,11 @@ public:
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("noshadow.ini");
             rf.configure(0,nullptr);
-            checkEqual(rf.find("magic_number").asInt(),5002,"noshadow.ini found as correct location");
+            checkEqual(rf.find("magic_number").asInt32(),5002,"noshadow.ini found as correct location");
             Property p;
             ResourceFinderOptions opts;
             checkTrue(rf.readConfig(p,"shadow.ini",opts),"found shadow.ini");
-            checkEqual(p.find("magic_number").asInt(),5001,"shadow.ini found as correct location");
+            checkEqual(p.find("magic_number").asInt32(),5001,"shadow.ini found as correct location");
         }
 
         breakDownTestArea();

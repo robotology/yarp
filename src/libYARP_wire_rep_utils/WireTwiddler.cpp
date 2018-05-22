@@ -85,8 +85,8 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
     if (is_vector||is_list) {
         Value v = desc.get(offset);
         offset++;
-        if (v.isInt()) {
-            len = v.asInt();
+        if (v.isInt32()) {
+            len = v.asInt32();
         } else {
             if (v.asString()!="*") {
                 fprintf(stderr,"Does not look like length: %s\n",
@@ -120,27 +120,27 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
         kind = vtag;
         item = true;
     }
-    if (kind=="int32"||kind=="uint32") {
-        tag = BOTTLE_TAG_INT;
+    if (kind=="int8"||kind=="uint8"||kind=="bool") {
+        tag = BOTTLE_TAG_INT8;
+        unit_length = 1;
+    } else if (kind=="int16"||kind=="uint16") {
+        tag = BOTTLE_TAG_INT16;
+        unit_length = 2;
+    } else if (kind=="int32"||kind=="uint32") {
+        tag = BOTTLE_TAG_INT32;
         unit_length = 4;
+    } else if (kind=="int64"||kind=="uint64") {
+        tag = BOTTLE_TAG_INT64;
+        unit_length = 8;
+    } else if (kind=="float32") {
+        tag = BOTTLE_TAG_FLOAT32;
+        unit_length = 4;
+    } else if (kind=="float64") {
+        tag = BOTTLE_TAG_FLOAT64;
+        unit_length = 8;
     } else if (kind=="vocab") {
         tag = BOTTLE_TAG_VOCAB;
         unit_length = 4;
-    } else if (kind=="int8"||kind=="uint8"||kind=="bool") {
-        tag = BOTTLE_TAG_INT;
-        unit_length = 4;
-        wire_unit_length = 1;
-    } else if (kind=="int64"||kind=="uint64") {
-        tag = BOTTLE_TAG_INT;
-        unit_length = 4;
-        wire_unit_length = 8;
-    } else if (kind=="float64") {
-        tag = BOTTLE_TAG_DOUBLE;
-        unit_length = 8;
-    } else if (kind=="float32") {
-        tag = BOTTLE_TAG_DOUBLE;
-        unit_length = 8;
-        wire_unit_length = 4;
     } else if (kind=="string") {
         tag = BOTTLE_TAG_STRING;
         unit_length = -1;
@@ -268,14 +268,26 @@ bool WireTwiddler::configure(const char *txt, const char *prompt) {
 
 std::string nameThatCode(int code) {
     switch (code) {
-    case BOTTLE_TAG_INT:
+    case BOTTLE_TAG_INT8:
+        return "int8";
+        break;
+    case BOTTLE_TAG_INT16:
+        return "int16";
+        break;
+    case BOTTLE_TAG_INT32:
         return "int32";
+        break;
+    case BOTTLE_TAG_INT64:
+        return "int64";
+        break;
+    case BOTTLE_TAG_FLOAT32:
+        return "float32";
+        break;
+    case BOTTLE_TAG_FLOAT64:
+        return "float64";
         break;
     case BOTTLE_TAG_VOCAB:
         return "vocab";
-        break;
-    case BOTTLE_TAG_DOUBLE:
-        return "float64";
         break;
     case BOTTLE_TAG_STRING:
         return "string";
@@ -414,10 +426,10 @@ bool WireTwiddler::write(yarp::os::Bottle& bot,
 
 void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
     if (gap.var_name == "image_params") {
-        int w = prop.find("width").asInt();
-        int h = prop.find("height").asInt();
-        int step = prop.find("step").asInt();
-        bool bigendian = prop.find("is_bigendian").asInt()==1;
+        int w = prop.find("width").asInt32();
+        int h = prop.find("height").asInt32();
+        int step = prop.find("step").asInt32();
+        bool bigendian = prop.find("is_bigendian").asInt32()==1;
         if (bigendian) {
             fprintf(stderr,"Sorry, cannot handle bigendian images yet.\n");
             std::exit(1);
@@ -493,7 +505,7 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
     }
 }
 
-YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
+yarp::conf::ssize_t WireTwiddlerReader::read(const Bytes& b) {
     dbg_printf("Want %d bytes\n", (int)b.length());
     if (index==-1) {
         dbg_printf("WireTwidderReader::read getting started\n");
@@ -665,7 +677,7 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
                         prop.put(gap.var_name,(int)(*nn));
                         dbg_printf("Saved %s: is %d\n",
                                gap.var_name.c_str(),
-                               prop.find(gap.var_name).asInt());
+                               prop.find(gap.var_name).asInt32());
                     }
                 }
                 dbg_printf("WireTwidderReader sending %d payload bytes:\n",r);
@@ -906,7 +918,7 @@ bool WireTwiddlerWriter::emit(const char *src, int len) {
             const WireTwiddlerGap& gap = *activeGap;
             if (gap.wire_unit_length==4 && gap.unit_length==8 &&
                 len == 8 &&
-                gap.flavor == BOTTLE_TAG_DOUBLE) {
+                gap.flavor == BOTTLE_TAG_FLOAT64) {
                 NetFloat64 *x = (NetFloat64 *)src;
                 if (scratchOffset+4>scratch.length()) {
                     scratch.allocateOnNeed(scratchOffset+4,scratchOffset+4);
@@ -964,7 +976,7 @@ bool WireTwiddlerWriter::transform(const WireTwiddlerGap& gap) {
         return true;
     }
     if (gap.wire_unit_length==4 && gap.unit_length==8 &&
-        gap.flavor == BOTTLE_TAG_DOUBLE) {
+        gap.flavor == BOTTLE_TAG_FLOAT64) {
         activeGap = &gap;
         pass(gap.unit_length);
         return true;
@@ -974,7 +986,7 @@ bool WireTwiddlerWriter::transform(const WireTwiddlerGap& gap) {
     return false;
 }
 
-YARP_SSIZE_T WireTwiddlerReader::readMapped(yarp::os::InputStream& is,
+yarp::conf::ssize_t WireTwiddlerReader::readMapped(yarp::os::InputStream& is,
                                             const yarp::os::Bytes& b,
                                             const WireTwiddlerGap& gap) {
     if (gap.load_external) {
@@ -982,9 +994,9 @@ YARP_SSIZE_T WireTwiddlerReader::readMapped(yarp::os::InputStream& is,
         if (gap.var_name[0]=='=') {
             Bottle b;
             b.fromString(gap.var_name.substr(1,gap.var_name.length()));
-            v = b.get(0).asInt();
+            v = b.get(0).asInt32();
         } else {
-            v = prop.find(gap.var_name).asInt();
+            v = prop.find(gap.var_name).asInt32();
         }
         dbg_printf("Read %s: %d\n", gap.var_name.c_str(), v);
         for (int i=0; i<(int)b.length(); i++) {
@@ -1007,9 +1019,9 @@ YARP_SSIZE_T WireTwiddlerReader::readMapped(yarp::os::InputStream& is,
         len = b.length();
     }
     Bytes b2(b.get(),len);
-    YARP_SSIZE_T r = is.readFull(b2);
-    if (r==(YARP_SSIZE_T)len) {
-        if (gap.flavor==BOTTLE_TAG_DOUBLE) {
+    yarp::conf::ssize_t r = is.readFull(b2);
+    if (r==(yarp::conf::ssize_t)len) {
+        if (gap.flavor==BOTTLE_TAG_FLOAT64) {
             if (gap.wire_unit_length==4 &&
                 gap.unit_length==8) {
                 NetFloat32 x = *((NetFloat32 *)b2.get());

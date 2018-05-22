@@ -60,7 +60,7 @@ public:
      */
     virtual int read() {
         unsigned char result;
-        YARP_SSIZE_T ct = read(yarp::os::Bytes((char*)&result, 1));
+        yarp::conf::ssize_t ct = read(yarp::os::Bytes((char*)&result, 1));
         if (ct<1) {
             return -1;
         }
@@ -80,7 +80,7 @@ public:
      * @return the number of bytes read, or -1 upon error
      *
      */
-    virtual YARP_SSIZE_T read(const Bytes& b, size_t offset, YARP_SSIZE_T len) {
+    virtual yarp::conf::ssize_t read(const Bytes& b, size_t offset, yarp::conf::ssize_t len) {
         return read(yarp::os::Bytes(b.get()+offset, len));
     }
 
@@ -94,7 +94,7 @@ public:
      * @return the number of bytes read, or -1 upon error
      *
      */
-    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b) = 0;
+    virtual yarp::conf::ssize_t read(const yarp::os::Bytes& b) = 0;
 
 
     /**
@@ -102,7 +102,7 @@ public:
      * Like read, but solicit partial responses.
      *
      */
-    virtual YARP_SSIZE_T partialRead(const yarp::os::Bytes& b) {
+    virtual yarp::conf::ssize_t partialRead(const yarp::os::Bytes& b) {
         return read(b);
     }
 
@@ -150,14 +150,14 @@ public:
      * Keep reading until buffer is full.
      *
      */
-    YARP_SSIZE_T readFull(const Bytes& b);
+    yarp::conf::ssize_t readFull(const Bytes& b);
 
     /**
      *
      * Read and discard a fixed number of bytes.
      *
      */
-    YARP_SSIZE_T readDiscard(size_t len);
+    yarp::conf::ssize_t readDiscard(size_t len);
 
     /**
      *

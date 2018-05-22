@@ -64,7 +64,7 @@ bool fakeDepthCameraDriver::open(Searchable& config)
     {
         if (config.check(get<1>(p)))
         {
-            *get<0>(p) = config.find(get<1>(p)).asDouble();
+            *get<0>(p) = config.find(get<1>(p)).asFloat64();
         }
         else
         {

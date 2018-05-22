@@ -145,7 +145,7 @@ public:
     virtual bool read(ConnectionReader& connection) override {
         Bottle receive;
         receive.read(connection);
-        receive.addInt(5);
+        receive.addInt32(5);
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=nullptr) {
             receive.write(*writer);
@@ -196,7 +196,7 @@ public:
         for (int i=0; i<3; i++) {
             Bottle b,b2;
             p.read(b,true);
-            b2.addInt(b.get(0).asInt()+1);
+            b2.addInt32(b.get(0).asInt32()+1);
             if ((!faithful)&&i==1) {
                 // no reply
             } else {
@@ -220,9 +220,9 @@ public:
         total = 0;
         for (int i=0; i<3; i++) {
             Bottle b, b2;
-            b.addInt(i);
+            b.addInt32(i);
             p.write(b,b2);
-            total += b2.get(0).asInt(); // should be i+1
+            total += b2.get(0).asInt32(); // should be i+1
         }
         // total should be 1+2+3 = 6
     }
@@ -373,8 +373,8 @@ public:
         out.enableBackgroundWrite(true);
         out.write(bot1);
         in.read(bot2);
-        checkEqual(bot1.get(0).asInt(),5,"check bot[0]");
-        checkEqual(bot1.get(1).asInt(),10,"check bot[1]");
+        checkEqual(bot1.get(0).asInt32(),5,"check bot[0]");
+        checkEqual(bot1.get(1).asInt32(),10,"check bot[1]");
         checkEqual(bot1.get(2).asString().c_str(),"hello","check bot[2]");
 
         while (out.isWriting()) {
@@ -385,7 +385,7 @@ public:
         bot1.fromString("18");
         out.write(bot1);
         in.read(bot2);
-        checkEqual(bot1.get(0).asInt(),18,"check one more send/receive");
+        checkEqual(bot1.get(0).asInt32(),18,"check one more send/receive");
 
         in.close();
         out.close();
@@ -400,7 +400,7 @@ public:
 
         bot1.fromString("1 2 3");
         for (int i=0; i<10000; i++) {
-            bot1.addInt(i);
+            bot1.addInt32(i);
         }
 
         Port input, output;
@@ -444,7 +444,7 @@ public:
 
         bot1.fromString("1 2 3");
         for (int i=0; i<10000; i++) {
-            bot1.addInt(i);
+            bot1.addInt32(i);
         }
 
         Port input, output;
@@ -488,7 +488,7 @@ public:
 
         bot1.fromString("1 2 3");
         for (int i=0; i<100000; i++) {
-            bot1.addInt(i);
+            bot1.addInt32(i);
         }
 
         Port input, output;
@@ -898,7 +898,7 @@ public:
         Time::delay(0.25);
         Bottle& bot = sender.prepare();
         bot.clear();
-        bot.addInt(1);
+        bot.addInt32(1);
         sender.write();
         Time::delay(0.25);
         report(0,"if this hangs, PortTest::testUnbufferedClose is unhappy");
@@ -1015,7 +1015,7 @@ public:
         Network::sync("/writer");
         Network::sync("/reader");
         Bottle bsend, breply;
-        bsend.addInt(10);
+        bsend.addInt32(10);
         p1.write(bsend, breply);
         p1.write(bsend, breply);
         p1.write(bsend, breply);
@@ -1273,7 +1273,7 @@ public:
         yAssert(bot2);
         checkEqual(bot2->size(),3,"data looks ok");
 
-        bot1.addInt(4);
+        bot1.addInt32(4);
 
         report(0,"interrupting...");
         input.interrupt();
@@ -1284,7 +1284,7 @@ public:
         }
         checkEqual(buf.getPendingReads(),0,"msg after interrupt ignored");
 
-        bot1.addInt(5);
+        bot1.addInt32(5);
 
         input.resume();
         output.write(bot1);
@@ -1319,7 +1319,7 @@ public:
         checkTrue(ok,"first msg came through");
         checkEqual(bot2.size(),3,"data looks ok");
 
-        bot1.addInt(4);
+        bot1.addInt32(4);
 
         report(0,"interrupting...");
         input.interrupt();
@@ -1329,7 +1329,7 @@ public:
 
         Time::delay(1);
 
-        bot1.addInt(5);
+        bot1.addInt32(5);
 
         report(0,"resuming");
         input.resume();
@@ -1354,7 +1354,7 @@ public:
         output.start();
         Bottle cmd, reply;
         input.read(cmd,true);
-        reply.addInt(cmd.get(1).asInt()+cmd.get(2).asInt());
+        reply.addInt32(cmd.get(1).asInt32()+cmd.get(2).asInt32());
         checkEqual(cmd.toString().c_str(),"[add] 1 2","cmd received ok");
         input.interrupt();
         input.reply(reply);
@@ -1422,7 +1422,7 @@ public:
         bot = port.read();
         checkFalse(bot==nullptr,"reader working");
         if (bot) {
-            checkEqual(bot->get(0).asInt(),2,"reader read correct message");
+            checkEqual(bot->get(0).asInt32(),2,"reader read correct message");
         }
     }
 
@@ -1438,7 +1438,7 @@ public:
         Network::sync("/in");
         Bottle& msg = pout.prepare();
         msg.clear();
-        msg.addInt(42);
+        msg.addInt32(42);
         pout.write();
         pout.waitForWrite();
         pout.close();
@@ -1486,7 +1486,7 @@ public:
         Network::connect("/out","/in");
         Bottle cmd("hello"), reply;
         pout.write(cmd,reply);
-        checkEqual(reply.get(1).asInt(),5,"admin_reader was called");
+        checkEqual(reply.get(1).asInt32(),5,"admin_reader was called");
         cmd.fromString("[ver]");
         pout.write(cmd,reply);
         checkTrue(reply.size()>=4,"yarp commands still work");

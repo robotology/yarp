@@ -184,7 +184,7 @@ int ShmemInputStreamImpl::read(char* data, int len)
     return len;
 }
 
-YARP_SSIZE_T ShmemInputStreamImpl::read(const yarp::os::Bytes& b)
+yarp::conf::ssize_t ShmemInputStreamImpl::read(const yarp::os::Bytes& b)
 {
     m_ReadSerializerMutex.wait();
 
@@ -195,7 +195,7 @@ YARP_SSIZE_T ShmemInputStreamImpl::read(const yarp::os::Bytes& b)
 
     char *data = b.get(), buf;
     size_t len = b.length();
-    YARP_SSIZE_T ret;
+    yarp::conf::ssize_t ret;
 
     while (!(ret = read(data, (int)len))) {
 #ifdef _ACE_USE_SV_SEM

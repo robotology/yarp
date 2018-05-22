@@ -26,10 +26,10 @@ int main(int argc, char *argv[]) {
     while (true) {
         Bottle msg, reply;
         if (!server.read(msg,true)) continue;
-        int x = msg.get(0).asInt();
-        int y = msg.get(1).asInt();
+        int x = msg.get(0).asInt32();
+        int y = msg.get(1).asInt32();
         int sum = x + y;
-        reply.addInt(sum);
+        reply.addInt32(sum);
         printf("Got %d + %d, answering %d\n", x, y, sum);
         server.reply(reply);
     }

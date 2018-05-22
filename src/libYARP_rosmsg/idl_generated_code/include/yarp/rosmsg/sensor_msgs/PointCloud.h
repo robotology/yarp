@@ -75,7 +75,7 @@ public:
         }
 
         // *** points ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         points.resize(len);
         for (int i=0; i<len; i++) {
             if (!points[i].read(connection)) {
@@ -84,7 +84,7 @@ public:
         }
 
         // *** channels ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         channels.resize(len);
         for (int i=0; i<len; i++) {
             if (!channels[i].read(connection)) {
@@ -109,10 +109,10 @@ public:
         }
 
         // *** points ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         points.resize(len);
         for (int i=0; i<len; i++) {
             if (!points[i].read(connection)) {
@@ -121,10 +121,10 @@ public:
         }
 
         // *** channels ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         channels.resize(len);
         for (int i=0; i<len; i++) {
             if (!channels[i].read(connection)) {
@@ -150,7 +150,7 @@ public:
         }
 
         // *** points ***
-        connection.appendInt(points.size());
+        connection.appendInt32(points.size());
         for (size_t i=0; i<points.size(); i++) {
             if (!points[i].write(connection)) {
                 return false;
@@ -158,7 +158,7 @@ public:
         }
 
         // *** channels ***
-        connection.appendInt(channels.size());
+        connection.appendInt32(channels.size());
         for (size_t i=0; i<channels.size(); i++) {
             if (!channels[i].write(connection)) {
                 return false;
@@ -170,8 +170,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(3);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(3);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -179,8 +179,8 @@ public:
         }
 
         // *** points ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(points.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(points.size());
         for (size_t i=0; i<points.size(); i++) {
             if (!points[i].write(connection)) {
                 return false;
@@ -188,8 +188,8 @@ public:
         }
 
         // *** channels ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(channels.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(channels.size());
         for (size_t i=0; i<channels.size(); i++) {
             if (!channels[i].write(connection)) {
                 return false;

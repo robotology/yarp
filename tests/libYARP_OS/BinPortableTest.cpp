@@ -30,7 +30,7 @@ YARP_BEGIN_PACK
 class BinPortableTarget {
 public:
     BinPortableTarget() {
-        tag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
+        tag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT32;
         len = 2;
     }
 

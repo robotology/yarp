@@ -43,7 +43,7 @@ private:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
-        cmd.addDouble(v);
+        cmd.addFloat64(v);
         _port->write(cmd,response);
         return true;
     }
@@ -52,8 +52,8 @@ private:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
-        cmd.addDouble(b);
-        cmd.addDouble(r);
+        cmd.addFloat64(b);
+        cmd.addFloat64(r);
         _port->write(cmd,response);
         return true;
     }
@@ -64,7 +64,7 @@ private:
         cmd.addVocab(code);
         _port->write(cmd,response);
         // response should be [cmd] [name] value
-        return response.get(2).asDouble();
+        return response.get(2).asFloat64();
     }
 
     bool getCommand(int code, double &b, double &r) const
@@ -74,8 +74,8 @@ private:
         cmd.addVocab(code);
         _port->write(cmd,response);
         // response should be [cmd] [name] value
-        b=response.get(2).asDouble();
-        r=response.get(3).asDouble();
+        b=response.get(2).asFloat64();
+        r=response.get(3).asFloat64();
         return true;
     }
 
@@ -85,28 +85,28 @@ public:
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRHASFEA);
-        cmd.addInt(feature);
+        cmd.addInt32(feature);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 01
     virtual bool setFeatureDC1394(int feature,double value) override
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETVAL);
-        cmd.addInt(feature);
-        cmd.addDouble(value);
+        cmd.addInt32(feature);
+        cmd.addFloat64(value);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 02
     virtual double getFeatureDC1394(int feature) override
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETVAL);
-        cmd.addInt(feature);
+        cmd.addInt32(feature);
         _port->write(cmd,response);
-        return response.get(0).asDouble();
+        return response.get(0).asFloat64();
     }
 
     // 03
@@ -114,28 +114,28 @@ public:
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRHASACT);
-        cmd.addInt(feature);
+        cmd.addInt32(feature);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 04
     virtual bool setActiveDC1394(int feature, bool onoff) override
     {
         yarp::os::Bottle cmd ,response;
         cmd.addVocab(VOCAB_DRSETACT);
-        cmd.addInt(feature);
-        cmd.addInt(int(onoff));
+        cmd.addInt32(feature);
+        cmd.addInt32(int(onoff));
         _port->write(cmd, response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 05
     virtual bool getActiveDC1394(int feature) override
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETACT);
-        cmd.addInt(feature);
+        cmd.addInt32(feature);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
 
     // 06
@@ -143,9 +143,9 @@ public:
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRHASMAN);
-        cmd.addInt(feature);
+        cmd.addInt32(feature);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 07
     virtual bool hasAutoDC1394(int feature) override
@@ -153,46 +153,46 @@ public:
         yTrace();
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRHASAUT);
-        cmd.addInt(feature);
+        cmd.addInt32(feature);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 08
     virtual bool hasOnePushDC1394(int feature) override
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRHASONP);
-        cmd.addInt(feature);
+        cmd.addInt32(feature);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 09
     virtual bool setModeDC1394(int feature, bool auto_onoff) override
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETMOD);
-        cmd.addInt(feature);
-        cmd.addInt(int(auto_onoff));
+        cmd.addInt32(feature);
+        cmd.addInt32(int(auto_onoff));
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 10
     virtual bool getModeDC1394(int feature) override
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETMOD);
-        cmd.addInt(feature);
+        cmd.addInt32(feature);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 11
     virtual bool setOnePushDC1394(int feature) override
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETONP);
-        cmd.addInt(feature);
+        cmd.addInt32(feature);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
 
     // 12
@@ -203,8 +203,8 @@ public:
         _port->write(cmd,response);
 
         // I'll bite your sweet little fingers ^__^
-        return (unsigned)response.get(0).asInt();
-        //return response.get(0).asInt()!=0? true:false;
+        return (unsigned)response.get(0).asInt32();
+        //return response.get(0).asInt32()!=0? true:false;
     }
     // 13
     virtual unsigned int getVideoModeDC1394() override
@@ -214,17 +214,17 @@ public:
         _port->write(cmd,response);
 
         // I'll bite your sweet little fingers ^__^
-        return (unsigned)response.get(0).asInt();
-        //return response.get(0).asInt()!=0? true:false;
+        return (unsigned)response.get(0).asInt32();
+        //return response.get(0).asInt32()!=0? true:false;
     }
     // 14
     virtual bool setVideoModeDC1394(int video_mode) override
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETVMD);
-        cmd.addInt(video_mode);
+        cmd.addInt32(video_mode);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
 
     // 15
@@ -235,8 +235,8 @@ public:
         _port->write(cmd,response);
 
         // I'll bite your sweet little fingers ^__^
-        return (unsigned)response.get(0).asInt();
-        //return response.get(0).asInt()!=0? true:false;
+        return (unsigned)response.get(0).asInt32();
+        //return response.get(0).asInt32()!=0? true:false;
     }
     // 16
     virtual unsigned int getFPSDC1394() override
@@ -246,17 +246,17 @@ public:
         _port->write(cmd,response);
 
         // I'll bite your sweet little fingers ^__^
-        return (unsigned)response.get(0).asInt();
-        //return response.get(0).asInt()!=0? true:false;
+        return (unsigned)response.get(0).asInt32();
+        //return response.get(0).asInt32()!=0? true:false;
     }
     // 17
     virtual bool setFPSDC1394(int fps) override
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETFPS);
-        cmd.addInt(fps);
+        cmd.addInt32(fps);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
 
     // 18
@@ -267,17 +267,17 @@ public:
         _port->write(cmd,response);
 
         // I'll bite your sweet little fingers ^__^
-        return (unsigned)response.get(0).asInt();
-        //return response.get(0).asInt()!=0? true:false;
+        return (unsigned)response.get(0).asInt32();
+        //return response.get(0).asInt32()!=0? true:false;
     }
     // 19
     virtual bool setISOSpeedDC1394(int speed) override
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETISO);
-        cmd.addInt(speed);
+        cmd.addInt32(speed);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
 
     // 20
@@ -285,12 +285,12 @@ public:
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETCCM);
-        cmd.addInt(video_mode);
+        cmd.addInt32(video_mode);
         _port->write(cmd,response);
 
         // I'll bite your sweet little fingers ^__^
-        return (unsigned)response.get(0).asInt();
-        //return response.get(0).asInt()!=0? true:false;
+        return (unsigned)response.get(0).asInt32();
+        //return response.get(0).asInt32()!=0? true:false;
     }
     // 21
     virtual unsigned int getColorCodingDC1394() override
@@ -300,27 +300,27 @@ public:
         _port->write(cmd,response);
 
         // I'll bite your sweet little fingers ^__^
-        return (unsigned)response.get(0).asInt();
-        //return response.get(0).asInt()!=0? true:false;
+        return (unsigned)response.get(0).asInt32();
+        //return response.get(0).asInt32()!=0? true:false;
     }
     // 22
     virtual bool setColorCodingDC1394(int coding) override
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETCOD);
-        cmd.addInt(coding);
+        cmd.addInt32(coding);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
 
     // 23
     virtual bool setWhiteBalanceDC1394(double b, double r) override {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETWHB);
-        cmd.addDouble(b);
-        cmd.addDouble(r);
+        cmd.addFloat64(b);
+        cmd.addFloat64(r);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 24
     virtual bool getWhiteBalanceDC1394(double &b, double &r) override
@@ -328,9 +328,9 @@ public:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETWHB);
         _port->write(cmd,response);
-        b=response.get(0).asDouble();
-        r=response.get(1).asDouble();
-        return response.get(0).asInt()!=0? true:false;
+        b=response.get(0).asFloat64();
+        r=response.get(1).asFloat64();
+        return response.get(0).asInt32()!=0? true:false;
     }
 
     virtual bool getFormat7MaxWindowDC1394(unsigned int &xdim,unsigned int &ydim,unsigned int &xstep,unsigned int &ystep,unsigned int &xoffstep,unsigned int &yoffstep) override
@@ -339,13 +339,13 @@ public:
         cmd.addVocab(VOCAB_DRGETF7M);
         _port->write(cmd,response);
 
-        xdim=response.get(0).asInt();
-        ydim=response.get(1).asInt();
-        xstep=response.get(2).asInt();
-        ystep=response.get(3).asInt();
-        xoffstep=response.get(4).asInt();
-        yoffstep=response.get(5).asInt();
-        return response.get(0).asInt()!=0? true:false;
+        xdim=response.get(0).asInt32();
+        ydim=response.get(1).asInt32();
+        xstep=response.get(2).asInt32();
+        ystep=response.get(3).asInt32();
+        xoffstep=response.get(4).asInt32();
+        yoffstep=response.get(5).asInt32();
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 26
     virtual bool getFormat7WindowDC1394(unsigned int &xdim,unsigned int &ydim,int &x0,int &y0) override
@@ -353,23 +353,23 @@ public:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETWF7);
         _port->write(cmd,response);
-        xdim=response.get(0).asInt();
-        ydim=response.get(1).asInt();
-        x0=response.get(2).asInt();
-        y0=response.get(3).asInt();
-        return response.get(0).asInt()!=0? true:false;
+        xdim=response.get(0).asInt32();
+        ydim=response.get(1).asInt32();
+        x0=response.get(2).asInt32();
+        y0=response.get(3).asInt32();
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 27
     virtual bool setFormat7WindowDC1394(unsigned int xdim,unsigned int ydim,int x0,int y0) override
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETWF7);
-        cmd.addInt(xdim);
-        cmd.addInt(ydim);
-        cmd.addInt(x0);
-        cmd.addInt(y0);
+        cmd.addInt32(xdim);
+        cmd.addInt32(ydim);
+        cmd.addInt32(x0);
+        cmd.addInt32(y0);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
 
     // 28
@@ -377,9 +377,9 @@ public:
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETOPM);
-        cmd.addInt(int(b1394b));
+        cmd.addInt32(int(b1394b));
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 29
     virtual bool getOperationModeDC1394() override
@@ -387,7 +387,7 @@ public:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETOPM);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
 
     // 30
@@ -395,9 +395,9 @@ public:
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETTXM);
-        cmd.addInt(int(bTxON));
+        cmd.addInt32(int(bTxON));
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 31
     virtual bool getTransmissionDC1394() override
@@ -405,7 +405,7 @@ public:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETTXM);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     /*
      *    // 32
@@ -413,9 +413,9 @@ public:
      *    {
      *        yarp::os::Bottle cmd, response;
      *        cmd.addVocab(VOCAB_DRSETBAY);
-     *        cmd.addInt(int(bON));
+     *        cmd.addInt32(int(bON));
      *        _port->write(cmd,response);
-     *        return response.get(0).asInt()!=0? true:false;
+     *        return response.get(0).asInt32()!=0? true:false;
 }
 // 33
 virtual bool getBayerDC1394() override
@@ -423,7 +423,7 @@ virtual bool getBayerDC1394() override
 yarp::os::Bottle cmd, response;
 cmd.addVocab(VOCAB_DRGETBAY);
 _port->write(cmd,response);
-return response.get(0).asInt()!=0? true:false;
+return response.get(0).asInt32()!=0? true:false;
 }
 */
     // 34
@@ -431,9 +431,9 @@ return response.get(0).asInt()!=0? true:false;
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETBCS);
-        cmd.addInt((int)onoff);
+        cmd.addInt32((int)onoff);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 35
     virtual bool setDefaultsDC1394() override
@@ -441,7 +441,7 @@ return response.get(0).asInt()!=0? true:false;
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETDEF);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 36
     virtual bool setResetDC1394() override
@@ -449,16 +449,16 @@ return response.get(0).asInt()!=0? true:false;
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETRST);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
     // 37
     virtual bool setPowerDC1394(bool onoff) override
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETPWR);
-        cmd.addInt((int)onoff);
+        cmd.addInt32((int)onoff);
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
 
     // 38
@@ -466,9 +466,9 @@ return response.get(0).asInt()!=0? true:false;
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETCAP);
-        cmd.addInt(int(bON));
+        cmd.addInt32(int(bON));
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
 
     // 39
@@ -476,9 +476,9 @@ return response.get(0).asInt()!=0? true:false;
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETBPP);
-        cmd.addInt(int(bpp));
+        cmd.addInt32(int(bpp));
         _port->write(cmd,response);
-        return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt32()!=0? true:false;
     }
 
     // 40
@@ -487,7 +487,7 @@ return response.get(0).asInt()!=0? true:false;
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETBPP);
         _port->write(cmd,response);
-        return (unsigned)response.get(0).asInt();
+        return (unsigned)response.get(0).asInt32();
     }
 
 
@@ -618,12 +618,12 @@ public:
         cmd.addVocab(VOCAB_FRAMEGRABBER_IMAGE);
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_CROP);
-        cmd.addInt(cropType);
+        cmd.addInt32(cropType);
         yarp::os::Bottle & list = cmd.addList();
         for(size_t i=0; i<vertices.size(); i++)
         {
-            list.addInt(vertices[i].first);
-            list.addInt(vertices[i].second);
+            list.addInt32(vertices[i].first);
+            list.addInt32(vertices[i].second);
         }
         port.write(cmd,response);
 
@@ -635,7 +635,7 @@ public:
             return false;
         }
 
-        image.resize(response.get(2).asInt(), response.get(3).asInt());
+        image.resize(response.get(2).asInt32(), response.get(3).asInt32());
         unsigned char *pixelOut    = image.getRawImage();
 
         if(response.get(4).asBlob())
@@ -809,7 +809,7 @@ protected:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
-        cmd.addDouble(v);
+        cmd.addFloat64(v);
         port.write(cmd,response);
         return true;
     }
@@ -818,8 +818,8 @@ protected:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
-        cmd.addDouble(b);
-        cmd.addDouble(r);
+        cmd.addFloat64(b);
+        cmd.addFloat64(r);
         port.write(cmd,response);
         return true;
     }
@@ -830,7 +830,7 @@ protected:
         cmd.addVocab(code);
         port.write(cmd,response);
         // response should be [cmd] [name] value
-        return response.get(2).asDouble();
+        return response.get(2).asFloat64();
     }
 
     bool getCommand(int code, double &b, double &r) const
@@ -840,8 +840,8 @@ protected:
         cmd.addVocab(code);
         port.write(cmd,response);
         // response should be [cmd] [name] value
-        b=response.get(2).asDouble();
-        r=response.get(3).asDouble();
+        b=response.get(2).asFloat64();
+        r=response.get(3).asFloat64();
         return true;
     }
 };

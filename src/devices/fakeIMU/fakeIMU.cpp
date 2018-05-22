@@ -56,7 +56,7 @@ bool fakeIMU::open(yarp::os::Searchable &config)
     int period;
     if( config.check("period"))
     {
-        period = config.find("period").asInt();
+        period = config.find("period").asInt32();
         setRate(period);
     }
     else

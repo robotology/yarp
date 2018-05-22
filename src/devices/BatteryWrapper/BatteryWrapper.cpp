@@ -168,7 +168,7 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
         return false;
     }
     else
-        _rate = config.find("period").asInt();
+        _rate = config.find("period").asInt32();
 
     if (!config.check("name"))
     {
@@ -227,10 +227,10 @@ void BatteryWrapper::run()
             lastStateStamp.update();
             yarp::os::Bottle& b = streamingPort.prepare();
             b.clear();
-            b.addDouble(voltage);
-            b.addDouble(current);
-            b.addDouble(charge);
-            b.addDouble(temperature);
+            b.addFloat64(voltage);
+            b.addFloat64(current);
+            b.addFloat64(charge);
+            b.addFloat64(temperature);
             streamingPort.setEnvelope(lastStateStamp);
             streamingPort.write();
         }

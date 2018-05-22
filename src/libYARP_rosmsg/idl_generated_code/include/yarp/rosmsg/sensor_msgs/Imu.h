@@ -56,11 +56,11 @@ class Imu : public yarp::os::idl::WirePortable
 public:
     yarp::rosmsg::std_msgs::Header header;
     yarp::rosmsg::geometry_msgs::Quaternion orientation;
-    std::vector<yarp::os::NetFloat64> orientation_covariance;
+    std::vector<yarp::conf::float64_t> orientation_covariance;
     yarp::rosmsg::geometry_msgs::Vector3 angular_velocity;
-    std::vector<yarp::os::NetFloat64> angular_velocity_covariance;
+    std::vector<yarp::conf::float64_t> angular_velocity_covariance;
     yarp::rosmsg::geometry_msgs::Vector3 linear_acceleration;
-    std::vector<yarp::os::NetFloat64> linear_acceleration_covariance;
+    std::vector<yarp::conf::float64_t> linear_acceleration_covariance;
 
     Imu() :
             header(),
@@ -118,7 +118,7 @@ public:
         // *** orientation_covariance ***
         int len = 9;
         orientation_covariance.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&orientation_covariance[0], sizeof(yarp::os::NetFloat64)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&orientation_covariance[0], sizeof(yarp::conf::float64_t)*len)) {
             return false;
         }
 
@@ -130,7 +130,7 @@ public:
         // *** angular_velocity_covariance ***
         len = 9;
         angular_velocity_covariance.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&angular_velocity_covariance[0], sizeof(yarp::os::NetFloat64)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&angular_velocity_covariance[0], sizeof(yarp::conf::float64_t)*len)) {
             return false;
         }
 
@@ -142,7 +142,7 @@ public:
         // *** linear_acceleration_covariance ***
         len = 9;
         linear_acceleration_covariance.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&linear_acceleration_covariance[0], sizeof(yarp::os::NetFloat64)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&linear_acceleration_covariance[0], sizeof(yarp::conf::float64_t)*len)) {
             return false;
         }
 
@@ -168,13 +168,13 @@ public:
         }
 
         // *** orientation_covariance ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         orientation_covariance.resize(len);
         for (int i=0; i<len; i++) {
-            orientation_covariance[i] = (yarp::os::NetFloat64)connection.expectDouble();
+            orientation_covariance[i] = (yarp::conf::float64_t)connection.expectFloat64();
         }
 
         // *** angular_velocity ***
@@ -183,13 +183,13 @@ public:
         }
 
         // *** angular_velocity_covariance ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64)) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         angular_velocity_covariance.resize(len);
         for (int i=0; i<len; i++) {
-            angular_velocity_covariance[i] = (yarp::os::NetFloat64)connection.expectDouble();
+            angular_velocity_covariance[i] = (yarp::conf::float64_t)connection.expectFloat64();
         }
 
         // *** linear_acceleration ***
@@ -198,13 +198,13 @@ public:
         }
 
         // *** linear_acceleration_covariance ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64)) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         linear_acceleration_covariance.resize(len);
         for (int i=0; i<len; i++) {
-            linear_acceleration_covariance[i] = (yarp::os::NetFloat64)connection.expectDouble();
+            linear_acceleration_covariance[i] = (yarp::conf::float64_t)connection.expectFloat64();
         }
 
         return !connection.isError();
@@ -231,7 +231,7 @@ public:
 
         // *** orientation_covariance ***
         if (orientation_covariance.size()>0) {
-            connection.appendExternalBlock((char*)&orientation_covariance[0], sizeof(yarp::os::NetFloat64)*orientation_covariance.size());
+            connection.appendExternalBlock((char*)&orientation_covariance[0], sizeof(yarp::conf::float64_t)*orientation_covariance.size());
         }
 
         // *** angular_velocity ***
@@ -241,7 +241,7 @@ public:
 
         // *** angular_velocity_covariance ***
         if (angular_velocity_covariance.size()>0) {
-            connection.appendExternalBlock((char*)&angular_velocity_covariance[0], sizeof(yarp::os::NetFloat64)*angular_velocity_covariance.size());
+            connection.appendExternalBlock((char*)&angular_velocity_covariance[0], sizeof(yarp::conf::float64_t)*angular_velocity_covariance.size());
         }
 
         // *** linear_acceleration ***
@@ -251,7 +251,7 @@ public:
 
         // *** linear_acceleration_covariance ***
         if (linear_acceleration_covariance.size()>0) {
-            connection.appendExternalBlock((char*)&linear_acceleration_covariance[0], sizeof(yarp::os::NetFloat64)*linear_acceleration_covariance.size());
+            connection.appendExternalBlock((char*)&linear_acceleration_covariance[0], sizeof(yarp::conf::float64_t)*linear_acceleration_covariance.size());
         }
 
         return !connection.isError();
@@ -259,8 +259,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(7);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(7);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -273,10 +273,10 @@ public:
         }
 
         // *** orientation_covariance ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(orientation_covariance.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64);
+        connection.appendInt32(orientation_covariance.size());
         for (size_t i=0; i<orientation_covariance.size(); i++) {
-            connection.appendDouble((double)orientation_covariance[i]);
+            connection.appendFloat64(orientation_covariance[i]);
         }
 
         // *** angular_velocity ***
@@ -285,10 +285,10 @@ public:
         }
 
         // *** angular_velocity_covariance ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(angular_velocity_covariance.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64);
+        connection.appendInt32(angular_velocity_covariance.size());
         for (size_t i=0; i<angular_velocity_covariance.size(); i++) {
-            connection.appendDouble((double)angular_velocity_covariance[i]);
+            connection.appendFloat64(angular_velocity_covariance[i]);
         }
 
         // *** linear_acceleration ***
@@ -297,10 +297,10 @@ public:
         }
 
         // *** linear_acceleration_covariance ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(linear_acceleration_covariance.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64);
+        connection.appendInt32(linear_acceleration_covariance.size());
         for (size_t i=0; i<linear_acceleration_covariance.size(); i++) {
-            connection.appendDouble((double)linear_acceleration_covariance[i]);
+            connection.appendFloat64(linear_acceleration_covariance[i]);
         }
 
         connection.convertTextMode();

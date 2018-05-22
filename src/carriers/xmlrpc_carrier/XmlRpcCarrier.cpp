@@ -24,10 +24,10 @@ using YarpXmlRpc::XmlRpcServerConnection;
 
 void toXmlRpcValue(Value& vin, XmlRpcValue& vout)
 {
-    if (vin.isInt()) {
-        vout = vin.asInt();
-    } else if (vin.isDouble()) {
-        vout = vin.asDouble();
+    if (vin.isInt32()) {
+        vout = vin.asInt32();
+    } else if (vin.isFloat64()) {
+        vout = vin.asFloat64();
     } else if (vin.isString()) {
         vout = std::string(vin.asString());
     } else if (vin.isVocab()) {

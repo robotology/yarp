@@ -65,12 +65,12 @@ public:
         bool ok = cmd.read(reader);
         if (!ok) return false;
         if (verbose) printf("slave got request %s\n", cmd.toString().c_str());
-        reply.addInt(1);
+        reply.addInt32(1);
         reply.addString("");
         yarp::os::Bottle& lst = reply.addList();
         lst.addString("TCPROS");
         lst.addString(hostname.c_str());
-        lst.addInt(portnum);
+        lst.addInt32(portnum);
         yarp::os::ConnectionWriter *writer = reader.getWriter();
         if (writer==NULL) { return false; }
         if (verbose) printf("replying with %s\n", reply.toString().c_str());

@@ -72,7 +72,7 @@ public:
     info.addString("ip");
     info.addString(e.machine.c_str());
     info.addString("port");
-    info.addInt(e.portNumber);
+    info.addInt32(e.portNumber);
     info.addString("type");
     info.addString(e.carrier.c_str());
   }
@@ -128,7 +128,7 @@ public:
     std::string name = cmd.get(1).asString();
     std::string carrier = cmd.get(2).asString();
     std::string machine = cmd.get(3).asString();
-    int number = cmd.get(4).asInt();
+    int number = cmd.get(4).asInt32();
     if (name=="...") {
       name = "/tmp/";
       for (int i=0; i<20; i++) {

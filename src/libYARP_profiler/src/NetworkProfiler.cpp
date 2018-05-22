@@ -133,9 +133,9 @@ bool NetworkProfiler::getPortDetails(const string& portName, PortDetails& info) 
     else {
         info.owner.name = process->find("name").asString();
         info.owner.arguments = process->find("arguments").asString();
-        info.owner.pid = process->find("pid").asInt();
-        info.owner.priority = process->find("priority").asInt();
-        info.owner.policy = process->find("policy").asInt();
+        info.owner.pid = process->find("pid").asInt32();
+        info.owner.priority = process->find("priority").asInt32();
+        info.owner.policy = process->find("policy").asInt32();
     }
 
     Property* platform = reply.find("platform").asDict();
@@ -267,7 +267,7 @@ bool NetworkProfiler::creatSimpleModuleGraph(yarp::profiler::graph::Graph& graph
         if(!dynamic_cast<ProcessVertex*>(*itr))
             continue;
         ProcessVertex* pv1 = dynamic_cast<ProcessVertex*>(*itr);
-        ProcessVertex* pv2 = new ProcessVertex(pv1->property.find("pid").asInt(),
+        ProcessVertex* pv2 = new ProcessVertex(pv1->property.find("pid").asInt32(),
                                                pv1->property.find("hostname").asString());
         pv2->property = pv1->property;
         subgraph.insert(*pv2);
@@ -433,7 +433,7 @@ bool NetworkProfiler::setPortmonitorParams(std::string portName, yarp::os::Prope
             yError()<<reply.toString();
             return false;
         }
-        else if(reply.get(0).isInt() && reply.get(0).asInt() == -1) {
+        else if(reply.get(0).isInt32() && reply.get(0).asInt32() == -1) {
             yError()<<reply.toString();
             return false;
         }
@@ -458,7 +458,7 @@ bool NetworkProfiler::getPortmonitorParams(std::string portName, yarp::os::Bottl
             yError()<<param.toString();
             return false;
         }
-        else if(param.get(0).isInt() && param.get(0).asInt() == -1) {
+        else if(param.get(0).isInt32() && param.get(0).asInt32() == -1) {
             yError()<<param.toString();
             return false;
         }

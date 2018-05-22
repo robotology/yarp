@@ -9,12 +9,13 @@
 
 #include <yarp/os/Property.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/StringInputStream.h>
+#include <yarp/os/Network.h>
+
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/StringInputStream.h>
-#include <yarp/os/NetType.h>
 #include <yarp/os/impl/SplitString.h>
-
 #include <yarp/os/impl/PlatformDirent.h>
 
 #include <algorithm>
@@ -935,12 +936,12 @@ void Property::put(const std::string& key, Value *value) {
 
 void Property::put(const std::string& key, int value) {
     summon();
-    put(key, Value::makeInt(value));
+    put(key, Value::makeInt32(value));
 }
 
 void Property::put(const std::string& key, double value) {
     summon();
-    put(key, Value::makeDouble(value));
+    put(key, Value::makeFloat64(value));
 }
 
 bool Property::check(const std::string& key) const {

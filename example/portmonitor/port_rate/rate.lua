@@ -13,7 +13,7 @@ require("yarp")
 -- @return Boolean
 --
 PortMonitor.create = function(options)
-    isReceiver = (options:find("sender_side"):asInt() == 0)
+    isReceiver = (options:find("sender_side"):asInt32() == 0)
     sourceName = options:find("source"):asString()
     destinationName = options:find("destination"):asString()
     if isReceiver == true then

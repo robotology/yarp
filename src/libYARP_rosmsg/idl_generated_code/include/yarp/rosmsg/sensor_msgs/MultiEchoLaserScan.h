@@ -60,25 +60,25 @@ class MultiEchoLaserScan : public yarp::os::idl::WirePortable
 {
 public:
     yarp::rosmsg::std_msgs::Header header;
-    yarp::os::NetFloat32 angle_min;
-    yarp::os::NetFloat32 angle_max;
-    yarp::os::NetFloat32 angle_increment;
-    yarp::os::NetFloat32 time_increment;
-    yarp::os::NetFloat32 scan_time;
-    yarp::os::NetFloat32 range_min;
-    yarp::os::NetFloat32 range_max;
+    yarp::conf::float32_t angle_min;
+    yarp::conf::float32_t angle_max;
+    yarp::conf::float32_t angle_increment;
+    yarp::conf::float32_t time_increment;
+    yarp::conf::float32_t scan_time;
+    yarp::conf::float32_t range_min;
+    yarp::conf::float32_t range_max;
     std::vector<yarp::rosmsg::sensor_msgs::LaserEcho> ranges;
     std::vector<yarp::rosmsg::sensor_msgs::LaserEcho> intensities;
 
     MultiEchoLaserScan() :
             header(),
-            angle_min(0.0),
-            angle_max(0.0),
-            angle_increment(0.0),
-            time_increment(0.0),
-            scan_time(0.0),
-            range_min(0.0),
-            range_max(0.0),
+            angle_min(0.0f),
+            angle_max(0.0f),
+            angle_increment(0.0f),
+            time_increment(0.0f),
+            scan_time(0.0f),
+            range_min(0.0f),
+            range_max(0.0f),
             ranges(),
             intensities()
     {
@@ -90,25 +90,25 @@ public:
         header.clear();
 
         // *** angle_min ***
-        angle_min = 0.0;
+        angle_min = 0.0f;
 
         // *** angle_max ***
-        angle_max = 0.0;
+        angle_max = 0.0f;
 
         // *** angle_increment ***
-        angle_increment = 0.0;
+        angle_increment = 0.0f;
 
         // *** time_increment ***
-        time_increment = 0.0;
+        time_increment = 0.0f;
 
         // *** scan_time ***
-        scan_time = 0.0;
+        scan_time = 0.0f;
 
         // *** range_min ***
-        range_min = 0.0;
+        range_min = 0.0f;
 
         // *** range_max ***
-        range_max = 0.0;
+        range_max = 0.0f;
 
         // *** ranges ***
         ranges.clear();
@@ -125,42 +125,28 @@ public:
         }
 
         // *** angle_min ***
-        if (!connection.expectBlock((char*)&angle_min, 4)) {
-            return false;
-        }
+        angle_min = connection.expectFloat32();
 
         // *** angle_max ***
-        if (!connection.expectBlock((char*)&angle_max, 4)) {
-            return false;
-        }
+        angle_max = connection.expectFloat32();
 
         // *** angle_increment ***
-        if (!connection.expectBlock((char*)&angle_increment, 4)) {
-            return false;
-        }
+        angle_increment = connection.expectFloat32();
 
         // *** time_increment ***
-        if (!connection.expectBlock((char*)&time_increment, 4)) {
-            return false;
-        }
+        time_increment = connection.expectFloat32();
 
         // *** scan_time ***
-        if (!connection.expectBlock((char*)&scan_time, 4)) {
-            return false;
-        }
+        scan_time = connection.expectFloat32();
 
         // *** range_min ***
-        if (!connection.expectBlock((char*)&range_min, 4)) {
-            return false;
-        }
+        range_min = connection.expectFloat32();
 
         // *** range_max ***
-        if (!connection.expectBlock((char*)&range_max, 4)) {
-            return false;
-        }
+        range_max = connection.expectFloat32();
 
         // *** ranges ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         ranges.resize(len);
         for (int i=0; i<len; i++) {
             if (!ranges[i].read(connection)) {
@@ -169,7 +155,7 @@ public:
         }
 
         // *** intensities ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         intensities.resize(len);
         for (int i=0; i<len; i++) {
             if (!intensities[i].read(connection)) {
@@ -194,31 +180,31 @@ public:
         }
 
         // *** angle_min ***
-        angle_min = reader.expectDouble();
+        angle_min = reader.expectFloat32();
 
         // *** angle_max ***
-        angle_max = reader.expectDouble();
+        angle_max = reader.expectFloat32();
 
         // *** angle_increment ***
-        angle_increment = reader.expectDouble();
+        angle_increment = reader.expectFloat32();
 
         // *** time_increment ***
-        time_increment = reader.expectDouble();
+        time_increment = reader.expectFloat32();
 
         // *** scan_time ***
-        scan_time = reader.expectDouble();
+        scan_time = reader.expectFloat32();
 
         // *** range_min ***
-        range_min = reader.expectDouble();
+        range_min = reader.expectFloat32();
 
         // *** range_max ***
-        range_max = reader.expectDouble();
+        range_max = reader.expectFloat32();
 
         // *** ranges ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         ranges.resize(len);
         for (int i=0; i<len; i++) {
             if (!ranges[i].read(connection)) {
@@ -227,10 +213,10 @@ public:
         }
 
         // *** intensities ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         intensities.resize(len);
         for (int i=0; i<len; i++) {
             if (!intensities[i].read(connection)) {
@@ -256,28 +242,28 @@ public:
         }
 
         // *** angle_min ***
-        connection.appendBlock((char*)&angle_min, 4);
+        connection.appendFloat32(angle_min);
 
         // *** angle_max ***
-        connection.appendBlock((char*)&angle_max, 4);
+        connection.appendFloat32(angle_max);
 
         // *** angle_increment ***
-        connection.appendBlock((char*)&angle_increment, 4);
+        connection.appendFloat32(angle_increment);
 
         // *** time_increment ***
-        connection.appendBlock((char*)&time_increment, 4);
+        connection.appendFloat32(time_increment);
 
         // *** scan_time ***
-        connection.appendBlock((char*)&scan_time, 4);
+        connection.appendFloat32(scan_time);
 
         // *** range_min ***
-        connection.appendBlock((char*)&range_min, 4);
+        connection.appendFloat32(range_min);
 
         // *** range_max ***
-        connection.appendBlock((char*)&range_max, 4);
+        connection.appendFloat32(range_max);
 
         // *** ranges ***
-        connection.appendInt(ranges.size());
+        connection.appendInt32(ranges.size());
         for (size_t i=0; i<ranges.size(); i++) {
             if (!ranges[i].write(connection)) {
                 return false;
@@ -285,7 +271,7 @@ public:
         }
 
         // *** intensities ***
-        connection.appendInt(intensities.size());
+        connection.appendInt32(intensities.size());
         for (size_t i=0; i<intensities.size(); i++) {
             if (!intensities[i].write(connection)) {
                 return false;
@@ -297,8 +283,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(10);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(10);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -306,36 +292,36 @@ public:
         }
 
         // *** angle_min ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)angle_min);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(angle_min);
 
         // *** angle_max ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)angle_max);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(angle_max);
 
         // *** angle_increment ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)angle_increment);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(angle_increment);
 
         // *** time_increment ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)time_increment);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(time_increment);
 
         // *** scan_time ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)scan_time);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(scan_time);
 
         // *** range_min ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)range_min);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(range_min);
 
         // *** range_max ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)range_max);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(range_max);
 
         // *** ranges ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(ranges.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(ranges.size());
         for (size_t i=0; i<ranges.size(); i++) {
             if (!ranges[i].write(connection)) {
                 return false;
@@ -343,8 +329,8 @@ public:
         }
 
         // *** intensities ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(intensities.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(intensities.size());
         for (size_t i=0; i<intensities.size(); i++) {
             if (!intensities[i].write(connection)) {
                 return false;

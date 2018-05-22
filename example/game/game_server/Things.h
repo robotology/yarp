@@ -34,7 +34,7 @@ public:
     }
 
     static bool isFluid(ID x) {
-        return x.asInt()>=theta.asInt();
+        return x.asInt32()>=theta.asInt32();
     }
 
     ID create() {
@@ -42,7 +42,7 @@ public:
         ID result = at;
         created.bind(at,at);
         things.bind(at,Thing());
-        at = at.asInt()+1;
+        at = at.asInt32()+1;
         return result;
     }
 

@@ -30,7 +30,7 @@ bool FrameGrabberControls2_Sender::getCameraDescription(CameraDescriptor* camera
     bool ret = _port.write(cmd,response);
 
     // response should be [fgc2] [camd] [is] [busType] [description]
-    camera->busType = (BusType) response.get(3).asInt();
+    camera->busType = (BusType) response.get(3).asInt32();
     camera->deviceDescription = response.get(4).asString();
     return ret;
 }
@@ -41,10 +41,10 @@ bool FrameGrabberControls2_Sender::hasFeature(int feature, bool* hasFeature)
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_HAS);
     cmd.addVocab(VOCAB_FEATURE);
-    cmd.addInt(feature);
+    cmd.addInt32(feature);
     bool ret = _port.write(cmd,response);
 
-    *hasFeature = response.get(4).asInt() !=0? true:false;
+    *hasFeature = response.get(4).asInt32() !=0? true:false;
     return ret;
 }
 
@@ -54,8 +54,8 @@ bool FrameGrabberControls2_Sender::setFeature(int feature, double value)
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_FEATURE);
-    cmd.addInt(feature);
-    cmd.addDouble(value);
+    cmd.addInt32(feature);
+    cmd.addFloat64(value);
     return _port.write(cmd,response);
 }
 
@@ -65,9 +65,9 @@ bool FrameGrabberControls2_Sender::setFeature(int feature, double  value1, doubl
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_FEATURE2);
-    cmd.addInt(feature);
-    cmd.addDouble(value1);
-    cmd.addDouble(value2);
+    cmd.addInt32(feature);
+    cmd.addFloat64(value1);
+    cmd.addFloat64(value2);
     return _port.write(cmd,response);
 }
 
@@ -77,10 +77,10 @@ bool FrameGrabberControls2_Sender::getFeature(int feature, double* value)
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_FEATURE);
-    cmd.addInt(feature);
+    cmd.addInt32(feature);
     bool ret = _port.write(cmd,response);
 
-    *value = response.get(3).asDouble();
+    *value = response.get(3).asFloat64();
     return ret;
 }
 
@@ -90,11 +90,11 @@ bool FrameGrabberControls2_Sender::getFeature(int feature, double *value1, doubl
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_FEATURE2);
-    cmd.addInt(feature);
+    cmd.addInt32(feature);
     bool ret = _port.write(cmd,response);
 
-    *value1 = response.get(3).asDouble();
-    *value2 = response.get(4).asDouble();
+    *value1 = response.get(3).asFloat64();
+    *value2 = response.get(4).asFloat64();
     return ret;
 }
 
@@ -104,10 +104,10 @@ bool FrameGrabberControls2_Sender::hasOnOff(int feature, bool* _hasOnOff)
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_HAS);
     cmd.addVocab(VOCAB_ONOFF);
-    cmd.addInt(feature);
+    cmd.addInt32(feature);
     bool ret = _port.write(cmd,response);
 
-    *_hasOnOff = response.get(4).asInt() !=0? true:false;
+    *_hasOnOff = response.get(4).asInt32() !=0? true:false;
     return ret;
 }
 
@@ -117,8 +117,8 @@ bool FrameGrabberControls2_Sender::setActive(int feature, bool onoff)
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_ACTIVE);
-    cmd.addInt(feature);
-    cmd.addInt(onoff);
+    cmd.addInt32(feature);
+    cmd.addInt32(onoff);
     return _port.write(cmd,response);
 }
 
@@ -128,10 +128,10 @@ bool FrameGrabberControls2_Sender::getActive(int feature, bool* _isActive)
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_ACTIVE);
-    cmd.addInt(feature);
+    cmd.addInt32(feature);
     bool ret = _port.write(cmd,response);
 
-    *_isActive = response.get(3).asInt() !=0? true:false;
+    *_isActive = response.get(3).asInt32() !=0? true:false;
     return ret;
 }
 
@@ -141,10 +141,10 @@ bool FrameGrabberControls2_Sender::hasAuto(int feature, bool* _hasAuto)
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_HAS);
     cmd.addVocab(VOCAB_AUTO);
-    cmd.addInt(feature);
+    cmd.addInt32(feature);
     bool ret = _port.write(cmd,response);
 
-    *_hasAuto = response.get(4).asInt() !=0? true:false;;
+    *_hasAuto = response.get(4).asInt32() !=0? true:false;;
     return ret;
 }
 
@@ -154,10 +154,10 @@ bool FrameGrabberControls2_Sender::hasManual(int feature, bool* _hasManual)
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_HAS);
     cmd.addVocab(VOCAB_MANUAL);
-    cmd.addInt(feature);
+    cmd.addInt32(feature);
     bool ret = _port.write(cmd,response);
 
-    *_hasManual = response.get(4).asInt() !=0? true:false;
+    *_hasManual = response.get(4).asInt32() !=0? true:false;
     return ret;
 }
 
@@ -167,10 +167,10 @@ bool FrameGrabberControls2_Sender::hasOnePush(int feature, bool* _hasOnePush)
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_HAS);
     cmd.addVocab(VOCAB_ONEPUSH);
-    cmd.addInt(feature);
+    cmd.addInt32(feature);
     bool ret = _port.write(cmd,response);
 
-    *_hasOnePush = response.get(4).asInt() !=0? true:false;
+    *_hasOnePush = response.get(4).asInt32() !=0? true:false;
     return ret;
 }
 
@@ -180,8 +180,8 @@ bool FrameGrabberControls2_Sender::setMode(int feature, FeatureMode mode)
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_MODE);
-    cmd.addInt(feature);
-    cmd.addInt(mode);
+    cmd.addInt32(feature);
+    cmd.addInt32(mode);
     return _port.write(cmd,response);
 }
 
@@ -191,10 +191,10 @@ bool FrameGrabberControls2_Sender::getMode(int feature, FeatureMode* mode)
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_MODE);
-    cmd.addInt(feature);
+    cmd.addInt32(feature);
     bool ret = _port.write(cmd,response);
 
-    *mode = (FeatureMode) response.get(3).asInt();
+    *mode = (FeatureMode) response.get(3).asInt32();
     return ret;
 }
 
@@ -204,7 +204,7 @@ bool FrameGrabberControls2_Sender::setOnePush(int feature)
     cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_ONEPUSH);
-    cmd.addInt(feature);
+    cmd.addInt32(feature);
     return _port.write(cmd,response);
 }
 
@@ -255,43 +255,43 @@ bool FrameGrabberControls2_Parser::respond(const yarp::os::Bottle& cmd, yarp::os
             response.addVocab(VOCAB_FRAMEGRABBER_CONTROL2);
             response.addVocab(VOCAB_HAS);
             response.addVocab(VOCAB_FEATURE);
-            response.addInt(param);
+            response.addInt32(param);
 
             switch (param)
             {
                 case VOCAB_FEATURE:
                 {
                     bool _hasFeat;
-                    ok = fgCtrl2->hasFeature(cmd.get(3).asInt(), &_hasFeat);
-                    response.addInt(_hasFeat);
+                    ok = fgCtrl2->hasFeature(cmd.get(3).asInt32(), &_hasFeat);
+                    response.addInt32(_hasFeat);
                 } break;
 
                 case VOCAB_ONOFF:
                 {
                     bool _hasOnOff;
-                    ok = fgCtrl2->hasOnOff(cmd.get(3).asInt(), &_hasOnOff);
-                    response.addInt(_hasOnOff);
+                    ok = fgCtrl2->hasOnOff(cmd.get(3).asInt32(), &_hasOnOff);
+                    response.addInt32(_hasOnOff);
                 } break;
 
                 case VOCAB_AUTO:
                 {
                     bool _hasAuto;
-                    ok = fgCtrl2->hasAuto(cmd.get(3).asInt(), &_hasAuto);
-                    response.addInt(_hasAuto);
+                    ok = fgCtrl2->hasAuto(cmd.get(3).asInt32(), &_hasAuto);
+                    response.addInt32(_hasAuto);
                 } break;
 
                 case VOCAB_MANUAL:
                 {
                     bool _hasManual;
-                    ok = fgCtrl2->hasManual(cmd.get(3).asInt(), &_hasManual);
-                    response.addInt(_hasManual);
+                    ok = fgCtrl2->hasManual(cmd.get(3).asInt32(), &_hasManual);
+                    response.addInt32(_hasManual);
                 } break;
 
                 case VOCAB_ONEPUSH:
                 {
                     bool _hasOnePush;
-                    ok = fgCtrl2->hasOnePush(cmd.get(3).asInt(), &_hasOnePush);
-                    response.addInt(_hasOnePush);
+                    ok = fgCtrl2->hasOnePush(cmd.get(3).asInt32(), &_hasOnePush);
+                    response.addInt32(_hasOnePush);
                 } break;
 
                 default:
@@ -310,27 +310,27 @@ bool FrameGrabberControls2_Parser::respond(const yarp::os::Bottle& cmd, yarp::os
             {
                 case VOCAB_FEATURE:
                 {
-                    ok = fgCtrl2->setFeature(cmd.get(3).asInt(), cmd.get(4).asDouble());
+                    ok = fgCtrl2->setFeature(cmd.get(3).asInt32(), cmd.get(4).asFloat64());
                 } break;
 
                 case VOCAB_FEATURE2:
                 {
-                    ok = fgCtrl2->setFeature(cmd.get(3).asInt(), cmd.get(4).asDouble(), cmd.get(5).asDouble());
+                    ok = fgCtrl2->setFeature(cmd.get(3).asInt32(), cmd.get(4).asFloat64(), cmd.get(5).asFloat64());
                 } break;
 
                 case VOCAB_ACTIVE:
                 {
-                    ok = fgCtrl2->setActive(cmd.get(3).asInt(), cmd.get(4).asInt());
+                    ok = fgCtrl2->setActive(cmd.get(3).asInt32(), cmd.get(4).asInt32());
                 } break;
 
                 case VOCAB_MODE:
                 {
-                    ok = fgCtrl2->setMode(cmd.get(3).asInt(), (FeatureMode) cmd.get(4).asInt());
+                    ok = fgCtrl2->setMode(cmd.get(3).asInt32(), (FeatureMode) cmd.get(4).asInt32());
                 } break;
 
                 case VOCAB_ONEPUSH:
                 {
-                    ok = fgCtrl2->setOnePush(cmd.get(3).asInt());
+                    ok = fgCtrl2->setOnePush(cmd.get(3).asInt32());
                 } break;
 
                 default:
@@ -354,7 +354,7 @@ bool FrameGrabberControls2_Parser::respond(const yarp::os::Bottle& cmd, yarp::os
                 {
                     CameraDescriptor camera;
                     ok = fgCtrl2->getCameraDescription(&camera);
-                    response.addInt(camera.busType);
+                    response.addInt32(camera.busType);
                     response.addString(camera.deviceDescription);
                     yDebug() << "Response is " << response.toString();
                 } break;
@@ -362,30 +362,30 @@ bool FrameGrabberControls2_Parser::respond(const yarp::os::Bottle& cmd, yarp::os
                 case VOCAB_FEATURE:
                 {
                     double value;
-                    ok = fgCtrl2->getFeature(cmd.get(3).asInt(), &value);
-                    response.addDouble(value);
+                    ok = fgCtrl2->getFeature(cmd.get(3).asInt32(), &value);
+                    response.addFloat64(value);
                 } break;
 
                 case VOCAB_FEATURE2:
                 {
                     double value1, value2;
-                    ok = fgCtrl2->getFeature(cmd.get(3).asInt(), &value1, &value2);
-                    response.addDouble(value1);
-                    response.addDouble(value2);
+                    ok = fgCtrl2->getFeature(cmd.get(3).asInt32(), &value1, &value2);
+                    response.addFloat64(value1);
+                    response.addFloat64(value2);
                 } break;
 
                 case VOCAB_ACTIVE:
                 {
                     bool _isActive;
-                    ok = fgCtrl2->getActive(cmd.get(3).asInt(), &_isActive);
-                    response.addInt(_isActive);
+                    ok = fgCtrl2->getActive(cmd.get(3).asInt32(), &_isActive);
+                    response.addInt32(_isActive);
                 } break;
 
                 case VOCAB_MODE:
                 {
                     FeatureMode _mode;
-                    ok = fgCtrl2->getMode(cmd.get(3).asInt(), &_mode);
-                    response.addInt(_mode);
+                    ok = fgCtrl2->getMode(cmd.get(3).asInt32(), &_mode);
+                    response.addInt32(_mode);
                 } break;
 
                 default:

@@ -35,14 +35,14 @@ class GridCells : public yarp::os::idl::WirePortable
 {
 public:
     yarp::rosmsg::std_msgs::Header header;
-    yarp::os::NetFloat32 cell_width;
-    yarp::os::NetFloat32 cell_height;
+    yarp::conf::float32_t cell_width;
+    yarp::conf::float32_t cell_height;
     std::vector<yarp::rosmsg::geometry_msgs::Point> cells;
 
     GridCells() :
             header(),
-            cell_width(0.0),
-            cell_height(0.0),
+            cell_width(0.0f),
+            cell_height(0.0f),
             cells()
     {
     }
@@ -53,10 +53,10 @@ public:
         header.clear();
 
         // *** cell_width ***
-        cell_width = 0.0;
+        cell_width = 0.0f;
 
         // *** cell_height ***
-        cell_height = 0.0;
+        cell_height = 0.0f;
 
         // *** cells ***
         cells.clear();
@@ -70,17 +70,13 @@ public:
         }
 
         // *** cell_width ***
-        if (!connection.expectBlock((char*)&cell_width, 4)) {
-            return false;
-        }
+        cell_width = connection.expectFloat32();
 
         // *** cell_height ***
-        if (!connection.expectBlock((char*)&cell_height, 4)) {
-            return false;
-        }
+        cell_height = connection.expectFloat32();
 
         // *** cells ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         cells.resize(len);
         for (int i=0; i<len; i++) {
             if (!cells[i].read(connection)) {
@@ -105,16 +101,16 @@ public:
         }
 
         // *** cell_width ***
-        cell_width = reader.expectDouble();
+        cell_width = reader.expectFloat32();
 
         // *** cell_height ***
-        cell_height = reader.expectDouble();
+        cell_height = reader.expectFloat32();
 
         // *** cells ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         cells.resize(len);
         for (int i=0; i<len; i++) {
             if (!cells[i].read(connection)) {
@@ -140,13 +136,13 @@ public:
         }
 
         // *** cell_width ***
-        connection.appendBlock((char*)&cell_width, 4);
+        connection.appendFloat32(cell_width);
 
         // *** cell_height ***
-        connection.appendBlock((char*)&cell_height, 4);
+        connection.appendFloat32(cell_height);
 
         // *** cells ***
-        connection.appendInt(cells.size());
+        connection.appendInt32(cells.size());
         for (size_t i=0; i<cells.size(); i++) {
             if (!cells[i].write(connection)) {
                 return false;
@@ -158,8 +154,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(4);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(4);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -167,16 +163,16 @@ public:
         }
 
         // *** cell_width ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)cell_width);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(cell_width);
 
         // *** cell_height ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)cell_height);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(cell_height);
 
         // *** cells ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(cells.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(cells.size());
         for (size_t i=0; i<cells.size(); i++) {
             if (!cells[i].write(connection)) {
                 return false;

@@ -166,13 +166,13 @@ void NodeTest::basicApiTest() {
     Bottle cmd, reply;
     cmd.fromString("getSubscriptions dummy");
     NetworkBase::write(Contact("/test"), cmd, reply);
-    checkEqual(reply.get(0).asInt(),1,"getSubscriptions api success");
+    checkEqual(reply.get(0).asInt32(),1,"getSubscriptions api success");
     cmd.fromString("requestTopic dummy /p2 (TCPROS)");
     NetworkBase::write(Contact("/test"), cmd, reply);
-    checkEqual(reply.get(0).asInt(),1,"found /p2");
+    checkEqual(reply.get(0).asInt32(),1,"found /p2");
     cmd.fromString("requestTopic dummy /p3 (TCPROS)");
     NetworkBase::write(Contact("/test"), cmd, reply);
-    checkEqual(reply.get(0).asInt(),0,"failed to find /p3");
+    checkEqual(reply.get(0).asInt32(),0,"failed to find /p3");
     p1.close();
     p2.close();
     NameClient::getNameClient().getNodes().clear();
@@ -248,7 +248,7 @@ void NodeTest::singleNameTest() {
     Bottle cmd, reply;
     cmd.fromString("requestTopic dummy /p1 (TCPROS)");
     NetworkBase::write(Contact("/ntest"), cmd, reply);
-    checkEqual(reply.get(0).asInt(),1,"found /p1");
+    checkEqual(reply.get(0).asInt32(),1,"found /p1");
 }
 
 void NodeTest::typePropTest() {

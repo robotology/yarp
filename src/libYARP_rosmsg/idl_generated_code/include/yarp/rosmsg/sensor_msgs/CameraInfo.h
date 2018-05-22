@@ -161,15 +161,15 @@ class CameraInfo : public yarp::os::idl::WirePortable
 {
 public:
     yarp::rosmsg::std_msgs::Header header;
-    yarp::os::NetUint32 height;
-    yarp::os::NetUint32 width;
+    std::uint32_t height;
+    std::uint32_t width;
     std::string distortion_model;
-    std::vector<yarp::os::NetFloat64> D;
-    std::vector<yarp::os::NetFloat64> K;
-    std::vector<yarp::os::NetFloat64> R;
-    std::vector<yarp::os::NetFloat64> P;
-    yarp::os::NetUint32 binning_x;
-    yarp::os::NetUint32 binning_y;
+    std::vector<yarp::conf::float64_t> D;
+    std::vector<yarp::conf::float64_t> K;
+    std::vector<yarp::conf::float64_t> R;
+    std::vector<yarp::conf::float64_t> P;
+    std::uint32_t binning_x;
+    std::uint32_t binning_y;
     yarp::rosmsg::sensor_msgs::RegionOfInterest roi;
 
     CameraInfo() :
@@ -237,51 +237,51 @@ public:
         }
 
         // *** height ***
-        height = connection.expectInt();
+        height = connection.expectInt32();
 
         // *** width ***
-        width = connection.expectInt();
+        width = connection.expectInt32();
 
         // *** distortion_model ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         distortion_model.resize(len);
         if (!connection.expectBlock((char*)distortion_model.c_str(), len)) {
             return false;
         }
 
         // *** D ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         D.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&D[0], sizeof(yarp::os::NetFloat64)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&D[0], sizeof(yarp::conf::float64_t)*len)) {
             return false;
         }
 
         // *** K ***
         len = 9;
         K.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&K[0], sizeof(yarp::os::NetFloat64)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&K[0], sizeof(yarp::conf::float64_t)*len)) {
             return false;
         }
 
         // *** R ***
         len = 9;
         R.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&R[0], sizeof(yarp::os::NetFloat64)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&R[0], sizeof(yarp::conf::float64_t)*len)) {
             return false;
         }
 
         // *** P ***
         len = 12;
         P.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&P[0], sizeof(yarp::os::NetFloat64)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&P[0], sizeof(yarp::conf::float64_t)*len)) {
             return false;
         }
 
         // *** binning_x ***
-        binning_x = connection.expectInt();
+        binning_x = connection.expectInt32();
 
         // *** binning_y ***
-        binning_y = connection.expectInt();
+        binning_y = connection.expectInt32();
 
         // *** roi ***
         if (!roi.read(connection)) {
@@ -305,10 +305,10 @@ public:
         }
 
         // *** height ***
-        height = reader.expectInt();
+        height = reader.expectInt32();
 
         // *** width ***
-        width = reader.expectInt();
+        width = reader.expectInt32();
 
         // *** distortion_model ***
         if (!reader.readString(distortion_model)) {
@@ -316,50 +316,50 @@ public:
         }
 
         // *** D ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         D.resize(len);
         for (int i=0; i<len; i++) {
-            D[i] = (yarp::os::NetFloat64)connection.expectDouble();
+            D[i] = (yarp::conf::float64_t)connection.expectFloat64();
         }
 
         // *** K ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64)) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         K.resize(len);
         for (int i=0; i<len; i++) {
-            K[i] = (yarp::os::NetFloat64)connection.expectDouble();
+            K[i] = (yarp::conf::float64_t)connection.expectFloat64();
         }
 
         // *** R ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64)) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         R.resize(len);
         for (int i=0; i<len; i++) {
-            R[i] = (yarp::os::NetFloat64)connection.expectDouble();
+            R[i] = (yarp::conf::float64_t)connection.expectFloat64();
         }
 
         // *** P ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64)) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         P.resize(len);
         for (int i=0; i<len; i++) {
-            P[i] = (yarp::os::NetFloat64)connection.expectDouble();
+            P[i] = (yarp::conf::float64_t)connection.expectFloat64();
         }
 
         // *** binning_x ***
-        binning_x = reader.expectInt();
+        binning_x = reader.expectInt32();
 
         // *** binning_y ***
-        binning_y = reader.expectInt();
+        binning_y = reader.expectInt32();
 
         // *** roi ***
         if (!roi.read(connection)) {
@@ -384,41 +384,41 @@ public:
         }
 
         // *** height ***
-        connection.appendInt(height);
+        connection.appendInt32(height);
 
         // *** width ***
-        connection.appendInt(width);
+        connection.appendInt32(width);
 
         // *** distortion_model ***
-        connection.appendInt(distortion_model.length());
+        connection.appendInt32(distortion_model.length());
         connection.appendExternalBlock((char*)distortion_model.c_str(), distortion_model.length());
 
         // *** D ***
-        connection.appendInt(D.size());
+        connection.appendInt32(D.size());
         if (D.size()>0) {
-            connection.appendExternalBlock((char*)&D[0], sizeof(yarp::os::NetFloat64)*D.size());
+            connection.appendExternalBlock((char*)&D[0], sizeof(yarp::conf::float64_t)*D.size());
         }
 
         // *** K ***
         if (K.size()>0) {
-            connection.appendExternalBlock((char*)&K[0], sizeof(yarp::os::NetFloat64)*K.size());
+            connection.appendExternalBlock((char*)&K[0], sizeof(yarp::conf::float64_t)*K.size());
         }
 
         // *** R ***
         if (R.size()>0) {
-            connection.appendExternalBlock((char*)&R[0], sizeof(yarp::os::NetFloat64)*R.size());
+            connection.appendExternalBlock((char*)&R[0], sizeof(yarp::conf::float64_t)*R.size());
         }
 
         // *** P ***
         if (P.size()>0) {
-            connection.appendExternalBlock((char*)&P[0], sizeof(yarp::os::NetFloat64)*P.size());
+            connection.appendExternalBlock((char*)&P[0], sizeof(yarp::conf::float64_t)*P.size());
         }
 
         // *** binning_x ***
-        connection.appendInt(binning_x);
+        connection.appendInt32(binning_x);
 
         // *** binning_y ***
-        connection.appendInt(binning_y);
+        connection.appendInt32(binning_y);
 
         // *** roi ***
         if (!roi.write(connection)) {
@@ -430,8 +430,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(11);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(11);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -439,53 +439,53 @@ public:
         }
 
         // *** height ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)height);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(height);
 
         // *** width ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)width);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(width);
 
         // *** distortion_model ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(distortion_model.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(distortion_model.length());
         connection.appendExternalBlock((char*)distortion_model.c_str(), distortion_model.length());
 
         // *** D ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(D.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64);
+        connection.appendInt32(D.size());
         for (size_t i=0; i<D.size(); i++) {
-            connection.appendDouble((double)D[i]);
+            connection.appendFloat64(D[i]);
         }
 
         // *** K ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(K.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64);
+        connection.appendInt32(K.size());
         for (size_t i=0; i<K.size(); i++) {
-            connection.appendDouble((double)K[i]);
+            connection.appendFloat64(K[i]);
         }
 
         // *** R ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(R.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64);
+        connection.appendInt32(R.size());
         for (size_t i=0; i<R.size(); i++) {
-            connection.appendDouble((double)R[i]);
+            connection.appendFloat64(R[i]);
         }
 
         // *** P ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(P.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64);
+        connection.appendInt32(P.size());
         for (size_t i=0; i<P.size(); i++) {
-            connection.appendDouble((double)P[i]);
+            connection.appendFloat64(P[i]);
         }
 
         // *** binning_x ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)binning_x);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(binning_x);
 
         // *** binning_y ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)binning_y);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(binning_y);
 
         // *** roi ***
         if (!roi.write(connection)) {

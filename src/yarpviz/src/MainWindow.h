@@ -31,7 +31,7 @@ public:
         if(dynamic_cast<yarp::profiler::graph::ProcessVertex*>(vertex)) {
             std::stringstream lable;
             lable << vertex->property.find("name").asString().c_str()
-                  << " (" << vertex->property.find("pid").asInt() << ")";
+                  << " (" << vertex->property.find("pid").asInt32() << ")";
             setText(0, lable.str().c_str());
         }
         else if(dynamic_cast<yarp::profiler::graph::MachineVertex*> (vertex))

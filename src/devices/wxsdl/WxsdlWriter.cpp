@@ -260,8 +260,8 @@ void SDLPanel::onClick(wxMouseEvent & event) {
         */
         Bottle& bot = clicks.prepare();
         bot.clear();
-        bot.addInt(cx);
-        bot.addInt(cy);
+        bot.addInt32(cx);
+        bot.addInt32(cy);
         clicks.write();
     }
     return;
@@ -608,19 +608,19 @@ void WxsdlWriter::run() {
 bool WxsdlWriter::open(yarp::os::Searchable & config) {
     int width = config.check("w",
                              Value(128),
-                             "width of viewer").asInt();
+                             "width of viewer").asInt32();
     if (!config.check("w")) {
         width = config.check("width",
                              Value(128),
-                             "width of viewer").asInt();
+                             "width of viewer").asInt32();
     }
     int height = config.check("h",
                               Value(128),
-                              "height of viewer").asInt();
+                              "height of viewer").asInt32();
     if (!config.check("h")) {
         height = config.check("height",
                               Value(128),
-                              "height of viewer").asInt();
+                              "height of viewer").asInt32();
     }
     __title = config.check("title",
                            Value("yarpview"),
@@ -634,13 +634,13 @@ bool WxsdlWriter::open(yarp::os::Searchable & config) {
     if (config.check("x")) {
         __x = config.check("x",
                            Value(0),
-                           "x coordinate of viewer").asInt();
+                           "x coordinate of viewer").asInt32();
     }
 
     if (config.check("y")) {
         __y = config.check("y",
                            Value(0),
-                           "y coordinate of viewer").asInt();
+                           "y coordinate of viewer").asInt32();
     }
 
     if (config.check("out")) {

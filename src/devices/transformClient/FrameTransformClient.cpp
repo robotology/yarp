@@ -41,7 +41,7 @@ void Transforms_client_storage::onRead(yarp::os::Bottle &b)
         //compare network time
         /*if (tmpDT*1000<TRANSFORM_TIMEOUT)
         {
-            state = b.get(5).asInt();
+            state = b.get(5).asInt32();
         }
         else
         {
@@ -79,14 +79,14 @@ void Transforms_client_storage::onRead(yarp::os::Bottle &b)
                 FrameTransform t;
                 t.src_frame_id = bt->get(0).asString();
                 t.dst_frame_id = bt->get(1).asString();
-                t.timestamp = bt->get(2).asDouble();
-                t.translation.tX = bt->get(3).asDouble();
-                t.translation.tY = bt->get(4).asDouble();
-                t.translation.tZ = bt->get(5).asDouble();
-                t.rotation.w() = bt->get(6).asDouble();
-                t.rotation.x() = bt->get(7).asDouble();
-                t.rotation.y() = bt->get(8).asDouble();
-                t.rotation.z() = bt->get(9).asDouble();
+                t.timestamp = bt->get(2).asFloat64();
+                t.translation.tX = bt->get(3).asFloat64();
+                t.translation.tY = bt->get(4).asFloat64();
+                t.translation.tZ = bt->get(5).asFloat64();
+                t.rotation.w() = bt->get(6).asFloat64();
+                t.rotation.x() = bt->get(7).asFloat64();
+                t.rotation.y() = bt->get(8).asFloat64();
+                t.rotation.z() = bt->get(9).asFloat64();
                 m_transforms.push_back(t);
             }
         }
@@ -372,7 +372,7 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
 
     if (config.check("period"))
     {
-        m_period = config.find("period").asInt();
+        m_period = config.find("period").asInt32();
     }
     else
     {
@@ -674,14 +674,14 @@ bool yarp::dev::FrameTransformClient::setTransform(const std::string& target_fra
     b.addVocab(VOCAB_TRANSFORM_SET);
     b.addString(source_frame_id);
     b.addString(target_frame_id);
-    b.addDouble(1000.0); //transform lifetime
-    b.addDouble(tf.translation.tX);
-    b.addDouble(tf.translation.tY);
-    b.addDouble(tf.translation.tZ);
-    b.addDouble(tf.rotation.w());
-    b.addDouble(tf.rotation.x());
-    b.addDouble(tf.rotation.y());
-    b.addDouble(tf.rotation.z());
+    b.addFloat64(1000.0); //transform lifetime
+    b.addFloat64(tf.translation.tX);
+    b.addFloat64(tf.translation.tY);
+    b.addFloat64(tf.translation.tZ);
+    b.addFloat64(tf.rotation.w());
+    b.addFloat64(tf.rotation.x());
+    b.addFloat64(tf.rotation.y());
+    b.addFloat64(tf.rotation.z());
     bool ret = m_rpc_InterfaceToServer.write(b, resp);
     if (ret)
     {
@@ -721,14 +721,14 @@ bool yarp::dev::FrameTransformClient::setTransformStatic(const std::string &targ
     b.addVocab(VOCAB_TRANSFORM_SET);
     b.addString(source_frame_id);
     b.addString(target_frame_id);
-    b.addDouble(-1);
-    b.addDouble(tf.translation.tX);
-    b.addDouble(tf.translation.tY);
-    b.addDouble(tf.translation.tZ);
-    b.addDouble(tf.rotation.w());
-    b.addDouble(tf.rotation.x());
-    b.addDouble(tf.rotation.y());
-    b.addDouble(tf.rotation.z());
+    b.addFloat64(-1);
+    b.addFloat64(tf.translation.tX);
+    b.addFloat64(tf.translation.tY);
+    b.addFloat64(tf.translation.tZ);
+    b.addFloat64(tf.rotation.w());
+    b.addFloat64(tf.rotation.x());
+    b.addFloat64(tf.rotation.y());
+    b.addFloat64(tf.rotation.z());
     bool ret = m_rpc_InterfaceToServer.write(b, resp);
     if (ret)
     {

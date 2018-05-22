@@ -37,45 +37,39 @@ namespace geometry_msgs {
 class Point32 : public yarp::os::idl::WirePortable
 {
 public:
-    yarp::os::NetFloat32 x;
-    yarp::os::NetFloat32 y;
-    yarp::os::NetFloat32 z;
+    yarp::conf::float32_t x;
+    yarp::conf::float32_t y;
+    yarp::conf::float32_t z;
 
     Point32() :
-            x(0.0),
-            y(0.0),
-            z(0.0)
+            x(0.0f),
+            y(0.0f),
+            z(0.0f)
     {
     }
 
     void clear()
     {
         // *** x ***
-        x = 0.0;
+        x = 0.0f;
 
         // *** y ***
-        y = 0.0;
+        y = 0.0f;
 
         // *** z ***
-        z = 0.0;
+        z = 0.0f;
     }
 
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** x ***
-        if (!connection.expectBlock((char*)&x, 4)) {
-            return false;
-        }
+        x = connection.expectFloat32();
 
         // *** y ***
-        if (!connection.expectBlock((char*)&y, 4)) {
-            return false;
-        }
+        y = connection.expectFloat32();
 
         // *** z ***
-        if (!connection.expectBlock((char*)&z, 4)) {
-            return false;
-        }
+        z = connection.expectFloat32();
 
         return !connection.isError();
     }
@@ -89,13 +83,13 @@ public:
         }
 
         // *** x ***
-        x = reader.expectDouble();
+        x = reader.expectFloat32();
 
         // *** y ***
-        y = reader.expectDouble();
+        y = reader.expectFloat32();
 
         // *** z ***
-        z = reader.expectDouble();
+        z = reader.expectFloat32();
 
         return !connection.isError();
     }
@@ -110,33 +104,33 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** x ***
-        connection.appendBlock((char*)&x, 4);
+        connection.appendFloat32(x);
 
         // *** y ***
-        connection.appendBlock((char*)&y, 4);
+        connection.appendFloat32(y);
 
         // *** z ***
-        connection.appendBlock((char*)&z, 4);
+        connection.appendFloat32(z);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(3);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(3);
 
         // *** x ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)x);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(x);
 
         // *** y ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)y);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(y);
 
         // *** z ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)z);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(z);
 
         connection.convertTextMode();
         return !connection.isError();

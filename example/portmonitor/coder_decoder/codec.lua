@@ -28,7 +28,7 @@ require("yarp")
 -- @return Boolean
 --
 PortMonitor.create = function(options)
-    isCoder = (options:find("sender_side"):asInt() == 1)
+    isCoder = (options:find("sender_side"):asInt32() == 1)
     if isCoder == true then
         print("codec.lua: I will encode whatever i get!")
     else

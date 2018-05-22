@@ -42,14 +42,14 @@ class MapMetaData : public yarp::os::idl::WirePortable
 {
 public:
     yarp::rosmsg::TickTime map_load_time;
-    yarp::os::NetFloat32 resolution;
-    yarp::os::NetUint32 width;
-    yarp::os::NetUint32 height;
+    yarp::conf::float32_t resolution;
+    std::uint32_t width;
+    std::uint32_t height;
     yarp::rosmsg::geometry_msgs::Pose origin;
 
     MapMetaData() :
             map_load_time(),
-            resolution(0.0),
+            resolution(0.0f),
             width(0),
             height(0),
             origin()
@@ -62,7 +62,7 @@ public:
         map_load_time.clear();
 
         // *** resolution ***
-        resolution = 0.0;
+        resolution = 0.0f;
 
         // *** width ***
         width = 0;
@@ -82,15 +82,13 @@ public:
         }
 
         // *** resolution ***
-        if (!connection.expectBlock((char*)&resolution, 4)) {
-            return false;
-        }
+        resolution = connection.expectFloat32();
 
         // *** width ***
-        width = connection.expectInt();
+        width = connection.expectInt32();
 
         // *** height ***
-        height = connection.expectInt();
+        height = connection.expectInt32();
 
         // *** origin ***
         if (!origin.read(connection)) {
@@ -114,13 +112,13 @@ public:
         }
 
         // *** resolution ***
-        resolution = reader.expectDouble();
+        resolution = reader.expectFloat32();
 
         // *** width ***
-        width = reader.expectInt();
+        width = reader.expectInt32();
 
         // *** height ***
-        height = reader.expectInt();
+        height = reader.expectInt32();
 
         // *** origin ***
         if (!origin.read(connection)) {
@@ -145,13 +143,13 @@ public:
         }
 
         // *** resolution ***
-        connection.appendBlock((char*)&resolution, 4);
+        connection.appendFloat32(resolution);
 
         // *** width ***
-        connection.appendInt(width);
+        connection.appendInt32(width);
 
         // *** height ***
-        connection.appendInt(height);
+        connection.appendInt32(height);
 
         // *** origin ***
         if (!origin.write(connection)) {
@@ -163,8 +161,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(5);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(5);
 
         // *** map_load_time ***
         if (!map_load_time.write(connection)) {
@@ -172,16 +170,16 @@ public:
         }
 
         // *** resolution ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)resolution);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(resolution);
 
         // *** width ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)width);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(width);
 
         // *** height ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)height);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(height);
 
         // *** origin ***
         if (!origin.write(connection)) {

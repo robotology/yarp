@@ -146,7 +146,7 @@ bool NameServiceOnTriples::cmdQuery(NameTripleState& act, bool nested) {
             q.addString("ip");
             q.addString(host);
             q.addString("port");
-            q.addInt(sock);
+            q.addInt32(sock);
             q.addString("type");
             q.addString(carrier);
         } else {
@@ -158,7 +158,7 @@ bool NameServiceOnTriples::cmdQuery(NameTripleState& act, bool nested) {
             bip.addString(host);
             Bottle bnum;
             bnum.addString("port_number");
-            bnum.addInt(sock);
+            bnum.addInt32(sock);
             Bottle bcarrier;
             bcarrier.addString("carrier");
             bcarrier.addString(carrier);
@@ -172,7 +172,7 @@ bool NameServiceOnTriples::cmdQuery(NameTripleState& act, bool nested) {
         if (act.bottleMode) {
             Bottle bstate;
             bstate.addString("error");
-            bstate.addInt(-2);
+            bstate.addInt32(-2);
             bstate.addString("port not known");
             q.addString("port");
             q.addList() = bstate;
@@ -263,7 +263,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
         }
     }
     if (act.cmd.size()>at) {
-        sock = act.cmd.get(at).asInt();
+        sock = act.cmd.get(at).asInt32();
         at++;
     } else {
         if (carrier=="topic") {

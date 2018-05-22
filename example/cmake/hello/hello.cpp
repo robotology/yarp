@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     Bottle&out = outPort.prepare();
     out.clear();
     out.addString("Hello");
-    out.addInt(i);
+    out.addInt32(i);
     printf("Sending %s\n", out.toString().c_str());
 
     // send the message

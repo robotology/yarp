@@ -323,7 +323,7 @@ public:
     NetInt32 x;
     NetInt32 y;
     Target() {
-        tag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
+        tag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT32;
         len = 2;
     }
 };
@@ -348,13 +348,13 @@ public:
   int x;
   int y;
   virtual bool write(ConnectionWriter& connection) {
-    connection.appendInt(x);
-    connection.appendInt(y);
+    connection.appendInt32(x);
+    connection.appendInt32(y);
     return true;
   }
   virtual bool read(ConnectionReader& connection) {
-    x = connection.expectInt();
-    y = connection.expectInt();
+    x = connection.expectInt32();
+    y = connection.expectInt32();
     return !connection.isError();
   }
 };
@@ -377,10 +377,10 @@ rpc"), or a web-browser, etc.  For example, we could make Target's
 write method be:
 \code
   virtual bool write(ConnectionWriter& connection) {
-    connection.appendInt(BOTTLE_TAG_LIST+BOTTLE_TAG_INT);
-    connection.appendInt(2); // two elements
-    connection.appendInt(x);
-    connection.appendInt(y);
+    connection.appendInt32(BOTTLE_TAG_LIST+BOTTLE_TAG_INT32);
+    connection.appendInt32(2); // two elements
+    connection.appendInt32(x);
+    connection.appendInt32(y);
     connection.convertTextMode(); // if connection is text-mode, convert!
     return true;
   }
@@ -398,12 +398,12 @@ The corresponding read method would be:
 \code
   virtual bool read(ConnectionReader& connection) {
     connection.convertTextMode(); // if connection is text-mode, convert!
-    int tag = connection.expectInt();
-    if (tag!=BOTTLE_TAG_LIST+BOTTLE_TAG_INT) return false;
-    int ct = connection.expectInt();
+    int tag = connection.expectInt32();
+    if (tag!=BOTTLE_TAG_LIST+BOTTLE_TAG_INT32) return false;
+    int ct = connection.expectInt32();
     if (ct!=2) return false;
-    x = connection.expectInt();
-    y = connection.expectInt();
+    x = connection.expectInt32();
+    y = connection.expectInt32();
     return !connection.isError();
   }
 \endcode

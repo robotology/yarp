@@ -49,7 +49,7 @@ public:
         //printf("service provider reading data\n");
         receive.read(connection);
         //printf("service provider read data\n");
-        receive.addInt(5);
+        receive.addInt32(5);
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=nullptr) {
             //printf("service provider replying\n");
@@ -144,7 +144,7 @@ public:
         Bottle cmd("10"), reply;
         Network::write("/server",cmd,reply);
         checkEqual(reply.size(),2,"got append");
-        checkEqual(reply.get(1).asInt(),5,"append is correct");
+        checkEqual(reply.get(1).asInt32(),5,"append is correct");
         server.close();
     }
 
@@ -156,7 +156,7 @@ public:
         Value *v = Network::getProperty("/foo","my_prop");
         checkTrue(v!=nullptr,"got property");
         if (v!=nullptr) {
-            checkEqual(v->asInt(),15,"recover property");
+            checkEqual(v->asInt32(),15,"recover property");
             delete v;
         }
         Network::unregisterName("/foo");

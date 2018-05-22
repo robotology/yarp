@@ -42,6 +42,10 @@
 #ifdef YARP_HAS_ACE
 # include <ace/config.h>
 # include <ace/Init_ACE.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 #endif
 
 #include <cstdio>
@@ -120,7 +124,7 @@ static int noteDud(const Contact& src)
     Bottle cmd, reply;
     cmd.addString("announce");
     cmd.addString(src.getName().c_str());
-    cmd.addInt(0);
+    cmd.addInt32(0);
     ContactStyle style;
     bool ok = NetworkBase::writeToNameServer(cmd,
                                              reply,
@@ -243,8 +247,8 @@ static int enactConnection(const Contact& src,
         return 1;
     }
     std::string msg = "";
-    if (reply.get(0).isInt()) {
-        ok = (reply.get(0).asInt()==0);
+    if (reply.get(0).isInt32()) {
+        ok = (reply.get(0).asInt32()==0);
         msg = reply.get(1).asString();
     } else {
         // older protocol
@@ -766,15 +770,15 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
         Bottle::getNullBottle();
         std::string quiet = getEnvironment("YARP_QUIET");
         Bottle b2(quiet.c_str());
-        if (b2.get(0).asInt()>0) {
-            Logger::get().setVerbosity(-b2.get(0).asInt());
+        if (b2.get(0).asInt32()>0) {
+            Logger::get().setVerbosity(-b2.get(0).asInt32());
         } else {
             std::string verbose = getEnvironment("YARP_VERBOSE");
             Bottle b(verbose.c_str());
-            if (b.get(0).asInt()>0) {
+            if (b.get(0).asInt32()>0) {
                 YARP_INFO(Logger::get(),
                           "YARP_VERBOSE environment variable is set");
-                Logger::get().setVerbosity(b.get(0).asInt());
+                Logger::get().setVerbosity(b.get(0).asInt32());
             }
         }
         std::string stack = getEnvironment("YARP_STACK_SIZE");
@@ -1023,11 +1027,11 @@ static bool getPortQos(const std::string& port, const std::string& unit,
 
     Bottle& sched = reply.findGroup("sched");
     Bottle* sched_prop = sched.find("sched").asList();
-    style.setThreadPriority(sched_prop->find("priority").asInt());
-    style.setThreadPolicy(sched_prop->find("policy").asInt());
+    style.setThreadPriority(sched_prop->find("priority").asInt32());
+    style.setThreadPolicy(sched_prop->find("policy").asInt32());
     Bottle& qos = reply.findGroup("qos");
     Bottle* qos_prop = qos.find("qos").asList();
-    style.setPacketPrioritybyTOS(qos_prop->find("tos").asInt());
+    style.setPacketPrioritybyTOS(qos_prop->find("tos").asInt32());
 
     return true;
 }

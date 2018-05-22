@@ -42,11 +42,11 @@ int main(int argc, char **argv)
     parameters.fromCommand(argc, argv);
 
     std::string part=parameters.find("part").asString();
-    int id=parameters.find("id").asInt();
+    int id=parameters.find("id").asInt32();
     double time=0;
     if (parameters.check("time"))
         {
-            time=parameters.find("time").asDouble();
+            time=parameters.find("time").asFloat64();
         }
     else
         time=-1;

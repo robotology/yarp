@@ -244,23 +244,23 @@ bool depthCameraDriver::setParams()
     //ACCURACY
     if (params_map[accuracy].isSetting && ret)
     {
-        if (!params_map[accuracy].val[0].isDouble() )
+        if (!params_map[accuracy].val[0].isFloat64() )
             settingErrorMsg("Param " + params_map[accuracy].name + " is not a double as it should be.", ret);
 
-        if (! setDepthAccuracy(params_map[accuracy].val[0].asDouble() ) )
+        if (! setDepthAccuracy(params_map[accuracy].val[0].asFloat64() ) )
             settingErrorMsg("Setting param " + params_map[accuracy].name + " failed... quitting.", ret);
     }
 
     //CLIP_PLANES
     if (params_map[clipPlanes].isSetting && ret)
     {
-        if (!params_map[clipPlanes].val[0].isDouble() )
+        if (!params_map[clipPlanes].val[0].isFloat64() )
             settingErrorMsg("Param " + params_map[clipPlanes].name + " is not a double as it should be.", ret);
 
-        if (!params_map[clipPlanes].val[1].isDouble() )
+        if (!params_map[clipPlanes].val[1].isFloat64() )
             settingErrorMsg("Param " + params_map[clipPlanes].name + " is not a double as it should be.", ret);
 
-        if (! setDepthClipPlanes(params_map[clipPlanes].val[0].asDouble(), params_map[clipPlanes].val[1].asDouble() ) )
+        if (! setDepthClipPlanes(params_map[clipPlanes].val[0].asFloat64(), params_map[clipPlanes].val[1].asFloat64() ) )
             settingErrorMsg("Setting param " + params_map[clipPlanes].name + " failed... quitting.", ret);
     }
 
@@ -271,10 +271,10 @@ bool depthCameraDriver::setParams()
         p1 = params_map[depth_Fov].val[0];
         p2 = params_map[depth_Fov].val[1];
 
-        if (!p1.isDouble() || !p2.isDouble() )
+        if (!p1.isFloat64() || !p2.isFloat64() )
             settingErrorMsg("Param " + params_map[depth_Fov].name + " is not a double as it should be.", ret);
 
-        if (! setDepthFOV(p1.asDouble(), p2.asDouble() ) )
+        if (! setDepthFOV(p1.asFloat64(), p2.asFloat64() ) )
             settingErrorMsg("Setting param " + params_map[depth_Fov].name + " failed... quitting.", ret);
     }
 
@@ -287,12 +287,12 @@ bool depthCameraDriver::setParams()
         p1 = params_map[rgb_Fov].val[0];
         p2 = params_map[rgb_Fov].val[1];
 
-        if (!p1.isDouble() || !p2.isDouble() )
+        if (!p1.isFloat64() || !p2.isFloat64() )
         {
             settingErrorMsg("Param " + params_map[rgb_Fov].name + " is not a double as it should be.", ret);
         }
 
-        if (! setRgbFOV(p1.asDouble(), p2.asDouble() ) )
+        if (! setRgbFOV(p1.asFloat64(), p2.asFloat64() ) )
         {
             settingErrorMsg("Setting param " + params_map[rgb_Fov].name + " failed... quitting.", ret);
         }
@@ -305,12 +305,12 @@ bool depthCameraDriver::setParams()
         p1 = params_map[depthRes].val[0];
         p2 = params_map[depthRes].val[1];
 
-        if (!p1.isInt() || !p2.isInt() )
+        if (!p1.isInt32() || !p2.isInt32() )
         {
             settingErrorMsg("Param " + params_map[depthRes].name + " is not a int as it should be.", ret);
         }
 
-        if (! setDepthResolution(p1.asInt(), p2.asInt()))
+        if (! setDepthResolution(p1.asInt32(), p2.asInt32()))
         {
             settingErrorMsg("Setting param " + params_map[depthRes].name + " failed... quitting.", ret);
         }
@@ -323,12 +323,12 @@ bool depthCameraDriver::setParams()
         p1 = params_map[rgbRes].val[0];
         p2 = params_map[rgbRes].val[1];
 
-        if (!p1.isInt() || !p2.isInt() )
+        if (!p1.isInt32() || !p2.isInt32() )
         {
             settingErrorMsg("Param " + params_map[rgbRes].name + " is not a int as it should be.", ret);
         }
 
-        if (! setRgbResolution(p1.asInt(), p2.asInt()))
+        if (! setRgbResolution(p1.asInt32(), p2.asInt32()))
         {
             settingErrorMsg("Setting param " + params_map[rgbRes].name + " failed... quitting.", ret);
         }
@@ -445,7 +445,7 @@ int depthCameraDriver::getRgbHeight()
 {
     if (params_map[rgbRes].isDescription)
     {
-        return params_map[rgbRes].val.at(1).asInt();
+        return params_map[rgbRes].val.at(1).asInt32();
     }
 
     return m_imageStream.getVideoMode().getResolutionY();
@@ -455,7 +455,7 @@ int depthCameraDriver::getRgbWidth()
 {
     if (params_map[rgbRes].isDescription)
     {
-        return params_map[rgbRes].val.at(0).asInt();
+        return params_map[rgbRes].val.at(0).asInt32();
     }
 
     return m_imageStream.getVideoMode().getResolutionX();
@@ -471,7 +471,7 @@ bool depthCameraDriver::getRgbResolution(int &width, int &height)
 {
     if (params_map[rgbRes].isDescription)
     {
-        return params_map[rgbRes].val.at(0).asInt();
+        return params_map[rgbRes].val.at(0).asInt32();
     }
     else{
         width  = m_imageStream.getVideoMode().getResolutionX();
@@ -583,8 +583,8 @@ bool depthCameraDriver::getRgbFOV(double &horizontalFov, double &verticalFov)
 {
     if (params_map[rgb_Fov].isDescription)
     {
-        horizontalFov = params_map[rgb_Fov].val[0].asDouble();
-        verticalFov   = params_map[rgb_Fov].val[1].asDouble();
+        horizontalFov = params_map[rgb_Fov].val[0].asFloat64();
+        verticalFov   = params_map[rgb_Fov].val[1].asFloat64();
         return true;
     }
     horizontalFov = m_imageStream.getHorizontalFieldOfView() * RAD2DEG;
@@ -648,7 +648,7 @@ int  depthCameraDriver::getDepthHeight()
 {
     if (params_map[depthRes].isDescription)
     {
-        return params_map[depthRes].val[1].asDouble();
+        return params_map[depthRes].val[1].asFloat64();
     }
     return m_depthStream.getVideoMode().getResolutionY();
 }
@@ -657,7 +657,7 @@ int  depthCameraDriver::getDepthWidth()
 {
     if (params_map[depthRes].isDescription)
     {
-        return params_map[depthRes].val[0].asDouble();
+        return params_map[depthRes].val[0].asFloat64();
     }
     return m_depthStream.getVideoMode().getResolutionX();
 }
@@ -666,8 +666,8 @@ bool depthCameraDriver::getDepthFOV(double& horizontalFov, double& verticalFov)
 {
     if (params_map[depth_Fov].isDescription)
     {
-        horizontalFov = params_map[depth_Fov].val[0].asDouble();
-        verticalFov   = params_map[depth_Fov].val[1].asDouble();
+        horizontalFov = params_map[depth_Fov].val[0].asFloat64();
+        verticalFov   = params_map[depth_Fov].val[1].asFloat64();
         return true;
     }
     horizontalFov = m_depthStream.getHorizontalFieldOfView() * RAD2DEG;
@@ -684,7 +684,7 @@ double depthCameraDriver::getDepthAccuracy()
 {
     if (params_map[accuracy].isDescription)
     {
-        return params_map[accuracy].val[0].asDouble();
+        return params_map[accuracy].val[0].asFloat64();
     }
     return m_depthStream.getVideoMode().getPixelFormat() == PIXEL_FORMAT_DEPTH_1_MM ? 0.001 : 0.0001;
 }
@@ -693,8 +693,8 @@ bool depthCameraDriver::getDepthClipPlanes(double& nearPlane, double& farPlane)
 {
     if (params_map[clipPlanes].isDescription)
     {
-        nearPlane = params_map[clipPlanes].val[0].asDouble();
-        farPlane  = params_map[clipPlanes].val[1].asDouble();
+        nearPlane = params_map[clipPlanes].val[0].asFloat64();
+        farPlane  = params_map[clipPlanes].val[1].asFloat64();
         return true;
     }
     double factor;

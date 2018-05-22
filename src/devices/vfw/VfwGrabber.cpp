@@ -237,7 +237,7 @@ bool VfwGrabber::open(yarp::os::Searchable& config) {
     if (system_resource!=NULL) {
         int index = config.check("index",
                                  yarp::os::Value(0),
-                                 "VFW device index").asInt();
+                                 "VFW device index").asInt32();
         int result = icvOpenCAM_VFW(&HELPER(system_resource),index);
         if (!result) {
             printf("failed to find camera\n");

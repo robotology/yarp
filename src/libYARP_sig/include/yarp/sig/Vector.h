@@ -76,12 +76,12 @@ inline int BottleTagMap () {
 
 template<>
 inline int BottleTagMap <double> () {
-    return BOTTLE_TAG_DOUBLE;
+    return BOTTLE_TAG_FLOAT64;
   }
 
 template<>
 inline int BottleTagMap <int> () {
-    return BOTTLE_TAG_INT;
+    return BOTTLE_TAG_INT32;
   }
 
 /**

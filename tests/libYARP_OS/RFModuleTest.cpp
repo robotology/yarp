@@ -23,7 +23,7 @@ class MyModule : public RFModule
 public:
     virtual bool respond(const Bottle& command, Bottle& reply) override
     {
-        if (command.get(0).isInt())
+        if (command.get(0).isInt32())
         {
             reply = command;
             return true;
@@ -70,9 +70,9 @@ public:
         Network::sync("/p1");
         Network::sync("/p2");
         Bottle out, in;
-        out.addInt(42);
+        out.addInt32(42);
         p1.write(out,in);
-        checkEqual(in.get(0).asInt(), out.get(0).asInt(), "[Test] Port response");
+        checkEqual(in.get(0).asInt32(), out.get(0).asInt32(), "[Test] Port response");
     }
 
     void testThread()

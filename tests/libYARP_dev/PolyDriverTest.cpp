@@ -29,9 +29,9 @@ public:
     virtual bool open(yarp::os::Searchable& config) override
     {
         w = config.check("width",yarp::os::Value(128),
-                         "desired width of test image").asInt();
+                         "desired width of test image").asInt32();
         h = config.check("height",yarp::os::Value(128),
-                         "desired height of test image").asInt();
+                         "desired height of test image").asInt32();
         return true;
 
     }
@@ -149,7 +149,7 @@ name /mymotor\n\
         PolyDriver dd(p);
         Bottle cmd("get axes"), reply;
         Network::write(Contact("/mymotor/rpc:i"), cmd, reply);
-        checkEqual(reply.get(2).asInt(),10,"axis count is correct");
+        checkEqual(reply.get(2).asInt32(),10,"axis count is correct");
     }
 
     void testControlBoard2() {

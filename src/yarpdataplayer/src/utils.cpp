@@ -291,7 +291,7 @@ bool Utilities::setupDataFromParts(partsData &part)
                 timeStampCol = column;
             }
 
-            part.timestamp.push_back( b.get(timeStampCol).asDouble() );
+            part.timestamp.push_back( b.get(timeStampCol).asFloat64() );
             itr++;
         }
         allTimeStamps.push_back( part.timestamp[0] );   //save all first timeStamps dumped for later ease of use

@@ -9,65 +9,64 @@
 
 #include <yarp/os/NetUint16.h>
 
-#ifdef YARP_INT16
 #ifndef YARP_LITTLE_ENDIAN
 
 using namespace yarp;
 using namespace yarp::os;
 
 
-unsigned YARP_INT16 NetUint16::swap(unsigned YARP_INT16 x) const {
+std::uint16_t NetUint16::swap(std::uint16_t x) const {
     return (x>>8) | ((x<<8) & 0xff00);
 }
 
-unsigned YARP_INT16 NetUint16::get() const {
-    return (unsigned YARP_INT16)swap(raw_value);
+std::uint16_t NetUint16::get() const {
+    return (std::uint16_t)swap(raw_value);
 }
 
-void NetUint16::set(unsigned YARP_INT16 v) {
-    raw_value = (unsigned YARP_INT16)swap((unsigned YARP_INT16)v);
+void NetUint16::set(std::uint16_t v) {
+    raw_value = (std::uint16_t)swap((std::uint16_t)v);
 }
 
 NetUint16::NetUint16() {
 }
 
-NetUint16::NetUint16(unsigned YARP_INT16 val) {
+NetUint16::NetUint16(std::uint16_t val) {
     set(val);
 }
 
-NetUint16::operator unsigned YARP_INT16() const {
+NetUint16::operator std::uint16_t() const {
     return get();
 }
 
-unsigned YARP_INT16 NetUint16::operator+(unsigned YARP_INT16 v) const {
+std::uint16_t NetUint16::operator+(std::uint16_t v) const {
     return get()+v;
 }
 
-unsigned YARP_INT16 NetUint16::operator-(unsigned YARP_INT16 v) const {
+std::uint16_t NetUint16::operator-(std::uint16_t v) const {
     return get()-v;
 }
 
-unsigned YARP_INT16 NetUint16::operator*(unsigned YARP_INT16 v) const {
+std::uint16_t NetUint16::operator*(std::uint16_t v) const {
     return get()*v;
 }
 
-unsigned YARP_INT16 NetUint16::operator/(unsigned YARP_INT16 v) const {
+std::uint16_t NetUint16::operator/(std::uint16_t v) const {
     return get()/v;
 }
 
-void NetUint16::operator+=(unsigned YARP_INT16 v) {
+void NetUint16::operator+=(std::uint16_t v) {
     set(get()+v);
 }
 
-void NetUint16::operator-=(unsigned YARP_INT16 v) {
+void NetUint16::operator-=(std::uint16_t v) {
     set(get()-v);
 }
 
-void NetUint16::operator*=(unsigned YARP_INT16 v) {
+void NetUint16::operator*=(std::uint16_t v) {
     set(get()*v);
 }
 
-void NetUint16::operator/=(unsigned YARP_INT16 v) {
+void NetUint16::operator/=(std::uint16_t v) {
     set(get()/v);
 }
 
@@ -81,4 +80,3 @@ void NetUint16::operator--(int) {
 
 
 #endif // YARP_LITTLE_ENDIAN
-#endif // YARP_INT16

@@ -52,10 +52,12 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/NestedContact.h
                  include/yarp/os/NetFloat32.h
                  include/yarp/os/NetFloat64.h
+                 include/yarp/os/NetInt8.h
                  include/yarp/os/NetInt16.h
                  include/yarp/os/NetInt32.h
                  include/yarp/os/NetInt64.h
                  include/yarp/os/NetType.h
+                 include/yarp/os/NetUint8.h
                  include/yarp/os/NetUint16.h
                  include/yarp/os/NetUint32.h
                  include/yarp/os/NetUint64.h
@@ -190,6 +192,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/SemaphoreImpl.h
                       include/yarp/os/impl/SocketTwoWayStream.h
                       include/yarp/os/impl/SplitString.h
+                      include/yarp/os/impl/Storable.h
                       include/yarp/os/impl/StreamConnectionReader.h
                       include/yarp/os/impl/TcpAcceptor.h
                       include/yarp/os/impl/TcpCarrier.h
@@ -301,6 +304,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/SocketTwoWayStream.cpp
                  src/SplitString.cpp
                  src/Stamp.cpp
+                 src/Storable.cpp
                  src/StreamConnectionReader.cpp
                  src/SystemClock.cpp
                  src/SystemInfo.cpp

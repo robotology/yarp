@@ -38,7 +38,7 @@ class PoseWithCovariance : public yarp::os::idl::WirePortable
 {
 public:
     yarp::rosmsg::geometry_msgs::Pose pose;
-    std::vector<yarp::os::NetFloat64> covariance;
+    std::vector<yarp::conf::float64_t> covariance;
 
     PoseWithCovariance() :
             pose(),
@@ -67,7 +67,7 @@ public:
         // *** covariance ***
         int len = 36;
         covariance.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&covariance[0], sizeof(yarp::os::NetFloat64)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&covariance[0], sizeof(yarp::conf::float64_t)*len)) {
             return false;
         }
 
@@ -88,13 +88,13 @@ public:
         }
 
         // *** covariance ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         covariance.resize(len);
         for (int i=0; i<len; i++) {
-            covariance[i] = (yarp::os::NetFloat64)connection.expectDouble();
+            covariance[i] = (yarp::conf::float64_t)connection.expectFloat64();
         }
 
         return !connection.isError();
@@ -116,7 +116,7 @@ public:
 
         // *** covariance ***
         if (covariance.size()>0) {
-            connection.appendExternalBlock((char*)&covariance[0], sizeof(yarp::os::NetFloat64)*covariance.size());
+            connection.appendExternalBlock((char*)&covariance[0], sizeof(yarp::conf::float64_t)*covariance.size());
         }
 
         return !connection.isError();
@@ -124,8 +124,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(2);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(2);
 
         // *** pose ***
         if (!pose.write(connection)) {
@@ -133,10 +133,10 @@ public:
         }
 
         // *** covariance ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(covariance.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64);
+        connection.appendInt32(covariance.size());
         for (size_t i=0; i<covariance.size(); i++) {
-            connection.appendDouble((double)covariance[i]);
+            connection.appendFloat64(covariance[i]);
         }
 
         connection.convertTextMode();

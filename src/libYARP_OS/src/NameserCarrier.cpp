@@ -67,7 +67,7 @@ void yarp::os::impl::NameserTwoWayStream::endPacket() {
     delegate->endPacket();
 }
 
-YARP_SSIZE_T yarp::os::impl::NameserTwoWayStream::read(const Bytes& b) {
+yarp::conf::ssize_t yarp::os::impl::NameserTwoWayStream::read(const Bytes& b) {
     // assume it is ok for name_ser to go byte-by-byte
     // since this protocol will be phased out
     if (b.length()<=0) {
@@ -75,7 +75,7 @@ YARP_SSIZE_T yarp::os::impl::NameserTwoWayStream::read(const Bytes& b) {
     }
     Bytes tmp(b.get(), 1);
     while (swallowRead.length()>0) {
-        YARP_SSIZE_T r = delegate->getInputStream().read(tmp);
+        yarp::conf::ssize_t r = delegate->getInputStream().read(tmp);
         if (r<=0) { return r; }
         swallowRead = swallowRead.substr(1, swallowRead.length()-1);
     }
@@ -84,7 +84,7 @@ YARP_SSIZE_T yarp::os::impl::NameserTwoWayStream::read(const Bytes& b) {
         pendingRead = pendingRead.substr(1, pendingRead.length()-1);
         return 1;
     }
-    YARP_SSIZE_T r = delegate->getInputStream().read(tmp);
+    yarp::conf::ssize_t r = delegate->getInputStream().read(tmp);
     if (r<=0) { return r; }
     if (tmp.get()[0]=='\n') {
         pendingRead = "";

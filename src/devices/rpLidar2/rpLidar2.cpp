@@ -50,8 +50,8 @@ bool RpLidar2::open(yarp::os::Searchable& config)
         yarp::os::Searchable& general_config = config.findGroup("GENERAL");
         m_clip_max_enable = general_config.check("clip_max");
         m_clip_min_enable = general_config.check("clip_min");
-        if (m_clip_max_enable)                                    { m_max_distance = general_config.find("clip_max").asDouble(); }
-        if (m_clip_min_enable)                                    { m_min_distance = general_config.find("clip_min").asDouble(); }
+        if (m_clip_max_enable)                                    { m_max_distance = general_config.find("clip_max").asFloat64(); }
+        if (m_clip_min_enable)                                    { m_min_distance = general_config.find("clip_min").asFloat64(); }
         if (general_config.check("max_angle")   == false)         { yError()  << "Missing max_angle param in GENERAL group"; return false;    }
         if (general_config.check("min_angle")   == false)         { yError()  << "Missing min_angle param in GENERAL group"; return false;    }
         if (general_config.check("resolution")  == false)         { yError()  << "Missing resolution param in GENERAL group"; return false;  }
@@ -59,20 +59,20 @@ bool RpLidar2::open(yarp::os::Searchable& config)
         if (general_config.check("serial_baudrate") == false)     { yError()  << "Missing serial_baudrate param in GENERAL group"; return false; }
         if (general_config.check("sample_buffer_life") == false)  { yError()  << "Missing sample_buffer_life param in GENERAL group"; return false; }
 
-        baudrate    = general_config.find("serial_baudrate").asInt();
+        baudrate    = general_config.find("serial_baudrate").asInt32();
         serial      = general_config.find("serial_port").asString();
-        m_max_angle   = general_config.find("max_angle").asDouble();
-        m_min_angle   = general_config.find("min_angle").asDouble();
-        m_resolution  = general_config.find("resolution").asDouble();
-        m_buffer_life = general_config.find("sample_buffer_life").asInt();
-        m_do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt()!=0);
+        m_max_angle   = general_config.find("max_angle").asFloat64();
+        m_min_angle   = general_config.find("min_angle").asFloat64();
+        m_resolution  = general_config.find("resolution").asFloat64();
+        m_buffer_life = general_config.find("sample_buffer_life").asInt32();
+        m_do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt32()!=0);
         if (general_config.check("motor_pwm"))
         {
-            m_pwm_val     = general_config.find("motor_pwm").asInt();
+            m_pwm_val     = general_config.find("motor_pwm").asInt32();
         }
         if (general_config.check("thread_period"))
         {
-            int   thread_period = general_config.find("thread_period").asInt();
+            int   thread_period = general_config.find("thread_period").asInt32();
             this->setRate(thread_period);
         }
     }
@@ -97,8 +97,8 @@ bool RpLidar2::open(yarp::os::Searchable& config)
             for (size_t s = 1; s < s_maxs; s++)
             {
                 Range_t range;
-                range.max = maxs.get(s).asDouble();
-                range.min = mins.get(s).asDouble();
+                range.max = maxs.get(s).asFloat64();
+                range.min = mins.get(s).asFloat64();
                 if (range.max >= 0 && range.max <= 360 &&
                     range.min >= 0 && range.min <= 360 &&
                     range.max > range.min)

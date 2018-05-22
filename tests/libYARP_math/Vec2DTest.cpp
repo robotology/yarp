@@ -83,18 +83,18 @@ public:
         Bottle bot;
         Vec2D<int> vecbot1 (1,2);
         bool copy1 = yarp::os::Portable::copyPortable(vecbot1, bot);
-        checkTrue(copy1 && bot.size() == 2 && bot.get(0).asInt() == vecbot1.x && bot.get(1).asInt() == vecbot1.y, "copyPortable ok");
+        checkTrue(copy1 && bot.size() == 2 && bot.get(0).asInt32() == vecbot1.x && bot.get(1).asInt32() == vecbot1.y, "copyPortable ok");
 
         Vec2D<double> vecbot2 (1.1,2.2);
         bool copy2 = yarp::os::Portable::copyPortable(vecbot2, bot);
-        checkTrue(copy2 && bot.size() == 2 && bot.get(0).asInt() == vecbot1.x && bot.get(1).asInt() == vecbot1.y, "copyPortable ok");
+        checkTrue(copy2 && bot.size() == 2 && bot.get(0).asInt32() == vecbot1.x && bot.get(1).asInt32() == vecbot1.y, "copyPortable ok");
 
-        Bottle bot1; bot1.addInt(7); bot1.addInt(9);
+        Bottle bot1; bot1.addInt32(7); bot1.addInt32(9);
         Vec2D<int> vecbot3;
         bool copy3 = yarp::os::Portable::copyPortable(bot1, vecbot3);
         checkTrue(copy3 && vecbot3.x == 7 && vecbot3.y == 9, "copyPortable ok");
 
-        Bottle bot2; bot2.addDouble(7.1); bot2.addDouble(9.1);
+        Bottle bot2; bot2.addFloat64(7.1); bot2.addFloat64(9.1);
         Vec2D<double> vecbot4;
         bool copy4 = yarp::os::Portable::copyPortable(bot2, vecbot4);
         checkTrue(copy4 && vecbot4.x == 7.1 && vecbot4.y == 9.1, "copyPortable ok");

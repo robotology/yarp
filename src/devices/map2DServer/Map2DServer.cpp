@@ -230,9 +230,9 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
                 Map2DLocation loc = it->second;
                 yInfo() << "Retrieved location " << name << "at " << loc.toString();
                 out.addString(loc.map_id);
-                out.addDouble(loc.x);
-                out.addDouble(loc.y);
-                out.addDouble(loc.theta);
+                out.addFloat64(loc.x);
+                out.addFloat64(loc.y);
+                out.addFloat64(loc.theta);
             }
             else
             {
@@ -248,9 +248,9 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             std::string name = in.get(2).asString();
 
             location.map_id = in.get(3).asString();
-            location.x      = in.get(4).asDouble();
-            location.y      = in.get(5).asDouble();
-            location.theta  = in.get(6).asDouble();
+            location.x      = in.get(4).asFloat64();
+            location.y      = in.get(5).asFloat64();
+            location.theta  = in.get(6).asFloat64();
 
             m_locations_storage.insert(std::pair<std::string, Map2DLocation>(name, location));
             yInfo() << "Added location " << name << "at " << location.toString();
@@ -604,7 +604,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
             yError() << "Map2DServer: Missing 'enable_ros_publisher' in ROS group";
             return false;
         }
-        if (ROS_config.find("enable_ros_publisher").asInt() == 1 || ROS_config.find("enable_ros_publisher").asString() == "true")
+        if (ROS_config.find("enable_ros_publisher").asInt32() == 1 || ROS_config.find("enable_ros_publisher").asString() == "true")
         {
             m_enable_publish_ros_map = true;
             yInfo() << "Map2DServer: Enabled ROS publisher";
@@ -614,7 +614,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
             yError() << "Map2DServer: Missing 'enable_ros_subscriber' in ROS group";
             return false;
         }
-        if (ROS_config.find("enable_ros_subscriber").asInt() == 1 || ROS_config.find("enable_ros_subscriber").asString() == "true")
+        if (ROS_config.find("enable_ros_subscriber").asInt32() == 1 || ROS_config.find("enable_ros_subscriber").asString() == "true")
         {
             m_enable_subscribe_ros_map = true;
             yInfo() << "Map2DServer: Enabled ROS subscriber";

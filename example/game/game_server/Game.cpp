@@ -86,7 +86,7 @@ void Game::setMaze(const char *fname) {
                 v = SYS(system_resource).game_things.create();
                 SYS(system_resource).game_things.getThing(v).set(x,y,v);
             }
-            if (v.asInt()!=0) {
+            if (v.asInt32()!=0) {
                 m.set(x,y,v);
                 ct++;
             }
@@ -126,33 +126,33 @@ Thing& Game::newThing(bool putOnBoard) {
 
     if(putOnBoard) {
   
-        if (id.asInt()!=-1) {
+        if (id.asInt32()!=-1) {
             ID xx = -1;
             ID yy = -1;
 
             for (int i=0; i<100; i++) {
                 ID x = (int)(ranf()*20);
                 ID y = (int)(ranf()*20);
-                if (SYS(system_resource).game_matrix.get(x,y).asInt()==0) {
+                if (SYS(system_resource).game_matrix.get(x,y).asInt32()==0) {
                     xx = x;
                     yy = y;
                 }
             }
 
             if (xx==-1) {
-                for (int r=1; r<20 && xx.asInt()==-1; r++) {
-                    for (int n=0; n<r && xx.asInt()==-1; n++) {
+                for (int r=1; r<20 && xx.asInt32()==-1; r++) {
+                    for (int n=0; n<r && xx.asInt32()==-1; n++) {
                         ID x = r-n;
                         ID y = n;
-                        if (SYS(system_resource).game_matrix.get(x,y).asInt()==0) {
+                        if (SYS(system_resource).game_matrix.get(x,y).asInt32()==0) {
                             xx = x;
                             yy = y;
                         }
                     }
                 }
             }
-            if (xx.asInt()!=-1) {
-                printf("Make new at %ld %ld\n", xx.asInt(), yy.asInt());
+            if (xx.asInt32()!=-1) {
+                printf("Make new at %ld %ld\n", xx.asInt32(), yy.asInt32());
                 SYS(system_resource).game_things.create(id);
                 SYS(system_resource).game_things.getThing(id).set(xx,yy,id);
                 SYS(system_resource).game_matrix.set(xx,yy,id);
@@ -165,7 +165,7 @@ Thing& Game::newThing(bool putOnBoard) {
         SYS(system_resource).game_things.create(id);
     }
   
-    if (id.asInt()==-1) {
+    if (id.asInt32()==-1) {
         return Thing::NOTHING;
     }
     return getThing(id);

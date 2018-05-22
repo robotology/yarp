@@ -629,20 +629,20 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
     //printf("DELAYED OPEN %s\n", config.toString().c_str());
 
     int w = config.check("width",Value(0),
-                         "width of image (must be even)").asInt();
+                         "width of image (must be even)").asInt32();
     int h = config.check("height",Value(0),
-                         "height of image (must be even)").asInt();
+                         "height of image (must be even)").asInt32();
     int framerate = config.check("framerate",Value(30),
-                                 "baseline images per second").asInt();
+                                 "baseline images per second").asInt32();
 
     int sample_rate = 0;
     int channels = 0;
     bool audio = config.check("audio","should audio be included");
     if (audio) {
         sample_rate = config.check("sample_rate",Value(44100),
-                                   "audio samples per second").asInt();
+                                   "audio samples per second").asInt32();
         channels = config.check("channels",Value(1),
-                                "audio samples per second").asInt();
+                                "audio samples per second").asInt32();
     }
 
     filename = config.check("out",Value("movie.avi"),

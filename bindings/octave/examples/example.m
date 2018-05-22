@@ -30,9 +30,9 @@ for i=1:100
     wb = p.prepare();
     wb.clear();
     wb.addString('count');
-    wb.addInt(i);
+    wb.addInt32(i);
     wb.addString('of');
-    wb.addInt(100);
+    wb.addInt32(100);
     p.write();
     wb.toString()
     yarp.Time.delay(0.5)

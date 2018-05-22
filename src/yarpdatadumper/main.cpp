@@ -575,7 +575,7 @@ public:
         else
             type=bottle;
 
-        dwnsample=rf.check("downsample",Value(1)).asInt();
+        dwnsample=rf.check("downsample",Value(1)).asInt32();
         rxTime=rf.check("rxTime");
         txTime=rf.check("txTime");
         string templateDirName=rf.check("dir")?rf.find("dir").asString().c_str():portName;

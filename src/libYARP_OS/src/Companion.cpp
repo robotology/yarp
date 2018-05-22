@@ -712,10 +712,10 @@ int Companion::cmdName(int argc, char *argv[]) {
             machine = cmd.get(3).asString();
         }
         if (cmd.size()>4) {
-            if (!cmd.get(4).isInt()) {
+            if (!cmd.get(4).isInt32()) {
                 port = 0;
             } else {
-                port = cmd.get(4).asInt();
+                port = cmd.get(4).asInt32();
             }
         }
         Contact result;
@@ -1357,7 +1357,7 @@ int Companion::cmdCheck(int argc, char *argv[]) {
     YARP_INFO(log, "=== Trying to write some data");
 
     Bottle bot;
-    bot.addInt(42);
+    bot.addInt32(42);
     out.write(bot);
 
     SystemClock::delaySystem(1);
@@ -1368,7 +1368,7 @@ int Companion::cmdCheck(int argc, char *argv[]) {
         YARP_INFO(log, "=== Trying to read some data");
         SystemClock::delaySystem(1);
         if (check.get() != nullptr) {
-            int x = check.get()->getInt(0);
+            int x = check.get()->get(0).asInt32();
             char buf[256];
             sprintf(buf, "*** Read number %d", x);
             YARP_INFO(log, buf);
@@ -1514,7 +1514,7 @@ int Companion::cmdClean(int argc, char *argv[]) {
     printf("got %d port%s\n", ct, (ct!=1)?"s":"");
     double timeout = -1;
     if (options.check("timeout")) {
-        timeout = options.find("timeout").asDouble();
+        timeout = options.find("timeout").asFloat64();
     }
     if (timeout <= 0) {
         timeout = -1;
@@ -1768,8 +1768,8 @@ int Companion::subscribe(const char *src, const char *dest, const char *mode) {
                 //Bottle& topic = b->findGroup("topic");
                 const char *srcTopic = "";
                 const char *destTopic = "";
-                //if (topic.get(1).asInt()) srcTopic=" (topic)";
-                //if (topic.get(2).asInt()) destTopic=" (topic)";
+                //if (topic.get(1).asInt32()) srcTopic=" (topic)";
+                //if (topic.get(2).asInt32()) destTopic=" (topic)";
                 printf("Persistent connection %s%s -> %s%s",
                        b->check("src", Value("?")).asString().c_str(),
                        srcTopic,
@@ -1920,11 +1920,11 @@ public:
             return false;
         }
         if (bot.read(reader)) {
-            if (bot.size()==2 && bot.isInt(0) && bot.isString(1) && !raw) {
-                int code = bot.getInt(0);
+            if (bot.size()==2 && bot.isInt32(0) && bot.isString(1) && !raw) {
+                int code = bot.get(0).asInt32();
                 if (code!=1) {
                     showEnvelope();
-                    printf("%s\n", bot.getString(1).c_str());
+                    printf("%s\n", bot.get(1).asString().c_str());
                     fflush(stdout);
                 }
                 if (code==1) {
@@ -2128,7 +2128,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
             }
             Bottle bot;
             if (!raw) {
-                bot.addInt(0);
+                bot.addInt32(0);
                 bot.addString(txt.c_str());
             } else {
                 bot.fromString(txt.c_str());
@@ -2163,7 +2163,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
 
     if (!raw) {
         Bottle bot;
-        bot.addInt(1);
+        bot.addInt32(1);
         bot.addString("<EOF>");
         //core.send(bot);
         port.write(bot);
@@ -2675,10 +2675,10 @@ int Companion::cmdSample(int argc, char *argv[]) {
         return 1;
     }
     if (options.check("period")) {
-        port.setTargetPeriod(options.find("period").asDouble());
+        port.setTargetPeriod(options.find("period").asFloat64());
     }
     if (options.check("rate")) {
-        port.setTargetPeriod(1.0/options.find("rate").asDouble());
+        port.setTargetPeriod(1.0/options.find("rate").asFloat64());
     }
     if (options.check("input")) {
         std::string input = options.find("input").asString();
@@ -2747,8 +2747,8 @@ int Companion::cmdClock(int argc, char *argv[])
     yarp::os::BufferedPort<yarp::os::Bottle> streamPort;
 
     config.fromCommand(argc, argv, false, true);
-    double period = config.check("period", Value(30), "update period, default 30ms").asDouble() /1000.0;
-    double timeFactor = config.check("rtf", Value(1), "real time factor. Upscale or downscale the clock frequency by a multiplier factor. Default 1").asDouble();
+    double period = config.check("period", Value(30), "update period, default 30ms").asFloat64() /1000.0;
+    double timeFactor = config.check("rtf", Value(1), "real time factor. Upscale or downscale the clock frequency by a multiplier factor. Default 1").asFloat64();
     bool system = config.check("systemTime", "Publish system clock. If false time starts from zero. Default false");
     bool help = config.check("help");
 
@@ -2813,8 +2813,8 @@ int Companion::cmdClock(int argc, char *argv[])
         nsec = std::modf(time, &sec) *1e9;
 
         tick.clear();
-        tick.addInt((int)sec);
-        tick.addInt((int)nsec);
+        tick.addInt32((int32_t)sec);
+        tick.addInt32((int32_t)nsec);
         streamPort.write();
 
         if( (((int) elapsed %5) == 0))

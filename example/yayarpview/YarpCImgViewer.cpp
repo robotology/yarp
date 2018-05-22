@@ -189,7 +189,7 @@ int YarpCImgViewer::main(int argc, char ** argv)
 
     Value& udelay = options.find("udelay");
     if (!udelay.isNull())
-        ycv.setUdelay(udelay.asInt());
+        ycv.setUdelay(udelay.asInt32());
 
     Value& behavior = options.find("behave");
     if (!behavior.isNull() &&

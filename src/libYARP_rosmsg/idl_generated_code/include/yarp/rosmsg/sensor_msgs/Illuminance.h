@@ -49,8 +49,8 @@ class Illuminance : public yarp::os::idl::WirePortable
 {
 public:
     yarp::rosmsg::std_msgs::Header header;
-    yarp::os::NetFloat64 illuminance;
-    yarp::os::NetFloat64 variance;
+    yarp::conf::float64_t illuminance;
+    yarp::conf::float64_t variance;
 
     Illuminance() :
             header(),
@@ -79,10 +79,10 @@ public:
         }
 
         // *** illuminance ***
-        illuminance = connection.expectDouble();
+        illuminance = connection.expectFloat64();
 
         // *** variance ***
-        variance = connection.expectDouble();
+        variance = connection.expectFloat64();
 
         return !connection.isError();
     }
@@ -101,10 +101,10 @@ public:
         }
 
         // *** illuminance ***
-        illuminance = reader.expectDouble();
+        illuminance = reader.expectFloat64();
 
         // *** variance ***
-        variance = reader.expectDouble();
+        variance = reader.expectFloat64();
 
         return !connection.isError();
     }
@@ -124,18 +124,18 @@ public:
         }
 
         // *** illuminance ***
-        connection.appendDouble(illuminance);
+        connection.appendFloat64(illuminance);
 
         // *** variance ***
-        connection.appendDouble(variance);
+        connection.appendFloat64(variance);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(3);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(3);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -143,12 +143,12 @@ public:
         }
 
         // *** illuminance ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)illuminance);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(illuminance);
 
         // *** variance ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)variance);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(variance);
 
         connection.convertTextMode();
         return !connection.isError();

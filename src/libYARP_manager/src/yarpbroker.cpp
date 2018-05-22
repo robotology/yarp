@@ -281,7 +281,7 @@ bool YarpBroker::kill()
     grp.clear();
     grp.addString("kill");
     grp.addString(strTag.c_str());
-    grp.addInt(SIGKILL);
+    grp.addInt32(SIGKILL);
     msg.addList() = grp;
     int ret = SendMsg(msg, strHost.c_str(), response, CONNECTION_TIMEOUT);
     if(ret != YARPRUN_OK)
@@ -677,7 +677,7 @@ bool YarpBroker::getAllProcesses(const char* server,
             Process proc;
             std::string sprc;
             if(response.get(i).check("pid"))
-                proc.pid = response.get(i).find("pid").asInt();
+                proc.pid = response.get(i).find("pid").asInt32();
             if(response.get(i).check("cmd"))
                sprc = response.get(i).find("cmd").asString();
             if(response.get(i).check("env") &&
@@ -919,7 +919,7 @@ int YarpBroker::requestServer(Property& config)
         if(response.size() > 2)
             strStdioUUID = response.get(2).asString().c_str();
 
-        return ((response.get(0).asInt()>0)?YARPRUN_OK:YARPRUN_UNDEF);
+        return ((response.get(0).asInt32()>0)?YARPRUN_OK:YARPRUN_UNDEF);
     }
 
     // DON'T USE A RUN SERVER TO MANAGE STDIO
@@ -944,7 +944,7 @@ int YarpBroker::requestServer(Property& config)
         if (ret != YARPRUN_OK)
             return ret;
 
-        return ((response.get(0).asInt()>0)?YARPRUN_OK:YARPRUN_UNDEF);
+        return ((response.get(0).asInt32()>0)?YARPRUN_OK:YARPRUN_UNDEF);
     }
 
     return YARPRUN_UNDEF;

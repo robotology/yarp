@@ -88,7 +88,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 {
                     if (stream_IPWM)
                     {
-                        bool ok = stream_IPWM->setRefDutyCycle(b.get(2).asInt(), cmdVector[0]);
+                        bool ok = stream_IPWM->setRefDutyCycle(b.get(2).asInt32(), cmdVector[0]);
                         if (!ok)
                             yError("Errors while trying to command an pwm message");
                     }
@@ -120,7 +120,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 {
                     if (stream_ICurrent)
                     {
-                        bool ok = stream_ICurrent->setRefCurrent(b.get(2).asInt(), cmdVector[0]);
+                        bool ok = stream_ICurrent->setRefCurrent(b.get(2).asInt32(), cmdVector[0]);
                         if (!ok)
                         {
                             yError("Errors while trying to command a streaming current message on single joint\n");
@@ -144,7 +144,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 {
                     if (stream_ICurrent)
                     {
-                        int n_joints = b.get(1).asInt();
+                        int n_joints = b.get(1).asInt32();
                         Bottle *jlut = b.get(2).asList();
                         if (((int)jlut->size() != n_joints) && ((int)cmdVector.size() != n_joints))
                         {
@@ -153,7 +153,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
 
                         int *joint_list = new int[n_joints];
                         for (int i = 0; i < n_joints; i++)
-                            joint_list[i] = jlut->get(i).asInt();
+                            joint_list[i] = jlut->get(i).asInt32();
 
 
                         bool ok = stream_ICurrent->setRefCurrents(n_joints, joint_list, cmdVector.data());
@@ -202,7 +202,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
 
         case VOCAB_VELOCITY_MOVE:
             {
-                stream_IVel->velocityMove(b.get(1).asInt(), cmdVector[0]);
+                stream_IVel->velocityMove(b.get(1).asInt32(), cmdVector[0]);
             }
         break;
 
@@ -221,9 +221,9 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         {
             if(stream_IPosDirect)
             {
-                bool ok = stream_IPosDirect->setPosition(b.get(1).asInt(), cmdVector[0]); // cmdVector.data());
+                bool ok = stream_IPosDirect->setPosition(b.get(1).asInt32(), cmdVector[0]); // cmdVector.data());
                 if (!ok)
-                {   yError("Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt() ); }
+                {   yError("Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt32() ); }
             }
         }
         break;
@@ -232,7 +232,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         {
             if (stream_ITorque)
             {
-                bool ok = stream_ITorque->setRefTorque(b.get(1).asInt(), cmdVector[0]);
+                bool ok = stream_ITorque->setRefTorque(b.get(1).asInt32(), cmdVector[0]);
                 if (!ok)
                 {   yError("Errors while trying to command a streaming torque direct message on single joint\n"); }
             }
@@ -254,7 +254,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         {
             if (stream_ITorque)
             {
-                int n_joints = b.get(1).asInt();
+                int n_joints = b.get(1).asInt32();
                 Bottle *jlut = b.get(2).asList();
                 if( ((int)jlut->size() != n_joints) && ((int)cmdVector.size() != n_joints) )
                 {
@@ -263,7 +263,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
 
                 int *joint_list = new int[n_joints];
                 for (int i = 0; i < n_joints; i++)
-                    joint_list[i] = jlut->get(i).asInt();
+                    joint_list[i] = jlut->get(i).asInt32();
 
 
                 bool ok = stream_ITorque->setRefTorques(n_joints, joint_list, cmdVector.data());
@@ -279,7 +279,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         {
             if(stream_IPosDirect)
             {
-                int n_joints = b.get(1).asInt();
+                int n_joints = b.get(1).asInt32();
                 Bottle *jlut = b.get(2).asList();
                 if( ((int)jlut->size() != n_joints) && ((int)cmdVector.size() != n_joints) )
                 {
@@ -288,7 +288,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
 
                 int *joint_list = new int[n_joints];
                 for (int i = 0; i < n_joints; i++)
-                    joint_list[i] = jlut->get(i).asInt();
+                    joint_list[i] = jlut->get(i).asInt32();
 
 
                 bool ok = stream_IPosDirect->setPositions(n_joints, joint_list, cmdVector.data());
@@ -314,14 +314,14 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         {
             if(stream_IVel2)
             {
-                int n_joints = b.get(1).asInt();
+                int n_joints = b.get(1).asInt32();
                 Bottle *jlut = b.get(2).asList();
                 if( ((int)jlut->size() != n_joints) && ((int)cmdVector.size() != n_joints) )
                     yError("Received VOCAB_VELOCITY_MOVE_GROUP size of joints vector or positions vector does not match the selected joint number\n" );
 
                 int *joint_list = new int[n_joints];
                 for (int i = 0; i < n_joints; i++)
-                    joint_list[i] = jlut->get(i).asInt();
+                    joint_list[i] = jlut->get(i).asInt32();
 
                 bool ok = stream_IVel2->velocityMove(n_joints, joint_list, cmdVector.data());
                 if (!ok)

@@ -24,7 +24,7 @@ public:
 
     std::string toString() const;
 
-    static void appendInt(char *&buf,int x);
+    static void appendInt32(char *&buf,int x);
 
     static void appendString(char *&buf,const std::string& str);
 

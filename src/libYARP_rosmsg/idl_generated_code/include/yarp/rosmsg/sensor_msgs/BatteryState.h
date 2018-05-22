@@ -77,50 +77,50 @@ namespace sensor_msgs {
 class BatteryState : public yarp::os::idl::WirePortable
 {
 public:
-    static const unsigned char POWER_SUPPLY_STATUS_UNKNOWN = 0;
-    static const unsigned char POWER_SUPPLY_STATUS_CHARGING = 1;
-    static const unsigned char POWER_SUPPLY_STATUS_DISCHARGING = 2;
-    static const unsigned char POWER_SUPPLY_STATUS_NOT_CHARGING = 3;
-    static const unsigned char POWER_SUPPLY_STATUS_FULL = 4;
-    static const unsigned char POWER_SUPPLY_HEALTH_UNKNOWN = 0;
-    static const unsigned char POWER_SUPPLY_HEALTH_GOOD = 1;
-    static const unsigned char POWER_SUPPLY_HEALTH_OVERHEAT = 2;
-    static const unsigned char POWER_SUPPLY_HEALTH_DEAD = 3;
-    static const unsigned char POWER_SUPPLY_HEALTH_OVERVOLTAGE = 4;
-    static const unsigned char POWER_SUPPLY_HEALTH_UNSPEC_FAILURE = 5;
-    static const unsigned char POWER_SUPPLY_HEALTH_COLD = 6;
-    static const unsigned char POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE = 7;
-    static const unsigned char POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE = 8;
-    static const unsigned char POWER_SUPPLY_TECHNOLOGY_UNKNOWN = 0;
-    static const unsigned char POWER_SUPPLY_TECHNOLOGY_NIMH = 1;
-    static const unsigned char POWER_SUPPLY_TECHNOLOGY_LION = 2;
-    static const unsigned char POWER_SUPPLY_TECHNOLOGY_LIPO = 3;
-    static const unsigned char POWER_SUPPLY_TECHNOLOGY_LIFE = 4;
-    static const unsigned char POWER_SUPPLY_TECHNOLOGY_NICD = 5;
-    static const unsigned char POWER_SUPPLY_TECHNOLOGY_LIMN = 6;
+    static const std::uint8_t POWER_SUPPLY_STATUS_UNKNOWN = 0;
+    static const std::uint8_t POWER_SUPPLY_STATUS_CHARGING = 1;
+    static const std::uint8_t POWER_SUPPLY_STATUS_DISCHARGING = 2;
+    static const std::uint8_t POWER_SUPPLY_STATUS_NOT_CHARGING = 3;
+    static const std::uint8_t POWER_SUPPLY_STATUS_FULL = 4;
+    static const std::uint8_t POWER_SUPPLY_HEALTH_UNKNOWN = 0;
+    static const std::uint8_t POWER_SUPPLY_HEALTH_GOOD = 1;
+    static const std::uint8_t POWER_SUPPLY_HEALTH_OVERHEAT = 2;
+    static const std::uint8_t POWER_SUPPLY_HEALTH_DEAD = 3;
+    static const std::uint8_t POWER_SUPPLY_HEALTH_OVERVOLTAGE = 4;
+    static const std::uint8_t POWER_SUPPLY_HEALTH_UNSPEC_FAILURE = 5;
+    static const std::uint8_t POWER_SUPPLY_HEALTH_COLD = 6;
+    static const std::uint8_t POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE = 7;
+    static const std::uint8_t POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE = 8;
+    static const std::uint8_t POWER_SUPPLY_TECHNOLOGY_UNKNOWN = 0;
+    static const std::uint8_t POWER_SUPPLY_TECHNOLOGY_NIMH = 1;
+    static const std::uint8_t POWER_SUPPLY_TECHNOLOGY_LION = 2;
+    static const std::uint8_t POWER_SUPPLY_TECHNOLOGY_LIPO = 3;
+    static const std::uint8_t POWER_SUPPLY_TECHNOLOGY_LIFE = 4;
+    static const std::uint8_t POWER_SUPPLY_TECHNOLOGY_NICD = 5;
+    static const std::uint8_t POWER_SUPPLY_TECHNOLOGY_LIMN = 6;
     yarp::rosmsg::std_msgs::Header header;
-    yarp::os::NetFloat32 voltage;
-    yarp::os::NetFloat32 current;
-    yarp::os::NetFloat32 charge;
-    yarp::os::NetFloat32 capacity;
-    yarp::os::NetFloat32 design_capacity;
-    yarp::os::NetFloat32 percentage;
-    unsigned char power_supply_status;
-    unsigned char power_supply_health;
-    unsigned char power_supply_technology;
+    yarp::conf::float32_t voltage;
+    yarp::conf::float32_t current;
+    yarp::conf::float32_t charge;
+    yarp::conf::float32_t capacity;
+    yarp::conf::float32_t design_capacity;
+    yarp::conf::float32_t percentage;
+    std::uint8_t power_supply_status;
+    std::uint8_t power_supply_health;
+    std::uint8_t power_supply_technology;
     bool present;
-    std::vector<yarp::os::NetFloat32> cell_voltage;
+    std::vector<yarp::conf::float32_t> cell_voltage;
     std::string location;
     std::string serial_number;
 
     BatteryState() :
             header(),
-            voltage(0.0),
-            current(0.0),
-            charge(0.0),
-            capacity(0.0),
-            design_capacity(0.0),
-            percentage(0.0),
+            voltage(0.0f),
+            current(0.0f),
+            charge(0.0f),
+            capacity(0.0f),
+            design_capacity(0.0f),
+            percentage(0.0f),
             power_supply_status(0),
             power_supply_health(0),
             power_supply_technology(0),
@@ -179,22 +179,22 @@ public:
         header.clear();
 
         // *** voltage ***
-        voltage = 0.0;
+        voltage = 0.0f;
 
         // *** current ***
-        current = 0.0;
+        current = 0.0f;
 
         // *** charge ***
-        charge = 0.0;
+        charge = 0.0f;
 
         // *** capacity ***
-        capacity = 0.0;
+        capacity = 0.0f;
 
         // *** design_capacity ***
-        design_capacity = 0.0;
+        design_capacity = 0.0f;
 
         // *** percentage ***
-        percentage = 0.0;
+        percentage = 0.0f;
 
         // *** power_supply_status ***
         power_supply_status = 0;
@@ -226,49 +226,31 @@ public:
         }
 
         // *** voltage ***
-        if (!connection.expectBlock((char*)&voltage, 4)) {
-            return false;
-        }
+        voltage = connection.expectFloat32();
 
         // *** current ***
-        if (!connection.expectBlock((char*)&current, 4)) {
-            return false;
-        }
+        current = connection.expectFloat32();
 
         // *** charge ***
-        if (!connection.expectBlock((char*)&charge, 4)) {
-            return false;
-        }
+        charge = connection.expectFloat32();
 
         // *** capacity ***
-        if (!connection.expectBlock((char*)&capacity, 4)) {
-            return false;
-        }
+        capacity = connection.expectFloat32();
 
         // *** design_capacity ***
-        if (!connection.expectBlock((char*)&design_capacity, 4)) {
-            return false;
-        }
+        design_capacity = connection.expectFloat32();
 
         // *** percentage ***
-        if (!connection.expectBlock((char*)&percentage, 4)) {
-            return false;
-        }
+        percentage = connection.expectFloat32();
 
         // *** power_supply_status ***
-        if (!connection.expectBlock((char*)&power_supply_status, 1)) {
-            return false;
-        }
+        power_supply_status = connection.expectInt8();
 
         // *** power_supply_health ***
-        if (!connection.expectBlock((char*)&power_supply_health, 1)) {
-            return false;
-        }
+        power_supply_health = connection.expectInt8();
 
         // *** power_supply_technology ***
-        if (!connection.expectBlock((char*)&power_supply_technology, 1)) {
-            return false;
-        }
+        power_supply_technology = connection.expectInt8();
 
         // *** present ***
         if (!connection.expectBlock((char*)&present, 1)) {
@@ -276,21 +258,21 @@ public:
         }
 
         // *** cell_voltage ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         cell_voltage.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&cell_voltage[0], sizeof(yarp::os::NetFloat32)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&cell_voltage[0], sizeof(yarp::conf::float32_t)*len)) {
             return false;
         }
 
         // *** location ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         location.resize(len);
         if (!connection.expectBlock((char*)location.c_str(), len)) {
             return false;
         }
 
         // *** serial_number ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         serial_number.resize(len);
         if (!connection.expectBlock((char*)serial_number.c_str(), len)) {
             return false;
@@ -313,43 +295,43 @@ public:
         }
 
         // *** voltage ***
-        voltage = reader.expectDouble();
+        voltage = reader.expectFloat32();
 
         // *** current ***
-        current = reader.expectDouble();
+        current = reader.expectFloat32();
 
         // *** charge ***
-        charge = reader.expectDouble();
+        charge = reader.expectFloat32();
 
         // *** capacity ***
-        capacity = reader.expectDouble();
+        capacity = reader.expectFloat32();
 
         // *** design_capacity ***
-        design_capacity = reader.expectDouble();
+        design_capacity = reader.expectFloat32();
 
         // *** percentage ***
-        percentage = reader.expectDouble();
+        percentage = reader.expectFloat32();
 
         // *** power_supply_status ***
-        power_supply_status = reader.expectInt();
+        power_supply_status = reader.expectInt8();
 
         // *** power_supply_health ***
-        power_supply_health = reader.expectInt();
+        power_supply_health = reader.expectInt8();
 
         // *** power_supply_technology ***
-        power_supply_technology = reader.expectInt();
+        power_supply_technology = reader.expectInt8();
 
         // *** present ***
-        present = reader.expectInt();
+        present = reader.expectInt8();
 
         // *** cell_voltage ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT32)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         cell_voltage.resize(len);
         for (int i=0; i<len; i++) {
-            cell_voltage[i] = (yarp::os::NetFloat32)connection.expectDouble();
+            cell_voltage[i] = (yarp::conf::float32_t)connection.expectFloat32();
         }
 
         // *** location ***
@@ -380,47 +362,47 @@ public:
         }
 
         // *** voltage ***
-        connection.appendBlock((char*)&voltage, 4);
+        connection.appendFloat32(voltage);
 
         // *** current ***
-        connection.appendBlock((char*)&current, 4);
+        connection.appendFloat32(current);
 
         // *** charge ***
-        connection.appendBlock((char*)&charge, 4);
+        connection.appendFloat32(charge);
 
         // *** capacity ***
-        connection.appendBlock((char*)&capacity, 4);
+        connection.appendFloat32(capacity);
 
         // *** design_capacity ***
-        connection.appendBlock((char*)&design_capacity, 4);
+        connection.appendFloat32(design_capacity);
 
         // *** percentage ***
-        connection.appendBlock((char*)&percentage, 4);
+        connection.appendFloat32(percentage);
 
         // *** power_supply_status ***
-        connection.appendBlock((char*)&power_supply_status, 1);
+        connection.appendInt8(power_supply_status);
 
         // *** power_supply_health ***
-        connection.appendBlock((char*)&power_supply_health, 1);
+        connection.appendInt8(power_supply_health);
 
         // *** power_supply_technology ***
-        connection.appendBlock((char*)&power_supply_technology, 1);
+        connection.appendInt8(power_supply_technology);
 
         // *** present ***
         connection.appendBlock((char*)&present, 1);
 
         // *** cell_voltage ***
-        connection.appendInt(cell_voltage.size());
+        connection.appendInt32(cell_voltage.size());
         if (cell_voltage.size()>0) {
-            connection.appendExternalBlock((char*)&cell_voltage[0], sizeof(yarp::os::NetFloat32)*cell_voltage.size());
+            connection.appendExternalBlock((char*)&cell_voltage[0], sizeof(yarp::conf::float32_t)*cell_voltage.size());
         }
 
         // *** location ***
-        connection.appendInt(location.length());
+        connection.appendInt32(location.length());
         connection.appendExternalBlock((char*)location.c_str(), location.length());
 
         // *** serial_number ***
-        connection.appendInt(serial_number.length());
+        connection.appendInt32(serial_number.length());
         connection.appendExternalBlock((char*)serial_number.c_str(), serial_number.length());
 
         return !connection.isError();
@@ -428,8 +410,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(35);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(35);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -437,60 +419,60 @@ public:
         }
 
         // *** voltage ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)voltage);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(voltage);
 
         // *** current ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)current);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(current);
 
         // *** charge ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)charge);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(charge);
 
         // *** capacity ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)capacity);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(capacity);
 
         // *** design_capacity ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)design_capacity);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(design_capacity);
 
         // *** percentage ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)percentage);
+        connection.appendInt32(BOTTLE_TAG_FLOAT32);
+        connection.appendFloat32(percentage);
 
         // *** power_supply_status ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)power_supply_status);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(power_supply_status);
 
         // *** power_supply_health ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)power_supply_health);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(power_supply_health);
 
         // *** power_supply_technology ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)power_supply_technology);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(power_supply_technology);
 
         // *** present ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)present);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(present);
 
         // *** cell_voltage ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(cell_voltage.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT32);
+        connection.appendInt32(cell_voltage.size());
         for (size_t i=0; i<cell_voltage.size(); i++) {
-            connection.appendDouble((double)cell_voltage[i]);
+            connection.appendFloat32(cell_voltage[i]);
         }
 
         // *** location ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(location.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(location.length());
         connection.appendExternalBlock((char*)location.c_str(), location.length());
 
         // *** serial_number ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(serial_number.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(serial_number.length());
         connection.appendExternalBlock((char*)serial_number.c_str(), serial_number.length());
 
         connection.convertTextMode();

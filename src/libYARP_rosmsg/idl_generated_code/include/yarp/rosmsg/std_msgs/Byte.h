@@ -28,7 +28,7 @@ namespace std_msgs {
 class Byte : public yarp::os::idl::WirePortable
 {
 public:
-    unsigned char data;
+    std::uint8_t data;
 
     Byte() :
             data(0)
@@ -44,9 +44,7 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** data ***
-        if (!connection.expectBlock((char*)&data, 1)) {
-            return false;
-        }
+        data = connection.expectInt8();
 
         return !connection.isError();
     }
@@ -60,7 +58,7 @@ public:
         }
 
         // *** data ***
-        data = reader.expectInt();
+        data = reader.expectInt8();
 
         return !connection.isError();
     }
@@ -75,19 +73,19 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** data ***
-        connection.appendBlock((char*)&data, 1);
+        connection.appendInt8(data);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(1);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(1);
 
         // *** data ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)data);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(data);
 
         connection.convertTextMode();
         return !connection.isError();

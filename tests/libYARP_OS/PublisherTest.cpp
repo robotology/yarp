@@ -51,14 +51,14 @@ public:
 
             Bottle& b = p.prepare();
             b.clear();
-            b.addInt(42);
+            b.addInt32(42);
             p.write();
             p.waitForWrite();
 
             Bottle *bin = pin.read();
             checkTrue(bin!=nullptr,"message arrived");
             if (!bin) return;
-            checkEqual(bin->get(0).asInt(),42,"message is correct");
+            checkEqual(bin->get(0).asInt32(),42,"message is correct");
         }
     }
 
@@ -79,14 +79,14 @@ public:
 
             Bottle& b = pout.prepare();
             b.clear();
-            b.addInt(42);
+            b.addInt32(42);
             pout.write();
             pout.waitForWrite();
 
             Bottle *bin = pin.read();
             checkTrue(bin!=nullptr,"message arrived");
             if (!bin) return;
-            checkEqual(bin->get(0).asInt(),42,"message is correct");
+            checkEqual(bin->get(0).asInt32(),42,"message is correct");
         }
     }
 
@@ -106,14 +106,14 @@ public:
 
             Bottle& b = pout.prepare();
             b.clear();
-            b.addInt(42);
+            b.addInt32(42);
             pout.write();
             pout.waitForWrite();
 
             Bottle *bin = pin.read();
             checkTrue(bin!=nullptr,"message arrived");
             if (!bin) return;
-            checkEqual(bin->get(0).asInt(),42,"message is correct");
+            checkEqual(bin->get(0).asInt32(),42,"message is correct");
         }
     }
 
@@ -133,13 +133,13 @@ public:
             waitForOutput(p,10);
 
             Bottle b;
-            b.addInt(42);
+            b.addInt32(42);
             p.write(b);
 
             Bottle *bin = pin.read();
             checkTrue(bin!=nullptr,"message arrived");
             if (!bin) return;
-            checkEqual(bin->get(0).asInt(),42,"message is correct");
+            checkEqual(bin->get(0).asInt32(),42,"message is correct");
         }
     }
 
@@ -159,14 +159,14 @@ public:
 
             Bottle& b = pout.prepare();
             b.clear();
-            b.addInt(42);
+            b.addInt32(42);
             pout.write();
 
             Bottle bin;
-            bin.addInt(99);
+            bin.addInt32(99);
             pin.read(bin);
             pout.waitForWrite();
-            checkEqual(bin.get(0).asInt(),42,"message is correct");
+            checkEqual(bin.get(0).asInt32(),42,"message is correct");
         }
     }
 

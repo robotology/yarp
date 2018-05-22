@@ -178,13 +178,10 @@ will affect the implementation of the yarp::os::NetInt32 type.
 On little endian systems, NetInt32 maps straight onto native integers.
 On big endian systems, NetInt32 is a class that simulates little endian
 integers.
-\li We figure out an appropriate native type for 16-bit integers,
-32-bit integers, and 64-bit floating point numbers.  The types are stored
-in YARP_INT16, YARP_INT32, and YARP_FLOAT64 respectively.
 \li If the YARP_ADMIN environment flag is set, we turn on some more
 aggressive warnings and errors in the compiler.  YARP developers should
 generally have this flag set if possible.
-\li We define YARP_PRESENT for compilation.  This definition is unused.
+\li We define BUILDING_YARP for compilation.
 \li We define _REENTRANT, for thread-safe C library calls.
 \li Compiler flags that may also be needed by users are recorded in a
  global property "YARP_DEFS" for later export.
@@ -536,9 +533,7 @@ configuration.
 It is placed in <CMAKE_BINARY_DIR>/src/conf/libYARP_conf/include/yarp/conf/system.h,
 and should be accessed as "#include <yarp/conf/system.h>".
 It is intended to store some facts about the system upon which YARP
-is built: the types YARP_INT32, YARP_INT16, YARP_FLOAT64,
-whether the system is big- or little-endian, and whether to use ACE strings
-or STL strings
+is built: whether the system is big- or little-endian.
 \sa \ref yarp_build_structure_conf
 \sa \ref yarp_build_structure_system_check
 

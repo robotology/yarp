@@ -26,13 +26,13 @@ int main(int argc, char *argv[]) {
     }
 
     Bottle msg, reply;
-    msg.addInt(atoi(argv[1]));
-    msg.addInt(atoi(argv[2]));
+    msg.addInt32(atoi(argv[1]));
+    msg.addInt32(atoi(argv[2]));
     if (!client.write(msg,reply)) {
         fprintf(stderr,"Failed to call service\n");
         return 1;
     }
-    printf("Got %d\n", reply.get(0).asInt());
+    printf("Got %d\n", reply.get(0).asInt32());
 
     return 0;
 }

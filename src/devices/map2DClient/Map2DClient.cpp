@@ -224,9 +224,9 @@ bool yarp::dev::Map2DClient::storeLocation(std::string location_name, Map2DLocat
     b.addVocab(VOCAB_NAV_STORE_ABS);
     b.addString(location_name);
     b.addString(loc.map_id);
-    b.addDouble(loc.x);
-    b.addDouble(loc.y);
-    b.addDouble(loc.theta);
+    b.addFloat64(loc.x);
+    b.addFloat64(loc.y);
+    b.addFloat64(loc.theta);
 
     bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
     if (ret)
@@ -308,9 +308,9 @@ bool   yarp::dev::Map2DClient::getLocation(std::string location_name, Map2DLocat
         else
         {
             loc.map_id = resp.get(1).asString();
-            loc.x = resp.get(2).asDouble();
-            loc.y = resp.get(3).asDouble();
-            loc.theta = resp.get(4).asDouble();
+            loc.x = resp.get(2).asFloat64();
+            loc.y = resp.get(3).asFloat64();
+            loc.theta = resp.get(4).asFloat64();
         }
     }
     else

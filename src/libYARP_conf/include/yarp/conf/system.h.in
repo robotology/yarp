@@ -10,8 +10,6 @@
 #ifndef YARP_CONFIG_SYSTEM_H
 #define YARP_CONFIG_SYSTEM_H
 
-#include <yarp/conf/numeric.h>
-
 #cmakedefine YARP_HAS_ACE
 
 // ACE information

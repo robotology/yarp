@@ -92,7 +92,7 @@ bool SDLJoypad::open(yarp::os::Searchable& rf)
                 // choose between multiple joysticks
                 if (rf.check("DefaultJoystickNumber"))
                 {
-                    joy_id = rf.find("DefaultJoystickNumber").asInt();
+                    joy_id = rf.find("DefaultJoystickNumber").asInt32();
                     yInfo ( "SDLJoypad: Multiple joysticks found, using #%d, as specified in the configuration options\n", joy_id);
                 }
                 else
@@ -166,7 +166,7 @@ bool SDLJoypad::open(yarp::os::Searchable& rf)
 
 bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
 {
-    if(!cfg.check("sticks") || !cfg.find("sticks").isInt())
+    if(!cfg.check("sticks") || !cfg.find("sticks").isInt32())
     {
         yError() << "SDLJoypad: missing 'sticks' parameter or not an integer";
         return false;
@@ -177,7 +177,7 @@ bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
         m_axes.push_back(true);
     }
 
-    m_stickCount = cfg.find("sticks").asInt();
+    m_stickCount = cfg.find("sticks").asInt32();
     for(unsigned int i = 0; i < m_stickCount; i++)
     {
         string stickName;
@@ -200,13 +200,13 @@ bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
             return false;
         }
 
-        if(!stickParams.check("axes") || !stickParams.find("axes").isInt())
+        if(!stickParams.check("axes") || !stickParams.find("axes").isInt32())
         {
             yError() << "SDLJoypad: missing 'axes' count in" << stickName << "group or not an integer";
             return false;
         }
 
-        axesCount = stickParams.find("axes").asInt();
+        axesCount = stickParams.find("axes").asInt32();
 
         for(int j = 0; j < axesCount; j++)
         {
@@ -215,13 +215,13 @@ bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
             axisName   = "axis"         + std::to_string(j) + "_id";
             invertName = "invert_axis_" + std::to_string(j);
 
-            if(!stickParams.check(axisName) || !stickParams.find(axisName).isInt())
+            if(!stickParams.check(axisName) || !stickParams.find(axisName).isInt32())
             {
                 yError() << "SDLJoypad: missing" << axisName << "param in" << stickName << "group or not an integer.";
                 return false;
             }
 
-            axis_id = (unsigned int)stickParams.find(axisName).asInt();
+            axis_id = (unsigned int)stickParams.find(axisName).asInt32();
             if(axis_id > m_axisCount - 1)
             {
                 yError() << "SDLJoypad: axis id out of bound";
@@ -239,13 +239,13 @@ bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
             m_axes[axis_id] = false;
         }
 
-        if(!stickParams.check("deadZone") || !stickParams.find("deadZone").isDouble())
+        if(!stickParams.check("deadZone") || !stickParams.find("deadZone").isFloat64())
         {
             yError() << "SDLJoypad: missing deadZone param in" << stickName << "group or not an double.";
             return false;
         }
 
-        currentStick.deadZone = stickParams.find("deadZone").asDouble();
+        currentStick.deadZone = stickParams.find("deadZone").asFloat64();
         m_sticks.push_back(currentStick);
     }
     return true;

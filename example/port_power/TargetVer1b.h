@@ -17,7 +17,7 @@ YARP_BEGIN_PACK
 class Target {
 public:
     Target() {
-        tag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
+        tag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT32;
         len = 2;
     }
 

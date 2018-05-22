@@ -113,11 +113,19 @@ public:
         return local->expectText(terminatingChar);
     }
 
-    virtual int expectInt() override {
-        return local->expectInt();
+    virtual std::int8_t expectInt8() override {
+        return local->expectInt8();
     }
 
-    virtual YARP_INT64 expectInt64() override {
+    virtual std::int16_t expectInt16() override {
+        return local->expectInt64();
+    }
+
+    virtual std::int32_t expectInt32() override {
+        return local->expectInt32();
+    }
+
+    virtual std::int64_t expectInt64() override {
         return local->expectInt64();
     }
 
@@ -125,8 +133,12 @@ public:
         return local->pushInt(x);
     }
 
-    virtual double expectDouble() override {
-        return local->expectDouble();
+    virtual yarp::conf::float32_t expectFloat32() override {
+        return local->expectFloat32();
+    }
+
+    virtual yarp::conf::float64_t expectFloat64() override {
+        return local->expectFloat64();
     }
 
     virtual bool isTextMode() override {
@@ -196,7 +208,7 @@ public:
     // InputStream methods
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b) override;
+    virtual yarp::conf::ssize_t read(const yarp::os::Bytes& b) override;
 
     virtual void close() override {
     }

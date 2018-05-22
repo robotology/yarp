@@ -132,10 +132,10 @@ int main(int argc, char **argv) {
     
     p.fromCommand(argc, argv);
 
-    int period=p.check("period", Value(THREAD_PERIOD)).asInt();
-    double time=p.check("time", Value(MAIN_WAIT)).asDouble();
-    double cpuTime=p.check("cpu", Value(THREAD_CPU_TIME)).asDouble();
-    int iterations=p.check("iterations", Value(-1)).asInt();
+    int period=p.check("period", Value(THREAD_PERIOD)).asInt32();
+    double time=p.check("time", Value(MAIN_WAIT)).asFloat64();
+    double cpuTime=p.check("cpu", Value(THREAD_CPU_TIME)).asFloat64();
+    int iterations=p.check("iterations", Value(-1)).asInt32();
 
     Time::turboBoost();
 

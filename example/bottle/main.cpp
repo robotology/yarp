@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 
     Bottle b2;
     b2.addString("height");
-    b2.addInt(15);
+    b2.addInt32(15);
     printf("Bottle b2 is: %s\n", b2.toString().c_str());
     // should give: height 15
 
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     // should give: (color red) (height 15)
 
     printf("color check: %s\n", b3.find("color").asString().c_str());
-    printf("height check: %d\n", b3.find("height").asInt());
+    printf("height check: %d\n", b3.find("height").asInt32());
 
     Bottle b4;
     b4.addString("nested");
@@ -55,13 +55,13 @@ int main(int argc, char *argv[]) {
     printf("Bottle b6 is: %s\n", b6.toString().c_str());
     // should give: (pos left top) (size 10) (nested ((color red) (height 5))
 
-    printf("size check: %d\n", b6.find("size").asInt());
+    printf("size check: %d\n", b6.find("size").asInt32());
     printf("pos check: %s\n", b6.find("pos").asString().c_str());
     // find assumes key->value pairs; for lists, use findGroup
     printf("pos group check: %s\n", b6.findGroup("pos").toString().c_str());
     // see documentation for Bottle::findGroup
     printf("nested check: %s\n", b6.find("nested").toString().c_str());
-    printf("nested height check: %d\n", b6.find("nested").find("height").asInt());
+    printf("nested height check: %d\n", b6.find("nested").find("height").asInt32());
 
 
     printf("\n");

@@ -658,7 +658,7 @@ Bottle NameServer::botify(const Contact& address) {
         bip.addString(address.getHost().c_str());
         Bottle bnum;
         bnum.addString("port_number");
-        bnum.addInt(address.getPort());
+        bnum.addInt32(address.getPort());
         Bottle bcarrier;
         bcarrier.addString("carrier");
         bcarrier.addString(address.getCarrier().c_str());
@@ -671,7 +671,7 @@ Bottle NameServer::botify(const Contact& address) {
     } else {
         Bottle bstate;
         bstate.addString("error");
-        bstate.addInt(-2);
+        bstate.addInt32(-2);
         bstate.addString("port not known");
         result.addString("port");
         result.addList() = bstate;

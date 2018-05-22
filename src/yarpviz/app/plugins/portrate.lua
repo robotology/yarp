@@ -114,7 +114,7 @@ end
 --
 PortMonitor.setparam = function(property)
     if property:check("log_raw") then
-        param_log_raw = (property:find("log_raw"):asInt() == 1)
+        param_log_raw = (property:find("log_raw"):asInt32() == 1)
         if param_log_raw == true then 
             print("\n[Rate_Log] Logging all samples!\n")
         else
@@ -132,7 +132,7 @@ PortMonitor.setparam = function(property)
     end
 
     if property:check("log_start") then        
-        param_log_start = (property:find("log_start"):asInt() == 1)
+        param_log_start = (property:find("log_start"):asInt32() == 1)
         if param_log_start == true then 
             print("\n[Rate_Log] Start logging...\n")
         else

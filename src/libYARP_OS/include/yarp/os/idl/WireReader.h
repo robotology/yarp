@@ -58,37 +58,77 @@ public:
 
     bool readNested(yarp::os::PortReader& obj);
 
-    bool readI16(YARP_INT16& x);
-
-    bool readI32(YARP_INT32& x);
-
-    bool readI64(YARP_INT64& x);
-
     bool readBool(bool& x);
 
-    bool readByte(YARP_INT8& x);
+    bool readI8(std::int8_t& x);
 
-    bool readVocab(YARP_INT32& x);
+    bool readI16(std::int16_t& x);
 
-    bool readDouble(double& x);
+    bool readI32(std::int32_t& x);
 
-    int expectInt() {
-        YARP_INT32 x;
+    bool readI64(std::int64_t& x);
+
+    bool readFloat32(yarp::conf::float32_t& x);
+
+    bool readFloat64(yarp::conf::float64_t& x);
+
+    bool readVocab(std::int32_t& x);
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use readI8 instead")
+    bool readByte(std::int8_t& x) { return readI8(x); }
+
+    YARP_DEPRECATED_MSG("Use readFloat64 instead")
+    bool readDouble(double& x) { return readFloat64(x); }
+#endif // YARP_NO_DEPRECATED
+
+    std::int8_t expectInt8() {
+        std::int8_t x;
+        readI8(x);
+        return x;
+    }
+    std::int16_t expectInt16() {
+        std::int16_t x;
+        readI16(x);
+        return x;
+    }
+    std::int32_t expectInt32() {
+        std::int32_t x;
         readI32(x);
         return x;
     }
 
-    double expectDouble() {
-        double x;
-        readDouble(x);
+    std::int64_t expectInt64() {
+        std::int64_t x;
+        readI64(x);
         return x;
     }
+
+    yarp::conf::float32_t expectFloat32() {
+        yarp::conf::float32_t x;
+        readFloat32(x);
+        return x;
+    }
+
+    yarp::conf::float64_t expectFloat64() {
+        yarp::conf::float64_t x;
+        readFloat64(x);
+        return x;
+    }
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use expectInt32 instead")
+    int expectInt() { return (int)expectInt32(); }
+
+    YARP_DEPRECATED_MSG("Use expectFloat64 instead")
+    double expectDouble() { return (double)expectFloat64(); }
+#endif // YARP_NO_DEPRECATED
 
     bool readString(std::string& str, bool *is_vocab = nullptr);
 
     bool readBinary(std::string& str);
 
-    bool readEnum(YARP_INT32& x, WireVocab& converter);
+    bool readEnum(std::int32_t& x, WireVocab& converter);
 
     bool readListHeader();
 
@@ -108,11 +148,11 @@ public:
 
     std::string readTag();
 
-    void readListBegin(WireState& nstate, unsigned YARP_INT32& len);
+    void readListBegin(WireState& nstate, std::uint32_t& len);
 
-    void readSetBegin(WireState& nstate, unsigned YARP_INT32& len);
+    void readSetBegin(WireState& nstate, std::uint32_t& len);
 
-    void readMapBegin(WireState& nstate, WireState& nstate2, unsigned YARP_INT32& len);
+    void readMapBegin(WireState& nstate, WireState& nstate2, std::uint32_t& len);
 
     void readListEnd();
 

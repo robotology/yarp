@@ -56,25 +56,24 @@ bool yarp::os::Stamp::read(ConnectionReader& connection)
         timeStamp = ts;
     } else {
         connection.convertTextMode();
-        int header = connection.expectInt();
+        std::int32_t header = connection.expectInt32();
         if (header != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        std::int32_t len = connection.expectInt32();
         if (len != 2) {
             return false;
         }
-        int code;
-        code = connection.expectInt();
-        if (code != BOTTLE_TAG_INT) {
+        std::int32_t code = connection.expectInt32();
+        if (code != BOTTLE_TAG_INT32) {
             return false;
         }
-        sequenceNumber = connection.expectInt();
-        code = connection.expectInt();
-        if (code != BOTTLE_TAG_DOUBLE) {
+        sequenceNumber = connection.expectInt32();
+        code = connection.expectInt32();
+        if (code != BOTTLE_TAG_FLOAT64) {
             return false;
         }
-        timeStamp = connection.expectDouble();
+        timeStamp = connection.expectFloat64();
         if (connection.isError()) {
             sequenceNumber = -1;
             timeStamp = 0;
@@ -91,12 +90,12 @@ bool yarp::os::Stamp::write(ConnectionWriter& connection)
         std::snprintf(buf, 512, "%d %.*g", sequenceNumber, DBL_DIG, timeStamp);
         connection.appendString(buf);
     } else {
-        connection.appendInt(BOTTLE_TAG_LIST); // nested structure
-        connection.appendInt(2);               // with two elements
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt(sequenceNumber);
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble(timeStamp);
+        connection.appendInt32(BOTTLE_TAG_LIST); // nested structure
+        connection.appendInt32(2);               // with two elements
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(sequenceNumber);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(timeStamp);
         connection.convertTextMode();
     }
     return !connection.isError();

@@ -30,9 +30,13 @@ private:
 public:
     virtual bool expectBlock(const char *data, size_t len) override;
     virtual std::string expectText(int terminatingChar = '\n') override;
-    virtual int expectInt() override;
+    virtual std::int8_t expectInt8() override;
+    virtual std::int16_t expectInt16() override;
+    virtual std::int32_t expectInt32() override;
+    virtual std::int64_t expectInt64() override;
+    virtual yarp::conf::float32_t expectFloat32() override;
+    virtual yarp::conf::float64_t expectFloat64() override;
     virtual bool pushInt(int x) override;
-    virtual double expectDouble() override;
     virtual bool isTextMode() override;
     virtual bool convertTextMode() override;
     virtual size_t getSize() override;

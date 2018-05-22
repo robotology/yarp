@@ -24,9 +24,9 @@ int main() {
         // prepare a message
         Bottle bot; 
         bot.addString("testing");
-        bot.addInt(i);
+        bot.addInt32(i);
         bot.addString("of");
-        bot.addInt(top);
+        bot.addInt32(top);
         // send the message
         output.write(bot);
         printf("Sent message: %s\n", bot.toString().c_str());

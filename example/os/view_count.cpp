@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 	int count = 1;
 	while (count>0) {
 	    Bottle *msg = in.read();
-		count = msg->get(1).asInt();
+		count = msg->get(1).asInt32();
 		printf("at %d\n", count);
 	}
     

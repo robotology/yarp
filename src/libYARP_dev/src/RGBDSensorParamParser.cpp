@@ -103,7 +103,7 @@ static bool parseIntrinsic(const Searchable& config, const string& groupName, RG
             return false;
         }
 
-        *(realParams[i].second) = intrinsic.find(realParams[i].first).asDouble();
+        *(realParams[i].second) = intrinsic.find(realParams[i].first).asFloat64();
     }
 
     if (!intrinsic.check("distortionModel"))
@@ -145,7 +145,7 @@ static bool parseIntrinsic(const Searchable& config, const string& groupName, RG
             yError() << "RGBDSensorParamParser: missing" << realParams[i].first << "param in" << intrinsic.find("distortionModel").asString() << "group in the configuration file";
             return false;
         }
-        *(realParams[i].second) = distortion.find(realParams[i].first).asDouble();
+        *(realParams[i].second) = distortion.find(realParams[i].first).asFloat64();
     }
 
     return true;
@@ -242,12 +242,12 @@ bool RGBDSensorParamParser::parseParam(Searchable &config, std::vector<RGBDParam
             {
                 int k = i*4+j;
                 Value& v = tf->get(k);
-                if (!v.isDouble())
+                if (!v.isFloat64())
                 {
                     yError() << "wrong data format on transformation matrix (position" << k << ")";
                     return false;
                 }
-                transformationMatrix[i][j] = v.asDouble();
+                transformationMatrix[i][j] = v.asFloat64();
             }
         }
     }

@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     options.put("device", "SerialServoBoard");
     options.put("board", config.check("board", yarp::os::Value("ssc32")).asString().c_str());
     options.put("comport", config.check("comport", yarp::os::Value("/dev/ttyS0")).asString().c_str());
-    options.put("baudrate", config.check("baudrate", yarp::os::Value(38400)).asInt());
+    options.put("baudrate", config.check("baudrate", yarp::os::Value(38400)).asInt32());
 
 
     PolyDriver dd(options);

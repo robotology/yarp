@@ -56,9 +56,9 @@ class JointState : public yarp::os::idl::WirePortable
 public:
     yarp::rosmsg::std_msgs::Header header;
     std::vector<std::string> name;
-    std::vector<yarp::os::NetFloat64> position;
-    std::vector<yarp::os::NetFloat64> velocity;
-    std::vector<yarp::os::NetFloat64> effort;
+    std::vector<yarp::conf::float64_t> position;
+    std::vector<yarp::conf::float64_t> velocity;
+    std::vector<yarp::conf::float64_t> effort;
 
     JointState() :
             header(),
@@ -95,10 +95,10 @@ public:
         }
 
         // *** name ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         name.resize(len);
         for (int i=0; i<len; i++) {
-            int len2 = connection.expectInt();
+            int len2 = connection.expectInt32();
             name[i].resize(len2);
             if (!connection.expectBlock((char*)name[i].c_str(), len2)) {
                 return false;
@@ -106,23 +106,23 @@ public:
         }
 
         // *** position ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         position.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&position[0], sizeof(yarp::os::NetFloat64)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&position[0], sizeof(yarp::conf::float64_t)*len)) {
             return false;
         }
 
         // *** velocity ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         velocity.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&velocity[0], sizeof(yarp::os::NetFloat64)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&velocity[0], sizeof(yarp::conf::float64_t)*len)) {
             return false;
         }
 
         // *** effort ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         effort.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&effort[0], sizeof(yarp::os::NetFloat64)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&effort[0], sizeof(yarp::conf::float64_t)*len)) {
             return false;
         }
 
@@ -143,13 +143,13 @@ public:
         }
 
         // *** name ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_STRING)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_STRING)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         name.resize(len);
         for (int i=0; i<len; i++) {
-            int len2 = connection.expectInt();
+            int len2 = connection.expectInt32();
             name[i].resize(len2);
             if (!connection.expectBlock((char*)name[i].c_str(), len2)) {
                 return false;
@@ -157,33 +157,33 @@ public:
         }
 
         // *** position ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64)) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         position.resize(len);
         for (int i=0; i<len; i++) {
-            position[i] = (yarp::os::NetFloat64)connection.expectDouble();
+            position[i] = (yarp::conf::float64_t)connection.expectFloat64();
         }
 
         // *** velocity ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64)) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         velocity.resize(len);
         for (int i=0; i<len; i++) {
-            velocity[i] = (yarp::os::NetFloat64)connection.expectDouble();
+            velocity[i] = (yarp::conf::float64_t)connection.expectFloat64();
         }
 
         // *** effort ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64)) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         effort.resize(len);
         for (int i=0; i<len; i++) {
-            effort[i] = (yarp::os::NetFloat64)connection.expectDouble();
+            effort[i] = (yarp::conf::float64_t)connection.expectFloat64();
         }
 
         return !connection.isError();
@@ -204,28 +204,28 @@ public:
         }
 
         // *** name ***
-        connection.appendInt(name.size());
+        connection.appendInt32(name.size());
         for (size_t i=0; i<name.size(); i++) {
-            connection.appendInt(name[i].length());
+            connection.appendInt32(name[i].length());
             connection.appendExternalBlock((char*)name[i].c_str(), name[i].length());
         }
 
         // *** position ***
-        connection.appendInt(position.size());
+        connection.appendInt32(position.size());
         if (position.size()>0) {
-            connection.appendExternalBlock((char*)&position[0], sizeof(yarp::os::NetFloat64)*position.size());
+            connection.appendExternalBlock((char*)&position[0], sizeof(yarp::conf::float64_t)*position.size());
         }
 
         // *** velocity ***
-        connection.appendInt(velocity.size());
+        connection.appendInt32(velocity.size());
         if (velocity.size()>0) {
-            connection.appendExternalBlock((char*)&velocity[0], sizeof(yarp::os::NetFloat64)*velocity.size());
+            connection.appendExternalBlock((char*)&velocity[0], sizeof(yarp::conf::float64_t)*velocity.size());
         }
 
         // *** effort ***
-        connection.appendInt(effort.size());
+        connection.appendInt32(effort.size());
         if (effort.size()>0) {
-            connection.appendExternalBlock((char*)&effort[0], sizeof(yarp::os::NetFloat64)*effort.size());
+            connection.appendExternalBlock((char*)&effort[0], sizeof(yarp::conf::float64_t)*effort.size());
         }
 
         return !connection.isError();
@@ -233,8 +233,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(5);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(5);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -242,32 +242,32 @@ public:
         }
 
         // *** name ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_STRING);
-        connection.appendInt(name.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_STRING);
+        connection.appendInt32(name.size());
         for (size_t i=0; i<name.size(); i++) {
-            connection.appendInt(name[i].length());
+            connection.appendInt32(name[i].length());
             connection.appendExternalBlock((char*)name[i].c_str(), name[i].length());
         }
 
         // *** position ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(position.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64);
+        connection.appendInt32(position.size());
         for (size_t i=0; i<position.size(); i++) {
-            connection.appendDouble((double)position[i]);
+            connection.appendFloat64(position[i]);
         }
 
         // *** velocity ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(velocity.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64);
+        connection.appendInt32(velocity.size());
         for (size_t i=0; i<velocity.size(); i++) {
-            connection.appendDouble((double)velocity[i]);
+            connection.appendFloat64(velocity[i]);
         }
 
         // *** effort ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(effort.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64);
+        connection.appendInt32(effort.size());
         for (size_t i=0; i<effort.size(); i++) {
-            connection.appendDouble((double)effort[i]);
+            connection.appendFloat64(effort[i]);
         }
 
         connection.convertTextMode();

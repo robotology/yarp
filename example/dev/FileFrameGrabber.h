@@ -66,8 +66,8 @@ public:
     virtual bool open(yarp::os::Searchable& config) { 
         std::string pattern = 
             config.check("pattern",yarp::os::Value("%d.ppm")).asString();
-        int first = config.check("first",yarp::os::Value(0)).asInt();
-        int last = config.check("last",yarp::os::Value(-1)).asInt();
+        int first = config.check("first",yarp::os::Value(0)).asInt32();
+        int last = config.check("last",yarp::os::Value(-1)).asInt32();
         return open(pattern.c_str(),first,last);
     }
 

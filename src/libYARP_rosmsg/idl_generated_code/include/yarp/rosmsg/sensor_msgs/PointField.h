@@ -42,18 +42,18 @@ namespace sensor_msgs {
 class PointField : public yarp::os::idl::WirePortable
 {
 public:
-    static const unsigned char INT8 = 1;
-    static const unsigned char UINT8 = 2;
-    static const unsigned char INT16 = 3;
-    static const unsigned char UINT16 = 4;
-    static const unsigned char INT32 = 5;
-    static const unsigned char UINT32 = 6;
-    static const unsigned char FLOAT32 = 7;
-    static const unsigned char FLOAT64 = 8;
+    static const std::uint8_t INT8 = 1;
+    static const std::uint8_t UINT8 = 2;
+    static const std::uint8_t INT16 = 3;
+    static const std::uint8_t UINT16 = 4;
+    static const std::uint8_t INT32 = 5;
+    static const std::uint8_t UINT32 = 6;
+    static const std::uint8_t FLOAT32 = 7;
+    static const std::uint8_t FLOAT64 = 8;
     std::string name;
-    yarp::os::NetUint32 offset;
-    unsigned char datatype;
-    yarp::os::NetUint32 count;
+    std::uint32_t offset;
+    std::uint8_t datatype;
+    std::uint32_t count;
 
     PointField() :
             name(""),
@@ -97,22 +97,20 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** name ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         name.resize(len);
         if (!connection.expectBlock((char*)name.c_str(), len)) {
             return false;
         }
 
         // *** offset ***
-        offset = connection.expectInt();
+        offset = connection.expectInt32();
 
         // *** datatype ***
-        if (!connection.expectBlock((char*)&datatype, 1)) {
-            return false;
-        }
+        datatype = connection.expectInt8();
 
         // *** count ***
-        count = connection.expectInt();
+        count = connection.expectInt32();
 
         return !connection.isError();
     }
@@ -131,13 +129,13 @@ public:
         }
 
         // *** offset ***
-        offset = reader.expectInt();
+        offset = reader.expectInt32();
 
         // *** datatype ***
-        datatype = reader.expectInt();
+        datatype = reader.expectInt8();
 
         // *** count ***
-        count = reader.expectInt();
+        count = reader.expectInt32();
 
         return !connection.isError();
     }
@@ -152,42 +150,42 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** name ***
-        connection.appendInt(name.length());
+        connection.appendInt32(name.length());
         connection.appendExternalBlock((char*)name.c_str(), name.length());
 
         // *** offset ***
-        connection.appendInt(offset);
+        connection.appendInt32(offset);
 
         // *** datatype ***
-        connection.appendBlock((char*)&datatype, 1);
+        connection.appendInt8(datatype);
 
         // *** count ***
-        connection.appendInt(count);
+        connection.appendInt32(count);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(12);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(12);
 
         // *** name ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(name.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(name.length());
         connection.appendExternalBlock((char*)name.c_str(), name.length());
 
         // *** offset ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)offset);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(offset);
 
         // *** datatype ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)datatype);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(datatype);
 
         // *** count ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)count);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(count);
 
         connection.convertTextMode();
         return !connection.isError();

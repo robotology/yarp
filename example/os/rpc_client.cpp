@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 	} else {
 	  Bottle cmd;
 	  cmd.addString("COUNT");
-	  cmd.addInt(ct);
+	  cmd.addInt32(ct);
 	  ct++;
 	  printf("Sending message... %s\n", cmd.toString().c_str());
 	  Bottle response;

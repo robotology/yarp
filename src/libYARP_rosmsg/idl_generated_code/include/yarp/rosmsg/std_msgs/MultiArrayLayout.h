@@ -55,7 +55,7 @@ class MultiArrayLayout : public yarp::os::idl::WirePortable
 {
 public:
     std::vector<yarp::rosmsg::std_msgs::MultiArrayDimension> dim;
-    yarp::os::NetUint32 data_offset;
+    std::uint32_t data_offset;
 
     MultiArrayLayout() :
             dim(),
@@ -75,7 +75,7 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** dim ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         dim.resize(len);
         for (int i=0; i<len; i++) {
             if (!dim[i].read(connection)) {
@@ -84,7 +84,7 @@ public:
         }
 
         // *** data_offset ***
-        data_offset = connection.expectInt();
+        data_offset = connection.expectInt32();
 
         return !connection.isError();
     }
@@ -98,10 +98,10 @@ public:
         }
 
         // *** dim ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         dim.resize(len);
         for (int i=0; i<len; i++) {
             if (!dim[i].read(connection)) {
@@ -110,7 +110,7 @@ public:
         }
 
         // *** data_offset ***
-        data_offset = reader.expectInt();
+        data_offset = reader.expectInt32();
 
         return !connection.isError();
     }
@@ -125,7 +125,7 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** dim ***
-        connection.appendInt(dim.size());
+        connection.appendInt32(dim.size());
         for (size_t i=0; i<dim.size(); i++) {
             if (!dim[i].write(connection)) {
                 return false;
@@ -133,19 +133,19 @@ public:
         }
 
         // *** data_offset ***
-        connection.appendInt(data_offset);
+        connection.appendInt32(data_offset);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(2);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(2);
 
         // *** dim ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(dim.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(dim.size());
         for (size_t i=0; i<dim.size(); i++) {
             if (!dim[i].write(connection)) {
                 return false;
@@ -153,8 +153,8 @@ public:
         }
 
         // *** data_offset ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)data_offset);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(data_offset);
 
         connection.convertTextMode();
         return !connection.isError();

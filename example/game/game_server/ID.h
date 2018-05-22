@@ -21,7 +21,7 @@ public:
     long int hash() const {
         return x;
     }
-    long int asInt() const {
+    long int asInt32() const {
         return x;
     }
     bool isValid() {

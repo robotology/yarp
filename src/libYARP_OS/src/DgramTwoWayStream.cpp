@@ -43,7 +43,7 @@ using namespace yarp::os;
 #define UDP_MAX_DATAGRAM_SIZE 65507 - CRC_SIZE
 
 
-static bool checkCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int pct,
+static bool checkCrc(char *buf, yarp::conf::ssize_t length, yarp::conf::ssize_t crcLength, int pct,
                      int *store_altPct = nullptr) {
     NetInt32 alt =
         (NetInt32)NetType::getCrc(buf+crcLength, (length>crcLength)?(length-crcLength):0);
@@ -68,7 +68,7 @@ static bool checkCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int
 }
 
 
-static void addCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int pct) {
+static void addCrc(char *buf, yarp::conf::ssize_t length, yarp::conf::ssize_t crcLength, int pct) {
     NetInt32 alt =
         (NetInt32)NetType::getCrc(buf+crcLength,
                                            (length>crcLength)?(length-crcLength):0);
@@ -728,7 +728,7 @@ void DgramTwoWayStream::closeMain() {
     happy = false;
 }
 
-YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
+yarp::conf::ssize_t DgramTwoWayStream::read(const Bytes& b) {
     reader = true;
     bool done = false;
 
@@ -746,7 +746,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
 
             //yAssert(dgram != nullptr);
             //YARP_DEBUG(Logger::get(), "DGRAM Waiting for something!");
-            YARP_SSIZE_T result = -1;
+            yarp::conf::ssize_t result = -1;
 #if defined(YARP_HAS_ACE)
             if (dgram && restrictInterfaceIp.isValid()) {
                 /*
@@ -882,8 +882,8 @@ void DgramTwoWayStream::write(const Bytes& b) {
     Bytes local = b;
     while (local.length()>0) {
         //YARP_DEBUG(Logger::get(), "DGRAM prep writing");
-        YARP_SSIZE_T rem = local.length();
-        YARP_SSIZE_T space = writeBuffer.length()-writeAvail;
+        yarp::conf::ssize_t rem = local.length();
+        yarp::conf::ssize_t space = writeBuffer.length()-writeAvail;
         bool shouldFlush = false;
         if (rem>=space) {
             rem = space;
@@ -913,7 +913,7 @@ void DgramTwoWayStream::flush() {
 
     if (writeAvail>0) {
         //yAssert(dgram != nullptr);
-        YARP_SSIZE_T len = 0;
+        yarp::conf::ssize_t len = 0;
 
 #if defined(YARP_HAS_ACE)
         if (mgram != nullptr) {

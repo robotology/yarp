@@ -23,7 +23,7 @@ using namespace std;
 
 #define dbg_printf if (0) printf
 
-YARP_SSIZE_T TcpRosStream::read(const Bytes& b) {
+yarp::conf::ssize_t TcpRosStream::read(const Bytes& b) {
     if (!setInitiative) {
         initiative = false;
         setInitiative = true;

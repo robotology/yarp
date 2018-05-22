@@ -63,12 +63,12 @@ public:
     bool shouldShowDebug();
 
 private:
-    void show(unsigned YARP_INT32 level, const std::string& txt);
+    void show(std::uint32_t level, const std::string& txt);
 
     std::string prefix;
     Logger *parent;
     int verbose;
-    unsigned YARP_INT32 low;
+    std::uint32_t low;
     long int pid;
     FILE *stream;
 };

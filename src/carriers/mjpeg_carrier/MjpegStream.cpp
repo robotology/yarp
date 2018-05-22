@@ -21,7 +21,7 @@ using namespace yarp::sig;
 using namespace yarp::mjpeg;
 using namespace std;
 
-YARP_SSIZE_T MjpegStream::read(const Bytes& b) {
+yarp::conf::ssize_t MjpegStream::read(const Bytes& b) {
     bool debug = false;
     if (remaining==0) {
         if (phase==1) {
@@ -67,7 +67,7 @@ YARP_SSIZE_T MjpegStream::read(const Bytes& b) {
             printf("Expected Content-Length: got - \"%s\"\n", b.get(0).asString().c_str());
             continue;
         }
-        int len = b.get(1).asInt();
+        int len = b.get(1).asInt32();
         if (debug) {
             printf("Length is \"%d\"\n", len);
         }

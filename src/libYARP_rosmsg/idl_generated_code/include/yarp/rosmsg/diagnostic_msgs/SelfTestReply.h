@@ -29,7 +29,7 @@ class SelfTestReply : public yarp::os::idl::WirePortable
 {
 public:
     std::string id;
-    unsigned char passed;
+    std::uint8_t passed;
     std::vector<yarp::rosmsg::diagnostic_msgs::DiagnosticStatus> status;
 
     SelfTestReply() :
@@ -54,19 +54,17 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** id ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         id.resize(len);
         if (!connection.expectBlock((char*)id.c_str(), len)) {
             return false;
         }
 
         // *** passed ***
-        if (!connection.expectBlock((char*)&passed, 1)) {
-            return false;
-        }
+        passed = connection.expectInt8();
 
         // *** status ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         status.resize(len);
         for (int i=0; i<len; i++) {
             if (!status[i].read(connection)) {
@@ -91,13 +89,13 @@ public:
         }
 
         // *** passed ***
-        passed = reader.expectInt();
+        passed = reader.expectInt8();
 
         // *** status ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         status.resize(len);
         for (int i=0; i<len; i++) {
             if (!status[i].read(connection)) {
@@ -118,14 +116,14 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** id ***
-        connection.appendInt(id.length());
+        connection.appendInt32(id.length());
         connection.appendExternalBlock((char*)id.c_str(), id.length());
 
         // *** passed ***
-        connection.appendBlock((char*)&passed, 1);
+        connection.appendInt8(passed);
 
         // *** status ***
-        connection.appendInt(status.size());
+        connection.appendInt32(status.size());
         for (size_t i=0; i<status.size(); i++) {
             if (!status[i].write(connection)) {
                 return false;
@@ -137,21 +135,21 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(3);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(3);
 
         // *** id ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(id.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(id.length());
         connection.appendExternalBlock((char*)id.c_str(), id.length());
 
         // *** passed ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)passed);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(passed);
 
         // *** status ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(status.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(status.size());
         for (size_t i=0; i<status.size(); i++) {
             if (!status[i].write(connection)) {
                 return false;

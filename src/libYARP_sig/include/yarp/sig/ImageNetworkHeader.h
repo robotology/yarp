@@ -62,7 +62,7 @@ public:
         paramName = VOCAB3('m','a','t');
         paramIdTag = BOTTLE_TAG_VOCAB;
         id = image.getPixelCode();
-        paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
+        paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT32;
         paramListLen = 5;
         depth = image.getPixelSize();
         imgSize = image.getRawImageSize();

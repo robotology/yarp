@@ -215,11 +215,11 @@ extern "C" {
     YARP_DECLARE(int) yarpReaderExpectText(yarpReaderPtr reader,
                                            yarpStringPtr str,
                                            char terminal);
-    YARP_DECLARE(int) yarpReaderExpectInt(yarpReaderPtr reader, int *data);
+    YARP_DECLARE(int) yarpReaderExpectInt32(yarpReaderPtr reader, int *data);
     YARP_DECLARE(int) yarpReaderExpectDouble(yarpReaderPtr reader, double *data);
     YARP_DECLARE(int) yarpReaderIsTextMode(yarpReaderPtr reader);
 
-    YARP_DECLARE(int) yarpWriterAppendInt(yarpWriterPtr c, int data);
+    YARP_DECLARE(int) yarpWriterAppendInt32(yarpWriterPtr c, int data);
 
     YARP_DECLARE(int) yarpPortableInit(yarpPortablePtr portable, 
                                        yarpPortableCallbacksPtr callbacks);
@@ -264,7 +264,7 @@ extern "C" {
 
     YARP_DECLARE(int) yarpBottleInit(yarpBottlePtr bottle);
     YARP_DECLARE(int) yarpBottleFini(yarpBottlePtr bottle);
-    YARP_DECLARE(void) yarpBottleAddInt(yarpBottlePtr bottle, int x);
+    YARP_DECLARE(void) yarpBottleAddInt32(yarpBottlePtr bottle, int x);
     YARP_DECLARE(void) yarpBottleAddDouble(yarpBottlePtr bottle, double x);
     YARP_DECLARE(void) yarpBottleAddString(yarpBottlePtr bottle, const char *x);
     YARP_DECLARE(int) yarpBottleWrite(yarpBottlePtr bottle, yarpWriterPtr connection);

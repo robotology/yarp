@@ -69,12 +69,11 @@ static Clock *getClock()
          *   This is better because it shows initialization problems right from the start and help user
          *   to fix the code, which may otherwise lead to undefined behaviour.
          *
-         * So now initialize a system clock and go forward for backward compatibility, if YARP_NO_DEPRECATED
-         * is true, exit now! This is gonna be the default in the next release.
+         * So now initialize a system clock and exit.
          */
         printNoClock_ErrorMessage();
 
-#ifdef YARP_NO_DEPRECATED  // for back compatibility
+#ifdef YARP_NO_DEPRECATED // Since YARP 2.3.70
         ::exit(-1);
 #endif
     }
@@ -122,7 +121,7 @@ void Time::yield() {
 
 void Time::useSystemClock()
 {
-#ifdef YARP_NO_DEPRECATED
+#ifdef YARP_NO_DEPRECATED // Since YARP 2.3.70
     if(!isSystemClock())
 #endif
     {
@@ -242,7 +241,7 @@ void Time::useCustomClock(Clock *clock) {
 }
 
 bool Time::isSystemClock() {
-#ifdef YARP_NO_DEPRECATED
+#ifdef YARP_NO_DEPRECATED // Since YARP 2.3.70
     return (yarp_clock_type==YARP_CLOCK_SYSTEM);
 #else
     if(yarp_clock_type==YARP_CLOCK_UNINITIALIZED)
@@ -301,11 +300,11 @@ std::string Time::clockTypeToString(yarpClockType type)
 
 bool Time::isValid()
 {
-#ifndef YARP_NO_DEPRECATED
+#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
     if( (yarp_clock_type == YARP_CLOCK_SYSTEM) || (yarp_clock_type==YARP_CLOCK_UNINITIALIZED) )
         return true;
     else
 #endif
-    // The clock must never be NULL here (when YARP_NO_DEPRECATED is true)
+    // The clock must never be NULL here
     return getClock()->isValid();
 }

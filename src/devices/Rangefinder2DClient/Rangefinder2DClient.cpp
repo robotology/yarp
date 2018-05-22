@@ -62,7 +62,7 @@ void Rangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
         //compare network time
         if (tmpDT*1000<LASER_TIMEOUT)
         {
-            state = b.get(1).asInt();
+            state = b.get(1).asInt32();
         }
         else
         {
@@ -86,7 +86,7 @@ void Rangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
     //now compare timestamps
     if ((1000*(newStamp.getTime()-lastStamp.getTime()))<LASER_TIMEOUT)
     {
-        state = b.get(1).asInt();
+        state = b.get(1).asInt32();
     }
     else
     {
@@ -118,7 +118,7 @@ bool Rangefinder2DInputPortProcessor::getData(yarp::sig::Vector &ranges)
     unsigned int size = lastBottle.get(0).asList()->size();
     ranges.resize(size);
     for (unsigned int i = 0; i < size; i++)
-        ranges[i] = lastBottle.get(0).asList()->get(i).asDouble();
+        ranges[i] = lastBottle.get(0).asList()->get(i).asFloat64();
     mutex.post();
     return true;
 }
@@ -126,7 +126,7 @@ bool Rangefinder2DInputPortProcessor::getData(yarp::sig::Vector &ranges)
 yarp::dev::IRangefinder2D::Device_status Rangefinder2DInputPortProcessor::getStatus()
 {
     mutex.wait();
-    yarp::dev::IRangefinder2D::Device_status status = (yarp::dev::IRangefinder2D::Device_status) lastBottle.get(3).asInt();
+    yarp::dev::IRangefinder2D::Device_status status = (yarp::dev::IRangefinder2D::Device_status) lastBottle.get(3).asInt32();
     mutex.post();
     return status;
 }
@@ -179,7 +179,7 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
 
     if (config.check("period"))
     {
-        _rate = config.find("period").asInt();
+        _rate = config.find("period").asInt32();
     }
     else
     {
@@ -276,9 +276,9 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
             config.check("device_position_theta"))
         {
             yInfo() << "Position information obtained from configuration parameters";
-            device_position_x = config.find("device_position_x").asDouble();
-            device_position_y = config.find("device_position_y").asDouble();
-            device_position_theta = config.find("device_position_theta").asDouble();
+            device_position_x = config.find("device_position_x").asFloat64();
+            device_position_y = config.find("device_position_y").asFloat64();
+            device_position_theta = config.find("device_position_theta").asFloat64();
         }
         else
         {
@@ -333,8 +333,8 @@ bool yarp::dev::Rangefinder2DClient::getDistanceRange(double& min, double& max)
     bool ok = rpcPort.write(cmd, response);
     if (CHECK_FAIL(ok, response) != false)
     {
-        min = response.get(2).asDouble();
-        max = response.get(3).asDouble();
+        min = response.get(2).asFloat64();
+        max = response.get(3).asFloat64();
         return true;
     }
     return false;
@@ -346,8 +346,8 @@ bool yarp::dev::Rangefinder2DClient::setDistanceRange(double min, double max)
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_ILASER2D);
     cmd.addVocab(VOCAB_LASER_DISTANCE_RANGE);
-    cmd.addDouble(min);
-    cmd.addDouble(max);
+    cmd.addFloat64(min);
+    cmd.addFloat64(max);
     bool ok = rpcPort.write(cmd, response);
     if (ok)
     {
@@ -366,8 +366,8 @@ bool yarp::dev::Rangefinder2DClient::getScanLimits(double& min, double& max)
     bool ok = rpcPort.write(cmd, response);
     if (CHECK_FAIL(ok, response) != false)
     {
-        min = scan_angle_min = response.get(2).asDouble();
-        max = scan_angle_max = response.get(3).asDouble();
+        min = scan_angle_min = response.get(2).asFloat64();
+        max = scan_angle_max = response.get(3).asFloat64();
         return true;
     }
     return false;
@@ -379,8 +379,8 @@ bool yarp::dev::Rangefinder2DClient::setScanLimits(double min, double max)
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_ILASER2D);
     cmd.addVocab(VOCAB_LASER_ANGULAR_RANGE);
-    cmd.addDouble(min);
-    cmd.addDouble(max);
+    cmd.addFloat64(min);
+    cmd.addFloat64(max);
     bool ok = rpcPort.write(cmd, response);
     return (CHECK_FAIL(ok, response));
 }
@@ -394,7 +394,7 @@ bool yarp::dev::Rangefinder2DClient::getHorizontalResolution(double& step)
     bool ok = rpcPort.write(cmd, response);
     if (CHECK_FAIL(ok, response) != false)
     {
-        step = response.get(2).asDouble();
+        step = response.get(2).asFloat64();
         return true;
     }
     return false;
@@ -406,7 +406,7 @@ bool yarp::dev::Rangefinder2DClient::setHorizontalResolution(double step)
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_ILASER2D);
     cmd.addVocab(VOCAB_LASER_ANGULAR_STEP);
-    cmd.addDouble(step);
+    cmd.addFloat64(step);
     bool ok = rpcPort.write(cmd, response);
     return (CHECK_FAIL(ok, response));
 }
@@ -420,7 +420,7 @@ bool yarp::dev::Rangefinder2DClient::getScanRate(double& rate)
     bool ok = rpcPort.write(cmd, response);
     if (CHECK_FAIL(ok, response) != false)
     {
-        rate = response.get(2).asDouble();
+        rate = response.get(2).asFloat64();
         return true;
     }
     return false;
@@ -432,7 +432,7 @@ bool yarp::dev::Rangefinder2DClient::setScanRate(double rate)
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_ILASER2D);
     cmd.addVocab(VOCAB_LASER_SCAN_RATE);
-    cmd.addDouble(rate);
+    cmd.addFloat64(rate);
     bool ok = rpcPort.write(cmd, response);
     return (CHECK_FAIL(ok, response));
 }

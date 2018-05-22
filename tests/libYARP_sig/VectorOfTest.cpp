@@ -158,7 +158,7 @@ public:
                 ok = false;
             for (k = 0; k<s; k++)
             {
-                if (v.get(k).asInt() != 42)
+                if (v.get(k).asInt32() != 42)
                 {
 
                     ok = false;
@@ -172,7 +172,7 @@ public:
                 ok = false;
             for (k = 0; k < s; k++)
             {
-                if (v.get(k).asInt() != k)
+                if (v.get(k).asInt32() != k)
                 {
 
                     ok = false;
@@ -252,7 +252,7 @@ public:
         {
             for (unsigned int k = 0; k < vector.size(); k++)
             {
-                if (tmp2.get(k).asInt() != vector[k])
+                if (tmp2.get(k).asInt32() != vector[k])
                     success = false;
             }
         }

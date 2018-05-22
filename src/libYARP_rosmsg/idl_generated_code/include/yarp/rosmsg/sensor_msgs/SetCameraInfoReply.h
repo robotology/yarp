@@ -53,7 +53,7 @@ public:
         }
 
         // *** status_message ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         status_message.resize(len);
         if (!connection.expectBlock((char*)status_message.c_str(), len)) {
             return false;
@@ -71,7 +71,7 @@ public:
         }
 
         // *** success ***
-        success = reader.expectInt();
+        success = reader.expectInt8();
 
         // *** status_message ***
         if (!reader.readString(status_message)) {
@@ -94,7 +94,7 @@ public:
         connection.appendBlock((char*)&success, 1);
 
         // *** status_message ***
-        connection.appendInt(status_message.length());
+        connection.appendInt32(status_message.length());
         connection.appendExternalBlock((char*)status_message.c_str(), status_message.length());
 
         return !connection.isError();
@@ -102,16 +102,16 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(2);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(2);
 
         // *** success ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)success);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(success);
 
         // *** status_message ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(status_message.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(status_message.length());
         connection.appendExternalBlock((char*)status_message.c_str(), status_message.length());
 
         connection.convertTextMode();

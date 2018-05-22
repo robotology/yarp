@@ -458,10 +458,10 @@ bool realsense2Driver::initializeRealsenseDevice()
         yError()<<"realsense2Driver: missing depthResolution or rgbResolution from [SETTINGS]";
         return false;
     }
-    double colorW = params_map[rgbRes].val[0].asDouble();
-    double colorH = params_map[rgbRes].val[1].asDouble();
-    double depthW = params_map[depthRes].val[0].asDouble();
-    double depthH = params_map[depthRes].val[1].asDouble();
+    double colorW = params_map[rgbRes].val[0].asFloat64();
+    double colorH = params_map[rgbRes].val[1].asFloat64();
+    double depthW = params_map[depthRes].val[0].asFloat64();
+    double depthH = params_map[depthRes].val[1].asFloat64();
 
     m_cfg.enable_stream(RS2_STREAM_COLOR, colorW, colorH, RS2_FORMAT_RGB8, m_fps);
     m_cfg.enable_stream(RS2_STREAM_DEPTH, depthW, depthH, RS2_FORMAT_Z16, m_fps);
@@ -566,33 +566,33 @@ bool realsense2Driver::setParams()
     //ACCURACY
     if (params_map[accuracy].isSetting && ret)
     {
-        if (!params_map[accuracy].val[0].isDouble() )
+        if (!params_map[accuracy].val[0].isFloat64() )
             settingErrorMsg("Param " + params_map[accuracy].name + " is not a double as it should be.", ret);
 
-        if (! setDepthAccuracy(params_map[accuracy].val[0].asDouble() ) )
+        if (! setDepthAccuracy(params_map[accuracy].val[0].asFloat64() ) )
             settingErrorMsg("Setting param " + params_map[accuracy].name + " failed... quitting.", ret);
     }
 
     //CLIP_PLANES
     if (params_map[clipPlanes].isSetting && ret)
     {
-        if (!params_map[clipPlanes].val[0].isDouble() )
+        if (!params_map[clipPlanes].val[0].isFloat64() )
             settingErrorMsg("Param " + params_map[clipPlanes].name + " is not a double as it should be.", ret);
 
-        if (!params_map[clipPlanes].val[1].isDouble() )
+        if (!params_map[clipPlanes].val[1].isFloat64() )
             settingErrorMsg("Param " + params_map[clipPlanes].name + " is not a double as it should be.", ret);
 
-        if (! setDepthClipPlanes(params_map[clipPlanes].val[0].asDouble(), params_map[clipPlanes].val[1].asDouble() ) )
+        if (! setDepthClipPlanes(params_map[clipPlanes].val[0].asFloat64(), params_map[clipPlanes].val[1].asFloat64() ) )
             settingErrorMsg("Setting param " + params_map[clipPlanes].name + " failed... quitting.", ret);
     }
 
     //FRAMERATE
     if (params_map[framerate].isSetting && ret)
     {
-        if (!params_map[framerate].val[0].isInt() )
+        if (!params_map[framerate].val[0].isInt32() )
             settingErrorMsg("Param " + params_map[framerate].name + " is not a int as it should be.", ret);
         else
-            m_fps = params_map[framerate].val[0].asInt();
+            m_fps = params_map[framerate].val[0].asInt32();
     }
     else
     {
@@ -638,12 +638,12 @@ bool realsense2Driver::setParams()
         p1 = params_map[depthRes].val[0];
         p2 = params_map[depthRes].val[1];
 
-        if (!p1.isInt() || !p2.isInt() )
+        if (!p1.isInt32() || !p2.isInt32() )
         {
             settingErrorMsg("Param " + params_map[depthRes].name + " is not a int as it should be.", ret);
         }
 
-        if (! setDepthResolution(p1.asInt(), p2.asInt()))
+        if (! setDepthResolution(p1.asInt32(), p2.asInt32()))
         {
             settingErrorMsg("Setting param " + params_map[depthRes].name + " failed... quitting.", ret);
         }
@@ -656,12 +656,12 @@ bool realsense2Driver::setParams()
         p1 = params_map[rgbRes].val[0];
         p2 = params_map[rgbRes].val[1];
 
-        if (!p1.isInt() || !p2.isInt() )
+        if (!p1.isInt32() || !p2.isInt32() )
         {
             settingErrorMsg("Param " + params_map[rgbRes].name + " is not a int as it should be.", ret);
         }
 
-        if (! setRgbResolution(p1.asInt(), p2.asInt()))
+        if (! setRgbResolution(p1.asInt32(), p2.asInt32()))
         {
             settingErrorMsg("Setting param " + params_map[rgbRes].name + " failed... quitting.", ret);
         }
@@ -917,8 +917,8 @@ bool realsense2Driver::getDepthClipPlanes(double& nearPlane, double& farPlane)
 {
     if (params_map[clipPlanes].isDescription)
     {
-        nearPlane = params_map[clipPlanes].val[0].asDouble();
-        farPlane  = params_map[clipPlanes].val[1].asDouble();
+        nearPlane = params_map[clipPlanes].val[0].asFloat64();
+        farPlane  = params_map[clipPlanes].val[1].asFloat64();
         return true;
     }
 

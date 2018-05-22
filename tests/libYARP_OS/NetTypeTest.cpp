@@ -47,12 +47,12 @@ public:
     void checkInt() {
         report(0,"checking integer representation");
         union {
-            YARP_INT32 i;
-            unsigned char c[sizeof(YARP_INT32)];
+            std::int32_t i;
+            unsigned char c[sizeof(std::int32_t)];
         } val;
         NetInt32 i = 258;
-        checkEqual(sizeof(YARP_INT32),4,"integer size is ok");
-        memcpy((char*)(&val.i),(char*)&i,sizeof(YARP_INT32));
+        checkEqual(sizeof(std::int32_t),4,"integer size is ok");
+        memcpy((char*)(&val.i),(char*)&i,sizeof(std::int32_t));
         checkEqual(val.c[0],2,"first byte ok");
         checkEqual(val.c[1],1,"second byte ok");
         checkEqual(val.c[2],0,"third byte ok");
@@ -62,12 +62,12 @@ public:
     void checkInt16() {
         report(0,"checking 16-bit integer representation");
         union {
-            YARP_INT16 i;
-            unsigned char c[sizeof(YARP_INT16)];
+            std::int16_t i;
+            unsigned char c[sizeof(std::int16_t)];
         } val;
         NetInt16 i = 258;
-        checkEqual(sizeof(YARP_INT16),2,"integer size is ok");
-        memcpy((char*)(&val.i),(char*)&i,sizeof(YARP_INT16));
+        checkEqual(sizeof(std::int16_t),2,"integer size is ok");
+        memcpy((char*)(&val.i),(char*)&i,sizeof(std::int16_t));
         checkEqual(val.c[0],2,"first byte ok");
         checkEqual(val.c[1],1,"second byte ok");
     }

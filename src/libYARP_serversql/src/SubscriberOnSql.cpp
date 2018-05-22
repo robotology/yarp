@@ -535,8 +535,8 @@ bool SubscriberOnSql::listSubscriptions(const std::string& port,
         if (srcTopic||destTopic) {
             Bottle btopic;
             btopic.addString("topic");
-            btopic.addInt(srcTopic);
-            btopic.addInt(destTopic);
+            btopic.addInt32(srcTopic);
+            btopic.addInt32(destTopic);
             b.addList() = btopic;
         }
     }

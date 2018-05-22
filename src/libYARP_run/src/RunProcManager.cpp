@@ -357,7 +357,7 @@ yarp::os::Bottle YarpRunInfoVector::PS()
 
         grp.clear();
         grp.addString("pid");
-        grp.addInt(m_apList[i]->mPidCmd);
+        grp.addInt32(m_apList[i]->mPidCmd);
         line.addList()=grp;
 
         grp.clear();

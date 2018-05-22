@@ -58,10 +58,10 @@ bool BoschIMU::open(yarp::os::Searchable& config)
         return false;
     }
 
-    int period = config.check("period",Value(10),"Thread period in ms").asInt();
+    int period = config.check("period",Value(10),"Thread period in ms").asInt32();
     setRate(period);
 
-    nChannels = config.check("channels", Value(12)).asInt();
+    nChannels = config.check("channels", Value(12)).asInt32();
 
     fd_ser = ::open(config.find("comport").toString().c_str(), O_RDWR | O_NOCTTY );
     if (fd_ser < 0) {

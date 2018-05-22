@@ -1297,7 +1297,7 @@ void MainWindow::onYarpNameList()
     {
         std::string portName = ports[i].find("name").asString();
         std::string portIp   = ports[i].find("ip").asString() + " port " +
-                    std::to_string(ports[i].find("port_number").asInt());
+                    std::to_string(ports[i].find("port_number").asInt32());
         ui->entitiesTree->addPort(QStringList() << QString(portName.c_str())
                                   << QString(portIp.c_str()));
     }

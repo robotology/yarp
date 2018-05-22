@@ -237,7 +237,7 @@ global numDoubles;
 global dPort;
 dBottle=yarp.Bottle;
 for i=1:1:numDoubles;
-    dBottle.addDouble(u(i));
+    dBottle.addFloat64(u(i));
 end;
 dPort.write(dBottle);
 sys = [];

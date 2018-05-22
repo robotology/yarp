@@ -104,9 +104,9 @@ static int getIntParam(Name &n, const char *param)
     std::string strValue = n.getCarrierModifier(param, &hasField);
     Value *v = Value::makeValue(strValue.c_str());
     int intvalue = 0;
-    if((hasField) && v->isInt())
+    if((hasField) && v->isInt32())
     {
-        intvalue = v->asInt();
+        intvalue = v->asInt32();
     }
 
     delete v;

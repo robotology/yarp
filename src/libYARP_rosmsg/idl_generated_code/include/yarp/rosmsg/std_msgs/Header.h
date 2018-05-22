@@ -43,7 +43,7 @@ namespace std_msgs {
 class Header : public yarp::os::idl::WirePortable
 {
 public:
-    yarp::os::NetUint32 seq;
+    std::uint32_t seq;
     yarp::rosmsg::TickTime stamp;
     std::string frame_id;
 
@@ -69,7 +69,7 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** seq ***
-        seq = connection.expectInt();
+        seq = connection.expectInt32();
 
         // *** stamp ***
         if (!stamp.read(connection)) {
@@ -77,7 +77,7 @@ public:
         }
 
         // *** frame_id ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         frame_id.resize(len);
         if (!connection.expectBlock((char*)frame_id.c_str(), len)) {
             return false;
@@ -95,7 +95,7 @@ public:
         }
 
         // *** seq ***
-        seq = reader.expectInt();
+        seq = reader.expectInt32();
 
         // *** stamp ***
         if (!stamp.read(connection)) {
@@ -120,7 +120,7 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** seq ***
-        connection.appendInt(seq);
+        connection.appendInt32(seq);
 
         // *** stamp ***
         if (!stamp.write(connection)) {
@@ -128,7 +128,7 @@ public:
         }
 
         // *** frame_id ***
-        connection.appendInt(frame_id.length());
+        connection.appendInt32(frame_id.length());
         connection.appendExternalBlock((char*)frame_id.c_str(), frame_id.length());
 
         return !connection.isError();
@@ -136,12 +136,12 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(3);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(3);
 
         // *** seq ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)seq);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(seq);
 
         // *** stamp ***
         if (!stamp.write(connection)) {
@@ -149,8 +149,8 @@ public:
         }
 
         // *** frame_id ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(frame_id.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(frame_id.length());
         connection.appendExternalBlock((char*)frame_id.c_str(), frame_id.length());
 
         connection.convertTextMode();

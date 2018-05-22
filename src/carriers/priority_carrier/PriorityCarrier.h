@@ -160,10 +160,10 @@ public:
 
     virtual void setCarrierParams(const yarp::os::Property& params) override {
         yarp::os::Property property = params;
-        timeConstant = property.check("tc", Value(timeConstant)).asDouble();
-        timeResting = property.check("tr", Value(timeResting)).asDouble();
-        stimulation = property.check("st", Value(stimulation)).asDouble();
-        baias = property.check("bs", Value(baias)).asDouble();
+        timeConstant = property.check("tc", Value(timeConstant)).asFloat64();
+        timeResting = property.check("tr", Value(timeResting)).asFloat64();
+        stimulation = property.check("st", Value(stimulation)).asFloat64();
+        baias = property.check("bs", Value(baias)).asFloat64();
         isVirtual = property.check("virtual", Value(isVirtual)).asBool();
         if(property.check("ex"))
             excitation = property.findGroup("ex");

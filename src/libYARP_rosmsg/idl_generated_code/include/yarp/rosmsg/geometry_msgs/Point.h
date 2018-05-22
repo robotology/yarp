@@ -31,9 +31,9 @@ namespace geometry_msgs {
 class Point : public yarp::os::idl::WirePortable
 {
 public:
-    yarp::os::NetFloat64 x;
-    yarp::os::NetFloat64 y;
-    yarp::os::NetFloat64 z;
+    yarp::conf::float64_t x;
+    yarp::conf::float64_t y;
+    yarp::conf::float64_t z;
 
     Point() :
             x(0.0),
@@ -57,13 +57,13 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** x ***
-        x = connection.expectDouble();
+        x = connection.expectFloat64();
 
         // *** y ***
-        y = connection.expectDouble();
+        y = connection.expectFloat64();
 
         // *** z ***
-        z = connection.expectDouble();
+        z = connection.expectFloat64();
 
         return !connection.isError();
     }
@@ -77,13 +77,13 @@ public:
         }
 
         // *** x ***
-        x = reader.expectDouble();
+        x = reader.expectFloat64();
 
         // *** y ***
-        y = reader.expectDouble();
+        y = reader.expectFloat64();
 
         // *** z ***
-        z = reader.expectDouble();
+        z = reader.expectFloat64();
 
         return !connection.isError();
     }
@@ -98,33 +98,33 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** x ***
-        connection.appendDouble(x);
+        connection.appendFloat64(x);
 
         // *** y ***
-        connection.appendDouble(y);
+        connection.appendFloat64(y);
 
         // *** z ***
-        connection.appendDouble(z);
+        connection.appendFloat64(z);
 
         return !connection.isError();
     }
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(3);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(3);
 
         // *** x ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)x);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(x);
 
         // *** y ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)y);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(y);
 
         // *** z ***
-        connection.appendInt(BOTTLE_TAG_DOUBLE);
-        connection.appendDouble((double)z);
+        connection.appendInt32(BOTTLE_TAG_FLOAT64);
+        connection.appendFloat64(z);
 
         connection.convertTextMode();
         return !connection.isError();

@@ -306,8 +306,8 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
                     {
                         out.addVocab(VOCAB_IS);
                         out.addVocab(cmd);
-                        out.addDouble(min);
-                        out.addDouble(max);
+                        out.addFloat64(min);
+                        out.addFloat64(max);
                         ret = true;
                     }
                     else
@@ -326,8 +326,8 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
                     {
                         out.addVocab(VOCAB_IS);
                         out.addVocab(cmd);
-                        out.addDouble(min);
-                        out.addDouble(max);
+                        out.addFloat64(min);
+                        out.addFloat64(max);
                         ret = true;
                     }
                     else
@@ -345,7 +345,7 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
                     {
                         out.addVocab(VOCAB_IS);
                         out.addVocab(cmd);
-                        out.addDouble(step);
+                        out.addFloat64(step);
                         ret = true;
                     }
                     else
@@ -363,7 +363,7 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
                     {
                         out.addVocab(VOCAB_IS);
                         out.addVocab(cmd);
-                        out.addDouble(rate);
+                        out.addFloat64(rate);
                         ret = true;
                     }
                     else
@@ -384,8 +384,8 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
             {
                 if (sens_p)
                 {
-                    double min = in.get(3).asInt();
-                    double max = in.get(4).asInt();
+                    double min = in.get(3).asInt32();
+                    double max = in.get(4).asInt32();
                     sens_p->setDistanceRange(min, max);
                     ret = true;
                 }
@@ -394,8 +394,8 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
             {
                 if (sens_p)
                 {
-                    double min = in.get(3).asInt();
-                    double max = in.get(4).asInt();
+                    double min = in.get(3).asInt32();
+                    double max = in.get(4).asInt32();
                     sens_p->setScanLimits(min, max);
                     ret = true;
                 }
@@ -404,7 +404,7 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
             {
                 if (sens_p)
                 {
-                    double rate = in.get(3).asInt();
+                    double rate = in.get(3).asInt32();
                     sens_p->setScanRate(rate);
                     ret = true;
                 }
@@ -413,7 +413,7 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
             {
                 if (sens_p)
                 {
-                    double step = in.get(3).asDouble();
+                    double step = in.get(3).asFloat64();
                     sens_p->setHorizontalResolution(step);
                     ret = true;
                 }
@@ -473,7 +473,7 @@ bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
         return false;
     }
     else
-        _rate = config.find("period").asInt();
+        _rate = config.find("period").asInt32();
 
     if (!config.check("name"))
     {
@@ -578,7 +578,7 @@ void Rangefinder2DWrapper::run()
             Bottle& bl = b.addList();
 
             bl.read(ranges);
-            b.addInt(status);
+            b.addInt32(status);
             streamingPort.setEnvelope(lastStateStamp);
             streamingPort.write();
 

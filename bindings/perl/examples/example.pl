@@ -23,9 +23,9 @@ for (my $i=1; $i<=$top; $i++) {
     my $bottle = $p->prepare();
     $bottle->clear();
     $bottle->addString("count");
-    $bottle->addInt($i);
+    $bottle->addInt32($i);
     $bottle->addString("of");
-    $bottle->addInt($top);
+    $bottle->addInt32($top);
     print "Sending ", $bottle->toString(), "\n";
     $p->write();
     yarp::Time::delay(0.5);

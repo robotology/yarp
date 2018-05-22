@@ -126,16 +126,16 @@ bool QtYARPScope::parseParameters(QStringList params)
         emit setWindowTitle(QString("%1").arg(rf.find("title").asString().data()));
     }
     // position
-    if (rf.find("x").isInt() && rf.find("y").isInt()) {
-        emit setWindowPosition(rf.find("x").asInt(), rf.find("y").asInt());
+    if (rf.find("x").isInt32() && rf.find("y").isInt32()) {
+        emit setWindowPosition(rf.find("x").asInt32(), rf.find("y").asInt32());
     }
     // size
-    if (rf.find("dx").isInt() && rf.find("dy").isInt()) {
-        emit setWindowSize(rf.find("dx").asInt(), rf.find("dy").asInt());
+    if (rf.find("dx").isInt32() && rf.find("dy").isInt32()) {
+        emit setWindowSize(rf.find("dx").asInt32(), rf.find("dy").asInt32());
     }
     // interval
-    if (rf.find("interval").isInt()) {
-        interval = rf.find("interval").asInt();
+    if (rf.find("interval").isInt32()) {
+        interval = rf.find("interval").asInt32();
     }else{
         interval = 50;
     }

@@ -9,7 +9,6 @@
 
 #include <yarp/os/NetFloat32.h>
 
-#ifdef YARP_FLOAT32
 #ifndef YARP_LITTLE_ENDIAN
 
 using namespace yarp;
@@ -76,5 +75,5 @@ void NetFloat32::operator/=(RawNetFloat32 v) {
     set(get()/v);
 }
 
+
 #endif // YARP_LITTLE_ENDIAN
-#endif // YARP_FLOAT32

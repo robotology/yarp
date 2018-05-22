@@ -57,13 +57,13 @@ class PointCloud2 : public yarp::os::idl::WirePortable
 {
 public:
     yarp::rosmsg::std_msgs::Header header;
-    yarp::os::NetUint32 height;
-    yarp::os::NetUint32 width;
+    std::uint32_t height;
+    std::uint32_t width;
     std::vector<yarp::rosmsg::sensor_msgs::PointField> fields;
     bool is_bigendian;
-    yarp::os::NetUint32 point_step;
-    yarp::os::NetUint32 row_step;
-    std::vector<unsigned char> data;
+    std::uint32_t point_step;
+    std::uint32_t row_step;
+    std::vector<std::uint8_t> data;
     bool is_dense;
 
     PointCloud2() :
@@ -117,13 +117,13 @@ public:
         }
 
         // *** height ***
-        height = connection.expectInt();
+        height = connection.expectInt32();
 
         // *** width ***
-        width = connection.expectInt();
+        width = connection.expectInt32();
 
         // *** fields ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         fields.resize(len);
         for (int i=0; i<len; i++) {
             if (!fields[i].read(connection)) {
@@ -137,15 +137,15 @@ public:
         }
 
         // *** point_step ***
-        point_step = connection.expectInt();
+        point_step = connection.expectInt32();
 
         // *** row_step ***
-        row_step = connection.expectInt();
+        row_step = connection.expectInt32();
 
         // *** data ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         data.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&data[0], sizeof(unsigned char)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&data[0], sizeof(std::uint8_t)*len)) {
             return false;
         }
 
@@ -171,16 +171,16 @@ public:
         }
 
         // *** height ***
-        height = reader.expectInt();
+        height = reader.expectInt32();
 
         // *** width ***
-        width = reader.expectInt();
+        width = reader.expectInt32();
 
         // *** fields ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         fields.resize(len);
         for (int i=0; i<len; i++) {
             if (!fields[i].read(connection)) {
@@ -189,26 +189,26 @@ public:
         }
 
         // *** is_bigendian ***
-        is_bigendian = reader.expectInt();
+        is_bigendian = reader.expectInt8();
 
         // *** point_step ***
-        point_step = reader.expectInt();
+        point_step = reader.expectInt32();
 
         // *** row_step ***
-        row_step = reader.expectInt();
+        row_step = reader.expectInt32();
 
         // *** data ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_INT)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_INT8)) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         data.resize(len);
         for (int i=0; i<len; i++) {
-            data[i] = (unsigned char)connection.expectInt();
+            data[i] = (std::uint8_t)connection.expectInt8();
         }
 
         // *** is_dense ***
-        is_dense = reader.expectInt();
+        is_dense = reader.expectInt8();
 
         return !connection.isError();
     }
@@ -228,13 +228,13 @@ public:
         }
 
         // *** height ***
-        connection.appendInt(height);
+        connection.appendInt32(height);
 
         // *** width ***
-        connection.appendInt(width);
+        connection.appendInt32(width);
 
         // *** fields ***
-        connection.appendInt(fields.size());
+        connection.appendInt32(fields.size());
         for (size_t i=0; i<fields.size(); i++) {
             if (!fields[i].write(connection)) {
                 return false;
@@ -245,15 +245,15 @@ public:
         connection.appendBlock((char*)&is_bigendian, 1);
 
         // *** point_step ***
-        connection.appendInt(point_step);
+        connection.appendInt32(point_step);
 
         // *** row_step ***
-        connection.appendInt(row_step);
+        connection.appendInt32(row_step);
 
         // *** data ***
-        connection.appendInt(data.size());
+        connection.appendInt32(data.size());
         if (data.size()>0) {
-            connection.appendExternalBlock((char*)&data[0], sizeof(unsigned char)*data.size());
+            connection.appendExternalBlock((char*)&data[0], sizeof(std::uint8_t)*data.size());
         }
 
         // *** is_dense ***
@@ -264,8 +264,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(9);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(9);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -273,16 +273,16 @@ public:
         }
 
         // *** height ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)height);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(height);
 
         // *** width ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)width);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(width);
 
         // *** fields ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(fields.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(fields.size());
         for (size_t i=0; i<fields.size(); i++) {
             if (!fields[i].write(connection)) {
                 return false;
@@ -290,27 +290,27 @@ public:
         }
 
         // *** is_bigendian ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)is_bigendian);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(is_bigendian);
 
         // *** point_step ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)point_step);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(point_step);
 
         // *** row_step ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)row_step);
+        connection.appendInt32(BOTTLE_TAG_INT32);
+        connection.appendInt32(row_step);
 
         // *** data ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_INT);
-        connection.appendInt(data.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_INT8);
+        connection.appendInt32(data.size());
         for (size_t i=0; i<data.size(); i++) {
-            connection.appendInt((int)data[i]);
+            connection.appendInt8(data[i]);
         }
 
         // *** is_dense ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)is_dense);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(is_dense);
 
         connection.convertTextMode();
         return !connection.isError();

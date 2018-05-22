@@ -122,7 +122,7 @@ bool ServerSerial::close() {
 
 bool ServerSerial::open(Searchable& prop)
 {
-    verb = (prop.check("verbose",Value(0),"Specifies if the device is in verbose mode (0/1).").asInt())>0;
+    verb = (prop.check("verbose",Value(0),"Specifies if the device is in verbose mode (0/1).").asInt32())>0;
     if (verb)
         yInfo("running with verbose output\n");
 

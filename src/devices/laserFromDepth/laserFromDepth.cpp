@@ -47,9 +47,9 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
         yarp::os::Searchable& general_config = config.findGroup("SUBDEVICE");
         m_clip_max_enable = general_config.check("clip_max");
         m_clip_min_enable = general_config.check("clip_min");
-        if (m_clip_max_enable) { m_max_distance = general_config.find("clip_max").asDouble(); }
-        if (m_clip_min_enable) { m_min_distance = general_config.find("clip_min").asDouble(); }
-        m_do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt()!=0);
+        if (m_clip_max_enable) { m_max_distance = general_config.find("clip_max").asFloat64(); }
+        if (m_clip_min_enable) { m_min_distance = general_config.find("clip_min").asFloat64(); }
+        m_do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt32()!=0);
     }
     else
     {
@@ -69,8 +69,8 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
             for (size_t s = 1; s < s_maxs; s++)
             {
                 Range_t range;
-                range.max = maxs.get(s).asDouble();
-                range.min = mins.get(s).asDouble();
+                range.max = maxs.get(s).asFloat64();
+                range.min = mins.get(s).asFloat64();
                 if (range.max >= 0 && range.max <= 360 &&
                     range.min >= 0 && range.min <= 360 &&
                     range.max > range.min)

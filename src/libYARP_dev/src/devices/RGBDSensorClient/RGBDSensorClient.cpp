@@ -244,8 +244,8 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable &config)
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_RGBD_PROTOCOL_VERSION);
     rpcPort.write(cmd, response);
-    int major = response.get(3).asInt();
-    int minor = response.get(4).asInt();
+    int major = response.get(3).asInt32();
+    int minor = response.get(4).asInt32();
 
     if(major != RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR)
     {
@@ -351,7 +351,7 @@ IRGBDSensor::RGBDSensor_status RGBDSensorClient::getSensorStatus()
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_STATUS);
     rpcPort.write(cmd, response);
-    return (IRGBDSensor::RGBDSensor_status) response.get(3).asInt();
+    return (IRGBDSensor::RGBDSensor_status) response.get(3).asInt32();
 }
 
 

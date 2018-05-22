@@ -95,15 +95,15 @@ bool FakeBot::open(yarp::os::Searchable& config) {
         yarp::sig::file::read(fore,foreFile.c_str());
     }
     noiseLevel = config.check("noise",Value(0.05),
-                              "pixel noise level").asDouble();
+                              "pixel noise level").asFloat64();
 
     xScale = config.check("sx",Value(1.0),
-                          "scaling for x coordinate").asDouble();
+                          "scaling for x coordinate").asFloat64();
     yScale = config.check("sy",Value(1.0),
-                          "scaling for y coordinate").asDouble();
+                          "scaling for y coordinate").asFloat64();
 
     lifetime = config.check("lifetime",Value(-1.0),
-                            "device should exist for this length of time (in seconds)").asDouble();
+                            "device should exist for this length of time (in seconds)").asFloat64();
     if (lifetime>=0) {
         start();
     }

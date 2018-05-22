@@ -123,7 +123,7 @@ Contact& Contact::operator=(Contact&& rhs)
 Contact Contact::fromConfig(const Searchable& config)
 {
     Contact result;
-    result.mPriv->port = config.check("port_number", Value(-1)).asInt();
+    result.mPriv->port = config.check("port_number", Value(-1)).asInt32();
     result.mPriv->hostname = config.check("ip", Value("")).asString().c_str();
     result.mPriv->regName = config.check("name", Value("")).asString().c_str();
     result.mPriv->carrier = config.check("carrier", Value("tcp")).asString().c_str();

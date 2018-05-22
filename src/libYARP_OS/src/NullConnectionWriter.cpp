@@ -15,17 +15,32 @@ void yarp::os::NullConnectionWriter::appendBlock(const char *data, size_t len)
     YARP_UNUSED(len);
 }
 
-void yarp::os::NullConnectionWriter::appendInt(int data)
+void yarp::os::NullConnectionWriter::appendInt8(std::int8_t data)
 {
     YARP_UNUSED(data);
 }
 
-void yarp::os::NullConnectionWriter::appendInt64(const YARP_INT64& data)
+void yarp::os::NullConnectionWriter::appendInt16(std::int16_t data)
 {
     YARP_UNUSED(data);
 }
 
-void yarp::os::NullConnectionWriter::appendDouble(double data)
+void yarp::os::NullConnectionWriter::appendInt32(std::int32_t data)
+{
+    YARP_UNUSED(data);
+}
+
+void yarp::os::NullConnectionWriter::appendInt64(std::int64_t data)
+{
+    YARP_UNUSED(data);
+}
+
+void yarp::os::NullConnectionWriter::appendFloat32(yarp::conf::float32_t data)
+{
+    YARP_UNUSED(data);
+}
+
+void yarp::os::NullConnectionWriter::appendFloat64(yarp::conf::float64_t data)
 {
     YARP_UNUSED(data);
 }

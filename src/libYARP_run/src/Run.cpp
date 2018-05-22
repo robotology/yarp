@@ -322,7 +322,7 @@ int yarp::run::Run::main(int argc, char *argv[])
         fprintf(stderr, "Yarprun stress test started.\n");
         fflush(stderr);
 
-        int max_interval_ms=config.find("stresstest").asInt();
+        int max_interval_ms=config.find("stresstest").asInt32();
         std::string tag_zero=config.find("as").asString();
         yarp::os::Bottle srv=config.findGroup("on");
 
@@ -652,7 +652,7 @@ int yarp::run::Run::server()
         if (msg.check("kill"))
         {
             std::string alias(msg.findGroup("kill").get(1).asString());
-            int sig=msg.findGroup("kill").get(2).asInt();
+            int sig=msg.findGroup("kill").get(2).asInt32();
             yarp::os::Bottle result;
             result.addString(mProcessVector.Signal(alias, sig)?"kill OK":"kill FAILED");
             port.reply(result);
@@ -1153,7 +1153,7 @@ int yarp::run::Run::server()
             if (msg.check("kill"))
             {
                 std::string alias(msg.findGroup("kill").get(1).asString());
-                int sig=msg.findGroup("kill").get(2).asInt();
+                int sig=msg.findGroup("kill").get(2).asInt32();
                 yarp::os::Bottle result;
                 result.addString(mProcessVector->Signal(alias, sig)?"kill OK":"kill FAILED");
                 RUNLOG("<<<writeToPipe")
@@ -1309,7 +1309,7 @@ int yarp::run::Run::client(yarp::os::Property& config)
 
         if (!response.size()) return YARPRUN_ERROR;
 
-        if (response.get(0).asInt()<=0) return 2;
+        if (response.get(0).asInt32()<=0) return 2;
 
         return 0;
     }
@@ -1358,7 +1358,7 @@ int yarp::run::Run::client(yarp::os::Property& config)
 
         if (!response.size()) return YARPRUN_ERROR;
 
-        if (response.get(0).asInt()<=0) return 2;
+        if (response.get(0).asInt32()<=0) return 2;
 
         return 0;
     }
@@ -1380,7 +1380,7 @@ int yarp::run::Run::client(yarp::os::Property& config)
             Help("SYNTAX ERROR: missing tag\n");
             return YARPRUN_ERROR;
         }
-        if (config.findGroup("kill").get(2).asInt()==0)
+        if (config.findGroup("kill").get(2).asInt32()==0)
         {
             Help("SYNTAX ERROR: missing signum\n");
             return YARPRUN_ERROR;
@@ -1704,7 +1704,7 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
                                       +std::string("Can't execute stdout because ")+lastError2String()
                                       +std::string("\n");
 
-        result.addInt(YARPRUN_ERROR);
+        result.addInt32(YARPRUN_ERROR);
         result.addString(strError.c_str());
         fprintf(stderr, "%s", strError.c_str());
         fflush(stderr);
@@ -1749,7 +1749,7 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
                                       +std::string("Can't execute stdin because ")+lastError2String()
                                       +std::string("\n");
 
-        result.addInt(YARPRUN_ERROR);
+        result.addInt32(YARPRUN_ERROR);
         result.addString(strError.c_str());
         fprintf(stderr, "%s", strError.c_str());
 
@@ -1851,7 +1851,7 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
 
     if (!bSuccess)
     {
-        result.addInt(YARPRUN_ERROR);
+        result.addInt32(YARPRUN_ERROR);
 
         DWORD nBytes;
         std::string line1=std::string("ABORTED: server=")+mPortName
@@ -1912,7 +1912,7 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
     }
     mProcessVector.Add(pInf);
 
-    result.addInt(cmd_process_info.dwProcessId);
+    result.addInt32(cmd_process_info.dwProcessId);
     std::string out=std::string("STARTED: server=")+mPortName
                              +std::string(" alias=")+strAlias
                              +std::string(" cmd=")+strCmd
@@ -1975,7 +1975,7 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
                                       +std::string("Can't execute stdout because ")+lastError2String()
                                       +std::string("\n");
 
-        result.addInt(YARPRUN_ERROR);
+        result.addInt32(YARPRUN_ERROR);
         result.addString(strError.c_str());
         fprintf(stderr, "%s", strError.c_str());
         fflush(stderr);
@@ -2069,7 +2069,7 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
 
     if (!bSuccess)
     {
-        result.addInt(YARPRUN_ERROR);
+        result.addInt32(YARPRUN_ERROR);
 
         DWORD nBytes;
         std::string line1=std::string("ABORTED: server=")+mPortName
@@ -2122,7 +2122,7 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
     }
     mProcessVector.Add(pInf);
 
-    result.addInt(cmd_process_info.dwProcessId);
+    result.addInt32(cmd_process_info.dwProcessId);
     std::string out=std::string("STARTED: server=")+mPortName
                              +std::string(" alias=")+strAlias
                              +std::string(" cmd=")+strCmd
@@ -2235,7 +2235,7 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 
     if (!bSuccess)
     {
-        result.addInt(YARPRUN_ERROR);
+        result.addInt32(YARPRUN_ERROR);
 
         std::string out=std::string("ABORTED: server=")+mPortName
                                  +std::string(" alias=")+strAlias
@@ -2263,7 +2263,7 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 
     mProcessVector.Add(pInf);
 
-    result.addInt(cmd_process_info.dwProcessId);
+    result.addInt32(cmd_process_info.dwProcessId);
     std::string out=std::string("STARTED: server=")+mPortName
                              +std::string(" alias=")+strAlias
                              +std::string(" cmd=")+strCmd
@@ -2330,7 +2330,7 @@ int yarp::run::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
     }
 
     result.clear();
-    result.addInt(stdio_process_info.dwProcessId);
+    result.addInt32(stdio_process_info.dwProcessId);
     result.addString(out.c_str());
     fprintf(stderr, "%s", out.c_str());
     fflush(stderr);
@@ -2492,7 +2492,7 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
                                  +std::string("Can't create pipes ")+strerror(error)
                                  +std::string("\n");
 
-        result.addInt(YARPRUN_ERROR);
+        result.addInt32(YARPRUN_ERROR);
         result.addString(out.c_str());
         fprintf(stderr, "%s", out.c_str());
 
@@ -2518,7 +2518,7 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
                                  +std::string("Can't fork stdout process because ")+strerror(error)
                                  +std::string("\n");
 
-        result.addInt(YARPRUN_ERROR);
+        result.addInt32(YARPRUN_ERROR);
         result.addString(out.c_str());
         fprintf(stderr, "%s", out.c_str());
 
@@ -2592,7 +2592,7 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
                                      +std::string("Can't fork stdin process because ")+strerror(error)
                                      +std::string("\n");
 
-            result.addInt(YARPRUN_ERROR);
+            result.addInt32(YARPRUN_ERROR);
             result.addString(out.c_str());
             fprintf(stderr, "%s", out.c_str());
 
@@ -2668,7 +2668,7 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
                                          +std::string("\nCan't fork command process because ")+strerror(error)
                                          +std::string("\n");
 
-                result.addInt(YARPRUN_ERROR);
+                result.addInt32(YARPRUN_ERROR);
                 result.addString(out.c_str());
                 fprintf(stderr, "%s", out.c_str());
 
@@ -2880,7 +2880,7 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
                        +std::string("\n");
                 }
 
-                result.addInt(pid_cmd);
+                result.addInt32(pid_cmd);
                 result.addString(out.c_str());
                 result.addString(strStdioUUID.c_str());
 
@@ -2893,7 +2893,7 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
         }
     }
 
-    result.addInt(YARPRUN_ERROR);
+    result.addInt32(YARPRUN_ERROR);
     result.addString("I should never reach this point!!!\n");
 
     return YARPRUN_ERROR;
@@ -2932,7 +2932,7 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
                                  +std::string("Can't create pipes ")+strerror(error)
                                  +std::string("\n");
 
-        result.addInt(YARPRUN_ERROR);
+        result.addInt32(YARPRUN_ERROR);
         result.addString(out.c_str());
         fprintf(stderr, "%s", out.c_str());
 
@@ -2956,7 +2956,7 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
                                  +std::string("Can't fork stdout process because ")+strerror(error)
                                  +std::string("\n");
 
-        result.addInt(YARPRUN_ERROR);
+        result.addInt32(YARPRUN_ERROR);
         result.addString(out.c_str());
         fprintf(stderr, "%s", out.c_str());
 
@@ -3029,7 +3029,7 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
                                          +std::string("\nCan't fork command process because ")+strerror(error)
                                          +std::string("\n");
 
-                result.addInt(YARPRUN_ERROR);
+                result.addInt32(YARPRUN_ERROR);
                 result.addString(out.c_str());
                 fprintf(stderr, "%s", out.c_str());
 
@@ -3230,7 +3230,7 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
                        +std::string("\n");
                 }
 
-                result.addInt(pid_cmd);
+                result.addInt32(pid_cmd);
                 result.addString(out.c_str());
 
                 fprintf(stderr, "%s", out.c_str());
@@ -3242,7 +3242,7 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
         }
     }
 
-    result.addInt(YARPRUN_ERROR);
+    result.addInt32(YARPRUN_ERROR);
     result.addString("I should never reach this point!!!\n");
 
     return YARPRUN_ERROR;
@@ -3277,7 +3277,7 @@ int yarp::run::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
                                  +std::string("\n");
 
         result.clear();
-        result.addInt(YARPRUN_ERROR);
+        result.addInt32(YARPRUN_ERROR);
         result.addString(out.c_str());
         fprintf(stderr, "%s", out.c_str());
 
@@ -3317,7 +3317,7 @@ int yarp::run::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
                                  +std::string("\n");
 
         result.clear();
-        result.addInt(YARPRUN_ERROR);
+        result.addInt32(YARPRUN_ERROR);
         result.addString(out.c_str());
         fprintf(stderr, "%s", out.c_str());
 
@@ -3420,7 +3420,7 @@ int yarp::run::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 
         fprintf(stderr, "%s", out.c_str());
 
-        result.addInt(pid_cmd);
+        result.addInt32(pid_cmd);
         result.addString(out.c_str());
 
         CLOSE(pipe_child_to_parent[READ_FROM_PIPE]);
@@ -3429,7 +3429,7 @@ int yarp::run::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
     }
 
     result.clear();
-    result.addInt(YARPRUN_ERROR);
+    result.addInt32(YARPRUN_ERROR);
 
     return YARPRUN_ERROR;
 }
@@ -3452,7 +3452,7 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
                                  +std::string("\n");
 
 
-        result.addInt(YARPRUN_ERROR);
+        result.addInt32(YARPRUN_ERROR);
         result.addString(out.c_str());
         fprintf(stderr, "%s", out.c_str());
 
@@ -3471,7 +3471,7 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
                                  +std::string("\nCan't fork command process because ")+strerror(error)
                                  +std::string("\n");
 
-        result.addInt(YARPRUN_ERROR);
+        result.addInt32(YARPRUN_ERROR);
         result.addString(out.c_str());
         fprintf(stderr, "%s", out.c_str());
 
@@ -3646,7 +3646,7 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 
         fprintf(stderr, "%s", out.c_str());
 
-        result.addInt(pid_cmd);
+        result.addInt32(pid_cmd);
         result.addString(out.c_str());
 
         CLOSE(pipe_child_to_parent[READ_FROM_PIPE]);
@@ -3655,7 +3655,7 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
         return pid_cmd;
     }
 
-    result.addInt(YARPRUN_ERROR);
+    result.addInt32(YARPRUN_ERROR);
 
     return YARPRUN_ERROR;
 }
@@ -3718,10 +3718,10 @@ int yarp::run::Run::start(const std::string &node, yarp::os::Property &command, 
     response=sendMsg(msg, dest_srv.c_str());
 
     char buff[16];
-    sprintf(buff, "%d", response.get(0).asInt());
+    sprintf(buff, "%d", response.get(0).asInt32());
     keyv=std::string(buff);
 
-    return response.get(0).asInt()>0?0:YARPRUN_ERROR;
+    return response.get(0).asInt32()>0?0:YARPRUN_ERROR;
 }
 
 int yarp::run::Run::sigterm(const std::string &node, const std::string &keyv)
@@ -3777,7 +3777,7 @@ int yarp::run::Run::kill(const std::string &node, const std::string &keyv, int s
     grp.clear();
     grp.addString("kill");
     grp.addString(keyv.c_str());
-    grp.addInt(s);
+    grp.addInt32(s);
     msg.addList()=grp;
 
     printf(":: %s\n", msg.toString().c_str());

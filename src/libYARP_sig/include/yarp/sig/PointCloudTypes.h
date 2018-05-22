@@ -30,7 +30,7 @@ namespace sig {
 /**
  * @brief The PointCloudBasicTypes enum
  */
-enum PointCloudBasicType : YARP_INT32 {
+enum PointCloudBasicType : std::int32_t {
     PC_XY_DATA                  =      (1 << 0) ,
     PC_XYZ_DATA                 =      (1 << 1) ,
     PC_RGBA_DATA                =      (1 << 2) ,
@@ -61,7 +61,7 @@ enum PointCloudBasicType : YARP_INT32 {
 /**
  * @brief The PointCloudCompositeType enum
  */
-enum PointCloudCompositeType : YARP_INT32 {
+enum PointCloudCompositeType : std::int32_t {
 // Shortcuts names for matching PCL predefined types
     PCL_POINT2D_XY             =   (PC_XY_DATA),
     PCL_POINT_XYZ              =   (PC_XYZ_DATA),
@@ -90,7 +90,7 @@ enum PointCloudCompositeType : YARP_INT32 {
 };
 
 // Defined as in PCL pointTypes.h file for better compatibility
-enum PointCloudBorderTrait : YARP_INT32
+enum PointCloudBorderTrait : std::int32_t
 {
     BORDER_TRAIT__OBSTACLE_BORDER,
     BORDER_TRAIT__SHADOW_BORDER,
@@ -141,15 +141,15 @@ struct DataXY
     yarp::os::Bottle toBottle()
     {
         yarp::os::Bottle ret;
-        ret.addDouble(x);
-        ret.addDouble(y);
+        ret.addFloat64(x);
+        ret.addFloat64(y);
         return ret;
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
         yarp::os::Bottle* intBt = bt.get(static_cast<int>(i)).asList();
-        x = static_cast<float>(intBt->get(0).asDouble());
-        y = static_cast<float>(intBt->get(1).asDouble());
+        x = static_cast<float>(intBt->get(0).asFloat64());
+        y = static_cast<float>(intBt->get(1).asFloat64());
         return;
     }
 };
@@ -190,9 +190,9 @@ struct DataXYZ
     yarp::os::Bottle toBottle()
     {
         yarp::os::Bottle ret;
-        ret.addDouble(x);
-        ret.addDouble(y);
-        ret.addDouble(z);
+        ret.addFloat64(x);
+        ret.addFloat64(y);
+        ret.addFloat64(z);
         return ret;
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
@@ -203,9 +203,9 @@ struct DataXYZ
             return;
         }
 
-        x = static_cast<float>(intBt->get(0).asDouble());
-        y = static_cast<float>(intBt->get(1).asDouble());
-        z = static_cast<float>(intBt->get(2).asDouble());
+        x = static_cast<float>(intBt->get(0).asFloat64());
+        y = static_cast<float>(intBt->get(1).asFloat64());
+        z = static_cast<float>(intBt->get(2).asFloat64());
         return;
     }
 };
@@ -240,19 +240,19 @@ struct DataRGBA
     yarp::os::Bottle toBottle()
     {
         yarp::os::Bottle ret;
-        ret.addInt(r);
-        ret.addInt(g);
-        ret.addInt(b);
-        ret.addInt(a);
+        ret.addInt32(r);
+        ret.addInt32(g);
+        ret.addInt32(b);
+        ret.addInt32(a);
         return ret;
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
         yarp::os::Bottle* intBt = bt.get(static_cast<int>(i)).asList();
-        r = intBt->get(0).asInt();
-        g = intBt->get(1).asInt();
-        b = intBt->get(2).asInt();
-        a = intBt->get(3).asInt();
+        r = intBt->get(0).asInt32();
+        g = intBt->get(1).asInt32();
+        b = intBt->get(2).asInt32();
+        a = intBt->get(3).asInt32();
         return;
     }
 };
@@ -304,10 +304,10 @@ struct DataNormal
     yarp::os::Bottle toBottle()
     {
         yarp::os::Bottle ret;
-        ret.addDouble(normal_x);
-        ret.addDouble(normal_y);
-        ret.addDouble(normal_z);
-        ret.addDouble(curvature);
+        ret.addFloat64(normal_x);
+        ret.addFloat64(normal_y);
+        ret.addFloat64(normal_z);
+        ret.addFloat64(curvature);
         return ret;
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
@@ -318,10 +318,10 @@ struct DataNormal
             return;
         }
 
-        normal_x = static_cast<float>(intBt->get(0).asDouble());
-        normal_y = static_cast<float>(intBt->get(1).asDouble());
-        normal_z = static_cast<float>(intBt->get(2).asDouble());
-        curvature = static_cast<float>(intBt->get(3).asDouble());
+        normal_x = static_cast<float>(intBt->get(0).asFloat64());
+        normal_y = static_cast<float>(intBt->get(1).asFloat64());
+        normal_z = static_cast<float>(intBt->get(2).asFloat64());
+        curvature = static_cast<float>(intBt->get(3).asFloat64());
         return;
     }
 };
@@ -362,9 +362,9 @@ struct DataNormalNoCurvature
     yarp::os::Bottle toBottle()
     {
         yarp::os::Bottle ret;
-        ret.addDouble(normal_x);
-        ret.addDouble(normal_y);
-        ret.addDouble(normal_z);
+        ret.addFloat64(normal_x);
+        ret.addFloat64(normal_y);
+        ret.addFloat64(normal_z);
         return ret;
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
@@ -375,9 +375,9 @@ struct DataNormalNoCurvature
             return;
         }
 
-        normal_x = static_cast<float>(intBt->get(0).asDouble());
-        normal_y = static_cast<float>(intBt->get(1).asDouble());
-        normal_z = static_cast<float>(intBt->get(2).asDouble());
+        normal_x = static_cast<float>(intBt->get(0).asFloat64());
+        normal_y = static_cast<float>(intBt->get(1).asFloat64());
+        normal_z = static_cast<float>(intBt->get(2).asFloat64());
         return;
     }
 };
@@ -434,9 +434,9 @@ struct DataViewpoint
     yarp::os::Bottle toBottle()
     {
         yarp::os::Bottle ret;
-        ret.addDouble(vp_x);
-        ret.addDouble(vp_y);
-        ret.addDouble(vp_z);
+        ret.addFloat64(vp_x);
+        ret.addFloat64(vp_y);
+        ret.addFloat64(vp_z);
         return ret;
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
@@ -447,9 +447,9 @@ struct DataViewpoint
             return;
         }
 
-        vp_x = static_cast<float>(intBt->get(0).asDouble());
-        vp_y = static_cast<float>(intBt->get(1).asDouble());
-        vp_z = static_cast<float>(intBt->get(2).asDouble());
+        vp_x = static_cast<float>(intBt->get(0).asFloat64());
+        vp_y = static_cast<float>(intBt->get(1).asFloat64());
+        vp_z = static_cast<float>(intBt->get(2).asFloat64());
         return;
     }
 };
@@ -513,13 +513,13 @@ struct DataXYZRGBA
     yarp::os::Bottle toBottle()
     {
         yarp::os::Bottle ret;
-        ret.addDouble(x);
-        ret.addDouble(y);
-        ret.addDouble(z);
-        ret.addInt(r);
-        ret.addInt(g);
-        ret.addInt(b);
-        ret.addInt(a);
+        ret.addFloat64(x);
+        ret.addFloat64(y);
+        ret.addFloat64(z);
+        ret.addInt32(r);
+        ret.addInt32(g);
+        ret.addInt32(b);
+        ret.addInt32(a);
         return ret;
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
@@ -530,13 +530,13 @@ struct DataXYZRGBA
             return;
         }
 
-        x = static_cast<float>(intBt->get(0).asDouble());
-        y = static_cast<float>(intBt->get(1).asDouble());
-        z = static_cast<float>(intBt->get(2).asDouble());
-        r = intBt->get(3).asInt();
-        g = intBt->get(4).asInt();
-        b = intBt->get(5).asInt();
-        a = intBt->get(6).asInt();
+        x = static_cast<float>(intBt->get(0).asFloat64());
+        y = static_cast<float>(intBt->get(1).asFloat64());
+        z = static_cast<float>(intBt->get(2).asFloat64());
+        r = intBt->get(3).asInt32();
+        g = intBt->get(4).asInt32();
+        b = intBt->get(5).asInt32();
+        a = intBt->get(6).asInt32();
         return;
     }
 };
@@ -588,10 +588,10 @@ struct DataXYZI
     yarp::os::Bottle toBottle()
     {
         yarp::os::Bottle ret;
-        ret.addDouble(x);
-        ret.addDouble(y);
-        ret.addDouble(z);
-        ret.addDouble(intensity);
+        ret.addFloat64(x);
+        ret.addFloat64(y);
+        ret.addFloat64(z);
+        ret.addFloat64(intensity);
         return ret;
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
@@ -602,10 +602,10 @@ struct DataXYZI
             return;
         }
 
-        x = static_cast<float>(intBt->get(0).asDouble());
-        y = static_cast<float>(intBt->get(1).asDouble());
-        z = static_cast<float>(intBt->get(2).asDouble());
-        intensity = static_cast<float>(intBt->get(3).asDouble());
+        x = static_cast<float>(intBt->get(0).asFloat64());
+        y = static_cast<float>(intBt->get(1).asFloat64());
+        z = static_cast<float>(intBt->get(2).asFloat64());
+        intensity = static_cast<float>(intBt->get(3).asFloat64());
         return;
     }
 };
@@ -657,10 +657,10 @@ struct DataInterestPointXYZ
     yarp::os::Bottle toBottle()
     {
         yarp::os::Bottle ret;
-        ret.addDouble(x);
-        ret.addDouble(y);
-        ret.addDouble(z);
-        ret.addDouble(strength);
+        ret.addFloat64(x);
+        ret.addFloat64(y);
+        ret.addFloat64(z);
+        ret.addFloat64(strength);
         return ret;
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
@@ -671,10 +671,10 @@ struct DataInterestPointXYZ
             return;
         }
 
-        x = static_cast<float>(intBt->get(0).asDouble());
-        y = static_cast<float>(intBt->get(1).asDouble());
-        z = static_cast<float>(intBt->get(2).asDouble());
-        strength = static_cast<float>(intBt->get(3).asDouble());
+        x = static_cast<float>(intBt->get(0).asFloat64());
+        y = static_cast<float>(intBt->get(1).asFloat64());
+        z = static_cast<float>(intBt->get(2).asFloat64());
+        strength = static_cast<float>(intBt->get(3).asFloat64());
         return;
     }
 };
@@ -745,13 +745,13 @@ struct DataXYZNormal
     yarp::os::Bottle toBottle()
     {
         yarp::os::Bottle ret;
-        ret.addDouble(x);
-        ret.addDouble(y);
-        ret.addDouble(z);
-        ret.addDouble(normal_x);
-        ret.addDouble(normal_y);
-        ret.addDouble(normal_z);
-        ret.addDouble(curvature);
+        ret.addFloat64(x);
+        ret.addFloat64(y);
+        ret.addFloat64(z);
+        ret.addFloat64(normal_x);
+        ret.addFloat64(normal_y);
+        ret.addFloat64(normal_z);
+        ret.addFloat64(curvature);
         return ret;
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
@@ -762,13 +762,13 @@ struct DataXYZNormal
             return;
         }
 
-        x = static_cast<float>(intBt->get(0).asDouble());
-        y = static_cast<float>(intBt->get(1).asDouble());
-        z = static_cast<float>(intBt->get(2).asDouble());
-        normal_x = static_cast<float>(intBt->get(3).asDouble());
-        normal_y = static_cast<float>(intBt->get(4).asDouble());
-        normal_z = static_cast<float>(intBt->get(5).asDouble());
-        curvature = static_cast<float>(intBt->get(6).asDouble());
+        x = static_cast<float>(intBt->get(0).asFloat64());
+        y = static_cast<float>(intBt->get(1).asFloat64());
+        z = static_cast<float>(intBt->get(2).asFloat64());
+        normal_x = static_cast<float>(intBt->get(3).asFloat64());
+        normal_y = static_cast<float>(intBt->get(4).asFloat64());
+        normal_z = static_cast<float>(intBt->get(5).asFloat64());
+        curvature = static_cast<float>(intBt->get(6).asFloat64());
         return;
     }
 };
@@ -853,17 +853,17 @@ struct DataXYZNormalRGBA
     yarp::os::Bottle toBottle()
     {
         yarp::os::Bottle ret;
-        ret.addDouble(x);
-        ret.addDouble(y);
-        ret.addDouble(z);
-        ret.addDouble(normal_x);
-        ret.addDouble(normal_y);
-        ret.addDouble(normal_z);
-        ret.addDouble(curvature);
-        ret.addInt(r);
-        ret.addInt(g);
-        ret.addInt(b);
-        ret.addInt(a);
+        ret.addFloat64(x);
+        ret.addFloat64(y);
+        ret.addFloat64(z);
+        ret.addFloat64(normal_x);
+        ret.addFloat64(normal_y);
+        ret.addFloat64(normal_z);
+        ret.addFloat64(curvature);
+        ret.addInt32(r);
+        ret.addInt32(g);
+        ret.addInt32(b);
+        ret.addInt32(a);
         return ret;
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
@@ -874,17 +874,17 @@ struct DataXYZNormalRGBA
             return;
         }
 
-        x = static_cast<float>(intBt->get(0).asDouble());
-        y = static_cast<float>(intBt->get(1).asDouble());
-        z = static_cast<float>(intBt->get(2).asDouble());
-        normal_x = static_cast<float>(intBt->get(3).asDouble());
-        normal_y = static_cast<float>(intBt->get(4).asDouble());
-        normal_z = static_cast<float>(intBt->get(5).asDouble());
-        curvature = static_cast<float>(intBt->get(6).asDouble());
-        r = intBt->get(7).asInt();
-        g = intBt->get(8).asInt();
-        b = intBt->get(9).asInt();
-        a = intBt->get(10).asInt();
+        x = static_cast<float>(intBt->get(0).asFloat64());
+        y = static_cast<float>(intBt->get(1).asFloat64());
+        z = static_cast<float>(intBt->get(2).asFloat64());
+        normal_x = static_cast<float>(intBt->get(3).asFloat64());
+        normal_y = static_cast<float>(intBt->get(4).asFloat64());
+        normal_z = static_cast<float>(intBt->get(5).asFloat64());
+        curvature = static_cast<float>(intBt->get(6).asFloat64());
+        r = intBt->get(7).asInt32();
+        g = intBt->get(8).asInt32();
+        b = intBt->get(9).asInt32();
+        a = intBt->get(10).asInt32();
         return;
     }
 };

@@ -32,13 +32,13 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    int joints = robot.findGroup("GENERAL").find("Joints").asInt();
+    int joints = robot.findGroup("GENERAL").find("Joints").asInt32();
     printf("Robot has %d joints\n", joints);
 
     Bottle& maxes = robot.findGroup("LIMITS").findGroup("Max");
     printf("Robot has limits: ");
     for (int i=1; i<maxes.size(); i++) {
-        printf("%d ", maxes.get(i).asInt());
+        printf("%d ", maxes.get(i).asInt32());
     }
     printf("\n");
 

@@ -105,7 +105,7 @@ bool AbstractCarrier::expectSenderSpecifier(ConnectionState& proto)
     NetInt32 numberSrc;
     Bytes number((char*)&numberSrc, sizeof(NetInt32));
     int len = 0;
-    YARP_SSIZE_T r = proto.is().readFull(number);
+    yarp::conf::ssize_t r = proto.is().readFull(number);
     if ((size_t)r!=number.length()) {
         YARP_DEBUG(Logger::get(), "did not get sender name length");
         return false;
@@ -241,7 +241,7 @@ bool AbstractCarrier::defaultExpectAck(ConnectionState& proto)
     if (proto.getConnection().requireAck()) {
         char buf[8];
         Bytes header((char*)&buf[0], sizeof(buf));
-        YARP_SSIZE_T hdr = proto.is().readFull(header);
+        yarp::conf::ssize_t hdr = proto.is().readFull(header);
         if ((size_t)hdr!=header.length()) {
             YARP_DEBUG(proto.getLog(), "did not get acknowledgement header");
             return false;
@@ -271,7 +271,7 @@ bool AbstractCarrier::defaultExpectIndex(ConnectionState& proto)
     // expect index header
     char buf[8];
     Bytes header((char*)&buf[0], sizeof(buf));
-    YARP_SSIZE_T r = proto.is().readFull(header);
+    yarp::conf::ssize_t r = proto.is().readFull(header);
     if ((size_t)r!=header.length()) {
         YARP_DEBUG(log, "broken index");
         return false;
@@ -303,7 +303,7 @@ bool AbstractCarrier::defaultExpectIndex(ConnectionState& proto)
     NetInt32 numberSrc;
     Bytes number((char*)&numberSrc, sizeof(NetInt32));
     for (int i=0; i<inLen; i++) {
-        YARP_SSIZE_T l = proto.is().readFull(number);
+        yarp::conf::ssize_t l = proto.is().readFull(number);
         if ((size_t)l!=number.length()) {
             YARP_DEBUG(log, "bad input block length");
             return false;
@@ -312,7 +312,7 @@ bool AbstractCarrier::defaultExpectIndex(ConnectionState& proto)
         total += x;
     }
     for (int i2=0; i2<outLen; i2++) {
-        YARP_SSIZE_T l = proto.is().readFull(number);
+        yarp::conf::ssize_t l = proto.is().readFull(number);
         if ((size_t)l!=number.length()) {
             YARP_DEBUG(log, "bad output block length");
             return false;
@@ -342,7 +342,7 @@ int AbstractCarrier::readYarpInt(ConnectionState& proto)
 {
     char buf[8];
     Bytes header(&(buf[0]), sizeof(buf));
-    YARP_SSIZE_T len = proto.is().readFull(header);
+    yarp::conf::ssize_t len = proto.is().readFull(header);
     if ((size_t)len!=header.length()) {
         YARP_DEBUG(proto.getLog(), "data stream died");
         return -1;

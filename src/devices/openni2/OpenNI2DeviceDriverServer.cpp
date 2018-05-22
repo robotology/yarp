@@ -97,25 +97,25 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData()
                 // user ID number
                 Bottle &userBot = botSkeleton.addList();
                 userBot.addVocab(USER_VOCAB);
-                userBot.addInt(userSkeleton[i].uID);
+                userBot.addInt32(userSkeleton[i].uID);
                 for(int jointIndex = 0; jointIndex < TOTAL_JOINTS; jointIndex++) {
                     // position
                     botSkeleton.addVocab(POSITION_VOCAB);
                     joint = userSkeleton[i].skeletonPointsPos[jointIndex].data();
                     Bottle &botList = botSkeleton.addList();
-                    botList.addDouble(joint[0]);
-                    botList.addDouble(joint[1]);
-                    botList.addDouble(joint[2]);
-                    botSkeleton.addDouble(userSkeleton[i].skeletonPosConfidence[jointIndex]);
+                    botList.addFloat64(joint[0]);
+                    botList.addFloat64(joint[1]);
+                    botList.addFloat64(joint[2]);
+                    botSkeleton.addFloat64(userSkeleton[i].skeletonPosConfidence[jointIndex]);
                     // orientation
                     joint = userSkeleton[i].skeletonPointsOri[jointIndex].data();
                     botSkeleton.addVocab(ORIENTATION_VOCAB);
                     Bottle &botList2 = botSkeleton.addList();
-                    botList2.addDouble(joint[0]);
-                    botList2.addDouble(joint[1]);
-                    botList2.addDouble(joint[2]);
-                    botList2.addDouble(joint[3]);
-                    botSkeleton.addDouble(userSkeleton[i].skeletonOriConfidence[jointIndex]);
+                    botList2.addFloat64(joint[0]);
+                    botList2.addFloat64(joint[1]);
+                    botList2.addFloat64(joint[2]);
+                    botList2.addFloat64(joint[3]);
+                    botSkeleton.addFloat64(userSkeleton[i].skeletonOriConfidence[jointIndex]);
                 }
                 skeletonPort->write();
             }
@@ -126,7 +126,7 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData()
                 botCalib.clear();
                 skeletonPort->setEnvelope(timestamp);
                 botCalib.addString("CALIBRATING FOR USER");
-                botCalib.addInt(userSkeleton[i].uID);
+                botCalib.addInt32(userSkeleton[i].uID);
                 skeletonPort->write();
             }
 
@@ -177,13 +177,13 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config) {
     }
 
     if(config.check("depthVideoMode", "Depth video mode (default=0)")) {
-        dMode = config.find("depthVideoMode").asInt();
+        dMode = config.find("depthVideoMode").asInt32();
     } else {
         dMode = 0;
     }
 
     if(config.check("colorVideoMode", "Color video mode (default=0)")) {
-         cMode = config.find("colorVideoMode").asInt();
+         cMode = config.find("colorVideoMode").asInt32();
     } else {
         cMode = 0;
     }
@@ -213,7 +213,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config) {
     }
 
     if (config.check("minConfidence", "Set minimum confidence (default=0.6)")) {
-        mConf = config.find("minConfidence").asDouble();
+        mConf = config.find("minConfidence").asFloat64();
     } else {
         mConf = MINIMUM_CONFIDENCE;
     }

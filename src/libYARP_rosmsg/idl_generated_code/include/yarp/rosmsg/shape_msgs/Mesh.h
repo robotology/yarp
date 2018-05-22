@@ -57,7 +57,7 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** triangles ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         triangles.resize(len);
         for (int i=0; i<len; i++) {
             if (!triangles[i].read(connection)) {
@@ -66,7 +66,7 @@ public:
         }
 
         // *** vertices ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         vertices.resize(len);
         for (int i=0; i<len; i++) {
             if (!vertices[i].read(connection)) {
@@ -86,10 +86,10 @@ public:
         }
 
         // *** triangles ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         triangles.resize(len);
         for (int i=0; i<len; i++) {
             if (!triangles[i].read(connection)) {
@@ -98,10 +98,10 @@ public:
         }
 
         // *** vertices ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         vertices.resize(len);
         for (int i=0; i<len; i++) {
             if (!vertices[i].read(connection)) {
@@ -122,7 +122,7 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** triangles ***
-        connection.appendInt(triangles.size());
+        connection.appendInt32(triangles.size());
         for (size_t i=0; i<triangles.size(); i++) {
             if (!triangles[i].write(connection)) {
                 return false;
@@ -130,7 +130,7 @@ public:
         }
 
         // *** vertices ***
-        connection.appendInt(vertices.size());
+        connection.appendInt32(vertices.size());
         for (size_t i=0; i<vertices.size(); i++) {
             if (!vertices[i].write(connection)) {
                 return false;
@@ -142,12 +142,12 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(2);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(2);
 
         // *** triangles ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(triangles.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(triangles.size());
         for (size_t i=0; i<triangles.size(); i++) {
             if (!triangles[i].write(connection)) {
                 return false;
@@ -155,8 +155,8 @@ public:
         }
 
         // *** vertices ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(vertices.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(vertices.size());
         for (size_t i=0; i<vertices.size(); i++) {
             if (!vertices[i].write(connection)) {
                 return false;

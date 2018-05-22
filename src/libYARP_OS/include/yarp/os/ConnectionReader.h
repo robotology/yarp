@@ -57,20 +57,54 @@ public:
     /**
      * Read an integer from the network connection.
      * @return the integer read from the connection
+     * @warning Unsafe, sizeof(int) is platform dependent. Use expectInt32 instead.
      */
-    virtual int expectInt() = 0;
+    YARP_DEPRECATED_INTERNAL_MSG("Use expectInt32 instead") // Since YARP 3.0.0
+    virtual int expectInt() final { return static_cast<int>(expectInt32()); }
 
     /**
-     * Read a 64 bit integer from the network connection.
+     * Read a 8-bit integer from the network connection.
      * @return the integer read from the connection
      */
-    virtual YARP_INT64 expectInt64() = 0;
+    virtual std::int8_t expectInt8() = 0;
+
+    /**
+     * Read a 16-bit integer from the network connection.
+     * @return the integer read from the connection
+     */
+    virtual std::int16_t expectInt16() = 0;
+
+    /**
+     * Read a 32-bit integer from the network connection.
+     * @return the integer read from the connection
+     */
+    virtual std::int32_t expectInt32() = 0;
+
+    /**
+     * Read a 64-bit integer from the network connection.
+     * @return the integer read from the connection
+     */
+    virtual std::int64_t expectInt64() = 0;
 
     /**
      * Read a floating point number from the network connection.
      * @return the floating point number read from the connection
+     * @warning Unsafe, sizeof(double) is platform dependent. Use expectFloat64 instead.
      */
-    virtual double expectDouble() = 0;
+    YARP_DEPRECATED_INTERNAL_MSG("Use expectFloat64 instead") // Since YARP 3.0.0
+    virtual double expectDouble() { return static_cast<double>(expectFloat64()); }
+
+    /**
+     * Read a 32-bit floating point number from the network connection.
+     * @return the floating point number read from the connection
+     */
+    virtual yarp::conf::float32_t expectFloat32() = 0;
+
+    /**
+     * Read a 64-bit floating point number from the network connection.
+     * @return the floating point number read from the connection
+     */
+    virtual yarp::conf::float64_t expectFloat64() = 0;
 
     /**
      * Check if the connection is text mode.  If it is, you are

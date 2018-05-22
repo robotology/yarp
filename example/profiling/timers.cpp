@@ -36,9 +36,9 @@ int main(int argc, char **argv)
     double period=0.1; //s
 
     if (p.check("period"))
-        period=p.find("period").asDouble()/1000.0;
+        period=p.find("period").asFloat64()/1000.0;
     if (p.check("time"))
-        totalTime=p.find("time").asDouble();
+        totalTime=p.find("time").asFloat64();
 
     printf("Generating wave with period T=%.2lf[ms]\n", period*1000);
     if (totalTime!=-1)

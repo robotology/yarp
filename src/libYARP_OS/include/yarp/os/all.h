@@ -13,9 +13,11 @@
 // everything for the yarp::os namespace
 #include <yarp/os/NetFloat32.h>
 #include <yarp/os/NetFloat64.h>
+#include <yarp/os/NetInt8.h>
 #include <yarp/os/NetInt16.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetInt64.h>
+#include <yarp/os/NetUint8.h>
 #include <yarp/os/NetUint16.h>
 #include <yarp/os/NetUint32.h>
 #include <yarp/os/NetUint64.h>

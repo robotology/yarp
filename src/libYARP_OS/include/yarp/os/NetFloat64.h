@@ -16,66 +16,63 @@
 ////////////////////////////////////////////////////////////////////////
 //
 // The goal of this file is just to define a 64 bit signed little-endian
-// floating point type
-//
-// If you are having trouble with it, and your system has a 32 bit
-// little-endian type called e.g. ___my_system_double, you can replace
-// this whole file with:
-//    typedef ___my_system_double NetFloat64;
+// IEC 559/IEEE 754 floating point type.
 //
 ////////////////////////////////////////////////////////////////////////
 
-
-////////////////////////////////////////////////////////////////////////
-//   YARP_FLOAT64 should be a 64-bit float
-//   YARP_BIG_ENDIAN should be defined if we are big endian
-//   YARP_LITTLE_ENDIAN should be defined if we are little endian
-
-
-#ifdef YARP_FLOAT64
+#if !YARP_FLOAT64_IS_IEC559
+  // YARP assumes that floating point values are serialized as IEC 559/IEEE 754
+  // floating point types.
+  // If you receive the following error, this means that float and double, on
+  // your platform, are not IEC 559, and therefore some conversion must be
+  // performed whenever reading or writing a floating point value from the
+  // network.
+  // See, for example https://github.com/MalcolmMcLean/ieee754/ for a possible
+  // implementation of the read and write methods.
+  YARP_COMPILER_ERROR("Unsupported compiler. Please implement yarp::os::NetFloat64")
+#endif
 
 namespace yarp {
-    namespace os {
-        /**
-         * Definition of the NetFloat64 type
-         */
+namespace os {
+
+/**
+ * Definition of the NetFloat64 type
+ */
 
 #ifdef YARP_LITTLE_ENDIAN
 
-        typedef YARP_FLOAT64 NetFloat64;
+typedef yarp::conf::float64_t NetFloat64;
 
 #else // YARP_LITTLE_ENDIAN
 
-        typedef YARP_FLOAT64 RawNetFloat64;
-        union UnionNetFloat64 {
-            YARP_FLOAT64 d;
-            unsigned char c[8];
-        };
-        class YARP_OS_API NetFloat64 {
-        private:
-            double raw_value;
-            double swap(double x) const;
-            RawNetFloat64 get() const;
-            void set(RawNetFloat64 v);
-        public:
-            NetFloat64();
-            NetFloat64(RawNetFloat64 val);
-            operator RawNetFloat64() const;
-            RawNetFloat64 operator+(RawNetFloat64 v) const;
-            RawNetFloat64 operator-(RawNetFloat64 v) const;
-            RawNetFloat64 operator*(RawNetFloat64 v) const;
-            RawNetFloat64 operator/(RawNetFloat64 v) const;
-            void operator+=(RawNetFloat64 v);
-            void operator-=(RawNetFloat64 v);
-            void operator*=(RawNetFloat64 v);
-            void operator/=(RawNetFloat64 v);
-        };
+typedef yarp::conf::float64_t RawNetFloat64;
+union UnionNetFloat64 {
+    yarp::conf::float64_t d;
+    unsigned char c[8];
+};
+class YARP_OS_API NetFloat64 {
+private:
+    double raw_value;
+    double swap(double x) const;
+    RawNetFloat64 get() const;
+    void set(RawNetFloat64 v);
+public:
+    NetFloat64();
+    NetFloat64(RawNetFloat64 val);
+    operator RawNetFloat64() const;
+    RawNetFloat64 operator+(RawNetFloat64 v) const;
+    RawNetFloat64 operator-(RawNetFloat64 v) const;
+    RawNetFloat64 operator*(RawNetFloat64 v) const;
+    RawNetFloat64 operator/(RawNetFloat64 v) const;
+    void operator+=(RawNetFloat64 v);
+    void operator-=(RawNetFloat64 v);
+    void operator*=(RawNetFloat64 v);
+    void operator/=(RawNetFloat64 v);
+};
 
 #endif // YARP_LITTLE_ENDIAN
 
-    }
-}
-
-#endif // YARP_FLOAT64
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_NETFLOAT64_H

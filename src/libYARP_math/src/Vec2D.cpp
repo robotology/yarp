@@ -38,10 +38,10 @@ bool Vec2D<double>::read(yarp::os::ConnectionReader& connection)
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
     if (!ok) return false;
 
-    if (header.listLen == 2 && header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_DOUBLE))
+    if (header.listLen == 2 && header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_FLOAT64))
     {
-        this->x = connection.expectDouble();
-        this->y = connection.expectDouble();
+        this->x = connection.expectFloat64();
+        this->y = connection.expectFloat64();
     }
     else
     {
@@ -60,10 +60,10 @@ bool Vec2D<int>::read(yarp::os::ConnectionReader& connection)
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
     if (!ok) return false;
 
-    if (header.listLen == 2 && header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_INT))
+    if (header.listLen == 2 && header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_INT32))
     {
-        this->x = connection.expectInt();
-        this->y = connection.expectInt();
+        this->x = connection.expectInt32();
+        this->y = connection.expectInt32();
     }
     else
     {
@@ -78,13 +78,13 @@ bool Vec2D<double>::write(yarp::os::ConnectionWriter& connection)
 {
     Vec2DPortContentHeader header;
 
-    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_DOUBLE);
+    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_FLOAT64);
     header.listLen = 2;
 
     connection.appendBlock((char*)&header, sizeof(header));
 
-    connection.appendDouble(this->x);
-    connection.appendDouble(this->y);
+    connection.appendFloat64(this->x);
+    connection.appendFloat64(this->y);
 
     connection.convertTextMode();
 
@@ -96,13 +96,13 @@ bool Vec2D<int>::write(yarp::os::ConnectionWriter& connection)
 {
     Vec2DPortContentHeader header;
 
-    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_INT);
+    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_INT32);
     header.listLen = 2;
 
     connection.appendBlock((char*)&header, sizeof(header));
 
-    connection.appendInt(this->x);
-    connection.appendInt(this->y);
+    connection.appendInt32(this->x);
+    connection.appendInt32(this->y);
 
     connection.convertTextMode();
 

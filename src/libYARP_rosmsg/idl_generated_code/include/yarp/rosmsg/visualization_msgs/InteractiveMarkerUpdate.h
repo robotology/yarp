@@ -61,10 +61,10 @@ class InteractiveMarkerUpdate : public yarp::os::idl::WirePortable
 {
 public:
     std::string server_id;
-    yarp::os::NetUint64 seq_num;
-    static const unsigned char KEEP_ALIVE = 0;
-    static const unsigned char UPDATE = 1;
-    unsigned char type;
+    std::uint64_t seq_num;
+    static const std::uint8_t KEEP_ALIVE = 0;
+    static const std::uint8_t UPDATE = 1;
+    std::uint8_t type;
     std::vector<yarp::rosmsg::visualization_msgs::InteractiveMarker> markers;
     std::vector<yarp::rosmsg::visualization_msgs::InteractiveMarkerPose> poses;
     std::vector<std::string> erases;
@@ -107,24 +107,20 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** server_id ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         server_id.resize(len);
         if (!connection.expectBlock((char*)server_id.c_str(), len)) {
             return false;
         }
 
         // *** seq_num ***
-        if (!connection.expectBlock((char*)&seq_num, 8)) {
-            return false;
-        }
+        seq_num = connection.expectInt64();
 
         // *** type ***
-        if (!connection.expectBlock((char*)&type, 1)) {
-            return false;
-        }
+        type = connection.expectInt8();
 
         // *** markers ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         markers.resize(len);
         for (int i=0; i<len; i++) {
             if (!markers[i].read(connection)) {
@@ -133,7 +129,7 @@ public:
         }
 
         // *** poses ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         poses.resize(len);
         for (int i=0; i<len; i++) {
             if (!poses[i].read(connection)) {
@@ -142,10 +138,10 @@ public:
         }
 
         // *** erases ***
-        len = connection.expectInt();
+        len = connection.expectInt32();
         erases.resize(len);
         for (int i=0; i<len; i++) {
-            int len2 = connection.expectInt();
+            int len2 = connection.expectInt32();
             erases[i].resize(len2);
             if (!connection.expectBlock((char*)erases[i].c_str(), len2)) {
                 return false;
@@ -169,16 +165,16 @@ public:
         }
 
         // *** seq_num ***
-        seq_num = reader.expectInt();
+        seq_num = reader.expectInt64();
 
         // *** type ***
-        type = reader.expectInt();
+        type = reader.expectInt8();
 
         // *** markers ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         markers.resize(len);
         for (int i=0; i<len; i++) {
             if (!markers[i].read(connection)) {
@@ -187,10 +183,10 @@ public:
         }
 
         // *** poses ***
-        if (connection.expectInt() != BOTTLE_TAG_LIST) {
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         poses.resize(len);
         for (int i=0; i<len; i++) {
             if (!poses[i].read(connection)) {
@@ -199,13 +195,13 @@ public:
         }
 
         // *** erases ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_STRING)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_STRING)) {
             return false;
         }
-        len = connection.expectInt();
+        len = connection.expectInt32();
         erases.resize(len);
         for (int i=0; i<len; i++) {
-            int len2 = connection.expectInt();
+            int len2 = connection.expectInt32();
             erases[i].resize(len2);
             if (!connection.expectBlock((char*)erases[i].c_str(), len2)) {
                 return false;
@@ -225,17 +221,17 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** server_id ***
-        connection.appendInt(server_id.length());
+        connection.appendInt32(server_id.length());
         connection.appendExternalBlock((char*)server_id.c_str(), server_id.length());
 
         // *** seq_num ***
-        connection.appendBlock((char*)&seq_num, 8);
+        connection.appendInt64(seq_num);
 
         // *** type ***
-        connection.appendBlock((char*)&type, 1);
+        connection.appendInt8(type);
 
         // *** markers ***
-        connection.appendInt(markers.size());
+        connection.appendInt32(markers.size());
         for (size_t i=0; i<markers.size(); i++) {
             if (!markers[i].write(connection)) {
                 return false;
@@ -243,7 +239,7 @@ public:
         }
 
         // *** poses ***
-        connection.appendInt(poses.size());
+        connection.appendInt32(poses.size());
         for (size_t i=0; i<poses.size(); i++) {
             if (!poses[i].write(connection)) {
                 return false;
@@ -251,9 +247,9 @@ public:
         }
 
         // *** erases ***
-        connection.appendInt(erases.size());
+        connection.appendInt32(erases.size());
         for (size_t i=0; i<erases.size(); i++) {
-            connection.appendInt(erases[i].length());
+            connection.appendInt32(erases[i].length());
             connection.appendExternalBlock((char*)erases[i].c_str(), erases[i].length());
         }
 
@@ -262,25 +258,25 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(8);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(8);
 
         // *** server_id ***
-        connection.appendInt(BOTTLE_TAG_STRING);
-        connection.appendInt(server_id.length());
+        connection.appendInt32(BOTTLE_TAG_STRING);
+        connection.appendInt32(server_id.length());
         connection.appendExternalBlock((char*)server_id.c_str(), server_id.length());
 
         // *** seq_num ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)seq_num);
+        connection.appendInt32(BOTTLE_TAG_INT64);
+        connection.appendInt64(seq_num);
 
         // *** type ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)type);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(type);
 
         // *** markers ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(markers.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(markers.size());
         for (size_t i=0; i<markers.size(); i++) {
             if (!markers[i].write(connection)) {
                 return false;
@@ -288,8 +284,8 @@ public:
         }
 
         // *** poses ***
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(poses.size());
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(poses.size());
         for (size_t i=0; i<poses.size(); i++) {
             if (!poses[i].write(connection)) {
                 return false;
@@ -297,10 +293,10 @@ public:
         }
 
         // *** erases ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_STRING);
-        connection.appendInt(erases.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_STRING);
+        connection.appendInt32(erases.size());
         for (size_t i=0; i<erases.size(); i++) {
-            connection.appendInt(erases[i].length());
+            connection.appendInt32(erases[i].length());
             connection.appendExternalBlock((char*)erases[i].c_str(), erases[i].length());
         }
 

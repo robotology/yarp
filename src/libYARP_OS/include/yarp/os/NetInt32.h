@@ -18,65 +18,47 @@
 // The goal of this file is just to define a 32 bit signed little-endian
 // integer type.
 //
-// If you are having trouble with it, and your system has a 32 bit
-// little-endian type called e.g. ___my_system_int32, you can replace
-// this whole file with:
-//    typedef ___my_system_int32 NetInt32;
-//
 ////////////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////////////
-//   YARP_INT32 should be a 32-bit integer
-//   YARP_BIG_ENDIAN should be defined if we are big endian
-//   YARP_LITTLE_ENDIAN should be defined if we are little endian
-
-
-#ifdef YARP_INT32
 
 namespace yarp {
-    namespace os {
-        /**
-         * Definition of the NetInt32 type
-         */
+namespace os {
+
+/**
+ * Definition of the NetInt32 type
+ */
 
 #ifdef YARP_LITTLE_ENDIAN
 
-        typedef YARP_INT32 NetInt32;
+typedef std::int32_t NetInt32;
 
-#else
+#else // YARP_LITTLE_ENDIAN
 
-        class YARP_OS_API NetInt32 {
-        private:
-            unsigned YARP_INT32 raw_value;
-            unsigned YARP_INT32 swap(unsigned YARP_INT32 x) const;
-            YARP_INT32 get() const;
-            void set(YARP_INT32 v);
-        public:
-            NetInt32();
-            NetInt32(YARP_INT32 val);
-            operator YARP_INT32() const;
-            YARP_INT32 operator+(YARP_INT32 v) const;
-            YARP_INT32 operator-(YARP_INT32 v) const;
-            YARP_INT32 operator*(YARP_INT32 v) const;
-            YARP_INT32 operator/(YARP_INT32 v) const;
-            void operator+=(YARP_INT32 v);
-            void operator-=(YARP_INT32 v);
-            void operator*=(YARP_INT32 v);
-            void operator/=(YARP_INT32 v);
-            void operator++(int);
-            void operator--(int);
-        };
+class YARP_OS_API NetInt32
+{
+private:
+    std::uint32_t raw_value;
+    std::uint32_t swap(std::uint32_t x) const;
+    std::int32_t get() const;
+    void set(std::int32_t v);
+public:
+    NetInt32();
+    NetInt32(std::int32_t val);
+    operator std::int32_t() const;
+    std::int32_t operator+(std::int32_t v) const;
+    std::int32_t operator-(std::int32_t v) const;
+    std::int32_t operator*(std::int32_t v) const;
+    std::int32_t operator/(std::int32_t v) const;
+    void operator+=(std::int32_t v);
+    void operator-=(std::int32_t v);
+    void operator*=(std::int32_t v);
+    void operator/=(std::int32_t v);
+    void operator++(int);
+    void operator--(int);
+};
 
 #endif // YARP_LITTLE_ENDIAN
 
-    }
-}
-
-#else // YARP_INT32
-
-#error "NetInt32 not defined"
-
-#endif // YARP_INT32
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_NETINT32_H

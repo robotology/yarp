@@ -74,7 +74,7 @@ PortMonitor.update = function(thing)
     bt = thing:asBottle()
     th = yarp.Things()
     vec = yarp.Vector()
-    for i=1,bt:get(1):asInt() do
+    for i=1,bt:get(1):asInt32() do
         vec:push_back(math.random())
     end
     th:setPortWriter(vec)

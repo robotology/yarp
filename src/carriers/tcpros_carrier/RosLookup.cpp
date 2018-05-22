@@ -35,7 +35,7 @@ bool RosLookup::lookupCore(const std::string& name) {
     req.addString("dummy_id");
     req.addString(name);
     rpc(getRosCoreAddress(), "xmlrpc", req, reply, verbose);
-    if (reply.get(0).asInt()!=1) {
+    if (reply.get(0).asInt32()!=1) {
         fprintf(stderr, "Failure: %s\n", reply.toString().c_str());
         return false;
     }
@@ -58,7 +58,7 @@ bool RosLookup::lookupCore(const std::string& name) {
     hostname = url.substr(break1+3,break2-break1-3);
     Value vportnum;
     vportnum.fromString(url.substr(break2+1,break3-break2-1).c_str());
-    portnum = vportnum.asInt();
+    portnum = vportnum.asInt32();
     if (verbose) printf("%s\n", reply.toString().c_str());
     valid = (portnum!=0);
     rpc(getRosCoreAddress(), "xmlrpc", req, reply, verbose);
@@ -81,7 +81,7 @@ bool RosLookup::lookupTopic(const std::string& name) {
     //printf("Sending [%s] to %s\n", req.toString().c_str(),toString().c_str());
     Contact c = Contact::fromString(toString().c_str());
     rpc(c,"xmlrpc",req,reply, verbose);
-    if (reply.get(0).asInt()!=1) {
+    if (reply.get(0).asInt32()!=1) {
         fprintf(stderr,"Failure looking up topic %s: %s\n", name.c_str(), reply.toString().c_str());
         return false;
     }
@@ -98,7 +98,7 @@ bool RosLookup::lookupTopic(const std::string& name) {
     Value hostname2 = pref->get(1);
     Value portnum2 = pref->get(2);
     hostname = hostname2.asString().c_str();
-    portnum = portnum2.asInt();
+    portnum = portnum2.asInt32();
     protocol = "tcpros";
     if (verbose) {
         printf("topic %s available at %s:%d\n", name.c_str(),

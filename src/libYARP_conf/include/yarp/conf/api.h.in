@@ -131,6 +131,14 @@ recommended usage of this header within YARP is:
 #  define YARP_DEPRECATED_API_MSG(X) YARP_DEPRECATED_COMPILER_SPECIFIC_MSG(X) YARP_OS_API
 #endif
 
+#ifdef BUILDING_YARP
+#  define YARP_DEPRECATED_INTERNAL YARP_DEPRECATED
+#  define YARP_DEPRECATED_INTERNAL_MSG(X) YARP_DEPRECATED_MSG(X)
+#else
+#  define YARP_DEPRECATED_INTERNAL
+#  define YARP_DEPRECATED_INTERNAL_MSG(X)
+#endif
+
 // YARP_NODISCARD: print a warning if the result unused
 #if (YARP_COMPILER_IS_GNU && (__GNUC__ >= 4)) || YARP_COMPILER_IS_Clang || YARP_COMPILER_IS_AppleClang
 #  define YARP_NODISCARD __attribute__ ((warn_unused_result))

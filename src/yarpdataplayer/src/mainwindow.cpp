@@ -60,7 +60,7 @@ MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
 
     if (rf.check("withExtraTimeCol")){
         withExtraTimeCol = true;
-        column = rf.check("withExtraTimeCol",Value(1)).asInt();
+        column = rf.check("withExtraTimeCol",Value(1)).asInt32();
 
         if (column < 1 || column > 2 ){
             column = 1;

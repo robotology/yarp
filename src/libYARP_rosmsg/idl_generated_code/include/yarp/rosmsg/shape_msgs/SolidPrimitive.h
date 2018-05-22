@@ -69,20 +69,20 @@ namespace shape_msgs {
 class SolidPrimitive : public yarp::os::idl::WirePortable
 {
 public:
-    static const unsigned char BOX = 1;
-    static const unsigned char SPHERE = 2;
-    static const unsigned char CYLINDER = 3;
-    static const unsigned char CONE = 4;
-    unsigned char type;
-    std::vector<yarp::os::NetFloat64> dimensions;
-    static const unsigned char BOX_X = 0;
-    static const unsigned char BOX_Y = 1;
-    static const unsigned char BOX_Z = 2;
-    static const unsigned char SPHERE_RADIUS = 0;
-    static const unsigned char CYLINDER_HEIGHT = 0;
-    static const unsigned char CYLINDER_RADIUS = 1;
-    static const unsigned char CONE_HEIGHT = 0;
-    static const unsigned char CONE_RADIUS = 1;
+    static const std::uint8_t BOX = 1;
+    static const std::uint8_t SPHERE = 2;
+    static const std::uint8_t CYLINDER = 3;
+    static const std::uint8_t CONE = 4;
+    std::uint8_t type;
+    std::vector<yarp::conf::float64_t> dimensions;
+    static const std::uint8_t BOX_X = 0;
+    static const std::uint8_t BOX_Y = 1;
+    static const std::uint8_t BOX_Z = 2;
+    static const std::uint8_t SPHERE_RADIUS = 0;
+    static const std::uint8_t CYLINDER_HEIGHT = 0;
+    static const std::uint8_t CYLINDER_RADIUS = 1;
+    static const std::uint8_t CONE_HEIGHT = 0;
+    static const std::uint8_t CONE_RADIUS = 1;
 
     SolidPrimitive() :
             type(0),
@@ -126,14 +126,12 @@ public:
     bool readBare(yarp::os::ConnectionReader& connection) override
     {
         // *** type ***
-        if (!connection.expectBlock((char*)&type, 1)) {
-            return false;
-        }
+        type = connection.expectInt8();
 
         // *** dimensions ***
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         dimensions.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&dimensions[0], sizeof(yarp::os::NetFloat64)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&dimensions[0], sizeof(yarp::conf::float64_t)*len)) {
             return false;
         }
 
@@ -149,16 +147,16 @@ public:
         }
 
         // *** type ***
-        type = reader.expectInt();
+        type = reader.expectInt8();
 
         // *** dimensions ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         dimensions.resize(len);
         for (int i=0; i<len; i++) {
-            dimensions[i] = (yarp::os::NetFloat64)connection.expectDouble();
+            dimensions[i] = (yarp::conf::float64_t)connection.expectFloat64();
         }
 
         return !connection.isError();
@@ -174,12 +172,12 @@ public:
     bool writeBare(yarp::os::ConnectionWriter& connection) override
     {
         // *** type ***
-        connection.appendBlock((char*)&type, 1);
+        connection.appendInt8(type);
 
         // *** dimensions ***
-        connection.appendInt(dimensions.size());
+        connection.appendInt32(dimensions.size());
         if (dimensions.size()>0) {
-            connection.appendExternalBlock((char*)&dimensions[0], sizeof(yarp::os::NetFloat64)*dimensions.size());
+            connection.appendExternalBlock((char*)&dimensions[0], sizeof(yarp::conf::float64_t)*dimensions.size());
         }
 
         return !connection.isError();
@@ -187,18 +185,18 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(14);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(14);
 
         // *** type ***
-        connection.appendInt(BOTTLE_TAG_INT);
-        connection.appendInt((int)type);
+        connection.appendInt32(BOTTLE_TAG_INT8);
+        connection.appendInt8(type);
 
         // *** dimensions ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(dimensions.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64);
+        connection.appendInt32(dimensions.size());
         for (size_t i=0; i<dimensions.size(); i++) {
-            connection.appendDouble((double)dimensions[i]);
+            connection.appendFloat64(dimensions[i]);
         }
 
         connection.convertTextMode();

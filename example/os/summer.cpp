@@ -24,12 +24,12 @@ int main(int argc, char *argv[]) {
             cout << "got " << input->toString().c_str() << endl;
             double total = 0;
             for (int i=0; i<input->size(); i++) {
-                total += input->get(i).asDouble();
+                total += input->get(i).asFloat64();
             }
             Bottle& output = port.prepare();
             output.clear();
             output.addString("total");
-            output.addDouble(total);
+            output.addFloat64(total);
             cout << "writing " << output.toString().c_str() << endl;
             port.write();
         }

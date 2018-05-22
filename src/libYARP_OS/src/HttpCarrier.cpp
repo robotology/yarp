@@ -36,7 +36,7 @@ static bool asJson(std::string  &accum,
 
 static bool asJson(std::string &accum,
                    yarp::os::Value &v) {
-    if (v.isInt()||v.isDouble()) {
+    if (v.isInt32()||v.isFloat64()) {
         accum += v.toString();
         return true;
     }
@@ -647,8 +647,8 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
             Bottle b;
             b.fromString(result.c_str());
             if (b.get(0).asString()=="Content-Length:") {
-                //printf("]]] got length %d\n", b.get(1).asInt());
-                contentLength = b.get(1).asInt();
+                //printf("]]] got length %d\n", b.get(1).asInt32());
+                contentLength = b.get(1).asInt32();
             }
             if (b.get(0).asString()=="Content-Type:") {
                 //printf("]]] got type %s\n", b.get(1).asString());
@@ -731,7 +731,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
 
 bool yarp::os::impl::HttpCarrier::expectReplyToHeader(ConnectionState& proto) {
     input = "";
-    YARP_SSIZE_T len = 1;
+    yarp::conf::ssize_t len = 1;
     while (len>0) {
         char buf[2];
         Bytes b((char *)&buf[0], 1);

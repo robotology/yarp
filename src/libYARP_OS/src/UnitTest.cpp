@@ -267,7 +267,7 @@ void UnitTest::saveEnvironment(const char *key) {
     Bottle& lst = env.addList();
     lst.addString(key);
     lst.addString(val);
-    lst.addInt(found?1:0);
+    lst.addInt32(found?1:0);
 }
 
 void UnitTest::restoreEnvironment() {
@@ -276,7 +276,7 @@ void UnitTest::restoreEnvironment() {
         if (lst==nullptr) continue;
         std::string key = lst->get(0).asString();
         std::string val = lst->get(1).asString();
-        bool found = lst->get(2).asInt()?true:false;
+        bool found = lst->get(2).asInt32()?true:false;
         if (!found) {
             NetworkBase::unsetEnvironment(key);
         } else {

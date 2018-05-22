@@ -416,12 +416,12 @@ bool ControlBoardWrapper::open(Searchable& config)
     // NOW, check for correct parameter, so if both are present we use the correct one
     if(prop.check("period"))
     {
-        if(!prop.find("period").isInt())
+        if(!prop.find("period").isInt32())
         {
             yError() << " *** ControlBoardWrapper2: 'period' parameter is not an integer value *** ";
             return false;
         }
-        period = prop.find("period").asInt();
+        period = prop.find("period").asInt32();
         if(period <= 0)
         {
             yError() << " *** ControlBoardWrapper2: 'period' parameter is not an integer value, read value is " << period << " ***";
@@ -508,7 +508,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
     if (!prop.check("joints", "number of joints of the part"))
         return false;
 
-    controlledJoints=prop.find("joints").asInt();
+    controlledJoints=prop.find("joints").asInt32();
 
     int nsubdevices=nets->size();
     device.lut.resize(controlledJoints);
@@ -548,18 +548,18 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
             }
 
             // If I came here, bot is correct
-            wBase=bot->get(0).asInt();
-            wTop=bot->get(1).asInt();
-            base=bot->get(2).asInt();
-            top=bot->get(3).asInt();
+            wBase=bot->get(0).asInt32();
+            wTop=bot->get(1).asInt32();
+            base=bot->get(2).asInt32();
+            top=bot->get(3).asInt32();
         }
         else if (parameters.size()==5)
         {
             // yError<<"Parameter networks use deprecated syntax\n";
-            wBase=parameters.get(1).asInt();
-            wTop=parameters.get(2).asInt();
-            base=parameters.get(3).asInt();
-            top=parameters.get(4).asInt();
+            wBase=parameters.get(1).asInt32();
+            wTop=parameters.get(2).asInt32();
+            base=parameters.get(3).asInt32();
+            top=parameters.get(4).asInt32();
         }
         else
         {

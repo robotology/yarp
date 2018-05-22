@@ -120,23 +120,23 @@ public:
             rgbParams->getRgbMirroring(result);
             checkFalse(result,"checking mirroring");
             rgbParams->getRgbIntrinsicParam(intrinsics);
-            result=(intrinsics.find("focalLengthX").asDouble())==4.0;
+            result=(intrinsics.find("focalLengthX").asFloat64())==4.0;
             checkTrue(result,"checking focalLength X");
-            result=(intrinsics.find("focalLengthY").asDouble())==5.0;
+            result=(intrinsics.find("focalLengthY").asFloat64())==5.0;
             checkTrue(result,"checking focalLength Y");
-            result=(intrinsics.find("principalPointX").asDouble())==6.0;
+            result=(intrinsics.find("principalPointX").asFloat64())==6.0;
             checkTrue(result,"checking principalPoint X");
-            result=(intrinsics.find("principalPointY").asDouble())==7.0;
+            result=(intrinsics.find("principalPointY").asFloat64())==7.0;
             checkTrue(result,"checking principalPoint Y");
-            result=(intrinsics.find("k1").asDouble())==8.0;
+            result=(intrinsics.find("k1").asFloat64())==8.0;
             checkTrue(result,"checking k1");
-            result=(intrinsics.find("k2").asDouble())==9.0;
+            result=(intrinsics.find("k2").asFloat64())==9.0;
             checkTrue(result,"checking k2");
-            result=(intrinsics.find("k3").asDouble())==10.0;
+            result=(intrinsics.find("k3").asFloat64())==10.0;
             checkTrue(result,"checking k3");
-            result=(intrinsics.find("t1").asDouble())==11.0;
+            result=(intrinsics.find("t1").asFloat64())==11.0;
             checkTrue(result,"checking t1");
-            result=(intrinsics.find("t2").asDouble())==12.0;
+            result=(intrinsics.find("t2").asFloat64())==12.0;
             checkTrue(result,"checking t2");
             result=(intrinsics.find("distortionModel").asString())=="FishEye";
             checkTrue(result,"checking distorionModel");
@@ -150,7 +150,7 @@ public:
             {
                 for(int j=0; j<3; j++)
                 {
-                    if(retM->get(i*3+j).asDouble()!=v(i*3+j) || v2(i*3+j)!=v(i*3+j))
+                    if(retM->get(i*3+j).asFloat64()!=v(i*3+j) || v2(i*3+j)!=v(i*3+j))
                         result=false;
                 }
             }
@@ -233,23 +233,23 @@ public:
             rgbParams->getRgbMirroring(result);
             checkFalse(result,"checking mirroring");
             rgbParams->getRgbIntrinsicParam(intrinsics);
-            result=(intrinsics.find("focalLengthX").asDouble())==4.0;
+            result=(intrinsics.find("focalLengthX").asFloat64())==4.0;
             checkTrue(result,"checking focalLength X");
-            result=(intrinsics.find("focalLengthY").asDouble())==5.0;
+            result=(intrinsics.find("focalLengthY").asFloat64())==5.0;
             checkTrue(result,"checking focalLength Y");
-            result=(intrinsics.find("principalPointX").asDouble())==6.0;
+            result=(intrinsics.find("principalPointX").asFloat64())==6.0;
             checkTrue(result,"checking principalPoint X");
-            result=(intrinsics.find("principalPointY").asDouble())==7.0;
+            result=(intrinsics.find("principalPointY").asFloat64())==7.0;
             checkTrue(result,"checking principalPoint Y");
-            result=(intrinsics.find("k1").asDouble())==8.0;
+            result=(intrinsics.find("k1").asFloat64())==8.0;
             checkTrue(result,"checking k1");
-            result=(intrinsics.find("k2").asDouble())==9.0;
+            result=(intrinsics.find("k2").asFloat64())==9.0;
             checkTrue(result,"checking k2");
-            result=(intrinsics.find("k3").asDouble())==10.0;
+            result=(intrinsics.find("k3").asFloat64())==10.0;
             checkTrue(result,"checking k3");
-            result=(intrinsics.find("t1").asDouble())==11.0;
+            result=(intrinsics.find("t1").asFloat64())==11.0;
             checkTrue(result,"checking t1");
-            result=(intrinsics.find("t2").asDouble())==12.0;
+            result=(intrinsics.find("t2").asFloat64())==12.0;
             checkTrue(result,"checking t2");
             result=(intrinsics.find("distortionModel").asString())=="FishEye";
             checkTrue(result,"checking distorionModel");
@@ -263,7 +263,7 @@ public:
             {
                 for(int j=0; j<3; j++)
                 {
-                    if(retM->get(i*3+j).asDouble()!=v(i*3+j) || v2(i*3+j)!=v(i*3+j))
+                    if(retM->get(i*3+j).asFloat64()!=v(i*3+j) || v2(i*3+j)!=v(i*3+j))
                         result=false;
                 }
             }
@@ -271,23 +271,23 @@ public:
             Bottle bt=intrinsics.findGroup("right");
             result=!bt.isNull();
             checkTrue(result,"checking second intrinsics");
-            result=(bt.find("focalLengthX").asDouble())==4.0;
+            result=(bt.find("focalLengthX").asFloat64())==4.0;
             checkTrue(result,"checking focalLength X");
-            result=(bt.find("focalLengthY").asDouble())==5.0;
+            result=(bt.find("focalLengthY").asFloat64())==5.0;
             checkTrue(result,"checking focalLength Y");
-            result=(bt.find("principalPointX").asDouble())==6.0;
+            result=(bt.find("principalPointX").asFloat64())==6.0;
             checkTrue(result,"checking principalPoint X");
-            result=(bt.find("principalPointY").asDouble())==7.0;
+            result=(bt.find("principalPointY").asFloat64())==7.0;
             checkTrue(result,"checking principalPoint Y");
-            result=(bt.find("k1").asDouble())==8.0;
+            result=(bt.find("k1").asFloat64())==8.0;
             checkTrue(result,"checking k1");
-            result=(bt.find("k2").asDouble())==9.0;
+            result=(bt.find("k2").asFloat64())==9.0;
             checkTrue(result,"checking k2");
-            result=(bt.find("k3").asDouble())==10.0;
+            result=(bt.find("k3").asFloat64())==10.0;
             checkTrue(result,"checking k3");
-            result=(bt.find("t1").asDouble())==11.0;
+            result=(bt.find("t1").asFloat64())==11.0;
             checkTrue(result,"checking t1");
-            result=(bt.find("t2").asDouble())==12.0;
+            result=(bt.find("t2").asFloat64())==12.0;
             checkTrue(result,"checking t2");
             result=(bt.find("distortionModel").asString())=="FishEye";
             checkTrue(result,"checking distorionModel");
@@ -301,7 +301,7 @@ public:
             {
                 for(int j=0; j<3; j++)
                 {
-                    if(retM->get(i*3+j).asDouble()!=v(i*3+j) || v2(i*3+j)!=v(i*3+j))
+                    if(retM->get(i*3+j).asFloat64()!=v(i*3+j) || v2(i*3+j)!=v(i*3+j))
                         result=false;
                 }
             }
@@ -329,23 +329,23 @@ public:
             rgbParams->getRgbMirroring(result);
             checkFalse(result,"checking mirroring");
             rgbParams->getRgbIntrinsicParam(intrinsics);
-            result=(intrinsics.find("focalLengthX").asDouble())==4.0;
+            result=(intrinsics.find("focalLengthX").asFloat64())==4.0;
             checkTrue(result,"checking focalLength X");
-            result=(intrinsics.find("focalLengthY").asDouble())==5.0;
+            result=(intrinsics.find("focalLengthY").asFloat64())==5.0;
             checkTrue(result,"checking focalLength Y");
-            result=(intrinsics.find("principalPointX").asDouble())==6.0;
+            result=(intrinsics.find("principalPointX").asFloat64())==6.0;
             checkTrue(result,"checking principalPoint X");
-            result=(intrinsics.find("principalPointY").asDouble())==7.0;
+            result=(intrinsics.find("principalPointY").asFloat64())==7.0;
             checkTrue(result,"checking principalPoint Y");
-            result=(intrinsics.find("k1").asDouble())==8.0;
+            result=(intrinsics.find("k1").asFloat64())==8.0;
             checkTrue(result,"checking k1");
-            result=(intrinsics.find("k2").asDouble())==9.0;
+            result=(intrinsics.find("k2").asFloat64())==9.0;
             checkTrue(result,"checking k2");
-            result=(intrinsics.find("k3").asDouble())==10.0;
+            result=(intrinsics.find("k3").asFloat64())==10.0;
             checkTrue(result,"checking k3");
-            result=(intrinsics.find("t1").asDouble())==11.0;
+            result=(intrinsics.find("t1").asFloat64())==11.0;
             checkTrue(result,"checking t1");
-            result=(intrinsics.find("t2").asDouble())==12.0;
+            result=(intrinsics.find("t2").asFloat64())==12.0;
             checkTrue(result,"checking t2");
             result=(intrinsics.find("distortionModel").asString())=="FishEye";
             checkTrue(result,"checking distorionModel");
@@ -355,7 +355,7 @@ public:
             {
                 for(int j=0; j<3; j++)
                 {
-                    if(retM->get(i*3+j).asDouble()!=v(i*3+j) || v2(i*3+j)!=v(i*3+j))
+                    if(retM->get(i*3+j).asFloat64()!=v(i*3+j) || v2(i*3+j)!=v(i*3+j))
                         result=false;
                 }
             }

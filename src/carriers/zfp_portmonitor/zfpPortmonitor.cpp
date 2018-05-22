@@ -93,9 +93,9 @@ yarp::os::Things& ZfpMonitorObject::update(yarp::os::Things& thing)
             return thing;
         }
         data.clear();
-        data.addInt(img->width());
-        data.addInt(img->height());
-        data.addInt(sizeCompressed);
+        data.addInt32(img->width());
+        data.addInt32(img->height());
+        data.addInt32(sizeCompressed);
         Value v(compressed, sizeCompressed);
         data.add(v);
         th.setPortWriter(&data);
@@ -105,9 +105,9 @@ yarp::os::Things& ZfpMonitorObject::update(yarp::os::Things& thing)
 
        Bottle* compressedbt= thing.cast_as<Bottle>();
 
-       int width=compressedbt->get(0).asInt();
-       int height=compressedbt->get(1).asInt();
-       int sizeCompressed=compressedbt->get(2).asInt();
+       int width=compressedbt->get(0).asInt32();
+       int height=compressedbt->get(1).asInt32();
+       int sizeCompressed=compressedbt->get(2).asInt32();
        // cast thing to compressed.
        decompress((float*)compressedbt->get(3).asBlob(), decompressed, sizeCompressed, width, height,1e-3);
 

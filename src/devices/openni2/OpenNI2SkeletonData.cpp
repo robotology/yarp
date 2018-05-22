@@ -53,7 +53,7 @@ void OpenNI2SkeletonData::storeData(Bottle& b){
     int userID;
     UserSkeleton *tuserSkeleton;
     if(b.get(0).isString()){
-        userID = b.get(1).asInt();
+        userID = b.get(1).asInt32();
         string vocab = b.get(0).asString().c_str();
         if(vocab.compare("CALIBRATING FOR USER") == 0)
         {
@@ -65,7 +65,7 @@ void OpenNI2SkeletonData::storeData(Bottle& b){
     
     else if(b.get(0).isList()){
         list = b.get(0).asList();
-        userID = list->get(1).asInt();
+        userID = list->get(1).asInt32();
 #ifdef OPENNI2_DRIVER_USES_NITE2
         userSkeleton[userID-1].skeletonState = nite::SKELETON_TRACKED;//USER STATUS
 #endif
@@ -73,16 +73,16 @@ void OpenNI2SkeletonData::storeData(Bottle& b){
         int jointIndex = 0;
         for(int i = 1; i < b.size(); i+=6){
             list = b.get(i+1).asList();// position elements
-            tuserSkeleton->skeletonPointsPos[jointIndex][0] = list->get(0).asDouble();
-            tuserSkeleton->skeletonPointsPos[jointIndex][1] = list->get(1).asDouble();
-            tuserSkeleton->skeletonPointsPos[jointIndex][2] = list->get(2).asDouble();
-            tuserSkeleton->skeletonPosConf[jointIndex] = b.get(i+2).asDouble();
+            tuserSkeleton->skeletonPointsPos[jointIndex][0] = list->get(0).asFloat64();
+            tuserSkeleton->skeletonPointsPos[jointIndex][1] = list->get(1).asFloat64();
+            tuserSkeleton->skeletonPointsPos[jointIndex][2] = list->get(2).asFloat64();
+            tuserSkeleton->skeletonPosConf[jointIndex] = b.get(i+2).asFloat64();
             list = b.get(i+4).asList();// orientation elements
-            tuserSkeleton->skeletonPointsOri[jointIndex][0] = list->get(0).asDouble();
-            tuserSkeleton->skeletonPointsOri[jointIndex][1] = list->get(1).asDouble();
-            tuserSkeleton->skeletonPointsOri[jointIndex][2] = list->get(2).asDouble();
-            tuserSkeleton->skeletonPointsOri[jointIndex][3] = list->get(3).asDouble();
-            tuserSkeleton->skeletonOriConf[jointIndex] = b.get(i+5).asDouble();
+            tuserSkeleton->skeletonPointsOri[jointIndex][0] = list->get(0).asFloat64();
+            tuserSkeleton->skeletonPointsOri[jointIndex][1] = list->get(1).asFloat64();
+            tuserSkeleton->skeletonPointsOri[jointIndex][2] = list->get(2).asFloat64();
+            tuserSkeleton->skeletonPointsOri[jointIndex][3] = list->get(3).asFloat64();
+            tuserSkeleton->skeletonOriConf[jointIndex] = b.get(i+5).asFloat64();
             jointIndex++;
         }
     }

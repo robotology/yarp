@@ -19,9 +19,9 @@ bool yarp::os::PortablePairBase::readPair(ConnectionReader& connection,
     // text-to-binary mapping
     connection.convertTextMode();
 
-    int header = connection.expectInt();
+    std::int32_t header = connection.expectInt32();
     if (header!=BOTTLE_TAG_LIST) { return false; }
-    int len = connection.expectInt();
+    std::int32_t len = connection.expectInt32();
     if (len!=2) { return false; }
 
     bool ok = head.read(connection);
@@ -35,8 +35,8 @@ bool yarp::os::PortablePairBase::writePair(ConnectionWriter& connection,
                                            Portable& head,
                                            Portable& body)
 {
-    connection.appendInt(BOTTLE_TAG_LIST); // nested structure
-    connection.appendInt(2);               // with two elements
+    connection.appendInt32(BOTTLE_TAG_LIST); // nested structure
+    connection.appendInt32(2);               // with two elements
     bool ok = head.write(connection);
     if (ok) {
         ok = body.write(connection);

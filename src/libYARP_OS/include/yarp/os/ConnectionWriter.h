@@ -54,22 +54,60 @@ public:
     /**
      * Send a representation of an integer to the network connection.
      * @param data the integer to send
+     * @warning Unsafe, sizeof(int) is platform dependent. Use appendInt32 instead.
      */
-    virtual void appendInt(int data) = 0;
+    YARP_DEPRECATED_INTERNAL_MSG("Use appendInt32 instead") // Since YARP 3.0.0
+    virtual void appendInt(int data) final { appendInt32(static_cast<std::int32_t>(data)); }
+
+    /**
+     * Send a representation of a 8-bit integer to the network connection.
+     * @param data the integer to send
+     */
+    virtual void appendInt8(std::int8_t data) = 0;
+
+    /**
+     * Send a representation of a 16-bit integer to the network connection.
+     * @param data the integer to send
+     */
+    virtual void appendInt16(std::int16_t data) = 0;
+
+    /**
+     * Send a representation of a 32-bit integer to the network connection.
+     * @param data the integer to send
+     */
+    virtual void appendInt32(std::int32_t data) = 0;
 
     /**
      * Send a representation of a 64-bit integer to the network connection.
      * @param data the integer to send
      */
-    virtual void appendInt64(const YARP_INT64& data) = 0;
+    virtual void appendInt64(std::int64_t data) = 0;
 
     /**
      * Send a representation of a floating point number to the network
      * connection.
      *
      * @param data the floating point number to send
+     * @warning Unsafe, sizeof(double) is platform dependent. Use appendFloat64 instead.
      */
-    virtual void appendDouble(double data) = 0;
+    YARP_DEPRECATED_INTERNAL_MSG("Use appendFloat64 instead") // Since YARP 3.0.0
+    virtual void appendDouble(double data) { appendFloat64(static_cast<yarp::conf::float64_t>(data)); }
+
+    /**
+     * Send a representation of a 32-bit floating point number to the network
+     * connection.
+     *
+     * @param data the floating point number to send
+     */
+    virtual void appendFloat32(yarp::conf::float32_t data) = 0;
+
+    /**
+     * Send a representation of a 64-bit floating point number to the network
+     * connection.
+     *
+     * @param data the floating point number to send
+     */
+    virtual void appendFloat64(yarp::conf::float64_t data) = 0;
 
     /**
      * Send a character sequence to the network connection.
@@ -184,7 +222,7 @@ public:
 
 
     virtual void appendRawString(const std::string& str) {
-        appendInt(static_cast<std::int32_t>(str.length()));
+        appendInt32(static_cast<std::int32_t>(str.length()));
         appendBlock((char*)str.c_str(), str.length());
     }
 

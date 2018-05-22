@@ -171,9 +171,9 @@ bool Logger::shouldShowDebug()
 }
 
 
-void Logger::show(unsigned YARP_INT32 level, const std::string& txt)
+void Logger::show(std::uint32_t level, const std::string& txt)
 {
-    unsigned YARP_INT32 inLevel = level;
+    std::uint32_t inLevel = level;
     //fprintf(stderr, "level %d txt %s\n", level, txt.c_str());
     if (verbose>0) {
         level = 10000;

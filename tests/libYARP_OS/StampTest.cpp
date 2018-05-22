@@ -47,8 +47,8 @@ public:
             Bottle bot;
             bot.read(con.getReader());
 
-            checkEqual(bot.get(0).asInt(), 55, "sequence number write");
-            checkTrue (fabs(bot.get(1).asDouble()-1)<0.0001, "time stamp write");
+            checkEqual(bot.get(0).asInt32(), 55, "sequence number write");
+            checkTrue (fabs(bot.get(1).asFloat64()-1)<0.0001, "time stamp write");
 
 
             stampToWrite.write(con.getCleanWriter());
@@ -141,8 +141,8 @@ public:
             env.write(buf);
             std::string str = buf.toString();
             Bottle bot(str.c_str());
-            checkEqual(bot.get(0).asInt(),42,"sequence ok");
-            checkEqualish(bot.get(1).asDouble(),3,"time ok");
+            checkEqual(bot.get(0).asInt32(),42,"sequence ok");
+            checkEqualish(bot.get(1).asFloat64(),3,"time ok");
         }
     }
 

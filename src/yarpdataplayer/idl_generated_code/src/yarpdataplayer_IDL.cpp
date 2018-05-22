@@ -17,9 +17,9 @@ public:
 class yarpdataplayer_IDL_setFrame : public yarp::os::Portable {
 public:
   std::string name;
-  int32_t frameNum;
+  std::int32_t frameNum;
   bool _return;
-  void init(const std::string& name, const int32_t frameNum);
+  void init(const std::string& name, const std::int32_t frameNum);
   virtual bool write(yarp::os::ConnectionWriter& connection) override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
@@ -27,7 +27,7 @@ public:
 class yarpdataplayer_IDL_getFrame : public yarp::os::Portable {
 public:
   std::string name;
-  int32_t _return;
+  std::int32_t _return;
   void init(const std::string& name);
   virtual bool write(yarp::os::ConnectionWriter& connection) override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
@@ -114,7 +114,7 @@ bool yarpdataplayer_IDL_setFrame::read(yarp::os::ConnectionReader& connection) {
   return true;
 }
 
-void yarpdataplayer_IDL_setFrame::init(const std::string& name, const int32_t frameNum) {
+void yarpdataplayer_IDL_setFrame::init(const std::string& name, const std::int32_t frameNum) {
   _return = false;
   this->name = name;
   this->frameNum = frameNum;
@@ -263,22 +263,22 @@ bool yarpdataplayer_IDL::step() {
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
-bool yarpdataplayer_IDL::setFrame(const std::string& name, const int32_t frameNum) {
+bool yarpdataplayer_IDL::setFrame(const std::string& name, const std::int32_t frameNum) {
   bool _return = false;
   yarpdataplayer_IDL_setFrame helper;
   helper.init(name,frameNum);
   if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","bool yarpdataplayer_IDL::setFrame(const std::string& name, const int32_t frameNum)");
+    yError("Missing server method '%s'?","bool yarpdataplayer_IDL::setFrame(const std::string& name, const std::int32_t frameNum)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
-int32_t yarpdataplayer_IDL::getFrame(const std::string& name) {
-  int32_t _return = 0;
+std::int32_t yarpdataplayer_IDL::getFrame(const std::string& name) {
+  std::int32_t _return = 0;
   yarpdataplayer_IDL_getFrame helper;
   helper.init(name);
   if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","int32_t yarpdataplayer_IDL::getFrame(const std::string& name)");
+    yError("Missing server method '%s'?","std::int32_t yarpdataplayer_IDL::getFrame(const std::string& name)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -356,7 +356,7 @@ bool yarpdataplayer_IDL::read(yarp::os::ConnectionReader& connection) {
     }
     if (tag == "setFrame") {
       std::string name;
-      int32_t frameNum;
+      std::int32_t frameNum;
       if (!reader.readString(name)) {
         reader.fail();
         return false;
@@ -381,7 +381,7 @@ bool yarpdataplayer_IDL::read(yarp::os::ConnectionReader& connection) {
         reader.fail();
         return false;
       }
-      int32_t _return;
+      std::int32_t _return;
       _return = getFrame(name);
       yarp::os::idl::WireWriter writer(reader);
       if (!writer.isNull()) {
@@ -461,7 +461,7 @@ bool yarpdataplayer_IDL::read(yarp::os::ConnectionReader& connection) {
         if (!writer.isNull()) {
           if (!writer.writeListHeader(2)) return false;
           if (!writer.writeTag("many",1, 0)) return false;
-          if (!writer.writeListBegin(BOTTLE_TAG_INT, static_cast<uint32_t>(_return.size()))) return false;
+          if (!writer.writeListBegin(BOTTLE_TAG_INT32, static_cast<uint32_t>(_return.size()))) return false;
           std::vector<std::string> ::iterator _iterHelp;
           for (_iterHelp = _return.begin(); _iterHelp != _return.end(); ++_iterHelp)
           {
@@ -503,7 +503,7 @@ std::vector<std::string> yarpdataplayer_IDL::help(const std::string& functionNam
       helpString.push_back("@return true/false on success/failure ");
     }
     if (functionName=="setFrame") {
-      helpString.push_back("bool setFrame(const std::string& name, const int32_t frameNum) ");
+      helpString.push_back("bool setFrame(const std::string& name, const std::int32_t frameNum) ");
       helpString.push_back("Sets the frame number to the user desired frame. ");
       helpString.push_back("@param name specifies the name of the loaded data ");
       helpString.push_back("@param frameNum specifies the frame number the user ");
@@ -511,7 +511,7 @@ std::vector<std::string> yarpdataplayer_IDL::help(const std::string& functionNam
       helpString.push_back("@return true/false on success/failure ");
     }
     if (functionName=="getFrame") {
-      helpString.push_back("int32_t getFrame(const std::string& name) ");
+      helpString.push_back("std::int32_t getFrame(const std::string& name) ");
       helpString.push_back("Gets the frame number the user is requesting ");
       helpString.push_back("@param name specifies the name of the data to modify ");
       helpString.push_back(" would like to skip to ");

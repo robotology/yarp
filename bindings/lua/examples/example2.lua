@@ -32,9 +32,9 @@ for i=1,10 do
     local wb = sender:prepare()
     wb:clear()
     wb:addString("count")
-    wb:addInt(i)
+    wb:addInt32(i)
     wb:addString("of")
-    wb:addInt(10)
+    wb:addInt32(10)
     sender:write()
 
     -- read from receiver port

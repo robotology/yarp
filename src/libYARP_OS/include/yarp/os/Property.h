@@ -114,7 +114,7 @@ public:
     /**
      * \brief Associate the given \c key with the given integer.
      *
-     * After the association <code>find(key).asInt()</code> will return that
+     * After the association <code>find(key).asInt32()</code> will return that
      * integer.
      * If \c key is already associated, the value will be replaced with the new
      * one.
@@ -183,8 +183,8 @@ public:
      * <code>{width => 10, height => 15}</code>.
      * Therefore:
      * \code
-     *   prop.find("width").asInt() // gives 10
-     *   prop.find("height").asInt() // gives 15
+     *   prop.find("width").asInt32() // gives 10
+     *   prop.find("height").asInt32() // gives 15
      * \endcode
      *
      * If a key is duplicated, only the latest will be used.
@@ -205,8 +205,8 @@ public:
      * will be the mapping <code>{width => 10, height => 15}</code>.
      * Therefore:
      * \code
-     *   prop.find("width").asInt() // gives 10
-     *   prop.find("height").asInt() // gives 15
+     *   prop.find("width").asInt32() // gives 10
+     *   prop.find("height").asInt32() // gives 15
      * \endcode
      *
      * If a key is duplicated, only the latest will be used.
@@ -232,8 +232,8 @@ public:
      * will be the mapping <code>{width => 10, height => 15}</code>.
      * Therefore:
      * \code
-     *   prop.find("width").asInt() // gives 10
-     *   prop.find("height").asInt() // gives 15
+     *   prop.find("width").asInt32() // gives 10
+     *   prop.find("height").asInt32() // gives 15
      * \endcode
      *
      * If a key is duplicated, only the latest will be used.
@@ -259,8 +259,8 @@ public:
      * will be the mapping <code>{width => 10, height => 15}</code>.
      * Therefore:
      * \code
-     *   prop.find("width").asInt() // gives 10
-     *   prop.find("height").asInt() // gives 15
+     *   prop.find("width").asInt32() // gives 10
+     *   prop.find("height").asInt32() // gives 15
      * \endcode
      *
      * If a key is duplicated, only the latest will be used.
@@ -284,8 +284,8 @@ public:
      * the Property object will be the mapping  {width => 10, height => 15}.
      * In other words:
      * \code
-     *   prop.find("width").asInt() // gives 10
-     *   prop.find("height").asInt() // gives 15
+     *   prop.find("width").asInt32() // gives 10
+     *   prop.find("height").asInt32() // gives 15
      * \endcode
      *
      * If a key is duplicated, only the latest will be used.
@@ -310,7 +310,7 @@ public:
      * "(SIZE (width 10) (height 15)) (APPEARANCE (color red))".
      * In other words:
      * \code
-     *   prop.findGroup("SIZE").find("width").asInt() // gives 10
+     *   prop.findGroup("SIZE").find("width").asInt32() // gives 10
      *   prop.findGroup("APPEARANCE").find("color").asString() // gives red
      * \endcode
      *

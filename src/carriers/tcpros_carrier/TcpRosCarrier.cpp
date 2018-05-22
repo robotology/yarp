@@ -137,7 +137,7 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     string header_serial = header.writeHeader();
     string header_len(4,'\0');
     char *at = (char*)header_len.c_str();
-    RosHeader::appendInt(at,header_serial.length());
+    RosHeader::appendInt32(at,header_serial.length());
     dbg_printf("Writing %s -- %d bytes\n", 
                RosHeader::showMessage(header_len).c_str(),
                (int)header_len.length());
@@ -281,7 +281,7 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     string header_serial = header.writeHeader();
     string header_len(4,'\0');
     char *at = (char*)header_len.c_str();
-    RosHeader::appendInt(at,header_serial.length());
+    RosHeader::appendInt32(at,header_serial.length());
     dbg_printf("Writing %s -- %d bytes\n", 
                RosHeader::showMessage(header_len).c_str(),
                (int)header_len.length());
@@ -416,7 +416,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
 
     string header_len(4,'\0');
     char *at = (char*)header_len.c_str();
-    RosHeader::appendInt(at,len);
+    RosHeader::appendInt32(at,len);
     Bytes b1((char*)header_len.c_str(),header_len.length());
     proto.os().write(b1);
     flex_writer->write(proto.os());

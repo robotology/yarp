@@ -115,12 +115,12 @@ bool Quaternion::read(yarp::os::ConnectionReader& connection)
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
     if (!ok) return false;
 
-    if (header.listLen == 4 &&  header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_DOUBLE))
+    if (header.listLen == 4 &&  header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_FLOAT64))
     {
-        this->internal_data[0] = connection.expectDouble();
-        this->internal_data[1] = connection.expectDouble();
-        this->internal_data[2] = connection.expectDouble();
-        this->internal_data[3] = connection.expectDouble();
+        this->internal_data[0] = connection.expectFloat64();
+        this->internal_data[1] = connection.expectFloat64();
+        this->internal_data[2] = connection.expectFloat64();
+        this->internal_data[3] = connection.expectFloat64();
     }
     else
     {
@@ -134,15 +134,15 @@ bool Quaternion::write(yarp::os::ConnectionWriter& connection)
 {
     QuaternionPortContentHeader header;
 
-    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_DOUBLE);
+    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_FLOAT64);
     header.listLen = 4;
 
     connection.appendBlock((char*)&header, sizeof(header));
 
-    connection.appendDouble(this->internal_data[0]);
-    connection.appendDouble(this->internal_data[1]);
-    connection.appendDouble(this->internal_data[2]);
-    connection.appendDouble(this->internal_data[3]);
+    connection.appendFloat64(this->internal_data[0]);
+    connection.appendFloat64(this->internal_data[1]);
+    connection.appendFloat64(this->internal_data[2]);
+    connection.appendFloat64(this->internal_data[3]);
 
     // if someone is foolish enough to connect in text mode,
     // let them see something readable.

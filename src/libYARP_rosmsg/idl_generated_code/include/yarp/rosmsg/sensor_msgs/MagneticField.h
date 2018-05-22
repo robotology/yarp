@@ -52,7 +52,7 @@ class MagneticField : public yarp::os::idl::WirePortable
 public:
     yarp::rosmsg::std_msgs::Header header;
     yarp::rosmsg::geometry_msgs::Vector3 magnetic_field;
-    std::vector<yarp::os::NetFloat64> magnetic_field_covariance;
+    std::vector<yarp::conf::float64_t> magnetic_field_covariance;
 
     MagneticField() :
             header(),
@@ -90,7 +90,7 @@ public:
         // *** magnetic_field_covariance ***
         int len = 9;
         magnetic_field_covariance.resize(len);
-        if (len > 0 && !connection.expectBlock((char*)&magnetic_field_covariance[0], sizeof(yarp::os::NetFloat64)*len)) {
+        if (len > 0 && !connection.expectBlock((char*)&magnetic_field_covariance[0], sizeof(yarp::conf::float64_t)*len)) {
             return false;
         }
 
@@ -116,13 +116,13 @@ public:
         }
 
         // *** magnetic_field_covariance ***
-        if (connection.expectInt() != (BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE)) {
+        if (connection.expectInt32() != (BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64)) {
             return false;
         }
-        int len = connection.expectInt();
+        int len = connection.expectInt32();
         magnetic_field_covariance.resize(len);
         for (int i=0; i<len; i++) {
-            magnetic_field_covariance[i] = (yarp::os::NetFloat64)connection.expectDouble();
+            magnetic_field_covariance[i] = (yarp::conf::float64_t)connection.expectFloat64();
         }
 
         return !connection.isError();
@@ -149,7 +149,7 @@ public:
 
         // *** magnetic_field_covariance ***
         if (magnetic_field_covariance.size()>0) {
-            connection.appendExternalBlock((char*)&magnetic_field_covariance[0], sizeof(yarp::os::NetFloat64)*magnetic_field_covariance.size());
+            connection.appendExternalBlock((char*)&magnetic_field_covariance[0], sizeof(yarp::conf::float64_t)*magnetic_field_covariance.size());
         }
 
         return !connection.isError();
@@ -157,8 +157,8 @@ public:
 
     bool writeBottle(yarp::os::ConnectionWriter& connection) override
     {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(3);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(3);
 
         // *** header ***
         if (!header.write(connection)) {
@@ -171,10 +171,10 @@ public:
         }
 
         // *** magnetic_field_covariance ***
-        connection.appendInt(BOTTLE_TAG_LIST|BOTTLE_TAG_DOUBLE);
-        connection.appendInt(magnetic_field_covariance.size());
+        connection.appendInt32(BOTTLE_TAG_LIST|BOTTLE_TAG_FLOAT64);
+        connection.appendInt32(magnetic_field_covariance.size());
         for (size_t i=0; i<magnetic_field_covariance.size(); i++) {
-            connection.appendDouble((double)magnetic_field_covariance[i]);
+            connection.appendFloat64(magnetic_field_covariance[i]);
         }
 
         connection.convertTextMode();

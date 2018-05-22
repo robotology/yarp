@@ -46,7 +46,7 @@ div { padding-bottom: 10px; } \n\
 
             response.addString(prefix);
             response.addString("stream");
-            response.addInt(1);
+            response.addInt32(1);
             return response.write(*out);
         }
 
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
     options.fromCommand(argc,argv);
 
     std::string name = options.check("name",Value("/web")).asString();
-    int port_number = options.check("p",Value(0)).asInt();
+    int port_number = options.check("p",Value(0)).asInt32();
 
     Network yarp;
     Port server;

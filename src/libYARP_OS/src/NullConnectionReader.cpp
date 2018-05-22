@@ -22,9 +22,34 @@ std::string yarp::os::NullConnectionReader::expectText(int terminatingChar)
     return "";
 }
 
-int yarp::os::NullConnectionReader::expectInt()
+std::int8_t yarp::os::NullConnectionReader::expectInt8()
 {
     return 0;
+}
+
+std::int16_t yarp::os::NullConnectionReader::expectInt16()
+{
+    return 0;
+}
+
+std::int32_t yarp::os::NullConnectionReader::expectInt32()
+{
+    return 0;
+}
+
+std::int64_t yarp::os::NullConnectionReader::expectInt64()
+{
+    return 0;
+}
+
+yarp::conf::float32_t yarp::os::NullConnectionReader::expectFloat32()
+{
+    return 0.0f;
+}
+
+yarp::conf::float64_t yarp::os::NullConnectionReader::expectFloat64()
+{
+    return 0.0;
 }
 
 bool yarp::os::NullConnectionReader::pushInt(int x)
@@ -32,12 +57,6 @@ bool yarp::os::NullConnectionReader::pushInt(int x)
     YARP_UNUSED(x);
     return false;
 }
-
-double yarp::os::NullConnectionReader::expectDouble()
-{
-    return 0.0;
-}
-
 bool yarp::os::NullConnectionReader::isTextMode()
 {
     return false;

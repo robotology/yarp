@@ -345,7 +345,7 @@ bool JrkerrMotionControl::open(yarp::os::Searchable& config) {
     }
 
     int i;
-    int nj = p.findGroup("GENERAL").find("Joints").asInt();
+    int nj = p.findGroup("GENERAL").find("Joints").asInt32();
     JrkerrMotionControlParameters params(nj);
     params._njoints = nj;
 
@@ -354,13 +354,13 @@ bool JrkerrMotionControl::open(yarp::os::Searchable& config) {
     ////// GENERAL
     Bottle &xtmp = p.findGroup("GENERAL").findGroup("AxisMap");
     yAssert(xtmp.size() == nj+1);
-    for (i = 1; i < xtmp.size(); i++) params._axisMap[i-1] = xtmp.get(i).asInt();
+    for (i = 1; i < xtmp.size(); i++) params._axisMap[i-1] = xtmp.get(i).asInt32();
     xtmp = p.findGroup("GENERAL").findGroup("Encoder");
     yAssert(xtmp.size() == nj+1);
-    for (i = 1; i < xtmp.size(); i++) params._angleToEncoder[i-1] = xtmp.get(i).asDouble();
+    for (i = 1; i < xtmp.size(); i++) params._angleToEncoder[i-1] = xtmp.get(i).asFloat64();
     xtmp = p.findGroup("GENERAL").findGroup("Zeros");
     yAssert(xtmp.size() == nj+1);
-    for (i = 1; i < xtmp.size(); i++) params._zeros[i-1] = xtmp.get(i).asDouble();
+    for (i = 1; i < xtmp.size(); i++) params._zeros[i-1] = xtmp.get(i).asFloat64();
 
     ////// PIDS
     int j=0;
@@ -369,49 +369,49 @@ bool JrkerrMotionControl::open(yarp::os::Searchable& config) {
         char tmp[80];
         sprintf(tmp, "Pid%d", j);
         xtmp = p.findGroup("PIDS").findGroup(tmp);
-        params._pids[j].kp = xtmp.get(1).asDouble();
-        params._pids[j].kd = xtmp.get(2).asDouble();
-        params._pids[j].ki = xtmp.get(3).asDouble();
+        params._pids[j].kp = xtmp.get(1).asFloat64();
+        params._pids[j].kd = xtmp.get(2).asFloat64();
+        params._pids[j].ki = xtmp.get(3).asFloat64();
 
-        params._pids[j].max_int = xtmp.get(4).asDouble();
-        params._pids[j].max_output = xtmp.get(5).asDouble();
+        params._pids[j].max_int = xtmp.get(4).asFloat64();
+        params._pids[j].max_output = xtmp.get(5).asFloat64();
 
-        params._pids[j].scale = xtmp.get(6).asDouble();
-        params._pids[j].offset = xtmp.get(7).asDouble();
+        params._pids[j].scale = xtmp.get(6).asFloat64();
+        params._pids[j].offset = xtmp.get(7).asFloat64();
     }
 
     /////// LIMITS
     xtmp = p.findGroup("LIMITS").findGroup("Currents");
     yAssert(xtmp.size() == nj+1);
-    for(i=1;i<xtmp.size(); i++) params._currentLimits[i-1]=xtmp.get(i).asDouble();
+    for(i=1;i<xtmp.size(); i++) params._currentLimits[i-1]=xtmp.get(i).asFloat64();
 
     xtmp = p.findGroup("LIMITS").findGroup("Velocity");
     yAssert(xtmp.size() == nj+1);
-    for(i=1;i<xtmp.size(); i++) params._velocityLimits[i-1]=xtmp.get(i).asDouble();
+    for(i=1;i<xtmp.size(); i++) params._velocityLimits[i-1]=xtmp.get(i).asFloat64();
 
     xtmp = p.findGroup("LIMITS").findGroup("Acceleration");
     yAssert(xtmp.size() == nj+1);
-    for(i=1;i<xtmp.size(); i++) params._accelerationLimits[i-1]=xtmp.get(i).asDouble();
+    for(i=1;i<xtmp.size(); i++) params._accelerationLimits[i-1]=xtmp.get(i).asFloat64();
 
     xtmp = p.findGroup("LIMITS").findGroup("Error");
     yAssert(xtmp.size() == nj+1);
-    for(i=1;i<xtmp.size(); i++) params._errorLimits[i-1]=xtmp.get(i).asDouble();
+    for(i=1;i<xtmp.size(); i++) params._errorLimits[i-1]=xtmp.get(i).asFloat64();
 
 
     xtmp = p.findGroup("LIMITS").findGroup("Max");
     yAssert(xtmp.size() == nj+1);
-    for(i=1;i<xtmp.size(); i++) params._limitsMax[i-1]=xtmp.get(i).asDouble();
+    for(i=1;i<xtmp.size(); i++) params._limitsMax[i-1]=xtmp.get(i).asFloat64();
 
     xtmp = p.findGroup("LIMITS").findGroup("Min");
     yAssert(xtmp.size() == nj+1);
-    for(i=1;i<xtmp.size(); i++) params._limitsMin[i-1]=xtmp.get(i).asDouble();
+    for(i=1;i<xtmp.size(); i++) params._limitsMin[i-1]=xtmp.get(i).asFloat64();
 
     /////// DEFAULTS
 
     xtmp = p.findGroup("DEFAULTS").findGroup("Velocity");
     if( xtmp.size() != nj+1 )
         for(i=1;i<xtmp.size(); i++)
-            params._velocityDefaults[i-1]=xtmp.get(i).asDouble();
+            params._velocityDefaults[i-1]=xtmp.get(i).asFloat64();
     else  //set defaults to "safe values"
         for(i=1;i<xtmp.size(); i++)
             params._velocityDefaults[i-1]=0;
@@ -419,28 +419,28 @@ bool JrkerrMotionControl::open(yarp::os::Searchable& config) {
     xtmp = p.findGroup("DEFAULTS").findGroup("Acceleration");
     if( xtmp.size() != nj+1 )
         for(i=1;i<xtmp.size(); i++)
-            params._accelerationDefaults[i-1]=xtmp.get(i).asDouble();
+            params._accelerationDefaults[i-1]=xtmp.get(i).asFloat64();
     else  //set defaults to "safe values"
         for(i=1;i<xtmp.size(); i++)
             params._accelerationDefaults[i-1]=0;
 
 //  JRKERR SPECIFIC STUFF
 
-    params._comPort = p.findGroup("JRKERR").find("ComPort").asInt();
-    params._baudRate = p.findGroup("JRKERR").find("BaudRate").asInt();
-    params._groupAddr = p.findGroup("JRKERR").find("GroupAddress").asInt();
+    params._comPort = p.findGroup("JRKERR").find("ComPort").asInt32();
+    params._baudRate = p.findGroup("JRKERR").find("BaudRate").asInt32();
+    params._groupAddr = p.findGroup("JRKERR").find("GroupAddress").asInt32();
 
     xtmp = p.findGroup("JRKERR").findGroup("ServoRate");
     yAssert(xtmp.size() == nj+1);
-    for(i=1;i<xtmp.size(); i++) params._servoRate[i-1]=xtmp.get(i).asInt();
+    for(i=1;i<xtmp.size(); i++) params._servoRate[i-1]=xtmp.get(i).asInt32();
 
     xtmp = p.findGroup("JRKERR").findGroup("TickPerTurn");
     yAssert(xtmp.size() == nj+1);
-    for(i=1;i<xtmp.size(); i++) params._countperturn[i-1]=xtmp.get(i).asInt();
+    for(i=1;i<xtmp.size(); i++) params._countperturn[i-1]=xtmp.get(i).asInt32();
 
     xtmp = p.findGroup("JRKERR").findGroup("DeadBand");
     yAssert(xtmp.size() == nj+1);
-    for(i=1;i<xtmp.size(); i++) params._deadBand[i-1]=xtmp.get(i).asInt();
+    for(i=1;i<xtmp.size(); i++) params._deadBand[i-1]=xtmp.get(i).asInt32();
 
     params._p = printf;
     return open(params);

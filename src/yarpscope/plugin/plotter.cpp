@@ -194,7 +194,7 @@ void Plotter::onTimeout()
             }
 
 
-            double y = (float)(b->get(graph->index).asDouble());
+            double y = (float)(b->get(graph->index).asFloat64());
 
             float t;
             if (graph->curr_connection->realTime && stmp.isValid()) {
