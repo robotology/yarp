@@ -1,0 +1,157 @@
+/**
+  @page protocolVersion_check YARP protocol version check
+
+  \author Alberto Cardellino
+
+\section content Contents
+\li \ref yarp_protocols
+\li \ref yarp_internal_protocol
+\li \ref how_is_performed
+\li \ref deal_with_changes
+<br>
+
+\section yarp_protocols How YARP ports communicate
+The communication of user data is achieved by means of specialized a class called \ref port_expert_data "Portable", once
+the sender and receiver ports are connected the data will be sent over the network using the specified carrier (tcp, udp,
+mjpeg etc). The ports can optionally send addictional metadata along with the data, like for example the timestamp.
+
+In order to establish a connection betwen two ports, a handshake needs to be performed between them and the yarpserver
+(when present) and this is achieved by means of an \c internal protocol, referred to as the \b admin protocol.
+
+
+\section yarp_internal_protocol YARP ports admin protocol
+YARP ports use a set of commands to perform service routines, like the communication with the yarp server, enacting
+connections and disconnections etc... <br>
+This communication is handled by the YARP framework and it is transparent to the user.
+
+The list of accepted commands can be seen by using the `yarp admin rpc` command.
+
+Example:
+\verbatim
+    @terminal$ yarp admin rpc </portName>
+    >>help
+    Responses:
+    [help]                  # give this help
+    [ver]                   # report protocol version information
+    [add] $portname         # add an output connection
+    [add] $portname $car    # add an output with a given protocol
+    [del] $portname         # remove an input or output connection
+    [list] [in]             # list input connections
+    [list] [out]            # list output connections
+    [list] [in]  $portname  # give details for input
+    [list] [out] $portname  # give details for output
+    [prop] [get]            # get all user-defined port properties
+    [prop] [get] $prop      # get a user-defined port property (prop, val)
+    [prop] [set] $prop $val # set a user-defined port property (prop, val)
+    [prop] [get] $portname  # get Qos properties of a connection to/from a port
+    [prop] [set] $portname  # set Qos properties of a connection to/from a port
+    [prop] [get] $cur_port  # get information about current process (e.g., scheduling priority, pid)
+    [prop] [set] $cur_port  # set properties of the current process (e.g., scheduling priority, pid)
+    [atch] [out] $prop      # attach a portmonitor plug-in to the port's output
+    [atch] [in]  $prop      # attach a portmonitor plug-in to the port's input
+    [dtch] [out]            # detach portmonitor plug-in from the port's output
+    [dtch] [in]             # detach portmonitor plug-in from the port's input
+\endverbatim
+
+The command `ver` can be used to get the current YARP protocol version.
+The answer will be in the form:
+\verbatim
+    Command  Current  Current   Current
+     Name     Major    Minor     Patch
+     [ver]      1        2         3
+\endverbatim
+
+An alternative method to communicate with a port in admin mode is to use telnet. <br>
+
+\verbatim
+    @terminal1$ yarp read /r
+    @terminal2$ telnet 127.0.0.1 10001    // where 127.0.0.1 : 10001 is the socket for the /r YARP port
+
+    Connected to 127.0.0.1
+    Escape character is '^]'.
+\endverbatim
+
+We can get access to YARP internal protocol by creating a connection to the admin port
+\verbatim
+    CONNECT myName      --> connect to the port by providing a custom user name
+    Welcome myName      --> response from the port
+    // list of available commands
+    ?
+    This is a YARP port.  Here are the commands it responds to:
+    *       Gives a description of this port
+    d       Signals the beginning of input for the port's owner
+    do      The same as "d" except replies should be suppressed ("data-only")
+    q       Disconnects
+    i       Interrupt parent process (unix only)
+    r       Reverse connection type to be a reader
+    /port   Requests to send output to /port
+    !/port  Requests to stop sending output to /port
+    ~/port  Requests to stop receiving input from /port
+    a       Signals the beginning of an administrative message
+    ?       Gives this help
+\endverbatim
+
+Writing the command \c a we can have access to the admin functionalities through telnet connection.
+
+\verbatim
+    > a
+    > ver
+
+    >> Response
+   [ver] 1 2 4
+\endverbatim
+
+More details about the YARP connections and how they work can be found in the \ref yarp_protocol page.
+The protocol version number is composed by three values, called Major, Minor and Patch and it is stored in a structure called
+\ref ProtocolVersion: <br>
+- The Patch number is updated when a small fix or improvement is applied. <b> Patches must be backward compatible </b>.<br>
+- The Minor number is updated when a compatibility breaking change is applied to the protocol. <br>
+        Anyway the developer <b> must provide a backward compatibility layer for Minor changes</b>,
+        so that YARP communication between two machines running different versions of YARP protocol can still be succesfully performed.
+        See \ref deal_with_changes for more information. <br>
+- The Major number is updated when a new release of the protocol is delivered. Backward compatibility may or may not
+    be guaranteed, depending case by case. <br>
+
+
+\note Please note this is \b NOT the YARP library version, but it is a separated versioning specific for the port protocol. <br>
+YARP connections can be instantiated with different carriers, like tcp, udp, mjpeg, h264, portmonitor and many others.
+Users can write their own carriers and use them when connecting ports. The YARP protocol version is not related to any
+carrier used for the connection, instead it is all about how YARP establishes the communication and serializes the data, and
+it is totally transparent to the final user.
+
+<br>
+\section how_is_performed How the protocol check works
+When a new YARP connection is being established, the required information are collected by querying involved `</source>`
+and `</destination>` ports. <br>
+The port in charge of establishing the connection, will ask to the other one its current protocol version by using the admin
+`ver` command.<br>
+A YARP port can be connected to many different ports, each of them may run on a different machine, therefore the
+protocol version has to be verified for each connection.
+
+\note The port establishing the connection is usually the source one, but this may vary depending on the carrier used. For
+example when using mjpeg to receive images from a webcam, the YARP port establishing the connection is the receiver. <br>
+Anyway, in this specific case, the protocol check will be skipped, since the counterpart is not a YARP port.
+
+In case the protocol versions of the source and destination ports do not match, the connection is aborted and an error message
+is generated.
+
+<br>
+\section deal_with_changes  How to implement changes
+
+When a change in the protocol is made, the version number must be updated accordingly in the yarp/conf/YarpVersion.cmake file.
+
+Example: Current version
+
+\verbatim
+set(YARP_PROTOCOL_VERSION_MAJOR "1")
+set(YARP_PROTOCOL_VERSION_MINOR "2")
+set(YARP_PROTOCOL_VERSION_PATCH "4")
+\endverbatim
+
+New version after changes
+
+\verbatim
+set(YARP_PROTOCOL_VERSION_MAJOR "1")
+set(YARP_PROTOCOL_VERSION_MINOR "3")
+set(YARP_PROTOCOL_VERSION_PATCH "0")
+\endverbatim

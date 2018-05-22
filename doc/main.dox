@@ -109,6 +109,7 @@ periodically check it.
 \li \subpage yarp_env_variables
 \li \subpage rtf_plugins
 \li \subpage yarp_pointcloud
+\li \subpage protocolVersion_check
 
 \section yarp_more_info More information
 \li \subpage what_is_yarp
