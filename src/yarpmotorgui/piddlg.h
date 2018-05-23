@@ -16,6 +16,8 @@
 #include <QItemDelegate>
 #include <QModelIndex>
 #include <QLineEdit>
+#include <QIntValidator>
+#include <QDoubleValidator>
 #include <vector>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
