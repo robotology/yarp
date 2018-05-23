@@ -13,29 +13,33 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-yarp::os::impl::TextCarrier::TextCarrier(bool ackVariant) {
+yarp::os::impl::TextCarrier::TextCarrier(bool ackVariant)
+{
     this->ackVariant = ackVariant;
 }
 
-std::string yarp::os::impl::TextCarrier::getName() {
+std::string yarp::os::impl::TextCarrier::getName()
+{
     if (ackVariant) {
         return "text_ack";
     }
     return "text";
 }
 
-std::string yarp::os::impl::TextCarrier::getSpecifierName() {
+std::string yarp::os::impl::TextCarrier::getSpecifierName()
+{
     if (ackVariant) {
         return "CONNACK ";
     }
     return "CONNECT ";
 }
 
-bool yarp::os::impl::TextCarrier::checkHeader(const Bytes& header) {
-    if (header.length()==8) {
+bool yarp::os::impl::TextCarrier::checkHeader(const Bytes& header)
+{
+    if (header.length() == 8) {
         std::string target = getSpecifierName();
-        for (int i=0; i<8; i++) {
-            if (!(target[i]==header.get()[i])) {
+        for (int i = 0; i < 8; i++) {
+            if (!(target[i] == header.get()[i])) {
                 return false;
             }
         }
@@ -44,33 +48,39 @@ bool yarp::os::impl::TextCarrier::checkHeader(const Bytes& header) {
     return false;
 }
 
-void yarp::os::impl::TextCarrier::getHeader(const Bytes& header) {
-    if (header.length()==8) {
+void yarp::os::impl::TextCarrier::getHeader(const Bytes& header)
+{
+    if (header.length() == 8) {
         std::string target = getSpecifierName();
-        for (int i=0; i<8; i++) {
+        for (int i = 0; i < 8; i++) {
             header.get()[i] = target[i];
         }
     }
 }
 
-yarp::os::Carrier *yarp::os::impl::TextCarrier::create() {
+yarp::os::Carrier* yarp::os::impl::TextCarrier::create()
+{
     return new TextCarrier(ackVariant);
 }
 
-bool yarp::os::impl::TextCarrier::requireAck() {
+bool yarp::os::impl::TextCarrier::requireAck()
+{
     return ackVariant;
 }
 
-bool yarp::os::impl::TextCarrier::isTextMode() {
+bool yarp::os::impl::TextCarrier::isTextMode()
+{
     return true;
 }
 
 
-bool yarp::os::impl::TextCarrier::supportReply() {
+bool yarp::os::impl::TextCarrier::supportReply()
+{
     return requireAck();
 }
 
-bool yarp::os::impl::TextCarrier::sendHeader(ConnectionState& proto) {
+bool yarp::os::impl::TextCarrier::sendHeader(ConnectionState& proto)
+{
     std::string target = getSpecifierName();
     yarp::os::Bytes b((char*)target.c_str(), 8);
     proto.os().write(b);
@@ -83,7 +93,8 @@ bool yarp::os::impl::TextCarrier::sendHeader(ConnectionState& proto) {
     return proto.os().isOk();
 }
 
-bool yarp::os::impl::TextCarrier::expectReplyToHeader(ConnectionState& proto) {
+bool yarp::os::impl::TextCarrier::expectReplyToHeader(ConnectionState& proto)
+{
     if (ackVariant) {
         // expect and ignore welcome line
         std::string result = proto.is().readLine();
@@ -91,7 +102,8 @@ bool yarp::os::impl::TextCarrier::expectReplyToHeader(ConnectionState& proto) {
     return true;
 }
 
-bool yarp::os::impl::TextCarrier::expectSenderSpecifier(ConnectionState& proto) {
+bool yarp::os::impl::TextCarrier::expectSenderSpecifier(ConnectionState& proto)
+{
     YARP_SPRINTF0(Logger::get(), debug, "TextCarrier::expectSenderSpecifier");
     Route route = proto.getRoute();
     route.setFromName(proto.is().readLine());
@@ -99,18 +111,21 @@ bool yarp::os::impl::TextCarrier::expectSenderSpecifier(ConnectionState& proto) 
     return true;
 }
 
-bool yarp::os::impl::TextCarrier::sendIndex(ConnectionState& proto, SizedWriter& writer) {
+bool yarp::os::impl::TextCarrier::sendIndex(ConnectionState& proto, SizedWriter& writer)
+{
     YARP_UNUSED(proto);
     YARP_UNUSED(writer);
     return true;
 }
 
-bool yarp::os::impl::TextCarrier::expectIndex(ConnectionState& proto) {
+bool yarp::os::impl::TextCarrier::expectIndex(ConnectionState& proto)
+{
     YARP_UNUSED(proto);
     return true;
 }
 
-bool yarp::os::impl::TextCarrier::sendAck(ConnectionState& proto) {
+bool yarp::os::impl::TextCarrier::sendAck(ConnectionState& proto)
+{
     if (ackVariant) {
         std::string from = "<ACK>\r\n";
         Bytes b2((char*)from.c_str(), from.length());
@@ -120,7 +135,8 @@ bool yarp::os::impl::TextCarrier::sendAck(ConnectionState& proto) {
     return proto.os().isOk();
 }
 
-bool yarp::os::impl::TextCarrier::expectAck(ConnectionState& proto) {
+bool yarp::os::impl::TextCarrier::expectAck(ConnectionState& proto)
+{
     if (ackVariant) {
         // expect and ignore acknowledgement
         std::string result = proto.is().readLine();
@@ -128,7 +144,8 @@ bool yarp::os::impl::TextCarrier::expectAck(ConnectionState& proto) {
     return true;
 }
 
-bool yarp::os::impl::TextCarrier::respondToHeader(ConnectionState& proto) {
+bool yarp::os::impl::TextCarrier::respondToHeader(ConnectionState& proto)
+{
     std::string from = "Welcome ";
     from += proto.getRoute().getFromName();
     from += "\r\n";

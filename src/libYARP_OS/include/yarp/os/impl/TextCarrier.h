@@ -13,23 +13,19 @@
 #include <yarp/os/impl/TcpCarrier.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class TextCarrier;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * Communicating between two ports via a plain-text protocol.
  */
-class yarp::os::impl::TextCarrier : public TcpCarrier
+class TextCarrier : public TcpCarrier
 {
 
 public:
     TextCarrier(bool ackVariant = false);
 
-    virtual Carrier *create() override;
+    virtual Carrier* create() override;
 
     virtual std::string getName() override;
 
@@ -48,8 +44,13 @@ public:
     virtual bool sendAck(ConnectionState& proto) override;
     virtual bool expectAck(ConnectionState& proto) override;
     virtual bool respondToHeader(ConnectionState& proto) override;
+
 private:
     bool ackVariant;
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_TEXTCARRIER_H
