@@ -12,7 +12,6 @@
 
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/PortCoreUnit.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/OutputProtocol.h>
 
 namespace yarp {
@@ -43,10 +42,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~PortCoreOutputUnit()
-    {
-        closeMain();
-    }
+    virtual ~PortCoreOutputUnit();
 
     /**
      * Prepare to serve this output.  A thread will start if a call
@@ -102,24 +98,13 @@ public:
     virtual bool isBusy() override;
 
     // documented in PortCoreUnit
-    void setCarrierParams(const yarp::os::Property& params) override
-    {
-        if (op)
-            op->getConnection().setCarrierParams(params);
-    }
+    virtual void setCarrierParams(const yarp::os::Property& params) override;
 
     // documented in PortCoreUnit
-    void getCarrierParams(yarp::os::Property& params) override
-    {
-        if (op)
-            op->getConnection().getCarrierParams(params);
-    }
+    virtual void getCarrierParams(yarp::os::Property& params) override;
 
     // return the protocol object
-    OutputProtocol* getOutPutProtocol()
-    {
-        return op;
-    }
+    OutputProtocol* getOutPutProtocol();
 
 private:
     OutputProtocol *op; ///< protocol object for writing/reading

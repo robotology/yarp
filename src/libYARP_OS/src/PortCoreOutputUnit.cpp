@@ -43,11 +43,16 @@ PortCoreOutputUnit::PortCoreOutputUnit(PortCore& owner, int index, OutputProtoco
             cachedTracker(nullptr)
 {
     yAssert(op!=nullptr);
-
 }
 
-bool PortCoreOutputUnit::start() {
+PortCoreOutputUnit::~PortCoreOutputUnit()
+{
+    closeMain();
+}
 
+
+bool PortCoreOutputUnit::start()
+{
     phase.wait();
 
     if (!threaded) {
@@ -70,7 +75,8 @@ bool PortCoreOutputUnit::start() {
 }
 
 
-void PortCoreOutputUnit::run() {
+void PortCoreOutputUnit::run()
+{
     running = true;
     sending = false;
 
@@ -114,8 +120,8 @@ void PortCoreOutputUnit::run() {
 
 
 
-void PortCoreOutputUnit::runSingleThreaded() {
-
+void PortCoreOutputUnit::runSingleThreaded()
+{
     if (op != nullptr) {
         Route route = op->getRoute();
         setMode();
@@ -149,7 +155,8 @@ void PortCoreOutputUnit::runSingleThreaded() {
     return;
 }
 
-void PortCoreOutputUnit::closeBasic() {
+void PortCoreOutputUnit::closeBasic()
+{
     bool waitForOther = false;
     if (op != nullptr) {
         op->getConnection().prepareDisconnect();
@@ -215,7 +222,8 @@ void PortCoreOutputUnit::closeBasic() {
     }
 }
 
-void PortCoreOutputUnit::closeMain() {
+void PortCoreOutputUnit::closeMain()
+{
     if (finished) return;
 
     YARP_DEBUG(Logger::get(), "PortCoreOutputUnit closing");
@@ -244,7 +252,8 @@ void PortCoreOutputUnit::closeMain() {
 }
 
 
-Route PortCoreOutputUnit::getRoute() {
+Route PortCoreOutputUnit::getRoute()
+{
     if (op != nullptr) {
         Route r = op->getRoute();
         op->beginWrite();
@@ -253,7 +262,8 @@ Route PortCoreOutputUnit::getRoute() {
     return PortCoreUnit::getRoute();
 }
 
-bool PortCoreOutputUnit::sendHelper() {
+bool PortCoreOutputUnit::sendHelper()
+{
     bool replied = false;
     if (op != nullptr) {
         bool done = false;
@@ -343,7 +353,8 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
                                const std::string& envelopeString,
                                bool waitAfter,
                                bool waitBefore,
-                               bool *gotReply) {
+                               bool *gotReply)
+{
     bool replied = false;
 
     if (op != nullptr) {
@@ -399,7 +410,8 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
 }
 
 
-void *PortCoreOutputUnit::takeTracker() {
+void *PortCoreOutputUnit::takeTracker()
+{
     void *tracker = nullptr;
     trackerMutex.wait();
     if (!sending) {
@@ -410,6 +422,24 @@ void *PortCoreOutputUnit::takeTracker() {
     return tracker;
 }
 
-bool PortCoreOutputUnit::isBusy() {
+bool PortCoreOutputUnit::isBusy()
+{
     return sending;
+}
+
+void PortCoreOutputUnit::setCarrierParams(const yarp::os::Property& params)
+{
+    if (op)
+        op->getConnection().setCarrierParams(params);
+}
+
+void PortCoreOutputUnit::getCarrierParams(yarp::os::Property& params)
+{
+    if (op)
+        op->getConnection().getCarrierParams(params);
+}
+
+OutputProtocol* PortCoreOutputUnit::getOutPutProtocol()
+{
+    return op;
 }
