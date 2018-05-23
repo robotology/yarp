@@ -18,6 +18,7 @@
 
 #include "advanced_dialog.h"
 #include "ui_advanced_dialog.h"
+#include <QIntValidator>
 
 advanced_dialog::advanced_dialog(yarp::yarpLogger::LoggerEngine* logger, QWidget *parent) :
     QDialog(parent),

@@ -14,6 +14,7 @@
 #include <QItemDelegate>
 #include <QModelIndex>
 #include <QLineEdit>
+#include <QDoubleValidator>
 
 namespace Ui {
     class sliderOptions;
