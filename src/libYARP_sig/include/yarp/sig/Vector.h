@@ -352,9 +352,9 @@ public:
     * Warning: the string format might change in the future. This method
     * is here to ease debugging.
     */
-    yarp::os::ConstString toString(int precision=-1, int width=-1) const
+    std::string toString(int precision=-1, int width=-1) const
     {
-        yarp::os::ConstString ret = "";
+        std::string ret = "";
         size_t c = 0;
         const size_t buffSize = 256;
         char tmp[buffSize];
