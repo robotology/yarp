@@ -776,7 +776,6 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
 #ifdef YARP_HAS_ACE
         YARP_ACE::init();
 #endif
-        ThreadImpl::init();
         BottleImpl::getNull();
         Bottle::getNullBottle();
         std::string quiet = getEnvironment("YARP_QUIET");
@@ -791,13 +790,6 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
                           "YARP_VERBOSE environment variable is set");
                 Logger::get().setVerbosity(b.get(0).asInt32());
             }
-        }
-        std::string stack = getEnvironment("YARP_STACK_SIZE");
-        if (stack!="") {
-            int sz = atoi(stack.c_str());
-            Thread::setDefaultStackSize(sz);
-            YARP_SPRINTF1(Logger::get(), info,
-                          "YARP_STACK_SIZE set to %d", sz);
         }
 
         // make sure system is actually able to do things fast
@@ -814,7 +806,6 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
 void NetworkBase::finiMinimum() {
     if (__yarp_is_initialized==1) {
         Time::useSystemClock();
-        ThreadImpl::fini();
         yarp::os::impl::removeClock();
     }
     if (__yarp_is_initialized>0) __yarp_is_initialized--;
@@ -1299,14 +1290,20 @@ std::string NetworkBase::getPathSeparator() {
 #endif
 }
 
+namespace {
+static std::mutex& getNetworkMutex()
+{
+    static std::mutex mutex;
+    return mutex;
+}
+} // namespace
+
 void NetworkBase::lock() {
-    ThreadImpl::init();
-    ThreadImpl::threadMutex->wait();
+    getNetworkMutex().lock();
 }
 
 void NetworkBase::unlock() {
-    ThreadImpl::init();
-    ThreadImpl::threadMutex->post();
+    getNetworkMutex().unlock();
 }
 
 
