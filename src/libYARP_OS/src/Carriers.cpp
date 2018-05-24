@@ -222,11 +222,11 @@ Carriers::~Carriers()
 
 void Carriers::clear()
 {
-    std::vector<Carrier*>& lst = mPriv->delegates;
-    for (unsigned int i=0; i<lst.size(); i++) {
-        delete lst[i];
+    for (unsigned int i=0; i<mPriv->delegates.size(); i++) {
+        delete mPriv->delegates[i];
+        mPriv->delegates[i] = nullptr;
     }
-    lst.clear();
+    mPriv->delegates.clear();
 }
 
 Carrier *Carriers::chooseCarrier(const std::string& name)
