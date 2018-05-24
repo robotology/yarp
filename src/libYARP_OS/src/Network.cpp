@@ -57,7 +57,6 @@ using namespace yarp::os;
 static int __yarp_is_initialized = 0;
 static bool __yarp_auto_init_active = false; // was yarp auto-initialized?
 
-static MultiNameSpace *__multi_name_space = nullptr;
 
 /**
  *
@@ -89,19 +88,8 @@ static YarpAutoInit yarp_auto_init; ///< destructor is called on shutdown.
 
 static MultiNameSpace& getNameSpace()
 {
-    if (__multi_name_space == nullptr) {
-        __multi_name_space = new MultiNameSpace;
-        yAssert(__multi_name_space != nullptr);
-    }
-    return *__multi_name_space;
-}
-
-static void removeNameSpace()
-{
-    if (__multi_name_space != nullptr) {
-        delete __multi_name_space;
-        __multi_name_space = nullptr;
-    }
+    static MultiNameSpace __multi_name_space;
+    return __multi_name_space;
 }
 
 static bool needsLookup(const Contact& contact)
@@ -805,7 +793,6 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
 void NetworkBase::finiMinimum() {
     if (__yarp_is_initialized==1) {
         Time::useSystemClock();
-        removeNameSpace();
         ThreadImpl::fini();
         yarp::os::impl::removeClock();
 #ifdef YARP_HAS_ACE
