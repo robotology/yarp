@@ -803,8 +803,6 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
         // make sure system is actually able to do things fast
         Time::turboBoost();
 
-        // prepare carriers
-        Carriers::getInstance();
         __yarp_is_initialized++;
         if(yarp::os::Time::getClockType() == YARP_CLOCK_UNINITIALIZED)
             NetworkBase::yarpClockInit(clockType, nullptr);
