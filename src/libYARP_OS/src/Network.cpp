@@ -727,6 +727,7 @@ int NetworkBase::main(int argc, char *argv[]) {
     return Companion::main(argc, argv);
 }
 
+
 void NetworkBase::autoInitMinimum() {
     autoInitMinimum(YARP_CLOCK_DEFAULT);
 }
@@ -739,10 +740,32 @@ void NetworkBase::autoInitMinimum(yarp::os::yarpClockType clockType, yarp::os::C
     }
 }
 
-
 void NetworkBase::initMinimum() {
     initMinimum(YARP_CLOCK_DEFAULT);
 }
+
+#if defined(YARP_HAS_ACE)
+namespace {
+class YARP_ACE
+{
+private:
+    YARP_ACE() {
+        ACE::init();
+    }
+
+public:
+    ~YARP_ACE() {
+        ACE::fini();
+    }
+
+    static YARP_ACE& init() {
+        static YARP_ACE ace;
+        return ace;
+    }
+};
+} // namespace
+#endif
+
 
 void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom) {
     YARP_UNUSED(custom);
@@ -751,7 +774,7 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
         yarp::os::impl::signal(SIGPIPE, SIG_IGN);
 
 #ifdef YARP_HAS_ACE
-        ACE::init();
+        YARP_ACE::init();
 #endif
         ThreadImpl::init();
         BottleImpl::getNull();
@@ -795,9 +818,6 @@ void NetworkBase::finiMinimum() {
         Time::useSystemClock();
         ThreadImpl::fini();
         yarp::os::impl::removeClock();
-#ifdef YARP_HAS_ACE
-        ACE::fini();
-#endif
     }
     if (__yarp_is_initialized>0) __yarp_is_initialized--;
 }
