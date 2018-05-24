@@ -806,8 +806,6 @@ void NetworkBase::finiMinimum() {
     if (__yarp_is_initialized==1) {
         Time::useSystemClock();
         removeNameSpace();
-        Bottle::fini();
-        BottleImpl::fini();
         ThreadImpl::fini();
         yarp::os::impl::removeClock();
 #ifdef YARP_HAS_ACE

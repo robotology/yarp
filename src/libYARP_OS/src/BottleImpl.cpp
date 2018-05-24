@@ -33,8 +33,6 @@ using yarp::os::Value;
 #define YTRACE(x)
 
 
-yarp::os::impl::StoreNull* BottleImpl::storeNull = nullptr;
-
 BottleImpl::BottleImpl() :
         parent(nullptr),
         invalid(false),
