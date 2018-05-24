@@ -169,7 +169,7 @@ int WorkerClass::sendImages(int part, int frame)
         tmp.erase(tmp.end()-1);
         code = Vocab::encode(tmp);
     }
-
+    
     tmpPath = tmpPath + tmpName;
     unique_ptr<Image> img_yarp = nullptr;
 
@@ -182,13 +182,36 @@ int WorkerClass::sendImages(int part, int frame)
         }
     } else {
         img_ipl=cvLoadImage(tmpPath.c_str(),CV_LOAD_IMAGE_UNCHANGED);
+        if ( img_ipl!=nullptr ) {
+            if (code==VOCAB_PIXEL_RGB)
+            {
+                img_yarp = unique_ptr<Image>(new ImageOf<PixelRgb>);
+                cvCvtColor(img_ipl,img_ipl,CV_BGR2RGB);
+            }
+            else if (code==VOCAB_PIXEL_BGR)
+                img_yarp = unique_ptr<Image>(new ImageOf<PixelBgr>);
+            else if (code==VOCAB_PIXEL_RGBA)
+            {
+                img_yarp = unique_ptr<Image>(new ImageOf<PixelRgba>);
+                cvCvtColor(img_ipl,img_ipl,CV_BGRA2RGBA);
+            }
+            else if (code==VOCAB_PIXEL_MONO)
+                img_yarp = unique_ptr<Image>(new ImageOf<PixelMono>);
+            else
+            {
+                img_yarp = unique_ptr<Image>(new ImageOf<PixelRgb>);
+                cvCvtColor(img_ipl,img_ipl,CV_BGR2RGB);
+            }
+            img_yarp->resize(img_ipl->width, img_ipl->height);
+            cvCopy( img_ipl, (IplImage *) img_yarp->getIplImage());
+        }
     }
 
     if ( img_ipl==nullptr ) {
         LOG_ERROR("Cannot load file %s !\n", tmpPath.c_str() );
         return 1;
     } else {
-        utilities->partDetails[part].imagePort.prepare().wrapIplImage(img_ipl);
+        utilities->partDetails[part].imagePort.prepare()=*img_yarp;
 #else
     bool fileValid = true;
     if (code==VOCAB_PIXEL_RGB) {
