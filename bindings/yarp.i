@@ -287,10 +287,11 @@ namespace yarp {
 #if (SWIG_VERSION >= 0x030011) && (!defined(SWIGCSHARP))
     %define VOCAB(x1,x2,x3,x4) x4*16777216+x3*65536+x2*256+x1 // Tested on Lua and Python
     %enddef
-#else
+#elif defined(SWIGCSHARP)
+    // We'd rather no VOCAB vs a defective VOCAB (value 0), but required for CSHARP.
     %define VOCAB(x1,x2,x3,x4) 0 // VOCABs in enum should be generated in Lua and Python, not C#
     %enddef
-#endif
+#endif // If old SWIG and not CSHARP, no global defined (but enum should be) VOCABs wrappers generated
 %define VOCAB4(x1,x2,x3,x4) VOCAB(x1,x2,x3,x4)
 %enddef
 %define VOCAB3(x1,x2,x3) VOCAB(x1,x2,x3,0)
