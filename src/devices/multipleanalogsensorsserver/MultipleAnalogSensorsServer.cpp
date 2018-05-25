@@ -289,7 +289,7 @@ bool MultipleAnalogSensorsServer::detachAll()
     m_rpcPort.close();
     m_streamingPort.close();
 
-    return false;
+    return true;
 }
 
 SensorRPCData MultipleAnalogSensorsServer::getMetadata()
