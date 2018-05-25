@@ -60,14 +60,14 @@ bool DepthImageConverter::accept(yarp::os::Things& thing)
 yarp::os::Things& DepthImageConverter::update(yarp::os::Things& thing)
 {
     Image* img = thing.cast_as< Image >();
-    inMatrix = (float **) img->getRawImage();
+    inMatrix = reinterpret_cast<float **> (img->getRawImage());
 
     outImg.setPixelCode(VOCAB_PIXEL_MONO);
     outImg.setPixelSize(1);
     outImg.resize(img->width(), img->height());
 
     outImg.zero();
-    float *inPixels = (float *)img->getRawImage();
+    float *inPixels = reinterpret_cast<float *> (img->getRawImage());
     unsigned char *pixels = outImg.getRawImage();
     for(int h=0; h<img->height(); h++)
     {
