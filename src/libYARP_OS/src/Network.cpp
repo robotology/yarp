@@ -11,32 +11,24 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Carriers.h>
-#include <string>
-#include <yarp/os/DummyConnector.h>
-#include <yarp/os/InputStream.h>
 #include <yarp/os/MultiNameSpace.h>
 #include <yarp/os/NameSpace.h>
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Route.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/YarpPlugin.h>
 #include <yarp/os/Face.h>
 
-#include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PortCommand.h>
-#include <yarp/os/impl/StreamConnectionReader.h>
-#include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/impl/TimeImpl.h>
 
 #ifdef YARP_HAS_ACE
@@ -50,6 +42,8 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <mutex>
+#include <string>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -767,9 +761,10 @@ public:
 #endif
 
 
-void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom) {
+void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom)
+{
     YARP_UNUSED(custom);
-    if (__yarp_is_initialized==0) {
+    if (__yarp_is_initialized == 0) {
         // Broken pipes need to be dealt with through other means
         yarp::os::impl::signal(SIGPIPE, SIG_IGN);
 
@@ -797,17 +792,20 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
         __yarp_is_initialized++;
         if(yarp::os::Time::getClockType() == YARP_CLOCK_UNINITIALIZED)
             NetworkBase::yarpClockInit(clockType, nullptr);
-    }
-    else
+    } else {
         __yarp_is_initialized++;
+    }
 }
 
-void NetworkBase::finiMinimum() {
-    if (__yarp_is_initialized==1) {
+void NetworkBase::finiMinimum()
+{
+    if (__yarp_is_initialized == 1) {
         Time::useSystemClock();
         yarp::os::impl::Time::removeClock();
     }
-    if (__yarp_is_initialized>0) __yarp_is_initialized--;
+    if (__yarp_is_initialized > 0) {
+        __yarp_is_initialized--;
+    }
 }
 
 void yarp::os::NetworkBase::yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom)
