@@ -99,7 +99,7 @@ public:
 
         checkEqual(U.rows(), m, "Number of Rows of U matrix is correct");
         checkEqual(U.cols(), n, "Number of Cols of U matrix is correct");
-        checkEqual(s.size(), n, "Size of s vector is correct");
+        checkEqual(s.size(), (size_t) n, "Size of s vector is correct");
         checkEqual(V.rows(), n, "Number of Rows of V matrix is correct");
         checkEqual(V.cols(), n, "Number of Cols of V matrix is correct");
     }

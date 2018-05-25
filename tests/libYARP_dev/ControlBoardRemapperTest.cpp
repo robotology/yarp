@@ -77,7 +77,7 @@ public:
         int axes = 0;
         ok = pos->getAxes(&axes);
         checkTrue(ok, "getAxes returned correctly");
-        checkEqual(axes, nrOfRemappedAxes, "remapper seems functional");
+        checkEqual((size_t) axes, nrOfRemappedAxes, "remapper seems functional");
 
         IPositionDirect *posdir = nullptr;
         ok = ddRemapper.view(posdir);

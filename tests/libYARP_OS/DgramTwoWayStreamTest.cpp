@@ -244,10 +244,10 @@ public:
                 checkTrue(!goodRead[1],"second read should be broken");
                 checkTrue(!goodRead[2],"third read should be broken");
                 checkTrue(goodRead[3],"fourth read should be good again");
-                checkEqual(length[0],recv.length(),"first length should be full");
+                checkEqual((size_t) length[0],recv.length(),"first length should be full");
                 checkEqual(length[1],-1,"second should be error");
                 checkEqual(length[2],-1,"third should be error");
-                checkEqual(length[3],recv.length(),"fourth length should be full");
+                checkEqual((size_t) length[3],recv.length(),"fourth length should be full");
             } else {
                 checkTrue(goodRead[0],"first read should be good");
                 checkTrue(!goodRead[1],"second read should be broken");

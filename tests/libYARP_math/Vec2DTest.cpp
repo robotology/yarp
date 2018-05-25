@@ -33,7 +33,6 @@ using namespace yarp::sig;
 using namespace yarp::math;
 using namespace std;
 
-const double TOL = 1e-8;
 
 class Vec2DTest : public UnitTest {
 public:
