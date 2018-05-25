@@ -57,7 +57,7 @@ public:
      */
     virtual void onCommencement();
 
-    virtual Type getWriteType() { return Type::anon(); }
+    virtual Type getWriteType() const { return Type::anon(); }
 };
 
 #endif // YARP_OS_PORTWRITER_H
