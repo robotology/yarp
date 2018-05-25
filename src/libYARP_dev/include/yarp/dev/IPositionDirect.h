@@ -145,7 +145,7 @@ public:
      *          refs    10 30 40
      * @return true/false on success/failure
      */
-    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs)=0;
+    virtual bool setPositionsRaw(const int n_joint, const int *joints, const double *refs)=0;
 
 
     /** Set new position for a set of axes.

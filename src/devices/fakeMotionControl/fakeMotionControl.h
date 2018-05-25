@@ -448,7 +448,7 @@ public:
 
     // PositionDirect Interface
     virtual bool setPositionRaw(int j, double ref) override;
-    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs) override;
+    virtual bool setPositionsRaw(const int n_joint, const int *joints, const double *refs) override;
     virtual bool setPositionsRaw(const double *refs) override;
     virtual bool getRefPositionRaw(const int joint, double *ref) override;
     virtual bool getRefPositionsRaw(double *refs) override;
