@@ -121,23 +121,14 @@ public:
 
     static StoreNull& getNull()
     {
-        if (!storeNull) {
-            storeNull = new StoreNull;
-        }
-        return *storeNull;
+        static StoreNull storeNull;
+        return storeNull;
     }
 
     // check if a piece of text is a completed bottle
     static bool isComplete(const char* txt);
 
     void hasChanged() { dirty = true; }
-    static void fini()
-    {
-        if (storeNull) {
-            delete storeNull;
-            storeNull = nullptr;
-        }
-    }
 
     bool checkIndex(int index) const;
 
@@ -150,8 +141,6 @@ public:
     Value& findBit(const std::string& key) const;
 
 private:
-    static StoreNull* storeNull;
-
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<Storable*>) content;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<char>) data;
     int speciality;

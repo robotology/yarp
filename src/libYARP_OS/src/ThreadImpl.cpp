@@ -30,33 +30,7 @@
 
 using namespace yarp::os::impl;
 
-int ThreadImpl::threadCount = 0;
-int ThreadImpl::defaultStackSize = 0;
-SemaphoreImpl *ThreadImpl::threadMutex = nullptr;
-SemaphoreImpl *ThreadImpl::timeMutex = nullptr;
-
-void ThreadImpl::init()
-{
-    if (!threadMutex) {
-        threadMutex = new SemaphoreImpl(1);
-    }
-    if (!timeMutex) {
-        timeMutex = new SemaphoreImpl(1);
-    }
-}
-
-void ThreadImpl::fini()
-{
-    if (threadMutex) {
-        delete threadMutex;
-        threadMutex = nullptr;
-    }
-    if (timeMutex) {
-        delete timeMutex;
-        timeMutex = nullptr;
-    }
-}
-
+static std::atomic<int> threadCount{0};
 
 void theExecutiveBranch(void *args)
 {
@@ -106,8 +80,7 @@ void theExecutiveBranch(void *args)
 
     //YARP_ERROR(Logger::get(), std::string("uncaught exception in thread: ") +
     //             e.toString());
-
-    ThreadImpl::changeCount(-1);
+    --threadCount;
     YARP_DEBUG(Logger::get(), "Thread shutting down");
     //ACE_Thread::exit();
 
@@ -123,7 +96,7 @@ ThreadImpl::ThreadImpl() :
         id(std::thread::id()),
         defaultPriority(-1),
         defaultPolicy(-1),
-        hid(std::thread()),
+        thread(std::thread()),
         active(false),
         opened(false),
         closing(false),
@@ -132,7 +105,6 @@ ThreadImpl::ThreadImpl() :
         synchro(0),
         initWasSuccessful(false)
 {
-    setOptions();
 }
 
 
@@ -141,7 +113,7 @@ ThreadImpl::ThreadImpl(Runnable *target) :
         id(std::thread::id()),
         defaultPriority(-1),
         defaultPolicy(-1),
-        hid(std::thread()),
+        thread(std::thread()),
         active(false),
         opened(false),
         closing(false),
@@ -150,7 +122,6 @@ ThreadImpl::ThreadImpl(Runnable *target) :
         synchro(0),
         initWasSuccessful(false)
 {
-    setOptions();
 }
 
 
@@ -179,12 +150,6 @@ long int ThreadImpl::getKeyOfCaller()
 }
 
 
-void ThreadImpl::setOptions(int stackSize)
-{
-    this->stackSize = stackSize;
-}
-
-
 int ThreadImpl::join(double seconds)
 {
     closing = true;
@@ -202,8 +167,8 @@ int ThreadImpl::join(double seconds)
         }
 
         int result = -1;
-        if (hid.joinable()) {
-            hid.join();
+        if (thread.joinable()) {
+            thread.join();
             result = 0;
         }
 
@@ -276,8 +241,8 @@ bool ThreadImpl::start()
     closing = false;
     initWasSuccessful = false;
     beforeStart();
-    hid = std::thread(theExecutiveBranch, (void*)this);
-    int result = hid.joinable() ? 0 : 1;
+    thread = std::thread(theExecutiveBranch, (void*)this);
+    int result = thread.joinable() ? 0 : 1;
     if (result==0) {
         // we must, at some point in the future, join the thread
         needJoin = true;
@@ -287,7 +252,7 @@ bool ThreadImpl::start()
         synchroWait();
         initWasSuccessful = true;
         if (opened) {
-            ThreadImpl::changeCount(1);
+            ++threadCount;
             YARP_DEBUG(Logger::get(), "Child thread initialized ok");
             afterStart(true);
             return true;
@@ -332,20 +297,7 @@ bool ThreadImpl::isRunning()
 
 int ThreadImpl::getCount()
 {
-    init();
-    threadMutex->wait();
-    int ct = threadCount;
-    threadMutex->post();
-    return ct;
-}
-
-
-void ThreadImpl::changeCount(int delta)
-{
-    init();
-    threadMutex->wait();
-    threadCount+=delta;
-    threadMutex->post();
+    return threadCount;
 }
 
 int ThreadImpl::setPriority(int priority, int policy)
@@ -360,7 +312,7 @@ int ThreadImpl::setPriority(int priority, int policy)
     if (active && priority!=-1) {
 #if defined(YARP_HAS_ACE)
         if (std::is_same<std::thread::native_handle_type, ACE_hthread_t>::value) {
-            return ACE_Thread::setprio(hid.native_handle(), priority, policy);
+            return ACE_Thread::setprio(thread.native_handle(), priority, policy);
         } else {
             YARP_ERROR(Logger::get(), "Cannot set priority without ACE");
         }
@@ -368,7 +320,7 @@ int ThreadImpl::setPriority(int priority, int policy)
         if (std::is_same<std::thread::native_handle_type, pthread_t>::value) {
             struct sched_param thread_param;
             thread_param.sched_priority = priority;
-            int ret = pthread_setschedparam(hid.native_handle(), policy, &thread_param);
+            int ret = pthread_setschedparam(thread.native_handle(), policy, &thread_param);
             return (ret != 0) ? -1 : 0;
         } else {
             YARP_ERROR(Logger::get(), "Cannot set priority without ACE");
@@ -386,7 +338,7 @@ int ThreadImpl::getPriority()
     if (active) {
 #if defined(YARP_HAS_ACE)
         if (std::is_same<std::thread::native_handle_type, ACE_hthread_t>::value) {
-            ACE_Thread::getprio(hid.native_handle(), prio);
+            ACE_Thread::getprio(thread.native_handle(), prio);
         } else {
             YARP_ERROR(Logger::get(), "Cannot get priority without ACE");
         }
@@ -394,7 +346,7 @@ int ThreadImpl::getPriority()
         if (std::is_same<std::thread::native_handle_type, pthread_t>::value) {
             struct sched_param thread_param;
             int policy;
-            if (pthread_getschedparam(hid.native_handle(), &policy, &thread_param) == 0) {
+            if (pthread_getschedparam(thread.native_handle(), &policy, &thread_param) == 0) {
                 prio = thread_param.sched_priority;
             } else {
                 YARP_ERROR(Logger::get(), "Cannot get priority without ACE");
@@ -414,14 +366,14 @@ int ThreadImpl::getPolicy()
 #if defined(YARP_HAS_ACE)
         if (std::is_same<std::thread::native_handle_type, ACE_hthread_t>::value) {
             int prio;
-            ACE_Thread::getprio(hid.native_handle(), prio, policy);
+            ACE_Thread::getprio(thread.native_handle(), prio, policy);
         } else {
             YARP_ERROR(Logger::get(), "Cannot get scheduling policy without ACE");
         }
 #elif defined(__unix__)
         if (std::is_same<std::thread::native_handle_type, pthread_t>::value) {
             struct sched_param thread_param;
-            if (pthread_getschedparam(hid.native_handle(), &policy, &thread_param) != 0) {
+            if (pthread_getschedparam(thread.native_handle(), &policy, &thread_param) != 0) {
                 policy = defaultPolicy;
             }
         } else {
@@ -437,12 +389,6 @@ int ThreadImpl::getPolicy()
 long ThreadImpl::getTid()
 {
     return tid;
-}
-
-
-void ThreadImpl::setDefaultStackSize(int stackSize)
-{
-    defaultStackSize = stackSize;
 }
 
 void ThreadImpl::yield()

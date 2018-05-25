@@ -203,15 +203,15 @@ bool Carriers::Private::select(Searchable& options)
 Carriers::Carriers() :
         mPriv(new Private)
 {
-    mPriv->delegates.push_back(new HttpCarrier());
-    mPriv->delegates.push_back(new NameserCarrier());
-    mPriv->delegates.push_back(new LocalCarrier());
-    mPriv->delegates.push_back(new TcpCarrier());
-    mPriv->delegates.push_back(new TcpCarrier(false));
-    mPriv->delegates.push_back(new McastCarrier());
-    mPriv->delegates.push_back(new UdpCarrier());
-    mPriv->delegates.push_back(new TextCarrier());
-    mPriv->delegates.push_back(new TextCarrier(true));
+    mPriv->delegates.emplace_back(new HttpCarrier());
+    mPriv->delegates.emplace_back(new NameserCarrier());
+    mPriv->delegates.emplace_back(new LocalCarrier());
+    mPriv->delegates.emplace_back(new TcpCarrier());
+    mPriv->delegates.emplace_back(new TcpCarrier(false));
+    mPriv->delegates.emplace_back(new McastCarrier());
+    mPriv->delegates.emplace_back(new UdpCarrier());
+    mPriv->delegates.emplace_back(new TextCarrier());
+    mPriv->delegates.emplace_back(new TextCarrier(true));
 }
 
 Carriers::~Carriers()
@@ -222,11 +222,11 @@ Carriers::~Carriers()
 
 void Carriers::clear()
 {
-    std::vector<Carrier*>& lst = mPriv->delegates;
-    for (unsigned int i=0; i<lst.size(); i++) {
-        delete lst[i];
+    for (unsigned int i=0; i<mPriv->delegates.size(); i++) {
+        delete mPriv->delegates[i];
+        mPriv->delegates[i] = nullptr;
     }
-    lst.clear();
+    mPriv->delegates.clear();
 }
 
 Carrier *Carriers::chooseCarrier(const std::string& name)
@@ -311,7 +311,7 @@ OutputProtocol *Carriers::connect(const Contact& address)
 
 bool Carriers::addCarrierPrototype(Carrier *carrier)
 {
-    getInstance().mPriv->delegates.push_back(carrier);
+    getInstance().mPriv->delegates.emplace_back(carrier);
     return true;
 }
 

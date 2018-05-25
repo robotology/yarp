@@ -442,7 +442,6 @@ private:
     friend class yarp::os::impl::BottleImpl;
     yarp::os::impl::BottleImpl* const implementation;
 
-    static void fini();
 };
 
 #endif // YARP_OS_BOTTLE_H

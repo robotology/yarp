@@ -17,17 +17,13 @@
 #include <atomic>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class ThreadImpl;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * An abstraction for a thread of execution.
  */
-class YARP_OS_impl_API yarp::os::impl::ThreadImpl : public Runnable
+class YARP_OS_impl_API ThreadImpl : public Runnable
 {
 public:
 
@@ -55,13 +51,7 @@ public:
     virtual bool threadInit() override;
     virtual void threadRelease() override;
 
-    // call before start
-    void setOptions(int stackSize = 0);
-
     static int getCount();
-
-    // won't be public for long...
-    static void changeCount(int delta);
 
     // get a unique key
     long int getKey();
@@ -78,14 +68,6 @@ public:
     int getPolicy();
     long getTid();
 
-    static void setDefaultStackSize(int stackSize);
-
-    static SemaphoreImpl *threadMutex;
-    static SemaphoreImpl *timeMutex; // Used by yarp::os::Time
-
-    static void init();
-    static void fini();
-
     long tid;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::thread::id) id;
 
@@ -94,8 +76,7 @@ public:
 private:
     int defaultPriority;
     int defaultPolicy;
-    int stackSize;
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::thread) hid;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::thread) thread;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) active;
     bool opened;
     bool closing;
@@ -103,12 +84,12 @@ private:
     Runnable *delegate;
 
     SemaphoreImpl synchro;
-    //ACE_Auto_Event synchro;   // event for init synchro
 
-    static int threadCount;
-    static int defaultStackSize;
     bool initWasSuccessful;
-
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_THREADIMPL_H

@@ -31,13 +31,13 @@ static bool network_clock_ok = false;
 static Clock *pclock = nullptr;
 static yarpClockType yarp_clock_type  = YARP_CLOCK_UNINITIALIZED;
 
-static void lock() {
-    yarp::os::impl::ThreadImpl::timeMutex->wait();
+namespace {
+static std::mutex& getTimeMutex()
+{
+    static std::mutex mutex;
+    return mutex;
 }
-
-static void unlock() {
-    yarp::os::impl::ThreadImpl::timeMutex->post();
-}
+} // namespace
 
 void printNoClock_ErrorMessage()
 {
@@ -125,7 +125,7 @@ void Time::useSystemClock()
     if(!isSystemClock())
 #endif
     {
-        lock();
+        getTimeMutex().lock();
 
         Clock *old_pclock = pclock;
         bool old_clock_owned = clock_owned;
@@ -138,7 +138,7 @@ void Time::useSystemClock()
         if(old_clock_owned && old_pclock)
             delete old_pclock;
 
-        unlock();
+        getTimeMutex().unlock();
     }
 
 }
@@ -167,7 +167,7 @@ void Time::useNetworkClock(const std::string& clock, std::string localPortName)
     // re-create the clock also in case we already use a network clock, because
     // the input clock port may be different or the clock producer may be changed (different
     // clock source publishing on the same port/topic), so we may need to reconnect.
-    lock();
+    getTimeMutex().lock();
 
     Clock *old_pclock = pclock;   // store current clock pointer to delete it afterward
     bool old_clock_owned = clock_owned;
@@ -195,9 +195,11 @@ void Time::useNetworkClock(const std::string& clock, std::string localPortName)
         }
     }
 
-    if(old_clock_owned && old_pclock)
+    if(old_clock_owned && old_pclock) {
         delete old_pclock;
-    unlock();
+    }
+
+    getTimeMutex().unlock();
 
     int i=-1;
     while(pclock && !pclock->isValid() )
@@ -223,7 +225,7 @@ void Time::useCustomClock(Clock *clock) {
         return;
     }
 
-    lock();
+    getTimeMutex().lock();
 
     // store current clock pointer to delete it afterward
     Clock *old_pclock = pclock;
@@ -237,7 +239,7 @@ void Time::useCustomClock(Clock *clock) {
     if(old_clock_owned && old_pclock)
         delete old_pclock;
 
-    unlock();
+    getTimeMutex().unlock();
 }
 
 bool Time::isSystemClock() {

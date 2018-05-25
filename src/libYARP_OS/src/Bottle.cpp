@@ -27,12 +27,15 @@ using yarp::os::impl::Storable;
 class NullBottle : public Bottle
 {
 public:
-    NullBottle() : Bottle() { setReadOnly(true); }
-    virtual bool isNull() const override { return true; }
-    static NullBottle* bottleNull;
+    NullBottle() : Bottle()
+    {
+        setReadOnly(true);
+    }
+    virtual bool isNull() const override
+    {
+        return true;
+    }
 };
-
-NullBottle* NullBottle::bottleNull = nullptr;
 
 Bottle::Bottle()
         : Portable(), Searchable(), implementation(new BottleImpl(this))
@@ -297,18 +300,8 @@ void Bottle::add(const Value& value)
 
 Bottle& Bottle::getNullBottle()
 {
-    if (NullBottle::bottleNull == nullptr) {
-        NullBottle::bottleNull = new NullBottle();
-    }
-    return *NullBottle::bottleNull;
-}
-
-void Bottle::fini()
-{
-    if (NullBottle::bottleNull != nullptr) {
-        delete NullBottle::bottleNull;
-        NullBottle::bottleNull = nullptr;
-    }
+    static NullBottle bottleNull;
+    return bottleNull;
 }
 
 bool Bottle::operator==(const Bottle& alt) const

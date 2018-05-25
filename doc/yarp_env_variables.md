@@ -71,7 +71,6 @@ Misc configuration
 | `YARP_CLOCK`                  | If this variable is set, the default YARP time facilities will read the time from the yarp port whose name is contained in this variable.                | |
 | `YARP_PORT_PREFIX`            | If this variable is set, its content is prepended to the name of the port whenever a port is opened.  For example: `YARP_PORT_PREFIX=/prefix yarp read /read` will open a port named `/prefix/read` for shells where this syntax is permitted. |  |
 | `YARP_RENAME<???>`            | Suppose a program has a port called `/foo/bar` and there is no way provided to change the name of that port other than source code modification.  The port name can be changed entirely setting the `YARP_RENAME_foo_bar` variable to the desired name of the port. For example: `YARP_RENAME_read=/logger yarp read /read` will open a port named `/logger` for shells where this syntax is permitted.  Renames (if present) are applied before prefixes specified with `YARP_PORT_PREFIX` (if present). |  |
-| `YARP_STACK_SIZE`             | Default stack size (in bytes) for YARP threads.  |   |
 | `YARP_NAMESPACE`              | If this variable is set, its content is used by YARP as namespace, overriding the value set by `yarp namespace` |  |
 | `YARP_IP`                     | If this variable is set, it forces the IP address used for registering YARP ports to be in a particular family.  Prefixes are allowed.  For example, on a machine with a 10.11.4.4 address and a 192.168.1.10 address, seeting YARP_IP to 192 or 192.168 or 192.168.1.10 all result in the 192.xxx.xxx.xxx IP address being used. |  |
 
@@ -93,6 +92,7 @@ Deprecated Environmental Variables
 | Environmental variable        | Description | Related documentation page |
 |:-----------------------------:|:-----------:|:--------------------------:|
 | `YARP_POLICY`                 |  Legacy variable used to change the behavior of the ResourceFinder. Deprecated since YARP 2.3.65  | |
+| `YARP_STACK_SIZE`             | Default stack size (in bytes) for YARP threads. Deprecated since YARP 3.0.0 | |
 
 
 Build system

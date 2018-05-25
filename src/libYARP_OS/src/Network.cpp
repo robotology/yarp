@@ -57,7 +57,6 @@ using namespace yarp::os;
 static int __yarp_is_initialized = 0;
 static bool __yarp_auto_init_active = false; // was yarp auto-initialized?
 
-static MultiNameSpace *__multi_name_space = nullptr;
 
 /**
  *
@@ -89,19 +88,8 @@ static YarpAutoInit yarp_auto_init; ///< destructor is called on shutdown.
 
 static MultiNameSpace& getNameSpace()
 {
-    if (__multi_name_space == nullptr) {
-        __multi_name_space = new MultiNameSpace;
-        yAssert(__multi_name_space != nullptr);
-    }
-    return *__multi_name_space;
-}
-
-static void removeNameSpace()
-{
-    if (__multi_name_space != nullptr) {
-        delete __multi_name_space;
-        __multi_name_space = nullptr;
-    }
+    static MultiNameSpace __multi_name_space;
+    return __multi_name_space;
 }
 
 static bool needsLookup(const Contact& contact)
@@ -739,6 +727,7 @@ int NetworkBase::main(int argc, char *argv[]) {
     return Companion::main(argc, argv);
 }
 
+
 void NetworkBase::autoInitMinimum() {
     autoInitMinimum(YARP_CLOCK_DEFAULT);
 }
@@ -751,10 +740,32 @@ void NetworkBase::autoInitMinimum(yarp::os::yarpClockType clockType, yarp::os::C
     }
 }
 
-
 void NetworkBase::initMinimum() {
     initMinimum(YARP_CLOCK_DEFAULT);
 }
+
+#if defined(YARP_HAS_ACE)
+namespace {
+class YARP_ACE
+{
+private:
+    YARP_ACE() {
+        ACE::init();
+    }
+
+public:
+    ~YARP_ACE() {
+        ACE::fini();
+    }
+
+    static YARP_ACE& init() {
+        static YARP_ACE ace;
+        return ace;
+    }
+};
+} // namespace
+#endif
+
 
 void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom) {
     YARP_UNUSED(custom);
@@ -763,9 +774,8 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
         yarp::os::impl::signal(SIGPIPE, SIG_IGN);
 
 #ifdef YARP_HAS_ACE
-        ACE::init();
+        YARP_ACE::init();
 #endif
-        ThreadImpl::init();
         BottleImpl::getNull();
         Bottle::getNullBottle();
         std::string quiet = getEnvironment("YARP_QUIET");
@@ -781,19 +791,10 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
                 Logger::get().setVerbosity(b.get(0).asInt32());
             }
         }
-        std::string stack = getEnvironment("YARP_STACK_SIZE");
-        if (stack!="") {
-            int sz = atoi(stack.c_str());
-            Thread::setDefaultStackSize(sz);
-            YARP_SPRINTF1(Logger::get(), info,
-                          "YARP_STACK_SIZE set to %d", sz);
-        }
 
         // make sure system is actually able to do things fast
         Time::turboBoost();
 
-        // prepare carriers
-        Carriers::getInstance();
         __yarp_is_initialized++;
         if(yarp::os::Time::getClockType() == YARP_CLOCK_UNINITIALIZED)
             NetworkBase::yarpClockInit(clockType, nullptr);
@@ -805,14 +806,7 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
 void NetworkBase::finiMinimum() {
     if (__yarp_is_initialized==1) {
         Time::useSystemClock();
-        removeNameSpace();
-        Bottle::fini();
-        BottleImpl::fini();
-        ThreadImpl::fini();
         yarp::os::impl::removeClock();
-#ifdef YARP_HAS_ACE
-        ACE::fini();
-#endif
     }
     if (__yarp_is_initialized>0) __yarp_is_initialized--;
 }
@@ -1296,14 +1290,20 @@ std::string NetworkBase::getPathSeparator() {
 #endif
 }
 
+namespace {
+static std::mutex& getNetworkMutex()
+{
+    static std::mutex mutex;
+    return mutex;
+}
+} // namespace
+
 void NetworkBase::lock() {
-    ThreadImpl::init();
-    ThreadImpl::threadMutex->wait();
+    getNetworkMutex().lock();
 }
 
 void NetworkBase::unlock() {
-    ThreadImpl::init();
-    ThreadImpl::threadMutex->post();
+    getNetworkMutex().unlock();
 }
 
 

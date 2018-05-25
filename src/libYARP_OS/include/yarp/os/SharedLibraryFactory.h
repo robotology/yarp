@@ -161,7 +161,7 @@ private:
     int status;
     SharedLibraryClassApi api;
     int returnValue;
-    int rct;
+    int rct; // FIXME Remove this reference counter and use a shared_ptr instead.
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) className;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) baseClassName;
