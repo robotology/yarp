@@ -16,7 +16,7 @@
 // needed for the driver factory.
 yarp::dev::DriverCreator *createServerSerial() {
     return new yarp::dev::DriverCreatorOf<yarp::dev::ServerSerial>("serial",
-                                                                   "",
+                                                                   "serial",
                                                                    "yarp::dev::ServerSerial");
 }
 
