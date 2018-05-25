@@ -167,7 +167,7 @@ MSG: geometry_msgs/PoseWithCovarianceStamped\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/SetMap", "nav_msgs/SetMap");
         typ.addProperty("md5sum", yarp::os::Value("91149a20d7be299b87c340df8cc94fd4"));

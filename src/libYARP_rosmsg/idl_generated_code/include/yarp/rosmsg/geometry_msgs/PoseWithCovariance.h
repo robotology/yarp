@@ -180,7 +180,7 @@ MSG: geometry_msgs/Pose\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PoseWithCovariance", "geometry_msgs/PoseWithCovariance");
         typ.addProperty("md5sum", yarp::os::Value("c23e848cf1b7533a8d7c259073a97e6f"));

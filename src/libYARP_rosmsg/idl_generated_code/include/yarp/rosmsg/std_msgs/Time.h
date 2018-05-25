@@ -125,7 +125,7 @@ time data\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Time", "std_msgs/Time");
         typ.addProperty("md5sum", yarp::os::Value("cd7166c74c552c311fbcc2fe5a7bc289"));

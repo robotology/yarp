@@ -227,7 +227,7 @@ bool do_rectify\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/RegionOfInterest", "sensor_msgs/RegionOfInterest");
         typ.addProperty("md5sum", yarp::os::Value("bdb633039d588fcccb441a4d43ccfe09"));

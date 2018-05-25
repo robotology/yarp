@@ -119,7 +119,7 @@ bool data\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Bool", "std_msgs/Bool");
         typ.addProperty("md5sum", yarp::os::Value("8b94c1b53db61fb6aed406028ad6332a"));

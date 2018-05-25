@@ -367,7 +367,7 @@ MSG: sensor_msgs/NavSatStatus\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/NavSatFix", "sensor_msgs/NavSatFix");
         typ.addProperty("md5sum", yarp::os::Value("2d3a8cd499b9b4a0249fb98fd05cfa48"));

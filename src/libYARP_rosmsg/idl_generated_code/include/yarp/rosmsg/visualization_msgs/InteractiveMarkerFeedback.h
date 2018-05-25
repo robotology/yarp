@@ -420,7 +420,7 @@ MSG: geometry_msgs/Point\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/InteractiveMarkerFeedback", "visualization_msgs/InteractiveMarkerFeedback");
         typ.addProperty("md5sum", yarp::os::Value("ab0f1eee058667e28c19ff3ffc3f4b78"));

@@ -163,7 +163,7 @@ uint32 stride  # stride of given dimension");
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/MultiArrayDimension", "std_msgs/MultiArrayDimension");
         typ.addProperty("md5sum", yarp::os::Value("4cd0c83a8683deae40ecdac60e53bfa8"));

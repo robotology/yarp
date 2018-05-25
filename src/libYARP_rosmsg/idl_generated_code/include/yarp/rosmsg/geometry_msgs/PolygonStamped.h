@@ -161,7 +161,7 @@ MSG: geometry_msgs/Polygon\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PolygonStamped", "geometry_msgs/PolygonStamped");
         typ.addProperty("md5sum", yarp::os::Value("c6be8f7dc3bee7fe9e8d296070f53340"));

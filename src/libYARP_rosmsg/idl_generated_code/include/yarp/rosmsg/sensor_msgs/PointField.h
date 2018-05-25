@@ -231,7 +231,7 @@ uint32 count     # How many elements in the field\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/PointField", "sensor_msgs/PointField");
         typ.addProperty("md5sum", yarp::os::Value("268eacb2962780ceac86cbd17e328150"));

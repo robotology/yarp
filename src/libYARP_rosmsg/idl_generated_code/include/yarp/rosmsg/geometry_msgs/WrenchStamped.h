@@ -161,7 +161,7 @@ MSG: geometry_msgs/Wrench\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/WrenchStamped", "geometry_msgs/WrenchStamped");
         typ.addProperty("md5sum", yarp::os::Value("d78d3cb249ce23087ade7e7d0c40cfa7"));

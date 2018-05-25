@@ -146,7 +146,7 @@ MSG: sensor_msgs/JoyFeedback\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/JoyFeedbackArray", "sensor_msgs/JoyFeedbackArray");
         typ.addProperty("md5sum", yarp::os::Value("cde5730a895b1fc4dee6f91b754b213d"));

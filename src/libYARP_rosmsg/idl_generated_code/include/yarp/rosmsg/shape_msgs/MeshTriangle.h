@@ -137,7 +137,7 @@ uint32[3] vertex_indices\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("shape_msgs/MeshTriangle", "shape_msgs/MeshTriangle");
         typ.addProperty("md5sum", yarp::os::Value("23688b2e6d2de3d32fe8af104a903253"));

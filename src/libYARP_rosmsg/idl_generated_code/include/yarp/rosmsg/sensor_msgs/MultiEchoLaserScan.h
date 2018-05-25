@@ -402,7 +402,7 @@ MSG: sensor_msgs/LaserEcho\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/MultiEchoLaserScan", "sensor_msgs/MultiEchoLaserScan");
         typ.addProperty("md5sum", yarp::os::Value("6fefb0c6da89d7c8abe4b339f5c2f8fb"));

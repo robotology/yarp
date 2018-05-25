@@ -246,7 +246,7 @@ MSG: actionlib_msgs/GoalID\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("actionlib_msgs/GoalStatus", "actionlib_msgs/GoalStatus");
         typ.addProperty("md5sum", yarp::os::Value("d388f9b87b3c471f784434d671988d4a"));

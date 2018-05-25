@@ -125,7 +125,7 @@ duration data\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Duration", "std_msgs/Duration");
         typ.addProperty("md5sum", yarp::os::Value("3e286caf4241d664e55f3ad380e2ae46"));

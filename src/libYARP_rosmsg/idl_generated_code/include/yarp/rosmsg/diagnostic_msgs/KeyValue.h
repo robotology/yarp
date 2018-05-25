@@ -153,7 +153,7 @@ string value # a value to track over time\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("diagnostic_msgs/KeyValue", "diagnostic_msgs/KeyValue");
         typ.addProperty("md5sum", yarp::os::Value("cf57fdc6617a881a88c16e768132149c"));

@@ -159,7 +159,7 @@ MSG: geometry_msgs/Inertia\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/InertiaStamped", "geometry_msgs/InertiaStamped");
         typ.addProperty("md5sum", yarp::os::Value("ddee48caeab5a966c5e8d166654a9ac7"));

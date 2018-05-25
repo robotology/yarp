@@ -115,7 +115,7 @@ char data");
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Char", "std_msgs/Char");
         typ.addProperty("md5sum", yarp::os::Value("1bf77f25acecdedba0e224b162199717"));

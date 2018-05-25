@@ -126,7 +126,7 @@ MSG: nav_msgs/Path\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/GetPlanReply", "nav_msgs/GetPlanReply");
         typ.addProperty("md5sum", yarp::os::Value("0002bc113c0259d71f6cf8cbc9430e18"));

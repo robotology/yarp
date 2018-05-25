@@ -213,7 +213,7 @@ MSG: std_msgs/Header\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/CompressedImage", "sensor_msgs/CompressedImage");
         typ.addProperty("md5sum", yarp::os::Value("8f7a12909da2c9d3332d540a0977563f"));

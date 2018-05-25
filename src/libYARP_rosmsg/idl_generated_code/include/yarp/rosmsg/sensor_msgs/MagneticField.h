@@ -233,7 +233,7 @@ MSG: geometry_msgs/Vector3\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/MagneticField", "sensor_msgs/MagneticField");
         typ.addProperty("md5sum", yarp::os::Value("2f3b0b43eed0c9501de0fa3ff89a45aa"));
