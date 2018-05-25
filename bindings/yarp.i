@@ -290,20 +290,24 @@ namespace yarp {
   }
  }
 
-#if defined(SWIGCSHARP)
-    %define YARP_OS_VOCAB_H 1
+// We skip macros from Vocab.h via SWIG_PREPROCESSOR_SHOULD_SKIP_THIS directive
+// But cannot define YARP_OS_VOCAB_H as we would miss encode/decode
+#if (SWIG_VERSION >= 0x030011) && (!defined(SWIGCSHARP))
+    %define VOCAB(x1,x2,x3,x4) x4*16777216+x3*65536+x2*256+x1 // Tested on Lua and Python
     %enddef
-    %define VOCAB(a,b,c,d) 0
+#elif defined(SWIGCSHARP)
+    // We'd rather no VOCAB vs a defective VOCAB (value 0), but required for CSHARP.
+    %define VOCAB(x1,x2,x3,x4) 0 // VOCABs in enum should be generated in Lua and Python, not C#
     %enddef
-    %define VOCAB4(a,b,c,d) VOCAB((a),(b),(c),(d))
-    %enddef
-    %define VOCAB3(a,b,c) VOCAB((a),(b),(c),(0))
-    %enddef
-    %define VOCAB2(a,b) VOCAB((a),(b),(0),(0))
-    %enddef
-    %define VOCAB1(a) VOCAB((a),(0),(0),(0))
-    %enddef
-#endif
+#endif // If old SWIG and not CSHARP, no global defined (but enum should be) VOCABs wrappers generated
+%define VOCAB4(x1,x2,x3,x4) VOCAB(x1,x2,x3,x4)
+%enddef
+%define VOCAB3(x1,x2,x3) VOCAB(x1,x2,x3,0)
+%enddef
+%define VOCAB2(x1,x2) VOCAB(x1,x2,0,0)
+%enddef
+%define VOCAB1(x1) VOCAB(x1,0,0,0)
+%enddef
 
 %define YARP_BEGIN_PACK
 %enddef
