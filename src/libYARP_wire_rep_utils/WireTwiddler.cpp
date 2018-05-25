@@ -545,7 +545,7 @@ yarp::conf::ssize_t WireTwiddlerReader::read(const Bytes& b) {
             memcpy(b.get(),byte_start,len);
             sent += len;
             consumed += len;
-            NetInt32 *nn = (NetInt32 *)b.get();
+            NetInt32 *nn = reinterpret_cast<NetInt32 *> (b.get());
             dbg_printf("WireTwidderReader sending %d boilerplate bytes:\n",len);
             dbg_printf("   [[[%d]]]\n", (int)(*nn));
             return len;
@@ -645,7 +645,7 @@ yarp::conf::ssize_t WireTwiddlerReader::read(const Bytes& b) {
             int r = 0;
             if (!gap.shouldIgnoreExternal()) {
                 r = readMapped(is,b2,gap);
-                NetInt32 *nn = (NetInt32 *)b.get();
+                NetInt32 *nn = reinterpret_cast<NetInt32 *> (b.get());
                 dbg_printf("WireTwidderReader sending %d payload bytes:\n",r);
                 dbg_printf("   [[[%d]]]\n", (int)(*nn));
                 if (r>0) {
@@ -664,7 +664,7 @@ yarp::conf::ssize_t WireTwiddlerReader::read(const Bytes& b) {
                 dump.allocateOnNeed(len2,len2);
                 Bytes b3(dump.get(),len2);
                 r = is.readFull(b3);
-                NetInt32 *nn = (NetInt32 *)dump.get();
+                NetInt32 *nn = reinterpret_cast<NetInt32 *> (dump.get());
                 if (gap.save_external) {
                     if (override_length>=0) {
                         prop.put(gap.var_name,
@@ -923,7 +923,7 @@ bool WireTwiddlerWriter::emit(const char *src, int len) {
                 if (scratchOffset+4>scratch.length()) {
                     scratch.allocateOnNeed(scratchOffset+4,scratchOffset+4);
                 }
-                NetFloat32 *y = (NetFloat32 *)(scratch.get()+scratchOffset);
+                NetFloat32 *y = reinterpret_cast<NetFloat32 *>(scratch.get()+scratchOffset);
                 *y = (NetFloat32) *x;
                 src = nullptr;
                 noffset = scratchOffset;
@@ -1002,7 +1002,7 @@ yarp::conf::ssize_t WireTwiddlerReader::readMapped(yarp::os::InputStream& is,
         for (int i=0; i<(int)b.length(); i++) {
             b.get()[i] = 0;
         }
-        NetInt32 *nn = (NetInt32 *)b.get();
+        NetInt32 *nn = reinterpret_cast<NetInt32 *> (b.get());
         if (b.length()>=4) {
             *nn = v;
         }
@@ -1024,8 +1024,8 @@ yarp::conf::ssize_t WireTwiddlerReader::readMapped(yarp::os::InputStream& is,
         if (gap.flavor==BOTTLE_TAG_FLOAT64) {
             if (gap.wire_unit_length==4 &&
                 gap.unit_length==8) {
-                NetFloat32 x = *((NetFloat32 *)b2.get());
-                NetFloat64 *y = (NetFloat64 *)b2.get();
+                NetFloat32 x = *(reinterpret_cast<NetFloat32 *> (b2.get()));
+                NetFloat64 *y = reinterpret_cast<NetFloat64 *> (b2.get());
                 *y = x;
             }
         }
