@@ -23,7 +23,7 @@ ways for things to go wrong, and more paths to keep track of.
 
 For runtime loading of plugins, it is important to enable
 the following CMake flag when compiling those plugins:
- \li CREATE_SHARED_LIBRARY = ON
+ \li BUILD_SHARED_LIBS = ON
 
 Only shared libraries (.so/.dll/.dylib) can be loaded at runtime.
 To compile YARP device and carrier plugins respectively, select:
