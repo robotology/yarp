@@ -776,8 +776,7 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
 #ifdef YARP_HAS_ACE
         YARP_ACE::init();
 #endif
-        BottleImpl::getNull();
-        Bottle::getNullBottle();
+
         std::string quiet = getEnvironment("YARP_QUIET");
         Bottle b2(quiet.c_str());
         if (b2.get(0).asInt32()>0) {
