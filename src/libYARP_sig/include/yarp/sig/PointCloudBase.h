@@ -77,7 +77,7 @@ public:
      */
     virtual int getPointType() const;
 
-    virtual yarp::os::Type getType() override;
+    virtual yarp::os::Type getType() const override;
 
     /**
      * @return true if the point cloud is organized in an image-like structure

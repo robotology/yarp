@@ -99,7 +99,7 @@ int PointCloudBase::getPointType() const
     return header.pointType;
 }
 
-yarp::os::Type PointCloudBase::getType()
+yarp::os::Type PointCloudBase::getType() const
 {
     return yarp::os::Type::byName("yarp/pointCloud");
 }
