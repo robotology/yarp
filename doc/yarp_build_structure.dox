@@ -151,7 +151,7 @@ in the same general OS family.
 
 Now we prepare some options for the user.  Some may be hidden
 as "advanced" options.
-\li The CREATE_SHARED_LIBRARY option - if set to true, shared libraries
+\li The BUILD_SHARED_LIBS option - if set to true, shared libraries
  (.so/.dll/.dylib/...) will be built, instead of static.
 \li [ADVANCED] The USE_STL_STRING option - internally, YARP uses an
  ACE string class.  This can be toggled to std::string if desired.

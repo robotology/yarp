@@ -46,7 +46,7 @@ Now, we need to get YARP ready:
 See \ref install for how to do that.
 \li Check that your build of YARP is compatible with SWIG.
 It is best if YARP is compiled as a set of dynamic/shared libraries.
-If you compiled YARP yourself, make sure that the "CREATE_SHARED_LIBRARY"
+If you compiled YARP yourself, make sure that the "BUILD_SHARED_LIBS"
 flag was turned on.  If not, configure it with CMake and recompile.
 Precompiled YARP builds provide dynamic/shared libraries.
 \li You'll also need an up-to-date copy of the YARP source code.  This

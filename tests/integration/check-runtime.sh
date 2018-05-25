@@ -32,13 +32,13 @@ PLUGIN_FLAGS="-DCREATE_DEVICE_LIBRARY_MODULES=TRUE -DENABLE_yarpmod_fakebot=TRUE
 # Create fakebot device
 cd $base/fakebot
 echo "Working in $PWD"
-cmake -DCMAKE_INSTALL_PREFIX=$base/root $PLUGIN_FLAGS -DCREATE_SHARED_LIBRARY=TRUE $src
+cmake -DCMAKE_INSTALL_PREFIX=$base/root $PLUGIN_FLAGS -DBUILD_SHARED_LIBS=TRUE $src
 make
 make install
 
 cd $base/fakebot_static
 echo "Working in $PWD"
-cmake -DCMAKE_INSTALL_PREFIX=$base/root_static $PLUGIN_FLAGS -DCREATE_SHARED_LIBRARY=FALSE $src
+cmake -DCMAKE_INSTALL_PREFIX=$base/root_static $PLUGIN_FLAGS -DBUILD_SHARED_LIBS=FALSE $src
 make
 make install
 
