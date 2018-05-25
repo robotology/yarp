@@ -51,7 +51,6 @@ public:
             unsigned char c[sizeof(std::int32_t)];
         } val;
         NetInt32 i = 258;
-        checkEqual(sizeof(std::int32_t),4,"integer size is ok");
         memcpy((char*)(&val.i),(char*)&i,sizeof(std::int32_t));
         checkEqual(val.c[0],2,"first byte ok");
         checkEqual(val.c[1],1,"second byte ok");
@@ -66,7 +65,6 @@ public:
             unsigned char c[sizeof(std::int16_t)];
         } val;
         NetInt16 i = 258;
-        checkEqual(sizeof(std::int16_t),2,"integer size is ok");
         memcpy((char*)(&val.i),(char*)&i,sizeof(std::int16_t));
         checkEqual(val.c[0],2,"first byte ok");
         checkEqual(val.c[1],1,"second byte ok");
@@ -75,7 +73,6 @@ public:
     void checkFloat() {
         report(0,"checking floating point representation");
         NetFloat64 d = 99;
-        checkEqual(sizeof(NetFloat64), 8, "NetFloat64 size is ok.");
         unsigned char rpi[8] = {
             110, 134, 27, 240, 249, 33, 9, 64
         };
