@@ -70,7 +70,7 @@ bool ImplementPositionDirect::setPosition(int j, double ref)
     return iPDirect->setPositionRaw(k, enc);
 }
 
-bool ImplementPositionDirect::setPositions(const int n_joint, const int *joints, double *refs)
+bool ImplementPositionDirect::setPositions(const int n_joint, const int *joints, const double *refs)
 {
     int *tmp_joints =  new int [nj];
     double *tmp_refs = new double [nj];
