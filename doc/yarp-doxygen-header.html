@@ -23,6 +23,31 @@ $mathjax
 <link href="$relpath^$stylesheet" rel="stylesheet" type="text/css" />
 $extrastylesheet
 <script type="text/javascript" src="../version_switch.js"></script>
+
+<link rel="stylesheet" type="text/css" href="cookieconsent.min.css" />
+<script src="cookieconsent.min.js"></script>
+<script>
+window.addEventListener("load", function(){
+window.cookieconsent.initialise({
+  "palette": {
+    "popup": {
+      "background": "#eb6c44",
+      "text": "#ffffff"
+    },
+    "button": {
+      "background": "#237afc",
+    }
+  },
+  "theme": "classic",
+  "content": {
+    "message": "INFORMATION NOTICE ON COOKIES : This website uses only browsing/session cookies. Users can choose whether or not to accept the use of cookies and access the website. By clicking on \"Further information\", the full information notice on the types of cookies will be displayed and you will be able  to choose whether or not to accept them whilst browsing on the website.",
+    "dismiss": "ACCEPT and close",
+    "link": "Further information",
+    "href": "http://www.icub.org/other/personal_data_notice.html"
+  }
+})});
+</script>
+
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
