@@ -74,7 +74,6 @@ public:
 int main() {
     yarp::os::Network network;
     Thread1 t1(THREAD_PERIOD);
-    Time::turboBoost();
     t1.start(); 
 
     Time::delay(MAIN_WAIT);

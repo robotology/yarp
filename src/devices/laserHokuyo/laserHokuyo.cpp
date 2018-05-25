@@ -244,7 +244,6 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
         b_ans.clear();
     }
 
-    Time::turboBoost();
     RateThread::start();
     return true;
 }

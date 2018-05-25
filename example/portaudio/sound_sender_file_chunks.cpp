@@ -30,7 +30,6 @@ int main(int argc, char *argv[])
 {
     //open the network
     Network yarp;
-    yarp::os::Time::turboBoost();
 
     //open the output port
 #ifdef USE_PORTS

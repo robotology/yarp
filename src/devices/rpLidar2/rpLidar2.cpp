@@ -194,7 +194,6 @@ bool RpLidar2::open(yarp::os::Searchable& config)
     yInfo("max_angle %f, min_angle %f", m_max_angle, m_min_angle);
     yInfo("resolution %f",              m_resolution);
     yInfo("sensors %d",                 m_sensorsNum);
-    Time::turboBoost();
     RateThread::start();
     return true;
 }

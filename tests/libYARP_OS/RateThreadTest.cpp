@@ -328,7 +328,6 @@ public:
         bool success = false;
         double acceptedThreshold = 0.10;
 
-        Time::turboBoost();
         char message[255];
 
         //try plausible rates

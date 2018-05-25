@@ -129,7 +129,6 @@ public:
 int main(int argc, char **argv) 
 {
     Network yarp;
-    Time::turboBoost();
     Property p;
     p.fromCommand(argc, argv);
 

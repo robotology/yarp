@@ -127,6 +127,7 @@ public:
 };
 
 int main(int argc, char **argv) {
+    Network yarp;
     Property p;
     Thread1 t1;
     
@@ -136,8 +137,6 @@ int main(int argc, char **argv) {
     double time=p.check("time", Value(MAIN_WAIT)).asFloat64();
     double cpuTime=p.check("cpu", Value(THREAD_CPU_TIME)).asFloat64();
     int iterations=p.check("iterations", Value(-1)).asInt32();
-
-    Time::turboBoost();
 
     t1.setRate(period);
     t1.setCpuTime(cpuTime);
