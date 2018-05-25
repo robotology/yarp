@@ -653,6 +653,12 @@ bool yarp::dev::FrameTransformClient::getTransform(const std::string& target_fra
 
 bool yarp::dev::FrameTransformClient::setTransform(const std::string& target_frame_id, const std::string& source_frame_id, const yarp::sig::Matrix& transform)
 {
+    if(target_frame_id == source_frame_id)
+    {
+        yError() << "FrameTransformClient::setTransform() Invalid transform detected.\n" \
+                    "\t Source frame and target frame are both equal to " << source_frame_id;
+        return false;
+    }
 
     if (!canExplicitTransform(target_frame_id, source_frame_id) && canTransform(target_frame_id, source_frame_id))
     {
@@ -701,6 +707,13 @@ bool yarp::dev::FrameTransformClient::setTransform(const std::string& target_fra
 
 bool yarp::dev::FrameTransformClient::setTransformStatic(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform)
 {
+    if(target_frame_id == source_frame_id)
+    {
+        yError() << "FrameTransformClient::setTransformStatic() Invalid transform detected.\n" \
+                    "\t Source frame and target frame are both equal to " << source_frame_id;
+        return false;
+    }
+
     if (canTransform(target_frame_id, source_frame_id))
     {
         yError() << "FrameTransformClient::setTransform() such static transform already exist, directly or by chaining transforms";
