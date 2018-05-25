@@ -24,7 +24,7 @@
 #endif
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
+using yarp::os::impl::Logger;
 
 static bool clock_owned = false;
 static bool network_clock_ok = false;
@@ -80,13 +80,23 @@ static Clock *getClock()
     return pclock;
 }
 
-void yarp::os::impl::removeClock()
+void yarp::os::impl::Time::removeClock()
 {
     if(pclock) {
         delete pclock;
         pclock = nullptr;
     }
     yarp_clock_type = YARP_CLOCK_UNINITIALIZED;
+}
+
+void yarp::os::impl::Time::turboBoost()
+{
+#if defined(_WIN32)
+    // only does something on Microsoft Windows
+    TIMECAPS tm;
+    timeGetDevCaps(&tm, sizeof(TIMECAPS));
+    timeBeginPeriod(tm.wPeriodMin);
+#endif
 }
 
 void Time::delay(double seconds) {
@@ -105,14 +115,12 @@ double Time::now() {
     return clk->now();
 }
 
-void Time::turboBoost() {
-#ifdef ACE_WIN32
-    // only does something on Microsoft Windows
-    TIMECAPS tm;
-    timeGetDevCaps(&tm, sizeof(TIMECAPS));
-    timeBeginPeriod(tm.wPeriodMin);
-#endif
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+void Time::turboBoost()
+{
+    return yarp::os::impl::Time::turboBoost();
 }
+#endif // YARP_NO_DEPRECATED
 
 void Time::yield() {
     return yarp::os::Thread::yield();

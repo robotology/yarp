@@ -56,15 +56,6 @@ public:
     static void yield();
 
     /**
-     * For OS where it makes sense sets the scheduler to be called more often.
-     * This sets the scheduler to be run to the maximum possible rate based
-     * on the capability of the hardware.
-     * Specifically, on Microsoft Windows, high resolution scheduling is
-     * used.
-     */
-    static void turboBoost();
-
-    /**
      *
      * Configure YARP to use system time (this is the default).
      */
@@ -144,6 +135,21 @@ public:
      *
      */
     static bool isValid();
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+    /**
+     * For OS where it makes sense sets the scheduler to be called more often.
+     * This sets the scheduler to be run to the maximum possible rate based
+     * on the capability of the hardware.
+     * Specifically, on Microsoft Windows, high resolution scheduling is
+     * used.
+     *
+     * @deprecated Since YARP 3.0.0
+     */
+    YARP_DEPRECATED
+    static void turboBoost();
+#endif
+
 };
 
 #endif // YARP_OS_TIME_H

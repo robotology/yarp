@@ -9,12 +9,23 @@
 #ifndef YARP_OS_IMPL_TIMEIMPL_H
 #define YARP_OS_IMPL_TIMEIMPL_H
 
-#include <yarp/os/Time.h>
-
 namespace yarp {
 namespace os {
 namespace impl {
-    void removeClock();
+namespace Time {
+
+void removeClock();
+
+/**
+ * For OS where it makes sense sets the scheduler to be called more often.
+ * This sets the scheduler to be run to the maximum possible rate based
+ * on the capability of the hardware.
+ * Specifically, on Microsoft Windows, high resolution scheduling is
+ * used.
+ */
+void turboBoost();
+
+} // namespace Time
 } // namespace impl
 } // namespace os
 } // namespace yarp
