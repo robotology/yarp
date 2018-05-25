@@ -25,17 +25,17 @@ yarp::os::Stamp::Stamp()
     timeStamp = 0;
 }
 
-int yarp::os::Stamp::getCount()
+int yarp::os::Stamp::getCount() const
 {
     return sequenceNumber;
 }
 
-double yarp::os::Stamp::getTime()
+double yarp::os::Stamp::getTime() const
 {
     return timeStamp;
 }
 
-bool yarp::os::Stamp::isValid()
+bool yarp::os::Stamp::isValid() const
 {
     return sequenceNumber >= 0;
 }
@@ -101,7 +101,7 @@ bool yarp::os::Stamp::write(ConnectionWriter& connection)
     return !connection.isError();
 }
 
-int yarp::os::Stamp::getMaxCount()
+int yarp::os::Stamp::getMaxCount() const
 {
     // a very conservative maximum
     return 32767;

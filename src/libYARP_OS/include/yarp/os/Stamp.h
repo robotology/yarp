@@ -46,21 +46,21 @@ public:
      *
      * @return the sequence number.
      */
-    int getCount();
+    int getCount() const;
 
     /**
      * Get the time stamp.
      *
      * @return the time stamp
      */
-    double getTime();
+    double getTime() const;
 
     /**
      * Check if this Stamp is valid.
      *
      * @return true if this is a valid Stamp
      */
-    bool isValid();
+    bool isValid() const;
 
     /**
      * Get the maximum sequence number, after which an incrementing sequence
@@ -68,7 +68,7 @@ public:
      *
      * @return the maximum sequence number.
      */
-    int getMaxCount();
+    int getMaxCount() const;
 
     /**
      * Set the timestamp to the current time, and increment the sequence number
