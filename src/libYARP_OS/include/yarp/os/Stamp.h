@@ -90,8 +90,10 @@ public:
 };
 
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 /**
  * A base class for objects with time stamps and/or sequence numbers.
+ * @deprecated since YARP 3.0.0
  */
 class YARP_OS_DEPRECATED_API Stamped
 {
@@ -107,6 +109,7 @@ public:
      */
     virtual Stamp getStamp() const = 0;
 };
+#endif // YARP_NO_DEPRECATED
 
 } // namespace os
 } // namespace yarp

@@ -127,7 +127,9 @@ void yarp::os::Stamp::update(double time)
     timeStamp = time;
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
 yarp::os::Stamped::~Stamped() = default;
 YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
