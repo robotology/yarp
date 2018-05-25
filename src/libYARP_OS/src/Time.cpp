@@ -91,13 +91,23 @@ void yarp::os::impl::Time::removeClock()
     yarp_clock_type = YARP_CLOCK_UNINITIALIZED;
 }
 
-void yarp::os::impl::Time::turboBoost()
+void yarp::os::impl::Time::startTurboBoost()
 {
 #if defined(_WIN32)
     // only does something on Microsoft Windows
     TIMECAPS tm;
     timeGetDevCaps(&tm, sizeof(TIMECAPS));
     timeBeginPeriod(tm.wPeriodMin);
+#endif
+}
+
+void yarp::os::impl::Time::endTurboBoost()
+{
+#if defined(_WIN32)
+    // only does something on Microsoft Windows
+    TIMECAPS tm;
+    timeGetDevCaps(&tm, sizeof(TIMECAPS));
+    timeEndPeriod(tm.wPeriodMin);
 #endif
 }
 
@@ -120,7 +130,7 @@ double Time::now() {
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 void Time::turboBoost()
 {
-    return yarp::os::impl::Time::turboBoost();
+    return yarp::os::impl::Time::startTurboBoost();
 }
 #endif // YARP_NO_DEPRECATED
 

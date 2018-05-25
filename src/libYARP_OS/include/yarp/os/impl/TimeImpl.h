@@ -22,8 +22,14 @@ void removeClock();
  * on the capability of the hardware.
  * Specifically, on Microsoft Windows, high resolution scheduling is
  * used.
+ *
+ * @warning According to https://msdn.microsoft.com/en-us/library/vs/alm/dd757624(v=vs.85).aspx
+ *          timeBeginPeriod (called in startTurboBoost) affects a global Windows
+ *          setting and should be matched with a call to timeEndPeriod (called
+ *          in endTurboBoost).
  */
-void turboBoost();
+void startTurboBoost();
+void endTurboBoost();
 
 } // namespace Time
 } // namespace impl

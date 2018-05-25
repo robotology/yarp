@@ -787,7 +787,7 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
         }
 
         // make sure system is actually able to do things fast
-        yarp::os::impl::Time::turboBoost();
+        yarp::os::impl::Time::startTurboBoost();
 
         __yarp_is_initialized++;
         if(yarp::os::Time::getClockType() == YARP_CLOCK_UNINITIALIZED)
@@ -802,6 +802,10 @@ void NetworkBase::finiMinimum()
     if (__yarp_is_initialized == 1) {
         Time::useSystemClock();
         yarp::os::impl::Time::removeClock();
+
+        // reset system timer resolution
+        yarp::os::impl::Time::endTurboBoost();
+
     }
     if (__yarp_is_initialized > 0) {
         __yarp_is_initialized--;
