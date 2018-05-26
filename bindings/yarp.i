@@ -178,8 +178,8 @@
 %ignore yarp::sig::Image::pixel(int,int) const;
 %ignore yarp::sig::Image::getRow(int) const;
 %ignore yarp::sig::Image::getIplImage() const;
-%ignore yarp::sig::Image::getReadType();
-%ignore yarp::sig::Vector::getType();
+%ignore yarp::sig::Image::getReadType() const;
+%ignore yarp::sig::Vector::getType() const;
 %ignore yarp::os::Property::put(const char *,Value *);
 %ignore yarp::os::Bottle::add(Value *);
 %rename(toString) std::string::operator const char *() const;
