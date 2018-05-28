@@ -73,7 +73,7 @@ public:
             return false;
         }
 
-        for (int i = 0; i < m1.rows(); i++)
+        for (size_t i = 0; i < m1.rows(); i++)
         {
             if (!isEqual(m1.getRow(i), m2.getRow(i), precision))
             {
