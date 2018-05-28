@@ -859,9 +859,9 @@ bool realsense2Driver::setExtrinsicParam(Matrix &extrinsic, const rs2_extrinsics
 
     extrinsic.eye();
 
-    for (int j=0; j<extrinsic.rows() - 1; j++)
+    for (size_t j=0; j<extrinsic.rows() - 1; j++)
     {
-        for (int i=0; i<extrinsic.cols() - 1; i++)
+        for (size_t i=0; i<extrinsic.cols() - 1; i++)
         {
             extrinsic[j][i] = values.rotation[i + j*extrinsic.cols()];
         }
