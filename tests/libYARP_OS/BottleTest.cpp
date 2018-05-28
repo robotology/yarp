@@ -458,7 +458,7 @@ public:
         BufferedConnectionWriter writer;
         bot.write(writer);
         std::string s = writer.toString();
-        checkEqual((int)s.length(),sizeof(NetInt32)*(1+1+(int)bot.size()),
+        checkEqual(s.length(),sizeof(NetInt32)*(1+1+(int)bot.size()),
                    "exact number of integers, plus type/count");
 
         Bottle bot2("[go] (10 20 30 40)");
@@ -472,7 +472,7 @@ public:
         // 1 for (inner) list code
         // 1 for (inner) list length
         // 4 for integers in list
-        checkEqual((int)s.length(),sizeof(NetInt32)*(10),
+        checkEqual(s.length(),sizeof(NetInt32)*(10),
                    "nested example");
     }
 

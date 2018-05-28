@@ -81,6 +81,12 @@ else()
                  APPEND_STRING
                  PROPERTY COMPILE_FLAGS " -Wno-sign-compare")
   endif()
+  if(CXX_HAS_WNULL_CONVERSION)
+    set_property(SOURCE ${yarpidl_thrift_SRCS}
+                        ${yarpidl_thrift_GEN_SRCS}
+                 APPEND_STRING
+                 PROPERTY COMPILE_FLAGS " -Wno-null-conversion")
+  endif()
 endif()
 
 

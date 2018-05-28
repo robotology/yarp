@@ -93,7 +93,7 @@ Vector Rand::vector(const Vector &min, const Vector &max)
 {
     size_t s = min.size();
     yarp::sig::Vector ret(s);
-    for(int k=0;k<s;k++)
+    for(size_t k=0;k<s;k++)
     {
         ret[k]=theRandScalar.get(min[k], max[k]);
     }

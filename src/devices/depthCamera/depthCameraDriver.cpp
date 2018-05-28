@@ -837,11 +837,11 @@ bool depthCameraDriver::getImage(ImageOf<PixelFloat>& Frame, Stamp* Stamp, strea
     float* rawImage;
     short* srcRawImage;
 
-    srcRawImage = (short*)(sourceFrame->image.getRawImage());
+    srcRawImage = reinterpret_cast<short*> (sourceFrame->image.getRawImage());
     factor      = sourceFrame->pixF == PIXEL_FORMAT_DEPTH_1_MM ? 0.001 : 0.0001;
 
     Frame.resize(w, h);
-    rawImage = (float*)(Frame.getRawImage());
+    rawImage = reinterpret_cast<float*> (Frame.getRawImage());
 
     //TODO: optimize short-to-float cast and multiplication using SSE/SIMD instruction
     for(i = 0; i < w * h; i++)

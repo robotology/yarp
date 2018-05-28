@@ -644,8 +644,6 @@ bool  MapGrid2D::crop (int left, int top, int right, int bottom)
     if (top    > (int)this->height()) return false;
     if (bottom > (int)this->height()) return false;
 
-    int i=0; int x =0;
-    int j=0; int y=0;
     yarp::sig::ImageOf<CellData> new_map_occupancy;
     yarp::sig::ImageOf<CellData> new_map_flags;
 
@@ -1021,8 +1019,8 @@ bool MapGrid2D::getOccupancyData(XYCell cell, double& occupancy) const
 
 bool MapGrid2D::setOccupancyGrid(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 {
-    if (image.width() != m_width ||
-        image.height() != m_height)
+    if ((size_t) image.width() != m_width ||
+        (size_t) image.height() != m_height)
     {
         yError() << "The size of given occupancy grid does not correspond to the current map. Use method setSize() first.";
         return false;
