@@ -117,7 +117,7 @@ bool DevicePipe::updateService() {
         Sound tmpSound;
         imgSndSource->getAudioVisual(tmp,tmpSound);
         imgSndSink->putAudioVisual(tmp,tmpSound);
-        printf("piped %zux%zu image, %dx%d sound\n",
+        printf("piped %zux%zu image, %zux%zu sound\n",
                tmp.width(), tmp.height(),
                tmpSound.getSamples(), tmpSound.getChannels());
     } else if (imgSource!=nullptr&&imgSink!=nullptr) {
@@ -129,7 +129,7 @@ bool DevicePipe::updateService() {
         Sound tmp;
         sndSource->getSound(tmp);
         sndSink->renderSound(tmp);
-        printf("piped %dx%d sound\n", tmp.getSamples(), tmp.getChannels());
+        printf("piped %zux%zu sound\n", tmp.getSamples(), tmp.getChannels());
     } else {
         printf("Don't know how to pipe between these devices.\n");
         printf("Piping is very limited at the moment.\n");
