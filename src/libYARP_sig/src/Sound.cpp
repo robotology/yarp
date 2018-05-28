@@ -56,15 +56,15 @@ Sound& Sound::operator += (const Sound& alt) {
     unsigned char* p2    = alt.getRawData();
     unsigned char* pout  = this->getRawData();
 
-    for (int ch=0; ch<channels; ch++)
+    for (size_t ch=0; ch<channels; ch++)
     {
-        int out1 = ch* this->getBytesPerSample() * this->samples;
-        int out2 = ch* this->getBytesPerSample() * this->samples + this->getBytesPerSample() * orig.samples;
+        size_t out1 = ch* this->getBytesPerSample() * this->samples;
+        size_t out2 = ch* this->getBytesPerSample() * this->samples + this->getBytesPerSample() * orig.samples;
 
-        int ori1 = ch * orig.getBytesPerSample() * orig.samples;
-        int s1   = orig.getBytesPerSample() * orig.samples;
+        size_t ori1 = ch * orig.getBytesPerSample() * orig.samples;
+        size_t s1   = orig.getBytesPerSample() * orig.samples;
 
-        int alt1 = ch * orig.getBytesPerSample() * alt.samples;
+        size_t alt1 = ch * orig.getBytesPerSample() * alt.samples;
         unsigned int s2 = alt.getBytesPerSample() * alt.samples;
 
         memcpy((void *) &pout[out1], (void *) (p1+ori1), s1);
@@ -91,16 +91,12 @@ void Sound::synchronize() {
     channels = img.height();
 }
 
-Sound Sound::subSound(int first_sample, int last_sample)
+Sound Sound::subSound(size_t first_sample, size_t last_sample)
 {
     if (last_sample  > this->samples)
         last_sample = samples;
     if (first_sample > this->samples)
         first_sample = samples;
-    if (last_sample  < 0)
-        last_sample = 0;
-    if (first_sample < 0)
-        first_sample = 0;
     if (last_sample < first_sample)
         last_sample = first_sample;
 
@@ -121,10 +117,10 @@ Sound Sound::subSound(int first_sample, int last_sample)
     */
 
     //safe implementation
-    int j=0;
-    for (int i=first_sample; i<last_sample; i++)
+    size_t j=0;
+    for (size_t i=first_sample; i<last_sample; i++)
     {
-        for (int c=0; c< this->channels; c++)
+        for (size_t c=0; c< this->channels; c++)
             s.set(this->get(i,c),j,c);
         j++;
     }
@@ -134,7 +130,7 @@ Sound Sound::subSound(int first_sample, int last_sample)
     return s;
 }
 
-void Sound::init(int bytesPerSample) {
+void Sound::init(size_t bytesPerSample) {
     implementation = new FlexImage();
     yAssert(implementation!=nullptr);
 
@@ -154,13 +150,13 @@ Sound::~Sound() {
     }
 }
 
-void Sound::resize(int samples, int channels) {
+void Sound::resize(size_t samples, size_t channels) {
     FlexImage& img = HELPER(implementation);
     img.resize(samples,channels);
     synchronize();
 }
 
-int Sound::get(int location, int channel) const {
+int Sound::get(size_t location, size_t channel) const {
     FlexImage& img = HELPER(implementation);
     unsigned char *addr = img.getPixelAddress(location,channel);
     if (bytesPerSample==2) {
@@ -177,7 +173,7 @@ void Sound::clear()
     memset(p,0,size);
 }
 
-void Sound::set(int value, int location, int channel) {
+void Sound::set(int value, size_t location, size_t channel) {
     FlexImage& img = HELPER(implementation);
     unsigned char *addr = img.getPixelAddress(location,channel);
     if (bytesPerSample==2) {
@@ -187,11 +183,11 @@ void Sound::set(int value, int location, int channel) {
     yInfo("sound only implemented for 16 bit samples");
 }
 
-int Sound::getFrequency() const {
+size_t Sound::getFrequency() const {
     return frequency;
 }
 
-void Sound::setFrequency(int freq) {
+void Sound::setFrequency(size_t freq) {
     this->frequency = freq;
 }
 
@@ -219,7 +215,7 @@ unsigned char *Sound::getRawData() const {
     return img.getRawImage();
 }
 
-int Sound::getRawDataSize() const {
+size_t Sound::getRawDataSize() const {
     FlexImage& img = HELPER(implementation);
     return img.getRawImageSize();
 }
