@@ -265,8 +265,9 @@ endmacro()
 option(SKIP_ACE "Compile YARP without ACE (Linux only, TCP only, limited functionality)" OFF)
 mark_as_advanced(SKIP_ACE)
 
-
-option(CREATE_LIB_MATH "Create math library libYARP_math?" OFF)
+find_package(Eigen3 QUIET)
+checkandset_dependency(Eigen3)
+option(CREATE_LIB_MATH "Create math library libYARP_math?" ${YARP_HAS_EIGEN3})
 cmake_dependent_option(CREATE_YARPROBOTINTERFACE "Do you want to compile yarprobotinterface?" ON YARP_COMPILE_EXECUTABLES OFF)
 cmake_dependent_option(CREATE_YARPMANAGER_CONSOLE "Do you want to compile YARP Module Manager (console)?" ON YARP_COMPILE_EXECUTABLES OFF)
 cmake_dependent_option(CREATE_YARPDATADUMPER "Do you want to compile yarpdatadumper?" ON YARP_COMPILE_EXECUTABLES OFF)
@@ -357,11 +358,6 @@ checkbuildandset_dependency(SQLite)
 
 find_package(Libedit QUIET)
 checkandset_dependency(Libedit)
-
-if(CREATE_LIB_MATH)
-  find_package(Eigen3 QUIET)
-  checkandset_dependency(Eigen3)
-endif()
 
 if(CREATE_YARPROBOTINTERFACE OR CREATE_YARPSCOPE OR CREATE_LIB_MANAGER)
   set(TinyXML_REQUIRED_VERSION 2.6)
