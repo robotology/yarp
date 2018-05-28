@@ -31,7 +31,7 @@ bool file::write(const ImageOf<PixelFloat>& src, const std::string& dest)
         return false;
     }
 
-    int dims[2] = { src.width(), src.height() };
+    size_t dims[2] = { src.width(), src.height() };
 
     size_t bw = 0;
     size_t size_ = sizeof(float);
