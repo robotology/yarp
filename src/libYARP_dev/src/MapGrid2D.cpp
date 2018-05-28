@@ -644,8 +644,6 @@ bool  MapGrid2D::crop (int left, int top, int right, int bottom)
     if (top    > (int)this->height()) return false;
     if (bottom > (int)this->height()) return false;
 
-    int i=0; int x =0;
-    int j=0; int y=0;
     yarp::sig::ImageOf<CellData> new_map_occupancy;
     yarp::sig::ImageOf<CellData> new_map_flags;
 
