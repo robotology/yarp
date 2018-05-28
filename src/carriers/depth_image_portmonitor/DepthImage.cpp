@@ -69,9 +69,9 @@ yarp::os::Things& DepthImageConverter::update(yarp::os::Things& thing)
     outImg.zero();
     float *inPixels = reinterpret_cast<float *> (img->getRawImage());
     unsigned char *pixels = outImg.getRawImage();
-    for(int h=0; h<img->height(); h++)
+    for(size_t h=0; h<img->height(); h++)
     {
-        for(int w=0; w<img->width(); w++)
+        for(size_t w=0; w<img->width(); w++)
         {
             float inVal = inPixels[w + (h * img->width())];
             if (inVal != inVal /* NaN */ || inVal < min || inVal > max) {
