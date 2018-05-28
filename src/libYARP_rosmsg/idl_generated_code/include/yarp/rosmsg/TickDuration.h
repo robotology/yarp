@@ -171,7 +171,7 @@ public:
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("TickDuration", "TickDuration");
         typ.addProperty("md5sum", yarp::os::Value("4f8dc7710c22b42c7b09295dcda33fa0"));

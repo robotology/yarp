@@ -182,7 +182,7 @@ string error_string\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("tf2_msgs/TF2Error", "tf2_msgs/TF2Error");
         typ.addProperty("md5sum", yarp::os::Value("bc6848fd6fd750c92e38575618a4917d"));

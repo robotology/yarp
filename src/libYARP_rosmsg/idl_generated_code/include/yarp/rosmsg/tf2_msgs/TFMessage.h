@@ -146,7 +146,7 @@ MSG: geometry_msgs/TransformStamped\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("tf2_msgs/TFMessage", "tf2_msgs/TFMessage");
         typ.addProperty("md5sum", yarp::os::Value("94810edda583a504dfda3829e70d7eec"));

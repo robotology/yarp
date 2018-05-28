@@ -117,7 +117,7 @@ public:
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/SetMapReply", "nav_msgs/SetMapReply");
         typ.addProperty("md5sum", yarp::os::Value("358e233cde0c8a8bcfea4ce193f8fc15"));

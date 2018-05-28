@@ -525,7 +525,7 @@ public:
 
     virtual bool setPosition(int j, double ref) override;
 
-    virtual bool setPositions(const int n_joints, const int *joints, double *dpos) override;
+    virtual bool setPositions(const int n_joints, const int *joints, const double *dpos) override;
 
     virtual bool setPositions(const double *refs) override;
 

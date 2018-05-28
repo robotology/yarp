@@ -332,7 +332,7 @@ MSG: sensor_msgs/RegionOfInterest\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("stereo_msgs/DisparityImage", "stereo_msgs/DisparityImage");
         typ.addProperty("md5sum", yarp::os::Value("04a177815f75271039fa21f16acad8c9"));

@@ -173,7 +173,7 @@ MSG: std_msgs/MultiArrayLayout\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/UInt16MultiArray", "std_msgs/UInt16MultiArray");
         typ.addProperty("md5sum", yarp::os::Value("52f264f1c973c4b73790d384c6cb4484"));

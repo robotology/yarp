@@ -2859,7 +2859,7 @@ public:
         return true;
     }
 
-    bool setPositions(const int n_joint, const int *joints, double *refs) override
+    bool setPositions(const int n_joint, const int *joints, const double *refs) override
     {
         if (!isLive()) return false;
         CommandMessage& c = command_buffer.get();

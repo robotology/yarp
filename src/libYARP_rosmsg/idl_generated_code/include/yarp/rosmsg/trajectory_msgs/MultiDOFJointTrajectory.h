@@ -238,7 +238,7 @@ MSG: trajectory_msgs/MultiDOFJointTrajectoryPoint\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("trajectory_msgs/MultiDOFJointTrajectory", "trajectory_msgs/MultiDOFJointTrajectory");
         typ.addProperty("md5sum", yarp::os::Value("ef145a45a5f47b77b7f5cdde4b16c942"));

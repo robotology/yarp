@@ -117,7 +117,7 @@ uint8 data\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/UInt8", "std_msgs/UInt8");
         typ.addProperty("md5sum", yarp::os::Value("7c8164229e7d2c17eb95e9231617fdee"));

@@ -224,7 +224,7 @@ MSG: geometry_msgs/TwistWithCovariance\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/Odometry", "nav_msgs/Odometry");
         typ.addProperty("md5sum", yarp::os::Value("cd5e73d190d741a2f92e81eda573aca7"));

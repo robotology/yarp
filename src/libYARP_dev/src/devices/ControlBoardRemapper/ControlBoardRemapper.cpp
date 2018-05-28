@@ -3739,7 +3739,7 @@ bool ControlBoardRemapper::setPosition(int j, double ref)
     return false;
 }
 
-bool ControlBoardRemapper::setPositions(const int n_joints, const int *joints, double *dpos)
+bool ControlBoardRemapper::setPositions(const int n_joints, const int *joints, const double *dpos)
 {
     bool ret=true;
     yarp::os::LockGuard(selectedJointsBuffers.mutex);

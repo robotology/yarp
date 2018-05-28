@@ -150,7 +150,7 @@ MSG: sensor_msgs/CameraInfo\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/SetCameraInfo", "sensor_msgs/SetCameraInfo");
         typ.addProperty("md5sum", yarp::os::Value("ee34be01fdeee563d0d99cd594d5581d"));

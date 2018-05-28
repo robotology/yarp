@@ -169,7 +169,7 @@ string id\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("actionlib_msgs/GoalID", "actionlib_msgs/GoalID");
         typ.addProperty("md5sum", yarp::os::Value("302881f31927c1df708a2dbab0e80ee8"));

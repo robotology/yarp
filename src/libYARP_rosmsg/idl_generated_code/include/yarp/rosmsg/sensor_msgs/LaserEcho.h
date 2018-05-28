@@ -140,7 +140,7 @@ float32[] echoes  # Multiple values of ranges or intensities.\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/LaserEcho", "sensor_msgs/LaserEcho");
         typ.addProperty("md5sum", yarp::os::Value("8bc5ae449b200fba4d552b4225586696"));

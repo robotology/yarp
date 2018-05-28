@@ -248,7 +248,7 @@ MSG: sensor_msgs/ChannelFloat32\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/PointCloud", "sensor_msgs/PointCloud");
         typ.addProperty("md5sum", yarp::os::Value("d8e9c3f5afbdd8a130fd1d2763945fca"));

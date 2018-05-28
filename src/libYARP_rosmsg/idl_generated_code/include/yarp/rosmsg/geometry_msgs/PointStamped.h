@@ -161,7 +161,7 @@ MSG: geometry_msgs/Point\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PointStamped", "geometry_msgs/PointStamped");
         typ.addProperty("md5sum", yarp::os::Value("c63aecb41bfdfd6b7e1fac37c7cbe7bf"));

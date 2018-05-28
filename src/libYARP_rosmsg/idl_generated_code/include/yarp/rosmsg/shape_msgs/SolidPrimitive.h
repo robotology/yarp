@@ -270,7 +270,7 @@ uint8 CONE_RADIUS=1\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("shape_msgs/SolidPrimitive", "shape_msgs/SolidPrimitive");
         typ.addProperty("md5sum", yarp::os::Value("d8f8cbc74c5ff283fca29569ccefb45d"));

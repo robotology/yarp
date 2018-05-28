@@ -320,7 +320,7 @@ uint8 command_type\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/MenuEntry", "visualization_msgs/MenuEntry");
         typ.addProperty("md5sum", yarp::os::Value("b90ec63024573de83b57aa93eb39be2d"));

@@ -149,7 +149,7 @@ float64[4] coef\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("shape_msgs/Plane", "shape_msgs/Plane");
         typ.addProperty("md5sum", yarp::os::Value("2c1b92ed8f31492f8e73f6a4a44ca796"));

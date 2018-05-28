@@ -63,7 +63,7 @@ public:
 
     virtual bool getAxes(int *axes) override;
     virtual bool setPosition(int j, double ref) override;
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs) override;
+    virtual bool setPositions(const int n_joint, const int *joints, const double *refs) override;
     virtual bool setPositions(const double *refs) override;
     virtual bool getRefPosition(const int joint, double *ref) override;
     virtual bool getRefPositions(double *refs) override;
@@ -103,7 +103,7 @@ public:
     virtual bool setPosition(int j, double ref) override
     {return NOT_YET_IMPLEMENTED("setPosition");}
 
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs) override
+    virtual bool setPositions(const int n_joint, const int *joints, const double *refs) override
     {return NOT_YET_IMPLEMENTED("setPositions");}
 
     virtual bool setPositions(const double *refs) override

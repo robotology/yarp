@@ -159,7 +159,7 @@ float64 theta");
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Pose2D", "geometry_msgs/Pose2D");
         typ.addProperty("md5sum", yarp::os::Value("938fa65709584ad8e77d238529be13b8"));

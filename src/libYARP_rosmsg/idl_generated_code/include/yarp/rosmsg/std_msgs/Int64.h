@@ -115,7 +115,7 @@ int64 data");
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Int64", "std_msgs/Int64");
         typ.addProperty("md5sum", yarp::os::Value("34add168574510e6e17f5d23ecc077ef"));

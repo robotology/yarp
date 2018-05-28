@@ -161,7 +161,7 @@ MSG: geometry_msgs/Twist\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/TwistStamped", "geometry_msgs/TwistStamped");
         typ.addProperty("md5sum", yarp::os::Value("98d34b0043a2093cf9d9345ab6eef12e"));

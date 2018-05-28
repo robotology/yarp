@@ -199,7 +199,7 @@ MSG: geometry_msgs/Pose\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/InteractiveMarkerPose", "visualization_msgs/InteractiveMarkerPose");
         typ.addProperty("md5sum", yarp::os::Value("a6e6833209a196a38d798dadb02c81f8"));

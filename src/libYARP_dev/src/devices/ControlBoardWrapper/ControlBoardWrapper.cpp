@@ -4471,7 +4471,7 @@ bool ControlBoardWrapper::setPosition(int j, double ref)
     return false;
 }
 
-bool ControlBoardWrapper::setPositions(const int n_joints, const int *joints, double *dpos)
+bool ControlBoardWrapper::setPositions(const int n_joints, const int *joints, const double *dpos)
 {
     bool ret = true;
 

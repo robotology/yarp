@@ -171,7 +171,7 @@ float32 z");
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Point32", "geometry_msgs/Point32");
         typ.addProperty("md5sum", yarp::os::Value("cc153912f1453b708d221682bc23d9ac"));

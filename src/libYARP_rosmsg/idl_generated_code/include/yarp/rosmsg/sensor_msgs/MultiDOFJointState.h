@@ -364,7 +364,7 @@ MSG: geometry_msgs/Wrench\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/MultiDOFJointState", "sensor_msgs/MultiDOFJointState");
         typ.addProperty("md5sum", yarp::os::Value("690f272f0640d2631c305eeb8301e59d"));

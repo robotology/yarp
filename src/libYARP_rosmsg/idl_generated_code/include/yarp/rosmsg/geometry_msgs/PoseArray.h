@@ -183,7 +183,7 @@ MSG: geometry_msgs/Pose\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PoseArray", "geometry_msgs/PoseArray");
         typ.addProperty("md5sum", yarp::os::Value("916c28c5764443f268b296bb671b9d97"));

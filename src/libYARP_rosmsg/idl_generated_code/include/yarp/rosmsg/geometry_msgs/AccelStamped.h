@@ -161,7 +161,7 @@ MSG: geometry_msgs/Accel\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/AccelStamped", "geometry_msgs/AccelStamped");
         typ.addProperty("md5sum", yarp::os::Value("d8a98a5d81351b6eb0578c78557e7659"));

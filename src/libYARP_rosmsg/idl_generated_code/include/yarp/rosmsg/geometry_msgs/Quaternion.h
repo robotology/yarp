@@ -181,7 +181,7 @@ float64 w\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Quaternion", "geometry_msgs/Quaternion");
         typ.addProperty("md5sum", yarp::os::Value("a779879fadf0160734f906b8c19c7004"));

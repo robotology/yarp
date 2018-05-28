@@ -206,7 +206,7 @@ float32[] values\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/ChannelFloat32", "sensor_msgs/ChannelFloat32");
         typ.addProperty("md5sum", yarp::os::Value("3d40139cdd33dfedcb71ffeeeb42ae7f"));

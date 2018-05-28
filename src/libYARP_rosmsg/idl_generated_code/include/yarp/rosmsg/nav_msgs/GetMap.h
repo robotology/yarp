@@ -108,7 +108,7 @@ nav_msgs/OccupancyGrid map\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/GetMap", "nav_msgs/GetMap");
         typ.addProperty("md5sum", yarp::os::Value("d41d8cd98f00b204e9800998ecf8427e"));

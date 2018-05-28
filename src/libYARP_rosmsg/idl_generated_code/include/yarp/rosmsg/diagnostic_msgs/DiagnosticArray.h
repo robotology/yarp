@@ -177,7 +177,7 @@ MSG: diagnostic_msgs/DiagnosticStatus\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("diagnostic_msgs/DiagnosticArray", "diagnostic_msgs/DiagnosticArray");
         typ.addProperty("md5sum", yarp::os::Value("60810da900de1dd6ddd437c3503511da"));

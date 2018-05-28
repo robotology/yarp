@@ -556,7 +556,7 @@ MSG: std_msgs/Header\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/BatteryState", "sensor_msgs/BatteryState");
         typ.addProperty("md5sum", yarp::os::Value("476f837fa6771f6e16e3bf4ef96f8770"));

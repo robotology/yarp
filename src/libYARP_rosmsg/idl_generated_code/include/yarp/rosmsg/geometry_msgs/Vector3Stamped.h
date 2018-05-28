@@ -161,7 +161,7 @@ MSG: geometry_msgs/Vector3\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Vector3Stamped", "geometry_msgs/Vector3Stamped");
         typ.addProperty("md5sum", yarp::os::Value("7b324c7325e683bf02a9b14b01090ec7"));

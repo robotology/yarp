@@ -161,7 +161,7 @@ MSG: geometry_msgs/AccelWithCovariance\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/AccelWithCovarianceStamped", "geometry_msgs/AccelWithCovarianceStamped");
         typ.addProperty("md5sum", yarp::os::Value("96adb295225031ec8d57fb4251b0a886"));

@@ -195,7 +195,7 @@ MSG: geometry_msgs/PoseStamped\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/GetPlan", "nav_msgs/GetPlan");
         typ.addProperty("md5sum", yarp::os::Value("e25a43e0752bcca599a8c2eef8282df8"));

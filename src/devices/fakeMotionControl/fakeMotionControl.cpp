@@ -2865,7 +2865,7 @@ bool FakeMotionControl::setPositionRaw(int j, double ref)
     return true;
 }
 
-bool FakeMotionControl::setPositionsRaw(const int n_joint, const int *joints, double *refs)
+bool FakeMotionControl::setPositionsRaw(const int n_joint, const int *joints, const double *refs)
 {
     for(int i=0; i< n_joint; i++)
     {

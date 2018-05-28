@@ -216,7 +216,7 @@ MSG: visualization_msgs/InteractiveMarker\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/InteractiveMarkerInit", "visualization_msgs/InteractiveMarkerInit");
         typ.addProperty("md5sum", yarp::os::Value("d5f2c5045a72456d228676ab91048734"));

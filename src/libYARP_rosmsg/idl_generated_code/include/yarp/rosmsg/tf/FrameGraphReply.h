@@ -123,7 +123,7 @@ public:
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("tf/FrameGraphReply", "tf/FrameGraphReply");
         typ.addProperty("md5sum", yarp::os::Value("c4af9ac907e58e906eb0b6e3c58478c0"));

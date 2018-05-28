@@ -281,7 +281,7 @@ duration time_from_start\n\
     }
 
     // Name the class, ROS will need this
-    yarp::os::Type getType() override
+    yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("trajectory_msgs/JointTrajectoryPoint", "trajectory_msgs/JointTrajectoryPoint");
         typ.addProperty("md5sum", yarp::os::Value("f3cd1e1c4d320c79d6985c904ae5dcd3"));

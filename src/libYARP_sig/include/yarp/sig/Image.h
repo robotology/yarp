@@ -341,7 +341,7 @@ public:
         return data;
     }
 
-    virtual yarp::os::Type getReadType() override {
+    virtual yarp::os::Type getReadType() const override {
         return yarp::os::Type::byName("yarp/image");
     }
 
