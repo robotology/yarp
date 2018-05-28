@@ -12,7 +12,7 @@
 #include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/Companion.h>
+#include <yarp/companion/yarpcompanion.h>
 
 #include "TestList.h"
 //
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
         }
     }
     if (!done) {
-        Companion::main(argc,argv);
+        yarp::companion::main(argc,argv);
     }
 
     return result;

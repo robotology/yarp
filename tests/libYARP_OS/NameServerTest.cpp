@@ -8,7 +8,6 @@
  */
 
 #include <yarp/os/impl/NameServer.h>
-#include <yarp/os/impl/Companion.h>
 
 #include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"

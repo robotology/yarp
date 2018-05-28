@@ -16,7 +16,6 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/Name.h>
-#include <yarp/os/impl/Companion.h>
 
 
 #define YMSG(x) printf x;
@@ -167,7 +166,7 @@ void PortCoreOutputUnit::closeBasic()
                          debug,
                          "output for route %s asking other side to close by out-of-band means",
                          route.toString().c_str());
-            Companion::disconnectInput(route.getToName().c_str(),
+            NetworkBase::disconnectInput(route.getToName().c_str(),
                                        route.getFromName().c_str(), true);
         } else {
             if (op->getConnection().canEscape()) {

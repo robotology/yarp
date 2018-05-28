@@ -40,7 +40,8 @@ if(CREATE_LIB_PROFILER)
                                                   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
   target_link_libraries(YARP_profiler PUBLIC YARP::YARP_OS
-                                      PRIVATE YARP::YARP_init)
+                                      PRIVATE YARP::YARP_init
+                                              YARP::YARP_companion)
 
 
   if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)

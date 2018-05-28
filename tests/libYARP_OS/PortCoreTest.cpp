@@ -12,9 +12,9 @@
 #include <yarp/os/Carriers.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/impl/BottleImpl.h>
-#include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/Network.h>
+#include <yarp/companion/impl/Companion.h>
 //#include "TestList.h"
 
 using namespace yarp::os::impl;
@@ -111,7 +111,7 @@ public:
         sender.send(bot);
         Time::delay(0.3);
         checkEqual(receives,0,"nothing received");
-        Companion::connect("/write", "/read");
+        NetworkBase::connect("/write", "/read");
         Time::delay(0.3);
         report(0,"sending bottle, should receive it this time");
         expectation = bot.toString();
@@ -159,7 +159,7 @@ public:
         sender.send(bot);
         Time::delay(0.3);
         checkEqual(receives,0,"nothing received");
-        Companion::connect("/write", "/read");
+        NetworkBase::connect("/write", "/read");
         Time::delay(0.3);
         report(0,"sending bottle, should receive it this time");
         expectation = bot.toString();

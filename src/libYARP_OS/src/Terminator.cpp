@@ -9,7 +9,6 @@
 
 #include <cstdio>
 #include <yarp/os/impl/SocketTwoWayStream.h>
-#include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/PortCommand.h>
 
 #include <yarp/os/Terminator.h>
@@ -31,7 +30,7 @@ bool Terminator::terminateByName(const char *name) {
         // name doesn't include /quit
         // old mechanism won't work, let's try new
         PortCommand pc('\0', "i");
-        Companion::sendMessage(s, pc, true);
+        NetworkBase::sendMessage(s, pc, true);
         return true;
     }
 

@@ -22,14 +22,15 @@
 #include <yarp/os/Face.h>
 
 #include <yarp/os/impl/BufferedConnectionWriter.h>
-#include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/PlatformUnistd.h>
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/impl/TimeImpl.h>
+#include <yarp/os/impl/Terminal.h>
 
 #ifdef YARP_HAS_ACE
 # include <ace/config.h>
@@ -683,42 +684,118 @@ bool NetworkBase::isConnected(const std::string& src,
     return isConnected(src, dest, style);
 }
 
-bool NetworkBase::exists(const std::string& port, bool quiet) {
+bool NetworkBase::exists(const std::string& port, bool quiet, bool checkVer)
+{
     ContactStyle style;
     style.quiet = quiet;
-    return exists(port, style);
+    return exists(port, style, checkVer);
 }
 
-bool NetworkBase::exists(const std::string& port, const ContactStyle& style) {
-    int result = Companion::exists(port.c_str(), style);
-    if (result==0) {
-        //Companion::poll(port, true);
-        ContactStyle style2 = style;
-        style2.admin = true;
-        Bottle cmd("[ver]"), resp;
-        bool ok = NetworkBase::write(Contact(port), cmd, resp, style2);
-        if (!ok) result = 1;
-        if (resp.get(0).toString()!="ver"&&resp.get(0).toString()!="dict") {
-            // YARP nameserver responds with a version
-            // ROS nameserver responds with a dictionary of error data
-            // Treat everything else an unknown
-            result = 1;
+bool NetworkBase::exists(const std::string& port, const ContactStyle& style, bool checkVer)
+{
+    bool silent = style.quiet;
+    Contact address = NetworkBase::queryName(port);
+    if (!address.isValid()) {
+        if (!silent) {
+            printf("Address of port %s is not valid\n", port.c_str());
+        }
+        return false;
+    }
+
+    Contact address2(address);
+    if (style.timeout>=0) {
+        address2.setTimeout((float)style.timeout);
+    }
+    OutputProtocol *out = Carriers::connect(address2);
+
+    if (out == nullptr) {
+        if (!silent) {
+            printf("Cannot connect to port %s\n", port.c_str());
+        }
+        return false;
+    } else {
+        out->close();
+    }
+    delete out;
+    out = nullptr;
+
+    if (!checkVer)
+    {
+        return true;
+    }
+
+    ContactStyle style2 = style;
+    style2.admin = true;
+    Bottle cmd("[ver]"), resp;
+    bool ok = NetworkBase::write(Contact(port), cmd, resp, style2);
+    if (!ok)
+    {
+        return false;
+    }
+    if (resp.get(0).toString()!="ver"&&resp.get(0).toString()!="dict")
+    {
+        // YARP nameserver responds with a version
+        // ROS nameserver responds with a dictionary of error data
+        // Treat everything else an unknown
+        return false;
+    }
+
+    return true;
+}
+
+
+bool NetworkBase::waitConnection(const std::string& source, const std::string& destination, bool quiet)
+{
+    int ct = 1;
+    while (true) {
+
+        if (ct%30==1) {
+            if (!quiet) {
+                yInfo("Waiting for %s->%s...", source.c_str(), destination.c_str());
+            }
+        }
+        ct++;
+
+        int result = NetworkBase::isConnected(source, destination, true)?0:1;
+        if (result!=0) {
+            SystemClock::delaySystem(0.1);
+        } else {
+            return true;
         }
     }
-    return result == 0;
 }
 
 
-bool NetworkBase::sync(const std::string& port, bool quiet) {
-    int result = Companion::wait(port.c_str(), quiet);
-    if (result==0) {
-        Companion::poll(port.c_str(), true);
+bool NetworkBase::waitPort(const std::string& target, bool quiet)
+{
+    int ct = 1;
+    while (true) {
+
+        if (ct%30==1) {
+            if (!quiet) {
+                yInfo("Waiting for %s...", target.c_str());
+            }
+        }
+        ct++;
+
+        bool result = exists(target, true, false);
+        if (!result) {
+            SystemClock::delaySystem(0.1);
+        } else {
+            return true;
+        }
     }
-    return result == 0;
 }
 
-int NetworkBase::main(int argc, char *argv[]) {
-    return Companion::main(argc, argv);
+
+
+bool NetworkBase::sync(const std::string& port, bool quiet)
+{
+    bool result = waitPort(port.c_str(), quiet);
+    if (result) {
+        poll(port.c_str(), true);
+    }
+    return result;
 }
 
 
@@ -915,10 +992,11 @@ void NetworkBase::assertion(bool shouldBeTrue) {
     yAssert(shouldBeTrue);
 }
 
-
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 std::string NetworkBase::readString(bool *eof) {
-    return std::string(Companion::readString(eof).c_str());
+    return yarp::os::impl::terminal::readString(eof);
 }
+#endif // YARP_NO_DEPRECATED
 
 bool NetworkBase::setConnectionQos(const std::string& src, const std::string& dest,
                                    const QosStyle& style, bool quiet) {
@@ -1307,6 +1385,91 @@ void NetworkBase::unlock() {
     getNetworkMutex().unlock();
 }
 
+
+int NetworkBase::sendMessage(const std::string& port,
+                             yarp::os::PortWriter& writable,
+                             bool silent)
+{
+    std::string output;
+    return sendMessage(port, writable, output, silent);
+}
+
+int NetworkBase::sendMessage(const std::string& port,
+                             PortWriter& writable,
+                             std::string& output,
+                             bool quiet)
+{
+    output = "";
+    Contact srcAddress = NetworkBase::queryName(port.c_str());
+    if (!srcAddress.isValid()) {
+        if (!quiet) {
+            fprintf(stderr, "Cannot find port named %s\n", port.c_str());
+        }
+        return 1;
+    }
+    OutputProtocol *out = Carriers::connect(srcAddress);
+    if (out == nullptr) {
+        if (!quiet) {
+            fprintf(stderr, "Cannot connect to port named %s at %s\n",
+                            port.c_str(),
+                            srcAddress.toURI().c_str());
+        }
+        return 1;
+    }
+    Route route("admin", port, "text");
+
+
+    bool ok = out->open(route);
+    if (!ok) {
+        if (!quiet) fprintf(stderr, "Cannot make connection\n");
+        if (out != nullptr) delete out;
+        return 1;
+    }
+
+    BufferedConnectionWriter bw(out->getConnection().isTextMode());
+    PortCommand disconnect('\0', "q");
+    bool wok = writable.write(bw);
+    if (!wok) {
+        if (!quiet) fprintf(stderr, "Cannot write on connection\n");
+        if (out != nullptr) delete out;
+        return 1;
+    }
+    if (!disconnect.write(bw)) {
+        if (!quiet) fprintf(stderr, "Cannot write on connection\n");
+        if (out != nullptr) delete out;
+        return 1;
+    }
+
+    out->write(bw);
+    InputProtocol& ip = out->getInput();
+    ConnectionReader& con = ip.beginRead();
+    Bottle b;
+    b.read(con);
+    b.read(con);
+    output = b.toString().c_str();
+    if (!quiet) {
+        //fprintf(stderr, "%s\n", b.toString().c_str());
+        YARP_SPRINTF1(Logger::get(), info, "%s", b.toString().c_str());
+    }
+    ip.endRead();
+    out->close();
+    delete out;
+    out = nullptr;
+
+    return 0;
+}
+
+int NetworkBase::poll(const std::string& target, bool silent) {
+    PortCommand pc('\0', "*");
+    return sendMessage(target, pc, silent);
+}
+
+int NetworkBase::disconnectInput(const std::string& src,
+                                 const std::string& dest, bool silent)
+{
+    PortCommand pc('\0', std::string("~")+dest);
+    return sendMessage(src, pc, silent);
+}
 
 class ForwardingCarrier : public Carrier {
 public:

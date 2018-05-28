@@ -18,7 +18,6 @@
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/Name.h>
 
-#include <yarp/os/impl/Companion.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
@@ -453,13 +452,13 @@ void PortCore::closeMain()
         if (!done) {
             YARP_DEBUG(log, std::string("requesting removal of connection from ")+
                        removeName);
-            int result = Companion::disconnect(removeName.c_str(),
-                                               getName().c_str(),
-                                               true);
-            if (result!=0) {
-                Companion::disconnectInput(getName().c_str(),
-                                           removeName.c_str(),
-                                           true);
+            bool result = NetworkBase::disconnect(removeName.c_str(),
+                                                  getName().c_str(),
+                                                  true);
+            if (!result) {
+                NetworkBase::disconnectInput(getName().c_str(),
+                                             removeName.c_str(),
+                                             true);
             }
             prevName = removeName;
         }
