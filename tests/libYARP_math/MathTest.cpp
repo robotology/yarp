@@ -63,8 +63,8 @@ public:
             if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
             checkTrue(false, testName.c_str());
         }
-        for(int r=0; r<A.rows(); r++){
-            for(int c=0; c<A.cols(); c++){
+        for(size_t r=0; r<A.rows(); r++){
+            for(size_t c=0; c<A.cols(); c++){
                 if(fabs(A(r,c)-B(r,c))>TOL){
                     if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
                     checkTrue(false, testName.c_str());
@@ -217,8 +217,8 @@ public:
         res=A/3.0;  //divide all by 3
         //sum elements
         double acc=0.0;
-        for(int r=0; r<res.rows(); r++)
-            for(int c=0; c<res.cols(); c++)
+        for(size_t r=0; r<res.rows(); r++)
+            for(size_t c=0; c<res.cols(); c++)
                     acc+=res[r][c];
 
         double expected=res.rows()*res.cols()*3.0;
@@ -228,8 +228,8 @@ public:
         A=3.0; //initialize all with 3
         res=A*3.0;   // multiply all by 3
         acc=0.0;
-        for(int r=0; r<res.rows(); r++)
-            for(int c=0; c<res.cols(); c++)
+        for(size_t r=0; r<res.rows(); r++)
+            for(size_t c=0; c<res.cols(); c++)
             {
                 //fprintf(stderr, "%lf\n", res[r][c]);
                 acc+=res[r][c];
@@ -270,8 +270,8 @@ public:
         report(0,"checking matrix inversions...");
         Matrix A(4,4);
         int counter = 1;
-        for(int r = 0; r < A.rows(); r++) {
-            for(int c = 0; c < A.cols(); c++) {
+        for(size_t r = 0; r < A.rows(); r++) {
+            for(size_t c = 0; c < A.cols(); c++) {
                 A(r, c) = counter++ + (r == c ? 1 : 0);
             }
         }
@@ -280,8 +280,8 @@ public:
 
         bool invGood=true;
         Matrix ref=eye(4,4);
-        for(int r=0;r<I.rows(); r++)
-            for(int c=0;c<I.cols(); c++)
+        for(size_t r=0;r<I.rows(); r++)
+            for(size_t c=0;c<I.cols(); c++)
             {
                 if (fabs(I[r][c]-ref[r][c])>0.0001)
                     invGood=false;

@@ -126,13 +126,13 @@ class MatrixTest : public UnitTest {
         tmp=(gsl_matrix *)(tmpGSL.getGslMatrix());
 
         bool ret=true;
-        if ((int)tmp->size1!=a.rows())
+        if (tmp->size1!=a.rows())
             ret=false;
 
-        if ((int)tmp->size2!=a.cols())
+        if (tmp->size2!=a.cols())
             ret=false;
 
-        if ((int)tmp->block->size!=a.cols()*a.rows())
+        if (tmp->block->size!=a.cols()*a.rows())
             ret=false;
 
         if (tmp->data!=a.data())
@@ -255,30 +255,30 @@ public:
         DummyConnector con;
         b.write(con.getWriter());
         m.read(con.getReader());
-        checkEqual(m.rows(),2,"row size correct");
-        checkEqual(m.cols(),3,"col size correct");
+        checkEqual(m.rows(),(size_t) 2,"row size correct");
+        checkEqual(m.cols(),(size_t) 3,"col size correct");
         checkTrue(m[1][2]>5 && m[1][2]<6, "content is sane");
     }
 
     void checkSubmatrix()
     {
         report(0,"check function Matrix::submatrix works...");
-        const int R=10;
-        const int C=20;
+        const size_t R=10;
+        const size_t C=20;
         Matrix m(R,C);
 
-        int r=0;
-        int c=0;
+        size_t r=0;
+        size_t c=0;
         int kk=0;
         for(r=0; r<R; r++)
             for (c=0; c<C; c++)
                 m[r][c]=kk++;
 
         report(0,"extracting submatrix...");
-        int r1=5;
-        int r2=8;
-        int c1=4;
-        int c2=8;
+        size_t r1=5;
+        size_t r2=8;
+        size_t c1=4;
+        size_t c2=8;
         Matrix m2=m.submatrix(r1, r2, c1, c2);
 
         checkEqual(r2-r1+1,m2.rows(),"rows matches");
