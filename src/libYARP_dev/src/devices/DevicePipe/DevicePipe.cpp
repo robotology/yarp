@@ -117,14 +117,14 @@ bool DevicePipe::updateService() {
         Sound tmpSound;
         imgSndSource->getAudioVisual(tmp,tmpSound);
         imgSndSink->putAudioVisual(tmp,tmpSound);
-        printf("piped %dx%d image, %dx%d sound\n",
+        printf("piped %zux%zu image, %dx%d sound\n",
                tmp.width(), tmp.height(),
                tmpSound.getSamples(), tmpSound.getChannels());
     } else if (imgSource!=nullptr&&imgSink!=nullptr) {
         ImageOf<PixelRgb> tmp;
         imgSource->getImage(tmp);
         imgSink->putImage(tmp);
-        printf("piped %dx%d image\n", tmp.width(), tmp.height());
+        printf("piped %zux%zu image\n", tmp.width(), tmp.height());
     } else if (sndSource!=nullptr&&sndSink!=nullptr) {
         Sound tmp;
         sndSource->getSound(tmp);

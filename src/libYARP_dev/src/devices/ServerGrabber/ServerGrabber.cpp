@@ -1001,7 +1001,7 @@ void ServerGrabber::stitch(FlexImage &flex_i, const Image &_img, const Image &_i
     unsigned char * pixelRight   = _img2.getRawImage();
     unsigned char * pixelOutLeft = flex_i.getRawImage();
     unsigned char * pixelOutRight=flex_i.getRawImage()+ singleImage_rowSizeByte;
-    for(int h=0; h<_img.height(); h++)
+    for(size_t h=0; h<_img.height(); h++)
     {
         memcpy(pixelOutLeft, pixelLeft,singleImage_rowSizeByte);
         memcpy(pixelOutRight, pixelRight, singleImage_rowSizeByte);
