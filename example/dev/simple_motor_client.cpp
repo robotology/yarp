@@ -85,8 +85,7 @@ int main(int argc, char *argv[])
     }
 
     Network yarp;
-	Time::turboBoost();
-    
+
     char name[1024];
     Value& v = options.find("robot");
     Value& part = options.find("part");

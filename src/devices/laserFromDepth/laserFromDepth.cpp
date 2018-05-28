@@ -87,8 +87,6 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
 
     }
 
-    Time::turboBoost();
-
     Property prop;
     if(!config.check("RGBD_SENSOR_CLIENT"))
     {

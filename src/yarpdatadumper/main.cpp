@@ -535,8 +535,6 @@ public:
 
     bool configure(ResourceFinder &rf) override
     {
-        Time::turboBoost();
-
         portName=rf.check("name",Value("/dump")).asString().c_str();
         if (portName[0]!='/')
             portName="/"+portName;

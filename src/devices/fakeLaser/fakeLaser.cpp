@@ -139,7 +139,6 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     yInfo("resolution %f", resolution);
     yInfo("sensors %d", sensorsNum);
     yInfo("test mode: %d", m_test_mode);
-    Time::turboBoost();
     RateThread::start();
     return true;
 }

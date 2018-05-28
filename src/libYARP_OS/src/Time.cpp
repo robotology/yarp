@@ -24,22 +24,22 @@
 #endif
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
+using yarp::os::impl::Logger;
+
+namespace {
 
 static bool clock_owned = false;
 static bool network_clock_ok = false;
 static Clock *pclock = nullptr;
 static yarpClockType yarp_clock_type  = YARP_CLOCK_UNINITIALIZED;
 
-namespace {
 static std::mutex& getTimeMutex()
 {
     static std::mutex mutex;
     return mutex;
 }
-} // namespace
 
-void printNoClock_ErrorMessage()
+static void printNoClock_ErrorMessage()
 {
     YARP_ERROR(Logger::get(), "\n Warning an issue has been found, please update the code.\n \
     Clock is not initialized: This means YARP framework has not been properly initialized. \n \
@@ -79,14 +79,36 @@ static Clock *getClock()
     }
     return pclock;
 }
+} // namespace
 
-void yarp::os::impl::removeClock()
+
+void yarp::os::impl::Time::removeClock()
 {
     if(pclock) {
         delete pclock;
         pclock = nullptr;
     }
     yarp_clock_type = YARP_CLOCK_UNINITIALIZED;
+}
+
+void yarp::os::impl::Time::startTurboBoost()
+{
+#if defined(_WIN32)
+    // only does something on Microsoft Windows
+    TIMECAPS tm;
+    timeGetDevCaps(&tm, sizeof(TIMECAPS));
+    timeBeginPeriod(tm.wPeriodMin);
+#endif
+}
+
+void yarp::os::impl::Time::endTurboBoost()
+{
+#if defined(_WIN32)
+    // only does something on Microsoft Windows
+    TIMECAPS tm;
+    timeGetDevCaps(&tm, sizeof(TIMECAPS));
+    timeEndPeriod(tm.wPeriodMin);
+#endif
 }
 
 void Time::delay(double seconds) {
@@ -105,14 +127,12 @@ double Time::now() {
     return clk->now();
 }
 
-void Time::turboBoost() {
-#ifdef ACE_WIN32
-    // only does something on Microsoft Windows
-    TIMECAPS tm;
-    timeGetDevCaps(&tm, sizeof(TIMECAPS));
-    timeBeginPeriod(tm.wPeriodMin);
-#endif
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+void Time::turboBoost()
+{
+    return yarp::os::impl::Time::startTurboBoost();
 }
+#endif // YARP_NO_DEPRECATED
 
 void Time::yield() {
     return yarp::os::Thread::yield();

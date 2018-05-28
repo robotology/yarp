@@ -37,8 +37,6 @@ int main(int argc, char *argv[])
     //    yWarning() << "Cannot lock memory swapping (check superuser permission)";
 #endif //ICUB_USE_REALTIME_LINUX
 
-    yarp::os::Time::turboBoost();
-
     yarp::os::ResourceFinder &rf(yarp::os::ResourceFinder::getResourceFinderSingleton());
     rf.setVerbose();
     rf.setDefaultConfigFile("yarprobotinterface.ini");

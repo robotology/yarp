@@ -120,7 +120,6 @@ bool RpLidar::open(yarp::os::Searchable& config)
     yInfo("max_angle %f, min_angle %f", max_angle, min_angle);
     yInfo("resolution %f", resolution);
     yInfo("sensors %d", sensorsNum);
-    Time::turboBoost();
 
     yarp::os::Searchable& general_config = config.findGroup("GENERAL");
     bool ok = general_config.check("Serial_Configuration");
