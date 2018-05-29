@@ -8,10 +8,9 @@
 include(YarpPlugin)
 include(YarpPrintFeature)
 
-option(CREATE_OPTIONAL_CARRIERS "Compile optional carriers" OFF)
-yarp_print_feature(CREATE_OPTIONAL_CARRIERS 0 "Compile optional carriers")
-
-yarp_begin_plugin_library(yarpcar QUIET)
+yarp_begin_plugin_library(yarpcar OPTION CREATE_OPTIONAL_CARRIERS
+                                  DEFAULT OFF
+                                  DOC "carrier plugins")
   add_subdirectory(shmem_carrier)
   add_subdirectory(human_carrier)
   add_subdirectory(mpi_carrier)

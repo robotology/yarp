@@ -8,11 +8,9 @@
 include(YarpPlugin)
 include(YarpPrintFeature)
 
-option(CREATE_DEVICE_LIBRARY_MODULES "Compile device modules" OFF)
-yarp_print_feature(CREATE_DEVICE_LIBRARY_MODULES 0 "Compile device modules")
-
-# Prepare a plugin library called "yarpmod".
-yarp_begin_plugin_library(yarpmod QUIET)
+yarp_begin_plugin_library(yarpmod OPTION CREATE_DEVICE_LIBRARY_MODULES
+                                  DEFAULT OFF
+                                  DOC "devices plugins")
   add_subdirectory(cuda)
   add_subdirectory(depthCamera)
   add_subdirectory(fakeDepthCamera)
