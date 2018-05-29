@@ -24,7 +24,7 @@ Using YARP ports for communication:
 
 Make sure you understand how to control YARP buffering policies the life-cycle of messages:
 
-\li \subpage yarp_buffering 
+\li \subpage yarp_buffering
 
 How to write a standard module, search and install configuration files:
 \li \subpage yarp_resource_finder_tutorials
@@ -62,7 +62,6 @@ Communication protocol details:
 
 YARP implementation:
 \li \subpage yarp_guts
-\li \subpage yarp_build_structure
 \li \subpage yarp_plugins
 
  *
