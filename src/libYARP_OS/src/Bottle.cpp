@@ -172,7 +172,7 @@ std::string Bottle::toString() const
     return std::string(implementation->toString().c_str());
 }
 
-void Bottle::fromBinary(const char* buf, int len)
+void Bottle::fromBinary(const char* buf, size_t len)
 {
     implementation->edit();
     implementation->fromBinary(buf, len);
@@ -202,12 +202,12 @@ bool Bottle::read(ConnectionReader& reader)
     return implementation->read(reader);
 }
 
-Value& Bottle::get(int index) const
+Value& Bottle::get(size_t index) const
 {
     return implementation->get(index);
 }
 
-int Bottle::size() const
+size_t Bottle::size() const
 {
     return static_cast<int>(implementation->size());
 }
@@ -339,7 +339,7 @@ bool Bottle::operator!=(const Bottle& alt) const
 void Bottle::append(const Bottle& alt)
 {
     implementation->edit();
-    for (int i = 0; i < alt.size(); i++) {
+    for (size_t i = 0; i < alt.size(); i++) {
         add(alt.get(i));
     }
 }

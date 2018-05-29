@@ -428,7 +428,7 @@ public:
             if (result!=nullptr) {
                 checkEqual(bot1.size(),result->size(),"size check");
                 YARP_INFO(Logger::get(),std::string("size is in fact ") +
-                          NetType::toString(result->size()));
+                          NetType::toString((unsigned int) result->size()));
             }
         }
 
@@ -468,7 +468,7 @@ public:
             if (result!=nullptr) {
                 checkEqual(bot1.size(),result->size(),"size check");
                 YARP_INFO(Logger::get(),std::string("size is in fact ") +
-                          NetType::toString(result->size()));
+                          NetType::toString((unsigned int) result->size()));
             }
         }
         if (ct==0) {
@@ -516,7 +516,7 @@ public:
             if (result!=nullptr) {
                 checkEqual(bot1.size(),result->size(),"size check");
                 YARP_INFO(Logger::get(),std::string("size is in fact ") +
-                          NetType::toString(result->size()));
+                          NetType::toString((unsigned int) result->size()));
             }
         }
         if (ct==0) {
