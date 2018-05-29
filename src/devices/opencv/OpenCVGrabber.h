@@ -97,9 +97,9 @@ public:
 protected:
 
     /** Width of the images a grabber produces. */
-    int m_w;
+    size_t m_w;
     /** Height of the images a grabber produces. */
-    int m_h;
+    size_t m_h;
 
     /** Whether to loop or not. */
     bool m_loop;

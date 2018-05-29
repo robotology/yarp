@@ -859,9 +859,9 @@ bool realsense2Driver::setExtrinsicParam(Matrix &extrinsic, const rs2_extrinsics
 
     extrinsic.eye();
 
-    for (int j=0; j<extrinsic.rows() - 1; j++)
+    for (size_t j=0; j<extrinsic.rows() - 1; j++)
     {
-        for (int i=0; i<extrinsic.cols() - 1; i++)
+        for (size_t i=0; i<extrinsic.cols() - 1; i++)
         {
             extrinsic[j][i] = values.rotation[i + j*extrinsic.cols()];
         }
@@ -1495,13 +1495,13 @@ bool realsense2Driver::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
         return false;
     }
 
-    int singleImage_rowSizeByte   =  image.getRowSize()/2;
+    size_t singleImage_rowSizeByte   =  image.getRowSize()/2;
     unsigned char * pixelLeft     =  (unsigned char*) (frm1.get_data());
     unsigned char * pixelRight    =  (unsigned char*) (frm2.get_data());
     unsigned char * pixelOutLeft  =  image.getRawImage();
     unsigned char * pixelOutRight =  image.getRawImage() + singleImage_rowSizeByte;
 
-    for (int h=0; h< image.height(); h++)
+    for (size_t h=0; h< image.height(); h++)
     {
         memcpy(pixelOutLeft, pixelLeft, singleImage_rowSizeByte);
         memcpy(pixelOutRight, pixelRight, singleImage_rowSizeByte);

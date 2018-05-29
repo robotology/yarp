@@ -290,11 +290,11 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
         break;
     case VOCAB_GRID:
         {
-            int ww = image.width();
-            int hh = image.height();
+            size_t ww = image.width();
+            size_t hh = image.height();
             if (ww>1&&hh>1) {
-                for (int x=0; x<ww; x++) {
-                    for (int y=0; y<hh; y++) {
+                for (size_t x=0; x<ww; x++) {
+                    for (size_t y=0; y<hh; y++) {
                         double xx = ((double)x)/(ww-1);
                         double yy = ((double)y)/(hh-1);
                         int r = int(0.5+255*xx);
@@ -327,11 +327,11 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
             count = 0;
         }
         
-        int ww = w = image.width();
-        int hh = h = image.height();
+        size_t ww = w = image.width();
+        size_t hh = h = image.height();
         if (ww>1 && hh>1) {
-            for (int x = 0; x<ww; x++) {
-                for (int y = 0; y<hh; y++) {
+            for (size_t x = 0; x<ww; x++) {
+                for (size_t y = 0; y<hh; y++) {
                     double xx = ((double)x) / (ww - 1);
                     double yy = ((double)y) / (hh - 1);
                     int r = int(0.5 + 255 * xx);
@@ -346,7 +346,7 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
     case VOCAB_LINE:
     default:
         {
-            for (int i=0; i<image.width(); i++) {
+            for (size_t i=0; i<image.width(); i++) {
                 image.pixel(i,ct).r = 255;
             }
             char ttxt[50];
@@ -386,14 +386,14 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
 
             static unsigned char r=128,g=128,b=128;
 
-            int ww = image.width();
-            int hh = image.height();
+            size_t ww = image.width();
+            size_t hh = image.height();
 
             if (ww>1&&hh>1) {
                 std::default_random_engine randengine;
                 std::uniform_real_distribution<double> udist(-1.0, 1.0);
-                for (int x=0; x<ww; x++) {
-                    for (int y=0; y<hh; y++) {
+                for (size_t x=0; x<ww; x++) {
+                    for (size_t y=0; y<hh; y++) {
                         //r+=(rand()%3)-1;
                         //g+=(rand()%3)-1;
                         //b+=(rand()%3)-1;
@@ -419,8 +419,6 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
     if (bx>=image.width()) {
         bx = image.width()-1;
     }
-    if (bx<0) bx = 0;
-    if (by<0) by = 0;
 }
 
 
@@ -435,10 +433,10 @@ bool TestFrameGrabber::makeSimpleBayer(
 
     bayer.resize(img.width(), img.height());
 
-    const int w = img.width();
-    const int h = img.height();
+    const size_t w = img.width();
+    const size_t h = img.height();
 
-    int i, j;
+    size_t i, j;
     for (i = 0; i < h; i++) {
         PixelRgb *row = (PixelRgb *)img.getRow(i);
         PixelMono *rd = (PixelMono *)bayer.getRow(i);

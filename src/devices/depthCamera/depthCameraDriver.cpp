@@ -112,7 +112,7 @@ void streamFrameListener::onNewFrame(openni::VideoStream& stream)
     image.setPixelCode(pixC);
     image.resize(w, h);
 
-    if (image.getRawImageSize() != frameRef.getDataSize())
+    if (image.getRawImageSize() != (size_t) frameRef.getDataSize())
     {
         yError() << "depthCameraDriver:device and local copy data size doesn't match";
         return;

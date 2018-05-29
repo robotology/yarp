@@ -405,8 +405,8 @@ public:
             ImageOf<PixelRgb>* imgR;
             imgL = pLeft.read();
             imgR = pRight.read();
-            result &= imgL->width() == width/2;
-            result &= imgR->width() == width/2;
+            result &= imgL->width() == (size_t) width/2;
+            result &= imgR->width() == (size_t) width/2;
 
             //Test the crop function - must work
             ImageOf<PixelRgb> crop;

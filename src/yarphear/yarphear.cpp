@@ -36,8 +36,8 @@ private:
     bool muted;
     bool saving;
     std::deque<Sound> sounds;
-    int samples;
-    int channels;
+    size_t samples;
+    size_t channels;
 
 public:
     Echo() : mutex(1) {
@@ -159,8 +159,8 @@ public:
         long int at = 0;
         while (!sounds.empty()) {
             Sound& tmp = sounds.front();
-            for (int i=0; i<channels; i++) {
-                for (int j=0; j<tmp.getSamples(); j++) {
+            for (size_t i=0; i<channels; i++) {
+                for (size_t j=0; j<tmp.getSamples(); j++) {
                     total.set(tmp.get(j,i),at+j,i);
                 }
             }

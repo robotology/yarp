@@ -66,11 +66,11 @@ Matrix operator+(const Matrix &a, const Matrix &b)
 
 Matrix& operator+=(Matrix &a, const Matrix &b)
 {
-    int n=a.cols();
-    int m=a.rows();
+    size_t n=a.cols();
+    size_t m=a.rows();
     yAssert(m==b.rows() && n==b.cols());
-    for (int r=0; r<m;r++)
-        for (int c=0; c<n;c++)
+    for (size_t r=0; r<m;r++)
+        for (size_t c=0; c<n;c++)
             a(r,c)+=b(r,c);
     return a;
 }
@@ -121,12 +121,12 @@ Matrix operator-(const Matrix &a, const Matrix &b)
 
 Matrix& operator-=(Matrix &a, const Matrix &b)
 {
-    int n=a.cols();
-    int m=a.rows();
+    size_t n=a.cols();
+    size_t m=a.rows();
     yAssert(m==b.rows());
     yAssert(n==b.cols());
-    for (int r=0; r<m;r++)
-        for (int c=0; c<n;c++)
+    for (size_t r=0; r<m;r++)
+        for (size_t c=0; c<n;c++)
             a(r,c)-=b(r,c);
     return a;
 }
@@ -215,8 +215,8 @@ Matrix operator*(const Matrix &M, const double k)
 
 Matrix& operator*=(Matrix &M, const double k)
 {
-    for (int r=0; r<M.rows(); r++)
-        for (int c=0; c<M.cols(); c++)
+    for (size_t r=0; r<M.rows(); r++)
+        for (size_t c=0; c<M.cols(); c++)
             M(r,c)*=k;
     return M;
 }
@@ -293,10 +293,10 @@ Matrix& operator/=(Matrix &M, const double k)
 
 Matrix yarp::math::pile(const Matrix &m1, const Matrix &m2)
 {
-    int c = m1.cols();
+    size_t c = m1.cols();
     yAssert(c==m2.cols());
-    int r1 = m1.rows();
-    int r2 = m2.rows();
+    size_t r1 = m1.rows();
+    size_t r2 = m2.rows();
     Matrix res(r1+r2, c);
 
     toEigen(res).block(0,0,r1,c) = toEigen(m1);
@@ -345,10 +345,10 @@ Matrix yarp::math::pile(const Vector &v1, const Vector &v2)
 
 Matrix yarp::math::cat(const Matrix &m1, const Matrix &m2)
 {
-    int r = m1.rows();
+    size_t r = m1.rows();
     yAssert(r==m2.rows());
-    int c1 = m1.cols();
-    int c2 = m2.cols();
+    size_t c1 = m1.cols();
+    size_t c2 = m2.cols();
     Matrix res(r, c1+c2);
 
     toEigen(res).block(0,0,r,c1)  = toEigen(m1);

@@ -155,8 +155,8 @@ bool MapGrid2D::getMapImage(yarp::sig::ImageOf<PixelRgb>& image) const
 
 bool MapGrid2D::setMapImage(yarp::sig::ImageOf<PixelRgb>& image)
 {
-    if (image.width() != (int)(m_width) ||
-        image.height() != (int)(m_height))
+    if (image.width() != m_width ||
+        image.height() != m_height)
     {
         yError() << "The size of given iamge does not correspond to the current map. Use method setSize() first.";
         return false;
@@ -759,7 +759,7 @@ bool MapGrid2D::read(yarp::os::ConnectionReader& connection)
     m_map_flags.resize(m_width, m_height);
     bool ok = true;
     unsigned char *mem = nullptr;
-    int            memsize = 0;
+    size_t memsize = 0;
     connection.expectInt32();
     memsize = connection.expectInt32();
     if (memsize != m_map_occupancy.getRawImageSize()) { return false; }

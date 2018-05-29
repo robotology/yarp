@@ -112,21 +112,21 @@ bool OpenCVGrabber::open(Searchable & config) {
     // Extract the desired image size from the configuration if
     // present, otherwise query the capture device
     if (config.check("width","if present, specifies desired image width")) {
-        m_w = config.check("width", Value(-1)).asInt32();
+        m_w = config.check("width", Value(0)).asInt32();
         if (!fromFile && m_w>0) {
             m_cap.set(CV_CAP_PROP_FRAME_WIDTH, m_w);
         }
     } else {
-        m_w = (int)m_cap.get(CV_CAP_PROP_FRAME_WIDTH);
+        m_w = (size_t)m_cap.get(CV_CAP_PROP_FRAME_WIDTH);
     }
 
     if (config.check("height","if present, specifies desired image height")) {
-        m_h = config.check("height", Value(-1)).asInt32();
+        m_h = config.check("height", Value(0)).asInt32();
         if (!fromFile && m_h>0) {
             m_cap.set(CV_CAP_PROP_FRAME_HEIGHT, m_h);
         }
     } else {
-        m_w = (int)m_cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+        m_w = (size_t)m_cap.get(CV_CAP_PROP_FRAME_HEIGHT);
     }
 
     // Ignore capture properties - they are unreliable
@@ -175,7 +175,7 @@ bool OpenCVGrabber::sendImage(const cv::Mat & frame, ImageOf<PixelRgb> & image)
     image.resize(frame.cols, frame.rows);
 
     if (!m_saidSize) {
-        yDebug("Received image of size %dx%d\n", image.width(), image.height());
+        yDebug("Received image of size %zux%zu\n", image.width(), image.height());
         m_saidSize = true;
     }
 
@@ -189,17 +189,17 @@ bool OpenCVGrabber::sendImage(const cv::Mat & frame, ImageOf<PixelRgb> & image)
     // Copy the captured image to the output image
     memcpy(image.getRawImage(), frame_rgb.data, sizeof(unsigned char) * frame_rgb.rows * frame_rgb.cols * frame_rgb.channels());
 
-    if (m_w <= 0) {
+    if (m_w == 0) {
         m_w = image.width();
     }
-    if (m_h <= 0) {
+    if (m_h == 0) {
         m_h = image.height();
     }
     if (fromFile) {
         if (m_w>0 && m_h>0) {
             if (image.width() != m_w || image.height() != m_h) {
                 if (!m_saidResize) {
-                    yDebug("Software scaling from %dx%d to %dx%d",  image.width(), image.height(), m_w, m_h);
+                    yDebug("Software scaling from %zux%zu to %zux%zu",  image.width(), image.height(), m_w, m_h);
                     m_saidResize = true;
                 }
                 image.copy(image, m_w, m_h);
@@ -207,7 +207,7 @@ bool OpenCVGrabber::sendImage(const cv::Mat & frame, ImageOf<PixelRgb> & image)
         }
     }
 
-    DBG yDebug("%d by %d image\n", image.width(), image.height());
+    DBG yDebug("%zu by %zu image\n", image.width(), image.height());
 
     return true;
 

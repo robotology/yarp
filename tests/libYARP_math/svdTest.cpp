@@ -40,8 +40,8 @@ public:
             if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
             checkTrue(false, testName.c_str());
         }
-        for(int r=0; r<A.rows(); r++){
-            for(int c=0; c<A.cols(); c++){
+        for(size_t r=0; r<A.rows(); r++){
+            for(size_t c=0; c<A.cols(); c++){
                 if(fabs(A(r,c)-B(r,c))>TOL){
                     if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
                     checkTrue(false, testName.c_str());
@@ -58,8 +58,8 @@ public:
             checkTrue(true, testName.c_str());
             return;
         }
-        for(int r=0; r<A.rows(); r++)
-            for(int c=0; c<A.cols(); c++)
+        for(size_t r=0; r<A.rows(); r++)
+            for(size_t c=0; c<A.cols(); c++)
                 if(fabs(A(r,c)-B(r,c))>TOL){
                     checkTrue(true, testName.c_str());
                     return;
@@ -89,7 +89,7 @@ public:
     {
         report(0,"checking that SVD resizes the output matrices");
 
-        int m=6, n=5;
+        size_t m=6, n=5;
         Matrix U, V;
         Vector s;
 

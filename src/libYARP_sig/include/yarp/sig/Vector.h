@@ -42,7 +42,7 @@ namespace yarp {
 class YARP_sig_API yarp::sig::VectorBase : public yarp::os::Portable
 {
 public:
-    virtual int getElementSize() const = 0;
+    virtual size_t getElementSize() const = 0;
     virtual int getBottleTag() const = 0;
 
     virtual size_t getListSize() const = 0;
@@ -141,7 +141,7 @@ public:
         return *this;
     }
 
-    virtual int getElementSize() const override {
+    virtual size_t getElementSize() const override {
         return sizeof(T);
     }
 

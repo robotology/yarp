@@ -47,9 +47,9 @@ class yarp::dev::TestFrameGrabber : public DeviceDriver,
                                     public IRgbVisualParams
 {
 private:
-    int ct;
-    int bx, by;
-    int w, h;
+    size_t ct;
+    size_t bx, by;
+    size_t w, h;
     unsigned long rnd;
     double freq;
     double period;

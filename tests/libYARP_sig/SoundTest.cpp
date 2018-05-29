@@ -25,18 +25,18 @@ public:
         report(0,"check set/get sample...");
         Sound snd;
         snd.resize(100,2);
-        checkEqual(100,snd.getSamples(),"sample count");
-        checkEqual(2,snd.getChannels(),"channel count");
-        for (int i=0; i<snd.getSamples(); i++) {
-            for (int j=0; j<2; j++) {
+        checkEqual((size_t) 100,snd.getSamples(),"sample count");
+        checkEqual((size_t) 2,snd.getChannels(),"channel count");
+        for (size_t i=0; i<snd.getSamples(); i++) {
+            for (size_t j=0; j<2; j++) {
                 snd.set(42,i,j);
             }
         }
         snd.set(99,50);
         checkEqual(99,snd.get(50),"set/get");
         Sound snd2(snd);
-        checkEqual(100,snd2.getSamples(),"sample count");
-        checkEqual(2,snd2.getChannels(),"channel count");
+        checkEqual((size_t) 100,snd2.getSamples(),"sample count");
+        checkEqual((size_t) 2,snd2.getChannels(),"channel count");
         checkEqual(99,snd2.get(50),"copy works");
     }
 
@@ -46,17 +46,17 @@ public:
         snd1.resize(5, 8);
         snd2.resize(3, 8);
 
-        for(int ch=0; ch<snd1.getChannels(); ch++)
+        for(size_t ch=0; ch<snd1.getChannels(); ch++)
         {
-            for(int s=0; s<snd1.getSamples(); s++)
+            for(size_t s=0; s<snd1.getSamples(); s++)
             {
                 snd1.set(ch+s, s, ch);
             }
         }
 
-        for(int ch=0; ch<snd2.getChannels(); ch++)
+        for(size_t ch=0; ch<snd2.getChannels(); ch++)
         {
-            for(int s=0; s<snd2.getSamples(); s++)
+            for(size_t s=0; s<snd2.getSamples(); s++)
             {
                 snd2.set(1000+ch+s, s, ch);
             }
@@ -67,17 +67,17 @@ public:
 
         // Checking sum is correct
         bool ok = true;
-        int s1Samples = snd1.getSamples();
-        int s2Samples = snd2.getSamples();
+        size_t s1Samples = snd1.getSamples();
+        size_t s2Samples = snd2.getSamples();
 
-        for(int ch=0; ch<snd1.getChannels(); ch++)
+        for(size_t ch=0; ch<snd1.getChannels(); ch++)
         {
-            for(int s=0; s<s1Samples; s++)
+            for(size_t s=0; s<s1Samples; s++)
             {
                 ok &= (sndSum.get(s, ch) == snd1.get(s, ch));
             }
 
-            for(int s=0; s<s2Samples; s++)
+            for(size_t s=0; s<s2Samples; s++)
             {
                 ok &= (sndSum.get(s1Samples +s , ch) == snd2.get(s, ch));
             }
@@ -91,7 +91,7 @@ public:
         Sound snd1;
         snd1.resize(128);
         snd1.setFrequency(50);
-        for (int i=0; i<snd1.getSamples(); i++) {
+        for (size_t i=0; i<snd1.getSamples(); i++) {
             snd1.set(i-snd1.getSamples()/2,i);
         }
 
@@ -116,7 +116,7 @@ public:
                        "freq check");
 
             bool ok = true;
-            for (int i=0; i<result->getSamples(); i++) {
+            for (size_t i=0; i<result->getSamples(); i++) {
                 ok = ok && (result->get(i) == snd1.get(i));
             }
             checkTrue(ok,"sample values match");
