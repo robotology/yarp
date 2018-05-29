@@ -498,13 +498,7 @@ void Image::setPixelSize(int imgPixelSize) {
 
 void Image::setPixelCode(int imgPixelCode) {
     this->imgPixelCode = imgPixelCode;
-
-    if(imgPixelCode < 0)
-    {
-        imgPixelSize = -imgPixelCode;
-    }
-
-    imgPixelSize = pixelCode2Size.at((YarpVocabPixelTypesEnum)imgPixelCode);
+    this->imgPixelSize = (imgPixelCode < 0) ? -imgPixelCode : pixelCode2Size.at((YarpVocabPixelTypesEnum)imgPixelCode);
 }
 
 
