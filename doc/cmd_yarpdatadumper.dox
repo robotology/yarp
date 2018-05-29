@@ -108,7 +108,7 @@ by the \ref yarpdatadumper.
 
 --type \e datatype
 - The parameter \e datatype selects the type of items to be
-  stored. It can be \e bottle, \e image or \e video; if not
+  stored. It can be \e bottle, \e image, \e image_jpg or \e video; if not
   specified \e bottle is assumed. Note that images are stored
   using the corresponding file formats. The data type \e video
   is available if OpenCV is found and the codec \e huffyuv is installed.
