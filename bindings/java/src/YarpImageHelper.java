@@ -257,12 +257,12 @@ public class YarpImageHelper
      * @return output array
      */
     public static short[] getRawImg(ImageRgb img) {
-        int pixelsize = img.getPixelSize();
-        int width = img.width();
-        int height = img.height();
-        int imgsize = img.getRawImageSize();
-		int imgPixels = width * height * pixelsize;
-		int pad = img.getPadding();
+        int pixelsize = (int) img.getPixelSize();
+        int width = (int) img.width();
+        int height = (int) img.height();
+        int imgsize = (int) img.getRawImageSize();
+        int imgPixels = width * height * pixelsize;
+        int pad = (int) img.getPadding();
         //short [] vec1ds = new short [imgsize];
 		short [] vec1ds = new short [imgPixels];
         charArray car = charArray.frompointer(img.getRawImage());
