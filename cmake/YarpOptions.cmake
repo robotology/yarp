@@ -88,6 +88,12 @@ endif()
 # link the right library when both optimized and debug library are found
 set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS ${YARP_DEBUG_CONFIGURATIONS})
 
+#########################################################################
+# Handle YARP_IDL_BINARY_HINT
+set(YARP_IDL_BINARY_HINT "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
+foreach(_config ${CMAKE_CONFIGURATION_TYPES})
+  list(APPEND YARP_IDL_BINARY_HINT "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/${_config}")
+endforeach()
 
 #########################################################################
 # Simplify compilation of portable binaries.
