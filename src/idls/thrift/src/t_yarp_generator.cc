@@ -295,9 +295,17 @@ void getNeededType(t_type* curType, std::set<string>& neededTypes)
   int flat_element_count(t_function* fn);
 
   void auto_warn(ostream& f_srv_) {
-    f_srv_ << "// This is an automatically-generated file." << endl;
-    f_srv_ << "// It could get re-generated if the ALLOW_IDL_GENERATION flag is on." << endl;
-    f_srv_ << endl;
+    f_srv_ << "/*\n";
+    f_srv_ << " * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)\n";
+    f_srv_ << " * All rights reserved.\n";
+    f_srv_ << " *\n";
+    f_srv_ << " * This software may be modified and distributed under the terms of the\n";
+    f_srv_ << " * BSD-3-Clause license. See the accompanying LICENSE file for details.\n";
+    f_srv_ << " */\n";
+    f_srv_ << "\n";
+    f_srv_ << "// This is an automatically generated file.\n";
+    f_srv_ << "// It could get re-generated if the ALLOW_IDL_GENERATION flag is on.\n";
+    f_srv_ << "\n";
   }
 
   void generate_enum_constant_list(std::ofstream& f,
