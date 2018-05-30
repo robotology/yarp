@@ -1145,9 +1145,9 @@ bool PartItem::homeToCustomPosition(const yarp::os::Bottle& positionElement)
     //Look for group called m_robotPartPort_Position and m_robotPartPort_Velocity
     Bottle xtmp, ytmp;
     xtmp = positionElement.findGroup(m_robotPartPort.toStdString() + "_Position");
-    ok = ok && (xtmp.size() == NUMBER_OF_JOINTS + 1);
+    ok = ok && (xtmp.size() == (size_t) NUMBER_OF_JOINTS + 1);
     ytmp = positionElement.findGroup(m_robotPartPort.toStdString() + "_Velocity");
-    ok = ok && (ytmp.size() == NUMBER_OF_JOINTS + 1);
+    ok = ok && (ytmp.size() == (size_t) NUMBER_OF_JOINTS + 1);
 
     if(ok)
     {

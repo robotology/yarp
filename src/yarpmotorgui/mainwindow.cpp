@@ -99,7 +99,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     std::map<std::string, yarp::os::Bottle> customPositions;
 
-    for (int index = 0; index < ini.size(); ++index) {
+    for (size_t index = 0; index < ini.size(); ++index) {
         //Look for groups starting with "customPosition_"
         yarp::os::Value item = ini.get(index);
         if (!item.isList()) continue;
