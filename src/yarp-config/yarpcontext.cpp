@@ -106,7 +106,7 @@ int yarp_context_main(int argc, char *argv[]) {
         if (options.check("verbose"))
             rf.setVerbose(true);
         yarp::os::Bottle paths=rf.findPaths((std::string("contexts") + PATH_SEPARATOR +contextName).c_str(), opts);
-        for (int curCont=0; curCont<paths.size(); ++curCont)
+        for (size_t curCont=0; curCont<paths.size(); ++curCont)
             printf("%s\n", paths.get(curCont).asString().c_str());
         return 0;
     }

@@ -336,7 +336,7 @@ void printUserFolders(yarp::os::ResourceFinder &rf, folderType ftype)
     opts.searchLocations = ResourceFinderOptions::User;
     yarp::os::Bottle contextPaths = rf.findPaths(getFolderStringName(ftype), opts);
     printf("**LOCAL USER DATA:\n");
-    for (int curPathId = 0; curPathId<contextPaths.size(); ++curPathId)
+    for (size_t curPathId = 0; curPathId<contextPaths.size(); ++curPathId)
     {
         printf("* Directory : %s\n", contextPaths.get(curPathId).asString().c_str());
         printContentDirs(contextPaths.get(curPathId).asString());
@@ -349,7 +349,7 @@ void printSysadmFolders(yarp::os::ResourceFinder &rf, folderType ftype)
     opts.searchLocations = ResourceFinderOptions::Sysadmin;
     yarp::os::Bottle contextPaths = rf.findPaths(getFolderStringName(ftype), opts);
     printf("**SYSADMIN DATA:\n");
-    for (int curPathId = 0; curPathId<contextPaths.size(); ++curPathId)
+    for (size_t curPathId = 0; curPathId<contextPaths.size(); ++curPathId)
     {
         printf("* Directory : %s\n", contextPaths.get(curPathId).asString().c_str());
         printContentDirs(contextPaths.get(curPathId).asString());
@@ -362,7 +362,7 @@ void printInstalledFolders(yarp::os::ResourceFinder &rf, folderType ftype)
     opts.searchLocations = ResourceFinderOptions::Installed;
     yarp::os::Bottle contextPaths = rf.findPaths(getFolderStringName(ftype), opts);
     printf("**INSTALLED DATA:\n");
-    for (int curPathId = 0; curPathId<contextPaths.size(); ++curPathId)
+    for (size_t curPathId = 0; curPathId<contextPaths.size(); ++curPathId)
     {
         printf("* Directory : %s\n", contextPaths.get(curPathId).asString().c_str());
         printContentDirs(contextPaths.get(curPathId).asString());
@@ -620,7 +620,7 @@ int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
         yarp::os::mkdir((destDirname).c_str());
         yarp::os::mkdir((hiddenDirname).c_str());
         bool ok = true;
-        for (int i = 2; i<importArg.size(); ++i)
+        for (size_t i = 2; i<importArg.size(); ++i)
         {
             std::string fileName = importArg.get(i).asString();
             if (fileName != "")
@@ -658,7 +658,7 @@ int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
             printf("Copied %s %s from %s to %s .\n", fType == CONTEXTS ? "context" : "robot", contextName.c_str(), originalpath.c_str(), destDirname.c_str());
             printf("Current locations for this %s:\n", fType == CONTEXTS ? "context" : "robot");
             yarp::os::Bottle paths = rf.findPaths((getFolderStringName(fType) + PATH_SEPARATOR + contextName).c_str());
-            for (int curCont = 0; curCont<paths.size(); ++curCont)
+            for (size_t curCont = 0; curCont<paths.size(); ++curCont)
                 printf("%s\n", paths.get(curCont).asString().c_str());
         }
         return result;
@@ -679,7 +679,7 @@ int importAll(folderType fType, bool verbose)
     ResourceFinderOptions opts;
     opts.searchLocations = ResourceFinderOptions::Installed;
     yarp::os::Bottle contextPaths = rf.findPaths(getFolderStringName(fType), opts);
-    for (int curPathId = 0; curPathId<contextPaths.size(); ++curPathId)
+    for (size_t curPathId = 0; curPathId<contextPaths.size(); ++curPathId)
     {
 
         std::string curPath = contextPaths.get(curPathId).toString();
@@ -778,7 +778,7 @@ int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose)
                 if (hiddenPath != "")
                     removeHidden = false;
 
-                for (int i = 2; i<removeArg.size(); ++i)
+                for (size_t i = 2; i<removeArg.size(); ++i)
                 {
                     std::string fileName = removeArg.get(i).asString();
                     if (fileName != "")
@@ -850,7 +850,7 @@ int diffList(folderType fType, bool verbose)
     ResourceFinderOptions opts;
     opts.searchLocations = ResourceFinderOptions::Installed;
     Bottle installedPaths = rf.findPaths(getFolderStringName(fType), opts);
-    for (int n = 0; n <installedPaths.size(); ++n)
+    for (size_t n = 0; n <installedPaths.size(); ++n)
     {
         std::string installedPath = installedPaths.get(n).asString();
         std::vector<std::string> subDirs = listContentDirs(installedPath);
@@ -885,7 +885,7 @@ int merge(yarp::os::Bottle& mergeArg, folderType fType, bool verbose)
 
     if (mergeArg.size() >2)
     {
-        for (int i = 2; i<mergeArg.size(); ++i)
+        for (size_t i = 2; i<mergeArg.size(); ++i)
         {
             std::string fileName = mergeArg.get(i).asString();
             if (fileName != "")
