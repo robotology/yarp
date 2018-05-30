@@ -139,7 +139,11 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
   endif()
 
   if (NOT _YBPL_QUIET AND NOT YarpPlugin_QUIET)
-    yarp_print_feature(${_YBPL_OPTION} ${YARP_PLUGIN_LEVEL} "${_YBPL_DOC}")
+    if(_DEFINED _YBPL_OPTION)
+      yarp_print_feature(${_YBPL_OPTION} ${YARP_PLUGIN_LEVEL} "${_YBPL_DOC}")
+    else()
+      message(STATUS "${_YBPL_DOC}")
+    endif()
   endif()
 
   # Make a record of the fact that we are now within a plugin
