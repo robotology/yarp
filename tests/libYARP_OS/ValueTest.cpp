@@ -147,21 +147,21 @@ public:
             Bottle b("10 (1 2 3) 20");
             v = b.get(1);
             checkTrue(v.isList(),"type ok");
-            checkEqual(v.asList()->size(),3,"length ok");
+            checkEqual(v.asList()->size(),(size_t) 3,"length ok");
         }
         {
             Value v;
             Bottle b("(10 (1 2 3) 20)");
             v = b.get(0).asList()->get(1);
             checkTrue(v.isList(),"type ok");
-            checkEqual(v.asList()->size(),3,"length ok");
+            checkEqual(v.asList()->size(),(size_t) 3,"length ok");
         }
         {
             Value v(1);
             Bottle b("10 (1 2 3) 20");
             v = b.get(1);
             checkTrue(v.isList(),"type ok");
-            checkEqual(v.asList()->size(),3,"length ok");
+            checkEqual(v.asList()->size(),(size_t) 3,"length ok");
         }
     }
 

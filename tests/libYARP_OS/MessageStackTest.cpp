@@ -47,7 +47,7 @@ public:
         stack.stack(b);
         stack.stack(b);
         Time::delay(1);
-        checkEqual(worker.last.size(),0,"no read without permission");
+        checkEqual(worker.last.size(),(size_t) 0,"no read without permission");
         worker.go.post();
         worker.gone.wait();
         checkEqual(worker.last.toString(),"hello","got a message");

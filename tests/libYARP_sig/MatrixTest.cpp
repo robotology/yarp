@@ -407,22 +407,22 @@ public:
         report(0,"check matrix format conforms to network standard...");
 
         Matrix m;
-        unsigned int rr = 10;
-        unsigned int cc = 5;
+        size_t rr = 10;
+        size_t cc = 5;
         makeTestMatrix(m,rr,cc);
 
         BufferedConnectionWriter writer;
         m.write(writer);
         std::string s = writer.toString();
         Bottle bot;
-        bot.fromBinary(s.c_str(),(int)s.length());
-        checkEqual((unsigned int) bot.get(0).asInt32(),rr,"row count matches");
-        checkEqual((unsigned int) bot.get(1).asInt32(),cc,"column count matches");
+        bot.fromBinary(s.c_str(),s.length());
+        checkEqual((size_t) bot.get(0).asInt32(),rr,"row count matches");
+        checkEqual((size_t) bot.get(1).asInt32(),cc,"column count matches");
         Bottle *lst = bot.get(2).asList();
         checkTrue(lst!=nullptr,"have data");
         if (!lst) return;
-        checkEqual(lst->size(),(int)(rr*cc),"data length matches");
-        if (lst->size()!=(int)(rr*cc)) return;
+        checkEqual(lst->size(),(rr*cc),"data length matches");
+        if (lst->size()!=(rr*cc)) return;
         bool ok = true;
         for (int i=0; i<(int)(rr*cc); i++) {
             double v = lst->get(i).asFloat64();
@@ -440,8 +440,8 @@ public:
         // potential problem reported by Miguel Sarabia Del Castillo
 
         Matrix m;
-        unsigned int rr = 10;
-        unsigned int cc = 5;
+        size_t rr = 10;
+        size_t cc = 5;
         makeTestMatrix(m,rr,cc);
 
         double value = 3.14;
@@ -464,12 +464,12 @@ public:
         Bottle *bot2 = bot.get(1).asList();
         checkTrue(bot1!=nullptr&&bot2!=nullptr,"got head/body");
         if (bot1==nullptr || bot2==nullptr) return;
-        checkEqual((unsigned int) bot1->get(0).asInt32(),rr,"row count matches");
-        checkEqual((unsigned int) bot1->get(1).asInt32(),cc,"column count matches");
+        checkEqual((size_t) bot1->get(0).asInt32(),rr,"row count matches");
+        checkEqual((size_t) bot1->get(1).asInt32(),cc,"column count matches");
         Bottle *lst = bot1->get(2).asList();
         checkTrue(lst!=nullptr,"have data");
         if (!lst) return;
-        checkEqual(lst->size(),(int)(rr*cc),"data length matches");
+        checkEqual(lst->size(),(rr*cc),"data length matches");
         checkEqualish(bot2->get(0).asFloat64(),value,"value match");
     }
 

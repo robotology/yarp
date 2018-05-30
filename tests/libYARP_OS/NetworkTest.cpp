@@ -143,7 +143,7 @@ public:
         Network::sync("/server");
         Bottle cmd("10"), reply;
         Network::write("/server",cmd,reply);
-        checkEqual(reply.size(),2,"got append");
+        checkEqual(reply.size(),(size_t) 2,"got append");
         checkEqual(reply.get(1).asInt32(),5,"append is correct");
         server.close();
     }

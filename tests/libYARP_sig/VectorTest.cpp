@@ -179,10 +179,10 @@ public:
         v.write(writer);
         std::string s = writer.toString();
         Bottle bot;
-        bot.fromBinary(s.c_str(),(int)s.length());
-        checkEqual((int)bot.size(),(int)v.size(),"size matches");
+        bot.fromBinary(s.c_str(), s.length());
+        checkEqual(bot.size(), v.size(),"size matches");
         {
-            for (int i=0; i<bot.size(); i++) {
+            for (size_t i=0; i<bot.size(); i++) {
                 checkTrue(bot.get(i).asFloat64()>i-0.25,"bounded below");
                 checkTrue(bot.get(i).asFloat64()<i+0.25,"bounded above");
             }
