@@ -57,6 +57,7 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
                                 ycm-${YCM_REQUIRED_VERSION}/modules/ExtractVersion.cmake
                                 ycm-${YCM_REQUIRED_VERSION}/modules/GetAllCMakeProperties.cmake
                                 ycm-${YCM_REQUIRED_VERSION}/modules/GitInfo.cmake
+                                ycm-${YCM_REQUIRED_VERSION}/modules/InstallBasicPackageFiles.cmake
                                 ycm-${YCM_REQUIRED_VERSION}/modules/ReplaceImportedTargets.cmake
                                 ycm-${YCM_REQUIRED_VERSION}/modules/StandardFindModule.cmake)
     set(YCM_CMAKE_3rdparty_FILES ycm-${YCM_REQUIRED_VERSION}/3rdparty/FindEigen3.cmake
