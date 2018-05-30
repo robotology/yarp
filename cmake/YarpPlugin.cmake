@@ -139,7 +139,7 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
   endif()
 
   if (NOT _YBPL_QUIET AND NOT YarpPlugin_QUIET)
-    if(_DEFINED _YBPL_OPTION)
+    if(DEFINED _YBPL_OPTION)
       yarp_print_feature(${_YBPL_OPTION} ${YARP_PLUGIN_LEVEL} "${_YBPL_DOC}")
     else()
       message(STATUS "${_YBPL_DOC}")

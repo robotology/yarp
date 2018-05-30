@@ -73,7 +73,7 @@ target_link_libraries(YARP_sig PRIVATE ${ACE_LIBRARIES}
                                       YARP::YARP_OS)
 if(YARP_HAS_JPEG)
   target_compile_definitions(YARP_sig PRIVATE YARP_HAS_JPEG_C=1)
-  target_link_libraries(${JPEG_LIBRARY})
+  target_link_libraries(YARP_sig PRIVATE ${JPEG_LIBRARY})
 endif()
 
 if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
