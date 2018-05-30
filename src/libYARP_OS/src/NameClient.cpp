@@ -193,7 +193,7 @@ Contact NameClient::registerName(const std::string& name, const Contact& suggest
         } else {
             if (prefix != "") {
                 Bottle ips = NameConfig::getIpsAsBottle();
-                for (int i = 0; i < ips.size(); i++) {
+                for (size_t i = 0; i < ips.size(); i++) {
                     std::string ip = ips.get(i).asString().c_str();
                     if (ip.find(prefix) == 0) {
                         prefix = ip.c_str();
@@ -226,7 +226,7 @@ Contact NameClient::registerName(const std::string& name, const Contact& suggest
 
         std::string cmdOffers = "set /port offers ";
         yarp::os::Bottle lst = yarp::os::Carriers::listCarriers();
-        for (int i = 0; i < lst.size(); i++) {
+        for (size_t i = 0; i < lst.size(); i++) {
             cmdOffers = cmdOffers + " " + lst.get(i).asString();
         }
 

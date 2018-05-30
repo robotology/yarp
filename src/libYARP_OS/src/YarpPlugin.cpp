@@ -55,7 +55,7 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
         // we may have a YARP-specific search path available,
         // and a proper name for the DLL
         Bottle paths = selector->getSearchPath();
-        for (int i=0; i<paths.size(); i++) {
+        for (size_t i=0; i<paths.size(); i++) {
             Searchable& options = paths.get(i);
             std::string path = options.find("path").asString();
             std::string ext = options.find("extension").asString();
@@ -189,7 +189,7 @@ void YarpPluginSelector::scan() {
     // Search .ini files in plugins directories
     config.clear();
     if (plugin_paths.size()>0) {
-        for (int i=0; i<plugin_paths.size(); i++) {
+        for (size_t i=0; i<plugin_paths.size(); i++) {
             std::string target = plugin_paths.get(i).asString();
             YARP_SPRINTF1(Logger::get(),
                           debug,
@@ -206,11 +206,11 @@ void YarpPluginSelector::scan() {
     plugins.clear();
     search_path.clear();
     Bottle inilst = config.findGroup("inifile").tail();
-    for (int i=0; i<inilst.size(); i++) {
+    for (size_t i=0; i<inilst.size(); i++) {
         std::string inifile = inilst.get(i).asString();
         Bottle inigroup = config.findGroup(inifile);
         Bottle lst = inigroup.findGroup("plugin").tail();
-        for (int i=0; i<lst.size(); i++) {
+        for (size_t i=0; i<lst.size(); i++) {
             std::string plugin_name = lst.get(i).asString();
             Bottle group = inigroup.findGroup(plugin_name);
             group.add(Value::makeValue(std::string("(inifile \"") + inifile + "\")"));
@@ -219,7 +219,7 @@ void YarpPluginSelector::scan() {
             }
         }
         lst = inigroup.findGroup("search").tail();
-        for (int i=0; i<lst.size(); i++) {
+        for (size_t i=0; i<lst.size(); i++) {
             std::string search_name = lst.get(i).asString();
             Bottle group = inigroup.findGroup(search_name);
             search_path.addList() = group;

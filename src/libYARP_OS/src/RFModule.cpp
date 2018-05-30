@@ -58,7 +58,7 @@ public:
                     //printf("ALL: %s\n", reply.toString().c_str());
                     //printf("ITEM 1: %s\n", reply.get(0).toString().c_str());
                     if (reply.get(0).toString() == "help") {
-                        for (int i = 0; i < reply.size(); i++) {
+                        for (size_t i = 0; i < reply.size(); i++) {
                             yInfo("%s.", reply.get(i).toString().c_str());
                         }
                     } else {
@@ -120,7 +120,7 @@ bool RFModuleRespondHandler::read(ConnectionReader& connection) {
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=nullptr) {
             if (response.get(0).toString() == "many" && writer->isTextMode()) {
-                for (int i=1; i<response.size(); i++) {
+                for (size_t i=1; i<response.size(); i++) {
                     Value& v = response.get(i);
                     if (v.isList()) {
                         v.asList()->write(*writer);

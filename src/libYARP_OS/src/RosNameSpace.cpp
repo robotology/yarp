@@ -555,7 +555,7 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
             for (int i=0; i<3; i++) {
                 Bottle *part = parts->get(i).asList();
                 if (!part) continue;
-                for (int j=0; j<part->size(); j++) {
+                for (size_t j=0; j<part->size(); j++) {
                     Bottle *unit = part->get(j).asList();
                     if (!unit) continue;
                     std::string stem = unit->get(0).asString();
@@ -566,7 +566,7 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
                     } else {
                         services.put(stem, 1);
                     }
-                    for (int j=0; j<links->size(); j++) {
+                    for (size_t j=0; j<links->size(); j++) {
                         nodes.put(links->get(j).asString(), 1);
                     }
                 }
@@ -576,7 +576,7 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
             for (int p=0; p<3; p++) {
                 Bottle blist;
                 blist.read(*props[p]);
-                for (int i=0; i<blist.size(); i++) {
+                for (size_t i=0; i<blist.size(); i++) {
                     std::string name = blist.get(i).asList()->get(0).asString();
                     Bottle& info = out.addList();
                     info.addString(title[p]);

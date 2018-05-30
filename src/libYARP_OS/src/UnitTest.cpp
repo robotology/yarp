@@ -253,7 +253,7 @@ void UnitTest::saveEnvironment(const char *key) {
 }
 
 void UnitTest::restoreEnvironment() {
-    for (int i=0; i<env.size(); i++) {
+    for (size_t i=0; i<env.size(); i++) {
         Bottle *lst = env.get(i).asList();
         if (lst==nullptr) continue;
         std::string key = lst->get(0).asString();

@@ -2111,13 +2111,13 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             Bottle *pubs = cmd.get(3).asList();
             if (pubs!=nullptr) {
                 Property listed;
-                for (int i=0; i<pubs->size(); i++) {
+                for (size_t i=0; i<pubs->size(); i++) {
                     std::string pub = pubs->get(i).asString();
                     listed.put(pub, 1);
                 }
                 Property present;
                 stateMutex.wait();
-                for (unsigned int i=0; i<units.size(); i++) {
+                for (size_t i=0; i<units.size(); i++) {
                     PortCoreUnit *unit = units[i];
                     if (unit!=nullptr) {
                         if (unit->isPupped()) {
@@ -2130,7 +2130,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     }
                 }
                 stateMutex.post();
-                for (int i=0; i<pubs->size(); i++) {
+                for (size_t i=0; i<pubs->size(); i++) {
                     std::string pub = pubs->get(i).asString();
                     if (!present.check(pub)) {
                         YARP_SPRINTF1(log, debug, "ROS ADD %s", pub.c_str());

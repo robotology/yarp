@@ -162,7 +162,7 @@ bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
     cmd.write(con0.getWriter());
     Bottle in;
     in.read(con0.getReader());
-    for (int i=0; i<in.size(); i++) {
+    for (size_t i=0; i<in.size(); i++) {
         cmd0 += " ";
         cmd0 += in.get(i).toString().c_str();
     }

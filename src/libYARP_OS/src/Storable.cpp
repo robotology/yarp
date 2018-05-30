@@ -564,7 +564,7 @@ void StoreBlob::fromString(const std::string& src)
 {
     Bottle bot(src.c_str());
     std::string buf(YARP_STRINIT(bot.size()));
-    for (int i = 0; i < bot.size(); i++) {
+    for (size_t i = 0; i < bot.size(); i++) {
         buf[i] =
             static_cast<char>(static_cast<unsigned char>(bot.get(i).asInt32()));
     }

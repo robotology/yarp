@@ -97,7 +97,7 @@
                     cmdList=helpBottle.get(0).asList();
                 if (cmdList && cmdList->get(0).asString() == "*** Available commands:")
                 {
-                    for (int i=1; i<cmdList->size(); ++i)
+                    for (size_t i=1; i<cmdList->size(); ++i)
                         commands.push_back(cmdList->get(i).asString());
                 }
             }
@@ -269,7 +269,7 @@ static void writeBottleAsFile(const char *fileName, const Bottle& bot) {
     if (!fout) {
         return;
     }
-    for (int i=0; i<bot.size(); i++) {
+    for (size_t i=0; i<bot.size(); i++) {
         fprintf(fout, "%s\n", bot.get(i).toString().c_str());
     }
     fclose(fout);
@@ -747,7 +747,7 @@ int Companion::cmdName(int argc, char *argv[]) {
     if (reply.size()==1&&reply.get(0).isString()) {
         printf("%s", reply.get(0).asString().c_str());
     } else if (reply.get(0).isVocab() && reply.get(0).asVocab()==VOCAB4('m', 'a', 'n', 'y')) {
-        for (int i=1; i<reply.size(); i++) {
+        for (size_t i=1; i<reply.size(); i++) {
             Value& v = reply.get(i);
             if (v.isString()) {
                 printf("  %s\n", v.asString().c_str());
@@ -1019,7 +1019,7 @@ int Companion::cmdConnect(int argc, char *argv[]) {
             mode = "to";
         } else if (arg=="--list-carriers") {
             Bottle lst = Carriers::listCarriers();
-            for (int i=0; i<lst.size(); i++) {
+            for (size_t i=0; i<lst.size(); i++) {
                 printf("%s%s", (i>0)?" ":"", lst.get(i).asString().c_str());
             }
             printf("\n");
@@ -1522,7 +1522,7 @@ int Companion::cmdClean(int argc, char *argv[]) {
     } else {
         printf("Using a timeout of %g seconds\n", timeout);
     }
-    for (int i=1; i<reply.size(); i++) {
+    for (size_t i=1; i<reply.size(); i++) {
         Bottle *entry = reply.get(i).asList();
         if (entry != nullptr) {
             std::string port = entry->check("name", Value("")).asString();
@@ -1762,7 +1762,7 @@ int Companion::subscribe(const char *src, const char *dest, const char *mode) {
     }
     if (reply.get(0).toString()=="subscriptions") {
         Bottle subs = reply.tail();
-        for (int i=0; i<subs.size(); i++) {
+        for (size_t i=0; i<subs.size(); i++) {
             Bottle *b = subs.get(i).asList();
             if (b != nullptr) {
                 //Bottle& topic = b->findGroup("topic");
@@ -2267,7 +2267,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
                         lst = reply.get(1).asList();
                         start = 0;
                     }
-                    for (int i=start; i<lst->size(); i++) {
+                    for (size_t i=start; i<lst->size(); i++) {
                         Value& v = lst->get(i);
                         if (v.isString()) {
                             printf("  %s\n", v.asString().c_str());
@@ -2419,7 +2419,7 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
             return 1;
         }
         printf("Search path:\n");
-        for (int i=0; i<lst.size(); i++) {
+        for (size_t i=0; i<lst.size(); i++) {
             Value& options = lst.get(i);
             std::string name = options.asList()->get(0).toString();
             std::string path = options.check("path", Value("unknown path")).asString();
@@ -2433,7 +2433,7 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
 
     if (arg=="--list") {
         Bottle lst = selector.getSelectedPlugins();
-        for (int i=0; i<lst.size(); i++) {
+        for (size_t i=0; i<lst.size(); i++) {
             Value& options = lst.get(i);
             std::string name = options.check("name", Value("untitled")).asString();
             printf("%s\n", name.c_str());
@@ -2448,7 +2448,7 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         }
         printf("Runtime plugins found:\n");
         bool ok = true;
-        for (int i=0; i<lst.size(); i++) {
+        for (size_t i=0; i<lst.size(); i++) {
             Value& options = lst.get(i);
             std::string name = options.check("name", Value("untitled")).asString();
             std::string type = options.check("type", Value("unknown type")).asString();

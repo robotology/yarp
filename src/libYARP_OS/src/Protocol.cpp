@@ -74,7 +74,7 @@ void Protocol::setRoute(const Route& route)
         Bottle b(from.c_str());
         if (b.size() > 1) {
             r.setFromName(b.get(0).toString().c_str());
-            for (int i = 1; i < b.size(); i++) {
+            for (size_t i = 1; i < b.size(); i++) {
                 Value& v = b.get(i);
                 Bottle* lst = v.asList();
                 if (lst != nullptr) {
