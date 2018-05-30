@@ -45,7 +45,7 @@ bool NetworkProfiler::yarpNameList(ports_name_set &ports, bool complete) {
         return false;
     }
 
-    for (int i=1; i<reply.size(); i++) {
+    for (size_t i=1; i<reply.size(); i++) {
         Bottle *entry = reply.get(i).asList();
         if(entry != nullptr) {
             bool shouldTake = false;
@@ -90,7 +90,7 @@ bool NetworkProfiler::getPortDetails(const string& portName, PortDetails& info) 
         ping.close();
         return false;
     }
-    for(int i=0; i<reply.size(); i++) {
+    for(size_t i=0; i<reply.size(); i++) {
         ConnectionInfo cnn;
         cnn.name = reply.get(i).asString();
         Bottle reply2;
@@ -111,7 +111,7 @@ bool NetworkProfiler::getPortDetails(const string& portName, PortDetails& info) 
         ping.close();
         return false;
     }
-    for(int i=0; i<reply.size(); i++) {
+    for(size_t i=0; i<reply.size(); i++) {
         ConnectionInfo cnn;
         cnn.name = reply.get(i).asString();
         if(cnn.name != ping.getName())
