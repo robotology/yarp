@@ -37,7 +37,7 @@ static bool checkParam(const Bottle& input, RGBDSensorParamParser::RGBDParam& pa
             return false;
         }
         param.val.resize(param.size);
-        for (int i=0;i<b->size();i++)
+        for (size_t i=0;i<b->size();i++)
         {
             ret = true;
             param.val[i] = b->get(i);

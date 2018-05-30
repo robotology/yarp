@@ -231,7 +231,7 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
                     yarp::os::Bottle *modeList;
                     modeList  = cmd.get(3).asList();
 
-                    if(modeList->size() != controlledJoints)
+                    if(modeList->size() != (size_t) controlledJoints)
                     {
                         yError("received an invalid setControlMode message. Size of vector doesn´t match the number of controlled joints\n");
                         *ok = false;
@@ -706,7 +706,7 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     int n_joints = cmd.get(3).asInt32();
                     jointList = cmd.get(4).asList();
                     modeList  = cmd.get(5).asList();
-                    if( (jointList->size() != n_joints) || (modeList->size() != n_joints) )
+                    if( (jointList->size() != (size_t) n_joints) || (modeList->size() != (size_t) n_joints) )
                     {
                         if (ControlBoardWrapper_p->verbose()) {
                             yError("Received an invalid setInteractionMode message. Size of vectors doesn´t match\n");
@@ -734,7 +734,7 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
 //              yDebug()  << "CBW.c set interactionMode ALL" << std::endl;
 
                     modeList  = cmd.get(3).asList();
-                    if(modeList->size() != controlledJoints)
+                    if(modeList->size() != (size_t) controlledJoints)
                     {
                         if (ControlBoardWrapper_p->verbose())
                             yError("Received an invalid setInteractionMode message. Size of vector doesn´t match the number of controlled joints\n");
@@ -784,7 +784,7 @@ void RPCMessagesParser::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
 
                     int n_joints = cmd.get(3).asInt32();
                     jointList = cmd.get(4).asList();
-                    if(jointList->size() != n_joints )
+                    if(jointList->size() != (size_t) n_joints )
                     {
                     yError("Received an invalid getInteractionMode message. Size of vectors doesn´t match");
                         *ok = false;
@@ -1789,7 +1789,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                                 if (jlut==nullptr || pos_val==nullptr)
                                     break;
-                                if (len!=jlut->size() || len!=pos_val->size())
+                                if ((size_t) len!=jlut->size() || (size_t) len!=pos_val->size())
                                     break;
 
                                 int *j_tmp=new int [len];
@@ -1844,7 +1844,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                                 if (jBottle_p==nullptr || posBottle_p==nullptr)
                                     break;
-                                if (len!=jBottle_p->size() || len!=posBottle_p->size())
+                                if ((size_t) len!=jBottle_p->size() || (size_t) len!=posBottle_p->size())
                                     break;
 
                                 int *j_tmp=new int [len];
@@ -1899,7 +1899,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                                 if (jBottle_p==nullptr || velBottle_p==nullptr)
                                     break;
-                                if (len!=jBottle_p->size() || len!=velBottle_p->size())
+                                if ((size_t) len!=jBottle_p->size() || (size_t) len!=velBottle_p->size())
                                     break;
 
                                 int *j_tmp=new int [len];
@@ -1953,7 +1953,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                                 if (jBottle_p==nullptr || accBottle_p==nullptr)
                                     break;
-                                if (len!=jBottle_p->size() || len!=accBottle_p->size())
+                                if ((size_t) len!=jBottle_p->size() || (size_t) len!=accBottle_p->size())
                                     break;
 
                                 int *j_tmp = new int [len];
@@ -2006,7 +2006,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
 
                                 if (jBottle_p==nullptr)
                                     break;
-                                if (len!=jBottle_p->size())
+                                if ((size_t) len!=jBottle_p->size())
                                     break;
 
                                 int *j_tmp = new int [len];

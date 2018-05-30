@@ -720,11 +720,11 @@ protected:
         {
             int i;
             Bottle& list = *(response.get(0).asList());
-            yAssert(list.size() >= n_joints)
+            yAssert(list.size() >= (size_t) n_joints)
 
-            if (list.size() != n_joints)
+            if (list.size() != (size_t )n_joints)
             {
-                yError("%s length of response does not match: expected %d, received %d\n ", functionName.c_str(), n_joints , list.size() );
+                yError("%s length of response does not match: expected %d, received %zu\n ", functionName.c_str(), n_joints , list.size() );
                 return false;
             }
             else

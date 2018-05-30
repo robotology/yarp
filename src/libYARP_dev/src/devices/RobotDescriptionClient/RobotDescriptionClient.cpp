@@ -94,7 +94,7 @@ bool yarp::dev::RobotDescriptionClient::getAllDevicesByType(const std::string &t
         else
         {
             Bottle *b = resp.get(1).asList();
-            for (int i = 0; i < b->size(); i += 2)
+            for (size_t i = 0; i < b->size(); i += 2)
             {
                 DeviceDescription desc;
                 desc.device_name = b->get(i).asString();
@@ -185,7 +185,7 @@ bool yarp::dev::RobotDescriptionClient::getAllDevices(std::vector<DeviceDescript
         else
         {
             Bottle *b = resp.get(1).asList();
-            for (int i = 0; i < b->size();i+=2)
+            for (size_t i = 0; i < b->size();i+=2)
             {
                 DeviceDescription desc;
                 desc.device_name = b->get(i).asString();
