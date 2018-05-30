@@ -235,12 +235,12 @@ bool WireTwiddler::configure(const char *txt, const char *prompt) {
 
     buffer_start = 0;
     buffer.clear();
-    int at = 0;
-    int next = 0;
+    size_t at = 0;
+    size_t next = 0;
     do {
         bool ign = false;
         at = next;
-        dbg_printf("Configuring, length %d, at %d\n", desc.size(), at);
+        dbg_printf("Configuring, length %zu, at %zu\n", desc.size(), at);
         next = configure(desc,at,ign,"");
     } while (next>at&&next<desc.size());
     if (buffer_start!=(int)buffer.size()) {

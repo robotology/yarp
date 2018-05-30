@@ -137,7 +137,7 @@ public:
             report(1, "Message #2 is null..");
             return;
         }
-        checkEqual(datum->size(),4,"message is ok");
+        checkEqual(datum->size(),(size_t) 4,"message is ok");
         in.useCallback();
         in.count = 0;
         out.prepare().fromString("1 2 3 4 5");

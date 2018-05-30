@@ -255,14 +255,14 @@ public:
      * @return the Value v; if the index lies outside the range of
      *         elements present, then v.isNull() will be true.
      */
-    Value& get(int index) const;
+    Value& get(size_t index) const;
 
     /**
      * Gets the number of elements in the bottle.
      *
      * @return number of elements in the bottle.
      */
-    int size() const;
+    size_t size() const;
 
     /**
      * Initializes bottle from a string.
@@ -282,7 +282,7 @@ public:
      * @param buf the binary form of the bottle to be interpreted.
      * @param len the length of the binary form.
      */
-    void fromBinary(const char* buf, int len);
+    void fromBinary(const char* buf, size_t len);
 
     /**
      * Returns binary representation of bottle.

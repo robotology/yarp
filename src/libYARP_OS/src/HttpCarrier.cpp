@@ -105,7 +105,7 @@ static bool asJson(std::string& accum,
                     offset = 1;
                 }
             }
-            for (int i=offset2; i<bot->size(); i++) {
+            for (size_t i=offset2; i<bot->size(); i++) {
                 yarp::os::Value& vi = bot->get(i);
                 if (!vi.isList()) {
                     struc = false;
@@ -127,7 +127,7 @@ static bool asJson(std::string& accum,
             asJson(accum, bot->get(0));
             need_comma = true;
         }
-        for (int i=offset; i<bot->size(); i++) {
+        for (size_t i=offset; i<bot->size(); i++) {
             yarp::os::Bottle *boti = bot->get(i).asList();
             if (boti == nullptr) continue;
             if (need_comma) {
@@ -145,7 +145,7 @@ static bool asJson(std::string& accum,
     // [ ... ]
     accum += "[";
     if (offset2) offset--;
-    for (int i=offset; i<bot->size(); i++) {
+    for (int i=offset; (size_t)i<bot->size(); i++) {
         if (i>offset) {
             accum += ", ";
         }

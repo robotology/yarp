@@ -282,25 +282,25 @@ public:
         Network::setEnvironment("YARP_DATA_DIRS",foobar);
         Bottle dirs;
         dirs = ResourceFinder::getDataDirs();
-        checkEqual(dirs.size(),2,"YARP_DATA_DIRS parsed as two directories");
+        checkEqual(dirs.size(),(size_t) 2,"YARP_DATA_DIRS parsed as two directories");
         checkEqual(dirs.get(0).asString().c_str(),"/foo","YARP_DATA_DIRS first dir ok");
         checkEqual(dirs.get(1).asString().c_str(),"/bar","YARP_DATA_DIRS second dir ok");
 
         Network::setEnvironment("YARP_DATA_DIRS","/foo");
         dirs = ResourceFinder::getDataDirs();
-        checkEqual(dirs.size(),1,"YARP_DATA_DIRS parsed as one directory");
+        checkEqual(dirs.size(),(size_t) 1,"YARP_DATA_DIRS parsed as one directory");
 
         Network::unsetEnvironment("YARP_DATA_DIRS");
         Network::setEnvironment("XDG_DATA_DIRS",foobar);
         dirs = ResourceFinder::getDataDirs();
-        checkEqual(dirs.size(),2,"XDG_DATA_DIRS gives two directories");
+        checkEqual(dirs.size(),(size_t) 2,"XDG_DATA_DIRS gives two directories");
         checkEqual(dirs.get(0).asString().c_str(),yfoo.c_str(),"XDG_DATA_DIRS first dir ok");
         checkEqual(dirs.get(1).asString().c_str(),ybar.c_str(),"XDG_DATA_DIRS second dir ok");
 
         Network::unsetEnvironment("XDG_DATA_DIRS");
 #ifdef __linux__
         dirs = ResourceFinder::getDataDirs();
-        checkEqual(dirs.size(),2,"DATA_DIRS default length 2");
+        checkEqual(dirs.size(),(size_t) 2,"DATA_DIRS default length 2");
         checkEqual(dirs.get(0).asString().c_str(),"/usr/local/share/yarp","DATA_DIRS default element 0 is ok");
         checkEqual(dirs.get(1).asString().c_str(),"/usr/share/yarp","DATA_DIRS default element 1 is ok");
 #endif
@@ -320,21 +320,21 @@ public:
         Network::setEnvironment("YARP_CONFIG_DIRS",foobar);
         Bottle dirs;
         dirs = ResourceFinder::getConfigDirs();
-        checkEqual(dirs.size(),2,"YARP_CONFIG_DIRS parsed as two directories");
+        checkEqual(dirs.size(),(size_t) 2,"YARP_CONFIG_DIRS parsed as two directories");
         checkEqual(dirs.get(0).asString().c_str(),"/foo","YARP_CONFIG_DIRS first dir ok");
         checkEqual(dirs.get(1).asString().c_str(),"/bar","YARP_CONFIG_DIRS second dir ok");
 
         Network::unsetEnvironment("YARP_CONFIG_DIRS");
         Network::setEnvironment("XDG_CONFIG_DIRS",foobar);
         dirs = ResourceFinder::getConfigDirs();
-        checkEqual(dirs.size(),2,"XDG_CONFIG_DIRS gives two directories");
+        checkEqual(dirs.size(),(size_t) 2,"XDG_CONFIG_DIRS gives two directories");
         checkEqual(dirs.get(0).asString().c_str(),yfoo.c_str(),"XDG_CONFIG_DIRS first dir ok");
         checkEqual(dirs.get(1).asString().c_str(),ybar.c_str(),"XDG_CONFIG_DIRS second dir ok");
 
         Network::unsetEnvironment("XDG_CONFIG_DIRS");
 #ifdef __linux__
         dirs = ResourceFinder::getConfigDirs();
-        checkEqual(dirs.size(),1,"CONFIG_DIRS default length 1");
+        checkEqual(dirs.size(),(size_t) 1,"CONFIG_DIRS default length 1");
         checkEqual(dirs.get(0).asString().c_str(),"/etc/yarp","CONFIG_DIRS default is ok");
 #endif
 
@@ -362,7 +362,7 @@ public:
         }
         std::string slash = Network::getDirectorySeparator();
         std::string dir = buf;
-        for (int i=0; i<dirs.size(); i++) {
+        for (size_t i=0; i<dirs.size(); i++) {
             dir += slash;
             dir = dir + dirs.get(i).asString();
         }
@@ -372,7 +372,7 @@ public:
     void mkdir(const Bottle& dirs) {
         std::string slash = Network::getDirectorySeparator();
         std::string dir = "";
-        for (int i=0; i<dirs.size(); i++) {
+        for (size_t i=0; i<dirs.size(); i++) {
             if (i>0) dir += slash;
             dir = dir + dirs.get(i).asString();
             mkdir(dir);

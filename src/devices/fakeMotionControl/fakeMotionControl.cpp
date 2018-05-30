@@ -136,7 +136,7 @@ bool FakeMotionControl::extractGroup(Bottle &input, Bottle &out, const std::stri
         return false;
     }
 
-    if(tmp.size()!=size)
+    if(tmp.size()!=(size_t) size)
     {
         yError() << key1.c_str() << " incorrect number of entries";
         return false;
@@ -884,7 +884,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         if(extractGroup(general, xtmp, "AxisMap", "a list of reordered indices for the axes", _njoints))
         {
-            for (i = 1; i < xtmp.size(); i++)
+            for (i = 1; (size_t) i < xtmp.size(); i++)
                 _axisMap[i - 1] = xtmp.get(i).asInt32();
         }
         else
@@ -902,7 +902,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
         if (extractGroup(general, xtmp, "AxisName", "a list of strings representing the axes names", _njoints))
         {
             //beware: axis name has to be remapped here because they are not set using the toHw() helper function
-            for (i = 1; i < xtmp.size(); i++)
+            for (i = 1; (size_t) i < xtmp.size(); i++)
             {
                 _axisName[_axisMap[i - 1]] = xtmp.get(i).asString();
             }
@@ -923,7 +923,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
         if (extractGroup(general, xtmp, "AxisType", "a list of strings representing the axes type (revolute/prismatic)", _njoints))
         {
             //beware: axis type has to be remapped here because they are not set using the toHw() helper function
-            for (i = 1; i < xtmp.size(); i++)
+            for (i = 1; (size_t) i < xtmp.size(); i++)
             {
                 string typeString = xtmp.get(i).asString();
                 if (typeString == "revolute")  _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_REVOLUTE;
@@ -953,7 +953,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         if (extractGroup(general, xtmp, "ampsToSensor", "a list of scales for the ampsToSensor conversion factors", _njoints))
         {
-            for (i = 1; i < xtmp.size(); i++)
+            for (i = 1; (size_t) i < xtmp.size(); i++)
             {
                 if (xtmp.get(i).isFloat64())
                 {
@@ -978,7 +978,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         if (extractGroup(general, xtmp, "fullscalePWM", "a list of scales for the fullscalePWM conversion factors", _njoints))
         {
-            for (i = 1; i < xtmp.size(); i++)
+            for (i = 1; (size_t) i < xtmp.size(); i++)
             {
                 if (xtmp.get(i).isFloat64() || xtmp.get(i).isInt32())
                 {
@@ -1002,7 +1002,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         if (extractGroup(general, xtmp, "Encoder", "a list of scales for the encoders", _njoints))
         {
-            for (i = 1; i < xtmp.size(); i++)
+            for (i = 1; (size_t) i < xtmp.size(); i++)
             {
                 _angleToEncoder[i-1] = xtmp.get(i).asFloat64();
             }

@@ -546,7 +546,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     if(prop.check("Pos"))
                     {
                         yarp::os::Bottle pos = prop.findGroup("Pos");
-                        for(int i=1; i<pos.size(); i++)
+                        for(size_t i=1; i<pos.size(); i++)
                         {
                             GyPoint pt;
                             pt.x = pos.get(i).find("x").asFloat64();
@@ -654,7 +654,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     if(prop.check("Pos"))
                     {
                         yarp::os::Bottle pos = prop.findGroup("Pos");
-                        for(int i=1; i<pos.size(); i++)
+                        for(size_t i=1; i<pos.size(); i++)
                         {
                             GyPoint pt;
                             pt.x = pos.get(i).find("x").asFloat64();

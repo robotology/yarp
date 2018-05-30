@@ -111,7 +111,7 @@ public:
         const char *args[] = {"CMD","--size","10","20","--mono","on"};
         p3.fromCommand(5,args);
         Bottle bot(p3.toString().c_str());
-        checkEqual(bot.size(),2,"right number of terms");
+        checkEqual(bot.size(),(size_t) 2,"right number of terms");
         checkEqual(p3.findGroup("size").get(1).toString().c_str(),"10","width");
         checkEqual(p3.findGroup("size").get(2).toString().c_str(),"20","height");
         checkTrue(p3.findGroup("size").get(1).isInt32(),"width type");
@@ -121,7 +121,7 @@ public:
         Property p4;
         p4.fromConfig("size 10 20\nmono on\n");
         Bottle bot2(p4.toString().c_str());
-        checkEqual(bot2.size(),2,"right number of terms");
+        checkEqual(bot2.size(),(size_t) 2,"right number of terms");
         checkEqual(p4.findGroup("size").get(1).toString().c_str(),"10","width");
         checkEqual(p4.findGroup("size").get(2).toString().c_str(),"20","height");
         checkTrue(p4.findGroup("size").get(1).isInt32(),"width type");
@@ -131,7 +131,7 @@ public:
         Property p5;
         p5.fromConfig("[cat1]\nsize 10 20\nmono on\n[cat2]\nfoo\t100\n");
         Bottle bot3(p5.toString().c_str());
-        checkEqual(bot3.size(),2,"right number of terms");
+        checkEqual(bot3.size(),(size_t) 2,"right number of terms");
         checkEqual(p5.findGroup("cat1").findGroup("size").get(1).asInt32(),
                    10,"category 1, size, width");
         checkEqual(p5.findGroup("cat2").findGroup("foo").get(1).asInt32(),
@@ -315,13 +315,13 @@ check $x $y\n\
         p.fromConfig("url \"http://www.robotcub.org\"\n");
         checkEqual(p.find("url").asString().c_str(),"http://www.robotcub.org","url with // passed ok");
         p.fromConfig("x 10 # 15");
-        checkEqual(p.findGroup("x").size(),2,"group size with # ok");
+        checkEqual(p.findGroup("x").size(),(size_t) 2,"group size with # ok");
         p.fromConfig("x 10 // 15");
-        checkEqual(p.findGroup("x").size(),2,"group size with // ok");
+        checkEqual(p.findGroup("x").size(),(size_t) 2,"group size with // ok");
         p.fromConfig("x \"# 1 // 2\" 4 5");
-        checkEqual(p.findGroup("x").size(),4,"group size with quoting ok");
+        checkEqual(p.findGroup("x").size(),(size_t) 4,"group size with quoting ok");
         p.fromConfig("x 10#15 4 5");
-        checkEqual(p.findGroup("x").size(),4,"group size with x#y ok");
+        checkEqual(p.findGroup("x").size(),(size_t) 4,"group size with x#y ok");
         report(0,"checking comment in configuration file");
         p.fromConfig("robotName icub \n urdf_file model.urdf \n # this is trash \n");
         checkEqual(p.check("#"),false,"presence of comment line properly ignored in fromConfig");
@@ -345,8 +345,8 @@ check $x $y\n\
         p_no_spaces.fromConfig("torso_yaw = ((0.275,\"0B3M0\"),(0.275,\"0B3M1\"),(0.55,\"0B4M0\"))\n");
         checkEqual(p_no_spaces.find("torso_yaw").isList(),true,"list without spaces correctly loaded");
         checkEqual(p_spaces.find("torso_yaw").isList(),true,"list with spaces correctly loaded");
-        checkEqual(p_no_spaces.find("torso_yaw").asList()->size(),3,"list without spaces loaded with correct size");
-        checkEqual(p_spaces.find("torso_yaw").asList()->size(),3,"list with spaces loaded with correct size");
+        checkEqual(p_no_spaces.find("torso_yaw").asList()->size(),(size_t) 3,"list without spaces loaded with correct size");
+        checkEqual(p_spaces.find("torso_yaw").asList()->size(),(size_t) 3,"list with spaces loaded with correct size");
     }
 
     virtual void checkWipe() {

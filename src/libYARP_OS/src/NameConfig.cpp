@@ -423,7 +423,7 @@ yarp::os::Bottle NameConfig::getIpsAsBottle() {
 std::string NameConfig::getIps() {
     yarp::os::Bottle bot = getIpsAsBottle();
     std::string result = "";
-    for (int i=0; i<bot.size(); i++) {
+    for (size_t i=0; i<bot.size(); i++) {
         std::string ip = bot.get(i).asString();
         if (i>0) {
             result += " ";

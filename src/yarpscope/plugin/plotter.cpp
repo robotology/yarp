@@ -188,7 +188,7 @@ void Plotter::onTimeout()
             yarp::os::Stamp stmp;
             graph->curr_connection->localPort->getEnvelope(stmp);
 
-            if (b->size() - 1 < graph->index) {
+            if (b->size() - 1 < (size_t) graph->index) {
                 qWarning() << "bottle size =" << b->size() << " requested index =" << graph->index;
                 continue;
             }

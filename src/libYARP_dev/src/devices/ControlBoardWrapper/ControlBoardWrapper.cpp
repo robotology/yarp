@@ -247,7 +247,7 @@ bool ControlBoardWrapper::checkROSParams(Searchable &config)
             return false;
         }
 
-        if(nameList.size() != controlledJoints)
+        if(nameList.size() != (size_t) controlledJoints)
         {
             yError() << partName << " jointNames incorrect number of entries. \n jointNames is " << nameList.toString() << "while expected length is " << controlledJoints;
             useROS = ROS_config_error;
@@ -516,7 +516,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 
     // configure the devices
     int totalJ=0;
-    for(int k=0;k<nets->size();k++)
+    for(size_t k=0;k<nets->size();k++)
     {
         Bottle parameters;
         int wBase;

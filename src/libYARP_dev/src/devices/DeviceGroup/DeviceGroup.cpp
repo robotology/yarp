@@ -135,7 +135,7 @@ bool DeviceGroup::open(yarp::os::Searchable& config) {
     if (config.check("part","a list of section names, with each section containing a device")) {
         Bottle bot = config.findGroup("part").tail();
         printf("Assembly of: %s\n", bot.toString().c_str());
-        for (int i=0; i<bot.size(); i++) {
+        for (size_t i=0; i<bot.size(); i++) {
             std::string name = bot.get(i).asString();
             printf("  %s -> %s\n", name.c_str(),
                    config.findGroup(name).toString().c_str());

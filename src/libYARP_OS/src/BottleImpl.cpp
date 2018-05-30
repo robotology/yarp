@@ -341,7 +341,7 @@ bool BottleImpl::fromBytes(ConnectionReader& reader)
 }
 
 
-void BottleImpl::fromBinary(const char* text, int len)
+void BottleImpl::fromBinary(const char* text, size_t len)
 {
     std::string wrapper(text, len);
     StringInputStream sis;
@@ -574,9 +574,9 @@ std::int32_t BottleImpl::subCode()
     return subCoder(*this);
 }
 
-bool BottleImpl::checkIndex(int index) const
+bool BottleImpl::checkIndex(size_t index) const
 {
-    if (index >= 0 && index < static_cast<int>(size())) {
+    if (index < size()) {
         return true;
     }
     return false;
@@ -636,7 +636,7 @@ Storable* BottleImpl::pop()
     return stb;
 }
 
-Storable& BottleImpl::get(int index) const
+Storable& BottleImpl::get(size_t index) const
 {
     return (checkIndex(index) ? *(content[index]) : getNull());
 }

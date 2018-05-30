@@ -217,7 +217,7 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
             sizes = yarp::os::Bottle::getNullBottle();
         }
 
-        for (int i = 0; i < indexes.size(); i++) {
+        for (size_t i = 0; i < indexes.size(); i++) {
             graph_index = indexes.get(i).asInt32();
 
             if (!titles.isNull()) {

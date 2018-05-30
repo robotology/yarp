@@ -97,7 +97,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
     }
 
     remoteControlBoardsPorts.resize(remoteControlBoards->size());
-    for(int ax=0; ax < remoteControlBoards->size(); ax++)
+    for(size_t ax=0; ax < remoteControlBoards->size(); ax++)
     {
         remoteControlBoardsPorts[ax] = remoteControlBoards->get(ax).asString().c_str();
     }

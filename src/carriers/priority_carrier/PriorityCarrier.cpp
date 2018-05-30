@@ -96,7 +96,7 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
         msg+= dummy;
         safe_printf(dummy, 1024, "   ex: ");
         msg+= dummy;
-        for(int i=0; i<excitation.size(); i++)
+        for(size_t i=0; i<excitation.size(); i++)
         {
             Value v = excitation.get(i);
             if(v.isList() && (v.asList()->size()>=2))
@@ -206,7 +206,7 @@ double PriorityCarrier::getActualInput(double t)
         PriorityCarrier *peer = it->first;
         if(peer != this)
         {
-            for(int i=0; i<peer->excitation.size(); i++)
+            for(size_t i=0; i<peer->excitation.size(); i++)
             {
                 Value v = peer->excitation.get(i);
                 if(v.isList() && (v.asList()->size()>=2))
@@ -259,7 +259,7 @@ bool PriorityGroup::recalculate(double t)
         for(PriorityGroup::iterator colItr=peerSet.begin(); colItr!=peerSet.end(); colItr++)
         {
             PriorityCarrier *peerCol = colItr->first;
-            for(int i=0; i<peerCol->excitation.size(); i++)
+            for(size_t i=0; i<peerCol->excitation.size(); i++)
             {
                 Value v = peerCol->excitation.get(i);
                 if(v.isList() && (v.asList()->size()>=2))

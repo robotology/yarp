@@ -143,7 +143,7 @@ bool VirtualAnalogWrapper::open(Searchable& config)
 
     int totalJ=0;
 
-    for (int k=0; k<networks->size(); ++k)
+    for (size_t k=0; k<networks->size(); ++k)
     {
         Bottle parameters=config.findGroup(networks->get(k).asString().c_str());
 

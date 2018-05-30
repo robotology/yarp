@@ -740,7 +740,7 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                 std::vector<AnalogPortEntry> tmpPorts;
                 tmpPorts.resize(nports);
 
-                for(int k=0; k<ports->size(); k++)
+                for(size_t k=0; k<ports->size(); k++)
                 {
                     Bottle parameters=params.findGroup(ports->get(k).asString().c_str());
 

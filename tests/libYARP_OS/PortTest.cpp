@@ -428,7 +428,7 @@ public:
             if (result!=nullptr) {
                 checkEqual(bot1.size(),result->size(),"size check");
                 YARP_INFO(Logger::get(),std::string("size is in fact ") +
-                          NetType::toString(result->size()));
+                          NetType::toString((unsigned int) result->size()));
             }
         }
 
@@ -468,7 +468,7 @@ public:
             if (result!=nullptr) {
                 checkEqual(bot1.size(),result->size(),"size check");
                 YARP_INFO(Logger::get(),std::string("size is in fact ") +
-                          NetType::toString(result->size()));
+                          NetType::toString((unsigned int) result->size()));
             }
         }
         if (ct==0) {
@@ -516,7 +516,7 @@ public:
             if (result!=nullptr) {
                 checkEqual(bot1.size(),result->size(),"size check");
                 YARP_INFO(Logger::get(),std::string("size is in fact ") +
-                          NetType::toString(result->size()));
+                          NetType::toString((unsigned int) result->size()));
             }
         }
         if (ct==0) {
@@ -755,7 +755,7 @@ public:
         Bottle src("10 10 20");
         out.write(src);
         callback.produce.wait();
-        checkEqual(callback.saved.size(),3,"object came through");
+        checkEqual(callback.saved.size(),(size_t) 3,"object came through");
         reader.disableCallback();
         out.close();
         in.close();
@@ -774,7 +774,7 @@ public:
         Bottle src("10 10 20");
         out.write(src);
         callback.produce.wait();
-        checkEqual(callback.saved.size(),3,"object came through");
+        checkEqual(callback.saved.size(),(size_t) 3,"object came through");
         in.disableCallback();
     }
 
@@ -846,13 +846,13 @@ public:
         checkTrue(inBot1!=nullptr,"got 1 of 2 items");
         if (inBot1!=nullptr) {
             printf("Bottle 1 is: %s\n", inBot1->toString().c_str());
-            checkEqual(inBot1->size(),2,"match for item 1");
+            checkEqual(inBot1->size(),(size_t) 2,"match for item 1");
         }
         Bottle *inBot2 = in.read();
         checkTrue(inBot2!=nullptr,"got 2 of 2 items");
         if (inBot2!=nullptr) {
             printf("Bottle 2 is: %s\n", inBot2->toString().c_str());
-            checkEqual(inBot2->size(),5,"match for item 1");
+            checkEqual(inBot2->size(),(size_t) 5,"match for item 1");
         }
     }
 
@@ -883,7 +883,7 @@ public:
         checkTrue(inBot2!=nullptr,"got 2 of 2 items");
         if (inBot2!=nullptr) {
             printf("Bottle 2 is: %s\n", inBot2->toString().c_str());
-            checkEqual(inBot2->size(),5,"match for item 1");
+            checkEqual(inBot2->size(),(size_t) 5,"match for item 1");
         }
     }
 
@@ -1125,7 +1125,7 @@ public:
         p2.setAdminMode();
         p2.write(cmd,reply);
 
-        checkTrue(reply.size()>=1, "got a reply");
+        checkTrue(reply.size()>=(size_t) 1, "got a reply");
 
         p1.close();
         p2.close();
@@ -1148,7 +1148,7 @@ public:
         Bottle *bot = in.read();
         checkTrue(bot!=nullptr,"Inserted message received");
         if (bot!=nullptr) {
-            checkEqual(bot->size(),1,"right length");
+            checkEqual(bot->size(),(size_t) 1,"right length");
         }
 
         out.prepare().fromString("1 2");
@@ -1158,7 +1158,7 @@ public:
         Bottle *bot2 = in.read();
         checkTrue(bot2!=nullptr,"Inserted message received");
         if (bot2!=nullptr) {
-            checkEqual(bot2->size(),2,"right length");
+            checkEqual(bot2->size(),(size_t) 2,"right length");
         }
 
         out.prepare().fromString("1 2 3");
@@ -1168,13 +1168,13 @@ public:
         Bottle *bot3 = in.read();
         checkTrue(bot3!=nullptr,"Inserted message received");
         if (bot3!=nullptr) {
-            checkEqual(bot3->size(),3,"right length");
+            checkEqual(bot3->size(),(size_t) 3,"right length");
         }
         if (bot2!=nullptr) {
-            checkEqual(bot2->size(),2,"original (2) still ok");
+            checkEqual(bot2->size(),(size_t) 2,"original (2) still ok");
         }
         if (bot!=nullptr) {
-            checkEqual(bot->size(),1,"original (1) still ok");
+            checkEqual(bot->size(),(size_t) 1,"original (1) still ok");
         }
 
         in.release(key);
@@ -1271,7 +1271,7 @@ public:
         checkEqual(buf.getPendingReads(),1,"first msg came through");
         Bottle *bot2 = buf.read();
         yAssert(bot2);
-        checkEqual(bot2->size(),3,"data looks ok");
+        checkEqual(bot2->size(),(size_t) 3,"data looks ok");
 
         bot1.addInt32(4);
 
@@ -1294,7 +1294,7 @@ public:
         checkEqual(buf.getPendingReads(),1,"next msg came through");
         bot2 = buf.read();
         yAssert(bot2);
-        checkEqual(bot2->size(),5,"data looks ok");
+        checkEqual(bot2->size(),(size_t) 5,"data looks ok");
 
         output.close();
         input.close();
@@ -1317,7 +1317,7 @@ public:
         output.write(bot1);
         bool ok = input.read(bot2);
         checkTrue(ok,"first msg came through");
-        checkEqual(bot2.size(),3,"data looks ok");
+        checkEqual(bot2.size(),(size_t) 3,"data looks ok");
 
         bot1.addInt32(4);
 
@@ -1336,7 +1336,7 @@ public:
         output.write(bot1);
         ok = input.read(bot2);
         checkTrue(ok,"next msg came through");
-        checkEqual(bot2.size(),5,"data looks ok");
+        checkEqual(bot2.size(),(size_t) 5,"data looks ok");
 
         output.close();
         input.close();
@@ -1489,7 +1489,7 @@ public:
         checkEqual(reply.get(1).asInt32(),5,"admin_reader was called");
         cmd.fromString("[ver]");
         pout.write(cmd,reply);
-        checkTrue(reply.size()>=4,"yarp commands still work");
+        checkTrue(reply.size()>=(size_t) 4,"yarp commands still work");
     }
 
     void testCallbackLock() {
@@ -1506,13 +1506,13 @@ public:
         pin.lockCallback();
         pout.write(cmd);
         Time::delay(0.25);
-        checkEqual(data.size(),0,"data does not arrive too early");
+        checkEqual(data.size(),(size_t) 0,"data does not arrive too early");
         pin.unlockCallback();
         while (pout.isWriting()) {
             report(0,"waiting for port to stabilize");
             Time::delay(0.2);
         }
-        checkEqual(data.size(),1,"data does eventually arrive");
+        checkEqual(data.size(),(size_t) 1,"data does eventually arrive");
         pin.close();
         pout.close();
     }

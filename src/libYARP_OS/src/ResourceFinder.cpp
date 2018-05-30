@@ -105,7 +105,7 @@ static void prependResourceType(std::string& path,
 static void appendResourceType(Bottle& paths,
                                const std::string& resourceType) {
     if (resourceType=="") return;
-    for (int i=0; i<paths.size(); i++) {
+    for (size_t i=0; i<paths.size(); i++) {
         std::string txt = paths.get(i).asString();
         appendResourceType(txt, resourceType);
         paths.get(i) = Value(txt);
@@ -390,7 +390,7 @@ public:
                       bool isDir,
                       Bottle& output, const ResourceFinderOptions& opts) {
         Bottle doc;
-        int prelen = output.size();
+        size_t prelen = output.size();
         findFileBaseInner(config, name, isDir, true, output, opts, doc, nullptr);
         if (output.size()!=prelen) return;
         bool justTop = (opts.duplicateFilesPolicy==ResourceFinderOptions::First);
@@ -402,7 +402,7 @@ public:
     }
 
     void addString(Bottle& output, const std::string& txt) {
-        for (int i=0; i<output.size(); i++) {
+        for (size_t i=0; i<output.size(); i++) {
             if (txt == output.get(i).asString()) return;
         }
         output.addString(txt);
@@ -464,7 +464,7 @@ public:
             opts2.duplicateFilesPolicy = ResourceFinderOptions::All;
             findFileBaseInner(config, robot.c_str(), true, allowPathd, paths, opts2, doc, "robot");
             appendResourceType(paths, resourceType);
-            for (int j=0; j<paths.size(); j++) {
+            for (size_t j=0; j<paths.size(); j++) {
                 std::string str = check(paths.get(j).asString().c_str(),
                                         "", "",
                                         name, isDir, doc, "robot");
@@ -476,7 +476,7 @@ public:
         }
 
         if ((locs & ResourceFinderOptions::Context) && !useNearMain) {
-            for (int i=0; i<apps.size(); i++) {
+            for (size_t i=0; i<apps.size(); i++) {
                 std::string app = apps.get(i).asString();
 
                 // New context still apparently applies only to "applications"
@@ -491,7 +491,7 @@ public:
                 opts2.duplicateFilesPolicy = ResourceFinderOptions::All;
                 findFileBaseInner(config, app.c_str(), true, allowPathd, paths, opts2, doc, "context");
                 appendResourceType(paths, resourceType);
-                for (int j=0; j<paths.size(); j++) {
+                for (size_t j=0; j<paths.size(); j++) {
                     std::string str = check(paths.get(j).asString().c_str(), "", "",
                                             name, isDir, doc, "context");
                     if (str!="") {
@@ -536,7 +536,7 @@ public:
         if (locs & ResourceFinderOptions::Sysadmin) {
             Bottle dirs = ResourceFinder::getConfigDirs();
             appendResourceType(dirs, resourceType);
-            for (int i=0; i<dirs.size(); i++) {
+            for (size_t i=0; i<dirs.size(); i++) {
                 std::string str = check(dirs.get(i).asString().c_str(),
                                         "", "", name, isDir,
                                         doc, "YARP_CONFIG_DIRS");
@@ -551,7 +551,7 @@ public:
         if (locs & ResourceFinderOptions::Installed) {
             Bottle dirs = ResourceFinder::getDataDirs();
             appendResourceType(dirs, resourceType);
-            for (int i=0; i<dirs.size(); i++) {
+            for (size_t i=0; i<dirs.size(); i++) {
                 std::string str = check(dirs.get(i).asString().c_str(),
                                         "", "", name, isDir,
                                         doc, "YARP_DATA_DIRS");
@@ -570,7 +570,7 @@ public:
             opts2.resourceType = "config";
             findFileBaseInner(config, "path.d", true, false, pathds, opts2, doc, "path.d");
 
-            for (int i=0; i<pathds.size(); i++) {
+            for (size_t i=0; i<pathds.size(); i++) {
                 // check /.../path.d/*
                 // this directory is expected to contain *.ini files like this:
                 //   [search BUNDLE_NAME]
@@ -581,12 +581,12 @@ public:
                 Property pathd;
                 pathd.fromConfigFile(pathds.get(i).asString());
                 Bottle sections = pathd.findGroup("search").tail();
-                for (int i=0; i<sections.size(); i++) {
+                for (size_t i=0; i<sections.size(); i++) {
                     std::string search_name = sections.get(i).asString();
                     Bottle group = pathd.findGroup(search_name);
                     Bottle paths = group.findGroup("path").tail();
                     appendResourceType(paths, resourceType);
-                    for (int j=0; j<paths.size(); j++) {
+                    for (size_t j=0; j<paths.size(); j++) {
                         std::string str = check(paths.get(j).asString().c_str(), "", "",
                                                 name, isDir, doc, "yarp.d");
                         if (str!="") {

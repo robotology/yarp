@@ -141,7 +141,7 @@ bool Carriers::Private::matchCarrier(const Bytes *header, Bottle& code)
     int at = 0;
     bool success = true;
     bool done = false;
-    for (int i=0; i<code.size() && !done; i++) {
+    for (size_t i=0; i<code.size() && !done; i++) {
         Value& v = code.get(i);
         if (v.isString()) {
             std::string str = v.asString();
@@ -186,7 +186,7 @@ bool Carriers::Private::scanForCarrier(const Bytes *header)
     YarpPluginSelector selector;
     selector.scan();
     Bottle lst = selector.getSelectedPlugins();
-    for (int i=0; i<lst.size(); i++) {
+    for (size_t i=0; i<lst.size(); i++) {
         if (checkForCarrier(header, lst.get(i))) {
             return true;
         }
@@ -346,7 +346,7 @@ Bottle Carriers::listCarriers()
 
     instance.mPriv->scan();
     Bottle plugins = instance.mPriv->getSelectedPlugins();
-    for (int i = 0; i < plugins.size(); i++) {
+    for (size_t i = 0; i < plugins.size(); i++) {
         Value& options = plugins.get(i);
         std::string name = options.check("name", Value("untitled")).asString();
         if (done.check(name)) {

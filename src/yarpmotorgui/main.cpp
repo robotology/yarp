@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
         if (b_name != nullptr && b_part == nullptr)
         {
             //check port names from config file
-            for (int i = 0; i < b_name->size(); i++)
+            for (size_t i = 0; i < b_name->size(); i++)
             {
                 pParts.addString(b_name->get(i).asString());
             }
@@ -195,7 +195,7 @@ int main(int argc, char *argv[])
         else if (robotName != "" && b_part != nullptr)
         {
             //check parts from config file
-            for (int i = 0; i < b_part->size(); i++)
+            for (size_t i = 0; i < b_part->size(); i++)
             {
                 string ss = b_part->get(i).asString();
                 if (ss.at(0) != '/')
@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
     }
 
     //Check 1 in the panel
-    for(int n = 0; n < pParts.size(); n++)
+    for(size_t n = 0; n < pParts.size(); n++)
     {
         QString part = QString("%1").arg(pParts.get(n).asString().c_str());
         if (b_part_skip)

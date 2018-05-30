@@ -233,7 +233,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
 
     act.reply.addString("old");
 
-    int at = 2;
+    size_t at = 2;
     int sock = -1;
     std::string carrier = "...";
     std::string machine = "...";

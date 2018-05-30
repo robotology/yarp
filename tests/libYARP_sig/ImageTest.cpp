@@ -345,7 +345,7 @@ static const size_t EXT_HEIGHT = 64;
         std::string s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),s.length());
-        checkEqual(bot.size(),4,"plausible bottle out");
+        checkEqual(bot.size(),(size_t) 4,"plausible bottle out");
         checkEqual(bot.get(0).toString().c_str(),"mat","good tag");
         YARP_DEBUG(Logger::get(),"an example image:");
         YARP_DEBUG(Logger::get(),bot.toString().c_str());

@@ -32,9 +32,9 @@ public:
         std::string s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),s.length());
-        checkEqual(bot.size(),2,"it is a pair");  
-        checkEqual(bot.get(0).asList()->size(),3,"head len is right");  
-        checkEqual(bot.get(1).asList()->size(),2,"body len is right");  
+        checkEqual(bot.size(),(size_t) 2,"it is a pair");
+        checkEqual(bot.get(0).asList()->size(),(size_t) 3,"head len is right");
+        checkEqual(bot.get(1).asList()->size(),(size_t) 2,"body len is right");
     }
 
 
@@ -62,8 +62,8 @@ public:
         
         checkTrue(result!=nullptr,"got something check");
         if (result!=nullptr) {
-            checkEqual(result->head.size(),3,"head len is right");  
-            checkEqual(result->body.size(),2,"body len is right");  
+            checkEqual(result->head.size(),(size_t) 3,"head len is right");
+            checkEqual(result->body.size(),(size_t) 2,"body len is right");
         }
 
         output.close();

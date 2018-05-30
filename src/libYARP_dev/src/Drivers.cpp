@@ -75,7 +75,7 @@ public:
 
         scan();
         Bottle lst = getSelectedPlugins();
-        for (int i=0; i<lst.size(); i++) {
+        for (size_t i=0; i<lst.size(); i++) {
             Value& prop = lst.get(i);
             std::string name = prop.check("name",Value("untitled")).asString();
             if (done.check(name)) continue;
@@ -298,7 +298,7 @@ static void toDox(PolyDriver& dd, FILE *os) {
     fprintf(os,"== Options checked by device:\n== \n");
 
     Bottle order = dd.getOptions();
-    for (int i=0; i<order.size(); i++) {
+    for (size_t i=0; i<order.size(); i++) {
         std::string name = order.get(i).toString();
         if (name=="wrapped"||(name.find(".wrapped")!=std::string::npos)) {
             continue;

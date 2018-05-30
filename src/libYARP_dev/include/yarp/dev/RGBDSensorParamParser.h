@@ -61,7 +61,7 @@ public:
         YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
         bool         isSetting;
         bool         isDescription;
-        int          size;
+        size_t          size;
 
         YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::Value>) val;
     };

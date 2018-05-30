@@ -92,7 +92,7 @@ public:
         const char *hbuf = bot4.toBinary(&hsize);
         Bottle bot5;
         bot5.fromBinary(hbuf,hsize);
-        checkEqual(bot5.size(),4,"player bug");
+        checkEqual(bot5.size(),(size_t) 4,"player bug");
 
     }
 
@@ -319,10 +319,10 @@ public:
         report(0,"testing clear...");
         Bottle b;
         b.addString("hello");
-        checkEqual(1,b.size(),"size ok");
+        checkEqual((size_t) 1,b.size(),"size ok");
         b.clear();
         b.addString("there");
-        checkEqual(1,b.size(),"size ok");
+        checkEqual((size_t) 1,b.size(),"size ok");
     }
 
     void testLists() {
@@ -353,7 +353,7 @@ public:
             bb.addInt32(5);
             bb.addInt32(6);
         }
-        checkEqual(bot10.size(),2,"construction test 1");
+        checkEqual(bot10.size(),(size_t) 2,"construction test 1");
         checkEqual(bot10.toString().c_str(),"(1 2 3) (4 5 6)",
                    "construction test 2");
         checkTrue(bot10.get(1).isList(),"construction test 3");
@@ -390,10 +390,10 @@ public:
         Bottle bot1("1 (2 3) (4 5 6) 7");
         Bottle bot2;
         bot2.copy(bot1,1,2);
-        checkEqual(bot2.size(),2,"subrange");
+        checkEqual(bot2.size(),(size_t) 2,"subrange");
         checkEqual(bot2.get(0).toString().c_str(),"2 3","subrange");
         bot2.copy(bot2,0,1);
-        checkEqual(bot2.size(),1,"self copy");
+        checkEqual(bot2.size(),(size_t) 1,"self copy");
     }
 
     void testFind() {
@@ -420,7 +420,7 @@ public:
     void testVocab() {
         report(0,"testing vocab...");
         Bottle bot("[send] 10 20");
-        checkEqual(bot.size(),3,"plausible parse");
+        checkEqual(bot.size(),(size_t) 3,"plausible parse");
         checkTrue(bot.get(0).isVocab(),"vocab present");
         checkEqual(bot.get(0).asInt32(),VOCAB('s','e','n','d'),
                    "vocab match");
@@ -429,7 +429,7 @@ public:
     void testBlob() {
         report(0,"testing blob...");
         Bottle bot("{4 42 255} 10 20");
-        checkEqual(bot.size(),3,"plausible parse");
+        checkEqual(bot.size(),(size_t) 3,"plausible parse");
         checkTrue(bot.get(0).isBlob(),"blob present");
         checkEqual((int)bot.get(0).asBlobLength(),3,"blob length");
         checkEqual(bot.get(0).asBlob()[1],42, "blob match");
@@ -441,7 +441,7 @@ public:
         checkFalse(v.isNull(),"value non-null");
         Bottle b;
         b.add(v);
-        checkEqual(b.size(),1,"insertion happened");
+        checkEqual(b.size(),(size_t) 1,"insertion happened");
         checkTrue(b.get(0).isBlob(),"insertion is right type");
         checkEqual(12,(int)b.get(0).asBlobLength(),"length within bottle");
     }
@@ -519,7 +519,7 @@ public:
         report(0,"testing white space behavior...");
         Bottle bot;
         bot.fromString("\t\thello\t10\n");
-        checkEqual(bot.size(),2,"ok with tab");
+        checkEqual(bot.size(),(size_t) 2,"ok with tab");
         checkEqual(bot.get(0).asString().c_str(),"hello","pre-tab ok");
         checkEqual(bot.get(1).asInt32(),10,"post-tab ok");
 
@@ -527,7 +527,7 @@ public:
         std::string s2 = "[set] [poss] (10.0 20.0 30.0 40.0 5.1)\n";
         Bottle p;
         p.fromString(s2.c_str());
-        checkEqual(p.get(2).asList()->size(),5,"newline test checks out");
+        checkEqual(p.get(2).asList()->size(),(size_t) 5,"newline test checks out");
     }
 
     void testNestDetection() {
@@ -555,7 +555,7 @@ public:
         Bottle bot1("1 2 3");
         Bottle bot2("4 5");
         bot1.append(bot2);
-        checkEqual(bot1.size(),5,"add two bottles");
+        checkEqual(bot1.size(),(size_t) 5,"add two bottles");
     }
 
     void testStack() {
@@ -568,7 +568,7 @@ public:
         bot2.addInt32(3);
         bot.addFloat64(2.71828);
         checkTrue(bot.pop().isFloat64(),"popping double");
-        checkEqual(bot.size(),4,"bottle size decreased after pop");
+        checkEqual(bot.size(),(size_t) 4,"bottle size decreased after pop");
         checkEqual(bot.pop().asList()->pop().asInt32(),3,"popping list and nested int");
         checkEqual(bot.pop().asString().c_str(),"Foo", "popping string");
         Value val;
@@ -580,14 +580,14 @@ public:
         checkEqual(val.asInt32(), 10, "popped value is integer 10");
         val = bot.pop();
         checkTrue(bot.pop().isNull(), "empty bottle pops null");
-        checkEqual(bot.size(),0,"bottle is empty after popping");
+        checkEqual(bot.size(),(size_t) 0,"bottle is empty after popping");
     }
 
     void testTypeDetection() {
         report(0,"test type detection...");
         Bottle bot;
         bot.fromString("hello ip 10.0.0.10");
-        checkEqual(bot.size(),3,"right length");
+        checkEqual(bot.size(),(size_t) 3,"right length");
         checkTrue(bot.get(2).isString(),"right type");
         checkEqual(bot.get(2).asString().c_str(),"10.0.0.10","multiple period test");
     }
@@ -619,8 +619,8 @@ public:
     void testContinuation() {
         report(0,"test continuation...");
         Bottle b("x (1 2\n3 4\n5 6)\ny (1 2)");
-        checkEqual(b.find("x").asList()->size(),6,"x has right length");
-        checkEqual(b.find("y").asList()->size(),2,"y has right length");
+        checkEqual(b.find("x").asList()->size(),(size_t) 6,"x has right length");
+        checkEqual(b.find("y").asList()->size(),(size_t) 2,"y has right length");
     }
 
     void testAssignment() {
@@ -628,18 +628,18 @@ public:
         Bottle b("x (1 2\n3 4\n5 6)\ny (1 2)");
         Bottle b2;
         b2 = b;
-        checkEqual(b2.size(),4,"initial copy ok");
+        checkEqual(b2.size(),(size_t) 4,"initial copy ok");
         b2 = b2;
-        checkEqual(b2.size(),4,"re-copy ok");
+        checkEqual(b2.size(),(size_t) 4,"re-copy ok");
         Bottle b3("zig zag");
         b2.clear();
         checkFalse(b2.isNull(),"have a non-null bottle");
-        checkEqual(b2.size(),0,"have an empty bottle");
+        checkEqual(b2.size(),(size_t) 0,"have an empty bottle");
         b3 = b2;
 
         checkFalse(b3.isNull(),"copied a non-null bottle");
 
-        checkEqual(b3.size(),0,"copied an empty bottle");
+        checkEqual(b3.size(),(size_t) 0,"copied an empty bottle");
         Bottle& nullBot = b.findGroup("zig");
         checkTrue(nullBot.isNull(),"have a null bottle");
         b = nullBot;
@@ -656,11 +656,11 @@ public:
         Bottle b;
         b.fromString("appp plan-clean (\"<Plan>\" \"<Names>\" cover \"</Names>\" \"<isAtomic>\" 1 \"</isAtomic>\" \"<motorCommand>\" () \"</motorCommand>\" \"<Primitive>\" (cover 28988.470168 \"<args>\" \"7106\" \"7103\" \"</args>\" \"<argsRole>\" object1 arg2 object2 arg1 subject \"7107\" \"</argsRole>\" \"<preReqRelations>\" \"</preReqRelations>\" \"<preForRelations>\" \"</preForRelations>\" \"<postAddRelations>\" \"</postAddRelations>\" \"<postRemRelations>\" \"</postRemRelations>\" \"<addRelations>\" \"</addRelations>\" \"<remRelations>\" visible null arg2 \"</remRelations>\") \"</Primitive>\" \"<SubPlans>\" \"</SubPlans>\" \"</Plan>\")");
         Bottle b2 = b;
-        checkEqual(b2.size(),3,"copy ok level 1");
+        checkEqual(b2.size(),(size_t) 3,"copy ok level 1");
         Bottle *sub = b2.get(2).asList();
         checkTrue(sub!=nullptr,"list where list expected");
         if (sub!=nullptr) {
-            checkEqual(sub->size(),16,"copy ok level 2");
+            checkEqual(sub->size(),(size_t) 16,"copy ok level 2");
         }
 
         DummyConnector con;
@@ -672,7 +672,7 @@ public:
         sub = b3.get(2).asList();
         checkTrue(sub!=nullptr,"list where list expected");
         if (sub!=nullptr) {
-            checkEqual(sub->size(),16,"copy ok level 2");
+            checkEqual(sub->size(),(size_t) 16,"copy ok level 2");
         }
     }
 
@@ -761,7 +761,7 @@ public:
     void testLoopBug() {
         report(0,"test infinite loop tickled by yarpmanager + string type change");
         Bottle pos("Pos ((x 349.5) (y 122)) ((x 286) (y 122)) ((x 413) (y 122))");
-        for(int i=1; i<pos.size(); i++) {
+        for(size_t i=1; i<pos.size(); i++) {
             pos.get(i).find("x").asFloat64();
         }
     }

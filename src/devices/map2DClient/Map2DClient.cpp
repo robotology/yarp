@@ -174,7 +174,7 @@ bool yarp::dev::Map2DClient::get_map_names(std::vector<std::string>& map_names)
         }
         else
         {
-            for (int i = 1; i < resp.size(); i++)
+            for (size_t i = 1; i < resp.size(); i++)
             {
                 map_names.push_back(resp.get(i).asString());
             }
@@ -267,7 +267,7 @@ bool   yarp::dev::Map2DClient::getLocationsList(std::vector<std::string>& locati
             if (list)
             {
                 locations.clear();
-                for (int i = 0; i < list->size(); i++)
+                for (size_t i = 0; i < list->size(); i++)
                 {
                     locations.push_back(list->get(i).asString());
                 }

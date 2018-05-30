@@ -272,7 +272,7 @@ public:
             clear();
         }
         Bottle *cursor = nullptr;
-        for (int i=0; i<total.size(); i++) {
+        for (size_t i=0; i<total.size(); i++) {
             cursor = nullptr;
             Bottle *term = total.get(i).asList();
             if (!term) continue;
@@ -628,7 +628,7 @@ public:
                     } else {
                         if (bot.get(1).asString()=="=") {
                             Bottle& b = accum.addList();
-                            for (int i=0; i<bot.size(); i++) {
+                            for (size_t i=0; i<bot.size(); i++) {
                                 if (i!=1) {
                                     b.add(bot.get(i));
                                 }
@@ -665,7 +665,7 @@ public:
         if (wipe) {
             clear();
         }
-        for (int i=0; i<bot.size(); i++) {
+        for (size_t i=0; i<bot.size(); i++) {
             Value& bb = bot.get(i);
             if (bb.isList()) {
                 Bottle *sub = bb.asList();

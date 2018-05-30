@@ -112,7 +112,7 @@ bool ControlBoardRemapper::parseAxesNames(const Property& prop)
     }
 
     axesNames.resize(propAxesNames->size());
-    for(int ax=0; ax < propAxesNames->size(); ax++)
+    for(size_t ax=0; ax < propAxesNames->size(); ax++)
     {
         axesNames[ax] = propAxesNames->get(ax).asString().c_str();
     }
@@ -144,7 +144,7 @@ bool ControlBoardRemapper::parseNetworks(const Property& prop)
     remappedControlBoards.subdevices.resize(nsubdevices);
 
     // configure the devices
-    for(int k=0;k<nets->size();k++)
+    for(size_t k=0;k<nets->size();k++)
     {
         Bottle parameters;
         int wBase;

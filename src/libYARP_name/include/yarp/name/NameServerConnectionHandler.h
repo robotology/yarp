@@ -58,7 +58,7 @@ public:
         remote = reader.getRemoteContact();
         if (lock) service->lock();
         service->apply(cmd,reply,event,remote);
-        for (int i=0; i<event.size(); i++) {
+        for (size_t i=0; i<event.size(); i++) {
             yarp::os::Bottle *e = event.get(i).asList();
             if (e!=0/*NULL*/) {
                 service->onEvent(*e);
@@ -72,7 +72,7 @@ public:
             //printf("sending reply %s\n", reply.toString().c_str());
             if (reply.get(0).toString()=="old") {
                 // support old name server messages
-                for (int i=1; i<reply.size(); i++) {
+                for (size_t i=1; i<reply.size(); i++) {
                     yarp::os::Value& v = reply.get(i);
                     if (v.isList()) {
                         std::string si = v.asList()->toString();

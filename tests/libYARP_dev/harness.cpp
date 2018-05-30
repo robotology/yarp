@@ -120,7 +120,7 @@ static void toDox(PolyDriver& dd, FILE *os) {
     fprintf(os, "<table>\n");
     fprintf(os, "<tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>\n");
     Bottle order = dd.getOptions();
-    for (int i=0; i<order.size(); i++) {
+    for (size_t i=0; i<order.size(); i++) {
         std::string name = order.get(i).toString().c_str();
         if (name=="wrapped"||name.substr(0,10)=="subdevice.") {
             continue;

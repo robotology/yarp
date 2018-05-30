@@ -463,7 +463,7 @@ yarp::os::Bottle yarp::run::Run::sendMsg(yarp::os::Bottle& msg, std::string targ
         port.close();
 
         fprintf(stderr, "RESPONSE:\n=========\n");
-        for (int s=0; s<response.size(); ++s)
+        for (size_t s=0; s<response.size(); ++s)
         {
             fprintf(stderr, "%s\n", response.get(s).toString().c_str());
         }
@@ -474,7 +474,7 @@ yarp::os::Bottle yarp::run::Run::sendMsg(yarp::os::Bottle& msg, std::string targ
     response.addString("RESPONSE:\n");
     response.addString("=========\n");
     response.addString("Cannot connect to remote server, aborting...\n");
-    for (int s=0; s<response.size(); ++s)
+    for (size_t s=0; s<response.size(); ++s)
     {
         fprintf(stderr, "%s\n", response.get(s).toString().c_str());
     }
@@ -940,7 +940,7 @@ int yarp::run::Run::server()
                 if (fileName!="")
                 {
                     yarp::os::Bottle possiblePaths = parsePaths(yarp::os::NetworkBase::getEnvironment("PATH"));
-                    for (int i=0; i<possiblePaths.size(); ++i)
+                    for (size_t i=0; i<possiblePaths.size(); ++i)
                     {
                         std::string guessString=possiblePaths.get(i).asString() + slash + fileName;
                         const char* guess=guessString.c_str();

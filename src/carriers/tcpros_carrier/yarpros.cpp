@@ -72,7 +72,7 @@ string showFormat(Bottle& b, string root) {
         r += "\n";
         if (b.size()<50) {
             r += " # integers seen: ";
-            for (int i=0; i<b.size(); i++) {
+            for (size_t i=0; i<b.size(); i++) {
                 char buf[1000];
                 sprintf(buf," %d",b.get(i).asInt32());
                 r += buf;
@@ -86,7 +86,7 @@ string showFormat(Bottle& b, string root) {
         r += "\n";
         if (b.size()<50) {
             r += " # floats seen: ";
-            for (int i=0; i<b.size(); i++) {
+            for (size_t i=0; i<b.size(); i++) {
                 char buf[1000];
                 sprintf(buf," %g",b.get(i).asFloat64());
                 r += buf;
@@ -97,12 +97,12 @@ string showFormat(Bottle& b, string root) {
     }
     r += addPart("int32",root + "_len",b.size(),nullptr,"elements in list");
     r += "\n";
-    for (int i=0; i<b.size(); i++) {
+    for (size_t i=0; i<b.size(); i++) {
         Value& v = b.get(i);
         char tag_name[1000];
         char val_name[1000];
-        sprintf(tag_name,"%s%d_tag", root.c_str(), i);
-        sprintf(val_name,"%s%d", root.c_str(), i);
+        sprintf(tag_name,"%s%zu_tag", root.c_str(), i);
+        sprintf(val_name,"%s%zu", root.c_str(), i);
         if (v.isVocab()) {
             if (!specialized) {
                 r += addPart("int32",tag_name,BOTTLE_TAG_VOCAB,nullptr,

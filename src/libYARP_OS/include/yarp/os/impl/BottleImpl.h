@@ -50,7 +50,7 @@ public:
 
     Storable* pop();
 
-    Storable& get(int index) const;
+    Storable& get(size_t index) const;
 
     void addInt8(std::int8_t x) { add(new StoreInt8(x)); }
     void addInt16(std::int16_t x) { add(new StoreInt16(x)); }
@@ -86,7 +86,7 @@ public:
 
     bool fromBytes(yarp::os::ConnectionReader& reader);
 
-    void fromBinary(const char* text, int len);
+    void fromBinary(const char* text, size_t len);
 
     void specialize(std::int32_t subCode);
     int getSpecialization();
@@ -130,7 +130,7 @@ public:
 
     void hasChanged() { dirty = true; }
 
-    bool checkIndex(int index) const;
+    bool checkIndex(size_t index) const;
 
     bool invalid;
     bool ro;
