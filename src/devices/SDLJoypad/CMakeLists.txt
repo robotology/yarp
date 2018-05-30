@@ -9,7 +9,7 @@ yarp_prepare_plugin(SDLJoypad
                     TYPE yarp::dev::SDLJoypad
                     INCLUDE SDLJoypad.h
                     EXTRA_CONFIG WRAPPER=JoypadControlServer
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_USE_SDL")
+                    DEPENDS "YARP_USE_SDL")
 
 if(ENABLE_SDLJoypad)
 

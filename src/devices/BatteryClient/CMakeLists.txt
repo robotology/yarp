@@ -8,7 +8,6 @@ yarp_prepare_plugin(BatteryClient
                     CATEGORY device
                     TYPE yarp::dev::BatteryClient
                     INCLUDE BatteryClient.h
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES"
                     DEFAULT ON)
 
 if(NOT SKIP_BatteryClient)

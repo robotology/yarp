@@ -10,7 +10,7 @@ yarp_prepare_plugin(serialport
                     TYPE yarp::dev::SerialDeviceDriver
                     INCLUDE SerialDeviceDriver.h
                     EXTRA_CONFIG WRAPPER=serial
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_ACE")
+                    DEPENDS "YARP_HAS_ACE")
 
 if(NOT SKIP_serialport)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

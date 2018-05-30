@@ -33,7 +33,7 @@ cd $base
 mkdir -p $base/fakebot
 mkdir -p $base/fakebot_static
 
-PLUGIN_FLAGS="-DCREATE_DEVICE_LIBRARY_MODULES=TRUE -DENABLE_yarpmod_fakebot=TRUE -DCREATE_OPTIONAL_CARRIERS=TRUE -DENABLE_yarpcar_human_carrier=TRUE -DCREATE_GUIS=OFF"
+PLUGIN_FLAGS="-DYARP_COMPILE_DEVICE_PLUGINS=TRUE -DENABLE_yarpmod_fakebot=TRUE -DCREATE_OPTIONAL_CARRIERS=TRUE -DENABLE_yarpcar_human_carrier=TRUE -DCREATE_GUIS=OFF"
 
 # Create fakebot device
 cd $base/fakebot

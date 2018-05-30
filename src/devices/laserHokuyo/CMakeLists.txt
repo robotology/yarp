@@ -7,8 +7,7 @@
 yarp_prepare_plugin(laserHokuyo
                     CATEGORY device
                     TYPE laserHokuyo
-                    INCLUDE laserHokuyo.h
-                    DEPENDS CREATE_DEVICE_LIBRARY_MODULES)
+                    INCLUDE laserHokuyo.h)
 
 if(NOT SKIP_laserHokuyo)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

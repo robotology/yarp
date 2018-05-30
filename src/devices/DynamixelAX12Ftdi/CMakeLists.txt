@@ -6,7 +6,7 @@ yarp_prepare_plugin(dynamixelAX12Ftdi
                     TYPE yarp::dev::DynamixelAX12FtdiDriver
                     INCLUDE "DynamixelAX12FtdiDriver.h"
                     EXTRA_CONFIG WRAPPER=controlboard
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_FTDI")
+                    DEPENDS "YARP_HAS_FTDI")
 
 if(NOT SKIP_dynamixelAX12Ftdi)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

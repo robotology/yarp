@@ -33,7 +33,7 @@ if(YARP_LINK_PLUGINS)
         target_link_libraries(YARP_init PRIVATE YARP::yarpcar)
     endif()
 
-    if(CREATE_DEVICE_LIBRARY_MODULES)
+    if(YARP_COMPILE_DEVICE_PLUGINS)
         set_property(SOURCE src/CustomInit.cpp
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION2=add_yarpmod_plugins)

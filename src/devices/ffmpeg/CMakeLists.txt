@@ -10,12 +10,12 @@ yarp_prepare_plugin(ffmpeg_grabber
                     TYPE yarp::dev::FfmpegGrabber
                     INCLUDE FfmpegGrabber.h
                     EXTRA_CONFIG WRAPPER=grabber
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_FFMPEG")
+                    DEPENDS "YARP_HAS_FFMPEG")
 yarp_prepare_plugin(ffmpeg_writer
                     CATEGORY device
                     TYPE yarp::dev::FfmpegWriter
                     INCLUDE FfmpegWriter.h
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_FFMPEG")
+                    DEPENDS "YARP_HAS_FFMPEG")
 
 if(NOT SKIP_ffmpeg_grabber OR NOT SKIP_ffmpeg_writer)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

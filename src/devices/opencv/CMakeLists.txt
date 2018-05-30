@@ -10,7 +10,7 @@ yarp_prepare_plugin(opencv_grabber
                     TYPE yarp::dev::OpenCVGrabber
                     INCLUDE OpenCVGrabber.h
                     EXTRA_CONFIG WRAPPER=grabber
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_OPENCV")
+                    DEPENDS "YARP_HAS_OPENCV")
 
 if(NOT SKIP_opencv_grabber)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

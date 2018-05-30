@@ -6,13 +6,13 @@ yarp_prepare_plugin(primesensecamera
                     TYPE yarp::dev::ServerKinect
                     INCLUDE "ServerKinect.h"
                     EXTRA_CONFIG WRAPPER=primesensecamera
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_LIBUSB1")
+                    DEPENDS "YARP_HAS_LIBUSB1")
 yarp_prepare_plugin(kinect
                     CATEGORY device
                     TYPE yarp::dev::KinectDeviceDriver
                     INCLUDE "KinectDeviceDriver.h"
                     EXTRA_CONFIG WRAPPER=primesensecamera
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_LIBUSB1")
+                    DEPENDS "YARP_HAS_LIBUSB1")
 
 if(NOT SKIP_primesensecamera OR NOT SKIP_kinect)
   # Include libfreenect library from openkinect repository at https://github.com/OpenKinect/openkinect

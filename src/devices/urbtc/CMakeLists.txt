@@ -10,7 +10,7 @@ yarp_prepare_plugin(urbtc
                     TYPE yarp::dev::UrbtcControl
                     INCLUDE UrbtcControl.h
                     EXTRA_CONFIG WRAPPER=controlboard
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;UNIX;YARP_COMPILE_UNMAINTAINED"
+                    DEPENDS "UNIX;YARP_COMPILE_UNMAINTAINED"
                     ADVANCED)
 
 if(NOT SKIP_urbtc)

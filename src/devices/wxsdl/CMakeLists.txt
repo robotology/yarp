@@ -9,7 +9,7 @@ yarp_prepare_plugin(wxsdl
                     CATEGORY device
                     TYPE yarp::dev::WxsdlWriter
                     INCLUDE WxsdlWriter.h
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_WXWIDGETS;YARP_HAS_SDL")
+                    DEPENDS "YARP_HAS_WXWIDGETS;YARP_HAS_SDL")
 
 if(NOT SKIP_wxsdl)
   include_directories(SYSTEM ${wxWidgets_INCLUDE_DIRS}

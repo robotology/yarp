@@ -9,7 +9,7 @@ yarp_prepare_plugin(nvidia
                     CATEGORY device
                     TYPE NVIDIAGPU
                     INCLUDE "NVIDIADeviceDriver.h"
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_NVIDIACG")
+                    DEPENDS "YARP_HAS_NVIDIACG")
 
 if(NOT SKIP_nvidia)
   add_definitions(-DGL_GLEXT_PROTOTYPES

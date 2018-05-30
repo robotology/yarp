@@ -8,8 +8,7 @@
 yarp_prepare_plugin(SerialServoBoard
                     CATEGORY device
                     TYPE SerialServoBoard
-                    INCLUDE "SerialServoBoard.h"
-                    DEPENDS CREATE_DEVICE_LIBRARY_MODULES)
+                    INCLUDE "SerialServoBoard.h")
 
 if(NOT SKIP_SerialServoBoard)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

@@ -8,8 +8,7 @@ yarp_prepare_plugin(fakeAnalogSensor
                     CATEGORY device
                     TYPE yarp::dev::FakeAnalogSensor
                     INCLUDE fakeAnalogSensor.h
-                    EXTRA_CONFIG WRAPPER=analogServer
-                    DEPENDS CREATE_DEVICE_LIBRARY_MODULES)
+                    EXTRA_CONFIG WRAPPER=analogServer)
 
 if(ENABLE_fakeAnalogSensor)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

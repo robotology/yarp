@@ -8,7 +8,6 @@ yarp_prepare_plugin(multipleanalogsensorsclient
                     CATEGORY device
                     TYPE yarp::dev::MultipleAnalogSensorsClient
                     INCLUDE MultipleAnalogSensorsClient.h
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES"
                     DEFAULT ON)
 
 if(ENABLE_multipleanalogsensorsclient)

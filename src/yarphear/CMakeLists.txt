@@ -2,7 +2,7 @@
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
 
-if (CREATE_DEVICE_LIBRARY_MODULES)
+if (YARP_COMPILE_DEVICE_PLUGINS)
 
   include_directories(${ACE_INCLUDE_DIRS})
   add_executable(yarphear yarphear.cpp)
@@ -17,4 +17,4 @@ if (CREATE_DEVICE_LIBRARY_MODULES)
           DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   set_property(TARGET yarphear PROPERTY FOLDER "Command Line Tools")
-endif(CREATE_DEVICE_LIBRARY_MODULES)
+endif(YARP_COMPILE_DEVICE_PLUGINS)
