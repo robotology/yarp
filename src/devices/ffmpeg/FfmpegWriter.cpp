@@ -271,7 +271,7 @@ static void write_audio_frame(AVFormatContext *oc, AVStream *st, Sound& snd)
 
     c = st->codec;
 
-    int at = 0;
+    size_t at = 0;
     while (at<snd.getSamples()) {
 
         int avail = samples_size - samples_at;
@@ -774,8 +774,8 @@ bool FfmpegWriter::close() {
 
 bool FfmpegWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
     if (delayed) {
-        savedConfig.put("width",Value(image.width()));
-        savedConfig.put("height",Value(image.height()));
+        savedConfig.put("width",Value((int)image.width()));
+        savedConfig.put("height",Value((int)image.height()));
     }
     if (!isOk()) { return false; }
 
@@ -808,10 +808,10 @@ bool FfmpegWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
 bool FfmpegWriter::putAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                                   yarp::sig::Sound& sound) {
     if (delayed) {
-        savedConfig.put("width",Value(image.width()));
-        savedConfig.put("height",Value(image.height()));
-        savedConfig.put("sample_rate",Value(sound.getFrequency()));
-        savedConfig.put("channels",Value(sound.getChannels()));
+        savedConfig.put("width",Value((int)image.width()));
+        savedConfig.put("height",Value((int)image.height()));
+        savedConfig.put("sample_rate",Value((int)sound.getFrequency()));
+        savedConfig.put("channels",Value((int)sound.getChannels()));
         savedConfig.put("audio",Value(1));
     }
     if (!isOk()) { return false; }
