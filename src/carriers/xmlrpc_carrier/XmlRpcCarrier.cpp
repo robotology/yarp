@@ -45,7 +45,7 @@ void toXmlRpcValue(Value& vin, XmlRpcValue& vout)
             offset = 1;
         } else {
             // auto-detect
-            for (int i=0; i<bot->size(); i++) {
+            for (size_t i=0; i<bot->size(); i++) {
                 Value& vi = bot->get(i);
                 if (!vi.isList()) {
                     struc = false;
@@ -59,14 +59,14 @@ void toXmlRpcValue(Value& vin, XmlRpcValue& vout)
         }
         if (struc) {
             vout = XmlRpcValue();
-            for (int i=offset; i<bot->size(); i++) {
+            for (size_t i=offset; i<bot->size(); i++) {
                 Bottle *boti = bot->get(i).asList();
                 XmlRpcValue& vouti=vout[std::string(boti->get(0).toString())]=XmlRpcValue();
                 toXmlRpcValue(boti->get(1),vouti);
             }
         } else {
             vout = XmlRpcValue();
-            for (int i=offset; i<bot->size(); i++) {
+            for (size_t i=offset; i<bot->size(); i++) {
                 XmlRpcValue& vouti = vout[i] = XmlRpcValue();
                 toXmlRpcValue(bot->get(i),vouti);
             }
