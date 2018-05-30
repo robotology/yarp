@@ -141,8 +141,9 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
     # Generate code at configuration time, so we know filenames.
     find_program(YARPIDL_${family}_LOCATION
                  NAMES yarpidl_${family}
-                 HINTS ${YARP_IDL_BINARY_HINT} # This is a list of directories
-                       "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}"
+                 HINTS ${YARP_IDL_BINARY_HINT} # This is a list of directories defined
+                                               # in YarpOptions.cmake (for YARP) or in
+                                               # YARPConfig.cmake for dependencies
                  NO_DEFAULT_PATH)
     # Make sure intermediate output directory exists.
     make_directory(${dir})
@@ -150,7 +151,7 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
     configure_file(${YARP_MODULE_DIR}/template/placeGeneratedYarpIdlFiles.cmake.in ${dir}/place${yarpidlName}.cmake @ONLY)
 
     if("${family}" STREQUAL "thrift")
-      set(cmd ${YARPIDL_thrift_LOCATION} --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${dir}" "${yarpidl_file}")
+      set(cmd "${YARPIDL_thrift_LOCATION}" --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${dir}" "${yarpidl_file}")
     else()
       set(_verbose )
       set(_output_quiet OUTPUT_QUIET)
@@ -158,7 +159,7 @@ function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
         set(_verbose --verbose)
         set(_output_quiet )
       endif()
-      set(cmd ${YARPIDL_rosmsg_LOCATION} --no-ros true --no-cache ${_verbose} ${_no_recurse} --out "${dir}" "${yarpidl_file}")
+      set(cmd "${YARPIDL_rosmsg_LOCATION}" --no-ros true --no-cache ${_verbose} ${_no_recurse} --out "${dir}" "${yarpidl_file}")
     endif()
 
     # Go ahead and generate files.
