@@ -25,10 +25,9 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::sig;
 
-
 /**************************************************************************/
 typedef enum { bottle, image } DumpType;
-
+bool format_jpeg = false;
 
 // Abstract object definition for queueing
 /**************************************************************************/
@@ -93,12 +92,13 @@ public:
         int code=p->getPixelCode();
         string ext;
 
-        if (code==VOCAB_PIXEL_MONO_FLOAT)
-            ext=".float";
-        else if (code==VOCAB_PIXEL_MONO)
-            ext=".pgm";
-        else
-            ext=".ppm";
+        if      (code == VOCAB_PIXEL_MONO_FLOAT)  { ext = ".float"; }
+        else if (code == VOCAB_PIXEL_MONO)  { ext = ".pgm"; }
+        else 
+        {
+            if (format_jpeg) { ext = ".jpg"; }
+            else             { ext = ".ppm"; }
+        }
 
         ostringstream fName;
         fName << setw(8) << setfill('0') << cnt << ext;
@@ -106,7 +106,14 @@ public:
         string extfName=dirName;
         extfName+="/";
         extfName+=fName.str();
-        file::write(*p,extfName.c_str());
+        if (ext == ".jpg")
+        {
+            file::write(*p, extfName.c_str(), file::FORMAT_JPG);
+        }
+        else
+        {
+            file::write(*p, extfName.c_str());
+        }
 
         string ret=fName.str();
         ret+=" [";
@@ -556,6 +563,11 @@ public:
                     videoOn=true;
             #endif
             }
+            else if (optTypeName == "image_jpg")
+            {
+                type=image;
+                format_jpeg = true;
+            }
         #ifdef ADD_VIDEO
             else if (optTypeName=="video")
             {
@@ -706,11 +718,11 @@ int main(int argc, char *argv[])
         yInfo() << "\t--dir        name: provide explicit name of storage directory";
         yInfo() << "\t--overwrite      : overwrite pre-existing storage directory";
     #ifdef ADD_VIDEO
-        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image, video]";
+        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image, image_jpg, video]";
         yInfo() << "\t--addVideo       : produce video as well (if image is selected)";
         yInfo() << "\t--videoType   ext: produce video of specified container type [mkv(default), avi]";
     #else
-        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image]";
+        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image, image_jpg]";
     #endif
         yInfo() << "\t--downsample    n: downsample rate (default: 1 => downsample disabled)";
         yInfo() << "\t--rxTime         : dump the receiver time instead of the sender time";

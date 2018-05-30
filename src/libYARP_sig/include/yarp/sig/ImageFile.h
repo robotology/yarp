@@ -20,44 +20,32 @@ namespace yarp {
          *
          * Image file operations.
          */
-        namespace file {
-            enum
+        namespace file
+        {
+            enum image_fileformat
                 {
                     FORMAT_NULL,
                     FORMAT_ANY,
                     FORMAT_PGM,
                     FORMAT_PPM,
+                    FORMAT_JPG,
                     FORMAT_NUMERIC
                 };
 
             // PPM/PGM format
-            bool YARP_sig_API read(ImageOf<PixelRgb>& dest,
-                                   const std::string& src);
-            bool YARP_sig_API read(ImageOf<PixelBgr>& dest,
-                                   const std::string& src);
-            bool YARP_sig_API read(ImageOf<PixelRgba>& dest,
-                                   const std::string& src);
-            bool YARP_sig_API read(ImageOf<PixelMono>& dest,
-                                   const std::string& src);
-
-            bool YARP_sig_API read(ImageOf<PixelFloat>& dest,
-                                   const std::string& src);
+            bool YARP_sig_API read(ImageOf<PixelRgb>& dest,   const std::string& src, image_fileformat format = FORMAT_ANY);
+            bool YARP_sig_API read(ImageOf<PixelBgr>& dest,   const std::string& src, image_fileformat format = FORMAT_ANY);
+            bool YARP_sig_API read(ImageOf<PixelRgba>& dest,  const std::string& src, image_fileformat format = FORMAT_ANY);
+            bool YARP_sig_API read(ImageOf<PixelMono>& dest,  const std::string& src, image_fileformat format = FORMAT_ANY);
+            bool YARP_sig_API read(ImageOf<PixelFloat>& dest, const std::string& src, image_fileformat format = FORMAT_ANY);
 
             // PPM/PGM format
-            bool YARP_sig_API write(const ImageOf<PixelRgb>& src,
-                                    const std::string& dest);
-            bool YARP_sig_API write(const ImageOf<PixelBgr>& src,
-                                    const std::string& dest);
-            bool YARP_sig_API write(const ImageOf<PixelRgba>& src,
-                                    const std::string& dest);
-            bool YARP_sig_API write(const ImageOf<PixelMono>& src,
-                                    const std::string& dest);
-
-            bool YARP_sig_API write(const ImageOf<PixelFloat>& src,
-                                    const std::string& dest);
-
-            bool YARP_sig_API write(const Image& src,
-                                    const std::string& dest);
+            bool YARP_sig_API write(const ImageOf<PixelRgb>& src,   const std::string& dest, image_fileformat format = FORMAT_PPM);
+            bool YARP_sig_API write(const ImageOf<PixelBgr>& src,   const std::string& dest, image_fileformat format = FORMAT_PPM);
+            bool YARP_sig_API write(const ImageOf<PixelRgba>& src,  const std::string& dest, image_fileformat format = FORMAT_PPM);
+            bool YARP_sig_API write(const ImageOf<PixelMono>& src,  const std::string& dest, image_fileformat format = FORMAT_PGM);
+            bool YARP_sig_API write(const ImageOf<PixelFloat>& src, const std::string& dest, image_fileformat format = FORMAT_NUMERIC);
+            bool YARP_sig_API write(const Image& src,               const std::string& dest, image_fileformat format = FORMAT_PPM);
         }
     }
 }
