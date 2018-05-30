@@ -672,7 +672,7 @@ bool YarpBroker::getAllProcesses(const char* server,
     int ret = SendMsg(msg, server, response, 3.0);
     if((ret == YARPRUN_OK) || (ret == YARPRUN_NORESPONSE))
     {
-        for(int i=0; i<response.size(); i++)
+        for(size_t i=0; i<response.size(); i++)
         {
             Process proc;
             std::string sprc;
@@ -815,7 +815,7 @@ void YarpBroker::run()
     Bottle *input;
     if( (input=stdioPort.read(false)) && eventSink)
     {
-        for (int i=0; i<input->size(); i++)
+        for (size_t i=0; i<input->size(); i++)
             eventSink->onBrokerStdout(input->get(i).asString().c_str());
     }
 }
