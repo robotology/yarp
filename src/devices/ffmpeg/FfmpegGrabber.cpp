@@ -746,8 +746,8 @@ bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& imag
                         DBG printf("NODELAY %g ", delay);
                     }
                 }
-                DBG printf("IMAGE size %dx%d  ", image.width(), image.height());
-                DBG printf("SOUND size %d\n", sound.getSamples());
+                DBG printf("IMAGE size %zux%zu  ", image.width(), image.height());
+                DBG printf("SOUND size %zu\n", sound.getSamples());
                 if (!_hasAudio) {
                     sound.resize(0,0);
                 }
