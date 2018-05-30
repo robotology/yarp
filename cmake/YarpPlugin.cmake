@@ -599,7 +599,12 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
 
     # add the library initializer code
     add_library(${YARP_PLUGIN_MASTER} ${code} ${CMAKE_CURRENT_BINARY_DIR}/yarp_${YARP_PLUGIN_MASTER}_plugin_library.cpp)
-    target_link_libraries(${YARP_PLUGIN_MASTER} PRIVATE YARP::YARP_conf)
+
+    # this cannot be target_link_libraries, or in static builds the master
+    # target will require the YARP_conf target, and this does not work well
+    # with separate exports.
+    # See also: https://gitlab.kitware.com/cmake/cmake/issues/18049
+    target_include_directories(${YARP_PLUGIN_MASTER} PRIVATE $<TARGET_PROPERTY:YARP::YARP_conf,INTERFACE_INCLUDE_DIRECTORIES>)
 
     if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
       set_property(TARGET ${YARP_PLUGIN_MASTER} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)

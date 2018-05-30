@@ -33,10 +33,6 @@ install(TARGETS yarpcar
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
-if(YARP_LINK_PLUGINS)
-  set_property(GLOBAL APPEND PROPERTY YARP_LIBS yarpcar ${yarpcar_LIBRARIES})
-endif()
-
 set_property(TARGET yarpcar PROPERTY FOLDER "Plugins/Carrier")
 
 include(YarpDeprecatedOption)

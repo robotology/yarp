@@ -29,7 +29,7 @@
 #include <yarp/dev/PreciselyTimed.h>
 
 
-#include <stateExtendedReader.hpp>
+#include "stateExtendedReader.hpp"
 
 #define PROTOCOL_VERSION_MAJOR 1
 #define PROTOCOL_VERSION_MINOR 9

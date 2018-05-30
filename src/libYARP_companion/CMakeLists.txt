@@ -21,15 +21,6 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              FILES ${YARP_companion_HDRS}
                    ${YARP_companion_IMPL_HDRS})
 
-set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
-get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-
-include_directories(${YARP_TREE_INCLUDE_DIRS})
-if(NOT SKIP_ACE)
-  include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
-endif()
-include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
-
 add_library(YARP_companion ${YARP_companion_SRCS}
                            ${YARP_companion_HDRS}
                            ${YARP_companion_IMPL_HDRS})
@@ -39,6 +30,7 @@ target_include_directories(YARP_companion PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRE
                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(YARP_companion PUBLIC YARP::YARP_OS)
+list(APPEND YARP_companion_PUBLIC_DEPS YARP_OS)
 
 if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
   message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
@@ -51,24 +43,36 @@ else()
   target_compile_features(YARP_companion PUBLIC cxx_override)
 endif()
 
+if(YARP_HAS_ACE)
+  target_include_directories(YARP_companion SYSTEM PRIVATE ${ACE_INCLUDE_DIRS})
+  target_link_libraries(YARP_companion PRIVATE ${ACE_LIBRARIES})
+  list(APPEND YARP_companion_PRIVATE_DEPS ACE)
+endif()
+
 if(YARP_HAS_LIBEDIT)
-    add_definitions(-DWITH_LIBEDIT)
-    include_directories(${Libedit_INCLUDE_DIRS})
-    target_link_libraries(YARP_companion PRIVATE ${Libedit_LIBRARIES})
+  target_compile_definitions(YARP_companion PRIVATE WITH_LIBEDIT)
+  target_include_directories(YARP_companion SYSTEM PRIVATE ${Libedit_INCLUDE_DIRS})
+  target_link_libraries(YARP_companion PRIVATE ${Libedit_LIBRARIES})
+  list(APPEND YARP_companion_PRIVATE_DEPS Libedit)
 endif()
 
 set_property(TARGET YARP_companion PROPERTY PUBLIC_HEADER ${YARP_companion_HDRS})
 set_property(TARGET YARP_companion PROPERTY PRIVATE_HEADER ${YARP_companion_IMPL_HDRS})
+set_property(TARGET YARP_companion PROPERTY VERSION ${YARP_VERSION_SHORT})
+set_property(TARGET YARP_companion PROPERTY SOVERSION ${YARP_SOVERSION})
 
 install(TARGETS YARP_companion
-        EXPORT YARP
-        COMPONENT runtime
+        EXPORT YARP_companion
+        COMPONENT YARP_companion
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/companion"
         PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/companion/impl")
 
-set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_companion)
-set_property(TARGET YARP_companion PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+include(YarpInstallBasicPackageFiles)
+yarp_install_basic_package_files(YARP_companion
+                                 DEPENDENCIES ${YARP_companion_PUBLIC_DEPS}
+                                 PRIVATE_DEPENDENCIES ${YARP_companion_PRIVATE_DEPS})
+
 set_property(TARGET YARP_companion PROPERTY FOLDER "Libraries")

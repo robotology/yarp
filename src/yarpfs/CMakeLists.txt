@@ -11,9 +11,6 @@ cmake_dependent_option(CREATE_YARPFS "Compile yarpfs executable" FALSE
 mark_as_advanced(CREATE_YARPFS)
 
 if(CREATE_YARPFS)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS})
-
   # Find Fuse
   find_package(Fuse REQUIRED)
   add_definitions(${Fuse_DEFINITIONS})

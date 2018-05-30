@@ -5,11 +5,6 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 if(CREATE_YARPLOGGER)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_logger_INCLUDE_DIRS TARGET YARP_logger PROPERTY INCLUDE_DIRS)
-
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_logger_INCLUDE_DIRS})
   include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 
   add_executable(yarplogger-console main.cpp)

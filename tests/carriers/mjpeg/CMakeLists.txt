@@ -9,10 +9,6 @@ if(YARP_HAS_JPEG)
     add_definitions(-DMJPEG_AUTOCOMPRESS)
   endif()
 
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS})
   include_directories(SYSTEM ${JPEG_INCLUDE_DIR})
   include_directories("${CMAKE_SOURCE_DIR}/src/carriers/mjpeg_carrier/")
 

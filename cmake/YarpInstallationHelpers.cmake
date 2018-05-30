@@ -451,4 +451,3 @@ macro(YARP_INSTALL _what)
   endif()
 
 endmacro()
-

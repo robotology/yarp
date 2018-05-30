@@ -8,10 +8,6 @@
 # used by tcpros_carrier, mjpeg_carrier
 
 if(CREATE_OPTIONAL_CARRIERS)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-  include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
-  get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-  include_directories(${YARP_INCLUDE_DIRS})
   add_library(YARP_wire_rep_utils STATIC WireImage.cpp
                                          WireImage.h
                                          WireBottle.cpp
@@ -23,9 +19,18 @@ if(CREATE_OPTIONAL_CARRIERS)
   target_include_directories(YARP_wire_rep_utils PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-  target_link_libraries(YARP_wire_rep_utils PRIVATE YARP::YARP_OS
-                                                    YARP::YARP_sig
-                                                    ${ACE_LIBRARIES})
+  target_link_libraries(YARP_wire_rep_utils PUBLIC YARP::YARP_conf
+                                                   YARP::YARP_OS
+                                                   YARP::YARP_sig)
+  list(APPEND YARP_wire_rep_utils_PUBLIC_DEPS YARP_conf
+                                              YARP_OS
+                                              YARP_sig)
+
+  if(YARP_HAS_ACE)
+    target_include_directories(YARP_wire_rep_utils SYSTEM PRIVATE ${ACE_INCLUDE_DIRS})
+    target_link_libraries(YARP_wire_rep_utils PRIVATE ${ACE_LIBRARIES})
+    list(APPEND YARP_wire_rep_utils_PRIVATE_DEPS ACE)
+  endif()
 
   if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
     message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
@@ -39,13 +44,20 @@ if(CREATE_OPTIONAL_CARRIERS)
                                                        cxx_override)
   endif()
 
-  set_property(TARGET YARP_wire_rep_utils PROPERTY INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
-  set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_wire_rep_utils)
+  set_property(TARGET YARP_serversql PROPERTY VERSION ${YARP_VERSION_SHORT})
+  set_property(TARGET YARP_serversql PROPERTY SOVERSION ${YARP_SOVERSION})
+
   install(TARGETS YARP_wire_rep_utils
-          EXPORT YARP
-          COMPONENT runtime
+          EXPORT YARP_wire_rep_utils
+          COMPONENT YARP_wire_rep_utils
           RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
           LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
           ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+
+  include(YarpInstallBasicPackageFiles)
+  yarp_install_basic_package_files(YARP_wire_rep_utils
+                                   DEPENDENCIES ${YARP_wire_rep_utils_PUBLIC_DEPS}
+                                   PRIVATE_DEPENDENCIES ${YARP_wire_rep_utils_PRIVATE_DEPS})
+
   set_property(TARGET YARP_wire_rep_utils PROPERTY FOLDER "Libraries/Private")
 endif()

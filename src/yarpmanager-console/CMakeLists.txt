@@ -5,16 +5,10 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 if(CREATE_YARPMANAGER_CONSOLE)
-
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
-
   set(yarpmanager_console_SRCS yarpmanager.cpp
                                ymanager.cpp)
   set(yarpmanager_console_HDRS ymanager.h)
 
-  include_directories(${YARP_OS_INCLUDE_DIRS})
-  include_directories(${YARP_manager_INCLUDE_DIRS})
   include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
   if(MSVC)
     include_directories(SYSTEM ${dirent_INCLUDE_DIRS})

@@ -57,16 +57,9 @@ add_library(YARP::YARP_rosmsg ALIAS YARP_rosmsg)
 target_include_directories(YARP_rosmsg INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(YARP_rosmsg INTERFACE YARP::YARP_OS)
+list(APPEND YARP_rosmsg_PUBLIC_DEPS YARP_OS)
 
 add_dependencies(YARP_rosmsg YARP_rosmsg_gen_all)
-
-install(TARGETS YARP_rosmsg
-        EXPORT YARP
-        COMPONENT YARP_rosmsg)
-install(FILES ${YARP_rosmsgs_IMPL_HDRS}
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/rosmsg/impl)
-
-set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_rosmsg)
 
 
 # ROS native types
@@ -81,11 +74,13 @@ add_library(YARP_rosmsg_native INTERFACE)
 add_library(YARP::YARP_rosmsg_native ALIAS YARP_rosmsg_native)
 target_include_directories(YARP_rosmsg_native INTERFACE $<BUILD_INTERFACE:${native_MSG_BUILD_INTERFACE_INCLUDE_DIRS}>
                                                         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(YARP_rosmsg_native INTERFACE YARP::YARP_OS)
+list(APPEND YARP_rosmsg_native_PUBLIC_DEPS YARP_OS)
 
 add_dependencies(YARP_rosmsg_gen_all YARP_rosmsg_gen_native)
 target_link_libraries(YARP_rosmsg INTERFACE YARP::YARP_rosmsg_native)
+list(APPEND YARP_rosmsg_PUBLIC_DEPS YARP_rosmsg_native)
 
-# Install files and exports
 # Deprecated files are not installed since they were never installed
 # YARP_NO_DEPRECATED since YARP v3.0.0
 unset(native_INSTALL_FILES)
@@ -95,13 +90,6 @@ foreach(_file ${native_MSG_GEN_FILES})
   endif()
 endforeach()
 
-install(TARGETS YARP_rosmsg_native
-        EXPORT YARP
-        COMPONENT YARP_rosmsg_native)
-install(FILES ${native_INSTALL_FILES}
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/rosmsg)
-
-set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_rosmsg_native)
 
 
 # Other ROS packages
@@ -140,10 +128,13 @@ foreach(_pkg ${ROS_MSG_PACKAGES})
                                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
   target_link_libraries(YARP_rosmsg_${_pkg} INTERFACE YARP::YARP_OS
                                                       YARP::YARP_rosmsg_native)
+  list(APPEND YARP_rosmsg_${_pkg}_PUBLIC_DEPS YARP_OS
+                                              YARP_rosmsg_native)
 
   # YARP_rosmsg depends on all the packages
   add_dependencies(YARP_rosmsg YARP_rosmsg_gen_${_pkg})
   target_link_libraries(YARP_rosmsg INTERFACE YARP::YARP_rosmsg_${_pkg})
+  list(APPEND YARP_rosmsg_PUBLIC_DEPS YARP_rosmsg_${_pkg})
 
   # Install files and exports
   # Deprecated files are not installed since they were never installed
@@ -155,15 +146,6 @@ foreach(_pkg ${ROS_MSG_PACKAGES})
       list(APPEND ${_pkg}_INSTALL_FILES "${_file}")
     endif()
   endforeach()
-
-  install(TARGETS YARP_rosmsg_${_pkg}
-          EXPORT YARP
-          COMPONENT YARP_rosmsg_${_pkg})
-  install(FILES ${${_pkg}_INSTALL_FILES}
-          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/rosmsg/${_pkg}
-          COMPONENT development)
-
-  set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_rosmsg_${_pkg})
 endforeach()
 
 # Handle dependencies after adding all packages so that we can ignore the
@@ -175,8 +157,43 @@ foreach(_pkg ${ROS_MSG_PACKAGES})
       string(REGEX REPLACE "^.*<build_depend.*>(.+)</build_depend>.*" "\\1" _dep "${_line}")
       if(TARGET YARP::YARP_rosmsg_${_dep})
         target_link_libraries(YARP_rosmsg_${_pkg} INTERFACE YARP::YARP_rosmsg_${_dep})
-      else()
+        list(APPEND YARP_rosmsg_${_pkg}_PUBLIC_DEPS YARP_rosmsg_${_dep})
       endif()
     endforeach()
   endif()
 endforeach()
+
+
+# Install all libraries and all files
+
+include(YarpInstallBasicPackageFiles)
+
+install(TARGETS YARP_rosmsg_native
+        EXPORT YARP_rosmsg_native
+        COMPONENT YARP_rosmsg_native)
+install(FILES ${native_INSTALL_FILES}
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/rosmsg)
+yarp_install_basic_package_files(YARP_rosmsg_native
+                                 DEPENDENCIES ${YARP_rosmsg_native_PUBLIC_DEPS}
+                                 PRIVATE_DEPENDENCIES ${YARP_rosmsg_native_PRIVATE_DEPS})
+
+foreach(_pkg ${ROS_MSG_PACKAGES})
+  install(TARGETS YARP_rosmsg_${_pkg}
+          EXPORT YARP_rosmsg_${_pkg}
+          COMPONENT YARP_rosmsg_${_pkg})
+  install(FILES ${${_pkg}_INSTALL_FILES}
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/rosmsg/${_pkg}
+          COMPONENT development)
+  yarp_install_basic_package_files(YARP_rosmsg_${_pkg}
+                                   DEPENDENCIES ${YARP_rosmsg_${_pkg}_PUBLIC_DEPS}
+                                   PRIVATE_DEPENDENCIES ${YARP_rosmsg_${_pkg}_PRIVATE_DEPS})
+endforeach()
+
+install(TARGETS YARP_rosmsg
+        EXPORT YARP_rosmsg
+        COMPONENT YARP_rosmsg)
+install(FILES ${YARP_rosmsgs_IMPL_HDRS}
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/rosmsg/impl)
+yarp_install_basic_package_files(YARP_rosmsg
+                                 DEPENDENCIES ${YARP_rosmsg_PUBLIC_DEPS}
+                                 PRIVATE_DEPENDENCIES ${YARP_rosmsg_PRIVATE_DEPS})

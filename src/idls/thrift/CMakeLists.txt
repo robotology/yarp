@@ -100,8 +100,6 @@ install(TARGETS yarpidl_thrift
         COMPONENT utilities
         DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-set_property(GLOBAL APPEND PROPERTY YARP_TOOLS yarpidl_thrift)
-
 set_property(TARGET yarpidl_thrift PROPERTY FOLDER "Command Line Tools")
 
 

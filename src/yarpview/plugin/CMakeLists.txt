@@ -4,11 +4,6 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-include_directories(${YARP_OS_INCLUDE_DIRS}
-                    ${YARP_sig_INCLUDE_DIRS})
-
 set(QtYARPViewPlugin_SRCS qtyarpview_plugin.cpp
                           videoproducer.cpp
                           signalhandler.cpp
