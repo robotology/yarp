@@ -1523,7 +1523,7 @@ bool ApplicationViewWidget::scanAvailableCarriers(QString carrier, bool isConnec
     bool res=false;
     stringLst.clear();
     stringLst.push_back(carrier);
-    for (int i=0; i<lst.size(); i++)
+    for (size_t i=0; i<lst.size(); i++)
     {
         if (lst.get(i).asString() == carrier.toStdString())
             res = true;
