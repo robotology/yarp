@@ -401,7 +401,7 @@ bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
     {
         Bottle group = config.findGroup("USER_TF").tail();
 
-        for (int i = 0; i < group.size(); i++)
+        for (size_t i = 0; i < group.size(); i++)
         {
             string         tfName;
             FrameTransform t;

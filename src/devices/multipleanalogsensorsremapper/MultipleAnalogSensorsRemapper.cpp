@@ -117,7 +117,7 @@ bool getVectorOfStringFromListInConfig(const std::string& key, const os::Searcha
     }
 
     vectorOfStrings.resize(propList->size());
-    for (int ax=0; ax < propList->size(); ax++)
+    for (size_t ax=0; ax < propList->size(); ax++)
     {
         vectorOfStrings[ax] = propList->get(ax).asString().c_str();
     }
