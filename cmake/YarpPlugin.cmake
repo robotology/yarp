@@ -443,11 +443,11 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
       endif()
     endforeach()
     if(DEFINED _YPP_WRAPPER)
-      yarp_deprecated_warning("WRAPPER argument is deprecated. Use EXTRA_CONFIG WRAPPER=<...> instead.") # since YARP 2.3.68
+      message(DEPRECATION "WRAPPER argument is deprecated. Use EXTRA_CONFIG WRAPPER=<...> instead.") # since YARP 2.3.68
       set(YARPPLUG_WRAPPER "${_YPP_WRAPPER}")
     endif()
     if(DEFINED _YPP_CODE)
-      yarp_deprecated_warning("CODE argument is deprecated. Use EXTRA_CONFIG CODE=<...> instead.") # since YARP 2.3.68
+      message(DEPRECATION "CODE argument is deprecated. Use EXTRA_CONFIG CODE=<...> instead.") # since YARP 2.3.68
       set(YARPPLUG_CODE "${_YPP_CODE}")
     endif()
 
@@ -659,27 +659,26 @@ endmacro()
 # Deprecated macros
 #
 if(NOT YARP_NO_DEPRECATED)
-  include(${CMAKE_CURRENT_LIST_DIR}/YarpDeprecatedWarning.cmake)
 
   macro(YARP_PREPARE_DEVICE)
-    yarp_deprecated_warning("YARP_PREPARE_DEVICE is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY device) instead.") # Since YARP 2.3.68
+    message(DEPRECATION "YARP_PREPARE_DEVICE is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY device) instead.") # Since YARP 2.3.68
     yarp_prepare_plugin(${ARGN} CATEGORY device)
   endmacro()
 
   macro(YARP_PREPARE_CARRIER)
-    yarp_deprecated_warning("YARP_PREPARE_CARRIER is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY carrier) instead.") # Since YARP 2.3.68
+    message(DEPRECATION "YARP_PREPARE_CARRIER is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY carrier) instead.") # Since YARP 2.3.68
     yarp_prepare_plugin(${ARGN} CATEGORY carrier)
   endmacro()
 
   macro(YARP_ADD_CARRIER_FINGERPRINT file_name)
-    yarp_deprecated_warning("YARP_ADD_CARRIER_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.") # Since YARP 2.3.64
+    message(DEPRECATION "YARP_ADD_CARRIER_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.") # Since YARP 2.3.64
     yarp_install(FILES ${file_name}
                  COMPONENT runtime
                  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
   endmacro()
 
   macro(YARP_ADD_DEVICE_FINGERPRINT file_name)
-    yarp_deprecated_warning("YARP_ADD_DEVICE_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.") # Since YARP 2.3.64
+    message(DEPRECATION "YARP_ADD_DEVICE_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.") # Since YARP 2.3.64
     yarp_install(FILES ${file_name}
                  COMPONENT runtime
                  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
