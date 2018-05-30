@@ -18,7 +18,7 @@ yarp_prepare_plugin(mpi
                     TYPE yarp::os::MpiP2PCarrier
                     INCLUDE yarp/os/MpiP2PCarrier.h
                     EXTRA_CONFIG CODE="MPI_____"
-                    DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_MPI")
+                    DEPENDS "YARP_HAS_MPI")
 
 if(NOT SKIP_mpi)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -54,7 +54,7 @@ yarp_prepare_plugin(mpibcast
                     TYPE yarp::os::MpiBcastCarrier
                     INCLUDE yarp/os/MpiBcastCarrier.h
                     EXTRA_CONFIG CODE="MPIBCAST"
-                    DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_MPI")
+                    DEPENDS "YARP_HAS_MPI")
 
 if(NOT SKIP_mpibcast)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)

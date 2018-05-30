@@ -7,7 +7,7 @@
 
 # used by tcpros_carrier, mjpeg_carrier
 
-if(CREATE_OPTIONAL_CARRIERS)
+if(YARP_COMPILE_CARRIER_PLUGINS)
   add_library(YARP_wire_rep_utils STATIC WireImage.cpp
                                          WireImage.h
                                          WireBottle.cpp

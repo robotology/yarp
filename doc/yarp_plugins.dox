@@ -29,7 +29,7 @@ Only shared libraries (.so/.dll/.dylib) can be loaded at runtime.
 To compile YARP device and carrier plugins respectively, select:
 
  \li YARP_COMPILE_DEVICE_PLUGINS = ON
- \li CREATE_OPTIONAL_CARRIERS = ON
+ \li YARP_COMPILE_CARRIER_PLUGINS = ON
 
 This will bring up a list of possible devices and carriers to choose
 from, for example:

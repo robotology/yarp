@@ -20,7 +20,7 @@ option(CREATE_GUIS "Do you want to compile GUIs" ON)
 option(CREATE_YARPROBOTINTERFACE "Do you want to compile yarprobotinterface?" ON)
 
 # useful carriers
-option(CREATE_OPTIONAL_CARRIERS "Compile some optional carriers" TRUE)
+option(YARP_COMPILE_CARRIER_PLUGINS "Compile some optional carriers" TRUE)
 option(ENABLE_yarpcar_tcpros_carrier "tcpros carrier" TRUE)
 option(ENABLE_yarpcar_rossrv_carrier "rossrv carrier" TRUE)
 option(ENABLE_yarpcar_xmlrpc_carrier "xmlrpc carrier" TRUE)

@@ -10,7 +10,6 @@ yarp_prepare_plugin(bayer
                     INCLUDE BayerCarrier.h
                     EXTRA_CONFIG SUBTYPE=recv
                                  CODE="not applicable"
-                    DEPENDS CREATE_OPTIONAL_CARRIERS
                     DEFAULT ON)
 
 if(NOT SKIP_bayer)

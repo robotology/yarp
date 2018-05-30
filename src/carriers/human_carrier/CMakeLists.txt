@@ -9,8 +9,7 @@ yarp_prepare_plugin(human
                     CATEGORY carrier
                     TYPE HumanCarrier
                     INCLUDE HumanCarrier.h
-                    EXTRA_CONFIG CODE="HUMANITY"
-                    DEPENDS CREATE_OPTIONAL_CARRIERS)
+                    EXTRA_CONFIG CODE="HUMANITY")
 
 if(NOT SKIP_human)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

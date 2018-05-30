@@ -7,7 +7,7 @@
 yarp_prepare_plugin(depthimage TYPE DepthImageConverter
                                INCLUDE DepthImage.h
                                CATEGORY portmonitor
-                               DEPENDS "CREATE_OPTIONAL_CARRIERS;ENABLE_yarpcar_portmonitor")
+                               DEPENDS "ENABLE_yarpcar_portmonitor")
 
 if(NOT SKIP_depthimage)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
