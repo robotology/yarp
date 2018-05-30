@@ -372,7 +372,7 @@ static bool ImageWriteFloat(ImageOf<PixelFloat>& img, const char *filename)
         return false;
     }
 
-    int dims[2] = { img.width(), img.height() };
+    size_t dims[2] = { img.width(), img.height() };
 
     size_t bw = 0;
     size_t size_ = sizeof(float);
