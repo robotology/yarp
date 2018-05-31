@@ -54,22 +54,22 @@ struct YARP_OS_API yarp::os::YarpTimerEvent
 
 struct YARP_OS_API yarp::os::TimerSettings
 {
-    TimerSettings(double inRate) :
-            rate(inRate),
+    TimerSettings(double inPeriod) :
+            period(inPeriod),
             totalTime(0.0),
             totalRunCount(0),
             tolerance(0.001)
     {
     }
-    TimerSettings(double inRate, size_t count, double seconds) :
-            rate(inRate),
+    TimerSettings(double inPeriod, size_t count, double seconds) :
+            period(inPeriod),
             totalTime(seconds),
             totalRunCount(count),
             tolerance(0.001)
     {
     }
-    TimerSettings(double inRate, size_t count, double seconds, double inTollerance) :
-            rate(inRate),
+    TimerSettings(double inPeriod, size_t count, double seconds, double inTollerance) :
+            period(inPeriod),
             totalTime(seconds),
             totalRunCount(count),
             tolerance(inTollerance)
@@ -78,12 +78,12 @@ struct YARP_OS_API yarp::os::TimerSettings
 
     bool operator==(const TimerSettings& rhs) const
     {
-        return rate == rhs.rate && totalTime == rhs.totalTime && totalRunCount == rhs.totalRunCount && tolerance == rhs.tolerance;
+        return period == rhs.period && totalTime == rhs.totalTime && totalRunCount == rhs.totalRunCount && tolerance == rhs.tolerance;
     }
 
 
     /**
-     * @param rate the rate of the timer in seconds
+     * @param period the period of the timer in seconds
      * @param totalTime the life of the timer in seconds. 0 == infinite.
      *        The lower between totalTime and totalRunCount*rate + execution
      *        delay will stop the timer
@@ -92,7 +92,7 @@ struct YARP_OS_API yarp::os::TimerSettings
      *        delay will stop the timer
      * @param tolerance the tolerance while checking the timer life
      */
-    double rate;
+    double period;
     double totalTime;
     size_t totalRunCount;
     double tolerance;

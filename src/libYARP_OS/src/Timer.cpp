@@ -189,7 +189,7 @@ class ThreadedTimer : public yarp::os::Timer::PrivateImpl,
 
 public:
     ThreadedTimer(TimerSettings sett, TimerCallback call, yarp::os::Mutex* mutex = nullptr) :
-            PrivateImpl(sett, call, mutex), RateThread((int)(sett.rate * 1000))
+            PrivateImpl(sett, call, mutex), RateThread((int)(sett.period * 1000))
     {
     }
 
@@ -256,8 +256,8 @@ YarpTimerEvent yarp::os::Timer::PrivateImpl::getEventNow(unsigned int iteration)
     YarpTimerEvent event;
 
     event.currentReal = yarp::os::Time::now();
-    event.currentExpected = m_startStamp + iteration * m_settings.rate;
-    event.lastExpected = event.currentExpected - m_settings.rate;
+    event.currentExpected = m_startStamp + iteration * m_settings.period;
+    event.lastExpected = event.currentExpected - m_settings.period;
     event.lastReal = m_lastReal;
     event.lastDuration = event.currentReal - m_lastReal;
     event.runCount = iteration;
