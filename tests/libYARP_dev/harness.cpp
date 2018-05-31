@@ -10,13 +10,13 @@
 #include <string>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/UnitTest.h>
-#include <yarp/os/impl/Companion.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Drivers.h>
+#include <yarp/companion/yarpcompanion.h>
 
 #include "TestList.h"
 
@@ -77,7 +77,7 @@ int harness_main(int argc, char *argv[]) {
         }
     }
     if (!done) {
-        Companion::main(argc,argv);
+        yarp::companion::main(argc,argv);
     }
 
     return result;

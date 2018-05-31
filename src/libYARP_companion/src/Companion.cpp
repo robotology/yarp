@@ -7,14 +7,14 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/impl/Companion.h>
+#include <yarp/companion/impl/Companion.h>
+#include <yarp/companion/yarpcompanion.h>
 
 #include <yarp/conf/system.h>
 #include <yarp/conf/version.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Carriers.h>
-#include <string>
 #include <yarp/os/Name.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
@@ -35,115 +35,125 @@
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/PlatformSignal.h>
-#include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformUnistd.h>
+#include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
+#include <yarp/os/impl/Terminal.h>
 
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <string>
 
 
-#ifdef WITH_LIBEDIT
-    #include <editline/readline.h>
-    #include <vector>
-    static std::vector<std::string> commands;
-    static yarp::os::Port* rpcHelpPort = nullptr;
-    static bool commandListInitialized = false;
-
-    static char* dupstr(char* s)
-    {
-        char *r;
-        r = (char*) malloc ((strlen (s) + 1));
-        strcpy (r, s);
-        return (r);
-    }
-    /* Generator function for command completion.  STATE lets us know whether
-   to start from scratch; without any state (i.e. STATE == 0), then we
-   start at the top of the list. */
-    static char* command_generator (const char* text, int state)
-    {
-        static size_t list_index, len;
-        char *name;
-
-        /* if this is a new word to complete, initialize now.  this includes
-            saving the length of text for efficiency, and initializing the index
-            variable to 0. */
-        if (!state)
-            {
-            list_index = 0;
-            len = strlen (text);
-            }
-
-        if (!commandListInitialized)
-        {
-            commands.clear();
-            yarp::os::Bottle helpCommand, helpBottle;
-            helpCommand.addString("help");
-            bool helpOk=false;
-            if (rpcHelpPort)
-                helpOk = rpcHelpPort->write(helpCommand, helpBottle);
-            if (helpOk)
-            {
-                yarp::os::Bottle* cmdList = nullptr;
-                if (helpBottle.get(0).isVocab() && helpBottle.get(0).asVocab()==VOCAB4('m', 'a', 'n', 'y') )
-                {
-                    cmdList=helpBottle.get(1).asList();
-                }
-                else
-                    cmdList=helpBottle.get(0).asList();
-                if (cmdList && cmdList->get(0).asString() == "*** Available commands:")
-                {
-                    for (size_t i=1; i<cmdList->size(); ++i)
-                        commands.push_back(cmdList->get(i).asString());
-                }
-            }
-            commands.push_back(" ");
-            commandListInitialized=true;
-        }
-        while ((list_index<commands.size()) && (name = (char*)commands[list_index].c_str()))
-            {
-            list_index++;
-            if (strncmp (name, text, len) == 0)
-                return (dupstr(name));
-            }
-
-        /* if no names matched, then return null. */
-        return ((char *)nullptr);
-    }
-    /* Attempt to complete on the contents of TEXT.  START and END show the
-   region of TEXT that contains the word to complete.  We can use the
-   entire line in case we want to do some simple parsing.  Return the
-   array of matches, or nullptr if there aren't any. */
-    static char ** my_completion (const char* text, int start, int end)
-    {
-        YARP_UNUSED(end);
-        char **matches;
-        matches = (char **)nullptr;
-
-        /* If this word is at the start of the line, then it is a command
-        to complete. If we are completing after "help ", it is a command again.
-        Otherwise, stop completing. */
-        if (start == 0)
-            matches = rl_completion_matches(text, &command_generator);
-        else if (start == 5 && strncmp (text, "help ", 5))
-            matches = rl_completion_matches(text, &command_generator);
-        else
-            rl_attempted_completion_over=1;
-
-        return (matches);
-    }
-
-#endif
-
+using namespace yarp::companion::impl;
 using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp;
 
-Companion Companion::instance;
+#ifdef WITH_LIBEDIT
+
+#include <editline/readline.h>
+#include <vector>
+static std::vector<std::string> commands;
+static yarp::os::Port* rpcHelpPort = nullptr;
+static bool commandListInitialized = false;
+
+static char* dupstr(char* s)
+{
+    char *r;
+    r = (char*) malloc ((strlen (s) + 1));
+    strcpy (r, s);
+    return (r);
+}
+
+/* Generator function for command completion.  STATE lets us know whether
+   to start from scratch; without any state (i.e. STATE == 0), then we
+   start at the top of the list. */
+static char* command_generator (const char* text, int state)
+{
+    static size_t list_index, len;
+    char *name;
+
+    /* if this is a new word to complete, initialize now.  this includes
+        saving the length of text for efficiency, and initializing the index
+        variable to 0. */
+    if (!state)
+    {
+        list_index = 0;
+        len = strlen (text);
+    }
+
+    if (!commandListInitialized)
+    {
+        commands.clear();
+        yarp::os::Bottle helpCommand, helpBottle;
+        helpCommand.addString("help");
+        bool helpOk=false;
+        if (rpcHelpPort)
+            helpOk = rpcHelpPort->write(helpCommand, helpBottle);
+        if (helpOk)
+        {
+            yarp::os::Bottle* cmdList = nullptr;
+            if (helpBottle.get(0).isVocab() && helpBottle.get(0).asVocab()==VOCAB4('m', 'a', 'n', 'y') )
+            {
+                cmdList=helpBottle.get(1).asList();
+            }
+            else
+                cmdList=helpBottle.get(0).asList();
+            if (cmdList && cmdList->get(0).asString() == "*** Available commands:")
+            {
+                for (size_t i=1; i<cmdList->size(); ++i)
+                    commands.push_back(cmdList->get(i).asString());
+            }
+        }
+        commands.push_back(" ");
+        commandListInitialized=true;
+    }
+    while ((list_index<commands.size()) && (name = (char*)commands[list_index].c_str()))
+        {
+        list_index++;
+        if (strncmp (name, text, len) == 0)
+            return (dupstr(name));
+        }
+
+    /* if no names matched, then return null. */
+    return ((char *)nullptr);
+}
+
+/* Attempt to complete on the contents of TEXT.  START and END show the
+   region of TEXT that contains the word to complete.  We can use the
+   entire line in case we want to do some simple parsing.  Return the
+   array of matches, or nullptr if there aren't any. */
+static char ** my_completion (const char* text, int start, int end)
+{
+    YARP_UNUSED(end);
+    char **matches;
+    matches = (char **)nullptr;
+
+    /* If this word is at the start of the line, then it is a command
+       to complete. If we are completing after "help ", it is a command again.
+       Otherwise, stop completing. */
+    if (start == 0)
+        matches = rl_completion_matches(text, &command_generator);
+    else if (start == 5 && strncmp (text, "help ", 5))
+        matches = rl_completion_matches(text, &command_generator);
+    else
+        rl_attempted_completion_over=1;
+
+    return (matches);
+}
+
+#endif // WITH_LIBEDIT
+
+Companion& Companion::getInstance()
+{
+    static Companion instance;
+    return instance;
+}
 
 static std::string companion_unregister_name;
 static Port *companion_active_port = nullptr;
@@ -209,61 +219,6 @@ static void companion_install_handler() {
     #endif
 }
 
-#ifdef WITH_LIBEDIT
-static char* szLine = (char*)nullptr;
-static bool readlineEOF=false;
-#endif
-static bool EOFreached()
-{
-#ifdef WITH_LIBEDIT
-    if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin))) {
-        return readlineEOF;
-    }
-#endif
-    return feof(stdin);
-}
-
-static std::string getStdin() {
-    std::string txt = "";
-
-#ifdef WITH_LIBEDIT
-    if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin))) {
-        if (szLine) {
-            free(szLine);
-            szLine = (char*)nullptr;
-        }
-
-        szLine = readline(">>");
-        if (szLine && *szLine) {
-            txt = szLine;
-            add_history(szLine);
-        } else if (!szLine) {
-            readlineEOF=true;
-        }
-        return txt;
-    }
-#endif
-
-    bool done = false;
-    char buf[2048];
-    while (!done) {
-        char *result = fgets(buf, sizeof(buf), stdin);
-        if (result != nullptr) {
-            for (unsigned int i=0; i<strlen(buf); i++) {
-                if (buf[i]=='\n') {
-                    buf[i] = '\0';
-                    done = true;
-                    break;
-                }
-            }
-            txt += buf;
-        } else {
-            done = true;
-        }
-    }
-    return txt;
-}
-
 static void writeBottleAsFile(const char *fileName, const Bottle& bot) {
     FILE *fout = fopen(fileName, "w");
     if (!fout) {
@@ -277,10 +232,11 @@ static void writeBottleAsFile(const char *fileName, const Bottle& bot) {
 }
 
 
-Companion::Companion() {
-    adminMode = false;
-    waitConnect = false;
-    add("check",      &Companion::cmdCheck,
+Companion::Companion() :
+    adminMode(false),
+    waitConnect(false)
+{
+   add("check",      &Companion::cmdCheck,
         "run a simple sanity check to see if yarp is working");
     add("clean",  &Companion::cmdClean,
         "try to remove inactive entries from the name server");
@@ -339,6 +295,11 @@ Companion::Companion() {
         "report where the yarp name server is running");
     add("write",      &Companion::cmdWrite,
         "write to the network from standard input");
+}
+
+void Companion::setAdminMode(bool admin)
+{
+    adminMode = admin;
 }
 
 void Companion::add(const char* name,
@@ -410,7 +371,7 @@ int Companion::dispatch(const char* name, int argc, char* argv[])
 }
 
 
-int Companion::main(int argc, char *argv[]) {
+int yarp::companion::main(int argc, char *argv[]) {
     ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
     if (!rf.isConfigured()) {
         rf.configure(argc, argv);
@@ -426,7 +387,7 @@ int Companion::main(int argc, char *argv[]) {
         return 0;
     }
 
-    Companion& instance = getInstance();
+    Companion& instance = Companion::getInstance();
     int verbose = 0;
     bool adminMode = false;
     bool more = true;
@@ -464,7 +425,7 @@ int Companion::main(int argc, char *argv[]) {
     const char *cmd = argv[0];
     argc--;
     argv++;
-    instance.adminMode = adminMode;
+    instance.setAdminMode(adminMode);
     return instance.dispatch(cmd, argc, argv);
 }
 
@@ -479,7 +440,6 @@ int Companion::cmdTerminate(int argc, char *argv[]) {
     printf("Wrong parameter format, please specify a port name as a single parameter to terminate\n");
     return 1;
 }
-
 
 
 int Companion::cmdPing(int argc, char *argv[]) {
@@ -577,7 +537,7 @@ int Companion::ping(const char *port, bool quiet) {
             delete out;
         }
     } else {
-        int e = exists(port, quiet);
+        int e = NetworkBase::exists(port, quiet);
         printf("%s %s.\n", port, (e==0)?"exists":"is not responding");
         return e;
     }
@@ -588,7 +548,7 @@ int Companion::ping(const char *port, bool quiet) {
 
 int Companion::cmdExists(int argc, char *argv[]) {
     if (argc == 1) {
-        return exists(argv[0], true);
+        return NetworkBase::exists(argv[0], true);
     }
     if (argc == 2) {
         bool ok = NetworkBase::isConnected(argv[0], argv[1], false);
@@ -599,83 +559,16 @@ int Companion::cmdExists(int argc, char *argv[]) {
     return 1;
 }
 
-
-
-int Companion::exists(const char *target, const ContactStyle& style) {
-    bool silent = style.quiet;
-    Contact address = NetworkBase::queryName(target);
-    if (!address.isValid()) {
-        if (!silent) {
-            printf("Address of port %s is not valid\n", target);
-        }
-        return 2;
-    }
-
-    Contact address2(address);
-    if (style.timeout>=0) {
-        address2.setTimeout((float)style.timeout);
-    }
-    OutputProtocol *out = Carriers::connect(address2);
-
-    if (out == nullptr) {
-        if (!silent) {
-            printf("Cannot connect to port %s\n", target);
-        }
-        return 1;
-    } else {
-        out->close();
-    }
-    delete out;
-    out = nullptr;
-    return 0;
-}
-
-
-
 int Companion::cmdWait(int argc, char *argv[]) {
     if (argc == 1) {
-        return wait(argv[0], false);
+        return NetworkBase::waitPort(argv[0]);
     }
     if (argc == 2) {
-        return wait(argv[0], false, argv[1]);
+        return NetworkBase::waitConnection(argv[0], argv[1]);
     }
     fprintf(stderr, "Please specify a single port name, or a source and destination port name\n");
     return 1;
 }
-
-
-int Companion::wait(const char *target, bool silent, const char *target2) {
-    bool done = false;
-    int ct = 1;
-    while (!done) {
-        if (ct%30==1) {
-            if (!silent) {
-                if (target2 != nullptr) {
-                    YARP_SPRINTF2(Logger::get(), info,
-                                  "Waiting for %s->%s...", target, target2);
-                } else {
-                    YARP_SPRINTF1(Logger::get(), info,
-                                  "Waiting for %s...", target);
-                }
-            }
-        }
-        ct++;
-        int result = 0;
-        if (target2 != nullptr) {
-            result = NetworkBase::isConnected(target, target2, true)?0:1;
-        } else {
-            result = exists(target, true);
-        }
-        if (result!=0) {
-            SystemClock::delaySystem(0.1);
-        } else {
-            done = true;
-        }
-    }
-    return 0;
-}
-
-
 
 int Companion::cmdName(int argc, char *argv[]) {
     ContactStyle style;
@@ -939,69 +832,6 @@ int Companion::cmdVersion(int argc, char *argv[]) {
 }
 
 
-int Companion::sendMessage(const std::string& port, PortWriter& writable,
-                           std::string& output, bool quiet) {
-    output = "";
-    Contact srcAddress = NetworkBase::queryName(port.c_str());
-    if (!srcAddress.isValid()) {
-        if (!quiet) {
-            fprintf(stderr, "Cannot find port named %s\n", port.c_str());
-        }
-        return 1;
-    }
-    OutputProtocol *out = Carriers::connect(srcAddress);
-    if (out == nullptr) {
-        if (!quiet) {
-            fprintf(stderr, "Cannot connect to port named %s at %s\n",
-                            port.c_str(),
-                            srcAddress.toURI().c_str());
-        }
-        return 1;
-    }
-    Route route("admin", port, "text");
-
-
-    bool ok = out->open(route);
-    if (!ok) {
-        if (!quiet) fprintf(stderr, "Cannot make connection\n");
-        if (out != nullptr) delete out;
-        return 1;
-    }
-
-    BufferedConnectionWriter bw(out->getConnection().isTextMode());
-    PortCommand disconnect('\0', "q");
-    bool wok = writable.write(bw);
-    if (!wok) {
-        if (!quiet) fprintf(stderr, "Cannot write on connection\n");
-        if (out != nullptr) delete out;
-        return 1;
-    }
-    if (!disconnect.write(bw)) {
-        if (!quiet) fprintf(stderr, "Cannot write on connection\n");
-        if (out != nullptr) delete out;
-        return 1;
-    }
-
-    out->write(bw);
-    InputProtocol& ip = out->getInput();
-    ConnectionReader& con = ip.beginRead();
-    Bottle b;
-    b.read(con);
-    b.read(con);
-    output = b.toString().c_str();
-    if (!quiet) {
-        //fprintf(stderr, "%s\n", b.toString().c_str());
-        YARP_SPRINTF1(Logger::get(), info, "%s", b.toString().c_str());
-    }
-    ip.endRead();
-    out->close();
-    delete out;
-    out = nullptr;
-
-    return 0;
-}
-
-
 int Companion::cmdConnect(int argc, char *argv[]) {
     //int argc_org = argc;
     //char **argv_org = argv;
@@ -1199,7 +1029,7 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
         if (echo) {
             response = cmd;
         } else {
-            std::string txt = getStdin();
+            std::string txt = yarp::os::impl::terminal::getStdin();
             response.fromString(txt.c_str());
         }
         if (drop) {
@@ -1264,8 +1094,8 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
         }
     }
     while(ok) {
-        std::string txt = getStdin();
-        if (EOFreached()) {
+        std::string txt = yarp::os::impl::terminal::getStdin();
+        if (yarp::os::impl::terminal::EOFreached()) {
             break;
         }
         Bottle cmd(txt.c_str()), reply;
@@ -1815,58 +1645,12 @@ int Companion::unsubscribe(const char *src, const char *dest) {
 int Companion::connect(const char *src, const char *dest, bool silent) {
     bool ok = NetworkBase::connect(src, dest, nullptr, silent);
     return ok?0:1;
-    /*
-    int err = 0;
-    std::string result = "";
-    Address srcAddr = Name(src).toAddress();
-    Address destAddr = Name(dest).toAddress();
-    if (destAddr.getCarrierName()=="" &&
-        srcAddr.getCarrierName()!="") {
-        // old behavior unhelpful; move modifier from src to dest in
-        // this case
-        std::string newDest = srcAddr.getCarrierName() + ":/" + slashify(dest);
-        std::string newSrc = slashify(srcAddr.getRegName());
-        PortCommand pc('\0', slashify(newDest));
-        err = sendMessage(newSrc.c_str(), pc, result, silent);
-    } else {
-        // do not risk changing old behavior
-        PortCommand pc('\0', slashify(dest));
-        err = sendMessage(src, pc, result, silent);
-    }
-    if (err==0) {
-        err = 1;
-        //printf("RESULT is %s err is %d\n", result.c_str(), err);
-        // specifically test for "Added output..." message
-        if (result.length()>0) {
-            if (result[0]=='A') {
-                err = 0;
-            }
-        }
-    }
-    return err;
-    */
-}
-
-
-int Companion::poll(const char *target, bool silent) {
-    PortCommand pc('\0', "*");
-    return sendMessage(target, pc, silent);
 }
 
 int Companion::disconnect(const char *src, const char *dest, bool silent) {
-    //PortCommand pc('\0', std::string("!")+dest);
-    //return sendMessage(src, pc, silent);
     bool ok = NetworkBase::disconnect(src, dest, silent);
     return ok?0:1;
 }
-
-int Companion::disconnectInput(const char *src, const char *dest,
-                               bool silent) {
-    PortCommand pc('\0', std::string("~")+dest);
-    return sendMessage(src, pc, silent);
-}
-
-
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -2117,9 +1901,9 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     }
 
 
-    while (!EOFreached()) {
-        std::string txt = getStdin();
-        if (!EOFreached()) {
+    while (!yarp::os::impl::terminal::EOFreached()) {
+        std::string txt = yarp::os::impl::terminal::getStdin();
+        if (!yarp::os::impl::terminal::EOFreached()) {
             if (txt.length()>0) {
                 if (txt[0]<32 && txt[0]!='\n' &&
                     txt[0]!='\r' && txt[0]!='\t') {
@@ -2203,7 +1987,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
     rl_attempted_completion_function = my_completion;
 #endif
 
-    while (!EOFreached()) {
+    while (!yarp::os::impl::terminal::EOFreached()) {
         Port port;
         port.openFake(connectionName);
         if (!port.addOutput(targetName)) {
@@ -2230,13 +2014,13 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
 #ifdef WITH_LIBEDIT
     rpcHelpPort = &port;
 #endif
-        while (port.getOutputCount()==1&&!EOFreached()) {
+        while (port.getOutputCount()==1&&!yarp::os::impl::terminal::EOFreached()) {
             std::string txt;
             if (!resendFlag) {
-                txt = getStdin();
+                txt = yarp::os::impl::terminal::getStdin();
             }
 
-            if (!EOFreached()) {
+            if (!yarp::os::impl::terminal::EOFreached()) {
                 if (txt.length()>0) {
                     if (txt[0]<32 && txt[0]!='\n' &&
                         txt[0]!='\r') {
@@ -2286,36 +2070,9 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
     return 0;
 }
 
-
-
-std::string Companion::readString(bool *eof) {
-    bool end = false;
-
-    std::string txt;
-
-    if (!EOFreached()) {
-        txt = getStdin();
-    }
-
-    if (EOFreached()) {
-        end = true;
-    } else if (txt.length()>0 && txt[0]<32 && txt[0]!='\n' &&
-               txt[0]!='\r') {
-        end = true;
-    }
-    if (end) {
-        txt = "";
-    }
-    if (eof != nullptr) {
-        *eof = end;
-    }
-    return txt;
-}
-
 std::string Companion::version() {
     return YARP_VERSION;
 }
-
 
 static void plugin_signal_handler(int) {
    // prevent infinite recursion if say_hi() causes another segfault

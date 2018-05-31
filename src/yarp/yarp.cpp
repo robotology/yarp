@@ -8,6 +8,7 @@
  */
 
 #include <yarp/os/Network.h>
+#include <yarp/companion/yarpcompanion.h>
 #include <yarp/serversql/yarpserversql.h>
 #include <yarp/run/Run.h>
 
@@ -34,6 +35,6 @@ int main(int argc, char *argv[]) {
     }
 
     // call the yarp standard companion
-    return Network::main(argc,argv);
+    yarp::companion::main(argc,argv);
 }
 

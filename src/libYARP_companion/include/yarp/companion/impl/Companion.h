@@ -7,9 +7,10 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_IMPL_COMPANION_H
-#define YARP_OS_IMPL_COMPANION_H
+#ifndef YARP_COMPANION_IMPL_COMPANION_H
+#define YARP_COMPANION_IMPL_COMPANION_H
 
+#include <yarp/companion/api.h>
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/ContactStyle.h>
 #include <yarp/os/Contactable.h>
@@ -19,35 +20,19 @@
 #include <vector>
 #include <cstdio>
 
-// ACE headers may fiddle with main
-#ifdef main
-#undef main
-#endif
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class Companion;
-        }
-    }
-}
+namespace companion {
+namespace impl {
 
 /**
  * Implementation of a standard set of YARP utilities.
  */
-class YARP_OS_impl_API yarp::os::impl::Companion {
+class YARP_companion_API Companion
+{
 public:
 
     static std::string version();
-
-    /**
-     * The standard main method for the YARP companion utility.
-     * @param argc Argument count
-     * @param argv Command line arguments
-     * @return 0 on success, non-zero on failure
-     */
-
-    static int main(int argc, char *argv[]);
 
     /**
      * Request that an output port connect to an input port.
@@ -68,22 +53,6 @@ public:
      */
     static int disconnect(const char *src, const char *dest,
                           bool silent = false);
-
-    static int disconnectInput(const char *src, const char *dest,
-                               bool silent = false);
-
-    static int poll(const char *target, bool silent = false);
-
-    static int wait(const char *target, bool silent = false,
-                    const char *target2 = nullptr);
-
-    static int exists(const char *target, bool silent = false) {
-        ContactStyle style;
-        style.quiet = silent;
-        return exists(target, style);
-    }
-
-    static int exists(const char *target, const ContactStyle& style);
 
     /**
      * Create a port to read Bottles and prints them to standard input.
@@ -119,21 +88,9 @@ public:
      */
     static std::string readString(bool *eof=nullptr);
 
+    static Companion& getInstance();
 
-    static int sendMessage(const std::string& port, yarp::os::PortWriter& writable,
-                           bool silent = false) {
-        std::string output;
-        return sendMessage(port, writable, output, silent);
-    }
-
-    static int sendMessage(const std::string& port, yarp::os::PortWriter& writable,
-                           std::string& output,
-                           bool quiet);
-
-
-    static Companion& getInstance() {
-        return instance;
-    }
+    void setAdminMode(bool admin);
 
     int dispatch(const char *name, int argc, char *argv[]);
 
@@ -211,8 +168,6 @@ private:
 
     Companion();
 
-    static Companion instance;
-
     void applyArgs(yarp::os::Contactable& port);
 
     class Entry {
@@ -242,4 +197,9 @@ private:
              const char* tip);
 };
 
-#endif // YARP_OS_IMPL_COMPANION_H
+} // namespace impl
+} // namespace companion
+} // namespace yarp
+
+
+#endif // YARP_COMPANION_IMPL_COMPANION_H

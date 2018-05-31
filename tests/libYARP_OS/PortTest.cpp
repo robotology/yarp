@@ -8,7 +8,6 @@
  */
 
 #include <yarp/os/Port.h>
-#include <yarp/os/impl/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/RateThread.h>
@@ -20,20 +19,20 @@
 #include <yarp/os/BinPortable.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/NetType.h>
-#include <yarp/os/impl/UnitTest.h>
-
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/PortReport.h>
-
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/PortInfo.h>
+#include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Drivers.h>
 
 #include <yarp/sig/Image.h>
+
+#include <yarp/companion/impl/Companion.h>
 
 //#include "TestList.h"
 
@@ -1204,7 +1203,7 @@ public:
         writer.start();
         int argc = 2;
         const char *argv[] = {"...","/write"};
-        Companion::getInstance().cmdRead(argc,(char**)argv);
+        yarp::companion::impl::Companion::getInstance().cmdRead(argc,(char**)argv);
         writer.finish();
     }
 

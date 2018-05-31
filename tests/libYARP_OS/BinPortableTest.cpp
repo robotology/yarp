@@ -13,14 +13,12 @@
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/impl/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/NetInt32.h>
 
 #include <yarp/os/impl/UnitTest.h>
-//#include "TestList.h"
 
 using namespace yarp::os::impl;
 using namespace yarp::os;

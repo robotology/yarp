@@ -20,6 +20,8 @@
 
 #include <yarp/sig/SoundFile.h>
 
+#include <yarp/os/impl/Terminal.h>
+
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::sig::file;
@@ -226,7 +228,7 @@ int main(int argc, char *argv[]) {
             yInfo("Type \"help\" for usage\n");
         }
 
-        std::string keys = Network::readString();
+        std::string keys = yarp::os::impl::terminal::readString(nullptr);
         Bottle b(keys);
         std::string cmd = b.get(0).asString();
         if (b.size()==0) {

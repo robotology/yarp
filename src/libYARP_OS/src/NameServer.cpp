@@ -18,13 +18,13 @@
 #ifdef YARP_HAS_ACE
 #  include <yarp/os/impl/FallbackNameServer.h>
 #endif
-#include <yarp/os/impl/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
+#include <yarp/conf/version.h>
 
 #include <map>
 #include <set>
@@ -581,7 +581,7 @@ yarp::os::Bottle NameServer::ncmdVersion(int argc, char *argv[]) {
     YARP_UNUSED(argv);
     Bottle response;
     response.addString("version");
-    response.addString(Companion::version().c_str());
+    response.addString(YARP_VERSION);
     return response;
 }
 

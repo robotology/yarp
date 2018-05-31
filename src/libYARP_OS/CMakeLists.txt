@@ -149,7 +149,6 @@ set(YARP_OS_IDL_HDRS include/yarp/os/idl/BareStyle.h
 set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/BottleImpl.h
                       include/yarp/os/impl/BufferedConnectionWriter.h
-                      include/yarp/os/impl/Companion.h
                       include/yarp/os/impl/DgramTwoWayStream.h
                       include/yarp/os/impl/Dispatcher.h
                       include/yarp/os/impl/FakeFace.h
@@ -199,6 +198,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/TcpConnector.h
                       include/yarp/os/impl/TcpFace.h
                       include/yarp/os/impl/TcpStream.h
+                      include/yarp/os/impl/Terminal.h
                       include/yarp/os/impl/TextCarrier.h
                       include/yarp/os/impl/ThreadImpl.h
                       include/yarp/os/impl/UdpCarrier.h
@@ -217,7 +217,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Bytes.cpp
                  src/Carrier.cpp
                  src/Carriers.cpp
-                 src/Companion.cpp
                  src/ConnectionReader.cpp
                  src/ConnectionWriter.cpp
                  src/Contactable.cpp
@@ -311,6 +310,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/SystemInfoSerializer.cpp
                  src/TcpCarrier.cpp
                  src/TcpFace.cpp
+                 src/Terminal.cpp
                  src/Terminator.cpp
                  src/TextCarrier.cpp
                  src/Things.cpp

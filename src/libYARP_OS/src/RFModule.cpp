@@ -18,6 +18,7 @@
 
 #include <yarp/os/impl/PlatformTime.h>
 #include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/Terminal.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -49,7 +50,7 @@ public:
         yInfo("Listening to terminal (type \"quit\" to stop module).");
         bool isEof = false;
         while (!(isEof || isStopping() || owner.isStopping())) {
-            std::string str = NetworkBase::readString(&isEof);
+            std::string str = yarp::os::impl::terminal::readString(&isEof);
             if (!isEof) {
                 Bottle cmd(str.c_str());
                 Bottle reply;
@@ -102,7 +103,7 @@ public:
 
 
     bool detachTerminal() {
-        yWarning("Critial: stopping thread, this might hang.");
+        yWarning("Critical: stopping thread, this might hang.");
         Thread::stop();
         yWarning("done!");
         return true;

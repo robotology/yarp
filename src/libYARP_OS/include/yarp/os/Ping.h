@@ -13,6 +13,8 @@
 #include <cmath>
 #include <string>
 
+#include <yarp/os/api.h>
+
 namespace yarp {
     namespace os {
         class Stat;
@@ -120,7 +122,7 @@ public:
  * non-YARP ports with a compatible protocol.
  *
  */
-class yarp::os::Ping {
+class YARP_OS_API yarp::os::Ping {
 public:
     Ping(const char *target = nullptr) {
         if (target != nullptr) {

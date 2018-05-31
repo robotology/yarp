@@ -22,6 +22,7 @@ add_subdirectory(libYARP_dev)
 add_subdirectory(libYARP_pcl)
 
 # private libraries
+add_subdirectory(libYARP_companion)
 add_subdirectory(libYARP_name)
 add_subdirectory(libYARP_serversql)
 add_subdirectory(libYARP_run)

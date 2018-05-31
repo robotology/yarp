@@ -13,7 +13,6 @@
 #include <yarp/os/all.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/UnitTest.h>
-#include <yarp/os/impl/Companion.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;

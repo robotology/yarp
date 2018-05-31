@@ -14,7 +14,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/Carrier.h>
-#include <yarp/os/impl/Companion.h>
+#include <yarp/companion/impl/Companion.h>
 
 using namespace std;
 using namespace yarp::os;
@@ -239,7 +239,7 @@ bool NetworkProfiler::yarpClean(float timeout) {
     char* argv[2];
     argv[0] = (char*) "--timeout";
     argv[1] = (char*) sstream.str().c_str();
-    yarp::os::impl::Companion::getInstance().cmdClean(2,argv);
+    yarp::companion::impl::Companion::getInstance().cmdClean(2,argv);
     return true;
 }
 

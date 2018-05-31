@@ -175,7 +175,7 @@ public:
      * @param quiet suppress messages displayed during check
      * @return true on success, false on failure
      */
-    static bool exists(const std::string& port, bool quiet = true);
+    static bool exists(const std::string& port, bool quiet = true, bool checkVer = true);
 
     /**
      * Check for a port to be ready and responsive.
@@ -183,7 +183,7 @@ public:
      * @param style options for network communication
      * @return true on success, false on failure
      */
-    static bool exists(const std::string& port, const ContactStyle& style);
+    static bool exists(const std::string& port, const ContactStyle& style, bool checkVer = true);
 
     /**
      * Wait for a port to be ready and responsive.
@@ -192,18 +192,6 @@ public:
      * @return true on success, false on failure
      */
     static bool sync(const std::string& port, bool quiet = true);
-
-    /**
-     * The standard main method for the YARP companion utility.
-     * This method is not thread-safe; it initializes and shuts
-     * down YARP, the effect of which varies between operating
-     * systems.  Do not call this method if there are other
-     * threads using YARP.
-     * @param argc argument count
-     * @param argv command line arguments
-     * @return 0 on success, non-zero on failure
-     */
-    static int main(int argc, char *argv[]);
 
     /**
      * An assertion.  Should be true.  If false, this will be
@@ -333,6 +321,7 @@ public:
      */
     static bool getLocalMode();
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     /**
      * Read a line of arbitrary length from standard input.
      *
@@ -344,8 +333,12 @@ public:
      *
      * @return A string from standard input, without newline or
      * linefeed characters.
+     *
+     * @deprecated since YARP 3.0.0
      */
+    YARP_DEPRECATED
     static std::string readString(bool *eof = nullptr);
+#endif // YARP_NO_DEPRECATED
 
 
     /**
@@ -621,12 +614,73 @@ public:
      */
     static bool getConnectionQos(const std::string& src, const std::string& dest,
                                  QosStyle& srcStyle, QosStyle& destStyle, bool quiet=true);
+
     /**
      * Checks that the port has a valid name.
      * @param portName the name of port
      * @return true if portName is valid
      */
     static bool isValidPortName(const std::string& portName);
+
+    /**
+     * Delays the system until a specified connection is established.
+     * @param source name of the source port of the connection
+     * @param destination name of the dest port of the connection
+     * @param quiet flag for verbosity
+     * @return true when the connection is finally found
+     */
+    static bool waitConnection(const std::string& source,
+                               const std::string& destination,
+                               bool quiet = false);
+
+    /**
+     * Delays the system until a specified port is open.
+     * @param target name of the port to wait for
+     * @param quiet flag for verbosity
+     * @return true when the port is finally open
+     */
+    static bool waitPort(const std::string& target, bool quiet = false);
+
+    /**
+     * Just a reminder to sendMessage with temporary output parameter that will
+     * be discarded.
+     */
+    static int sendMessage(const std::string& port,
+                           yarp::os::PortWriter& writable,
+                           bool silent = false);
+
+    /**
+     * Sends a message to the specified port.
+     * @param port name of destination port
+     * @param writable the object to be written to the port
+     * @param output storage string for the output message received from port
+     * @param quiet flag for verbosity
+     * @return 0 on success
+     */
+    static int sendMessage(const std::string& port,
+                           yarp::os::PortWriter& writable,
+                           std::string& output,
+                           bool quiet);
+
+    /**
+     * Sends a disconnection command to the specified port.
+     * @param src the port to send the command to
+     * @param dest the port that has to be disconnected
+     * @param silent flag for verbosity
+     * @return 0 on success
+     */
+    static int disconnectInput(const std::string& src,
+                               const std::string& dest,
+                               bool silent = false);
+
+    /**
+     * Sends a 'describe yourself' message to a specified port, in order to
+     * receive information about the port and its connections.
+     * @param target the name of the port to be described
+     * @param silent flag for verbosity
+     * @return 0 on success
+     */
+    static int poll(const std::string& target, bool silent = false);
 };
 
 /**

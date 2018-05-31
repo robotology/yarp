@@ -8,8 +8,8 @@
  */
 
 #include <yarp/os/impl/UnitTest.h>
-
 #include <yarp/os/Network.h>
+#include <yarp/companion/yarpcompanion.h>
 
 #include "TestList.h"
 
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
         }
     }
     if (!done) {
-        Network::main(argc,argv);
+        yarp::companion::main(argc,argv);
     }
 
     yarp.queryBypass(nullptr);
