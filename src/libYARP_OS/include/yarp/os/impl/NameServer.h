@@ -10,7 +10,6 @@
 #ifndef YARP_OS_IMPL_NAMESERVER_H
 #define YARP_OS_IMPL_NAMESERVER_H
 
-#include <string>
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/Dispatcher.h>
@@ -21,12 +20,8 @@
 #include <yarp/os/Bottle.h>
 
 #include <map>
+#include <string>
 #include <vector>
-
-// ACE headers may fiddle with main
-#ifdef main
-#undef main
-#endif
 
 
 namespace yarp {

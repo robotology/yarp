@@ -12,9 +12,9 @@
 
 #include <yarp/conf/system.h>
 #include <yarp/conf/compiler.h>
-#include <string>
 #include <yarp/os/NestedContact.h>
 
+#include <string>
 
 namespace yarp {
     namespace os {

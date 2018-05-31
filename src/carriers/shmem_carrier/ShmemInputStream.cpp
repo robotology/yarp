@@ -9,7 +9,13 @@
 
 #include "ShmemInputStream.h"
 #include <yarp/os/impl/PlatformTime.h>
+
 #include <ace/Lib_Find.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
+
 
 
 ShmemInputStreamImpl::ShmemInputStreamImpl() :

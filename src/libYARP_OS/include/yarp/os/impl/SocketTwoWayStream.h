@@ -18,9 +18,13 @@
 #include <yarp/os/impl/TcpAcceptor.h>
 
 #ifdef YARP_HAS_ACE // For TCP_CORK definition
-#include <ace/os_include/netinet/os_tcp.h>
+# include <ace/os_include/netinet/os_tcp.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 #else
-#include <netinet/tcp.h>
+# include <netinet/tcp.h>
 #endif
 
 namespace yarp {
@@ -220,8 +224,8 @@ private:
     yarp::os::impl::TcpStream stream;
     bool haveWriteTimeout;
     bool haveReadTimeout;
-    ACE_Time_Value writeTimeout;
-    ACE_Time_Value readTimeout;
+    YARP_timeval writeTimeout;
+    YARP_timeval readTimeout;
     Contact localAddress, remoteAddress;
     bool happy;
     void updateAddresses();

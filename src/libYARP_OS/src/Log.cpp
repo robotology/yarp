@@ -20,6 +20,10 @@
 
 #ifdef YARP_HAS_ACE
 # include <ace/Stack_Trace.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 #elif defined(YARP_HAS_EXECINFO_H)
 # include <execinfo.h>
 #endif

@@ -25,6 +25,10 @@
 #  include <ace/OS_Memory.h>
 #  include <ace/OS_NS_sys_select.h>
 #  include <ace/os_include/net/os_if.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 #else
 #  include <arpa/inet.h>
 #  include <netinet/in.h>

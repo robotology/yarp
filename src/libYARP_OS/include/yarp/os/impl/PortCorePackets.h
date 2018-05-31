@@ -12,8 +12,12 @@
 
 #include <yarp/os/impl/PortCorePacket.h>
 #ifdef YARP_HAS_ACE
-#  include <ace/config.h>
-#  include <ace/String_Base.h>
+# include <ace/config.h>
+# include <ace/String_Base.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 #endif
 #include <list>
 #include <cstdio>

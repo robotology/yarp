@@ -19,10 +19,6 @@
 #include <yarp/os/QosStyle.h>
 #include <yarp/os/Time.h>
 
-//protects against some dangerous ACE macros
-#ifdef main
-#undef main
-#endif
 
 namespace yarp {
     namespace os {

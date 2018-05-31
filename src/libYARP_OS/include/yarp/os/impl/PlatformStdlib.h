@@ -12,6 +12,10 @@
 #include <yarp/conf/system.h>
 #ifdef YARP_HAS_ACE
 # include <ace/OS_NS_stdlib.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 #else
 # include <stdlib.h>
 #endif

@@ -24,7 +24,7 @@ char* szLine = (char*)nullptr;
 bool readlineEOF=false;
 #endif // WITH_LIBEDIT
 
-bool yarp::os::impl::terminal::EOFreached()
+bool yarp::os::impl::Terminal::EOFreached()
 {
 #ifdef WITH_LIBEDIT
     if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin))) {
@@ -34,7 +34,7 @@ bool yarp::os::impl::terminal::EOFreached()
     return feof(stdin);
 }
 
-std::string yarp::os::impl::terminal::getStdin() {
+std::string yarp::os::impl::Terminal::getStdin() {
     std::string txt = "";
 
 #ifdef WITH_LIBEDIT
@@ -75,7 +75,7 @@ std::string yarp::os::impl::terminal::getStdin() {
     return txt;
 }
 
-std::string yarp::os::impl::terminal::readString(bool *eof) {
+std::string yarp::os::impl::Terminal::readString(bool *eof) {
     bool end = false;
 
     std::string txt;

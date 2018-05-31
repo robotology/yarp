@@ -12,6 +12,10 @@
 #include <yarp/conf/system.h>
 #if defined(YARP_HAS_ACE)
 # include <ace/os_include/os_limits.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 #else
 # include <climits>
 #if !defined(HOST_NAME_MAX) && defined(__APPLE__)

@@ -10,6 +10,15 @@
 #ifndef YARP_OS_IMPL_SHMEMOUTPUTSTREAM_H
 #define YARP_OS_IMPL_SHMEMOUTPUTSTREAM_H
 
+
+#include "ShmemTypes.h"
+
+#include <yarp/os/OutputStream.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/Thread.h>
+#include <yarp/os/Time.h>
+#include <yarp/os/impl/Logger.h>
+
 #include <ace/config.h>
 #include <ace/Mutex.h>
 #include <ace/Process_Mutex.h>
@@ -22,14 +31,11 @@
 #else
 #include <ace/Shared_Memory_SV.h>
 #endif
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 
-#include <yarp/os/OutputStream.h>
-#include <yarp/os/Semaphore.h>
-#include <yarp/os/Thread.h>
-#include <yarp/os/Time.h>
-#include <yarp/os/impl/Logger.h>
-
-#include "ShmemTypes.h"
 
 class ShmemOutputStreamImpl
 {

@@ -994,7 +994,7 @@ void NetworkBase::assertion(bool shouldBeTrue) {
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 std::string NetworkBase::readString(bool *eof) {
-    return yarp::os::impl::terminal::readString(eof);
+    return yarp::os::impl::Terminal::readString(eof);
 }
 #endif // YARP_NO_DEPRECATED
 

@@ -10,10 +10,14 @@
 #define YARP_OS_IMPL_TCPCONNECTOR_H
 
 #if defined(YARP_HAS_ACE)
-#  include <ace/config.h>
-#  include <ace/SOCK_Connector.h>
+# include <ace/config.h>
+# include <ace/SOCK_Connector.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 #elif defined(__unix__)
-#  include <yarp/os/impl/posix/TcpConnector.h>
+# include <yarp/os/impl/posix/TcpConnector.h>
 #else
 YARP_COMPILER_ERROR(Cannot implement TcpConnector on this platform)
 #endif

@@ -12,14 +12,17 @@
 
 #include <yarp/conf/system.h>
 #ifdef YARP_HAS_ACE
-#  include <ace/OS_NS_sys_time.h>
-#  include <ace/Time_Value.h>
-#  include <ace/High_Res_Timer.h>
-#  define PLATFORM_TIME_SET(x, y) x.set(y)
+# include <ace/OS_NS_sys_time.h>
+# include <ace/Time_Value.h>
+# include <ace/High_Res_Timer.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
+# define PLATFORM_TIME_SET(x, y) x.set(y)
 #else
-#  include <sys/time.h>
-#  define ACE_Time_Value struct timeval
-#  define PLATFORM_TIME_SET(x, y) fromDouble(x, y)
+# include <sys/time.h>
+# define PLATFORM_TIME_SET(x, y) fromDouble(x, y)
 #endif
 
 namespace yarp {

@@ -20,6 +20,11 @@
 
 #include <ace/DEV_Connector.h>
 #include <ace/TTY_IO.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
+
 
 namespace yarp {
     namespace dev {

@@ -16,11 +16,6 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Semaphore.h>
 
-// watch out for ACE randomly redefining main, depending on configuration
-#ifdef main
-#undef main
-#endif
-
 
 class YarpRunInfoVector;
 class ZombieHunterThread;

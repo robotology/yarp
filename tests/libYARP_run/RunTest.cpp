@@ -22,10 +22,6 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-#ifdef main
-#undef main
-#endif
-
 class YarpRun: public Thread
 {
     int _argc;

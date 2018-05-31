@@ -8,46 +8,22 @@
  */
 
 #include <yarp/os/Event.h>
-#include <yarp/os/impl/Logger.h>
-
-using namespace yarp::os::impl;
-using namespace yarp::os;
-
-#include <yarp/conf/system.h>
-#ifdef YARP_HAS_ACE
-
-#include <ace/Auto_Event.h>
-#include <ace/Manual_Event.h>
-
-#define EVENT_IMPL(x) (static_cast<ACE_Event*>(x))
-
-yarp::os::Event::Event(bool autoResetAfterWait) {
-    if (autoResetAfterWait) {
-        implementation = new ACE_Auto_Event;
-    } else {
-        implementation = new ACE_Manual_Event;
-    }
-    yAssert(implementation != nullptr);
-}
-
-
-#else
-
 #include <yarp/os/Semaphore.h>
-class YarpEventImpl {
-private:
-    bool autoReset;
-    bool signalled;
-    int waiters;
-    Semaphore stateMutex;
-    Semaphore action;
+
+
+class yarp::os::Event::Private
+{
 public:
-    YarpEventImpl(bool autoReset) : autoReset(autoReset), action(0) {
+    Private(bool autoReset) :
+            autoReset(autoReset),
+            action(0)
+    {
         signalled = false;
         waiters = 0;
     }
 
-    void wait() {
+    void wait()
+    {
         stateMutex.wait();
         if (signalled) {
             stateMutex.post();
@@ -61,12 +37,15 @@ public:
         }
     }
 
-    void signal(bool after = true) {
+    void signal(bool after = true)
+    {
         stateMutex.wait();
         int w = waiters;
-        if (w>0) {
-            if (autoReset) { w = 1; }
-            for (int i=0; i<w; i++) {
+        if (w > 0) {
+            if (autoReset) {
+                w = 1;
+            }
+            for (int i = 0; i < w; i++) {
                 action.post();
                 waiters--;
             }
@@ -75,38 +54,43 @@ public:
         stateMutex.post();
     }
 
-    void reset() {
+    void reset()
+    {
         stateMutex.wait();
         signalled = false;
         stateMutex.post();
     }
+
+private:
+    bool autoReset;
+    bool signalled;
+    int waiters;
+    Semaphore stateMutex;
+    Semaphore action;
 };
 
-#define EVENT_IMPL(x) (static_cast<YarpEventImpl*>(x))
 
-yarp::os::Event::Event(bool autoResetAfterWait) {
-    implementation = new YarpEventImpl(autoResetAfterWait);
-    yAssert(implementation != nullptr);
+yarp::os::Event::Event(bool autoResetAfterWait) :
+        mPriv(new Private(autoResetAfterWait))
+{
 }
 
-
-#endif
-
-yarp::os::Event::~Event() {
-    if (implementation != nullptr) {
-        delete EVENT_IMPL(implementation);
-        implementation = nullptr;
-    }
+yarp::os::Event::~Event()
+{
+    delete mPriv;
 }
 
-void yarp::os::Event::wait() {
-    EVENT_IMPL(implementation)->wait();
+void yarp::os::Event::wait()
+{
+    mPriv->wait();
 }
 
-void yarp::os::Event::signal() {
-    EVENT_IMPL(implementation)->signal();
+void yarp::os::Event::signal()
+{
+    mPriv->signal();
 }
 
-void yarp::os::Event::reset() {
-    EVENT_IMPL(implementation)->reset();
+void yarp::os::Event::reset()
+{
+    mPriv->reset();
 }

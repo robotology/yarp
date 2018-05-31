@@ -21,6 +21,10 @@
 
 #ifdef YARP_HAS_ACE
 # include <ace/ACE.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 #endif
 
 #if defined(__APPLE__)

@@ -1029,7 +1029,7 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
         if (echo) {
             response = cmd;
         } else {
-            std::string txt = yarp::os::impl::terminal::getStdin();
+            std::string txt = yarp::os::impl::Terminal::getStdin();
             response.fromString(txt.c_str());
         }
         if (drop) {
@@ -1094,8 +1094,8 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
         }
     }
     while(ok) {
-        std::string txt = yarp::os::impl::terminal::getStdin();
-        if (yarp::os::impl::terminal::EOFreached()) {
+        std::string txt = yarp::os::impl::Terminal::getStdin();
+        if (yarp::os::impl::Terminal::EOFreached()) {
             break;
         }
         Bottle cmd(txt.c_str()), reply;
@@ -1901,9 +1901,9 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     }
 
 
-    while (!yarp::os::impl::terminal::EOFreached()) {
-        std::string txt = yarp::os::impl::terminal::getStdin();
-        if (!yarp::os::impl::terminal::EOFreached()) {
+    while (!yarp::os::impl::Terminal::EOFreached()) {
+        std::string txt = yarp::os::impl::Terminal::getStdin();
+        if (!yarp::os::impl::Terminal::EOFreached()) {
             if (txt.length()>0) {
                 if (txt[0]<32 && txt[0]!='\n' &&
                     txt[0]!='\r' && txt[0]!='\t') {
@@ -1987,7 +1987,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
     rl_attempted_completion_function = my_completion;
 #endif
 
-    while (!yarp::os::impl::terminal::EOFreached()) {
+    while (!yarp::os::impl::Terminal::EOFreached()) {
         Port port;
         port.openFake(connectionName);
         if (!port.addOutput(targetName)) {
@@ -2014,13 +2014,13 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
 #ifdef WITH_LIBEDIT
     rpcHelpPort = &port;
 #endif
-        while (port.getOutputCount()==1&&!yarp::os::impl::terminal::EOFreached()) {
+        while (port.getOutputCount()==1&&!yarp::os::impl::Terminal::EOFreached()) {
             std::string txt;
             if (!resendFlag) {
-                txt = yarp::os::impl::terminal::getStdin();
+                txt = yarp::os::impl::Terminal::getStdin();
             }
 
-            if (!yarp::os::impl::terminal::EOFreached()) {
+            if (!yarp::os::impl::Terminal::EOFreached()) {
                 if (txt.length()>0) {
                     if (txt[0]<32 && txt[0]!='\n' &&
                         txt[0]!='\r') {

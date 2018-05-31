@@ -17,6 +17,10 @@
 #ifdef YARP_HAS_ACE
 #  include <ace/INET_Addr.h>
 #  include <ace/os_include/netinet/os_tcp.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 #elif(__unix__)
 #  include <netinet/tcp.h>
 #endif

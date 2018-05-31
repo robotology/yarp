@@ -12,6 +12,10 @@
 #include <yarp/conf/system.h>
 #if defined(YARP_HAS_ACE)
 # include <ace/OS_NS_sys_wait.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 #elif defined(YARP_HAS_SYS_WAIT_H)
 # include <sys/wait.h>
 #endif

@@ -15,6 +15,10 @@
 #ifdef YARP_HAS_ACE
 #  include <ace/ACE.h>
 #  include <ace/DLL.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 #else
 #  include <yarp/os/impl/PlatformDlfcn.h>
 #endif

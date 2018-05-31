@@ -228,7 +228,7 @@ int main(int argc, char *argv[]) {
             yInfo("Type \"help\" for usage\n");
         }
 
-        std::string keys = yarp::os::impl::terminal::readString(nullptr);
+        std::string keys = yarp::os::impl::Terminal::readString(nullptr);
         Bottle b(keys);
         std::string cmd = b.get(0).asString();
         if (b.size()==0) {
