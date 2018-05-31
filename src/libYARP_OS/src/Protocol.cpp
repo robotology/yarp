@@ -283,7 +283,7 @@ void Protocol::rename(const Route& route)
 
 bool Protocol::isOk()
 {
-    if (!checkStreams() || recv_delegate_fail || recv_delegate_fail) {
+    if (!checkStreams() || recv_delegate_fail || send_delegate_fail) {
         return false;
     }
     return true;
