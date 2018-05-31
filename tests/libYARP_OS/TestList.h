@@ -46,7 +46,7 @@ extern yarp::os::impl::UnitTest& getVocabTest();
 extern yarp::os::impl::UnitTest& getValueTest();
 extern yarp::os::impl::UnitTest& getPortablePairTest();
 extern yarp::os::impl::UnitTest& getTerminatorTest();
-extern yarp::os::impl::UnitTest& getRateThreadTest();
+extern yarp::os::impl::UnitTest& getPeriodicThreadTest();
 extern yarp::os::impl::UnitTest& getStampTest();
 extern yarp::os::impl::UnitTest& getRFModuleTest();
 extern yarp::os::impl::UnitTest& getPortReaderBufferTest();
@@ -80,7 +80,7 @@ public:
         root.add(getStreamConnectionReaderTest());
         root.add(getBufferedConnectionWriterTest());
         root.add(getThreadTest());
-        root.add(getRateThreadTest());
+        root.add(getPeriodicThreadTest());
         root.add(getProtocolTest());
         root.add(getNameServerTest());
         root.add(getPortCoreTest());
