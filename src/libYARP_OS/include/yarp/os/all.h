@@ -53,7 +53,7 @@
 #include <yarp/os/LockGuard.h>
 #include <yarp/os/Event.h>
 #include <yarp/os/Thread.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Terminator.h>
 #include <yarp/os/Time.h>
@@ -74,6 +74,7 @@
 
 #ifndef YARP_NO_DEPRECATED // since YARP 3.0.0
 # include <yarp/os/ConstString.h>
+# include <yarp/os/RateThread.h>
 #endif
 
 /**

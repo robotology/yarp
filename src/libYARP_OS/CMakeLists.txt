@@ -70,6 +70,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Os.h
                  include/yarp/os/OutputProtocol.h
                  include/yarp/os/OutputStream.h
+                 include/yarp/os/PeriodicThread.h
                  include/yarp/os/Ping.h
                  include/yarp/os/Portable.h
                  include/yarp/os/PortablePair.h
@@ -267,6 +268,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/NullConnectionReader.cpp
                  src/NullConnectionWriter.cpp
                  src/Os.cpp
+                 src/PeriodicThread.cpp
                  src/Ping.cpp
                  src/PlatformTime.cpp
                  src/Portable.cpp

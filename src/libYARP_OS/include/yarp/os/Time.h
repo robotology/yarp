@@ -19,6 +19,8 @@
 namespace yarp {
 namespace os {
 
+enum class ShouldUseSystemClock { No = 0, Yes = 1 };
+
 enum yarpClockType
 {
     YARP_CLOCK_UNINITIALIZED=-1,
