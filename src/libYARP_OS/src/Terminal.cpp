@@ -16,6 +16,7 @@
 #include <yarp/os/Vocab.h>
 
 #include <cstdio>
+#include <cstring>
 
 #ifdef WITH_LIBEDIT
 #include <editline/readline.h>
