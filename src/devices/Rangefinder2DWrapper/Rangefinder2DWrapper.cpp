@@ -31,11 +31,11 @@ yarp::dev::DriverCreator *createRangefinder2DWrapper() {
   * It also creates one rpc port.
   */
 
-Rangefinder2DWrapper::Rangefinder2DWrapper() : RateThread(DEFAULT_THREAD_PERIOD),
+Rangefinder2DWrapper::Rangefinder2DWrapper() : PeriodicThread(DEFAULT_THREAD_PERIOD),
     partName("Rangefinder2DWrapper"),
     sens_p(nullptr),
     iTimed(nullptr),
-    _rate(DEFAULT_THREAD_PERIOD),
+    _period(DEFAULT_THREAD_PERIOD),
     minAngle(0),
     maxAngle(0),
     minDistance(0),
@@ -231,17 +231,15 @@ bool Rangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
         return false;
     }
 
-    RateThread::setRate(_rate);
-    RateThread::start();
-
-    return true;
+    PeriodicThread::setPeriod(_period);
+    return PeriodicThread::start();
 }
 
 bool Rangefinder2DWrapper::detachAll()
 {
-    if (RateThread::isRunning())
+    if (PeriodicThread::isRunning())
     {
-        RateThread::stop();
+        PeriodicThread::stop();
     }
     sens_p = nullptr;
     return true;
@@ -254,9 +252,9 @@ void Rangefinder2DWrapper::attach(yarp::dev::IRangefinder2D *s)
 
 void Rangefinder2DWrapper::detach()
 {
-    if (RateThread::isRunning())
+    if (PeriodicThread::isRunning())
     {
-        RateThread::stop();
+        PeriodicThread::stop();
     }
     sens_p = nullptr;
 }
@@ -473,7 +471,7 @@ bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
         return false;
     }
     else
-        _rate = config.find("period").asInt32();
+        _period = config.find("period").asInt32() / 1000.0;
 
     if (!config.check("name"))
     {
@@ -594,7 +592,7 @@ void Rangefinder2DWrapper::run()
                 rosData.angle_max = maxAngle * M_PI / 180.0;
                 rosData.angle_increment = resolution * M_PI / 180.0;
                 rosData.time_increment = 0;             // all points in a single scan are considered took at the very same time
-                rosData.scan_time = 1/getRate();        // time elapsed between two successive readings
+                rosData.scan_time = getPeriod();        // time elapsed between two successive readings
                 rosData.range_min = minDistance;
                 rosData.range_max = maxDistance;
                 rosData.ranges.resize(ranges_size);
@@ -619,9 +617,9 @@ void Rangefinder2DWrapper::run()
 bool Rangefinder2DWrapper::close()
 {
     yTrace("Rangefinder2DWrapper::Close");
-    if (RateThread::isRunning())
+    if (PeriodicThread::isRunning())
     {
-        RateThread::stop();
+        PeriodicThread::stop();
     }
     if(rosNode!=nullptr) {
         rosNode->interrupt();
