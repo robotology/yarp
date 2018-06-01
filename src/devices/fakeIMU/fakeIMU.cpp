@@ -25,7 +25,7 @@ using namespace yarp::math;
  * emulating an IMU
  * @author Alberto Cardellino
  */
-fakeIMU::fakeIMU() : RateThread(DEFAULT_PERIOD)
+fakeIMU::fakeIMU() : PeriodicThread(DEFAULT_PERIOD)
 {
     nchannels = 12;
     dummy_value = 0;
@@ -53,11 +53,11 @@ fakeIMU::~fakeIMU()
 
 bool fakeIMU::open(yarp::os::Searchable &config)
 {
-    int period;
+    double period;
     if( config.check("period"))
     {
-        period = config.find("period").asInt32();
-        setRate(period);
+        period = config.find("period").asInt32() / 1000.0;
+        setPeriod(period);
     }
     else
         yInfo() << "Using default period of " << DEFAULT_PERIOD << " ms";

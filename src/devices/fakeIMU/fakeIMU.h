@@ -8,7 +8,7 @@
 
 #include <string>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/GenericSensorInterfaces.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/os/Stamp.h>
@@ -21,7 +21,7 @@ namespace yarp{
     }
 }
 
-#define DEFAULT_PERIOD 10   //ms
+#define DEFAULT_PERIOD 0.01   //s
 
 /**
 * \brief `fakeIMU` : fake device implementing the device interface tipically implemented by an Inertial Measurement Unit
@@ -40,7 +40,7 @@ namespace yarp{
 */
 class yarp::dev::fakeIMU :  public DeviceDriver,
                             public IGenericSensor,
-                            public yarp::os::RateThread,
+                            public yarp::os::PeriodicThread,
                             public yarp::dev::IPreciselyTimed,
                             public yarp::dev::IThreeAxisGyroscopes,
                             public yarp::dev::IThreeAxisLinearAccelerometers,
