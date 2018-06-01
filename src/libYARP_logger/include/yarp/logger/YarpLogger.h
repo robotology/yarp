@@ -17,7 +17,7 @@
 #include <yarp/os/Vocab.h>
 
 #include <yarp/os/Thread.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 
 #include <list>
@@ -185,10 +185,10 @@ class yarp::yarpLogger::LogEntry
 class yarp::yarpLogger::LoggerEngine
 {
     //private class
-    class logger_thread : public yarp::os::SystemRateThread
+    class logger_thread : public yarp::os::PeriodicThread
     {
         public:
-        logger_thread (std::string _portname, int _rate=10, int _log_list_max_size=100);
+        logger_thread (std::string _portname, double _period=0.01, int _log_list_max_size=100);
         public:
         yarp::os::Semaphore  mutex;
         unsigned int         log_list_max_size;

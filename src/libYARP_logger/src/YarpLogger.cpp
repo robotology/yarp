@@ -201,7 +201,7 @@ std::string LoggerEngine::logger_thread::getPortName()
     return logger_portName;
 }
 
-LoggerEngine::logger_thread::logger_thread (std::string _portname, int _rate,  int _log_list_max_size) : SystemRateThread(_rate)
+LoggerEngine::logger_thread::logger_thread (std::string _portname, double _period,  int _log_list_max_size) : PeriodicThread(_period, ShouldUseSystemClock::Yes)
 {
         logger_portName              = _portname;
         log_list_max_size            = _log_list_max_size;
@@ -447,8 +447,7 @@ void LoggerEngine::stop_discover()
 
 LoggerEngine::LoggerEngine(std::string portName)
 {
-    int thread_rate = 10;
-    log_updater=new logger_thread (portName,thread_rate);
+    log_updater=new logger_thread (portName, 0.01);
     logging = false;
     discovering = false;
 }
