@@ -18,7 +18,7 @@ namespace yarp {
 namespace dev {
 
 
-MultipleAnalogSensorsServer::MultipleAnalogSensorsServer(): RateThread(20)
+MultipleAnalogSensorsServer::MultipleAnalogSensorsServer(): PeriodicThread(0.02)
 {
 
 }
@@ -49,11 +49,11 @@ bool MultipleAnalogSensorsServer::open(os::Searchable& config)
         return false;
     }
 
-    m_periodInMs = config.find("period").asInt32();
+    m_periodInS = config.find("period").asInt32() / 1000.0;
 
-    if (m_periodInMs <= 0)
+    if (m_periodInS <= 0)
     {
-        yError("MultipleAnalogSensorsClient: period parameter is present (%d) but it is not a positive integer, exiting.", m_periodInMs);
+        yError("MultipleAnalogSensorsClient: period parameter is present (%f) but it is not a positive integer, exiting.", m_periodInS);
         return false;
     }
 
@@ -272,7 +272,7 @@ bool MultipleAnalogSensorsServer::attachAll(const PolyDriverList& p)
     }
 
     // Set rate period
-    ok = this->setRate(m_periodInMs);
+    ok = this->setPeriod(m_periodInS);
     ok = ok && this->start();
 
     return ok;
