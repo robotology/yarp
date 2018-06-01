@@ -9,7 +9,7 @@
 #ifndef YARP_DEV_JOYPADCONTROLSERVER_JOYPADCONTROLSERVER_H
 #define YARP_DEV_JOYPADCONTROLSERVER_JOYPADCONTROLSERVER_H
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IJoypadController.h>
 #include <yarp/dev/Wrapper.h>
@@ -49,7 +49,7 @@ public:
 class yarp::dev::JoypadControlServer: public yarp::dev::DeviceDriver,
                                       public yarp::dev::IWrapper,
                                       public yarp::dev::IMultipleWrapper,
-                                      public yarp::os::RateThread
+                                      public yarp::os::PeriodicThread
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -59,7 +59,7 @@ class yarp::dev::JoypadControlServer: public yarp::dev::DeviceDriver,
     #define JoyPort yarp::dev::JoypadControl::JoyPort
 
 
-    unsigned int                    m_rate;
+    double                          m_period;
     JoypadCtrlParser                m_parser;
     yarp::dev::IJoypadController*   m_device;
     yarp::os::Port                  m_rpcPort;
