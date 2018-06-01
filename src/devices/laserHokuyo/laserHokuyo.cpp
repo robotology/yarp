@@ -49,7 +49,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
 
     //list of mandatory options
     //TODO change comments
-    period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt32();
+    period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt32() / 1000.0;
 
     if (general_config.check("max_angle") == false) { yError() << "Missing max_angle param"; return false; }
     if (general_config.check("min_angle") == false) { yError() << "Missing min_angle param"; return false; }
@@ -86,7 +86,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
         laser_mode = GD_MODE;
         yError("Laser_mode not found. Using GD mode (single acquisition)");
     }
-    setRate(period);
+    setPeriod(period);
 
     bool br2 = config.check("SERIAL_PORT_CONFIGURATION");
     if (br2 == false)
@@ -244,13 +244,12 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
         b_ans.clear();
     }
 
-    RateThread::start();
-    return true;
+    return PeriodicThread::start();
 }
 
 bool laserHokuyo::close()
 {
-    RateThread::stop();
+    PeriodicThread::stop();
 
     Bottle b;
     Bottle b_ans;

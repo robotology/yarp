@@ -14,7 +14,7 @@
 //#include <cstdio>
 #include <string>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Mutex.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IRangefinder2D.h>
@@ -25,7 +25,7 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-class laserHokuyo : public RateThread, public yarp::dev::IRangefinder2D, public DeviceDriver
+class laserHokuyo : public PeriodicThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
 protected:
     PolyDriver driver;
@@ -34,7 +34,7 @@ protected:
     yarp::os::Mutex mutex;
 
     int cardId;
-    int period;
+    double period;
     int sensorsNum;
     int start_position;
     int end_position;
@@ -74,7 +74,7 @@ protected:
     yarp::sig::Vector laser_data;
 
 public:
-    laserHokuyo(int period=20) : RateThread(period),
+    laserHokuyo(double period = 0.02) : PeriodicThread(period),
         pSerial(nullptr),
         mutex(),
         cardId(0),
