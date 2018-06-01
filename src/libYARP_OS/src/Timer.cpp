@@ -7,7 +7,7 @@
 */
 
 #include <yarp/os/Timer.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Time.h>
 #include <cmath>
 #include <map>
@@ -101,12 +101,12 @@ public:
     }
 };
 
-class TimerSingleton : public yarp::os::RateThread
+class TimerSingleton : public yarp::os::PeriodicThread
 {
     std::mutex mu;
     std::map<size_t, MonoThreadTimer*> timers;
     TimerSingleton() :
-            RateThread(0)
+            PeriodicThread(0.0)
     {
     }
 
@@ -180,7 +180,7 @@ void TimerSingleton::run()
 }
 
 class ThreadedTimer : public yarp::os::Timer::PrivateImpl,
-                      public yarp::os::RateThread
+                      public yarp::os::PeriodicThread
 {
     typedef yarp::os::Timer::TimerCallback TimerCallback;
     virtual void run() override;
@@ -189,7 +189,7 @@ class ThreadedTimer : public yarp::os::Timer::PrivateImpl,
 
 public:
     ThreadedTimer(TimerSettings sett, TimerCallback call, yarp::os::Mutex* mutex = nullptr) :
-            PrivateImpl(sett, call, mutex), RateThread((int)(sett.period * 1000))
+            PrivateImpl(sett, call, mutex), PeriodicThread(sett.period)
     {
     }
 
@@ -207,7 +207,8 @@ public:
     virtual bool stepTimer() override
     {
         singleStep = true;
-        return step();
+        step();
+        return true;
     }
 
     virtual void stopTimer() override
