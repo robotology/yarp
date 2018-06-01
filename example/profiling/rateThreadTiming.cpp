@@ -20,7 +20,7 @@
 using namespace yarp::os;
 using namespace std;
 
-const int THREAD_PERIOD=15;
+const double THREAD_PERIOD=0.015;
 const int MAIN_WAIT=10;
 const double THREAD_CPU_TIME=0.1;
 
@@ -29,19 +29,19 @@ const double THREAD_CPU_TIME=0.1;
  * the thread run for a certain time. We measure
  * the real period.
  * Parameters:
- * --period set the periodicity of the thread (ms).
+ * --period set the periodicity of the thread (s).
  * --time the time we wait before quitting (seconds).
  * --iterations how many iterations the thread will do
  * --cpu time spent in thread (percentage)
  * August 08, Lorenzo Natale.
  */
 
-class Thread1 : public RateThread {
+class Thread1 : public PeriodicThread {
     double cpuUsage;
     int iterations;
     std::vector<double> measures;
 public:
-	Thread1(int r=THREAD_PERIOD):RateThread(r)
+    Thread1(double p=THREAD_PERIOD):PeriodicThread(p)
     { 
         cpuUsage=0; 
         iterations=-1;
@@ -109,7 +109,7 @@ public:
 #endif
         
         double time;
-        time=getRate()*cpuUsage/1000; //go to seconds
+        time=getPeriod()*cpuUsage; //go to seconds
 
         double start=Time::now();
         now=start;
@@ -133,21 +133,21 @@ int main(int argc, char **argv) {
     
     p.fromCommand(argc, argv);
 
-    int period=p.check("period", Value(THREAD_PERIOD)).asInt32();
+    double period=p.check("period", Value(THREAD_PERIOD)).asFloat64();
     double time=p.check("time", Value(MAIN_WAIT)).asFloat64();
     double cpuTime=p.check("cpu", Value(THREAD_CPU_TIME)).asFloat64();
     int iterations=p.check("iterations", Value(-1)).asInt32();
 
-    t1.setRate(period);
+    t1.setPeriod(period);
     t1.setCpuTime(cpuTime);
     t1.setIterations(iterations);
 
-    printf("Going to start a thread with period %d[ms]\n", period);
+    printf("Going to start a thread with period %f[s]\n", period);
     if (iterations!=-1)
         printf("Going to wait %d iterations\n", iterations);
     printf("Thread will use %.0lf/100 cpu time\n", cpuTime*100);
 
-    time=(period*(iterations+10))/1000;
+    time=(period*(iterations+10));
 
     printf("Going to wait %.2lf seconds before quitting\n", time);
 
