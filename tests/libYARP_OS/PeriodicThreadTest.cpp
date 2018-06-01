@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
@@ -404,7 +404,7 @@ public:
         busy.stop();
         checkTrue(true, "Negative delay on reteThread is safe.");
     }
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+
     void testRunnable()
     {
         report(0, "Testing runnable");
@@ -423,7 +423,6 @@ public:
 
         report(0, "successful");
     }
-#endif
 
 
     void testSimTime() {

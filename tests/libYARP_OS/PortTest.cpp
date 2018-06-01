@@ -10,7 +10,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortReaderBuffer.h>
@@ -53,7 +53,7 @@ namespace yarp {
  * A fake device for testing closure after a prepare of a closed port.
  */
 class yarp::dev::BrokenDevice : public DeviceDriver,
-                                public yarp::os::RateThread
+                                public yarp::os::PeriodicThread
 {
 private:
 
@@ -61,17 +61,17 @@ public:
     /**
      * Constructor.
      */
-    BrokenDevice():RateThread(30), img(nullptr){}
+    BrokenDevice():PeriodicThread(0.03), img(nullptr){}
 
     virtual bool close() override
     {
         pImg.close();
-        RateThread::stop();
+        PeriodicThread::stop();
         return true;
 
     }
 
-    virtual bool open(yarp::os::Searchable& config) override { return RateThread::start(); }
+    virtual bool open(yarp::os::Searchable& config) override { return PeriodicThread::start(); }
 
     //RateThread
     bool threadInit() override { return true; }
@@ -92,10 +92,10 @@ private:
 
 };
 
-class TcpTestServer : public RateThread
+class TcpTestServer : public PeriodicThread
 {
 public:
-    TcpTestServer() : RateThread(20)
+    TcpTestServer() : PeriodicThread(0.02)
     {
 
     }
@@ -1532,7 +1532,7 @@ public:
     }
 
     void testPrepareDeadlock(){
-        report(0,"testing the deadlock when you close a device(RateThread) after the prepare of a closed port");
+        report(0,"testing the deadlock when you close a device(PeriodicThread) after the prepare of a closed port");
         yarp::dev::PolyDriver p;
         Property prop;
         prop.put("device","brokenDevice");
