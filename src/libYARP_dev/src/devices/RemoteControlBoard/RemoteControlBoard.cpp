@@ -13,7 +13,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Semaphore.h>
@@ -48,7 +48,7 @@ namespace yarp{
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-const int DIAGNOSTIC_THREAD_RATE=1000;
+const int DIAGNOSTIC_THREAD_PERIOD=1.000;
 const double TIMEOUT=0.5;
 
 inline bool getTimeStamp(Bottle &bot, Stamp &st)
@@ -72,13 +72,13 @@ struct yarp::dev::ProtocolVersion
 };
 
 
-class DiagnosticThread: public RateThread
+class DiagnosticThread: public PeriodicThread
 {
     StateExtendedInputPort *owner;
     std::string ownerName;
 
 public:
-    DiagnosticThread(int r): RateThread(r)
+    DiagnosticThread(double r): PeriodicThread(r)
     { owner=nullptr; }
 
     void setOwner(StateExtendedInputPort *o)
@@ -1158,7 +1158,7 @@ public:
 
         if (config.check("diagnostic"))
         {
-            diagnosticThread = new DiagnosticThread(DIAGNOSTIC_THREAD_RATE);
+            diagnosticThread = new DiagnosticThread(DIAGNOSTIC_THREAD_PERIOD);
             diagnosticThread->setOwner(&extendedIntputStatePort);
             diagnosticThread->start();
         }
