@@ -28,9 +28,9 @@ yarp::dev::DriverCreator *createBatteryWrapper() {
   * It also creates one rpc port.
   */
 
-BatteryWrapper::BatteryWrapper() : RateThread(DEFAULT_THREAD_PERIOD)
+BatteryWrapper::BatteryWrapper() : PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
-    _rate = DEFAULT_THREAD_PERIOD;
+    _period = DEFAULT_THREAD_PERIOD;
     battery_p = nullptr;
 }
 
@@ -65,10 +65,8 @@ bool BatteryWrapper::attachAll(const PolyDriverList &battery2attach)
         return false;
     }
     attach(battery_p);
-    RateThread::setRate(_rate);
-    RateThread::start();
-
-    return true;
+    PeriodicThread::setPeriod(_period);
+    return PeriodicThread::start();
 }
 
 bool BatteryWrapper::detachAll()
@@ -168,7 +166,7 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
         return false;
     }
     else
-        _rate = config.find("period").asInt32();
+        _period = config.find("period").asInt32() / 1000.0;
 
     if (!config.check("name"))
     {
@@ -244,12 +242,12 @@ void BatteryWrapper::run()
 bool BatteryWrapper::close()
 {
     yTrace("BatteryWrapper::Close");
-    if (RateThread::isRunning())
+    if (PeriodicThread::isRunning())
     {
-        RateThread::stop();
+        PeriodicThread::stop();
     }
 
-    RateThread::stop();
+    PeriodicThread::stop();
     detachAll();
     return true;
 }
