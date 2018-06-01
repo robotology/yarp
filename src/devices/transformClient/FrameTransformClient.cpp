@@ -372,12 +372,12 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
 
     if (config.check("period"))
     {
-        m_period = config.find("period").asInt32();
+        m_period = config.find("period").asInt32() / 1000.0;
     }
     else
     {
-        m_period = 10;
-        yWarning("FrameTransformClient: using default period of %d ms" , m_period);
+        m_period = 0.010;
+        yWarning("FrameTransformClient: using default period of %f ms" , m_period);
     }
 
     std::string local_rpcServer = m_local_name;
@@ -868,9 +868,9 @@ bool yarp::dev::FrameTransformClient::waitForTransform(const std::string &target
     return true;
 }
 
-FrameTransformClient::FrameTransformClient() : RateThread(10),
+FrameTransformClient::FrameTransformClient() : PeriodicThread(0.01),
     m_transform_storage(nullptr),
-    m_period(0)
+    m_period(0.01)
 {
 }
 
