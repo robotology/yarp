@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IRangefinder2D.h>
@@ -33,7 +33,7 @@ struct Range_t
 
 //---------------------------------------------------------------------------------------------------------------
 
-class LaserFromDepth : public RateThread, public yarp::dev::IRangefinder2D, public DeviceDriver
+class LaserFromDepth : public PeriodicThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
 protected:
     PolyDriver driver;
@@ -61,7 +61,7 @@ protected:
     yarp::sig::Vector m_laser_data;
 
 public:
-    LaserFromDepth(int period = 10) : RateThread(period),
+    LaserFromDepth(double period = 0.01) : PeriodicThread(period),
         iRGBD(nullptr),
         m_depth_width(0),
         m_depth_height(0),

@@ -119,7 +119,7 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
     m_laser_data.resize(m_sensorsNum, 0.0);
     m_max_angle = +hfov / 2;
     m_min_angle = -hfov / 2;
-    RateThread::start();
+    PeriodicThread::start();
 
     yInfo("Sensor ready");
     return true;
@@ -127,7 +127,7 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
 
 bool LaserFromDepth::close()
 {
-    RateThread::stop();
+    PeriodicThread::stop();
 
     if(driver.isValid())
         driver.close();
