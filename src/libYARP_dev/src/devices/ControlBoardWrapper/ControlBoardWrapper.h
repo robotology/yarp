@@ -19,7 +19,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Vocab.h>
 
@@ -255,7 +255,7 @@ public:
  */
 
 class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
-                                        public yarp::os::RateThread,
+                                        public yarp::os::PeriodicThread,
                                         public yarp::dev::IPidControl,
                                         public yarp::dev::IPositionControl,
                                         public yarp::dev::IPositionDirect,
@@ -322,7 +322,7 @@ private:
     int               controlledJoints;
     int               base;         // to be removed
     int               top;          // to be removed
-    int               period;       // thread rate for publishing data
+    double            period;       // thread rate for publishing data
     bool              _verb;        // make it work and propagate to subdevice if --subdevice option is used
 
     yarp::os::Bottle getOptions();
@@ -370,7 +370,7 @@ public:
     bool verbose() const { return _verb; }
 
     /* Return id of this device */
-    std::string getId() { return partName; };
+    std::string getId() { return partName; }
 
     /**
     * Default open() method.

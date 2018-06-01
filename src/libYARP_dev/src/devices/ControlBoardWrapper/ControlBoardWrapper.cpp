@@ -31,13 +31,13 @@ yarp::dev::DriverCreator *createControlBoardWrapper()
             ("controlboardwrapper2", "controlboardwrapper2", "yarp::dev::ControlBoardWrapper2");
 }
 
-ControlBoardWrapper::ControlBoardWrapper() :yarp::os::RateThread(20),
+ControlBoardWrapper::ControlBoardWrapper() :yarp::os::PeriodicThread(0.02),
                                             ownDevices(true)
 {
     streaming_parser.init(this);
     RPC_parser.init(this);
     controlledJoints = 0;
-    period = 20; // ms.
+    period = 0.02; // s.
     base = 0;
     top = 0;
     subDeviceOwned = nullptr;
@@ -78,9 +78,9 @@ bool ControlBoardWrapper::close()
     //stop thread if running
     detachAll();
 
-    if (yarp::os::RateThread::isRunning())
+    if (yarp::os::PeriodicThread::isRunning())
     {
-        yarp::os::RateThread::stop();
+        yarp::os::PeriodicThread::stop();
     }
 
     if(useROS != ROS_only)
@@ -421,7 +421,7 @@ bool ControlBoardWrapper::open(Searchable& config)
             yError() << " *** ControlBoardWrapper2: 'period' parameter is not an integer value *** ";
             return false;
         }
-        period = prop.find("period").asInt32();
+        period = prop.find("period").asInt32() / 1000.0;
         if(period <= 0)
         {
             yError() << " *** ControlBoardWrapper2: 'period' parameter is not an integer value, read value is " << period << " ***";
@@ -431,7 +431,7 @@ bool ControlBoardWrapper::open(Searchable& config)
     else
     {
         yDebug() << "ControlBoardWrapper2: 'period' parameter missing, using default thread period = 20ms";
-        period = 20;
+        period = 0.02;
     }
 
     // check if we need to create subdevice or if they are
@@ -481,8 +481,9 @@ bool ControlBoardWrapper::open(Searchable& config)
     // we can start the thread. Otherwise this will happen when attachAll is called
     if (ownDevices)
     {
-       RateThread::setRate(period);
-       RateThread::start();
+       PeriodicThread::setPeriod(period);
+       if (!PeriodicThread::start())
+           return false;
     }
     return true;
 }
@@ -842,10 +843,8 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
 
     updateAxisName();
     calculateMaxNumOfJointsInDevices();
-    RateThread::setRate(period);
-    RateThread::start();
-
-    return true;
+    PeriodicThread::setPeriod(period);
+    return PeriodicThread::start();
 }
 
 bool ControlBoardWrapper::detachAll()
@@ -854,8 +853,8 @@ bool ControlBoardWrapper::detachAll()
         if (ownDevices)
             return false;
 
-        if (yarp::os::RateThread::isRunning())
-            yarp::os::RateThread::stop();
+        if (yarp::os::PeriodicThread::isRunning())
+            yarp::os::PeriodicThread::stop();
 
         int devices=device.subdevices.size();
 
