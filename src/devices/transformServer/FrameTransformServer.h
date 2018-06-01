@@ -19,7 +19,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/RpcServer.h>
@@ -57,7 +57,7 @@ namespace yarp
 #define ROSNODENAME "/tfNode"
 #define ROSTOPICNAME_TF "/tf"
 #define ROSTOPICNAME_TF_STATIC "/tf_static"
-#define DEFAULT_THREAD_PERIOD 20 //ms
+#define DEFAULT_THREAD_PERIOD 0.02 //s
 
 class Transforms_server_storage
 {
@@ -76,7 +76,7 @@ public:
      void clear                       ();
 };
 
-class yarp::dev::FrameTransformServer : public yarp::os::RateThread,
+class yarp::dev::FrameTransformServer : public yarp::os::PeriodicThread,
                                    public yarp::dev::DeviceDriver,
                                    public yarp::os::PortReader
 {
@@ -98,7 +98,7 @@ private:
     std::string        m_streamingPortName;
     std::string        m_rpcPortName;
     yarp::os::Stamp              m_lastStateStamp;
-    int                          m_period;
+    double                       m_period;
     yarp::os::Node*              m_rosNode;
     bool                         m_enable_publish_ros_tf;
     bool                         m_enable_subscribe_ros_tf;
