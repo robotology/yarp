@@ -113,12 +113,12 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
         safe_printf(dummy, 1024, "   virtual: %s\n",
                             (isVirtual)?"yes":"no");
         msg+= dummy;
-        int rate = options.check("rate", Value(10)).asInt32();
-        safe_printf(dummy, 1024, "   db.rate: %dms\n", rate);
+        double rate = options.check("rate", Value(10)).asInt32() / 1000.0;
+        safe_printf(dummy, 1024, "   db.rate: %fs\n", rate);
         msg+= dummy;
         yInfo("%s", msg.c_str());
         debugger.stop();
-        debugger.setRate(rate);
+        debugger.setPeriod(rate);
         debugger.start();
     }
 #endif
@@ -369,7 +369,7 @@ bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
  */
 
 #ifdef WITH_PRIORITY_DEBUG
-PriorityDebugThread::PriorityDebugThread(PriorityCarrier* carrier) : RateThread(10)
+PriorityDebugThread::PriorityDebugThread(PriorityCarrier* carrier) : PeriodicThread(0.01)
 {
     pcarrier = carrier;
     count = 0;
