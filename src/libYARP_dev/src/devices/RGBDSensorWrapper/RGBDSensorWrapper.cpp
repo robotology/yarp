@@ -170,7 +170,7 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 
 
 RGBDSensorWrapper::RGBDSensorWrapper() :
-    RateThread(DEFAULT_THREAD_PERIOD),
+    PeriodicThread(DEFAULT_THREAD_PERIOD),
     rosNode(nullptr),
     nodeSeq(0),
     period(DEFAULT_THREAD_PERIOD),
@@ -251,7 +251,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
             yInfo() << "RGBDSensorWrapper: using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "ms";
     }
     else
-        period = config.find("period").asInt32();
+        period = config.find("period").asInt32() / 1000.0;
 
     Bottle &rosGroup = config.findGroup("ROS");
     if(rosGroup.isNull())
@@ -551,14 +551,14 @@ bool RGBDSensorWrapper::attachAll(const PolyDriverList &device2attach)
     if(!attach(sensor_p))
         return false;
 
-    RateThread::setRate(period);
-    return RateThread::start();
+    PeriodicThread::setPeriod(period);
+    return PeriodicThread::start();
 }
 
 bool RGBDSensorWrapper::detachAll()
 {
-    if (yarp::os::RateThread::isRunning())
-        yarp::os::RateThread::stop();
+    if (yarp::os::PeriodicThread::isRunning())
+        yarp::os::PeriodicThread::stop();
 
     //check if we already instantiated a subdevice previously
     if (isSubdeviceOwned)
@@ -590,8 +590,8 @@ bool RGBDSensorWrapper::attach(yarp::dev::IRGBDSensor *s)
         }
     }
 
-    RateThread::setRate(period);
-    return RateThread::start();
+    PeriodicThread::setPeriod(period);
+    return PeriodicThread::start();
 }
 
 bool RGBDSensorWrapper::attach(PolyDriver* poly)
@@ -613,8 +613,8 @@ bool RGBDSensorWrapper::attach(PolyDriver* poly)
         yError() << "RGBD wrapper: error configuring interfaces for parsers";
         return false;
     }
-    RateThread::setRate(period);
-    return RateThread::start();
+    PeriodicThread::setPeriod(period);
+    return PeriodicThread::start();
 }
 
 bool RGBDSensorWrapper::detach()
