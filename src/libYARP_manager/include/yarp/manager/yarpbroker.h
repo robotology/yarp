@@ -18,7 +18,7 @@
 #include <yarp/os/Property.h>
 #include <string>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 
 // FIXME Do not use yarp/os/impl in .h files
 #include <yarp/os/SystemInfo.h>
@@ -34,7 +34,7 @@ namespace manager {
 /**
  * Class Broker
  */
-class YarpBroker: public Broker, public yarp::os::RateThread {
+class YarpBroker: public Broker, public yarp::os::PeriodicThread {
 
 public:
     YarpBroker();

@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
 
@@ -27,8 +27,8 @@ namespace yarp {
 namespace manager {
 
 
-#define DEF_PERIOD      100  //ms
-#define WDOG_PERIOD     5000 //ms
+#define DEF_PERIOD      0.1  //s
+#define WDOG_PERIOD     5.0 //s
 
 typedef enum __RSTATE {
     SUSPENDED,
@@ -194,12 +194,12 @@ private:
 };
 
 
-class ConcurentRateWrapper: public yarp::os::RateThread
+class ConcurentRateWrapper: public yarp::os::PeriodicThread
 {
 public:
 
     ConcurentRateWrapper(Executable* ptrExecutable, ExecutableFuncPtr ptrLabor)
-    : RateThread(WDOG_PERIOD), labor(ptrLabor), executable(ptrExecutable) { }
+    : PeriodicThread(WDOG_PERIOD), labor(ptrLabor), executable(ptrExecutable) { }
 
     virtual ~ConcurentRateWrapper() { if(isRunning()) stop(); }
 

@@ -22,7 +22,7 @@
 #define RUN_TIMEOUT             10.0        //seconds
 #define STOP_TIMEOUT            15.0
 #define KILL_TIMEOUT            10.0
-#define EVENT_THREAD_PERIOD     500
+#define EVENT_THREAD_PERIOD     0.5 //seconds
 
 #if defined(_WIN32)
     #define SIGKILL 9
@@ -41,7 +41,7 @@ using namespace std;
 using namespace yarp::manager;
 
 
-YarpBroker::YarpBroker() : RateThread(EVENT_THREAD_PERIOD)
+YarpBroker::YarpBroker() : PeriodicThread(EVENT_THREAD_PERIOD)
 {
     bOnlyConnector = bInitialized = false;
     ID = generateID();
@@ -56,8 +56,8 @@ YarpBroker::~YarpBroker()
 
 void YarpBroker::fini()
 {
-    if(RateThread::isRunning())
-        RateThread::stop();
+    if(PeriodicThread::isRunning())
+        PeriodicThread::stop();
     //port.close();
 }
 
@@ -204,9 +204,9 @@ bool YarpBroker::start()
         {
             if(strStdioUUID.size())
             {
-                if(RateThread::isRunning())
-                    RateThread::stop();
-                RateThread::start();
+                if(PeriodicThread::isRunning())
+                    PeriodicThread::stop();
+                PeriodicThread::start();
             }
             return true;
         }
@@ -253,7 +253,7 @@ bool YarpBroker::stop()
     {
         if(running() == 0)
         {
-            RateThread::stop();
+            PeriodicThread::stop();
             return true;
         }
     }
@@ -262,7 +262,7 @@ bool YarpBroker::stop()
     strError += strCmd;
     strError += " on ";
     strError += strHost;
-    RateThread::stop();
+    PeriodicThread::stop();
     return false;
 }
 
@@ -301,7 +301,7 @@ bool YarpBroker::kill()
     {
         if(running() == 0)
         {
-            RateThread::stop();
+            PeriodicThread::stop();
             return true;
         }
     }
@@ -310,7 +310,7 @@ bool YarpBroker::kill()
     strError += strCmd;
     strError += " on ";
     strError += strHost;
-    RateThread::stop();
+    PeriodicThread::stop();
     return false;
 }
 
