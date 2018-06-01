@@ -153,7 +153,7 @@ AnalogPortEntry &AnalogPortEntry::operator =(const AnalogPortEntry &alt)
 
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
 // Constructor used when there is only one output port
-AnalogWrapper::AnalogWrapper(const char* name, int rate): RateThread(rate)
+AnalogWrapper::AnalogWrapper(const char* name, int rate): PeriodicThread(rate / 1000.0)
 {
     // init ROS struct
     useROS          = ROS_disabled;
@@ -179,14 +179,14 @@ bool AnalogWrapper::createPort(const char* name, int rate)
     analogPorts[0].length = -1; // max length
     analogPorts[0].port_name = std::string(name);
     setHandlers();
-    setRate(rate);
+    setPeriod(rate / 1000.0);
     return true;
 }
 
 #ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
 // Contructor used when one or more output ports are specified
 AnalogWrapper::AnalogWrapper(const std::vector<AnalogPortEntry>& _analogPorts, int rate):
-    RateThread(rate),
+    PeriodicThread(rate / 1000.0),
     _rate(rate),
     sensorId("AnalogServer"),
     useROS(ROS_disabled),
@@ -207,12 +207,12 @@ bool AnalogWrapper::createPorts(const std::vector<AnalogPortEntry>& _analogPorts
     analogSensor_p=nullptr;
     this->analogPorts=_analogPorts;
     setHandlers();
-    setRate(rate);
+    setPeriod(rate / 1000.0);
     return true;
 }
 
 AnalogWrapper::AnalogWrapper() :
-        RateThread(DEFAULT_THREAD_PERIOD),
+        PeriodicThread(DEFAULT_THREAD_PERIOD / 1000.0),
         ownDevices(false),
         subDeviceOwned(nullptr)
 {
@@ -297,8 +297,8 @@ bool AnalogWrapper::openAndAttachSubDevice(Searchable &prop)
     }
 
     attach(analogSensor_p);
-    RateThread::setRate(_rate);
-    return RateThread::start();
+    PeriodicThread::setPeriod(_rate / 1000.0);
+    return PeriodicThread::start();
 }
 
 
@@ -340,8 +340,8 @@ bool AnalogWrapper::attachAll(const PolyDriverList &analog2attach)
         return false;
     }
     attach(analogSensor_p);
-    RateThread::setRate(_rate);
-    return RateThread::start();
+    PeriodicThread::setPeriod(_rate / 1000.0);
+    return PeriodicThread::start();
 }
 
 bool AnalogWrapper::detachAll()
@@ -916,9 +916,9 @@ void AnalogWrapper::run()
 bool AnalogWrapper::close()
 {
     yTrace("AnalogWrapper::Close");
-    if (RateThread::isRunning())
+    if (PeriodicThread::isRunning())
     {
-        RateThread::stop();
+        PeriodicThread::stop();
     }
 
     detachAll();

@@ -22,7 +22,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Stamp.h>
 
@@ -168,7 +168,7 @@ namespace yarp{
 
 
 
-class yarp::dev::AnalogWrapper: public yarp::os::RateThread,
+class yarp::dev::AnalogWrapper: public yarp::os::PeriodicThread,
                                 public yarp::dev::DeviceDriver,
                                 public yarp::dev::IMultipleWrapper
 {
