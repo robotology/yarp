@@ -354,7 +354,7 @@ bool FakeMotionControl::dealloc()
 }
 
 FakeMotionControl::FakeMotionControl() :
-    RateThread(10.0),
+    PeriodicThread(0.01),
     ImplementControlCalibration<FakeMotionControl, IControlCalibration>(this),
     ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>(this),
     ImplementPidControl(this),

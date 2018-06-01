@@ -15,7 +15,7 @@
 #include <yarp/os/NullConnectionReader.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/BufferedPort.h>
 
 #include <yarp/sig/Vector.h>
@@ -60,7 +60,7 @@ public:
 
 
 #ifdef WITH_PRIORITY_DEBUG
-class yarp::os::PriorityDebugThread : public yarp::os::RateThread {
+class yarp::os::PriorityDebugThread : public yarp::os::PeriodicThread {
 public:
     PriorityDebugThread(PriorityCarrier* carrier);
     virtual ~PriorityDebugThread();

@@ -267,7 +267,7 @@ private:
 
 
 /**************************************************************************/
-class DumpThread : public RateThread
+class DumpThread : public PeriodicThread
 {
 private:
     DumpQueue      &buf;
@@ -300,7 +300,7 @@ private:
 public:
     DumpThread(DumpType _type, DumpQueue &Q, const string &_dirName, int szToWrite,
                bool _saveData, bool _videoOn, const string &_videoType) :
-        RateThread(50),
+        PeriodicThread(0.05),
         buf(Q),
         type(_type),
         dirName(_dirName),

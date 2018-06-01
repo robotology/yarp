@@ -54,7 +54,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     if (br != false)
     {
         yarp::os::Searchable& general_config = config.findGroup("GENERAL");
-        period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt32();
+        period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt32() / 1000.0;
     }
 
     string string_test_mode = config.check("test", Value(string("use_pattern")), "string to select test mode").asString();
@@ -139,13 +139,12 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     yInfo("resolution %f", resolution);
     yInfo("sensors %d", sensorsNum);
     yInfo("test mode: %d", m_test_mode);
-    RateThread::start();
-    return true;
+    return PeriodicThread::start();
 }
 
 bool FakeLaser::close()
 {
-    RateThread::stop();
+    PeriodicThread::stop();
 
     driver.close();
     
@@ -212,7 +211,7 @@ bool FakeLaser::setHorizontalResolution(double step)
 bool FakeLaser::getScanRate(double& rate)
 {
     mutex.wait();
-    rate = 1.0 / (period * 1000);
+    rate = 1.0 / (period);
     mutex.post();
     return true;
 }
@@ -220,7 +219,7 @@ bool FakeLaser::getScanRate(double& rate)
 bool FakeLaser::setScanRate(double rate)
 {
     mutex.wait();
-    period = (int)((1.0 / rate) / 1000.0);
+    period = (1.0 / rate);
     mutex.post();
     return false;
 }

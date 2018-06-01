@@ -9,7 +9,7 @@
 #ifndef YARP_DEVICE_FAKE_ANALOGSENSOR
 #define YARP_DEVICE_FAKE_ANALOGSENSOR
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 
 #include <yarp/dev/all.h>
@@ -33,7 +33,7 @@ namespace yarp{
 */
 
 class yarp::dev::FakeAnalogSensor : public yarp::dev::DeviceDriver,
-                                    public yarp::os::RateThread,
+                                    public yarp::os::PeriodicThread,
                                     public yarp::dev::IAnalogSensor
 {
 private:
@@ -47,7 +47,7 @@ private:
     yarp::sig::Vector       data;
 
 public:
-    FakeAnalogSensor(int period = 20);
+    FakeAnalogSensor(double period = 0.02);
 
     ~FakeAnalogSensor();
 

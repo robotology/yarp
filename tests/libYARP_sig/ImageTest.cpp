@@ -24,7 +24,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 
 #include "TestList.h"
 
@@ -33,12 +33,12 @@ using namespace yarp::sig;
 using namespace yarp::sig::draw;
 using namespace yarp::os;
 
-class readWriteTest : public yarp::os::RateThread
+class readWriteTest : public yarp::os::PeriodicThread
 {
     yarp::os::Port p;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> image;
 public:
-    readWriteTest() : RateThread(10) {}
+    readWriteTest() : PeriodicThread(0.01) {}
 
     yarp::sig::ImageOf<yarp::sig::PixelRgb> getImage()
     {

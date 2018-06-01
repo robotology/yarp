@@ -10,7 +10,7 @@
 #ifndef YARP_DEV_MULTIPLEANALOGSENSORSSERVER_MULTIPLEANALOGSENSORSSERVER_H
 #define YARP_DEV_MULTIPLEANALOGSENSORSSERVER_MULTIPLEANALOGSENSORSSERVER_H
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/Wrapper.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
@@ -41,12 +41,12 @@ namespace yarp {
  * | name           |      -         | string  | -              |   -           | Yes                         | Prefix of the port opened by this device                          | MUST start with a '/' character |
  * | period         |      -         | int     | ms             |   -           | Yes                          | Refresh period of the broadcasted values in ms                    |  |
  */
-class yarp::dev::MultipleAnalogSensorsServer : public yarp::os::RateThread,
+class yarp::dev::MultipleAnalogSensorsServer : public yarp::os::PeriodicThread,
                                                public yarp::dev::DeviceDriver,
                                                public yarp::dev::IMultipleWrapper,
                                                public MultipleAnalogSensorsMetadata
 {
-    int m_periodInMs{10};
+    double m_periodInS{0.01};
     std::string m_streamingPortName;
     std::string m_RPCPortName;
     yarp::os::BufferedPort<SensorStreamingData> m_streamingPort;

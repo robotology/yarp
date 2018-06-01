@@ -58,7 +58,7 @@ extern char **environ;
 # pragma comment(lib, "wbemuuid.lib")  // for get process arguments from pid
 #endif
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 
 #include <vector>
@@ -114,11 +114,11 @@ bool getCpuEntry(const char* tag, const char *buff, std::string& value)
 #endif
 
 
-#if defined(_WIN32)
-class CpuLoadCollector: public yarp::os::SystemRateThread
+#if  defined(_WIN32)
+class CpuLoadCollector: public yarp::os::PeriodicThread
 {
 public:
-    CpuLoadCollector():SystemRateThread(5000)
+    CpuLoadCollector():PeriodicThread(5.000, ShouldUseSystemClock::Yes)
     {
        firstRun = true;
        load.cpuLoad1 = 0.0;

@@ -191,7 +191,7 @@ bool yarp::dev::impl::ServerGrabberResponder::respond(const os::Bottle &command,
 
 // **********ServerGrabber**********
 
-ServerGrabber::ServerGrabber():RateThread(DEFAULT_THREAD_PERIOD), period(DEFAULT_THREAD_PERIOD) {
+ServerGrabber::ServerGrabber():PeriodicThread(DEFAULT_THREAD_PERIOD), period(DEFAULT_THREAD_PERIOD) {
     responder = nullptr;
     responder2 =nullptr;
     rgbVis_p = nullptr;
@@ -362,7 +362,7 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
 {
     if(config.check("period","refresh period(in ms) of the broadcasted values through yarp ports")
             && config.find("period").isInt32())
-        period = config.find("period").asInt32();
+        period = config.find("period").asInt32() / 1000.0;
     else
         yWarning()<<"ServerGrabber: period parameter not found, using default of"<< DEFAULT_THREAD_PERIOD << "ms";
     if((config.check("subdevice")) && (config.check("left_config") || config.check("right_config")))
@@ -937,8 +937,8 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
         }
     }
 
-    RateThread::setRate(period);
-    ret = RateThread::start();
+    PeriodicThread::setPeriod(period);
+    ret = PeriodicThread::start();
 
     return ret;
 }
@@ -953,8 +953,8 @@ bool ServerGrabber::detachAll()
 }
 void ServerGrabber::stopThread()
 {
-    if (yarp::os::RateThread::isRunning())
-        yarp::os::RateThread::stop();
+    if (yarp::os::PeriodicThread::isRunning())
+        yarp::os::PeriodicThread::stop();
 
     rgbVis_p       = nullptr;
     rgbVis_p2      = nullptr;

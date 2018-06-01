@@ -15,14 +15,14 @@
 
 #include <yarp/os/all.h>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 
 #include <yarp/os/Time.h>
 using namespace yarp::os;
 
 const char SERVER_NAME[]="/game";
-const int PLAYER_RATE=500;
+const double PLAYER_PERIOD=0.5;
 
 const char UP[]="up";
 const char DOWN[]="down";
@@ -31,12 +31,12 @@ const char LEFT[]="left";
 const char FIRE[]="fire";
 const char GO[]="go";
 
-class MyPlayer: public RateThread
+class MyPlayer: public PeriodicThread
 {
 public:
     std::default_random_engine randengine;
 
-    MyPlayer(const char *n, int rate):RateThread(rate)
+    MyPlayer(const char *n, double period):PeriodicThread(period)
     {
         myX=0;
         myY=0;
@@ -216,7 +216,7 @@ int main(int argc, char **argv)
   
     Network yarp;
 
-    MyPlayer *player = new MyPlayer(argv[1], PLAYER_RATE);
+    MyPlayer *player = new MyPlayer(argv[1], PLAYER_PERIOD);
   
     if(atoi(argv[2])==0)
         player->setShooter(0);

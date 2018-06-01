@@ -20,7 +20,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Stamp.h>
 
@@ -45,9 +45,9 @@ namespace yarp{
         }
 }
 
-#define DEFAULT_THREAD_PERIOD 20 //ms
+#define DEFAULT_THREAD_PERIOD 0.02 //s
 
-class yarp::dev::Rangefinder2DWrapper: public yarp::os::RateThread,
+class yarp::dev::Rangefinder2DWrapper: public yarp::os::PeriodicThread,
                                 public yarp::dev::DeviceDriver,
                                 public yarp::dev::IMultipleWrapper,
                                 public yarp::os::PortReader
@@ -87,7 +87,7 @@ private:
     yarp::dev::IRangefinder2D *sens_p;
     yarp::dev::IPreciselyTimed *iTimed;
     yarp::os::Stamp lastStateStamp;
-    int _rate;
+    double _period;
     std::string sensorId;
     double minAngle, maxAngle;
     double minDistance, maxDistance;

@@ -8,10 +8,9 @@
 
 #include <yarp/dev/IJoypadController.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <vector>
 #include <JoypadControlNetUtils.h>
-#include <yarp/os/RateThread.h>
 
 /**
 * @ingroup dev_impl_network_clients
@@ -36,10 +35,10 @@ namespace yarp
     }
 }
 
-class yarp::dev::JoypadControlWatchdog : public yarp::os::RateThread
+class yarp::dev::JoypadControlWatchdog : public yarp::os::PeriodicThread
 {
 public:
-    JoypadControlWatchdog() : RateThread(250) {}
+    JoypadControlWatchdog() : PeriodicThread(0.250) {}
     virtual ~JoypadControlWatchdog() = default;
 
 

@@ -25,7 +25,7 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
-BoschIMU::BoschIMU() : RateThread(20),
+BoschIMU::BoschIMU() : PeriodicThread(0.02),
     verbose(false),
     status(0),
     nChannels(12),
@@ -58,8 +58,8 @@ bool BoschIMU::open(yarp::os::Searchable& config)
         return false;
     }
 
-    int period = config.check("period",Value(10),"Thread period in ms").asInt32();
-    setRate(period);
+    double period = config.check("period",Value(10),"Thread period in ms").asInt32() / 1000.0;
+    setPeriod(period);
 
     nChannels = config.check("channels", Value(12)).asInt32();
 
@@ -111,7 +111,7 @@ bool BoschIMU::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if(!RateThread::start())
+    if(!PeriodicThread::start())
         return false;
 
     return true;
@@ -121,7 +121,7 @@ bool BoschIMU::close()
 {
     yTrace();
     //stop the thread
-    RateThread::stop();
+    PeriodicThread::stop();
     return true;
 }
 

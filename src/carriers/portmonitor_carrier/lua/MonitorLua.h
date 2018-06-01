@@ -11,7 +11,7 @@
 
 #include <string>
 #include <string>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/RecursiveMutex.h>
 #include "MonitorBinding.h"
 #include "lua_swig.h"
@@ -93,10 +93,10 @@ private:
 
 };
 
-class MonitorTrigger : public yarp::os::RateThread {
+class MonitorTrigger : public yarp::os::PeriodicThread {
 public:
-    MonitorTrigger(MonitorLua* monitor, int period)
-        : yarp::os::RateThread(period) {
+    MonitorTrigger(MonitorLua* monitor, double period)
+        : yarp::os::PeriodicThread(period) {
         MonitorTrigger::monitor = monitor;
     }
     virtual ~MonitorTrigger() { }

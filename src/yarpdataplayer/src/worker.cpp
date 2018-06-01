@@ -267,7 +267,7 @@ void WorkerClass::setManager(Utilities *utilities)
 /**********************************************************/
 MasterThread::MasterThread(Utilities *utilities, int numPart, QMainWindow *gui, QObject *parent) :
     QObject(parent),
-    RateThread (2),
+    PeriodicThread (0.002),
     utilities(utilities),
     numPart(numPart),
     timePassed(0.0),
@@ -369,7 +369,7 @@ void MasterThread::runNormally()
         }
     }
     
-    this->setRate( (int) (2 / utilities->speed) );
+    this->setPeriod( (2 / utilities->speed) / 1000.0 );
     for (int i=0; i < numPart; i++){
        // virtualTime += utilities->partDetails[i].worker->getFrameRate()/4.16;//0.0024;
     }
@@ -445,7 +445,7 @@ void MasterThread::pause()
 /**********************************************************/
 void MasterThread::resume()
 {
-    RateThread::resume();
+    PeriodicThread::resume();
 }
 
 /**********************************************************/

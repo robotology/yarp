@@ -199,13 +199,13 @@ public:
     }
 };
 
-class serverThread: public RateThread
+class serverThread: public PeriodicThread
 {
     BufferedPort<TestData> port;
     unsigned int payload;
 
 public:
-    serverThread():RateThread(100)
+    serverThread():PeriodicThread(0.100)
     {}
 
     void setPayload(unsigned int p)
@@ -221,8 +221,8 @@ public:
         portName+="/port:o";
         port.open(portName.c_str());
 
-        RateThread::setRate(int (period*1000.0+0.5));
-        RateThread::start();
+        PeriodicThread::setPeriod(period);
+        PeriodicThread::start();
     }
 
     void run()

@@ -20,7 +20,7 @@
 #include <yarp/os/Property.h>
 #include <string>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Thread.h>
 
 #include <yarp/manager/broker.h>

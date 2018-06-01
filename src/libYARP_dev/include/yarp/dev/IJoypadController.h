@@ -12,7 +12,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <map>
 #include <vector>
 
@@ -201,7 +201,7 @@ public:
 
 
 
-class YARP_dev_API yarp::dev::IJoypadEventDriven : yarp::os::RateThread,
+class YARP_dev_API yarp::dev::IJoypadEventDriven : yarp::os::PeriodicThread,
                                                    public yarp::dev::IJoypadController
 {
 private:
@@ -253,8 +253,10 @@ public:
 
 
     IJoypadEventDriven();
-
-    IJoypadEventDriven(int rate);
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+    explicit IJoypadEventDriven(YARP_DEPRECATED_MSG("Use IJoypadEventDriven(double)") int rate);
+#endif
+    explicit IJoypadEventDriven(double period);
 
     virtual bool threadInit() override final;
     virtual void run() override final;

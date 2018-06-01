@@ -12,7 +12,7 @@
 
 #include <string>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/ILocalization2D.h>
@@ -49,7 +49,7 @@ using namespace yarp::dev;
 * yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient
 */
 
-class FakeLaser : public RateThread, public yarp::dev::IRangefinder2D, public DeviceDriver
+class FakeLaser : public PeriodicThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
 protected:
     enum test_mode_t { NO_OBSTACLES = 0, USE_PATTERN =1, USE_MAPFILE =2 };
@@ -60,7 +60,7 @@ protected:
     localization_mode_t m_loc_mode;
     yarp::os::Semaphore mutex;
 
-    int period;
+    double period;
     int sensorsNum;
 
     double min_angle;
@@ -87,7 +87,7 @@ protected:
     std::uniform_real_distribution<>* m_dis;
 
 public:
-    FakeLaser(int period = 20) : RateThread(period),
+    FakeLaser(double period = 0.02) : PeriodicThread(period),
         m_test_mode(test_mode_t::NO_OBSTACLES),
         m_loc_mode(localization_mode_t::LOC_NOT_SET),
         mutex(1),

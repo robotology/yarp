@@ -72,8 +72,8 @@ bool RpLidar2::open(yarp::os::Searchable& config)
         }
         if (general_config.check("thread_period"))
         {
-            int   thread_period = general_config.find("thread_period").asInt32();
-            this->setRate(thread_period);
+            double thread_period = general_config.find("thread_period").asInt32() / 1000.0;
+            this->setPeriod(thread_period);
         }
     }
     else
@@ -194,7 +194,7 @@ bool RpLidar2::open(yarp::os::Searchable& config)
     yInfo("max_angle %f, min_angle %f", m_max_angle, m_min_angle);
     yInfo("resolution %f",              m_resolution);
     yInfo("sensors %d",                 m_sensorsNum);
-    RateThread::start();
+    PeriodicThread::start();
     return true;
 }
 
@@ -202,7 +202,7 @@ bool RpLidar2::close()
 {
     m_drv->stopMotor();
     RPlidarDriver::DisposeDriver(m_drv);
-    RateThread::stop();
+    PeriodicThread::stop();
     yInfo() << "rpLidar closed";
     return true;
 }

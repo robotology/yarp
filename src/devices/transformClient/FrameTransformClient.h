@@ -20,7 +20,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/math/FrameTransform.h>
 #include <yarp/os/RecursiveMutex.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 
 namespace yarp {
     namespace dev {
@@ -83,7 +83,7 @@ public:
 class yarp::dev::FrameTransformClient: public DeviceDriver,
                                   public IFrameTransform,
                                   public yarp::os::PortReader,
-                                  public yarp::os::RateThread
+                                  public yarp::os::PeriodicThread
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
@@ -101,7 +101,7 @@ protected:
     std::string         m_local_name;
     std::string         m_remote_name;
     Transforms_client_storage*    m_transform_storage;
-    int                           m_period;
+    double                        m_period;
     yarp::os::Mutex               m_rpc_mutex;
     struct broadcast_port_t
     {

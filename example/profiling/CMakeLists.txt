@@ -34,34 +34,34 @@ add_executable(bottle_test bottle_test.cpp)
 target_link_libraries(bottle_test ${YARP_LIBRARIES})
 if(USE_PARALLEL_PORT)
   target_link_libraries(bottle_test ${PPEVENTDEBUGGER_LIBRARIES})
-endif
+endif()
 
 add_executable(port_latency port_latency.cpp)
 target_link_libraries(port_latency ${YARP_LIBRARIES})
 if(USE_PARALLEL_PORT)
   target_link_libraries(port_latency ${PPEVENTDEBUGGER_LIBRARIES})
-endif
+endif()
 
 add_executable(port_latency_st port_latency_st.cpp)
 target_link_libraries(port_latency_st ${YARP_LIBRARIES})
 if(USE_PARALLEL_PORT)
   target_link_libraries(port_latency_st ${PPEVENTDEBUGGER_LIBRARIES})
-endif
+endif()
 
 add_executable(thread_latency thread_latency.cpp)
 target_link_libraries(thread_latency ${YARP_LIBRARIES})
 if(USE_PARALLEL_PORT)
   target_link_libraries(thread_latency ${PPEVENTDEBUGGER_LIBRARIES})
-endif
+endif()
 
 add_executable(timers timers.cpp)
 target_link_libraries(timers ${YARP_LIBRARIES})
 if(USE_PARALLEL_PORT)
   target_link_libraries(timers ${PPEVENTDEBUGGER_LIBRARIES})
-endif
+endif()
 
 add_executable(rateThreadTiming rateThreadTiming.cpp)
 target_link_libraries(rateThreadTiming ${YARP_LIBRARIES})
 if(USE_PARALLEL_PORT)
   target_link_libraries(rateThreadTiming ${PPEVENTDEBUGGER_LIBRARIES})
-endif
+endif()

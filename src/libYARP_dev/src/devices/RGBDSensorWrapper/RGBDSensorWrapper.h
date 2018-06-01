@@ -20,7 +20,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/BufferedPort.h>
 
 
@@ -57,7 +57,7 @@ namespace yarp{
     }
 }
 
-#define DEFAULT_THREAD_PERIOD   30 //ms
+#define DEFAULT_THREAD_PERIOD   0.03 //m
 
 // Following three definitions would fit better in a header file
 // shared between client and server ... where to place it?
@@ -128,7 +128,7 @@ public:
 class yarp::dev::RGBDSensorWrapper: public yarp::dev::DeviceDriver,
                                     public yarp::dev::IWrapper,
                                     public yarp::dev::IMultipleWrapper,
-                                    public yarp::os::RateThread
+                                    public yarp::os::PeriodicThread
 {
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -180,7 +180,7 @@ private:
 
     // Image data specs
     // int hDim, vDim;
-    UInt                           period;
+    double                         period;
     std::string                    sensorId;
     yarp::dev::IRGBDSensor*        sensor_p;
     yarp::dev::IFrameGrabberControls* fgCtrl;

@@ -186,13 +186,12 @@ bool RpLidar::open(yarp::os::Searchable& config)
 //     string info;
 //     bool b_info = HW_getInfo(info);
 
-    RateThread::start();
-    return true;
+    return PeriodicThread::start();
 }
 
 bool RpLidar::close()
 {
-    RateThread::stop();
+    PeriodicThread::stop();
 
     if (!HW_stop())
     {

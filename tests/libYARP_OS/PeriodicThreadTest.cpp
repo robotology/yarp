@@ -8,6 +8,7 @@
  */
 
 #include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
@@ -47,9 +48,9 @@ public:
     }
 };
 
-class RateThreadTest : public UnitTest {
+class PeriodicThreadTest : public UnitTest {
 private:
-    class RateThread1: public RateThread
+    class PeriodicThread1: public PeriodicThread
     {
     public:
         double t1;
@@ -58,7 +59,7 @@ private:
         double period;
         int n;
 
-        RateThread1(int r): RateThread(r){}
+        PeriodicThread1(double r): PeriodicThread(r){}
 
         virtual bool threadInit() override
         {
@@ -85,38 +86,47 @@ private:
         virtual void threadRelease() override
         {
             if (n>0)
-                period=1000*average/(n-1);
+                period=average/(n-1);
             else
                 period=0;
         }
 
     };
 
-    class RateThread2: public RateThread
+    class PeriodicThread2: public PeriodicThread
     {
     public:
         bool fail;
         int state;
 
-        RateThread2(int r): RateThread(r),fail(false),state(-1){}
+        PeriodicThread2(double r) :
+                PeriodicThread(r),
+                fail(false),
+                state(-1)
+        {
+        }
 
         void threadWillFail(bool f)
-        {fail=f;}
+        {
+            fail = f;
+        }
 
         virtual bool threadInit() override
         {
-            state=-1;
+            state = -1;
             return !fail;
         }
 
         virtual void afterStart(bool s) override
         {
-            if (s)
+            if (s) {
                 state=0;
+            }
         }
 
         virtual void run() override
-        {}
+        {
+        }
 
         virtual void threadRelease() override
         {
@@ -124,13 +134,13 @@ private:
         }
     };
 
-    class RateThread3: public RateThread
+    class PeriodicThread3: public PeriodicThread
     {
     public:
         bool fail;
         int state;
 
-        RateThread3(int r): RateThread(r),fail(false),state(-1){}
+        PeriodicThread3(double r): PeriodicThread(r),fail(false),state(-1){}
 
         void threadWillFail(bool f)
         {
@@ -164,12 +174,12 @@ private:
         }
     };
 
-    class RateThread4: public RateThread
+    class PeriodicThread4: public PeriodicThread
     {
     public:
         int count;
 
-        RateThread4(int r): RateThread(r),count(10){}
+        PeriodicThread4(double r): PeriodicThread(r),count(10){}
 
         virtual void run() override
         {
@@ -177,17 +187,17 @@ private:
 
                //terminate when count is zero
                if (count==0)
-                   RateThread::askToStop();
+                   PeriodicThread::askToStop();
         }
 
     };
 
-    class RateThread5: public RateThread
+    class PeriodicThread5: public PeriodicThread
     {
     public:
         int count;
 
-        RateThread5(int r): RateThread(r),count(0){}
+        PeriodicThread5(double r): PeriodicThread(r),count(0){}
 
         virtual void run() override {
             count++;
@@ -200,12 +210,12 @@ private:
      * The delay will be a negative number.
      * Check that thread does not hangs forever.
      */
-    class BusyThread: public RateThread
+    class BusyThread: public PeriodicThread
     {
     public:
         int count;
 
-        BusyThread(int r): RateThread(r),count(0){}
+        BusyThread(double r): PeriodicThread(r),count(0){}
 
         virtual void run() override {
             printf("BusyThread running ...\n");
@@ -213,11 +223,11 @@ private:
         }
     };
 
-    class AskForStopThread : public RateThread {
+    class AskForStopThread : public PeriodicThread {
     public:
         bool done;
 
-        AskForStopThread() : RateThread(100) {
+        AskForStopThread() : PeriodicThread(0.1) {
             done = false;
         }
 
@@ -265,12 +275,12 @@ private:
     };
 
 public:
-    virtual std::string getName() override { return "RateThreadTest"; }
+    virtual std::string getName() override { return "PeriodicThreadTest"; }
 
-    double test(int rate, double delay)
+    double test(double period, double delay)
     {
         double estPeriod=0;
-        RateThread1 *thread1=new RateThread1(rate);
+        PeriodicThread1 *thread1=new PeriodicThread1(period);
 
         thread1->start();
         Time::delay(delay);
@@ -285,7 +295,7 @@ public:
     void testInitSuccessFailure()
     {
         report(0,"checking init failure/success notification");
-        RateThread2 t(200);
+        PeriodicThread2 t(0.200);
         t.threadWillFail(false);
         t.start();
         checkTrue(t.isRunning(), "thread is running");
@@ -304,7 +314,7 @@ public:
     void testInitReleaseSynchro()
     {
         report(0,"Checking init/release synchronization");
-        RateThread3 t(200);
+        PeriodicThread3 t(0.200);
         t.threadWillFail(false);
         // if start does not wait for threadRelease/threadInit, a race condition
         // will be detected
@@ -321,7 +331,7 @@ public:
         report(0,"done");
     }
 
-    void testRateThread() {
+    void testPeriodicThread() {
         report(0,"testing rate thread precision");
         report(0,"setting high res scheduler (this affects only windows)");
 
@@ -332,35 +342,35 @@ public:
 
         //try plausible rates
         double desiredPeriod, actualPeriod;
-        desiredPeriod = 15;
-        sprintf(message, "Thread1 requested period: %d[ms]", (int)desiredPeriod);
+        desiredPeriod = 0.015;
+        sprintf(message, "Thread1 requested period: %f[s]", desiredPeriod);
         report(0, message);
         actualPeriod = test(desiredPeriod, 1);
         if( (actualPeriod > (desiredPeriod*(1-acceptedThreshold))) && (actualPeriod < (desiredPeriod * (1+acceptedThreshold))) )
             success = true;
-        sprintf(message, "Thread1 estimated period: %.2lf[ms]", actualPeriod);
+        sprintf(message, "Thread1 estimated period: %f[s]", actualPeriod);
         report(0, message);
         sprintf(message, "Period NOT within range of %d%%", (int)(acceptedThreshold*100));
         if(!success)  YARP_WARN(Logger::get(), message);
 
-        desiredPeriod = 10;
-        sprintf(message, "Thread2 requested period: %d[ms]", (int)desiredPeriod);
+        desiredPeriod = 0.010;
+        sprintf(message, "Thread2 requested period: %f[s]", desiredPeriod);
         report(0, message);
         actualPeriod = test(desiredPeriod, 1);
         if( (actualPeriod > (desiredPeriod*(1-acceptedThreshold))) && (actualPeriod < (desiredPeriod * (1+acceptedThreshold))) )
             success = true;
-        sprintf(message, "Thread2 estimated period: %.2lf[ms]", actualPeriod);
+        sprintf(message, "Thread2 estimated period: %f[s]", actualPeriod);
         report(0, message);
         sprintf(message, "Period NOT within range of %d%%", (int)(acceptedThreshold*100));
         if(!success)  YARP_WARN(Logger::get(), message);
 
-        desiredPeriod = 1;
-        sprintf(message, "Thread3 requested period: %d[ms]", (int)desiredPeriod);
+        desiredPeriod = 0.001;
+        sprintf(message, "Thread3 requested period: %f[s]", desiredPeriod);
         report(0, message);
         actualPeriod = test(desiredPeriod, 1);
         if( (actualPeriod > (desiredPeriod*(1-acceptedThreshold))) && (actualPeriod < (desiredPeriod * (1+acceptedThreshold))) )
             success = true;
-        sprintf(message, "Thread3 estimated period: %.2lf[ms]", actualPeriod);
+        sprintf(message, "Thread3 estimated period: %f[s]", actualPeriod);
         report(0, message);
         sprintf(message, "Period NOT within range of %d%%", (int)(acceptedThreshold*100));
         if(!success)  YARP_WARN(Logger::get(), message);
@@ -368,7 +378,7 @@ public:
         report(0, "successful");
 
         report(0, "Testing askToStop() function");
-        RateThread4 thread(10);
+        PeriodicThread4 thread(0.010);
         thread.start();
 
         bool running=true;
@@ -388,7 +398,7 @@ public:
         Time::delay(-2);
         checkTrue(true, "Negative Time::delay() and delaySystem() is safe.");
 
-        BusyThread  busy(10);
+        BusyThread  busy(0.010);
         busy.start();
         SystemClock::delaySystem(2);
         busy.stop();
@@ -401,7 +411,7 @@ public:
 
         Runnable1 foo;
         RateThreadWrapper t;
-        t.setRate(100);
+        t.setPeriod(0.1);
         t.attach(foo);
         t.start();
         checkTrue(t.isRunning(), "thread is running");
@@ -421,7 +431,7 @@ public:
         Time::useCustomClock(&clock);
         checkTrue(Time::isCustomClock(), "isCustomClock is true");
         checkTrue(Time::getClockType() == YARP_CLOCK_CUSTOM, "getClockType is YARP_CLOCK_CUSTOM");
-        RateThread5 thread(100*1000); // 100 secs
+        PeriodicThread5 thread(100*1000); // 100 secs
         thread.start();
         SystemClock clk;
         for (int i=0; i<20; i++) {
@@ -460,15 +470,15 @@ public:
         testInitSuccessFailure();
         testInitReleaseSynchro();
         testRunnable();
-        testRateThread();
+        testPeriodicThread();
         testSimTime();
         testStartAskForStopStart();
     }
 };
 
-static RateThreadTest theRateThreadTest;
+static PeriodicThreadTest thePeriodicThreadTest;
 
-UnitTest& getRateThreadTest() {
-    return theRateThreadTest;
+UnitTest& getPeriodicThreadTest() {
+    return thePeriodicThreadTest;
 }
 

@@ -11,7 +11,7 @@
 #include <vector>
 #include <yarp/os/LogStream.h>
 
-#define DEFAULT_THREAD_PERIOD   10 //ms
+#define DEFAULT_THREAD_PERIOD   0.010 //s
 
 using namespace std;
 using namespace yarp::dev;
@@ -217,8 +217,8 @@ bool JoypadCtrlParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& re
 }
 
 
-JoypadControlServer::JoypadControlServer() : RateThread(DEFAULT_THREAD_PERIOD),
-                                             m_rate(DEFAULT_THREAD_PERIOD),
+JoypadControlServer::JoypadControlServer() : PeriodicThread(DEFAULT_THREAD_PERIOD),
+                                             m_period(DEFAULT_THREAD_PERIOD),
                                              m_device(nullptr),
                                              m_subDeviceOwned(nullptr),
                                              m_isSubdeviceOwned(false),
@@ -258,7 +258,7 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
     }
     else
     {
-        m_rate = params.find("period").asInt32();
+        m_period = params.find("period").asInt32() / 1000.0;
     }
 
     m_profile = params.check("profile");
@@ -345,9 +345,8 @@ bool JoypadControlServer::openAndAttachSubDevice(Searchable& prop)
     }
 
     openPorts();
-    RateThread::setRate(m_rate);
-    RateThread::start();
-    return true;
+    PeriodicThread::setPeriod(m_period);
+    return PeriodicThread::start();
 }
 
 bool JoypadControlServer::attach(PolyDriver* poly)
@@ -806,8 +805,9 @@ bool JoypadControlServer::attachAll(const PolyDriverList& p)
     if(!attach(m_device))
         return false;
 
-    RateThread::setRate(m_rate);
-    RateThread::start();
+    PeriodicThread::setPeriod(m_period);
+    if (!PeriodicThread::start())
+        return false;
 
     openPorts();
     return true;
@@ -815,8 +815,8 @@ bool JoypadControlServer::attachAll(const PolyDriverList& p)
 
 bool JoypadControlServer::detachAll()
 {
-    if (yarp::os::RateThread::isRunning())
-        yarp::os::RateThread::stop();
+    if (yarp::os::PeriodicThread::isRunning())
+        yarp::os::PeriodicThread::stop();
 
     //check if we already instantiated a subdevice previously
     if (m_isSubdeviceOwned)

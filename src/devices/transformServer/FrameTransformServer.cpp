@@ -88,7 +88,7 @@ void Transforms_server_storage::clear()
   * FrameTransformServer
   */
 
-FrameTransformServer::FrameTransformServer() : RateThread(DEFAULT_THREAD_PERIOD)
+FrameTransformServer::FrameTransformServer() : PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
     m_period = DEFAULT_THREAD_PERIOD;
     m_enable_publish_ros_tf = false;
@@ -494,11 +494,11 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
 
     if (!config.check("period"))
     {
-        m_period = 10;
+        m_period = 0.01;
     }
     else
     {
-        m_period = config.find("period").asInt32();
+        m_period = config.find("period").asInt32() / 1000.0;
         yInfo() << "FrameTransformServer: thread period set to:" << m_period;
     }
 
@@ -830,9 +830,9 @@ void FrameTransformServer::run()
 bool FrameTransformServer::close()
 {
     yTrace("FrameTransformServer::Close");
-    if (RateThread::isRunning())
+    if (PeriodicThread::isRunning())
     {
-        RateThread::stop();
+        PeriodicThread::stop();
     }
 
     return true;

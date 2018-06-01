@@ -271,6 +271,8 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %enddef
 %define YARP_OS_DEPRECATED_API
 %enddef
+%define YARP_OS_DEPRECATED_API_MSG(msg)
+%enddef
 %define YARP_DISABLE_DEPRECATED_WARNING
 %enddef
 %define YARP_DISABLE_DLL_INTERFACE_WARNING
@@ -369,7 +371,10 @@ namespace yarp {
 %include <yarp/os/Searchable.h>
 %include <yarp/os/Semaphore.h>
 %include <yarp/os/Thread.h>
+%include <yarp/os/PeriodicThread.h>
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 %include <yarp/os/RateThread.h>
+#endif
 %include <yarp/os/Time.h>
 %include <yarp/os/RFModule.h>
 %include <yarp/os/Stamp.h>

@@ -7,41 +7,37 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_RATETHREAD_H
-#define YARP_OS_RATETHREAD_H
+#ifndef YARP_OS_PERIODICTHREAD_H
+#define YARP_OS_PERIODICTHREAD_H
 
-#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Runnable.h>
-#include <yarp/os/api.h>
-
-namespace yarp {
-namespace os {
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-
-
-
+#include <yarp/os/Time.h>
 /**
  * \ingroup key_class
  *
  * An abstraction for a periodic thread.
- *
- * @deprecated since YARP 3.0.0
  */
-class YARP_OS_DEPRECATED_API_MSG("Use PeriodicThread instead") RateThread : private PeriodicThread
+namespace yarp {
+namespace os {
+
+class YARP_OS_API PeriodicThread
 {
 public:
 
     /**
-     * Constructor.  Thread begins in a dormant state.  Call RateThread::start
+     * Constructor.  Thread begins in a dormant state.  Call PeriodicThread::start
      * to get things going.
-     * @param period The period in milliseconds [ms] between
-     * successive calls to the RateThread::run method
-     * (remember you need to call RateThread::start first
+     * @param period The period in seconds [sec] between
+     * successive calls to the PeriodicThread::run method
+     * (remember you need to call PeriodicThread::start first
      * before anything happens)
+     * @param useSystemClock whether the thread should always
+     * use the system clock, or depend on the current
+     * configuration of the network.
      */
-    RateThread(int period);
+    explicit PeriodicThread(double period, ShouldUseSystemClock useSystemClock = ShouldUseSystemClock::No);
 
-    virtual ~RateThread();
+    virtual ~PeriodicThread();
 
     /**
      * Call this to start the thread. Blocks until initThread()
@@ -54,7 +50,7 @@ public:
      * starting it.  This will execute at most one call
      * to doLoop before returning.
      */
-    bool step();
+    void step();
 
     /**
      * Call this to stop the thread, this call blocks until the
@@ -73,73 +69,74 @@ public:
     /**
      * Returns true when the thread is started, false otherwise.
      */
-    bool isRunning();
+    bool isRunning() const;
 
     /**
      * Returns true when the thread is suspended, false otherwise.
      */
-    bool isSuspended();
+    bool isSuspended() const;
 
     /**
-     * Set the (new) rate of the thread.
-     * @param period the rate [ms]
+     * Set the (new) period of the thread.
+     * @param period the period [sec]
      * @return true.
      */
-    bool setRate(int period);
-    /**
-     * Return the current rate of the thread.
-     * @return thread current rate [ms].
-     */
-    double getRate();
+    bool setPeriod(double period);
 
     /**
-     * Suspend the thread, the thread keeps running by doLoop is
+     * @brief Return the current period of the thread.
+     * @return thread current period [sec].
+     */
+    double getPeriod() const;
+
+    /**
+     * @brief Suspend the thread, the thread keeps running by doLoop is
      * never executed.
      */
     void suspend();
 
     /**
-     * Resume the thread if previously suspended.
+     * @brief Resume the thread if previously suspended.
      */
     void resume();
 
     /**
-     * Reset thread statistics.
+     * @brief Reset thread statistics.
      */
     void resetStat();
 
     /**
-     * Return estimated period since last reset.
+     * @brief Return estimated period since last reset.
      */
-    double getEstPeriod();
+    double getEstimatedPeriod() const;
 
     /**
-     * Return estimated period since last reset.
-     * @param av average value
-     * @param std standard deviation
+     * @brief Return estimated period since last reset.
+     * @param[out] av average value
+     * @param[out] std standard deviation
      */
-    void getEstPeriod(double &av, double &std);
+    void getEstimatedPeriod(double &av, double &std) const;
 
     /**
-     * Return the number of iterations performed since last reset.
+     * @brief Return the number of iterations performed since last reset.
      */
-    unsigned int getIterations();
+    unsigned int getIterations() const;
 
     /**
-     * Return the estimated duration of the run() function since
+     * @brief Return the estimated duration of the run() function since
      * last reset.
      */
-    double getEstUsed();
+    double getEstimatedUsed() const;
 
     /**
-     * Return estimated duration of the run() function since last reset.
-     * @param av average value
-     * @param std standard deviation
+     * @brief Return estimated duration of the run() function since last reset.
+     * @param[out] av average value
+     * @param[out] std standard deviation
      */
-    void getEstUsed(double &av, double &std);
+    void getEstimatedUsed(double &av, double &std) const;
 
     /**
-     * Set the priority and scheduling policy of the thread, if the OS supports that.
+     * @brief Set the priority and scheduling policy of the thread, if the OS supports that.
      * @param priority the new priority of the thread.
      * @param policy the scheduling policy of the thread
      * @return -1 if the priority cannot be set.
@@ -154,16 +151,16 @@ public:
     int setPriority(int priority, int policy=-1);
 
     /**
-     * Query the current priority of the thread, if the OS supports that.
+     * @brief Query the current priority of the thread, if the OS supports that.
      * @return the priority of the thread.
      */
-    int getPriority();
+    int getPriority() const;
 
     /**
      * @brief Query the current scheduling policy of the thread, if the OS supports that.
      * @return the scheduling policy of the thread.
      */
-    int getPolicy();
+    int getPolicy() const;
 
 protected:
     /**
@@ -177,7 +174,7 @@ protected:
      * to afterStart(). Note that afterStart() is called by the
      * same thread that is executing the "start" method.
      */
-    virtual bool threadInit() override;
+    virtual bool threadInit();
 
     /**
      * Release method. The thread executes this function once when
@@ -185,7 +182,7 @@ protected:
      * resources that were initialized in threadInit() (release memory,
      * and device driver resources).
      */
-     virtual void threadRelease() override;
+     virtual void threadRelease();
 
     /**
      * Loop function. This is the thread itself.
@@ -198,73 +195,29 @@ protected:
      * Note: after each run is completed, the thread will call a yield()
      * in order to facilitate other threads to run.
      */
-    virtual void run() override = 0;
+    virtual void run() = 0;
 
     /**
      * Called just before a new thread starts. This method is executed
      * by the same thread that calls start().
      */
-    virtual void beforeStart() override;
+    virtual void beforeStart();
 
     /**
      * Called just after a new thread starts (or fails to start), this
      * is executed by the same thread that calls start().
      * @param success true iff the new thread started successfully.
      */
-    virtual void afterStart(bool success) override;
-};
+    virtual void afterStart(bool success);
 
-
-class YARP_OS_DEPRECATED_API_MSG("Use PeriodicThread(..., == ShouldUseSystemClock::Yes) instead")  SystemRateThread : public PeriodicThread
-{
-public:
-    SystemRateThread(int period);
-
-    virtual ~SystemRateThread();
-
-    bool stepSystem();
-};
-
-
-#endif
-/**
- * This class takes a Runnable instance and wraps a thread around it.
- * This class is under development - API may change a lot.
- */
-class YARP_OS_API RateThreadWrapper : public PeriodicThread
-{
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-    yarp::os::Runnable *helper;
-    int owned;
-public:
-    /**
-     * Default constructor.
-     */
-    RateThreadWrapper();
-    RateThreadWrapper(Runnable *helper);
-    RateThreadWrapper(Runnable& helper);
-
-    virtual ~RateThreadWrapper();
-
-    void detach();
-    virtual bool attach(Runnable& helper);
-    virtual bool attach(Runnable *helper);
-
-    bool open(double framerate = -1, bool polling = false);
-    void close();
-    void stop();
-
-    virtual void run() override;
-    virtual bool threadInit() override;
-    virtual void threadRelease() override;
-    virtual void afterStart(bool success) override;
-    virtual void beforeStart() override;
-
-    Runnable *getAttachment() const;
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
 } // namespace os
 } // namespace yarp
 
-
-#endif // YARP_OS_RATETHREAD_H
+#endif // YARP_OS_PERIODICTHREAD_H

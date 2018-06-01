@@ -23,7 +23,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
@@ -87,7 +87,7 @@ struct ImpedanceParameters
 
 class yarp::dev::FakeMotionControl :    public DeviceDriver,
 //                                         public DeviceResponder,
-                                        public yarp::os::RateThread,
+                                        public yarp::os::PeriodicThread,
                                         public IPidControlRaw,
                                         public IControlCalibrationRaw,
                                         public IAmplifierControlRaw,

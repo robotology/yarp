@@ -21,13 +21,17 @@ using namespace yarp::os;
 
 #define JoyData yarp::dev::IJoypadEvent::joyData
 
-yarp::dev::IJoypadEventDriven::IJoypadEventDriven() : IJoypadEventDriven(10){}
+yarp::dev::IJoypadEventDriven::IJoypadEventDriven() : IJoypadEventDriven(0.01){}
 
-yarp::dev::IJoypadEventDriven::IJoypadEventDriven(int rate) : RateThread(rate)
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+yarp::dev::IJoypadEventDriven::IJoypadEventDriven(int rate) : IJoypadEventDriven(rate / 1000.0) {}
+#endif
+yarp::dev::IJoypadEventDriven::IJoypadEventDriven(double period) : PeriodicThread(period),
+                                                                   m_event(nullptr),
+                                                                   EventDrivenEnabled(false)
 {
-    EventDrivenEnabled = false;
-    m_event = nullptr;
 }
+
 
 bool isEqual(const float& a, const float& b, const float& tolerance)
 {

@@ -19,7 +19,7 @@ endif()
 cmake_dependent_option(YARP_DISABLE_FAILING_TESTS OFF "Disable tests that fail randomly due to race conditions"
                        "NOT ${CMAKE_VERSION} VERSION_LESS 3.9;YARP_COMPILE_TESTS" OFF)
 mark_as_advanced(YARP_DISABLE_FAILING_TESTS)
-set(FAILING_TESTS OS::RateThreadTest
+set(FAILING_TESTS OS::PeriodicThreadTest
                   dev::ControlBoardRemapperTest
                   dev::FrameTransformClientTest)
 

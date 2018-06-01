@@ -10,13 +10,16 @@
 #ifndef YARP_OS_TIME_H
 #define YARP_OS_TIME_H
 
-#include <string>
 #include <yarp/os/Clock.h>
 #include <yarp/os/SystemClock.h>
 #include <yarp/os/NetworkClock.h>
 
+#include <string>
+
 namespace yarp {
 namespace os {
+
+enum class ShouldUseSystemClock { No = 0, Yes = 1 };
 
 enum yarpClockType
 {

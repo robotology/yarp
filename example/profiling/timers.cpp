@@ -9,7 +9,6 @@
 
 #include <stdio.h>
 #include <yarp/os/all.h>
-#include <yarp/os/RateThread.h>
 using namespace yarp::os;
 
 // Timers test.

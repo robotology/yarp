@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IRangefinder2D.h>
@@ -159,7 +159,7 @@ struct Range_t
 
 //---------------------------------------------------------------------------------------------------------------
 
-class RpLidar : public RateThread, public yarp::dev::IRangefinder2D, public DeviceDriver
+class RpLidar : public PeriodicThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
 protected:
     PolyDriver driver;
@@ -186,7 +186,7 @@ protected:
     yarp::sig::Vector laser_data;
 
 public:
-    RpLidar(int period = 10) : RateThread(period),
+    RpLidar(double period = 0.01) : PeriodicThread(period),
         pSerial(nullptr),
         sensorsNum(0),
         min_angle(0.0),
