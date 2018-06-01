@@ -38,7 +38,6 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
 
   if(NOT YCM_FOUND)
     set(YCM_CMAKE_find_modules_FILES ycm-${YCM_REQUIRED_VERSION}/find-modules/FindACE.cmake
-                                     ycm-${YCM_REQUIRED_VERSION}/find-modules/FindFFMPEG.cmake
                                      ycm-${YCM_REQUIRED_VERSION}/find-modules/FindFreenect.cmake
                                      ycm-${YCM_REQUIRED_VERSION}/find-modules/FindFTDI.cmake
                                      ycm-${YCM_REQUIRED_VERSION}/find-modules/FindGLFW3.cmake
@@ -62,6 +61,7 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
                                 ycm-${YCM_REQUIRED_VERSION}/modules/ReplaceImportedTargets.cmake
                                 ycm-${YCM_REQUIRED_VERSION}/modules/StandardFindModule.cmake)
     set(YCM_CMAKE_3rdparty_FILES ycm-${YCM_REQUIRED_VERSION}/3rdparty/FindEigen3.cmake
+                                 ycm-${YCM_REQUIRED_VERSION}/3rdparty/FindFFMPEG.cmake
                                  ycm-${YCM_REQUIRED_VERSION}/3rdparty/FindOctave.cmake
                                  ycm-${YCM_REQUIRED_VERSION}/3rdparty/FindQCustomPlot.cmake)
     set(YCM_CMAKE_cmake_3_1_FILES ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/CMakeFindDependencyMacro.cmake # 3.0

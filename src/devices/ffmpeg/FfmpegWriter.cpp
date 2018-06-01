@@ -60,8 +60,8 @@ using namespace yarp::sig::file;
 #define M_PI 3.1415926535897931
 #endif
 
-//#include <ffmpeg/avformat.h>
-//#include <ffmpeg/avcodec.h>
+//#include <libavformat/avformat.h>
+//#include <libavcodec/avcodec.h>
 
 #define STREAM_FRAME_RATE 25 /* 25 images/s */
 #define STREAM_PIX_FMT AV_PIX_FMT_YUV420P /* default pix_fmt */

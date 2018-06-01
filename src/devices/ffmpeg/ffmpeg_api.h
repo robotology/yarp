@@ -16,11 +16,11 @@
 #endif
 
 extern "C" {
-#include <avcodec.h>
-#include <avformat.h>
-#include <avdevice.h>
-#include <swscale.h>
-#include <mathematics.h>
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libavdevice/avdevice.h>
+#include <libswscale/swscale.h>
+#include <libavutil/mathematics.h>
 }
 
 
