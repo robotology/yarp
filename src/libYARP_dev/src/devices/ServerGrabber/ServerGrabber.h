@@ -22,11 +22,10 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/dev/IVisualParamsImpl.h>
-#include <yarp/os/RateThread.h>
 #include <yarp/dev/Wrapper.h>
 namespace yarp {
     namespace dev {
@@ -85,7 +84,7 @@ typedef struct
 
 } Configuration;
 
-#define DEFAULT_THREAD_PERIOD   30 //ms
+#define DEFAULT_THREAD_PERIOD   0.03 //s
 
 
 /**
@@ -181,10 +180,10 @@ typedef struct
 class YARP_dev_API yarp::dev::ServerGrabber : public DeviceDriver,
             public yarp::dev::IWrapper,
             public yarp::dev::IMultipleWrapper,
-            public yarp::os::RateThread
+            public yarp::os::PeriodicThread
 {
 private:
-    int period;
+    double period;
     int count, count2;
     yarp::dev::impl::ServerGrabberResponder* responder;
     yarp::dev::impl::ServerGrabberResponder* responder2;
