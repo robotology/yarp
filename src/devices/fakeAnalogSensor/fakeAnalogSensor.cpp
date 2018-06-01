@@ -15,14 +15,14 @@
 using namespace std;
 using namespace yarp::dev;
 
-FakeAnalogSensor::FakeAnalogSensor(int period) : RateThread(period),
+FakeAnalogSensor::FakeAnalogSensor(double period) : PeriodicThread(period),
         mutex(1),
         channelsNum(0),
         status(IAnalogSensor::AS_OK)
 {
     yTrace();
     timeStamp = yarp::os::Time::now();
-};
+}
 
 FakeAnalogSensor::~FakeAnalogSensor()
 {
@@ -57,23 +57,22 @@ bool FakeAnalogSensor::open(yarp::os::Searchable& config)
         return false;
     }
 
-    int period=config.find("period").asInt32();
-    setRate(period);
+    int period=config.find("period").asInt32() / 1000.0;
+    setPeriod(period);
 
     //create the data vector:
     this->channelsNum = 1;
     data.resize(channelsNum);
     data.zero();
 
-    RateThread::start();
-    return true;
+    return PeriodicThread::start();
 }
 
 bool FakeAnalogSensor::close()
 {
     yTrace();
     //stop the thread
-    RateThread::stop();
+    PeriodicThread::stop();
 
     return true;
 }
