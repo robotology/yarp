@@ -67,7 +67,6 @@ IF(ENABLE_icubmod_usbCamera)
 
     # includes valid for all platforms
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/common
-                        ${YARP_INCLUDE_DIRS}
                         ${OpenCV_INCLUDE_DIRS})
 
     yarp_add_plugin(usbCamera ${USBcamera_common_SRCS} ${USBcamera_common_HDRS} ${OS_SOURCES})
