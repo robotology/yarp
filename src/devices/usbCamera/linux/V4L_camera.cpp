@@ -82,7 +82,7 @@ int V4L_camera::convertYARP_to_V4L(int feature)
     return NOT_PRESENT;
 }
 
-V4L_camera::V4L_camera() : RateThread(1000/DEFAULT_FRAMERATE), doCropping(false), toEpochOffset(getEpochTimeShift())
+V4L_camera::V4L_camera() : PeriodicThread(1.0/DEFAULT_FRAMERATE), doCropping(false), toEpochOffset(getEpochTimeShift())
 {
     verbose = false;
     param.fps = DEFAULT_FRAMERATE;

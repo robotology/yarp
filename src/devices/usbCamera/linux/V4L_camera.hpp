@@ -48,7 +48,7 @@
 #include <cv.h>
 
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/IVisualParams.h>
@@ -151,7 +151,7 @@ class yarp::dev::V4L_camera :   public yarp::dev::DeviceDriver,
                                 public yarp::dev::IFrameGrabber,
                                 public yarp::dev::IFrameGrabberControls,
                                 public yarp::dev::IPreciselyTimed,
-                                public yarp::os::RateThread,
+                                public yarp::os::PeriodicThread,
                                 public IRgbVisualParams
 {
 public:
