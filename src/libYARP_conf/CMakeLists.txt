@@ -73,17 +73,19 @@ target_include_directories(YARP_conf INTERFACE $<BUILD_INTERFACE:${PROJECT_BINAR
 # Install all the headers
 
 install(TARGETS YARP_conf
-        EXPORT YARP
+        EXPORT YARP_conf
         COMPONENT YARP_conf)
 
 install(DIRECTORY "${PROJECT_BINARY_DIR}/include/yarp/conf"
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp
+        COMPONENT YARP_conf
         FILES_MATCHING PATTERN "*.h")
-
-set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_conf)
 
 
 #########################################################################
-# Set YARP_TREE_INCLUDE_DIRS global property
+# Install cmake files
 
-set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_BINARY_DIR}/include")
+include(YarpInstallBasicPackageFiles)
+yarp_install_basic_package_files(YARP_conf
+                                 DEPENDENCIES ${YARP_conf_PUBLIC_DEPS}
+                                 PRIVATE_DEPENDENCIES ${YARP_conf_PRIVATE_DEPS})

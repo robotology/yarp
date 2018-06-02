@@ -9,12 +9,7 @@ if(CREATE_YARPDATAPLAYER)
   include(YarpUseQt5)
   include(YarpOSXUtilities)
 
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS})
 
   if(YARP_HAS_OPENCV)
     add_definitions(-DHAS_OPENCV)

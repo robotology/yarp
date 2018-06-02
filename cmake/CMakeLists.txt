@@ -6,8 +6,7 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 # YARP CMake Modules
-set(YARP_CMAKE_FILES YarpDeprecatedWarning.cmake
-                     YarpPlugin.cmake
+set(YARP_CMAKE_FILES YarpPlugin.cmake
                      YarpIDL.cmake
                      YarpInstallationHelpers.cmake
                      YarpPrintFeature.cmake)
@@ -58,6 +57,7 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
                                 ycm-${YCM_REQUIRED_VERSION}/modules/ExtractVersion.cmake
                                 ycm-${YCM_REQUIRED_VERSION}/modules/GetAllCMakeProperties.cmake
                                 ycm-${YCM_REQUIRED_VERSION}/modules/GitInfo.cmake
+                                ycm-${YCM_REQUIRED_VERSION}/modules/InstallBasicPackageFiles.cmake
                                 ycm-${YCM_REQUIRED_VERSION}/modules/ReplaceImportedTargets.cmake
                                 ycm-${YCM_REQUIRED_VERSION}/modules/StandardFindModule.cmake)
     set(YCM_CMAKE_3rdparty_FILES ycm-${YCM_REQUIRED_VERSION}/3rdparty/FindEigen3.cmake
@@ -160,7 +160,8 @@ foreach(_f FindACE.cmake                                          # since YARP 2
            cmake-3.5/Modules/FindPackageHandleStandardArgs.cmake
            cmake-3.5/Modules/FindPackageMessage.cmake
            cmake-3.5/Modules/SelectLibraryConfigurations.cmake
-           deprecated/YarpCMakeWorkarounds.cmake)
+           deprecated/YarpCMakeWorkarounds.cmake
+           YarpDeprecatedWarning.cmake)                           # since YARP 3.0.0
   if(EXISTS "${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}")
     install(CODE
  "if(EXISTS \"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}\")

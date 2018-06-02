@@ -47,7 +47,7 @@ list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
 # Main project
 project(YARP
-        VERSION 2.3.73.4
+        VERSION 2.3.73.5
         LANGUAGES C CXX)
 set(PROJECT_DESCRIPTION "YARP: A thin middleware for humanoid robots and more")
 
@@ -60,15 +60,6 @@ message(STATUS "Using:")
 message(STATUS "  CMake: ${CMAKE_VERSION} (${CMAKE_COMMAND})")
 message(STATUS "  C Compiler: ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION} (${CMAKE_C_COMPILER})")
 message(STATUS "  CXX Compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})")
-
-# The YARP build is fairly flexible, so we need to accumulate some
-# information about what libraries are being built (and their dependencies),
-# along with the include path.  We'll be passing that along to clients
-# using YARP without a global install.
-set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-set_property(GLOBAL PROPERTY YARP_LIBS)
-set_property(GLOBAL PROPERTY YARP_TOOLS)
-set_property(GLOBAL PROPERTY YARP_DEFS)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS 1)
 set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Autogen Targets")

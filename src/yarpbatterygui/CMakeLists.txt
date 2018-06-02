@@ -9,13 +9,6 @@ if(CREATE_YARPBATTERYGUI)
   include(YarpUseQt5)
   include(YarpOSXUtilities)
 
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
-
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
   set(yarpbatterygui_SRCS main.cpp

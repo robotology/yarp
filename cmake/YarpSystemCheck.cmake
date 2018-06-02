@@ -173,8 +173,6 @@ check_floating_point_exponent_digits(LDBL)
 # Set up compile flags
 
 add_definitions(-DBUILDING_YARP)
-add_definitions(-D_REENTRANT)
-set_property(GLOBAL APPEND PROPERTY YARP_DEFS -D_REENTRANT)
 
 # on windows, we have to tell ace how it was compiled
 if(WIN32)

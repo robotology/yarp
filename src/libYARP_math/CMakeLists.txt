@@ -5,9 +5,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-set(YARP_HAS_MATH_LIB FALSE)
+set(YARP_HAS_MATH_LIB FALSE PARENT_SCOPE)
 if (CREATE_LIB_MATH)
-  set(YARP_HAS_MATH_LIB TRUE)
+  set(YARP_HAS_MATH_LIB TRUE PARENT_SCOPE)
 endif()
 
 if (YARP_HAS_MATH_LIB)
@@ -49,15 +49,6 @@ if (YARP_HAS_MATH_LIB)
                FILES ${YARP_math_HDRS}
                      ${YARP_math_IMPL_HDRS})
 
-  set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
-  get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-
-  include_directories(${YARP_TREE_INCLUDE_DIRS})
-  include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
-
-  # import math symbols from standard cmath
-  add_definitions(-D_USE_MATH_DEFINES)
-
   add_library(YARP_math ${YARP_math_SRCS}
                         ${YARP_math_HDRS}
                         ${YARP_math_IMPL_HDRS})
@@ -65,10 +56,19 @@ if (YARP_HAS_MATH_LIB)
 
   target_include_directories(YARP_math PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+  target_include_directories(YARP_math SYSTEM PRIVATE ${EIGEN3_INCLUDE_DIR})
 
-  target_link_libraries(YARP_math PUBLIC YARP::YARP_OS
+  target_link_libraries(YARP_math PUBLIC YARP::YARP_conf
+                                         YARP::YARP_OS
                                          YARP::YARP_sig
                                   PRIVATE YARP::YARP_eigen)
+  list(APPEND YARP_math_PUBLIC_DEPS YARP_conf
+                                    YARP_OS
+                                    YARP_sig)
+  list(APPEND YARP_math_PRIVATE_DEPS YARP_eigen)
+
+  # import math symbols from standard cmath
+  target_compile_definitions(YARP_math PRIVATE _USE_MATH_DEFINES)
 
   if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
     message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
@@ -83,19 +83,22 @@ if (YARP_HAS_MATH_LIB)
 
   set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS})
   set_property(TARGET YARP_math PROPERTY PRIVATE_HEADER ${YARP_math_IMPL_HDRS})
+  set_property(TARGET YARP_math PROPERTY VERSION ${YARP_VERSION_SHORT})
+  set_property(TARGET YARP_math PROPERTY SOVERSION ${YARP_SOVERSION})
 
   install(TARGETS YARP_math
-          EXPORT YARP
-          COMPONENT runtime
+          EXPORT YARP_math
+          COMPONENT YARP_math
           RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
           LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
           ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
           PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/math"
           PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/math/impl")
 
-  set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_math)
-  set_property(TARGET YARP_math PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+  include(YarpInstallBasicPackageFiles)
+  yarp_install_basic_package_files(YARP_math
+                                   DEPENDENCIES ${YARP_math_PUBLIC_DEPS}
+                                   PRIVATE_DEPENDENCIES ${YARP_math_PRIVATE_DEPS})
+
   set_property(TARGET YARP_math PROPERTY FOLDER "Libraries")
 endif()
-
-set_property(GLOBAL PROPERTY YARP_HAS_MATH_LIB ${YARP_HAS_MATH_LIB})

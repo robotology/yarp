@@ -26,23 +26,26 @@ if(NOT YARP_VERSION)
   endif()
 
   # Find YARP for bindings-only builds
-  find_package(YARP REQUIRED)
-  list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-  include_directories(${YARP_INCLUDE_DIRS})
+  find_package(YARP COMPONENTS conf OS sig dev REQUIRED)
+  foreach(_component conf OS sig dev)
+    get_property(YARP_${_component}_INCLUDE_DIRS TARGET YARP::YARP_${_component} PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+    include_directories(${YARP_${_component}_INCLUDE_DIRS})
+  endforeach()
 
   find_package(SWIG 3.0 REQUIRED)
 
   set(_nested_build 0)
 else()
   # this is necessary for SWIG to parse yarp.i file
-  get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-  include_directories(${YARP_INCLUDE_DIRS})
-
+  # FIXME: Find a better way to do this (using generator expressions?)
+  include_directories("${CMAKE_BINARY_DIR}/src/libYARP_conf/include")
+  include_directories("${CMAKE_SOURCE_DIR}/src/libYARP_OS/include")
+  include_directories("${CMAKE_SOURCE_DIR}/src/libYARP_sig/include")
+  include_directories("${CMAKE_SOURCE_DIR}/src/libYARP_dev/include")
   set(_nested_build 1)
 endif()
 
-# Must be included after setting CMAKE_MODULE_PATH for nested builds
-include(YarpPrintFeature)
+include(${YARP_MODULE_DIR}/YarpPrintFeature.cmake)
 
 set(YARP_COMPILE_BINDINGS_DEFAULT TRUE)
 set(YARP_BASE_DIR ${CMAKE_CURRENT_BINARY_DIR})

@@ -552,29 +552,32 @@ check_optional_dependency(YARP_COMPILE_RTF_ADDONS RTF)
 
 
 #########################################################################
-# Print information for user (CDash)
-
-
+# Print information for user
 
 message(STATUS "Enabled features:")
 
-yarp_print_feature(CREATE_LIB_MATH 0 "YARP_math")
+yarp_print_feature(BUILD_SHARED_LIBS 0 "Build shared libraries")
+yarp_print_feature(SKIP_ACE 0 "Disable ACE library")
+yarp_print_feature(YARP_NO_DEPRECATED 0 "Filter out deprecated declarations from YARP API")
+yarp_print_feature(YARP_NO_DEPRECATED_WARNINGS 1 "Do not warn when using YARP deprecated declarations")
 
-yarp_print_feature(YARP_COMPILE_EXECUTABLES 0 "Executables")
-yarp_print_feature(CREATE_YARPROBOTINTERFACE 1 "yarprobotinterface")
-yarp_print_feature(CREATE_YARPMANAGER_CONSOLE 1 "YARP Module Manager (console)")
-yarp_print_feature(CREATE_YARPDATADUMPER 1 "yarpdatadumper")
-yarp_print_feature(CREATE_GUIS 1 "GUIs")
-yarp_print_feature(CREATE_YARPVIEW 2 "yarpview")
-yarp_print_feature(CREATE_YARPMANAGER 2 "yarpmanager")
-yarp_print_feature(CREATE_YARPLOGGER 2 "yarplogger")
-yarp_print_feature(CREATE_YARPSCOPE 2 "yarpscope")
-yarp_print_feature(CREATE_YARPDATAPLAYER 2 "yarpdataplayer")
-yarp_print_feature(CREATE_YARPMOTORGUI 2 "yarpmotorgui")
-yarp_print_feature(CREATE_YARPLASERSCANNERGUI 2 "yarplaserscannergui")
-yarp_print_feature(CREATE_YARPBATTERYGUI 2 "yarpbatterygui")
-yarp_print_feature(CREATE_YARPVIZ 2 "yarpviz")
+yarp_print_feature(CREATE_LIB_MATH 0 "Compile YARP_math library")
 
-yarp_print_feature(YARP_COMPILE_RTF_ADDONS 0 "Robot Testing Framework addons")
-yarp_print_feature(YARP_COMPILE_UNMAINTAINED 0 "Unmaintained components")
-yarp_print_feature(YARP_COMPILE_TESTS 0 "YARP tests")
+yarp_print_feature(YARP_COMPILE_EXECUTABLES 0 "Compile executables")
+yarp_print_feature(CREATE_YARPROBOTINTERFACE 1 "Compile yarprobotinterface")
+yarp_print_feature(CREATE_YARPMANAGER_CONSOLE 1 "Compile YARP Module Manager (console)")
+yarp_print_feature(CREATE_YARPDATADUMPER 1 "Compile yarpdatadumper")
+yarp_print_feature(CREATE_GUIS 1 "Compile GUIs")
+yarp_print_feature(CREATE_YARPVIEW 2 "Compile yarpview")
+yarp_print_feature(CREATE_YARPMANAGER 2 "Compile yarpmanager")
+yarp_print_feature(CREATE_YARPLOGGER 2 "Compile yarplogger")
+yarp_print_feature(CREATE_YARPSCOPE 2 "Compile yarpscope")
+yarp_print_feature(CREATE_YARPDATAPLAYER 2 "Compile yarpdataplayer")
+yarp_print_feature(CREATE_YARPMOTORGUI 2 "Compile yarpmotorgui")
+yarp_print_feature(CREATE_YARPLASERSCANNERGUI 2 "Compile yarplaserscannergui")
+yarp_print_feature(CREATE_YARPBATTERYGUI 2 "Compile yarpbatterygui")
+yarp_print_feature(CREATE_YARPVIZ 2 "Compile yarpviz")
+
+yarp_print_feature(YARP_COMPILE_RTF_ADDONS 0 "Compile Robot Testing Framework addons")
+yarp_print_feature(YARP_COMPILE_UNMAINTAINED 0 "Compile Unmaintained components")
+yarp_print_feature(YARP_COMPILE_TESTS 0 "Compile and enable YARP tests")

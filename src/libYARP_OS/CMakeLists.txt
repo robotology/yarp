@@ -368,15 +368,6 @@ if (ENABLE_YARPRUN_LOG)
     add_definitions(-DYARPRUN_LOG)
 endif(ENABLE_YARPRUN_LOG)
 
-set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
-get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-
-include_directories(${YARP_TREE_INCLUDE_DIRS})
-if (NOT SKIP_ACE)
-  include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
-endif ()
-include_directories(${hmac_INCLUDE_DIRS})
-
 add_library(YARP_OS ${YARP_OS_SRCS}
                     ${YARP_OS_HDRS}
                     ${YARP_OS_IDL_HDRS}
@@ -386,10 +377,36 @@ add_library(YARP::YARP_OS ALIAS YARP_OS)
 
 target_include_directories(YARP_OS PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(YARP_OS PUBLIC YARP::YARP_conf)
+list(APPEND YARP_OS_PUBLIC_DEPS YARP_conf)
 
-target_link_libraries(YARP_OS PRIVATE ${ACE_LIBRARIES}
-                                      ${hmac_LIBRARIES}
-                              PUBLIC YARP::YARP_conf)
+target_include_directories(YARP_OS SYSTEM PRIVATE ${hmac_INCLUDE_DIRS})
+target_link_libraries(YARP_OS PRIVATE ${hmac_LIBRARIES})
+# list(APPEND YARP_OS_PUBLIC_DEPS hmac)
+
+if(YARP_HAS_ACE)
+  target_link_libraries(YARP_OS PRIVATE ${ACE_LIBRARIES})
+  target_include_directories(YARP_OS SYSTEM PRIVATE ${ACE_INCLUDE_DIRS})
+  list(APPEND YARP_OS_PRIVATE_DEPS ACE)
+else()
+  target_link_libraries(YARP_OS PRIVATE ${CMAKE_DL_LIBS})
+endif()
+
+if(YARP_HAS_LIBEDIT)
+  target_compile_definitions(YARP_OS PRIVATE WITH_LIBEDIT)
+  target_include_directories(YARP_OS SYSTEM PRIVATE ${Libedit_INCLUDE_DIRS})
+  target_link_libraries(YARP_OS PRIVATE ${Libedit_LIBRARIES})
+  list(APPEND YARP_OS_PRIVATE_DEPS Libedit)
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  target_link_libraries(YARP_OS PRIVATE pthread)
+endif()
+
+if(APPLE)
+  target_link_libraries(YARP_OS PRIVATE "-framework Foundation")
+endif()
+
 
 if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
   message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
@@ -404,22 +421,12 @@ else()
                                          cxx_rvalue_references)
 endif()
 
-if(APPLE)
-  target_link_libraries(YARP_OS PRIVATE "-framework Foundation")
-endif()
 
 set_property(TARGET YARP_OS PROPERTY PUBLIC_HEADER ${YARP_OS_HDRS})
 set_property(TARGET YARP_OS PROPERTY PRIVATE_HEADER ${YARP_OS_IMPL_HDRS})
+set_property(TARGET YARP_OS PROPERTY VERSION ${YARP_VERSION_SHORT})
+set_property(TARGET YARP_OS PROPERTY SOVERSION ${YARP_SOVERSION})
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    target_link_libraries(YARP_OS PRIVATE pthread)
-endif()
-
-if(YARP_HAS_LIBEDIT)
-    add_definitions(-DWITH_LIBEDIT)
-    include_directories(${Libedit_INCLUDE_DIRS})
-    target_link_libraries(YARP_OS PRIVATE ${Libedit_LIBRARIES})
-endif()
 
 option(YARP_TEST_HEAP "Replace new/delete operators with test harness (may be incompatible with ACE)" FALSE)
 mark_as_advanced(YARP_TEST_HEAP)
@@ -428,20 +435,23 @@ if (YARP_TEST_HEAP)
 endif()
 
 install(TARGETS YARP_OS
-        EXPORT YARP
-        COMPONENT runtime
+        EXPORT YARP_OS
+        COMPONENT YARP_OS
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os
         PRIVATE_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl)
 install(FILES ${YARP_OS_IDL_HDRS}
-        COMPONENT development
+        COMPONENT YARP_OS
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/idl)
 install(FILES ${YARP_OS_IMPL_POSIX_HDRS}
         COMPONENT development
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl/posix)
 
-set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)
-set_property(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+include(YarpInstallBasicPackageFiles)
+yarp_install_basic_package_files(YARP_OS
+                                 DEPENDENCIES ${YARP_OS_PUBLIC_DEPS}
+                                 PRIVATE_DEPENDENCIES ${YARP_OS_PRIVATE_DEPS})
+
 set_property(TARGET YARP_OS PROPERTY FOLDER "Libraries")

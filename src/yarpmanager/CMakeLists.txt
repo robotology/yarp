@@ -9,14 +9,8 @@ if(CREATE_YARPMANAGER)
   include(YarpUseQt5)
   include(YarpOSXUtilities)
 
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
-  get_property(YARP_profiler_INCLUDE_DIRS TARGET YARP_profiler PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_manager_INCLUDE_DIRS}
-                      ${YARP_profiler_INCLUDE_DIRS}
-                      ./src-builder
-                      ./src-manager)
+  include_directories("${CMAKE_CURRENT_LIST_DIR}/src-builder"
+                      "${CMAKE_CURRENT_LIST_DIR}/src-manager")
   if(MSVC)
     include_directories(SYSTEM ${dirent_INCLUDE_DIRS})
   endif()

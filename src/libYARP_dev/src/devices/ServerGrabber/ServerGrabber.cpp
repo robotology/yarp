@@ -7,8 +7,9 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include "ServerGrabber.h"
+
 #include <yarp/os/Log.h>
-#include <ServerGrabber.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>

@@ -6,8 +6,6 @@
 
 if(CREATE_LIB_MANAGER)
 
-  get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-
   project(YARP_manager)
 
   set(YARP_manager_HDRS include/yarp/manager/application.h
@@ -80,19 +78,6 @@ if(CREATE_LIB_MANAGER)
                FILES ${YARP_manager_HDRS}
                      ${YARP_manager_IMPL_HDRS})
 
-  set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
-  get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-
-  include_directories(${YARP_TREE_INCLUDE_DIRS})
-  include_directories(SYSTEM ${TinyXML_INCLUDE_DIRS})
-  if(MSVC)
-    include_directories(SYSTEM ${dirent_INCLUDE_DIRS})
-  endif()
-
-  if(CREATE_LIB_MATH)
-    add_definitions( -DWITH_YARPMATH )
-  endif()
-
 
   # FIXME All API should use a YARP_manager_API for __declspec(dllimport/dllexport)
   # For now always build the library as STATIC
@@ -103,14 +88,24 @@ if(CREATE_LIB_MANAGER)
 
   target_include_directories(YARP_manager PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+  if(MSVC)
+    target_include_directories(YARP_manager SYSTEM PRIVATE ${dirent_INCLUDE_DIRS})
+  endif()
 
   target_link_libraries(YARP_manager PUBLIC YARP::YARP_OS
-                                     PRIVATE YARP::YARP_sig
-                                             ${TinyXML_LIBRARIES})
+                                     PRIVATE YARP::YARP_sig)
+  list(APPEND YARP_manager_PUBLIC_DEPS YARP_OS)
+  list(APPEND YARP_manager_PRIVATE_DEPS YARP_sig)
 
-  if(CREATE_LIB_MATH)
+  if(TARGET YARP::YARP_math)
     target_link_libraries(YARP_manager PRIVATE YARP::YARP_math)
+    target_compile_definitions(YARP_manager PRIVATE WITH_YARPMATH)
+    list(APPEND YARP_manager_PRIVATE_DEPS YARP_math)
   endif()
+
+  target_include_directories(YARP_manager SYSTEM PRIVATE ${TinyXML_INCLUDE_DIRS})
+  target_link_libraries(YARP_manager PRIVATE ${TinyXML_LIBRARIES})
+  list(APPEND YARP_manager_PRIVATE_DEPS TinyXML)
 
   if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
     message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
@@ -125,17 +120,22 @@ if(CREATE_LIB_MANAGER)
 
   set_property(TARGET YARP_manager PROPERTY PUBLIC_HEADER ${YARP_manager_HDRS})
   set_property(TARGET YARP_manager PROPERTY PRIVATE_HEADER ${YARP_manager_IMPL_HDRS})
+  set_property(TARGET YARP_manager PROPERTY VERSION ${YARP_VERSION_SHORT})
+  set_property(TARGET YARP_manager PROPERTY SOVERSION ${YARP_SOVERSION})
 
   install(TARGETS YARP_manager
-          EXPORT YARP
-          COMPONENT runtime
+          EXPORT YARP_manager
+          COMPONENT YARP_manager
           RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
           LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
           ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
           PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/manager"
           PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/manager/impl")
 
-  set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_manager)
-  set_property(TARGET YARP_manager PROPERTY INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include)
+  include(YarpInstallBasicPackageFiles)
+  yarp_install_basic_package_files(YARP_manager
+                                   DEPENDENCIES ${YARP_manager_PUBLIC_DEPS}
+                                   PRIVATE_DEPENDENCIES ${YARP_manager_PRIVATE_DEPS})
+
   set_property(TARGET YARP_manager PROPERTY FOLDER "Libraries/Private")
 endif()

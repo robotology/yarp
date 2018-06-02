@@ -58,7 +58,7 @@ if(YARP_COMPILE_TESTS)
     list(APPEND build_generator --build-config $<CONFIGURATION>)
   endif()
 
-  unset(build_options)
+  set(build_options -Wno-dev)
   if(CMAKE_BUILD_TYPE)
     list(APPEND build_options -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
   endif()
@@ -86,11 +86,10 @@ if(YARP_COMPILE_TESTS)
               dev
               serversql
               run)
-  get_property(YARP_HAS_MATH_LIB GLOBAL PROPERTY YARP_HAS_MATH_LIB)
-  if(YARP_HAS_MATH_LIB)
+  if(TARGET YARP::YARP_math)
     list(APPEND targets math)
   endif()
-  if(TARGET YARP_wire_rep_utils)
+  if(TARGET YARP::YARP_wire_rep_utils)
     list(APPEND targets wire_rep_utils)
   endif()
 
@@ -98,23 +97,12 @@ if(YARP_COMPILE_TESTS)
     file(GLOB harness_code ${CMAKE_SOURCE_DIR}/tests/libYARP_${test_family}/*.cpp
                            ${CMAKE_SOURCE_DIR}/tests/libYARP_${test_family}/*.h)
 
-    if("${test_family}" STREQUAL "dev" AND NOT YARP_HAS_MATH_LIB)
+    if("${test_family}" STREQUAL "dev" AND NOT TARGET YARP::YARP_math)
        # Without MATH lib, we don't compile FrameTransformClient and MapGrid2D
        list(REMOVE_ITEM harness_code ${CMAKE_CURRENT_SOURCE_DIR}/libYARP_dev/FrameTransformClientTest.cpp)
        list(REMOVE_ITEM harness_code ${CMAKE_CURRENT_SOURCE_DIR}/libYARP_dev/MapGrid2DTest.cpp)
     endif()
 
-    get_property(YARP_TREE_INCLUDE_DIRS
-                 TARGET YARP_${test_family}
-                 PROPERTY INCLUDE_DIRS)
-    get_property(YARP_LIBRARIES
-                 GLOBAL
-                 PROPERTY YARP_LIBS)
-    get_property(YARP_serversql_INCLUDE_DIRS
-                 TARGET YARP_serversql
-                 PROPERTY INCLUDE_DIRS)
-    include_directories(${YARP_TREE_INCLUDE_DIRS})
-    include_directories(${YARP_serversql_INCLUDE_DIRS})
     if(YARP_HAS_ACE)
       include_directories(${ACE_INCLUDE_DIRS})
     endif()
@@ -123,8 +111,20 @@ if(YARP_COMPILE_TESTS)
     set(EXE harness_${test_family})
     string(TOLOWER ${EXE} EXE)
     add_executable(${EXE} ${harness_code})
-    target_link_libraries(${EXE} ${YARP_LIBRARIES})
-    target_link_libraries(${EXE} YARP::YARP_serversql)
+    target_link_libraries(${EXE} YARP::YARP_OS
+                                 YARP::YARP_init
+                                 YARP::YARP_sig
+                                 YARP::YARP_dev
+                                 YARP::YARP_serversql
+                                 YARP::YARP_run
+                                 YARP::YARP_gsl
+                                 YARP::YARP_companion)
+    if(TARGET YARP::YARP_math)
+      target_link_libraries(${EXE} YARP::YARP_math)
+    endif()
+    if(TARGET YARP::YARP_wire_rep_utils)
+      target_link_libraries(${EXE} YARP::YARP_wire_rep_utils)
+    endif()
     if(YARP_HAS_ACE)
       target_link_libraries(${EXE} ${ACE_LIBRARIES})
     endif()

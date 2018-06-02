@@ -6,13 +6,7 @@
 
 if(CREATE_YARPROBOTINTERFACE)
 
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-
-
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS}
-                      ${TinyXML_INCLUDE_DIRS})
+  include_directories(${TinyXML_INCLUDE_DIRS})
 
   set(yarprobotinterface_SRCS
       main.cpp

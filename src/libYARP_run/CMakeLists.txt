@@ -31,8 +31,6 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
                    ${YARP_run_IMPL_HDRS}
                    ${YARP_run_os_HDRS})
 
-include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
-
 add_library(YARP_run ${YARP_run_SRCS}
                      ${YARP_run_HDRS}
                      ${YARP_run_IMPL_HDRS}
@@ -42,8 +40,15 @@ add_library(YARP::YARP_run ALIAS YARP_run)
 target_include_directories(YARP_run PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-target_link_libraries(YARP_run PRIVATE YARP::YARP_OS
-                                       ${ACE_LIBRARIES})
+target_link_libraries(YARP_run PRIVATE YARP::YARP_OS)
+list(APPEND YARP_run_PRIVATE_DEPS YARP_OS)
+
+if(YARP_HAS_ACE)
+  target_link_libraries(YARP_run PRIVATE ${ACE_LIBRARIES})
+  target_include_directories(YARP_run SYSTEM PRIVATE ${ACE_INCLUDE_DIRS})
+  list(APPEND YARP_run_PRIVATE_DEPS ACE)
+endif()
+
 
 if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
   message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
@@ -58,10 +63,12 @@ endif()
 
 set_property(TARGET YARP_run PROPERTY PUBLIC_HEADER ${YARP_run_HDRS})
 set_property(TARGET YARP_run PROPERTY PRIVATE_HEADER ${YARP_run_IMPL_HDRS})
+set_property(TARGET YARP_run PROPERTY VERSION ${YARP_VERSION_SHORT})
+set_property(TARGET YARP_run PROPERTY SOVERSION ${YARP_SOVERSION})
 
 install(TARGETS YARP_run
-        EXPORT YARP
-        COMPONENT runtime
+        EXPORT YARP_run
+        COMPONENT YARP_run
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
@@ -73,6 +80,9 @@ if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
           DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/os")
 endif()
 
-set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_run)
-set_property(TARGET YARP_run PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+include(YarpInstallBasicPackageFiles)
+yarp_install_basic_package_files(YARP_run
+                                 DEPENDENCIES ${YARP_run_PUBLIC_DEPS}
+                                 PRIVATE_DEPENDENCIES ${YARP_run_PRIVATE_DEPS})
+
 set_property(TARGET YARP_run PROPERTY FOLDER "Libraries/Private")

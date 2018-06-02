@@ -139,115 +139,85 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/PWMControlImpl.cpp
                   src/RemoteCalibratorImpl.cpp
                   src/TorqueControlImpl.cpp
-                  src/RGBDSensorParamParser.cpp                  src/VirtualAnalogSensorImpl.cpp)
+                  src/RGBDSensorParamParser.cpp
+                  src/VirtualAnalogSensorImpl.cpp)
+
 if(CREATE_LIB_MATH)
   list(APPEND YARP_dev_SRCS src/IFrameTransform.cpp
                             src/IMap2D.cpp
                             src/MapGrid2D.cpp)
 endif()
 
-set(YARP_devices_SRCS src/devices/AnalogSensorClient/AnalogSensorClient.cpp
-                      src/devices/AnalogWrapper/AnalogWrapper.cpp
-                      src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
-                      src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
-                      src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
-                      src/devices/DeviceGroup/DeviceGroup.cpp
-                      src/devices/DevicePipe/DevicePipe.cpp
-                      src/devices/JoypadControlClient/JoypadControlClient.cpp
-                      src/devices/JoypadControlServer/JoypadControlServer.cpp
-                      src/devices/RemoteFrameGrabber/RemoteFrameGrabber.cpp
-                      src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
-                      src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
-                      src/devices/ServerFrameGrabber/ServerFrameGrabber.cpp
-                      src/devices/ServerSerial/ServerSerial.cpp
-                      src/devices/TestMotor/TestMotor.cpp
-                      src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
+set(YARP_dev_devices_SRCS src/devices/AnalogSensorClient/AnalogSensorClient.cpp
+                          src/devices/AnalogWrapper/AnalogWrapper.cpp
+                          src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
+                          src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
+                          src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
+                          src/devices/ControlBoardWrapper/ControlBoardWrapper.cpp
+                          src/devices/ControlBoardWrapper/RPCMessagesParser.cpp
+                          src/devices/ControlBoardWrapper/StreamingMessagesParser.cpp
+                          src/devices/ControlBoardWrapper/SubDevice.cpp
+                          src/devices/DeviceGroup/DeviceGroup.cpp
+                          src/devices/DevicePipe/DevicePipe.cpp
+                          src/devices/JoypadControlClient/JoypadControlClient.cpp
+                          src/devices/JoypadControlServer/JoypadControlServer.cpp
+                          src/devices/RemoteControlBoard/RemoteControlBoard.cpp
+                          src/devices/RemoteControlBoard/stateExtendedReader.cpp
+                          src/devices/RemoteFrameGrabber/RemoteFrameGrabber.cpp
+                          src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
+                          src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
+                          src/devices/RGBDSensorClient/RGBDSensorClient.cpp
+                          src/devices/RGBDSensorClient/RGBDSensorClient_StreamingMsgParser.cpp
+                          src/devices/RGBDSensorWrapper/RGBDSensorWrapper.cpp
+                          src/devices/ServerFrameGrabber/ServerFrameGrabber.cpp
+                          src/devices/ServerGrabber/ServerGrabber.cpp
+                          src/devices/ServerInertial/ServerInertial.cpp
+                          src/devices/ServerSerial/ServerSerial.cpp
+                          src/devices/TestMotor/TestMotor.cpp
+                          src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
 
-set(YARP_devices_HDRS src/devices/AnalogSensorClient/AnalogSensorClient.h
-                      src/devices/AnalogWrapper/AnalogWrapper.h
-                      src/devices/ControlBoardRemapper/ControlBoardRemapper.h
-                      src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
-                      src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h
-                      src/devices/DeviceGroup/DeviceGroup.h
-                      src/devices/DevicePipe/DevicePipe.h
-                      src/devices/JoypadControlClient/JoypadControlClient.h
-                      src/devices/JoypadControlServer/JoypadControlNetUtils.h
-                      src/devices/JoypadControlServer/JoypadControlServer.h
-                      src/devices/RemoteFrameGrabber/RemoteFrameGrabber.h
-                      src/devices/RobotDescriptionClient/RobotDescriptionClient.h
-                      src/devices/RobotDescriptionServer/RobotDescriptionServer.h
-                      src/devices/ServerFrameGrabber/ServerFrameGrabber.h
-                      src/devices/ServerSerial/ServerSerial.h
-                      src/devices/TestMotor/TestMotor.h
-                      src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
+set(YARP_dev_devices_HDRS src/devices/AnalogSensorClient/AnalogSensorClient.h
+                          src/devices/AnalogWrapper/AnalogWrapper.h
+                          src/devices/ControlBoardRemapper/ControlBoardRemapper.h
+                          src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
+                          src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h
+                          src/devices/ControlBoardWrapper/ControlBoardWrapper.h
+                          src/devices/ControlBoardWrapper/RPCMessagesParser.h
+                          src/devices/ControlBoardWrapper/StreamingMessagesParser.h
+                          src/devices/ControlBoardWrapper/SubDevice.h
+                          src/devices/DeviceGroup/DeviceGroup.h
+                          src/devices/DevicePipe/DevicePipe.h
+                          src/devices/JoypadControlClient/JoypadControlClient.h
+                          src/devices/JoypadControlServer/JoypadControlNetUtils.h
+                          src/devices/JoypadControlServer/JoypadControlServer.h
+                          src/devices/RemoteControlBoard/RemoteControlBoard.h
+                          src/devices/RemoteControlBoard/stateExtendedReader.hpp
+                          src/devices/RemoteFrameGrabber/RemoteFrameGrabber.h
+                          src/devices/RobotDescriptionClient/RobotDescriptionClient.h
+                          src/devices/RobotDescriptionServer/RobotDescriptionServer.h
+                          src/devices/RGBDSensorClient/RGBDSensorClient.h
+                          src/devices/RGBDSensorClient/RGBDSensorClient_StreamingMsgParser.h
+                          src/devices/RGBDSensorWrapper/RGBDSensorWrapper.h
+                          src/devices/ServerFrameGrabber/ServerFrameGrabber.h
+                          src/devices/ServerGrabber/ServerGrabber.h
+                          src/devices/ServerInertial/ServerInertial.h
+                          src/devices/ServerSerial/ServerSerial.h
+                          src/devices/TestMotor/TestMotor.h
+                          src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
 
-# handle the ros / yarp thrift messages
-# the variables cbw2_msgs_srcs, cbw2_msgs_hrds and cbw2_msgs_incl_dirs will be set inside
-add_subdirectory(src/devices/msgs)
-
-# relative paths should be relative to current directory
-unset(_tmp)
-foreach(_var cbw2_msgs_srcs cbw2_msgs_hrds)
-  foreach(_f ${${_var}})
-    file(RELATIVE_PATH _f "${CMAKE_CURRENT_SOURCE_DIR}" "${_f}")
-    list(APPEND _tmp "${_f}")
-  endforeach()
-  set(${_var} ${_tmp})
-endforeach()
-
-
-
-list(APPEND YARP_devices_SRCS ${cbw2_msgs_srcs})
-list(APPEND YARP_devices_HDRS ${cbw2_msgs_hrds})
-include_directories(${cbw2_msgs_incl_dirs})
-
-
-# handle the source file for the controlboardwrapper2 device
-# the variable cbw2_core_srcs, cbw2_core_hrds, cbw2_core_incl_dirs will be set inside
-add_subdirectory(src/devices/ControlBoardWrapper)
-list(APPEND YARP_devices_SRCS ${cbw2_core_srcs})
-list(APPEND YARP_devices_HDRS ${cbw2_core_hrds})
-include_directories(${cbw2_core_incl_dirs})
+# handle the yarp thrift messages
+include(YarpIDL)
+yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/stateExt.thrift"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/devices/msgs/yarp"
+                YARP_dev_idl_SRCS
+                YARP_dev_idl_HDRS
+                YARP_dev_idl_INCLUDE_DIRS)
+include("${CMAKE_CURRENT_SOURCE_DIR}/src/devices/msgs/yarp/stateExt_thrift.cmake")
 
 
-# handle the source file for the RemoteControlBoard device
-# the variables rmc_core_srcs and rmc_core_hrds and rmc_core_incl_dirs will be set inside
-add_subdirectory(src/devices/RemoteControlBoard)
-list(APPEND YARP_devices_SRCS ${rmc_core_srcs})
-list(APPEND YARP_devices_HDRS ${rmc_core_hrds})
-include_directories(${rmc_core_incl_dirs})
 
-# add ServerInertial device
-add_subdirectory(src/devices/ServerInertial)
-list(APPEND YARP_devices_SRCS ${serverInertial_srcs}
-                              ${inertial_msgs_srcs})
-list(APPEND YARP_devices_HDRS ${serverInertial_hdrs}
-                              ${inertial_msgs_hdrs})
-include_directories(${serverInertial_incl_dirs})
-
-# add ServerGrabber device
-add_subdirectory(src/devices/ServerGrabber)
-list(APPEND YARP_devices_SRCS ${serverGrabber_srcs}
-                              ${grabber_msgs_srcs})
-list(APPEND YARP_devices_HDRS ${serverGrabber_hdrs}
-                              ${grabber_msgs_hdrs})
-include_directories(${serverGrabber_incl_dirs})
-
-# add RGBDSensorClient device
-add_subdirectory(src/devices/RGBDSensorClient)
-list(APPEND YARP_devices_SRCS ${RGBDClient_srcs}
-                              ${RGBDSensor_msgs_srcs})
-list(APPEND YARP_devices_HDRS ${RGBDClient_hrds}
-                              ${RGBDSensor_msgs_hdrs})
-include_directories(${RGBDClient_incl_dirs})
-
-# add DepthSensorWrapper device
-add_subdirectory(src/devices/RGBDSensorWrapper)
-list(APPEND YARP_devices_SRCS ${RGBDWrap_srcs}
-                              ${RGBDSensor_msgs_srcs})
-list(APPEND YARP_devices_HDRS ${RGBDWrap_hdrs}
-                              ${RGBDSensor_msgs_hdrs})
-include_directories(${RGBDWrap_incl_dirs})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/AnalogSensorClient
+                    ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/JoypadControlServer)
 
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -259,37 +229,35 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
                    ${YARP_dev_IMPL_HDRS})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Devices Files"
-             FILES ${YARP_devices_SRCS}
-                   ${YARP_devices_HDRS})
-
-set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
-get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-
-if (CREATE_LIB_MATH)
-  add_definitions(-DWITH_YARPMATH)
-endif()
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/AnalogSensorClient
-                    ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/JoypadControlServer)
-
-include_directories(${YARP_TREE_INCLUDE_DIRS})
+             FILES ${YARP_dev_devices_SRCS}
+                   ${YARP_dev_devices_HDRS})
 
 add_library(YARP_dev ${YARP_dev_SRCS}
                      ${YARP_dev_HDRS}
                      ${YARP_dev_IMPL_HDRS}
-                     ${YARP_devices_SRCS}
-                     ${YARP_devices_HDRS})
+                     ${YARP_dev_devices_SRCS}
+                     ${YARP_dev_devices_HDRS}
+                     ${YARP_dev_idl_SRCS}
+                     ${YARP_dev_idl_HDRS})
 add_library(YARP::YARP_dev ALIAS YARP_dev)
 
 target_include_directories(YARP_dev PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_include_directories(YARP_dev PRIVATE ${YARP_dev_idl_INCLUDE_DIRS})
 
-target_link_libraries(YARP_dev PRIVATE YARP::YARP_OS
-                                       YARP::YARP_rosmsg
-                               PUBLIC YARP::YARP_sig)
+target_link_libraries(YARP_dev PUBLIC YARP::YARP_conf
+                                      YARP::YARP_OS
+                                      YARP::YARP_sig
+                               PRIVATE YARP::YARP_rosmsg)
+list(APPEND YARP_dev_PUBLIC_DEPS YARP_conf
+                                 YARP_OS
+                                 YARP_sig)
+list(APPEND YARP_dev_PRIVATE_DEPS YARP_rosmsg)
 
-if (CREATE_LIB_MATH)
+if(TARGET YARP::YARP_math)
   target_link_libraries(YARP_dev PRIVATE YARP::YARP_math)
+  target_compile_definitions(YARP_dev PRIVATE WITH_YARPMATH)
+  list(APPEND YARP_dev_PRIVATE_DEPS YARP_math)
 endif()
 
 if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
@@ -307,16 +275,21 @@ endif()
 
 set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS})
 set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS})
+set_property(TARGET YARP_dev PROPERTY VERSION ${YARP_VERSION_SHORT})
+set_property(TARGET YARP_dev PROPERTY SOVERSION ${YARP_SOVERSION})
 
 install(TARGETS YARP_dev
-        EXPORT YARP
-        COMPONENT runtime
+        EXPORT YARP_dev
+        COMPONENT YARP_dev
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/dev"
         PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/dev/impl")
 
-set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_dev)
-set_property(TARGET YARP_dev PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+include(YarpInstallBasicPackageFiles)
+yarp_install_basic_package_files(YARP_dev
+                                 DEPENDENCIES ${YARP_dev_PUBLIC_DEPS}
+                                 PRIVATE_DEPENDENCIES ${YARP_dev_PRIVATE_DEPS})
+
 set_property(TARGET YARP_dev PROPERTY FOLDER "Libraries")

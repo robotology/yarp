@@ -6,9 +6,6 @@
 
 include_directories(src)
 
-get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-include_directories(${YARP_OS_INCLUDE_DIRS})
-
 if(NOT SKIP_ACE)
   include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 endif()
@@ -32,7 +29,5 @@ install(TARGETS yarpidl_rosmsg
         EXPORT YARP
         COMPONENT utilities
         DESTINATION ${CMAKE_INSTALL_BINDIR})
-
-set_property(GLOBAL APPEND PROPERTY YARP_TOOLS yarpidl_rosmsg)
 
 set_property(TARGET yarpidl_rosmsg PROPERTY FOLDER "Command Line Tools")

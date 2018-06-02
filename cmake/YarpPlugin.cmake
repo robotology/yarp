@@ -443,11 +443,11 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
       endif()
     endforeach()
     if(DEFINED _YPP_WRAPPER)
-      yarp_deprecated_warning("WRAPPER argument is deprecated. Use EXTRA_CONFIG WRAPPER=<...> instead.") # since YARP 2.3.68
+      message(DEPRECATION "WRAPPER argument is deprecated. Use EXTRA_CONFIG WRAPPER=<...> instead.") # since YARP 2.3.68
       set(YARPPLUG_WRAPPER "${_YPP_WRAPPER}")
     endif()
     if(DEFINED _YPP_CODE)
-      yarp_deprecated_warning("CODE argument is deprecated. Use EXTRA_CONFIG CODE=<...> instead.") # since YARP 2.3.68
+      message(DEPRECATION "CODE argument is deprecated. Use EXTRA_CONFIG CODE=<...> instead.") # since YARP 2.3.68
       set(YARPPLUG_CODE "${_YPP_CODE}")
     endif()
 
@@ -599,7 +599,12 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
 
     # add the library initializer code
     add_library(${YARP_PLUGIN_MASTER} ${code} ${CMAKE_CURRENT_BINARY_DIR}/yarp_${YARP_PLUGIN_MASTER}_plugin_library.cpp)
-    target_link_libraries(${YARP_PLUGIN_MASTER} PRIVATE YARP::YARP_conf)
+
+    # this cannot be target_link_libraries, or in static builds the master
+    # target will require the YARP_conf target, and this does not work well
+    # with separate exports.
+    # See also: https://gitlab.kitware.com/cmake/cmake/issues/18049
+    target_include_directories(${YARP_PLUGIN_MASTER} PRIVATE $<TARGET_PROPERTY:YARP::YARP_conf,INTERFACE_INCLUDE_DIRECTORIES>)
 
     if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
       set_property(TARGET ${YARP_PLUGIN_MASTER} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)
@@ -659,27 +664,26 @@ endmacro()
 # Deprecated macros
 #
 if(NOT YARP_NO_DEPRECATED)
-  include(${CMAKE_CURRENT_LIST_DIR}/YarpDeprecatedWarning.cmake)
 
   macro(YARP_PREPARE_DEVICE)
-    yarp_deprecated_warning("YARP_PREPARE_DEVICE is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY device) instead.") # Since YARP 2.3.68
+    message(DEPRECATION "YARP_PREPARE_DEVICE is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY device) instead.") # Since YARP 2.3.68
     yarp_prepare_plugin(${ARGN} CATEGORY device)
   endmacro()
 
   macro(YARP_PREPARE_CARRIER)
-    yarp_deprecated_warning("YARP_PREPARE_CARRIER is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY carrier) instead.") # Since YARP 2.3.68
+    message(DEPRECATION "YARP_PREPARE_CARRIER is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY carrier) instead.") # Since YARP 2.3.68
     yarp_prepare_plugin(${ARGN} CATEGORY carrier)
   endmacro()
 
   macro(YARP_ADD_CARRIER_FINGERPRINT file_name)
-    yarp_deprecated_warning("YARP_ADD_CARRIER_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.") # Since YARP 2.3.64
+    message(DEPRECATION "YARP_ADD_CARRIER_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.") # Since YARP 2.3.64
     yarp_install(FILES ${file_name}
                  COMPONENT runtime
                  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
   endmacro()
 
   macro(YARP_ADD_DEVICE_FINGERPRINT file_name)
-    yarp_deprecated_warning("YARP_ADD_DEVICE_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.") # Since YARP 2.3.64
+    message(DEPRECATION "YARP_ADD_DEVICE_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.") # Since YARP 2.3.64
     yarp_install(FILES ${file_name}
                  COMPONENT runtime
                  DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})

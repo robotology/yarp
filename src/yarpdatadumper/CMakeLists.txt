@@ -6,12 +6,6 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 if(CREATE_YARPDATADUMPER)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS})
-
   if(YARP_HAS_OPENCV)
     add_definitions(-DADD_VIDEO)
     include_directories(${OpenCV_INCLUDE_DIRS})
