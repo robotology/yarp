@@ -250,9 +250,9 @@ bool WireTwiddler::configure(const char *txt, const char *prompt) {
         buffer_start = (int)buffer.size();
         gaps.push_back(gap);
     }
-    dbg_printf("buffer has %d items\n", (int)buffer.size());
-    dbg_printf("gaps has %d items\n", (int)gaps.size());
-    for (int i=0; i<(int)gaps.size(); i++) {
+    dbg_printf("buffer has %zu items\n", buffer.size());
+    dbg_printf("gaps has %zu items\n", gaps.size());
+    for (size_t i=0; i<gaps.size(); i++) {
         WireTwiddlerGap& gap = gaps[i];
         if (gap.buffer_length!=0) {
             gap.byte_start = (char *) (&buffer[gap.buffer_start]);
@@ -343,9 +343,9 @@ std::string WireTwiddler::fromTemplate(const yarp::os::Bottle& msg) {
 
 
 void WireTwiddler::show() {
-    for (int i=0; i<(int)gaps.size(); i++) {
+    for (size_t i=0; i<gaps.size(); i++) {
         WireTwiddlerGap& gap = gaps[i];
-        printf("Block #%d (%s)\n", i, gap.getOrigin().c_str());
+        printf("Block #%zu (%s)\n", i, gap.getOrigin().c_str());
         if (gap.buffer_length!=0) {
             printf("  Buffer from %d to %d\n", gap.buffer_start,
                    gap.buffer_start+gap.buffer_length-1);
@@ -362,7 +362,7 @@ void WireTwiddler::show() {
 
 std::string WireTwiddler::toString() const {
     std::string result = "";
-    for (int i=0; i<(int)gaps.size(); i++) {
+    for (size_t i=0; i<gaps.size(); i++) {
         std::string item = "";
         const WireTwiddlerGap& gap = gaps[i];
         item += gap.origin;
@@ -506,7 +506,7 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
 }
 
 yarp::conf::ssize_t WireTwiddlerReader::read(const Bytes& b) {
-    dbg_printf("Want %d bytes\n", (int)b.length());
+    dbg_printf("Want %zu bytes\n", b.length());
     if (index==-1) {
         dbg_printf("WireTwidderReader::read getting started\n");
     }
@@ -722,8 +722,7 @@ bool WireTwiddlerWriter::update() {
     activeEmitLength = 0;
     activeEmitOffset = -1;
 
-    dbg_printf("Parent headers %d blocks %d\n", (int)parent->headerLength(),
-               (int)parent->length());
+    dbg_printf("Parent headers %zu blocks %zu\n", parent->headerLength(), parent->length());
 
     for (int i=0; i<twiddler->getGapCount(); i++) {
         if (errorState) return false;
@@ -763,10 +762,10 @@ bool WireTwiddlerWriter::update() {
         }
     }
     emit(nullptr, 0);
-    dbg_printf("%d write blocks\n", (int)srcs.size());
+    dbg_printf("%zu write blocks\n", srcs.size());
     if (dbg_flag) {
-        for (int i=0; i<(int)srcs.size(); i++) {
-            dbg_printf("  write block %d: len %d offset %d ptr %ld\n", i, srcs[i].len,srcs[i].offset,(long int)srcs[i].src);
+        for (size_t i=0; i<srcs.size(); i++) {
+            dbg_printf("  write block %zu: len %d offset %d ptr %p\n", i, srcs[i].len, srcs[i].offset, srcs[i].src);
         }
     }
     return !errorState;
@@ -876,8 +875,8 @@ bool WireTwiddlerWriter::advance(int length, bool shouldEmit,
                 NetInt32 t1 = 0;
                 NetInt32 t2 = 0;
                 if (rem>=4) {
-                    t1 = *((NetInt32 *)(blockPtr+offset));
-                    t2 = *((NetInt32 *)(activeCheck-rem));
+                    t1 = *(reinterpret_cast<const NetInt32*>(blockPtr+offset));
+                    t2 = *(reinterpret_cast<const NetInt32*>(activeCheck-rem));
                     if (t1!=t2 && (t1&BOTTLE_TAG_LIST) && (t2&BOTTLE_TAG_LIST)) {
                         // delay checking of codes until list length is read
                         // since list may be empty
@@ -919,11 +918,11 @@ bool WireTwiddlerWriter::emit(const char *src, int len) {
             if (gap.wire_unit_length==4 && gap.unit_length==8 &&
                 len == 8 &&
                 gap.flavor == BOTTLE_TAG_FLOAT64) {
-                NetFloat64 *x = (NetFloat64 *)src;
+                const NetFloat64 *x = reinterpret_cast<const NetFloat64*>(src);
                 if (scratchOffset+4>scratch.length()) {
                     scratch.allocateOnNeed(scratchOffset+4,scratchOffset+4);
                 }
-                NetFloat32 *y = reinterpret_cast<NetFloat32 *>(scratch.get()+scratchOffset);
+                NetFloat32 *y = reinterpret_cast<NetFloat32*>(scratch.get()+scratchOffset);
                 *y = (NetFloat32) *x;
                 src = nullptr;
                 noffset = scratchOffset;
@@ -992,14 +991,14 @@ yarp::conf::ssize_t WireTwiddlerReader::readMapped(yarp::os::InputStream& is,
     if (gap.load_external) {
         int v = 0;
         if (gap.var_name[0]=='=') {
-            Bottle b;
-            b.fromString(gap.var_name.substr(1,gap.var_name.length()));
-            v = b.get(0).asInt32();
+            Bottle bot;
+            bot.fromString(gap.var_name.substr(1,gap.var_name.length()));
+            v = bot.get(0).asInt32();
         } else {
             v = prop.find(gap.var_name).asInt32();
         }
         dbg_printf("Read %s: %d\n", gap.var_name.c_str(), v);
-        for (int i=0; i<(int)b.length(); i++) {
+        for (size_t i=0; i<b.length(); i++) {
             b.get()[i] = 0;
         }
         NetInt32 *nn = reinterpret_cast<NetInt32 *> (b.get());
@@ -1011,7 +1010,7 @@ yarp::conf::ssize_t WireTwiddlerReader::readMapped(yarp::os::InputStream& is,
     if (gap.wire_unit_length==gap.unit_length) {
         return is.read(b);
     }
-    for (int i=0; i<(int)b.length(); i++) {
+    for (size_t i=0; i<b.length(); i++) {
         b.get()[i] = 0;
     }
     size_t len = gap.wire_unit_length;

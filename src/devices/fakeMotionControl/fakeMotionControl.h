@@ -27,7 +27,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
-#include <yarp/dev/ControlBoardInterfacesImpl.inl>
+#include <yarp/dev/ControlBoardInterfacesImpl-inl.h>
 #include <yarp/dev/IVirtualAnalogSensor.h>
 #include <yarp/dev/IVirtualAnalogSensorImpl.h>
 

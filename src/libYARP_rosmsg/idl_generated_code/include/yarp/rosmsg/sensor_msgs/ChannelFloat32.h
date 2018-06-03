@@ -40,6 +40,7 @@
 #define YARP_ROSMSG_sensor_msgs_ChannelFloat32_h
 
 #include <yarp/os/Wire.h>
+#include <yarp/os/Type.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <string>
 #include <vector>

@@ -26,6 +26,8 @@ showing the number of bytes passed on.
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>

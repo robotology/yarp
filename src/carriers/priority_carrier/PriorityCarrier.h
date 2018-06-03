@@ -126,7 +126,7 @@ public:
         return "priority_carrier";
     }
 
-    bool isResting(double priority){
+    bool isResting(double priority) {
         return ((timeResting > 0) &&
                 ((priority < 0) || (priority >= STIMUL_THRESHOLD)));
     }

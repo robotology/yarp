@@ -14,16 +14,13 @@
 #include <yarp/os/SystemInfo.h>
 
 namespace yarp {
-  namespace os {
-        class SystemInfoSerializer;
-  }
-}
+namespace os {
 
 /**
  * \ingroup key_class
  * @brief A helper class to pass the SystemInfo object around the YARP network
  */
-class YARP_OS_API yarp::os::SystemInfoSerializer: public yarp::os::Portable
+class YARP_OS_API SystemInfoSerializer: public yarp::os::Portable
 {
 public:
     /**
@@ -50,7 +47,6 @@ public:
      */
     virtual bool write(yarp::os::ConnectionWriter& connection) override;
 
-public:
     /**
      * @brief system memory information
      */
@@ -82,6 +78,15 @@ public:
     yarp::os::SystemInfo::UserInfo user;
 
     //yarp::os::SystemInfo::NetworkInfo network;
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_SYSTEMINFOSERIALIZER_H

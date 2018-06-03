@@ -8,7 +8,9 @@
  */
 
 #include <yarp/os/Stamp.h>
+
 #include <yarp/os/Bottle.h>
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/Time.h>
 
 #include <cfloat>

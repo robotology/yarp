@@ -22,12 +22,15 @@ using namespace yarp::os;
 class PortWriterBufferBaseHelper : public PortWriterBufferManager {
 public:
     PortWriterBufferBaseHelper(PortWriterBufferBase& owner) :
-        owner(owner), stateSema(1), completionSema(0) {
-        current = nullptr;
-        callback = nullptr;
-        port = nullptr;
-        finishing = false;
-        outCt = 0;
+            owner(owner),
+            stateSema(1),
+            completionSema(0),
+            port(nullptr),
+            current(nullptr),
+            callback(nullptr),
+            finishing(false),
+            outCt(0)
+    {
     }
 
     virtual ~PortWriterBufferBaseHelper() {

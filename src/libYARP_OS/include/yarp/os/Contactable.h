@@ -11,6 +11,7 @@
 #define YARP_OS_CONTACTABLE_H
 
 #include <yarp/os/Contact.h>
+#include <yarp/os/PortReader.h>
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/PortReport.h>
 #include <yarp/os/Mutex.h>

@@ -10,15 +10,13 @@
 #ifndef YARP_OS_PORTREADER_H
 #define YARP_OS_PORTREADER_H
 
-#include <yarp/os/ConnectionReader.h>
-#include <yarp/os/Type.h>
-
-// Defined in this file:
-namespace yarp { namespace os { class PortReader; }}
-
+#include <yarp/os/api.h>
 
 namespace yarp {
 namespace os {
+
+class ConnectionReader;
+class Type;
 
 /**
  * Interface implemented by all objects that can read themselves from
@@ -29,7 +27,6 @@ namespace os {
 class YARP_OS_API PortReader
 {
 public:
-
     /**
      * Destructor.
      */

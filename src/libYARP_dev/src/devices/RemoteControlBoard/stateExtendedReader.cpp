@@ -6,7 +6,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "stateExtendedReader.hpp"
+#include "stateExtendedReader.h"
 #include <cstring>
 
 #include <yarp/os/PortablePair.h>

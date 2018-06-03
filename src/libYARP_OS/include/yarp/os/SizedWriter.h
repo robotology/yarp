@@ -11,15 +11,17 @@
 #define YARP_OS_SIZEDWRITER_H
 
 #include <yarp/conf/numeric.h>
-#include <yarp/os/OutputStream.h>
-#include <yarp/os/PortReader.h>
+
+#include <yarp/os/api.h>
 #include <yarp/os/PortWriter.h>
 
 namespace yarp {
-    namespace os {
-        class SizedWriter;
-    }
-}
+namespace os {
+
+class ConnectionWriter;
+class OutputStream;
+class PortReader;
+class Portable;
 
 /**
  * Minimal requirements for an efficient Writer.
@@ -29,9 +31,10 @@ namespace yarp {
  * SizedWriter class is referenced by the library instead of
  * BufferedConnectionWriter specifically to leave that possibility open.
  */
-class YARP_OS_API yarp::os::SizedWriter : public PortWriter {
+class YARP_OS_API SizedWriter : public PortWriter
+{
 public:
-    virtual ~SizedWriter() {}
+    virtual ~SizedWriter();
 
     virtual size_t length() = 0;
 
@@ -39,44 +42,32 @@ public:
 
     virtual size_t length(size_t index) = 0;
 
-    virtual const char *data(size_t index) = 0;
+    virtual const char* data(size_t index) = 0;
 
-    virtual PortReader *getReplyHandler() = 0;
+    virtual PortReader* getReplyHandler() = 0;
 
-    virtual Portable *getReference() = 0;
+    virtual Portable* getReference() = 0;
 
-    virtual void write(OutputStream& os) {
-        for (size_t i=0; i<length(); i++) {
-            Bytes b((char*)data(i), length(i));
-            os.write(b);
-        }
-    }
+    virtual void write(OutputStream& os);
 
-    virtual bool write(ConnectionWriter& connection) override {
-        for (size_t i=0; i<length(); i++) {
-            connection.appendBlock((char*)data(i), length(i));
-        }
-        return true;
-    }
+    virtual bool write(ConnectionWriter& connection) override;
 
     virtual bool dropRequested() = 0;
 
-
     /**
-     *
      * Call when writing is about to begin.
-     *
      */
     virtual void startWrite() = 0;
 
     /**
-     *
      * Call when all writing is finished.
-     *
      */
     virtual void stopWrite() = 0;
 
-    virtual void clear() {}
+    virtual void clear();
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_SIZEDWRITER_H

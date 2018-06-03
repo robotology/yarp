@@ -8,6 +8,8 @@
  */
 
 #include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/OutputStream.h>
+
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 
 using namespace yarp::os;

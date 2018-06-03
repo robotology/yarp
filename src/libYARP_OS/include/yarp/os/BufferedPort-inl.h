@@ -11,6 +11,7 @@
 #define YARP_OS_BUFFEREDPORT_INL_H
 
 #include <yarp/os/BufferedPort.h>
+#include <yarp/os/Type.h>
 
 template <typename T>
 yarp::os::BufferedPort<T>::BufferedPort() :

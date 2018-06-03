@@ -19,7 +19,7 @@
 #include "sio_util.h"
 
 
-#include <yarp/dev/ControlBoardInterfacesImpl.inl>
+#include <yarp/dev/ControlBoardInterfacesImpl-inl.h>
 
 
 typedef int (*PV) (const char *fmt, ...);

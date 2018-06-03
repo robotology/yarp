@@ -11,6 +11,7 @@
 #ifndef YARP_OS_IMPL_BOTTLEIMPL_H
 #define YARP_OS_IMPL_BOTTLEIMPL_H
 
+#include <yarp/os/Bytes.h>
 #include <yarp/os/impl/Storable.h>
 #include <vector>
 

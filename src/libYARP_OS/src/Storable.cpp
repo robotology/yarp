@@ -11,7 +11,13 @@
 #include <yarp/os/impl/Storable.h>
 
 #include <yarp/conf/numeric.h>
+
+#include <yarp/os/Bottle.h>
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/NetType.h>
+#include <yarp/os/Value.h>
+
 #include <yarp/os/impl/BottleImpl.h>
 
 #include <clocale>
@@ -31,9 +37,10 @@ using yarp::os::impl::StoreBlob;
 using yarp::os::impl::StoreDict;
 using yarp::os::impl::BottleImpl;
 using yarp::os::impl::Storable;
+using yarp::os::Bottle;
 using yarp::os::ConnectionReader;
 using yarp::os::ConnectionWriter;
-
+using yarp::os::Value;
 
 const int StoreInt8::code = BOTTLE_TAG_INT8;
 const int StoreInt16::code = BOTTLE_TAG_INT16;
@@ -173,6 +180,49 @@ Storable* Storable::createByCode(std::int32_t id)
         break;
     }
     return storable;
+}
+
+Value& Storable::find(const std::string& key) const
+{
+    YARP_UNUSED(key);
+    return BottleImpl::getNull();
+}
+
+Bottle& Storable::findGroup(const std::string& key) const
+{
+    YARP_UNUSED(key);
+    return Bottle::getNullBottle();
+}
+
+bool Storable::check(const std::string& key) const
+{
+    Bottle& val = findGroup(key);
+    if (!val.isNull()) {
+        return true;
+    }
+    Value& val2 = find(key);
+    return !val2.isNull();
+}
+
+bool Storable::operator==(const Value& alt) const
+{
+    return std::string(toString().c_str()) == alt.toString().c_str();
+}
+
+
+bool Storable::read(ConnectionReader& connection)
+{
+    std::int32_t x = connection.expectInt32();
+    if (x != getCode()) {
+        return false;
+    }
+    return readRaw(connection);
+}
+
+bool Storable::write(ConnectionWriter& connection)
+{
+    connection.appendInt32(getCode());
+    return writeRaw(connection);
 }
 
 

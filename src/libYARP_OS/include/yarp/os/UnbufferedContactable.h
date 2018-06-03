@@ -12,10 +12,6 @@
 #include <yarp/os/Contactable.h>
 
 
-// Defined in this file:
-namespace yarp { namespace os { class UnbufferedContactable; }}
-
-
 namespace yarp {
 namespace os {
 
@@ -35,7 +31,7 @@ public:
      * @return true iff the object is successfully written
      */
     virtual bool write(PortWriter& writer,
-                       PortWriter *callback = nullptr) const = 0;
+                       PortWriter* callback = nullptr) const = 0;
 
     /**
      * Write an object to the port, then expect one back.
@@ -48,8 +44,9 @@ public:
      *                 is done (otherwise writer.onCompletion() is called)
      * @return true iff an object is successfully written and read
      */
-    virtual bool write(PortWriter& writer, PortReader& reader,
-                       PortWriter *callback = nullptr) const = 0;
+    virtual bool write(PortWriter& writer,
+                       PortReader& reader,
+                       PortWriter* callback = nullptr) const = 0;
 
     /**
      * Read an object from the port.

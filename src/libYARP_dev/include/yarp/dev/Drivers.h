@@ -74,7 +74,7 @@ public:
      * @return the object managing the device.
      */
     virtual PolyDriver *owner() {
-        return 0/*NULL*/;
+        return nullptr;
     }
 };
 

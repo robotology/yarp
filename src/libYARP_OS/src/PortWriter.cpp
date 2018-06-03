@@ -8,13 +8,20 @@
  */
 
 #include <yarp/os/PortWriter.h>
+#include <yarp/os/Type.h>
 
 
-yarp::os::PortWriter::~PortWriter() {
+yarp::os::PortWriter::~PortWriter() = default;
+
+void yarp::os::PortWriter::onCompletion()
+{
 }
 
-void yarp::os::PortWriter::onCompletion() {
+void yarp::os::PortWriter::onCommencement()
+{
 }
 
-void yarp::os::PortWriter::onCommencement() {
+yarp::os::Type yarp::os::PortWriter::getWriteType() const
+{
+    return yarp::os::Type::anon();
 }

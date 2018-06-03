@@ -7,7 +7,7 @@
 
 #include "UrbtcControl.h"
 
-#include "../../../ControlBoardInterfacesImpl.inl"
+#include "../../../ControlBoardInterfacesImpl-inl.h"
 
 yarp::dev::UrbtcControl::UrbtcControl() :
         ImplementPositionControl<UrbtcControl, IPositionControl>(this),

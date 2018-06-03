@@ -7,9 +7,12 @@
  */
 
 #include <yarp/dev/MapGrid2D.h>
+
 #include <yarp/os/Bottle.h>
-#include <yarp/sig/ImageFile.h>
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/sig/ImageFile.h>
 #include <algorithm>
 #include <fstream>
 #include <cmath>

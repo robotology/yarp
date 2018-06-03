@@ -199,7 +199,8 @@ yarp::conf::ssize_t ShmemInputStreamImpl::read(const yarp::os::Bytes& b)
         return -1;
     }
 
-    char *data = b.get(), buf;
+    char* data = b.get();
+    char* buf;
     size_t len = b.length();
     yarp::conf::ssize_t ret;
 

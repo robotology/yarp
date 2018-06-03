@@ -7,6 +7,7 @@
  */
 
 #include <yarp/os/AbstractContactable.h>
+#include <yarp/os/Type.h>
 
 bool yarp::os::AbstractContactable::open(const std::string& name)
 {

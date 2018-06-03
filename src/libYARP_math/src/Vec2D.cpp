@@ -7,6 +7,9 @@
  */
 
 #include <yarp/math/Vec2D.h>
+
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/math/Math.h>
 #include <sstream>
 #include <cmath>

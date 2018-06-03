@@ -11,9 +11,10 @@
 #define YARP_SIG_IMAGE_H
 
 #include <yarp/conf/system.h>
-#include <yarp/os/Portable.h>
-#include <yarp/os/Vocab.h>
 #include <yarp/os/NetUint16.h>
+#include <yarp/os/Portable.h>
+#include <yarp/os/Type.h>
+#include <yarp/os/Vocab.h>
 #include <yarp/sig/api.h>
 #include <map>
 

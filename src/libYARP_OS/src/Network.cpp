@@ -13,6 +13,7 @@
 #include <yarp/os/Carriers.h>
 #include <yarp/os/MultiNameSpace.h>
 #include <yarp/os/NameSpace.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Route.h>

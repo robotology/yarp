@@ -695,49 +695,6 @@ void BottleImpl::copyRange(const BottleImpl* alt, int first, int len)
     }
 }
 
-Value& Storable::find(const std::string& key) const
-{
-    YARP_UNUSED(key);
-    return BottleImpl::getNull();
-}
-
-Bottle& Storable::findGroup(const std::string& key) const
-{
-    YARP_UNUSED(key);
-    return Bottle::getNullBottle();
-}
-
-bool Storable::check(const std::string& key) const
-{
-    Bottle& val = findGroup(key);
-    if (!val.isNull()) {
-        return true;
-    }
-    Value& val2 = find(key);
-    return !val2.isNull();
-}
-
-bool Storable::operator==(const Value& alt) const
-{
-    return std::string(toString().c_str()) == alt.toString().c_str();
-}
-
-
-bool Storable::read(ConnectionReader& connection)
-{
-    std::int32_t x = connection.expectInt32();
-    if (x != getCode()) {
-        return false;
-    }
-    return readRaw(connection);
-}
-
-bool Storable::write(ConnectionWriter& connection)
-{
-    connection.appendInt32(getCode());
-    return writeRaw(connection);
-}
-
 void BottleImpl::edit()
 {
     if (ro) {

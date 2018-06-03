@@ -75,7 +75,7 @@ public:
      */
     template <class T>
     bool view(T *&x) {
-        x = 0 /*NULL*/;
+        x = nullptr;
 
         // This is not super-portable; and it requires RTTI compiled
         // in.  For systems on which this is a problem, suggest:
@@ -83,7 +83,7 @@ public:
         // implement own method for checking interface support.
         T *v = dynamic_cast<T *>(getImplementation());
 
-        if (v!=0 /*NULL*/) {
+        if (v != nullptr) {
             x = v;
             return true;
         }

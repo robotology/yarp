@@ -11,6 +11,7 @@
 #define YARP_SIG_SOUNDFILE_H
 
 #include <yarp/sig/Sound.h>
+#include <cstdio>
 
 namespace yarp {
     namespace sig{

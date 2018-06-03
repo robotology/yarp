@@ -10,21 +10,21 @@
 #ifndef YARP_OS_PORTWRITER_H
 #define YARP_OS_PORTWRITER_H
 
-#include <yarp/os/ConnectionWriter.h>
-#include <yarp/os/Type.h>
+#include <yarp/os/api.h>
 
 namespace yarp {
-    namespace os {
-        class PortWriter;
-    }
-}
+namespace os {
+
+class ConnectionWriter;
+class Type;
 
 /**
  * Interface implemented by all objects that can write themselves to
  * the network, such as Bottle objects.
  * @see Port, PortReader
  */
-class YARP_OS_API yarp::os::PortWriter {
+class YARP_OS_API PortWriter
+{
 public:
     /**
      * Destructor.
@@ -57,7 +57,10 @@ public:
      */
     virtual void onCommencement();
 
-    virtual Type getWriteType() const { return Type::anon(); }
+    virtual yarp::os::Type getWriteType() const;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_PORTWRITER_H

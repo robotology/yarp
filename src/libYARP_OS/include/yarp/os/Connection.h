@@ -10,6 +10,7 @@
 #define YARP_OS_CONNECTION_H
 
 #include <yarp/os/api.h>
+#include <yarp/os/Bytes.h>
 
 namespace yarp {
     namespace os {

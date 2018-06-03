@@ -11,7 +11,7 @@
 #define YARP_SIG_SOUND_H
 
 #include <yarp/os/Portable.h>
-
+#include <yarp/conf/numeric.h>
 #include <yarp/sig/api.h>
 
 namespace yarp {

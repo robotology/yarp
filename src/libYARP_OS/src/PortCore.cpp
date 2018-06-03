@@ -7,23 +7,26 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/InputProtocol.h>
-#include <yarp/os/RosNameSpace.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PortCore.h>
+
+#include <yarp/os/Bottle.h>
+#include <yarp/os/DummyConnector.h>
+#include <yarp/os/InputProtocol.h>
+#include <yarp/os/Name.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/PortInfo.h>
+#include <yarp/os/RosNameSpace.h>
+#include <yarp/os/StringOutputStream.h>
+#include <yarp/os/SystemInfo.h>
+#include <yarp/os/Time.h>
+
 #include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/ConnectionRecorder.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformUnistd.h>
 #include <yarp/os/impl/PortCoreInputUnit.h>
 #include <yarp/os/impl/PortCoreOutputUnit.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
-#include <yarp/os/Name.h>
-
-#include <yarp/os/Network.h>
-#include <yarp/os/Bottle.h>
-#include <yarp/os/Time.h>
-#include <yarp/os/PortInfo.h>
-#include <yarp/os/SystemInfo.h>
-#include <yarp/os/DummyConnector.h>
 
 #include <vector>
 #include <cstdio>
