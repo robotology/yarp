@@ -56,7 +56,6 @@ if (YARP_HAS_MATH_LIB)
 
   target_include_directories(YARP_math PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-  target_include_directories(YARP_math SYSTEM PRIVATE ${EIGEN3_INCLUDE_DIR})
 
   target_link_libraries(YARP_math PUBLIC YARP::YARP_conf
                                          YARP::YARP_OS
@@ -66,6 +65,14 @@ if (YARP_HAS_MATH_LIB)
                                     YARP_OS
                                     YARP_sig)
   list(APPEND YARP_math_PRIVATE_DEPS YARP_eigen)
+
+  # NOTE: Fix this when Eigen3 3.3.1 is available on all supported distributions
+  if(TARGET Eigen3::Eigen)
+    target_link_libraries(YARP_math PRIVATE Eigen3::Eigen)
+    list(APPEND YARP_math_PRIVATE_DEPS "Eigen3 3.3.1")
+  else()
+    target_include_directories(YARP_math SYSTEM PRIVATE ${EIGEN3_INCLUDE_DIR})
+  endif()
 
   # import math symbols from standard cmath
   target_compile_definitions(YARP_math PRIVATE _USE_MATH_DEFINES)

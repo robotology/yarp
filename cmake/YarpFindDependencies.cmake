@@ -265,8 +265,14 @@ endmacro()
 option(SKIP_ACE "Compile YARP without ACE (Linux only, TCP only, limited functionality)" OFF)
 mark_as_advanced(SKIP_ACE)
 
-find_package(Eigen3 QUIET)
+# NOTE: Fix this when Eigen3 3.3.1 is available on all supported distributions
+find_package(Eigen3 3.3.1 CONFIG QUIET)
+if(NOT eigen3_FOUND)
+  find_package(Eigen3 QUIET)
+  set(eigen3_FOUND ${EIGEN3_FOUND})
+endif()
 checkandset_dependency(Eigen3)
+
 option(CREATE_LIB_MATH "Create math library libYARP_math?" ${YARP_HAS_EIGEN3})
 cmake_dependent_option(CREATE_YARPROBOTINTERFACE "Do you want to compile yarprobotinterface?" ON YARP_COMPILE_EXECUTABLES OFF)
 cmake_dependent_option(CREATE_YARPMANAGER_CONSOLE "Do you want to compile YARP Module Manager (console)?" ON YARP_COMPILE_EXECUTABLES OFF)
