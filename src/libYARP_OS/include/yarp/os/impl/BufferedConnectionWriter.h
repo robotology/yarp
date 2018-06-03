@@ -240,9 +240,15 @@ private:
      * the full message is available, whereas conversion can be
      * requested at any time.
      *
+     * The const version of this method performs a const_cast, and calls the
+     * non-const version. This makes possible calling it in const methods.
+     * Conceptually this is not completely wrong because it does not modify
+     * the external state of the class, but just some internal representation.
+     *
      * @return true on success
      */
     bool applyConvertTextMode();
+    bool applyConvertTextMode() const;
 
 
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>) lst; ///< buffers in payload

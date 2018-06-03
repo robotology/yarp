@@ -495,6 +495,10 @@ std::string BufferedConnectionWriter::toString()
     return output;
 }
 
+bool BufferedConnectionWriter::applyConvertTextMode() const
+{
+    return const_cast<BufferedConnectionWriter*>(this)->applyConvertTextMode();
+}
 
 bool BufferedConnectionWriter::applyConvertTextMode()
 {
