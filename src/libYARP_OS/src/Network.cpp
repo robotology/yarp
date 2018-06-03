@@ -1503,7 +1503,7 @@ public:
     }
 
 
-    virtual Carrier& getContent() {
+    virtual Carrier& getContent() const {
         return car.getContent();
     }
 
@@ -1736,7 +1736,7 @@ public:
         }
     }
 
-    Carrier& getContent() override {
+    Carrier& getContent() const override {
         return car.getContent();
     }
 
