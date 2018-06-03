@@ -52,61 +52,61 @@ public:
 
     bool writeNested(yarp::os::PortWriter& obj);
 
-    bool writeBool(bool x);
+    bool writeBool(bool x) const;
 
-    bool writeI8(std::int8_t x);
+    bool writeI8(std::int8_t x) const;
 
-    bool writeI16(std::int16_t x);
+    bool writeI16(std::int16_t x) const;
 
-    bool writeI32(std::int32_t x);
+    bool writeI32(std::int32_t x) const;
 
-    bool writeI64(std::int64_t x);
+    bool writeI64(std::int64_t x) const;
 
-    bool writeFloat32(yarp::conf::float32_t x);
+    bool writeFloat32(yarp::conf::float32_t x) const;
 
-    bool writeFloat64(yarp::conf::float64_t x);
+    bool writeFloat64(yarp::conf::float64_t x) const;
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     YARP_DEPRECATED_MSG("Use writeI8 instead")
-    bool writeByte(std::int8_t x) { return writeI8(x); }
+    bool writeByte(std::int8_t x) const { return writeI8(x); }
 
     YARP_DEPRECATED_MSG("Use writeFloat64 instead")
-    bool writeDouble(double x) { return writeFloat64(static_cast<yarp::conf::float64_t>(x)); }
+    bool writeDouble(double x) const { return writeFloat64(static_cast<yarp::conf::float64_t>(x)); }
 #endif // YARP_NO_DEPRECATED
 
-    bool writeVocab(std::int32_t x);
+    bool writeVocab(std::int32_t x) const;
 
-    bool isValid();
+    bool isValid() const;
 
-    bool isError();
+    bool isError() const;
 
-    bool writeTag(const char *tag, int split, int len);
+    bool writeTag(const char *tag, int split, int len) const;
 
-    bool writeString(const std::string& tag);
+    bool writeString(const std::string& tag) const;
 
-    bool writeBinary(const std::string& tag);
+    bool writeBinary(const std::string& tag) const;
 
-    bool writeListHeader(int len);
+    bool writeListHeader(int len) const;
 
-    bool writeListBegin(int tag, std::uint32_t len);
+    bool writeListBegin(int tag, std::uint32_t len) const;
 
-    bool writeSetBegin(int tag, std::uint32_t len);
+    bool writeSetBegin(int tag, std::uint32_t len) const;
 
-    bool writeMapBegin(int tag, int tag2, std::uint32_t len);
+    bool writeMapBegin(int tag, int tag2, std::uint32_t len) const;
 
-    bool writeListEnd();
+    bool writeListEnd() const;
 
-    bool writeSetEnd();
+    bool writeSetEnd() const;
 
-    bool writeMapEnd();
+    bool writeMapEnd() const;
 
-    bool writeOnewayResponse();
+    bool writeOnewayResponse() const;
 
 private:
     bool get_mode;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) get_string;
     bool get_is_vocab;
-    bool need_ok;
+    mutable bool need_ok;
     ConnectionWriter& writer;
 };
 
