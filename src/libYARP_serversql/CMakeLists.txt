@@ -48,8 +48,7 @@ target_link_libraries(YARP_serversql PUBLIC YARP::YARP_conf
                                              YARP::YARP_init)
 list(APPEND YARP_serversql_PUBLIC_DEPS YARP_conf
                                        YARP_OS)
-list(APPEND YARP_serversql_PRIVATE_DEPS YARP_name
-                                        YARP_init)
+list(APPEND YARP_serversql_PRIVATE_DEPS YARP_name)
 
 target_include_directories(YARP_serversql SYSTEM PRIVATE ${SQLite_INCLUDE_DIRS})
 target_link_libraries(YARP_serversql PRIVATE ${SQLite_LIBRARIES})
