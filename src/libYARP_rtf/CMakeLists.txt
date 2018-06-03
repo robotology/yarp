@@ -32,7 +32,8 @@ target_include_directories(YARP_rtf PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOU
 target_link_libraries(YARP_rtf PUBLIC YARP::YARP_conf
                                       YARP::YARP_OS
                                       YARP::YARP_sig
-                                      YARP::YARP_dev)
+                                      YARP::YARP_dev
+                               PRIVATE YARP::YARP_init)
 list(APPEND YARP_rtf_PUBLIC_DEPS YARP_conf
                                  YARP_OS
                                  YARP_sig
