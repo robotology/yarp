@@ -294,19 +294,19 @@ public:
 
     bool update();
 
-    virtual size_t length() override {
+    virtual size_t length() const override {
         return srcs.size();
     }
 
-    virtual size_t headerLength() override {
+    virtual size_t headerLength() const override {
         return 0;
     }
 
-    virtual size_t length(size_t index) override {
+    virtual size_t length(size_t index) const override {
         return srcs[index].len;
     }
 
-    virtual const char *data(size_t index) override {
+    virtual const char *data(size_t index) const override {
         if (srcs[index].offset<0) return srcs[index].src;
         return scratch.get()+srcs[index].offset;
     }
@@ -341,11 +341,11 @@ public:
         return false;
     }
 
-    virtual void startWrite() override {
+    virtual void startWrite() const override {
         parent->startWrite();
     }
 
-    virtual void stopWrite() override {
+    virtual void stopWrite() const override {
         parent->stopWrite();
     }
 };

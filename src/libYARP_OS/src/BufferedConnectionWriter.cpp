@@ -314,17 +314,17 @@ void BufferedConnectionWriter::appendLine(const std::string& data)
 }
 
 
-size_t BufferedConnectionWriter::length()
+size_t BufferedConnectionWriter::length() const
 {
     return header_used + lst_used;
 }
 
-size_t BufferedConnectionWriter::headerLength()
+size_t BufferedConnectionWriter::headerLength() const
 {
     return header_used;
 }
 
-size_t BufferedConnectionWriter::length(size_t index)
+size_t BufferedConnectionWriter::length(size_t index) const
 {
     if (index < header_used) {
         yarp::os::ManagedBytes& b = *(header[index]);
@@ -334,7 +334,7 @@ size_t BufferedConnectionWriter::length(size_t index)
     return b.used();
 }
 
-const char* BufferedConnectionWriter::data(size_t index)
+const char* BufferedConnectionWriter::data(size_t index) const
 {
     if (index < header_used) {
         yarp::os::ManagedBytes& b = *(header[index]);
@@ -452,11 +452,11 @@ bool BufferedConnectionWriter::dropRequested()
     return shouldDrop;
 }
 
-void BufferedConnectionWriter::startWrite()
+void BufferedConnectionWriter::startWrite() const
 {
 }
 
-void BufferedConnectionWriter::stopWrite()
+void BufferedConnectionWriter::stopWrite() const
 {
     // convert, last thing, if requested
     applyConvertTextMode();

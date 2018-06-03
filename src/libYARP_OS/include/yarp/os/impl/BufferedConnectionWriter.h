@@ -165,10 +165,10 @@ public:
 
 
     // defined by yarp::os::SizedWriter
-    virtual size_t length() override;
-    virtual size_t headerLength() override;
-    virtual size_t length(size_t index) override;
-    virtual const char* data(size_t index) override;
+    virtual size_t length() const override;
+    virtual size_t headerLength() const override;
+    virtual size_t length(size_t index) const override;
+    virtual const char* data(size_t index) const override;
     virtual bool write(ConnectionWriter& connection) override;
     virtual void write(OutputStream& os) override;
 
@@ -212,8 +212,8 @@ public:
 
     // defined by yarp::os::SizedWriter
     virtual bool dropRequested() override;
-    virtual void startWrite() override;
-    virtual void stopWrite() override;
+    virtual void startWrite() const override;
+    virtual void stopWrite() const override;
 
     // defined by yarp::os::ConnectionWriter
     virtual SizedWriter* getBuffer() override;
