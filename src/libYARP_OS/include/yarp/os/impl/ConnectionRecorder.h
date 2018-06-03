@@ -52,9 +52,9 @@ public:
      */
     void fini();
 
-    yarp::os::impl::BufferedConnectionWriter& getMessage();
-    yarp::os::impl::BufferedConnectionWriter& getReply();
-    bool hasReply();
+    const yarp::os::impl::BufferedConnectionWriter& getMessage() const;
+    const yarp::os::impl::BufferedConnectionWriter& getReply() const;
+    bool hasReply() const;
 
     virtual bool expectBlock(const char* data, size_t len) override;
     virtual std::string expectText(int terminatingChar) override;

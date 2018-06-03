@@ -39,17 +39,17 @@ void yarp::os::impl::ConnectionRecorder::fini()
     }
 }
 
-yarp::os::impl::BufferedConnectionWriter& yarp::os::impl::ConnectionRecorder::getMessage()
+const yarp::os::impl::BufferedConnectionWriter& yarp::os::impl::ConnectionRecorder::getMessage() const
 {
     return readerStore;
 }
 
-yarp::os::impl::BufferedConnectionWriter& yarp::os::impl::ConnectionRecorder::getReply()
+const yarp::os::impl::BufferedConnectionWriter& yarp::os::impl::ConnectionRecorder::getReply() const
 {
     return writerStore;
 }
 
-bool yarp::os::impl::ConnectionRecorder::hasReply()
+bool yarp::os::impl::ConnectionRecorder::hasReply() const
 {
     return wrote;
 }
