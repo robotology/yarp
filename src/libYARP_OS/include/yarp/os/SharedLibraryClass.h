@@ -122,7 +122,7 @@ public:
      *
      * @return the created instance
      */
-    T& operator*() {
+    T& operator*() const {
         return (*content);
     }
 
