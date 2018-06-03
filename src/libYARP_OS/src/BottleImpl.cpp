@@ -514,6 +514,10 @@ bool BottleImpl::read(ConnectionReader& reader)
     return result;
 }
 
+void BottleImpl::synch() const
+{
+    const_cast<BottleImpl*>(this)->synch();
+}
 
 void BottleImpl::synch()
 {

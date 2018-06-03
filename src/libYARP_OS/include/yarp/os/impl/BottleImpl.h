@@ -151,7 +151,18 @@ private:
     void add(Storable* s);
     void smartAdd(const std::string& str);
 
+    /*
+     * Bottle is using a lazy syncronization method. Whenever some operation
+     * is performed, a dirty flag is set, and when it is used, the synch()
+     * method is called.
+     *
+     * The const version of the synch() method performs a const_cast, and
+     * calls the non-const version. This allows to call it in const methods.
+     * Conceptually this is not completely wrong because it does not modify
+     * the external state of the class, but just some internal representation.
+     */
     void synch();
+    void synch() const;
 };
 
 } // namespace impl
