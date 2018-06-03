@@ -21,7 +21,9 @@ macro(YARP_INSTALL_BASIC_PACKAGE_FILES _export)
       # Do not add private libraries built by YARP
       string(TOUPPER "${_dep}" _DEP)
       string(REGEX REPLACE " +" "" _DEP ${_DEP})
-      if(NOT ${YARP_BUILD_${_DEP}})
+      if(YARP_BUILD_${_DEP})
+        # This is a private library, do not add it to the dependencies
+      else()
         list(APPEND _deps "${_dep}")
       endif()
     endif()
@@ -35,7 +37,9 @@ macro(YARP_INSTALL_BASIC_PACKAGE_FILES _export)
       # Do not add private libraries built by YARP
       string(TOUPPER "${_dep}" _DEP)
       string(REGEX REPLACE " +" "" _DEP ${_DEP})
-      if(NOT ${YARP_BUILD_${_DEP}})
+      if(YARP_BUILD_${_DEP})
+        # This is a private library, do not add it to the dependencies
+      else()
         list(APPEND _priv_deps "${_dep}")
       endif()
     endif()
