@@ -402,14 +402,14 @@ void BottleImpl::toBytes(const Bytes& data)
 }
 
 
-const char* BottleImpl::getBytes()
+const char* BottleImpl::getBytes() const
 {
     YMSG(("am I nested? %d\n", nested));
     synch();
     return &data[0];
 }
 
-size_t BottleImpl::byteCount()
+size_t BottleImpl::byteCount() const
 {
     synch();
     return data.size();

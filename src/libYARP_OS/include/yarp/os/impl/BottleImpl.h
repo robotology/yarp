@@ -77,8 +77,8 @@ public:
 
     void onCommencement();
 
-    const char* getBytes();
-    size_t byteCount();
+    const char* getBytes() const;
+    size_t byteCount() const;
 
     void copyRange(const BottleImpl* alt, int first = 0, int len = -1);
 
