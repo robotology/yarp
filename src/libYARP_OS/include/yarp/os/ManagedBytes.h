@@ -103,7 +103,7 @@ public:
     /**
      * @return description of data block associated with this object
      */
-    const Bytes& bytes();
+    const Bytes& bytes() const;
 
 
     /**

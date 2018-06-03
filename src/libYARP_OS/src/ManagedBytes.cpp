@@ -130,7 +130,7 @@ void ManagedBytes::clear() {
     use_set = false;
 }
 
-const Bytes& ManagedBytes::bytes() {
+const Bytes& ManagedBytes::bytes() const {
     return b;
 }
 
