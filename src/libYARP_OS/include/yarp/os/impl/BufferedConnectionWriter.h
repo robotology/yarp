@@ -184,7 +184,7 @@ public:
      * @return the size of the message that will be sent, in bytes, including
      * the header and payload.
      */
-    virtual size_t dataSize();
+    virtual size_t dataSize() const;
 
     size_t bufferCount() const;
 

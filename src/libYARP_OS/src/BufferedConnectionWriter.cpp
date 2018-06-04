@@ -383,7 +383,7 @@ bool BufferedConnectionWriter::write(PortReader& obj)
 }
 
 
-size_t BufferedConnectionWriter::dataSize()
+size_t BufferedConnectionWriter::dataSize() const
 {
     size_t i;
     size_t len = 0;
