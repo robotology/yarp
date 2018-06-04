@@ -27,7 +27,7 @@ bool Carrier::isPush() const
     return true;
 }
 
-std::string Carrier::getBootstrapCarrierName()
+std::string Carrier::getBootstrapCarrierName() const
 {
     return "tcp";
 }

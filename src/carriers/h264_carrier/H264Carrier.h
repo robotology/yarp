@@ -116,7 +116,7 @@ public:
 
     virtual bool expectAck(ConnectionState& proto) override;
 
-    virtual std::string getBootstrapCarrierName() override;
+    virtual std::string getBootstrapCarrierName() const override;
 
     virtual yarp::os::Face* createFace(void) override;
 

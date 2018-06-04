@@ -1685,7 +1685,7 @@ public:
         getContent().close();
     }
 
-    virtual std::string getBootstrapCarrierName() override {
+    virtual std::string getBootstrapCarrierName() const override {
         return getContent().getBootstrapCarrierName();
     }
 

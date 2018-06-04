@@ -213,7 +213,7 @@ bool H264Carrier::expectAck(ConnectionState& proto)
     return true;
 }
 
-std::string H264Carrier::getBootstrapCarrierName()
+std::string H264Carrier::getBootstrapCarrierName() const
 {
     return "";
 }

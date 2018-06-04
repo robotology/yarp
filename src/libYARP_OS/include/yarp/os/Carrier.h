@@ -333,7 +333,7 @@ public:
      *
      * @return the name of the bootstrap carrier.
      */
-    virtual std::string getBootstrapCarrierName();
+    virtual std::string getBootstrapCarrierName() const;
 
     /**
      * Some carrier types may require special connection logic.
