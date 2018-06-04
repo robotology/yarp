@@ -31,7 +31,7 @@ bool AbstractCarrier::supportReply() const
     return !isConnectionless();
 }
 
-bool AbstractCarrier::canAccept()
+bool AbstractCarrier::canAccept() const
 {
     return true;
 }

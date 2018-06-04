@@ -1625,7 +1625,7 @@ public:
         getContent().setParameters(header);
     }
 
-    virtual bool canAccept() override {
+    virtual bool canAccept() const override {
         return getContent().canAccept();
     }
 

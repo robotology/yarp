@@ -31,7 +31,7 @@ bool H264Carrier::isConnectionless() const
     return true;
 }
 
-bool H264Carrier::canAccept()
+bool H264Carrier::canAccept() const
 {
     return true;
 }

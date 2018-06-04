@@ -60,7 +60,7 @@ public:
     // Documented in Carrier
     virtual bool supportReply() const override;
     // Documented in Carrier
-    virtual bool canAccept() override;
+    virtual bool canAccept() const override;
     // Documented in Carrier
     virtual bool canOffer() override;
     // Documented in Carrier

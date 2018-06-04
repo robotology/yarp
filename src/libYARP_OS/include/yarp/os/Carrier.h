@@ -124,7 +124,7 @@ public:
      *
      * @return true if carrier can read messages
      */
-    virtual bool canAccept() = 0;
+    virtual bool canAccept() const = 0;
 
     /**
      * Check if writing is implemented for this carrier.

@@ -63,7 +63,7 @@ public:
         return false;
     }
 
-    virtual bool canAccept() override {
+    virtual bool canAccept() const override {
         return true;
     }
 

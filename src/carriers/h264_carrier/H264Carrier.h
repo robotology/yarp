@@ -57,7 +57,7 @@ public:
 
     virtual bool isConnectionless() const override;
 
-    virtual bool canAccept() override;
+    virtual bool canAccept() const override;
 
     virtual bool canOffer() override;
 
