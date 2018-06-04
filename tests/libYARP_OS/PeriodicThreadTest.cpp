@@ -275,7 +275,7 @@ private:
     };
 
 public:
-    virtual std::string getName() override { return "PeriodicThreadTest"; }
+    virtual std::string getName() const override { return "PeriodicThreadTest"; }
 
     double test(double period, double delay)
     {

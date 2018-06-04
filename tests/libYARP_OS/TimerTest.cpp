@@ -27,7 +27,7 @@ class TimerTest : public UnitTest {
     unsigned int runCount{ 1 };
 
 public:
-    virtual std::string getName() override { return "TimerTest"; }
+    virtual std::string getName() const override { return "TimerTest"; }
 
     //please note that the return values of the callbacks does not rappresent the result of the tests but simply keeps the timer alive..
     bool timingCallback(const YarpTimerEvent& timings)

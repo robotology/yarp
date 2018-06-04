@@ -31,7 +31,7 @@ const double TOL = 1e-8;
 
 class MathTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "MathTest"; }
+    virtual std::string getName() const override { return "MathTest"; }
 
     // Assert that 2 vectors are equal
     void assertEqual(const Vector &a, const Vector &b, string testName, bool verbose=false){

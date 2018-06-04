@@ -36,7 +36,7 @@ using namespace std;
 
 class Vec2DTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "Vec2DTest"; }
+    virtual std::string getName() const override { return "Vec2DTest"; }
 
     virtual void runTests() override
     {

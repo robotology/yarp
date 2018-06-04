@@ -69,7 +69,7 @@ public:
 
 class RunTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "RunTest"; }
+    virtual std::string getName() const override { return "RunTest"; }
 
     virtual void testRun() {
         //this could be local or using an external nameserver, to be decided

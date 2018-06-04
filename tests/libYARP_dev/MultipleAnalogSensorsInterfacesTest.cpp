@@ -26,7 +26,7 @@ using namespace yarp::dev;
 class MultipleAnalogSensorsInterfacesTest : public UnitTest
 {
 public:
-    virtual std::string getName() override { return "MultipleAnalogSensorsInterfacesTest"; }
+    virtual std::string getName() const override { return "MultipleAnalogSensorsInterfacesTest"; }
 
     void checkRemapperOnSingleIMU()
     {

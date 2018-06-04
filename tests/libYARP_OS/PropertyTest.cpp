@@ -25,7 +25,7 @@ using namespace yarp::os;
 
 class PropertyTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "PropertyTest"; }
+    virtual std::string getName() const override { return "PropertyTest"; }
 
     void checkPutGet() {
         report(0,"checking puts and gets");

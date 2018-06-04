@@ -22,7 +22,7 @@ using namespace yarp::dev;
 class AnalogWrapperTest : public UnitTest
 {
 public:
-    virtual std::string getName() override { return "AnalogWrapperTest"; }
+    virtual std::string getName() const override { return "AnalogWrapperTest"; }
 
     void testAnalogWrapper() {
         report(0,"\ntest the Analogwrapper ");

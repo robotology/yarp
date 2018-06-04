@@ -28,7 +28,7 @@ using namespace yarp::os::impl;
 class WireTest : public UnitTest
 {
 public:
-    virtual std::string getName() override { return "WireTest"; }
+    virtual std::string getName() const override { return "WireTest"; }
 
     void checkWire()
     {

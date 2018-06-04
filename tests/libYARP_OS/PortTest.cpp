@@ -341,7 +341,7 @@ class PortTest : public UnitTest {
 public:
     int safePort() { return Network::getDefaultPortRange()+100; }
 
-    virtual std::string getName() override { return "PortTest"; }
+    virtual std::string getName() const override { return "PortTest"; }
 
     void testOpen() {
         report(0,"checking opening and closing ports");

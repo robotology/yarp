@@ -17,7 +17,7 @@ using namespace yarp::os::impl;
 
 class NameConfigTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "NameConfigTest"; }
+    virtual std::string getName() const override { return "NameConfigTest"; }
 
     void testRead() {
         report(0,"no tests yet");

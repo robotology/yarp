@@ -14,7 +14,7 @@ using namespace yarp::os::impl;
 
 class UnitTestTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "UnitTestTest"; }
+    virtual std::string getName() const override { return "UnitTestTest"; }
 
     void checkHeapMonitor() {
         if (!heapMonitorSupported()) {

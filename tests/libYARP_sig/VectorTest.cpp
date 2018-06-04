@@ -145,7 +145,7 @@ class VectorTest : public UnitTest {
     }
 
 public:
-    virtual std::string getName() override { return "VectorTest"; }
+    virtual std::string getName() const override { return "VectorTest"; }
 
     void checkGsl()
     {

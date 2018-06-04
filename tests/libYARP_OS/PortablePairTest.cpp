@@ -21,7 +21,7 @@ using namespace yarp::os;
 
 class PortablePairTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "PortablePairTest"; }
+    virtual std::string getName() const override { return "PortablePairTest"; }
     
     void checkStandard() {
         PortablePair<Bottle,Bottle> pp;

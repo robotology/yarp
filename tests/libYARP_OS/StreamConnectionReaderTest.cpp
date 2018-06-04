@@ -18,7 +18,7 @@ using namespace yarp::os::impl;
 
 class StreamConnectionReaderTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "StreamConnectionReaderTest"; }
+    virtual std::string getName() const override { return "StreamConnectionReaderTest"; }
 
     void testRead() {
         report(0,"testing reading...");

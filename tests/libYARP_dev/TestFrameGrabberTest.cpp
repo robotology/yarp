@@ -28,7 +28,7 @@ using namespace yarp::sig;
 class TestFrameGrabberTest : public UnitTest
 {
 public:
-    virtual std::string getName() override { return "TestFrameGrabberTest"; }
+    virtual std::string getName() const override { return "TestFrameGrabberTest"; }
 
     void testTestFrameGrabber() {
         report(0,"\ntest the TestFrameGrabber ");

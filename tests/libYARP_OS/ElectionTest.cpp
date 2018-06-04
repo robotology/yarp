@@ -16,7 +16,7 @@ using namespace yarp::os::impl;
 
 class ElectionTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "ElectionTest"; }
+    virtual std::string getName() const override { return "ElectionTest"; }
 
     void testBasics() {
         report(0,"testing the basics of elections");

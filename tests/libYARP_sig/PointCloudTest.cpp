@@ -31,7 +31,7 @@ float acceptedDiff = 1e-6f;
 class PointCloudTest : public yarp::os::impl::UnitTest
 {
 public:
-    virtual std::string getName() override
+    virtual std::string getName() const override
     { return "PointCloudTest"; }
 
     void readWriteMatchTest()

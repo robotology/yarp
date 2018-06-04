@@ -24,7 +24,7 @@ using namespace yarp::os::impl;
  */
 class ServerTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "ServerTest"; }
+    virtual std::string getName() const override { return "ServerTest"; }
 
     void checkRegisterFree() {
         report(0,"checking free register command...");

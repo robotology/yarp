@@ -22,7 +22,7 @@ using namespace yarp::os;
 
 class NetTypeTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "NetTypeTest"; }
+    virtual std::string getName() const override { return "NetTypeTest"; }
 
     void checkCrc() {
         report(0,"checking cyclic redundancy check is plausible");

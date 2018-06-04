@@ -23,7 +23,7 @@ public:
         return Network::getDefaultPortRange()+100;
     }
 
-    virtual std::string getName() override { return "NameServerTest"; }
+    virtual std::string getName() const override { return "NameServerTest"; }
 
     void checkRegister() {
         report(0,"checking register...");
