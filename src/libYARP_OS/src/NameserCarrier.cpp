@@ -102,7 +102,7 @@ std::string yarp::os::impl::NameserCarrier::getName() const {
     return "name_ser";
 }
 
-std::string yarp::os::impl::NameserCarrier::getSpecifierName() {
+std::string yarp::os::impl::NameserCarrier::getSpecifierName() const {
     return "NAME_SER";
 }
 

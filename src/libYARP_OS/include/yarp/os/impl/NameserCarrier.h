@@ -68,7 +68,7 @@ public:
     NameserCarrier();
 
     virtual std::string getName() const override;
-    virtual std::string getSpecifierName();
+    std::string getSpecifierName() const;
 
     virtual Carrier *create() override;
 

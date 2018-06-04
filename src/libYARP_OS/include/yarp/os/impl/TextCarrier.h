@@ -29,7 +29,7 @@ public:
 
     virtual std::string getName() const override;
 
-    virtual std::string getSpecifierName();
+    virtual std::string getSpecifierName() const;
 
     virtual bool checkHeader(const Bytes& header) override;
     virtual void getHeader(const Bytes& header) override;

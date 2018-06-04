@@ -26,7 +26,7 @@ std::string yarp::os::impl::TextCarrier::getName() const
     return "text";
 }
 
-std::string yarp::os::impl::TextCarrier::getSpecifierName()
+std::string yarp::os::impl::TextCarrier::getSpecifierName() const
 {
     if (ackVariant) {
         return "CONNACK ";

@@ -100,7 +100,7 @@ public:
     virtual bool isConnectionless() const override;
     virtual bool canEscape() const override;
     virtual bool isLocal() const override;
-    virtual std::string getSpecifierName();
+    virtual std::string getSpecifierName() const;
     virtual bool checkHeader(const Bytes& header) override;
     virtual void getHeader(const Bytes& header) override;
     virtual void setParameters(const Bytes& header) override;

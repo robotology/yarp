@@ -183,7 +183,7 @@ bool yarp::os::impl::LocalCarrier::isLocal() const {
     return true;
 }
 
-std::string yarp::os::impl::LocalCarrier::getSpecifierName() {
+std::string yarp::os::impl::LocalCarrier::getSpecifierName() const {
     return "LOCALITY";
 }
 
