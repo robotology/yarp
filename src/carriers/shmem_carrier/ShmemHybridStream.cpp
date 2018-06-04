@@ -192,7 +192,7 @@ yarp::os::OutputStream& ShmemHybridStream::getOutputStream()
     return *this;
 }
 
-bool ShmemHybridStream::isOk()
+bool ShmemHybridStream::isOk() const
 {
     return m_bLinked && in.isOk() && out.isOk();
 }

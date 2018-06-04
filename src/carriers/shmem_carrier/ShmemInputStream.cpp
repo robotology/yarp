@@ -36,7 +36,7 @@ ShmemInputStreamImpl::~ShmemInputStreamImpl()
     close();
 }
 
-bool ShmemInputStreamImpl::isOk()
+bool ShmemInputStreamImpl::isOk() const
 {
     return m_bOpen;
 }

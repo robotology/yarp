@@ -33,7 +33,7 @@ const Contact& NullStream::getRemoteAddress() {
     return address;
 }
 
-bool NullStream::isOk() {
+bool NullStream::isOk() const {
     return false;
 }
 

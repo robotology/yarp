@@ -73,7 +73,7 @@ public:
         return data;
     }
 
-    virtual bool isOk() override {
+    virtual bool isOk() const override {
         return true;
     }
 

@@ -75,7 +75,7 @@ public:
         return delegate->getRemoteAddress();
     }
 
-    virtual bool isOk() override {
+    virtual bool isOk() const override {
         return delegate->isOk();
     }
 

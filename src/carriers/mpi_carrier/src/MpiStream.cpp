@@ -36,7 +36,7 @@ void MpiStream::resetBuffer() {
     readBuffer = NULL;
 }
 
-bool MpiStream::isOk() {
+bool MpiStream::isOk() const {
     return !terminate;
 }
 

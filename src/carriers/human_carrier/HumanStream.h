@@ -34,7 +34,7 @@ public:
         std::cout << "Bye bye" << std::endl;
     }
 
-    virtual bool isOk() override {
+    virtual bool isOk() const override {
         return true;
     }
 

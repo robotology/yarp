@@ -46,7 +46,7 @@ public:
     // TwoWayStrem implementation
     virtual yarp::os::InputStream& getInputStream() override;
     virtual yarp::os::OutputStream& getOutputStream() override;
-    virtual bool isOk() override;
+    virtual bool isOk() const override;
 
     virtual void reset() override;
 

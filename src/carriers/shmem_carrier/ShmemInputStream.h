@@ -43,7 +43,7 @@ public:
     ShmemInputStreamImpl();
     ~ShmemInputStreamImpl();
 
-    bool isOk();
+    bool isOk() const;
     bool open(int port, ACE_SOCK_Stream* pSock, int size = SHMEM_DEFAULT_SIZE);
     yarp::conf::ssize_t read(const yarp::os::Bytes& b);
     void close();

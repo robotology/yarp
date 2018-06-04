@@ -43,7 +43,7 @@ public:
     ShmemOutputStreamImpl();
     ~ShmemOutputStreamImpl();
 
-    bool isOk();
+    bool isOk() const;
     bool open(int port, int size = SHMEM_DEFAULT_SIZE);
     bool write(const yarp::os::Bytes& b);
     void close();

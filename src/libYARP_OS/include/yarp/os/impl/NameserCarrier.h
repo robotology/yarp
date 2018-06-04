@@ -44,7 +44,7 @@ public:
     virtual const Contact& getLocalAddress() override;
     virtual const Contact& getRemoteAddress() override;
 
-    virtual bool isOk() override;
+    virtual bool isOk() const override;
     virtual void reset() override;
     virtual void close() override;
     virtual void beginPacket() override;

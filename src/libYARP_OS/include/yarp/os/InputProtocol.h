@@ -115,7 +115,7 @@ public:
      * Check if the connection is valid and can be used.
      *
      */
-    virtual bool isOk() = 0;
+    virtual bool isOk() const = 0;
 
     /**
      *

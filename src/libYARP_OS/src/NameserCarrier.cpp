@@ -47,7 +47,7 @@ const Contact& yarp::os::impl::NameserTwoWayStream::getRemoteAddress() {
     return delegate->getRemoteAddress();
 }
 
-bool yarp::os::impl::NameserTwoWayStream::isOk() {
+bool yarp::os::impl::NameserTwoWayStream::isOk() const {
     return delegate->isOk();
 }
 

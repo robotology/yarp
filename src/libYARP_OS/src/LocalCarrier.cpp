@@ -122,7 +122,7 @@ void yarp::os::impl::LocalCarrierStream::close() {
     done = true;
 }
 
-bool yarp::os::impl::LocalCarrierStream::isOk() {
+bool yarp::os::impl::LocalCarrierStream::isOk() const {
     return !done;
 }
 

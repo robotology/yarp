@@ -49,7 +49,7 @@ public:
     virtual TwoWayStream& getStreams() override;
     virtual void takeStreams(TwoWayStream* streams) override;
     virtual TwoWayStream* giveStreams() override;
-    virtual bool checkStreams() override;
+    virtual bool checkStreams() const override;
     virtual void setReference(yarp::os::Portable* ref) override;
     virtual std::string getSenderSpecifier() override;
     virtual const std::string& getEnvelope() override;
@@ -80,7 +80,7 @@ public:
     // yarp::os::OutputProtocol.
     virtual bool open(const Route& route) override;
     virtual void rename(const Route& route) override;
-    virtual bool isOk() override;
+    virtual bool isOk() const override;
     virtual bool write(SizedWriter& writer) override;
     virtual InputProtocol& getInput() override;
     virtual void beginWrite() override;

@@ -178,7 +178,7 @@ public:
 
     virtual void close() override { is.close(); }
 
-    virtual bool isOk() override { return is.isOk(); }
+    virtual bool isOk() const override { return is.isOk(); }
 
     yarp::conf::ssize_t readMapped(yarp::os::InputStream& is,
                             const yarp::os::Bytes& b,

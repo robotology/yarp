@@ -121,7 +121,7 @@ public:
 
     virtual void flush() override;
 
-    virtual bool isOk() override;
+    virtual bool isOk() const override;
 
     virtual void reset() override;
 

@@ -213,7 +213,7 @@ public:
     virtual void close() override {
     }
 
-    virtual bool isOk() override {
+    virtual bool isOk() const override {
         return happy;
     }
 

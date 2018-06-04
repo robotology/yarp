@@ -73,7 +73,7 @@ public:
     virtual void endPacket() override;
     virtual void interrupt() override;
     virtual void close() override;
-    virtual bool isOk() override;
+    virtual bool isOk() const override;
 
 private:
     Contact localAddress, remoteAddress;

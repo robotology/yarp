@@ -992,7 +992,7 @@ void DgramTwoWayStream::flush() {
 }
 
 
-bool DgramTwoWayStream::isOk() {
+bool DgramTwoWayStream::isOk() const {
     return happy;
 }
 

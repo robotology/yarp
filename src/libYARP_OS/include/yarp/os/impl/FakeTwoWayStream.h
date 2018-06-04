@@ -94,7 +94,7 @@ public:
         return in.toString();
     }
 
-    virtual bool isOk() override
+    virtual bool isOk() const override
     {
         return true;
     }

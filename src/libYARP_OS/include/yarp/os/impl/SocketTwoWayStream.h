@@ -169,7 +169,7 @@ public:
 #endif
     }
 
-    virtual bool isOk() override
+    virtual bool isOk() const override
     {
         return happy;
     }

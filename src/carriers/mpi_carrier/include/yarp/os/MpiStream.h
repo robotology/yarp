@@ -50,7 +50,7 @@ public:
     using yarp::os::InputStream::read;
 
     virtual void close() override = 0;
-    virtual bool isOk() override;
+    virtual bool isOk() const override;
     virtual void interrupt() override;
     virtual ssize_t read(const Bytes& b) override = 0;
     virtual void write(const Bytes& b) override = 0;

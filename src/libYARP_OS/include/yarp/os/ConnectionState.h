@@ -110,7 +110,7 @@ public:
     /**
      * Check whether streams are in a good state.
      */
-    virtual bool checkStreams() = 0;
+    virtual bool checkStreams() const = 0;
 
     /**
      * Get the port associated with the connection.

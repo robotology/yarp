@@ -76,7 +76,7 @@ public:
     virtual const Contact& getLocalAddress() override;
     virtual const Contact& getRemoteAddress() override;
 
-    virtual bool isOk() override;
+    virtual bool isOk() const override;
     virtual void reset() override;
     using yarp::os::OutputStream::write;
     virtual void write(const Bytes& b) override;

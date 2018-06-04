@@ -120,7 +120,7 @@ public:
         return stream == nullptr;
     }
 
-    virtual bool isOk() override {
+    virtual bool isOk() const override {
         if (stream != nullptr) {
             return stream->isOk();
         }

@@ -135,7 +135,7 @@ TwoWayStream* Protocol::giveStreams()
 }
 
 
-bool Protocol::checkStreams()
+bool Protocol::checkStreams() const
 {
     return shift.isOk();
 }
@@ -281,7 +281,7 @@ void Protocol::rename(const Route& route)
 }
 
 
-bool Protocol::isOk()
+bool Protocol::isOk() const
 {
     if (!checkStreams() || recv_delegate_fail || send_delegate_fail) {
         return false;
