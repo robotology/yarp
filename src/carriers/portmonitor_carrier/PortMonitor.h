@@ -106,8 +106,8 @@ public:
     virtual void getCarrierParams(yarp::os::Property& params) override;
 
 
-    void lock() { mutex.lock(); }
-    void unlock() { mutex.unlock(); }
+    void lock() const { mutex.lock(); }
+    void unlock() const { mutex.unlock(); }
 
     MonitorBinding* getBinder(void) {
         if(!bReady)
@@ -131,7 +131,7 @@ private:
     yarp::os::Things thing;
     MonitorBinding* binder;
     PortMonitorGroup *group;
-    std::mutex mutex;
+    mutable std::mutex mutex;
 };
 
 #endif //PORTMONITOR_INC
