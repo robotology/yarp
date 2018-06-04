@@ -67,7 +67,7 @@ bool yarp::os::NullConnectionReader::convertTextMode()
     return false;
 }
 
-size_t yarp::os::NullConnectionReader::getSize()
+size_t yarp::os::NullConnectionReader::getSize() const
 {
     return 0;
 }

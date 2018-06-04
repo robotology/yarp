@@ -153,7 +153,7 @@ public:
         return true;
     }
 
-    virtual size_t getSize() override {
+    virtual size_t getSize() const override {
         if (image_data_len) {
             processBuffered();
         }

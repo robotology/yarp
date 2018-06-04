@@ -135,7 +135,7 @@ public:
      * Checks how much data is available.
      * @return the number of bytes left on the connection.
      */
-    virtual size_t getSize() = 0;
+    virtual size_t getSize() const = 0;
 
 
     /**

@@ -39,7 +39,7 @@ public:
     virtual bool pushInt(int x) override;
     virtual bool isTextMode() const override;
     virtual bool convertTextMode() override;
-    virtual size_t getSize() override;
+    virtual size_t getSize() const override;
     virtual ConnectionWriter *getWriter() override;
     virtual Bytes readEnvelope() override;
     virtual Portable *getReference() override;

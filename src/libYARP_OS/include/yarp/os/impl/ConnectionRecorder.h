@@ -68,7 +68,7 @@ public:
     virtual bool isTextMode() const override;
     virtual bool isBareMode() const override;
     virtual bool convertTextMode() override;
-    virtual size_t getSize() override;
+    virtual size_t getSize() const override;
     virtual yarp::os::ConnectionWriter* getWriter() override;
     virtual yarp::os::Portable* getReference() override;
     virtual yarp::os::Contact getRemoteContact() const override;

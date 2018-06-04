@@ -138,7 +138,7 @@ bool yarp::os::impl::ConnectionRecorder::convertTextMode()
     return false;
 }
 
-size_t yarp::os::impl::ConnectionRecorder::getSize()
+size_t yarp::os::impl::ConnectionRecorder::getSize() const
 {
     return reader->getSize();
 }

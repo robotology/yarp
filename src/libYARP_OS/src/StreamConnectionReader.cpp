@@ -167,7 +167,7 @@ bool StreamConnectionReader::setSize(size_t len)
     return true;
 }
 
-size_t StreamConnectionReader::getSize()
+size_t StreamConnectionReader::getSize() const
 {
     return messageLen + (pushedIntFlag?sizeof(yarp::os::NetInt32):0);
 }

@@ -62,7 +62,7 @@ public:
 
     /**** OVERRIDES ****/
     virtual bool setSize(size_t len) override;
-    virtual size_t getSize() override;
+    virtual size_t getSize() const override;
     virtual bool pushInt(int x) override;
     virtual std::int8_t expectInt8() override;
     virtual std::int16_t expectInt16() override;
