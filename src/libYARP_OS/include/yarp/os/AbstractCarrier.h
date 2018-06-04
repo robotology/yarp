@@ -68,7 +68,7 @@ public:
     // Documented in Carrier
     virtual bool requireAck() override;
     // Documented in Carrier
-    virtual bool canEscape() override;
+    virtual bool canEscape() const override;
     // Documented in Carrier
     virtual bool isLocal() override;
     // Documented in Carrier

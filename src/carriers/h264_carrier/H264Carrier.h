@@ -63,7 +63,7 @@ public:
 
     virtual bool isTextMode() const override;
 
-    virtual bool canEscape() override;
+    virtual bool canEscape() const override;
 
     virtual void handleEnvelope(const std::string& envelope) override;
 

@@ -147,7 +147,7 @@ public:
      *
      * @return true if carrier can encode administrative messages
      */
-    virtual bool canEscape() override = 0;
+    virtual bool canEscape() const override = 0;
 
     /**
      * Carriers that do not distinguish data from administrative headers

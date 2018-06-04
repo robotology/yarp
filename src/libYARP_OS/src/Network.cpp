@@ -1526,7 +1526,7 @@ public:
         return getContent().isBareMode();
     }
 
-    virtual bool canEscape() override {
+    virtual bool canEscape() const override {
         return getContent().canEscape();
     }
 

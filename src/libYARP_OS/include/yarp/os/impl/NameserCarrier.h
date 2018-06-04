@@ -77,7 +77,7 @@ public:
     virtual bool requireAck() override;
     virtual bool isTextMode() const override;
     virtual bool supportReply() override;
-    virtual bool canEscape() override;
+    virtual bool canEscape() const override;
     virtual bool sendHeader(ConnectionState& proto) override;
     virtual bool expectSenderSpecifier(ConnectionState& proto) override;
     virtual bool expectIndex(ConnectionState& proto) override;

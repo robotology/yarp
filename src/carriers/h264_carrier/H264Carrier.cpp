@@ -46,7 +46,7 @@ bool H264Carrier::isTextMode() const
     return false;
 }
 
-bool H264Carrier::canEscape()
+bool H264Carrier::canEscape() const
 {
     return false;
 }

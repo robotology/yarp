@@ -78,7 +78,7 @@ public:
      *
      * @return true if carrier can encode administrative messages
      */
-    virtual bool canEscape() = 0;
+    virtual bool canEscape() const = 0;
 
     /**
      * Check if carrier has flow control, requiring sent messages
@@ -271,7 +271,7 @@ class YARP_OS_API yarp::os::NullConnection : public Connection
 public:
     virtual bool isValid() const override { return false; }
     virtual bool isTextMode() const override { return true; }
-    virtual bool canEscape() override { return true; }
+    virtual bool canEscape() const override { return true; }
     virtual void handleEnvelope(const std::string& envelope) override { YARP_UNUSED(envelope); }
     virtual bool requireAck() override { return false; }
     virtual bool supportReply() override { return false; }

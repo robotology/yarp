@@ -98,7 +98,7 @@ public:
 
     virtual bool requireAck() override;
     virtual bool isConnectionless() const override;
-    virtual bool canEscape() override;
+    virtual bool canEscape() const override;
     virtual bool isLocal() override;
     virtual std::string getSpecifierName();
     virtual bool checkHeader(const Bytes& header) override;

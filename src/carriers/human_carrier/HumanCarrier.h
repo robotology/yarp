@@ -39,7 +39,7 @@ public:
         return true;
     }
 
-    virtual bool canEscape() override {
+    virtual bool canEscape() const override {
         return true;
     }
 

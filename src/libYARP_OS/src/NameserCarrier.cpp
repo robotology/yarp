@@ -145,7 +145,7 @@ bool yarp::os::impl::NameserCarrier::supportReply() {
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::canEscape() {
+bool yarp::os::impl::NameserCarrier::canEscape() const {
     return false;
 }
 

@@ -51,7 +51,7 @@ bool AbstractCarrier::requireAck()
     return false;
 }
 
-bool AbstractCarrier::canEscape()
+bool AbstractCarrier::canEscape() const
 {
     return true;
 }

@@ -175,7 +175,7 @@ bool yarp::os::impl::LocalCarrier::isConnectionless() const {
     return false;
 }
 
-bool yarp::os::impl::LocalCarrier::canEscape() {
+bool yarp::os::impl::LocalCarrier::canEscape() const {
     return false;
 }
 
