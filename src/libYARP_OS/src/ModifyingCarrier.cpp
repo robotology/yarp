@@ -33,7 +33,7 @@ bool yarp::os::ModifyingCarrier::respondToHeader(yarp::os::ConnectionState &prot
     return false;
 }
 
-bool yarp::os::ModifyingCarrier::modifiesIncomingData()
+bool yarp::os::ModifyingCarrier::modifiesIncomingData() const
 {
     return true;
 }

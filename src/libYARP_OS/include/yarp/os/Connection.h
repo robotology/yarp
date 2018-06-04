@@ -159,7 +159,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyIncomingData called.
      */
-    virtual bool modifiesIncomingData() = 0;
+    virtual bool modifiesIncomingData() const = 0;
 
     /**
      * Modify incoming payload data, if appropriate.
@@ -281,7 +281,7 @@ public:
     virtual bool isBroadcast() const override { return false; }
     virtual bool isActive() const override { return false; }
 
-    virtual bool modifiesIncomingData() override { return false; }
+    virtual bool modifiesIncomingData() const override { return false; }
 
     virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) override
     {

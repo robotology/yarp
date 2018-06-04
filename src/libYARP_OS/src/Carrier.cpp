@@ -46,7 +46,7 @@ int  Carrier::connect(const Contact& src,
     return -1;
 }
 
-bool Carrier::modifiesIncomingData()
+bool Carrier::modifiesIncomingData() const
 {
     return false;
 }

@@ -1562,7 +1562,7 @@ public:
         return getContent().isActive();
     }
 
-    virtual bool modifiesIncomingData() override {
+    virtual bool modifiesIncomingData() const override {
         return getContent().modifiesIncomingData();
     }
 
