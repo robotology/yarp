@@ -47,7 +47,7 @@ public:
     virtual Contact getLocalContact() override;
     virtual bool isValid() const override;
     virtual bool isActive() const override;
-    virtual bool isError() override;
+    virtual bool isError() const override;
     virtual void requestDrop() override;
     virtual Searchable& getConnectionModifiers() override;
 };

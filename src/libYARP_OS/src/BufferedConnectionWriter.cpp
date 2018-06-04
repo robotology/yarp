@@ -437,7 +437,7 @@ bool BufferedConnectionWriter::isActive() const
     return true;
 }
 
-bool BufferedConnectionWriter::isError()
+bool BufferedConnectionWriter::isError() const
 {
     return false; // output errors are of no significance at user level
 }

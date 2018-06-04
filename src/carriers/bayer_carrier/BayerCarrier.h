@@ -188,7 +188,7 @@ public:
         return parent->isActive();
     }
 
-    virtual bool isError() override {
+    virtual bool isError() const override {
         return parent->isError()||!happy;
     }
 

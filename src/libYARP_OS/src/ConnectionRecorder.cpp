@@ -184,7 +184,7 @@ bool yarp::os::impl::ConnectionRecorder::isActive() const
     return reader->isActive();
 }
 
-bool yarp::os::impl::ConnectionRecorder::isError()
+bool yarp::os::impl::ConnectionRecorder::isError() const
 {
     // shared
     if (writing) {

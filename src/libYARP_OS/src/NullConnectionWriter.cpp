@@ -98,7 +98,7 @@ bool yarp::os::NullConnectionWriter::isActive() const
     return true;
 }
 
-bool yarp::os::NullConnectionWriter::isError()
+bool yarp::os::NullConnectionWriter::isError() const
 {
     return true;
 }

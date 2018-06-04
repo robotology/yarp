@@ -107,7 +107,7 @@ bool yarp::os::NullConnectionReader::isActive() const
     return false;
 }
 
-bool yarp::os::NullConnectionReader::isError()
+bool yarp::os::NullConnectionReader::isError() const
 {
     return true;
 }

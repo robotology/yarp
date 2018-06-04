@@ -341,7 +341,7 @@ bool StreamConnectionReader::isValid() const
     return valid;
 }
 
-bool StreamConnectionReader::isError()
+bool StreamConnectionReader::isError() const
 {
     if (err) {
         return true;

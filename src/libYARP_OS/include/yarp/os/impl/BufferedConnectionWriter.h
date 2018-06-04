@@ -207,7 +207,7 @@ public:
     virtual void setReference(yarp::os::Portable* obj) override;
     virtual bool isValid() const override;
     virtual bool isActive() const override;
-    virtual bool isError() override;
+    virtual bool isError() const override;
     virtual void requestDrop() override;
 
     // defined by yarp::os::SizedWriter

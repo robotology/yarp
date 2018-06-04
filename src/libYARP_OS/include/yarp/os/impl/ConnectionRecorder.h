@@ -75,7 +75,7 @@ public:
     virtual yarp::os::Contact getLocalContact() override;
     virtual bool isValid() const override;
     virtual bool isActive() const override;
-    virtual bool isError() override;
+    virtual bool isError() const override;
     virtual void appendBlock(const char* data, size_t len) override;
     virtual void appendInt8(std::int8_t data) override;
     virtual void appendInt16(std::int16_t data) override;
