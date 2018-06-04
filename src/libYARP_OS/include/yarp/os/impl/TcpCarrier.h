@@ -33,7 +33,7 @@ public:
 
     virtual std::string getName() const override;
 
-    virtual int getSpecifierCode();
+    virtual int getSpecifierCode() const;
 
     virtual bool checkHeader(const yarp::os::Bytes& header) override;
     virtual void getHeader(const yarp::os::Bytes& header) override;

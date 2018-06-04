@@ -68,7 +68,7 @@ std::string yarp::os::impl::McastCarrier::getName() const {
     return "mcast";
 }
 
-int yarp::os::impl::McastCarrier::getSpecifierCode() {
+int yarp::os::impl::McastCarrier::getSpecifierCode() const {
     return 1;
 }
 

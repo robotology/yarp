@@ -25,7 +25,7 @@ std::string yarp::os::impl::TcpCarrier::getName() const {
     return requireAckFlag?"tcp":"fast_tcp";
 }
 
-int yarp::os::impl::TcpCarrier::getSpecifierCode() {
+int yarp::os::impl::TcpCarrier::getSpecifierCode() const {
     return 3;
 }
 

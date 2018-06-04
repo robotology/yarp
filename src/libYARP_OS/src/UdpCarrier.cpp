@@ -24,7 +24,7 @@ std::string yarp::os::impl::UdpCarrier::getName() const {
     return "udp";
 }
 
-int yarp::os::impl::UdpCarrier::getSpecifierCode() {
+int yarp::os::impl::UdpCarrier::getSpecifierCode() const {
     return 0;
 }
 

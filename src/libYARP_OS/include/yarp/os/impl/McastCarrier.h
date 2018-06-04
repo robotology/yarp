@@ -52,7 +52,8 @@ public:
     virtual Carrier *create() override;
     virtual std::string getName() const override;
 
-    virtual int getSpecifierCode() override;
+    virtual int getSpecifierCode() const override;
+
     virtual bool sendHeader(ConnectionState& proto) override;
     virtual bool expectExtraHeader(ConnectionState& proto) override;
     virtual bool respondToHeader(ConnectionState& proto) override;

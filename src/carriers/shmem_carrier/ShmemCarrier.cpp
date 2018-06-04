@@ -28,7 +28,7 @@ std::string ShmemCarrier::getName() const
     return "shmem";
 }
 
-int ShmemCarrier::getSpecifierCode()
+int ShmemCarrier::getSpecifierCode() const
 {
     // specifier codes are a very old yarp feature,
     // not necessary any more really, should be replaced.
