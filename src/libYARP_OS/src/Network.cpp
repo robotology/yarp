@@ -1586,7 +1586,7 @@ public:
         return getContent().acceptOutgoingData(writer);
     }
 
-    virtual bool modifiesReply() override {
+    virtual bool modifiesReply() const override {
         return getContent().modifiesReply();
     }
 

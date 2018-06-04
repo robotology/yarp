@@ -217,7 +217,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyReply called.
      */
-    virtual bool modifiesReply() = 0;
+    virtual bool modifiesReply() const = 0;
 
     /**
      * Modify reply payload data, if appropriate.
@@ -310,7 +310,7 @@ public:
         return true;
     }
 
-    virtual bool modifiesReply() override
+    virtual bool modifiesReply() const override
     {
         return false;
     }

@@ -43,7 +43,7 @@ bool yarp::os::ModifyingCarrier::modifiesOutgoingData() const
     return true;
 }
 
-bool yarp::os::ModifyingCarrier::modifiesReply()
+bool yarp::os::ModifyingCarrier::modifiesReply() const
 {
     return true;
 }

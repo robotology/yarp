@@ -415,7 +415,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyReply called.
      */
-    virtual bool modifiesReply() override;
+    virtual bool modifiesReply() const override;
 
     /**
      * Modify reply payload data, if appropriate.

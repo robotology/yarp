@@ -75,7 +75,7 @@ PortWriter& Carrier::modifyOutgoingData(PortWriter& writer)
     return writer;
 }
 
-bool Carrier::modifiesReply()
+bool Carrier::modifiesReply() const
 {
     return false;
 }

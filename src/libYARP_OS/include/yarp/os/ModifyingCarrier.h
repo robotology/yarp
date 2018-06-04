@@ -34,7 +34,7 @@ public:
     virtual bool respondToHeader(yarp::os::ConnectionState& proto) override;
     virtual bool modifiesIncomingData() const override;
     virtual bool modifiesOutgoingData() const override;
-    virtual bool modifiesReply() override;
+    virtual bool modifiesReply() const override;
     virtual void setCarrierParams(const yarp::os::Property& params) override;
     virtual void getCarrierParams(yarp::os::Property& params) override;
     virtual bool configureFromProperty(yarp::os::Property& prop) override;
