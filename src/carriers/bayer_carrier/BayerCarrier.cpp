@@ -293,6 +293,10 @@ bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
     return true;
 }
 
+bool BayerCarrier::processBuffered() const {
+    return const_cast<BayerCarrier*>(this)->processBuffered();
+}
+
 bool BayerCarrier::processBuffered() {
     if (!have_result) {
         //printf("Copy-based conversion.\n");

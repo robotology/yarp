@@ -230,6 +230,14 @@ public:
     virtual bool debayerHalf(yarp::sig::ImageOf<yarp::sig::PixelMono>& src,
                              yarp::sig::ImageOf<yarp::sig::PixelRgb>& dest);
 
+    /*
+     * The const version of the processBuffered() method performs a const_cast,
+     * and calls the non-const version. This allows to call it in const methods.
+     * Conceptually this is not completely wrong because it does not modify
+     * the external state of the class, but just some internal representation.
+     */
+    virtual bool processBuffered() const;
+
     virtual bool processBuffered();
 
     virtual bool processDirect(const yarp::os::Bytes& bytes);
