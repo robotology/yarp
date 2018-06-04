@@ -167,7 +167,7 @@ std::string yarp::os::impl::LocalCarrier::getName() const {
     return "local";
 }
 
-bool yarp::os::impl::LocalCarrier::requireAck() {
+bool yarp::os::impl::LocalCarrier::requireAck() const {
     return false;
 }
 

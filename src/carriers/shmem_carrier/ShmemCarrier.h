@@ -27,7 +27,7 @@ public:
     virtual std::string getName() const override;
 
     virtual int getSpecifierCode();
-    virtual bool requireAck() override;
+    virtual bool requireAck() const override;
     virtual bool isConnectionless() const override;
     virtual bool checkHeader(const yarp::os::Bytes& header) override;
     virtual void getHeader(const yarp::os::Bytes& header) override;

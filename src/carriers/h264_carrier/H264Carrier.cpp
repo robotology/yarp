@@ -56,7 +56,7 @@ void H264Carrier::handleEnvelope(const std::string& envelope)
     this->envelope = envelope;
 }
 
-bool H264Carrier::requireAck()
+bool H264Carrier::requireAck() const
 {
     return false;
 }

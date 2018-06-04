@@ -50,7 +50,7 @@ void yarp::os::impl::TcpCarrier::setParameters(const yarp::os::Bytes& header) {
     // Now prefilter by ack flag
 }
 
-bool yarp::os::impl::TcpCarrier::requireAck() {
+bool yarp::os::impl::TcpCarrier::requireAck() const {
     return requireAckFlag;
 }
 

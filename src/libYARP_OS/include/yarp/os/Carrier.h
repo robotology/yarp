@@ -167,7 +167,7 @@ public:
      *
      * @return true if carrier requires acknowledgement.
      */
-    virtual bool requireAck() override = 0;
+    virtual bool requireAck() const override = 0;
 
     /**
      * This flag is used by YARP to determine whether the connection

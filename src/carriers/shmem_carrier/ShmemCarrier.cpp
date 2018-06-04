@@ -35,7 +35,7 @@ int ShmemCarrier::getSpecifierCode()
     return 14;
 }
 
-bool ShmemCarrier::requireAck()
+bool ShmemCarrier::requireAck() const
 {
     return true;
 }

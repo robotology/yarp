@@ -133,7 +133,7 @@ void yarp::os::impl::NameserCarrier::getHeader(const Bytes& header) {
 }
 
 
-bool yarp::os::impl::NameserCarrier::requireAck() {
+bool yarp::os::impl::NameserCarrier::requireAck() const {
     return false;
 }
 

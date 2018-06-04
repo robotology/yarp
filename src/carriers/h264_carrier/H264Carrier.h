@@ -67,7 +67,7 @@ public:
 
     virtual void handleEnvelope(const std::string& envelope) override;
 
-    virtual bool requireAck() override;
+    virtual bool requireAck() const override;
 
     virtual bool supportReply() override;
 

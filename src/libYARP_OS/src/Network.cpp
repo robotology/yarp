@@ -1534,7 +1534,7 @@ public:
         getContent().handleEnvelope(envelope);
     }
 
-    virtual bool requireAck() override {
+    virtual bool requireAck() const override {
         return getContent().requireAck();
     }
 

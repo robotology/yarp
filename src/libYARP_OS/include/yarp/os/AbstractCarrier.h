@@ -66,7 +66,7 @@ public:
     // Documented in Carrier
     virtual bool isTextMode() const override;
     // Documented in Carrier
-    virtual bool requireAck() override;
+    virtual bool requireAck() const override;
     // Documented in Carrier
     virtual bool canEscape() const override;
     // Documented in Carrier

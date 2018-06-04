@@ -46,7 +46,7 @@ bool AbstractCarrier::isTextMode() const
     return false;
 }
 
-bool AbstractCarrier::requireAck()
+bool AbstractCarrier::requireAck() const
 {
     return false;
 }

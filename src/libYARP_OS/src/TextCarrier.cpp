@@ -63,7 +63,7 @@ yarp::os::Carrier* yarp::os::impl::TextCarrier::create()
     return new TextCarrier(ackVariant);
 }
 
-bool yarp::os::impl::TextCarrier::requireAck()
+bool yarp::os::impl::TextCarrier::requireAck() const
 {
     return ackVariant;
 }

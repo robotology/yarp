@@ -74,7 +74,7 @@ public:
 
     virtual bool checkHeader(const Bytes& header) override;
     virtual void getHeader(const Bytes& header) override;
-    virtual bool requireAck() override;
+    virtual bool requireAck() const override;
     virtual bool isTextMode() const override;
     virtual bool supportReply() override;
     virtual bool canEscape() const override;

@@ -86,7 +86,7 @@ public:
      *
      * @return true if carrier requires acknowledgement.
      */
-    virtual bool requireAck() = 0;
+    virtual bool requireAck() const = 0;
 
     /**
      * This flag is used by YARP to determine whether the connection
@@ -273,7 +273,7 @@ public:
     virtual bool isTextMode() const override { return true; }
     virtual bool canEscape() const override { return true; }
     virtual void handleEnvelope(const std::string& envelope) override { YARP_UNUSED(envelope); }
-    virtual bool requireAck() override { return false; }
+    virtual bool requireAck() const override { return false; }
     virtual bool supportReply() override { return false; }
     virtual bool isLocal() override { return false; }
     virtual bool isPush() const override { return true; }

@@ -91,7 +91,7 @@ public:
         return true;
     }
 
-    virtual bool requireAck() override
+    virtual bool requireAck() const override
     {
         return false;
     }

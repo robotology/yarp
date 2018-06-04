@@ -96,7 +96,7 @@ public:
 
     virtual std::string getName() const override;
 
-    virtual bool requireAck() override;
+    virtual bool requireAck() const override;
     virtual bool isConnectionless() const override;
     virtual bool canEscape() const override;
     virtual bool isLocal() override;

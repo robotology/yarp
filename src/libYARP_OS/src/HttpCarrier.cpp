@@ -588,7 +588,7 @@ void yarp::os::impl::HttpCarrier::getHeader(const Bytes& header) {
     }
 }
 
-bool yarp::os::impl::HttpCarrier::requireAck() {
+bool yarp::os::impl::HttpCarrier::requireAck() const {
     return false;
 }
 

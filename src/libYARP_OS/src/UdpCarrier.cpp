@@ -40,7 +40,7 @@ void yarp::os::impl::UdpCarrier::setParameters(const Bytes& header) {
     YARP_UNUSED(header);
 }
 
-bool yarp::os::impl::UdpCarrier::requireAck() {
+bool yarp::os::impl::UdpCarrier::requireAck() const {
     return false;
 }
 
