@@ -13,7 +13,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/math/api.h>
-#include <yarp/math/Quaternion.h>
+#include <yarp/sig/Quaternion.h>
 
 /**
 * Mathematical operations.
@@ -208,7 +208,7 @@ YARP_math_API yarp::sig::Vector& operator*=(yarp::sig::Vector &a, const yarp::si
 * @param b a quaternion
 * @return a*b
 */
-YARP_math_API yarp::math::Quaternion operator*(const yarp::math::Quaternion& a, const yarp::math::Quaternion& b);
+YARP_math_API yarp::sig::Quaternion operator*(const yarp::sig::Quaternion& a, const yarp::sig::Quaternion& b);
 
 /**
 * Vector-vector element-wise division operator (defined in Math.h).

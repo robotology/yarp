@@ -8,6 +8,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LockGuard.h>
+#include <yarp/math/Math.h>
 
 /*! \file FrameTransformClient.cpp */
 
@@ -171,7 +172,7 @@ size_t   Transforms_client_storage::size()
     return m_transforms.size();
 }
 
-yarp::math::FrameTransform& Transforms_client_storage::operator[]   (std::size_t idx)
+yarp::sig::FrameTransform& Transforms_client_storage::operator[]   (std::size_t idx)
 {
     RecursiveLockGuard l(m_mutex);
     return m_transforms[idx];
@@ -838,7 +839,7 @@ bool yarp::dev::FrameTransformClient::transformPose(const std::string &target_fr
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion)
+bool yarp::dev::FrameTransformClient::transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Quaternion &input_quaternion, yarp::sig::Quaternion &transformed_quaternion)
 {
     yarp::sig::Matrix m(4, 4);
     if (!getTransform(target_frame_id, source_frame_id, m))

@@ -10,7 +10,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/math/Math.h>
 #include <yarp/math/SVD.h>
-#include <yarp/math/Quaternion.h>
+#include <yarp/sig/Quaternion.h>
 
 #include <yarp/eigen/Eigen.h>
 

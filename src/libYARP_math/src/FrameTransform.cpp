@@ -6,22 +6,40 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/math/FrameTransform.h>
-
+#include <yarp/sig/FrameTransform.h>
+#include <yarp/math/Math.h>
 #include <cstdio>
 
-std::string yarp::math::FrameTransform::toString()
+using namespace yarp::sig;
+using namespace yarp::math;
+
+void FrameTransform::rotFromRPY(double R, double P, double Y)
 {
-    char buff[1024];
-    sprintf(buff, "%s -> %s \n tran: %f %f %f \n rot: %f %f %f %f \n\n",
-                  src_frame_id.c_str(),
-                  dst_frame_id.c_str(),
-                  translation.tX,
-                  translation.tY,
-                  translation.tZ,
-                  rotation.x(),
-                  rotation.y(),
-                  rotation.z(),
-                  rotation.w());
-    return std::string(buff);
+    double               rot[3] = { R, P, Y };
+    size_t               i = 3;
+    yarp::sig::Vector    rotV;
+    yarp::sig::Matrix    rotM;
+    rotV = yarp::sig::Vector(i, rot);
+    rotM = rpy2dcm(rotV);
+    rotation.fromRotationMatrix(rotM);
+}
+
+yarp::sig::Vector FrameTransform::getRPYRot() const
+{
+    yarp::sig::Vector rotV;
+    yarp::sig::Matrix rotM;
+    rotM = rotation.toRotationMatrix4x4();
+    rotV = dcm2rpy(rotM);
+    return rotV;
+}
+
+yarp::sig::Matrix FrameTransform::toMatrix() const
+{
+    yarp::sig::Vector rotV;
+    yarp::sig::Matrix t_mat(4, 4);
+    t_mat = rotation.toRotationMatrix4x4();
+    t_mat[0][3] = translation.tX;
+    t_mat[1][3] = translation.tY;
+    t_mat[2][3] = translation.tZ;
+    return t_mat;
 }

@@ -20,7 +20,10 @@ set(YARP_sig_HDRS include/yarp/sig/all.h
                   include/yarp/sig/PointCloudTypes.h
                   include/yarp/sig/SoundFile.h
                   include/yarp/sig/Sound.h
-                  include/yarp/sig/Vector.h)
+                  include/yarp/sig/Vector.h
+                  include/yarp/sig/FrameTransform.h
+                  include/yarp/sig/Quaternion.h
+                  include/yarp/sig/Vec2D.h)
 
 if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
   list(APPEND YARP_sig_HDRS include/yarp/sig/IplImage.h)
@@ -38,7 +41,10 @@ set(YARP_sig_SRCS src/ImageCopy.cpp
                   src/Sound.cpp
                   src/SoundFile.cpp
                   src/Vector.cpp
-                  src/DeBayer.cpp)
+                  src/DeBayer.cpp
+                  src/Vec2D.cpp
+                  src/Quaternion.cpp
+                  src/FrameTransform.cpp)
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Source Files"

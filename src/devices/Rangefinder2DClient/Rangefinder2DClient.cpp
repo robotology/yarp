@@ -12,7 +12,7 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/IFrameTransform.h>
 #include <yarp/math/Math.h>
-#include <yarp/math/FrameTransform.h>
+#include <yarp/sig/FrameTransform.h>
 
 #include <limits>
 #include <cmath>

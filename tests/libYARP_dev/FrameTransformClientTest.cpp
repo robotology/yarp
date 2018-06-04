@@ -17,7 +17,7 @@
 #include <yarp/dev/Wrapper.h>
 #include <yarp/os/Time.h>
 #include <yarp/math/Math.h>
-#include <yarp/math/FrameTransform.h>
+#include <yarp/sig/FrameTransform.h>
 #include <yarp/os/LogStream.h>
 #define M_PI 3.14159265358979323846
 #include<cmath>
@@ -50,7 +50,7 @@ public:
         return true;
     }
 
-    bool isEqual(const yarp::math::Quaternion& q1, const yarp::math::Quaternion& q2, double precision)
+    bool isEqual(const yarp::sig::Quaternion& q1, const yarp::sig::Quaternion& q2, double precision)
     {
         yarp::sig::Vector v1 = q1.toVector();
         yarp::sig::Vector v2 = q2.toVector();
@@ -217,7 +217,7 @@ public:
         //test 6
         yarp::sig::Vector in_point1(3), out_point1(3), verPoint1(4);
         yarp::sig::Vector in_pose1(6),  out_pose1(6),  verPose(6);
-        yarp::math::Quaternion in_quat1,  out_quat1,   verQuat;
+        yarp::sig::Quaternion in_quat1,  out_quat1,   verQuat;
 
         in_quat1.fromRotationMatrix(m4);
 

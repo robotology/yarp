@@ -10,6 +10,7 @@
 #include <sstream>
 #include <limits>
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/math/Math.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LockGuard.h>

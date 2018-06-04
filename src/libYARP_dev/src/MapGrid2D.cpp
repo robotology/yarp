@@ -10,6 +10,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/sig/ImageFile.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/math/Math.h>
 #include <algorithm>
 #include <fstream>
 #include <cmath>

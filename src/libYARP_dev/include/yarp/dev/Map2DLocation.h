@@ -10,7 +10,7 @@
 #define YARP_DEV_MAP2DLOCATION_H
 
 #include <yarp/os/Portable.h>
-#include <yarp/math/Vec2D.h>
+#include <yarp/sig/Vec2D.h>
 #include <yarp/dev/api.h>
 #include <sstream>
 #include <string>
