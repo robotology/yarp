@@ -185,7 +185,7 @@ public:
      *
      * @return true if carrier will only operate within a single process
      */
-    virtual bool isLocal() override = 0;
+    virtual bool isLocal() const override = 0;
 
 
     /**

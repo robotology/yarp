@@ -71,7 +71,7 @@ public:
 
     virtual bool supportReply() const override;
 
-    virtual bool isLocal() override;
+    virtual bool isLocal() const override;
 
     // this is important - flips expected flow of messages
     virtual bool isPush() const override;

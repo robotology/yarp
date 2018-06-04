@@ -70,7 +70,7 @@ public:
     // Documented in Carrier
     virtual bool canEscape() const override;
     // Documented in Carrier
-    virtual bool isLocal() override;
+    virtual bool isLocal() const override;
     // Documented in Carrier
     virtual std::string toString() override;
 

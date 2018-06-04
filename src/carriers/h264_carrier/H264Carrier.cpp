@@ -66,7 +66,7 @@ bool H264Carrier::supportReply() const
     return false;
 }
 
-bool H264Carrier::isLocal()
+bool H264Carrier::isLocal() const
 {
     return false;
 }

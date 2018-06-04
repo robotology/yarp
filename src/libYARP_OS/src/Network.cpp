@@ -1542,7 +1542,7 @@ public:
         return getContent().supportReply();
     }
 
-    virtual bool isLocal() override {
+    virtual bool isLocal() const override {
         return getContent().isLocal();
     }
 

@@ -101,7 +101,7 @@ public:
         return true;
     }
 
-    virtual bool isLocal() override
+    virtual bool isLocal() const override
     {
         return false;
     }

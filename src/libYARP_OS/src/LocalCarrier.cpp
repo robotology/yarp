@@ -179,7 +179,7 @@ bool yarp::os::impl::LocalCarrier::canEscape() const {
     return false;
 }
 
-bool yarp::os::impl::LocalCarrier::isLocal() {
+bool yarp::os::impl::LocalCarrier::isLocal() const {
     return true;
 }
 

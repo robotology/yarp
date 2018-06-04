@@ -99,7 +99,7 @@ public:
     virtual bool requireAck() const override;
     virtual bool isConnectionless() const override;
     virtual bool canEscape() const override;
-    virtual bool isLocal() override;
+    virtual bool isLocal() const override;
     virtual std::string getSpecifierName();
     virtual bool checkHeader(const Bytes& header) override;
     virtual void getHeader(const Bytes& header) override;

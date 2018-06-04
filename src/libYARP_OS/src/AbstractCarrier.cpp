@@ -56,7 +56,7 @@ bool AbstractCarrier::canEscape() const
     return true;
 }
 
-bool AbstractCarrier::isLocal()
+bool AbstractCarrier::isLocal() const
 {
     return false;
 }

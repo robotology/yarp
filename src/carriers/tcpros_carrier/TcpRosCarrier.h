@@ -113,7 +113,7 @@ public:
         return isService;
     }
 
-    virtual bool isLocal() override {
+    virtual bool isLocal() const override {
         return false;
     }
 

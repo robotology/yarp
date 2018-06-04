@@ -104,7 +104,7 @@ public:
      *
      * @return true if carrier will only operate within a single process
      */
-    virtual bool isLocal() = 0;
+    virtual bool isLocal() const = 0;
 
 
     /**
@@ -275,7 +275,7 @@ public:
     virtual void handleEnvelope(const std::string& envelope) override { YARP_UNUSED(envelope); }
     virtual bool requireAck() const override { return false; }
     virtual bool supportReply() const override { return false; }
-    virtual bool isLocal() override { return false; }
+    virtual bool isLocal() const override { return false; }
     virtual bool isPush() const override { return true; }
     virtual bool isConnectionless() const override { return false; }
     virtual bool isBroadcast() override { return false; }
