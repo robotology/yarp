@@ -50,7 +50,7 @@ public:
      * Get the common name of the device.
      * @return the common name of the device this creates.
      */
-    virtual std::string getName() = 0;
+    virtual std::string getName() const = 0;
 
     /**
      * Get the common name of a device that can wrap this one.
@@ -108,7 +108,7 @@ public:
         return desc;
     }
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return desc;
     }
 
@@ -144,7 +144,7 @@ public:
         return desc;
     }
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return desc;
     }
 

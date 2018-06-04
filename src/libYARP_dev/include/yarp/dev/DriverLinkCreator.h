@@ -47,7 +47,7 @@ public:
         return internal;
     }
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return name;
     }
 
