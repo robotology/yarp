@@ -105,7 +105,7 @@ public:
      *
      * @return true if carrier is connectionless
      */
-    virtual bool isConnectionless() override = 0;
+    virtual bool isConnectionless() const override = 0;
 
 
     /**

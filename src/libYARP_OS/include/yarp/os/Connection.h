@@ -130,7 +130,7 @@ public:
      *
      * @return true if carrier is connectionless
      */
-    virtual bool isConnectionless() = 0;
+    virtual bool isConnectionless() const = 0;
 
 
     /**
@@ -277,7 +277,7 @@ public:
     virtual bool supportReply() override { return false; }
     virtual bool isLocal() override { return false; }
     virtual bool isPush() override { return true; }
-    virtual bool isConnectionless() override { return false; }
+    virtual bool isConnectionless() const override { return false; }
     virtual bool isBroadcast() override { return false; }
     virtual bool isActive() override { return false; }
 

@@ -1550,7 +1550,7 @@ public:
         return getContent().isPush();
     }
 
-    virtual bool isConnectionless() override {
+    virtual bool isConnectionless() const override {
         return getContent().isConnectionless();
     }
 

@@ -55,7 +55,7 @@ public:
 
     virtual std::string getName() const override;
 
-    virtual bool isConnectionless() override;
+    virtual bool isConnectionless() const override;
 
     virtual bool canAccept() override;
 

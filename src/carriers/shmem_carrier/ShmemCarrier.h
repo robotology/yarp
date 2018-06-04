@@ -28,7 +28,7 @@ public:
 
     virtual int getSpecifierCode();
     virtual bool requireAck() override;
-    virtual bool isConnectionless() override;
+    virtual bool isConnectionless() const override;
     virtual bool checkHeader(const yarp::os::Bytes& header) override;
     virtual void getHeader(const yarp::os::Bytes& header) override;
     virtual void setParameters(const yarp::os::Bytes& header) override;

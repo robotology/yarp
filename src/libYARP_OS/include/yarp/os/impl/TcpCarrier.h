@@ -39,7 +39,7 @@ public:
     virtual void getHeader(const yarp::os::Bytes& header) override;
     virtual void setParameters(const yarp::os::Bytes& header) override;
     virtual bool requireAck() override;
-    virtual bool isConnectionless() override;
+    virtual bool isConnectionless() const override;
     virtual bool respondToHeader(yarp::os::ConnectionState& proto) override;
     virtual bool expectReplyToHeader(yarp::os::ConnectionState& proto) override;
 

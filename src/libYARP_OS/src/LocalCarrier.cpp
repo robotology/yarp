@@ -171,7 +171,7 @@ bool yarp::os::impl::LocalCarrier::requireAck() {
     return false;
 }
 
-bool yarp::os::impl::LocalCarrier::isConnectionless() {
+bool yarp::os::impl::LocalCarrier::isConnectionless() const {
     return false;
 }
 

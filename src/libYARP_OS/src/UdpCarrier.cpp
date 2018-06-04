@@ -44,7 +44,7 @@ bool yarp::os::impl::UdpCarrier::requireAck() {
     return false;
 }
 
-bool yarp::os::impl::UdpCarrier::isConnectionless() {
+bool yarp::os::impl::UdpCarrier::isConnectionless() const {
     return true;
 }
 

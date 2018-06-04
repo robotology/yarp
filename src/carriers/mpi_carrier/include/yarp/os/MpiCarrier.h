@@ -46,7 +46,7 @@ public:
 
     virtual void createStream(bool sender) = 0;
 
-    virtual bool isConnectionless() override {
+    virtual bool isConnectionless() const override {
         return false;
     }
 

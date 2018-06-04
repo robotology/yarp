@@ -54,7 +54,7 @@ bool yarp::os::impl::TcpCarrier::requireAck() {
     return requireAckFlag;
 }
 
-bool yarp::os::impl::TcpCarrier::isConnectionless() {
+bool yarp::os::impl::TcpCarrier::isConnectionless() const {
     return false;
 }
 

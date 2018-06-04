@@ -26,7 +26,7 @@ std::string H264Carrier::getName() const
     return "h264";
 }
 
-bool H264Carrier::isConnectionless()
+bool H264Carrier::isConnectionless() const
 {
     return true;
 }

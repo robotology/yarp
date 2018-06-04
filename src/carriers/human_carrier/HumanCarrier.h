@@ -22,7 +22,7 @@ public:
         return "human";
     }
 
-    virtual bool isConnectionless() override {
+    virtual bool isConnectionless() const override {
         return true;
     }
 

@@ -66,7 +66,7 @@ public:
         return "xmlrpc";
     }
 
-    virtual bool isConnectionless() override
+    virtual bool isConnectionless() const override
     {
         return false;
     }

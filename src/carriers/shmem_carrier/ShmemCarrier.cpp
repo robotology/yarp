@@ -40,7 +40,7 @@ bool ShmemCarrier::requireAck()
     return true;
 }
 
-bool ShmemCarrier::isConnectionless()
+bool ShmemCarrier::isConnectionless() const
 {
     return false;
 }

@@ -39,7 +39,7 @@ public:
     virtual void getHeader(const Bytes& header) override;
     virtual void setParameters(const Bytes& header) override;
     virtual bool requireAck() override;
-    virtual bool isConnectionless() override;
+    virtual bool isConnectionless() const override;
     virtual bool respondToHeader(ConnectionState& proto) override;
     virtual bool expectReplyToHeader(ConnectionState& proto) override;
 };

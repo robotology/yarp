@@ -20,7 +20,7 @@ void AbstractCarrier::setParameters(const Bytes& header)
     // default - no parameters
 }
 
-bool AbstractCarrier::isConnectionless()
+bool AbstractCarrier::isConnectionless() const
 {
     // conservative choice - shortcuts are taken for connection
     return true;

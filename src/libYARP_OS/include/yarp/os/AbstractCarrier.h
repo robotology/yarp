@@ -56,7 +56,7 @@ public:
 /** @{ */
 
     // Documented in Carrier
-    virtual bool isConnectionless() override;
+    virtual bool isConnectionless() const override;
     // Documented in Carrier
     virtual bool supportReply() override;
     // Documented in Carrier

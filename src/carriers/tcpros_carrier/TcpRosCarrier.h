@@ -76,7 +76,7 @@ public:
         return isService?"rossrv":"tcpros";
     }
 
-    virtual bool isConnectionless() override {
+    virtual bool isConnectionless() const override {
         return false;
     }
 

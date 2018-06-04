@@ -59,7 +59,7 @@ public:
         return "mjpeg";
     }
 
-    virtual bool isConnectionless() override {
+    virtual bool isConnectionless() const override {
         return false;
     }
 
