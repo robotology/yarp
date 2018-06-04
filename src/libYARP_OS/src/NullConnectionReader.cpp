@@ -57,7 +57,7 @@ bool yarp::os::NullConnectionReader::pushInt(int x)
     YARP_UNUSED(x);
     return false;
 }
-bool yarp::os::NullConnectionReader::isTextMode()
+bool yarp::os::NullConnectionReader::isTextMode() const
 {
     return false;
 }

@@ -57,7 +57,7 @@ void yarp::os::NullConnectionWriter::appendExternalBlock(const char *data, size_
     YARP_UNUSED(len);
 }
 
-bool yarp::os::NullConnectionWriter::isTextMode()
+bool yarp::os::NullConnectionWriter::isTextMode() const
 {
     return false;
 }

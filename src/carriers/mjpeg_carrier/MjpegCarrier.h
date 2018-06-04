@@ -71,7 +71,7 @@ public:
         return true;
     }
 
-    virtual bool isTextMode() override {
+    virtual bool isTextMode() const override {
         return false;
     }
 

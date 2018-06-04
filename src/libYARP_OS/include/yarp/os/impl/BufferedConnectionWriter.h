@@ -121,7 +121,7 @@ public:
     void push(const Bytes& data, bool copy);
 
     // defined by yarp::os::ConnectionWriter
-    virtual bool isTextMode() override;
+    virtual bool isTextMode() const override;
     virtual bool isBareMode() override;
     virtual bool convertTextMode() override;
     virtual void declareSizes(int argc, int* argv) override; // FIXME Remove?

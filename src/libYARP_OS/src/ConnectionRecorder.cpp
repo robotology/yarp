@@ -123,7 +123,7 @@ bool yarp::os::impl::ConnectionRecorder::pushInt(int x)
     return ok;
 }
 
-bool yarp::os::impl::ConnectionRecorder::isTextMode()
+bool yarp::os::impl::ConnectionRecorder::isTextMode() const
 {
     return false;
 }

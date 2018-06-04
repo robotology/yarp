@@ -138,7 +138,7 @@ public:
      *
      * @return true if carrier is text-based
      */
-    virtual bool isTextMode() override = 0;
+    virtual bool isTextMode() const override = 0;
 
     /**
      * Check if carrier can encode administrative messages, as opposed

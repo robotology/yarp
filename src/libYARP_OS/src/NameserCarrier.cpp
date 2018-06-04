@@ -137,7 +137,7 @@ bool yarp::os::impl::NameserCarrier::requireAck() {
     return false;
 }
 
-bool yarp::os::impl::NameserCarrier::isTextMode() {
+bool yarp::os::impl::NameserCarrier::isTextMode() const {
     return true;
 }
 

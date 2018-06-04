@@ -112,7 +112,7 @@ public:
      * representation of your data structure.
      * @return true if the connection is text mode (as opposed to binary)
      */
-    virtual bool isTextMode() = 0;
+    virtual bool isTextMode() const = 0;
 
     /**
      * Check if the connection is bare mode.  If it is, you are

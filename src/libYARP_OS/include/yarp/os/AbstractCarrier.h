@@ -64,7 +64,7 @@ public:
     // Documented in Carrier
     virtual bool canOffer() override;
     // Documented in Carrier
-    virtual bool isTextMode() override;
+    virtual bool isTextMode() const override;
     // Documented in Carrier
     virtual bool requireAck() override;
     // Documented in Carrier

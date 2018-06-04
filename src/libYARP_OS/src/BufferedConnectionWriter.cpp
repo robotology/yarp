@@ -188,7 +188,7 @@ void BufferedConnectionWriter::push(const Bytes& data, bool copy)
 }
 
 
-bool BufferedConnectionWriter::isTextMode()
+bool BufferedConnectionWriter::isTextMode() const
 {
     return textMode;
 }

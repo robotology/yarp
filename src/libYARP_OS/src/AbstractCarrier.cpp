@@ -41,7 +41,7 @@ bool AbstractCarrier::canOffer()
     return true;
 }
 
-bool AbstractCarrier::isTextMode()
+bool AbstractCarrier::isTextMode() const
 {
     return false;
 }

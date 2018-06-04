@@ -270,7 +270,7 @@ std::string StreamConnectionReader::expectText(int terminatingChar)
     return std::string(result.c_str());
 }
 
-bool StreamConnectionReader::isTextMode()
+bool StreamConnectionReader::isTextMode() const
 {
     return textMode;
 }

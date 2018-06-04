@@ -1518,7 +1518,7 @@ public:
         return car.isValid();
     }
 
-    virtual bool isTextMode() override {
+    virtual bool isTextMode() const override {
         return getContent().isTextMode();
     }
 

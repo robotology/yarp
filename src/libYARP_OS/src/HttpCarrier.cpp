@@ -592,7 +592,7 @@ bool yarp::os::impl::HttpCarrier::requireAck() {
     return false;
 }
 
-bool yarp::os::impl::HttpCarrier::isTextMode() {
+bool yarp::os::impl::HttpCarrier::isTextMode() const {
     return true;
 }
 

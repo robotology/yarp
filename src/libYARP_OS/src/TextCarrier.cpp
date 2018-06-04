@@ -68,7 +68,7 @@ bool yarp::os::impl::TextCarrier::requireAck()
     return ackVariant;
 }
 
-bool yarp::os::impl::TextCarrier::isTextMode()
+bool yarp::os::impl::TextCarrier::isTextMode() const
 {
     return true;
 }

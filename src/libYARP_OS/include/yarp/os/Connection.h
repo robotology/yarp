@@ -49,7 +49,7 @@ public:
      *
      * @return true if carrier is text-based
      */
-    virtual bool isTextMode() = 0;
+    virtual bool isTextMode() const = 0;
 
     /**
      * Check if carrier excludes type information from payload
@@ -270,7 +270,7 @@ class YARP_OS_API yarp::os::NullConnection : public Connection
 {
 public:
     virtual bool isValid() override { return false; }
-    virtual bool isTextMode() override { return true; }
+    virtual bool isTextMode() const override { return true; }
     virtual bool canEscape() override { return true; }
     virtual void handleEnvelope(const std::string& envelope) override { YARP_UNUSED(envelope); }
     virtual bool requireAck() override { return false; }

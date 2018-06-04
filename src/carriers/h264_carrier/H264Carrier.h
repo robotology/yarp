@@ -61,7 +61,7 @@ public:
 
     virtual bool canOffer() override;
 
-    virtual bool isTextMode() override;
+    virtual bool isTextMode() const override;
 
     virtual bool canEscape() override;
 

@@ -65,7 +65,7 @@ public:
     virtual yarp::conf::float32_t expectFloat32() override;
     virtual yarp::conf::float64_t expectFloat64() override;
     virtual bool pushInt(int x) override;
-    virtual bool isTextMode() override;
+    virtual bool isTextMode() const override;
     virtual bool isBareMode() override;
     virtual bool convertTextMode() override;
     virtual size_t getSize() override;

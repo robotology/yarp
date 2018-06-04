@@ -34,7 +34,7 @@ public:
         return true;
     }
 
-    virtual bool isTextMode() override {
+    virtual bool isTextMode() const override {
         // let's be text mode, for human-friendliness
         return true;
     }

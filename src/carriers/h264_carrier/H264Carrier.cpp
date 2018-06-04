@@ -41,7 +41,7 @@ bool H264Carrier::canOffer()
     return true;
 }
 
-bool H264Carrier::isTextMode()
+bool H264Carrier::isTextMode() const
 {
     return false;
 }

@@ -34,7 +34,7 @@ public:
     virtual void appendFloat64(yarp::conf::float64_t data) override;
     virtual void appendString(const char *str, int terminate = '\n') override;
     virtual void appendExternalBlock(const char *data, size_t len) override;
-    virtual bool isTextMode() override;
+    virtual bool isTextMode() const override;
     virtual bool isBareMode() override;
     virtual void declareSizes(int argc, int *argv) override;
     virtual void setReplyHandler(PortReader& reader) override;
