@@ -64,7 +64,7 @@ bool Carrier::acceptIncomingData(ConnectionReader& reader)
 }
 
 
-bool Carrier::modifiesOutgoingData()
+bool Carrier::modifiesOutgoingData() const
 {
     return false;
 }

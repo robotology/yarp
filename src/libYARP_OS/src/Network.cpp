@@ -1574,7 +1574,7 @@ public:
         return getContent().acceptIncomingData(reader);
     }
 
-    virtual bool modifiesOutgoingData() override {
+    virtual bool modifiesOutgoingData() const override {
         return getContent().modifiesOutgoingData();
     }
 

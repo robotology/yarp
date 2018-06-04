@@ -33,7 +33,7 @@ public:
     virtual void getHeader(const yarp::os::Bytes &header) override;
     virtual bool respondToHeader(yarp::os::ConnectionState& proto) override;
     virtual bool modifiesIncomingData() const override;
-    virtual bool modifiesOutgoingData() override;
+    virtual bool modifiesOutgoingData() const override;
     virtual bool modifiesReply() override;
     virtual void setCarrierParams(const yarp::os::Property& params) override;
     virtual void getCarrierParams(yarp::os::Property& params) override;

@@ -395,7 +395,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyOutgoingData called.
      */
-    virtual bool modifiesOutgoingData() override;
+    virtual bool modifiesOutgoingData() const override;
 
     /**
      * Modify outgoing payload data, if appropriate.
