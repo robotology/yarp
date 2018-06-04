@@ -118,7 +118,7 @@ public:
 
     virtual std::string getBootstrapCarrierName() const override;
 
-    virtual yarp::os::Face* createFace(void) override;
+    virtual yarp::os::Face* createFace(void) const override;
 
 };
 

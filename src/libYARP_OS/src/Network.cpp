@@ -1704,7 +1704,7 @@ public:
         return getContent().configureFromProperty(options);
     }
 
-    virtual yarp::os::Face* createFace(void) override {
+    virtual yarp::os::Face* createFace(void) const override {
         return getContent().createFace();
     }
 };

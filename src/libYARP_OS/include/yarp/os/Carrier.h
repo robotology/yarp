@@ -461,7 +461,7 @@ public:
      * Create new Face object that the carrier needs.
      *
      */
-    virtual yarp::os::Face* createFace(void);
+    virtual yarp::os::Face* createFace() const;
 };
 
 #endif // YARP_OS_CARRIER_H

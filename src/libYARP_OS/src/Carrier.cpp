@@ -124,7 +124,7 @@ void Carrier::getCarrierParams(Property& params) const
     YARP_UNUSED(params);
 }
 
-yarp::os::Face* Carrier::createFace(void)
+yarp::os::Face* Carrier::createFace() const
 {
     return new yarp::os::impl::TcpFace();
 }

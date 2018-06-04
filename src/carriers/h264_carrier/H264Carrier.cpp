@@ -218,7 +218,7 @@ std::string H264Carrier::getBootstrapCarrierName() const
     return "";
 }
 
-yarp::os::Face* H264Carrier::createFace(void)
+yarp::os::Face* H264Carrier::createFace(void) const
 {
     return new yarp::os::impl::FakeFace();
 }
