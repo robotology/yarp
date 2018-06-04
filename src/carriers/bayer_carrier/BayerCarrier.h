@@ -196,7 +196,7 @@ public:
         parent->requestDrop();
     }
 
-    virtual yarp::os::Searchable& getConnectionModifiers() override {
+    virtual const yarp::os::Searchable& getConnectionModifiers() const override {
         return parent->getConnectionModifiers();
     }
 

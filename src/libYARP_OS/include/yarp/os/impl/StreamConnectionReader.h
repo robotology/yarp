@@ -84,7 +84,7 @@ public:
     virtual yarp::os::Portable *getReference() const override;
     virtual yarp::os::Bytes readEnvelope() override;
     virtual void requestDrop() override;
-    virtual yarp::os::Searchable& getConnectionModifiers() override;
+    virtual const yarp::os::Searchable& getConnectionModifiers() const override;
     virtual void setParentConnectionReader(ConnectionReader *parentConnectionReader) override;
 
 private:

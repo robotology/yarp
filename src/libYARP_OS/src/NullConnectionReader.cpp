@@ -116,7 +116,7 @@ void yarp::os::NullConnectionReader::requestDrop()
 {
 }
 
-yarp::os::Searchable& yarp::os::NullConnectionReader::getConnectionModifiers()
+const yarp::os::Searchable& yarp::os::NullConnectionReader::getConnectionModifiers() const
 {
     return blank;
 }

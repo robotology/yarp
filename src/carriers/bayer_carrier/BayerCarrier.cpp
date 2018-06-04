@@ -97,7 +97,7 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
     have_result = false;
     if (need_reset) {
         int m = DC1394_BAYER_METHOD_BILINEAR;
-        Searchable& config = reader.getConnectionModifiers();
+        const Searchable& config = reader.getConnectionModifiers();
         half = false;
         if (config.check("size")) {
             if (config.find("size").asString() == "half") {

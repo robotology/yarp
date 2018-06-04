@@ -388,11 +388,11 @@ void StreamConnectionReader::requestDrop()
     shouldDrop = true;
 }
 
-Searchable& StreamConnectionReader::getConnectionModifiers()
+const Searchable& StreamConnectionReader::getConnectionModifiers() const
 {
     if (config.size()==0) {
         if (protocol) {
-            config.fromString(protocol->getSenderSpecifier().c_str());
+            const_cast<Bottle&>(config).fromString(protocol->getSenderSpecifier().c_str());
         }
     }
     return config;

@@ -90,7 +90,7 @@ public:
     virtual void setReference(yarp::os::Portable* obj) override;
     virtual bool write(yarp::os::ConnectionWriter& connection) override;
     virtual void requestDrop() override;
-    virtual yarp::os::Searchable& getConnectionModifiers() override;
+    virtual const yarp::os::Searchable& getConnectionModifiers() const override;
     virtual yarp::os::SizedWriter* getBuffer() override;
     virtual bool setSize(size_t len) override;
 };

@@ -210,7 +210,7 @@ public:
      * @return connection configuration object
      *
      */
-    virtual Searchable& getConnectionModifiers() = 0;
+    virtual const Searchable& getConnectionModifiers() const = 0;
 
     /**
      * Store an integer to return on the next call to expectInt()

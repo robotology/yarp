@@ -283,7 +283,7 @@ void yarp::os::impl::ConnectionRecorder::requestDrop()
 {
 }
 
-yarp::os::Searchable& yarp::os::impl::ConnectionRecorder::getConnectionModifiers()
+const yarp::os::Searchable& yarp::os::impl::ConnectionRecorder::getConnectionModifiers() const
 {
     return blank;
 }
