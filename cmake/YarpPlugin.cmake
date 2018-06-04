@@ -281,7 +281,11 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
   endif()
 
   # Set up a flag to enable/disable compilation of this plugin.
-  set(_plugin_fullname "${YARP_PLUGIN_MASTER}_${_plugin_name}")
+  if(NOT YARP_PLUGIN_MASTER STREQUAL "")
+    set(_plugin_fullname "${YARP_PLUGIN_MASTER}_${_plugin_name}")
+  else()
+    set(_plugin_fullname "${_plugin_name}")
+  endif()
 
   if(NOT DEFINED _YPP_DOC)
     set(_feature_doc "${_plugin_name} ${_YPP_CATEGORY}")
