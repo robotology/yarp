@@ -44,7 +44,7 @@ public:
     /**
      * Perform maintenance actions, if needed.
      */
-    virtual void check() {
+    virtual void check() const {
     }
 
     virtual InputStream& getInputStream() override {
