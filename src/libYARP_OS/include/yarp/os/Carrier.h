@@ -199,7 +199,7 @@ public:
      *
      * @return true if carrier is "push" style, false if "pull" style
      */
-    virtual bool isPush() override;
+    virtual bool isPush() const override;
 
     /**
      * Perform any initialization needed before writing on a connection.

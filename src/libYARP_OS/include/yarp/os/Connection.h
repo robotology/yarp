@@ -118,7 +118,7 @@ public:
      *
      * @return true if carrier is "push" style, false if "pull" style
      */
-    virtual bool isPush() = 0;
+    virtual bool isPush() const = 0;
 
    /**
      * Check if this carrier is connectionless (like udp, mcast) or
@@ -276,7 +276,7 @@ public:
     virtual bool requireAck() override { return false; }
     virtual bool supportReply() override { return false; }
     virtual bool isLocal() override { return false; }
-    virtual bool isPush() override { return true; }
+    virtual bool isPush() const override { return true; }
     virtual bool isConnectionless() const override { return false; }
     virtual bool isBroadcast() override { return false; }
     virtual bool isActive() override { return false; }

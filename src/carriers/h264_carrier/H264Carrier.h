@@ -74,7 +74,7 @@ public:
     virtual bool isLocal() override;
 
     // this is important - flips expected flow of messages
-    virtual bool isPush() override;
+    virtual bool isPush() const override;
 
     virtual std::string toString() override;
 

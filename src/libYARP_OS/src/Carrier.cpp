@@ -22,7 +22,7 @@ void Carrier::handleEnvelope(const std::string& envelope)
     YARP_UNUSED(envelope);
 }
 
-bool Carrier::isPush()
+bool Carrier::isPush() const
 {
     return true;
 }

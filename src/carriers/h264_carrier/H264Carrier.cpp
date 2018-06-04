@@ -72,7 +72,7 @@ bool H264Carrier::isLocal()
 }
 
 // this is important - flips expected flow of messages
-bool H264Carrier::isPush()
+bool H264Carrier::isPush() const
 {
     return false;
 }

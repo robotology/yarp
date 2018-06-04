@@ -108,7 +108,7 @@ public:
         return true;
     }
 
-    virtual bool isPush() override {
+    virtual bool isPush() const override {
         // if topic-like, pull ; if service-like, push!
         return isService;
     }

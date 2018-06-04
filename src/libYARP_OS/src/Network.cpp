@@ -1546,7 +1546,7 @@ public:
         return getContent().isLocal();
     }
 
-    virtual bool isPush() override {
+    virtual bool isPush() const override {
         return getContent().isPush();
     }
 

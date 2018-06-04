@@ -96,7 +96,7 @@ public:
     }
 
     // this is important - flips expected flow of messages
-    virtual bool isPush() override {
+    virtual bool isPush() const override {
         return false;
     }
 
