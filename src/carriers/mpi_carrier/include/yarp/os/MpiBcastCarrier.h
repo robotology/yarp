@@ -62,7 +62,7 @@ public:
         return false;
     }
 
-    virtual bool isBroadcast() override {
+    virtual bool isBroadcast() const override {
         return true;
     }
 

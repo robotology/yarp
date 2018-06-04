@@ -117,7 +117,7 @@ public:
      *
      * @return true if carrier uses a broadcast mechanism.
      */
-    virtual bool isBroadcast() override;
+    virtual bool isBroadcast() const override;
 
     /**
      * Check if reading is implemented for this carrier.

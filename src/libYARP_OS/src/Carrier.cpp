@@ -12,7 +12,7 @@
 
 using namespace yarp::os;
 
-bool Carrier::isBroadcast()
+bool Carrier::isBroadcast() const
 {
     return false;
 }

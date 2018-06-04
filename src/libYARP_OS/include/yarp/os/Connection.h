@@ -142,7 +142,7 @@ public:
      *
      * @return true if carrier uses a broadcast mechanism.
      */
-    virtual bool isBroadcast() = 0;
+    virtual bool isBroadcast() const = 0;
 
 
     /**
@@ -278,7 +278,7 @@ public:
     virtual bool isLocal() const override { return false; }
     virtual bool isPush() const override { return true; }
     virtual bool isConnectionless() const override { return false; }
-    virtual bool isBroadcast() override { return false; }
+    virtual bool isBroadcast() const override { return false; }
     virtual bool isActive() const override { return false; }
 
     virtual bool modifiesIncomingData() override { return false; }

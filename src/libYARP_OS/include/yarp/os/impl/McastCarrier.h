@@ -70,7 +70,7 @@ public:
     bool takeElection();
 
     virtual bool isActive() const override;
-    virtual bool isBroadcast() override;
+    virtual bool isBroadcast() const override;
 };
 
 #endif // YARP_OS_IMPL_MCASTCARRIER_H

@@ -1554,7 +1554,7 @@ public:
         return getContent().isConnectionless();
     }
 
-    virtual bool isBroadcast() override {
+    virtual bool isBroadcast() const override {
         return getContent().isBroadcast();
     }
 
