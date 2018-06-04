@@ -76,8 +76,8 @@ public:
     virtual bool isBareMode() const override;
     virtual bool convertTextMode() override;
     virtual yarp::os::ConnectionWriter *getWriter() override;
-    virtual yarp::os::Contact getRemoteContact() override;
-    virtual yarp::os::Contact getLocalContact() override;
+    virtual yarp::os::Contact getRemoteContact() const override;
+    virtual yarp::os::Contact getLocalContact() const override;
     virtual bool isValid() const override;
     virtual bool isError() const override;
     virtual bool isActive() const override;

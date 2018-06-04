@@ -168,7 +168,7 @@ public:
      * @return contact information about sender (Contact::invalid if not
      * available)
      */
-    virtual Contact getRemoteContact() = 0;
+    virtual Contact getRemoteContact() const = 0;
 
     /**
      * Gets information about who is receiving the data, if that
@@ -177,7 +177,7 @@ public:
      * @return contact information about sender (Contact::invalid if not
      * available)
      */
-    virtual Contact getLocalContact() = 0;
+    virtual Contact getLocalContact() const = 0;
 
     /**
      * @return true if the reader is valid.  Invalid readers may signal

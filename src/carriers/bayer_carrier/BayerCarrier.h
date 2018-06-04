@@ -172,11 +172,11 @@ public:
         return parent->getReference();
     }
 
-    virtual Contact getRemoteContact() override {
+    virtual Contact getRemoteContact() const override {
         return parent->getRemoteContact();
     }
 
-    virtual Contact getLocalContact() override {
+    virtual Contact getLocalContact() const override {
         return parent->getLocalContact();
     }
 

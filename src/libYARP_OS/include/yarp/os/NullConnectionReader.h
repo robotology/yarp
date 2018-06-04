@@ -43,8 +43,8 @@ public:
     virtual ConnectionWriter *getWriter() override;
     virtual Bytes readEnvelope() override;
     virtual Portable *getReference() override;
-    virtual Contact getRemoteContact() override;
-    virtual Contact getLocalContact() override;
+    virtual Contact getRemoteContact() const override;
+    virtual Contact getLocalContact() const override;
     virtual bool isValid() const override;
     virtual bool isActive() const override;
     virtual bool isError() const override;

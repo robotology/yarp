@@ -315,7 +315,7 @@ yarp::os::ConnectionWriter* StreamConnectionReader::getWriter()
     return writer;
 }
 
-yarp::os::Contact StreamConnectionReader::getRemoteContact()
+yarp::os::Contact StreamConnectionReader::getRemoteContact() const
 {
     if (str!=nullptr) {
         Contact remote = str->getRemoteAddress();
@@ -326,7 +326,7 @@ yarp::os::Contact StreamConnectionReader::getRemoteContact()
     return remote;
 }
 
-yarp::os::Contact StreamConnectionReader::getLocalContact()
+yarp::os::Contact StreamConnectionReader::getLocalContact() const
 {
     if (str!=nullptr) {
         Contact local = str->getLocalAddress();

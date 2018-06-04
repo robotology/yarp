@@ -156,12 +156,12 @@ yarp::os::Portable* yarp::os::impl::ConnectionRecorder::getReference()
     return reader->getReference();
 }
 
-yarp::os::Contact yarp::os::impl::ConnectionRecorder::getRemoteContact()
+yarp::os::Contact yarp::os::impl::ConnectionRecorder::getRemoteContact() const
 {
     return reader->getRemoteContact();
 }
 
-yarp::os::Contact yarp::os::impl::ConnectionRecorder::getLocalContact()
+yarp::os::Contact yarp::os::impl::ConnectionRecorder::getLocalContact() const
 {
     return reader->getLocalContact();
 }

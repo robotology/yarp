@@ -87,12 +87,12 @@ yarp::os::Portable *yarp::os::NullConnectionReader::getReference()
     return nullptr;
 }
 
-yarp::os::Contact yarp::os::NullConnectionReader::getRemoteContact()
+yarp::os::Contact yarp::os::NullConnectionReader::getRemoteContact() const
 {
     return Contact();
 }
 
-yarp::os::Contact yarp::os::NullConnectionReader::getLocalContact()
+yarp::os::Contact yarp::os::NullConnectionReader::getLocalContact() const
 {
     return Contact();
 }
