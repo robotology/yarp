@@ -42,7 +42,7 @@ public:
     virtual size_t getSize() const override;
     virtual ConnectionWriter *getWriter() override;
     virtual Bytes readEnvelope() override;
-    virtual Portable *getReference() override;
+    virtual Portable *getReference() const override;
     virtual Contact getRemoteContact() const override;
     virtual Contact getLocalContact() const override;
     virtual bool isValid() const override;

@@ -82,7 +82,7 @@ yarp::os::Bytes yarp::os::NullConnectionReader::readEnvelope()
     return Bytes(nullptr, 0);
 }
 
-yarp::os::Portable *yarp::os::NullConnectionReader::getReference()
+yarp::os::Portable *yarp::os::NullConnectionReader::getReference() const
 {
     return nullptr;
 }

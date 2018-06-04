@@ -159,7 +159,7 @@ public:
      * this returns nullptr.
      * @return The message object, or nullptr if not available
      */
-    virtual Portable *getReference() = 0;
+    virtual Portable *getReference() const = 0;
 
     /**
      * Gets information about who is supplying the data being read, if

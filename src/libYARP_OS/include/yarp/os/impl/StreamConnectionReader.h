@@ -81,7 +81,7 @@ public:
     virtual bool isValid() const override;
     virtual bool isError() const override;
     virtual bool isActive() const override;
-    virtual yarp::os::Portable *getReference() override;
+    virtual yarp::os::Portable *getReference() const override;
     virtual yarp::os::Bytes readEnvelope() override;
     virtual void requestDrop() override;
     virtual yarp::os::Searchable& getConnectionModifiers() override;

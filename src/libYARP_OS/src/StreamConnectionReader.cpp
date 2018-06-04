@@ -365,7 +365,7 @@ bool StreamConnectionReader::isActive() const
     return false;
 }
 
-yarp::os::Portable* StreamConnectionReader::getReference()
+yarp::os::Portable* StreamConnectionReader::getReference() const
 {
     return ref;
 }

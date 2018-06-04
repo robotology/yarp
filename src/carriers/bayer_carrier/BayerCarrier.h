@@ -168,7 +168,7 @@ public:
         return parent->readEnvelope();
     }
 
-    virtual Portable *getReference() override {
+    virtual Portable *getReference() const override {
         return parent->getReference();
     }
 

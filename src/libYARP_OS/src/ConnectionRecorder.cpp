@@ -151,7 +151,7 @@ yarp::os::ConnectionWriter* yarp::os::impl::ConnectionRecorder::getWriter()
     return this;
 }
 
-yarp::os::Portable* yarp::os::impl::ConnectionRecorder::getReference()
+yarp::os::Portable* yarp::os::impl::ConnectionRecorder::getReference() const
 {
     return reader->getReference();
 }
