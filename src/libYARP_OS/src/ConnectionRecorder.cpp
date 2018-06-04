@@ -128,7 +128,7 @@ bool yarp::os::impl::ConnectionRecorder::isTextMode() const
     return false;
 }
 
-bool yarp::os::impl::ConnectionRecorder::isBareMode()
+bool yarp::os::impl::ConnectionRecorder::isBareMode() const
 {
     return false;
 }

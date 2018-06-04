@@ -275,7 +275,7 @@ bool StreamConnectionReader::isTextMode() const
     return textMode;
 }
 
-bool StreamConnectionReader::isBareMode()
+bool StreamConnectionReader::isBareMode() const
 {
     return bareMode;
 }

@@ -35,7 +35,7 @@ public:
     virtual void appendString(const char *str, int terminate = '\n') override;
     virtual void appendExternalBlock(const char *data, size_t len) override;
     virtual bool isTextMode() const override;
-    virtual bool isBareMode() override;
+    virtual bool isBareMode() const override;
     virtual void declareSizes(int argc, int *argv) override;
     virtual void setReplyHandler(PortReader& reader) override;
     virtual void setReference(Portable *obj) override;

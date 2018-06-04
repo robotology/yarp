@@ -73,7 +73,7 @@ public:
     virtual bool expectBlock(const char *data, size_t len) override;
     virtual std::string expectText(int terminatingChar) override;
     virtual bool isTextMode() const override;
-    virtual bool isBareMode() override;
+    virtual bool isBareMode() const override;
     virtual bool convertTextMode() override;
     virtual yarp::os::ConnectionWriter *getWriter() override;
     virtual yarp::os::Contact getRemoteContact() override;

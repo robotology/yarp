@@ -193,7 +193,7 @@ bool BufferedConnectionWriter::isTextMode() const
     return textMode;
 }
 
-bool BufferedConnectionWriter::isBareMode()
+bool BufferedConnectionWriter::isBareMode() const
 {
     return bareMode;
 }

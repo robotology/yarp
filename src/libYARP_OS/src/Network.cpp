@@ -1522,7 +1522,7 @@ public:
         return getContent().isTextMode();
     }
 
-    virtual bool isBareMode() override {
+    virtual bool isBareMode() const override {
         return getContent().isBareMode();
     }
 

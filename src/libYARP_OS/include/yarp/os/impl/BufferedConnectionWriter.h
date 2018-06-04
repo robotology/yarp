@@ -122,7 +122,7 @@ public:
 
     // defined by yarp::os::ConnectionWriter
     virtual bool isTextMode() const override;
-    virtual bool isBareMode() override;
+    virtual bool isBareMode() const override;
     virtual bool convertTextMode() override;
     virtual void declareSizes(int argc, int* argv) override; // FIXME Remove?
     virtual void setReplyHandler(PortReader& reader) override;

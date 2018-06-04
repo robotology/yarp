@@ -145,7 +145,7 @@ public:
         return false;
     }
 
-    virtual bool isBareMode() override {
+    virtual bool isBareMode() const override {
         return false;
     }
 

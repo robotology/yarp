@@ -119,7 +119,7 @@ public:
      * encouraged to omit type information from your serialization.
      * @return true if the connection is bare
      */
-    virtual bool isBareMode() = 0;
+    virtual bool isBareMode() const = 0;
 
     /**
      * Reads in a standard description in text mode, and converts

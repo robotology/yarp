@@ -56,7 +56,7 @@ public:
      *
      * @return true if carrier is bare
      */
-    virtual bool isBareMode() { return false; }
+    virtual bool isBareMode() const { return false; }
 
     /**
      * Carriers that do not distinguish data from administrative headers

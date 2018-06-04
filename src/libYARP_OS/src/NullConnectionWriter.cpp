@@ -62,7 +62,7 @@ bool yarp::os::NullConnectionWriter::isTextMode() const
     return false;
 }
 
-bool yarp::os::NullConnectionWriter::isBareMode()
+bool yarp::os::NullConnectionWriter::isBareMode() const
 {
     return false;
 }
