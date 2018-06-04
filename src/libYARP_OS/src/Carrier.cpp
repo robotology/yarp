@@ -119,7 +119,7 @@ void Carrier::setCarrierParams(const Property& params)
     YARP_UNUSED(params);
 }
 
-void Carrier::getCarrierParams(Property& params)
+void Carrier::getCarrierParams(Property& params) const
 {
     YARP_UNUSED(params);
 }

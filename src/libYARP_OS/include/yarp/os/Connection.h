@@ -240,7 +240,7 @@ public:
      *
      * @param params output carrier properties
      */
-    virtual void getCarrierParams(yarp::os::Property& params) = 0;
+    virtual void getCarrierParams(yarp::os::Property& params) const = 0;
 
     /**
      * Provide 8 bytes describing this connection sufficiently to
@@ -325,7 +325,7 @@ public:
         YARP_UNUSED(params);
     }
 
-    virtual void getCarrierParams(yarp::os::Property& params) override
+    virtual void getCarrierParams(yarp::os::Property& params) const override
     {
         YARP_UNUSED(params);
     }

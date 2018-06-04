@@ -54,7 +54,7 @@ void yarp::os::ModifyingCarrier::setCarrierParams(const yarp::os::Property &para
     YARP_UNUSED(params);
 }
 
-void yarp::os::ModifyingCarrier::getCarrierParams(yarp::os::Property &params)
+void yarp::os::ModifyingCarrier::getCarrierParams(yarp::os::Property &params) const
 {
     YARP_UNUSED(params);
 }

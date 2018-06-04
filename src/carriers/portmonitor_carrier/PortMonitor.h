@@ -103,7 +103,7 @@ public:
 
     virtual void setCarrierParams(const yarp::os::Property& params) override;
 
-    virtual void getCarrierParams(yarp::os::Property& params) override;
+    virtual void getCarrierParams(yarp::os::Property& params) const override;
 
 
     void lock() const { mutex.lock(); }

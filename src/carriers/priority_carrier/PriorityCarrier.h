@@ -169,7 +169,7 @@ public:
             excitation = property.findGroup("ex");
     }
 
-    virtual void getCarrierParams(yarp::os::Property& params) override {
+    virtual void getCarrierParams(yarp::os::Property& params) const override {
         params.put("tc", timeConstant);
         params.put("tr", timeResting);
         params.put("st", stimulation);

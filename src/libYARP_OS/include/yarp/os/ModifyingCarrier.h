@@ -36,7 +36,7 @@ public:
     virtual bool modifiesOutgoingData() const override;
     virtual bool modifiesReply() const override;
     virtual void setCarrierParams(const yarp::os::Property& params) override;
-    virtual void getCarrierParams(yarp::os::Property& params) override;
+    virtual void getCarrierParams(yarp::os::Property& params) const override;
     virtual bool configureFromProperty(yarp::os::Property& prop) override;
     // only remains to implement modifyIncomingData()
 };

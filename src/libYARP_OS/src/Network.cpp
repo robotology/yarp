@@ -1598,7 +1598,7 @@ public:
         getContent().setCarrierParams(params);
     }
 
-    virtual void getCarrierParams(Property& params) override {
+    virtual void getCarrierParams(Property& params) const override {
         getContent().getCarrierParams(params);
     }
 

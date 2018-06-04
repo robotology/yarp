@@ -150,7 +150,7 @@ void AbstractCarrier::setCarrierParams(const Property& params)
     YARP_UNUSED(params);
 }
 
-void AbstractCarrier::getCarrierParams(Property& params)
+void AbstractCarrier::getCarrierParams(Property& params) const
 {
     YARP_UNUSED(params);
 }

@@ -455,7 +455,7 @@ public:
      *
      * @param params properties
      */
-    virtual void getCarrierParams(Property& params) override;
+    virtual void getCarrierParams(Property& params) const override;
 
     /**
      * Create new Face object that the carrier needs.

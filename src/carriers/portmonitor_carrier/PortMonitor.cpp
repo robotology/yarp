@@ -99,7 +99,7 @@ void PortMonitor::setCarrierParams(const yarp::os::Property& params)
     PortMonitor::unlock();
 }
 
-void PortMonitor::getCarrierParams(yarp::os::Property& params)
+void PortMonitor::getCarrierParams(yarp::os::Property& params) const
 {
     if(!bReady) return;
     PortMonitor::lock();

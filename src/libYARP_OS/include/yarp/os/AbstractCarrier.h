@@ -50,7 +50,7 @@ public:
     // Documented in Carrier
     virtual void setCarrierParams(const yarp::os::Property& params) override;
     // Documented in Carrier
-    virtual void getCarrierParams(yarp::os::Property& params) override;
+    virtual void getCarrierParams(yarp::os::Property& params) const override;
 
 /** @} */
 /** @{ */
