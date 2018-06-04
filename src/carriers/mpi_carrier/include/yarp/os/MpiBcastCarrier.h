@@ -78,7 +78,7 @@ public:
 
     virtual bool isActive() override;
 
-    virtual bool isElect();
+    virtual bool isElect() const;
 };
 
 #endif //_YARP_MPIBCASTCARRIER_

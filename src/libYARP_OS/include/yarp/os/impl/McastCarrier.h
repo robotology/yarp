@@ -61,7 +61,7 @@ public:
     bool becomeMcast(ConnectionState& proto, bool sender);
     void addSender(const std::string& key);
     void removeSender(const std::string& key);
-    bool isElect();
+    bool isElect() const;
     /**
      * @brief takeElection, this function is called when the elect mcast
      * carrier dies and pass the write buffers to another one.

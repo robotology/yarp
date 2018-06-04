@@ -224,7 +224,7 @@ void yarp::os::impl::McastCarrier::removeSender(const std::string& key) {
     getCaster().remove(key, this);
 }
 
-bool yarp::os::impl::McastCarrier::isElect() {
+bool yarp::os::impl::McastCarrier::isElect() const {
     void *elect = getCaster().getElect(key);
     //void *elect = caster.getElect(mcastAddress.toString());
     return elect==this || elect==nullptr;

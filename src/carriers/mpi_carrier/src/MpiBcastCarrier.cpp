@@ -97,7 +97,7 @@ ElectionOf<yarp::os::PeerRecord<MpiBcastCarrier> >& MpiBcastCarrier::getCaster()
     }
     return *caster;
 }
-bool MpiBcastCarrier::isElect() {
+bool MpiBcastCarrier::isElect() const {
     MpiBcastCarrier *elect = getCaster().getElect(name);
     return elect==this || elect==NULL;
 }
