@@ -189,7 +189,7 @@ public:
      * @return true if the reader is active.  Readers become inactive
      * if the connection they are associated with breaks.
      */
-    virtual bool isActive() = 0;
+    virtual bool isActive() const = 0;
 
     /**
      * @return true if the reader encountered an error.  Readers can

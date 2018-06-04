@@ -293,7 +293,7 @@ public:
      *
      * @return true if carrier is active.
      */
-    virtual bool isActive() override = 0;
+    virtual bool isActive() const override = 0;
 
     /**
      * Do cleanup and preparation for the coming disconnect, if

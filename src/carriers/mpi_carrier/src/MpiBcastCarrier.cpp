@@ -102,7 +102,7 @@ bool MpiBcastCarrier::isElect() const {
     return elect==this || elect==NULL;
 }
 
-bool MpiBcastCarrier::isActive() {
+bool MpiBcastCarrier::isActive() const {
     return isElect();
 }
 

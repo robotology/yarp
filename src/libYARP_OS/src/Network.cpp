@@ -1558,7 +1558,7 @@ public:
         return getContent().isBroadcast();
     }
 
-    virtual bool isActive() override {
+    virtual bool isActive() const override {
         return getContent().isActive();
     }
 

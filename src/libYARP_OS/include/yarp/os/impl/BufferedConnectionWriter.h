@@ -206,7 +206,7 @@ public:
     // defined by yarp::os::ConnectionWriter
     virtual void setReference(yarp::os::Portable* obj) override;
     virtual bool isValid() const override;
-    virtual bool isActive() override;
+    virtual bool isActive() const override;
     virtual bool isError() override;
     virtual void requestDrop() override;
 

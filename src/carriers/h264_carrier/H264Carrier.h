@@ -99,7 +99,7 @@ public:
 
     virtual bool expectReplyToHeader(ConnectionState& proto) override;
 
-    virtual bool isActive() override;
+    virtual bool isActive() const override;
 
 
     // Payload time!

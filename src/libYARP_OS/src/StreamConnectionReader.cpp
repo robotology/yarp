@@ -349,7 +349,7 @@ bool StreamConnectionReader::isError()
     return !isActive();
 }
 
-bool StreamConnectionReader::isActive()
+bool StreamConnectionReader::isActive() const
 {
     if (shouldDrop) {
         return false;

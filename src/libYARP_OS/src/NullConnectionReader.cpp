@@ -102,7 +102,7 @@ bool yarp::os::NullConnectionReader::isValid() const
     return false;
 }
 
-bool yarp::os::NullConnectionReader::isActive()
+bool yarp::os::NullConnectionReader::isActive() const
 {
     return false;
 }

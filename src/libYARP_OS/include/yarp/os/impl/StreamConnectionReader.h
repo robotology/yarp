@@ -80,7 +80,7 @@ public:
     virtual yarp::os::Contact getLocalContact() override;
     virtual bool isValid() const override;
     virtual bool isError() override;
-    virtual bool isActive() override;
+    virtual bool isActive() const override;
     virtual yarp::os::Portable *getReference() override;
     virtual yarp::os::Bytes readEnvelope() override;
     virtual void requestDrop() override;

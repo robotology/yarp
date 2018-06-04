@@ -175,7 +175,7 @@ bool yarp::os::impl::ConnectionRecorder::isValid() const
     return reader->isValid();
 }
 
-bool yarp::os::impl::ConnectionRecorder::isActive()
+bool yarp::os::impl::ConnectionRecorder::isActive() const
 {
     // shared
     if (writing) {

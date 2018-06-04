@@ -238,7 +238,7 @@ bool yarp::os::impl::McastCarrier::takeElection()
 }
 
 
-bool yarp::os::impl::McastCarrier::isActive() {
+bool yarp::os::impl::McastCarrier::isActive() const {
     return isElect();
 }
 

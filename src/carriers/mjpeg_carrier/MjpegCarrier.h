@@ -185,7 +185,7 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
         return true;
     }
 
-    virtual bool isActive() override {
+    virtual bool isActive() const override {
         return true;
     }
 

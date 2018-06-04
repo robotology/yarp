@@ -69,7 +69,7 @@ public:
      */
     bool takeElection();
 
-    virtual bool isActive() override;
+    virtual bool isActive() const override;
     virtual bool isBroadcast() override;
 };
 

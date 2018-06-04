@@ -75,7 +75,7 @@ public:
     virtual std::string toString() override;
 
     // Documented in Carrier
-    virtual bool isActive() override;
+    virtual bool isActive() const override;
 
 /** @} */
 /** @{ */

@@ -177,7 +177,7 @@ bool H264Carrier::expectReplyToHeader(ConnectionState& proto)
     return true;
 }
 
-bool H264Carrier::isActive()
+bool H264Carrier::isActive() const
 {
     return true;
 }

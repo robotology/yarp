@@ -432,7 +432,7 @@ bool BufferedConnectionWriter::isValid() const
     return true;
 }
 
-bool BufferedConnectionWriter::isActive()
+bool BufferedConnectionWriter::isActive() const
 {
     return true;
 }

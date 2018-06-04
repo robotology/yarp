@@ -171,7 +171,7 @@ public:
         return true;
     }
 
-    virtual bool isActive() override
+    virtual bool isActive() const override
     {
         return true;
     }

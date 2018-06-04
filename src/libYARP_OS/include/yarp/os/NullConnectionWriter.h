@@ -41,7 +41,7 @@ public:
     virtual void setReference(Portable *obj) override;
     virtual bool convertTextMode() override;
     virtual bool isValid() const override;
-    virtual bool isActive() override;
+    virtual bool isActive() const override;
     virtual bool isError() override;
     virtual void requestDrop() override;
     virtual bool isNull() const override;

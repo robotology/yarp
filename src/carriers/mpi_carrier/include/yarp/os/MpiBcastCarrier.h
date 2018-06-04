@@ -76,7 +76,7 @@ public:
         return ok;
     }
 
-    virtual bool isActive() override;
+    virtual bool isActive() const override;
 
     virtual bool isElect() const;
 };

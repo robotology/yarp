@@ -150,7 +150,7 @@ public:
      *
      * @return true if carrier is active.
      */
-    virtual bool isActive() = 0;
+    virtual bool isActive() const = 0;
 
 
     /**
@@ -279,7 +279,7 @@ public:
     virtual bool isPush() const override { return true; }
     virtual bool isConnectionless() const override { return false; }
     virtual bool isBroadcast() override { return false; }
-    virtual bool isActive() override { return false; }
+    virtual bool isActive() const override { return false; }
 
     virtual bool modifiesIncomingData() override { return false; }
 

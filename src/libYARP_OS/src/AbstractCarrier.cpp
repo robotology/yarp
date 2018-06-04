@@ -140,7 +140,7 @@ bool AbstractCarrier::expectAck(ConnectionState& proto)
     return defaultExpectAck(proto);
 }
 
-bool AbstractCarrier::isActive()
+bool AbstractCarrier::isActive() const
 {
     return true;
 }
