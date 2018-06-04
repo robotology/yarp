@@ -160,14 +160,6 @@ bool BootstrapServer::configFileBootstrap(yarp::os::Contact& contact,
             }
         }
     }
-    else
-    {
-        if (!conf.isLocalName(conf.getHostName())) {
-            fprintf(stderr,"The address written in config file doesn't belong any interface \n");
-            return false;
-        }
-        suggest.setHost(conf.getHostName());
-    }
 
     bool changed = false;
     if (prev.isValid()) {
@@ -184,10 +176,7 @@ bool BootstrapServer::configFileBootstrap(yarp::os::Contact& contact,
         fprintf(stderr,"  Desired settings:  host %s port %d family %s\n",
                 suggest.getHost().c_str(), suggest.getPort(), "yarp");
         fprintf(stderr,"Please specify '--write' if it is ok to overwrite current settings, or\n");
-        if(!configFileRequired)
-            fprintf(stderr,"Please specify '--read' to use the current settings, or\n");
-        else
-            fprintf(stderr,"Please set an existing address in config file, or\n");
+        fprintf(stderr,"Please specify '--read' to use the current settings, or\n");
         fprintf(stderr,"delete %s\n", conf.getConfigFileName().c_str());
         return false;
     }
