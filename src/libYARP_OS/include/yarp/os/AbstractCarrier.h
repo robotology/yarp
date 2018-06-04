@@ -36,7 +36,7 @@ public:
     virtual Carrier *create() override = 0;
 
     // Documented in Carrier
-    virtual std::string getName() override = 0;
+    virtual std::string getName() const override = 0;
 
     // Documented in Carrier
     virtual bool checkHeader(const yarp::os::Bytes& header) override = 0;

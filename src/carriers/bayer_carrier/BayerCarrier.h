@@ -91,7 +91,7 @@ public:
         return new BayerCarrier();
     }
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return "bayer";
     }
 

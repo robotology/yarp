@@ -27,7 +27,7 @@ public:
 
     virtual Carrier* create() override;
 
-    virtual std::string getName() override;
+    virtual std::string getName() const override;
 
     virtual std::string getSpecifierName();
 

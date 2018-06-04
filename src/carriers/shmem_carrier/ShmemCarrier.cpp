@@ -23,7 +23,7 @@ yarp::os::Carrier* ShmemCarrier::create()
     return new ShmemCarrier();
 }
 
-std::string ShmemCarrier::getName()
+std::string ShmemCarrier::getName() const
 {
     return "shmem";
 }

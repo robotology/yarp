@@ -53,7 +53,7 @@ public:
         return new H264Carrier();
     }
 
-    virtual std::string getName() override;
+    virtual std::string getName() const override;
 
     virtual bool isConnectionless() override;
 

@@ -163,7 +163,7 @@ void yarp::os::impl::LocalCarrier::shutdown() {
     }
 }
 
-std::string yarp::os::impl::LocalCarrier::getName() {
+std::string yarp::os::impl::LocalCarrier::getName() const {
     return "local";
 }
 

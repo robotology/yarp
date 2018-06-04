@@ -21,7 +21,7 @@ yarp::os::Carrier *yarp::os::impl::TcpCarrier::create() {
     return new TcpCarrier(requireAckFlag);
 }
 
-std::string yarp::os::impl::TcpCarrier::getName() {
+std::string yarp::os::impl::TcpCarrier::getName() const {
     return requireAckFlag?"tcp":"fast_tcp";
 }
 

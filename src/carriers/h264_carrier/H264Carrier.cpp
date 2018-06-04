@@ -21,7 +21,7 @@ using namespace yarp::sig;
 
 
 
-std::string H264Carrier::getName()
+std::string H264Carrier::getName() const
 {
     return "h264";
 }

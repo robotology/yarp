@@ -529,7 +529,7 @@ yarp::os::Carrier *yarp::os::impl::HttpCarrier::create() {
     return new HttpCarrier();
 }
 
-std::string yarp::os::impl::HttpCarrier::getName() {
+std::string yarp::os::impl::HttpCarrier::getName() const {
     return "http";
 }
 

@@ -20,7 +20,7 @@ yarp::os::Carrier *yarp::os::impl::UdpCarrier::create() {
     return new UdpCarrier();
 }
 
-std::string yarp::os::impl::UdpCarrier::getName() {
+std::string yarp::os::impl::UdpCarrier::getName() const {
     return "udp";
 }
 

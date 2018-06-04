@@ -110,7 +110,7 @@ public:
 
     virtual Carrier *create() override;
 
-    virtual std::string getName() override;
+    virtual std::string getName() const override;
 
     bool checkHeader(const Bytes& header, const char *prefix);
 

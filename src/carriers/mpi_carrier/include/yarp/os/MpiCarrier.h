@@ -42,7 +42,7 @@ public:
     virtual ~MpiCarrier();
     virtual void close() override = 0;
     virtual Carrier *create() override = 0;
-    virtual std::string getName() override = 0;
+    virtual std::string getName() const override = 0;
 
     virtual void createStream(bool sender) = 0;
 

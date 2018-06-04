@@ -18,7 +18,7 @@ yarp::os::impl::TextCarrier::TextCarrier(bool ackVariant)
     this->ackVariant = ackVariant;
 }
 
-std::string yarp::os::impl::TextCarrier::getName()
+std::string yarp::os::impl::TextCarrier::getName() const
 {
     if (ackVariant) {
         return "text_ack";

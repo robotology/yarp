@@ -118,7 +118,7 @@ public:
         return new PriorityCarrier();
     }
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return "priority";
     }
 

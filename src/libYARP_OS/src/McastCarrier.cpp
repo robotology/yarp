@@ -64,7 +64,7 @@ Carrier *yarp::os::impl::McastCarrier::create() {
     return new McastCarrier();
 }
 
-std::string yarp::os::impl::McastCarrier::getName() {
+std::string yarp::os::impl::McastCarrier::getName() const {
     return "mcast";
 }
 

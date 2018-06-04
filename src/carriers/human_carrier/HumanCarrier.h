@@ -18,7 +18,7 @@ public:
         return new HumanCarrier();
     }
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return "human";
     }
 

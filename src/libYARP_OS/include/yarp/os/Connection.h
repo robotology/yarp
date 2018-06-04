@@ -262,7 +262,7 @@ public:
      *
      * @return the name of this connection type
      */
-    virtual std::string getName() = 0;
+    virtual std::string getName() const = 0;
 };
 
 
@@ -339,7 +339,7 @@ public:
 
     virtual void prepareDisconnect() override {}
 
-    virtual std::string getName() override
+    virtual std::string getName() const override
     {
         return "null";
     }

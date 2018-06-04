@@ -50,7 +50,7 @@ public:
     virtual ~McastCarrier();
 
     virtual Carrier *create() override;
-    virtual std::string getName() override;
+    virtual std::string getName() const override;
 
     virtual int getSpecifierCode() override;
     virtual bool sendHeader(ConnectionState& proto) override;

@@ -61,7 +61,7 @@ public:
         return new XmlRpcCarrier();
     }
 
-    virtual std::string getName() override
+    virtual std::string getName() const override
     {
         return "xmlrpc";
     }
