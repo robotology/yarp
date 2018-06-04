@@ -62,7 +62,7 @@ public:
     // Documented in Carrier
     virtual bool canAccept() const override;
     // Documented in Carrier
-    virtual bool canOffer() override;
+    virtual bool canOffer() const override;
     // Documented in Carrier
     virtual bool isTextMode() const override;
     // Documented in Carrier

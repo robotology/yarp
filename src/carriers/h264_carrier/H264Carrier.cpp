@@ -36,7 +36,7 @@ bool H264Carrier::canAccept() const
     return true;
 }
 
-bool H264Carrier::canOffer()
+bool H264Carrier::canOffer() const
 {
     return true;
 }

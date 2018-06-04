@@ -59,7 +59,7 @@ public:
 
     virtual bool canAccept() const override;
 
-    virtual bool canOffer() override;
+    virtual bool canOffer() const override;
 
     virtual bool isTextMode() const override;
 

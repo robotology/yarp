@@ -1629,7 +1629,7 @@ public:
         return getContent().canAccept();
     }
 
-    virtual bool canOffer() override {
+    virtual bool canOffer() const override {
         return getContent().canOffer();
     }
 

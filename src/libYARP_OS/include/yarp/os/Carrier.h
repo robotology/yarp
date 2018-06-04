@@ -131,7 +131,7 @@ public:
      *
      * @return true if carrier can write messages
      */
-    virtual bool canOffer() = 0;
+    virtual bool canOffer() const = 0;
 
     /**
      * Check if carrier is textual in nature

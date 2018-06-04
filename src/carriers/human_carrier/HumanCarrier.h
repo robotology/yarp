@@ -30,7 +30,7 @@ public:
         return true;
     }
 
-    virtual bool canOffer() override {
+    virtual bool canOffer() const override {
         return true;
     }
 

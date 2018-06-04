@@ -36,7 +36,7 @@ bool AbstractCarrier::canAccept() const
     return true;
 }
 
-bool AbstractCarrier::canOffer()
+bool AbstractCarrier::canOffer() const
 {
     return true;
 }
