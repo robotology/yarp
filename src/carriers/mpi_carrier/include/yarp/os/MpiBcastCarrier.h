@@ -58,7 +58,7 @@ public:
         return "bcast";
     }
 
-    virtual bool supportReply() override {
+    virtual bool supportReply() const override {
         return false;
     }
 

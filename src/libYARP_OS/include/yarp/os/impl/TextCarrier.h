@@ -35,7 +35,7 @@ public:
     virtual void getHeader(const Bytes& header) override;
     virtual bool requireAck() const override;
     virtual bool isTextMode() const override;
-    virtual bool supportReply() override;
+    virtual bool supportReply() const override;
     virtual bool sendHeader(ConnectionState& proto) override;
     virtual bool expectReplyToHeader(ConnectionState& proto) override;
     virtual bool expectSenderSpecifier(ConnectionState& proto) override;

@@ -597,7 +597,7 @@ bool yarp::os::impl::HttpCarrier::isTextMode() const {
 }
 
 
-bool yarp::os::impl::HttpCarrier::supportReply() {
+bool yarp::os::impl::HttpCarrier::supportReply() const {
     return true;
 }
 

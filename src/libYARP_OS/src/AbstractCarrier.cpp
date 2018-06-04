@@ -26,7 +26,7 @@ bool AbstractCarrier::isConnectionless() const
     return true;
 }
 
-bool AbstractCarrier::supportReply()
+bool AbstractCarrier::supportReply() const
 {
     return !isConnectionless();
 }

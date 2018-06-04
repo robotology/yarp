@@ -74,7 +74,7 @@ bool yarp::os::impl::TextCarrier::isTextMode() const
 }
 
 
-bool yarp::os::impl::TextCarrier::supportReply()
+bool yarp::os::impl::TextCarrier::supportReply() const
 {
     return requireAck();
 }

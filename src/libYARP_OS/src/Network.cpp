@@ -1538,7 +1538,7 @@ public:
         return getContent().requireAck();
     }
 
-    virtual bool supportReply() override {
+    virtual bool supportReply() const override {
         return getContent().supportReply();
     }
 

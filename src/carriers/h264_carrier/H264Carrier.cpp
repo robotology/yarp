@@ -61,7 +61,7 @@ bool H264Carrier::requireAck() const
     return false;
 }
 
-bool H264Carrier::supportReply()
+bool H264Carrier::supportReply() const
 {
     return false;
 }

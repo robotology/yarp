@@ -94,7 +94,7 @@ public:
      *
      * @return true if carrier supports replies
      */
-    virtual bool supportReply() = 0;
+    virtual bool supportReply() const = 0;
 
     /**
      * Check if carrier operates within a single process.
@@ -274,7 +274,7 @@ public:
     virtual bool canEscape() const override { return true; }
     virtual void handleEnvelope(const std::string& envelope) override { YARP_UNUSED(envelope); }
     virtual bool requireAck() const override { return false; }
-    virtual bool supportReply() override { return false; }
+    virtual bool supportReply() const override { return false; }
     virtual bool isLocal() override { return false; }
     virtual bool isPush() const override { return true; }
     virtual bool isConnectionless() const override { return false; }

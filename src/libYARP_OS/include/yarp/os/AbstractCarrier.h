@@ -58,7 +58,7 @@ public:
     // Documented in Carrier
     virtual bool isConnectionless() const override;
     // Documented in Carrier
-    virtual bool supportReply() override;
+    virtual bool supportReply() const override;
     // Documented in Carrier
     virtual bool canAccept() override;
     // Documented in Carrier

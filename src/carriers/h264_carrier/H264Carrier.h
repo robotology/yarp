@@ -69,7 +69,7 @@ public:
 
     virtual bool requireAck() const override;
 
-    virtual bool supportReply() override;
+    virtual bool supportReply() const override;
 
     virtual bool isLocal() override;
 

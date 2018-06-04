@@ -57,7 +57,7 @@ public:
         return "mpi";
     }
 
-    virtual bool supportReply() override {
+    virtual bool supportReply() const override {
         return true;
     }
 };

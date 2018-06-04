@@ -175,7 +175,7 @@ public:
      *
      * @return true if carrier supports replies
      */
-    virtual bool supportReply() override = 0;
+    virtual bool supportReply() const override = 0;
 
     /**
      * Check if carrier operates within a single process.

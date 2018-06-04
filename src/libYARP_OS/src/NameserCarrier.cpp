@@ -141,7 +141,7 @@ bool yarp::os::impl::NameserCarrier::isTextMode() const {
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::supportReply() {
+bool yarp::os::impl::NameserCarrier::supportReply() const {
     return true;
 }
 
