@@ -97,7 +97,7 @@ yarp::os::Contact yarp::os::NullConnectionReader::getLocalContact()
     return Contact();
 }
 
-bool yarp::os::NullConnectionReader::isValid()
+bool yarp::os::NullConnectionReader::isValid() const
 {
     return false;
 }

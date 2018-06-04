@@ -40,7 +40,7 @@ public:
     virtual void setReplyHandler(PortReader& reader) override;
     virtual void setReference(Portable *obj) override;
     virtual bool convertTextMode() override;
-    virtual bool isValid() override;
+    virtual bool isValid() const override;
     virtual bool isActive() override;
     virtual bool isError() override;
     virtual void requestDrop() override;

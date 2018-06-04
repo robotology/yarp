@@ -166,7 +166,7 @@ yarp::os::Contact yarp::os::impl::ConnectionRecorder::getLocalContact()
     return reader->getLocalContact();
 }
 
-bool yarp::os::impl::ConnectionRecorder::isValid()
+bool yarp::os::impl::ConnectionRecorder::isValid() const
 {
     // shared
     if (writing) {

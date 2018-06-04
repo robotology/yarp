@@ -78,7 +78,7 @@ public:
     virtual yarp::os::ConnectionWriter *getWriter() override;
     virtual yarp::os::Contact getRemoteContact() override;
     virtual yarp::os::Contact getLocalContact() override;
-    virtual bool isValid() override;
+    virtual bool isValid() const override;
     virtual bool isError() override;
     virtual bool isActive() override;
     virtual yarp::os::Portable *getReference() override;

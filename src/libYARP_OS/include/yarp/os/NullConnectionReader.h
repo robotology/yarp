@@ -45,7 +45,7 @@ public:
     virtual Portable *getReference() override;
     virtual Contact getRemoteContact() override;
     virtual Contact getLocalContact() override;
-    virtual bool isValid() override;
+    virtual bool isValid() const override;
     virtual bool isActive() override;
     virtual bool isError() override;
     virtual void requestDrop() override;

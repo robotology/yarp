@@ -180,7 +180,7 @@ public:
         return parent->getLocalContact();
     }
 
-    virtual bool isValid() override {
+    virtual bool isValid() const override {
         return true;
     }
 

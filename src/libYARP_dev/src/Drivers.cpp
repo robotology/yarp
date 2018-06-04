@@ -190,7 +190,7 @@ public:
         }
     }
 
-    bool isValid() {
+    bool isValid() const {
         return dev.isValid();
     }
 

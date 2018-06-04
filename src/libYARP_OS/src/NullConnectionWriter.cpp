@@ -88,7 +88,7 @@ bool yarp::os::NullConnectionWriter::convertTextMode()
     return false;
 }
 
-bool yarp::os::NullConnectionWriter::isValid()
+bool yarp::os::NullConnectionWriter::isValid() const
 {
     return false;
 }

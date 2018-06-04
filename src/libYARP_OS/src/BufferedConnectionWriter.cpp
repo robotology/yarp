@@ -427,7 +427,7 @@ void BufferedConnectionWriter::setReference(yarp::os::Portable* obj)
     ref = obj;
 }
 
-bool BufferedConnectionWriter::isValid()
+bool BufferedConnectionWriter::isValid() const
 {
     return true;
 }

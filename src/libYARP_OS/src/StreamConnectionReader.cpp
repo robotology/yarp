@@ -336,7 +336,7 @@ yarp::os::Contact StreamConnectionReader::getLocalContact()
     return yarp::os::Contact();
 }
 
-bool StreamConnectionReader::isValid()
+bool StreamConnectionReader::isValid() const
 {
     return valid;
 }

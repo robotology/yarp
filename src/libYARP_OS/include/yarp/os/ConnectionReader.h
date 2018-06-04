@@ -183,7 +183,7 @@ public:
      * @return true if the reader is valid.  Invalid readers may signal
      * a shutdown.
      */
-    virtual bool isValid() = 0;
+    virtual bool isValid() const = 0;
 
     /**
      * @return true if the reader is active.  Readers become inactive

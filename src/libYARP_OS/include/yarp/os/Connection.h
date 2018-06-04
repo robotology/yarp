@@ -42,7 +42,7 @@ public:
      * @return true if a valid connection
      *
      */
-    virtual bool isValid() { return true; }
+    virtual bool isValid() const { return true; }
 
     /**
      * Check if carrier is textual in nature
@@ -269,7 +269,7 @@ public:
 class YARP_OS_API yarp::os::NullConnection : public Connection
 {
 public:
-    virtual bool isValid() override { return false; }
+    virtual bool isValid() const override { return false; }
     virtual bool isTextMode() const override { return true; }
     virtual bool canEscape() override { return true; }
     virtual void handleEnvelope(const std::string& envelope) override { YARP_UNUSED(envelope); }

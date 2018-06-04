@@ -1514,7 +1514,7 @@ public:
 
     // Forward yarp::os::Connection methods
 
-    bool isValid() override {
+    bool isValid() const override {
         return car.isValid();
     }
 

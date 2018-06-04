@@ -181,7 +181,7 @@ public:
      * @return true if the writer is valid.  A writer may be invalid
      * if a connection has closed.
      */
-    virtual bool isValid() = 0;
+    virtual bool isValid() const = 0;
 
     /**
      * @return true if the writer is active.  Writers may become inactive
