@@ -155,7 +155,7 @@ void AbstractCarrier::getCarrierParams(Property& params) const
     YARP_UNUSED(params);
 }
 
-int AbstractCarrier::getSpecifier(const Bytes& b)
+int AbstractCarrier::getSpecifier(const Bytes& b) const
 {
     int x = interpretYarpNumber(b);
     if (x>=0) {

@@ -153,7 +153,7 @@ protected:
 
 /** @{ */
 
-    int getSpecifier(const Bytes& b);
+    int getSpecifier(const Bytes& b) const;
     void createStandardHeader(int specifier, const yarp::os::Bytes& header) const;
 
     // Documented in Carrier
