@@ -121,7 +121,7 @@ public:
         return isService?"rossrv_carrier":"tcpros_carrier";
     }
 
-    virtual void getHeader(const Bytes& header) override {
+    virtual void getHeader(Bytes& header) const override {
         // no header, will need to do some fancy footwork
         const char *target = "NONONONO";
         for (size_t i=0; i<8 && i<header.length(); i++) {

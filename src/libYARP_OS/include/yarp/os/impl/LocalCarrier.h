@@ -102,7 +102,7 @@ public:
     virtual bool isLocal() const override;
     virtual std::string getSpecifierName() const;
     virtual bool checkHeader(const Bytes& header) override;
-    virtual void getHeader(const Bytes& header) override;
+    virtual void getHeader(Bytes& header) const override;
     virtual void setParameters(const Bytes& header) override;
     virtual bool sendHeader(ConnectionState& proto) override;
     virtual bool expectExtraHeader(ConnectionState& proto) override;

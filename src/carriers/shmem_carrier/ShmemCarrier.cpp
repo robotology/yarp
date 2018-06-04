@@ -50,7 +50,7 @@ bool ShmemCarrier::checkHeader(const yarp::os::Bytes& header)
     return getSpecifier(header) % 16 == getSpecifierCode();
 }
 
-void ShmemCarrier::getHeader(const yarp::os::Bytes& header)
+void ShmemCarrier::getHeader(yarp::os::Bytes& header) const
 {
     createStandardHeader(getSpecifierCode(), header);
 }

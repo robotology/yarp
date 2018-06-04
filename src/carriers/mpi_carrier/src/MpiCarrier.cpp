@@ -30,7 +30,7 @@ MpiCarrier::~MpiCarrier() {
     #endif
 }
 
-void  MpiCarrier::getHeader(const Bytes& header) {
+void  MpiCarrier::getHeader(Bytes& header) const {
     for (size_t i=0; i<8 && i<header.length(); i++) {
         header.get()[i] = target.c_str()[i];
     }

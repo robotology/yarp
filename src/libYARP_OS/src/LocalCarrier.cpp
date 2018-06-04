@@ -200,7 +200,7 @@ bool yarp::os::impl::LocalCarrier::checkHeader(const Bytes& header) {
     return false;
 }
 
-void yarp::os::impl::LocalCarrier::getHeader(const Bytes& header) {
+void yarp::os::impl::LocalCarrier::getHeader(Bytes& header) const {
     if (header.length()==8) {
         std::string target = getSpecifierName();
         for (int i=0; i<8; i++) {

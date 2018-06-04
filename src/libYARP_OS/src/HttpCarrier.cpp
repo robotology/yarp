@@ -579,7 +579,7 @@ void yarp::os::impl::HttpCarrier::setParameters(const Bytes& header) {
     }
 }
 
-void yarp::os::impl::HttpCarrier::getHeader(const Bytes& header) {
+void yarp::os::impl::HttpCarrier::getHeader(Bytes& header) const {
     if (header.length()==8) {
         std::string target = "GET / HT";
         for (int i=0; i<8; i++) {

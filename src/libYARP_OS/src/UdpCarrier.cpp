@@ -32,7 +32,7 @@ bool yarp::os::impl::UdpCarrier::checkHeader(const Bytes& header) {
     return getSpecifier(header)%16 == getSpecifierCode();
 }
 
-void yarp::os::impl::UdpCarrier::getHeader(const Bytes& header) {
+void yarp::os::impl::UdpCarrier::getHeader(Bytes& header) const {
     createStandardHeader(getSpecifierCode(), header);
 }
 

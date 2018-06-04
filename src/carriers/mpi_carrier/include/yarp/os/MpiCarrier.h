@@ -57,7 +57,7 @@ public:
     virtual bool supportReply() const override = 0;
 
 
-    virtual void getHeader(const Bytes& header) override;
+    virtual void getHeader(Bytes& header) const override;
     virtual bool checkHeader(const Bytes& header) override;
 
 

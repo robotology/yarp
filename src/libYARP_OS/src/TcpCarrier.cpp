@@ -39,7 +39,7 @@ bool yarp::os::impl::TcpCarrier::checkHeader(const yarp::os::Bytes& header) {
     return false;
 }
 
-void yarp::os::impl::TcpCarrier::getHeader(const yarp::os::Bytes& header) {
+void yarp::os::impl::TcpCarrier::getHeader(yarp::os::Bytes& header) const {
     createStandardHeader(getSpecifierCode()+(requireAckFlag?128:0), header);
 }
 

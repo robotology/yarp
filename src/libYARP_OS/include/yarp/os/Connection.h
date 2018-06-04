@@ -246,10 +246,10 @@ public:
      * Provide 8 bytes describing this connection sufficiently to
      * allow the other side of a connection to select it.
      *
-     * @param header a buffer to hold the first 8 bytes to send on a
-     *               connection
+     * @param[out] header a buffer to hold the first 8 bytes to send on a
+     *                    connection
      */
-    virtual void getHeader(const yarp::os::Bytes& header) = 0;
+    virtual void getHeader(yarp::os::Bytes& header) const = 0;
 
     /**
      * Do cleanup and preparation for the coming disconnect, if
@@ -330,7 +330,7 @@ public:
         YARP_UNUSED(params);
     }
 
-    virtual void getHeader(const yarp::os::Bytes& header) override
+    virtual void getHeader(yarp::os::Bytes& header) const override
     {
         for (size_t i=0; i<header.length(); i++) {
             header.get()[i] = '\0';

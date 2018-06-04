@@ -111,7 +111,7 @@ public:
         return "xmlrpc_carrier";
     }
 
-    virtual void getHeader(const Bytes& header) override
+    virtual void getHeader(Bytes& header) const override
     {
         const char *target = "POST /RP";
         for (size_t i=0; i<8 && i<header.length(); i++) {

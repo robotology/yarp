@@ -78,7 +78,7 @@ public:
 
     virtual std::string toString() const override;
 
-    virtual void getHeader(const Bytes& header) override;
+    virtual void getHeader(Bytes& header) const override;
 
     virtual bool checkHeader(const Bytes& header) override;
 

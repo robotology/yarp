@@ -92,7 +92,7 @@ public:
      * @param header a buffer to hold the first 8 bytes to send on a
      *               connection
      */
-    virtual void getHeader(const Bytes& header) override = 0;
+    virtual void getHeader(Bytes& header) const override = 0;
 
 
     /**

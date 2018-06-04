@@ -48,7 +48,7 @@ bool yarp::os::impl::TextCarrier::checkHeader(const Bytes& header)
     return false;
 }
 
-void yarp::os::impl::TextCarrier::getHeader(const Bytes& header)
+void yarp::os::impl::TextCarrier::getHeader(Bytes& header) const
 {
     if (header.length() == 8) {
         std::string target = getSpecifierName();

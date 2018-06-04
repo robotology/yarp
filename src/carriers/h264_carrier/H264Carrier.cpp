@@ -82,7 +82,7 @@ std::string H264Carrier::toString() const
     return "h264_carrier";
 }
 
-void H264Carrier::getHeader(const Bytes& header)
+void H264Carrier::getHeader(Bytes& header) const
 {
 }
 

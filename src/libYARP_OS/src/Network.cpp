@@ -1602,7 +1602,7 @@ public:
         getContent().getCarrierParams(params);
     }
 
-    virtual void getHeader(const yarp::os::Bytes& header) override {
+    virtual void getHeader(yarp::os::Bytes& header) const override {
         getContent().getHeader(header);
     }
 

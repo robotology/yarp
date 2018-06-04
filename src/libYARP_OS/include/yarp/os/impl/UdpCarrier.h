@@ -36,7 +36,7 @@ public:
     virtual int getSpecifierCode() const;
 
     virtual bool checkHeader(const Bytes& header) override;
-    virtual void getHeader(const Bytes& header) override;
+    virtual void getHeader(Bytes& header) const override;
     virtual void setParameters(const Bytes& header) override;
     virtual bool requireAck() const override;
     virtual bool isConnectionless() const override;

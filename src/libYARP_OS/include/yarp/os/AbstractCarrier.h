@@ -45,7 +45,7 @@ public:
     virtual void setParameters(const yarp::os::Bytes& header) override;
 
     // Documented in Carrier
-    virtual void getHeader(const yarp::os::Bytes& header) override = 0;
+    virtual void getHeader(yarp::os::Bytes& header) const override = 0;
 
     // Documented in Carrier
     virtual void setCarrierParams(const yarp::os::Property& params) override;

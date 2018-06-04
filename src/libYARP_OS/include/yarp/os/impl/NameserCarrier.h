@@ -73,7 +73,7 @@ public:
     virtual Carrier *create() override;
 
     virtual bool checkHeader(const Bytes& header) override;
-    virtual void getHeader(const Bytes& header) override;
+    virtual void getHeader(Bytes& header) const override;
     virtual bool requireAck() const override;
     virtual bool isTextMode() const override;
     virtual bool supportReply() const override;

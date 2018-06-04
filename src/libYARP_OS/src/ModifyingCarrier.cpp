@@ -17,7 +17,7 @@ bool yarp::os::ModifyingCarrier::checkHeader(const yarp::os::Bytes &header)
 }
 
 
-void yarp::os::ModifyingCarrier::getHeader(const yarp::os::Bytes &header)
+void yarp::os::ModifyingCarrier::getHeader(yarp::os::Bytes &header) const
 {
     if (header.length()==8) {
         std::string target = "ohbehave";

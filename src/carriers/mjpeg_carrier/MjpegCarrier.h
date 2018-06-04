@@ -104,7 +104,7 @@ public:
         return "mjpeg_carrier";
     }
 
-    virtual void getHeader(const Bytes& header) override {
+    virtual void getHeader(Bytes& header) const override {
         // GET /?action=stream HTTP/1.1
         const char *target = "GET /?ac";
         for (size_t i=0; i<8 && i<header.length(); i++) {

@@ -123,7 +123,7 @@ bool yarp::os::impl::NameserCarrier::checkHeader(const yarp::os::Bytes& header) 
     return false;
 }
 
-void yarp::os::impl::NameserCarrier::getHeader(const Bytes& header) {
+void yarp::os::impl::NameserCarrier::getHeader(Bytes& header) const {
     if (header.length()==8) {
         std::string target = getSpecifierName();
         for (int i=0; i<8; i++) {
