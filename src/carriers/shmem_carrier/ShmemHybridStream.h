@@ -53,8 +53,8 @@ public:
     virtual void beginPacket() override;
     virtual void endPacket() override;
 
-    virtual const yarp::os::Contact& getLocalAddress() override;
-    virtual const yarp::os::Contact& getRemoteAddress() override;
+    virtual const yarp::os::Contact& getLocalAddress() const override;
+    virtual const yarp::os::Contact& getRemoteAddress() const override;
 
 private:
     enum

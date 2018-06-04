@@ -67,11 +67,11 @@ public:
     virtual OutputStream& getOutputStream() override { return *this; }
 
 
-    virtual const Contact& getLocalAddress() override {
+    virtual const Contact& getLocalAddress() const override {
         return delegate->getLocalAddress();
     }
 
-    virtual const Contact& getRemoteAddress() override {
+    virtual const Contact& getRemoteAddress() const override {
         return delegate->getRemoteAddress();
     }
 

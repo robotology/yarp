@@ -211,12 +211,12 @@ void ShmemHybridStream::endPacket()
 {
 }
 
-const yarp::os::Contact& ShmemHybridStream::getLocalAddress()
+const yarp::os::Contact& ShmemHybridStream::getLocalAddress() const
 {
     return m_LocalAddress;
 }
 
-const yarp::os::Contact& ShmemHybridStream::getRemoteAddress()
+const yarp::os::Contact& ShmemHybridStream::getRemoteAddress() const
 {
     return m_RemoteAddress;
 }

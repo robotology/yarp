@@ -69,12 +69,12 @@ public:
     }
 
 
-    virtual const yarp::os::Contact& getLocalAddress() override
+    virtual const yarp::os::Contact& getLocalAddress() const override
     {
         return delegate->getLocalAddress();
     }
 
-    virtual const yarp::os::Contact& getRemoteAddress() override
+    virtual const yarp::os::Contact& getRemoteAddress() const override
     {
         return delegate->getRemoteAddress();
     }

@@ -56,12 +56,12 @@ public:
         return out;
     }
 
-    virtual const Contact& getLocalAddress() override
+    virtual const Contact& getLocalAddress() const override
     {
         return local;
     }
 
-    virtual const Contact& getRemoteAddress() override
+    virtual const Contact& getRemoteAddress() const override
     {
         return remote;
     }

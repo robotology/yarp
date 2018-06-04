@@ -357,11 +357,11 @@ yarp::os::OutputStream& yarp::os::impl::HttpTwoWayStream::getOutputStream() {
     return *this;
 }
 
-const Contact& yarp::os::impl::HttpTwoWayStream::getLocalAddress() {
+const Contact& yarp::os::impl::HttpTwoWayStream::getLocalAddress() const {
     return delegate->getLocalAddress();
 }
 
-const Contact& yarp::os::impl::HttpTwoWayStream::getRemoteAddress() {
+const Contact& yarp::os::impl::HttpTwoWayStream::getRemoteAddress() const {
     return delegate->getRemoteAddress();
 }
 

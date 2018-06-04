@@ -73,8 +73,8 @@ public:
 
     virtual InputStream& getInputStream() override;
     virtual OutputStream& getOutputStream() override;
-    virtual const Contact& getLocalAddress() override;
-    virtual const Contact& getRemoteAddress() override;
+    virtual const Contact& getLocalAddress() const override;
+    virtual const Contact& getRemoteAddress() const override;
 
     virtual bool isOk() const override;
     virtual void reset() override;

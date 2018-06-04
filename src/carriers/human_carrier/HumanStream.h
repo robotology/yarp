@@ -66,12 +66,12 @@ public:
         return *this;
     }
 
-    virtual const yarp::os::Contact& getLocalAddress() override {
+    virtual const yarp::os::Contact& getLocalAddress() const override {
         // left undefined
         return local;
     }
 
-    virtual const yarp::os::Contact& getRemoteAddress() override {
+    virtual const yarp::os::Contact& getRemoteAddress() const override {
         // left undefined
         return remote;
     }

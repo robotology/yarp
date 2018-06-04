@@ -25,11 +25,11 @@ OutputStream& NullStream::getOutputStream() {
     return * this;
 }
 
-const Contact& NullStream::getLocalAddress() {
+const Contact& NullStream::getLocalAddress() const {
     return address;
 }
 
-const Contact& NullStream::getRemoteAddress() {
+const Contact& NullStream::getRemoteAddress() const {
     return address;
 }
 

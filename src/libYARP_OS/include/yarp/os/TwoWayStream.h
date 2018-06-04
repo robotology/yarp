@@ -55,7 +55,7 @@ public:
      * @return the address of the local side of the stream.
      * The address will be tagged as invalid if the stream is not set up.
      */
-    virtual const Contact& getLocalAddress() = 0;
+    virtual const Contact& getLocalAddress() const = 0;
 
     /**
      * Get the address of the remote side of the stream.
@@ -63,7 +63,7 @@ public:
      * @return the address of the remote side of the stream.
      * The address will be tagged as invalid if the stream is not set up.
      */
-    virtual const Contact& getRemoteAddress() = 0;
+    virtual const Contact& getRemoteAddress() const = 0;
 
     /**
      *
@@ -118,8 +118,8 @@ public:
     virtual InputStream& getInputStream() override;
     virtual OutputStream& getOutputStream() override;
 
-    virtual const Contact& getLocalAddress() override;
-    virtual const Contact& getRemoteAddress() override;
+    virtual const Contact& getLocalAddress() const override;
+    virtual const Contact& getRemoteAddress() const override;
 
     virtual bool isOk() const override;
     virtual void reset() override;

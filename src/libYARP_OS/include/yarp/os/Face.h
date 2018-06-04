@@ -85,7 +85,7 @@ public:
      * @return an address
      *
      */
-    virtual Contact getLocalAddress() {
+    virtual Contact getLocalAddress() const {
         return Contact();
     }
 };

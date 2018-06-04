@@ -142,6 +142,6 @@ OutputProtocol *TcpFace::write(const Contact& address) {
 }
 
 
-Contact TcpFace::getLocalAddress() {
+Contact TcpFace::getLocalAddress() const {
     return address;
 }

@@ -63,13 +63,13 @@ public:
         return stream->getOutputStream();
     }
 
-    virtual const Contact& getLocalAddress() override {
+    virtual const Contact& getLocalAddress() const override {
         check();
         return (stream == nullptr) ? nullStream.getLocalAddress()
                                         : (stream->getLocalAddress());
     }
 
-    virtual const Contact& getRemoteAddress() override {
+    virtual const Contact& getRemoteAddress() const override {
         check();
         return (stream == nullptr) ? nullStream.getRemoteAddress()
                                         : (stream->getRemoteAddress());

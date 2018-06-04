@@ -69,12 +69,12 @@ OutputStream& yarp::os::impl::LocalCarrierStream::getOutputStream()
     return *this;
 }
 
-const Contact& yarp::os::impl::LocalCarrierStream::getLocalAddress()
+const Contact& yarp::os::impl::LocalCarrierStream::getLocalAddress() const
 {
     return localAddress;
 }
 
-const Contact& yarp::os::impl::LocalCarrierStream::getRemoteAddress()
+const Contact& yarp::os::impl::LocalCarrierStream::getRemoteAddress() const
 {
     return remoteAddress;
 }

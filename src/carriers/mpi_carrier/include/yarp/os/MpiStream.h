@@ -56,8 +56,8 @@ public:
     virtual void write(const Bytes& b) override = 0;
     virtual InputStream& getInputStream() override;
     virtual OutputStream& getOutputStream() override;
-    virtual const yarp::os::Contact& getLocalAddress() override;
-    virtual const yarp::os::Contact& getRemoteAddress() override;
+    virtual const yarp::os::Contact& getLocalAddress() const override;
+    virtual const yarp::os::Contact& getRemoteAddress() const override;
     void resetBuffer();
     virtual void reset() override { resetBuffer();}
     virtual void beginPacket() override;

@@ -39,11 +39,11 @@ yarp::os::OutputStream& yarp::os::impl::NameserTwoWayStream::getOutputStream() {
     return delegate->getOutputStream();
 }
 
-const Contact& yarp::os::impl::NameserTwoWayStream::getLocalAddress() {
+const Contact& yarp::os::impl::NameserTwoWayStream::getLocalAddress() const {
     return delegate->getLocalAddress();
 }
 
-const Contact& yarp::os::impl::NameserTwoWayStream::getRemoteAddress() {
+const Contact& yarp::os::impl::NameserTwoWayStream::getRemoteAddress() const {
     return delegate->getRemoteAddress();
 }
 

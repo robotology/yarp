@@ -56,11 +56,11 @@ InputStream& MpiStream::getInputStream() {
 yarp::os::OutputStream& MpiStream::getOutputStream() {
     return *this;
 }
-const yarp::os::Contact& MpiStream::getLocalAddress() {
+const yarp::os::Contact& MpiStream::getLocalAddress() const {
     // left undefined
     return local;
 }
-const yarp::os::Contact& MpiStream::getRemoteAddress() {
+const yarp::os::Contact& MpiStream::getRemoteAddress() const {
     // left undefined
     return remote;
 }
