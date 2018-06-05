@@ -178,7 +178,8 @@ foreach(_d cmake-3.1/  # since YARP 2.3.68
            ycm-0.2/    # since YARP 2.3.70
            ycm-0.3.1
            ycm-0.4.0   # since YARP 2.3.72
-           ycm-0.5.1)
+           ycm-0.5.1
+           ycm-0.6.0)  # since YARP 3.0 
   install(CODE
  "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\")
     message(STATUS \"Deleted: \\\"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\\\"\")
