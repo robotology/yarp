@@ -142,7 +142,7 @@ static bool ImageReadFloat(ImageOf<PixelFloat>& dest, const std::string& filenam
     size_t size_ = sizeof(float);
     size_t count_ = 0;
 
-    int dims[2];
+    size_t dims[2];
     if (fread(dims, sizeof(dims), 1, fp) > 0)
     {
         count_ = (size_t)(dims[0] * dims[1]);
