@@ -138,7 +138,7 @@ struct DataXY
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(x);
@@ -187,7 +187,7 @@ struct DataXYZ
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(x);
@@ -237,7 +237,7 @@ struct DataRGBA
         ret += tmp;
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addInt32(r);
@@ -301,7 +301,7 @@ struct DataNormal
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(normal_x);
@@ -359,7 +359,7 @@ struct DataNormalNoCurvature
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(normal_x);
@@ -431,7 +431,7 @@ struct DataViewpoint
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(vp_x);
@@ -510,7 +510,7 @@ struct DataXYZRGBA
         ret += tmp;
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(x);
@@ -585,7 +585,7 @@ struct DataXYZI
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(x);
@@ -654,7 +654,7 @@ struct DataInterestPointXYZ
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(x);
@@ -742,7 +742,7 @@ struct DataXYZNormal
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(x);
@@ -850,7 +850,7 @@ struct DataXYZNormalRGBA
         ret += tmp;
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(x);

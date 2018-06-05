@@ -346,7 +346,7 @@ public:
      * @brief Generate a yarp::os::Bottle filled with the PointCloud data.
      * @return the yarp::os::Bottle generated
      */
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addInt32(width());
