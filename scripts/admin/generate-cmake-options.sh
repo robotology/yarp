@@ -20,16 +20,8 @@ CMAKE_OPTIONS="\
 -DCREATE_GUIS:BOOL=TRUE \
 -DCREATE_YARPVIZ:BOOL=TRUE \
 -DCREATE_LIB_MATH:BOOL=TRUE \
--DYARP_COMPILE_CARRIER_PLUGINS:BOOL=TRUE \
 -DENABLE_yarpcar_human:BOOL=TRUE \
--DENABLE_yarpcar_xmlrpc:BOOL=TRUE \
--DENABLE_yarpcar_tcpros:BOOL=TRUE \
--DENABLE_yarpcar_rossrv:BOOL=TRUE \
--DENABLE_yarpcar_bayer:BOOL=TRUE \
--DENABLE_yarpcar_priority:BOOL=TRUE \
--DENABLE_yarpcar_portmonitor:BOOL=TRUE \
 -DENABLE_yarpcar_depthimage:BOOL=TRUE \
--DYARP_COMPILE_DEVICE_PLUGINS:BOOL=TRUE \
 -DENABLE_yarpmod_fakebot:BOOL=TRUE \
 -DENABLE_yarpmod_fakeMotionControl=TRUE \
 -DENABLE_yarpmod_fakeAnalogSensor=TRUE \
@@ -40,7 +32,6 @@ CMAKE_OPTIONS="\
 -DENABLE_yarpmod_fakeLaser=TRUE \
 -DENABLE_yarpmod_rpLidar=TRUE \
 -DENABLE_yarpmod_laserHokuyo=TRUE \
--DENABLE_yarpmod_test_grabber=TRUE \
 "
 OS_TYPE=""
 echo "$2" | grep -iq "Debian\|Ubuntu"

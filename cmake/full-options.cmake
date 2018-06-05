@@ -15,18 +15,3 @@ option(CREATE_LIB_MATH "Math library" TRUE)
 
 # GUIS
 option(CREATE_GUIS "Do you want to compile GUIs" ON)
-
-# robot interface
-option(CREATE_YARPROBOTINTERFACE "Do you want to compile yarprobotinterface?" ON)
-
-# useful carriers
-option(YARP_COMPILE_CARRIER_PLUGINS "Compile some optional carriers" TRUE)
-option(ENABLE_yarpcar_tcpros_carrier "tcpros carrier" TRUE)
-option(ENABLE_yarpcar_rossrv_carrier "rossrv carrier" TRUE)
-option(ENABLE_yarpcar_xmlrpc_carrier "xmlrpc carrier" TRUE)
-option(ENABLE_yarpcar_portmonitor_carrier "portmonitor carrier" TRUE)
-option(ENABLE_yarpcar_priority_carrier "priority carrier" TRUE)
-option(ENABLE_yarpcar_human_carrier "human carrier" TRUE)
-
-
-
