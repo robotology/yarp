@@ -27,7 +27,7 @@ using namespace yarp::sig;
 
 /**************************************************************************/
 typedef enum { bottle, image } DumpType;
-bool format_jpeg = false;
+bool save_jpeg = false;
 
 // Abstract object definition for queueing
 /**************************************************************************/
@@ -89,38 +89,36 @@ public:
 
     const string toFile(const string &dirName, unsigned int cnt) override
     {
-        int code=p->getPixelCode();
+        file::image_fileformat format;
         string ext;
 
-        if      (code == VOCAB_PIXEL_MONO_FLOAT)  { ext = ".float"; }
-        else if (code == VOCAB_PIXEL_MONO)  { ext = ".pgm"; }
-        else 
+        int code=p->getPixelCode();
+        if (code==VOCAB_PIXEL_MONO_FLOAT)
         {
-            if (format_jpeg) { ext = ".jpg"; }
-            else             { ext = ".ppm"; }
+            format=file::FORMAT_NUMERIC;
+            ext=".float";
+        }
+        else if (code==VOCAB_PIXEL_MONO)
+        {
+            format=file::FORMAT_PGM;
+            ext=".pgm";
+        }
+        else if (save_jpeg)
+        {
+            format=file::FORMAT_JPG;
+            ext=".jpg";
+        }
+        else
+        {
+            format=file::FORMAT_PPM;
+            ext=".ppm";
         }
 
         ostringstream fName;
         fName << setw(8) << setfill('0') << cnt << ext;
+        file::write(*p,dirName+"/"+fName.str(),format);
 
-        string extfName=dirName;
-        extfName+="/";
-        extfName+=fName.str();
-        if (ext == ".jpg")
-        {
-            file::write(*p, extfName.c_str(), file::FORMAT_JPG);
-        }
-        else
-        {
-            file::write(*p, extfName.c_str());
-        }
-
-        string ret=fName.str();
-        ret+=" [";
-        ret+=Vocab::decode(code).c_str();
-        ret+="]";
-
-        return ret;
+        return (fName.str()+" ["+Vocab::decode(code)+"]");
     }
 
     void *getPtr() override { return p->getIplImage(); }
@@ -566,7 +564,7 @@ public:
             else if (optTypeName == "image_jpg")
             {
                 type=image;
-                format_jpeg = true;
+                save_jpeg = true;
             }
         #ifdef ADD_VIDEO
             else if (optTypeName=="video")
