@@ -37,7 +37,18 @@ endif()
 # Properly find the dependencies. This will force to include all the
 # dependencies also for packages in other exports
 foreach(_target ${_targets})
-  find_dependency(${_target} HINTS "${YARP_CMAKECONFIG_DIR}" NO_DEFAULT_PATH)
+  # FIXME Remove this check when CMake 3.9 or later is required
+  if (CMAKE_VERSION VERSION_LESS 3.9)
+    find_package(${_target}
+                 ${_YARP_FIND_PARTS_QUIET}
+                 ${_YARP_FIND_PARTS_REQUIRED}
+                 HINTS "${YARP_CMAKECONFIG_DIR}"
+                 NO_DEFAULT_PATH)
+  else()
+    find_dependency(${_target}
+                    HINTS "${YARP_CMAKECONFIG_DIR}"
+                    NO_DEFAULT_PATH)
+  endif()
 endforeach()
 
 # Restore the original situation
