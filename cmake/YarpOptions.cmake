@@ -128,27 +128,23 @@ endif()
 # Add the option to build only libraries and skip the binaries
 
 option(YARP_COMPILE_EXECUTABLES "Enable YARP executables." ON)
-mark_as_advanced(YARP_COMPILE_EXECUTABLES)
 
 
 #########################################################################
 # Add the option to build Robot Testing Framework addons
 option(YARP_COMPILE_RTF_ADDONS "Compile Robot Testing Framework addons." OFF)
-mark_as_advanced(YARP_COMPILE_RTF_ADDONS)
 
 
 #########################################################################
 # Disable unmaintained stuff unless explicitly enabled by the user.
 
 option(YARP_COMPILE_UNMAINTAINED "Enable unmaintained components" OFF)
-mark_as_advanced(YARP_COMPILE_UNMAINTAINED)
 
 
 #########################################################################
 # Turn on testing.
 
 option(YARP_COMPILE_TESTS "Enable YARP tests" OFF)
-mark_as_advanced(YARP_COMPILE_TESTS)
 if(YARP_COMPILE_TESTS)
   enable_testing()
 endif()
