@@ -320,7 +320,7 @@ public:
         return data.write(writer);
     }
 
-    virtual std::string toString(int precision = -1, int width = -1)
+    virtual std::string toString(int precision = -1, int width = -1) const
     {
         std::string ret;
         if (isOrganized()) {
