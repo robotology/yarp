@@ -27,10 +27,8 @@ void TcpRosCarrier::setParameters(const Bytes& header) {
     if (header.length()!=8) {
         return;
     }
-    Bytes h1(header.get(),4);
-    Bytes h2(header.get()+4,4);
-    headerLen1 = NetType::netInt(h1);
-    headerLen2 = NetType::netInt(h2);
+    headerLen1 = *reinterpret_cast<const NetInt32*>(header.get());
+    headerLen2 = *reinterpret_cast<const NetInt32*>(header.get() + 4);
 }
 
 bool TcpRosCarrier::checkHeader(const Bytes& header) {
