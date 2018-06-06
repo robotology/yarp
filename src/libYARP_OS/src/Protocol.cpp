@@ -108,7 +108,7 @@ void Protocol::setRoute(const Route& route)
 }
 
 
-const Route& Protocol::getRoute()
+const Route& Protocol::getRoute() const
 {
     return route;
 }

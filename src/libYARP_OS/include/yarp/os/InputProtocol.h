@@ -68,7 +68,7 @@ public:
      * a triplet of the source port, destination port, and carrier.
      *
      */
-    virtual const Route& getRoute() = 0;
+    virtual const Route& getRoute() const = 0;
 
     /**
      *

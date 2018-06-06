@@ -56,7 +56,7 @@ public:
      */
     virtual void close() = 0;
 
-    virtual const Route& getRoute() = 0;
+    virtual const Route& getRoute() const = 0;
 
     /**
      *

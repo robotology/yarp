@@ -40,7 +40,7 @@ public:
      * Get the route associated with this connection. A route is
      * a triplet of the source port, destination port, and carrier.
      */
-    virtual const Route& getRoute() = 0;
+    virtual const Route& getRoute() const = 0;
 
     /**
      * Set the route associated with this connection.

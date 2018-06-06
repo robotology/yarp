@@ -45,7 +45,7 @@ public:
 
     // yarp::os::ConnectionState.
     virtual void setRoute(const Route& route) override;
-    virtual const Route& getRoute() override;
+    virtual const Route& getRoute() const override;
     virtual TwoWayStream& getStreams() override;
     virtual void takeStreams(TwoWayStream* streams) override;
     virtual TwoWayStream* giveStreams() override;
