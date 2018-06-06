@@ -119,6 +119,19 @@ set(YARP_QML2_IMPORT_DIR_FULL "@PACKAGE_YARP_QML2_IMPORT_DIR@")
 # Used by YarpIDL.cmake
 set(YARP_IDL_BINARY_HINT "@PACKAGE_YARP_IDL_BINARY_HINT@")
 
+# FIXME Remove this check when CMake 3.9 or later is required
+#       This is used later and in YARPTargetsStatic.cmake
+if (CMAKE_VERSION VERSION_LESS 3.9)
+  set(_YARP_FIND_PARTS_REQUIRED)
+  if (YARP_FIND_REQUIRED)
+    set(_YARP_FIND_PARTS_REQUIRED REQUIRED)
+  endif()
+  set(_YARP_FIND_PARTS_QUIET)
+  if (YARP_FIND_QUIETLY)
+    set(_YARP_FIND_PARTS_QUIET QUIET)
+  endif()
+endif()
+
 # Include YARPTargets.cmake file (that includes for now, targets without a
 # specific destination
 if(NOT TARGET YARP::yarpidl_thrift)
@@ -139,10 +152,18 @@ endif()
 # Find all requested components
 set(YARP_LIBRARIES YARP::YARP_init)
 foreach(_module ${YARP_FIND_COMPONENTS})
-  find_dependency(YARP_${_module}
-                  HINTS "${YARP_CMAKECONFIG_DIR}"
-                  NO_DEFAULT_PATH)
-
+  # FIXME Remove this check when CMake 3.9 or later is required
+  if (CMAKE_VERSION VERSION_LESS 3.9)
+    find_package(YARP_${_module}
+                 ${_YARP_FIND_PARTS_QUIET}
+                 ${_YARP_FIND_PARTS_REQUIRED}
+                 HINTS "${YARP_CMAKECONFIG_DIR}"
+                 NO_DEFAULT_PATH)
+  else()
+    find_dependency(YARP_${_module}
+                    HINTS "${YARP_CMAKECONFIG_DIR}"
+                    NO_DEFAULT_PATH)
+  endif()
   list(APPEND YARP_LIBRARIES YARP::YARP_${_module})
 endforeach()
 
