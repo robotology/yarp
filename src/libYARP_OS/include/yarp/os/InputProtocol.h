@@ -175,7 +175,7 @@ public:
      * @return true if a reply will be made to a message.
      *
      */
-    virtual bool isReplying() = 0;
+    virtual bool isReplying() const = 0;
 };
 
 #endif // YARP_OS_INPUTPROTOCOL_H

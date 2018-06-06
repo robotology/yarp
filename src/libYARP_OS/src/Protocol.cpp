@@ -409,7 +409,7 @@ void Protocol::attachPort(yarp::os::Contactable* port)
 }
 
 
-bool Protocol::isReplying()
+bool Protocol::isReplying() const
 {
     return pendingReply;
 }

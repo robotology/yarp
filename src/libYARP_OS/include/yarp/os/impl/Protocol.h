@@ -74,7 +74,7 @@ public:
     virtual void setEnvelope(const std::string& str) override;
     virtual Connection& getReceiver() override;
     virtual void attachPort(yarp::os::Contactable* port) override;
-    virtual bool isReplying() override;
+    virtual bool isReplying() const override;
 
 
     // yarp::os::OutputProtocol.
