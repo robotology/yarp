@@ -53,7 +53,7 @@ public:
     virtual void setReference(yarp::os::Portable* ref) override;
     virtual std::string getSenderSpecifier() override;
     virtual const std::string& getEnvelope() override;
-    virtual Log& getLog() override;
+    virtual Log& getLog() const override;
     virtual void setRemainingLength(int len) override;
     virtual Connection& getConnection() override;
     virtual Contactable* getContactable() override;

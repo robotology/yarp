@@ -182,7 +182,7 @@ const std::string& Protocol::getEnvelope()
 }
 
 
-Log& Protocol::getLog()
+Log& Protocol::getLog() const
 {
     return log;
 }

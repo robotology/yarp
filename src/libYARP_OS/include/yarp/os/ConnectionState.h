@@ -72,7 +72,7 @@ public:
     /**
      * Access a connection-specific logging object.
      */
-    virtual Log& getLog() = 0;
+    virtual Log& getLog() const = 0;
 
     /**
      * Extract a name for the sender, if the connection
