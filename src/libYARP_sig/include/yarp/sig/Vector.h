@@ -47,6 +47,7 @@ public:
 
     virtual size_t getListSize() const = 0;
     virtual const char *getMemoryBlock() const = 0;
+    virtual char *getMemoryBlock() = 0;
     virtual void resize(size_t size) = 0;
 
     /*
@@ -154,9 +155,14 @@ public:
         return len;
     }
 
-    virtual const char *getMemoryBlock() const override
+    virtual const char* getMemoryBlock() const override
     {
-        return (char *) bytes.get();
+        return bytes.get();
+    }
+
+    virtual char* getMemoryBlock() override
+    {
+        return bytes.get();
     }
 
     inline const T *getFirst() const

@@ -52,7 +52,7 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
     {
         if ((size_t)getListSize() != (size_t)(header.listLen))
             resize(header.listLen);
-        const char *ptr = getMemoryBlock();
+        char* ptr = getMemoryBlock();
         yAssert(ptr != nullptr);
         int elemSize=getElementSize();
         ok = connection.expectBlock(ptr, elemSize*header.listLen);
