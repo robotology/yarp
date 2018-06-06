@@ -166,7 +166,7 @@ protected:
 /** @{ */
 
     static int interpretYarpNumber(const yarp::os::Bytes& b);
-    static void createYarpNumber(int x, const yarp::os::Bytes& header);
+    static void createYarpNumber(int x, yarp::os::Bytes& header);
 
 /** @} */
 

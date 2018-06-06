@@ -374,7 +374,7 @@ int AbstractCarrier::interpretYarpNumber(const yarp::os::Bytes& b)
     return -1;
 }
 
-void AbstractCarrier::createYarpNumber(int x, const yarp::os::Bytes& header)
+void AbstractCarrier::createYarpNumber(int x, yarp::os::Bytes& header)
 {
     if (header.length()!=8) {
         return;
