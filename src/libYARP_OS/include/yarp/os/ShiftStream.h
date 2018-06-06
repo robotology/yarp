@@ -116,7 +116,7 @@ public:
     /**
      * @return true if there is no wrapped stream.
      */
-    virtual bool isEmpty() {
+    virtual bool isEmpty() const {
         return stream == nullptr;
     }
 
