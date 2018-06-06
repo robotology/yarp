@@ -203,7 +203,7 @@ Connection& Protocol::getConnection()
 }
 
 
-Contactable* Protocol::getContactable()
+Contactable* Protocol::getContactable() const
 {
     return port;
 }

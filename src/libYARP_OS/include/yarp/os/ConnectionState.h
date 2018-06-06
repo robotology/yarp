@@ -115,7 +115,7 @@ public:
     /**
      * Get the port associated with the connection.
      */
-    virtual Contactable *getContactable() = 0;
+    virtual Contactable *getContactable() const = 0;
 
 
     /**

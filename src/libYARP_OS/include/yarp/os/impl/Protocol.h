@@ -56,7 +56,7 @@ public:
     virtual Log& getLog() const override;
     virtual void setRemainingLength(int len) override;
     virtual Connection& getConnection() override;
-    virtual Contactable* getContactable() override;
+    virtual Contactable* getContactable() const override;
 
 
     // yarp::os::InputProtocol.
