@@ -138,6 +138,10 @@ const Bytes& ManagedBytes::bytes() const {
     return b;
 }
 
+Bytes& ManagedBytes::bytes() {
+    return b;
+}
+
 Bytes ManagedBytes::usedBytes() {
     return Bytes(get(), used());
 }

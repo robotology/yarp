@@ -106,10 +106,15 @@ public:
     void clear();
 
     /**
-     * @return description of data block associated with this object
+     * @return description of data block associated with this object (const
+     * version)
      */
     const Bytes& bytes() const;
 
+    /**
+     * @return description of data block associated with this object
+     */
+    Bytes& bytes();
 
     /**
      * @return description of used portion of data block associated
