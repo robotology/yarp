@@ -394,7 +394,7 @@ bool BottleImpl::fromBytes(const Bytes& data)
     return true;
 }
 
-void BottleImpl::toBytes(const Bytes& data)
+void BottleImpl::toBytes(Bytes& data)
 {
     synch();
     yAssert(data.length() == byteCount());

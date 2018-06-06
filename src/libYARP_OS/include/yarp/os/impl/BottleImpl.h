@@ -83,7 +83,7 @@ public:
     void copyRange(const BottleImpl* alt, int first = 0, int len = -1);
 
     bool fromBytes(const yarp::os::Bytes& data);
-    void toBytes(const yarp::os::Bytes& data);
+    void toBytes(yarp::os::Bytes& data);
 
     bool fromBytes(yarp::os::ConnectionReader& reader);
 
