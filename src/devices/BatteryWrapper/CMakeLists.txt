@@ -8,7 +8,6 @@ yarp_prepare_plugin(BatteryWrapper
                     CATEGORY device
                     TYPE yarp::dev::BatteryWrapper
                     INCLUDE BatteryWrapper.h
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES"
                     DEFAULT ON)
 
 if(NOT SKIP_BatteryWrapper)

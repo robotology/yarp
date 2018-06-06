@@ -9,7 +9,7 @@ yarp_prepare_plugin(depthCamera
                     TYPE yarp::dev::depthCameraDriver
                     INCLUDE depthCameraDriver.h
                     EXTRA_CONFIG WRAPPER=RGBDSensorWrapper
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_OPENNI2")
+                    DEPENDS "YARP_HAS_OPENNI2")
 
 if(ENABLE_depthCamera)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

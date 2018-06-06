@@ -8,8 +8,8 @@
 include(YarpPlugin)
 include(YarpPrintFeature)
 
-yarp_begin_plugin_library(yarpmod OPTION CREATE_DEVICE_LIBRARY_MODULES
-                                  DEFAULT OFF
+yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
+                                  DEFAULT ON
                                   DOC "devices plugins")
   add_subdirectory(cuda)
   add_subdirectory(depthCamera)
@@ -120,3 +120,5 @@ install(TARGETS yarpmod
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 set_property(TARGET yarpmod PROPERTY FOLDER "Plugins/Device")
+
+yarp_renamed_option(CREATE_DEVICE_LIBRARY_MODULES YARP_COMPILE_DEVICE_PLUGINS) # since YARP 3.0.0

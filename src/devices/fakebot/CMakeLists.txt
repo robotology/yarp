@@ -8,8 +8,7 @@
 yarp_prepare_plugin(fakebot
                     CATEGORY device
                     TYPE yarp::dev::FakeBot
-                    INCLUDE FakeBot.h
-                    DEPENDS CREATE_DEVICE_LIBRARY_MODULES)
+                    INCLUDE FakeBot.h)
 
 if(NOT SKIP_fakebot)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

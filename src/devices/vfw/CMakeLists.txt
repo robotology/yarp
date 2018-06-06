@@ -10,7 +10,7 @@ yarp_prepare_plugin(vfw_grabber
                     TYPE yarp::dev::VfwGrabber
                     INCLUDE VfwGrabber.h
                     EXTRA_CONFIG WRAPPER=grabber
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;WIN32")
+                    DEPENDS "WIN32")
 
 if(NOT SKIP_vfw_grabber)
   find_library(vfw_library vfw32)

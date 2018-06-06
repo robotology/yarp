@@ -7,8 +7,7 @@
 yarp_prepare_plugin(laserFromDepth
                     CATEGORY device
                     TYPE LaserFromDepth
-                    INCLUDE laserFromDepth.h
-                    DEPENDS CREATE_DEVICE_LIBRARY_MODULES)
+                    INCLUDE laserFromDepth.h)
 
 if(NOT SKIP_laserFromDepth)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

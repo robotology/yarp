@@ -26,13 +26,16 @@ the following CMake flag when compiling those plugins:
  \li BUILD_SHARED_LIBS = ON
 
 Only shared libraries (.so/.dll/.dylib) can be loaded at runtime.
-To compile YARP device and carrier plugins respectively, select:
+YARP plugins are enabled by default, in order to disable them you can set to
+`OFF` the following options:
 
- \li CREATE_DEVICE_LIBRARY_MODULES = ON
- \li CREATE_OPTIONAL_CARRIERS = ON
+ \li YARP_COMPILE_DEVICE_PLUGINS
+ \li YARP_COMPILE_CARRIER_PLUGINS
 
-This will bring up a list of possible devices and carriers to choose
-from, for example:
+The most important plugins are enabled by default, but you can select or
+deselect each plugin by changing the value of the corresponding option, for
+example:
+
  \li ENABLE_yarpmod_fakebot = ON
  \li ENABLE_yarpcar_human_carrier = ON
 

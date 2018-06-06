@@ -10,7 +10,6 @@ yarp_prepare_plugin(portmonitor
                     CATEGORY carrier
                     EXTRA_CONFIG SUBTYPE=recv
                                  CODE="not applicable"
-                    DEPENDS "CREATE_OPTIONAL_CARRIERS"
                     DEFAULT ON)
 
 if (NOT SKIP_portmonitor)

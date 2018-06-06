@@ -9,7 +9,7 @@ yarp_prepare_plugin(meiMotionControl
                     TYPE yarp::dev::MEIMotionControl
                     INCLUDE MEIMotionControl.h
                     EXTRA_CONFIG WRAPPER=controlboard
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_COMPILE_UNMAINTAINED"
+                    DEPENDS "YARP_COMPILE_UNMAINTAINED"
                     ADVANCED)
 
 if(NOT SKIP_meiMotionControl)

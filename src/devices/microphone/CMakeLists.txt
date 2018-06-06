@@ -10,7 +10,7 @@ yarp_prepare_plugin(microphone
                     TYPE yarp::dev::MicrophoneDeviceDriver
                     INCLUDE MicrophoneDeviceDriver.h
                     EXTRA_CONFIG WRAPPER=grabber
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;UNIX OR WIN32;NOT APPLE")
+                    DEPENDS "UNIX OR WIN32;NOT APPLE")
 
 if(NOT SKIP_microphone)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

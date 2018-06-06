@@ -9,7 +9,7 @@ yarp_prepare_plugin(stage
                     CATEGORY device
                     TYPE yarp::dev::StageControl
                     INCLUDE StageControl.h
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_STAGE;YARP_COMPILE_UNMAINTAINED")
+                    DEPENDS "YARP_HAS_STAGE;YARP_COMPILE_UNMAINTAINED")
 
 if(NOT SKIP_stage)
 

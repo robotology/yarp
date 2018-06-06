@@ -9,7 +9,7 @@ yarp_prepare_plugin(pumacalibrator
                     CATEGORY device
                     TYPE yarp::dev::PumaCalibrator
                     INCLUDE PumaCalibrator.h
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_COMPILE_UNMAINTAINED"
+                    DEPENDS "YARP_COMPILE_UNMAINTAINED"
                     ADVANCED)
 
 if(NOT SKIP_pumacalibrator)

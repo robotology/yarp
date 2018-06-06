@@ -9,7 +9,7 @@ yarp_prepare_plugin(cuda
                     CATEGORY device
                     TYPE CUDAGPU
                     INCLUDE "CUDADeviceDriver.h"
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_CUDA")
+                    DEPENDS "YARP_HAS_CUDA")
 
 if(NOT SKIP_cuda)
   set(CUDA_NUMTHREADS 64 CACHE STRING "")

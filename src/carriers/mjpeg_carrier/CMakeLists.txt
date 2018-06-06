@@ -10,7 +10,7 @@ yarp_prepare_plugin(mjpeg
                     TYPE yarp::os::MjpegCarrier
                     INCLUDE MjpegCarrier.h
                     EXTRA_CONFIG CODE="GET /?ac"
-                    DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_JPEG")
+                    DEPENDS "YARP_HAS_JPEG")
 
 if(NOT SKIP_mjpeg)
   option(MJPEG_AUTOCOMPRESS "Automatically compress/decompress images on mjpeg stream" TRUE)

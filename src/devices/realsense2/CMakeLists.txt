@@ -9,7 +9,7 @@ yarp_prepare_plugin(realsense2
                     TYPE yarp::dev::realsense2Driver
                     INCLUDE realsense2Driver.h
                     EXTRA_CONFIG WRAPPER=RGBDSensorWrapper
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_REALSENSE2")
+                    DEPENDS "YARP_HAS_REALSENSE2")
 
 if(ENABLE_realsense2)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

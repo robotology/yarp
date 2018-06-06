@@ -11,7 +11,7 @@ The devices available to "yarpdev" depend on the options set
 when compiling YARP.  To choose the devices you want compiled,
 run "ccmake ." (on UNIX) or "cmake" (on Windows) on the
 root directory of the YARP source code and select the
-"CREATE_DEVICE_LIBRARY_MODULES" option.
+"YARP_COMPILE_DEVICE_PLUGINS" option.
 After you configure, new "ENABLE_*"
 options will appear that permit you to choose what devices you want
 to try and compile.  Often this will require that you install

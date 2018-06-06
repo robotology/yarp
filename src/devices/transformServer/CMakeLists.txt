@@ -8,7 +8,7 @@ yarp_prepare_plugin(transformServer
                     CATEGORY device
                     TYPE yarp::dev::FrameTransformServer
                     INCLUDE FrameTransformServer.h
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_MATH_LIB"
+                    DEPENDS "YARP_HAS_MATH_LIB"
                     DEFAULT ON)
 
 if(NOT SKIP_transformServer)

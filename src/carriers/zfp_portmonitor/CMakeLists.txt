@@ -7,7 +7,7 @@
 yarp_prepare_plugin(zfp TYPE ZfpMonitorObject
                         INCLUDE zfpPortmonitor.h
                         CATEGORY portmonitor
-                        DEPENDS "CREATE_OPTIONAL_CARRIERS;ENABLE_yarpcar_portmonitor;YARP_HAS_ZFP")
+                        DEPENDS "ENABLE_yarpcar_portmonitor;YARP_HAS_ZFP")
 
 if(NOT SKIP_zfp)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

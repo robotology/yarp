@@ -8,8 +8,8 @@
 include(YarpPlugin)
 include(YarpPrintFeature)
 
-yarp_begin_plugin_library(yarpcar OPTION CREATE_OPTIONAL_CARRIERS
-                                  DEFAULT OFF
+yarp_begin_plugin_library(yarpcar OPTION YARP_COMPILE_CARRIER_PLUGINS
+                                  DEFAULT ON
                                   DOC "carrier plugins")
   add_subdirectory(shmem_carrier)
   add_subdirectory(human_carrier)
@@ -46,3 +46,4 @@ yarp_renamed_option(ENABLE_yarpcar_priority_carrier ENABLE_yarpcar_priority) # s
 yarp_renamed_option(ENABLE_yarpcar_tcpros_carrier ENABLE_yarpcar_tcpros) # since YARP 2.3.68
 yarp_renamed_option(ENABLE_yarpcar_rossrv_carrier ENABLE_yarpcar_rossrv) # since YARP 2.3.68
 yarp_renamed_option(ENABLE_yarpcar_xmlrpc_carrier ENABLE_yarpcar_xmlrpc) # since YARP 2.3.68
+yarp_renamed_option(CREATE_OPTIONAL_CARRIERS YARP_COMPILE_CARRIER_PLUGINS) # since YARP 3.0.0

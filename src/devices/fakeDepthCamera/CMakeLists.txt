@@ -8,8 +8,7 @@ yarp_prepare_plugin(fakeDepthCamera
                     CATEGORY device
                     TYPE yarp::dev::fakeDepthCameraDriver
                     INCLUDE fakeDepthCameraDriver.h
-                    EXTRA_CONFIG WRAPPER=RGBDSensorWrapper
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES")
+                    EXTRA_CONFIG WRAPPER=RGBDSensorWrapper)
 
 if(ENABLE_fakeDepthCamera)
 

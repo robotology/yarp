@@ -9,7 +9,7 @@ yarp_prepare_plugin(h264
                     TYPE yarp::os::H264Carrier
                     INCLUDE H264Carrier.h
                     EXTRA_CONFIG CODE=""
-                    DEPENDS "CREATE_OPTIONAL_CARRIERS;GLIB2_FOUND;GSTREAMER_FOUND;GSTREAMER_APP_LIBRARY_FOUND")
+                    DEPENDS "GLIB2_FOUND;GSTREAMER_FOUND;GSTREAMER_APP_LIBRARY_FOUND")
 
 if(NOT SKIP_h264)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

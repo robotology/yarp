@@ -18,12 +18,12 @@ yarp_prepare_plugin(OpenNI2DeviceServer
                     CATEGORY device
                     TYPE yarp::dev::OpenNI2DeviceDriverServer
                     INCLUDE OpenNI2DeviceDriverServer.h
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_MATH_LIB;OpenNI2_FOUND")
+                    DEPENDS "YARP_HAS_MATH_LIB;OpenNI2_FOUND")
 yarp_prepare_plugin(OpenNI2DeviceClient
                     CATEGORY device
                     TYPE yarp::dev::OpenNI2DeviceDriverClient
                     INCLUDE OpenNI2DeviceDriverClient.h
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_MATH_LIB;OpenNI2_FOUND")
+                    DEPENDS "YARP_HAS_MATH_LIB;OpenNI2_FOUND")
 
 if (NOT SKIP_OpenNI2DeviceServer OR NOT SKIP_OpenNI2DeviceClient)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

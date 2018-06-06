@@ -63,14 +63,14 @@ if(CREATE_YARPC)
     target_link_libraries(yarpc PRIVATE YARP::YARP_OS
                                         YARP::YARP_init)
     if(YARP_LINK_PLUGINS)
-      if(CREATE_OPTIONAL_CARRIERS)
+      if(YARP_COMPILE_CARRIER_PLUGINS)
         set_property(SOURCE ${init_src}
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION=add_yarpcar_plugins)
         target_link_libraries(yarpc PRIVATE YARP::yarpcar)
       endif()
 
-      if(CREATE_DEVICE_LIBRARY_MODULES)
+      if(YARP_COMPILE_DEVICE_PLUGINS)
         set_property(SOURCE ${init_src}
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION2=add_yarpmod_plugins)

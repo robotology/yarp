@@ -10,7 +10,7 @@ yarp_prepare_plugin(jrkerr
                     TYPE yarp::dev::JrkerrMotionControl
                     INCLUDE JrkerrMotionControl.h
                     EXTRA_CONFIG WRAPPER=controlboard
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;WIN32")
+                    DEPENDS "WIN32")
 
 if(NOT SKIP_jrkerr)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

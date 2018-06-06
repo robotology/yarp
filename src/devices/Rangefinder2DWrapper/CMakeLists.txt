@@ -8,7 +8,6 @@ yarp_prepare_plugin(Rangefinder2DWrapper
                     CATEGORY device
                     TYPE yarp::dev::Rangefinder2DWrapper
                     INCLUDE Rangefinder2DWrapper.h
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES"
                     DEFAULT ON)
 
 if(NOT SKIP_Rangefinder2DWrapper)
