@@ -24,7 +24,7 @@ int NetType::netInt(const yarp::os::Bytes& code) {
     return tmp;
 }
 
-bool NetType::netInt(int data, const yarp::os::Bytes& code) {
+bool NetType::netInt(int data, yarp::os::Bytes& code) {
     NetInt32 i = data;
     yarp::os::Bytes b((char*)(&i), sizeof(i));
     if (code.length()!=sizeof(i)) {

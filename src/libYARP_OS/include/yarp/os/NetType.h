@@ -30,7 +30,7 @@ class YARP_OS_API yarp::os::NetType {
 public:
 
     static int netInt(const yarp::os::Bytes& code);
-    static bool netInt(int data, const yarp::os::Bytes& code);
+    static bool netInt(int data, yarp::os::Bytes& code);
     static std::string toHexString(int x);
     static std::string toString(int x);
     static std::string toString(long x);
