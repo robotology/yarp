@@ -154,7 +154,7 @@ protected:
 /** @{ */
 
     int getSpecifier(const Bytes& b);
-    void createStandardHeader(int specifier, const yarp::os::Bytes& header);
+    void createStandardHeader(int specifier, const yarp::os::Bytes& header) const;
 
     // Documented in Carrier
     virtual bool write(ConnectionState& proto, SizedWriter& writer) override;

@@ -164,7 +164,7 @@ int AbstractCarrier::getSpecifier(const Bytes& b)
     return x;
 }
 
-void AbstractCarrier::createStandardHeader(int specifier, const Bytes& header)
+void AbstractCarrier::createStandardHeader(int specifier, const Bytes& header) const
 {
     createYarpNumber(7777+specifier, header);
 }
