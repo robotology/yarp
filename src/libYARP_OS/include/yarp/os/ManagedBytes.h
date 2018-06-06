@@ -91,9 +91,14 @@ public:
     size_t used() const;
 
     /**
+     * @return address of data block (const version)
+     */
+    const char* get() const;
+
+    /**
      * @return address of data block
      */
-    char *get() const;
+    char* get();
 
     /**
      * Disassociate object with any data block (deleting block if appropriate).

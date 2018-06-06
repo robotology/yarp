@@ -114,7 +114,11 @@ size_t ManagedBytes::used() const {
     return use_set ? use : length();
 }
 
-char *ManagedBytes::get() const {
+const char* ManagedBytes::get() const {
+    return b.get();
+}
+
+char* ManagedBytes::get() {
     return b.get();
 }
 

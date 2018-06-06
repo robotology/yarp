@@ -60,7 +60,7 @@ public:
 public:
     char ch;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) str;
-    yarp::os::ManagedBytes header;
+    mutable yarp::os::ManagedBytes header;
 };
 
 #endif // YARP_OS_IMPL_PORTCOMMAND_H
