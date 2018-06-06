@@ -70,7 +70,7 @@ public:
     virtual std::string getName() const override;
     std::string getSpecifierName() const;
 
-    virtual Carrier *create() override;
+    virtual Carrier *create() const override;
 
     virtual bool checkHeader(const Bytes& header) override;
     virtual void getHeader(Bytes& header) const override;

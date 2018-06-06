@@ -68,7 +68,7 @@ public:
         persistent = true;
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new TcpRosCarrier();
     }
 
@@ -207,7 +207,7 @@ public:
         isService = true;
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new RosSrvCarrier();
     }
 };

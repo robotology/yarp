@@ -25,7 +25,7 @@ namespace yarp {
 class YARP_OS_API yarp::os::ModifyingCarrier : public AbstractCarrier {
 public:
 
-    virtual Carrier *create() override = 0;
+    virtual Carrier *create() const override = 0;
 
     virtual std::string getName() const override = 0;
 

@@ -48,7 +48,7 @@ public:
 
     virtual void close() override;
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new MpiBcastCarrier();
     }
 

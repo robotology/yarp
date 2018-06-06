@@ -22,7 +22,7 @@ public:
     ShmemCarrier();
     virtual ~ShmemCarrier();
 
-    virtual Carrier* create() override;
+    virtual Carrier* create() const override;
 
     virtual std::string getName() const override;
 

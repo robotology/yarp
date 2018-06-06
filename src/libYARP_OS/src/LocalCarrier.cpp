@@ -137,7 +137,7 @@ yarp::os::impl::LocalCarrier::~LocalCarrier() {
     shutdown();
 }
 
-yarp::os::Carrier *yarp::os::impl::LocalCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::LocalCarrier::create() const {
     return new LocalCarrier();
 }
 

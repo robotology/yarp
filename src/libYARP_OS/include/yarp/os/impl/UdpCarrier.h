@@ -29,7 +29,7 @@ class yarp::os::impl::UdpCarrier : public AbstractCarrier
 public:
     UdpCarrier();
 
-    virtual Carrier *create() override;
+    virtual Carrier *create() const override;
 
     virtual std::string getName() const override;
 

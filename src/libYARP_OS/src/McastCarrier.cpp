@@ -60,7 +60,7 @@ yarp::os::impl::McastCarrier::~McastCarrier() {
     }
 }
 
-Carrier *yarp::os::impl::McastCarrier::create() {
+Carrier *yarp::os::impl::McastCarrier::create() const {
     return new McastCarrier();
 }
 

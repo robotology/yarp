@@ -92,7 +92,7 @@ public:
 
     virtual ~LocalCarrier();
 
-    virtual Carrier *create() override;
+    virtual Carrier *create() const override;
 
     virtual std::string getName() const override;
 

@@ -1507,7 +1507,7 @@ public:
         return car.getContent();
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return owner->create();
     }
 
@@ -1740,8 +1740,8 @@ public:
         return car.getContent();
     }
 
-    virtual Carrier *create() override {
-        ForwardingCarrier *ncar = new ForwardingCarrier(plugin.getFactory(), this);
+    virtual Carrier *create() const override {
+        ForwardingCarrier *ncar = new ForwardingCarrier(plugin.getFactory(), const_cast<StubCarrier*>(this));
         if (ncar==nullptr) {
             return nullptr;
         }

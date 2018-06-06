@@ -18,7 +18,7 @@ ShmemCarrier::ShmemCarrier() = default;
 
 ShmemCarrier::~ShmemCarrier() = default;
 
-yarp::os::Carrier* ShmemCarrier::create()
+yarp::os::Carrier* ShmemCarrier::create() const
 {
     return new ShmemCarrier();
 }

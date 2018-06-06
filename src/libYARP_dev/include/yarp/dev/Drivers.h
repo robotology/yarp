@@ -44,7 +44,7 @@ public:
     /**
      * Create a device.
      */
-    virtual DeviceDriver *create() = 0;
+    virtual DeviceDriver *create() const = 0;
 
     /**
      * Get the common name of the device.
@@ -120,7 +120,7 @@ public:
         return code;
     }
 
-    virtual DeviceDriver *create() override {
+    virtual DeviceDriver *create() const override {
         return new T;
     }
 };
@@ -156,7 +156,7 @@ public:
         return code;
     }
 
-    virtual DeviceDriver *create() override;
+    virtual DeviceDriver *create() const override;
 };
 
 

@@ -87,7 +87,7 @@ public:
         if (local) delete local;
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new BayerCarrier();
     }
 

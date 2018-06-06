@@ -75,7 +75,7 @@ public:
         if (binder) delete binder;
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new PortMonitor();
     }
 

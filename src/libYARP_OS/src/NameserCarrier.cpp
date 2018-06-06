@@ -106,7 +106,7 @@ std::string yarp::os::impl::NameserCarrier::getSpecifierName() const {
     return "NAME_SER";
 }
 
-yarp::os::Carrier *yarp::os::impl::NameserCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::NameserCarrier::create() const {
     return new NameserCarrier();
 }
 

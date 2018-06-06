@@ -58,7 +58,7 @@ void yarp::os::impl::TextCarrier::getHeader(Bytes& header) const
     }
 }
 
-yarp::os::Carrier* yarp::os::impl::TextCarrier::create()
+yarp::os::Carrier* yarp::os::impl::TextCarrier::create() const
 {
     return new TextCarrier(ackVariant);
 }

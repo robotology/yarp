@@ -16,7 +16,7 @@ using namespace yarp::os::impl;
 yarp::os::impl::UdpCarrier::UdpCarrier() {
 }
 
-yarp::os::Carrier *yarp::os::impl::UdpCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::UdpCarrier::create() const {
     return new UdpCarrier();
 }
 

@@ -49,7 +49,7 @@ public:
 
     virtual ~McastCarrier();
 
-    virtual Carrier *create() override;
+    virtual Carrier *create() const override;
     virtual std::string getName() const override;
 
     virtual int getSpecifierCode() const override;

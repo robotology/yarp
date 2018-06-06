@@ -41,9 +41,9 @@ public:
         return name;
     }
 
-    virtual DeviceDriver *create() override {
+    virtual DeviceDriver *create() const override {
         DeviceDriver *internal;
-        holding.view(internal);
+        const_cast<PolyDriver&>(holding).view(internal);
         return internal;
     }
 

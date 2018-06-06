@@ -57,7 +57,7 @@ public:
      *
      * @return a new object of the same type as this one.
      */
-    virtual Carrier *create() = 0;
+    virtual Carrier *create() const = 0;
 
     /**
      * Given the first 8 bytes received on a connection, decide if

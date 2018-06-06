@@ -56,7 +56,7 @@ public:
     {
     }
 
-    virtual Carrier *create() override
+    virtual Carrier *create() const override
     {
         return new XmlRpcCarrier();
     }

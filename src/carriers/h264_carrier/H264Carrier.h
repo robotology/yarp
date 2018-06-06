@@ -48,7 +48,7 @@ public:
     H264Carrier()
     {;}
 
-    virtual Carrier *create() override
+    virtual Carrier *create() const override
     {
         return new H264Carrier();
     }

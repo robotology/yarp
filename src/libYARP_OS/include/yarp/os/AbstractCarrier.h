@@ -33,7 +33,7 @@ public:
 /** @{ */
 
     // Documented in Carrier
-    virtual Carrier *create() override = 0;
+    virtual Carrier *create() const override = 0;
 
     // Documented in Carrier
     virtual std::string getName() const override = 0;

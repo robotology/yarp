@@ -51,7 +51,7 @@ public:
         sender = false;
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new MjpegCarrier();
     }
 

@@ -45,7 +45,7 @@ public:
      * @return A new PortReader object -- used to read from a connection to
      * a Port
      */
-    virtual PortReader *create() = 0;
+    virtual PortReader *create() const = 0;
 
 };
 

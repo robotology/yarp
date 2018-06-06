@@ -525,7 +525,7 @@ yarp::os::impl::HttpCarrier::HttpCarrier() :
         stream(nullptr) {
 }
 
-yarp::os::Carrier *yarp::os::impl::HttpCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::HttpCarrier::create() const {
     return new HttpCarrier();
 }
 

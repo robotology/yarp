@@ -17,7 +17,7 @@ yarp::os::impl::TcpCarrier::TcpCarrier(bool requireAckFlag) {
     this->requireAckFlag = requireAckFlag;
 }
 
-yarp::os::Carrier *yarp::os::impl::TcpCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::TcpCarrier::create() const {
     return new TcpCarrier(requireAckFlag);
 }
 

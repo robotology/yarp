@@ -606,7 +606,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     return 0;
 }
 
-DeviceDriver *StubDriverCreator::create() {
+DeviceDriver *StubDriverCreator::create() const {
     //yDebug("Creating %s from %s\n", desc.c_str(), libname.c_str());
     StubDriver *result = new StubDriver(libname.c_str(),fnname.c_str(),false);
     if (result==nullptr) return result;
