@@ -49,6 +49,16 @@ public:
         }
     }
 
+    /*
+     * The const version of the processBuffered() method performs a const_cast,
+     * and calls the non-const version. This allows to call it in const methods.
+     * Conceptually this is not completely wrong because it does not modify
+     * the external state of the class, but just some internal representation.
+     */
+    void flush() const {
+        const_cast<PropertyItem*>(this)->flush();
+    }
+
     void flush() {
         if (backing) {
             Bottle flatten(backing->toString());
