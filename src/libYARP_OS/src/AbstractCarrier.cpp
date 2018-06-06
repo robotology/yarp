@@ -118,7 +118,8 @@ bool AbstractCarrier::expectSenderSpecifier(ConnectionState& proto)
         len = 1;
     }
     ManagedBytes b(len+1);
-    r = proto.is().readFull(Bytes(b.get(), len));
+    Bytes bytes(b.get(), len);
+    r = proto.is().readFull(bytes);
     if ((int)r!=len) {
         YARP_DEBUG(Logger::get(), "did not get sender name");
         return false;

@@ -21,7 +21,7 @@ using namespace yarp::sig;
 using namespace yarp::mjpeg;
 using namespace std;
 
-yarp::conf::ssize_t MjpegStream::read(const Bytes& b) {
+yarp::conf::ssize_t MjpegStream::read(Bytes& b) {
     bool debug = false;
     if (remaining==0) {
         if (phase==1) {

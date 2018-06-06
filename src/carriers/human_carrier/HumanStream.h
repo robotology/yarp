@@ -50,7 +50,7 @@ public:
 
     // InputStream
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(const Bytes& b) override;
+    virtual yarp::conf::ssize_t read(Bytes& b) override;
 
     // OutputStream
     using yarp::os::OutputStream::write;

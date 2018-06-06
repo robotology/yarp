@@ -505,7 +505,7 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
     }
 }
 
-yarp::conf::ssize_t WireTwiddlerReader::read(const Bytes& b) {
+yarp::conf::ssize_t WireTwiddlerReader::read(Bytes& b) {
     dbg_printf("Want %zu bytes\n", b.length());
     if (index==-1) {
         dbg_printf("WireTwidderReader::read getting started\n");
@@ -552,8 +552,8 @@ yarp::conf::ssize_t WireTwiddlerReader::read(const Bytes& b) {
         }
         if ((gap.length==-1||gap.unit_length==-1) && override_length==-1) {
             dbg_printf("LOOKING TO EXTERNAL\n");
-            int r = is.readFull(Bytes((char*)&lengthBuffer,
-                                      sizeof(NetInt32)));
+            Bytes bytes(reinterpret_cast<char*>(&lengthBuffer), sizeof(NetInt32));
+            int r = is.readFull(bytes);
             if (r!=sizeof(NetInt32)) return -1;
             dbg_printf("Read length %d\n", lengthBuffer);
             pending_length = sizeof(lengthBuffer);
@@ -593,8 +593,8 @@ yarp::conf::ssize_t WireTwiddlerReader::read(const Bytes& b) {
             dbg_printf("### %d pending strings\n", pending_strings);
             if (pending_string_length==0&&pending_string_data==0) {
                 dbg_printf("Checking string length\n");
-                int r = is.readFull(Bytes((char*)&lengthBuffer,
-                                          sizeof(NetInt32)));
+                Bytes bytes(reinterpret_cast<char*>(&lengthBuffer), sizeof(NetInt32));
+                int r = is.readFull(bytes);
                 if (r!=sizeof(NetInt32)) return -1;
                 dbg_printf("Read length %d\n", lengthBuffer);
                 pending_string_length = sizeof(lengthBuffer);
@@ -986,8 +986,8 @@ bool WireTwiddlerWriter::transform(const WireTwiddlerGap& gap) {
 }
 
 yarp::conf::ssize_t WireTwiddlerReader::readMapped(yarp::os::InputStream& is,
-                                            const yarp::os::Bytes& b,
-                                            const WireTwiddlerGap& gap) {
+                                                   yarp::os::Bytes& b,
+                                                   const WireTwiddlerGap& gap) {
     if (gap.load_external) {
         int v = 0;
         if (gap.var_name[0]=='=') {

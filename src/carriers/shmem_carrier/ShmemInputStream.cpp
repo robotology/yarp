@@ -190,7 +190,7 @@ int ShmemInputStreamImpl::read(char* data, int len)
     return len;
 }
 
-yarp::conf::ssize_t ShmemInputStreamImpl::read(const yarp::os::Bytes& b)
+yarp::conf::ssize_t ShmemInputStreamImpl::read(yarp::os::Bytes& b)
 {
     m_ReadSerializerMutex.lock();
 

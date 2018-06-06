@@ -45,7 +45,7 @@ public:
 
     bool isOk() const;
     bool open(int port, ACE_SOCK_Stream* pSock, int size = SHMEM_DEFAULT_SIZE);
-    yarp::conf::ssize_t read(const yarp::os::Bytes& b);
+    yarp::conf::ssize_t read(yarp::os::Bytes& b);
     void close();
 
 protected:

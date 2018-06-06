@@ -60,7 +60,7 @@ public:
     /////////////////////////////////////////////////
     // InputStream
 
-    virtual ssize_t read(const yarp::os::Bytes& b) {
+    virtual ssize_t read(yarp::os::Bytes& b) {
         if (interrupting) { return -1; }
         while (inputCache.size() < b.length()) {
             yInfo() <<"*** CHECK OTHER TERMINAL FOR SOMETHING TO TYPE:";

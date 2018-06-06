@@ -85,7 +85,7 @@ bool yarp::os::impl::LocalCarrierStream::setTypeOfService(int tos)
     return true;
 }
 
-yarp::conf::ssize_t yarp::os::impl::LocalCarrierStream::read(const yarp::os::Bytes& b)
+yarp::conf::ssize_t yarp::os::impl::LocalCarrierStream::read(yarp::os::Bytes& b)
 {
     yAssert(false);
     return b.length();

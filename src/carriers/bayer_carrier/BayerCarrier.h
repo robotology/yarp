@@ -208,7 +208,7 @@ public:
     // InputStream methods
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(const yarp::os::Bytes& b) override;
+    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     virtual void close() override {
     }

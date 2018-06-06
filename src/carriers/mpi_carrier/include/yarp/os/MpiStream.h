@@ -52,7 +52,7 @@ public:
     virtual void close() override = 0;
     virtual bool isOk() const override;
     virtual void interrupt() override;
-    virtual ssize_t read(const Bytes& b) override = 0;
+    virtual ssize_t read(Bytes& b) override = 0;
     virtual void write(const Bytes& b) override = 0;
     virtual InputStream& getInputStream() override;
     virtual OutputStream& getOutputStream() override;

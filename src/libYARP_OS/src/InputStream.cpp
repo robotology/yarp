@@ -22,22 +22,25 @@ void InputStream::check()
 int InputStream::read()
 {
     unsigned char result;
-    yarp::conf::ssize_t ct = read(yarp::os::Bytes((char*)&result, 1));
+    yarp::os::Bytes bytes(reinterpret_cast<char*>(&result), 1);
+    yarp::conf::ssize_t ct = read(bytes);
     if (ct < 1) {
         return -1;
     }
-    return result;
+    return static_cast<int>(result);
 }
 
-yarp::conf::ssize_t InputStream::read(const Bytes& b, size_t offset, yarp::conf::ssize_t len)
+yarp::conf::ssize_t InputStream::read(Bytes& b, size_t offset, yarp::conf::ssize_t len)
 {
-    return read(yarp::os::Bytes(b.get() + offset, len));
+    yarp::os::Bytes bytes(b.get() + offset, len);
+    return read(bytes);
 }
 
-yarp::conf::ssize_t InputStream::partialRead(const yarp::os::Bytes& b)
+yarp::conf::ssize_t InputStream::partialRead(yarp::os::Bytes& b)
 {
     return read(b);
 }
+
 void InputStream::interrupt()
 {
 }
@@ -92,7 +95,7 @@ std::string InputStream::readLine(int terminal, bool* success)
     return buf;
 }
 
-yarp::conf::ssize_t InputStream::readFull(const Bytes& b)
+yarp::conf::ssize_t InputStream::readFull(Bytes& b)
 {
     yarp::conf::ssize_t off = 0;
     yarp::conf::ssize_t fullLen = b.length();

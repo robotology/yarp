@@ -173,7 +173,7 @@ void ShmemHybridStream::write(const yarp::os::Bytes& b)
     }
 }
 
-yarp::conf::ssize_t ShmemHybridStream::read(const yarp::os::Bytes& b)
+yarp::conf::ssize_t ShmemHybridStream::read(yarp::os::Bytes& b)
 {
     yarp::conf::ssize_t ret = in.read(b);
     if (ret == -1) {

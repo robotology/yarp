@@ -174,15 +174,15 @@ public:
     virtual ~WireTwiddlerReader() {}
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(const yarp::os::Bytes& b) override;
+    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     virtual void close() override { is.close(); }
 
     virtual bool isOk() const override { return is.isOk(); }
 
     yarp::conf::ssize_t readMapped(yarp::os::InputStream& is,
-                            const yarp::os::Bytes& b,
-                            const WireTwiddlerGap& gap);
+                                   yarp::os::Bytes& b,
+                                   const WireTwiddlerGap& gap);
 
     void compute(const WireTwiddlerGap& gap);
 };

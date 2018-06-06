@@ -52,7 +52,7 @@ public:
         }
     }
 
-    virtual yarp::conf::ssize_t read(const Bytes& b) override {
+    virtual yarp::conf::ssize_t read(Bytes& b) override {
         char *base = b.get();
         size_t space = b.length();
         yarp::conf::ssize_t ct = 0;

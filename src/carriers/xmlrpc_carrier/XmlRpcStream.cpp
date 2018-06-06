@@ -87,7 +87,7 @@ Value toValue(XmlRpcValue& v, bool outer)
     return Value("(type not supported yet out of laziness)");
 }
 
-yarp::conf::ssize_t XmlRpcStream::read(const Bytes& b)
+yarp::conf::ssize_t XmlRpcStream::read(Bytes& b)
 {
     //printf("XMLRPC READ\n");
     yarp::conf::ssize_t result = sis.read(b);

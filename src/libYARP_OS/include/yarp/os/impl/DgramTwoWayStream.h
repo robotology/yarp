@@ -114,7 +114,7 @@ public:
     virtual void closeMain();
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(const yarp::os::Bytes& b) override;
+    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     using yarp::os::OutputStream::write;
     virtual void write(const yarp::os::Bytes& b) override;

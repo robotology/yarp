@@ -91,7 +91,7 @@ bool H264Stream::setReadEnvelopeCallback(InputStream::readEnvelopeCallbackType c
     return true;
 }
 
-yarp::conf::ssize_t H264Stream::read(const Bytes& b)
+yarp::conf::ssize_t H264Stream::read(Bytes& b)
 {
 
 #ifdef debug_time

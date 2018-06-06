@@ -45,7 +45,7 @@ public:
 
     /**
      * Read and return a single byte.  Should block and wait for data.
-     * By default, this calls read(const Bytes& b) to do its work.
+     * By default, this calls read(Bytes& b) to do its work.
      *
      * @return a byte from the stream (0-255), or -1 on failure.
      */
@@ -53,32 +53,32 @@ public:
 
     /**
      * Read a block of data from the stream.  Should block and wait
-     * for data. By default, this calls read(const Bytes& b) to do
+     * for data. By default, this calls read(Bytes& b) to do
      * its work.
      *
-     * @param b the block of data to read to
+     * @param[out] b the block of data to read to
      * @param offset an offset within the block to start at
      * @param len the number of bytes to read
      *
      * @return the number of bytes read, or -1 upon error
      */
-    virtual yarp::conf::ssize_t read(const Bytes& b, size_t offset, yarp::conf::ssize_t len);
+    virtual yarp::conf::ssize_t read(Bytes& b, size_t offset, yarp::conf::ssize_t len);
 
     /**
      * Read a block of data from the stream.  Should block and wait
      * for data.
      *
-     * @param b the block of data to read to
+     * @param b[out] the block of data to read to
      *
      * @return the number of bytes read, or -1 upon error
      */
-    virtual yarp::conf::ssize_t read(const yarp::os::Bytes& b) = 0;
+    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) = 0;
 
 
     /**
      * Like read, but solicit partial responses.
      */
-    virtual yarp::conf::ssize_t partialRead(const yarp::os::Bytes& b);
+    virtual yarp::conf::ssize_t partialRead(yarp::os::Bytes& b);
 
     /**
      * Terminate the stream.
@@ -112,7 +112,7 @@ public:
     /**
      * Keep reading until buffer is full.
      */
-    yarp::conf::ssize_t readFull(const Bytes& b);
+    yarp::conf::ssize_t readFull(Bytes& b);
 
     /**
      * Read and discard a fixed number of bytes.

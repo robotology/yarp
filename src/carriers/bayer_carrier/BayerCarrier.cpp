@@ -332,7 +332,7 @@ bool BayerCarrier::processDirect(const yarp::os::Bytes& bytes) {
 }
 
 
-yarp::conf::ssize_t BayerCarrier::read(const yarp::os::Bytes& b) {
+yarp::conf::ssize_t BayerCarrier::read(yarp::os::Bytes& b) {
     // copy across small stuff - the image header
     if (consumed<sizeof(header)) {
         size_t len = b.length();
