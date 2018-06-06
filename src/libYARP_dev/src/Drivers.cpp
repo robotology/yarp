@@ -208,27 +208,27 @@ public:
         return &dev.getContent();
     }
 
-    std::string getDllName() {
+    std::string getDllName() const {
         return settings.getLibraryName();
     }
 
-    std::string getFnName() {
+    std::string getFnName() const {
         return settings.getMethodName();
     }
 
-    std::string getwrapName() {
+    std::string getwrapName() const {
         return settings.getWrapperName();
     }
 
-    std::string getPluginName() {
+    std::string getPluginName() const {
         return settings.getPluginName();
     }
 
-    std::string getClassName() {
+    std::string getClassName() const {
         return settings.getClassName();
     }
 
-    std::string getBaseClassName() {
+    std::string getBaseClassName() const {
         return settings.getBaseClassName();
     }
 };
