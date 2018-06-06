@@ -21,23 +21,28 @@
  * 8-bytes of a regular text mode connection.
  *
  */
-class TestCarrier : public yarp::os::impl::TextCarrier {
-    
+class TestCarrier : public yarp::os::impl::TextCarrier
+{
+
 public:
-    virtual std::string getName() {
+    virtual std::string getName() const override
+    {
         return "test";
     }
 
-    virtual std::string getSpecifierName() {
+    virtual std::string getSpecifierName() const override
+    {
         return "TESTTEST";
     }
 
-    virtual Carrier *create() {
+    virtual Carrier *create() const override
+    {
         return new TestCarrier();
     }
 };
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     yarp::os::Network yarp;
     yarp::os::Carriers::addCarrierPrototype(new TestCarrier);
 
