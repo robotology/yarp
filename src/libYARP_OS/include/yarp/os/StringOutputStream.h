@@ -49,7 +49,7 @@ public:
         return true;
     }
 
-    const std::string& str() { return data; }
+    const std::string& str() const { return data; }
 
 private:
     std::string data;
