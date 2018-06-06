@@ -240,7 +240,7 @@ public:
 
     virtual bool processBuffered();
 
-    virtual bool processDirect(const yarp::os::Bytes& bytes);
+    virtual bool processDirect(yarp::os::Bytes& bytes);
 
 };
 

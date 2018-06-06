@@ -314,7 +314,7 @@ bool BayerCarrier::processBuffered() {
     return true;
 }
 
-bool BayerCarrier::processDirect(const yarp::os::Bytes& bytes) {
+bool BayerCarrier::processDirect(yarp::os::Bytes& bytes) {
     if (have_result) {
         memcpy(bytes.get(),out.getRawImage(),bytes.length());
         return true;
