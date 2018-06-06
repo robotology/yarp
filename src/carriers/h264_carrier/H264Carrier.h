@@ -76,7 +76,7 @@ public:
     // this is important - flips expected flow of messages
     virtual bool isPush() const override;
 
-    virtual std::string toString() override;
+    virtual std::string toString() const override;
 
     virtual void getHeader(const Bytes& header) override;
 

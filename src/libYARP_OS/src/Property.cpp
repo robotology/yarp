@@ -67,7 +67,7 @@ public:
         }
     }
 
-    std::string toString() {
+    std::string toString() const {
         flush();
         return bot.toString();
     }
@@ -684,10 +684,10 @@ public:
         }
     }
 
-    std::string toString() {
+    std::string toString() const {
         Bottle bot;
-        for (std::map<std::string, PropertyItem>::iterator it = data.begin(); it != data.end(); ++it) {
-            PropertyItem& rec = it->second;
+        for (std::map<std::string, PropertyItem>::const_iterator it = data.begin(); it != data.end(); ++it) {
+            const PropertyItem& rec = it->second;
             Bottle& sub = bot.addList();
             rec.flush();
             sub.copy(rec.bot);

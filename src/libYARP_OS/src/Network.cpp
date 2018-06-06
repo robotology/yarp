@@ -1677,7 +1677,7 @@ public:
         return getContent().expectAck(proto);
     }
 
-    virtual std::string toString() override {
+    virtual std::string toString() const override {
         return getContent().toString();
     }
 

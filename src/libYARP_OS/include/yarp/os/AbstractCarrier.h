@@ -72,7 +72,7 @@ public:
     // Documented in Carrier
     virtual bool isLocal() const override;
     // Documented in Carrier
-    virtual std::string toString() override;
+    virtual std::string toString() const override;
 
     // Documented in Carrier
     virtual bool isActive() const override;

@@ -29,7 +29,7 @@ public:
 
     bool lookupTopic(const std::string& name);
 
-    std::string toString() {
+    std::string toString() const {
         char buf[1000];
         sprintf(buf,"/%s:%d/", hostname.c_str(), portnum);
         return buf;

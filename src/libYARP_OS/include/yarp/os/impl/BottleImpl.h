@@ -69,7 +69,7 @@ public:
     void clear();
 
     void fromString(const std::string& line);
-    std::string toString();
+    std::string toString() const;
     size_t size() const;
 
     bool read(ConnectionReader& reader);

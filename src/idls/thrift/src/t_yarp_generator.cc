@@ -1074,7 +1074,7 @@ void t_yarp_generator::generate_enum(t_enum* tenum) {
   f_types_ << "public:" << endl;
   indent_up();
   indent(f_types_) << "virtual int fromString(const std::string& input) override;" << endl;
-  indent(f_types_) << "virtual std::string toString(int input) override;" << endl;
+  indent(f_types_) << "virtual std::string toString(int input) const override;" << endl;
   indent_down();
   f_types_ << "};" << endl;
   f_types_ << endl;
@@ -1096,7 +1096,7 @@ void t_yarp_generator::generate_enum(t_enum* tenum) {
   os << "}" << endl;
 
 
-  os << "std::string " << enum_name << "Vocab::toString(int input) {" << endl;
+  os << "std::string " << enum_name << "Vocab::toString(int input) const {" << endl;
   indent_up();
   indent(os) << "switch((" << enum_name << ")input) {" << endl;
   for (vector<t_enum_value*>::const_iterator c_iter = constants.begin();
@@ -1398,7 +1398,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent_up();
 
   f_stt_ << endl;
-  indent(f_stt_) << "std::string toString();"
+  indent(f_stt_) << "std::string toString() const;"
                  << endl;
 
   f_stt_ << endl;
@@ -1855,7 +1855,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   }
 
   indent(f_cpp_) << "std::string " << name
-                 << "::toString() {"
+                 << "::toString() const {"
                  << endl;
   indent_up();
   indent(f_cpp_) << "yarp::os::Bottle b;" << endl;

@@ -55,7 +55,7 @@ public:
         return false;
     }
 
-    virtual std::string toString() override {
+    virtual std::string toString() const override {
         return "humans are handy";
     }
 

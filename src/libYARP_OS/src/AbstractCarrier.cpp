@@ -61,7 +61,7 @@ bool AbstractCarrier::isLocal() const
     return false;
 }
 
-std::string AbstractCarrier::toString()
+std::string AbstractCarrier::toString() const
 {
     return getName();
 }

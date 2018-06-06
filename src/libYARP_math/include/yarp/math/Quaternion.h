@@ -42,7 +42,7 @@ public:
     double& z() ;
     double& w() ;
 
-    std::string toString(int precision = -1, int width = -1);
+    std::string toString(int precision = -1, int width = -1) const;
 
     /**
     * Computes the modulus of the quaternion.

@@ -77,7 +77,7 @@ bool H264Carrier::isPush() const
     return false;
 }
 
-std::string H264Carrier::toString()
+std::string H264Carrier::toString() const
 {
     return "h264_carrier";
 }

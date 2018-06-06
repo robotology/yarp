@@ -310,7 +310,7 @@ private:
             return base;
         }
 
-        std::string toString()
+        std::string toString() const
         {
             std::string base = "";
             for (unsigned int i=0; i<prop.size(); i++) {

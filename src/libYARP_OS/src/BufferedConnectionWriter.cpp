@@ -474,7 +474,7 @@ void BufferedConnectionWriter::setInitialPoolSize(size_t size)
 }
 
 
-std::string BufferedConnectionWriter::toString()
+std::string BufferedConnectionWriter::toString() const
 {
     stopWrite();
     size_t total_size = dataSize();

@@ -29,7 +29,7 @@ public:
 
     StringOutputStream() { }
 
-    std::string toString() {
+    std::string toString() const {
         return data;
     }
 

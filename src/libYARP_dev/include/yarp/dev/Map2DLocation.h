@@ -54,7 +54,7 @@ namespace yarp
             * Returns text representation of the location.
             * @return a human readable string containing the location infos.
             */
-            std::string toString()
+            std::string toString() const
             {
                 std::ostringstream stringStream;
                 stringStream.precision(-1);

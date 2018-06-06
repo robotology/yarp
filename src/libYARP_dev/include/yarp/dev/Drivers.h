@@ -39,7 +39,7 @@ public:
      * Returns a simple description of devices the factory can make.
      * @return a description of what this factory makes
      */
-    virtual std::string toString() = 0;
+    virtual std::string toString() const = 0;
 
     /**
      * Create a device.
@@ -104,7 +104,7 @@ public:
     {
     }
 
-    virtual std::string toString() override {
+    virtual std::string toString() const override {
         return desc;
     }
 
@@ -140,7 +140,7 @@ public:
     {
     }
 
-    virtual std::string toString() override {
+    virtual std::string toString() const override {
         return desc;
     }
 
@@ -218,7 +218,7 @@ public:
      * A description of the available devices.
      * @return a description of the available devices.
      */
-    virtual std::string toString();
+    virtual std::string toString() const;
 
     /**
      * Destructor.

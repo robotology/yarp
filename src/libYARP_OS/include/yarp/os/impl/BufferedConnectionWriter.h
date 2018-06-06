@@ -230,7 +230,7 @@ public:
     /**
      * @return the message serialized as a string
      */
-    std::string toString();
+    std::string toString() const;
 
 
 private:

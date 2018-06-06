@@ -71,7 +71,7 @@ namespace yarp
             {
                 return e_level;
             }
-            std::string toString()
+            std::string toString() const
             {
                 if (e_level == 0) { return "<UNDEFINED>"; }
                 if (e_level == 1) { return "<TRACE>"; }

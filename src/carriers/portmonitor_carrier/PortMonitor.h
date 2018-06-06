@@ -83,7 +83,7 @@ public:
         return "portmonitor";
     }
 
-    virtual std::string toString() override {
+    virtual std::string toString() const override {
         return "portmonitor_carrier";
     }
 

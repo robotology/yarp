@@ -296,7 +296,7 @@ bool BottleImpl::isComplete(const char* txt)
 }
 
 
-std::string BottleImpl::toString()
+std::string BottleImpl::toString() const
 {
     std::string result = "";
     for (unsigned int i = 0; i < content.size(); i++) {

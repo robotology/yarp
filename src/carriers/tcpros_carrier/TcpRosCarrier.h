@@ -117,7 +117,7 @@ public:
         return false;
     }
 
-    virtual std::string toString() override {
+    virtual std::string toString() const override {
         return isService?"rossrv_carrier":"tcpros_carrier";
     }
 

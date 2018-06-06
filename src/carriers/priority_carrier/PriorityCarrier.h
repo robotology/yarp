@@ -122,7 +122,7 @@ public:
         return "priority";
     }
 
-    virtual std::string toString() override {
+    virtual std::string toString() const override {
         return "priority_carrier";
     }
 

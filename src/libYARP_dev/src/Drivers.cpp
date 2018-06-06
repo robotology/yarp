@@ -249,7 +249,7 @@ Drivers::~Drivers() {
     }
 }
 
-std::string Drivers::toString() {
+std::string Drivers::toString() const {
     return HELPER(implementation).toString();
 }
 

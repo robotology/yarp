@@ -69,7 +69,7 @@ public:
     virtual void close() override {
     }
 
-    virtual std::string toString() {
+    virtual std::string toString() const {
         return data;
     }
 
