@@ -362,12 +362,12 @@ void AbstractCarrier::writeYarpInt(int n, ConnectionState& proto)
 int AbstractCarrier::interpretYarpNumber(const yarp::os::Bytes& b)
 {
     if (b.length()==8) {
-        char *base = b.get();
+        const char *base = b.get();
         if (base[0]=='Y' &&
             base[1]=='A' &&
             base[6]=='R' &&
             base[7]=='P') {
-            yarp::os::Bytes b2(b.get()+2, 4);
+            yarp::os::Bytes b2(const_cast<char*>(b.get())+2, 4);
             int x = NetType::netInt(b2);
             return x;
         }

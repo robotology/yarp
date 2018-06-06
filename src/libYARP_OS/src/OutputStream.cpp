@@ -20,7 +20,8 @@ void yarp::os::OutputStream::write(char ch)
 
 void yarp::os::OutputStream::write(const Bytes& b, int offset, int len)
 {
-    write(yarp::os::Bytes(b.get() + offset, len));
+    const yarp::os::Bytes bytes(const_cast<char*>(b.get()) + offset, len);
+    write(bytes);
 }
 
 void yarp::os::OutputStream::flush()

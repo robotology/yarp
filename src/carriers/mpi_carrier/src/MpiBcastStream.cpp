@@ -115,7 +115,7 @@ void MpiBcastStream::write(const Bytes& b) {
     #endif
     int size = b.length();
     MPI_Bcast(&size, 1, MPI_INT, 0, comm->comm );
-    MPI_Bcast(b.get(), size, MPI_BYTE, 0, comm->comm );
+    MPI_Bcast((void*)b.get(), size, MPI_BYTE, 0, comm->comm );
     comm->sema.post();
 
     #ifdef MPI_DEBUG
