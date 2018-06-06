@@ -218,7 +218,7 @@ public:
      * @return a buffer if one is present.
      *
      */
-    virtual SizedWriter *getBuffer() = 0;
+    virtual SizedWriter *getBuffer() const = 0;
 
 
     virtual void appendRawString(const std::string& str) {

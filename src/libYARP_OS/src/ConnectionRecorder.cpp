@@ -289,7 +289,7 @@ const yarp::os::Searchable& yarp::os::impl::ConnectionRecorder::getConnectionMod
 }
 
 
-yarp::os::SizedWriter* yarp::os::impl::ConnectionRecorder::getBuffer()
+yarp::os::SizedWriter* yarp::os::impl::ConnectionRecorder::getBuffer() const
 {
     return nullptr;
 }

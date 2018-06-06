@@ -91,7 +91,7 @@ public:
     virtual bool write(yarp::os::ConnectionWriter& connection) override;
     virtual void requestDrop() override;
     virtual const yarp::os::Searchable& getConnectionModifiers() const override;
-    virtual yarp::os::SizedWriter* getBuffer() override;
+    virtual yarp::os::SizedWriter* getBuffer() const override;
     virtual bool setSize(size_t len) override;
 };
 

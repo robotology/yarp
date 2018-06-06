@@ -462,9 +462,9 @@ void BufferedConnectionWriter::stopWrite() const
     applyConvertTextMode();
 }
 
-SizedWriter* BufferedConnectionWriter::getBuffer()
+SizedWriter* BufferedConnectionWriter::getBuffer() const
 {
-    return this;
+    return const_cast<BufferedConnectionWriter*>(this);
 }
 
 

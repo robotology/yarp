@@ -216,7 +216,7 @@ public:
     virtual void stopWrite() const override;
 
     // defined by yarp::os::ConnectionWriter
-    virtual SizedWriter* getBuffer() override;
+    virtual SizedWriter* getBuffer() const override;
 
     /**
      * Set a custom initial pool size, which affects the size of buffers

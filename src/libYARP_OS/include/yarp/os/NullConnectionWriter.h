@@ -45,7 +45,7 @@ public:
     virtual bool isError() const override;
     virtual void requestDrop() override;
     virtual bool isNull() const override;
-    virtual SizedWriter *getBuffer() override;
+    virtual SizedWriter *getBuffer() const override;
 };
 
 #endif // YARP_OS_NULLCONNECTIONWRITER_H
