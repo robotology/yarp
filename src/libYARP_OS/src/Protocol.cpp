@@ -176,7 +176,7 @@ std::string Protocol::getSenderSpecifier()
 }
 
 
-const std::string& Protocol::getEnvelope()
+const std::string& Protocol::getEnvelope() const
 {
     return envelope;
 }

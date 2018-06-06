@@ -136,7 +136,7 @@ public:
     /**
      * Read the envelope associated with the current message.
      */
-    virtual const std::string& getEnvelope() = 0;
+    virtual const std::string& getEnvelope() const = 0;
 };
 
 #endif // YARP_OS_CONNECTIONSTATE_H
