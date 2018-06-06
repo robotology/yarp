@@ -65,7 +65,7 @@ public:
      *
      * @return the name of the C++ class associated with this device.
      */
-    virtual std::string getCode() = 0;
+    virtual std::string getCode() const = 0;
 
     /**
      * For "links" to other devices.
@@ -116,7 +116,7 @@ public:
         return wrap;
     }
 
-    virtual std::string getCode() override {
+    virtual std::string getCode() const override {
         return code;
     }
 
@@ -152,7 +152,7 @@ public:
         return wrap;
     }
 
-    virtual std::string getCode() override {
+    virtual std::string getCode() const override {
         return code;
     }
 

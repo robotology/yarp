@@ -55,7 +55,7 @@ public:
         return "(link)";
     }
 
-    virtual std::string getCode() override {
+    virtual std::string getCode() const override {
         return "DriverLinkCreator";
     }
 
