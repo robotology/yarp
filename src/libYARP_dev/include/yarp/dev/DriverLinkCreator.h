@@ -51,7 +51,7 @@ public:
         return name;
     }
 
-    virtual std::string getWrapper() override {
+    virtual std::string getWrapper() const override {
         return "(link)";
     }
 

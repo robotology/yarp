@@ -58,7 +58,7 @@ public:
      * @return the common name of the device that can wrap this one
      * for the network.
      */
-    virtual std::string getWrapper() = 0;
+    virtual std::string getWrapper() const = 0;
 
     /**
      * Get the name of the C++ class associated with this device.
@@ -112,7 +112,7 @@ public:
         return desc;
     }
 
-    virtual std::string getWrapper() override {
+    virtual std::string getWrapper() const override {
         return wrap;
     }
 
@@ -148,7 +148,7 @@ public:
         return desc;
     }
 
-    virtual std::string getWrapper() override {
+    virtual std::string getWrapper() const override {
         return wrap;
     }
 
