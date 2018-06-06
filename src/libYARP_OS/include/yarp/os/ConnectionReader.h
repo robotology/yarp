@@ -45,7 +45,7 @@ public:
      *
      * @return true on success
      */
-    virtual bool expectBlock(const char *data, size_t len) = 0;
+    virtual bool expectBlock(char *data, size_t len) = 0;
 
     /**
      * Read some text from the network connection.

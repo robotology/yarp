@@ -9,7 +9,7 @@
 #include <yarp/os/NullConnectionReader.h>
 
 
-bool yarp::os::NullConnectionReader::expectBlock(const char *data, size_t len)
+bool yarp::os::NullConnectionReader::expectBlock(char *data, size_t len)
 {
     YARP_UNUSED(data);
     YARP_UNUSED(len);

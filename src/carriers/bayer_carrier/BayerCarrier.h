@@ -105,7 +105,7 @@ public:
     ////////////////////////////////////////////////////////////////////////
     // ConnectionReader methods
 
-    virtual bool expectBlock(const char *data, size_t len) override {
+    virtual bool expectBlock(char *data, size_t len) override {
         return local->expectBlock(data,len);
     }
 

@@ -54,7 +54,7 @@ bool yarp::os::impl::ConnectionRecorder::hasReply() const
     return wrote;
 }
 
-bool yarp::os::impl::ConnectionRecorder::expectBlock(const char* data, size_t len)
+bool yarp::os::impl::ConnectionRecorder::expectBlock(char* data, size_t len)
 {
     bool ok = reader->expectBlock(data, len);
     if (ok) {

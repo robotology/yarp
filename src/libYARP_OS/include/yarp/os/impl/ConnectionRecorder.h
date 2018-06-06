@@ -56,7 +56,7 @@ public:
     const yarp::os::impl::BufferedConnectionWriter& getReply() const;
     bool hasReply() const;
 
-    virtual bool expectBlock(const char* data, size_t len) override;
+    virtual bool expectBlock(char* data, size_t len) override;
     virtual std::string expectText(int terminatingChar) override;
     virtual std::int8_t expectInt8() override;
     virtual std::int16_t expectInt16() override;

@@ -371,7 +371,7 @@ bool WireReader::readString(std::string& str, bool *is_vocab)
         return false;
     }
     str.resize(len);
-    reader.expectBlock((const char *)str.c_str(), len);
+    reader.expectBlock(const_cast<char*>(str.data()), len);
 #ifndef YARP_NO_DEPRECATED // Since YARP 2.3.72
     // This is needed for compatibility with versions of yarp before March 2015
     if (len>0) {
@@ -416,7 +416,7 @@ bool WireReader::readBinary(std::string& str)
         return false;
     }
     str.resize(len);
-    reader.expectBlock((const char *)str.c_str(), len);
+    reader.expectBlock(const_cast<char*>(str.data()), len);
     return !reader.isError();
 }
 
@@ -454,7 +454,7 @@ bool WireReader::readEnum(std::int32_t& x, WireVocab& converter)
         }
         std::string str;
         str.resize(len);
-        reader.expectBlock((const char *)str.c_str(), len);
+        reader.expectBlock(const_cast<char*>(str.data()), len);
         str.resize(len-1);
         state->len--;
         if (reader.isError()) {

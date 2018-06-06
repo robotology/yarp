@@ -28,7 +28,7 @@ class YARP_OS_API yarp::os::NullConnectionReader : public ConnectionReader {
 private:
     Value blank;
 public:
-    virtual bool expectBlock(const char *data, size_t len) override;
+    virtual bool expectBlock(char *data, size_t len) override;
     virtual std::string expectText(int terminatingChar = '\n') override;
     virtual std::int8_t expectInt8() override;
     virtual std::int16_t expectInt16() override;

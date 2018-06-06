@@ -81,7 +81,7 @@ bool StreamConnectionReader::dropRequested()
     return shouldDrop;
 }
 
-bool StreamConnectionReader::expectBlock(const Bytes &b)
+bool StreamConnectionReader::expectBlock(Bytes &b)
 {
     if (!isGood()) {
         return false;
@@ -251,9 +251,10 @@ yarp::conf::float64_t StreamConnectionReader::expectFloat64()
     return expectType<yarp::conf::float64_t, NetFloat64>();
 }
 
-bool StreamConnectionReader::expectBlock(const char *data, size_t len)
+bool StreamConnectionReader::expectBlock(char *data, size_t len)
 {
-    return expectBlock(yarp::os::Bytes((char*)data, len));
+    yarp::os::Bytes bytes(data, len);
+    return expectBlock(bytes);
 }
 
 std::string StreamConnectionReader::expectText(int terminatingChar)
