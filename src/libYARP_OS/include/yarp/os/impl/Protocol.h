@@ -51,7 +51,7 @@ public:
     virtual TwoWayStream* giveStreams() override;
     virtual bool checkStreams() const override;
     virtual void setReference(yarp::os::Portable* ref) override;
-    virtual std::string getSenderSpecifier() override;
+    virtual std::string getSenderSpecifier() const override;
     virtual const std::string& getEnvelope() const override;
     virtual Log& getLog() const override;
     virtual void setRemainingLength(int len) override;

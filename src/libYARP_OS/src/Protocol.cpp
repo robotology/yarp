@@ -147,7 +147,7 @@ void Protocol::setReference(yarp::os::Portable* ref)
 }
 
 
-std::string Protocol::getSenderSpecifier()
+std::string Protocol::getSenderSpecifier() const
 {
     Route r = getRoute();
     // We pull the sender name from the route.

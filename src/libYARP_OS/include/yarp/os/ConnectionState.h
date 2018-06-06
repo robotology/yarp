@@ -78,7 +78,7 @@ public:
      * Extract a name for the sender, if the connection
      * type supports that.
      */
-    virtual std::string getSenderSpecifier() = 0;
+    virtual std::string getSenderSpecifier() const = 0;
 
     /**
      * Access the streams associated with the connection.
