@@ -84,12 +84,12 @@ public:
         in.add(str);
     }
 
-    std::string getOutputText()
+    std::string getOutputText() const
     {
         return out.toString();
     }
 
-    std::string getInputText()
+    std::string getInputText() const
     {
         return in.toString();
     }
