@@ -109,7 +109,7 @@ public:
      * @return the wrapped stream (which after this call will remain
      * this container's responsibility - compare with giveStream).
      */
-    virtual TwoWayStream *getStream() {
+    virtual TwoWayStream *getStream() const {
         return stream;
     }
 
