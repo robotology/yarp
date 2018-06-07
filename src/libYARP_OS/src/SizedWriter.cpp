@@ -24,7 +24,7 @@ void yarp::os::SizedWriter::write(OutputStream& os)
     }
 }
 
-bool yarp::os::SizedWriter::write(ConnectionWriter& connection)
+bool yarp::os::SizedWriter::write(ConnectionWriter& connection) const
 {
     for (size_t i = 0; i < length(); i++) {
         connection.appendBlock((char*)data(i), length(i));

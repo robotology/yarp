@@ -312,7 +312,7 @@ public:
      * @param writer the interface to the network connection for writing
      * @result true iff the representation was written successfully.
      */
-    bool write(ConnectionWriter& writer) override;
+    bool write(ConnectionWriter& writer) const override;
 
     /**
      * Set the bottle's value based on input from a network connection.

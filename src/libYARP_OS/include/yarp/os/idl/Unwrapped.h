@@ -32,7 +32,7 @@ public:
         return content.read(wreader);
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) override {
+    virtual bool write(yarp::os::ConnectionWriter& writer) const override {
         WireWriter wwriter(writer);
         return content.write(wwriter);
     }
@@ -50,7 +50,7 @@ public:
         return content.read(wreader);
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) override {
+    virtual bool write(yarp::os::ConnectionWriter& writer) const override {
         WireWriter wwriter(writer);
         return content.write(wwriter);
     }

@@ -138,7 +138,7 @@ public:
 
     bool read(ConnectionReader& reader) override;
 
-    bool write(ConnectionWriter& writer) override;
+    bool write(ConnectionWriter& writer) const override;
 
     /**
      *

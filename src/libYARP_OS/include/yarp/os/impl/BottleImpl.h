@@ -73,7 +73,7 @@ public:
     size_t size() const;
 
     bool read(ConnectionReader& reader);
-    bool write(ConnectionWriter& writer);
+    bool write(ConnectionWriter& writer) const;
 
     void onCommencement();
 

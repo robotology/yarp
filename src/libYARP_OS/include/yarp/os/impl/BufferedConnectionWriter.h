@@ -169,7 +169,7 @@ public:
     virtual size_t headerLength() const override;
     virtual size_t length(size_t index) const override;
     virtual const char* data(size_t index) const override;
-    virtual bool write(ConnectionWriter& connection) override;
+    virtual bool write(ConnectionWriter& connection) const override;
     virtual void write(OutputStream& os) override;
 
     /**

@@ -15,7 +15,7 @@ bool yarp::os::idl::WirePortable::read(yarp::os::idl::WireReader& reader) {
     return false;
 }
 
-bool yarp::os::idl::WirePortable::write(yarp::os::idl::WireWriter& writer) {
+bool yarp::os::idl::WirePortable::write(const yarp::os::idl::WireWriter& writer) const {
     YARP_UNUSED(writer);
     return false;
 }

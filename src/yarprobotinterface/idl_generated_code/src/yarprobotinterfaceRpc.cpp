@@ -18,7 +18,7 @@ class yarprobotinterfaceRpc_get_phase : public yarp::os::Portable {
 public:
   std::string _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -26,7 +26,7 @@ class yarprobotinterfaceRpc_get_level : public yarp::os::Portable {
 public:
   std::int32_t _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -34,7 +34,7 @@ class yarprobotinterfaceRpc_get_robot : public yarp::os::Portable {
 public:
   std::string _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -42,7 +42,7 @@ class yarprobotinterfaceRpc_is_ready : public yarp::os::Portable {
 public:
   bool _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -50,7 +50,7 @@ class yarprobotinterfaceRpc_quit : public yarp::os::Portable {
 public:
   std::string _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -58,7 +58,7 @@ class yarprobotinterfaceRpc_bye : public yarp::os::Portable {
 public:
   std::string _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -66,11 +66,11 @@ class yarprobotinterfaceRpc_exit : public yarp::os::Portable {
 public:
   std::string _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-bool yarprobotinterfaceRpc_get_phase::write(yarp::os::ConnectionWriter& connection) {
+bool yarprobotinterfaceRpc_get_phase::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("get_phase",1,2)) return false;
@@ -91,7 +91,7 @@ void yarprobotinterfaceRpc_get_phase::init() {
   _return = "";
 }
 
-bool yarprobotinterfaceRpc_get_level::write(yarp::os::ConnectionWriter& connection) {
+bool yarprobotinterfaceRpc_get_level::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("get_level",1,2)) return false;
@@ -112,7 +112,7 @@ void yarprobotinterfaceRpc_get_level::init() {
   _return = 0;
 }
 
-bool yarprobotinterfaceRpc_get_robot::write(yarp::os::ConnectionWriter& connection) {
+bool yarprobotinterfaceRpc_get_robot::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("get_robot",1,2)) return false;
@@ -133,7 +133,7 @@ void yarprobotinterfaceRpc_get_robot::init() {
   _return = "";
 }
 
-bool yarprobotinterfaceRpc_is_ready::write(yarp::os::ConnectionWriter& connection) {
+bool yarprobotinterfaceRpc_is_ready::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("is_ready",1,2)) return false;
@@ -154,7 +154,7 @@ void yarprobotinterfaceRpc_is_ready::init() {
   _return = false;
 }
 
-bool yarprobotinterfaceRpc_quit::write(yarp::os::ConnectionWriter& connection) {
+bool yarprobotinterfaceRpc_quit::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("quit",1,1)) return false;
@@ -175,7 +175,7 @@ void yarprobotinterfaceRpc_quit::init() {
   _return = "";
 }
 
-bool yarprobotinterfaceRpc_bye::write(yarp::os::ConnectionWriter& connection) {
+bool yarprobotinterfaceRpc_bye::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("bye",1,1)) return false;
@@ -196,7 +196,7 @@ void yarprobotinterfaceRpc_bye::init() {
   _return = "";
 }
 
-bool yarprobotinterfaceRpc_exit::write(yarp::os::ConnectionWriter& connection) {
+bool yarprobotinterfaceRpc_exit::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("exit",1,1)) return false;

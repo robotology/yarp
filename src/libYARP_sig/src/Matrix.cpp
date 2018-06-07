@@ -140,7 +140,7 @@ bool Matrix::read(yarp::os::ConnectionReader& connection) {
 }
 
 
-bool Matrix::write(yarp::os::ConnectionWriter& connection) {
+bool Matrix::write(yarp::os::ConnectionWriter& connection) const {
     MatrixPortContentHeader header;
 
     //header.totalLen = sizeof(header)+sizeof(double)*this->size();

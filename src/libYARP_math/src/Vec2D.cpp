@@ -77,7 +77,7 @@ bool Vec2D<int>::read(yarp::os::ConnectionReader& connection)
 }
 
 template<>
-bool Vec2D<double>::write(yarp::os::ConnectionWriter& connection)
+bool Vec2D<double>::write(yarp::os::ConnectionWriter& connection) const
 {
     Vec2DPortContentHeader header;
 
@@ -95,7 +95,7 @@ bool Vec2D<double>::write(yarp::os::ConnectionWriter& connection)
 }
 
 template<>
-bool Vec2D<int>::write(yarp::os::ConnectionWriter& connection)
+bool Vec2D<int>::write(yarp::os::ConnectionWriter& connection) const
 {
     Vec2DPortContentHeader header;
 

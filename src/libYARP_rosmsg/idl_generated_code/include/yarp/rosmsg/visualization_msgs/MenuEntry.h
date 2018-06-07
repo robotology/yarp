@@ -189,7 +189,7 @@ public:
                                         : readBottle(connection));
     }
 
-    bool writeBare(yarp::os::ConnectionWriter& connection) override
+    bool writeBare(yarp::os::ConnectionWriter& connection) const override
     {
         // *** id ***
         connection.appendInt32(id);
@@ -211,7 +211,7 @@ public:
         return !connection.isError();
     }
 
-    bool writeBottle(yarp::os::ConnectionWriter& connection) override
+    bool writeBottle(yarp::os::ConnectionWriter& connection) const override
     {
         connection.appendInt32(BOTTLE_TAG_LIST);
         connection.appendInt32(8);
@@ -243,7 +243,7 @@ public:
     }
 
     using yarp::os::idl::WirePortable::write;
-    bool write(yarp::os::ConnectionWriter& connection) override
+    bool write(yarp::os::ConnectionWriter& connection) const override
     {
         return (connection.isBareMode() ? writeBare(connection)
                                         : writeBottle(connection));

@@ -1049,7 +1049,7 @@ bool Property::read(ConnectionReader& reader) {
 }
 
 
-bool Property::write(ConnectionWriter& writer) {
+bool Property::write(ConnectionWriter& writer) const {
     // for now just delegate to Bottle
     Bottle b(toString());
     return b.write(writer);

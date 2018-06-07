@@ -99,7 +99,7 @@ bool SystemInfoSerializer::read(yarp::os::ConnectionReader& connection)
 }
 
 
-bool SystemInfoSerializer::write(yarp::os::ConnectionWriter& connection)
+bool SystemInfoSerializer::write(yarp::os::ConnectionWriter& connection) const
 {
     mPriv->updateSystemInfo();
 

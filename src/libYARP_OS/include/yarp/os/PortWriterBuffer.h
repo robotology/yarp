@@ -48,7 +48,7 @@ public:
                             void *tracker) :
         creator(creator), tracker(tracker) {}
 
-    virtual bool write(ConnectionWriter& connection) override {
+    virtual bool write(ConnectionWriter& connection) const override {
         return writer.write(connection);
     }
 

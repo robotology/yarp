@@ -133,7 +133,7 @@ bool Quaternion::read(yarp::os::ConnectionReader& connection)
     return !connection.isError();
 }
 
-bool Quaternion::write(yarp::os::ConnectionWriter& connection)
+bool Quaternion::write(yarp::os::ConnectionWriter& connection) const
 {
     QuaternionPortContentHeader header;
 

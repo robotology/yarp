@@ -309,7 +309,7 @@ public:
      * Write image to a connection.
      * @return true iff image was written correctly
      */
-    virtual bool write(yarp::os::ConnectionWriter& connection) override;
+    virtual bool write(yarp::os::ConnectionWriter& connection) const override;
 
     void setQuantum(size_t imgQuantum);
 

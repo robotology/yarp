@@ -186,7 +186,7 @@ const char* Bottle::toBinary(size_t* size)
     return implementation->getBytes();
 }
 
-bool Bottle::write(ConnectionWriter& writer)
+bool Bottle::write(ConnectionWriter& writer) const
 {
     return implementation->write(writer);
 }

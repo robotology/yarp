@@ -180,7 +180,7 @@ bool ManagedBytes::read(ConnectionReader& reader) {
     return reader.expectBlock(get(), length());
 }
 
-bool ManagedBytes::write(ConnectionWriter& writer) {
+bool ManagedBytes::write(ConnectionWriter& writer) const {
     writer.appendInt32(BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB);
     writer.appendInt32(1);
     writer.appendInt32(static_cast<std::int32_t>(length()));

@@ -39,19 +39,19 @@ bool WireWriter::isNull() const {
     return writer.isNull();
 }
 
-bool WireWriter::write(WirePortable& obj) {
+bool WireWriter::write(const WirePortable& obj) const {
     return obj.write(*this);
 }
 
-bool WireWriter::write(yarp::os::PortWriter& obj) {
+bool WireWriter::write(const yarp::os::PortWriter& obj) const {
     return obj.write(writer);
 }
 
-bool WireWriter::writeNested(WirePortable& obj) {
+bool WireWriter::writeNested(const WirePortable& obj) const {
     return obj.write(writer);
 }
 
-bool WireWriter::writeNested(yarp::os::PortWriter& obj) {
+bool WireWriter::writeNested(const yarp::os::PortWriter& obj) const {
     return obj.write(writer);
 }
 

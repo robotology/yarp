@@ -420,7 +420,7 @@ void BottleImpl::onCommencement()
     synch();
 }
 
-bool BottleImpl::write(ConnectionWriter& writer)
+bool BottleImpl::write(ConnectionWriter& writer) const
 {
     // could simplify this if knew lengths of blocks up front
     if (writer.isTextMode()) {

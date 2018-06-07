@@ -294,7 +294,7 @@ bool Value::read(ConnectionReader& connection)
     return s->readRaw(connection);
 }
 
-bool Value::write(ConnectionWriter& connection)
+bool Value::write(ConnectionWriter& connection) const
 {
     if (!proxy) {
         connection.appendInt32(BOTTLE_TAG_LIST);

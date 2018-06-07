@@ -202,7 +202,7 @@ bool Sound::read(ConnectionReader& connection) {
 }
 
 
-bool Sound::write(ConnectionWriter& connection) {
+bool Sound::write(ConnectionWriter& connection) const {
     // lousy format - fix soon!
     FlexImage& img = HELPER(implementation);
     Bottle bot;

@@ -1370,9 +1370,9 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
               << endl;
 
 
-  indent(out) << "bool write(yarp::os::idl::WireWriter& writer) override;"
+  indent(out) << "bool write(const yarp::os::idl::WireWriter& writer) const override;"
               << endl;
-  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) override;"
+  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) const override;"
               << endl;
 
   out << endl;
@@ -1383,8 +1383,8 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 
   for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
     string mname = (*mem_iter)->get_name();
-    indent(out) << "bool write_" << mname << "(yarp::os::idl::WireWriter& writer);" << endl;
-    indent(out) << "bool nested_write_" << mname << "(yarp::os::idl::WireWriter& writer);" << endl;
+    indent(out) << "bool write_" << mname << "(const yarp::os::idl::WireWriter& writer) const;" << endl;
+    indent(out) << "bool nested_write_" << mname << "(const yarp::os::idl::WireWriter& writer) const;" << endl;
   }
   for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
     string mname = (*mem_iter)->get_name();
@@ -1527,7 +1527,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 
   // serialize
   indent(out) << "bool read(yarp::os::ConnectionReader& connection) override;" << endl;
-  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) override;" << endl;
+  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) const override;" << endl;
 
 
   indent_down();
@@ -1672,14 +1672,14 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
       string mname = (*mem_iter)->get_name();
       indent(out) << "bool " << name
-                  << "::write_" << mname << "(yarp::os::idl::WireWriter& writer) {"
+                  << "::write_" << mname << "(const yarp::os::idl::WireWriter& writer) const {"
                   << endl;
       indent_up();
       generate_serialize_field(out, *mem_iter, "");
       indent(out) << "return true;" << endl;
       scope_down(out);
       indent(out) << "bool " << name
-                  << "::nested_write_" << mname << "(yarp::os::idl::WireWriter& writer) {"
+                  << "::nested_write_" << mname << "(const yarp::os::idl::WireWriter& writer) const {"
                   << endl;
       indent_up();
       generate_serialize_field(out, *mem_iter, "", "", true);
@@ -1688,7 +1688,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     }
 
     indent(out) << "bool " << name
-                << "::write(yarp::os::idl::WireWriter& writer) {"
+                << "::write(const yarp::os::idl::WireWriter& writer) const {"
                 << endl;
     indent_up();
     for (mem_iter=members.begin() ; mem_iter != members.end(); mem_iter++) {
@@ -1701,7 +1701,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     out << endl;
 
     indent(out) << "bool " << name
-                << "::write(yarp::os::ConnectionWriter& connection) {"
+                << "::write(yarp::os::ConnectionWriter& connection) const {"
                 << endl;
     indent_up();
     indent(out) << "yarp::os::idl::WireWriter writer(connection);"
@@ -1718,7 +1718,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     ofstream& out = f_cpp_;
 
     indent(out) << "bool " << name
-                << "::Editor::write(yarp::os::ConnectionWriter& connection) {"
+                << "::Editor::write(yarp::os::ConnectionWriter& connection) const {"
                 << endl;
     indent_up();
     indent(out) << "if (!isValid()) return false;" << endl;
@@ -2011,7 +2011,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
         }
 
         indent(f_curr_) << function_prototype(*fn_iter,false,nullptr,"init") << ";" << endl;
-        indent(f_curr_) << "virtual bool write(yarp::os::ConnectionWriter& connection) override;" << endl;
+        indent(f_curr_) << "virtual bool write(yarp::os::ConnectionWriter& connection) const override;" << endl;
         indent(f_curr_) << "virtual bool read(yarp::os::ConnectionReader& connection) override;" << endl;
 
         indent_down();
@@ -2033,7 +2033,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
         vector<t_field*>::iterator arg_iter;
         t_type* returntype = (*fn_iter)->get_returntype();
         t_field returnfield(returntype, "_return");
-        indent(f_curr_) << "bool " << service_name_ << "_" << fname << "::write(yarp::os::ConnectionWriter& connection) {" << endl;
+        indent(f_curr_) << "bool " << service_name_ << "_" << fname << "::write(yarp::os::ConnectionWriter& connection) const {" << endl;
         indent_up();
         yfn y((*fn_iter)->get_name());
         indent(f_curr_) << "yarp::os::idl::WireWriter writer(connection);"
@@ -2410,7 +2410,7 @@ void t_yarp_generator::generate_count_field(ofstream& out,
   } else if (type->is_container()) {
     string iter = tmp("_iter");
     out <<
-      indent() << type_name(type) << "::iterator " << iter << ";" << endl <<
+      indent() << type_name(type) << "::const_iterator " << iter << ";" << endl <<
       indent() << "for (" << iter << " = " << name  << ".begin(); " << name << " != " << name << ".end(); ++" << iter << ")" << endl;
     scope_up(out);
     out << "ct += " << iter << "->count(writer);" << endl;
@@ -2536,7 +2536,7 @@ void t_yarp_generator::generate_serialize_container(ofstream& out,
 
   string iter = tmp("_iter");
   out <<
-    indent() << type_name(ttype) << "::iterator " << iter << ";" << endl <<
+    indent() << type_name(ttype) << "::const_iterator " << iter << ";" << endl <<
     indent() << "for (" << iter << " = " << prefix  << ".begin(); " << iter << " != " << prefix << ".end(); ++" << iter << ")" << endl;
   scope_up(out);
     if (ttype->is_map()) {

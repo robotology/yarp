@@ -427,7 +427,7 @@ public:
     bool read(ConnectionReader& reader) override;
 
     // documented in Portable
-    bool write(ConnectionWriter& writer) override;
+    bool write(ConnectionWriter& writer) const override;
 
 private:
     void *implementation;

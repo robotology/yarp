@@ -344,7 +344,7 @@ const char* BufferedConnectionWriter::data(size_t index) const
     return (const char*)b.get();
 }
 
-bool BufferedConnectionWriter::write(ConnectionWriter& connection)
+bool BufferedConnectionWriter::write(ConnectionWriter& connection) const
 {
     stopWrite();
     size_t i;

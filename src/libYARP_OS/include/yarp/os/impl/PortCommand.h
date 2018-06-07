@@ -44,7 +44,7 @@ public:
         this->str = str;
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) override;
+    virtual bool write(yarp::os::ConnectionWriter& writer) const override;
     virtual bool read(yarp::os::ConnectionReader& reader) override;
 
     char getKey()

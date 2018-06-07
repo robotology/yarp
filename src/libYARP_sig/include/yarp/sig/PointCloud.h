@@ -314,7 +314,7 @@ public:
         return true;
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) override
+    virtual bool write(yarp::os::ConnectionWriter& writer) const override
     {
         writer.appendBlock((char*)&header, sizeof(PointCloudNetworkHeader));
         return data.write(writer);

@@ -262,7 +262,7 @@ void yarp::os::impl::ConnectionRecorder::setReference(yarp::os::Portable* obj)
     writer->setReference(obj);
 }
 
-bool yarp::os::impl::ConnectionRecorder::write(yarp::os::ConnectionWriter& connection)
+bool yarp::os::impl::ConnectionRecorder::write(yarp::os::ConnectionWriter& connection) const
 {
     if (hasReply()) {
         connection.appendInt32(BOTTLE_TAG_LIST); // nested structure

@@ -157,14 +157,14 @@ class ServiceTester : public Portable {
 public:
     UnitTest& owner;
     Bottle send, receive;
-    int ct;
+    mutable int ct;
 
     ServiceTester(UnitTest& owner) : owner(owner) {}
 
-    virtual bool write(ConnectionWriter& connection) override {
+    virtual bool write(ConnectionWriter& connection) const override {
         ct = 0;
         send.write(connection);
-        connection.setReplyHandler(*this);
+        connection.setReplyHandler(const_cast<ServiceTester&>(*this));
         return true;
     }
 

@@ -64,7 +64,7 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
     return !connection.isError();
 }
 
-bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
+bool VectorBase::write(yarp::os::ConnectionWriter& connection) const {
     VectorPortContentHeader header;
 
     //header.totalLen = sizeof(header)+sizeof(double)*this->size();
@@ -210,7 +210,7 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
     return !connection.isError();
 }
 
-bool Vector::write(yarp::os::ConnectionWriter& connection) {
+bool Vector::write(yarp::os::ConnectionWriter& connection) const {
     VectorPortContentHeader header;
 
     header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_FLOAT64);

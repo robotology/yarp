@@ -88,7 +88,7 @@ public:
     virtual void declareSizes(int argc, int* argv) override;
     virtual void setReplyHandler(yarp::os::PortReader& reader) override;
     virtual void setReference(yarp::os::Portable* obj) override;
-    virtual bool write(yarp::os::ConnectionWriter& connection) override;
+    virtual bool write(yarp::os::ConnectionWriter& connection) const override;
     virtual void requestDrop() override;
     virtual const yarp::os::Searchable& getConnectionModifiers() const override;
     virtual yarp::os::SizedWriter* getBuffer() const override;

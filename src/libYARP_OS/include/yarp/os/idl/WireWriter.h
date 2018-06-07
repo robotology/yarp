@@ -44,13 +44,13 @@ public:
 
     bool isNull() const;
 
-    bool write(WirePortable& obj);
+    bool write(const WirePortable& obj) const;
 
-    bool write(yarp::os::PortWriter& obj);
+    bool write(const yarp::os::PortWriter& obj) const;
 
-    bool writeNested(WirePortable& obj);
+    bool writeNested(const WirePortable& obj) const;
 
-    bool writeNested(yarp::os::PortWriter& obj);
+    bool writeNested(const yarp::os::PortWriter& obj) const;
 
     bool writeBool(bool x) const;
 

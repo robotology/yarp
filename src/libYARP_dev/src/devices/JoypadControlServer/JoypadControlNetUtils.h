@@ -50,7 +50,7 @@ struct JoyData : public yarp::os::Portable
         return !connection.isError();
     }
 
-    bool write(yarp::os::ConnectionWriter& connection) override
+    bool write(yarp::os::ConnectionWriter& connection) const override
     {
         connection.appendInt32(Buttons.length());
         connection.appendInt32(Sticks.length());
