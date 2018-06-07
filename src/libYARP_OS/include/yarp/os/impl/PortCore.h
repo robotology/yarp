@@ -518,37 +518,37 @@ public:
 
     void checkType(PortReader& reader)
     {
-        typeMutex.wait();
+        typeMutex.lock();
         if (!checkedType) {
             if (!typ.isValid()) {
                 typ = reader.getReadType();
             }
             checkedType = true;
         }
-        typeMutex.post();
+        typeMutex.unlock();
     }
 
     yarp::os::Type getType()
     {
-        typeMutex.wait();
+        typeMutex.lock();
         Type t = typ;
-        typeMutex.post();
+        typeMutex.unlock();
         return t;
     }
 
     void promiseType(const Type& typ)
     {
-        typeMutex.wait();
+        typeMutex.lock();
         this->typ = typ;
-        typeMutex.post();
+        typeMutex.unlock();
     }
 
 private:
 
     // main internal PortCore state and operations
     std::vector<PortCoreUnit *> units;  ///< list of connections
-    SemaphoreImpl stateMutex;       ///< control access to essential port state
-    SemaphoreImpl packetMutex;      ///< control access to message cache
+    SemaphoreImpl stateSema;       ///< control access to essential port state
+    yarp::os::Mutex packetMutex;      ///< control access to message cache
     SemaphoreImpl connectionChange; ///< signal changes in connections
     Logger log;  ///< message logger
     Face *face;  ///< network server
@@ -588,7 +588,7 @@ private:
     bool mutexOwned;        ///< do we own the optional callback lock
     BufferedConnectionWriter envelopeWriter; ///< storage area for envelope, if present
 
-    SemaphoreImpl typeMutex;        ///< control access to type
+    yarp::os::Mutex typeMutex;        ///< control access to type
     bool checkedType;
     Type typ;
 
