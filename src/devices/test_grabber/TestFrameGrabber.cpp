@@ -88,7 +88,7 @@ bool TestFrameGrabber::open(yarp::os::Searchable& config) {
         period = 1/freq;
     } else if (config.check("period",val,
                             "period of test images in seconds")) {
-        period = val->asFloat64();
+        period = val->asFloat64() / 1000.0;
         if(period<=0) {
             period =0;
             freq = -1;
