@@ -84,7 +84,7 @@ public:
      * This is called when the port has finished all writing operations.
      * Passes call on to head and body.
      */
-    virtual void onCompletion() override {
+    virtual void onCompletion() const override {
         head.onCompletion();
         body.onCompletion();
     }

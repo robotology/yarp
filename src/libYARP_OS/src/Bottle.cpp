@@ -191,7 +191,7 @@ bool Bottle::write(ConnectionWriter& writer) const
     return implementation->write(writer);
 }
 
-void Bottle::onCommencement()
+void Bottle::onCommencement() const
 {
     implementation->onCommencement();
 }

@@ -345,7 +345,7 @@ public:
      */
     bool read(PortWriter& writer, bool textMode = false);
 
-    void onCommencement() override;
+    void onCommencement() const override;
 
     virtual bool check(const std::string& key) const override;
 

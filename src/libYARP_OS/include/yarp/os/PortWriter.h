@@ -47,7 +47,7 @@ public:
     /**
      * This is called when the port has finished all writing operations.
      */
-    virtual void onCompletion();
+    virtual void onCompletion() const;
 
     /**
      * This is called when the port is about to begin writing operations.
@@ -55,7 +55,7 @@ public:
      * many times by YARP depending on the mix of formats and protocols
      * in use.
      */
-    virtual void onCommencement();
+    virtual void onCommencement() const;
 
     virtual yarp::os::Type getWriteType() const;
 };

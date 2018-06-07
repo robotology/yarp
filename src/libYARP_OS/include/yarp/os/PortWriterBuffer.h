@@ -52,12 +52,12 @@ public:
         return writer.write(connection);
     }
 
-    virtual void onCompletion() override {
+    virtual void onCompletion() const override {
         writer.onCompletion();
         creator.onCompletion(tracker);
     }
 
-    virtual void onCommencement() override {
+    virtual void onCommencement() const override {
         writer.onCommencement();
     }
 
