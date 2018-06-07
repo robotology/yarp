@@ -70,7 +70,7 @@ bool Carrier::modifiesOutgoingData() const
 }
 
 
-PortWriter& Carrier::modifyOutgoingData(PortWriter& writer)
+const PortWriter& Carrier::modifyOutgoingData(const PortWriter& writer)
 {
     return writer;
 }
@@ -94,7 +94,7 @@ PortReader& Carrier::modifyReply(PortReader& reader)
     return reader;
 }
 
-bool Carrier::acceptOutgoingData(PortWriter& writer)
+bool Carrier::acceptOutgoingData(const PortWriter& writer)
 {
     YARP_UNUSED(writer);
     return true;

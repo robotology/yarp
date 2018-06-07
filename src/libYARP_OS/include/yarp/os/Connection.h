@@ -200,7 +200,7 @@ public:
      * @param writer for outgoing data.
      * @return writer for modified version of outgoing data.
      */
-    virtual PortWriter& modifyOutgoingData(PortWriter& writer) = 0;
+    virtual const PortWriter& modifyOutgoingData(const PortWriter& writer) = 0;
 
     /**
      * Determine whether outgoing data should be accepted.
@@ -209,7 +209,7 @@ public:
      * @return true if data should be accepted, false if it should be
      *         discarded.
      */
-    virtual bool acceptOutgoingData(PortWriter& writer) = 0;
+    virtual bool acceptOutgoingData(const PortWriter& writer) = 0;
 
     /**
      * Check if this carrier modifies outgoing data through the
@@ -299,12 +299,12 @@ public:
         return false;
     }
 
-    virtual PortWriter& modifyOutgoingData(PortWriter& writer) override
+    virtual const PortWriter& modifyOutgoingData(const PortWriter& writer) override
     {
         return writer;
     }
 
-    virtual bool acceptOutgoingData(PortWriter& writer) override
+    virtual bool acceptOutgoingData(const PortWriter& writer) override
     {
         YARP_UNUSED(writer);
         return true;

@@ -407,7 +407,7 @@ public:
      * @param writer for outgoing data.
      * @return writer for modified version of outgoing data.
      */
-    virtual PortWriter& modifyOutgoingData(PortWriter& writer) override;
+    virtual const PortWriter& modifyOutgoingData(const PortWriter& writer) override;
 
     /**
      * Check if this carrier modifies outgoing data through the
@@ -432,7 +432,7 @@ public:
      * @return true if data should be accepted, false if it should be
      *         discarded.
      */
-    virtual bool acceptOutgoingData(PortWriter& writer) override;
+    virtual bool acceptOutgoingData(const PortWriter& writer) override;
 
     /**
      * Give carrier a shot at looking at how the connection is set up.

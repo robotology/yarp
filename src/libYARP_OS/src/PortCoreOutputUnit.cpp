@@ -281,11 +281,18 @@ bool PortCoreOutputUnit::sendHelper()
         }
 
         if (op->getConnection().isLocal()) {
-            buf.setReference(dynamic_cast<yarp::os::Portable *>
-                             (cachedWriter));
+            // WARNING Cast away const qualifier.
+            //         This may actually cause bugs when using the local carrier
+            //         with something that is actually const (i.e. that is using
+            //         some parts of memory that cannot be written.
+            yarp::os::PortWriter* pw = const_cast<yarp::os::PortWriter*>(cachedWriter);
+            yarp::os::Portable* p = dynamic_cast<yarp::os::Portable*>(pw);
+            if(p == nullptr) {
+                YARP_ERROR(Logger::get(), "PortCoreOutputUnit: cast failed.");
+                return false;
+            }
+            buf.setReference(p);
         } else {
-
-
             yAssert(cachedWriter != nullptr);
             bool ok = cachedWriter->write(buf);
             if (!ok) {

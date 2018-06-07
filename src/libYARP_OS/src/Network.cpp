@@ -1578,11 +1578,11 @@ public:
         return getContent().modifiesOutgoingData();
     }
 
-    virtual PortWriter& modifyOutgoingData(PortWriter& writer) override {
+    virtual const PortWriter& modifyOutgoingData(const PortWriter& writer) override {
         return getContent().modifyOutgoingData(writer);
     }
 
-    virtual bool acceptOutgoingData(PortWriter& writer) override {
+    virtual bool acceptOutgoingData(const PortWriter& writer) override {
         return getContent().acceptOutgoingData(writer);
     }
 

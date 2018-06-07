@@ -95,9 +95,9 @@ public:
 
     virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) override;
 
-    virtual yarp::os::PortWriter& modifyOutgoingData(yarp::os::PortWriter& writer) override;
+    virtual const yarp::os::PortWriter& modifyOutgoingData(const yarp::os::PortWriter& writer) override;
 
-    virtual bool acceptOutgoingData(yarp::os::PortWriter& wrtier) override;
+    virtual bool acceptOutgoingData(const yarp::os::PortWriter& writer) override;
 
     virtual yarp::os::PortReader& modifyReply(yarp::os::PortReader& reader) override;
 
