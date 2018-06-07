@@ -691,7 +691,7 @@ std::string NameServer::terminate(const std::string& str) {
 
 std::string NameServer::apply(const std::string& txt, const Contact& remote) {
     std::string result = "no command given";
-    mutex.wait();
+    mutex.lock();
 
     SplitString ss(txt.c_str());
     if (ss.size()>=2) {
@@ -712,7 +712,7 @@ std::string NameServer::apply(const std::string& txt, const Contact& remote) {
         //YARP_DEBUG(Logger::get(), std::string("name server request -- ") + txt);
         //YARP_DEBUG(Logger::get(), std::string("name server result  -- ") + result);
     }
-    mutex.post();
+    mutex.unlock();
     return result;
 }
 
