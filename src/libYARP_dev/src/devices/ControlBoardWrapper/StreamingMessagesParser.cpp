@@ -140,8 +140,8 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 {
                     if (stream_ICurrent)
                     {
-                        int n_joints = b.get(1).asInt32();
-                        Bottle *jlut = b.get(2).asList();
+                        int n_joints = b.get(2).asInt32();
+                        Bottle *jlut = b.get(3).asList();
                         if (((int)jlut->size() != n_joints) && ((int)cmdVector.size() != n_joints))
                         {
                             yError("Received VOCAB_CURRENT_REF_GROUP size of joints vector or currents vector does not match the selected joint number\n");
