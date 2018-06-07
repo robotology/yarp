@@ -12,6 +12,7 @@
 
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Port.h>
 
 
@@ -27,7 +28,7 @@ namespace yarp {
 class yarp::os::impl::PortCoreAdapter : public PortCore
 {
 private:
-    SemaphoreImpl stateMutex;
+    yarp::os::Mutex stateMutex;
     PortReader *readDelegate;
     PortReader *permanentReadDelegate;
     PortReader *adminReadDelegate;
