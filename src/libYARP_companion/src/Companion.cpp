@@ -15,6 +15,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Carriers.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Name.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
@@ -2244,14 +2245,14 @@ class CompanionMergeInput : public TypedReaderCallback<Bottle> {
 public:
     Contactable *port;
     Semaphore *sema;
-    Semaphore mutex;
+    Mutex mutex;
 
     Bottle value;
     Stamp stamp;
 
     CompanionMergeInput() : port(nullptr),
                             sema(nullptr),
-                            mutex(1) {
+                            mutex() {
     }
 
     void init(Contactable& port, Semaphore& sema) {
@@ -2261,10 +2262,10 @@ public:
 
     using yarp::os::TypedReaderCallback<Bottle>::onRead;
     virtual void onRead(Bottle& datum) override {
-        mutex.wait();
+        mutex.lock();
         value = datum;
         port->getEnvelope(stamp);
-        mutex.post();
+        mutex.unlock();
         sema->post();
     }
 };
@@ -2394,9 +2395,9 @@ int Companion::cmdMerge(int argc, char *argv[]) {
             Bottle &out=outPort.prepare();
             out.clear();
             for (int i = 0; i< nPorts; i++) {
-                inData[i].mutex.wait();
+                inData[i].mutex.lock();
                 out.append(inData[i].value);
-                inData[i].mutex.post();
+                inData[i].mutex.unlock();
             }
             outPort.setEnvelope(outStamp);
             outPort.write();
