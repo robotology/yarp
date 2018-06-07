@@ -352,9 +352,9 @@ bool PortCoreOutputUnit::sendHelper()
     return replied;
 }
 
-void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
+void *PortCoreOutputUnit::send(const yarp::os::PortWriter& writer,
                                yarp::os::PortReader *reader,
-                               yarp::os::PortWriter *callback,
+                               const yarp::os::PortWriter *callback,
                                void *tracker,
                                const std::string& envelopeString,
                                bool waitAfter,

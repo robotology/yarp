@@ -65,7 +65,7 @@ public:
         YARP_DEBUG(Logger::get(), "finished writes");
     }
 
-    void *get() {
+    const void* get() {
         if (callback!=nullptr) {
             // (Safe to check outside mutex)
             // oops, there is already a prepared and unwritten
@@ -94,7 +94,7 @@ public:
 
     bool release() {
         stateSema.wait();
-        PortWriter *cback = callback;
+        const PortWriter* cback = callback;
         current = nullptr;
         callback = nullptr;
         stateSema.post();
@@ -137,8 +137,8 @@ public:
             finishWrites();
         }
         stateSema.wait();
-        PortWriter *active = current;
-        PortWriter *cback = callback;
+        const PortWriter *active = current;
+        const PortWriter *cback = callback;
         current = nullptr;
         callback = nullptr;
         stateSema.post();
@@ -156,8 +156,8 @@ private:
     yarp::os::Semaphore stateSema;
     yarp::os::Semaphore completionSema;
     Port *port;
-    PortWriter *current;
-    PortWriter *callback;
+    const PortWriter *current;
+    const PortWriter *callback;
     bool finishing;
     int outCt;
 };
@@ -190,7 +190,7 @@ PortWriterBufferBase::~PortWriterBufferBase() {
 }
 
 
-void *PortWriterBufferBase::getContent() {
+const void* PortWriterBufferBase::getContent() const {
     return HELPER(implementation).get();
 }
 

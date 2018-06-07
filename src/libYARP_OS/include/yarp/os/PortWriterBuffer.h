@@ -75,7 +75,7 @@ public:
     virtual PortWriterWrapper *create(PortWriterBufferManager& man,
                                       void *tracker) = 0;
 
-    void *getContent();
+    const void* getContent() const;
 
     bool releaseContent();
 

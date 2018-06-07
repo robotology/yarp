@@ -1334,9 +1334,9 @@ bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os)
 }
 
 
-bool PortCore::send(PortWriter& writer,
+bool PortCore::send(const PortWriter& writer,
                     PortReader *reader,
-                    PortWriter *callback)
+                    const PortWriter *callback)
 {
     // check if there is any modifier
     // we need to protect this part while the modifier
@@ -1358,10 +1358,10 @@ bool PortCore::send(PortWriter& writer,
     return sendHelper(writer, PORTCORE_SEND_NORMAL, reader, callback);
 }
 
-bool PortCore::sendHelper(PortWriter& writer,
+bool PortCore::sendHelper(const PortWriter& writer,
                           int mode,
                           PortReader *reader,
-                          PortWriter *callback)
+                          const PortWriter *callback)
 {
     if (interrupted||finishing) return false;
 

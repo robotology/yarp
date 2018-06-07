@@ -146,15 +146,15 @@ void yarp::os::AbstractContactable::releaseProperties(Property *prop)
     asPort().releaseProperties(prop);
 }
 
-bool yarp::os::AbstractContactable::write(PortWriter& writer,
-                                          PortWriter* callback) const
+bool yarp::os::AbstractContactable::write(const PortWriter& writer,
+                                          const PortWriter* callback) const
 {
     return asPort().write(writer, callback);
 }
 
-bool yarp::os::AbstractContactable::write(PortWriter& writer,
+bool yarp::os::AbstractContactable::write(const PortWriter& writer,
                                           PortReader& reader,
-                                          PortWriter *callback) const
+                                          const PortWriter *callback) const
 {
     return asPort().write(writer, reader, callback);
 }
