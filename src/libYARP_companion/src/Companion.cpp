@@ -1658,7 +1658,7 @@ int Companion::disconnect(const char *src, const char *dest, bool silent) {
 // just a temporary implementation until real ports are available
 class BottleReader : public PortReader {
 private:
-    SemaphoreImpl done;
+    yarp::os::Semaphore done;
     bool raw;
     bool env;
     Contact address;

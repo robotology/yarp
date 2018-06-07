@@ -11,7 +11,7 @@
 #define YARP_OS_IMPL_PORTCORE_H
 
 #include <yarp/os/impl/ThreadImpl.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
+#include <yarp/os/Semaphore.h>
 #include <yarp/os/Carriers.h>
 #include <yarp/os/Contactable.h>
 #include <yarp/os/Contact.h>
@@ -549,7 +549,7 @@ private:
     std::vector<PortCoreUnit *> units;  ///< list of connections
     SemaphoreImpl stateSema;       ///< control access to essential port state
     yarp::os::Mutex packetMutex;      ///< control access to message cache
-    SemaphoreImpl connectionChange; ///< signal changes in connections
+    yarp::os::Semaphore connectionChange; ///< signal changes in connections
     Logger log;  ///< message logger
     Face *face;  ///< network server
     std::string name; ///< name of port

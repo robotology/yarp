@@ -7,20 +7,20 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/Os.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/Os.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/StringInputStream.h>
 
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
-#include <yarp/os/StringInputStream.h>
+#include <yarp/os/impl/PortCorePacket.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
-#include <yarp/os/impl/PortCorePacket.h>
-
 #include <list>
+#include <mutex>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -198,8 +198,8 @@ public:
 
     int ct;
     Port *port;
-    SemaphoreImpl contentSema;
-    SemaphoreImpl consumeSema;
+    yarp::os::Semaphore contentSema;
+    yarp::os::Semaphore consumeSema;
     std::mutex stateMutex;
 
     Private(PortReaderBufferBase& owner, unsigned int maxBuffer) :

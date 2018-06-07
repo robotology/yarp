@@ -9,10 +9,9 @@
 
 #include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Semaphore.h>
 
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
-
 #include <yarp/os/impl/PortCorePackets.h>
 
 using namespace yarp::os::impl;
@@ -154,8 +153,8 @@ public:
 private:
     PortWriterBufferBase& owner;
     PortCorePackets packets;
-    SemaphoreImpl stateSema;
-    SemaphoreImpl completionSema;
+    yarp::os::Semaphore stateSema;
+    yarp::os::Semaphore completionSema;
     Port *port;
     PortWriter *current;
     PortWriter *callback;

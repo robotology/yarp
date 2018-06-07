@@ -14,6 +14,7 @@
 #include <yarp/os/impl/PortCoreUnit.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/InputProtocol.h>
+#include <yarp/os/Semaphore.h>
 
 namespace yarp {
     namespace os {
@@ -89,7 +90,7 @@ public:
 
 private:
     InputProtocol *ip;
-    SemaphoreImpl phase, access;
+    yarp::os::Semaphore phase, access;
     bool closing, finished, running;
     std::string name;
     yarp::os::PortReader *localReader;
