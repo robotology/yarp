@@ -19,8 +19,8 @@
 
 #include <cstring>
 
-#define WAIT() { RUNLOG("<<<mutex.wait()") mutex.wait(); RUNLOG(">>>mutex.wait()") }
-#define POST() { RUNLOG("<<<mutex.post()") mutex.post(); RUNLOG(">>>mutex.post()") }
+#define WAIT() { RUNLOG("<<<mutex.lock()") mutex.lock(); RUNLOG(">>>mutex.lock()") }
+#define POST() { RUNLOG("<<<mutex.unlock()") mutex.unlock(); RUNLOG(">>>mutex.unlock()") }
 
 #if defined(_WIN32)
     #include <process.h>

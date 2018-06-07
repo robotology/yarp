@@ -27,6 +27,7 @@
 #include <cstdio>
 #include <yarp/run/Run.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Mutex.h>
 #include <string>
 #include <yarp/os/impl/PlatformSignal.h>
 
@@ -182,7 +183,7 @@ public:
     yarp::os::Bottle PS();
     bool IsRunning(std::string &alias);
 
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 
 protected:
     void Pack();
