@@ -25,7 +25,7 @@ using namespace yarp::os::impl;
 
 #define dbg_printf if (0) printf
 
-RosNameSpace::RosNameSpace(const Contact& contact) : mutex(1) {
+RosNameSpace::RosNameSpace(const Contact& contact) : mutex() {
     this->contact = contact;
 }
 
@@ -163,19 +163,19 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
                     cmd.addString(toRosName(nc.getNestedName()));
                     cmd.addList() = *publishers;
 
-                    mutex.wait();
+                    mutex.lock();
                     bool need_start = false;
                     if (pending.size()==0) {
-                        mutex.post();
+                        mutex.unlock();
                         stop();
                         need_start = true;
-                        mutex.wait();
+                        mutex.lock();
                     }
                     pending.addList() = cmd;
                     if (need_start) {
                         start();
                     }
-                    mutex.post();
+                    mutex.unlock();
                 }
             }
         }
@@ -651,14 +651,14 @@ Contact RosNameSpace::rosify(const Contact& contact) {
 void RosNameSpace::run() {
     int pct = 0;
     do {
-        mutex.wait();
+        mutex.lock();
         pct = pending.size();
-        mutex.post();
+        mutex.unlock();
         if (pct>0) {
-            mutex.wait();
+            mutex.lock();
             Bottle *bot = pending.get(0).asList();
             Bottle curr = *bot;
-            mutex.post();
+            mutex.unlock();
 
             dbg_printf("ROS connection begins: %s\n", curr.toString().c_str());
             ContactStyle style;
@@ -671,10 +671,10 @@ void RosNameSpace::run() {
             NetworkBase::write(contact, cmd, reply, style);
             dbg_printf("ROS connection ends: %s\n", curr.toString().c_str());
 
-            mutex.wait();
+            mutex.lock();
             pending = pending.tail();
             pct = pending.size();
-            mutex.post();
+            mutex.unlock();
         }
     } while (pct>0);
 }
