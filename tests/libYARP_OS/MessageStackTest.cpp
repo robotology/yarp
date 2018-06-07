@@ -9,6 +9,7 @@
 #include <yarp/os/MessageStack.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/impl/UnitTest.h>
 
 using namespace yarp::os::impl;
@@ -18,17 +19,17 @@ class MessageStackWorker : public PortReader {
 public:
     Semaphore go;
     Semaphore gone;
-    Semaphore mutex;
+    Mutex mutex;
     Bottle last;
 
-    MessageStackWorker() : go(0), gone(0), mutex(1) {
+    MessageStackWorker() : go(0), gone(0), mutex() {
     }
 
     virtual bool read(ConnectionReader& reader) override {
         go.wait();
-        mutex.wait();
+        mutex.lock();
         bool ok = last.read(reader);
-        mutex.post();
+        mutex.unlock();
         gone.post();
         return ok;
     }
