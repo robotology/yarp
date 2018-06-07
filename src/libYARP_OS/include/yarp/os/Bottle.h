@@ -343,7 +343,7 @@ public:
      * @param textMode true if text serialization should be used.
      * @return true iff the bottle was read successfully.
      */
-    bool read(PortWriter& writer, bool textMode = false);
+    bool read(const PortWriter& writer, bool textMode = false);
 
     void onCommencement() const override;
 

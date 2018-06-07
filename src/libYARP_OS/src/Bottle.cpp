@@ -317,7 +317,7 @@ bool Bottle::write(PortReader& reader, bool textMode)
     return reader.read(con.getReader());
 }
 
-bool Bottle::read(PortWriter& writer, bool textMode)
+bool Bottle::read(const PortWriter& writer, bool textMode)
 {
     implementation->edit();
     DummyConnector con;
