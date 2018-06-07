@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 #include <yarp/os/Network.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/BufferedPort.h>
@@ -21,7 +21,7 @@ using namespace yarp::os;
 class Callback:public BufferedPort<Bottle>
 {
 private:
-	Semaphore mutex;
+	Mutex mutex;
 	Bottle Datum;
 
 public:
@@ -33,21 +33,21 @@ public:
 
   	void onRead(Bottle &v)
 	{
-        mutex.wait(); 
+        mutex.lock(); 
         Datum=v;
         //Time::delay(5);
-        mutex.post();
+        mutex.unlock();
         fprintf(stderr, "Callback got: %s\n",Datum.toString().c_str());
     }
 
 	void lock()
 	{
-		mutex.wait();
+		mutex.lock();
 	}
 
     void unlock()
     {
-        mutex.post();
+        mutex.unlock();
     }
 
     Bottle get()

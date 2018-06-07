@@ -38,7 +38,7 @@ class QueueManager : public DeviceResponder {
 private:
     BufferedPort<Bottle> port;
     deque<Entry> q;
-    Semaphore mutex;
+    Mutex mutex;
 
     bool removeName(const char *name) {
         bool acted = false;
@@ -82,7 +82,7 @@ private:
         }
     }
 public:
-    QueueManager() : mutex(1) {
+    QueueManager() : mutex() {
         attach(port);
         Contact c("/help", "tcp", "localhost", 80);
         port.open(c);
@@ -103,7 +103,7 @@ public:
 
     virtual bool respond(const yarp::os::Bottle& command, 
                          yarp::os::Bottle& reply) {
-        mutex.wait();
+        mutex.lock();
         switch (command.get(0).asVocab()) {
         case VOCAB3('a','d','d'):
             {
@@ -161,20 +161,20 @@ public:
             break;
         default:
             updateHelp();
-            mutex.post();
+            mutex.unlock();
             return DeviceResponder::respond(command,reply);
         }
-        mutex.post();
+        mutex.unlock();
         printf("%s\n", reply.toString().c_str());
         return true;
     }
 
     void update() {
         Bottle& status = port.prepare();
-        mutex.wait();
+        mutex.lock();
         status.clear();
         addQueue(status);
-        mutex.post();
+        mutex.unlock();
         port.write();
     }
 };

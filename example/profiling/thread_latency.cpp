@@ -34,7 +34,7 @@ const double THREAD_PERIOD=0.020;
 
 class ThreadB: public Thread
 {
-    Semaphore mutex;
+    Mutex mutex;
     int iterations;
     double stamp;
     vector<double> measures;
@@ -59,7 +59,7 @@ public:
         pp.set();
 #endif
         stamp=t;
-        mutex.post();
+        mutex.unlock();
     }
 
     void dump(const std::string &filename)
@@ -79,7 +79,7 @@ public:
         while(!isStopping())
             {
                 static int count=0;
-                mutex.wait();
+                mutex.lock();
                 count++;
 #ifdef USE_PARALLEL_PORT
                 pp.reset();

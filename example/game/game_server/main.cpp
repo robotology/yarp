@@ -31,7 +31,7 @@ using namespace yarp::os;
 typedef std::string String;
 
 
-Semaphore clientMutex(1);
+Mutex clientMutex();
 static int clientCount = 0;
 
 
@@ -46,11 +46,11 @@ public:
 
     ClientService(Replier& broadcaster) : broadcaster(broadcaster) {
         loggedOn=false;
-        clientMutex.wait();
+        clientMutex.lock();
         clientCount++;
         printf("Connection created, client #%d\n", clientCount);
         id = clientCount;
-        clientMutex.post();
+        clientMutex.unlock();
         player.setReplier(this);
         writer = NULL;
     }
@@ -58,10 +58,10 @@ public:
     virtual ~ClientService() {
         player.setReplier(NULL);
         player.shutdown();
-        clientMutex.wait();
+        clientMutex.lock();
         printf("Connection shut down for %d\n", id);
         clientCount--;
-        clientMutex.post();
+        clientMutex.unlock();
     }
 
     virtual bool read(ConnectionReader& connection) {

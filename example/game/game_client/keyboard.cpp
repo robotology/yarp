@@ -22,12 +22,12 @@ using namespace yarp;
 static String dir = "right";
 static String msg = "";
 static int mode = 0;
-static Semaphore mutex(1);
+static Mutex mutex();
 
 String getPreparation() {
-    mutex.wait();
+    mutex.lock();
     String result = msg;
-    mutex.post();
+    mutex.unlock();
     return result;
 }
 
@@ -121,11 +121,11 @@ String getCommand() {
     default:
         //cprintf("KEY is %d\n", key);
         if (mode==0) {
-            mutex.wait();
+            mutex.lock();
             if (key>=32 && key<=126) {
                 msg += ((char)key);
             }
-            mutex.post();
+            mutex.unlock();
         }
         mode = 0;
         break;

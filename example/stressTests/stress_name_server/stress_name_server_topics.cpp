@@ -17,16 +17,16 @@ using namespace yarp::os;
 class Count {
 public:
     int counts[R];
-    Semaphore mutex;
+    Mutex mutex;
 
-    Count() : mutex(1) {
+    Count() : mutex() {
         for (int i=0; i<R; i++) { counts[i] = 0; }
     }
 
     void count(int x) {
-        mutex.wait();
+        mutex.lock();
         counts[x]++;
-        mutex.post();
+        mutex.unlock();
     }
 
     void show() {

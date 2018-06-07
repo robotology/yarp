@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Time.h>
 
 #include "Thing.h"
@@ -38,9 +38,9 @@ public:
     Matrix game_matrix;
     DMatrix transient_matrix;
     Things game_things;
-    yarp::os::Semaphore game_mutex;
+    yarp::os::Mutex game_mutex;
 
-    GameHelper() : game_mutex(1) {
+    GameHelper() : game_mutex() {
     }
 };
 
@@ -214,11 +214,11 @@ void Game::load() {
 }
 
 void Game::wait() {
-    SYS(system_resource).game_mutex.wait();
+    SYS(system_resource).game_mutex.lock();
 }
 
 void Game::post() {
-    SYS(system_resource).game_mutex.post();
+    SYS(system_resource).game_mutex.unlock();
 }
 
 

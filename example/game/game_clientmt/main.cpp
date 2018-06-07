@@ -55,7 +55,7 @@ public:
 
     void doInit()
     {
-        mutex.wait();
+        mutex.lock();
 
         printf("Connecting with game server\n");
         Network::connect(port.getName(), SERVER_NAME);
@@ -64,30 +64,30 @@ public:
 
         randengine.seed(0);
     
-        mutex.post();
+        mutex.unlock();
     }
 
     // void doLoop()
     void run()
     {
-        mutex.wait();
+        mutex.lock();
         
         look();
         rndMove();
         if(shooterF)
             rndShoot();
 
-        mutex.post();
+        mutex.unlock();
     }
 
     void doRelease()
     {
-        mutex.wait();
+        mutex.lock();
 
         printf("Disconnecting\n");
         Network::disconnect(port.getName(), SERVER_NAME);
         
-        mutex.post();
+        mutex.unlock();
     }
 
     void look()
@@ -159,19 +159,19 @@ public:
 
     void getWorld(Bottle &w)
     {
-        mutex.wait();
+        mutex.lock();
         
         w=world;
 
-        mutex.post();
+        mutex.unlock();
     }
 
     int getLife()
     {
         int ret;
-        mutex.wait();
+        mutex.lock();
         ret=myLife;
-        mutex.post();
+        mutex.unlock();
 
         return ret;
     }
@@ -179,18 +179,18 @@ public:
     int getX()
     {
         int ret;
-        mutex.wait();
+        mutex.lock();
         ret=myX;
-        mutex.post();
+        mutex.unlock();
         return ret;
     }
 
     int getY()
     {
         int ret;
-        mutex.wait();
+        mutex.lock();
         ret=myY;
-        mutex.post();
+        mutex.unlock();
         return ret;
     }
 
@@ -206,7 +206,7 @@ public:
 
     double prev;
     double now;
-    Semaphore mutex;
+    Mutex mutex;
 };
 
 int main(int argc, char **argv)
