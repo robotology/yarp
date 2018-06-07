@@ -956,6 +956,6 @@ bool jointData::Editor::read(yarp::os::ConnectionReader& connection) {
 
 std::string jointData::toString() const {
   yarp::os::Bottle b;
-  b.read(const_cast<jointData&>(*this));
+  b.read(*this);
   return b.toString();
 }

@@ -1859,7 +1859,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
                  << endl;
   indent_up();
   indent(f_cpp_) << "yarp::os::Bottle b;" << endl;
-  indent(f_cpp_) << "b.read(const_cast<" << name << "&>(*this));" << endl;
+  indent(f_cpp_) << "b.read(*this);" << endl;
   indent(f_cpp_) << "return b.toString();" << endl;
   scope_down(f_cpp_);
 
