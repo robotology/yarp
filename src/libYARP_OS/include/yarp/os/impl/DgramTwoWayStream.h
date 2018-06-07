@@ -12,7 +12,7 @@
 
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/ManagedBytes.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 
 #include <cstdlib>
 
@@ -47,7 +47,7 @@ public:
                           dgram_sockfd(-1),
 #endif
                           dgram(nullptr), mgram(nullptr),
-                          mutex(1), readAt(0), readAvail(0),
+                          mutex(), readAt(0), readAvail(0),
                           writeAvail(0), pct(0), happy(true),
                           bufferAlertNeeded(false), bufferAlerted(false),
                           multiMode(false), errCount(0), lastReportTime(0)
@@ -162,7 +162,7 @@ private:
 #endif
     Contact localAddress, remoteAddress, restrictInterfaceIp;
     yarp::os::ManagedBytes readBuffer, writeBuffer;
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
     yarp::conf::ssize_t readAt, readAvail, writeAvail;
     int pct;
     bool happy;
