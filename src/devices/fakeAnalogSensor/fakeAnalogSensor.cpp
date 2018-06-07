@@ -16,7 +16,7 @@ using namespace std;
 using namespace yarp::dev;
 
 FakeAnalogSensor::FakeAnalogSensor(double period) : PeriodicThread(period),
-        mutex(1),
+        mutex(),
         channelsNum(0),
         status(IAnalogSensor::AS_OK)
 {
@@ -79,9 +79,9 @@ bool FakeAnalogSensor::close()
 
 int FakeAnalogSensor::read(yarp::sig::Vector &out)
 {
-    mutex.wait();
+    mutex.lock();
     out[0] = yarp::os::Time::now();
-    mutex.post();
+    mutex.unlock();
 
     return status;
 }
@@ -135,7 +135,7 @@ bool FakeAnalogSensor::threadInit()
 
 void FakeAnalogSensor::run()
 {
-    mutex.wait();
+    mutex.lock();
 
     // Do fake stuff
     double timeNow = yarp::os::Time::now();
@@ -147,7 +147,7 @@ void FakeAnalogSensor::run()
         status = IAnalogSensor::AS_OK;
 
     timeStamp = timeNow;
-    mutex.post();
+    mutex.unlock();
 }
 
 void FakeAnalogSensor::threadRelease()

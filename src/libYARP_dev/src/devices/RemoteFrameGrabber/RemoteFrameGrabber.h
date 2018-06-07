@@ -13,7 +13,7 @@
 #include <cstring>          // for memcpy
 
 #include <yarp/os/Network.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/FrameGrabberControlImpl.h>
 #include <yarp/dev/IVisualParamsImpl.h>
@@ -388,7 +388,7 @@ public:
      * Constructor.
      */
     RemoteFrameGrabber() : FrameGrabberControls_Sender(port), Implement_RgbVisualParams_Sender(port),
-        mutex(1),
+        mutex(),
         lastHeight(0),
         lastWidth(0),
         no_stream(false),
@@ -396,11 +396,11 @@ public:
     {}
 
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override {
-        mutex.wait();
+        mutex.lock();
         if(no_stream == true)
         {
             image.zero();
-            mutex.post();
+            mutex.unlock();
             return false;
         }
 
@@ -408,10 +408,10 @@ public:
             image = *(reader.lastRead());
             lastHeight = image.height();
             lastWidth = image.width();
-            mutex.post();
+            mutex.unlock();
             return true;
         }
-        mutex.post();
+        mutex.unlock();
         return false;
     }
 
@@ -502,7 +502,7 @@ public:
 
     virtual bool close() override {
         port.close();
-//        mutex.wait();   // why does it need this?
+//        mutex.lock();   // why does it need this?
         return true;
     }
 
@@ -584,7 +584,7 @@ private:
     yarp::os::Port port;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string remote);
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string local);
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
     int lastHeight;
     int lastWidth;
     bool no_stream;

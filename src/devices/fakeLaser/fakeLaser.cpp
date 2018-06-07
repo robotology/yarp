@@ -158,84 +158,84 @@ bool FakeLaser::close()
 
 bool FakeLaser::getDistanceRange(double& min, double& max)
 {
-    mutex.wait();
+    mutex.lock();
     min = min_distance;
     max = max_distance;
-    mutex.post();
+    mutex.unlock();
     return true;
 }
 
 bool FakeLaser::setDistanceRange(double min, double max)
 {
-    mutex.wait();
+    mutex.lock();
     min_distance = min;
     max_distance = max;
-    mutex.post();
+    mutex.unlock();
     return true;
 }
 
 bool FakeLaser::getScanLimits(double& min, double& max)
 {
-    mutex.wait();
+    mutex.lock();
     min = min_angle;
     max = max_angle;
-    mutex.post();
+    mutex.unlock();
     return true;
 }
 
 bool FakeLaser::setScanLimits(double min, double max)
 {
-    mutex.wait();
+    mutex.lock();
     min_angle = min;
     max_angle = max;
-    mutex.post();
+    mutex.unlock();
     return true;
 }
 
 bool FakeLaser::getHorizontalResolution(double& step)
 {
-    mutex.wait();
+    mutex.lock();
     step = resolution;
-    mutex.post();
+    mutex.unlock();
     return true;
 }
 
 bool FakeLaser::setHorizontalResolution(double step)
 {
-    mutex.wait();
+    mutex.lock();
     resolution = step;
-    mutex.post();
+    mutex.unlock();
     return true;
 }
 
 bool FakeLaser::getScanRate(double& rate)
 {
-    mutex.wait();
+    mutex.lock();
     rate = 1.0 / (period);
-    mutex.post();
+    mutex.unlock();
     return true;
 }
 
 bool FakeLaser::setScanRate(double rate)
 {
-    mutex.wait();
+    mutex.lock();
     period = (1.0 / rate);
-    mutex.post();
+    mutex.unlock();
     return false;
 }
 
 
 bool FakeLaser::getRawData(yarp::sig::Vector &out)
 {
-    mutex.wait();
+    mutex.lock();
     out = laser_data;
-    mutex.post();
+    mutex.unlock();
     device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
     return true;
 }
 bool FakeLaser::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 {
-    mutex.wait();
+    mutex.lock();
 #ifdef LASER_DEBUG
     //yDebug("data: %s\n", laser_data.toString().c_str());
 #endif
@@ -248,16 +248,16 @@ bool FakeLaser::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
         double angle = (i / double(size)*laser_angle_of_view + min_angle)* DEG2RAD;
         data[i].set_polar(laser_data[i], angle);
     }
-    mutex.post();
+    mutex.unlock();
     device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
     return true;
 }
 
 bool FakeLaser::getDeviceStatus(Device_status &status)
 {
-    mutex.wait();
+    mutex.lock();
     status = device_status;
-    mutex.post();
+    mutex.unlock();
     return true;
 }
 
@@ -273,7 +273,7 @@ bool FakeLaser::threadInit()
 
 void FakeLaser::run()
 {
-    mutex.wait();
+    mutex.lock();
     laser_data.clear();
     double t      = yarp::os::Time::now();
     static double t_orig = yarp::os::Time::now();
@@ -370,7 +370,7 @@ void FakeLaser::run()
         }
     }
 
-    mutex.post();
+    mutex.unlock();
     return;
 }
 
@@ -423,8 +423,8 @@ void FakeLaser::threadRelease()
 
 bool FakeLaser::getDeviceInfo(std::string &device_info)
 {
-    this->mutex.wait();
+    this->mutex.lock();
     device_info = info;
-    this->mutex.post();
+    this->mutex.unlock();
     return true;
 }

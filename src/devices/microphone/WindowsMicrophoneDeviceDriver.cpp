@@ -61,7 +61,7 @@ public:
     //----------------------------------------------------------------------
     //  Constructor/Destructor
     //----------------------------------------------------------------------
-    SoundResources (void) : _bmutex(1),
+    SoundResources (void) : _bmutex(),
                             _new_frame(0),
                             _canpost(true),
                             numSamples(2048),
@@ -83,7 +83,7 @@ public:
     //----------------------------------------------------------------------
     // Variables
     //----------------------------------------------------------------------
-    yarp::os::Semaphore _bmutex;
+    yarp::os::Mutex _bmutex;
     yarp::os::Semaphore _new_frame;
     bool          _canpost;
 
@@ -315,7 +315,7 @@ int SoundResources::_initialize (const SoundOpenParameters& params)
 //--------------------------------------------------------------------------------------
 int SoundResources::_uninitialize (void)
 {
-    _bmutex.wait ();
+    _bmutex.lock ();
 
     m_InRecord = false;
     mixerClose(m_MixerHandle);   // Close mixer
@@ -325,7 +325,7 @@ int SoundResources::_uninitialize (void)
         delete[] _rawBuffer;     // Delete the shared buffer
         _rawBuffer = NULL;
     }
-    _bmutex.post ();
+    _bmutex.unlock ();
 
     return 1;
 }
@@ -415,10 +415,10 @@ int SoundResources::_init (const SoundOpenParameters& params)
     //----------------------------------------------------------------------
     // Initialize the local buffers
     //----------------------------------------------------------------------
-    _bmutex.wait ();
+    _bmutex.lock ();
     _rawBuffer = new unsigned char [dwBufferLength];
     // yAssert(_rawBuffer != NULL);
-    _bmutex.post ();
+    _bmutex.unlock ();
 
     return 1;
 }
@@ -448,7 +448,7 @@ inline SoundResources& RES(void *res)
 //--------------------------------------------------------------------------------------
 int SoundResources::acquireBuffer (void *buffer)
 {
-    _bmutex.wait ();
+    _bmutex.lock ();
     (*(unsigned char **)buffer) = _rawBuffer;
 
     return 1;
@@ -464,7 +464,7 @@ int SoundResources::acquireBuffer (void *buffer)
 int SoundResources::releaseBuffer ()
 {
     _canpost = true;
-    _bmutex.post ();
+    _bmutex.unlock ();
 
     return 1;
 }
@@ -511,7 +511,7 @@ void SoundResources::run()
                             _canpost = false;
                             _new_frame.post();
                         }
-                        _bmutex.post ();
+                        _bmutex.unlock ();
                     }
                     else
                         {

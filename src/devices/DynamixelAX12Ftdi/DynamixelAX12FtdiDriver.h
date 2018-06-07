@@ -42,7 +42,7 @@
 #include <iostream>
 #include <yarp/os/Time.h>
 
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 
 #define MOTION_COMPLETION_TOLERANCE 3
 
@@ -146,7 +146,7 @@ private:
 
     ErrorCode checkAnswerPacket(unsigned char* packet, const char*& message);
 
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 
     unsigned char *jointNumbers;
 

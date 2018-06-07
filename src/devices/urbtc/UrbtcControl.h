@@ -14,7 +14,7 @@
 #include <sys/stat.h>       /* for open */
 #include <fcntl.h>          /* for open */
 
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Runnable.h>
@@ -95,7 +95,7 @@ protected:
     int                     _posAccuracy;           // how accurate should checkMotionDoneRaw behave?
 
     int                     _threadRate;            // milliseconds
-    yarp::os::Semaphore     _mutex;
+    yarp::os::Mutex         _mutex;
 
     // Thread
     virtual void run();

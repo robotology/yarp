@@ -217,7 +217,7 @@ bool VirtualAnalogWrapper::close()
 
 bool VirtualAnalogWrapper::attachAll(const PolyDriverList &polylist)
 {
-    mMutex.wait();
+    mMutex.lock();
 
     for (int p=0; p<polylist.size(); ++p)
     {
@@ -230,7 +230,7 @@ bool VirtualAnalogWrapper::attachAll(const PolyDriverList &polylist)
             {
                 if (!mSubdevices[k].attach(polylist[p]->poly,key))
                 {
-                    mMutex.post();
+                    mMutex.unlock();
                     return false;
                 }
             }
@@ -242,12 +242,12 @@ bool VirtualAnalogWrapper::attachAll(const PolyDriverList &polylist)
     {
         if (!mSubdevices[k].isAttached())
         {
-            mMutex.post();
+            mMutex.unlock();
             return false;
         }
    }
 
-    mMutex.post();
+    mMutex.unlock();
 
     Thread::start();
 
@@ -256,14 +256,14 @@ bool VirtualAnalogWrapper::attachAll(const PolyDriverList &polylist)
 
 bool VirtualAnalogWrapper::detachAll()
 {
-    mMutex.wait();
+    mMutex.lock();
 
     for(int k=0; k<mNSubdevs; ++k)
     {
         mSubdevices[k].detach();
     }
 
-    mMutex.post();
+    mMutex.unlock();
 
 //     close();
 
@@ -301,7 +301,7 @@ void VirtualAnalogWrapper::run()
         if (pTorques)
         {
             sendLastValueBeforeTimeout = false;
-            mMutex.wait();
+            mMutex.lock();
 
             lastRecv=Time::now();
             switch (pTorques->get(0).asInt32())
@@ -355,7 +355,7 @@ void VirtualAnalogWrapper::run()
                 mSubdevices[d].flushTorques();
             }
 
-            mMutex.post();
+            mMutex.unlock();
         }
         else
         {

@@ -891,9 +891,9 @@ void ControlBoardWrapper::run()
         }
     }
 
-    timeMutex.wait();
+    timeMutex.lock();
     time.update(joint_timeStamp/controlledJoints);
-    timeMutex.post();
+    timeMutex.unlock();
 
     if(useROS != ROS_only)
     {
@@ -1521,7 +1521,7 @@ bool ControlBoardWrapper::positionMove(const int n_joints, const int *joints, co
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -1559,7 +1559,7 @@ bool ControlBoardWrapper::positionMove(const int n_joints, const int *joints, co
             }
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -1625,7 +1625,7 @@ bool ControlBoardWrapper::getTargetPositions(const int n_joints, const int *join
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -1669,7 +1669,7 @@ bool ControlBoardWrapper::getTargetPositions(const int n_joints, const int *join
             targets[j] = 0;
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -1730,7 +1730,7 @@ bool ControlBoardWrapper::relativeMove(const int n_joints, const int *joints, co
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -1768,7 +1768,7 @@ bool ControlBoardWrapper::relativeMove(const int n_joints, const int *joints, co
             }
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -1846,7 +1846,7 @@ bool ControlBoardWrapper::checkMotionDone(const int n_joints, const int *joints,
     bool tmp = true;
     bool XFlags = true;
 
-   rpcDataMutex.wait();
+   rpcDataMutex.lock();
    //Reset subdev_jointsVectorLen vector
    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -1889,7 +1889,7 @@ bool ControlBoardWrapper::checkMotionDone(const int n_joints, const int *joints,
         *flags = tmp;
     else
         *flags = false;
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -1980,7 +1980,7 @@ bool ControlBoardWrapper::setRefSpeeds(const int n_joints, const int *joints, co
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -2019,7 +2019,7 @@ bool ControlBoardWrapper::setRefSpeeds(const int n_joints, const int *joints, co
             }
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -2111,7 +2111,7 @@ bool ControlBoardWrapper::setRefAccelerations(const int n_joints, const int *joi
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -2150,7 +2150,7 @@ bool ControlBoardWrapper::setRefAccelerations(const int n_joints, const int *joi
             }
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -2227,7 +2227,7 @@ bool ControlBoardWrapper::getRefSpeeds(const int n_joints, const int *joints, do
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -2286,7 +2286,7 @@ bool ControlBoardWrapper::getRefSpeeds(const int n_joints, const int *joints, do
             spds[j] = 0;
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -2362,7 +2362,7 @@ bool ControlBoardWrapper::getRefAccelerations(const int n_joints, const int *joi
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -2421,7 +2421,7 @@ bool ControlBoardWrapper::getRefAccelerations(const int n_joints, const int *joi
             accs[j] = 0;
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -2482,7 +2482,7 @@ bool ControlBoardWrapper::stop(const int n_joints, const int *joints)
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -2517,7 +2517,7 @@ bool ControlBoardWrapper::stop(const int n_joints, const int *joints)
             }
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -4038,7 +4038,7 @@ bool ControlBoardWrapper::setRefTorques(const int n_joints, const int *joints, c
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -4065,7 +4065,7 @@ bool ControlBoardWrapper::setRefTorques(const int n_joints, const int *joints, c
             ret=false;
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -4383,7 +4383,7 @@ bool ControlBoardWrapper::setControlModes(const int n_joints, const int *joints,
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -4410,7 +4410,7 @@ bool ControlBoardWrapper::setControlModes(const int n_joints, const int *joints,
             ret=false;
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -4474,7 +4474,7 @@ bool ControlBoardWrapper::setPositions(const int n_joints, const int *joints, co
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -4503,7 +4503,7 @@ bool ControlBoardWrapper::setPositions(const int n_joints, const int *joints, co
             ret=false;
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -4531,9 +4531,9 @@ bool ControlBoardWrapper::setPositions(const double *refs)
 }
 
 yarp::os::Stamp ControlBoardWrapper::getLastInputStamp() {
-    timeMutex.wait();
+    timeMutex.lock();
     yarp::os::Stamp ret=time;
-    timeMutex.post();
+    timeMutex.unlock();
     return ret;
 }
 
@@ -4594,7 +4594,7 @@ bool ControlBoardWrapper::getRefPositions(const int n_joints, const int *joints,
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -4638,7 +4638,7 @@ bool ControlBoardWrapper::getRefPositions(const int n_joints, const int *joints,
             targets[j] = 0;
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -4650,7 +4650,7 @@ bool ControlBoardWrapper::velocityMove(const int n_joints, const int *joints, co
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -4688,7 +4688,7 @@ bool ControlBoardWrapper::velocityMove(const int n_joints, const int *joints, co
             }
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -4755,7 +4755,7 @@ bool ControlBoardWrapper::getRefVelocities(const int n_joints, const int* joints
 
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -4799,7 +4799,7 @@ bool ControlBoardWrapper::getRefVelocities(const int n_joints, const int* joints
             vels[j] = 0;
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -4823,7 +4823,7 @@ bool ControlBoardWrapper::getInteractionModes(int n_joints, int *joints, yarp::d
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -4871,7 +4871,7 @@ bool ControlBoardWrapper::getInteractionModes(int n_joints, int *joints, yarp::d
             modes[j] = VOCAB_IM_UNKNOWN;
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -4928,7 +4928,7 @@ bool ControlBoardWrapper::setInteractionModes(int n_joints, int *joints, yarp::d
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -4955,7 +4955,7 @@ bool ControlBoardWrapper::setInteractionModes(int n_joints, int *joints, yarp::d
             ret=false;
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 
@@ -5228,7 +5228,7 @@ bool ControlBoardWrapper::setRefCurrents(const int n_joint, const int *joints, c
 {
     bool ret = true;
 
-    rpcDataMutex.wait();
+    rpcDataMutex.lock();
     //Reset subdev_jointsVectorLen vector
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
@@ -5255,7 +5255,7 @@ bool ControlBoardWrapper::setRefCurrents(const int n_joint, const int *joints, c
             ret = false;
         }
     }
-    rpcDataMutex.post();
+    rpcDataMutex.unlock();
     return ret;
 }
 

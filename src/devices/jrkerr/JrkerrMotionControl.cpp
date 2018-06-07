@@ -181,7 +181,7 @@ JrkerrMotionControl::JrkerrMotionControl() :
     ImplementAmplifierControl<JrkerrMotionControl, IAmplifierControl>(this),
     ImplementControlLimits<JrkerrMotionControl, IControlLimits>(this),
     _done(0),
-    _mutex(1)
+    _mutex()
 {
     system_resources = (void *) new JrkerrRS485Resources;
     yAssert(system_resources != NULL);
@@ -199,7 +199,7 @@ JrkerrMotionControl::~JrkerrMotionControl ()
 bool JrkerrMotionControl::open (const JrkerrMotionControlParameters &p)
 {
 
-    _mutex.wait();
+    _mutex.lock();
 
     JrkerrRS485Resources& r = RES (system_resources);
 
@@ -210,10 +210,10 @@ bool JrkerrMotionControl::open (const JrkerrMotionControlParameters &p)
     /* TO DEBUG */
     if (!r.initialize (p))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
-    _mutex.post();
+    _mutex.unlock();
 
     ImplementPositionControl<JrkerrMotionControl, IPositionControl>::
         initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros);
@@ -449,7 +449,7 @@ bool JrkerrMotionControl::open(yarp::os::Searchable& config) {
 
 bool JrkerrMotionControl::close (void)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& d = RES(system_resources);
 
     ImplementPositionControl<JrkerrMotionControl, IPositionControl>::uninitialize ();
@@ -484,7 +484,7 @@ bool JrkerrMotionControl::close (void)
     checkAndDestroy<int> (_mode);
 
     int ret = d.uninitialize ();
-    _mutex.wait();
+    _mutex.lock();
 
     return ret;
 }
@@ -500,21 +500,21 @@ void JrkerrMotionControl::run ()
 // return the number of controlled axes.
 bool JrkerrMotionControl::getAxes(int *ax)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     *ax = r.getJoints();
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
 // LATER: can be optimized.
 bool JrkerrMotionControl::setPidRaw (int axis, const Pid &pid)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
 
@@ -529,7 +529,7 @@ bool JrkerrMotionControl::setPidRaw (int axis, const Pid &pid)
         _il[axis], _ol[axis], _cl[axis], _el[axis],
         _sr[axis], _dc[axis], &(r.jrkerrcmd));
 
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
@@ -541,11 +541,11 @@ bool JrkerrMotionControl::setOffsetRaw(int j, double v)
 
 bool JrkerrMotionControl::getPidRaw (int axis, Pid *out)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
     out[axis].kp = _kp[axis];
@@ -555,15 +555,15 @@ bool JrkerrMotionControl::getPidRaw (int axis, Pid *out)
     out[axis].max_output = _ol[axis];
     out[axis].scale = 1; // not used
     out[axis].offset = 0; // not used
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
 bool JrkerrMotionControl::getPidsRaw (Pid *out)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
-    _mutex.post();
+    _mutex.unlock();
     for (int i = 0; i < r.getJoints(); i++) {
         getPidRaw(i, &out[i] );
     }
@@ -573,9 +573,9 @@ bool JrkerrMotionControl::getPidsRaw (Pid *out)
 
 bool JrkerrMotionControl::setPidsRaw(const Pid *pids)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
-    _mutex.post();
+    _mutex.unlock();
     for (int i = 0; i < r.getJoints(); i++) {
         setPidRaw(i, pids[i] );
     }
@@ -586,11 +586,11 @@ bool JrkerrMotionControl::setPidsRaw(const Pid *pids)
 /// input reference is in encoder counts
 bool JrkerrMotionControl::setReferenceRaw (int axis, double ref)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
 
@@ -609,7 +609,7 @@ bool JrkerrMotionControl::setReferenceRaw (int axis, double ref)
         _ref_positions[axis] = ref;
     }
 
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
@@ -617,9 +617,9 @@ bool JrkerrMotionControl::setReferenceRaw (int axis, double ref)
 /// input references are encoder counts
 bool JrkerrMotionControl::setReferencesRaw (const double *refs)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
-    _mutex.post();
+    _mutex.unlock();
 
     int i;
 
@@ -630,15 +630,15 @@ bool JrkerrMotionControl::setReferencesRaw (const double *refs)
 
 bool JrkerrMotionControl::setErrorLimitRaw(int axis, double limit)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
     _el[axis] = limit;
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
@@ -646,11 +646,11 @@ bool JrkerrMotionControl::setErrorLimitRaw(int axis, double limit)
 // there is a jrkerr hardware limitation for this : check this TODO
 bool JrkerrMotionControl::setErrorLimitsRaw(const double *limit)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     for(int i = 0; i < r.getJoints(); i++ )
         _el[i] = limit[i];
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
@@ -676,49 +676,49 @@ bool JrkerrMotionControl::getOutputsRaw(double *outs)
 
 bool JrkerrMotionControl::getReferenceRaw(int axis, double *ref)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
     *ref = _ref_positions[axis];
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
 bool JrkerrMotionControl::getReferencesRaw(double *ref)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     for(int i = 0; i < r.getJoints(); i++)
         ref[i] = _ref_positions[i];
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
 bool JrkerrMotionControl::getErrorLimitRaw(int axis, double *err)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
     *err = _el[axis];
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
 bool JrkerrMotionControl::getErrorLimitsRaw(double *errs)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     for(int i = 0; i < r.getJoints(); i++)
         errs[i] = _el[i];
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
@@ -754,14 +754,14 @@ bool JrkerrMotionControl::setVelocityMode()
 // reference values comes in encoder counts
 bool JrkerrMotionControl::positionMoveRaw(int axis, double ref)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
-    _mutex.post();
+    _mutex.unlock();
     setReferenceRaw(axis, ref);
 
     if (!ENABLED (axis))
@@ -769,7 +769,7 @@ bool JrkerrMotionControl::positionMoveRaw(int axis, double ref)
         return true;
     }
 
-    _mutex.wait();
+    _mutex.lock();
 
     long pic_position; // counts
     long pic_speed;   // 65535*counts/tick
@@ -785,7 +785,7 @@ bool JrkerrMotionControl::positionMoveRaw(int axis, double ref)
     mode = LOAD_POS | ENABLE_SERVO | START_NOW;   //trapezoidal mode
     ServoLoadTraj(axis+1, mode, pic_position, pic_speed, pic_accel, 0, &(r.jrkerrcmd) );
 
-    _mutex.post();
+    _mutex.unlock();
 
     return true;
 }
@@ -793,9 +793,9 @@ bool JrkerrMotionControl::positionMoveRaw(int axis, double ref)
 
 bool JrkerrMotionControl::positionMoveRaw(const double *refs)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
-    _mutex.post();
+    _mutex.unlock();
 
     for(int i = 0; i < r.getJoints(); i++)
     {
@@ -820,11 +820,11 @@ bool JrkerrMotionControl::relativeMoveRaw(const double *deltas)
 /// check motion done, single axis.
 bool JrkerrMotionControl::checkMotionDoneRaw(int axis, bool *ret)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
     unsigned char statbyte;
@@ -832,7 +832,7 @@ bool JrkerrMotionControl::checkMotionDoneRaw(int axis, bool *ret)
         statbyte = NmcGetStat(axis+1, &(r.jrkerrcmd));
 
     *ret = (statbyte & MOVE_DONE);  //wait for MOVE_DONE bit to go HIGH
-    _mutex.post();
+    _mutex.unlock();
 
     return true;
 }
@@ -848,11 +848,11 @@ bool JrkerrMotionControl::checkMotionDoneRaw (bool *ret)
 /// input speed is in encoder counts per second
 bool JrkerrMotionControl::setRefSpeedRaw(int axis, double sp)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
 
@@ -882,7 +882,7 @@ bool JrkerrMotionControl::setRefSpeedRaw(int axis, double sp)
     unsigned char mode = LOAD_VEL | ENABLE_SERVO | START_NOW;   //trapezoidal mode
 
     ServoLoadTraj(axis+1, mode, pic_position, pic_speed, pic_accel, 0, &(r.jrkerrcmd) );
-    _mutex.post();
+    _mutex.unlock();
 
     return true;
 }
@@ -891,9 +891,9 @@ bool JrkerrMotionControl::setRefSpeedRaw(int axis, double sp)
 /// input speeds are in encoder counts per second
 bool JrkerrMotionControl::setRefSpeedsRaw(const double *spds)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
-    _mutex.post();
+    _mutex.unlock();
 
     for(int i = 0; i < r.getJoints(); i++ )
         setRefSpeedRaw(i, spds[i]);
@@ -904,11 +904,11 @@ bool JrkerrMotionControl::setRefSpeedsRaw(const double *spds)
 /// input acceleration is in encoder counts per second^2
 bool JrkerrMotionControl::setRefAccelerationRaw(int axis, double acc)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
     if( acc > _acceleration_limits[axis] )
@@ -932,7 +932,7 @@ bool JrkerrMotionControl::setRefAccelerationRaw(int axis, double acc)
     unsigned char mode = LOAD_ACC | ENABLE_SERVO | START_NOW;
 
     ServoLoadTraj(axis+1, mode, pic_position, pic_speed, pic_accel, 0, &(r.jrkerrcmd) );
-    _mutex.post();
+    _mutex.unlock();
 
     return true;
 }
@@ -941,9 +941,9 @@ bool JrkerrMotionControl::setRefAccelerationRaw(int axis, double acc)
 /// input accelerations are in encoder counts per second^2
 bool JrkerrMotionControl::setRefAccelerationsRaw(const double *accs)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
-    _mutex.post();
+    _mutex.unlock();
 
     for(int i = 0; i < r.getJoints(); i++ )
         setRefAccelerationRaw(i, accs[i]);
@@ -954,28 +954,28 @@ bool JrkerrMotionControl::setRefAccelerationsRaw(const double *accs)
 /// cmd is an array of double (LATER: to be optimized).
 bool JrkerrMotionControl::getRefSpeedsRaw (double *spds)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
 
     for(int i = 0; i < r.getJoints(); i++ )
         spds[i] = _ref_speeds[i];
-    _mutex.post();
+    _mutex.unlock();
 
     return true;
 }
 
 bool JrkerrMotionControl::getRefSpeedRaw (int axis, double *spd)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
 
     *spd = _ref_speeds[axis];
-    _mutex.post();
+    _mutex.unlock();
 
     return true;
 }
@@ -983,11 +983,11 @@ bool JrkerrMotionControl::getRefSpeedRaw (int axis, double *spd)
 /// cmd is an array of double (LATER: to be optimized).
 bool JrkerrMotionControl::getRefAccelerationsRaw (double *accs)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     for(int i = 0; i < r.getJoints(); i++ )
         accs[i] = _ref_accs[i];
-    _mutex.post();
+    _mutex.unlock();
 
     return true;
 }
@@ -995,41 +995,41 @@ bool JrkerrMotionControl::getRefAccelerationsRaw (double *accs)
 /// cmd is an array of double (LATER: to be optimized).
 bool JrkerrMotionControl::getRefAccelerationRaw (int axis, double *accs)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
     *accs = _ref_accs[axis];
-    _mutex.post();
+    _mutex.unlock();
 
     return true;
 }
 
 bool JrkerrMotionControl::stopRaw(int axis)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
     ServoStopMotor( axis+1, AMP_ENABLE | STOP_ABRUPT, &(r.jrkerrcmd));
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
 bool JrkerrMotionControl::stopRaw()
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     /*for(int i = 0; i < r.getJoints(); i++ )
         ServoStopMotor( i+1, AMP_ENABLE | STOP_ABRUPT, &(r.jrkerrcmd));*/
     ServoStopMotor( r._groupAddr, AMP_ENABLE | STOP_ABRUPT, &(r.jrkerrcmd));
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
@@ -1048,7 +1048,7 @@ bool JrkerrMotionControl::velocityMoveRaw (int axis, double sp)
         return true;
     }
 
-    _mutex.wait();
+    _mutex.lock();
 
     long pic_position = (long)(_ref_positions[axis]);
     //long pic_speed = (long)(65535.0*_ref_speeds[axis]*SERVOTICKTIME);
@@ -1062,7 +1062,7 @@ bool JrkerrMotionControl::velocityMoveRaw (int axis, double sp)
         pic_speed = -pic_speed;
     JrkerrRS485Resources& r = RES(system_resources);
     ServoLoadTraj(axis+1, mode, pic_position, pic_speed, pic_accel, 0, &(r.jrkerrcmd) );
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
@@ -1070,9 +1070,9 @@ bool JrkerrMotionControl::velocityMoveRaw (int axis, double sp)
 /// for each axis
 bool JrkerrMotionControl::velocityMoveRaw (const double *sp)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
-    _mutex.post();
+    _mutex.unlock();
     for(int i = 0; i < r.getJoints(); i++)
     {
         if(!velocityMoveRaw(i, sp[i]))
@@ -1093,63 +1093,63 @@ bool JrkerrMotionControl::setEncodersRaw(const double *vals)
 
 bool JrkerrMotionControl::resetEncoderRaw(int axis)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
 
     ServoResetPos( axis+1, &(r.jrkerrcmd));
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
 bool JrkerrMotionControl::resetEncodersRaw()
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     /*for(int i=0; i < r.getJoints(); i++){
         ServoResetPos( i+1, &(r.jrkerrcmd));
     }*/
     ServoResetPos( r._groupAddr, &(r.jrkerrcmd));
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
 bool JrkerrMotionControl::getEncodersRaw(double *v)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     unsigned char stat_items = SEND_POS;
     for(int i=0; i < r.getJoints(); i++){
         NmcReadStatus(i+1, stat_items, &(r.jrkerrcmd));
         v[i] = (double)ServoGetPos(i+1, &(r.jrkerrcmd));
     }
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
 bool JrkerrMotionControl::getEncoderRaw(int axis, double *v)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
     unsigned char stat_items = SEND_POS;
     NmcReadStatus(axis+1, stat_items, &(r.jrkerrcmd));
     *v = (double)ServoGetPos(axis+1, &(r.jrkerrcmd));
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
 bool JrkerrMotionControl::getEncoderSpeedsRaw(double *v)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     unsigned char stat_items = SEND_VEL;
     /*for(int i=0; i < r.getJoints(); i++){
@@ -1161,23 +1161,23 @@ bool JrkerrMotionControl::getEncoderSpeedsRaw(double *v)
     for(int i=0; i < r.getJoints(); i++){
         v[i] = (double)ServoGetVel(i+1, &(r.jrkerrcmd));
     }
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
 bool JrkerrMotionControl::getEncoderSpeedRaw(int axis, double *v)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
     unsigned char stat_items = SEND_VEL;
     NmcReadStatus(axis+1, stat_items, &(r.jrkerrcmd));
     *v = (double)ServoGetVel(axis+1, &(r.jrkerrcmd));
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
@@ -1193,31 +1193,31 @@ bool JrkerrMotionControl::getEncoderAccelerationRaw(int j, double *v)
 
 bool JrkerrMotionControl::disableAmpRaw(int axis)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
     ServoStopMotor( axis+1, AMP_ENABLE | MOTOR_OFF, &(r.jrkerrcmd));
     _en[axis] = false;
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
 bool JrkerrMotionControl::enableAmpRaw(int axis)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
     ServoStopMotor( axis+1, AMP_ENABLE | MOTOR_OFF, &(r.jrkerrcmd));
     _en[axis] = true;
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
@@ -1240,15 +1240,15 @@ bool JrkerrMotionControl::getMaxCurrentRaw(int axis, double* v)
 
 bool JrkerrMotionControl::setMaxCurrentRaw(int axis, double v)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
     _cl[axis] = v;
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
@@ -1264,10 +1264,10 @@ bool JrkerrMotionControl::doneRaw(int axis)
 
 bool JrkerrMotionControl::setPrintFunction(int (*f) (const char *fmt, ...))
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     _p = f;
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
@@ -1284,32 +1284,32 @@ bool JrkerrMotionControl::getAmpStatusRaw(int j, int *st)
 
 bool JrkerrMotionControl::setLimitsRaw(int axis, double min, double max)
 {
-    _mutex.wait();
+    _mutex.lock();
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
     _nl[axis] = min;
     _pl[axis] = max;
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 
 bool JrkerrMotionControl::getLimitsRaw(int axis, double *min, double *max)
 {
-    _mutex.wait();
+    _mutex.lock();
 
     JrkerrRS485Resources& r = RES(system_resources);
     if(!(axis >= 0 && axis < r.getJoints()))
     {
-        _mutex.post();
+        _mutex.unlock();
         return false;
     }
     *min = _nl[axis];
     *max = _pl[axis];
-    _mutex.post();
+    _mutex.unlock();
     return true;
 }
 

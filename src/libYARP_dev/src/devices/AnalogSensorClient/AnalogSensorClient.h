@@ -17,7 +17,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -36,7 +36,7 @@ const int ANALOG_TIMEOUT=100; //ms
 class InputPortProcessor : public yarp::os::BufferedPort<yarp::sig::Vector>
 {
     yarp::sig::Vector lastVector;
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
     yarp::os::Stamp lastStamp;
     double deltaT;
     double deltaTMax;

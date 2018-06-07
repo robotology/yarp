@@ -20,14 +20,14 @@ using namespace yarp::sig;
 
 inline void InputPortProcessor::resetStat()
 {
-    mutex.wait();
+    mutex.lock();
     count=0;
     deltaT=0;
     deltaTMax=0;
     deltaTMin=1e22;
     now=Time::now();
     prev=now;
-    mutex.post();
+    mutex.unlock();
 }
 
 InputPortProcessor::InputPortProcessor()
@@ -39,7 +39,7 @@ InputPortProcessor::InputPortProcessor()
 void InputPortProcessor::onRead(yarp::sig::Vector &v)
 {
     now=Time::now();
-    mutex.wait();
+    mutex.lock();
 
     if (count>0)
     {
@@ -85,35 +85,35 @@ void InputPortProcessor::onRead(yarp::sig::Vector &v)
     }
     lastStamp = newStamp;
 
-    mutex.post();
+    mutex.unlock();
 }
 
 inline int InputPortProcessor::getLast(yarp::sig::Vector &data, Stamp &stmp)
 {
-    mutex.wait();
+    mutex.lock();
     int ret=state;
     if (ret!=IAnalogSensor::AS_ERROR)
     {
         data=lastVector;
         stmp = lastStamp;
     }
-    mutex.post();
+    mutex.unlock();
 
     return ret;
 }
 
 inline int InputPortProcessor::getIterations()
 {
-    mutex.wait();
+    mutex.lock();
     int ret=count;
-    mutex.post();
+    mutex.unlock();
     return ret;
 }
 
 // time is in ms
 void InputPortProcessor::getEstFrequency(int &ite, double &av, double &min, double &max)
 {
-    mutex.wait();
+    mutex.lock();
     ite=count;
     min=deltaTMin*1000;
     max=deltaTMax*1000;
@@ -126,7 +126,7 @@ void InputPortProcessor::getEstFrequency(int &ite, double &av, double &min, doub
         av=deltaT/count;
     }
     av=av*1000;
-    mutex.post();
+    mutex.unlock();
 }
 
 int InputPortProcessor::getState()

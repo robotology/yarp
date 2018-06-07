@@ -62,7 +62,7 @@ DynamixelAX12FtdiDriver::~DynamixelAX12FtdiDriver() {
 
 bool DynamixelAX12FtdiDriver::open(yarp::os::Searchable& config) {
 
-    mutex.wait();
+    mutex.lock();
 
     FtdiDeviceSettings ftdiSetting;
     strcpy(ftdiSetting.description, config.check("FTDI_DESCRIPTION", Value("FT232R USB UART"), "Ftdi device description").asString().c_str());
@@ -168,7 +168,7 @@ bool DynamixelAX12FtdiDriver::open(yarp::os::Searchable& config) {
 
     // Everything ready to rumble
 
-    mutex.post();
+    mutex.unlock();
 
     return true;
 }
@@ -202,12 +202,12 @@ bool DynamixelAX12FtdiDriver::configure(yarp::os::Searchable& config) {
 
 int DynamixelAX12FtdiDriver::syncSendCommand(unsigned char id, unsigned char inst[], int size, unsigned char ret[], int &retSize) {
     int r = 0;
-    mutex.wait();
+    mutex.lock();
     if (!ftdi_usb_purge_buffers(&ftdic)) {
         r = sendCommand(id, inst, size, ret, retSize);
     }
 
-    mutex.post();
+    mutex.unlock();
     return r;
 }
 

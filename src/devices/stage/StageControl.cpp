@@ -79,18 +79,18 @@ bool StageControl::open(yarp::os::Searchable& config) {
 
 bool StageControl::close() {
   stop();
-  mutex.wait();
+  mutex.lock();
   if (world!=NULL) {
     stg_world_destroy( world );
     world = NULL;
   }
-  mutex.post();
+  mutex.unlock();
   return true;
 }
 
 
 bool StageControl::velocityMove(const double *v) {
-  mutex.wait();
+  mutex.lock();
   printf("Velocity move...\n");
   stg_position_cmd_t cmd;
   memset(&cmd,0,sizeof(cmd));
@@ -102,7 +102,7 @@ bool StageControl::velocityMove(const double *v) {
   }
 
   stg_model_set_cmd( position, &cmd, sizeof(cmd));
-  mutex.post();
+  mutex.unlock();
 
   return true;
 }
@@ -115,19 +115,19 @@ bool StageControl::velocityMove(const double *v) {
 
 void StageControl::run() {
   while (!isStopping()) {
-    mutex.wait();
+    mutex.lock();
     int result = stg_world_update( world,0 );
-    mutex.post();
+    mutex.unlock();
     printf("Tick...\n");
     if (result!=0) break;
     SystemClock::delaySystem(0.05);
   }
-  mutex.wait();
+  mutex.lock();
   if (world!=NULL) {
     stg_world_destroy( world );
     world = NULL;
   }
-  mutex.post();
+  mutex.unlock();
 }
 
 

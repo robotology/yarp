@@ -360,7 +360,7 @@ bool yarp::dev::UrbtcControl::setPositionMode()
     // caution, method sets new pid values.
     // setting here pid values which are known to work for position mode
 //    for (int i = 0; i < _intNumControllers; i++) {
-//        _mutex.wait();
+//        _mutex.lock();
 //        for (int j=0; j<4; j++) {
 //            _out[i].ch[j].x = 0;          // target position
 //            _out[i].ch[j].d = 0;          // target velocity
@@ -371,7 +371,7 @@ bool yarp::dev::UrbtcControl::setPositionMode()
 //            _out[i].ch[j].ki = (signed short)(_pidPosDefault.ki * _pidAccuracy);
 //            _out[i].ch[j].kix = (unsigned short) (_pidAccuracy);        // I gain = 0/1 = 0
 //        }
-//        _mutex.post();
+//        _mutex.unlock();
 //    }
     return true;
 }
@@ -383,14 +383,14 @@ bool yarp::dev::UrbtcControl::positionMoveRaw(int j, double ref)
         // check limits
         if ( ((int)ref) > _limitsMin[j] &&
              ((int)ref) < _limitsMax[j]) {
-            _mutex.wait();
+            _mutex.lock();
             _posDesired[j] = (long)ref;
             _out[j].ch[0].x = _out[j].ch[1].x = _out[j].ch[2].x = _out[j].ch[3].x  = (short)ref;
             if (write(_fd[j], &_out[j], sizeof(_out[j])) < 0) {
-                _mutex.post();
+                _mutex.unlock();
                 return false;
             }
-            _mutex.post();
+            _mutex.unlock();
             return true;
         }
         printf("Axis %d exceeded limts. Requested value: %d Limits: %d %d\n",
@@ -416,14 +416,14 @@ bool yarp::dev::UrbtcControl::positionMoveRaw(int j, double ref)
 //             localPos  = (short)((posInPeriods - ((double)_periodCounter[j])) * _periodTicks);
 //
 //             // do absolute positioning now within local period
-//             _mutex.wait();
+//             _mutex.lock();
 //             //cout << "pid: kp: " << _out[j].ch[0].kp << " kpx: " << _out[j].ch[0].kpx << " kd: " << _out[j].ch[0].kd << " kdx: " << _out[j].ch[0].kdx << endl;
 //             _out[j].ch[0].x = _out[j].ch[1].x = _out[j].ch[2].x = _out[j].ch[3].x  = localPos;
 //             if (write(_fd[j], &_out[j], sizeof(_out[j])) < 0) {
-//                  _mutex.post();
+//                  _mutex.unlock();
 //                  return false;
 //              }
-//             _mutex.post();
+//             _mutex.unlock();
 //             return true;
 //         }
 //         return false;
@@ -447,7 +447,7 @@ bool yarp::dev::UrbtcControl::relativeMoveRaw(int j, double delta)
         //printf("out channel axis %d: %d\n", j, _out[j].ch[0].x);
         if ( ((int)delta + (int)_out[j].ch[0].x) > _limitsMin[j]  &&
              ((int)delta + (int)_out[j].ch[0].x) < _limitsMax[j] ) {
-            _mutex.wait();
+            _mutex.lock();
             // for all channels of axis j
             _out[j].ch[0].x += (short)delta;
             _out[j].ch[1].x += (short)delta;
@@ -455,11 +455,11 @@ bool yarp::dev::UrbtcControl::relativeMoveRaw(int j, double delta)
             _out[j].ch[3].x += (short)delta;
             _posDesired[j] = _out[j].ch[0].x;
             if (write(_fd[j], &_out[j], sizeof(_out[j])) < 0) {
-                _mutex.post();
+                _mutex.unlock();
                 printf("writing failed!\n");
                 return false;
             }
-            _mutex.post();
+            _mutex.unlock();
             return true;
         }
         printf("Axis %d exceeded limts. Requested value: %d Limits: %d %d\n",
@@ -567,13 +567,13 @@ bool yarp::dev::UrbtcControl::stopRaw(int j)
 {
 
     if (j > -1 && j < _intNumControllers) {
-        _mutex.wait();
+        _mutex.lock();
         _out[j].ch[0].d = _out[j].ch[1].d = _out[j].ch[2].d = _out[j].ch[3].d  = (short)0;
         if (write(_fd[j], &_out[j], sizeof(_out[j])) < 0) {
-            _mutex.post();
+            _mutex.unlock();
             return false;
         }
-        _mutex.post();
+        _mutex.unlock();
         return true;
     }
     return false;
@@ -583,13 +583,13 @@ bool yarp::dev::UrbtcControl::stopRaw()
 {
 
     for (int i = 0; i < _intNumControllers; i++) {
-        _mutex.wait();
+        _mutex.lock();
         _out[i].ch[0].d = _out[i].ch[1].d = _out[i].ch[2].d = _out[i].ch[3].d  = (short)0;
         if (write(_fd[i], &_out[i], sizeof(_out[i])) < 0) {
-            _mutex.post();
+            _mutex.unlock();
             return false;
         }
-        _mutex.post();
+        _mutex.unlock();
     }
     return true;
 }
@@ -602,7 +602,7 @@ bool yarp::dev::UrbtcControl::setVelocityMode()
     // caution, method sets new pid values.
     // setting here pid values which are known to work for velocity mode (strange controller behavior..)
 //    for (int i = 0; i < _intNumControllers; i++) {
-//        _mutex.wait();
+//        _mutex.lock();
 //        for (int j=0; j<4; j++) {
 //            _out[i].ch[j].x = 0;          // target position
 //            _out[i].ch[j].d = 0;          // target velocity
@@ -613,7 +613,7 @@ bool yarp::dev::UrbtcControl::setVelocityMode()
 //            _out[i].ch[j].ki = (signed short) (_pidVelDefault.ki * _pidAccuracy);
 //            _out[i].ch[j].kix = (unsigned short) (_pidAccuracy);        // I gain = 0/1 = 0
 //        }
-//        _mutex.post();
+//        _mutex.unlock();
 //    }
     return true;
 }
@@ -622,14 +622,14 @@ bool yarp::dev::UrbtcControl::velocityMoveRaw(int j, double sp)
 {
 
     if (j > -1 && j < _intNumControllers) {
-        _mutex.wait();
+        _mutex.lock();
         _out[j].ch[0].d = _out[j].ch[1].d = _out[j].ch[2].d = _out[j].ch[3].d  = (short)sp;
         // writing
         if (write(_fd[j], &_out[j], sizeof(_out[j])) < 0) {
-            _mutex.post();
+            _mutex.unlock();
             return false;
         }
-        _mutex.post();
+        _mutex.unlock();
     }
     return false;
 }
@@ -638,13 +638,13 @@ bool yarp::dev::UrbtcControl::velocityMoveRaw(const double *sp)
 {
 
     for (int i = 0; i < _intNumControllers; i++) {
-        _mutex.wait();
+        _mutex.lock();
         _out[i].ch[0].d = _out[i].ch[1].d = _out[i].ch[2].d = _out[i].ch[3].d  = (int)sp;
         if (write(_fd[i], &_out[i], sizeof(_out[i])) < 0) {
-            _mutex.post();
+            _mutex.unlock();
             return false;
         }
-        _mutex.post();
+        _mutex.unlock();
     }
     return true;
 }
@@ -657,14 +657,14 @@ bool yarp::dev::UrbtcControl::setPidRaw(int j, const Pid &pid)
 
     if (j > -1 && j < _intNumControllers) {
         for (int i = 0; i < 4; i++) {
-            _mutex.wait();
+            _mutex.lock();
             _out[j].ch[i].kp = (signed short)(pid.kp * _pidAccuracy);
             _out[j].ch[i].kpx = (signed short)(_pidAccuracy);        // P gain  = 5/1 = 5
             _out[j].ch[i].kd = (signed short)(pid.kd * _pidAccuracy);
             _out[j].ch[i].kdx = (signed short)(_pidAccuracy);        // D gain = 2/1 = 2
             _out[j].ch[i].ki = (signed short)(pid.ki * _pidAccuracy);
             _out[j].ch[i].kix = (signed short)(_pidAccuracy);        // I gain = 0/1 = 0
-            _mutex.post();
+            _mutex.unlock();
         }
     }
     return true;
@@ -840,7 +840,7 @@ bool yarp::dev::UrbtcControl::resetEncoderRaw(int j)
 
     if(j > -1 && j < _intNumControllers) {
 
-        _mutex.wait();
+        _mutex.lock();
 
         _cmd[j].retval = 0;
         _cmd[j].setoffset  = CH0 | CH1 | CH2 | CH3;
@@ -859,31 +859,31 @@ bool yarp::dev::UrbtcControl::resetEncoderRaw(int j)
         // prepare for writing _cmd
         if (ioctl(_fd[j], URBTC_COUNTER_SET) < 0)   {
             printf("Error on ioctl() for device number: %d\n", j);
-            _mutex.post();
+            _mutex.unlock();
             return false;
         }
 
         // write the cmd struct out to the device
         if (write(_fd[j], &_cmd[j], sizeof(_cmd[j])) < 0)    {
             printf("Error writing cmd struct to device number: %d\n", j);
-            _mutex.post();
+            _mutex.unlock();
             return false;
         }
 
         // prepare for writing _out again
         if (ioctl(_fd[j], URBTC_DESIRE_SET) < 0)  {
             printf("Error ioctl() URBTC_DESIRE_SET\n");
-            _mutex.post();
+            _mutex.unlock();
             return false;
         }
         if (ioctl(_fd[j], URBTC_CONTINUOUS_READ) < 0)   {
             printf("Error ioctl() URBTC_CONTINUOUS_READ\n");
-            _mutex.post();
+            _mutex.unlock();
             return false;
         }
         if (ioctl(_fd[j], URBTC_BUFREAD) < 0) {
             printf("Error ioctl() URBTC_BUFREAD\n");
-            _mutex.post();
+            _mutex.unlock();
             return false;
         }
 
@@ -895,7 +895,7 @@ bool yarp::dev::UrbtcControl::resetEncoderRaw(int j)
 
         // set position to 0 (otherwise controller would move to the last specified position relative to new origin)
         positionMoveRaw(j, 0.0);
-        _mutex.post();
+        _mutex.unlock();
         return true;
     }
     return false;
@@ -929,10 +929,10 @@ bool yarp::dev::UrbtcControl::getEncoderRaw(int j, double *v)
 
     // get the accumulated encoder value
     if (j > -1 && j < _intNumControllers) {
-        //_mutex.wait();
+        //_mutex.lock();
         //cout << "getting encoder value: " << (double)_pos[j] << endl;
         *v = (double)_pos[j];
-        //_mutex.post();
+        //_mutex.unlock();
     }
     return true;
 
@@ -952,11 +952,11 @@ bool yarp::dev::UrbtcControl::getEncodersRaw(double *encs)
 {
 
     // get the accumulated encoder value
-    _mutex.wait();
+    _mutex.lock();
     for (int i = 0; i < _intNumControllers; i++) {
         encs[i] = _pos[i];
     }
-    _mutex.post();
+    _mutex.unlock();
     return true;
 
         // get the real encoder value
@@ -1000,11 +1000,11 @@ bool yarp::dev::UrbtcControl::setLimitsRaw (int axis, double min, double max)
 {
     //cout << "set limits called" << endl;
     if(axis > -1 && axis < _intNumControllers) {
-        _mutex.wait();
+        _mutex.lock();
         _limitsMax[axis] = (int)max;
         _limitsMin[axis] = (int)min;
         //cout << "Limits set (raw) to: " << min << " " << max << " for axis: " << axis;
-        _mutex.post();
+        _mutex.unlock();
         return true;
     }
     return false;
@@ -1087,10 +1087,10 @@ void yarp::dev::UrbtcControl::run()
                 _periodCounter[i]++;
             if ( (oldPos[i] - newPos[i]) < -32000)   // switched from -32768 to 32768
                  _periodCounter[i]--;
-            _mutex.wait();
+            _mutex.lock();
             _posOld[i] = _pos[i];
             _pos[i] = (long)(_periodCounter[i] * _periodTicks) + (long)newPos[i];
-            _mutex.post();
+            _mutex.unlock();
 
             // make sure motors do not run over limits
             if (_pos[i] > _limitsMax[i] || _pos[i] < _limitsMin[i]) {
@@ -1122,12 +1122,12 @@ void yarp::dev::UrbtcControl::run()
 short yarp::dev::UrbtcControl::getUrbtcEncoderValue(int axis)
 {
 
-    _mutex.wait();
+    _mutex.lock();
     if ((read(_fd[axis], &_in[axis], sizeof(_in[axis]))) != sizeof(_in[axis])) {
         printf("UrbtcControl::setEncoderRaw(): Warning: read size mismatch.\n");
     }
     // actually only channel 0 should contain the encoder value, the others should be 0
-    _mutex.post();
+    _mutex.unlock();
     return (_in[axis].ct[0] + _in[axis].ct[1] + _in[axis].ct[2] + _in[axis].ct[3]);
 }
 
@@ -1143,7 +1143,7 @@ short yarp::dev::UrbtcControl::getUrbtcEncoderValue(int axis)
 //            if ( (position - _pos[axis]) < 0)
 //                signedStepSize = -signedStepSize;
 //
-//            _mutex.wait();
+//            _mutex.lock();
 //             let the motor run
 //             split up in two whiles to make sure tolerance band is not 'over-jumped'
 //            if (signedStepSize > 0) {
@@ -1152,7 +1152,7 @@ short yarp::dev::UrbtcControl::getUrbtcEncoderValue(int axis)
 //                    _out[axis].ch[0].x = _out[axis].ch[axis].x = _out[axis].ch[2].x = _out[axis].ch[3].x  = _pos[axis] + signedStepSize;
 //                     writing
 //                    if (write(_fd[axis], &_out[axis], sizeof(_out[axis])) < 0) {
-//                        _mutex.post();
+//                        _mutex.unlock();
 //                        return false;
 //                    }
 //                    yarp::os::Time::delay(0.001);
@@ -1164,14 +1164,14 @@ short yarp::dev::UrbtcControl::getUrbtcEncoderValue(int axis)
 //                    _out[axis].ch[0].x = _out[axis].ch[axis].x = _out[axis].ch[2].x = _out[axis].ch[3].x  = _pos[axis] + signedStepSize;
 //                     writing
 //                    if (write(_fd[axis], &_out[axis], sizeof(_out[axis])) < 0) {
-//                        _mutex.post();
+//                        _mutex.unlock();
 //                        return false;
 //                    }
 //                    yarp::os::Time::delay(0.001);
 //                    cout << "_pos: " << _pos[axis] << "  required: " << position << endl;
 //                }
 //            }
-//            _mutex.post();
+//            _mutex.unlock();
 //
 //        }
 //    }
@@ -1210,13 +1210,13 @@ short yarp::dev::UrbtcControl::getUrbtcEncoderValue(int axis)
 //
 //
 //            // start moving at velocity speed
-//            _mutex.wait();
+//            _mutex.lock();
 //            _out[axis].ch[0].d = _out[axis].ch[axis].d = _out[axis].ch[2].d = _out[axis].ch[3].d  = signedSpeed;
 //            // writing
 //            if (write(_fd[axis], &_out[axis], sizeof(_out[axis])) < 0) {
 //                return false;
 //            }
-//            _mutex.post();
+//            _mutex.unlock();
 //
 //            // let the motor run
 //            if (signedSpeed > 0) {

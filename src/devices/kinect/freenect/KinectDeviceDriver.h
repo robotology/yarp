@@ -19,7 +19,7 @@
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 
 #include "libfreenect.h"
 
@@ -77,22 +77,22 @@ public:
     pair.head.resize(width_,height_);
     pair.body.resize(width_,height_);
 
-    depthMutex_.wait();
+    depthMutex_.lock();
     // must transfer row by row, since YARP may use padding
     for (int i=0; i<height_; i++) {
       // depth image (1 layer)
       memcpy((unsigned char *)(&pair.head.pixel(0,i)),&depthBuf_[width_*i],width_*sizeof(uint16_t));
     }
     depthSent_ = true;
-    depthMutex_.post();
+    depthMutex_.unlock();
 
-    rgbMutex_.wait();
+    rgbMutex_.lock();
     for (int i=0; i<height_; i++) {
       // rgb image (3 layers), requires PixelRgb return value
       memcpy((unsigned char *)(&pair.body.pixel(0,i)),&rgbBuf_[i*width_*3],width_*3);
     }
     rgbSent_ = true;
-    rgbMutex_.post();
+    rgbMutex_.unlock();
 
     return true;
   }
@@ -137,17 +137,17 @@ public:
    * Depth and rgb callbacks fill internal image buffers
    */
   void depthImgCb(uint16_t *buf) {
-    depthMutex_.wait();
+    depthMutex_.lock();
     depthSent_ = false; // new depth data available
     memcpy(depthBuf_, buf, width_*height_*sizeof(uint16_t));
-    depthMutex_.post();
+    depthMutex_.unlock();
   }
 
   void rgbImgCb(uint8_t *buf) {
-    rgbMutex_.wait();
+    rgbMutex_.lock();
     rgbSent_ = false; // new rgb data available
     memcpy(rgbBuf_, buf, width_*height_*3);
-    rgbMutex_.post();
+    rgbMutex_.unlock();
   }
 
 private:
@@ -162,9 +162,9 @@ private:
   const double verticalFOV_;
 
   //! depth and rgb buffers from the kinect camera
-  yarp::os::Semaphore depthMutex_;
+  yarp::os::Mutex depthMutex_;
   uint16_t *depthBuf_;
-  yarp::os::Semaphore rgbMutex_;
+  yarp::os::Mutex rgbMutex_;
   uint8_t *rgbBuf_;
 
   bool depthSent_;

@@ -13,11 +13,12 @@
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Election.h>
 #include <yarp/os/NullConnectionReader.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/Things.h>
 
 #include "MonitorBinding.h"
 #include "MonitorEvent.h"
+
+#include <mutex>
 
 namespace yarp {
     namespace os {
@@ -105,8 +106,8 @@ public:
     virtual void getCarrierParams(yarp::os::Property& params) override;
 
 
-    void lock() { mutex.wait(); }
-    void unlock() { mutex.post(); }
+    void lock() { mutex.lock(); }
+    void unlock() { mutex.unlock(); }
 
     MonitorBinding* getBinder(void) {
         if(!bReady)
@@ -130,7 +131,7 @@ private:
     yarp::os::Things thing;
     MonitorBinding* binder;
     PortMonitorGroup *group;
-    yarp::os::Semaphore mutex;
+    std::mutex mutex;
 };
 
 #endif //PORTMONITOR_INC
