@@ -7,7 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/math/Rand.h>
 #include <ctime>
 #include <cstdio>
@@ -26,7 +26,7 @@ using namespace yarp::math::impl;
 */
 class ThreadSafeRandScalar : public RandScalar
 {
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 public:
     ThreadSafeRandScalar(): RandScalar()
     {
@@ -35,24 +35,24 @@ public:
 
     void init()
     {
-        mutex.wait();
+        mutex.lock();
         RandScalar::init();
-        mutex.post();
+        mutex.unlock();
     }
 
     void init(int s)
     {
-        mutex.wait();
+        mutex.lock();
         RandScalar::init(s);
-        mutex.post();
+        mutex.unlock();
     }
 
     double get(double min=0.0, double max=1.0)
     {
         double ret;
-        mutex.wait();
+        mutex.lock();
         ret=RandScalar::get(min, max);
-        mutex.post();
+        mutex.unlock();
         return ret;
     }
 
