@@ -34,7 +34,7 @@ private:
     PolyDriver poly;
     IAudioRender *put;
     BufferedPort<Sound> port;
-    Semaphore mutex;
+    Mutex mutex;
     bool muted;
     bool saving;
     std::deque<Sound> sounds;
@@ -42,7 +42,7 @@ private:
     size_t channels;
 
 public:
-    Echo() : mutex(1) {
+    Echo() : mutex() {
         put = nullptr;
         port.useCallback(*this);
         port.setStrict();
@@ -108,7 +108,7 @@ public:
             yWarning("Dropping sound packet -- %d packet(s) behind\n", ct);
             port.read();
         }
-        mutex.wait();
+        mutex.lock();
         /*
           if (muted) {
           for (int i=0; i<sound.getChannels(); i++) {
@@ -127,20 +127,20 @@ public:
             saveFrame(sound);
         }
 
-        mutex.post();
+        mutex.unlock();
         Time::yield();
     }
 
     void mute(bool muteFlag=true) {
-        mutex.wait();
+        mutex.lock();
         muted = muteFlag;
-        mutex.post();
+        mutex.unlock();
     }
 
     void save(bool saveFlag=true) {
-        mutex.wait();
+        mutex.lock();
         saving = saveFlag;
-        mutex.post();
+        mutex.unlock();
     }
 
     void saveFrame(Sound& sound) {
@@ -153,7 +153,7 @@ public:
     }
 
     bool saveFile(const char *name) {
-        mutex.wait();
+        mutex.lock();
         saving = false;
 
         Sound total;
@@ -170,7 +170,7 @@ public:
             at += tmp.getSamples();
             sounds.pop_front();
         }
-        mutex.post();
+        mutex.unlock();
         bool ok = write(total,name);
         if (ok) {
             yDebug("Wrote audio to %s\n", name);
@@ -182,7 +182,7 @@ public:
 
     bool close() {
         port.close();
-        mutex.wait(); // onRead never gets called again once it finishes
+        mutex.lock(); // onRead never gets called again once it finishes
         return true;
     }
 };
