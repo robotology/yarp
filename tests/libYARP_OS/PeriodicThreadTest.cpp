@@ -431,7 +431,7 @@ public:
         Time::useCustomClock(&clock);
         checkTrue(Time::isCustomClock(), "isCustomClock is true");
         checkTrue(Time::getClockType() == YARP_CLOCK_CUSTOM, "getClockType is YARP_CLOCK_CUSTOM");
-        PeriodicThread5 thread(100*1000); // 100 secs
+        PeriodicThread5 thread(100); // 100 secs
         thread.start();
         SystemClock clk;
         for (int i=0; i<20; i++) {
