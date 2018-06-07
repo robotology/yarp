@@ -656,13 +656,13 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
 
 
 void NameServiceOnTriples::lock() {
-    mutex.wait();
+    mutex.lock();
     db->begin(nullptr);
 }
 
 void NameServiceOnTriples::unlock() {
     db->end(nullptr);
-    mutex.post();
+    mutex.unlock();
 }
 
 
