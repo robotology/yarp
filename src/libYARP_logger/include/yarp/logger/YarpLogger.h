@@ -18,7 +18,7 @@
 
 #include <yarp/os/Thread.h>
 #include <yarp/os/PeriodicThread.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 
 #include <list>
 #include <vector>
@@ -190,7 +190,7 @@ class yarp::yarpLogger::LoggerEngine
         public:
         logger_thread (std::string _portname, double _period=0.01, int _log_list_max_size=100);
         public:
-        yarp::os::Semaphore  mutex;
+        yarp::os::Mutex      mutex;
         unsigned int         log_list_max_size;
         bool                 log_list_max_size_enabled;
         std::list<LogEntry>  log_list;
