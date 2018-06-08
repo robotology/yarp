@@ -48,7 +48,7 @@ namespace yarp{
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-const int DIAGNOSTIC_THREAD_PERIOD=1.000;
+const double DIAGNOSTIC_THREAD_PERIOD=1.000;
 const double TIMEOUT=0.5;
 
 inline bool getTimeStamp(Bottle &bot, Stamp &st)
