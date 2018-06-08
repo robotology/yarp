@@ -232,7 +232,7 @@ public:
         }
         stateSema.lock();
         clear();
-        //stateSema.unlock();  // never give back mutex
+        stateSema.unlock();
     }
 
     void clear()
