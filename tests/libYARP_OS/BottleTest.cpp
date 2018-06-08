@@ -20,6 +20,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Stamp.h>
+#include <yarp/os/ManagedBytes.h>
 
 //#include "TestList.h"
 

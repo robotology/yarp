@@ -16,7 +16,7 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/impl/SplitString.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Bottle.h>
 
 #include <map>
@@ -52,7 +52,7 @@ class YARP_OS_impl_API yarp::os::impl::NameServer : public NameServerStub
 public:
 
     NameServer() :
-            mutex(1)
+            mutex()
     {
         setup();
     }
@@ -488,7 +488,7 @@ protected:
     int basePort;
 
 private:
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 };
 
 #endif // YARP_OS_IMPL_NAMESERVER_H

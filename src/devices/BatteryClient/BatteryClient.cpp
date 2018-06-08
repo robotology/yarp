@@ -17,14 +17,14 @@ using namespace yarp::sig;
 
 inline void BatteryInputPortProcessor::resetStat()
 {
-    mutex.wait();
+    mutex.lock();
     count=0;
     deltaT=0;
     deltaTMax=0;
     deltaTMin=1e22;
     now=Time::now();
     prev=now;
-    mutex.post();
+    mutex.unlock();
 }
 
 BatteryInputPortProcessor::BatteryInputPortProcessor()
@@ -36,7 +36,7 @@ BatteryInputPortProcessor::BatteryInputPortProcessor()
 void BatteryInputPortProcessor::onRead(yarp::os::Bottle &b)
 {
     now=Time::now();
-    mutex.wait();
+    mutex.lock();
 
     if (count>0)
     {
@@ -82,75 +82,75 @@ void BatteryInputPortProcessor::onRead(yarp::os::Bottle &b)
     }
     lastStamp = newStamp;
 
-    mutex.post();
+    mutex.unlock();
 }
 
 inline int BatteryInputPortProcessor::getLast(yarp::os::Bottle &data, Stamp &stmp)
 {
-    mutex.wait();
+    mutex.lock();
     int ret=state;
     if (ret != IBattery::BATTERY_GENERAL_ERROR)
     {
         data=lastBottle;
         stmp = lastStamp;
     }
-    mutex.post();
+    mutex.unlock();
 
     return ret;
 }
 
 double BatteryInputPortProcessor::getVoltage()
 {
-    mutex.wait();
+    mutex.lock();
     double voltage = lastBottle.get(0).asInt32();
-    mutex.post();
+    mutex.unlock();
     return voltage;
 }
 
 double BatteryInputPortProcessor::getCurrent()
 {
-    mutex.wait();
+    mutex.lock();
     double current = lastBottle.get(1).asInt32();
-    mutex.post();
+    mutex.unlock();
     return current;
 }
 
 double BatteryInputPortProcessor::getCharge()
 {
-    mutex.wait();
+    mutex.lock();
     double charge = lastBottle.get(2).asInt32();
-    mutex.post();
+    mutex.unlock();
     return charge;
 }
 
 int    BatteryInputPortProcessor::getStatus()
 {
-    mutex.wait();
+    mutex.lock();
     int status = lastBottle.get(3).asInt32();
-    mutex.post();
+    mutex.unlock();
     return status;
 }
 
 double BatteryInputPortProcessor::getTemperature()
 {
-    mutex.wait();
+    mutex.lock();
     double temperature = lastBottle.get(4).asInt32();
-    mutex.post();
+    mutex.unlock();
     return temperature;
 }
 
 inline int BatteryInputPortProcessor::getIterations()
 {
-    mutex.wait();
+    mutex.lock();
     int ret=count;
-    mutex.post();
+    mutex.unlock();
     return ret;
 }
 
 // time is in ms
 void BatteryInputPortProcessor::getEstFrequency(int &ite, double &av, double &min, double &max)
 {
-    mutex.wait();
+    mutex.lock();
     ite=count;
     min=deltaTMin*1000;
     max=deltaTMax*1000;
@@ -163,7 +163,7 @@ void BatteryInputPortProcessor::getEstFrequency(int &ite, double &av, double &mi
         av=deltaT/count;
     }
     av=av*1000;
-    mutex.post();
+    mutex.unlock();
 }
 
 bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)

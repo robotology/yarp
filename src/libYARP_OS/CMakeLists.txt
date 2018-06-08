@@ -150,6 +150,7 @@ set(YARP_OS_IDL_HDRS include/yarp/os/idl/BareStyle.h
 set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/BottleImpl.h
                       include/yarp/os/impl/BufferedConnectionWriter.h
+                      include/yarp/os/impl/ConnectionRecorder.h
                       include/yarp/os/impl/DgramTwoWayStream.h
                       include/yarp/os/impl/Dispatcher.h
                       include/yarp/os/impl/FakeFace.h
@@ -189,7 +190,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/PortManager.h
                       include/yarp/os/impl/Protocol.h
                       include/yarp/os/impl/Runnable.h
-                      include/yarp/os/impl/SemaphoreImpl.h
                       include/yarp/os/impl/SocketTwoWayStream.h
                       include/yarp/os/impl/SplitString.h
                       include/yarp/os/impl/Storable.h
@@ -219,6 +219,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Carrier.cpp
                  src/Carriers.cpp
                  src/ConnectionReader.cpp
+                 src/ConnectionRecorder.cpp
                  src/ConnectionWriter.cpp
                  src/Contactable.cpp
                  src/Contact.cpp
@@ -268,6 +269,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/NullConnectionReader.cpp
                  src/NullConnectionWriter.cpp
                  src/Os.cpp
+                 src/OutputStream.cpp
                  src/PeriodicThread.cpp
                  src/Ping.cpp
                  src/PlatformTime.cpp
@@ -300,6 +302,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Runnable.cpp
                  src/Searchable.cpp
                  src/Semaphore.cpp
+                 src/SizedWriter.cpp
                  src/SharedLibrary.cpp
                  src/SharedLibraryFactory.cpp
                  src/SocketTwoWayStream.cpp

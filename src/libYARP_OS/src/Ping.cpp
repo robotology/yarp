@@ -14,7 +14,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Vocab.h>
 
 #include <cstdio>
@@ -97,19 +97,19 @@ std::string Ping::renderTime(double t, int space, int decimal) {
 
 class PingSampler : public PortReader {
 public:
-    Semaphore mutex;
+    Mutex mutex;
     int ct;
     double lastTime;
     Stat period;
 
-    PingSampler() : mutex(1) { ct = 0; lastTime = 0; }
+    PingSampler() : mutex() { ct = 0; lastTime = 0; }
 
     virtual bool read(ConnectionReader& connection) override {
         double now = SystemClock::nowSystem();
         Bottle b;
         bool ok = b.read(connection);
         if (ok) {
-            mutex.wait();
+            mutex.lock();
             ct++;
             if (ct>1) {
                 double dt = now - lastTime;
@@ -120,7 +120,7 @@ public:
                    period.mean(),
                    period.deviation(),
                    ct);
-            mutex.post();
+            mutex.unlock();
         }
         return ok;
     }

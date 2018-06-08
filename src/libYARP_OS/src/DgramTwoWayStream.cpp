@@ -635,13 +635,13 @@ DgramTwoWayStream::~DgramTwoWayStream() {
 
 void DgramTwoWayStream::interrupt() {
     bool act = false;
-    mutex.wait();
+    mutex.lock();
     if ((!closed) && (!interrupting) && happy) {
         act = true;
         interrupting = true;
         closed = true;
     }
-    mutex.post();
+    mutex.unlock();
 
     if (act) {
         if (reader) {
@@ -683,9 +683,9 @@ void DgramTwoWayStream::interrupt() {
             }
             YARP_DEBUG(Logger::get(), "dgram interrupt done");
         }
-        mutex.wait();
+        mutex.lock();
         interrupting = false;
-        mutex.post();
+        mutex.unlock();
     } else {
         // wait for interruption to be done
         if (interrupting) {
@@ -703,16 +703,16 @@ void DgramTwoWayStream::closeMain() {
     if (dgram != nullptr) {
         //printf("Dgram closing, interrupt state %d\n", interrupting);
         interrupt();
-        mutex.wait();
+        mutex.lock();
         closed = true;
         happy = false;
         //printf("Dgram closinger, interrupt state %d\n", interrupting);
-        mutex.post();
+        mutex.unlock();
         while (interrupting) {
             happy = false;
             yarp::os::SystemClock::delaySystem(0.1);
         }
-        mutex.wait();
+        mutex.lock();
         if (dgram != nullptr) {
 #if defined(YARP_HAS_ACE)
             dgram->close();
@@ -727,7 +727,7 @@ void DgramTwoWayStream::closeMain() {
             mgram = nullptr;
         }
         happy = false;
-        mutex.post();
+        mutex.unlock();
     }
     happy = false;
 }

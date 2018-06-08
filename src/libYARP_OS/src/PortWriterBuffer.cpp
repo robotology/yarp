@@ -9,10 +9,9 @@
 
 #include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Semaphore.h>
 
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
-
 #include <yarp/os/impl/PortCorePackets.h>
 
 using namespace yarp::os::impl;
@@ -22,12 +21,15 @@ using namespace yarp::os;
 class PortWriterBufferBaseHelper : public PortWriterBufferManager {
 public:
     PortWriterBufferBaseHelper(PortWriterBufferBase& owner) :
-        owner(owner), stateSema(1), completionSema(0) {
-        current = nullptr;
-        callback = nullptr;
-        port = nullptr;
-        finishing = false;
-        outCt = 0;
+            owner(owner),
+            stateSema(1),
+            completionSema(0),
+            port(nullptr),
+            current(nullptr),
+            callback(nullptr),
+            finishing(false),
+            outCt(0)
+    {
     }
 
     virtual ~PortWriterBufferBaseHelper() {
@@ -151,8 +153,8 @@ public:
 private:
     PortWriterBufferBase& owner;
     PortCorePackets packets;
-    SemaphoreImpl stateSema;
-    SemaphoreImpl completionSema;
+    yarp::os::Semaphore stateSema;
+    yarp::os::Semaphore completionSema;
     Port *port;
     PortWriter *current;
     PortWriter *callback;

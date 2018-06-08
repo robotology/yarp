@@ -19,7 +19,7 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Log.h>
 
 #include <yarp/sig/Vector.h>
@@ -44,7 +44,7 @@ using namespace yarp::sig;
 class StateExtendedInputPort:public yarp::os::BufferedPort<jointData>
 {
     jointData last;
-    Semaphore mutex;
+    Mutex mutex;
     Stamp lastStamp;
     double deltaT;
     double deltaTMax;

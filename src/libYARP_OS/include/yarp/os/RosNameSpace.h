@@ -13,7 +13,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Thread.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 
 #include <cstdio>
 
@@ -103,7 +103,7 @@ public:
 private:
     Contact contact;
     Bottle pending;
-    Semaphore mutex;
+    Mutex mutex;
 };
 
 #endif // YARP_OS_ROSNAMESPACE_H

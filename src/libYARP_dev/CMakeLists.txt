@@ -18,7 +18,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ControlBoardHelpers.h
                   include/yarp/dev/ControlBoardInterfaces.h
                   include/yarp/dev/ControlBoardInterfacesImpl.h
-                  include/yarp/dev/ControlBoardInterfacesImpl.inl
+                  include/yarp/dev/ControlBoardInterfacesImpl-inl.h
                   include/yarp/dev/ControlBoardPid.h
                   include/yarp/dev/DataSource.h
                   include/yarp/dev/DeviceDriver.h
@@ -191,7 +191,7 @@ set(YARP_dev_devices_HDRS src/devices/AnalogSensorClient/AnalogSensorClient.h
                           src/devices/JoypadControlServer/JoypadControlNetUtils.h
                           src/devices/JoypadControlServer/JoypadControlServer.h
                           src/devices/RemoteControlBoard/RemoteControlBoard.h
-                          src/devices/RemoteControlBoard/stateExtendedReader.hpp
+                          src/devices/RemoteControlBoard/stateExtendedReader.h
                           src/devices/RemoteFrameGrabber/RemoteFrameGrabber.h
                           src/devices/RobotDescriptionClient/RobotDescriptionClient.h
                           src/devices/RobotDescriptionServer/RobotDescriptionServer.h

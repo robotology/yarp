@@ -17,6 +17,7 @@
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/impl/TimeImpl.h>
 
+#include <mutex>
 
 #ifdef ACE_WIN32
 // for WIN32 MM functions

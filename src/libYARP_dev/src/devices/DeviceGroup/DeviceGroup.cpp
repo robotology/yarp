@@ -12,7 +12,7 @@
 #include <cstdio>
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/DriverLinkCreator.h>
 
@@ -40,16 +40,16 @@ private:
     std::vector<PolyDriver *> drivers;
     std::vector<std::string> names;
     std::vector<bool> needDrive;
-    Semaphore mutex;
+    Mutex mutex;
 public:
     bool needDriveSummary;
 
-    DeviceGroupHelper() : mutex(1) {
+    DeviceGroupHelper() : mutex() {
         needDriveSummary = false;
     }
 
     void clear() {
-        mutex.wait();
+        mutex.lock();
         std::vector<PolyDriver *>& lst = drivers;
         for (unsigned int i=0; i<lst.size(); i++) {
             printf("*** Removing %s\n",names[i].c_str());
@@ -60,11 +60,11 @@ public:
         }
         lst.clear();
         names.clear();
-        mutex.post();
+        mutex.unlock();
     }
 
     void update() {
-        mutex.wait();
+        mutex.lock();
         std::vector<PolyDriver *>& lst = drivers;
         for (unsigned int i=0; i<lst.size(); i++) {
             if (needDrive[i]) {
@@ -75,7 +75,7 @@ public:
                 }
             }
         }
-        mutex.post();
+        mutex.unlock();
     }
 
     bool close() {

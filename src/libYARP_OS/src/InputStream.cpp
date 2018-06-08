@@ -7,13 +7,51 @@
  */
 
 #include <yarp/os/InputStream.h>
+#include <yarp/os/Bytes.h>
 #include <yarp/os/ManagedBytes.h>
 
 using namespace yarp::os;
 
+InputStream::InputStream() = default;
+InputStream::~InputStream() = default;
+
+void InputStream::check()
+{
+}
+
+int InputStream::read()
+{
+    unsigned char result;
+    yarp::conf::ssize_t ct = read(yarp::os::Bytes((char*)&result, 1));
+    if (ct < 1) {
+        return -1;
+    }
+    return result;
+}
+
+yarp::conf::ssize_t InputStream::read(const Bytes& b, size_t offset, yarp::conf::ssize_t len)
+{
+    return read(yarp::os::Bytes(b.get() + offset, len));
+}
+
+yarp::conf::ssize_t InputStream::partialRead(const yarp::os::Bytes& b)
+{
+    return read(b);
+}
+void InputStream::interrupt()
+{
+}
+
+bool InputStream::setReadTimeout(double timeout)
+{
+    YARP_UNUSED(timeout);
+    return false;
+}
+
 // slow implementation - only relevant for textmode operation
 
-std::string InputStream::readLine(int terminal, bool *success) {
+std::string InputStream::readLine(int terminal, bool* success)
+{
     std::string buf("");
     bool done = false;
     int esc = 0;
@@ -22,28 +60,28 @@ std::string InputStream::readLine(int terminal, bool *success) {
     }
     while (!done) {
         int v = read();
-        if (v<0) {
+        if (v < 0) {
             if (success != nullptr) {
                 *success = false;
             }
             return "";
         }
         char ch = (char)v;
-        if (v=='\\') {
+        if (v == '\\') {
             esc++;
         }
-        if (v!=0&&v!='\r'&&v!='\n') {
-            if (v!='\\'||esc>=2) {
+        if (v != 0 && v != '\r' && v != '\n') {
+            if (v != '\\' || esc >= 2) {
                 while (esc) {
                     buf += '\\';
                     esc--;
                 }
             }
-            if (v!='\\') {
+            if (v != '\\') {
                 buf += ch;
             }
         }
-        if (ch==terminal) {
+        if (ch == terminal) {
             if (!esc) {
                 done = true;
             } else {
@@ -54,27 +92,36 @@ std::string InputStream::readLine(int terminal, bool *success) {
     return buf;
 }
 
-yarp::conf::ssize_t InputStream::readFull(const Bytes& b) {
+yarp::conf::ssize_t InputStream::readFull(const Bytes& b)
+{
     yarp::conf::ssize_t off = 0;
     yarp::conf::ssize_t fullLen = b.length();
     yarp::conf::ssize_t remLen = fullLen;
     yarp::conf::ssize_t result = 1;
-    while (result>0&&remLen>0) {
+    while (result > 0 && remLen > 0) {
         result = read(b, off, remLen);
-        if (result>0) {
+        if (result > 0) {
             remLen -= result;
             off += result;
         }
     }
-    return (result<=0)?-1:fullLen;
+    return (result <= 0) ? -1 : fullLen;
 }
 
-yarp::conf::ssize_t InputStream::readDiscard(size_t len) {
-    if (len<100) {
+yarp::conf::ssize_t InputStream::readDiscard(size_t len)
+{
+    if (len < 100) {
         char buf[100];
         Bytes b(buf, len);
         return readFull(b);
     }
     ManagedBytes b(len);
     return readFull(b.bytes());
+}
+
+bool InputStream::setReadEnvelopeCallback(readEnvelopeCallbackType callback, void* data)
+{
+    YARP_UNUSED(callback);
+    YARP_UNUSED(data);
+    return false;
 }

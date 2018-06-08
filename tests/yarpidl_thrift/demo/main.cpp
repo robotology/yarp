@@ -919,7 +919,7 @@ bool test_primitives() {
     TestSomeMoreTypes a, b;
     Bottle tmp;
     a.a_bool = true;
-    a.a_byte = 8;
+    a.a_i8 = 8;
     a.a_i16 = 16;
     a.a_i32 = 32;
     a.a_i64 = 64;

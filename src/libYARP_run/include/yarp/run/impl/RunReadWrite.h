@@ -13,7 +13,6 @@
 #include <string>
 #include <yarp/os/Port.h>
 #include <yarp/os/Thread.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/PortReader.h>
 #include <string>
 #include <yarp/os/Network.h>

@@ -9,6 +9,7 @@
 
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/ConnectionReader.h>
+#include <yarp/os/ConnectionWriter.h>
 
 
 bool yarp::os::PortablePairBase::readPair(ConnectionReader& connection,

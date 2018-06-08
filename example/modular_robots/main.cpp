@@ -37,7 +37,7 @@ public:
 
 class WideNameService : public yarp::name::NameService {
 private:
-  yarp::os::Semaphore mutex;
+  yarp::os::Mutex mutex;
   map<string,Entry> names;
   map<int,int> numbers;
   int lastNumber;
@@ -60,7 +60,7 @@ private:
   }
 
 public:
-  WideNameService() : mutex(1) {
+  WideNameService() : mutex() {
     firstNumber = lastNumber =  DEFAULT_NAME_PORT_NUMBER;
   }
 
@@ -172,7 +172,7 @@ public:
                      yarp::os::Bottle& event,
                      yarp::os::Contact& remote) {
     bool ok = false;
-    mutex.wait();
+    mutex.lock();
     printf(" + %s\n", cmd.toString().c_str());
     reply.clear();
     std::string tag = cmd.get(0).asString();
@@ -188,7 +188,7 @@ public:
       reply.addString("old");
       reply.addString("I have no idea what you are talking about");
     }
-    mutex.post();
+    mutex.unlock();
     return ok;
   }
 };

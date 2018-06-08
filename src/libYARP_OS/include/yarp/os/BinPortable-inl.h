@@ -11,6 +11,7 @@
 #define YARP_OS_BINPORTABLE_INL_H
 
 #include <yarp/os/ConnectionReader.h>
+#include <yarp/os/ConnectionWriter.h>
 
 template <class T>
 T& yarp::os::BinPortable<T>::content()

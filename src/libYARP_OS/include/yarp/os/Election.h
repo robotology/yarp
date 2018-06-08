@@ -11,7 +11,7 @@
 #define YARP_OS_ELECTION_H
 
 #include <string>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Log.h>
 
 #include <map>
@@ -67,7 +67,7 @@ class yarp::os::ElectionOf {
 private:
     typedef void *voidPtr;
 
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 
     typedef typename std::map<std::string, PR> map_type;
     map_type nameMap;
@@ -85,33 +85,33 @@ private:
         return &(entry->second);
     }
  public:
-    ElectionOf() : mutex(1) {
+    ElectionOf() : mutex() {
         ct = 0;
     }
     virtual ~ElectionOf() {}
 
     PR *add(const std::string& key, typename PR::peer_type *entity) {
-        mutex.wait();
+        mutex.lock();
         ct++;
         PR *rec = getRecordRaw(key, true);
         yAssert(rec);
         rec->add(entity);
-        mutex.post();
+        mutex.unlock();
         return rec;
     }
     void remove(const std::string& key, typename PR::peer_type *entity) {
-        mutex.wait();
+        mutex.lock();
         ct++;
         PR *rec = getRecordRaw(key, false);
         yAssert(rec);
         rec->remove(entity);
-        mutex.post();
+        mutex.unlock();
     }
 
     typename PR::peer_type *getElect(const std::string& key) {
-        mutex.wait();
+        mutex.lock();
         PR *rec = getRecordRaw(key, false);
-        mutex.post();
+        mutex.unlock();
         if (rec) {
             return rec->getFirst();
         }
@@ -119,9 +119,9 @@ private:
     }
 
     PR *getRecord(const std::string& key) {
-        mutex.wait();
+        mutex.lock();
         PR *rec = getRecordRaw(key, false);
-        mutex.post();
+        mutex.unlock();
         return rec;
     }
 
@@ -129,8 +129,8 @@ private:
         return ct;
     }
 
-    void lock() { mutex.wait(); }
-    void unlock() { mutex.post(); }
+    void lock() { mutex.lock(); }
+    void unlock() { mutex.unlock(); }
 };
 
 

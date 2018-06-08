@@ -24,7 +24,7 @@
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/dev/Wrapper.h>
 
 #include <yarp/dev/IVirtualAnalogSensor.h>
@@ -72,7 +72,7 @@ namespace yarp{
 class yarp::dev::VirtualAnalogWrapper : public yarp::dev::DeviceDriver, public yarp::os::Thread, public yarp::dev::IMultipleWrapper
 {
 public:
-    VirtualAnalogWrapper() : mMutex(1)
+    VirtualAnalogWrapper() : mMutex()
     {
         lastRecv = 0;
         mIsVerbose=false;
@@ -104,7 +104,7 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
-    yarp::os::Semaphore mMutex;
+    yarp::os::Mutex mMutex;
 
     bool mIsVerbose;
 

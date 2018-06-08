@@ -11,6 +11,7 @@
 #define YARP_OS_IMPL_SOCKETTWOWAYSTREAM_H
 
 #include <yarp/conf/system.h>
+#include <yarp/os/Bytes.h>
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformTime.h>

@@ -24,11 +24,11 @@ namespace yarp {
 template <class T>
 class yarp::os::idl::BottleStyle : public T {
 public:
-    virtual bool read(yarp::os::ConnectionReader& reader) {
+    virtual bool read(yarp::os::ConnectionReader& reader) override {
         return T::readBottle(reader);
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) {
+    virtual bool write(yarp::os::ConnectionWriter& writer) override {
         return T::writeBottle(writer);
     }
 };

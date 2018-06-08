@@ -23,6 +23,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Thread.h>
 
 namespace yarp{
@@ -254,7 +255,7 @@ protected:
 
 protected:
 	void *system_resources;
-    yarp::os::Semaphore _mutex;
+    yarp::os::Mutex _mutex;
     yarp::os::Semaphore _done;
 
 	bool _writerequested;

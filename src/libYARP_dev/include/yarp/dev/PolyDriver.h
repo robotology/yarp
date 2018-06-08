@@ -157,7 +157,7 @@ public:
       if(isValid())
         return dd->getImplementation();
       else
-        return NULL;
+        return nullptr;
     }
 
 private:

@@ -24,11 +24,11 @@ namespace yarp {
 template <class T>
 class yarp::os::idl::BareStyle : public T {
 public:
-    virtual bool read(yarp::os::ConnectionReader& reader) {
+    virtual bool read(yarp::os::ConnectionReader& reader) override {
         return T::readBare(reader);
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) {
+    virtual bool write(yarp::os::ConnectionWriter& writer) override {
         return T::writeBare(writer);
     }
 };

@@ -16,7 +16,7 @@
 #include "MEIMotionControl.h"
 
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/ControlBoardInterfacesImpl.inl>
+#include <yarp/dev/ControlBoardInterfacesImpl-inl.h>
 
 // MEI
 #define MEI_WINNT

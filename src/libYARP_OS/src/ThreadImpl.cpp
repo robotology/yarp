@@ -9,10 +9,10 @@
 
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/NetType.h>
+#include <yarp/os/Semaphore.h>
 
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformSignal.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
 
 #include <cstdlib>
 #include <thread>

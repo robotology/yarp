@@ -8,7 +8,7 @@
  */
 
 #include <yarp/os/Bottle.h>
-#include <string>
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
@@ -22,6 +22,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <string>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;

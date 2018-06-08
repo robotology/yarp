@@ -7,20 +7,20 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/Os.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/Os.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/StringInputStream.h>
 
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
-#include <yarp/os/StringInputStream.h>
+#include <yarp/os/impl/PortCorePacket.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
-#include <yarp/os/impl/PortCorePacket.h>
-
 #include <list>
+#include <mutex>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -198,9 +198,9 @@ public:
 
     int ct;
     Port *port;
-    SemaphoreImpl contentSema;
-    SemaphoreImpl consumeSema;
-    std::mutex stateSema;
+    yarp::os::Semaphore contentSema;
+    yarp::os::Semaphore consumeSema;
+    std::mutex stateMutex;
 
     Private(PortReaderBufferBase& owner, unsigned int maxBuffer) :
             owner(owner),
@@ -215,24 +215,24 @@ public:
             port(nullptr),
             contentSema(0),
             consumeSema(0),
-            stateSema()
+            stateMutex()
     {
     }
 
     virtual ~Private()
     {
         Port *closePort = nullptr;
-        stateSema.lock();
+        stateMutex.lock();
         if (port!=nullptr) {
             closePort = port;
         }
-        stateSema.unlock();
+        stateMutex.unlock();
         if (closePort!=nullptr) {
             closePort->close();
         }
-        stateSema.lock();
+        stateMutex.lock();
         clear();
-        //stateSema.unlock();  // never give back mutex
+        stateMutex.unlock();
     }
 
     void clear()
@@ -372,9 +372,9 @@ yarp::os::PortReader *PortReaderBufferBase::create()
 
 int PortReaderBufferBase::check()
 {
-    mPriv->stateSema.lock();
+    mPriv->stateMutex.lock();
     int count = mPriv->checkContent();
-    mPriv->stateSema.unlock();
+    mPriv->stateMutex.unlock();
     return count;
 }
 
@@ -422,7 +422,7 @@ PortReader *PortReaderBufferBase::readBase(bool& missed, bool cleanup)
             mPriv->last_recv = target;
         }
     }
-    mPriv->stateSema.lock();
+    mPriv->stateMutex.lock();
     PortReaderPacket *readerPacket = mPriv->getContent();
     PortReader *reader = nullptr;
     if (readerPacket!=nullptr) {
@@ -433,7 +433,7 @@ PortReader *PortReaderBufferBase::readBase(bool& missed, bool cleanup)
             reader = external;
         }
     }
-    mPriv->stateSema.unlock();
+    mPriv->stateMutex.unlock();
     if (reader!=nullptr) {
         mPriv->consumeSema.post();
     }
@@ -456,7 +456,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection)
     }
     PortReaderPacket *reader = nullptr;
     while (reader==nullptr) {
-        mPriv->stateSema.lock();
+        mPriv->stateMutex.lock();
         reader = mPriv->get();
         if (reader && reader->getReader() == nullptr) {
             PortReader *next = create();
@@ -464,7 +464,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection)
             reader->setReader(next);
         }
 
-        mPriv->stateSema.unlock();
+        mPriv->stateMutex.unlock();
         if (reader==nullptr) {
             mPriv->consumeSema.wait();
         }
@@ -480,7 +480,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection)
         mPriv->port = nullptr;
     }
     if (ok) {
-        mPriv->stateSema.lock();
+        mPriv->stateMutex.lock();
         bool pruned = false;
         if (mPriv->ct>0 && mPriv->prune) {
             PortReaderPacket *readerPacket =
@@ -490,15 +490,15 @@ bool PortReaderBufferBase::read(ConnectionReader& connection)
         //mPriv->configure(reader, false, true);
         mPriv->pool.addActivePacket(reader);
         mPriv->ct++;
-        mPriv->stateSema.unlock();
+        mPriv->stateMutex.unlock();
         if (!pruned) {
             mPriv->contentSema.post();
         }
         //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> adding data");
     } else {
-        mPriv->stateSema.lock();
+        mPriv->stateMutex.lock();
         mPriv->pool.addInactivePacket(reader);
-        mPriv->stateSema.unlock();
+        mPriv->stateMutex.unlock();
         //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> skipping data");
 
         // important to give reader a shot anyway, allowing proper closing
@@ -565,9 +565,9 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
 
     PortReaderPacket *reader = nullptr;
     while (reader==nullptr) {
-        mPriv->stateSema.lock();
+        mPriv->stateMutex.lock();
         reader = mPriv->get();
-        mPriv->stateSema.unlock();
+        mPriv->stateMutex.unlock();
         if (reader==nullptr) {
             mPriv->consumeSema.wait();
         }
@@ -576,7 +576,7 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
     if (ok) {
         reader->setExternal(obj, wrapper);
 
-        mPriv->stateSema.lock();
+        mPriv->stateMutex.lock();
         bool pruned = false;
         if (mPriv->ct>0 && mPriv->prune) {
             PortReaderPacket *readerPacket =
@@ -586,15 +586,15 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
         //mPriv->configure(reader, false, true);
         mPriv->pool.addActivePacket(reader);
         mPriv->ct++;
-        mPriv->stateSema.unlock();
+        mPriv->stateMutex.unlock();
         if (!pruned) {
             mPriv->contentSema.post();
         }
         //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> adding data");
     } else {
-        mPriv->stateSema.lock();
+        mPriv->stateMutex.lock();
         mPriv->pool.addInactivePacket(reader);
-        mPriv->stateSema.unlock();
+        mPriv->stateMutex.unlock();
         //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> skipping data");
 
         // important to give reader a shot anyway, allowing proper closing
@@ -625,9 +625,9 @@ void *PortReaderBufferBase::acquire()
 
 void PortReaderBufferBase::release(void *key)
 {
-    mPriv->stateSema.lock();
+    mPriv->stateMutex.lock();
     mPriv->release(key);
-    mPriv->stateSema.unlock();
+    mPriv->stateMutex.unlock();
 }
 
 
@@ -651,9 +651,9 @@ void typedReaderMissingCallback()
 void PortReaderBufferBase::release(PortReader *completed)
 {
     YARP_UNUSED(completed);
-    //mPriv->stateSema.wait();
+    //mPriv->stateMutex.wait();
     //mPriv->configure(completed, true, false);
-    //mPriv->stateSema.post();
+    //mPriv->stateMutex.post();
     printf("release not implemented anymore; not needed\n");
     std::exit(1);
 }

@@ -11,7 +11,7 @@
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/Thread.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 
 #include <stage.h>
 
@@ -30,9 +30,9 @@ private:
     stg_model_t* position;
     stg_model_t* laser;
     double setpoint[3];
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 public:
-    StageControl() : mutex(1) {
+    StageControl() : mutex() {
         world = NULL;
         for (int i=0; i<3; i++) {
             setpoint[i] = 0;

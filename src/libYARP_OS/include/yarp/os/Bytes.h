@@ -11,14 +11,12 @@
 #define YARP_OS_BYTES_H
 
 #include <yarp/os/api.h>
-#include <cstddef> //defines size_t
+
+#include <cstddef>
+
 
 namespace yarp {
-    namespace os {
-        class Bytes;
-    }
-}
-
+namespace os {
 
 /**
  * \brief A simple abstraction for a block of bytes.
@@ -26,7 +24,8 @@ namespace yarp {
  * This class is not responsible for allocating or destroying those bytes, just
  * recording their location.
  */
-class YARP_OS_API yarp::os::Bytes {
+class YARP_OS_API Bytes
+{
 public:
     /**
      * Default constructor.  No data present.
@@ -38,7 +37,7 @@ public:
      * @param data address of data block
      * @param len length of data block
      */
-    Bytes(char *data, size_t len);
+    Bytes(char* data, size_t len);
 
     /**
      * @return length of data block
@@ -48,11 +47,14 @@ public:
     /**
      * @return address of data block
      */
-    char *get() const;
+    char* get() const;
 
 private:
-    char *data;
+    char* data;
     size_t len;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_BYTES_H

@@ -12,7 +12,9 @@
 #include <yarp/conf/system.h>
 
 #include <yarp/os/Bottle.h>
-#include <yarp/os/ManagedBytes.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/NetInt32.h>
 #include <yarp/os/NetFloat64.h>
 
 #include <yarp/os/impl/Logger.h>
@@ -26,8 +28,6 @@
 using namespace yarp::sig;
 using namespace yarp::os;
 
-// network stuff
-#include <yarp/os/NetInt32.h>
 
 ///////////////////
 

@@ -11,6 +11,7 @@
 #define YARP_OS_STRINGINPUTSTREAM_H
 
 #include <yarp/os/InputStream.h>
+#include <yarp/os/Bytes.h>
 #include <string>
 
 namespace yarp {

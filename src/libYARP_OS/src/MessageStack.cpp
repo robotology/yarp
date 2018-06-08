@@ -10,6 +10,7 @@
 #include <yarp/os/MessageStack.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/DummyConnector.h>
@@ -34,7 +35,7 @@ class MessageStackHelper {
 private:
     std::list<MessageStackThread *> threads;
     std::deque<Bottle> msgs;
-    Semaphore mutex;
+    Mutex mutex;
     Semaphore produce;
     size_t max_threads;
     int available_threads;
@@ -42,7 +43,7 @@ private:
     bool active;
 
 public:
-    MessageStackHelper(int max_threads, PortReader& owner) : mutex(1), produce(0), owner(owner) {
+    MessageStackHelper(int max_threads, PortReader& owner) : mutex(), produce(0), owner(owner) {
         this->max_threads = (size_t)max_threads;
         available_threads = 0;
         active = true;
@@ -64,7 +65,7 @@ public:
     }
 
     void stack(PortWriter& msg, const std::string& tag) {
-        mutex.wait();
+        mutex.lock();
         msgs.push_back(Bottle());
         if (tag!="") {
             Bottle b;
@@ -84,23 +85,23 @@ public:
             }
         }
         available_threads--;
-        mutex.post();
+        mutex.unlock();
         produce.post();
     }
 
     bool process() {
         produce.wait();
         if (!active) return false;
-        mutex.wait();
+        mutex.lock();
         Bottle b = msgs.front();
         msgs.pop_front();
-        mutex.post();
+        mutex.unlock();
         DummyConnector con;
         b.write(con.getWriter());
         owner.read(con.getReader());
-        mutex.wait();
+        mutex.lock();
         available_threads++;
-        mutex.post();
+        mutex.unlock();
         return active;
     }
 

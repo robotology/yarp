@@ -13,7 +13,7 @@
 #include <yarp/name/NameServerConnectionHandler.h>
 
 #include <yarp/os/PortReaderCreator.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Port.h>
 
 
@@ -33,11 +33,11 @@ class yarp::name::NameServerManager : public NameService,
 private:
     NameService& ns;
     yarp::os::Port *port;
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 public:
     NameServerManager(NameService& ns,
                       yarp::os::Port *port = NULL) : ns(ns),
-                                                     port(port), mutex(1) {
+                                                     port(port), mutex() {
     }
 
     void setPort(yarp::os::Port& port) {
@@ -56,11 +56,11 @@ public:
     }
 
     virtual void lock() override {
-        mutex.wait();
+        mutex.lock();
     }
 
     virtual void unlock() override {
-        mutex.post();
+        mutex.unlock();
     }
 
     virtual bool apply(yarp::os::Bottle& cmd,

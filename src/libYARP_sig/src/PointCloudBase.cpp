@@ -7,6 +7,7 @@
  */
 
 #include <yarp/sig/PointCloudBase.h>
+#include <yarp/os/Type.h>
 
 using namespace yarp::sig;
 

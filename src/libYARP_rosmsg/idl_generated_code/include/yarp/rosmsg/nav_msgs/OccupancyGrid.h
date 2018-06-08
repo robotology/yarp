@@ -27,6 +27,7 @@
 #define YARP_ROSMSG_nav_msgs_OccupancyGrid_h
 
 #include <yarp/os/Wire.h>
+#include <yarp/os/Type.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <string>
 #include <vector>

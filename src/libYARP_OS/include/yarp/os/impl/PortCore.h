@@ -11,7 +11,7 @@
 #define YARP_OS_IMPL_PORTCORE_H
 
 #include <yarp/os/impl/ThreadImpl.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
+#include <yarp/os/Semaphore.h>
 #include <yarp/os/Carriers.h>
 #include <yarp/os/Contactable.h>
 #include <yarp/os/Contact.h>
@@ -518,38 +518,38 @@ public:
 
     void checkType(PortReader& reader)
     {
-        typeMutex.wait();
+        typeMutex.lock();
         if (!checkedType) {
             if (!typ.isValid()) {
                 typ = reader.getReadType();
             }
             checkedType = true;
         }
-        typeMutex.post();
+        typeMutex.unlock();
     }
 
     yarp::os::Type getType()
     {
-        typeMutex.wait();
+        typeMutex.lock();
         Type t = typ;
-        typeMutex.post();
+        typeMutex.unlock();
         return t;
     }
 
     void promiseType(const Type& typ)
     {
-        typeMutex.wait();
+        typeMutex.lock();
         this->typ = typ;
-        typeMutex.post();
+        typeMutex.unlock();
     }
 
 private:
 
     // main internal PortCore state and operations
     std::vector<PortCoreUnit *> units;  ///< list of connections
-    SemaphoreImpl stateMutex;       ///< control access to essential port state
-    SemaphoreImpl packetMutex;      ///< control access to message cache
-    SemaphoreImpl connectionChange; ///< signal changes in connections
+    yarp::os::Semaphore stateSema;       ///< control access to essential port state
+    yarp::os::Mutex packetMutex;      ///< control access to message cache
+    yarp::os::Semaphore connectionChange; ///< signal changes in connections
     Logger log;  ///< message logger
     Face *face;  ///< network server
     std::string name; ///< name of port
@@ -588,7 +588,7 @@ private:
     bool mutexOwned;        ///< do we own the optional callback lock
     BufferedConnectionWriter envelopeWriter; ///< storage area for envelope, if present
 
-    SemaphoreImpl typeMutex;        ///< control access to type
+    yarp::os::Mutex typeMutex;        ///< control access to type
     bool checkedType;
     Type typ;
 

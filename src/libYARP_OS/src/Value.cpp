@@ -9,6 +9,8 @@
 
 #include <yarp/os/Value.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/ConnectionWriter.h>
 
 #include <yarp/os/impl/BottleImpl.h>
 

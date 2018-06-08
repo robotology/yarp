@@ -13,7 +13,7 @@
 #include <string>
 
 #include <yarp/os/PeriodicThread.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/ILocalization2D.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -58,7 +58,7 @@ protected:
     PolyDriver driver;
     test_mode_t m_test_mode;
     localization_mode_t m_loc_mode;
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 
     double period;
     int sensorsNum;
@@ -90,7 +90,7 @@ public:
     FakeLaser(double period = 0.02) : PeriodicThread(period),
         m_test_mode(test_mode_t::NO_OBSTACLES),
         m_loc_mode(localization_mode_t::LOC_NOT_SET),
-        mutex(1),
+        mutex(),
         period(period),
         sensorsNum(0),
         min_angle(0.0),

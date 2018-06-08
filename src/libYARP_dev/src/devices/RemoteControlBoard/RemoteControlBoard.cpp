@@ -16,7 +16,7 @@
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/QosStyle.h>
 
@@ -29,7 +29,7 @@
 #include <yarp/dev/PreciselyTimed.h>
 
 
-#include "stateExtendedReader.hpp"
+#include "stateExtendedReader.h"
 
 #define PROTOCOL_VERSION_MAJOR 1
 #define PROTOCOL_VERSION_MINOR 9
@@ -178,7 +178,7 @@ protected:
     // from the YARP .thrift file
 //  yarp::os::PortReaderBuffer<jointData>           extendedInputState_buffer;  // Buffer storing new data
     StateExtendedInputPort                          extendedIntputStatePort;  // Buffered port storing new data
-    Semaphore extendedPortMutex;
+    Mutex extendedPortMutex;
     jointData last_singleJoint;     // tmp to store last received data for a particular joint
 //    yarp::os::Port extendedIntputStatePort;         // Port /stateExt:i reading the state of the joints
     jointData last_wholePart;         // tmp to store last received data for whole part
@@ -186,7 +186,7 @@ protected:
     std::string remote;
     std::string local;
     mutable Stamp lastStamp;  //this is shared among all calls that read encoders
-    // Semaphore mutex;
+    // Mutex mutex;
     int nj;
     bool njIsKnown;
 
@@ -1483,9 +1483,9 @@ public:
     {
         double localArrivalTime = 0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_ENCODER, v, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         if (ret && ( (Time::now()-localArrivalTime) > TIMEOUT) )
             ret = false;
@@ -1503,10 +1503,10 @@ public:
     {
         double localArrivalTime = 0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_ENCODER, v, lastStamp, localArrivalTime);
         *t=lastStamp.getTime();
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         if (ret && ( (Time::now()-localArrivalTime) > TIMEOUT) )
             ret = false;
@@ -1526,9 +1526,9 @@ public:
     virtual bool getEncoders(double *encs) override {
         double localArrivalTime = 0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_ENCODERS, encs, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         return ret;
     }
@@ -1542,10 +1542,10 @@ public:
     virtual bool getEncodersTimed(double *encs, double *ts) override {
         double localArrivalTime=0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_ENCODERS, encs, lastStamp, localArrivalTime);
         std::fill_n(ts, nj, lastStamp.getTime());
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         if ( (Time::now()-localArrivalTime) > TIMEOUT)
             ret=false;
@@ -1562,9 +1562,9 @@ public:
     {
         double localArrivalTime=0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_ENCODER_SPEED, sp, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -1578,9 +1578,9 @@ public:
     {
         double localArrivalTime=0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_ENCODER_SPEEDS, spds, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -1593,9 +1593,9 @@ public:
     virtual bool getEncoderAcceleration(int j, double *acc) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_ENCODER_ACCELERATION, acc, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -1607,9 +1607,9 @@ public:
     virtual bool getEncoderAccelerations(double *accs) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_ENCODER_ACCELERATIONS, accs, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -1755,9 +1755,9 @@ public:
     {
         double localArrivalTime = 0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_MOTOR_ENCODER, v, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         if(ret && ((Time::now()-localArrivalTime) > TIMEOUT) )
             ret=false;
@@ -1775,10 +1775,10 @@ public:
     {
         double localArrivalTime = 0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_MOTOR_ENCODER, v, lastStamp, localArrivalTime);
         *t=lastStamp.getTime();
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         if(ret && ((Time::now()-localArrivalTime) > TIMEOUT) )
             ret=false;
@@ -1799,9 +1799,9 @@ public:
     {
         double localArrivalTime=0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_MOTOR_ENCODERS, encs, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         return ret;
     }
@@ -1816,10 +1816,10 @@ public:
     {
         double localArrivalTime=0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_MOTOR_ENCODERS, encs, lastStamp, localArrivalTime);
         std::fill_n(ts, nj, lastStamp.getTime());
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         if(ret && ((Time::now()-localArrivalTime) > TIMEOUT) )
             ret=false;
@@ -1835,9 +1835,9 @@ public:
     virtual bool getMotorEncoderSpeed(int j, double *sp) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_MOTOR_ENCODER_SPEED, sp, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -1849,9 +1849,9 @@ public:
     virtual bool getMotorEncoderSpeeds(double *spds) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_MOTOR_ENCODER_SPEEDS, spds, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -1864,9 +1864,9 @@ public:
     virtual bool getMotorEncoderAcceleration(int j, double *acc) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_MOTOR_ENCODER_ACCELERATION, acc, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -1878,9 +1878,9 @@ public:
     virtual bool getMotorEncoderAccelerations(double *accs) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_MOTOR_ENCODER_SPEEDS, accs, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -1891,9 +1891,9 @@ public:
      */
     virtual Stamp getLastInputStamp() override {
         Stamp ret;
-//        mutex.wait();
+//        mutex.lock();
         ret = lastStamp;
-//        mutex.post();
+//        mutex.unlock();
         return ret;
     }
 
@@ -2395,9 +2395,9 @@ public:
     virtual bool getPWM(int m, double* val) override
     {
         double localArrivalTime = 0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(m, VOCAB_PWMCONTROL_PWM_OUTPUT, val, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -2638,18 +2638,18 @@ public:
     bool getTorque(int j, double *t) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_TRQ, t, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
     bool getTorques(double *t) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_TRQS, t, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -2755,9 +2755,9 @@ public:
     bool getControlMode(int j, int *mode) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_CM_CONTROL_MODE, mode, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -2766,7 +2766,7 @@ public:
     {
         double localArrivalTime=0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, last_wholePart.controlMode.getFirst(), lastStamp, localArrivalTime);
         if(ret)
         {
@@ -2776,7 +2776,7 @@ public:
         else
             ret = false;
 
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -2784,9 +2784,9 @@ public:
     bool getControlModes(int *modes) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, modes, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -2942,9 +2942,9 @@ public:
     bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(axis, VOCAB_INTERACTION_MODE, (int*) mode, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -2952,7 +2952,7 @@ public:
     {
         double localArrivalTime=0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, last_wholePart.interactionMode.getFirst(), lastStamp, localArrivalTime);
         if(ret)
         {
@@ -2962,16 +2962,16 @@ public:
         else
             ret = false;
 
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
     bool getInteractionModes(yarp::dev::InteractionModeEnum* modes) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_INTERACTION_MODES, (int*) modes, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -3351,18 +3351,18 @@ public:
     virtual bool getDutyCycle(int j, double *out) override
     {
         double localArrivalTime = 0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_PWMCONTROL_PWM_OUTPUT, out, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
     virtual bool getDutyCycles(double *outs) override
     {
         double localArrivalTime = 0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_PWMCONTROL_PWM_OUTPUTS, outs, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 

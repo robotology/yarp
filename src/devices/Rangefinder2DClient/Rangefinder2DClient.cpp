@@ -29,14 +29,14 @@ using namespace yarp::sig;
 
 inline void  Rangefinder2DInputPortProcessor::resetStat()
 {
-    mutex.wait();
+    mutex.lock();
     count=0;
     deltaT=0;
     deltaTMax=0;
     deltaTMin=1e22;
     now=SystemClock::nowSystem();
     prev=now;
-    mutex.post();
+    mutex.unlock();
 }
 
 Rangefinder2DInputPortProcessor::Rangefinder2DInputPortProcessor()
@@ -48,7 +48,7 @@ Rangefinder2DInputPortProcessor::Rangefinder2DInputPortProcessor()
 void Rangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
 {
     now=SystemClock::nowSystem();
-    mutex.wait();
+    mutex.lock();
 
     if (count>0)
     {
@@ -94,55 +94,55 @@ void Rangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
     }
     lastStamp = newStamp;
 
-    mutex.post();
+    mutex.unlock();
 }
 
 inline int Rangefinder2DInputPortProcessor::getLast(yarp::os::Bottle &data, Stamp &stmp)
 {
-    mutex.wait();
+    mutex.lock();
     int ret=state;
     if (ret != IRangefinder2D::DEVICE_GENERAL_ERROR)
     {
         data=lastBottle;
         stmp = lastStamp;
     }
-    mutex.post();
+    mutex.unlock();
 
     return ret;
 }
 
 bool Rangefinder2DInputPortProcessor::getData(yarp::sig::Vector &ranges)
 {
-    mutex.wait();
-    if (lastBottle.size()==0) { mutex.post(); return false; }
+    mutex.lock();
+    if (lastBottle.size()==0) { mutex.unlock(); return false; }
     unsigned int size = lastBottle.get(0).asList()->size();
     ranges.resize(size);
     for (unsigned int i = 0; i < size; i++)
         ranges[i] = lastBottle.get(0).asList()->get(i).asFloat64();
-    mutex.post();
+    mutex.unlock();
     return true;
 }
 
 yarp::dev::IRangefinder2D::Device_status Rangefinder2DInputPortProcessor::getStatus()
 {
-    mutex.wait();
+    mutex.lock();
     yarp::dev::IRangefinder2D::Device_status status = (yarp::dev::IRangefinder2D::Device_status) lastBottle.get(3).asInt32();
-    mutex.post();
+    mutex.unlock();
     return status;
 }
 
 inline int Rangefinder2DInputPortProcessor::getIterations()
 {
-    mutex.wait();
+    mutex.lock();
     int ret=count;
-    mutex.post();
+    mutex.unlock();
     return ret;
 }
 
 // time is in ms
 void Rangefinder2DInputPortProcessor::getEstFrequency(int &ite, double &av, double &min, double &max)
 {
-    mutex.wait();
+    mutex.lock();
     ite=count;
     min=deltaTMin*1000;
     max=deltaTMax*1000;
@@ -155,7 +155,7 @@ void Rangefinder2DInputPortProcessor::getEstFrequency(int &ite, double &av, doub
         av=deltaT/count;
     }
     av=av*1000;
-    mutex.post();
+    mutex.unlock();
 }
 
 bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)

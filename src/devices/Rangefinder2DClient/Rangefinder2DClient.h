@@ -15,7 +15,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -33,7 +33,7 @@ const int LASER_TIMEOUT=100; //ms
 class Rangefinder2DInputPortProcessor : public yarp::os::BufferedPort<yarp::os::Bottle>
 {
     yarp::os::Bottle lastBottle;
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
     yarp::os::Stamp lastStamp;
     double deltaT;
     double deltaTMax;

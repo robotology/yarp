@@ -55,10 +55,10 @@ public:
     virtual int getSpecifierCode() override;
     virtual bool sendHeader(ConnectionState& proto) override;
     virtual bool expectExtraHeader(ConnectionState& proto) override;
-    virtual bool becomeMcast(ConnectionState& proto, bool sender);
     virtual bool respondToHeader(ConnectionState& proto) override;
     virtual bool expectReplyToHeader(ConnectionState& proto) override;
 
+    bool becomeMcast(ConnectionState& proto, bool sender);
     void addSender(const std::string& key);
     void removeSender(const std::string& key);
     bool isElect();

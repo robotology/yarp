@@ -19,7 +19,6 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/PortCoreAdapter.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 

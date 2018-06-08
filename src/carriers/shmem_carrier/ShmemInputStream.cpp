@@ -192,14 +192,15 @@ int ShmemInputStreamImpl::read(char* data, int len)
 
 yarp::conf::ssize_t ShmemInputStreamImpl::read(const yarp::os::Bytes& b)
 {
-    m_ReadSerializerMutex.wait();
+    m_ReadSerializerMutex.lock();
 
     if (!m_bOpen) {
-        m_ReadSerializerMutex.post();
+        m_ReadSerializerMutex.unlock();
         return -1;
     }
 
-    char *data = b.get(), buf;
+    char* data = b.get();
+    char* buf;
     size_t len = b.length();
     yarp::conf::ssize_t ret;
 
@@ -216,12 +217,12 @@ yarp::conf::ssize_t ShmemInputStreamImpl::read(const yarp::os::Bytes& b)
         if (!m_pSock->recv(&buf, 1)) {
             //yDebug("STREAM IS BROKEN");
             close();
-            m_ReadSerializerMutex.post();
+            m_ReadSerializerMutex.unlock();
             return -1;
         }
     }
 
-    m_ReadSerializerMutex.post();
+    m_ReadSerializerMutex.unlock();
 
     return ret;
 }

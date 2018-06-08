@@ -46,6 +46,7 @@
 #define YARP_ROSMSG_sensor_msgs_MultiEchoLaserScan_h
 
 #include <yarp/os/Wire.h>
+#include <yarp/os/Type.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <string>
 #include <vector>

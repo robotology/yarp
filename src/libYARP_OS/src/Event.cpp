@@ -8,6 +8,7 @@
  */
 
 #include <yarp/os/Event.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Semaphore.h>
 
 
@@ -24,13 +25,13 @@ public:
 
     void wait()
     {
-        stateMutex.wait();
+        stateMutex.lock();
         if (signalled) {
-            stateMutex.post();
+            stateMutex.unlock();
             return;
         }
         waiters++;
-        stateMutex.post();
+        stateMutex.unlock();
         action.wait();
         if (autoReset) {
             reset();
@@ -39,7 +40,7 @@ public:
 
     void signal(bool after = true)
     {
-        stateMutex.wait();
+        stateMutex.lock();
         int w = waiters;
         if (w > 0) {
             if (autoReset) {
@@ -51,21 +52,21 @@ public:
             }
         }
         signalled = after;
-        stateMutex.post();
+        stateMutex.unlock();
     }
 
     void reset()
     {
-        stateMutex.wait();
+        stateMutex.lock();
         signalled = false;
-        stateMutex.post();
+        stateMutex.unlock();
     }
 
 private:
     bool autoReset;
     bool signalled;
     int waiters;
-    Semaphore stateMutex;
+    Mutex stateMutex;
     Semaphore action;
 };
 

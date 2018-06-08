@@ -11,7 +11,8 @@
 #define YARP_OS_IMPL_PORTCOREADAPTER_H
 
 #include <yarp/os/impl/PortCore.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Port.h>
 
 
@@ -27,7 +28,7 @@ namespace yarp {
 class yarp::os::impl::PortCoreAdapter : public PortCore
 {
 private:
-    SemaphoreImpl stateMutex;
+    yarp::os::Mutex stateMutex;
     PortReader *readDelegate;
     PortReader *permanentReadDelegate;
     PortReader *adminReadDelegate;
@@ -41,9 +42,9 @@ private:
     bool opened;
     bool replyDue;
     bool dropDue;
-    SemaphoreImpl produce;
-    SemaphoreImpl consume;
-    SemaphoreImpl readBlock;
+    yarp::os::Semaphore produce;
+    yarp::os::Semaphore consume;
+    yarp::os::Semaphore readBlock;
     PortReaderCreator *recReadCreator;
     int recWaitAfterSend;
     bool usedForRead;

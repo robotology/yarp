@@ -28,7 +28,7 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/dev/Wrapper.h>
 
 #include <string>
@@ -291,7 +291,7 @@ private:
     yarp::os::BufferedPort<CommandMessage>     inputStreamingPort;        // Input streaming port for high frequency commands
     yarp::os::Port inputRPCPort;                // Input RPC port for set/get remote calls
     yarp::os::Stamp time;                       // envelope to attach to the state port
-    yarp::os::Semaphore timeMutex;
+    yarp::os::Mutex timeMutex;
 
     // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated
     // from the YARP .thrift file
@@ -314,7 +314,7 @@ private:
 
 
     // RPC calls are concurrent from multiple clients, data used inside the calls has to be protected
-    yarp::os::Semaphore                             rpcDataMutex;                   // mutex to avoid concurrency between more clients using rppc port
+    yarp::os::Mutex                                 rpcDataMutex;                   // mutex to avoid concurrency between more clients using rppc port
     yarp::dev::impl::MultiJointData                 rpcData;                        // Structure used to re-arrange data from "multiple_joints" calls.
 
     std::string         partName;               // to open ports and print more detailed debug messages

@@ -13,7 +13,7 @@
 #include "ShmemTypes.h"
 
 #include <yarp/os/InputStream.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/Logger.h>
@@ -64,7 +64,7 @@ protected:
     ACE_Process_Mutex* m_pWaitDataMutex;
 #endif
 
-    yarp::os::Semaphore m_ReadSerializerMutex;
+    yarp::os::Mutex m_ReadSerializerMutex;
 
     ACE_Shared_Memory* m_pMap;
     char* m_pData;

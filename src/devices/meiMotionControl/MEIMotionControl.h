@@ -457,7 +457,7 @@ protected:
 
 protected:
 	void *system_resources;
-//    yarp::os::Semaphore _mutex;
+//    yarp::os::Mutex _mutex;
 //    yarp::os::Semaphore _done;
 
 

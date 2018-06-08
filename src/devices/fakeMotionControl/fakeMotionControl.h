@@ -22,12 +22,12 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
-#include <yarp/dev/ControlBoardInterfacesImpl.inl>
+#include <yarp/dev/ControlBoardInterfacesImpl-inl.h>
 #include <yarp/dev/IVirtualAnalogSensor.h>
 #include <yarp/dev/IVirtualAnalogSensorImpl.h>
 
@@ -137,7 +137,7 @@ private:
         VERY_VERY_VERBOSE   = 6     // adds messages printed every cycle, so too much verbose for usage, only for deep debugging
     };
 
-    yarp::os::Semaphore     _mutex;
+    yarp::os::Mutex _mutex;
     int  _njoints;
     int *_axisMap;                              /** axis remapping lookup-table */
     double *_angleToEncoder;                    /** angle to iCubDegrees conversion factors */

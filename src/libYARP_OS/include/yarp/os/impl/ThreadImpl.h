@@ -11,7 +11,7 @@
 #define YARP_OS_IMPL_THREADIMPL_H
 
 #include <yarp/os/impl/Runnable.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
+#include <yarp/os/Semaphore.h>
 
 #include <thread>
 #include <atomic>
@@ -83,7 +83,7 @@ private:
     bool needJoin;
     Runnable *delegate;
 
-    SemaphoreImpl synchro;
+    yarp::os::Semaphore synchro;
 
     bool initWasSuccessful;
 };

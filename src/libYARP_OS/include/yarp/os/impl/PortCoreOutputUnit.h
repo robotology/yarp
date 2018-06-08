@@ -13,6 +13,8 @@
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/PortCoreUnit.h>
 #include <yarp/os/OutputProtocol.h>
+#include <yarp/os/Mutex.h>
+#include <yarp/os/Semaphore.h>
 
 namespace yarp {
     namespace os {
@@ -113,9 +115,9 @@ private:
     bool running;       ///< is a thread running
     bool threaded;      ///< do we need a thread for background writing
     bool sending;       ///< are we sending something right now
-    SemaphoreImpl phase;        ///< let main thread kick sending thread
-    SemaphoreImpl activate;     ///< signal when we have a new tracker
-    SemaphoreImpl trackerMutex; ///< protect the tracker during outside access
+    yarp::os::Semaphore phase;        ///< let main thread kick sending thread
+    yarp::os::Semaphore activate;     ///< signal when we have a new tracker
+    yarp::os::Mutex trackerMutex; ///< protect the tracker during outside access
     yarp::os::PortWriter *cachedWriter;   ///< the message the send
     yarp::os::PortReader *cachedReader;   ///< where to put a reply
     yarp::os::PortWriter *cachedCallback; ///< where to sent commencement and

@@ -15,7 +15,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Vocab.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 
 #include <list>
 
@@ -29,13 +29,13 @@ public:
     bool needed;
     bool positive;
     int ct;
-    yarp::os::Semaphore& mutex;
+    yarp::os::Mutex& mutex;
 
     //yarp::os::Contact src;
     std::string src;
     std::string dest;
 
-    ConnectThread(yarp::os::Semaphore& mutex) : mutex(mutex) {
+    ConnectThread(yarp::os::Mutex& mutex) : mutex(mutex) {
         needed = true;
         ct = 0;
         positive = true;
@@ -43,12 +43,12 @@ public:
 
     virtual void run() override {
         do {
-            mutex.wait();
+            mutex.lock();
             if (ct==0) {
                 needed = false;
             }
             ct--;
-            mutex.post();
+            mutex.unlock();
             /*
             printf(" ]]] con %s %s / %d %d\n", src.c_str(),
                    dest.c_str(),
@@ -79,10 +79,10 @@ public:
 class ConnectManager {
 private:
     std::list<ConnectThread *> con;
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 public:
 
-    ConnectManager() : mutex(1) {
+    ConnectManager() : mutex() {
     }
 
     virtual ~ConnectManager() {
@@ -129,7 +129,7 @@ public:
                     }
                 } else {
                     if ((*it)->src == src && (*it)->dest == dest) {
-                        mutex.wait();
+                        mutex.lock();
                         /*
                         printf("??? prethread %d %d\n", (*it)->needed,
                                (*it)->ct);
@@ -139,7 +139,7 @@ public:
                             (*it)->ct++;
                             already = true;
                         }
-                        mutex.post();
+                        mutex.unlock();
                     }
                 }
             }

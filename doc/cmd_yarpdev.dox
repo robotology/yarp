@@ -8,13 +8,13 @@ them for network visibility.  This is useful in cases where you
 wish to control devices on remote machines.
 
 The devices available to "yarpdev" depend on the options set
-when compiling YARP.  To choose the devices you want compiled,
-run "ccmake ." (on UNIX) or "cmake" (on Windows) on the
-root directory of the YARP source code and select the
-"YARP_COMPILE_DEVICE_PLUGINS" option.
-After you configure, new "ENABLE_*"
-options will appear that permit you to choose what devices you want
-to try and compile.  Often this will require that you install
+when compiling YARP.
+The most important devices are enabled by default.
+To disable all device plugins, you can set to `OFF` the
+`YARP_COMPILE_DEVICE_PLUGINS` option in CMake.
+You can select and deselect each device using the relative `ENABLE_*`
+options in CMake.
+Often this will require that you install
 particular libraries or operating system device drivers.
 
 

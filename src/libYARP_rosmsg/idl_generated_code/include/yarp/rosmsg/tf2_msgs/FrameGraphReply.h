@@ -16,6 +16,7 @@
 #define YARP_ROSMSG_tf2_msgs_FrameGraphReply_h
 
 #include <yarp/os/Wire.h>
+#include <yarp/os/Type.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <string>
 #include <vector>

@@ -10,19 +10,45 @@
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/SystemInfoSerializer.h>
 #include <yarp/os/ConnectionReader.h>
+#include <yarp/os/ConnectionWriter.h>
 
 using namespace yarp::os;
 
 
+class SystemInfoSerializer::Private
+{
+public:
+    Private(SystemInfoSerializer* parent) :
+            parent(parent)
+    {
+    }
+
+    void updateSystemInfo()
+    {
+        // updating system info
+        parent->memory = SystemInfo::getMemoryInfo();
+        parent->storage = SystemInfo::getStorageInfo();
+        //parent->network = SystemInfo::getNetworkInfo();
+        parent->processor = SystemInfo::getProcessorInfo();
+        parent->platform = SystemInfo::getPlatformInfo();
+        parent->load = SystemInfo::getLoadInfo();
+        parent->user = SystemInfo::getUserInfo();
+    }
+
+    SystemInfoSerializer* const parent;
+};
+
 SystemInfoSerializer::SystemInfoSerializer() :
-    memory(SystemInfo::MemoryInfo{0,0}),
-    storage(SystemInfo::StorageInfo{0,0}),
-    load(SystemInfo::LoadInfo{.0,.0,.0,0})
+        memory(SystemInfo::MemoryInfo{0,0}),
+        storage(SystemInfo::StorageInfo{0,0}),
+        load(SystemInfo::LoadInfo{.0,.0,.0,0}),
+        mPriv(new Private(this))
 {
 }
 
 SystemInfoSerializer::~SystemInfoSerializer()
 {
+    delete mPriv;
 }
 
 bool SystemInfoSerializer::read(yarp::os::ConnectionReader& connection)
@@ -75,14 +101,7 @@ bool SystemInfoSerializer::read(yarp::os::ConnectionReader& connection)
 
 bool SystemInfoSerializer::write(yarp::os::ConnectionWriter& connection)
 {
-    // updating system info
-    memory = SystemInfo::getMemoryInfo();
-    storage = SystemInfo::getStorageInfo();
-    //network = SystemInfo::getNetworkInfo();
-    processor = SystemInfo::getProcessorInfo();
-    platform = SystemInfo::getPlatformInfo();
-    load = SystemInfo::getLoadInfo();
-    user = SystemInfo::getUserInfo();
+    mPriv->updateSystemInfo();
 
     // serializing memory
     connection.appendInt32(memory.totalSpace);

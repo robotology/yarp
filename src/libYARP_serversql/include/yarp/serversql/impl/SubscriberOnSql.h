@@ -12,7 +12,7 @@
 
 #include <yarp/serversql/impl/Subscriber.h>
 
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 
 
 namespace yarp {
@@ -26,7 +26,7 @@ namespace impl {
  */
 class SubscriberOnSql : public Subscriber {
 public:
-    SubscriberOnSql() : mutex(1) {
+    SubscriberOnSql() : mutex() {
         implementation = nullptr;
         verbose = false;
     }
@@ -96,7 +96,7 @@ public:
 private:
     void *implementation;
     bool verbose;
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 };
 
 } // namespace impl

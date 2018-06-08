@@ -7,6 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Bottle.h>
 

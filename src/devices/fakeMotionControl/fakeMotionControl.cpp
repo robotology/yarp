@@ -373,7 +373,7 @@ FakeMotionControl::FakeMotionControl() :
     ImplementMotor(this),
     ImplementAxisInfo(this),
     ImplementVirtualAnalogSensor(this),
-    _mutex(1)
+    _mutex()
 //     SAFETY_THRESHOLD(2.0)
 {
     verbose = VERY_VERBOSE;
@@ -2396,19 +2396,19 @@ bool FakeMotionControl::getEncoderAccelerationsRaw(double *accs)
 bool FakeMotionControl::getEncodersTimedRaw(double *encs, double *stamps)
 {
     bool ret = getEncodersRaw(encs);
-    _mutex.wait();
+    _mutex.lock();
     for(int i=0; i<_njoints; i++)
         stamps[i] = _encodersStamp[i];
-    _mutex.post();
+    _mutex.unlock();
     return ret;
 }
 
 bool FakeMotionControl::getEncoderTimedRaw(int j, double *encs, double *stamp)
 {
     bool ret = getEncoderRaw(j, encs);
-    _mutex.wait();
+    _mutex.lock();
     *stamp = _encodersStamp[j];
-    _mutex.post();
+    _mutex.unlock();
 
     return ret;
 }
@@ -2503,10 +2503,10 @@ bool FakeMotionControl::getMotorEncoderAccelerationsRaw(double *accs)
 bool FakeMotionControl::getMotorEncodersTimedRaw(double *encs, double *stamps)
 {
     bool ret = getMotorEncodersRaw(encs);
-    _mutex.wait();
+    _mutex.lock();
     for(int i=0; i<_njoints; i++)
         stamps[i] = _encodersStamp[i];
-    _mutex.post();
+    _mutex.unlock();
 
     return ret;
 }
@@ -2514,9 +2514,9 @@ bool FakeMotionControl::getMotorEncodersTimedRaw(double *encs, double *stamps)
 bool FakeMotionControl::getMotorEncoderTimedRaw(int m, double *encs, double *stamp)
 {
     bool ret = getMotorEncoderRaw(m, encs);
-    _mutex.wait();
+    _mutex.lock();
     *stamp = _encodersStamp[m];
-    _mutex.post();
+    _mutex.unlock();
 
     return ret;
 }

@@ -14,7 +14,6 @@
 #include <yarp/run/api.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/Semaphore.h>
 
 
 class YarpRunInfoVector;

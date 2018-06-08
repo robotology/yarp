@@ -10,6 +10,7 @@
 #ifndef YARP_OS_VALUE_H
 #define YARP_OS_VALUE_H
 
+#include <yarp/conf/numeric.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Bottle.h>

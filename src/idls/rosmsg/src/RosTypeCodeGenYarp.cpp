@@ -198,6 +198,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     fprintf(out, "#ifndef YARP_ROSMSG_%s_h\n", safename.c_str());
     fprintf(out, "#define YARP_ROSMSG_%s_h\n\n", safename.c_str());
     fprintf(out, "#include <yarp/os/Wire.h>\n");
+    fprintf(out, "#include <yarp/os/Type.h>\n");
     fprintf(out, "#include <yarp/os/idl/WireTypes.h>\n");
     fprintf(out, "#include <string>\n");
     fprintf(out, "#include <vector>\n");

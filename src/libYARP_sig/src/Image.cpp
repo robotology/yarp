@@ -12,21 +12,22 @@
 
 */
 
-#include <yarp/sig/impl/IplImage.h>
-
-#include <yarp/os/Log.h>
 #include <yarp/sig/Image.h>
-#include <yarp/sig/ImageNetworkHeader.h>
 
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Vocab.h>
-#include <string>
+#include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/Log.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Vocab.h>
 
+#include <yarp/sig/ImageNetworkHeader.h>
+#include <yarp/sig/impl/IplImage.h>
 #include <yarp/sig/impl/DeBayer.h>
 
 #include <cstdio>
 #include <cstring>
+#include <string>
+
 
 using namespace yarp::sig;
 using namespace yarp::os;

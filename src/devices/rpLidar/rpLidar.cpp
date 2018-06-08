@@ -679,7 +679,7 @@ void RpLidar::run()
              {
              yError("Unable to put sensor in scan mode!");
              }
-             mutex.post();
+             mutex.unlock();
              return;
              }
              else
