@@ -365,7 +365,7 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
             && config.find("period").isInt32())
         period = config.find("period").asInt32() / 1000.0;
     else
-        yWarning()<<"ServerGrabber: period parameter not found, using default of"<< DEFAULT_THREAD_PERIOD << "ms";
+        yWarning()<<"ServerGrabber: period parameter not found, using default of"<< DEFAULT_THREAD_PERIOD << "s";
     if((config.check("subdevice")) && (config.check("left_config") || config.check("right_config")))
     {
         yError()<<"ServerGrabber: found both 'subdevice' and 'left_config/right_config' parameters...";

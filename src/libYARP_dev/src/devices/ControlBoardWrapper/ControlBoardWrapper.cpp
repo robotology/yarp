@@ -424,7 +424,7 @@ bool ControlBoardWrapper::open(Searchable& config)
         period = prop.find("period").asInt32() / 1000.0;
         if(period <= 0)
         {
-            yError() << " *** ControlBoardWrapper2: 'period' parameter is not an integer value, read value is " << period << " ***";
+            yError() << " *** ControlBoardWrapper2: 'period' parameter is not valid, read value is " << period << " ***";
             return false;
         }
     }

@@ -244,7 +244,7 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
     if(params.check("help"))
     {
         yInfo() << "parameters:\n\n" <<
-                   "period             - refresh period of the broadcasted values in ms.. default" << DEFAULT_THREAD_PERIOD << "\n"
+                   "period             - refresh period of the broadcasted values in ms.. default" << DEFAULT_THREAD_PERIOD * 1000<< "\n"
                    "use_separate_ports - set it to 1 to use separate ports (buttons, axes, trackballs, hats) and 0 to stream all in one single port\n" <<
                    "name               - Prefix name of the ports opened by the JoypadControlServer, e.g. /robotName/joypad\n" <<
                    "subdevice          - name of the subdevice to open\n" <<
@@ -254,7 +254,7 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
     std::string rootName;
     if (!params.check("period", "refresh period of the broadcasted values in ms"))
     {
-        yInfo() << "JoypadControlServer: using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "ms";
+        yInfo() << "JoypadControlServer: using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
     }
     else
     {

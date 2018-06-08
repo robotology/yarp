@@ -248,7 +248,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
     if (!config.check("period", "refresh period of the broadcasted values in ms"))
     {
         if(verbose >= 3)
-            yInfo() << "RGBDSensorWrapper: using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "ms";
+            yInfo() << "RGBDSensorWrapper: using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
     }
     else
         period = config.find("period").asInt32() / 1000.0;

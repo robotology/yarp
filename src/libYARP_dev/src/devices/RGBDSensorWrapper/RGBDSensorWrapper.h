@@ -57,7 +57,7 @@ namespace yarp{
     }
 }
 
-#define DEFAULT_THREAD_PERIOD   0.03 //m
+#define DEFAULT_THREAD_PERIOD   0.03 // s
 
 // Following three definitions would fit better in a header file
 // shared between client and server ... where to place it?
