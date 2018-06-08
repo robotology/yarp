@@ -122,7 +122,7 @@ struct DataXY
             float y;
         };
     };
-    std::string toString(int precision, int width)
+    std::string toString(int precision, int width) const
     {
         std::string ret = "";
         char tmp[128];
@@ -138,7 +138,7 @@ struct DataXY
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(x);
@@ -169,7 +169,7 @@ struct DataXYZ
             float z;
         };
     };
-    std::string toString(int precision, int width)
+    std::string toString(int precision, int width) const
     {
         std::string ret = "";
         char tmp[128];
@@ -187,7 +187,7 @@ struct DataXYZ
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(x);
@@ -227,7 +227,7 @@ struct DataRGBA
         yarp::os::NetInt32 rgba;
 //        float data_c[4];
     };
-    std::string toString(int precision, int width)
+    std::string toString(int precision, int width) const
     {
         YARP_UNUSED(precision);
         YARP_UNUSED(width);
@@ -237,7 +237,7 @@ struct DataRGBA
         ret += tmp;
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addInt32(r);
@@ -281,7 +281,7 @@ struct DataNormal
         };
         float data_c[4];
     };
-    std::string toString(int precision, int width)
+    std::string toString(int precision, int width) const
     {
         std::string ret = "";
         char tmp[128];
@@ -301,7 +301,7 @@ struct DataNormal
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(normal_x);
@@ -341,7 +341,7 @@ struct DataNormalNoCurvature
             float normal_z;
         };
     };
-    std::string toString(int precision, int width)
+    std::string toString(int precision, int width) const
     {
         std::string ret = "";
         char tmp[128];
@@ -359,7 +359,7 @@ struct DataNormalNoCurvature
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(normal_x);
@@ -413,7 +413,7 @@ struct DataViewpoint
             float vp_z;
         };
     };
-    std::string toString(int precision, int width)
+    std::string toString(int precision, int width) const
     {
         std::string ret = "";
         char tmp[128];
@@ -431,7 +431,7 @@ struct DataViewpoint
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(vp_x);
@@ -490,7 +490,7 @@ struct DataXYZRGBA
         yarp::os::NetInt32 rgba;
         float rgba_padding[4];
     };
-    std::string toString(int precision, int width)
+    std::string toString(int precision, int width) const
     {
         std::string ret = "";
         char tmp[128];
@@ -510,7 +510,7 @@ struct DataXYZRGBA
         ret += tmp;
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(x);
@@ -565,7 +565,7 @@ struct DataXYZI
         };
         float intensity_padding[4];
     };
-    std::string toString(int precision, int width)
+    std::string toString(int precision, int width) const
     {
         std::string ret = "";
         char tmp[128];
@@ -585,7 +585,7 @@ struct DataXYZI
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(x);
@@ -634,7 +634,7 @@ struct DataInterestPointXYZ
         };
         float strength_padding[4];
     };
-    std::string toString(int precision, int width)
+    std::string toString(int precision, int width) const
     {
         std::string ret = "";
         char tmp[128];
@@ -654,7 +654,7 @@ struct DataInterestPointXYZ
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(x);
@@ -714,7 +714,7 @@ struct DataXYZNormal
         };
         float filler_c[4];
     };
-    std::string toString(int precision, int width)
+    std::string toString(int precision, int width) const
     {
         std::string ret = "";
         char tmp[128];
@@ -742,7 +742,7 @@ struct DataXYZNormal
         }
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(x);
@@ -820,7 +820,7 @@ struct DataXYZNormalRGBA
         };
         float filler_others[4];
     };
-    std::string toString(int precision, int width)
+    std::string toString(int precision, int width) const
     {
         std::string ret = "";
         char tmp[128];
@@ -850,7 +850,7 @@ struct DataXYZNormalRGBA
         ret += tmp;
         return ret;
     }
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addFloat64(x);

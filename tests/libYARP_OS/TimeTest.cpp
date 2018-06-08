@@ -19,7 +19,7 @@ using namespace yarp::os::impl;
 
 class TimeTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "TimeTest"; }
+    virtual std::string getName() const override { return "TimeTest"; }
 
     void testDelay() {
         report(0,"testing delay (there will be a short pause)...");

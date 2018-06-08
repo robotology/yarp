@@ -18,7 +18,7 @@ using namespace yarp::os::impl;
 
 class VocabTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "VocabTest"; }
+    virtual std::string getName() const override { return "VocabTest"; }
 
     void checkConvert() {
         report(0,"checking vocabulary conversions");

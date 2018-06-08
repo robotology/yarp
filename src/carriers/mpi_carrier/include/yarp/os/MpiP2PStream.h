@@ -29,7 +29,7 @@ public:
     using MpiStream::write;
     using MpiStream::read;
 
-    ssize_t read(const Bytes& b) override;
+    ssize_t read(Bytes& b) override;
     void write(const Bytes& b) override;
     void close() override {
         #ifdef MPI_DEBUG

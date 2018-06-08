@@ -36,13 +36,13 @@ class YARP_OS_API SizedWriter : public PortWriter
 public:
     virtual ~SizedWriter();
 
-    virtual size_t length() = 0;
+    virtual size_t length() const = 0;
 
-    virtual size_t headerLength() = 0;
+    virtual size_t headerLength() const = 0;
 
-    virtual size_t length(size_t index) = 0;
+    virtual size_t length(size_t index) const = 0;
 
-    virtual const char* data(size_t index) = 0;
+    virtual const char* data(size_t index) const = 0;
 
     virtual PortReader* getReplyHandler() = 0;
 
@@ -50,19 +50,19 @@ public:
 
     virtual void write(OutputStream& os);
 
-    virtual bool write(ConnectionWriter& connection) override;
+    virtual bool write(ConnectionWriter& connection) const override;
 
     virtual bool dropRequested() = 0;
 
     /**
      * Call when writing is about to begin.
      */
-    virtual void startWrite() = 0;
+    virtual void startWrite() const = 0;
 
     /**
      * Call when all writing is finished.
      */
-    virtual void stopWrite() = 0;
+    virtual void stopWrite() const = 0;
 
     virtual void clear();
 };

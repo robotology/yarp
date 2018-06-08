@@ -58,7 +58,7 @@ public:
 
     virtual bool read(yarp::os::ConnectionReader& connection) override = 0;
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) override = 0;
+    virtual bool write(yarp::os::ConnectionWriter& writer) const override = 0;
 
     virtual int getBottleTag() const = 0;
 

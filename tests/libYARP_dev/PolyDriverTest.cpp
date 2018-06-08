@@ -57,7 +57,7 @@ class DeprecatedDeviceDriverTest : public DeprecatedDeviceDriver
 
 class PolyDriverTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "PolyDriverTest"; }
+    virtual std::string getName() const override { return "PolyDriverTest"; }
 
     void testDeprecated() {
         report(0,"deprecated device test");

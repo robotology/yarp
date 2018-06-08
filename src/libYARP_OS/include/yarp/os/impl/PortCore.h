@@ -262,9 +262,9 @@ public:
      * @param reader where to direct replies
      * @param callback who to call onCompletion() on when message sent.
      */
-    bool send(yarp::os::PortWriter& writer,
+    bool send(const yarp::os::PortWriter& writer,
               yarp::os::PortReader *reader = nullptr,
-              yarp::os::PortWriter *callback = nullptr);
+              const yarp::os::PortWriter *callback = nullptr);
 
     /**
      * Send a message with a specific mode (normal or log).
@@ -272,10 +272,10 @@ public:
      * @param reader where to direct replies
      * @param callback who to call onCompletion() on when message sent.
      */
-    bool sendHelper(yarp::os::PortWriter& writer,
+    bool sendHelper(const yarp::os::PortWriter& writer,
                     int mode,
                     yarp::os::PortReader *reader = nullptr,
-                    yarp::os::PortWriter *callback = nullptr);
+                    const yarp::os::PortWriter *callback = nullptr);
 
     /**
      * Shut down port.

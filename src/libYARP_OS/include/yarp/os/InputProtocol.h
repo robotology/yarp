@@ -68,7 +68,7 @@ public:
      * a triplet of the source port, destination port, and carrier.
      *
      */
-    virtual const Route& getRoute() = 0;
+    virtual const Route& getRoute() const = 0;
 
     /**
      *
@@ -115,7 +115,7 @@ public:
      * Check if the connection is valid and can be used.
      *
      */
-    virtual bool isOk() = 0;
+    virtual bool isOk() const = 0;
 
     /**
      *
@@ -175,7 +175,7 @@ public:
      * @return true if a reply will be made to a message.
      *
      */
-    virtual bool isReplying() = 0;
+    virtual bool isReplying() const = 0;
 };
 
 #endif // YARP_OS_INPUTPROTOCOL_H

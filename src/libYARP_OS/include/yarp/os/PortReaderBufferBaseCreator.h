@@ -22,7 +22,7 @@ class YARP_OS_API PortReaderBufferBaseCreator
 public:
     virtual ~PortReaderBufferBaseCreator();
 
-    virtual yarp::os::PortReader *create() = 0;
+    virtual yarp::os::PortReader *create() const = 0;
 };
 
 } // namespace os

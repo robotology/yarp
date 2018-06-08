@@ -732,7 +732,7 @@ void DgramTwoWayStream::closeMain() {
     happy = false;
 }
 
-yarp::conf::ssize_t DgramTwoWayStream::read(const Bytes& b) {
+yarp::conf::ssize_t DgramTwoWayStream::read(Bytes& b) {
     reader = true;
     bool done = false;
 
@@ -992,7 +992,7 @@ void DgramTwoWayStream::flush() {
 }
 
 
-bool DgramTwoWayStream::isOk() {
+bool DgramTwoWayStream::isOk() const {
     return happy;
 }
 

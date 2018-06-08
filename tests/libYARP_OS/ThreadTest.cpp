@@ -285,7 +285,7 @@ public:
         gotCount = 0;
     }
 
-    virtual std::string getName() override { return "ThreadTest"; }
+    virtual std::string getName() const override { return "ThreadTest"; }
 
     void testIsRunning()
     {

@@ -146,7 +146,7 @@
 #ifdef SWIGJAVA
     %rename(wait_c) *::wait();
     %rename(clone_c) *::clone() const;
-    %rename(toString_c) *::toString();
+    %rename(toString_c) *::toString() const;
 #endif
 
 #ifdef SWIGCHICKEN

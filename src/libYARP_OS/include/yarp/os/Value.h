@@ -346,7 +346,7 @@ public:
     virtual bool read(ConnectionReader& connection) override;
 
     // documented in Portable
-    virtual bool write(ConnectionWriter& connection) override;
+    virtual bool write(ConnectionWriter& connection) const override;
 
     // documented in Searchable
     virtual bool check(const std::string& key) const override;

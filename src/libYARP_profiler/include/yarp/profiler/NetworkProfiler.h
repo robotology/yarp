@@ -67,11 +67,11 @@ public:
         std::vector<ConnectionInfo> outputs;
         std::vector<ConnectionInfo> inputs;
         ProcessInfo owner;
-        std::string toString() {
+        std::string toString() const {
             std::ostringstream str;
             str<<"port name: "<<name<<std::endl;
             str<<"outputs:"<<std::endl;
-            std::vector<ConnectionInfo>::iterator itr;
+            std::vector<ConnectionInfo>::const_iterator itr;
             for(itr=outputs.begin(); itr!=outputs.end(); itr++)
                 str<<"   + "<<(*itr).name<<" ("<<(*itr).carrier<<")"<<std::endl;
             str<<"inputs:"<<std::endl;

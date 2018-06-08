@@ -190,7 +190,7 @@ public:
         }
     }
 
-    bool isValid() {
+    bool isValid() const {
         return dev.isValid();
     }
 
@@ -208,27 +208,27 @@ public:
         return &dev.getContent();
     }
 
-    std::string getDllName() {
+    std::string getDllName() const {
         return settings.getLibraryName();
     }
 
-    std::string getFnName() {
+    std::string getFnName() const {
         return settings.getMethodName();
     }
 
-    std::string getwrapName() {
+    std::string getwrapName() const {
         return settings.getWrapperName();
     }
 
-    std::string getPluginName() {
+    std::string getPluginName() const {
         return settings.getPluginName();
     }
 
-    std::string getClassName() {
+    std::string getClassName() const {
         return settings.getClassName();
     }
 
-    std::string getBaseClassName() {
+    std::string getBaseClassName() const {
         return settings.getBaseClassName();
     }
 };
@@ -249,7 +249,7 @@ Drivers::~Drivers() {
     }
 }
 
-std::string Drivers::toString() {
+std::string Drivers::toString() const {
     return HELPER(implementation).toString();
 }
 
@@ -606,7 +606,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     return 0;
 }
 
-DeviceDriver *StubDriverCreator::create() {
+DeviceDriver *StubDriverCreator::create() const {
     //yDebug("Creating %s from %s\n", desc.c_str(), libname.c_str());
     StubDriver *result = new StubDriver(libname.c_str(),fnname.c_str(),false);
     if (result==nullptr) return result;

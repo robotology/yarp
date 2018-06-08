@@ -296,7 +296,7 @@ bool BottleImpl::isComplete(const char* txt)
 }
 
 
-std::string BottleImpl::toString()
+std::string BottleImpl::toString() const
 {
     std::string result = "";
     for (unsigned int i = 0; i < content.size(); i++) {
@@ -394,7 +394,7 @@ bool BottleImpl::fromBytes(const Bytes& data)
     return true;
 }
 
-void BottleImpl::toBytes(const Bytes& data)
+void BottleImpl::toBytes(Bytes& data)
 {
     synch();
     yAssert(data.length() == byteCount());
@@ -402,14 +402,14 @@ void BottleImpl::toBytes(const Bytes& data)
 }
 
 
-const char* BottleImpl::getBytes()
+const char* BottleImpl::getBytes() const
 {
     YMSG(("am I nested? %d\n", nested));
     synch();
     return &data[0];
 }
 
-size_t BottleImpl::byteCount()
+size_t BottleImpl::byteCount() const
 {
     synch();
     return data.size();
@@ -420,7 +420,7 @@ void BottleImpl::onCommencement()
     synch();
 }
 
-bool BottleImpl::write(ConnectionWriter& writer)
+bool BottleImpl::write(ConnectionWriter& writer) const
 {
     // could simplify this if knew lengths of blocks up front
     if (writer.isTextMode()) {
@@ -514,6 +514,10 @@ bool BottleImpl::read(ConnectionReader& reader)
     return result;
 }
 
+void BottleImpl::synch() const
+{
+    const_cast<BottleImpl*>(this)->synch();
+}
 
 void BottleImpl::synch()
 {

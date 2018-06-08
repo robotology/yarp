@@ -51,8 +51,8 @@ public:
         }
     }
 
-    virtual yarp::os::PortReader *create() override {
-        return new NameServerConnectionHandler(this);
+    virtual yarp::os::PortReader *create() const override {
+        return new NameServerConnectionHandler(const_cast<NameServerManager*>(this));
     }
 
     virtual void lock() override {

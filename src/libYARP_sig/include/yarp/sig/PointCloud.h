@@ -314,13 +314,13 @@ public:
         return true;
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) override
+    virtual bool write(yarp::os::ConnectionWriter& writer) const override
     {
         writer.appendBlock((char*)&header, sizeof(PointCloudNetworkHeader));
         return data.write(writer);
     }
 
-    virtual std::string toString(int precision = -1, int width = -1)
+    virtual std::string toString(int precision = -1, int width = -1) const
     {
         std::string ret;
         if (isOrganized()) {
@@ -346,7 +346,7 @@ public:
      * @brief Generate a yarp::os::Bottle filled with the PointCloud data.
      * @return the yarp::os::Bottle generated
      */
-    yarp::os::Bottle toBottle()
+    yarp::os::Bottle toBottle() const
     {
         yarp::os::Bottle ret;
         ret.addInt32(width());

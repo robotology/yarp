@@ -57,12 +57,12 @@ void yarp::os::NullConnectionWriter::appendExternalBlock(const char *data, size_
     YARP_UNUSED(len);
 }
 
-bool yarp::os::NullConnectionWriter::isTextMode()
+bool yarp::os::NullConnectionWriter::isTextMode() const
 {
     return false;
 }
 
-bool yarp::os::NullConnectionWriter::isBareMode()
+bool yarp::os::NullConnectionWriter::isBareMode() const
 {
     return false;
 }
@@ -88,17 +88,17 @@ bool yarp::os::NullConnectionWriter::convertTextMode()
     return false;
 }
 
-bool yarp::os::NullConnectionWriter::isValid()
+bool yarp::os::NullConnectionWriter::isValid() const
 {
     return false;
 }
 
-bool yarp::os::NullConnectionWriter::isActive()
+bool yarp::os::NullConnectionWriter::isActive() const
 {
     return true;
 }
 
-bool yarp::os::NullConnectionWriter::isError()
+bool yarp::os::NullConnectionWriter::isError() const
 {
     return true;
 }
@@ -112,7 +112,7 @@ bool yarp::os::NullConnectionWriter::isNull() const
     return true;
 }
 
-yarp::os::SizedWriter *yarp::os::NullConnectionWriter::getBuffer()
+yarp::os::SizedWriter *yarp::os::NullConnectionWriter::getBuffer() const
 {
     return nullptr;
 }

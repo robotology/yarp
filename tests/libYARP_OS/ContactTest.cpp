@@ -16,7 +16,7 @@ using namespace yarp::os;
 class ContactTest : public UnitTest
 {
 public:
-    virtual std::string getName() override
+    virtual std::string getName() const override
     {
         return "ContactTest";
     }

@@ -434,7 +434,7 @@ bool Port::addOutput(const Contact& contact)
 }
 
 
-bool Port::write(PortWriter& writer, PortWriter *callback) const
+bool Port::write(const PortWriter& writer, const PortWriter *callback) const
 {
     PortCoreAdapter& core = IMPL();
     if (core.isInterrupted()) return false;
@@ -455,9 +455,9 @@ bool Port::write(PortWriter& writer, PortWriter *callback) const
     return result;
 }
 
-bool Port::write(PortWriter& writer,
+bool Port::write(const PortWriter& writer,
                  PortReader& reader,
-                 PortWriter *callback) const
+                 const PortWriter *callback) const
 {
     PortCoreAdapter& core = IMPL();
     if (core.isInterrupted()) return false;

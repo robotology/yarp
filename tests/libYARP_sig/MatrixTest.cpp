@@ -145,7 +145,7 @@ class MatrixTest : public UnitTest {
     }
 
 public:
-    virtual std::string getName() override { return "MatrixTest"; }
+    virtual std::string getName() const override { return "MatrixTest"; }
 
     void checkOperators()
     {

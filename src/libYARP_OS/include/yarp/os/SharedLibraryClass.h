@@ -104,7 +104,7 @@ public:
      *
      * @return the created instance
      */
-    T& getContent() {
+    T& getContent() const {
         return *content;
     }
 

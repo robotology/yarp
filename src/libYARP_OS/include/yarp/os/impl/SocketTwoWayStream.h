@@ -70,12 +70,12 @@ public:
         return *this;
     }
 
-    virtual const Contact& getLocalAddress() override
+    virtual const Contact& getLocalAddress() const override
     {
         return localAddress;
     }
 
-    virtual const Contact& getRemoteAddress() override
+    virtual const Contact& getRemoteAddress() const override
     {
         return remoteAddress;
     }
@@ -101,7 +101,7 @@ public:
     }
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(const Bytes& b) override
+    virtual yarp::conf::ssize_t read(Bytes& b) override
     {
         if (!isOk()) { return -1; }
         yarp::conf::ssize_t result;
@@ -118,7 +118,7 @@ public:
         return result;
     }
 
-    virtual yarp::conf::ssize_t partialRead(const Bytes& b) override
+    virtual yarp::conf::ssize_t partialRead(Bytes& b) override
     {
         if (!isOk()) { return -1; }
         yarp::conf::ssize_t result;
@@ -169,7 +169,7 @@ public:
 #endif
     }
 
-    virtual bool isOk() override
+    virtual bool isOk() const override
     {
         return happy;
     }

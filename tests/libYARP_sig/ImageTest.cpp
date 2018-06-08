@@ -67,7 +67,7 @@ public:
 
 class ImageTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "ImageTest"; }
+    virtual std::string getName() const override { return "ImageTest"; }
 
     void passImage(ImageOf<PixelRgb> img) {
         report(0, "passed a blank image ok");

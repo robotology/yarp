@@ -45,7 +45,7 @@ public:
      *
      * @return true on success
      */
-    virtual bool expectBlock(const char *data, size_t len) = 0;
+    virtual bool expectBlock(char *data, size_t len) = 0;
 
     /**
      * Read some text from the network connection.
@@ -112,14 +112,14 @@ public:
      * representation of your data structure.
      * @return true if the connection is text mode (as opposed to binary)
      */
-    virtual bool isTextMode() = 0;
+    virtual bool isTextMode() const = 0;
 
     /**
      * Check if the connection is bare mode.  If it is, you are
      * encouraged to omit type information from your serialization.
      * @return true if the connection is bare
      */
-    virtual bool isBareMode() = 0;
+    virtual bool isBareMode() const = 0;
 
     /**
      * Reads in a standard description in text mode, and converts
@@ -135,7 +135,7 @@ public:
      * Checks how much data is available.
      * @return the number of bytes left on the connection.
      */
-    virtual size_t getSize() = 0;
+    virtual size_t getSize() const = 0;
 
 
     /**
@@ -159,7 +159,7 @@ public:
      * this returns nullptr.
      * @return The message object, or nullptr if not available
      */
-    virtual Portable *getReference() = 0;
+    virtual Portable *getReference() const = 0;
 
     /**
      * Gets information about who is supplying the data being read, if
@@ -168,7 +168,7 @@ public:
      * @return contact information about sender (Contact::invalid if not
      * available)
      */
-    virtual Contact getRemoteContact() = 0;
+    virtual Contact getRemoteContact() const = 0;
 
     /**
      * Gets information about who is receiving the data, if that
@@ -177,19 +177,19 @@ public:
      * @return contact information about sender (Contact::invalid if not
      * available)
      */
-    virtual Contact getLocalContact() = 0;
+    virtual Contact getLocalContact() const = 0;
 
     /**
      * @return true if the reader is valid.  Invalid readers may signal
      * a shutdown.
      */
-    virtual bool isValid() = 0;
+    virtual bool isValid() const = 0;
 
     /**
      * @return true if the reader is active.  Readers become inactive
      * if the connection they are associated with breaks.
      */
-    virtual bool isActive() = 0;
+    virtual bool isActive() const = 0;
 
     /**
      * @return true if the reader encountered an error.  Readers can
@@ -197,7 +197,7 @@ public:
      * protocols like UDP/Multicast, where losses are not unexpected,
      * this error flag will be reset for the next incoming message.
      */
-    virtual bool isError() = 0;
+    virtual bool isError() const = 0;
 
     /**
      * Tag the connection to be dropped after the current message.
@@ -210,7 +210,7 @@ public:
      * @return connection configuration object
      *
      */
-    virtual Searchable& getConnectionModifiers() = 0;
+    virtual const Searchable& getConnectionModifiers() const = 0;
 
     /**
      * Store an integer to return on the next call to expectInt()

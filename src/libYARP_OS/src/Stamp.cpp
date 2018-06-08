@@ -85,7 +85,7 @@ bool yarp::os::Stamp::read(ConnectionReader& connection)
     return !connection.isError();
 }
 
-bool yarp::os::Stamp::write(ConnectionWriter& connection)
+bool yarp::os::Stamp::write(ConnectionWriter& connection) const
 {
     if (connection.isTextMode()) {
         char buf[512];

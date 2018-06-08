@@ -36,7 +36,7 @@ public:
 
 class PortReaderBufferTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "PortReaderBufferTest"; }
+    virtual std::string getName() const override { return "PortReaderBufferTest"; }
 
 
     void checkAccept() {

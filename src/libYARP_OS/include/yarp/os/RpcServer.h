@@ -43,12 +43,13 @@ public:
     virtual ~RpcServer();
 
     // documented in UnbufferedContactable
-    virtual bool write(PortWriter& writer,
-                       PortWriter *callback = nullptr) const override;
+    virtual bool write(const PortWriter& writer,
+                       const PortWriter *callback = nullptr) const override;
 
     // documented in UnbufferedContactable
-    virtual bool write(PortWriter& writer, PortReader& reader,
-                       PortWriter *callback = nullptr) const override;
+    virtual bool write(const PortWriter& writer,
+                       PortReader& reader,
+                       const PortWriter *callback = nullptr) const override;
 
     // documented in UnbufferedContactable
     virtual bool read(PortReader& reader, bool willReply = true) override;

@@ -149,7 +149,7 @@ bool yarp::os::PortReaderBuffer<T>::read(ConnectionReader& connection)
 }
 
 template <typename T>
-yarp::os::PortReader* yarp::os::PortReaderBuffer<T>::create()
+yarp::os::PortReader* yarp::os::PortReaderBuffer<T>::create() const
 {
     return new T;
 }

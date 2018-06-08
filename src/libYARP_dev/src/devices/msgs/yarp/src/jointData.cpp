@@ -351,183 +351,183 @@ bool jointData::read(yarp::os::ConnectionReader& connection) {
   return read(reader);
 }
 
-bool jointData::write_jointPosition(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_jointPosition(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.write(jointPosition)) return false;
   return true;
 }
-bool jointData::nested_write_jointPosition(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_jointPosition(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeNested(jointPosition)) return false;
   return true;
 }
-bool jointData::write_jointPosition_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_jointPosition_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(jointPosition_isValid)) return false;
   return true;
 }
-bool jointData::nested_write_jointPosition_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_jointPosition_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(jointPosition_isValid)) return false;
   return true;
 }
-bool jointData::write_jointVelocity(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_jointVelocity(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.write(jointVelocity)) return false;
   return true;
 }
-bool jointData::nested_write_jointVelocity(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_jointVelocity(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeNested(jointVelocity)) return false;
   return true;
 }
-bool jointData::write_jointVelocity_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_jointVelocity_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(jointVelocity_isValid)) return false;
   return true;
 }
-bool jointData::nested_write_jointVelocity_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_jointVelocity_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(jointVelocity_isValid)) return false;
   return true;
 }
-bool jointData::write_jointAcceleration(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_jointAcceleration(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.write(jointAcceleration)) return false;
   return true;
 }
-bool jointData::nested_write_jointAcceleration(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_jointAcceleration(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeNested(jointAcceleration)) return false;
   return true;
 }
-bool jointData::write_jointAcceleration_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_jointAcceleration_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(jointAcceleration_isValid)) return false;
   return true;
 }
-bool jointData::nested_write_jointAcceleration_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_jointAcceleration_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(jointAcceleration_isValid)) return false;
   return true;
 }
-bool jointData::write_motorPosition(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_motorPosition(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.write(motorPosition)) return false;
   return true;
 }
-bool jointData::nested_write_motorPosition(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_motorPosition(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeNested(motorPosition)) return false;
   return true;
 }
-bool jointData::write_motorPosition_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_motorPosition_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(motorPosition_isValid)) return false;
   return true;
 }
-bool jointData::nested_write_motorPosition_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_motorPosition_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(motorPosition_isValid)) return false;
   return true;
 }
-bool jointData::write_motorVelocity(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_motorVelocity(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.write(motorVelocity)) return false;
   return true;
 }
-bool jointData::nested_write_motorVelocity(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_motorVelocity(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeNested(motorVelocity)) return false;
   return true;
 }
-bool jointData::write_motorVelocity_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_motorVelocity_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(motorVelocity_isValid)) return false;
   return true;
 }
-bool jointData::nested_write_motorVelocity_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_motorVelocity_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(motorVelocity_isValid)) return false;
   return true;
 }
-bool jointData::write_motorAcceleration(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_motorAcceleration(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.write(motorAcceleration)) return false;
   return true;
 }
-bool jointData::nested_write_motorAcceleration(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_motorAcceleration(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeNested(motorAcceleration)) return false;
   return true;
 }
-bool jointData::write_motorAcceleration_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_motorAcceleration_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(motorAcceleration_isValid)) return false;
   return true;
 }
-bool jointData::nested_write_motorAcceleration_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_motorAcceleration_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(motorAcceleration_isValid)) return false;
   return true;
 }
-bool jointData::write_torque(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_torque(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.write(torque)) return false;
   return true;
 }
-bool jointData::nested_write_torque(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_torque(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeNested(torque)) return false;
   return true;
 }
-bool jointData::write_torque_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_torque_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(torque_isValid)) return false;
   return true;
 }
-bool jointData::nested_write_torque_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_torque_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(torque_isValid)) return false;
   return true;
 }
-bool jointData::write_pwmDutycycle(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_pwmDutycycle(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.write(pwmDutycycle)) return false;
   return true;
 }
-bool jointData::nested_write_pwmDutycycle(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_pwmDutycycle(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeNested(pwmDutycycle)) return false;
   return true;
 }
-bool jointData::write_pwmDutycycle_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_pwmDutycycle_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(pwmDutycycle_isValid)) return false;
   return true;
 }
-bool jointData::nested_write_pwmDutycycle_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_pwmDutycycle_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(pwmDutycycle_isValid)) return false;
   return true;
 }
-bool jointData::write_current(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_current(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.write(current)) return false;
   return true;
 }
-bool jointData::nested_write_current(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_current(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeNested(current)) return false;
   return true;
 }
-bool jointData::write_current_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_current_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(current_isValid)) return false;
   return true;
 }
-bool jointData::nested_write_current_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_current_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(current_isValid)) return false;
   return true;
 }
-bool jointData::write_controlMode(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_controlMode(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.write(controlMode)) return false;
   return true;
 }
-bool jointData::nested_write_controlMode(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_controlMode(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeNested(controlMode)) return false;
   return true;
 }
-bool jointData::write_controlMode_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_controlMode_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(controlMode_isValid)) return false;
   return true;
 }
-bool jointData::nested_write_controlMode_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_controlMode_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(controlMode_isValid)) return false;
   return true;
 }
-bool jointData::write_interactionMode(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_interactionMode(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.write(interactionMode)) return false;
   return true;
 }
-bool jointData::nested_write_interactionMode(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_interactionMode(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeNested(interactionMode)) return false;
   return true;
 }
-bool jointData::write_interactionMode_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::write_interactionMode_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(interactionMode_isValid)) return false;
   return true;
 }
-bool jointData::nested_write_interactionMode_isValid(yarp::os::idl::WireWriter& writer) {
+bool jointData::nested_write_interactionMode_isValid(const yarp::os::idl::WireWriter& writer) const {
   if (!writer.writeBool(interactionMode_isValid)) return false;
   return true;
 }
-bool jointData::write(yarp::os::idl::WireWriter& writer) {
+bool jointData::write(const yarp::os::idl::WireWriter& writer) const {
   if (!write_jointPosition(writer)) return false;
   if (!write_jointPosition_isValid(writer)) return false;
   if (!write_jointVelocity(writer)) return false;
@@ -553,12 +553,12 @@ bool jointData::write(yarp::os::idl::WireWriter& writer) {
   return !writer.isError();
 }
 
-bool jointData::write(yarp::os::ConnectionWriter& connection) {
+bool jointData::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(22)) return false;
   return write(writer);
 }
-bool jointData::Editor::write(yarp::os::ConnectionWriter& connection) {
+bool jointData::Editor::write(yarp::os::ConnectionWriter& connection) const {
   if (!isValid()) return false;
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(dirty_count+1)) return false;
@@ -954,7 +954,7 @@ bool jointData::Editor::read(yarp::os::ConnectionReader& connection) {
   return true;
 }
 
-std::string jointData::toString() {
+std::string jointData::toString() const {
   yarp::os::Bottle b;
   b.read(*this);
   return b.toString();

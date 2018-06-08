@@ -327,7 +327,7 @@ public:
       * Write vector to a connection.
       * return true iff a vector was written correctly
       */
-      virtual bool write(yarp::os::ConnectionWriter& connection) override;
+      virtual bool write(yarp::os::ConnectionWriter& connection) const override;
 
 };
 

@@ -39,15 +39,15 @@ yarp::os::OutputStream& yarp::os::impl::NameserTwoWayStream::getOutputStream() {
     return delegate->getOutputStream();
 }
 
-const Contact& yarp::os::impl::NameserTwoWayStream::getLocalAddress() {
+const Contact& yarp::os::impl::NameserTwoWayStream::getLocalAddress() const {
     return delegate->getLocalAddress();
 }
 
-const Contact& yarp::os::impl::NameserTwoWayStream::getRemoteAddress() {
+const Contact& yarp::os::impl::NameserTwoWayStream::getRemoteAddress() const {
     return delegate->getRemoteAddress();
 }
 
-bool yarp::os::impl::NameserTwoWayStream::isOk() {
+bool yarp::os::impl::NameserTwoWayStream::isOk() const {
     return delegate->isOk();
 }
 
@@ -67,7 +67,7 @@ void yarp::os::impl::NameserTwoWayStream::endPacket() {
     delegate->endPacket();
 }
 
-yarp::conf::ssize_t yarp::os::impl::NameserTwoWayStream::read(const Bytes& b) {
+yarp::conf::ssize_t yarp::os::impl::NameserTwoWayStream::read(Bytes& b) {
     // assume it is ok for name_ser to go byte-by-byte
     // since this protocol will be phased out
     if (b.length()<=0) {
@@ -98,15 +98,15 @@ yarp::os::impl::NameserCarrier::NameserCarrier() {
     firstSend = true;
 }
 
-std::string yarp::os::impl::NameserCarrier::getName() {
+std::string yarp::os::impl::NameserCarrier::getName() const {
     return "name_ser";
 }
 
-std::string yarp::os::impl::NameserCarrier::getSpecifierName() {
+std::string yarp::os::impl::NameserCarrier::getSpecifierName() const {
     return "NAME_SER";
 }
 
-yarp::os::Carrier *yarp::os::impl::NameserCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::NameserCarrier::create() const {
     return new NameserCarrier();
 }
 
@@ -123,7 +123,7 @@ bool yarp::os::impl::NameserCarrier::checkHeader(const yarp::os::Bytes& header) 
     return false;
 }
 
-void yarp::os::impl::NameserCarrier::getHeader(const Bytes& header) {
+void yarp::os::impl::NameserCarrier::getHeader(Bytes& header) const {
     if (header.length()==8) {
         std::string target = getSpecifierName();
         for (int i=0; i<8; i++) {
@@ -133,19 +133,19 @@ void yarp::os::impl::NameserCarrier::getHeader(const Bytes& header) {
 }
 
 
-bool yarp::os::impl::NameserCarrier::requireAck() {
+bool yarp::os::impl::NameserCarrier::requireAck() const {
     return false;
 }
 
-bool yarp::os::impl::NameserCarrier::isTextMode() {
+bool yarp::os::impl::NameserCarrier::isTextMode() const {
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::supportReply() {
+bool yarp::os::impl::NameserCarrier::supportReply() const {
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::canEscape() {
+bool yarp::os::impl::NameserCarrier::canEscape() const {
     return false;
 }
 

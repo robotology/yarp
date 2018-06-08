@@ -173,7 +173,7 @@ void ShmemHybridStream::write(const yarp::os::Bytes& b)
     }
 }
 
-yarp::conf::ssize_t ShmemHybridStream::read(const yarp::os::Bytes& b)
+yarp::conf::ssize_t ShmemHybridStream::read(yarp::os::Bytes& b)
 {
     yarp::conf::ssize_t ret = in.read(b);
     if (ret == -1) {
@@ -192,7 +192,7 @@ yarp::os::OutputStream& ShmemHybridStream::getOutputStream()
     return *this;
 }
 
-bool ShmemHybridStream::isOk()
+bool ShmemHybridStream::isOk() const
 {
     return m_bLinked && in.isOk() && out.isOk();
 }
@@ -211,12 +211,12 @@ void ShmemHybridStream::endPacket()
 {
 }
 
-const yarp::os::Contact& ShmemHybridStream::getLocalAddress()
+const yarp::os::Contact& ShmemHybridStream::getLocalAddress() const
 {
     return m_LocalAddress;
 }
 
-const yarp::os::Contact& ShmemHybridStream::getRemoteAddress()
+const yarp::os::Contact& ShmemHybridStream::getRemoteAddress() const
 {
     return m_RemoteAddress;
 }

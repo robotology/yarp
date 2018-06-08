@@ -18,7 +18,7 @@ using namespace yarp::os::impl;
 
 class ProtocolTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "ProtocolTest"; }
+    virtual std::string getName() const override { return "ProtocolTest"; }
 
     std::string simplify(std::string x) {
         return humanize(x);

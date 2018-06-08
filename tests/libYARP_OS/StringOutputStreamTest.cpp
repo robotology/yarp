@@ -20,7 +20,7 @@ using namespace yarp::os::impl;
 
 class StringOutputStreamTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "StringOutputStreamTest"; }
+    virtual std::string getName() const override { return "StringOutputStreamTest"; }
 
     void testWrite() {
         report(0,"testing writing...");

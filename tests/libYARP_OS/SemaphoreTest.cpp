@@ -34,7 +34,7 @@ public:
 
 class SemaphoreTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "SemaphoreTest"; }
+    virtual std::string getName() const override { return "SemaphoreTest"; }
 
     void checkBasic() {
         report(0, "basic semaphore sanity check...");

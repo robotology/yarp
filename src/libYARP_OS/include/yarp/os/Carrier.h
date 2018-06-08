@@ -57,7 +57,7 @@ public:
      *
      * @return a new object of the same type as this one.
      */
-    virtual Carrier *create() = 0;
+    virtual Carrier *create() const = 0;
 
     /**
      * Given the first 8 bytes received on a connection, decide if
@@ -92,7 +92,7 @@ public:
      * @param header a buffer to hold the first 8 bytes to send on a
      *               connection
      */
-    virtual void getHeader(const Bytes& header) override = 0;
+    virtual void getHeader(Bytes& header) const override = 0;
 
 
     /**
@@ -105,7 +105,7 @@ public:
      *
      * @return true if carrier is connectionless
      */
-    virtual bool isConnectionless() override = 0;
+    virtual bool isConnectionless() const override = 0;
 
 
     /**
@@ -117,28 +117,28 @@ public:
      *
      * @return true if carrier uses a broadcast mechanism.
      */
-    virtual bool isBroadcast() override;
+    virtual bool isBroadcast() const override;
 
     /**
      * Check if reading is implemented for this carrier.
      *
      * @return true if carrier can read messages
      */
-    virtual bool canAccept() = 0;
+    virtual bool canAccept() const = 0;
 
     /**
      * Check if writing is implemented for this carrier.
      *
      * @return true if carrier can write messages
      */
-    virtual bool canOffer() = 0;
+    virtual bool canOffer() const = 0;
 
     /**
      * Check if carrier is textual in nature
      *
      * @return true if carrier is text-based
      */
-    virtual bool isTextMode() override = 0;
+    virtual bool isTextMode() const override = 0;
 
     /**
      * Check if carrier can encode administrative messages, as opposed
@@ -147,7 +147,7 @@ public:
      *
      * @return true if carrier can encode administrative messages
      */
-    virtual bool canEscape() override = 0;
+    virtual bool canEscape() const override = 0;
 
     /**
      * Carriers that do not distinguish data from administrative headers
@@ -167,7 +167,7 @@ public:
      *
      * @return true if carrier requires acknowledgement.
      */
-    virtual bool requireAck() override = 0;
+    virtual bool requireAck() const override = 0;
 
     /**
      * This flag is used by YARP to determine whether the connection
@@ -175,7 +175,7 @@ public:
      *
      * @return true if carrier supports replies
      */
-    virtual bool supportReply() override = 0;
+    virtual bool supportReply() const override = 0;
 
     /**
      * Check if carrier operates within a single process.
@@ -185,7 +185,7 @@ public:
      *
      * @return true if carrier will only operate within a single process
      */
-    virtual bool isLocal() override = 0;
+    virtual bool isLocal() const override = 0;
 
 
     /**
@@ -199,7 +199,7 @@ public:
      *
      * @return true if carrier is "push" style, false if "pull" style
      */
-    virtual bool isPush() override;
+    virtual bool isPush() const override;
 
     /**
      * Perform any initialization needed before writing on a connection.
@@ -293,7 +293,7 @@ public:
      *
      * @return true if carrier is active.
      */
-    virtual bool isActive() override = 0;
+    virtual bool isActive() const override = 0;
 
     /**
      * Do cleanup and preparation for the coming disconnect, if
@@ -307,7 +307,7 @@ public:
      *
      * @return name of carrier.
      */
-    virtual std::string toString() = 0;
+    virtual std::string toString() const = 0;
 
     /**
      * Close the carrier.
@@ -333,7 +333,7 @@ public:
      *
      * @return the name of the bootstrap carrier.
      */
-    virtual std::string getBootstrapCarrierName();
+    virtual std::string getBootstrapCarrierName() const;
 
     /**
      * Some carrier types may require special connection logic.
@@ -362,7 +362,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyIncomingData called.
      */
-    virtual bool modifiesIncomingData() override;
+    virtual bool modifiesIncomingData() const override;
 
     /**
      * Modify incoming payload data, if appropriate.
@@ -395,7 +395,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyOutgoingData called.
      */
-    virtual bool modifiesOutgoingData() override;
+    virtual bool modifiesOutgoingData() const override;
 
     /**
      * Modify outgoing payload data, if appropriate.
@@ -407,7 +407,7 @@ public:
      * @param writer for outgoing data.
      * @return writer for modified version of outgoing data.
      */
-    virtual PortWriter& modifyOutgoingData(PortWriter& writer) override;
+    virtual const PortWriter& modifyOutgoingData(const PortWriter& writer) override;
 
     /**
      * Check if this carrier modifies outgoing data through the
@@ -415,7 +415,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyReply called.
      */
-    virtual bool modifiesReply() override;
+    virtual bool modifiesReply() const override;
 
     /**
      * Modify reply payload data, if appropriate.
@@ -432,7 +432,7 @@ public:
      * @return true if data should be accepted, false if it should be
      *         discarded.
      */
-    virtual bool acceptOutgoingData(PortWriter& writer) override;
+    virtual bool acceptOutgoingData(const PortWriter& writer) override;
 
     /**
      * Give carrier a shot at looking at how the connection is set up.
@@ -455,13 +455,13 @@ public:
      *
      * @param params properties
      */
-    virtual void getCarrierParams(Property& params) override;
+    virtual void getCarrierParams(Property& params) const override;
 
     /**
      * Create new Face object that the carrier needs.
      *
      */
-    virtual yarp::os::Face* createFace(void);
+    virtual yarp::os::Face* createFace() const;
 };
 
 #endif // YARP_OS_CARRIER_H

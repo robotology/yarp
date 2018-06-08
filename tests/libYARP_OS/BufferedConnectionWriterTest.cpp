@@ -25,7 +25,7 @@ typedef PortablePair<PortablePair<PortablePair<Bottle, ImageOf<PixelRgb> >,
 
 class BufferedConnectionWriterTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "BufferedConnectionWriterTest"; }
+    virtual std::string getName() const override { return "BufferedConnectionWriterTest"; }
 
     void testWrite() {
         report(0,"testing writing...");

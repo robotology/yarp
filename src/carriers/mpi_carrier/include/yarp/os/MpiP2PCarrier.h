@@ -44,7 +44,7 @@ public:
         delete comm;
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new MpiP2PCarrier();
     }
 
@@ -53,11 +53,11 @@ public:
         stream = new MpiP2PStream(route, comm);
     }
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return "mpi";
     }
 
-    virtual bool supportReply() override {
+    virtual bool supportReply() const override {
         return true;
     }
 };

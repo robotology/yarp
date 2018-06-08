@@ -35,7 +35,7 @@ public:
         _location += b.length();
     }
     void close() override {}
-    bool isOk() override { return true; }
+    bool isOk() const override { return true; }
 private:
     char *_location;
 };

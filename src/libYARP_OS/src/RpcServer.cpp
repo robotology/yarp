@@ -25,7 +25,7 @@ RpcServer::~RpcServer()
     port.close();
 }
 
-bool RpcServer::write(PortWriter& writer, PortWriter *callback) const
+bool RpcServer::write(const PortWriter& writer, const PortWriter *callback) const
 {
     YARP_UNUSED(writer);
     YARP_UNUSED(callback);
@@ -33,9 +33,9 @@ bool RpcServer::write(PortWriter& writer, PortWriter *callback) const
     return false;
 }
 
-bool RpcServer::write(PortWriter& writer,
+bool RpcServer::write(const PortWriter& writer,
                       PortReader& reader,
-                      PortWriter *callback) const
+                      const PortWriter *callback) const
 {
     YARP_UNUSED(writer);
     YARP_UNUSED(reader);

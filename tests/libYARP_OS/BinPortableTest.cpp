@@ -42,7 +42,7 @@ YARP_END_PACK
 
 class BinPortableTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "BinPortableTest"; }
+    virtual std::string getName() const override { return "BinPortableTest"; }
 
     void testInt() {
         report(0,"checking binary read/write of native int");

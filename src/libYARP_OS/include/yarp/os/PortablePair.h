@@ -41,8 +41,8 @@ public:
      * @return true iff the object pair was successfully written
      */
     static bool writePair(ConnectionWriter& connection,
-                          Portable& head,
-                          Portable& body);
+                          const Portable& head,
+                          const Portable& body);
 };
 
 /**
@@ -76,7 +76,7 @@ public:
      * @param connection an interface to the network connection for writing
      * @return true iff the object pair was successfully written
      */
-    virtual bool write(ConnectionWriter& connection) override {
+    virtual bool write(ConnectionWriter& connection) const override {
         return writePair(connection, head, body);
     }
 
@@ -84,7 +84,7 @@ public:
      * This is called when the port has finished all writing operations.
      * Passes call on to head and body.
      */
-    virtual void onCompletion() override {
+    virtual void onCompletion() const override {
         head.onCompletion();
         body.onCompletion();
     }

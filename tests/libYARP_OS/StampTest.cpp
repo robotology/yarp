@@ -24,7 +24,7 @@ using namespace yarp::os;
 
 class StampTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "StampTest"; }
+    virtual std::string getName() const override { return "StampTest"; }
 
     void checkFormat() {
         report(0, "checking Stamp can serialize ok...");

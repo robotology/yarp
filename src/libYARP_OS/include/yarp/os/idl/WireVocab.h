@@ -23,7 +23,7 @@ class YARP_OS_API yarp::os::idl::WireVocab {
 public:
     virtual ~WireVocab() {}
     virtual int fromString(const std::string& input) = 0;
-    virtual std::string toString(int input) = 0;
+    virtual std::string toString(int input) const = 0;
 };
 
 #endif // YARP_OS_IDL_WIREVOCAB_H

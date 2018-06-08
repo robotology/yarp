@@ -58,12 +58,12 @@ public:
 
     virtual InputStream& getInputStream() override;
     virtual OutputStream& getOutputStream() override;
-    virtual const Contact& getLocalAddress() override;
-    virtual const Contact& getRemoteAddress() override;
+    virtual const Contact& getLocalAddress() const override;
+    virtual const Contact& getRemoteAddress() const override;
     virtual bool setTypeOfService(int tos) override;
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(const yarp::os::Bytes& b) override;
+    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     using yarp::os::OutputStream::write;
     virtual void write(const yarp::os::Bytes& b) override;
@@ -73,7 +73,7 @@ public:
     virtual void endPacket() override;
     virtual void interrupt() override;
     virtual void close() override;
-    virtual bool isOk() override;
+    virtual bool isOk() const override;
 
 private:
     Contact localAddress, remoteAddress;
@@ -92,17 +92,17 @@ public:
 
     virtual ~LocalCarrier();
 
-    virtual Carrier *create() override;
+    virtual Carrier *create() const override;
 
-    virtual std::string getName() override;
+    virtual std::string getName() const override;
 
-    virtual bool requireAck() override;
-    virtual bool isConnectionless() override;
-    virtual bool canEscape() override;
-    virtual bool isLocal() override;
-    virtual std::string getSpecifierName();
+    virtual bool requireAck() const override;
+    virtual bool isConnectionless() const override;
+    virtual bool canEscape() const override;
+    virtual bool isLocal() const override;
+    virtual std::string getSpecifierName() const;
     virtual bool checkHeader(const Bytes& header) override;
-    virtual void getHeader(const Bytes& header) override;
+    virtual void getHeader(Bytes& header) const override;
     virtual void setParameters(const Bytes& header) override;
     virtual bool sendHeader(ConnectionState& proto) override;
     virtual bool expectExtraHeader(ConnectionState& proto) override;

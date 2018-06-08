@@ -81,10 +81,10 @@ public:
 
 
     virtual bool read(ConnectionReader& connection) override;
-    virtual bool write(ConnectionWriter& connection) override;
+    virtual bool write(ConnectionWriter& connection) const override;
 
     virtual bool readRaw(ConnectionReader& connection) = 0;
-    virtual bool writeRaw(ConnectionWriter& connection) = 0;
+    virtual bool writeRaw(ConnectionWriter& connection) const = 0;
 
     virtual bool isBool() const override { return false; }
     virtual bool asBool() const override { return false; }
@@ -185,7 +185,7 @@ public:
     virtual std::int32_t getCode() const override { return -1; }
 
     virtual bool readRaw(ConnectionReader& connection) override { YARP_UNUSED(connection); return false; }
-    virtual bool writeRaw(ConnectionWriter& connection) override { YARP_UNUSED(connection); return false; }
+    virtual bool writeRaw(ConnectionWriter& connection) const override { YARP_UNUSED(connection); return false; }
 
     virtual bool isNull() const override { return true; }
 };
@@ -212,7 +212,7 @@ public:
     virtual std::int32_t getCode() const override { return code; }
 
     virtual bool readRaw(ConnectionReader& reader) override;
-    virtual bool writeRaw(ConnectionWriter& writer) override;
+    virtual bool writeRaw(ConnectionWriter& writer) const override;
 
     virtual bool isInt8() const override { return true; }
     virtual bool asBool() const override { return x != 0; }
@@ -248,7 +248,7 @@ public:
     virtual std::int32_t getCode() const override { return code; }
 
     virtual bool readRaw(ConnectionReader& reader) override;
-    virtual bool writeRaw(ConnectionWriter& writer) override;
+    virtual bool writeRaw(ConnectionWriter& writer) const override;
 
     virtual bool isInt16() const override { return true; }
     virtual bool asBool() const override { return x != 0; }
@@ -283,7 +283,7 @@ public:
     virtual std::int32_t getCode() const override { return code; }
 
     virtual bool readRaw(ConnectionReader& reader) override;
-    virtual bool writeRaw(ConnectionWriter& writer) override;
+    virtual bool writeRaw(ConnectionWriter& writer) const override;
 
     virtual std::int8_t asInt8() const override { return static_cast<std::int8_t>(x); }
     virtual bool asBool() const override { return x != 0; }
@@ -317,7 +317,7 @@ public:
     virtual std::int32_t getCode() const override { return code; }
 
     virtual bool readRaw(ConnectionReader& reader) override;
-    virtual bool writeRaw(ConnectionWriter& writer) override;
+    virtual bool writeRaw(ConnectionWriter& writer) const override;
 
     virtual bool isInt64() const override { return true; }
     virtual bool asBool() const override { return x != 0; }
@@ -351,7 +351,7 @@ public:
     virtual std::int32_t getCode() const override { return code; }
 
     virtual bool readRaw(ConnectionReader& reader) override;
-    virtual bool writeRaw(ConnectionWriter& writer) override;
+    virtual bool writeRaw(ConnectionWriter& writer) const override;
 
     virtual bool isFloat32() const override { return true; }
     virtual std::int8_t asInt8() const override { return static_cast<std::int8_t>(x); }
@@ -383,7 +383,7 @@ public:
     virtual std::int32_t getCode() const override { return code; }
 
     virtual bool readRaw(ConnectionReader& reader) override;
-    virtual bool writeRaw(ConnectionWriter& writer) override;
+    virtual bool writeRaw(ConnectionWriter& writer) const override;
 
     virtual bool isFloat64() const override { return true; }
     virtual std::int8_t asInt8() const override { return static_cast<std::int8_t>(x); }
@@ -416,7 +416,7 @@ public:
     virtual std::int32_t getCode() const override { return code; }
 
     virtual bool readRaw(ConnectionReader& reader) override;
-    virtual bool writeRaw(ConnectionWriter& writer) override;
+    virtual bool writeRaw(ConnectionWriter& writer) const override;
 
     virtual bool isBool() const override { return (x == 0 || x == '1'); }
     virtual bool asBool() const override { return x != 0; }
@@ -455,7 +455,7 @@ public:
     virtual std::int32_t getCode() const override { return code; }
 
     virtual bool readRaw(ConnectionReader& reader) override;
-    virtual bool writeRaw(ConnectionWriter& writer) override;
+    virtual bool writeRaw(ConnectionWriter& writer) const override;
 
     virtual bool isString() const override { return true; }
     virtual std::string asString() const override { return x; }
@@ -494,7 +494,7 @@ public:
     virtual std::int32_t getCode() const override { return code; }
 
     virtual bool readRaw(ConnectionReader& reader) override;
-    virtual bool writeRaw(ConnectionWriter& writer) override;
+    virtual bool writeRaw(ConnectionWriter& writer) const override;
 
     virtual bool isBlob() const override { return true; }
     virtual const char* asBlob() const override { return x.c_str(); }
@@ -526,7 +526,7 @@ public:
     virtual std::int32_t getCode() const override { return code + subCode(); }
 
     virtual bool readRaw(ConnectionReader& reader) override;
-    virtual bool writeRaw(ConnectionWriter& writer) override;
+    virtual bool writeRaw(ConnectionWriter& writer) const override;
 
     virtual bool isList() const override { return true; }
     virtual yarp::os::Bottle* asList() const override
@@ -572,7 +572,7 @@ public:
     virtual std::int32_t getCode() const override { return code; }
 
     virtual bool readRaw(ConnectionReader& reader) override;
-    virtual bool writeRaw(ConnectionWriter& writer) override;
+    virtual bool writeRaw(ConnectionWriter& writer) const override;
 
     virtual bool isDict() const override { return true; }
     virtual yarp::os::Property* asDict() const override { return const_cast<yarp::os::Property*>(&content); }

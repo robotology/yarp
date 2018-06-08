@@ -32,7 +32,7 @@ static bool waitForOutput(Contactable& c,double timeout) {
 
 class PublisherTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "PublisherTest"; }
+    virtual std::string getName() const override { return "PublisherTest"; }
 
     void testPublisherToBufferedPort() {
         report(0,"Publisher to BufferedPort test");

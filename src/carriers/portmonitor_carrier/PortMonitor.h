@@ -75,15 +75,15 @@ public:
         if (binder) delete binder;
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new PortMonitor();
     }
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return "portmonitor";
     }
 
-    virtual std::string toString() override {
+    virtual std::string toString() const override {
         return "portmonitor_carrier";
     }
 
@@ -95,19 +95,19 @@ public:
 
     virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) override;
 
-    virtual yarp::os::PortWriter& modifyOutgoingData(yarp::os::PortWriter& writer) override;
+    virtual const yarp::os::PortWriter& modifyOutgoingData(const yarp::os::PortWriter& writer) override;
 
-    virtual bool acceptOutgoingData(yarp::os::PortWriter& wrtier) override;
+    virtual bool acceptOutgoingData(const yarp::os::PortWriter& writer) override;
 
     virtual yarp::os::PortReader& modifyReply(yarp::os::PortReader& reader) override;
 
     virtual void setCarrierParams(const yarp::os::Property& params) override;
 
-    virtual void getCarrierParams(yarp::os::Property& params) override;
+    virtual void getCarrierParams(yarp::os::Property& params) const override;
 
 
-    void lock() { mutex.lock(); }
-    void unlock() { mutex.unlock(); }
+    void lock() const { mutex.lock(); }
+    void unlock() const { mutex.unlock(); }
 
     MonitorBinding* getBinder(void) {
         if(!bReady)
@@ -131,7 +131,7 @@ private:
     yarp::os::Things thing;
     MonitorBinding* binder;
     PortMonitorGroup *group;
-    std::mutex mutex;
+    mutable std::mutex mutex;
 };
 
 #endif //PORTMONITOR_INC

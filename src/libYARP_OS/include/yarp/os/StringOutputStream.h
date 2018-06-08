@@ -29,7 +29,7 @@ public:
 
     StringOutputStream() { }
 
-    std::string toString() {
+    std::string toString() const {
         return data;
     }
 
@@ -45,11 +45,11 @@ public:
     virtual void close() override {
     }
 
-    virtual bool isOk() override {
+    virtual bool isOk() const override {
         return true;
     }
 
-    const std::string& str() { return data; }
+    const std::string& str() const { return data; }
 
 private:
     std::string data;

@@ -16,15 +16,15 @@ using namespace yarp::os::impl;
 yarp::os::impl::UdpCarrier::UdpCarrier() {
 }
 
-yarp::os::Carrier *yarp::os::impl::UdpCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::UdpCarrier::create() const {
     return new UdpCarrier();
 }
 
-std::string yarp::os::impl::UdpCarrier::getName() {
+std::string yarp::os::impl::UdpCarrier::getName() const {
     return "udp";
 }
 
-int yarp::os::impl::UdpCarrier::getSpecifierCode() {
+int yarp::os::impl::UdpCarrier::getSpecifierCode() const {
     return 0;
 }
 
@@ -32,7 +32,7 @@ bool yarp::os::impl::UdpCarrier::checkHeader(const Bytes& header) {
     return getSpecifier(header)%16 == getSpecifierCode();
 }
 
-void yarp::os::impl::UdpCarrier::getHeader(const Bytes& header) {
+void yarp::os::impl::UdpCarrier::getHeader(Bytes& header) const {
     createStandardHeader(getSpecifierCode(), header);
 }
 
@@ -40,11 +40,11 @@ void yarp::os::impl::UdpCarrier::setParameters(const Bytes& header) {
     YARP_UNUSED(header);
 }
 
-bool yarp::os::impl::UdpCarrier::requireAck() {
+bool yarp::os::impl::UdpCarrier::requireAck() const {
     return false;
 }
 
-bool yarp::os::impl::UdpCarrier::isConnectionless() {
+bool yarp::os::impl::UdpCarrier::isConnectionless() const {
     return true;
 }
 

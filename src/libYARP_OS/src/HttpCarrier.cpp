@@ -357,15 +357,15 @@ yarp::os::OutputStream& yarp::os::impl::HttpTwoWayStream::getOutputStream() {
     return *this;
 }
 
-const Contact& yarp::os::impl::HttpTwoWayStream::getLocalAddress() {
+const Contact& yarp::os::impl::HttpTwoWayStream::getLocalAddress() const {
     return delegate->getLocalAddress();
 }
 
-const Contact& yarp::os::impl::HttpTwoWayStream::getRemoteAddress() {
+const Contact& yarp::os::impl::HttpTwoWayStream::getRemoteAddress() const {
     return delegate->getRemoteAddress();
 }
 
-bool yarp::os::impl::HttpTwoWayStream::isOk() {
+bool yarp::os::impl::HttpTwoWayStream::isOk() const {
     return true; //delegate->isOk();
 }
 
@@ -525,11 +525,11 @@ yarp::os::impl::HttpCarrier::HttpCarrier() :
         stream(nullptr) {
 }
 
-yarp::os::Carrier *yarp::os::impl::HttpCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::HttpCarrier::create() const {
     return new HttpCarrier();
 }
 
-std::string yarp::os::impl::HttpCarrier::getName() {
+std::string yarp::os::impl::HttpCarrier::getName() const {
     return "http";
 }
 
@@ -579,7 +579,7 @@ void yarp::os::impl::HttpCarrier::setParameters(const Bytes& header) {
     }
 }
 
-void yarp::os::impl::HttpCarrier::getHeader(const Bytes& header) {
+void yarp::os::impl::HttpCarrier::getHeader(Bytes& header) const {
     if (header.length()==8) {
         std::string target = "GET / HT";
         for (int i=0; i<8; i++) {
@@ -588,16 +588,16 @@ void yarp::os::impl::HttpCarrier::getHeader(const Bytes& header) {
     }
 }
 
-bool yarp::os::impl::HttpCarrier::requireAck() {
+bool yarp::os::impl::HttpCarrier::requireAck() const {
     return false;
 }
 
-bool yarp::os::impl::HttpCarrier::isTextMode() {
+bool yarp::os::impl::HttpCarrier::isTextMode() const {
     return true;
 }
 
 
-bool yarp::os::impl::HttpCarrier::supportReply() {
+bool yarp::os::impl::HttpCarrier::supportReply() const {
     return true;
 }
 

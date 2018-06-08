@@ -25,15 +25,15 @@ OutputStream& NullStream::getOutputStream() {
     return * this;
 }
 
-const Contact& NullStream::getLocalAddress() {
+const Contact& NullStream::getLocalAddress() const {
     return address;
 }
 
-const Contact& NullStream::getRemoteAddress() {
+const Contact& NullStream::getRemoteAddress() const {
     return address;
 }
 
-bool NullStream::isOk() {
+bool NullStream::isOk() const {
     return false;
 }
 
@@ -49,7 +49,7 @@ void NullStream::beginPacket() {
 void NullStream::endPacket()   {
 }
 
-yarp::conf::ssize_t NullStream::read(const Bytes& b) {
+yarp::conf::ssize_t NullStream::read(Bytes& b) {
     YARP_UNUSED(b);
     return -1;
 }

@@ -34,18 +34,18 @@ public:
     virtual void appendFloat64(yarp::conf::float64_t data) override;
     virtual void appendString(const char *str, int terminate = '\n') override;
     virtual void appendExternalBlock(const char *data, size_t len) override;
-    virtual bool isTextMode() override;
-    virtual bool isBareMode() override;
+    virtual bool isTextMode() const override;
+    virtual bool isBareMode() const override;
     virtual void declareSizes(int argc, int *argv) override;
     virtual void setReplyHandler(PortReader& reader) override;
     virtual void setReference(Portable *obj) override;
     virtual bool convertTextMode() override;
-    virtual bool isValid() override;
-    virtual bool isActive() override;
-    virtual bool isError() override;
+    virtual bool isValid() const override;
+    virtual bool isActive() const override;
+    virtual bool isError() const override;
     virtual void requestDrop() override;
     virtual bool isNull() const override;
-    virtual SizedWriter *getBuffer() override;
+    virtual SizedWriter *getBuffer() const override;
 };
 
 #endif // YARP_OS_NULLCONNECTIONWRITER_H

@@ -33,8 +33,8 @@ bool yarp::os::PortablePairBase::readPair(ConnectionReader& connection,
 }
 
 bool yarp::os::PortablePairBase::writePair(ConnectionWriter& connection,
-                                           Portable& head,
-                                           Portable& body)
+                                           const Portable& head,
+                                           const Portable& body)
 {
     connection.appendInt32(BOTTLE_TAG_LIST); // nested structure
     connection.appendInt32(2);               // with two elements

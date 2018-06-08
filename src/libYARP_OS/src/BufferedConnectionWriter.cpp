@@ -188,12 +188,12 @@ void BufferedConnectionWriter::push(const Bytes& data, bool copy)
 }
 
 
-bool BufferedConnectionWriter::isTextMode()
+bool BufferedConnectionWriter::isTextMode() const
 {
     return textMode;
 }
 
-bool BufferedConnectionWriter::isBareMode()
+bool BufferedConnectionWriter::isBareMode() const
 {
     return bareMode;
 }
@@ -314,17 +314,17 @@ void BufferedConnectionWriter::appendLine(const std::string& data)
 }
 
 
-size_t BufferedConnectionWriter::length()
+size_t BufferedConnectionWriter::length() const
 {
     return header_used + lst_used;
 }
 
-size_t BufferedConnectionWriter::headerLength()
+size_t BufferedConnectionWriter::headerLength() const
 {
     return header_used;
 }
 
-size_t BufferedConnectionWriter::length(size_t index)
+size_t BufferedConnectionWriter::length(size_t index) const
 {
     if (index < header_used) {
         yarp::os::ManagedBytes& b = *(header[index]);
@@ -334,7 +334,7 @@ size_t BufferedConnectionWriter::length(size_t index)
     return b.used();
 }
 
-const char* BufferedConnectionWriter::data(size_t index)
+const char* BufferedConnectionWriter::data(size_t index) const
 {
     if (index < header_used) {
         yarp::os::ManagedBytes& b = *(header[index]);
@@ -344,7 +344,7 @@ const char* BufferedConnectionWriter::data(size_t index)
     return (const char*)b.get();
 }
 
-bool BufferedConnectionWriter::write(ConnectionWriter& connection)
+bool BufferedConnectionWriter::write(ConnectionWriter& connection) const
 {
     stopWrite();
     size_t i;
@@ -383,7 +383,7 @@ bool BufferedConnectionWriter::write(PortReader& obj)
 }
 
 
-size_t BufferedConnectionWriter::dataSize()
+size_t BufferedConnectionWriter::dataSize() const
 {
     size_t i;
     size_t len = 0;
@@ -427,17 +427,17 @@ void BufferedConnectionWriter::setReference(yarp::os::Portable* obj)
     ref = obj;
 }
 
-bool BufferedConnectionWriter::isValid()
+bool BufferedConnectionWriter::isValid() const
 {
     return true;
 }
 
-bool BufferedConnectionWriter::isActive()
+bool BufferedConnectionWriter::isActive() const
 {
     return true;
 }
 
-bool BufferedConnectionWriter::isError()
+bool BufferedConnectionWriter::isError() const
 {
     return false; // output errors are of no significance at user level
 }
@@ -452,19 +452,19 @@ bool BufferedConnectionWriter::dropRequested()
     return shouldDrop;
 }
 
-void BufferedConnectionWriter::startWrite()
+void BufferedConnectionWriter::startWrite() const
 {
 }
 
-void BufferedConnectionWriter::stopWrite()
+void BufferedConnectionWriter::stopWrite() const
 {
     // convert, last thing, if requested
     applyConvertTextMode();
 }
 
-SizedWriter* BufferedConnectionWriter::getBuffer()
+SizedWriter* BufferedConnectionWriter::getBuffer() const
 {
-    return this;
+    return const_cast<BufferedConnectionWriter*>(this);
 }
 
 
@@ -474,7 +474,7 @@ void BufferedConnectionWriter::setInitialPoolSize(size_t size)
 }
 
 
-std::string BufferedConnectionWriter::toString()
+std::string BufferedConnectionWriter::toString() const
 {
     stopWrite();
     size_t total_size = dataSize();
@@ -495,6 +495,10 @@ std::string BufferedConnectionWriter::toString()
     return output;
 }
 
+bool BufferedConnectionWriter::applyConvertTextMode() const
+{
+    return const_cast<BufferedConnectionWriter*>(this)->applyConvertTextMode();
+}
 
 bool BufferedConnectionWriter::applyConvertTextMode()
 {

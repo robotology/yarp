@@ -56,62 +56,62 @@ public:
     {
     }
 
-    virtual Carrier *create() override
+    virtual Carrier *create() const override
     {
         return new XmlRpcCarrier();
     }
 
-    virtual std::string getName() override
+    virtual std::string getName() const override
     {
         return "xmlrpc";
     }
 
-    virtual bool isConnectionless() override
+    virtual bool isConnectionless() const override
     {
         return false;
     }
 
-    virtual bool canAccept() override
+    virtual bool canAccept() const override
     {
         return true;
     }
 
-    virtual bool canOffer() override
+    virtual bool canOffer() const override
     {
         return true;
     }
 
-    virtual bool isTextMode() override
+    virtual bool isTextMode() const override
     {
         return true;
     }
 
-    virtual bool canEscape() override
+    virtual bool canEscape() const override
     {
         return true;
     }
 
-    virtual bool requireAck() override
+    virtual bool requireAck() const override
     {
         return false;
     }
 
-    virtual bool supportReply() override
+    virtual bool supportReply() const override
     {
         return true;
     }
 
-    virtual bool isLocal() override
+    virtual bool isLocal() const override
     {
         return false;
     }
 
-    virtual std::string toString() override
+    virtual std::string toString() const override
     {
         return "xmlrpc_carrier";
     }
 
-    virtual void getHeader(const Bytes& header) override
+    virtual void getHeader(Bytes& header) const override
     {
         const char *target = "POST /RP";
         for (size_t i=0; i<8 && i<header.length(); i++) {
@@ -171,7 +171,7 @@ public:
         return true;
     }
 
-    virtual bool isActive() override
+    virtual bool isActive() const override
     {
         return true;
     }
@@ -203,7 +203,7 @@ public:
         return true;
     }
 
-    virtual std::string getBootstrapCarrierName() override
+    virtual std::string getBootstrapCarrierName() const override
     {
         return "";
     }

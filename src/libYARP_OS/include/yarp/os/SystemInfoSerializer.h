@@ -45,7 +45,7 @@ public:
      * @param connection a ConnectionWriter
      * @return true/false upon success or failure
      */
-    virtual bool write(yarp::os::ConnectionWriter& connection) override;
+    virtual bool write(yarp::os::ConnectionWriter& connection) const override;
 
     /**
      * @brief system memory information

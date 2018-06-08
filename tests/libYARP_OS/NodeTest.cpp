@@ -36,7 +36,7 @@ public:
 
 class NodeTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "NodeTest"; }
+    virtual std::string getName() const override { return "NodeTest"; }
 
     void parseNameTest();
     void basicNodeTest();

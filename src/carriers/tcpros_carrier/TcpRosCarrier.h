@@ -68,60 +68,60 @@ public:
         persistent = true;
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new TcpRosCarrier();
     }
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return isService?"rossrv":"tcpros";
     }
 
-    virtual bool isConnectionless() override {
+    virtual bool isConnectionless() const override {
         return false;
     }
 
-    virtual bool canAccept() override {
+    virtual bool canAccept() const override {
         return true;
     }
 
-    virtual bool canOffer() override {
+    virtual bool canOffer() const override {
         return true;
     }
 
-    virtual bool isTextMode() override {
+    virtual bool isTextMode() const override {
         return false;
     }
 
-    virtual bool isBareMode() override {
+    virtual bool isBareMode() const override {
         return true;
     }
 
-    virtual bool canEscape() override {
+    virtual bool canEscape() const override {
         return false;
     }
 
-    virtual bool requireAck() override {
+    virtual bool requireAck() const override {
         return false;
     }
 
-    virtual bool supportReply() override {
+    virtual bool supportReply() const override {
         return true;
     }
 
-    virtual bool isPush() override {
+    virtual bool isPush() const override {
         // if topic-like, pull ; if service-like, push!
         return isService;
     }
 
-    virtual bool isLocal() override {
+    virtual bool isLocal() const override {
         return false;
     }
 
-    virtual std::string toString() override {
+    virtual std::string toString() const override {
         return isService?"rossrv_carrier":"tcpros_carrier";
     }
 
-    virtual void getHeader(const Bytes& header) override {
+    virtual void getHeader(Bytes& header) const override {
         // no header, will need to do some fancy footwork
         const char *target = "NONONONO";
         for (size_t i=0; i<8 && i<header.length(); i++) {
@@ -154,7 +154,7 @@ public:
 
     virtual bool expectReplyToHeader(ConnectionState& proto) override;
 
-    virtual bool isActive() override {
+    virtual bool isActive() const override {
         return true;
     }
 
@@ -181,7 +181,7 @@ public:
         return true;
     }
 
-    virtual std::string getBootstrapCarrierName() override { return ""; }
+    virtual std::string getBootstrapCarrierName() const override { return ""; }
 
     virtual int connect(const yarp::os::Contact& src,
                         const yarp::os::Contact& dest,
@@ -207,7 +207,7 @@ public:
         isService = true;
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new RosSrvCarrier();
     }
 };

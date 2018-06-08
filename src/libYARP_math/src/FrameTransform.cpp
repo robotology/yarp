@@ -10,7 +10,7 @@
 
 #include <cstdio>
 
-std::string yarp::math::FrameTransform::toString()
+std::string yarp::math::FrameTransform::toString() const
 {
     char buff[1024];
     sprintf(buff, "%s -> %s \n tran: %f %f %f \n rot: %f %f %f %f \n\n",

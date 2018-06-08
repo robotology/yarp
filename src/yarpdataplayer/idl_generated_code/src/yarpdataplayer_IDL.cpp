@@ -18,7 +18,7 @@ class yarpdataplayer_IDL_step : public yarp::os::Portable {
 public:
   bool _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -28,7 +28,7 @@ public:
   std::int32_t frameNum;
   bool _return;
   void init(const std::string& name, const std::int32_t frameNum);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -37,7 +37,7 @@ public:
   std::string name;
   std::int32_t _return;
   void init(const std::string& name);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -46,7 +46,7 @@ public:
   std::string path;
   bool _return;
   void init(const std::string& path);
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -54,7 +54,7 @@ class yarpdataplayer_IDL_play : public yarp::os::Portable {
 public:
   bool _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -62,7 +62,7 @@ class yarpdataplayer_IDL_pause : public yarp::os::Portable {
 public:
   bool _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -70,7 +70,7 @@ class yarpdataplayer_IDL_stop : public yarp::os::Portable {
 public:
   bool _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -78,11 +78,11 @@ class yarpdataplayer_IDL_quit : public yarp::os::Portable {
 public:
   bool _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-bool yarpdataplayer_IDL_step::write(yarp::os::ConnectionWriter& connection) {
+bool yarpdataplayer_IDL_step::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("step",1,1)) return false;
@@ -103,7 +103,7 @@ void yarpdataplayer_IDL_step::init() {
   _return = false;
 }
 
-bool yarpdataplayer_IDL_setFrame::write(yarp::os::ConnectionWriter& connection) {
+bool yarpdataplayer_IDL_setFrame::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(3)) return false;
   if (!writer.writeTag("setFrame",1,1)) return false;
@@ -128,7 +128,7 @@ void yarpdataplayer_IDL_setFrame::init(const std::string& name, const std::int32
   this->frameNum = frameNum;
 }
 
-bool yarpdataplayer_IDL_getFrame::write(yarp::os::ConnectionWriter& connection) {
+bool yarpdataplayer_IDL_getFrame::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("getFrame",1,1)) return false;
@@ -151,7 +151,7 @@ void yarpdataplayer_IDL_getFrame::init(const std::string& name) {
   this->name = name;
 }
 
-bool yarpdataplayer_IDL_load::write(yarp::os::ConnectionWriter& connection) {
+bool yarpdataplayer_IDL_load::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("load",1,1)) return false;
@@ -174,7 +174,7 @@ void yarpdataplayer_IDL_load::init(const std::string& path) {
   this->path = path;
 }
 
-bool yarpdataplayer_IDL_play::write(yarp::os::ConnectionWriter& connection) {
+bool yarpdataplayer_IDL_play::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("play",1,1)) return false;
@@ -195,7 +195,7 @@ void yarpdataplayer_IDL_play::init() {
   _return = false;
 }
 
-bool yarpdataplayer_IDL_pause::write(yarp::os::ConnectionWriter& connection) {
+bool yarpdataplayer_IDL_pause::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("pause",1,1)) return false;
@@ -216,7 +216,7 @@ void yarpdataplayer_IDL_pause::init() {
   _return = false;
 }
 
-bool yarpdataplayer_IDL_stop::write(yarp::os::ConnectionWriter& connection) {
+bool yarpdataplayer_IDL_stop::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("stop",1,1)) return false;
@@ -237,7 +237,7 @@ void yarpdataplayer_IDL_stop::init() {
   _return = false;
 }
 
-bool yarpdataplayer_IDL_quit::write(yarp::os::ConnectionWriter& connection) {
+bool yarpdataplayer_IDL_quit::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("quit",1,1)) return false;

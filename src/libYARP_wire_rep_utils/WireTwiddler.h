@@ -174,15 +174,15 @@ public:
     virtual ~WireTwiddlerReader() {}
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(const yarp::os::Bytes& b) override;
+    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     virtual void close() override { is.close(); }
 
-    virtual bool isOk() override { return is.isOk(); }
+    virtual bool isOk() const override { return is.isOk(); }
 
     yarp::conf::ssize_t readMapped(yarp::os::InputStream& is,
-                            const yarp::os::Bytes& b,
-                            const WireTwiddlerGap& gap);
+                                   yarp::os::Bytes& b,
+                                   const WireTwiddlerGap& gap);
 
     void compute(const WireTwiddlerGap& gap);
 };
@@ -294,19 +294,19 @@ public:
 
     bool update();
 
-    virtual size_t length() override {
+    virtual size_t length() const override {
         return srcs.size();
     }
 
-    virtual size_t headerLength() override {
+    virtual size_t headerLength() const override {
         return 0;
     }
 
-    virtual size_t length(size_t index) override {
+    virtual size_t length(size_t index) const override {
         return srcs[index].len;
     }
 
-    virtual const char *data(size_t index) override {
+    virtual const char *data(size_t index) const override {
         if (srcs[index].offset<0) return srcs[index].src;
         return scratch.get()+srcs[index].offset;
     }
@@ -341,11 +341,11 @@ public:
         return false;
     }
 
-    virtual void startWrite() override {
+    virtual void startWrite() const override {
         parent->startWrite();
     }
 
-    virtual void stopWrite() override {
+    virtual void stopWrite() const override {
         parent->stopWrite();
     }
 };

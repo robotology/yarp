@@ -34,7 +34,7 @@ public:
         std::cout << "Bye bye" << std::endl;
     }
 
-    virtual bool isOk() override {
+    virtual bool isOk() const override {
         return true;
     }
 
@@ -50,7 +50,7 @@ public:
 
     // InputStream
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(const Bytes& b) override;
+    virtual yarp::conf::ssize_t read(Bytes& b) override;
 
     // OutputStream
     using yarp::os::OutputStream::write;
@@ -66,12 +66,12 @@ public:
         return *this;
     }
 
-    virtual const yarp::os::Contact& getLocalAddress() override {
+    virtual const yarp::os::Contact& getLocalAddress() const override {
         // left undefined
         return local;
     }
 
-    virtual const yarp::os::Contact& getRemoteAddress() override {
+    virtual const yarp::os::Contact& getRemoteAddress() const override {
         // left undefined
         return remote;
     }

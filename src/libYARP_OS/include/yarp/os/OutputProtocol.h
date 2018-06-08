@@ -56,14 +56,14 @@ public:
      */
     virtual void close() = 0;
 
-    virtual const Route& getRoute() = 0;
+    virtual const Route& getRoute() const = 0;
 
     /**
      *
      * Check if the connection is valid and can be used.
      *
      */
-    virtual bool isOk() = 0;
+    virtual bool isOk() const = 0;
 
     /**
      *

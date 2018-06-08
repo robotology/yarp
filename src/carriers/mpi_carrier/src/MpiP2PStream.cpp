@@ -15,7 +15,7 @@ using namespace yarp::os;
 /////////////////////////////////////////////////
 // InputStream
 
-ssize_t MpiP2PStream::read(const Bytes& b) {
+ssize_t MpiP2PStream::read(Bytes& b) {
     if (readAvail == 0) {
         // get new data
         reset();

@@ -99,7 +99,7 @@ void PortMonitor::setCarrierParams(const yarp::os::Property& params)
     PortMonitor::unlock();
 }
 
-void PortMonitor::getCarrierParams(yarp::os::Property& params)
+void PortMonitor::getCarrierParams(yarp::os::Property& params) const
 {
     if(!bReady) return;
     PortMonitor::lock();
@@ -174,7 +174,7 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
 }
 
 
-yarp::os::PortWriter& PortMonitor::modifyOutgoingData(yarp::os::PortWriter& writer)
+const yarp::os::PortWriter& PortMonitor::modifyOutgoingData(const yarp::os::PortWriter& writer)
 {
     if(!bReady) return writer;
 
@@ -184,13 +184,13 @@ yarp::os::PortWriter& PortMonitor::modifyOutgoingData(yarp::os::PortWriter& writ
 
     PortMonitor::lock();
     thing.reset();
-    thing.setPortWriter(&writer);
+    thing.setPortWriter(const_cast<yarp::os::PortWriter*>(&writer));
     yarp::os::Things& result = binder->updateData(thing);
     PortMonitor::unlock();
     return *result.getPortWriter();
 }
 
-bool PortMonitor::acceptOutgoingData(yarp::os::PortWriter& writer)
+bool PortMonitor::acceptOutgoingData(const yarp::os::PortWriter& writer)
 {
     if(!bReady) return false;
 
@@ -200,7 +200,7 @@ bool PortMonitor::acceptOutgoingData(yarp::os::PortWriter& writer)
 
     PortMonitor::lock();
     yarp::os::Things thing;
-    thing.setPortWriter(&writer);
+    thing.setPortWriter(const_cast<yarp::os::PortWriter*>(&writer));
     bool result = binder->acceptData(thing);
     PortMonitor::unlock();
     return result;

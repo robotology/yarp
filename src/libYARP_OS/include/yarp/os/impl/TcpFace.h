@@ -34,7 +34,7 @@ public:
     virtual InputProtocol *read() override;
     virtual OutputProtocol *write(const Contact& address) override;
 
-    virtual Contact getLocalAddress() override;
+    virtual Contact getLocalAddress() const override;
 
     /*
      * This class like all classes except the port objects does

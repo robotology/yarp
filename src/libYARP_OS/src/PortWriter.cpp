@@ -13,11 +13,11 @@
 
 yarp::os::PortWriter::~PortWriter() = default;
 
-void yarp::os::PortWriter::onCompletion()
+void yarp::os::PortWriter::onCompletion() const
 {
 }
 
-void yarp::os::PortWriter::onCommencement()
+void yarp::os::PortWriter::onCommencement() const
 {
 }
 

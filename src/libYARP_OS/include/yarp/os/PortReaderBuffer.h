@@ -116,7 +116,7 @@ public:
      *
      * @return new instance of the templated type.
      */
-    virtual PortReader *create() override;
+    virtual PortReader *create() const override;
 
     // documented in TypedReader
     virtual void setReplier(PortReader& reader) override;

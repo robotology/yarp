@@ -48,21 +48,21 @@ public:
 
     virtual void close() override;
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new MpiBcastCarrier();
     }
 
     virtual void createStream(bool sender) override;
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return "bcast";
     }
 
-    virtual bool supportReply() override {
+    virtual bool supportReply() const override {
         return false;
     }
 
-    virtual bool isBroadcast() override {
+    virtual bool isBroadcast() const override {
         return true;
     }
 
@@ -76,9 +76,9 @@ public:
         return ok;
     }
 
-    virtual bool isActive() override;
+    virtual bool isActive() const override;
 
-    virtual bool isElect();
+    virtual bool isElect() const;
 };
 
 #endif //_YARP_MPIBCASTCARRIER_

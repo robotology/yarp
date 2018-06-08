@@ -114,15 +114,15 @@ public:
         }
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new PriorityCarrier();
     }
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return "priority";
     }
 
-    virtual std::string toString() override {
+    virtual std::string toString() const override {
         return "priority_carrier";
     }
 
@@ -169,7 +169,7 @@ public:
             excitation = property.findGroup("ex");
     }
 
-    virtual void getCarrierParams(yarp::os::Property& params) override {
+    virtual void getCarrierParams(yarp::os::Property& params) const override {
         params.put("tc", timeConstant);
         params.put("tr", timeResting);
         params.put("st", stimulation);

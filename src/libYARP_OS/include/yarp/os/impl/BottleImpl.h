@@ -69,21 +69,21 @@ public:
     void clear();
 
     void fromString(const std::string& line);
-    std::string toString();
+    std::string toString() const;
     size_t size() const;
 
     bool read(ConnectionReader& reader);
-    bool write(ConnectionWriter& writer);
+    bool write(ConnectionWriter& writer) const;
 
     void onCommencement();
 
-    const char* getBytes();
-    size_t byteCount();
+    const char* getBytes() const;
+    size_t byteCount() const;
 
     void copyRange(const BottleImpl* alt, int first = 0, int len = -1);
 
     bool fromBytes(const yarp::os::Bytes& data);
-    void toBytes(const yarp::os::Bytes& data);
+    void toBytes(yarp::os::Bytes& data);
 
     bool fromBytes(yarp::os::ConnectionReader& reader);
 
@@ -151,7 +151,18 @@ private:
     void add(Storable* s);
     void smartAdd(const std::string& str);
 
+    /*
+     * Bottle is using a lazy syncronization method. Whenever some operation
+     * is performed, a dirty flag is set, and when it is used, the synch()
+     * method is called.
+     *
+     * The const version of the synch() method performs a const_cast, and
+     * calls the non-const version. This allows to call it in const methods.
+     * Conceptually this is not completely wrong because it does not modify
+     * the external state of the class, but just some internal representation.
+     */
     void synch();
+    void synch() const;
 };
 
 } // namespace impl

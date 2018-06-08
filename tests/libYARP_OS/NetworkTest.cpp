@@ -89,7 +89,7 @@ public:
 
 class NetworkTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "NetworkTest"; }
+    virtual std::string getName() const override { return "NetworkTest"; }
 
     void checkConnect() {
         report(0,"checking return value of connect method");

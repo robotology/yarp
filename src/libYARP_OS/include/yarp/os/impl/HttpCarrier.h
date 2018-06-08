@@ -73,10 +73,10 @@ public:
 
     virtual InputStream& getInputStream() override;
     virtual OutputStream& getOutputStream() override;
-    virtual const Contact& getLocalAddress() override;
-    virtual const Contact& getRemoteAddress() override;
+    virtual const Contact& getLocalAddress() const override;
+    virtual const Contact& getRemoteAddress() const override;
 
-    virtual bool isOk() override;
+    virtual bool isOk() const override;
     virtual void reset() override;
     using yarp::os::OutputStream::write;
     virtual void write(const Bytes& b) override;
@@ -108,18 +108,18 @@ private:
 public:
     HttpCarrier();
 
-    virtual Carrier *create() override;
+    virtual Carrier *create() const override;
 
-    virtual std::string getName() override;
+    virtual std::string getName() const override;
 
     bool checkHeader(const Bytes& header, const char *prefix);
 
     virtual bool checkHeader(const Bytes& header) override;
     virtual void setParameters(const Bytes& header) override;
-    virtual void getHeader(const Bytes& header) override;
-    virtual bool requireAck() override;
-    virtual bool isTextMode() override;
-    virtual bool supportReply() override;
+    virtual void getHeader(Bytes& header) const override;
+    virtual bool requireAck() const override;
+    virtual bool isTextMode() const override;
+    virtual bool supportReply() const override;
     virtual bool sendHeader(ConnectionState& proto) override;
     virtual bool expectSenderSpecifier(ConnectionState& proto) override;
     virtual bool expectReplyToHeader(ConnectionState& proto) override;

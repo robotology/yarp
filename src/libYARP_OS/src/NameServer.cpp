@@ -824,8 +824,8 @@ public:
         }
     }
 
-    virtual PortReader *create() override {
-        return new MainNameServerWorker(this);
+    virtual PortReader *create() const override {
+        return new MainNameServerWorker(const_cast<MainNameServer*>(this));
     }
 };
 

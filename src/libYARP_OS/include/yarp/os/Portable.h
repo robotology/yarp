@@ -31,7 +31,7 @@ public:
     // reiterate the key inherited virtual methods, just as a reminder
 
     virtual bool read(ConnectionReader& reader) override = 0;
-    virtual bool write(ConnectionWriter& writer) override = 0;
+    virtual bool write(ConnectionWriter& writer) const override = 0;
 
     virtual Type getType() const;
 

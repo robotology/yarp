@@ -126,7 +126,7 @@ namespace yarp
                 return true;
             }
 
-            std::string toString();
+            std::string toString() const;
         };
     }
 }

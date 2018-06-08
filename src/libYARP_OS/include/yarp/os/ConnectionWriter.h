@@ -132,14 +132,14 @@ public:
      * representation of your data structure.
      * @return true if the connection is text mode (as opposed to binary)
      */
-    virtual bool isTextMode() = 0;
+    virtual bool isTextMode() const = 0;
 
     /**
      * Check if the connection is bare mode.  If it is, you are
      * encouraged to omit type information from your serialization.
      * @return true if the connection is bare
      */
-    virtual bool isBareMode() = 0;
+    virtual bool isBareMode() const = 0;
 
     /**
      * If you can easily determine how many blocks there are in a message,
@@ -181,13 +181,13 @@ public:
      * @return true if the writer is valid.  A writer may be invalid
      * if a connection has closed.
      */
-    virtual bool isValid() = 0;
+    virtual bool isValid() const = 0;
 
     /**
      * @return true if the writer is active.  Writers may become inactive
      * if the connection they are associated with breaks.
      */
-    virtual bool isActive() = 0;
+    virtual bool isActive() const = 0;
 
     /**
      * @return true if the writer encountered an error.  Writers can
@@ -195,7 +195,7 @@ public:
      * protocols like UDP/Multicast, where losses are not unexpected,
      * this error flag will be reset for the next incoming message.
      */
-    virtual bool isError() = 0;
+    virtual bool isError() const = 0;
 
 
     /**
@@ -218,7 +218,7 @@ public:
      * @return a buffer if one is present.
      *
      */
-    virtual SizedWriter *getBuffer() = 0;
+    virtual SizedWriter *getBuffer() const = 0;
 
 
     virtual void appendRawString(const std::string& str) {

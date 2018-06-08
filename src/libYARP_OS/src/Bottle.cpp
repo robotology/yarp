@@ -186,12 +186,12 @@ const char* Bottle::toBinary(size_t* size)
     return implementation->getBytes();
 }
 
-bool Bottle::write(ConnectionWriter& writer)
+bool Bottle::write(ConnectionWriter& writer) const
 {
     return implementation->write(writer);
 }
 
-void Bottle::onCommencement()
+void Bottle::onCommencement() const
 {
     implementation->onCommencement();
 }
@@ -317,7 +317,7 @@ bool Bottle::write(PortReader& reader, bool textMode)
     return reader.read(con.getReader());
 }
 
-bool Bottle::read(PortWriter& writer, bool textMode)
+bool Bottle::read(const PortWriter& writer, bool textMode)
 {
     implementation->edit();
     DummyConnector con;

@@ -129,9 +129,9 @@ public:
      * the caller's responsibility to manage any memory associated
      * with the message.
      */
-    virtual void *send(yarp::os::PortWriter& writer,
+    virtual void *send(const yarp::os::PortWriter& writer,
                        yarp::os::PortReader *reader,
-                       yarp::os::PortWriter *callback,
+                       const yarp::os::PortWriter *callback,
                        void *tracker,
                        const std::string& envelope,
                        bool waitAfter = true,

@@ -45,9 +45,14 @@ public:
     size_t length() const;
 
     /**
-     * @return address of data block
+     * @return address of data block. Const version.
      */
-    char* get() const;
+    const char* get() const;
+
+    /**
+     * @return address of data block.
+     */
+    char* get();
 
 private:
     char* data;

@@ -54,7 +54,7 @@ public:
     virtual void write(const Bytes& b) override;
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(const Bytes& b) override;
+    virtual yarp::conf::ssize_t read(Bytes& b) override;
 
     virtual bool setReadEnvelopeCallback(InputStream::readEnvelopeCallbackType callback, void* data) override;
 

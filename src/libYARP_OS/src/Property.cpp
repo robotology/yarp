@@ -49,6 +49,16 @@ public:
         }
     }
 
+    /*
+     * The const version of the processBuffered() method performs a const_cast,
+     * and calls the non-const version. This allows to call it in const methods.
+     * Conceptually this is not completely wrong because it does not modify
+     * the external state of the class, but just some internal representation.
+     */
+    void flush() const {
+        const_cast<PropertyItem*>(this)->flush();
+    }
+
     void flush() {
         if (backing) {
             Bottle flatten(backing->toString());
@@ -57,7 +67,7 @@ public:
         }
     }
 
-    std::string toString() {
+    std::string toString() const {
         flush();
         return bot.toString();
     }
@@ -674,10 +684,10 @@ public:
         }
     }
 
-    std::string toString() {
+    std::string toString() const {
         Bottle bot;
-        for (std::map<std::string, PropertyItem>::iterator it = data.begin(); it != data.end(); ++it) {
-            PropertyItem& rec = it->second;
+        for (std::map<std::string, PropertyItem>::const_iterator it = data.begin(); it != data.end(); ++it) {
+            const PropertyItem& rec = it->second;
             Bottle& sub = bot.addList();
             rec.flush();
             sub.copy(rec.bot);
@@ -1039,7 +1049,7 @@ bool Property::read(ConnectionReader& reader) {
 }
 
 
-bool Property::write(ConnectionWriter& writer) {
+bool Property::write(ConnectionWriter& writer) const {
     // for now just delegate to Bottle
     Bottle b(toString());
     return b.write(writer);

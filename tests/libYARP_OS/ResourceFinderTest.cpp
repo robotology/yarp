@@ -25,7 +25,7 @@ using namespace yarp::os::impl;
 
 class ResourceFinderTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "ResourceFinderTest"; }
+    virtual std::string getName() const override { return "ResourceFinderTest"; }
 
     void testBasics() {
         report(0,"testing the basics of RF...");

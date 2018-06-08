@@ -37,25 +37,25 @@ public:
         holding.close();
     }
 
-    virtual std::string toString() override {
+    virtual std::string toString() const override {
         return name;
     }
 
-    virtual DeviceDriver *create() override {
+    virtual DeviceDriver *create() const override {
         DeviceDriver *internal;
-        holding.view(internal);
+        const_cast<PolyDriver&>(holding).view(internal);
         return internal;
     }
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return name;
     }
 
-    virtual std::string getWrapper() override {
+    virtual std::string getWrapper() const override {
         return "(link)";
     }
 
-    virtual std::string getCode() override {
+    virtual std::string getCode() const override {
         return "DriverLinkCreator";
     }
 

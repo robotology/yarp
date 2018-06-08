@@ -116,7 +116,7 @@ public:
 
 class DgramTwoWayStreamTest : public UnitTest {
 public:
-    virtual std::string getName() override { return "DgramTwoWayStreamTest"; }
+    virtual std::string getName() const override { return "DgramTwoWayStreamTest"; }
 
     void checkNormal() {
         report(0, "checking that dgrams are output sensibly");

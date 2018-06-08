@@ -97,7 +97,7 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
     have_result = false;
     if (need_reset) {
         int m = DC1394_BAYER_METHOD_BILINEAR;
-        Searchable& config = reader.getConnectionModifiers();
+        const Searchable& config = reader.getConnectionModifiers();
         half = false;
         if (config.check("size")) {
             if (config.find("size").asString() == "half") {
@@ -293,6 +293,10 @@ bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
     return true;
 }
 
+bool BayerCarrier::processBuffered() const {
+    return const_cast<BayerCarrier*>(this)->processBuffered();
+}
+
 bool BayerCarrier::processBuffered() {
     if (!have_result) {
         //printf("Copy-based conversion.\n");
@@ -310,7 +314,7 @@ bool BayerCarrier::processBuffered() {
     return true;
 }
 
-bool BayerCarrier::processDirect(const yarp::os::Bytes& bytes) {
+bool BayerCarrier::processDirect(yarp::os::Bytes& bytes) {
     if (have_result) {
         memcpy(bytes.get(),out.getRawImage(),bytes.length());
         return true;
@@ -328,7 +332,7 @@ bool BayerCarrier::processDirect(const yarp::os::Bytes& bytes) {
 }
 
 
-yarp::conf::ssize_t BayerCarrier::read(const yarp::os::Bytes& b) {
+yarp::conf::ssize_t BayerCarrier::read(yarp::os::Bytes& b) {
     // copy across small stuff - the image header
     if (consumed<sizeof(header)) {
         size_t len = b.length();

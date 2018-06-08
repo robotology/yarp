@@ -121,8 +121,8 @@ public:
     void push(const Bytes& data, bool copy);
 
     // defined by yarp::os::ConnectionWriter
-    virtual bool isTextMode() override;
-    virtual bool isBareMode() override;
+    virtual bool isTextMode() const override;
+    virtual bool isBareMode() const override;
     virtual bool convertTextMode() override;
     virtual void declareSizes(int argc, int* argv) override; // FIXME Remove?
     virtual void setReplyHandler(PortReader& reader) override;
@@ -165,11 +165,11 @@ public:
 
 
     // defined by yarp::os::SizedWriter
-    virtual size_t length() override;
-    virtual size_t headerLength() override;
-    virtual size_t length(size_t index) override;
-    virtual const char* data(size_t index) override;
-    virtual bool write(ConnectionWriter& connection) override;
+    virtual size_t length() const override;
+    virtual size_t headerLength() const override;
+    virtual size_t length(size_t index) const override;
+    virtual const char* data(size_t index) const override;
+    virtual bool write(ConnectionWriter& connection) const override;
     virtual void write(OutputStream& os) override;
 
     /**
@@ -184,7 +184,7 @@ public:
      * @return the size of the message that will be sent, in bytes, including
      * the header and payload.
      */
-    virtual size_t dataSize();
+    virtual size_t dataSize() const;
 
     size_t bufferCount() const;
 
@@ -205,18 +205,18 @@ public:
 
     // defined by yarp::os::ConnectionWriter
     virtual void setReference(yarp::os::Portable* obj) override;
-    virtual bool isValid() override;
-    virtual bool isActive() override;
-    virtual bool isError() override;
+    virtual bool isValid() const override;
+    virtual bool isActive() const override;
+    virtual bool isError() const override;
     virtual void requestDrop() override;
 
     // defined by yarp::os::SizedWriter
     virtual bool dropRequested() override;
-    virtual void startWrite() override;
-    virtual void stopWrite() override;
+    virtual void startWrite() const override;
+    virtual void stopWrite() const override;
 
     // defined by yarp::os::ConnectionWriter
-    virtual SizedWriter* getBuffer() override;
+    virtual SizedWriter* getBuffer() const override;
 
     /**
      * Set a custom initial pool size, which affects the size of buffers
@@ -230,7 +230,7 @@ public:
     /**
      * @return the message serialized as a string
      */
-    std::string toString();
+    std::string toString() const;
 
 
 private:
@@ -240,9 +240,15 @@ private:
      * the full message is available, whereas conversion can be
      * requested at any time.
      *
+     * The const version of this method performs a const_cast, and calls the
+     * non-const version. This makes possible calling it in const methods.
+     * Conceptually this is not completely wrong because it does not modify
+     * the external state of the class, but just some internal representation.
+     *
      * @return true on success
      */
     bool applyConvertTextMode();
+    bool applyConvertTextMode() const;
 
 
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>) lst; ///< buffers in payload

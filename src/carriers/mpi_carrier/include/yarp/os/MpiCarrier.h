@@ -41,23 +41,23 @@ public:
     MpiCarrier() ;
     virtual ~MpiCarrier();
     virtual void close() override = 0;
-    virtual Carrier *create() override = 0;
-    virtual std::string getName() override = 0;
+    virtual Carrier *create() const override = 0;
+    virtual std::string getName() const override = 0;
 
     virtual void createStream(bool sender) = 0;
 
-    virtual bool isConnectionless() override {
+    virtual bool isConnectionless() const override {
         return false;
     }
 
-    virtual bool canEscape() override {
+    virtual bool canEscape() const override {
         return true;
     }
 
-    virtual bool supportReply() override = 0;
+    virtual bool supportReply() const override = 0;
 
 
-    virtual void getHeader(const Bytes& header) override;
+    virtual void getHeader(Bytes& header) const override;
     virtual bool checkHeader(const Bytes& header) override;
 
 

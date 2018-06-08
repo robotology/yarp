@@ -21,32 +21,32 @@ using namespace yarp::sig;
 
 
 
-std::string H264Carrier::getName()
+std::string H264Carrier::getName() const
 {
     return "h264";
 }
 
-bool H264Carrier::isConnectionless()
+bool H264Carrier::isConnectionless() const
 {
     return true;
 }
 
-bool H264Carrier::canAccept()
+bool H264Carrier::canAccept() const
 {
     return true;
 }
 
-bool H264Carrier::canOffer()
+bool H264Carrier::canOffer() const
 {
     return true;
 }
 
-bool H264Carrier::isTextMode()
+bool H264Carrier::isTextMode() const
 {
     return false;
 }
 
-bool H264Carrier::canEscape()
+bool H264Carrier::canEscape() const
 {
     return false;
 }
@@ -56,33 +56,33 @@ void H264Carrier::handleEnvelope(const std::string& envelope)
     this->envelope = envelope;
 }
 
-bool H264Carrier::requireAck()
+bool H264Carrier::requireAck() const
 {
     return false;
 }
 
-bool H264Carrier::supportReply()
+bool H264Carrier::supportReply() const
 {
     return false;
 }
 
-bool H264Carrier::isLocal()
+bool H264Carrier::isLocal() const
 {
     return false;
 }
 
 // this is important - flips expected flow of messages
-bool H264Carrier::isPush()
+bool H264Carrier::isPush() const
 {
     return false;
 }
 
-std::string H264Carrier::toString()
+std::string H264Carrier::toString() const
 {
     return "h264_carrier";
 }
 
-void H264Carrier::getHeader(const Bytes& header)
+void H264Carrier::getHeader(Bytes& header) const
 {
 }
 
@@ -177,7 +177,7 @@ bool H264Carrier::expectReplyToHeader(ConnectionState& proto)
     return true;
 }
 
-bool H264Carrier::isActive()
+bool H264Carrier::isActive() const
 {
     return true;
 }
@@ -213,12 +213,12 @@ bool H264Carrier::expectAck(ConnectionState& proto)
     return true;
 }
 
-std::string H264Carrier::getBootstrapCarrierName()
+std::string H264Carrier::getBootstrapCarrierName() const
 {
     return "";
 }
 
-yarp::os::Face* H264Carrier::createFace(void)
+yarp::os::Face* H264Carrier::createFace(void) const
 {
     return new yarp::os::impl::FakeFace();
 }

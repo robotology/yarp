@@ -51,7 +51,7 @@ public:
 class RFModuleTest : public UnitTest
 {
 public:
-    virtual std::string getName() override { return "RFModuleTest"; }
+    virtual std::string getName() const override { return "RFModuleTest"; }
 
 
     void testPort()

@@ -24,7 +24,7 @@ class PortCoreTest : public UnitTest, public PortReader {
 public:
     int safePort() { return Network::getDefaultPortRange()+100; }
 
-    virtual std::string getName() override { return "PortCoreTest"; }
+    virtual std::string getName() const override { return "PortCoreTest"; }
 
     std::string expectation;
     int receives;

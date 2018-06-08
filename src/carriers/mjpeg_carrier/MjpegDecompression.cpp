@@ -158,7 +158,7 @@ public:
             return false;
         }
 
-        jpeg_net_src(&cinfo,cimg.get(),cimg.length());
+        jpeg_net_src(&cinfo,(char*)cimg.get(),cimg.length());
         jpeg_save_markers(&cinfo, JPEG_COM, 0xFFFF);
         jpeg_read_header(&cinfo, TRUE);
         jpeg_calc_output_dimensions(&cinfo);

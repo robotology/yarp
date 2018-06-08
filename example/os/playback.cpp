@@ -59,7 +59,7 @@ public:
         return reader.expectBlock(mem.get(),mem.length());
     }
 
-    virtual bool write(ConnectionWriter& writer) {
+    virtual bool write(ConnectionWriter& writer) const {
         if (mem.length()==0) {
             fprintf(stderr,"Nothing to write.\n");
             return false;

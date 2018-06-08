@@ -96,7 +96,7 @@ public:
         return value.c_str();
     }
 
-    std::string toString() {
+    std::string toString() const {
         std::string r = "";
         if (hasName) {
             r = name;

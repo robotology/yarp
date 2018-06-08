@@ -50,14 +50,14 @@ public:
     using yarp::os::InputStream::read;
 
     virtual void close() override = 0;
-    virtual bool isOk() override;
+    virtual bool isOk() const override;
     virtual void interrupt() override;
-    virtual ssize_t read(const Bytes& b) override = 0;
+    virtual ssize_t read(Bytes& b) override = 0;
     virtual void write(const Bytes& b) override = 0;
     virtual InputStream& getInputStream() override;
     virtual OutputStream& getOutputStream() override;
-    virtual const yarp::os::Contact& getLocalAddress() override;
-    virtual const yarp::os::Contact& getRemoteAddress() override;
+    virtual const yarp::os::Contact& getLocalAddress() const override;
+    virtual const yarp::os::Contact& getRemoteAddress() const override;
     void resetBuffer();
     virtual void reset() override { resetBuffer();}
     virtual void beginPacket() override;

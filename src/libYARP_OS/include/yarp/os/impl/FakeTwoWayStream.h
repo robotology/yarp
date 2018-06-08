@@ -56,12 +56,12 @@ public:
         return out;
     }
 
-    virtual const Contact& getLocalAddress() override
+    virtual const Contact& getLocalAddress() const override
     {
         return local;
     }
 
-    virtual const Contact& getRemoteAddress() override
+    virtual const Contact& getRemoteAddress() const override
     {
         return remote;
     }
@@ -84,17 +84,17 @@ public:
         in.add(str);
     }
 
-    std::string getOutputText()
+    std::string getOutputText() const
     {
         return out.toString();
     }
 
-    std::string getInputText()
+    std::string getInputText() const
     {
         return in.toString();
     }
 
-    virtual bool isOk() override
+    virtual bool isOk() const override
     {
         return true;
     }

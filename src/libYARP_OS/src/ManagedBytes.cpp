@@ -114,7 +114,11 @@ size_t ManagedBytes::used() const {
     return use_set ? use : length();
 }
 
-char *ManagedBytes::get() const {
+const char* ManagedBytes::get() const {
+    return b.get();
+}
+
+char* ManagedBytes::get() {
     return b.get();
 }
 
@@ -130,7 +134,11 @@ void ManagedBytes::clear() {
     use_set = false;
 }
 
-const Bytes& ManagedBytes::bytes() {
+const Bytes& ManagedBytes::bytes() const {
+    return b;
+}
+
+Bytes& ManagedBytes::bytes() {
     return b;
 }
 
@@ -172,7 +180,7 @@ bool ManagedBytes::read(ConnectionReader& reader) {
     return reader.expectBlock(get(), length());
 }
 
-bool ManagedBytes::write(ConnectionWriter& writer) {
+bool ManagedBytes::write(ConnectionWriter& writer) const {
     writer.appendInt32(BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB);
     writer.appendInt32(1);
     writer.appendInt32(static_cast<std::int32_t>(length()));

@@ -14,52 +14,52 @@ public:
 
     // First, the easy bits...
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new HumanCarrier();
     }
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return "human";
     }
 
-    virtual bool isConnectionless() override {
+    virtual bool isConnectionless() const override {
         return true;
     }
 
-    virtual bool canAccept() override {
+    virtual bool canAccept() const override {
         return true;
     }
 
-    virtual bool canOffer() override {
+    virtual bool canOffer() const override {
         return true;
     }
 
-    virtual bool isTextMode() override {
+    virtual bool isTextMode() const override {
         // let's be text mode, for human-friendliness
         return true;
     }
 
-    virtual bool canEscape() override {
+    virtual bool canEscape() const override {
         return true;
     }
 
-    virtual bool requireAck() override {
+    virtual bool requireAck() const override {
         return true;
     }
 
-    virtual bool supportReply() override {
+    virtual bool supportReply() const override {
         return true;
     }
 
-    virtual bool isLocal() override {
+    virtual bool isLocal() const override {
         return false;
     }
 
-    virtual std::string toString() override {
+    virtual std::string toString() const override {
         return "humans are handy";
     }
 
-    virtual void getHeader(const Bytes& header) override {
+    virtual void getHeader(Bytes& header) const override {
         const char *target = "HUMANITY";
         for (size_t i=0; i<8 && i<header.length(); i++) {
             header.get()[i] = target[i];
@@ -122,7 +122,7 @@ public:
         return true;
     }
 
-    virtual bool isActive() override {
+    virtual bool isActive() const override {
         return true;
     }
 

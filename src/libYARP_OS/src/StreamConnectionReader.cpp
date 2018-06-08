@@ -81,7 +81,7 @@ bool StreamConnectionReader::dropRequested()
     return shouldDrop;
 }
 
-bool StreamConnectionReader::expectBlock(const Bytes &b)
+bool StreamConnectionReader::expectBlock(Bytes &b)
 {
     if (!isGood()) {
         return false;
@@ -167,7 +167,7 @@ bool StreamConnectionReader::setSize(size_t len)
     return true;
 }
 
-size_t StreamConnectionReader::getSize()
+size_t StreamConnectionReader::getSize() const
 {
     return messageLen + (pushedIntFlag?sizeof(yarp::os::NetInt32):0);
 }
@@ -251,9 +251,10 @@ yarp::conf::float64_t StreamConnectionReader::expectFloat64()
     return expectType<yarp::conf::float64_t, NetFloat64>();
 }
 
-bool StreamConnectionReader::expectBlock(const char *data, size_t len)
+bool StreamConnectionReader::expectBlock(char *data, size_t len)
 {
-    return expectBlock(yarp::os::Bytes((char*)data, len));
+    yarp::os::Bytes bytes(data, len);
+    return expectBlock(bytes);
 }
 
 std::string StreamConnectionReader::expectText(int terminatingChar)
@@ -270,12 +271,12 @@ std::string StreamConnectionReader::expectText(int terminatingChar)
     return std::string(result.c_str());
 }
 
-bool StreamConnectionReader::isTextMode()
+bool StreamConnectionReader::isTextMode() const
 {
     return textMode;
 }
 
-bool StreamConnectionReader::isBareMode()
+bool StreamConnectionReader::isBareMode() const
 {
     return bareMode;
 }
@@ -315,7 +316,7 @@ yarp::os::ConnectionWriter* StreamConnectionReader::getWriter()
     return writer;
 }
 
-yarp::os::Contact StreamConnectionReader::getRemoteContact()
+yarp::os::Contact StreamConnectionReader::getRemoteContact() const
 {
     if (str!=nullptr) {
         Contact remote = str->getRemoteAddress();
@@ -326,7 +327,7 @@ yarp::os::Contact StreamConnectionReader::getRemoteContact()
     return remote;
 }
 
-yarp::os::Contact StreamConnectionReader::getLocalContact()
+yarp::os::Contact StreamConnectionReader::getLocalContact() const
 {
     if (str!=nullptr) {
         Contact local = str->getLocalAddress();
@@ -336,12 +337,12 @@ yarp::os::Contact StreamConnectionReader::getLocalContact()
     return yarp::os::Contact();
 }
 
-bool StreamConnectionReader::isValid()
+bool StreamConnectionReader::isValid() const
 {
     return valid;
 }
 
-bool StreamConnectionReader::isError()
+bool StreamConnectionReader::isError() const
 {
     if (err) {
         return true;
@@ -349,7 +350,7 @@ bool StreamConnectionReader::isError()
     return !isActive();
 }
 
-bool StreamConnectionReader::isActive()
+bool StreamConnectionReader::isActive() const
 {
     if (shouldDrop) {
         return false;
@@ -365,7 +366,7 @@ bool StreamConnectionReader::isActive()
     return false;
 }
 
-yarp::os::Portable* StreamConnectionReader::getReference()
+yarp::os::Portable* StreamConnectionReader::getReference() const
 {
     return ref;
 }
@@ -387,11 +388,11 @@ void StreamConnectionReader::requestDrop()
     shouldDrop = true;
 }
 
-Searchable& StreamConnectionReader::getConnectionModifiers()
+const Searchable& StreamConnectionReader::getConnectionModifiers() const
 {
     if (config.size()==0) {
         if (protocol) {
-            config.fromString(protocol->getSenderSpecifier().c_str());
+            const_cast<Bottle&>(config).fromString(protocol->getSenderSpecifier().c_str());
         }
     }
     return config;

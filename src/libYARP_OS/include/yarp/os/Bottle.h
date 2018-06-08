@@ -312,7 +312,7 @@ public:
      * @param writer the interface to the network connection for writing
      * @result true iff the representation was written successfully.
      */
-    bool write(ConnectionWriter& writer) override;
+    bool write(ConnectionWriter& writer) const override;
 
     /**
      * Set the bottle's value based on input from a network connection.
@@ -343,9 +343,9 @@ public:
      * @param textMode true if text serialization should be used.
      * @return true iff the bottle was read successfully.
      */
-    bool read(PortWriter& writer, bool textMode = false);
+    bool read(const PortWriter& writer, bool textMode = false);
 
-    void onCommencement() override;
+    void onCommencement() const override;
 
     virtual bool check(const std::string& key) const override;
 

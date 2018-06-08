@@ -20,48 +20,48 @@ void AbstractCarrier::setParameters(const Bytes& header)
     // default - no parameters
 }
 
-bool AbstractCarrier::isConnectionless()
+bool AbstractCarrier::isConnectionless() const
 {
     // conservative choice - shortcuts are taken for connection
     return true;
 }
 
-bool AbstractCarrier::supportReply()
+bool AbstractCarrier::supportReply() const
 {
     return !isConnectionless();
 }
 
-bool AbstractCarrier::canAccept()
+bool AbstractCarrier::canAccept() const
 {
     return true;
 }
 
-bool AbstractCarrier::canOffer()
+bool AbstractCarrier::canOffer() const
 {
     return true;
 }
 
-bool AbstractCarrier::isTextMode()
+bool AbstractCarrier::isTextMode() const
 {
     return false;
 }
 
-bool AbstractCarrier::requireAck()
+bool AbstractCarrier::requireAck() const
 {
     return false;
 }
 
-bool AbstractCarrier::canEscape()
+bool AbstractCarrier::canEscape() const
 {
     return true;
 }
 
-bool AbstractCarrier::isLocal()
+bool AbstractCarrier::isLocal() const
 {
     return false;
 }
 
-std::string AbstractCarrier::toString()
+std::string AbstractCarrier::toString() const
 {
     return getName();
 }
@@ -118,7 +118,8 @@ bool AbstractCarrier::expectSenderSpecifier(ConnectionState& proto)
         len = 1;
     }
     ManagedBytes b(len+1);
-    r = proto.is().readFull(Bytes(b.get(), len));
+    Bytes bytes(b.get(), len);
+    r = proto.is().readFull(bytes);
     if ((int)r!=len) {
         YARP_DEBUG(Logger::get(), "did not get sender name");
         return false;
@@ -140,7 +141,7 @@ bool AbstractCarrier::expectAck(ConnectionState& proto)
     return defaultExpectAck(proto);
 }
 
-bool AbstractCarrier::isActive()
+bool AbstractCarrier::isActive() const
 {
     return true;
 }
@@ -150,12 +151,12 @@ void AbstractCarrier::setCarrierParams(const Property& params)
     YARP_UNUSED(params);
 }
 
-void AbstractCarrier::getCarrierParams(Property& params)
+void AbstractCarrier::getCarrierParams(Property& params) const
 {
     YARP_UNUSED(params);
 }
 
-int AbstractCarrier::getSpecifier(const Bytes& b)
+int AbstractCarrier::getSpecifier(const Bytes& b) const
 {
     int x = interpretYarpNumber(b);
     if (x>=0) {
@@ -164,7 +165,7 @@ int AbstractCarrier::getSpecifier(const Bytes& b)
     return x;
 }
 
-void AbstractCarrier::createStandardHeader(int specifier, const Bytes& header)
+void AbstractCarrier::createStandardHeader(int specifier, Bytes& header) const
 {
     createYarpNumber(7777+specifier, header);
 }
@@ -361,12 +362,12 @@ void AbstractCarrier::writeYarpInt(int n, ConnectionState& proto)
 int AbstractCarrier::interpretYarpNumber(const yarp::os::Bytes& b)
 {
     if (b.length()==8) {
-        char *base = b.get();
+        const char *base = b.get();
         if (base[0]=='Y' &&
             base[1]=='A' &&
             base[6]=='R' &&
             base[7]=='P') {
-            yarp::os::Bytes b2(b.get()+2, 4);
+            yarp::os::Bytes b2(const_cast<char*>(b.get())+2, 4);
             int x = NetType::netInt(b2);
             return x;
         }
@@ -374,7 +375,7 @@ int AbstractCarrier::interpretYarpNumber(const yarp::os::Bytes& b)
     return -1;
 }
 
-void AbstractCarrier::createYarpNumber(int x, const yarp::os::Bytes& header)
+void AbstractCarrier::createYarpNumber(int x, yarp::os::Bytes& header)
 {
     if (header.length()!=8) {
         return;

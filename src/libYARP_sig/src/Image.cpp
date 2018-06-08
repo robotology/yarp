@@ -753,7 +753,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
 }
 
 
-bool Image::write(yarp::os::ConnectionWriter& connection) {
+bool Image::write(yarp::os::ConnectionWriter& connection) const {
     ImageNetworkHeader header;
     header.setFromImage(*this);
     /*

@@ -49,10 +49,11 @@ public:
 
     virtual ~McastCarrier();
 
-    virtual Carrier *create() override;
-    virtual std::string getName() override;
+    virtual Carrier *create() const override;
+    virtual std::string getName() const override;
 
-    virtual int getSpecifierCode() override;
+    virtual int getSpecifierCode() const override;
+
     virtual bool sendHeader(ConnectionState& proto) override;
     virtual bool expectExtraHeader(ConnectionState& proto) override;
     virtual bool respondToHeader(ConnectionState& proto) override;
@@ -61,7 +62,7 @@ public:
     bool becomeMcast(ConnectionState& proto, bool sender);
     void addSender(const std::string& key);
     void removeSender(const std::string& key);
-    bool isElect();
+    bool isElect() const;
     /**
      * @brief takeElection, this function is called when the elect mcast
      * carrier dies and pass the write buffers to another one.
@@ -69,8 +70,8 @@ public:
      */
     bool takeElection();
 
-    virtual bool isActive() override;
-    virtual bool isBroadcast() override;
+    virtual bool isActive() const override;
+    virtual bool isBroadcast() const override;
 };
 
 #endif // YARP_OS_IMPL_MCASTCARRIER_H

@@ -55,7 +55,7 @@ public:
      * @return the address of the local side of the stream.
      * The address will be tagged as invalid if the stream is not set up.
      */
-    virtual const Contact& getLocalAddress() = 0;
+    virtual const Contact& getLocalAddress() const = 0;
 
     /**
      * Get the address of the remote side of the stream.
@@ -63,7 +63,7 @@ public:
      * @return the address of the remote side of the stream.
      * The address will be tagged as invalid if the stream is not set up.
      */
-    virtual const Contact& getRemoteAddress() = 0;
+    virtual const Contact& getRemoteAddress() const = 0;
 
     /**
      *
@@ -72,7 +72,7 @@ public:
      * @return true iff the stream is ok
      *
      */
-    virtual bool isOk() = 0;
+    virtual bool isOk() const = 0;
 
     /**
      * Reset the stream.
@@ -118,17 +118,17 @@ public:
     virtual InputStream& getInputStream() override;
     virtual OutputStream& getOutputStream() override;
 
-    virtual const Contact& getLocalAddress() override;
-    virtual const Contact& getRemoteAddress() override;
+    virtual const Contact& getLocalAddress() const override;
+    virtual const Contact& getRemoteAddress() const override;
 
-    virtual bool isOk() override;
+    virtual bool isOk() const override;
     virtual void reset() override;
     virtual void close() override;
     virtual void beginPacket() override;
     virtual void endPacket() override;
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(const Bytes& b) override;
+    virtual yarp::conf::ssize_t read(Bytes& b) override;
 
     using yarp::os::OutputStream::write;
     virtual void write(const Bytes& b) override;

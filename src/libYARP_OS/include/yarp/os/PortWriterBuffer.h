@@ -48,16 +48,16 @@ public:
                             void *tracker) :
         creator(creator), tracker(tracker) {}
 
-    virtual bool write(ConnectionWriter& connection) override {
+    virtual bool write(ConnectionWriter& connection) const override {
         return writer.write(connection);
     }
 
-    virtual void onCompletion() override {
+    virtual void onCompletion() const override {
         writer.onCompletion();
         creator.onCompletion(tracker);
     }
 
-    virtual void onCommencement() override {
+    virtual void onCommencement() const override {
         writer.onCommencement();
     }
 
@@ -75,7 +75,7 @@ public:
     virtual PortWriterWrapper *create(PortWriterBufferManager& man,
                                       void *tracker) = 0;
 
-    void *getContent();
+    const void* getContent() const;
 
     bool releaseContent();
 

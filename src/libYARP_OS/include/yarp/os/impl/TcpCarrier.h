@@ -29,17 +29,17 @@ public:
 
     TcpCarrier(bool requireAckFlag = true);
 
-    virtual Carrier *create() override;
+    virtual Carrier *create() const override;
 
-    virtual std::string getName() override;
+    virtual std::string getName() const override;
 
-    virtual int getSpecifierCode();
+    virtual int getSpecifierCode() const;
 
     virtual bool checkHeader(const yarp::os::Bytes& header) override;
-    virtual void getHeader(const yarp::os::Bytes& header) override;
+    virtual void getHeader(yarp::os::Bytes& header) const override;
     virtual void setParameters(const yarp::os::Bytes& header) override;
-    virtual bool requireAck() override;
-    virtual bool isConnectionless() override;
+    virtual bool requireAck() const override;
+    virtual bool isConnectionless() const override;
     virtual bool respondToHeader(yarp::os::ConnectionState& proto) override;
     virtual bool expectReplyToHeader(yarp::os::ConnectionState& proto) override;
 

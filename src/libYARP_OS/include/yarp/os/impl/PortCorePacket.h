@@ -30,8 +30,8 @@ class yarp::os::impl::PortCorePacket
 public:
     PortCorePacket *prev_; ///< this packet will be in a list of active packets
     PortCorePacket *next_; ///< this packet will be in a list of active packets
-    yarp::os::PortWriter *content;  ///< the object being sent
-    yarp::os::PortWriter *callback; ///< where to send event notifications
+    const yarp::os::PortWriter *content;  ///< the object being sent
+    const yarp::os::PortWriter *callback; ///< where to send event notifications
     int ct;                ///< number of uses of the messagae
     bool owned;            ///< should we memory-manage the content object
     bool ownedCallback;    ///< should we memory-manage the callback object
@@ -89,7 +89,7 @@ public:
     /**
      * @return the object being sent.
      */
-    yarp::os::PortWriter *getContent()
+    const yarp::os::PortWriter* getContent()
     {
         return content;
     }
@@ -97,7 +97,7 @@ public:
     /**
      * @return the object to which notifications should be sent.
      */
-    yarp::os::PortWriter *getCallback()
+    const yarp::os::PortWriter* getCallback()
     {
         return (callback != nullptr) ? callback : content;
     }
@@ -110,8 +110,9 @@ public:
      * @param callback where to send notifications
      * @param ownedCallback should we memory-manage `callback`
      */
-    void setContent(yarp::os::PortWriter *writable, bool owned = false,
-                    yarp::os::PortWriter *callback = nullptr,
+    void setContent(const yarp::os::PortWriter *writable,
+                    bool owned = false,
+                    const yarp::os::PortWriter *callback = nullptr,
                     bool ownedCallback = false)
     {
         content = writable;

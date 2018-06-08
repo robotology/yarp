@@ -80,15 +80,15 @@ public:
     virtual yarp::os::OutputStream& getOutputStream() override { return *this; }
 
 
-    virtual const yarp::os::Contact& getLocalAddress() override {
+    virtual const yarp::os::Contact& getLocalAddress() const override {
         return delegate->getLocalAddress();
     }
 
-    virtual const yarp::os::Contact& getRemoteAddress() override {
+    virtual const yarp::os::Contact& getRemoteAddress() const override {
         return delegate->getRemoteAddress();
     }
 
-    virtual bool isOk() override {
+    virtual bool isOk() const override {
         return delegate->isOk();
     }
 
@@ -113,7 +113,7 @@ public:
     virtual void write(const Bytes& b) override;
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(const Bytes& b) override;
+    virtual yarp::conf::ssize_t read(Bytes& b) override;
 
     virtual void interrupt() override {
         delegate->getInputStream().interrupt();

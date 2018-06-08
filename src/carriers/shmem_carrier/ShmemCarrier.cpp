@@ -18,29 +18,29 @@ ShmemCarrier::ShmemCarrier() = default;
 
 ShmemCarrier::~ShmemCarrier() = default;
 
-yarp::os::Carrier* ShmemCarrier::create()
+yarp::os::Carrier* ShmemCarrier::create() const
 {
     return new ShmemCarrier();
 }
 
-std::string ShmemCarrier::getName()
+std::string ShmemCarrier::getName() const
 {
     return "shmem";
 }
 
-int ShmemCarrier::getSpecifierCode()
+int ShmemCarrier::getSpecifierCode() const
 {
     // specifier codes are a very old yarp feature,
     // not necessary any more really, should be replaced.
     return 14;
 }
 
-bool ShmemCarrier::requireAck()
+bool ShmemCarrier::requireAck() const
 {
     return true;
 }
 
-bool ShmemCarrier::isConnectionless()
+bool ShmemCarrier::isConnectionless() const
 {
     return false;
 }
@@ -50,7 +50,7 @@ bool ShmemCarrier::checkHeader(const yarp::os::Bytes& header)
     return getSpecifier(header) % 16 == getSpecifierCode();
 }
 
-void ShmemCarrier::getHeader(const yarp::os::Bytes& header)
+void ShmemCarrier::getHeader(yarp::os::Bytes& header) const
 {
     createStandardHeader(getSpecifierCode(), header);
 }

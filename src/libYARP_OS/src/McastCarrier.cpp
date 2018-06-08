@@ -60,15 +60,15 @@ yarp::os::impl::McastCarrier::~McastCarrier() {
     }
 }
 
-Carrier *yarp::os::impl::McastCarrier::create() {
+Carrier *yarp::os::impl::McastCarrier::create() const {
     return new McastCarrier();
 }
 
-std::string yarp::os::impl::McastCarrier::getName() {
+std::string yarp::os::impl::McastCarrier::getName() const {
     return "mcast";
 }
 
-int yarp::os::impl::McastCarrier::getSpecifierCode() {
+int yarp::os::impl::McastCarrier::getSpecifierCode() const {
     return 1;
 }
 
@@ -224,7 +224,7 @@ void yarp::os::impl::McastCarrier::removeSender(const std::string& key) {
     getCaster().remove(key, this);
 }
 
-bool yarp::os::impl::McastCarrier::isElect() {
+bool yarp::os::impl::McastCarrier::isElect() const {
     void *elect = getCaster().getElect(key);
     //void *elect = caster.getElect(mcastAddress.toString());
     return elect==this || elect==nullptr;
@@ -238,10 +238,10 @@ bool yarp::os::impl::McastCarrier::takeElection()
 }
 
 
-bool yarp::os::impl::McastCarrier::isActive() {
+bool yarp::os::impl::McastCarrier::isActive() const {
     return isElect();
 }
 
-bool yarp::os::impl::McastCarrier::isBroadcast() {
+bool yarp::os::impl::McastCarrier::isBroadcast() const {
     return true;
 }

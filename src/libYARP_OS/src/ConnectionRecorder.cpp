@@ -39,22 +39,22 @@ void yarp::os::impl::ConnectionRecorder::fini()
     }
 }
 
-yarp::os::impl::BufferedConnectionWriter& yarp::os::impl::ConnectionRecorder::getMessage()
+const yarp::os::impl::BufferedConnectionWriter& yarp::os::impl::ConnectionRecorder::getMessage() const
 {
     return readerStore;
 }
 
-yarp::os::impl::BufferedConnectionWriter& yarp::os::impl::ConnectionRecorder::getReply()
+const yarp::os::impl::BufferedConnectionWriter& yarp::os::impl::ConnectionRecorder::getReply() const
 {
     return writerStore;
 }
 
-bool yarp::os::impl::ConnectionRecorder::hasReply()
+bool yarp::os::impl::ConnectionRecorder::hasReply() const
 {
     return wrote;
 }
 
-bool yarp::os::impl::ConnectionRecorder::expectBlock(const char* data, size_t len)
+bool yarp::os::impl::ConnectionRecorder::expectBlock(char* data, size_t len)
 {
     bool ok = reader->expectBlock(data, len);
     if (ok) {
@@ -123,12 +123,12 @@ bool yarp::os::impl::ConnectionRecorder::pushInt(int x)
     return ok;
 }
 
-bool yarp::os::impl::ConnectionRecorder::isTextMode()
+bool yarp::os::impl::ConnectionRecorder::isTextMode() const
 {
     return false;
 }
 
-bool yarp::os::impl::ConnectionRecorder::isBareMode()
+bool yarp::os::impl::ConnectionRecorder::isBareMode() const
 {
     return false;
 }
@@ -138,7 +138,7 @@ bool yarp::os::impl::ConnectionRecorder::convertTextMode()
     return false;
 }
 
-size_t yarp::os::impl::ConnectionRecorder::getSize()
+size_t yarp::os::impl::ConnectionRecorder::getSize() const
 {
     return reader->getSize();
 }
@@ -151,22 +151,22 @@ yarp::os::ConnectionWriter* yarp::os::impl::ConnectionRecorder::getWriter()
     return this;
 }
 
-yarp::os::Portable* yarp::os::impl::ConnectionRecorder::getReference()
+yarp::os::Portable* yarp::os::impl::ConnectionRecorder::getReference() const
 {
     return reader->getReference();
 }
 
-yarp::os::Contact yarp::os::impl::ConnectionRecorder::getRemoteContact()
+yarp::os::Contact yarp::os::impl::ConnectionRecorder::getRemoteContact() const
 {
     return reader->getRemoteContact();
 }
 
-yarp::os::Contact yarp::os::impl::ConnectionRecorder::getLocalContact()
+yarp::os::Contact yarp::os::impl::ConnectionRecorder::getLocalContact() const
 {
     return reader->getLocalContact();
 }
 
-bool yarp::os::impl::ConnectionRecorder::isValid()
+bool yarp::os::impl::ConnectionRecorder::isValid() const
 {
     // shared
     if (writing) {
@@ -175,7 +175,7 @@ bool yarp::os::impl::ConnectionRecorder::isValid()
     return reader->isValid();
 }
 
-bool yarp::os::impl::ConnectionRecorder::isActive()
+bool yarp::os::impl::ConnectionRecorder::isActive() const
 {
     // shared
     if (writing) {
@@ -184,7 +184,7 @@ bool yarp::os::impl::ConnectionRecorder::isActive()
     return reader->isActive();
 }
 
-bool yarp::os::impl::ConnectionRecorder::isError()
+bool yarp::os::impl::ConnectionRecorder::isError() const
 {
     // shared
     if (writing) {
@@ -262,7 +262,7 @@ void yarp::os::impl::ConnectionRecorder::setReference(yarp::os::Portable* obj)
     writer->setReference(obj);
 }
 
-bool yarp::os::impl::ConnectionRecorder::write(yarp::os::ConnectionWriter& connection)
+bool yarp::os::impl::ConnectionRecorder::write(yarp::os::ConnectionWriter& connection) const
 {
     if (hasReply()) {
         connection.appendInt32(BOTTLE_TAG_LIST); // nested structure
@@ -283,13 +283,13 @@ void yarp::os::impl::ConnectionRecorder::requestDrop()
 {
 }
 
-yarp::os::Searchable& yarp::os::impl::ConnectionRecorder::getConnectionModifiers()
+const yarp::os::Searchable& yarp::os::impl::ConnectionRecorder::getConnectionModifiers() const
 {
     return blank;
 }
 
 
-yarp::os::SizedWriter* yarp::os::impl::ConnectionRecorder::getBuffer()
+yarp::os::SizedWriter* yarp::os::impl::ConnectionRecorder::getBuffer() const
 {
     return nullptr;
 }

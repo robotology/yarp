@@ -28,7 +28,7 @@ public:
         return T::readBottle(reader);
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) override {
+    virtual bool write(yarp::os::ConnectionWriter& writer) const override {
         return T::writeBottle(writer);
     }
 };

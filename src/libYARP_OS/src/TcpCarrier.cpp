@@ -17,15 +17,15 @@ yarp::os::impl::TcpCarrier::TcpCarrier(bool requireAckFlag) {
     this->requireAckFlag = requireAckFlag;
 }
 
-yarp::os::Carrier *yarp::os::impl::TcpCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::TcpCarrier::create() const {
     return new TcpCarrier(requireAckFlag);
 }
 
-std::string yarp::os::impl::TcpCarrier::getName() {
+std::string yarp::os::impl::TcpCarrier::getName() const {
     return requireAckFlag?"tcp":"fast_tcp";
 }
 
-int yarp::os::impl::TcpCarrier::getSpecifierCode() {
+int yarp::os::impl::TcpCarrier::getSpecifierCode() const {
     return 3;
 }
 
@@ -39,7 +39,7 @@ bool yarp::os::impl::TcpCarrier::checkHeader(const yarp::os::Bytes& header) {
     return false;
 }
 
-void yarp::os::impl::TcpCarrier::getHeader(const yarp::os::Bytes& header) {
+void yarp::os::impl::TcpCarrier::getHeader(yarp::os::Bytes& header) const {
     createStandardHeader(getSpecifierCode()+(requireAckFlag?128:0), header);
 }
 
@@ -50,11 +50,11 @@ void yarp::os::impl::TcpCarrier::setParameters(const yarp::os::Bytes& header) {
     // Now prefilter by ack flag
 }
 
-bool yarp::os::impl::TcpCarrier::requireAck() {
+bool yarp::os::impl::TcpCarrier::requireAck() const {
     return requireAckFlag;
 }
 
-bool yarp::os::impl::TcpCarrier::isConnectionless() {
+bool yarp::os::impl::TcpCarrier::isConnectionless() const {
     return false;
 }
 

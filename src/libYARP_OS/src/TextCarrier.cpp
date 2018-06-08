@@ -18,7 +18,7 @@ yarp::os::impl::TextCarrier::TextCarrier(bool ackVariant)
     this->ackVariant = ackVariant;
 }
 
-std::string yarp::os::impl::TextCarrier::getName()
+std::string yarp::os::impl::TextCarrier::getName() const
 {
     if (ackVariant) {
         return "text_ack";
@@ -26,7 +26,7 @@ std::string yarp::os::impl::TextCarrier::getName()
     return "text";
 }
 
-std::string yarp::os::impl::TextCarrier::getSpecifierName()
+std::string yarp::os::impl::TextCarrier::getSpecifierName() const
 {
     if (ackVariant) {
         return "CONNACK ";
@@ -48,7 +48,7 @@ bool yarp::os::impl::TextCarrier::checkHeader(const Bytes& header)
     return false;
 }
 
-void yarp::os::impl::TextCarrier::getHeader(const Bytes& header)
+void yarp::os::impl::TextCarrier::getHeader(Bytes& header) const
 {
     if (header.length() == 8) {
         std::string target = getSpecifierName();
@@ -58,23 +58,23 @@ void yarp::os::impl::TextCarrier::getHeader(const Bytes& header)
     }
 }
 
-yarp::os::Carrier* yarp::os::impl::TextCarrier::create()
+yarp::os::Carrier* yarp::os::impl::TextCarrier::create() const
 {
     return new TextCarrier(ackVariant);
 }
 
-bool yarp::os::impl::TextCarrier::requireAck()
+bool yarp::os::impl::TextCarrier::requireAck() const
 {
     return ackVariant;
 }
 
-bool yarp::os::impl::TextCarrier::isTextMode()
+bool yarp::os::impl::TextCarrier::isTextMode() const
 {
     return true;
 }
 
 
-bool yarp::os::impl::TextCarrier::supportReply()
+bool yarp::os::impl::TextCarrier::supportReply() const
 {
     return requireAck();
 }

@@ -25,17 +25,17 @@ class TextCarrier : public TcpCarrier
 public:
     TextCarrier(bool ackVariant = false);
 
-    virtual Carrier* create() override;
+    virtual Carrier* create() const override;
 
-    virtual std::string getName() override;
+    virtual std::string getName() const override;
 
-    virtual std::string getSpecifierName();
+    virtual std::string getSpecifierName() const;
 
     virtual bool checkHeader(const Bytes& header) override;
-    virtual void getHeader(const Bytes& header) override;
-    virtual bool requireAck() override;
-    virtual bool isTextMode() override;
-    virtual bool supportReply() override;
+    virtual void getHeader(Bytes& header) const override;
+    virtual bool requireAck() const override;
+    virtual bool isTextMode() const override;
+    virtual bool supportReply() const override;
     virtual bool sendHeader(ConnectionState& proto) override;
     virtual bool expectReplyToHeader(ConnectionState& proto) override;
     virtual bool expectSenderSpecifier(ConnectionState& proto) override;

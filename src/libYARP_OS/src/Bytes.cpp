@@ -27,7 +27,12 @@ size_t yarp::os::Bytes::length() const
     return len;
 }
 
-char* yarp::os::Bytes::get() const
+const char* yarp::os::Bytes::get() const
+{
+    return data;
+}
+
+char* yarp::os::Bytes::get()
 {
     return data;
 }

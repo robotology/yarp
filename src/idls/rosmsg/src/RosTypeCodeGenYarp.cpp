@@ -591,7 +591,7 @@ bool RosTypeCodeGenYarp::endRead(bool bare)
 
 bool RosTypeCodeGenYarp::beginWrite(bool bare, int len)
 {
-    fprintf(out, "    bool write%s(yarp::os::ConnectionWriter& connection) override\n",
+    fprintf(out, "    bool write%s(yarp::os::ConnectionWriter& connection) const override\n",
             bare?"Bare":"Bottle");
     fprintf(out, "    {\n");
     if (!bare) {
@@ -732,7 +732,7 @@ bool RosTypeCodeGenYarp::endWrite(bool bare)
     fprintf(out, "    }\n\n");
     if (!bare) {
         fprintf(out, "    using yarp::os::idl::WirePortable::write;\n");
-        fprintf(out, "    bool write(yarp::os::ConnectionWriter& connection) override\n");
+        fprintf(out, "    bool write(yarp::os::ConnectionWriter& connection) const override\n");
         fprintf(out, "    {\n");
         fprintf(out, "        return (connection.isBareMode() ? writeBare(connection)\n");
         fprintf(out, "                                        : writeBottle(connection));\n");

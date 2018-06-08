@@ -779,7 +779,7 @@ bool MapGrid2D::read(yarp::os::ConnectionReader& connection)
         return true;
 }
 
-bool MapGrid2D::write(yarp::os::ConnectionWriter& connection)
+bool MapGrid2D::write(yarp::os::ConnectionWriter& connection) const
 {
     connection.appendInt32(BOTTLE_TAG_LIST);
     connection.appendInt32(9);

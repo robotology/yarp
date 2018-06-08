@@ -52,11 +52,11 @@ public:
      */
     void fini();
 
-    yarp::os::impl::BufferedConnectionWriter& getMessage();
-    yarp::os::impl::BufferedConnectionWriter& getReply();
-    bool hasReply();
+    const yarp::os::impl::BufferedConnectionWriter& getMessage() const;
+    const yarp::os::impl::BufferedConnectionWriter& getReply() const;
+    bool hasReply() const;
 
-    virtual bool expectBlock(const char* data, size_t len) override;
+    virtual bool expectBlock(char* data, size_t len) override;
     virtual std::string expectText(int terminatingChar) override;
     virtual std::int8_t expectInt8() override;
     virtual std::int16_t expectInt16() override;
@@ -65,17 +65,17 @@ public:
     virtual yarp::conf::float32_t expectFloat32() override;
     virtual yarp::conf::float64_t expectFloat64() override;
     virtual bool pushInt(int x) override;
-    virtual bool isTextMode() override;
-    virtual bool isBareMode() override;
+    virtual bool isTextMode() const override;
+    virtual bool isBareMode() const override;
     virtual bool convertTextMode() override;
-    virtual size_t getSize() override;
+    virtual size_t getSize() const override;
     virtual yarp::os::ConnectionWriter* getWriter() override;
-    virtual yarp::os::Portable* getReference() override;
-    virtual yarp::os::Contact getRemoteContact() override;
-    virtual yarp::os::Contact getLocalContact() override;
-    virtual bool isValid() override;
-    virtual bool isActive() override;
-    virtual bool isError() override;
+    virtual yarp::os::Portable* getReference() const override;
+    virtual yarp::os::Contact getRemoteContact() const override;
+    virtual yarp::os::Contact getLocalContact() const override;
+    virtual bool isValid() const override;
+    virtual bool isActive() const override;
+    virtual bool isError() const override;
     virtual void appendBlock(const char* data, size_t len) override;
     virtual void appendInt8(std::int8_t data) override;
     virtual void appendInt16(std::int16_t data) override;
@@ -88,10 +88,10 @@ public:
     virtual void declareSizes(int argc, int* argv) override;
     virtual void setReplyHandler(yarp::os::PortReader& reader) override;
     virtual void setReference(yarp::os::Portable* obj) override;
-    virtual bool write(yarp::os::ConnectionWriter& connection) override;
+    virtual bool write(yarp::os::ConnectionWriter& connection) const override;
     virtual void requestDrop() override;
-    virtual yarp::os::Searchable& getConnectionModifiers() override;
-    virtual yarp::os::SizedWriter* getBuffer() override;
+    virtual const yarp::os::Searchable& getConnectionModifiers() const override;
+    virtual yarp::os::SizedWriter* getBuffer() const override;
     virtual bool setSize(size_t len) override;
 };
 

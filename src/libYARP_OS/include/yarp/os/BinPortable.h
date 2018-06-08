@@ -49,7 +49,7 @@ public:
     virtual bool read(ConnectionReader& connection) override;
 
     // Documented in Portable
-    virtual bool write(ConnectionWriter& connection) override;
+    virtual bool write(ConnectionWriter& connection) const override;
 };
 
 } // namespace os

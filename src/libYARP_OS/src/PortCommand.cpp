@@ -45,7 +45,7 @@ bool PortCommand::read(ConnectionReader& reader) {
     return true;
 }
 
-bool PortCommand::write(ConnectionWriter& writer) {
+bool PortCommand::write(ConnectionWriter& writer) const {
     //ACE_DEBUG((LM_DEBUG, "PortCommand::writeBlock"));
     //printf("Writing port command, text mode %d\n", writer.isTextMode());
     if (!writer.isTextMode()) {

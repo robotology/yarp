@@ -108,7 +108,7 @@ void Protocol::setRoute(const Route& route)
 }
 
 
-const Route& Protocol::getRoute()
+const Route& Protocol::getRoute() const
 {
     return route;
 }
@@ -135,7 +135,7 @@ TwoWayStream* Protocol::giveStreams()
 }
 
 
-bool Protocol::checkStreams()
+bool Protocol::checkStreams() const
 {
     return shift.isOk();
 }
@@ -147,7 +147,7 @@ void Protocol::setReference(yarp::os::Portable* ref)
 }
 
 
-std::string Protocol::getSenderSpecifier()
+std::string Protocol::getSenderSpecifier() const
 {
     Route r = getRoute();
     // We pull the sender name from the route.
@@ -176,13 +176,13 @@ std::string Protocol::getSenderSpecifier()
 }
 
 
-const std::string& Protocol::getEnvelope()
+const std::string& Protocol::getEnvelope() const
 {
     return envelope;
 }
 
 
-Log& Protocol::getLog()
+Log& Protocol::getLog() const
 {
     return log;
 }
@@ -203,7 +203,7 @@ Connection& Protocol::getConnection()
 }
 
 
-Contactable* Protocol::getContactable()
+Contactable* Protocol::getContactable() const
 {
     return port;
 }
@@ -281,7 +281,7 @@ void Protocol::rename(const Route& route)
 }
 
 
-bool Protocol::isOk()
+bool Protocol::isOk() const
 {
     if (!checkStreams() || recv_delegate_fail || send_delegate_fail) {
         return false;
@@ -409,7 +409,7 @@ void Protocol::attachPort(yarp::os::Contactable* port)
 }
 
 
-bool Protocol::isReplying()
+bool Protocol::isReplying() const
 {
     return pendingReply;
 }

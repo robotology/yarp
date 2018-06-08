@@ -1503,30 +1503,30 @@ public:
     }
 
 
-    virtual Carrier& getContent() {
+    virtual Carrier& getContent() const {
         return car.getContent();
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return owner->create();
     }
 
 
     // Forward yarp::os::Connection methods
 
-    bool isValid() override {
+    bool isValid() const override {
         return car.isValid();
     }
 
-    virtual bool isTextMode() override {
+    virtual bool isTextMode() const override {
         return getContent().isTextMode();
     }
 
-    virtual bool isBareMode() override {
+    virtual bool isBareMode() const override {
         return getContent().isBareMode();
     }
 
-    virtual bool canEscape() override {
+    virtual bool canEscape() const override {
         return getContent().canEscape();
     }
 
@@ -1534,35 +1534,35 @@ public:
         getContent().handleEnvelope(envelope);
     }
 
-    virtual bool requireAck() override {
+    virtual bool requireAck() const override {
         return getContent().requireAck();
     }
 
-    virtual bool supportReply() override {
+    virtual bool supportReply() const override {
         return getContent().supportReply();
     }
 
-    virtual bool isLocal() override {
+    virtual bool isLocal() const override {
         return getContent().isLocal();
     }
 
-    virtual bool isPush() override {
+    virtual bool isPush() const override {
         return getContent().isPush();
     }
 
-    virtual bool isConnectionless() override {
+    virtual bool isConnectionless() const override {
         return getContent().isConnectionless();
     }
 
-    virtual bool isBroadcast() override {
+    virtual bool isBroadcast() const override {
         return getContent().isBroadcast();
     }
 
-    virtual bool isActive() override {
+    virtual bool isActive() const override {
         return getContent().isActive();
     }
 
-    virtual bool modifiesIncomingData() override {
+    virtual bool modifiesIncomingData() const override {
         return getContent().modifiesIncomingData();
     }
 
@@ -1574,19 +1574,19 @@ public:
         return getContent().acceptIncomingData(reader);
     }
 
-    virtual bool modifiesOutgoingData() override {
+    virtual bool modifiesOutgoingData() const override {
         return getContent().modifiesOutgoingData();
     }
 
-    virtual PortWriter& modifyOutgoingData(PortWriter& writer) override {
+    virtual const PortWriter& modifyOutgoingData(const PortWriter& writer) override {
         return getContent().modifyOutgoingData(writer);
     }
 
-    virtual bool acceptOutgoingData(PortWriter& writer) override {
+    virtual bool acceptOutgoingData(const PortWriter& writer) override {
         return getContent().acceptOutgoingData(writer);
     }
 
-    virtual bool modifiesReply() override {
+    virtual bool modifiesReply() const override {
         return getContent().modifiesReply();
     }
 
@@ -1598,11 +1598,11 @@ public:
         getContent().setCarrierParams(params);
     }
 
-    virtual void getCarrierParams(Property& params) override {
+    virtual void getCarrierParams(Property& params) const override {
         getContent().getCarrierParams(params);
     }
 
-    virtual void getHeader(const yarp::os::Bytes& header) override {
+    virtual void getHeader(yarp::os::Bytes& header) const override {
         getContent().getHeader(header);
     }
 
@@ -1610,7 +1610,7 @@ public:
         getContent().prepareDisconnect();
     }
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return getContent().getName();
     }
 
@@ -1625,11 +1625,11 @@ public:
         getContent().setParameters(header);
     }
 
-    virtual bool canAccept() override {
+    virtual bool canAccept() const override {
         return getContent().canAccept();
     }
 
-    virtual bool canOffer() override {
+    virtual bool canOffer() const override {
         return getContent().canOffer();
     }
 
@@ -1677,7 +1677,7 @@ public:
         return getContent().expectAck(proto);
     }
 
-    virtual std::string toString() override {
+    virtual std::string toString() const override {
         return getContent().toString();
     }
 
@@ -1685,7 +1685,7 @@ public:
         getContent().close();
     }
 
-    virtual std::string getBootstrapCarrierName() override {
+    virtual std::string getBootstrapCarrierName() const override {
         return getContent().getBootstrapCarrierName();
     }
 
@@ -1704,7 +1704,7 @@ public:
         return getContent().configureFromProperty(options);
     }
 
-    virtual yarp::os::Face* createFace(void) override {
+    virtual yarp::os::Face* createFace(void) const override {
         return getContent().createFace();
     }
 };
@@ -1736,12 +1736,12 @@ public:
         }
     }
 
-    Carrier& getContent() override {
+    Carrier& getContent() const override {
         return car.getContent();
     }
 
-    virtual Carrier *create() override {
-        ForwardingCarrier *ncar = new ForwardingCarrier(plugin.getFactory(), this);
+    virtual Carrier *create() const override {
+        ForwardingCarrier *ncar = new ForwardingCarrier(plugin.getFactory(), const_cast<StubCarrier*>(this));
         if (ncar==nullptr) {
             return nullptr;
         }

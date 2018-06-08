@@ -9,7 +9,7 @@
 #include <yarp/os/NullConnectionReader.h>
 
 
-bool yarp::os::NullConnectionReader::expectBlock(const char *data, size_t len)
+bool yarp::os::NullConnectionReader::expectBlock(char *data, size_t len)
 {
     YARP_UNUSED(data);
     YARP_UNUSED(len);
@@ -57,7 +57,7 @@ bool yarp::os::NullConnectionReader::pushInt(int x)
     YARP_UNUSED(x);
     return false;
 }
-bool yarp::os::NullConnectionReader::isTextMode()
+bool yarp::os::NullConnectionReader::isTextMode() const
 {
     return false;
 }
@@ -67,7 +67,7 @@ bool yarp::os::NullConnectionReader::convertTextMode()
     return false;
 }
 
-size_t yarp::os::NullConnectionReader::getSize()
+size_t yarp::os::NullConnectionReader::getSize() const
 {
     return 0;
 }
@@ -82,32 +82,32 @@ yarp::os::Bytes yarp::os::NullConnectionReader::readEnvelope()
     return Bytes(nullptr, 0);
 }
 
-yarp::os::Portable *yarp::os::NullConnectionReader::getReference()
+yarp::os::Portable *yarp::os::NullConnectionReader::getReference() const
 {
     return nullptr;
 }
 
-yarp::os::Contact yarp::os::NullConnectionReader::getRemoteContact()
+yarp::os::Contact yarp::os::NullConnectionReader::getRemoteContact() const
 {
     return Contact();
 }
 
-yarp::os::Contact yarp::os::NullConnectionReader::getLocalContact()
+yarp::os::Contact yarp::os::NullConnectionReader::getLocalContact() const
 {
     return Contact();
 }
 
-bool yarp::os::NullConnectionReader::isValid()
+bool yarp::os::NullConnectionReader::isValid() const
 {
     return false;
 }
 
-bool yarp::os::NullConnectionReader::isActive()
+bool yarp::os::NullConnectionReader::isActive() const
 {
     return false;
 }
 
-bool yarp::os::NullConnectionReader::isError()
+bool yarp::os::NullConnectionReader::isError() const
 {
     return true;
 }
@@ -116,7 +116,7 @@ void yarp::os::NullConnectionReader::requestDrop()
 {
 }
 
-yarp::os::Searchable& yarp::os::NullConnectionReader::getConnectionModifiers()
+const yarp::os::Searchable& yarp::os::NullConnectionReader::getConnectionModifiers() const
 {
     return blank;
 }

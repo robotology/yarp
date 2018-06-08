@@ -52,7 +52,7 @@ public:
         }
     }
 
-    virtual yarp::conf::ssize_t read(const Bytes& b) override {
+    virtual yarp::conf::ssize_t read(Bytes& b) override {
         char *base = b.get();
         size_t space = b.length();
         yarp::conf::ssize_t ct = 0;
@@ -69,11 +69,11 @@ public:
     virtual void close() override {
     }
 
-    virtual std::string toString() {
+    virtual std::string toString() const {
         return data;
     }
 
-    virtual bool isOk() override {
+    virtual bool isOk() const override {
         return true;
     }
 

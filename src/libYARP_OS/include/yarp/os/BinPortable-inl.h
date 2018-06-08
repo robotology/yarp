@@ -31,7 +31,7 @@ bool yarp::os::BinPortable<T>::read(ConnectionReader& connection)
 }
 
 template <class T>
-bool yarp::os::BinPortable<T>::write(ConnectionWriter& connection)
+bool yarp::os::BinPortable<T>::write(ConnectionWriter& connection) const
 {
     connection.appendBlock((char*)(&t), sizeof(T));
     connection.convertTextMode(); // if connection is text-mode, convert!

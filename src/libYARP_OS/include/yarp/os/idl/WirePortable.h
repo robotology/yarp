@@ -34,13 +34,13 @@ public:
 
     virtual bool read(yarp::os::idl::WireReader& reader);
 
-    virtual bool write(yarp::os::idl::WireWriter& writer);
+    virtual bool write(const yarp::os::idl::WireWriter& writer) const;
 
     virtual bool readBare(yarp::os::ConnectionReader& reader) {
         return read(reader);
     }
 
-    virtual bool writeBare(yarp::os::ConnectionWriter& writer) {
+    virtual bool writeBare(yarp::os::ConnectionWriter& writer) const {
         return write(writer);
     }
 
@@ -48,7 +48,7 @@ public:
         return read(reader);
     }
 
-    virtual bool writeBottle(yarp::os::ConnectionWriter& writer) {
+    virtual bool writeBottle(yarp::os::ConnectionWriter& writer) const {
         return write(writer);
     }
 };

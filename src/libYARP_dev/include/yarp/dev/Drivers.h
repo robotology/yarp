@@ -39,18 +39,18 @@ public:
      * Returns a simple description of devices the factory can make.
      * @return a description of what this factory makes
      */
-    virtual std::string toString() = 0;
+    virtual std::string toString() const = 0;
 
     /**
      * Create a device.
      */
-    virtual DeviceDriver *create() = 0;
+    virtual DeviceDriver *create() const = 0;
 
     /**
      * Get the common name of the device.
      * @return the common name of the device this creates.
      */
-    virtual std::string getName() = 0;
+    virtual std::string getName() const = 0;
 
     /**
      * Get the common name of a device that can wrap this one.
@@ -58,14 +58,14 @@ public:
      * @return the common name of the device that can wrap this one
      * for the network.
      */
-    virtual std::string getWrapper() = 0;
+    virtual std::string getWrapper() const = 0;
 
     /**
      * Get the name of the C++ class associated with this device.
      *
      * @return the name of the C++ class associated with this device.
      */
-    virtual std::string getCode() = 0;
+    virtual std::string getCode() const = 0;
 
     /**
      * For "links" to other devices.
@@ -104,23 +104,23 @@ public:
     {
     }
 
-    virtual std::string toString() override {
+    virtual std::string toString() const override {
         return desc;
     }
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return desc;
     }
 
-    virtual std::string getWrapper() override {
+    virtual std::string getWrapper() const override {
         return wrap;
     }
 
-    virtual std::string getCode() override {
+    virtual std::string getCode() const override {
         return code;
     }
 
-    virtual DeviceDriver *create() override {
+    virtual DeviceDriver *create() const override {
         return new T;
     }
 };
@@ -140,23 +140,23 @@ public:
     {
     }
 
-    virtual std::string toString() override {
+    virtual std::string toString() const override {
         return desc;
     }
 
-    virtual std::string getName() override {
+    virtual std::string getName() const override {
         return desc;
     }
 
-    virtual std::string getWrapper() override {
+    virtual std::string getWrapper() const override {
         return wrap;
     }
 
-    virtual std::string getCode() override {
+    virtual std::string getCode() const override {
         return code;
     }
 
-    virtual DeviceDriver *create() override;
+    virtual DeviceDriver *create() const override;
 };
 
 
@@ -218,7 +218,7 @@ public:
      * A description of the available devices.
      * @return a description of the available devices.
      */
-    virtual std::string toString();
+    virtual std::string toString() const;
 
     /**
      * Destructor.

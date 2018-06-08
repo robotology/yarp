@@ -60,7 +60,7 @@ public:
     /////////////////////////////////////////////////
     // InputStream
 
-    virtual ssize_t read(const yarp::os::Bytes& b) {
+    virtual ssize_t read(yarp::os::Bytes& b) {
         if (interrupting) { return -1; }
         while (inputCache.size() < b.length()) {
             yInfo() <<"*** CHECK OTHER TERMINAL FOR SOMETHING TO TYPE:";
@@ -144,48 +144,48 @@ public:
     /////////////////////////////////////////////////
     // First, the easy bits...
 
-    virtual yarp::os::Carrier *create() {
+    virtual yarp::os::Carrier *create() const {
         return new HumanCarrier();
     }
 
-    virtual std::string getName() {
+    virtual std::string getName() const {
         return "human";
     }
 
-    virtual bool isConnectionless() {
+    virtual bool isConnectionless() const {
         return true;
     }
 
-    virtual bool canAccept() {
+    virtual bool canAccept() const {
         return true;
     }
 
-    virtual bool canOffer() {
+    virtual bool canOffer() const {
         return true;
     }
 
-    virtual bool isTextMode() {
+    virtual bool isTextMode() const {
         // let's be text mode, for human-friendliness
         return true;
     }
 
-    virtual bool canEscape() {
+    virtual bool canEscape() const {
         return true;
     }
 
-    virtual bool requireAck() {
+    virtual bool requireAck() const {
         return true;
     }
 
-    virtual bool supportReply() {
+    virtual bool supportReply() const {
         return true;
     }
 
-    virtual bool isLocal() {
+    virtual bool isLocal() const {
         return false;
     }
 
-    virtual std::string toString() {
+    virtual std::string toString() const {
         return "humans are handy";
     }
 

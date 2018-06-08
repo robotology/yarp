@@ -219,7 +219,7 @@ bool Storable::read(ConnectionReader& connection)
     return readRaw(connection);
 }
 
-bool Storable::write(ConnectionWriter& connection)
+bool Storable::write(ConnectionWriter& connection) const
 {
     connection.appendInt32(getCode());
     return writeRaw(connection);
@@ -247,7 +247,7 @@ bool StoreInt8::readRaw(ConnectionReader& reader)
     return true;
 }
 
-bool StoreInt8::writeRaw(ConnectionWriter& writer)
+bool StoreInt8::writeRaw(ConnectionWriter& writer) const
 {
     writer.appendInt8(x);
     return true;
@@ -275,7 +275,7 @@ bool StoreInt16::readRaw(ConnectionReader& reader)
     return true;
 }
 
-bool StoreInt16::writeRaw(ConnectionWriter& writer)
+bool StoreInt16::writeRaw(ConnectionWriter& writer) const
 {
     writer.appendInt16(x);
     return true;
@@ -303,7 +303,7 @@ bool StoreInt32::readRaw(ConnectionReader& reader)
     return true;
 }
 
-bool StoreInt32::writeRaw(ConnectionWriter& writer)
+bool StoreInt32::writeRaw(ConnectionWriter& writer) const
 {
     writer.appendInt32(x);
     return true;
@@ -331,7 +331,7 @@ bool StoreInt64::readRaw(ConnectionReader& reader)
     return true;
 }
 
-bool StoreInt64::writeRaw(ConnectionWriter& writer)
+bool StoreInt64::writeRaw(ConnectionWriter& writer) const
 {
     writer.appendInt64(x);
     return true;
@@ -390,7 +390,7 @@ bool StoreVocab::readRaw(ConnectionReader& reader)
     return true;
 }
 
-bool StoreVocab::writeRaw(ConnectionWriter& writer)
+bool StoreVocab::writeRaw(ConnectionWriter& writer) const
 {
     writer.appendInt32(x);
     return true;
@@ -417,7 +417,7 @@ bool StoreFloat32::readRaw(ConnectionReader& reader)
     return true;
 }
 
-bool StoreFloat32::writeRaw(ConnectionWriter& writer)
+bool StoreFloat32::writeRaw(ConnectionWriter& writer) const
 {
     writer.appendFloat32(x);
     return true;
@@ -443,7 +443,7 @@ bool StoreFloat64::readRaw(ConnectionReader& reader)
     return true;
 }
 
-bool StoreFloat64::writeRaw(ConnectionWriter& writer)
+bool StoreFloat64::writeRaw(ConnectionWriter& writer) const
 {
     writer.appendFloat64(x);
     return true;
@@ -579,7 +579,7 @@ bool StoreString::readRaw(ConnectionReader& reader)
     return true;
 }
 
-bool StoreString::writeRaw(ConnectionWriter& writer)
+bool StoreString::writeRaw(ConnectionWriter& writer) const
 {
     writer.appendInt32(static_cast<std::int32_t>(x.length()));
     writer.appendBlock(x.c_str(), x.length());
@@ -639,7 +639,7 @@ bool StoreBlob::readRaw(ConnectionReader& reader)
     return true;
 }
 
-bool StoreBlob::writeRaw(ConnectionWriter& writer)
+bool StoreBlob::writeRaw(ConnectionWriter& writer) const
 {
     writer.appendInt32(static_cast<std::int32_t>(x.length()));
     writer.appendBlock(x.c_str(), x.length());
@@ -683,7 +683,7 @@ bool StoreList::readRaw(ConnectionReader& reader)
     return true;
 }
 
-bool StoreList::writeRaw(ConnectionWriter& writer)
+bool StoreList::writeRaw(ConnectionWriter& writer) const
 {
     // not using the most efficient representation
     content.write(writer);
@@ -732,7 +732,7 @@ bool StoreDict::readRaw(ConnectionReader& reader)
     return true;
 }
 
-bool StoreDict::writeRaw(ConnectionWriter& writer)
+bool StoreDict::writeRaw(ConnectionWriter& writer) const
 {
     // not using the most efficient representation
     content.write(writer);

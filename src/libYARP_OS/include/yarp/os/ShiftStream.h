@@ -44,7 +44,7 @@ public:
     /**
      * Perform maintenance actions, if needed.
      */
-    virtual void check() {
+    virtual void check() const {
     }
 
     virtual InputStream& getInputStream() override {
@@ -63,13 +63,13 @@ public:
         return stream->getOutputStream();
     }
 
-    virtual const Contact& getLocalAddress() override {
+    virtual const Contact& getLocalAddress() const override {
         check();
         return (stream == nullptr) ? nullStream.getLocalAddress()
                                         : (stream->getLocalAddress());
     }
 
-    virtual const Contact& getRemoteAddress() override {
+    virtual const Contact& getRemoteAddress() const override {
         check();
         return (stream == nullptr) ? nullStream.getRemoteAddress()
                                         : (stream->getRemoteAddress());
@@ -109,18 +109,18 @@ public:
      * @return the wrapped stream (which after this call will remain
      * this container's responsibility - compare with giveStream).
      */
-    virtual TwoWayStream *getStream() {
+    virtual TwoWayStream *getStream() const {
         return stream;
     }
 
     /**
      * @return true if there is no wrapped stream.
      */
-    virtual bool isEmpty() {
+    virtual bool isEmpty() const {
         return stream == nullptr;
     }
 
-    virtual bool isOk() override {
+    virtual bool isOk() const override {
         if (stream != nullptr) {
             return stream->isOk();
         }

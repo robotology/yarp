@@ -43,7 +43,7 @@ public:
 
     void report(int severity, const std::string& problem);
 
-    virtual std::string getName() { return "isolated test"; }
+    virtual std::string getName() const { return "isolated test"; }
 
     static void startTestSystem();
     static UnitTest& getRoot();

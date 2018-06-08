@@ -94,12 +94,12 @@ public:
         return *this;
     }
 
-    virtual const Contact& getLocalAddress() override
+    virtual const Contact& getLocalAddress() const override
     {
         return localAddress;
     }
 
-    virtual const Contact& getRemoteAddress() override
+    virtual const Contact& getRemoteAddress() const override
     {
         return remoteAddress;
     }
@@ -114,14 +114,14 @@ public:
     virtual void closeMain();
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(const yarp::os::Bytes& b) override;
+    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     using yarp::os::OutputStream::write;
     virtual void write(const yarp::os::Bytes& b) override;
 
     virtual void flush() override;
 
-    virtual bool isOk() override;
+    virtual bool isOk() const override;
 
     virtual void reset() override;
 

@@ -91,9 +91,14 @@ public:
     size_t used() const;
 
     /**
+     * @return address of data block (const version)
+     */
+    const char* get() const;
+
+    /**
      * @return address of data block
      */
-    char *get() const;
+    char* get();
 
     /**
      * Disassociate object with any data block (deleting block if appropriate).
@@ -101,10 +106,15 @@ public:
     void clear();
 
     /**
+     * @return description of data block associated with this object (const
+     * version)
+     */
+    const Bytes& bytes() const;
+
+    /**
      * @return description of data block associated with this object
      */
-    const Bytes& bytes();
-
+    Bytes& bytes();
 
     /**
      * @return description of used portion of data block associated
@@ -128,7 +138,7 @@ public:
 
     bool read(ConnectionReader& reader) override;
 
-    bool write(ConnectionWriter& writer) override;
+    bool write(ConnectionWriter& writer) const override;
 
     /**
      *
