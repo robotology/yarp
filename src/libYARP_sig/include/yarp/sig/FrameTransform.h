@@ -6,20 +6,19 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_MATH_TRANSFORM_H
-#define YARP_MATH_TRANSFORM_H
+#ifndef YARP_SIG_TRANSFORM_H
+#define YARP_SIG_TRANSFORM_H
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
-#include <yarp/math/api.h>
-#include <yarp/math/Math.h>
-#include <yarp/math/Quaternion.h>
+#include <yarp/sig/api.h>
+#include <yarp/sig/Quaternion.h>
 
 namespace yarp
 {
-    namespace math
+    namespace sig
     {
-        class YARP_math_API FrameTransform
+        class YARP_sig_API FrameTransform
         {
             public:
             YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) src_frame_id;
@@ -77,36 +76,9 @@ namespace yarp
                 translation.set(X, Y, Z);
             }
 
-            void rotFromRPY(double R, double P, double Y)
-            {
-                double               rot[3] = { R, P, Y };
-                size_t               i = 3;
-                yarp::sig::Vector    rotV;
-                yarp::sig::Matrix    rotM;
-                rotV = yarp::sig::Vector(i, rot);
-                rotM = rpy2dcm(rotV);
-                rotation.fromRotationMatrix(rotM);
-            }
-
-            yarp::sig::Vector getRPYRot() const
-            {
-                yarp::sig::Vector rotV;
-                yarp::sig::Matrix rotM;
-                rotM = rotation.toRotationMatrix4x4();
-                rotV = dcm2rpy(rotM);
-                return rotV;
-            }
-
-            yarp::sig::Matrix toMatrix() const
-            {
-                yarp::sig::Vector rotV;
-                yarp::sig::Matrix t_mat(4,4);
-                t_mat = rotation.toRotationMatrix4x4();
-                t_mat[0][3] = translation.tX;
-                t_mat[1][3] = translation.tY;
-                t_mat[2][3] = translation.tZ;
-                return t_mat;
-            }
+            void rotFromRPY(double R, double P, double Y);
+            yarp::sig::Vector getRPYRot() const;
+            yarp::sig::Matrix toMatrix() const;
 
             bool fromMatrix(const yarp::sig::Matrix& mat)
             {

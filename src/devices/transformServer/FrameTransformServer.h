@@ -35,7 +35,7 @@
 #include <yarp/dev/IFrameTransform.h>
 #include <string>
 
-#include <yarp/math/FrameTransform.h>
+#include <yarp/sig/FrameTransform.h>
 
 #include <yarp/rosmsg/geometry_msgs/TransformStamped.h>
 #include <yarp/rosmsg/tf2_msgs/TFMessage.h>
@@ -62,17 +62,17 @@ namespace yarp
 class Transforms_server_storage
 {
 private:
-    std::vector <yarp::math::FrameTransform> m_transforms;
+    std::vector <yarp::sig::FrameTransform> m_transforms;
     yarp::os::Mutex  m_mutex;
 
 public:
      Transforms_server_storage()      {}
      ~Transforms_server_storage()     {}
-     bool     set_transform           (yarp::math::FrameTransform t);
+     bool     set_transform           (yarp::sig::FrameTransform t);
      bool     delete_transform        (int id);
      bool     delete_transform        (std::string t1, std::string t2);
      inline size_t   size()                                             { return m_transforms.size(); }
-     inline yarp::math::FrameTransform& operator[]   (std::size_t idx)  { return m_transforms[idx]; }
+     inline yarp::sig::FrameTransform& operator[]   (std::size_t idx)  { return m_transforms[idx]; }
      void clear                       ();
 };
 

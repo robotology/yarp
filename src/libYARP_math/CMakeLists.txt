@@ -22,10 +22,7 @@ if (YARP_HAS_MATH_LIB)
                      include/yarp/math/RandnVector.h
                      include/yarp/math/RandScalar.h
                      include/yarp/math/RandVector.h
-                     include/yarp/math/SVD.h
-                     include/yarp/math/Quaternion.h
-                     include/yarp/math/Vec2D.h
-                     include/yarp/math/FrameTransform.h)
+                     include/yarp/math/SVD.h)
 
   set(YARP_math_IMPL_HDRS)
 

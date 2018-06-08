@@ -18,7 +18,7 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/math/FrameTransform.h>
+#include <yarp/sig/FrameTransform.h>
 #include <yarp/os/RecursiveMutex.h>
 #include <yarp/os/PeriodicThread.h>
 
@@ -49,18 +49,18 @@ private:
     int              m_state;
     int              m_count;
 
-    std::vector <yarp::math::FrameTransform> m_transforms;
+    std::vector <yarp::sig::FrameTransform> m_transforms;
 
 public:
     yarp::os::RecursiveMutex  m_mutex;
     size_t   size();
-    yarp::math::FrameTransform& operator[]   (std::size_t idx);
+    yarp::sig::FrameTransform& operator[]   (std::size_t idx);
     void clear();
 
 public:
     Transforms_client_storage (std::string port_name);
     ~Transforms_client_storage ( );
-    bool     set_transform(yarp::math::FrameTransform t);
+    bool     set_transform(yarp::sig::FrameTransform t);
     bool     delete_transform(std::string t1, std::string t2);
 
     inline void resetStat();
@@ -140,7 +140,7 @@ public:
      bool     deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id) override;
      bool     transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point) override;
      bool     transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose) override;
-     bool     transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion) override;
+     bool     transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Quaternion &input_quaternion, yarp::sig::Quaternion &transformed_quaternion) override;
      bool     waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout) override;
 
      FrameTransformClient();

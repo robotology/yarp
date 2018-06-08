@@ -671,7 +671,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
         map.setSize_in_cells(map_ros->info.width,map_ros->info.height);
         map.setResolution( map_ros->info.resolution);
         map.setMapName(map_name);
-        yarp::math::Quaternion quat(map_ros->info.origin.orientation.x,
+        yarp::sig::Quaternion quat(map_ros->info.origin.orientation.x,
                                     map_ros->info.origin.orientation.y,
                                     map_ros->info.origin.orientation.z,
                                     map_ros->info.origin.orientation.w);
@@ -800,7 +800,7 @@ bool Map2DServer::updateVizMarkers()
     yarp::rosmsg::visualization_msgs::Marker marker;
     yarp::rosmsg::TickTime    tt;
     yarp::sig::Vector         rpy(3);
-    yarp::math::Quaternion    q;
+    yarp::sig::Quaternion    q;
 
     yarp::rosmsg::visualization_msgs::MarkerArray& markers = m_rosPublisherPort_markers.prepare();
     markers.markers.clear();

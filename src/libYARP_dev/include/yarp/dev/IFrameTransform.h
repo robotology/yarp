@@ -12,7 +12,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/sig/Matrix.h>
-#include <yarp/math/Quaternion.h>
+#include <yarp/sig/Quaternion.h>
 #include <vector>
 
 namespace yarp {
@@ -148,7 +148,7 @@ public:
     * @param transformed_quaternion the returned quaternion (x y z w)
     * @return true/false
     */
-    virtual bool     transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion) = 0;
+    virtual bool     transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Quaternion &input_quaternion, yarp::sig::Quaternion &transformed_quaternion) = 0;
 
     /**
      Block until a transform from source_frame_id to target_frame_id is possible or it times out.

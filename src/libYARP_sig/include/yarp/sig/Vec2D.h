@@ -6,20 +6,20 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_MATH_VEC2D_H
-#define YARP_MATH_VEC2D_H
+#ifndef YARP_SIG_VEC2D_H
+#define YARP_SIG_VEC2D_H
 
-#include <yarp/math/api.h>
+#include <yarp/sig/api.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/os/Portable.h>
 #include <type_traits>
 
 namespace yarp {
-namespace math {
+namespace sig {
 
 template <typename T>
-class YARP_math_API Vec2D : public yarp::os::Portable
+class YARP_sig_API Vec2D : public yarp::os::Portable
 {
     static_assert (std::is_same<int, T>::value ||
                    std::is_same<double, T>::value, "Vec2D can be specialized only as int, double");
@@ -70,11 +70,11 @@ public:
     }
 
     //operators
-    yarp::math::Vec2D<T>& operator+=(const yarp::math::Vec2D<T>& rhs);
-    yarp::math::Vec2D<T>& operator-=(const yarp::math::Vec2D<T>& rhs);
-    yarp::math::Vec2D<T>& operator =(const yarp::math::Vec2D<T>& rhs);
-    bool operator == (const yarp::math::Vec2D<T>& rhs);
-    bool operator != (const yarp::math::Vec2D<T>& rhs);
+    yarp::sig::Vec2D<T>& operator+=(const yarp::sig::Vec2D<T>& rhs);
+    yarp::sig::Vec2D<T>& operator-=(const yarp::sig::Vec2D<T>& rhs);
+    yarp::sig::Vec2D<T>& operator =(const yarp::sig::Vec2D<T>& rhs);
+    bool operator == (const yarp::sig::Vec2D<T>& rhs);
+    bool operator != (const yarp::sig::Vec2D<T>& rhs);
 };
 
 } // namespace math
@@ -82,12 +82,12 @@ public:
 
 //operators
 template <typename T>
-yarp::math::Vec2D<T> YARP_math_API operator + (yarp::math::Vec2D<T> lhs, const yarp::math::Vec2D<T>& rhs);
+yarp::sig::Vec2D<T> YARP_sig_API operator + (yarp::sig::Vec2D<T> lhs, const yarp::sig::Vec2D<T>& rhs);
 
 template <typename T>
-yarp::math::Vec2D<T> YARP_math_API operator - (yarp::math::Vec2D<T> lhs, const yarp::math::Vec2D<T>& rhs);
+yarp::sig::Vec2D<T> YARP_sig_API operator - (yarp::sig::Vec2D<T> lhs, const yarp::sig::Vec2D<T>& rhs);
 
 template <typename T>
-yarp::math::Vec2D<T> YARP_math_API operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<T> rhs);
+yarp::sig::Vec2D<T> YARP_sig_API operator * (const yarp::sig::Matrix& lhs, yarp::sig::Vec2D<T> rhs);
 
 #endif // YARP_MATH_VEC2D_H

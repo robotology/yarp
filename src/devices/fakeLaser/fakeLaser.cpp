@@ -13,7 +13,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/math/Vec2D.h>
+#include <yarp/sig/Vec2D.h>
 #include <iostream>
 #include <limits>
 #include <cstring>

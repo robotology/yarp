@@ -16,7 +16,7 @@
 
 #include <yarp/math/Math.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/math/Vec2D.h>
+#include <yarp/sig/Vec2D.h>
 
 #include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>

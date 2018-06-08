@@ -6,10 +6,10 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_QUATERNION
-#define YARP_QUATERNION
+#ifndef YARP_SIG_QUATERNION
+#define YARP_SIG_QUATERNION
 
-#include <yarp/math/api.h>
+#include <yarp/sig/api.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/os/Portable.h>
@@ -18,12 +18,12 @@
 #include <yarp/os/NetInt32.h>
 
 namespace yarp {
-    namespace math {
+    namespace sig {
         class Quaternion;
     }
 }
 
-class YARP_math_API yarp::math::Quaternion : public yarp::os::Portable
+class YARP_sig_API yarp::sig::Quaternion : public yarp::os::Portable
 {
     double internal_data[4]; // stored as [w x y z]
 
@@ -105,16 +105,6 @@ public:
     *
     */
     void fromRotationMatrix(const yarp::sig::Matrix &R);
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-    /**
-     * Converts a quaternion to a rotation matrix.
-     *
-     * @deprecated since YARP 3.0.0. Use toRotationMatrix4x4 instead.
-     */
-    YARP_DEPRECATED_MSG("Use toRotationMatrix4x4 instead")
-    yarp::sig::Matrix toRotationMatrix() const { return toRotationMatrix4x4(); }
-#endif
 
     /**
     * Converts a quaternion to a rotation matrix.

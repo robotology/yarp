@@ -12,7 +12,7 @@
 #include <yarp/os/Portable.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/math/Vec2D.h>
+#include <yarp/sig/Vec2D.h>
 #include <yarp/dev/api.h>
 
 /**
@@ -26,8 +26,8 @@ namespace yarp
         {
             public:
             typedef yarp::sig::PixelMono CellData;
-            typedef yarp::math::Vec2D<int> XYCell;
-            typedef yarp::math::Vec2D<double> XYWorld;
+            typedef yarp::sig::Vec2D<int> XYCell;
+            typedef yarp::sig::Vec2D<double> XYWorld;
             enum map_flags
             {
                 MAP_CELL_FREE=0,
