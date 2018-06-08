@@ -60,7 +60,7 @@ bool fakeIMU::open(yarp::os::Searchable &config)
         setPeriod(period);
     }
     else
-        yInfo() << "Using default period of " << DEFAULT_PERIOD << " ms";
+        yInfo() << "Using default period of " << DEFAULT_PERIOD << " s";
 
     constantValue = config.check("constantValue");
 

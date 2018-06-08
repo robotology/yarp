@@ -377,7 +377,7 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
     else
     {
         m_period = 0.010;
-        yWarning("FrameTransformClient: using default period of %f ms" , m_period);
+        yWarning("FrameTransformClient: using default period of %f s" , m_period);
     }
 
     std::string local_rpcServer = m_local_name;
