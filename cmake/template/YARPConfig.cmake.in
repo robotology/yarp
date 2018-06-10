@@ -7,7 +7,6 @@
 
 
 
-include(CMakeFindDependencyMacro)
 include(CMakeDependentOption)
 
 
@@ -149,27 +148,23 @@ endif()
 # Find all requested components
 set(YARP_LIBRARIES YARP::YARP_init)
 foreach(_yarp_module ${YARP_FIND_COMPONENTS})
-  # FIXME Remove this check when CMake 3.9 or later is required
-  if (CMAKE_VERSION VERSION_LESS 3.9)
-    set(_YARP_FIND_PARTS_REQUIRED)
-    if (YARP_FIND_REQUIRED)
-      set(_YARP_FIND_PARTS_REQUIRED REQUIRED)
-    endif()
-    set(_YARP_FIND_PARTS_QUIET)
-    if (YARP_FIND_QUIETLY)
-      set(_YARP_FIND_PARTS_QUIET QUIET)
-    endif()
-    find_package(YARP_${_yarp_module}
-                 ${_YARP_FIND_PARTS_QUIET}
-                 ${_YARP_FIND_PARTS_REQUIRED}
-                 HINTS "${YARP_CMAKECONFIG_DIR}"
-                 NO_DEFAULT_PATH)
-  else()
-    find_dependency(YARP_${_yarp_module}
-                    HINTS "${YARP_CMAKECONFIG_DIR}"
-                    NO_DEFAULT_PATH)
+  set(_YARP_FIND_PART_${_yarp_module}_REQUIRED)
+  # Only propagate REQUIRED if module was not passed to OPTIONAL_COMPONENTS
+  if(YARP_FIND_REQUIRED AND YARP_FIND_REQUIRED_${_yarp_module})
+    set(_YARP_FIND_PART_${_yarp_module}_REQUIRED REQUIRED)
   endif()
-  list(APPEND YARP_LIBRARIES YARP::YARP_${_yarp_module})
+  set(_YARP_FIND_PARTS_QUIET)
+  if(YARP_FIND_QUIETLY)
+    set(_YARP_FIND_PARTS_QUIET QUIET)
+  endif()
+  find_package(YARP_${_yarp_module}
+               ${_YARP_FIND_PARTS_QUIET}
+               ${_YARP_FIND_PART_${_yarp_module}_REQUIRED}
+               HINTS "${YARP_CMAKECONFIG_DIR}"
+               NO_DEFAULT_PATH)
+  if(YARP_${_yarp_module}_FOUND)
+    list(APPEND YARP_LIBRARIES YARP::YARP_${_yarp_module})
+  endif()
 endforeach()
 
 # Restore the original value of the variable
