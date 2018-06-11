@@ -9,6 +9,7 @@
 tags
 /author-*.txt
 /license-*.txt
+/copyright-*.txt
 /license_check/
 /install*/
 .DS_Store
