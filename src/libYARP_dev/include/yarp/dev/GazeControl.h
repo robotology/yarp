@@ -1,8 +1,11 @@
 /*
-* Copyright (C) 2008 RobotCub Consortium
-* Author: Ugo Pattacini
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #ifndef YARP_DEV_GAZECONTROL_H
 #define YARP_DEV_GAZECONTROL_H
@@ -51,7 +54,7 @@ struct yarp::dev::GazeEventParameters
      *    communication timeout.
      *  - "*": a tag for all-events.
      */
-    yarp::os::ConstString type;
+    std::string type;
 
     /*!
      * The user specifies the motion check-point that raises a
@@ -73,7 +76,7 @@ struct yarp::dev::GazeEventVariables
      * The signature of the received event as filled by the event
      * handler.
      */
-    yarp::os::ConstString type;
+    std::string type;
 
     /*!
      * Contain the time instant of the source when the event took

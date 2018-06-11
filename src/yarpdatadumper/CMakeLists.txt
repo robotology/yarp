@@ -1,15 +1,11 @@
-# Copyright: (C) 2010 RobotCub Consortium
-# Authors: Ugo Pattacini
-# CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
-
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 if(CREATE_YARPDATADUMPER)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS})
-
   if(YARP_HAS_OPENCV)
     add_definitions(-DADD_VIDEO)
     include_directories(${OpenCV_INCLUDE_DIRS})
@@ -57,17 +53,5 @@ if(CREATE_YARPDATADUMPER)
   execute_process(COMMAND \${CMAKE_COMMAND} -E create_symlink \"${_relpath}\"
                                                                \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator\")"
             COMPONENT utilities)
-
-    # Remove deprecated files (since YARP 2.3.66.1)
-    if(EXISTS "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator.py")
-      message(STATUS "Deleted: \"${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator.py\"")
-      file(REMOVE "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/yarpdatadumperAppGenerator.py")
-    endif()
-    install(CODE
- "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_FULL_BINDIR}/yarpdatadumperAppGenerator.py\")
-    message(STATUS \"Deleted: \$ENV{DESTDIR}${CMAKE_INSTALL_FULL_BINDIR}/yarpdatadumperAppGenerator.py\")
-    file(REMOVE \"\$ENV{DESTDIR}${CMAKE_INSTALL_FULL_BINDIR}/yarpdatadumperAppGenerator.py\")
-  endif()")
-
   endif()
 endif()

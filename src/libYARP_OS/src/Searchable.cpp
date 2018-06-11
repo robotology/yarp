@@ -1,7 +1,11 @@
 /*
- * Copyright (C) 2006, 2008 RobotCub Consortium, Arjan Gijsberts
- * Authors: Paul Fitzpatrick, Arjan Gijsberts
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * Copyright (C) 2006, 2008 Arjan Gijsberts
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Searchable.h>
@@ -31,9 +35,9 @@ yarp::os::Searchable::Searchable() :
 yarp::os::Searchable::~Searchable() {
 }
 
-bool yarp::os::Searchable::check(const ConstString& key,
+bool yarp::os::Searchable::check(const std::string& key,
                                  yarp::os::Value *& result,
-                                 const ConstString& comment) const {
+                                 const std::string& comment) const {
     if (getMonitor()!=nullptr && comment!="") {
         SearchReport report;
         report.key = key;
@@ -49,9 +53,9 @@ bool yarp::os::Searchable::check(const ConstString& key,
     return ok;
 }
 
-yarp::os::Value yarp::os::Searchable::check(const ConstString& key,
+yarp::os::Value yarp::os::Searchable::check(const std::string& key,
                                             const yarp::os::Value& fallback,
-                                            const ConstString& comment) const {
+                                            const std::string& comment) const {
     if (getMonitor()!=nullptr && comment!="") {
         yarp::os::SearchReport report;
         report.key = key;
@@ -74,8 +78,8 @@ yarp::os::Value yarp::os::Searchable::check(const ConstString& key,
     return fallback;
 }
 
-bool yarp::os::Searchable::check(const ConstString& key,
-                                 const ConstString& comment) const {
+bool yarp::os::Searchable::check(const std::string& key,
+                                 const std::string& comment) const {
     if (getMonitor()!=nullptr && comment!="") {
         yarp::os::SearchReport report;
         report.key = key;
@@ -86,8 +90,8 @@ bool yarp::os::Searchable::check(const ConstString& key,
     return check(key);
 }
 
-yarp::os::Bottle& yarp::os::Searchable::findGroup(const ConstString& key,
-                                                  const ConstString& comment) const {
+yarp::os::Bottle& yarp::os::Searchable::findGroup(const std::string& key,
+                                                  const std::string& comment) const {
     if (getMonitor()!=nullptr && comment!="") {
         yarp::os::SearchReport report;
         report.key = key;
@@ -113,7 +117,7 @@ yarp::os::SearchMonitor *yarp::os::Searchable::getMonitor() const {
     return monitor;
 }
 
-yarp::os::ConstString yarp::os::Searchable::getMonitorContext() const {
+std::string yarp::os::Searchable::getMonitorContext() const {
     return monitorContext;
 }
 

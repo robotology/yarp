@@ -1,23 +1,26 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Authors: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-// rate thread example -nat
+// periodic thread example -nat
 
 #include <stdio.h>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Network.h>
 
 using namespace yarp::os;
 
-class Thread1 : public RateThread {
+class Thread1 : public PeriodicThread {
 public:
-	Thread1(int r):RateThread(r){}
+    Thread1(double p):PeriodicThread(p){}
     virtual bool threadInit()
 	{
 		printf("Starting thread1\n");
@@ -45,9 +48,9 @@ public:
 	}
 };
 
-class Thread2: public RateThread {
+class Thread2: public PeriodicThread {
 public:
-	Thread2(int r):RateThread(r){}
+    Thread2(double p):PeriodicThread(p){}
 	virtual bool threadInit()
 	{
 		printf("Starting thread2\n");
@@ -77,10 +80,10 @@ public:
 
 int main() {
     yarp::os::Network network;
-    Thread1 t1(500);  //run every 500ms
-	Thread2 t2(1000); //run every 1s
-	printf("thread1 rate is %d[ms]\n", 500);
-	printf("thread2 rate is %d[ms]\n", 1000);
+    Thread1 t1(0.500);  //run every 500ms
+    Thread2 t2(1.000); //run every 1s
+    printf("thread1 period is %d[ms]\n", 500);
+    printf("thread2 period is %d[ms]\n", 1000);
 
 	printf("Starting threads...\n");
     bool ok=t1.start();
@@ -92,8 +95,8 @@ int main() {
         }
 
     Time::delay(3);
-    printf("Thread1 ran %d times, estimated rate: %.lf[ms]\n", t1.getIterations(), t1.getEstPeriod());
-    printf("Thread2 ran %d times, estimated rate: %.lf[ms]\n", t2.getIterations(), t2.getEstPeriod());
+    printf("Thread1 ran %d times, estimated period: %.lf[ms]\n", t1.getIterations(), t1.getEstimatedPeriod());
+    printf("Thread2 ran %d times, estimated period: %.lf[ms]\n", t2.getIterations(), t2.getEstimatedPeriod());
 
     printf("suspending threads...\n");
 	t1.suspend();
@@ -109,11 +112,11 @@ int main() {
 	printf("\n");
 
 
-	printf("Changing thread1 rate to %d[ms]\n", 250);
-	printf("Changing thread2 rate to %d[ms]\n", 500);
+    printf("Changing thread1 period to %d[ms]\n", 250);
+    printf("Changing thread2 period to %d[ms]\n", 500);
 
-	t1.setRate(250);
-    t2.setRate(500);
+    t1.setPeriod(0.250);
+    t2.setPeriod(0.500);
 
 	printf("Resuming threads...\n");
     t1.resetStat();
@@ -123,8 +126,8 @@ int main() {
 
 	Time::delay(3);
     
-    printf("Thread1 ran %d times, estimated rate: %.lf[ms]\n", t1.getIterations(), t1.getEstPeriod());
-    printf("Thread2 ran %d times, estimated rate: %.lf[ms]\n", t2.getIterations(), t2.getEstPeriod());
+    printf("Thread1 ran %d times, estimated period: %.lf[ms]\n", t1.getIterations(), t1.getEstimatedPeriod());
+    printf("Thread2 ran %d times, estimated period: %.lf[ms]\n", t2.getIterations(), t2.getEstimatedPeriod());
     t1.stop();
     t2.stop();
     printf("stopped\n");

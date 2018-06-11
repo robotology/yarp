@@ -1,14 +1,16 @@
 /*
- * Copyright (C) 2011, 2016 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_SHAREDLIBRARY_H
 #define YARP_OS_SHAREDLIBRARY_H
 
 #include <yarp/os/api.h>
-#include <yarp/conf/system.h>
+#include <string>
 
 namespace yarp {
     namespace os {
@@ -18,13 +20,6 @@ namespace yarp {
         }
     }
 }
-
-#ifndef YARP_WRAP_STL_STRING
-# include <string>
-namespace yarp { namespace os { typedef std::string ConstString; }}
-#else
-namespace yarp { namespace os { class ConstString; }}
-#endif
 
 /**
  * Low-level wrapper for loading shared libraries (DLLs) and accessing
@@ -72,7 +67,7 @@ public:
      *
      * @return the most recent error
      */
-    ConstString error();
+    std::string error();
 
     /**
      * Look up a symbol in the shared library.

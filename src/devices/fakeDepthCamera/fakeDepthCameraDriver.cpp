@@ -1,8 +1,10 @@
 /*
-* Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
-* Author: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
-* CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
-*/
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #include "fakeDepthCameraDriver.h"
 
@@ -62,7 +64,7 @@ bool fakeDepthCameraDriver::open(Searchable& config)
     {
         if (config.check(get<1>(p)))
         {
-            *get<0>(p) = config.find(get<1>(p)).asDouble();
+            *get<0>(p) = config.find(get<1>(p)).asFloat64();
         }
         else
         {
@@ -278,7 +280,7 @@ IRGBDSensor::RGBDSensor_status fakeDepthCameraDriver::getSensorStatus()
     return RGBD_SENSOR_OK_IN_USE;
 }
 
-ConstString fakeDepthCameraDriver::getLastErrorMsg(Stamp* timeStamp)
+std::string fakeDepthCameraDriver::getLastErrorMsg(Stamp* timeStamp)
 {
     return "no error";
 }

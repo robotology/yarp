@@ -1,8 +1,12 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
+
 package yarp.matlab;
 
 import yarp.PixelRgb;
@@ -253,12 +257,12 @@ public class YarpImageHelper
      * @return output array
      */
     public static short[] getRawImg(ImageRgb img) {
-        int pixelsize = img.getPixelSize();
-        int width = img.width();
-        int height = img.height();
-        int imgsize = img.getRawImageSize();
-		int imgPixels = width * height * pixelsize;
-		int pad = img.getPadding();
+        int pixelsize = (int) img.getPixelSize();
+        int width = (int) img.width();
+        int height = (int) img.height();
+        int imgsize = (int) img.getRawImageSize();
+        int imgPixels = width * height * pixelsize;
+        int pad = (int) img.getPadding();
         //short [] vec1ds = new short [imgsize];
 		short [] vec1ds = new short [imgPixels];
         charArray car = charArray.frompointer(img.getRawImage());

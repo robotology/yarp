@@ -1,15 +1,15 @@
-# Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
-# Authors: Alberto Cardellino, Andrea Ruzzenenti
-# email:   andrea.ruzzenenti@iit.it
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 yarp_prepare_plugin(depthCamera
                     CATEGORY device
                     TYPE yarp::dev::depthCameraDriver
                     INCLUDE depthCameraDriver.h
                     EXTRA_CONFIG WRAPPER=RGBDSensorWrapper
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_OPENNI2")
+                    DEPENDS "YARP_HAS_OPENNI2")
 
 if(ENABLE_depthCamera)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -17,8 +17,7 @@ if(ENABLE_depthCamera)
   include_directories(SYSTEM ${OpenNI2_INCLUDE_DIRS})
 
   yarp_add_plugin(yarp_depthCamera depthCameraDriver.cpp
-                                   depthCameraDriver.h
-                                   depthCameraImpl.hpp)
+                                   depthCameraDriver.h)
 
   target_link_libraries(yarp_depthCamera YARP::YARP_OS
                                          YARP::YARP_sig

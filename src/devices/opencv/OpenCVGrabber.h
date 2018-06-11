@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006  Eric Mislivec and RobotCub Consortium
  * Authors: Eric Mislivec and Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  *
  */
 
@@ -97,9 +97,9 @@ public:
 protected:
 
     /** Width of the images a grabber produces. */
-    int m_w;
+    size_t m_w;
     /** Height of the images a grabber produces. */
-    int m_h;
+    size_t m_h;
 
     /** Whether to loop or not. */
     bool m_loop;

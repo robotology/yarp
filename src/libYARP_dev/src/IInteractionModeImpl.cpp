@@ -1,9 +1,10 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <cstdio>
 
@@ -14,12 +15,12 @@
 using namespace yarp::dev;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 #define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK_DEL(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); delete [] temp; return false;}
 
 ImplementInteractionMode::ImplementInteractionMode(yarp::dev::IInteractionModeRaw *class_p) :
     iInteraction(class_p),
     helper(nullptr),
-    temp_int(nullptr),
-    temp_modes(nullptr)
+    nj(0)
 {
 
 }
@@ -46,14 +47,10 @@ bool ImplementInteractionMode::initialize(int size, const int *amap, const doubl
     if(helper != nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert(helper != nullptr);
 
-    temp_int=new int [size];
-    yAssert(temp_int != nullptr);
-
-    temp_modes=new yarp::dev::InteractionModeEnum [size];
-    yAssert(temp_modes != nullptr);
+    nj = size;
     return true;
 }
 
@@ -68,9 +65,6 @@ bool ImplementInteractionMode::uninitialize()
         delete castToMapper(helper);
         helper = nullptr;
     }
-
-    checkAndDestroy(temp_int);
-    checkAndDestroy(temp_modes);
     return true;
 }
 
@@ -82,24 +76,31 @@ bool ImplementInteractionMode::getInteractionMode(int axis, yarp::dev::Interacti
 
 bool ImplementInteractionMode::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
+    int *temp =  new int [nj];
     for (int i = 0; i < n_joints; i++)
     {
-         MJOINTIDCHECK(i)
-         temp_int[i] = castToMapper(helper)->toHw(joints[i]);
+         MJOINTIDCHECK_DEL(i)
+         temp[i] = castToMapper(helper)->toHw(joints[i]);
     }
-    return iInteraction->getInteractionModesRaw(n_joints, temp_int, modes);
+    bool ret = iInteraction->getInteractionModesRaw(n_joints, temp, modes);
+    delete [] temp;
+    return ret;
 }
 
 bool ImplementInteractionMode::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
+    yarp::dev::InteractionModeEnum *temp_modes=new yarp::dev::InteractionModeEnum [nj];
     if(!iInteraction->getInteractionModesRaw(temp_modes) )
+    {
+        delete [] temp_modes;
         return false;
-
+    }
     for(int idx=0; idx<castToMapper(helper)->axes(); idx++)
     {
         int j = castToMapper(helper)->toUser(idx);
         modes[j] = temp_modes[idx];
     }
+    delete [] temp_modes;
     return true;
 }
 
@@ -111,20 +112,26 @@ bool ImplementInteractionMode::setInteractionMode(int axis, yarp::dev::Interacti
 
 bool ImplementInteractionMode::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
+    int *temp =  new int [nj];
     for(int idx=0; idx<n_joints; idx++)
     {
-        MJOINTIDCHECK(idx)
-        temp_int[idx] = castToMapper(helper)->toHw(joints[idx]);
+        MJOINTIDCHECK_DEL(idx)
+        temp[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
-    return iInteraction->setInteractionModesRaw(n_joints, temp_int, modes);
+    bool ret = iInteraction->setInteractionModesRaw(n_joints, temp, modes);
+    delete [] temp;
+    return ret;
 }
 
 bool ImplementInteractionMode::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
+    yarp::dev::InteractionModeEnum *temp_modes=new yarp::dev::InteractionModeEnum [nj];
     for(int idx=0; idx< castToMapper(helper)->axes(); idx++)
     {
         int j = castToMapper(helper)->toHw(idx);
-        modes[j] = temp_modes[idx];
+        temp_modes[idx] = modes[j];
     }
-    return iInteraction->setInteractionModesRaw(temp_modes);
+    bool ret = iInteraction->setInteractionModesRaw(temp_modes);
+    delete [] temp_modes;
+    return ret;
 }

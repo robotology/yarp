@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006, 2007 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_IMPL_MCASTCARRIER_H
@@ -14,7 +17,6 @@
 
 #include <yarp/os/Election.h>
 #include <yarp/os/impl/SplitString.h>
-#include <yarp/os/impl/PlatformSize.h>
 
 #include <cstdio>
 
@@ -32,8 +34,8 @@ namespace yarp {
 class yarp::os::impl::McastCarrier : public UdpCarrier {
 protected:
     Contact mcastAddress;
-    ConstString mcastName;
-    ConstString key;
+    std::string mcastName;
+    std::string key;
     DgramTwoWayStream *stream;
     Contact local;
 
@@ -47,19 +49,20 @@ public:
 
     virtual ~McastCarrier();
 
-    virtual Carrier *create() override;
-    virtual ConstString getName() override;
+    virtual Carrier *create() const override;
+    virtual std::string getName() const override;
 
-    virtual int getSpecifierCode() override;
+    virtual int getSpecifierCode() const override;
+
     virtual bool sendHeader(ConnectionState& proto) override;
     virtual bool expectExtraHeader(ConnectionState& proto) override;
-    virtual bool becomeMcast(ConnectionState& proto, bool sender);
     virtual bool respondToHeader(ConnectionState& proto) override;
     virtual bool expectReplyToHeader(ConnectionState& proto) override;
 
-    void addSender(const ConstString& key);
-    void removeSender(const ConstString& key);
-    bool isElect();
+    bool becomeMcast(ConnectionState& proto, bool sender);
+    void addSender(const std::string& key);
+    void removeSender(const std::string& key);
+    bool isElect() const;
     /**
      * @brief takeElection, this function is called when the elect mcast
      * carrier dies and pass the write buffers to another one.
@@ -67,8 +70,8 @@ public:
      */
     bool takeElection();
 
-    virtual bool isActive() override;
-    virtual bool isBroadcast() override;
+    virtual bool isActive() const override;
+    virtual bool isBroadcast() const override;
 };
 
 #endif // YARP_OS_IMPL_MCASTCARRIER_H

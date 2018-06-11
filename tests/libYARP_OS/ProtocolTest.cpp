@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/impl/FakeTwoWayStream.h>
@@ -16,9 +18,9 @@ using namespace yarp::os::impl;
 
 class ProtocolTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "ProtocolTest"; }
+    virtual std::string getName() const override { return "ProtocolTest"; }
 
-    ConstString simplify(ConstString x) {
+    std::string simplify(std::string x) {
         return humanize(x);
     }
 
@@ -65,13 +67,13 @@ public:
                    "added a bottle");
 
         ConnectionReader& reader = p2.beginRead();
-        ConstString str1 = reader.expectText().c_str();
-        ConstString str2 = reader.expectText().c_str();
+        std::string str1 = reader.expectText().c_str();
+        std::string str2 = reader.expectText().c_str();
         p2.endRead();
 
-        checkEqual(str1,ConstString("d"),"data tag");
+        checkEqual(str1,std::string("d"),"data tag");
         const char *expect2 = "0 \"Hello\"";
-        checkEqual(str2,ConstString(expect2),"bottle representation");
+        checkEqual(str2,std::string(expect2),"bottle representation");
     }
 
     virtual void runTests() override {

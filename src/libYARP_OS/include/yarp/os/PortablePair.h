@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_PORTABLEPAIR_H
@@ -38,8 +41,8 @@ public:
      * @return true iff the object pair was successfully written
      */
     static bool writePair(ConnectionWriter& connection,
-                          Portable& head,
-                          Portable& body);
+                          const Portable& head,
+                          const Portable& body);
 };
 
 /**
@@ -73,7 +76,7 @@ public:
      * @param connection an interface to the network connection for writing
      * @return true iff the object pair was successfully written
      */
-    virtual bool write(ConnectionWriter& connection) override {
+    virtual bool write(ConnectionWriter& connection) const override {
         return writePair(connection, head, body);
     }
 
@@ -81,7 +84,7 @@ public:
      * This is called when the port has finished all writing operations.
      * Passes call on to head and body.
      */
-    virtual void onCompletion() override {
+    virtual void onCompletion() const override {
         head.onCompletion();
         body.onCompletion();
     }

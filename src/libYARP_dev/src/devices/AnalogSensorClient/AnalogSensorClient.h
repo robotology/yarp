@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Author: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_ANALOGSENSORCLIENT_ANALOGSENSORCLIENT_H
@@ -15,7 +17,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -34,7 +36,7 @@ const int ANALOG_TIMEOUT=100; //ms
 class InputPortProcessor : public yarp::os::BufferedPort<yarp::sig::Vector>
 {
     yarp::sig::Vector lastVector;
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
     yarp::os::Stamp lastStamp;
     double deltaT;
     double deltaTMax;
@@ -74,7 +76,7 @@ public:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 /**
-* @ingroup dev_impl_wrapper
+* @ingroup dev_impl_network_clients
 *
 * \section AnalogSensorClient Description of input parameters
 * \brief Device that reads an AnalogSensor (using the IAnalogSensor interface) from the YARP network.
@@ -101,8 +103,8 @@ class yarp::dev::AnalogSensorClient:    public DeviceDriver,
 protected:
     InputPortProcessor inputPort;
     yarp::os::Port rpcPort;
-    yarp::os::ConstString local;
-    yarp::os::ConstString remote;
+    std::string local;
+    std::string remote;
     yarp::os::Stamp lastTs; //used by IPreciselyTimed
     std::string robotName;
     std::string deviceId;

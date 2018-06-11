@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
 * Author: Marco Randazzo <marco.randazzo@iit.it>
-* CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+* CopyPolicy: Released under the terms of the GPLv2 or later, see LICENSE
 */
 
 
@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IRangefinder2D.h>
@@ -34,12 +34,12 @@ struct Range_t
 
 //---------------------------------------------------------------------------------------------------------------
 
-class RpLidar2 : public RateThread, public yarp::dev::IRangefinder2D, public DeviceDriver
+class RpLidar2 : public PeriodicThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
     typedef rp::standalone::rplidar::RPlidarDriver rplidardrv;
 
     void                  handleError(u_result error);
-    yarp::os::ConstString deviceinfo();
+    std::string deviceinfo();
 protected:
     yarp::os::Mutex       m_mutex;
     int                   m_sensorsNum;
@@ -55,13 +55,13 @@ protected:
     bool                  m_inExpressMode;
     int                   m_pwm_val;
     std::vector <Range_t> m_range_skip_vector;
-    yarp::os::ConstString m_info;
+    std::string m_info;
     Device_status         m_device_status;
     yarp::sig::Vector     m_laser_data;
     rplidardrv*           m_drv;
 
 public:
-    RpLidar2(int period = 10) : RateThread(period),
+    RpLidar2(double period = 0.01) : PeriodicThread(period),
         m_sensorsNum(0),
         m_buffer_life(0),
         m_min_angle(0.0),
@@ -94,7 +94,7 @@ public:
     virtual bool getRawData(yarp::sig::Vector &data) override;
     virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) override;
     virtual bool getDeviceStatus     (Device_status &status) override;
-    virtual bool getDeviceInfo       (yarp::os::ConstString &device_info) override;
+    virtual bool getDeviceInfo       (std::string &device_info) override;
     virtual bool getDistanceRange    (double& min, double& max) override;
     virtual bool setDistanceRange    (double min, double max) override;
     virtual bool getScanLimits        (double& min, double& max) override;

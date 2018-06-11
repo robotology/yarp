@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Network.h>
@@ -21,9 +24,9 @@ int main() {
         // prepare a message
         Bottle bot; 
         bot.addString("testing");
-        bot.addInt(i);
+        bot.addInt32(i);
         bot.addString("of");
-        bot.addInt(top);
+        bot.addInt32(top);
         // send the message
         output.write(bot);
         printf("Sent message: %s\n", bot.toString().c_str());

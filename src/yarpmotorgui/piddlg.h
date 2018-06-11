@@ -4,7 +4,7 @@
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
- * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+ * CopyPolicy: Released under the terms of the GPLv2 or later, see LICENSE
  */
 
 
@@ -60,6 +60,7 @@ signals:
     void sendSingleRemoteVariable(std::string key, yarp::os::Bottle val);
     void refreshPids(int jointIndex);
     void updateAllRemoteVariables();
+    void dumpRemoteVariables();
 
 private:
     Ui::PidDlg *ui;
@@ -71,7 +72,7 @@ private slots:
     void onSend();
     void onCancel();
     void onSendRemoteVariable();
-
+    void onDumpRemoteVariables();
 };
 
 class TableIntDelegate : public QItemDelegate

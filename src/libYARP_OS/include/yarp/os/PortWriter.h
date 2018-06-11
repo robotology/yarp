@@ -1,27 +1,30 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_PORTWRITER_H
 #define YARP_OS_PORTWRITER_H
 
-#include <yarp/os/ConnectionWriter.h>
-#include <yarp/os/Type.h>
+#include <yarp/os/api.h>
 
 namespace yarp {
-    namespace os {
-        class PortWriter;
-    }
-}
+namespace os {
+
+class ConnectionWriter;
+class Type;
 
 /**
  * Interface implemented by all objects that can write themselves to
  * the network, such as Bottle objects.
  * @see Port, PortReader
  */
-class YARP_OS_API yarp::os::PortWriter {
+class YARP_OS_API PortWriter
+{
 public:
     /**
      * Destructor.
@@ -39,12 +42,12 @@ public:
      * @param writer an interface to the network connection for writing
      * @return true iff the object is successfully written
      */
-    virtual bool write(ConnectionWriter& writer) = 0;
+    virtual bool write(ConnectionWriter& writer) const = 0;
 
     /**
      * This is called when the port has finished all writing operations.
      */
-    virtual void onCompletion();
+    virtual void onCompletion() const;
 
     /**
      * This is called when the port is about to begin writing operations.
@@ -52,9 +55,12 @@ public:
      * many times by YARP depending on the mix of formats and protocols
      * in use.
      */
-    virtual void onCommencement();
+    virtual void onCommencement() const;
 
-    virtual Type getWriteType() { return Type::anon(); }
+    virtual yarp::os::Type getWriteType() const;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_PORTWRITER_H

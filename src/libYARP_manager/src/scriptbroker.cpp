@@ -1,17 +1,16 @@
 /*
- *  Yarp Modules Manager
- *  Copyright: (C) 2013 Istituto Italiano di Tecnologia (IIT)
- *  Authors: Ali Paikan <ali.paikan@iit.it>
- *           Elena Ceseracciu <elena.ceseracciu@iit.it>
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/manager/scriptbroker.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 #define CONNECTION_TIMEOUT      5.0         //seconds
 
@@ -23,17 +22,17 @@ using namespace std;
 static char slash = NetworkBase::getDirectorySeparator()[0];
 
 ////// adapted from libYARP_OS: ResourceFinder.cpp
-static Bottle parsePaths(const ConstString& txt) {
+static Bottle parsePaths(const std::string& txt) {
     char slash = NetworkBase::getDirectorySeparator()[0];
     char sep = NetworkBase::getPathSeparator()[0];
     Bottle result;
     const char *at = txt.c_str();
     int slash_tweak = 0;
     int len = 0;
-    for (ConstString::size_type i=0; i<txt.length(); i++) {
+    for (std::string::size_type i=0; i<txt.length(); i++) {
         char ch = txt[i];
         if (ch==sep) {
-            result.addString(ConstString(at,len-slash_tweak));
+            result.addString(std::string(at,len-slash_tweak));
             at += len+1;
             len = 0;
             slash_tweak = 0;
@@ -43,7 +42,7 @@ static Bottle parsePaths(const ConstString& txt) {
         len++;
     }
     if (len>0) {
-        result.addString(ConstString(at,len-slash_tweak));
+        result.addString(std::string(at,len-slash_tweak));
     }
     return result;
 }
@@ -71,9 +70,9 @@ bool ScriptLocalBroker::init(const char* szcmd, const char* szparam,
     if(szcmd)
     {
         yarp::os::Bottle possiblePaths = parsePaths(yarp::os::NetworkBase::getEnvironment("PATH"));
-        for (int i=0; i<possiblePaths.size(); ++i)
+        for (size_t i=0; i<possiblePaths.size(); ++i)
         {
-            ConstString guessString=possiblePaths.get(i).asString() + slash + szcmd;
+            std::string guessString=possiblePaths.get(i).asString() + slash + szcmd;
             const char* guess=guessString.c_str();
             if (fileExists (guess))
             {

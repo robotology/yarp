@@ -17,7 +17,7 @@ public:
     if (!writer.writeListHeader(4)) return false;
     if (!writer.writeTag("multiply_point",1,2)) return false;
     if (!writer.write(x)) return false;
-    if (!writer.writeDouble(factor)) return false;
+    if (!writer.writeFloat64(factor)) return false;
     return true;
   }
   virtual bool read(yarp::os::ConnectionReader& connection) {
@@ -44,7 +44,7 @@ bool DemoExtended::read(yarp::os::ConnectionReader& connection) {
   yarp::os::idl::WireReader reader(connection);
   reader.expectAccept();
   if (!reader.readListHeader()) { reader.fail(); return false; }
-  yarp::os::ConstString tag = reader.readTag();
+  std::string tag = reader.readTag();
   while (!reader.isError()) {
     // TODO: use quick lookup, this is just a test
     if (tag == "multiply_point") {
@@ -54,7 +54,7 @@ bool DemoExtended::read(yarp::os::ConnectionReader& connection) {
         reader.fail();
         return false;
       }
-      if (!reader.readDouble(factor)) {
+      if (!reader.readFloat64(factor)) {
         reader.fail();
         return false;
       }
@@ -69,7 +69,7 @@ bool DemoExtended::read(yarp::os::ConnectionReader& connection) {
       return true;
     }
     if (reader.noMore()) { reader.fail(); return false; }
-    yarp::os::ConstString next_tag = reader.readTag();
+    std::string next_tag = reader.readTag();
     if (next_tag=="") break;
     tag = tag + "_" + next_tag;
   }

@@ -1,7 +1,7 @@
 /*
  * Copyright: (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Authors: Nicolò Genesio <nicolo.genesio@iit.it>
- * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 
@@ -34,7 +34,7 @@ private:
     yarp::os::Bottle plugins;
     yarp::os::Bottle portmonitors;
     yarp::os::Bottle carriers;
-    bool scanPlugins(yarp::os::ConstString name, yarp::os::ConstString type="");
+    bool scanPlugins(std::string name, std::string type="");
 };
 
 #endif // YARP_RTF_PLUGINS_YARPPLUGIN_YARPPLUGINFIXTURE_H

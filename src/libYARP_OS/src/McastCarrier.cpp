@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/conf/system.h>
@@ -57,15 +60,15 @@ yarp::os::impl::McastCarrier::~McastCarrier() {
     }
 }
 
-Carrier *yarp::os::impl::McastCarrier::create() {
+Carrier *yarp::os::impl::McastCarrier::create() const {
     return new McastCarrier();
 }
 
-ConstString yarp::os::impl::McastCarrier::getName() {
+std::string yarp::os::impl::McastCarrier::getName() const {
     return "mcast";
 }
 
-int yarp::os::impl::McastCarrier::getSpecifierCode() {
+int yarp::os::impl::McastCarrier::getSpecifierCode() const {
     return 1;
 }
 
@@ -80,7 +83,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto) {
     Contact addr;
 
     Contact alt = proto.getStreams().getLocalAddress();
-    ConstString altKey =
+    std::string altKey =
         proto.getRoute().getFromName() +
         "/net=" + alt.getHost();
     McastCarrier *elect = getCaster().getElect(altKey);
@@ -137,7 +140,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto) {
 bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
     YARP_DEBUG(Logger::get(), "Expecting extra mcast header");
     ManagedBytes block(6);
-    YARP_SSIZE_T len = proto.is().readFull(block.bytes());
+    yarp::conf::ssize_t len = proto.is().readFull(block.bytes());
     if ((size_t)len!=block.length()) {
         YARP_ERROR(Logger::get(), "problem with MCAST header");
         return false;
@@ -147,7 +150,7 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
     int port = -1;
 
     unsigned char *base = (unsigned char *)block.get();
-    ConstString add;
+    std::string add;
     for (int i=0; i<4; i++) {
         ip[i] = base[i];
         if (i!=0) { add += "."; }
@@ -157,7 +160,7 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
     }
     port = 256*base[4]+base[5];
     Contact addr("mcast", add, port);
-    YARP_DEBUG(Logger::get(), ConstString("got mcast header ") + addr.toURI());
+    YARP_DEBUG(Logger::get(), std::string("got mcast header ") + addr.toURI());
     mcastAddress = addr;
 
     return true;
@@ -186,7 +189,7 @@ bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool send
         key += local.getHost();
 
         YARP_DEBUG(Logger::get(),
-                    ConstString("multicast key: ") + key);
+                    std::string("multicast key: ") + key);
         addSender(key);
     }
 
@@ -213,15 +216,15 @@ bool yarp::os::impl::McastCarrier::expectReplyToHeader(ConnectionState& proto) {
     return becomeMcast(proto, true);
 }
 
-void yarp::os::impl::McastCarrier::addSender(const ConstString& key) {
+void yarp::os::impl::McastCarrier::addSender(const std::string& key) {
     getCaster().add(key, this);
 }
 
-void yarp::os::impl::McastCarrier::removeSender(const ConstString& key) {
+void yarp::os::impl::McastCarrier::removeSender(const std::string& key) {
     getCaster().remove(key, this);
 }
 
-bool yarp::os::impl::McastCarrier::isElect() {
+bool yarp::os::impl::McastCarrier::isElect() const {
     void *elect = getCaster().getElect(key);
     //void *elect = caster.getElect(mcastAddress.toString());
     return elect==this || elect==nullptr;
@@ -235,10 +238,10 @@ bool yarp::os::impl::McastCarrier::takeElection()
 }
 
 
-bool yarp::os::impl::McastCarrier::isActive() {
+bool yarp::os::impl::McastCarrier::isActive() const {
     return isElect();
 }
 
-bool yarp::os::impl::McastCarrier::isBroadcast() {
+bool yarp::os::impl::McastCarrier::isBroadcast() const {
     return true;
 }

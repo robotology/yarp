@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef PLAYER_H
@@ -9,7 +12,7 @@
 
 #include <stdlib.h>
 
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include "Thing.h"
 #include "Login.h"
 
@@ -22,7 +25,7 @@ public:
 
 class Player : public Replier {
 public:
-    Player() : mutex(1) {
+    Player() : mutex() {
   
     }
 
@@ -34,27 +37,27 @@ public:
 
     // this sets a callback, to pass messages back to the user
     void setReplier(Replier *n_replier) {
-        mutex.wait();
+        mutex.lock();
         replier = n_replier;
-        mutex.post();
+        mutex.unlock();
     }
 
     // anything that needs to be said is said via the replier callback
     virtual void send(const char *msg) {
-        mutex.wait();
+        mutex.lock();
         if (replier!=NULL) {
             replier->send(msg);
         }
-        mutex.post();
+        mutex.unlock();
     }
 
     // anything that needs to be broadcast is done via the replier callback
     virtual void broadcast(const char *msg) {
-        mutex.wait();
+        mutex.lock();
         if (replier!=NULL) {
             replier->broadcast(msg);
         }
-        mutex.post();
+        mutex.unlock();
     }
 
     // request a move for the player
@@ -92,7 +95,7 @@ public:
 private:
   
     Replier *replier;
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 
     ID id;
     Login login;

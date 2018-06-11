@@ -1,14 +1,18 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_STRINGINPUTSTREAM_H
 #define YARP_OS_STRINGINPUTSTREAM_H
 
 #include <yarp/os/InputStream.h>
-#include <yarp/os/ConstString.h>
+#include <yarp/os/Bytes.h>
+#include <string>
 
 namespace yarp {
     namespace os {
@@ -33,12 +37,12 @@ public:
         data = "";
     }
 
-    void reset(const ConstString& str) {
+    void reset(const std::string& str) {
         at = 0;
         data = str;
     }
 
-    void add(const ConstString& txt) {
+    void add(const std::string& txt) {
         data += txt;
     }
 
@@ -48,10 +52,10 @@ public:
         }
     }
 
-    virtual YARP_SSIZE_T read(const Bytes& b) override {
+    virtual yarp::conf::ssize_t read(Bytes& b) override {
         char *base = b.get();
         size_t space = b.length();
-        YARP_SSIZE_T ct = 0;
+        yarp::conf::ssize_t ct = 0;
         for (size_t i=0; i<space; i++) {
             if (at<data.length()) {
                 base[i] = data[at];
@@ -65,16 +69,16 @@ public:
     virtual void close() override {
     }
 
-    virtual ConstString toString() {
+    virtual std::string toString() const {
         return data;
     }
 
-    virtual bool isOk() override {
+    virtual bool isOk() const override {
         return true;
     }
 
 private:
-    ConstString data;
+    std::string data;
     unsigned int at;
 };
 

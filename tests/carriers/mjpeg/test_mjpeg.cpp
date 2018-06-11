@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/all.h>
@@ -20,13 +21,13 @@ int main(int argc, char *argv[]) {
     Property options;
     options.fromCommand(argc,argv);
 
-    ConstString inName = options.check("in",Value("/mjpeg/in")).asString();
-    ConstString outName = options.check("out",Value("/mjpeg/out")).asString();
+    std::string inName = options.check("in",Value("/mjpeg/in")).asString();
+    std::string outName = options.check("out",Value("/mjpeg/out")).asString();
 
     BufferedPort<ManagedBytes> in; 
     // BufferedPort<Bottle> would also work fine, but less efficient
 
-    BufferedPort<ImageOf<PixelRgb> > out;
+    BufferedPort<FlexImage> out;
 
     if (!in.open(inName)) return 1;
     if (!out.open(outName)) return 1;

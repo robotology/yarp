@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/NetType.h>
@@ -21,7 +24,7 @@ int NetType::netInt(const yarp::os::Bytes& code) {
     return tmp;
 }
 
-bool NetType::netInt(int data, const yarp::os::Bytes& code) {
+bool NetType::netInt(int data, yarp::os::Bytes& code) {
     NetInt32 i = data;
     yarp::os::Bytes b((char*)(&i), sizeof(i));
     if (code.length()!=sizeof(i)) {
@@ -32,32 +35,32 @@ bool NetType::netInt(int data, const yarp::os::Bytes& code) {
     return true;
 }
 
-ConstString NetType::toHexString(int x) {
+std::string NetType::toHexString(int x) {
     char buf[256];
     sprintf(buf, "%x", x);
     return buf;
 }
 
-ConstString NetType::toString(int x) {
+std::string NetType::toString(int x) {
     char buf[256];
     sprintf(buf, "%d", x);
     return buf;
 }
 
-ConstString NetType::toString(long x) {
+std::string NetType::toString(long x) {
     char buf[256];
     sprintf(buf, "%ld", x);
     return buf;
 }
 
-ConstString NetType::toString(unsigned int x) {
+std::string NetType::toString(unsigned int x) {
     char buf[256];
     sprintf(buf, "%u", x);
     return buf;
 }
 
 
-int NetType::toInt(const ConstString& x) {
+int NetType::toInt(const std::string& x) {
     return atoi(x.c_str());
 }
 

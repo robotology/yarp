@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_EVENT_H
@@ -10,10 +13,7 @@
 #include <yarp/os/api.h>
 
 namespace yarp {
-    namespace os {
-        class Event;
-    }
-}
+namespace os {
 
 /**
  * \ingroup key_class
@@ -23,9 +23,9 @@ namespace yarp {
  * can wait for an event to enter a signaled state.
  *
  */
-class YARP_OS_API yarp::os::Event {
+class YARP_OS_API Event
+{
 public:
-
     /**
      * Constructor.  Sets the initial value of the counter.
      * @param autoResetAfterWait if set, reset() will be called
@@ -67,8 +67,14 @@ public:
      */
     void reset();
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-    void *implementation;
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_EVENT_H

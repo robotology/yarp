@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2009 RobotCub Consortium
- * Author: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "SubDevice.h"
@@ -28,20 +31,16 @@ SubDevice::SubDevice() :
     subdevice(nullptr),
     pid(nullptr),
     pos(nullptr),
-    pos2(nullptr),
     vel(nullptr),
-    vel2(nullptr),
     iJntEnc(nullptr),
     iMotEnc(nullptr),
     amp(nullptr),
-    lim2(nullptr),
+    lim(nullptr),
     calib(nullptr),
-    calib2(nullptr),
     iTimed(nullptr),
     iTorque(nullptr),
     iImpedance(nullptr),
     iMode(nullptr),
-    iMode2(nullptr),
     info(nullptr),
     posDir(nullptr),
     iInteract(nullptr),
@@ -53,11 +52,13 @@ SubDevice::SubDevice() :
     attachedF(false)
 {}
 
-bool SubDevice::configure(int b, int t, int n, const std::string &key, yarp::dev::ControlBoardWrapper *_parent)
+bool SubDevice::configure(int wb, int wt, int b, int t, int n, const std::string &key, yarp::dev::ControlBoardWrapper *_parent)
 {
     parent = _parent;
     configuredF=false;
-
+    
+    wbase = wb;
+    wtop = wt;
     base=b;
     top=t;
     axes=n;
@@ -96,21 +97,17 @@ void SubDevice::detach()
 
     pid=nullptr;
     pos=nullptr;
-    pos2=nullptr;
     posDir=nullptr;
     vel=nullptr;
-    vel2=nullptr;
     amp = nullptr;
     iJntEnc=nullptr;
     iMotEnc=nullptr;
-    lim2=nullptr;
+    lim=nullptr;
     calib=nullptr;
-    calib2=nullptr;
     info=nullptr;
     iTorque=nullptr;
     iImpedance=nullptr;
     iMode=nullptr;
-    iMode2=nullptr;
     iTimed=nullptr;
     iInteract=nullptr;
     iVar = nullptr;
@@ -153,20 +150,16 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
         {
             subdevice->view(pid);
             subdevice->view(pos);
-            subdevice->view(pos2);
             subdevice->view(posDir);
             subdevice->view(vel);
-            subdevice->view(vel2);
             subdevice->view(amp);
-            subdevice->view(lim2);
+            subdevice->view(lim);
             subdevice->view(calib);
-            subdevice->view(calib2);
             subdevice->view(info);
             subdevice->view(iTimed);
             subdevice->view(iTorque);
             subdevice->view(iImpedance);
             subdevice->view(iMode);
-            subdevice->view(iMode2);
             subdevice->view(iJntEnc);
             subdevice->view(iMotEnc);
             subdevice->view(iInteract);
@@ -181,7 +174,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             return false;
         }
 
-    if ( ((iMode==nullptr) || (iMode2==nullptr)) && (_subDevVerbose ))
+    if ( ((iMode==nullptr)) && (_subDevVerbose ))
         yWarning("ControlBoardWrapper for part <%s>:  Warning iMode not valid interface.", parentName.c_str());
 
     if ((iTorque==nullptr) && (_subDevVerbose))
@@ -214,22 +207,16 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     int deviceJoints=0;
 
     // checking minimum set of intefaces required
-    if( ! (pos || pos2) ) // One of the 2 is enough, therefore if both are missing I raise an error
+    if( ! (pos) )
     {
         yError("ControlBoarWrapper: neither IPositionControl nor IPositionControl2 interface was not found in subdevice. Quitting");
         return false;
     }
 
-    if( ! (vel || vel2) ) // One of the 2 is enough, therefore if both are missing I raise an error
+    if( ! (vel) )
     {
         yError("ControlBoarWrapper: neither IVelocityControl nor IVelocityControl2 interface was not found in subdevice. Quitting");
         return false;
-    }
-    else
-    {
-        // both have to be correct (and they should 'cause the vel2 is derived from 1. Use a workaround here, then investigate more!!
-        if(vel2 && !vel)
-            vel = vel2;
     }
 
     if(!iJntEnc)
@@ -253,7 +240,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     }
     else
     {
-        if (!pos2->getAxes(&deviceJoints))
+        if (!pos->getAxes(&deviceJoints))
         {
             yError("ControlBoardWrapper for part <%s>: failed to get axes number for subdevice %s.", parentName.c_str(), k.c_str());
             return false;
@@ -280,6 +267,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
                  return false;
     }
 
+    totalAxis = deviceJoints;
     attachedF=true;
     return true;
 }

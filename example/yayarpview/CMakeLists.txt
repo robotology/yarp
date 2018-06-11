@@ -2,9 +2,9 @@
 # compiled YARP.
 
 # Copyright: (C) 2010 Renaud Detry
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 project(yayarpview)
 
 # replace with the path to your YARP binaries if needed

@@ -1,11 +1,14 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/impl/UdpCarrier.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -13,15 +16,15 @@ using namespace yarp::os::impl;
 yarp::os::impl::UdpCarrier::UdpCarrier() {
 }
 
-yarp::os::Carrier *yarp::os::impl::UdpCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::UdpCarrier::create() const {
     return new UdpCarrier();
 }
 
-yarp::os::ConstString yarp::os::impl::UdpCarrier::getName() {
+std::string yarp::os::impl::UdpCarrier::getName() const {
     return "udp";
 }
 
-int yarp::os::impl::UdpCarrier::getSpecifierCode() {
+int yarp::os::impl::UdpCarrier::getSpecifierCode() const {
     return 0;
 }
 
@@ -29,7 +32,7 @@ bool yarp::os::impl::UdpCarrier::checkHeader(const Bytes& header) {
     return getSpecifier(header)%16 == getSpecifierCode();
 }
 
-void yarp::os::impl::UdpCarrier::getHeader(const Bytes& header) {
+void yarp::os::impl::UdpCarrier::getHeader(Bytes& header) const {
     createStandardHeader(getSpecifierCode(), header);
 }
 
@@ -37,11 +40,11 @@ void yarp::os::impl::UdpCarrier::setParameters(const Bytes& header) {
     YARP_UNUSED(header);
 }
 
-bool yarp::os::impl::UdpCarrier::requireAck() {
+bool yarp::os::impl::UdpCarrier::requireAck() const {
     return false;
 }
 
-bool yarp::os::impl::UdpCarrier::isConnectionless() {
+bool yarp::os::impl::UdpCarrier::isConnectionless() const {
     return true;
 }
 
@@ -70,8 +73,8 @@ bool yarp::os::impl::UdpCarrier::respondToHeader(ConnectionState& proto) {
 bool yarp::os::impl::UdpCarrier::expectReplyToHeader(ConnectionState& proto) {
     // I am the sender
     int myPort = proto.getStreams().getLocalAddress().getPort();
-    ConstString myName = proto.getStreams().getLocalAddress().getHost();
-    ConstString altName = proto.getStreams().getRemoteAddress().getHost();
+    std::string myName = proto.getStreams().getLocalAddress().getHost();
+    std::string altName = proto.getStreams().getRemoteAddress().getHost();
 
     int altPort = readYarpInt(proto);
 

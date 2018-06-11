@@ -1,8 +1,10 @@
 /*
-* Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
-* Author: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
-* CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
-*/
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #ifndef DEPTHCAMERA_DRIVER_H
 #define DEPTHCAMERA_DRIVER_H
@@ -78,7 +80,7 @@ public:
     virtual bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL) override;
 
     virtual RGBDSensor_status     getSensorStatus() override;
-    virtual yarp::os::ConstString getLastErrorMsg(Stamp* timeStamp = NULL) override;
+    virtual std::string getLastErrorMsg(Stamp* timeStamp = NULL) override;
 
 private:
     double rgb_h{480};

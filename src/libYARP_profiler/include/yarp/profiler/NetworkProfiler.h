@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
- * Authors: Ali Paikan
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
+
 #ifndef YARP_PROFILER_NETWORK_PROFILER_H
 #define YARP_PROFILER_NETWORK_PROFILER_H
 
@@ -65,11 +67,11 @@ public:
         std::vector<ConnectionInfo> outputs;
         std::vector<ConnectionInfo> inputs;
         ProcessInfo owner;
-        std::string toString() {
+        std::string toString() const {
             std::ostringstream str;
             str<<"port name: "<<name<<std::endl;
             str<<"outputs:"<<std::endl;
-            std::vector<ConnectionInfo>::iterator itr;
+            std::vector<ConnectionInfo>::const_iterator itr;
             for(itr=outputs.begin(); itr!=outputs.end(); itr++)
                 str<<"   + "<<(*itr).name<<" ("<<(*itr).carrier<<")"<<std::endl;
             str<<"inputs:"<<std::endl;

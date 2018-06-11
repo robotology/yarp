@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick, Giacomo Spigler
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Network.h>
@@ -41,7 +44,7 @@ int main(int argc, char *argv[]) {
     options.put("device", "SerialServoBoard");
     options.put("board", config.check("board", yarp::os::Value("ssc32")).asString().c_str());
     options.put("comport", config.check("comport", yarp::os::Value("/dev/ttyS0")).asString().c_str());
-    options.put("baudrate", config.check("baudrate", yarp::os::Value(38400)).asInt());
+    options.put("baudrate", config.check("baudrate", yarp::os::Value(38400)).asInt32());
 
 
     PolyDriver dd(options);

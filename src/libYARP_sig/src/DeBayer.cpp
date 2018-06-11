@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #include <yarp/sig/impl/DeBayer.h>
 #include <yarp/os/Log.h>
@@ -9,14 +16,14 @@ bool deBayer_GRBG8_TO_BGR(yarp::sig::Image &source, yarp::sig::Image &dest, int 
 
         dest.resize(source.width(), source.height());
     // perform conversion, skip borders
-    for (int r = 0; r < source.height() - 2; r += 2)
+    for (size_t r = 0; r < source.height() - 2; r += 2)
     {
         unsigned char *destRow = dest.getRow(r);
         unsigned char *sourceRowCurrent = source.getRow(r);
         unsigned char *sourceRowNext = source.getRow(r + 1);
 
         //row i GRGRGR...
-        for (int c = 0; c < dest.width() - 2; c += 2)
+        for (size_t c = 0; c < dest.width() - 2; c += 2)
         {
             //source is on G pixel
             destRow[0] = sourceRowNext[0];       //blue
@@ -43,7 +50,7 @@ bool deBayer_GRBG8_TO_BGR(yarp::sig::Image &source, yarp::sig::Image &dest, int 
         sourceRowNext = source.getRow(r + 2);
 
         //row is now BGBGBG...
-        for (int c = 0; c < dest.width() - 2; c += 2)
+        for (size_t c = 0; c < dest.width() - 2; c += 2)
         {
             //source is on B pixel
             destRow[0] = sourceRowCurrent[0];   //blue
@@ -75,14 +82,14 @@ bool deBayer_GRBG8_TO_RGB(yarp::sig::Image &source, yarp::sig::Image &dest, int 
 
     dest.resize(source.width(), source.height());
     // perform conversion, skip borders
-    for (int r = 0; r < source.height() - 2; r += 2)
+    for (size_t r = 0; r < source.height() - 2; r += 2)
     {
         unsigned char *destRow = dest.getRow(r);
         unsigned char *sourceRowCurrent = source.getRow(r);
         unsigned char *sourceRowNext = source.getRow(r + 1);
 
         //row i GRGRGR...
-        for (int c = 0; c < source.width() - 2; c += 2)
+        for (size_t c = 0; c < source.width() - 2; c += 2)
         {
             //source is on G pixel
             destRow[0] = sourceRowCurrent[1];    //red
@@ -109,7 +116,7 @@ bool deBayer_GRBG8_TO_RGB(yarp::sig::Image &source, yarp::sig::Image &dest, int 
         sourceRowNext = source.getRow(r + 2);
 
         //row is now BGBGBG...
-        for (int c = 0; c < dest.width() - 2; c += 2)
+        for (size_t c = 0; c < dest.width() - 2; c += 2)
         {
             //source is on B pixel
             destRow[0] = sourceRowNext[1];      //red

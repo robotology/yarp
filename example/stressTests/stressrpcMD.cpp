@@ -1,10 +1,11 @@
-
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <stdio.h>
 
@@ -40,17 +41,17 @@ int main(int argc, char **argv)
     Property parameters;
     parameters.fromCommand(argc, argv);
 
-    ConstString part=parameters.find("part").asString();
-    int id=parameters.find("id").asInt();
+    std::string part=parameters.find("part").asString();
+    int id=parameters.find("id").asInt32();
     double time=0;
     if (parameters.check("time"))
         {
-            time=parameters.find("time").asDouble();
+            time=parameters.find("time").asFloat64();
         }
     else
         time=-1;
 
-    ConstString protocol;
+    std::string protocol;
     if (parameters.check("prot"))
     {
         protocol=parameters.find("prot").asString();
@@ -58,7 +59,7 @@ int main(int argc, char **argv)
     else
         protocol="tcp";
 
-    ConstString rname;
+    std::string rname;
     if (parameters.check("robot"))
     {
         rname=parameters.find("robot").asString();

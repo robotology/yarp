@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_ABSTRACTCONTACTABLE_H
@@ -31,10 +33,6 @@ class YARP_OS_API AbstractContactable : public UnbufferedContactable
 {
 
 public:
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
-    using Contactable::open;
-#endif // YARP_NO_DEPRECATED
-
     /**
      * Get the concrete Port being used for communication.
      */
@@ -46,16 +44,16 @@ public:
     virtual const Port& asPort() const = 0;
 
     // Documented in Contactable
-    virtual bool open(const ConstString& name) override;
+    virtual bool open(const std::string& name) override;
 
     // Documented in Contactable
     virtual bool open(const Contact& contact, bool registerName = true) override;
 
     // Documented in Contactable
-    virtual bool addOutput(const ConstString& name) override;
+    virtual bool addOutput(const std::string& name) override;
 
     // Documented in Contactable
-    virtual bool addOutput(const ConstString& name, const ConstString& carrier) override;
+    virtual bool addOutput(const std::string& name, const std::string& carrier) override;
 
     // Documented in Contactable
     virtual bool addOutput(const Contact& contact) override;
@@ -73,7 +71,7 @@ public:
     virtual Contact where() const override;
 
     // Documented in Contactable
-    virtual ConstString getName() const override;
+    virtual std::string getName() const override;
 
     // Documented in Contactable
     virtual bool setEnvelope(PortWriter& envelope) override;
@@ -127,13 +125,13 @@ public:
     virtual void releaseProperties(Property* prop) override;
 
     // Documented in UnbufferedContactable
-    virtual bool write(PortWriter& writer,
-                       PortWriter* callback = nullptr) const override;
+    virtual bool write(const PortWriter& writer,
+                       const PortWriter* callback = nullptr) const override;
 
     // Documented in UnbufferedContactable
-    virtual bool write(PortWriter& writer,
+    virtual bool write(const PortWriter& writer,
                        PortReader& reader,
-                       PortWriter* callback = nullptr) const override;
+                       const PortWriter* callback = nullptr) const override;
 
     // Documented in UnbufferedContactable
     virtual bool read(PortReader& reader, bool willReply = false) override;

@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/Thread.h>
 #include <yarp/os/impl/ThreadImpl.h>
@@ -12,30 +14,39 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-class ThreadCallbackAdapter : public ThreadImpl {
+class yarp::os::Thread::Private : public ThreadImpl
+{
 private:
     Thread& owner;
 public:
 
-    explicit ThreadCallbackAdapter(Thread& owner) : owner(owner) {
+    explicit Private(Thread& owner) :
+            owner(owner),
+            stopping(false)
+    {
     }
 
-    virtual ~ThreadCallbackAdapter() {
+    virtual ~Private()
+    {
     }
 
-    virtual void beforeStart() override {
+    virtual void beforeStart() override
+    {
         owner.beforeStart();
     }
 
-    virtual void afterStart(bool success) override {
+    virtual void afterStart(bool success) override
+    {
         owner.afterStart(success);
     }
 
-    virtual void run() override {
+    virtual void run() override
+    {
         owner.run();
     }
 
-    virtual void close() override {
+    virtual void close() override
+    {
         if (isRunning()) {
             owner.onStop();
         }
@@ -43,37 +54,39 @@ public:
     }
 
     virtual bool threadInit() override
-    {return owner.threadInit();}
+    {
+        return owner.threadInit();
+    }
 
     virtual void threadRelease() override
-    {owner.threadRelease();}
+    {
+        owner.threadRelease();
+    }
+
+    bool stopping;
 };
 
 
 Thread::Thread() :
-        implementation(new ThreadCallbackAdapter(*this)),
-        stopping(false)
+        mPriv(new Private(*this))
 {
-    yAssert(implementation!=nullptr);
 }
 
-
-Thread::~Thread() {
-    if (implementation) {
-        ((ThreadImpl*)implementation)->close();
-        delete ((ThreadImpl*)implementation);
-        implementation = nullptr;
-    }
+Thread::~Thread()
+{
+    mPriv->close();
+    delete mPriv;
 }
 
-
-bool Thread::join(double seconds) {
-    return ((ThreadImpl*)implementation)->join(seconds) == 0;
+bool Thread::join(double seconds)
+{
+    return mPriv->join(seconds) == 0;
 }
 
-bool Thread::stop() {
-    stopping = true;
-    ((ThreadImpl*)implementation)->close();
+bool Thread::stop()
+{
+    mPriv->stopping = true;
+    mPriv->close();
     return true;
 }
 
@@ -82,63 +95,64 @@ void Thread::onStop()
     // by default this does nothing
 }
 
-bool Thread::start() {
-    stopping = false;
-    return ((ThreadImpl*)implementation)->start();
+bool Thread::start()
+{
+    mPriv->stopping = false;
+    return mPriv->start();
 }
 
-bool Thread::isStopping() {
-    //return ((ThreadImpl*)implementation)->isClosing();
-    return stopping;
+bool Thread::isStopping()
+{
+    //return mPriv->isClosing();
+    return mPriv->stopping;
 }
 
-bool Thread::isRunning() {
-    return ((ThreadImpl*)implementation)->isRunning();
+bool Thread::isRunning()
+{
+    return mPriv->isRunning();
 }
 
-void Thread::beforeStart() {
+void Thread::beforeStart()
+{
 }
 
-void Thread::afterStart(bool success) {
+void Thread::afterStart(bool success)
+{
     YARP_UNUSED(success);
 }
 
-
-void Thread::setOptions(int stackSize) {
-    ((ThreadImpl*)implementation)->setOptions(stackSize);
-}
-
-int Thread::getCount() {
+int Thread::getCount()
+{
     return ThreadImpl::getCount();
 }
 
 // get a unique key
-long int Thread::getKey() {
-    return ((ThreadImpl*)implementation)->getKey();
+long int Thread::getKey()
+{
+    return mPriv->getKey();
 }
 
-long int Thread::getKeyOfCaller() {
+long int Thread::getKeyOfCaller()
+{
     return ThreadImpl::getKeyOfCaller();
 }
 
-
-int Thread::setPriority(int priority, int policy) {
-    return ((ThreadImpl*)implementation)->setPriority(priority, policy);
+int Thread::setPriority(int priority, int policy)
+{
+    return mPriv->setPriority(priority, policy);
 }
 
-
-int Thread::getPriority() {
-    return ((ThreadImpl*)implementation)->getPriority();
+int Thread::getPriority()
+{
+    return mPriv->getPriority();
 }
 
-int Thread::getPolicy() {
-    return ((ThreadImpl*)implementation)->getPolicy();
+int Thread::getPolicy()
+{
+    return mPriv->getPolicy();
 }
 
-void Thread::setDefaultStackSize(int stackSize) {
-    ThreadImpl::setDefaultStackSize(stackSize);
-}
-
-void Thread::yield() {
+void Thread::yield()
+{
     ThreadImpl::yield();
 }

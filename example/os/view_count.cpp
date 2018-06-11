@@ -1,8 +1,12 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
+
 
 #include <yarp/os/all.h>
 #include <stdio.h>
@@ -18,7 +22,7 @@ int main(int argc, char *argv[]) {
 	int count = 1;
 	while (count>0) {
 	    Bottle *msg = in.read();
-		count = msg->get(1).asInt();
+		count = msg->get(1).asInt32();
 		printf("at %d\n", count);
 	}
     

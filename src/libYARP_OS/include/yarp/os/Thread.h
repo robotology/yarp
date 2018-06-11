@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006, 2008 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_THREAD_H
@@ -10,17 +13,16 @@
 #include <yarp/os/api.h>
 
 namespace yarp {
-    namespace os {
-        class Thread;
-    }
-}
+namespace os {
+
 
 /**
  * \ingroup key_class
  *
  * An abstraction for a thread of execution.
  */
-class YARP_OS_API yarp::os::Thread {
+class YARP_OS_API Thread
+{
 public:
 
     /**
@@ -132,14 +134,6 @@ public:
     bool isRunning();
 
     /**
-     * Set the stack size for the new thread.  Must be called before
-     * Thread::start
-     * @param stackSize the desired stack size in bytes (if 0, uses
-     *                  a reasonable default)
-     */
-    void setOptions(int stackSize = 0);
-
-    /**
      * Check how many threads are running.
      * @return the number of threads currently running
      */
@@ -186,13 +180,6 @@ public:
     int getPolicy();
 
     /**
-     * Set the default stack size for all threads created after this
-     * point.  A value of 0 will use a reasonable default.
-     * @param stackSize the desired stack size in bytes.
-     */
-    static void setDefaultStackSize(int stackSize);
-
-    /**
      * The function returns when the thread execution has completed.
      * Stops the execution of the thread that calls this function until either
      * the thread to join has finished execution (when it returns from run())
@@ -207,9 +194,36 @@ public:
      */
     static void yield();
 
+
+#ifndef YARP_NO_DEPRECATED // since YARP 3.0.0
+    /**
+     * Set the stack size for the new thread.  Must be called before
+     * Thread::start
+     * @param stackSize the desired stack size in bytes (if 0, uses
+     *                  a reasonable default)
+     * @deprecated since YARP 3.0.0
+     */
+    YARP_DEPRECATED
+    void setOptions(int stackSize = 0) {};
+
+    /**
+     * Set the default stack size for all threads created after this
+     * point.  A value of 0 will use a reasonable default.
+     * @param stackSize the desired stack size in bytes.
+     */
+    YARP_DEPRECATED
+    static void setDefaultStackSize(int stackSize) {};
+#endif // YARP_NO_DEPRECATED
+
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-    void *implementation;
-    bool stopping;
+    class Private;
+    Private* const mPriv;
+#endif
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_THREAD_H

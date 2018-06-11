@@ -1,9 +1,10 @@
 /*
- * Copyright: (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #ifndef YARP_IPOSITIONDIRECTIMPL_H
 #define YARP_IPOSITIONDIRECTIMPL_H
@@ -29,8 +30,7 @@ class YARP_dev_API yarp::dev::ImplementPositionDirect : public yarp::dev::IPosit
 protected:
     IPositionDirectRaw *iPDirect;
     void    *helper;
-    int     *temp_int;
-    double  *temp_double;
+    int nj;
     /**
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.
@@ -63,7 +63,7 @@ public:
 
     virtual bool getAxes(int *axes) override;
     virtual bool setPosition(int j, double ref) override;
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs) override;
+    virtual bool setPositions(const int n_joint, const int *joints, const double *refs) override;
     virtual bool setPositions(const double *refs) override;
     virtual bool getRefPosition(const int joint, double *ref) override;
     virtual bool getRefPositions(double *refs) override;
@@ -103,7 +103,7 @@ public:
     virtual bool setPosition(int j, double ref) override
     {return NOT_YET_IMPLEMENTED("setPosition");}
 
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs) override
+    virtual bool setPositions(const int n_joint, const int *joints, const double *refs) override
     {return NOT_YET_IMPLEMENTED("setPositions");}
 
     virtual bool setPositions(const double *refs) override

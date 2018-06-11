@@ -1,11 +1,13 @@
 /*
- * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
- * Authors: Ali Paikan and Daniele E. Domenichelli
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/QosStyle.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Vocab.h>
 
 #include <cstdlib>
@@ -34,14 +36,14 @@ void yarp::os::QosStyle::setPacketPriorityByLevel(PacketPriorityLevel level) {
     }
 }
 
-bool yarp::os::QosStyle::setPacketPriority(const ConstString& priority) {
+bool yarp::os::QosStyle::setPacketPriority(const std::string& priority) {
     size_t p = priority.find(':');
-    if (p == ConstString::npos) {
+    if (p == std::string::npos) {
         return false;
     }
 
-    ConstString key = priority.substr(0, p);
-    ConstString value = priority.substr(p+1);
+    std::string key = priority.substr(0, p);
+    std::string value = priority.substr(p+1);
     if (key.length() <= 0 || value.length() <= 0) {
         return false;
     }

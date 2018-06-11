@@ -1,16 +1,18 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Route.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Contact.h>
 
 
 using yarp::os::Route;
-using yarp::os::ConstString;
 using yarp::os::Contact;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -18,10 +20,10 @@ using yarp::os::Contact;
 class Route::Private
 {
 public:
-    Private(const ConstString& fromName,
-            const ConstString& toName,
+    Private(const std::string& fromName,
+            const std::string& toName,
             const Contact& toContact,
-            const ConstString& carrierName) :
+            const std::string& carrierName) :
         fromName(fromName),
         toName(toName),
         toContact(toContact),
@@ -29,10 +31,10 @@ public:
     {
     }
 
-    ConstString fromName;
-    ConstString toName;
+    std::string fromName;
+    std::string toName;
     Contact toContact;
-    ConstString carrierName;
+    std::string carrierName;
 
 };
 
@@ -44,16 +46,16 @@ public:
 
 
 Route::Route() :
-        mPriv(new Private(ConstString(),
-                          ConstString(),
+        mPriv(new Private(std::string(),
+                          std::string(),
                           Contact(),
-                          ConstString()))
+                          std::string()))
 {
 }
 
-Route::Route(const ConstString& fromName,
-             const ConstString& toName,
-             const ConstString& carrierName) :
+Route::Route(const std::string& fromName,
+             const std::string& toName,
+             const std::string& carrierName) :
         mPriv(new Private(fromName,
                           toName,
                           Contact(),
@@ -93,22 +95,22 @@ Route& Route::operator=(Route&& rhs)
     return *this;
 }
 
-const ConstString& Route::getFromName() const
+const std::string& Route::getFromName() const
 {
     return mPriv->fromName;
 }
 
-void Route::setFromName(const ConstString& fromName)
+void Route::setFromName(const std::string& fromName)
 {
     mPriv->fromName = fromName;
 }
 
-const ConstString& Route::getToName() const
+const std::string& Route::getToName() const
 {
     return mPriv->toName;
 }
 
-void Route::setToName(const ConstString& toName)
+void Route::setToName(const std::string& toName)
 {
     mPriv->toName = toName;
 }
@@ -123,12 +125,12 @@ void Route::setToContact(const Contact& toContact)
     mPriv->toContact = toContact;
 }
 
-const ConstString& Route::getCarrierName() const
+const std::string& Route::getCarrierName() const
 {
     return mPriv->carrierName;
 }
 
-void Route::setCarrierName(const ConstString& carrierName)
+void Route::setCarrierName(const std::string& carrierName)
 {
     mPriv->carrierName = carrierName;
 }
@@ -138,40 +140,7 @@ void Route::swapNames()
     mPriv->fromName.swap(mPriv->toName);
 }
 
-ConstString Route::toString() const
+std::string Route::toString() const
 {
     return getFromName() + "->" + getCarrierName() + "->" + getToName();
 }
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
-
-Route Route::addFromName(const ConstString& fromName) const
-{
-    Route result(*this);
-    result.mPriv->fromName = fromName;
-    return result;
-}
-
-Route Route::addToName(const ConstString& toName) const
-{
-    Route result(*this);
-    result.mPriv->toName = toName;
-    return result;
-}
-
-
-Route Route::addToContact(const Contact& toContact) const
-{
-    Route result(*this);
-    result.mPriv->toContact = toContact;
-    return result;
-}
-
-Route Route::addCarrierName(const ConstString& carrierName) const
-{
-    Route result(*this);
-    result.mPriv->carrierName = carrierName;
-    return result;
-}
-
-#endif // YARP_NO_DEPRECATED

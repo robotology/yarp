@@ -1,7 +1,9 @@
 /*
- * Copyright: (C) 2017 Istituto Italiano di Tecnologia (IIT)
- * Author: Valentina Gaggero <valentina.gaggero@iit.it>
- * Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef H264CARRIER_INC
@@ -40,43 +42,43 @@ class yarp::os::H264Carrier : public Carrier
 {
 private:
     bool decoderIsRunning;
-    yarp::os::ConstString envelope;
+    std::string envelope;
     h264Decoder_cfgParamters cfgParams;
 public:
     H264Carrier()
     {;}
 
-    virtual Carrier *create() override
+    virtual Carrier *create() const override
     {
         return new H264Carrier();
     }
 
-    virtual ConstString getName() override;
+    virtual std::string getName() const override;
 
-    virtual bool isConnectionless() override;
+    virtual bool isConnectionless() const override;
 
-    virtual bool canAccept() override;
+    virtual bool canAccept() const override;
 
-    virtual bool canOffer() override;
+    virtual bool canOffer() const override;
 
-    virtual bool isTextMode() override;
+    virtual bool isTextMode() const override;
 
-    virtual bool canEscape() override;
+    virtual bool canEscape() const override;
 
-    virtual void handleEnvelope(const yarp::os::ConstString& envelope) override;
+    virtual void handleEnvelope(const std::string& envelope) override;
 
-    virtual bool requireAck() override;
+    virtual bool requireAck() const override;
 
-    virtual bool supportReply() override;
+    virtual bool supportReply() const override;
 
-    virtual bool isLocal() override;
+    virtual bool isLocal() const override;
 
     // this is important - flips expected flow of messages
-    virtual bool isPush() override;
+    virtual bool isPush() const override;
 
-    virtual ConstString toString() override;
+    virtual std::string toString() const override;
 
-    virtual void getHeader(const Bytes& header) override;
+    virtual void getHeader(Bytes& header) const override;
 
     virtual bool checkHeader(const Bytes& header) override;
 
@@ -97,7 +99,7 @@ public:
 
     virtual bool expectReplyToHeader(ConnectionState& proto) override;
 
-    virtual bool isActive() override;
+    virtual bool isActive() const override;
 
 
     // Payload time!
@@ -114,9 +116,9 @@ public:
 
     virtual bool expectAck(ConnectionState& proto) override;
 
-    virtual ConstString getBootstrapCarrierName() override;
+    virtual std::string getBootstrapCarrierName() const override;
 
-    virtual yarp::os::Face* createFace(void) override;
+    virtual yarp::os::Face* createFace(void) const override;
 
 };
 

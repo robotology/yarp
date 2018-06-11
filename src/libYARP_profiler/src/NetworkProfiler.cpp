@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
- * Authors: Ali Paikan
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/profiler/NetworkProfiler.h>
@@ -13,7 +14,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/Carrier.h>
-#include <yarp/os/impl/Companion.h>
+#include <yarp/companion/impl/Companion.h>
 
 using namespace std;
 using namespace yarp::os;
@@ -44,11 +45,11 @@ bool NetworkProfiler::yarpNameList(ports_name_set &ports, bool complete) {
         return false;
     }
 
-    for (int i=1; i<reply.size(); i++) {
+    for (size_t i=1; i<reply.size(); i++) {
         Bottle *entry = reply.get(i).asList();
         if(entry != nullptr) {
             bool shouldTake = false;
-            ConstString portname = entry->check("name", Value("")).asString();
+            std::string portname = entry->check("name", Value("")).asString();
             if(complete)
             {
                 shouldTake = portname != "";
@@ -89,7 +90,7 @@ bool NetworkProfiler::getPortDetails(const string& portName, PortDetails& info) 
         ping.close();
         return false;
     }
-    for(int i=0; i<reply.size(); i++) {
+    for(size_t i=0; i<reply.size(); i++) {
         ConnectionInfo cnn;
         cnn.name = reply.get(i).asString();
         Bottle reply2;
@@ -110,7 +111,7 @@ bool NetworkProfiler::getPortDetails(const string& portName, PortDetails& info) 
         ping.close();
         return false;
     }
-    for(int i=0; i<reply.size(); i++) {
+    for(size_t i=0; i<reply.size(); i++) {
         ConnectionInfo cnn;
         cnn.name = reply.get(i).asString();
         if(cnn.name != ping.getName())
@@ -132,9 +133,9 @@ bool NetworkProfiler::getPortDetails(const string& portName, PortDetails& info) 
     else {
         info.owner.name = process->find("name").asString();
         info.owner.arguments = process->find("arguments").asString();
-        info.owner.pid = process->find("pid").asInt();
-        info.owner.priority = process->find("priority").asInt();
-        info.owner.policy = process->find("policy").asInt();
+        info.owner.pid = process->find("pid").asInt32();
+        info.owner.priority = process->find("priority").asInt32();
+        info.owner.policy = process->find("policy").asInt32();
     }
 
     Property* platform = reply.find("platform").asDict();
@@ -238,7 +239,7 @@ bool NetworkProfiler::yarpClean(float timeout) {
     char* argv[2];
     argv[0] = (char*) "--timeout";
     argv[1] = (char*) sstream.str().c_str();
-    yarp::os::impl::Companion::getInstance().cmdClean(2,argv);
+    yarp::companion::impl::Companion::getInstance().cmdClean(2,argv);
     return true;
 }
 
@@ -266,7 +267,7 @@ bool NetworkProfiler::creatSimpleModuleGraph(yarp::profiler::graph::Graph& graph
         if(!dynamic_cast<ProcessVertex*>(*itr))
             continue;
         ProcessVertex* pv1 = dynamic_cast<ProcessVertex*>(*itr);
-        ProcessVertex* pv2 = new ProcessVertex(pv1->property.find("pid").asInt(),
+        ProcessVertex* pv2 = new ProcessVertex(pv1->property.find("pid").asInt32(),
                                                pv1->property.find("hostname").asString());
         pv2->property = pv1->property;
         subgraph.insert(*pv2);
@@ -432,7 +433,7 @@ bool NetworkProfiler::setPortmonitorParams(std::string portName, yarp::os::Prope
             yError()<<reply.toString();
             return false;
         }
-        else if(reply.get(0).isInt() && reply.get(0).asInt() == -1) {
+        else if(reply.get(0).isInt32() && reply.get(0).asInt32() == -1) {
             yError()<<reply.toString();
             return false;
         }
@@ -457,7 +458,7 @@ bool NetworkProfiler::getPortmonitorParams(std::string portName, yarp::os::Bottl
             yError()<<param.toString();
             return false;
         }
-        else if(param.get(0).isInt() && param.get(0).asInt() == -1) {
+        else if(param.get(0).isInt32() && param.get(0).asInt32() == -1) {
             yError()<<param.toString();
             return false;
         }

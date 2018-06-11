@@ -1,8 +1,10 @@
 /*
-* Copyright (C) 2017 RobotCub Consortium
-* Author: Marco Randazzo <marco.randazzo@iit.it>
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 /**
  * \infile Tests for Vec2D.
@@ -31,11 +33,10 @@ using namespace yarp::sig;
 using namespace yarp::math;
 using namespace std;
 
-const double TOL = 1e-8;
 
 class Vec2DTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "Vec2DTest"; }
+    virtual std::string getName() const override { return "Vec2DTest"; }
 
     virtual void runTests() override
     {
@@ -81,18 +82,18 @@ public:
         Bottle bot;
         Vec2D<int> vecbot1 (1,2);
         bool copy1 = yarp::os::Portable::copyPortable(vecbot1, bot);
-        checkTrue(copy1 && bot.size() == 2 && bot.get(0).asInt() == vecbot1.x && bot.get(1).asInt() == vecbot1.y, "copyPortable ok");
+        checkTrue(copy1 && bot.size() == 2 && bot.get(0).asInt32() == vecbot1.x && bot.get(1).asInt32() == vecbot1.y, "copyPortable ok");
 
         Vec2D<double> vecbot2 (1.1,2.2);
         bool copy2 = yarp::os::Portable::copyPortable(vecbot2, bot);
-        checkTrue(copy2 && bot.size() == 2 && bot.get(0).asInt() == vecbot1.x && bot.get(1).asInt() == vecbot1.y, "copyPortable ok");
+        checkTrue(copy2 && bot.size() == 2 && bot.get(0).asInt32() == vecbot1.x && bot.get(1).asInt32() == vecbot1.y, "copyPortable ok");
 
-        Bottle bot1; bot1.addInt(7); bot1.addInt(9);
+        Bottle bot1; bot1.addInt32(7); bot1.addInt32(9);
         Vec2D<int> vecbot3;
         bool copy3 = yarp::os::Portable::copyPortable(bot1, vecbot3);
         checkTrue(copy3 && vecbot3.x == 7 && vecbot3.y == 9, "copyPortable ok");
 
-        Bottle bot2; bot2.addDouble(7.1); bot2.addDouble(9.1);
+        Bottle bot2; bot2.addFloat64(7.1); bot2.addFloat64(9.1);
         Vec2D<double> vecbot4;
         bool copy4 = yarp::os::Portable::copyPortable(bot2, vecbot4);
         checkTrue(copy4 && vecbot4.x == 7.1 && vecbot4.y == 9.1, "copyPortable ok");

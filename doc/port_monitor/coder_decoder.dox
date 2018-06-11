@@ -1,10 +1,3 @@
-
-/*
- * Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
- * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
-
 /**
  * @page coder_decoder An example of using the portmonitor object at the both sides of a connection to encode and decode data
 
@@ -90,7 +83,7 @@ Notice that codec.lua acts as coder or decoder depending to which side of the co
 <span style="color:#00b418">-- @return Boolean</span>
 <span style="color:#00b418">--</span>
 PortMonitor.create <span style="color:#0100b6;font-weight:700">=</span> <span style="color:#0100b6;font-weight:700">function</span>(options)
-    isCoder <span style="color:#0100b6;font-weight:700">=</span> (options:find(<span style="color:#d80800">"sender_side"</span>):asInt() <span style="color:#0100b6;font-weight:700">==</span> <span style="color:#cd0000;font-style:italic">1</span>)
+    isCoder <span style="color:#0100b6;font-weight:700">=</span> (options:find(<span style="color:#d80800">"sender_side"</span>):asInt32() <span style="color:#0100b6;font-weight:700">==</span> <span style="color:#cd0000;font-style:italic">1</span>)
     <span style="color:#0100b6;font-weight:700">if</span> isCoder <span style="color:#0100b6;font-weight:700">==</span> <span style="color:#585cf6;font-style:italic">true</span> <span style="color:#0100b6;font-weight:700">then</span>
         <span style="color:#3c4c72;font-weight:700">print</span>(<span style="color:#d80800">"codec.lua: I will encode whatever i get!"</span>)
     <span style="color:#0100b6;font-weight:700">else</span>

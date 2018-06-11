@@ -1,12 +1,15 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Log.h>
 #include <yarp/sig/Image.h>
-#include <yarp/sig/IplImage.h>
+#include <yarp/sig/impl/IplImage.h>
 
 #include <cstring>
 #include <cstdio>
@@ -1221,9 +1224,9 @@ typedef PixelRgbInt Def_VOCAB_PIXEL_RGB_INT;
 #define MAKE_CASE(id1, id2) case HASH(id1, id2): HANDLE_CASE(len, src, Def_##id1, quantum1, topIsLow1, dest, Def_##id2, quantum2, topIsLow2); break;
 
 // More elegant ways to do this, but needs to be efficient at pixel level
-void Image::copyPixels(const unsigned char *src, int id1,
-                       char unsigned *dest, int id2, int w, int h,
-                       int imageSize, int quantum1, int quantum2,
+void Image::copyPixels(const unsigned char *src, size_t id1,
+                       char unsigned *dest, size_t id2, size_t w, size_t h,
+                       size_t imageSize, size_t quantum1, size_t quantum2,
                        bool topIsLow1, bool topIsLow2)
 {
     DBG printf("copyPixels...\n");
@@ -1456,7 +1459,7 @@ void Image::copyPixels(const unsigned char *src, int id1,
         MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_MONO16)
 
         default:
-            printf("*** Tried to copy type %d to %d\n", id1, id2);
+            printf("*** Tried to copy type %zu to %zu\n", id1, id2);
             std::exit(1);
             break;
     }

@@ -5,7 +5,7 @@
  * email:   dperrone@aitek.it
  * website: www.aitek.it
  *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 #include "simpleloader.h"
@@ -74,15 +74,15 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
     }
 
     if (options->check("min")) {
-        plot_minval = (float)options->find("min").asDouble();
+        plot_minval = (float)options->find("min").asFloat64();
     }
 
     if (options->check("max")) {
-        plot_maxval = (float)options->find("max").asDouble();
+        plot_maxval = (float)options->find("max").asFloat64();
     }
 
     if (options->check("size")) {
-        plot_size = options->find("size").asInt();
+        plot_size = options->find("size").asInt32();
     }
 
     if (options->check("bgcolor")) {
@@ -100,7 +100,7 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
 
     if (!indexValue.isList()) {
         // SINGLE PLOT
-        graph_index = indexValue.asInt();
+        graph_index = indexValue.asInt32();
 
         if (options->check("graph_title")) {
             if (options->find("graph_title").isList()) {
@@ -135,7 +135,7 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
                 *ok = false;
                 return;
             }
-            graph_size =  options->find("graph_size").asInt();
+            graph_size =  options->find("graph_size").asInt32();
         } else {
             graph_size = default_graph_size;
         }
@@ -217,8 +217,8 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
             sizes = yarp::os::Bottle::getNullBottle();
         }
 
-        for (int i = 0; i < indexes.size(); i++) {
-            graph_index = indexes.get(i).asInt();
+        for (size_t i = 0; i < indexes.size(); i++) {
+            graph_index = indexes.get(i).asInt32();
 
             if (!titles.isNull()) {
                 graph_title = QString("%1").arg(titles.get(i).asString().data());
@@ -233,7 +233,7 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, 
             }
 
             if (!sizes.isNull()) {
-                graph_size = sizes.get(i).asInt();
+                graph_size = sizes.get(i).asInt32();
             } else {
                 graph_size = default_graph_size;
             }

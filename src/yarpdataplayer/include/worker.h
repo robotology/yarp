@@ -22,7 +22,7 @@
 
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/sig/ImageFile.h>
 #include "include/utils.h"
 #include <yarp/os/Event.h>
@@ -113,7 +113,7 @@ public:
 
 //};
 /**********************************************************/
-class MasterThread : public QObject,  public yarp::os::RateThread
+class MasterThread : public QObject,  public yarp::os::PeriodicThread
 {
 
     friend class Utilities;

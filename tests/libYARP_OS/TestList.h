@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef _YARP2_TESTLIST_
@@ -44,7 +46,7 @@ extern yarp::os::impl::UnitTest& getVocabTest();
 extern yarp::os::impl::UnitTest& getValueTest();
 extern yarp::os::impl::UnitTest& getPortablePairTest();
 extern yarp::os::impl::UnitTest& getTerminatorTest();
-extern yarp::os::impl::UnitTest& getRateThreadTest();
+extern yarp::os::impl::UnitTest& getPeriodicThreadTest();
 extern yarp::os::impl::UnitTest& getStampTest();
 extern yarp::os::impl::UnitTest& getRFModuleTest();
 extern yarp::os::impl::UnitTest& getPortReaderBufferTest();
@@ -53,12 +55,12 @@ extern yarp::os::impl::UnitTest& getResourceFinderTest();
 extern yarp::os::impl::UnitTest& getDgramTwoWayStreamTest();
 extern yarp::os::impl::UnitTest& getSemaphoreTest();
 extern yarp::os::impl::UnitTest& getEventTest();
-extern yarp::os::impl::UnitTest& getRunTest();
 extern yarp::os::impl::UnitTest& getNodeTest();
 extern yarp::os::impl::UnitTest& getPublisherTest();
 extern yarp::os::impl::UnitTest& getLogTest();
 extern yarp::os::impl::UnitTest& getLogStreamTest();
 extern yarp::os::impl::UnitTest& getMessageStackTest();
+extern yarp::os::impl::UnitTest& getTimerTest();
 extern yarp::os::impl::UnitTest& getUnitTestTest();
 
 extern yarp::os::impl::UnitTest& getSystemInfoTest();
@@ -78,7 +80,7 @@ public:
         root.add(getStreamConnectionReaderTest());
         root.add(getBufferedConnectionWriterTest());
         root.add(getThreadTest());
-        root.add(getRateThreadTest());
+        root.add(getPeriodicThreadTest());
         root.add(getProtocolTest());
         root.add(getNameServerTest());
         root.add(getPortCoreTest());
@@ -105,14 +107,9 @@ public:
         root.add(getLogTest());
         root.add(getLogStreamTest());
         root.add(getMessageStackTest());
+        root.add(getTimerTest());
         root.add(getUnitTestTest());
-
         root.add(getSystemInfoTest());
-
-#ifdef BROKEN_TEST
-        root.add(getRunTest());
-#endif
-
     }
 };
 

@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Author: Marco Randazzo <marco.randazzo@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/impl/LogForwarder.h>
@@ -9,26 +11,15 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/SystemInfo.h>
 
-yarp::os::LogForwarder* yarp::os::LogForwarder::instance = nullptr;
 yarp::os::Semaphore *yarp::os::LogForwarder::sem = nullptr;
 
 yarp::os::LogForwarder* yarp::os::LogForwarder::getInstance()
 {
-    if (!instance)
-    {
-        instance = new LogForwarder;
-    }
-    return instance;
-};
-
-void yarp::os::LogForwarder::clearInstance()
-{
-    if (instance)
-    {
-        delete instance;
-    };
-};
+    static LogForwarder instance;
+    return &instance;
+}
 
 void yarp::os::LogForwarder::forward (const std::string& message)
 {
@@ -58,10 +49,11 @@ yarp::os::LogForwarder::LogForwarder()
     outputPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
     char host_name [MAX_STRING_SIZE]; //unsafe
     yarp::os::gethostname(host_name, MAX_STRING_SIZE);
-    char prog_name [MAX_STRING_SIZE]; //unsafe
-    yarp::os::getprogname(prog_name, MAX_STRING_SIZE);
-    int pid = yarp::os::getpid();
-    sprintf(logPortName, "/log/%s/%s/%d", host_name, prog_name, pid);  //unsafe, better to use snprintf when available
+
+    yarp::os::SystemInfo::ProcessInfo processInfo = yarp::os::SystemInfo::getProcessInfo();
+
+    std::snprintf(logPortName, MAX_STRING_SIZE, "/log/%s/%s/%d", host_name, processInfo.name.c_str(), processInfo.pid);
+
     if (outputPort->open(logPortName) == false)
     {
         printf("LogForwarder error while opening port %s\n", logPortName);
@@ -70,8 +62,7 @@ yarp::os::LogForwarder::LogForwarder()
     {
         printf("LogForwarder error while connecting port %s\n", logPortName);
     }
-    //yarp::os::Network::connect(logPortName, "/test");
-};
+}
 
 yarp::os::LogForwarder::~LogForwarder()
 {
@@ -85,7 +76,6 @@ yarp::os::LogForwarder::~LogForwarder()
         b.addString("[INFO] Execution terminated\n");
         outputPort->write(true);
         outputPort->waitForWrite();
-        //outputPort->interrupt();
         outputPort->close();
         delete outputPort;
         outputPort=nullptr;
@@ -93,5 +83,4 @@ yarp::os::LogForwarder::~LogForwarder()
     sem->post();
     delete sem;
     sem = nullptr;
-//     yarp::os::NetworkBase::finiMinimum();
-};
+}

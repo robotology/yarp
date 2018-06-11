@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2012-2014 Istituto Italiano di Tecnologia (IIT)
- * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_LOGSTREAM_H
@@ -12,7 +14,7 @@
 #include <vector>
 
 #include <yarp/os/api.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Log.h>
 #include <yarp/os/Os.h>
 
@@ -139,15 +141,7 @@ public:
         return *this;
     }
 
-#ifndef YARP_CONSTSTRING_IS_STD_STRING
     inline LogStream& operator<<(const std::string &t) {
-        stream->oss << t;
-        stream->oss << ' ';
-        return *this;
-    }
-#endif
-
-    inline LogStream& operator<<(const yarp::os::ConstString &t) {
         stream->oss << t.c_str();
         stream->oss << ' ';
         return *this;

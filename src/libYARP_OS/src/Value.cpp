@@ -1,12 +1,16 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/Value.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/ConnectionWriter.h>
 
 #include <yarp/os/impl/BottleImpl.h>
 
@@ -20,27 +24,27 @@ Value::Value() :
         proxy(nullptr) {
 }
 
-Value::Value(int x, bool isVocab) :
+Value::Value(std::int32_t x, bool isVocab) :
         Portable(),
         Searchable(),
         proxy(nullptr)
 {
     if (!isVocab) {
-        setProxy(static_cast<Storable*>(makeInt(x)));
+        setProxy(static_cast<Storable*>(makeInt32(x)));
     } else {
         setProxy(static_cast<Storable*>(makeVocab(x)));
     }
 }
 
-Value::Value(double x) :
+Value::Value(yarp::conf::float64_t x) :
         Portable(),
         Searchable(),
         proxy(nullptr)
 {
-    setProxy(static_cast<Storable*>(makeDouble(x)));
+    setProxy(static_cast<Storable*>(makeFloat64(x)));
 }
 
-Value::Value(const ConstString& str, bool isVocab) :
+Value::Value(const std::string& str, bool isVocab) :
         Portable(),
         Searchable(),
         proxy(nullptr)
@@ -115,10 +119,22 @@ bool Value::isBool() const
     return proxy->isBool();
 }
 
-bool Value::isInt() const
+bool Value::isInt8() const
 {
     ok();
-    return proxy->isInt();
+    return proxy->isInt8();
+}
+
+bool Value::isInt16() const
+{
+    ok();
+    return proxy->isInt16();
+}
+
+bool Value::isInt32() const
+{
+    ok();
+    return proxy->isInt32();
 }
 
 bool Value::isInt64() const
@@ -127,16 +143,22 @@ bool Value::isInt64() const
     return proxy->isInt64();
 }
 
+bool Value::isFloat32() const
+{
+    ok();
+    return proxy->isFloat32();
+}
+
+bool Value::isFloat64() const
+{
+    ok();
+    return proxy->isFloat64();
+}
+
 bool Value::isString() const
 {
     ok();
     return proxy->isString();
-}
-
-bool Value::isDouble() const
-{
-    ok();
-    return proxy->isDouble();
 }
 
 bool Value::isList() const
@@ -169,16 +191,40 @@ bool Value::asBool() const
     return proxy->asBool();
 }
 
-int Value::asInt() const
+std::int8_t Value::asInt8() const
 {
     ok();
-    return proxy->asInt();
+    return proxy->asInt8();
 }
 
-YARP_INT64 Value::asInt64() const
+std::int16_t Value::asInt16() const
+{
+    ok();
+    return proxy->asInt16();
+}
+
+std::int32_t Value::asInt32() const
+{
+    ok();
+    return proxy->asInt32();
+}
+
+std::int64_t Value::asInt64() const
 {
     ok();
     return proxy->asInt64();
+}
+
+yarp::conf::float32_t Value::asFloat32() const
+{
+    ok();
+    return proxy->asFloat32();
+}
+
+yarp::conf::float64_t Value::asFloat64() const
+{
+    ok();
+    return proxy->asFloat64();
 }
 
 int Value::asVocab() const
@@ -187,13 +233,7 @@ int Value::asVocab() const
     return proxy->asVocab();
 }
 
-double Value::asDouble() const
-{
-    ok();
-    return proxy->asDouble();
-}
-
-ConstString Value::asString() const
+std::string Value::asString() const
 {
     ok();
     return proxy->asString();
@@ -236,14 +276,14 @@ bool Value::read(ConnectionReader& connection)
         delete proxy;
         proxy = nullptr;
     }
-    int x = connection.expectInt();
+    std::int32_t x = connection.expectInt32();
     if ((x&0xffff) != x) return false;
     if (!(x&BOTTLE_TAG_LIST)) return false;
-    int len = connection.expectInt();
+    std::int32_t len = connection.expectInt32();
     if (len==0) return true;
     if (len!=1) return false;
     if (x==BOTTLE_TAG_LIST) {
-        x = connection.expectInt();
+        x = connection.expectInt32();
     } else {
         x &= ~BOTTLE_TAG_LIST;
     }
@@ -254,31 +294,31 @@ bool Value::read(ConnectionReader& connection)
     return s->readRaw(connection);
 }
 
-bool Value::write(ConnectionWriter& connection)
+bool Value::write(ConnectionWriter& connection) const
 {
     if (!proxy) {
-        connection.appendInt(BOTTLE_TAG_LIST);
-        connection.appendInt(0);
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(0);
         return !connection.isError();
     }
-    connection.appendInt(BOTTLE_TAG_LIST);
-    connection.appendInt(1);
+    connection.appendInt32(BOTTLE_TAG_LIST);
+    connection.appendInt32(1);
     return proxy->write(connection);
 }
 
-bool Value::check(const ConstString& key) const
+bool Value::check(const std::string& key) const
 {
     ok();
     return proxy->check(key);
 }
 
-Value& Value::find(const ConstString& key) const
+Value& Value::find(const std::string& key) const
 {
     ok();
     return proxy->find(key);
 }
 
-Bottle& Value::findGroup(const ConstString& key) const
+Bottle& Value::findGroup(const std::string& key) const
 {
     ok();
     return proxy->findGroup(key);
@@ -300,7 +340,7 @@ void Value::fromString(const char *str) {
     setProxy(static_cast<Storable*>(makeValue(str)));
 }
 
-ConstString Value::toString() const
+std::string Value::toString() const
 {
     ok();
     return proxy->toString();
@@ -335,19 +375,37 @@ bool Value::isLeaf() const
     return false;
 }
 
-Value *Value::makeInt(int x)
+Value *Value::makeInt8(std::int8_t x)
 {
-    return new StoreInt(x);
+    return new StoreInt8(x);
 }
 
-
-Value *Value::makeDouble(double x)
+Value *Value::makeInt16(std::int16_t x)
 {
-    return new StoreDouble(x);
+    return new StoreInt16(x);
 }
 
+Value *Value::makeInt32(std::int32_t x)
+{
+    return new StoreInt32(x);
+}
 
-Value *Value::makeString(const ConstString& str)
+Value *Value::makeInt64(std::int64_t x)
+{
+    return new StoreInt64(x);
+}
+
+Value *Value::makeFloat32(yarp::conf::float32_t x)
+{
+    return new StoreFloat32(x);
+}
+
+Value *Value::makeFloat64(yarp::conf::float64_t x)
+{
+    return new StoreFloat64(x);
+}
+
+Value *Value::makeString(const std::string& str)
 {
     return new StoreString(str);
 }
@@ -359,7 +417,7 @@ Value *Value::makeVocab(int v)
 }
 
 
-Value *Value::makeVocab(const ConstString& str)
+Value *Value::makeVocab(const std::string& str)
 {
     return new StoreVocab(Vocab::encode(str));
 }
@@ -367,7 +425,7 @@ Value *Value::makeVocab(const ConstString& str)
 
 Value *Value::makeBlob(void *data, int length)
 {
-    ConstString s((char*)data, length);
+    std::string s((char*)data, length);
     return new StoreBlob(s);
 }
 
@@ -388,7 +446,7 @@ Value *Value::makeList(const char *txt)
 }
 
 
-Value *Value::makeValue(const ConstString& txt)
+Value *Value::makeValue(const std::string& txt)
 {
     Bottle bot(txt);
     if (bot.size()>1) {

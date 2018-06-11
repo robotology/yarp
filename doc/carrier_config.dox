@@ -1,9 +1,3 @@
-/*
- * Copyright (C) 2010 RobotCub Consortium
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
-
 /**
  * @page carrier_config Configuring YARP Connections
 
@@ -236,7 +230,7 @@ streams).  See \ref yarp_http_recv_images.
 yarp connect /src /dest mjpeg
 \endverbatim
 
-To compile this carrier, turn on CREATE_OPTIONAL_CARRIERS and then
+To compile this carrier, turn on YARP_COMPILE_CARRIER_PLUGINS and then
 ENABLE_yarpcar_mjpeg_carrier in CMake.  There will be an extra CMake
 option called MJPEG_AUTOCOMPRESS.  If turned on, this carrier will
 deliver images of standard YARP image format to ports.  If turned

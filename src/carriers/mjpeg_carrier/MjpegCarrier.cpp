@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <cstdio>
 
@@ -163,8 +164,16 @@ bool MjpegCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     jpeg_net_dest(&cinfo);
     cinfo.image_width = w;
     cinfo.image_height = h;
-    cinfo.input_components = 3;
-    cinfo.in_color_space = JCS_RGB;
+
+    if (img->getPixelCode() != VOCAB_PIXEL_MONO) {
+        cinfo.in_color_space = JCS_RGB;
+        cinfo.input_components = 3;
+    }
+    else {
+        cinfo.in_color_space = JCS_GRAYSCALE;
+        cinfo.input_components = 1;
+    }
+
     jpeg_set_defaults(&cinfo);
     //jpeg_set_quality(&cinfo, 85, TRUE);
     dbg_printf("Starting to compress...\n");
@@ -192,8 +201,8 @@ bool MjpegCarrier::reply(ConnectionState& proto, SizedWriter& writer) {
 
 bool MjpegCarrier::sendHeader(ConnectionState& proto) {
     Name n(proto.getRoute().getCarrierName() + "://test");
-    ConstString pathValue = n.getCarrierModifier("path");
-    ConstString target = "GET /?action=stream\n\n";
+    std::string pathValue = n.getCarrierModifier("path");
+    std::string target = "GET /?action=stream\n\n";
     if (pathValue!="") {
         target = "GET /";
         target += pathValue;

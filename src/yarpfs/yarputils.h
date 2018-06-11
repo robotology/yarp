@@ -1,8 +1,11 @@
 /*
- * Copyright (C) 2007 RobotCub Consortium, Giacomo Spigler
- * Authors: Paul Fitzpatrick, Giacomo Spigler
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * Copyright (C) 2007 Giacomo Spigler
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARPUTILS_H
@@ -24,8 +27,6 @@
 #include <string>
 #include <csignal>
 
-#include <ace/Containers_T.h>
-
 using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace std;
@@ -46,7 +47,7 @@ private:
     bool dirty;
     bool _isStem, _isPort, _isAct;
     bool _isSymLink;
-    ConstString link;
+    std::string link;
 
     // New version of check method.  Relies on very up-to-date yarp server.
     // Deals better with non existent directories/files.
@@ -56,7 +57,7 @@ private:
             bool leafLike = (tail=="rw");
 
             NameConfig nc;
-            ConstString name = nc.getNamespace();
+            std::string name = nc.getNamespace();
             Bottle msg, reply;
             msg.addString("bot");
             msg.addString("list");
@@ -143,7 +144,7 @@ public:
         return _isSymLink;
     }
 
-    ConstString getLink() {
+    std::string getLink() {
         if (link=="") {
             Value * v = Network::getProperty(path.c_str(),"link");
             if (v!=NULL) {
@@ -193,7 +194,7 @@ public:
         return ypath.isSymLink();
     }
 
-    ConstString getLink() {
+    std::string getLink() {
         return ypath.getLink();
     }
 

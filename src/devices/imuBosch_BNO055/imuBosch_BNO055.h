@@ -6,7 +6,7 @@
 #define BOSCH_IMU_DEVICE
 
 #include <yarp/sig/Vector.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/dev/SerialInterfaces.h>
@@ -112,7 +112,7 @@ namespace yarp {
 
 
 /**
-*  @ingroup dev_impl_wrapper
+*  @ingroup dev_impl_analog_sensors
 *
 * \section BoschIMU Description of input parameters
 *
@@ -127,7 +127,7 @@ namespace yarp {
 **/
 
 class yarp::dev::BoschIMU:   public yarp::dev::DeviceDriver,
-                             public yarp::os::RateThread,
+                             public yarp::os::PeriodicThread,
                              public yarp::dev::IGenericSensor
 {
 protected:

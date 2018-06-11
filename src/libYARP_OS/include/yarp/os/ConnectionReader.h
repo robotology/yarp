@@ -1,13 +1,16 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_CONNECTIONREADER_H
 #define YARP_OS_CONNECTIONREADER_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/Searchable.h>
@@ -42,32 +45,66 @@ public:
      *
      * @return true on success
      */
-    virtual bool expectBlock(const char *data, size_t len) = 0;
+    virtual bool expectBlock(char *data, size_t len) = 0;
 
     /**
      * Read some text from the network connection.
      * @param terminatingChar The marker for the end of the text
      * @return the text read from the connection
      */
-    virtual ConstString expectText(int terminatingChar = '\n') = 0;
+    virtual std::string expectText(int terminatingChar = '\n') = 0;
 
     /**
      * Read an integer from the network connection.
      * @return the integer read from the connection
+     * @warning Unsafe, sizeof(int) is platform dependent. Use expectInt32 instead.
      */
-    virtual int expectInt() = 0;
+    YARP_DEPRECATED_INTERNAL_MSG("Use expectInt32 instead") // Since YARP 3.0.0
+    virtual int expectInt() final { return static_cast<int>(expectInt32()); }
 
     /**
-     * Read a 64 bit integer from the network connection.
+     * Read a 8-bit integer from the network connection.
      * @return the integer read from the connection
      */
-    virtual YARP_INT64 expectInt64() = 0;
+    virtual std::int8_t expectInt8() = 0;
+
+    /**
+     * Read a 16-bit integer from the network connection.
+     * @return the integer read from the connection
+     */
+    virtual std::int16_t expectInt16() = 0;
+
+    /**
+     * Read a 32-bit integer from the network connection.
+     * @return the integer read from the connection
+     */
+    virtual std::int32_t expectInt32() = 0;
+
+    /**
+     * Read a 64-bit integer from the network connection.
+     * @return the integer read from the connection
+     */
+    virtual std::int64_t expectInt64() = 0;
 
     /**
      * Read a floating point number from the network connection.
      * @return the floating point number read from the connection
+     * @warning Unsafe, sizeof(double) is platform dependent. Use expectFloat64 instead.
      */
-    virtual double expectDouble() = 0;
+    YARP_DEPRECATED_INTERNAL_MSG("Use expectFloat64 instead") // Since YARP 3.0.0
+    virtual double expectDouble() { return static_cast<double>(expectFloat64()); }
+
+    /**
+     * Read a 32-bit floating point number from the network connection.
+     * @return the floating point number read from the connection
+     */
+    virtual yarp::conf::float32_t expectFloat32() = 0;
+
+    /**
+     * Read a 64-bit floating point number from the network connection.
+     * @return the floating point number read from the connection
+     */
+    virtual yarp::conf::float64_t expectFloat64() = 0;
 
     /**
      * Check if the connection is text mode.  If it is, you are
@@ -75,14 +112,14 @@ public:
      * representation of your data structure.
      * @return true if the connection is text mode (as opposed to binary)
      */
-    virtual bool isTextMode() = 0;
+    virtual bool isTextMode() const = 0;
 
     /**
      * Check if the connection is bare mode.  If it is, you are
      * encouraged to omit type information from your serialization.
      * @return true if the connection is bare
      */
-    virtual bool isBareMode() = 0;
+    virtual bool isBareMode() const = 0;
 
     /**
      * Reads in a standard description in text mode, and converts
@@ -98,7 +135,7 @@ public:
      * Checks how much data is available.
      * @return the number of bytes left on the connection.
      */
-    virtual size_t getSize() = 0;
+    virtual size_t getSize() const = 0;
 
 
     /**
@@ -122,7 +159,7 @@ public:
      * this returns nullptr.
      * @return The message object, or nullptr if not available
      */
-    virtual Portable *getReference() = 0;
+    virtual Portable *getReference() const = 0;
 
     /**
      * Gets information about who is supplying the data being read, if
@@ -131,7 +168,7 @@ public:
      * @return contact information about sender (Contact::invalid if not
      * available)
      */
-    virtual Contact getRemoteContact() = 0;
+    virtual Contact getRemoteContact() const = 0;
 
     /**
      * Gets information about who is receiving the data, if that
@@ -140,19 +177,19 @@ public:
      * @return contact information about sender (Contact::invalid if not
      * available)
      */
-    virtual Contact getLocalContact() = 0;
+    virtual Contact getLocalContact() const = 0;
 
     /**
      * @return true if the reader is valid.  Invalid readers may signal
      * a shutdown.
      */
-    virtual bool isValid() = 0;
+    virtual bool isValid() const = 0;
 
     /**
      * @return true if the reader is active.  Readers become inactive
      * if the connection they are associated with breaks.
      */
-    virtual bool isActive() = 0;
+    virtual bool isActive() const = 0;
 
     /**
      * @return true if the reader encountered an error.  Readers can
@@ -160,7 +197,7 @@ public:
      * protocols like UDP/Multicast, where losses are not unexpected,
      * this error flag will be reset for the next incoming message.
      */
-    virtual bool isError() = 0;
+    virtual bool isError() const = 0;
 
     /**
      * Tag the connection to be dropped after the current message.
@@ -173,7 +210,7 @@ public:
      * @return connection configuration object
      *
      */
-    virtual Searchable& getConnectionModifiers() = 0;
+    virtual const Searchable& getConnectionModifiers() const = 0;
 
     /**
      * Store an integer to return on the next call to expectInt()

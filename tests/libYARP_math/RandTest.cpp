@@ -1,9 +1,11 @@
 /*
-* Copyright (C) 2010 RobotCub Consortium
-* Author: Lorenzo Natale
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
-
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 /**
  * \infile Tests for Rand.h/Rand.cpp
@@ -26,7 +28,7 @@ using namespace yarp::math;
 
 class RandTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "RandTest"; }
+    virtual std::string getName() const override { return "RandTest"; }
 
     void normalRnd()
     {

@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Author: Marco Randazzo <marco.randazzo@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/dev/IRobotDescription.h>
@@ -30,7 +32,7 @@ bool yarp::dev::RobotDescriptionServer::open(yarp::os::Searchable &config)
         return false;
     }
 
-    ConstString local_rpc = m_local_name;
+    std::string local_rpc = m_local_name;
     local_rpc += "/rpc";
 
     if (!m_rpc_port.open(local_rpc.c_str()))

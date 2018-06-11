@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "MjpegDecompression.h"
@@ -141,8 +142,7 @@ public:
     void init() {
         jpeg_create_decompress(&cinfo);
     }
-
-    bool decompress(const Bytes& cimg, ImageOf<PixelRgb>& img) {
+    bool decompress(const Bytes& cimg, FlexImage& img) {
         bool debug = false;
 
         if (!active) {
@@ -158,10 +158,19 @@ public:
             return false;
         }
 
-        jpeg_net_src(&cinfo,cimg.get(),cimg.length());
+        jpeg_net_src(&cinfo,(char*)cimg.get(),cimg.length());
         jpeg_save_markers(&cinfo, JPEG_COM, 0xFFFF);
         jpeg_read_header(&cinfo, TRUE);
         jpeg_calc_output_dimensions(&cinfo);
+
+        if(cinfo.jpeg_color_space == JCS_GRAYSCALE) {
+            img.setPixelCode(VOCAB_PIXEL_MONO);
+        }
+        else
+        {
+            img.setPixelCode(VOCAB_PIXEL_RGB);
+        }
+
         if (debug) printf("Got image %dx%d\n", cinfo.output_width, cinfo.output_height);
         img.resize(cinfo.output_width,cinfo.output_height);
         jpeg_start_decompress(&cinfo);
@@ -170,7 +179,7 @@ public:
         int at = 0;
         while (cinfo.output_scanline < cinfo.output_height) {
             JSAMPLE *lines[1];
-            lines[0] = (JSAMPLE*)(&img.pixel(0,at));
+            lines[0] = (JSAMPLE*)(img.getPixelAddress(0,at));
             jpeg_read_scanlines(&cinfo, lines, 1);
             at++;
         }
@@ -211,7 +220,7 @@ MjpegDecompression::~MjpegDecompression() {
 
 
 bool MjpegDecompression::decompress(const yarp::os::Bytes& data,
-                                    yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+                                    FlexImage &image) {
     MjpegDecompressionHelper& helper = HELPER(system_resource);
     return helper.decompress(data, image);
 }

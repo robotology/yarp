@@ -1,40 +1,50 @@
 /*
- * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
- * Authors: Francesco Romano
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/RecursiveMutex.h>
-#include <yarp/os/impl/LockImpl.h>
-#include <yarp/os/LogStream.h>
+#include <mutex>
 
-using namespace yarp::os::impl;
-using namespace yarp::os;
+using yarp::os::RecursiveMutex;
 
-RecursiveMutex::RecursiveMutex() {
-    implementation = new RecursiveLockImpl();
-    yAssert(implementation!=nullptr);
+class RecursiveMutex::Private
+{
+public:
+    std::recursive_mutex mutex;
+};
+
+RecursiveMutex::RecursiveMutex() :
+        mPriv(new Private)
+{
 }
 
-RecursiveMutex::~RecursiveMutex() {
-    RecursiveLockImpl *lock = static_cast<RecursiveLockImpl*>(implementation);
-    if (lock) {
-        delete lock;
-        implementation = nullptr;
-    }
+RecursiveMutex::~RecursiveMutex()
+{
+    delete mPriv;
 }
 
-void RecursiveMutex::lock() {
-    RecursiveLockImpl *lock = static_cast<RecursiveLockImpl*>(implementation);
-    lock->lock();
+void RecursiveMutex::lock()
+{
+    mPriv->mutex.lock();
 }
 
-bool RecursiveMutex::tryLock() {
-    RecursiveLockImpl *lock = static_cast<RecursiveLockImpl*>(implementation);
-    return lock->tryLock();
+bool RecursiveMutex::try_lock()
+{
+    return mPriv->mutex.try_lock();
 }
 
-void RecursiveMutex::unlock() {
-    RecursiveLockImpl *lock = static_cast<RecursiveLockImpl*>(implementation);
-    lock->unlock();
+void RecursiveMutex::unlock()
+{
+    mPriv->mutex.unlock();
 }
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+bool RecursiveMutex::tryLock()
+{
+    return mPriv->mutex.try_lock();
+}
+#endif // YARP_NO_DEPRECATED

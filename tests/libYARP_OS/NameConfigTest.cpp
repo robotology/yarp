@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/impl/NameConfig.h>
@@ -15,15 +17,15 @@ using namespace yarp::os::impl;
 
 class NameConfigTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "NameConfigTest"; }
+    virtual std::string getName() const override { return "NameConfigTest"; }
 
     void testRead() {
         report(0,"no tests yet");
         //report(0,"checking writing the config file");
         NameConfig nc;
         //bool result = nc.createPath("/tmp/work/bozo/foo/namer.conf");
-        ConstString fname = nc.getConfigFileName();
-        //ConstString txt = nc.readConfig(fname);
+        std::string fname = nc.getConfigFileName();
+        //std::string txt = nc.readConfig(fname);
         report(0,fname);
         //report(0,txt);
     }

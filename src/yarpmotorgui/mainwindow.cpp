@@ -4,7 +4,7 @@
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
- * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+ * CopyPolicy: Released under the terms of the GPLv2 or later, see LICENSE
  */
 
 
@@ -99,7 +99,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     std::map<std::string, yarp::os::Bottle> customPositions;
 
-    for (int index = 0; index < ini.size(); ++index) {
+    for (size_t index = 0; index < ini.size(); ++index) {
         //Look for groups starting with "customPosition_"
         yarp::os::Value item = ini.get(index);
         if (!item.isList()) continue;

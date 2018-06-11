@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Ze Ji
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  *
  */
 
@@ -32,8 +32,6 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-#include <ace/Vector_T.h>
-
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
@@ -42,11 +40,9 @@
 //#include <libftdi/ftdi.h>
 #include <usb.h>
 #include <iostream>
-#include <ace/DEV_Connector.h>
-#include <ace/TTY_IO.h>
 #include <yarp/os/Time.h>
 
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 
 #define MOTION_COMPLETION_TOLERANCE 3
 
@@ -150,7 +146,7 @@ private:
 
     ErrorCode checkAnswerPacket(unsigned char* packet, const char*& message);
 
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 
     unsigned char *jointNumbers;
 

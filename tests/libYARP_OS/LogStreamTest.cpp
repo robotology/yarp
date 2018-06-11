@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2012-2014 Istituto Italiano di Tecnologia (IIT)
- * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/LogStream.h>
 
@@ -14,7 +14,7 @@
 
 class LogStreamTest : public yarp::os::impl::UnitTest {
 public:
-    virtual yarp::os::ConstString getName() override { return "LogStreamTest"; }
+    virtual std::string getName() const override { return "LogStreamTest"; }
 
     void checkLogStream() {
         int i = 13;

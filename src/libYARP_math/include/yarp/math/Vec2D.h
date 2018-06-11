@@ -1,8 +1,10 @@
 /*
-* Author: Marco Randazzo
-* Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #ifndef YARP_MATH_VEC2D_H
 #define YARP_MATH_VEC2D_H
@@ -13,17 +15,11 @@
 #include <yarp/os/Portable.h>
 #include <type_traits>
 
-namespace yarp
-{
-    namespace math
-    {
-        template <typename T>
-        class Vec2D;
-    }
-}
+namespace yarp {
+namespace math {
 
 template <typename T>
-class YARP_math_API yarp::math::Vec2D : public yarp::os::Portable
+class YARP_math_API Vec2D : public yarp::os::Portable
 {
     static_assert (std::is_same<int, T>::value ||
                    std::is_same<double, T>::value, "Vec2D can be specialized only as int, double");
@@ -66,9 +62,9 @@ public:
     * Write vector to a connection.
     * return true if a Vec2D was written correctly
     */
-    virtual bool write(yarp::os::ConnectionWriter& connection) override;
+    virtual bool write(yarp::os::ConnectionWriter& connection) const override;
 
-    virtual yarp::os::Type getType() override
+    virtual yarp::os::Type getType() const override
     {
         return yarp::os::Type::byName("yarp/vec2D");
     }
@@ -80,6 +76,9 @@ public:
     bool operator == (const yarp::math::Vec2D<T>& rhs);
     bool operator != (const yarp::math::Vec2D<T>& rhs);
 };
+
+} // namespace math
+} // namespace yarp
 
 //operators
 template <typename T>

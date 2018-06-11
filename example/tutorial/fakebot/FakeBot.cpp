@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "FakeBot.h"
@@ -71,23 +74,23 @@ void scramble(unsigned char& ch, float f) {
 
 
 bool FakeBot::open(yarp::os::Searchable& config) {
-    ConstString backFile = config.check("background",Value(""),
+    std::string backFile = config.check("background",Value(""),
                                         "background image to use").asString();
     if (backFile!="") {
         yarp::sig::file::read(back,backFile.c_str());
     }
-    ConstString foreFile = config.check("target",Value(""),
+    std::string foreFile = config.check("target",Value(""),
                                         "target image to use").asString();
     if (foreFile!="") {
         yarp::sig::file::read(fore,foreFile.c_str());
     }
     noiseLevel = config.check("noise",Value(0.05),
-                              "pixel noise level").asDouble();
+                              "pixel noise level").asFloat64();
 
     xScale = config.check("sx",Value(1.0),
-                          "scaling for x coordinate").asDouble();
+                          "scaling for x coordinate").asFloat64();
     yScale = config.check("sy",Value(1.0),
-                          "scaling for y coordinate").asDouble();
+                          "scaling for y coordinate").asFloat64();
 
     return true;
 }

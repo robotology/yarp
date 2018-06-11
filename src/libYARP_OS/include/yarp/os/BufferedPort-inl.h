@@ -1,13 +1,17 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_BUFFEREDPORT_INL_H
 #define YARP_OS_BUFFEREDPORT_INL_H
 
 #include <yarp/os/BufferedPort.h>
+#include <yarp/os/Type.h>
 
 template <typename T>
 yarp::os::BufferedPort<T>::BufferedPort() :
@@ -34,7 +38,7 @@ yarp::os::BufferedPort<T>::~BufferedPort()
 }
 
 template <typename T>
-bool yarp::os::BufferedPort<T>::open(const ConstString& name)
+bool yarp::os::BufferedPort<T>::open(const std::string& name)
 {
     attachIfNeeded();
     return port.open(name);
@@ -48,13 +52,13 @@ bool yarp::os::BufferedPort<T>::open(const Contact& contact, bool registerName)
 }
 
 template <typename T>
-bool yarp::os::BufferedPort<T>::addOutput(const ConstString& name)
+bool yarp::os::BufferedPort<T>::addOutput(const std::string& name)
 {
     return port.addOutput(name);
 }
 
 template <typename T>
-bool yarp::os::BufferedPort<T>::addOutput(const ConstString& name, const ConstString& carrier)
+bool yarp::os::BufferedPort<T>::addOutput(const std::string& name, const std::string& carrier)
 {
     return port.addOutput(name, carrier);
 }
@@ -101,7 +105,7 @@ yarp::os::Contact yarp::os::BufferedPort<T>::where() const
 }
 
 template <typename T>
-yarp::os::ConstString yarp::os::BufferedPort<T>::getName() const
+std::string yarp::os::BufferedPort<T>::getName() const
 {
     return where().getName();
 }

@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2008 RobotCub Consortium
- * Authors: Lorenzo Natale and Ugo Pattacini
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_CARTESIANCONTROL_H
@@ -43,7 +46,7 @@ struct yarp::dev::CartesianEventParameters
      *  - "closing": the server is being shut down.
      *  - "*": a tag for all-events.
      */
-    yarp::os::ConstString type;
+    std::string type;
 
     /*!
      * The user specifies the motion check-point that raises a
@@ -65,7 +68,7 @@ struct yarp::dev::CartesianEventVariables
      * The signature of the received event as filled by the event
      *  handler.
      */
-    yarp::os::ConstString type;
+    std::string type;
 
     /*!
      * Contain the time instant of the source when the event took
@@ -182,14 +185,14 @@ public:
      * \param p can be "position" or "orientation".
      * \return true/false on success/failure.
      */
-    virtual bool setPosePriority(const yarp::os::ConstString &p) = 0;
+    virtual bool setPosePriority(const std::string &p) = 0;
 
     /*!
      * Get the current pose priority. [wait for reply]
      * \param p here is returned either as "position" or "orientation".
      * \return true/false on success/failure.
      */
-    virtual bool getPosePriority(yarp::os::ConstString &p) = 0;
+    virtual bool getPosePriority(std::string &p) = 0;
 
     /*!
      * Get the current pose of the end-effector. [do not wait for

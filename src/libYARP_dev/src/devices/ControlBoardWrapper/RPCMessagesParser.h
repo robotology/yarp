@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Author: Alberto Cardellino
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_CONTROLBOARDWRAPPER_RPCMESSAGESPARSER_H
@@ -22,7 +24,7 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/dev/Wrapper.h>
 
 #include <string>
@@ -75,20 +77,17 @@ protected:
     yarp::dev::ControlBoardWrapper      *ControlBoardWrapper_p;
     yarp::dev::IPidControl              *rpc_IPid;
     yarp::dev::IPositionControl         *rpc_IPosCtrl;
-    yarp::dev::IPositionControl2        *rpc_IPosCtrl2;
     yarp::dev::IPositionDirect          *rpc_IPosDirect;
     yarp::dev::IVelocityControl         *rpc_IVelCtrl;
-    yarp::dev::IVelocityControl2        *rpc_IVelCtrl2;
     yarp::dev::IEncodersTimed           *rpc_IEncTimed;
     yarp::dev::IMotorEncoders           *rpc_IMotEnc;
     yarp::dev::IAmplifierControl        *rcp_IAmp;
-    yarp::dev::IControlLimits2          *rcp_Ilim2;
+    yarp::dev::IControlLimits           *rcp_Ilim;
     yarp::dev::ITorqueControl           *rpc_ITorque;
     yarp::dev::IControlMode             *rpc_iCtrlMode;
-    yarp::dev::IControlMode2            *rpc_iCtrlMode2;
     yarp::dev::IAxisInfo                *rpc_AxisInfo;
     yarp::dev::IRemoteCalibrator        *rpc_IRemoteCalibrator;
-    yarp::dev::IControlCalibration2     *rpc_Icalib2;
+    yarp::dev::IControlCalibration      *rpc_Icalib;
     yarp::dev::IImpedanceControl        *rpc_IImpedance;
     yarp::dev::IInteractionMode         *rpc_IInteract;
     yarp::dev::IMotor                   *rpc_IMotor;
@@ -97,7 +96,7 @@ protected:
     yarp::dev::IPWMControl              *rpc_IPWM;
     yarp::sig::Vector                   tmpVect;
     yarp::os::Stamp                     lastRpcStamp;
-    yarp::os::Semaphore                 mutex;
+    yarp::os::Mutex                     mutex;
     int                                 controlledJoints;
 
 public:

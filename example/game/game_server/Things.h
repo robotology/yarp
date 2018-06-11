@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef THINGS_H
@@ -31,7 +34,7 @@ public:
     }
 
     static bool isFluid(ID x) {
-        return x.asInt()>=theta.asInt();
+        return x.asInt32()>=theta.asInt32();
     }
 
     ID create() {
@@ -39,7 +42,7 @@ public:
         ID result = at;
         created.bind(at,at);
         things.bind(at,Thing());
-        at = at.asInt()+1;
+        at = at.asInt32()+1;
         return result;
     }
 

@@ -1,20 +1,27 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium, Anne van Rossum
- * Authors: Paul Fitzpatrick, Anne van Rossum
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * Copyright (C) 2006 Anne van Rossum <anne@almende.com>
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/impl/SocketTwoWayStream.h>
 #include <yarp/os/impl/NameConfig.h>
+#include <yarp/os/impl/TcpAcceptor.h>
+#include <yarp/os/impl/TcpStream.h>
+#include <yarp/os/impl/TcpConnector.h>
 
 #ifdef YARP_HAS_ACE
 #  include <ace/INET_Addr.h>
 #  include <ace/os_include/netinet/os_tcp.h>
-#else
-#  include <yarp/os/impl/TcpAcceptor.h>
-#  include <yarp/os/impl/TcpStream.h>
-#  include <yarp/os/impl/TcpConnector.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
+#elif(__unix__)
 #  include <netinet/tcp.h>
 #endif
 
@@ -25,9 +32,9 @@ int SocketTwoWayStream::open(const Contact& address) {
     if (address.getPort()==-1) {
         return -1;
     }
-    ConstString host = address.getHost();
+    std::string host = address.getHost();
+    yarp::os::impl::TcpConnector connector;
 #ifdef YARP_HAS_ACE
-    ACE_SOCK_Connector connector;
     if (address.getHost() == "localhost") {
         // ACE does not like localhost.  At all.
         NameConfig config;
@@ -42,7 +49,6 @@ int SocketTwoWayStream::open(const Contact& address) {
     }
     int result = connector.connect(stream, addr, timeout, ACE_Addr::sap_any, 1);
 #else
-    TcpConnector connector;
     int result;
 
     if (address.hasTimeout())
@@ -73,7 +79,7 @@ int SocketTwoWayStream::open(const Contact& address) {
     return result;
 }
 
-int SocketTwoWayStream::open(ACE_SOCK_Acceptor& acceptor) {
+int SocketTwoWayStream::open(yarp::os::impl::TcpAcceptor& acceptor) {
     int result = acceptor.accept(stream);
     if (result>=0) {
         happy = true;
@@ -83,12 +89,9 @@ int SocketTwoWayStream::open(ACE_SOCK_Acceptor& acceptor) {
 }
 
 void SocketTwoWayStream::updateAddresses() {
-    //int zero = 0;
     int one = 1;
-
+    stream.set_option(IPPROTO_TCP, TCP_NODELAY, &one, sizeof(int));
 #ifdef YARP_HAS_ACE
-    stream.set_option (ACE_IPPROTO_TCP, TCP_NODELAY, &one,
-                       sizeof(int));
     ACE_INET_Addr local, remote;
     stream.get_local_addr(local);
     stream.get_remote_addr(remote);
@@ -99,8 +102,6 @@ void SocketTwoWayStream::updateAddresses() {
     localAddress = Contact(localHostAddress, local.get_port_number());
     remoteAddress = Contact(remoteHostAddress, remote.get_port_number());
 #else
-    stream.set_option (IPPROTO_TCP, TCP_NODELAY, &one,
-                       sizeof(int));
     struct sockaddr local;
     struct sockaddr remote;
     memset(&local, 0, sizeof(local));

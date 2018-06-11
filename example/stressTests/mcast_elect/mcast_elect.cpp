@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <stdio.h>
@@ -13,7 +16,7 @@ using namespace yarp::os;
 
 class Porter : public Thread {
 public:
-  ConstString name;
+  std::string name;
   BufferedPort<Bottle> port;
 
   virtual void run() {
@@ -39,8 +42,8 @@ public:
     if (!b.read(con)) {
       return false;
     }
-    ConstString src = con.getRemoteContact().getName();
-    ConstString txt = b.get(0).asString();
+    std::string src = con.getRemoteContact().getName();
+    std::string txt = b.get(0).asString();
     printf("Reading [%s] from [%s]\n", txt.c_str(), src.c_str());
     if (src!=txt) {
       printf("YIKES!!!\n");
@@ -67,7 +70,7 @@ int main() {
       p.open("/reader");
       Porter writer[N];
       for (int i=0; i<N; i++) {
-	ConstString name = ConstString("/writer/") + ConstString::toString(i);
+	std::string name = std::string("/writer/") + std::string::toString(i);
 	writer[i].name = name;
 	writer[i].port.open(name);
       }

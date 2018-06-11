@@ -1,11 +1,13 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/SharedLibraryFactory.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Os.h>
 
 yarp::os::SharedLibraryFactory::SharedLibraryFactory() :
@@ -96,7 +98,7 @@ int yarp::os::SharedLibraryFactory::getStatus() const
     return status;
 }
 
-yarp::os::ConstString yarp::os::SharedLibraryFactory::getError() const
+std::string yarp::os::SharedLibraryFactory::getError() const
 {
     return error;
 }
@@ -124,17 +126,17 @@ int yarp::os::SharedLibraryFactory::removeRef()
     return rct;
 }
 
-yarp::os::ConstString yarp::os::SharedLibraryFactory::getName() const
+std::string yarp::os::SharedLibraryFactory::getName() const
 {
     return name;
 }
 
-yarp::os::ConstString yarp::os::SharedLibraryFactory::getClassName() const
+std::string yarp::os::SharedLibraryFactory::getClassName() const
 {
     return className;
 }
 
-yarp::os::ConstString yarp::os::SharedLibraryFactory::getBaseClassName() const
+std::string yarp::os::SharedLibraryFactory::getBaseClassName() const
 {
     return baseClassName;
 }

@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
- * Authors: Ali Paikan and Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef PRIORITYCARRIER_INC
@@ -14,7 +15,7 @@
 #include <yarp/os/NullConnectionReader.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/BufferedPort.h>
 
 #include <yarp/sig/Vector.h>
@@ -59,7 +60,7 @@ public:
 
 
 #ifdef WITH_PRIORITY_DEBUG
-class yarp::os::PriorityDebugThread : public yarp::os::RateThread {
+class yarp::os::PriorityDebugThread : public yarp::os::PeriodicThread {
 public:
     PriorityDebugThread(PriorityCarrier* carrier);
     virtual ~PriorityDebugThread();
@@ -70,7 +71,7 @@ public:
 public:
     int count;
     PriorityCarrier* pcarrier;
-    ConstString debugPortName;
+    std::string debugPortName;
     BufferedPort<yarp::sig::Vector> debugPort;
 };
 #endif //WITH_PRIORITY_DEBUG
@@ -113,19 +114,19 @@ public:
         }
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new PriorityCarrier();
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() const override {
         return "priority";
     }
 
-    virtual ConstString toString() override {
+    virtual std::string toString() const override {
         return "priority_carrier";
     }
 
-    bool isResting(double priority){
+    bool isResting(double priority) {
         return ((timeResting > 0) &&
                 ((priority < 0) || (priority >= STIMUL_THRESHOLD)));
     }
@@ -159,16 +160,16 @@ public:
 
     virtual void setCarrierParams(const yarp::os::Property& params) override {
         yarp::os::Property property = params;
-        timeConstant = property.check("tc", Value(timeConstant)).asDouble();
-        timeResting = property.check("tr", Value(timeResting)).asDouble();
-        stimulation = property.check("st", Value(stimulation)).asDouble();
-        baias = property.check("bs", Value(baias)).asDouble();
+        timeConstant = property.check("tc", Value(timeConstant)).asFloat64();
+        timeResting = property.check("tr", Value(timeResting)).asFloat64();
+        stimulation = property.check("st", Value(stimulation)).asFloat64();
+        baias = property.check("bs", Value(baias)).asFloat64();
         isVirtual = property.check("virtual", Value(isVirtual)).asBool();
         if(property.check("ex"))
             excitation = property.findGroup("ex");
     }
 
-    virtual void getCarrierParams(yarp::os::Property& params) override {
+    virtual void getCarrierParams(yarp::os::Property& params) const override {
         params.put("tc", timeConstant);
         params.put("tr", timeResting);
         params.put("st", stimulation);
@@ -189,12 +190,12 @@ public:
     bool isActive;                  // true if port is in active state X(t)
     double baias;                   // baias value for excitation
     Bottle excitation;              // a list of exitatory signals as (name, value)
-    ConstString sourceName;
+    std::string sourceName;
 
     double yi;                      // this is set in the recalculate() for the debug purpose
 
 private:
-    ConstString portName;
+    std::string portName;
     PriorityGroup *group;
 
     static ElectionOf<PriorityGroup> *peers;

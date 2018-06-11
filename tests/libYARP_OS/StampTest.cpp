@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2007 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <cmath>
@@ -22,7 +24,7 @@ using namespace yarp::os;
 
 class StampTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "StampTest"; }
+    virtual std::string getName() const override { return "StampTest"; }
 
     void checkFormat() {
         report(0, "checking Stamp can serialize ok...");
@@ -45,8 +47,8 @@ public:
             Bottle bot;
             bot.read(con.getReader());
 
-            checkEqual(bot.get(0).asInt(), 55, "sequence number write");
-            checkTrue (fabs(bot.get(1).asDouble()-1)<0.0001, "time stamp write");
+            checkEqual(bot.get(0).asInt32(), 55, "sequence number write");
+            checkTrue (fabs(bot.get(1).asFloat64()-1)<0.0001, "time stamp write");
 
 
             stampToWrite.write(con.getCleanWriter());
@@ -137,10 +139,10 @@ public:
             Stamp env(42,3.0);
             BufferedConnectionWriter buf(true);
             env.write(buf);
-            ConstString str = buf.toString();
+            std::string str = buf.toString();
             Bottle bot(str.c_str());
-            checkEqual(bot.get(0).asInt(),42,"sequence ok");
-            checkEqualish(bot.get(1).asDouble(),3,"time ok");
+            checkEqual(bot.get(0).asInt32(),42,"sequence ok");
+            checkEqualish(bot.get(1).asFloat64(),3,"time ok");
         }
     }
 

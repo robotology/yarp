@@ -157,10 +157,4 @@ Creates a gui. Connects automatically to:
 Linux and Windows.
 
 \author Francesco Nori
-
-Copyright (C) 2008 RobotCub Consortium
-
-CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
-This file can be edited at doc/yarpmotorgui.dox.
 */

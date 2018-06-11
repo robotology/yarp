@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Ping.h>
@@ -11,7 +14,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Vocab.h>
 
 #include <cstdio>
@@ -67,8 +70,8 @@ void Ping::report() {
 }
 
 
-ConstString Ping::renderTime(double t, int space, int decimal) {
-    ConstString unit = "";
+std::string Ping::renderTime(double t, int space, int decimal) {
+    std::string unit = "";
     double times = 1;
     if (space<0) {
         yError("Negative space");
@@ -94,19 +97,19 @@ ConstString Ping::renderTime(double t, int space, int decimal) {
 
 class PingSampler : public PortReader {
 public:
-    Semaphore mutex;
+    Mutex mutex;
     int ct;
     double lastTime;
     Stat period;
 
-    PingSampler() : mutex(1) { ct = 0; lastTime = 0; }
+    PingSampler() : mutex() { ct = 0; lastTime = 0; }
 
     virtual bool read(ConnectionReader& connection) override {
         double now = SystemClock::nowSystem();
         Bottle b;
         bool ok = b.read(connection);
         if (ok) {
-            mutex.wait();
+            mutex.lock();
             ct++;
             if (ct>1) {
                 double dt = now - lastTime;
@@ -117,7 +120,7 @@ public:
                    period.mean(),
                    period.deviation(),
                    ct);
-            mutex.post();
+            mutex.unlock();
         }
         return ok;
     }

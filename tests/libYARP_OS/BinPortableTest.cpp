@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/conf/system.h>
@@ -11,14 +13,12 @@
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/impl/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/NetInt32.h>
 
 #include <yarp/os/impl/UnitTest.h>
-//#include "TestList.h"
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -28,7 +28,7 @@ YARP_BEGIN_PACK
 class BinPortableTarget {
 public:
     BinPortableTarget() {
-        tag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
+        tag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT32;
         len = 2;
     }
 
@@ -42,7 +42,7 @@ YARP_END_PACK
 
 class BinPortableTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "BinPortableTest"; }
+    virtual std::string getName() const override { return "BinPortableTest"; }
 
     void testInt() {
         report(0,"checking binary read/write of native int");

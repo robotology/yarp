@@ -1,12 +1,15 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/AbstractContactable.h>
+#include <yarp/os/Type.h>
 
-bool yarp::os::AbstractContactable::open(const ConstString& name)
+bool yarp::os::AbstractContactable::open(const std::string& name)
 {
     return asPort().open(name);
 }
@@ -17,13 +20,13 @@ bool yarp::os::AbstractContactable::open(const Contact& contact,
     return asPort().open(contact, registerName);
 }
 
-bool yarp::os::AbstractContactable::addOutput(const ConstString& name)
+bool yarp::os::AbstractContactable::addOutput(const std::string& name)
 {
     return asPort().addOutput(name);
 }
 
-bool yarp::os::AbstractContactable::addOutput(const ConstString& name,
-                                              const ConstString& carrier)
+bool yarp::os::AbstractContactable::addOutput(const std::string& name,
+                                              const std::string& carrier)
 {
     return asPort().addOutput(name, carrier);
 }
@@ -53,7 +56,7 @@ yarp::os::Contact yarp::os::AbstractContactable::where() const
     return asPort().where();
 }
 
-yarp::os::ConstString yarp::os::AbstractContactable::getName() const
+std::string yarp::os::AbstractContactable::getName() const
 {
     return asPort().getName();
 }
@@ -143,15 +146,15 @@ void yarp::os::AbstractContactable::releaseProperties(Property *prop)
     asPort().releaseProperties(prop);
 }
 
-bool yarp::os::AbstractContactable::write(PortWriter& writer,
-                                          PortWriter* callback) const
+bool yarp::os::AbstractContactable::write(const PortWriter& writer,
+                                          const PortWriter* callback) const
 {
     return asPort().write(writer, callback);
 }
 
-bool yarp::os::AbstractContactable::write(PortWriter& writer,
+bool yarp::os::AbstractContactable::write(const PortWriter& writer,
                                           PortReader& reader,
-                                          PortWriter *callback) const
+                                          const PortWriter *callback) const
 {
     return asPort().write(writer, reader, callback);
 }

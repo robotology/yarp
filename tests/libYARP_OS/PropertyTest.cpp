@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Property.h>
@@ -23,7 +25,7 @@ using namespace yarp::os;
 
 class PropertyTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "PropertyTest"; }
+    virtual std::string getName() const override { return "PropertyTest"; }
 
     void checkPutGet() {
         report(0,"checking puts and gets");
@@ -50,9 +52,9 @@ public:
         Property p;
         p.put("ten",10);
         p.put("pi",(double)3.14);
-        checkEqual(p.find("ten").asInt(),10,"ten");
-        checkTrue(p.find("pi").asDouble()>3,"pi>3");
-        checkTrue(p.find("pi").asDouble()<4,"pi<4");
+        checkEqual(p.find("ten").asInt32(),10,"ten");
+        checkTrue(p.find("pi").asFloat64()>3,"pi>3");
+        checkTrue(p.find("pi").asFloat64()<4,"pi<4");
         p.unput("ten");
         checkTrue(p.find("ten").isNull(),"unput");
     }
@@ -62,23 +64,23 @@ public:
         report(0,"checking that issue https://github.com/robotology/yarp/issues/1057 is properly solved");
         double val = 1e-5;
         p.fromString("(dbl 0.00001)");
-        checkTrue(std::fabs(p.find("dbl").asDouble() - val) < DBL_EPSILON, "checking 1e-5");
+        checkTrue(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON, "checking 1e-5");
         p.unput("dbl");
         val = 1e-6;
         p.fromString("(dbl 0.000001)");
-        checkTrue(std::fabs(p.find("dbl").asDouble() - val) < DBL_EPSILON, "checking 1e-6");
+        checkTrue(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON, "checking 1e-6");
         p.unput("dbl");
         val = 1e-7;
         p.fromString("(dbl 0.0000001)");
-        checkTrue(std::fabs(p.find("dbl").asDouble() - val) < DBL_EPSILON, "checking 1e-7");
+        checkTrue(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON, "checking 1e-7");
         p.unput("dbl");
         val = 1e-8;
         p.fromString("(dbl 0.00000001)");
-        checkTrue(std::fabs(p.find("dbl").asDouble() - val) < DBL_EPSILON, "checking 1e-8");
+        checkTrue(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON, "checking 1e-8");
         p.unput("dbl");
         val = 1e-9;
         p.fromString("(dbl 0.000000001)");
-        checkTrue(std::fabs(p.find("dbl").asDouble() - val) < DBL_EPSILON, "checking 1e-9");
+        checkTrue(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON, "checking 1e-9");
     }
 
 
@@ -96,7 +98,7 @@ public:
         report(0,"checking external forms");
         Property p;
         p.fromString("(foo 12) (testing left right)");
-        checkEqual(p.find("foo").asInt(),12,"good key 1");
+        checkEqual(p.find("foo").asInt32(),12,"good key 1");
         checkEqual(p.find("testing").asString().c_str(),"left","good key 2");
         checkEqual(p.findGroup("testing").toString().c_str(),
                    "testing left right","good key 2 (more)");
@@ -109,30 +111,30 @@ public:
         const char *args[] = {"CMD","--size","10","20","--mono","on"};
         p3.fromCommand(5,args);
         Bottle bot(p3.toString().c_str());
-        checkEqual(bot.size(),2,"right number of terms");
+        checkEqual(bot.size(),(size_t) 2,"right number of terms");
         checkEqual(p3.findGroup("size").get(1).toString().c_str(),"10","width");
         checkEqual(p3.findGroup("size").get(2).toString().c_str(),"20","height");
-        checkTrue(p3.findGroup("size").get(1).isInt(),"width type");
-        checkEqual(p3.findGroup("size").get(1).asInt(),10,"width type val");
+        checkTrue(p3.findGroup("size").get(1).isInt32(),"width type");
+        checkEqual(p3.findGroup("size").get(1).asInt32(),10,"width type val");
 
         report(0,"reading from config-style string");
         Property p4;
         p4.fromConfig("size 10 20\nmono on\n");
         Bottle bot2(p4.toString().c_str());
-        checkEqual(bot2.size(),2,"right number of terms");
+        checkEqual(bot2.size(),(size_t) 2,"right number of terms");
         checkEqual(p4.findGroup("size").get(1).toString().c_str(),"10","width");
         checkEqual(p4.findGroup("size").get(2).toString().c_str(),"20","height");
-        checkTrue(p4.findGroup("size").get(1).isInt(),"width type");
-        checkEqual(p4.findGroup("size").get(1).asInt(),10,"width type val");
+        checkTrue(p4.findGroup("size").get(1).isInt32(),"width type");
+        checkEqual(p4.findGroup("size").get(1).asInt32(),10,"width type val");
 
         report(0,"more realistic config-style string");
         Property p5;
         p5.fromConfig("[cat1]\nsize 10 20\nmono on\n[cat2]\nfoo\t100\n");
         Bottle bot3(p5.toString().c_str());
-        checkEqual(bot3.size(),2,"right number of terms");
-        checkEqual(p5.findGroup("cat1").findGroup("size").get(1).asInt(),
+        checkEqual(bot3.size(),(size_t) 2,"right number of terms");
+        checkEqual(p5.findGroup("cat1").findGroup("size").get(1).asInt32(),
                    10,"category 1, size, width");
-        checkEqual(p5.findGroup("cat2").findGroup("foo").get(1).asInt(),
+        checkEqual(p5.findGroup("cat2").findGroup("foo").get(1).asInt32(),
                    100,"category 2, foo");
 
         report(0,"command line style string");
@@ -168,11 +170,11 @@ public:
         int argc = 7;
         Property p;
         p.fromCommand(argc,argv);
-        checkEqual(p.findGroup("x").findGroup("y").find("z").asInt(),10,"x::y::z ok");
+        checkEqual(p.findGroup("x").findGroup("y").find("z").asInt32(),10,"x::y::z ok");
         Property p2("(x (y (z 45) (r 92))) (winding roads)");
         p2.fromCommand(argc,argv,true,false);
-        checkEqual(p2.findGroup("x").findGroup("y").find("z").asInt(),10,"x::y::z #2 ok");
-        checkEqual(p2.findGroup("x").findGroup("y").find("r").asInt(),92,"x::y::r ok");
+        checkEqual(p2.findGroup("x").findGroup("y").find("z").asInt32(),10,"x::y::z #2 ok");
+        checkEqual(p2.findGroup("x").findGroup("y").find("r").asInt32(),92,"x::y::r ok");
     }
 
     void checkLineBreak() {
@@ -187,21 +189,21 @@ public:
         report(0,"checking hex");
         Property p;
         p.fromString("(CanAddress 0x0C)");
-        checkEqual(p.find("CanAddress").asInt(),12,"0x0C");
+        checkEqual(p.find("CanAddress").asInt32(),12,"0x0C");
         p.fromString("(CanAddress 0x0E)");
-        checkEqual(p.find("CanAddress").asInt(),14,"0x0E");
+        checkEqual(p.find("CanAddress").asInt32(),14,"0x0E");
         p.fromString("(CanAddress 0x0c)");
-        checkEqual(p.find("CanAddress").asInt(),12,"0x0c");
+        checkEqual(p.find("CanAddress").asInt32(),12,"0x0c");
         p.fromString("(CanAddress 0x0e)");
-        checkEqual(p.find("CanAddress").asInt(),14,"0x0e");
+        checkEqual(p.find("CanAddress").asInt32(),14,"0x0e");
         p.fromString("(CanAddress 0xff)");
-        checkEqual(p.find("CanAddress").asInt(),255,"0xff");
+        checkEqual(p.find("CanAddress").asInt32(),255,"0xff");
         p.fromConfig("\
 CanAddress1 0x0C\n\
 CanAddress2 0x0E\n\
 ");
-        checkEqual(p.find("CanAddress1").asInt(),12,"config text 0x0C");
-        checkEqual(p.find("CanAddress2").asInt(),14,"config text 0x0E");
+        checkEqual(p.find("CanAddress1").asInt32(),12,"config text 0x0C");
+        checkEqual(p.find("CanAddress2").asInt32(),14,"config text 0x0E");
 
         const char *fname1 = "_yarp_regression_test1.txt";
 
@@ -213,8 +215,8 @@ CanAddress2 0x0E\n\
         fout = nullptr;
 
         p.fromConfigFile(fname1);
-        checkEqual(p.find("CanAddress1").asInt(),14,"config text 0x0E");
-        checkEqual(p.find("CanAddress2").asInt(),12,"config text 0x0C");
+        checkEqual(p.find("CanAddress1").asInt32(),14,"config text 0x0E");
+        checkEqual(p.find("CanAddress2").asInt32(),12,"config text 0x0C");
     }
 
     virtual void checkCopy() {
@@ -223,7 +225,7 @@ CanAddress2 0x0E\n\
         p0.fromString("(foo 12) (testing left right)");
         {
             Property p(p0);
-            checkEqual(p.find("foo").asInt(),12,"good key 1");
+            checkEqual(p.find("foo").asInt32(),12,"good key 1");
             checkEqual(p.find("testing").asString().c_str(),"left",
                        "good key 2");
             checkEqual(p.findGroup("testing").toString().c_str(),
@@ -233,7 +235,7 @@ CanAddress2 0x0E\n\
             Property p;
             p.fromString("bozo");
             p = p0;
-            checkEqual(p.find("foo").asInt(),12,"good key 1");
+            checkEqual(p.find("foo").asInt32(),12,"good key 1");
             checkEqual(p.find("testing").asString().c_str(),"left",
                        "good key 2");
             checkEqual(p.findGroup("testing").toString().c_str(),
@@ -253,8 +255,8 @@ yarp2 ${__YARP__}\n\
 yarp3 pre_${__YARP__}_post\n\
 ");
         checkEqual(p.find("color").asString().c_str(),"red","normal key");
-        checkEqual(p.find("yarp1").asInt(),1,"basic expansion");
-        checkEqual(p.find("yarp2").asInt(),1,"expansion with parenthesis");
+        checkEqual(p.find("yarp1").asInt32(),1,"basic expansion");
+        checkEqual(p.find("yarp2").asInt32(),1,"expansion with parenthesis");
         checkEqual(p.find("yarp3").asString().c_str(),"pre_1_post",
                    "expansion with neighbor");
 
@@ -275,8 +277,8 @@ x 10\n\
 y 20\n\
 check $x $y\n\
 ");
-        checkEqual(p.findGroup("check").get(1).asInt(),10,"local x is ok");
-        checkEqual(p.findGroup("check").get(2).asInt(),20,"local y is ok");
+        checkEqual(p.findGroup("check").get(1).asInt32(),10,"local x is ok");
+        checkEqual(p.findGroup("check").get(2).asInt32(),20,"local y is ok");
     }
 
 
@@ -299,9 +301,9 @@ check $x $y\n\
         report(0,"checking nested forms");
         Property p;
         p.fromConfig("[sect a]\nhello there\n[sect b]\nx 10\n");
-        ConstString sects = p.findGroup("sect").tail().toString();
+        std::string sects = p.findGroup("sect").tail().toString();
         checkEqual(sects.c_str(),"a b","section list present");
-        ConstString hello = p.findGroup("a").find("hello").asString();
+        std::string hello = p.findGroup("a").find("hello").asString();
         checkEqual(hello.c_str(),"there","individual sections present");
     }
 
@@ -309,17 +311,17 @@ check $x $y\n\
         report(0,"checking comments");
         Property p;
         p.fromConfig("x 10\n// x 11\n");
-        checkEqual(p.find("x").asInt(),10,"comment ignored ok");
+        checkEqual(p.find("x").asInt32(),10,"comment ignored ok");
         p.fromConfig("url \"http://www.robotcub.org\"\n");
         checkEqual(p.find("url").asString().c_str(),"http://www.robotcub.org","url with // passed ok");
         p.fromConfig("x 10 # 15");
-        checkEqual(p.findGroup("x").size(),2,"group size with # ok");
+        checkEqual(p.findGroup("x").size(),(size_t) 2,"group size with # ok");
         p.fromConfig("x 10 // 15");
-        checkEqual(p.findGroup("x").size(),2,"group size with // ok");
+        checkEqual(p.findGroup("x").size(),(size_t) 2,"group size with // ok");
         p.fromConfig("x \"# 1 // 2\" 4 5");
-        checkEqual(p.findGroup("x").size(),4,"group size with quoting ok");
+        checkEqual(p.findGroup("x").size(),(size_t) 4,"group size with quoting ok");
         p.fromConfig("x 10#15 4 5");
-        checkEqual(p.findGroup("x").size(),4,"group size with x#y ok");
+        checkEqual(p.findGroup("x").size(),(size_t) 4,"group size with x#y ok");
         report(0,"checking comment in configuration file");
         p.fromConfig("robotName icub \n urdf_file model.urdf \n # this is trash \n");
         checkEqual(p.check("#"),false,"presence of comment line properly ignored in fromConfig");
@@ -343,8 +345,8 @@ check $x $y\n\
         p_no_spaces.fromConfig("torso_yaw = ((0.275,\"0B3M0\"),(0.275,\"0B3M1\"),(0.55,\"0B4M0\"))\n");
         checkEqual(p_no_spaces.find("torso_yaw").isList(),true,"list without spaces correctly loaded");
         checkEqual(p_spaces.find("torso_yaw").isList(),true,"list with spaces correctly loaded");
-        checkEqual(p_no_spaces.find("torso_yaw").asList()->size(),3,"list without spaces loaded with correct size");
-        checkEqual(p_spaces.find("torso_yaw").asList()->size(),3,"list with spaces loaded with correct size");
+        checkEqual(p_no_spaces.find("torso_yaw").asList()->size(),(size_t) 3,"list without spaces loaded with correct size");
+        checkEqual(p_spaces.find("torso_yaw").asList()->size(),(size_t) 3,"list with spaces loaded with correct size");
     }
 
     virtual void checkWipe() {
@@ -352,8 +354,8 @@ check $x $y\n\
         Property p;
         p.put("x",12);
         p.fromConfig("y 20",false);
-        checkEqual(p.find("x").asInt(),12,"x is ok");
-        checkEqual(p.find("y").asInt(),20,"y is ok");
+        checkEqual(p.find("x").asInt32(),12,"x is ok");
+        checkEqual(p.find("y").asInt32(),20,"y is ok");
     }
 
     virtual void checkBackslashPath() {
@@ -361,7 +363,7 @@ check $x $y\n\
         // if passed on command-line, don't be shocked
         report(0,"checking backslash path behavior");
         Property p;
-        ConstString target = "conf\\brains-brains.ini";
+        std::string target = "conf\\brains-brains.ini";
         const char *argv[] = {
             "PROGRAM NAME",
             "--file",
@@ -398,8 +400,8 @@ check $x $y\n\
 
             Property p;
             p.fromConfigFile(fname2);
-            checkEqual(p.find("x").asInt(),1,"x is ok");
-            checkEqual(p.find("y").asInt(),2,"y is ok");
+            checkEqual(p.find("x").asInt32(),1,"x is ok");
+            checkEqual(p.find("y").asInt32(),2,"y is ok");
         }
 
 
@@ -428,8 +430,8 @@ check $x $y\n\
             */
             Property p;
             p.fromConfigFile(fname2);
-            checkEqual(p.findGroup("base").find("x").asInt(),1,"x is ok");
-            checkEqual(p.find("y").asInt(),2,"y is ok");
+            checkEqual(p.findGroup("base").find("x").asInt32(),1,"x is ok");
+            checkEqual(p.find("y").asInt32(),2,"y is ok");
             checkEqual(p.findGroup("base").toString().c_str(),
                        "base (x 1)","expected external structure");
         }
@@ -454,10 +456,10 @@ check $x $y\n\
 
             Property p;
             p.fromConfigFile(fname2);
-            checkEqual(p.findGroup("base").find("x").asInt(),1,"x is ok");
-            checkEqual(p.find("y").asInt(),2,"y is ok");
-            checkEqual(p.findGroup("base").find("z").asInt(),3,"z is ok");
-            checkEqual(p.findGroup("base").find("w").asInt(),4,"w is ok");
+            checkEqual(p.findGroup("base").find("x").asInt32(),1,"x is ok");
+            checkEqual(p.find("y").asInt32(),2,"y is ok");
+            checkEqual(p.findGroup("base").find("z").asInt32(),3,"z is ok");
+            checkEqual(p.findGroup("base").find("w").asInt32(),4,"w is ok");
         }
 
         {
@@ -479,10 +481,10 @@ check $x $y\n\
 
             Property p;
             p.fromConfigFile(fname2);
-            checkEqual(p.findGroup("b1").find("x").asInt(),1,"x is ok");
+            checkEqual(p.findGroup("b1").find("x").asInt32(),1,"x is ok");
             checkEqual(p.findGroup("base").get(1).asString().c_str(),
                        "b1","list element 1 is ok");
-            checkEqual(p.findGroup("b2").find("x").asInt(),1,"x is ok");
+            checkEqual(p.findGroup("b2").find("x").asInt32(),1,"x is ok");
             checkEqual(p.findGroup("base").get(2).asString().c_str(),
                        "b2","list element 2 is ok");
         }
@@ -553,8 +555,8 @@ check $x $y\n\
         propRoot.fromConfigFile(root_file_name);
         report(0,"Parsing root_file_check ");
         propRootCheck.fromConfigFile(root_file_check_name);
-        checkEqual(propRoot.findGroup("root_group").find("bau").asInt(),10,"root_group is found in root_file");
-        checkEqual(propRootCheck.findGroup("root_group").find("bau").asInt(),10,"root_group is found in root_file_check");
+        checkEqual(propRoot.findGroup("root_group").find("bau").asInt32(),10,"root_group is found in root_file");
+        checkEqual(propRootCheck.findGroup("root_group").find("bau").asInt32(),10,"root_group is found in root_file_check");
 
     }
 
@@ -571,9 +573,9 @@ check $x $y\n\
         int argc = 5;
         Property p;
         p.fromCommand(argc,argv);
-        ConstString target1 = "(cmd \"ls foo\") (on \"/server\")";
-        ConstString target2 = "(on \"/server\") (cmd \"ls foo\")";
-        ConstString actual = p.toString();
+        std::string target1 = "(cmd \"ls foo\") (on \"/server\")";
+        std::string target2 = "(on \"/server\") (cmd \"ls foo\")";
+        std::string actual = p.toString();
         if (actual==target1) {
             checkEqual(actual.c_str(),target1.c_str(),"command ok");
         } else {
@@ -584,7 +586,7 @@ check $x $y\n\
     virtual void checkDirectory() {
         report(0,"checking directory scanning");
         // change directory name if test files removed
-        ConstString dirname = "__test_dir_1";
+        std::string dirname = "__test_dir_1";
         if (yarp::os::stat(dirname.c_str())<0) {
             yarp::os::mkdir(dirname.c_str());
         }
@@ -607,8 +609,8 @@ check $x $y\n\
         }
         Property p;
         p.fromConfigFile(dirname.c_str());
-        checkEqual(p.find("x").asInt(),3,"t1 read");
-        checkEqual(p.find("y").asInt(),4,"t2 read");
+        checkEqual(p.find("x").asInt32(),3,"t1 read");
+        checkEqual(p.find("y").asInt32(),4,"t2 read");
     }
 
     virtual void checkMonitor() {
@@ -630,8 +632,8 @@ check $x $y\n\
         p.put("x",1);
         Property& psub = p.addGroup("psub");
         psub.put("y",2);
-        checkEqual(p.find("x").asInt(),1,"basic int");
-        checkEqual(p.findGroup("psub").find("y").asInt(),2,"nested int");
+        checkEqual(p.find("x").asInt32(),1,"basic int");
+        checkEqual(p.findGroup("psub").find("y").asInt32(),2,"nested int");
         Property pCopy = p;
         checkEqual(pCopy.toString(),p.toString(),"test if addGroup works fine with Property copy assigment");
         Property pCopy2;

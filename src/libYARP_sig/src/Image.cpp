@@ -1,30 +1,33 @@
 /*
- * Copyright (C) 2007 RobotCub Consortium
- * Authors: Paul Fitzpatrick, Giorgio Metta
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 /*
   This file is in a pretty hacky state.  Sorry!
 
 */
 
-#include <yarp/sig/IplImage.h>
-
-#include <yarp/os/Log.h>
 #include <yarp/sig/Image.h>
-#include <yarp/sig/ImageNetworkHeader.h>
 
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Vocab.h>
-#include <yarp/os/ConstString.h>
+#include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/Log.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Vocab.h>
 
+#include <yarp/sig/ImageNetworkHeader.h>
+#include <yarp/sig/impl/IplImage.h>
 #include <yarp/sig/impl/DeBayer.h>
 
 #include <cstdio>
 #include <cstring>
+#include <string>
+
 
 using namespace yarp::sig;
 using namespace yarp::os;
@@ -45,19 +48,19 @@ inline bool readFromConnection(Image &dest, ImageNetworkHeader &header, Connecti
 {
     dest.resize(header.width, header.height);
     unsigned char *mem = dest.getRawImage();
-    int allocatedBytes = dest.getRawImageSize();
+    size_t allocatedBytes = dest.getRawImageSize();
     yAssert(mem != nullptr);
     //this check is redundant with assertion, I would remove it
-    if (dest.getRawImageSize() != header.imgSize) {
+    if (dest.getRawImageSize() != (size_t) header.imgSize) {
         printf("There is a problem reading an image\n");
         printf("incoming: width %d, height %d, code %d, quantum %d, size %d\n",
             (int)header.width, (int)header.height,
             (int)header.id,
             (int)header.quantum, (int)header.imgSize);
-        printf("my space: width %d, height %d, code %d, quantum %d, size %d\n",
+        printf("my space: width %zu, height %zu, code %d, quantum %zu, size %zu\n",
             dest.width(), dest.height(), dest.getPixelCode(), dest.getQuantum(), allocatedBytes);
     }
-    yAssert(allocatedBytes == header.imgSize);
+    yAssert(allocatedBytes == (size_t) header.imgSize);
     bool ok = connection.expectBlock((char *)mem, allocatedBytes);
     return (!connection.isError() && ok);
 }
@@ -69,8 +72,8 @@ public:
     IplImage* pImage;
     char **Data;  // this is not IPL. it's char to maintain IPL compatibility
     int extern_type_id;
-    int extern_type_quantum;
-    int quantum;
+    size_t extern_type_quantum;
+    size_t quantum;
     bool topIsLow;
 
 protected:
@@ -93,16 +96,16 @@ protected:
     void _free_data ();
 
     void _make_independent();
-    bool _set_ipl_header(int x, int y, int pixel_type, int quantum,
+    bool _set_ipl_header(size_t x, size_t y, int pixel_type, size_t quantum,
                          bool topIsLow);
     void _free_ipl_header();
-    void _alloc_complete(int x, int y, int pixel_type, int quantum,
+    void _alloc_complete(size_t x, size_t y, int pixel_type, size_t quantum,
                          bool topIsLow);
     void _free_complete();
 
 
     // computes the # of padding bytes. These are always at the end of the row.
-    int _pad_bytes (int linesize, int align) const;
+    int _pad_bytes (size_t linesize, size_t align) const;
 
     inline int GetPadding() const {
         return _pad_bytes (pImage->width * pImage->nChannels,
@@ -125,17 +128,17 @@ public:
         _free_complete();
     }
 
-    void resize(int x, int y, int pixel_type,
-                int quantum, bool topIsLow);
+    void resize(size_t x, size_t y, int pixel_type,
+                size_t quantum, bool topIsLow);
 
-    void _alloc_complete_extern(const void *buf, int x, int y, int pixel_type,
-                                int quantum, bool topIsLow);
+    void _alloc_complete_extern(const void *buf, size_t x, size_t y, int pixel_type,
+                                size_t quantum, bool topIsLow);
 
 };
 
 
-void ImageStorage::resize(int x, int y, int pixel_type,
-                          int quantum, bool topIsLow) {
+void ImageStorage::resize(size_t x, size_t y, int pixel_type,
+                          size_t quantum, bool topIsLow) {
     int need_recreation = 1;
 
     if (quantum==0) {
@@ -144,7 +147,7 @@ void ImageStorage::resize(int x, int y, int pixel_type,
 
     if (need_recreation) {
         _free_complete();
-        DBGPF1 printf("HIT recreation for %ld %ld: %d %d %d\n", (long int) this, (long int) pImage, x, y, pixel_type);
+        DBGPF1 printf("HIT recreation for %p %p: %zu %zu %d\n", this, pImage, x, y, pixel_type);
         _alloc_complete (x, y, pixel_type, quantum, topIsLow);
     }
     extern_type_id = pixel_type;
@@ -270,7 +273,7 @@ void ImageStorage::_free_ipl_header()
 }
 
 
-void ImageStorage::_alloc_complete(int x, int y, int pixel_type, int quantum,
+void ImageStorage::_alloc_complete(size_t x, size_t y, int pixel_type, size_t quantum,
                                    bool topIsLow)
 {
     _make_independent();
@@ -327,7 +330,7 @@ const std::map<int, pixelTypeIplParams> pixelCode2iplParams = {
     {-4,                                {1, IPL_DEPTH_32S, "GRAY", "GRAY"}}
 };
 
-bool ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
+bool ImageStorage::_set_ipl_header(size_t x, size_t y, int pixel_type, size_t quantum,
                                    bool topIsLow)
 {
     if (pImage != nullptr) {
@@ -360,7 +363,7 @@ bool ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
     return true;
 }
 
-void ImageStorage::_alloc_complete_extern(const void *buf, int x, int y, int pixel_type, int quantum, bool topIsLow)
+void ImageStorage::_alloc_complete_extern(const void *buf, size_t x, size_t y, int pixel_type, size_t quantum, bool topIsLow)
 {
     if (quantum==0) {
         quantum = 1;
@@ -379,12 +382,12 @@ void ImageStorage::_alloc_complete_extern(const void *buf, int x, int y, int pix
 
 
 
-int ImageStorage::_pad_bytes (int linesize, int align) const
+int ImageStorage::_pad_bytes (size_t linesize, size_t align) const
 {
     return yarp::sig::PAD_BYTES (linesize, align);
 }
 
-const std::map<YarpVocabPixelTypesEnum, unsigned int> Image::pixelCode2Size = {
+const std::map<YarpVocabPixelTypesEnum, size_t> Image::pixelCode2Size = {
     {VOCAB_PIXEL_INVALID,               0 },
     {VOCAB_PIXEL_MONO,                  sizeof(yarp::sig::PixelMono)},
     {VOCAB_PIXEL_MONO16,                sizeof(yarp::sig::PixelMono16)},
@@ -439,7 +442,7 @@ Image::~Image() {
 }
 
 
-int Image::getPixelSize() const {
+size_t Image::getPixelSize() const {
     return imgPixelSize;
 }
 
@@ -456,8 +459,7 @@ void Image::zero() {
 }
 
 
-void Image::resize(int imgWidth, int imgHeight) {
-    yAssert(imgWidth>=0 && imgHeight>=0);
+void Image::resize(size_t imgWidth, size_t imgHeight) {
 
     int code = getPixelCode();
     bool change = false;
@@ -486,8 +488,8 @@ void Image::resize(int imgWidth, int imgHeight) {
     }
 }
 
-void Image::setPixelSize(int imgPixelSize) {
-    if(imgPixelSize == (int)pixelCode2Size.at((YarpVocabPixelTypesEnum)imgPixelCode))
+void Image::setPixelSize(size_t imgPixelSize) {
+    if(imgPixelSize == pixelCode2Size.at((YarpVocabPixelTypesEnum)imgPixelCode))
         return;
 
     setPixelCode(-imgPixelSize);
@@ -496,17 +498,11 @@ void Image::setPixelSize(int imgPixelSize) {
 
 void Image::setPixelCode(int imgPixelCode) {
     this->imgPixelCode = imgPixelCode;
-
-    if(imgPixelCode < 0)
-    {
-        imgPixelSize = -imgPixelCode;
-    }
-
-    imgPixelSize = pixelCode2Size.at((YarpVocabPixelTypesEnum)imgPixelCode);
+    this->imgPixelSize = (imgPixelCode < 0) ? -imgPixelCode : pixelCode2Size.at((YarpVocabPixelTypesEnum)imgPixelCode);
 }
 
 
-void Image::setQuantum(int imgQuantum) {
+void Image::setQuantum(size_t imgQuantum) {
     this->imgQuantum = imgQuantum;
 }
 
@@ -536,7 +532,7 @@ unsigned char *Image::getRawImage() const {
     return nullptr;
 }
 
-int Image::getRawImageSize() const {
+size_t Image::getRawImageSize() const {
     ImageStorage *impl = (ImageStorage*)implementation;
     yAssert(impl!=nullptr);
     if (impl->pImage!=nullptr) {
@@ -556,7 +552,7 @@ const void *Image::getIplImage() const {
 void Image::wrapIplImage(void *iplImage) {
     yAssert(iplImage!=nullptr);
     IplImage *p = (IplImage *)iplImage;
-    ConstString str = p->colorModel;
+    std::string str = p->colorModel;
     int code = -1;
     int color_code = -1;
     if (str=="rgb"||str=="RGB"||
@@ -675,13 +671,13 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
 
     setPixelCode(header.id);
 
-    int q = getQuantum();
+    size_t q = getQuantum();
     if (q==0) {
         //q = YARP_IMAGE_ALIGN;
         setQuantum(header.quantum);
         q = getQuantum();
     }
-    if (q!=header.quantum) {
+    if (q!=(size_t) header.quantum) {
         if ((header.depth*header.width)%header.quantum==0 &&
             (header.depth*header.width)%q==0) {
             header.quantum = q;
@@ -689,7 +685,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
     }
 
     // handle easy case, received and current image are compatible, no conversion needed
-    if (getPixelCode() == header.id && q == header.quantum && imgPixelSize == header.depth)
+    if (getPixelCode() == header.id && q == (size_t) header.quantum && imgPixelSize == (size_t) header.depth)
     {
         return readFromConnection(*this, header, connection);
     }
@@ -757,7 +753,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
 }
 
 
-bool Image::write(yarp::os::ConnectionWriter& connection) {
+bool Image::write(yarp::os::ConnectionWriter& connection) const {
     ImageNetworkHeader header;
     header.setFromImage(*this);
     /*
@@ -767,7 +763,7 @@ bool Image::write(yarp::os::ConnectionWriter& connection) {
     header.paramName = VOCAB3('m','a','t');
     header.paramIdTag = BOTTLE_TAG_VOCAB;
     header.id = getPixelCode();
-    header.paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
+    header.paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT32;
     header.paramListLen = 5;
     header.depth = getPixelSize();
     header.imgSize = getRawImageSize();
@@ -842,7 +838,7 @@ bool Image::copy(const Image& alt) {
 }
 
 
-void Image::setExternal(const void *data, int imgWidth, int imgHeight) {
+void Image::setExternal(const void *data, size_t imgWidth, size_t imgHeight) {
     if (imgQuantum==0) {
         imgQuantum = 1;
     }
@@ -856,7 +852,7 @@ void Image::setExternal(const void *data, int imgWidth, int imgHeight) {
 }
 
 
-bool Image::copy(const Image& alt, int w, int h) {
+bool Image::copy(const Image& alt, size_t w, size_t h) {
     if (getPixelCode()==0) {
         setPixelCode(alt.getPixelCode());
         setQuantum(alt.getQuantum());
@@ -876,22 +872,22 @@ bool Image::copy(const Image& alt, int w, int h) {
     }
 
     resize(w,h);
-    int d = getPixelSize();
+    size_t d = getPixelSize();
 
-    int nw = w;
-    int nh = h;
+    size_t nw = w;
+    size_t nh = h;
     w = alt.width();
     h = alt.height();
 
     float di = ((float)h)/nh;
     float dj = ((float)w)/nw;
 
-    for (int i=0; i<nh; i++)
+    for (size_t i=0; i<nh; i++)
         {
-            int i0 = (int)(di*i);
-            for (int j=0; j<nw; j++)
+            size_t i0 = (size_t)(di*i);
+            for (size_t j=0; j<nw; j++)
                 {
-                    int j0 = (int)(dj*j);
+                    size_t j0 = (size_t)(dj*j);
                     memcpy(getPixelAddress(j,i),
                            alt.getPixelAddress(j0,i0),
                            d);

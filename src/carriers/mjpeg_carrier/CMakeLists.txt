@@ -1,13 +1,16 @@
-# Copyright (C) 2010 RobotCub Consortium
-# Authors: Paul Fitzpatrick
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 yarp_prepare_plugin(mjpeg
                     CATEGORY carrier
                     TYPE yarp::os::MjpegCarrier
                     INCLUDE MjpegCarrier.h
                     EXTRA_CONFIG CODE="GET /?ac"
-                    DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_JPEG")
+                    DEPENDS "YARP_HAS_JPEG")
 
 if(NOT SKIP_mjpeg)
   option(MJPEG_AUTOCOMPRESS "Automatically compress/decompress images on mjpeg stream" TRUE)

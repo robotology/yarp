@@ -1,29 +1,33 @@
 /*
- * Copyright: (C) 2017 Istituto Italiano di Tecnologia (IIT)
- * Author: Valentina Gaggero <valentina.gaggero@iit.it>
- * Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
+
 #include <yarp/os/Carrier.h>
 #include <yarp/os/impl/TcpFace.h>
 
 using namespace yarp::os;
 
-bool Carrier::isBroadcast()
+bool Carrier::isBroadcast() const
 {
     return false;
 }
 
-void Carrier::handleEnvelope(const yarp::os::ConstString& envelope)
+void Carrier::handleEnvelope(const std::string& envelope)
 {
     YARP_UNUSED(envelope);
 }
 
-bool Carrier::isPush()
+bool Carrier::isPush() const
 {
     return true;
 }
 
-ConstString Carrier::getBootstrapCarrierName()
+std::string Carrier::getBootstrapCarrierName() const
 {
     return "tcp";
 }
@@ -42,7 +46,7 @@ int  Carrier::connect(const Contact& src,
     return -1;
 }
 
-bool Carrier::modifiesIncomingData()
+bool Carrier::modifiesIncomingData() const
 {
     return false;
 }
@@ -60,18 +64,18 @@ bool Carrier::acceptIncomingData(ConnectionReader& reader)
 }
 
 
-bool Carrier::modifiesOutgoingData()
+bool Carrier::modifiesOutgoingData() const
 {
     return false;
 }
 
 
-PortWriter& Carrier::modifyOutgoingData(PortWriter& writer)
+const PortWriter& Carrier::modifyOutgoingData(const PortWriter& writer)
 {
     return writer;
 }
 
-bool Carrier::modifiesReply()
+bool Carrier::modifiesReply() const
 {
     return false;
 }
@@ -90,7 +94,7 @@ PortReader& Carrier::modifyReply(PortReader& reader)
     return reader;
 }
 
-bool Carrier::acceptOutgoingData(PortWriter& writer)
+bool Carrier::acceptOutgoingData(const PortWriter& writer)
 {
     YARP_UNUSED(writer);
     return true;
@@ -115,12 +119,12 @@ void Carrier::setCarrierParams(const Property& params)
     YARP_UNUSED(params);
 }
 
-void Carrier::getCarrierParams(Property& params)
+void Carrier::getCarrierParams(Property& params) const
 {
     YARP_UNUSED(params);
 }
 
-yarp::os::Face* Carrier::createFace(void)
+yarp::os::Face* Carrier::createFace() const
 {
     return new yarp::os::impl::TcpFace();
 }

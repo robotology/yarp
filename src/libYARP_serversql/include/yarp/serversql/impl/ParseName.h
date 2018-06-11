@@ -1,14 +1,16 @@
 /*
- * Copyright (C) 2009 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_SERVERSQL_IMPL_PARSENAME_H
 #define YARP_SERVERSQL_IMPL_PARSENAME_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 
 
 namespace yarp {
@@ -17,21 +19,21 @@ namespace impl {
 
 class ParseName {
 private:
-    yarp::os::ConstString carrier;
-    yarp::os::ConstString networkChoice;
-    yarp::os::ConstString portName;
+    std::string carrier;
+    std::string networkChoice;
+    std::string portName;
 public:
-    void apply(const yarp::os::ConstString& str);
+    void apply(const std::string& str);
 
-    yarp::os::ConstString getPortName() {
+    std::string getPortName() {
         return portName;
     }
 
-    yarp::os::ConstString getCarrier() {
+    std::string getCarrier() {
         return carrier;
     }
 
-    yarp::os::ConstString getNetworkChoice() {
+    std::string getNetworkChoice() {
         return networkChoice;
     }
 

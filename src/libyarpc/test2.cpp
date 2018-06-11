@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2009 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <cstdio>
@@ -13,12 +15,12 @@ int testResult = 0;
 
 int testWrite(yarpWriterPtr connection, void *ptr) {
     printf("Writing an integer\n");
-    return yarpWriterAppendInt(connection,15);
+    return yarpWriterAppendInt32(connection,15);
 }
 
 int testRead(yarpReaderPtr connection, void *ptr) {
     printf("Reading an integer\n");
-    return yarpReaderExpectInt(connection,&testResult);
+    return yarpReaderExpectInt32(connection,&testResult);
 }
 
 int main(int argc, char *argv[]) {

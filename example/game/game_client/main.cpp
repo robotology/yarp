@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <stdio.h>
@@ -32,15 +35,15 @@ String pad(const String& src, int len = 70) {
 	return result;
 }
 
-Semaphore broadcastMutex(1);
+Mutex broadcastMutex();
 String broadcast = "";
 
 class BroadcastHandler : public TypedReaderCallback<Bottle> {
 public:
     virtual void onRead(Bottle& bot) {
-        broadcastMutex.wait();
+        broadcastMutex.lock();
         broadcast = bot.toString().c_str();
-        broadcastMutex.post();
+        broadcastMutex.unlock();
     }
 } handler;
 
@@ -51,9 +54,9 @@ public:
     Port p;
     String name;
     PortReaderBuffer<Bottle> reader;
-    Semaphore mutex;
+    Mutex mutex;
 
-    UpdateThread() : mutex(1) {
+    UpdateThread() : mutex() {
     }
 
     void setName(const char *name) {
@@ -84,13 +87,13 @@ public:
     void show() {
         int xx = 0;
         int yy = 1;
-        mutex.wait();
+        mutex.lock();
         Bottle send("look");
         Property prop;
         p.write(send,prop);
         gotoxy(0,0);
         Bottle& map = prop.findGroup("look").findGroup("map");
-        broadcastMutex.wait();
+        broadcastMutex.lock();
         String prep = getPreparation().c_str();
         if (prep.length()>0) {
             long int t = (long int)Time::now();
@@ -103,7 +106,7 @@ public:
                 pad("").c_str(),
                 pad(prep).c_str(),
                 pad(broadcast).c_str());
-        broadcastMutex.post();
+        broadcastMutex.unlock();
         int i;
         for (i=1; i<map.size(); i++) {
             cprintf("  %s\n", map.get(i).asString().c_str());
@@ -116,13 +119,13 @@ public:
                 Bottle& location = player->findGroup("location");
                 Value& life = player->find("life");
                 char buf[256];
-                ConstString playerName = player->get(0).asString();
+                std::string playerName = player->get(0).asString();
                 if (strlen(playerName.c_str())<40) {
                     sprintf(buf,"PLAYER %s is at (%d,%d) with lifeforce %d",
                                     playerName.c_str(),
-                                    location.get(1).asInt(),
-                                    location.get(2).asInt(),
-                                    life.asInt());
+                                    location.get(1).asInt32(),
+                                    location.get(2).asInt32(),
+                                    life.asInt32());
                     cprintf("%s\n", pad(String(buf)).c_str());
                 }
             }
@@ -132,13 +135,13 @@ public:
         }
 
         gotoxy(xx,yy);
-        mutex.post();
+        mutex.unlock();
     }
 
     void apply(const String& str) {
         Bottle send, recv;
         send.fromString(str.c_str());
-        mutex.wait();
+        mutex.lock();
         p.write(send,recv);
         if (recv.get(0).asString()=="error") {
             cprintf("PROBLEM:\n");
@@ -147,7 +150,7 @@ public:
             refresh();
             Time::delay(2);
         }
-        mutex.post();
+        mutex.unlock();
         //show();
     }
 
@@ -156,9 +159,9 @@ public:
             Time::delay(0.25);
             show();
         }
-        mutex.wait();
+        mutex.lock();
         p.close();
-        mutex.post();
+        mutex.unlock();
     }
 
 } update_thread;

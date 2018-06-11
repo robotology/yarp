@@ -1,9 +1,13 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Bottle.h>
 
@@ -93,7 +97,7 @@ bool ManagedBytes::allocateOnNeed(size_t neededLen, size_t allocateLen) {
 
 void ManagedBytes::copy() {
     if (!owned) {
-        YARP_SSIZE_T len = length();
+        yarp::conf::ssize_t len = length();
         char *buf = new char[len];
         yarp::os::NetworkBase::assertion(buf!=nullptr);
         memcpy(buf, get(), len);
@@ -110,7 +114,11 @@ size_t ManagedBytes::used() const {
     return use_set ? use : length();
 }
 
-char *ManagedBytes::get() const {
+const char* ManagedBytes::get() const {
+    return b.get();
+}
+
+char* ManagedBytes::get() {
     return b.get();
 }
 
@@ -126,7 +134,11 @@ void ManagedBytes::clear() {
     use_set = false;
 }
 
-const Bytes& ManagedBytes::bytes() {
+const Bytes& ManagedBytes::bytes() const {
+    return b;
+}
+
+Bytes& ManagedBytes::bytes() {
     return b;
 }
 
@@ -149,12 +161,12 @@ size_t ManagedBytes::resetUsed() {
 
 bool ManagedBytes::read(ConnectionReader& reader) {
     reader.convertTextMode();
-    int listTag;
-    int listLen;
-    int blobLen;
-    listTag = reader.expectInt();
-    listLen = reader.expectInt();
-    blobLen = reader.expectInt();
+    std::int32_t listTag;
+    std::int32_t listLen;
+    std::int32_t blobLen;
+    listTag = reader.expectInt32();
+    listLen = reader.expectInt32();
+    blobLen = reader.expectInt32();
     if (listTag!=BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB) {
         return false;
     }
@@ -168,10 +180,10 @@ bool ManagedBytes::read(ConnectionReader& reader) {
     return reader.expectBlock(get(), length());
 }
 
-bool ManagedBytes::write(ConnectionWriter& writer) {
-    writer.appendInt(BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB);
-    writer.appendInt(1);
-    writer.appendInt((int)length());
+bool ManagedBytes::write(ConnectionWriter& writer) const {
+    writer.appendInt32(BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB);
+    writer.appendInt32(1);
+    writer.appendInt32(static_cast<std::int32_t>(length()));
     writer.appendExternalBlock(get(), length());
     writer.convertTextMode();
     return !writer.isError();

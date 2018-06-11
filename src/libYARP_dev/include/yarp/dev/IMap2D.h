@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Authors: Marco Randazzo <marco.randazzo@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_IMAP2D_H
@@ -33,7 +35,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~IMap2D() {}
+    virtual ~IMap2D();
 
     /**
      Removes all the registered maps from the server.
@@ -71,7 +73,7 @@ public:
     * @param loc the location of the robot
     * @return true/false
     */
-    virtual bool storeLocation(yarp::os::ConstString location_name, Map2DLocation loc) = 0;
+    virtual bool storeLocation(std::string location_name, Map2DLocation loc) = 0;
 
     /**
     * Retrieves a location specified by the user in the world reference frame
@@ -79,21 +81,21 @@ public:
     * @param loc the location of the robot
     * @return true/false
     */
-    virtual bool getLocation(yarp::os::ConstString location_name, Map2DLocation& loc) = 0;
+    virtual bool getLocation(std::string location_name, Map2DLocation& loc) = 0;
 
     /**
     * Get a list of all stored locations
     * @param the returned list of locations
     * @return true/false
     */
-    virtual bool getLocationsList(std::vector<yarp::os::ConstString>& locations) = 0;
+    virtual bool getLocationsList(std::vector<std::string>& locations) = 0;
 
     /**
     * Delete a location
     * @param location_name the name of the location
     * @return true/false
     */
-    virtual bool deleteLocation(yarp::os::ConstString location_name) = 0;
+    virtual bool deleteLocation(std::string location_name) = 0;
 
     /**
     * Delete all stored locations

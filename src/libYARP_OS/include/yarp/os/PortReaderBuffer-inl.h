@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006, 2008 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_PORTREADERBUFFER_INL_H
@@ -146,7 +149,7 @@ bool yarp::os::PortReaderBuffer<T>::read(ConnectionReader& connection)
 }
 
 template <typename T>
-yarp::os::PortReader* yarp::os::PortReaderBuffer<T>::create()
+yarp::os::PortReader* yarp::os::PortReaderBuffer<T>::create() const
 {
     return new T;
 }
@@ -170,7 +173,7 @@ bool yarp::os::PortReaderBuffer<T>::isClosed()
 }
 
 template <typename T>
-yarp::os::ConstString yarp::os::PortReaderBuffer<T>::getName() const
+std::string yarp::os::PortReaderBuffer<T>::getName() const
 {
     return implementation.getName();
 }

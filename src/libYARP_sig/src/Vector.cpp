@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2007 The RobotCub Consortium
- * Author: Lorenzo Natale.
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/sig/Vector.h>
@@ -9,7 +12,9 @@
 #include <yarp/conf/system.h>
 
 #include <yarp/os/Bottle.h>
-#include <yarp/os/ManagedBytes.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/NetInt32.h>
 #include <yarp/os/NetFloat64.h>
 
 #include <yarp/os/impl/Logger.h>
@@ -23,8 +28,6 @@
 using namespace yarp::sig;
 using namespace yarp::os;
 
-// network stuff
-#include <yarp/os/NetInt32.h>
 
 ///////////////////
 
@@ -49,7 +52,7 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
     {
         if ((size_t)getListSize() != (size_t)(header.listLen))
             resize(header.listLen);
-        const char *ptr = getMemoryBlock();
+        char* ptr = getMemoryBlock();
         yAssert(ptr != nullptr);
         int elemSize=getElementSize();
         ok = connection.expectBlock(ptr, elemSize*header.listLen);
@@ -61,7 +64,7 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
     return !connection.isError();
 }
 
-bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
+bool VectorBase::write(yarp::os::ConnectionWriter& connection) const {
     VectorPortContentHeader header;
 
     //header.totalLen = sizeof(header)+sizeof(double)*this->size();
@@ -86,9 +89,9 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
 /**
 * Quick implementation, space for improvement.
 */
-ConstString Vector::toString(int precision, int width) const
+std::string Vector::toString(int precision, int width) const
 {
-    ConstString ret = "";
+    std::string ret = "";
     size_t c;
     char tmp[350];
     if(width<0){
@@ -193,13 +196,13 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
     if (!ok) return false;
 
     if (header.listLen > 0 &&
-        header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_DOUBLE)) {
+        header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_FLOAT64)) {
         if (size() != (size_t)(header.listLen))
             resize(header.listLen);
 
         int k=0;
         for (k=0;k<header.listLen;k++)
-            (*this)[k]=connection.expectDouble();
+            (*this)[k]=connection.expectFloat64();
     } else {
         return false;
     }
@@ -207,17 +210,17 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
     return !connection.isError();
 }
 
-bool Vector::write(yarp::os::ConnectionWriter& connection) {
+bool Vector::write(yarp::os::ConnectionWriter& connection) const {
     VectorPortContentHeader header;
 
-    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_DOUBLE);
+    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_FLOAT64);
     header.listLen = (int)size();
 
     connection.appendBlock((char*)&header, sizeof(header));
 
     int k=0;
     for (k=0;k<header.listLen;k++)
-        connection.appendDouble((*this)[k]);
+        connection.appendFloat64((*this)[k]);
 
     // if someone is foolish enough to connect in text mode,
     // let them see something readable.

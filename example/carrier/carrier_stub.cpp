@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <stdio.h>
@@ -18,23 +21,28 @@
  * 8-bytes of a regular text mode connection.
  *
  */
-class TestCarrier : public yarp::os::impl::TextCarrier {
-    
+class TestCarrier : public yarp::os::impl::TextCarrier
+{
+
 public:
-    virtual yarp::os::ConstString getName() {
+    virtual std::string getName() const override
+    {
         return "test";
     }
 
-    virtual yarp::os::ConstString getSpecifierName() {
+    virtual std::string getSpecifierName() const override
+    {
         return "TESTTEST";
     }
 
-    virtual Carrier *create() {
+    virtual Carrier *create() const override
+    {
         return new TestCarrier();
     }
 };
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     yarp::os::Network yarp;
     yarp::os::Carriers::addCarrierPrototype(new TestCarrier);
 

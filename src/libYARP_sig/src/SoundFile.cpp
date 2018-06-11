@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/sig/SoundFile.h>
@@ -260,21 +263,21 @@ bool yarp::sig::file::soundStreamReader::close()
 
 size_t yarp::sig::file::soundStreamReader::readBlock(Sound& dest, size_t block_size)
 {
-    int expected_bytes = block_size*(soundInfo.bits/8)*soundInfo.channels;
+    int expected_bytes = (int)(block_size*(soundInfo.bits/8)*soundInfo.channels);
 
     //this probably works only if soundInfo.bits=16
     int expected_words=expected_bytes/(soundInfo.bits/8);
     NetInt16     *data = new NetInt16 [expected_words];
 
-    int bytes_read = fread(data,1,expected_bytes,fp);
-    int samples_read = bytes_read/(soundInfo.bits/8)/soundInfo.channels;
+    size_t bytes_read = fread(data,1,expected_bytes,fp);
+    size_t samples_read = bytes_read/(soundInfo.bits/8)/soundInfo.channels;
 
-    dest.resize(samples_read,soundInfo.channels);
+    dest.resize((int)samples_read,soundInfo.channels);
     dest.setFrequency(soundInfo.freq);
 
     int ct = 0;
-    for (int i=0; i<samples_read; i++) {
-        for (int j=0; j<soundInfo.channels; j++) {
+    for (size_t i=0; i<samples_read; i++) {
+        for (size_t j=0; j< (size_t) soundInfo.channels; j++) {
             dest.set(data[ct],i,j);
             ct++;
         }
@@ -299,7 +302,7 @@ bool  yarp::sig::file::soundStreamReader::rewind(size_t sample_offset)
         return false;
     }
 
-    fseek(fp,this->soundInfo.data_start_offset+(sample_offset*this->soundInfo.channels*this->soundInfo.bits/2),SEEK_SET);
+    fseek(fp,(long int)(this->soundInfo.data_start_offset+(sample_offset*this->soundInfo.channels*this->soundInfo.bits/2)),SEEK_SET);
     index=sample_offset;
 
     return true;

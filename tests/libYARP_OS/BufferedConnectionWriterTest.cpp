@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/DummyConnector.h>
@@ -23,7 +25,7 @@ typedef PortablePair<PortablePair<PortablePair<Bottle, ImageOf<PixelRgb> >,
 
 class BufferedConnectionWriterTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "BufferedConnectionWriterTest"; }
+    virtual std::string getName() const override { return "BufferedConnectionWriterTest"; }
 
     void testWrite() {
         report(0,"testing writing...");
@@ -44,11 +46,11 @@ public:
             StringOutputStream sos;
             // first we test a message with a few short strings
             BufferedConnectionWriter bbr;
-            report(0,ConstString("pool size of ") + Bottle::toString(pool_sizes[i]) + " begins");
+            report(0,std::string("pool size of ") + Bottle::toString(pool_sizes[i]) + " begins");
             bbr.setInitialPoolSize(pool_sizes[i]);
             bbr.reset(false);
-            ConstString msg1("Hello");
-            ConstString msg2("Greetings");
+            std::string msg1("Hello");
+            std::string msg2("Greetings");
             heapMonitorBegin();
             bbr.appendLine(msg1);
             bbr.appendLine(msg2);
@@ -76,15 +78,15 @@ public:
             checkEqual(sos.toString(),"Space Monkeys\r\nAttack\r\n","alternate text");
 
             // And again, a bigger change this time
-            ConstString test(2048,'x');
+            std::string test(2048,'x');
             bbr.restart();
             sos.reset();
             bbr.appendLine(test);
             bbr.appendLine(test);
             bbr.appendLine(test);
             bbr.write(sos);
-            ConstString result = sos.toString();
-            ConstString expect = test + "\r\n" + test + "\r\n" + test + "\r\n";
+            std::string result = sos.toString();
+            std::string expect = test + "\r\n" + test + "\r\n" + test + "\r\n";
             checkTrue(result==expect,"long text");
             sos.reset();
             heapMonitorBegin(false);
@@ -151,7 +153,7 @@ public:
             bbr.write(stamp2);
             checkEqual(stamp1.getCount(),stamp2.getCount(),"stamp still matches");
 
-            report(0,ConstString("pool size of ") + Bottle::toString(pool_sizes[i]) + " had " + Bottle::toString(bbr.bufferCount()) + " buffers");
+            report(0,std::string("pool size of ") + Bottle::toString(pool_sizes[i]) + " had " + Bottle::toString(bbr.bufferCount()) + " buffers");
         }
     }
 

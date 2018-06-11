@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Author: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_RGBDSENSORWRAPPER_RGBDSENSORWRAPPER_H
@@ -18,7 +20,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/BufferedPort.h>
 
 
@@ -28,14 +30,15 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/IVisualParamsImpl.h>
-#include <yarp/dev/FrameGrabberControl2Impl.h>
+#include <yarp/dev/FrameGrabberControlImpl.h>
 
 // ROS stuff
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
 #include <yarp/os/Subscriber.h>
-#include <../msgs/ros/include/sensor_msgs_CameraInfo.h>
-#include <../msgs/ros/include/sensor_msgs_Image.h>
+#include <yarp/rosmsg/TickTime.h>
+#include <yarp/rosmsg/sensor_msgs/CameraInfo.h>
+#include <yarp/rosmsg/sensor_msgs/Image.h>
 
 
 namespace yarp{
@@ -48,13 +51,13 @@ namespace yarp{
             const std::string colorTopicName_param     = "ROS_colorTopicName";
             const std::string depthTopicName_param     = "ROS_depthTopicName";
             const std::string depthInfoTopicName_param = "ROS_colorInfoTopicName";
-            const std::string colorInfoTopicName_param = "ROS_depthinfoTopicName";
+            const std::string colorInfoTopicName_param = "ROS_depthInfoTopicName";
             class RGBDSensorParser;
         }
     }
 }
 
-#define DEFAULT_THREAD_PERIOD   30 //ms
+#define DEFAULT_THREAD_PERIOD   0.03 // s
 
 // Following three definitions would fit better in a header file
 // shared between client and server ... where to place it?
@@ -70,14 +73,14 @@ private:
     yarp::dev::IRGBDSensor  *iRGBDSensor;
     yarp::dev::Implement_RgbVisualParams_Parser  rgbParser;
     yarp::dev::Implement_DepthVisualParams_Parser depthParser;
-    yarp::dev::FrameGrabberControls2_Parser fgCtrlParsers;
+    yarp::dev::FrameGrabberControls_Parser fgCtrlParsers;
 
 public:
     RGBDSensorParser();
     virtual ~RGBDSensorParser() {}
     bool configure(IRGBDSensor *interface);
     bool configure(IRgbVisualParams *rgbInterface, IDepthVisualParams *depthInterface);
-    bool configure(IFrameGrabberControls2 *_fgCtrl);
+    bool configure(IFrameGrabberControls *_fgCtrl);
     virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
@@ -100,7 +103,7 @@ public:
  * | name           |      -                  | string  | -              |   -           | Yes, unless useROS='only'      | Prefix name of the ports opened by the RGBD wrapper, e.g. /robotName/RGBD                      | Required suffix like '/rpc' will be added by the device      |
  * | subdevice      |      -                  | string  | -              |   -           | alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
  * | ROS            |      -                  | group   |  -             |   -           | No                             | Group containing parameter for ROS topic initialization                                             | if missing, it is assumed to not use ROS topics |
- * |   -            |  useROS                 | string  | true/false/only|   -           |  if ROS group is present       | set 'true' to have both yarp ports and ROS topic, set 'only' to have only ROS topic and no yarp port|  - |
+ * |   -            |  use_ROS                | string  | true/false/only|   -           |  if ROS group is present       | set 'true' to have both yarp ports and ROS topic, set 'only' to have only ROS topic and no yarp port|  - |
  * |   -            |  forceInfoSync          | string  | bool           |   -           |  no                            | set 'true' to force the timestamp on the camera_info message to match the image one                 |  - |
  * |   -            |  ROS_colorTopicName     | string  |  -             |   -           |  if ROS group is present       | set the name for ROS image topic                                                                    | must start with a leading '/' |
  * |   -            |  ROS_depthTopicName     | string  |  -             |   -           |  if ROS group is present       | set the name for ROS depth topic                                                                    | must start with a leading '/' |
@@ -125,7 +128,7 @@ public:
 class yarp::dev::RGBDSensorWrapper: public yarp::dev::DeviceDriver,
                                     public yarp::dev::IWrapper,
                                     public yarp::dev::IMultipleWrapper,
-                                    public yarp::os::RateThread
+                                    public yarp::os::PeriodicThread
 {
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -133,8 +136,8 @@ private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat>    DepthImage;
     typedef yarp::os::BufferedPort<DepthImage>           DepthPortType;
     typedef yarp::os::BufferedPort<yarp::sig::FlexImage> ImagePortType;
-    typedef yarp::os::Publisher<sensor_msgs_Image>       ImageTopicType;
-    typedef yarp::os::Publisher<sensor_msgs_CameraInfo>  DepthTopicType;
+    typedef yarp::os::Publisher<yarp::rosmsg::sensor_msgs::Image>       ImageTopicType;
+    typedef yarp::os::Publisher<yarp::rosmsg::sensor_msgs::CameraInfo>  DepthTopicType;
     typedef unsigned int                                 UInt;
 
     enum SensorType{COLOR_SENSOR, DEPTH_SENSOR};
@@ -151,14 +154,14 @@ private:
         std::string     parname;
     };
 
-    yarp::os::ConstString colorFrame_StreamingPort_Name;
-    yarp::os::ConstString depthFrame_StreamingPort_Name;
+    std::string colorFrame_StreamingPort_Name;
+    std::string depthFrame_StreamingPort_Name;
     ImagePortType         colorFrame_StreamingPort;
     DepthPortType         depthFrame_StreamingPort;
 
     // One RPC port should be enough for the wrapper in all cases
     yarp::os::Port        rpcPort;
-    yarp::os::ConstString rpcPort_Name;
+    std::string rpcPort_Name;
     ImageTopicType        rosPublisherPort_color, rosPublisherPort_depth;
     DepthTopicType        rosPublisherPort_colorCaminfo, rosPublisherPort_depthCaminfo;
     yarp::os::Node*       rosNode;
@@ -177,10 +180,10 @@ private:
 
     // Image data specs
     // int hDim, vDim;
-    UInt                           period;
+    double                         period;
     std::string                    sensorId;
     yarp::dev::IRGBDSensor*        sensor_p;
-    yarp::dev::IFrameGrabberControls2* fgCtrl;
+    yarp::dev::IFrameGrabberControls* fgCtrl;
     IRGBDSensor::RGBDSensor_status sensorStatus;
     int                            verbose;
     bool                           use_YARP;
@@ -208,22 +211,22 @@ private:
     void shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest);
     void shallowCopyImages(const DepthImage& src, DepthImage& dest);
     bool writeData();
-    void deepCopyImages(const yarp::sig::FlexImage& src,
-                        sensor_msgs_Image&          dest,
-                        const std::string&          frame_id,
-                        const TickTime&             timeStamp,
-                        const UInt&                 seq);
+    void deepCopyImages(const yarp::sig::FlexImage&       src,
+                        yarp::rosmsg::sensor_msgs::Image& dest,
+                        const std::string&                frame_id,
+                        const yarp::rosmsg::TickTime&     timeStamp,
+                        const UInt&                       seq);
 
-    void deepCopyImages(const DepthImage&           src,
-                        sensor_msgs_Image&          dest,
-                        const std::string&          frame_id,
-                        const TickTime&             timeStamp,
-                        const UInt&                 seq);
+    void deepCopyImages(const DepthImage&                 src,
+                        yarp::rosmsg::sensor_msgs::Image& dest,
+                        const std::string&                frame_id,
+                        const yarp::rosmsg::TickTime&     timeStamp,
+                        const UInt&                       seq);
 
-    bool setCamInfo(sensor_msgs_CameraInfo&         cameraInfo,
-                    const std::string&              frame_id,
-                    const UInt&                     seq,
-                    const SensorType&               sensorType);
+    bool setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo,
+                    const std::string&                     frame_id,
+                    const UInt&                            seq,
+                    const SensorType&                      sensorType);
 
     static std::string yarp2RosPixelCode(int code);
 

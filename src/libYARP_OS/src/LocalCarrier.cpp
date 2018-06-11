@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2006, 2007 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/impl/LocalCarrier.h>
 #include <yarp/os/Portable.h>
@@ -14,8 +16,8 @@ using namespace yarp::os;
 yarp::os::impl::LocalCarrierManager yarp::os::impl::LocalCarrier::manager;
 
 yarp::os::impl::LocalCarrierManager::LocalCarrierManager() :
-        senderMutex(1),
-        receiverMutex(1),
+        senderMutex(),
+        receiverMutex(),
         received(0),
         sender(nullptr),
         receiver(nullptr)
@@ -23,7 +25,7 @@ yarp::os::impl::LocalCarrierManager::LocalCarrierManager() :
 }
 
 void yarp::os::impl::LocalCarrierManager::setSender(LocalCarrier *sender) {
-    senderMutex.wait();
+    senderMutex.lock();
     this->sender = sender;
 }
 
@@ -31,22 +33,22 @@ yarp::os::impl::LocalCarrier *yarp::os::impl::LocalCarrierManager::getReceiver()
     received.wait();
     LocalCarrier *result = receiver;
     sender = nullptr;
-    senderMutex.post();
+    senderMutex.unlock();
     return result;
 }
 
 yarp::os::impl::LocalCarrier *yarp::os::impl::LocalCarrierManager::getSender(LocalCarrier *receiver) {
-    receiverMutex.wait();
+    receiverMutex.lock();
     this->receiver = receiver;
     LocalCarrier *result = sender;
     received.post();
-    receiverMutex.post();
+    receiverMutex.unlock();
     return result;
 }
 
 void yarp::os::impl::LocalCarrierManager::revoke(LocalCarrier *carrier) {
     if (sender == carrier) {
-        senderMutex.post();
+        senderMutex.unlock();
     }
 }
 
@@ -67,12 +69,12 @@ OutputStream& yarp::os::impl::LocalCarrierStream::getOutputStream()
     return *this;
 }
 
-const Contact& yarp::os::impl::LocalCarrierStream::getLocalAddress()
+const Contact& yarp::os::impl::LocalCarrierStream::getLocalAddress() const
 {
     return localAddress;
 }
 
-const Contact& yarp::os::impl::LocalCarrierStream::getRemoteAddress()
+const Contact& yarp::os::impl::LocalCarrierStream::getRemoteAddress() const
 {
     return remoteAddress;
 }
@@ -83,7 +85,7 @@ bool yarp::os::impl::LocalCarrierStream::setTypeOfService(int tos)
     return true;
 }
 
-YARP_SSIZE_T yarp::os::impl::LocalCarrierStream::read(const yarp::os::Bytes& b)
+yarp::conf::ssize_t yarp::os::impl::LocalCarrierStream::read(yarp::os::Bytes& b)
 {
     yAssert(false);
     return b.length();
@@ -120,12 +122,12 @@ void yarp::os::impl::LocalCarrierStream::close() {
     done = true;
 }
 
-bool yarp::os::impl::LocalCarrierStream::isOk() {
+bool yarp::os::impl::LocalCarrierStream::isOk() const {
     return !done;
 }
 
 
-yarp::os::impl::LocalCarrier::LocalCarrier() : peerMutex(1), sent(0), received(0) {
+yarp::os::impl::LocalCarrier::LocalCarrier() : peerMutex(), sent(0), received(0) {
     ref = nullptr;
     peer = nullptr;
     doomed = false;
@@ -135,59 +137,59 @@ yarp::os::impl::LocalCarrier::~LocalCarrier() {
     shutdown();
 }
 
-yarp::os::Carrier *yarp::os::impl::LocalCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::LocalCarrier::create() const {
     return new LocalCarrier();
 }
 
 void yarp::os::impl::LocalCarrier::removePeer() {
     if (!doomed) {
-        peerMutex.wait();
+        peerMutex.lock();
         peer = nullptr;
-        peerMutex.post();
+        peerMutex.unlock();
     }
 }
 
 void yarp::os::impl::LocalCarrier::shutdown() {
     if (!doomed) {
         doomed = true;
-        peerMutex.wait();
+        peerMutex.lock();
         if (peer != nullptr) {
             peer->accept(nullptr);
             LocalCarrier *wasPeer = peer;
             peer = nullptr;
             wasPeer->removePeer();
         }
-        peerMutex.post();
+        peerMutex.unlock();
     }
 }
 
-yarp::os::ConstString yarp::os::impl::LocalCarrier::getName() {
+std::string yarp::os::impl::LocalCarrier::getName() const {
     return "local";
 }
 
-bool yarp::os::impl::LocalCarrier::requireAck() {
+bool yarp::os::impl::LocalCarrier::requireAck() const {
     return false;
 }
 
-bool yarp::os::impl::LocalCarrier::isConnectionless() {
+bool yarp::os::impl::LocalCarrier::isConnectionless() const {
     return false;
 }
 
-bool yarp::os::impl::LocalCarrier::canEscape() {
+bool yarp::os::impl::LocalCarrier::canEscape() const {
     return false;
 }
 
-bool yarp::os::impl::LocalCarrier::isLocal() {
+bool yarp::os::impl::LocalCarrier::isLocal() const {
     return true;
 }
 
-yarp::os::ConstString yarp::os::impl::LocalCarrier::getSpecifierName() {
+std::string yarp::os::impl::LocalCarrier::getSpecifierName() const {
     return "LOCALITY";
 }
 
 bool yarp::os::impl::LocalCarrier::checkHeader(const Bytes& header) {
     if (header.length()==8) {
-        ConstString target = getSpecifierName();
+        std::string target = getSpecifierName();
         for (int i=0; i<8; i++) {
             if (!(target[i]==header.get()[i])) {
                 return false;
@@ -198,9 +200,9 @@ bool yarp::os::impl::LocalCarrier::checkHeader(const Bytes& header) {
     return false;
 }
 
-void yarp::os::impl::LocalCarrier::getHeader(const Bytes& header) {
+void yarp::os::impl::LocalCarrier::getHeader(Bytes& header) const {
     if (header.length()==8) {
-        ConstString target = getSpecifierName();
+        std::string target = getSpecifierName();
         for (int i=0; i<8; i++) {
             header.get()[i] = target[i];
         }
@@ -218,11 +220,11 @@ bool yarp::os::impl::LocalCarrier::sendHeader(ConnectionState& proto) {
 
     defaultSendHeader(proto);
     // now switch over to some local structure to communicate
-    peerMutex.wait();
+    peerMutex.lock();
     peer = manager.getReceiver();
     //printf("sender %ld sees receiver %ld\n", (long int) this,
     //       (long int) peer);
-    peerMutex.post();
+    peerMutex.unlock();
 
     return true;
 }
@@ -230,7 +232,7 @@ bool yarp::os::impl::LocalCarrier::sendHeader(ConnectionState& proto) {
 bool yarp::os::impl::LocalCarrier::expectExtraHeader(ConnectionState& proto) {
     portName = proto.getRoute().getToName();
     // switch over to some local structure to communicate
-    peerMutex.wait();
+    peerMutex.lock();
     peer = manager.getSender(this);
     //printf("receiver %ld (%s) sees sender %ld (%s)\n",
     //       (long int) this, portName.c_str(),
@@ -238,7 +240,7 @@ bool yarp::os::impl::LocalCarrier::expectExtraHeader(ConnectionState& proto) {
     Route route = proto.getRoute();
     route.setFromName(peer->portName);
     proto.setRoute(route);
-    peerMutex.post();
+    peerMutex.unlock();
 
     return true;
 }
@@ -258,14 +260,14 @@ bool yarp::os::impl::LocalCarrier::write(ConnectionState& proto, SizedWriter& wr
     YARP_UNUSED(proto);
     yarp::os::Portable *ref = writer.getReference();
     if (ref != nullptr) {
-        peerMutex.wait();
+        peerMutex.lock();
         if (peer != nullptr) {
             peer->accept(ref);
         } else {
             YARP_ERROR(Logger::get(),
                         "local send failed - write without peer");
         }
-        peerMutex.post();
+        peerMutex.unlock();
     } else {
         YARP_ERROR(Logger::get(),
                     "local send failed - no object");

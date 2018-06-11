@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_SHAREDLIBRARYFACTORY_H
@@ -11,7 +13,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/SharedLibrary.h>
 #include <yarp/os/SharedLibraryClassApi.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 
 namespace yarp {
@@ -93,7 +95,7 @@ public:
      *
      * @return the latest error.
      */
-    ConstString getError() const;
+    std::string getError() const;
 
     /**
      * Get the factory API, which has creation/deletion methods.
@@ -128,21 +130,21 @@ public:
      *
      * @return the name associated with this factory.
      */
-    ConstString getName() const;
+    std::string getName() const;
 
     /**
      * Get the type associated with this factory.
      *
      * @return the type associated with this factory.
      */
-    ConstString getClassName() const;
+    std::string getClassName() const;
 
     /**
      * Get the base type associated with this factory.
      *
      * @return the base type associated with this factory.
      */
-    ConstString getBaseClassName() const;
+    std::string getBaseClassName() const;
 
     /**
      *
@@ -159,11 +161,11 @@ private:
     int status;
     SharedLibraryClassApi api;
     int returnValue;
-    int rct;
-    ConstString name;
-    ConstString className;
-    ConstString baseClassName;
-    ConstString error;
+    int rct; // FIXME Remove this reference counter and use a shared_ptr instead.
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) className;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) baseClassName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) error;
 };
 
 

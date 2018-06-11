@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_NODES_H
@@ -10,13 +12,11 @@
 #include <yarp/os/Contactables.h>
 
 namespace yarp {
-    namespace os {
-        class Node;
-        class Nodes;
-    }
-}
+namespace os {
 
-class YARP_OS_API yarp::os::Nodes : public Contactables
+class Node;
+
+class YARP_OS_API Nodes : public yarp::os::Contactables
 {
 public:
     Nodes();
@@ -25,14 +25,14 @@ public:
     virtual void add(Contactable& contactable) override;
     virtual void remove(Contactable& contactable) override;
 
-    virtual Contact query(const ConstString& name,
-                          const ConstString& category = "") override;
+    virtual Contact query(const std::string& name,
+                          const std::string& category = "") override;
 
-    virtual Contact getParent(const ConstString& name);
+    virtual Contact getParent(const std::string& name);
 
-    virtual Contact getURI(const ConstString& name);
+    virtual Contact getURI(const std::string& name);
 
-    virtual void prepare(const ConstString& name);
+    virtual void prepare(const std::string& name);
 
     virtual void update(Contactable& contactable);
 
@@ -40,14 +40,21 @@ public:
 
     bool enable(bool flag);
     void clear();
-    void setActiveName(const ConstString& name);
-    void addExternalNode(const ConstString& name, Node& node);
-    void removeExternalNode(const ConstString& name);
-    ConstString getActiveName();
+    void setActiveName(const std::string& name);
+    void addExternalNode(const std::string& name, Node& node);
+    void removeExternalNode(const std::string& name);
+    std::string getActiveName();
     bool requireActiveName();
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-    class Helper;
-    Helper * const mPriv;
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
+
+} // namespace yarp
+} // namespace os
+
 
 #endif // YARP_OS_NODES_H

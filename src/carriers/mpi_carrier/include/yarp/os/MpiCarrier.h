@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2010 Daniel Krieg
- * Author: Daniel Krieg <krieg@fias.uni-frankfurt.de>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2010 Daniel Krieg <krieg@fias.uni-frankfurt.de>
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_MPICARRIER
@@ -31,30 +34,30 @@ class yarp::os::MpiCarrier : public AbstractCarrier {
 protected:
     MpiStream* stream;
     MpiComm* comm;
-    ConstString port;
-    ConstString name, other, route;
-    ConstString target;
+    std::string port;
+    std::string name, other, route;
+    std::string target;
 public:
     MpiCarrier() ;
     virtual ~MpiCarrier();
     virtual void close() override = 0;
-    virtual Carrier *create() override = 0;
-    virtual ConstString getName() override = 0;
+    virtual Carrier *create() const override = 0;
+    virtual std::string getName() const override = 0;
 
     virtual void createStream(bool sender) = 0;
 
-    virtual bool isConnectionless() override {
+    virtual bool isConnectionless() const override {
         return false;
     }
 
-    virtual bool canEscape() override {
+    virtual bool canEscape() const override {
         return true;
     }
 
-    virtual bool supportReply() override = 0;
+    virtual bool supportReply() const override = 0;
 
 
-    virtual void getHeader(const Bytes& header) override;
+    virtual void getHeader(Bytes& header) const override;
     virtual bool checkHeader(const Bytes& header) override;
 
 
@@ -94,4 +97,4 @@ public:
 
 };
 
-#endif //_YARP_MPICARRIER_
+#endif // YARP_MPICARRIER

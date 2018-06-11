@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
- * Authors: Nicolò Genesio
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #ifndef YARP_DEV_SERVERGRABBER_H
 #define YARP_DEV_SERVERGRABBER_H
@@ -12,7 +14,7 @@
 
 #include <yarp/dev/DataSource.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
-#include <yarp/dev/FrameGrabberControl2Impl.h>
+#include <yarp/dev/FrameGrabberControlImpl.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/ServiceInterfaces.h>
@@ -20,11 +22,10 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/dev/IVisualParamsImpl.h>
-#include <yarp/os/RateThread.h>
 #include <yarp/dev/Wrapper.h>
 namespace yarp {
     namespace dev {
@@ -38,7 +39,7 @@ namespace yarp {
     }
 }
 
-class yarp::dev::DC1394::DC1394Parser:    public DeviceResponder
+class YARP_dev_API yarp::dev::DC1394::DC1394Parser:    public DeviceResponder
 {
 private:
     yarp::dev::IFrameGrabberControlsDC1394  *fgCtrl_DC1394;
@@ -83,7 +84,7 @@ typedef struct
 
 } Configuration;
 
-#define DEFAULT_THREAD_PERIOD   30 //ms
+#define DEFAULT_THREAD_PERIOD   0.03 //s
 
 
 /**
@@ -179,10 +180,10 @@ typedef struct
 class YARP_dev_API yarp::dev::ServerGrabber : public DeviceDriver,
             public yarp::dev::IWrapper,
             public yarp::dev::IMultipleWrapper,
-            public yarp::os::RateThread
+            public yarp::os::PeriodicThread
 {
 private:
-    int period;
+    double period;
     int count, count2;
     yarp::dev::impl::ServerGrabberResponder* responder;
     yarp::dev::impl::ServerGrabberResponder* responder2;
@@ -190,12 +191,12 @@ private:
     yarp::dev::Implement_RgbVisualParams_Parser  rgbParser2;
     yarp::dev::IRgbVisualParams* rgbVis_p;
     yarp::dev::IRgbVisualParams* rgbVis_p2;
-    yarp::os::ConstString rpcPort_Name;
-    yarp::os::ConstString rpcPort2_Name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) rpcPort_Name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) rpcPort2_Name;
     yarp::os::Port rpcPort;
     yarp::os::Port rpcPort2;
-    yarp::os::ConstString pImg_Name;
-    yarp::os::ConstString pImg2_Name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) pImg_Name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) pImg2_Name;
     yarp::os::BufferedPort<yarp::sig::FlexImage> pImg;
     yarp::os::BufferedPort<yarp::sig::FlexImage> pImg2;
     yarp::os::Port *p2;//audio
@@ -207,13 +208,13 @@ private:
     yarp::dev::IFrameGrabberImageRaw *fgImageRaw2;
     //yarp::sig::FlexImage  doubleImage, doubleImage2;
 //    IAudioVisualGrabber *fgAv; //TODO: manage the AV
-    yarp::dev::IFrameGrabberControls2 *fgCtrl;
-    yarp::dev::IFrameGrabberControls2 *fgCtrl2;
+    yarp::dev::IFrameGrabberControls *fgCtrl;
+    yarp::dev::IFrameGrabberControls *fgCtrl2;
     yarp::dev::IFrameGrabberControlsDC1394* fgCtrl_DC1394;
     yarp::dev::IFrameGrabberControlsDC1394* fgCtrl2_DC1394;
     yarp::dev::IPreciselyTimed *fgTimed;
-    yarp::dev::FrameGrabberControls2_Parser ifgCtrl_Parser;
-    yarp::dev::FrameGrabberControls2_Parser ifgCtrl2_Parser;
+    yarp::dev::FrameGrabberControls_Parser ifgCtrl_Parser;
+    yarp::dev::FrameGrabberControls_Parser ifgCtrl2_Parser;
     yarp::dev::DC1394::DC1394Parser ifgCtrl_DC1394_Parser;
     yarp::dev::DC1394::DC1394Parser ifgCtrl2_DC1394_Parser;
     Configuration param;

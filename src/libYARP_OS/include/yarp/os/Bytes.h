@@ -1,21 +1,22 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_BYTES_H
 #define YARP_OS_BYTES_H
 
 #include <yarp/os/api.h>
-#include <cstddef> //defines size_t
+
+#include <cstddef>
+
 
 namespace yarp {
-    namespace os {
-        class Bytes;
-    }
-}
-
+namespace os {
 
 /**
  * \brief A simple abstraction for a block of bytes.
@@ -23,7 +24,8 @@ namespace yarp {
  * This class is not responsible for allocating or destroying those bytes, just
  * recording their location.
  */
-class YARP_OS_API yarp::os::Bytes {
+class YARP_OS_API Bytes
+{
 public:
     /**
      * Default constructor.  No data present.
@@ -35,7 +37,7 @@ public:
      * @param data address of data block
      * @param len length of data block
      */
-    Bytes(char *data, size_t len);
+    Bytes(char* data, size_t len);
 
     /**
      * @return length of data block
@@ -43,13 +45,21 @@ public:
     size_t length() const;
 
     /**
-     * @return address of data block
+     * @return address of data block. Const version.
      */
-    char *get() const;
+    const char* get() const;
+
+    /**
+     * @return address of data block.
+     */
+    char* get();
 
 private:
-    char *data;
+    char* data;
     size_t len;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_BYTES_H

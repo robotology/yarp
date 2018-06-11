@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick, Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <stdio.h>
@@ -23,7 +26,7 @@ int server(double server_wait)
         Bottle b;
         b.clear();
         double time=Time::now();
-        b.addDouble(time);
+        b.addFloat64(time);
         port.write(b);
         //give the CPU some time
         Time::delay(server_wait);
@@ -51,7 +54,7 @@ int client(int nframes)
         {
             Bottle datum;
             port.read(datum);
-            double t=datum.get(0).asDouble();
+            double t=datum.get(0).asFloat64();
             double now=Time::now();
             delay+=(now-t)*1000;
             count++;
@@ -72,7 +75,7 @@ int main(int argc, char **argv) {
     p.fromCommand(argc, argv);
 
     if (p.check("server"))
-        return server(p.find("period").asDouble());
+        return server(p.find("period").asFloat64());
     else if (p.check("client"))
-        return client(p.find("nframes").asInt());
+        return client(p.find("nframes").asInt32());
 }

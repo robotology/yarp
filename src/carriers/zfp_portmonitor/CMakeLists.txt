@@ -1,11 +1,13 @@
-# Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
-# Authors: Nicolò Genesio
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 yarp_prepare_plugin(zfp TYPE ZfpMonitorObject
                         INCLUDE zfpPortmonitor.h
                         CATEGORY portmonitor
-                        DEPENDS "CREATE_OPTIONAL_CARRIERS;ENABLE_yarpcar_portmonitor;YARP_HAS_ZFP")
+                        DEPENDS "ENABLE_yarpcar_portmonitor;YARP_HAS_ZFP")
 
 if(NOT SKIP_zfp)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

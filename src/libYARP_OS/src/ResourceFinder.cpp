@@ -1,14 +1,16 @@
 /*
- * Copyright (C) 2008 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/ResourceFinder.h>
 
 #include <yarp/os/Bottle.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Property.h>
@@ -16,9 +18,7 @@
 #include <yarp/os/Time.h>
 
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
-#include <yarp/os/impl/PlatformUnistd.h>
 #include <yarp/os/impl/PlatformSysStat.h>
 
 #include <cstdio>
@@ -32,8 +32,8 @@ using namespace yarp::os::impl;
 #define RESOURCE_FINDER_CACHE_TIME 10
 
 
-static ConstString getPwd() {
-    ConstString result;
+static std::string getPwd() {
+    std::string result;
     int len = 5;
     char *buf = nullptr;
     while (true) {
@@ -54,7 +54,7 @@ static ConstString getPwd() {
 }
 
 
-static Bottle parsePaths(const ConstString& txt) {
+static Bottle parsePaths(const std::string& txt) {
     if (txt.empty()) {
         return Bottle();
     }
@@ -64,10 +64,10 @@ static Bottle parsePaths(const ConstString& txt) {
     const char *at = txt.c_str();
     int slash_tweak = 0;
     int len = 0;
-    for (ConstString::size_type i=0; i<txt.length(); i++) {
+    for (std::string::size_type i=0; i<txt.length(); i++) {
         char ch = txt[i];
         if (ch==sep) {
-            result.addString(ConstString(at, len-slash_tweak));
+            result.addString(std::string(at, len-slash_tweak));
             at += len+1;
             len = 0;
             slash_tweak = 0;
@@ -77,16 +77,16 @@ static Bottle parsePaths(const ConstString& txt) {
         len++;
     }
     if (len>0) {
-        result.addString(ConstString(at, len-slash_tweak));
+        result.addString(std::string(at, len-slash_tweak));
     }
     return result;
 }
 
 
-static void appendResourceType(ConstString& path,
-                               const ConstString& resourceType) {
+static void appendResourceType(std::string& path,
+                               const std::string& resourceType) {
     if (resourceType=="") return;
-    ConstString slash = NetworkBase::getDirectorySeparator();
+    std::string slash = NetworkBase::getDirectorySeparator();
     if (path.length()>0) {
         if (path[path.length()-1] != slash[0]) {
             path += NetworkBase::getDirectorySeparator();
@@ -95,18 +95,18 @@ static void appendResourceType(ConstString& path,
     path += resourceType;
 }
 
-static void prependResourceType(ConstString& path,
-                                const ConstString& resourceType) {
+static void prependResourceType(std::string& path,
+                                const std::string& resourceType) {
     if (resourceType=="") return;
-    ConstString slash = NetworkBase::getDirectorySeparator();
+    std::string slash = NetworkBase::getDirectorySeparator();
     path = resourceType + NetworkBase::getDirectorySeparator() + path;
 }
 
 static void appendResourceType(Bottle& paths,
-                               const ConstString& resourceType) {
+                               const std::string& resourceType) {
     if (resourceType=="") return;
-    for (int i=0; i<paths.size(); i++) {
-        ConstString txt = paths.get(i).asString();
+    for (size_t i=0; i<paths.size(); i++) {
+        std::string txt = paths.get(i).asString();
         appendResourceType(txt, resourceType);
         paths.get(i) = Value(txt);
     }
@@ -116,7 +116,7 @@ static void appendResourceType(Bottle& paths,
 class ResourceFinderHelper {
 private:
     yarp::os::Bottle apps;
-    yarp::os::ConstString configFilePath;
+    std::string configFilePath;
     yarp::os::Property cache;
     bool verbose;
     bool quiet;
@@ -144,33 +144,28 @@ public:
         return verbose;
     }
 
-    static ConstString extractPath(const char *fname) {
-        ConstString s = fname;
+    static std::string extractPath(const char *fname) {
+        std::string s = fname;
         size_t n = s.rfind('/');
-        if (n == ConstString::npos) {
+        if (n == std::string::npos) {
             n = s.rfind('\\');
         }
-        if (n != ConstString::npos) {
+        if (n != std::string::npos) {
             s[n] = '\0';
-            return ConstString(s.c_str());
+            return std::string(s.c_str());
         }
         return "";
     }
 
-    bool configure(Property& config, int argc, char *argv[], bool skip) {
-        if (argc>0) {
-            if (argv[0]!=nullptr) {
-                yarp::os::setprogname(argv[0]);
-            }
-        }
-
+    bool configure(Property& config, int argc, char *argv[], bool skip)
+    {
         Property p;
         p.fromCommand(argc, argv, skip);
 
         bool user_specified_from = p.check("from");
 
         if (p.check("verbose")) {
-            setVerbose(p.check("verbose", Value(1)).asInt());
+            setVerbose(p.check("verbose", Value(1)).asInt32());
         }
 
         if (isVerbose()) {
@@ -181,7 +176,7 @@ public:
 
         if (p.check("context")) {
             clearAppNames();
-            ConstString c = p.check("context", Value("default")).asString();
+            std::string c = p.check("context", Value("default")).asString();
             addAppName(c.c_str());
             if (verbose) {
                 fprintf(RTARGET, "||| added context %s\n",
@@ -191,19 +186,19 @@ public:
 
         config.fromCommand(argc, argv, skip, false);
         if (config.check("from")) {
-            ConstString from = config.check("from",
+            std::string from = config.check("from",
                                             Value("config.ini")).toString();
             if (verbose) {
                 fprintf(RTARGET, "||| default config file specified as %s\n",
                         from.c_str());
             }
             mainActive = true;
-            ConstString corrected = findFile(config, from.c_str(), nullptr);
+            std::string corrected = findFile(config, from.c_str(), nullptr);
             mainActive = false;
             if (corrected!="") {
                 from = corrected;
             }
-            ConstString fromPath = extractPath(from.c_str());
+            std::string fromPath = extractPath(from.c_str());
             configFilePath = fromPath;
             if (!config.fromConfigFile(from, false) && user_specified_from) {
                 configured_normally = false;
@@ -220,7 +215,7 @@ public:
         return true;
     }
 
-    bool isAbsolute(const ConstString& str) {
+    bool isAbsolute(const std::string& str) {
         if (str.length()>0 && (str[0]=='/'||str[0]=='\\')) {
             return true;
         }
@@ -232,7 +227,7 @@ public:
         return false;
     }
 
-    bool isRooted(const ConstString& str) {
+    bool isRooted(const std::string& str) {
         if (isAbsolute(str)) return true;
         if (str.length()>=2) {
             if (str[0]=='.'&&(str[1]=='/'||str[1]=='\\')) {
@@ -244,16 +239,16 @@ public:
         return false;
     }
 
-    yarp::os::ConstString getPath(const ConstString& base1,
-                                  const ConstString& base2,
-                                  const ConstString& base3,
-                                  const ConstString& name) {
+    std::string getPath(const std::string& base1,
+                                  const std::string& base2,
+                                  const std::string& base3,
+                                  const std::string& name) {
         if (isAbsolute(name)) {
             return name;
         }
 
-        ConstString s = "";
-        ConstString slash = NetworkBase::getDirectorySeparator();
+        std::string s = "";
+        std::string slash = NetworkBase::getDirectorySeparator();
 
         if (base1!="") {
             s = base1;
@@ -283,20 +278,20 @@ public:
         return s;
     }
 
-    yarp::os::ConstString check(const ConstString& base1,
-                                const ConstString& base2,
-                                const ConstString& base3,
-                                const ConstString& name,
+    std::string check(const std::string& base1,
+                                const std::string& base2,
+                                const std::string& base3,
+                                const std::string& name,
                                 bool isDir,
                                 const Bottle& doc,
                                 const char *doc2) {
-        ConstString s = getPath(base1, base2, base3, name);
+        std::string s = getPath(base1, base2, base3, name);
 
         // check cache first
         Bottle *prev = cache.find(s).asList();
         if (prev!=nullptr) {
-            double t = prev->get(0).asDouble();
-            int flag = prev->get(1).asInt();
+            double t = prev->get(0).asFloat64();
+            int flag = prev->get(1).asInt32();
             if (SystemClock::nowSystem()-t<RESOURCE_FINDER_CACHE_TIME) {
                 if (flag) return s;
                 return "";
@@ -304,7 +299,7 @@ public:
         }
 
         if (verbose) {
-            ConstString base = doc.toString();
+            std::string base = doc.toString();
             fprintf(RTARGET, "||| checking [%s] (%s%s%s)\n", s.c_str(),
                     base.c_str(),
                     (base.length()==0) ? "" : " ",
@@ -313,8 +308,8 @@ public:
         bool ok = exists(s.c_str(), isDir);
         Value status;
         yAssert(status.asList());
-        status.asList()->addDouble(SystemClock::nowSystem());
-        status.asList()->addInt(ok?1:0);
+        status.asList()->addFloat64(SystemClock::nowSystem());
+        status.asList()->addInt32(ok?1:0);
         cache.put(s, status);
         if (ok) {
             if (verbose) {
@@ -325,17 +320,17 @@ public:
         return "";
     }
 
-    yarp::os::ConstString findPath(Property& config, const ConstString& name,
+    std::string findPath(Property& config, const std::string& name,
                                    const ResourceFinderOptions *externalOptions) {
-        ConstString fname = config.check(name, Value(name)).asString();
-        ConstString result = findFileBase(config, fname, true, externalOptions);
+        std::string fname = config.check(name, Value(name)).asString();
+        std::string result = findFileBase(config, fname, true, externalOptions);
         return result;
     }
 
-    yarp::os::Bottle findPaths(Property& config, const ConstString& name,
+    yarp::os::Bottle findPaths(Property& config, const std::string& name,
                                const ResourceFinderOptions *externalOptions,
                                bool enforcePlural = true) {
-        ConstString fname = config.check(name, Value(name)).asString();
+        std::string fname = config.check(name, Value(name)).asString();
         Bottle paths;
         if (externalOptions) {
             if (externalOptions->duplicateFilesPolicy == ResourceFinderOptions::All) {
@@ -354,26 +349,26 @@ public:
         return paths;
     }
 
-    yarp::os::ConstString findPath(Property& config) {
-        ConstString result = findFileBase(config, "", true, nullptr);
+    std::string findPath(Property& config) {
+        std::string result = findFileBase(config, "", true, nullptr);
 		if (result=="") result = getPwd();
         return result;
     }
 
-    yarp::os::ConstString findFile(Property& config, const ConstString& name,
+    std::string findFile(Property& config, const std::string& name,
                                    const ResourceFinderOptions *externalOptions) {
-        ConstString fname = config.check(name, Value(name)).asString();
-        ConstString result = findFileBase(config, fname, false, externalOptions);
+        std::string fname = config.check(name, Value(name)).asString();
+        std::string result = findFileBase(config, fname, false, externalOptions);
         return result;
     }
 
-    yarp::os::ConstString findFileByName(Property& config, const ConstString& fname,
+    std::string findFileByName(Property& config, const std::string& fname,
                                    const ResourceFinderOptions *externalOptions) {
-        ConstString result = findFileBase(config, fname, false, externalOptions);
+        std::string result = findFileBase(config, fname, false, externalOptions);
         return result;
     }
 
-    yarp::os::ConstString findFileBase(Property& config, const ConstString& name,
+    std::string findFileBase(Property& config, const std::string& name,
                                        bool isDir,
                                        const ResourceFinderOptions *externalOptions) {
         Bottle output;
@@ -391,11 +386,11 @@ public:
         return !quiet;
     }
 
-    void findFileBase(Property& config, const ConstString& name,
+    void findFileBase(Property& config, const std::string& name,
                       bool isDir,
                       Bottle& output, const ResourceFinderOptions& opts) {
         Bottle doc;
-        int prelen = output.size();
+        size_t prelen = output.size();
         findFileBaseInner(config, name, isDir, true, output, opts, doc, nullptr);
         if (output.size()!=prelen) return;
         bool justTop = (opts.duplicateFilesPolicy==ResourceFinderOptions::First);
@@ -406,14 +401,14 @@ public:
         }
     }
 
-    void addString(Bottle& output, const ConstString& txt) {
-        for (int i=0; i<output.size(); i++) {
+    void addString(Bottle& output, const std::string& txt) {
+        for (size_t i=0; i<output.size(); i++) {
             if (txt == output.get(i).asString()) return;
         }
         output.addString(txt);
     }
 
-    void findFileBaseInner(Property& config, const ConstString& name,
+    void findFileBaseInner(Property& config, const std::string& name,
                            bool isDir, bool allowPathd,
                            Bottle& output, const ResourceFinderOptions& opts,
                            const Bottle& predoc, const char *reason) {
@@ -426,7 +421,7 @@ public:
         }
         ResourceFinderOptions::SearchLocations locs = opts.searchLocations;
         ResourceFinderOptions::SearchFlavor flavor = opts.searchFlavor;
-        ConstString resourceType = opts.resourceType;
+        std::string resourceType = opts.resourceType;
 
         bool justTop = (opts.duplicateFilesPolicy==ResourceFinderOptions::First);
 
@@ -436,7 +431,7 @@ public:
                 addString(output, getPwd());
                 if (justTop) return;
             }
-            ConstString str = check(getPwd(), resourceType, "", name, isDir, doc, "pwd");
+            std::string str = check(getPwd(), resourceType, "", name, isDir, doc, "pwd");
             if (str!="") {
                 if (mainActive) useNearMain = true;
                 addString(output, str);
@@ -446,7 +441,7 @@ public:
 
         if ((locs & ResourceFinderOptions::NearMainConfig) && useNearMain) {
             if (configFilePath!="") {
-                ConstString str = check(configFilePath.c_str(), resourceType, "", name, isDir, doc, "defaultConfigFile path");
+                std::string str = check(configFilePath.c_str(), resourceType, "", name, isDir, doc, "defaultConfigFile path");
                 if (str!="") {
                     addString(output, str);
                     if (justTop) return;
@@ -455,9 +450,9 @@ public:
         }
 
         if (locs & ResourceFinderOptions::Robot) {
-            ConstString slash = NetworkBase::getDirectorySeparator();
+            std::string slash = NetworkBase::getDirectorySeparator();
             bool found = false;
-            ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
+            std::string robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
                                                             &found);
             if (!found) robot = "default";
 
@@ -469,8 +464,8 @@ public:
             opts2.duplicateFilesPolicy = ResourceFinderOptions::All;
             findFileBaseInner(config, robot.c_str(), true, allowPathd, paths, opts2, doc, "robot");
             appendResourceType(paths, resourceType);
-            for (int j=0; j<paths.size(); j++) {
-                ConstString str = check(paths.get(j).asString().c_str(),
+            for (size_t j=0; j<paths.size(); j++) {
+                std::string str = check(paths.get(j).asString().c_str(),
                                         "", "",
                                         name, isDir, doc, "robot");
                 if (str!="") {
@@ -481,8 +476,8 @@ public:
         }
 
         if ((locs & ResourceFinderOptions::Context) && !useNearMain) {
-            for (int i=0; i<apps.size(); i++) {
-                ConstString app = apps.get(i).asString();
+            for (size_t i=0; i<apps.size(); i++) {
+                std::string app = apps.get(i).asString();
 
                 // New context still apparently applies only to "applications"
                 // which means we need to restrict our attention to "app"
@@ -496,8 +491,8 @@ public:
                 opts2.duplicateFilesPolicy = ResourceFinderOptions::All;
                 findFileBaseInner(config, app.c_str(), true, allowPathd, paths, opts2, doc, "context");
                 appendResourceType(paths, resourceType);
-                for (int j=0; j<paths.size(); j++) {
-                    ConstString str = check(paths.get(j).asString().c_str(), "", "",
+                for (size_t j=0; j<paths.size(); j++) {
+                    std::string str = check(paths.get(j).asString().c_str(), "", "",
                                             name, isDir, doc, "context");
                     if (str!="") {
                         addString(output, str);
@@ -510,10 +505,10 @@ public:
         // check YARP_CONFIG_HOME
         if ((locs & ResourceFinderOptions::User) &&
             (flavor & ResourceFinderOptions::ConfigLike)) {
-            ConstString home = ResourceFinder::getConfigHomeNoCreate();
+            std::string home = ResourceFinder::getConfigHomeNoCreate();
             if (home!="") {
                 appendResourceType(home, resourceType);
-                ConstString str = check(home.c_str(), "", "", name, isDir,
+                std::string str = check(home.c_str(), "", "", name, isDir,
                                         doc, "YARP_CONFIG_HOME");
                 if (str!="") {
                     addString(output, str);
@@ -525,10 +520,10 @@ public:
         // check YARP_DATA_HOME
         if ((locs & ResourceFinderOptions::User) &&
             (flavor & ResourceFinderOptions::DataLike)) {
-            ConstString home = ResourceFinder::getDataHomeNoCreate();
+            std::string home = ResourceFinder::getDataHomeNoCreate();
             if (home!="") {
                 appendResourceType(home, resourceType);
-                ConstString str = check(home.c_str(), "", "", name, isDir,
+                std::string str = check(home.c_str(), "", "", name, isDir,
                                         doc, "YARP_DATA_HOME");
                 if (str!="") {
                     addString(output, str);
@@ -541,8 +536,8 @@ public:
         if (locs & ResourceFinderOptions::Sysadmin) {
             Bottle dirs = ResourceFinder::getConfigDirs();
             appendResourceType(dirs, resourceType);
-            for (int i=0; i<dirs.size(); i++) {
-                ConstString str = check(dirs.get(i).asString().c_str(),
+            for (size_t i=0; i<dirs.size(); i++) {
+                std::string str = check(dirs.get(i).asString().c_str(),
                                         "", "", name, isDir,
                                         doc, "YARP_CONFIG_DIRS");
                 if (str!="") {
@@ -556,8 +551,8 @@ public:
         if (locs & ResourceFinderOptions::Installed) {
             Bottle dirs = ResourceFinder::getDataDirs();
             appendResourceType(dirs, resourceType);
-            for (int i=0; i<dirs.size(); i++) {
-                ConstString str = check(dirs.get(i).asString().c_str(),
+            for (size_t i=0; i<dirs.size(); i++) {
+                std::string str = check(dirs.get(i).asString().c_str(),
                                         "", "", name, isDir,
                                         doc, "YARP_DATA_DIRS");
                 if (str!="") {
@@ -575,7 +570,7 @@ public:
             opts2.resourceType = "config";
             findFileBaseInner(config, "path.d", true, false, pathds, opts2, doc, "path.d");
 
-            for (int i=0; i<pathds.size(); i++) {
+            for (size_t i=0; i<pathds.size(); i++) {
                 // check /.../path.d/*
                 // this directory is expected to contain *.ini files like this:
                 //   [search BUNDLE_NAME]
@@ -586,13 +581,13 @@ public:
                 Property pathd;
                 pathd.fromConfigFile(pathds.get(i).asString());
                 Bottle sections = pathd.findGroup("search").tail();
-                for (int i=0; i<sections.size(); i++) {
-                    ConstString search_name = sections.get(i).asString();
+                for (size_t i=0; i<sections.size(); i++) {
+                    std::string search_name = sections.get(i).asString();
                     Bottle group = pathd.findGroup(search_name);
                     Bottle paths = group.findGroup("path").tail();
                     appendResourceType(paths, resourceType);
-                    for (int j=0; j<paths.size(); j++) {
-                        ConstString str = check(paths.get(j).asString().c_str(), "", "",
+                    for (size_t j=0; j<paths.size(); j++) {
+                        std::string str = check(paths.get(j).asString().c_str(), "", "",
                                                 name, isDir, doc, "yarp.d");
                         if (str!="") {
                             addString(output, str);
@@ -643,7 +638,7 @@ public:
     }
 
 
-    ConstString getContext() {
+    std::string getContext() {
         return apps.get(0).asString();
     }
 
@@ -651,23 +646,23 @@ public:
         return apps;
     }
 
-    ConstString getHomeContextPath(Property& config, const ConstString& context )
+    std::string getHomeContextPath(Property& config, const std::string& context )
     {
         YARP_UNUSED(config);
         if (useNearMain)
             return configFilePath;
         else
         {
-            ConstString path = getPath(ResourceFinder::getDataHome(), "contexts", context, "");
+            std::string path = getPath(ResourceFinder::getDataHome(), "contexts", context, "");
 
-            ConstString slash = NetworkBase::getDirectorySeparator();
+            std::string slash = NetworkBase::getDirectorySeparator();
             if (path.length()>1) {
               if (path[path.length()-1] == slash[0]) {
                 path = path.substr(0, path.length()-slash.size());
                 }
             }
 
-            ConstString parentPath=getPath(ResourceFinder::getDataHome(), "contexts", "", "");
+            std::string parentPath=getPath(ResourceFinder::getDataHome(), "contexts", "", "");
             if (yarp::os::stat(parentPath.c_str()))
                 yarp::os::mkdir(parentPath.c_str());
 
@@ -677,24 +672,24 @@ public:
         }
     }
 
-    ConstString getHomeRobotPath()
+    std::string getHomeRobotPath()
     {
         if (useNearMain)
             return configFilePath;
         bool found = false;
-        ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
+        std::string robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
                                                             &found);
         if (!found) robot = "default";
-        ConstString path = getPath(ResourceFinder::getDataHome(), "robots", robot, "");
+        std::string path = getPath(ResourceFinder::getDataHome(), "robots", robot, "");
 
-        ConstString slash = NetworkBase::getDirectorySeparator();
+        std::string slash = NetworkBase::getDirectorySeparator();
         if (path.length()>1) {
             if (path[path.length()-1]==slash[0]) {
             path = path.substr(0, path.length()-slash.size());
             }
         }
 
-        ConstString parentPath=getPath(ResourceFinder::getDataHome(), "robots", "", "");
+        std::string parentPath=getPath(ResourceFinder::getDataHome(), "robots", "", "");
         if (yarp::os::stat(parentPath.c_str()))
             yarp::os::mkdir(parentPath.c_str());
 
@@ -786,11 +781,21 @@ bool ResourceFinder::clearContext()
     return HELPER(implementation).clearAppNames();
 }
 
-bool ResourceFinder::setDefault(const char *key, const yarp::os::ConstString& val)
+bool ResourceFinder::setDefault(const char *key, const std::string& val)
 {
     Value val2;
     val2.fromString(val.c_str());
     return HELPER(implementation).setDefault(config, key, val2);
+}
+
+bool ResourceFinder::setDefault(const char *key, std::int32_t val)
+{
+    return HELPER(implementation).setDefault(config, key, Value(val));
+}
+
+bool ResourceFinder::setDefault(const char *key, yarp::conf::float64_t val)
+{
+    return HELPER(implementation).setDefault(config, key, Value(val));
 }
 
 bool ResourceFinder::setDefault(const char *key, const yarp::os::Value& val)
@@ -798,7 +803,7 @@ bool ResourceFinder::setDefault(const char *key, const yarp::os::Value& val)
     return HELPER(implementation).setDefault(config, key, val);
 }
 
-yarp::os::ConstString ResourceFinder::findFile(const ConstString& name)
+std::string ResourceFinder::findFile(const std::string& name)
 {
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET, "||| finding file [%s]\n", name.c_str());
@@ -806,7 +811,7 @@ yarp::os::ConstString ResourceFinder::findFile(const ConstString& name)
     return HELPER(implementation).findFile(config, name, nullptr);
 }
 
-yarp::os::ConstString ResourceFinder::findFile(const ConstString& name,
+std::string ResourceFinder::findFile(const std::string& name,
                                                const ResourceFinderOptions& options)
 {
     if (HELPER(implementation).isVerbose()) {
@@ -815,7 +820,7 @@ yarp::os::ConstString ResourceFinder::findFile(const ConstString& name,
     return HELPER(implementation).findFile(config, name, &options);
 }
 
-yarp::os::ConstString ResourceFinder::findFileByName(const ConstString& name)
+std::string ResourceFinder::findFileByName(const std::string& name)
 {
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET, "||| finding file %s\n", name.c_str());
@@ -823,7 +828,7 @@ yarp::os::ConstString ResourceFinder::findFileByName(const ConstString& name)
     return HELPER(implementation).findFileByName(config, name, nullptr);
 }
 
-yarp::os::ConstString ResourceFinder::findFileByName(const ConstString& name,
+std::string ResourceFinder::findFileByName(const std::string& name,
                                                      const ResourceFinderOptions& options)
 {
     if (HELPER(implementation).isVerbose()) {
@@ -833,7 +838,7 @@ yarp::os::ConstString ResourceFinder::findFileByName(const ConstString& name,
 }
 
 
-yarp::os::ConstString ResourceFinder::findPath(const ConstString& name)
+std::string ResourceFinder::findPath(const std::string& name)
 {
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET, "||| finding path [%s]\n", name.c_str());
@@ -841,7 +846,7 @@ yarp::os::ConstString ResourceFinder::findPath(const ConstString& name)
     return HELPER(implementation).findPath(config, name, nullptr);
 }
 
-yarp::os::ConstString ResourceFinder::findPath(const ConstString& name,
+std::string ResourceFinder::findPath(const std::string& name,
                                                const ResourceFinderOptions& options)
 {
     if (HELPER(implementation).isVerbose()) {
@@ -850,7 +855,7 @@ yarp::os::ConstString ResourceFinder::findPath(const ConstString& name,
     return HELPER(implementation).findPath(config, name, &options);
 }
 
-yarp::os::Bottle ResourceFinder::findPaths(const ConstString& name)
+yarp::os::Bottle ResourceFinder::findPaths(const std::string& name)
 {
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET, "||| finding paths [%s]\n", name.c_str());
@@ -858,7 +863,7 @@ yarp::os::Bottle ResourceFinder::findPaths(const ConstString& name)
     return HELPER(implementation).findPaths(config, name, nullptr);
 }
 
-yarp::os::Bottle ResourceFinder::findPaths(const ConstString& name,
+yarp::os::Bottle ResourceFinder::findPaths(const std::string& name,
                                            const ResourceFinderOptions& options)
 {
     if (HELPER(implementation).isVerbose()) {
@@ -867,7 +872,7 @@ yarp::os::Bottle ResourceFinder::findPaths(const ConstString& name,
     return HELPER(implementation).findPaths(config, name, &options);
 }
 
-yarp::os::ConstString ResourceFinder::findPath()
+std::string ResourceFinder::findPath()
 {
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET, "||| finding path\n");
@@ -888,19 +893,19 @@ bool ResourceFinder::setQuiet(bool quiet)
 
 
 
-bool ResourceFinder::check(const ConstString& key) const
+bool ResourceFinder::check(const std::string& key) const
 {
     return config.check(key);
 }
 
 
-Value& ResourceFinder::find(const ConstString& key) const
+Value& ResourceFinder::find(const std::string& key) const
 {
     return config.find(key);
 }
 
 
-Bottle& ResourceFinder::findGroup(const ConstString& key) const
+Bottle& ResourceFinder::findGroup(const std::string& key) const
 {
     return config.findGroup(key);
 }
@@ -912,23 +917,23 @@ bool ResourceFinder::isNull() const
 }
 
 
-ConstString ResourceFinder::toString() const
+std::string ResourceFinder::toString() const
 {
     return config.toString();
 }
 
-ConstString ResourceFinder::getContext()
+std::string ResourceFinder::getContext()
 {
     return HELPER(implementation).getContext();
 }
 
-ConstString ResourceFinder::getHomeContextPath()
+std::string ResourceFinder::getHomeContextPath()
 {
     return HELPER(implementation).getHomeContextPath(config,
                                                HELPER(implementation).getContext());
 }
 
-ConstString ResourceFinder::getHomeRobotPath()
+std::string ResourceFinder::getHomeRobotPath()
 {
     return HELPER(implementation).getHomeRobotPath();
 }
@@ -947,26 +952,27 @@ ResourceFinder ResourceFinder::findNestedResourceFinder(const char *key)
 
 ResourceFinder& ResourceFinder::getResourceFinderSingleton()
 {
-    return NameClient::getNameClient().getResourceFinder();
+    static ResourceFinder instance;
+    return instance;
 }
 
-ConstString ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
+std::string ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
 {
-    ConstString slash = NetworkBase::getDirectorySeparator();
+    std::string slash = NetworkBase::getDirectorySeparator();
     bool found = false;
-    ConstString yarp_version = NetworkBase::getEnvironment("YARP_DATA_HOME",
+    std::string yarp_version = NetworkBase::getEnvironment("YARP_DATA_HOME",
                                                            &found);
     if (yarp_version != "") return yarp_version;
-    ConstString xdg_version = NetworkBase::getEnvironment("XDG_DATA_HOME",
+    std::string xdg_version = NetworkBase::getEnvironment("XDG_DATA_HOME",
                                                           &found);
     if (found) return createIfAbsent(mayCreate, xdg_version + slash + "yarp");
 #if defined(_WIN32)
-    ConstString app_version = NetworkBase::getEnvironment("APPDATA");
+    std::string app_version = NetworkBase::getEnvironment("APPDATA");
     if (app_version != "") {
         return createIfAbsent(mayCreate, app_version + slash + "yarp");
     }
 #endif
-    ConstString home_version = NetworkBase::getEnvironment("HOME");
+    std::string home_version = NetworkBase::getEnvironment("HOME");
 #if defined(__APPLE__)
     if (home_version != "") {
         return createIfAbsent(mayCreate,
@@ -987,18 +993,18 @@ ConstString ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
 }
 
 
-ConstString ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
+std::string ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
 {
-    ConstString slash = NetworkBase::getDirectorySeparator();
+    std::string slash = NetworkBase::getDirectorySeparator();
     bool found = false;
-    ConstString yarp_version = NetworkBase::getEnvironment("YARP_CONFIG_HOME",
+    std::string yarp_version = NetworkBase::getEnvironment("YARP_CONFIG_HOME",
                                                            &found);
     if (found) return yarp_version;
-    ConstString xdg_version = NetworkBase::getEnvironment("XDG_CONFIG_HOME",
+    std::string xdg_version = NetworkBase::getEnvironment("XDG_CONFIG_HOME",
                                                           &found);
     if (found) return createIfAbsent(mayCreate, xdg_version + slash + "yarp");
 #if defined(_WIN32)
-    ConstString app_version = NetworkBase::getEnvironment("APPDATA");
+    std::string app_version = NetworkBase::getEnvironment("APPDATA");
     if (app_version != "") {
         return createIfAbsent(mayCreate,
                               app_version + slash + "yarp" + slash + "config");
@@ -1006,14 +1012,14 @@ ConstString ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
 #endif
 
 #if defined(__APPLE__)
-    ConstString home_mac_version = getDataHomeNoCreate();
+    std::string home_mac_version = getDataHomeNoCreate();
     if (home_mac_version != "") {
         return createIfAbsent(mayCreate,
                               home_mac_version
                               + slash + "config");
     }
 #endif
-    ConstString home_version = NetworkBase::getEnvironment("HOME");
+    std::string home_version = NetworkBase::getEnvironment("HOME");
     if (home_version != "") {
         return createIfAbsent(mayCreate,
                               home_version
@@ -1023,8 +1029,8 @@ ConstString ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
     return "";
 }
 
-ConstString ResourceFinder::createIfAbsent(bool mayCreate,
-                                           const ConstString& path)
+std::string ResourceFinder::createIfAbsent(bool mayCreate,
+                                           const std::string& path)
 {
     if (!mayCreate) return path;
     NameConfig::createPath(path, 0);
@@ -1033,7 +1039,7 @@ ConstString ResourceFinder::createIfAbsent(bool mayCreate,
 
 Bottle ResourceFinder::getDataDirs()
 {
-    ConstString slash = NetworkBase::getDirectorySeparator();
+    std::string slash = NetworkBase::getDirectorySeparator();
     bool found = false;
     Bottle yarp_version = parsePaths(NetworkBase::getEnvironment("YARP_DATA_DIRS",
                                                                  &found));
@@ -1045,7 +1051,7 @@ Bottle ResourceFinder::getDataDirs()
         return xdg_version;
     }
 #if defined(_WIN32)
-    ConstString app_version = NetworkBase::getEnvironment("YARP_DIR");
+    std::string app_version = NetworkBase::getEnvironment("YARP_DIR");
     if (app_version != "") {
         appendResourceType(app_version, "share");
         appendResourceType(app_version, "yarp");
@@ -1063,7 +1069,7 @@ Bottle ResourceFinder::getDataDirs()
 
 Bottle ResourceFinder::getConfigDirs()
 {
-    ConstString slash = NetworkBase::getDirectorySeparator();
+    std::string slash = NetworkBase::getDirectorySeparator();
     bool found = false;
     Bottle yarp_version = parsePaths(NetworkBase::getEnvironment("YARP_CONFIG_DIRS",
                                                                  &found));
@@ -1075,7 +1081,7 @@ Bottle ResourceFinder::getConfigDirs()
         return xdg_version;
     }
 #if defined(_WIN32)
-    ConstString app_version = NetworkBase::getEnvironment("ALLUSERSPROFILE");
+    std::string app_version = NetworkBase::getEnvironment("ALLUSERSPROFILE");
     if (app_version != "") {
         appendResourceType(app_version, "yarp");
         Bottle result;
@@ -1095,13 +1101,13 @@ Bottle ResourceFinder::getConfigDirs()
 
 
 bool ResourceFinder::readConfig(Property& config,
-                                const ConstString& key,
+                                const std::string& key,
                                 const ResourceFinderOptions& options)
 {
     Bottle bot = HELPER(implementation).findPaths(config, key, &options, false);
 
     for (int i=bot.size()-1; i>=0; i--) {
-        ConstString fname = bot.get(i).asString();
+        std::string fname = bot.get(i).asString();
         config.fromConfigFile(fname, false);
     }
 

@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_ROSNAMESPACE_H
@@ -11,7 +13,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Thread.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 
 #include <cstdio>
 
@@ -29,22 +31,22 @@ public:
 
     virtual Contact getNameServerContact() const override;
 
-    virtual Contact queryName(const ConstString& name) override;
-    virtual Contact registerName(const ConstString& name) override;
+    virtual Contact queryName(const std::string& name) override;
+    virtual Contact registerName(const std::string& name) override;
     virtual Contact registerContact(const Contact& contact) override;
-    virtual Contact unregisterName(const ConstString& name) override;
+    virtual Contact unregisterName(const std::string& name) override;
     virtual Contact unregisterContact(const Contact& contact) override;
     virtual Contact registerAdvanced(const Contact& contact,
                                      NameStore *store) override;
-    virtual Contact unregisterAdvanced(const ConstString& name,
+    virtual Contact unregisterAdvanced(const std::string& name,
                                        NameStore *store) override;
 
-    virtual bool setProperty(const ConstString& name,
-                             const ConstString& key,
+    virtual bool setProperty(const std::string& name,
+                             const std::string& key,
                              const Value& value) override;
 
-    virtual Value *getProperty(const ConstString& name,
-                               const ConstString& key) override;
+    virtual Value *getProperty(const std::string& name,
+                               const std::string& key) override;
 
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
@@ -90,10 +92,10 @@ public:
      * ":" is definitely ruled out.  Since plenty of valid
      * YARP ports have a ":" in them, we need to quote this.
      */
-    static ConstString toRosName(const ConstString& name);
-    static ConstString fromRosName(const ConstString& name);
-    static ConstString toRosNodeName(const ConstString& name);
-    static ConstString fromRosNodeName(const ConstString& name);
+    static std::string toRosName(const std::string& name);
+    static std::string fromRosName(const std::string& name);
+    static std::string toRosNodeName(const std::string& name);
+    static std::string fromRosNodeName(const std::string& name);
     static Contact rosify(const Contact& contact);
 
     virtual void run() override;
@@ -101,7 +103,7 @@ public:
 private:
     Contact contact;
     Bottle pending;
-    Semaphore mutex;
+    Mutex mutex;
 };
 
 #endif // YARP_OS_ROSNAMESPACE_H

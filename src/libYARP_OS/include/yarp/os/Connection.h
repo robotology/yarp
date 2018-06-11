@@ -1,13 +1,16 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_CONNECTION_H
 #define YARP_OS_CONNECTION_H
 
 #include <yarp/os/api.h>
+#include <yarp/os/Bytes.h>
 
 namespace yarp {
     namespace os {
@@ -39,21 +42,21 @@ public:
      * @return true if a valid connection
      *
      */
-    virtual bool isValid() { return true; }
+    virtual bool isValid() const { return true; }
 
     /**
      * Check if carrier is textual in nature
      *
      * @return true if carrier is text-based
      */
-    virtual bool isTextMode() = 0;
+    virtual bool isTextMode() const = 0;
 
     /**
      * Check if carrier excludes type information from payload
      *
      * @return true if carrier is bare
      */
-    virtual bool isBareMode() { return false; }
+    virtual bool isBareMode() const { return false; }
 
     /**
      * Carriers that do not distinguish data from administrative headers
@@ -65,7 +68,7 @@ public:
      *
      * @param envelope the envelope to transmit bundled with data.
      */
-    virtual void handleEnvelope(const yarp::os::ConstString& envelope) = 0;
+    virtual void handleEnvelope(const std::string& envelope) = 0;
 
 
     /**
@@ -75,7 +78,7 @@ public:
      *
      * @return true if carrier can encode administrative messages
      */
-    virtual bool canEscape() = 0;
+    virtual bool canEscape() const = 0;
 
     /**
      * Check if carrier has flow control, requiring sent messages
@@ -83,7 +86,7 @@ public:
      *
      * @return true if carrier requires acknowledgement.
      */
-    virtual bool requireAck() = 0;
+    virtual bool requireAck() const = 0;
 
     /**
      * This flag is used by YARP to determine whether the connection
@@ -91,7 +94,7 @@ public:
      *
      * @return true if carrier supports replies
      */
-    virtual bool supportReply() = 0;
+    virtual bool supportReply() const = 0;
 
     /**
      * Check if carrier operates within a single process.
@@ -101,7 +104,7 @@ public:
      *
      * @return true if carrier will only operate within a single process
      */
-    virtual bool isLocal() = 0;
+    virtual bool isLocal() const = 0;
 
 
     /**
@@ -115,7 +118,7 @@ public:
      *
      * @return true if carrier is "push" style, false if "pull" style
      */
-    virtual bool isPush() = 0;
+    virtual bool isPush() const = 0;
 
    /**
      * Check if this carrier is connectionless (like udp, mcast) or
@@ -127,7 +130,7 @@ public:
      *
      * @return true if carrier is connectionless
      */
-    virtual bool isConnectionless() = 0;
+    virtual bool isConnectionless() const = 0;
 
 
     /**
@@ -139,7 +142,7 @@ public:
      *
      * @return true if carrier uses a broadcast mechanism.
      */
-    virtual bool isBroadcast() = 0;
+    virtual bool isBroadcast() const = 0;
 
 
     /**
@@ -147,7 +150,7 @@ public:
      *
      * @return true if carrier is active.
      */
-    virtual bool isActive() = 0;
+    virtual bool isActive() const = 0;
 
 
     /**
@@ -156,7 +159,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyIncomingData called.
      */
-    virtual bool modifiesIncomingData() = 0;
+    virtual bool modifiesIncomingData() const = 0;
 
     /**
      * Modify incoming payload data, if appropriate.
@@ -185,7 +188,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyOutgoingData called.
      */
-    virtual bool modifiesOutgoingData() = 0;
+    virtual bool modifiesOutgoingData() const = 0;
 
     /**
      * Modify outgoing payload data, if appropriate.
@@ -197,7 +200,7 @@ public:
      * @param writer for outgoing data.
      * @return writer for modified version of outgoing data.
      */
-    virtual PortWriter& modifyOutgoingData(PortWriter& writer) = 0;
+    virtual const PortWriter& modifyOutgoingData(const PortWriter& writer) = 0;
 
     /**
      * Determine whether outgoing data should be accepted.
@@ -206,7 +209,7 @@ public:
      * @return true if data should be accepted, false if it should be
      *         discarded.
      */
-    virtual bool acceptOutgoingData(PortWriter& writer) = 0;
+    virtual bool acceptOutgoingData(const PortWriter& writer) = 0;
 
     /**
      * Check if this carrier modifies outgoing data through the
@@ -214,7 +217,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyReply called.
      */
-    virtual bool modifiesReply() = 0;
+    virtual bool modifiesReply() const = 0;
 
     /**
      * Modify reply payload data, if appropriate.
@@ -237,16 +240,16 @@ public:
      *
      * @param params output carrier properties
      */
-    virtual void getCarrierParams(yarp::os::Property& params) = 0;
+    virtual void getCarrierParams(yarp::os::Property& params) const = 0;
 
     /**
      * Provide 8 bytes describing this connection sufficiently to
      * allow the other side of a connection to select it.
      *
-     * @param header a buffer to hold the first 8 bytes to send on a
-     *               connection
+     * @param[out] header a buffer to hold the first 8 bytes to send on a
+     *                    connection
      */
-    virtual void getHeader(const yarp::os::Bytes& header) = 0;
+    virtual void getHeader(yarp::os::Bytes& header) const = 0;
 
     /**
      * Do cleanup and preparation for the coming disconnect, if
@@ -259,26 +262,26 @@ public:
      *
      * @return the name of this connection type
      */
-    virtual yarp::os::ConstString getName() = 0;
+    virtual std::string getName() const = 0;
 };
 
 
 class YARP_OS_API yarp::os::NullConnection : public Connection
 {
 public:
-    virtual bool isValid() override { return false; }
-    virtual bool isTextMode() override { return true; }
-    virtual bool canEscape() override { return true; }
-    virtual void handleEnvelope(const yarp::os::ConstString& envelope) override { YARP_UNUSED(envelope); }
-    virtual bool requireAck() override { return false; }
-    virtual bool supportReply() override { return false; }
-    virtual bool isLocal() override { return false; }
-    virtual bool isPush() override { return true; }
-    virtual bool isConnectionless() override { return false; }
-    virtual bool isBroadcast() override { return false; }
-    virtual bool isActive() override { return false; }
+    virtual bool isValid() const override { return false; }
+    virtual bool isTextMode() const override { return true; }
+    virtual bool canEscape() const override { return true; }
+    virtual void handleEnvelope(const std::string& envelope) override { YARP_UNUSED(envelope); }
+    virtual bool requireAck() const override { return false; }
+    virtual bool supportReply() const override { return false; }
+    virtual bool isLocal() const override { return false; }
+    virtual bool isPush() const override { return true; }
+    virtual bool isConnectionless() const override { return false; }
+    virtual bool isBroadcast() const override { return false; }
+    virtual bool isActive() const override { return false; }
 
-    virtual bool modifiesIncomingData() override { return false; }
+    virtual bool modifiesIncomingData() const override { return false; }
 
     virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) override
     {
@@ -291,23 +294,23 @@ public:
         return true;
     }
 
-    virtual bool modifiesOutgoingData() override
+    virtual bool modifiesOutgoingData() const override
     {
         return false;
     }
 
-    virtual PortWriter& modifyOutgoingData(PortWriter& writer) override
+    virtual const PortWriter& modifyOutgoingData(const PortWriter& writer) override
     {
         return writer;
     }
 
-    virtual bool acceptOutgoingData(PortWriter& writer) override
+    virtual bool acceptOutgoingData(const PortWriter& writer) override
     {
         YARP_UNUSED(writer);
         return true;
     }
 
-    virtual bool modifiesReply() override
+    virtual bool modifiesReply() const override
     {
         return false;
     }
@@ -322,12 +325,12 @@ public:
         YARP_UNUSED(params);
     }
 
-    virtual void getCarrierParams(yarp::os::Property& params) override
+    virtual void getCarrierParams(yarp::os::Property& params) const override
     {
         YARP_UNUSED(params);
     }
 
-    virtual void getHeader(const yarp::os::Bytes& header) override
+    virtual void getHeader(yarp::os::Bytes& header) const override
     {
         for (size_t i=0; i<header.length(); i++) {
             header.get()[i] = '\0';
@@ -336,7 +339,7 @@ public:
 
     virtual void prepareDisconnect() override {}
 
-    virtual yarp::os::ConstString getName() override
+    virtual std::string getName() const override
     {
         return "null";
     }

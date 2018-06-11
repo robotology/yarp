@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_IMPL_PORTCOREINPUTUNIT_H
@@ -11,6 +14,7 @@
 #include <yarp/os/impl/PortCoreUnit.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/InputProtocol.h>
+#include <yarp/os/Semaphore.h>
 
 namespace yarp {
     namespace os {
@@ -69,7 +73,7 @@ public:
 
     virtual bool isFinished() override;
 
-    const ConstString& getName();
+    const std::string& getName();
 
     virtual Route getRoute() override;
 
@@ -86,9 +90,9 @@ public:
 
 private:
     InputProtocol *ip;
-    SemaphoreImpl phase, access;
+    yarp::os::Semaphore phase, access;
     bool closing, finished, running;
-    ConstString name;
+    std::string name;
     yarp::os::PortReader *localReader;
     Route officialRoute;
     bool reversed;

@@ -5,7 +5,7 @@
  * email:   dperrone@aitek.it
  * website: www.aitek.it
  *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 #include "qtyarpview.h"
@@ -274,34 +274,34 @@ void QtYARPView::setOptions(yarp::os::Searchable& options) {
         qsnprintf(_options.m_outNetworkName, 256, "%s", val->asString().c_str());
     }
     if (options.check("RefreshTime",val)||options.check("p",val)) {
-        _options.m_refreshTime = val->asInt();
+        _options.m_refreshTime = val->asInt32();
         sigHandler.changeRefreshInterval(_options.m_refreshTime);
         emit refreshIntervalChanged();
     }
     if (options.check("PosX",val)||options.check("x",val)) {
-        _options.m_posX = val->asInt();
+        _options.m_posX = val->asInt32();
         emit posXChanged();
     }
     if (options.check("PosY",val)||options.check("y",val)) {
-        _options.m_posY = val->asInt();
+        _options.m_posY = val->asInt32();
         emit posYChanged();
     }
     if (options.check("Width",val)||options.check("w",val)) {
-        _options.m_windWidth = val->asInt();
+        _options.m_windWidth = val->asInt32();
         emit widthChanged();
     }
     if (options.check("Height",val)||options.check("h",val)) {
-        _options.m_windHeight = val->asInt();
+        _options.m_windHeight = val->asInt32();
         emit heightChanged();
     }
     if (options.check("OutputEnabled",val)) {
-        _options.m_outputEnabled = val->asInt();
+        _options.m_outputEnabled = val->asInt32();
     }
     if (options.check("out",val)) {
         _options.m_outputEnabled = true;
     }
     if (options.check("SaveOptions",val)||options.check("saveoptions",val)) {
-        _options.m_outputEnabled = val->asInt();
+        _options.m_outputEnabled = val->asInt32();
     }
     if (options.check("synch"))
     {
@@ -457,10 +457,10 @@ void QtYARPView::clickCoords_4(int start_x, int start_y, int end_x, int end_y)
         if (_pOutPort != nullptr) {
             yarp::os::Bottle& bot = _pOutPort->prepare();
             bot.clear();
-            bot.addInt(start_x);
-            bot.addInt(start_y);
-            bot.addInt(end_x);
-            bot.addInt(end_y);
+            bot.addInt32(start_x);
+            bot.addInt32(start_y);
+            bot.addInt32(end_x);
+            bot.addInt32(end_y);
             //_pOutPort->Content() = _outBottle;
             _pOutPort->write();
         }
@@ -483,8 +483,8 @@ void QtYARPView::clickCoords_2(int x,int y)
         if (_pOutPort!=nullptr) {
             yarp::os::Bottle& bot = _pOutPort->prepare();
             bot.clear();
-            bot.addInt(x);
-            bot.addInt(y);
+            bot.addInt32(x);
+            bot.addInt32(y);
             //_pOutPort->Content() = _outBottle;
             _pOutPort->write();
         }

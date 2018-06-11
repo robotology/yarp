@@ -1,6 +1,6 @@
 /*
  * Copyright: (C) 2010 Renaud Detry
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 /**
@@ -189,7 +189,7 @@ int YarpCImgViewer::main(int argc, char ** argv)
 
     Value& udelay = options.find("udelay");
     if (!udelay.isNull())
-        ycv.setUdelay(udelay.asInt());
+        ycv.setUdelay(udelay.asInt32());
 
     Value& behavior = options.find("behave");
     if (!behavior.isNull() &&

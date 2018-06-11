@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/Logger.h>
@@ -64,7 +66,7 @@ public:
         // no parent
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() const override {
         return "root";
     }
 };
@@ -99,7 +101,7 @@ void UnitTest::clear() {
     subTests.clear();
 }
 
-void UnitTest::report(int severity, const ConstString& problem) {
+void UnitTest::report(int severity, const std::string& problem) {
     if (parent!=nullptr) {
         parent->report(severity, getName() + ": " + problem);
     } else {
@@ -136,10 +138,10 @@ int UnitTest::run(int argc, char *argv[]) {
         runTests();
         ran = true;
     } else {
-        ConstString name = getName();
+        std::string name = getName();
         bool onList = false;
         for (int i=0; i<argc; i++) {
-            if (name == ConstString(argv[i])) {
+            if (name == std::string(argv[i])) {
                 onList = true;
                 break;
             }
@@ -185,24 +187,6 @@ void UnitTest::stopTestSystem() {
     }
 }
 
-
-bool UnitTest::checkEqualImpl(int x, int y,
-                              const char *desc,
-                              const char *txt1,
-                              const char *txt2,
-                              const char *fname,
-                              int fline) {
-    char buf[1000];
-    sprintf(buf, "in file %s:%d [%s] %s (%d) == %s (%d)",
-                    fname, fline, desc, txt1, x, txt2, y);
-    if (x==y) {
-        report(0, ConstString("  [") + desc + "] passed ok");
-    } else {
-        report(1, ConstString("  FAILURE ") + buf);
-    }
-    return x==y;
-}
-
 bool UnitTest::checkEqualishImpl(double x, double y,
                                  const char *desc,
                                  const char *txt1,
@@ -214,15 +198,15 @@ bool UnitTest::checkEqualishImpl(double x, double y,
                     fname, fline, desc, txt1, x, txt2, y);
     bool ok = (fabs(x-y)<0.0001);
     if (ok) {
-        report(0, ConstString("  [") + desc + "] passed ok");
+        report(0, std::string("  [") + desc + "] passed ok");
     } else {
-        report(1, ConstString("  FAILURE ") + buf);
+        report(1, std::string("  FAILURE ") + buf);
     }
     return ok;
 }
 
 
-bool UnitTest::checkEqualImpl(const ConstString& x, const ConstString& y,
+bool UnitTest::checkEqualImpl(const std::string& x, const std::string& y,
                               const char *desc,
                               const char *txt1,
                               const char *txt2,
@@ -233,16 +217,16 @@ bool UnitTest::checkEqualImpl(const ConstString& x, const ConstString& y,
                     fname, fline, desc, txt1, humanize(x).c_str(), txt2, humanize(y).c_str());
     bool ok = (x==y);
     if (ok) {
-        report(0, ConstString("  [") + desc + "] passed ok");
+        report(0, std::string("  [") + desc + "] passed ok");
     } else {
-        report(1, ConstString("  FAILURE ") + buf);
+        report(1, std::string("  FAILURE ") + buf);
     }
     return ok;
 }
 
 
-ConstString UnitTest::humanize(const ConstString& txt) {
-    ConstString result("");
+std::string UnitTest::humanize(const std::string& txt) {
+    std::string result("");
     for (unsigned int i=0; i<txt.length(); i++) {
         char ch = txt[i];
         if (ch == '\n') {
@@ -261,20 +245,20 @@ ConstString UnitTest::humanize(const ConstString& txt) {
 
 void UnitTest::saveEnvironment(const char *key) {
     bool found = false;
-    ConstString val = NetworkBase::getEnvironment(key, &found);
+    std::string val = NetworkBase::getEnvironment(key, &found);
     Bottle& lst = env.addList();
     lst.addString(key);
     lst.addString(val);
-    lst.addInt(found?1:0);
+    lst.addInt32(found?1:0);
 }
 
 void UnitTest::restoreEnvironment() {
-    for (int i=0; i<env.size(); i++) {
+    for (size_t i=0; i<env.size(); i++) {
         Bottle *lst = env.get(i).asList();
         if (lst==nullptr) continue;
-        ConstString key = lst->get(0).asString();
-        ConstString val = lst->get(1).asString();
-        bool found = lst->get(2).asInt()?true:false;
+        std::string key = lst->get(0).asString();
+        std::string val = lst->get(1).asString();
+        bool found = lst->get(2).asInt32()?true:false;
         if (!found) {
             NetworkBase::unsetEnvironment(key);
         } else {

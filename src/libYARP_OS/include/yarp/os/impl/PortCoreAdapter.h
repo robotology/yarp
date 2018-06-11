@@ -1,15 +1,18 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_IMPL_PORTCOREADAPTER_H
 #define YARP_OS_IMPL_PORTCOREADAPTER_H
 
 #include <yarp/os/impl/PortCore.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Port.h>
 
 
@@ -25,7 +28,7 @@ namespace yarp {
 class yarp::os::impl::PortCoreAdapter : public PortCore
 {
 private:
-    SemaphoreImpl stateMutex;
+    yarp::os::Mutex stateMutex;
     PortReader *readDelegate;
     PortReader *permanentReadDelegate;
     PortReader *adminReadDelegate;
@@ -39,9 +42,9 @@ private:
     bool opened;
     bool replyDue;
     bool dropDue;
-    SemaphoreImpl produce;
-    SemaphoreImpl consume;
-    SemaphoreImpl readBlock;
+    yarp::os::Semaphore produce;
+    yarp::os::Semaphore consume;
+    yarp::os::Semaphore readBlock;
     PortReaderCreator *recReadCreator;
     int recWaitAfterSend;
     bool usedForRead;

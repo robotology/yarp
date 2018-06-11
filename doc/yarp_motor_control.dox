@@ -1,6 +1,3 @@
-#ifndef _YARP2_USERDOC_
-#define _YARP2_USERDOC_
-
 /**
  * @page yarp_motor_control The YARP motor control interfaces
 
@@ -145,5 +142,3 @@ controller memory). As a last operation before close(), disable the
 amplifiers so that it becomes safe again to move the robot.
 
 */
-
-#endif

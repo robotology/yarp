@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <stdio.h>
@@ -50,12 +53,12 @@ int main(int argc, char *argv[]) {
             Bottle& location = player->findGroup("location");
             Value& life = player->find("life");
 
-            ConstString playerName = player->get(0).asString();
+            std::string playerName = player->get(0).asString();
             printf("PLAYER %s is at (%d,%d) with lifeforce %d\n", 
                    playerName.c_str(), 
-                   location.get(1).asInt(),
-                   location.get(2).asInt(),
-                   life.asInt());
+                   location.get(1).asInt32(),
+                   location.get(2).asInt32(),
+                   life.asInt32());
             printf("Logging out\n");
         }
     }

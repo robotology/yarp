@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <stdio.h>
@@ -19,12 +22,12 @@ using namespace yarp;
 static String dir = "right";
 static String msg = "";
 static int mode = 0;
-static Semaphore mutex(1);
+static Mutex mutex();
 
 String getPreparation() {
-    mutex.wait();
+    mutex.lock();
     String result = msg;
-    mutex.post();
+    mutex.unlock();
     return result;
 }
 
@@ -118,11 +121,11 @@ String getCommand() {
     default:
         //cprintf("KEY is %d\n", key);
         if (mode==0) {
-            mutex.wait();
+            mutex.lock();
             if (key>=32 && key<=126) {
                 msg += ((char)key);
             }
-            mutex.post();
+            mutex.unlock();
         }
         mode = 0;
         break;

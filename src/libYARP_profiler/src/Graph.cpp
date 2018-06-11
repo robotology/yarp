@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
- * Authors: Ali Paikan
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Log.h>
@@ -206,20 +207,20 @@ void strongConnect(Vertex* v,
         if(!w.property.check("index")) {
             // Successor w has not yet been visited; recurse on it
             strongConnect((Vertex*)(&w), scc, S, index);
-            int lowlink = std::min(v->property.find("lowlink").asInt(),
-                                   w.property.find("lowlink").asInt());
+            int lowlink = std::min(v->property.find("lowlink").asInt32(),
+                                   w.property.find("lowlink").asInt32());
             v->property.put("lowlink", lowlink);
 
         } else if (w.property.check("onStack")) {
             // Successor w is in stack S and hence in the current SCC
-            int lowlink = std::min(v->property.find("lowlink").asInt(),
-                                   w.property.find("index").asInt());
+            int lowlink = std::min(v->property.find("lowlink").asInt32(),
+                                   w.property.find("index").asInt32());
             v->property.put("lowlink", lowlink);
         }
     } // end successors
 
     // If v is a root node, pop the stack and generate an SCC
-    if(v->property.find("lowlink").asInt() == v->property.find("index").asInt()) {
+    if(v->property.find("lowlink").asInt32() == v->property.find("index").asInt32()) {
         // start a new strongly connected component
         pvertex_set vset;
         Vertex* w;

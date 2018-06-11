@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
 * Author: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
-* CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+* CopyPolicy: Released under the terms of the GPLv2 or later, see LICENSE
 */
 
 #ifndef DEPTHCAMERA_DRIVER_H
@@ -9,14 +9,17 @@
 
 #include <iostream>
 #include <string>
+#include <map>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/FrameGrabberControl2.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/sig/all.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/os/all.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/IRGBDSensor.h>
+#include <yarp/dev/RGBDSensorParamParser.h>
 #include <OpenNI.h>
 
 
@@ -36,10 +39,6 @@ namespace yarp
         namespace impl
         {
             class  streamFrameListener;
-            struct CameraParameters;
-            struct RGBDParam;
-            struct IntrinsicParams;
-            struct plum_bob;
         }
     }
 }
@@ -49,7 +48,7 @@ namespace yarp
  *  @ingroup dev_impl_media
  *
  *
- * This device is a YARP plugin for OpenNI2 compatible devices, and exposes the IRGBDSensor and IFrameGrabberControls2
+ * This device is a YARP plugin for OpenNI2 compatible devices, and exposes the IRGBDSensor and IFrameGrabberControls
  * interfaces to read the images and operate on the available settings.
  *
  * See the documentation for more details about each interface.
@@ -185,7 +184,7 @@ transformation          (1.0 0.0 0.0 0.0   0.0 1.0 0.0 0.0   0.0 0.0 1.0 0.0  0.
 
 class yarp::dev::depthCameraDriver : public yarp::dev::DeviceDriver,
                                      public yarp::dev::IRGBDSensor,
-                                     public yarp::dev::IFrameGrabberControls2
+                                     public yarp::dev::IFrameGrabberControls
 {
 private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
@@ -236,9 +235,9 @@ public:
     virtual bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL) override;
 
     virtual RGBDSensor_status     getSensorStatus() override;
-    virtual yarp::os::ConstString getLastErrorMsg(Stamp* timeStamp = NULL) override;
+    virtual std::string getLastErrorMsg(Stamp* timeStamp = NULL) override;
 
-    //IFrameGrabberControls2
+    //IFrameGrabberControls
     virtual bool   getCameraDescription(CameraDescriptor *camera) override;
     virtual bool   hasFeature(int feature, bool*   hasFeature) override;
     virtual bool   setFeature(int feature, double  value) override;
@@ -260,14 +259,11 @@ private:
     //method
     inline bool initializeOpeNIDevice();
     inline bool setParams();
-    inline bool parseIntrinsic(const yarp::os::Searchable& config, const std::string& groupName, impl::IntrinsicParams &params);
     bool        getImage(FlexImage& Frame, Stamp* Stamp, impl::streamFrameListener *sourceFrame);
     bool        getImage(depthImage& Frame, Stamp* Stamp, impl::streamFrameListener *sourceFrame);
     bool        setResolution(int w, int h, openni::VideoStream &stream);
     bool        setFOV(double horizontalFov, double verticalFov, openni::VideoStream &stream);
-    bool        setIntrinsic(yarp::os::Property& intrinsic, const impl::IntrinsicParams& values);
-    bool        checkParam(const os::Bottle& settings, const os::Bottle& description, impl::RGBDParam& param);
-    bool        checkParam(const yarp::os::Bottle& input, impl::RGBDParam &param, bool& found);
+    bool        setIntrinsic(yarp::os::Property& intrinsic, const RGBDSensorParamParser::IntrinsicParams& values);
     void        settingErrorMsg(const std::string& error, bool& ret);
 
     //properties
@@ -276,10 +272,11 @@ private:
     openni::Device                  m_device;
     impl::streamFrameListener*      m_depthFrame;
     impl::streamFrameListener*      m_imageFrame;
-    yarp::os::ConstString           m_lastError;
-    impl::CameraParameters*         m_cameraDescription;
+    std::string           m_lastError;
+    yarp::dev::RGBDSensorParamParser* m_paramParser;
     bool                            m_depthRegistration;
     std::vector<cameraFeature_id_t> m_supportedFeatures;
+
 #endif
 };
 #endif

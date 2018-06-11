@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/idl/WirePortable.h>
@@ -13,7 +15,7 @@ bool yarp::os::idl::WirePortable::read(yarp::os::idl::WireReader& reader) {
     return false;
 }
 
-bool yarp::os::idl::WirePortable::write(yarp::os::idl::WireWriter& writer) {
+bool yarp::os::idl::WirePortable::write(const yarp::os::idl::WireWriter& writer) const {
     YARP_UNUSED(writer);
     return false;
 }

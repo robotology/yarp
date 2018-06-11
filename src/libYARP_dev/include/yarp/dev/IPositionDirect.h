@@ -1,12 +1,16 @@
 /*
- * Copyright: (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 
 #ifndef YARP_IPOSITIONDIRECT_H
 #define YARP_IPOSITIONDIRECT_H
+
+#include <yarp/dev/api.h>
 
 namespace yarp {
     namespace dev {
@@ -57,7 +61,7 @@ public:
      *          refs    10 30 40
      * @return true/false on success/failure
      */
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs)=0;
+    virtual bool setPositions(const int n_joint, const int *joints, const double *refs)=0;
 
     /** Set new position for a set of axis.
      * @param refs specifies the new reference points
@@ -74,7 +78,7 @@ public:
      * @param ref last reference sent using setPosition(s) functions
      * @return true/false on success/failure
      */
-    virtual bool getRefPosition(const int joint, double *ref) {return false;};
+    virtual bool getRefPosition(const int joint, double *ref) {return false;}
 
     /** Get the last position reference for all axes.
      *  This is the dual of setPositionsRaw and shall return only values sent using
@@ -85,7 +89,7 @@ public:
      * @param ref array containing last reference sent using setPosition(s) functions
      * @return true/false on success/failure
      */
-    virtual bool getRefPositions(double *refs) {return false;};
+    virtual bool getRefPositions(double *refs) {return false;}
 
     /** Get the last position reference for the specified group of axes.
      *  This is the dual of setPositionsRaw and shall return only values sent using
@@ -96,7 +100,7 @@ public:
      * @param ref array containing last reference sent using setPosition(s) functions
      * @return true/false on success/failure
      */
-    virtual bool getRefPositions(const int n_joint, const int *joints, double *refs) {return false;};
+    virtual bool getRefPositions(const int n_joint, const int *joints, double *refs) {return false;}
 };
 
 
@@ -141,7 +145,7 @@ public:
      *          refs    10 30 40
      * @return true/false on success/failure
      */
-    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs)=0;
+    virtual bool setPositionsRaw(const int n_joint, const int *joints, const double *refs)=0;
 
 
     /** Set new position for a set of axes.
@@ -159,7 +163,7 @@ public:
      * @param ref last reference sent using setPosition(s) functions
      * @return true/false on success/failure
      */
-    virtual bool getRefPositionRaw(const int joint, double *ref) {return false;};
+    virtual bool getRefPositionRaw(const int joint, double *ref) {return false;}
 
     /** Get the last position reference for all axes.
      *  This is the dual of setPositionsRaw and shall return only values sent using
@@ -182,7 +186,7 @@ public:
      * @param ref array containing last reference sent using setPosition(s) functions
      * @return true/false on success/failure
      */
-    virtual bool getRefPositionsRaw(const int n_joint, const int *joints, double *refs) {return false;};
+    virtual bool getRefPositionsRaw(const int n_joint, const int *joints, double *refs) {return false;}
 };
 
 #define VOCAB_POSITION_DIRECT           VOCAB3('d','p','o')

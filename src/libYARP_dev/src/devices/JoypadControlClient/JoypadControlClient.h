@@ -1,18 +1,19 @@
 /*
- * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
- * Author: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/dev/IJoypadController.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <vector>
 #include <JoypadControlNetUtils.h>
-#include <yarp/os/RateThread.h>
 
 /**
-* @ingroup dev_impl_wrapper
+* @ingroup dev_impl_network_clients
 *
 * \section JoypadControlClient Description of input parameters
 * \brief joypad input network wrapper on client side
@@ -34,10 +35,10 @@ namespace yarp
     }
 }
 
-class yarp::dev::JoypadControlWatchdog : public yarp::os::RateThread
+class yarp::dev::JoypadControlWatchdog : public yarp::os::PeriodicThread
 {
 public:
-    JoypadControlWatchdog() : RateThread(250) {}
+    JoypadControlWatchdog() : PeriodicThread(0.250) {}
     virtual ~JoypadControlWatchdog() = default;
 
 
@@ -65,8 +66,8 @@ private:
     JOYPORT<Vector>       m_stickPort;
     std::vector<size_t>   m_stickDof;
     bool                  m_rpc_only;
-    yarp::os::ConstString m_local;
-    yarp::os::ConstString m_remote;
+    std::string m_local;
+    std::string m_remote;
 
     yarp::dev::JoypadControlWatchdog          watchdog;
     std::vector<JoypadControl::LoopablePort*> m_ports;

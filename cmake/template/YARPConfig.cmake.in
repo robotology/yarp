@@ -1,6 +1,14 @@
-# Copyright: (C) 2009, 2010 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Giorgio Metta
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
+
+
+
+include(CMakeFindDependencyMacro)
+include(CMakeDependentOption)
 
 
 # Version
@@ -10,15 +18,21 @@ set(YARP_VERSION_PATCH "@YARP_VERSION_PATCH@")
 set(YARP_VERSION_TWEAK "@YARP_VERSION_TWEAK@")
 set(YARP_VERSION "@YARP_VERSION@")
 set(YARP_VERSION_SHORT "@YARP_VERSION_SHORT@")
-set(YARP_VERSION_ABI "@YARP_VERSION_ABI@")
+
+# Build type and flags
+set(YARP_IS_SHARED_LIBRARY @BUILD_SHARED_LIBS@)
+
+set(YARP_C_COMPILER_ID "@CMAKE_C_COMPILER_ID@")
+set(YARP_C_COMPILER_VERSION "@CMAKE_C_COMPILER_VERSION@")
+set(YARP_C_FLAGS "@CMAKE_C_FLAGS@")
+
+set(YARP_CXX_COMPILER_ID "@CMAKE_CXX_COMPILER_ID@")
+set(YARP_CXX_COMPILER_VERSION "@CMAKE_CXX_COMPILER_VERSION@")
+set(YARP_CXX_FLAGS "@CMAKE_CXX_FLAGS@")
 
 
 @PACKAGE_INIT@
 
-# Give the details of YARP libraries, include path etc.
-set(YARP_LIBRARIES "@YARP_LIBRARIES@")
-set(YARP_INCLUDE_DIRS "@PACKAGE_YARP_INCLUDE_DIRS@")
-set(YARP_DEFINES "@YARP_ALL_DEFINES@") # only needed if you use ACE directly
 
 # Check if deprecated methods are built
 set(YARP_NO_DEPRECATED @YARP_NO_DEPRECATED@)
@@ -29,13 +43,6 @@ else(YARP_NO_DEPRECATED)
 endif(YARP_NO_DEPRECATED)
 
 # Disable deprecated warnings, but add an option to enable it
-include(CMakeDependentOption)
-# FIXME 2.4 Workaround to reset this value to its default, remove it
-#           at some point.
-if(NOT YARP_NO_DEPRECATED_WARNINGS_DEFAULT_UPDATED)
-  unset(YARP_NO_DEPRECATED_WARNINGS CACHE)
-  set(YARP_NO_DEPRECATED_WARNINGS_DEFAULT_UPDATED TRUE CACHE BOOL "Workaround to reset this value to its default" INTERNAL)
-endif()
 cmake_dependent_option(YARP_NO_DEPRECATED_WARNINGS
                        "Do not warn when using YARP deprecated declarations" FALSE
                        "NOT YARP_NO_DEPRECATED" FALSE)
@@ -63,17 +70,18 @@ if(NOT YARP_NO_DEPRECATED)
                                  "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/modules"
                                  "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/3rdparty"
                                  "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-proposed")
-    if(${CMAKE_VERSION} VERSION_LESS 3.1)
-      list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules")
-    endif()
     if(${CMAKE_VERSION} VERSION_LESS 3.8)
       list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules")
     endif()
   endif()
 endif()
 
+
 # Install prefix
 set(YARP_INSTALL_PREFIX "@PACKAGE_YARP_INSTALL_PREFIX@")
+
+# Directory containing CMake config files for other exports
+set(YARP_CMAKECONFIG_DIR "@PACKAGE_YARP_CMAKECONFIG_DIR@")
 
 # Install directories (relative path)
 set(YARP_DATA_INSTALL_DIR "@YARP_DATA_INSTALL_DIR@")
@@ -105,42 +113,112 @@ set(YARP_STATIC_PLUGINS_INSTALL_DIR_FULL "@PACKAGE_YARP_STATIC_PLUGINS_INSTALL_D
 set(YARP_DYNAMIC_PLUGINS_INSTALL_DIR_FULL "@PACKAGE_YARP_DYNAMIC_PLUGINS_INSTALL_DIR@")
 set(YARP_QML2_IMPORT_DIR_FULL "@PACKAGE_YARP_QML2_IMPORT_DIR@")
 
-set(YARP_IS_SHARED_LIBRARY @BUILD_SHARED_LIBS@)
-
-# Check if IDL is available
-set(YARP_HAS_IDL @YARP_HAS_IDL@)
+# Used by YarpIDL.cmake
 set(YARP_IDL_BINARY_HINT "@PACKAGE_YARP_IDL_BINARY_HINT@")
 
-if(NOT TARGET YARP::YARP_OS)
-  include(${CMAKE_CURRENT_LIST_DIR}/YARPTargets.cmake)
+# FIXME Remove this check when CMake 3.9 or later is required
+#       This is used later and in YARPTargetsStatic.cmake
+if (CMAKE_VERSION VERSION_LESS 3.9)
+  set(_YARP_FIND_PARTS_REQUIRED)
+  if (YARP_FIND_REQUIRED)
+    set(_YARP_FIND_PARTS_REQUIRED REQUIRED)
+  endif()
+  set(_YARP_FIND_PARTS_QUIET)
+  if (YARP_FIND_QUIETLY)
+    set(_YARP_FIND_PARTS_QUIET QUIET)
+  endif()
 endif()
 
-# Find dependencies required by targets 
-if(TARGET YARP::YARP_rtf)
-  find_package(RTF QUIET)
+# Include YARPTargets.cmake file (that includes for now, targets without a
+# specific destination
+if(NOT TARGET YARP::yarpidl_thrift)
+  if(YARP_IS_SHARED_LIBRARY)
+    include("${CMAKE_CURRENT_LIST_DIR}/YARPTargets.cmake")
+  else()
+    include("${CMAKE_CURRENT_LIST_DIR}/YARPTargetsStatic.cmake")
+  endif()
 endif()
 
 
-# Export variables for available targets
-set(YARP_OS_LIBRARY YARP::YARP_OS)
-set(YARP_SIG_LIBRARY YARP::YARP_sig)
-if(TARGET YARP::YARP_math)
-  set(YARP_MATH_LIBRARY YARP::YARP_math)
-endif()
-set(YARP_DEV_LIBRARY YARP::YARP_dev)
-if(TARGET YARP::YARP_name)
-  set(YARP_NAME_LIBRARY YARP::YARP_name)
-endif()
-set(YARP_INIT_LIBRARY YARP::YARP_init)
-
-# Pass along some compilation options that may be useful for clients
-# to check.
-set(YARP_HAS_MATH_LIB FALSE)
-if(TARGET YARP::YARP_math)
-  set(YARP_HAS_MATH_LIB TRUE)
+if(YARP_FIND_COMPONENTS STREQUAL "")
+  # No components requested.
+  # Search for the main YARP libraries only.
+  set(YARP_FIND_COMPONENTS @YARP_DEFAULT_FIND_COMPONENTS@)
 endif()
 
+# Find all requested components
+set(YARP_LIBRARIES YARP::YARP_init)
+foreach(_module ${YARP_FIND_COMPONENTS})
+  # FIXME Remove this check when CMake 3.9 or later is required
+  if (CMAKE_VERSION VERSION_LESS 3.9)
+    find_package(YARP_${_module}
+                 ${_YARP_FIND_PARTS_QUIET}
+                 ${_YARP_FIND_PARTS_REQUIRED}
+                 HINTS "${YARP_CMAKECONFIG_DIR}"
+                 NO_DEFAULT_PATH)
+  else()
+    find_dependency(YARP_${_module}
+                    HINTS "${YARP_CMAKECONFIG_DIR}"
+                    NO_DEFAULT_PATH)
+  endif()
+  list(APPEND YARP_LIBRARIES YARP::YARP_${_module})
+endforeach()
+
+# Ensure that all requested modules are available
+check_required_components(YARP)
+
+
+################################################################################
 # Load CMake helper functions
+
 include(${YARP_MODULE_DIR}/YarpIDL.cmake)
 include(${YARP_MODULE_DIR}/YarpPlugin.cmake)
 include(${YARP_MODULE_DIR}/YarpInstallationHelpers.cmake)
+
+
+################################################################################
+# Deprecated variables
+
+if(NOT YARP_NO_DEPRECATED AND NOT DEFINED YARP_OS_LIBRARY) # Since YARP 3.0.0
+  # Export variables for available targets
+  set(YARP_OS_LIBRARY YARP::YARP_OS)
+  set(YARP_SIG_LIBRARY YARP::YARP_sig)
+  if(TARGET YARP::YARP_math)
+    set(YARP_MATH_LIBRARY YARP::YARP_math)
+  endif()
+  set(YARP_DEV_LIBRARY YARP::YARP_dev)
+  if(TARGET YARP::YARP_name)
+    set(YARP_NAME_LIBRARY YARP::YARP_name)
+  endif()
+  set(YARP_INIT_LIBRARY YARP::YARP_init)
+
+  # Pass along some compilation options that may be useful for clients
+  # to check.
+  set(YARP_HAS_MATH_LIB FALSE)
+  if(TARGET YARP::YARP_math)
+    set(YARP_HAS_MATH_LIB TRUE)
+  endif()
+
+  set(YARP_VERSION_ABI "@YARP_SOVERSION@")
+
+  # Print a warning when using deprecated variables
+  macro(DEPRECATED_VARIABLE_WARNING _variable)
+    message(DEPRECATION "The ${_variable} variable is deprecated")
+  endmacro()
+  macro(YARP_DEPRECATED_VARIABLE _variable)
+    variable_watch(${_variable} deprecated_variable_warning)
+  endmacro()
+  macro(YARP_HAS_MATH_LIB_IS_DEPRECATED _variable)
+    message(DEPRECATION "The ${_variable} variable is deprecated. You can check for YARP_math using find_package(YARP COMPONENTS math)")
+  endmacro()
+
+  yarp_deprecated_variable(YARP_DEV_LIBRARY)
+  yarp_deprecated_variable(YARP_SIG_LIBRARY)
+  yarp_deprecated_variable(YARP_INIT_LIBRARY)
+  yarp_deprecated_variable(YARP_HAS_MATH_LIB)
+  yarp_deprecated_variable(YARP_INCLUDE_DIRS)
+  yarp_deprecated_variable(YARP_DEFINES)
+  yarp_deprecated_variable(YARP_HAS_IDL)
+  yarp_deprecated_variable(YARP_VERSION_ABI)
+  variable_watch(YARP_MATH_LIBRARY YARP_HAS_MATH_LIB_IS_DEPRECATED)
+endif()

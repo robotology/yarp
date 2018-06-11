@@ -1,15 +1,19 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_IMPL_UNITTEST_H
 #define YARP_OS_IMPL_UNITTEST_H
 
-#include <yarp/os/ConstString.h>
 #include <yarp/os/Bottle.h>
 
+#include <string>
+#include <sstream>
 #include <vector>
 
 namespace yarp {
@@ -20,8 +24,6 @@ namespace yarp {
     }
 }
 
-// Explicit instantiation
-template class YARP_OS_impl_API std::vector<yarp::os::impl::UnitTest *>;
 
 /**
  * Simple unit testing framework.  There are libraries out there for
@@ -39,9 +41,9 @@ public:
         clear();
     }
 
-    void report(int severity, const ConstString& problem);
+    void report(int severity, const std::string& problem);
 
-    virtual ConstString getName() { return "isolated test"; }
+    virtual std::string getName() const { return "isolated test"; }
 
     static void startTestSystem();
     static UnitTest& getRoot();
@@ -60,13 +62,32 @@ public:
 
     virtual void runSubTests(int argc, char *argv[]);
 
-
-    bool checkEqualImpl(int x, int y,
+    template< class T >
+    struct is_supported : std::integral_constant<bool,
+                                                 std::is_arithmetic<T>::value ||
+                                                 std::is_enum<T>::value ||
+                                                 std::is_same<T, bool>::value> {};
+    template<typename T1,
+             typename T2,
+             typename = typename std::enable_if<is_supported<T1>::value && is_supported<T2>::value>::type>
+    bool checkEqualImpl(T1 x, T2 y,
                         const char *desc,
                         const char *txt1,
                         const char *txt2,
                         const char *fname,
-                        int fline);
+                        int fline)
+    {
+        std::ostringstream ost;
+        if (x == y) {
+            ost << "  [" << desc << "] passed ok";
+            report(0, ost.str());
+            return true;
+        } else {
+            ost << "  FAILURE in file " << fname << ":" << fline << " [" << desc << "] " << txt1 << " (" << x << ") == " << txt2 << " (" << y << ")";
+            report(1, ost.str());
+            return false;
+        }
+    }
 
     bool checkEqualishImpl(double x, double y,
                            const char *desc,
@@ -75,14 +96,14 @@ public:
                            const char *fname,
                            int fline);
 
-    bool checkEqualImpl(const ConstString& x, const ConstString& y,
+    bool checkEqualImpl(const std::string& x, const std::string& y,
                         const char *desc,
                         const char *txt1,
                         const char *txt2,
                         const char *fname,
                         int fline);
 
-    ConstString humanize(const ConstString& txt);
+    std::string humanize(const std::string& txt);
 
     void saveEnvironment(const char *key);
     void restoreEnvironment();
@@ -139,7 +160,7 @@ public:
 
 private:
     UnitTest *parent;
-    std::vector<UnitTest *> subTests;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<UnitTest*>) subTests;
     bool hasProblem;
     yarp::os::Bottle env;
     static UnitTest *theRoot;

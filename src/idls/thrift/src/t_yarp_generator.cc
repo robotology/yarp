@@ -27,9 +27,10 @@
 #include <cstdlib>
 #include <sys/stat.h>
 #include <sstream>
-#include "t_generator.h"
-#include "t_oop_generator.h"
-#include "platform.h"
+
+#include "thrift/generate/t_generator.h"
+#include "thrift/generate/t_oop_generator.h"
+#include "thrift/platform.h"
 using namespace std;
 
 
@@ -294,9 +295,17 @@ void getNeededType(t_type* curType, std::set<string>& neededTypes)
   int flat_element_count(t_function* fn);
 
   void auto_warn(ostream& f_srv_) {
-    f_srv_ << "// This is an automatically-generated file." << endl;
-    f_srv_ << "// It could get re-generated if the ALLOW_IDL_GENERATION flag is on." << endl;
-    f_srv_ << endl;
+    f_srv_ << "/*\n";
+    f_srv_ << " * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)\n";
+    f_srv_ << " * All rights reserved.\n";
+    f_srv_ << " *\n";
+    f_srv_ << " * This software may be modified and distributed under the terms of the\n";
+    f_srv_ << " * BSD-3-Clause license. See the accompanying LICENSE file for details.\n";
+    f_srv_ << " */\n";
+    f_srv_ << "\n";
+    f_srv_ << "// This is an automatically generated file.\n";
+    f_srv_ << "// It could get re-generated if the ALLOW_IDL_GENERATION flag is on.\n";
+    f_srv_ << "\n";
   }
 
   void generate_enum_constant_list(std::ofstream& f,
@@ -320,19 +329,19 @@ string t_yarp_generator::type_to_enum(t_type* type) {
       return "BOTTLE_TAG_STRING";
     case t_base_type::TYPE_BOOL:
       return "BOTTLE_TAG_VOCAB";
-    case t_base_type::TYPE_BYTE:
+    case t_base_type::TYPE_I8:
       return "::apache::thrift::protocol::T_BYTE";
     case t_base_type::TYPE_I16:
       return "::apache::thrift::protocol::T_I16";
     case t_base_type::TYPE_I32:
-      return "BOTTLE_TAG_INT";
+      return "BOTTLE_TAG_INT32";
     case t_base_type::TYPE_I64:
       return "::apache::thrift::protocol::T_I64";
     case t_base_type::TYPE_DOUBLE:
-      return "BOTTLE_TAG_DOUBLE";
+      return "BOTTLE_TAG_FLOAT64";
     }
   } else if (type->is_enum()) {
-    return "BOTTLE_TAG_INT";
+    return "BOTTLE_TAG_INT32";
   } else if (type->is_struct()) {
     return "BOTTLE_TAG_LIST";
   } else if (type->is_xception()) {
@@ -446,14 +455,14 @@ string t_yarp_generator::base_type_name(t_base_type::t_base tbase) {
     return "std::string";
   case t_base_type::TYPE_BOOL:
     return "bool";
-  case t_base_type::TYPE_BYTE:
-    return "int8_t";
+  case t_base_type::TYPE_I8:
+    return "std::int8_t";
   case t_base_type::TYPE_I16:
-    return "int16_t";
+    return "std::int16_t";
   case t_base_type::TYPE_I32:
-    return "int32_t";
+    return "std::int32_t";
   case t_base_type::TYPE_I64:
-    return "YARP_INT64";
+    return "std::int64_t";
   case t_base_type::TYPE_DOUBLE:
     return "double";
   default:
@@ -1065,7 +1074,7 @@ void t_yarp_generator::generate_enum(t_enum* tenum) {
   f_types_ << "public:" << endl;
   indent_up();
   indent(f_types_) << "virtual int fromString(const std::string& input) override;" << endl;
-  indent(f_types_) << "virtual std::string toString(int input) override;" << endl;
+  indent(f_types_) << "virtual std::string toString(int input) const override;" << endl;
   indent_down();
   f_types_ << "};" << endl;
   f_types_ << endl;
@@ -1087,7 +1096,7 @@ void t_yarp_generator::generate_enum(t_enum* tenum) {
   os << "}" << endl;
 
 
-  os << "std::string " << enum_name << "Vocab::toString(int input) {" << endl;
+  os << "std::string " << enum_name << "Vocab::toString(int input) const {" << endl;
   indent_up();
   indent(os) << "switch((" << enum_name << ")input) {" << endl;
   for (vector<t_enum_value*>::const_iterator c_iter = constants.begin();
@@ -1129,7 +1138,7 @@ void t_yarp_generator::generate_enum_constant_list(std::ofstream& f,
     print_doc(f,(*c_iter));
     indent(f)
       << prefix << (*c_iter)->get_name() << suffix;
-    if (include_values && (*c_iter)->has_value()) {
+    if (include_values) {
       f << " = " << (*c_iter)->get_value();
     }
   }
@@ -1361,9 +1370,9 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
               << endl;
 
 
-  indent(out) << "bool write(yarp::os::idl::WireWriter& writer) override;"
+  indent(out) << "bool write(const yarp::os::idl::WireWriter& writer) const override;"
               << endl;
-  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) override;"
+  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) const override;"
               << endl;
 
   out << endl;
@@ -1374,8 +1383,8 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 
   for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
     string mname = (*mem_iter)->get_name();
-    indent(out) << "bool write_" << mname << "(yarp::os::idl::WireWriter& writer);" << endl;
-    indent(out) << "bool nested_write_" << mname << "(yarp::os::idl::WireWriter& writer);" << endl;
+    indent(out) << "bool write_" << mname << "(const yarp::os::idl::WireWriter& writer) const;" << endl;
+    indent(out) << "bool nested_write_" << mname << "(const yarp::os::idl::WireWriter& writer) const;" << endl;
   }
   for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
     string mname = (*mem_iter)->get_name();
@@ -1389,7 +1398,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent_up();
 
   f_stt_ << endl;
-  indent(f_stt_) << "yarp::os::ConstString toString();"
+  indent(f_stt_) << "std::string toString() const;"
                  << endl;
 
   f_stt_ << endl;
@@ -1518,7 +1527,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 
   // serialize
   indent(out) << "bool read(yarp::os::ConnectionReader& connection) override;" << endl;
-  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) override;" << endl;
+  indent(out) << "bool write(yarp::os::ConnectionWriter& connection) const override;" << endl;
 
 
   indent_down();
@@ -1663,14 +1672,14 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
       string mname = (*mem_iter)->get_name();
       indent(out) << "bool " << name
-                  << "::write_" << mname << "(yarp::os::idl::WireWriter& writer) {"
+                  << "::write_" << mname << "(const yarp::os::idl::WireWriter& writer) const {"
                   << endl;
       indent_up();
       generate_serialize_field(out, *mem_iter, "");
       indent(out) << "return true;" << endl;
       scope_down(out);
       indent(out) << "bool " << name
-                  << "::nested_write_" << mname << "(yarp::os::idl::WireWriter& writer) {"
+                  << "::nested_write_" << mname << "(const yarp::os::idl::WireWriter& writer) const {"
                   << endl;
       indent_up();
       generate_serialize_field(out, *mem_iter, "", "", true);
@@ -1679,7 +1688,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     }
 
     indent(out) << "bool " << name
-                << "::write(yarp::os::idl::WireWriter& writer) {"
+                << "::write(const yarp::os::idl::WireWriter& writer) const {"
                 << endl;
     indent_up();
     for (mem_iter=members.begin() ; mem_iter != members.end(); mem_iter++) {
@@ -1692,7 +1701,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     out << endl;
 
     indent(out) << "bool " << name
-                << "::write(yarp::os::ConnectionWriter& connection) {"
+                << "::write(yarp::os::ConnectionWriter& connection) const {"
                 << endl;
     indent_up();
     indent(out) << "yarp::os::idl::WireWriter writer(connection);"
@@ -1709,7 +1718,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     ofstream& out = f_cpp_;
 
     indent(out) << "bool " << name
-                << "::Editor::write(yarp::os::ConnectionWriter& connection) {"
+                << "::Editor::write(yarp::os::ConnectionWriter& connection) const {"
                 << endl;
     indent_up();
     indent(out) << "if (!isValid()) return false;" << endl;
@@ -1749,7 +1758,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     indent(out) << "writer.writeString(\"send: 'help' or 'patch (param1 val1) (param2 val2)'\");" << endl;
     indent(out) << "return true;" << endl;
     scope_down(out);
-    indent(out) << "yarp::os::ConstString tag;" << endl;
+    indent(out) << "std::string tag;" << endl;
     indent(out) << "if (!reader.readString(tag)) return false;" << endl;
     indent(out) << "if (tag==\"help\") {" << endl;
     indent_up();
@@ -1759,7 +1768,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     indent(out) << "if (!writer.writeTag(\"many\",1, 0)) return false;" << endl;
     indent(out) << "if (reader.getLength()>0) {" << endl;
     indent_up();
-    indent(out) << "yarp::os::ConstString field;" << endl;
+    indent(out) << "std::string field;" << endl;
     indent(out) << "if (!reader.readString(field)) return false;" << endl;
     for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
       string mname = (*mem_iter)->get_name();
@@ -1798,8 +1807,8 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     indent(out) << "for (int i=1; i<len; i++) {" << endl;
     indent_up();
     indent(out) << "if (nested && !reader.readListHeader(3)) return false;" << endl;
-    indent(out) << "yarp::os::ConstString act;" << endl;
-    indent(out) << "yarp::os::ConstString key;" << endl;
+    indent(out) << "std::string act;" << endl;
+    indent(out) << "std::string key;" << endl;
     indent(out) << "if (have_act) {" << endl;
     indent_up();
     indent(out) << "act = tag;" << endl;
@@ -1845,8 +1854,8 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     out << endl;
   }
 
-  indent(f_cpp_) << "yarp::os::ConstString " << name
-                 << "::toString() {"
+  indent(f_cpp_) << "std::string " << name
+                 << "::toString() const {"
                  << endl;
   indent_up();
   indent(f_cpp_) << "yarp::os::Bottle b;" << endl;
@@ -2002,7 +2011,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
         }
 
         indent(f_curr_) << function_prototype(*fn_iter,false,nullptr,"init") << ";" << endl;
-        indent(f_curr_) << "virtual bool write(yarp::os::ConnectionWriter& connection) override;" << endl;
+        indent(f_curr_) << "virtual bool write(yarp::os::ConnectionWriter& connection) const override;" << endl;
         indent(f_curr_) << "virtual bool read(yarp::os::ConnectionReader& connection) override;" << endl;
 
         indent_down();
@@ -2024,7 +2033,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
         vector<t_field*>::iterator arg_iter;
         t_type* returntype = (*fn_iter)->get_returntype();
         t_field returnfield(returntype, "_return");
-        indent(f_curr_) << "bool " << service_name_ << "_" << fname << "::write(yarp::os::ConnectionWriter& connection) {" << endl;
+        indent(f_curr_) << "bool " << service_name_ << "_" << fname << "::write(yarp::os::ConnectionWriter& connection) const {" << endl;
         indent_up();
         yfn y((*fn_iter)->get_name());
         indent(f_curr_) << "yarp::os::idl::WireWriter writer(connection);"
@@ -2192,7 +2201,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     indent(f_cpp_) << "reader.expectAccept();" << endl;
     indent(f_cpp_) << "if (!reader.readListHeader()) { reader.fail(); return false; }"
                    << endl;
-    indent(f_cpp_) << "yarp::os::ConstString tag = reader.readTag();" << endl;
+    indent(f_cpp_) << "std::string tag = reader.readTag();" << endl;
     indent(f_cpp_) << "bool direct = (tag==\"__direct__\");" << endl;
     indent(f_cpp_) << "if (direct) tag = reader.readTag();" << endl;
     indent(f_cpp_) << "while (!reader.isError()) {" << endl;
@@ -2303,7 +2312,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     indent_up();
     indent(f_cpp_) << "if (!writer.writeListHeader(2)) return false;" << endl;
     indent(f_cpp_) << "if (!writer.writeTag(\"many\",1, 0)) return false;" << endl;
-    indent(f_cpp_) << "if (!writer.writeListBegin(BOTTLE_TAG_INT, static_cast<uint32_t>(_return.size()))) return false;" << endl;
+    indent(f_cpp_) << "if (!writer.writeListBegin(BOTTLE_TAG_INT32, static_cast<uint32_t>(_return.size()))) return false;" << endl;
     indent(f_cpp_) << "std::vector<std::string> ::iterator _iterHelp;" << endl;
     indent(f_cpp_) << "for (_iterHelp = _return.begin(); _iterHelp != _return.end(); ++_iterHelp)" << endl;
     indent(f_cpp_) << "{" << endl;
@@ -2322,7 +2331,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 
     indent(f_cpp_) << "if (reader.noMore()) { reader.fail(); return false; }"
                    << endl;
-    indent(f_cpp_) << "yarp::os::ConstString next_tag = reader.readTag();" << endl;
+    indent(f_cpp_) << "std::string next_tag = reader.readTag();" << endl;
     indent(f_cpp_) << "if (next_tag==\"\") break;" << endl;
     indent(f_cpp_) << "tag = tag + \"_\" + next_tag;" << endl;
     indent_down();
@@ -2401,7 +2410,7 @@ void t_yarp_generator::generate_count_field(ofstream& out,
   } else if (type->is_container()) {
     string iter = tmp("_iter");
     out <<
-      indent() << type_name(type) << "::iterator " << iter << ";" << endl <<
+      indent() << type_name(type) << "::const_iterator " << iter << ";" << endl <<
       indent() << "for (" << iter << " = " << name  << ".begin(); " << name << " != " << name << ".end(); ++" << iter << ")" << endl;
     scope_up(out);
     out << "ct += " << iter << "->count(writer);" << endl;
@@ -2460,8 +2469,8 @@ void t_yarp_generator::generate_serialize_field(ofstream& out,
       case t_base_type::TYPE_BOOL:
         out << "writeBool(" << name << ")";
         break;
-      case t_base_type::TYPE_BYTE:
-        out << "writeByte(" << name << ")";
+      case t_base_type::TYPE_I8:
+        out << "writeI8(" << name << ")";
         break;
       case t_base_type::TYPE_I16:
         out << "writeI16(" << name << ")";
@@ -2473,7 +2482,7 @@ void t_yarp_generator::generate_serialize_field(ofstream& out,
         out << "writeI64(" << name << ")";
         break;
       case t_base_type::TYPE_DOUBLE:
-        out << "writeDouble(" << name << ")";
+        out << "writeFloat64(" << name << ")";
         break;
       default:
         throw "compiler error: no C++ writer for base type " + t_base_type::t_base_name(tbase) + name;
@@ -2527,7 +2536,7 @@ void t_yarp_generator::generate_serialize_container(ofstream& out,
 
   string iter = tmp("_iter");
   out <<
-    indent() << type_name(ttype) << "::iterator " << iter << ";" << endl <<
+    indent() << type_name(ttype) << "::const_iterator " << iter << ";" << endl <<
     indent() << "for (" << iter << " = " << prefix  << ".begin(); " << iter << " != " << prefix << ".end(); ++" << iter << ")" << endl;
   scope_up(out);
     if (ttype->is_map()) {
@@ -2640,8 +2649,8 @@ void t_yarp_generator::generate_deserialize_field(ofstream& out,
     case t_base_type::TYPE_BOOL:
       out << "readBool(" << name << ")";
       break;
-    case t_base_type::TYPE_BYTE:
-      out << "readByte(" << name << ")";
+    case t_base_type::TYPE_I8:
+      out << "readI8(" << name << ")";
       break;
     case t_base_type::TYPE_I16:
       out << "readI16(" << name << ")";
@@ -2653,7 +2662,7 @@ void t_yarp_generator::generate_deserialize_field(ofstream& out,
       out << "readI64(" << name << ")";
       break;
     case t_base_type::TYPE_DOUBLE:
-      out << "readDouble(" << name << ")";
+      out << "readFloat64(" << name << ")";
       break;
     default:
       throw "compiler error: no C++ reader for base type " + t_base_type::t_base_name(tbase) + name;
@@ -2859,7 +2868,7 @@ string t_yarp_generator::declare_field(t_field* tfield, bool init, bool pointer,
       case t_base_type::TYPE_BOOL:
         result += " = false";
         break;
-      case t_base_type::TYPE_BYTE:
+      case t_base_type::TYPE_I8:
       case t_base_type::TYPE_I16:
       case t_base_type::TYPE_I32:
       case t_base_type::TYPE_I64:
@@ -2960,7 +2969,7 @@ string t_yarp_generator::render_const_value(ofstream& out, string name, t_type* 
     case t_base_type::TYPE_BOOL:
       render << ((value->get_integer() > 0) ? "true" : "false");
       break;
-    case t_base_type::TYPE_BYTE:
+    case t_base_type::TYPE_I8:
     case t_base_type::TYPE_I16:
     case t_base_type::TYPE_I32:
       render << value->get_integer();

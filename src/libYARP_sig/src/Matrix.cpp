@@ -1,8 +1,11 @@
 /*
-* Author: Lorenzo Natale.
-* Copyright (C) 2007 The RobotCub Consortium
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #include <yarp/sig/Matrix.h>
 
@@ -10,6 +13,7 @@
 
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetFloat64.h>
 #include <yarp/os/NetInt32.h>
@@ -47,13 +51,13 @@ YARP_END_PACK
 // network stuff
 #include <yarp/os/NetInt32.h>
 
-bool yarp::sig::removeCols(const Matrix &in, Matrix &out, int first_col, int how_many)
+bool yarp::sig::removeCols(const Matrix &in, Matrix &out, size_t first_col, size_t how_many)
 {
-    int nrows = in.rows();
-    int ncols = in.cols();
+    size_t nrows = in.rows();
+    size_t ncols = in.cols();
     Matrix ret(nrows, ncols-how_many);
-    for(int r=0; r<nrows; r++)
-        for(int c_in=0,c_out=0;c_in<ncols; c_in++)
+    for(size_t r=0; r<nrows; r++)
+        for(size_t c_in=0,c_out=0;c_in<ncols; c_in++)
         {
             if (c_in==first_col)
             {
@@ -67,13 +71,13 @@ bool yarp::sig::removeCols(const Matrix &in, Matrix &out, int first_col, int how
     return true;
 }
 
-bool yarp::sig::removeRows(const Matrix &in, Matrix &out, int first_row, int how_many)
+bool yarp::sig::removeRows(const Matrix &in, Matrix &out, size_t first_row, size_t how_many)
 {
-    int nrows = in.rows();
-    int ncols = in.cols();
+    size_t nrows = in.rows();
+    size_t ncols = in.cols();
     Matrix ret(nrows-how_many, ncols);
-    for(int c=0; c<ncols; c++)
-        for(int r_in=0, r_out=0; r_in<nrows; r_in++)
+    for(size_t c=0; c<ncols; c++)
+        for(size_t r_in=0, r_out=0; r_in<nrows; r_in++)
         {
             if (r_in==first_row)
             {
@@ -87,7 +91,7 @@ bool yarp::sig::removeRows(const Matrix &in, Matrix &out, int first_row, int how
      return true;
 }
 
-bool yarp::sig::submatrix(const Matrix &in, Matrix &out, int r1, int r2, int c1, int c2)
+bool yarp::sig::submatrix(const Matrix &in, Matrix &out, size_t r1, size_t r2, size_t c1, size_t c2)
 {
     double *t=out.data();
     const double *i=in.data()+in.cols()*r1+c1;
@@ -96,9 +100,9 @@ bool yarp::sig::submatrix(const Matrix &in, Matrix &out, int r1, int r2, int c1,
     if(i == nullptr || t == nullptr)
         return false;
 
-    for(int r=0;r<=(r2-r1);r++)
+    for(size_t r=0;r<=(r2-r1);r++)
     {
-        for(int c=0;c<=(c2-c1);c++)
+        for(size_t c=0;c<=(c2-c1);c++)
         {
             *t++=*i++;
         }
@@ -115,11 +119,11 @@ bool Matrix::read(yarp::os::ConnectionReader& connection) {
     MatrixPortContentHeader header;
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
     if (!ok) return false;
-    int r=rows();
-    int c=cols();
+    size_t r=rows();
+    size_t c=cols();
     if (header.listLen > 0)
     {
-        if ( r != (int)(header.rows) || c!=(int)(header.cols))
+        if ( r != (size_t)(header.rows) || c!=(size_t)(header.cols))
         {
             resize(header.rows, header.cols);
         }
@@ -127,7 +131,7 @@ bool Matrix::read(yarp::os::ConnectionReader& connection) {
         int l=0;
         double *tmp=data();
         for(l=0;l<header.listLen;l++)
-            tmp[l]=connection.expectDouble();
+            tmp[l]=connection.expectFloat64();
     }
     else
         return false;
@@ -136,15 +140,15 @@ bool Matrix::read(yarp::os::ConnectionReader& connection) {
 }
 
 
-bool Matrix::write(yarp::os::ConnectionWriter& connection) {
+bool Matrix::write(yarp::os::ConnectionWriter& connection) const {
     MatrixPortContentHeader header;
 
     //header.totalLen = sizeof(header)+sizeof(double)*this->size();
     header.outerListTag = BOTTLE_TAG_LIST;
     header.outerListLen = 3;
-    header.rowsTag = BOTTLE_TAG_INT;
-    header.colsTag = BOTTLE_TAG_INT;
-    header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE;
+    header.rowsTag = BOTTLE_TAG_INT32;
+    header.colsTag = BOTTLE_TAG_INT32;
+    header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_FLOAT64;
     header.rows=rows();
     header.cols=cols();
     header.listLen = header.rows*header.cols;
@@ -154,7 +158,7 @@ bool Matrix::write(yarp::os::ConnectionWriter& connection) {
     int l=0;
     const double *tmp=data();
     for(l=0;l<header.listLen;l++)
-        connection.appendDouble(tmp[l]);
+        connection.appendFloat64(tmp[l]);
 
     // if someone is foolish enough to connect in text mode,
     // let them see something readable.
@@ -166,11 +170,11 @@ bool Matrix::write(yarp::os::ConnectionWriter& connection) {
 /**
 * Quick implementation, space for improvement.
 */
-ConstString Matrix::toString(int precision, int width, const char* endRowStr) const
+std::string Matrix::toString(int precision, int width, const char* endRowStr) const
 {
-    ConstString ret;
+    std::string ret;
     char tmp[350];
-    int c, r;
+    size_t c, r;
     if(width>0) // if width is specified use a space as separator
     {
         for(r=0;r<nrows;r++)
@@ -208,7 +212,7 @@ void Matrix::updatePointers()
     if (matrix!=nullptr)
         delete [] matrix;
 
-    int r=0;
+    size_t r=0;
     matrix=new double* [nrows];
     if (nrows>0) matrix[0]=storage;
     for(r=1;r<nrows; r++)
@@ -245,8 +249,8 @@ const Matrix &Matrix::operator=(const Matrix &r)
 
 const Matrix &Matrix::operator=(double v)
 {
-    int nelem = nrows*ncols;
-    for(int k=0; k<nelem; k++)
+    size_t nelem = nrows*ncols;
+    for(size_t k=0; k<nelem; k++)
         storage[k]=v;
 
     return *this;
@@ -261,15 +265,15 @@ Matrix::~Matrix()
         delete [] storage;
 }
 
-void Matrix::resize(int new_r, int new_c)
+void Matrix::resize(size_t new_r, size_t new_c)
 {
     if(new_r==nrows && new_c==ncols)
         return;
 
     double *new_storage=new double[new_r*new_c];
 
-    const int copy_r=(new_r<nrows) ? new_r:nrows;
-    const int copy_c=(new_c<ncols) ? new_c:ncols;
+    const size_t copy_r=(new_r<nrows) ? new_r:nrows;
+    const size_t copy_c=(new_c<ncols) ? new_c:ncols;
     //copy_r = (new_r<nrows) ? new_r:nrows;
 
     if (storage!=nullptr)
@@ -293,7 +297,7 @@ void Matrix::resize(int new_r, int new_c)
 #endif
 
         // favor performance with large matrices
-        for(int r=0; r<copy_r;r++)
+        for(size_t r=0; r<copy_r;r++)
         {
             tmp_current=matrix[r];
             memcpy(tmp_new, tmp_current, sizeof(double)*copy_c);
@@ -323,13 +327,13 @@ void Matrix::zero()
     memset(storage, 0, sizeof(double)*ncols*nrows);
 }
 
-Matrix Matrix::removeCols(int first_col, int how_many)
+Matrix Matrix::removeCols(size_t first_col, size_t how_many)
 {
     Matrix ret;
     ret.resize(nrows, ncols-how_many);
 
-    for(int r=0; r<nrows; r++)
-        for(int c_in=0,c_out=0;c_in<ncols; c_in++)
+    for(size_t r=0; r<nrows; r++)
+        for(size_t c_in=0,c_out=0;c_in<ncols; c_in++)
         {
             if (c_in==first_col)
             {
@@ -351,13 +355,13 @@ Matrix Matrix::removeCols(int first_col, int how_many)
     return ret;
 }
 
-Matrix Matrix::removeRows(int first_row, int how_many)
+Matrix Matrix::removeRows(size_t first_row, size_t how_many)
 {
     Matrix ret;
     ret.resize(nrows-how_many, ncols);
 
-    for(int c=0; c<ncols; c++)
-        for(int r_in=0, r_out=0; r_in<nrows; r_in++)
+    for(size_t c=0; c<ncols; c++)
+        for(size_t r_in=0, r_out=0; r_in<nrows; r_in++)
         {
             if (r_in==first_row)
             {
@@ -384,56 +388,56 @@ Matrix Matrix::transposed() const
     Matrix ret;
     ret.resize(ncols, nrows);
 
-    for(int r=0; r<nrows; r++)
-        for(int c=0;c<ncols; c++)
+    for(size_t r=0; r<nrows; r++)
+        for(size_t c=0;c<ncols; c++)
             ret[c][r]=(*this)[r][c];
 
     return ret;
 }
 
-Vector Matrix::getRow(int r) const
+Vector Matrix::getRow(size_t r) const
 {
     Vector ret;
     ret.resize(ncols);
 
-    for(int c=0;c<ncols;c++)
+    for(size_t c=0;c<ncols;c++)
         ret[c]=(*this)[r][c];
 
     return ret;
 }
 
-Vector Matrix::getCol(int c) const
+Vector Matrix::getCol(size_t c) const
 {
     Vector ret;
     ret.resize(nrows);
 
-    for(int r=0;r<nrows;r++)
+    for(size_t r=0;r<nrows;r++)
         ret[r]=(*this)[r][c];
 
     return ret;
 }
 
-Vector Matrix::subrow(int r, int c, int size) const
+Vector Matrix::subrow(size_t r, size_t c, size_t size) const
 {
     if(r>=rows() || c+size-1>=cols())
         return Vector(0);
 
     Vector ret(size);
 
-    for(int i=0;i<size;i++)
+    for(size_t i=0;i<size;i++)
         ret[i]=(*this)[r][c+i];
 
     return ret;
 }
 
-Vector Matrix::subcol(int r, int c, int size) const
+Vector Matrix::subcol(size_t r, size_t c, size_t size) const
 {
     if(r+size-1>=rows() || c>=cols())
         return Vector(0);
 
     Vector ret(size);
 
-    for(int i=0;i<size;i++)
+    for(size_t i=0;i<size;i++)
         ret[i]=(*this)[r+i][c];
 
     return ret;
@@ -442,12 +446,12 @@ Vector Matrix::subcol(int r, int c, int size) const
 const Matrix &Matrix::eye()
 {
     zero();
-    int tmpR=nrows;
+    size_t tmpR=nrows;
     if (ncols<nrows)
         tmpR=ncols;
 
-    int c=0;
-    for(int r=0; r<tmpR; r++,c++)
+    size_t c=0;
+    for(size_t r=0; r<tmpR; r++,c++)
         (*this)[r][c]=1.0;
 
     return *this;
@@ -456,12 +460,12 @@ const Matrix &Matrix::eye()
 const Matrix &Matrix::diagonal(const Vector &d)
 {
     zero();
-    int tmpR=nrows;
+    size_t tmpR=nrows;
     if (ncols<nrows)
         tmpR=ncols;
 
-    int c=0;
-    for(int r=0; r<tmpR; r++,c++)
+    size_t c=0;
+    for(size_t r=0; r<tmpR; r++,c++)
         (*this)[r][c]=d[r];
 
     return *this;
@@ -489,43 +493,43 @@ bool Matrix::operator==(const yarp::sig::Matrix &r) const
     return true;
 }
 
-bool Matrix::setRow(int row, const Vector &r)
+bool Matrix::setRow(size_t row, const Vector &r)
 {
-    if((row<0) || (row>=nrows) || (r.length() != (size_t)ncols))
+    if((row>=nrows) || (r.length() != ncols))
         return false;
 
-    for(int c=0;c<ncols;c++)
+    for(size_t c=0;c<ncols;c++)
         (*this)[row][c]=r[c];
 
     return true;
 }
 
-bool Matrix::setCol(int col, const Vector &c)
+bool Matrix::setCol(size_t col, const Vector &c)
 {
-    if((col<0) || (col>=ncols) || (c.length() != (size_t)nrows))
+    if((col>=ncols) || (c.length() != nrows))
         return false;
 
-    for(int r=0;r<nrows;r++)
+    for(size_t r=0;r<nrows;r++)
         (*this)[r][col]=c[r];
 
     return true;
 }
 
-bool Matrix::setSubmatrix(const yarp::sig::Matrix &m, int r, int c)
+bool Matrix::setSubmatrix(const yarp::sig::Matrix &m, size_t r, size_t c)
 {
-    if((c<0) || (c+m.cols()>ncols) || (r<0) || (r+m.rows()>nrows))
+    if((c+m.cols()>ncols) || (r+m.rows()>nrows))
         return false;
 
-    for(int i=0;i<m.rows();i++)
-        for(int j=0;j<m.cols();j++)
+    for(size_t i=0;i<m.rows();i++)
+        for(size_t j=0;j<m.cols();j++)
             (*this)[r+i][c+j] = m(i,j);
     return true;
 }
 
-bool Matrix::setSubrow(const Vector &v, int r, int c)
+bool Matrix::setSubrow(const Vector &v, size_t r, size_t c)
 {
     size_t s = v.size();
-    if(r<0 || r>=nrows || c<0 || c+s-1>=(size_t)ncols)
+    if(r>=nrows || c+s-1>=(size_t)ncols)
         return false;
 
     for(size_t i=0;i<s;i++)
@@ -533,10 +537,10 @@ bool Matrix::setSubrow(const Vector &v, int r, int c)
     return true;
 }
 
-bool Matrix::setSubcol(const Vector &v, int r, int c)
+bool Matrix::setSubcol(const Vector &v, size_t r, size_t c)
 {
     size_t s = v.size();
-    if(r<0 || r+s-1>=(size_t)nrows || c<0 || c>=ncols)
+    if(r+s-1>=(size_t)nrows || c>=ncols)
         return false;
 
     for(size_t i=0;i<s;i++)
@@ -544,7 +548,7 @@ bool Matrix::setSubcol(const Vector &v, int r, int c)
     return true;
 }
 
-Matrix::Matrix(int r, int c):
+Matrix::Matrix(size_t r, size_t c):
     storage(nullptr),
     matrix(nullptr),
     nrows(r),

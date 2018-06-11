@@ -1,14 +1,17 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_CARRIERS_H
 #define YARP_OS_CARRIERS_H
 
 #include <yarp/os/Bytes.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Face.h>
 #include <yarp/os/OutputProtocol.h>
@@ -38,12 +41,12 @@ public:
      * @param name the name of the desired carrier.
      * @return the desired carrier, or nullptr if not found.
      */
-    static Carrier *chooseCarrier(const ConstString& name);
+    static Carrier *chooseCarrier(const std::string& name);
 
     /**
      * Get template for carrier.
      */
-    static Carrier *getCarrierTemplate(const ConstString& name);
+    static Carrier *getCarrierTemplate(const std::string& name);
 
     /**
      * Select a carrier by 8-byte header.
@@ -100,8 +103,6 @@ public:
     static bool addCarrierPrototype(Carrier *carrier);
 
     static Carriers& getInstance();
-
-    static void removeInstance();
 
     static Bottle listCarriers();
 

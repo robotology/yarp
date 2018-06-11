@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP2_ROSTYPE_INC
@@ -13,7 +14,8 @@
 #include <map>
 #include <list>
 
-class RosTypeSearch {
+class RosTypeSearch
+{
 private:
     bool find_service;
     std::string target_dir;
@@ -81,45 +83,21 @@ class RosTypeCodeGen;
 class RosTypeCodeGenState;
 
 
-class RosType {
-public:
-
-    // std::vector<RosType> subRosType; is awkward to export in a MSVC DLL
-    // so we work around it
-    class RosTypes {
-    public:
-        void *system_resource;
-
-        RosTypes();
-
-        virtual ~RosTypes();
-
-        RosTypes(const RosTypes& alt);
-
-        const RosTypes& operator=(const RosTypes& alt);
-
-        void clear();
-
-        void push_back(const RosType& t);
-
-        size_t size() const;
-
-        RosType& operator[](int i);
-        const RosType& operator[](int i) const;
-    };
-
+class RosType
+{
 public:
     bool isValid;
     bool isArray;
     int arrayLength;
     bool isPrimitive;
+    bool isRosPrimitive;
     bool isStruct;
     std::string rosType;
     std::string rosRawType;
     std::string rosName;
     std::string rosPath;
     std::string initializer;
-    RosTypes subRosType;
+    std::vector<RosType> subRosType;
     std::string txt;
     std::list<std::string> checksum_var_text;
     std::list<std::string> checksum_const_text;
@@ -128,18 +106,28 @@ public:
     RosType *reply;
     std::string package;
     bool verbose;
+    bool no_recurse;
 
-    RosType() {
-        reply = 0 /*NULL*/;
-        clear();
+    RosType() :
+            isValid(false),
+            isArray(false),
+            arrayLength(-1),
+            isPrimitive(false),
+            isRosPrimitive(false),
+            isStruct(false),
+            reply(nullptr),
+            verbose(false),
+            no_recurse(false)
+    {
     }
 
     void clear() {
         isValid = false;
         isArray = false;
-        isStruct = false;
         arrayLength = -1;
         isPrimitive = false;
+        isRosPrimitive = false;
+        isStruct = false;
         txt = "";
         rosType = "";
         rosRawType = "";
@@ -148,14 +136,13 @@ public:
         subRosType.clear();
         if (reply) {
             delete reply;
-            reply = 0 /*NULL*/;
+            reply = nullptr;
         }
         checksum_var_text.clear();
         checksum_const_text.clear();
         checksum = "";
         source = "";
         //package = "";
-        verbose = false;
     }
 
     virtual ~RosType() {
@@ -177,19 +164,25 @@ public:
     void setVerbose() {
         verbose = true;
     }
+
+    void setNoRecurse() {
+        no_recurse = true;
+    }
 };
 
 typedef RosType RosField;
 
-class RosTypeCodeGenState {
+class RosTypeCodeGenState
+{
 public:
     std::string directory;
     std::map<std::string, RosType *> generated;
     std::map<std::string, bool> usedVariables;
     std::map<std::string, std::string> checksums;
-    std::vector<std::string> dependencies;
-    std::vector<std::string> dependenciesAsPaths;
+    std::map<std::string, std::vector<std::string>> dependencies;
+    std::map<std::string, std::vector<std::string>> dependenciesAsPaths;
     std::string txt;
+    std::vector<std::string> generatedFiles;
 
     std::string useVariable(const std::string& name) {
         usedVariables[name] = true;
@@ -204,7 +197,8 @@ public:
     }
 };
 
-class RosTypeCodeGen {
+class RosTypeCodeGen
+{
 protected:
     bool verbose;
 public:
@@ -238,6 +232,8 @@ public:
 
     virtual bool endType(const std::string& tname,
                          const RosField& field) = 0;
+
+    virtual bool writeIndex(RosTypeCodeGenState& state) = 0;
 
     virtual bool hasNativeTimeClass() const {
         return false;

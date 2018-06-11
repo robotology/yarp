@@ -1,13 +1,16 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/MessageStack.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/DummyConnector.h>
@@ -32,7 +35,7 @@ class MessageStackHelper {
 private:
     std::list<MessageStackThread *> threads;
     std::deque<Bottle> msgs;
-    Semaphore mutex;
+    Mutex mutex;
     Semaphore produce;
     size_t max_threads;
     int available_threads;
@@ -40,7 +43,7 @@ private:
     bool active;
 
 public:
-    MessageStackHelper(int max_threads, PortReader& owner) : mutex(1), produce(0), owner(owner) {
+    MessageStackHelper(int max_threads, PortReader& owner) : mutex(), produce(0), owner(owner) {
         this->max_threads = (size_t)max_threads;
         available_threads = 0;
         active = true;
@@ -61,8 +64,8 @@ public:
         active = true;
     }
 
-    void stack(PortWriter& msg, const ConstString& tag) {
-        mutex.wait();
+    void stack(PortWriter& msg, const std::string& tag) {
+        mutex.lock();
         msgs.push_back(Bottle());
         if (tag!="") {
             Bottle b;
@@ -82,23 +85,23 @@ public:
             }
         }
         available_threads--;
-        mutex.post();
+        mutex.unlock();
         produce.post();
     }
 
     bool process() {
         produce.wait();
         if (!active) return false;
-        mutex.wait();
+        mutex.lock();
         Bottle b = msgs.front();
         msgs.pop_front();
-        mutex.post();
+        mutex.unlock();
         DummyConnector con;
         b.write(con.getWriter());
         owner.read(con.getReader());
-        mutex.wait();
+        mutex.lock();
         available_threads++;
-        mutex.post();
+        mutex.unlock();
         return active;
     }
 
@@ -137,7 +140,7 @@ void MessageStack::attach(PortReader& owner) {
     yAssert(implementation);
 }
 
-void MessageStack::stack(PortWriter& msg, const ConstString& tag) {
+void MessageStack::stack(PortWriter& msg, const std::string& tag) {
     if (!implementation) return;
     HELPER(implementation).stack(msg, tag);
 }

@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "RosHeader.h"
@@ -15,7 +16,7 @@
 using namespace yarp::os;
 using namespace std;
 
-void RosHeader::appendInt(char *&buf,int x) {
+void RosHeader::appendInt32(char *&buf,int x) {
     Bytes bytes(buf,4);
     NetType::netInt(x,bytes);
     buf += 4;
@@ -52,7 +53,7 @@ string RosHeader::writeHeader() {
          it!=data.end(); it++) {
         string key = it->first;
         string val = it->second;
-        appendInt(buf,key.length()+1+val.length());
+        appendInt32(buf,key.length()+1+val.length());
         appendString(buf,key);
         appendString(buf,string("="));
         appendString(buf,val);

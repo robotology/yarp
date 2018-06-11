@@ -1,39 +1,48 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-
 #include <yarp/os/Mutex.h>
-#include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
+#include <mutex>
 
-using namespace yarp::os::impl;
-using namespace yarp::os;
+using yarp::os::Mutex;
 
-Mutex::Mutex() {
-    // should optimize implementation when better building blocks are
-    // available, but for now stick with semaphores
-    implementation = new SemaphoreImpl(1);
-    yAssert(implementation!=nullptr);
+class Mutex::Private : public std::mutex
+{
+};
+
+Mutex::Mutex() :
+        mPriv(new Private)
+{
 }
 
-Mutex::~Mutex() {
-    if (implementation!=nullptr) {
-        delete ((SemaphoreImpl*)implementation);
-        implementation = nullptr;
-    }
+Mutex::~Mutex()
+{
+    delete mPriv;
 }
 
-void Mutex::lock() {
-    ((SemaphoreImpl*)implementation)->wait();
+void Mutex::lock()
+{
+    mPriv->lock();
 }
 
-bool Mutex::tryLock() {
-    return ((SemaphoreImpl*)implementation)->check();
+bool Mutex::try_lock()
+{
+    return mPriv->try_lock();
 }
 
-void Mutex::unlock() {
-    ((SemaphoreImpl*)implementation)->post();
+void Mutex::unlock()
+{
+    mPriv->unlock();
 }
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+bool Mutex::tryLock()
+{
+    return mPriv->try_lock();
+}
+#endif // YARP_NO_DEPRECATED

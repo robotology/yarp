@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2007 RobotCub Consortium
- * Authors: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #ifndef YARP_SIG_VECTOR_H
 #define YARP_SIG_VECTOR_H
@@ -11,7 +13,7 @@
 //#include <cstdlib> //defines size_t
 #include <cstddef> //defines size_t
 #include <yarp/os/Portable.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/ManagedBytes.h>
 
 #include <yarp/sig/api.h>
@@ -40,11 +42,12 @@ namespace yarp {
 class YARP_sig_API yarp::sig::VectorBase : public yarp::os::Portable
 {
 public:
-    virtual int getElementSize() const = 0;
+    virtual size_t getElementSize() const = 0;
     virtual int getBottleTag() const = 0;
 
     virtual size_t getListSize() const = 0;
     virtual const char *getMemoryBlock() const = 0;
+    virtual char *getMemoryBlock() = 0;
     virtual void resize(size_t size) = 0;
 
     /*
@@ -57,7 +60,7 @@ public:
     * Write vector to a connection.
     * return true iff a vector was written correctly
     */
-    virtual bool write(yarp::os::ConnectionWriter& connection) override;
+    virtual bool write(yarp::os::ConnectionWriter& connection) const override;
 };
 
 /*
@@ -74,12 +77,12 @@ inline int BottleTagMap () {
 
 template<>
 inline int BottleTagMap <double> () {
-    return BOTTLE_TAG_DOUBLE;
+    return BOTTLE_TAG_FLOAT64;
   }
 
 template<>
 inline int BottleTagMap <int> () {
-    return BOTTLE_TAG_INT;
+    return BOTTLE_TAG_INT32;
   }
 
 /**
@@ -139,7 +142,7 @@ public:
         return *this;
     }
 
-    virtual int getElementSize() const override {
+    virtual size_t getElementSize() const override {
         return sizeof(T);
     }
 
@@ -152,9 +155,14 @@ public:
         return len;
     }
 
-    virtual const char *getMemoryBlock() const override
+    virtual const char* getMemoryBlock() const override
     {
-        return (char *) bytes.get();
+        return bytes.get();
+    }
+
+    virtual char* getMemoryBlock() override
+    {
+        return bytes.get();
     }
 
     inline const T *getFirst() const
@@ -353,7 +361,7 @@ public:
     * Warning: the string format might change in the future. This method
     * is here to ease debugging.
     */
-    yarp::os::ConstString toString(int precision=-1, int width=-1) const;
+    std::string toString(int precision=-1, int width=-1) const;
 
 
     /**
@@ -466,9 +474,9 @@ public:
     * Write vector to a connection.
     * return true iff a vector was written correctly
     */
-    virtual bool write(yarp::os::ConnectionWriter& connection) override;
+    virtual bool write(yarp::os::ConnectionWriter& connection) const override;
 
-    virtual yarp::os::Type getType() override {
+    virtual yarp::os::Type getType() const override {
         return yarp::os::Type::byName("yarp/vector");
     }
 };

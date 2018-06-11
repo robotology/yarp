@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Author: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_CONTROLBOARDWRAPPER_SUBDEVICE_H
@@ -72,7 +74,10 @@ public:
     std::string id;
     int base;
     int top;
-    int axes;
+    int wbase; //wrapper base
+    int wtop; //wrapper top
+    int axes; //number of used axis of this subdevice
+    int totalAxis; //Numeber of total axis taht the subdevice can control
 
     bool configuredF;
 
@@ -81,20 +86,16 @@ public:
     yarp::dev::PolyDriver            *subdevice;
     yarp::dev::IPidControl           *pid;
     yarp::dev::IPositionControl      *pos;
-    yarp::dev::IPositionControl2     *pos2;
     yarp::dev::IVelocityControl      *vel;
-    yarp::dev::IVelocityControl2     *vel2;
     yarp::dev::IEncodersTimed        *iJntEnc;
     yarp::dev::IMotorEncoders        *iMotEnc;
     yarp::dev::IAmplifierControl     *amp;
-    yarp::dev::IControlLimits2       *lim2;
+    yarp::dev::IControlLimits        *lim;
     yarp::dev::IControlCalibration   *calib;
-    yarp::dev::IControlCalibration2  *calib2;
     yarp::dev::IPreciselyTimed       *iTimed;
     yarp::dev::ITorqueControl        *iTorque;
     yarp::dev::IImpedanceControl     *iImpedance;
     yarp::dev::IControlMode          *iMode;
-    yarp::dev::IControlMode2         *iMode2;
     yarp::dev::IAxisInfo             *info;
     yarp::dev::IPositionDirect       *posDir;
     yarp::dev::IInteractionMode      *iInteract;
@@ -114,7 +115,7 @@ public:
     void detach();
     inline void setVerbose(bool _verbose) {_subDevVerbose = _verbose; }
 
-    bool configure(int base, int top, int axes, const std::string &id, yarp::dev::ControlBoardWrapper *_parent);
+    bool configure(int wbase, int wtop, int base, int top, int axes, const std::string &id, yarp::dev::ControlBoardWrapper *_parent);
 
     inline void refreshJointEncoders()
     {
@@ -150,6 +151,7 @@ struct DevicesLutEntry
 {
     int offset; //an offset, the device is mapped starting from this joint
     int deviceEntry; //index to the joint corresponding subdevice in the list
+    int jointIndexInDev; //the index of joint in the numeration inside the device
 };
 
 
@@ -158,6 +160,7 @@ class yarp::dev::impl::WrappedDevice
 public:
     SubDeviceVector subdevices;
     std::vector<DevicesLutEntry> lut;
+    int maxNumOfJointsInDevices;
 
     inline yarp::dev::impl::SubDevice *getSubdevice(unsigned int i)
     {

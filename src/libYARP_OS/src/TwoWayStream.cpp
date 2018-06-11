@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/TwoWayStream.h>
@@ -22,15 +25,15 @@ OutputStream& NullStream::getOutputStream() {
     return * this;
 }
 
-const Contact& NullStream::getLocalAddress() {
+const Contact& NullStream::getLocalAddress() const {
     return address;
 }
 
-const Contact& NullStream::getRemoteAddress() {
+const Contact& NullStream::getRemoteAddress() const {
     return address;
 }
 
-bool NullStream::isOk() {
+bool NullStream::isOk() const {
     return false;
 }
 
@@ -46,7 +49,7 @@ void NullStream::beginPacket() {
 void NullStream::endPacket()   {
 }
 
-YARP_SSIZE_T NullStream::read(const Bytes& b) {
+yarp::conf::ssize_t NullStream::read(Bytes& b) {
     YARP_UNUSED(b);
     return -1;
 }

@@ -1,13 +1,14 @@
 /*
- * Copyright (C) 2006, 2008 RobotCub Consortium
- * Authors: Giorgio Metta, Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <cstdio>
 #include <yarp/os/impl/SocketTwoWayStream.h>
-#include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/PortCommand.h>
 
 #include <yarp/os/Terminator.h>
@@ -23,13 +24,13 @@ bool Terminator::terminateByName(const char *name) {
     if (name == nullptr)
         return false;
 
-    ConstString s(name);
+    std::string s(name);
 
-    if (s.find("/quit")==ConstString::npos) {
+    if (s.find("/quit")==std::string::npos) {
         // name doesn't include /quit
         // old mechanism won't work, let's try new
         PortCommand pc('\0', "i");
-        Companion::sendMessage(s, pc, true);
+        NetworkBase::sendMessage(s, pc, true);
         return true;
     }
 
@@ -66,7 +67,7 @@ Terminee::Terminee(const char *name) {
         return;
     }
 
-    ConstString s(name);
+    std::string s(name);
     if (name[0] != '/') {
         s.clear();
         s += "/";

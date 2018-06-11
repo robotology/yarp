@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "AnalogWrapper.h"
@@ -69,13 +71,13 @@ bool AnalogServerHandler::_handleIAnalog(yarp::os::Bottle &cmd, yarp::os::Bottle
     case VOCAB_CALIBRATE_CHANNEL:
       if (msgsize==3)
       {
-        int ch=cmd.get(2).asInt();
+        int ch=cmd.get(2).asInt32();
         is->calibrateChannel(ch);
       }
       if (msgsize==4)
       {
-        int ch=cmd.get(2).asInt();
-        double v=cmd.get(3).asDouble();
+        int ch=cmd.get(2).asInt32();
+        double v=cmd.get(3).asFloat64();
         is->calibrateChannel(ch, v);
       }
 
@@ -149,26 +151,6 @@ AnalogPortEntry &AnalogPortEntry::operator =(const AnalogPortEntry &alt)
   * It creates one rpc port and its related handler for every output port.
   */
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-// Constructor used when there is only one output port
-AnalogWrapper::AnalogWrapper(const char* name, int rate): RateThread(rate)
-{
-    // init ROS struct
-    useROS          = ROS_disabled;
-    frame_id        = "";
-    rosNodeName     = "";
-    rosTopicName    = "";
-    rosNode         = nullptr;
-    rosMsgCounter   = 0;
-
-    ownDevices      = false;
-    subDeviceOwned  = nullptr;
-    sensorId = "AnalogServer";
-    _rate = rate;
-    createPort(name, rate);
-}
-#endif // YARP_NO_DEPRECATED
-
 bool AnalogWrapper::createPort(const char* name, int rate)
 {
     analogSensor_p=nullptr;
@@ -177,40 +159,21 @@ bool AnalogWrapper::createPort(const char* name, int rate)
     analogPorts[0].length = -1; // max length
     analogPorts[0].port_name = std::string(name);
     setHandlers();
-    setRate(rate);
+    setPeriod(rate / 1000.0);
     return true;
 }
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-// Contructor used when one or more output ports are specified
-AnalogWrapper::AnalogWrapper(const std::vector<AnalogPortEntry>& _analogPorts, int rate):
-    RateThread(rate),
-    _rate(rate),
-    sensorId("AnalogServer"),
-    useROS(ROS_disabled),
-    frame_id(""),
-    rosNodeName(""),
-    rosTopicName(""),
-    rosNode(nullptr),
-    rosMsgCounter(0),
-    ownDevices(false),
-    subDeviceOwned(nullptr)
-{
-    createPorts(_analogPorts, rate);
-}
-#endif // YARP_NO_DEPRECATED
 
 bool AnalogWrapper::createPorts(const std::vector<AnalogPortEntry>& _analogPorts, int rate)
 {
     analogSensor_p=nullptr;
     this->analogPorts=_analogPorts;
     setHandlers();
-    setRate(rate);
+    setPeriod(rate / 1000.0);
     return true;
 }
 
 AnalogWrapper::AnalogWrapper() :
-        RateThread(DEFAULT_THREAD_PERIOD),
+        PeriodicThread(DEFAULT_THREAD_PERIOD / 1000.0),
         ownDevices(false),
         subDeviceOwned(nullptr)
 {
@@ -295,8 +258,8 @@ bool AnalogWrapper::openAndAttachSubDevice(Searchable &prop)
     }
 
     attach(analogSensor_p);
-    RateThread::setRate(_rate);
-    return RateThread::start();
+    PeriodicThread::setPeriod(_rate / 1000.0);
+    return PeriodicThread::start();
 }
 
 
@@ -338,8 +301,8 @@ bool AnalogWrapper::attachAll(const PolyDriverList &analog2attach)
         return false;
     }
     attach(analogSensor_p);
-    RateThread::setRate(_rate);
-    return RateThread::start();
+    PeriodicThread::setPeriod(_rate / 1000.0);
+    return PeriodicThread::start();
 }
 
 bool AnalogWrapper::detachAll()
@@ -431,7 +394,7 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
         useROS = ROS_config_error;
         return false;
     }
-    yarp::os::ConstString ros_use_type = rosGroup.find("useROS").asString();
+    std::string ros_use_type = rosGroup.find("useROS").asString();
     if(ros_use_type == "false")
     {
         yInfo() << sensorId << "useROS topic if set to 'false'";
@@ -633,7 +596,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
     }
     else
     {
-        _rate = config.find("period").asInt();
+        _rate = config.find("period").asInt32();
     }
 
     if (config.check("deviceId"))
@@ -738,7 +701,7 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                 std::vector<AnalogPortEntry> tmpPorts;
                 tmpPorts.resize(nports);
 
-                for(int k=0; k<ports->size(); k++)
+                for(size_t k=0; k<ports->size(); k++)
                 {
                     Bottle parameters=params.findGroup(ports->get(k).asString().c_str());
 
@@ -756,10 +719,10 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                         yError() << "AnalogWrapper: unable to open the analog server, address conflict";
                         return false;
                     }
-                    int wBase=parameters.get(1).asInt();
-                    int wTop=parameters.get(2).asInt();
-                    int base=parameters.get(3).asInt();
-                    int top=parameters.get(4).asInt();
+                    int wBase=parameters.get(1).asInt32();
+                    int wTop=parameters.get(2).asInt32();
+                    int base=parameters.get(3).asInt32();
+                    int top=parameters.get(4).asInt32();
 
                     yDebug()<<"--> "<<wBase<<" "<<wTop<<" "<<base<<" "<<top;
 
@@ -780,7 +743,7 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                 }
                 createPorts(tmpPorts, _rate);
 
-                if (sumOfChannels!=deviceChannels.asInt())
+                if (sumOfChannels!=deviceChannels.asInt32())
                 {
                     yError() << "AnalogWrapper: Total number of mapped taxels does not correspond to total taxels";
                     return false;
@@ -840,9 +803,9 @@ void AnalogWrapper::run()
 
                 if (useROS != ROS_disabled && rosMsgType == "geometry_msgs/WrenchStamped")
                 {
-                    geometry_msgs_WrenchStamped rosData;
+                    yarp::rosmsg::geometry_msgs::WrenchStamped rosData;
                     rosData.header.seq = rosMsgCounter++;
-                    rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
+                    rosData.header.stamp = yarp::os::Time::now();
                     rosData.header.frame_id = frame_id;
 
                     rosData.wrench.force.x = lastDataRead[0];
@@ -857,7 +820,7 @@ void AnalogWrapper::run()
                 }
                 else if (useROS != ROS_disabled && rosMsgType == "sensor_msgs/JointState")
                 {
-                    sensor_msgs_JointState rosData;
+                    yarp::rosmsg::sensor_msgs::JointState rosData;
                     size_t data_size = lastDataRead.size();
                     rosData.name.resize(data_size);
                     rosData.position.resize(data_size);
@@ -883,7 +846,7 @@ void AnalogWrapper::run()
                         }
                     }
                     rosData.header.seq = rosMsgCounter++;
-                    rosData.header.stamp = normalizeSecNSec(yarp::os::Time::now());
+                    rosData.header.stamp = yarp::os::Time::now();
                     rosPublisherJointPort.write(rosData);
                 }
             }
@@ -914,9 +877,9 @@ void AnalogWrapper::run()
 bool AnalogWrapper::close()
 {
     yTrace("AnalogWrapper::Close");
-    if (RateThread::isRunning())
+    if (PeriodicThread::isRunning())
     {
-        RateThread::stop();
+        PeriodicThread::stop();
     }
 
     detachAll();

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  *
  */
 
@@ -12,8 +12,8 @@
 #include "avpreamble.h"
 
 extern "C" {
-#include <avcodec.h>
-#include <avformat.h>
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
 }
 
 /*
@@ -121,7 +121,7 @@ protected:
     bool imageSync;
 
     /** Uri of the images a grabber produces. */
-    yarp::os::ConstString m_uri;
+    std::string m_uri;
 
     /** Width of the images a grabber produces. */
     int m_w;

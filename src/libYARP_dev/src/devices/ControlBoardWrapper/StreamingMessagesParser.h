@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Author: Alberto Cardellino
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_CONTROLBOARDWRAPPER_STREAMINGMESSAGESPARSER_H
@@ -73,10 +75,8 @@ typedef yarp::os::PortablePair<yarp::os::Bottle, yarp::sig::Vector> CommandMessa
 class  yarp::dev::impl::StreamingMessagesParser : public yarp::os::TypedReaderCallback<CommandMessage> {
 protected:
     yarp::dev::IPositionControl     *stream_IPosCtrl;
-    yarp::dev::IPositionControl2    *stream_IPosCtrl2;
     yarp::dev::IPositionDirect      *stream_IPosDirect;
     yarp::dev::IVelocityControl     *stream_IVel;
-    yarp::dev::IVelocityControl2    *stream_IVel2;
     yarp::dev::ITorqueControl       *stream_ITorque;
     yarp::dev::IPWMControl          *stream_IPWM;
     yarp::dev::ICurrentControl      *stream_ICurrent;

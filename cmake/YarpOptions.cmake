@@ -1,6 +1,9 @@
-# Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 include(GNUInstallDirs)
 include(CMakeDependentOption)
@@ -85,6 +88,12 @@ endif()
 # link the right library when both optimized and debug library are found
 set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS ${YARP_DEBUG_CONFIGURATIONS})
 
+#########################################################################
+# Handle YARP_IDL_BINARY_HINT
+set(YARP_IDL_BINARY_HINT "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
+foreach(_config ${CMAKE_CONFIGURATION_TYPES})
+  list(APPEND YARP_IDL_BINARY_HINT "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/${_config}")
+endforeach()
 
 #########################################################################
 # Simplify compilation of portable binaries.
@@ -119,27 +128,23 @@ endif()
 # Add the option to build only libraries and skip the binaries
 
 option(YARP_COMPILE_EXECUTABLES "Enable YARP executables." ON)
-mark_as_advanced(YARP_COMPILE_EXECUTABLES)
 
 
 #########################################################################
 # Add the option to build Robot Testing Framework addons
 option(YARP_COMPILE_RTF_ADDONS "Compile Robot Testing Framework addons." OFF)
-mark_as_advanced(YARP_COMPILE_RTF_ADDONS)
 
 
 #########################################################################
 # Disable unmaintained stuff unless explicitly enabled by the user.
 
 option(YARP_COMPILE_UNMAINTAINED "Enable unmaintained components" OFF)
-mark_as_advanced(YARP_COMPILE_UNMAINTAINED)
 
 
 #########################################################################
 # Turn on testing.
 
 option(YARP_COMPILE_TESTS "Enable YARP tests" OFF)
-mark_as_advanced(YARP_COMPILE_TESTS)
 if(YARP_COMPILE_TESTS)
   enable_testing()
 endif()
@@ -296,48 +301,6 @@ endif()
 
 
 #########################################################################
-# Ensure that it is compiled with c++11 also with CMake 3.1
-
-if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
-  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-endif()
-if(${CMAKE_VERSION} VERSION_LESS 3.1)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
-endif()
-
-
-#########################################################################
-# Control whether to build YARP using C++11 replacements for ACE stuff
-
-option(YARP_EXPERIMENTAL_CXX11 "Build YARP using C++11 replacement for threads, semaphores, etc." OFF)
-mark_as_advanced(YARP_EXPERIMENTAL_CXX11)
-if(YARP_EXPERIMENTAL_CXX11)
-  set(YARP_HAS_CXX11 ON)
-endif()
-
-
-#########################################################################
-# Control whether yarp::os::ConstString should be std::string or opaque
-# Not an important option for end users yet.  In principle
-# yarp::os::ConstString could now be set to std::string, if YARP
-# ever decides to accept STL as a dependency.
-
-set(YARP_WRAP_STL_STRING_DEFAULT OFF)
-if(MSVC)
-  set(YARP_WRAP_STL_STRING_DEFAULT ON)
-endif()
-option(YARP_WRAP_STL_STRING "Do you want the yarp string classes to wrap std::string? (as opposed to being exactly std::string)" ${YARP_WRAP_STL_STRING_DEFAULT})
-mark_as_advanced(YARP_WRAP_STL_STRING)
-set(YARP_WRAP_STL_STRING_INLINE_DEFAULT ON)
-if(MSVC)
-  set(YARP_WRAP_STL_STRING_INLINE_DEFAULT OFF)
-endif()
-cmake_dependent_option(YARP_WRAP_STL_STRING_INLINE "If wrapping std::string, should we use an inline implementation? (as opposed to opaque)" ${YARP_WRAP_STL_STRING_INLINE_DEFAULT}
-                       YARP_WRAP_STL_STRING OFF)
-mark_as_advanced(YARP_WRAP_STL_STRING_INLINE)
-
-
-#########################################################################
 # Control compilation of device tests.
 # Not really for end-user, but instead for the library developers
 yarp_deprecated_option(CREATE_BUILTIN_DEVICE_TESTS) # Since YARP 2.3.68
@@ -364,7 +327,7 @@ add_install_rpath_support(LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"       # Librar
 
 #########################################################################
 # Specify yarp version and copyright into macOS bundles
-set(MACOSX_BUNDLE_COPYRIGHT "© Istituto Italiano di Tecnologia (IIT) and RobotCub Consortium. YARP is released under the terms of the LGPL v2.1 or later.")
+set(MACOSX_BUNDLE_COPYRIGHT "© 2006-2018 Istituto Italiano di Tecnologia (IIT), 2006-2010 RobotCub Consortium. YARP is released under the terms of the BSD-3-Clause. See the accompanying LICENSE file for details.")
 set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${YARP_VERSION_SHORT}")
 
 
@@ -404,3 +367,10 @@ if(TEST_MACHINE_HOSTNAME)
   message(STATUS "TEST_MACHINE_OS_TYPE: ${TEST_MACHINE_OS_TYPE}")
   message(STATUS "TEST_MACHINE_TEST_TYPE: ${TEST_MACHINE_TEST_TYPE}")
 endif()
+
+
+
+
+yarp_deprecated_option(YARP_EXPERIMENTAL_CXX11) # Since YARP 3.0.0
+yarp_deprecated_option(YARP_WRAP_STL_STRING) # Since YARP 3.0.0
+yarp_deprecated_option(YARP_WRAP_STL_STRING_INLINE) # Since YARP 3.0.0

@@ -1,7 +1,7 @@
 /*
  * Copyright: (C) 2016 Istituto Italiano di Tecnologia (IIT)
  * Authors: Nicolò Genesio <nicolo.genesio@iit.it>
- * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 #include "YarpPluginFixture.h"
@@ -23,13 +23,13 @@ using namespace yarp::dev;
 
 PREPARE_FIXTURE_PLUGIN(YarpPluginFixture)
 
-bool YarpPluginFixture::scanPlugins(yarp::os::ConstString name, yarp::os::ConstString type)
+bool YarpPluginFixture::scanPlugins(std::string name, std::string type)
 {
     YarpPluginSelector selector;
     selector.scan();
     Bottle lst=selector.getSelectedPlugins();
     bool res=false;
-    for (int i=0; i<lst.size(); i++)
+    for (size_t i=0; i<lst.size(); i++)
     {
         Value& options = lst.get(i);
         if(!type.empty())
@@ -67,7 +67,7 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
             RTF_ASSERT_ERROR("YarpPluginFixture: not found devices parameter");
         }
         resDev=true;
-        for(int i=1;i<devices.size();i++)
+        for(size_t i=1;i<devices.size();i++)
         {
             if(Drivers::factory().find(devices.get(i).asString().c_str())==nullptr)
             {
@@ -88,7 +88,7 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
             RTF_ASSERT_ERROR("YarpPluginFixture: not found plugins parameter");
         }
         resPlug=true;
-        for(int i=1;i<plugins.size();i++)
+        for(size_t i=1;i<plugins.size();i++)
         {
             if(!scanPlugins(plugins.get(i).asString())){
                 RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+plugins.get(i).asString()+" among the available plugins");
@@ -108,7 +108,7 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
             RTF_ASSERT_ERROR("YarpPluginFixture: not found portmonitors parameter");
         }
         resPortMonitor=true;
-        for(int i=1;i<portmonitors.size();i++)
+        for(size_t i=1;i<portmonitors.size();i++)
         {
             if(!scanPlugins(portmonitors.get(i).asString(),"portmonitor")){
                 RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+portmonitors.get(i).asString()+" among the available portmonitors");
@@ -129,7 +129,7 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
         }
         Bottle lst=Carriers::listCarriers();
         resCarr=true;
-        for(int i=1;i<carriers.size();i++)
+        for(size_t i=1;i<carriers.size();i++)
         {
             if(lst.find(carriers.get(i).asString()).isNull()){
                 RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+carriers.get(i).asString()+" among the available carriers");

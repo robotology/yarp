@@ -1,12 +1,13 @@
-# Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
-# Author: Marco Randazzo
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 yarp_prepare_plugin(rpLidar
                     CATEGORY device
                     TYPE RpLidar
-                    INCLUDE rpLidar.h
-                    DEPENDS CREATE_DEVICE_LIBRARY_MODULES)
+                    INCLUDE rpLidar.h)
 
 if(NOT SKIP_rpLidar)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

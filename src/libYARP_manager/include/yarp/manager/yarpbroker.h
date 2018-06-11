@@ -1,11 +1,10 @@
 /*
- *  Yarp Modules Manager
- *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
- *  Authors: Ali Paikan <ali.paikan@iit.it>
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #ifndef YARP_MANAGER_YARPBROKER
 #define YARP_MANAGER_YARPBROKER
@@ -17,9 +16,9 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 
 // FIXME Do not use yarp/os/impl in .h files
 #include <yarp/os/SystemInfo.h>
@@ -35,7 +34,7 @@ namespace manager {
 /**
  * Class Broker
  */
-class YarpBroker: public Broker, public yarp::os::RateThread {
+class YarpBroker: public Broker, public yarp::os::PeriodicThread {
 
 public:
     YarpBroker();
@@ -100,7 +99,7 @@ private:
     bool timeout(double base, double timeout);
     yarp::os::Property& runProperty(void);
     int requestServer(yarp::os::Property& config);
-    int SendMsg(yarp::os::Bottle& msg, yarp::os::ConstString target,
+    int SendMsg(yarp::os::Bottle& msg, std::string target,
                 yarp::os::Bottle& resp, float fTimeout=5.0);
     bool getQosFromString(const char* qos, yarp::os::QosStyle& style);
 

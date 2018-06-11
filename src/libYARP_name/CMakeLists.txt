@@ -1,6 +1,9 @@
-# Copyright: (C) 2010 RobotCub Consortium
-# Author: Paul Fitzpatrick
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 project(YARP_name)
 
@@ -24,12 +27,6 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              FILES ${YARP_name_HDRS}
                    ${YARP_name_IMPL_HDRS})
 
-set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
-get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-
-include_directories(${YARP_TREE_INCLUDE_DIRS})
-include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
-
 add_library(YARP_name ${YARP_name_SRCS}
                       ${YARP_name_HDRS}
                       ${YARP_name_IMPL_HDRS})
@@ -38,32 +35,36 @@ add_library(YARP::YARP_name ALIAS YARP_name)
 target_include_directories(YARP_name PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-target_link_libraries(YARP_name PRIVATE YARP::YARP_OS
-                                        ${ACE_LIBRARIES})
+target_link_libraries(YARP_name PUBLIC YARP::YARP_conf
+                                       YARP::YARP_OS)
+list(APPEND YARP_name_PUBLIC_DEPS YARP_conf
+                                  YARP_OS)
 
-if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
-  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+if(YARP_HAS_ACE)
+  target_include_directories(YARP_name SYSTEM PRIVATE ${ACE_INCLUDE_DIRS})
+  target_link_libraries(YARP_name PRIVATE ${ACE_LIBRARIES})
+  list(APPEND YARP_name_PRIVATE_DEPS ACE)
 endif()
-if(CMAKE_VERSION VERSION_LESS 3.1)
-  if(DEFINED CXX11_FLAGS)
-    target_compile_options(YARP_name PUBLIC ${CXX11_FLAGS})
-  endif()
-else()
-  target_compile_features(YARP_name PUBLIC cxx_override)
-endif()
+
+target_compile_features(YARP_name PUBLIC cxx_override)
 
 set_property(TARGET YARP_name PROPERTY PUBLIC_HEADER ${YARP_name_HDRS})
 set_property(TARGET YARP_name PROPERTY PRIVATE_HEADER ${YARP_name_IMPL_HDRS})
+set_property(TARGET YARP_name PROPERTY VERSION ${YARP_VERSION_SHORT})
+set_property(TARGET YARP_name PROPERTY SOVERSION ${YARP_SOVERSION})
 
 install(TARGETS YARP_name
-        EXPORT YARP
-        COMPONENT runtime
+        EXPORT YARP_name
+        COMPONENT YARP_name
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/name"
         PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/name/impl")
 
-set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_name)
-set_property(TARGET YARP_name PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+include(YarpInstallBasicPackageFiles)
+yarp_install_basic_package_files(YARP_name
+                                 DEPENDENCIES ${YARP_name_PUBLIC_DEPS}
+                                 PRIVATE_DEPENDENCIES ${YARP_name_PRIVATE_DEPS})
+
 set_property(TARGET YARP_name PROPERTY FOLDER "Libraries/Private")

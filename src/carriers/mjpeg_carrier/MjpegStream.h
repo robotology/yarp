@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef MJPEGSTREAM_INC
@@ -35,7 +36,7 @@ private:
     TwoWayStream *delegate;
     StringInputStream sis;
     StringOutputStream sos;
-    yarp::sig::ImageOf<yarp::sig::PixelRgb> img;
+    yarp::sig::FlexImage img;
     yarp::sig::ImageNetworkHeader imgHeader;
     BlobNetworkHeader blobHeader;
     ManagedBytes cimg;
@@ -43,24 +44,16 @@ private:
     int phase;
     char *cursor;
     int remaining;
-    bool sender;
-    bool firstRound;
     bool autocompress;
     yarp::os::Bytes envelope;
-    readEnvelopeCallbackType readEnvelopeCallback;
-    void* readEnvelopeCallbackData;
 public:
-    MjpegStream(TwoWayStream *delegate, bool sender, bool autocompress) :
+    MjpegStream(TwoWayStream *delegate, bool autocompress) :
             delegate(delegate),
             blobHeader(BlobNetworkHeader{0,0,0}),
             phase(0),
             cursor(NULL),
             remaining(0),
-            sender(sender),
-            firstRound(true),
-            autocompress(autocompress),
-            readEnvelopeCallback(NULL),
-            readEnvelopeCallbackData(NULL)
+            autocompress(autocompress)
     {}
 
     virtual ~MjpegStream() {
@@ -74,15 +67,15 @@ public:
     virtual OutputStream& getOutputStream() override { return *this; }
 
 
-    virtual const Contact& getLocalAddress() override {
+    virtual const Contact& getLocalAddress() const override {
         return delegate->getLocalAddress();
     }
 
-    virtual const Contact& getRemoteAddress() override {
+    virtual const Contact& getRemoteAddress() const override {
         return delegate->getRemoteAddress();
     }
 
-    virtual bool isOk() override {
+    virtual bool isOk() const override {
         return delegate->isOk();
     }
 
@@ -106,7 +99,7 @@ public:
     virtual void write(const Bytes& b) override;
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const Bytes& b) override;
+    virtual yarp::conf::ssize_t read(Bytes& b) override;
 
     virtual void interrupt() override {
         delegate->getInputStream().interrupt();

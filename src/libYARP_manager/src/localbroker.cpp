@@ -1,11 +1,10 @@
 /*
- *  Yarp Modules Manager
- *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
- *  Authors: Ali Paikan <ali.paikan@iit.it>
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/impl/SplitString.h>
 #include <yarp/manager/localbroker.h>
@@ -657,7 +656,7 @@ int LocalBroker::ExecuteCmd(void)
     }
 
     // adding new env variables
-    yarp::os::ConstString cstrEnvName;
+    std::string cstrEnvName;
     if(strEnv.size())
     {
         yarp::os::impl::SplitString ss(strEnv.c_str(), ';');

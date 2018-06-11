@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 
@@ -31,7 +32,7 @@ static bool waitForOutput(Contactable& c,double timeout) {
 
 class PublisherTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "PublisherTest"; }
+    virtual std::string getName() const override { return "PublisherTest"; }
 
     void testPublisherToBufferedPort() {
         report(0,"Publisher to BufferedPort test");
@@ -50,14 +51,14 @@ public:
 
             Bottle& b = p.prepare();
             b.clear();
-            b.addInt(42);
+            b.addInt32(42);
             p.write();
             p.waitForWrite();
 
             Bottle *bin = pin.read();
             checkTrue(bin!=nullptr,"message arrived");
             if (!bin) return;
-            checkEqual(bin->get(0).asInt(),42,"message is correct");
+            checkEqual(bin->get(0).asInt32(),42,"message is correct");
         }
     }
 
@@ -78,14 +79,14 @@ public:
 
             Bottle& b = pout.prepare();
             b.clear();
-            b.addInt(42);
+            b.addInt32(42);
             pout.write();
             pout.waitForWrite();
 
             Bottle *bin = pin.read();
             checkTrue(bin!=nullptr,"message arrived");
             if (!bin) return;
-            checkEqual(bin->get(0).asInt(),42,"message is correct");
+            checkEqual(bin->get(0).asInt32(),42,"message is correct");
         }
     }
 
@@ -105,14 +106,14 @@ public:
 
             Bottle& b = pout.prepare();
             b.clear();
-            b.addInt(42);
+            b.addInt32(42);
             pout.write();
             pout.waitForWrite();
 
             Bottle *bin = pin.read();
             checkTrue(bin!=nullptr,"message arrived");
             if (!bin) return;
-            checkEqual(bin->get(0).asInt(),42,"message is correct");
+            checkEqual(bin->get(0).asInt32(),42,"message is correct");
         }
     }
 
@@ -132,13 +133,13 @@ public:
             waitForOutput(p,10);
 
             Bottle b;
-            b.addInt(42);
+            b.addInt32(42);
             p.write(b);
 
             Bottle *bin = pin.read();
             checkTrue(bin!=nullptr,"message arrived");
             if (!bin) return;
-            checkEqual(bin->get(0).asInt(),42,"message is correct");
+            checkEqual(bin->get(0).asInt32(),42,"message is correct");
         }
     }
 
@@ -158,14 +159,14 @@ public:
 
             Bottle& b = pout.prepare();
             b.clear();
-            b.addInt(42);
+            b.addInt32(42);
             pout.write();
 
             Bottle bin;
-            bin.addInt(99);
+            bin.addInt32(99);
             pin.read(bin);
             pout.waitForWrite();
-            checkEqual(bin.get(0).asInt(),42,"message is correct");
+            checkEqual(bin.get(0).asInt32(),42,"message is correct");
         }
     }
 

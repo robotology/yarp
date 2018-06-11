@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <cstdio>
@@ -16,7 +17,6 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/impl/PlatformSysStat.h>
 #include <yarp/os/impl/PlatformSysWait.h>
-#include <yarp/os/impl/PlatformUnistd.h>
 
 #include <cstdlib>
 
@@ -43,15 +43,21 @@ void show_usage()
     printf("    Allow YARP to look up missing types on ROS website\n");
     printf("  --out <dir>\n");
     printf("    Generates .h file in the specified directory\n");
+    printf("  --no-cache\n");
+    printf("    Do not cache ros msg file\n");
+    printf("  --no-index\n");
+    printf("    Do not generate the indexALL.txt file\n");
+    printf("  --no-recurse\n");
+    printf("    Generate code only for the selected file, not for its dependencies\n");
     printf("  --verbose\n");
     printf("    Verbose output\n");
     printf("\n");
 }
 
-static void generateTypeMap1(RosType& t, ConstString& txt)
+static void generateTypeMap1(RosType& t, std::string& txt)
 {
     if (!t.isValid) return;
-    RosType::RosTypes& lst = t.subRosType;
+    std::vector<RosType>& lst = t.subRosType;
     if (lst.size()>0) {
         bool simple = true;
         for (size_t i=0; i<lst.size(); i++) {
@@ -90,7 +96,7 @@ static void generateTypeMap1(RosType& t, ConstString& txt)
     txt += " *";
 }
 
-static void generateTypeMap(RosType& t, ConstString& txt)
+static void generateTypeMap(RosType& t, std::string& txt)
 {
     txt = "";
     generateTypeMap1(t,txt);
@@ -107,13 +113,13 @@ void configure_search(RosTypeSearch& env, Searchable& p)
     if (p.check("out")) {
         env.setTargetDirectory(p.find("out").toString().c_str());
     }
-    if (p.check("no-ros",Value(0)).asInt()!=0 || p.findGroup("no-ros").size()==1) {
+    if (p.check("no-ros",Value(0)).asInt32()!=0 || p.findGroup("no-ros").size()==1) {
         env.disableRos();
     }
-    if (p.check("web",Value(0)).asInt()!=0 || p.findGroup("web").size()==1) {
+    if (p.check("web",Value(0)).asInt32()!=0 || p.findGroup("web").size()==1) {
         env.enableWeb();
     }
-    if (p.check("soft",Value(0)).asInt()!=0 || p.findGroup("soft").size()==1) {
+    if (p.check("soft",Value(0)).asInt32()!=0 || p.findGroup("soft").size()==1) {
         env.softFail();
     }
     env.lookForService(p.check("service"));
@@ -127,6 +133,9 @@ int generate_cpp(int argc, char *argv[])
     string fname;
     p.fromCommand(argc,argv);
     bool verbose = p.check("verbose");
+    bool no_cache = p.check("no-cache");
+    bool no_index = p.check("no-index");
+    bool no_recurse = p.check("no-recurse");
 
     fname = argv[argc-1];
 
@@ -148,6 +157,9 @@ int generate_cpp(int argc, char *argv[])
         t.setVerbose();
         gen.setVerbose();
     }
+    if (no_recurse) {
+        t.setNoRecurse();
+    }
 
     if (p.check("out")) {
         gen.setTargetDirectory(p.find("out").toString().c_str());
@@ -157,7 +169,12 @@ int generate_cpp(int argc, char *argv[])
     if (t.read(fname.c_str(),env,gen)) {
         RosTypeCodeGenState state;
         t.emitType(gen,state);
-        t.cache(fname.c_str(),env,gen);
+        if (!no_cache) {
+            t.cache(fname.c_str(),env,gen);
+        }
+        if (!no_index) {
+            gen.writeIndex(state);
+        }
     }
 
     return 0;
@@ -230,7 +247,7 @@ int main(int argc, char *argv[])
             printf("Request: %s\n", req.toString().c_str());
         }
         Bottle resp;
-        ConstString tag = req.get(0).asString();
+        std::string tag = req.get(0).asString();
         string fname0 = req.get(1).asString().c_str();
         string fname = env.findFile(fname0.c_str());
         string txt = "";
@@ -241,7 +258,7 @@ int main(int argc, char *argv[])
             RosTypeCodeGenYarp gen;
             RosType t;
             if (t.read(fname0.c_str(),env,gen)) {
-                ConstString txt;
+                std::string txt;
                 generateTypeMap(t,txt);
                 resp.addString(txt);
             } else {

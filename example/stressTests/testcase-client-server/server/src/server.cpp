@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Bottle.h>
@@ -72,7 +75,7 @@ void CollatzServer::run()
 #if 0
             if (in.get(0).asVocab()==COLLATZ_VOCAB_REQ_ITEM)
             {
-                unsigned int num=in.get(1).asInt();
+                unsigned int num=in.get(1).asInt32();
 
                 fprintf(stdout,"Request received\n");
 
@@ -89,8 +92,8 @@ void CollatzServer::run()
 
             out.clear();
             out.addVocab(COLLATZ_VOCAB_ITEM);
-            out.addInt((int)num);
-            out.addInt((int)thres);
+            out.addInt32((int)num);
+            out.addInt32((int)thres);
 
             // send the item to the client
             port.reply(out);

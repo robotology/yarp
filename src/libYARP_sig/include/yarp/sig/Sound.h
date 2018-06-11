@@ -1,14 +1,17 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_SIG_SOUND_H
 #define YARP_SIG_SOUND_H
 
 #include <yarp/os/Portable.h>
-
+#include <yarp/conf/numeric.h>
 #include <yarp/sig/api.h>
 
 namespace yarp {
@@ -54,21 +57,21 @@ public:
      * @param first_sample the starting sample number
      * @param last_sample the ending sample number
      */
-    Sound subSound(int first_sample, int last_sample);
+    Sound subSound(size_t first_sample, size_t last_sample);
 
-    void resize(int samples, int channels = 1);
+    void resize(size_t samples, size_t channels = 1);
 
-    int get(int sample, int channel = 0) const;
-    void set(int value, int sample, int channel = 0);
+    int get(size_t sample, size_t channel = 0) const;
+    void set(int value, size_t sample, size_t channel = 0);
 
-    int getSafe(int sample, int channel = 0) {
+    int getSafe(size_t sample, size_t channel = 0) {
         if (isSample(sample,channel)) {
             return get(sample,channel);
         }
         return 0;
     }
 
-    void setSafe(int value, int sample, int channel = 0) {
+    void setSafe(int value, size_t sample, size_t channel = 0) {
         if (isSample(sample,channel)) {
             set(value,sample,channel);
         }
@@ -80,8 +83,8 @@ public:
      * @param channel the channel to choose
      * @return true iff there is a sample at the given coordinate
      */
-    inline bool isSample(int sample, int channel=0) const {
-        return (sample>=0 && channel>=0 && sample<samples && channel<channels);
+    inline bool isSample(size_t sample, size_t channel=0) const {
+        return (sample<samples && channel<channels);
     }
 
     /**
@@ -89,33 +92,33 @@ public:
     */
     void clear();
 
-    int getFrequency() const;
+    size_t getFrequency() const;
 
-    void setFrequency(int freq);
+    void setFrequency(size_t freq);
 
-    int getBytesPerSample() const { return bytesPerSample; }
+    size_t getBytesPerSample() const { return bytesPerSample; }
 
-    int getSamples() const { return samples; }
+    size_t getSamples() const { return samples; }
 
-    int getChannels() const { return channels; }
+    size_t getChannels() const { return channels; }
 
     virtual bool read(yarp::os::ConnectionReader& connection) override;
 
-    virtual bool write(yarp::os::ConnectionWriter& connection) override;
+    virtual bool write(yarp::os::ConnectionWriter& connection) const override;
 
     unsigned char *getRawData() const;
 
-    int getRawDataSize() const;
+    size_t getRawDataSize() const;
 
 private:
-    void init(int bytesPerSample);
+    void init(size_t bytesPerSample);
     void synchronize();
 
     void *implementation;
-    int samples;
-    int channels;
-    int bytesPerSample;
-    int frequency;
+    size_t samples;
+    size_t channels;
+    size_t bytesPerSample;
+    size_t frequency;
 };
 
 #endif // YARP_SIG_SOUND_H

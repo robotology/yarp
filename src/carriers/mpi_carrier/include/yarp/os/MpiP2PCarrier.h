@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2010 Daniel Krieg
- * Author: Daniel Krieg <krieg@fias.uni-frankfurt.de>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2010 Daniel Krieg <krieg@fias.uni-frankfurt.de>
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_MPIP2PCARRIER
@@ -41,7 +44,7 @@ public:
         delete comm;
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new MpiP2PCarrier();
     }
 
@@ -50,13 +53,13 @@ public:
         stream = new MpiP2PStream(route, comm);
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() const override {
         return "mpi";
     }
 
-    virtual bool supportReply() override {
+    virtual bool supportReply() const override {
         return true;
     }
 };
 
-#endif //_YARP_MPIP2PCARRIER_
+#endif // YARP_MPIP2PCARRIER

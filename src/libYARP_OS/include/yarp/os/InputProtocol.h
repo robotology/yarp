@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_INPUTPROTOCOL_H
@@ -11,7 +14,7 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Property.h>
 #include <yarp/os/Connection.h>
 #include <yarp/os/SizedWriter.h>
@@ -43,7 +46,7 @@ public:
      * the associated port).
      *
      */
-    virtual bool open(const ConstString& name) = 0;
+    virtual bool open(const std::string& name) = 0;
 
     /**
      *
@@ -65,7 +68,7 @@ public:
      * a triplet of the source port, destination port, and carrier.
      *
      */
-    virtual const Route& getRoute() = 0;
+    virtual const Route& getRoute() const = 0;
 
     /**
      *
@@ -112,7 +115,7 @@ public:
      * Check if the connection is valid and can be used.
      *
      */
-    virtual bool isOk() = 0;
+    virtual bool isOk() const = 0;
 
     /**
      *
@@ -151,7 +154,7 @@ public:
      * Set the envelope that will be attached to the next message.
      *
      */
-    virtual void setEnvelope(const ConstString& str) = 0;
+    virtual void setEnvelope(const std::string& str) = 0;
 
     /**
      *
@@ -172,7 +175,7 @@ public:
      * @return true if a reply will be made to a message.
      *
      */
-    virtual bool isReplying() = 0;
+    virtual bool isReplying() const = 0;
 };
 
 #endif // YARP_OS_INPUTPROTOCOL_H

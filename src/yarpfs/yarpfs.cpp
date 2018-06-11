@@ -1,10 +1,12 @@
 /*
- * Copyright (C) 2007 RobotCub Consortium, Giacomo Spigler
- * Authors: Paul Fitzpatrick, Giacomo Spigler
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * Copyright (C) 2007 Giacomo Spigler
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 #define FUSE_USE_VERSION 26
 
 #include <fuse/fuse.h>
@@ -20,7 +22,7 @@
 #include <string>
 #include <csignal>
 
-#include <ace/Containers_T.h>
+#include <set>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -87,7 +89,7 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
     NameConfig nc;
 
-    ConstString name = nc.getNamespace();
+    std::string name = nc.getNamespace();
     Bottle msg, reply;
     msg.addString("bot");
     msg.addString("list");
@@ -97,7 +99,7 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
     printf("Got %s\n", reply.toString().c_str());
 
-    ACE_Ordered_MultiSet<ConstString> lines;
+    std::set<std::string> lines;
 
 
     for (int i=1; i<reply.size(); i++) {
@@ -107,13 +109,13 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
             rpath = rpath + "/";
         }
         if (entry!=NULL) {
-            ConstString name = entry->check("name",Value("")).asString();
+            std::string name = entry->check("name",Value("")).asString();
             if (name!="") {
                 if (strstr(name.c_str(),rpath.c_str())==
                            name.c_str()) {
                     printf(">>> %s is in path %s\n", name.c_str(),
                            rpath.c_str());
-                    ConstString part(name.c_str()+rpath.length());
+                    std::string part(name.c_str()+rpath.length());
                     if (part[0]=='/') {
                         part = part.substr(1,part.length()-1);
                     }
@@ -123,10 +125,9 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                     if (brk!=NULL) {
                         *brk = '\0';
                     }
-                    ConstString item(part.c_str());
+                    std::string item(part.c_str());
                     printf("    %s is the item\n", item.c_str());
                     if (item!="") {
-                        lines.remove(item);
                         lines.insert(item);
                     }
                 }
@@ -135,12 +136,9 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     }
 
     // return result in alphabetical order
-    ACE_Ordered_MultiSet_Iterator<ConstString> iter(lines);
-    iter.first();
-    while (!iter.done()) {
-        printf("adding item %s\n", (*iter).c_str());
-        filler(buf, (*iter).c_str(), NULL, 0);
-        iter.advance();
+    for (const auto& line : lines) {
+        printf("adding item %s\n", line.c_str());
+        filler(buf, line.c_str(), NULL, 0);
     }
 
     return 0;

@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/impl/PortCore.h>
@@ -10,9 +12,9 @@
 #include <yarp/os/Carriers.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/impl/BottleImpl.h>
-#include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/Network.h>
+#include <yarp/companion/impl/Companion.h>
 //#include "TestList.h"
 
 using namespace yarp::os::impl;
@@ -22,9 +24,9 @@ class PortCoreTest : public UnitTest, public PortReader {
 public:
     int safePort() { return Network::getDefaultPortRange()+100; }
 
-    virtual ConstString getName() override { return "PortCoreTest"; }
+    virtual std::string getName() const override { return "PortCoreTest"; }
 
-    ConstString expectation;
+    std::string expectation;
     int receives;
 
     bool read(ConnectionReader& reader) override {
@@ -34,7 +36,7 @@ public:
         receives++;
         BottleImpl bot;
         bot.read(reader);
-        if (expectation==ConstString("")) {
+        if (expectation==std::string("")) {
             report(1,"got unexpected input");
             return false;
         }
@@ -102,14 +104,14 @@ public:
         receiver.start();
         //Time::delay(1);
         Bottle bot;
-        bot.addInt(0);
+        bot.addInt32(0);
         bot.addString("Hello world");
         report(0,"sending bottle, should received nothing");
         expectation = "";
         sender.send(bot);
         Time::delay(0.3);
         checkEqual(receives,0,"nothing received");
-        Companion::connect("/write", "/read");
+        NetworkBase::connect("/write", "/read");
         Time::delay(0.3);
         report(0,"sending bottle, should receive it this time");
         expectation = bot.toString();
@@ -150,14 +152,14 @@ public:
         receiver.start();
         //Time::delay(1);
         Bottle bot;
-        bot.addInt(0);
+        bot.addInt32(0);
         bot.addString("Hello world");
         report(0,"sending bottle, should received nothing");
         expectation = "";
         sender.send(bot);
         Time::delay(0.3);
         checkEqual(receives,0,"nothing received");
-        Companion::connect("/write", "/read");
+        NetworkBase::connect("/write", "/read");
         Time::delay(0.3);
         report(0,"sending bottle, should receive it this time");
         expectation = bot.toString();

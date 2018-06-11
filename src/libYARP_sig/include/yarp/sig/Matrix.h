@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2007 RobotCub Consortium
- * Authors: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #ifndef YARP_SIG_MATRIX_H
 #define YARP_SIG_MATRIX_H
@@ -26,9 +28,9 @@ namespace yarp {
 
 namespace yarp {
     namespace sig {
-        YARP_sig_API bool submatrix(const Matrix &in, Matrix &out, int r1, int r2, int c1, int c2);
-        YARP_sig_API bool removeCols(const Matrix &in, Matrix &out, int first_col, int how_many);
-        YARP_sig_API bool removeRows(const Matrix &in, Matrix &out, int first_row, int how_many);
+        YARP_sig_API bool submatrix(const Matrix &in, Matrix &out, size_t r1, size_t r2, size_t c1, size_t c2);
+        YARP_sig_API bool removeCols(const Matrix &in, Matrix &out, size_t first_col, size_t how_many);
+        YARP_sig_API bool removeRows(const Matrix &in, Matrix &out, size_t first_row, size_t how_many);
     }
 }
 
@@ -46,8 +48,8 @@ private:
     double *storage;
     double **matrix; //double pointer access to elements
 
-    int nrows;
-    int ncols;
+    size_t nrows;
+    size_t ncols;
 
     /**
     * Update pointer to data, call this every time you
@@ -63,7 +65,7 @@ public:
           ncols(0)
       {}
 
-      Matrix(int r, int c);
+      Matrix(size_t r, size_t c);
 
       /**
       * Copy constructor.
@@ -90,13 +92,13 @@ public:
       /**
       * Return number of rows.
       */
-      int rows() const
+      size_t rows() const
       { return nrows; }
 
       /**
       * Return number of columns.
       */
-      int cols() const
+      size_t cols() const
       { return ncols; }
 
       /**
@@ -104,7 +106,7 @@ public:
       * @param r number of rows
       * @param c number of columns
       */
-      void resize(int r, int c);
+      void resize(size_t r, size_t c);
 
       /**
       * Single element access, no range check. Returns
@@ -112,7 +114,7 @@ public:
       * @param r row number.
       * @return a pointer to the first element of the row.
       */
-      inline double *operator[](int r)
+      inline double *operator[](size_t r)
       { return matrix[r]; }
 
       /**
@@ -121,7 +123,7 @@ public:
       * @param r row number.
       * @return a (const) pointer to the first element of the row.
       */
-      inline const double *operator[](int r) const
+      inline const double *operator[](size_t r) const
       { return matrix[r]; }
 
       /**
@@ -130,7 +132,7 @@ public:
       * @param c col number.
       * @return a reference to the element.
       */
-      inline const double &operator()(int r, int c) const
+      inline const double &operator()(size_t r, size_t c) const
       { return matrix[r][c]; }
 
       /**
@@ -139,7 +141,7 @@ public:
       * @param c col number.
       * @return a (const) reference to the element.
       */
-      inline double &operator()(int r, int c)
+      inline double &operator()(size_t r, size_t c)
       { return matrix[r][c]; }
 
       /**
@@ -153,7 +155,7 @@ public:
       * @param r vector which contains the desired values for the row
       * @return true if operation succeeds, false if not
       */
-      bool setRow(int row, const Vector &r);
+      bool setRow(size_t row, const Vector &r);
 
       /**
       * Set a column of the matrix copying the values from a vector: the vector length must be equal to the number of rows of the matrix.
@@ -161,7 +163,7 @@ public:
       * @param c a vector which contains the desired values for the column
       * @return true if operation succeeds, false if not
       */
-      bool setCol(int col, const Vector &c);
+      bool setCol(size_t col, const Vector &c);
 
       /**
       * Return the transposed of the matrix.
@@ -191,7 +193,7 @@ public:
       * @param c2 end column
       * @return the sumbatrix
       */
-      Matrix submatrix(int r1, int r2, int c1, int c2) const
+      Matrix submatrix(size_t r1, size_t r2, size_t c1, size_t c2) const
       {
           Matrix ret;
           ret.resize(r2-r1+1, c2-c1+1);
@@ -210,7 +212,7 @@ public:
       * @param c start column
       * @return true if the operation succeeded, false otherwise
       */
-      bool setSubmatrix(const Matrix &m, int r, int c);
+      bool setSubmatrix(const Matrix &m, size_t r, size_t c);
 
       /**
       * Set a portion of a row of this matrix with the values of the specified vector v.
@@ -221,7 +223,7 @@ public:
       * @param c start column
       * @return true if the operation succeeded, false otherwise
       */
-      bool setSubrow(const Vector &v, int r, int c);
+      bool setSubrow(const Vector &v, size_t r, size_t c);
 
       /**
       * Set a portion of a column of this matrix with the values of the specified vector v.
@@ -232,21 +234,21 @@ public:
       * @param c index of the column to set
       * @return true if the operation succeeded, false otherwise
       */
-      bool setSubcol(const Vector &v, int r, int c);
+      bool setSubcol(const Vector &v, size_t r, size_t c);
 
       /**
       * Get a row of the matrix as a vector.
       * @param r the row number
       * @return a vector which contains the requested row
       */
-      Vector getRow(int r) const;
+      Vector getRow(size_t r) const;
 
       /**
       * Get a columns of the matrix as a vector.
       * @param c the column number
       * @return a vector which contains the requested row
       */
-      Vector getCol(int c) const;
+      Vector getCol(size_t c) const;
 
       /**
       * Modifies the matrix, removing one or more columns from it.
@@ -254,7 +256,7 @@ public:
       * @param how_many the number of columns to remove
       * @return the matrix with the specified columns removed
       */
-      Matrix removeCols(int first_col, int how_many);
+      Matrix removeCols(size_t first_col, size_t how_many);
 
       /**
       * Modifies the matrix, removing one or more rows from it.
@@ -262,7 +264,7 @@ public:
       * @param how_many the number of rows to remove
       * @return the matrix with the specified rows removed
       */
-      Matrix removeRows(int first_row, int how_many);
+      Matrix removeRows(size_t first_row, size_t how_many);
 
       /**
       * Get a subrow of the matrix as a vector.
@@ -271,7 +273,7 @@ public:
       * @param size the size of the subrow
       * @return a vector which contains the requested subrow
       */
-      Vector subrow(int r, int c, int size) const;
+      Vector subrow(size_t r, size_t c, size_t size) const;
 
       /**
       * Get a subcolumn of the matrix as a vector.
@@ -280,7 +282,7 @@ public:
       * @param size the size of the subcolumn
       * @return a vector which contains the requested subcolumn
       */
-      Vector subcol(int r, int c, int size) const;
+      Vector subcol(size_t r, size_t c, size_t size) const;
 
       /**
       * Print matrix to a string. Useful for display, writing to text.
@@ -293,7 +295,7 @@ public:
       * is here to ease debugging.
       * @return a const string which contain the matrix in text form.
       */
-      yarp::os::ConstString toString(int precision=-1, int width=-1, const char* endRowStr="\n") const;
+      std::string toString(int precision=-1, int width=-1, const char* endRowStr="\n") const;
 
       /**
       * Return a pointer to the first element
@@ -325,7 +327,7 @@ public:
       * Write vector to a connection.
       * return true iff a vector was written correctly
       */
-      virtual bool write(yarp::os::ConnectionWriter& connection) override;
+      virtual bool write(yarp::os::ConnectionWriter& connection) const override;
 
 };
 

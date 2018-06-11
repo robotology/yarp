@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 // ********************************************************
@@ -14,7 +14,7 @@
 //#include <cstdio>
 #include <string>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Mutex.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IRangefinder2D.h>
@@ -25,7 +25,7 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-class laserHokuyo : public RateThread, public yarp::dev::IRangefinder2D, public DeviceDriver
+class laserHokuyo : public PeriodicThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
 protected:
     PolyDriver driver;
@@ -34,7 +34,7 @@ protected:
     yarp::os::Mutex mutex;
 
     int cardId;
-    int period;
+    double period;
     int sensorsNum;
     int start_position;
     int end_position;
@@ -74,7 +74,7 @@ protected:
     yarp::sig::Vector laser_data;
 
 public:
-    laserHokuyo(int period=20) : RateThread(period),
+    laserHokuyo(double period = 0.02) : PeriodicThread(period),
         pSerial(nullptr),
         mutex(),
         cardId(0),
@@ -107,7 +107,7 @@ public:
     virtual bool getRawData(yarp::sig::Vector &data) override;
     virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) override;
     virtual bool getDeviceStatus     (Device_status &status) override;
-    virtual bool getDeviceInfo       (yarp::os::ConstString &device_info) override;
+    virtual bool getDeviceInfo       (std::string &device_info) override;
     virtual bool getDistanceRange    (double& min, double& max) override;
     virtual bool setDistanceRange    (double min, double max) override;
     virtual bool getScanLimits        (double& min, double& max) override;

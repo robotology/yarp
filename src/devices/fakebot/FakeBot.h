@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2007 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/dev/DeviceDriver.h>
@@ -25,7 +27,7 @@ class yarp::dev::FakeBot : public DeviceDriver,
             public IAmplifierControl,
             public IEncodersTimed,
             public IFrameGrabberImage,
-            public IControlCalibration2,
+            public IControlCalibration,
             public IControlLimits,
             public DeviceResponder,
             public yarp::os::Thread
@@ -285,6 +287,22 @@ public:
         return true;
     }
 
+    virtual bool positionMove(const int n_joint, const int *joints, const double *refs) override { return false; }
+
+    virtual bool relativeMove(const int n_joint, const int *joints, const double *deltas) override { return false; }
+
+    virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flags) override { return false; }
+
+    virtual bool setRefSpeeds(const int n_joint, const int *joints, const double *spds) override { return false; }
+
+    virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs) override { return false; }
+
+    virtual bool getRefSpeeds(const int n_joint, const int *joints, double *spds) override { return false; }
+
+    virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs) override { return false; }
+
+    virtual bool stop(const int n_joint, const int *joints) override { return false; }
+
 
     // IEncodersTimed
     virtual bool getEncodersTimed(double *encs, double *time) override
@@ -319,6 +337,8 @@ public:
         }
         return true;
     }
+
+    virtual bool velocityMove(const int n_joint, const int *joints, const double *spds) override { return false; }
 
 
 
@@ -370,7 +390,7 @@ public:
         return true;
     }
 
-    virtual bool calibrate2(int j, unsigned int iv, double v1, double v2, double v3) override
+    virtual bool calibrate(int j, unsigned int iv, double v1, double v2, double v3) override
     {
         fprintf(stderr, "FakeBot: calibrating joint %d with parameters %u %lf %lf %lf\n", j, iv, v1, v2, v3);
         return true;
@@ -395,6 +415,10 @@ public:
         fprintf(stderr, "FakeBot: set limits\n");
         return true;
     }
+
+    virtual bool setVelLimits(int axis, double min, double max) override { return false; }
+
+    virtual bool getVelLimits(int axis, double *min, double *max) override { return false; }
 
     virtual void run() override;
 };

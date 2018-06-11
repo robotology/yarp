@@ -1,27 +1,22 @@
 /*
- * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
- * Authors: Ali Paikan and Daniele E. Domenichelli
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_QOSSTYLE_H
 #define YARP_OS_QOSSTYLE_H
 
 #include <yarp/os/api.h>
-#include <yarp/conf/system.h>
+#include <string>
 
 namespace yarp {
     namespace os {
         class QosStyle;
     }
 }
-
-#ifndef YARP_WRAP_STL_STRING
-# include <string>
-namespace yarp { namespace os { typedef std::string ConstString; }}
-#else
-namespace yarp { namespace os { class ConstString; }}
-#endif
 
 /**
  * \ingroup comm_class
@@ -125,7 +120,7 @@ public:
      * @param priority the string to be interpreted as priority
      * @return true if correctly set, false otherwise
      */
-    bool setPacketPriority(const ConstString& priority);
+    bool setPacketPriority(const std::string& priority);
 
 
     /**

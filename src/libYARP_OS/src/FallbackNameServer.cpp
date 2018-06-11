@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/conf/system.h>
@@ -31,16 +34,16 @@ void FallbackNameServer::run() {
     YARP_DEBUG(Logger::get(), "Fallback server running");
     while (listen.isOk()&&send.isOk()&&!closed) {
         YARP_DEBUG(Logger::get(), "Fallback server waiting");
-        ConstString msg;
+        std::string msg;
         listen.beginPacket();
         msg = listen.readLine();
         listen.endPacket();
         YARP_DEBUG(Logger::get(), "Fallback server got something");
         if (listen.isOk()&&!closed) {
-            YARP_DEBUG(Logger::get(), ConstString("Fallback server got ") + msg);
+            YARP_DEBUG(Logger::get(), std::string("Fallback server got ") + msg);
             if (msg.find("NAME_SERVER ") == 0) {
                 Contact addr;
-                ConstString result = owner.apply(msg, addr);
+                std::string result = owner.apply(msg, addr);
                 send.beginPacket();
                 send.writeLine(result.c_str(), (int)result.length());
                 send.flush();

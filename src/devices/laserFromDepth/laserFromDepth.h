@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
 * Author: Marco Randazzo <marco.randazzo@iit.it>
-* CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+* CopyPolicy: Released under the terms of the GPLv2 or later, see LICENSE
 */
 
 
@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IRangefinder2D.h>
@@ -33,7 +33,7 @@ struct Range_t
 
 //---------------------------------------------------------------------------------------------------------------
 
-class LaserFromDepth : public RateThread, public yarp::dev::IRangefinder2D, public DeviceDriver
+class LaserFromDepth : public PeriodicThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
 protected:
     PolyDriver driver;
@@ -61,7 +61,7 @@ protected:
     yarp::sig::Vector m_laser_data;
 
 public:
-    LaserFromDepth(int period = 10) : RateThread(period),
+    LaserFromDepth(double period = 0.01) : PeriodicThread(period),
         iRGBD(nullptr),
         m_depth_width(0),
         m_depth_height(0),
@@ -92,7 +92,7 @@ public:
     virtual bool getRawData(yarp::sig::Vector &data) override;
     virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) override;
     virtual bool getDeviceStatus     (Device_status &status) override;
-    virtual bool getDeviceInfo       (yarp::os::ConstString &device_info) override;
+    virtual bool getDeviceInfo       (std::string &device_info) override;
     virtual bool getDistanceRange    (double& min, double& max) override;
     virtual bool setDistanceRange    (double min, double max) override;
     virtual bool getScanLimits        (double& min, double& max) override;

@@ -147,15 +147,15 @@ void drawNav(const yarp::os::Bottle *display, IplImage *img, double scale)
         yError ("wrong image format!");
         return;
     }
-    double c0 = display->get(0).asDouble();
-//     double c1 = display->get(1).asDouble();
-//     double c2 = display->get(2).asDouble();
-    double angle_f = display->get(3).asDouble();
-//     double angle_t = display->get(4).asDouble();
-//     double w_f = display->get(5).asDouble();
-//     double w_t = display->get(6).asDouble();
-    double max_obs_dist = display->get(7).asDouble();
-    double angle_g = display->get(8).asDouble();
+    double c0 = display->get(0).asFloat64();
+//     double c1 = display->get(1).asFloat64();
+//     double c2 = display->get(2).asFloat64();
+    double angle_f = display->get(3).asFloat64();
+//     double angle_t = display->get(4).asFloat64();
+//     double w_f = display->get(5).asFloat64();
+//     double w_t = display->get(6).asFloat64();
+    double max_obs_dist = display->get(7).asFloat64();
+    double angle_g = display->get(8).asFloat64();
 
     CvPoint center;
     center.x = (int)(img->width/2  );
@@ -295,16 +295,16 @@ int main(int argc, char *argv[])
         display_help();
         return 0;
     }
-    double scale = rf.check("scale", Value(100), "global scale factor").asDouble();
-    double robot_radius = rf.check("robot_radius", Value(0.001), "robot radius [m]").asDouble();
-    double sens_position_x = rf.check("sens_position_x", Value(0), "sens_position_x [m]").asDouble();
-    double sens_position_y = rf.check("sens_position_y", Value(0), "sens_position_y [m]").asDouble();
-    double sens_position_t = rf.check("sens_position_theta", Value(0), "sens_position_theta [m]").asDouble();
+    double scale = rf.check("scale", Value(100), "global scale factor").asFloat64();
+    double robot_radius = rf.check("robot_radius", Value(0.001), "robot radius [m]").asFloat64();
+    double sens_position_x = rf.check("sens_position_x", Value(0), "sens_position_x [m]").asFloat64();
+    double sens_position_y = rf.check("sens_position_y", Value(0), "sens_position_y [m]").asFloat64();
+    double sens_position_t = rf.check("sens_position_theta", Value(0), "sens_position_theta [m]").asFloat64();
     bool verbose = rf.check("verbose", Value(false), "verbose [0/1]").asBool();
     bool absolute = rf.check("absolute", Value(false), "absolute [0/1]").asBool();
     bool compass = rf.check("compass", Value(true), "compass [0/1]").asBool();
-    int period = rf.check("period",Value(50),"period [ms]").asInt(); //ms
-    int aspect = rf.check("aspect", Value(0), "0 draw lines, 1 draw points").asInt();
+    int period = rf.check("period",Value(50),"period [ms]").asInt32(); //ms
+    int aspect = rf.check("aspect", Value(0), "0 draw lines, 1 draw points").asInt32();
     string laserport = rf.check("sens_port", Value("/laser:o"), "laser port name").asString();
 
     string laser_map_port_name;
@@ -389,8 +389,8 @@ int main(int argc, char *argv[])
             for (unsigned int i=0; i<1080; i++)
             {
                 Bottle* b = las_map->get(i).asList();
-                lasermap_data[i].x = b->get(0).asDouble();
-                lasermap_data[i].y = b->get(1).asDouble();
+                lasermap_data[i].x = b->get(0).asFloat64();
+                lasermap_data[i].y = b->get(1).asFloat64();
             }
         }*/
 

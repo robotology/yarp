@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2009 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/serversql/yarpserversql.h>
@@ -102,20 +104,20 @@ public:
 
     bool open(Searchable& options)
     {
-        ConstString dbDefault = ":memory:";
-        ConstString subdbDefault = ":memory:";
+        std::string dbDefault = ":memory:";
+        std::string subdbDefault = ":memory:";
 
         if (options.check("memory")) {
             fprintf(stderr,"The --memory option was given, but that is now a default. Continuing.\n");
         }
 
-        ConstString dbFilename = options.check("portdb",
+        std::string dbFilename = options.check("portdb",
                                                Value(dbDefault)).asString();
-        ConstString subdbFilename = options.check("subdb",
+        std::string subdbFilename = options.check("subdb",
                                                   Value(subdbDefault)).asString();
 
-        ConstString ip = options.check("ip",Value("...")).asString();
-        int sock = options.check("socket",Value(Network::getDefaultPortRange())).asInt();
+        std::string ip = options.check("ip",Value("...")).asString();
+        int sock = options.check("socket",Value(Network::getDefaultPortRange())).asInt32();
         bool cautious = options.check("cautious");
         bool verbose = options.check("verbose");
 
@@ -178,7 +180,7 @@ public:
                 fprintf(stderr,"Aborting.\n");
                 return false;
             }
-            ConstString addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
+            std::string addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
             Contact c = Contact::fromString(addr.c_str());
             if (c.isValid()) {
                 c.setCarrier("xmlrpc");

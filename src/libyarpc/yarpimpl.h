@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2009, 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARPC_YARPIMPL_INC
@@ -24,7 +26,7 @@ using namespace yarp::os;
 #define YARP_NETWORK(s) (*((Network*)((s==NULL)?(yarpNetworkGet()):s->implementation)))
 #define YARP_READER(s) (*((ConnectionReader*)(s->implementation)))
 #define YARP_WRITER(s) (*((ConnectionWriter*)(s->implementation)))
-#define YARP_STRING(s) (*((ConstString*)(s->implementation)))
+#define YARP_STRING(s) (*((std::string*)(s->implementation)))
 #define YARP_THREAD(s) (*((Thread*)(s->implementation)))
 #define YARP_BOTTLE(s) (*((Bottle*)(s->implementation)))
 

@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2009 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_SERVERSQL_IMPL_CONNECTTHREAD_H
@@ -13,7 +15,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Vocab.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 
 #include <list>
 
@@ -27,13 +29,13 @@ public:
     bool needed;
     bool positive;
     int ct;
-    yarp::os::Semaphore& mutex;
+    yarp::os::Mutex& mutex;
 
     //yarp::os::Contact src;
-    yarp::os::ConstString src;
-    yarp::os::ConstString dest;
+    std::string src;
+    std::string dest;
 
-    ConnectThread(yarp::os::Semaphore& mutex) : mutex(mutex) {
+    ConnectThread(yarp::os::Mutex& mutex) : mutex(mutex) {
         needed = true;
         ct = 0;
         positive = true;
@@ -41,12 +43,12 @@ public:
 
     virtual void run() override {
         do {
-            mutex.wait();
+            mutex.lock();
             if (ct==0) {
                 needed = false;
             }
             ct--;
-            mutex.post();
+            mutex.unlock();
             /*
             printf(" ]]] con %s %s / %d %d\n", src.c_str(),
                    dest.c_str(),
@@ -77,10 +79,10 @@ public:
 class ConnectManager {
 private:
     std::list<ConnectThread *> con;
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 public:
 
-    ConnectManager() : mutex(1) {
+    ConnectManager() : mutex() {
     }
 
     virtual ~ConnectManager() {
@@ -97,14 +99,14 @@ public:
         con.clear();
     }
 
-    void disconnect(const yarp::os::ConstString& src,
-                    const yarp::os::ConstString& dest,
+    void disconnect(const std::string& src,
+                    const std::string& dest,
                     bool srcDrop) {
         connect(src,dest,false);
     }
 
-    void connect(const yarp::os::ConstString& src,
-                 const yarp::os::ConstString& dest,
+    void connect(const std::string& src,
+                 const std::string& dest,
                  bool positive = true) {
         //printf("  ??? %s %s\n", src, dest);
         ConnectThread *t = nullptr;
@@ -127,7 +129,7 @@ public:
                     }
                 } else {
                     if ((*it)->src == src && (*it)->dest == dest) {
-                        mutex.wait();
+                        mutex.lock();
                         /*
                         printf("??? prethread %d %d\n", (*it)->needed,
                                (*it)->ct);
@@ -137,7 +139,7 @@ public:
                             (*it)->ct++;
                             already = true;
                         }
-                        mutex.post();
+                        mutex.unlock();
                     }
                 }
             }

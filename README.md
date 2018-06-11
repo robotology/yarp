@@ -66,16 +66,23 @@ There's a comprehensive list of tutorials here:
 License
 -------
 
-[![License](https://img.shields.io/badge/license-LGPL%20%2B%20others-19c2d8.svg)](https://github.com/robotology/yarp/blob/devel/LICENSE)
+[![License](https://img.shields.io/badge/license-BSD%20%2B%20others-19c2d8.svg)](https://github.com/robotology/yarp/blob/devel/LICENSE)
 
-Material included in YARP is Copyright of Istituto Italiano di Tecnologia (IIT)
-and RobotCub Consortium. YARP is released under the terms of the LGPL v2.1 or
-later. See the file COPYING for details.
+Material included in YARP is Copyright of Istituto Italiano di Tecnologia (IIT),
+RobotCub Consortium and other contributors.
 
-Certain optional parts of YARP have dependencies that have more 
-requirements than the LGPL:
- + libYARP_math uses the GNU Scientific Library, under the GPL.
- + devices urbtc, vfw, dimax_u2c have components that are under the GPL.
+ * Most YARP components are released under the terms of the BSD-3-Clause.
+ * Some components are released under the BSD-3-Clause, but use LGPL 3rd party
+   libraries, therefore they have to be considered LGPL if these libraries are
+   linked statically.
+ * Some components are released under the terms of the LGPL license, version 2.1
+   or later.
+ * A few optional parts of YARP are released under the terms of the GPL license,
+   version 2 or later:
+   + libYARP_math uses the GNU Scientific Library, under the GPL.
+   + devices urbtc, vfw, dimax_u2c have components that are under the GPL.
+
+See the file COPYING and LICENSE files for details.
 
 
 CI Status

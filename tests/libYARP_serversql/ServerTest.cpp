@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2009 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <cstdio>
@@ -11,7 +13,6 @@
 #include <yarp/os/all.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/UnitTest.h>
-#include <yarp/os/impl/Companion.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -23,7 +24,7 @@ using namespace yarp::os::impl;
  */
 class ServerTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "ServerTest"; }
+    virtual std::string getName() const override { return "ServerTest"; }
 
     void checkRegisterFree() {
         report(0,"checking free register command...");
@@ -91,19 +92,19 @@ public:
         NameClient& nic = NameClient::getNameClient();
         Contact addr1("tcp", "192.168.1.100", 9998);
         nic.registerName("/check/list",addr1);
-        ConstString result = nic.send("NAME_SERVER list",true);
-        ConstString target = "registration name /check/list ip 192.168.1.100 port 9998 type tcp";
-        checkTrue(result.find(target)!=ConstString::npos,"listing found");
+        std::string result = nic.send("NAME_SERVER list",true);
+        std::string target = "registration name /check/list ip 192.168.1.100 port 9998 type tcp";
+        checkTrue(result.find(target)!=std::string::npos,"listing found");
     }
 
     void checkSetGet() {
         report(0,"checking set/get...");
         NameClient& nic = NameClient::getNameClient();
         nic.registerName("/check/set");
-        ConstString result = nic.send("NAME_SERVER set /check/set prop val",true);
+        std::string result = nic.send("NAME_SERVER set /check/set prop val",true);
         result = nic.send("NAME_SERVER get /check/set prop",true);
-        ConstString target = "port /check/set property prop = val";
-        checkTrue(result.find(target)!=ConstString::npos,"answer found");
+        std::string target = "port /check/set property prop = val";
+        checkTrue(result.find(target)!=std::string::npos,"answer found");
     }
 
     virtual void runTests() override {

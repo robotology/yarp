@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 RobotCub Consortium, Jonas Ruesch, Arjan Gijsberts
  * Authors: Paul Fitzpatrick, Jonas Ruesch, Arjan Gijsberts
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  *
  */
 
@@ -390,13 +390,13 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
                         "sample_rate",
                         config.check("audio_rate",
                                      Value(44100),
-                                     "audio sample rate").asInt(),
+                                     "audio sample rate").asInt32(),
                         0);
         av_dict_set_int(&formatParams,
                         "channels",
                         config.check("channels",
                                      Value(1),
-                                     "number of channels").asInt(),
+                                     "number of channels").asInt32(),
                         0);
     } else {
         if (config.check("time_base_num") && config.check("time_base_den")) {
@@ -404,10 +404,10 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
             sprintf(buf, "%d/%d",
                     config.check("time_base_num",
                                  Value(1),
-                                 "numerator of basic time unit").asInt(),
+                                 "numerator of basic time unit").asInt32(),
                     config.check("time_base_den",
                                  Value(29),
-                                 "denominator of basic time unit").asInt());
+                                 "denominator of basic time unit").asInt32());
             av_dict_set(&formatParams, "framerate", buf, 0);
         }
 
@@ -416,7 +416,7 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
                             "channel",
                             config.check("channel",
                                          Value(0),
-                                         "channel identifier").asInt(),
+                                         "channel identifier").asInt32(),
                             0);
         }
         if (config.check("standard")) {
@@ -431,17 +431,17 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
                         "width",
                         config.check("width",
                                      Value(640),
-                                     "width of image").asInt(),
+                                     "width of image").asInt32(),
                         0);
         av_dict_set_int(&formatParams,
                         "height",
                         config.check("height",
                                      Value(480),
-                                     "height of image").asInt(),
+                                     "height of image").asInt32(),
                         0);
     }
 
-    ConstString videoDevice = (config.check("v4l1") ? "video4linux" : "video4linux2");
+    std::string videoDevice = (config.check("v4l1") ? "video4linux" : "video4linux2");
     iformat = av_find_input_format(audio ? "audio_device" : videoDevice.c_str());
 
     int result = avformat_open_input(audio ? ppFormatCtx2 : ppFormatCtx,
@@ -471,7 +471,7 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
 bool FfmpegGrabber::openFirewire(yarp::os::Searchable & config,
                                  AVFormatContext **ppFormatCtx) {
     AVInputFormat *iformat;
-    ConstString devname = config.check("devname",
+    std::string devname = config.check("devname",
                                        Value("/dev/dv1394"),
                                        "firewire device name").asString();
     iformat = av_find_input_format("dv1394");
@@ -491,7 +491,7 @@ bool FfmpegGrabber::openFile(AVFormatContext **ppFormatCtx,
 
 
 bool FfmpegGrabber::open(yarp::os::Searchable & config) {
-    ConstString fname =
+    std::string fname =
         config.check("source",
                      Value("default.avi"),
                      "media file to read from").asString();
@@ -505,7 +505,7 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
     }
 
     imageSync = false;
-    ConstString sync =
+    std::string sync =
         config.check("sync",
                      Value("image"),
                      "sync on image or audio (if have to choose)?").asString();
@@ -518,7 +518,7 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
     }
 
     pace = config.check("pace",Value(1.0),
-                        "simulated realtime multiplier factor (must be <1 right now)").asDouble();
+                        "simulated realtime multiplier factor (must be <1 right now)").asFloat64();
 
     // Register all formats and codecs
     av_register_all();
@@ -746,8 +746,8 @@ bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& imag
                         DBG printf("NODELAY %g ", delay);
                     }
                 }
-                DBG printf("IMAGE size %dx%d  ", image.width(), image.height());
-                DBG printf("SOUND size %d\n", sound.getSamples());
+                DBG printf("IMAGE size %zux%zu  ", image.width(), image.height());
+                DBG printf("SOUND size %zu\n", sound.getSamples());
                 if (!_hasAudio) {
                     sound.resize(0,0);
                 }

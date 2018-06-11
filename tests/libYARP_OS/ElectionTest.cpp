@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Election.h>
@@ -14,19 +16,19 @@ using namespace yarp::os::impl;
 
 class ElectionTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "ElectionTest"; }
+    virtual std::string getName() const override { return "ElectionTest"; }
 
     void testBasics() {
         report(0,"testing the basics of elections");
-        ConstString c1 = "Magnifico";
-        ConstString c2 = "Grasso";
-        ConstString c3 = "Bozo";
-        ElectionOf<PeerRecord<ConstString> > elector;
+        std::string c1 = "Magnifico";
+        std::string c2 = "Grasso";
+        std::string c3 = "Bozo";
+        ElectionOf<PeerRecord<std::string> > elector;
         elector.add("italy",&c1);
         elector.add("italy",&c2);
         elector.add("france",&c3);
-        ConstString *e1 = elector.getElect("italy");
-        ConstString *e2 = elector.getElect("france");
+        std::string *e1 = elector.getElect("italy");
+        std::string *e2 = elector.getElect("france");
         checkTrue(e1!=nullptr,"elected entity exists (1)");
         checkTrue(e2!=nullptr,"elected entity exists (2)");
         if (e1!=nullptr && e2!=nullptr) {

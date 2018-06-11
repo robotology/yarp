@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Authors: Marco Randazzo
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_IMPLEMENTCURRENTCONTROL_H
@@ -21,10 +23,7 @@ class YARP_dev_API yarp::dev::ImplementCurrentControl: public ICurrentControl
 protected:
     yarp::dev::ICurrentControlRaw *iCurrentRaw;
     void *helper;
-    double *temp;
-    double *temp2;
-    int    *temp_int;
-    yarp::dev::Pid *tmpPids;
+    int nj;
 
     /**
      * Initialize the internal data and alloc memory.

@@ -1,9 +1,10 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Author: Marco Randazzo <marco.randazzo@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #ifndef YARP_OS_IMPL_LOGFORWARDER_H
 #define YARP_OS_IMPL_LOGFORWARDER_H
@@ -23,7 +24,6 @@ class YARP_OS_API LogForwarder
 {
     public:
         static LogForwarder* getInstance();
-        static void clearInstance();
         void forward (const std::string& message);
     protected:
         LogForwarder();
@@ -33,9 +33,8 @@ class YARP_OS_API LogForwarder
         char logPortName[MAX_STRING_SIZE];
         yarp::os::BufferedPort<yarp::os::Bottle>* outputPort;
     private:
-        LogForwarder(LogForwarder const&){};
-        LogForwarder& operator=(LogForwarder const&){return *this;}; //@@@checkme
-        static LogForwarder* instance;
+        LogForwarder(LogForwarder const&){}
+        LogForwarder& operator=(LogForwarder const&){return *this;}
 };
 
 } // namespace os

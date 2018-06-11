@@ -1,11 +1,9 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Author: Davide Perrone
- * Date: Feb 2014
- * email:   dperrone@aitek.it
- * website: www.aitek.it
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * This software may be modified and distributed under the terms of the
+ * LGPLv2.1+ license. See the accompanying LICENSE file for details.
  */
 
 #include "mainwindow.h"
@@ -16,7 +14,7 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/ResourceFinder.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/ResourceFinderOptions.h>
 
 
@@ -132,10 +130,10 @@ int main(int argc, char *argv[])
 //        yarp::os::Bottle appPaths2=rf.findPaths("scripts");
 //        std::cout << "app path : " << appPaths.toString()<< std::endl;
         QString appPathsStr="";
-        for (int ind=0; ind < appPaths.size(); ++ind){
+        for (size_t ind=0; ind < appPaths.size(); ++ind){
             appPathsStr += (appPaths.get(ind).asString() + ";").c_str();
         }
-        for (int ind=0; ind < appPaths2.size(); ++ind){
+        for (size_t ind=0; ind < appPaths2.size(); ++ind){
             appPathsStr += (appPaths2.get(ind).asString() + ";").c_str();
         }
         if (add_curr_dir)
@@ -150,7 +148,7 @@ int main(int argc, char *argv[])
        appPaths=rf.findPaths("modules");
        //std::cout << "mod path : " << appPaths.toString()<< std::endl;
        QString modPathsStr="";
-       for (int ind=0; ind < appPaths.size(); ++ind){
+       for (size_t ind=0; ind < appPaths.size(); ++ind){
            modPathsStr += (appPaths.get(ind).asString() + ";").c_str();
        }
        if (add_curr_dir)
@@ -164,7 +162,7 @@ int main(int argc, char *argv[])
        appPaths=rf.findPaths("resources");
        //std::cout << "res path : " << appPaths.toString()<< std::endl;
        QString resPathsStr="";
-       for (int ind=0; ind < appPaths.size(); ++ind){
+       for (size_t ind=0; ind < appPaths.size(); ++ind){
            resPathsStr += (appPaths.get(ind).asString() + ";").c_str();
        }
        if (add_curr_dir)
@@ -178,7 +176,7 @@ int main(int argc, char *argv[])
        appPaths=rf.findPaths("templates/applications");
       // std::cout << "templ path : " << appPaths.toString()<< std::endl;
        QString templPathsStr="";
-       for (int ind=0; ind < appPaths.size(); ++ind){
+       for (size_t ind=0; ind < appPaths.size(); ++ind){
             templPathsStr += (appPaths.get(ind).asString() + ";").c_str();
        }
        if (add_curr_dir)

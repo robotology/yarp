@@ -2,7 +2,7 @@
  * Copyright (C) 2012, 2015 Istituto Italiano di Tecnologia (IIT)
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 #include "Device.h"
@@ -353,7 +353,7 @@ bool RobotInterface::Device::calibrate(const RobotInterface::Device &target) con
         return false;
     }
 
-    yarp::dev::IControlCalibration2 *controlCalibrator;
+    yarp::dev::IControlCalibration *controlCalibrator;
     if (!target.driver()->view(controlCalibrator)) {
         yError() << target.name() << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
         return false;
@@ -459,7 +459,7 @@ bool RobotInterface::Device::park(const Device &target) const
         return false;
     }
 
-    yarp::dev::IControlCalibration2 *controlCalibrator;
+    yarp::dev::IControlCalibration *controlCalibrator;
     if (!target.driver()->view(controlCalibrator)) {
         yError() << target.name() << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
         return false;

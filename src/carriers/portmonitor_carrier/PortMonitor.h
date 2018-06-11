@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Authors: Ali Paikan
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef PORTMONITOR_INC
@@ -12,11 +13,12 @@
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Election.h>
 #include <yarp/os/NullConnectionReader.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/Things.h>
 
 #include "MonitorBinding.h"
 #include "MonitorEvent.h"
+
+#include <mutex>
 
 namespace yarp {
     namespace os {
@@ -73,15 +75,15 @@ public:
         if (binder) delete binder;
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new PortMonitor();
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() const override {
         return "portmonitor";
     }
 
-    virtual ConstString toString() override {
+    virtual std::string toString() const override {
         return "portmonitor_carrier";
     }
 
@@ -93,19 +95,19 @@ public:
 
     virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) override;
 
-    virtual yarp::os::PortWriter& modifyOutgoingData(yarp::os::PortWriter& writer) override;
+    virtual const yarp::os::PortWriter& modifyOutgoingData(const yarp::os::PortWriter& writer) override;
 
-    virtual bool acceptOutgoingData(yarp::os::PortWriter& wrtier) override;
+    virtual bool acceptOutgoingData(const yarp::os::PortWriter& writer) override;
 
     virtual yarp::os::PortReader& modifyReply(yarp::os::PortReader& reader) override;
 
     virtual void setCarrierParams(const yarp::os::Property& params) override;
 
-    virtual void getCarrierParams(yarp::os::Property& params) override;
+    virtual void getCarrierParams(yarp::os::Property& params) const override;
 
 
-    void lock() { mutex.wait(); }
-    void unlock() { mutex.post(); }
+    void lock() const { mutex.lock(); }
+    void unlock() const { mutex.unlock(); }
 
     MonitorBinding* getBinder(void) {
         if(!bReady)
@@ -114,8 +116,8 @@ public:
     }
 
 public:
-    ConstString portName;
-    ConstString sourceName;
+    std::string portName;
+    std::string sourceName;
 
 private:
     static ElectionOf<PortMonitorGroup> *peers;
@@ -129,7 +131,7 @@ private:
     yarp::os::Things thing;
     MonitorBinding* binder;
     PortMonitorGroup *group;
-    yarp::os::Semaphore mutex;
+    mutable std::mutex mutex;
 };
 
 #endif //PORTMONITOR_INC

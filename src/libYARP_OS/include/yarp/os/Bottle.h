@@ -1,7 +1,11 @@
 /*
- * Copyright (C) 2006, 2008 RobotCub Consortium, Arjan Gijsberts
- * Authors: Paul Fitzpatrick, Arjan Gijsberts
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * Copyright (C) 2006, 2008 Arjan Gijsberts
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_BOTTLE_H
@@ -9,19 +13,28 @@
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/Searchable.h>
-
-#include <yarp/os/ConstString.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Value.h>
 
-#define BOTTLE_TAG_INT 1          // 0000 0000 0001
-#define BOTTLE_TAG_VOCAB (1 + 8)  // 0000 0000 1001
-#define BOTTLE_TAG_DOUBLE (2 + 8) // 0000 0000 1010
-#define BOTTLE_TAG_STRING (4)     // 0000 0000 0100
-#define BOTTLE_TAG_BLOB (4 + 8)   // 0000 0000 1100
-#define BOTTLE_TAG_INT64 (1 + 16) // 0000 0001 0001
-#define BOTTLE_TAG_LIST 256       // 0001 0000 0000
-#define BOTTLE_TAG_DICT 512       // 0010 0000 0000
+#include <string>
+
+#define BOTTLE_TAG_INT8 32         // 0000 0000 0010 0000
+#define BOTTLE_TAG_INT16 64        // 0000 0000 0100 0000
+#define BOTTLE_TAG_INT32 1         // 0000 0000 0000 0001
+#define BOTTLE_TAG_INT64 (1 + 16)  // 0000 0000 0001 0001
+#define BOTTLE_TAG_VOCAB (1 + 8)   // 0000 0000 0000 1001
+#define BOTTLE_TAG_FLOAT32 128     // 0000 0000 1000 0000
+#define BOTTLE_TAG_FLOAT64 (2 + 8) // 0000 0000 0000 1010
+#define BOTTLE_TAG_STRING (4)      // 0000 0000 0000 0100
+#define BOTTLE_TAG_BLOB (4 + 8)    // 0000 0000 0000 1100
+#define BOTTLE_TAG_LIST 256        // 0000 0001 0000 0000
+#define BOTTLE_TAG_DICT 512        // 0000 0010 0000 0000
+
+YARP_DEPRECATED_INTERNAL_MSG("Use BOTTLE_TAG_INT32 instead") // Since YARP 3.0.0
+constexpr std::int32_t BOTTLE_TAG_DOUBLE = BOTTLE_TAG_FLOAT64;
+
+YARP_DEPRECATED_INTERNAL_MSG("Use BOTTLE_TAG_FLOAT64 instead") // Since YARP 3.0.0
+constexpr std::int32_t BOTTLE_TAG_INT = BOTTLE_TAG_INT32;
 
 namespace yarp {
     namespace os {
@@ -75,7 +88,7 @@ public:
      *
      * @param text the textual form of the bottle to be interpreted.
      */
-    explicit Bottle(const ConstString& text);
+    explicit Bottle(const std::string& text);
 
     /**
      * Copy constructor.
@@ -106,15 +119,38 @@ public:
      * Places an integer in the bottle, at the end of the list.
      *
      * @param x the integer to add.
+     * @warning Unsafe, sizeof(int) is platform dependent. Use addInt32 instead.
      */
-    void addInt(int x);
+    YARP_DEPRECATED_INTERNAL_MSG("Use addInt32 instead") // Since YARP 3.0.0
+    inline void addInt(int x) { addInt32(static_cast<std::int32_t>(x)); }
 
     /**
-     * Places a 64 integer in the bottle, at the end of the list.
+     * Places a 8-bit integer in the bottle, at the end of the list.
      *
-     * @param x the integer to add.
+     * @param x the 8-bit integer to add.
      */
-    void addInt64(const YARP_INT64& x);
+    void addInt8(std::int8_t x);
+
+    /**
+     * Places a 16-bit integer in the bottle, at the end of the list.
+     *
+     * @param x the 16-bit integer to add.
+     */
+    void addInt16(std::int16_t x);
+
+    /**
+     * Places a 32-bit integer in the bottle, at the end of the list.
+     *
+     * @param x the 32-bit integer to add.
+     */
+    void addInt32(std::int32_t x);
+
+    /**
+     * Places a 64-bit integer in the bottle, at the end of the list.
+     *
+     * @param x the 64-bit integer to add.
+     */
+    void addInt64(std::int64_t x);
 
     /**
      * Places a vocabulary item in the bottle, at the end of the list.
@@ -128,8 +164,26 @@ public:
      * list.
      *
      * @param x the number to add.
+     * @warning Unsafe, sizeof(double) is platform dependent. Use addFloat64 instead.
      */
-    void addDouble(double x);
+    YARP_DEPRECATED_INTERNAL_MSG("Use addFloat64 instead") // Since YARP 3.0.0
+    inline void addDouble(double x) { addFloat64(static_cast<yarp::conf::float64_t>(x)); }
+
+    /**
+     * Places a 32-bit floating point number in the bottle, at the end of the
+     * list.
+     *
+     * @param x the number to add.
+     */
+    void addFloat32(yarp::conf::float32_t x);
+
+    /**
+     * Places a 64-bit floating point number in the bottle, at the end of the
+     * list.
+     *
+     * @param x the number to add.
+     */
+    void addFloat64(yarp::conf::float64_t x);
 
     /**
      * Places a string in the bottle, at the end of the list.
@@ -143,7 +197,7 @@ public:
      *
      * @param str the string to add.
      */
-    void addString(const ConstString& str);
+    void addString(const std::string& str);
 
     /**
      * Add a Value to the bottle, at the end of the list.
@@ -192,23 +246,23 @@ public:
     /**
      * Reads a Value v from a certain part of the list.
      *
-     * Methods like v.isInt() or v.isString() can be used to check the
+     * Methods like v.isInt32() or v.isString() can be used to check the
      * type of the result.
-     * Methods like v.asInt() or v.asString() can be used to access the
+     * Methods like v.asInt32() or v.asString() can be used to access the
      * result as a particular type.
      *
      * @param index the part of the list to read from.
      * @return the Value v; if the index lies outside the range of
      *         elements present, then v.isNull() will be true.
      */
-    Value& get(int index) const;
+    Value& get(size_t index) const;
 
     /**
      * Gets the number of elements in the bottle.
      *
      * @return number of elements in the bottle.
      */
-    int size() const;
+    size_t size() const;
 
     /**
      * Initializes bottle from a string.
@@ -220,7 +274,7 @@ public:
      *
      * @param text the textual form of the bottle to be interpreted.
      */
-    void fromString(const ConstString& text);
+    void fromString(const std::string& text);
 
     /**
      * Initializes bottle from a binary representation.
@@ -228,7 +282,7 @@ public:
      * @param buf the binary form of the bottle to be interpreted.
      * @param len the length of the binary form.
      */
-    void fromBinary(const char* buf, int len);
+    void fromBinary(const char* buf, size_t len);
 
     /**
      * Returns binary representation of bottle.
@@ -250,7 +304,7 @@ public:
      *
      * @return a textual representation of the bottle.
      */
-    ConstString toString() const override;
+    std::string toString() const override;
 
     /**
      * Output a representation of the bottle to a network connection.
@@ -258,7 +312,7 @@ public:
      * @param writer the interface to the network connection for writing
      * @result true iff the representation was written successfully.
      */
-    bool write(ConnectionWriter& writer) override;
+    bool write(ConnectionWriter& writer) const override;
 
     /**
      * Set the bottle's value based on input from a network connection.
@@ -289,15 +343,15 @@ public:
      * @param textMode true if text serialization should be used.
      * @return true iff the bottle was read successfully.
      */
-    bool read(PortWriter& writer, bool textMode = false);
+    bool read(const PortWriter& writer, bool textMode = false);
 
-    void onCommencement() override;
+    void onCommencement() const override;
 
-    virtual bool check(const ConstString& key) const override;
+    virtual bool check(const std::string& key) const override;
 
-    virtual Value& find(const ConstString& key) const override;
+    virtual Value& find(const std::string& key) const override;
 
-    Bottle& findGroup(const ConstString& key) const override;
+    Bottle& findGroup(const std::string& key) const override;
 
     virtual bool isNull() const override;
 
@@ -358,7 +412,7 @@ public:
      */
     void hasChanged();
 
-    static ConstString toString(int x);
+    static std::string toString(int x);
 
     /**
      * Get numeric bottle code for this bottle.
@@ -374,7 +428,7 @@ public:
      * @return a string representation of the code's meaning
      *
      */
-    static ConstString describeBottleCode(int code);
+    static std::string describeBottleCode(int code);
 
 
 protected:
@@ -388,7 +442,6 @@ private:
     friend class yarp::os::impl::BottleImpl;
     yarp::os::impl::BottleImpl* const implementation;
 
-    static void fini();
 };
 
 #endif // YARP_OS_BOTTLE_H

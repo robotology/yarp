@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2010 Daniel Krieg
- * Author: Daniel Krieg <krieg@fias.uni-frankfurt.de>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2010 Daniel Krieg <krieg@fias.uni-frankfurt.de>
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/MpiBcastStream.h>
@@ -48,7 +51,7 @@ void MpiBcastStream::execCmd(int cmd) {
 /////////////////////////////////////////////////
 // InputStream
 
-ssize_t MpiBcastStream::read(const Bytes& b) {
+ssize_t MpiBcastStream::read(Bytes& b) {
     if (terminate) {
       return -1;
     }
@@ -112,7 +115,7 @@ void MpiBcastStream::write(const Bytes& b) {
     #endif
     int size = b.length();
     MPI_Bcast(&size, 1, MPI_INT, 0, comm->comm );
-    MPI_Bcast(b.get(), size, MPI_BYTE, 0, comm->comm );
+    MPI_Bcast((void*)b.get(), size, MPI_BYTE, 0, comm->comm );
     comm->sema.post();
 
     #ifdef MPI_DEBUG

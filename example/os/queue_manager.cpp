@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 /*
@@ -35,7 +38,7 @@ class QueueManager : public DeviceResponder {
 private:
     BufferedPort<Bottle> port;
     deque<Entry> q;
-    Semaphore mutex;
+    Mutex mutex;
 
     bool removeName(const char *name) {
         bool acted = false;
@@ -79,7 +82,7 @@ private:
         }
     }
 public:
-    QueueManager() : mutex(1) {
+    QueueManager() : mutex() {
         attach(port);
         Contact c("/help", "tcp", "localhost", 80);
         port.open(c);
@@ -100,7 +103,7 @@ public:
 
     virtual bool respond(const yarp::os::Bottle& command, 
                          yarp::os::Bottle& reply) {
-        mutex.wait();
+        mutex.lock();
         switch (command.get(0).asVocab()) {
         case VOCAB3('a','d','d'):
             {
@@ -119,17 +122,17 @@ public:
             break;
         case VOCAB3('d','e','l'):
             {
-                if (command.get(1).isInt()) {
-                    int idx = command.get(1).asInt();
+                if (command.get(1).isInt32()) {
+                    int idx = command.get(1).asInt32();
                     bool acted = removeName(idx);
                     if (acted) {
                         reply.clear();
                         reply.add(Value::makeVocab("del"));
-                        reply.addInt(idx);
+                        reply.addInt32(idx);
                     } else {
                         reply.clear();
                         reply.add(Value::makeVocab("no"));
-                        reply.addInt(idx);
+                        reply.addInt32(idx);
                     }
                     addQueue(reply);
                 } else {
@@ -158,20 +161,20 @@ public:
             break;
         default:
             updateHelp();
-            mutex.post();
+            mutex.unlock();
             return DeviceResponder::respond(command,reply);
         }
-        mutex.post();
+        mutex.unlock();
         printf("%s\n", reply.toString().c_str());
         return true;
     }
 
     void update() {
         Bottle& status = port.prepare();
-        mutex.wait();
+        mutex.lock();
         status.clear();
         addQueue(status);
-        mutex.post();
+        mutex.unlock();
         port.write();
     }
 };

@@ -1,6 +1,10 @@
 /*
- * Copyright (C) 2010 Daniel Krieg
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2010 Daniel Krieg <krieg@fias.uni-frankfurt.de>
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/impl/AuthHMAC.h>
@@ -10,9 +14,10 @@
 #include <cstdio>
 #include <ctime>
 #include <random>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Property.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/impl/NameClient.h>
 
@@ -43,9 +48,9 @@ AuthHMAC::AuthHMAC() :
         return;
     }
     memset(&context, 0, sizeof(HMAC_CONTEXT));
-    ConstString key;
-    ResourceFinder& rf = NameClient::getNameClient().getResourceFinder();
-    ConstString fname;
+    std::string key;
+    ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
+    std::string fname;
     Network::lock();
     ResourceFinderOptions opt;
     opt.messageFilter = ResourceFinderOptions::ShowNone;

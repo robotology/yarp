@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_SIG_IMAGENETWORKHEADER_H
@@ -59,7 +62,7 @@ public:
         paramName = VOCAB3('m','a','t');
         paramIdTag = BOTTLE_TAG_VOCAB;
         id = image.getPixelCode();
-        paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
+        paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT32;
         paramListLen = 5;
         depth = image.getPixelSize();
         imgSize = image.getRawImageSize();

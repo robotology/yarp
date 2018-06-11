@@ -1,6 +1,9 @@
 /*
- * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_IMPL_PLATFORMSIGNAL_H
@@ -9,6 +12,10 @@
 #include <yarp/conf/system.h>
 #ifdef YARP_HAS_ACE
 # include <ace/OS_NS_signal.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 #elif defined(YARP_HAS_SIGNAL_H)
 # include <signal.h>
 #elif defined(YARP_HAS_SYS_SIGNAL_H)
@@ -27,12 +34,7 @@ namespace impl {
     using ACE_OS::sigfillset;
     using ACE_OS::sigaction;
     using ACE_OS::kill;
-    // std::signal is broken for Visual Studio 12 2013
-    // (Fixed in Visual studio 14 2015)
-#  if defined(_MSC_VER) && _MSC_VER <= 1800
-    using ACE_OS::signal;
-    using ACE_OS::raise;
-# elif defined(YARP_HAS_CSIGNAL)
+# if defined(YARP_HAS_CSIGNAL)
     // Prefer std::signal over ::signal
     using std::signal;
     using std::raise;

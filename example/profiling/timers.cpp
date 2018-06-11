@@ -1,12 +1,14 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Authors: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <stdio.h>
 #include <yarp/os/all.h>
-#include <yarp/os/RateThread.h>
 using namespace yarp::os;
 
 // Timers test.
@@ -33,9 +35,9 @@ int main(int argc, char **argv)
     double period=0.1; //s
 
     if (p.check("period"))
-        period=p.find("period").asDouble()/1000.0;
+        period=p.find("period").asFloat64()/1000.0;
     if (p.check("time"))
-        totalTime=p.find("time").asDouble();
+        totalTime=p.find("time").asFloat64();
 
     printf("Generating wave with period T=%.2lf[ms]\n", period*1000);
     if (totalTime!=-1)

@@ -1,9 +1,12 @@
 (declare (uses cyarp))
 
-; Copyright: (C) 2010 RobotCub Consortium
-; Author: Paul Fitzpatrick
-; CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- 
+; Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+; Copyright (C) 2006-2010 RobotCub Consortium
+; All rights reserved.
+;
+; This software may be modified and distributed under the terms of the
+; BSD-3-Clause license. See the accompanying LICENSE file for details.
+
 (Network-init)
 
 (define p (new-BufferedPortBottle))
@@ -16,9 +19,9 @@
   (let ((bottle (BufferedPortBottle-prepare p)))
     (Bottle-clear bottle)
     (Bottle-addString bottle "count")
-    (Bottle-addInt bottle i)
+    (Bottle-addInt32 bottle i)
     (Bottle-addString bottle "of")
-    (Bottle-addInt bottle top)
+    (Bottle-addInt32 bottle top)
     (display "Sending ")
     (display (Bottle-toString bottle))
     (newline)

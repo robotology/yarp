@@ -1,21 +1,19 @@
-# Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
-# Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
-#          Ali Paikan <ali.paikan@iit.it>
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 if(CREATE_YARPMANAGER)
 
   include(YarpUseQt5)
   include(YarpOSXUtilities)
 
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
-  get_property(YARP_profiler_INCLUDE_DIRS TARGET YARP_profiler PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_manager_INCLUDE_DIRS}
-                      ${YARP_profiler_INCLUDE_DIRS}
-                      ./src-builder
-                      ./src-manager)
+  include_directories("${CMAKE_CURRENT_LIST_DIR}/src-builder"
+                      "${CMAKE_CURRENT_LIST_DIR}/src-manager")
+  if(MSVC)
+    include_directories(SYSTEM ${dirent_INCLUDE_DIRS})
+  endif()
 
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 

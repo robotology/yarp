@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2007 RobotCub Consortium
- * Authors: Lorenzo Natale, Ugo Pattacini
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_MATH
@@ -13,252 +15,254 @@
 #include <yarp/math/api.h>
 #include <yarp/math/Quaternion.h>
 
+/**
+* Mathematical operations.
+*/
+
+/**
+* Addition operator between a scalar and a vector (defined in Math.h).
+* Sum the scalar to all the elements of the vector.
+*/
+YARP_math_API yarp::sig::Vector operator+(const yarp::sig::Vector &a, const double &s);
+
+/**
+* Addition operator between a scalar and a vector (defined in Math.h).
+* Sum the scalar to all the elements of the vector.
+*/
+YARP_math_API yarp::sig::Vector operator+(const double &s, const yarp::sig::Vector &a);
+
+/**
+* Addition operator between a scalar and a vector (defined in Math.h).
+* Sum the scalar to all the elements of the vector.
+*/
+YARP_math_API yarp::sig::Vector& operator+=(yarp::sig::Vector &a, const double &s);
+
+/**
+* Addition operator between vectors, returns a+b (defined in Math.h).
+*/
+YARP_math_API yarp::sig::Vector operator+(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+
+/**
+ * Addition operator between vectors, returns a+b (defined in Math.h).
+ */
+YARP_math_API yarp::sig::Vector& operator+=(yarp::sig::Vector &a, const yarp::sig::Vector &b);
+
+/**
+* Addition operator between matrices, returns a+b (defined in Math.h).
+*/
+YARP_math_API yarp::sig::Matrix operator+(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
+
+/**
+* Addition operator between matrices, returns a+b (defined in Math.h).
+*/
+YARP_math_API yarp::sig::Matrix& operator+=(yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
+
+/**
+* Subtraction operator between a vector and a scalar (defined in Math.h).
+* Subtract the scalar to all the elements of the vector.
+*/
+YARP_math_API yarp::sig::Vector operator-(const yarp::sig::Vector &a, const double &s);
+
+/**
+* Subtraction operator between a scalar and a vector (defined in Math.h).
+* Multiply the vector by -1 and sum the scalar to the result.
+*/
+YARP_math_API yarp::sig::Vector operator-(const double &s, const yarp::sig::Vector &a);
+
+/**
+* Subtraction operator between a vector and a scalar (defined in Math.h).
+* Subtract the scalar to all the elements of the vector.
+*/
+YARP_math_API yarp::sig::Vector& operator-=(yarp::sig::Vector &a, const double &s);
+
+/**
+* Subtraction operator between vectors, returns a-b (defined in Math.h).
+*/
+YARP_math_API yarp::sig::Vector operator-(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+
+/**
+* Subtraction operator between vectors, returns a-b (defined in Math.h).
+*/
+YARP_math_API yarp::sig::Vector& operator-=(yarp::sig::Vector &a, const yarp::sig::Vector &b);
+
+/**
+* Subtraction operator between matrices, returns a-b (defined in Math.h).
+*/
+YARP_math_API yarp::sig::Matrix operator-(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
+
+/**
+* Subtraction operator between matrices, returns a-b (defined in Math.h).
+*/
+YARP_math_API yarp::sig::Matrix& operator-=(yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
+
+/**
+* Scalar-vector product operator (defined in Math.h).
+* @param k a scalar
+* @param b vector
+* @return k*b
+*/
+YARP_math_API yarp::sig::Vector operator*(double k, const yarp::sig::Vector &b);
+
+/**
+* Vector-scalar product operator (defined in Math.h).
+* @param b a vector
+* @param k a scalar
+* @return b*k
+*/
+YARP_math_API yarp::sig::Vector operator*(const yarp::sig::Vector &b, double k);
+
+/**
+* Vector-scalar product operator (defined in Math.h).
+* @param b a vector
+* @param k a scalar
+* @return b*k
+*/
+YARP_math_API yarp::sig::Vector& operator*=(yarp::sig::Vector &b, double k);
+
+/**
+* Vector-matrix product operator (defined in Math.h).
+* @param a is a vector (interpreted as a row)
+* @param m is a matrix
+* @return a*m
+*/
+YARP_math_API yarp::sig::Vector operator*(const yarp::sig::Vector &a,
+    const yarp::sig::Matrix &m);
+
+/**
+* Vector-matrix product operator (defined in Math.h).
+* @param a is a vector (interpreted as a row)
+* @param m is a matrix
+* @return a*m
+*/
+YARP_math_API yarp::sig::Vector& operator*=(yarp::sig::Vector &a, const yarp::sig::Matrix &m);
+
+/**
+* Matrix-vector product operator (defined in Math.h).
+* @param a is a vector (interpreted as a column)
+* @param m is a matrix
+* @return m*a
+*/
+ YARP_math_API yarp::sig::Vector operator*(const yarp::sig::Matrix &m,
+    const yarp::sig::Vector &a);
+
+/**
+* Matrix-matrix product operator (defined in Math.h).
+* @param a a matrix
+* @param b a matrix
+* @return a*b
+*/
+YARP_math_API yarp::sig::Matrix operator*(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
+
+/**
+* Matrix-matrix product operator (defined in Math.h).
+* @param a a matrix
+* @param b a matrix
+* @return a*b
+*/
+YARP_math_API yarp::sig::Matrix& operator*=(yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
+
+/**
+* Scalar-matrix product operator (defined in Math.h).
+* @param k a scalar
+* @param M a matrix
+* @return k*M
+*/
+YARP_math_API yarp::sig::Matrix operator*(const double k, const yarp::sig::Matrix &M);
+
+/**
+* Matrix-scalar product operator (defined in Math.h).
+* @param M a matrix
+* @param k a scalar
+* @return M*k
+*/
+YARP_math_API yarp::sig::Matrix operator*(const yarp::sig::Matrix &M, const double k);
+
+/**
+* Matrix-scalar product operator (defined in Math.h).
+* @param M a matrix
+* @param k a scalar
+* @return M*k
+*/
+YARP_math_API yarp::sig::Matrix& operator*=(yarp::sig::Matrix &M, const double k);
+
+/**
+* Vector-vector element-wise product operator (defined in Math.h).
+* @param a a vector
+* @param b a vector
+* @return a.*b (matlab notation)
+*/
+YARP_math_API yarp::sig::Vector operator*(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+
+/**
+* Vector-vector element-wise product operator (defined in Math.h).
+* @param a a vector
+* @param b a vector
+* @return a.*b (matlab notation)
+*/
+YARP_math_API yarp::sig::Vector& operator*=(yarp::sig::Vector &a, const yarp::sig::Vector &b);
+
+/**
+* Quaternion-quaternion hamilton product operator (defined in Math.h).
+* reference: "Stevens, Brian L., Frank L. Lewis, Aircraft Control and Simulation, Wiley–Interscience, 2nd Edition".
+* @param a a quaternion
+* @param b a quaternion
+* @return a*b
+*/
+YARP_math_API yarp::math::Quaternion operator*(const yarp::math::Quaternion& a, const yarp::math::Quaternion& b);
+
+/**
+* Vector-vector element-wise division operator (defined in Math.h).
+* @param a a vector
+* @param b a vector
+* @return a./b (matlab notation)
+*/
+YARP_math_API yarp::sig::Vector operator/(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+
+/**
+* Vector-vector element-wise division operator (defined in Math.h).
+* @param a a vector
+* @param b a vector
+* @return a./b (matlab notation)
+*/
+YARP_math_API yarp::sig::Vector& operator/=(yarp::sig::Vector &a, const yarp::sig::Vector &b);
+
+/**
+* Vector-scalar division operator (defined in Math.h).
+* @param b a vector
+* @param k a scalar
+* @return b/k
+*/
+YARP_math_API yarp::sig::Vector operator/(const yarp::sig::Vector &b, double k);
+
+/**
+* Vector-scalar division operator (defined in Math.h).
+* @param b a vector
+* @param k a scalar
+* @return b/k
+*/
+YARP_math_API yarp::sig::Vector& operator/=(yarp::sig::Vector &b, double k);
+
+/**
+* Matrix-scalar division operator (defined in Math.h).
+* @param M a matrix
+* @param k a scalar
+* @return M./k (matlab notation)
+*/
+YARP_math_API yarp::sig::Matrix operator/(const yarp::sig::Matrix &M, double k);
+
+/**
+* Matrix-scalar division operator (defined in Math.h).
+* @param M a matrix
+* @param k a scalar
+* @return M./k (matlab notation)
+*/
+YARP_math_API yarp::sig::Matrix& operator/=(yarp::sig::Matrix &M, double k);
+
+
 namespace yarp
 {
-     /**
-     * Mathematical operations.
-     */
     namespace math
     {
-        /**
-        * Addition operator between a scalar and a vector (defined in Math.h).
-        * Sum the scalar to all the elements of the vector.
-        */
-        YARP_math_API yarp::sig::Vector operator+(const yarp::sig::Vector &a, const double &s);
-
-        /**
-        * Addition operator between a scalar and a vector (defined in Math.h).
-        * Sum the scalar to all the elements of the vector.
-        */
-        YARP_math_API yarp::sig::Vector operator+(const double &s, const yarp::sig::Vector &a);
-
-        /**
-        * Addition operator between a scalar and a vector (defined in Math.h).
-        * Sum the scalar to all the elements of the vector.
-        */
-        YARP_math_API yarp::sig::Vector& operator+=(yarp::sig::Vector &a, const double &s);
-
-        /**
-        * Addition operator between vectors, returns a+b (defined in Math.h).
-        */
-        YARP_math_API yarp::sig::Vector operator+(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
-
-        /**
-         * Addition operator between vectors, returns a+b (defined in Math.h).
-         */
-        YARP_math_API yarp::sig::Vector& operator+=(yarp::sig::Vector &a, const yarp::sig::Vector &b);
-
-        /**
-        * Addition operator between matrices, returns a+b (defined in Math.h).
-        */
-        YARP_math_API yarp::sig::Matrix operator+(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
-
-        /**
-        * Addition operator between matrices, returns a+b (defined in Math.h).
-        */
-        YARP_math_API yarp::sig::Matrix& operator+=(yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
-
-        /**
-        * Subtraction operator between a vector and a scalar (defined in Math.h).
-        * Subtract the scalar to all the elements of the vector.
-        */
-        YARP_math_API yarp::sig::Vector operator-(const yarp::sig::Vector &a, const double &s);
-
-        /**
-        * Subtraction operator between a scalar and a vector (defined in Math.h).
-        * Multiply the vector by -1 and sum the scalar to the result.
-        */
-        YARP_math_API yarp::sig::Vector operator-(const double &s, const yarp::sig::Vector &a);
-
-        /**
-        * Subtraction operator between a vector and a scalar (defined in Math.h).
-        * Subtract the scalar to all the elements of the vector.
-        */
-        YARP_math_API yarp::sig::Vector& operator-=(yarp::sig::Vector &a, const double &s);
-
-        /**
-        * Subtraction operator between vectors, returns a-b (defined in Math.h).
-        */
-        YARP_math_API yarp::sig::Vector operator-(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
-
-        /**
-        * Subtraction operator between vectors, returns a-b (defined in Math.h).
-        */
-        YARP_math_API yarp::sig::Vector& operator-=(yarp::sig::Vector &a, const yarp::sig::Vector &b);
-
-        /**
-        * Subtraction operator between matrices, returns a-b (defined in Math.h).
-        */
-        YARP_math_API yarp::sig::Matrix operator-(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
-
-        /**
-        * Subtraction operator between matrices, returns a-b (defined in Math.h).
-        */
-        YARP_math_API yarp::sig::Matrix& operator-=(yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
-
-        /**
-        * Scalar-vector product operator (defined in Math.h).
-        * @param k a scalar
-        * @param b vector
-        * @return k*b
-        */
-        YARP_math_API yarp::sig::Vector operator*(double k, const yarp::sig::Vector &b);
-
-        /**
-        * Vector-scalar product operator (defined in Math.h).
-        * @param b a vector
-        * @param k a scalar
-        * @return b*k
-        */
-        YARP_math_API yarp::sig::Vector operator*(const yarp::sig::Vector &b, double k);
-
-        /**
-        * Vector-scalar product operator (defined in Math.h).
-        * @param b a vector
-        * @param k a scalar
-        * @return b*k
-        */
-        YARP_math_API yarp::sig::Vector& operator*=(yarp::sig::Vector &b, double k);
-
-        /**
-        * Vector-matrix product operator (defined in Math.h).
-        * @param a is a vector (interpreted as a row)
-        * @param m is a matrix
-        * @return a*m
-        */
-        YARP_math_API yarp::sig::Vector operator*(const yarp::sig::Vector &a,
-            const yarp::sig::Matrix &m);
-
-        /**
-        * Vector-matrix product operator (defined in Math.h).
-        * @param a is a vector (interpreted as a row)
-        * @param m is a matrix
-        * @return a*m
-        */
-        YARP_math_API yarp::sig::Vector& operator*=(yarp::sig::Vector &a, const yarp::sig::Matrix &m);
-
-        /**
-        * Matrix-vector product operator (defined in Math.h).
-        * @param a is a vector (interpreted as a column)
-        * @param m is a matrix
-        * @return m*a
-        */
-         YARP_math_API yarp::sig::Vector operator*(const yarp::sig::Matrix &m,
-            const yarp::sig::Vector &a);
-
-        /**
-        * Matrix-matrix product operator (defined in Math.h).
-        * @param a a matrix
-        * @param b a matrix
-        * @return a*b
-        */
-        YARP_math_API yarp::sig::Matrix operator*(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
-
-        /**
-        * Matrix-matrix product operator (defined in Math.h).
-        * @param a a matrix
-        * @param b a matrix
-        * @return a*b
-        */
-        YARP_math_API yarp::sig::Matrix& operator*=(yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
-
-        /**
-       * Scalar-matrix product operator (defined in Math.h).
-       * @param k a scalar
-       * @param M a matrix
-       * @return k*M
-       */
-        YARP_math_API yarp::sig::Matrix operator*(const double k, const yarp::sig::Matrix &M);
-
-        /**
-       * Matrix-scalar product operator (defined in Math.h).
-       * @param M a matrix
-       * @param k a scalar
-       * @return M*k
-       */
-        YARP_math_API yarp::sig::Matrix operator*(const yarp::sig::Matrix &M, const double k);
-
-        /**
-        * Matrix-scalar product operator (defined in Math.h).
-        * @param M a matrix
-        * @param k a scalar
-        * @return M*k
-        */
-        YARP_math_API yarp::sig::Matrix& operator*=(yarp::sig::Matrix &M, const double k);
-
-        /**
-       * Vector-vector element-wise product operator (defined in Math.h).
-       * @param a a vector
-       * @param b a vector
-       * @return a.*b (matlab notation)
-       */
-        YARP_math_API yarp::sig::Vector operator*(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
-
-        /**
-       * Vector-vector element-wise product operator (defined in Math.h).
-       * @param a a vector
-       * @param b a vector
-       * @return a.*b (matlab notation)
-       */
-        YARP_math_API yarp::sig::Vector& operator*=(yarp::sig::Vector &a, const yarp::sig::Vector &b);
-
-        /**
-       * Quaternion-quaternion hamilton product operator (defined in Math.h).
-       * reference: "Stevens, Brian L., Frank L. Lewis, Aircraft Control and Simulation, Wiley–Interscience, 2nd Edition".
-       * @param a a quaternion
-       * @param b a quaternion
-       * @return a*b
-       */
-        YARP_math_API yarp::math::Quaternion operator*(const Quaternion& a, const Quaternion& b);
-
-        /**
-       * Vector-vector element-wise division operator (defined in Math.h).
-       * @param a a vector
-       * @param b a vector
-       * @return a./b (matlab notation)
-       */
-        YARP_math_API yarp::sig::Vector operator/(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
-
-        /**
-       * Vector-vector element-wise division operator (defined in Math.h).
-       * @param a a vector
-       * @param b a vector
-       * @return a./b (matlab notation)
-       */
-        YARP_math_API yarp::sig::Vector& operator/=(yarp::sig::Vector &a, const yarp::sig::Vector &b);
-
-        /**
-        * Vector-scalar division operator (defined in Math.h).
-        * @param b a vector
-        * @param k a scalar
-        * @return b/k
-        */
-        YARP_math_API yarp::sig::Vector operator/(const yarp::sig::Vector &b, double k);
-
-        /**
-        * Vector-scalar division operator (defined in Math.h).
-        * @param b a vector
-        * @param k a scalar
-        * @return b/k
-        */
-        YARP_math_API yarp::sig::Vector& operator/=(yarp::sig::Vector &b, double k);
-
-        /**
-        * Matrix-scalar division operator (defined in Math.h).
-        * @param M a matrix
-        * @param k a scalar
-        * @return M./k (matlab notation)
-        */
-        YARP_math_API yarp::sig::Matrix operator/(const yarp::sig::Matrix &M, double k);
-
-        /**
-        * Matrix-scalar division operator (defined in Math.h).
-        * @param M a matrix
-        * @param k a scalar
-        * @return M./k (matlab notation)
-        */
-        YARP_math_API yarp::sig::Matrix& operator/=(yarp::sig::Matrix &M, double k);
-
         /**
          * Matrix-Matrix concatenation by column (defined in Math.h).
          * @param m1 a matrix nXm

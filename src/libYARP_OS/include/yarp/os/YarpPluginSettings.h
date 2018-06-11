@@ -1,12 +1,15 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_YARPPLUGINSETTINGS_H
 #define YARP_OS_YARPPLUGINSETTINGS_H
 
+#include <yarp/os/api.h>
 #include <yarp/os/YarpPluginSelector.h>
 #include <yarp/os/SharedLibraryClass.h>
 #include <yarp/os/Log.h>
@@ -49,8 +52,8 @@ public:
      * as a factory
      *
      */
-    void setLibraryMethodName(const ConstString& dll_name,
-                              const ConstString& fn_name) {
+    void setLibraryMethodName(const std::string& dll_name,
+                              const std::string& fn_name) {
         this->dll_name = dll_name;
         this->fn_name = fn_name;
     }
@@ -64,7 +67,7 @@ public:
      * @param name the name of the plugin to load
      *
      */
-    void setPluginName(const ConstString& name) {
+    void setPluginName(const std::string& name) {
         this->name = name;
     }
 
@@ -76,8 +79,8 @@ public:
      * @param class_name the name of the class
      * @param baseclass_name the name of the base class
      */
-    void setClassInfo(const ConstString& class_name,
-                      const ConstString& baseclass_name) {
+    void setClassInfo(const std::string& class_name,
+                      const std::string& baseclass_name) {
         this->class_name = class_name;
         this->baseclass_name = baseclass_name;
     }
@@ -124,9 +127,9 @@ public:
      * @return true on success
      *
      */
-    bool readFromSearchable(Searchable& options, const ConstString& name) {
-        ConstString iname = options.find("library").toString();
-        ConstString pname = options.find("part").toString();
+    bool readFromSearchable(Searchable& options, const std::string& name) {
+        std::string iname = options.find("library").toString();
+        std::string pname = options.find("part").toString();
 
         if (iname=="") iname = name;
         if (pname=="") pname = name;
@@ -143,7 +146,7 @@ public:
      * @return the name of the plugin, if set
      *
      */
-    ConstString getPluginName() const {
+    std::string getPluginName() const {
         return name;
     }
 
@@ -152,7 +155,7 @@ public:
      * @return the name of the shared library, if set
      *
      */
-    ConstString getLibraryName() const {
+    std::string getLibraryName() const {
         return dll_name;
     }
 
@@ -161,7 +164,7 @@ public:
      * @return the name of the factory method, if set
      *
      */
-    ConstString getMethodName() const {
+    std::string getMethodName() const {
         return fn_name;
     }
 
@@ -179,7 +182,7 @@ public:
      * @return the name of the wrapper, if set
      *
      */
-    ConstString getWrapperName() const {
+    std::string getWrapperName() const {
         return wrapper_name;
     }
 
@@ -188,7 +191,7 @@ public:
      * @return the name of the class, if set
      *
      */
-    ConstString getClassName() const {
+    std::string getClassName() const {
         return class_name;
     }
 
@@ -197,7 +200,7 @@ public:
      * @return the name of the base class, if set
      *
      */
-    ConstString getBaseClassName() const {
+    std::string getBaseClassName() const {
         return class_name;
     }
 
@@ -230,22 +233,22 @@ public:
     void reportFailure() const;
 
 private:
-    ConstString name;
-    ConstString dll_name;
-    ConstString fn_name;
-    ConstString wrapper_name;
-    ConstString class_name;
-    ConstString baseclass_name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) dll_name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) fn_name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) wrapper_name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) class_name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) baseclass_name;
     YarpPluginSelector *selector;
     bool verbose;
 
-    bool subopen(SharedLibraryFactory& factory, const ConstString& dll_name,
-                 const ConstString& fn_name);
+    bool subopen(SharedLibraryFactory& factory, const std::string& dll_name,
+                 const std::string& fn_name);
 
-    bool open(SharedLibraryFactory& factory, const ConstString& dll_name,
-              const ConstString& fn_name);
+    bool open(SharedLibraryFactory& factory, const std::string& dll_name,
+              const std::string& fn_name);
 
-    bool readFromSelector(const ConstString& name) {
+    bool readFromSelector(const std::string& name) {
         if (!selector) return false;
         Bottle plugins = selector->getSelectedPlugins();
         Bottle group = plugins.findGroup(name.c_str()).tail();

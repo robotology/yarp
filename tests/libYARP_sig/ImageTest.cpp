@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 /**
  *
@@ -23,7 +24,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 
 #include "TestList.h"
 
@@ -32,12 +33,12 @@ using namespace yarp::sig;
 using namespace yarp::sig::draw;
 using namespace yarp::os;
 
-class readWriteTest : public yarp::os::RateThread
+class readWriteTest : public yarp::os::PeriodicThread
 {
     yarp::os::Port p;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> image;
 public:
-    readWriteTest() : RateThread(10) {}
+    readWriteTest() : PeriodicThread(0.01) {}
 
     yarp::sig::ImageOf<yarp::sig::PixelRgb> getImage()
     {
@@ -66,7 +67,7 @@ public:
 
 class ImageTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "ImageTest"; }
+    virtual std::string getName() const override { return "ImageTest"; }
 
     void passImage(ImageOf<PixelRgb> img) {
         report(0, "passed a blank image ok");
@@ -77,20 +78,20 @@ public:
         FlexImage image;
         image.setPixelCode(VOCAB_PIXEL_RGB);
         image.resize(256,128);
-        checkEqual(image.width(),256,"check width");
-        checkEqual(image.height(),128,"check height");
+        checkEqual(image.width(), (size_t) 256,"check width");
+        checkEqual(image.height(), (size_t) 128,"check height");
         ImageOf<PixelInt> iint;
         iint.resize(256,128);
         long int total = 0;
-        for (int x=0; x<iint.width(); x++) {
-            for (int y=0; y<iint.height(); y++) {
+        for (size_t x=0; x<iint.width(); x++) {
+            for (size_t y=0; y<iint.height(); y++) {
                 int v = (x+y)%65537;
                 iint.pixel(x,y) = v;
                 total += v;
             }
         }
-        for (int x2=0; x2<iint.width(); x2++) {
-            for (int y2=0; y2<iint.height(); y2++) {
+        for (size_t x2=0; x2<iint.width(); x2++) {
+            for (size_t y2=0; y2<iint.height(); y2++) {
                 total -= iint.pixel(x2,y2);
             }
         }
@@ -102,8 +103,8 @@ public:
 
         ImageOf<PixelRgb> img1;
         img1.resize(128,64);
-        for (int x=0; x<img1.width(); x++) {
-            for (int y=0; y<img1.height(); y++) {
+        for (size_t x=0; x<img1.width(); x++) {
+            for (size_t y=0; y<img1.height(); y++) {
                 PixelRgb& pixel = img1.pixel(x,y);
                 pixel.r = x;
                 pixel.g = y;
@@ -119,8 +120,8 @@ public:
         if (img1.width()==result.width() &&
             img1.height()==result.height()) {
             int mismatch = 0;
-            for (int x=0; x<img1.width(); x++) {
-                for (int y=0; y<img1.height(); y++) {
+            for (size_t x=0; x<img1.width(); x++) {
+                for (size_t y=0; y<img1.height(); y++) {
                     PixelRgb& pix0 = img1.pixel(x,y);
                     PixelRgb& pix1 = result.pixel(x,y);
                     if (pix0.r!=pix1.r ||
@@ -149,8 +150,8 @@ public:
 
         ImageOf<PixelRgb> img1;
         img1.resize(128,64);
-        for (int x=0; x<img1.width(); x++) {
-            for (int y=0; y<img1.height(); y++) {
+        for (size_t x=0; x<img1.width(); x++) {
+            for (size_t y=0; y<img1.height(); y++) {
                 PixelRgb& pixel = img1.pixel(x,y);
                 unsigned char v = x%30;
                 pixel.r = v;
@@ -168,8 +169,8 @@ public:
         if (img1.width()==result.width() &&
             img1.height()==result.height()) {
             int mismatch = 0;
-            for (int x=0; x<img1.width(); x++) {
-                for (int y=0; y<img1.height(); y++) {
+            for (size_t x=0; x<img1.width(); x++) {
+                for (size_t y=0; y<img1.height(); y++) {
                     PixelRgb& pix0 = img1.pixel(x,y);
                     PixelMono& pix1 = result.pixel(x,y);
                     if (pix0.r>pix1+1 || pix0.r<pix1-1) {
@@ -182,16 +183,16 @@ public:
     }
 
 
-#define EXT_WIDTH (128)
-#define EXT_HEIGHT (64)
+static const size_t EXT_WIDTH = 128;
+static const size_t EXT_HEIGHT = 64;
 
     void testExternal() {
         report(0, "testing external image...");
         unsigned char buf[EXT_HEIGHT][EXT_WIDTH];
 
         {
-            for (int x=0; x<EXT_WIDTH; x++) {
-                for (int y=0; y<EXT_HEIGHT; y++) {
+            for (size_t x=0; x<EXT_WIDTH; x++) {
+                for (size_t y=0; y<EXT_HEIGHT; y++) {
                     buf[y][x] = 20;
                 }
             }
@@ -205,8 +206,8 @@ public:
         checkEqual(img1.height(),EXT_HEIGHT,"height check");
 
         int mismatch = 0;
-        for (int x=0; x<img1.width(); x++) {
-            for (int y=0; y<img1.height(); y++) {
+        for (size_t x=0; x<img1.width(); x++) {
+            for (size_t y=0; y<img1.height(); y++) {
                 img1.pixel(x,y) = 5;
                 if (buf[y][x]!=5) {
                     mismatch++;
@@ -244,8 +245,8 @@ public:
 
         ImageOf<PixelRgb> img1;
         img1.resize(128,64);
-        for (int x=0; x<img1.width(); x++) {
-            for (int y=0; y<img1.height(); y++) {
+        for (size_t x=0; x<img1.width(); x++) {
+            for (size_t y=0; y<img1.height(); y++) {
                 PixelRgb& pixel = img1.pixel(x,y);
                 pixel.r = x;
                 pixel.g = y;
@@ -280,8 +281,8 @@ public:
             if (img1.width()==result->width() &&
                 img1.height()==result->height()) {
                 int mismatch = 0;
-                for (int x=0; x<img1.width(); x++) {
-                    for (int y=0; y<img1.height(); y++) {
+                for (size_t x=0; x<img1.width(); x++) {
+                    for (size_t y=0; y<img1.height(); y++) {
                         PixelRgb& pix0 = img1.pixel(x,y);
                         PixelRgb& pix1 = result->pixel(x,y);
                         if (pix0.r!=pix1.r ||
@@ -304,34 +305,34 @@ public:
         report(0,"checking image padding...");
         ImageOf<PixelMono> img1;
         img1.resize(13,5);
-        checkEqual(img1.getQuantum(),8,"ipl compatible quantum");
-        checkEqual(img1.getRowSize(),16,"ipl compatible row size");
-        checkEqual(img1.width(),13,"good real row width");
+        checkEqual(img1.getQuantum(),(size_t) 8,"ipl compatible quantum");
+        checkEqual(img1.getRowSize(),(size_t) 16,"ipl compatible row size");
+        checkEqual(img1.width(),(size_t) 13,"good real row width");
         checkEqual(img1.getPadding(), img1.getRowSize()-img1.width(), "getPadding()");
 
         unsigned char buf2[13][5];
         ImageOf<PixelMono> img2;
         img2.setExternal(&buf2[0][0],13,5);
-        checkEqual(img2.getQuantum(),1,"natural external quantum");
-        checkEqual(img2.getRowSize(),13,"natural external row size");
-        checkEqual(img2.width(),13,"natural external row width");
-        checkEqual(img2.getPadding(), 0, "natural external padding");
+        checkEqual(img2.getQuantum(),(size_t) 1,"natural external quantum");
+        checkEqual(img2.getRowSize(),(size_t) 13,"natural external row size");
+        checkEqual(img2.width(),(size_t) 13,"natural external row width");
+        checkEqual(img2.getPadding(), (size_t)  0, "natural external padding");
 
         unsigned char buf3[16][5];
         ImageOf<PixelMono> img3;
         img3.setQuantum(8);
         img3.setExternal(&buf3[0][0],13,5);
-        checkEqual(img3.getQuantum(),8,"forced external quantum");
-        checkEqual(img3.getRowSize(),16,"forced external row size");
-        checkEqual(img3.width(),13,"normal external row width");
-        checkEqual(img3.getPadding(), 3, "forced external padding");
+        checkEqual(img3.getQuantum(),(size_t) 8,"forced external quantum");
+        checkEqual(img3.getRowSize(),(size_t) 16,"forced external row size");
+        checkEqual(img3.width(),(size_t) 13,"normal external row width");
+        checkEqual(img3.getPadding(),(size_t)  3, "forced external padding");
 
         FlexImage img4;
         img4.setPixelCode(VOCAB_PIXEL_MONO);
         img4.setQuantum(1);
         img4.resize(10,10);
-        checkEqual(img4.getQuantum(),1,"unit quantum");
-        checkEqual(img4.getRowSize(),10,"exact row size");
+        checkEqual(img4.getQuantum(),(size_t) 1,"unit quantum");
+        checkEqual(img4.getRowSize(),(size_t) 10,"exact row size");
     }
 
     void testStandard() {
@@ -341,10 +342,10 @@ public:
         img.zero();
         BufferedConnectionWriter writer;
         img.write(writer);
-        ConstString s = writer.toString();
+        std::string s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),s.length());
-        checkEqual(bot.size(),4,"plausible bottle out");
+        checkEqual(bot.size(),(size_t) 4,"plausible bottle out");
         checkEqual(bot.get(0).toString().c_str(),"mat","good tag");
         YARP_DEBUG(Logger::get(),"an example image:");
         YARP_DEBUG(Logger::get(),bot.toString().c_str());
@@ -374,25 +375,25 @@ public:
         ImageOf<PixelRgb> img3;
         img.resize(64,64);
         img.zero();
-        for (int i=0; i<img.width()/2; i++) {
-            for (int j=0; j<img.height()/2; j++) {
+        for (size_t i=0; i<img.width()/2; i++) {
+            for (size_t j=0; j<img.height()/2; j++) {
                 img(i,j).r = 255;
                 img(i,j).g = 255;
                 img(i,j).b = 255;
             }
         }
         img2.copy(img,32,32);
-        checkEqual(img2.width(),32,"dimension check");
+        checkEqual(img2.width(),(size_t) 32,"dimension check");
         checkEqual(img2(0,0),255,"logic check");
         checkEqual(img2(img2.width()-2,0),0,"logic check");
         checkEqual(img2(0,img2.height()-2),0,"logic check");
         img3.copy(img,16,16);
-        checkEqual(img3.width(),16,"dimension check");
+        checkEqual(img3.width(),(size_t) 16,"dimension check");
         checkEqual(img3(0,0).r,255,"logic check");
         checkEqual(img3(img3.width()-2,0).r,0,"logic check");
         checkEqual(img3(0,img3.height()-2).r,0,"logic check");
         img.copy(img3,4,4);
-        checkEqual(img.width(),4,"dimension check");
+        checkEqual(img.width(),(size_t) 4,"dimension check");
     }
 
     // test row pointer access (getRow())
@@ -409,7 +410,7 @@ public:
         img1.zero();
         img2.zero();
 
-        int r,c;
+        size_t r,c;
         // fill img1 with some data, using pointer to row
         // access
         for(r=0; r<img1.height(); r++)
@@ -455,7 +456,7 @@ public:
         img1.resize(15,10);
         img1.zero();
 
-        int r,c;
+        size_t r,c;
         int acc1=0;
         int acc2=0;
         for(r=0; r<img1.height(); r++)
@@ -518,8 +519,8 @@ public:
         unsigned char buf[EXT_HEIGHT][EXT_WIDTH];
 
         {
-            for (int x=0; x<EXT_WIDTH; x++) {
-                for (int y=0; y<EXT_HEIGHT; y++) {
+            for (size_t x=0; x<EXT_WIDTH; x++) {
+                for (size_t y=0; y<EXT_HEIGHT; y++) {
                     buf[y][x] = 20;
                 }
             }
@@ -534,8 +535,8 @@ public:
         checkEqual(img1.height(),EXT_HEIGHT,"height check");
 
         int mismatch = 0;
-        for (int x=0; x<img1.width(); x++) {
-            for (int y=0; y<img1.height(); y++) {
+        for (size_t x=0; x<img1.width(); x++) {
+            for (size_t y=0; y<img1.height(); y++) {
                 img1.pixel(x,y) = 5;
                 if (buf[img1.height()-y-1][x]!=5) {
                     mismatch++;
@@ -551,8 +552,8 @@ public:
         img2.setTopIsLowIndex(true);
         img2.resize(50,50);
         int ct = 1;
-        for (int x=0; x<img2.width(); x++) {
-            for (int y=0; y<img2.height(); y++) {
+        for (size_t x=0; x<img2.width(); x++) {
+            for (size_t y=0; y<img2.height(); y++) {
                 img2(x,y) = ct;
                 ct++;
             }
@@ -560,8 +561,8 @@ public:
         img3.copy(img2);
         mismatch = 0;
         ct = 1;
-        for (int x=0; x<img2.width(); x++) {
-            for (int y=0; y<img2.height(); y++) {
+        for (size_t x=0; x<img2.width(); x++) {
+            for (size_t y=0; y<img2.height(); y++) {
                 if (img3(x,y)!=ct) {
                     mismatch++;
                 }

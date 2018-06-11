@@ -1,8 +1,11 @@
 #!/usr/bin/ruby
 
-# Copyright: (C) 2010 RobotCub Consortium
-# Author: Paul Fitzpatrick
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 require 'yarp'
 
@@ -16,9 +19,9 @@ for i in 1..top do
     bottle = p.prepare()
     bottle.clear()
     bottle.addString("count")
-    bottle.addInt(i)
+    bottle.addInt32(i)
     bottle.addString("of")
-    bottle.addInt(top)
+    bottle.addInt32(top)
     puts "Sending", bottle.toString()
     p.write()
     Yarp::Time.delay(0.5)

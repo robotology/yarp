@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/impl/BufferedConnectionWriter.h>
@@ -19,7 +21,7 @@ using namespace yarp::os;
 
 class PortablePairTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "PortablePairTest"; }
+    virtual std::string getName() const override { return "PortablePairTest"; }
     
     void checkStandard() {
         PortablePair<Bottle,Bottle> pp;
@@ -27,12 +29,12 @@ public:
         pp.body.fromString("yes no");
         BufferedConnectionWriter writer;
         pp.write(writer);
-        ConstString s = writer.toString();
+        std::string s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),s.length());
-        checkEqual(bot.size(),2,"it is a pair");  
-        checkEqual(bot.get(0).asList()->size(),3,"head len is right");  
-        checkEqual(bot.get(1).asList()->size(),2,"body len is right");  
+        checkEqual(bot.size(),(size_t) 2,"it is a pair");
+        checkEqual(bot.get(0).asList()->size(),(size_t) 3,"head len is right");
+        checkEqual(bot.get(1).asList()->size(),(size_t) 2,"body len is right");
     }
 
 
@@ -60,8 +62,8 @@ public:
         
         checkTrue(result!=nullptr,"got something check");
         if (result!=nullptr) {
-            checkEqual(result->head.size(),3,"head len is right");  
-            checkEqual(result->body.size(),2,"body len is right");  
+            checkEqual(result->head.size(),(size_t) 3,"head len is right");
+            checkEqual(result->body.size(),(size_t) 2,"body len is right");
         }
 
         output.close();

@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_SEMAPHORE_H
@@ -10,10 +13,7 @@
 #include <yarp/os/api.h>
 
 namespace yarp {
-    namespace os {
-        class Semaphore;
-    }
-}
+namespace os {
 
 /**
  * \ingroup key_class
@@ -25,9 +25,9 @@ namespace yarp {
  * for another thread to first increment it.  This is a
  * useful primitive for regulating thread interaction.
  */
-class YARP_OS_API yarp::os::Semaphore {
+class YARP_OS_API Semaphore
+{
 public:
-
     /**
      * Constructor.  Sets the initial value of the counter.
      * @param initialCount initial value of the counter
@@ -74,9 +74,14 @@ public:
      */
     void post();
 
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-    void *implementation;
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_SEMAPHORE_H

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
  * Authors: Marco Randazzo, Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  *
  */
 
@@ -149,12 +149,12 @@ PortAudioDeviceDriver::~PortAudioDeviceDriver()
 
 bool PortAudioDeviceDriver::open(yarp::os::Searchable& config)
 {
-    driverConfig.rate = config.check("rate",Value(0),"audio sample rate (0=automatic)").asInt();
-    driverConfig.samples = config.check("samples",Value(0),"number of samples per network packet (0=automatic). For chunks of 1 second of recording set samples=rate. Channels number is handled internally.").asInt();
-    driverConfig.channels = config.check("channels",Value(0),"number of audio channels (0=automatic, max is 2)").asInt();
+    driverConfig.rate = config.check("rate",Value(0),"audio sample rate (0=automatic)").asInt32();
+    driverConfig.samples = config.check("samples",Value(0),"number of samples per network packet (0=automatic). For chunks of 1 second of recording set samples=rate. Channels number is handled internally.").asInt32();
+    driverConfig.channels = config.check("channels",Value(0),"number of audio channels (0=automatic, max is 2)").asInt32();
     driverConfig.wantRead = (bool)config.check("read","if present, just deal with reading audio (microphone)");
     driverConfig.wantWrite = (bool)config.check("write","if present, just deal with writing audio (speaker)");
-    driverConfig.deviceNumber = config.check("id",Value(-1),"which portaudio index to use (-1=automatic)").asInt();
+    driverConfig.deviceNumber = config.check("id",Value(-1),"which portaudio index to use (-1=automatic)").asInt32();
 
     if (!(driverConfig.wantRead||driverConfig.wantWrite))
     {

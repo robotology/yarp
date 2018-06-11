@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/NullConnectionWriter.h>
@@ -13,17 +15,32 @@ void yarp::os::NullConnectionWriter::appendBlock(const char *data, size_t len)
     YARP_UNUSED(len);
 }
 
-void yarp::os::NullConnectionWriter::appendInt(int data)
+void yarp::os::NullConnectionWriter::appendInt8(std::int8_t data)
 {
     YARP_UNUSED(data);
 }
 
-void yarp::os::NullConnectionWriter::appendInt64(const YARP_INT64& data)
+void yarp::os::NullConnectionWriter::appendInt16(std::int16_t data)
 {
     YARP_UNUSED(data);
 }
 
-void yarp::os::NullConnectionWriter::appendDouble(double data)
+void yarp::os::NullConnectionWriter::appendInt32(std::int32_t data)
+{
+    YARP_UNUSED(data);
+}
+
+void yarp::os::NullConnectionWriter::appendInt64(std::int64_t data)
+{
+    YARP_UNUSED(data);
+}
+
+void yarp::os::NullConnectionWriter::appendFloat32(yarp::conf::float32_t data)
+{
+    YARP_UNUSED(data);
+}
+
+void yarp::os::NullConnectionWriter::appendFloat64(yarp::conf::float64_t data)
 {
     YARP_UNUSED(data);
 }
@@ -40,12 +57,12 @@ void yarp::os::NullConnectionWriter::appendExternalBlock(const char *data, size_
     YARP_UNUSED(len);
 }
 
-bool yarp::os::NullConnectionWriter::isTextMode()
+bool yarp::os::NullConnectionWriter::isTextMode() const
 {
     return false;
 }
 
-bool yarp::os::NullConnectionWriter::isBareMode()
+bool yarp::os::NullConnectionWriter::isBareMode() const
 {
     return false;
 }
@@ -71,17 +88,17 @@ bool yarp::os::NullConnectionWriter::convertTextMode()
     return false;
 }
 
-bool yarp::os::NullConnectionWriter::isValid()
+bool yarp::os::NullConnectionWriter::isValid() const
 {
     return false;
 }
 
-bool yarp::os::NullConnectionWriter::isActive()
+bool yarp::os::NullConnectionWriter::isActive() const
 {
     return true;
 }
 
-bool yarp::os::NullConnectionWriter::isError()
+bool yarp::os::NullConnectionWriter::isError() const
 {
     return true;
 }
@@ -95,7 +112,7 @@ bool yarp::os::NullConnectionWriter::isNull() const
     return true;
 }
 
-yarp::os::SizedWriter *yarp::os::NullConnectionWriter::getBuffer()
+yarp::os::SizedWriter *yarp::os::NullConnectionWriter::getBuffer() const
 {
     return nullptr;
 }

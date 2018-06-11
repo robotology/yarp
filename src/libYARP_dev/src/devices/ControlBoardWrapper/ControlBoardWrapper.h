@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Author: Lorenzo Natale, Alberto Cardellino
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_CONTROLBOARDWRAPPER_CONTROLBOARDWRAPPER_H
@@ -17,7 +19,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Vocab.h>
 
@@ -26,7 +28,7 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/dev/Wrapper.h>
 
 #include <string>
@@ -41,10 +43,10 @@
 #include "RPCMessagesParser.h"
 
 // ROS state publisher
-#include <yarpRosHelper.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
-#include <sensor_msgs_JointState.h>  // Defines ROS jointState msg; it already includes TickTime and Header
+#include <yarp/rosmsg/sensor_msgs/JointState.h>
+#include <yarp/rosmsg/impl/yarpRosHelper.h>
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 #ifdef MSVC
@@ -253,22 +255,21 @@ public:
  */
 
 class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
-                                        public yarp::os::RateThread,
+                                        public yarp::os::PeriodicThread,
                                         public yarp::dev::IPidControl,
-                                        public yarp::dev::IPositionControl2,
+                                        public yarp::dev::IPositionControl,
                                         public yarp::dev::IPositionDirect,
-                                        public yarp::dev::IVelocityControl2,
+                                        public yarp::dev::IVelocityControl,
                                         public yarp::dev::IEncodersTimed,
                                         public yarp::dev::IMotor,
                                         public yarp::dev::IMotorEncoders,
                                         public yarp::dev::IAmplifierControl,
-                                        public yarp::dev::IControlLimits2,
+                                        public yarp::dev::IControlLimits,
                                         public yarp::dev::IRemoteCalibrator,
                                         public yarp::dev::IControlCalibration,
-                                        public yarp::dev::IControlCalibration2,
                                         public yarp::dev::ITorqueControl,
                                         public yarp::dev::IImpedanceControl,
-                                        public yarp::dev::IControlMode2,
+                                        public yarp::dev::IControlMode,
                                         public yarp::dev::IMultipleWrapper,
                                         public yarp::dev::IAxisInfo,
                                         public yarp::dev::IPreciselyTimed,
@@ -290,7 +291,7 @@ private:
     yarp::os::BufferedPort<CommandMessage>     inputStreamingPort;        // Input streaming port for high frequency commands
     yarp::os::Port inputRPCPort;                // Input RPC port for set/get remote calls
     yarp::os::Stamp time;                       // envelope to attach to the state port
-    yarp::os::Semaphore timeMutex;
+    yarp::os::Mutex timeMutex;
 
     // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated
     // from the YARP .thrift file
@@ -304,8 +305,8 @@ private:
     std::string                                         rosTopicName;               // name of the rosTopic
     yarp::os::Node                                      *rosNode;                   // add a ROS node
     yarp::os::NetUint32                                 rosMsgCounter;              // incremental counter in the ROS message
-    yarp::os::PortWriterBuffer<sensor_msgs_JointState>  rosOutputState_buffer;      // Buffer associated to the ROS topic
-    yarp::os::Publisher<sensor_msgs_JointState>         rosPublisherPort;           // Dedicated ROS topic publisher
+    yarp::os::PortWriterBuffer<yarp::rosmsg::sensor_msgs::JointState> rosOutputState_buffer; // Buffer associated to the ROS topic
+    yarp::os::Publisher<yarp::rosmsg::sensor_msgs::JointState> rosPublisherPort;    // Dedicated ROS topic publisher
 
     yarp::os::PortReaderBuffer<yarp::os::Bottle>    inputRPC_buffer;                // Buffer associated to the inputRPCPort port
     yarp::dev::impl::RPCMessagesParser              RPC_parser;                     // Message parser associated to the inputRPCPort port
@@ -313,7 +314,7 @@ private:
 
 
     // RPC calls are concurrent from multiple clients, data used inside the calls has to be protected
-    yarp::os::Semaphore                             rpcDataMutex;                   // mutex to avoid concurrency between more clients using rppc port
+    yarp::os::Mutex                                 rpcDataMutex;                   // mutex to avoid concurrency between more clients using rppc port
     yarp::dev::impl::MultiJointData                 rpcData;                        // Structure used to re-arrange data from "multiple_joints" calls.
 
     std::string         partName;               // to open ports and print more detailed debug messages
@@ -321,7 +322,7 @@ private:
     int               controlledJoints;
     int               base;         // to be removed
     int               top;          // to be removed
-    int               period;       // thread rate for publishing data
+    double            period;       // thread rate for publishing data
     bool              _verb;        // make it work and propagate to subdevice if --subdevice option is used
 
     yarp::os::Bottle getOptions();
@@ -341,6 +342,17 @@ private:
     bool openAndAttachSubDevice(yarp::os::Property& prop);
 
     bool ownDevices;
+    inline void printError(std::string func_name, std::string info, bool result)
+    {
+        //If result is false, this means that en error occured in function named func_name, otherwise means that the device doesn't implement the interface to witch func_name belongs to.
+        if(false == result)
+            yError() << "CBW(" << partName << "): " << func_name.c_str() << " on device" << info.c_str() << " returns false";
+        //Commented in order to mantain the old behaviour (none message appear if device desn't implement the interface)
+        //else
+            // yError() << "CBW(" << partName << "): " << func_name.c_str() << " on device" << info.c_str() << ": the interface is not available.";
+    }
+    
+    void calculateMaxNumOfJointsInDevices();
 #endif  //DOXYGEN_SHOULD_SKIP_THIS
 
 public:
@@ -358,7 +370,7 @@ public:
     bool verbose() const { return _verb; }
 
     /* Return id of this device */
-    yarp::os::ConstString getId() { return partName; };
+    std::string getId() { return partName; }
 
     /**
     * Default open() method.
@@ -905,6 +917,17 @@ public:
      */
     virtual bool getNominalCurrent(int m, double *val) override;
 
+    /* Set the the nominal current which can be kept for an indefinite amount of time
+    * without harming the motor. This value is specific for each motor and it is typically
+    * found in its datasheet. The units are Ampere.
+    * This value and the peak current may be used by the firmware to configure
+    * an I2T filter.
+    * @param m motor number
+    * @param val storage for return value. [Ampere]
+    * @return true/false success failure.
+    */
+    virtual bool setNominalCurrent(int m, const double val) override;
+
     /* Get the the peak current which causes damage to the motor if maintained
      * for a long amount of time.
      * The value is often found in the motor datasheet, units are Ampere.
@@ -1000,9 +1023,9 @@ public:
 
     /* IRemoteVariables */
 
-    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val) override;
+    virtual bool getRemoteVariable(std::string key, yarp::os::Bottle& val) override;
 
-    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val) override;
+    virtual bool setRemoteVariable(std::string key, const yarp::os::Bottle& val) override;
 
     virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys) override;
 
@@ -1067,9 +1090,8 @@ public:
     virtual bool quitPark() override;
 
     /* IControlCalibration */
-
-    using yarp::dev::IControlCalibration2::calibrate;
-
+    using yarp::dev::IControlCalibration::calibrate;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     /**
     * Calibrate a single joint, the calibration method accepts a parameter
     * that is used to accomplish various things internally and is implementation
@@ -1079,8 +1101,8 @@ public:
     * @return true/false on success/failure.
     */
     virtual bool calibrate(int j, double p) override;
-
-    virtual bool calibrate2(int j, unsigned int ui, double v1, double v2, double v3) override;
+#endif
+    virtual bool calibrate(int j, unsigned int ui, double v1, double v2, double v3) override;
 
     virtual bool setCalibrationParameters(int j, const CalibrationParameters& params) override;
 
@@ -1111,7 +1133,7 @@ public:
     virtual bool setGearboxRatio(int m, const double val) override;
 
     /* IAxisInfo */
-    virtual bool getAxisName(int j, yarp::os::ConstString& name) override;
+    virtual bool getAxisName(int j, std::string& name) override;
 
     virtual bool getJointType(int j, yarp::dev::JointTypeEnum& type) override;
 
@@ -1124,10 +1146,6 @@ public:
     virtual bool setRefTorque(int j, double t) override;
 
     virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) override;
-
-    virtual bool getBemfParam(int j, double *t) override;
-
-    virtual bool setBemfParam(int j, double t) override;
 
     virtual bool getMotorTorqueParams(int j,  yarp::dev::MotorTorqueParameters *params) override;
 
@@ -1168,7 +1186,7 @@ public:
 
     virtual bool setPosition(int j, double ref) override;
 
-    virtual bool setPositions(const int n_joints, const int *joints, double *dpos) override;
+    virtual bool setPositions(const int n_joints, const int *joints, const double *dpos) override;
 
     virtual bool setPositions(const double *refs) override;
 

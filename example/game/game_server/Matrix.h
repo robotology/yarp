@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef MATRIX_H
@@ -70,23 +73,23 @@ public:
             for (hid_iterator it2=line.begin(); it2!=line.end(); it2++) {
                 ID x = (*it2).ext_id_;
                 ID v = (*it2).int_id_;
-                printf("(%ld,%ld) = %ld\n",x.asInt(),y.asInt(),v.asInt());
-                fout << "piece " << x.asInt() << " " << y.asInt() << " " << 
-                    v.asInt() << std::endl;
+                printf("(%ld,%ld) = %ld\n",x.asInt32(),y.asInt32(),v.asInt32());
+                fout << "piece " << x.asInt32() << " " << y.asInt32() << " " << 
+                    v.asInt32() << std::endl;
                 ids.rebind(v,v);
             }
         }
         for (hid_iterator it=ids.begin(); it!=ids.end(); it++) {
             ID v = (*it).ext_id_;
-            printf("need state for id %ld\n", v.asInt());
+            printf("need state for id %ld\n", v.asInt32());
 
             char fname[256];
-            sprintf(fname, "/tmp/%ld.txt", v.asInt());
+            sprintf(fname, "/tmp/%ld.txt", v.asInt32());
 
-            fout << "state " << v.asInt() << " " << fname << std::endl;
+            fout << "state " << v.asInt32() << " " << fname << std::endl;
 
             std::ofstream fout2(fname);
-            fout2 << "id " << v.asInt() << std::endl;
+            fout2 << "id " << v.asInt32() << std::endl;
         }
     }
 };

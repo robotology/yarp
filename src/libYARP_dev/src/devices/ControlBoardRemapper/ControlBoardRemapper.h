@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Author: Lorenzo Natale, Silvio Traversaro
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_CONTROLBOARDREMAPPER_CONTROLBOARDREMAPPER_H
@@ -30,7 +32,7 @@ namespace dev {
 
 
 /**
- *  @ingroup dev_impl_wrapper
+ *  @ingroup dev_impl_remappers
  *
  * \section ControlBoardRemapper
  * A device that takes a list of axes from multiple controlboards and
@@ -71,22 +73,21 @@ namespace dev {
 
 class ControlBoardRemapper : public yarp::dev::DeviceDriver,
                              public yarp::dev::IPidControl,
-                             public yarp::dev::IPositionControl2,
+                             public yarp::dev::IPositionControl,
                              public yarp::dev::IPositionDirect,
-                             public yarp::dev::IVelocityControl2,
+                             public yarp::dev::IVelocityControl,
                              public yarp::dev::IPWMControl,
                              public yarp::dev::ICurrentControl,
                              public yarp::dev::IEncodersTimed,
                              public yarp::dev::IMotor,
                              public yarp::dev::IMotorEncoders,
                              public yarp::dev::IAmplifierControl,
-                             public yarp::dev::IControlLimits2,
+                             public yarp::dev::IControlLimits,
                              public yarp::dev::IRemoteCalibrator,
                              public yarp::dev::IControlCalibration,
-                             public yarp::dev::IControlCalibration2,
                              public yarp::dev::ITorqueControl,
                              public yarp::dev::IImpedanceControl,
-                             public yarp::dev::IControlMode2,
+                             public yarp::dev::IControlMode,
                              public yarp::dev::IMultipleWrapper,
                              public yarp::dev::IAxisInfo,
                              public yarp::dev::IPreciselyTimed,
@@ -387,6 +388,8 @@ public:
 
     virtual bool getNominalCurrent(int m, double *val) override;
 
+    virtual bool setNominalCurrent(int m, const double val) override;
+
     virtual bool getPeakCurrent(int m, double *val) override;
 
     virtual bool setPeakCurrent(int m, const double val) override;
@@ -410,9 +413,9 @@ public:
 
     /* IRemoteVariables */
 
-    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle &val) override;
+    virtual bool getRemoteVariable(std::string key, yarp::os::Bottle &val) override;
 
-    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle &val) override;
+    virtual bool setRemoteVariable(std::string key, const yarp::os::Bottle &val) override;
 
     virtual bool getRemoteVariablesList(yarp::os::Bottle *listOfKeys) override;
 
@@ -440,11 +443,11 @@ public:
 
     /* IControlCalibration */
 
-    using yarp::dev::IControlCalibration2::calibrate;
-
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     virtual bool calibrate(int j, double p) override;
+#endif
 
-    virtual bool calibrate2(int j, unsigned int ui, double v1, double v2, double v3) override;
+    virtual bool calibrate(int j, unsigned int ui, double v1, double v2, double v3) override;
 
     virtual bool setCalibrationParameters(int j, const CalibrationParameters &params) override;
 
@@ -470,7 +473,7 @@ public:
     virtual bool setGearboxRatio(int m, const double val) override;
 
     /* IAxisInfo */
-    virtual bool getAxisName(int j, yarp::os::ConstString &name) override;
+    virtual bool getAxisName(int j, std::string &name) override;
 
     virtual bool getJointType(int j, yarp::dev::JointTypeEnum &type) override;
 
@@ -483,10 +486,6 @@ public:
     virtual bool setRefTorque(int j, double t) override;
 
     virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) override;
-
-    virtual bool getBemfParam(int j, double *t) override;
-
-    virtual bool setBemfParam(int j, double t) override;
 
     virtual bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters *params) override;
 
@@ -526,7 +525,7 @@ public:
 
     virtual bool setPosition(int j, double ref) override;
 
-    virtual bool setPositions(const int n_joints, const int *joints, double *dpos) override;
+    virtual bool setPositions(const int n_joints, const int *joints, const double *dpos) override;
 
     virtual bool setPositions(const double *refs) override;
 

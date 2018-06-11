@@ -1,44 +1,36 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_IMPL_BUFFEREDCONNECTIONWRITER_H
 #define YARP_OS_IMPL_BUFFEREDCONNECTIONWRITER_H
 
 #include <yarp/os/ConnectionWriter.h>
-#include <yarp/os/ConnectionReader.h>
 #include <yarp/os/SizedWriter.h>
-#include <yarp/os/ManagedBytes.h>
-#include <yarp/os/NetType.h>
-#include <yarp/os/StringOutputStream.h>
-#include <yarp/os/Vocab.h>
-#include <yarp/os/Bottle.h>
-#include <yarp/os/NetInt64.h>
 
+#include <string>
 #include <vector>
-#include <cstdlib>
+
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class BufferedConnectionWriter;
-            class ConnectionRecorder;
-            using yarp::os::ConnectionWriter;
-            using yarp::os::ConnectionReader;
-        }
-    }
-    using os::ConnectionWriter;
-    using os::ConnectionReader;
-}
+namespace os {
 
-/**
+class Bytes;
+class ManagedBytes;
+
+namespace impl {
+
+/*
  * When allocating space to store serialized data, we start off with
  * a block of this size.  It will be resized as necessary.
  * Data can optionally have a header, serialized separately.
  */
-#define BUFFERED_CONNECTION_INITIAL_POOL_SIZE (1024)
+constexpr size_t BUFFERED_CONNECTION_INITIAL_POOL_SIZE = 1024;
 
 /**
  * A helper for creating cached object descriptions.  When a object is
@@ -52,9 +44,10 @@ namespace yarp {
  * or when they may change in value). If you use external blocks, be
  * sure to pay attention to onCompletion() events on your object.
  */
-class YARP_OS_impl_API yarp::os::impl::BufferedConnectionWriter : public ConnectionWriter, public SizedWriter {
+class YARP_OS_impl_API BufferedConnectionWriter : public yarp::os::ConnectionWriter,
+                                                  public yarp::os::SizedWriter
+{
 public:
-
     /**
      * Constructor.
      *
@@ -68,39 +61,19 @@ public:
      * methods, it takes on action on it.
      */
     BufferedConnectionWriter(bool textMode = false,
-                             bool bareMode = false) : textMode(textMode), bareMode(bareMode)
-    {
-        reader = nullptr;
-        target = &lst;
-        target_used = &lst_used;
-        ref = nullptr;
-        initialPoolSize = BUFFERED_CONNECTION_INITIAL_POOL_SIZE;
-        stopPool();
-        shouldDrop = false;
-        convertTextModePending = false;
-        lst_used = 0;
-        header_used = 0;
-    }
+                             bool bareMode = false);
 
     /**
      * Destructor.
      */
-    virtual ~BufferedConnectionWriter() {
-        clear();
-    }
+    virtual ~BufferedConnectionWriter();
 
     /**
      * Completely clear the writer and start afresh.
      *
      * @param textMode see parameter to constructor for details
      */
-    void reset(bool textMode) {
-        this->textMode = textMode;
-        clear();
-        reader = nullptr;
-        ref = nullptr;
-        convertTextModePending = false;
-    }
+    void reset(bool textMode);
 
     /**
      * Tell the writer that we will be serializing a new object, but to
@@ -114,23 +87,7 @@ public:
     /**
      * Clear all cached data.
      */
-    virtual void clear() override {
-        target = &lst;
-        target_used = &lst_used;
-
-        size_t i;
-        for (i=0; i<lst.size(); i++) {
-            delete lst[i];
-        }
-        lst.clear();
-        for (i=0; i<header.size(); i++) {
-            delete header[i];
-        }
-        header.clear();
-        stopPool();
-        lst_used = 0;
-        header_used = 0;
-    }
+    virtual void clear() override;
 
     /**
      * Add the specified bytes to the current pool buffer.
@@ -149,12 +106,7 @@ public:
      * addPool() for the current write will result in creation
      * of a new pool.
      */
-    void stopPool() {
-        pool = nullptr;
-        poolIndex = 0;
-        poolLength = initialPoolSize;
-        poolCount = 0;
-    }
+    void stopPool();
 
     /**
      * Add the specified buffer to the list of buffers to be written.
@@ -168,6 +120,22 @@ public:
      */
     void push(const Bytes& data, bool copy);
 
+    // defined by yarp::os::ConnectionWriter
+    virtual bool isTextMode() const override;
+    virtual bool isBareMode() const override;
+    virtual bool convertTextMode() override;
+    virtual void declareSizes(int argc, int* argv) override; // FIXME Remove?
+    virtual void setReplyHandler(PortReader& reader) override;
+    virtual void appendInt8(std::int8_t data) override;
+    virtual void appendInt16(std::int16_t data) override;
+    virtual void appendInt32(std::int32_t data) override;
+    virtual void appendInt64(std::int64_t data) override;
+    virtual void appendFloat32(yarp::conf::float32_t data) override;
+    virtual void appendFloat64(yarp::conf::float64_t data) override;
+    virtual void appendBlock(const char* data, size_t len) override;
+    virtual void appendString(const char* str, int terminate = '\n') override;
+    virtual void appendExternalBlock(const char* data, size_t len) override;
+
     /**
      * Add a buffer by recording a reference to it, without copying it.
      * Be careful, this is the opposite of what appendBlock(ptr, len)
@@ -175,45 +143,16 @@ public:
      *
      * @param data the buffer to add
      */
-    virtual void appendBlock(const yarp::os::Bytes& data) {
-        stopPool();
-        push(data, false);
-    }
+    virtual void appendBlock(const yarp::os::Bytes& data);
 
     /**
      * Add a buffer by copying its contents
      *
      * @param data the buffer to add
      */
-    virtual void appendBlockCopy(const Bytes& data) {
-        push(data, true);
-    }
+    virtual void appendBlockCopy(const Bytes& data);
 
-    // defined by yarp::os::ConnectionWriter
-    virtual void appendInt(int data) override {
-        NetInt32 i = data;
-        yarp::os::Bytes b((char*)(&i), sizeof(i));
-        push(b, true);
-    }
-
-    // defined by yarp::os::ConnectionWriter
-    virtual void appendInt64(const YARP_INT64& data) override {
-        NetInt64 i = data;
-        yarp::os::Bytes b((char*)(&i), sizeof(i));
-        push(b, true);
-    }
-
-    // defined by yarp::os::ConnectionWriter
-    virtual void appendDouble(double data) override {
-        NetFloat64 i = data;
-        yarp::os::Bytes b((char*)(&i), sizeof(i));
-        push(b, true);
-    }
-
-    virtual void appendStringBase(const ConstString& data) {
-        yarp::os::Bytes b((char*)(data.c_str()), data.length()+1);
-        push(b, true);
-    }
+    virtual void appendStringBase(const std::string& data);
 
     /**
      * Send a string along with a carriage-return-line-feed sequence.
@@ -222,205 +161,16 @@ public:
      *
      * @param data string to write, not including carriage-return-line-feed.
      */
-    virtual void appendLine(const ConstString& data) {
-        yarp::os::Bytes b((char*)(data.c_str()), data.length());
-        push(b, true);
-        const char *eol = "\r\n"; // for windows compatibility
-        yarp::os::Bytes beol((char*)eol, 2);
-        push(beol, true);
-    }
+    virtual void appendLine(const std::string& data);
 
-    // defined by yarp::os::ConnectionWriter
-    virtual bool isTextMode() override {
-        return textMode;
-    }
-
-    // defined by yarp::os::ConnectionWriter
-    virtual bool isBareMode() override {
-        return bareMode;
-    }
 
     // defined by yarp::os::SizedWriter
-    bool write(ConnectionWriter& connection) override {
-        stopWrite();
-        size_t i;
-        for (i=0; i<header_used; i++) {
-            yarp::os::ManagedBytes& b = *(header[i]);
-            connection.appendBlock(b.get(), b.used());
-        }
-        for (i=0; i<lst_used; i++) {
-            yarp::os::ManagedBytes& b = *(lst[i]);
-            connection.appendBlock(b.get(), b.used());
-        }
-        return !connection.isError();
-    }
-
-    // defined by yarp::os::SizedWriter
-    void write(OutputStream& os) override;
-
-    /**
-     * @return the size of the message that will be sent, in bytes, including
-     * the header and payload.
-     */
-    virtual size_t dataSize() {
-        size_t i;
-        size_t len=0;
-        for (i=0; i<header_used; i++) {
-            yarp::os::ManagedBytes& b = *(header[i]);
-            len += b.usedBytes().length();
-        }
-        for (i=0; i<lst_used; i++) {
-            yarp::os::ManagedBytes& b = *(lst[i]);
-            len += b.usedBytes().length();
-        }
-        return len;
-    }
-
-    // defined by yarp::os::SizedWriter
-    virtual size_t length() override {
-        return header_used+lst_used;
-    }
-
-    // defined by yarp::os::SizedWriter
-    virtual size_t headerLength() override {
-        return header_used;
-    }
-
-    /**
-     * @return number of cache buffers lying around, internal or external
-     */
-    size_t bufferCount() const {
-        return header.size() + lst.size();
-    }
-
-    // defined by yarp::os::SizedWriter
-    virtual size_t length(size_t index) override {
-        if (index<header_used) {
-            yarp::os::ManagedBytes& b = *(header[index]);
-            return b.used();
-        }
-        yarp::os::ManagedBytes& b = *(lst[index-header.size()]);
-        return b.used();
-    }
-
-    // defined by yarp::os::SizedWriter
-    virtual const char *data(size_t index) override {
-        if (index<header_used) {
-            yarp::os::ManagedBytes& b = *(header[index]);
-            return (const char *)b.get();
-        }
-        yarp::os::ManagedBytes& b = *(lst[index-header.size()]);
-        return (const char *)b.get();
-    }
-
-    /**
-     * @return the message serialized as a string
-     */
-    ConstString toString();
-
-    // defined by yarp::os::ConnectionWriter
-    virtual void appendBlock(const char *data, size_t len) override {
-        appendBlockCopy(yarp::os::Bytes((char*)data, len));
-    }
-
-    // defined by yarp::os::ConnectionWriter
-    virtual void appendString(const char *str, int terminate = '\n') override {
-        if (terminate=='\n') {
-            appendLine(str);
-        } else if (terminate==0) {
-            appendStringBase(str);
-        } else {
-            ConstString s = str;
-            s += terminate;
-            appendBlockCopy(yarp::os::Bytes((char*)(s.c_str()), s.length()));
-        }
-    }
-
-    // defined by yarp::os::ConnectionWriter
-    virtual void appendExternalBlock(const char *data, size_t len) override {
-        appendBlock(yarp::os::Bytes((char*)data, len));
-    }
-
-    // defined by yarp::os::ConnectionWriter
-    virtual void declareSizes(int argc, int *argv) override {
-        YARP_UNUSED(argc);
-        YARP_UNUSED(argv);
-        // this method is never called yet, so no point using it yet.
-    }
-
-    // defined by yarp::os::ConnectionWriter
-    virtual void setReplyHandler(PortReader& reader) override {
-        this->reader = &reader;
-    }
-
-    // defined by yarp::os::SizedWriter
-    virtual PortReader *getReplyHandler() override {
-        return reader;
-    }
-
-    // defined by yarp::os::ConnectionWriter
-    virtual bool convertTextMode() override;
-
-    /**
-     *
-     * Switch to storing a header.  Buffers are tracked separately
-     * for the header.
-     *
-     */
-    void addToHeader() {
-        stopPool();
-        target = &header;
-        target_used = &header_used;
-    }
-
-    // defined by yarp::os::SizedWriter
-    virtual yarp::os::Portable *getReference() override {
-        return ref;
-    }
-
-    // defined by yarp::os::ConnectionWriter
-    virtual void setReference(yarp::os::Portable *obj) override {
-        ref = obj;
-    }
-
-    // defined by yarp::os::ConnectionWriter
-    virtual bool isValid() override {
-        return true;
-    }
-
-    // defined by yarp::os::ConnectionWriter
-    virtual bool isActive() override {
-        return true;
-    }
-
-    // defined by yarp::os::ConnectionWriter
-    virtual bool isError() override {
-        return false;  // output errors are of no significance at user level
-    }
-
-    // defined by yarp::os::ConnectionWriter
-   virtual void requestDrop() override {
-        shouldDrop = true;
-    }
-
-    // defined by yarp::os::SizedWriter
-    bool dropRequested() override {
-        return shouldDrop;
-    }
-
-    // defined by yarp::os::SizedWriter
-    virtual void startWrite() override {}
-
-    // defined by yarp::os::SizedWriter
-    virtual void stopWrite() override {
-        // convert, last thing, if requested
-        applyConvertTextMode();
-    }
-
-    // defined by yarp::os::ConnectionWriter
-    virtual SizedWriter *getBuffer() override {
-        return this;
-    }
+    virtual size_t length() const override;
+    virtual size_t headerLength() const override;
+    virtual size_t length(size_t index) const override;
+    virtual const char* data(size_t index) const override;
+    virtual bool write(ConnectionWriter& connection) const override;
+    virtual void write(OutputStream& os) override;
 
     /**
      * Write message to a receiving object.  This is to simplify writing tests,
@@ -431,14 +181,57 @@ public:
     bool write(PortReader& obj);
 
     /**
+     * @return the size of the message that will be sent, in bytes, including
+     * the header and payload.
+     */
+    virtual size_t dataSize() const;
+
+    size_t bufferCount() const;
+
+
+    // defined by yarp::os::SizedWriter
+    virtual PortReader* getReplyHandler() override;
+
+    /**
+     * Switch to storing a header.  Buffers are tracked separately
+     * for the header.
+     */
+    void addToHeader();
+
+
+    // defined by yarp::os::SizedWriter
+    virtual yarp::os::Portable* getReference() override;
+
+
+    // defined by yarp::os::ConnectionWriter
+    virtual void setReference(yarp::os::Portable* obj) override;
+    virtual bool isValid() const override;
+    virtual bool isActive() const override;
+    virtual bool isError() const override;
+    virtual void requestDrop() override;
+
+    // defined by yarp::os::SizedWriter
+    virtual bool dropRequested() override;
+    virtual void startWrite() const override;
+    virtual void stopWrite() const override;
+
+    // defined by yarp::os::ConnectionWriter
+    virtual SizedWriter* getBuffer() const override;
+
+    /**
      * Set a custom initial pool size, which affects the size of buffers
      * created for temporary data storage.  If this method is not called,
      * the default used is BUFFERED_CONNECTION_INITIAL_POOL_SIZE
      * @param size the initial buffer size (in bytes) to use
      */
-    void setInitialPoolSize(size_t size) {
-        initialPoolSize = size;
-    }
+    void setInitialPoolSize(size_t size);
+
+
+    /**
+     * @return the message serialized as a string
+     */
+    std::string toString() const;
+
 
 private:
     /**
@@ -447,255 +240,39 @@ private:
      * the full message is available, whereas conversion can be
      * requested at any time.
      *
+     * The const version of this method performs a const_cast, and calls the
+     * non-const version. This makes possible calling it in const methods.
+     * Conceptually this is not completely wrong because it does not modify
+     * the external state of the class, but just some internal representation.
+     *
      * @return true on success
      */
     bool applyConvertTextMode();
+    bool applyConvertTextMode() const;
 
 
-    std::vector<yarp::os::ManagedBytes *> lst;    ///< buffers in payload
-    std::vector<yarp::os::ManagedBytes *> header; ///< buffers in header
-    std::vector<yarp::os::ManagedBytes *> *target;///< points to header or payload
-    yarp::os::ManagedBytes *pool; ///< the pool buffer (in lst or header)
-    size_t poolIndex;  ///< current offset into pool buffer
-    size_t poolCount;  ///< number of pool buffers allocated
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>) lst; ///< buffers in payload
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>) header; ///< buffers in header
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>*) target; ///< points to header or payload
+    yarp::os::ManagedBytes* pool; ///< the pool buffer (in lst or header)
+    size_t poolIndex; ///< current offset into pool buffer
+    size_t poolCount; ///< number of pool buffers allocated
     size_t poolLength; ///< length of current pool buffer
-    yarp::os::PortReader *reader; ///< reply handler, if any
-    bool textMode;     ///< should we be writing in text mode
-    bool bareMode;     ///< should we be writing without including type info
+    yarp::os::PortReader* reader; ///< reply handler, if any
+    bool textMode; ///< should we be writing in text mode
+    bool bareMode; ///< should we be writing without including type info
     bool convertTextModePending; ///< will we need to do an automatic textmode conversion
-    yarp::os::Portable *ref; ///< object reference for when serialization can be skipped
-    bool shouldDrop;   ///< should the connection drop after writes
-    size_t lst_used;   ///< how many payload buffers are in use for the current message
-    size_t header_used;///< how many header buffers are in use for the current message
-    size_t *target_used;///< points to lst_used of header_used
+    yarp::os::Portable* ref; ///< object reference for when serialization can be skipped
+    bool shouldDrop; ///< should the connection drop after writes
+    size_t lst_used; ///< how many payload buffers are in use for the current message
+    size_t header_used; ///< how many header buffers are in use for the current message
+    size_t* target_used; ///< points to lst_used of header_used
     size_t initialPoolSize; ///< size of new pool buffers
 };
 
 
-/**
- * A helper for recording entire message/reply transactions
- */
-class yarp::os::impl::ConnectionRecorder : public ConnectionReader,
-            public ConnectionWriter, public yarp::os::PortWriter {
-private:
-    ConnectionReader *reader;
-    ConnectionWriter *writer;
-    BufferedConnectionWriter readerStore;
-    BufferedConnectionWriter writerStore;
-    bool writing;
-    bool wrote;
-    bool skipNextInt;
-    yarp::os::Bottle blank;
-public:
-    ConnectionRecorder() {
-        reader = nullptr;
-        writer = nullptr;
-        writing = false;
-        wrote = false;
-        skipNextInt = false;
-    }
-
-    /**
-     * Call this to wrap a specific ConnectionReader.
-     */
-    void init(ConnectionReader *wrappedReader) {
-        reader = wrappedReader;
-        if (reader->isTextMode()) {
-            reader->convertTextMode();
-        }
-        writing = false;
-    }
-
-    /**
-     * Call this when all reading/writing has been done.
-     */
-    void fini() {
-        if (writing) {
-            if (writer->isTextMode()) {
-                writer->convertTextMode();
-            }
-            writing = false;
-        }
-    }
-
-    virtual bool expectBlock(const char *data, size_t len) override {
-        bool ok = reader->expectBlock(data, len);
-        if (ok) {
-            readerStore.appendBlock(data, len);
-        }
-        return ok;
-    }
-
-    virtual ConstString expectText(int terminatingChar) override {
-        ConstString str = reader->expectText(terminatingChar);
-        readerStore.appendString(str.c_str(), terminatingChar);
-        return str;
-    }
-
-    virtual int expectInt() override {
-        int x = reader->expectInt();
-        if (!skipNextInt) {
-            readerStore.appendInt(x);
-        } else {
-            skipNextInt = false;
-        }
-        return x;
-    }
-
-    virtual YARP_INT64 expectInt64() override {
-        YARP_INT64 x = reader->expectInt64();
-        readerStore.appendInt64(x);
-        return x;
-    }
-
-    virtual bool pushInt(int x) override {
-        bool ok = reader->pushInt(x);
-        skipNextInt = skipNextInt || ok;
-        return ok;
-    }
-
-    virtual double expectDouble() override {
-        double x = reader->expectDouble();
-        readerStore.appendDouble(x);
-        return x;
-    }
-
-    virtual bool isTextMode() override {
-        return false;
-    }
-
-    virtual bool isBareMode() override {
-        return false;
-    }
-
-    virtual bool convertTextMode() override {
-        return false;
-    }
-
-    virtual size_t getSize() override {
-        return reader->getSize();
-    }
-
-
-    virtual ConnectionWriter *getWriter() override {
-        writer = reader->getWriter();
-        writing = true;
-        wrote = true;
-        return this;
-    }
-
-    virtual Portable *getReference() override {
-        return reader->getReference();
-    }
-
-    virtual Contact getRemoteContact() override {
-        return reader->getRemoteContact();
-    }
-
-    virtual Contact getLocalContact() override {
-        return reader->getLocalContact();
-    }
-
-    virtual bool isValid() override {
-        // shared
-        if (writing) {
-            return writer->isValid();
-        }
-        return reader->isValid();
-    }
-
-    virtual bool isActive() override {
-        // shared
-        if (writing) {
-            return writer->isActive();
-        }
-        return reader->isActive();
-    }
-
-    virtual bool isError() override {
-        // shared
-        if (writing) {
-            return writer->isError();
-        }
-        return reader->isError();
-    }
-
-
-    virtual void appendBlock(const char *data, size_t len) override {
-        writer->appendBlock(data, len);
-        writerStore.appendBlock(data, len);
-    }
-
-    virtual void appendInt(int data) override {
-        writer->appendInt(data);
-        writerStore.appendInt(data);
-    }
-
-    virtual void appendInt64(const YARP_INT64& data) override {
-        writer->appendInt64(data);
-        writerStore.appendInt64(data);
-    }
-
-    virtual void appendDouble(double data) override {
-        writer->appendDouble(data);
-        writerStore.appendDouble(data);
-    }
-
-    virtual void appendString(const char *str, int terminate) override {
-        writer->appendString(str, terminate);
-        writerStore.appendString(str, terminate);
-    }
-
-    virtual void appendExternalBlock(const char *data, size_t len) override {
-        writer->appendExternalBlock(data, len);
-        writerStore.appendExternalBlock(data, len);
-    }
-
-    virtual void declareSizes(int argc, int *argv) override {
-        writer->declareSizes(argc, argv);
-    }
-
-    virtual void setReplyHandler(PortReader& reader) override {
-        writer->setReplyHandler(reader);
-    }
-
-    virtual void setReference(Portable *obj) override {
-        writer->setReference(obj);
-    }
-
-    virtual bool write(ConnectionWriter& connection) override {
-        if (hasReply()) {
-            connection.appendInt(BOTTLE_TAG_LIST); // nested structure
-            connection.appendInt(3);               // with three elements
-            connection.appendInt(BOTTLE_TAG_VOCAB);
-            connection.appendInt(VOCAB3('r', 'p', 'c'));
-            bool ok = readerStore.write(connection);
-            if (ok) {
-                writerStore.write(connection);
-            }
-            return ok;
-        } else {
-            return readerStore.write(connection);
-        }
-    }
-
-    virtual void requestDrop() override {
-    }
-
-    virtual yarp::os::Searchable& getConnectionModifiers() override {
-        return blank;
-    }
-
-    BufferedConnectionWriter& getMessage() { return readerStore; }
-    BufferedConnectionWriter& getReply() { return writerStore; }
-    bool hasReply() { return wrote; }
-    virtual SizedWriter *getBuffer() override { return nullptr; }
-
-    virtual bool setSize(size_t len) override {
-        return reader->setSize(len);
-    }
-};
-
-
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_BUFFEREDCONNECTIONWRITER_H

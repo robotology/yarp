@@ -3,7 +3,7 @@
  *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  *
  */
 
@@ -11,7 +11,7 @@
 
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/application.h>
-#include <yarp/manager/ymm-dir.h>
+#include <dirent.h>
 #include <yarp/os/ResourceFinder.h>
 
 /*
@@ -781,7 +781,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         return true;
     }
 
-    const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+    const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
 
     /**
      *  list available modules
@@ -1156,7 +1156,7 @@ void YConsoleManager::onCnnFailed(void* which)
 
 bool YConsoleManager::loadRecursiveApplications(const char* szPath)
 {
-    const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+    const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
     string strPath = szPath;
     if((strPath.rfind(directorySeparator)==string::npos) ||
             (strPath.rfind(directorySeparator)!=strPath.size()-1))

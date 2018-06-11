@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Authors: Ali Paikan
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  *
  */
 
@@ -31,7 +31,7 @@ public:
         if(dynamic_cast<yarp::profiler::graph::ProcessVertex*>(vertex)) {
             std::stringstream lable;
             lable << vertex->property.find("name").asString().c_str()
-                  << " (" << vertex->property.find("pid").asInt() << ")";
+                  << " (" << vertex->property.find("pid").asInt32() << ")";
             setText(0, lable.str().c_str());
         }
         else if(dynamic_cast<yarp::profiler::graph::MachineVertex*> (vertex))

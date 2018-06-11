@@ -1,19 +1,20 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_NESTEDCONTACT_H
 #define YARP_OS_NESTEDCONTACT_H
 
-#include <yarp/os/ConstString.h>
+#include <yarp/os/api.h>
+#include <string>
 
 namespace yarp {
-    namespace os {
-        class NestedContact;
-    }
-}
+namespace os {
 
 /**
  *
@@ -21,64 +22,95 @@ namespace yarp {
  * can express a ROS-style node/topic or node/service combination.
  *
  */
-class YARP_OS_API yarp::os::NestedContact {
+class YARP_OS_API NestedContact
+{
 public:
-    NestedContact() {}
+    /** @{ */
 
-    NestedContact(const ConstString& nFullName);
+    /**
+     * @brief Default constructor.
+     */
+    NestedContact();
 
-    bool fromString(const ConstString& nFullName);
+    /**
+     * @brief Constructor.
+     *
+     * @param fullName the full name.
+     */
+    NestedContact(const std::string& fullName);
 
-    void setTypeName(const ConstString& nWireType) {
-        wireType = nWireType;
-    }
+    /**
+     * @brief Copy constructor.
+     *
+     * @param rhs the NestedContact to copy
+     */
+    NestedContact(const NestedContact& rhs);
 
-    void setCategoryWrite() {
-        category = "+";
-    }
+    /**
+     * @brief Move constructor.
+     *
+     * @param rhs the NestedContact to be moved
+     */
+    NestedContact(NestedContact&& rhs);
 
-    void setCategoryRead() {
-        category = "-";
-    }
+    /**
+     * @brief Destructor.
+     */
+    ~NestedContact();
 
-    ConstString getFullName() const {
-        return fullName;
-    }
-    ConstString getNodeName() const {
-        return nodeName;
-    }
+    /**
+     * Copy assignment operator.
+     *
+     * @param rhs the NestedContact to copy
+     * @return this object
+     */
+    NestedContact& operator=(const NestedContact& rhs);
 
-    ConstString getNestedName() const {
-        return nestedName;
-    }
+    /**
+     * @brief Move assignment operator.
+     *
+     * @param rhs the NestedContact to be moved
+     * @return this object
+     */
+    NestedContact& operator=(NestedContact&& rhs);
 
-    ConstString getCategory() const {
-        return category;
-    }
+    /** @} */
+    /** @{ */
 
-    ConstString getTypeName() const {
-        return wireType;
-    }
+    bool fromString(const std::string& nFullName);
 
-    ConstString getTypeNameStar() const {
-        return (wireType!="")?wireType:"*";
-    }
+    void setTypeName(const std::string& nWireType);
 
+    void setCategoryWrite();
 
-    bool isNested() const {
-        return nestedName!="";
-    }
+    void setCategoryRead();
 
-    ConstString toString() const {
-        return nestedName + category + "@" + nodeName;
-    }
+    std::string getFullName() const;
 
+    std::string getNodeName() const;
+
+    std::string getNestedName() const;
+
+    std::string getCategory() const;
+
+    std::string getTypeName() const;
+
+    std::string getTypeNameStar() const;
+
+    bool isNested() const;
+
+    std::string toString() const;
+
+    /** @} */
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-    ConstString fullName;
-    ConstString nodeName;
-    ConstString nestedName;
-    ConstString category;
-    ConstString wireType;
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_NESTEDCONTACT_H

@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DRIVERS_H
@@ -36,18 +39,18 @@ public:
      * Returns a simple description of devices the factory can make.
      * @return a description of what this factory makes
      */
-    virtual yarp::os::ConstString toString() = 0;
+    virtual std::string toString() const = 0;
 
     /**
      * Create a device.
      */
-    virtual DeviceDriver *create() = 0;
+    virtual DeviceDriver *create() const = 0;
 
     /**
      * Get the common name of the device.
      * @return the common name of the device this creates.
      */
-    virtual yarp::os::ConstString getName() = 0;
+    virtual std::string getName() const = 0;
 
     /**
      * Get the common name of a device that can wrap this one.
@@ -55,14 +58,14 @@ public:
      * @return the common name of the device that can wrap this one
      * for the network.
      */
-    virtual yarp::os::ConstString getWrapper() = 0;
+    virtual std::string getWrapper() const = 0;
 
     /**
      * Get the name of the C++ class associated with this device.
      *
      * @return the name of the C++ class associated with this device.
      */
-    virtual yarp::os::ConstString getCode() = 0;
+    virtual std::string getCode() const = 0;
 
     /**
      * For "links" to other devices.
@@ -71,7 +74,7 @@ public:
      * @return the object managing the device.
      */
     virtual PolyDriver *owner() {
-        return 0/*NULL*/;
+        return nullptr;
     }
 };
 
@@ -81,7 +84,7 @@ public:
 template <class T>
 class yarp::dev::DriverCreatorOf : public DriverCreator {
 private:
-    yarp::os::ConstString desc, wrap, code;
+    std::string desc, wrap, code;
 public:
     /**
      * Constructor.  Sets up the name by which the device will be known.
@@ -101,23 +104,23 @@ public:
     {
     }
 
-    virtual yarp::os::ConstString toString() override {
+    virtual std::string toString() const override {
         return desc;
     }
 
-    virtual yarp::os::ConstString getName() override {
+    virtual std::string getName() const override {
         return desc;
     }
 
-    virtual yarp::os::ConstString getWrapper() override {
+    virtual std::string getWrapper() const override {
         return wrap;
     }
 
-    virtual yarp::os::ConstString getCode() override {
+    virtual std::string getCode() const override {
         return code;
     }
 
-    virtual DeviceDriver *create() override {
+    virtual DeviceDriver *create() const override {
         return new T;
     }
 };
@@ -129,7 +132,7 @@ public:
  */
 class YARP_dev_API yarp::dev::StubDriverCreator : public DriverCreator {
 private:
-    yarp::os::ConstString desc, wrap, code, libname, fnname;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) desc, wrap, code, libname, fnname;
 public:
     StubDriverCreator(const char *name, const char *wrap, const char *code,
                       const char *libname, const char *fnname) :
@@ -137,23 +140,23 @@ public:
     {
     }
 
-    virtual yarp::os::ConstString toString() override {
+    virtual std::string toString() const override {
         return desc;
     }
 
-    virtual yarp::os::ConstString getName() override {
+    virtual std::string getName() const override {
         return desc;
     }
 
-    virtual yarp::os::ConstString getWrapper() override {
+    virtual std::string getWrapper() const override {
         return wrap;
     }
 
-    virtual yarp::os::ConstString getCode() override {
+    virtual std::string getCode() const override {
         return code;
     }
 
-    virtual DeviceDriver *create() override;
+    virtual DeviceDriver *create() const override;
 };
 
 
@@ -215,7 +218,7 @@ public:
      * A description of the available devices.
      * @return a description of the available devices.
      */
-    virtual yarp::os::ConstString toString();
+    virtual std::string toString() const;
 
     /**
      * Destructor.

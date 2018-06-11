@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  *
  * Most of this file is from the output_example.c of ffmpeg -
  * copyright/copypolicy statement follows --
@@ -60,8 +60,8 @@ using namespace yarp::sig::file;
 #define M_PI 3.1415926535897931
 #endif
 
-//#include <ffmpeg/avformat.h>
-//#include <ffmpeg/avcodec.h>
+//#include <libavformat/avformat.h>
+//#include <libavcodec/avcodec.h>
 
 #define STREAM_FRAME_RATE 25 /* 25 images/s */
 #define STREAM_PIX_FMT AV_PIX_FMT_YUV420P /* default pix_fmt */
@@ -271,7 +271,7 @@ static void write_audio_frame(AVFormatContext *oc, AVStream *st, Sound& snd)
 
     c = st->codec;
 
-    int at = 0;
+    size_t at = 0;
     while (at<snd.getSamples()) {
 
         int avail = samples_size - samples_at;
@@ -629,20 +629,20 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
     //printf("DELAYED OPEN %s\n", config.toString().c_str());
 
     int w = config.check("width",Value(0),
-                         "width of image (must be even)").asInt();
+                         "width of image (must be even)").asInt32();
     int h = config.check("height",Value(0),
-                         "height of image (must be even)").asInt();
+                         "height of image (must be even)").asInt32();
     int framerate = config.check("framerate",Value(30),
-                                 "baseline images per second").asInt();
+                                 "baseline images per second").asInt32();
 
     int sample_rate = 0;
     int channels = 0;
     bool audio = config.check("audio","should audio be included");
     if (audio) {
         sample_rate = config.check("sample_rate",Value(44100),
-                                   "audio samples per second").asInt();
+                                   "audio samples per second").asInt32();
         channels = config.check("channels",Value(1),
-                                "audio samples per second").asInt();
+                                "audio samples per second").asInt32();
     }
 
     filename = config.check("out",Value("movie.avi"),
@@ -774,8 +774,8 @@ bool FfmpegWriter::close() {
 
 bool FfmpegWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
     if (delayed) {
-        savedConfig.put("width",Value(image.width()));
-        savedConfig.put("height",Value(image.height()));
+        savedConfig.put("width",Value((int)image.width()));
+        savedConfig.put("height",Value((int)image.height()));
     }
     if (!isOk()) { return false; }
 
@@ -808,10 +808,10 @@ bool FfmpegWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
 bool FfmpegWriter::putAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                                   yarp::sig::Sound& sound) {
     if (delayed) {
-        savedConfig.put("width",Value(image.width()));
-        savedConfig.put("height",Value(image.height()));
-        savedConfig.put("sample_rate",Value(sound.getFrequency()));
-        savedConfig.put("channels",Value(sound.getChannels()));
+        savedConfig.put("width",Value((int)image.width()));
+        savedConfig.put("height",Value((int)image.height()));
+        savedConfig.put("sample_rate",Value((int)sound.getFrequency()));
+        savedConfig.put("channels",Value((int)sound.getChannels()));
         savedConfig.put("audio",Value(1));
     }
     if (!isOk()) { return false; }

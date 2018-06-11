@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_IMPL_NAMESERCARRIER_H
@@ -29,8 +32,8 @@ class yarp::os::impl::NameserTwoWayStream : public TwoWayStream, InputStream
 {
 private:
     TwoWayStream *delegate;
-    ConstString pendingRead;
-    ConstString swallowRead;
+    std::string pendingRead;
+    std::string swallowRead;
 public:
     NameserTwoWayStream(TwoWayStream *delegate);
 
@@ -38,17 +41,17 @@ public:
 
     virtual InputStream& getInputStream() override;
     virtual OutputStream& getOutputStream() override;
-    virtual const Contact& getLocalAddress() override;
-    virtual const Contact& getRemoteAddress() override;
+    virtual const Contact& getLocalAddress() const override;
+    virtual const Contact& getRemoteAddress() const override;
 
-    virtual bool isOk() override;
+    virtual bool isOk() const override;
     virtual void reset() override;
     virtual void close() override;
     virtual void beginPacket() override;
     virtual void endPacket() override;
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b) override;
+    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 };
 
 
@@ -64,17 +67,17 @@ private:
 public:
     NameserCarrier();
 
-    virtual ConstString getName() override;
-    virtual ConstString getSpecifierName();
+    virtual std::string getName() const override;
+    std::string getSpecifierName() const;
 
-    virtual Carrier *create() override;
+    virtual Carrier *create() const override;
 
     virtual bool checkHeader(const Bytes& header) override;
-    virtual void getHeader(const Bytes& header) override;
-    virtual bool requireAck() override;
-    virtual bool isTextMode() override;
-    virtual bool supportReply() override;
-    virtual bool canEscape() override;
+    virtual void getHeader(Bytes& header) const override;
+    virtual bool requireAck() const override;
+    virtual bool isTextMode() const override;
+    virtual bool supportReply() const override;
+    virtual bool canEscape() const override;
     virtual bool sendHeader(ConnectionState& proto) override;
     virtual bool expectSenderSpecifier(ConnectionState& proto) override;
     virtual bool expectIndex(ConnectionState& proto) override;

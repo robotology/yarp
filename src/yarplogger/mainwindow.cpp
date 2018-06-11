@@ -623,7 +623,7 @@ void MainWindow::on_actionStart_Logger_triggered()
     }
     else
     {
-        system_message->addMessage("Unable to start: maybe logger port is conflicting with another running process?",MESSAGE_LEVEL_ERROR);
+        system_message->addMessage("Unable to start: maybe logger port is conflicting with another running process?\nOnly one logger can be executed on the same network.",MESSAGE_LEVEL_ERROR);
     }
 }
 

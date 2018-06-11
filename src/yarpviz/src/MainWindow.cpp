@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
  * Authors: Ali Paikan
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  *
  */
 
@@ -239,7 +239,7 @@ void MainWindow::drawGraph(Graph &graph)
 
             std::stringstream label;
             label << "   " << prop.find("name").asString().c_str()
-                  << " (" << prop.find("pid").asInt() << ")   ";
+                  << " (" << prop.find("pid").asInt32() << ")   ";
             sgraph->setAttribute("shape", "box");
             sgraph->setAttribute("label", label.str().c_str());
             if(prop.check("color")) {
@@ -254,7 +254,7 @@ void MainWindow::drawGraph(Graph &graph)
             dynamic_cast<GraphicVertex*>(*itr)->setGraphicItem(sgraph);
             sgraph->setVertex(*itr);
             std::stringstream keyProcess;
-            keyProcess<<prop.find("hostname").asString()<<prop.find("pid").asInt();
+            keyProcess<<prop.find("hostname").asString()<<prop.find("pid").asInt32();
             std::string endNodeName = keyProcess.str() + ".end";
             QGVNode * node = sgraph->addNode(endNodeName.c_str());
             node->setAttribute("shape", "circle");
@@ -297,7 +297,7 @@ void MainWindow::drawGraph(Graph &graph)
             QGVNode *node;
             QString colorProcess;
             if(layoutSubgraph) {
-                key<<v->property.find("hostname").asString()<<v->property.find("pid").asInt();
+                key<<v->property.find("hostname").asString()<<v->property.find("pid").asInt32();
                 QGVSubGraph *sgraph = sceneSubGraphMap[key.str()];
                 if(sgraph)
                 {
@@ -368,7 +368,7 @@ void MainWindow::drawGraph(Graph &graph)
                                                   (QGVNode*)((GraphicVertex*)&v2)->getGraphicItem(),
                                                    lable.c_str());
                     QosStyle::PacketPriorityLevel level=
-                            (QosStyle::PacketPriorityLevel)edge.property.find("FromPacketPriority").asInt();
+                            (QosStyle::PacketPriorityLevel)edge.property.find("FromPacketPriority").asInt32();
                     switch (level) {
                     case QosStyle::PacketPriorityNormal:
                         gve->setAttribute("color", "white");

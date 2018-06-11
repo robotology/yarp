@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2009 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <cstdlib>
@@ -34,7 +36,7 @@ using namespace yarp::os;
 using namespace yarp::serversql::impl;
 using namespace std;
 
-bool SubscriberOnSql::open(const ConstString& filename, bool fresh) {
+bool SubscriberOnSql::open(const std::string& filename, bool fresh) {
     sqlite3 *db = nullptr;
     if (fresh) {
         int result = access(filename.c_str(),F_OK);
@@ -172,9 +174,9 @@ bool SubscriberOnSql::close() {
     return true;
 }
 
-bool SubscriberOnSql::addSubscription(const ConstString& src,
-                                      const ConstString& dest,
-                                      const ConstString& mode) {
+bool SubscriberOnSql::addSubscription(const std::string& src,
+                                      const std::string& dest,
+                                      const std::string& mode) {
     removeSubscription(src,dest);
     ParseName psrc, pdest;
     psrc.apply(src);
@@ -227,8 +229,8 @@ bool SubscriberOnSql::addSubscription(const ConstString& src,
     return ok;
 }
 
-bool SubscriberOnSql::removeSubscription(const ConstString& src,
-                                         const ConstString& dest) {
+bool SubscriberOnSql::removeSubscription(const std::string& src,
+                                         const std::string& dest) {
     ParseName psrc, pdest;
     psrc.apply(src);
     pdest.apply(dest);
@@ -250,8 +252,8 @@ bool SubscriberOnSql::removeSubscription(const ConstString& src,
 }
 
 
-bool SubscriberOnSql::welcome(const ConstString& port, int activity) {
-    mutex.wait();
+bool SubscriberOnSql::welcome(const std::string& port, int activity) {
+    mutex.lock();
 
     NameSpace *ns = getDelegate();
     if (ns) {
@@ -301,7 +303,7 @@ bool SubscriberOnSql::welcome(const ConstString& port, int activity) {
         }
     }
     sqlite3_free(query);
-    mutex.post();
+    mutex.unlock();
 
     if (activity>0) {
         hookup(port);
@@ -311,14 +313,14 @@ bool SubscriberOnSql::welcome(const ConstString& port, int activity) {
     return ok;
 }
 
-bool SubscriberOnSql::hookup(const ConstString& port) {
+bool SubscriberOnSql::hookup(const std::string& port) {
     if (getDelegate()) {
         NestedContact nc(port);
         if (nc.getNestedName().size()>0) {
             return false;
         }
     }
-    mutex.wait();
+    mutex.lock();
     sqlite3_stmt *statement = nullptr;
     char *query = nullptr;
     //query = sqlite3_mprintf("SELECT * FROM subscriptions WHERE src = %Q OR dest= %Q",port, port);
@@ -344,20 +346,20 @@ bool SubscriberOnSql::hookup(const ConstString& port) {
     }
     sqlite3_finalize(statement);
     sqlite3_free(query);
-    mutex.post();
+    mutex.unlock();
 
     return false;
 }
 
 
-bool SubscriberOnSql::breakdown(const ConstString& port) {
+bool SubscriberOnSql::breakdown(const std::string& port) {
     if (getDelegate()) {
         NestedContact nc(port);
         if (nc.getNestedName().size()>0) {
             return false;
         }
     }
-    mutex.wait();
+    mutex.lock();
     sqlite3_stmt *statement = nullptr;
     char *query = nullptr;
     // query = sqlite3_mprintf("SELECT src,dest,srcFull,destFull,mode FROM subscriptions WHERE ((src = %Q AND EXISTS (SELECT NULL FROM live WHERE name=dest)) OR (dest = %Q AND EXISTS (SELECT NULL FROM live WHERE name=src))) UNION SELECT s1.src, s2.dest, s1.srcFull, s2.destFull, NULL FROM subscriptions s1, subscriptions s2, topics t WHERE (s1.dest = t.topic AND s2.src = t.topic AND ((s1.src = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s2.dest)) OR (s2.dest = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s1.src))))",port, port, port, port);
@@ -382,16 +384,16 @@ bool SubscriberOnSql::breakdown(const ConstString& port) {
     }
     sqlite3_finalize(statement);
     sqlite3_free(query);
-    mutex.post();
+    mutex.unlock();
 
     return false;
 }
 
 
-bool SubscriberOnSql::checkSubscription(const ConstString& src,const ConstString& dest,
-                                        const ConstString& srcFull,
-                                        const ConstString& destFull,
-                                        const ConstString& mode) {
+bool SubscriberOnSql::checkSubscription(const std::string& src,const std::string& dest,
+                                        const std::string& srcFull,
+                                        const std::string& destFull,
+                                        const std::string& mode) {
     if (getDelegate()) {
         NestedContact nc(src);
         if (nc.getNestedName().size()>0) {
@@ -419,7 +421,7 @@ bool SubscriberOnSql::checkSubscription(const ConstString& src,const ConstString
             }
         }
         if (mode!="") {
-            ConstString mode_name = mode;
+            std::string mode_name = mode;
             if (mode_name=="from") {
                 if (!csrc.isValid()) {
                     removeSubscription(src,dest);
@@ -435,11 +437,11 @@ bool SubscriberOnSql::checkSubscription(const ConstString& src,const ConstString
 }
 
 
-bool SubscriberOnSql::breakSubscription(const ConstString& dropper,
-                                        const ConstString& src, const ConstString& dest,
-                                        const ConstString& srcFull,
-                                        const ConstString& destFull,
-                                        const ConstString& mode) {
+bool SubscriberOnSql::breakSubscription(const std::string& dropper,
+                                        const std::string& src, const std::string& dest,
+                                        const std::string& srcFull,
+                                        const std::string& destFull,
+                                        const std::string& mode) {
     if (getDelegate()) {
         NestedContact nc(src);
         if (nc.getNestedName().size()>0) {
@@ -455,7 +457,7 @@ bool SubscriberOnSql::breakSubscription(const ConstString& dropper,
     }
     NameStore *store = getStore();
     if (store != nullptr) {
-        bool srcDrop = ConstString(dropper) == src;
+        bool srcDrop = std::string(dropper) == src;
         Contact contact;
         if (srcDrop) {
             contact = store->query(src);
@@ -468,7 +470,7 @@ bool SubscriberOnSql::breakSubscription(const ConstString& dropper,
             disconnect(srcFull,destFull,srcDrop);
         }
         if (mode!="") {
-            ConstString mode_name = mode;
+            std::string mode_name = mode;
             if (mode_name=="from") {
                 if (srcDrop) {
                     removeSubscription(src,dest);
@@ -485,12 +487,12 @@ bool SubscriberOnSql::breakSubscription(const ConstString& dropper,
 
 
 
-bool SubscriberOnSql::listSubscriptions(const ConstString& port,
+bool SubscriberOnSql::listSubscriptions(const std::string& port,
                                         yarp::os::Bottle& reply) {
-    mutex.wait();
+    mutex.lock();
     sqlite3_stmt *statement = nullptr;
     char *query = nullptr;
-    if (ConstString(port)!="") {
+    if (std::string(port)!="") {
         query = sqlite3_mprintf("SELECT s.srcFull, s.DestFull, EXISTS(SELECT topic FROM topics WHERE topic = s.src), EXISTS(SELECT topic FROM topics WHERE topic = s.dest), s.mode FROM subscriptions s WHERE s.src = %Q OR s.dest= %Q ORDER BY s.src, s.dest",port.c_str(),port.c_str());
     } else {
         query = sqlite3_mprintf("SELECT s.srcFull, s.destFull, EXISTS(SELECT topic FROM topics WHERE topic = s.src), EXISTS(SELECT topic FROM topics WHERE topic = s.dest), s.mode FROM subscriptions s ORDER BY s.src, s.dest");
@@ -533,23 +535,23 @@ bool SubscriberOnSql::listSubscriptions(const ConstString& port,
         if (srcTopic||destTopic) {
             Bottle btopic;
             btopic.addString("topic");
-            btopic.addInt(srcTopic);
-            btopic.addInt(destTopic);
+            btopic.addInt32(srcTopic);
+            btopic.addInt32(destTopic);
             b.addList() = btopic;
         }
     }
     sqlite3_finalize(statement);
     sqlite3_free(query);
-    mutex.post();
+    mutex.unlock();
 
     return true;
 }
 
 
-bool SubscriberOnSql::setTopic(const ConstString& port, const ConstString& structure,
+bool SubscriberOnSql::setTopic(const std::string& port, const std::string& structure,
                                bool active) {
     if (structure!="" || !active) {
-        mutex.wait();
+        mutex.lock();
         char *query = sqlite3_mprintf("DELETE FROM topics WHERE topic = %Q",
                                       port.c_str());
         if (verbose) {
@@ -562,14 +564,14 @@ bool SubscriberOnSql::setTopic(const ConstString& port, const ConstString& struc
             ok = false;
         }
         sqlite3_free(query);
-        mutex.post();
+        mutex.unlock();
         if (!ok) return false;
         if (!active) return true;
     }
 
     bool have_topic = false;
     if (structure=="") {
-        mutex.wait();
+        mutex.lock();
         sqlite3_stmt *statement = nullptr;
         char *query = nullptr;
         query = sqlite3_mprintf("SELECT topic FROM topics WHERE topic = %Q",
@@ -586,11 +588,11 @@ bool SubscriberOnSql::setTopic(const ConstString& port, const ConstString& struc
         }
         sqlite3_finalize(statement);
         sqlite3_free(query);
-        mutex.post();
+        mutex.unlock();
     }
 
     if (structure!="" || !have_topic) {
-        mutex.wait();
+        mutex.lock();
         char *msg = nullptr;
         const char *pstructure = structure.c_str();
         if (structure=="") pstructure = nullptr;
@@ -609,14 +611,14 @@ bool SubscriberOnSql::setTopic(const ConstString& port, const ConstString& struc
             }
         }
         sqlite3_free(query);
-        mutex.post();
+        mutex.unlock();
         if (!ok) return false;
     }
 
-    vector<vector<ConstString> > subs;
+    vector<vector<std::string> > subs;
 
     // go ahead and connect anything needed
-    mutex.wait();
+    mutex.lock();
     sqlite3_stmt *statement = nullptr;
     char *query = sqlite3_mprintf("SELECT s1.src, s2.dest, s1.srcFull, s2.destFull FROM subscriptions s1, subscriptions s2, topics t WHERE (t.topic = %Q AND s1.dest = t.topic AND s2.src = t.topic)", port.c_str());
     if (verbose) {
@@ -636,7 +638,7 @@ bool SubscriberOnSql::setTopic(const ConstString& port, const ConstString& struc
         char *srcFull = (char *)sqlite3_column_text(statement,2);
         char *destFull = (char *)sqlite3_column_text(statement,3);
         char *mode = (char *)sqlite3_column_text(statement,4);
-        vector<ConstString> sub;
+        vector<std::string> sub;
         sub.push_back(src);
         sub.push_back(dest);
         sub.push_back(srcFull);
@@ -646,10 +648,10 @@ bool SubscriberOnSql::setTopic(const ConstString& port, const ConstString& struc
     }
     sqlite3_finalize(statement);
     sqlite3_free(query);
-    mutex.post();
+    mutex.unlock();
 
     for (int i=0; i<(int)subs.size(); i++) {
-        vector<ConstString>& sub = subs[i];
+        vector<std::string>& sub = subs[i];
         checkSubscription(sub[0],sub[1],sub[2],sub[3],sub[4]);
     }
 
@@ -658,7 +660,7 @@ bool SubscriberOnSql::setTopic(const ConstString& port, const ConstString& struc
 
 
 bool SubscriberOnSql::listTopics(yarp::os::Bottle& topics) {
-    mutex.wait();
+    mutex.lock();
     sqlite3_stmt *statement = nullptr;
     char *query = nullptr;
     query = sqlite3_mprintf("SELECT topic FROM topics");
@@ -675,16 +677,16 @@ bool SubscriberOnSql::listTopics(yarp::os::Bottle& topics) {
     }
     sqlite3_finalize(statement);
     sqlite3_free(query);
-    mutex.post();
+    mutex.unlock();
 
     return true;
 }
 
 
-bool SubscriberOnSql::setType(const ConstString& family,
-                              const ConstString& structure,
-                              const ConstString& value) {
-    mutex.wait();
+bool SubscriberOnSql::setType(const std::string& family,
+                              const std::string& structure,
+                              const std::string& value) {
+    mutex.lock();
     char *msg = nullptr;
     char *query = sqlite3_mprintf("INSERT OR REPLACE INTO structures (name,%Q) VALUES(%Q,%Q)",
                                   family.c_str(),
@@ -703,13 +705,13 @@ bool SubscriberOnSql::setType(const ConstString& family,
         }
     }
     sqlite3_free(query);
-    mutex.post();
+    mutex.unlock();
     return ok;
 }
 
-ConstString SubscriberOnSql::getType(const ConstString& family,
-                                     const ConstString& structure) {
-    mutex.wait();
+std::string SubscriberOnSql::getType(const std::string& family,
+                                     const std::string& structure) {
+    mutex.lock();
     sqlite3_stmt *statement = nullptr;
     char *query = nullptr;
     query = sqlite3_mprintf("SELECT %s FROM structures WHERE name = %Q",
@@ -718,7 +720,7 @@ ConstString SubscriberOnSql::getType(const ConstString& family,
         printf("Query: %s\n", query);
     }
     int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, nullptr);
-    ConstString sresult;
+    std::string sresult;
     if (result!=SQLITE_OK) {
         printf("Error in query\n");
     }
@@ -727,7 +729,7 @@ ConstString SubscriberOnSql::getType(const ConstString& family,
     }
     sqlite3_finalize(statement);
     sqlite3_free(query);
-    mutex.post();
+    mutex.unlock();
 
     return sresult;
 }

@@ -1,17 +1,18 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/PortReader.h>
+#include <yarp/os/Type.h>
 
+yarp::os::PortReader::~PortReader() = default;
 
-yarp::os::PortReader::~PortReader()
-{
-}
-
-yarp::os::Type yarp::os::PortReader::getReadType()
+yarp::os::Type yarp::os::PortReader::getReadType() const
 {
     return Type::anon();
 }

@@ -1,8 +1,9 @@
-# Copyright (C) 2009  RobotCub Consortium
-# Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
-# Authors: Lorenzo Natale <lorenzo.natale@iit.it>
-#          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 # This module checks if all the dependencies are installed and if the
 # dependencies to build some parts of Yarp are satisfied.
@@ -24,6 +25,7 @@
 
 include(YarpRenamedOption)
 include(CMakeDependentOption)
+include(YarpPrintFeature)
 
 # USEFUL MACROS:
 
@@ -216,9 +218,9 @@ macro(print_dependency package)
     set(_version " ${${package}_VERSION}")
   endif()
   if(NOT DEFINED YARP_HAS_${PKG})
-    message(STATUS " --- ${package}${_required_version}: disabled")
+    set(_reason "disabled")
   elseif(NOT YARP_HAS_${PKG})
-    message(STATUS " --- ${package}${_required_version}: not found")
+    set(_reason "not found")
   elseif(YARP_HAS_SYSTEM_${PKG} AND YARP_USE_SYSTEM_${PKG})
     unset(_where)
     if(${package}_DIR)
@@ -241,17 +243,20 @@ macro(print_dependency package)
     elseif(${PKG}_INCLUDE_DIR)
       set(_where " (${${PKG}_INCLUDE_DIR})")
     endif()
-    message(STATUS " +++ ${package}${_required_version}: found${_version}${_where}")
+    set(_reason "found${_version}${_where}")
   elseif(YARP_HAS_SYSTEM_${PKG})
-    message(STATUS " +++ ${package}${_required_version}: compiling (system package disabled)")
+    set(_reason "compiling (system package disabled)")
   else()
-    message(STATUS " +++ ${package}${_required_version}: compiling (not found)")
+    set(_reason "compiling (not found)")
   endif()
+
+  yarp_print_with_checkbox(YARP_HAS_${PKG} "${package}${_required_version}: ${_reason}")
+
   unset(_lib)
   unset(_where)
   unset(_version)
   unset(_required_version)
-
+  unset(_reason)
 endmacro()
 
 
@@ -260,8 +265,15 @@ endmacro()
 option(SKIP_ACE "Compile YARP without ACE (Linux only, TCP only, limited functionality)" OFF)
 mark_as_advanced(SKIP_ACE)
 
+# NOTE: Fix this when Eigen3 3.3.1 is available on all supported distributions
+find_package(Eigen3 3.3.1 CONFIG QUIET)
+if(NOT eigen3_FOUND)
+  find_package(Eigen3 QUIET)
+  set(eigen3_FOUND ${EIGEN3_FOUND})
+endif()
+checkandset_dependency(Eigen3)
 
-option(CREATE_LIB_MATH "Create math library libYARP_math?" OFF)
+option(CREATE_LIB_MATH "Create math library libYARP_math?" ${YARP_HAS_EIGEN3})
 cmake_dependent_option(CREATE_YARPROBOTINTERFACE "Do you want to compile yarprobotinterface?" ON YARP_COMPILE_EXECUTABLES OFF)
 cmake_dependent_option(CREATE_YARPMANAGER_CONSOLE "Do you want to compile YARP Module Manager (console)?" ON YARP_COMPILE_EXECUTABLES OFF)
 cmake_dependent_option(CREATE_YARPDATADUMPER "Do you want to compile yarpdatadumper?" ON YARP_COMPILE_EXECUTABLES OFF)
@@ -275,13 +287,6 @@ cmake_dependent_option(CREATE_YARPMOTORGUI "Do you want to compile yarpmotorgui?
 cmake_dependent_option(CREATE_YARPLASERSCANNERGUI  "Do you want to compile yarplaserscannergui?" OFF CREATE_GUIS OFF)
 cmake_dependent_option(CREATE_YARPBATTERYGUI "Do you want to compile yarpbatterygui?" OFF CREATE_GUIS OFF)
 cmake_dependent_option(CREATE_YARPVIZ "Do you want to compile yarpviz?" OFF CREATE_GUIS OFF)
-
-yarp_renamed_option(CREATE_YMANAGER CREATE_YARPMANAGER_CONSOLE)
-yarp_renamed_option(CREATE_GYARPMANAGER CREATE_YARPMANAGER)
-yarp_deprecated_option(CREATE_GYARPBUILDER)
-yarp_deprecated_option(CREATE_YARPBUILDER)
-yarp_deprecated_option(CREATE_YARPMANAGER_PP) # Since YARP 2.3.68
-yarp_deprecated_option(CREATE_LIB_MATH_USING_GSL) # Since YARP 2.3.70
 
 if(CREATE_YARPMANAGER_CONSOLE OR CREATE_YARPMANAGER)
   set(CREATE_LIB_MANAGER ON CACHE INTERNAL "Create manager library libYARP_manager?")
@@ -353,11 +358,6 @@ checkbuildandset_dependency(SQLite)
 find_package(Libedit QUIET)
 checkandset_dependency(Libedit)
 
-if(CREATE_LIB_MATH)
-  find_package(Eigen3 QUIET)
-  checkandset_dependency(Eigen3)
-endif()
-
 if(CREATE_YARPROBOTINTERFACE OR CREATE_YARPSCOPE OR CREATE_LIB_MANAGER)
   set(TinyXML_REQUIRED_VERSION 2.6)
   find_package(TinyXML ${TinyXML_REQUIRED_VERSION} QUIET)
@@ -365,6 +365,8 @@ if(CREATE_YARPROBOTINTERFACE OR CREATE_YARPSCOPE OR CREATE_LIB_MANAGER)
 endif()
 
 buildandset_dependency(xmlrpcpp)
+
+buildandset_dependency(hmac)
 
 if(CREATE_GUIS)
   find_package(Qt5 COMPONENTS Core Widgets Gui Quick Qml Multimedia Xml PrintSupport QUIET)
@@ -405,7 +407,6 @@ checkandset_dependency(Lua)
 set(Libdc1394_REQUIRED_VERSION 2.0)
 find_package(Libdc1394 ${Libdc1394_REQUIRED_VERSION} QUIET)
 checkandset_dependency(Libdc1394)
-yarp_deprecated_option(USE_LIBDC1394) # since YARP 2.3.68
 
 find_package(JPEG QUIET)
 checkandset_dependency(JPEG)
@@ -463,6 +464,9 @@ checkandset_dependency(ZFP)
 find_package(OpenNI2 QUIET)
 checkandset_dependency(OpenNI2)
 
+find_package(realsense2 QUIET)
+checkandset_dependency(realsense2)
+
 find_package(Doxygen)
 checkandset_dependency(Doxygen)
 
@@ -477,6 +481,13 @@ set(GStreamerPluginsBase_REQUIRED_VERSION 1.4)
 find_package(GStreamerPluginsBase ${GStreamerPluginsBase_REQUIRED_VERSION} COMPONENTS app QUIET)
 checkandset_dependency(GStreamerPluginsBase)
 
+set(BISON_REQUIRED_VERSION 2.5)
+find_package(BISON ${BISON_REQUIRED_VERSION} QUIET)
+checkandset_dependency(BISON)
+
+find_package(FLEX QUIET)
+checkandset_dependency(FLEX)
+
 # PRINT DEPENDENCIES STATUS:
 
 message(STATUS "I have found the following libraries:")
@@ -487,6 +498,7 @@ print_dependency(SQLite)
 print_dependency(Eigen3)
 print_dependency(TinyXML)
 #print_dependency(xmlrpcpp)
+print_dependency(hmac)
 print_dependency(Qt5)
 print_dependency(QCustomPlot)
 print_dependency(Graphviz)
@@ -512,9 +524,12 @@ print_dependency(Libusb1)
 print_dependency(Stage)
 print_dependency(ZFP)
 print_dependency(OpenNI2)
+print_dependency(realsense2)
 print_dependency(GLIB2)
 print_dependency(GStreamer)
 print_dependency(GStreamerPluginsBase)
+print_dependency(BISON)
+print_dependency(FLEX)
 
 
 # CHECK DEPENDENCIES:
@@ -532,11 +547,35 @@ check_optional_dependency(YARP_COMPILE_BINDINGS SWIG)
 check_optional_dependency(YARP_COMPILE_RTF_ADDONS RTF)
 
 
+
+
 #########################################################################
-# Print information for user (CDash)
-if (CREATE_LIB_MATH)
-  message(STATUS "YARP_math selected for compilation")
-endif()
-if (CREATE_GUIS)
-  message(STATUS "GUIs selected for compilation")
-endif()
+# Print information for user
+
+message(STATUS "Enabled features:")
+
+yarp_print_feature(BUILD_SHARED_LIBS 0 "Build shared libraries")
+yarp_print_feature(SKIP_ACE 0 "Disable ACE library")
+yarp_print_feature(YARP_NO_DEPRECATED 0 "Filter out deprecated declarations from YARP API")
+yarp_print_feature(YARP_NO_DEPRECATED_WARNINGS 1 "Do not warn when using YARP deprecated declarations")
+
+yarp_print_feature(CREATE_LIB_MATH 0 "Compile YARP_math library")
+
+yarp_print_feature(YARP_COMPILE_EXECUTABLES 0 "Compile executables")
+yarp_print_feature(CREATE_YARPROBOTINTERFACE 1 "Compile yarprobotinterface")
+yarp_print_feature(CREATE_YARPMANAGER_CONSOLE 1 "Compile YARP Module Manager (console)")
+yarp_print_feature(CREATE_YARPDATADUMPER 1 "Compile yarpdatadumper")
+yarp_print_feature(CREATE_GUIS 1 "Compile GUIs")
+yarp_print_feature(CREATE_YARPVIEW 2 "Compile yarpview")
+yarp_print_feature(CREATE_YARPMANAGER 2 "Compile yarpmanager")
+yarp_print_feature(CREATE_YARPLOGGER 2 "Compile yarplogger")
+yarp_print_feature(CREATE_YARPSCOPE 2 "Compile yarpscope")
+yarp_print_feature(CREATE_YARPDATAPLAYER 2 "Compile yarpdataplayer")
+yarp_print_feature(CREATE_YARPMOTORGUI 2 "Compile yarpmotorgui")
+yarp_print_feature(CREATE_YARPLASERSCANNERGUI 2 "Compile yarplaserscannergui")
+yarp_print_feature(CREATE_YARPBATTERYGUI 2 "Compile yarpbatterygui")
+yarp_print_feature(CREATE_YARPVIZ 2 "Compile yarpviz")
+
+yarp_print_feature(YARP_COMPILE_RTF_ADDONS 0 "Compile Robot Testing Framework addons")
+yarp_print_feature(YARP_COMPILE_UNMAINTAINED 0 "Compile Unmaintained components")
+yarp_print_feature(YARP_COMPILE_TESTS 0 "Compile and enable YARP tests")

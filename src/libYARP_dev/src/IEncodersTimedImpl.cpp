@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
- * Authors: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
@@ -14,12 +16,10 @@ using namespace yarp::dev;
 
 ////////////////////////
 // Encoder Interface Timed Implementation
-ImplementEncodersTimed::ImplementEncodersTimed(IEncodersTimedRaw *y)
+ImplementEncodersTimed::ImplementEncodersTimed(IEncodersTimedRaw *y):nj(0)
 {
     iEncoders=y;
     helper = nullptr;
-    temp=nullptr;
-    temp2=nullptr;
 }
 
 ImplementEncodersTimed::~ImplementEncodersTimed()
@@ -32,12 +32,10 @@ bool ImplementEncodersTimed:: initialize (int size, const int *amap, const doubl
     if (helper!=nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert (helper != nullptr);
-    temp=new double [size];
-    yAssert (temp != nullptr);
-    temp2=new double [size];
-    yAssert (temp2 != nullptr);
+    
+    nj = size;
     return true;
 }
 
@@ -52,9 +50,6 @@ bool ImplementEncodersTimed::uninitialize ()
         delete castToMapper(helper);
         helper=nullptr;
     }
-
-    checkAndDestroy(temp);
-    checkAndDestroy(temp2);
 
     return true;
 }
@@ -92,9 +87,13 @@ bool ImplementEncodersTimed::setEncoder(int j, double val)
 
 bool ImplementEncodersTimed::setEncoders(const double *val)
 {
-    castToMapper(helper)->posA2E(val, temp);
+    double * tmp = new double[nj];
+    castToMapper(helper)->posA2E(val, tmp);
 
-    return iEncoders->setEncodersRaw(temp);
+    bool ret = iEncoders->setEncodersRaw(tmp);
+    
+    delete []tmp;
+    return ret;
 }
 
 bool ImplementEncodersTimed::getEncoder(int j, double *v)
@@ -116,11 +115,11 @@ bool ImplementEncodersTimed::getEncoder(int j, double *v)
 bool ImplementEncodersTimed::getEncoders(double *v)
 {
     bool ret;
+    double *my_enc = new double[nj];
+    ret=iEncoders->getEncodersRaw(my_enc);
 
-    ret=iEncoders->getEncodersRaw(temp);
-
-    castToMapper(helper)->posE2A(temp, v);
-
+    castToMapper(helper)->posE2A(my_enc, v);
+    delete [] my_enc;
     return ret;
 }
 
@@ -143,10 +142,11 @@ bool ImplementEncodersTimed::getEncoderSpeed(int j, double *v)
 bool ImplementEncodersTimed::getEncoderSpeeds(double *v)
 {
     bool ret;
-    ret=iEncoders->getEncoderSpeedsRaw(temp);
+    double *tmp = new double[nj];
+    ret=iEncoders->getEncoderSpeedsRaw(tmp);
 
-    castToMapper(helper)->velE2A(temp, v);
-
+    castToMapper(helper)->velE2A(tmp, v);
+    delete [] tmp;
     return ret;
 }
 
@@ -169,10 +169,11 @@ bool ImplementEncodersTimed::getEncoderAcceleration(int j, double *v)
 bool ImplementEncodersTimed::getEncoderAccelerations(double *v)
 {
     bool ret;
-    ret=iEncoders->getEncoderAccelerationsRaw(temp);
+    double *tmp = new double[nj];
+    ret=iEncoders->getEncoderAccelerationsRaw(tmp);
 
-    castToMapper(helper)->accE2A(temp, v);
-
+    castToMapper(helper)->accE2A(tmp, v);
+    delete [] tmp;
     return ret;
 }
 
@@ -196,10 +197,15 @@ bool ImplementEncodersTimed::getEncoderTimed(int j, double *v, double *t)
 bool ImplementEncodersTimed::getEncodersTimed(double *v, double *t)
 {
     bool ret;
-    ret=iEncoders->getEncodersTimedRaw(temp, temp2);
+    double *tmp_v = new double[nj];
+    double *tmp_t = new double[nj];
+    ret=iEncoders->getEncodersTimedRaw(tmp_v, tmp_t);
 
-    castToMapper(helper)->posE2A(temp, v);
-    castToMapper(helper)->toUser(temp2, t);
+    castToMapper(helper)->posE2A(tmp_v, v);
+    castToMapper(helper)->toUser(tmp_t, t);
+
+    delete [] tmp_v;
+    delete [] tmp_t;
 
     return ret;
 }

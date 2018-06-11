@@ -1,16 +1,17 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Authors: Ali Paikan
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef MONITORLUA_INC
 #define MONITORLUA_INC
 
 #include <string>
-#include <yarp/os/ConstString.h>
-#include <yarp/os/RateThread.h>
+#include <string>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/RecursiveMutex.h>
 #include "MonitorBinding.h"
 #include "lua_swig.h"
@@ -92,10 +93,10 @@ private:
 
 };
 
-class MonitorTrigger : public yarp::os::RateThread {
+class MonitorTrigger : public yarp::os::PeriodicThread {
 public:
-    MonitorTrigger(MonitorLua* monitor, int period)
-        : yarp::os::RateThread(period) {
+    MonitorTrigger(MonitorLua* monitor, double period)
+        : yarp::os::PeriodicThread(period) {
         MonitorTrigger::monitor = monitor;
     }
     virtual ~MonitorTrigger() { }

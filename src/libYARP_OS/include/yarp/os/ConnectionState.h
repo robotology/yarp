@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_CONNECTIONSTATE_H
@@ -38,7 +40,7 @@ public:
      * Get the route associated with this connection. A route is
      * a triplet of the source port, destination port, and carrier.
      */
-    virtual const Route& getRoute() = 0;
+    virtual const Route& getRoute() const = 0;
 
     /**
      * Set the route associated with this connection.
@@ -70,13 +72,13 @@ public:
     /**
      * Access a connection-specific logging object.
      */
-    virtual Log& getLog() = 0;
+    virtual Log& getLog() const = 0;
 
     /**
      * Extract a name for the sender, if the connection
      * type supports that.
      */
-    virtual ConstString getSenderSpecifier() = 0;
+    virtual std::string getSenderSpecifier() const = 0;
 
     /**
      * Access the streams associated with the connection.
@@ -108,12 +110,12 @@ public:
     /**
      * Check whether streams are in a good state.
      */
-    virtual bool checkStreams() = 0;
+    virtual bool checkStreams() const = 0;
 
     /**
      * Get the port associated with the connection.
      */
-    virtual Contactable *getContactable() = 0;
+    virtual Contactable *getContactable() const = 0;
 
 
     /**
@@ -134,7 +136,7 @@ public:
     /**
      * Read the envelope associated with the current message.
      */
-    virtual const ConstString& getEnvelope() = 0;
+    virtual const std::string& getEnvelope() const = 0;
 };
 
 #endif // YARP_OS_CONNECTIONSTATE_H

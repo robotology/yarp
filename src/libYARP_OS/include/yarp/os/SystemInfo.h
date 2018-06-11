@@ -1,14 +1,16 @@
 /*
- *  Copyright: (C) 2010 RobotCub Consortium
- *  Authors: Ali Paikan <ali.paikan@iit.it>
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #ifndef YARP_OS_SYSTEMINFO_H
 #define YARP_OS_SYSTEMINFO_H
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Property.h>
 
 
@@ -52,9 +54,9 @@ public:
      * @brief The ProcessorInfo struct holds the processor information
      */
     typedef struct ProcessorInfo {
-        yarp::os::ConstString architecture;
-        yarp::os::ConstString model;
-        yarp::os::ConstString vendor;
+        std::string architecture;
+        std::string model;
+        std::string vendor;
         int family;
         int modelNumber;
         int cores;
@@ -78,11 +80,11 @@ public:
      * @brief The PlatformInfo struct holds the operating system information
      */
     typedef struct PlatformInfo {
-        yarp::os::ConstString name;
-        yarp::os::ConstString distribution;
-        yarp::os::ConstString release;
-        yarp::os::ConstString codename;
-        yarp::os::ConstString kernel;
+        std::string name;
+        std::string distribution;
+        std::string release;
+        std::string codename;
+        std::string kernel;
         yarp::os::Property environmentVars;
     } PlatformInfo;
 
@@ -90,17 +92,17 @@ public:
      * @brief The UserInfo struct holds the current user information
      */
     typedef struct UserInfo {
-        yarp::os::ConstString userName;
-        yarp::os::ConstString realName;
-        yarp::os::ConstString homeDir;
+        std::string userName;
+        std::string realName;
+        std::string homeDir;
         int userID;
     } UserInfo;
 
     /*
     typedef struct NetworkInfo {
-        yarp::os::ConstString mac;
-        yarp::os::ConstString ip4;
-        yarp::os::ConstString ip6;
+        std::string mac;
+        std::string ip4;
+        std::string ip6;
     } NetworkInfo;
     */
 
@@ -108,8 +110,8 @@ public:
      * @brief The ProcessInfo struct provides the operating system process information.
      */
     typedef struct ProcessInfo {
-        yarp::os::ConstString name;
-        yarp::os::ConstString arguments;
+        std::string name;
+        std::string arguments;
         int schedPolicy;
         int schedPriority;
         int pid;
@@ -156,10 +158,10 @@ public:
      * @brief gets the operating system process information given by its PID.
      * If the information cannot be retrieved, ProcessInfo.pid is set to -1
      * otherwise, it is equal to the given PID as parameter.
-     * @param pid the process (task) PID
+     * @param pid the process (task) PID, or 0 for current process
      * @return ProcessInfo
      */
-    static ProcessInfo getProcessInfo(int pid);
+    static ProcessInfo getProcessInfo(int pid = 0);
 
     //static NetworkInfo getNetworkInfo();
 };

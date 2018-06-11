@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Authors: Marco Randazzo, Andrea Ruzzenenti
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_MATH_TRANSFORM_H
@@ -20,8 +22,8 @@ namespace yarp
         class YARP_math_API FrameTransform
         {
             public:
-            std::string src_frame_id;
-            std::string dst_frame_id;
+            YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) src_frame_id;
+            YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) dst_frame_id;
             double      timestamp;
 
             struct Translation_t
@@ -90,7 +92,7 @@ namespace yarp
             {
                 yarp::sig::Vector rotV;
                 yarp::sig::Matrix rotM;
-                rotM = rotation.toRotationMatrix();
+                rotM = rotation.toRotationMatrix4x4();
                 rotV = dcm2rpy(rotM);
                 return rotV;
             }
@@ -99,7 +101,7 @@ namespace yarp
             {
                 yarp::sig::Vector rotV;
                 yarp::sig::Matrix t_mat(4,4);
-                t_mat = rotation.toRotationMatrix();
+                t_mat = rotation.toRotationMatrix4x4();
                 t_mat[0][3] = translation.tX;
                 t_mat[1][3] = translation.tY;
                 t_mat[2][3] = translation.tZ;
@@ -124,7 +126,7 @@ namespace yarp
                 return true;
             }
 
-            std::string toString();
+            std::string toString() const;
         };
     }
 }

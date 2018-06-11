@@ -1,13 +1,17 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_CONF_API_H
 #define YARP_CONF_API_H
 
 #include <yarp/conf/compiler.h>
+#include <yarp/conf/system.h>
 
 /*
 
@@ -90,6 +94,18 @@ recommended usage of this header within YARP is:
 #  define YARP_DEPRECATED_MSG(X)
 #endif
 
+
+// Position for the attribute [[deprecated]] for typedef is different compared
+// to compiler-specific attributes
+#if defined(YARP_COMPILER_CXX_ATTRIBUTE_DEPRECATED) && YARP_COMPILER_CXX_ATTRIBUTE_DEPRECATED
+# define YARP_DEPRECATED_TYPEDEF YARP_DEPRECATED typedef
+# define YARP_DEPRECATED_TYPEDEF_MSG(x) YARP_DEPRECATED_MSG(x) typedef
+#else
+# define YARP_DEPRECATED_TYPEDEF typedef YARP_DEPRECATED
+# define YARP_DEPRECATED_TYPEDEF_MSG(x) typedef YARP_DEPRECATED_MSG(x)
+#endif
+
+
 // Due to a GCC bug, it is not a good idea to mix C++14 and compiler-specific attributes
 // For this reason, only for usage with visibility macro, we define the compiler-specific attributes
 // See https://github.com/robotology/yarp/issues/1531
@@ -113,6 +129,14 @@ recommended usage of this header within YARP is:
 #else
 #  define YARP_DEPRECATED_API YARP_DEPRECATED_COMPILER_SPECIFIC YARP_OS_API
 #  define YARP_DEPRECATED_API_MSG(X) YARP_DEPRECATED_COMPILER_SPECIFIC_MSG(X) YARP_OS_API
+#endif
+
+#ifdef BUILDING_YARP
+#  define YARP_DEPRECATED_INTERNAL YARP_DEPRECATED
+#  define YARP_DEPRECATED_INTERNAL_MSG(X) YARP_DEPRECATED_MSG(X)
+#else
+#  define YARP_DEPRECATED_INTERNAL
+#  define YARP_DEPRECATED_INTERNAL_MSG(X)
 #endif
 
 // YARP_NODISCARD: print a warning if the result unused

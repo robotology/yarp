@@ -1,4 +1,12 @@
-// This is an automatically-generated file.
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+// This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
 #ifndef YARP_THRIFT_GENERATOR_STRUCT_jointData
@@ -101,54 +109,54 @@ public:
   // read and write structure on a connection
   bool read(yarp::os::idl::WireReader& reader) override;
   bool read(yarp::os::ConnectionReader& connection) override;
-  bool write(yarp::os::idl::WireWriter& writer) override;
-  bool write(yarp::os::ConnectionWriter& connection) override;
+  bool write(const yarp::os::idl::WireWriter& writer) const override;
+  bool write(yarp::os::ConnectionWriter& connection) const override;
 
 private:
-  bool write_jointPosition(yarp::os::idl::WireWriter& writer);
-  bool nested_write_jointPosition(yarp::os::idl::WireWriter& writer);
-  bool write_jointPosition_isValid(yarp::os::idl::WireWriter& writer);
-  bool nested_write_jointPosition_isValid(yarp::os::idl::WireWriter& writer);
-  bool write_jointVelocity(yarp::os::idl::WireWriter& writer);
-  bool nested_write_jointVelocity(yarp::os::idl::WireWriter& writer);
-  bool write_jointVelocity_isValid(yarp::os::idl::WireWriter& writer);
-  bool nested_write_jointVelocity_isValid(yarp::os::idl::WireWriter& writer);
-  bool write_jointAcceleration(yarp::os::idl::WireWriter& writer);
-  bool nested_write_jointAcceleration(yarp::os::idl::WireWriter& writer);
-  bool write_jointAcceleration_isValid(yarp::os::idl::WireWriter& writer);
-  bool nested_write_jointAcceleration_isValid(yarp::os::idl::WireWriter& writer);
-  bool write_motorPosition(yarp::os::idl::WireWriter& writer);
-  bool nested_write_motorPosition(yarp::os::idl::WireWriter& writer);
-  bool write_motorPosition_isValid(yarp::os::idl::WireWriter& writer);
-  bool nested_write_motorPosition_isValid(yarp::os::idl::WireWriter& writer);
-  bool write_motorVelocity(yarp::os::idl::WireWriter& writer);
-  bool nested_write_motorVelocity(yarp::os::idl::WireWriter& writer);
-  bool write_motorVelocity_isValid(yarp::os::idl::WireWriter& writer);
-  bool nested_write_motorVelocity_isValid(yarp::os::idl::WireWriter& writer);
-  bool write_motorAcceleration(yarp::os::idl::WireWriter& writer);
-  bool nested_write_motorAcceleration(yarp::os::idl::WireWriter& writer);
-  bool write_motorAcceleration_isValid(yarp::os::idl::WireWriter& writer);
-  bool nested_write_motorAcceleration_isValid(yarp::os::idl::WireWriter& writer);
-  bool write_torque(yarp::os::idl::WireWriter& writer);
-  bool nested_write_torque(yarp::os::idl::WireWriter& writer);
-  bool write_torque_isValid(yarp::os::idl::WireWriter& writer);
-  bool nested_write_torque_isValid(yarp::os::idl::WireWriter& writer);
-  bool write_pwmDutycycle(yarp::os::idl::WireWriter& writer);
-  bool nested_write_pwmDutycycle(yarp::os::idl::WireWriter& writer);
-  bool write_pwmDutycycle_isValid(yarp::os::idl::WireWriter& writer);
-  bool nested_write_pwmDutycycle_isValid(yarp::os::idl::WireWriter& writer);
-  bool write_current(yarp::os::idl::WireWriter& writer);
-  bool nested_write_current(yarp::os::idl::WireWriter& writer);
-  bool write_current_isValid(yarp::os::idl::WireWriter& writer);
-  bool nested_write_current_isValid(yarp::os::idl::WireWriter& writer);
-  bool write_controlMode(yarp::os::idl::WireWriter& writer);
-  bool nested_write_controlMode(yarp::os::idl::WireWriter& writer);
-  bool write_controlMode_isValid(yarp::os::idl::WireWriter& writer);
-  bool nested_write_controlMode_isValid(yarp::os::idl::WireWriter& writer);
-  bool write_interactionMode(yarp::os::idl::WireWriter& writer);
-  bool nested_write_interactionMode(yarp::os::idl::WireWriter& writer);
-  bool write_interactionMode_isValid(yarp::os::idl::WireWriter& writer);
-  bool nested_write_interactionMode_isValid(yarp::os::idl::WireWriter& writer);
+  bool write_jointPosition(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_jointPosition(const yarp::os::idl::WireWriter& writer) const;
+  bool write_jointPosition_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_jointPosition_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool write_jointVelocity(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_jointVelocity(const yarp::os::idl::WireWriter& writer) const;
+  bool write_jointVelocity_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_jointVelocity_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool write_jointAcceleration(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_jointAcceleration(const yarp::os::idl::WireWriter& writer) const;
+  bool write_jointAcceleration_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_jointAcceleration_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool write_motorPosition(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_motorPosition(const yarp::os::idl::WireWriter& writer) const;
+  bool write_motorPosition_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_motorPosition_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool write_motorVelocity(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_motorVelocity(const yarp::os::idl::WireWriter& writer) const;
+  bool write_motorVelocity_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_motorVelocity_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool write_motorAcceleration(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_motorAcceleration(const yarp::os::idl::WireWriter& writer) const;
+  bool write_motorAcceleration_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_motorAcceleration_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool write_torque(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_torque(const yarp::os::idl::WireWriter& writer) const;
+  bool write_torque_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_torque_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool write_pwmDutycycle(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_pwmDutycycle(const yarp::os::idl::WireWriter& writer) const;
+  bool write_pwmDutycycle_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_pwmDutycycle_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool write_current(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_current(const yarp::os::idl::WireWriter& writer) const;
+  bool write_current_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_current_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool write_controlMode(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_controlMode(const yarp::os::idl::WireWriter& writer) const;
+  bool write_controlMode_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_controlMode_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool write_interactionMode(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_interactionMode(const yarp::os::idl::WireWriter& writer) const;
+  bool write_interactionMode_isValid(const yarp::os::idl::WireWriter& writer) const;
+  bool nested_write_interactionMode_isValid(const yarp::os::idl::WireWriter& writer) const;
   bool read_jointPosition(yarp::os::idl::WireReader& reader);
   bool nested_read_jointPosition(yarp::os::idl::WireReader& reader);
   bool read_jointPosition_isValid(yarp::os::idl::WireReader& reader);
@@ -196,7 +204,7 @@ private:
 
 public:
 
-  yarp::os::ConstString toString();
+  std::string toString() const;
 
   // if you want to serialize this class without nesting, use this helper
   typedef yarp::os::idl::Unwrapped<jointData > unwrapped;
@@ -511,7 +519,7 @@ public:
       dirty_flags(false);
     }
     bool read(yarp::os::ConnectionReader& connection) override;
-    bool write(yarp::os::ConnectionWriter& connection) override;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
   private:
 
     jointData *obj;

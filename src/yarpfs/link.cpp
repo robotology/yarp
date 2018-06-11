@@ -1,8 +1,11 @@
 /*
- * Copyright (C) 2007 RobotCub Consortium, Giacomo Spigler
- * Authors: Paul Fitzpatrick, Giacomo Spigler
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * Copyright (C) 2007 Giacomo Spigler
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <fuse/fuse.h>
@@ -16,8 +19,6 @@
 
 #include <string>
 #include <csignal>
-
-#include <ace/Containers_T.h>
 
 #include "yarputils.h"
 #include "yarpfns.h"

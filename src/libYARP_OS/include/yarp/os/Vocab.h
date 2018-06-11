@@ -1,15 +1,17 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #ifndef YARP_OS_VOCAB_H
 #define YARP_OS_VOCAB_H
 
 #include <yarp/os/NetInt32.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 namespace yarp {
     namespace os {
@@ -60,14 +62,14 @@ public:
      * @param str the string to convert
      * @result the integer equivalent of the string form of the identifier
      */
-    static NetInt32 encode(const ConstString& str);
+    static NetInt32 encode(const std::string& str);
 
     /**
      * Convert a vocabulary identifier into a string.
      * @param code the vocabulary identifier to convert
      * @result the string equivalent of the integer form of the identifier
      */
-    static ConstString decode(NetInt32 code);
+    static std::string decode(NetInt32 code);
 };
 
 #endif // YARP_OS_VOCAB_H

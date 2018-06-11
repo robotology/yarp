@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 // source for sender.cpp
@@ -21,7 +23,7 @@ int main() {
     for (int i=0; i<100; i++) {
         output.write(bot1);
         printf("Sent message: %s\n", bot1.toString().c_str());
-        bot1.addInt(i); // change the message for next time
+        bot1.addInt32(i); // change the message for next time
         Time::delay(1);
     }
     output.close();

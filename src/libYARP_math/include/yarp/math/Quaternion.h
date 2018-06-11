@@ -1,8 +1,10 @@
 /*
-* Author: Marco Randazzo, Silvio Traversaro
-* Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #ifndef YARP_QUATERNION
 #define YARP_QUATERNION
@@ -40,21 +42,42 @@ public:
     double& z() ;
     double& w() ;
 
-    std::string toString(int precision = -1, int width = -1);
+    std::string toString(int precision = -1, int width = -1) const;
 
     /**
     * Computes the modulus of the quaternion.
     */
     double abs();
 
+    /**
+    * Normalizes the quaternion elements.
+    */
     void normalize();
+
+    /**
+    * Computes the inverse of the quaternion.
+    */
+    Quaternion inverse() const;
 
     /**
     * Computes the argument or phase of the quaternion in radians.
     */
     double arg();
 
+    /**
+    * Computes the quaternion from an axis-angle representation
+    * @param v a 4D vector, where the first three elements represent the axis, while the fourth element represents the angle (in radians)
+    */
     void fromAxisAngle(const yarp::sig::Vector &v);
+
+    /**
+    * Computes the quaternion from an axis-angle representation
+    * @param axis a 3D vector representing the axis.
+    * @angle the rotation angle (in radians)
+    */
+    void fromAxisAngle(const yarp::sig::Vector& axis, const double& angle);
+
+
     yarp::sig::Vector toAxisAngle();
 
     /**
@@ -83,11 +106,21 @@ public:
     */
     void fromRotationMatrix(const yarp::sig::Matrix &R);
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+    /**
+     * Converts a quaternion to a rotation matrix.
+     *
+     * @deprecated since YARP 3.0.0. Use toRotationMatrix4x4 instead.
+     */
+    YARP_DEPRECATED_MSG("Use toRotationMatrix4x4 instead")
+    yarp::sig::Matrix toRotationMatrix() const { return toRotationMatrix4x4(); }
+#endif
+
     /**
     * Converts a quaternion to a rotation matrix.
     *
     * The quaternion is expected to be ordered in the following way:
-    * - s = q_0 \in \mathbb{R} the real part of the quaterion
+    * - s = q_0 \in \mathbb{R} the real part of the quaternion
     * - r = \begin{bmatrix} q_1 \\ q_2 \\ q_3 \end{bmatrix} \in \mathbb{R}^3 the imaginary part of the quaternion
     *
     * The returned rotation matrix is given by the following formula:
@@ -108,9 +141,18 @@ public:
     *         rotation components in the top left 3 by 3 submatrix.
     *
     */
-    yarp::sig::Matrix toRotationMatrix() const;
+    yarp::sig::Matrix toRotationMatrix4x4() const;
 
+    /**
+    * Converts a quaternion to a rotation matrix.
+    * @param q the quaternion
+    * @return the corresponding 3 by 3 rotation matrix
+    */
+    yarp::sig::Matrix toRotationMatrix3x3() const;
 
+    /**
+    * Converts the quaternion to a vector of length 4.
+    */
     yarp::sig::Vector toVector() const;
 
     ///////// Serialization methods
@@ -124,12 +166,14 @@ public:
     * Write vector to a connection.
     * return true iff a vector was written correctly
     */
-    virtual bool write(yarp::os::ConnectionWriter& connection) override;
+    virtual bool write(yarp::os::ConnectionWriter& connection) const override;
 
-    virtual yarp::os::Type getType() override
+    virtual yarp::os::Type getType() const override
     {
         return yarp::os::Type::byName("yarp/quaternion");
     }
+
+
 };
 
 #endif

@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2007 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Network.h>
@@ -10,7 +12,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Time.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/QosStyle.h>
@@ -25,7 +27,7 @@ using namespace yarp::os;
 class NetworkTestWorker1 : public Thread {
 public:
     Semaphore fini;
-    ConstString name;
+    std::string name;
     Port p;
 
     NetworkTestWorker1() : fini(0) {
@@ -47,7 +49,7 @@ public:
         //printf("service provider reading data\n");
         receive.read(connection);
         //printf("service provider read data\n");
-        receive.addInt(5);
+        receive.addInt32(5);
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=nullptr) {
             //printf("service provider replying\n");
@@ -87,7 +89,7 @@ public:
 
 class NetworkTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "NetworkTest"; }
+    virtual std::string getName() const override { return "NetworkTest"; }
 
     void checkConnect() {
         report(0,"checking return value of connect method");
@@ -141,8 +143,8 @@ public:
         Network::sync("/server");
         Bottle cmd("10"), reply;
         Network::write("/server",cmd,reply);
-        checkEqual(reply.size(),2,"got append");
-        checkEqual(reply.get(1).asInt(),5,"append is correct");
+        checkEqual(reply.size(),(size_t) 2,"got append");
+        checkEqual(reply.get(1).asInt32(),5,"append is correct");
         server.close();
     }
 
@@ -154,7 +156,7 @@ public:
         Value *v = Network::getProperty("/foo","my_prop");
         checkTrue(v!=nullptr,"got property");
         if (v!=nullptr) {
-            checkEqual(v->asInt(),15,"recover property");
+            checkEqual(v->asInt32(),15,"recover property");
             delete v;
         }
         Network::unregisterName("/foo");
@@ -196,8 +198,8 @@ public:
         face.close();
     }
 
-    static bool waitConnect(const ConstString& n1,
-                            const ConstString& n2,
+    static bool waitConnect(const std::string& n1,
+                            const std::string& n2,
                             double timeout) {
         double start = Time::now();
         while (Time::now()-start<timeout) {

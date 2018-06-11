@@ -1,9 +1,10 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Author: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #ifndef YARP_DEV_IRGBDSENSOR_H
 #define YARP_DEV_IRGBDSENSOR_H
@@ -114,7 +115,7 @@ public:
      * Error message will be reset after any succesful command
      * @return A string explaining the last error occurred.
      */
-    virtual yarp::os::ConstString getLastErrorMsg(yarp::os::Stamp *timeStamp = NULL) = 0;
+    virtual std::string getLastErrorMsg(yarp::os::Stamp *timeStamp = NULL) = 0;
 
     /**
      * Get the rgb frame from the device.

@@ -1,8 +1,10 @@
-
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/all.h>
@@ -35,7 +37,7 @@ public:
 
 class WideNameService : public yarp::name::NameService {
 private:
-  yarp::os::Semaphore mutex;
+  yarp::os::Mutex mutex;
   map<string,Entry> names;
   map<int,int> numbers;
   int lastNumber;
@@ -58,7 +60,7 @@ private:
   }
 
 public:
-  WideNameService() : mutex(1) {
+  WideNameService() : mutex() {
     firstNumber = lastNumber =  DEFAULT_NAME_PORT_NUMBER;
   }
 
@@ -70,7 +72,7 @@ public:
     info.addString("ip");
     info.addString(e.machine.c_str());
     info.addString("port");
-    info.addInt(e.portNumber);
+    info.addInt32(e.portNumber);
     info.addString("type");
     info.addString(e.carrier.c_str());
   }
@@ -104,7 +106,7 @@ public:
   virtual bool cmdUnregister(yarp::os::Bottle& cmd,
                              yarp::os::Bottle& reply,
                              yarp::os::Contact& remote) {
-    ConstString name = cmd.get(1).asString();
+    std::string name = cmd.get(1).asString();
     map<string,Entry>::iterator it = names.find(name.c_str());
     if (it!=names.end()) {
       Entry& entry = it->second;
@@ -123,10 +125,10 @@ public:
   virtual bool cmdRegister(yarp::os::Bottle& cmd,
                            yarp::os::Bottle& reply,
                            yarp::os::Contact& remote) {
-    ConstString name = cmd.get(1).asString();
-    ConstString carrier = cmd.get(2).asString();
-    ConstString machine = cmd.get(3).asString();
-    int number = cmd.get(4).asInt();
+    std::string name = cmd.get(1).asString();
+    std::string carrier = cmd.get(2).asString();
+    std::string machine = cmd.get(3).asString();
+    int number = cmd.get(4).asInt32();
     if (name=="...") {
       name = "/tmp/";
       for (int i=0; i<20; i++) {
@@ -170,10 +172,10 @@ public:
                      yarp::os::Bottle& event,
                      yarp::os::Contact& remote) {
     bool ok = false;
-    mutex.wait();
+    mutex.lock();
     printf(" + %s\n", cmd.toString().c_str());
     reply.clear();
-    ConstString tag = cmd.get(0).asString();
+    std::string tag = cmd.get(0).asString();
     if (tag=="register") {
       ok = cmdRegister(cmd,reply,remote);
     } else if (tag=="unregister") {
@@ -186,7 +188,7 @@ public:
       reply.addString("old");
       reply.addString("I have no idea what you are talking about");
     }
-    mutex.post();
+    mutex.unlock();
     return ok;
   }
 };

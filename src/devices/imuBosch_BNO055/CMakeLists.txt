@@ -1,13 +1,15 @@
-# Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
-# Authors: Alberto Cardellino
-# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 yarp_prepare_plugin(imuBosch_BNO055
                     CATEGORY device
                     TYPE yarp::dev::BoschIMU
                     INCLUDE imuBosch_BNO055.h
                     EXTRA_CONFIG WRAPPER=inertial
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;NOT WIN32;CREATE_LIB_MATH")
+                    DEPENDS "NOT WIN32;YARP_HAS_MATH_LIB")
 
 if(ENABLE_imuBosch_BNO055)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Author: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "RGBDSensorClient.h"
@@ -25,7 +27,7 @@ yarp::dev::DriverCreator *createRGBDSensorClient()
         "yarp::dev::RGBDSensorClient");
 }
 
-RGBDSensorClient::RGBDSensorClient() : FrameGrabberControls2_Sender(rpcPort)
+RGBDSensorClient::RGBDSensorClient() : FrameGrabberControls_Sender(rpcPort)
 {
     sensor_p       = nullptr;
     use_ROS        = false;
@@ -242,8 +244,8 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable &config)
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_RGBD_PROTOCOL_VERSION);
     rpcPort.write(cmd, response);
-    int major = response.get(3).asInt();
-    int minor = response.get(4).asInt();
+    int major = response.get(3).asInt32();
+    int minor = response.get(4).asInt32();
 
     if(major != RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR)
     {
@@ -349,11 +351,11 @@ IRGBDSensor::RGBDSensor_status RGBDSensorClient::getSensorStatus()
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_STATUS);
     rpcPort.write(cmd, response);
-    return (IRGBDSensor::RGBDSensor_status) response.get(3).asInt();
+    return (IRGBDSensor::RGBDSensor_status) response.get(3).asInt32();
 }
 
 
-yarp::os::ConstString RGBDSensorClient::getLastErrorMsg(yarp::os::Stamp *timeStamp)
+std::string RGBDSensorClient::getLastErrorMsg(yarp::os::Stamp *timeStamp)
 {
     yarp::os::Bottle cmd, response;
     cmd.addVocab(VOCAB_RGBD_SENSOR);

@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "yarp.h"
@@ -38,8 +40,8 @@ YARP_DEFINE(int) yarpBottleFini(yarpBottlePtr bottle) {
     return 0;
 }
 
-YARP_DEFINE(void) yarpBottleAddInt(yarpBottlePtr bottle, int x) {
-    YARP_BOTTLE(bottle).addInt(x);
+YARP_DEFINE(void) yarpBottleAddInt32(yarpBottlePtr bottle, int x) {
+    YARP_BOTTLE(bottle).addInt32(x);
 }
 
 YARP_DEFINE(void) yarpBottleAddDouble(yarpBottlePtr bottle, double x) {

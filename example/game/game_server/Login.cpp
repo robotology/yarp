@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "Login.h"
@@ -18,7 +21,7 @@ bool Login::apply(const char *name, const char *key) {
     Thing& rthing = game.newThing();
     base_id = rthing.getID();
 
-    return (base_id.asInt()!=-1);
+    return (base_id.asInt32()!=-1);
 }
 
 
@@ -28,7 +31,7 @@ Thing& Login::getThing() {
 }
 
 void Login::shutdown() {
-    if (base_id.asInt()!=-1) {
+    if (base_id.asInt32()!=-1) {
         Game& game = Game::getGame();
         game.killThing(base_id);
         base_id = -1;

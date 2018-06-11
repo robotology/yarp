@@ -1,9 +1,10 @@
 /*
- * Copyright: (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #ifndef YARP_DEV_IINTERACTIONMODEIMPL_H
 #define YARP_DEV_IINTERACTIONMODEIMPL_H
@@ -30,8 +31,7 @@ class YARP_dev_API yarp::dev::ImplementInteractionMode : public yarp::dev::IInte
 protected:
     yarp::dev::IInteractionModeRaw *iInteraction;
     void    *helper;                                // class controlBoardHelper, to handle axis map and conversion unit, where needed
-    int     *temp_int;                              // to convert axis number
-    yarp::dev::InteractionModeEnum *temp_modes;     // helper for all joints methods
+    int      nj;                                    //number of controlled axes the driver deals with.
 
     /**
      * Initialize the internal data and alloc memory, smaller version.

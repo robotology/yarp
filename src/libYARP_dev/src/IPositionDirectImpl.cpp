@@ -1,9 +1,10 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <cstdio>
 
@@ -15,14 +16,16 @@ using namespace yarp::dev;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 #define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 #define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK_DEL1(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); delete [] tmp_joints; return false;}
+#define MJOINTIDCHECK_DEL2(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); delete [] tmp_joints; delete [] tmp_refs;return false;}
 
 ImplementPositionDirect::ImplementPositionDirect(IPositionDirectRaw *y) :
     iPDirect(y),
     helper(nullptr),
-    temp_int(nullptr),
-    temp_double(nullptr)
+    nj(0)
 {
 }
+
 
 ImplementPositionDirect::~ImplementPositionDirect()
 {
@@ -34,14 +37,10 @@ bool ImplementPositionDirect::initialize(int size, const int *amap, const double
     if(helper != nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert(helper != nullptr);
 
-    temp_double=new double [size];
-    yAssert(temp_double != nullptr);
-
-    temp_int=new int [size];
-    yAssert(temp_int != nullptr);
+    nj=size;
     return true;
 }
 
@@ -52,9 +51,6 @@ bool ImplementPositionDirect::uninitialize()
         delete castToMapper(helper);
         helper=nullptr;
     }
-
-    checkAndDestroy(temp_double);
-    checkAndDestroy(temp_int);
 
     return true;
 }
@@ -74,21 +70,31 @@ bool ImplementPositionDirect::setPosition(int j, double ref)
     return iPDirect->setPositionRaw(k, enc);
 }
 
-bool ImplementPositionDirect::setPositions(const int n_joint, const int *joints, double *refs)
+bool ImplementPositionDirect::setPositions(const int n_joint, const int *joints, const double *refs)
 {
+    int *tmp_joints =  new int [nj];
+    double *tmp_refs = new double [nj];
     for(int idx=0; idx<n_joint; idx++)
     {
-        MJOINTIDCHECK(idx)
-        castToMapper(helper)->posA2E(refs[idx], joints[idx], temp_double[idx], temp_int[idx]);
+        MJOINTIDCHECK_DEL2(idx)
+        castToMapper(helper)->posA2E(refs[idx], joints[idx], tmp_refs[idx], tmp_joints[idx]);
     }
-    return iPDirect->setPositionsRaw(n_joint, temp_int, temp_double);
+    bool ret = iPDirect->setPositionsRaw(n_joint, tmp_joints, tmp_refs);
+    delete [] tmp_joints;
+    delete [] tmp_refs;
+    
+    return ret;
 }
 
 bool ImplementPositionDirect::setPositions(const double *refs)
 {
-    castToMapper(helper)->posA2E(refs, temp_double);
+    double *tmp = new double[nj];
+    castToMapper(helper)->posA2E(refs, tmp);
 
-    return iPDirect->setPositionsRaw(temp_double);
+    bool ret = iPDirect->setPositionsRaw(tmp);
+    
+    delete [] tmp;
+    return ret;
 }
 
 bool ImplementPositionDirect::getRefPosition(const int j, double* ref)
@@ -106,25 +112,33 @@ bool ImplementPositionDirect::getRefPosition(const int j, double* ref)
 
 bool ImplementPositionDirect::getRefPositions(const int n_joint, const int* joints, double* refs)
 {
+    int * tmp_joints = new int[nj];
     for(int idx=0; idx<n_joint; idx++)
     {
-        MJOINTIDCHECK(idx)
-        temp_int[idx]=castToMapper(helper)->toHw(joints[idx]);
+        MJOINTIDCHECK_DEL1(idx)
+        tmp_joints[idx]=castToMapper(helper)->toHw(joints[idx]);
     }
 
-    bool ret = iPDirect->getRefPositionsRaw(n_joint, temp_int, temp_double);
+    double *tmp_refs = new double[nj];
+    bool ret = iPDirect->getRefPositionsRaw(n_joint, tmp_joints, tmp_refs);
 
     for(int idx=0; idx<n_joint; idx++)
     {
-        refs[idx]=castToMapper(helper)->posE2A(temp_double[idx], temp_int[idx]);
+        refs[idx]=castToMapper(helper)->posE2A(tmp_refs[idx], tmp_joints[idx]);
     }
+    
+    delete [] tmp_joints;
+    delete [] tmp_refs;
+    
     return ret;
 }
 
 bool ImplementPositionDirect::getRefPositions(double* refs)
 {
-    bool ret = iPDirect->getRefPositionsRaw(temp_double);
-    castToMapper(helper)->posE2A(temp_double, refs);
+    double *tmp=new double[nj];
+    bool ret = iPDirect->getRefPositionsRaw(tmp);
+    castToMapper(helper)->posE2A(tmp, refs);
+    delete [] tmp;
     return ret;
 }
 

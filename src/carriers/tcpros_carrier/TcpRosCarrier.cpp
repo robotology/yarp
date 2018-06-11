@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "TcpRosCarrier.h"
@@ -26,10 +27,8 @@ void TcpRosCarrier::setParameters(const Bytes& header) {
     if (header.length()!=8) {
         return;
     }
-    Bytes h1(header.get(),4);
-    Bytes h2(header.get()+4,4);
-    headerLen1 = NetType::netInt(h1);
-    headerLen2 = NetType::netInt(h2);
+    headerLen1 = *reinterpret_cast<const NetInt32*>(header.get());
+    headerLen2 = *reinterpret_cast<const NetInt32*>(header.get() + 4);
 }
 
 bool TcpRosCarrier::checkHeader(const Bytes& header) {
@@ -48,9 +47,9 @@ bool TcpRosCarrier::checkHeader(const Bytes& header) {
 }
 
 
-ConstString TcpRosCarrier::getRosType(ConnectionState& proto) {
-    ConstString typ = "";
-    ConstString rtyp = "";
+std::string TcpRosCarrier::getRosType(ConnectionState& proto) {
+    std::string typ = "";
+    std::string rtyp = "";
     if (proto.getContactable()) {
         Type t = proto.getContactable()->getType(); 
         typ = t.getName();
@@ -70,14 +69,14 @@ ConstString TcpRosCarrier::getRosType(ConnectionState& proto) {
         }
     }
     Name n(proto.getRoute().getCarrierName() + "://test");
-    ConstString mode = "topic";
-    ConstString modeValue = n.getCarrierModifier("topic");
+    std::string mode = "topic";
+    std::string modeValue = n.getCarrierModifier("topic");
     if (modeValue=="") {
         mode = "service";
         modeValue = n.getCarrierModifier("service");
     }
     if (modeValue!="") {
-        ConstString package = n.getCarrierModifier("package");
+        std::string package = n.getCarrierModifier("package");
         if (package!="") {
             rtyp = package + "/" + modeValue;
         }
@@ -92,8 +91,8 @@ ConstString TcpRosCarrier::getRosType(ConnectionState& proto) {
 bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     dbg_printf("Route is %s\n", proto.getRoute().toString().c_str());
     Name n(proto.getRoute().getCarrierName() + "://test");
-    ConstString mode = "topic";
-    ConstString modeValue = n.getCarrierModifier("topic");
+    std::string mode = "topic";
+    std::string modeValue = n.getCarrierModifier("topic");
     if (modeValue=="") {
         mode = "service";
         modeValue = n.getCarrierModifier("service");
@@ -105,7 +104,7 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
         modeValue = "notopic";
         isService = false;
     }
-    ConstString rawValue = n.getCarrierModifier("raw");
+    std::string rawValue = n.getCarrierModifier("raw");
     if (rawValue=="2") {
         raw = 2;
         dbg_printf("ROS-native mode requested\n");
@@ -121,7 +120,7 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     dbg_printf("Writing to %s\n", proto.getStreams().getRemoteAddress().toString().c_str()); 
     dbg_printf("Writing from %s\n", proto.getStreams().getLocalAddress().toString().c_str());
 
-    ConstString rtyp = getRosType(proto);
+    std::string rtyp = getRosType(proto);
     if (rtyp!="") {
         header.data["type"] = rtyp.c_str();
     }
@@ -136,7 +135,7 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     string header_serial = header.writeHeader();
     string header_len(4,'\0');
     char *at = (char*)header_len.c_str();
-    RosHeader::appendInt(at,header_serial.length());
+    RosHeader::appendInt32(at,header_serial.length());
     dbg_printf("Writing %s -- %d bytes\n", 
                RosHeader::showMessage(header_len).c_str(),
                (int)header_len.length());
@@ -178,7 +177,7 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
     }
     header.readHeader(string(m.get(),m.length()));
     dbg_printf("Message header: %s\n", header.toString().c_str());
-    ConstString rosname = "";
+    std::string rosname = "";
     if (header.data.find("type")!=header.data.end()) {
         rosname = header.data["type"].c_str();
     }
@@ -248,11 +247,11 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     header.readHeader(string(m.get(),m.length()));
     dbg_printf("Got header %s\n", header.toString().c_str());
 
-    ConstString rosname = "";
+    std::string rosname = "";
     if (header.data.find("type")!=header.data.end()) {
         rosname = header.data["type"].c_str();
     }
-    ConstString rtyp = getRosType(proto);
+    std::string rtyp = getRosType(proto);
     if (rtyp!="") {
         rosname = rtyp;
         header.data["type"] = rosname;
@@ -280,7 +279,7 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     string header_serial = header.writeHeader();
     string header_len(4,'\0');
     char *at = (char*)header_len.c_str();
-    RosHeader::appendInt(at,header_serial.length());
+    RosHeader::appendInt32(at,header_serial.length());
     dbg_printf("Writing %s -- %d bytes\n", 
                RosHeader::showMessage(header_len).c_str(),
                (int)header_len.length());
@@ -343,7 +342,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
             }
             if (img) {
                 translate = TCPROS_TRANSLATE_IMAGE;
-                ConstString frame = "/frame";
+                std::string frame = "/frame";
                 ri.init(*img,frame);
             } else { 
                 if (WireBottle::extractBlobFromBottle(writer,wt)) {
@@ -415,7 +414,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
 
     string header_len(4,'\0');
     char *at = (char*)header_len.c_str();
-    RosHeader::appendInt(at,len);
+    RosHeader::appendInt32(at,len);
     Bytes b1((char*)header_len.c_str(),header_len.length());
     proto.os().write(b1);
     flex_writer->write(proto.os());
@@ -471,7 +470,7 @@ int TcpRosCarrier::connect(const yarp::os::Contact& src,
     }
 
     Name n((style.carrier + "://test").c_str());
-    ConstString topic = n.getCarrierModifier("topic").c_str();
+    std::string topic = n.getCarrierModifier("topic").c_str();
     if (topic=="") {
         printf("Warning, no topic!\n");
         topic = "notopic";

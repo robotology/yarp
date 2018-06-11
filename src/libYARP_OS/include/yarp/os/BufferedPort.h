@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_BUFFEREDPORT_H
@@ -66,10 +69,6 @@ class BufferedPort : public Contactable,
                      public TypedReaderCallback<T>
 {
 public:
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
-    using Contactable::open;
-#endif // YARP_NO_DEPRECATED
-
     using yarp::os::TypedReaderCallback<T>::onRead;
 
     /**
@@ -93,16 +92,16 @@ public:
     virtual ~BufferedPort();
 
     // Documented in Contactable
-    virtual bool open(const ConstString& name) override;
+    virtual bool open(const std::string& name) override;
 
     // Documented in Contactable
     virtual bool open(const Contact& contact, bool registerName = true) override;
 
     // Documented in Contactable
-    virtual bool addOutput(const ConstString& name) override;
+    virtual bool addOutput(const std::string& name) override;
 
     // Documented in Contactable
-    virtual bool addOutput(const ConstString& name, const ConstString& carrier) override;
+    virtual bool addOutput(const std::string& name, const std::string& carrier) override;
 
     // Documented in Contactable
     virtual bool addOutput(const Contact& contact) override;
@@ -124,7 +123,7 @@ public:
     virtual Contact where() const override;
 
     // Documented in Contactable
-    virtual ConstString getName() const override;
+    virtual std::string getName() const override;
 
 
     /**

@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Authors: Ali Paikan
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <stdio.h>
@@ -83,7 +85,7 @@ yarp::os::Things& AsciiImageMonitorObject::update(yarp::os::Things& thing)
     }
     str[count++] = '\0';
     //printf("%s\n", str);
-    bt.addInt(0);
+    bt.addInt32(0);
     bt.addString(str);
     th.setPortWriter(&bt);
     free(str);

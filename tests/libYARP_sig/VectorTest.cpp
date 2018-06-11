@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Author: Lorenzo Natale and Giorgio Metta
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/sig/Vector.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
@@ -143,7 +145,7 @@ class VectorTest : public UnitTest {
     }
 
 public:
-    virtual ConstString getName() override { return "VectorTest"; }
+    virtual std::string getName() const override { return "VectorTest"; }
 
     void checkGsl()
     {
@@ -175,14 +177,14 @@ public:
         }
         BufferedConnectionWriter writer;
         v.write(writer);
-        ConstString s = writer.toString();
+        std::string s = writer.toString();
         Bottle bot;
-        bot.fromBinary(s.c_str(),(int)s.length());
-        checkEqual((int)bot.size(),(int)v.size(),"size matches");
+        bot.fromBinary(s.c_str(), s.length());
+        checkEqual(bot.size(), v.size(),"size matches");
         {
-            for (int i=0; i<bot.size(); i++) {
-                checkTrue(bot.get(i).asDouble()>i-0.25,"bounded below");
-                checkTrue(bot.get(i).asDouble()<i+0.25,"bounded above");
+            for (size_t i=0; i<bot.size(); i++) {
+                checkTrue(bot.get(i).asFloat64()>i-0.25,"bounded below");
+                checkTrue(bot.get(i).asFloat64()<i+0.25,"bounded above");
             }
         }
     }

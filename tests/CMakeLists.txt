@@ -1,7 +1,9 @@
-# Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 include(CMakeDependentOption)
 
@@ -11,11 +13,36 @@ if(YARP_ENABLE_BROKEN_TESTS)
   add_definitions(-DBROKEN_TEST)
 endif()
 
-cmake_dependent_option(YARP_DISABLE_FAILING_TESTS OFF "Disable tests that fail randomly due to race conditions" YARP_COMPILE_TESTS OFF)
+if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 3.9)
+  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
+cmake_dependent_option(YARP_DISABLE_FAILING_TESTS OFF "Disable tests that fail randomly due to race conditions"
+                       "NOT ${CMAKE_VERSION} VERSION_LESS 3.9;YARP_COMPILE_TESTS" OFF)
 mark_as_advanced(YARP_DISABLE_FAILING_TESTS)
-set(FAILING_TESTS OS::RateThreadTest
+set(FAILING_TESTS OS::PeriodicThreadTest
                   dev::ControlBoardRemapperTest
                   dev::FrameTransformClientTest)
+
+macro(yarp_disable_test _test _base_only)
+  if(TEST ${_test})
+    set_property(TEST ${_test} PROPERTY DISABLED ON)
+  endif()
+  if(NOT ${_base_only})
+    foreach(_Tool ${YARP_VALGRIND_TOOLS})
+      if(TEST ${_test}::Valgrind::${_Tool})
+        string(TOUPPER "${_Tool}" _TOOL)
+        if(YARP_VALGRIND_${_TOOL}_TESTS)
+          set_property(TEST ${_test}::Valgrind::${_Tool} PROPERTY DISABLED ON)
+        endif()
+      endif()
+    endforeach()
+    if(YARP_GDB_TESTS)
+      if(TEST ${_test}::gdb)
+        set_property(TEST ${_test}::gdb PROPERTY DISABLED ON)
+      endif()
+    endif()
+  endif()
+endmacro()
 
 if(YARP_COMPILE_TESTS)
   # Prepare 'build_generator', 'build_options' and 'build_module_path' variables
@@ -31,7 +58,7 @@ if(YARP_COMPILE_TESTS)
     list(APPEND build_generator --build-config $<CONFIGURATION>)
   endif()
 
-  unset(build_options)
+  set(build_options -Wno-dev)
   if(CMAKE_BUILD_TYPE)
     list(APPEND build_options -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
   endif()
@@ -57,12 +84,12 @@ if(YARP_COMPILE_TESTS)
   set(targets OS
               sig
               dev
-              serversql)
-  get_property(YARP_HAS_MATH_LIB GLOBAL PROPERTY YARP_HAS_MATH_LIB)
-  if(YARP_HAS_MATH_LIB)
+              serversql
+              run)
+  if(TARGET YARP::YARP_math)
     list(APPEND targets math)
   endif()
-  if(TARGET YARP_wire_rep_utils)
+  if(TARGET YARP::YARP_wire_rep_utils)
     list(APPEND targets wire_rep_utils)
   endif()
 
@@ -70,32 +97,34 @@ if(YARP_COMPILE_TESTS)
     file(GLOB harness_code ${CMAKE_SOURCE_DIR}/tests/libYARP_${test_family}/*.cpp
                            ${CMAKE_SOURCE_DIR}/tests/libYARP_${test_family}/*.h)
 
-    if("${test_family}" STREQUAL "dev" AND NOT YARP_HAS_MATH_LIB)
+    if("${test_family}" STREQUAL "dev" AND NOT TARGET YARP::YARP_math)
        # Without MATH lib, we don't compile FrameTransformClient and MapGrid2D
        list(REMOVE_ITEM harness_code ${CMAKE_CURRENT_SOURCE_DIR}/libYARP_dev/FrameTransformClientTest.cpp)
        list(REMOVE_ITEM harness_code ${CMAKE_CURRENT_SOURCE_DIR}/libYARP_dev/MapGrid2DTest.cpp)
     endif()
 
-    get_property(YARP_TREE_INCLUDE_DIRS
-                 TARGET YARP_${test_family}
-                 PROPERTY INCLUDE_DIRS)
-    get_property(YARP_LIBRARIES
-                 GLOBAL
-                 PROPERTY YARP_LIBS)
-    get_property(YARP_serversql_INCLUDE_DIRS
-                 TARGET YARP_serversql
-                 PROPERTY INCLUDE_DIRS)
-    include_directories(${YARP_TREE_INCLUDE_DIRS})
-    include_directories(${YARP_serversql_INCLUDE_DIRS})
     if(YARP_HAS_ACE)
       include_directories(${ACE_INCLUDE_DIRS})
     endif()
+    include_directories(${hmac_INCLUDE_DIRS})
 
     set(EXE harness_${test_family})
     string(TOLOWER ${EXE} EXE)
     add_executable(${EXE} ${harness_code})
-    target_link_libraries(${EXE} ${YARP_LIBRARIES})
-    target_link_libraries(${EXE} YARP::YARP_serversql)
+    target_link_libraries(${EXE} YARP::YARP_OS
+                                 YARP::YARP_init
+                                 YARP::YARP_sig
+                                 YARP::YARP_dev
+                                 YARP::YARP_serversql
+                                 YARP::YARP_run
+                                 YARP::YARP_gsl
+                                 YARP::YARP_companion)
+    if(TARGET YARP::YARP_math)
+      target_link_libraries(${EXE} YARP::YARP_math)
+    endif()
+    if(TARGET YARP::YARP_wire_rep_utils)
+      target_link_libraries(${EXE} YARP::YARP_wire_rep_utils)
+    endif()
     if(YARP_HAS_ACE)
       target_link_libraries(${EXE} ${ACE_LIBRARIES})
     endif()
@@ -105,24 +134,13 @@ if(YARP_COMPILE_TESTS)
       get_filename_component(XN ${test} NAME_WE)
       if(NOT "${XN}" MATCHES "^(harness|TestList)$")
         set(_cmd $<TARGET_FILE:${EXE}> verbose regression ${XN})
-        list(FIND FAILING_TESTS "${test_family}::${XN}" _failing_test)
-        set(_disabled 0)
-        if(YARP_DISABLE_FAILING_TESTS AND NOT _failing_test EQUAL -1)
-          set(_disabled 1)
-        endif()
         add_test(NAME "${test_family}::${XN}"
                  COMMAND ${_cmd})
-        if(_disabled)
-          set_property(TEST "${test_family}::${XN}" PROPERTY DISABLED ON)
-        endif()
         foreach(_Tool ${YARP_VALGRIND_TOOLS})
           string(TOUPPER "${_Tool}" _TOOL)
           if(YARP_VALGRIND_${_TOOL}_TESTS)
             add_test(NAME "${test_family}::${XN}::Valgrind::${_Tool}"
                      COMMAND ${VALGRIND_${_TOOL}_COMMAND} ${_cmd})
-            if(_disabled)
-              set_property(TEST "${test_family}::${XN}::Valgrind::${_Tool}" PROPERTY DISABLED ON)
-            endif()
           endif()
         endforeach()
         if(YARP_GDB_TESTS)
@@ -143,7 +161,7 @@ if(YARP_COMPILE_TESTS)
   endif()
 
   # Compile ControlBoardRemapperTest only if fakeMotionControl is enabled
-  if(ENABLE_yarpmod_fakeMotionControl)
+  if(ENABLE_yarpmod_fakeMotionControl AND YARP_HAS_MATH_LIB)
     add_definitions(-DYARP_CONTROLBOARDREMAPPER_TESTS)
   endif()
 
@@ -155,6 +173,11 @@ if(YARP_COMPILE_TESTS)
   # Compile TestFrameGrabberTest only if test_grabber is enabled
   if(ENABLE_yarpmod_test_grabber)
     add_definitions(-DYARP_TESTFRAMEGRABBER_TESTS)
+  endif()
+
+  # Compile ControlBoardRemapperTest only if fakeMotionControl is enabled
+  if(ENABLE_yarpmod_fakeIMU)
+    add_definitions(-DYARP_MULTIPLEANALOGSENSORSINTERFACES_TESTS)
   endif()
 
   add_subdirectory(carriers)
@@ -171,6 +194,12 @@ if(YARP_COMPILE_TESTS)
   endif()
 
 
+  #disable failing test
+  if(YARP_DISABLE_FAILING_TESTS)
+    foreach(test ${FAILING_TESTS})
+      yarp_disable_test(${test} 0)
+    endforeach()
+  endif()
 
   yarp_deprecated_option(TEST_yarpidl_rosmsg) # Since YARP 2.3.70
   yarp_deprecated_option(TEST_yarpidl_thrift) # Since YARP 2.3.70

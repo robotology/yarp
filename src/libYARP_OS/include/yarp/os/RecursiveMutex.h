@@ -1,20 +1,24 @@
 /*
- * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
- * Authors: Francesco Romano
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_RECURSIVELOCK_H
 #define YARP_OS_RECURSIVELOCK_H
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 #include <yarp/os/api.h>
+#else // YARP_NO_DEPRECATED
+#include <mutex>
+#endif // YARP_NO_DEPRECATED
 
 namespace yarp {
-    namespace os {
-        class RecursiveMutex;
-    }
-}
+namespace os {
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 /**
  * RecursiveMutex offers exclusive, recursive ownership semantics:
  *   - A calling thread owns a RecursiveMutex for a period of time that starts
@@ -30,20 +34,16 @@ namespace yarp {
  * The behavior of a program is undefined if a RecursiveMutex is unlocked by a
  * thread which is not currently owning the RecursiveMutex
  */
-class YARP_OS_API yarp::os::RecursiveMutex {
+class YARP_OS_API RecursiveMutex
+{
 public:
-
     /**
-     *
      * Constructor.
-     *
      */
     RecursiveMutex();
 
     /**
-     *
      * Destructor.
-     *
      */
     ~RecursiveMutex();
 
@@ -54,7 +54,6 @@ public:
      * this function, it will not block, and a reference count will be increased
      * Thu number of calls to lock() must be balanced by the same number of
      * calls to unlock()
-     *
      */
     void lock();
 
@@ -62,23 +61,45 @@ public:
      * @brief Lock the associated resource if it is free.
      *
      * @see RecursiveLock#lock() for more detailed description
-     * @return true if the associated resource was successfully locked. False otherwise
-     *
+     * @return true if the associated resource was successfully locked. False
+     *         otherwise
      */
-    bool tryLock();
+    bool try_lock();
 
     /**
      * @brief Unlock the associated resource thus freeing waiting threads.
      *
      * If the resource is not currently locked by the calling thread,
      * the behavior is undefined.
-     *
      */
     void unlock();
 
+    /**
+     * @brief Lock the associated resource if it is free.
+     *
+     * @see RecursiveLock#lock() for more detailed description
+     * @return true if the associated resource was successfully locked. False
+     *         otherwise
+     *
+     * @deprecated since YARP 3.0.0. Use try_lock() instead.
+     */
+    YARP_DEPRECATED_MSG("Use try_lock() instead")
+    bool tryLock();
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-    void *implementation;
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
+#else // YARP_NO_DEPRECATED
+
+using RecursiveMutex = std::recursive_mutex;
+
+#endif // YARP_NO_DEPRECATED
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_RECURSIVELOCK_H

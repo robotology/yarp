@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <stdio.h>
@@ -12,7 +15,7 @@
 class FileFrameGrabber : public yarp::dev::IFrameGrabberImage, 
                          public yarp::dev::DeviceDriver {
 private:
-    yarp::os::ConstString pattern, lastLoad;
+    std::string pattern, lastLoad;
     int first, last, at;
     int h, w;
 
@@ -61,10 +64,10 @@ public:
     }
 
     virtual bool open(yarp::os::Searchable& config) { 
-        yarp::os::ConstString pattern = 
+        std::string pattern = 
             config.check("pattern",yarp::os::Value("%d.ppm")).asString();
-        int first = config.check("first",yarp::os::Value(0)).asInt();
-        int last = config.check("last",yarp::os::Value(-1)).asInt();
+        int first = config.check("first",yarp::os::Value(0)).asInt32();
+        int last = config.check("last",yarp::os::Value(-1)).asInt32();
         return open(pattern.c_str(),first,last);
     }
 

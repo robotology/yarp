@@ -1,16 +1,17 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Semaphore.h>
 
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
-
 #include <yarp/os/impl/PortCorePackets.h>
 
 using namespace yarp::os::impl;
@@ -20,12 +21,15 @@ using namespace yarp::os;
 class PortWriterBufferBaseHelper : public PortWriterBufferManager {
 public:
     PortWriterBufferBaseHelper(PortWriterBufferBase& owner) :
-        owner(owner), stateSema(1), completionSema(0) {
-        current = nullptr;
-        callback = nullptr;
-        port = nullptr;
-        finishing = false;
-        outCt = 0;
+            owner(owner),
+            stateSema(1),
+            completionSema(0),
+            port(nullptr),
+            current(nullptr),
+            callback(nullptr),
+            finishing(false),
+            outCt(0)
+    {
     }
 
     virtual ~PortWriterBufferBaseHelper() {
@@ -61,7 +65,7 @@ public:
         YARP_DEBUG(Logger::get(), "finished writes");
     }
 
-    void *get() {
+    const void* get() {
         if (callback!=nullptr) {
             // (Safe to check outside mutex)
             // oops, there is already a prepared and unwritten
@@ -90,7 +94,7 @@ public:
 
     bool release() {
         stateSema.wait();
-        PortWriter *cback = callback;
+        const PortWriter* cback = callback;
         current = nullptr;
         callback = nullptr;
         stateSema.post();
@@ -133,8 +137,8 @@ public:
             finishWrites();
         }
         stateSema.wait();
-        PortWriter *active = current;
-        PortWriter *cback = callback;
+        const PortWriter *active = current;
+        const PortWriter *cback = callback;
         current = nullptr;
         callback = nullptr;
         stateSema.post();
@@ -149,11 +153,11 @@ public:
 private:
     PortWriterBufferBase& owner;
     PortCorePackets packets;
-    SemaphoreImpl stateSema;
-    SemaphoreImpl completionSema;
+    yarp::os::Semaphore stateSema;
+    yarp::os::Semaphore completionSema;
     Port *port;
-    PortWriter *current;
-    PortWriter *callback;
+    const PortWriter *current;
+    const PortWriter *callback;
     bool finishing;
     int outCt;
 };
@@ -186,7 +190,7 @@ PortWriterBufferBase::~PortWriterBufferBase() {
 }
 
 
-void *PortWriterBufferBase::getContent() {
+const void* PortWriterBufferBase::getContent() const {
     return HELPER(implementation).get();
 }
 

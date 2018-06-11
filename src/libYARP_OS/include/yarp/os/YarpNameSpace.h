@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_YARPNAMESPACE_H
@@ -30,20 +32,20 @@ public:
         return contact;
     }
 
-    virtual Contact queryName(const ConstString& name) override;
+    virtual Contact queryName(const std::string& name) override;
 
-    virtual Contact registerName(const ConstString& name) override;
+    virtual Contact registerName(const std::string& name) override;
 
     virtual Contact registerContact(const Contact& contact) override;
 
-    virtual Contact unregisterName(const ConstString& name) override;
+    virtual Contact unregisterName(const std::string& name) override;
 
     virtual Contact unregisterContact(const Contact& contact) override;
 
-    virtual bool setProperty(const ConstString& name, const ConstString& key,
+    virtual bool setProperty(const std::string& name, const std::string& key,
                              const Value& value) override;
 
-    virtual Value *getProperty(const ConstString& name, const ConstString& key) override;
+    virtual Value *getProperty(const std::string& name, const std::string& key) override;
 
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
@@ -87,7 +89,7 @@ public:
         return connectTopic("unsubscribe", false, false, src, dest, style);
     }
 
-    virtual bool connectTopic(const ConstString& dir,
+    virtual bool connectTopic(const std::string& dir,
                               bool srcIsTopic,
                               bool destIsTopic,
                               const Contact& src,

@@ -1,15 +1,11 @@
-/*
- * Copyright (C) 2011, 2016 Istituto Italiano di Tecnologia (IIT).
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
-
 /**
  * @page yarp_with_ros_parameters Talking to the ROS parameter server
 
- 
+
 YARP has no special support for the ROS parameter server, but can
-communicate with it via its [network API](http://wiki.ros.org/ROS/Parameter%20Server%20API). Here is a command-line example:
+communicate with it via its
+[network API](http://wiki.ros.org/ROS/Parameter%20Server%20API).
+Here is a command-line example:
 
 \verbatim
 yarp rpc /ros
@@ -32,7 +28,7 @@ From code, you could use a Bottle:
   cmd.addString("setParam");
   cmd.addString("/demo");
   cmd.addString("foo");
-  cmd.addInt(15);
+  cmd.addInt32(15);
   Network::write(ros,cmd,reply);
   printf("reply to setParam is: %s\n", reply.toString().c_str());
 
@@ -43,7 +39,7 @@ From code, you could use a Bottle:
   cmd.addString("foo");
   Network::write(ros,cmd,reply);
   printf("reply to getParam is: %s\n", reply.toString().c_str());
-  printf("Stored value is hopefully %d\n", reply.get(2).asInt());
+  printf("Stored value is hopefully %d\n", reply.get(2).asInt32());
   return 0;
 \endcode
 

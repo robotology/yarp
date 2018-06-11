@@ -1,8 +1,11 @@
 /*
-* Copyright (C) 2007 RobotCub Consortium
-* Authors: Lorenzo Natale, Ugo Pattacini
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #include <yarp/os/Log.h>
 #include <yarp/math/Math.h>
@@ -21,18 +24,18 @@ using namespace yarp::sig;
 using namespace yarp::math;
 
 
-Vector yarp::math::operator+(const Vector &a, const double &s)
+Vector operator+(const Vector &a, const double &s)
 {
     Vector ret(a);
     return ret+=s;
 }
 
-Vector yarp::math::operator+(const double &s, const Vector &a)
+Vector operator+(const double &s, const Vector &a)
 {
     return a+s;
 }
 
-Vector& yarp::math::operator+=(Vector &a, const double &s)
+Vector& operator+=(Vector &a, const double &s)
 {
     size_t l = a.size();
     for(size_t i=0; i<l; i++)
@@ -40,13 +43,13 @@ Vector& yarp::math::operator+=(Vector &a, const double &s)
     return a;
 }
 
-Vector yarp::math::operator+(const Vector &a, const Vector &b)
+Vector operator+(const Vector &a, const Vector &b)
 {
     Vector ret(a);
     return ret+=b;
 }
 
-Vector& yarp::math::operator+=(Vector &a, const Vector &b)
+Vector& operator+=(Vector &a, const Vector &b)
 {
     size_t s=a.size();
     yAssert(s==b.size());
@@ -55,30 +58,30 @@ Vector& yarp::math::operator+=(Vector &a, const Vector &b)
     return a;
 }
 
-Matrix yarp::math::operator+(const Matrix &a, const Matrix &b)
+Matrix operator+(const Matrix &a, const Matrix &b)
 {
     Matrix ret(a);
     return ret+=b;
 }
 
-Matrix& yarp::math::operator+=(Matrix &a, const Matrix &b)
+Matrix& operator+=(Matrix &a, const Matrix &b)
 {
-    int n=a.cols();
-    int m=a.rows();
+    size_t n=a.cols();
+    size_t m=a.rows();
     yAssert(m==b.rows() && n==b.cols());
-    for (int r=0; r<m;r++)
-        for (int c=0; c<n;c++)
+    for (size_t r=0; r<m;r++)
+        for (size_t c=0; c<n;c++)
             a(r,c)+=b(r,c);
     return a;
 }
 
-Vector yarp::math::operator-(const Vector &a, const double &s)
+Vector operator-(const Vector &a, const double &s)
 {
     Vector ret(a);
     return ret-=s;
 }
 
-Vector yarp::math::operator-(const double &s, const Vector &a)
+Vector operator-(const double &s, const Vector &a)
 {
     size_t l = a.size();
     Vector ret(l);
@@ -87,7 +90,7 @@ Vector yarp::math::operator-(const double &s, const Vector &a)
     return ret;
 }
 
-Vector& yarp::math::operator-=(Vector &a, const double &s)
+Vector& operator-=(Vector &a, const double &s)
 {
     size_t l = a.size();
     for(size_t i=0; i<l; i++)
@@ -95,13 +98,13 @@ Vector& yarp::math::operator-=(Vector &a, const double &s)
     return a;
 }
 
-Vector yarp::math::operator-(const Vector &a, const Vector &b)
+Vector operator-(const Vector &a, const Vector &b)
 {
     Vector ret(a);
     return ret-=b;
 }
 
-Vector& yarp::math::operator-=(Vector &a, const Vector &b)
+Vector& operator-=(Vector &a, const Vector &b)
 {
     size_t s=a.size();
     yAssert(s==b.size());
@@ -110,44 +113,44 @@ Vector& yarp::math::operator-=(Vector &a, const Vector &b)
     return a;
 }
 
-Matrix yarp::math::operator-(const Matrix &a, const Matrix &b)
+Matrix operator-(const Matrix &a, const Matrix &b)
 {
     Matrix ret(a);
     return ret-=b;
 }
 
-Matrix& yarp::math::operator-=(Matrix &a, const Matrix &b)
+Matrix& operator-=(Matrix &a, const Matrix &b)
 {
-    int n=a.cols();
-    int m=a.rows();
+    size_t n=a.cols();
+    size_t m=a.rows();
     yAssert(m==b.rows());
     yAssert(n==b.cols());
-    for (int r=0; r<m;r++)
-        for (int c=0; c<n;c++)
+    for (size_t r=0; r<m;r++)
+        for (size_t c=0; c<n;c++)
             a(r,c)-=b(r,c);
     return a;
 }
 
-Vector yarp::math::operator*(double k, const Vector &b)
+Vector operator*(double k, const Vector &b)
 {
     return operator*(b,k);
 }
 
-Vector yarp::math::operator*(const Vector &a, double k)
+Vector operator*(const Vector &a, double k)
 {
     Vector ret(a);
     return ret*=k;
 }
 
-Vector& yarp::math::operator*=(Vector &a, double k)
+Vector& operator*=(Vector &a, double k)
 {
-    int size=a.size();
-    for(int i=0;i<size;i++)
+    size_t size=a.size();
+    for (size_t i = 0; i < size; i++)
         a[i]*=k;
     return a;
 }
 
-Vector yarp::math::operator*(const Vector &a, const Matrix &m)
+Vector operator*(const Vector &a, const Matrix &m)
 {
     yAssert(a.size()==(size_t)m.rows());
     Vector ret((size_t)m.cols());
@@ -157,7 +160,7 @@ Vector yarp::math::operator*(const Vector &a, const Matrix &m)
     return ret;
 }
 
-Vector& yarp::math::operator*=(Vector &a, const Matrix &m)
+Vector& operator*=(Vector &a, const Matrix &m)
 {
     yAssert(a.size()==(size_t)m.rows());
     Vector a2(a);
@@ -168,7 +171,7 @@ Vector& yarp::math::operator*=(Vector &a, const Matrix &m)
     return a;
 }
 
-Vector yarp::math::operator*(const Matrix &m, const Vector &a)
+Vector operator*(const Matrix &m, const Vector &a)
 {
     yAssert((size_t)m.cols()==a.size());
     Vector ret((size_t)m.rows(),0.0);
@@ -178,7 +181,7 @@ Vector yarp::math::operator*(const Matrix &m, const Vector &a)
     return ret;
 }
 
-Matrix yarp::math::operator*(const Matrix &a, const Matrix &b)
+Matrix operator*(const Matrix &a, const Matrix &b)
 {
     yAssert(a.cols()==b.rows());
     Matrix c(a.rows(), b.cols());
@@ -188,7 +191,7 @@ Matrix yarp::math::operator*(const Matrix &a, const Matrix &b)
     return c;
 }
 
-Matrix& yarp::math::operator*=(Matrix &a, const Matrix &b)
+Matrix& operator*=(Matrix &a, const Matrix &b)
 {
     yAssert(a.cols()==b.rows());
     Matrix a2(a);   // a copy of a
@@ -199,32 +202,32 @@ Matrix& yarp::math::operator*=(Matrix &a, const Matrix &b)
     return a;
 }
 
-Matrix yarp::math::operator*(const double k, const Matrix &M)
+Matrix operator*(const double k, const Matrix &M)
 {
     Matrix res(M);
     return res*=k;
 }
 
-Matrix yarp::math::operator*(const Matrix &M, const double k)
+Matrix operator*(const Matrix &M, const double k)
 {
     return operator*(k,M);
 }
 
-Matrix& yarp::math::operator*=(Matrix &M, const double k)
+Matrix& operator*=(Matrix &M, const double k)
 {
-    for (int r=0; r<M.rows(); r++)
-        for (int c=0; c<M.cols(); c++)
+    for (size_t r=0; r<M.rows(); r++)
+        for (size_t c=0; c<M.cols(); c++)
             M(r,c)*=k;
     return M;
 }
 
-Vector yarp::math::operator*(const Vector &a, const Vector &b)
+Vector operator*(const Vector &a, const Vector &b)
 {
     Vector res(a);
     return res*=b;
 }
 
-Vector& yarp::math::operator*=(Vector &a, const Vector &b)
+Vector& operator*=(Vector &a, const Vector &b)
 {
     size_t n =a.length();
     yAssert(n==b.length());
@@ -233,7 +236,7 @@ Vector& yarp::math::operator*=(Vector &a, const Vector &b)
     return a;
 }
 
-Quaternion yarp::math::operator*(const Quaternion& a, const Quaternion& b)
+Quaternion operator*(const Quaternion& a, const Quaternion& b)
 {
     return Quaternion(a.w()*b.x() + a.x()*b.w() + a.y()*b.z() - a.z()*b.y(),
                       a.w()*b.y() + a.y()*b.w() + a.z()*b.x() - a.x()*b.z(),
@@ -241,13 +244,13 @@ Quaternion yarp::math::operator*(const Quaternion& a, const Quaternion& b)
                       a.w()*b.w() - a.x()*b.x() - a.y()*b.y() - a.z()*b.z());
 }
 
-Vector yarp::math::operator/(const Vector &a, const Vector &b)
+Vector operator/(const Vector &a, const Vector &b)
 {
     Vector res(a);
     return res/=b;
 }
 
-Vector& yarp::math::operator/=(Vector &a, const Vector &b)
+Vector& operator/=(Vector &a, const Vector &b)
 {
     size_t n =a.length();
     yAssert(n==b.length());
@@ -256,28 +259,28 @@ Vector& yarp::math::operator/=(Vector &a, const Vector &b)
     return a;
 }
 
-Vector yarp::math::operator/(const Vector &b, double k)
+Vector operator/(const Vector &b, double k)
 {
     Vector res(b);
     return res/=k;
 }
 
-Vector& yarp::math::operator/=(Vector &b, double k)
+Vector& operator/=(Vector &b, double k)
 {
-    int n=b.length();
+    size_t n=b.length();
     yAssert(k!=0.0);
-    for (int i=0;i<n;i++)
+    for (size_t i = 0; i < n; i++)
         b[i]/=k;
     return b;
 }
 
-Matrix yarp::math::operator/(const Matrix &M, const double k)
+Matrix operator/(const Matrix &M, const double k)
 {
     Matrix res(M);
     return res/=k;
 }
 
-Matrix& yarp::math::operator/=(Matrix &M, const double k)
+Matrix& operator/=(Matrix &M, const double k)
 {
     yAssert(k!=0.0);
     int rows=M.rows();
@@ -290,10 +293,10 @@ Matrix& yarp::math::operator/=(Matrix &M, const double k)
 
 Matrix yarp::math::pile(const Matrix &m1, const Matrix &m2)
 {
-    int c = m1.cols();
+    size_t c = m1.cols();
     yAssert(c==m2.cols());
-    int r1 = m1.rows();
-    int r2 = m2.rows();
+    size_t r1 = m1.rows();
+    size_t r2 = m2.rows();
     Matrix res(r1+r2, c);
 
     toEigen(res).block(0,0,r1,c) = toEigen(m1);
@@ -342,10 +345,10 @@ Matrix yarp::math::pile(const Vector &v1, const Vector &v2)
 
 Matrix yarp::math::cat(const Matrix &m1, const Matrix &m2)
 {
-    int r = m1.rows();
+    size_t r = m1.rows();
     yAssert(r==m2.rows());
-    int c1 = m1.cols();
-    int c2 = m2.cols();
+    size_t c1 = m1.cols();
+    size_t c2 = m2.cols();
     Matrix res(r, c1+c2);
 
     toEigen(res).block(0,0,r,c1)  = toEigen(m1);
@@ -382,8 +385,8 @@ Matrix yarp::math::cat(const Vector &v, const Matrix &m)
 
 Vector yarp::math::cat(const Vector &v1, const Vector &v2)
 {
-    int n1 = v1.size();
-    int n2 = v2.size();
+    size_t n1 = v1.size();
+    size_t n2 = v2.size();
     Vector res(n1+n2);
 
     toEigen(res).segment(0,n1) = toEigen(v1);
@@ -394,7 +397,7 @@ Vector yarp::math::cat(const Vector &v1, const Vector &v2)
 
 Vector yarp::math::cat(const Vector &v, double s)
 {
-    int n = v.size();
+    size_t n = v.size();
     Vector res(n+1);
 
     toEigen(res).segment(0,n) = toEigen(v);
@@ -405,7 +408,7 @@ Vector yarp::math::cat(const Vector &v, double s)
 
 Vector yarp::math::cat(double s, const Vector &v)
 {
-    int n = v.size();
+    size_t n = v.size();
     Vector res(n+1);
 
     res(0) = s;

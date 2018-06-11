@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Author: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_IVIRTUALANALOGSENSOR_H
@@ -17,8 +19,21 @@
 namespace yarp {
     namespace dev {
         class IVirtualAnalogSensor;
+        class IVirtualAnalogSensorRaw;
+        enum class VAS_status;
     }
 }
+
+YARP_WARNING_PUSH
+YARP_DISABLE_CLASS_ENUM_API_WARNING
+enum class YARP_dev_API yarp::dev::VAS_status
+{
+    VAS_OK = 0,
+    VAS_ERROR = 1,      // generic error
+    VAS_OVF = 2,        // overflow
+    VAS_TIMEOUT = 3
+};
+YARP_WARNING_POP
 
 /**
  * @ingroup dev_iface_other
@@ -30,13 +45,6 @@ namespace yarp {
 class YARP_dev_API yarp::dev::IVirtualAnalogSensor
 {
 public:
-    enum VAS_status
-    {
-        VAS_OK=0,
-        VAS_ERROR=1,      // generic error
-        VAS_OVF=2,        // overflow
-        VAS_TIMEOUT=3
-    };
 
     virtual ~IVirtualAnalogSensor(){}
 
@@ -59,6 +67,41 @@ public:
      */
     virtual bool updateVirtualAnalogSensorMeasure(yarp::sig::Vector &measure)=0;
     virtual bool updateVirtualAnalogSensorMeasure(int ch, double &measure)=0;
+
+};
+
+/**
+* @ingroup dev_iface_other
+*
+* A generic interface to a virtual sensors. A virtual sensor is any device that
+* can generate values used as a measure by robot
+*/
+
+class YARP_dev_API yarp::dev::IVirtualAnalogSensorRaw
+{
+public:
+
+    virtual ~IVirtualAnalogSensorRaw() {}
+
+    /** Check the status of a given channel.
+    * @param ch channel number.
+    * @return VAS_status type.
+    */
+    virtual VAS_status getVirtualAnalogSensorStatusRaw(int ch) = 0;
+
+    /**
+    * Get the number of channels of the virtual sensor.
+    * @return number of channels (0 in case of errors).
+    */
+    virtual int getVirtualAnalogSensorChannelsRaw() = 0;
+
+    /**
+    * Set a vector of torque values for virtual sensor.
+    * @param measure a vector containing the sensor's last readings.
+    * @return true if ok, false otherwise.
+    */
+    virtual bool updateVirtualAnalogSensorMeasureRaw(yarp::sig::Vector &measure) = 0;
+    virtual bool updateVirtualAnalogSensorMeasureRaw(int ch, double &measure) = 0;
 
 };
 

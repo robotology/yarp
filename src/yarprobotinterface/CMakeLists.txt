@@ -1,12 +1,12 @@
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
+
 if(CREATE_YARPROBOTINTERFACE)
 
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-
-
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS}
-                      ${TinyXML_INCLUDE_DIRS})
+  include_directories(${TinyXML_INCLUDE_DIRS})
 
   set(yarprobotinterface_SRCS
       main.cpp

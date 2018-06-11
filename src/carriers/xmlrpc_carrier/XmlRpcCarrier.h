@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_XMLRPC_CARRIER_XMLRPCCARRIER_H
@@ -45,7 +46,7 @@ private:
     bool firstRound;
     bool sender;
     Contact host;
-    ConstString http;
+    std::string http;
     bool interpretRos;
 public:
     XmlRpcCarrier() :
@@ -55,62 +56,62 @@ public:
     {
     }
 
-    virtual Carrier *create() override
+    virtual Carrier *create() const override
     {
         return new XmlRpcCarrier();
     }
 
-    virtual ConstString getName() override
+    virtual std::string getName() const override
     {
         return "xmlrpc";
     }
 
-    virtual bool isConnectionless() override
+    virtual bool isConnectionless() const override
     {
         return false;
     }
 
-    virtual bool canAccept() override
+    virtual bool canAccept() const override
     {
         return true;
     }
 
-    virtual bool canOffer() override
+    virtual bool canOffer() const override
     {
         return true;
     }
 
-    virtual bool isTextMode() override
+    virtual bool isTextMode() const override
     {
         return true;
     }
 
-    virtual bool canEscape() override
+    virtual bool canEscape() const override
     {
         return true;
     }
 
-    virtual bool requireAck() override
+    virtual bool requireAck() const override
     {
         return false;
     }
 
-    virtual bool supportReply() override
+    virtual bool supportReply() const override
     {
         return true;
     }
 
-    virtual bool isLocal() override
+    virtual bool isLocal() const override
     {
         return false;
     }
 
-    virtual ConstString toString() override
+    virtual std::string toString() const override
     {
         return "xmlrpc_carrier";
     }
 
-    virtual void getHeader(const Bytes& header) override
+    virtual void getHeader(Bytes& header) const override
     {
         const char *target = "POST /RP";
         for (size_t i=0; i<8 && i<header.length(); i++) {
@@ -170,7 +171,7 @@ public:
         return true;
     }
 
-    virtual bool isActive() override
+    virtual bool isActive() const override
     {
         return true;
     }
@@ -202,7 +203,7 @@ public:
         return true;
     }
 
-    virtual ConstString getBootstrapCarrierName() override
+    virtual std::string getBootstrapCarrierName() const override
     {
         return "";
     }

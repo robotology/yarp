@@ -1,13 +1,15 @@
-# Copyright: (C) 2016 Istituto Italiano di Tecnologia (IIT)
-# Author: Alberto Cardellino
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 yarp_prepare_plugin(fakeMotionControl
                     CATEGORY device
                     TYPE yarp::dev::FakeMotionControl
                     INCLUDE fakeMotionControl.h
                     EXTRA_CONFIG WRAPPER=controlboardwrapper2
-                    DEPENDS CREATE_DEVICE_LIBRARY_MODULES)
+                    DEPENDS "YARP_HAS_MATH_LIB")
 
 if(NOT SKIP_fakeMotionControl)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -15,7 +17,8 @@ if(NOT SKIP_fakeMotionControl)
                                          fakeMotionControl.h)
   target_link_libraries(yarp_fakeMotionControl YARP::YARP_OS
                                                YARP::YARP_sig
-                                               YARP::YARP_dev)
+                                               YARP::YARP_dev
+                                               YARP::YARP_math)
   yarp_install(TARGETS yarp_fakeMotionControl
                EXPORT YARP
                COMPONENT runtime

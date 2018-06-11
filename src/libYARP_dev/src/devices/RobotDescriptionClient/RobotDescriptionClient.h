@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Author: Marco Randazzo <marco.randazzo@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_ROBOTDESCRIPTION_CLIENT_H
@@ -13,9 +16,9 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRobotDescription.h>
 
@@ -26,7 +29,7 @@ namespace yarp {
 }
 
 /**
-* @ingroup dev_impl_wrapper
+* @ingroup dev_impl_network_clients
 * This client device is used to connect to a robotDescriptionServer and ask info about the currently opened devices.
 *
 * Parameters required by this device are:
@@ -43,8 +46,8 @@ class yarp::dev::RobotDescriptionClient : public DeviceDriver,
 protected:
     yarp::os::Mutex               m_mutex;
     yarp::os::Port                m_rpc_port;
-    yarp::os::ConstString         m_local_name;
-    yarp::os::ConstString         m_remote_name;
+    std::string         m_local_name;
+    std::string         m_remote_name;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 

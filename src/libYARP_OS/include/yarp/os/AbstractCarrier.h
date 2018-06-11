@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_ABSTRACTCARRIER_H
@@ -30,10 +33,10 @@ public:
 /** @{ */
 
     // Documented in Carrier
-    virtual Carrier *create() override = 0;
+    virtual Carrier *create() const override = 0;
 
     // Documented in Carrier
-    virtual ConstString getName() override = 0;
+    virtual std::string getName() const override = 0;
 
     // Documented in Carrier
     virtual bool checkHeader(const yarp::os::Bytes& header) override = 0;
@@ -42,37 +45,37 @@ public:
     virtual void setParameters(const yarp::os::Bytes& header) override;
 
     // Documented in Carrier
-    virtual void getHeader(const yarp::os::Bytes& header) override = 0;
+    virtual void getHeader(yarp::os::Bytes& header) const override = 0;
 
     // Documented in Carrier
     virtual void setCarrierParams(const yarp::os::Property& params) override;
     // Documented in Carrier
-    virtual void getCarrierParams(yarp::os::Property& params) override;
+    virtual void getCarrierParams(yarp::os::Property& params) const override;
 
 /** @} */
 /** @{ */
 
     // Documented in Carrier
-    virtual bool isConnectionless() override;
+    virtual bool isConnectionless() const override;
     // Documented in Carrier
-    virtual bool supportReply() override;
+    virtual bool supportReply() const override;
     // Documented in Carrier
-    virtual bool canAccept() override;
+    virtual bool canAccept() const override;
     // Documented in Carrier
-    virtual bool canOffer() override;
+    virtual bool canOffer() const override;
     // Documented in Carrier
-    virtual bool isTextMode() override;
+    virtual bool isTextMode() const override;
     // Documented in Carrier
-    virtual bool requireAck() override;
+    virtual bool requireAck() const override;
     // Documented in Carrier
-    virtual bool canEscape() override;
+    virtual bool canEscape() const override;
     // Documented in Carrier
-    virtual bool isLocal() override;
+    virtual bool isLocal() const override;
     // Documented in Carrier
-    virtual ConstString toString() override;
+    virtual std::string toString() const override;
 
     // Documented in Carrier
-    virtual bool isActive() override;
+    virtual bool isActive() const override;
 
 /** @} */
 /** @{ */
@@ -150,8 +153,8 @@ protected:
 
 /** @{ */
 
-    int getSpecifier(const Bytes& b);
-    void createStandardHeader(int specifier, const yarp::os::Bytes& header);
+    int getSpecifier(const Bytes& b) const;
+    void createStandardHeader(int specifier, yarp::os::Bytes& header) const;
 
     // Documented in Carrier
     virtual bool write(ConnectionState& proto, SizedWriter& writer) override;
@@ -163,7 +166,7 @@ protected:
 /** @{ */
 
     static int interpretYarpNumber(const yarp::os::Bytes& b);
-    static void createYarpNumber(int x, const yarp::os::Bytes& header);
+    static void createYarpNumber(int x, yarp::os::Bytes& header);
 
 /** @} */
 

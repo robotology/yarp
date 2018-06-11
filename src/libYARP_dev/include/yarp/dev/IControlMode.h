@@ -1,14 +1,16 @@
 /*
- * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
- * Authors: Marco Randazzo <marco.randazzo@iit.it>
- *          Lorenzo Natale <lorenzo.natale@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_ICONTROLMODE_H
 #define YARP_DEV_ICONTROLMODE_H
 
 #include <yarp/os/Vocab.h>
+#include <yarp/dev/api.h>
 
 namespace yarp {
     namespace dev {
@@ -27,61 +29,6 @@ class YARP_dev_API yarp::dev::IControlMode
 public:
     virtual ~IControlMode(){}
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-    /**
-    * Set position mode, single axis.
-    * @param j joint number
-    * @return: true/false success failure.
-    * @deprecated since YARP 2.3.70
-    */
-    YARP_DEPRECATED_MSG("Use IControlMode2::setControlMode(j, VOCAB_CM_POSITION) instead")
-    virtual bool setPositionMode(int j) { return false; }
-#endif // YARP_NO_DEPRECATED
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-    /**
-    * Set velocity mode, single axis.
-    * @param j joint number
-    * @return: true/false success failure.
-    * @deprecated since YARP 2.3.70
-    */
-    YARP_DEPRECATED_MSG("Use IControlMode2::setControlMode(j, VOCAB_CM_VELOCITY) instead")
-    virtual bool setVelocityMode(int j) { return false; }
-#endif // YARP_NO_DEPRECATED
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-    /**
-    * Set torque mode, single axis.
-    * @param j joint number
-    * @return: true/false success failure.
-    * @deprecated since YARP 2.3.70
-    */
-    YARP_DEPRECATED_MSG("Use IControlMode2::setControlMode(j, VOCAB_CM_TORQUE) instead")
-    virtual bool setTorqueMode(int j) { return false; }
-#endif // YARP_NO_DEPRECATED
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-    /**
-    * Set impedance position mode, single axis.
-    * @param j joint number
-    * @return: true/false success failure.
-    * @deprecated since YARP 2.3.70
-    */
-    YARP_DEPRECATED_MSG("Use IControlMode2::setControlMode(j, VOCAB_CM_IMPEDANCE_POS) instead")
-    virtual bool setImpedancePositionMode(int j) { return false; }
-#endif // YARP_NO_DEPRECATED
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-    /**
-    * Set impedance velocity mode, single axis.
-    * @param j joint number
-    * @return: true/false success failure.
-    * @deprecated since YARP 2.3.70
-    */
-    YARP_DEPRECATED_MSG("Use IControlMode2::setControlMode(j, VOCAB_CM_IMPEDANCE_VEL) instead")
-    virtual bool setImpedanceVelocityMode(int j) { return false; }
-#endif // YARP_NO_DEPRECATED
-
     /**
     * Get the current control mode.
     * @param j joint number
@@ -96,6 +43,54 @@ public:
     * @return: true/false success failure.
     */
     virtual bool getControlModes(int *modes)=0;
+
+    /**
+    * Get the current control mode for a subset of axes.
+    * @param n_joints how many joints this command is referring to
+    * @param joints list of joint numbers, the size of this array is n_joints
+    * @param modes array containing the new controlmodes, one value for each joint, the size is n_joints.
+    *          The first value will be the new reference fot the joint joints[0].
+    *          for example:
+    *          n_joint  3
+    *          joints   0  2  4
+    *          modes    VOCAB_CM_POSITION VOCAB_CM_VELOCITY VOCAB_CM_POSITION
+    * @return true/false success failure.
+    */
+    virtual bool getControlModes(const int n_joint, const int *joints, int *modes)=0;
+
+    /**
+    * Set the current control mode.
+    * @param j: joint number
+    * @param mode: a vocab of the desired control mode for joint j.
+    * @return true if the new controlMode was successfully set, false if the message was not received or
+    *         the joint was unable to switch to the desired controlMode
+    *         (e.g. the joint is on a fault condition or the desired mode is not implemented).    */
+    virtual bool setControlMode(const int j, const int mode)=0;
+
+    /**
+    * Set the current control mode for a subset of axes.
+    * @param n_joints how many joints this command is referring to
+    * @param joints list of joint numbers, the size of this array is n_joints
+    * @param modes array containing the new controlmodes, one value for each joint, the size is n_joints.
+    *          The first value will be the new reference fot the joint joints[0].
+    *          for example:
+    *          n_joint  3
+    *          joints   0  2  4
+    *          modes    VOCAB_CM_POSITION VOCAB_CM_VELOCITY VOCAB_CM_POSITION
+    * @return true if the new controlMode was successfully set, false if the message was not received or
+    *         the joint was unable to switch to the desired controlMode
+    *         (e.g. the joint is on a fault condition or the desired mode is not implemented).
+    */
+    virtual bool setControlModes(const int n_joint, const int *joints, int *modes)=0;
+
+    /**
+    * Set the current control mode (multiple joints).
+    * @param modes: a vector containing vocabs for the desired control modes of the joints.
+    * @return true if the new controlMode was successfully set, false if the message was not received or
+    *         the joint was unable to switch to the desired controlMode
+    *         (e.g. the joint is on a fault condition or the desired mode is not implemented).
+    */
+    virtual bool setControlModes(int *modes)=0;
 };
 
 
@@ -109,16 +104,12 @@ class yarp::dev::IControlModeRaw
 {
 public:
     virtual ~IControlModeRaw(){}
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-    YARP_DEPRECATED virtual bool setPositionModeRaw(int j) { return false; }
-    YARP_DEPRECATED virtual bool setVelocityModeRaw(int j) { return false; }
-    YARP_DEPRECATED virtual bool setTorqueModeRaw(int j) { return false; }
-    YARP_DEPRECATED virtual bool setImpedancePositionModeRaw(int j) { return false; }
-    YARP_DEPRECATED virtual bool setImpedanceVelocityModeRaw(int j) { return false; }
-#endif // YARP_NO_DEPRECATED
     virtual bool getControlModeRaw(int j, int *mode)=0;
     virtual bool getControlModesRaw(int* modes)=0;
+    virtual bool getControlModesRaw(const int n_joint, const int *joints, int *modes)=0;
+    virtual bool setControlModeRaw(const int j, const int mode)=0;
+    virtual bool setControlModesRaw(const int n_joint, const int *joints, int *modes)=0;
+    virtual bool setControlModesRaw(int *modes)=0;
 };
 
 
@@ -142,6 +133,20 @@ public:
 #define VOCAB_CM_PWM                VOCAB4('i','p','w','m')
 #define VOCAB_CM_IMPEDANCE_POS      VOCAB4('i','m','p','o')  // deprecated
 #define VOCAB_CM_IMPEDANCE_VEL      VOCAB4('i','m','v','e')  // deprecated
+
+// Values
+// Read / Write
+#define VOCAB_CM_MIXED              VOCAB3('m','i','x')
+
+// Write only (only from high level toward the joint)
+#define VOCAB_CM_FORCE_IDLE         VOCAB4('f','i','d','l')
+
+// Read only (imposed by the board on special events)
+#define VOCAB_CM_HW_FAULT           VOCAB4('h','w','f','a')
+#define VOCAB_CM_CALIBRATING        VOCAB3('c','a','l')     // the joint is calibrating
+#define VOCAB_CM_CALIB_DONE         VOCAB4('c','a','l','d') // calibration successfully completed
+#define VOCAB_CM_NOT_CONFIGURED     VOCAB4('c','f','g','n') // missing initial configuration (default value at start-up)
+#define VOCAB_CM_CONFIGURED         VOCAB4('c','f','g','y') // initial configuration completed, if any
 
 // Read only (cannot be set from user)
 #define VOCAB_CM_UNKNOWN            VOCAB4('u','n','k','w')

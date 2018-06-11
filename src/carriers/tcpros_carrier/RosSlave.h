@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/all.h>
@@ -13,7 +14,7 @@
 class RosSlave : public yarp::os::PortReader {
 private:
     yarp::os::Port slave;
-    yarp::os::ConstString hostname;
+    std::string hostname;
     int portnum;
     yarp::os::Semaphore done;
     bool verbose;
@@ -64,12 +65,12 @@ public:
         bool ok = cmd.read(reader);
         if (!ok) return false;
         if (verbose) printf("slave got request %s\n", cmd.toString().c_str());
-        reply.addInt(1);
+        reply.addInt32(1);
         reply.addString("");
         yarp::os::Bottle& lst = reply.addList();
         lst.addString("TCPROS");
         lst.addString(hostname.c_str());
-        lst.addInt(portnum);
+        lst.addInt32(portnum);
         yarp::os::ConnectionWriter *writer = reader.getWriter();
         if (writer==NULL) { return false; }
         if (verbose) printf("replying with %s\n", reply.toString().c_str());

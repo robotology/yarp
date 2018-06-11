@@ -1,10 +1,3 @@
-/*
- * Copyright (C) 2010 RobotCub Consortium
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
-
-
 /**
  * \defgroup dev_all Devices
  *
@@ -76,6 +69,21 @@
  *
  */
 
+/**
+ * @ingroup dev_iface
+ * @defgroup dev_iface_multiple_analog Multiple Analog Sensor Interfaces
+ *
+ * The interfaces present in this group are meant to be implemented by
+ * devices that expose sensor that can be efficiently expressed as vector of
+ * real numbers, so-called "analog" sensors.
+ *
+ * For more information see the documentation of server, client and remapper devices that operate on these interfaces:
+ *
+ * * yarp::dev::MultipleAnalogSensorsServer
+ * * yarp::dev::MultipleAnalogSensorsClient
+ * * yarp::dev::MultipleAnalogSensorsRemapper
+ *
+ */
 
 /**
  * @ingroup dev_iface
@@ -95,6 +103,34 @@
  *
  */
 
+
+/**
+ * @ingroup dev_impl
+ *
+ * \defgroup dev_impl_wrapper Network Servers (Wrappers)
+ *
+ * These devices take implementations of existing interfaces and wrap them
+ * up to work across the network.
+ *
+ */
+
+/**
+ * @ingroup dev_impl
+ *
+ * \defgroup dev_impl_network_clients Network Clients
+ *
+ * These devices are meant to communicate to YARP ports opened by \ref dev_impl_wrapper
+ * to provide device interfaces in a transparent way over a YARP network.
+ */
+
+/**
+ * @ingroup dev_impl
+ *
+ * \defgroup dev_impl_remappers Remappers
+ *
+ * These devices are meant expose a group of existing devices as a unique device,
+ * or to expose a subset of the resourses exposed by a device as an indipendent device.
+ */
 
 /**
  * @ingroup dev_impl
@@ -121,11 +157,18 @@
 /**
  * @ingroup dev_impl
  *
- * \defgroup dev_impl_wrapper Network Wrappers
+ * \defgroup dev_impl_analog_sensors Analog Sensors
  *
- * These take implementations of existing interfaces and wrap them
- * up to work across the network.
+ * These are devices that expose sensor that can be efficiently expressed as vector of
+ * real numbers, so-called "analog" sensors, such as gyroscope, accelerometers, force-torque sensors.
+ */
+
+/**
+ * @ingroup dev_impl
  *
+ * \defgroup dev_impl_other Other Device Implementations
+ *
+ * Miscellaneous device implementations.
  */
 
 /**

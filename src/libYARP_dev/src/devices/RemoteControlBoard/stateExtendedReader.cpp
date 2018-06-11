@@ -1,10 +1,12 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "stateExtendedReader.hpp"
+#include "stateExtendedReader.h"
 #include <cstring>
 
 #include <yarp/os/PortablePair.h>
@@ -14,7 +16,6 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/LogStream.h>
 
 #include <yarp/sig/Vector.h>
@@ -32,14 +33,14 @@ using namespace yarp::sig;
 
 void StateExtendedInputPort::resetStat()
 {
-    mutex.wait();
+    mutex.lock();
     count=0;
     deltaT=0;
     deltaTMax=0;
     deltaTMin=1e22;
     now=Time::now();
     prev=now;
-    mutex.post();
+    mutex.unlock();
 }
 
 StateExtendedInputPort::StateExtendedInputPort()
@@ -66,7 +67,7 @@ void StateExtendedInputPort::init(int numberOfJoints)
 void StateExtendedInputPort::onRead(jointData &v)
 {
     now=Time::now();
-    mutex.wait();
+    mutex.lock();
 
     if (count>0)
     {
@@ -87,12 +88,12 @@ void StateExtendedInputPort::onRead(jointData &v)
     //check that timestamp are available
     if (!lastStamp.isValid())
         lastStamp.update(now);
-    mutex.post();
+    mutex.unlock();
 }
 
 bool StateExtendedInputPort::getLastSingle(int j, int field, double *data, Stamp &stamp, double &localArrivalTime)
 {
-    mutex.wait();
+    mutex.lock();
     bool ret = valid;
     if (ret)
     {
@@ -151,14 +152,14 @@ bool StateExtendedInputPort::getLastSingle(int j, int field, double *data, Stamp
         localArrivalTime=now;
         stamp = lastStamp;
     }
-    mutex.post();
+    mutex.unlock();
 
     return ret;
 }
 
 bool StateExtendedInputPort::getLastSingle(int j, int field, int *data, Stamp &stamp, double &localArrivalTime)
 {
-    mutex.wait();
+    mutex.lock();
     bool ret = valid;
     if (ret)
     {
@@ -181,13 +182,13 @@ bool StateExtendedInputPort::getLastSingle(int j, int field, int *data, Stamp &s
         localArrivalTime=now;
         stamp = lastStamp;
     }
-    mutex.post();
+    mutex.unlock();
     return ret;
 }
 
 bool StateExtendedInputPort::getLastVector(int field, double* data, Stamp& stamp, double& localArrivalTime)
 {
-    mutex.wait();
+    mutex.lock();
     bool ret = valid;
     if (ret)
     {
@@ -246,14 +247,14 @@ bool StateExtendedInputPort::getLastVector(int field, double* data, Stamp& stamp
         localArrivalTime=now;
         stamp = lastStamp;
     }
-    mutex.post();
+    mutex.unlock();
 
     return ret;
 }
 
 bool StateExtendedInputPort::getLastVector(int field, int* data, Stamp& stamp, double& localArrivalTime)
 {
-    mutex.wait();
+    mutex.lock();
     bool ret = valid;
     if (ret)
     {
@@ -276,22 +277,22 @@ bool StateExtendedInputPort::getLastVector(int field, int* data, Stamp& stamp, d
         localArrivalTime=now;
         stamp = lastStamp;
     }
-    mutex.post();
+    mutex.unlock();
     return ret;
 }
 
 int StateExtendedInputPort::getIterations()
 {
-    mutex.wait();
+    mutex.lock();
     int ret=count;
-    mutex.post();
+    mutex.unlock();
     return ret;
 }
 
 // time is in ms
 void StateExtendedInputPort::getEstFrequency(int &ite, double &av, double &min, double &max)
 {
-    mutex.wait();
+    mutex.lock();
     ite=count;
     min=deltaTMin*1000;
     max=deltaTMax*1000;
@@ -304,5 +305,5 @@ void StateExtendedInputPort::getEstFrequency(int &ite, double &av, double &min, 
         av=deltaT/count;
     }
     av=av*1000;
-    mutex.post();
+    mutex.unlock();
 }

@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2009 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/conf/system.h>
@@ -46,13 +48,13 @@ public:
         fallback = nullptr;
     }
 
-    virtual ConstString apply(const ConstString& txt, const Contact& remote) override {
+    virtual std::string apply(const std::string& txt, const Contact& remote) override {
         DummyConnector con, con2;
         con.setTextMode(true);
         ConnectionWriter& writer = con.getWriter();
         writer.appendString(txt.c_str());
         bool ok = handler.apply(con.getReader(),&(con2.getWriter()));
-        ConstString result = "";
+        std::string result = "";
         if (ok) {
             result = con2.getReader().expectText().c_str();
         }
@@ -151,20 +153,12 @@ bool BootstrapServer::configFileBootstrap(yarp::os::Contact& contact,
             suggest.setHost(conf.getHostName());
         } else {
             // Let's just check we're not a loopback
-            ConstString betterHost = conf.getHostName(false,suggest.getHost());
+            std::string betterHost = conf.getHostName(false,suggest.getHost());
             if (betterHost!=suggest.getHost()) {
                 fprintf(stderr,"Overriding loopback address for name server\n");
                 suggest.setHost(betterHost);
             }
         }
-    }
-    else
-    {
-        if (!conf.isLocalName(conf.getHostName())) {
-            fprintf(stderr,"The address written in config file doesn't belong any interface \n");
-            return false;
-        }
-        suggest.setHost(conf.getHostName());
     }
 
     bool changed = false;
@@ -182,10 +176,7 @@ bool BootstrapServer::configFileBootstrap(yarp::os::Contact& contact,
         fprintf(stderr,"  Desired settings:  host %s port %d family %s\n",
                 suggest.getHost().c_str(), suggest.getPort(), "yarp");
         fprintf(stderr,"Please specify '--write' if it is ok to overwrite current settings, or\n");
-        if(!configFileRequired)
-            fprintf(stderr,"Please specify '--read' to use the current settings, or\n");
-        else
-            fprintf(stderr,"Please set an existing address in config file, or\n");
+        fprintf(stderr,"Please specify '--read' to use the current settings, or\n");
         fprintf(stderr,"delete %s\n", conf.getConfigFileName().c_str());
         return false;
     }

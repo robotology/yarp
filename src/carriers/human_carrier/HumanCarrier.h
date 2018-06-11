@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "HumanStream.h"
@@ -12,52 +14,52 @@ public:
 
     // First, the easy bits...
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new HumanCarrier();
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() const override {
         return "human";
     }
 
-    virtual bool isConnectionless() override {
+    virtual bool isConnectionless() const override {
         return true;
     }
 
-    virtual bool canAccept() override {
+    virtual bool canAccept() const override {
         return true;
     }
 
-    virtual bool canOffer() override {
+    virtual bool canOffer() const override {
         return true;
     }
 
-    virtual bool isTextMode() override {
+    virtual bool isTextMode() const override {
         // let's be text mode, for human-friendliness
         return true;
     }
 
-    virtual bool canEscape() override {
+    virtual bool canEscape() const override {
         return true;
     }
 
-    virtual bool requireAck() override {
+    virtual bool requireAck() const override {
         return true;
     }
 
-    virtual bool supportReply() override {
+    virtual bool supportReply() const override {
         return true;
     }
 
-    virtual bool isLocal() override {
+    virtual bool isLocal() const override {
         return false;
     }
 
-    virtual ConstString toString() override {
+    virtual std::string toString() const override {
         return "humans are handy";
     }
 
-    virtual void getHeader(const Bytes& header) override {
+    virtual void getHeader(Bytes& header) const override {
         const char *target = "HUMANITY";
         for (size_t i=0; i<8 && i<header.length(); i++) {
             header.get()[i] = target[i];
@@ -120,7 +122,7 @@ public:
         return true;
     }
 
-    virtual bool isActive() override {
+    virtual bool isActive() const override {
         return true;
     }
 
@@ -135,15 +137,15 @@ public:
     }
 
     virtual bool sendIndex(ConnectionState& proto,SizedWriter& writer) {
-        ConstString prefix = "human says ";
+        std::string prefix = "human says ";
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.os().write(b2);
         return true;
     }
 
     virtual bool expectIndex(ConnectionState& proto) override {
-        ConstString prefix = "human says ";
-        ConstString compare = prefix;
+        std::string prefix = "human says ";
+        std::string compare = prefix;
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.is().read(b2);
         bool ok = proto.is().isOk() && (prefix==compare);
@@ -154,15 +156,15 @@ public:
     // Acknowledgements, we don't do them
 
     virtual bool sendAck(ConnectionState& proto) override {
-        ConstString prefix = "computers rule!\r\n";
+        std::string prefix = "computers rule!\r\n";
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.os().write(b2);
         return true;
     }
 
     virtual bool expectAck(ConnectionState& proto) override {
-        ConstString prefix = "computers rule!\r\n";
-        ConstString compare = prefix;
+        std::string prefix = "computers rule!\r\n";
+        std::string compare = prefix;
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.is().read(b2);
         bool ok = proto.is().isOk() && (prefix==compare);

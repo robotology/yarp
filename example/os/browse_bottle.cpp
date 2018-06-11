@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <stdio.h>
@@ -15,11 +18,11 @@ void showBottle(Bottle& anUnknownBottle, int indentation = 0) {
         printf("[%d]: ", i);
         Value& element = anUnknownBottle.get(i);
         switch (element.getCode()) {
-        case BOTTLE_TAG_INT:
-            printf("int %d\n", element.asInt());
+        case BOTTLE_TAG_INT32:
+            printf("int %d\n", element.asInt32());
             break;
-        case BOTTLE_TAG_DOUBLE:
-            printf("float %g\n", element.asDouble());
+        case BOTTLE_TAG_FLOAT64:
+            printf("float %g\n", element.asFloat64());
             break;
         case BOTTLE_TAG_STRING:
             printf("string \"%s\"\n", element.asString().c_str());

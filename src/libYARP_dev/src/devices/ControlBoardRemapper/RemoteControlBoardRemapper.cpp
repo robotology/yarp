@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Author: Silvio Traversaro
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "RemoteControlBoardRemapper.h"
@@ -95,7 +97,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
     }
 
     remoteControlBoardsPorts.resize(remoteControlBoards->size());
-    for(int ax=0; ax < remoteControlBoards->size(); ax++)
+    for(size_t ax=0; ax < remoteControlBoards->size(); ax++)
     {
         remoteControlBoardsPorts[ax] = remoteControlBoards->get(ax).asString().c_str();
     }

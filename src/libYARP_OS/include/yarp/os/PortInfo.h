@@ -1,14 +1,18 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_PORTINFO_H
 #define YARP_OS_PORTINFO_H
 
-#include <yarp/os/ConstString.h>
+#include <yarp/os/api.h>
 #include <yarp/os/Vocab.h>
+#include <string>
 
 
 namespace yarp {
@@ -53,19 +57,19 @@ public:
     bool created;
 
     /// Name of port.
-    ConstString portName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) portName;
 
     /// Name of connection source, if any.
-    ConstString sourceName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) sourceName;
 
     /// Name of connection target, if any.
-    ConstString targetName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) targetName;
 
     /// Name of protocol type, if releveant.
-    ConstString carrierName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) carrierName;
 
     /// A human-readable description of contents.
-    ConstString message;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) message;
 };
 
 

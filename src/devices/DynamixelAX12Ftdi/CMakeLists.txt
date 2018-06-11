@@ -1,12 +1,12 @@
 # Copyright (C) 2010 Ze Ji
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
 
 yarp_prepare_plugin(dynamixelAX12Ftdi
                     CATEGORY device
                     TYPE yarp::dev::DynamixelAX12FtdiDriver
                     INCLUDE "DynamixelAX12FtdiDriver.h"
                     EXTRA_CONFIG WRAPPER=controlboard
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES;YARP_HAS_FTDI")
+                    DEPENDS "YARP_HAS_FTDI")
 
 if(NOT SKIP_dynamixelAX12Ftdi)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

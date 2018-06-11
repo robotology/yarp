@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_MANAGEDBYTES_H
@@ -88,9 +91,14 @@ public:
     size_t used() const;
 
     /**
+     * @return address of data block (const version)
+     */
+    const char* get() const;
+
+    /**
      * @return address of data block
      */
-    char *get() const;
+    char* get();
 
     /**
      * Disassociate object with any data block (deleting block if appropriate).
@@ -98,10 +106,15 @@ public:
     void clear();
 
     /**
+     * @return description of data block associated with this object (const
+     * version)
+     */
+    const Bytes& bytes() const;
+
+    /**
      * @return description of data block associated with this object
      */
-    const Bytes& bytes();
-
+    Bytes& bytes();
 
     /**
      * @return description of used portion of data block associated
@@ -125,7 +138,7 @@ public:
 
     bool read(ConnectionReader& reader) override;
 
-    bool write(ConnectionWriter& writer) override;
+    bool write(ConnectionWriter& writer) const override;
 
     /**
      *

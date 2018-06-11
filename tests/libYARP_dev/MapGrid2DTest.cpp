@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2016 RobotCub Consortium
- * Authors: Marco Randazzo
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 /**
  *
@@ -31,7 +31,7 @@ using namespace yarp::os::impl;
 
 class MapGrid2DTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "MapGrid2DTest"; }
+    virtual std::string getName() const override { return "MapGrid2DTest"; }
 
     void ReadMapfromString(MapGrid2D& m, std::string s)
     {

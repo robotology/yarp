@@ -1,12 +1,11 @@
-
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
- *          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/Contact.h>
@@ -17,7 +16,7 @@ using namespace yarp::os;
 class ContactTest : public UnitTest
 {
 public:
-    virtual ConstString getName() override
+    virtual std::string getName() const override
     {
         return "ContactTest";
     }
@@ -26,7 +25,7 @@ public:
     {
         report(0, "checking string representation");
         Contact address("tcp", "127.0.0.1", 10000);
-        ConstString txt = address.toURI();
+        std::string txt = address.toURI();
         checkEqual(txt, "tcp://127.0.0.1:10000/", "string rep example");
     }
 
@@ -36,59 +35,13 @@ public:
         Contact address("tcp", "127.0.0.1", 10000);
         Contact address2;
         address2 = address;
-        ConstString txt = address2.toURI();
+        std::string txt = address2.toURI();
         checkEqual(txt, "tcp://127.0.0.1:10000/", "string rep example");
 
         Contact inv1;
         address2 = inv1;
         checkFalse(inv1.isValid(), "invalid source");
         checkFalse(address2.isValid(), "invalid copy");
-    }
-
-    virtual void testFactory()
-    {
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.68
-        report(0, "checking deprecated static factory methods");
-YARP_WARNING_PUSH;
-YARP_DISABLE_DEPRECATED_WARNING;
-        checkTrue(!Contact::invalid().isValid(), "good invalid");
-        checkTrue(!Contact::empty().isValid(), "good invalid");
-        {
-            report(0, "checking deprecated static factory methods");
-            Contact c = Contact::byName("/foo");
-            checkFalse(c.isValid(), "invalid Contact");
-            checkEqual(c.getHost().c_str(), "", "hostname not set");
-            checkEqual(c.getPort(), -1, "port number not set");
-            checkFalse(c.hasTimeout(), "timeout not set");
-            checkEqual(c.getCarrier().c_str(), "", "carrier not set");
-            checkEqual(c.getRegName().c_str(), "/foo", "regName set");
-            checkEqual(c.getName().c_str(), "/foo", "port name generated");
-        }
-        {
-            report(0, "checking deprecated static factory methods");
-            Contact c = Contact::byCarrier("ziggy");
-            checkFalse(c.isValid(), "invalid Contact");
-            checkEqual(c.getHost().c_str(), "", "hostname not set");
-            checkEqual(c.getPort(), -1, "port number not set");
-            checkFalse(c.hasTimeout(), "timeout not set");
-            checkEqual(c.getCarrier().c_str(), "ziggy", "carrier set");
-            checkEqual(c.getRegName().c_str(), "", "regName not set");
-            checkEqual(c.getName().c_str(), "", "port name not generated");
-        }
-        {
-            report(0, "checking deprecated static factory methods");
-            Contact c = Contact::bySocket("ziggy", "www.robotology.yarp", 8080);
-            checkTrue(c.isValid(), "valid Contact");
-            checkEqual(c.getHost().c_str(), "www.robotology.yarp", "hostname set");
-            checkEqual(c.getPort(), 8080, "port number set");
-            checkFalse(c.hasTimeout(), "timeout not set");
-            checkEqual(c.getCarrier().c_str(), "ziggy", "carrier set");
-            checkEqual(c.getRegName().c_str(), "", "regName not set");
-            checkEqual(c.getName().c_str(), "/www.robotology.yarp:8080", "port name generated");
-        }
-YARP_WARNING_POP;
-
-#endif // YARP_NO_DEPRECATED
     }
 
     virtual void testContact()
@@ -305,7 +258,6 @@ YARP_WARNING_POP;
     virtual void runTests() override {
         testString();
         testCopy();
-        testFactory();
         testContact();
     }
 };

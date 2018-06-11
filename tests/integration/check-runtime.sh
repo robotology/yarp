@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
+
 function header() {
     echo "###############################################################"
     echo "## $1"
@@ -27,7 +33,7 @@ cd $base
 mkdir -p $base/fakebot
 mkdir -p $base/fakebot_static
 
-PLUGIN_FLAGS="-DCREATE_DEVICE_LIBRARY_MODULES=TRUE -DENABLE_yarpmod_fakebot=TRUE -DCREATE_OPTIONAL_CARRIERS=TRUE -DENABLE_yarpcar_human_carrier=TRUE -DCREATE_GUIS=OFF"
+PLUGIN_FLAGS="-DENABLE_yarpmod_fakebot=TRUE -DENABLE_yarpcar_human_carrier=TRUE -DCREATE_GUIS=OFF"
 
 # Create fakebot device
 cd $base/fakebot

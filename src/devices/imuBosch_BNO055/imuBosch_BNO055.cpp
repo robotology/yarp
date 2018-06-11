@@ -25,7 +25,7 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
-BoschIMU::BoschIMU() : RateThread(20),
+BoschIMU::BoschIMU() : PeriodicThread(0.02),
     verbose(false),
     status(0),
     nChannels(12),
@@ -58,10 +58,10 @@ bool BoschIMU::open(yarp::os::Searchable& config)
         return false;
     }
 
-    int period = config.check("period",Value(10),"Thread period in ms").asInt();
-    setRate(period);
+    double period = config.check("period",Value(10),"Thread period in ms").asInt32() / 1000.0;
+    setPeriod(period);
 
-    nChannels = config.check("channels", Value(12)).asInt();
+    nChannels = config.check("channels", Value(12)).asInt32();
 
     fd_ser = ::open(config.find("comport").toString().c_str(), O_RDWR | O_NOCTTY );
     if (fd_ser < 0) {
@@ -111,7 +111,7 @@ bool BoschIMU::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if(!RateThread::start())
+    if(!PeriodicThread::start())
         return false;
 
     return true;
@@ -121,7 +121,7 @@ bool BoschIMU::close()
 {
     yTrace();
     //stop the thread
-    RateThread::stop();
+    PeriodicThread::stop();
     return true;
 }
 
@@ -539,7 +539,7 @@ void BoschIMU::run()
         quaternion_tmp.z() = ((double)raw_data[3]) / (2 << 13);
 
         RPY_angle.resize(3);
-        RPY_angle   = yarp::math::dcm2rpy(quaternion.toRotationMatrix());
+        RPY_angle   = yarp::math::dcm2rpy(quaternion.toRotationMatrix4x4());
         data_tmp[0] = RPY_angle[0] * 180 / M_PI;
         data_tmp[1] = RPY_angle[1] * 180 / M_PI;
         data_tmp[2] = RPY_angle[2] * 180 / M_PI;

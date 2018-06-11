@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Ze Ji 
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  *
  */
 
@@ -62,16 +62,16 @@ DynamixelAX12FtdiDriver::~DynamixelAX12FtdiDriver() {
 
 bool DynamixelAX12FtdiDriver::open(yarp::os::Searchable& config) {
 
-    mutex.wait();
+    mutex.lock();
 
     FtdiDeviceSettings ftdiSetting;
     strcpy(ftdiSetting.description, config.check("FTDI_DESCRIPTION", Value("FT232R USB UART"), "Ftdi device description").asString().c_str());
     strcpy(ftdiSetting.serial, config.check("FTDI_SERIAL", Value("A7003MhG"), "Ftdi device serial").asString().c_str());
     strcpy(ftdiSetting.manufacturer, config.check("FTDI_MANUFACTURER", Value("FTDI"), "Ftdi device manufacturer").asString().c_str());
-    ftdiSetting.baudrate = config.check("baudrate", Value(57600), "Specifies the baudrate at which the communication port operates.").asInt();
-    ftdiSetting.vendor = config.check("ftdivendor", Value(0x0403), "USB device vendor. 0x0403 normally. Can be found by lsusb on linux").asInt();
-    ftdiSetting.product = config.check("ftdiproduct", Value(0x6001), "USB device product number. 0x6001 normally. Can be found by lsusb on linux").asInt();
-    ftdiSetting.flowctrol = config.check("flowctrl", Value(SIO_DISABLE_FLOW_CTRL), "flow control to use. Should be SIO_DISABLE_FLOW_CTRL = 0x0, SIO_RTS_CTS_HS = 0x1 << 8, SIO_DTR_DSR_HS = 0x2 << 8, or SIO_XON_XOFF_HS = 0x4 << 8").asInt();
+    ftdiSetting.baudrate = config.check("baudrate", Value(57600), "Specifies the baudrate at which the communication port operates.").asInt32();
+    ftdiSetting.vendor = config.check("ftdivendor", Value(0x0403), "USB device vendor. 0x0403 normally. Can be found by lsusb on linux").asInt32();
+    ftdiSetting.product = config.check("ftdiproduct", Value(0x6001), "USB device product number. 0x6001 normally. Can be found by lsusb on linux").asInt32();
+    ftdiSetting.flowctrol = config.check("flowctrl", Value(SIO_DISABLE_FLOW_CTRL), "flow control to use. Should be SIO_DISABLE_FLOW_CTRL = 0x0, SIO_RTS_CTS_HS = 0x1 << 8, SIO_DTR_DSR_HS = 0x2 << 8, or SIO_XON_XOFF_HS = 0x4 << 8").asInt32();
     ftdiSetting.write_chunksize = 3;
     ftdiSetting.read_chunksize = 256;
 
@@ -168,7 +168,7 @@ bool DynamixelAX12FtdiDriver::open(yarp::os::Searchable& config) {
 
     // Everything ready to rumble
 
-    mutex.post();
+    mutex.unlock();
 
     return true;
 }
@@ -202,12 +202,12 @@ bool DynamixelAX12FtdiDriver::configure(yarp::os::Searchable& config) {
 
 int DynamixelAX12FtdiDriver::syncSendCommand(unsigned char id, unsigned char inst[], int size, unsigned char ret[], int &retSize) {
     int r = 0;
-    mutex.wait();
+    mutex.lock();
     if (!ftdi_usb_purge_buffers(&ftdic)) {
         r = sendCommand(id, inst, size, ret, retSize);
     }
 
-    mutex.post();
+    mutex.unlock();
     return r;
 }
 
@@ -844,7 +844,7 @@ bool DynamixelAX12FtdiDriver::getEncoderAccelerations(double *accs) {
 
 bool DynamixelAX12FtdiDriver::initMotorIndex(yarp::os::Bottle *sensorIndex) {
     int s = sensorIndex->size() - 1;
-    if (s != sensorIndex->get(0).asInt()) {
+    if (s != sensorIndex->get(0).asInt32()) {
         fprintf(stderr, "sensor number does not match the real number in configuration file\n");
         return false;
     }
@@ -882,7 +882,7 @@ bool DynamixelAX12FtdiDriver::initMotorIndex(yarp::os::Bottle *sensorIndex) {
     }
 
     for (int i = 0; i < numOfAxes; i++) {
-        jointNumbers[i] = (unsigned char) (sensorIndex->get(i + 1).asInt());
+        jointNumbers[i] = (unsigned char) (sensorIndex->get(i + 1).asInt32());
     }
     return true;
 }

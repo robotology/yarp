@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/impl/PortCommand.h>
@@ -42,7 +45,7 @@ bool PortCommand::read(ConnectionReader& reader) {
     return true;
 }
 
-bool PortCommand::write(ConnectionWriter& writer) {
+bool PortCommand::write(ConnectionWriter& writer) const {
     //ACE_DEBUG((LM_DEBUG, "PortCommand::writeBlock"));
     //printf("Writing port command, text mode %d\n", writer.isTextMode());
     if (!writer.isTextMode()) {
@@ -66,7 +69,7 @@ bool PortCommand::write(ConnectionWriter& writer) {
         if (ch!='\0') {
             char buf[] = "X";
             buf[0] = ch;
-            writer.appendString(ConstString(buf).c_str(), '\n');
+            writer.appendString(std::string(buf).c_str(), '\n');
         } else {
             writer.appendString(str.c_str(), '\n');
         }

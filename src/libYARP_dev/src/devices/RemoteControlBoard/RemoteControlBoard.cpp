@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Giorgio Metta, Lorenzo Natale, Paul Fitzpatrick, Alberto Cardellino
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <cstring>
@@ -10,10 +13,10 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/QosStyle.h>
 
@@ -26,7 +29,7 @@
 #include <yarp/dev/PreciselyTimed.h>
 
 
-#include <stateExtendedReader.hpp>
+#include "stateExtendedReader.h"
 
 #define PROTOCOL_VERSION_MAJOR 1
 #define PROTOCOL_VERSION_MINOR 9
@@ -45,7 +48,7 @@ namespace yarp{
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-const int DIAGNOSTIC_THREAD_RATE=1000;
+const double DIAGNOSTIC_THREAD_PERIOD=1.000;
 const double TIMEOUT=0.5;
 
 inline bool getTimeStamp(Bottle &bot, Stamp &st)
@@ -53,8 +56,8 @@ inline bool getTimeStamp(Bottle &bot, Stamp &st)
     if (bot.get(3).asVocab()==VOCAB_TIMESTAMP)
     {
         //yup! we have a timestamp
-        int fr=bot.get(4).asInt();
-        double ts=bot.get(5).asDouble();
+        int fr=bot.get(4).asInt32();
+        double ts=bot.get(5).asFloat64();
         st=Stamp(fr,ts);
         return true;
     }
@@ -69,13 +72,13 @@ struct yarp::dev::ProtocolVersion
 };
 
 
-class DiagnosticThread: public RateThread
+class DiagnosticThread: public PeriodicThread
 {
     StateExtendedInputPort *owner;
-    ConstString ownerName;
+    std::string ownerName;
 
 public:
-    DiagnosticThread(int r): RateThread(r)
+    DiagnosticThread(double r): PeriodicThread(r)
     { owner=nullptr; }
 
     void setOwner(StateExtendedInputPort *o)
@@ -112,14 +115,8 @@ public:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.70
-// A class implementing setXxxxxMode(int) causes a warning on MSVC
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#endif
-
 /**
-* @ingroup dev_impl_wrapper
+* @ingroup dev_impl_network_clients
 *
 * The client side of the control board, connects to a remote controlboard using the YARP network.
 *
@@ -137,20 +134,19 @@ YARP_DISABLE_DEPRECATED_WARNING
 */
 class yarp::dev::RemoteControlBoard :
     public IPidControl,
-    public IPositionControl2,
-    public IVelocityControl2,
+    public IPositionControl,
+    public IVelocityControl,
     public IEncodersTimed,
     public IMotorEncoders,
     public IMotor,
     public IAmplifierControl,
-    public IControlLimits2,
+    public IControlLimits,
     public IAxisInfo,
     public IPreciselyTimed,
-    public IControlCalibration2,
+    public IControlCalibration,
     public ITorqueControl,
     public IImpedanceControl,
-//    public IControlMode,
-    public IControlMode2,
+    public IControlMode,
     public DeviceDriver,
     public IPositionDirect,
     public IInteractionMode,
@@ -176,15 +172,15 @@ protected:
     // from the YARP .thrift file
 //  yarp::os::PortReaderBuffer<jointData>           extendedInputState_buffer;  // Buffer storing new data
     StateExtendedInputPort                          extendedIntputStatePort;  // Buffered port storing new data
-    Semaphore extendedPortMutex;
+    Mutex extendedPortMutex;
     jointData last_singleJoint;     // tmp to store last received data for a particular joint
 //    yarp::os::Port extendedIntputStatePort;         // Port /stateExt:i reading the state of the joints
     jointData last_wholePart;         // tmp to store last received data for whole part
 
-    ConstString remote;
-    ConstString local;
+    std::string remote;
+    std::string local;
     mutable Stamp lastStamp;  //this is shared among all calls that read encoders
-    // Semaphore mutex;
+    // Mutex mutex;
     int nj;
     bool njIsKnown;
 
@@ -230,7 +226,7 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(v1);
         cmd.addVocab(v2);
-        cmd.addInt(axis);
+        cmd.addInt32(axis);
         bool ok=rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             return true;
@@ -242,7 +238,7 @@ protected:
     {
         Bottle cmd, response;
         cmd.addVocab(v);
-        cmd.addInt(axis);
+        cmd.addInt32(axis);
         bool ok=rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             return true;
@@ -256,7 +252,7 @@ protected:
         cmd.addVocab(v1);
         cmd.addVocab(v2);
         cmd.addVocab(v3);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok=rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             return true;
@@ -289,7 +285,7 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
-        cmd.addDouble(v);
+        cmd.addFloat64(v);
 
         bool ok = rpc_p.write(cmd, response);
 
@@ -307,7 +303,7 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
-        cmd.addInt(v);
+        cmd.addInt32(v);
 
         bool ok = rpc_p.write(cmd, response);
 
@@ -330,7 +326,7 @@ protected:
 
         if (CHECK_FAIL(ok, response)) {
             // response should be [cmd] [name] value
-            v = response.get(2).asDouble();
+            v = response.get(2).asFloat64();
 
             getTimeStamp(response, lastStamp);
             return true;
@@ -355,7 +351,7 @@ protected:
 
         if (CHECK_FAIL(ok, response)) {
             // response should be [cmd] [name] value
-            v = response.get(2).asInt();
+            v = response.get(2).asInt32();
 
             getTimeStamp(response, lastStamp);
             return true;
@@ -375,8 +371,8 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
-        cmd.addInt(j);
-        cmd.addDouble(val);
+        cmd.addInt32(j);
+        cmd.addFloat64(val);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -386,9 +382,9 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
-        cmd.addInt(j);
-        cmd.addDouble(val1);
-        cmd.addDouble(val2);
+        cmd.addInt32(j);
+        cmd.addFloat64(val1);
+        cmd.addFloat64(val2);
 
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
@@ -408,7 +404,7 @@ protected:
         Bottle& l = cmd.addList();
         int i;
         for (i = 0; i < nj; i++)
-            l.addDouble(val[i]);
+            l.addFloat64(val[i]);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -422,7 +418,7 @@ protected:
         Bottle& l = cmd.addList();
         int i;
         for (i = 0; i < nj; i++)
-            l.addDouble(val[i]);
+            l.addFloat64(val[i]);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -436,10 +432,10 @@ protected:
         int i;
         Bottle& l1 = cmd.addList();
         for (i = 0; i < nj; i++)
-            l1.addDouble(val1[i]);
+            l1.addFloat64(val1[i]);
         Bottle& l2 = cmd.addList();
         for (i = 0; i < nj; i++)
-            l2.addDouble(val2[i]);
+            l2.addFloat64(val2[i]);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -449,14 +445,14 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(v);
-        cmd.addInt(len);
+        cmd.addInt32(len);
         int i;
         Bottle& l1 = cmd.addList();
         for (i = 0; i < len; i++)
-            l1.addInt(val1[i]);
+            l1.addInt32(val1[i]);
         Bottle& l2 = cmd.addList();
         for (i = 0; i < len; i++)
-            l2.addDouble(val2[i]);
+            l2.addFloat64(val2[i]);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -466,8 +462,8 @@ protected:
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(v1);
         cmd.addVocab(v2);
-        cmd.addInt(axis);
-        cmd.addDouble(val);
+        cmd.addInt32(axis);
+        cmd.addFloat64(val);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -480,8 +476,8 @@ protected:
         cmd.addVocab(VOCAB_PID);
         cmd.addVocab(voc);
         cmd.addVocab(type);
-        cmd.addInt(axis);
-        cmd.addDouble(val);
+        cmd.addInt32(axis);
+        cmd.addFloat64(val);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -497,7 +493,7 @@ protected:
         Bottle& l = cmd.addList();
         int i;
         for (i = 0; i < nj; i++)
-            l.addDouble(val_arr[i]);
+            l.addFloat64(val_arr[i]);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -509,12 +505,12 @@ protected:
         cmd.addVocab(VOCAB_PID);
         cmd.addVocab(voc);
         cmd.addVocab(type);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response))
         {
-            *val = response.get(2).asDouble();
+            *val = response.get(2).asFloat64();
             getTimeStamp(response, lastStamp);
             return true;
         }
@@ -540,7 +536,7 @@ protected:
             int njs = l.size();
             yAssert (nj == njs);
             for (i = 0; i < nj; i++)
-                val[i] = l.get(i).asDouble();
+                val[i] = l.get(i).asFloat64();
             getTimeStamp(response, lastStamp);
             return true;
         }
@@ -552,7 +548,7 @@ protected:
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(v1);
         cmd.addVocab(v2);
-        cmd.addInt(axis);
+        cmd.addInt32(axis);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -568,12 +564,12 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
             // ok
-            *val = response.get(2).asDouble();
+            *val = response.get(2).asFloat64();
 
             getTimeStamp(response, lastStamp);
             return true;
@@ -593,11 +589,11 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             // ok
-            *val = response.get(2).asInt();
+            *val = response.get(2).asInt32();
 
             getTimeStamp(response, lastStamp);
             return true;
@@ -610,12 +606,12 @@ protected:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v1);
         cmd.addVocab(v2);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
             // ok
-            *val = response.get(2).asDouble();
+            *val = response.get(2).asFloat64();
 
             getTimeStamp(response, lastStamp);
             return true;
@@ -628,12 +624,12 @@ protected:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v1);
         cmd.addVocab(v2);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             // ok
-            *val1 = response.get(2).asDouble();
-            *val2 = response.get(3).asDouble();
+            *val1 = response.get(2).asFloat64();
+            *val2 = response.get(3).asFloat64();
 
             getTimeStamp(response, lastStamp);
             return true;
@@ -646,13 +642,13 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
-        cmd.addInt(axis);
+        cmd.addInt32(axis);
 
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
-            *v1 = response.get(2).asDouble();
-            *v2 = response.get(3).asDouble();
+            *v1 = response.get(2).asFloat64();
+            *v2 = response.get(3).asFloat64();
             return true;
         }
         return false;
@@ -669,10 +665,10 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            val = (response.get(2).asInt()!=0);
+            val = (response.get(2).asInt32()!=0);
             getTimeStamp(response, lastStamp);
             return true;
         }
@@ -683,22 +679,22 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v);
-        cmd.addInt(len);
+        cmd.addInt32(len);
         Bottle& l1 = cmd.addList();
         for (int i = 0; i < len; i++)
-            l1.addInt(val1[i]);
+            l1.addInt32(val1[i]);
 
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
-            retVal = (response.get(2).asInt()!=0);
+            retVal = (response.get(2).asInt32()!=0);
             getTimeStamp(response, lastStamp);
             return true;
         }
         return false;
     }
 
-    bool get2V1I1IA1DA(int v1, int v2, const int n_joints, const int *joints, double *retVals, yarp::os::ConstString functionName = "")
+    bool get2V1I1IA1DA(int v1, int v2, const int n_joints, const int *joints, double *retVals, std::string functionName = "")
     {
         Bottle cmd, response;
         if (!isLive()) return false;
@@ -706,11 +702,11 @@ protected:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v1);
         cmd.addVocab(v2);
-        cmd.addInt(n_joints);
+        cmd.addInt32(n_joints);
 
         Bottle& l1 = cmd.addList();
         for (int i = 0; i < n_joints; i++)
-            l1.addInt(joints[i]);
+            l1.addInt32(joints[i]);
 
         bool ok = rpc_p.write(cmd, response);
 
@@ -718,18 +714,18 @@ protected:
         {
             int i;
             Bottle& list = *(response.get(0).asList());
-            yAssert(list.size() >= n_joints)
+            yAssert(list.size() >= (size_t) n_joints)
 
-            if (list.size() != n_joints)
+            if (list.size() != (size_t )n_joints)
             {
-                yError("%s length of response does not match: expected %d, received %d\n ", functionName.c_str(), n_joints , list.size() );
+                yError("%s length of response does not match: expected %d, received %zu\n ", functionName.c_str(), n_joints , list.size() );
                 return false;
             }
             else
             {
                 for (i = 0; i < n_joints; i++)
                 {
-                    retVals[i] = (double) list.get(i).asDouble();
+                    retVals[i] = (double) list.get(i).asFloat64();
                 }
                 return true;
             }
@@ -743,7 +739,7 @@ protected:
         cmd.addVocab(v);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            val = (response.get(2).asInt()!=0);
+            val = (response.get(2).asInt32()!=0);
             getTimeStamp(response, lastStamp);
             return true;
         }
@@ -772,7 +768,7 @@ protected:
             int njs = l.size();
             yAssert (nj == njs);
             for (i = 0; i < nj; i++)
-                val[i] = l.get(i).asInt();
+                val[i] = l.get(i).asInt32();
 
             getTimeStamp(response, lastStamp);
 
@@ -803,7 +799,7 @@ protected:
             int njs = l.size();
             yAssert (nj == njs);
             for (i = 0; i < nj; i++)
-                val[i] = l.get(i).asDouble();
+                val[i] = l.get(i).asFloat64();
 
             getTimeStamp(response, lastStamp);
 
@@ -835,7 +831,7 @@ protected:
             int njs = l.size();
             yAssert (nj == njs);
             for (i = 0; i < nj; i++)
-                val[i] = l.get(i).asDouble();
+                val[i] = l.get(i).asFloat64();
 
             getTimeStamp(response, lastStamp);
             return true;
@@ -868,7 +864,7 @@ protected:
             int njs = l.size();
             yAssert (nj == njs);
             for (i = 0; i < nj; i++)
-                val[i] = l.get(i).asDouble();
+                val[i] = l.get(i).asFloat64();
 
             getTimeStamp(response, lastStamp);
             return true;
@@ -896,13 +892,13 @@ protected:
 
             int nj1 = l1.size();
             int nj2 = l2.size();
-           // ACE_ASSERT (nj == nj1);
-           // ACE_ASSERT (nj == nj2);
+           // yAssert(nj == nj1);
+           // yAssert(nj == nj2);
 
             for (i = 0; i < nj1; i++)
-                val1[i] = l1.get(i).asDouble();
+                val1[i] = l1.get(i).asFloat64();
             for (i = 0; i < nj2; i++)
-                val2[i] = l2.get(i).asDouble();
+                val2[i] = l2.get(i).asFloat64();
 
             getTimeStamp(response, lastStamp);
             return true;
@@ -910,12 +906,12 @@ protected:
         return false;
     }
 
-    bool get1V1I1S(int code, int j, yarp::os::ConstString &name)
+    bool get1V1I1S(int code, int j, std::string &name)
     {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
@@ -933,10 +929,10 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v);
-        cmd.addInt(len);
+        cmd.addInt32(len);
         Bottle &l1 = cmd.addList();
         for(int i = 0; i < len; i++)
-            l1.addInt(val1[i]);
+            l1.addInt32(val1[i]);
 
         bool ok = rpc_p.write(cmd, response);
 
@@ -954,7 +950,7 @@ protected:
                 return false;
             }
             for (i = 0; i < nj2; i++)
-                val2[i] = l2.get(i).asDouble();
+                val2[i] = l2.get(i).asFloat64();
 
             getTimeStamp(response, lastStamp);
             return true;
@@ -1001,9 +997,9 @@ public:
         if (config.check("local_qos")) {
             Bottle& qos = config.findGroup("local_qos");
             if(qos.check("thread_priority"))
-                localQos.setThreadPriority(qos.find("thread_priority").asInt());
+                localQos.setThreadPriority(qos.find("thread_priority").asInt32());
             if(qos.check("thread_policy"))
-                localQos.setThreadPolicy(qos.find("thread_policy").asInt());
+                localQos.setThreadPolicy(qos.find("thread_policy").asInt32());
             if(qos.check("packet_priority"))
                 localQos.setPacketPriority(qos.find("packet_priority").asString());
         }
@@ -1012,9 +1008,9 @@ public:
         if (config.check("remote_qos")) {
             Bottle& qos = config.findGroup("remote_qos");
             if(qos.check("thread_priority"))
-                remoteQos.setThreadPriority(qos.find("thread_priority").asInt());
+                remoteQos.setThreadPriority(qos.find("thread_priority").asInt32());
             if(qos.check("thread_policy"))
-                remoteQos.setThreadPolicy(qos.find("thread_policy").asInt());
+                remoteQos.setThreadPolicy(qos.find("thread_policy").asInt32());
             if(qos.check("packet_priority"))
                 remoteQos.setPacketPriority(qos.find("packet_priority").asString());
         }
@@ -1049,14 +1045,14 @@ public:
             return false;
         }
 
-        ConstString carrier =
+        std::string carrier =
             config.check("carrier",
             Value("udp"),
             "default carrier for streaming robot state").asString().c_str();
 
         bool portProblem = false;
         if (local != "") {
-            ConstString s1 = local;
+            std::string s1 = local;
             s1 += "/rpc:o";
             if (!rpc_p.open(s1.c_str())) { portProblem = true; }
             s1 = local;
@@ -1074,9 +1070,9 @@ public:
         bool connectionProblem = false;
         if (remote != "" && !portProblem)
         {
-            ConstString s1 = remote;
+            std::string s1 = remote;
             s1 += "/rpc:i";
-            ConstString s2 = local;
+            std::string s2 = local;
             s2 += "/rpc:o";
             bool ok = false;
             // RPC port needs to be tcp, therefore no carrier option is added here
@@ -1156,7 +1152,7 @@ public:
 
         if (config.check("diagnostic"))
         {
-            diagnosticThread = new DiagnosticThread(DIAGNOSTIC_THREAD_RATE);
+            diagnosticThread = new DiagnosticThread(DIAGNOSTIC_THREAD_PERIOD);
             diagnosticThread->setOwner(&extendedIntputStatePort);
             diagnosticThread->start();
         }
@@ -1216,18 +1212,18 @@ public:
         cmd.addVocab(VOCAB_PID);
         cmd.addVocab(VOCAB_PID);
         cmd.addVocab(pidtype);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         Bottle& l = cmd.addList();
-        l.addDouble(pid.kp);
-        l.addDouble(pid.kd);
-        l.addDouble(pid.ki);
-        l.addDouble(pid.max_int);
-        l.addDouble(pid.max_output);
-        l.addDouble(pid.offset);
-        l.addDouble(pid.scale);
-        l.addDouble(pid.stiction_up_val);
-        l.addDouble(pid.stiction_down_val);
-        l.addDouble(pid.kff);
+        l.addFloat64(pid.kp);
+        l.addFloat64(pid.kd);
+        l.addFloat64(pid.ki);
+        l.addFloat64(pid.max_int);
+        l.addFloat64(pid.max_output);
+        l.addFloat64(pid.offset);
+        l.addFloat64(pid.scale);
+        l.addFloat64(pid.stiction_up_val);
+        l.addFloat64(pid.stiction_down_val);
+        l.addFloat64(pid.kff);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -1243,16 +1239,16 @@ public:
         int i;
         for (i = 0; i < nj; i++) {
             Bottle& m = l.addList();
-            m.addDouble(pids[i].kp);
-            m.addDouble(pids[i].kd);
-            m.addDouble(pids[i].ki);
-            m.addDouble(pids[i].max_int);
-            m.addDouble(pids[i].max_output);
-            m.addDouble(pids[i].offset);
-            m.addDouble(pids[i].scale);
-            m.addDouble(pids[i].stiction_up_val);
-            m.addDouble(pids[i].stiction_down_val);
-            m.addDouble(pids[i].kff);
+            m.addFloat64(pids[i].kp);
+            m.addFloat64(pids[i].kd);
+            m.addFloat64(pids[i].ki);
+            m.addFloat64(pids[i].max_int);
+            m.addFloat64(pids[i].max_output);
+            m.addFloat64(pids[i].offset);
+            m.addFloat64(pids[i].scale);
+            m.addFloat64(pids[i].stiction_up_val);
+            m.addFloat64(pids[i].stiction_down_val);
+            m.addFloat64(pids[i].kff);
         }
 
         bool ok = rpc_p.write(cmd, response);
@@ -1290,23 +1286,23 @@ public:
         cmd.addVocab(VOCAB_PID);
         cmd.addVocab(VOCAB_PID);
         cmd.addVocab(pidtype);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             Bottle* lp = response.get(2).asList();
             if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
-            pid->kp = l.get(0).asDouble();
-            pid->kd = l.get(1).asDouble();
-            pid->ki = l.get(2).asDouble();
-            pid->max_int = l.get(3).asDouble();
-            pid->max_output = l.get(4).asDouble();
-            pid->offset = l.get(5).asDouble();
-            pid->scale = l.get(6).asDouble();
-            pid->stiction_up_val = l.get(7).asDouble();
-            pid->stiction_down_val = l.get(8).asDouble();
-            pid->kff = l.get(9).asDouble();
+            pid->kp = l.get(0).asFloat64();
+            pid->kd = l.get(1).asFloat64();
+            pid->ki = l.get(2).asFloat64();
+            pid->max_int = l.get(3).asFloat64();
+            pid->max_output = l.get(4).asFloat64();
+            pid->offset = l.get(5).asFloat64();
+            pid->scale = l.get(6).asFloat64();
+            pid->stiction_up_val = l.get(7).asFloat64();
+            pid->stiction_down_val = l.get(8).asFloat64();
+            pid->kff = l.get(9).asFloat64();
             return true;
         }
         return false;
@@ -1333,16 +1329,16 @@ public:
                 Bottle* mp = lp->get(i).asList();
                 if (mp == nullptr)
                     return false;
-                pids[i].kp = mp->get(0).asDouble();
-                pids[i].kd = mp->get(1).asDouble();
-                pids[i].ki = mp->get(2).asDouble();
-                pids[i].max_int = mp->get(3).asDouble();
-                pids[i].max_output = mp->get(4).asDouble();
-                pids[i].offset = mp->get(5).asDouble();
-                pids[i].scale = mp->get(6).asDouble();
-                pids[i].stiction_up_val = mp->get(7).asDouble();
-                pids[i].stiction_down_val = mp->get(8).asDouble();
-                pids[i].kff = mp->get(9).asDouble();
+                pids[i].kp = mp->get(0).asFloat64();
+                pids[i].kd = mp->get(1).asFloat64();
+                pids[i].ki = mp->get(2).asFloat64();
+                pids[i].max_int = mp->get(3).asFloat64();
+                pids[i].max_output = mp->get(4).asFloat64();
+                pids[i].offset = mp->get(5).asFloat64();
+                pids[i].scale = mp->get(6).asFloat64();
+                pids[i].stiction_up_val = mp->get(7).asFloat64();
+                pids[i].stiction_down_val = mp->get(8).asFloat64();
+                pids[i].kff = mp->get(9).asFloat64();
             }
             return true;
         }
@@ -1372,7 +1368,7 @@ public:
         cmd.addVocab(VOCAB_PID);
         cmd.addVocab(VOCAB_RESET);
         cmd.addVocab(pidtype);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -1384,7 +1380,7 @@ public:
         cmd.addVocab(VOCAB_PID);
         cmd.addVocab(VOCAB_DISABLE);
         cmd.addVocab(pidtype);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -1396,7 +1392,7 @@ public:
         cmd.addVocab(VOCAB_PID);
         cmd.addVocab(VOCAB_ENABLE);
         cmd.addVocab(pidtype);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -1408,7 +1404,7 @@ public:
         cmd.addVocab(VOCAB_PID);
         cmd.addVocab(VOCAB_ENABLE);
         cmd.addVocab(pidtype);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response))
         {
@@ -1481,9 +1477,9 @@ public:
     {
         double localArrivalTime = 0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_ENCODER, v, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         if (ret && ( (Time::now()-localArrivalTime) > TIMEOUT) )
             ret = false;
@@ -1501,10 +1497,10 @@ public:
     {
         double localArrivalTime = 0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_ENCODER, v, lastStamp, localArrivalTime);
         *t=lastStamp.getTime();
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         if (ret && ( (Time::now()-localArrivalTime) > TIMEOUT) )
             ret = false;
@@ -1524,9 +1520,9 @@ public:
     virtual bool getEncoders(double *encs) override {
         double localArrivalTime = 0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_ENCODERS, encs, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         return ret;
     }
@@ -1540,10 +1536,10 @@ public:
     virtual bool getEncodersTimed(double *encs, double *ts) override {
         double localArrivalTime=0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_ENCODERS, encs, lastStamp, localArrivalTime);
         std::fill_n(ts, nj, lastStamp.getTime());
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         if ( (Time::now()-localArrivalTime) > TIMEOUT)
             ret=false;
@@ -1560,9 +1556,9 @@ public:
     {
         double localArrivalTime=0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_ENCODER_SPEED, sp, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -1576,9 +1572,9 @@ public:
     {
         double localArrivalTime=0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_ENCODER_SPEEDS, spds, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -1591,9 +1587,9 @@ public:
     virtual bool getEncoderAcceleration(int j, double *acc) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_ENCODER_ACCELERATION, acc, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -1605,14 +1601,14 @@ public:
     virtual bool getEncoderAccelerations(double *accs) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_ENCODER_ACCELERATIONS, accs, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
     /* IRemoteVariable */
-    virtual bool getRemoteVariable(yarp::os::ConstString key, yarp::os::Bottle& val) override {
+    virtual bool getRemoteVariable(std::string key, yarp::os::Bottle& val) override {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
@@ -1627,7 +1623,7 @@ public:
         return false;
     }
 
-    virtual bool setRemoteVariable(yarp::os::ConstString key, const yarp::os::Bottle& val) override {
+    virtual bool setRemoteVariable(std::string key, const yarp::os::Bottle& val) override {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
@@ -1753,9 +1749,9 @@ public:
     {
         double localArrivalTime = 0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_MOTOR_ENCODER, v, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         if(ret && ((Time::now()-localArrivalTime) > TIMEOUT) )
             ret=false;
@@ -1773,10 +1769,10 @@ public:
     {
         double localArrivalTime = 0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_MOTOR_ENCODER, v, lastStamp, localArrivalTime);
         *t=lastStamp.getTime();
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         if(ret && ((Time::now()-localArrivalTime) > TIMEOUT) )
             ret=false;
@@ -1797,9 +1793,9 @@ public:
     {
         double localArrivalTime=0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_MOTOR_ENCODERS, encs, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         return ret;
     }
@@ -1814,10 +1810,10 @@ public:
     {
         double localArrivalTime=0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_MOTOR_ENCODERS, encs, lastStamp, localArrivalTime);
         std::fill_n(ts, nj, lastStamp.getTime());
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
 
         if(ret && ((Time::now()-localArrivalTime) > TIMEOUT) )
             ret=false;
@@ -1833,9 +1829,9 @@ public:
     virtual bool getMotorEncoderSpeed(int j, double *sp) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_MOTOR_ENCODER_SPEED, sp, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -1847,9 +1843,9 @@ public:
     virtual bool getMotorEncoderSpeeds(double *spds) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_MOTOR_ENCODER_SPEEDS, spds, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -1862,9 +1858,9 @@ public:
     virtual bool getMotorEncoderAcceleration(int j, double *acc) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_MOTOR_ENCODER_ACCELERATION, acc, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -1876,9 +1872,9 @@ public:
     virtual bool getMotorEncoderAccelerations(double *accs) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_MOTOR_ENCODER_SPEEDS, accs, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -1889,9 +1885,9 @@ public:
      */
     virtual Stamp getLastInputStamp() override {
         Stamp ret;
-//        mutex.wait();
+//        mutex.lock();
         ret = lastStamp;
-//        mutex.post();
+//        mutex.unlock();
         return ret;
     }
 
@@ -2189,11 +2185,11 @@ public:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_STOP_GROUP);
-        cmd.addInt(len);
+        cmd.addInt32(len);
         int i;
         Bottle& l1 = cmd.addList();
         for (i = 0; i < len; i++)
-            l1.addInt(val1[i]);
+            l1.addInt32(val1[i]);
 
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
@@ -2220,7 +2216,7 @@ public:
         CommandMessage& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab(VOCAB_VELOCITY_MOVE);
-        c.head.addInt(j);
+        c.head.addInt32(j);
         c.body.resize(1);
         memcpy(&(c.body[0]), &v, sizeof(double));
         command_buffer.write(writeStrict_singleJoint);
@@ -2342,6 +2338,20 @@ public:
         return get1V1I1D(VOCAB_AMP_NOMINAL_CURRENT, m, val);
     }
 
+    /* Set the the nominal current which can be kept for an indefinite amount of time
+    * without harming the motor. This value is specific for each motor and it is typically
+    * found in its datasheet. The units are Ampere.
+    * This value and the peak current may be used by the firmware to configure
+    * an I2T filter.
+    * @param m motor number
+    * @param val storage for return value. [Ampere]
+    * @return true/false success failure.
+    */
+    virtual bool setNominalCurrent(int m, const double val) override
+    {
+        return set1V1I1D(VOCAB_AMP_NOMINAL_CURRENT, m, val);
+    }
+
     /* Get the the peak current which causes damage to the motor if maintained
      * for a long amount of time.
      * The value is often found in the motor datasheet, units are Ampere.
@@ -2379,9 +2389,9 @@ public:
     virtual bool getPWM(int m, double* val) override
     {
         double localArrivalTime = 0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(m, VOCAB_PWMCONTROL_PWM_OUTPUT, val, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -2453,7 +2463,7 @@ public:
     }
 
     /* IAxisInfo */
-    virtual bool getAxisName(int j, yarp::os::ConstString& name) override {
+    virtual bool getAxisName(int j, std::string& name) override {
         return get1V1I1S(VOCAB_INFO_NAME, j, name);
     }
 
@@ -2474,16 +2484,16 @@ public:
     bool virtual park(bool wait=true) override
     { return send1V(VOCAB_PARK); }
 
-    bool virtual calibrate2(int j, unsigned int ui, double v1, double v2, double v3) override
+    bool virtual calibrate(int j, unsigned int ui, double v1, double v2, double v3) override
     {
         Bottle cmd, response;
 
         cmd.addVocab(VOCAB_CALIBRATE_JOINT);
-        cmd.addInt(j);
-        cmd.addInt(ui);
-        cmd.addDouble(v1);
-        cmd.addDouble(v2);
-        cmd.addDouble(v3);
+        cmd.addInt32(j);
+        cmd.addInt32(ui);
+        cmd.addFloat64(v1);
+        cmd.addFloat64(v2);
+        cmd.addFloat64(v3);
 
         bool ok = rpc_p.write(cmd, response);
 
@@ -2498,12 +2508,12 @@ public:
         Bottle cmd, response;
 
         cmd.addVocab(VOCAB_CALIBRATE_JOINT_PARAMS);
-        cmd.addInt(j);
-        cmd.addInt(params.type);
-        cmd.addDouble(params.param1);
-        cmd.addDouble(params.param2);
-        cmd.addDouble(params.param3);
-        cmd.addDouble(params.param4);
+        cmd.addInt32(j);
+        cmd.addInt32(params.type);
+        cmd.addFloat64(params.param1);
+        cmd.addFloat64(params.param2);
+        cmd.addFloat64(params.param3);
+        cmd.addFloat64(params.param4);
 
         bool ok = rpc_p.write(cmd, response);
 
@@ -2548,7 +2558,7 @@ public:
         c.head.clear();
         // in streaming port only SET command can be sent, so it is implicit
         c.head.addVocab(VOCAB_TORQUES_DIRECT);
-        c.head.addInt(j);
+        c.head.addInt32(j);
 
         c.body.clear();
         c.body.resize(1);
@@ -2566,21 +2576,15 @@ public:
         c.head.clear();
         // in streaming port only SET command can be sent, so it is implicit
         c.head.addVocab(VOCAB_TORQUES_DIRECT_GROUP);
-        c.head.addInt(n_joint);
+        c.head.addInt32(n_joint);
         Bottle &jointList = c.head.addList();
         for (int i = 0; i < n_joint; i++)
-            jointList.addInt(joints[i]);
+            jointList.addInt32(joints[i]);
         c.body.resize(n_joint);
         memcpy(&(c.body[0]), t, sizeof(double)*n_joint);
         command_buffer.write(writeStrict_moreJoints);
         return true;
     }
-
-    bool getBemfParam(int j, double *t) override
-    { return get2V1I1D(VOCAB_TORQUE, VOCAB_BEMF, j, t); }
-
-    bool setBemfParam(int j, double v) override
-    { return set2V1I1D(VOCAB_TORQUE, VOCAB_BEMF, j, v); }
 
     bool setMotorTorqueParams(int j, const MotorTorqueParameters params) override
     {
@@ -2588,12 +2592,12 @@ public:
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_TORQUE);
         cmd.addVocab(VOCAB_MOTOR_PARAMS);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         Bottle& b = cmd.addList();
-        b.addDouble(params.bemf);
-        b.addDouble(params.bemf_scale);
-        b.addDouble(params.ktau);
-        b.addDouble(params.ktau_scale);
+        b.addFloat64(params.bemf);
+        b.addFloat64(params.bemf_scale);
+        b.addFloat64(params.ktau);
+        b.addFloat64(params.ktau_scale);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -2604,7 +2608,7 @@ public:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_TORQUE);
         cmd.addVocab(VOCAB_MOTOR_PARAMS);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             Bottle* lp = response.get(2).asList();
@@ -2616,10 +2620,10 @@ public:
                 yError("getMotorTorqueParams return value not understood, size!=4");
                 return false;
             }
-            params->bemf        = l.get(0).asDouble();
-            params->bemf_scale  = l.get(1).asDouble();
-            params->ktau        = l.get(2).asDouble();
-            params->ktau_scale  = l.get(3).asDouble();
+            params->bemf        = l.get(0).asFloat64();
+            params->bemf_scale  = l.get(1).asFloat64();
+            params->ktau        = l.get(2).asFloat64();
+            params->ktau_scale  = l.get(3).asFloat64();
             return true;
         }
         return false;
@@ -2628,18 +2632,18 @@ public:
     bool getTorque(int j, double *t) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_TRQ, t, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
     bool getTorques(double *t) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_TRQS, t, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -2655,15 +2659,15 @@ public:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_IMPEDANCE);
         cmd.addVocab(VOCAB_IMP_PARAM);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             Bottle* lp = response.get(2).asList();
             if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
-            *stiffness = l.get(0).asDouble();
-            *damping   = l.get(1).asDouble();
+            *stiffness = l.get(0).asFloat64();
+            *damping   = l.get(1).asFloat64();
             return true;
         }
         return false;
@@ -2675,14 +2679,14 @@ public:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_IMPEDANCE);
         cmd.addVocab(VOCAB_IMP_OFFSET);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             Bottle* lp = response.get(2).asList();
             if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
-            *offset    = l.get(0).asDouble();
+            *offset    = l.get(0).asFloat64();
             return true;
         }
         return false;
@@ -2694,11 +2698,11 @@ public:
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_IMPEDANCE);
         cmd.addVocab(VOCAB_IMP_PARAM);
-        cmd.addInt(j);
+        cmd.addInt32(j);
 
         Bottle& b = cmd.addList();
-        b.addDouble(stiffness);
-        b.addDouble(damping);
+        b.addFloat64(stiffness);
+        b.addFloat64(damping);
 
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
@@ -2710,10 +2714,10 @@ public:
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_IMPEDANCE);
         cmd.addVocab(VOCAB_IMP_OFFSET);
-        cmd.addInt(j);
+        cmd.addInt32(j);
 
         Bottle& b = cmd.addList();
-        b.addDouble(offset);
+        b.addFloat64(offset);
 
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
@@ -2725,17 +2729,17 @@ public:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_IMPEDANCE);
         cmd.addVocab(VOCAB_LIMITS);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             Bottle* lp = response.get(2).asList();
             if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
-            *min_stiff    = l.get(0).asDouble();
-            *max_stiff    = l.get(1).asDouble();
-            *min_damp     = l.get(2).asDouble();
-            *max_damp     = l.get(3).asDouble();
+            *min_stiff    = l.get(0).asFloat64();
+            *max_stiff    = l.get(1).asFloat64();
+            *min_damp     = l.get(2).asFloat64();
+            *max_damp     = l.get(3).asFloat64();
             return true;
         }
         return false;
@@ -2745,9 +2749,9 @@ public:
     bool getControlMode(int j, int *mode) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_CM_CONTROL_MODE, mode, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -2756,7 +2760,7 @@ public:
     {
         double localArrivalTime=0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, last_wholePart.controlMode.getFirst(), lastStamp, localArrivalTime);
         if(ret)
         {
@@ -2766,7 +2770,7 @@ public:
         else
             ret = false;
 
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -2774,9 +2778,9 @@ public:
     bool getControlModes(int *modes) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, modes, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -2788,7 +2792,7 @@ public:
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_ICONTROLMODE);
         cmd.addVocab(VOCAB_CM_CONTROL_MODE);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         cmd.addVocab(mode);
 
         bool ok = rpc_p.write(cmd, response);
@@ -2802,11 +2806,11 @@ public:
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_ICONTROLMODE);
         cmd.addVocab(VOCAB_CM_CONTROL_MODE_GROUP);
-        cmd.addInt(n_joint);
+        cmd.addInt32(n_joint);
         int i;
         Bottle& l1 = cmd.addList();
         for (i = 0; i < n_joint; i++)
-            l1.addInt(joints[i]);
+            l1.addInt32(joints[i]);
 
         Bottle& l2 = cmd.addList();
         for (i = 0; i < n_joint; i++)
@@ -2842,23 +2846,23 @@ public:
         CommandMessage& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab(VOCAB_POSITION_DIRECT);
-        c.head.addInt(j);
+        c.head.addInt32(j);
         c.body.resize(1);
         memcpy(&(c.body[0]), &ref, sizeof(double));
         command_buffer.write(writeStrict_singleJoint);
         return true;
     }
 
-    bool setPositions(const int n_joint, const int *joints, double *refs) override
+    bool setPositions(const int n_joint, const int *joints, const double *refs) override
     {
         if (!isLive()) return false;
         CommandMessage& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab(VOCAB_POSITION_DIRECT_GROUP);
-        c.head.addInt(n_joint);
+        c.head.addInt32(n_joint);
         Bottle &jointList = c.head.addList();
         for (int i = 0; i < n_joint; i++)
-            jointList.addInt(joints[i]);
+            jointList.addInt32(joints[i]);
         c.body.resize(n_joint);
         memcpy(&(c.body[0]), refs, sizeof(double)*n_joint);
         command_buffer.write(writeStrict_moreJoints);
@@ -2903,10 +2907,10 @@ public:
         CommandMessage& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab(VOCAB_VELOCITY_MOVE_GROUP);
-        c.head.addInt(n_joint);
+        c.head.addInt32(n_joint);
         Bottle &jointList = c.head.addList();
         for (int i = 0; i < n_joint; i++)
-            jointList.addInt(joints[i]);
+            jointList.addInt32(joints[i]);
         c.body.resize(n_joint);
         memcpy(&(c.body[0]), spds, sizeof(double)*n_joint);
         command_buffer.write(writeStrict_moreJoints);
@@ -2932,9 +2936,9 @@ public:
     bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(axis, VOCAB_INTERACTION_MODE, (int*) mode, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -2942,7 +2946,7 @@ public:
     {
         double localArrivalTime=0.0;
 
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, last_wholePart.interactionMode.getFirst(), lastStamp, localArrivalTime);
         if(ret)
         {
@@ -2952,16 +2956,16 @@ public:
         else
             ret = false;
 
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
     bool getInteractionModes(yarp::dev::InteractionModeEnum* modes) override
     {
         double localArrivalTime=0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_INTERACTION_MODES, (int*) modes, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
@@ -2973,7 +2977,7 @@ public:
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
         cmd.addVocab(VOCAB_INTERACTION_MODE);
-        cmd.addInt(axis);
+        cmd.addInt32(axis);
         cmd.addVocab(mode);
 
         bool ok = rpc_p.write(cmd, response);
@@ -2988,11 +2992,11 @@ public:
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
         cmd.addVocab(VOCAB_INTERACTION_MODE_GROUP);
-        cmd.addInt(n_joints);
+        cmd.addInt32(n_joints);
 
         Bottle& l1 = cmd.addList();
         for (int i = 0; i < n_joints; i++)
-            l1.addInt(joints[i]);
+            l1.addInt32(joints[i]);
 
         Bottle& l2 = cmd.addList();
         for (int i = 0; i < n_joints; i++)
@@ -3038,9 +3042,9 @@ public:
 
         if (!error)
         {
-            protocolVersion.major=reply.get(1).asInt();
-            protocolVersion.minor=reply.get(2).asInt();
-            protocolVersion.tweak=reply.get(3).asInt();
+            protocolVersion.major=reply.get(1).asInt32();
+            protocolVersion.minor=reply.get(2).asInt32();
+            protocolVersion.tweak=reply.get(3).asInt32();
 
             //verify protocol
             if (protocolVersion.major!=PROTOCOL_VERSION_MAJOR)
@@ -3088,7 +3092,7 @@ public:
         bool ok = rpc_p.write(cmd, response);
         if(ok)
         {
-            *isCalib = response.get(2).asInt()!=0;
+            *isCalib = response.get(2).asInt32()!=0;
         }
         else
         {
@@ -3231,7 +3235,7 @@ public:
         c.head.clear();
         c.head.addVocab(VOCAB_CURRENTCONTROL_INTERFACE);
         c.head.addVocab(VOCAB_CURRENT_REF);
-        c.head.addInt(j);
+        c.head.addInt32(j);
         c.body.resize(1);
         memcpy(&(c.body[0]), &ref, sizeof(double));
         command_buffer.write(writeStrict_singleJoint);
@@ -3245,10 +3249,10 @@ public:
         c.head.clear();
         c.head.addVocab(VOCAB_CURRENTCONTROL_INTERFACE);
         c.head.addVocab(VOCAB_CURRENT_REF_GROUP);
-        c.head.addInt(n_joint);
+        c.head.addInt32(n_joint);
         Bottle &jointList = c.head.addList();
         for (int i = 0; i < n_joint; i++)
-            jointList.addInt(joints[i]);
+            jointList.addInt32(joints[i]);
         c.body.resize(n_joint);
         memcpy(&(c.body[0]), refs, sizeof(double)*n_joint);
         command_buffer.write(writeStrict_moreJoints);
@@ -3283,7 +3287,7 @@ public:
         // in streaming port only SET command can be sent, so it is implicit
         c.head.addVocab(VOCAB_PWMCONTROL_INTERFACE);
         c.head.addVocab(VOCAB_PWMCONTROL_REF_PWM);
-        c.head.addInt(j);
+        c.head.addInt32(j);
 
         c.body.clear();
         c.body.resize(1);
@@ -3316,7 +3320,7 @@ public:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_PWMCONTROL_INTERFACE);
         cmd.addVocab(VOCAB_PWMCONTROL_REF_PWM);
-        cmd.addInt(j);
+        cmd.addInt32(j);
         response.clear();
 
         bool ok = rpc_p.write(cmd, response);
@@ -3324,7 +3328,7 @@ public:
         if (CHECK_FAIL(ok, response))
         {
             // ok
-            *ref = response.get(2).asDouble();
+            *ref = response.get(2).asFloat64();
 
             getTimeStamp(response, lastStamp);
             return true;
@@ -3341,40 +3345,22 @@ public:
     virtual bool getDutyCycle(int j, double *out) override
     {
         double localArrivalTime = 0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_PWMCONTROL_PWM_OUTPUT, out, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
     virtual bool getDutyCycles(double *outs) override
     {
         double localArrivalTime = 0.0;
-        extendedPortMutex.wait();
+        extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_PWMCONTROL_PWM_OUTPUTS, outs, lastStamp, localArrivalTime);
-        extendedPortMutex.post();
+        extendedPortMutex.unlock();
         return ret;
     }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-#if !defined(_MSC_VER)
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#endif
-    YARP_DEPRECATED bool setPositionMode(int j) override { return setControlMode(j,VOCAB_CM_POSITION); }
-    YARP_DEPRECATED bool setVelocityMode(int j) override { return setControlMode(j,VOCAB_CM_VELOCITY); }
-    YARP_DEPRECATED bool setTorqueMode(int j) override { return setControlMode(j,VOCAB_CM_TORQUE); }
-    YARP_DEPRECATED bool setImpedancePositionMode(int j) override { return setControlMode(j,VOCAB_CM_IMPEDANCE_POS); }
-    YARP_DEPRECATED bool setImpedanceVelocityMode(int j) override { return setControlMode(j,VOCAB_CM_IMPEDANCE_VEL); }
-#if !defined(_MSC_VER)
-YARP_WARNING_POP
-#endif
-#endif // YARP_NO_DEPRECATED
 };
-
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.70
-YARP_WARNING_POP
-#endif
 
 
 // implementation of CommandsHelper

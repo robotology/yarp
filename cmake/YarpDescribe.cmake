@@ -1,61 +1,29 @@
-# Copyright: (C) 2010 RobotCub Consortium
-# Authors: Paul Fitzpatrick
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 include(YarpBackupVariable)
 
-# Let's see what we built, and record it to facilitate in-tree
-# ("uninstalled") use of YARP.
-get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-get_property(YARP_LIBS GLOBAL PROPERTY YARP_LIBS)
-get_property(YARP_TOOLS GLOBAL PROPERTY YARP_TOOLS)
+set(YARP_BINDINGS "${CMAKE_SOURCE_DIR}/bindings")
+set(YARP_CMAKECONFIG_DIR "${CMAKE_BINARY_DIR}")
 
-# Oops, cannot use YARP_DEFINES name, conflicts with an old variable
-# that might be lurking in CMakeCache.txt as people upgrade.  Insert
-# an "_ALL_" for now.
-get_property(YARP_ALL_DEFINES GLOBAL PROPERTY YARP_DEFS)
-get_property(YARP_HAS_MATH_LIB GLOBAL PROPERTY YARP_HAS_MATH_LIB)
-
-message(STATUS "In-tree includes: ${YARP_INCLUDE_DIRS}")
-message(STATUS "YARP libraries: ${YARP_LIBS}")
-
-set(YARP_HAS_IDL TRUE)
-set(YARP_IDL_BINARY_HINT ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
-foreach(_config ${CMAKE_CONFIGURATION_TYPES})
-  set(YARP_IDL_BINARY_HINT "${YARP_IDL_BINARY_HINT};${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/${_config}")
-endforeach()
-set(YARP_BINDINGS ${CMAKE_SOURCE_DIR}/bindings)
-
-# Filter out from YARP_LIBRARIES all the plugins, yarpmod, yarpcar
-# and all the other libraries that should not be linked by the user
-set(YARP_LIBRARIES)
-foreach(lib ${YARP_LIBS})
-  if(NOT "${lib}" MATCHES "carrier$" AND
-     NOT "${lib}" MATCHES "^yarp_" AND
-     NOT "${lib}" MATCHES "^YARP_priv" AND
-     NOT "${lib}" MATCHES "rtf_fixturemanager_" AND
-     NOT "${lib}" STREQUAL "yarpcar" AND
-     NOT "${lib}" STREQUAL "yarpmod" AND
-     NOT "${lib}" STREQUAL "YARP_wire_rep_utils" AND
-     NOT "${lib}" STREQUAL "YARP_manager" AND
-     NOT "${lib}" STREQUAL "YARP_profiler" AND
-     NOT "${lib}" STREQUAL "YARP_logger" AND
-     NOT "${lib}" STREQUAL "YARP_serversql" AND
-     NOT "${lib}" STREQUAL "YARP_gsl" AND
-     NOT "${lib}" STREQUAL "YARP_eigen" AND
-     NOT "${lib}" STREQUAL "YARP_rtf")
-    list(APPEND YARP_LIBRARIES YARP::${lib})
-  endif()
-endforeach()
+set(YARP_DEFAULT_FIND_COMPONENTS OS
+                                 sig
+                                 dev)
+if(TARGET YARP::YARP_math)
+  list(APPEND YARP_DEFAULT_FIND_COMPONENTS math)
+endif()
 
 configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in"
                               "${CMAKE_BINARY_DIR}/YARPConfig.cmake"
                               INSTALL_DESTINATION "${CMAKE_BINARY_DIR}"
                               INSTALL_PREFIX "${CMAKE_BINARY_DIR}"
-                              PATH_VARS YARP_INCLUDE_DIRS
-                                        YARP_BINDINGS
+                              PATH_VARS YARP_BINDINGS
                                         YARP_MODULE_DIR
                                         YARP_IDL_BINARY_HINT
                                         # YARP_INSTALL_PREFIX is empty for build tree
@@ -75,16 +43,23 @@ configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cma
                                         YARP_STATIC_PLUGINS_INSTALL_DIR
                                         YARP_DYNAMIC_PLUGINS_INSTALL_DIR
                                         YARP_QML2_IMPORT_DIR
-                              NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+                                        YARP_CMAKECONFIG_DIR)
 
 write_basic_package_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
                                  VERSION ${YARP_VERSION_SHORT}
-                                 COMPATIBILITY AnyNewerVersion)
+                                 COMPATIBILITY SameMajorVersion)
+
 
 # YARPTargets.cmake (build tree)
-export(TARGETS ${YARP_LIBS} ${YARP_TOOLS}
+export(EXPORT YARP
        NAMESPACE YARP::
        FILE ${CMAKE_BINARY_DIR}/YARPTargets.cmake)
+
+if(NOT BUILD_SHARED_LIBS)
+  configure_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPTargetsStatic.cmake.in"
+                 "${CMAKE_BINARY_DIR}/YARPTargetsStatic.cmake"
+                 @ONLY)
+endif()
 
 if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.7)
   message(AUTHOR_WARNING "Searching for packages in \"lib/cmake\" is supported on Windows since CMake 3.7. You can remove this check")
@@ -94,34 +69,24 @@ if(WIN32)
 else()
   set(YARP_CMAKE_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/YARP")
 endif()
-    # Temporary fix to remove the outdated destination path that will
-    # cause issues when looking for YARP package.
-    # FIXME Remove this when this hack has been around for enough time.
-install(CODE
- "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/YARP\")
-    message(STATUS \"Deleted: \\\"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/YARP\\\"\")
-    file(REMOVE_RECURSE \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/YARP\")
-  endif()")
 
 # Save variables for later
-yarp_backup_variable(YARP_INCLUDE_DIRS)
 yarp_backup_variable(YARP_BINDINGS)
 yarp_backup_variable(YARP_MODULE_DIR)
 yarp_backup_variable(YARP_IDL_BINARY_HINT)
 yarp_backup_variable(YARP_INSTALL_PREFIX)
 
 # Set up a configuration file for installed use of YARP
-set(YARP_INCLUDE_DIRS "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
 set(YARP_BINDINGS "${CMAKE_INSTALL_FULL_DATADIR}/yarp/bindings")
 set(YARP_MODULE_DIR "${CMAKE_INSTALL_FULL_DATADIR}/yarp/cmake")
 set(YARP_IDL_BINARY_HINT "${CMAKE_INSTALL_FULL_BINDIR}")
 set(YARP_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+set(YARP_CMAKECONFIG_DIR "${YARP_CMAKE_DESTINATION}/..")
 
 configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in"
                               "${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake"
                               INSTALL_DESTINATION ${YARP_CMAKE_DESTINATION}
-                              PATH_VARS YARP_INCLUDE_DIRS
-                                        YARP_BINDINGS
+                              PATH_VARS YARP_BINDINGS
                                         YARP_MODULE_DIR
                                         YARP_IDL_BINARY_HINT
                                         YARP_INSTALL_PREFIX
@@ -141,12 +106,16 @@ configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cma
                                         YARP_STATIC_PLUGINS_INSTALL_DIR
                                         YARP_DYNAMIC_PLUGINS_INSTALL_DIR
                                         YARP_QML2_IMPORT_DIR
-                              NO_CHECK_REQUIRED_COMPONENTS_MACRO)
-install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake RENAME YARPConfig.cmake COMPONENT configuration DESTINATION ${YARP_CMAKE_DESTINATION})
-install(FILES ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake COMPONENT configuration DESTINATION ${YARP_CMAKE_DESTINATION})
+                                        YARP_CMAKECONFIG_DIR)
+install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake
+        RENAME YARPConfig.cmake
+        COMPONENT configuration
+        DESTINATION ${YARP_CMAKE_DESTINATION})
+install(FILES ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
+        COMPONENT configuration
+        DESTINATION ${YARP_CMAKE_DESTINATION})
 
 # Restore variables to their original value
-yarp_restore_variable(YARP_INCLUDE_DIRS)
 yarp_restore_variable(YARP_MODULE_DIR)
 yarp_restore_variable(YARP_IDL_BINARY_HINT)
 yarp_restore_variable(YARP_BINDINGS)
@@ -159,10 +128,12 @@ install(EXPORT YARP
         DESTINATION ${YARP_CMAKE_DESTINATION}
         FILE YARPTargets.cmake)
 
-foreach(lib ${YARP_LIBS})
-  get_target_property(type ${lib} TYPE)
-  if("${type}" STREQUAL "SHARED_LIBRARY")
-    set_target_properties(${lib} PROPERTIES VERSION ${YARP_VERSION_SHORT}
-                                            SOVERSION ${YARP_GENERIC_SOVERSION})
-  endif()
-endforeach(lib)
+if(NOT BUILD_SHARED_LIBS)
+  configure_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPTargetsStatic.cmake.in"
+                 "${CMAKE_BINARY_DIR}/YARPTargetsStaticForInstall.cmake"
+                 @ONLY)
+  install(FILES ${CMAKE_BINARY_DIR}/YARPTargetsStaticForInstall.cmake
+          RENAME YARPTargetsStatic.cmake
+          COMPONENT configuration
+          DESTINATION ${YARP_CMAKE_DESTINATION})
+endif()

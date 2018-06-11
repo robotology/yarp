@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_XMLRPC_CARRIER_XMLRPCSTREAM_H
@@ -68,17 +69,17 @@ public:
     }
 
 
-    virtual const yarp::os::Contact& getLocalAddress() override
+    virtual const yarp::os::Contact& getLocalAddress() const override
     {
         return delegate->getLocalAddress();
     }
 
-    virtual const yarp::os::Contact& getRemoteAddress() override
+    virtual const yarp::os::Contact& getRemoteAddress() const override
     {
         return delegate->getRemoteAddress();
     }
 
-    virtual bool isOk() override
+    virtual bool isOk() const override
     {
         return delegate->isOk();
     }
@@ -107,7 +108,7 @@ public:
     virtual void write(const Bytes& b) override;
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const Bytes& b) override;
+    virtual yarp::conf::ssize_t read(Bytes& b) override;
 
     virtual void interrupt() override
     {

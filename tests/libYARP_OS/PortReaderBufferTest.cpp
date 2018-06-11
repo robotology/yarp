@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2007 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Bottle.h>
@@ -34,7 +36,7 @@ public:
 
 class PortReaderBufferTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "PortReaderBufferTest"; }
+    virtual std::string getName() const override { return "PortReaderBufferTest"; }
 
 
     void checkAccept() {
@@ -135,7 +137,7 @@ public:
             report(1, "Message #2 is null..");
             return;
         }
-        checkEqual(datum->size(),4,"message is ok");
+        checkEqual(datum->size(),(size_t) 4,"message is ok");
         in.useCallback();
         in.count = 0;
         out.prepare().fromString("1 2 3 4 5");

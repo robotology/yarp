@@ -5,17 +5,14 @@
  * email:   dperrone@aitek.it
  * website: www.aitek.it
  *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 #include "plotmanager.h"
 
-PlotManager *PlotManager::self = nullptr;
-
 PlotManager::PlotManager(QObject *parent) :
     QObject(parent)
 {
-    self = this;
     timer.setTimerType(Qt::PreciseTimer);
     connect(&timer,SIGNAL(timeout()),this,SLOT(onTimeout()),Qt::DirectConnection);
 }
@@ -35,10 +32,8 @@ PlotManager::~PlotManager()
 /*! \brief Returns an instance of the class (Singleton). */
 PlotManager * PlotManager::instance()
 {
-    if(self == nullptr){
-        return new PlotManager();
-    }
-    return self;
+    static PlotManager instance;
+    return &instance;
 }
 
 /*! \brief Returns a list of all plotters. */

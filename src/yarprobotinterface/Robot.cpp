@@ -2,7 +2,7 @@
  * Copyright (C) 2012, 2015 Istituto Italiano di Tecnologia (IIT)
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 #include "Robot.h"
@@ -278,7 +278,7 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
         v.fromString(RobotInterface::findParam(params, "networks").c_str());
         yarp::os::Bottle &targetNetworks = *(v.asList());
 
-        for (int i = 0; i < targetNetworks.size(); ++i) {
+        for (size_t i = 0; i < targetNetworks.size(); ++i) {
             std::string targetNetwork = targetNetworks.get(i).toString().c_str();
 
             if (!RobotInterface::hasParam(params, targetNetwork)) {

@@ -1,20 +1,10 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Author: Marco Randazzo
- * email:  marco.randazzo@iit.it
- * website: www.robotcub.org
- * Permission is granted to copy, distribute, and/or modify this program
- * under the terms of the GNU General Public License, version 2 or any
- * later version published by the Free Software Foundation.
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * A copy of the license can be found at
- * http://www.robotcub.org/icub/license/gpl.txt
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details
-*/
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #ifndef YARP_LOGGER
 #define YARP_LOGGER
@@ -27,8 +17,8 @@
 #include <yarp/os/Vocab.h>
 
 #include <yarp/os/Thread.h>
-#include <yarp/os/RateThread.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/PeriodicThread.h>
+#include <yarp/os/Mutex.h>
 
 #include <list>
 #include <vector>
@@ -81,7 +71,7 @@ namespace yarp
             {
                 return e_level;
             }
-            std::string toString()
+            std::string toString() const
             {
                 if (e_level == 0) { return "<UNDEFINED>"; }
                 if (e_level == 1) { return "<TRACE>"; }
@@ -195,12 +185,12 @@ class yarp::yarpLogger::LogEntry
 class yarp::yarpLogger::LoggerEngine
 {
     //private class
-    class logger_thread : public yarp::os::SystemRateThread
+    class logger_thread : public yarp::os::PeriodicThread
     {
         public:
-        logger_thread (std::string _portname, int _rate=10, int _log_list_max_size=100);
+        logger_thread (std::string _portname, double _period=0.01, int _log_list_max_size=100);
         public:
-        yarp::os::Semaphore  mutex;
+        yarp::os::Mutex      mutex;
         unsigned int         log_list_max_size;
         bool                 log_list_max_size_enabled;
         std::list<LogEntry>  log_list;

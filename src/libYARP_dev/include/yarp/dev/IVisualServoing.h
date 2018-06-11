@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
- * Authors: Claudio Fantacci
- * CopyPolicy: Released under the terms of the 3-clause BSD.
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_VISUALSERVOING_H
@@ -11,7 +13,7 @@
 #include <vector>
 
 #include <yarp/os/Bottle.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/sig/Vector.h>
 
 namespace yarp{
@@ -135,7 +137,7 @@ public:
      *       unique label. Such labels can are stored in the bottle returned by
      *       the getInfo() method.
      */
-    virtual bool setControlPoint(const yarp::os::ConstString& point) = 0;
+    virtual bool setControlPoint(const std::string& point) = 0;
 
     /*!
      * Return useful information for visual servoing.

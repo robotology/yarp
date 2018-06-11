@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_STAMP_H
@@ -11,17 +14,15 @@
 #include <yarp/os/NetFloat64.h>
 #include <yarp/os/Portable.h>
 
+
 namespace yarp {
-    namespace os {
-        class Stamp;
-        class Stamped;
-    }
-}
+namespace os {
 
 /**
  * An abstraction for a time stamp and/or sequence number.
  */
-class YARP_OS_API yarp::os::Stamp : public Portable {
+class YARP_OS_API Stamp : public Portable
+{
 private:
     NetInt32 sequenceNumber;
     NetFloat64 timeStamp;
@@ -45,21 +46,21 @@ public:
      *
      * @return the sequence number.
      */
-    int getCount();
+    int getCount() const;
 
     /**
      * Get the time stamp.
      *
      * @return the time stamp
      */
-    double getTime();
+    double getTime() const;
 
     /**
      * Check if this Stamp is valid.
      *
      * @return true if this is a valid Stamp
      */
-    bool isValid();
+    bool isValid() const;
 
     /**
      * Get the maximum sequence number, after which an incrementing sequence
@@ -67,7 +68,7 @@ public:
      *
      * @return the maximum sequence number.
      */
-    int getMaxCount();
+    int getMaxCount() const;
 
     /**
      * Set the timestamp to the current time, and increment the sequence number
@@ -85,14 +86,17 @@ public:
     virtual bool read(ConnectionReader& connection) override;
 
     // Documented in Portable
-    virtual bool write(ConnectionWriter& connection) override;
+    virtual bool write(ConnectionWriter& connection) const override;
 };
 
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 /**
  * A base class for objects with time stamps and/or sequence numbers.
+ * @deprecated since YARP 3.0.0
  */
-class YARP_OS_API yarp::os::Stamped {
+class YARP_OS_DEPRECATED_API Stamped
+{
 public:
     /**
      * Destructor
@@ -105,6 +109,9 @@ public:
      */
     virtual Stamp getStamp() const = 0;
 };
+#endif // YARP_NO_DEPRECATED
 
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_STAMP_H

@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Author: Marco Randazzo <marco.randazzo@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_ROBOTDESCRIPTIONSERVER_H
@@ -14,9 +16,9 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
 #include <yarp/dev/IRobotDescription.h>
@@ -48,7 +50,7 @@ protected:
     yarp::os::Mutex                m_external_mutex;
     yarp::os::Mutex                m_internal_mutex;
     yarp::os::Port                 m_rpc_port;
-    yarp::os::ConstString          m_local_name;
+    std::string          m_local_name;
     std::vector<DeviceDescription> m_robot_devices;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/

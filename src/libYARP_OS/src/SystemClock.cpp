@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
- *          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/SystemClock.h>
@@ -13,11 +14,7 @@
 
 void yarp::os::SystemClock::delaySystem(double seconds)
 {
-#if defined _MSC_VER && _MSC_VER <= 1800
-    std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(seconds)));
-#else
     std::this_thread::sleep_for(std::chrono::duration<double>(seconds));
-#endif
 }
 
 double yarp::os::SystemClock::nowSystem()

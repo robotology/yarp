@@ -1,7 +1,10 @@
 /*
- *  Copyright: (C) 2010 RobotCub Consortium
- *  Authors: Ali Paikan <ali.paikan@iit.it>
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_SYSTEMINFOSERIALIZER_H
@@ -11,16 +14,13 @@
 #include <yarp/os/SystemInfo.h>
 
 namespace yarp {
-  namespace os {
-        class SystemInfoSerializer;
-  }
-}
+namespace os {
 
 /**
  * \ingroup key_class
  * @brief A helper class to pass the SystemInfo object around the YARP network
  */
-class YARP_OS_API yarp::os::SystemInfoSerializer: public yarp::os::Portable
+class YARP_OS_API SystemInfoSerializer: public yarp::os::Portable
 {
 public:
     /**
@@ -45,9 +45,8 @@ public:
      * @param connection a ConnectionWriter
      * @return true/false upon success or failure
      */
-    virtual bool write(yarp::os::ConnectionWriter& connection) override;
+    virtual bool write(yarp::os::ConnectionWriter& connection) const override;
 
-public:
     /**
      * @brief system memory information
      */
@@ -79,6 +78,15 @@ public:
     yarp::os::SystemInfo::UserInfo user;
 
     //yarp::os::SystemInfo::NetworkInfo network;
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_SYSTEMINFOSERIALIZER_H

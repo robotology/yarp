@@ -1,23 +1,21 @@
-# Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
-# Authors: Andrea Ruzzenenti
-# email:   andrea.ruzzenenti@iit.it
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 yarp_prepare_plugin(fakeDepthCamera
                     CATEGORY device
                     TYPE yarp::dev::fakeDepthCameraDriver
                     INCLUDE fakeDepthCameraDriver.h
-                    EXTRA_CONFIG WRAPPER=RGBDSensorWrapper
-                    DEPENDS "CREATE_DEVICE_LIBRARY_MODULES")
+                    EXTRA_CONFIG WRAPPER=RGBDSensorWrapper)
 
 if(ENABLE_fakeDepthCamera)
 
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   yarp_add_plugin(yarp_fakeDepthCamera fakeDepthCameraDriver.cpp
-                                   fakeDepthCameraDriver.h
-                                   fakeDepthCameraImpl.hpp)
+                                       fakeDepthCameraDriver.h)
 
   target_link_libraries(yarp_fakeDepthCamera YARP::YARP_OS
                                              YARP::YARP_sig

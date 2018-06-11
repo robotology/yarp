@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 RobotCub Consortium
  * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  *
  */
 
@@ -12,8 +12,8 @@
 #include "avpreamble.h"
 
 extern "C" {
-#include <avcodec.h>
-#include <avformat.h>
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
 }
 
 /*
@@ -82,7 +82,7 @@ private:
     AVFormatContext *oc;
     AVStream *audio_st, *video_st;
     double audio_pts, video_pts;
-    yarp::os::ConstString filename;
+    std::string filename;
     yarp::os::Property savedConfig;
     AVFrame *picture, *tmp_picture;
     uint8_t *video_outbuf;

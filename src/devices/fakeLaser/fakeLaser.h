@@ -1,17 +1,19 @@
 /*
-* Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
-* Author: Marco Randazzo <marco.randazzo@iit.it>
-* CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
-*/
-
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #ifndef FAKE_LASER_H
 #define FAKE_LASER_H
 
 #include <string>
 
-#include <yarp/os/RateThread.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/PeriodicThread.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/ILocalization2D.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -25,7 +27,7 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 /**
-* @ingroup dev_impl_wrapper
+* @ingroup dev_impl_media
 * FakeLaser sensor device for testing purposes and reference for IRangefinder2D devices
 *
 * \section Description of input parameters
@@ -47,7 +49,7 @@ using namespace yarp::dev;
 * yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient
 */
 
-class FakeLaser : public RateThread, public yarp::dev::IRangefinder2D, public DeviceDriver
+class FakeLaser : public PeriodicThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
 protected:
     enum test_mode_t { NO_OBSTACLES = 0, USE_PATTERN =1, USE_MAPFILE =2 };
@@ -56,9 +58,9 @@ protected:
     PolyDriver driver;
     test_mode_t m_test_mode;
     localization_mode_t m_loc_mode;
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 
-    int period;
+    double period;
     int sensorsNum;
 
     double min_angle;
@@ -85,10 +87,10 @@ protected:
     std::uniform_real_distribution<>* m_dis;
 
 public:
-    FakeLaser(int period = 20) : RateThread(period),
+    FakeLaser(double period = 0.02) : PeriodicThread(period),
         m_test_mode(test_mode_t::NO_OBSTACLES),
         m_loc_mode(localization_mode_t::LOC_NOT_SET),
-        mutex(1),
+        mutex(),
         period(period),
         sensorsNum(0),
         min_angle(0.0),
@@ -143,7 +145,7 @@ public:
     virtual bool getRawData(yarp::sig::Vector &out) override;
     virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) override;
     virtual bool getDeviceStatus     (Device_status &status) override;
-    virtual bool getDeviceInfo       (yarp::os::ConstString &device_info) override;
+    virtual bool getDeviceInfo       (std::string &device_info) override;
     virtual bool getDistanceRange    (double& min, double& max) override;
     virtual bool setDistanceRange    (double min, double max) override;
     virtual bool getScanLimits        (double& min, double& max) override;

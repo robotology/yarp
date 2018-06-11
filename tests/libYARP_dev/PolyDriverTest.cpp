@@ -1,11 +1,13 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
@@ -27,9 +29,9 @@ public:
     virtual bool open(yarp::os::Searchable& config) override
     {
         w = config.check("width",yarp::os::Value(128),
-                         "desired width of test image").asInt();
+                         "desired width of test image").asInt32();
         h = config.check("height",yarp::os::Value(128),
-                         "desired height of test image").asInt();
+                         "desired height of test image").asInt32();
         return true;
 
     }
@@ -55,7 +57,7 @@ class DeprecatedDeviceDriverTest : public DeprecatedDeviceDriver
 
 class PolyDriverTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "PolyDriverTest"; }
+    virtual std::string getName() const override { return "PolyDriverTest"; }
 
     void testDeprecated() {
         report(0,"deprecated device test");
@@ -147,7 +149,7 @@ name /mymotor\n\
         PolyDriver dd(p);
         Bottle cmd("get axes"), reply;
         Network::write(Contact("/mymotor/rpc:i"), cmd, reply);
-        checkEqual(reply.get(2).asInt(),10,"axis count is correct");
+        checkEqual(reply.get(2).asInt32(),10,"axis count is correct");
     }
 
     void testControlBoard2() {

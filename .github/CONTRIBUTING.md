@@ -213,7 +213,12 @@ projects, or an error if YARP is built with `YARP_NO_DEPRECATED`
 No bugfixes or new features will be added to these, unless it is absolutely
 necessary for some reason.
 
-Deprecated features are definitely removed every 4 release series.
+Deprecated features are definitely removed in the following major release, with
+the exception of the features removed during the development between the last
+minor release and the new major release, that are kept until the following
+major release, in order to simplify as much as possible the migration.
+During this period, it is also allowed to do breaking changes that cannot be
+deprecated using the `YARP_DEPRECATED` methods.
 
 
 ### Supported Systems

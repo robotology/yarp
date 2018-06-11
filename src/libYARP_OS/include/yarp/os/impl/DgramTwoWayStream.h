@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_IMPL_DGRAMTWOWAYSTREAM_H
@@ -9,13 +12,17 @@
 
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/ManagedBytes.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 
 #include <cstdlib>
 
 #ifdef YARP_HAS_ACE
 #include <ace/SOCK_Dgram.h>
 #include <ace/SOCK_Dgram_Mcast.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 #endif
 
 namespace yarp {
@@ -40,7 +47,7 @@ public:
                           dgram_sockfd(-1),
 #endif
                           dgram(nullptr), mgram(nullptr),
-                          mutex(1), readAt(0), readAvail(0),
+                          mutex(), readAt(0), readAvail(0),
                           writeAvail(0), pct(0), happy(true),
                           bufferAlertNeeded(false), bufferAlerted(false),
                           multiMode(false), errCount(0), lastReportTime(0)
@@ -87,12 +94,12 @@ public:
         return *this;
     }
 
-    virtual const Contact& getLocalAddress() override
+    virtual const Contact& getLocalAddress() const override
     {
         return localAddress;
     }
 
-    virtual const Contact& getRemoteAddress() override
+    virtual const Contact& getRemoteAddress() const override
     {
         return remoteAddress;
     }
@@ -107,14 +114,14 @@ public:
     virtual void closeMain();
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b) override;
+    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     using yarp::os::OutputStream::write;
     virtual void write(const yarp::os::Bytes& b) override;
 
     virtual void flush() override;
 
-    virtual bool isOk() override;
+    virtual bool isOk() const override;
 
     virtual void reset() override;
 
@@ -155,8 +162,8 @@ private:
 #endif
     Contact localAddress, remoteAddress, restrictInterfaceIp;
     yarp::os::ManagedBytes readBuffer, writeBuffer;
-    yarp::os::Semaphore mutex;
-    YARP_SSIZE_T readAt, readAvail, writeAvail;
+    yarp::os::Mutex mutex;
+    yarp::conf::ssize_t readAt, readAvail, writeAvail;
     int pct;
     bool happy;
     bool bufferAlertNeeded;

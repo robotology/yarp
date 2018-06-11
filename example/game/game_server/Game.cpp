@@ -1,13 +1,16 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <stdio.h>
 #include <assert.h>
 
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Time.h>
 
 #include "Thing.h"
@@ -35,9 +38,9 @@ public:
     Matrix game_matrix;
     DMatrix transient_matrix;
     Things game_things;
-    yarp::os::Semaphore game_mutex;
+    yarp::os::Mutex game_mutex;
 
-    GameHelper() : game_mutex(1) {
+    GameHelper() : game_mutex() {
     }
 };
 
@@ -83,7 +86,7 @@ void Game::setMaze(const char *fname) {
                 v = SYS(system_resource).game_things.create();
                 SYS(system_resource).game_things.getThing(v).set(x,y,v);
             }
-            if (v.asInt()!=0) {
+            if (v.asInt32()!=0) {
                 m.set(x,y,v);
                 ct++;
             }
@@ -123,33 +126,33 @@ Thing& Game::newThing(bool putOnBoard) {
 
     if(putOnBoard) {
   
-        if (id.asInt()!=-1) {
+        if (id.asInt32()!=-1) {
             ID xx = -1;
             ID yy = -1;
 
             for (int i=0; i<100; i++) {
                 ID x = (int)(ranf()*20);
                 ID y = (int)(ranf()*20);
-                if (SYS(system_resource).game_matrix.get(x,y).asInt()==0) {
+                if (SYS(system_resource).game_matrix.get(x,y).asInt32()==0) {
                     xx = x;
                     yy = y;
                 }
             }
 
             if (xx==-1) {
-                for (int r=1; r<20 && xx.asInt()==-1; r++) {
-                    for (int n=0; n<r && xx.asInt()==-1; n++) {
+                for (int r=1; r<20 && xx.asInt32()==-1; r++) {
+                    for (int n=0; n<r && xx.asInt32()==-1; n++) {
                         ID x = r-n;
                         ID y = n;
-                        if (SYS(system_resource).game_matrix.get(x,y).asInt()==0) {
+                        if (SYS(system_resource).game_matrix.get(x,y).asInt32()==0) {
                             xx = x;
                             yy = y;
                         }
                     }
                 }
             }
-            if (xx.asInt()!=-1) {
-                printf("Make new at %ld %ld\n", xx.asInt(), yy.asInt());
+            if (xx.asInt32()!=-1) {
+                printf("Make new at %ld %ld\n", xx.asInt32(), yy.asInt32());
                 SYS(system_resource).game_things.create(id);
                 SYS(system_resource).game_things.getThing(id).set(xx,yy,id);
                 SYS(system_resource).game_matrix.set(xx,yy,id);
@@ -162,7 +165,7 @@ Thing& Game::newThing(bool putOnBoard) {
         SYS(system_resource).game_things.create(id);
     }
   
-    if (id.asInt()==-1) {
+    if (id.asInt32()==-1) {
         return Thing::NOTHING;
     }
     return getThing(id);
@@ -211,11 +214,11 @@ void Game::load() {
 }
 
 void Game::wait() {
-    SYS(system_resource).game_mutex.wait();
+    SYS(system_resource).game_mutex.lock();
 }
 
 void Game::post() {
-    SYS(system_resource).game_mutex.post();
+    SYS(system_resource).game_mutex.unlock();
 }
 
 

@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
@@ -79,7 +81,7 @@ bool StreamConnectionReader::dropRequested()
     return shouldDrop;
 }
 
-bool StreamConnectionReader::expectBlock(const Bytes &b)
+bool StreamConnectionReader::expectBlock(Bytes &b)
 {
     if (!isGood()) {
         return false;
@@ -91,7 +93,7 @@ bool StreamConnectionReader::expectBlock(const Bytes &b)
     }
     //if (len<0) len = messageLen;
     if (len>0) {
-        YARP_SSIZE_T rlen = in->readFull(b);
+        yarp::conf::ssize_t rlen = in->readFull(b);
         if (rlen>=0) {
             messageLen -= len;
             return true;
@@ -101,7 +103,7 @@ bool StreamConnectionReader::expectBlock(const Bytes &b)
     return false;
 }
 
-ConstString StreamConnectionReader::expectString(int len)
+std::string StreamConnectionReader::expectString(int len)
 {
     if (!isGood()) {
         return "";
@@ -109,26 +111,26 @@ ConstString StreamConnectionReader::expectString(int len)
     char *buf = new char[len];
     yarp::os::Bytes b(buf, len);
     yAssert(in!=nullptr);
-    YARP_SSIZE_T r = in->read(b);
+    yarp::conf::ssize_t r = in->read(b);
     if (r<0 || (size_t)r<b.length()) {
         err = true;
         delete[] buf;
         return "";
     }
     messageLen -= b.length();
-    ConstString s = buf;
+    std::string s = buf;
     delete[] buf;
     return s;
 }
 
-ConstString StreamConnectionReader::expectLine()
+std::string StreamConnectionReader::expectLine()
 {
     if (!isGood()) {
         return "";
     }
     yAssert(in!=nullptr);
     bool success = false;
-    ConstString result = in->readLine('\n', &success);
+    std::string result = in->readLine('\n', &success);
     if (!success) {
         err = true;
         return "";
@@ -165,7 +167,7 @@ bool StreamConnectionReader::setSize(size_t len)
     return true;
 }
 
-size_t StreamConnectionReader::getSize()
+size_t StreamConnectionReader::getSize() const
 {
     return messageLen + (pushedIntFlag?sizeof(yarp::os::NetInt32):0);
 }
@@ -180,7 +182,40 @@ bool StreamConnectionReader::pushInt(int x)
     return true;
 }
 
-int StreamConnectionReader::expectInt()
+template <typename T, typename NetT>
+inline T StreamConnectionReader::expectType()
+{
+    yAssert(in!=nullptr);
+
+    NetT x = 0;
+    yarp::os::Bytes b((char*)(&x), sizeof(T));
+    yarp::conf::ssize_t r = in->read(b);
+    if (r < 0 || (size_t)r < b.length()) {
+        err = true;
+        return 0;
+    }
+    messageLen -= b.length();
+
+    return static_cast<T>(x);
+}
+
+std::int8_t StreamConnectionReader::expectInt8()
+{
+    if (!isGood()) {
+        return 0;
+    }
+    return expectType<std::int8_t, NetInt8>();
+}
+
+std::int16_t StreamConnectionReader::expectInt16()
+{
+    if (!isGood()) {
+        return 0;
+    }
+    return expectType<std::int16_t, NetInt16>();
+}
+
+std::int32_t StreamConnectionReader::expectInt32()
 {
     if (pushedIntFlag) {
         pushedIntFlag = false;
@@ -189,77 +224,59 @@ int StreamConnectionReader::expectInt()
     if (!isGood()) {
         return 0;
     }
-    NetInt32 x = 0;
-    yarp::os::Bytes b((char*)(&x), sizeof(x));
-    yAssert(in!=nullptr);
-    YARP_SSIZE_T r = in->read(b);
-    if (r<0 || (size_t)r<b.length()) {
-        err = true;
-        return 0;
-    }
-    messageLen -= b.length();
-    return x;
+    return expectType<std::int32_t, NetInt32>();
 }
 
-YARP_INT64 StreamConnectionReader::expectInt64()
+std::int64_t StreamConnectionReader::expectInt64()
 {
     if (!isGood()) {
         return 0;
     }
-    NetInt64 x = 0;
-    yarp::os::Bytes b((char*)(&x), sizeof(x));
-    yAssert(in!=nullptr);
-    YARP_SSIZE_T r = in->read(b);
-    if (r<0 || (size_t)r<b.length()) {
-        err = true;
-        return 0;
-    }
-    messageLen -= b.length();
-    return x;
+    return expectType<std::int64_t, NetInt64>();
 }
 
-double StreamConnectionReader::expectDouble()
+yarp::conf::float32_t StreamConnectionReader::expectFloat32()
 {
     if (!isGood()) {
         return 0;
     }
-    NetFloat64 x = 0;
-    yarp::os::Bytes b((char*)(&x), sizeof(x));
-    yAssert(in!=nullptr);
-    YARP_SSIZE_T r = in->read(b);
-    if (r<0 || (size_t)r<b.length()) {
-        err = true;
+    return expectType<yarp::conf::float32_t, NetFloat32>();
+}
+
+yarp::conf::float64_t StreamConnectionReader::expectFloat64()
+{
+    if (!isGood()) {
         return 0;
     }
-    messageLen -= b.length();
-    return x;
+    return expectType<yarp::conf::float64_t, NetFloat64>();
 }
 
-bool StreamConnectionReader::expectBlock(const char *data, size_t len)
+bool StreamConnectionReader::expectBlock(char *data, size_t len)
 {
-    return expectBlock(yarp::os::Bytes((char*)data, len));
+    yarp::os::Bytes bytes(data, len);
+    return expectBlock(bytes);
 }
 
-yarp::os::ConstString StreamConnectionReader::expectText(int terminatingChar)
+std::string StreamConnectionReader::expectText(int terminatingChar)
 {
     if (!isGood()) {
         return "";
     }
     yAssert(in!=nullptr);
     bool lsuccess = false;
-    ConstString result = in->readLine(terminatingChar, &lsuccess);
+    std::string result = in->readLine(terminatingChar, &lsuccess);
     if (lsuccess) {
         messageLen -= result.length()+1;
     }
-    return ::yarp::os::ConstString(result.c_str());
+    return std::string(result.c_str());
 }
 
-bool StreamConnectionReader::isTextMode()
+bool StreamConnectionReader::isTextMode() const
 {
     return textMode;
 }
 
-bool StreamConnectionReader::isBareMode()
+bool StreamConnectionReader::isBareMode() const
 {
     return bareMode;
 }
@@ -272,7 +289,7 @@ bool StreamConnectionReader::convertTextMode()
             bot.read(*this);
             BufferedConnectionWriter writer;
             bot.write(writer);
-            ConstString s = writer.toString();
+            std::string s = writer.toString();
             altStream.reset(s);
             in = &altStream;
             convertedTextMode = true;
@@ -299,7 +316,7 @@ yarp::os::ConnectionWriter* StreamConnectionReader::getWriter()
     return writer;
 }
 
-yarp::os::Contact StreamConnectionReader::getRemoteContact()
+yarp::os::Contact StreamConnectionReader::getRemoteContact() const
 {
     if (str!=nullptr) {
         Contact remote = str->getRemoteAddress();
@@ -310,7 +327,7 @@ yarp::os::Contact StreamConnectionReader::getRemoteContact()
     return remote;
 }
 
-yarp::os::Contact StreamConnectionReader::getLocalContact()
+yarp::os::Contact StreamConnectionReader::getLocalContact() const
 {
     if (str!=nullptr) {
         Contact local = str->getLocalAddress();
@@ -320,12 +337,12 @@ yarp::os::Contact StreamConnectionReader::getLocalContact()
     return yarp::os::Contact();
 }
 
-bool StreamConnectionReader::isValid()
+bool StreamConnectionReader::isValid() const
 {
     return valid;
 }
 
-bool StreamConnectionReader::isError()
+bool StreamConnectionReader::isError() const
 {
     if (err) {
         return true;
@@ -333,7 +350,7 @@ bool StreamConnectionReader::isError()
     return !isActive();
 }
 
-bool StreamConnectionReader::isActive()
+bool StreamConnectionReader::isActive() const
 {
     if (shouldDrop) {
         return false;
@@ -349,7 +366,7 @@ bool StreamConnectionReader::isActive()
     return false;
 }
 
-yarp::os::Portable* StreamConnectionReader::getReference()
+yarp::os::Portable* StreamConnectionReader::getReference() const
 {
     return ref;
 }
@@ -357,7 +374,7 @@ yarp::os::Portable* StreamConnectionReader::getReference()
 Bytes StreamConnectionReader::readEnvelope()
 {
     if (protocol != nullptr) {
-        const ConstString& env = protocol->getEnvelope();
+        const std::string& env = protocol->getEnvelope();
         return Bytes((char*)env.c_str(), env.length());
     }
     if (parentConnectionReader != nullptr) {
@@ -371,11 +388,11 @@ void StreamConnectionReader::requestDrop()
     shouldDrop = true;
 }
 
-Searchable& StreamConnectionReader::getConnectionModifiers()
+const Searchable& StreamConnectionReader::getConnectionModifiers() const
 {
     if (config.size()==0) {
         if (protocol) {
-            config.fromString(protocol->getSenderSpecifier().c_str());
+            const_cast<Bottle&>(config).fromString(protocol->getSenderSpecifier().c_str());
         }
     }
     return config;

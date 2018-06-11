@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Istituto Italiano di Tecnologia (IIT)
  * Author: Marco Randazzo
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 // ********************************************************
@@ -49,18 +49,18 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
 
     //list of mandatory options
     //TODO change comments
-    period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt();
+    period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt32() / 1000.0;
 
     if (general_config.check("max_angle") == false) { yError() << "Missing max_angle param"; return false; }
     if (general_config.check("min_angle") == false) { yError() << "Missing min_angle param"; return false; }
-    max_angle = general_config.find("max_angle").asDouble();
-    min_angle = general_config.find("min_angle").asDouble();
+    max_angle = general_config.find("max_angle").asFloat64();
+    min_angle = general_config.find("min_angle").asFloat64();
 
-    start_position = general_config.check("Start_Position", Value(0), "Start position").asInt();
-    end_position = general_config.check("End_Position", Value(1080), "End Position").asInt();
+    start_position = general_config.check("Start_Position", Value(0), "Start position").asInt32();
+    end_position = general_config.check("End_Position", Value(1080), "End Position").asInt32();
 
-    error_codes = general_config.check("Convert_Error_Codes", Value(0), "Substitute error codes with legal measurments").asInt();
-    yarp::os::ConstString s = general_config.check("Laser_Mode", Value("GD"), "Laser Mode (GD/MD").asString();
+    error_codes = general_config.check("Convert_Error_Codes", Value(0), "Substitute error codes with legal measurments").asInt32();
+    std::string s = general_config.check("Laser_Mode", Value("GD"), "Laser Mode (GD/MD").asString();
 
     if (general_config.check("Measurement_Units"))
     {
@@ -86,7 +86,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
         laser_mode = GD_MODE;
         yError("Laser_mode not found. Using GD mode (single acquisition)");
     }
-    setRate(period);
+    setPeriod(period);
 
     bool br2 = config.check("SERIAL_PORT_CONFIGURATION");
     if (br2 == false)
@@ -244,14 +244,12 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
         b_ans.clear();
     }
 
-    Time::turboBoost();
-    RateThread::start();
-    return true;
+    return PeriodicThread::start();
 }
 
 bool laserHokuyo::close()
 {
-    RateThread::stop();
+    PeriodicThread::stop();
 
     Bottle b;
     Bottle b_ans;
@@ -584,7 +582,7 @@ void laserHokuyo::threadRelease()
 #endif
 }
 
-bool laserHokuyo::getDeviceInfo(yarp::os::ConstString &device_info)
+bool laserHokuyo::getDeviceInfo(std::string &device_info)
 {
     this->mutex.lock();
     device_info = info;

@@ -1,12 +1,8 @@
-# Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
-# Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-
-get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-include_directories(${YARP_OS_INCLUDE_DIRS}
-                    ${YARP_sig_INCLUDE_DIRS})
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 set(QtYARPViewPlugin_SRCS qtyarpview_plugin.cpp
                           videoproducer.cpp

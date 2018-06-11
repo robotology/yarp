@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006, 2007 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_PORT_H
@@ -48,10 +51,6 @@ class YARP_OS_API Port : public UnbufferedContactable
 {
 
 public:
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
-    using Contactable::open;
-#endif // YARP_NO_DEPRECATED
-
     /**
      * Constructor.
      *
@@ -66,7 +65,7 @@ public:
     virtual ~Port();
 
     // Documented in Contactable
-    bool open(const ConstString& name) override;
+    bool open(const std::string& name) override;
 
     // Documented in Contactable
     bool open(const Contact& contact, bool registerName = true) override;
@@ -85,13 +84,13 @@ public:
      *             port will claim to be from.
      * @return true on success
      */
-    bool openFake(const ConstString& name);
+    bool openFake(const std::string& name);
 
     // Documented in Contactable
-    bool addOutput(const ConstString& name) override;
+    bool addOutput(const std::string& name) override;
 
     // Documented in Contactable
-    bool addOutput(const ConstString& name, const ConstString& carrier) override;
+    bool addOutput(const std::string& name, const std::string& carrier) override;
 
     // Documented in Contactable
     bool addOutput(const Contact& contact) override;
@@ -109,11 +108,13 @@ public:
     Contact where() const override;
 
     // Documented in UnbufferedContactable
-    bool write(PortWriter& writer, PortWriter *callback = nullptr) const override;
+    bool write(const PortWriter& writer,
+               const PortWriter *callback = nullptr) const override;
 
     // Documented in UnbufferedContactable
-    bool write(PortWriter& writer, PortReader& reader,
-               PortWriter *callback = nullptr) const override;
+    bool write(const PortWriter& writer,
+               PortReader& reader,
+               const PortWriter *callback = nullptr) const override;
 
     // Documented in UnbufferedContactable
     bool read(PortReader& reader, bool willReply = false) override;

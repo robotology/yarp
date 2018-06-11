@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Lorenzo Natale, Giorgio Metta
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_CONTROLBOARDINTERFACES_H
@@ -47,9 +50,13 @@ namespace yarp {
         class IControlLimitsRaw;
         class IControlLimits;
         class IControlCalibrationRaw;
-        class IControlCalibration2Raw;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IControlCalibrationRaw instead") IControlCalibrationRaw IControlCalibration2Raw;
+#endif
         class IControlCalibration;
-        class IControlCalibration2;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IControlCalibration instead") IControlCalibration IControlCalibration2;
+#endif
         class IAxisInfo;
         class IAxisInfoRaw;
         struct CalibrationParameters;
@@ -156,6 +163,17 @@ public:
      * @return true/false success failure.
      */
     virtual bool getNominalCurrent(int m, double *val) {return false;};
+
+    /* Set the the nominal current which can be kept for an indefinite amount of time
+    * without harming the motor. This value is specific for each motor and it is typically
+    * found in its datasheet. The units are Ampere.
+    * This value and the peak current may be used by the firmware to configure
+    * an I2T filter.
+    * @param j joint number
+    * @param val storage for return value. [Ampere]
+    * @return true/false success failure.
+    */
+    virtual bool setNominalCurrent(int m, const double val) { return false; };
 
     /* Get the the peak current which causes damage to the motor if maintained
      * for a long amount of time.
@@ -292,6 +310,17 @@ public:
      */
     virtual bool getNominalCurrentRaw(int m, double *val) {return false;};
 
+    /* Set the the nominal current which can be kept for an indefinite amount of time
+    * without harming the motor. This value is specific for each motor and it is typically
+    * found in its datasheet. The units are Ampere.
+    * This value and the peak current may be used by the firmware to configure
+    * an I2T filter.
+    * @param j joint number
+    * @param val storage for return value. [Ampere]
+    * @return true/false success failure.
+    */
+    virtual bool setNominalCurrentRaw(int m, const double val) { return false; };
+
     /* Get the the peak current which causes damage to the motor if maintained
      * for a long amount of time.
      * The value is often found in the motor datasheet, units are Ampere.
@@ -353,56 +382,50 @@ public:
 class YARP_dev_API yarp::dev::IControlCalibrationRaw
 {
 public:
-    IControlCalibrationRaw(){};
+    IControlCalibrationRaw(){}
     /**
      * Destructor.
      */
     virtual ~IControlCalibrationRaw() {}
 
-    /* Start calibration, this method is very often platform
-     * specific.
-     * @return true/false on success failure
-     */
-    virtual bool calibrateRaw(int j, double p)=0;
-
-    /* Check if the calibration is terminated, on a particular joint.
-     * Non blocking.
-     * @return true/false
-     */
-    virtual bool doneRaw(int j)=0;
-
-};
-
-/**
- *
- * New interface for control devices, calibration commands.
- */
-class YARP_dev_API yarp::dev::IControlCalibration2Raw
-{
-public:
-    IControlCalibration2Raw(){};
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     /**
-     * Destructor.
-     */
-    virtual ~IControlCalibration2Raw() {}
-
-    /* Start calibration, this method is very often platform
+     *  Start calibration, this method is very often platform
      * specific.
+     * @deprecated Since YARP 3.0.0
      * @return true/false on success failure
      */
-    virtual bool calibrate2Raw(int axis, unsigned int type, double p1, double p2, double p3)=0;
+    virtual bool calibrateRaw(int j, double p) { return false; }
 
-    /* Start calibration, this method is very often platform
-    * specific.
-    * @return true/false on success failure
-    */
-    virtual bool setCalibrationParametersRaw(int axis, const CalibrationParameters& params) {return false;}
+    /**
+     * Start calibration, this method is very often platform
+     * specific.
+     * @deprecated Since YARP 3.0.0
+     * @return true/false on success failure
+     */
+    virtual bool calibrate2Raw(int axis, unsigned int type, double p1, double p2, double p3) { return false;}
+#endif
 
-    /* Check if the calibration is terminated, on a particular joint.
+    /**
+     * Check if the calibration is terminated, on a particular joint.
      * Non blocking.
      * @return true/false
      */
     virtual bool doneRaw(int j)=0;
+
+    /**
+     *  Start calibration, this method is very often platform
+     * specific.
+     * @return true/false on success failure
+     */
+    virtual bool calibrateRaw(int axis, unsigned int type, double p1, double p2, double p3)=0;
+
+    /**
+     *  Start calibration, this method is very often platform
+     * specific.
+     * @return true/false on success failure
+    */
+    virtual bool setCalibrationParametersRaw(int axis, const CalibrationParameters& params) { return false; }
 
 };
 
@@ -423,77 +446,56 @@ public:
      */
     virtual ~IControlCalibration() {}
 
-    /* Start calibration, this method is very often platform
-     * specific.
-     * @return true/false on success failure
-     */
-    virtual bool calibrate(int j, double p)=0;
-
-    /* Check if the calibration is terminated, on a particular joint.
-     * Non blocking.
-     * @return true/false
-     */
-    virtual bool done(int j)=0;
-
-    /* Set the calibrator object to be used to calibrate the robot.
-     * @param c pointer to the calibrator object
-     * @return true/false on success failure
-     */
-    virtual bool setCalibrator(ICalibrator *c);
-
-    /* Calibrate robot by using an external calibrator. The external
-     * calibrator must be previously set by calling the setCalibration()
-     * method.
-     * @return true/false on success failure
-     */
-    virtual bool calibrate();
-
-    virtual bool park(bool wait=true);
-
-};
-
-/**
- * @ingroup dev_iface_motor
- *
- * Interface for control devices, calibration commands.
- */
-class YARP_dev_API yarp::dev::IControlCalibration2
-{
-private:
-    ICalibrator *calibrator;
-
-public:
-    IControlCalibration2();
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     /**
-     * Destructor.
+     *  Start calibration, this method is very often platform
+     * specific.
+     * @return true/false on success failure
+     * @deprecated Since YARP 3.0.0
      */
-    virtual ~IControlCalibration2() {}
+    YARP_DEPRECATED
+    virtual bool calibrate(int j, double p) { return false; }
 
-    /* Start calibration, this method is very often platform
+    /**
+     *  Start calibration, this method is very often platform
+     * specific.
+     * @return true/false on success failure
+     * @deprecated Since YARP 3.0.0
+     */
+    YARP_DEPRECATED_MSG("Use calibrate instead")
+    virtual bool calibrate2(int axis, unsigned int type, double p1, double p2, double p3) { return calibrate(axis, type, p1, p2, p3); }
+#endif
+
+    /**
+     *  Start calibration, this method is very often platform
      * specific.
      * @return true/false on success failure
      */
-    virtual bool calibrate2(int axis, unsigned int type, double p1, double p2, double p3)=0;
+    virtual bool calibrate(int axis, unsigned int type, double p1, double p2, double p3)=0;
 
-    /* Start calibration, this method is very often platform
-    * specific.
-    * @return true/false on success failure
-    */
+    /**
+     *  Start calibration, this method is very often platform
+     * specific.
+     * @return true/false on success failure
+     */
     virtual bool setCalibrationParameters(int axis, const CalibrationParameters& params) { return false; }
 
-    /* Check if the calibration is terminated, on a particular joint.
+    /**
+     *  Check if the calibration is terminated, on a particular joint.
      * Non blocking.
      * @return true/false
      */
     virtual bool done(int j)=0;
 
-    /* Set the calibrator object to be used to calibrate the robot.
+    /**
+     * Set the calibrator object to be used to calibrate the robot.
      * @param c pointer to the calibrator object
      * @return true/false on success failure
      */
     virtual bool setCalibrator(ICalibrator *c);
 
-    /* Calibrate robot by using an external calibrator. The external
+    /**
+     * Calibrate robot by using an external calibrator. The external
      * calibrator must be previously set by calling the setCalibration()
      * method.
      * @return true/false on success failure
@@ -507,6 +509,9 @@ public:
 
     /* Abort parking, force the function park() to return.*/
     virtual bool abortPark();
+
+
+
 };
 
 /**
@@ -545,7 +550,7 @@ public:
 /**
  * @ingroup dev_iface_motor
  *
- * Interface for control devices, limits commands.
+ * Interface for control devices, commands to get/set position and veloity limits.
  */
 class YARP_dev_API yarp::dev::IControlLimits
 {
@@ -555,7 +560,8 @@ public:
      */
     virtual ~IControlLimits() {}
 
-    /* Set the software limits for a particular axis, the behavior of the
+    /**
+     * Set the software limits for a particular axis, the behavior of the
      * control card when these limits are exceeded, depends on the implementation.
      * @param axis joint number (why am I telling you this)
      * @param min the value of the lower limit
@@ -564,13 +570,33 @@ public:
      */
     virtual bool setLimits(int axis, double min, double max)=0;
 
-    /* Get the software limits for a particular axis.
+    /**
+     * Get the software limits for a particular axis.
      * @param axis joint number
      * @param pointer to store the value of the lower limit
      * @param pointer to store the value of the upper limit
      * @return true if everything goes fine, false otherwise.
      */
     virtual bool getLimits(int axis, double *min, double *max)=0;
+
+    /**
+     * Set the software speed limits for a particular axis, the behavior of the
+     * control card when these limits are exceeded, depends on the implementation.
+     * @param axis joint number
+     * @param min the value of the lower limit
+     * @param max the value of the upper limit
+     * @return true or false on success or failure
+     */
+    virtual bool setVelLimits(int axis, double min, double max)=0;
+
+    /**
+     * Get the software speed limits for a particular axis.
+     * @param axis joint number
+     * @param min pointer to store the value of the lower limit
+     * @param max pointer to store the value of the upper limit
+     * @return true if everything goes fine, false otherwise.
+     */
+    virtual bool getVelLimits(int axis, double *min, double *max)=0;
 };
 
 /**
@@ -584,7 +610,8 @@ public:
      */
     virtual ~IControlLimitsRaw() {}
 
-    /* Set the software limits for a particular axis, the behavior of the
+    /**
+     *  Set the software limits for a particular axis, the behavior of the
      * control card when these limits are exceeded, depends on the implementation.
      * @param axis joint number (why am I telling you this)
      * @param min the value of the lower limit
@@ -593,13 +620,33 @@ public:
      */
     virtual bool setLimitsRaw(int axis, double min, double max)=0;
 
-    /* Get the software limits for a particular axis.
+    /**
+     * Get the software limits for a particular axis.
      * @param axis joint number
      * @param pointer to store the value of the lower limit
      * @param pointer to store the value of the upper limit
      * @return true if everything goes fine, false otherwise.
      */
     virtual bool getLimitsRaw(int axis, double *min, double *max)=0;
+
+    /**
+     * Set the software speed limits for a particular axis, the behavior of the
+     * control card when these limits are exceeded, depends on the implementation.
+     * @param axis joint number
+     * @param min the value of the lower limit
+     * @param max the value of the upper limit
+     * @return true or false on success or failure
+     */
+    virtual bool setVelLimitsRaw(int axis, double min, double max)=0;
+
+    /**
+     * Get the software speed limits for a particular axis.
+     * @param axis joint number
+     * @param min pointer to store the value of the lower limit
+     * @param max pointer to store the value of the upper limit
+     * @return true if everything goes fine, false otherwise.
+     */
+    virtual bool getVelLimitsRaw(int axis, double *min, double *max)=0;
 };
 
 /**
@@ -620,7 +667,7 @@ public:
     * @param name the axis name
     * @return true if everything goes fine, false otherwise.
     */
-    virtual bool getAxisName(int axis, yarp::os::ConstString& name) = 0;
+    virtual bool getAxisName(int axis, std::string& name) = 0;
 
     /* Get the joint type (e.g. revolute/prismatic) for a particular axis.
     * @param axis joint number
@@ -646,7 +693,7 @@ public:
     * @param name the axis name
     * @return true if everything goes fine, false otherwise.
     */
-    virtual bool getAxisNameRaw(int axis, yarp::os::ConstString& name) = 0;
+    virtual bool getAxisNameRaw(int axis, std::string& name) = 0;
 
     /* Get the joint type (e.g. revolute/prismatic) for a particular axis.
     * @param axis joint number
@@ -733,6 +780,8 @@ public:
 
 // interface IControlLimits sets/gets
 #define VOCAB_LIMITS VOCAB4('l','l','i','m')
+#define VOCAB_VEL_LIMITS VOCAB4('v','l','i','m')
+
 
 // interface IAxisInfo
 #define VOCAB_INFO_NAME VOCAB4('n','a','m','e')

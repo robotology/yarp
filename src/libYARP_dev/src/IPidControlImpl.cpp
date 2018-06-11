@@ -1,104 +1,20 @@
 /*
- * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
- * Authors: Lorenzo Natale <lorenzo.natale@iit.it>
- *          Marco Randazzo <marco.randazzo@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/dev/IPidControlImpl.h>
 #include <yarp/dev/ControlBoardHelper.h>
-
+#include <yarp/os/LogStream.h>
 #include <cmath>
 
 using namespace yarp::dev;
-
-void ImplementPidControl::convert_units_to_machine (const yarp::dev::PidControlTypeEnum& pidtype, double userval, int j, double &machineval, int &k)
-{
-    switch (pidtype)
-    {
-        case yarp::dev::VOCAB_PIDTYPE_POSITION:
-            castToMapper(helper)->posA2E(userval,j, machineval,k);
-        break;
-        case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
-            castToMapper(helper)->velA2E(userval,j, machineval,k);
-        break;
-        case yarp::dev::VOCAB_PIDTYPE_TORQUE:
-            castToMapper(helper)->trqN2S(userval,j, machineval,k);
-        break;
-        case yarp::dev::VOCAB_PIDTYPE_CURRENT:
-            castToMapper(helper)->ampereA2S(userval,j, machineval,k);
-        break;
-        default:
-            yError() << "convert_units_to_machine: invalid pidtype";
-        break;
-    }
-}
-
-void ImplementPidControl::convert_units_to_machine (const yarp::dev::PidControlTypeEnum& pidtype, const double* userval, double* machineval)
-{
-    switch (pidtype)
-    {
-        case yarp::dev::VOCAB_PIDTYPE_POSITION:
-            castToMapper(helper)->posA2E(userval, machineval);
-        break;
-        case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
-            castToMapper(helper)->velA2E(userval, machineval);
-        break;
-        case yarp::dev::VOCAB_PIDTYPE_TORQUE:
-            castToMapper(helper)->trqN2S(userval, machineval);
-        break;
-        case yarp::dev::VOCAB_PIDTYPE_CURRENT:
-            castToMapper(helper)->ampereA2S(userval, machineval);
-        break;
-        default:
-            yError() << "convert_units_to_machine: invalid pidtype";
-        break;
-    }
-}
-
-void ImplementPidControl::convert_units_to_user(const yarp::dev::PidControlTypeEnum& pidtype, const double machineval, double* userval, int k)
-{
-    switch (pidtype)
-    {
-        case yarp::dev::VOCAB_PIDTYPE_POSITION:
-            *userval = castToMapper(helper)->posE2A(machineval, k);
-        break;
-        case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
-            *userval = castToMapper(helper)->velE2A(machineval, k);
-        break;
-        case yarp::dev::VOCAB_PIDTYPE_TORQUE:
-            *userval = castToMapper(helper)->trqS2N(machineval,k);
-        break;
-        case yarp::dev::VOCAB_PIDTYPE_CURRENT:
-            *userval = castToMapper(helper)->ampereS2A(machineval,k);
-        break;
-        default:
-            yError() << "convert_units_to_machine: invalid pidtype";
-        break;
-    }
-}
-
-void ImplementPidControl::convert_units_to_user(const yarp::dev::PidControlTypeEnum& pidtype, const double* machineval, double* userval)
-{
-    switch (pidtype)
-    {
-        case yarp::dev::VOCAB_PIDTYPE_POSITION:
-            castToMapper(helper)->posE2A(machineval, userval);
-        break;
-        case yarp::dev::VOCAB_PIDTYPE_VELOCITY:
-            castToMapper(helper)->velE2A(machineval, userval);
-        break;
-        case yarp::dev::VOCAB_PIDTYPE_TORQUE:
-            castToMapper(helper)->trqS2N(machineval,userval);
-        break;
-        case yarp::dev::VOCAB_PIDTYPE_CURRENT:
-            castToMapper(helper)->ampereS2A(machineval,userval);
-        break;
-        default:
-            yError() << "convert_units_to_machine: invalid pidtype";
-        break;
-    }
-}
+#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+#define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 //////////////////// Implement PidControl interface
 ImplementPidControl::ImplementPidControl(IPidControlRaw *y)
@@ -114,12 +30,12 @@ ImplementPidControl::~ImplementPidControl()
     uninitialize();
 }
 
-bool ImplementPidControl:: initialize (int size, const int *amap, const double *enc, const double *zos, const double* newtons, const double* amps)
+bool ImplementPidControl:: initialize (int size, const int *amap, const double *enc, const double *zos, const double* newtons, const double* amps, const double* dutys)
 {
     if (helper!=nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,newtons,amps));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,newtons,amps,nullptr,dutys));
     yAssert (helper != nullptr);
     temp=new double [size];
     yAssert (temp != nullptr);
@@ -142,24 +58,30 @@ bool ImplementPidControl::uninitialize ()
     checkAndDestroy(tmpPids);
     checkAndDestroy(temp);
 
-    return true;
+     return true;
 }
 
 bool ImplementPidControl::setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid)
 {
-    int k=castToMapper(helper)->toHw(j);
-    return iPid->setPidRaw(pidtype, k,pid);
+    JOINTIDCHECK
+    Pid pid_machine;
+    int k;
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    cb_helper->convert_pid_to_machine(pidtype, pid, j, pid_machine, k);
+    return iPid->setPidRaw(pidtype, k, pid_machine);
 }
 
 bool ImplementPidControl::setPids(const PidControlTypeEnum& pidtype,  const Pid *pids)
 {
-    int tmp=0;
-    int nj=castToMapper(helper)->axes();
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    int nj= cb_helper->axes();
 
     for(int j=0;j<nj;j++)
     {
-        tmp=castToMapper(helper)->toHw(j);
-        tmpPids[tmp]=pids[j];
+        Pid pid_machine;
+        int k;
+        cb_helper->convert_pid_to_machine(pidtype,  pids[j], j, pid_machine, k);
+        tmpPids[k] = pid_machine;
     }
 
     return iPid->setPidsRaw(pidtype, tmpPids);
@@ -167,141 +89,183 @@ bool ImplementPidControl::setPids(const PidControlTypeEnum& pidtype,  const Pid 
 
 bool ImplementPidControl::setPidReference(const PidControlTypeEnum& pidtype,  int j, double ref)
 {
+    JOINTIDCHECK
     int k=0;
     double raw;
-    this->convert_units_to_machine(pidtype,ref,j,raw,k);
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    cb_helper->convert_pidunits_to_machine(pidtype,ref,j,raw,k);
     return iPid->setPidReferenceRaw(pidtype, k, raw);
 }
 
 bool ImplementPidControl::setPidReferences(const PidControlTypeEnum& pidtype,  const double *refs)
 {
-    this->convert_units_to_machine(pidtype,refs,temp);
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    cb_helper->convert_pidunits_to_machine(pidtype,refs,temp);
     return iPid->setPidReferencesRaw(pidtype, temp);
 }
 
 bool ImplementPidControl::setPidErrorLimit(const PidControlTypeEnum& pidtype,  int j, double limit)
 {
+    JOINTIDCHECK
     int k;
     double raw;
-    this->convert_units_to_machine(pidtype,limit,j,raw,k);
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    cb_helper->convert_pidunits_to_machine(pidtype,limit,j,raw,k);
     return iPid->setPidErrorLimitRaw(pidtype, k, raw);
 }
 
 bool ImplementPidControl::setPidErrorLimits(const PidControlTypeEnum& pidtype,  const double *limits)
 {
-    this->convert_units_to_machine(pidtype,limits,temp);
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    cb_helper->convert_pidunits_to_machine(pidtype,limits,temp);
     return iPid->setPidErrorLimitsRaw(pidtype, temp);
 }
 
 
 bool ImplementPidControl::getPidError(const PidControlTypeEnum& pidtype, int j, double *err)
 {
+    JOINTIDCHECK
     int k;
     double raw;
+    ControlBoardHelper* cb_helper = castToMapper(helper);
     k=castToMapper(helper)->toHw(j);
 
     bool ret=iPid->getPidErrorRaw(pidtype, k, &raw);
 
-    this->convert_units_to_user(pidtype,raw,err,k);
+    cb_helper->convert_pidunits_to_user(pidtype,raw,err,k);
     return ret;
 }
 
 bool ImplementPidControl::getPidErrors(const PidControlTypeEnum& pidtype,  double *errs)
 {
     bool ret;
+    ControlBoardHelper* cb_helper = castToMapper(helper);
     ret=iPid->getPidErrorsRaw(pidtype, temp);
 
-    this->convert_units_to_user(pidtype,temp,errs);
+    cb_helper->convert_pidunits_to_user(pidtype,temp,errs);
     return ret;
 }
 
 bool ImplementPidControl::getPidOutput(const PidControlTypeEnum& pidtype,  int j, double *out)
 {
-    int k;
-
-    k=castToMapper(helper)->toHw(j);
-
-    bool ret=iPid->getPidOutputRaw(pidtype, k, out);
-
-    return ret;
+    JOINTIDCHECK
+    bool ret;
+    int k_raw;
+    double raw;
+    k_raw = castToMapper(helper)->toHw(j);
+    ret = iPid->getPidOutputRaw(pidtype, k_raw, &raw);
+    if (ret)
+    {
+        ControlBoardHelper* cb_helper = castToMapper(helper);
+        double output_conversion_units_user2raw = cb_helper->get_pidoutput_conversion_factor_user2raw(pidtype, j);
+        *out = raw / output_conversion_units_user2raw;
+        return true;
+    }
+    return false;
 }
 
-bool ImplementPidControl::getPidOutputs(const PidControlTypeEnum& pidtype,  double *outs)
+bool ImplementPidControl::getPidOutputs(const PidControlTypeEnum& pidtype, double *outs)
 {
-    bool ret=iPid->getPidOutputsRaw(pidtype, temp);
-
-    castToMapper(helper)->toUser(temp, outs);
-
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    int nj = cb_helper->axes();
+    bool ret = iPid->getPidOutputsRaw(pidtype, temp);
+    if (ret)
+    {
+        castToMapper(cb_helper)->toUser(temp, outs);
+        for (int j = 0; j < nj; j++)
+        {
+            double output_conversion_units_user2raw = cb_helper->get_pidoutput_conversion_factor_user2raw(pidtype, j);
+            outs[j] = outs[j] / output_conversion_units_user2raw;
+        }
+    }
     return ret;
 }
 
 bool ImplementPidControl::getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid)
 {
-    int k;
-    k=castToMapper(helper)->toHw(j);
-
-    return iPid->getPidRaw(pidtype, k, pid);
+    JOINTIDCHECK
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    int k_raw;
+    k_raw=cb_helper->toHw(j);
+    Pid rawPid;
+    bool b =iPid->getPidRaw(pidtype, k_raw, &rawPid);
+    if (b)
+    {
+        cb_helper->convert_pid_to_user(pidtype, rawPid, k_raw, *pid, j);
+        return true;
+    }
+    return false;
 }
 
 bool ImplementPidControl::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
 {
     bool ret=iPid->getPidsRaw(pidtype, tmpPids);
-    int nj=castToMapper(helper)->axes();
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    int nj=cb_helper->axes();
 
-    for(int j=0;j<nj;j++)
-        pids[castToMapper(helper)->toUser(j)]=tmpPids[j];
-
+    for (int k_raw = 0; k_raw < nj; k_raw++)
+    {
+        int j_usr;
+        Pid outpid;
+        cb_helper->convert_pid_to_user(pidtype, tmpPids[k_raw], k_raw, outpid, j_usr);
+        pids[j_usr] = outpid;
+    }
     return ret;
 }
 
 bool ImplementPidControl::getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
+    JOINTIDCHECK
     bool ret;
     int k;
     double raw;
-
+    ControlBoardHelper* cb_helper = castToMapper(helper);
     k=castToMapper(helper)->toHw(j);
 
     ret=iPid->getPidReferenceRaw(pidtype, k, &raw);
 
-    this->convert_units_to_user(pidtype,raw,ref,k);
+    cb_helper->convert_pidunits_to_user(pidtype,raw,ref,k);
     return ret;
 }
 
 bool ImplementPidControl::getPidReferences(const PidControlTypeEnum& pidtype, double *refs)
 {
     bool ret;
+    ControlBoardHelper* cb_helper = castToMapper(helper);
     ret=iPid->getPidReferencesRaw(pidtype, temp);
 
-    this->convert_units_to_user(pidtype,temp,refs);
+    cb_helper->convert_pidunits_to_user(pidtype,temp,refs);
     return ret;
 }
 
 bool ImplementPidControl::getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *ref)
 {
+    JOINTIDCHECK
     bool ret;
     int k;
     double raw;
-
+    ControlBoardHelper* cb_helper = castToMapper(helper);
     k=castToMapper(helper)->toHw(j);
 
     ret=iPid->getPidErrorLimitRaw(pidtype, k, &raw);
 
-    this->convert_units_to_user(pidtype,raw,ref,k);
+    cb_helper->convert_pidunits_to_user(pidtype,raw,ref,k);
     return ret;
 }
 
 bool ImplementPidControl::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *refs)
 {
     bool ret;
+    ControlBoardHelper* cb_helper = castToMapper(helper);
     ret=iPid->getPidErrorLimitsRaw(pidtype, temp);
 
-    this->convert_units_to_user(pidtype,temp,refs);
+    cb_helper->convert_pidunits_to_user(pidtype,temp,refs);
     return ret;
 }
 
 bool ImplementPidControl::resetPid(const PidControlTypeEnum& pidtype, int j)
 {
+    JOINTIDCHECK
     int k=0;
     k=castToMapper(helper)->toHw(j);
 
@@ -310,6 +274,7 @@ bool ImplementPidControl::resetPid(const PidControlTypeEnum& pidtype, int j)
 
 bool ImplementPidControl::enablePid(const PidControlTypeEnum& pidtype, int j)
 {
+    JOINTIDCHECK
     int k=0;
     k=castToMapper(helper)->toHw(j);
 
@@ -318,25 +283,35 @@ bool ImplementPidControl::enablePid(const PidControlTypeEnum& pidtype, int j)
 
 bool ImplementPidControl::disablePid(const PidControlTypeEnum& pidtype, int j)
 {
+    JOINTIDCHECK
     int k=0;
     k=castToMapper(helper)->toHw(j);
 
     return iPid->disablePidRaw(pidtype, k);
 }
 
-bool ImplementPidControl::setPidOffset(const PidControlTypeEnum& pidtype, int j, double v)
+bool ImplementPidControl::setPidOffset(const PidControlTypeEnum& pidtype, int j, double off)
 {
-    int k=0;
-    k=castToMapper(helper)->toHw(j);
-
-    return iPid->setPidOffsetRaw(pidtype, k, v);
+    JOINTIDCHECK
+    int k = 0;
+    double rawoff;
+    ControlBoardHelper* cb_helper = castToMapper(helper);
+    double output_conversion_units_user2raw = cb_helper->get_pidoutput_conversion_factor_user2raw(pidtype,j);
+    rawoff = off * output_conversion_units_user2raw;
+    return iPid->setPidOffsetRaw(pidtype, k, rawoff);
 }
 
 bool ImplementPidControl::isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled)
 {
+    JOINTIDCHECK
     int k=0;
     k=castToMapper(helper)->toHw(j);
 
     return iPid->isPidEnabledRaw(pidtype, k, enabled);
 }
 
+bool ImplementPidControl::setConversionUnits(const PidControlTypeEnum& pidtype, const PidFeedbackUnitsEnum fbk_conv_units, const PidOutputUnitsEnum out_conv_units)
+{
+    castToMapper(helper)->set_pid_conversion_units(pidtype, fbk_conv_units, out_conv_units);
+    return true;
+}

@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/impl/PortCoreAdapter.h>
@@ -11,7 +13,7 @@
 #include <yarp/os/PortReader.h>
 
 yarp::os::impl::PortCoreAdapter::PortCoreAdapter(Port& owner) :
-        stateMutex(1),
+        stateMutex(),
         readDelegate(nullptr),
         permanentReadDelegate(nullptr),
         adminReadDelegate(nullptr),
@@ -43,10 +45,10 @@ yarp::os::impl::PortCoreAdapter::PortCoreAdapter(Port& owner) :
 
 void yarp::os::impl::PortCoreAdapter::openable()
 {
-    stateMutex.wait();
+    stateMutex.lock();
     closed = false;
     opened = true;
-    stateMutex.post();
+    stateMutex.unlock();
 }
 
 void yarp::os::impl::PortCoreAdapter::alertOnRead()
@@ -82,11 +84,11 @@ void yarp::os::impl::PortCoreAdapter::setRpc()
 void yarp::os::impl::PortCoreAdapter::finishReading()
 {
     if (!readBackground) {
-        stateMutex.wait();
+        stateMutex.lock();
         closed = true;
         consume.post();
         consume.post();
-        stateMutex.post();
+        stateMutex.unlock();
     }
 }
 
@@ -126,11 +128,11 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
 
     if (!reader.isValid()) {
         // interrupt
-        stateMutex.wait();
+        stateMutex.lock();
         if (readDelegate!=nullptr) {
             readResult = readDelegate->read(reader);
         }
-        stateMutex.post();
+        stateMutex.unlock();
         produce.post();
         readBlock.post();
         return false;
@@ -147,7 +149,7 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
         consume.wait();
     }
 
-    stateMutex.wait();
+    stateMutex.lock();
     readResult = false;
     if (readDelegate!=nullptr) {
         readResult = readDelegate->read(reader);
@@ -162,7 +164,7 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
         writeDelegate = nullptr;
     }
     bool result = readResult;
-    stateMutex.post();
+    stateMutex.unlock();
     if (!readBackground) {
         produce.post();
     }
@@ -174,12 +176,12 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
             return false;
         }
         if (writeDelegate!=nullptr) {
-            stateMutex.wait();
+            stateMutex.lock();
             ConnectionWriter *writer = reader.getWriter();
             if (writer!=nullptr) {
                 result = readResult = writeDelegate->write(*writer);
             }
-            stateMutex.post();
+            stateMutex.unlock();
         }
         if (dropDue) {
             reader.requestDrop();
@@ -206,23 +208,23 @@ bool yarp::os::impl::PortCoreAdapter::read(PortReader& reader, bool willReply)
         replyDue = true;
     }
 
-    stateMutex.wait();
+    stateMutex.lock();
     readActive = true;
     readDelegate = &reader;
     checkType(reader);
     writeDelegate = nullptr;
     this->willReply = willReply;
     consume.post(); // happy consumer
-    stateMutex.post();
+    stateMutex.unlock();
 
     produce.wait();
-    stateMutex.wait();
+    stateMutex.lock();
     if (!readBackground) {
         readDelegate = nullptr;
     }
     bool result = readResult;
     if (!result) replyDue = false;
-    stateMutex.post();
+    stateMutex.unlock();
     return result;
 }
 
@@ -247,22 +249,22 @@ bool yarp::os::impl::PortCoreAdapter::reply(PortWriter& writer, bool drop, bool 
 
 void yarp::os::impl::PortCoreAdapter::configReader(PortReader& reader)
 {
-    stateMutex.wait();
+    stateMutex.lock();
     readActive = true;
     readBackground = true;
     readDelegate = &reader;
     permanentReadDelegate = &reader;
     checkType(reader);
     consume.post(); // just do this once
-    stateMutex.post();
+    stateMutex.unlock();
 }
 
 void yarp::os::impl::PortCoreAdapter::configAdminReader(PortReader& reader)
 {
-    stateMutex.wait();
+    stateMutex.lock();
     adminReadDelegate = &reader;
     setAdminReadHandler(reader);
-    stateMutex.post();
+    stateMutex.unlock();
 }
 
 void yarp::os::impl::PortCoreAdapter::configReadCreator(PortReaderCreator& creator)

@@ -1,17 +1,16 @@
 /*
-* Copyright (C) 2006 RobotCub Consortium
-* Authors: Paul Fitzpatrick
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
-
-// added test for threadRelease/threadInit functions, synchronization and
-// thread init success/failure notification, for thread and runnable classes
-// -nat
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Time.h>
 
 #include <yarp/os/impl/UnitTest.h>
@@ -42,13 +41,13 @@ private:
         double delay;
         bool hold;
         bool active;
-        Semaphore mutex;
+        Mutex mutex;
 
         ThreadDelay(double delay = 0.5, bool hold = false) :
                 delay(delay),
                 hold(hold),
                 active(true),
-                mutex(1)
+                mutex()
         {
         }
 
@@ -56,9 +55,9 @@ private:
             bool h;
             do {
                 Time::delay(delay);
-                mutex.wait();
+                mutex.lock();
                 h = hold;
-                mutex.post();
+                mutex.unlock();
             } while (h);
             active = false;
         }
@@ -94,15 +93,15 @@ private:
     public:
         ThreadTest& owner;
 
-        Thread2(ThreadTest& owner) : owner(owner), mutex(1), finished(false) {}
+        Thread2(ThreadTest& owner) : owner(owner), mutex(), finished(false) {}
 
         virtual void run() override {
             bool done = false;
             while (!done) {
                 owner.sema.wait();
-                mutex.wait();
+                mutex.lock();
                 done = finished;
-                mutex.post();
+                mutex.unlock();
                 owner.state.wait();
                 //printf("burp\n");
                 owner.gotCount++;
@@ -117,17 +116,17 @@ private:
         }
 
         virtual void close() override {
-            mutex.wait();
+            mutex.lock();
             finished = true;
             owner.state.wait();
             owner.expectCount++;
             owner.state.post();
             owner.sema.post();
-            mutex.post();
+            mutex.unlock();
         }
 
     private:
-        Semaphore mutex;
+        Mutex mutex;
         bool finished;
     };
 
@@ -191,34 +190,34 @@ private:
 
     class Thread5: public Thread {
     public:
-        Thread5() : state(0), fail(false), mutex(1) {}
+        Thread5() : state(0), fail(false), mutex() {}
         int state;
         bool fail;
-        Semaphore mutex;
+        Mutex mutex;
 
         void threadWillFail(bool f)
         {
-            mutex.wait();
+            mutex.lock();
             state=0;
             fail=f;
-            mutex.post();
+            mutex.unlock();
         }
 
         virtual bool threadInit() override
         {
             Time::delay(0.5);
-            mutex.wait();
+            mutex.lock();
             state=1;
-            mutex.post();
+            mutex.unlock();
             return !fail;
         }
 
         virtual void afterStart(bool s) override
         {
-            mutex.wait();
+            mutex.lock();
             if(!s)
                 state++;
-            mutex.post();
+            mutex.unlock();
         }
 
         virtual void run() override
@@ -227,9 +226,9 @@ private:
         virtual void threadRelease() override
         {
             Time::delay(0.5);
-            mutex.wait();
+            mutex.lock();
             state++;
-            mutex.post();
+            mutex.unlock();
         }
     };
 
@@ -286,7 +285,7 @@ public:
         gotCount = 0;
     }
 
-    virtual ConstString getName() override { return "ThreadTest"; }
+    virtual std::string getName() const override { return "ThreadTest"; }
 
     void testIsRunning()
     {
@@ -373,21 +372,21 @@ public:
         report(0,"Checking init/release synchronization");
         report(0,"Starting thread... thread will wait 0.5 second");
         t.start();
-        t.mutex.wait();
+        t.mutex.lock();
         checkEqual(1, t.state, "Start synchronized on init");
-        t.mutex.post();
+        t.mutex.unlock();
 
         report(0,"Stopping thread... thread will wait 0.5 second");
         t.stop();
-        t.mutex.wait();
+        t.mutex.lock();
         checkEqual(2, t.state, "Stop synchronized on release");
-        t.mutex.post();
+        t.mutex.unlock();
 
         t.threadWillFail(true);
         t.start();
-        t.mutex.wait();
+        t.mutex.lock();
         checkEqual(2, t.state, "Start synchronized on failed init");
-        t.mutex.post();
+        t.mutex.unlock();
 
         report(0, "done");
     }
@@ -464,9 +463,9 @@ public:
         t.start();
         checkEqual(t.join(1), 0, "thread t joined succesfully before 1 second timeout");
         checkTrue(t.active,"timeout join returns before thread stops");
-        t.mutex.wait();
+        t.mutex.lock();
         t.hold = false;
-        t.mutex.post();
+        t.mutex.unlock();
         t.stop();
         checkFalse(t.active,"flag behaves correctly");
         t.hold = false;

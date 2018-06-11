@@ -1,10 +1,3 @@
-
-/*
- * Copyright (C) 2010 RobotCub Consortium
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
-
 /**
  * @page yarp_config_files YARP config files
 
@@ -84,8 +77,8 @@ yarp::os::Property::find to get the second element of a group directly.
 It returns a yarp::os::Value object which can easily be converted to
 regular C types.
 \code
-prop.find("width").asInt()  // gives the int 10
-prop.find("height").asInt() // gives the int 15
+prop.find("width").asInt32()  // gives the int 10
+prop.find("height").asInt32() // gives the int 15
 \endcode
 
 \section yarp_config_file_add_section A config file with sections
@@ -106,7 +99,7 @@ the Property object we read in code will now contain the
 two groups "SIZE" and "APPEARANCE", which will have "width", "height",
 and "color" nested within them.  In other words:
 \code
-prop.findGroup("SIZE").find("width").asInt() // gives 10
+prop.findGroup("SIZE").find("width").asInt32() // gives 10
 prop.findGroup("APPEARANCE").find("color").asString() // gives "red"
 \endcode
 
@@ -364,8 +357,8 @@ And the program is called with these arguments:
 \endverbatim
 In this case, we get:
 \code
-prop.find("width").asInt()   // gives the int 200
-prop.find("height").asInt()  // gives the int 15
+prop.find("width").asInt32()   // gives the int 200
+prop.find("height").asInt32()  // gives the int 15
 \endcode
 This can be handy to override one or two values in a long config file
 without needing to copy it and modify it.  One wrinkle remains -- how

@@ -1,7 +1,10 @@
 /*
- *  Copyright: (C) 2010 RobotCub Consortium
- *  Authors: Ali Paikan <ali.paikan@iit.it>
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <cstdio>
@@ -9,6 +12,8 @@
 #include <cstring>
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/SystemInfoSerializer.h>
+#include <yarp/os/Os.h>
+
 using namespace yarp::os;
 
 #if defined(__linux__)
@@ -53,7 +58,7 @@ extern char **environ;
 # pragma comment(lib, "wbemuuid.lib")  // for get process arguments from pid
 #endif
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 
 #include <vector>
@@ -86,7 +91,7 @@ SystemInfo::capacity_t getMemEntry(const char *tag, const char *bufptr)
 }
 
 
-bool getCpuEntry(const char* tag, const char *buff, yarp::os::ConstString& value)
+bool getCpuEntry(const char* tag, const char *buff, std::string& value)
 {
     if (strlen(buff) <= strlen(tag))
         return false;
@@ -103,17 +108,17 @@ bool getCpuEntry(const char* tag, const char *buff, yarp::os::ConstString& value
     while((*pos2 != ':') && ((*pos2 == ' ')||(*pos2 == '\n'))) pos2--;
     if (pos2 < pos1)
         return false;
-    value = yarp::os::ConstString(pos1, pos2-pos1+1);
+    value = std::string(pos1, pos2-pos1+1);
     return true;
 }
 #endif
 
 
-#if defined(_WIN32)
-class CpuLoadCollector: public yarp::os::SystemRateThread
+#if  defined(_WIN32)
+class CpuLoadCollector: public yarp::os::PeriodicThread
 {
 public:
-    CpuLoadCollector():SystemRateThread(5000)
+    CpuLoadCollector():PeriodicThread(5.000, ShouldUseSystemClock::Yes)
     {
        firstRun = true;
        load.cpuLoad1 = 0.0;
@@ -307,7 +312,7 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
 
         DWORD dwSectorsPerCluster=0, dwBytesPerSector=0;
         DWORD dwFreeClusters=0, dwTotalClusters=0;
-        yarp::os::ConstString strHome = getUserInfo().homeDir;
+        std::string strHome = getUserInfo().homeDir;
         if (!strHome.length())
             strHome = "C:\\";
         if (GetDiskFreeSpaceA(strHome.c_str(), &dwSectorsPerCluster,
@@ -319,7 +324,7 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
 #endif
 
 #if defined(__linux__)
-    yarp::os::ConstString strHome = getUserInfo().homeDir;
+    std::string strHome = getUserInfo().homeDir;
     if (!strHome.length())
         strHome = "/home";
 
@@ -333,7 +338,7 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
 #endif
 
 #if defined(__APPLE__)
-    yarp::os::ConstString strHome = getUserInfo().homeDir;
+    std::string strHome = getUserInfo().homeDir;
     if (!strHome.length())
         strHome = "/";
 
@@ -485,7 +490,7 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
     {
         while(fgets(buffer, 128, proccpu))
         {
-            yarp::os::ConstString value;
+            std::string value;
             if (getCpuEntry("model", buffer, value) &&
                !getCpuEntry("model name", buffer, value))
                 processor.modelNumber = atoi(value.c_str());
@@ -511,7 +516,7 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
       processor.architecture = uts.machine;
     }
 #elif defined(__APPLE__)
-//    yarp::os::ConstString architecture;
+//    std::string architecture;
 
     int mib [] = { CTL_HW, HW_CPU_FREQ };
     int64_t value = 0;
@@ -566,34 +571,39 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
         sprintf(buff, "%d.%d", osver.dwMajorVersion, osver.dwMinorVersion);
         platform.release = buff;
         platform.codename = buff;
-        if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) &&
-            (osver.wProductType == VER_NT_WORKSTATION))
+        if ((osver.dwMajorVersion == 10) && (osver.dwMinorVersion == 0) && (osver.wProductType == VER_NT_WORKSTATION)) {
+            platform.distribution = "10";
+        } else if ((osver.dwMajorVersion == 10) && (osver.dwMinorVersion == 0) && (osver.wProductType != VER_NT_WORKSTATION)) {
+            platform.distribution = "Server 2016";
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 2) && (osver.wProductType == VER_NT_WORKSTATION)) {
+            platform.distribution = "8.1";
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 3) && (osver.wProductType != VER_NT_WORKSTATION)) {
+            platform.distribution = "Server 2012 R2";
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 2) && (osver.wProductType == VER_NT_WORKSTATION)) {
+            platform.distribution = "8";
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 2) && (osver.wProductType != VER_NT_WORKSTATION)) {
+            platform.distribution = "Server 2012";
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) && (osver.wProductType == VER_NT_WORKSTATION)) {
            platform.distribution = "7";
-        else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) &&
-            (osver.wProductType != VER_NT_WORKSTATION))
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) && (osver.wProductType != VER_NT_WORKSTATION)) {
            platform.distribution = "Server 2008 R2";
-        else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) &&
-            (osver.wProductType == VER_NT_WORKSTATION))
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) && (osver.wProductType == VER_NT_WORKSTATION)) {
            platform.distribution = "Vista";
-        else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) &&
-            (osver.wProductType != VER_NT_WORKSTATION))
+        } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) && (osver.wProductType != VER_NT_WORKSTATION)) {
            platform.distribution = "Server 2008";
-        else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2))
+        } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2)) {
            platform.distribution = "Server 2003";
-    //    else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
-    //        (osver.wSuiteMask & VER_SUITE_WH_SERVER))
+    //    } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) && (osver.wSuiteMask & VER_SUITE_WH_SERVER)) {
     //       platform.distribution = "Home Server";
-    //    else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
-    //            (GetSystemMetrics(SM_SERVERR2) != 0))
+    //    } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) && (GetSystemMetrics(SM_SERVERR2) != 0)) {
     //       platform.distribution = "Server 2003 R2";
-        else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
-                (osver.wProductType == VER_NT_WORKSTATION))
-                /* &&(osver.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)*/
+        } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) && (osver.wProductType == VER_NT_WORKSTATION)) /* &&(osver.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)*/ {
            platform.distribution = "XP Professional x64 Edition";
-        else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 1))
+        } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 1)) {
            platform.distribution = "XP";
-        else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 0))
+        } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 0)) {
             platform.distribution = "2000";
+        }
     }
 
     const char* a = GetEnvironmentStrings();
@@ -631,7 +641,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
     {
         while(fgets(buffer, 128, release))
         {
-            yarp::os::ConstString value;
+            std::string value;
             if (getCpuEntry("Distributor ID", buffer, value))
                 platform.distribution = value;
             if (getCpuEntry("Release", buffer, value))
@@ -767,7 +777,13 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
 }
 
 
-SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
+SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid)
+{
+    // If not specified, get information for current process
+    if (pid == 0) {
+        pid = yarp::os::getpid();
+    }
+
     SystemInfo::ProcessInfo info;
     info.pid = -1; // invalid
     info.schedPolicy = -1;
@@ -792,7 +808,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid) {
             // split the cmdline to find the arguments
             info.name = cmdline;
             size_t index = info.name.find(' ');
-            if (index != ConstString::npos) {
+            if (index != std::string::npos) {
                 info.name = info.name.substr(0, index);
                 info.arguments = cmdline;
                 info.arguments = info.arguments.substr(index+1);

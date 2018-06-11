@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/Time.h>
 #include <yarp/os/Portable.h>
@@ -14,7 +16,6 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/Name.h>
-#include <yarp/os/impl/Companion.h>
 
 
 #define YMSG(x) printf x;
@@ -24,8 +25,33 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-bool PortCoreOutputUnit::start() {
+PortCoreOutputUnit::PortCoreOutputUnit(PortCore& owner, int index, OutputProtocol *op) :
+            PortCoreUnit(owner, index),
+            op(op),
+            closing(false),
+            finished(false),
+            running(false),
+            threaded(false),
+            sending(false),
+            phase(1),
+            activate(0),
+            trackerMutex(),
+            cachedWriter(nullptr),
+            cachedReader(nullptr),
+            cachedCallback(nullptr),
+            cachedTracker(nullptr)
+{
+    yAssert(op!=nullptr);
+}
 
+PortCoreOutputUnit::~PortCoreOutputUnit()
+{
+    closeMain();
+}
+
+
+bool PortCoreOutputUnit::start()
+{
     phase.wait();
 
     if (!threaded) {
@@ -48,7 +74,8 @@ bool PortCoreOutputUnit::start() {
 }
 
 
-void PortCoreOutputUnit::run() {
+void PortCoreOutputUnit::run()
+{
     running = true;
     sending = false;
 
@@ -70,7 +97,7 @@ void PortCoreOutputUnit::run() {
                     YARP_DEBUG(log, "write something in background");
                     sendHelper();
                     YARP_DEBUG(log, "wrote something in background");
-                    trackerMutex.wait();
+                    trackerMutex.lock();
                     if (cachedTracker != nullptr) {
                         void *t = cachedTracker;
                         cachedTracker = nullptr;
@@ -79,7 +106,7 @@ void PortCoreOutputUnit::run() {
                     } else {
                         sending = false;
                     }
-                    trackerMutex.post();
+                    trackerMutex.unlock();
                 }
             }
             YARP_DEBUG(log, "wrote something in background");
@@ -92,14 +119,14 @@ void PortCoreOutputUnit::run() {
 
 
 
-void PortCoreOutputUnit::runSingleThreaded() {
-
+void PortCoreOutputUnit::runSingleThreaded()
+{
     if (op != nullptr) {
         Route route = op->getRoute();
         setMode();
         getOwner().reportUnit(this, true);
 
-        ConstString msg = ConstString("Sending output from ") +
+        std::string msg = std::string("Sending output from ") +
             route.getFromName() + " to " + route.getToName() + " using " +
             route.getCarrierName();
         if (Name(route.getToName()).isRooted()) {
@@ -127,7 +154,8 @@ void PortCoreOutputUnit::runSingleThreaded() {
     return;
 }
 
-void PortCoreOutputUnit::closeBasic() {
+void PortCoreOutputUnit::closeBasic()
+{
     bool waitForOther = false;
     if (op != nullptr) {
         op->getConnection().prepareDisconnect();
@@ -138,13 +166,13 @@ void PortCoreOutputUnit::closeBasic() {
                          debug,
                          "output for route %s asking other side to close by out-of-band means",
                          route.toString().c_str());
-            Companion::disconnectInput(route.getToName().c_str(),
+            NetworkBase::disconnectInput(route.getToName().c_str(),
                                        route.getFromName().c_str(), true);
         } else {
             if (op->getConnection().canEscape()) {
                 BufferedConnectionWriter buf(op->getConnection().isTextMode(),
                                              op->getConnection().isBareMode());
-                PortCommand pc('\0', ConstString("q"));
+                PortCommand pc('\0', std::string("q"));
                 pc.write(buf);
                 //printf("Asked for %s to close...\n",
                 //     op->getRoute().toString().c_str());
@@ -152,7 +180,7 @@ void PortCoreOutputUnit::closeBasic() {
             }
         }
 
-        ConstString msg = ConstString("Removing output from ") +
+        std::string msg = std::string("Removing output from ") +
             route.getFromName() + " to " + route.getToName();
 
         if (Name(route.getToName()).isRooted()) {
@@ -193,7 +221,8 @@ void PortCoreOutputUnit::closeBasic() {
     }
 }
 
-void PortCoreOutputUnit::closeMain() {
+void PortCoreOutputUnit::closeMain()
+{
     if (finished) return;
 
     YARP_DEBUG(Logger::get(), "PortCoreOutputUnit closing");
@@ -222,7 +251,8 @@ void PortCoreOutputUnit::closeMain() {
 }
 
 
-Route PortCoreOutputUnit::getRoute() {
+Route PortCoreOutputUnit::getRoute()
+{
     if (op != nullptr) {
         Route r = op->getRoute();
         op->beginWrite();
@@ -231,7 +261,8 @@ Route PortCoreOutputUnit::getRoute() {
     return PortCoreUnit::getRoute();
 }
 
-bool PortCoreOutputUnit::sendHelper() {
+bool PortCoreOutputUnit::sendHelper()
+{
     bool replied = false;
     if (op != nullptr) {
         bool done = false;
@@ -250,11 +281,18 @@ bool PortCoreOutputUnit::sendHelper() {
         }
 
         if (op->getConnection().isLocal()) {
-            buf.setReference(dynamic_cast<yarp::os::Portable *>
-                             (cachedWriter));
+            // WARNING Cast away const qualifier.
+            //         This may actually cause bugs when using the local carrier
+            //         with something that is actually const (i.e. that is using
+            //         some parts of memory that cannot be written.
+            yarp::os::PortWriter* pw = const_cast<yarp::os::PortWriter*>(cachedWriter);
+            yarp::os::Portable* p = dynamic_cast<yarp::os::Portable*>(pw);
+            if(p == nullptr) {
+                YARP_ERROR(Logger::get(), "PortCoreOutputUnit: cast failed.");
+                return false;
+            }
+            buf.setReference(p);
         } else {
-
-
             yAssert(cachedWriter != nullptr);
             bool ok = cachedWriter->write(buf);
             if (!ok) {
@@ -276,7 +314,7 @@ bool PortCoreOutputUnit::sendHelper() {
                             PortCommand pc('a', "");
                             pc.write(buf);
                         } else {
-                            PortCommand pc('\0', ConstString(suppressReply ? "D " : "d ") + cachedEnvelope);
+                            PortCommand pc('\0', std::string(suppressReply ? "D " : "d ") + cachedEnvelope);
                             pc.write(buf);
                         }
                     } else {
@@ -314,14 +352,15 @@ bool PortCoreOutputUnit::sendHelper() {
     return replied;
 }
 
-void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
+void *PortCoreOutputUnit::send(const yarp::os::PortWriter& writer,
                                yarp::os::PortReader *reader,
-                               yarp::os::PortWriter *callback,
+                               const yarp::os::PortWriter *callback,
                                void *tracker,
-                               const ConstString& envelopeString,
+                               const std::string& envelopeString,
                                bool waitAfter,
                                bool waitBefore,
-                               bool *gotReply) {
+                               bool *gotReply)
+{
     bool replied = false;
 
     if (op != nullptr) {
@@ -354,12 +393,12 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
             replied = sendHelper();
             sending = false;
         } else {
-            trackerMutex.wait();
+            trackerMutex.lock();
             void *nextTracker = tracker;
             tracker = cachedTracker;
             cachedTracker = nextTracker;
             activate.post();
-            trackerMutex.post();
+            trackerMutex.unlock();
         }
     } else {
         YARP_DEBUG(Logger::get(),
@@ -377,17 +416,36 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
 }
 
 
-void *PortCoreOutputUnit::takeTracker() {
+void *PortCoreOutputUnit::takeTracker()
+{
     void *tracker = nullptr;
-    trackerMutex.wait();
+    trackerMutex.lock();
     if (!sending) {
         tracker = cachedTracker;
         cachedTracker = nullptr;
     }
-    trackerMutex.post();
+    trackerMutex.unlock();
     return tracker;
 }
 
-bool PortCoreOutputUnit::isBusy() {
+bool PortCoreOutputUnit::isBusy()
+{
     return sending;
+}
+
+void PortCoreOutputUnit::setCarrierParams(const yarp::os::Property& params)
+{
+    if (op)
+        op->getConnection().setCarrierParams(params);
+}
+
+void PortCoreOutputUnit::getCarrierParams(yarp::os::Property& params)
+{
+    if (op)
+        op->getConnection().getCarrierParams(params);
+}
+
+OutputProtocol* PortCoreOutputUnit::getOutPutProtocol()
+{
+    return op;
 }

@@ -1,12 +1,13 @@
 /*
- * Copyright (C) 2007 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/all.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/RFModule.h>
@@ -22,7 +23,7 @@ class MyModule : public RFModule
 public:
     virtual bool respond(const Bottle& command, Bottle& reply) override
     {
-        if (command.get(0).isInt())
+        if (command.get(0).isInt32())
         {
             reply = command;
             return true;
@@ -50,7 +51,7 @@ public:
 class RFModuleTest : public UnitTest
 {
 public:
-    virtual ConstString getName() override { return "RFModuleTest"; }
+    virtual std::string getName() const override { return "RFModuleTest"; }
 
 
     void testPort()
@@ -69,9 +70,9 @@ public:
         Network::sync("/p1");
         Network::sync("/p2");
         Bottle out, in;
-        out.addInt(42);
+        out.addInt32(42);
         p1.write(out,in);
-        checkEqual(in.get(0).asInt(), out.get(0).asInt(), "[Test] Port response");
+        checkEqual(in.get(0).asInt32(), out.get(0).asInt32(), "[Test] Port response");
     }
 
     void testThread()

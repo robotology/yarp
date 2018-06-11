@@ -22,7 +22,7 @@ namespace yarp {
 class yarp::test::PointQualityVocab : public yarp::os::idl::WireVocab {
 public:
   virtual int fromString(const std::string& input);
-  virtual std::string toString(int input);
+  virtual std::string toString(int input) const;
 };
 
 

@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/ModifyingCarrier.h>
@@ -15,10 +17,10 @@ bool yarp::os::ModifyingCarrier::checkHeader(const yarp::os::Bytes &header)
 }
 
 
-void yarp::os::ModifyingCarrier::getHeader(const yarp::os::Bytes &header)
+void yarp::os::ModifyingCarrier::getHeader(yarp::os::Bytes &header) const
 {
     if (header.length()==8) {
-        ConstString target = "ohbehave";
+        std::string target = "ohbehave";
         for (int i=0; i<8; i++) {
             header.get()[i] = target[i];
         }
@@ -31,17 +33,17 @@ bool yarp::os::ModifyingCarrier::respondToHeader(yarp::os::ConnectionState &prot
     return false;
 }
 
-bool yarp::os::ModifyingCarrier::modifiesIncomingData()
+bool yarp::os::ModifyingCarrier::modifiesIncomingData() const
 {
     return true;
 }
 
-bool yarp::os::ModifyingCarrier::modifiesOutgoingData()
+bool yarp::os::ModifyingCarrier::modifiesOutgoingData() const
 {
     return true;
 }
 
-bool yarp::os::ModifyingCarrier::modifiesReply()
+bool yarp::os::ModifyingCarrier::modifiesReply() const
 {
     return true;
 }
@@ -52,7 +54,7 @@ void yarp::os::ModifyingCarrier::setCarrierParams(const yarp::os::Property &para
     YARP_UNUSED(params);
 }
 
-void yarp::os::ModifyingCarrier::getCarrierParams(yarp::os::Property &params)
+void yarp::os::ModifyingCarrier::getCarrierParams(yarp::os::Property &params) const
 {
     YARP_UNUSED(params);
 }

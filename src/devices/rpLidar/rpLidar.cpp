@@ -1,7 +1,7 @@
 /*
 * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
 * Author: Marco Randazzo <marco.randazzo@iit.it>
-* CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+* CopyPolicy: Released under the terms of the GPLv2 or later, see LICENSE
 */
 
 #define _USE_MATH_DEFINES
@@ -62,15 +62,15 @@ bool RpLidar::open(yarp::os::Searchable& config)
         yarp::os::Searchable& general_config = config.findGroup("GENERAL");
         clip_max_enable = general_config.check("clip_max");
         clip_min_enable = general_config.check("clip_min");
-        if (clip_max_enable) { max_distance = general_config.find("clip_max").asDouble(); }
-        if (clip_min_enable) { min_distance = general_config.find("clip_min").asDouble(); }
+        if (clip_max_enable) { max_distance = general_config.find("clip_max").asFloat64(); }
+        if (clip_min_enable) { min_distance = general_config.find("clip_min").asFloat64(); }
         if (general_config.check("max_angle") == false) { yError() << "Missing max_angle param"; return false; }
         if (general_config.check("min_angle") == false) { yError() << "Missing min_angle param"; return false; }
         if (general_config.check("resolution") == false) { yError() << "Missing resolution param"; return false; }
-        max_angle = general_config.find("max_angle").asDouble();
-        min_angle = general_config.find("min_angle").asDouble();
-        resolution = general_config.find("resolution").asDouble();
-        do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt()!=0);
+        max_angle = general_config.find("max_angle").asFloat64();
+        min_angle = general_config.find("min_angle").asFloat64();
+        resolution = general_config.find("resolution").asFloat64();
+        do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt32()!=0);
     }
     else
     {
@@ -91,8 +91,8 @@ bool RpLidar::open(yarp::os::Searchable& config)
             for (size_t s = 1; s < s_maxs; s++)
             {
                 Range_t range;
-                range.max = maxs.get(s).asDouble();
-                range.min = mins.get(s).asDouble();
+                range.max = maxs.get(s).asFloat64();
+                range.min = mins.get(s).asFloat64();
                 if (range.max >= 0 && range.max <= 360 &&
                     range.min >= 0 && range.min <= 360 &&
                     range.max > range.min)
@@ -120,7 +120,6 @@ bool RpLidar::open(yarp::os::Searchable& config)
     yInfo("max_angle %f, min_angle %f", max_angle, min_angle);
     yInfo("resolution %f", resolution);
     yInfo("sensors %d", sensorsNum);
-    Time::turboBoost();
 
     yarp::os::Searchable& general_config = config.findGroup("GENERAL");
     bool ok = general_config.check("Serial_Configuration");
@@ -129,12 +128,12 @@ bool RpLidar::open(yarp::os::Searchable& config)
         yError("Cannot find configuration file for serial port communication!");
         return false;
     }
-    yarp::os::ConstString serial_filename = general_config.find("Serial_Configuration").asString();
+    std::string serial_filename = general_config.find("Serial_Configuration").asString();
 
     Property prop;
     ResourceFinder rf;
     rf.setVerbose();
-    yarp::os::ConstString serial_completefilename= rf.findFileByName(serial_filename.c_str());
+    std::string serial_completefilename= rf.findFileByName(serial_filename.c_str());
 
     prop.put("device", "serialport");
     ok = prop.fromConfigFile(serial_completefilename.c_str(), config, false);
@@ -187,13 +186,12 @@ bool RpLidar::open(yarp::os::Searchable& config)
 //     string info;
 //     bool b_info = HW_getInfo(info);
 
-    RateThread::start();
-    return true;
+    return PeriodicThread::start();
 }
 
 bool RpLidar::close()
 {
-    RateThread::stop();
+    PeriodicThread::stop();
 
     if (!HW_stop())
     {
@@ -681,7 +679,7 @@ void RpLidar::run()
              {
              yError("Unable to put sensor in scan mode!");
              }
-             mutex.post();
+             mutex.unlock();
              return;
              }
              else
@@ -720,7 +718,7 @@ void RpLidar::threadRelease()
     return;
 }
 
-bool RpLidar::getDeviceInfo(yarp::os::ConstString &device_info)
+bool RpLidar::getDeviceInfo(std::string &device_info)
 {
     LockGuard guard(mutex);
     device_info = info;

@@ -1,14 +1,15 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-
 #include <yarp/os/impl/UnitTest.h>
-
 #include <yarp/os/Network.h>
+#include <yarp/companion/yarpcompanion.h>
 
 #include "TestList.h"
 
@@ -48,7 +49,7 @@ int main(int argc, char *argv[]) {
 
     if (argc>1) {
         int verbosity = 0;
-        while (ConstString(argv[1])=="verbose") {
+        while (std::string(argv[1])=="verbose") {
             verbosity++;
             argc--;
             argv++;
@@ -57,7 +58,7 @@ int main(int argc, char *argv[]) {
             Network::setVerbosity(verbosity);
         }
 
-        if (ConstString(argv[1])=="regression") {
+        if (std::string(argv[1])=="regression") {
             done = true;
             UnitTest::startTestSystem();
             TestList::collectTests();  // just in case automation doesn't work
@@ -70,7 +71,7 @@ int main(int argc, char *argv[]) {
         }
     }
     if (!done) {
-        Network::main(argc,argv);
+        yarp::companion::main(argc,argv);
     }
 
     yarp.queryBypass(nullptr);

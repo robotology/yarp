@@ -1,17 +1,15 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_UNBUFFEREDCONTACTABLE_H
 #define YARP_OS_UNBUFFEREDCONTACTABLE_H
 
 #include <yarp/os/Contactable.h>
-
-
-// Defined in this file:
-namespace yarp { namespace os { class UnbufferedContactable; }}
 
 
 namespace yarp {
@@ -32,8 +30,8 @@ public:
      *                 is done (otherwise writer.onCompletion() is called)
      * @return true iff the object is successfully written
      */
-    virtual bool write(PortWriter& writer,
-                       PortWriter *callback = nullptr) const = 0;
+    virtual bool write(const PortWriter& writer,
+                       const PortWriter* callback = nullptr) const = 0;
 
     /**
      * Write an object to the port, then expect one back.
@@ -46,8 +44,9 @@ public:
      *                 is done (otherwise writer.onCompletion() is called)
      * @return true iff an object is successfully written and read
      */
-    virtual bool write(PortWriter& writer, PortReader& reader,
-                       PortWriter *callback = nullptr) const = 0;
+    virtual bool write(const PortWriter& writer,
+                       PortReader& reader,
+                       const PortWriter* callback = nullptr) const = 0;
 
     /**
      * Read an object from the port.

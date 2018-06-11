@@ -1,14 +1,16 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick, Daniele E. Domenichelli
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_RESOURCEFINDEROPTIONS_H
 #define YARP_OS_RESOURCEFINDEROPTIONS_H
 
 #include <yarp/os/api.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 namespace yarp {
     namespace os {
@@ -66,13 +68,13 @@ public:
     SearchLocations searchLocations;
     DuplicateFilesPolicy duplicateFilesPolicy;
     SearchFlavor searchFlavor;
-    ConstString resourceType;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) resourceType;
     MessageFilter messageFilter;
 
     ResourceFinderOptions(SearchLocations searchLocations = ModuleDefault,
                           DuplicateFilesPolicy duplicateFilesPolicy = First,
                           SearchFlavor searchFlavor = ConfigAndDataLike,
-                          const ConstString& resourceType = "",
+                          const std::string& resourceType = "",
                           MessageFilter messageFilter = ShowFromFlags);
 
     static ResourceFinderOptions findFirstMatch() {

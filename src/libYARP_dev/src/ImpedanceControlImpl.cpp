@@ -1,14 +1,18 @@
 /*
- * Copyright (C) 2008 RobotCub Consortium
- * Authors: Marco Randazzo <marco.randazzo@iit.it>
- *          Lorenzo Natale <lorenzo.natale@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <cstdio>
 
 #include <yarp/dev/ImplementImpedanceControl.h>
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/os/LogStream.h>
+#include <math.h>   
 
 using namespace yarp::dev;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}

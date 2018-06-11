@@ -1,10 +1,15 @@
 /*
-* Author: Marco Randazzo, Silvio Traversaro
-* Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #include <yarp/math/Quaternion.h>
+
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/math/Math.h>
 #include <cmath>
 #include <cstdio>
@@ -113,12 +118,12 @@ bool Quaternion::read(yarp::os::ConnectionReader& connection)
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
     if (!ok) return false;
 
-    if (header.listLen == 4 &&  header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_DOUBLE))
+    if (header.listLen == 4 &&  header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_FLOAT64))
     {
-        this->internal_data[0] = connection.expectDouble();
-        this->internal_data[1] = connection.expectDouble();
-        this->internal_data[2] = connection.expectDouble();
-        this->internal_data[3] = connection.expectDouble();
+        this->internal_data[0] = connection.expectFloat64();
+        this->internal_data[1] = connection.expectFloat64();
+        this->internal_data[2] = connection.expectFloat64();
+        this->internal_data[3] = connection.expectFloat64();
     }
     else
     {
@@ -128,19 +133,19 @@ bool Quaternion::read(yarp::os::ConnectionReader& connection)
     return !connection.isError();
 }
 
-bool Quaternion::write(yarp::os::ConnectionWriter& connection)
+bool Quaternion::write(yarp::os::ConnectionWriter& connection) const
 {
     QuaternionPortContentHeader header;
 
-    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_DOUBLE);
+    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_FLOAT64);
     header.listLen = 4;
 
     connection.appendBlock((char*)&header, sizeof(header));
 
-    connection.appendDouble(this->internal_data[0]);
-    connection.appendDouble(this->internal_data[1]);
-    connection.appendDouble(this->internal_data[2]);
-    connection.appendDouble(this->internal_data[3]);
+    connection.appendFloat64(this->internal_data[0]);
+    connection.appendFloat64(this->internal_data[1]);
+    connection.appendFloat64(this->internal_data[2]);
+    connection.appendFloat64(this->internal_data[3]);
 
     // if someone is foolish enough to connect in text mode,
     // let them see something readable.
@@ -206,7 +211,7 @@ void Quaternion::fromRotationMatrix(const yarp::sig::Matrix &R)
     }
 }
 
-yarp::sig::Matrix Quaternion::toRotationMatrix() const
+yarp::sig::Matrix Quaternion::toRotationMatrix4x4() const
 {
     yarp::sig::Vector q = this->toVector();
     yarp::sig::Vector qin = (1.0 / yarp::math::norm(q))*q;
@@ -225,7 +230,26 @@ yarp::sig::Matrix Quaternion::toRotationMatrix() const
     return R;
 }
 
-std::string Quaternion::toString(int precision, int width)
+yarp::sig::Matrix Quaternion::toRotationMatrix3x3() const
+{
+    yarp::sig::Vector q = this->toVector();
+    yarp::sig::Vector qin = (1.0 / yarp::math::norm(q))*q;
+
+    yarp::sig::Matrix R = yarp::math::zeros(3,3);
+    R(0, 0) = qin[0] * qin[0] + qin[1] * qin[1] - qin[2] * qin[2] - qin[3] * qin[3];
+    R(1, 0) = 2.0*(qin[1] * qin[2] + qin[0] * qin[3]);
+    R(2, 0) = 2.0*(qin[1] * qin[3] - qin[0] * qin[2]);
+    R(0, 1) = 2.0*(qin[1] * qin[2] - qin[0] * qin[3]);
+    R(1, 1) = qin[0] * qin[0] - qin[1] * qin[1] + qin[2] * qin[2] - qin[3] * qin[3];
+    R(2, 1) = 2.0*(qin[2] * qin[3] + qin[0] * qin[1]);
+    R(0, 2) = 2.0*(qin[1] * qin[3] + qin[0] * qin[2]);
+    R(1, 2) = 2.0*(qin[2] * qin[3] - qin[0] * qin[1]);
+    R(2, 2) = qin[0] * qin[0] - qin[1] * qin[1] - qin[2] * qin[2] + qin[3] * qin[3];
+
+    return R;
+}
+
+std::string Quaternion::toString(int precision, int width) const
 {
     std::string ret = "";
     char tmp[350];
@@ -258,9 +282,22 @@ void Quaternion::fromAxisAngle(const yarp::sig::Vector &v)
     this->internal_data[3] = q.internal_data[3];
 }
 
+void Quaternion::fromAxisAngle(const yarp::sig::Vector& axis, const double& angle)
+{
+    yarp::sig::Vector v = axis;
+    v.resize(4); v[4] = angle;
+    yarp::sig::Matrix m = axis2dcm(v);
+    Quaternion q;
+    q.fromRotationMatrix(m);
+    this->internal_data[0] = q.internal_data[0];
+    this->internal_data[1] = q.internal_data[1];
+    this->internal_data[2] = q.internal_data[2];
+    this->internal_data[3] = q.internal_data[3];
+}
+
 yarp::sig::Vector Quaternion::toAxisAngle()
 {
-    yarp::sig::Matrix m=this->toRotationMatrix();
+    yarp::sig::Matrix m=this->toRotationMatrix4x4();
     yarp::sig::Vector v = dcm2axis(m);
     return v;
 }
@@ -289,4 +326,10 @@ double Quaternion::arg()
                       internal_data[2] * internal_data[2] +
                       internal_data[3] * internal_data[3]),
                  internal_data[0]);
+}
+
+Quaternion Quaternion::inverse() const
+{
+    //                     w                  x                 y                  z
+    return Quaternion(internal_data[0], -internal_data[1], -internal_data[2], -internal_data[3]);
 }

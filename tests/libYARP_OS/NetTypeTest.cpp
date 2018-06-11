@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/NetType.h>
@@ -20,7 +22,7 @@ using namespace yarp::os;
 
 class NetTypeTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "NetTypeTest"; }
+    virtual std::string getName() const override { return "NetTypeTest"; }
 
     void checkCrc() {
         report(0,"checking cyclic redundancy check is plausible");
@@ -45,12 +47,11 @@ public:
     void checkInt() {
         report(0,"checking integer representation");
         union {
-            YARP_INT32 i;
-            unsigned char c[sizeof(YARP_INT32)];
+            std::int32_t i;
+            unsigned char c[sizeof(std::int32_t)];
         } val;
         NetInt32 i = 258;
-        checkEqual(sizeof(YARP_INT32),4,"integer size is ok");
-        memcpy((char*)(&val.i),(char*)&i,sizeof(YARP_INT32));
+        memcpy((char*)(&val.i),(char*)&i,sizeof(std::int32_t));
         checkEqual(val.c[0],2,"first byte ok");
         checkEqual(val.c[1],1,"second byte ok");
         checkEqual(val.c[2],0,"third byte ok");
@@ -60,12 +61,11 @@ public:
     void checkInt16() {
         report(0,"checking 16-bit integer representation");
         union {
-            YARP_INT16 i;
-            unsigned char c[sizeof(YARP_INT16)];
+            std::int16_t i;
+            unsigned char c[sizeof(std::int16_t)];
         } val;
         NetInt16 i = 258;
-        checkEqual(sizeof(YARP_INT16),2,"integer size is ok");
-        memcpy((char*)(&val.i),(char*)&i,sizeof(YARP_INT16));
+        memcpy((char*)(&val.i),(char*)&i,sizeof(std::int16_t));
         checkEqual(val.c[0],2,"first byte ok");
         checkEqual(val.c[1],1,"second byte ok");
     }
@@ -73,7 +73,6 @@ public:
     void checkFloat() {
         report(0,"checking floating point representation");
         NetFloat64 d = 99;
-        checkEqual(sizeof(NetFloat64), 8, "NetFloat64 size is ok.");
         unsigned char rpi[8] = {
             110, 134, 27, 240, 249, 33, 9, 64
         };

@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef _YARP2_TESTLIST_
@@ -40,6 +42,10 @@ extern yarp::os::impl::UnitTest& getFrameTransformClientTest();
 extern yarp::os::impl::UnitTest& getMapGrid2DTest();
 #endif
 
+#ifdef YARP_MULTIPLEANALOGSENSORSINTERFACES_TESTS
+extern yarp::os::impl::UnitTest& getMultipleAnalogSensorsInterfacesTest();
+#endif
+
 class yarp::os::impl::TestList {
 public:
     static void collectTests() {
@@ -58,7 +64,10 @@ public:
 #ifdef WITH_YARPMATH
         root.add(getFrameTransformClientTest());
         root.add(getMapGrid2DTest());
-#endif	
+#endif
+#ifdef YARP_MULTIPLEANALOGSENSORSINTERFACES_TESTS
+        root.add(getMultipleAnalogSensorsInterfacesTest());
+#endif
     }
 };
 

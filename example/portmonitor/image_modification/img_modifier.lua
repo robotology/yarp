@@ -1,8 +1,9 @@
+-- Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+-- All rights reserved.
 --
--- Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
--- Authors: Ali Paikan
--- CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
---
+-- This software may be modified and distributed under the terms of the
+-- BSD-3-Clause license. See the accompanying LICENSE file for details.
+
 
 -- loading lua-yarp binding library
 require("yarp")
@@ -142,17 +143,17 @@ PortMonitor.setparam = function(property)
     bt = property:findGroup("bg", "background color")
     if bt:isNull() ~= true then
         if bt:size() >=4  then
-            PortMonitor.bg.r = bt:get(1):asInt()
-            PortMonitor.bg.g = bt:get(2):asInt()
-            PortMonitor.bg.b = bt:get(3):asInt()
+            PortMonitor.bg.r = bt:get(1):asInt32()
+            PortMonitor.bg.g = bt:get(2):asInt32()
+            PortMonitor.bg.b = bt:get(3):asInt32()
         end
     end
     bt = property:findGroup("fg", "forground color")
     if bt:isNull() ~= true then
         if bt:size() >=4  then
-            PortMonitor.fg.r = bt:get(1):asInt()
-            PortMonitor.fg.g = bt:get(2):asInt()
-            PortMonitor.fg.b = bt:get(3):asInt()
+            PortMonitor.fg.r = bt:get(1):asInt32()
+            PortMonitor.fg.g = bt:get(2):asInt32()
+            PortMonitor.fg.b = bt:get(3):asInt32()
         end
     end
 end
@@ -168,14 +169,14 @@ PortMonitor.getparam = function()
     bt = yarp.Bottle()
     bg = bt:addList()
     bg:addString("bg")
-    bg:addInt(PortMonitor.bg.r)
-    bg:addInt(PortMonitor.bg.g)
-    bg:addInt(PortMonitor.bg.b)
+    bg:addInt32(PortMonitor.bg.r)
+    bg:addInt32(PortMonitor.bg.g)
+    bg:addInt32(PortMonitor.bg.b)
     fg = bt:addList()
     fg:addString("fg")
-    fg:addInt(PortMonitor.fg.r)
-    fg:addInt(PortMonitor.fg.g)
-    fg:addInt(PortMonitor.fg.b)
+    fg:addInt32(PortMonitor.fg.r)
+    fg:addInt32(PortMonitor.fg.g)
+    fg:addInt32(PortMonitor.fg.b)
     property:fromString(bt:toString())
     return property
 end

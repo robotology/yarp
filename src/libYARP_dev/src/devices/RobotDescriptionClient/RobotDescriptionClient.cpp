@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Author: Marco Randazzo <marco.randazzo@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "RobotDescriptionClient.h"
@@ -38,7 +41,7 @@ bool yarp::dev::RobotDescriptionClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    ConstString local_rpc,  remote_rpc;
+    std::string local_rpc,  remote_rpc;
 
     local_rpc  = m_local_name + "/rpc";
     remote_rpc = m_remote_name + "/rpc";
@@ -91,7 +94,7 @@ bool yarp::dev::RobotDescriptionClient::getAllDevicesByType(const std::string &t
         else
         {
             Bottle *b = resp.get(1).asList();
-            for (int i = 0; i < b->size(); i += 2)
+            for (size_t i = 0; i < b->size(); i += 2)
             {
                 DeviceDescription desc;
                 desc.device_name = b->get(i).asString();
@@ -182,7 +185,7 @@ bool yarp::dev::RobotDescriptionClient::getAllDevices(std::vector<DeviceDescript
         else
         {
             Bottle *b = resp.get(1).asList();
-            for (int i = 0; i < b->size();i+=2)
+            for (size_t i = 0; i < b->size();i+=2)
             {
                 DeviceDescription desc;
                 desc.device_name = b->get(i).asString();

@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "XmlRpcStream.h"
@@ -46,7 +47,7 @@ Value toValue(XmlRpcValue& v, bool outer)
                 if (v2.getType()!=XmlRpcValue::TypeInvalid) {
                     Value v = toValue(v2,false);
                     if (i==0) {
-                        ConstString tag = v.asString();
+                        std::string tag = v.asString();
                         if (tag=="list"||tag=="dict") {
                             if (!outer) {
                                 bot->addString("list");
@@ -86,10 +87,10 @@ Value toValue(XmlRpcValue& v, bool outer)
     return Value("(type not supported yet out of laziness)");
 }
 
-YARP_SSIZE_T XmlRpcStream::read(const Bytes& b)
+yarp::conf::ssize_t XmlRpcStream::read(Bytes& b)
 {
     //printf("XMLRPC READ\n");
-    YARP_SSIZE_T result = sis.read(b);
+    yarp::conf::ssize_t result = sis.read(b);
     if (result>0) {
         //printf("RETURNING %d bytes\n", result);
         return result;

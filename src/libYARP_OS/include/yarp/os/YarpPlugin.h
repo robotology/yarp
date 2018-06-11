@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_YARPPLUGIN_H
@@ -132,9 +134,9 @@ public:
      * @return the name of the objects constructed by this plugin
      *
      */
-    ConstString getName() {
+    std::string getName() {
         if (!factory) {
-            return ConstString();
+            return std::string();
         }
         return factory->getName();
     }
@@ -144,9 +146,9 @@ public:
      * @return the type of the objects constructed by this plugin
      *
      */
-    ConstString getClassName() {
+    std::string getClassName() {
         if (!factory) {
-            return ConstString();
+            return std::string();
         }
         return factory->getClassName();
     }
@@ -156,9 +158,9 @@ public:
      * @return the base class the objects constructed by this plugin
      *
      */
-    ConstString getBaseClassName() {
+    std::string getBaseClassName() {
         if (!factory) {
-            return ConstString();
+            return std::string();
         }
         return factory->getBaseClassName();
     }

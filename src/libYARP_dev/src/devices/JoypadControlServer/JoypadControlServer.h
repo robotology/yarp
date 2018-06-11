@@ -1,12 +1,15 @@
 /*
- * Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
- * Author: Andrea Ruzzenenti <andrea.ruzzenenti@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
+
 #ifndef YARP_DEV_JOYPADCONTROLSERVER_JOYPADCONTROLSERVER_H
 #define YARP_DEV_JOYPADCONTROLSERVER_JOYPADCONTROLSERVER_H
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IJoypadController.h>
 #include <yarp/dev/Wrapper.h>
@@ -46,7 +49,7 @@ public:
 class yarp::dev::JoypadControlServer: public yarp::dev::DeviceDriver,
                                       public yarp::dev::IWrapper,
                                       public yarp::dev::IMultipleWrapper,
-                                      public yarp::os::RateThread
+                                      public yarp::os::PeriodicThread
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -56,7 +59,7 @@ class yarp::dev::JoypadControlServer: public yarp::dev::DeviceDriver,
     #define JoyPort yarp::dev::JoypadControl::JoyPort
 
 
-    unsigned int                    m_rate;
+    double                          m_period;
     JoypadCtrlParser                m_parser;
     yarp::dev::IJoypadController*   m_device;
     yarp::os::Port                  m_rpcPort;
@@ -64,8 +67,8 @@ class yarp::dev::JoypadControlServer: public yarp::dev::DeviceDriver,
     bool                            m_isSubdeviceOwned;
     bool                            m_separatePorts;
     bool                            m_profile;
-    yarp::os::ConstString           m_rpcPortName;
-    yarp::os::ConstString           m_name;
+    std::string           m_rpcPortName;
+    std::string           m_name;
     JoyPort<Vector>                 m_portAxis;
     JoyPort<Vector>                 m_portStick;
     JoyPort<Vector>                 m_portTouch;

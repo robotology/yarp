@@ -1,14 +1,17 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Authors: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-// rate thread example -nat
+// periodic thread example -nat
 
 #include <stdio.h>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Network.h>
@@ -20,13 +23,13 @@ using namespace yarp::sig;
 
 const int NROWS=20;
 const int NCOLS=20;
-const int THREAD_PERIOD=15;
+const double THREAD_PERIOD=0.015;
 const int MAIN_WAIT=100;
 
-class Thread1 : public RateThread {
+class Thread1 : public PeriodicThread {
     Matrix m;
 public:
-	Thread1(int r):RateThread(r){}
+    Thread1(double p):PeriodicThread(p){}
     virtual bool threadInit()
 	{ 
 		printf("Starting thread1\n");
@@ -50,8 +53,8 @@ public:
     {
         if (getIterations()==10)
             {
-                double estP=getEstPeriod();
-                double estU=getEstUsed();
+                double estP=getEstimatedPeriod();
+                double estU=getEstimatedUsed();
                 fprintf(stderr, "Thread1 est dT:%.3lf[ms]\n", estP);
                 fprintf(stderr, "Thread1 est used:%.3lf[ms]\n", estU);
                 resetStat();
@@ -71,7 +74,6 @@ public:
 int main() {
     yarp::os::Network network;
     Thread1 t1(THREAD_PERIOD);
-    Time::turboBoost();
     t1.start(); 
 
     Time::delay(MAIN_WAIT);

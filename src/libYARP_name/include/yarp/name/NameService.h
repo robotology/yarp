@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2009 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARPDB_NAMESERVICE_INC
@@ -50,11 +52,11 @@ public:
 
     virtual void goPublic() {}
 
-    virtual yarp::os::Contact query(const yarp::os::ConstString& name) override {
+    virtual yarp::os::Contact query(const std::string& name) override {
         return yarp::os::Contact();
     }
 
-    virtual bool announce(const yarp::os::ConstString& name, int activity) override {
+    virtual bool announce(const std::string& name, int activity) override {
         return false;
     }
 

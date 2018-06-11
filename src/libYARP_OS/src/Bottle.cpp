@@ -1,7 +1,11 @@
 /*
- * Copyright (C) 2006, 2008 RobotCub Consortium, Arjan Gijsberts
- * Authors: Paul Fitzpatrick, Arjan Gijsberts
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * Copyright (C) 2006, 2008 Arjan Gijsberts
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Bottle.h>
@@ -13,7 +17,6 @@
 
 
 using yarp::os::Bottle;
-using yarp::os::ConstString;
 using yarp::os::ConnectionReader;
 using yarp::os::ConnectionWriter;
 using yarp::os::Property;
@@ -24,12 +27,15 @@ using yarp::os::impl::Storable;
 class NullBottle : public Bottle
 {
 public:
-    NullBottle() : Bottle() { setReadOnly(true); }
-    virtual bool isNull() const override { return true; }
-    static NullBottle* bottleNull;
+    NullBottle() : Bottle()
+    {
+        setReadOnly(true);
+    }
+    virtual bool isNull() const override
+    {
+        return true;
+    }
 };
-
-NullBottle* NullBottle::bottleNull = nullptr;
 
 Bottle::Bottle()
         : Portable(), Searchable(), implementation(new BottleImpl(this))
@@ -39,7 +45,7 @@ Bottle::Bottle()
     implementation->ro = false;
 }
 
-Bottle::Bottle(const ConstString& text)
+Bottle::Bottle(const std::string& text)
         : Portable(), Searchable(), implementation(new BottleImpl(this))
 {
     yAssert(implementation != nullptr);
@@ -78,16 +84,40 @@ void Bottle::clear()
     implementation->clear();
 }
 
-void Bottle::addInt(int x)
+void Bottle::addInt8(std::int8_t x)
 {
     implementation->edit();
-    implementation->addInt(x);
+    implementation->addInt8(x);
 }
 
-void Bottle::addInt64(const YARP_INT64& x)
+void Bottle::addInt16(std::int16_t x)
+{
+    implementation->edit();
+    implementation->addInt16(x);
+}
+
+void Bottle::addInt32(std::int32_t x)
+{
+    implementation->edit();
+    implementation->addInt32(x);
+}
+
+void Bottle::addInt64(std::int64_t x)
 {
     implementation->edit();
     implementation->addInt64(x);
+}
+
+void Bottle::addFloat32(yarp::conf::float32_t x)
+{
+    implementation->edit();
+    implementation->addFloat32(x);
+}
+
+void Bottle::addFloat64(yarp::conf::float64_t x)
+{
+    implementation->edit();
+    implementation->addFloat64(x);
 }
 
 void Bottle::addVocab(int x)
@@ -96,19 +126,13 @@ void Bottle::addVocab(int x)
     implementation->addVocab(x);
 }
 
-void Bottle::addDouble(double x)
-{
-    implementation->edit();
-    implementation->addDouble(x);
-}
-
 void Bottle::addString(const char* str)
 {
     implementation->edit();
     implementation->addString(str);
 }
 
-void Bottle::addString(const ConstString& str)
+void Bottle::addString(const std::string& str)
 {
     implementation->edit();
     implementation->addString(str);
@@ -136,19 +160,19 @@ Value Bottle::pop()
     return val;
 }
 
-void Bottle::fromString(const ConstString& text)
+void Bottle::fromString(const std::string& text)
 {
     implementation->edit();
     implementation->invalid = false;
     implementation->fromString(text.c_str());
 }
 
-ConstString Bottle::toString() const
+std::string Bottle::toString() const
 {
-    return ConstString(implementation->toString().c_str());
+    return std::string(implementation->toString().c_str());
 }
 
-void Bottle::fromBinary(const char* buf, int len)
+void Bottle::fromBinary(const char* buf, size_t len)
 {
     implementation->edit();
     implementation->fromBinary(buf, len);
@@ -162,12 +186,12 @@ const char* Bottle::toBinary(size_t* size)
     return implementation->getBytes();
 }
 
-bool Bottle::write(ConnectionWriter& writer)
+bool Bottle::write(ConnectionWriter& writer) const
 {
     return implementation->write(writer);
 }
 
-void Bottle::onCommencement()
+void Bottle::onCommencement() const
 {
     implementation->onCommencement();
 }
@@ -178,12 +202,12 @@ bool Bottle::read(ConnectionReader& reader)
     return implementation->read(reader);
 }
 
-Value& Bottle::get(int index) const
+Value& Bottle::get(size_t index) const
 {
     return implementation->get(index);
 }
 
-int Bottle::size() const
+size_t Bottle::size() const
 {
     return static_cast<int>(implementation->size());
 }
@@ -209,7 +233,7 @@ void Bottle::copy(const Bottle& alt, int first, int len)
     implementation->copyRange(alt.implementation, first, len);
 }
 
-bool Bottle::check(const ConstString& key) const
+bool Bottle::check(const std::string& key) const
 {
     Bottle& val = findGroup(key);
     if (!val.isNull()) {
@@ -219,7 +243,7 @@ bool Bottle::check(const ConstString& key) const
     return !val2.isNull();
 }
 
-Value& Bottle::find(const ConstString& key) const
+Value& Bottle::find(const std::string& key) const
 {
     Value& val = implementation->findBit(key);
 
@@ -234,7 +258,7 @@ Value& Bottle::find(const ConstString& key) const
     return val;
 }
 
-Bottle& Bottle::findGroup(const ConstString& key) const
+Bottle& Bottle::findGroup(const std::string& key) const
 {
     Value& bb = implementation->findGroupBit(key);
 
@@ -248,7 +272,7 @@ Bottle& Bottle::findGroup(const ConstString& key) const
         }
         reportToMonitor(report);
         if (bb.isList()) {
-            ConstString context = getMonitorContext().c_str();
+            std::string context = getMonitorContext().c_str();
             context += ".";
             context += key;
             bb.asList()->setMonitor(getMonitor(),
@@ -276,23 +300,13 @@ void Bottle::add(const Value& value)
 
 Bottle& Bottle::getNullBottle()
 {
-    if (NullBottle::bottleNull == nullptr) {
-        NullBottle::bottleNull = new NullBottle();
-    }
-    return *NullBottle::bottleNull;
-}
-
-void Bottle::fini()
-{
-    if (NullBottle::bottleNull != nullptr) {
-        delete NullBottle::bottleNull;
-        NullBottle::bottleNull = nullptr;
-    }
+    static NullBottle bottleNull;
+    return bottleNull;
 }
 
 bool Bottle::operator==(const Bottle& alt) const
 {
-    return ConstString(toString().c_str()) == alt.toString().c_str();
+    return std::string(toString().c_str()) == alt.toString().c_str();
 }
 
 bool Bottle::write(PortReader& reader, bool textMode)
@@ -303,7 +317,7 @@ bool Bottle::write(PortReader& reader, bool textMode)
     return reader.read(con.getReader());
 }
 
-bool Bottle::read(PortWriter& writer, bool textMode)
+bool Bottle::read(const PortWriter& writer, bool textMode)
 {
     implementation->edit();
     DummyConnector con;
@@ -325,7 +339,7 @@ bool Bottle::operator!=(const Bottle& alt) const
 void Bottle::append(const Bottle& alt)
 {
     implementation->edit();
-    for (int i = 0; i < alt.size(); i++) {
+    for (size_t i = 0; i < alt.size(); i++) {
         add(alt.get(i));
     }
 }
@@ -340,26 +354,26 @@ Bottle Bottle::tail() const
     return b;
 }
 
-ConstString Bottle::toString(int x)
+std::string Bottle::toString(int x)
 {
     return NetType::toString(x);
 }
 
-ConstString Bottle::describeBottleCode(int code)
+std::string Bottle::describeBottleCode(int code)
 {
     int unit = code & ~(BOTTLE_TAG_LIST | BOTTLE_TAG_DICT);
-    ConstString unitName = "mixed";
+    std::string unitName = "mixed";
     switch (unit) {
     case 0:
         unitName = "mixed";
         break;
-    case BOTTLE_TAG_INT:
+    case BOTTLE_TAG_INT32:
         unitName = "int";
         break;
     case BOTTLE_TAG_VOCAB:
         unitName = "vocab";
         break;
-    case BOTTLE_TAG_DOUBLE:
+    case BOTTLE_TAG_FLOAT64:
         unitName = "float";
         break;
     case BOTTLE_TAG_STRING:
@@ -372,7 +386,7 @@ ConstString Bottle::describeBottleCode(int code)
         unitName = "unknown";
         break;
     }
-    ConstString result = unitName;
+    std::string result = unitName;
     if (code & BOTTLE_TAG_LIST) {
         result = "list of " + unitName;
     } else if (code & BOTTLE_TAG_DICT) {

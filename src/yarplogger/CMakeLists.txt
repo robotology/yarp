@@ -1,3 +1,9 @@
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
+
 if(CREATE_YARPLOGGER)
 
   project(yarplogger)
@@ -5,10 +11,6 @@ if(CREATE_YARPLOGGER)
   include(YarpUseQt5)
   include(YarpOSXUtilities)
 
-  get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_logger_HDRS TARGET YARP_logger PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS} ${YARP_logger_HDRS})
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
   file(GLOB yarplogger_SRCS *.cpp)
@@ -18,8 +20,6 @@ if(CREATE_YARPLOGGER)
 
   qt5_add_resources(yarplogger_QRC_GEN_SRCS ${yarplogger_QRC_FILES})
   qt5_wrap_ui(yarplogger_UI_GEN_SRCS ${yarplogger_UI_FILES})
-
-  include_directories(${YARP_TREE_INCLUDE_DIRS})
 
   source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
                PREFIX "Source Files"

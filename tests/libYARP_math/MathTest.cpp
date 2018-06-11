@@ -1,9 +1,11 @@
 /*
-* Copyright (C) 2007 RobotCub Consortium
-* Author: Lorenzo Natale
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
-
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #define _USE_MATH_DEFINES
 
@@ -29,7 +31,7 @@ const double TOL = 1e-8;
 
 class MathTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "MathTest"; }
+    virtual std::string getName() const override { return "MathTest"; }
 
     // Assert that 2 vectors are equal
     void assertEqual(const Vector &a, const Vector &b, string testName, bool verbose=false){
@@ -61,8 +63,8 @@ public:
             if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
             checkTrue(false, testName.c_str());
         }
-        for(int r=0; r<A.rows(); r++){
-            for(int c=0; c<A.cols(); c++){
+        for(size_t r=0; r<A.rows(); r++){
+            for(size_t c=0; c<A.cols(); c++){
                 if(fabs(A(r,c)-B(r,c))>TOL){
                     if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
                     checkTrue(false, testName.c_str());
@@ -215,8 +217,8 @@ public:
         res=A/3.0;  //divide all by 3
         //sum elements
         double acc=0.0;
-        for(int r=0; r<res.rows(); r++)
-            for(int c=0; c<res.cols(); c++)
+        for(size_t r=0; r<res.rows(); r++)
+            for(size_t c=0; c<res.cols(); c++)
                     acc+=res[r][c];
 
         double expected=res.rows()*res.cols()*3.0;
@@ -226,8 +228,8 @@ public:
         A=3.0; //initialize all with 3
         res=A*3.0;   // multiply all by 3
         acc=0.0;
-        for(int r=0; r<res.rows(); r++)
-            for(int c=0; c<res.cols(); c++)
+        for(size_t r=0; r<res.rows(); r++)
+            for(size_t c=0; c<res.cols(); c++)
             {
                 //fprintf(stderr, "%lf\n", res[r][c]);
                 acc+=res[r][c];
@@ -268,8 +270,8 @@ public:
         report(0,"checking matrix inversions...");
         Matrix A(4,4);
         int counter = 1;
-        for(int r = 0; r < A.rows(); r++) {
-            for(int c = 0; c < A.cols(); c++) {
+        for(size_t r = 0; r < A.rows(); r++) {
+            for(size_t c = 0; c < A.cols(); c++) {
                 A(r, c) = counter++ + (r == c ? 1 : 0);
             }
         }
@@ -278,8 +280,8 @@ public:
 
         bool invGood=true;
         Matrix ref=eye(4,4);
-        for(int r=0;r<I.rows(); r++)
-            for(int c=0;c<I.cols(); c++)
+        for(size_t r=0;r<I.rows(); r++)
+            for(size_t c=0;c<I.cols(); c++)
             {
                 if (fabs(I[r][c]-ref[r][c])>0.0001)
                     invGood=false;
@@ -639,7 +641,7 @@ public:
         Matrix mB = euler2dcm(Vector(3, vB));
         q3.fromRotationMatrix(mA);
         q4.fromRotationMatrix(mB);
-        assertEqual(mA*mB, (q3 * q4).toRotationMatrix(), "check quaternion multiplication");
+        assertEqual(mA*mB, (q3 * q4).toRotationMatrix4x4(), "check quaternion multiplication");
         q3 = Quaternion(2.0, 3.0, 4.0, 5.0);
         q3.normalize();
         assertEqual(q3.w()*q3.w() + q3.x()*q3.x() + q3.y()*q3.y() + q3.z()*q3.z(), 1, "check quaternion normalization");
@@ -692,8 +694,8 @@ public:
 
         q2 = q1;
 
-        m = q2.toRotationMatrix();
-        assertEqual(m, m_check, "check method toRotationMatrix");
+        m = q2.toRotationMatrix4x4();
+        assertEqual(m, m_check, "check method toRotationMatrix4x4");
 
         Vector v = q2.toVector();
         assertEqual(v, v_check, "check method toVector");

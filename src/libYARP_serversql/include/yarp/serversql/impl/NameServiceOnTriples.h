@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2009 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_SERVERSQL_IMPL_NAMESERVICEONTRIPLES_H
@@ -12,6 +14,7 @@
 #include <yarp/serversql/impl/TripleSource.h>
 #include <yarp/serversql/impl/Allocator.h>
 #include <yarp/serversql/impl/Subscriber.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/NameStore.h>
 #include <yarp/os/Semaphore.h>
 
@@ -65,7 +68,7 @@ private:
     Subscriber *subscriber;
     std::string lastRegister;
     yarp::os::Contact serverContact;
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
     yarp::os::Semaphore access;
     bool gonePublic;
     bool silent;
@@ -76,7 +79,7 @@ public:
             alloc(nullptr),
             subscriber(nullptr),
             lastRegister(""),
-            mutex(1),
+            mutex(),
             access(1),
             gonePublic(false),
             silent(false),
@@ -103,14 +106,14 @@ public:
         this->silent = flag;
     }
 
-    yarp::os::Contact query(const yarp::os::ConstString& portName,
+    yarp::os::Contact query(const std::string& portName,
                             NameTripleState& act,
-                            const yarp::os::ConstString& prefix,
+                            const std::string& prefix,
                             bool nested = false);
 
-    virtual bool announce(const yarp::os::ConstString& name, int activity) override;
+    virtual bool announce(const std::string& name, int activity) override;
 
-    virtual yarp::os::Contact query(const yarp::os::ConstString& portName) override;
+    virtual yarp::os::Contact query(const std::string& portName) override;
 
     bool cmdQuery(NameTripleState& act, bool nested = false);
 

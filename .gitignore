@@ -7,8 +7,9 @@
 *kdev*
 *.orig
 tags
-/author-gpl.txt
+/author-*.txt
 /license-*.txt
+/copyright-*.txt
 /license_check/
 /install*/
 .DS_Store
@@ -21,7 +22,6 @@ tags
 *.pyc
 /compile_commands.json
 /.ycm_extra_conf.py
-/.clang-format
 *.aps
 /CMakeSettings.json
 /.vs/

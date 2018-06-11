@@ -1,10 +1,3 @@
-/*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
-
 /**
  * @page tutorials YARP Tutorials
  *
@@ -31,7 +24,7 @@ Using YARP ports for communication:
 
 Make sure you understand how to control YARP buffering policies the life-cycle of messages:
 
-\li \subpage yarp_buffering 
+\li \subpage yarp_buffering
 
 How to write a standard module, search and install configuration files:
 \li \subpage yarp_resource_finder_tutorials
@@ -56,6 +49,7 @@ Using YARP devices:
 \li \subpage yarp_config_files
 
 More software tutorials:
+\li \subpage yarp_pointcloud
 \li \subpage yarp_code_examples
 \li \subpage gpu_tutorial
 \li \subpage using_cmake
@@ -68,7 +62,6 @@ Communication protocol details:
 
 YARP implementation:
 \li \subpage yarp_guts
-\li \subpage yarp_build_structure
 \li \subpage yarp_plugins
 
  *

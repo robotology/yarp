@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_DEVICEDRIVER_H
@@ -72,7 +75,7 @@ public:
      */
     template <class T>
     bool view(T *&x) {
-        x = 0 /*NULL*/;
+        x = nullptr;
 
         // This is not super-portable; and it requires RTTI compiled
         // in.  For systems on which this is a problem, suggest:
@@ -80,7 +83,7 @@ public:
         // implement own method for checking interface support.
         T *v = dynamic_cast<T *>(getImplementation());
 
-        if (v!=0 /*NULL*/) {
+        if (v != nullptr) {
             x = v;
             return true;
         }

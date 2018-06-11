@@ -1,9 +1,10 @@
 /*
- * Author: Lorenzo Natale
- * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/sig/Vector.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
@@ -157,7 +158,7 @@ public:
                 ok = false;
             for (k = 0; k<s; k++)
             {
-                if (v.get(k).asInt() != 42)
+                if (v.get(k).asInt32() != 42)
                 {
 
                     ok = false;
@@ -171,7 +172,7 @@ public:
                 ok = false;
             for (k = 0; k < s; k++)
             {
-                if (v.get(k).asInt() != k)
+                if (v.get(k).asInt32() != k)
                 {
 
                     ok = false;
@@ -190,7 +191,7 @@ public:
 class VectorOfTest : public UnitTest {
 
 public:
-    virtual ConstString getName() override { return "VectorOfTest"; }
+    virtual std::string getName() const override { return "VectorOfTest"; }
     void checkSendReceiveInt()
     {
         report(0, "check VectorO<int> send receive");
@@ -243,7 +244,7 @@ public:
 
         //compare vector and tmp
         success = true;
-        if (tmp2.size() != (int)vector.size())
+        if (tmp2.size() != vector.size())
         {
             success = false;
         }
@@ -251,7 +252,7 @@ public:
         {
             for (unsigned int k = 0; k < vector.size(); k++)
             {
-                if (tmp2.get(k).asInt() != vector[k])
+                if (tmp2.get(k).asInt32() != vector[k])
                     success = false;
             }
         }

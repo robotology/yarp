@@ -1,8 +1,9 @@
-/**
- * Copyright (C) 2016 RobotCub Consortium
- * Authors: Silvio Traversaro
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <vector>
@@ -66,17 +67,17 @@ const char *wrapperC_file_content   = "device controlboardwrapper2\n"
 class ControlBoardRemapperTest : public UnitTest
 {
 public:
-    virtual ConstString getName() override { return "ControlBoardRemapperTest"; }
+    virtual std::string getName() const override { return "ControlBoardRemapperTest"; }
 
     void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t nrOfRemappedAxes)
     {
-        IPositionControl2 *pos = nullptr;
+        IPositionControl *pos = nullptr;
         bool ok = ddRemapper.view(pos);
         checkTrue(ok, "interface position correctly opened");
         int axes = 0;
         ok = pos->getAxes(&axes);
         checkTrue(ok, "getAxes returned correctly");
-        checkEqual(axes, nrOfRemappedAxes, "remapper seems functional");
+        checkEqual((size_t) axes, nrOfRemappedAxes, "remapper seems functional");
 
         IPositionDirect *posdir = nullptr;
         ok = ddRemapper.view(posdir);
@@ -86,7 +87,7 @@ public:
         ok = ddRemapper.view(encs);
         checkTrue(ok, "encoders interface correctly opened");
 
-        IControlMode2 *ctrlmode = nullptr;
+        IControlMode *ctrlmode = nullptr;
         ok = ddRemapper.view(ctrlmode);
         checkTrue(ok, "control mode interface correctly opened");
 

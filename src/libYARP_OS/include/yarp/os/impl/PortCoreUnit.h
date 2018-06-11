@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_IMPL_PORTCOREUNIT_H
@@ -9,7 +12,7 @@
 
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/ThreadImpl.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Name.h>
 
 namespace yarp {
@@ -126,11 +129,11 @@ public:
      * the caller's responsibility to manage any memory associated
      * with the message.
      */
-    virtual void *send(yarp::os::PortWriter& writer,
+    virtual void *send(const yarp::os::PortWriter& writer,
                        yarp::os::PortReader *reader,
-                       yarp::os::PortWriter *callback,
+                       const yarp::os::PortWriter *callback,
                        void *tracker,
-                       const ConstString& envelope,
+                       const std::string& envelope,
                        bool waitAfter = true,
                        bool waitBefore = true,
                        bool *gotReply = nullptr)
@@ -187,7 +190,7 @@ public:
      */
     void setMode()
     {
-        Name name(getRoute().getCarrierName() + ConstString("://test"));
+        Name name(getRoute().getCarrierName() + std::string("://test"));
         mode = name.getCarrierModifier("log", &hasMode);
     }
 
@@ -207,7 +210,7 @@ public:
      *
      * @return the connection mode, or the empty string if there is none
      */
-    ConstString getMode(bool *hasMode = nullptr)
+    std::string getMode(bool *hasMode = nullptr)
     {
         if (hasMode!=nullptr) {
             *hasMode = this->hasMode;
@@ -233,7 +236,7 @@ public:
      * succeeding call to `publisherUpdate` does not mention the
      * target this connection is serving.
      */
-    yarp::os::ConstString getPupString() const
+    std::string getPupString() const
     {
         return pupString;
     }
@@ -247,7 +250,7 @@ public:
      * `publisherUpdate` does not mention the target this connection
      * is serving.
      */
-    void setPupped(const yarp::os::ConstString& pupString)
+    void setPupped(const std::string& pupString)
     {
         pupped = true;
         this->pupString = pupString;
@@ -284,11 +287,11 @@ protected:
 private:
     PortCore& owner; ///< the port to which this connection belongs
     bool doomed;     ///< whether the connection should shut down ASAP
-    ConstString mode;     ///< the logging mode of the connection
+    std::string mode;     ///< the logging mode of the connection
     bool hasMode;    ///< whether the logging mode has been set
     bool pupped;     ///< whether the connection was made by `publisherUpdate`
     int index;       ///< an ID assigned to the connection
-    yarp::os::ConstString pupString;  ///< the target of the connection if created by `publisherUpdate`
+    std::string pupString;  ///< the target of the connection if created by `publisherUpdate`
 };
 
 #endif // YARP_OS_IMPL_PORTCOREUNIT_H

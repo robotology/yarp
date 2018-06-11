@@ -1,12 +1,14 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/NetworkClock.h>
 #include <yarp/os/SystemClock.h>
+#include <yarp/os/SystemInfo.h>
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/impl/Logger.h>
@@ -62,7 +64,7 @@ NetworkClock::~NetworkClock() {
 }
 
 
-bool NetworkClock::open(const ConstString& clockSourcePortName, ConstString localPortName)
+bool NetworkClock::open(const std::string& clockSourcePortName, std::string localPortName)
 {
     port.setReadOnly();
     port.setReader(*this);
@@ -78,14 +80,11 @@ bool NetworkClock::open(const ConstString& clockSourcePortName, ConstString loca
         yarp::os::gethostname(hostName, MAX_STRING_SIZE);
         hostName[strlen(hostName)] = '\0';      // manually set the null terminator, so it is ok in any case
 
-        char progName [MAX_STRING_SIZE];
-        yarp::os::getprogname(progName, MAX_STRING_SIZE);
-        progName[strlen(progName)] = '\0';      // manually set the null terminator, so it is ok in any case
-        int pid = yarp::os::getpid();
+        yarp::os::SystemInfo::ProcessInfo processInfo = yarp::os::SystemInfo::getProcessInfo();
 
         localPortName = "/";
         // Ports may be anonymous to not pollute the yarp name list
-        localPortName += ConstString(hostName) + "/" + ConstString(progName) + "/" + ConstString(std::to_string(pid)) + "/clock:i";
+        localPortName += std::string(hostName) + "/" + processInfo.name + "/" + std::string(std::to_string(processInfo.pid)) + "/clock:i";
     }
 
     // if receiving port cannot be opened, return false.
@@ -160,8 +159,8 @@ bool NetworkClock::read(ConnectionReader& reader) {
     }
 
     timeMutex.lock();
-    sec = bot.get(0).asInt();
-    nsec = bot.get(1).asInt();
+    sec = bot.get(0).asInt32();
+    nsec = bot.get(1).asInt32();
     _time = sec + (nsec*1e-9);
     initted = true;
     timeMutex.unlock();

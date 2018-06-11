@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2006, 2007 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <deque>
 
@@ -19,6 +20,8 @@
 
 #include <yarp/sig/SoundFile.h>
 
+#include <yarp/os/impl/Terminal.h>
+
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::sig::file;
@@ -31,15 +34,15 @@ private:
     PolyDriver poly;
     IAudioRender *put;
     BufferedPort<Sound> port;
-    Semaphore mutex;
+    Mutex mutex;
     bool muted;
     bool saving;
     std::deque<Sound> sounds;
-    int samples;
-    int channels;
+    size_t samples;
+    size_t channels;
 
 public:
-    Echo() : mutex(1) {
+    Echo() : mutex() {
         put = nullptr;
         port.useCallback(*this);
         port.setStrict();
@@ -105,7 +108,7 @@ public:
             yWarning("Dropping sound packet -- %d packet(s) behind\n", ct);
             port.read();
         }
-        mutex.wait();
+        mutex.lock();
         /*
           if (muted) {
           for (int i=0; i<sound.getChannels(); i++) {
@@ -124,20 +127,20 @@ public:
             saveFrame(sound);
         }
 
-        mutex.post();
+        mutex.unlock();
         Time::yield();
     }
 
     void mute(bool muteFlag=true) {
-        mutex.wait();
+        mutex.lock();
         muted = muteFlag;
-        mutex.post();
+        mutex.unlock();
     }
 
     void save(bool saveFlag=true) {
-        mutex.wait();
+        mutex.lock();
         saving = saveFlag;
-        mutex.post();
+        mutex.unlock();
     }
 
     void saveFrame(Sound& sound) {
@@ -150,7 +153,7 @@ public:
     }
 
     bool saveFile(const char *name) {
-        mutex.wait();
+        mutex.lock();
         saving = false;
 
         Sound total;
@@ -158,8 +161,8 @@ public:
         long int at = 0;
         while (!sounds.empty()) {
             Sound& tmp = sounds.front();
-            for (int i=0; i<channels; i++) {
-                for (int j=0; j<tmp.getSamples(); j++) {
+            for (size_t i=0; i<channels; i++) {
+                for (size_t j=0; j<tmp.getSamples(); j++) {
                     total.set(tmp.get(j,i),at+j,i);
                 }
             }
@@ -167,7 +170,7 @@ public:
             at += tmp.getSamples();
             sounds.pop_front();
         }
-        mutex.post();
+        mutex.unlock();
         bool ok = write(total,name);
         if (ok) {
             yDebug("Wrote audio to %s\n", name);
@@ -179,7 +182,7 @@ public:
 
     bool close() {
         port.close();
-        mutex.wait(); // onRead never gets called again once it finishes
+        mutex.lock(); // onRead never gets called again once it finishes
         return true;
     }
 };
@@ -208,7 +211,7 @@ int main(int argc, char *argv[]) {
     bool muted = false;
     bool saving = false;
     bool help = false;
-    ConstString fname = "audio_%06d.wav";
+    std::string fname = "audio_%06d.wav";
     int ct = 0;
     bool done = false;
     while (!done) {
@@ -225,9 +228,9 @@ int main(int argc, char *argv[]) {
             yInfo("Type \"help\" for usage\n");
         }
 
-        ConstString keys = Network::readString();
+        std::string keys = yarp::os::impl::Terminal::readString(nullptr);
         Bottle b(keys);
-        ConstString cmd = b.get(0).asString();
+        std::string cmd = b.get(0).asString();
         if (b.size()==0) {
             muted = !muted;
             echo.mute(muted);
@@ -252,7 +255,7 @@ int main(int argc, char *argv[]) {
         } else if (cmd=="q"||cmd=="quit") {
             done = true;
         } else if (cmd=="buf"||cmd=="b") {
-            padding = b.get(1).asInt();
+            padding = b.get(1).asInt32();
             yInfo("Buffering at %d\n", padding);
         }
     }

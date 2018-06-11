@@ -1,70 +1,72 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/NetInt16.h>
 
-#ifdef YARP_INT16
 #ifndef YARP_LITTLE_ENDIAN
 
 using namespace yarp;
 using namespace yarp::os;
 
 
-unsigned YARP_INT16 NetInt16::swap(unsigned YARP_INT16 x) const {
+std::uint16_t NetInt16::swap(std::uint16_t x) const {
     return (x>>8) | ((x<<8) & 0xff00);
 }
 
-YARP_INT16 NetInt16::get() const {
-    return (YARP_INT16)swap(raw_value);
+std::int16_t NetInt16::get() const {
+    return (std::int16_t)swap(raw_value);
 }
 
-void NetInt16::set(YARP_INT16 v) {
-    raw_value = (YARP_INT16)swap((unsigned YARP_INT16)v);
+void NetInt16::set(std::int16_t v) {
+    raw_value = (std::int16_t)swap((std::uint16_t)v);
 }
 
 NetInt16::NetInt16() {
 }
 
-NetInt16::NetInt16(YARP_INT16 val) {
+NetInt16::NetInt16(std::int16_t val) {
     set(val);
 }
 
-NetInt16::operator YARP_INT16() const {
+NetInt16::operator std::int16_t() const {
     return get();
 }
 
-YARP_INT16 NetInt16::operator+(YARP_INT16 v) const {
+std::int16_t NetInt16::operator+(std::int16_t v) const {
     return get()+v;
 }
 
-YARP_INT16 NetInt16::operator-(YARP_INT16 v) const {
+std::int16_t NetInt16::operator-(std::int16_t v) const {
     return get()-v;
 }
 
-YARP_INT16 NetInt16::operator*(YARP_INT16 v) const {
+std::int16_t NetInt16::operator*(std::int16_t v) const {
     return get()*v;
 }
 
-YARP_INT16 NetInt16::operator/(YARP_INT16 v) const {
+std::int16_t NetInt16::operator/(std::int16_t v) const {
     return get()/v;
 }
 
-void NetInt16::operator+=(YARP_INT16 v) {
+void NetInt16::operator+=(std::int16_t v) {
     set(get()+v);
 }
 
-void NetInt16::operator-=(YARP_INT16 v) {
+void NetInt16::operator-=(std::int16_t v) {
     set(get()-v);
 }
 
-void NetInt16::operator*=(YARP_INT16 v) {
+void NetInt16::operator*=(std::int16_t v) {
     set(get()*v);
 }
 
-void NetInt16::operator/=(YARP_INT16 v) {
+void NetInt16::operator/=(std::int16_t v) {
     set(get()/v);
 }
 
@@ -77,4 +79,3 @@ void NetInt16::operator--(int) {
 }
 
 #endif // YARP_LITTLE_ENDIAN
-#endif // YARP_INT16

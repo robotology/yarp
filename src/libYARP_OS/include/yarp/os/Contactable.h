@@ -1,13 +1,17 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_CONTACTABLE_H
 #define YARP_OS_CONTACTABLE_H
 
 #include <yarp/os/Contact.h>
+#include <yarp/os/PortReader.h>
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/PortReport.h>
 #include <yarp/os/Mutex.h>
@@ -37,22 +41,6 @@ public:
      */
     virtual ~Contactable();
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
-    /**
-     * Start port operation, with automatically-chosen network parameters.
-     *
-     * The port is assigned an arbitrary name, and allocated
-     * network resources,
-     * by communicating with the YARP name server.
-     * @return true iff the port started operation successfully and is now
-     * visible on the YARP network
-     *
-     * @deprecated since YARP 2.3.72
-     */
-    YARP_DEPRECATED_MSG("Use open(\"...\") instead")
-    bool open();
-#endif // YARP_NO_DEPRECATED
-
     /**
      * Start port operation, with a specific name, with automatically-chosen
      * network parameters.
@@ -63,7 +51,7 @@ public:
      * @return true iff the port started operation successfully and is now
      * visible on the YARP network
      */
-    virtual bool open(const ConstString& name) = 0;
+    virtual bool open(const std::string& name) = 0;
 
     /**
      * Start port operation with user-chosen network parameters.
@@ -84,7 +72,7 @@ public:
      * @param name the name of the target port
      * @return true iff the connection is successfully created
      */
-    virtual bool addOutput(const ConstString& name) = 0;
+    virtual bool addOutput(const std::string& name) = 0;
 
     /**
      * Add an output connection to the specified port, using a specified
@@ -94,7 +82,7 @@ public:
      * @param carrier the carrier (network protocol) to use, e.g. "tcp", "udp", "mcast", "text", ...
      * @return true iff the connection is successfully created
      */
-    virtual bool addOutput(const ConstString& name, const ConstString& carrier) = 0;
+    virtual bool addOutput(const std::string& name, const std::string& carrier) = 0;
 
     /**
      * Add an output connection to the specified port, using specified
@@ -137,7 +125,7 @@ public:
      *
      * @return name of port
      */
-    virtual ConstString getName() const;
+    virtual std::string getName() const;
 
 
     /**

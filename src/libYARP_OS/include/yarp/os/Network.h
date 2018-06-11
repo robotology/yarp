@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_NETWORK_H
@@ -16,10 +19,6 @@
 #include <yarp/os/QosStyle.h>
 #include <yarp/os/Time.h>
 
-//protects against some dangerous ACE macros
-#ifdef main
-#undef main
-#endif
 
 namespace yarp {
     namespace os {
@@ -72,6 +71,27 @@ public:
     static void autoInitMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock *custom=nullptr);
 
     /**
+    * This function specifically initialize the clock
+    * In case clockType is one of the valid cases:
+    *      YARP_CLOCK_SYSTEM,
+    *      YARP_CLOCK_NETWORK,
+    *      YARP_CLOCK_CUSTOM
+    * (see yarp::os::Time for more), the corresponding clock will be initialized.
+    *
+    * In case the clockType is YARP_CLOCK_DEFAULT, the environment variable
+    * YARP_CLOCK will be used to choose between system or network clock.
+    *
+    * See description of yarp::os::Time::useNetworkClock() for more details about the
+    * network clock.
+    *
+    * This function is called by Network constructor and by Network::init(),
+    * and Network::initMinimum().
+    *
+    * In case of failure calls YARP_FAIL assert.
+    **/
+    static void yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom = nullptr);
+
+    /**
      * Deinitialization, excluding plugins.
      */
     static void finiMinimum();
@@ -84,15 +104,15 @@ public:
      * @param quiet suppress messages displayed upon success/failure
      * @return true on success, false on failure
      */
-    static bool connect(const ConstString& src, const ConstString& dest,
-                        const ConstString& carrier = "",
+    static bool connect(const std::string& src, const std::string& dest,
+                        const std::string& carrier = "",
                         bool quiet = true);
 
     // Catch old uses of nullptr for carrier
     static bool connect(const char *src, const char *dest,
                         const char *carrier,
                         bool quiet = true) {
-        return connect(ConstString(src), ConstString(dest), ConstString((carrier==nullptr)?"":carrier), quiet);
+        return connect(std::string(src), std::string(dest), std::string((carrier==nullptr)?"":carrier), quiet);
     }
 
     /**
@@ -102,7 +122,7 @@ public:
      * @param style options for connection
      * @return true on success, false on failure
      */
-    static bool connect(const ConstString& src, const ConstString& dest,
+    static bool connect(const std::string& src, const std::string& dest,
                         const ContactStyle& style);
 
     /**
@@ -112,7 +132,7 @@ public:
      * @param quiet suppress messages displayed upon success/failure
      * @return true on success, false on failure
      */
-    static bool disconnect(const ConstString& src, const ConstString& dest,
+    static bool disconnect(const std::string& src, const std::string& dest,
                            bool quiet = true);
 
     /**
@@ -122,7 +142,7 @@ public:
      * @param style options for network communication related to disconnection
      * @return true on success, false on failure
      */
-    static bool disconnect(const ConstString& src, const ConstString& dest,
+    static bool disconnect(const std::string& src, const std::string& dest,
                            const ContactStyle& style);
 
     /**
@@ -132,7 +152,7 @@ public:
      * @param quiet suppress messages displayed upon success/failure
      * @return true if there is a connection
      */
-    static bool isConnected(const ConstString& src, const ConstString& dest,
+    static bool isConnected(const std::string& src, const std::string& dest,
                             bool quiet = true);
 
     /**
@@ -142,7 +162,7 @@ public:
      * @param style options for network communication
      * @return true if there is a connection
      */
-    static bool isConnected(const ConstString& src, const ConstString& dest,
+    static bool isConnected(const std::string& src, const std::string& dest,
                             const ContactStyle& style);
 
     /**
@@ -151,7 +171,7 @@ public:
      * @param quiet suppress messages displayed during check
      * @return true on success, false on failure
      */
-    static bool exists(const ConstString& port, bool quiet = true);
+    static bool exists(const std::string& port, bool quiet = true, bool checkVer = true);
 
     /**
      * Check for a port to be ready and responsive.
@@ -159,7 +179,7 @@ public:
      * @param style options for network communication
      * @return true on success, false on failure
      */
-    static bool exists(const ConstString& port, const ContactStyle& style);
+    static bool exists(const std::string& port, const ContactStyle& style, bool checkVer = true);
 
     /**
      * Wait for a port to be ready and responsive.
@@ -167,19 +187,7 @@ public:
      * @param quiet suppress messages displayed during wait
      * @return true on success, false on failure
      */
-    static bool sync(const ConstString& port, bool quiet = true);
-
-    /**
-     * The standard main method for the YARP companion utility.
-     * This method is not thread-safe; it initializes and shuts
-     * down YARP, the effect of which varies between operating
-     * systems.  Do not call this method if there are other
-     * threads using YARP.
-     * @param argc argument count
-     * @param argv command line arguments
-     * @return 0 on success, non-zero on failure
-     */
-    static int main(int argc, char *argv[]);
+    static bool sync(const std::string& port, bool quiet = true);
 
     /**
      * An assertion.  Should be true.  If false, this will be
@@ -199,7 +207,7 @@ public:
      * known about the name, the returned contact is invalid
      * (Contact::isValid returns false)
      */
-    static Contact queryName(const ConstString& name);
+    static Contact queryName(const std::string& name);
 
     /**
      * Register a name with the name server.
@@ -209,7 +217,7 @@ public:
      * @return the contact information now associated with that name
      * (in other words, what Contact::queryName would now return)
      */
-    static Contact registerName(const ConstString& name);
+    static Contact registerName(const std::string& name);
 
     /**
      * Register contact information with the name server.
@@ -228,7 +236,7 @@ public:
      * (in other words, what Contact::queryName would now return).
      * This will be the invalid contact (Contact::isValid is false).
      */
-    static Contact unregisterName(const ConstString& name);
+    static Contact unregisterName(const std::string& name);
 
     /**
      * Removes the registration for a contact from the name server.
@@ -272,7 +280,7 @@ public:
      * command).
      * @return name of the port associated with the nameserver
      */
-    static ConstString getNameServerName();
+    static std::string getNameServerName();
 
     /**
      * Get the contact information for the port associated with the nameserver
@@ -291,7 +299,7 @@ public:
      * being made/broken in another thread.
      * @return true on success
      */
-    static bool setNameServerName(const ConstString& name);
+    static bool setNameServerName(const std::string& name);
 
 
     /**
@@ -309,6 +317,7 @@ public:
      */
     static bool getLocalMode();
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     /**
      * Read a line of arbitrary length from standard input.
      *
@@ -320,8 +329,12 @@ public:
      *
      * @return A string from standard input, without newline or
      * linefeed characters.
+     *
+     * @deprecated since YARP 3.0.0
      */
-    static ConstString readString(bool *eof = nullptr);
+    YARP_DEPRECATED
+    static std::string readString(bool *eof = nullptr);
+#endif // YARP_NO_DEPRECATED
 
 
     /**
@@ -387,7 +400,7 @@ public:
      *
      * @return true on success
      */
-    static bool write(const ConstString& port_name,
+    static bool write(const std::string& port_name,
                       PortWriter& cmd,
                       PortReader& reply);
 
@@ -452,7 +465,7 @@ public:
      * @return the value of the environment variable, or "" if not found
      *
      */
-    static ConstString getEnvironment(const char *key,
+    static std::string getEnvironment(const char *key,
                                       bool *found = nullptr);
 
     /**
@@ -463,7 +476,7 @@ public:
      * @param val the target value
      *
      */
-    static void setEnvironment(const ConstString& key, const ConstString& val);
+    static void setEnvironment(const std::string& key, const std::string& val);
 
     /**
      *
@@ -472,7 +485,7 @@ public:
      * @param key the variable to remove
      *
      */
-    static void unsetEnvironment(const ConstString& key);
+    static void unsetEnvironment(const std::string& key);
 
 
     /**
@@ -480,14 +493,14 @@ public:
      * Get an OS-appropriate directory separator (e.g. "/" on linux)
      *
      */
-    static ConstString getDirectorySeparator();
+    static std::string getDirectorySeparator();
 
     /**
      *
      * Get an OS-appropriate path separator (e.g. ":" on linux)
      *
      */
-    static ConstString getPathSeparator();
+    static std::string getPathSeparator();
 
     /**
      *
@@ -551,7 +564,7 @@ public:
      * @return full name of file including path
      *
      */
-    static ConstString getConfigFile(const char *fname);
+    static std::string getConfigFile(const char *fname);
 
     /**
      *
@@ -573,7 +586,7 @@ public:
      * @param destStyle the Qos preference of the input port
      * @return true if the Qos preferences are set correctly
      */
-    static bool setConnectionQos(const ConstString& src, const ConstString& dest,
+    static bool setConnectionQos(const std::string& src, const std::string& dest,
                                  const QosStyle& srcStyle, const QosStyle& destStyle,
                                  bool quiet=true);
 
@@ -584,7 +597,7 @@ public:
      * @param style the Qos preference of both input and output ports
      * @return true if the Qos preferences are set correctly
      */
-    static bool setConnectionQos(const ConstString& src, const ConstString& dest,
+    static bool setConnectionQos(const std::string& src, const std::string& dest,
                                  const QosStyle& style, bool quiet=true);
 
     /**
@@ -595,14 +608,75 @@ public:
      * @param destStyle the Qos preference of the input port
      * @return true if the Qos preferences are gotten correctly
      */
-    static bool getConnectionQos(const ConstString& src, const ConstString& dest,
+    static bool getConnectionQos(const std::string& src, const std::string& dest,
                                  QosStyle& srcStyle, QosStyle& destStyle, bool quiet=true);
+
     /**
      * Checks that the port has a valid name.
      * @param portName the name of port
      * @return true if portName is valid
      */
-    static bool isValidPortName(const ConstString& portName);
+    static bool isValidPortName(const std::string& portName);
+
+    /**
+     * Delays the system until a specified connection is established.
+     * @param source name of the source port of the connection
+     * @param destination name of the dest port of the connection
+     * @param quiet flag for verbosity
+     * @return true when the connection is finally found
+     */
+    static bool waitConnection(const std::string& source,
+                               const std::string& destination,
+                               bool quiet = false);
+
+    /**
+     * Delays the system until a specified port is open.
+     * @param target name of the port to wait for
+     * @param quiet flag for verbosity
+     * @return true when the port is finally open
+     */
+    static bool waitPort(const std::string& target, bool quiet = false);
+
+    /**
+     * Just a reminder to sendMessage with temporary output parameter that will
+     * be discarded.
+     */
+    static int sendMessage(const std::string& port,
+                           yarp::os::PortWriter& writable,
+                           bool silent = false);
+
+    /**
+     * Sends a message to the specified port.
+     * @param port name of destination port
+     * @param writable the object to be written to the port
+     * @param output storage string for the output message received from port
+     * @param quiet flag for verbosity
+     * @return 0 on success
+     */
+    static int sendMessage(const std::string& port,
+                           yarp::os::PortWriter& writable,
+                           std::string& output,
+                           bool quiet);
+
+    /**
+     * Sends a disconnection command to the specified port.
+     * @param src the port to send the command to
+     * @param dest the port that has to be disconnected
+     * @param silent flag for verbosity
+     * @return 0 on success
+     */
+    static int disconnectInput(const std::string& src,
+                               const std::string& dest,
+                               bool silent = false);
+
+    /**
+     * Sends a 'describe yourself' message to a specified port, in order to
+     * receive information about the port and its connections.
+     * @param target the name of the port to be described
+     * @param silent flag for verbosity
+     * @return 0 on success
+     */
+    static int poll(const std::string& target, bool silent = false);
 };
 
 /**
@@ -661,27 +735,6 @@ public:
      * your program, and to call this method towards the end.
      */
     static void fini();
-
-    /**
-     * This function specifically initialize the clock
-     * In case clockType is one of the valid cases:
-     *      YARP_CLOCK_SYSTEM,
-     *      YARP_CLOCK_NETWORK,
-     *      YARP_CLOCK_CUSTOM
-     * (see yarp::os::Time for more), the corresponding clock will be initialized.
-     *
-     * In case the clockType is YARP_CLOCK_DEFAULT, the environment variable
-     * YARP_CLOCK will be used to choose between system or network clock.
-     *
-     * See description of yarp::os::Time::useNetworkClock() for more details about the
-     * network clock.
-     *
-     * This function is called by Network constructor and by Network::init(),
-     * and Network::initMinimum().
-     *
-     * In case of failure calls YARP_FAIL assert.
-     **/
-    static void yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom=nullptr);
 };
 
 #endif // YARP_OS_NETWORK_H

@@ -1,29 +1,29 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_IMPL_THREADIMPL_H
 #define YARP_OS_IMPL_THREADIMPL_H
 
 #include <yarp/os/impl/Runnable.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
+#include <yarp/os/Semaphore.h>
 
-#include <yarp/os/impl/PlatformThread.h>
+#include <thread>
+#include <atomic>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class ThreadImpl;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * An abstraction for a thread of execution.
  */
-class YARP_OS_impl_API yarp::os::impl::ThreadImpl : public Runnable
+class YARP_OS_impl_API ThreadImpl : public Runnable
 {
 public:
 
@@ -51,13 +51,7 @@ public:
     virtual bool threadInit() override;
     virtual void threadRelease() override;
 
-    // call before start
-    void setOptions(int stackSize = 0);
-
     static int getCount();
-
-    // won't be public for long...
-    static void changeCount(int delta);
 
     // get a unique key
     long int getKey();
@@ -74,37 +68,28 @@ public:
     int getPolicy();
     long getTid();
 
-    static void setDefaultStackSize(int stackSize);
-
-    static SemaphoreImpl *threadMutex;
-    static SemaphoreImpl *timeMutex; // Used by yarp::os::Time
-
-    static void init();
-    static void fini();
-
     long tid;
-    Platform_thread_t  id;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::thread::id) id;
 
     static void yield();
 
 private:
     int defaultPriority;
     int defaultPolicy;
-    int stackSize;
-    Platform_hthread_t hid;
-    bool active; // FIXME should be atomic
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::thread) thread;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) active;
     bool opened;
     bool closing;
     bool needJoin;
     Runnable *delegate;
 
-    SemaphoreImpl synchro;
-    //ACE_Auto_Event synchro;   // event for init synchro
+    yarp::os::Semaphore synchro;
 
-    static int threadCount;
-    static int defaultStackSize;
     bool initWasSuccessful;
-
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_THREADIMPL_H

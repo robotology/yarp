@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2010 Daniel Krieg
- * Author: Daniel Krieg <krieg@fias.uni-frankfurt.de>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2010 Daniel Krieg <krieg@fias.uni-frankfurt.de>
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/MpiCarrier.h>
@@ -27,7 +30,7 @@ MpiCarrier::~MpiCarrier() {
     #endif
 }
 
-void  MpiCarrier::getHeader(const Bytes& header) {
+void  MpiCarrier::getHeader(Bytes& header) const {
     for (size_t i=0; i<8 && i<header.length(); i++) {
         header.get()[i] = target.c_str()[i];
     }
@@ -120,7 +123,7 @@ bool MpiCarrier::expectSenderSpecifier(ConnectionState& proto) {
     if (! MpiControl->isRunning())
         return false;
 
-    ConstString other_id = proto.is().readLine();
+    std::string other_id = proto.is().readLine();
     bool notLocal = comm->notLocal(other_id);
 
     port = proto.is().readLine();

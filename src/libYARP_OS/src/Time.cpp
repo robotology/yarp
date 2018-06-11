@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2006, 2011 Istituto Italiano di Tecnologia (IIT), Anne van Rossum
- * Authors: Paul Fitzpatrick, Anne van Rossum, Alberto Cardellino
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006, 2011 Anne van Rossum <anne@almende.com>
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/PlatformTime.h>
@@ -15,6 +17,7 @@
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/impl/TimeImpl.h>
 
+#include <mutex>
 
 #ifdef ACE_WIN32
 // for WIN32 MM functions
@@ -22,22 +25,22 @@
 #endif
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
+using yarp::os::impl::Logger;
+
+namespace {
 
 static bool clock_owned = false;
 static bool network_clock_ok = false;
 static Clock *pclock = nullptr;
 static yarpClockType yarp_clock_type  = YARP_CLOCK_UNINITIALIZED;
 
-static void lock() {
-    yarp::os::impl::ThreadImpl::timeMutex->wait();
+static std::mutex& getTimeMutex()
+{
+    static std::mutex mutex;
+    return mutex;
 }
 
-static void unlock() {
-    yarp::os::impl::ThreadImpl::timeMutex->post();
-}
-
-void printNoClock_ErrorMessage()
+static void printNoClock_ErrorMessage()
 {
     YARP_ERROR(Logger::get(), "\n Warning an issue has been found, please update the code.\n \
     Clock is not initialized: This means YARP framework has not been properly initialized. \n \
@@ -67,25 +70,46 @@ static Clock *getClock()
          *   This is better because it shows initialization problems right from the start and help user
          *   to fix the code, which may otherwise lead to undefined behaviour.
          *
-         * So now initialize a system clock and go forward for backward compatibility, if YARP_NO_DEPRECATED
-         * is true, exit now! This is gonna be the default in the next release.
+         * So now initialize a system clock and exit.
          */
         printNoClock_ErrorMessage();
 
-#ifdef YARP_NO_DEPRECATED  // for back compatibility
+#ifdef YARP_NO_DEPRECATED // Since YARP 2.3.70
         ::exit(-1);
 #endif
     }
     return pclock;
 }
+} // namespace
 
-void yarp::os::impl::removeClock()
+
+void yarp::os::impl::Time::removeClock()
 {
     if(pclock) {
         delete pclock;
         pclock = nullptr;
     }
     yarp_clock_type = YARP_CLOCK_UNINITIALIZED;
+}
+
+void yarp::os::impl::Time::startTurboBoost()
+{
+#if defined(_WIN32)
+    // only does something on Microsoft Windows
+    TIMECAPS tm;
+    timeGetDevCaps(&tm, sizeof(TIMECAPS));
+    timeBeginPeriod(tm.wPeriodMin);
+#endif
+}
+
+void yarp::os::impl::Time::endTurboBoost()
+{
+#if defined(_WIN32)
+    // only does something on Microsoft Windows
+    TIMECAPS tm;
+    timeGetDevCaps(&tm, sizeof(TIMECAPS));
+    timeEndPeriod(tm.wPeriodMin);
+#endif
 }
 
 void Time::delay(double seconds) {
@@ -104,14 +128,12 @@ double Time::now() {
     return clk->now();
 }
 
-void Time::turboBoost() {
-#ifdef ACE_WIN32
-    // only does something on Microsoft Windows
-    TIMECAPS tm;
-    timeGetDevCaps(&tm, sizeof(TIMECAPS));
-    timeBeginPeriod(tm.wPeriodMin);
-#endif
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+void Time::turboBoost()
+{
+    return yarp::os::impl::Time::startTurboBoost();
 }
+#endif // YARP_NO_DEPRECATED
 
 void Time::yield() {
     return yarp::os::Thread::yield();
@@ -120,11 +142,11 @@ void Time::yield() {
 
 void Time::useSystemClock()
 {
-#ifdef YARP_NO_DEPRECATED
+#ifdef YARP_NO_DEPRECATED // Since YARP 2.3.70
     if(!isSystemClock())
 #endif
     {
-        lock();
+        getTimeMutex().lock();
 
         Clock *old_pclock = pclock;
         bool old_clock_owned = clock_owned;
@@ -137,7 +159,7 @@ void Time::useSystemClock()
         if(old_clock_owned && old_pclock)
             delete old_pclock;
 
-        unlock();
+        getTimeMutex().unlock();
     }
 
 }
@@ -161,12 +183,12 @@ void Time::useSystemClock()
  * As soon as the clock starts being published, the networkClock has to acknowledge it and 'attach' to it. Clock will
  * then be valid.
  */
-void Time::useNetworkClock(const ConstString& clock, ConstString localPortName)
+void Time::useNetworkClock(const std::string& clock, std::string localPortName)
 {
     // re-create the clock also in case we already use a network clock, because
     // the input clock port may be different or the clock producer may be changed (different
     // clock source publishing on the same port/topic), so we may need to reconnect.
-    lock();
+    getTimeMutex().lock();
 
     Clock *old_pclock = pclock;   // store current clock pointer to delete it afterward
     bool old_clock_owned = clock_owned;
@@ -194,9 +216,11 @@ void Time::useNetworkClock(const ConstString& clock, ConstString localPortName)
         }
     }
 
-    if(old_clock_owned && old_pclock)
+    if(old_clock_owned && old_pclock) {
         delete old_pclock;
-    unlock();
+    }
+
+    getTimeMutex().unlock();
 
     int i=-1;
     while(pclock && !pclock->isValid() )
@@ -222,7 +246,7 @@ void Time::useCustomClock(Clock *clock) {
         return;
     }
 
-    lock();
+    getTimeMutex().lock();
 
     // store current clock pointer to delete it afterward
     Clock *old_pclock = pclock;
@@ -236,11 +260,11 @@ void Time::useCustomClock(Clock *clock) {
     if(old_clock_owned && old_pclock)
         delete old_pclock;
 
-    unlock();
+    getTimeMutex().unlock();
 }
 
 bool Time::isSystemClock() {
-#ifdef YARP_NO_DEPRECATED
+#ifdef YARP_NO_DEPRECATED // Since YARP 2.3.70
     return (yarp_clock_type==YARP_CLOCK_SYSTEM);
 #else
     if(yarp_clock_type==YARP_CLOCK_UNINITIALIZED)
@@ -265,9 +289,9 @@ yarpClockType Time::getClockType()
     return yarp_clock_type;
 }
 
-yarp::os::ConstString Time::clockTypeToString(yarpClockType type)
+std::string Time::clockTypeToString(yarpClockType type)
 {
-    yarp::os::ConstString clockTypeString("");
+    std::string clockTypeString("");
     if(type == -1)
         type = yarp_clock_type;
 
@@ -299,11 +323,11 @@ yarp::os::ConstString Time::clockTypeToString(yarpClockType type)
 
 bool Time::isValid()
 {
-#ifndef YARP_NO_DEPRECATED
+#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
     if( (yarp_clock_type == YARP_CLOCK_SYSTEM) || (yarp_clock_type==YARP_CLOCK_UNINITIALIZED) )
         return true;
     else
 #endif
-    // The clock must never be NULL here (when YARP_NO_DEPRECATED is true)
+    // The clock must never be NULL here
     return getClock()->isValid();
 }

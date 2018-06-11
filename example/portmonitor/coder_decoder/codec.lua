@@ -1,9 +1,10 @@
+-- Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+-- All rights reserved.
 --
--- Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
--- Authors: Ali Paikan
--- CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+-- This software may be modified and distributed under the terms of the
+-- BSD-3-Clause license. See the accompanying LICENSE file for details.
+
 -- Using Lua 5.1+ base64 v3.0 (c) 2009 by Alex Kloss <alexthkloss@web.de>
---
 
 -- loading lua-yarp binding library
 require("yarp")
@@ -27,7 +28,7 @@ require("yarp")
 -- @return Boolean
 --
 PortMonitor.create = function(options)
-    isCoder = (options:find("sender_side"):asInt() == 1)
+    isCoder = (options:find("sender_side"):asInt32() == 1)
     if isCoder == true then
         print("codec.lua: I will encode whatever i get!")
     else

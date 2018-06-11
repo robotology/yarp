@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef TCPROSCARRIER_INC
@@ -43,14 +44,14 @@ private:
     int seq;
     WireTwiddler twiddler;
     WireTwiddlerWriter twiddler_output;
-    yarp::os::ConstString kind;
+    std::string kind;
     bool persistent;
-    ConstString wire_type;
-    ConstString user_type;
-    ConstString md5sum;
-    ConstString message_definition;
+    std::string wire_type;
+    std::string user_type;
+    std::string md5sum;
+    std::string message_definition;
 
-    ConstString getRosType(ConnectionState& proto);
+    std::string getRosType(ConnectionState& proto);
 
 protected:
     bool isService;
@@ -67,60 +68,60 @@ public:
         persistent = true;
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new TcpRosCarrier();
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() const override {
         return isService?"rossrv":"tcpros";
     }
 
-    virtual bool isConnectionless() override {
+    virtual bool isConnectionless() const override {
         return false;
     }
 
-    virtual bool canAccept() override {
+    virtual bool canAccept() const override {
         return true;
     }
 
-    virtual bool canOffer() override {
+    virtual bool canOffer() const override {
         return true;
     }
 
-    virtual bool isTextMode() override {
+    virtual bool isTextMode() const override {
         return false;
     }
 
-    virtual bool isBareMode() override {
+    virtual bool isBareMode() const override {
         return true;
     }
 
-    virtual bool canEscape() override {
+    virtual bool canEscape() const override {
         return false;
     }
 
-    virtual bool requireAck() override {
+    virtual bool requireAck() const override {
         return false;
     }
 
-    virtual bool supportReply() override {
+    virtual bool supportReply() const override {
         return true;
     }
 
-    virtual bool isPush() override {
+    virtual bool isPush() const override {
         // if topic-like, pull ; if service-like, push!
         return isService;
     }
 
-    virtual bool isLocal() override {
+    virtual bool isLocal() const override {
         return false;
     }
 
-    virtual ConstString toString() override {
+    virtual std::string toString() const override {
         return isService?"rossrv_carrier":"tcpros_carrier";
     }
 
-    virtual void getHeader(const Bytes& header) override {
+    virtual void getHeader(Bytes& header) const override {
         // no header, will need to do some fancy footwork
         const char *target = "NONONONO";
         for (size_t i=0; i<8 && i<header.length(); i++) {
@@ -153,7 +154,7 @@ public:
 
     virtual bool expectReplyToHeader(ConnectionState& proto) override;
 
-    virtual bool isActive() override {
+    virtual bool isActive() const override {
         return true;
     }
 
@@ -180,7 +181,7 @@ public:
         return true;
     }
 
-    virtual ConstString getBootstrapCarrierName() override { return ""; }
+    virtual std::string getBootstrapCarrierName() const override { return ""; }
 
     virtual int connect(const yarp::os::Contact& src,
                         const yarp::os::Contact& dest,
@@ -206,7 +207,7 @@ public:
         isService = true;
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new RosSrvCarrier();
     }
 };

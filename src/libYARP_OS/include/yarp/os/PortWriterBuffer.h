@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_PORTWRITERBUFFER_H
@@ -45,16 +48,16 @@ public:
                             void *tracker) :
         creator(creator), tracker(tracker) {}
 
-    virtual bool write(ConnectionWriter& connection) override {
+    virtual bool write(ConnectionWriter& connection) const override {
         return writer.write(connection);
     }
 
-    virtual void onCompletion() override {
+    virtual void onCompletion() const override {
         writer.onCompletion();
         creator.onCompletion(tracker);
     }
 
-    virtual void onCommencement() override {
+    virtual void onCommencement() const override {
         writer.onCommencement();
     }
 
@@ -72,7 +75,7 @@ public:
     virtual PortWriterWrapper *create(PortWriterBufferManager& man,
                                       void *tracker) = 0;
 
-    void *getContent();
+    const void* getContent() const;
 
     bool releaseContent();
 

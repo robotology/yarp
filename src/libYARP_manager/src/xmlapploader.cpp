@@ -1,15 +1,14 @@
 /*
- *  Yarp Modules Manager
- *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
- *  Authors: Ali Paikan <ali.paikan@iit.it>
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/utility.h>
-#include <yarp/manager/ymm-dir.h>
+#include <dirent.h>
 #include <tinyxml.h>
 #include <yarp/os/Value.h>
 #ifdef WITH_GEOMETRY
@@ -43,7 +42,7 @@ XmlAppLoader::XmlAppLoader(const char* szPath, const char* szAppName)
 
     if(strlen(szPath))
     {
-        const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+        const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
         strPath = szPath;
         if((strPath.rfind(directorySeparator)==string::npos) ||
             (strPath.rfind(directorySeparator)!=strPath.size()-1))
@@ -372,8 +371,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     GyPoint pt;
                     if(prop.check("Pos"))
                     {
-                        pt.x = prop.findGroup("Pos").find("x").asDouble();
-                        pt.y = prop.findGroup("Pos").find("y").asDouble();
+                        pt.x = prop.findGroup("Pos").find("x").asFloat64();
+                        pt.y = prop.findGroup("Pos").find("y").asFloat64();
                         model.points.push_back(pt);
                         module.setModelBase(model);
                     }
@@ -497,8 +496,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     GyPoint pt;
                     if(prop.check("Pos"))
                     {
-                        pt.x = prop.findGroup("Pos").find("x").asDouble();
-                        pt.y = prop.findGroup("Pos").find("y").asDouble();
+                        pt.x = prop.findGroup("Pos").find("x").asFloat64();
+                        pt.y = prop.findGroup("Pos").find("y").asFloat64();
                         model.points.push_back(pt);
                         IApp.setModelBase(model);
                     }
@@ -547,11 +546,11 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     if(prop.check("Pos"))
                     {
                         yarp::os::Bottle pos = prop.findGroup("Pos");
-                        for(int i=1; i<pos.size(); i++)
+                        for(size_t i=1; i<pos.size(); i++)
                         {
                             GyPoint pt;
-                            pt.x = pos.get(i).find("x").asDouble();
-                            pt.y = pos.get(i).find("y").asDouble();
+                            pt.x = pos.get(i).find("x").asFloat64();
+                            pt.y = pos.get(i).find("y").asFloat64();
                             model.points.push_back(pt);
                         }
                         arbitrator.setModelBase(model);
@@ -655,11 +654,11 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     if(prop.check("Pos"))
                     {
                         yarp::os::Bottle pos = prop.findGroup("Pos");
-                        for(int i=1; i<pos.size(); i++)
+                        for(size_t i=1; i<pos.size(); i++)
                         {
                             GyPoint pt;
-                            pt.x = pos.get(i).find("x").asDouble();
-                            pt.y = pos.get(i).find("y").asDouble();
+                            pt.x = pos.get(i).find("x").asFloat64();
+                            pt.y = pos.get(i).find("y").asFloat64();
                             model.points.push_back(pt);
                         }
                         connection.setModelBase(model);

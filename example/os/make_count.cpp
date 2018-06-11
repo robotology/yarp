@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/all.h>
@@ -20,7 +23,7 @@ int main(int argc, char *argv[]) {
 	    Bottle& msg = out.prepare();
 		msg.clear();
 		msg.addString("countdown");
-		msg.addInt(i);
+		msg.addInt32(i);
 		out.write();
 		Time::delay(1);
     }

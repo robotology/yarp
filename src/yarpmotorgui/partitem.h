@@ -4,7 +4,7 @@
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
- * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+ * CopyPolicy: Released under the terms of the GPLv2 or later, see LICENSE
  */
 
 
@@ -133,9 +133,9 @@ private:
     Port            m_sequence_port;
     bool            m_interfaceError;
 
-    IPositionControl2  *m_iPos;
+    IPositionControl   *m_iPos;
     IPositionDirect    *m_iDir;
-    IVelocityControl2  *m_iVel;
+    IVelocityControl  *m_iVel;
     IRemoteVariables   *m_iVar;
     IEncoders          *m_iencs;
     IMotorEncoders     *m_iMot;
@@ -146,9 +146,9 @@ private:
     ITorqueControl     *m_iTrq;
     IImpedanceControl  *m_iImp;
     IAxisInfo         *m_iinfo;
-    IControlLimits2          *m_iLim;
-    IControlCalibration2     *m_ical;
-    IControlMode2           *m_ictrlmode2;
+    IControlLimits          *m_iLim;
+    IControlCalibration    *m_ical;
+    IControlMode           *m_ictrlmode;
     IInteractionMode        *m_iinteract;
     IRemoteCalibrator   *m_iremCalib;
     int m_slow_k;
@@ -221,6 +221,7 @@ private slots:
     void onSendStiffness(int jointIdex, double stiff, double damp, double force);
     void onSendPWM(int jointIndex, double dutyVal);
     void onRefreshPids(int jointIndex);
+    void onDumpAllRemoteVariables();
 
 
 };

@@ -1,8 +1,3 @@
-/*
- * Copyright (C) 2011, 2016 Istituto Italiano di Tecnologia (IIT).
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- */
-
 /**
 
 @page yarp_with_ros_writing_code_topics Writing code to talk to ROS topics
@@ -28,8 +23,8 @@ The first thing to do is to generate a YARP compatible type for std_msgs/String:
 $ yarpidl_rosmsg String
 \endverbatim
 
-This will produce the file String.h which can be used directly in our YARP
-program.
+This will produce the file \em yarp/rosmsg/String.h which can be used directly
+in our YARP program.
 
 Type the following code in a file, e.g. listener.cpp:
 
@@ -38,7 +33,7 @@ Type the following code in a file, e.g. listener.cpp:
 An example CMakeLists.txt file to compile this code would be:
 
 \code
-    cmake_minimum_required(VERSION 3.0)
+    cmake_minimum_required(VERSION 3.5)
     find_package(YARP REQUIRED)
     add_executable(listener listener.cpp)
     target_link_libraries(listener ${YARP_LIBRARIES})
@@ -79,7 +74,7 @@ in a file, e.g. talker.cpp:
 an example CMakeLists.txt file to compile this code would be:
 
 \code
-    cmake_minimum_required(VERSION 3.0)
+    cmake_minimum_required(VERSION 3.5)
     find_package(YARP REQUIRED)
     add_executable(talker talker.cpp)
     target_link_libraries(talker ${YARP_LIBRARIES})

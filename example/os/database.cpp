@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <stdio.h>
@@ -49,7 +52,7 @@ int main(int argc, char *argv[]) {
 
         Bottle tmp;
         tmp.add(cmd.get(1));
-        ConstString key = tmp.toString();
+        std::string key = tmp.toString();
 
         switch (Vocab::encode(cmd.get(0).toString())) {
         case VOCAB_SET:

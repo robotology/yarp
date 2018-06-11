@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2008 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <TestFrameGrabber.h>
 #include <yarp/dev/PolyDriver.h>
@@ -51,26 +53,26 @@ bool TestFrameGrabber::open(yarp::os::Searchable& config) {
     Value* retM;
     retM=Value::makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0");
     w = config.check("width",yarp::os::Value(320),
-                     "desired width of test image").asInt();
+                     "desired width of test image").asInt32();
     h = config.check("height",yarp::os::Value(240),
-                     "desired height of test image").asInt();
+                     "desired height of test image").asInt32();
     horizontalFov=config.check("horizontalFov",Value(1.0),
-                               "desired horizontal fov of test image").asDouble();
+                               "desired horizontal fov of test image").asFloat64();
     verticalFov=config.check("verticalFov",Value(2.0),
-                               "desired vertical fov of test image").asDouble();
+                               "desired vertical fov of test image").asFloat64();
     mirror=config.check("mirror",Value(false),
                         "mirroring disabled by default").asBool();
-    intrinsic.put("focalLengthX",config.check("focalLengthX",Value(4.0),"Horizontal component of the focal lenght of the test_grabber").asDouble());
-    intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"Vertical component of the focal lenght of the test_grabber").asDouble());
-    intrinsic.put("principalPointX",config.check("principalPointX",Value(6.0),"X coordinate of the principal point of the test_grabber").asDouble());
-    intrinsic.put("principalPointY",config.check("principalPointY",Value(7.0),"Y coordinate of the principal point of the test_grabber").asDouble());
+    intrinsic.put("focalLengthX",config.check("focalLengthX",Value(4.0),"Horizontal component of the focal lenght of the test_grabber").asFloat64());
+    intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"Vertical component of the focal lenght of the test_grabber").asFloat64());
+    intrinsic.put("principalPointX",config.check("principalPointX",Value(6.0),"X coordinate of the principal point of the test_grabber").asFloat64());
+    intrinsic.put("principalPointY",config.check("principalPointY",Value(7.0),"Y coordinate of the principal point of the test_grabber").asFloat64());
     intrinsic.put("retificationMatrix",config.check("retificationMatrix",*retM,"Matrix that describes the lens' distortion(fake)"));
     intrinsic.put("distortionModel",config.check("distortionModel",Value("FishEye"),"Reference to group of parameters describing the distortion model of the camera").asString());
-    intrinsic.put("k1",config.check("k1",Value(8.0),"Radial distortion coefficient of the lens(fake)").asDouble());
-    intrinsic.put("k2",config.check("k2",Value(9.0),"Radial distortion coefficient of the lens(fake)").asDouble());
-    intrinsic.put("k3",config.check("k3",Value(10.0),"Radial distortion coefficient of the lens(fake)").asDouble());
-    intrinsic.put("t1",config.check("t1",Value(11.0),"Tangential distortion of the lens(fake)").asDouble());
-    intrinsic.put("t2",config.check("t2",Value(12.0),"Tangential distortion of the lens(fake)").asDouble());
+    intrinsic.put("k1",config.check("k1",Value(8.0),"Radial distortion coefficient of the lens(fake)").asFloat64());
+    intrinsic.put("k2",config.check("k2",Value(9.0),"Radial distortion coefficient of the lens(fake)").asFloat64());
+    intrinsic.put("k3",config.check("k3",Value(10.0),"Radial distortion coefficient of the lens(fake)").asFloat64());
+    intrinsic.put("t1",config.check("t1",Value(11.0),"Tangential distortion of the lens(fake)").asFloat64());
+    intrinsic.put("t2",config.check("t2",Value(12.0),"Tangential distortion of the lens(fake)").asFloat64());
     //Only for debug
     CameraConfig conf1, conf2, conf3;
     conf1.height=128; conf1.width=128; conf1.framerate=60.0; conf1.pixelCoding=VOCAB_PIXEL_RGB;
@@ -82,11 +84,11 @@ bool TestFrameGrabber::open(yarp::os::Searchable& config) {
     delete retM;
 
     if (config.check("freq",val,"rate of test images in Hz")) {
-        freq = val->asDouble();
+        freq = val->asFloat64();
         period = 1/freq;
     } else if (config.check("period",val,
                             "period of test images in seconds")) {
-        period = val->asDouble();
+        period = val->asFloat64() / 1000.0;
         if(period<=0) {
             period =0;
             freq = -1;
@@ -221,70 +223,6 @@ bool TestFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
     return true;
 }
 
-bool TestFrameGrabber::setBrightness(double v) {
-    return false;
-}
-bool TestFrameGrabber::setExposure(double v) {
-    return false;
-}
-bool TestFrameGrabber::setSharpness(double v) {
-    return false;
-}
-bool TestFrameGrabber::setWhiteBalance(double blue, double red){
-    return false;
-}
-bool TestFrameGrabber::setHue(double v) {
-    return false;
-}
-bool TestFrameGrabber::setSaturation(double v) {
-    return false;
-}
-bool TestFrameGrabber::setGamma(double v) {
-    return false;
-}
-bool TestFrameGrabber::setShutter(double v) {
-    return false;
-}
-bool TestFrameGrabber::setGain(double v) {
-    return false;
-}
-bool TestFrameGrabber::setIris(double v) {
-    return false;
-}
-
-double TestFrameGrabber::getBrightness(){
-    return 0.0;
-}
-double TestFrameGrabber::getExposure(){
-    return 0.0;
-}
-double TestFrameGrabber::getSharpness(){
-    return 0.0;
-}
-bool TestFrameGrabber::getWhiteBalance(double &blue, double &red)
-{
-    red=0.0;
-    blue=0.0;
-    return true;
-}
-double TestFrameGrabber::getHue(){
-    return 0.0;
-}
-double TestFrameGrabber::getSaturation(){
-    return 0.0;
-}
-double TestFrameGrabber::getGamma(){
-    return 0.0;
-}
-double TestFrameGrabber::getShutter(){
-    return 0.0;
-}
-double TestFrameGrabber::getGain(){
-    return 0.0;
-}
-double TestFrameGrabber::getIris(){
-    return 0.0;
-}
 
 yarp::os::Stamp TestFrameGrabber::getLastInputStamp() {
     return stamp;
@@ -297,6 +235,23 @@ bool TestFrameGrabber::hasVideo() { return !use_mono; }
 bool TestFrameGrabber::hasRawVideo() {
     return use_mono;
 }
+
+bool TestFrameGrabber::getCameraDescription(CameraDescriptor *camera) { return false; }
+bool TestFrameGrabber::hasFeature(int feature, bool *hasFeature) { return false; }
+bool TestFrameGrabber::setFeature(int feature, double value) { return false; }
+bool TestFrameGrabber::getFeature(int feature, double *value) { return false; }
+bool TestFrameGrabber::setFeature(int feature, double  value1, double  value2) { return false; }
+bool TestFrameGrabber::getFeature(int feature, double *value1, double *value2) { return false; }
+bool TestFrameGrabber::hasOnOff(int feature, bool *HasOnOff) { return false; }
+bool TestFrameGrabber::setActive(int feature, bool onoff) { return false; }
+bool TestFrameGrabber::getActive(int feature, bool *isActive) { return false; }
+bool TestFrameGrabber::hasAuto(int feature, bool *hasAuto) { return false; }
+bool TestFrameGrabber::hasManual(int feature, bool *hasManual) { return false; }
+bool TestFrameGrabber::hasOnePush(int feature, bool *hasOnePush) { return false; }
+bool TestFrameGrabber::setMode(int feature, FeatureMode mode) { return false; }
+bool TestFrameGrabber::getMode(int feature, FeatureMode *mode) { return false; }
+bool TestFrameGrabber::setOnePush(int feature) { return false; }
+
 
 void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
                                        image) {
@@ -335,11 +290,11 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
         break;
     case VOCAB_GRID:
         {
-            int ww = image.width();
-            int hh = image.height();
+            size_t ww = image.width();
+            size_t hh = image.height();
             if (ww>1&&hh>1) {
-                for (int x=0; x<ww; x++) {
-                    for (int y=0; y<hh; y++) {
+                for (size_t x=0; x<ww; x++) {
+                    for (size_t y=0; y<hh; y++) {
                         double xx = ((double)x)/(ww-1);
                         double yy = ((double)y)/(hh-1);
                         int r = int(0.5+255*xx);
@@ -372,11 +327,11 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
             count = 0;
         }
         
-        int ww = w = image.width();
-        int hh = h = image.height();
+        size_t ww = w = image.width();
+        size_t hh = h = image.height();
         if (ww>1 && hh>1) {
-            for (int x = 0; x<ww; x++) {
-                for (int y = 0; y<hh; y++) {
+            for (size_t x = 0; x<ww; x++) {
+                for (size_t y = 0; y<hh; y++) {
                     double xx = ((double)x) / (ww - 1);
                     double yy = ((double)y) / (hh - 1);
                     int r = int(0.5 + 255 * xx);
@@ -391,7 +346,7 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
     case VOCAB_LINE:
     default:
         {
-            for (int i=0; i<image.width(); i++) {
+            for (size_t i=0; i<image.width(); i++) {
                 image.pixel(i,ct).r = 255;
             }
             char ttxt[50];
@@ -431,14 +386,14 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
 
             static unsigned char r=128,g=128,b=128;
 
-            int ww = image.width();
-            int hh = image.height();
+            size_t ww = image.width();
+            size_t hh = image.height();
 
             if (ww>1&&hh>1) {
                 std::default_random_engine randengine;
                 std::uniform_real_distribution<double> udist(-1.0, 1.0);
-                for (int x=0; x<ww; x++) {
-                    for (int y=0; y<hh; y++) {
+                for (size_t x=0; x<ww; x++) {
+                    for (size_t y=0; y<hh; y++) {
                         //r+=(rand()%3)-1;
                         //g+=(rand()%3)-1;
                         //b+=(rand()%3)-1;
@@ -464,8 +419,6 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
     if (bx>=image.width()) {
         bx = image.width()-1;
     }
-    if (bx<0) bx = 0;
-    if (by<0) by = 0;
 }
 
 
@@ -480,10 +433,10 @@ bool TestFrameGrabber::makeSimpleBayer(
 
     bayer.resize(img.width(), img.height());
 
-    const int w = img.width();
-    const int h = img.height();
+    const size_t w = img.width();
+    const size_t h = img.height();
 
-    int i, j;
+    size_t i, j;
     for (i = 0; i < h; i++) {
         PixelRgb *row = (PixelRgb *)img.getRow(i);
         PixelMono *rd = (PixelMono *)bayer.getRow(i);

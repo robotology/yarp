@@ -1,12 +1,11 @@
-# Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 project(YARP_init)
-
-get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-get_property(YARP_TREE_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
-include_directories(${YARP_TREE_INCLUDE_DIRS})
 
 set(YARP_init_HDRS)
 set(YARP_init_IMPL_HDRS)
@@ -27,14 +26,14 @@ target_link_libraries(YARP_init PRIVATE YARP::YARP_conf
                                         YARP::YARP_OS)
 
 if(YARP_LINK_PLUGINS)
-    if(CREATE_OPTIONAL_CARRIERS)
+    if(YARP_COMPILE_CARRIER_PLUGINS)
         set_property(SOURCE src/CustomInit.cpp
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION=add_yarpcar_plugins)
         target_link_libraries(YARP_init PRIVATE YARP::yarpcar)
     endif()
 
-    if(CREATE_DEVICE_LIBRARY_MODULES)
+    if(YARP_COMPILE_DEVICE_PLUGINS)
         set_property(SOURCE src/CustomInit.cpp
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION2=add_yarpmod_plugins)
@@ -43,13 +42,19 @@ if(YARP_LINK_PLUGINS)
     endif()
 endif()
 
+set_property(TARGET YARP_init PROPERTY VERSION ${YARP_VERSION_SHORT})
+set_property(TARGET YARP_init PROPERTY SOVERSION ${YARP_SOVERSION})
+
 install(TARGETS YARP_init
-        EXPORT YARP
-        COMPONENT runtime
+        EXPORT YARP_OS
+        COMPONENT YARP_OS
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
-set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_init)
-set_property(TARGET YARP_init PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+export(TARGETS YARP_init
+       NAMESPACE YARP::
+       APPEND
+       FILE ${CMAKE_BINARY_DIR}/YARP_OS/YARP_OSTargets.cmake)
+
 set_property(TARGET YARP_init PROPERTY FOLDER "Libraries")

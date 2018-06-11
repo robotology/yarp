@@ -21,14 +21,14 @@
     #pragma warning (disable : 4520)
 #endif
 
+#include <dirent.h>
+
 #if defined(_WIN32)
-    #include "include/msvc/dirent.h"
     #undef max                  /*conflict with pango lib coverage.h*/
     #include <direct.h>
     #define GetCurrentDir _getcwd
 #else
     #include <unistd.h>
-    #include <dirent.h>
     #include <cerrno>
     #include <sys/stat.h>
     #define GetCurrentDir getcwd
@@ -291,7 +291,7 @@ bool Utilities::setupDataFromParts(partsData &part)
                 timeStampCol = column;
             }
 
-            part.timestamp.push_back( b.get(timeStampCol).asDouble() );
+            part.timestamp.push_back( b.get(timeStampCol).asFloat64() );
             itr++;
         }
         allTimeStamps.push_back( part.timestamp[0] );   //save all first timeStamps dumped for later ease of use

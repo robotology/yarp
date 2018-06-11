@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_ANALOGWRAPPER_ANALOGWRAPPER_H
@@ -20,7 +22,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Stamp.h>
 
@@ -34,11 +36,11 @@
 
 
 // ROS state publisher
-#include <yarpRosHelper.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
-#include <geometry_msgs_WrenchStamped.h>  // Defines ROS jointState msg; it already includes TickTime and Header
-#include <sensor_msgs_JointState.h>
+#include <yarp/rosmsg/geometry_msgs/WrenchStamped.h>
+#include <yarp/rosmsg/sensor_msgs/JointState.h>
+#include <yarp/rosmsg/impl/yarpRosHelper.h>
 
 
 /* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
@@ -166,33 +168,13 @@ namespace yarp{
 
 
 
-class yarp::dev::AnalogWrapper: public yarp::os::RateThread,
+class yarp::dev::AnalogWrapper: public yarp::os::PeriodicThread,
                                 public yarp::dev::DeviceDriver,
                                 public yarp::dev::IMultipleWrapper
 {
 public:
     // Constructor used by yarp factory
     AnalogWrapper();
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-    // Constructor used when there is only one output port  -- obsolete, here for backward compatibility with skinwrapper
-    /** @deprecated since YARP 2.3.70 */
-#if !defined(_MSC_VER) || _MSC_VER != 1900
-    // For some unknown reason, Visual studio 2015 fails with this error:
-    // "C2416 attribute 'deprecated' cannot be applied in this context"
-    YARP_DEPRECATED
-#endif
-    AnalogWrapper(const char* name, int rate=20);
-
-    // Contructor used when one or more output ports are specified  -- obsolete, here for backward compatibility with skinwrapper
-    /** @deprecated since YARP 2.3.70 */
-#if !defined(_MSC_VER) || _MSC_VER != 1900
-    // For some unknown reason, Visual studio 2015 fails with this error:
-    // "C2416 attribute 'deprecated' cannot be applied in this context"
-    YARP_DEPRECATED
-#endif
-    AnalogWrapper(const std::vector<yarp::dev::impl::AnalogPortEntry>& _analogPorts, int rate=20);
-#endif // YARP_NO_DEPRECATED
 
     ~AnalogWrapper();
 
@@ -218,8 +200,8 @@ public:
 
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    yarp::os::ConstString streamingPortName;
-    yarp::os::ConstString rpcPortName;
+    std::string streamingPortName;
+    std::string rpcPortName;
     yarp::dev::IAnalogSensor *analogSensor_p;   // the analog sensor to read from
     std::vector<yarp::dev::impl::AnalogPortEntry> analogPorts;   // the list of output ports
     std::vector<yarp::dev::impl::AnalogServerHandler*> handlers; // the list of rpc port handlers
@@ -239,11 +221,11 @@ private:
     yarp::os::NetUint32                                      rosMsgCounter;              // incremental counter in the ROS message
 
     // TODO: in the future, in order to support multiple ROS msgs this should be a pointer allocated dynamically depending on the msg maybe (??)
-    //  yarp::os::PortWriterBuffer<geometry_msgs_WrenchStamped>  rosOutputWrench_buffer;      // Buffer associated to the ROS topic
-    yarp::os::Publisher<geometry_msgs_WrenchStamped>         rosPublisherWrenchPort;      // Dedicated ROS topic publisher
+    //  yarp::os::PortWriterBuffer<yarp::rosmsg::geometry_msgs::WrenchStamped> rosOutputWrench_buffer; // Buffer associated to the ROS topic
+    yarp::os::Publisher<yarp::rosmsg::geometry_msgs::WrenchStamped> rosPublisherWrenchPort; // Dedicated ROS topic publisher
 
-    //yarp::os::PortWriterBuffer<sensor_msgs_JointState>       rosOutputJoint_buffer;       // Buffer associated to the ROS topic
-    yarp::os::Publisher<sensor_msgs_JointState>              rosPublisherJointPort;       // Dedicated ROS topic publisher
+    //yarp::os::PortWriterBuffer<yarp::rosmsg::sensor_msgs::JointState> rosOutputJoint_buffer; // Buffer associated to the ROS topic
+    yarp::os::Publisher<yarp::rosmsg::sensor_msgs::JointState> rosPublisherJointPort; // Dedicated ROS topic publisher
 
 
     bool ownDevices;

@@ -1,9 +1,11 @@
-# Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Arjan Gijsberts, Lorenzo Natale, Fabien Benureau, Stephane Lallee, Ali Paikan,
-#          Francesco Romano, Daniele Domenichelli
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
@@ -24,20 +26,26 @@ if(NOT YARP_VERSION)
   endif()
 
   # Find YARP for bindings-only builds
-  find_package(YARP REQUIRED)
-  list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-  include_directories(${YARP_INCLUDE_DIRS})
+  find_package(YARP COMPONENTS conf OS sig dev REQUIRED)
+  foreach(_component conf OS sig dev)
+    get_property(YARP_${_component}_INCLUDE_DIRS TARGET YARP::YARP_${_component} PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+    include_directories(${YARP_${_component}_INCLUDE_DIRS})
+  endforeach()
 
   find_package(SWIG 3.0 REQUIRED)
 
   set(_nested_build 0)
 else()
   # this is necessary for SWIG to parse yarp.i file
-  get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-  include_directories(${YARP_INCLUDE_DIRS})
-
+  # FIXME: Find a better way to do this (using generator expressions?)
+  include_directories("${CMAKE_BINARY_DIR}/src/libYARP_conf/include")
+  include_directories("${CMAKE_SOURCE_DIR}/src/libYARP_OS/include")
+  include_directories("${CMAKE_SOURCE_DIR}/src/libYARP_sig/include")
+  include_directories("${CMAKE_SOURCE_DIR}/src/libYARP_dev/include")
   set(_nested_build 1)
 endif()
+
+include(${YARP_MODULE_DIR}/YarpPrintFeature.cmake)
 
 set(YARP_COMPILE_BINDINGS_DEFAULT TRUE)
 set(YARP_BASE_DIR ${CMAKE_CURRENT_BINARY_DIR})
@@ -47,6 +55,7 @@ if(_nested_build)
   set(YARP_BASE_DIR ${CMAKE_BINARY_DIR})
 endif()
 option(YARP_COMPILE_BINDINGS "Compile optional language bindings" ${YARP_COMPILE_BINDINGS_DEFAULT})
+yarp_print_feature(YARP_COMPILE_BINDINGS 0 "Bindings")
 
 #############################################################################
 ## Options for compiling supported languages.  There's nothing magical
@@ -69,13 +78,7 @@ foreach(Lang ${SUPPORTED_LANGUAGES})
   string(REGEX REPLACE " .+" "" LANG "${LANG}")
   cmake_dependent_option(CREATE_${LANG} "Do you want to create the ${Lang} interface" OFF
                          YARP_COMPILE_BINDINGS OFF)
-  if(YARP_COMPILE_BINDINGS)
-    if(CREATE_${LANG})
-      message(STATUS " +++ bindings ${Lang} is enabled")
-    else()
-      message(STATUS " --- bindings ${Lang} is not enabled")
-    endif()
-  endif()
+  yarp_print_feature(CREATE_${LANG} 1 "${Lang} bindings")
 endforeach()
 
 #############################################################################

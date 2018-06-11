@@ -1,32 +1,37 @@
 /*
- * Copyright (C) 2011, 2016 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/SharedLibrary.h>
 
 #include <yarp/conf/system.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Log.h>
 
 #ifdef YARP_HAS_ACE
 #  include <ace/ACE.h>
 #  include <ace/DLL.h>
+// In one the ACE headers there is a definition of "main" for WIN32
+# ifdef main
+#  undef main
+# endif
 #else
 #  include <yarp/os/impl/PlatformDlfcn.h>
 #endif
 
 
 using yarp::os::SharedLibrary;
-using yarp::os::ConstString;
 using yarp::os::impl::SharedLibraryImpl;
 
 
 class yarp::os::impl::SharedLibraryImpl
 {
 public:
-    SharedLibraryImpl() : dll(nullptr), error(ConstString()) {}
+    SharedLibraryImpl() : dll(nullptr), error(std::string()) {}
 
     inline char* getError()
     {
@@ -45,7 +50,7 @@ public:
 #else
     void* dll;
 #endif
-    ConstString error;
+    std::string error;
 };
 
 
@@ -78,7 +83,7 @@ bool SharedLibrary::open(const char *filename)
     int result = implementation->dll->open(filename);
     if (result != 0) {
         // Save error since close might overwrite it
-        ConstString error(implementation->getError());
+        std::string error(implementation->getError());
         close();
         implementation->error = error;
         return false;
@@ -114,7 +119,7 @@ bool SharedLibrary::close()
     return (result == 0);
 }
 
-ConstString SharedLibrary::error()
+std::string SharedLibrary::error()
 {
     return SharedLibrary::implementation->error;
 }

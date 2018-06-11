@@ -1,3 +1,10 @@
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
+
 ### parameters are
 # $1: hostname (could be also buildtype)
 # $2: os (macos, winxp, lenny, etch, karmic ...)
@@ -13,28 +20,18 @@ CMAKE_OPTIONS="\
 -DCREATE_GUIS:BOOL=TRUE \
 -DCREATE_YARPVIZ:BOOL=TRUE \
 -DCREATE_LIB_MATH:BOOL=TRUE \
--DCREATE_OPTIONAL_CARRIERS:BOOL=TRUE \
 -DENABLE_yarpcar_human:BOOL=TRUE \
--DENABLE_yarpcar_xmlrpc:BOOL=TRUE \
--DENABLE_yarpcar_tcpros:BOOL=TRUE \
--DENABLE_yarpcar_rossrv:BOOL=TRUE \
--DENABLE_yarpcar_bayer:BOOL=TRUE \
--DENABLE_yarpcar_priority:BOOL=TRUE \
--DENABLE_yarpcar_portmonitor:BOOL=TRUE \
 -DENABLE_yarpcar_depthimage:BOOL=TRUE \
--DCREATE_DEVICE_LIBRARY_MODULES:BOOL=TRUE \
 -DENABLE_yarpmod_fakebot:BOOL=TRUE \
 -DENABLE_yarpmod_fakeMotionControl=TRUE \
 -DENABLE_yarpmod_fakeAnalogSensor=TRUE \
 -DENABLE_yarpmod_fakeIMU=TRUE \
 -DENABLE_yarpmod_SerialServoBoard=TRUE \
--DENABLE_yarpmod_serial=TRUE \
 -DENABLE_yarpmod_serialport=TRUE \
 -DENABLE_yarpmod_imuBosch_BNO055=TRUE \
 -DENABLE_yarpmod_fakeLaser=TRUE \
 -DENABLE_yarpmod_rpLidar=TRUE \
 -DENABLE_yarpmod_laserHokuyo=TRUE \
--DENABLE_yarpmod_test_grabber=TRUE \
 "
 OS_TYPE=""
 echo "$2" | grep -iq "Debian\|Ubuntu"

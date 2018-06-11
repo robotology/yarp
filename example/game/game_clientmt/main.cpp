@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <stdio.h>
@@ -12,14 +15,14 @@
 
 #include <yarp/os/all.h>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 
 #include <yarp/os/Time.h>
 using namespace yarp::os;
 
 const char SERVER_NAME[]="/game";
-const int PLAYER_RATE=500;
+const double PLAYER_PERIOD=0.5;
 
 const char UP[]="up";
 const char DOWN[]="down";
@@ -28,12 +31,12 @@ const char LEFT[]="left";
 const char FIRE[]="fire";
 const char GO[]="go";
 
-class MyPlayer: public RateThread
+class MyPlayer: public PeriodicThread
 {
 public:
     std::default_random_engine randengine;
 
-    MyPlayer(const char *n, int rate):RateThread(rate)
+    MyPlayer(const char *n, double period):PeriodicThread(period)
     {
         myX=0;
         myY=0;
@@ -52,7 +55,7 @@ public:
 
     void doInit()
     {
-        mutex.wait();
+        mutex.lock();
 
         printf("Connecting with game server\n");
         Network::connect(port.getName(), SERVER_NAME);
@@ -61,30 +64,30 @@ public:
 
         randengine.seed(0);
     
-        mutex.post();
+        mutex.unlock();
     }
 
     // void doLoop()
     void run()
     {
-        mutex.wait();
+        mutex.lock();
         
         look();
         rndMove();
         if(shooterF)
             rndShoot();
 
-        mutex.post();
+        mutex.unlock();
     }
 
     void doRelease()
     {
-        mutex.wait();
+        mutex.lock();
 
         printf("Disconnecting\n");
         Network::disconnect(port.getName(), SERVER_NAME);
         
-        mutex.post();
+        mutex.unlock();
     }
 
     void look()
@@ -104,11 +107,11 @@ public:
             {
                 Bottle &location = player->findGroup("location");
                 Value &life = player->find("life");
-                ConstString playerName = player->get(0).asString();
+                std::string playerName = player->get(0).asString();
        
-                myX=location.get(1).asInt(),
-                    myY=location.get(2).asInt(),
-                    myLife=life.asInt();
+                myX=location.get(1).asInt32(),
+                    myY=location.get(2).asInt32(),
+                    myLife=life.asInt32();
             }
     }
 
@@ -156,19 +159,19 @@ public:
 
     void getWorld(Bottle &w)
     {
-        mutex.wait();
+        mutex.lock();
         
         w=world;
 
-        mutex.post();
+        mutex.unlock();
     }
 
     int getLife()
     {
         int ret;
-        mutex.wait();
+        mutex.lock();
         ret=myLife;
-        mutex.post();
+        mutex.unlock();
 
         return ret;
     }
@@ -176,18 +179,18 @@ public:
     int getX()
     {
         int ret;
-        mutex.wait();
+        mutex.lock();
         ret=myX;
-        mutex.post();
+        mutex.unlock();
         return ret;
     }
 
     int getY()
     {
         int ret;
-        mutex.wait();
+        mutex.lock();
         ret=myY;
-        mutex.post();
+        mutex.unlock();
         return ret;
     }
 
@@ -203,7 +206,7 @@ public:
 
     double prev;
     double now;
-    Semaphore mutex;
+    Mutex mutex;
 };
 
 int main(int argc, char **argv)
@@ -213,7 +216,7 @@ int main(int argc, char **argv)
   
     Network yarp;
 
-    MyPlayer *player = new MyPlayer(argv[1], PLAYER_RATE);
+    MyPlayer *player = new MyPlayer(argv[1], PLAYER_PERIOD);
   
     if(atoi(argv[2])==0)
         player->setShooter(0);

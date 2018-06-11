@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <cstdio>
@@ -15,7 +17,7 @@
 using namespace yarp::os;
 
 static NetInt32 getInt(char *cursor) {
-    NetInt32 *icursor = (NetInt32 *)cursor;
+    NetInt32 *icursor = reinterpret_cast<NetInt32 *> (cursor);
     return *icursor;
 }
 
@@ -36,13 +38,13 @@ static char *checkBottle(char *cursor, int& remaining, int ct, int list_tag) {
         }
         //printf("tag is %d\n", tag);
         switch (tag) {
-        case BOTTLE_TAG_INT:
+        case BOTTLE_TAG_INT32:
         case BOTTLE_TAG_VOCAB:
             if (remaining<4) { return nullptr; }
             cursor += 4;
             remaining -= 4;
             break;
-        case BOTTLE_TAG_DOUBLE:
+        case BOTTLE_TAG_FLOAT64:
             if (remaining<8) { return nullptr; }
             cursor += 8;
             remaining -= 8;

@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_NAMESPACE_H
@@ -68,21 +70,21 @@ public:
      * if available.
      *
      */
-    virtual ConstString getNameServerName() const;
+    virtual std::string getNameServerName() const;
 
     /**
      *
      * Map from port name to contact information.
      *
      */
-    virtual Contact queryName(const ConstString& name) = 0;
+    virtual Contact queryName(const std::string& name) = 0;
 
     /**
      *
      * Record contact information to tie to a port name.
      *
      */
-    virtual Contact registerName(const ConstString& name) = 0;
+    virtual Contact registerName(const std::string& name) = 0;
 
     /**
      *
@@ -96,7 +98,7 @@ public:
      * Disassociate contact information from a port name.
      *
      */
-    virtual Contact unregisterName(const ConstString& name) = 0;
+    virtual Contact unregisterName(const std::string& name) = 0;
 
     /**
      *
@@ -130,7 +132,7 @@ public:
      * information of other ports for cross-referencing.
      *
      */
-    virtual Contact unregisterAdvanced(const ConstString& name,
+    virtual Contact unregisterAdvanced(const std::string& name,
                                        NameStore *store)
     {
         YARP_UNUSED(store);
@@ -142,8 +144,8 @@ public:
      * Associate a key/value pair with a named port.
      *
      */
-    virtual bool setProperty(const ConstString& name,
-                             const ConstString& key,
+    virtual bool setProperty(const std::string& name,
+                             const std::string& key,
                              const Value& value) = 0;
 
     /**
@@ -153,8 +155,8 @@ public:
      * @return nullptr if no value was set for the named key.
      *
      */
-    virtual Value *getProperty(const ConstString& name,
-                               const ConstString& key) = 0;
+    virtual Value *getProperty(const std::string& name,
+                               const std::string& key) = 0;
 
     /**
      *

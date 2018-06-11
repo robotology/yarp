@@ -1,9 +1,11 @@
 /*
-* Copyright (C) 2010 RobotCub Consortium
-* Author: Lorenzo Natale
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
-
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 /**
  * \infile Tests for SVD.
@@ -29,7 +31,7 @@ const double TOL = 1e-8;
 
 class SVDTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "SVDTest"; }
+    virtual std::string getName() const override { return "SVDTest"; }
 
     // Assert that 2 matrices are equal
     void assertEqual(const Matrix &A, const Matrix &B, string testName, bool verbose=false)
@@ -38,8 +40,8 @@ public:
             if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
             checkTrue(false, testName.c_str());
         }
-        for(int r=0; r<A.rows(); r++){
-            for(int c=0; c<A.cols(); c++){
+        for(size_t r=0; r<A.rows(); r++){
+            for(size_t c=0; c<A.cols(); c++){
                 if(fabs(A(r,c)-B(r,c))>TOL){
                     if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
                     checkTrue(false, testName.c_str());
@@ -56,8 +58,8 @@ public:
             checkTrue(true, testName.c_str());
             return;
         }
-        for(int r=0; r<A.rows(); r++)
-            for(int c=0; c<A.cols(); c++)
+        for(size_t r=0; r<A.rows(); r++)
+            for(size_t c=0; c<A.cols(); c++)
                 if(fabs(A(r,c)-B(r,c))>TOL){
                     checkTrue(true, testName.c_str());
                     return;
@@ -87,7 +89,7 @@ public:
     {
         report(0,"checking that SVD resizes the output matrices");
 
-        int m=6, n=5;
+        size_t m=6, n=5;
         Matrix U, V;
         Vector s;
 
@@ -97,7 +99,7 @@ public:
 
         checkEqual(U.rows(), m, "Number of Rows of U matrix is correct");
         checkEqual(U.cols(), n, "Number of Cols of U matrix is correct");
-        checkEqual(s.size(), n, "Size of s vector is correct");
+        checkEqual(s.size(), (size_t) n, "Size of s vector is correct");
         checkEqual(V.rows(), n, "Number of Rows of V matrix is correct");
         checkEqual(V.cols(), n, "Number of Cols of V matrix is correct");
     }

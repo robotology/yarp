@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef BAYERCARRIER_INC
@@ -86,15 +87,15 @@ public:
         if (local) delete local;
     }
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new BayerCarrier();
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() const override {
         return "bayer";
     }
 
-    virtual ConstString toString() override {
+    virtual std::string toString() const override {
         return "bayer_carrier";
     }
 
@@ -104,19 +105,27 @@ public:
     ////////////////////////////////////////////////////////////////////////
     // ConnectionReader methods
 
-    virtual bool expectBlock(const char *data, size_t len) override {
+    virtual bool expectBlock(char *data, size_t len) override {
         return local->expectBlock(data,len);
     }
 
-    virtual ConstString expectText(int terminatingChar = '\n') override {
+    virtual std::string expectText(int terminatingChar = '\n') override {
         return local->expectText(terminatingChar);
     }
 
-    virtual int expectInt() override {
-        return local->expectInt();
+    virtual std::int8_t expectInt8() override {
+        return local->expectInt8();
     }
 
-    virtual YARP_INT64 expectInt64() override {
+    virtual std::int16_t expectInt16() override {
+        return local->expectInt64();
+    }
+
+    virtual std::int32_t expectInt32() override {
+        return local->expectInt32();
+    }
+
+    virtual std::int64_t expectInt64() override {
         return local->expectInt64();
     }
 
@@ -124,15 +133,19 @@ public:
         return local->pushInt(x);
     }
 
-    virtual double expectDouble() override {
-        return local->expectDouble();
+    virtual yarp::conf::float32_t expectFloat32() override {
+        return local->expectFloat32();
     }
 
-    virtual bool isTextMode() override {
+    virtual yarp::conf::float64_t expectFloat64() override {
+        return local->expectFloat64();
+    }
+
+    virtual bool isTextMode() const override {
         return false;
     }
 
-    virtual bool isBareMode() override {
+    virtual bool isBareMode() const override {
         return false;
     }
 
@@ -140,7 +153,7 @@ public:
         return true;
     }
 
-    virtual size_t getSize() override {
+    virtual size_t getSize() const override {
         if (image_data_len) {
             processBuffered();
         }
@@ -155,27 +168,27 @@ public:
         return parent->readEnvelope();
     }
 
-    virtual Portable *getReference() override {
+    virtual Portable *getReference() const override {
         return parent->getReference();
     }
 
-    virtual Contact getRemoteContact() override {
+    virtual Contact getRemoteContact() const override {
         return parent->getRemoteContact();
     }
 
-    virtual Contact getLocalContact() override {
+    virtual Contact getLocalContact() const override {
         return parent->getLocalContact();
     }
 
-    virtual bool isValid() override {
+    virtual bool isValid() const override {
         return true;
     }
 
-    virtual bool isActive() override {
+    virtual bool isActive() const override {
         return parent->isActive();
     }
 
-    virtual bool isError() override {
+    virtual bool isError() const override {
         return parent->isError()||!happy;
     }
 
@@ -183,7 +196,7 @@ public:
         parent->requestDrop();
     }
 
-    virtual yarp::os::Searchable& getConnectionModifiers() override {
+    virtual const yarp::os::Searchable& getConnectionModifiers() const override {
         return parent->getConnectionModifiers();
     }
 
@@ -195,12 +208,12 @@ public:
     // InputStream methods
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b) override;
+    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     virtual void close() override {
     }
 
-    virtual bool isOk() override {
+    virtual bool isOk() const override {
         return happy;
     }
 
@@ -217,9 +230,17 @@ public:
     virtual bool debayerHalf(yarp::sig::ImageOf<yarp::sig::PixelMono>& src,
                              yarp::sig::ImageOf<yarp::sig::PixelRgb>& dest);
 
+    /*
+     * The const version of the processBuffered() method performs a const_cast,
+     * and calls the non-const version. This allows to call it in const methods.
+     * Conceptually this is not completely wrong because it does not modify
+     * the external state of the class, but just some internal representation.
+     */
+    virtual bool processBuffered() const;
+
     virtual bool processBuffered();
 
-    virtual bool processDirect(const yarp::os::Bytes& bytes);
+    virtual bool processDirect(yarp::os::Bytes& bytes);
 
 };
 

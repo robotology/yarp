@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Francesco Romano
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_LOCKGUARD_H
@@ -14,8 +16,13 @@ namespace yarp {
         template <typename Lockable>
         class AbstractLockGuard;
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
         class Mutex;
         class RecursiveMutex;
+#else
+        using Mutex = std::mutex;
+        using RecursiveMutex = std::recursive_mutex;
+#endif
 
         typedef AbstractLockGuard<Mutex> LockGuard;
         typedef AbstractLockGuard<RecursiveMutex> RecursiveLockGuard;

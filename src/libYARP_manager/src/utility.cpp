@@ -1,11 +1,10 @@
 /*
- *  Yarp Modules Manager
- *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
- *  Authors: Ali Paikan <ali.paikan@iit.it>
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/manager/utility.h>
 #include <yarp/manager/graph.h>
@@ -100,14 +99,10 @@ std::ostream& operator << (std::ostream &os , StrStream& sstr)
  * Singleton class ErrorLogger
  */
 
-// Global static pointer used to ensure a single instance of the class.
-ErrorLogger* ErrorLogger::pInstance = nullptr;
-
 ErrorLogger* ErrorLogger::Instance()
 {
-    if (!pInstance)
-      pInstance = new ErrorLogger;
-    return pInstance;
+    static ErrorLogger instance;
+    return &instance;
 }
 
 void ErrorLogger::addWarning(const char* szWarning) {

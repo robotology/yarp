@@ -1,9 +1,3 @@
-/*
- * Copyright (C) 2010 RobotCub Consortium
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
-
 /**
  * @page using_cmake Using CMake
 
@@ -49,7 +43,7 @@ Then save the following as "CMakeLists.txt" within the
 same directory:
 
 \verbatim
-    cmake_minimum_required(VERSION 3.0)
+    cmake_minimum_required(VERSION 3.5)
     project(MyProject)
     add_executable(hello main.cpp)
 \endverbatim
@@ -224,7 +218,7 @@ Now we update the "CMakeLists.txt" to tell it about the library
 and to make sure the header file can be found by both the library
 and by "main.cpp":
 \verbatim
-    cmake_minimum_required(VERSION 3.0)
+    cmake_minimum_required(VERSION 3.5)
     project(MyProject)
     include_directories("${CMAKE_SOURCE_DIR}/namer")
     add_library(namer namer/world.cpp namer/world.h)
@@ -263,7 +257,7 @@ two separate projects.
 
 Add the following CMake file for the library in "namer/CMakeLists.txt":
 \verbatim
-    cmake_minimum_required(VERSION 3.0)
+    cmake_minimum_required(VERSION 3.5)
     project(Namer)
     include_directories("${CMAKE_SOURCE_DIR}")
     add_library(namer world.cpp world.h)
@@ -275,7 +269,7 @@ Make a subdirectory "hello" and move "main.cpp" into it.  Then add
 "hello/CMakeLists.txt":
 
 \verbatim
-    cmake_minimum_required(VERSION 3.0)
+    cmake_minimum_required(VERSION 3.5)
     project(hello)
     find_package(Namer REQUIRED)
     include_directories("${Namer_INCLUDE_DIRS}")
@@ -333,7 +327,7 @@ then a directory specified by an environment variable.
 
 Now modify "hello/CMakeLists.txt" so that it can find this script:
 \verbatim
-    cmake_minimum_required(VERSION 3.0)
+    cmake_minimum_required(VERSION 3.5)
     set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}")
     find_package(Namer REQUIRED)
     include_directories("${Namer_INCLUDE_DIRS}")

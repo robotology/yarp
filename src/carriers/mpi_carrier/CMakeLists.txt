@@ -1,8 +1,9 @@
-# Copyright (C) 2010 RobotCub Consortium
-# Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
-#          Daniel Krieg <krieg@fias.uni-frankfurt.de>
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 include(CMakeDependentOption)
 cmake_dependent_option(MPI_DEBUG_MSG "Turn on status messages for MPI Carrier" OFF
@@ -17,7 +18,7 @@ yarp_prepare_plugin(mpi
                     TYPE yarp::os::MpiP2PCarrier
                     INCLUDE yarp/os/MpiP2PCarrier.h
                     EXTRA_CONFIG CODE="MPI_____"
-                    DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_MPI")
+                    DEPENDS "YARP_HAS_MPI")
 
 if(NOT SKIP_mpi)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -53,7 +54,7 @@ yarp_prepare_plugin(mpibcast
                     TYPE yarp::os::MpiBcastCarrier
                     INCLUDE yarp/os/MpiBcastCarrier.h
                     EXTRA_CONFIG CODE="MPIBCAST"
-                    DEPENDS "CREATE_OPTIONAL_CARRIERS;YARP_HAS_MPI")
+                    DEPENDS "YARP_HAS_MPI")
 
 if(NOT SKIP_mpibcast)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)

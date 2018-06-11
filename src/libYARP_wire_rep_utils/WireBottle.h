@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP2_WIREBOTTLE
@@ -24,21 +26,21 @@ public:
         payload_offset = offset;
     }
 
-    virtual size_t length() override {
+    virtual size_t length() const override {
         return delegate->length()-payload_index;
     }
 
-    virtual size_t headerLength() override {
+    virtual size_t headerLength() const override {
         return 0; // not supported
     }
 
-    virtual size_t length(size_t index) override {
+    virtual size_t length(size_t index) const override {
         index += payload_index;
         if (index==payload_index) return delegate->length(index)-payload_offset;
         return delegate->length(index);
     }
 
-    virtual const char *data(size_t index) override {
+    virtual const char *data(size_t index) const override {
         index += payload_index;
         if (index==payload_index) return delegate->data(index)+payload_offset;
         return delegate->data(index);
@@ -55,10 +57,10 @@ public:
     virtual bool dropRequested() override { return false; }
 
 
-    virtual void startWrite() override {
+    virtual void startWrite() const override {
     }
 
-    virtual void stopWrite() override {
+    virtual void stopWrite() const override {
     }
 };
 

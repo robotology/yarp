@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Giorgio Metta, Lorenzo Natale, Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 /*
@@ -82,8 +85,7 @@ int main(int argc, char *argv[])
     }
 
     Network yarp;
-	Time::turboBoost();
-    
+
     char name[1024];
     Value& v = options.find("robot");
     Value& part = options.find("part");
@@ -218,7 +220,7 @@ int main(int argc, char *argv[])
 
                 case VOCAB_PID: {
                     Pid pd;
-                    int j = p.get(2).asInt();
+                    int j = p.get(2).asInt32();
                     pid->getPid(j, &pd);
                     printf("%s: ", Vocab::decode(VOCAB_PID).c_str());
                     printf("kp %.2f ", pd.kp);
@@ -234,7 +236,7 @@ int main(int argc, char *argv[])
 
                 case VOCAB_LIMITS: {
                     double min, max;
-                    int j = p.get(2).asInt();
+                    int j = p.get(2).asInt32();
                     lim->getLimits(j, &min, &max);
                     printf("%s: ", Vocab::decode(VOCAB_LIMITS).c_str());
                     printf("limits: (%.2f %.2f)\n", min, max);
@@ -300,32 +302,32 @@ int main(int argc, char *argv[])
         case VOCAB_SET:
             switch(p.get(1).asVocab()) {
                 case VOCAB_POSITION_MOVE: {
-                    int j = p.get(2).asInt();
-                    double ref = p.get(3).asDouble();
+                    int j = p.get(2).asInt32();
+                    double ref = p.get(3).asFloat64();
                     printf("%s: moving %d to %.2f\n", Vocab::decode(VOCAB_POSITION_MOVE).c_str(), j, ref);
                     pos->positionMove(j, ref);
                 }
                 break;
 
                 case VOCAB_VELOCITY_MOVE: {
-                    int j = p.get(2).asInt();
-                    double ref = p.get(3).asDouble();
+                    int j = p.get(2).asInt32();
+                    double ref = p.get(3).asFloat64();
                     printf("%s: accelerating %d to %.2f\n", Vocab::decode(VOCAB_VELOCITY_MOVE).c_str(), j, ref);
                     vel->velocityMove(j, ref);
                 }
                 break;
 
                 case VOCAB_REF_SPEED: {
-                    int j = p.get(2).asInt();
-                    double ref = p.get(3).asDouble();
+                    int j = p.get(2).asInt32();
+                    double ref = p.get(3).asFloat64();
                     printf("%s: setting speed for %d to %.2f\n", Vocab::decode(VOCAB_REF_SPEED).c_str(), j, ref);
                     pos->setRefSpeed(j, ref);
                 }
                 break;
 
                 case VOCAB_REF_ACCELERATION: {
-                    int j = p.get(2).asInt();
-                    double ref = p.get(3).asDouble();
+                    int j = p.get(2).asInt32();
+                    double ref = p.get(3).asFloat64();
                     printf("%s: setting acceleration for %d to %.2f\n", Vocab::decode(VOCAB_REF_ACCELERATION).c_str(), j, ref);
                     pos->setRefAcceleration(j, ref);
                 }
@@ -334,7 +336,7 @@ int main(int argc, char *argv[])
                 case VOCAB_POSITION_MOVES: {
                     Bottle *l = p.get(2).asList();
                     for (i = 0; i < jnts; i++) {
-                        tmp[i] = l->get(i).asDouble();
+                        tmp[i] = l->get(i).asFloat64();
                     }
                     printf("%s: moving all joints\n", Vocab::decode(VOCAB_POSITION_MOVES).c_str());
                     pos->positionMove(tmp);
@@ -344,7 +346,7 @@ int main(int argc, char *argv[])
                 case VOCAB_VELOCITY_MOVES: {
                     Bottle *l = p.get(2).asList();
                     for (i = 0; i < jnts; i++) {
-                        tmp[i] = l->get(i).asDouble();
+                        tmp[i] = l->get(i).asFloat64();
                     }
                     printf("%s: moving all joints\n", Vocab::decode(VOCAB_VELOCITY_MOVES).c_str());
                     vel->velocityMove(tmp);
@@ -354,7 +356,7 @@ int main(int argc, char *argv[])
                 case VOCAB_REF_SPEEDS: {
                     Bottle *l = p.get(2).asList();
                     for (i = 0; i < jnts; i++) {
-                        tmp[i] = l->get(i).asDouble();
+                        tmp[i] = l->get(i).asFloat64();
                     }
                     printf("%s: setting speed for all joints\n", Vocab::decode(VOCAB_REF_SPEEDS).c_str());
                     pos->setRefSpeeds(tmp);
@@ -364,7 +366,7 @@ int main(int argc, char *argv[])
                 case VOCAB_REF_ACCELERATIONS: {
                     Bottle *l = p.get(2).asList();
                     for (i = 0; i < jnts; i++) {
-                        tmp[i] = l->get(i).asDouble();
+                        tmp[i] = l->get(i).asFloat64();
                     }
                     printf("%s: setting acceleration for all joints\n", Vocab::decode(VOCAB_REF_ACCELERATIONS).c_str());
                     pos->setRefAccelerations(tmp);
@@ -372,7 +374,7 @@ int main(int argc, char *argv[])
                 break;
 
                 case VOCAB_STOP: {
-                    int j = p.get(2).asInt();
+                    int j = p.get(2).asInt32();
                     printf("%s: stopping axis %d\n", Vocab::decode(VOCAB_STOP).c_str());
                     pos->stop(j);
                 }
@@ -385,8 +387,8 @@ int main(int argc, char *argv[])
                 break;
 
                 case VOCAB_ENCODER: {
-                    int j = p.get(2).asInt();
-                    double ref = p.get(3).asDouble();
+                    int j = p.get(2).asInt32();
+                    double ref = p.get(3).asFloat64();
                     printf("%s: setting the encoder value for %d to %.2f\n", Vocab::decode(VOCAB_ENCODER).c_str(), j, ref);
                     enc->setEncoder(j, ref);                    
                 }
@@ -395,7 +397,7 @@ int main(int argc, char *argv[])
                 case VOCAB_ENCODERS: {
                     Bottle *l = p.get(2).asList();
                     for (i = 0; i < jnts; i++) {
-                        tmp[i] = l->get(i).asDouble();
+                        tmp[i] = l->get(i).asFloat64();
                     }
                     printf("%s: setting the encoder value for all joints\n", Vocab::decode(VOCAB_ENCODERS).c_str());
                     enc->setEncoders(tmp);
@@ -404,22 +406,22 @@ int main(int argc, char *argv[])
 
                 case VOCAB_PID: {
                     Pid pd;
-                    int j = p.get(2).asInt();
+                    int j = p.get(2).asInt32();
                     Bottle *l = p.get(3).asList();
-                    pd.kp = l->get(0).asDouble();
-                    pd.kd = l->get(1).asDouble();
-                    pd.ki = l->get(2).asDouble();
-                    pd.max_int = l->get(3).asDouble();
-                    pd.max_output = l->get(4).asDouble();
-                    pd.offset = l->get(5).asDouble();
-                    pd.scale = l->get(6).asDouble();
+                    pd.kp = l->get(0).asFloat64();
+                    pd.kd = l->get(1).asFloat64();
+                    pd.ki = l->get(2).asFloat64();
+                    pd.max_int = l->get(3).asFloat64();
+                    pd.max_output = l->get(4).asFloat64();
+                    pd.offset = l->get(5).asFloat64();
+                    pd.scale = l->get(6).asFloat64();
                     printf("%s: setting PID values for axis %d\n", Vocab::decode(VOCAB_PID).c_str(), j);
                     pid->setPid(j, pd);
                 }
                 break;
 
                 case VOCAB_DISABLE: {
-                    int j = p.get(2).asInt();
+                    int j = p.get(2).asInt32();
                     printf("%s: disabling control for axis %d\n", Vocab::decode(VOCAB_DISABLE).c_str(), j);
                     pid->disablePid(j);
                     amp->disableAmp(j);
@@ -427,7 +429,7 @@ int main(int argc, char *argv[])
                 break;
 
                 case VOCAB_ENABLE: {
-                    int j = p.get(2).asInt();
+                    int j = p.get(2).asInt32();
                     printf("%s: enabling control for axis %d\n", Vocab::decode(VOCAB_ENABLE).c_str(), j);
                     amp->enableAmp(j);
                     pid->enablePid(j);
@@ -435,10 +437,10 @@ int main(int argc, char *argv[])
                 break;
 
                 case VOCAB_LIMITS: {
-                    int j = p.get(2).asInt();
+                    int j = p.get(2).asInt32();
                     printf("%s: setting limits for axis %d\n", Vocab::decode(VOCAB_LIMITS).c_str(), j);
                     Bottle *l = p.get(3).asList();
-                    lim->setLimits(j, l->get(0).asDouble(), l->get(1).asDouble());
+                    lim->setLimits(j, l->get(0).asFloat64(), l->get(1).asFloat64());
                 }
                 break;
             }

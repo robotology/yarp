@@ -1,7 +1,10 @@
-// Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
-// Authors: Alberto Cardellino
-// email:   alberto.cardellino@iit.it
-// CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 
 #include <yarp/os/Time.h>
@@ -12,14 +15,14 @@
 using namespace std;
 using namespace yarp::dev;
 
-FakeAnalogSensor::FakeAnalogSensor(int period) : RateThread(period),
-        mutex(1),
+FakeAnalogSensor::FakeAnalogSensor(double period) : PeriodicThread(period),
+        mutex(),
         channelsNum(0),
         status(IAnalogSensor::AS_OK)
 {
     yTrace();
     timeStamp = yarp::os::Time::now();
-};
+}
 
 FakeAnalogSensor::~FakeAnalogSensor()
 {
@@ -54,32 +57,31 @@ bool FakeAnalogSensor::open(yarp::os::Searchable& config)
         return false;
     }
 
-    int period=config.find("period").asInt();
-    setRate(period);
+    double period=config.find("period").asInt32() / 1000.0;
+    setPeriod(period);
 
     //create the data vector:
     this->channelsNum = 1;
     data.resize(channelsNum);
     data.zero();
 
-    RateThread::start();
-    return true;
+    return PeriodicThread::start();
 }
 
 bool FakeAnalogSensor::close()
 {
     yTrace();
     //stop the thread
-    RateThread::stop();
+    PeriodicThread::stop();
 
     return true;
 }
 
 int FakeAnalogSensor::read(yarp::sig::Vector &out)
 {
-    mutex.wait();
+    mutex.lock();
     out[0] = yarp::os::Time::now();
-    mutex.post();
+    mutex.unlock();
 
     return status;
 }
@@ -133,7 +135,7 @@ bool FakeAnalogSensor::threadInit()
 
 void FakeAnalogSensor::run()
 {
-    mutex.wait();
+    mutex.lock();
 
     // Do fake stuff
     double timeNow = yarp::os::Time::now();
@@ -145,7 +147,7 @@ void FakeAnalogSensor::run()
         status = IAnalogSensor::AS_OK;
 
     timeStamp = timeNow;
-    mutex.post();
+    mutex.unlock();
 }
 
 void FakeAnalogSensor::threadRelease()

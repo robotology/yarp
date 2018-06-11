@@ -2,7 +2,7 @@
  * Copyright (C) 2012, 2015 Istituto Italiano di Tecnologia (IIT)
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 #include "Action.h"
@@ -60,7 +60,7 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
         yFatal() << "Missing \"config\" argument";
     }
 
-    const yarp::os::ConstString &filename = rf.findFile("config");
+    const std::string &filename = rf.findFile("config");
     yTrace() << "Reading robot config file" << filename;
 
     RobotInterface::XMLReader reader;
@@ -75,7 +75,7 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
     mPriv->robot.setVerbose(rf.check("verbose"));
     mPriv->robot.setAllowDeprecatedDevices(rf.check("allow-deprecated-devices"));
 
-    yarp::os::ConstString rpcPortName("/" + getName() + "/yarprobotinterface");
+    std::string rpcPortName("/" + getName() + "/yarprobotinterface");
     mPriv->rpcPort.open(rpcPortName);
     attach(mPriv->rpcPort);
 

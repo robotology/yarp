@@ -1,8 +1,9 @@
-/**
- * Copyright (C) 2016 RobotCub Consortium
- * Authors: Silvio Traversaro
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <vector>
@@ -72,7 +73,7 @@ public:
             return false;
         }
 
-        for (int i = 0; i < m1.rows(); i++)
+        for (size_t i = 0; i < m1.rows(); i++)
         {
             if (!isEqual(m1.getRow(i), m2.getRow(i), precision))
             {
@@ -82,7 +83,7 @@ public:
         return true;
     }
 
-    virtual ConstString getName() override
+    virtual std::string getName() const override
     {
         return "FrameTransformClientTest";
     }

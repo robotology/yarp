@@ -1,19 +1,21 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/NetUint64.h>
 
-#ifdef YARP_INT64
 #ifndef YARP_LITTLE_ENDIAN
 
 using namespace yarp;
 using namespace yarp::os;
 
 
-unsigned YARP_INT64 NetUint64::swap(unsigned YARP_INT64 x) const {
+std::uint64_t NetUint64::swap(std::uint64_t x) const {
     UnionNetUint64 in, out;
     in.d = x;
     for (int i=0; i<8; i++) {
@@ -60,4 +62,3 @@ void NetUint64::operator/=(RawNetUint64 v) {
     set(get()/v);
 }
 #endif // YARP_LITTLE_ENDIAN
-#endif // YARP_INT64

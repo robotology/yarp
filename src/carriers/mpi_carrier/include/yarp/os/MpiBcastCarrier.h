@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2010 Daniel Krieg
- * Author: Daniel Krieg <krieg@fias.uni-frankfurt.de>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2010 Daniel Krieg <krieg@fias.uni-frankfurt.de>
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_MPIBCASTCARRIER
@@ -45,21 +48,21 @@ public:
 
     virtual void close() override;
 
-    virtual Carrier *create() override {
+    virtual Carrier *create() const override {
         return new MpiBcastCarrier();
     }
 
     virtual void createStream(bool sender) override;
 
-    virtual ConstString getName() override {
+    virtual std::string getName() const override {
         return "bcast";
     }
 
-    virtual bool supportReply() override {
+    virtual bool supportReply() const override {
         return false;
     }
 
-    virtual bool isBroadcast() override {
+    virtual bool isBroadcast() const override {
         return true;
     }
 
@@ -73,9 +76,9 @@ public:
         return ok;
     }
 
-    virtual bool isActive() override;
+    virtual bool isActive() const override;
 
-    virtual bool isElect();
+    virtual bool isElect() const;
 };
 
 #endif //_YARP_MPIBCASTCARRIER_

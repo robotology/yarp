@@ -1,0 +1,222 @@
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+// This is an automatically generated file.
+
+// Generated from the following "shape_msgs/Mesh" msg definition:
+//   # Definition of a mesh
+//   
+//   # list of triangles; the index values refer to positions in vertices[]
+//   MeshTriangle[] triangles
+//   
+//   # the actual vertices that make up the mesh
+//   geometry_msgs/Point[] vertices
+// Instances of this class can be read and written with YARP ports,
+// using a ROS-compatible format.
+
+#ifndef YARP_ROSMSG_shape_msgs_Mesh_h
+#define YARP_ROSMSG_shape_msgs_Mesh_h
+
+#include <yarp/os/Wire.h>
+#include <yarp/os/Type.h>
+#include <yarp/os/idl/WireTypes.h>
+#include <string>
+#include <vector>
+#include <yarp/rosmsg/shape_msgs/MeshTriangle.h>
+#include <yarp/rosmsg/geometry_msgs/Point.h>
+
+namespace yarp {
+namespace rosmsg {
+namespace shape_msgs {
+
+class Mesh : public yarp::os::idl::WirePortable
+{
+public:
+    std::vector<yarp::rosmsg::shape_msgs::MeshTriangle> triangles;
+    std::vector<yarp::rosmsg::geometry_msgs::Point> vertices;
+
+    Mesh() :
+            triangles(),
+            vertices()
+    {
+    }
+
+    void clear()
+    {
+        // *** triangles ***
+        triangles.clear();
+
+        // *** vertices ***
+        vertices.clear();
+    }
+
+    bool readBare(yarp::os::ConnectionReader& connection) override
+    {
+        // *** triangles ***
+        int len = connection.expectInt32();
+        triangles.resize(len);
+        for (int i=0; i<len; i++) {
+            if (!triangles[i].read(connection)) {
+                return false;
+            }
+        }
+
+        // *** vertices ***
+        len = connection.expectInt32();
+        vertices.resize(len);
+        for (int i=0; i<len; i++) {
+            if (!vertices[i].read(connection)) {
+                return false;
+            }
+        }
+
+        return !connection.isError();
+    }
+
+    bool readBottle(yarp::os::ConnectionReader& connection) override
+    {
+        connection.convertTextMode();
+        yarp::os::idl::WireReader reader(connection);
+        if (!reader.readListHeader(2)) {
+            return false;
+        }
+
+        // *** triangles ***
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
+            return false;
+        }
+        int len = connection.expectInt32();
+        triangles.resize(len);
+        for (int i=0; i<len; i++) {
+            if (!triangles[i].read(connection)) {
+                return false;
+            }
+        }
+
+        // *** vertices ***
+        if (connection.expectInt32() != BOTTLE_TAG_LIST) {
+            return false;
+        }
+        len = connection.expectInt32();
+        vertices.resize(len);
+        for (int i=0; i<len; i++) {
+            if (!vertices[i].read(connection)) {
+                return false;
+            }
+        }
+
+        return !connection.isError();
+    }
+
+    using yarp::os::idl::WirePortable::read;
+    bool read(yarp::os::ConnectionReader& connection) override
+    {
+        return (connection.isBareMode() ? readBare(connection)
+                                        : readBottle(connection));
+    }
+
+    bool writeBare(yarp::os::ConnectionWriter& connection) const override
+    {
+        // *** triangles ***
+        connection.appendInt32(triangles.size());
+        for (size_t i=0; i<triangles.size(); i++) {
+            if (!triangles[i].write(connection)) {
+                return false;
+            }
+        }
+
+        // *** vertices ***
+        connection.appendInt32(vertices.size());
+        for (size_t i=0; i<vertices.size(); i++) {
+            if (!vertices[i].write(connection)) {
+                return false;
+            }
+        }
+
+        return !connection.isError();
+    }
+
+    bool writeBottle(yarp::os::ConnectionWriter& connection) const override
+    {
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(2);
+
+        // *** triangles ***
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(triangles.size());
+        for (size_t i=0; i<triangles.size(); i++) {
+            if (!triangles[i].write(connection)) {
+                return false;
+            }
+        }
+
+        // *** vertices ***
+        connection.appendInt32(BOTTLE_TAG_LIST);
+        connection.appendInt32(vertices.size());
+        for (size_t i=0; i<vertices.size(); i++) {
+            if (!vertices[i].write(connection)) {
+                return false;
+            }
+        }
+
+        connection.convertTextMode();
+        return !connection.isError();
+    }
+
+    using yarp::os::idl::WirePortable::write;
+    bool write(yarp::os::ConnectionWriter& connection) const override
+    {
+        return (connection.isBareMode() ? writeBare(connection)
+                                        : writeBottle(connection));
+    }
+
+    // This class will serialize ROS style or YARP style depending on protocol.
+    // If you need to force a serialization style, use one of these classes:
+    typedef yarp::os::idl::BareStyle<yarp::rosmsg::shape_msgs::Mesh> rosStyle;
+    typedef yarp::os::idl::BottleStyle<yarp::rosmsg::shape_msgs::Mesh> bottleStyle;
+
+    // Give source text for class, ROS will need this
+    static std::string typeText()
+    {
+        return std::string("\
+# Definition of a mesh\n\
+\n\
+# list of triangles; the index values refer to positions in vertices[]\n\
+MeshTriangle[] triangles\n\
+\n\
+# the actual vertices that make up the mesh\n\
+geometry_msgs/Point[] vertices\n\
+") + std::string("\n\
+================================================================================\n\
+MSG: shape_msgs/MeshTriangle\n\
+") + yarp::rosmsg::shape_msgs::MeshTriangle::typeText() + std::string("\n\
+================================================================================\n\
+MSG: geometry_msgs/Point\n\
+") + yarp::rosmsg::geometry_msgs::Point::typeText();
+    }
+
+    std::string getTypeText() const
+    {
+        return yarp::rosmsg::shape_msgs::Mesh::typeText();
+    }
+
+    // Name the class, ROS will need this
+    yarp::os::Type getType() const override
+    {
+        yarp::os::Type typ = yarp::os::Type::byName("shape_msgs/Mesh", "shape_msgs/Mesh");
+        typ.addProperty("md5sum", yarp::os::Value("1ffdae9486cd3316a121c578b47a85cc"));
+        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        return typ;
+    }
+};
+
+} // namespace shape_msgs
+} // namespace rosmsg
+} // namespace yarp
+
+#endif // YARP_ROSMSG_shape_msgs_Mesh_h

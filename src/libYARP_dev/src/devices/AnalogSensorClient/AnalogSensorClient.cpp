@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Author: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "AnalogSensorClient.h"
@@ -17,14 +20,14 @@ using namespace yarp::sig;
 
 inline void InputPortProcessor::resetStat()
 {
-    mutex.wait();
+    mutex.lock();
     count=0;
     deltaT=0;
     deltaTMax=0;
     deltaTMin=1e22;
     now=Time::now();
     prev=now;
-    mutex.post();
+    mutex.unlock();
 }
 
 InputPortProcessor::InputPortProcessor()
@@ -36,7 +39,7 @@ InputPortProcessor::InputPortProcessor()
 void InputPortProcessor::onRead(yarp::sig::Vector &v)
 {
     now=Time::now();
-    mutex.wait();
+    mutex.lock();
 
     if (count>0)
     {
@@ -82,35 +85,35 @@ void InputPortProcessor::onRead(yarp::sig::Vector &v)
     }
     lastStamp = newStamp;
 
-    mutex.post();
+    mutex.unlock();
 }
 
 inline int InputPortProcessor::getLast(yarp::sig::Vector &data, Stamp &stmp)
 {
-    mutex.wait();
+    mutex.lock();
     int ret=state;
     if (ret!=IAnalogSensor::AS_ERROR)
     {
         data=lastVector;
         stmp = lastStamp;
     }
-    mutex.post();
+    mutex.unlock();
 
     return ret;
 }
 
 inline int InputPortProcessor::getIterations()
 {
-    mutex.wait();
+    mutex.lock();
     int ret=count;
-    mutex.post();
+    mutex.unlock();
     return ret;
 }
 
 // time is in ms
 void InputPortProcessor::getEstFrequency(int &ite, double &av, double &min, double &max)
 {
-    mutex.wait();
+    mutex.lock();
     ite=count;
     min=deltaTMin*1000;
     max=deltaTMax*1000;
@@ -123,7 +126,7 @@ void InputPortProcessor::getEstFrequency(int &ite, double &av, double &min, doub
         av=deltaT/count;
     }
     av=av*1000;
-    mutex.post();
+    mutex.unlock();
 }
 
 int InputPortProcessor::getState()
@@ -172,7 +175,7 @@ void  yarp::dev::AnalogSensorClient::removeLeadingTrailingSlashesOnly(std::strin
 
 bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
 {
-    ConstString carrier = config.check("carrier", Value("udp"), "default carrier for streaming robot state").asString().c_str();
+    std::string carrier = config.check("carrier", Value("udp"), "default carrier for streaming robot state").asString().c_str();
 
     local.clear();
     remote.clear();
@@ -191,9 +194,9 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    ConstString local_rpc = local;
+    std::string local_rpc = local;
     local_rpc += "/rpc:o";
-    ConstString remote_rpc = remote;
+    std::string remote_rpc = remote;
     remote_rpc += "/rpc:i";
 
     if (!inputPort.open(local.c_str()))
@@ -265,7 +268,7 @@ int yarp::dev::AnalogSensorClient::calibrateSensor(const yarp::sig::Vector& valu
     cmd.addVocab(VOCAB_CALIBRATE);
     Bottle& l = cmd.addList();
     for (int i = 0; i < this->getChannels(); i++)
-         l.addDouble(value[i]);
+         l.addFloat64(value[i]);
     bool ok = rpcPort.write(cmd, response);
     return CHECK_FAIL(ok, response);
 }
@@ -275,7 +278,7 @@ int yarp::dev::AnalogSensorClient::calibrateChannel(int ch)
     Bottle cmd, response;
     cmd.addVocab(VOCAB_IANALOG);
     cmd.addVocab(VOCAB_CALIBRATE_CHANNEL);
-    cmd.addInt(ch);
+    cmd.addInt32(ch);
     bool ok = rpcPort.write(cmd, response);
     return CHECK_FAIL(ok, response);
 }
@@ -285,8 +288,8 @@ int yarp::dev::AnalogSensorClient::calibrateChannel(int ch, double value)
     Bottle cmd, response;
     cmd.addVocab(VOCAB_IANALOG);
     cmd.addVocab(VOCAB_CALIBRATE_CHANNEL);
-    cmd.addInt(ch);
-    cmd.addDouble(value);
+    cmd.addInt32(ch);
+    cmd.addFloat64(value);
     bool ok = rpcPort.write(cmd, response);
     return CHECK_FAIL(ok, response);
 }

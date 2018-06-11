@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006, 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_ALL_H
@@ -10,9 +13,11 @@
 // everything for the yarp::os namespace
 #include <yarp/os/NetFloat32.h>
 #include <yarp/os/NetFloat64.h>
+#include <yarp/os/NetInt8.h>
 #include <yarp/os/NetInt16.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetInt64.h>
+#include <yarp/os/NetUint8.h>
 #include <yarp/os/NetUint16.h>
 #include <yarp/os/NetUint32.h>
 #include <yarp/os/NetUint64.h>
@@ -21,7 +26,6 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
-#include <yarp/os/ConstString.h>
 #include <yarp/os/Contactable.h>
 #include <yarp/os/UnbufferedContactable.h>
 #include <yarp/os/AbstractContactable.h>
@@ -49,7 +53,7 @@
 #include <yarp/os/LockGuard.h>
 #include <yarp/os/Event.h>
 #include <yarp/os/Thread.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Terminator.h>
 #include <yarp/os/Time.h>
@@ -67,6 +71,11 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/MessageStack.h>
+
+#ifndef YARP_NO_DEPRECATED // since YARP 3.0.0
+# include <yarp/os/ConstString.h>
+# include <yarp/os/RateThread.h>
+#endif
 
 /**
  * @namespace yarp

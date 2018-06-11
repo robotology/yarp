@@ -1,10 +1,18 @@
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * LGPLv2.1+ license. See the accompanying LICENSE file for details.
+ */
+
 #include "newapplicationwizard.h"
 #include <QGridLayout>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
 
-#include <yarp/manager/ymm-dir.h>
+#include <dirent.h>
 #include <yarp/os/Network.h>
 
 using namespace std;
@@ -103,7 +111,7 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
 
 
 
-    const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+    const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
     if(m_config->check("apppath")){
         string basepath=m_config->check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
         string appPaths(m_config->find("apppath").asString().c_str());

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015-2017 Istituto Italiano di Tecnologia (IIT)
  * Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 #define _USE_MATH_DEFINES
 
@@ -179,9 +179,9 @@ inline void writeVec3OnPort(yarp::os::BufferedPort<yarp::os::Bottle>*const & por
     {
         yarp::os::Bottle& output = port->prepare();
         output.clear();
-        output.addDouble(vec3.x);
-        output.addDouble(vec3.y);
-        output.addDouble(vec3.z);
+        output.addFloat64(vec3.x);
+        output.addFloat64(vec3.y);
+        output.addFloat64(vec3.z);
         port->setEnvelope(stamp);
         port->write();
     }
@@ -414,8 +414,8 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         err_msgs[DOUBLE]      = "a real type";
         isFunctionMap[STRING] = &yarp::os::Value::isString;
         isFunctionMap[BOOL]   = &yarp::os::Value::isBool;
-        isFunctionMap[INT]    = &yarp::os::Value::isInt;
-        isFunctionMap[DOUBLE] = &yarp::os::Value::isDouble;
+        isFunctionMap[INT]    = &yarp::os::Value::isInt32;
+        isFunctionMap[DOUBLE] = &yarp::os::Value::isFloat64;
 
         //to add a parameter check, simply add a line below here and let the magic happens
         paramParser.push_back(std::make_pair("tfDevice",            STRING));
@@ -436,7 +436,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
                 return false;
             }
         }
-        guiCount = cfg.find("gui_elements").asInt();
+        guiCount = cfg.find("gui_elements").asInt32();
         paramParser.clear();
         if (guiCount)
         {
@@ -469,12 +469,12 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
                     }
                 }
 
-                hud.resizeW = guip.find("width").asDouble();
-                hud.resizeH = guip.find("height").asDouble();
-                hud.x       = guip.find("x").asDouble();
-                hud.y       = guip.find("y").asDouble();
-                hud.z       = guip.find("z").asDouble();
-                hud.alpha   = guip.find("alpha").asDouble();
+                hud.resizeW = guip.find("width").asFloat64();
+                hud.resizeH = guip.find("height").asFloat64();
+                hud.x       = guip.find("x").asFloat64();
+                hud.y       = guip.find("y").asFloat64();
+                hud.z       = guip.find("z").asFloat64();
+                hud.alpha   = guip.find("alpha").asFloat64();
                 hud.port    = new FlexImagePort;
                 hud.texture = new TextureBuffer();
                 std::transform(groupName.begin(), groupName.end(), groupName.begin(), ::tolower);
@@ -561,11 +561,11 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         displayPorts[eye]->setReadOnly();
     }
 
-    texWidth  = cfg.check("w",    yarp::os::Value(640), "Texture width (usually same as camera width)").asInt();
-    texHeight = cfg.check("h",    yarp::os::Value(480), "Texture height (usually same as camera height)").asInt();
+    texWidth  = cfg.check("w",    yarp::os::Value(640), "Texture width (usually same as camera width)").asInt32();
+    texHeight = cfg.check("h",    yarp::os::Value(480), "Texture height (usually same as camera height)").asInt32();
 
     // TODO accept different fov for right and left eye?
-    double hfov   = cfg.check("hfov", yarp::os::Value(105.),  "Camera horizontal field of view").asDouble();
+    double hfov   = cfg.check("hfov", yarp::os::Value(105.),  "Camera horizontal field of view").asFloat64();
     camHFOV[0] = hfov;
     camHFOV[1] = hfov;
 
@@ -585,14 +585,14 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         }
     }
 
-    prediction = cfg.check("prediction", yarp::os::Value(0.01), "Prediction [sec]").asDouble();
+    prediction = cfg.check("prediction", yarp::os::Value(0.01), "Prediction [sec]").asFloat64();
 
-    displayPorts[0]->rollOffset  = static_cast<float>(cfg.check("left-roll-offset",   yarp::os::Value(0.0), "[LEFT_SHIFT+PAGE_UP][LEFT_SHIFT+PAGE_DOWN] Left eye roll offset").asDouble());
-    displayPorts[0]->pitchOffset = static_cast<float>(cfg.check("left-pitch-offset",  yarp::os::Value(0.0), "[LEFT_SHIFT+UP_ARROW][LEFT_SHIFT+DOWN_ARROW] Left eye pitch offset").asDouble());
-    displayPorts[0]->yawOffset   = static_cast<float>(cfg.check("left-yaw-offset",    yarp::os::Value(0.0), "[LEFT_SHIFT+LEFT_ARROW][LEFT_SHIFT+RIGHT_ARROW] Left eye yaw offset").asDouble());
-    displayPorts[1]->rollOffset  = static_cast<float>(cfg.check("right-roll-offset",  yarp::os::Value(0.0), "[RIGHT_SHIFT+PAGE_UP][RIGHT_SHIFT+PAGE_DOWN] Right eye roll offset").asDouble());
-    displayPorts[1]->pitchOffset = static_cast<float>(cfg.check("right-pitch-offset", yarp::os::Value(0.0), "[RIGHT_SHIFT+UP_ARROW][RIGHT_SHIFT+DOWN_ARROW] Right eye pitch offset").asDouble());
-    displayPorts[1]->yawOffset   = static_cast<float>(cfg.check("right-yaw-offset",   yarp::os::Value(0.0), "[RIGHT_SHIFT+LEFT_ARROW][RIGHT_SHIFT+RIGHT_ARROW] Right eye yaw offset").asDouble());
+    displayPorts[0]->rollOffset  = static_cast<float>(cfg.check("left-roll-offset",   yarp::os::Value(0.0), "[LEFT_SHIFT+PAGE_UP][LEFT_SHIFT+PAGE_DOWN] Left eye roll offset").asFloat64());
+    displayPorts[0]->pitchOffset = static_cast<float>(cfg.check("left-pitch-offset",  yarp::os::Value(0.0), "[LEFT_SHIFT+UP_ARROW][LEFT_SHIFT+DOWN_ARROW] Left eye pitch offset").asFloat64());
+    displayPorts[0]->yawOffset   = static_cast<float>(cfg.check("left-yaw-offset",    yarp::os::Value(0.0), "[LEFT_SHIFT+LEFT_ARROW][LEFT_SHIFT+RIGHT_ARROW] Left eye yaw offset").asFloat64());
+    displayPorts[1]->rollOffset  = static_cast<float>(cfg.check("right-roll-offset",  yarp::os::Value(0.0), "[RIGHT_SHIFT+PAGE_UP][RIGHT_SHIFT+PAGE_DOWN] Right eye roll offset").asFloat64());
+    displayPorts[1]->pitchOffset = static_cast<float>(cfg.check("right-pitch-offset", yarp::os::Value(0.0), "[RIGHT_SHIFT+UP_ARROW][RIGHT_SHIFT+DOWN_ARROW] Right eye pitch offset").asFloat64());
+    displayPorts[1]->yawOffset   = static_cast<float>(cfg.check("right-yaw-offset",   yarp::os::Value(0.0), "[RIGHT_SHIFT+LEFT_ARROW][RIGHT_SHIFT+RIGHT_ARROW] Right eye yaw offset").asFloat64());
 
     // Start the thread
     if (!this->start()) {
@@ -775,7 +775,7 @@ void yarp::dev::OVRHeadset::threadRelease()
         // Disable Performance Hud Mode before destroying the session,
         // or it will stay after the device is closed.
         int PerfHudMode = (int)ovrPerfHud_Off;
-        ovr_SetInt(session, OVR_PERF_HUD_MODE, PerfHudMode);
+        ovr_SetInt32(session, OVR_PERF_HUD_MODE, PerfHudMode);
 
         ovr_Destroy(session);
         session = 0;
@@ -992,9 +992,9 @@ void yarp::dev::OVRHeadset::run()
             orientation.GetEulerAngles<OVR::Axis_Y, OVR::Axis_X, OVR::Axis_Z>(&yaw, &pitch, &roll);
             yarp::os::Bottle& output_orientation = orientationPort->prepare();
             output_orientation.clear();
-            output_orientation.addDouble(OVR::RadToDegree(pitch));
-            output_orientation.addDouble(OVR::RadToDegree(-roll));
-            output_orientation.addDouble(OVR::RadToDegree(yaw));
+            output_orientation.addFloat64(OVR::RadToDegree(pitch));
+            output_orientation.addFloat64(OVR::RadToDegree(-roll));
+            output_orientation.addFloat64(OVR::RadToDegree(yaw));
             orientationPort->setEnvelope(stamp);
             orientationPort->write();
         }
@@ -1037,9 +1037,9 @@ void yarp::dev::OVRHeadset::run()
             orientation.GetEulerAngles<OVR::Axis_Y, OVR::Axis_X, OVR::Axis_Z>(&yaw, &pitch, &roll);
             yarp::os::Bottle& output_orientation = predictedOrientationPort->prepare();
             output_orientation.clear();
-            output_orientation.addDouble(OVR::RadToDegree(pitch));
-            output_orientation.addDouble(OVR::RadToDegree(-roll));
-            output_orientation.addDouble(OVR::RadToDegree(yaw));
+            output_orientation.addFloat64(OVR::RadToDegree(pitch));
+            output_orientation.addFloat64(OVR::RadToDegree(-roll));
+            output_orientation.addFloat64(OVR::RadToDegree(yaw));
             predictedOrientationPort->setEnvelope(predicted_stamp);
             predictedOrientationPort->write();
         }
@@ -1386,9 +1386,9 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
         break;
     case GLFW_KEY_SLASH:
         {
-            int PerfHudMode = ovr_GetInt(session, OVR_PERF_HUD_MODE, 0);
+            int PerfHudMode = ovr_GetInt32(session, OVR_PERF_HUD_MODE, 0);
             PerfHudMode = (PerfHudMode + 1) % 8;
-            ovr_SetInt(session, OVR_PERF_HUD_MODE, PerfHudMode);
+            ovr_SetInt32(session, OVR_PERF_HUD_MODE, PerfHudMode);
         }
         break;
     case GLFW_KEY_G:

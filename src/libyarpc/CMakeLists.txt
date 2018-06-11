@@ -1,7 +1,9 @@
-# Copyright: (C) 2009 RobotCub Consortium
-# Author: Paul Fitzpatrick
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 include(CMakeDependentOption)
 cmake_dependent_option(CREATE_YARPC "Compile experimental stable C library" FALSE
@@ -14,9 +16,6 @@ mark_as_advanced(CREATE_YARPC_STANDALONE)
 
 if(CREATE_YARPC)
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS})
 
   unset(YARP_COPY_SRC)
   if(CREATE_YARPC_STANDALONE)
@@ -64,14 +63,14 @@ if(CREATE_YARPC)
     target_link_libraries(yarpc PRIVATE YARP::YARP_OS
                                         YARP::YARP_init)
     if(YARP_LINK_PLUGINS)
-      if(CREATE_OPTIONAL_CARRIERS)
+      if(YARP_COMPILE_CARRIER_PLUGINS)
         set_property(SOURCE ${init_src}
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION=add_yarpcar_plugins)
         target_link_libraries(yarpc PRIVATE YARP::yarpcar)
       endif()
 
-      if(CREATE_DEVICE_LIBRARY_MODULES)
+      if(YARP_COMPILE_DEVICE_PLUGINS)
         set_property(SOURCE ${init_src}
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION2=add_yarpmod_plugins)

@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2009 RobotCub Consortium
- * Author: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "StreamingMessagesParser.h"
@@ -19,10 +22,8 @@ using namespace std;
 
 StreamingMessagesParser::StreamingMessagesParser() :
         stream_IPosCtrl(nullptr),
-        stream_IPosCtrl2(nullptr),
         stream_IPosDirect(nullptr),
         stream_IVel(nullptr),
-        stream_IVel2(nullptr),
         stream_ITorque(nullptr),
         stream_IPWM(nullptr),
         stream_ICurrent(nullptr),
@@ -33,10 +34,8 @@ StreamingMessagesParser::StreamingMessagesParser() :
 void StreamingMessagesParser::init(ControlBoardWrapper *x) {
     stream_nJoints = 0;
     stream_IPosCtrl  = dynamic_cast<yarp::dev::IPositionControl *> (x);
-    stream_IPosCtrl2 = dynamic_cast<yarp::dev::IPositionControl2 *> (x);
     stream_IPosDirect = dynamic_cast<yarp::dev::IPositionDirect *> (x);
     stream_IVel = dynamic_cast<yarp::dev::IVelocityControl *> (x);
-    stream_IVel2 = dynamic_cast<yarp::dev::IVelocityControl2 *> (x);
     stream_ITorque=dynamic_cast<yarp::dev::ITorqueControl *> (x);
     stream_IPWM = dynamic_cast<yarp::dev::IPWMControl *> (x);
     stream_ICurrent = dynamic_cast<yarp::dev::ICurrentControl *> (x);
@@ -64,7 +63,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
     // some consistency checks
     if ((int)cmdVector.size() > stream_nJoints)
     {
-        yarp::os::ConstString str = yarp::os::Vocab::decode(b.get(0).asVocab());
+        std::string str = yarp::os::Vocab::decode(b.get(0).asVocab());
         yError("Received command vector with number of elements bigger than axis controlled by this wrapper (cmd: %s requested jnts: %d received jnts: %d)\n",str.c_str(),stream_nJoints,(int)cmdVector.size());
         return;
     }
@@ -85,7 +84,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 {
                     if (stream_IPWM)
                     {
-                        bool ok = stream_IPWM->setRefDutyCycle(b.get(2).asInt(), cmdVector[0]);
+                        bool ok = stream_IPWM->setRefDutyCycle(b.get(2).asInt32(), cmdVector[0]);
                         if (!ok)
                             yError("Errors while trying to command an pwm message");
                     }
@@ -117,7 +116,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 {
                     if (stream_ICurrent)
                     {
-                        bool ok = stream_ICurrent->setRefCurrent(b.get(2).asInt(), cmdVector[0]);
+                        bool ok = stream_ICurrent->setRefCurrent(b.get(2).asInt32(), cmdVector[0]);
                         if (!ok)
                         {
                             yError("Errors while trying to command a streaming current message on single joint\n");
@@ -141,7 +140,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 {
                     if (stream_ICurrent)
                     {
-                        int n_joints = b.get(2).asInt();
+                        int n_joints = b.get(2).asInt32();
                         Bottle *jlut = b.get(3).asList();
                         if (((int)jlut->size() != n_joints) && ((int)cmdVector.size() != n_joints))
                         {
@@ -150,7 +149,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
 
                         int *joint_list = new int[n_joints];
                         for (int i = 0; i < n_joints; i++)
-                            joint_list[i] = jlut->get(i).asInt();
+                            joint_list[i] = jlut->get(i).asInt32();
 
 
                         bool ok = stream_ICurrent->setRefCurrents(n_joints, joint_list, cmdVector.data());
@@ -165,7 +164,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
                 break;
                 default:
                 {
-                    yarp::os::ConstString str = yarp::os::Vocab::decode(b.get(0).asVocab());
+                    std::string str = yarp::os::Vocab::decode(b.get(0).asVocab());
                     yError("Unrecognized message while receiving on command port (%s)\n", str.c_str());
                 }
                 break;
@@ -199,7 +198,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
 
         case VOCAB_VELOCITY_MOVE:
             {
-                stream_IVel->velocityMove(b.get(1).asInt(), cmdVector[0]);
+                stream_IVel->velocityMove(b.get(1).asInt32(), cmdVector[0]);
             }
         break;
 
@@ -218,9 +217,9 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         {
             if(stream_IPosDirect)
             {
-                bool ok = stream_IPosDirect->setPosition(b.get(1).asInt(), cmdVector[0]); // cmdVector.data());
+                bool ok = stream_IPosDirect->setPosition(b.get(1).asInt32(), cmdVector[0]); // cmdVector.data());
                 if (!ok)
-                {   yError("Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt() ); }
+                {   yError("Errors while trying to command an streaming position direct message on joint %d\n", b.get(1).asInt32() ); }
             }
         }
         break;
@@ -229,7 +228,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         {
             if (stream_ITorque)
             {
-                bool ok = stream_ITorque->setRefTorque(b.get(1).asInt(), cmdVector[0]);
+                bool ok = stream_ITorque->setRefTorque(b.get(1).asInt32(), cmdVector[0]);
                 if (!ok)
                 {   yError("Errors while trying to command a streaming torque direct message on single joint\n"); }
             }
@@ -251,7 +250,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         {
             if (stream_ITorque)
             {
-                int n_joints = b.get(1).asInt();
+                int n_joints = b.get(1).asInt32();
                 Bottle *jlut = b.get(2).asList();
                 if( ((int)jlut->size() != n_joints) && ((int)cmdVector.size() != n_joints) )
                 {
@@ -260,7 +259,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
 
                 int *joint_list = new int[n_joints];
                 for (int i = 0; i < n_joints; i++)
-                    joint_list[i] = jlut->get(i).asInt();
+                    joint_list[i] = jlut->get(i).asInt32();
 
 
                 bool ok = stream_ITorque->setRefTorques(n_joints, joint_list, cmdVector.data());
@@ -276,7 +275,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         {
             if(stream_IPosDirect)
             {
-                int n_joints = b.get(1).asInt();
+                int n_joints = b.get(1).asInt32();
                 Bottle *jlut = b.get(2).asList();
                 if( ((int)jlut->size() != n_joints) && ((int)cmdVector.size() != n_joints) )
                 {
@@ -285,7 +284,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
 
                 int *joint_list = new int[n_joints];
                 for (int i = 0; i < n_joints; i++)
-                    joint_list[i] = jlut->get(i).asInt();
+                    joint_list[i] = jlut->get(i).asInt32();
 
 
                 bool ok = stream_IPosDirect->setPositions(n_joints, joint_list, cmdVector.data());
@@ -309,18 +308,18 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
         break;
         case VOCAB_VELOCITY_MOVE_GROUP:
         {
-            if(stream_IVel2)
+            if(stream_IVel)
             {
-                int n_joints = b.get(1).asInt();
+                int n_joints = b.get(1).asInt32();
                 Bottle *jlut = b.get(2).asList();
                 if( ((int)jlut->size() != n_joints) && ((int)cmdVector.size() != n_joints) )
                     yError("Received VOCAB_VELOCITY_MOVE_GROUP size of joints vector or positions vector does not match the selected joint number\n" );
 
                 int *joint_list = new int[n_joints];
                 for (int i = 0; i < n_joints; i++)
-                    joint_list[i] = jlut->get(i).asInt();
+                    joint_list[i] = jlut->get(i).asInt32();
 
-                bool ok = stream_IVel2->velocityMove(n_joints, joint_list, cmdVector.data());
+                bool ok = stream_IVel->velocityMove(n_joints, joint_list, cmdVector.data());
                 if (!ok)
                 {   yError("Error while trying to command a velocity move on joint group\n" ); }
 
@@ -331,7 +330,7 @@ void StreamingMessagesParser::onRead(CommandMessage& v)
 
         default:
             {
-                yarp::os::ConstString str = yarp::os::Vocab::decode(b.get(0).asVocab());
+                std::string str = yarp::os::Vocab::decode(b.get(0).asVocab());
                 yError("Unrecognized message while receiving on command port (%s)\n",str.c_str());
             }
             break;

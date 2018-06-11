@@ -1,13 +1,16 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Authors: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <stdio.h>
 
 #include <yarp/os/Network.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/BufferedPort.h>
@@ -18,7 +21,7 @@ using namespace yarp::os;
 class Callback:public BufferedPort<Bottle>
 {
 private:
-	Semaphore mutex;
+	Mutex mutex;
 	Bottle Datum;
 
 public:
@@ -30,21 +33,21 @@ public:
 
   	void onRead(Bottle &v)
 	{
-        mutex.wait(); 
+        mutex.lock(); 
         Datum=v;
         //Time::delay(5);
-        mutex.post();
+        mutex.unlock();
         fprintf(stderr, "Callback got: %s\n",Datum.toString().c_str());
     }
 
 	void lock()
 	{
-		mutex.wait();
+		mutex.lock();
 	}
 
     void unlock()
     {
-        mutex.post();
+        mutex.unlock();
     }
 
     Bottle get()

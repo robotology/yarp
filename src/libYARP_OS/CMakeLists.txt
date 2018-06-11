@@ -1,6 +1,9 @@
-# Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 project(YARP_OS)
 
@@ -49,10 +52,12 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/NestedContact.h
                  include/yarp/os/NetFloat32.h
                  include/yarp/os/NetFloat64.h
+                 include/yarp/os/NetInt8.h
                  include/yarp/os/NetInt16.h
                  include/yarp/os/NetInt32.h
                  include/yarp/os/NetInt64.h
                  include/yarp/os/NetType.h
+                 include/yarp/os/NetUint8.h
                  include/yarp/os/NetUint16.h
                  include/yarp/os/NetUint32.h
                  include/yarp/os/NetUint64.h
@@ -65,6 +70,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Os.h
                  include/yarp/os/OutputProtocol.h
                  include/yarp/os/OutputStream.h
+                 include/yarp/os/PeriodicThread.h
                  include/yarp/os/Ping.h
                  include/yarp/os/Portable.h
                  include/yarp/os/PortablePair.h
@@ -91,7 +97,6 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Route.h
                  include/yarp/os/RpcClient.h
                  include/yarp/os/RpcServer.h
-                 include/yarp/os/Run.h
                  include/yarp/os/Runnable.h
                  include/yarp/os/Searchable.h
                  include/yarp/os/Semaphore.h
@@ -111,6 +116,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Things.h
                  include/yarp/os/Thread.h
                  include/yarp/os/Time.h
+                 include/yarp/os/Timer.h
                  include/yarp/os/TwoWayStream.h
                  include/yarp/os/Type.h
                  include/yarp/os/TypedReader.h
@@ -141,14 +147,10 @@ set(YARP_OS_IDL_HDRS include/yarp/os/idl/BareStyle.h
                      include/yarp/os/idl/WireVocab.h
                      include/yarp/os/idl/WireWriter.h)
 
-set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
-                      include/yarp/os/impl/ACESemaphoreImpl.h
-                      include/yarp/os/impl/AuthHMAC.h
+set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/BottleImpl.h
                       include/yarp/os/impl/BufferedConnectionWriter.h
-                      include/yarp/os/impl/Companion.h
-                      include/yarp/os/impl/CXX11LockImpl.h
-                      include/yarp/os/impl/CXX11SemaphoreImpl.h
+                      include/yarp/os/impl/ConnectionRecorder.h
                       include/yarp/os/impl/DgramTwoWayStream.h
                       include/yarp/os/impl/Dispatcher.h
                       include/yarp/os/impl/FakeFace.h
@@ -156,13 +158,10 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/FallbackNameClient.h
                       include/yarp/os/impl/FallbackNameServer.h
                       include/yarp/os/impl/HttpCarrier.h
-                      include/yarp/os/impl/IOException.h
                       include/yarp/os/impl/LocalCarrier.h
-                      include/yarp/os/impl/LockImpl.h
                       include/yarp/os/impl/Logger.h
                       include/yarp/os/impl/LogImpl.h
                       include/yarp/os/impl/LogForwarder.h
-                      include/yarp/os/impl/MachSemaphoreImpl.h
                       include/yarp/os/impl/McastCarrier.h
                       include/yarp/os/impl/MemoryOutputStream.h
                       include/yarp/os/impl/NameClient.h
@@ -175,13 +174,9 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/PlatformLimits.h
                       include/yarp/os/impl/PlatformNetdb.h
                       include/yarp/os/impl/PlatformSignal.h
-                      include/yarp/os/impl/PlatformSize.h
                       include/yarp/os/impl/PlatformStdio.h
                       include/yarp/os/impl/PlatformStdlib.h
-                      include/yarp/os/impl/PlatformSysPrctl.h
-                      include/yarp/os/impl/PlatformSysStat.h
                       include/yarp/os/impl/PlatformSysWait.h
-                      include/yarp/os/impl/PlatformThread.h
                       include/yarp/os/impl/PlatformTime.h
                       include/yarp/os/impl/PlatformUnistd.h
                       include/yarp/os/impl/PortCommand.h
@@ -193,36 +188,26 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACELockImpl.h
                       include/yarp/os/impl/PortCorePackets.h
                       include/yarp/os/impl/PortCoreUnit.h
                       include/yarp/os/impl/PortManager.h
-                      include/yarp/os/impl/POSIXLockImpl.h
-                      include/yarp/os/impl/POSIXSemaphoreImpl.h
                       include/yarp/os/impl/Protocol.h
-                      include/yarp/os/impl/RunCheckpoints.h
                       include/yarp/os/impl/Runnable.h
-                      include/yarp/os/impl/RunProcManager.h
-                      include/yarp/os/impl/RunReadWrite.h
-                      include/yarp/os/impl/SemaphoreImpl.h
-                      include/yarp/os/impl/ShmemCarrier.h
-                      include/yarp/os/impl/ShmemHybridStream.h
-                      include/yarp/os/impl/ShmemInputStream.h
-                      include/yarp/os/impl/ShmemOutputStream.h
-                      include/yarp/os/impl/ShmemTwoWayStream.h
-                      include/yarp/os/impl/ShmemTypes.h
                       include/yarp/os/impl/SocketTwoWayStream.h
                       include/yarp/os/impl/SplitString.h
+                      include/yarp/os/impl/Storable.h
                       include/yarp/os/impl/StreamConnectionReader.h
                       include/yarp/os/impl/TcpAcceptor.h
                       include/yarp/os/impl/TcpCarrier.h
                       include/yarp/os/impl/TcpConnector.h
                       include/yarp/os/impl/TcpFace.h
                       include/yarp/os/impl/TcpStream.h
+                      include/yarp/os/impl/Terminal.h
                       include/yarp/os/impl/TextCarrier.h
                       include/yarp/os/impl/ThreadImpl.h
                       include/yarp/os/impl/UdpCarrier.h
-                      include/yarp/os/impl/UnitTest.h
-                      include/yarp/os/impl/ydr.h)
+                      include/yarp/os/impl/UnitTest.h)
 
-set(YARP_OS_IMPL_HMAC_HDRS include/yarp/os/impl/hmac/hmac_sha2.h
-                           include/yarp/os/impl/hmac/sha2.h)
+set(YARP_OS_IMPL_POSIX_HDRS include/yarp/os/impl/posix/TcpAcceptor.h
+                            include/yarp/os/impl/posix/TcpConnector.h
+                            include/yarp/os/impl/posix/TcpStream.h)
 
 set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/AbstractContactable.cpp
@@ -233,10 +218,9 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Bytes.cpp
                  src/Carrier.cpp
                  src/Carriers.cpp
-                 src/Companion.cpp
                  src/ConnectionReader.cpp
+                 src/ConnectionRecorder.cpp
                  src/ConnectionWriter.cpp
-                 src/ConstString.cpp
                  src/Contactable.cpp
                  src/Contact.cpp
                  src/ContactStyle.cpp
@@ -260,7 +244,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/MessageStack.cpp
                  src/ModifyingCarrier.cpp
                  src/MultiNameSpace.cpp
-                 src/Mutex.cpp
                  src/NameClient.cpp
                  src/NameConfig.cpp
                  src/Name.cpp
@@ -286,6 +269,8 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/NullConnectionReader.cpp
                  src/NullConnectionWriter.cpp
                  src/Os.cpp
+                 src/OutputStream.cpp
+                 src/PeriodicThread.cpp
                  src/Ping.cpp
                  src/PlatformTime.cpp
                  src/Portable.cpp
@@ -307,7 +292,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Protocol.cpp
                  src/Random.cpp
                  src/RateThread.cpp
-                 src/RecursiveMutex.cpp
                  src/ResourceFinder.cpp
                  src/ResourceFinderOptions.cpp
                  src/RFModule.cpp
@@ -315,37 +299,30 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Route.cpp
                  src/RpcClient.cpp
                  src/RpcServer.cpp
-                 src/RunCheckpoints.cpp
-                 src/Run.cpp
                  src/Runnable.cpp
-                 src/RunProcManager.cpp
-                 src/RunReadWrite.cpp
                  src/Searchable.cpp
                  src/Semaphore.cpp
+                 src/SizedWriter.cpp
                  src/SharedLibrary.cpp
                  src/SharedLibraryFactory.cpp
-                 src/ShmemHybridStream.cpp
-                 src/ShmemInputStream.cpp
-                 src/ShmemOutputStream.cpp
-                 src/ShmemTwoWayStream.cpp
                  src/SocketTwoWayStream.cpp
                  src/SplitString.cpp
                  src/Stamp.cpp
+                 src/Storable.cpp
                  src/StreamConnectionReader.cpp
                  src/SystemClock.cpp
                  src/SystemInfo.cpp
                  src/SystemInfoSerializer.cpp
-                 src/TcpAcceptor.cpp
                  src/TcpCarrier.cpp
-                 src/TcpConnector.cpp
                  src/TcpFace.cpp
-                 src/TcpStream.cpp
+                 src/Terminal.cpp
                  src/Terminator.cpp
                  src/TextCarrier.cpp
                  src/Things.cpp
                  src/Thread.cpp
                  src/ThreadImpl.cpp
                  src/Time.cpp
+                 src/Timer.cpp
                  src/TwoWayStream.cpp
                  src/Type.cpp
                  src/UdpCarrier.cpp
@@ -358,20 +335,25 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/WireReader.cpp
                  src/WireState.cpp
                  src/WireWriter.cpp
-                 src/ydr.cpp
-                 src/hmac_sha2.c
-                 src/sha2.c
                  src/QosStyle.cpp)
+
+if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
+  list(APPEND YARP_OS_HDRS include/yarp/os/ConstString.h)
+
+  list(APPEND YARP_OS_SRCS src/Mutex.cpp
+                           src/RecursiveMutex.cpp)
+endif()
+
+
+if(SKIP_ACE)
+  list(APPEND YARP_OS_SRCS src/posix/TcpAcceptor.cpp
+                           src/posix/TcpConnector.cpp
+                           src/posix/TcpStream.cpp)
+endif()
 
 if(APPLE)
   list(APPEND YARP_OS_IMPL_HDRS include/yarp/os/impl/MacOSAPI.h)
   list(APPEND YARP_OS_SRCS src/MacOSAPI.mm)
-endif()
-
-if(NOT SKIP_ACE)
-  # this carrier have not yet been implemented without ACE
-  set(YARP_OS_SRCS ${YARP_OS_SRCS}
-                   src/ShmemCarrier.cpp)
 endif()
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -382,63 +364,61 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              FILES ${YARP_OS_HDRS}
                    ${YARP_OS_IDL_HDRS}
                    ${YARP_OS_IMPL_HDRS}
-                   ${YARP_OS_IMPL_HMAC_HDRS})
+                   ${YARP_OS_IMPL_POSIX_HDRS})
 
 option(ENABLE_YARPRUN_LOG "Enable yarprun log file in temp dir" OFF)
 if (ENABLE_YARPRUN_LOG)
     add_definitions(-DYARPRUN_LOG)
 endif(ENABLE_YARPRUN_LOG)
 
-set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
-get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-
-include_directories(${YARP_TREE_INCLUDE_DIRS})
-if (NOT SKIP_ACE)
-  include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
-endif ()
-
 add_library(YARP_OS ${YARP_OS_SRCS}
                     ${YARP_OS_HDRS}
                     ${YARP_OS_IDL_HDRS}
                     ${YARP_OS_IMPL_HDRS}
-                    ${YARP_OS_IMPL_HMAC_HDRS})
+                    ${YARP_OS_IMPL_POSIX_HDRS})
 add_library(YARP::YARP_OS ALIAS YARP_OS)
 
 target_include_directories(YARP_OS PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(YARP_OS PUBLIC YARP::YARP_conf)
+list(APPEND YARP_OS_PUBLIC_DEPS YARP_conf)
 
-target_link_libraries(YARP_OS PRIVATE ${ACE_LIBRARIES}
-                              PUBLIC YARP::YARP_conf)
+target_include_directories(YARP_OS SYSTEM PRIVATE ${hmac_INCLUDE_DIRS})
+target_link_libraries(YARP_OS PRIVATE ${hmac_LIBRARIES})
+# list(APPEND YARP_OS_PUBLIC_DEPS hmac)
 
-if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
-  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-endif()
-if(CMAKE_VERSION VERSION_LESS 3.1)
-  if(DEFINED CXX11_FLAGS)
-    target_compile_options(YARP_OS PUBLIC ${CXX11_FLAGS})
-  endif()
+if(YARP_HAS_ACE)
+  target_link_libraries(YARP_OS PRIVATE ${ACE_LIBRARIES})
+  target_include_directories(YARP_OS SYSTEM PRIVATE ${ACE_INCLUDE_DIRS})
+  list(APPEND YARP_OS_PRIVATE_DEPS ACE)
 else()
-  target_compile_features(YARP_OS PUBLIC cxx_nullptr
-                                         cxx_override
-                                         cxx_rvalue_references)
+  target_link_libraries(YARP_OS PRIVATE ${CMAKE_DL_LIBS})
+endif()
+
+if(YARP_HAS_LIBEDIT)
+  target_compile_definitions(YARP_OS PRIVATE WITH_LIBEDIT)
+  target_include_directories(YARP_OS SYSTEM PRIVATE ${Libedit_INCLUDE_DIRS})
+  target_link_libraries(YARP_OS PRIVATE ${Libedit_LIBRARIES})
+  list(APPEND YARP_OS_PRIVATE_DEPS Libedit)
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  target_link_libraries(YARP_OS PRIVATE pthread)
 endif()
 
 if(APPLE)
   target_link_libraries(YARP_OS PRIVATE "-framework Foundation")
 endif()
 
+target_compile_features(YARP_OS PUBLIC cxx_nullptr
+                                       cxx_override
+                                       cxx_rvalue_references)
+
 set_property(TARGET YARP_OS PROPERTY PUBLIC_HEADER ${YARP_OS_HDRS})
 set_property(TARGET YARP_OS PROPERTY PRIVATE_HEADER ${YARP_OS_IMPL_HDRS})
+set_property(TARGET YARP_OS PROPERTY VERSION ${YARP_VERSION_SHORT})
+set_property(TARGET YARP_OS PROPERTY SOVERSION ${YARP_SOVERSION})
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    target_link_libraries(YARP_OS PRIVATE pthread)
-endif()
-
-if(YARP_HAS_LIBEDIT)
-    add_definitions(-DWITH_LIBEDIT)
-    include_directories(${Libedit_INCLUDE_DIRS})
-    target_link_libraries(YARP_OS PRIVATE ${Libedit_LIBRARIES})
-endif()
 
 option(YARP_TEST_HEAP "Replace new/delete operators with test harness (may be incompatible with ACE)" FALSE)
 mark_as_advanced(YARP_TEST_HEAP)
@@ -447,20 +427,23 @@ if (YARP_TEST_HEAP)
 endif()
 
 install(TARGETS YARP_OS
-        EXPORT YARP
-        COMPONENT runtime
+        EXPORT YARP_OS
+        COMPONENT YARP_OS
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os
         PRIVATE_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl)
 install(FILES ${YARP_OS_IDL_HDRS}
-        COMPONENT development
+        COMPONENT YARP_OS
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/idl)
-install(FILES ${YARP_OS_IMPL_HMAC_HDRS}
+install(FILES ${YARP_OS_IMPL_POSIX_HDRS}
         COMPONENT development
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl/hmac)
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl/posix)
 
-set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)
-set_property(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+include(YarpInstallBasicPackageFiles)
+yarp_install_basic_package_files(YARP_OS
+                                 DEPENDENCIES ${YARP_OS_PUBLIC_DEPS}
+                                 PRIVATE_DEPENDENCIES ${YARP_OS_PRIVATE_DEPS})
+
 set_property(TARGET YARP_OS PROPERTY FOLDER "Libraries")

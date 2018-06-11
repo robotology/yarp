@@ -1,7 +1,9 @@
 /*
- * Copyright: (C) 2012 Istituto Italiano di Tecnologia (IIT)
- * Author: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Network.h>
@@ -24,8 +26,8 @@ int main(int argc, char *argv[])
     rf.setDefaultContext("orBottle");
     rf.configure(argc, argv);
         
-    ConstString robotName=rf.find("robot").asString();
-    ConstString model=rf.findFile("model");
+    std::string robotName=rf.find("robot").asString();
+    std::string model=rf.findFile("model");
     
     cout<<"Running with:"<<endl;
     cout<<"robot: "<<robotName.c_str()<<endl;

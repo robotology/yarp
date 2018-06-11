@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/Carriers.h>
 #include <yarp/os/impl/Logger.h>
@@ -11,12 +13,7 @@
 #include <yarp/os/impl/FakeFace.h>
 #include <yarp/os/impl/TcpCarrier.h>
 #include <yarp/os/impl/TextCarrier.h>
-
-#  include <yarp/os/impl/McastCarrier.h>
-#ifdef YARP_HAS_ACE
-#  include <yarp/os/impl/ShmemCarrier.h>
-#endif
-
+#include <yarp/os/impl/McastCarrier.h>
 #include <yarp/os/impl/UdpCarrier.h>
 #include <yarp/os/impl/LocalCarrier.h>
 #include <yarp/os/impl/NameserCarrier.h>
@@ -38,12 +35,11 @@ using namespace yarp::os;
 class Carriers::Private : public YarpPluginSelector
 {
 public:
-    static Carriers* yarp_carriers_instance;
     static yarp::os::Mutex mutex;
 
     std::vector<Carrier*> delegates;
 
-    Carrier* chooseCarrier(const ConstString* name,
+    Carrier* chooseCarrier(const std::string* name,
                            const Bytes* header,
                            bool load_if_needed = true,
                            bool return_template = false);
@@ -55,20 +51,19 @@ public:
     virtual bool select(Searchable& options) override;
 };
 
-Carriers* Carriers::Private::yarp_carriers_instance = nullptr;
-yarp::os::Mutex Carriers::Private::mutex = yarp::os::Mutex();
+yarp::os::Mutex Carriers::Private::mutex {};
 
 
-Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
+Carrier* Carriers::Private::chooseCarrier(const std::string *name,
                                           const Bytes *header,
                                           bool load_if_needed,
                                           bool return_template)
 {
-    ConstString s;
+    std::string s;
     if (name != nullptr) {
         s = *name;
         size_t i = s.find('+');
-        if (i!=ConstString::npos) {
+        if (i!=std::string::npos) {
             s[i] = '\0';
             s = s.c_str();
             name = &s;
@@ -110,7 +105,7 @@ Carrier* Carriers::Private::chooseCarrier(const ConstString *name,
         }
     }
     if (name == nullptr) {
-        ConstString txt;
+        std::string txt;
         for (int i=0; i<(int)header->length(); i++) {
             txt += NetType::toString(header->get()[i]);
             txt += " ";
@@ -146,10 +141,10 @@ bool Carriers::Private::matchCarrier(const Bytes *header, Bottle& code)
     int at = 0;
     bool success = true;
     bool done = false;
-    for (int i=0; i<code.size() && !done; i++) {
+    for (size_t i=0; i<code.size() && !done; i++) {
         Value& v = code.get(i);
         if (v.isString()) {
-            ConstString str = v.asString();
+            std::string str = v.asString();
             for (int j=0; j<(int)str.length(); j++) {
                 if ((int)header->length()<=at) {
                     success = false;
@@ -175,7 +170,7 @@ bool Carriers::Private::checkForCarrier(const Bytes *header, Searchable& group)
     Bottle code = group.findGroup("code").tail();
     if (code.size()==0) return false;
     if (matchCarrier(header, code)) {
-        ConstString name = group.find("name").asString();
+        std::string name = group.find("name").asString();
         if (NetworkBase::registerCarrier(name.c_str(), nullptr)) {
             return true;
         }
@@ -191,7 +186,7 @@ bool Carriers::Private::scanForCarrier(const Bytes *header)
     YarpPluginSelector selector;
     selector.scan();
     Bottle lst = selector.getSelectedPlugins();
-    for (int i=0; i<lst.size(); i++) {
+    for (size_t i=0; i<lst.size(); i++) {
         if (checkForCarrier(header, lst.get(i))) {
             return true;
         }
@@ -208,19 +203,15 @@ bool Carriers::Private::select(Searchable& options)
 Carriers::Carriers() :
         mPriv(new Private)
 {
-    mPriv->delegates.push_back(new HttpCarrier());
-    mPriv->delegates.push_back(new NameserCarrier());
-    mPriv->delegates.push_back(new LocalCarrier());
-#ifdef YARP_HAS_ACE
-    //mPriv->delegates.push_back(new ShmemCarrier(1));
-    mPriv->delegates.push_back(new ShmemCarrier(2)); // new Alessandro version
-#endif
-    mPriv->delegates.push_back(new TcpCarrier());
-    mPriv->delegates.push_back(new TcpCarrier(false));
-    mPriv->delegates.push_back(new McastCarrier());
-    mPriv->delegates.push_back(new UdpCarrier());
-    mPriv->delegates.push_back(new TextCarrier());
-    mPriv->delegates.push_back(new TextCarrier(true));
+    mPriv->delegates.emplace_back(new HttpCarrier());
+    mPriv->delegates.emplace_back(new NameserCarrier());
+    mPriv->delegates.emplace_back(new LocalCarrier());
+    mPriv->delegates.emplace_back(new TcpCarrier());
+    mPriv->delegates.emplace_back(new TcpCarrier(false));
+    mPriv->delegates.emplace_back(new McastCarrier());
+    mPriv->delegates.emplace_back(new UdpCarrier());
+    mPriv->delegates.emplace_back(new TextCarrier());
+    mPriv->delegates.emplace_back(new TextCarrier(true));
 }
 
 Carriers::~Carriers()
@@ -231,19 +222,19 @@ Carriers::~Carriers()
 
 void Carriers::clear()
 {
-    std::vector<Carrier*>& lst = mPriv->delegates;
-    for (unsigned int i=0; i<lst.size(); i++) {
-        delete lst[i];
+    for (unsigned int i=0; i<mPriv->delegates.size(); i++) {
+        delete mPriv->delegates[i];
+        mPriv->delegates[i] = nullptr;
     }
-    lst.clear();
+    mPriv->delegates.clear();
 }
 
-Carrier *Carriers::chooseCarrier(const ConstString& name)
+Carrier *Carriers::chooseCarrier(const std::string& name)
 {
     return getInstance().mPriv->chooseCarrier(&name, nullptr);
 }
 
-Carrier *Carriers::getCarrierTemplate(const ConstString& name)
+Carrier *Carriers::getCarrierTemplate(const std::string& name)
 {
     return getInstance().mPriv->chooseCarrier(&name, nullptr, true, true);
 }
@@ -320,7 +311,7 @@ OutputProtocol *Carriers::connect(const Contact& address)
 
 bool Carriers::addCarrierPrototype(Carrier *carrier)
 {
-    getInstance().mPriv->delegates.push_back(carrier);
+    getInstance().mPriv->delegates.emplace_back(carrier);
     return true;
 }
 
@@ -333,22 +324,8 @@ bool Carrier::reply(ConnectionState& proto, SizedWriter& writer)
 
 Carriers& Carriers::getInstance()
 {
-    yarp::os::LockGuard guard(Private::mutex);
-    if (Private::yarp_carriers_instance == nullptr) {
-        Private::yarp_carriers_instance = new Carriers();
-        yAssert(Private::yarp_carriers_instance != nullptr);
-    }
-    return *Private::yarp_carriers_instance;
-}
-
-
-void Carriers::removeInstance()
-{
-    yarp::os::LockGuard guard(Private::mutex);
-    if (Private::yarp_carriers_instance != nullptr) {
-        delete Private::yarp_carriers_instance;
-        Private::yarp_carriers_instance = nullptr;
-    }
+    static Carriers instance;
+    return instance;
 }
 
 
@@ -369,9 +346,9 @@ Bottle Carriers::listCarriers()
 
     instance.mPriv->scan();
     Bottle plugins = instance.mPriv->getSelectedPlugins();
-    for (int i = 0; i < plugins.size(); i++) {
+    for (size_t i = 0; i < plugins.size(); i++) {
         Value& options = plugins.get(i);
-        ConstString name = options.check("name", Value("untitled")).asString();
+        std::string name = options.check("name", Value("untitled")).asString();
         if (done.check(name)) {
             continue;
         }
@@ -381,7 +358,7 @@ Bottle Carriers::listCarriers()
         settings.setSelector(*instance.mPriv);
         settings.readFromSearchable(options, name);
         settings.open(lib);
-        ConstString location = lib.getName().c_str();
+        std::string location = lib.getName().c_str();
         if (location=="") {
             continue;
         }

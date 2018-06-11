@@ -1,13 +1,10 @@
-#  Yarp Modules Profiler
-#  Copyright: (C) 2017 Istituto Italiano di Tecnologia (IIT)
-#  Authors: Nicolo' Genesio <nicolo.genesio@iit.it>
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
 #
-#  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 if(CREATE_LIB_PROFILER)
-
-  get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 
   project(YARP_profiler)
 
@@ -24,16 +21,10 @@ if(CREATE_LIB_PROFILER)
                PREFIX "Header Files"
                FILES ${YARP_profiler_HDRS})
 
-  set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
-  get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-
-  include_directories(${YARP_TREE_INCLUDE_DIRS})
-
-
   # FIXME All API should use a YARP_profiler_API for __declspec(dllimport/dllexport)
   # For now always build the library as STATIC
   add_library(YARP_profiler STATIC ${YARP_profiler_SRCS}
-                                  ${YARP_profiler_HDRS})
+                                   ${YARP_profiler_HDRS})
 
   add_library(YARP::YARP_profiler ALIAS YARP_profiler)
 
@@ -41,32 +32,29 @@ if(CREATE_LIB_PROFILER)
                                                   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
   target_link_libraries(YARP_profiler PUBLIC YARP::YARP_OS
-                                      PRIVATE YARP::YARP_init)
+                                      PRIVATE YARP::YARP_companion)
+  list(APPEND YARP_profiler_PUBLIC_DEPS YARP_OS)
+  list(APPEND YARP_profiler_PRIVATE_DEPS YARP_companion)
 
-
-  if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
-    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-  endif()
-  if(CMAKE_VERSION VERSION_LESS 3.1)
-    if(DEFINED CXX11_FLAGS)
-      target_compile_options(YARP_profiler PUBLIC ${CXX11_FLAGS})
-    endif()
-  else()
-    target_compile_features(YARP_profiler PUBLIC cxx_override)
-  endif()
+  target_compile_features(YARP_profiler PUBLIC cxx_override)
 
   set_property(TARGET YARP_profiler PROPERTY PUBLIC_HEADER ${YARP_profiler_HDRS})
   set_property(TARGET YARP_profiler PROPERTY PRIVATE_HEADER ${YARP_profiler_IMPL_HDRS})
+  set_property(TARGET YARP_profiler PROPERTY VERSION ${YARP_VERSION_SHORT})
+  set_property(TARGET YARP_profiler PROPERTY SOVERSION ${YARP_SOVERSION})
 
   install(TARGETS YARP_profiler
-          EXPORT YARP
-          COMPONENT runtime
+          EXPORT YARP_profiler
+          COMPONENT YARP_profiler
           RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
           LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
           ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
           PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/profiler")
 
-  set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_profiler)
-  set_property(TARGET YARP_profiler PROPERTY INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include)
+  include(YarpInstallBasicPackageFiles)
+  yarp_install_basic_package_files(YARP_profiler
+                                   DEPENDENCIES ${YARP_profiler_PUBLIC_DEPS}
+                                   PRIVATE_DEPENDENCIES ${YARP_profiler_PRIVATE_DEPS})
+
   set_property(TARGET YARP_profiler PROPERTY FOLDER "Libraries/Private")
 endif()

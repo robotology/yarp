@@ -1,0 +1,34 @@
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
+
+yarp_prepare_plugin(multipleanalogsensorsserver
+                    CATEGORY device
+                    TYPE yarp::dev::MultipleAnalogSensorsServer
+                    INCLUDE MultipleAnalogSensorsServer.h
+                    DEFAULT ON)
+
+
+if(ENABLE_multipleanalogsensorsserver)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
+  yarp_add_plugin(yarp_multipleanalogsensorsserver MultipleAnalogSensorsServer.cpp
+                                                   MultipleAnalogSensorsServer.h
+                                                   $<TARGET_OBJECTS:multipleAnalogSensorsSerializations>)
+  target_include_directories(yarp_multipleanalogsensorsserver
+                             PRIVATE $<TARGET_PROPERTY:multipleAnalogSensorsSerializations,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_link_libraries(yarp_multipleanalogsensorsserver YARP::YARP_OS
+                                                    YARP::YARP_sig
+                                                    YARP::YARP_dev)
+  yarp_install(TARGETS yarp_multipleanalogsensorsserver
+               EXPORT YARP
+               COMPONENT Runtime
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
+  yarp_install(FILES multipleanalogsensorsserver.ini
+               COMPONENT runtime
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set_property(TARGET yarp_multipleanalogsensorsserver PROPERTY FOLDER "Plugins/Device")
+endif()

@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 /*
@@ -23,6 +26,8 @@ showing the number of bytes passed on.
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
@@ -54,7 +59,7 @@ public:
         return reader.expectBlock(mem.get(),mem.length());
     }
 
-    virtual bool write(ConnectionWriter& writer) {
+    virtual bool write(ConnectionWriter& writer) const {
         if (mem.length()==0) {
             fprintf(stderr,"Nothing to write.\n");
             return false;
@@ -79,7 +84,7 @@ int main(int argc, char *argv[]) {
     // Get commandline options
     Property options;
     options.fromCommand(argc,argv);
-    ConstString portName = 
+    std::string portName = 
         options.check("name",Value("/playback"),"port name").asString();
 
     // Create a port

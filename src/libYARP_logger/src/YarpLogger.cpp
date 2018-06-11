@@ -1,20 +1,10 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Author: Marco Randazzo
- * email:  marco.randazzo@iit.it
- * website: www.robotcub.org
- * Permission is granted to copy, distribute, and/or modify this program
- * under the terms of the GNU General Public License, version 2 or any
- * later version published by the Free Software Foundation.
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * A copy of the license can be found at
- * http://www.robotcub.org/icub/license/gpl.txt
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details
-*/
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #include <iostream>
 #include <cstring>
@@ -169,7 +159,7 @@ void LoggerEngine::discover  (std::list<std::string>& ports)
         getline(iss, token, '/'); entry.logInfo.process_pid  = token;
 
         std::list<LogEntry>::iterator it;
-        this->log_updater->mutex.wait();
+        this->log_updater->mutex.lock();
         bool found = false;
         for (it = this->log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
         {
@@ -182,7 +172,7 @@ void LoggerEngine::discover  (std::list<std::string>& ports)
         {
             log_updater->log_list.push_back(entry);
         }
-        this->log_updater->mutex.post();
+        this->log_updater->mutex.unlock();
     }
 }
 
@@ -211,7 +201,7 @@ std::string LoggerEngine::logger_thread::getPortName()
     return logger_portName;
 }
 
-LoggerEngine::logger_thread::logger_thread (std::string _portname, int _rate,  int _log_list_max_size) : SystemRateThread(_rate)
+LoggerEngine::logger_thread::logger_thread (std::string _portname, double _period,  int _log_list_max_size) : PeriodicThread(_period, ShouldUseSystemClock::Yes)
 {
         logger_portName              = _portname;
         log_list_max_size            = _log_list_max_size;
@@ -333,7 +323,7 @@ void LoggerEngine::logger_thread::run()
             if (body.level == LOGLEVEL_ERROR     && listen_to_LOGLEVEL_ERROR     == false) {continue;}
             if (body.level == LOGLEVEL_FATAL     && listen_to_LOGLEVEL_FATAL     == false) {continue;}
 
-            this->mutex.wait();
+            this->mutex.lock();
             LogEntry entry;
             entry.logInfo.port_complete = header;
             entry.logInfo.port_complete.erase(0,1);
@@ -390,7 +380,7 @@ void LoggerEngine::logger_thread::run()
                 //}
             }
 
-            this->mutex.post();
+            this->mutex.unlock();
         }
     }
 
@@ -403,6 +393,12 @@ bool LoggerEngine::start_logging()
     {
         fprintf(stderr,"logger is already running, listening on port %s\n", log_updater->getPortName().c_str());
         return true;
+    }
+
+    if (yarp::os::Network::exists(log_updater->getPortName().c_str()))
+    {
+        fprintf(stderr, "Unable to start logger: port %s is unavailable because another instance of the logger is already running (or address conflict)\n", log_updater->getPortName().c_str());
+        return false;
     }
 
     if (log_updater->logger_port.open(log_updater->getPortName().c_str()))
@@ -451,8 +447,7 @@ void LoggerEngine::stop_discover()
 
 LoggerEngine::LoggerEngine(std::string portName)
 {
-    int thread_rate = 10;
-    log_updater=new logger_thread (portName,thread_rate);
+    log_updater=new logger_thread (portName, 0.01);
     logging = false;
     discovering = false;
 }
@@ -478,33 +473,33 @@ void LoggerEngine::get_infos (std::list<LogEntryInfo>& infos)
 {
     if (log_updater == nullptr) return;
 
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
         infos.push_back(it->logInfo);
     }
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
 }
 
 void LoggerEngine::get_messages (std::list<MessageEntry>& messages)
 {
     if (log_updater == nullptr) return;
 
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
         messages.insert(messages.end(), it->entry_list.begin(), it->entry_list.end());
     }
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
 }
 
 void LoggerEngine::get_messages_by_port_prefix    (std::string  port,  std::list<MessageEntry>& messages,  bool from_beginning)
 {
     if (log_updater == nullptr) return;
 
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
@@ -528,14 +523,14 @@ void LoggerEngine::get_messages_by_port_prefix    (std::string  port,  std::list
             break;
         }
     }
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
 }
 
 void LoggerEngine::clear_messages_by_port_complete    (std::string  port)
 {
     if (log_updater == nullptr) return;
 
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
@@ -545,14 +540,14 @@ void LoggerEngine::clear_messages_by_port_complete    (std::string  port)
                break;
            }
     }
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
 }
 
 void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::list<MessageEntry>& messages,  bool from_beginning)
 {
     if (log_updater == nullptr) return;
 
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
@@ -577,14 +572,14 @@ void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::li
             break;
         }
     }
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
 }
 
 void LoggerEngine::get_messages_by_process (std::string  process,  std::list<MessageEntry>& messages,  bool from_beginning)
 {
     if (log_updater == nullptr) return;
 
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
@@ -608,14 +603,14 @@ void LoggerEngine::get_messages_by_process (std::string  process,  std::list<Mes
             break;
         }
     }
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
 }
 
 void LoggerEngine::get_messages_by_pid     (std::string pid, std::list<MessageEntry>& messages,  bool from_beginning)
 {
     if (log_updater == nullptr) return;
 
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
@@ -639,7 +634,7 @@ void LoggerEngine::get_messages_by_pid     (std::string pid, std::list<MessageEn
             break;
         }
     }
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
 }
 
 const std::list<MessageEntry> filter_by_level (int level, const std::list<MessageEntry>& messages)
@@ -658,7 +653,7 @@ const std::list<MessageEntry> filter_by_level (int level, const std::list<Messag
 void LoggerEngine::set_listen_option               (LogLevel logLevel, bool enable)
 {
     if (log_updater == nullptr) return;
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     if      (logLevel == LOGLEVEL_UNDEFINED)  {log_updater->listen_to_LOGLEVEL_UNDEFINED=enable;}
     else if (logLevel == LOGLEVEL_TRACE)      {log_updater->listen_to_LOGLEVEL_TRACE=enable;}
     else if (logLevel == LOGLEVEL_INFO)       {log_updater->listen_to_LOGLEVEL_INFO=enable;}
@@ -666,7 +661,7 @@ void LoggerEngine::set_listen_option               (LogLevel logLevel, bool enab
     else if (logLevel == LOGLEVEL_WARNING)    {log_updater->listen_to_LOGLEVEL_WARNING=enable;}
     else if (logLevel == LOGLEVEL_ERROR)      {log_updater->listen_to_LOGLEVEL_ERROR=enable;}
     else if (logLevel == LOGLEVEL_FATAL)      {log_updater->listen_to_LOGLEVEL_FATAL=enable;}
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
 }
 
 bool LoggerEngine::get_listen_option               (LogLevel logLevel)
@@ -685,8 +680,8 @@ bool LoggerEngine::get_listen_option               (LogLevel logLevel)
 void LoggerEngine::set_listen_option               (std::string   option, bool enable)
 {
     if (log_updater == nullptr) return;
-    log_updater->mutex.wait();
-    log_updater->mutex.post();
+    log_updater->mutex.lock();
+    log_updater->mutex.unlock();
 }
 
 bool LoggerEngine::get_listen_option               (std::string   option)
@@ -697,10 +692,10 @@ bool LoggerEngine::get_listen_option               (std::string   option)
 void LoggerEngine::set_listen_option               (LogSystemEnum   logSystem, bool enable)
 {
     if (log_updater == nullptr) return;
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     if      (logSystem == LOGSYSTEM_YARP)         {log_updater->listen_to_YARP_MESSAGES=enable;}
     else if (logSystem == LOGSYSTEM_YARPRUN)      {log_updater->listen_to_YARPRUN_MESSAGES=enable;}
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
 }
 
 bool LoggerEngine::get_listen_option               (LogSystemEnum   logSystem)
@@ -716,7 +711,7 @@ bool LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
     if (log_updater == nullptr) return false;
     if (filename.size() == 0) return false;
 
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
@@ -724,7 +719,7 @@ bool LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
         {
             ofstream file1;
             file1.open(filename.c_str());
-            if (file1.is_open() == false) {log_updater->mutex.post(); return false;}
+            if (file1.is_open() == false) {log_updater->mutex.unlock(); return false;}
             std::vector<MessageEntry>::iterator it1;
             for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
             {
@@ -733,7 +728,7 @@ bool LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
             file1.close();
         }
     }
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
     return true;
 }
 
@@ -893,7 +888,7 @@ bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
 void LoggerEngine::set_log_lines_max_size (bool  enabled,  int new_size)
 {
     if (log_updater == nullptr) return;
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
 
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
@@ -902,45 +897,45 @@ void LoggerEngine::set_log_lines_max_size (bool  enabled,  int new_size)
         it->setLogEntryMaxSizeEnabled(enabled);
     }
 
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
 }
 
 
 void LoggerEngine::set_log_list_max_size           (bool  enabled,  int new_size)
 {
     if (log_updater == nullptr) return;
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     log_updater->log_list_max_size_enabled = enabled;
     log_updater->log_list_max_size = new_size;
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
 }
 
 void LoggerEngine::get_log_lines_max_size          (bool& enabled, int& current_size)
 {
     if (log_updater == nullptr) return;
     if (log_updater->log_list.empty() == true) return;
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     std::list<LogEntry>::iterator it = log_updater->log_list.begin();
     current_size = it->getLogEntryMaxSize();
     enabled = it->getLogEntryMaxSizeEnabled();
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
 }
 
 void LoggerEngine::get_log_list_max_size           (bool& enabled, int& current_size)
 {
     if (log_updater == nullptr) return;
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     enabled=log_updater->log_list_max_size_enabled;
     current_size=log_updater->log_list_max_size;
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
 }
 
 bool LoggerEngine::clear()
 {
     if (log_updater == nullptr) return false;
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     log_updater->log_list.clear();
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
     return true;
 }
 
@@ -948,7 +943,7 @@ void LoggerEngine::set_log_enable_by_port_complete (std::string  port, bool enab
 {
     if (log_updater == nullptr) return;
 
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
@@ -958,7 +953,7 @@ void LoggerEngine::set_log_enable_by_port_complete (std::string  port, bool enab
                break;
            }
     }
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
 }
 
 bool  LoggerEngine::get_log_enable_by_port_complete (std::string  port)
@@ -966,7 +961,7 @@ bool  LoggerEngine::get_log_enable_by_port_complete (std::string  port)
     if (log_updater == nullptr) return false;
 
     bool enabled=false;
-    log_updater->mutex.wait();
+    log_updater->mutex.lock();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
@@ -976,6 +971,6 @@ bool  LoggerEngine::get_log_enable_by_port_complete (std::string  port)
                break;
            }
     }
-    log_updater->mutex.post();
+    log_updater->mutex.unlock();
     return enabled;
 }

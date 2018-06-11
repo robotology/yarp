@@ -1,18 +1,11 @@
-# Copyright: (C) 2009 RobotCub Consortium
-#            (C) 2015 Istituto Italiano di Tecnologia (IIT)
-# Authors: Paul Fitzpatrick
-#          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 project(YARP_serversql)
-
-
-get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-get_property(YARP_name_INCLUDE_DIRS TARGET YARP_name PROPERTY INCLUDE_DIRS)
-include_directories(${YARP_OS_INCLUDE_DIRS}
-                    ${YARP_name_INCLUDE_DIRS}
-                    "${CMAKE_CURRENT_SOURCE_DIR}/include")
-include_directories(SYSTEM ${SQLite_INCLUDE_DIRS})
 
 set(YARP_serversql_SRCS src/TripleSourceCreator.cpp
                         src/NameServiceOnTriples.cpp
@@ -51,27 +44,34 @@ target_include_directories(YARP_serversql PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRE
 
 target_link_libraries(YARP_serversql PUBLIC YARP::YARP_conf
                                             YARP::YARP_OS
-                                            YARP::YARP_init
                                      PRIVATE YARP::YARP_name
-                                             ${SQLite_LIBRARIES})
-if(UNIX)
-  target_link_libraries(YARP_serversql PRIVATE ${CMAKE_DL_LIBS})
-endif()
+                                             YARP::YARP_init)
+list(APPEND YARP_serversql_PUBLIC_DEPS YARP_conf
+                                       YARP_OS)
+list(APPEND YARP_serversql_PRIVATE_DEPS YARP_name)
+
+target_include_directories(YARP_serversql SYSTEM PRIVATE ${SQLite_INCLUDE_DIRS})
+target_link_libraries(YARP_serversql PRIVATE ${SQLite_LIBRARIES})
+list(APPEND YARP_serversql_PRIVATE_DEPS SQLite)
 
 
 set_property(TARGET YARP_serversql PROPERTY PUBLIC_HEADER ${YARP_serversql_HDRS})
 set_property(TARGET YARP_serversql PROPERTY PRIVATE_HEADER ${YARP_serversql_IMPL_HDRS})
+set_property(TARGET YARP_serversql PROPERTY VERSION ${YARP_VERSION_SHORT})
+set_property(TARGET YARP_serversql PROPERTY SOVERSION ${YARP_SOVERSION})
 
 install(TARGETS YARP_serversql
-        EXPORT YARP
-        COMPONENT runtime
+        EXPORT YARP_serversql
+        COMPONENT YARP_serversql
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/serversql"
         PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/serversql/impl")
 
-set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_serversql)
-set_property(TARGET YARP_serversql PROPERTY INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
-                                                         ${YARP_OS_INCLUDE_DIRS})
+include(YarpInstallBasicPackageFiles)
+yarp_install_basic_package_files(YARP_serversql
+                                 DEPENDENCIES ${YARP_serversql_PUBLIC_DEPS}
+                                 PRIVATE_DEPENDENCIES ${YARP_serversql_PRIVATE_DEPS})
+
 set_property(TARGET YARP_serversql PROPERTY FOLDER "Libraries/Private")

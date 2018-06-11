@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/all.h>
@@ -32,7 +34,7 @@ public:
         std::cout << "Bye bye" << std::endl;
     }
 
-    virtual bool isOk() override {
+    virtual bool isOk() const override {
         return true;
     }
 
@@ -48,7 +50,7 @@ public:
 
     // InputStream
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const Bytes& b) override;
+    virtual yarp::conf::ssize_t read(Bytes& b) override;
 
     // OutputStream
     using yarp::os::OutputStream::write;
@@ -64,12 +66,12 @@ public:
         return *this;
     }
 
-    virtual const yarp::os::Contact& getLocalAddress() override {
+    virtual const yarp::os::Contact& getLocalAddress() const override {
         // left undefined
         return local;
     }
 
-    virtual const yarp::os::Contact& getRemoteAddress() override {
+    virtual const yarp::os::Contact& getRemoteAddress() const override {
         // left undefined
         return remote;
     }

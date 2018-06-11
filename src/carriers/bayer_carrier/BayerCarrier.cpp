@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "BayerCarrier.h"
@@ -69,7 +70,7 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
     con.setTextMode(reader.isTextMode());
     Bottle b;
     b.read(reader);
-    b.addInt(42);
+    b.addInt32(42);
     b.addString("(p.s. bork bork bork)");
     b.write(con.getWriter());
     return con.getReader();
@@ -96,7 +97,7 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
     have_result = false;
     if (need_reset) {
         int m = DC1394_BAYER_METHOD_BILINEAR;
-        Searchable& config = reader.getConnectionModifiers();
+        const Searchable& config = reader.getConnectionModifiers();
         half = false;
         if (config.check("size")) {
             if (config.find("size").asString() == "half") {
@@ -104,7 +105,7 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
             }
         }
         if (config.check("method")) {
-            ConstString method = config.find("method").asString();
+            std::string method = config.find("method").asString();
             bayer_method_set = true;
             if (method=="ahd") {
                 m = DC1394_BAYER_METHOD_AHD;
@@ -292,6 +293,10 @@ bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
     return true;
 }
 
+bool BayerCarrier::processBuffered() const {
+    return const_cast<BayerCarrier*>(this)->processBuffered();
+}
+
 bool BayerCarrier::processBuffered() {
     if (!have_result) {
         //printf("Copy-based conversion.\n");
@@ -309,7 +314,7 @@ bool BayerCarrier::processBuffered() {
     return true;
 }
 
-bool BayerCarrier::processDirect(const yarp::os::Bytes& bytes) {
+bool BayerCarrier::processDirect(yarp::os::Bytes& bytes) {
     if (have_result) {
         memcpy(bytes.get(),out.getRawImage(),bytes.length());
         return true;
@@ -327,7 +332,7 @@ bool BayerCarrier::processDirect(const yarp::os::Bytes& bytes) {
 }
 
 
-YARP_SSIZE_T BayerCarrier::read(const yarp::os::Bytes& b) {
+yarp::conf::ssize_t BayerCarrier::read(yarp::os::Bytes& b) {
     // copy across small stuff - the image header
     if (consumed<sizeof(header)) {
         size_t len = b.length();
@@ -336,7 +341,7 @@ YARP_SSIZE_T BayerCarrier::read(const yarp::os::Bytes& b) {
         }
         memcpy(b.get(),((char*)(&header))+consumed,len);
         consumed += len;
-        return (YARP_SSIZE_T) len;
+        return (yarp::conf::ssize_t) len;
     }
     // sane client will want to read image into correct-sized block
     if (b.length()==image_data_len) {
@@ -354,7 +359,7 @@ YARP_SSIZE_T BayerCarrier::read(const yarp::os::Bytes& b) {
         }
         memcpy(b.get(),out.getRawImage()+consumed-sizeof(header),len);
         consumed += len;
-        return (YARP_SSIZE_T) len;
+        return (yarp::conf::ssize_t) len;
     }
     return -1;
 }
@@ -362,7 +367,7 @@ YARP_SSIZE_T BayerCarrier::read(const yarp::os::Bytes& b) {
 
 bool BayerCarrier::setFormat(const char *fmt) {
     dcformat = DC1394_COLOR_FILTER_GRBG;
-    ConstString f(fmt);
+    std::string f(fmt);
     if (f.length()<2) return false;
     goff = (f[0]=='g'||f[0]=='G')?0:1;
     roff = (f[0]=='r'||f[0]=='R'||f[1]=='r'||f[1]=='R')?0:1;

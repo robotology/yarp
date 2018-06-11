@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2011 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP2_WIRETWIDDLER
@@ -36,8 +37,8 @@ public:
     bool save_external;
     bool load_external;
     bool computing;
-    yarp::os::ConstString origin;
-    yarp::os::ConstString var_name;
+    std::string origin;
+    std::string var_name;
     int flavor;
     WireTwiddlerGap() {
         buffer_start = 0;
@@ -59,7 +60,7 @@ public:
     int getUnitLength() const { return unit_length; }
     int getExternalLength() const { return unit_length; }
     bool shouldIgnoreExternal() const { return ignore_external; }
-    const yarp::os::ConstString& getOrigin() const { return origin; }
+    const std::string& getOrigin() const { return origin; }
 };
 
 
@@ -92,12 +93,12 @@ private:
     std::vector<yarp::os::NetInt32> buffer;
     std::vector<WireTwiddlerGap> gaps;
     yarp::os::ConnectionWriter *writer;
-    yarp::os::ConstString prompt;
+    std::string prompt;
 
 public:
     void show();
     int configure(yarp::os::Bottle& desc, int offset, bool& ignored,
-                  const yarp::os::ConstString& vtag);
+                  const std::string& vtag);
 
     int getGapCount() {
         return (int)gaps.size();
@@ -113,9 +114,9 @@ public:
         return gaps[index];
     }
 
-    yarp::os::ConstString toString() const;
+    std::string toString() const;
 
-    const yarp::os::ConstString& getPrompt() const {
+    const std::string& getPrompt() const {
         return prompt;
     }
 
@@ -173,15 +174,15 @@ public:
     virtual ~WireTwiddlerReader() {}
 
     using yarp::os::InputStream::read;
-    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b) override;
+    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     virtual void close() override { is.close(); }
 
-    virtual bool isOk() override { return is.isOk(); }
+    virtual bool isOk() const override { return is.isOk(); }
 
-    YARP_SSIZE_T readMapped(yarp::os::InputStream& is,
-                            const yarp::os::Bytes& b,
-                            const WireTwiddlerGap& gap);
+    yarp::conf::ssize_t readMapped(yarp::os::InputStream& is,
+                                   yarp::os::Bytes& b,
+                                   const WireTwiddlerGap& gap);
 
     void compute(const WireTwiddlerGap& gap);
 };
@@ -293,19 +294,19 @@ public:
 
     bool update();
 
-    virtual size_t length() override {
+    virtual size_t length() const override {
         return srcs.size();
     }
 
-    virtual size_t headerLength() override {
+    virtual size_t headerLength() const override {
         return 0;
     }
 
-    virtual size_t length(size_t index) override {
+    virtual size_t length(size_t index) const override {
         return srcs[index].len;
     }
 
-    virtual const char *data(size_t index) override {
+    virtual const char *data(size_t index) const override {
         if (srcs[index].offset<0) return srcs[index].src;
         return scratch.get()+srcs[index].offset;
     }
@@ -340,11 +341,11 @@ public:
         return false;
     }
 
-    virtual void startWrite() override {
+    virtual void startWrite() const override {
         parent->startWrite();
     }
 
-    virtual void stopWrite() override {
+    virtual void stopWrite() const override {
         parent->stopWrite();
     }
 };

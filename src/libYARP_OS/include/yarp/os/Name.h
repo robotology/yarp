@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_NAME_H
@@ -26,7 +29,7 @@ public:
      *
      * @param txt the port name.
      */
-    Name(const ConstString& txt);
+    Name(const std::string& txt);
 
     /**
      * Check if port name begins with "/"
@@ -45,10 +48,10 @@ public:
      */
     Contact toAddress() const;
 
-    ConstString getCarrierModifier(const char *mod, bool *hasModifier = nullptr);
+    std::string getCarrierModifier(const char *mod, bool *hasModifier = nullptr);
 
 private:
-    ConstString txt;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) txt;
 };
 
 #endif // YARP_OS_NAME_H

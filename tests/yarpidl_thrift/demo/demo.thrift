@@ -49,7 +49,7 @@ struct DemoStructExt {
 
 struct TestSomeMoreTypes {
   1: bool a_bool,
-  2: byte a_byte,
+  2: i8 a_i8,
   3: i16 a_i16,
   4: i32 a_i32,
   5: i64 a_i64,

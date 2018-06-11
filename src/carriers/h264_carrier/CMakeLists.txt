@@ -1,13 +1,15 @@
-# Copyright (C) 2010 RobotCub Consortium
-# Authors: Valentina Gaggero
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 yarp_prepare_plugin(h264
                     CATEGORY carrier
                     TYPE yarp::os::H264Carrier
                     INCLUDE H264Carrier.h
                     EXTRA_CONFIG CODE=""
-                    DEPENDS "CREATE_OPTIONAL_CARRIERS;GLIB2_FOUND;GSTREAMER_FOUND;GSTREAMER_APP_LIBRARY_FOUND")
+                    DEPENDS "GLIB2_FOUND;GSTREAMER_FOUND;GSTREAMER_APP_LIBRARY_FOUND")
 
 if(NOT SKIP_h264)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

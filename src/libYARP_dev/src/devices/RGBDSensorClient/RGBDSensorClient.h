@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Author: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_RGBDSENSORCLIENT_RGBDSENSORCLIENT_H
@@ -10,7 +12,6 @@
 
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/BufferedPort.h>
 
 #include <yarp/dev/PolyDriver.h>
@@ -18,7 +19,7 @@
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/dev/IVisualParamsImpl.h>
 #include <yarp/dev/FrameGrabberControl2.h>
-#include <yarp/dev/FrameGrabberControl2Impl.h>
+#include <yarp/dev/FrameGrabberControlImpl.h>
 
 #define DEFAULT_THREAD_PERIOD       20    //ms
 #define RGBDSENSOR_TIMEOUT_DEFAULT  100   //ms
@@ -38,7 +39,7 @@ namespace yarp {
 
 
 /**
- *  @ingroup dev_impl_client
+ *  @ingroup dev_impl_network_clients
  *
  * \section RGBDSensorClient Description of input parameters
  * A Network client to receive data from kinect-like devices.
@@ -87,7 +88,7 @@ namespace yarp {
  */
 
 class yarp::dev::RGBDSensorClient:  public DeviceDriver,
-                                    public FrameGrabberControls2_Sender,
+                                    public FrameGrabberControls_Sender,
                                     public IRGBDSensor
 {
 
@@ -95,16 +96,16 @@ class yarp::dev::RGBDSensorClient:  public DeviceDriver,
     yarp::dev::Implement_RgbVisualParams_Sender*   RgbMsgSender;
     yarp::dev::Implement_DepthVisualParams_Sender* DepthMsgSender;
 protected:
-    yarp::os::ConstString local_colorFrame_StreamingPort_name;
-    yarp::os::ConstString local_depthFrame_StreamingPort_name;
-    yarp::os::ConstString remote_colorFrame_StreamingPort_name;
-    yarp::os::ConstString remote_depthFrame_StreamingPort_name;
+    std::string local_colorFrame_StreamingPort_name;
+    std::string local_depthFrame_StreamingPort_name;
+    std::string remote_colorFrame_StreamingPort_name;
+    std::string remote_depthFrame_StreamingPort_name;
     yarp::os::BufferedPort<yarp::sig::FlexImage> colorFrame_StreamingPort;
     yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat> > depthFrame_StreamingPort;
 
     // Use a single RPC port for now
-    yarp::os::ConstString local_rpcPort_name;
-    yarp::os::ConstString remote_rpcPort_name;
+    std::string local_rpcPort_name;
+    std::string remote_rpcPort_name;
     yarp::os::Port        rpcPort;
 
 
@@ -117,10 +118,10 @@ protected:
      * another one, it will result in concurrent thread most probably) and buffering issues.
      *
 
-        yarp::os::ConstString local_colorFrame_rpcPort_Name;
-        yarp::os::ConstString local_depthFrame_rpcPort_Name;
-        yarp::os::ConstString remote_colorFrame_rpcPort_Name;
-        yarp::os::ConstString remote_depthFrame_rpcPort_Name;
+        std::string local_colorFrame_rpcPort_Name;
+        std::string local_depthFrame_rpcPort_Name;
+        std::string remote_colorFrame_rpcPort_Name;
+        std::string remote_depthFrame_rpcPort_Name;
 
         yarp::os::Port colorFrame_rpcPort;
         yarp::os::Port depthFrame_rpcPort;
@@ -230,7 +231,7 @@ public:
      * Error message will be reset after any succesful command
      * @return A string explaining the last error occurred.
      */
-    yarp::os::ConstString getLastErrorMsg(yarp::os::Stamp *timeStamp = NULL) override;
+    std::string getLastErrorMsg(yarp::os::Stamp *timeStamp = NULL) override;
 
     /**
      * Get the rgb frame from the device.
@@ -278,19 +279,19 @@ public:
     //
     // Implemented by FrameGrabberControls2_Sender
     //
-    using FrameGrabberControls2_Sender::getCameraDescription;
-    using FrameGrabberControls2_Sender::hasFeature;
-    using FrameGrabberControls2_Sender::setFeature;
-    using FrameGrabberControls2_Sender::getFeature;
-    using FrameGrabberControls2_Sender::hasOnOff;
-    using FrameGrabberControls2_Sender::setActive;
-    using FrameGrabberControls2_Sender::getActive;
-    using FrameGrabberControls2_Sender::hasAuto;
-    using FrameGrabberControls2_Sender::hasManual;
-    using FrameGrabberControls2_Sender::hasOnePush;
-    using FrameGrabberControls2_Sender::setMode;
-    using FrameGrabberControls2_Sender::getMode;
-    using FrameGrabberControls2_Sender::setOnePush;
+    using FrameGrabberControls_Sender::getCameraDescription;
+    using FrameGrabberControls_Sender::hasFeature;
+    using FrameGrabberControls_Sender::setFeature;
+    using FrameGrabberControls_Sender::getFeature;
+    using FrameGrabberControls_Sender::hasOnOff;
+    using FrameGrabberControls_Sender::setActive;
+    using FrameGrabberControls_Sender::getActive;
+    using FrameGrabberControls_Sender::hasAuto;
+    using FrameGrabberControls_Sender::hasManual;
+    using FrameGrabberControls_Sender::hasOnePush;
+    using FrameGrabberControls_Sender::setMode;
+    using FrameGrabberControls_Sender::getMode;
+    using FrameGrabberControls_Sender::setOnePush;
 };
 
 #endif // YARP_DEV_RGBDSENSORCLIENT_RGBDSENSORCLIENT_H

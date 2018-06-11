@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_SHIFTSTREAM_H
@@ -41,7 +44,7 @@ public:
     /**
      * Perform maintenance actions, if needed.
      */
-    virtual void check() {
+    virtual void check() const {
     }
 
     virtual InputStream& getInputStream() override {
@@ -60,13 +63,13 @@ public:
         return stream->getOutputStream();
     }
 
-    virtual const Contact& getLocalAddress() override {
+    virtual const Contact& getLocalAddress() const override {
         check();
         return (stream == nullptr) ? nullStream.getLocalAddress()
                                         : (stream->getLocalAddress());
     }
 
-    virtual const Contact& getRemoteAddress() override {
+    virtual const Contact& getRemoteAddress() const override {
         check();
         return (stream == nullptr) ? nullStream.getRemoteAddress()
                                         : (stream->getRemoteAddress());
@@ -106,18 +109,18 @@ public:
      * @return the wrapped stream (which after this call will remain
      * this container's responsibility - compare with giveStream).
      */
-    virtual TwoWayStream *getStream() {
+    virtual TwoWayStream *getStream() const {
         return stream;
     }
 
     /**
      * @return true if there is no wrapped stream.
      */
-    virtual bool isEmpty() {
+    virtual bool isEmpty() const {
         return stream == nullptr;
     }
 
-    virtual bool isOk() override {
+    virtual bool isOk() const override {
         if (stream != nullptr) {
             return stream->isOk();
         }

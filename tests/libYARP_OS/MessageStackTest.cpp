@@ -1,13 +1,15 @@
 /*
-* Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
-* Authors: Paul Fitzpatrick
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #include <yarp/os/MessageStack.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/impl/UnitTest.h>
 
 using namespace yarp::os::impl;
@@ -17,17 +19,17 @@ class MessageStackWorker : public PortReader {
 public:
     Semaphore go;
     Semaphore gone;
-    Semaphore mutex;
+    Mutex mutex;
     Bottle last;
 
-    MessageStackWorker() : go(0), gone(0), mutex(1) {
+    MessageStackWorker() : go(0), gone(0), mutex() {
     }
 
     virtual bool read(ConnectionReader& reader) override {
         go.wait();
-        mutex.wait();
+        mutex.lock();
         bool ok = last.read(reader);
-        mutex.post();
+        mutex.unlock();
         gone.post();
         return ok;
     }
@@ -46,7 +48,7 @@ public:
         stack.stack(b);
         stack.stack(b);
         Time::delay(1);
-        checkEqual(worker.last.size(),0,"no read without permission");
+        checkEqual(worker.last.size(),(size_t) 0,"no read without permission");
         worker.go.post();
         worker.gone.wait();
         checkEqual(worker.last.toString(),"hello","got a message");
@@ -66,7 +68,7 @@ public:
         checkBasic();
     }
 
-    virtual ConstString getName() override {
+    virtual std::string getName() const override {
         return "MessageStackTest";
     }
 };

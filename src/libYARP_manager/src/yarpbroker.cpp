@@ -1,11 +1,10 @@
 /*
- *  Yarp Modules Manager
- *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
- *  Authors: Ali Paikan <ali.paikan@iit.it>
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/manager/yarpbroker.h>
 
@@ -23,7 +22,7 @@
 #define RUN_TIMEOUT             10.0        //seconds
 #define STOP_TIMEOUT            15.0
 #define KILL_TIMEOUT            10.0
-#define EVENT_THREAD_PERIOD     500
+#define EVENT_THREAD_PERIOD     0.5 //seconds
 
 #if defined(_WIN32)
     #define SIGKILL 9
@@ -42,7 +41,7 @@ using namespace std;
 using namespace yarp::manager;
 
 
-YarpBroker::YarpBroker() : RateThread(EVENT_THREAD_PERIOD)
+YarpBroker::YarpBroker() : PeriodicThread(EVENT_THREAD_PERIOD)
 {
     bOnlyConnector = bInitialized = false;
     ID = generateID();
@@ -57,8 +56,8 @@ YarpBroker::~YarpBroker()
 
 void YarpBroker::fini()
 {
-    if(RateThread::isRunning())
-        RateThread::stop();
+    if(PeriodicThread::isRunning())
+        PeriodicThread::stop();
     //port.close();
 }
 
@@ -205,9 +204,9 @@ bool YarpBroker::start()
         {
             if(strStdioUUID.size())
             {
-                if(RateThread::isRunning())
-                    RateThread::stop();
-                RateThread::start();
+                if(PeriodicThread::isRunning())
+                    PeriodicThread::stop();
+                PeriodicThread::start();
             }
             return true;
         }
@@ -254,7 +253,7 @@ bool YarpBroker::stop()
     {
         if(running() == 0)
         {
-            RateThread::stop();
+            PeriodicThread::stop();
             return true;
         }
     }
@@ -263,7 +262,7 @@ bool YarpBroker::stop()
     strError += strCmd;
     strError += " on ";
     strError += strHost;
-    RateThread::stop();
+    PeriodicThread::stop();
     return false;
 }
 
@@ -282,7 +281,7 @@ bool YarpBroker::kill()
     grp.clear();
     grp.addString("kill");
     grp.addString(strTag.c_str());
-    grp.addInt(SIGKILL);
+    grp.addInt32(SIGKILL);
     msg.addList() = grp;
     int ret = SendMsg(msg, strHost.c_str(), response, CONNECTION_TIMEOUT);
     if(ret != YARPRUN_OK)
@@ -302,7 +301,7 @@ bool YarpBroker::kill()
     {
         if(running() == 0)
         {
-            RateThread::stop();
+            PeriodicThread::stop();
             return true;
         }
     }
@@ -311,7 +310,7 @@ bool YarpBroker::kill()
     strError += strCmd;
     strError += " on ";
     strError += strHost;
-    RateThread::stop();
+    PeriodicThread::stop();
     return false;
 }
 
@@ -643,13 +642,13 @@ bool YarpBroker::getAllPorts(vector<string> &ports)
     if((reply.size()!=1) || (!reply.get(0).isString()))
         return false;
 
-    ConstString str = reply.get(0).asString();
+    std::string str = reply.get(0).asString();
     const char* delm = "registration name ";
     size_t pos1, pos2;
-    while((pos1 = str.find(delm)) != ConstString::npos)
+    while((pos1 = str.find(delm)) != std::string::npos)
     {
         str = str.substr(pos1+strlen(delm));
-        if((pos2 = str.find(" ")) != ConstString::npos)
+        if((pos2 = str.find(" ")) != std::string::npos)
             ports.push_back(str.substr(0, pos2).c_str());
     }
 
@@ -673,17 +672,17 @@ bool YarpBroker::getAllProcesses(const char* server,
     int ret = SendMsg(msg, server, response, 3.0);
     if((ret == YARPRUN_OK) || (ret == YARPRUN_NORESPONSE))
     {
-        for(int i=0; i<response.size(); i++)
+        for(size_t i=0; i<response.size(); i++)
         {
             Process proc;
-            ConstString sprc;
+            std::string sprc;
             if(response.get(i).check("pid"))
-                proc.pid = response.get(i).find("pid").asInt();
+                proc.pid = response.get(i).find("pid").asInt32();
             if(response.get(i).check("cmd"))
                sprc = response.get(i).find("cmd").asString();
             if(response.get(i).check("env") &&
                response.get(i).find("env").asString().length())
-               sprc = sprc + ConstString("; ") + response.get(i).find("env").asString();
+               sprc = sprc + std::string("; ") + response.get(i).find("env").asString();
             proc.command = sprc.c_str();
             processes.push_back(proc);
         }
@@ -816,7 +815,7 @@ void YarpBroker::run()
     Bottle *input;
     if( (input=stdioPort.read(false)) && eventSink)
     {
-        for (int i=0; i<input->size(); i++)
+        for (size_t i=0; i<input->size(); i++)
             eventSink->onBrokerStdout(input->get(i).asString().c_str());
     }
 }
@@ -829,7 +828,7 @@ void YarpBroker::threadRelease()
 }
 
 
-int YarpBroker::SendMsg(Bottle& msg, ConstString target, Bottle& response, float fTimeout)
+int YarpBroker::SendMsg(Bottle& msg, std::string target, Bottle& response, float fTimeout)
 {
     if(!exists(target.c_str()))
         return YARPRUN_NOCONNECTION;
@@ -920,7 +919,7 @@ int YarpBroker::requestServer(Property& config)
         if(response.size() > 2)
             strStdioUUID = response.get(2).asString().c_str();
 
-        return ((response.get(0).asInt()>0)?YARPRUN_OK:YARPRUN_UNDEF);
+        return ((response.get(0).asInt32()>0)?YARPRUN_OK:YARPRUN_UNDEF);
     }
 
     // DON'T USE A RUN SERVER TO MANAGE STDIO
@@ -945,7 +944,7 @@ int YarpBroker::requestServer(Property& config)
         if (ret != YARPRUN_OK)
             return ret;
 
-        return ((response.get(0).asInt()>0)?YARPRUN_OK:YARPRUN_UNDEF);
+        return ((response.get(0).asInt32()>0)?YARPRUN_OK:YARPRUN_UNDEF);
     }
 
     return YARPRUN_UNDEF;

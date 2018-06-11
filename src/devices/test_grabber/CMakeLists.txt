@@ -1,26 +1,18 @@
-# Copyright (C) 2017 Istituto Italiano di Tecnologia (IIT)
-# Authors: Nicolò Genesio
-# email:   nicolo.genesio@iit.it
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 yarp_prepare_plugin(test_grabber
                     CATEGORY device
                     TYPE yarp::dev::TestFrameGrabber
                     INCLUDE TestFrameGrabber.h
                     EXTRA_CONFIG WRAPPER=grabber
-                    DEPENDS CREATE_DEVICE_LIBRARY_MODULES
                     DEFAULT ON)
 
 if(ENABLE_test_grabber)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  get_property(YARP_dev_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS}
-                      ${YARP_dev_INCLUDE_DIRS})
   yarp_add_plugin(yarp_test_grabber TestFrameGrabber.cpp
                                         TestFrameGrabber.h)
   target_link_libraries(yarp_test_grabber YARP_OS

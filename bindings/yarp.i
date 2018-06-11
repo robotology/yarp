@@ -1,6 +1,9 @@
-// Copyright: (C) 2010 RobotCub Consortium
-// Author: Paul Fitzpatrick, Stephane Lallee, Arnaud Degroote, Leo Pape, Juan G Victores, Marek Rucinski, Fabien Benureau, Ali Paikan
-// CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+// Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+// Copyright (C) 2006-2010 RobotCub Consortium
+// All rights reserved.
+//
+// This software may be modified and distributed under the terms of the
+// BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -39,11 +42,8 @@
   %include "std_vector.i"
 #endif
 
-// Try to make yarp::os::ConstString act like std::string
 // Try to translate std::string to native equivalents
 %include "std_string.i"
-%typemaps_std_string(yarp::os::ConstString, char, SWIG_AsCharPtrAndSize,
-             SWIG_FromCharPtrAndSize, %checkcode(STDSTRING));
 
 #if defined(SWIGCSHARP)
     // Get .NET pointers instead of swig generated types (useful when dealing with images)
@@ -100,12 +100,10 @@
 // Deal with overridden method clashes, simply by ignoring them.
 // At some point, these methods should get renamed so they are still
 // available.
-%ignore *::check(const ConstString& key, Value *& result) const;
-%ignore *::check(const ConstString& key, Value *& result, const ConstString& comment) const;
+%ignore *::check(const std::string& key, Value *& result) const;
+%ignore *::check(const std::string& key, Value *& result, const std::string& comment) const;
 %rename(where_c) *::where();
 %rename(seed_c) *::seed(int seed);  // perl clash
-%ignore *::setPid(int j, const Pid &pid);
-%ignore *::getPid(int j, Pid *pid);
 %ignore *::setKp(double);
 %ignore *::setKi(double);
 %ignore *::setKd(double);
@@ -113,7 +111,7 @@
 %ignore *::setScale(double);
 %ignore *::setOffset(double);
 %rename(attach_rpc_server) *::attach(yarp::os::RpcServer&);
-%rename(open_str) yarp::dev::PolyDriver::open(const yarp::os::ConstString& txt);
+%rename(open_str) yarp::dev::PolyDriver::open(const std::string& txt);
 
 #if defined(SWIGCSHARP)
     // there's a big CSHARP virtual/override muddle
@@ -148,7 +146,7 @@
 #ifdef SWIGJAVA
     %rename(wait_c) *::wait();
     %rename(clone_c) *::clone() const;
-    %rename(toString_c) *::toString();
+    %rename(toString_c) *::toString() const;
 #endif
 
 #ifdef SWIGCHICKEN
@@ -180,11 +178,11 @@
 %ignore yarp::sig::Image::pixel(int,int) const;
 %ignore yarp::sig::Image::getRow(int) const;
 %ignore yarp::sig::Image::getIplImage() const;
-%ignore yarp::sig::Image::getReadType();
-%ignore yarp::sig::Vector::getType();
+%ignore yarp::sig::Image::getReadType() const;
+%ignore yarp::sig::Vector::getType() const;
 %ignore yarp::os::Property::put(const char *,Value *);
 %ignore yarp::os::Bottle::add(Value *);
-%rename(toString) yarp::os::ConstString::operator const char *() const;
+%rename(toString) std::string::operator const char *() const;
 %rename(isEqual) *::operator==;
 %rename(notEqual) *::operator!=;
 %rename(access) *::operator();
@@ -273,6 +271,18 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %enddef
 %define YARP_OS_DEPRECATED_API
 %enddef
+%define YARP_OS_DEPRECATED_API_MSG(msg)
+%enddef
+%define YARP_DISABLE_DEPRECATED_WARNING
+%enddef
+%define YARP_DISABLE_DLL_INTERFACE_WARNING
+%enddef
+%define YARP_SUPPRESS_DLL_INTERFACE_WARNING
+%enddef
+%define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(x) x
+%enddef
+%define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS(...) __VA_ARGS__
+%enddef
 
 %define _YARP2_NETINT32_
 %enddef
@@ -329,7 +339,6 @@ namespace yarp {
 };
 #endif
 
-%include <yarp/os/ConstString.h>
 %include <yarp/os/PortReport.h>
 %include <yarp/os/Contact.h>
 %include <yarp/os/ConnectionReader.h>
@@ -362,7 +371,10 @@ namespace yarp {
 %include <yarp/os/Searchable.h>
 %include <yarp/os/Semaphore.h>
 %include <yarp/os/Thread.h>
+%include <yarp/os/PeriodicThread.h>
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 %include <yarp/os/RateThread.h>
+#endif
 %include <yarp/os/Time.h>
 %include <yarp/os/RFModule.h>
 %include <yarp/os/Stamp.h>
@@ -417,15 +429,21 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/CalibratorInterfaces.h>
 %include <yarp/dev/ControlBoardPid.h>
 %include <yarp/dev/IControlMode.h>
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 %include <yarp/dev/IControlMode2.h>
+#endif
 %include <yarp/dev/IEncoders.h>
+%include <yarp/dev/IMotorEncoders.h>
 %include <yarp/dev/ITorqueControl.h>
 %include <yarp/dev/IImpedanceControl.h>
 %include <yarp/dev/IVelocityControl.h>
 %include <yarp/dev/IPWMControl.h>
 %include <yarp/dev/ICurrentControl.h>
 %include <yarp/dev/IAnalogSensor.h>
+%include <yarp/dev/IRemoteVariables.h>
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 %include <yarp/dev/FrameGrabberControl2.h>
+#endif
 %include <yarp/dev/IPidControl.h>
 %include <yarp/dev/IPositionDirect.h>
 
@@ -578,6 +596,10 @@ typedef yarp::os::BufferedPort<yarp::sig::Vector> BufferedPortVector;
 %template(TypedReaderCallbackImageInt) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelInt> >;
 %template(BufferedPortImageInt) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> >;
 
+#if !defined (SWIGMATLAB)
+%feature("director") yarp::os::TypedReaderCallback<Sound>;
+%feature("director") yarp::os::TypedReaderCallback<yarp::sig::Sound>;
+#endif
 %template(TypedReaderSound) yarp::os::TypedReader<yarp::sig::Sound >;
 %template(TypedReaderCallbackSound) yarp::os::TypedReaderCallback<yarp::sig::Sound>;
 %template(BufferedPortSound) yarp::os::BufferedPort<yarp::sig::Sound >;
@@ -724,6 +746,12 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return result;
     }
 
+    yarp::dev::IMotorEncoders *viewIMotorEncoders() {
+        yarp::dev::IMotorEncoders *result;
+        self->view(result);
+        return result;
+    }
+
     yarp::dev::IPidControl *viewIPidControl() {
         yarp::dev::IPidControl *result;
         self->view(result);
@@ -771,12 +799,13 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         self->view(result);
         return result;
     }
-
-    yarp::dev::IControlMode2 *viewIControlMode2() {
-        yarp::dev::IControlMode2 *result;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+    yarp::dev::IControlMode *viewIControlMode2() {
+        yarp::dev::IControlMode *result;
         self->view(result);
         return result;
     }
+#endif
 
     yarp::dev::IPWMControl *viewIPWMControl() {
             yarp::dev::IPWMControl *result;
@@ -795,15 +824,33 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         self->view(result);
         return result;
     }
-
-    yarp::dev::IFrameGrabberControls2 *viewIFrameGrabberControls2() {
-        yarp::dev::IFrameGrabberControls2 *result;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+    yarp::dev::IFrameGrabberControls *viewIFrameGrabberControls2() {
+        yarp::dev::IFrameGrabberControls *result;
+        self->view(result);
+        return result;
+    }
+#endif
+    yarp::dev::IFrameGrabberControls *viewIFrameGrabberControls() {
+        yarp::dev::IFrameGrabberControls *result;
         self->view(result);
         return result;
     }
 
     yarp::dev::IPositionDirect *viewIPositionDirect() {
         yarp::dev::IPositionDirect *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::IRemoteVariables *viewIRemoteVariables() {
+        yarp::dev::IRemoteVariables *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::IAxisInfo *viewIAxisInfo() {
+        yarp::dev::IAxisInfo *result;
         self->view(result);
         return result;
     }
@@ -971,65 +1018,45 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 }
 
-%extend yarp::dev::IPidControl {
-#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
-    bool setReferences(std::vector<double>& data) {
-        return self->setReferences(&data[0]);
+%extend yarp::dev::IMotorEncoders {
+    int getNumberOfMotorEncoders() {
+        int nbEncs;
+        bool ok = self->getNumberOfMotorEncoders(&nbEncs);
+        if (!ok) return 0;
+        return nbEncs;
     }
 
-    bool getReference(int j, std::vector<double>& data) {
-        return self->getReference(j, &data[0]);
+    double getMotorEncoder(int j) {
+        double enc;
+        bool ok = self->getMotorEncoder(j, &enc);
+        if (!ok) return 0;
+        return enc;
     }
 
-    bool getReferences(std::vector<double>& data) {
-        return self->getReferences(&data[0]);
+    bool getMotorEncoders(std::vector<double>& encs) {
+        return self->getMotorEncoders(&encs[0]);
     }
 
-    bool setErrorLimits(std::vector<double>& data) {
-        return self->setErrorLimits(&data[0]);
+    bool getMotorEncoderTimed(int j, std::vector<double>& enc, std::vector<double>& time) {
+        return self->getMotorEncoderTimed(j, &enc[0], &time[0]);
     }
 
-    bool getErrorLimit(int j, std::vector<double>& data) {
-        return self->getErrorLimit(j, &data[0]);
+    bool getMotorEncodersTimed(std::vector<double>& encs, std::vector<double>& times) {
+        return self->getMotorEncodersTimed(&encs[0], &times[0]);
     }
 
-    bool getErrorLimits(std::vector<double>& data) {
-        return self->getErrorLimits(&data[0]);
+    double getMotorEncoderSpeed(int j) {
+        double speed;
+        bool ok = self->getMotorEncoderSpeed(j, &speed);
+        if (!ok) return 0;
+        return speed;
     }
 
-    bool getError(int j, std::vector<double>& data) {
-        return self->getError(j, &data[0]);
+    bool getMotorEncoderSpeeds(std::vector<double>& speeds) {
+        return self->getMotorEncoderSpeeds(&speeds[0]);
     }
-
-    bool getErrors(std::vector<double>& data) {
-        return self->getErrors(&data[0]);
-    }
-
-    bool getOutput(int j, std::vector<double>& data) {
-        return self->getOutput(j, &data[0]);
-    }
-
-    bool getOutputs(std::vector<double>& data) {
-        return self->getOutputs(&data[0]);
-    }
-
-    bool setPid(int j, yarp::dev::Pid pid) {
-        return self->setPid(j,pid);
-    }
-
-    bool setPids(std::vector<yarp::dev::Pid> pids) {
-        return self->setPids(&pids[0]);
-    }
-
-    bool getPid(int j, std::vector<yarp::dev::Pid> pid) {
-        return self->getPid(j,&pid[0]);
-    }
-
-    bool getPids(std::vector<yarp::dev::Pid> pids) {
-        return self->getPids(&pids[0]);
-    }
-#endif
 }
+
 
 %extend yarp::dev::IAmplifierControl {
     bool getCurrents(std::vector<double>& data) {
@@ -1058,9 +1085,7 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     bool getControlModes(std::vector<int>& data) {
         return self->getControlModes(&data[0]);
     }
-}
 
-%extend yarp::dev::IControlMode2 {
     bool getControlModes(int n_joint, std::vector<int>& joints, std::vector<int>& data) {
         return self->getControlModes(n_joint, &joints[0], &data[0]);
     }
@@ -1084,6 +1109,15 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 
     bool setPositions(std::vector<double>& data) {
         return self->setPositions(&data[0]);
+    }
+}
+
+%extend yarp::dev::IAxisInfo {
+    std::string getAxisName(int axis) {
+        std::string name;
+        bool ok = self->getAxisName(axis, name);
+        if (!ok) return "unknown";
+        return name;
     }
 }
 
@@ -1366,60 +1400,60 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////
-// Deal with IFrameGrabberControls2 pointer arguments that don't translate
+// Deal with IFrameGrabberControls pointer arguments that don't translate
+      %extend yarp::dev::IFrameGrabberControls {
+        CameraDescriptor getCameraDescription() {
+            CameraDescriptor result;
+            self->getCameraDescription(&result);
+            return result;
+        }
 
-%extend yarp::dev::IFrameGrabberControls2 {
-  CameraDescriptor getCameraDescription() {
-      CameraDescriptor result;
-      self->getCameraDescription(&result);
-      return result;
-  }
+        bool hasFeature(int feature) {
+            bool result;
+            self->hasFeature(feature, &result);
+            return result;
+        }
 
-  bool hasFeature(int feature) {
-      bool result;
-      self->hasFeature(feature, &result);
-      return result;
-  }
+        double getFeature(int feature) {
+            double result;
+            self->getFeature(feature, &result);
+            return result;
+        }
 
-  double getFeature(int feature) {
-      double result;
-      self->getFeature(feature, &result);
-      return result;
-  }
+        bool hasOnOff(int feature) {
+            bool result;
+            self->hasOnOff(feature, &result);
+            return result;
+        }
 
-  bool hasOnOff(int feature) {
-      bool result;
-      self->hasOnOff(feature, &result);
-      return result;
-  }
+        bool getActive(int feature) {
+            bool result;
+            self->getActive(feature, &result);
+            return result;
+        }
 
-  bool getActive(int feature) {
-      bool result;
-      self->getActive(feature, &result);
-      return result;
-  }
+        bool hasAuto(int feature) {
+            bool result;
+            self->hasAuto(feature, &result);
+            return result;
+        }
 
-  bool hasAuto(int feature) {
-      bool result;
-      self->hasAuto(feature, &result);
-      return result;
-  }
+        bool hasManual(int feature) {
+            bool result;
+            self->hasManual(feature, &result);
+            return result;
+        }
 
-  bool hasManual(int feature) {
-      bool result;
-      self->hasManual(feature, &result);
-      return result;
-  }
+        bool hasOnePush(int feature) {
+            bool result;
+            self->hasOnePush(feature, &result);
+            return result;
+        }
 
-  bool hasOnePush(int feature) {
-      bool result;
-      self->hasOnePush(feature, &result);
-      return result;
-  }
+        FeatureMode getMode(int feature) {
+            FeatureMode result;
+            self->getMode(feature, &result);
+            return result;
+        }
+      }
 
-  FeatureMode getMode(int feature) {
-      FeatureMode result;
-      self->getMode(feature, &result);
-      return result;
-  }
-}

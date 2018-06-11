@@ -1,14 +1,16 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_TYPE_H
 #define YARP_OS_TYPE_H
 
-#include <yarp/os/ConstString.h>
 #include <yarp/os/Searchable.h>
+#include <string>
 
 namespace yarp {
     namespace os {
@@ -51,11 +53,11 @@ public:
         return Type();
     }
 
-    ConstString getName() const {
+    std::string getName() const {
         return name;
     }
 
-    ConstString getNameOnWire() const {
+    std::string getNameOnWire() const {
         return name_on_wire;
     }
 
@@ -67,7 +69,7 @@ public:
         return hasName();
     }
 
-    ConstString toString() const {
+    std::string toString() const {
         if (name_on_wire!="") {
             return name + ":" + name_on_wire;
         }
@@ -82,8 +84,8 @@ public:
     Type& addProperty(const char *key, const Value& val);
 
 private:
-    ConstString name;
-    ConstString name_on_wire;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name_on_wire;
     Property *prop;
 };
 

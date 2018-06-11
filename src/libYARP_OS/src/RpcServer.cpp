@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2009 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/RpcServer.h>
@@ -22,7 +25,7 @@ RpcServer::~RpcServer()
     port.close();
 }
 
-bool RpcServer::write(PortWriter& writer, PortWriter *callback) const
+bool RpcServer::write(const PortWriter& writer, const PortWriter *callback) const
 {
     YARP_UNUSED(writer);
     YARP_UNUSED(callback);
@@ -30,9 +33,9 @@ bool RpcServer::write(PortWriter& writer, PortWriter *callback) const
     return false;
 }
 
-bool RpcServer::write(PortWriter& writer,
+bool RpcServer::write(const PortWriter& writer,
                       PortReader& reader,
-                      PortWriter *callback) const
+                      const PortWriter *callback) const
 {
     YARP_UNUSED(writer);
     YARP_UNUSED(reader);

@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2009 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <cmath>
@@ -32,7 +34,7 @@ public:
 
 class SemaphoreTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "SemaphoreTest"; }
+    virtual std::string getName() const override { return "SemaphoreTest"; }
 
     void checkBasic() {
         report(0, "basic semaphore sanity check...");

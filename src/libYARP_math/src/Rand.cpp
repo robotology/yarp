@@ -1,11 +1,13 @@
 /*
-* Author: Lorenzo Natale
-* Copyright (C) 2007, 2010 The RobotCub Consortium
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/math/Rand.h>
 #include <ctime>
 #include <cstdio>
@@ -24,7 +26,7 @@ using namespace yarp::math::impl;
 */
 class ThreadSafeRandScalar : public RandScalar
 {
-    yarp::os::Semaphore mutex;
+    yarp::os::Mutex mutex;
 public:
     ThreadSafeRandScalar(): RandScalar()
     {
@@ -33,24 +35,24 @@ public:
 
     void init()
     {
-        mutex.wait();
+        mutex.lock();
         RandScalar::init();
-        mutex.post();
+        mutex.unlock();
     }
 
     void init(int s)
     {
-        mutex.wait();
+        mutex.lock();
         RandScalar::init(s);
-        mutex.post();
+        mutex.unlock();
     }
 
     double get(double min=0.0, double max=1.0)
     {
         double ret;
-        mutex.wait();
+        mutex.lock();
         ret=RandScalar::get(min, max);
-        mutex.post();
+        mutex.unlock();
         return ret;
     }
 
@@ -89,9 +91,9 @@ Vector Rand::vector(int s)
 
 Vector Rand::vector(const Vector &min, const Vector &max)
 {
-    int s=min.size();
+    size_t s = min.size();
     yarp::sig::Vector ret(s);
-    for(int k=0;k<s;k++)
+    for(size_t k=0;k<s;k++)
     {
         ret[k]=theRandScalar.get(min[k], max[k]);
     }

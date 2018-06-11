@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_PUBLISHER_H
@@ -27,10 +29,6 @@ namespace yarp {
 template <class T>
 class yarp::os::Publisher : public AbstractContactable {
 public:
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
-    using Contactable::open;
-#endif // YARP_NO_DEPRECATED
-
     using AbstractContactable::write;
 
     /**
@@ -40,7 +38,7 @@ public:
      * @param name optional topic name to publish to.
      *
      */
-    Publisher(const ConstString& name = "") {
+    Publisher(const std::string& name = "") {
         buffered_port = nullptr;
         T example;
         port.promiseType(example.getType());
@@ -70,13 +68,13 @@ public:
      * @return true on success
      *
      */
-    bool topic(const ConstString& name) {
+    bool topic(const std::string& name) {
         port.includeNodeInName(true);
         return open(name);
     }
 
     // documentation provided in Contactable
-    virtual bool open(const ConstString& name) override {
+    virtual bool open(const std::string& name) override {
         clear();
         return port.open(name);
     }

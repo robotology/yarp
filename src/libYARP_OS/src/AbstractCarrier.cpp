@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/AbstractCarrier.h>
@@ -17,48 +20,48 @@ void AbstractCarrier::setParameters(const Bytes& header)
     // default - no parameters
 }
 
-bool AbstractCarrier::isConnectionless()
+bool AbstractCarrier::isConnectionless() const
 {
     // conservative choice - shortcuts are taken for connection
     return true;
 }
 
-bool AbstractCarrier::supportReply()
+bool AbstractCarrier::supportReply() const
 {
     return !isConnectionless();
 }
 
-bool AbstractCarrier::canAccept()
+bool AbstractCarrier::canAccept() const
 {
     return true;
 }
 
-bool AbstractCarrier::canOffer()
+bool AbstractCarrier::canOffer() const
 {
     return true;
 }
 
-bool AbstractCarrier::isTextMode()
+bool AbstractCarrier::isTextMode() const
 {
     return false;
 }
 
-bool AbstractCarrier::requireAck()
+bool AbstractCarrier::requireAck() const
 {
     return false;
 }
 
-bool AbstractCarrier::canEscape()
+bool AbstractCarrier::canEscape() const
 {
     return true;
 }
 
-bool AbstractCarrier::isLocal()
+bool AbstractCarrier::isLocal() const
 {
     return false;
 }
 
-ConstString AbstractCarrier::toString()
+std::string AbstractCarrier::toString() const
 {
     return getName();
 }
@@ -102,7 +105,7 @@ bool AbstractCarrier::expectSenderSpecifier(ConnectionState& proto)
     NetInt32 numberSrc;
     Bytes number((char*)&numberSrc, sizeof(NetInt32));
     int len = 0;
-    YARP_SSIZE_T r = proto.is().readFull(number);
+    yarp::conf::ssize_t r = proto.is().readFull(number);
     if ((size_t)r!=number.length()) {
         YARP_DEBUG(Logger::get(), "did not get sender name length");
         return false;
@@ -115,12 +118,13 @@ bool AbstractCarrier::expectSenderSpecifier(ConnectionState& proto)
         len = 1;
     }
     ManagedBytes b(len+1);
-    r = proto.is().readFull(Bytes(b.get(), len));
+    Bytes bytes(b.get(), len);
+    r = proto.is().readFull(bytes);
     if ((int)r!=len) {
         YARP_DEBUG(Logger::get(), "did not get sender name");
         return false;
     }
-    ConstString s = b.get();
+    std::string s = b.get();
     Route route = proto.getRoute();
     route.setFromName(s);
     proto.setRoute(route);
@@ -137,7 +141,7 @@ bool AbstractCarrier::expectAck(ConnectionState& proto)
     return defaultExpectAck(proto);
 }
 
-bool AbstractCarrier::isActive()
+bool AbstractCarrier::isActive() const
 {
     return true;
 }
@@ -147,12 +151,12 @@ void AbstractCarrier::setCarrierParams(const Property& params)
     YARP_UNUSED(params);
 }
 
-void AbstractCarrier::getCarrierParams(Property& params)
+void AbstractCarrier::getCarrierParams(Property& params) const
 {
     YARP_UNUSED(params);
 }
 
-int AbstractCarrier::getSpecifier(const Bytes& b)
+int AbstractCarrier::getSpecifier(const Bytes& b) const
 {
     int x = interpretYarpNumber(b);
     if (x>=0) {
@@ -161,7 +165,7 @@ int AbstractCarrier::getSpecifier(const Bytes& b)
     return x;
 }
 
-void AbstractCarrier::createStandardHeader(int specifier, const Bytes& header)
+void AbstractCarrier::createStandardHeader(int specifier, Bytes& header) const
 {
     createYarpNumber(7777+specifier, header);
 }
@@ -201,8 +205,8 @@ bool AbstractCarrier::sendSenderSpecifier(ConnectionState& proto)
 {
     NetInt32 numberSrc;
     Bytes number((char*)&numberSrc, sizeof(NetInt32));
-    const ConstString senderName = proto.getSenderSpecifier();
-    //const ConstString& senderName = getRoute().getFromName();
+    const std::string senderName = proto.getSenderSpecifier();
+    //const std::string& senderName = getRoute().getFromName();
     NetType::netInt((int)senderName.length()+1, number);
     OutputStream& os = proto.os();
     os.write(number);
@@ -238,7 +242,7 @@ bool AbstractCarrier::defaultExpectAck(ConnectionState& proto)
     if (proto.getConnection().requireAck()) {
         char buf[8];
         Bytes header((char*)&buf[0], sizeof(buf));
-        YARP_SSIZE_T hdr = proto.is().readFull(header);
+        yarp::conf::ssize_t hdr = proto.is().readFull(header);
         if ((size_t)hdr!=header.length()) {
             YARP_DEBUG(proto.getLog(), "did not get acknowledgement header");
             return false;
@@ -268,7 +272,7 @@ bool AbstractCarrier::defaultExpectIndex(ConnectionState& proto)
     // expect index header
     char buf[8];
     Bytes header((char*)&buf[0], sizeof(buf));
-    YARP_SSIZE_T r = proto.is().readFull(header);
+    yarp::conf::ssize_t r = proto.is().readFull(header);
     if ((size_t)r!=header.length()) {
         YARP_DEBUG(log, "broken index");
         return false;
@@ -300,7 +304,7 @@ bool AbstractCarrier::defaultExpectIndex(ConnectionState& proto)
     NetInt32 numberSrc;
     Bytes number((char*)&numberSrc, sizeof(NetInt32));
     for (int i=0; i<inLen; i++) {
-        YARP_SSIZE_T l = proto.is().readFull(number);
+        yarp::conf::ssize_t l = proto.is().readFull(number);
         if ((size_t)l!=number.length()) {
             YARP_DEBUG(log, "bad input block length");
             return false;
@@ -309,7 +313,7 @@ bool AbstractCarrier::defaultExpectIndex(ConnectionState& proto)
         total += x;
     }
     for (int i2=0; i2<outLen; i2++) {
-        YARP_SSIZE_T l = proto.is().readFull(number);
+        yarp::conf::ssize_t l = proto.is().readFull(number);
         if ((size_t)l!=number.length()) {
             YARP_DEBUG(log, "bad output block length");
             return false;
@@ -339,7 +343,7 @@ int AbstractCarrier::readYarpInt(ConnectionState& proto)
 {
     char buf[8];
     Bytes header(&(buf[0]), sizeof(buf));
-    YARP_SSIZE_T len = proto.is().readFull(header);
+    yarp::conf::ssize_t len = proto.is().readFull(header);
     if ((size_t)len!=header.length()) {
         YARP_DEBUG(proto.getLog(), "data stream died");
         return -1;
@@ -358,12 +362,12 @@ void AbstractCarrier::writeYarpInt(int n, ConnectionState& proto)
 int AbstractCarrier::interpretYarpNumber(const yarp::os::Bytes& b)
 {
     if (b.length()==8) {
-        char *base = b.get();
+        const char *base = b.get();
         if (base[0]=='Y' &&
             base[1]=='A' &&
             base[6]=='R' &&
             base[7]=='P') {
-            yarp::os::Bytes b2(b.get()+2, 4);
+            yarp::os::Bytes b2(const_cast<char*>(b.get())+2, 4);
             int x = NetType::netInt(b2);
             return x;
         }
@@ -371,7 +375,7 @@ int AbstractCarrier::interpretYarpNumber(const yarp::os::Bytes& b)
     return -1;
 }
 
-void AbstractCarrier::createYarpNumber(int x, const yarp::os::Bytes& header)
+void AbstractCarrier::createYarpNumber(int x, yarp::os::Bytes& header)
 {
     if (header.length()!=8) {
         return;

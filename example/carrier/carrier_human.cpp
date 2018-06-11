@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <stdio.h>
@@ -57,7 +60,7 @@ public:
     /////////////////////////////////////////////////
     // InputStream
 
-    virtual ssize_t read(const yarp::os::Bytes& b) {
+    virtual ssize_t read(yarp::os::Bytes& b) {
         if (interrupting) { return -1; }
         while (inputCache.size() < b.length()) {
             yInfo() <<"*** CHECK OTHER TERMINAL FOR SOMETHING TO TYPE:";
@@ -141,48 +144,48 @@ public:
     /////////////////////////////////////////////////
     // First, the easy bits...
 
-    virtual yarp::os::Carrier *create() {
+    virtual yarp::os::Carrier *create() const {
         return new HumanCarrier();
     }
 
-    virtual yarp::os::ConstString getName() {
+    virtual std::string getName() const {
         return "human";
     }
 
-    virtual bool isConnectionless() {
+    virtual bool isConnectionless() const {
         return true;
     }
 
-    virtual bool canAccept() {
+    virtual bool canAccept() const {
         return true;
     }
 
-    virtual bool canOffer() {
+    virtual bool canOffer() const {
         return true;
     }
 
-    virtual bool isTextMode() {
+    virtual bool isTextMode() const {
         // let's be text mode, for human-friendliness
         return true;
     }
 
-    virtual bool canEscape() {
+    virtual bool canEscape() const {
         return true;
     }
 
-    virtual bool requireAck() {
+    virtual bool requireAck() const {
         return true;
     }
 
-    virtual bool supportReply() {
+    virtual bool supportReply() const {
         return true;
     }
 
-    virtual bool isLocal() {
+    virtual bool isLocal() const {
         return false;
     }
 
-    virtual yarp::os::ConstString toString() {
+    virtual std::string toString() const {
         return "humans are handy";
     }
 
@@ -231,7 +234,7 @@ public:
 
         // let's just send the port name in plain text terminated with a
         // carriage-return / line-feed
-        yarp::os::ConstString from = proto.getRoute().getFromName();
+        std::string from = proto.getRoute().getFromName();
         yarp::os::Bytes b2((char*)from.c_str(),from.length());
         proto.os().write(b2);
         proto.os().write('\r');
@@ -283,15 +286,15 @@ public:
     }
 
     virtual bool sendIndex(yarp::os::ConnectionState& proto) {
-        yarp::os::ConstString prefix = "human says ";
+        std::string prefix = "human says ";
         yarp::os::Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.os().write(b2);
         return true;
     }
 
     virtual bool expectIndex(yarp::os::ConnectionState& proto) {
-        yarp::os::ConstString prefix = "human says ";
-        yarp::os::ConstString compare = prefix;
+        std::string prefix = "human says ";
+        std::string compare = prefix;
         yarp::os::Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.is().read(b2);
         bool ok = proto.is().isOk() && (prefix==compare);
@@ -303,15 +306,15 @@ public:
     // Acknowledgements, we don't do them
 
     virtual bool sendAck(yarp::os::ConnectionState& proto) {
-        yarp::os::ConstString prefix = "computers rule!\r\n";
+        std::string prefix = "computers rule!\r\n";
         yarp::os::Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.os().write(b2);
         return true;
     }
 
     virtual bool expectAck(yarp::os::ConnectionState& proto) {
-        yarp::os::ConstString prefix = "computers rule!\r\n";
-        yarp::os::ConstString compare = prefix;
+        std::string prefix = "computers rule!\r\n";
+        std::string compare = prefix;
         yarp::os::Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.is().read(b2);
         bool ok = proto.is().isOk() && (prefix==compare);

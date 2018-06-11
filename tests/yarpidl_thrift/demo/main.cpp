@@ -1,9 +1,10 @@
 /*
- * Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <cstdio>
 
@@ -23,7 +24,7 @@ using namespace yarp::os::impl;
 
 class ThriftTest : public UnitTest {
 public:
-    virtual ConstString getName() override {
+    virtual std::string getName() const override {
         return "ThriftTest";
     }
 };
@@ -38,34 +39,34 @@ public:
         closing = false;
     }
 
-    virtual int32_t get_answer() {
+    virtual int32_t get_answer() override {
         return 42;
     }
 
-    virtual int32_t add_one(const int32_t x) {
+    virtual int32_t add_one(const int32_t x) override {
         printf("adding 1 to %d\n", x);
         return x+1;
     }
 
-    virtual int32_t add_pair(const int32_t x, const int32_t y) {
+    virtual int32_t add_pair(const int32_t x, const int32_t y) override {
         printf("adding %d and %d\n", x, y);
         return x+y;
     }
 
-    virtual void test_void(const int32_t x) {
+    virtual void test_void(const int32_t x) override {
         printf("test void with %d\n", x);
     }
 
-    virtual void test_1way(const int32_t x) {
+    virtual void test_1way(const int32_t x) override {
         printf("test oneway with %d\n", x);
     }
 
-    virtual bool test_defaults(const int32_t x) {
+    virtual bool test_defaults(const int32_t x) override {
         printf("test defaults with %d\n", x);
         return (x==42);
     }
 
-    virtual std::vector<DemoEnum> test_enum_vector(const std::vector<DemoEnum> & x) {
+    virtual std::vector<DemoEnum> test_enum_vector(const std::vector<DemoEnum> & x) override {
         printf("test_enum_vector\n");
         std::vector<DemoEnum> result = x;
         result.push_back(ENUM1);
@@ -74,20 +75,20 @@ public:
 
     virtual int32_t test_partial(const int32_t x,
                                  const std::vector<int32_t> & lst,
-                                 const int32_t y) {
+                                 const int32_t y) override {
         printf("test_partial with %d and %d\n", x, y);
         YARP_UNUSED(lst);
         return x+y;
     }
 
-    virtual int32_t test_tail_defaults(const DemoEnum x) {
+    virtual int32_t test_tail_defaults(const DemoEnum x) override {
         if (x==ENUM1) {
             return 42;
         }
         return 999;
     }
 
-    virtual int32_t test_longer_tail_defaults(const int32_t ignore, const DemoEnum _enum, const int32_t _int, const std::string& _string) {
+    virtual int32_t test_longer_tail_defaults(const int32_t ignore, const DemoEnum _enum, const int32_t _int, const std::string& _string) override {
         YARP_UNUSED(ignore);
         if (_enum==ENUM2 && _int==42 && _string=="Space Monkey from the Planet: Space") {
             return 999;
@@ -97,7 +98,7 @@ public:
 
 
 
-    virtual void do_start_a_service() {
+    virtual void do_start_a_service() override {
         running = true;
         while (!closing) {
             printf("Operating...\n");
@@ -106,11 +107,11 @@ public:
         running = false;
     }
 
-    virtual bool do_check_for_service() {
+    virtual bool do_check_for_service() override {
         return running;
     }
 
-    virtual void do_stop_a_service() {
+    virtual void do_stop_a_service() override {
         closing = true;
         while (running) {
             Time::delay(0.1);
@@ -122,7 +123,7 @@ public:
 
 class BrokenServer : public Demo {
 public:
-    virtual int32_t get_answer() {
+    virtual int32_t get_answer() override {
         return 42;
     }
 };
@@ -130,13 +131,13 @@ public:
 
 class WrappingServer : public Wrapping {
 public:
-    virtual int32_t check(const yarp::os::Value& param) {
-        if (param.isInt()) return param.asInt()+1;
+    virtual int32_t check(const yarp::os::Value& param) override {
+        if (param.isInt32()) return param.asInt32()+1;
         if (param.asString()=="6*7") return 42;
         return 9;
     }
 
-    virtual Bottle getBottle() {
+    virtual Bottle getBottle() override {
         Bottle b("this is a test (bottle)");
         return b;
     }
@@ -150,22 +151,22 @@ public:
         wsx = dsx = wsy = dsy = 0;
     }
 
-    virtual bool will_set_x() {
+    virtual bool will_set_x() override {
         printf("will_set_x called, x is %d\n", get_x());
         wsx = get_x();
         return true;
     }
-    virtual bool will_set_y() {
+    virtual bool will_set_y() override {
         printf("will_set_y called, y is %d\n", get_y());
         wsy = get_y();
         return true;
     }
-    virtual bool did_set_x() {
+    virtual bool did_set_x() override {
         printf("did_set_x called, x is %d\n", get_x());
         dsx = get_x();
         return true;
     }
-    virtual bool did_set_y() {
+    virtual bool did_set_y() override {
         printf("did_set_y called, y is %d\n", get_y());
         dsy = get_y();
         return true;
@@ -174,7 +175,7 @@ public:
 
 class ClientPeek : public PortReader {
 public:
-    virtual bool read(ConnectionReader& con) {
+    virtual bool read(ConnectionReader& con) override {
         Bottle bot;
         bot.read(con);
         printf("Got %s\n", bot.toString().c_str());
@@ -196,12 +197,12 @@ public:
         called_did_set_id = false;
     }
 
-    virtual bool will_set_id() {
+    virtual bool will_set_id() override {
         called_will_set_id = true;
         return false;
     }
 
-    virtual bool did_set_id() {
+    virtual bool did_set_id() override {
         called_did_set_id = true;
         return false;
     }
@@ -222,7 +223,7 @@ bool add_one() {
     bot.read(con.getReader());
     printf("Result is %s\n", bot.toString().c_str());
 
-    if (bot.get(0).asInt() != 15) return false;
+    if (bot.get(0).asInt32() != 15) return false;
 
     bot.fromString("[add] [one] 15");
     DummyConnector con2;
@@ -231,7 +232,7 @@ bool add_one() {
     bot.read(con2.getReader());
     printf("Result is %s\n", bot.toString().c_str());
 
-    if (bot.get(0).asInt() != 16) return false;
+    if (bot.get(0).asInt32() != 16) return false;
 
     return true;
 }
@@ -310,7 +311,7 @@ bool test_live_rpc() {
     cmd.fromString("[add] [one] 5");
     client_port.write(cmd,reply);
     printf("Cmd %s reply %s\n", cmd.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asInt()!=6) return false;
+    if (reply.get(0).asInt32()!=6) return false;
 
     cmd.fromString("[test] [void] 5");
     client_port.write(cmd,reply);
@@ -319,7 +320,7 @@ bool test_live_rpc() {
     cmd.fromString("[add] [one] 6");
     client_port.write(cmd,reply);
     printf("Cmd %s reply %s\n", cmd.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asInt()!=7) return false;
+    if (reply.get(0).asInt32()!=7) return false;
 
     cmd.fromString("[test] [1way] 5");
     client_port.write(cmd,reply);
@@ -328,7 +329,7 @@ bool test_live_rpc() {
     cmd.fromString("[add] [one] 7");
     client_port.write(cmd,reply);
     printf("Cmd %s reply %s\n", cmd.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asInt()!=8) return false;
+    if (reply.get(0).asInt32()!=8) return false;
 
     return true;
 }
@@ -401,7 +402,7 @@ bool test_partial() {
     msg.fromString("add pair 4 3");
     client_port.write(msg,reply);
     printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asInt() != 7) return false;
+    if (reply.get(0).asInt32() != 7) return false;
 
     msg.fromString("add pair 4");
     client_port.write(msg,reply);
@@ -430,13 +431,13 @@ bool test_partial() {
     reply.fromString("0");
     client_port.write(msg,reply);
     printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asInt() != 30) return false;
+    if (reply.get(0).asInt32() != 30) return false;
 
     msg.fromString("test partial 10 (40 50 60) 5");
     reply.fromString("0");
     client_port.write(msg,reply);
     printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asInt() != 15) return false;
+    if (reply.get(0).asInt32() != 15) return false;
 
     msg.fromString("test partial 10 (40 50)");
     reply.fromString("0");
@@ -466,12 +467,12 @@ bool test_defaults_with_rpc() {
     msg.fromString("test_tail_defaults");
     client_port.write(msg,reply);
     printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asInt() != 42) return false;
+    if (reply.get(0).asInt32() != 42) return false;
 
     msg.fromString("test_tail_defaults 55");
     client_port.write(msg,reply);
     printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asInt() != 999) return false;
+    if (reply.get(0).asInt32() != 999) return false;
 
     msg.fromString("test longer tail defaults");
     client_port.write(msg,reply);
@@ -481,12 +482,12 @@ bool test_defaults_with_rpc() {
     msg.fromString("test longer tail defaults 888");
     client_port.write(msg,reply);
     printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asInt() != 999) return false;
+    if (reply.get(0).asInt32() != 999) return false;
 
     msg.fromString("test longer tail defaults 888 ENUM2 47");
     client_port.write(msg,reply);
     printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asInt() != 47) return false;
+    if (reply.get(0).asInt32() != 47) return false;
 
     return true;
 }
@@ -510,22 +511,22 @@ bool test_names_with_spaces() {
     msg.fromString("add_one 42");
     client_port.write(msg,reply);
     printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asInt() != 43) return false;
+    if (reply.get(0).asInt32() != 43) return false;
 
     msg.fromString("add one 52");
     client_port.write(msg,reply);
     printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asInt() != 53) return false;
+    if (reply.get(0).asInt32() != 53) return false;
 
     msg.fromString("get_answer");
     client_port.write(msg,reply);
     printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asInt() != 42) return false;
+    if (reply.get(0).asInt32() != 42) return false;
 
     msg.fromString("get answer");
     client_port.write(msg,reply);
     printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asInt() != 42) return false;
+    if (reply.get(0).asInt32() != 42) return false;
 
     return true;
 }
@@ -582,7 +583,7 @@ bool test_wrapping() {
     int x = 0;
     client.yarp().attachAsClient(client_port);
     server.yarp().attachAsServer(server_port);
-    x = client.check(99);
+    x = client.check(Value(99));
     printf("Result %d\n", x);
     if (x!=100) return false;
     x = client.check(Value("6*7"));
@@ -705,7 +706,7 @@ bool test_editor() {
         fprintf(stderr, "wrong tag after set_x\n");
         return false;
     }
-    if (b.get(1).asList()->get(2).asInt()!=15) {
+    if (b.get(1).asList()->get(2).asInt32()!=15) {
         fprintf(stderr, "wrong value after set_x\n");
         return false;
     }
@@ -726,7 +727,7 @@ bool test_editor() {
         fprintf(stderr, "wrong tag after set_y\n");
         return false;
     }
-    if (b.get(1).asList()->get(2).asInt()!=30) {
+    if (b.get(1).asList()->get(2).asInt32()!=30) {
         fprintf(stderr, "wrong value after set_y\n");
         return false;
     }
@@ -752,7 +753,7 @@ bool test_editor() {
         fprintf(stderr, "wrong x tag after set_x set_y\n");
         return false;
     }
-    if (b.get(1).asList()->get(2).asInt()!=1) {
+    if (b.get(1).asList()->get(2).asInt32()!=1) {
         fprintf(stderr, "wrong x value after set_x set_y\n");
         return false;
     }
@@ -760,7 +761,7 @@ bool test_editor() {
         fprintf(stderr, "wrong y tag after set_x set_y\n");
         return false;
     }
-    if (b.get(2).asList()->get(2).asInt()!=2) {
+    if (b.get(2).asList()->get(2).asInt32()!=2) {
         fprintf(stderr, "wrong y value after set_x set_y\n");
         return false;
     }
@@ -834,7 +835,7 @@ bool test_list_editor() {
         fprintf(stderr, "no list after set_int_list\n");
         return false;
     }
-    if (b.get(1).asList()->get(2).asList()->get(4).asInt()!=15) {
+    if (b.get(1).asList()->get(2).asList()->get(4).asInt32()!=15) {
         fprintf(stderr, "wrong value after set_int_list\n");
         return false;
     }
@@ -852,8 +853,8 @@ bool test_help() {
         server.read(con.getReader());
         bot.read(con.getReader());
         printf("Service general help is %s\n", bot.toString().c_str());
-        ConstString help = bot.toString();
-        if (help.find("get_answer")==ConstString::npos) {
+        std::string help = bot.toString();
+        if (help.find("get_answer")==std::string::npos) {
             fprintf(stderr,"no list given\n");
             return false;
         }
@@ -867,8 +868,8 @@ bool test_help() {
         server.read(con.getReader());
         bot.read(con.getReader());
         printf("Service specific help is %s\n", bot.toString().c_str());
-        ConstString help = bot.toString();
-        if (help.find("gets the answer")==ConstString::npos) {
+        std::string help = bot.toString();
+        if (help.find("gets the answer")==std::string::npos) {
             fprintf(stderr,"no help given\n");
             return false;
         }
@@ -885,8 +886,8 @@ bool test_help() {
         e.read(con.getReader());
         bot.read(con.getReader());
         printf("Structure general help is %s\n", bot.toString().c_str());
-        ConstString help = bot.toString();
-        if (help.find("x")==ConstString::npos) {
+        std::string help = bot.toString();
+        if (help.find("x")==std::string::npos) {
             fprintf(stderr,"no field list\n");
             return false;
         }
@@ -903,8 +904,8 @@ bool test_help() {
         e.read(con.getReader());
         bot.read(con.getReader());
         printf("Structure specific help is %s\n", bot.toString().c_str());
-        ConstString help = bot.toString();
-        if (help.find("this is the x part")==ConstString::npos) {
+        std::string help = bot.toString();
+        if (help.find("this is the x part")==std::string::npos) {
             fprintf(stderr,"no help given\n");
             return false;
         }
@@ -918,7 +919,7 @@ bool test_primitives() {
     TestSomeMoreTypes a, b;
     Bottle tmp;
     a.a_bool = true;
-    a.a_byte = 8;
+    a.a_i8 = 8;
     a.a_i16 = 16;
     a.a_i32 = 32;
     a.a_i64 = 64;

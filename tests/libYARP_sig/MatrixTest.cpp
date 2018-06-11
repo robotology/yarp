@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Author: Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/sig/Matrix.h>
@@ -123,13 +126,13 @@ class MatrixTest : public UnitTest {
         tmp=(gsl_matrix *)(tmpGSL.getGslMatrix());
 
         bool ret=true;
-        if ((int)tmp->size1!=a.rows())
+        if (tmp->size1!=a.rows())
             ret=false;
 
-        if ((int)tmp->size2!=a.cols())
+        if (tmp->size2!=a.cols())
             ret=false;
 
-        if ((int)tmp->block->size!=a.cols()*a.rows())
+        if (tmp->block->size!=a.cols()*a.rows())
             ret=false;
 
         if (tmp->data!=a.data())
@@ -142,7 +145,7 @@ class MatrixTest : public UnitTest {
     }
 
 public:
-    virtual ConstString getName() override { return "MatrixTest"; }
+    virtual std::string getName() const override { return "MatrixTest"; }
 
     void checkOperators()
     {
@@ -252,30 +255,30 @@ public:
         DummyConnector con;
         b.write(con.getWriter());
         m.read(con.getReader());
-        checkEqual(m.rows(),2,"row size correct");
-        checkEqual(m.cols(),3,"col size correct");
+        checkEqual(m.rows(),(size_t) 2,"row size correct");
+        checkEqual(m.cols(),(size_t) 3,"col size correct");
         checkTrue(m[1][2]>5 && m[1][2]<6, "content is sane");
     }
 
     void checkSubmatrix()
     {
         report(0,"check function Matrix::submatrix works...");
-        const int R=10;
-        const int C=20;
+        const size_t R=10;
+        const size_t C=20;
         Matrix m(R,C);
 
-        int r=0;
-        int c=0;
+        size_t r=0;
+        size_t c=0;
         int kk=0;
         for(r=0; r<R; r++)
             for (c=0; c<C; c++)
                 m[r][c]=kk++;
 
         report(0,"extracting submatrix...");
-        int r1=5;
-        int r2=8;
-        int c1=4;
-        int c2=8;
+        size_t r1=5;
+        size_t r2=8;
+        size_t c1=4;
+        size_t c2=8;
         Matrix m2=m.submatrix(r1, r2, c1, c2);
 
         checkEqual(r2-r1+1,m2.rows(),"rows matches");
@@ -404,25 +407,25 @@ public:
         report(0,"check matrix format conforms to network standard...");
 
         Matrix m;
-        unsigned int rr = 10;
-        unsigned int cc = 5;
+        size_t rr = 10;
+        size_t cc = 5;
         makeTestMatrix(m,rr,cc);
 
         BufferedConnectionWriter writer;
         m.write(writer);
-        ConstString s = writer.toString();
+        std::string s = writer.toString();
         Bottle bot;
-        bot.fromBinary(s.c_str(),(int)s.length());
-        checkEqual(bot.get(0).asInt(),rr,"row count matches");
-        checkEqual(bot.get(1).asInt(),cc,"column count matches");
+        bot.fromBinary(s.c_str(),s.length());
+        checkEqual((size_t) bot.get(0).asInt32(),rr,"row count matches");
+        checkEqual((size_t) bot.get(1).asInt32(),cc,"column count matches");
         Bottle *lst = bot.get(2).asList();
         checkTrue(lst!=nullptr,"have data");
         if (!lst) return;
-        checkEqual(lst->size(),(int)(rr*cc),"data length matches");
-        if (lst->size()!=(int)(rr*cc)) return;
+        checkEqual(lst->size(),(rr*cc),"data length matches");
+        if (lst->size()!=(rr*cc)) return;
         bool ok = true;
         for (int i=0; i<(int)(rr*cc); i++) {
-            double v = lst->get(i).asDouble();
+            double v = lst->get(i).asFloat64();
             if (fabs(v-i)>0.01) {
                 ok = false;
                 checkEqualish(v,i,"cell matches");
@@ -437,8 +440,8 @@ public:
         // potential problem reported by Miguel Sarabia Del Castillo
 
         Matrix m;
-        unsigned int rr = 10;
-        unsigned int cc = 5;
+        size_t rr = 10;
+        size_t cc = 5;
         makeTestMatrix(m,rr,cc);
 
         double value = 3.14;
@@ -453,7 +456,7 @@ public:
         msg2.read(reader);
         checkEqual(msg.head.rows(),msg2.head.rows(),"matrix row match");
         checkEqual(msg.head.cols(),msg2.head.cols(),"matrix col match");
-        checkEqualish(msg.body.asDouble(),msg2.body.asDouble(),"value match");
+        checkEqualish(msg.body.asFloat64(),msg2.body.asFloat64(),"value match");
 
         Bottle bot;
         bot.read(msg);
@@ -461,13 +464,13 @@ public:
         Bottle *bot2 = bot.get(1).asList();
         checkTrue(bot1!=nullptr&&bot2!=nullptr,"got head/body");
         if (bot1==nullptr || bot2==nullptr) return;
-        checkEqual(bot1->get(0).asInt(),rr,"row count matches");
-        checkEqual(bot1->get(1).asInt(),cc,"column count matches");
+        checkEqual((size_t) bot1->get(0).asInt32(),rr,"row count matches");
+        checkEqual((size_t) bot1->get(1).asInt32(),cc,"column count matches");
         Bottle *lst = bot1->get(2).asList();
         checkTrue(lst!=nullptr,"have data");
         if (!lst) return;
-        checkEqual(lst->size(),(int)(rr*cc),"data length matches");
-        checkEqualish(bot2->get(0).asDouble(),value,"value match");
+        checkEqual(lst->size(),(rr*cc),"data length matches");
+        checkEqualish(bot2->get(0).asFloat64(),value,"value match");
     }
 
     void checkEmpty() {

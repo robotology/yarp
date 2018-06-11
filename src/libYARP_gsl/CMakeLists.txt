@@ -1,6 +1,8 @@
-# Copyright: (C) 2016 Istituto Italiano di Tecnologia (IIT)
-# Author: Lorenzo Natale
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 project(YARP_gsl)
 
@@ -17,11 +19,6 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              FILES ${YARP_gsl_HDRS}
                    ${YARP_gsl_IMPL_HDRS})
 
-set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
-get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-
-include_directories(${YARP_TREE_INCLUDE_DIRS})
-
 add_library(YARP_gsl ${YARP_gsl_SRCS} ${YARP_gsl_HDRS})
 add_library(YARP::YARP_gsl ALIAS YARP_gsl)
 
@@ -29,19 +26,25 @@ target_include_directories(YARP_gsl PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOU
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(YARP_gsl PUBLIC YARP::YARP_sig)
+list(APPEND YARP_gsl_PUBLIC_DEPS YARP_sig)
 
 set_property(TARGET YARP_gsl PROPERTY PUBLIC_HEADER ${YARP_gsl_HDRS})
 set_property(TARGET YARP_gsl PROPERTY PRIVATE_HEADER ${YARP_gsl_IMPL_HDRS})
+set_property(TARGET YARP_gsl PROPERTY VERSION ${YARP_VERSION_SHORT})
+set_property(TARGET YARP_gsl PROPERTY SOVERSION ${YARP_SOVERSION})
 
 install(TARGETS YARP_gsl
-        EXPORT YARP
-        COMPONENT runtime
+        EXPORT YARP_gsl
+        COMPONENT YARP_gsl
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/gsl
         PRIVATE_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/gsl/impl)
 
-set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_gsl)
-set_property(TARGET YARP_gsl PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+include(YarpInstallBasicPackageFiles)
+yarp_install_basic_package_files(YARP_gsl
+                                 DEPENDENCIES ${YARP_gsl_PUBLIC_DEPS}
+                                 PRIVATE_DEPENDENCIES ${YARP_gsl_PRIVATE_DEPS})
+
 set_property(TARGET YARP_gsl PROPERTY FOLDER "Libraries")

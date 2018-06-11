@@ -1,30 +1,27 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_IMPL_NAMECLIENT_H
 #define YARP_OS_IMPL_NAMECLIENT_H
 
 #include <yarp/os/Contact.h>
-#include <yarp/os/Bottle.h>
-#include <yarp/os/Contact.h>
-#include <yarp/os/NameStore.h>
-#include <yarp/os/ResourceFinder.h>
-#include <yarp/os/Property.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/Nodes.h>
-#include <yarp/os/Network.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class NameClient;
-            class NameServer;
-        }
-    }
-}
+namespace os {
+
+class Bottle;
+class NameStore;
+
+namespace impl {
+
+class NameServer;
 
 /**
  * Client for YARP name server.  There is one global client available
@@ -33,82 +30,48 @@ namespace yarp {
  * name server these days - it is now a regular port, that can read
  * and respond to messages in the bottle format.
  */
-class YARP_OS_impl_API yarp::os::impl::NameClient
+class YARP_OS_impl_API NameClient
 {
+private:
+    NameClient();
+    NameClient(const NameClient& nic);
+
 public:
-
     /**
-     * Get an instance of the name client.  This is a global singleton,
-     * created on demand.
-     * return the name client
+     * Destructor
      */
-    static NameClient& getNameClient()
-    {
-        mutex.lock();
-        if (instance == nullptr) {
-            instance = new NameClient();
-        }
-        mutex.unlock();
-        return *instance;
-    }
+    virtual ~NameClient();
 
     /**
-     * Remove and delete the current global name client.
+     * Get an instance of the name client.
      *
+     * This is a global singleton, created on demand.
+     *
+     * @return the name client
      */
-    static void removeNameClient()
-    {
-        mutex.lock();
-        if (instance != nullptr) {
-            delete instance;
-            instance = nullptr;
-            instanceClosed = true;
-        }
-        mutex.unlock();
-    }
+    static NameClient& getNameClient();
 
-    static bool isClosed()
-    {
-        return instanceClosed;
-    }
-
-    static NameClient *create()
-    {
-        return new NameClient();
-    }
+    static NameClient* create();
 
     /**
      * The address of the name server.
      * @return the address of the name server
      */
-    Contact getAddress()
-    {
-        setup();
-        return address;
-    }
-
-    /**
-     * Deprecated, this is the identity function.
-     *
-     */
-    ConstString getNamePart(const ConstString& name)
-    {
-        return name;
-    }
+    Contact getAddress();
 
     /**
      * Look up the address of a named port.
      * @param name the name of the port
      * @return the address associated with the port
      */
-    Contact queryName(const ConstString& name);
+    Contact queryName(const std::string& name);
 
     /**
      * Register a port with a given name.
      * @param name the name of the port
      * @return the address associated with the port
      */
-    Contact registerName(const ConstString& name);
+    Contact registerName(const std::string& name);
 
     /**
      * Register a port with a given name and a partial address.
@@ -116,14 +79,14 @@ public:
      * @param suggest a partially completed address
      * @return the address associated with the port
      */
-    Contact registerName(const ConstString& name, const Contact& suggest);
+    Contact registerName(const std::string& name, const Contact& suggest);
 
     /**
      * Register disassociation of name from port.
      * @param name the name to remove
      * @return the new result of queries for that name (should be empty)
      */
-    Contact unregisterName(const ConstString& name);
+    Contact unregisterName(const std::string& name);
 
     /**
      * Send a message to the name server, and interpret the result as
@@ -134,11 +97,7 @@ public:
      * @return the address extracted from the reply, all errors result
      * in a non-valid address.
      */
-    Contact probe(const ConstString& cmd)
-    {
-        ConstString result = send(cmd);
-        return extractAddress(result);
-    }
+    Contact probe(const std::string& cmd);
 
     /**
      * Extract an address from its text representation.
@@ -147,7 +106,7 @@ public:
      *
      * @return the address corresponding to the text representation
      */
-    static Contact extractAddress(const ConstString& txt);
+    static Contact extractAddress(const std::string& txt);
 
     static Contact extractAddress(const Bottle& bot);
 
@@ -159,18 +118,18 @@ public:
      *
      * @return the reply from the name server.
      */
-    ConstString send(const ConstString& cmd, bool multi = true);
+    std::string send(const std::string& cmd, bool multi = true);
 
     /**
      * Send a message to the nameserver in Bottle format, and return the
      * result.
      *
-     * @param cmd the message to send.
+     * @param[in] cmd the message to send.
+     * @param[out] the reply from the name server.
      *
-     * @return the reply from the name server.
+     * @return true on success.
      */
-    bool send(yarp::os::Bottle& cmd,
-              yarp::os::Bottle& reply);
+    bool send(yarp::os::Bottle& cmd, yarp::os::Bottle& reply);
 
     /**
      * For testing, the nameclient can be set to use a "fake" name server
@@ -178,21 +137,14 @@ public:
      *
      * @param fake whether to use a fake name server
      */
-    void setFakeMode(bool fake = true)
-    {
-        this->fake = fake;
-    }
+    void setFakeMode(bool fake = true);
 
     /**
      * Check whether a fake name server is being used.
      *
-     *
      * @return true iff a fake name server is being used.
      */
-    bool isFakeMode()
-    {
-        return fake;
-    }
+    bool isFakeMode() const;
 
     /**
      * Control whether the name client should scan for the name server
@@ -200,10 +152,7 @@ public:
      *
      * @param allow true if the name client may scan for the name server.
      */
-    void setScan(bool allow = true)
-    {
-        allowScan = allow;
-    }
+    void setScan(bool allow = true);
 
     /**
      * Control whether the name client can save the address of the name
@@ -211,10 +160,7 @@ public:
      *
      * @param allow true if the name client may save the name server address.
      */
-    void setSave(bool allow = true)
-    {
-        allowSaveScan = allow;
-    }
+    void setSave(bool allow = true);
 
     /**
      * Check whether the name client scanned for the address of the name
@@ -222,10 +168,7 @@ public:
      *
      * @return true iff the name client scanned for the name server.
      */
-    bool didScan()
-    {
-        return reportScan;
-    }
+    bool didScan();
 
     /**
      * Check whether the name client saved the address of the name
@@ -233,10 +176,7 @@ public:
      *
      * @return true iff the name client saved the address of the name server.
      */
-    bool didSave()
-    {
-        return reportSaveScan;
-    }
+    bool didSave();
 
     /**
      * Force the name client to reread the cached location of the
@@ -248,64 +188,34 @@ public:
 
     bool setContact(const yarp::os::Contact& contact);
 
-    virtual ~NameClient();
+    void queryBypass(NameStore* store);
 
-    void queryBypass(NameStore *store)
-    {
-        altStore = store;
-    }
+    NameStore* getQueryBypass();
 
-    NameStore *getQueryBypass()
-    {
-        return altStore;
-    }
+    std::string getMode();
 
-    yarp::os::ConstString getMode()
-    {
-        return mode.c_str();
-    }
-
-    /**
-     * Make a singleton resource finder available to YARP,
-     * for finding configuration files.
-     *
-     */
-    ResourceFinder& getResourceFinder()
-    {
-        return resourceFinder;
-    }
-
-    yarp::os::Nodes& getNodes()
-    {
-        return nodes;
-    }
+    yarp::os::Nodes& getNodes();
 
 private:
-    NameClient();
-    NameClient(const NameClient& nic);
-
-    NameServer& getServer();
-
-
     Contact address;
-    ConstString host;
-    ConstString mode;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) host;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) mode;
     bool fake;
-    NameServer *fakeServer;
+    NameServer* fakeServer;
     bool allowScan;
     bool allowSaveScan;
     bool reportScan;
     bool reportSaveScan;
     bool isSetup;
-    NameStore *altStore;
-    yarp::os::ResourceFinder resourceFinder;
+    NameStore* altStore;
     yarp::os::Nodes nodes;
 
-    static yarp::os::Mutex mutex;
-    static NameClient *instance;
-    static bool instanceClosed;
-
+    NameServer& getServer();
     void setup();
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_NAMECLIENT_H

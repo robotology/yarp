@@ -1,4 +1,12 @@
-// This is an automatically-generated file.
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+// This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
 #include <yarprobotinterfaceRpc.h>
@@ -10,15 +18,15 @@ class yarprobotinterfaceRpc_get_phase : public yarp::os::Portable {
 public:
   std::string _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
 class yarprobotinterfaceRpc_get_level : public yarp::os::Portable {
 public:
-  int32_t _return;
+  std::int32_t _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -26,7 +34,7 @@ class yarprobotinterfaceRpc_get_robot : public yarp::os::Portable {
 public:
   std::string _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -34,7 +42,7 @@ class yarprobotinterfaceRpc_is_ready : public yarp::os::Portable {
 public:
   bool _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -42,7 +50,7 @@ class yarprobotinterfaceRpc_quit : public yarp::os::Portable {
 public:
   std::string _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -50,7 +58,7 @@ class yarprobotinterfaceRpc_bye : public yarp::os::Portable {
 public:
   std::string _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
@@ -58,11 +66,11 @@ class yarprobotinterfaceRpc_exit : public yarp::os::Portable {
 public:
   std::string _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) override;
+  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-bool yarprobotinterfaceRpc_get_phase::write(yarp::os::ConnectionWriter& connection) {
+bool yarprobotinterfaceRpc_get_phase::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("get_phase",1,2)) return false;
@@ -83,7 +91,7 @@ void yarprobotinterfaceRpc_get_phase::init() {
   _return = "";
 }
 
-bool yarprobotinterfaceRpc_get_level::write(yarp::os::ConnectionWriter& connection) {
+bool yarprobotinterfaceRpc_get_level::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("get_level",1,2)) return false;
@@ -104,7 +112,7 @@ void yarprobotinterfaceRpc_get_level::init() {
   _return = 0;
 }
 
-bool yarprobotinterfaceRpc_get_robot::write(yarp::os::ConnectionWriter& connection) {
+bool yarprobotinterfaceRpc_get_robot::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("get_robot",1,2)) return false;
@@ -125,7 +133,7 @@ void yarprobotinterfaceRpc_get_robot::init() {
   _return = "";
 }
 
-bool yarprobotinterfaceRpc_is_ready::write(yarp::os::ConnectionWriter& connection) {
+bool yarprobotinterfaceRpc_is_ready::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(2)) return false;
   if (!writer.writeTag("is_ready",1,2)) return false;
@@ -146,7 +154,7 @@ void yarprobotinterfaceRpc_is_ready::init() {
   _return = false;
 }
 
-bool yarprobotinterfaceRpc_quit::write(yarp::os::ConnectionWriter& connection) {
+bool yarprobotinterfaceRpc_quit::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("quit",1,1)) return false;
@@ -167,7 +175,7 @@ void yarprobotinterfaceRpc_quit::init() {
   _return = "";
 }
 
-bool yarprobotinterfaceRpc_bye::write(yarp::os::ConnectionWriter& connection) {
+bool yarprobotinterfaceRpc_bye::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("bye",1,1)) return false;
@@ -188,7 +196,7 @@ void yarprobotinterfaceRpc_bye::init() {
   _return = "";
 }
 
-bool yarprobotinterfaceRpc_exit::write(yarp::os::ConnectionWriter& connection) {
+bool yarprobotinterfaceRpc_exit::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(1)) return false;
   if (!writer.writeTag("exit",1,1)) return false;
@@ -222,12 +230,12 @@ std::string yarprobotinterfaceRpc::get_phase() {
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
-int32_t yarprobotinterfaceRpc::get_level() {
-  int32_t _return = 0;
+std::int32_t yarprobotinterfaceRpc::get_level() {
+  std::int32_t _return = 0;
   yarprobotinterfaceRpc_get_level helper;
   helper.init();
   if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","int32_t yarprobotinterfaceRpc::get_level()");
+    yError("Missing server method '%s'?","std::int32_t yarprobotinterfaceRpc::get_level()");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -287,7 +295,7 @@ bool yarprobotinterfaceRpc::read(yarp::os::ConnectionReader& connection) {
   yarp::os::idl::WireReader reader(connection);
   reader.expectAccept();
   if (!reader.readListHeader()) { reader.fail(); return false; }
-  yarp::os::ConstString tag = reader.readTag();
+  std::string tag = reader.readTag();
   bool direct = (tag=="__direct__");
   if (direct) tag = reader.readTag();
   while (!reader.isError()) {
@@ -304,7 +312,7 @@ bool yarprobotinterfaceRpc::read(yarp::os::ConnectionReader& connection) {
       return true;
     }
     if (tag == "get_level") {
-      int32_t _return;
+      std::int32_t _return;
       _return = get_level();
       yarp::os::idl::WireWriter writer(reader);
       if (!writer.isNull()) {
@@ -379,7 +387,7 @@ bool yarprobotinterfaceRpc::read(yarp::os::ConnectionReader& connection) {
         if (!writer.isNull()) {
           if (!writer.writeListHeader(2)) return false;
           if (!writer.writeTag("many",1, 0)) return false;
-          if (!writer.writeListBegin(BOTTLE_TAG_INT, static_cast<uint32_t>(_return.size()))) return false;
+          if (!writer.writeListBegin(BOTTLE_TAG_INT32, static_cast<uint32_t>(_return.size()))) return false;
           std::vector<std::string> ::iterator _iterHelp;
           for (_iterHelp = _return.begin(); _iterHelp != _return.end(); ++_iterHelp)
           {
@@ -391,7 +399,7 @@ bool yarprobotinterfaceRpc::read(yarp::os::ConnectionReader& connection) {
       return true;
     }
     if (reader.noMore()) { reader.fail(); return false; }
-    yarp::os::ConstString next_tag = reader.readTag();
+    std::string next_tag = reader.readTag();
     if (next_tag=="") break;
     tag = tag + "_" + next_tag;
   }
@@ -418,7 +426,7 @@ std::vector<std::string> yarprobotinterfaceRpc::help(const std::string& function
       helpString.push_back("Returns current phase. ");
     }
     if (functionName=="get_level") {
-      helpString.push_back("int32_t get_level() ");
+      helpString.push_back("std::int32_t get_level() ");
       helpString.push_back("Returns current level. ");
     }
     if (functionName=="get_robot") {

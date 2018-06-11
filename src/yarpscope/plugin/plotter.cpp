@@ -5,7 +5,7 @@
  * email:   dperrone@aitek.it
  * website: www.aitek.it
  *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 #include "plotter.h"
@@ -188,13 +188,13 @@ void Plotter::onTimeout()
             yarp::os::Stamp stmp;
             graph->curr_connection->localPort->getEnvelope(stmp);
 
-            if (b->size() - 1 < graph->index) {
+            if (b->size() - 1 < (size_t) graph->index) {
                 qWarning() << "bottle size =" << b->size() << " requested index =" << graph->index;
                 continue;
             }
 
 
-            double y = (float)(b->get(graph->index).asDouble());
+            double y = (float)(b->get(graph->index).asFloat64());
 
             float t;
             if (graph->curr_connection->realTime && stmp.isValid()) {

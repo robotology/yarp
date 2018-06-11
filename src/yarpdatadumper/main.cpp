@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Author: Ugo Pattacini <ugo.pattacini@iit.it>
- * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <iostream>
@@ -22,10 +25,9 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::sig;
 
-
 /**************************************************************************/
 typedef enum { bottle, image } DumpType;
-
+bool save_jpeg = false;
 
 // Abstract object definition for queueing
 /**************************************************************************/
@@ -87,30 +89,36 @@ public:
 
     const string toFile(const string &dirName, unsigned int cnt) override
     {
-        int code=p->getPixelCode();
+        file::image_fileformat format;
         string ext;
 
+        int code=p->getPixelCode();
         if (code==VOCAB_PIXEL_MONO_FLOAT)
+        {
+            format=file::FORMAT_NUMERIC;
             ext=".float";
+        }
         else if (code==VOCAB_PIXEL_MONO)
+        {
+            format=file::FORMAT_PGM;
             ext=".pgm";
+        }
+        else if (save_jpeg)
+        {
+            format=file::FORMAT_JPG;
+            ext=".jpg";
+        }
         else
+        {
+            format=file::FORMAT_PPM;
             ext=".ppm";
+        }
 
         ostringstream fName;
         fName << setw(8) << setfill('0') << cnt << ext;
+        file::write(*p,dirName+"/"+fName.str(),format);
 
-        string extfName=dirName;
-        extfName+="/";
-        extfName+=fName.str();
-        file::write(*p,extfName.c_str());
-
-        string ret=fName.str();
-        ret+=" [";
-        ret+=Vocab::decode(code).c_str();
-        ret+="]";
-
-        return ret;
+        return (fName.str()+" ["+Vocab::decode(code)+"]");
     }
 
     void *getPtr() override { return p->getIplImage(); }
@@ -257,7 +265,7 @@ private:
 
 
 /**************************************************************************/
-class DumpThread : public RateThread
+class DumpThread : public PeriodicThread
 {
 private:
     DumpQueue      &buf;
@@ -290,7 +298,7 @@ private:
 public:
     DumpThread(DumpType _type, DumpQueue &Q, const string &_dirName, int szToWrite,
                bool _saveData, bool _videoOn, const string &_videoType) :
-        RateThread(50),
+        PeriodicThread(0.05),
         buf(Q),
         type(_type),
         dirName(_dirName),
@@ -532,8 +540,6 @@ public:
 
     bool configure(ResourceFinder &rf) override
     {
-        Time::turboBoost();
-
         portName=rf.check("name",Value("/dump")).asString().c_str();
         if (portName[0]!='/')
             portName="/"+portName;
@@ -555,6 +561,11 @@ public:
                     videoOn=true;
             #endif
             }
+            else if (optTypeName == "image_jpg")
+            {
+                type=image;
+                save_jpeg = true;
+            }
         #ifdef ADD_VIDEO
             else if (optTypeName=="video")
             {
@@ -572,7 +583,7 @@ public:
         else
             type=bottle;
 
-        dwnsample=rf.check("downsample",Value(1)).asInt();
+        dwnsample=rf.check("downsample",Value(1)).asInt32();
         rxTime=rf.check("rxTime");
         txTime=rf.check("txTime");
         string templateDirName=rf.check("dir")?rf.find("dir").asString().c_str():portName;
@@ -705,11 +716,11 @@ int main(int argc, char *argv[])
         yInfo() << "\t--dir        name: provide explicit name of storage directory";
         yInfo() << "\t--overwrite      : overwrite pre-existing storage directory";
     #ifdef ADD_VIDEO
-        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image, video]";
+        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image, image_jpg, video]";
         yInfo() << "\t--addVideo       : produce video as well (if image is selected)";
         yInfo() << "\t--videoType   ext: produce video of specified container type [mkv(default), avi]";
     #else
-        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image]";
+        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image, image_jpg]";
     #endif
         yInfo() << "\t--downsample    n: downsample rate (default: 1 => downsample disabled)";
         yInfo() << "\t--rxTime         : dump the receiver time instead of the sender time";

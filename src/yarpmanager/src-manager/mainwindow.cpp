@@ -1,11 +1,9 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Author: Davide Perrone
- * Date: Feb 2014
- * email:   dperrone@aitek.it
- * website: www.aitek.it
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * This software may be modified and distributed under the terms of the
+ * LGPLv2.1+ license. See the accompanying LICENSE file for details.
  */
 
 #include "mainwindow.h"
@@ -13,7 +11,7 @@
 
 #include <yarp/os/Log.h>
 #include <yarp/os/ResourceFinder.h>
-#include <yarp/manager/ymm-dir.h>
+#include <dirent.h>
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/xmltemploader.h>
 #include <yarp/manager/localbroker.h>
@@ -211,7 +209,7 @@ void MainWindow::onWizardError(QString err)
 void MainWindow::init(yarp::os::Property config)
 {
     this->config = config;
-    const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+    const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
 
     string basepath=config.check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
 
@@ -425,7 +423,7 @@ void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
  */
 bool MainWindow::loadRecursiveTemplates(const char* szPath)
 {
-    const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+    const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
     string strPath = szPath;
     if((strPath.rfind(directorySeparator)==string::npos) ||
             (strPath.rfind(directorySeparator)!=strPath.size()-1))
@@ -466,7 +464,7 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
  */
 bool MainWindow::loadRecursiveApplications(const char* szPath)
 {
-    const yarp::os::ConstString directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+    const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
     string strPath = szPath;
     if((strPath.rfind(directorySeparator)==string::npos) ||
             (strPath.rfind(directorySeparator)!=strPath.size()-1))
@@ -1297,7 +1295,7 @@ void MainWindow::onYarpNameList()
     {
         std::string portName = ports[i].find("name").asString();
         std::string portIp   = ports[i].find("ip").asString() + " port " +
-                    std::to_string(ports[i].find("port_number").asInt());
+                    std::to_string(ports[i].find("port_number").asInt32());
         ui->entitiesTree->addPort(QStringList() << QString(portName.c_str())
                                   << QString(portIp.c_str()));
     }

@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/all.h>
@@ -43,7 +46,7 @@ int main(int argc, char *argv[]) {
     options.fromCommand(argc,argv);
 
     // Set the name of the port (use "/worker" if there is no --name option)
-    ConstString portName = options.check("name",Value("/worker")).asString();
+    std::string portName = options.check("name",Value("/worker")).asString();
     port.open(portName);
   
     int ct = 0;

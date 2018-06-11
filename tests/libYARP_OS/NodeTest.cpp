@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Node.h>
@@ -35,7 +36,7 @@ public:
 
 class NodeTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "NodeTest"; }
+    virtual std::string getName() const override { return "NodeTest"; }
 
     void parseNameTest();
     void basicNodeTest();
@@ -60,14 +61,14 @@ private:
         checkFalse(p.open("nameWithoutSlash+"), "open port with wrong name should fail");
     }
 
-    void parseName(const ConstString& arg,
-                   const ConstString& node,
-                   const ConstString& nested,
-                   const ConstString& cat) {
+    void parseName(const std::string& arg,
+                   const std::string& node,
+                   const std::string& nested,
+                   const std::string& cat) {
         NestedContact nc(arg);
-        checkEqual(nc.getNodeName(),node,(ConstString("node name matches for ") + arg).c_str());
-        checkEqual(nc.getNestedName(),nested,(ConstString("nested name matches for ") + arg).c_str());
-        checkEqual(nc.getCategory(),cat,(ConstString("category matches for ") + arg).c_str());
+        checkEqual(nc.getNodeName(),node,(std::string("node name matches for ") + arg).c_str());
+        checkEqual(nc.getNestedName(),nested,(std::string("nested name matches for ") + arg).c_str());
+        checkEqual(nc.getCategory(),cat,(std::string("category matches for ") + arg).c_str());
     }
 };
 
@@ -165,20 +166,20 @@ void NodeTest::basicApiTest() {
     Bottle cmd, reply;
     cmd.fromString("getSubscriptions dummy");
     NetworkBase::write(Contact("/test"), cmd, reply);
-    checkEqual(reply.get(0).asInt(),1,"getSubscriptions api success");
+    checkEqual(reply.get(0).asInt32(),1,"getSubscriptions api success");
     cmd.fromString("requestTopic dummy /p2 (TCPROS)");
     NetworkBase::write(Contact("/test"), cmd, reply);
-    checkEqual(reply.get(0).asInt(),1,"found /p2");
+    checkEqual(reply.get(0).asInt32(),1,"found /p2");
     cmd.fromString("requestTopic dummy /p3 (TCPROS)");
     NetworkBase::write(Contact("/test"), cmd, reply);
-    checkEqual(reply.get(0).asInt(),0,"failed to find /p3");
+    checkEqual(reply.get(0).asInt32(),0,"failed to find /p3");
     p1.close();
     p2.close();
     NameClient::getNameClient().getNodes().clear();
 }
 
-static bool waitConnect(const ConstString& n1,
-                        const ConstString& n2,
+static bool waitConnect(const std::string& n1,
+                        const std::string& n2,
                         double timeout) {
     double start = Time::now();
     while (Time::now()-start<timeout) {
@@ -247,7 +248,7 @@ void NodeTest::singleNameTest() {
     Bottle cmd, reply;
     cmd.fromString("requestTopic dummy /p1 (TCPROS)");
     NetworkBase::write(Contact("/ntest"), cmd, reply);
-    checkEqual(reply.get(0).asInt(),1,"found /p1");
+    checkEqual(reply.get(0).asInt32(),1,"found /p1");
 }
 
 void NodeTest::typePropTest() {

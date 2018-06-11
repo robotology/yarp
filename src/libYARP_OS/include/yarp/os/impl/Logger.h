@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_IMPL_LOGGER_H
@@ -9,24 +12,14 @@
 
 #include <yarp/conf/api.h>
 #include <yarp/conf/system.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/Log.h>
 #include <yarp/os/impl/PlatformStdio.h>
 
-#ifdef YARP_HAS_ACE
-# include <ace/Log_Priority.h>
-# include <ace/Log_Msg_Callback.h>
-// In one of these files or their inclusions, there is a definition of "main"
-// for WIN32
-# ifdef main
-#  undef main
-# endif
-#else
-#  define LM_DEBUG      04
-#  define LM_INFO      010
-#  define LM_WARNING   040
-#  define LM_ERROR    0200
-#endif
+#define YARP_LM_DEBUG      04
+#define YARP_LM_INFO      010
+#define YARP_LM_WARNING   040
+#define YARP_LM_ERROR    0200
 
 
 namespace yarp {
@@ -35,18 +28,13 @@ namespace impl {
 
 /**
  * This is a wrapper for message logging.
- * This is currently a sad mixture of the java yarp logging mechanism
- * and ACE.
  */
 class YARP_OS_impl_API Logger : public yarp::os::Log
-#ifdef YARP_HAS_ACE
-                              , public ACE_Log_Msg_Callback
-#endif
 {
 public:
     enum Level {
-        MAJOR_DEBUG=LM_INFO,
-        DEFAULT_WARN=LM_INFO
+        MAJOR_DEBUG=YARP_LM_INFO,
+        DEFAULT_WARN=YARP_LM_INFO
     };
 
     Logger(const char *prefix, Logger *parent = nullptr);
@@ -54,16 +42,12 @@ public:
 
     static Logger& get();
 
-#ifdef YARP_HAS_ACE
-    virtual void log(ACE_Log_Record& log_record) override;
-#endif
-
-    void println(const ConstString& txt);
-    void internal_debug(const ConstString& txt);
-    void internal_info(const ConstString& txt);
-    void internal_warning(const ConstString& txt);
-    void internal_error(const ConstString& txt);
-    void internal_fail(const ConstString& txt);
+    void println(const std::string& txt);
+    void internal_debug(const std::string& txt);
+    void internal_info(const std::string& txt);
+    void internal_warning(const std::string& txt);
+    void internal_error(const std::string& txt);
+    void internal_fail(const std::string& txt);
     void internal_debug(const char *txt);
     void internal_info(const char *txt);
     void internal_warning(const char *txt);
@@ -79,12 +63,12 @@ public:
     bool shouldShowDebug();
 
 private:
-    void show(unsigned YARP_INT32 level, const ConstString& txt);
+    void show(std::uint32_t level, const std::string& txt);
 
-    ConstString prefix;
+    std::string prefix;
     Logger *parent;
     int verbose;
-    unsigned YARP_INT32 low;
+    std::uint32_t low;
     long int pid;
     FILE *stream;
 };

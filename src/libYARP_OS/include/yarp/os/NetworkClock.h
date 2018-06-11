@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_NETWORKCLOCK_H
@@ -21,12 +23,13 @@ namespace yarp {
 }
 
 
-class YARP_OS_API yarp::os::NetworkClock : public Clock, PortReader {
+class YARP_OS_API yarp::os::NetworkClock : public Clock, PortReader
+{
 public:
     NetworkClock();
     virtual ~NetworkClock();
 
-    bool open(const ConstString& clockSourcePortName, ConstString localPortName="");
+    bool open(const std::string& clockSourcePortName, std::string localPortName="");
 
     virtual double now() override;
     virtual void delay(double seconds) override;
@@ -35,15 +38,16 @@ public:
     virtual bool read(ConnectionReader& reader) override;
 private:
 
-    ConstString clockName;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) clockName;
+
     void *pwaiters;
     Port port;
 
     Mutex listMutex;
     Mutex timeMutex;
 
-    YARP_INT32 sec;
-    YARP_INT32 nsec;
+    std::int32_t sec;
+    std::int32_t nsec;
     double _time;
     bool closing;
     bool initted;

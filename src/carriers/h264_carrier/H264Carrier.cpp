@@ -1,7 +1,9 @@
 /*
- * Copyright: (C) 2017 Istituto Italiano di Tecnologia (IIT)
- * Author: Valentina Gaggero <valentina.gaggero@iit.it>
- * Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <cstdio>
@@ -19,68 +21,68 @@ using namespace yarp::sig;
 
 
 
-ConstString H264Carrier::getName()
+std::string H264Carrier::getName() const
 {
     return "h264";
 }
 
-bool H264Carrier::isConnectionless()
+bool H264Carrier::isConnectionless() const
 {
     return true;
 }
 
-bool H264Carrier::canAccept()
+bool H264Carrier::canAccept() const
 {
     return true;
 }
 
-bool H264Carrier::canOffer()
+bool H264Carrier::canOffer() const
 {
     return true;
 }
 
-bool H264Carrier::isTextMode()
+bool H264Carrier::isTextMode() const
 {
     return false;
 }
 
-bool H264Carrier::canEscape()
+bool H264Carrier::canEscape() const
 {
     return false;
 }
 
-void H264Carrier::handleEnvelope(const yarp::os::ConstString& envelope)
+void H264Carrier::handleEnvelope(const std::string& envelope)
 {
     this->envelope = envelope;
 }
 
-bool H264Carrier::requireAck()
+bool H264Carrier::requireAck() const
 {
     return false;
 }
 
-bool H264Carrier::supportReply()
+bool H264Carrier::supportReply() const
 {
     return false;
 }
 
-bool H264Carrier::isLocal()
+bool H264Carrier::isLocal() const
 {
     return false;
 }
 
 // this is important - flips expected flow of messages
-bool H264Carrier::isPush()
+bool H264Carrier::isPush() const
 {
     return false;
 }
 
-ConstString H264Carrier::toString()
+std::string H264Carrier::toString() const
 {
     return "h264_carrier";
 }
 
-void H264Carrier::getHeader(const Bytes& header)
+void H264Carrier::getHeader(Bytes& header) const
 {
 }
 
@@ -99,12 +101,12 @@ void H264Carrier::setParameters(const Bytes& header)
 static int getIntParam(Name &n, const char *param)
 {
     bool hasField;
-    ConstString strValue = n.getCarrierModifier(param, &hasField);
+    std::string strValue = n.getCarrierModifier(param, &hasField);
     Value *v = Value::makeValue(strValue.c_str());
     int intvalue = 0;
-    if((hasField) && v->isInt())
+    if((hasField) && v->isInt32())
     {
-        intvalue = v->asInt();
+        intvalue = v->asInt32();
     }
 
     delete v;
@@ -175,7 +177,7 @@ bool H264Carrier::expectReplyToHeader(ConnectionState& proto)
     return true;
 }
 
-bool H264Carrier::isActive()
+bool H264Carrier::isActive() const
 {
     return true;
 }
@@ -211,12 +213,12 @@ bool H264Carrier::expectAck(ConnectionState& proto)
     return true;
 }
 
-ConstString H264Carrier::getBootstrapCarrierName()
+std::string H264Carrier::getBootstrapCarrierName() const
 {
     return "";
 }
 
-yarp::os::Face* H264Carrier::createFace(void)
+yarp::os::Face* H264Carrier::createFace(void) const
 {
     return new yarp::os::impl::FakeFace();
 }

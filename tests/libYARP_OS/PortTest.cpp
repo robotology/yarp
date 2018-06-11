@@ -1,15 +1,16 @@
 /*
- * Copyright (C) 2006, 2007 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/Port.h>
-#include <yarp/os/impl/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortReaderBuffer.h>
@@ -18,20 +19,20 @@
 #include <yarp/os/BinPortable.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/NetType.h>
-#include <yarp/os/impl/UnitTest.h>
-
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/PortReport.h>
-
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/PortInfo.h>
+#include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Drivers.h>
 
 #include <yarp/sig/Image.h>
+
+#include <yarp/companion/impl/Companion.h>
 
 //#include "TestList.h"
 
@@ -52,7 +53,7 @@ namespace yarp {
  * A fake device for testing closure after a prepare of a closed port.
  */
 class yarp::dev::BrokenDevice : public DeviceDriver,
-                                public yarp::os::RateThread
+                                public yarp::os::PeriodicThread
 {
 private:
 
@@ -60,17 +61,17 @@ public:
     /**
      * Constructor.
      */
-    BrokenDevice():RateThread(30), img(nullptr){}
+    BrokenDevice():PeriodicThread(0.03), img(nullptr){}
 
     virtual bool close() override
     {
         pImg.close();
-        RateThread::stop();
+        PeriodicThread::stop();
         return true;
 
     }
 
-    virtual bool open(yarp::os::Searchable& config) override { return RateThread::start(); }
+    virtual bool open(yarp::os::Searchable& config) override { return PeriodicThread::start(); }
 
     //RateThread
     bool threadInit() override { return true; }
@@ -91,10 +92,10 @@ private:
 
 };
 
-class TcpTestServer : public RateThread
+class TcpTestServer : public PeriodicThread
 {
 public:
-    TcpTestServer() : RateThread(20)
+    TcpTestServer() : PeriodicThread(0.02)
     {
 
     }
@@ -143,7 +144,7 @@ public:
     virtual bool read(ConnectionReader& connection) override {
         Bottle receive;
         receive.read(connection);
-        receive.addInt(5);
+        receive.addInt32(5);
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=nullptr) {
             receive.write(*writer);
@@ -156,14 +157,14 @@ class ServiceTester : public Portable {
 public:
     UnitTest& owner;
     Bottle send, receive;
-    int ct;
+    mutable int ct;
 
     ServiceTester(UnitTest& owner) : owner(owner) {}
 
-    virtual bool write(ConnectionWriter& connection) override {
+    virtual bool write(ConnectionWriter& connection) const override {
         ct = 0;
         send.write(connection);
-        connection.setReplyHandler(*this);
+        connection.setReplyHandler(const_cast<ServiceTester&>(*this));
         return true;
     }
 
@@ -194,7 +195,7 @@ public:
         for (int i=0; i<3; i++) {
             Bottle b,b2;
             p.read(b,true);
-            b2.addInt(b.get(0).asInt()+1);
+            b2.addInt32(b.get(0).asInt32()+1);
             if ((!faithful)&&i==1) {
                 // no reply
             } else {
@@ -218,9 +219,9 @@ public:
         total = 0;
         for (int i=0; i<3; i++) {
             Bottle b, b2;
-            b.addInt(i);
+            b.addInt32(i);
             p.write(b,b2);
-            total += b2.get(0).asInt(); // should be i+1
+            total += b2.get(0).asInt32(); // should be i+1
         }
         // total should be 1+2+3 = 6
     }
@@ -340,7 +341,7 @@ class PortTest : public UnitTest {
 public:
     int safePort() { return Network::getDefaultPortRange()+100; }
 
-    virtual ConstString getName() override { return "PortTest"; }
+    virtual std::string getName() const override { return "PortTest"; }
 
     void testOpen() {
         report(0,"checking opening and closing ports");
@@ -371,8 +372,8 @@ public:
         out.enableBackgroundWrite(true);
         out.write(bot1);
         in.read(bot2);
-        checkEqual(bot1.get(0).asInt(),5,"check bot[0]");
-        checkEqual(bot1.get(1).asInt(),10,"check bot[1]");
+        checkEqual(bot1.get(0).asInt32(),5,"check bot[0]");
+        checkEqual(bot1.get(1).asInt32(),10,"check bot[1]");
         checkEqual(bot1.get(2).asString().c_str(),"hello","check bot[2]");
 
         while (out.isWriting()) {
@@ -383,7 +384,7 @@ public:
         bot1.fromString("18");
         out.write(bot1);
         in.read(bot2);
-        checkEqual(bot1.get(0).asInt(),18,"check one more send/receive");
+        checkEqual(bot1.get(0).asInt32(),18,"check one more send/receive");
 
         in.close();
         out.close();
@@ -398,7 +399,7 @@ public:
 
         bot1.fromString("1 2 3");
         for (int i=0; i<10000; i++) {
-            bot1.addInt(i);
+            bot1.addInt32(i);
         }
 
         Port input, output;
@@ -425,8 +426,8 @@ public:
             checkTrue(result!=nullptr,"got something check");
             if (result!=nullptr) {
                 checkEqual(bot1.size(),result->size(),"size check");
-                YARP_INFO(Logger::get(),ConstString("size is in fact ") +
-                          NetType::toString(result->size()));
+                YARP_INFO(Logger::get(),std::string("size is in fact ") +
+                          NetType::toString((unsigned int) result->size()));
             }
         }
 
@@ -442,7 +443,7 @@ public:
 
         bot1.fromString("1 2 3");
         for (int i=0; i<10000; i++) {
-            bot1.addInt(i);
+            bot1.addInt32(i);
         }
 
         Port input, output;
@@ -465,8 +466,8 @@ public:
             checkTrue(result!=nullptr,"got something check");
             if (result!=nullptr) {
                 checkEqual(bot1.size(),result->size(),"size check");
-                YARP_INFO(Logger::get(),ConstString("size is in fact ") +
-                          NetType::toString(result->size()));
+                YARP_INFO(Logger::get(),std::string("size is in fact ") +
+                          NetType::toString((unsigned int) result->size()));
             }
         }
         if (ct==0) {
@@ -486,7 +487,7 @@ public:
 
         bot1.fromString("1 2 3");
         for (int i=0; i<100000; i++) {
-            bot1.addInt(i);
+            bot1.addInt32(i);
         }
 
         Port input, output;
@@ -513,8 +514,8 @@ public:
             checkTrue(result!=nullptr,"got something check");
             if (result!=nullptr) {
                 checkEqual(bot1.size(),result->size(),"size check");
-                YARP_INFO(Logger::get(),ConstString("size is in fact ") +
-                          NetType::toString(result->size()));
+                YARP_INFO(Logger::get(),std::string("size is in fact ") +
+                          NetType::toString((unsigned int) result->size()));
             }
         }
         if (ct==0) {
@@ -753,7 +754,7 @@ public:
         Bottle src("10 10 20");
         out.write(src);
         callback.produce.wait();
-        checkEqual(callback.saved.size(),3,"object came through");
+        checkEqual(callback.saved.size(),(size_t) 3,"object came through");
         reader.disableCallback();
         out.close();
         in.close();
@@ -772,7 +773,7 @@ public:
         Bottle src("10 10 20");
         out.write(src);
         callback.produce.wait();
-        checkEqual(callback.saved.size(),3,"object came through");
+        checkEqual(callback.saved.size(),(size_t) 3,"object came through");
         in.disableCallback();
     }
 
@@ -844,13 +845,13 @@ public:
         checkTrue(inBot1!=nullptr,"got 1 of 2 items");
         if (inBot1!=nullptr) {
             printf("Bottle 1 is: %s\n", inBot1->toString().c_str());
-            checkEqual(inBot1->size(),2,"match for item 1");
+            checkEqual(inBot1->size(),(size_t) 2,"match for item 1");
         }
         Bottle *inBot2 = in.read();
         checkTrue(inBot2!=nullptr,"got 2 of 2 items");
         if (inBot2!=nullptr) {
             printf("Bottle 2 is: %s\n", inBot2->toString().c_str());
-            checkEqual(inBot2->size(),5,"match for item 1");
+            checkEqual(inBot2->size(),(size_t) 5,"match for item 1");
         }
     }
 
@@ -881,7 +882,7 @@ public:
         checkTrue(inBot2!=nullptr,"got 2 of 2 items");
         if (inBot2!=nullptr) {
             printf("Bottle 2 is: %s\n", inBot2->toString().c_str());
-            checkEqual(inBot2->size(),5,"match for item 1");
+            checkEqual(inBot2->size(),(size_t) 5,"match for item 1");
         }
     }
 
@@ -896,7 +897,7 @@ public:
         Time::delay(0.25);
         Bottle& bot = sender.prepare();
         bot.clear();
-        bot.addInt(1);
+        bot.addInt32(1);
         sender.write();
         Time::delay(0.25);
         report(0,"if this hangs, PortTest::testUnbufferedClose is unhappy");
@@ -1013,7 +1014,7 @@ public:
         Network::sync("/writer");
         Network::sync("/reader");
         Bottle bsend, breply;
-        bsend.addInt(10);
+        bsend.addInt32(10);
         p1.write(bsend, breply);
         p1.write(bsend, breply);
         p1.write(bsend, breply);
@@ -1123,7 +1124,7 @@ public:
         p2.setAdminMode();
         p2.write(cmd,reply);
 
-        checkTrue(reply.size()>=1, "got a reply");
+        checkTrue(reply.size()>=(size_t) 1, "got a reply");
 
         p1.close();
         p2.close();
@@ -1146,7 +1147,7 @@ public:
         Bottle *bot = in.read();
         checkTrue(bot!=nullptr,"Inserted message received");
         if (bot!=nullptr) {
-            checkEqual(bot->size(),1,"right length");
+            checkEqual(bot->size(),(size_t) 1,"right length");
         }
 
         out.prepare().fromString("1 2");
@@ -1156,7 +1157,7 @@ public:
         Bottle *bot2 = in.read();
         checkTrue(bot2!=nullptr,"Inserted message received");
         if (bot2!=nullptr) {
-            checkEqual(bot2->size(),2,"right length");
+            checkEqual(bot2->size(),(size_t) 2,"right length");
         }
 
         out.prepare().fromString("1 2 3");
@@ -1166,13 +1167,13 @@ public:
         Bottle *bot3 = in.read();
         checkTrue(bot3!=nullptr,"Inserted message received");
         if (bot3!=nullptr) {
-            checkEqual(bot3->size(),3,"right length");
+            checkEqual(bot3->size(),(size_t) 3,"right length");
         }
         if (bot2!=nullptr) {
-            checkEqual(bot2->size(),2,"original (2) still ok");
+            checkEqual(bot2->size(),(size_t) 2,"original (2) still ok");
         }
         if (bot!=nullptr) {
-            checkEqual(bot->size(),1,"original (1) still ok");
+            checkEqual(bot->size(),(size_t) 1,"original (1) still ok");
         }
 
         in.release(key);
@@ -1202,7 +1203,7 @@ public:
         writer.start();
         int argc = 2;
         const char *argv[] = {"...","/write"};
-        Companion::getInstance().cmdRead(argc,(char**)argv);
+        yarp::companion::impl::Companion::getInstance().cmdRead(argc,(char**)argv);
         writer.finish();
     }
 
@@ -1269,9 +1270,9 @@ public:
         checkEqual(buf.getPendingReads(),1,"first msg came through");
         Bottle *bot2 = buf.read();
         yAssert(bot2);
-        checkEqual(bot2->size(),3,"data looks ok");
+        checkEqual(bot2->size(),(size_t) 3,"data looks ok");
 
-        bot1.addInt(4);
+        bot1.addInt32(4);
 
         report(0,"interrupting...");
         input.interrupt();
@@ -1282,7 +1283,7 @@ public:
         }
         checkEqual(buf.getPendingReads(),0,"msg after interrupt ignored");
 
-        bot1.addInt(5);
+        bot1.addInt32(5);
 
         input.resume();
         output.write(bot1);
@@ -1292,7 +1293,7 @@ public:
         checkEqual(buf.getPendingReads(),1,"next msg came through");
         bot2 = buf.read();
         yAssert(bot2);
-        checkEqual(bot2->size(),5,"data looks ok");
+        checkEqual(bot2->size(),(size_t) 5,"data looks ok");
 
         output.close();
         input.close();
@@ -1315,9 +1316,9 @@ public:
         output.write(bot1);
         bool ok = input.read(bot2);
         checkTrue(ok,"first msg came through");
-        checkEqual(bot2.size(),3,"data looks ok");
+        checkEqual(bot2.size(),(size_t) 3,"data looks ok");
 
-        bot1.addInt(4);
+        bot1.addInt32(4);
 
         report(0,"interrupting...");
         input.interrupt();
@@ -1327,14 +1328,14 @@ public:
 
         Time::delay(1);
 
-        bot1.addInt(5);
+        bot1.addInt32(5);
 
         report(0,"resuming");
         input.resume();
         output.write(bot1);
         ok = input.read(bot2);
         checkTrue(ok,"next msg came through");
-        checkEqual(bot2.size(),5,"data looks ok");
+        checkEqual(bot2.size(),(size_t) 5,"data looks ok");
 
         output.close();
         input.close();
@@ -1352,7 +1353,7 @@ public:
         output.start();
         Bottle cmd, reply;
         input.read(cmd,true);
-        reply.addInt(cmd.get(1).asInt()+cmd.get(2).asInt());
+        reply.addInt32(cmd.get(1).asInt32()+cmd.get(2).asInt32());
         checkEqual(cmd.toString().c_str(),"[add] 1 2","cmd received ok");
         input.interrupt();
         input.reply(reply);
@@ -1420,7 +1421,7 @@ public:
         bot = port.read();
         checkFalse(bot==nullptr,"reader working");
         if (bot) {
-            checkEqual(bot->get(0).asInt(),2,"reader read correct message");
+            checkEqual(bot->get(0).asInt32(),2,"reader read correct message");
         }
     }
 
@@ -1436,7 +1437,7 @@ public:
         Network::sync("/in");
         Bottle& msg = pout.prepare();
         msg.clear();
-        msg.addInt(42);
+        msg.addInt32(42);
         pout.write();
         pout.waitForWrite();
         pout.close();
@@ -1484,10 +1485,10 @@ public:
         Network::connect("/out","/in");
         Bottle cmd("hello"), reply;
         pout.write(cmd,reply);
-        checkEqual(reply.get(1).asInt(),5,"admin_reader was called");
+        checkEqual(reply.get(1).asInt32(),5,"admin_reader was called");
         cmd.fromString("[ver]");
         pout.write(cmd,reply);
-        checkTrue(reply.size()>=4,"yarp commands still work");
+        checkTrue(reply.size()>=(size_t) 4,"yarp commands still work");
     }
 
     void testCallbackLock() {
@@ -1504,13 +1505,13 @@ public:
         pin.lockCallback();
         pout.write(cmd);
         Time::delay(0.25);
-        checkEqual(data.size(),0,"data does not arrive too early");
+        checkEqual(data.size(),(size_t) 0,"data does not arrive too early");
         pin.unlockCallback();
         while (pout.isWriting()) {
             report(0,"waiting for port to stabilize");
             Time::delay(0.2);
         }
-        checkEqual(data.size(),1,"data does eventually arrive");
+        checkEqual(data.size(),(size_t) 1,"data does eventually arrive");
         pin.close();
         pout.close();
     }
@@ -1531,7 +1532,7 @@ public:
     }
 
     void testPrepareDeadlock(){
-        report(0,"testing the deadlock when you close a device(RateThread) after the prepare of a closed port");
+        report(0,"testing the deadlock when you close a device(PeriodicThread) after the prepare of a closed port");
         yarp::dev::PolyDriver p;
         Property prop;
         prop.put("device","brokenDevice");

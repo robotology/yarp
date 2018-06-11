@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2011 Daniel Krieg
- * Author: Daniel Krieg <krieg@fias.uni-frankfurt.de>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2010 Daniel Krieg <krieg@fias.uni-frankfurt.de>
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/MpiComm.h>
 #include <yarp/os/Log.h>
@@ -78,7 +80,7 @@ bool MpiControlThread::threadInit() {
 /* --------------------------------------- */
 /* MpiComm */
 
-MpiComm::MpiComm(ConstString name) : name(name) {
+MpiComm::MpiComm(std::string name) : name(name) {
     if (MpiControl == NULL) {
         MpiControl = new yarp::os::MpiControlThread;
     }
@@ -103,15 +105,15 @@ MpiComm::MpiComm(ConstString name) : name(name) {
 }
 
 //TODO: replace by static variable check??!?
-bool MpiComm::notLocal(ConstString other) {
-    if (other == ConstString(unique_id)) {
+bool MpiComm::notLocal(std::string other) {
+    if (other == std::string(unique_id)) {
         yError("MPI does not support process local communication\n");
         return false;
     }
     return true;
 }
 
-bool MpiComm::connect(ConstString port) {
+bool MpiComm::connect(std::string port) {
 
     char* port_name = new char[port.length()+1];
     memcpy(port_name, port.c_str(), port.length());

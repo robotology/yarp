@@ -1,41 +1,118 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/SemaphoreImpl.h>
 
-using namespace yarp::os::impl;
-using namespace yarp::os;
+#include <condition_variable>
+#include <mutex>
 
-Semaphore::Semaphore(unsigned int initialCount) {
-    implementation = new SemaphoreImpl(initialCount);
-    yAssert(implementation!=nullptr);
-}
+using yarp::os::Semaphore;
 
-Semaphore::~Semaphore() {
-    if (implementation!=nullptr) {
-        delete ((SemaphoreImpl*)implementation);
-        implementation = nullptr;
+class Semaphore::Private
+{
+public:
+    Private(unsigned int initialCount = 1) :
+            count(initialCount),
+            wakeups(0)
+    {
     }
+
+    Private(Private&) = delete;
+    Private& operator=(Private&) = delete;
+    virtual ~Private() = default;
+
+    // blocking wait
+    void wait()
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        count--;
+        if (count < 0) {
+            cond.wait(lock,
+                      [this] { return wakeups > 0; });
+            wakeups--;
+        }
+    }
+
+    // blocking wait with timeout
+    bool waitWithTimeout(double timeout)
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        count--;
+        if (count < 0) {
+            std::chrono::duration<double> ctime(timeout);
+            cond.wait_for(lock, ctime, [this] { return wakeups > 0; });
+
+            if (wakeups <= 0) {
+                count++;
+                return false;
+            }
+            wakeups--;
+        }
+        return true;
+    }
+
+    // polling wait
+    bool check()
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        if (count) {
+            count--;
+            return true;
+        }
+        return false;
+    }
+
+    // increment
+    void post()
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        count++;
+        if (count <= 0) {
+            wakeups++;
+            cond.notify_one();
+        }
+    }
+
+private:
+    std::mutex mutex;
+    std::condition_variable cond;
+    int count;
+    int wakeups;
+};
+
+
+Semaphore::Semaphore(unsigned int initialCount) :
+        mPriv(new Private(initialCount))
+{
 }
 
-void Semaphore::wait() {
-    ((SemaphoreImpl*)implementation)->wait();
+Semaphore::~Semaphore()
+{
+    delete mPriv;
 }
 
-bool Semaphore::waitWithTimeout(double timeoutInSeconds) {
-    return ((SemaphoreImpl*)implementation)->waitWithTimeout(timeoutInSeconds);
+void Semaphore::wait()
+{
+    mPriv->wait();
 }
 
-bool Semaphore::check() {
-    return ((SemaphoreImpl*)implementation)->check();
+bool Semaphore::waitWithTimeout(double timeoutInSeconds)
+{
+    return mPriv->waitWithTimeout(timeoutInSeconds);
 }
 
-void Semaphore::post() {
-    ((SemaphoreImpl*)implementation)->post();
+bool Semaphore::check()
+{
+    return mPriv->check();
+}
+
+void Semaphore::post()
+{
+    mPriv->post();
 }

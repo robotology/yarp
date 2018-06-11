@@ -1,11 +1,12 @@
 /*
- * Copyright (C) 2006, 2010 RobotCub Consortium
- * Copyright (C) 2010 Daniel Krieg
- * Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
- *          Daniel Krieg <krieg@fias.uni-frankfurt.de>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * Copyright (C) 2010 Daniel Krieg <krieg@fias.uni-frankfurt.de>
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #include <yarp/os/impl/TcpFace.h>
 #include <yarp/os/impl/Logger.h>
@@ -19,6 +20,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
+TcpFace::TcpFace() = default;
 
 TcpFace::~TcpFace() {
     closeFace();
@@ -26,7 +28,7 @@ TcpFace::~TcpFace() {
 
 
 bool TcpFace::open(const Contact& address) {
-    YARP_DEBUG(Logger::get(), ConstString("opening for address ") + address.toURI());
+    YARP_DEBUG(Logger::get(), std::string("opening for address ") + address.toURI());
 
     this->address = address;
 #ifdef YARP_HAS_ACE
@@ -140,6 +142,6 @@ OutputProtocol *TcpFace::write(const Contact& address) {
 }
 
 
-Contact TcpFace::getLocalAddress() {
+Contact TcpFace::getLocalAddress() const {
     return address;
 }

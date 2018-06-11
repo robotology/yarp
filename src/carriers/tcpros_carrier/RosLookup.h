@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <cstdio>
@@ -13,9 +14,9 @@
 class YARP_tcpros_carrier_API RosLookup {
 public:
     bool valid;
-    yarp::os::ConstString hostname;
+    std::string hostname;
     int portnum;
-    yarp::os::ConstString protocol;
+    std::string protocol;
     bool verbose;
 
     RosLookup(bool verbose) :
@@ -24,11 +25,11 @@ public:
         verbose(verbose)
     {}
 
-    bool lookupCore(const yarp::os::ConstString& name);
+    bool lookupCore(const std::string& name);
 
-    bool lookupTopic(const yarp::os::ConstString& name);
+    bool lookupTopic(const std::string& name);
 
-    yarp::os::ConstString toString() {
+    std::string toString() const {
         char buf[1000];
         sprintf(buf,"/%s:%d/", hostname.c_str(), portnum);
         return buf;

@@ -1,8 +1,9 @@
-
 /*
- * Copyright: (C) 2012 Istituto Italiano di Tecnologia (IIT)
- * Author: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/all.h>
@@ -23,7 +24,7 @@ public:
     info.addString("ip");
     info.addString(c.getHost().c_str());
     info.addString("port");
-    info.addInt(c.getPort());
+    info.addInt32(c.getPort());
     info.addString("type");
     info.addString(c.getCarrier().c_str());
   }
@@ -32,7 +33,7 @@ public:
                         yarp::os::Bottle& reply,
                         yarp::os::Contact& remote) {
     reply.addString("old");
-    ConstString name = cmd.get(1).asString();
+    std::string name = cmd.get(1).asString();
     Contact c = Network::queryName(name);
     if (c.isValid()) {
       appendEntry(reply,c);
@@ -64,7 +65,7 @@ public:
                      yarp::os::Contact& remote) {
     bool ok = false;
     printf(" + %s\n", cmd.toString().c_str());
-    ConstString tag = cmd.get(0).asString();
+    std::string tag = cmd.get(0).asString();
     if (tag=="register") {
       ok = cmdRegister(cmd,reply,remote);
     } else if (tag=="unregister") {
@@ -91,7 +92,7 @@ int main(int argc, char *argv[]) {
     fprintf(stderr,"Please supply a --socket NNNN option\n");
     exit(1);
   }
-  int socket = config.find("socket").asInt();
+  int socket = config.find("socket").asInt32();
 
   Network yarp;
   Contact contact(config.check("name", Value("/name/proxy")).asString(),

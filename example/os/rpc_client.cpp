@@ -1,7 +1,10 @@
 /*
- * Copyright: (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 /*
@@ -40,7 +43,7 @@ int main(int argc, char *argv[]) {
 	} else {
 	  Bottle cmd;
 	  cmd.addString("COUNT");
-	  cmd.addInt(ct);
+	  cmd.addInt32(ct);
 	  ct++;
 	  printf("Sending message... %s\n", cmd.toString().c_str());
 	  Bottle response;

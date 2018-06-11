@@ -1,13 +1,15 @@
 /*
- * Copyright (C) 2008 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/conf/system.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/NetType.h>
 #include <cstdio>
@@ -114,7 +116,7 @@ public:
 
 class DgramTwoWayStreamTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "DgramTwoWayStreamTest"; }
+    virtual std::string getName() const override { return "DgramTwoWayStreamTest"; }
 
     void checkNormal() {
         report(0, "checking that dgrams are output sensibly");
@@ -242,10 +244,10 @@ public:
                 checkTrue(!goodRead[1],"second read should be broken");
                 checkTrue(!goodRead[2],"third read should be broken");
                 checkTrue(goodRead[3],"fourth read should be good again");
-                checkEqual(length[0],recv.length(),"first length should be full");
+                checkEqual((size_t) length[0],recv.length(),"first length should be full");
                 checkEqual(length[1],-1,"second should be error");
                 checkEqual(length[2],-1,"third should be error");
-                checkEqual(length[3],recv.length(),"fourth length should be full");
+                checkEqual((size_t) length[3],recv.length(),"fourth length should be full");
             } else {
                 checkTrue(goodRead[0],"first read should be good");
                 checkTrue(!goodRead[1],"second read should be broken");

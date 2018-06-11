@@ -1,9 +1,3 @@
-/*
- * Copyright: (C) 2012 Istituto Italiano di Tecnologia (IIT)
- * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
-
 /**
 *
 @page thrift_tutorial_simple Thrift IDL in YARP: simple tutorial
@@ -57,7 +51,7 @@ configuration file in which we call the \c yarp_idl_to_dir macro:
 
 \code
 #CMakeList.txt
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 #find YARP
 find_package(YARP REQUIRED)

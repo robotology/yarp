@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2008 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/ResourceFinder.h>
@@ -12,7 +14,6 @@
 
 #include <yarp/os/impl/PlatformDirent.h>
 #include <yarp/os/impl/PlatformSysStat.h>
-#include <yarp/os/impl/PlatformUnistd.h>
 #include <yarp/os/impl/UnitTest.h>
 
 #include <cstdlib>
@@ -24,7 +25,7 @@ using namespace yarp::os::impl;
 
 class ResourceFinderTest : public UnitTest {
 public:
-    virtual ConstString getName() override { return "ResourceFinderTest"; }
+    virtual std::string getName() const override { return "ResourceFinderTest"; }
 
     void testBasics() {
         report(0,"testing the basics of RF...");
@@ -64,7 +65,7 @@ public:
             int argc = 7;
 
             rf.configure(argc,(char **)argv);
-            ConstString alt = rf.findFile("alt");
+            std::string alt = rf.findFile("alt");
             checkTrue(alt!="","found ini file");
 
             rf.setDefault("alt2",fname2);
@@ -117,7 +118,7 @@ public:
 
             ResourceFinder rf1;
             rf1.configure(argc,(char **)argv);
-            checkEqual(rf1.find("x").asInt(),14,"found x");
+            checkEqual(rf1.find("x").asInt32(),14,"found x");
 
             const char *argv2[] = { "ignore",
                                     "--_yarp_regression_test", ".",
@@ -130,8 +131,8 @@ public:
 
             ResourceFinder rf2;
             rf2.configure(argc2,(char **)argv2);
-            checkEqual(rf2.find("y").asInt(),30,"found y");
-            checkEqual(rf2.find("x").asInt(),20,"override x");
+            checkEqual(rf2.find("y").asInt32(),30,"found y");
+            checkEqual(rf2.find("x").asInt32(),20,"override x");
         }
 
     }
@@ -201,7 +202,7 @@ public:
         report(0,"test default values of generic type");
         int defInt=42;
         double defDouble=42.42;
-        ConstString defString="fortytwo";
+        std::string defString="fortytwo";
         Bottle defList("(answers (42 24))");
         const char *argv[] = { nullptr };
         int argc = 1;
@@ -212,8 +213,8 @@ public:
         rf.setDefault("constchar", defString.c_str());
         rf.setDefault("list", defList.toString());
         rf.configure(argc,(char **)argv);
-        checkEqual(rf.find("int").asInt(), defInt, "default integer set correctly");
-        checkEqualish(rf.find("double").asDouble(), defDouble, "default double set correctly");
+        checkEqual(rf.find("int").asInt32(), defInt, "default integer set correctly");
+        checkEqualish(rf.find("double").asFloat64(), defDouble, "default double set correctly");
         checkEqual(rf.find("string").asString(), defString, "default string set correctly");
         checkEqual(rf.find("constchar").asString(), defString, "default string (passed as const char*) set correctly");
         Bottle *foundList=rf.find("list").asList();
@@ -232,9 +233,9 @@ public:
         checkEqual(ResourceFinder::getDataHome().c_str(),"/foo","YARP_DATA_HOME noticed");
         Network::unsetEnvironment("YARP_DATA_HOME");
         Network::setEnvironment("XDG_DATA_HOME","/foo");
-        ConstString slash = Network::getDirectorySeparator();
+        std::string slash = Network::getDirectorySeparator();
         checkEqual(ResourceFinder::getDataHome().c_str(),
-                   (ConstString("/foo") + slash + "yarp").c_str(),
+                   (std::string("/foo") + slash + "yarp").c_str(),
                    "XDG_DATA_HOME noticed");
         Network::unsetEnvironment("XDG_DATA_HOME");
 #ifdef __linux__
@@ -255,9 +256,9 @@ public:
         checkEqual(ResourceFinder::getConfigHome().c_str(),"/foo","YARP_CONFIG_HOME noticed");
         Network::unsetEnvironment("YARP_CONFIG_HOME");
         Network::setEnvironment("XDG_CONFIG_HOME","/foo");
-        ConstString slash = Network::getDirectorySeparator();
+        std::string slash = Network::getDirectorySeparator();
         checkEqual(ResourceFinder::getConfigHome().c_str(),
-                   (ConstString("/foo") + slash + "yarp").c_str(),
+                   (std::string("/foo") + slash + "yarp").c_str(),
                    "XDG_CONFIG_HOME noticed");
         Network::unsetEnvironment("XDG_CONFIG_HOME");
 #ifdef __linux__
@@ -273,33 +274,33 @@ public:
         report(0,"test getDataDirs");
         saveEnvironment("YARP_DATA_DIRS");
         saveEnvironment("XDG_DATA_DIRS");
-        ConstString slash = Network::getDirectorySeparator();
-        ConstString colon = Network::getPathSeparator();
-        ConstString foobar = ConstString("/foo") + colon + "/bar";
-        ConstString yfoo = ConstString("/foo") + slash + "yarp";
-        ConstString ybar = ConstString("/bar") + slash + "yarp";
+        std::string slash = Network::getDirectorySeparator();
+        std::string colon = Network::getPathSeparator();
+        std::string foobar = std::string("/foo") + colon + "/bar";
+        std::string yfoo = std::string("/foo") + slash + "yarp";
+        std::string ybar = std::string("/bar") + slash + "yarp";
         Network::setEnvironment("YARP_DATA_DIRS",foobar);
         Bottle dirs;
         dirs = ResourceFinder::getDataDirs();
-        checkEqual(dirs.size(),2,"YARP_DATA_DIRS parsed as two directories");
+        checkEqual(dirs.size(),(size_t) 2,"YARP_DATA_DIRS parsed as two directories");
         checkEqual(dirs.get(0).asString().c_str(),"/foo","YARP_DATA_DIRS first dir ok");
         checkEqual(dirs.get(1).asString().c_str(),"/bar","YARP_DATA_DIRS second dir ok");
 
         Network::setEnvironment("YARP_DATA_DIRS","/foo");
         dirs = ResourceFinder::getDataDirs();
-        checkEqual(dirs.size(),1,"YARP_DATA_DIRS parsed as one directory");
+        checkEqual(dirs.size(),(size_t) 1,"YARP_DATA_DIRS parsed as one directory");
 
         Network::unsetEnvironment("YARP_DATA_DIRS");
         Network::setEnvironment("XDG_DATA_DIRS",foobar);
         dirs = ResourceFinder::getDataDirs();
-        checkEqual(dirs.size(),2,"XDG_DATA_DIRS gives two directories");
+        checkEqual(dirs.size(),(size_t) 2,"XDG_DATA_DIRS gives two directories");
         checkEqual(dirs.get(0).asString().c_str(),yfoo.c_str(),"XDG_DATA_DIRS first dir ok");
         checkEqual(dirs.get(1).asString().c_str(),ybar.c_str(),"XDG_DATA_DIRS second dir ok");
 
         Network::unsetEnvironment("XDG_DATA_DIRS");
 #ifdef __linux__
         dirs = ResourceFinder::getDataDirs();
-        checkEqual(dirs.size(),2,"DATA_DIRS default length 2");
+        checkEqual(dirs.size(),(size_t) 2,"DATA_DIRS default length 2");
         checkEqual(dirs.get(0).asString().c_str(),"/usr/local/share/yarp","DATA_DIRS default element 0 is ok");
         checkEqual(dirs.get(1).asString().c_str(),"/usr/share/yarp","DATA_DIRS default element 1 is ok");
 #endif
@@ -311,29 +312,29 @@ public:
         report(0,"test getConfigDirs");
         saveEnvironment("YARP_CONFIG_DIRS");
         saveEnvironment("XDG_CONFIG_DIRS");
-        ConstString slash = Network::getDirectorySeparator();
-        ConstString colon = Network::getPathSeparator();
-        ConstString foobar = ConstString("/foo") + colon + "/bar";
-        ConstString yfoo = ConstString("/foo") + slash + "yarp";
-        ConstString ybar = ConstString("/bar") + slash + "yarp";
+        std::string slash = Network::getDirectorySeparator();
+        std::string colon = Network::getPathSeparator();
+        std::string foobar = std::string("/foo") + colon + "/bar";
+        std::string yfoo = std::string("/foo") + slash + "yarp";
+        std::string ybar = std::string("/bar") + slash + "yarp";
         Network::setEnvironment("YARP_CONFIG_DIRS",foobar);
         Bottle dirs;
         dirs = ResourceFinder::getConfigDirs();
-        checkEqual(dirs.size(),2,"YARP_CONFIG_DIRS parsed as two directories");
+        checkEqual(dirs.size(),(size_t) 2,"YARP_CONFIG_DIRS parsed as two directories");
         checkEqual(dirs.get(0).asString().c_str(),"/foo","YARP_CONFIG_DIRS first dir ok");
         checkEqual(dirs.get(1).asString().c_str(),"/bar","YARP_CONFIG_DIRS second dir ok");
 
         Network::unsetEnvironment("YARP_CONFIG_DIRS");
         Network::setEnvironment("XDG_CONFIG_DIRS",foobar);
         dirs = ResourceFinder::getConfigDirs();
-        checkEqual(dirs.size(),2,"XDG_CONFIG_DIRS gives two directories");
+        checkEqual(dirs.size(),(size_t) 2,"XDG_CONFIG_DIRS gives two directories");
         checkEqual(dirs.get(0).asString().c_str(),yfoo.c_str(),"XDG_CONFIG_DIRS first dir ok");
         checkEqual(dirs.get(1).asString().c_str(),ybar.c_str(),"XDG_CONFIG_DIRS second dir ok");
 
         Network::unsetEnvironment("XDG_CONFIG_DIRS");
 #ifdef __linux__
         dirs = ResourceFinder::getConfigDirs();
-        checkEqual(dirs.size(),1,"CONFIG_DIRS default length 1");
+        checkEqual(dirs.size(),(size_t) 1,"CONFIG_DIRS default length 1");
         checkEqual(dirs.get(0).asString().c_str(),"/etc/yarp","CONFIG_DIRS default is ok");
 #endif
 
@@ -341,7 +342,7 @@ public:
     }
 
 
-    void mkdir(const ConstString& dirname) {
+    void mkdir(const std::string& dirname) {
         if (yarp::os::stat(dirname.c_str())<0) {
             yarp::os::mkdir(dirname.c_str());
         }
@@ -352,16 +353,16 @@ public:
         }
     }
 
-    ConstString pathify(const Bottle& dirs) {
+    std::string pathify(const Bottle& dirs) {
         char buf[1000];
         char *result = yarp::os::getcwd(buf,sizeof(buf));
         if (!result) {
             checkTrue(result!=nullptr,"cwd/pwd not too long");
             std::exit(1);
         }
-        ConstString slash = Network::getDirectorySeparator();
-        ConstString dir = buf;
-        for (int i=0; i<dirs.size(); i++) {
+        std::string slash = Network::getDirectorySeparator();
+        std::string dir = buf;
+        for (size_t i=0; i<dirs.size(); i++) {
             dir += slash;
             dir = dir + dirs.get(i).asString();
         }
@@ -369,9 +370,9 @@ public:
     }
 
     void mkdir(const Bottle& dirs) {
-        ConstString slash = Network::getDirectorySeparator();
-        ConstString dir = "";
-        for (int i=0; i<dirs.size(); i++) {
+        std::string slash = Network::getDirectorySeparator();
+        std::string dir = "";
+        for (size_t i=0; i<dirs.size(); i++) {
             if (i>0) dir += slash;
             dir = dir + dirs.get(i).asString();
             mkdir(dir);
@@ -379,11 +380,11 @@ public:
     }
 
     void setUpTestArea(bool etc_pathd) {
-        ConstString colon = Network::getPathSeparator();
-        ConstString slash = Network::getDirectorySeparator();
+        std::string colon = Network::getPathSeparator();
+        std::string slash = Network::getDirectorySeparator();
         FILE *fout;
 
-        ConstString base = etc_pathd ? "__test_dir_rf_a1" : "__test_dir_rf_a2";
+        std::string base = etc_pathd ? "__test_dir_rf_a1" : "__test_dir_rf_a2";
         Bottle yarp_data_home;
         yarp_data_home.addString(base);
         yarp_data_home.addString("home");
@@ -620,7 +621,7 @@ public:
             bool ok = rf.readConfig(p,"data.ini",
                                     ResourceFinderOptions::findFirstMatch());
             checkTrue(ok,"read a data.ini");
-            checkEqual(p.find("magic_number").asInt(),42,"right version found");
+            checkEqual(p.find("magic_number").asInt32(),42,"right version found");
             checkTrue(p.check("data_home"),"data_home found");
             checkFalse(p.check("data_dir0"),"data_dirs not found");
             checkFalse(p.check("project1"),"project1 not found");
@@ -628,7 +629,7 @@ public:
             //rf.setVerbose(true);
             rf.readConfig(p,"data.ini",
                           ResourceFinderOptions::findAllMatch());
-            checkEqual(p.find("magic_number").asInt(),42,"right priority");
+            checkEqual(p.find("magic_number").asInt32(),42,"right priority");
             checkTrue(p.check("data_home"),"data_home found");
             checkTrue(p.check("data_dir0"),"data_dirs found");
             checkTrue(p.check("project1"),"project1 found");
@@ -648,7 +649,7 @@ public:
             bool ok = rf.readConfig(p,"my_app.ini",
                                     ResourceFinderOptions::findFirstMatch());
             checkTrue(ok,"read a my_app.ini");
-            checkEqual(p.find("magic_number").asInt(),1000,"right version found");
+            checkEqual(p.find("magic_number").asInt32(),1000,"right version found");
         }
 
         {
@@ -656,25 +657,25 @@ public:
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app.ini");
             rf.configure(0,nullptr);
-            checkEqual(rf.find("magic_number").asInt(),1000,"my_app.ini found as default config file");
+            checkEqual(rf.find("magic_number").asInt32(),1000,"my_app.ini found as default config file");
         }
 
         {
             ResourceFinder rf;
-            ConstString contextName = "my_app";
+            std::string contextName = "my_app";
             rf.setDefaultContext(contextName);
             rf.setDefaultConfigFile("my_app.ini");
             rf.configure(0,nullptr);
-            checkEqual(rf.find("magic_number").asInt(),1000,"my_app.ini found as default config file");
+            checkEqual(rf.find("magic_number").asInt32(),1000,"my_app.ini found as default config file");
         }
 
         {
             ResourceFinder rf;
-            ConstString contextName = "my_app";
+            std::string contextName = "my_app";
             rf.setDefaultContext(contextName.c_str());
             rf.setDefaultConfigFile("my_app.ini");
             rf.configure(0,nullptr);
-            checkEqual(rf.find("magic_number").asInt(),1000,"my_app.ini found as default config file");
+            checkEqual(rf.find("magic_number").asInt32(),1000,"my_app.ini found as default config file");
         }
 
         {
@@ -682,7 +683,7 @@ public:
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("shadow.ini");
             rf.configure(0,nullptr);
-            checkEqual(rf.find("magic_number").asInt(),5001,"shadow.ini found as correct location");
+            checkEqual(rf.find("magic_number").asInt32(),5001,"shadow.ini found as correct location");
         }
 
         {
@@ -690,7 +691,7 @@ public:
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("noshadow.ini");
             rf.configure(0,nullptr);
-            checkEqual(rf.find("magic_number").asInt(),5002,"noshadow.ini found as correct location");
+            checkEqual(rf.find("magic_number").asInt32(),5002,"noshadow.ini found as correct location");
         }
 
         {
@@ -698,11 +699,11 @@ public:
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("noshadow.ini");
             rf.configure(0,nullptr);
-            checkEqual(rf.find("magic_number").asInt(),5002,"noshadow.ini found as correct location");
+            checkEqual(rf.find("magic_number").asInt32(),5002,"noshadow.ini found as correct location");
             Property p;
             ResourceFinderOptions opts;
             checkTrue(rf.readConfig(p,"shadow.ini",opts),"found shadow.ini");
-            checkEqual(p.find("magic_number").asInt(),5001,"shadow.ini found as correct location");
+            checkEqual(p.find("magic_number").asInt32(),5001,"shadow.ini found as correct location");
         }
 
         breakDownTestArea();
@@ -724,7 +725,7 @@ public:
 
     void testGetHomeDirsForWriting()
     {
-        ConstString slash = Network::getDirectorySeparator();
+        std::string slash = Network::getDirectorySeparator();
         report(0,"test get 'home' dirs for writing");
         setUpTestArea(false);
 
@@ -748,7 +749,7 @@ public:
             rf.configure(0,nullptr);
 
             bool found;
-            ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
+            std::string robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
                                                             &found);
             if (!found) robot = "default";
             checkEqual(rf.getHomeContextPath(),ResourceFinder::getDataHome() + slash + "contexts" + slash + "my_app","$YARP_DATA_HOME/contexts/my_app found as directory for writing");

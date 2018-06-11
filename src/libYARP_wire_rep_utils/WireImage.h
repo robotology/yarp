@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2010 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP2_WIREIMAGE
@@ -65,7 +67,7 @@ public:
     {}
 
     void init(const yarp::sig::FlexImage& img,
-              const yarp::os::ConstString& frame) {
+              const std::string& frame) {
         image = &img;
         yarp::os::ConnectionWriter *pbuf =
             yarp::os::ConnectionWriter::createBufferedConnectionWriter();
@@ -74,7 +76,7 @@ public:
         yarp::os::StringOutputStream ss;
         // probably need to translate encoding format better, but at
         // a guess "rgb" and "bgr" will work ok.
-        yarp::os::ConstString encoding =
+        std::string encoding =
             yarp::os::Vocab::decode(image->getPixelCode()).c_str();
         switch (image->getPixelCode()) {
         case VOCAB_PIXEL_BGR:
@@ -94,15 +96,15 @@ public:
             break;
         }
         buf.appendRawString(frame);
-        buf.appendInt(image->height());
-        buf.appendInt(image->width());
+        buf.appendInt32(image->height());
+        buf.appendInt32(image->width());
         buf.appendRawString(encoding);
         char is_bigendian = 0;
         buf.appendBlock(&is_bigendian,1);
-        buf.appendInt((image->width()*image->getPixelSize())+image->getPadding());
-        buf.appendInt(image->getRawImageSize());
+        buf.appendInt32((image->width()*image->getPixelSize())+image->getPadding());
+        buf.appendInt32(image->getRawImageSize());
         buf.getBuffer()->write(ss);
-        yarp::os::ConstString hdr = ss.toString();
+        std::string hdr = ss.toString();
         yarp::os::Bytes hdr_wrap((char*)hdr.c_str(),hdr.length());
         ros_const_header = yarp::os::ManagedBytes(hdr_wrap);
         ros_const_header.copy();
@@ -117,11 +119,11 @@ public:
         ros_seq_stamp.nsec = (int)((t-(int)t)*1e9);
     }
 
-    virtual size_t length() override { return 3; }
+    virtual size_t length() const override { return 3; }
 
-    virtual size_t headerLength() override { return 0; }
+    virtual size_t headerLength() const override { return 0; }
 
-    virtual size_t length(size_t index) override {
+    virtual size_t length(size_t index) const override {
         size_t result = 0;
         switch (index) {
         case 0:
@@ -140,7 +142,7 @@ public:
         return result;
     }
 
-    virtual const char *data(size_t index) override {
+    virtual const char *data(size_t index) const override {
         const char *result = 0 /*NULL*/;
         switch (index) {
         case 0:
@@ -162,9 +164,9 @@ public:
 
     virtual bool dropRequested() override { return false; }
 
-    virtual void startWrite() override {}
+    virtual void startWrite() const override {}
 
-    virtual void stopWrite() override {}
+    virtual void stopWrite() const override {}
 };
 
 class YARP_wire_rep_utils_API WireImage {

@@ -1,11 +1,9 @@
 /*
- * Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
- * Author: Davide Perrone
- * Date: Feb 2014
- * email:   dperrone@aitek.it
- * website: www.aitek.it
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * This software may be modified and distributed under the terms of the
+ * LGPLv2.1+ license. See the accompanying LICENSE file for details.
  */
 
 #ifndef CUSTOMTREEWIDGET_H

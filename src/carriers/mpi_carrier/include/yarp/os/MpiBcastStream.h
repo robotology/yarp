@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2010 Daniel Krieg
- * Author: Daniel Krieg <krieg@fias.uni-frankfurt.de>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2010 Daniel Krieg <krieg@fias.uni-frankfurt.de>
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_MPIBCASTSTREAM
@@ -26,7 +29,7 @@ namespace yarp {
 class yarp::os::MpiBcastStream : public MpiStream {
 
 public:
-    MpiBcastStream(ConstString name, MpiComm* comm) : MpiStream(name, comm) {};
+    MpiBcastStream(std::string name, MpiComm* comm) : MpiStream(name, comm) {};
     ~MpiBcastStream() {
         #ifdef MPI_DEBUG
         printf("[MpiBcastStream @ %s] Destructor\n", name.c_str());
@@ -36,7 +39,7 @@ public:
     using MpiStream::write;
     using MpiStream::read;
 
-    ssize_t read(const Bytes& b) override;
+    ssize_t read(Bytes& b) override;
     void write(const Bytes& b) override;
     void startJoin();
     void post() {
@@ -52,5 +55,4 @@ public:
 };
 
 
-#endif //_YARP_MPIBCASTSTREAM_
-
+#endif // YARP_MPIBCASTSTREAM

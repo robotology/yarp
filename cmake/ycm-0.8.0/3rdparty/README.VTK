@@ -1,0 +1,7 @@
+Some of the files in this folder and its subfolder come from the VTK git
+repository (ref v8.1.1):
+
+  https://gitlab.kitware.com/vtk/vtk/
+
+Redistribution and use is allowed according to the terms of the Boost Software
+License. See accompanying file COPYING.Catch2 for details.

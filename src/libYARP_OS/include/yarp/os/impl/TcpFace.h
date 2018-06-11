@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_IMPL_TCPFACE_H
@@ -10,35 +13,19 @@
 #include <yarp/conf/system.h>
 #include <yarp/os/Face.h>
 #include <yarp/os/impl/AuthHMAC.h>
-
-#ifdef YARP_HAS_ACE
-#  include <ace/config.h>
-#  include <ace/SOCK_Acceptor.h>
-#  include <ace/SOCK_Connector.h>
-#  include <ace/SOCK_Stream.h>
-#  include <ace/Log_Msg.h>
-#  define PlatformTcpAcceptor ACE_SOCK_Acceptor
-#else
-#  include <yarp/os/impl/TcpAcceptor.h>
-#  define PlatformTcpAcceptor TcpAcceptor
-#endif
-
+#include <yarp/os/impl/TcpAcceptor.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class TcpFace;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * Communicating with a port via TCP.
  */
-class YARP_OS_impl_API yarp::os::impl::TcpFace : public yarp::os::Face
+class YARP_OS_impl_API TcpFace : public yarp::os::Face
 {
 public:
-    TcpFace() { }
+    TcpFace();
 
     virtual ~TcpFace();
 
@@ -47,12 +34,11 @@ public:
     virtual InputProtocol *read() override;
     virtual OutputProtocol *write(const Contact& address) override;
 
-    virtual Contact getLocalAddress() override;
+    virtual Contact getLocalAddress() const override;
 
-    /**
+    /*
      * This class like all classes except the port objects does
      * not have any notion of running in a multi-threaded environment.
-     *
      */
 
 protected:
@@ -62,8 +48,12 @@ protected:
 private:
     void closeFace();
     Contact address;
-    PlatformTcpAcceptor peerAcceptor;
+    yarp::os::impl::TcpAcceptor peerAcceptor;
 };
 
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_TCPFACE_H

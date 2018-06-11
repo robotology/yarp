@@ -1,11 +1,10 @@
 /*
- *  Yarp Modules Manager
- *  Copyright: (C) 2011 Istituto Italiano di Tecnologia (IIT)
- *  Authors: Ali Paikan <ali.paikan@iit.it>
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 #ifndef YARP_MANAGER_Executable
 #define YARP_MANAGER_Executable
@@ -13,7 +12,7 @@
 #include <string>
 #include <vector>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
 
@@ -28,8 +27,8 @@ namespace yarp {
 namespace manager {
 
 
-#define DEF_PERIOD      100  //ms
-#define WDOG_PERIOD     5000 //ms
+#define DEF_PERIOD      0.1  //s
+#define WDOG_PERIOD     5.0 //s
 
 typedef enum __RSTATE {
     SUSPENDED,
@@ -195,12 +194,12 @@ private:
 };
 
 
-class ConcurentRateWrapper: public yarp::os::RateThread
+class ConcurentRateWrapper: public yarp::os::PeriodicThread
 {
 public:
 
     ConcurentRateWrapper(Executable* ptrExecutable, ExecutableFuncPtr ptrLabor)
-    : RateThread(WDOG_PERIOD), labor(ptrLabor), executable(ptrExecutable) { }
+    : PeriodicThread(WDOG_PERIOD), labor(ptrLabor), executable(ptrExecutable) { }
 
     virtual ~ConcurentRateWrapper() { if(isRunning()) stop(); }
 

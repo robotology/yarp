@@ -1,11 +1,14 @@
 /*
- * Copyright (C) 2007 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/impl/NameserCarrier.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -36,15 +39,15 @@ yarp::os::OutputStream& yarp::os::impl::NameserTwoWayStream::getOutputStream() {
     return delegate->getOutputStream();
 }
 
-const Contact& yarp::os::impl::NameserTwoWayStream::getLocalAddress() {
+const Contact& yarp::os::impl::NameserTwoWayStream::getLocalAddress() const {
     return delegate->getLocalAddress();
 }
 
-const Contact& yarp::os::impl::NameserTwoWayStream::getRemoteAddress() {
+const Contact& yarp::os::impl::NameserTwoWayStream::getRemoteAddress() const {
     return delegate->getRemoteAddress();
 }
 
-bool yarp::os::impl::NameserTwoWayStream::isOk() {
+bool yarp::os::impl::NameserTwoWayStream::isOk() const {
     return delegate->isOk();
 }
 
@@ -64,7 +67,7 @@ void yarp::os::impl::NameserTwoWayStream::endPacket() {
     delegate->endPacket();
 }
 
-YARP_SSIZE_T yarp::os::impl::NameserTwoWayStream::read(const Bytes& b) {
+yarp::conf::ssize_t yarp::os::impl::NameserTwoWayStream::read(Bytes& b) {
     // assume it is ok for name_ser to go byte-by-byte
     // since this protocol will be phased out
     if (b.length()<=0) {
@@ -72,7 +75,7 @@ YARP_SSIZE_T yarp::os::impl::NameserTwoWayStream::read(const Bytes& b) {
     }
     Bytes tmp(b.get(), 1);
     while (swallowRead.length()>0) {
-        YARP_SSIZE_T r = delegate->getInputStream().read(tmp);
+        yarp::conf::ssize_t r = delegate->getInputStream().read(tmp);
         if (r<=0) { return r; }
         swallowRead = swallowRead.substr(1, swallowRead.length()-1);
     }
@@ -81,7 +84,7 @@ YARP_SSIZE_T yarp::os::impl::NameserTwoWayStream::read(const Bytes& b) {
         pendingRead = pendingRead.substr(1, pendingRead.length()-1);
         return 1;
     }
-    YARP_SSIZE_T r = delegate->getInputStream().read(tmp);
+    yarp::conf::ssize_t r = delegate->getInputStream().read(tmp);
     if (r<=0) { return r; }
     if (tmp.get()[0]=='\n') {
         pendingRead = "";
@@ -95,21 +98,21 @@ yarp::os::impl::NameserCarrier::NameserCarrier() {
     firstSend = true;
 }
 
-yarp::os::ConstString yarp::os::impl::NameserCarrier::getName() {
+std::string yarp::os::impl::NameserCarrier::getName() const {
     return "name_ser";
 }
 
-yarp::os::ConstString yarp::os::impl::NameserCarrier::getSpecifierName() {
+std::string yarp::os::impl::NameserCarrier::getSpecifierName() const {
     return "NAME_SER";
 }
 
-yarp::os::Carrier *yarp::os::impl::NameserCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::NameserCarrier::create() const {
     return new NameserCarrier();
 }
 
 bool yarp::os::impl::NameserCarrier::checkHeader(const yarp::os::Bytes& header) {
     if (header.length()==8) {
-        ConstString target = getSpecifierName();
+        std::string target = getSpecifierName();
         for (int i=0; i<8; i++) {
             if (!(target[i]==header.get()[i])) {
                 return false;
@@ -120,9 +123,9 @@ bool yarp::os::impl::NameserCarrier::checkHeader(const yarp::os::Bytes& header) 
     return false;
 }
 
-void yarp::os::impl::NameserCarrier::getHeader(const Bytes& header) {
+void yarp::os::impl::NameserCarrier::getHeader(Bytes& header) const {
     if (header.length()==8) {
-        ConstString target = getSpecifierName();
+        std::string target = getSpecifierName();
         for (int i=0; i<8; i++) {
             header.get()[i] = target[i];
         }
@@ -130,24 +133,24 @@ void yarp::os::impl::NameserCarrier::getHeader(const Bytes& header) {
 }
 
 
-bool yarp::os::impl::NameserCarrier::requireAck() {
+bool yarp::os::impl::NameserCarrier::requireAck() const {
     return false;
 }
 
-bool yarp::os::impl::NameserCarrier::isTextMode() {
+bool yarp::os::impl::NameserCarrier::isTextMode() const {
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::supportReply() {
+bool yarp::os::impl::NameserCarrier::supportReply() const {
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::canEscape() {
+bool yarp::os::impl::NameserCarrier::canEscape() const {
     return false;
 }
 
 bool yarp::os::impl::NameserCarrier::sendHeader(ConnectionState& proto) {
-    yarp::os::ConstString target = getSpecifierName();
+    std::string target = getSpecifierName();
     yarp::os::Bytes b((char*)target.c_str(), 8);
     proto.os().write(b);
     proto.os().flush();
@@ -191,10 +194,11 @@ bool yarp::os::impl::NameserCarrier::expectReplyToHeader(ConnectionState& proto)
 }
 
 bool yarp::os::impl::NameserCarrier::write(ConnectionState& proto, SizedWriter& writer) {
-    ConstString target = firstSend?"VER ":"NAME_SERVER ";
+    std::string target = firstSend?"VER ":"NAME_SERVER ";
     Bytes b((char*)target.c_str(), target.length());
     proto.os().write(b);
-    ConstString txt;
+    proto.os().flush();
+    std::string txt;
     // ancient nameserver can't deal with quotes
     for (size_t i=0; i<writer.length(); i++) {
         for (size_t j=0; j<writer.length(i); j++) {

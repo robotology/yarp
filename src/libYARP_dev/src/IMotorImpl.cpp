@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
- * Authors: Marco Randazzo <marco.randazzo@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
@@ -14,12 +16,10 @@ using namespace yarp::dev;
 
 ////////////////////////
 // Encoder Interface Timed Implementation
-ImplementMotor::ImplementMotor(IMotorRaw *y)
+ImplementMotor::ImplementMotor(IMotorRaw *y):nj(0)
 {
     imotor=y;
     helper = nullptr;
-    temp1=nullptr;
-    temp2=nullptr;
 }
 
 ImplementMotor::~ImplementMotor()
@@ -32,12 +32,10 @@ bool ImplementMotor:: initialize (int size, const int *amap)
     if (helper!=nullptr)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, nullptr, 0, 0));
+    helper=(void *)(new ControlBoardHelper(size, amap));
     yAssert (helper != nullptr);
-    temp1=new double [size];
-    yAssert (temp1 != nullptr);
-    temp2=new double [size];
-    yAssert (temp2 != nullptr);
+
+    nj=size;
     return true;
 }
 
@@ -52,9 +50,6 @@ bool ImplementMotor::uninitialize ()
         delete castToMapper(helper);
         helper=nullptr;
     }
-
-    checkAndDestroy(temp1);
-    checkAndDestroy(temp2);
 
     return true;
 }

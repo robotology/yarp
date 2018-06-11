@@ -1,24 +1,25 @@
-# Copyright (C) 2014 Istituto Italiano di Tecnologia (IIT)
-# Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 if(CREATE_YARPDATAPLAYER)
 
   include(YarpUseQt5)
   include(YarpOSXUtilities)
 
-  get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  get_property(YARP_sig_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-  include_directories(${YARP_OS_INCLUDE_DIRS}
-                      ${YARP_sig_INCLUDE_DIRS})
 
   if(YARP_HAS_OPENCV)
     add_definitions(-DHAS_OPENCV)
     include_directories(${OpenCV_INCLUDE_DIRS})
   else()
     message(STATUS "yarpdataplayer: OpenCV not selected, keep on building...")
+  endif()
+
+  if(MSVC)
+    include_directories(SYSTEM ${dirent_INCLUDE_DIRS})
   endif()
 
   set(yarpdataplayer_SRCS src/aboutdlg.cpp
@@ -37,9 +38,7 @@ if(CREATE_YARPDATAPLAYER)
                           include/mainwindow.h
                           include/utils.h
                           include/worker.h)
-  if(MSVC)
-    list(APPEND yarpdataplayer_HDRS include/msvc/dirent.h)
-  endif()
+
   set(yarpdataplayer_QRC_FILES src/RC/res.qrc)
   set(yarpdataplayer_UI_FILES include/UI/aboutdlg.ui
                               include/UI/genericinfodlg.ui

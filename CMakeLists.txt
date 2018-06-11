@@ -1,8 +1,15 @@
-# Copyright: (C) 2009, 2010 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
+
+if(NOT ${CMAKE_VERSION} VERSION_LESS 3.4)
+  cmake_policy(SET CMP0064 NEW)
+endif()
 
 if(NOT ${CMAKE_VERSION} VERSION_LESS 3.8)
   cmake_policy(SET CMP0067 NEW)
@@ -22,15 +29,12 @@ endif()
 set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
 set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
 
-set(YCM_REQUIRED_VERSION 0.6.0) # Used also by YarpFindDependencies
+set(YCM_REQUIRED_VERSION 0.8.0) # Used also by YarpFindDependencies
 find_package(YCM ${YCM_REQUIRED_VERSION} QUIET)
 if(NOT YCM_FOUND)
   list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/find-modules"
                                "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/modules"
                                "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/3rdparty")
-  if(${CMAKE_VERSION} VERSION_LESS 3.1)
-    list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules")
-  endif()
   if(${CMAKE_VERSION} VERSION_LESS 3.8)
     list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules")
   endif()
@@ -40,7 +44,7 @@ list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
 # Main project
 project(YARP
-        VERSION 2.3.72.1
+        VERSION 2.3.73.5
         LANGUAGES C CXX)
 set(PROJECT_DESCRIPTION "YARP: A thin middleware for humanoid robots and more")
 
@@ -53,15 +57,6 @@ message(STATUS "Using:")
 message(STATUS "  CMake: ${CMAKE_VERSION} (${CMAKE_COMMAND})")
 message(STATUS "  C Compiler: ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION} (${CMAKE_C_COMPILER})")
 message(STATUS "  CXX Compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})")
-
-# The YARP build is fairly flexible, so we need to accumulate some
-# information about what libraries are being built (and their dependencies),
-# along with the include path.  We'll be passing that along to clients
-# using YARP without a global install.
-set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-set_property(GLOBAL PROPERTY YARP_LIBS)
-set_property(GLOBAL PROPERTY YARP_TOOLS)
-set_property(GLOBAL PROPERTY YARP_DEFS)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS 1)
 set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Autogen Targets")

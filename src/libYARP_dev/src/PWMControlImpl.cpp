@@ -1,11 +1,14 @@
 /*
-* Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
-* Authors: Marco Randazzo <marco.randazzo@iit.it>
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*/
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #include "yarp/dev/ImplementPWMControl.h"
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/os/LogStream.h>
 #include <iostream>
 
 using namespace yarp::dev;
@@ -25,14 +28,9 @@ bool ImplementPWMControl::initialize(int size, const int *amap, const double* du
     if (helper != nullptr)
         return false;
 
-    double *dummy = new double[size];
-    for (int k = 0; k<size; k++)
-        dummy[k] = 0;
-
-    helper = (void *)(new ControlBoardHelper(size, amap, dummy, dummy, dummy, nullptr, 0, dutyToPWM));
+    helper = (void *)(new ControlBoardHelper(size, amap, nullptr, nullptr, nullptr, nullptr, nullptr, dutyToPWM));
     yAssert(helper != nullptr);
 
-    delete[] dummy;
     return true;
 }
 
@@ -47,6 +45,12 @@ bool ImplementPWMControl::uninitialize()
     {
         delete castToMapper(helper);
         helper = nullptr;
+    }
+    
+    if(dummy != nullptr)
+    {
+        delete[] dummy;
+        dummy = nullptr;
     }
 
     return true;
@@ -68,8 +72,11 @@ bool ImplementPWMControl::setRefDutyCycle(int j, double duty)
 
 bool ImplementPWMControl::setRefDutyCycles(const double *duty)
 {
-    castToMapper(helper)->dutycycle2PWM(duty, dummy);
-    return raw->setRefDutyCyclesRaw(dummy);
+    double *aux = new double[castToMapper(helper)->axes()];
+    castToMapper(helper)->dutycycle2PWM(duty, aux);
+    bool ret = raw->setRefDutyCyclesRaw(aux);
+    delete [] aux;
+    return ret;
 }
 
 bool ImplementPWMControl::getRefDutyCycle(int j, double *v)
@@ -84,9 +91,10 @@ bool ImplementPWMControl::getRefDutyCycle(int j, double *v)
 
 bool ImplementPWMControl::getRefDutyCycles(double *duty)
 {
-    bool ret;
-    ret = raw->getRefDutyCyclesRaw(dummy);
-    castToMapper(helper)->PWM2dutycycle(dummy, duty);
+    double *aux = new double[castToMapper(helper)->axes()];
+    bool ret = raw->getRefDutyCyclesRaw(aux);
+    castToMapper(helper)->PWM2dutycycle(aux, duty);
+    delete [] aux;
     return ret;
 }
 
@@ -102,8 +110,9 @@ bool ImplementPWMControl::getDutyCycle(int j, double *duty)
 
 bool ImplementPWMControl::getDutyCycles(double *duty)
 {
-    bool ret;
-    ret = raw->getDutyCyclesRaw(dummy);
-    castToMapper(helper)->PWM2dutycycle(dummy, duty);
+    double *aux = new double[castToMapper(helper)->axes()];
+    bool ret = raw->getDutyCyclesRaw(aux);
+    castToMapper(helper)->PWM2dutycycle(aux, duty);
+    delete [] aux;
     return ret;
 }

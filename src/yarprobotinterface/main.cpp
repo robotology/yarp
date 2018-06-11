@@ -2,7 +2,7 @@
  * Copyright (C) 2012 Istituto Italiano di Tecnologia (IIT)
  * Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *          Lorenzo Natale <lorenzo.natale@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 
@@ -36,8 +36,6 @@ int main(int argc, char *argv[])
     //if( mlockall(MCL_CURRENT | MCL_FUTURE) != 0 )
     //    yWarning() << "Cannot lock memory swapping (check superuser permission)";
 #endif //ICUB_USE_REALTIME_LINUX
-
-    yarp::os::Time::turboBoost();
 
     yarp::os::ResourceFinder &rf(yarp::os::ResourceFinder::getResourceFinderSingleton());
     rf.setVerbose();

@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Author: Alberto Cardellino <alberto.cardellino@iit.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include <yarp/os/LogStream.h>
@@ -25,7 +27,7 @@ int Implement_RgbVisualParams_Sender::getRgbHeight()
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_HEIGHT);
     _port.write(cmd, response);
-    return response.get(3).asInt();
+    return response.get(3).asInt32();
 }
 
 int Implement_RgbVisualParams_Sender::getRgbWidth()
@@ -35,7 +37,7 @@ int Implement_RgbVisualParams_Sender::getRgbWidth()
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_WIDTH);
     _port.write(cmd, response);
-    return response.get(3).asInt();
+    return response.get(3).asInt32();
 }
 bool Implement_RgbVisualParams_Sender::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations){
     yarp::os::Bottle cmd, response;
@@ -49,11 +51,11 @@ bool Implement_RgbVisualParams_Sender::getRgbSupportedConfigurations(yarp::sig::
         configurations.clear();
         return false;
     }
-    configurations.resize(response.get(3).asInt());
-    for(int i=0; i<response.get(3).asInt(); i++){
-        configurations[i].width=response.get(4 + i*4).asInt();
-        configurations[i].height=response.get(4 + i*4 + 1).asInt();
-        configurations[i].framerate=response.get(4 + i*4 + 2).asDouble();
+    configurations.resize(response.get(3).asInt32());
+    for(int i=0; i<response.get(3).asInt32(); i++){
+        configurations[i].width=response.get(4 + i*4).asInt32();
+        configurations[i].height=response.get(4 + i*4 + 1).asInt32();
+        configurations[i].framerate=response.get(4 + i*4 + 2).asFloat64();
         configurations[i].pixelCoding=static_cast<YarpVocabPixelTypesEnum>(response.get(4 + i*4 + 3).asVocab());
     }
     return true;
@@ -72,8 +74,8 @@ bool Implement_RgbVisualParams_Sender::getRgbResolution(int &width, int &height)
         height= 0;
         return false;
     }
-    width  = response.get(3).asInt();
-    height = response.get(4).asInt();
+    width  = response.get(3).asInt32();
+    height = response.get(4).asInt32();
     return true;
 
 }
@@ -84,8 +86,8 @@ bool Implement_RgbVisualParams_Sender::setRgbResolution(int width, int height)
     cmd.addVocab(VOCAB_RGB_VISUAL_PARAMS);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_RESOLUTION);
-    cmd.addInt(width);
-    cmd.addInt(height);
+    cmd.addInt32(width);
+    cmd.addInt32(height);
     _port.write(cmd, response);
     return response.get(2).asBool();
 }
@@ -105,8 +107,8 @@ bool Implement_RgbVisualParams_Sender::getRgbFOV(double &horizontalFov, double &
         verticalFov = 0;
         return false;
     }
-    horizontalFov = response.get(3).asDouble();
-    verticalFov   = response.get(4).asDouble();
+    horizontalFov = response.get(3).asFloat64();
+    verticalFov   = response.get(4).asFloat64();
     return true;
 }
 
@@ -116,8 +118,8 @@ bool Implement_RgbVisualParams_Sender::setRgbFOV(double horizontalFov, double ve
     cmd.addVocab(VOCAB_RGB_VISUAL_PARAMS);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_FOV);
-    cmd.addDouble(horizontalFov);
-    cmd.addDouble(verticalFov);
+    cmd.addFloat64(horizontalFov);
+    cmd.addFloat64(verticalFov);
     _port.write(cmd, response);
     return response.get(2).asBool();
 }
@@ -169,7 +171,7 @@ bool Implement_RgbVisualParams_Sender::setRgbMirroring(bool mirror)
     cmd.addVocab(VOCAB_RGB_VISUAL_PARAMS);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_MIRROR);
-    cmd.addInt(mirror);
+    cmd.addInt32(mirror);
     _port.write(cmd, response);
     return response.get(2).asBool();
 }
@@ -224,7 +226,7 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                     response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
                     response.addVocab(VOCAB_HEIGHT);
                     response.addVocab(VOCAB_IS);
-                    response.addInt(iRgbVisual->getRgbHeight());
+                    response.addInt32(iRgbVisual->getRgbHeight());
                     ret=true;
                 break;
 
@@ -232,7 +234,7 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                     response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
                     response.addVocab(VOCAB_WIDTH);
                     response.addVocab(VOCAB_IS);
-                    response.addInt(iRgbVisual->getRgbWidth());
+                    response.addInt32(iRgbVisual->getRgbWidth());
                     ret=true;
                 break;
 
@@ -244,11 +246,11 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                         response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
                         response.addVocab(VOCAB_SUPPORTED_CONF);
                         response.addVocab(VOCAB_IS);
-                        response.addInt(conf.size());
+                        response.addInt32(conf.size());
                         for(size_t i=0; i<conf.size(); i++){
-                            response.addInt(conf[i].width);
-                            response.addInt(conf[i].height);
-                            response.addDouble(conf[i].framerate);
+                            response.addInt32(conf[i].width);
+                            response.addInt32(conf[i].height);
+                            response.addFloat64(conf[i].framerate);
                             response.addVocab(conf[i].pixelCoding);
                         }
                     }
@@ -267,8 +269,8 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                         response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
                         response.addVocab(VOCAB_RESOLUTION);
                         response.addVocab(VOCAB_IS);
-                        response.addInt(width);
-                        response.addInt(height);
+                        response.addInt32(width);
+                        response.addInt32(height);
                     }
                     else
                         response.addVocab(VOCAB_FAILED);
@@ -284,8 +286,8 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                         response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
                         response.addVocab(VOCAB_FOV);
                         response.addVocab(VOCAB_IS);
-                        response.addDouble(hFov);
-                        response.addDouble(vFov);
+                        response.addFloat64(hFov);
+                        response.addFloat64(vFov);
                     }
                     else
                         response.addVocab(VOCAB_FAILED);
@@ -318,7 +320,7 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                         response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
                         response.addVocab(VOCAB_MIRROR);
                         response.addVocab(VOCAB_IS);
-                        response.addInt(mirror);
+                        response.addInt32(mirror);
                     }
                     else
                         response.addVocab(VOCAB_FAILED);
@@ -341,17 +343,17 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
             switch(cmd.get(2).asVocab())
             {
                 case VOCAB_RESOLUTION:
-                    ret = iRgbVisual->setRgbResolution(cmd.get(3).asInt(), cmd.get(4).asInt());
+                    ret = iRgbVisual->setRgbResolution(cmd.get(3).asInt32(), cmd.get(4).asInt32());
                     response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
                     response.addVocab(VOCAB_SET);
-                    response.addInt(ret);
+                    response.addInt32(ret);
                 break;
 
                 case VOCAB_FOV:
-                    ret = iRgbVisual->setRgbFOV(cmd.get(3).asDouble(), cmd.get(4).asDouble());
+                    ret = iRgbVisual->setRgbFOV(cmd.get(3).asFloat64(), cmd.get(4).asFloat64());
                     response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
                     response.addVocab(VOCAB_SET);
-                    response.addInt(ret);
+                    response.addInt32(ret);
                 break;
 
                 case VOCAB_MIRROR:
@@ -359,7 +361,7 @@ bool Implement_RgbVisualParams_Parser::respond(const yarp::os::Bottle& cmd, yarp
                     ret = iRgbVisual->setRgbMirroring(cmd.get(3).asBool());
                     response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
                     response.addVocab(VOCAB_SET);
-                    response.addInt(ret);
+                    response.addInt32(ret);
                 }
                 break;
 
@@ -402,7 +404,7 @@ int Implement_DepthVisualParams_Sender::getDepthHeight()
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_HEIGHT);
     _port.write(cmd, response);
-    return response.get(3).asInt();
+    return response.get(3).asInt32();
 }
 
 int Implement_DepthVisualParams_Sender::getDepthWidth()
@@ -412,7 +414,7 @@ int Implement_DepthVisualParams_Sender::getDepthWidth()
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_WIDTH);
     _port.write(cmd, response);
-    return response.get(3).asInt();
+    return response.get(3).asInt32();
 }
 
 bool Implement_DepthVisualParams_Sender::setDepthResolution(int _width, int _height)
@@ -421,8 +423,8 @@ bool Implement_DepthVisualParams_Sender::setDepthResolution(int _width, int _hei
     cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_RESOLUTION);
-    cmd.addInt(_width);
-    cmd.addInt(_height);
+    cmd.addInt32(_width);
+    cmd.addInt32(_height);
     _port.write(cmd, response);
     return response.get(2).asBool();
 }
@@ -442,8 +444,8 @@ bool Implement_DepthVisualParams_Sender::getDepthFOV(double &horizontalFov, doub
         verticalFov = 0;
         return false;
     }
-    horizontalFov = response.get(3).asDouble();
-    verticalFov   = response.get(4).asDouble();
+    horizontalFov = response.get(3).asFloat64();
+    verticalFov   = response.get(4).asFloat64();
     return true;
 }
 
@@ -453,8 +455,8 @@ bool Implement_DepthVisualParams_Sender::setDepthFOV(double horizontalFov, doubl
     cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_FOV);
-    cmd.addDouble(horizontalFov);
-    cmd.addDouble(verticalFov);
+    cmd.addFloat64(horizontalFov);
+    cmd.addFloat64(verticalFov);
     _port.write(cmd, response);
     return response.get(2).asBool();
 }
@@ -466,7 +468,7 @@ double Implement_DepthVisualParams_Sender::getDepthAccuracy()
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_ACCURACY);
     _port.write(cmd, response);
-    return response.get(3).asDouble();
+    return response.get(3).asFloat64();
 }
 
 bool Implement_DepthVisualParams_Sender::setDepthAccuracy(double accuracy)
@@ -475,7 +477,7 @@ bool Implement_DepthVisualParams_Sender::setDepthAccuracy(double accuracy)
     cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_ACCURACY);
-    cmd.addDouble(accuracy);
+    cmd.addFloat64(accuracy);
     _port.write(cmd, response);
     return response.get(2).asBool();
 }
@@ -495,8 +497,8 @@ bool Implement_DepthVisualParams_Sender::getDepthClipPlanes(double &nearPlane, d
         farPlane  = 0;
         return false;
     }
-    nearPlane = response.get(3).asDouble();
-    farPlane  = response.get(4).asDouble();
+    nearPlane = response.get(3).asFloat64();
+    farPlane  = response.get(4).asFloat64();
     return true;
 }
 
@@ -506,8 +508,8 @@ bool Implement_DepthVisualParams_Sender::setDepthClipPlanes(double nearPlane, do
     cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_CLIP_PLANES);
-    cmd.addDouble(nearPlane);
-    cmd.addDouble(farPlane);
+    cmd.addFloat64(nearPlane);
+    cmd.addFloat64(farPlane);
     _port.write(cmd, response);
     return response.get(2).asBool();
 }
@@ -552,7 +554,7 @@ bool Implement_DepthVisualParams_Sender::setDepthMirroring(bool mirror)
     cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
     cmd.addVocab(VOCAB_SET);
     cmd.addVocab(VOCAB_MIRROR);
-    cmd.addInt(mirror);
+    cmd.addInt32(mirror);
     _port.write(cmd, response);
     return response.get(2).asBool();
 }
@@ -606,7 +608,7 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_HEIGHT);
                     response.addVocab(VOCAB_IS);
-                    response.addInt(iDepthVisual->getDepthHeight());
+                    response.addInt32(iDepthVisual->getDepthHeight());
                 }
                 break;
 
@@ -615,7 +617,7 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_WIDTH);
                     response.addVocab(VOCAB_IS);
-                    response.addInt(iDepthVisual->getDepthWidth());
+                    response.addInt32(iDepthVisual->getDepthWidth());
                 }
                 break;
 
@@ -628,8 +630,8 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                         response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                         response.addVocab(VOCAB_FOV);
                         response.addVocab(VOCAB_IS);
-                        response.addDouble(hFov);
-                        response.addDouble(vFov);
+                        response.addFloat64(hFov);
+                        response.addFloat64(vFov);
                     }
                     else
                         response.addVocab(VOCAB_FAILED);
@@ -660,7 +662,7 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_ACCURACY);
                     response.addVocab(VOCAB_IS);
-                    response.addDouble(iDepthVisual->getDepthAccuracy());
+                    response.addFloat64(iDepthVisual->getDepthAccuracy());
                 }
                 break;
 
@@ -671,8 +673,8 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_CLIP_PLANES);
                     response.addVocab(VOCAB_IS);
-                    response.addDouble(nearPlane);
-                    response.addDouble(farPlane);
+                    response.addFloat64(nearPlane);
+                    response.addFloat64(farPlane);
                 }
                 break;
 
@@ -685,7 +687,7 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                         response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                         response.addVocab(VOCAB_MIRROR);
                         response.addVocab(VOCAB_IS);
-                        response.addInt(mirror);
+                        response.addInt32(mirror);
                     }
                     else
                         response.addVocab(VOCAB_FAILED);
@@ -709,37 +711,37 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
             {
                 case VOCAB_RESOLUTION:
                 {
-                    ret = iDepthVisual->setDepthResolution(cmd.get(3).asInt(), cmd.get(4).asInt());
+                    ret = iDepthVisual->setDepthResolution(cmd.get(3).asInt32(), cmd.get(4).asInt32());
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_SET);
-                    response.addInt(ret);
+                    response.addInt32(ret);
                 }
                 break;
 
                 case VOCAB_FOV:
                 {
-                    ret = iDepthVisual->setDepthFOV(cmd.get(3).asDouble(), cmd.get(4).asDouble());
+                    ret = iDepthVisual->setDepthFOV(cmd.get(3).asFloat64(), cmd.get(4).asFloat64());
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_SET);
-                    response.addInt(ret);
+                    response.addInt32(ret);
                 }
                 break;
 
                 case VOCAB_ACCURACY:
                 {
-                    ret = iDepthVisual->setDepthAccuracy(cmd.get(3).asDouble());
+                    ret = iDepthVisual->setDepthAccuracy(cmd.get(3).asFloat64());
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_SET);
-                    response.addInt(ret);
+                    response.addInt32(ret);
                 }
                 break;
 
                 case VOCAB_CLIP_PLANES:
                 {
-                    ret = iDepthVisual->setDepthClipPlanes(cmd.get(3).asDouble(), cmd.get(4).asDouble());
+                    ret = iDepthVisual->setDepthClipPlanes(cmd.get(3).asFloat64(), cmd.get(4).asFloat64());
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_SET);
-                    response.addInt(ret);
+                    response.addInt32(ret);
                 }
                 break;
 
@@ -748,7 +750,7 @@ bool Implement_DepthVisualParams_Parser::respond(const yarp::os::Bottle& cmd, ya
                     ret = iDepthVisual->setDepthMirroring(cmd.get(3).asBool());
                     response.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
                     response.addVocab(VOCAB_SET);
-                    response.addInt(ret);
+                    response.addInt32(ret);
                 }
                 break;
 

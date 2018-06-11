@@ -1,10 +1,9 @@
-# Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick <paulfitz@alum.mit.edu>
-#          Giorgio Metta <giorgio.metta@iit.it>
-#          Lorenzo Natale <lorenzo.natale@iit.it>
-#          Alessandro Scalzo <alessandro.scalzo@iit.it>
-#          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 
 #########################################################################
@@ -14,20 +13,7 @@ include(TestBigEndian)
 include(CheckCXXCompilerFlag)
 include(CheckIncludeFiles)
 include(CheckIncludeFileCXX)
-
-# CheckTypeSize changes CMAKE_MINIMUM_REQUIRED_VERSION, see
-# http://www.cmake.org/Bug/view.php?id=14864 (fixed in CMake 3.1)
-# We save it here, and restore it after including the file.
-if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
-  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-endif()
-if(CMAKE_VERSION VERSION_LESS 3.1)
-  set(_CMAKE_MINIMUM_REQUIRED_VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION})
-endif()
 include(CheckTypeSize)
-if(CMAKE_VERSION VERSION_LESS 3.1)
-  cmake_minimum_required(VERSION ${_CMAKE_MINIMUM_REQUIRED_VERSION})
-endif()
 
 # Ensure that install directories are set
 include(GNUInstallDirs)
@@ -45,6 +31,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #########################################################################
 # Check whether system is big- or little- endian
 
+unset(YARP_BIG_ENDIAN)
+unset(YARP_LITTLE_ENDIAN)
+
 test_big_endian(IS_BIG_ENDIAN)
 if(${IS_BIG_ENDIAN})
   set(YARP_BIG_ENDIAN 1)
@@ -54,90 +43,91 @@ endif()
 
 
 #########################################################################
-# Find 16, 32, and 64 bit types, portably
-
-set(YARP_INT16)
-set(YARP_INT32)
-set(YARP_INT64)
-set(YARP_FLOAT32)
-set(YARP_FLOAT64)
-
-check_type_size("short" SIZEOF_SHORT)
-check_type_size("int" SIZEOF_INT)
-check_type_size("long" SIZEOF_LONG)
-if(SIZEOF_INT EQUAL 4)
-  set(YARP_INT32 "int")
-  set(YARP_INT32_FMT "d")
-else()
-  if(SIZEOF_SHORT EQUAL 4)
-    set(YARP_INT32 "short")
-    set(YARP_INT32_FMT "hd")
-  elseif(SIZEOF_LONG EQUAL 4)
-    set(YARP_INT32 "long")
-    set(YARP_INT32_FMT "ld")
-  endif()
-endif()
-
-if(SIZEOF_SHORT EQUAL 2)
-  set(YARP_INT16 "short")
-else()
-  # Hmm - there's no other native type to get 16 bits
-  # We will continue since most people using YARP do not need one.
-  message(STATUS "Warning: cannot find a 16 bit type on your system")
-  message(STATUS "Continuing...")
-endif()
-
-check_type_size("float" SIZEOF_FLOAT)
-check_type_size("double" SIZEOF_DOUBLE)
-if(SIZEOF_DOUBLE EQUAL 8)
-  set(YARP_FLOAT64 "double")
-elseif(SIZEOF_FLOAT EQUAL 8)
-  set(YARP_FLOAT64 "float")
-endif()
-
-if(SIZEOF_DOUBLE EQUAL 4)
-  set(YARP_FLOAT32 "double")
-elseif(SIZEOF_FLOAT EQUAL 4)
-  set(YARP_FLOAT32 "float")
-endif()
-
-if(SIZEOF_LONG EQUAL 8)
-  set(YARP_INT64 "long")
-  set(YARP_INT64_FMT "ld")
-else()
-  check_type_size("long long" SIZEOF_LONGLONG)
-  if(SIZEOF_LONGLONG EQUAL 8)
-    set(YARP_INT64 "long long")
-  else()
-    check_type_size("__int64" SIZEOF___INT64)
-    if(SIZEOF___INT64 EQUAL 8)
-      set(YARP_INT64 "__int64")
-    endif()
-  endif()
-  set(YARP_INT64_FMT "lld")
-endif()
+# Check size of pointers
 
 check_type_size("void *" YARP_POINTER_SIZE)
 
 
-set(YARP_SSIZE_T int)
-check_type_size(ssize_t YARP_SSIZE_T_LOWER)
-if(HAVE_YARP_SSIZE_T_LOWER)
-  set(YARP_SSIZE_T ssize_t)
-else()
-  check_type_size(SSIZE_T YARP_SSIZE_T_HIGHER)
-  if(HAVE_YARP_SSIZE_T_HIGHER)
-    set(YARP_SSIZE_T SSIZE_T)
-  else()
-    check_type_size(size_t YARP_SIZE_T)
-    if(YARP_SIZE_T EQUAL 8)
-      set(YARP_SSIZE_T ${YARP_INT64})
-    elseif(YARP_SIZE_T EQUAL 4)
-      set(YARP_SSIZE_T ${YARP_INT32})
-    elseif(YARP_SIZE_T EQUAL 2)
-      set(YARP_SSIZE_T ${YARP_INT16})
-    endif()
-  endif()
+#########################################################################
+# Find 32, 64 and optionally 128-bit floating point types and check whether
+# floating point types are IEC559
+
+unset(YARP_FLOAT32)
+unset(YARP_FLOAT64)
+unset(YARP_FLOAT128)
+
+set(YARP_FLOAT32_IS_IEC559 0)
+set(YARP_FLOAT64_IS_IEC559 0)
+set(YARP_FLOAT128_IS_IEC559 0)
+
+set(YARP_HAS_FLOAT128_T 0)
+
+
+macro(CHECK_FLOATING_POINT_IS_IEC559 _type)
+  string(REPLACE " " "_" _type_s "${_type}")
+  file(WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${_type_s}-is_iec559.cpp"
+"#include <limits>
+int main() {
+  return std::numeric_limits<${_type}>::is_iec559 ? 1 : 0;
+}
+")
+
+  try_run(YARP_${_type_s}_IS_IEC559
+          _unused
+          "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}"
+          "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${_type_s}-is_iec559.cpp")
+endmacro()
+
+check_floating_point_is_iec559("float")
+check_floating_point_is_iec559("double")
+check_floating_point_is_iec559("long double")
+
+
+
+check_type_size("float" SIZEOF_FLOAT)
+check_type_size("double" SIZEOF_DOUBLE)
+check_type_size("long double" SIZEOF_LONG_DOUBLE)
+
+if(YARP_float_IS_IEC559)
+  set(YARP_FLOAT32 "float")
+  set(YARP_FLOAT32_IS_IEC559 1)
+elseif(SIZEOF_FLOAT EQUAL 4)
+  set(YARP_FLOAT32 "float")
+elseif(SIZEOF_DOUBLE EQUAL 4)
+  set(YARP_FLOAT32 "double")
+elseif(SIZEOF_LONG_DOUBLE EQUAL 4)
+  set(YARP_FLOAT32 "long double")
+endif()
+if(NOT YARP_FLOAT32)
+  message(FATAL_ERROR "Cannot find a 32-bit floating point type")
+endif()
+
+if(YARP_double_IS_IEC559)
+  set(YARP_FLOAT64 "double")
+  set(YARP_FLOAT64_IS_IEC559 1)
+elseif(SIZEOF_DOUBLE EQUAL 8)
+  set(YARP_FLOAT64 "double")
+elseif(SIZEOF_LONG_DOUBLE EQUAL 8)
+  set(YARP_FLOAT64 "long double")
+elseif(SIZEOF_FLOAT EQUAL 8)
+  set(YARP_FLOAT64 "float")
+endif()
+if(NOT YARP_FLOAT64)
+  message(FATAL_ERROR "Cannot find a 64-bit floating point type")
+endif()
+
+if(YARP_long_double_IS_IEC559)
+  set(YARP_FLOAT128 "long double")
+  set(YARP_FLOAT128_IS_IEC559 1)
+elseif(SIZEOF_LONG_DOUBLE EQUAL 16)
+  set(YARP_FLOAT128 "long double")
+elseif(SIZEOF_DOUBLE EQUAL 16)
+  set(YARP_FLOAT128 "double")
+elseif(SIZEOF_FLOAT EQUAL 16)
+  set(YARP_FLOAT128 "float")
+endif()
+if(YARP_FLOAT128)
+  set(YARP_HAS_FLOAT128_T 1)
 endif()
 
 
@@ -169,9 +159,7 @@ check_floating_point_exponent_digits(LDBL)
 #########################################################################
 # Set up compile flags
 
-add_definitions(-DYARP_PRESENT)
-add_definitions(-D_REENTRANT)
-set_property(GLOBAL APPEND PROPERTY YARP_DEFS -D_REENTRANT)
+add_definitions(-DBUILDING_YARP)
 
 # on windows, we have to tell ace how it was compiled
 if(WIN32)
@@ -259,6 +247,8 @@ else()
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wtautological-compare")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Winconsistent-missing-override")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wsuggest-override")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wmaybe-uninitialized")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wnull-conversion")
 
     ## Unwanted warning flags ##
     unset(UNWANTED_WARNING_FLAGS)

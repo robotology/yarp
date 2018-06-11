@@ -4,7 +4,7 @@
  * Authors: Marco Randazzo <marco.randazzo@iit.it>
  *          Francesco Nori <francesco.nori@iit.it>
  *          Davide Perrone <dperrone@aitek.it>
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
  */
 
 #include "partitem.h"
@@ -23,6 +23,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <cmath>
+#include <cstdio>
 
 PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& _finder,
                    bool debug_param_enabled,
@@ -127,7 +128,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
 
     if (m_interfaceError == false)
     {
-        yarp::os::ConstString jointname;
+        std::string jointname;
         int number_of_joints;
         m_iPos->getAxes(&number_of_joints);
 
@@ -347,7 +348,7 @@ void PartItem::initInterfaces()
     m_iImp = nullptr;
     m_iLim = nullptr;
     m_ical = nullptr;
-    m_ictrlmode2 = nullptr;
+    m_ictrlmode = nullptr;
     m_iinteract = nullptr;
     m_iremCalib = nullptr;
 }
@@ -402,7 +403,7 @@ bool PartItem::openInterfaces()
         if(!ok){
             yError("...imp was not ok...");
         }
-        ok &= m_partsdd->view(m_ictrlmode2);
+        ok &= m_partsdd->view(m_ictrlmode);
         if(!ok){
             yError("...ctrlmode2 was not ok...");
         }
@@ -491,7 +492,7 @@ void PartItem::onSliderTrajectoryVelocityCommand(double trajspeedVal, int index)
 void PartItem::onSliderDirectPositionCommand(double dirpos, int index)
 {
     int mode;
-    m_ictrlmode2->getControlMode(index, &mode);
+    m_ictrlmode->getControlMode(index, &mode);
     if (mode == VOCAB_CM_POSITION_DIRECT)
     {
         m_iDir->setPosition(index, dirpos);
@@ -502,10 +503,48 @@ void PartItem::onSliderDirectPositionCommand(double dirpos, int index)
     }
 }
 
+void PartItem::onDumpAllRemoteVariables()
+{
+    if (m_iVar == 0)
+    {
+        return;
+    }
+
+    QString fileName = QFileDialog::getSaveFileName(this, QString("Save Dump for Remote Variables as:"), QDir::homePath()+QString("/RemoteVariablesDump.txt"));
+
+    FILE* dumpfile = fopen(fileName.toStdString().c_str(), "w");
+    if (dumpfile != NULL)
+    {
+        yarp::os::Bottle keys;
+        if (m_iVar->getRemoteVariablesList(&keys))
+        {
+            std::string s = keys.toString();
+            int keys_size = keys.size();
+            for (int i = 0; i < keys_size; i++)
+            {
+                std::string key_name;
+                if (keys.get(i).isString())
+                {
+                    yarp::os::Bottle val;
+                    key_name = keys.get(i).asString();
+                    if (m_iVar->getRemoteVariable(key_name, val))
+                    {
+                        std::string key_value = val.toString();
+                        std::string p_value = key_name + ' ' + key_value + '\n';
+                        fputs(p_value.c_str(), dumpfile);
+                    }
+                }
+            }
+        }
+        fclose(dumpfile);
+    }
+}
+
+
 void PartItem::onSliderTrajectoryPositionCommand(double posVal, int index)
 {
     int mode;
-    m_ictrlmode2->getControlMode(index, &mode);
+    m_ictrlmode->getControlMode(index, &mode);
 
     if ( mode == VOCAB_CM_POSITION) 
     {
@@ -520,7 +559,7 @@ void PartItem::onSliderTrajectoryPositionCommand(double posVal, int index)
 void PartItem::onSliderMixedPositionCommand(double posVal, int index)
 {
     int mode;
-    m_ictrlmode2->getControlMode(index, &mode);
+    m_ictrlmode->getControlMode(index, &mode);
 
     if ( mode == VOCAB_CM_MIXED)
     {
@@ -535,7 +574,7 @@ void PartItem::onSliderMixedPositionCommand(double posVal, int index)
 void PartItem::onSliderMixedVelocityCommand( double vel, int index)
 {
     int mode;
-    m_ictrlmode2->getControlMode(index, &mode);
+    m_ictrlmode->getControlMode(index, &mode);
 
     if (mode == VOCAB_CM_MIXED)
     {
@@ -786,6 +825,7 @@ void PartItem::onPidClicked(JointItem *joint)
     connect(m_currentPidDlg, SIGNAL(sendStiffness(int, double, double, double)), this, SLOT(onSendStiffness(int, double, double, double)));
     connect(m_currentPidDlg, SIGNAL(sendPWM(int, double)), this, SLOT(onSendPWM(int, double)));
     connect(m_currentPidDlg, SIGNAL(refreshPids(int)), this, SLOT(onRefreshPids(int)));
+    connect(m_currentPidDlg, SIGNAL(dumpRemoteVariables()), this, SLOT(onDumpAllRemoteVariables()));
 
     this->onRefreshPids(jointIndex);
 
@@ -803,13 +843,13 @@ void PartItem::onRunClicked(JointItem *joint)
         SystemClock::delaySystem(0.001);
     }
 
-    m_ictrlmode2->setControlMode(jointIndex, VOCAB_CM_POSITION);
+    m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_POSITION);
 }
 
 void PartItem::onIdleClicked(JointItem *joint)
 {
     const int jointIndex = joint->getJointIndex();
-    m_ictrlmode2->setControlMode(jointIndex, VOCAB_CM_FORCE_IDLE);
+    m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_FORCE_IDLE);
 }
 
 void PartItem::onHomeClicked(JointItem *joint)
@@ -827,8 +867,8 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     switch (mode) {
     case JointItem::Idle:{
         yInfo("joint: %d in IDLE mode", jointIndex);
-        if (m_ictrlmode2){
-            m_ictrlmode2->setControlMode(jointIndex, VOCAB_CM_IDLE);
+        if (m_ictrlmode){
+            m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_IDLE);
         } else {
             yError("ERROR: cannot do!");
         }
@@ -836,8 +876,8 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     }
     case JointItem::Position:{
         yInfo("joint: %d in POSITION mode", jointIndex);
-        if (m_ictrlmode2){
-            m_ictrlmode2->setControlMode(jointIndex, VOCAB_CM_POSITION);
+        if (m_ictrlmode){
+            m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_POSITION);
             joint->resetTarget();
         } else {
             yError("ERROR: cannot do!");
@@ -847,9 +887,9 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     case JointItem::PositionDirect:{
         //if(positionDirectEnabled){
             yInfo("joint: %d in POSITION DIRECT mode", jointIndex);
-            if (m_ictrlmode2){
+            if (m_ictrlmode){
                 joint->resetTarget();
-                m_ictrlmode2->setControlMode(jointIndex, VOCAB_CM_POSITION_DIRECT);
+                m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_POSITION_DIRECT);
             } else {
                 yError("ERROR: cannot do!");
             }
@@ -867,9 +907,9 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     case JointItem::Mixed:{
         //if(positionDirectEnabled){
             yInfo("joint: %d in MIXED mode", jointIndex);
-            if (m_ictrlmode2){
+            if (m_ictrlmode){
                 joint->resetTarget();
-                m_ictrlmode2->setControlMode(jointIndex, VOCAB_CM_MIXED);
+                m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_MIXED);
             } else {
                 yError("ERROR: cannot do!");
             }
@@ -888,9 +928,9 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     case JointItem::Velocity:{
         //if(positionDirectEnabled){
             yInfo("joint: %d in VELOCITY mode", jointIndex);
-            if (m_ictrlmode2)
+            if (m_ictrlmode)
             {
-                m_ictrlmode2->setControlMode(jointIndex, VOCAB_CM_VELOCITY);
+                m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_VELOCITY);
                 yInfo() << "Changing reference acceleration of joint " << jointIndex << " to 100000";
                 m_iVel->setRefAcceleration(jointIndex, 100000);
             } else {
@@ -911,8 +951,8 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     case JointItem::Torque:{
         //if(positionDirectEnabled){
             yInfo("joint: %d in TORQUE mode", jointIndex);
-            if (m_ictrlmode2){
-                m_ictrlmode2->setControlMode(jointIndex, VOCAB_CM_TORQUE);
+            if (m_ictrlmode){
+                m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_TORQUE);
             } else {
                 yError("ERROR: cannot do!");
             }
@@ -930,8 +970,8 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     }
     case JointItem::Pwm:{
         yInfo("joint: %d in PWM mode", jointIndex);
-        if (m_ictrlmode2){
-            m_ictrlmode2->setControlMode(jointIndex, VOCAB_CM_PWM);
+        if (m_ictrlmode){
+            m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_PWM);
         } else {
             yError("ERROR: cannot do!");
         }
@@ -939,8 +979,8 @@ void PartItem::onJointChangeMode(int mode,JointItem *joint)
     }
     case JointItem::Current:{
         yInfo("joint: %d in CURRENT mode", jointIndex);
-        if (m_ictrlmode2){
-            m_ictrlmode2->setControlMode(jointIndex, VOCAB_CM_CURRENT);
+        if (m_ictrlmode){
+            m_ictrlmode->setControlMode(jointIndex, VOCAB_CM_CURRENT);
         }
         else {
             yError("ERROR: cannot do!");
@@ -1105,16 +1145,16 @@ bool PartItem::homeToCustomPosition(const yarp::os::Bottle& positionElement)
     //Look for group called m_robotPartPort_Position and m_robotPartPort_Velocity
     Bottle xtmp, ytmp;
     xtmp = positionElement.findGroup(m_robotPartPort.toStdString() + "_Position");
-    ok = ok && (xtmp.size() == NUMBER_OF_JOINTS + 1);
+    ok = ok && (xtmp.size() == (size_t) NUMBER_OF_JOINTS + 1);
     ytmp = positionElement.findGroup(m_robotPartPort.toStdString() + "_Velocity");
-    ok = ok && (ytmp.size() == NUMBER_OF_JOINTS + 1);
+    ok = ok && (ytmp.size() == (size_t) NUMBER_OF_JOINTS + 1);
 
     if(ok)
     {
         for (int jointIndex = 0; jointIndex < NUMBER_OF_JOINTS; jointIndex++)
         {
-            double position = xtmp.get(jointIndex+1).asDouble();
-            double velocity = ytmp.get(jointIndex + 1).asDouble();
+            double position = xtmp.get(jointIndex+1).asFloat64();
+            double velocity = ytmp.get(jointIndex + 1).asFloat64();
             m_iPos->setRefSpeed(jointIndex, velocity);
             m_iPos->positionMove(jointIndex, position);
         }
@@ -1134,7 +1174,7 @@ void PartItem::idlePart()
     m_iPos->getAxes(&NUMBER_OF_JOINTS);
 
     for (int joint=0; joint < NUMBER_OF_JOINTS; joint++){
-        m_ictrlmode2->setControlMode(joint, VOCAB_CM_IDLE);
+        m_ictrlmode->setControlMode(joint, VOCAB_CM_IDLE);
     }
 }
 
@@ -1185,7 +1225,7 @@ void PartItem::runPart()
 
     for (int joint=0; joint < NUMBER_OF_JOINTS; joint++){
         //iencs->getEncoder(joint, &posJoint);
-        m_ictrlmode2->setControlMode(joint, VOCAB_CM_POSITION);
+        m_ictrlmode->setControlMode(joint, VOCAB_CM_POSITION);
     }
 }
 
@@ -2036,7 +2076,7 @@ QList<int> PartItem::getPartMode()
 
 void PartItem::updateControlMode()
 {
-    bool ret = m_ictrlmode2->getControlModes(m_controlModes);
+    bool ret = m_ictrlmode->getControlModes(m_controlModes);
 
 
     if(ret==false){

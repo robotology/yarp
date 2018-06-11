@@ -1,16 +1,15 @@
-# Copyright: (C) 2009 RobotCub Consortium
-# Copyright: (C) 2016 Istituto Italiano di Tecnologia (IIT)
-# Authors: Paul Fitzpatrick
-#          Daniele E. Domenichelli <daniele.domenichelli@iit.it>
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 # This file is the official location of the current YARP version number.
 
 include(GitInfo)
 
-set(YARP_VERSION_ABI "1")
-
-set(YARP_GENERIC_SOVERSION "${YARP_VERSION_ABI}")
+set(YARP_SOVERSION "3")
 
 set(YARP_VERSION_SHORT ${YARP_VERSION})
 

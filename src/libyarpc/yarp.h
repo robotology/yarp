@@ -1,10 +1,14 @@
 /*
- * Copyright (C) 2008, 2009 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
  *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+/*
  * This is a plain C interface to YARP.  It is as yet incomplete.
- *
  */
 
 #ifndef YET_ANOTHER_ROBOT_PLATFORM_CVERSION_INC
@@ -211,11 +215,11 @@ extern "C" {
     YARP_DECLARE(int) yarpReaderExpectText(yarpReaderPtr reader,
                                            yarpStringPtr str,
                                            char terminal);
-    YARP_DECLARE(int) yarpReaderExpectInt(yarpReaderPtr reader, int *data);
+    YARP_DECLARE(int) yarpReaderExpectInt32(yarpReaderPtr reader, int *data);
     YARP_DECLARE(int) yarpReaderExpectDouble(yarpReaderPtr reader, double *data);
     YARP_DECLARE(int) yarpReaderIsTextMode(yarpReaderPtr reader);
 
-    YARP_DECLARE(int) yarpWriterAppendInt(yarpWriterPtr c, int data);
+    YARP_DECLARE(int) yarpWriterAppendInt32(yarpWriterPtr c, int data);
 
     YARP_DECLARE(int) yarpPortableInit(yarpPortablePtr portable, 
                                        yarpPortableCallbacksPtr callbacks);
@@ -260,7 +264,7 @@ extern "C" {
 
     YARP_DECLARE(int) yarpBottleInit(yarpBottlePtr bottle);
     YARP_DECLARE(int) yarpBottleFini(yarpBottlePtr bottle);
-    YARP_DECLARE(void) yarpBottleAddInt(yarpBottlePtr bottle, int x);
+    YARP_DECLARE(void) yarpBottleAddInt32(yarpBottlePtr bottle, int x);
     YARP_DECLARE(void) yarpBottleAddDouble(yarpBottlePtr bottle, double x);
     YARP_DECLARE(void) yarpBottleAddString(yarpBottlePtr bottle, const char *x);
     YARP_DECLARE(int) yarpBottleWrite(yarpBottlePtr bottle, yarpWriterPtr connection);

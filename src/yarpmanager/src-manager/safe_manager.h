@@ -1,10 +1,9 @@
 /*
- *  YARP Modules Manager
- *  Copyright: (C) 2014 Istituto Italiano di Tecnologia (IIT)
- *  Authors: Ali Paikan <ali.paikan@iit.it>
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
+ * This software may be modified and distributed under the terms of the
+ * LGPLv2.1+ license. See the accompanying LICENSE file for details.
  */
 
 #ifndef SAFE_MANAGER_H
@@ -14,7 +13,7 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 
 #include <vector>
 

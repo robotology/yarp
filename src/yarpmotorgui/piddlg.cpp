@@ -4,7 +4,7 @@
  * Author: Marco Randazzo <marco.randazzo@iit.it>
  *         Francesco Nori <francesco.nori@iit.it>
  *         Davide Perrone <dperrone@aitek.it>
- * CopyPolicy: Released under the terms of the GPLv2 or later, see GPL.TXT
+ * CopyPolicy: Released under the terms of the GPLv2 or later, see LICENSE
  */
 
 
@@ -80,6 +80,7 @@ PidDlg::PidDlg(QString partname, int jointIndex, QString jointName, QWidget *par
     connect(ui->btnRefresh, SIGNAL(clicked()), this, SLOT(onRefresh()));
     connect(ui->btnSend,SIGNAL(clicked()),this,SLOT(onSend()));
     connect(ui->btnCancel,SIGNAL(clicked()),this,SLOT(onCancel()));
+    connect(ui->btnDump, SIGNAL(clicked()), this, SLOT(onDumpRemoteVariables()));
 
     ui->tablePosition->setItemDelegate(new TableDoubleDelegate);
     ui->tableVelocity->setItemDelegate(new TableDoubleDelegate);
@@ -88,6 +89,11 @@ PidDlg::PidDlg(QString partname, int jointIndex, QString jointName, QWidget *par
     ui->tablePWM->setItemDelegate(new TableDoubleDelegate);
     ui->tableCurrent->setItemDelegate(new TableDoubleDelegate);
     ui->tableCurrent->setItemDelegate(new TableGenericDelegate);
+}
+
+void PidDlg::onDumpRemoteVariables()
+{
+    emit dumpRemoteVariables();
 }
 
 PidDlg::~PidDlg()

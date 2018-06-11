@@ -1,21 +1,10 @@
 /*
- * Copyright (C) 2016 Istituto Italiano di Tecnologia (IIT)
- * Author: Alberto Cardellino
- * email:   alberto.cardellino@iit.it
- * website: www.robotcub.org
- * Permission is granted to copy, distribute, and/or modify this program
- * under the terms of the GNU General Public License, version 2 or any
- * later version published by the Free Software Foundation.
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * A copy of the license can be found at
- * http://www.robotcub.org/icub/license/gpl.txt
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
-
 
 /*
  * The aim of this device is to mimic the expected behaviour of a
@@ -33,12 +22,14 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Semaphore.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/Mutex.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
-#include <yarp/dev/ControlBoardInterfacesImpl.inl>
+#include <yarp/dev/ControlBoardInterfacesImpl-inl.h>
+#include <yarp/dev/IVirtualAnalogSensor.h>
+#include <yarp/dev/IVirtualAnalogSensorImpl.h>
 
 namespace yarp {
     namespace dev {
@@ -96,17 +87,17 @@ struct ImpedanceParameters
 
 class yarp::dev::FakeMotionControl :    public DeviceDriver,
 //                                         public DeviceResponder,
-                                        public yarp::os::RateThread,
+                                        public yarp::os::PeriodicThread,
                                         public IPidControlRaw,
-                                        public IControlCalibration2Raw,
+                                        public IControlCalibrationRaw,
                                         public IAmplifierControlRaw,
                                         public IEncodersTimedRaw,
                                         public IMotorEncodersRaw,
                                         public IMotorRaw,
-                                        public IPositionControl2Raw,
-                                        public IVelocityControl2Raw,
-                                        public IControlMode2Raw,
-                                        public IControlLimits2Raw,
+                                        public IPositionControlRaw,
+                                        public IVelocityControlRaw,
+                                        public IControlModeRaw,
+                                        public IControlLimitsRaw,
                                         public IPositionDirectRaw,
                                         public ITorqueControlRaw,
                                         public ICurrentControlRaw,
@@ -114,23 +105,25 @@ class yarp::dev::FakeMotionControl :    public DeviceDriver,
                                         public IImpedanceControlRaw,
                                         public IInteractionModeRaw,
                                         public IAxisInfoRaw,
-                                        public ImplementControlCalibration2<FakeMotionControl, IControlCalibration2>,
+                                        public IVirtualAnalogSensorRaw, //*
+                                        public ImplementControlCalibration<FakeMotionControl, IControlCalibration>,
                                         public ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>,
                                         public ImplementPidControl,
                                         public ImplementEncodersTimed,
-                                        public ImplementPositionControl2,
-                                        public ImplementVelocityControl2,
-                                        public ImplementControlMode2,
+                                        public ImplementPositionControl,
+                                        public ImplementVelocityControl,
+                                        public ImplementControlMode,
                                         public ImplementImpedanceControl,
                                         public ImplementMotorEncoders,
                                         public ImplementTorqueControl,
-                                        public ImplementControlLimits2,
+                                        public ImplementControlLimits,
                                         public ImplementPositionDirect,
                                         public ImplementInteractionMode,
                                         public ImplementCurrentControl,
                                         public ImplementPWMControl,
                                         public ImplementMotor,
-                                        public ImplementAxisInfo
+                                        public ImplementAxisInfo,
+                                        public ImplementVirtualAnalogSensor //*
 {
 private:
     enum VerboseLevel
@@ -144,7 +137,7 @@ private:
         VERY_VERY_VERBOSE   = 6     // adds messages printed every cycle, so too much verbose for usage, only for deep debugging
     };
 
-    yarp::os::Semaphore     _mutex;
+    yarp::os::Mutex _mutex;
     int  _njoints;
     int *_axisMap;                              /** axis remapping lookup-table */
     double *_angleToEncoder;                    /** angle to iCubDegrees conversion factors */
@@ -197,6 +190,8 @@ private:
     int *_velocityTimeout;                      /** velocity shifts */
     double *_kbemf;                             /** back-emf compensation parameter */
     double *_ktau;                              /** motor torque constant */
+    int *_kbemf_scale;                          /** back-emf compensation parameter */
+    int *_ktau_scale;                           /** motor torque constant */
     int * _filterType;                          /** the filter type (int value) used by the force control algorithm */
     int *_torqueSensorId;                       /** Id of associated Joint Torque Sensor */
     int *_torqueSensorChan;                     /** Channel of associated Joint Torque Sensor */
@@ -205,10 +200,9 @@ private:
     bool  *checking_motiondone;                 /* flag telling if I'm already waiting for motion done */
     double *_last_position_move_time;           /** time stamp for last received position move command*/
     double *_motorPwmLimits;                    /** motors PWM limits*/
+    double *_torques;                           /** joint torques */
 
-    // TODO doubled!!! optimize using just one of the 2!!!
 //     ImpedanceParameters *_impedance_params;     /** impedance parameters */
-//     eOmc_impedance_t *_cacheImpedance;          /* cache impedance value to split up the 2 sets */
 
     bool        verbosewhenok;
     bool        useRawEncoderData;
@@ -329,7 +323,7 @@ public:
 
     // calibration2raw
     virtual bool setCalibrationParametersRaw(int axis, const CalibrationParameters& params) override;
-    virtual bool calibrate2Raw(int axis, unsigned int type, double p1, double p2, double p3) override;
+    virtual bool calibrateRaw(int axis, unsigned int type, double p1, double p2, double p3) override;
     virtual bool doneRaw(int j) override;
 
 
@@ -380,7 +374,7 @@ public:
     ///////////////////////// END MotorEncoder Interface
 
     //////////////////////// BEGIN IAxisInfo Interface
-    virtual bool getAxisNameRaw(int axis, yarp::os::ConstString& name) override;
+    virtual bool getAxisNameRaw(int axis, std::string& name) override;
     virtual bool getJointTypeRaw(int axis, yarp::dev::JointTypeEnum& type) override;
     ///////////////////////// END IAxisInfo Interface
 
@@ -405,6 +399,7 @@ public:
     virtual bool getCurrentsRaw(double *vals) override;
     virtual bool getCurrentRaw(int j, double *val) override;
     virtual bool getNominalCurrentRaw(int m, double *val) override;
+    virtual bool setNominalCurrentRaw(int m, const double val) override;
     virtual bool setMaxCurrentRaw(int j, double val) override;
     virtual bool getMaxCurrentRaw(int j, double *val) override;
     virtual bool getPeakCurrentRaw(int m, double *val) override;
@@ -427,8 +422,6 @@ public:
     // Torque control
     virtual bool getTorqueRaw(int j, double *t) override;
     virtual bool getTorquesRaw(double *t) override;
-    virtual bool getBemfParamRaw(int j, double *bemf) override;
-    virtual bool setBemfParamRaw(int j, double bemf) override;
     virtual bool getTorqueRangeRaw(int j, double *min, double *max) override;
     virtual bool getTorqueRangesRaw(double *min, double *max) override;
     virtual bool setRefTorquesRaw(const double *t) override;
@@ -455,7 +448,7 @@ public:
 
     // PositionDirect Interface
     virtual bool setPositionRaw(int j, double ref) override;
-    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs) override;
+    virtual bool setPositionsRaw(const int n_joint, const int *joints, const double *refs) override;
     virtual bool setPositionsRaw(const double *refs) override;
     virtual bool getRefPositionRaw(const int joint, double *ref) override;
     virtual bool getRefPositionsRaw(double *refs) override;
@@ -495,6 +488,11 @@ public:
     virtual bool setRefCurrentsRaw(const int n_joint, const int *joints, const double *t) override;
     virtual bool getRefCurrentsRaw(double *t) override;
     virtual bool getRefCurrentRaw(int j, double *t) override;
+
+    yarp::dev::VAS_status getVirtualAnalogSensorStatusRaw(int ch) override;
+    int getVirtualAnalogSensorChannelsRaw() override;
+    bool updateVirtualAnalogSensorMeasureRaw(yarp::sig::Vector &measure) override;
+    bool updateVirtualAnalogSensorMeasureRaw(int ch, double &measure) override;
 
     void run() override;
 private:

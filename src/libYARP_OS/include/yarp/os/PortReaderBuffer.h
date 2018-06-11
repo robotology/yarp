@@ -1,7 +1,10 @@
 /*
- * Copyright (C) 2006, 2008 RobotCub Consortium
- * Authors: Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2010 RobotCub Consortium
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_OS_PORTREADERBUFFER_H
@@ -10,7 +13,7 @@
 #include <yarp/os/PortReader.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Thread.h>
-#include <yarp/os/ConstString.h>
+#include <string>
 #include <yarp/os/LocalReader.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/TypedReader.h>
@@ -113,7 +116,7 @@ public:
      *
      * @return new instance of the templated type.
      */
-    virtual PortReader *create() override;
+    virtual PortReader *create() const override;
 
     // documented in TypedReader
     virtual void setReplier(PortReader& reader) override;
@@ -124,7 +127,7 @@ public:
     virtual bool isClosed() override;
 
     // documented in TypedReader
-    virtual ConstString getName() const override;
+    virtual std::string getName() const override;
 
     // documented in LocalReader
     virtual bool acceptObject(T* obj, PortWriter *wrapper) override;
