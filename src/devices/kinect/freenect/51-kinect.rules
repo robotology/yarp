@@ -1,2 +1,0 @@
-# make kinect world read/writable
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="045e", MODE="0666"
