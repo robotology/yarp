@@ -93,61 +93,7 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
 endif()
 
 # Remove renamed files from installation
-foreach(_f FindACE.cmake                                          # since YARP 2.3.68
-           FindAtlas.cmake
-           FindFFMPEG.cmake
-           FindFreenect.cmake
-           FindFTDI.cmake
-           FindGLEW.cmake
-           FindGLFW3.cmake
-           FindGSL.cmake
-           FindLibedit.cmake
-           FindLibOVR.cmake
-           FindLibdc1394.cmake
-           FindLibusb1.cmake
-           FindNVIDIACg.cmake
-           FindOctave.cmake
-           FindOpenCV.cmake
-           FindOpenNI.cmake
-           FindPortAudio.cmake
-           FindQCustomPlot.cmake
-           FindReadLine.cmake
-           FindSQLite.cmake
-           FindStage.cmake
-           FindTinyXML.cmake
-           AddInstallRPATHSupport.cmake
-           ExtractVersion.cmake
-           GetAllCMakeProperties.cmake
-           ReplaceImportedTargets.cmake
-           StandardFindModule.cmake
-           YarpDeprecatedOption.cmake
-           YarpCMakeWorkarounds.cmake
-           YarpRenamedOption.cmake
-           YarpBackupVariable.cmake
-           deprecated/FindGthread.cmake
-           deprecated/FindGtkMM.cmake
-           deprecated/FindGtkMMUnix.cmake
-           deprecated/FindGtkMMWin32.cmake
-           deprecated/FindGtkPlus.cmake
-           deprecated/FindGtkWin32.cmake
-           deprecated/MacroExtractVersion.cmake
-           deprecated/MacroStandardFindModule.cmake
-           cmake-3.1/Modules/CMakeFindDependencyMacro.cmake
-           cmake-3.1/Modules/CMakePackageConfigHelpers.cmake
-           cmake-3.1/Modules/CMakeParseArguments.cmake
-           cmake-3.1/Modules/FeatureSummary.cmake
-           cmake-3.1/Modules/FindLua.cmake
-           cmake-3.1/Modules/FindPackageHandleStandardArgs.cmake
-           cmake-3.1/Modules/FindPackageMessage.cmake
-           cmake-3.1/Modules/GNUInstallDirs.cmake
-           cmake-3.5/Modules/CMakeParseArguments.cmake
-           cmake-3.5/Modules/FindFreetype.cmake
-           cmake-3.5/Modules/FindGTK2.cmake
-           cmake-3.5/Modules/FindPackageHandleStandardArgs.cmake
-           cmake-3.5/Modules/FindPackageMessage.cmake
-           cmake-3.5/Modules/SelectLibraryConfigurations.cmake
-           deprecated/YarpCMakeWorkarounds.cmake
-           YarpDeprecatedWarning.cmake)                           # since YARP 3.0.0
+foreach(_f YarpDeprecatedWarning.cmake)                           # since YARP 3.0.0
   if(EXISTS "${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}")
     install(CODE
  "if(EXISTS \"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}\")
@@ -159,13 +105,7 @@ foreach(_f FindACE.cmake                                          # since YARP 2
 endforeach()
 
 # Remove no longer used directory from installation
-foreach(_d cmake-3.1/  # since YARP 2.3.68
-           cmake-3.5/
-           ycm-0.2/    # since YARP 2.3.70
-           ycm-0.3.1
-           ycm-0.4.0   # since YARP 2.3.72
-           ycm-0.5.1
-           ycm-0.6.0   # since YARP 3.0.0
+foreach(_d ycm-0.6.0   # since YARP 3.0.0
            ycm-0.7.0)
   install(CODE
  "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\")

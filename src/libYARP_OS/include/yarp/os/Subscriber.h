@@ -31,9 +31,6 @@ class yarp::os::Subscriber : public AbstractContactable,
                              public TypedReaderCallback<T>
 {
 public:
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
-    using Contactable::open;
-#endif // YARP_NO_DEPRECATED
     using AbstractContactable::read;
 
     /**

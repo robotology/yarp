@@ -115,12 +115,6 @@ public:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.70
-// A class implementing setXxxxxMode(int) causes a warning on MSVC
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#endif
-
 /**
 * @ingroup dev_impl_network_clients
 *
@@ -3367,10 +3361,6 @@ public:
     }
 
 };
-
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.70
-YARP_WARNING_POP
-#endif
 
 
 // implementation of CommandsHelper

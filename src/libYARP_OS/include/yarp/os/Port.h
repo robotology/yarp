@@ -51,10 +51,6 @@ class YARP_OS_API Port : public UnbufferedContactable
 {
 
 public:
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
-    using Contactable::open;
-#endif // YARP_NO_DEPRECATED
-
     /**
      * Constructor.
      *

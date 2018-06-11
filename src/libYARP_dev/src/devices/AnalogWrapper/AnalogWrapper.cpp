@@ -151,26 +151,6 @@ AnalogPortEntry &AnalogPortEntry::operator =(const AnalogPortEntry &alt)
   * It creates one rpc port and its related handler for every output port.
   */
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-// Constructor used when there is only one output port
-AnalogWrapper::AnalogWrapper(const char* name, int rate): PeriodicThread(rate / 1000.0)
-{
-    // init ROS struct
-    useROS          = ROS_disabled;
-    frame_id        = "";
-    rosNodeName     = "";
-    rosTopicName    = "";
-    rosNode         = nullptr;
-    rosMsgCounter   = 0;
-
-    ownDevices      = false;
-    subDeviceOwned  = nullptr;
-    sensorId = "AnalogServer";
-    _rate = rate;
-    createPort(name, rate);
-}
-#endif // YARP_NO_DEPRECATED
-
 bool AnalogWrapper::createPort(const char* name, int rate)
 {
     analogSensor_p=nullptr;
@@ -182,25 +162,6 @@ bool AnalogWrapper::createPort(const char* name, int rate)
     setPeriod(rate / 1000.0);
     return true;
 }
-
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-// Contructor used when one or more output ports are specified
-AnalogWrapper::AnalogWrapper(const std::vector<AnalogPortEntry>& _analogPorts, int rate):
-    PeriodicThread(rate / 1000.0),
-    _rate(rate),
-    sensorId("AnalogServer"),
-    useROS(ROS_disabled),
-    frame_id(""),
-    rosNodeName(""),
-    rosTopicName(""),
-    rosNode(nullptr),
-    rosMsgCounter(0),
-    ownDevices(false),
-    subDeviceOwned(nullptr)
-{
-    createPorts(_analogPorts, rate);
-}
-#endif // YARP_NO_DEPRECATED
 
 bool AnalogWrapper::createPorts(const std::vector<AnalogPortEntry>& _analogPorts, int rate)
 {

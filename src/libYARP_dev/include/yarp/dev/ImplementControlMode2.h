@@ -19,14 +19,5 @@ YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::ImplementControlMode instead") Imple
 #endif
     }
 }
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.70
-// A class implementing setXxxxxMode(int) causes a warning on MSVC
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#endif
-
-#if defined(_MSC_VER) && !defined(YARP_NO_DEPRECATED) // since YARP 2.3.70
-YARP_WARNING_POP
-#endif
 
 #endif // YARP_DEV_IMPLEMENTCONTROLMODE2_H

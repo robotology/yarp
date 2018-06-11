@@ -69,10 +69,6 @@ class BufferedPort : public Contactable,
                      public TypedReaderCallback<T>
 {
 public:
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
-    using Contactable::open;
-#endif // YARP_NO_DEPRECATED
-
     using yarp::os::TypedReaderCallback<T>::onRead;
 
     /**

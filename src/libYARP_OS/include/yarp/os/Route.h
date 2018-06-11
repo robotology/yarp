@@ -175,55 +175,6 @@ public:
 
 /** @} */
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
-
-/** @{ */
-
-    /**
-     * @brief Copy this route with a different source.
-     *
-     * @param fromName The new source of the route.
-     * @return the created route.
-     *
-     * @deprecated since YARP 2.3.70
-     */
-    YARP_DEPRECATED_MSG("Use setFromName instead")
-    Route addFromName(const std::string& fromName) const;
-
-    /**
-     * @brief Copy this route with a different destination.
-     *
-     * @param toName The new destination of the route.
-     * @return the created route.
-     *
-     * @deprecated since YARP 2.3.70
-     */
-    YARP_DEPRECATED_MSG("Use setToName instead")
-    Route addToName(const std::string& toName) const;
-
-    /**
-     * @brief Copy this route with a different contact.
-     *
-     * @param toContact new destination contact of the route.
-     * @return the created route.
-     *
-     * @deprecated since YARP 2.3.70
-     */
-    YARP_DEPRECATED_MSG("Use setToConstact instead")
-    Route addToContact(const Contact& toContact) const;
-
-    /**
-     * @brief Copy this route with a different carrier.
-     *
-     * @param carrierName The new carrier of the route.
-     * @return the created route.
-     *
-     * @deprecated since YARP 2.3.70
-     */
-    YARP_DEPRECATED_MSG("Use setCarrierName instead")
-    Route addCarrierName(const std::string& carrierName) const;
-#endif // YARP_NO_DEPRECATED
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
     class Private;

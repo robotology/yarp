@@ -150,7 +150,3 @@ install_jni_symlink(yarp_java_matlab_jar
 if(YARP_COMPILE_TESTS)
   # add_subdirectory(tests)
 endif()
-
-
-include(YarpDeprecatedOption)
-yarp_deprecated_option(PREPARE_CLASS_FILES) # since YARP 2.3.72

@@ -171,8 +171,6 @@ endmacro()
 #                       [TEMPLATE <file_name|path_to_a_file>]
 #                       [TEMPLATE_DIR <dir>]
 #                       [EXTRA_CONFIG <config>]
-#                       [CODE <code>]        # Deprecated, used only by carriers
-#                       [WRAPPER <wrapper>]  # Deprecated, used only by devices
 #                       [QUIET]
 #                      )
 #
@@ -257,9 +255,7 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
                     DOC
                     DEFAULT
                     TEMPLATE
-                    TEMPLATE_DIR
-                    CODE
-                    WRAPPER)
+                    TEMPLATE_DIR)
   set(_multiValueArgs DEPENDS
                       EXTRA_CONFIG)
   cmake_parse_arguments(_YPP "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
@@ -446,14 +442,6 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
         list(APPEND _extra_config_list YARPPLUG_${_KEY})
       endif()
     endforeach()
-    if(DEFINED _YPP_WRAPPER)
-      message(DEPRECATION "WRAPPER argument is deprecated. Use EXTRA_CONFIG WRAPPER=<...> instead.") # since YARP 2.3.68
-      set(YARPPLUG_WRAPPER "${_YPP_WRAPPER}")
-    endif()
-    if(DEFINED _YPP_CODE)
-      message(DEPRECATION "CODE argument is deprecated. Use EXTRA_CONFIG CODE=<...> instead.") # since YARP 2.3.68
-      set(YARPPLUG_CODE "${_YPP_CODE}")
-    endif()
 
     # Configure the file
     configure_file("${_YPP_TEMPLATE}"
@@ -472,8 +460,6 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
     unset(YARPPLUG_INCLUDE)
     unset(YARPPLUG_CATEGORY)
     unset(YARPPLUG_PARENT_TYPE)
-    unset(YARPPLUG_WRAPPER)
-    unset(YARPPLUG_CODE)
     foreach(_extra_config ${_extra_config_list})
       unset(${_extra_config})
     endforeach()
@@ -661,35 +647,3 @@ macro(YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE exename bundle_name)
                                            YARP::YARP_init
                                            YARP::YARP_dev)
 endmacro()
-
-
-
-################################################################################
-# Deprecated macros
-#
-if(NOT YARP_NO_DEPRECATED)
-
-  macro(YARP_PREPARE_DEVICE)
-    message(DEPRECATION "YARP_PREPARE_DEVICE is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY device) instead.") # Since YARP 2.3.68
-    yarp_prepare_plugin(${ARGN} CATEGORY device)
-  endmacro()
-
-  macro(YARP_PREPARE_CARRIER)
-    message(DEPRECATION "YARP_PREPARE_CARRIER is deprecated.\nUse YARP_PREPARE_PLUGIN(CATEGORY carrier) instead.") # Since YARP 2.3.68
-    yarp_prepare_plugin(${ARGN} CATEGORY carrier)
-  endmacro()
-
-  macro(YARP_ADD_CARRIER_FINGERPRINT file_name)
-    message(DEPRECATION "YARP_ADD_CARRIER_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.") # Since YARP 2.3.64
-    yarp_install(FILES ${file_name}
-                 COMPONENT runtime
-                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-  endmacro()
-
-  macro(YARP_ADD_DEVICE_FINGERPRINT file_name)
-    message(DEPRECATION "YARP_ADD_DEVICE_FINGERPRINT is deprecated.\nUse YARP_INSTALL instead.") # Since YARP 2.3.64
-    yarp_install(FILES ${file_name}
-                 COMPONENT runtime
-                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-  endmacro()
-endif()

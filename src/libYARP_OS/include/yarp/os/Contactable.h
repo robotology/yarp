@@ -41,22 +41,6 @@ public:
      */
     virtual ~Contactable();
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
-    /**
-     * Start port operation, with automatically-chosen network parameters.
-     *
-     * The port is assigned an arbitrary name, and allocated
-     * network resources,
-     * by communicating with the YARP name server.
-     * @return true iff the port started operation successfully and is now
-     * visible on the YARP network
-     *
-     * @deprecated since YARP 2.3.72
-     */
-    YARP_DEPRECATED_MSG("Use open(\"...\") instead")
-    bool open();
-#endif // YARP_NO_DEPRECATED
-
     /**
      * Start port operation, with a specific name, with automatically-chosen
      * network parameters.

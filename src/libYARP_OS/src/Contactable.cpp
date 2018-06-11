@@ -15,13 +15,6 @@ yarp::os::Contactable::~Contactable()
 {
 }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.72
-bool yarp::os::Contactable::open()
-{
-    return open("...");
-}
-#endif // YARP_NO_DEPRECATED
-
 std::string yarp::os::Contactable::getName() const
 {
     return where().getName();

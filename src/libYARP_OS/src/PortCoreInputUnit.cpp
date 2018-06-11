@@ -277,27 +277,6 @@ void PortCoreInputUnit::run() {
                 }
 
                 std::string env = cmd.getText();
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.68
-                bool suppressed = false;
-                if (env.length()>1) {
-                    if (!suppressed) {
-                        // This is the backwards-compatible
-                        // method for signalling replies are
-                        // not expected.  To be used until
-                        // YARP 2.1.2 is a "long time ago".
-                        if (env[1]=='o') {
-                            ip->suppressReply();
-                        }
-                    }
-                    if (env.length()>2) {
-                        //YARP_ERROR(Logger::get(),
-                        //"***** received an envelope! [%s]", env.c_str());
-                        std::string env2 = env.substr(2, env.length());
-                        man.setEnvelope(env2);
-                        ip->setEnvelope(env2);
-                    }
-                }
-#else // YARP_NO_DEPRECATED
                 if (env.length()>2) {
                     //YARP_ERROR(Logger::get(),
                     //"***** received an envelope! [%s]", env.c_str());
@@ -305,7 +284,6 @@ void PortCoreInputUnit::run() {
                     man.setEnvelope(env2);
                     ip->setEnvelope(env2);
                 }
-#endif // YARP_NO_DEPRECATED
                 if (localReader) {
                     localReader->read(br);
                     if (!br.isActive()) { done = true; break; }

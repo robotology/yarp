@@ -371,20 +371,6 @@ public:
      */
     bool operator!=(const Value& alt) const;
 
-#ifndef YARP_NO_DEPRECATED //since YARP 2.3.70
-    // comparisons with strings worked "accidentally", users depend on them
-    YARP_DEPRECATED_MSG("Use asString() instead")
-    bool operator==(const char *alt) const {
-        return asString() == alt;
-    }
-
-    // comparisons with strings worked "accidentally", users depend on them
-    YARP_DEPRECATED_MSG("Use asString() instead")
-    bool operator!=(const char *alt) const {
-        return asString() != alt;
-    }
-#endif
-
     /**
      * Set value to correspond to a textual representation.
      * For example if str="10" then the value will be an integer,

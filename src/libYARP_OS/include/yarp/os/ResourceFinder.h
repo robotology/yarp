@@ -111,18 +111,6 @@ public:
         return setDefaultContext(contextName.c_str());
     }
 
-#ifndef YARP_NO_DEPRECATED // since YARP 2.3.70
-    /**
-     *
-     * Deprecated name for setDefaultContext
-     *
-     * @deprecated since YARP 2.3.70
-     */
-    YARP_DEPRECATED bool setContext(const char *contextName) {
-        return setDefaultContext(contextName);
-    }
-#endif // YARP_NO_DEPRECATED
-
     /**
      * Provide a default value for a given key.
      *

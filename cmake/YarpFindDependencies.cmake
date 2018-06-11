@@ -288,13 +288,6 @@ cmake_dependent_option(CREATE_YARPLASERSCANNERGUI  "Do you want to compile yarpl
 cmake_dependent_option(CREATE_YARPBATTERYGUI "Do you want to compile yarpbatterygui?" OFF CREATE_GUIS OFF)
 cmake_dependent_option(CREATE_YARPVIZ "Do you want to compile yarpviz?" OFF CREATE_GUIS OFF)
 
-yarp_renamed_option(CREATE_YMANAGER CREATE_YARPMANAGER_CONSOLE)
-yarp_renamed_option(CREATE_GYARPMANAGER CREATE_YARPMANAGER)
-yarp_deprecated_option(CREATE_GYARPBUILDER)
-yarp_deprecated_option(CREATE_YARPBUILDER)
-yarp_deprecated_option(CREATE_YARPMANAGER_PP) # Since YARP 2.3.68
-yarp_deprecated_option(CREATE_LIB_MATH_USING_GSL) # Since YARP 2.3.70
-
 if(CREATE_YARPMANAGER_CONSOLE OR CREATE_YARPMANAGER)
   set(CREATE_LIB_MANAGER ON CACHE INTERNAL "Create manager library libYARP_manager?")
 else()
@@ -414,7 +407,6 @@ checkandset_dependency(Lua)
 set(Libdc1394_REQUIRED_VERSION 2.0)
 find_package(Libdc1394 ${Libdc1394_REQUIRED_VERSION} QUIET)
 checkandset_dependency(Libdc1394)
-yarp_deprecated_option(USE_LIBDC1394) # since YARP 2.3.68
 
 find_package(JPEG QUIET)
 checkandset_dependency(JPEG)
