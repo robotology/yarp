@@ -1,40 +1,107 @@
-Author list for YARP2:
-Paul Fitzpatrick
-Giorgio Metta
-Lorenzo Natale
-Alessandro Scalzo
+Author and contributor list
+---------------------------
 
-We've also had contributions from:
-Radu Bogdan Rusu (inertial sensor)
-Alexis Maldonado (inertial sensor)
-Eric Mislivec (opencv wrapper)
-Christopher Prince (Solaris fixes, mac regression machine)
-Charles C. Kemp (firewire camera on linux)
-Francesco Nori (James robot head code)
-Julio Gomes (sound driver, jrkerr driver, for windows)
-Alexandre Bernardino (sound driver, jrkerr driver, serial driver, for windows)
-Carlos Beltran (sound code via YARP1, serial driver, assorted help)
-Jonas Ruesch (video4linux support in ffmpeg_grabber, urbtc driver, + lots)
-Assif Mirza (dimax_u2c driver, helped debug cmake library finding issues)
-Mike P. Blow (dimax_u2c driver)
-Lars Olsson (dimax_u2c driver)
-Hatice Kose-Bagci (updated FindPortAudio script for Windows)
-Jose Gaspar (helped modify example/external/nameclient.cpp example for windows)
-Claudio Castellini (useful bug reports, drivers, QUICKSTART documentation)
-Michael Bucko (sig::yarp::draw fixes, bug reports)
-Nelson Gon\c calves (testing and patch for SWIG, Java, Matlab on MINGW)
-Marco Barbosa (64-bit linux bug fix, report of event notification problem)
-Tomassino Ferrauto (patches to Bottle implementation; shmem bug tracking)
-Boris Duran (patches for SWIG for motor control classes)
-Mattia Castelnovi (a bunch of drivers)
-Giacomo Spigler (nvidia gpu driver, cuda gpu driver, contributed to yarpfs, SerialServoBoard driver)
-Freyr Magnusson (yarp::os::DummyConnector class)
-Marco Randazzo (read/reply bug report)
-Arjan Gijsberts (enabled video4linux2 supported in ffmpeg_grabber device)
-Stefan Freyr Stefansson (patch for opencv_grabber; PixelMono16 images)
-Fernando Tello (order of initialization bug report and investigation)
-Andreu Corominas Murta (debugging non-thread-safe Bottle::write problem)
-Lorenz M\"osenlechner (swig bindings for Allegro Lisp)
-Frank F\"orster (noted misleading link in installation instructions)
-Arnaud Degroote (reported problem in port_power example)
-Danilo Tardioli (patch for locale problem)
+Aiko Dinale
+Alberto Cardellino
+Alessandro Roncone
+Alessandro Scalzo
+Alessio Rocchi
+Alexandre Bernardino
+Alexandros Paraschos
+Alexis Maldonado
+Ali Paikan
+Andrea Del Prete
+Andrea Ruzzenenti
+Andreu Corominas Murta
+Anne van Rossum
+Arjan Gijsberts
+Arnaud Degroote
+Assif Mirza
+Bartek Łukawski
+Bertrand Higy
+Boris Duran
+Bruno Nery
+Carlo Ciliberto
+Carlos Beltran-Gonzalez
+Charles C. Kemp
+Christopher Prince
+Claudia Latella
+Claudio Castellini
+Claudio Fantacci
+Damiano Enerli
+Daniele E. Domenichelli
+Daniel Krieg
+Danilo Tardioli
+Davide Perrone
+Davide Pollarolo
+David-Estevez
+Davide Tome
+Diego Ferigo
+Duarte Aragao
+Elena Ceseracciu
+Elena Rampone
+Enrico Mingo
+Eric Mislivec
+Fabien Benureau
+Fernando Tello
+Francesca Stramandinoli
+Francesco Giovannini
+Francesco Nori
+Francesco Orabona
+Francesco Romano
+Frank Förster
+Freyr Magnusson
+Gabriele Nava
+Giacomo Spigler
+Giorgio Metta
+Giovanni Saponaro
+Giulia Vezzani
+Hatice Kose-Bagci
+Holger Friedrich
+Jonas Ruesch
+Jose Gaspar
+Juan G Victores
+Juan G. Victores
+Julio Gomes
+Konstantinos Theofilis
+Lars Olsson
+Leo Pape
+Lorenz Mösenlechner
+Lorenzo Natale
+Lorenzo Rapetti
+Marco Barbosa
+Marco Monforte
+Marco Randazzo
+Marek Rucinski
+Massimiliano Iacono
+Massimo Regoli
+Matej Hoffmann
+Matteo Brunettini
+Mattia Castelnovi
+Michael Bucko
+Miguel Sarabia del Castillo
+Mike P. Blow
+Mirko Ferrati
+Naeem Assif Mirza
+Nelson Gonçalves
+Nicolò Genesio
+Nuno Guedelha
+Paul Fitzpatrick
+Pedro Vicente
+Plinio Moreno
+Prashanth Ramadoss
+Radu Bogdan Rusu
+Serena Ivaldi
+Silvio Traversaro
+Stefan Freyr Stefansson
+Stephane Lallee
+Tobias Fischer
+Tomassino Ferrauto
+Ugo Pattacini
+Vadim Tikhanoff
+Valentina Gaggero
+Vítor Galvão
+YARP Developers
+Yeshasvi Tirupachuri
+Ze Ji
+Zero King

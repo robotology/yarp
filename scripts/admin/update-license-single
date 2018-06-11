@@ -12,8 +12,11 @@ my $fname = $ARGV[0];
 
 my $std_license = "
 /*
- * Copyright (C) 2006 Author McAuthor
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 ";
 
@@ -46,29 +49,64 @@ my $report = "skipped";
 
 my $policy = "unknown";
 my $copyright = "unknown";
-my $authors = "";
 
 my $quiet = 1;
-if ($txt=~/license/i || $txt=~/copyright/i || $txt=~/rights/i) {
+if ($txt =~ /license/i || $txt =~ /copyright/i || $txt =~ /rights/i) {
     $quiet = 0;
 }
 
 
 if ($copyright eq "unknown") {
-    if ($txt=~/copyright\:\s*([^\"\'\*\r\n]+)\s*[\n\r\*]/i) {
+    if ($txt =~ /copyright\:\s*([^\"\'\*\r\n]+)\s*[\n\r\*]/i) {
         $copyright = $1;
     } elsif ($txt =~ /copyright\:?\s*([^\(0-9][^\"\'\*\r\n]+)\s*[\n\r\*]/i) {
         $copyright = $1;
     }
 }
 
-if ($txt=~/CopyPolicy\:\s*(.*)/i) {
+if ($txt =~ /CopyPolicy\:\s*(.*)/i) {
     $policy = $1;
 }
 
-if ($txt=~/GNU Lesser General Public license/) {
-    if ($txt=~/we personally strongly object/) {
+if ($txt =~ /GNU Lesser General Public license/) {
+    if ($txt =~ /we personally strongly object/) {
         $policy = "LGPL; non-binding note discouraging certain uses";
+    }
+}
+
+if ($policy eq "unknown") {
+    if ($txt =~ /BSD-3-Clause/) {
+        $policy = "BSD-3-Clause";
+    } elsif ($txt =~ /clause BSD/) {
+        if ($txt =~ /2.clause BSD/) {
+            $policy = "BSD-2-Clause";
+        } elsif ($txt =~ /3.clause BSD/) {
+            $policy = "BSD-3-Clause";
+        } elsif ($txt =~ /4.clause BSD/) {
+            $policy = "BSD-4-Clause";
+        }
+    } elsif ($txt =~ /Distributed under the OSI-approved BSD License/) {
+        $policy = "BSD-3-Clause";
+    } elsif ($txt =~ /Redistribution and use is allowed according to the terms of the BSD license/) {
+        $policy = "BSD-3-Clause";
+    } elsif ($txt =~ /Permission is granted to anyone to use this software for any/) {
+        if ($txt =~ /This notice may not be removed or altered from any source/) {
+            $policy = "zlib";
+        } else {
+            if ($txt =~ /All advertising materials mentioning features or use of this software/) {
+                $policy = "BSD-4-Clause";
+            } else {
+                $policy = "BSD-3-Clause";
+            }
+        }
+    } elsif ($txt =~ /Redistribution and use in source and binary forms, with or without/) {
+        if ($txt =~ /All advertising materials mentioning features or use of this software/) {
+            $policy = "BSD-4-Clause";
+        } elsif ($txt =~ /may be used to endorse or promote/) {
+            $policy = "BSD-3-Clause";
+        } else {
+            $policy = "BSD-2-Clause";
+        }
     }
 }
 
@@ -77,6 +115,12 @@ if ($policy eq "unknown") {
         if ($txt =~ /either version 2.1/) {
             $policy = "LGPLv2.1 or later";
         }
+    }
+}
+
+if ($policy eq "unknown") {
+    if ($txt =~ /LGPLv2.1\+/) {
+        $policy = "LGPLv2.1 or later";
     }
 }
 
@@ -112,53 +156,46 @@ if ($policy eq "unknown") {
     }
 }
 
-if ($policy eq "unknown") {
-    if ($txt =~ /Distributed under the OSI-approved BSD License/) {
-        $policy = "3-clause BSD";
-    }
-}
-
 if ($txt =~ /(The author disclaims copyright to this source code)/) {
     $copyright = $1;
 }
 
-if ($txt =~ /here is a blessing/) {
-    $policy = "In place of a legal notice, a blessing is given."
+if ($policy eq "unknown") {
+    if ($txt =~ /here is a blessing/) {
+        $policy = "In place of a legal notice, a blessing is given."
+    }
 }
 
-if ($policy =~ /unknown/) {
-    if ($txt =~ /Permission is granted to anyone to use this software for any/) {
-        if ($txt =~ /This notice may not be removed or altered from any source/) {
-            $policy = "zlib";
-        } else {
-            if ($txt =~ /All advertising materials mentioning features or use of this software/) {
-                $policy = "4-clause BSD";
-            } else {
-                $policy = "3-clause BSD";
-            }
-        }
-    }
+if ($policy eq "unknown") {
     if ($txt =~ /Everyone is permitted to copy and distribute verbatim copies/) {
         $policy = "copying and distributing verbatim copies allowed";
     }
 }
 
-if ($txt =~ /Bayer pattern decoding functions/) {
-    $copyright = "Damien Douxchamps and Frederic Devernay";
-    $policy = "LGPLv2.1";
+if ($policy eq "unknown") {
+    if ($txt =~ /Bayer pattern decoding functions/) {
+        $copyright = "Damien Douxchamps and Frederic Devernay";
+        $policy = "LGPLv2.1";
+    }
 }
 
-if ($txt =~ /Licensed to the Apache Software Foundation/) {
-    $copyright = "Apache Software Foundation";
-    $policy = "Apache License, Version 2.0";
+if ($policy eq "unknown") {
+    if ($txt =~ /Licensed to the Apache Software Foundation/) {
+        $copyright = "Apache Software Foundation";
+        $policy = "Apache License, Version 2.0";
+    }
 }
 
-if ($txt =~ /Licensed under the Apache License/) {
-    $policy = "Apache License, Version 2.0";
+if ($policy eq "unknown") {
+    if ($txt =~ /Licensed under the Apache License/) {
+        $policy = "Apache License, Version 2.0";
+    }
 }
 
-if ($txt =~ /Alexander Chemeris/) {
-    $policy = "3-clause BSD";
+if ($policy eq "unknown") {
+    if ($txt =~ /Alexander Chemeris/) {
+        $policy = "BSD-3-Clause";
+    }
 }
 
 if ($copyright eq "unknown") {
@@ -168,18 +205,10 @@ if ($copyright eq "unknown") {
     }
 }
 
-if ($copyright =~ /RobotCub/i || $copyright =~ /IIT/i) {
-    if ($txt =~ /authors?: *([^ \n\r].*[^ \n\r])/i) {
-        $authors = $1;
-        $authors =~ s/[^ \n\r]*\@[^ \n\r]*//g;
-        $authors =~ s/^\s+|\s+$//g;
-    }
-}
-
 if ($policy eq "unknown") {
     if ($fname =~ /sfun_time.c/) {
         $copyright = "2009 The MathWorks, Inc.";
-        $policy = "3-clause BSD";
+        $policy = "BSD-3-Clause";
     }
 }
 
@@ -189,8 +218,6 @@ $copyright =~ s/©/\(C\)/g;
 $copyright =~ s/\xa9/\(C\)/g;
 $policy =~ s/\s+$//g;
 $policy =~ s/^\s+//g;
-
-$copyright =~ s/Alex Bernardino/Alexandre Bernardino/;
 
 if ($copyright eq "default") {
     # no copyright statement - only accept for example code
@@ -209,7 +236,7 @@ if ($policy eq "default") {
     $policy = "unknown";
 }
 
-if ($policy eq "Released under the terms of the LGPLv2.1 or later, see LGPL.TXT") {
+if ($policy eq "Released under the terms of the LGPLv2.1 or later, see LICENSE") {
     $policy = "LGPLv2.1 or later";
 }
 
@@ -224,16 +251,28 @@ if ($policy eq "Released under the terms of the GNU GPL v2.0.") {
 $txt2 = $txt;
 
 if ($report ne "skipped") {
-    my $authortxt = "";
-    if ($authors ne "") {
-        $authortxt = "  Authors: $authors\n";
-    }
-    my $txt = "$fname\n  Copyright: $copyright\n$authortxt  CopyPolicy: $policy\n\n";
+    my $txt = "$fname\n  Copyright: $copyright\nCopyPolicy: $policy\n\n";
     open(FOUT,">>license-changes.txt");
     print FOUT $txt;
     close(FOUT);
-    if ($policy =~ /LGPLv2.1 or later/) {
-        open(FOUT,">>license-good.txt");
+    if ($policy =~ /BSD-3-Clause/) {
+        open(FOUT,">>license-bsd3.txt");
+        print FOUT $txt;
+        close(FOUT);
+    } elsif ($policy =~ /BSD-2-Clause/) {
+        open(FOUT,">>license-bsd2.txt");
+        print FOUT $txt;
+        close(FOUT);
+    } elsif ($policy =~ /BSD-4-Clause/) {
+        open(FOUT,">>license-bsd2.txt");
+        print FOUT $txt;
+        close(FOUT);
+    } elsif ($policy =~ /LGPLv2.1 or later/) {
+        open(FOUT,">>license-lgpl2.1+.txt");
+        print FOUT $txt;
+        close(FOUT);
+    } elsif ($policy =~ /GPLv2 or later/) {
+        open(FOUT,">>license-gpl2+.txt");
         print FOUT $txt;
         close(FOUT);
     } else {

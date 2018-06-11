@@ -24,8 +24,7 @@ for f in `cd license_check; find . -type f -iname "*.cpp" \
                                        -or -iname "*.h" \
                                        -or -iname "*.cmake" \
                                        -or -name "CMakeLists.txt" \
-                | grep -v "/ace_" \
-                | grep -v "YarpPluginPath.cmake" \
+                | grep -v "/extern" | grep -v "/cmake/ycm-" \
 `; do
     ignore=0
 
@@ -52,45 +51,41 @@ for f in `cd license_check; find . -type f -iname "*.cpp" \
 done
 
 
-# license-good.txt has files under GNU GPL
+# license-bsd3.txt has files under BSD-3-Clause
 # license-odd.txt has everything else
 
 # Gather information on main GPL material
-cat license-good.txt  | grep "Copyright:" > license-gpl.txt
-cat license-good.txt  | grep "Authors:" | sed "s/\.$//" > author-gpl.txt
-GPL_PEOPLE=`( sed "s/.*[0-9][0-9][0-9][0-9] */ , /g" | sed "s/ and / , /g" | sed "s/ \& / , /g" | sed "s/ - / , /g" | grep -i "[a-z]" ) < license-gpl.txt`
-GPL_AUTHOR=`( sed "s/.*: */ , /g" | sed "s/ and / , /g" | sed "s/ \& / , /g" | sed "s/ - / , /g" | grep -i "[a-z]" ) < author-gpl.txt`
-echo $GPL_PEOPLE | perl -ne "print join(\"\\n\",split(/ *, */,\$_))" | grep "." | tee license-gpl-people.txt
-echo $GPL_AUTHOR | perl -ne "print join(\"\\n\",split(/ *, */,\$_))" | grep "." | tee license-gpl-author.txt
-GPL_YEARS=`(sed "s/\-[^ ]*//g" | sed "s/[^0-9 ]/ /g" ) < license-gpl.txt`
-echo $GPL_YEARS | perl -ne "print join(\"\\n\",split(/ +/,\$_))" | sort | uniq | grep "20" | tee license-gpl-years.txt
+cat license-bsd3.txt  | grep "Copyright:" > copyright-bsd3.txt
+
+BSD3_PEOPLE=`( sed "s/.*[0-9][0-9][0-9][0-9] */ , /g" | sed "s/ and / , /g" | sed "s/ \& / , /g" | sed "s/ - / , /g" | sed "s/^[ ,]\+//g" | grep -i "[a-z]" | tee license-bsd3-people.txt) < copyright-bsd3.txt`
+BSD3_YEARS=`(sed "s/\-[^ ]*//g" | sed "s/[^0-9 ]/ /g" | perl -ne "print join(\"\\n\",split(/ +/,\$_))" | sort -u | grep "20" | tee license-bsd3-years.txt) < copyright-bsd3.txt`
 
 # Construct license report
 (
 
 cat<<EOF
 Unless otherwise stated, files in YARP are:
-  Copyright: 2012 Paul Fitzpatrick, Lorenzo Natale, Giorgio Metta
-  Released under the GNU LGPLv2.1 or later - see LGPL.TXT for details.
+  Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+  All rights reserved.
 
-The list of authors for YARP (ordered by file count) is:
+  This software may be modified and distributed under the terms of the
+  BSD-3-Clause license. See the accompanying LICENSE file for details.
 EOF
-( cat license-gpl-author.txt license-gpl-people.txt | sort | uniq -c | sort -n -r | sed "s/.*[0-9] //" | grep -v "RobotCub Consortium" ) | sed "s/^/  /"
 
 cat<<EOF
 
 The list of committers in the YARP repository (ordered by number of commit) is:
 EOF
-git shortlog -esn | awk 'BEGIN{FS="\t"}{print "  " $2}' | sed "s/ <.\+>//"
+git shortlog -esn --no-merges | awk 'BEGIN{FS="\t"}{print "  " $2}' | sed "s/ <.\+>//"
 cat<<EOF
 
 The list of copyright holders for YARP is:
 EOF
 
 echo -n "  Copyright "
-echo -n `cat license-gpl-years.txt` | sed 's/ /, /g'
+echo -n `cat license-bsd3-years.txt` | sed 's/ /, /g'
 echo ""
-( cat license-gpl-people.txt | sort | uniq -c | sort -k 1rn -k 2d | sed "s/ *\([0-9]*\) /(\1 files) /" ) | sed "s/^/  /" | sed "s/(1 files)/(1 file)/" | sed "s/\(.*\)\((.*)\) \(.*\)/\1\3 \2/"
+( cat license-bsd3-people.txt | sort | uniq -c | sort -k 1rn -k 2d | sed "s/ *\([0-9]*\) /(\1 files) /" ) | sed "s/^/  /" | sed "s/(1 files)/(1 file)/" | sed "s/\(.*\)\((.*)\) \(.*\)/\1\3 \2/"
 echo ""
 
 cat<<EOF

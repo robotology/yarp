@@ -7,7 +7,7 @@
 *kdev*
 *.orig
 tags
-/author-gpl.txt
+/author-*.txt
 /license-*.txt
 /license_check/
 /install*/
