@@ -64,14 +64,6 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
                                  ycm-${YCM_REQUIRED_VERSION}/3rdparty/FindFFMPEG.cmake
                                  ycm-${YCM_REQUIRED_VERSION}/3rdparty/FindOctave.cmake
                                  ycm-${YCM_REQUIRED_VERSION}/3rdparty/FindQCustomPlot.cmake)
-    set(YCM_CMAKE_cmake_3_1_FILES ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/CMakeFindDependencyMacro.cmake # 3.0
-                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/CMakePackageConfigHelpers.cmake
-                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/CMakeParseArguments.cmake
-                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/FeatureSummary.cmake
-                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/FindLua.cmake # 3.0
-                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/FindPackageHandleStandardArgs.cmake
-                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/FindPackageMessage.cmake
-                                  ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules/GNUInstallDirs.cmake)
     set(YCM_CMAKE_cmake_3.8_FILES ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules/CMakeParseArguments.cmake
                                   ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules/FindPackageHandleStandardArgs.cmake
                                   ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules/FindPackageMessage.cmake
@@ -91,12 +83,6 @@ if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
     install(FILES ${YCM_CMAKE_cmake_proposed_FILES}
             COMPONENT scripts
             DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/cmake-proposed/Modules)
-    if(${CMAKE_VERSION} VERSION_LESS 3.1)
-      # Files from CMake 3.1, available only if CMake on the system is older
-      install(FILES ${YCM_CMAKE_cmake_3_1_FILES}
-              COMPONENT scripts
-              DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules)
-    endif()
     if(${CMAKE_VERSION} VERSION_LESS 3.8)
       # Files from CMake 3.8, available only if CMake on the system is older
       install(FILES ${YCM_CMAKE_cmake_3.8_FILES}

@@ -29,17 +29,8 @@ if(YARP_HAS_ACE)
   list(APPEND YARP_wire_rep_utils_PRIVATE_DEPS ACE)
 endif()
 
-if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
-  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-endif()
-if(CMAKE_VERSION VERSION_LESS 3.1)
-  if(DEFINED CXX11_FLAGS)
-    target_compile_options(YARP_wire_rep_utils PUBLIC ${CXX11_FLAGS})
-  endif()
-else()
-  target_compile_features(YARP_wire_rep_utils PUBLIC cxx_nullptr
-                                                     cxx_override)
-endif()
+target_compile_features(YARP_wire_rep_utils PUBLIC cxx_nullptr
+                                                   cxx_override)
 
 set_property(TARGET YARP_serversql PROPERTY VERSION ${YARP_VERSION_SHORT})
 set_property(TARGET YARP_serversql PROPERTY SOVERSION ${YARP_SOVERSION})

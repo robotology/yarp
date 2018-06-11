@@ -49,17 +49,7 @@ if(YARP_HAS_ACE)
   list(APPEND YARP_run_PRIVATE_DEPS ACE)
 endif()
 
-
-if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
-  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-endif()
-if(CMAKE_VERSION VERSION_LESS 3.1)
-  if(DEFINED CXX11_FLAGS)
-    target_compile_options(YARP_run PUBLIC ${CXX11_FLAGS})
-  endif()
-else()
-  target_compile_features(YARP_run PUBLIC cxx_override)
-endif()
+target_compile_features(YARP_run PUBLIC cxx_override)
 
 set_property(TARGET YARP_run PROPERTY PUBLIC_HEADER ${YARP_run_HDRS})
 set_property(TARGET YARP_run PROPERTY PRIVATE_HEADER ${YARP_run_IMPL_HDRS})

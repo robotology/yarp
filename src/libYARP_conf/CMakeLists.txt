@@ -18,35 +18,21 @@ file(READ
      OFFSET 97)
 
 
-# WriteCompilerDetectionHeader is supported since CMake 3.1, but until 3.3 there
-# is a bug in the non-c++11 compatible nullptr implementation, therefore we use
-# a pre-generated version of the file
-if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 3.3)
-  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-endif()
-if(${CMAKE_VERSION} VERSION_LESS 3.3)
-  string(REPLACE "\\\;" ";" _compiler_dox ${_compiler_dox})
-  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/yarp/conf/compiler.h.in"
-                 "${PROJECT_BINARY_DIR}/include/yarp/conf/compiler.h"
-                 @ONLY)
-else()
-  include(WriteCompilerDetectionHeader)
+include(WriteCompilerDetectionHeader)
 
-  get_property(_cxx_known_features GLOBAL PROPERTY CMAKE_CXX_KNOWN_FEATURES)
+get_property(_cxx_known_features GLOBAL PROPERTY CMAKE_CXX_KNOWN_FEATURES)
 
-  write_compiler_detection_header(
-    FILE "${PROJECT_BINARY_DIR}/include/yarp/conf/compiler.h"
-    PREFIX YARP
-    COMPILERS
-      GNU
-      Clang
-      AppleClang
-      MSVC
-    FEATURES ${_cxx_known_features}
-    VERSION 3.1.0
-    PROLOG ${_compiler_dox})
-endif()
-
+write_compiler_detection_header(
+  FILE "${PROJECT_BINARY_DIR}/include/yarp/conf/compiler.h"
+  PREFIX YARP
+  COMPILERS
+    GNU
+    Clang
+    AppleClang
+    MSVC
+  FEATURES ${_cxx_known_features}
+  VERSION 3.1.0
+  PROLOG ${_compiler_dox})
 
 
 #########################################################################

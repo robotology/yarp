@@ -13,20 +13,7 @@ include(TestBigEndian)
 include(CheckCXXCompilerFlag)
 include(CheckIncludeFiles)
 include(CheckIncludeFileCXX)
-
-# CheckTypeSize changes CMAKE_MINIMUM_REQUIRED_VERSION, see
-# http://www.cmake.org/Bug/view.php?id=14864 (fixed in CMake 3.1)
-# We save it here, and restore it after including the file.
-if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
-  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-endif()
-if(CMAKE_VERSION VERSION_LESS 3.1)
-  set(_CMAKE_MINIMUM_REQUIRED_VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION})
-endif()
 include(CheckTypeSize)
-if(CMAKE_VERSION VERSION_LESS 3.1)
-  cmake_minimum_required(VERSION ${_CMAKE_MINIMUM_REQUIRED_VERSION})
-endif()
 
 # Ensure that install directories are set
 include(GNUInstallDirs)

@@ -260,18 +260,9 @@ if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_PRIVATE_DEPS YARP_math)
 endif()
 
-if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
-  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-endif()
-if(CMAKE_VERSION VERSION_LESS 3.1)
-  if(DEFINED CXX11_FLAGS)
-    target_compile_options(YARP_dev PUBLIC ${CXX11_FLAGS})
-  endif()
-else()
-  target_compile_features(YARP_dev PUBLIC cxx_nullptr
-                                          cxx_override
-                                          cxx_final)
-endif()
+target_compile_features(YARP_dev PUBLIC cxx_nullptr
+                                        cxx_override
+                                        cxx_final)
 
 set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS})
 set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS})

@@ -36,17 +36,7 @@ if(CREATE_LIB_PROFILER)
   list(APPEND YARP_profiler_PUBLIC_DEPS YARP_OS)
   list(APPEND YARP_profiler_PRIVATE_DEPS YARP_companion)
 
-
-  if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
-    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-  endif()
-  if(CMAKE_VERSION VERSION_LESS 3.1)
-    if(DEFINED CXX11_FLAGS)
-      target_compile_options(YARP_profiler PUBLIC ${CXX11_FLAGS})
-    endif()
-  else()
-    target_compile_features(YARP_profiler PUBLIC cxx_override)
-  endif()
+  target_compile_features(YARP_profiler PUBLIC cxx_override)
 
   set_property(TARGET YARP_profiler PROPERTY PUBLIC_HEADER ${YARP_profiler_HDRS})
   set_property(TARGET YARP_profiler PROPERTY PRIVATE_HEADER ${YARP_profiler_IMPL_HDRS})

@@ -410,20 +410,9 @@ if(APPLE)
   target_link_libraries(YARP_OS PRIVATE "-framework Foundation")
 endif()
 
-
-if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
-  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-endif()
-if(CMAKE_VERSION VERSION_LESS 3.1)
-  if(DEFINED CXX11_FLAGS)
-    target_compile_options(YARP_OS PUBLIC ${CXX11_FLAGS})
-  endif()
-else()
-  target_compile_features(YARP_OS PUBLIC cxx_nullptr
-                                         cxx_override
-                                         cxx_rvalue_references)
-endif()
-
+target_compile_features(YARP_OS PUBLIC cxx_nullptr
+                                       cxx_override
+                                       cxx_rvalue_references)
 
 set_property(TARGET YARP_OS PROPERTY PUBLIC_HEADER ${YARP_OS_HDRS})
 set_property(TARGET YARP_OS PROPERTY PRIVATE_HEADER ${YARP_OS_IMPL_HDRS})

@@ -43,18 +43,8 @@ target_include_directories(YARP_rtf SYSTEM PUBLIC ${RTF_INCLUDE_DIRS})
 target_link_libraries(YARP_rtf PUBLIC RTF::RTF)
 list(APPEND YARP_rtf_PUBLIC_DEPS RTF)
 
-
-if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
-  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-endif()
-if(CMAKE_VERSION VERSION_LESS 3.1)
-  if(DEFINED CXX11_FLAGS)
-    target_compile_options(YARP_rtf PUBLIC ${CXX11_FLAGS})
-  endif()
-else()
-  target_compile_features(YARP_rtf PUBLIC cxx_nullptr
-                                         cxx_override)
-endif()
+target_compile_features(YARP_rtf PUBLIC cxx_nullptr
+                                        cxx_override)
 
 set_property(TARGET YARP_rtf PROPERTY PUBLIC_HEADER ${YARP_rtf_HDRS})
 set_property(TARGET YARP_rtf PROPERTY PRIVATE_HEADER ${YARP_rtf_IMPL_HDRS})

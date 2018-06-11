@@ -5,7 +5,7 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 if(NOT ${CMAKE_VERSION} VERSION_LESS 3.4)
   cmake_policy(SET CMP0064 NEW)
@@ -35,9 +35,6 @@ if(NOT YCM_FOUND)
   list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/find-modules"
                                "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/modules"
                                "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/3rdparty")
-  if(${CMAKE_VERSION} VERSION_LESS 3.1)
-    list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.1/Modules")
-  endif()
   if(${CMAKE_VERSION} VERSION_LESS 3.8)
     list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules")
   endif()

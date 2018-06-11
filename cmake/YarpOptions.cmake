@@ -301,17 +301,6 @@ endif()
 
 
 #########################################################################
-# Ensure that it is compiled with c++11 also with CMake 3.1
-
-if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
-  message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-endif()
-if(${CMAKE_VERSION} VERSION_LESS 3.1)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
-endif()
-
-
-#########################################################################
 # Control compilation of device tests.
 # Not really for end-user, but instead for the library developers
 yarp_deprecated_option(CREATE_BUILTIN_DEVICE_TESTS) # Since YARP 2.3.68

@@ -8,7 +8,7 @@
 # Make sure that YARP_DIR is set in your environment to wherever you 
 # compiled YARP.
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 project(PortPower)
 
 find_package(YARP REQUIRED)

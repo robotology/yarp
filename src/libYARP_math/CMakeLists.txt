@@ -77,16 +77,7 @@ if (YARP_HAS_MATH_LIB)
   # import math symbols from standard cmath
   target_compile_definitions(YARP_math PRIVATE _USE_MATH_DEFINES)
 
-  if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
-    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-  endif()
-  if(CMAKE_VERSION VERSION_LESS 3.1)
-    if(DEFINED CXX11_FLAGS)
-      target_compile_options(YARP_math PUBLIC ${CXX11_FLAGS})
-    endif()
-  else()
-    target_compile_features(YARP_math PUBLIC cxx_override)
-  endif()
+  target_compile_features(YARP_math PUBLIC cxx_override)
 
   set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS})
   set_property(TARGET YARP_math PROPERTY PRIVATE_HEADER ${YARP_math_IMPL_HDRS})

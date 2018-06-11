@@ -97,23 +97,8 @@ macro(STANDARD_FIND_MODULE _name _pkgconfig_name)
 
   # Try to use CMake Config file to locate the package
   if(NOT _OPT_${_NAME}_SKIP_CMAKE_CONFIG)
-    # Disable package cache when not done automatically by CMake
-    # This is a workaround for CMake bug #14849
-    unset(_standard_find_module_registryArgs)
-    if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.1)
-      message(AUTHOR_WARNING "Disabling cmake cache is supported since CMake 3.1. You can remove this check")
-    endif()
-    if(CMAKE_VERSION VERSION_LESS 3.1)
-      if(CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY)
-        list(APPEND _standard_find_module_registryArgs NO_CMAKE_PACKAGE_REGISTRY)
-      endif()
-      if(CMAKE_FIND_PACKAGE_NO_SYSTEM_PACKAGE_REGISTRY)
-        list(APPEND _standard_find_module_registryArgs NO_CMAKE_SYSTEM_PACKAGE_REGISTRY)
-      endif()
-    endif()
-
     set(_${_name}_FIND_QUIETLY ${${_name}_FIND_QUIETLY})
-    find_package(${_name} QUIET NO_MODULE ${_standard_find_module_registryArgs})
+    find_package(${_name} QUIET NO_MODULE)
     set(${_name}_FIND_QUIETLY ${_${_name}_FIND_QUIETLY})
     mark_as_advanced(${_name}_DIR)
 
