@@ -144,36 +144,3 @@ std::string Route::toString() const
 {
     return getFromName() + "->" + getCarrierName() + "->" + getToName();
 }
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
-
-Route Route::addFromName(const std::string& fromName) const
-{
-    Route result(*this);
-    result.mPriv->fromName = fromName;
-    return result;
-}
-
-Route Route::addToName(const std::string& toName) const
-{
-    Route result(*this);
-    result.mPriv->toName = toName;
-    return result;
-}
-
-
-Route Route::addToContact(const Contact& toContact) const
-{
-    Route result(*this);
-    result.mPriv->toContact = toContact;
-    return result;
-}
-
-Route Route::addCarrierName(const std::string& carrierName) const
-{
-    Route result(*this);
-    result.mPriv->carrierName = carrierName;
-    return result;
-}
-
-#endif // YARP_NO_DEPRECATED
