@@ -6,14 +6,14 @@
 
 Latest YARP release is:
 
- + YARP 2.3.72 (2018-02-12)
+ + YARP 3.0.0 (2018-06-11)
 
 \section download_source_code Source Code
 
 Latest release can be downloaded from here:
 
- + https://github.com/robotology/yarp/archive/v2.3.72.tar.gz
- + https://github.com/robotology/yarp/archive/v2.3.72.zip
+ + https://github.com/robotology/yarp/archive/v3.0.0.tar.gz
+ + https://github.com/robotology/yarp/archive/v3.0.0.zip
 
 \section download_binary Binary releases
 
@@ -28,15 +28,13 @@ Latest release can be downloaded from here:
 
 __Installers__:
 
-|       |            MSVC 12 2013           |            MSVC 14 2015           |
-|-------|:---------------------------------:|:---------------------------------:|
-| Win32 | [yarp_2.3.72_v12_x86_1.exe]       | [yarp_2.3.72_v14_x86_1.exe]       |
-| x64   | [yarp_2.3.72_v12_x86_amd64_1.exe] | [yarp_2.3.72_v14_x86_amd64_1.exe] |
+|       |             MSVC 2015/2017        |
+|-------|:---------------------------------:|
+| Win32 | [yarp_3.0.0_v14_x86_1.exe]        |
+| x64   | [yarp_3.0.0_v14_x86_amd64_1.exe]  |
 
-[yarp_2.3.72_v12_x86_1.exe]: https://github.com/robotology/yarp/releases/download/v2.3.72/yarp_2.3.72_v12_x86_1.exe
-[yarp_2.3.72_v14_x86_1.exe]: https://github.com/robotology/yarp/releases/download/v2.3.72/yarp_2.3.72_v14_x86_1.exe
-[yarp_2.3.72_v12_x86_amd64_1.exe]: https://github.com/robotology/yarp/releases/download/v2.3.72/yarp_2.3.72_v12_x86_amd64_1.exe
-[yarp_2.3.72_v14_x86_amd64_1.exe]: https://github.com/robotology/yarp/releases/download/v2.3.72/yarp_2.3.72_v14_x86_amd64_1.exe
+[yarp_3.0.0_v14_x86_1.exe]: https://github.com/robotology/yarp/releases/download/v3.0.0/yarp_3.0.0_v14_x86_1.exe
+[yarp_3.0.0_v14_x86_amd64_1.exe]: https://github.com/robotology/yarp/releases/download/v3.0.0/yarp_3.0.0_v14_x86_amd64_1.exe
 
 
 \subsection download_linux Linux (Debian/Ubuntu)
@@ -62,6 +60,8 @@ Previous versions are hosted on
 
 __Previous releases version and dates__:
 
+ + YARP 2.3.72.1 (2018-06-11)
+ + YARP 2.3.72 (2018-02-12)
  + YARP 2.3.70.2 (2017-12-11)
  + YARP 2.3.70.1 (2017-09-21)
  + YARP 2.3.70 (2017-06-15)
