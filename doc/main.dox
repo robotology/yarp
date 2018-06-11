@@ -34,7 +34,7 @@ library is used for Windows builds, and to support extra
 protocols.  On Linux and macOS, ACE can optionally be omitted,
 giving a very light footprint (with the trade-off being the
 loss of support for some non-TCP-based protocols).
-YARP is free and open, under the LGPL [\ref lgpl_note "*"].
+YARP is free and open, under the BSD-3-Clause license [\ref bsd_note "*"].
 
 The general philosophy that has guided the development of YARP is described in
 [\ref Fitzpatrick2014 "1"], [\ref Fitzpatrick2008 "2"] and [\ref Metta2006 "3"],
@@ -48,8 +48,8 @@ features allow reducing communication latency and improves determinism for
 selected channels in a YARP network [\ref Paikan2015a "5"] and
 [\ref Paikan2015b "6"].
 
-\anchor lgpl_note [*] Certain optional plugin devices, carriers, or libraries are
-under the GPL.
+\anchor bsd_note [*] Certain optional devices, carriers, tools or
+libraries are not licensed under the BSD-3-Clause.
 
 
 \section yarp_setup Getting set up

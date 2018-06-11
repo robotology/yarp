@@ -1,7 +1,7 @@
 /*============================================
 
 Copyright: (c) 2007 Jeffrey Kerr LLC
-CopyPolicy: 3-clause BSD
+CopyPolicy: BSD-3-Clause
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 

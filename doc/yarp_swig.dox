@@ -10,9 +10,11 @@ for you in the language of your choice.  At the time of writing, languages
 that have been tested with YARP and SWIG are: Java, Python, Perl,
 Chicken Scheme, C#, Allegro Common Lisp, TCL, and Ruby.
 If you are interested in a different language, check if it is in the list of
-<a href="http://www.swig.org/compat.html#SupportedLanguages">languages supported by SWIG</a>.  If it is, getting YARP going should be easy, so don't despair.
-Just send a quick email to the <a href="http://wiki.icub.org/wiki/Robotcub-hackers">mailing&nbsp;list</a>, or pattern match in
-the $YARP_ROOT/bindings/CMakeLists.txt file to add your language.
+<a href="http://www.swig.org/compat.html#SupportedLanguages">languages supported
+by SWIG</a>.
+If it is, getting YARP going should be easy, so don't despair.
+Just open an issue (or a pull request) on
+<a href="https://github.com/robotology/yarp/issues">YARP issue tracker</a>.
 
 @section yarp_swig_install Overview of steps needed
 
@@ -29,7 +31,10 @@ Then, install any language-specific packages needed.
  - \ref yarp_swig_lua
  - \ref yarp_swig_octave
  - \ref yarp_swig_perl
- - \ref Other tested languages are: Chicken Scheme, C#, Allegro Common Lisp, TCL, and Ruby.  Procedure is same as for Java/Python.  You may need to install a development package for your desired language.  To find out:
+ - \ref Other tested languages are: Chicken Scheme, C#, Allegro Common Lisp,
+   TCL, Ruby and Lua.  Procedure is same as for Java/Python.
+   You may need to install a development package for your desired language.
+   To find out:
    - On Linux: Check http://www.dabeaz.com/cgi-bin/wiki.pl?DeveloperInfo/GettingStarted
    - On OSX: A surprising amount of stuff comes pre-installed.
    - On Windows: Check http://www.swig.org/Doc2.0/Windows.html

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
- * Copyright (C) 2006 Alex Bernardino
+ * Copyright (C) 2006 Alexandre Bernardino
  * Copyright (C) 2006 Carlos Beltran-Gonzalez
  * All rights reserved.
  *

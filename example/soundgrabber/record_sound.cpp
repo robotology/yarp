@@ -20,10 +20,6 @@
   >> load -ascii sound.dat
   >> wavplay(sound, 44100);
 
-  Author: Julio Gomes, Alexandre Bernardino, VisLab, ISR-IST
-
-  Contact: jgomes(a)isr.ist.utl.pt, alex(a)isr.ist.utl.pt
-
 ************************************************************************/
 
 #include <yarp/os/all.h>

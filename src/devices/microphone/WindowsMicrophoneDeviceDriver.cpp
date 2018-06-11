@@ -431,9 +431,6 @@ int SoundResources::_init (const SoundOpenParameters& params)
 //
 //  Description: This is a convenient function to recover the pointer to the SoundResources
 //  object
-//
-//    Author: Ing. Carlos Beltran
-//  Revision:  none
 // =====================================================================================
 inline SoundResources& RES(void *res)
 {

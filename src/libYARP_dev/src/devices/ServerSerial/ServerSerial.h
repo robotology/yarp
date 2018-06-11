@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
- * Copyright (C) 2006 Alex Bernardino
+ * Copyright (C) 2006 Alexandre Bernardino
  * Copyright (C) 2006 Carlos Beltran-Gonzalez
  * All rights reserved.
  *
@@ -71,8 +71,6 @@ public:
  * text to the serial port.
  * The output port streams out whatever information it gets in the
  * serial port as text bottles.
- *
- * @author Alex Bernardino
  */
 class YARP_dev_API yarp::dev::ServerSerial : public DeviceDriver,
                                              public ISerialDevice,

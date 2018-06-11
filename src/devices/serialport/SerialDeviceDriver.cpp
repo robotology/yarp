@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
- * Copyright (C) 2007 Alex Bernardino
- * Copyright (C) 2007 Beltran-Gonzalez
+ * Copyright (C) 2007 Alexandre Bernardino
+ * Copyright (C) 2007 Carlos Beltran-Gonzalez
  * All rights reserved.
  *
  * This software may be modified and distributed under the terms of the
