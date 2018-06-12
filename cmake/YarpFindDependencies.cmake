@@ -488,6 +488,9 @@ checkandset_dependency(BISON)
 find_package(FLEX QUIET)
 checkandset_dependency(FLEX)
 
+find_package(I2C QUIET)
+checkandset_dependency(I2C)
+
 # PRINT DEPENDENCIES STATUS:
 
 message(STATUS "I have found the following libraries:")
@@ -530,6 +533,7 @@ print_dependency(GStreamer)
 print_dependency(GStreamerPluginsBase)
 print_dependency(BISON)
 print_dependency(FLEX)
+print_dependency(I2C)
 
 
 # CHECK DEPENDENCIES:
