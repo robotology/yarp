@@ -28,8 +28,9 @@ inline bool toPCL(const yarp::sig::PointCloud< T1 > &yarpCloud, ::pcl::PointClou
 {
     static_assert(sizeof(T1) == sizeof(T2), "yarp::pcl::toPcl: T1 and T2 are incompatible");
     pclCloud.points.resize(yarpCloud.size());
-    pclCloud.width  = yarpCloud.width();
-    pclCloud.height = yarpCloud.height();
+    pclCloud.width    = yarpCloud.width();
+    pclCloud.height   = yarpCloud.height();
+    pclCloud.is_dense = yarpCloud.isDense();
     memcpy((char*)& pclCloud.points.at(0), yarpCloud.getRawData(), yarpCloud.dataSizeBytes());
     return true;
 }
