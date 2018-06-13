@@ -148,20 +148,20 @@ endif()
 
 # Find all requested components
 set(YARP_LIBRARIES YARP::YARP_init)
-foreach(_module ${YARP_FIND_COMPONENTS})
+foreach(_yarp_module ${YARP_FIND_COMPONENTS})
   # FIXME Remove this check when CMake 3.9 or later is required
   if (CMAKE_VERSION VERSION_LESS 3.9)
-    find_package(YARP_${_module}
+    find_package(YARP_${_yarp_module}
                  ${_YARP_FIND_PARTS_QUIET}
                  ${_YARP_FIND_PARTS_REQUIRED}
                  HINTS "${YARP_CMAKECONFIG_DIR}"
                  NO_DEFAULT_PATH)
   else()
-    find_dependency(YARP_${_module}
+    find_dependency(YARP_${_yarp_module}
                     HINTS "${YARP_CMAKECONFIG_DIR}"
                     NO_DEFAULT_PATH)
   endif()
-  list(APPEND YARP_LIBRARIES YARP::YARP_${_module})
+  list(APPEND YARP_LIBRARIES YARP::YARP_${_yarp_module})
 endforeach()
 
 # Ensure that all requested modules are available
