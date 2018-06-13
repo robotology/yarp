@@ -50,7 +50,7 @@ else()
   if(EXISTS "${I2C_i2c_dev_h_INCLUDE_DIR}/linux/i2c-dev.h")
     file(READ "${I2C_i2c_dev_h_INCLUDE_DIR}/linux/i2c-dev.h" _i2c_dev_content)
     if(NOT "${_i2c_dev_content}" MATCHES "i2c_smbus_access")
-      set(I2C_i2c_dev_h_INCLUDE_DIR "I2C_i2c_dev_h_INCLUDE_DIR-NOTFOUND" CACHE)
+      set(I2C_i2c_dev_h_INCLUDE_DIR I2C_i2c_dev_h_INCLUDE_DIR-NOTFOUND CACHE STRING "" FORCE)
     endif()
 
     set(I2C_LIBRARIES "")
