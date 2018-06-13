@@ -34,10 +34,6 @@ if(NOT "${_expected_targets}" STREQUAL "")
   list(REMOVE_DUPLICATES _expected_targets)
 endif()
 
-# Provide YARP's own module search paths for use by find_package()
-set(_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH})
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-
 # Properly find the dependencies. This will force to include all the
 # dependencies also for packages in other exports
 foreach(_target ${_targets})
@@ -56,8 +52,6 @@ foreach(_target ${_targets})
 endforeach()
 
 # Restore the original situation
-set(CMAKE_MODULE_PATH ${_CMAKE_MODULE_PATH})
-unset(_CMAKE_MODULE_PATH)
 unset(YARP_static_hack_FOUND)
 unset(YARP_static_hack_NOT_FOUND_MESSAGE)
 set(CMAKE_FIND_PACKAGE_NAME ${_CMAKE_FIND_PACKAGE_NAME})

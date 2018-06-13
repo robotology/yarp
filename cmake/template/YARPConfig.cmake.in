@@ -129,6 +129,10 @@ if (CMAKE_VERSION VERSION_LESS 3.9)
   endif()
 endif()
 
+# Provide YARP's own module search paths for internal use by find_package()
+set(_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH})
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+
 # Include YARPTargets.cmake file (that includes for now, targets without a
 # specific destination
 if(NOT TARGET YARP::yarpidl_thrift)
@@ -163,6 +167,10 @@ foreach(_yarp_module ${YARP_FIND_COMPONENTS})
   endif()
   list(APPEND YARP_LIBRARIES YARP::YARP_${_yarp_module})
 endforeach()
+
+# Restore the original situation
+set(CMAKE_MODULE_PATH ${_CMAKE_MODULE_PATH})
+unset(_CMAKE_MODULE_PATH)
 
 # Ensure that all requested modules are available
 check_required_components(YARP)
