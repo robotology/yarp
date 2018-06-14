@@ -27,7 +27,7 @@ if(NOT eigen3_FOUND OR TARGET Eigen3::Eigen)
   list(APPEND YARP_eigen_PUBLIC_DEPS "Eigen3 3.3.1")
 else()
   target_include_directories(YARP_eigen INTERFACE ${EIGEN3_INCLUDE_DIR})
-  list(APPEND YARP_eigen_PUBLIC_DEPS Eigen3)
+  # list(APPEND YARP_eigen_PUBLIC_DEPS Eigen3) (not using targets)
 endif()
 
 install(TARGETS YARP_eigen

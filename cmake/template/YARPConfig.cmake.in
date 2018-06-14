@@ -51,31 +51,6 @@ if(YARP_NO_DEPRECATED_WARNINGS)
   add_definitions("-DYARP_NO_DEPRECATED_WARNINGS")
 endif()
 
-# CMake modules directories
-set_and_check(YARP_MODULE_DIR "@PACKAGE_YARP_MODULE_DIR@")
-set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
-if(NOT YARP_NO_DEPRECATED)
-  list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/deprecated")
-
-  # find_package(YCM) will overwrite the PACKAGE_PREFIX_DIR variable
-  # set by PACKAGE_INIT therefore we save and restore it later
-  set(_PACKAGE_PREFIX_DIR ${PACKAGE_PREFIX_DIR})
-  set(YCM_REQUIRED_VERSION @YCM_REQUIRED_VERSION@)
-  find_package(YCM ${YCM_REQUIRED_VERSION} QUIET)
-  set(PACKAGE_PREFIX_DIR ${_PACKAGE_PREFIX_DIR})
-  unset(_PACKAGE_PREFIX_DIR)
-
-  if(NOT YCM_FOUND)
-    list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/find-modules"
-                                 "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/modules"
-                                 "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/3rdparty"
-                                 "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-proposed")
-    if(${CMAKE_VERSION} VERSION_LESS 3.8)
-      list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules")
-    endif()
-  endif()
-endif()
-
 
 # Install prefix
 set(YARP_INSTALL_PREFIX "@PACKAGE_YARP_INSTALL_PREFIX@")
@@ -116,27 +91,47 @@ set(YARP_QML2_IMPORT_DIR_FULL "@PACKAGE_YARP_QML2_IMPORT_DIR@")
 # Used by YarpIDL.cmake
 set(YARP_IDL_BINARY_HINT "@PACKAGE_YARP_IDL_BINARY_HINT@")
 
-# FIXME Remove this check when CMake 3.9 or later is required
-#       This is used later and in YARPTargetsStatic.cmake
-if (CMAKE_VERSION VERSION_LESS 3.9)
-  set(_YARP_FIND_PARTS_REQUIRED)
-  if (YARP_FIND_REQUIRED)
-    set(_YARP_FIND_PARTS_REQUIRED REQUIRED)
-  endif()
-  set(_YARP_FIND_PARTS_QUIET)
-  if (YARP_FIND_QUIETLY)
-    set(_YARP_FIND_PARTS_QUIET QUIET)
+# CMake modules directories
+set_and_check(YARP_MODULE_DIR "@PACKAGE_YARP_MODULE_DIR@")
+
+
+# Save the variable, that it should not be modified by find_package(YARP), but
+# we need to modify it in order to find all the dependencies.
+set(_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH})
+
+# Find YCM if needed:
+# * If YARP is static therefore we need YCM (or YARP private version) for private
+#   dependencies.
+# * If deprecated stuff is enabled, we need YCM (or YARP private version) for
+#   compatibility with old versions.
+# If YCM is not found, the private version is used instead.
+if(NOT YARP_IS_SHARED_LIBRARY OR NOT YARP_NO_DEPRECATED)
+  # Until YCM is optional, we always want to look for YCM quietly, therefore we
+  # use find_package instead of find_dependency.
+  # WARNING find_package(YCM) will overwrite the PACKAGE_PREFIX_DIR variable,
+  #         therefore this variable is no longer valid after this line
+  find_package(YCM @YCM_REQUIRED_VERSION@ QUIET)
+  if(NOT YARP_NO_DEPRECATED AND NOT YCM_FOUND)
+    set(_YARP_YCM_MODULE_PATH "${YARP_MODULE_DIR}/ycm-@YCM_REQUIRED_VERSION@/find-modules"
+                              "${YARP_MODULE_DIR}/ycm-@YCM_REQUIRED_VERSION@/modules"
+                              "${YARP_MODULE_DIR}/ycm-@YCM_REQUIRED_VERSION@/3rdparty"
+                              "${YARP_MODULE_DIR}/ycm-@YCM_REQUIRED_VERSION@/cmake-proposed")
+    if(${CMAKE_VERSION} VERSION_LESS 3.8)
+      list(APPEND _YARP_YCM_MODULE_PATH "${YARP_MODULE_DIR}/ycm-@YCM_REQUIRED_VERSION@/cmake-3.8/Modules")
+    endif()
+
+    # We need these paths in order to use the find modules in the following
+    # find_package/find_dependency calls (those are automatically added by
+    # YCM)
+    list(APPEND CMAKE_MODULE_PATH ${_YARP_YCM_MODULE_PATH})
   endif()
 endif()
+
 
 # Include YARPTargets.cmake file (that includes for now, targets without a
 # specific destination
 if(NOT TARGET YARP::yarpidl_thrift)
-  if(YARP_IS_SHARED_LIBRARY)
-    include("${CMAKE_CURRENT_LIST_DIR}/YARPTargets.cmake")
-  else()
-    include("${CMAKE_CURRENT_LIST_DIR}/YARPTargetsStatic.cmake")
-  endif()
+  include("${CMAKE_CURRENT_LIST_DIR}/YARPTargets.cmake")
 endif()
 
 
@@ -151,6 +146,14 @@ set(YARP_LIBRARIES YARP::YARP_init)
 foreach(_yarp_module ${YARP_FIND_COMPONENTS})
   # FIXME Remove this check when CMake 3.9 or later is required
   if (CMAKE_VERSION VERSION_LESS 3.9)
+    set(_YARP_FIND_PARTS_REQUIRED)
+    if (YARP_FIND_REQUIRED)
+      set(_YARP_FIND_PARTS_REQUIRED REQUIRED)
+    endif()
+    set(_YARP_FIND_PARTS_QUIET)
+    if (YARP_FIND_QUIETLY)
+      set(_YARP_FIND_PARTS_QUIET QUIET)
+    endif()
     find_package(YARP_${_yarp_module}
                  ${_YARP_FIND_PARTS_QUIET}
                  ${_YARP_FIND_PARTS_REQUIRED}
@@ -163,6 +166,11 @@ foreach(_yarp_module ${YARP_FIND_COMPONENTS})
   endif()
   list(APPEND YARP_LIBRARIES YARP::YARP_${_yarp_module})
 endforeach()
+
+# Restore the original value of the variable
+set(CMAKE_MODULE_PATH ${_CMAKE_MODULE_PATH})
+unset(_CMAKE_MODULE_PATH)
+
 
 # Ensure that all requested modules are available
 check_required_components(YARP)
@@ -179,46 +187,75 @@ include(${YARP_MODULE_DIR}/YarpInstallationHelpers.cmake)
 ################################################################################
 # Deprecated variables
 
-if(NOT YARP_NO_DEPRECATED AND NOT DEFINED YARP_OS_LIBRARY) # Since YARP 3.0.0
-  # Export variables for available targets
+if(NOT YARP_NO_DEPRECATED AND NOT COMMAND _YARP_DEPRECATED_VARIABLE_WARNING)
+
+  # A macro to print a warning when using deprecated variables, called by
+  # variable_watch
+  macro(_YARP_DEPRECATED_VARIABLE_WARNING _variable)
+    message(DEPRECATION "The ${_variable} variable is deprecated")
+  endmacro()
+
+  # YARP_OS_LIBRARY is deprecated since YARP 3.0.0
   set(YARP_OS_LIBRARY YARP::YARP_OS)
+  variable_watch(YARP_OS_LIBRARY _yarp_deprecated_variable_warning)
+
+  # YARP_SIG_LIBRARY is deprecated since YARP 3.0.0
   set(YARP_SIG_LIBRARY YARP::YARP_sig)
+  variable_watch(YARP_SIG_LIBRARY _yarp_deprecated_variable_warning)
+
+  # YARP_MATH_LIBRARY is deprecated since YARP 3.0.0
   if(TARGET YARP::YARP_math)
     set(YARP_MATH_LIBRARY YARP::YARP_math)
   endif()
+  variable_watch(YARP_MATH_LIBRARY _yarp_deprecated_variable_warning)
+
+  # YARP_DEV_LIBRARY is deprecated since YARP 3.0.0
   set(YARP_DEV_LIBRARY YARP::YARP_dev)
+  variable_watch(YARP_DEV_LIBRARY _yarp_deprecated_variable_warning)
+
+  # YARP_NAME_LIBRARY is deprecated since YARP 3.0.0
   if(TARGET YARP::YARP_name)
     set(YARP_NAME_LIBRARY YARP::YARP_name)
   endif()
-  set(YARP_INIT_LIBRARY YARP::YARP_init)
+  variable_watch(YARP_NAME_LIBRARY _yarp_deprecated_variable_warning)
 
-  # Pass along some compilation options that may be useful for clients
-  # to check.
+  # YARP_INIT_LIBRARY is deprecated since YARP 3.0.0
+  set(YARP_INIT_LIBRARY YARP::YARP_init)
+  variable_watch(YARP_INIT_LIBRARY _yarp_deprecated_variable_warning)
+
+  # YARP_HAS_MATH_LIB is deprecated since YARP 3.0.0
   set(YARP_HAS_MATH_LIB FALSE)
   if(TARGET YARP::YARP_math)
     set(YARP_HAS_MATH_LIB TRUE)
   endif()
+  variable_watch(YARP_HAS_MATH_LIB _yarp_deprecated_variable_warning)
 
-  set(YARP_VERSION_ABI "@YARP_SOVERSION@")
-
-  # Print a warning when using deprecated variables
-  macro(DEPRECATED_VARIABLE_WARNING _variable)
-    message(DEPRECATION "The ${_variable} variable is deprecated")
-  endmacro()
-  macro(YARP_DEPRECATED_VARIABLE _variable)
-    variable_watch(${_variable} deprecated_variable_warning)
-  endmacro()
-  macro(YARP_HAS_MATH_LIB_IS_DEPRECATED _variable)
+  # YARP_MATH_LIBRARY is deprecated since YARP 3.0.0
+  macro(_YARP_HAS_MATH_LIB_IS_DEPRECATED _variable)
     message(DEPRECATION "The ${_variable} variable is deprecated. You can check for YARP_math using find_package(YARP COMPONENTS math)")
   endmacro()
+  variable_watch(YARP_MATH_LIBRARY _YARP_HAS_MATH_LIB_IS_DEPRECATED)
 
-  yarp_deprecated_variable(YARP_DEV_LIBRARY)
-  yarp_deprecated_variable(YARP_SIG_LIBRARY)
-  yarp_deprecated_variable(YARP_INIT_LIBRARY)
-  yarp_deprecated_variable(YARP_HAS_MATH_LIB)
-  yarp_deprecated_variable(YARP_INCLUDE_DIRS)
-  yarp_deprecated_variable(YARP_DEFINES)
-  yarp_deprecated_variable(YARP_HAS_IDL)
-  yarp_deprecated_variable(YARP_VERSION_ABI)
-  variable_watch(YARP_MATH_LIBRARY YARP_HAS_MATH_LIB_IS_DEPRECATED)
+  # YARP_VERSION_ABI is deprecated since YARP 3.0.0
+  set(YARP_VERSION_ABI "3")
+  variable_watch(YARP_VERSION_ABI _yarp_deprecated_variable_warning)
+
+  # YARP_INCLUDE_DIRS is deprecated since YARP 3.0.0
+  variable_watch(YARP_INCLUDE_DIRS _yarp_deprecated_variable_warning)
+
+  # YARP_MODULE_PATH is deprecated since YARP 3.0.0
+  macro(_YARP_MODULE_PATH_IS_DEPRECATED _variable)
+    message(DEPRECATION "The ${_variable} variable is deprecated. CMake find package modules are now in YCM.")
+  endmacro()
+  set(YARP_MODULE_PATH "${YARP_MODULE_DIR}"
+                       "${YARP_MODULE_DIR}/deprecated"
+                       ${_YARP_YCM_MODULE_PATH})
+  variable_watch(YARP_MODULE_PATH _yarp_module_path_is_deprecated)
+
+  # YARP_DEFINES is deprecated since YARP 3.0.0
+  variable_watch(YARP_DEFINES _yarp_deprecated_variable_warning)
+
+  # YARP_HAS_IDL is deprecated since YARP 3.0.0
+  variable_watch(YARP_HAS_IDL _yarp_deprecated_variable_warning)
+
 endif()

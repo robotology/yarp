@@ -21,9 +21,6 @@ yarp_prepare_plugin(mpi
                     DEPENDS "YARP_HAS_MPI")
 
 if(NOT SKIP_mpi)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-  include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 
   yarp_add_plugin(yarp_mpi src/MpiCarrier.cpp
                            src/MpiComm.cpp
@@ -34,16 +31,25 @@ if(NOT SKIP_mpi)
                            include/yarp/os/MpiStream.h
                            include/yarp/os/MpiP2PStream.h
                            include/yarp/os/MpiComm.h)
-  target_link_libraries(yarp_mpi YARP::YARP_OS
-                                 ${MPI_LIBRARIES})
+
+  target_include_directories(yarp_mpi PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  target_link_libraries(yarp_mpi PRIVATE YARP::YARP_OS)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS)
+
+  target_include_directories(yarp_mpi SYSTEM PRIVATE ${MPI_INCLUDE_PATH})
+  target_link_libraries(yarp_mpi PRIVATE ${MPI_LIBRARIES})
+#   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS MPI) (not using targets)
+
   yarp_install(TARGETS yarp_mpi
-               EXPORT YARP
-               COMPONENT runtime
+               EXPORT YARP_${YARP_PLUGIN_MASTER}
+               COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES mpi.ini
-               COMPONENT runtime
+               COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_mpi PROPERTY FOLDER "Plugins/Carrier")
 endif()
@@ -59,8 +65,6 @@ yarp_prepare_plugin(mpibcast
 if(NOT SKIP_mpibcast)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-  include_directories(SYSTEM ${MPI_INCLUDE_PATH})
-
   yarp_add_plugin(yarp_mpibcast src/MpiCarrier.cpp
                                 src/MpiBcastCarrier.cpp
                                 src/MpiComm.cpp
@@ -71,16 +75,26 @@ if(NOT SKIP_mpibcast)
                                 include/yarp/os/MpiStream.h
                                 include/yarp/os/MpiBcastStream.h
                                 include/yarp/os/MpiComm.h)
-  target_link_libraries(yarp_mpibcast YARP::YARP_OS
-                                      ${MPI_LIBRARIES})
+
+  target_include_directories(yarp_mpibcast PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  target_link_libraries(yarp_mpibcast PRIVATE YARP::YARP_OS)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS)
+
+  target_include_directories(yarp_mpibcast SYSTEM PRIVATE ${MPI_INCLUDE_PATH})
+  target_link_libraries(yarp_mpibcast PRIVATE ${MPI_LIBRARIES})
+#   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS MPI) (not using targets)
+
   yarp_install(TARGETS yarp_mpibcast
-               COMPONENT runtime
-               EXPORT YARP
+               COMPONENT ${YARP_PLUGIN_MASTER}
+               EXPORT YARP_${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES mpibcast.ini
-               COMPONENT runtime
+               COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
+
   set_property(TARGET yarp_mpibcast PROPERTY FOLDER "Plugins/Carrier")
+
 endif()

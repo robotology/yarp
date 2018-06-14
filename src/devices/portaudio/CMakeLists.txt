@@ -14,26 +14,34 @@ yarp_prepare_plugin(portaudio
 
 if(NOT SKIP_portaudio)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  include_directories(SYSTEM ${PortAudio_INCLUDE_DIR})
 
   yarp_add_plugin(yarp_portaudio PortAudioBuffer.cpp
                                  PortAudioBuffer.h
                                  PortAudioDeviceDriver.cpp
                                  PortAudioDeviceDriver.h)
-  target_link_libraries(yarp_portaudio YARP::YARP_OS
-                                       YARP::YARP_sig
-                                       YARP::YARP_dev
-                                       ${PortAudio_LIBRARIES})
+  target_link_libraries(yarp_portaudio PRIVATE YARP::YARP_OS
+                                               YARP::YARP_sig
+                                               YARP::YARP_dev)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+                                                      YARP_sig
+                                                      YARP_dev)
+
+  target_include_directories(yarp_portaudio SYSTEM PRIVATE ${PortAudio_INCLUDE_DIR})
+  target_link_libraries(yarp_portaudio PRIVATE ${PortAudio_LIBRARIES})
+#   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS PortAudio) (not using targets)
+
   yarp_install(TARGETS yarp_portaudio
-               EXPORT YARP
-               COMPONENT runtime
+               EXPORT YARP_${YARP_PLUGIN_MASTER}
+               COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES portaudio.ini
-               COMPONENT runtime
+               COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
   yarp_install(FILES portaudio.xml
                DESTINATION ${YARP_MODULES_INSTALL_DIR})
+
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_portaudio PROPERTY FOLDER "Plugins/Device")
 endif()

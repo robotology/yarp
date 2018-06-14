@@ -441,9 +441,7 @@ install(FILES ${YARP_OS_IMPL_POSIX_HDRS}
         COMPONENT development
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl/posix)
 
-include(YarpInstallBasicPackageFiles)
-yarp_install_basic_package_files(YARP_OS
-                                 DEPENDENCIES ${YARP_OS_PUBLIC_DEPS}
-                                 PRIVATE_DEPENDENCIES ${YARP_OS_PRIVATE_DEPS})
+set(YARP_OS_PUBLIC_DEPS ${YARP_OS_PUBLIC_DEPS} PARENT_SCOPE)
+set(YARP_OS_PRIVATE_DEPS ${YARP_OS_PRIVATE_DEPS} PARENT_SCOPE)
 
 set_property(TARGET YARP_OS PROPERTY FOLDER "Libraries")

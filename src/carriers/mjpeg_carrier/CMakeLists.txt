@@ -20,7 +20,6 @@ if(NOT SKIP_mjpeg)
 
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  include_directories(SYSTEM ${JPEG_INCLUDE_DIR})
 
   yarp_add_plugin(yarp_mjpeg
                   MjpegCarrier.h
@@ -29,19 +28,27 @@ if(NOT SKIP_mjpeg)
                   MjpegStream.cpp
                   MjpegDecompression.h
                   MjpegDecompression.cpp)
-  target_link_libraries(yarp_mjpeg YARP::YARP_OS
-                                   YARP::YARP_sig
-                                   YARP::YARP_wire_rep_utils
-                                   ${JPEG_LIBRARY})
+  target_link_libraries(yarp_mjpeg PRIVATE YARP::YARP_OS
+                                           YARP::YARP_sig
+                                           YARP::YARP_wire_rep_utils)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+                                                      YARP_sig
+                                                      YARP_wire_rep_utils)
+
+  target_include_directories(yarp_mjpeg SYSTEM PRIVATE ${JPEG_INCLUDE_DIR})
+  target_link_libraries(yarp_mjpeg PRIVATE ${JPEG_LIBRARY})
+#   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS JPEG) (not using targets)
 
   yarp_install(TARGETS yarp_mjpeg
-               EXPORT YARP
-               COMPONENT runtime
+               EXPORT YARP_${YARP_PLUGIN_MASTER}
+               COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES mjpeg.ini
-               COMPONENT runtime
+               COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_mjpeg PROPERTY FOLDER "Plugins/Carrier")
 endif()

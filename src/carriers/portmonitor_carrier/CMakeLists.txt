@@ -14,14 +14,9 @@ yarp_prepare_plugin(portmonitor
 
 if (NOT SKIP_portmonitor)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dll)
-
 
   if(LUA_FOUND)
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lua)
-    include_directories(SYSTEM ${LUA_INCLUDE_DIR})
     set(portmonitor_LUA_SRCS lua/MonitorLua.cpp lua/MonitorLua.h)
-    add_definitions("-DENABLED_PORTMONITOR_LUA")
   endif()
 
   yarp_add_plugin(yarp_portmonitor
@@ -34,20 +29,28 @@ if (NOT SKIP_portmonitor)
                   dll/MonitorSharedLib.cpp
                   ${portmonitor_LUA_SRCS})
 
-  target_link_libraries(yarp_portmonitor YARP::YARP_OS)
+  target_include_directories(yarp_portmonitor PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dll)
+  target_link_libraries(yarp_portmonitor PRIVATE YARP::YARP_OS)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS)
 
   if(LUA_FOUND)
-    target_link_libraries(yarp_portmonitor ${LUA_LIBRARY})
+    target_include_directories(yarp_portmonitor PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lua)
+    target_include_directories(yarp_portmonitor SYSTEM PRIVATE ${LUA_INCLUDE_DIR})
+    target_compile_definitions(yarp_portmonitor PRIVATE ENABLED_PORTMONITOR_LUA)
+    target_link_libraries(yarp_portmonitor PRIVATE ${LUA_LIBRARY})
+#     list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS Lua) (not using targets)
   endif()
 
   yarp_install(TARGETS yarp_portmonitor
-               EXPORT YARP
-               COMPONENT runtime
+               EXPORT YARP_${YARP_PLUGIN_MASTER}
+               COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES portmonitor.ini
-               COMPONENT runtime
+               COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_portmonitor PROPERTY FOLDER "Plugins/Carrier")
 endif()

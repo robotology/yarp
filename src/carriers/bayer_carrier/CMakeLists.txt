@@ -18,7 +18,6 @@ if(NOT SKIP_bayer)
   if(NOT YARP_HAS_LIBDC1394)
     set(DC1394_SRC ${libdc1394_bayer_ROOT}/libdc1394_bayer.c
                    ${libdc1394_bayer_ROOT}/conversions.h)
-    include_directories(SYSTEM ${libdc1394_bayer_ROOT})
     set(Libdc1394_LIBRARIES)
     if (MSVC AND DC1394_SRC)
       if(MSVC_VERSION VERSION_LESS 1900)
@@ -41,18 +40,25 @@ if(NOT SKIP_bayer)
                              BayerCarrier.cpp
                              ${DC1394_SRC})
 
-  target_link_libraries(yarp_bayer YARP::YARP_OS
-                                   YARP::YARP_sig
-                                   ${Libdc1394_LIBRARIES})
+  target_link_libraries(yarp_bayer PRIVATE YARP::YARP_OS
+                                           YARP::YARP_sig)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+                                                      YARP_sig)
+
+  target_include_directories(yarp_bayer SYSTEM PRIVATE ${libdc1394_bayer_ROOT})
+  target_link_libraries(yarp_bayer PRIVATE ${Libdc1394_LIBRARIES})
+#   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS Libdc1394) (not using targets)
 
   yarp_install(TARGETS yarp_bayer
-               EXPORT YARP
-               COMPONENT runtime
+               EXPORT YARP_${YARP_PLUGIN_MASTER}
+               COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES bayer.ini
-               COMPONENT runtime
+               COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_bayer PROPERTY FOLDER "Plugins/Carrier")
 endif()

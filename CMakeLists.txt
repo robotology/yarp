@@ -7,10 +7,6 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-if(NOT ${CMAKE_VERSION} VERSION_LESS 3.4)
-  cmake_policy(SET CMP0064 NEW)
-endif()
-
 if(NOT ${CMAKE_VERSION} VERSION_LESS 3.8)
   cmake_policy(SET CMP0067 NEW)
 endif()

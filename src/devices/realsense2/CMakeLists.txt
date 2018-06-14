@@ -17,20 +17,27 @@ if(ENABLE_realsense2)
   yarp_add_plugin(yarp_realsense2 realsense2Driver.cpp
                                  realsense2Driver.h)
 
-  target_link_libraries(yarp_realsense2 YARP::YARP_OS
-                                        YARP::YARP_sig
-                                        YARP::YARP_dev
-                                        realsense2::realsense2)
+  target_link_libraries(yarp_realsense2 PRIVATE YARP::YARP_OS
+                                                YARP::YARP_sig
+                                                YARP::YARP_dev)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+                                                      YARP_sig
+                                                      YARP_dev)
+
+  target_link_libraries(yarp_realsense2 PRIVATE realsense2::realsense2)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS realsense2)
 
   yarp_install(TARGETS yarp_realsense2
-               EXPORT YARP
-               COMPONENT runtime
+               EXPORT YARP_${YARP_PLUGIN_MASTER}
+               COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
 
   yarp_install(FILES realsense2.ini
-               COMPONENT runtime
+               COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_realsense2 PROPERTY FOLDER "Plugins/Device")
 endif()
