@@ -21,7 +21,8 @@ if(ENABLE_imuBosch_BNO055)
                                                      YARP::YARP_math)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
                                                       YARP_sig
-                                                      YARP_dev)
+                                                      YARP_dev
+                                                      YARP_math)
 
   yarp_install(TARGETS yarp_imuBosch_BNO055
                EXPORT YARP_${YARP_PLUGIN_MASTER}
