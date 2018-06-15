@@ -64,7 +64,7 @@ public:
      *
      * @param rhs the Route to be moved
      */
-    Route(Route&& rhs);
+    Route(Route&& rhs) noexcept;
 
     /**
      * @brief Destructor.
@@ -85,7 +85,7 @@ public:
      * @param rhs the Route to be moved
      * @return this object
      */
-    Route& operator=(Route&& rhs);
+    Route& operator=(Route&& rhs) noexcept;
 
 /** @} */
 /** @{ */

@@ -81,7 +81,7 @@ public:
      *
      * @param rhs the Contact to be moved
      */
-    Contact(Contact&& rhs);
+    Contact(Contact&& rhs) noexcept;
 
     /**
      * @brief Destructor.
@@ -102,7 +102,7 @@ public:
      * @param rhs the Contact to be moved
      * @return this object
      */
-    Contact& operator=(Contact&& rhs);
+    Contact& operator=(Contact&& rhs) noexcept;
 
 /** @} */
 /** @{ */
