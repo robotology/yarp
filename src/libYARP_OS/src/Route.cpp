@@ -68,7 +68,7 @@ Route::Route(const Route& rhs) :
 {
 }
 
-Route::Route(Route&& rhs) :
+Route::Route(Route&& rhs) noexcept :
         mPriv(rhs.mPriv)
 {
     rhs.mPriv = nullptr;
@@ -87,7 +87,7 @@ Route& Route::operator=(const Route& rhs)
     return *this;
 }
 
-Route& Route::operator=(Route&& rhs)
+Route& Route::operator=(Route&& rhs) noexcept
 {
     if (&rhs != this) {
         std::swap(mPriv, rhs.mPriv);
