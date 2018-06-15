@@ -97,7 +97,7 @@ Contact::Contact(const Contact& rhs) :
 {
 }
 
-Contact::Contact(Contact&& rhs) :
+Contact::Contact(Contact&& rhs) noexcept :
         mPriv(rhs.mPriv)
 {
     rhs.mPriv = nullptr;
@@ -116,7 +116,7 @@ Contact& Contact::operator=(const Contact& rhs)
     return *this;
 }
 
-Contact& Contact::operator=(Contact&& rhs)
+Contact& Contact::operator=(Contact&& rhs) noexcept
 {
     if (&rhs != this) {
         std::swap(mPriv, rhs.mPriv);
