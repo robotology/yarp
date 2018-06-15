@@ -26,7 +26,7 @@ if(ENABLE_multipleanalogsensorsclient)
 
   yarp_install(TARGETS yarp_multipleanalogsensorsclient
                EXPORT YARP_${YARP_PLUGIN_MASTER}
-               COMPONENT Runtime
+               COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES multipleanalogsensorsclient.ini

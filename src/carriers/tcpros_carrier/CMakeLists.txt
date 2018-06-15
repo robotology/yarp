@@ -38,12 +38,12 @@ if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
                                                       YARP_wire_rep_utils)
 
   yarp_install(TARGETS yarp_tcpros
-               EXPORT YARP_yarpcar
-               COMPONENT yarpcar
+               EXPORT YARP_${YARP_PLUGIN_MASTER}
+               COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES ros.ini
-               COMPONENT yarpcar
+               COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
@@ -59,7 +59,7 @@ if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
                                         YARP::YARP_init
                                         YARP::YARP_wire_rep_utils)
   install(TARGETS yarpros
-          EXPORT YARP_yarpcar
+          EXPORT YARP_${YARP_PLUGIN_MASTER}
           COMPONENT utilities
           DESTINATION ${CMAKE_INSTALL_BINDIR})
 
