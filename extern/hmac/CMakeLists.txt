@@ -23,8 +23,13 @@ set(hmac_LIBRARIES YARP_priv_hmac PARENT_SCOPE)
 set(hmac_DEFINITIONS "" PARENT_SCOPE)
 
 install(TARGETS YARP_priv_hmac
-        EXPORT YARP
-        COMPONENT runtime
+        EXPORT YARP_priv_hmac
+        COMPONENT YARP_priv_hmac
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+
+if(NOT CREATE_SHARED_LIBS)
+  include(YarpInstallBasicPackageFiles)
+  yarp_install_basic_package_files(YARP_priv_hmac)
+endif()

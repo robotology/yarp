@@ -18,17 +18,23 @@ if(ENABLE_multipleanalogsensorsserver)
                                                    $<TARGET_OBJECTS:multipleAnalogSensorsSerializations>)
   target_include_directories(yarp_multipleanalogsensorsserver
                              PRIVATE $<TARGET_PROPERTY:multipleAnalogSensorsSerializations,INTERFACE_INCLUDE_DIRECTORIES>)
-  target_link_libraries(yarp_multipleanalogsensorsserver YARP::YARP_OS
-                                                    YARP::YARP_sig
-                                                    YARP::YARP_dev)
+  target_link_libraries(yarp_multipleanalogsensorsserver PRIVATE YARP::YARP_OS
+                                                                 YARP::YARP_sig
+                                                                 YARP::YARP_dev)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+                                                      YARP_sig
+                                                      YARP_dev)
+
   yarp_install(TARGETS yarp_multipleanalogsensorsserver
-               EXPORT YARP
-               COMPONENT Runtime
+               EXPORT YARP_${YARP_PLUGIN_MASTER}
+               COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES multipleanalogsensorsserver.ini
-               COMPONENT runtime
+               COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_multipleanalogsensorsserver PROPERTY FOLDER "Plugins/Device")
 endif()

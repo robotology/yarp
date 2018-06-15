@@ -83,11 +83,18 @@ add_library(YARP::yarpmod ALIAS yarpmod)
 
 
 install(TARGETS yarpmod
-        EXPORT YARP
-        COMPONENT runtime
+        EXPORT YARP_${YARP_PLUGIN_MASTER}
+        COMPONENT ${YARP_PLUGIN_MASTER}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+include(YarpInstallBasicPackageFiles)
+list(REMOVE_DUPLICATES YARP_yarpmod_PRIVATE_DEPS)
+yarp_install_basic_package_files(YARP_yarpmod
+                                 FIRST_TARGET yarpmod
+                                 DEPENDENCIES ${YARP_yarpmod_PUBLIC_DEPS}
+                                 PRIVATE_DEPENDENCIES ${YARP_yarpmod_PRIVATE_DEPS})
 
 set_property(TARGET yarpmod PROPERTY FOLDER "Plugins/Device")
 

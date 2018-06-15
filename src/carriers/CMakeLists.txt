@@ -27,11 +27,18 @@ yarp_end_plugin_library(yarpcar QUIET)
 add_library(YARP::yarpcar ALIAS yarpcar)
 
 install(TARGETS yarpcar
-        EXPORT YARP
-        COMPONENT runtime
+        EXPORT YARP_yarpcar
+        COMPONENT yarpcar
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+
+include(YarpInstallBasicPackageFiles)
+list(REMOVE_DUPLICATES YARP_yarpcar_PRIVATE_DEPS)
+yarp_install_basic_package_files(YARP_yarpcar
+                                 FIRST_TARGET yarpcar
+                                 DEPENDENCIES ${YARP_yarpcar_PUBLIC_DEPS}
+                                 PRIVATE_DEPENDENCIES ${YARP_yarpcar_PRIVATE_DEPS})
 
 set_property(TARGET yarpcar PROPERTY FOLDER "Plugins/Carrier")
 

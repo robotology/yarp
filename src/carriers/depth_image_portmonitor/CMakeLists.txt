@@ -15,16 +15,21 @@ if(NOT SKIP_depthimage)
   yarp_add_plugin(yarp_pm_depthimage
                   DepthImage.cpp
                   DepthImage.h)
-  target_link_libraries(yarp_pm_depthimage YARP::YARP_OS
-                                           YARP::YARP_sig)
+  target_link_libraries(yarp_pm_depthimage PRIVATE YARP::YARP_OS
+                                                   YARP::YARP_sig)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+                                                      YARP_sig)
+
   yarp_install(TARGETS yarp_pm_depthimage
-               EXPORT YARP
-               COMPONENT runtime
+               EXPORT YARP_${YARP_PLUGIN_MASTER}
+               COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES depthimage.ini
-               COMPONENT runtime
+               COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_pm_depthimage PROPERTY FOLDER "Plugins/Port Monitor")
 endif()

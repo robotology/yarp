@@ -291,6 +291,7 @@ function(INSTALL_BASIC_PACKAGE_FILES _Name)
     endif()
 
     set(_first_target ${_IBPF_FIRST_TARGET})
+    set(_targets ${_IBPF_FIRST_TARGET})
   endif()
 
   if(DEFINED _IBPF_EXPORT)

@@ -16,19 +16,27 @@ if(NOT SKIP_map2DServer)
 
   yarp_add_plugin(yarp_map2DServer Map2DServer.cpp
                                    Map2DServer.h)
-  target_link_libraries(yarp_map2DServer YARP::YARP_OS
-                                         YARP::YARP_sig
-                                         YARP::YARP_dev
-                                         YARP::YARP_math
-                                         YARP::YARP_rosmsg)
+  target_link_libraries(yarp_map2DServer PRIVATE YARP::YARP_OS
+                                                 YARP::YARP_sig
+                                                 YARP::YARP_dev
+                                                 YARP::YARP_math
+                                                 YARP::YARP_rosmsg)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+                                                      YARP_sig
+                                                      YARP_dev
+                                                      YARP_math
+                                                      YARP_rosmsg)
+
   yarp_install(TARGETS yarp_map2DServer
-               EXPORT YARP
-               COMPONENT runtime
+               EXPORT YARP_${YARP_PLUGIN_MASTER}
+               COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES map2DServer.ini
-               COMPONENT runtime
+               COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_map2DServer PROPERTY FOLDER "Plugins/Device")
 endif()

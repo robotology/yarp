@@ -69,8 +69,13 @@ set(QGVCore_LIBRARIES "YARP_priv_qgvcore" PARENT_SCOPE)
 set(QGVCore_DEFINITIONS "" PARENT_SCOPE)
 
 install(TARGETS YARP_priv_qgvcore
-        EXPORT YARP
-        COMPONENT runtime
+        EXPORT YARP_priv_qgvcore
+        COMPONENT YARP_priv_qgvcore
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+
+if(NOT CREATE_SHARED_LIBS)
+  include(YarpInstallBasicPackageFiles)
+  yarp_install_basic_package_files(YARP_priv_qgvcore)
+endif()

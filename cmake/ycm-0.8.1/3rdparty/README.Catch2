@@ -1,0 +1,7 @@
+Some of the files in this folder and its subfolder come from the Catch2 git
+repository (ref 93db01c647eda55d84f626bf396c36eabf220150):
+
+  https://github.com/catchorg/Catch2/
+
+Redistribution and use is allowed according to the terms of the Boost Software
+License. See accompanying file COPYING.Catch2 for details.
