@@ -7,10 +7,6 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-if(NOT ${CMAKE_VERSION} VERSION_LESS 3.4)
-  cmake_policy(SET CMP0064 NEW)
-endif()
-
 if(NOT ${CMAKE_VERSION} VERSION_LESS 3.8)
   cmake_policy(SET CMP0067 NEW)
 endif()
@@ -29,7 +25,7 @@ endif()
 set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
 set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
 
-set(YCM_REQUIRED_VERSION 0.8.0) # Used also by YarpFindDependencies
+set(YCM_REQUIRED_VERSION 0.8.1) # Used also by YarpFindDependencies
 find_package(YCM ${YCM_REQUIRED_VERSION} QUIET)
 if(NOT YCM_FOUND)
   list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/find-modules"

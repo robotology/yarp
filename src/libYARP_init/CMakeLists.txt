@@ -31,6 +31,7 @@ if(YARP_LINK_PLUGINS)
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION=add_yarpcar_plugins)
         target_link_libraries(YARP_init PRIVATE YARP::yarpcar)
+#         list(APPEND YARP_init_PRIVATE_DEPS YARP_yarpcar) (This will cause circular inclusion)
     endif()
 
     if(YARP_COMPILE_DEVICE_PLUGINS)
@@ -38,7 +39,7 @@ if(YARP_LINK_PLUGINS)
                      APPEND PROPERTY COMPILE_DEFINITIONS
                      PLUGIN_INIT_FUNCTION2=add_yarpmod_plugins)
         target_link_libraries(YARP_init PRIVATE YARP::yarpmod)
-        target_link_libraries(YARP_init PRIVATE YARP::YARP_dev)
+#         list(APPEND YARP_init_PRIVATE_DEPS YARP_yarpmod) (This will cause circular inclusion)
     endif()
 endif()
 
@@ -52,9 +53,10 @@ install(TARGETS YARP_init
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
-export(TARGETS YARP_init
-       NAMESPACE YARP::
-       APPEND
-       FILE ${CMAKE_BINARY_DIR}/YARP_OS/YARP_OSTargets.cmake)
+include(YarpInstallBasicPackageFiles)
+yarp_install_basic_package_files(YARP_OS
+                                 DEPENDENCIES ${YARP_OS_PUBLIC_DEPS} ${YARP_init_PUBLIC_DEPS}
+                                 PRIVATE_DEPENDENCIES ${YARP_OS_PRIVATE_DEPS} ${YARP_init_PRIVATE_DEPS}
+                                 STATIC_CONFIG_TEMPLATE "${CMAKE_CURRENT_LIST_DIR}/YARP_OSConfigStatic.cmake.in")
 
 set_property(TARGET YARP_init PROPERTY FOLDER "Libraries")

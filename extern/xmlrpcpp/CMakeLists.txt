@@ -52,8 +52,13 @@ set(xmlrpcpp_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/xmlrpcpp/src PARENT_SCOPE)
 set(xmlrpcpp_LIBRARIES "YARP_priv_xmlrpcpp" PARENT_SCOPE)
 
 install(TARGETS YARP_priv_xmlrpcpp
-        EXPORT YARP
-        COMPONENT runtime
+        EXPORT YARP_priv_xmlrpcpp
+        COMPONENT YARP_priv_xmlrpcpp
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+
+if(NOT CREATE_SHARED_LIBS)
+  include(YarpInstallBasicPackageFiles)
+  yarp_install_basic_package_files(YARP_priv_xmlrpcpp)
+endif()

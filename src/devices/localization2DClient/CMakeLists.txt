@@ -16,18 +16,24 @@ if(NOT SKIP_localization2DClient)
 
   yarp_add_plugin(yarp_localization2DClient Localization2DClient.cpp
                                             Localization2DClient.h)
-  target_link_libraries(yarp_localization2DClient YARP::YARP_OS
-                                                  YARP::YARP_sig
-                                                  YARP::YARP_dev
-                                                  YARP::YARP_math)
+  target_link_libraries(yarp_localization2DClient PRIVATE YARP::YARP_OS
+                                                          YARP::YARP_sig
+                                                          YARP::YARP_dev
+                                                          YARP::YARP_math)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+                                                      YARP_sig
+                                                      YARP_dev
+                                                      YARP_math)
   yarp_install(TARGETS yarp_localization2DClient
-               EXPORT YARP
-               COMPONENT runtime
+               EXPORT YARP_${YARP_PLUGIN_MASTER}
+               COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES localization2DClient.ini
-               COMPONENT runtime
+               COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_localization2DClient PROPERTY FOLDER "Plugins/Device")
 endif()

@@ -15,26 +15,29 @@ yarp_prepare_plugin(priority
 
 if(NOT SKIP_priority)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  if(CREATE_LIB_MATH)
-    add_definitions(-DWITH_YARPMATH)
-  endif()
 
   yarp_add_plugin(yarp_priority PriorityCarrier.h
                                 PriorityCarrier.cpp)
-  target_link_libraries(yarp_priority YARP::YARP_OS
-                                      YARP::YARP_sig)
+  target_link_libraries(yarp_priority PRIVATE YARP::YARP_OS
+                                              YARP::YARP_sig)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+                                                      YARP_sig)
   if(CREATE_LIB_MATH)
-     target_link_libraries(yarp_priority YARP::YARP_math)
+    target_compile_definitions(yarp_priority PRIVATE WITH_YARPMATH)
+    target_link_libraries(yarp_priority PRIVATE YARP::YARP_math)
+    list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_math)
   endif()
 
   yarp_install(TARGETS yarp_priority
-               EXPORT YARP
-               COMPONENT runtime
+               EXPORT YARP_${YARP_PLUGIN_MASTER}
+               COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES priority.ini
-               COMPONENT runtime
+               COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_priority PROPERTY FOLDER "Plugins/Carrier")
 endif()

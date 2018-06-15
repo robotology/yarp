@@ -243,19 +243,21 @@ endif()
 ########################################################################
 ## Compatibility with older versions
 
-function(_FindACE_Deprecated _variable _access _value _current_list_file _stack)
-  message(DEPRECATION "${_variable} is deprecated")
-endfunction()
+if (NOT COMMAND _FindACE_Deprecated)
+  function(_FindACE_Deprecated _variable _access _value _current_list_file _stack)
+    message(DEPRECATION "${_variable} is deprecated")
+  endfunction()
 
-set(ACE_LIBRARY_RELEASE ${ACE_ACE_LIBRARY_RELEASE})
-set(ACE_LIBRARY_DEBUG ${ACE_ACE_LIBRARY_DEBUG})
-set(ACE_LIBRARY ${ACE_ACE_LIBRARY})
-set(ACE_HAS_STRING_HASH 1)
+  set(ACE_LIBRARY_RELEASE ${ACE_ACE_LIBRARY_RELEASE})
+  set(ACE_LIBRARY_DEBUG ${ACE_ACE_LIBRARY_DEBUG})
+  set(ACE_LIBRARY ${ACE_ACE_LIBRARY})
+  set(ACE_HAS_STRING_HASH 1)
 
-variable_watch(ACE_LIBRARY_RELEASE _FindACE_Deprecated)
-variable_watch(ACE_LIBRARY_DEBUG _FindACE_Deprecated)
-variable_watch(ACE_LIBRARY _FindACE_Deprecated)
-variable_watch(ACE_HAS_STRING_HASH _FindACE_Deprecated)
+  variable_watch(ACE_LIBRARY_RELEASE _FindACE_Deprecated)
+  variable_watch(ACE_LIBRARY_DEBUG _FindACE_Deprecated)
+  variable_watch(ACE_LIBRARY _FindACE_Deprecated)
+  variable_watch(ACE_HAS_STRING_HASH _FindACE_Deprecated)
+endif()
 
 ########################################################################
 # Set package properties if FeatureSummary was included

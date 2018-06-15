@@ -19,28 +19,37 @@ yarp_prepare_plugin(ffmpeg_writer
 
 if(NOT SKIP_ffmpeg_grabber OR NOT SKIP_ffmpeg_writer)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  include_directories(SYSTEM ${FFMPEG_INCLUDE_DIR})
   yarp_add_plugin(yarp_ffmpeg FfmpegGrabber.cpp
                               FfmpegWriter.cpp
                               FfmpegGrabber.h
                               FfmpegWriter.h
                               ffmpeg_api.h
                               ffmpeg_api.cpp)
-  target_link_libraries(yarp_ffmpeg YARP::YARP_OS
-                                    YARP::YARP_sig
-                                    YARP::YARP_dev
-                                    ${FFMPEG_LIBRARIES})
+  target_link_libraries(yarp_ffmpeg PRIVATE YARP::YARP_OS
+                                            YARP::YARP_sig
+                                            YARP::YARP_dev)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+                                                      YARP_sig
+                                                      YARP_dev)
+
+  target_include_directories(yarp_ffmpeg SYSTEM PRIVATE ${FFMPEG_INCLUDE_DIR})
+  target_link_libraries(yarp_ffmpeg PRIVATE ${FFMPEG_LIBRARIES})
+#   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS FFMPEG) (not using targets)
+
   if(MINGW)
-    target_link_libraries(yarp_ffmpeg ws2_32)
+    target_link_libraries(yarp_ffmpeg PRIVATE ws2_32)
   endif()
+
   yarp_install(TARGETS yarp_ffmpeg
-               EXPORT YARP
-               COMPONENT runtime
+               EXPORT YARP_${YARP_PLUGIN_MASTER}
+               COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
   yarp_install(FILES ffmpeg.ini
-               COMPONENT runtime
+               COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_ffmpeg PROPERTY FOLDER "Plugins/Device")
 endif()

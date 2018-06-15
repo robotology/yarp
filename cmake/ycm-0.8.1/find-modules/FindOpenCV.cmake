@@ -216,11 +216,8 @@ if(NOT OpenCV_FOUND)
 #   we can leave the default to TRUE. The libhighgui problem needs to be solved 
 #   anyway...
 
-    if(WIN32)
-        set(LINK_LIB_HIGHGUI TRUE CACHE BOOL "Do you want to link against libhighgui?")
-    else(WIN32)
-        set(LINK_LIB_HIGHGUI TRUE CACHE BOOL "Do you want to link against libhighgui?")
-    endif(WIN32)
+    set(LINK_LIB_HIGHGUI TRUE CACHE BOOL "Do you want to link against libhighgui?")
+    mark_as_advanced(LINK_LIB_HIGHGUI)
 
     if(LINK_LIB_HIGHGUI AND WIN32)
         set(LINK_LIB_CVCAM)

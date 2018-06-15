@@ -55,12 +55,6 @@ export(EXPORT YARP
        NAMESPACE YARP::
        FILE ${CMAKE_BINARY_DIR}/YARPTargets.cmake)
 
-if(NOT BUILD_SHARED_LIBS)
-  configure_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPTargetsStatic.cmake.in"
-                 "${CMAKE_BINARY_DIR}/YARPTargetsStatic.cmake"
-                 @ONLY)
-endif()
-
 if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.7)
   message(AUTHOR_WARNING "Searching for packages in \"lib/cmake\" is supported on Windows since CMake 3.7. You can remove this check")
 endif()
@@ -127,13 +121,3 @@ install(EXPORT YARP
         NAMESPACE YARP::
         DESTINATION ${YARP_CMAKE_DESTINATION}
         FILE YARPTargets.cmake)
-
-if(NOT BUILD_SHARED_LIBS)
-  configure_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPTargetsStatic.cmake.in"
-                 "${CMAKE_BINARY_DIR}/YARPTargetsStaticForInstall.cmake"
-                 @ONLY)
-  install(FILES ${CMAKE_BINARY_DIR}/YARPTargetsStaticForInstall.cmake
-          RENAME YARPTargetsStatic.cmake
-          COMPONENT configuration
-          DESTINATION ${YARP_CMAKE_DESTINATION})
-endif()

@@ -24,8 +24,13 @@ set(QCustomPlot_LIBRARIES "YARP_priv_qcustomplot" PARENT_SCOPE)
 set(QCustomPlot_DEFINITIONS "" PARENT_SCOPE)
 
 install(TARGETS YARP_priv_qcustomplot
-        EXPORT YARP
-        COMPONENT runtime
+        EXPORT YARP_priv_qcustomplot
+        COMPONENT YARP_priv_qcustomplot
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+
+if(NOT CREATE_SHARED_LIBS)
+  include(YarpInstallBasicPackageFiles)
+  yarp_install_basic_package_files(YARP_priv_qcustomplot)
+endif()

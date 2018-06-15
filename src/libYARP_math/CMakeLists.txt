@@ -72,6 +72,7 @@ if (YARP_HAS_MATH_LIB)
     list(APPEND YARP_math_PRIVATE_DEPS "Eigen3 3.3.1")
   else()
     target_include_directories(YARP_math SYSTEM PRIVATE ${EIGEN3_INCLUDE_DIR})
+#     list(APPEND YARP_math_PRIVATE_DEPS Eigen3) (not using targets)
   endif()
 
   # import math symbols from standard cmath

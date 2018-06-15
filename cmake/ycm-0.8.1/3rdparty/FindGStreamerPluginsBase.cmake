@@ -30,6 +30,10 @@ endif()
 # Find the plugin libraries
 include(MacroFindGStreamerLibrary)
 
+if (NOT DEFINED GStreamerPluginsBase_FIND_QUIETLY)
+  set(GStreamerPluginsBase_FIND_QUIETLY 0)
+endif()
+
 macro(_find_gst_plugins_base_component _name _header)
     find_gstreamer_library(${_name} ${_header} ${GSTREAMER_ABI_VERSION} ${GStreamerPluginsBase_FIND_QUIETLY})
     set(_GSTREAMER_PLUGINS_BASE_EXTRA_VARIABLES ${_GSTREAMER_PLUGINS_BASE_EXTRA_VARIABLES}
