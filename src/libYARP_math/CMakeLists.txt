@@ -5,10 +5,13 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-set(YARP_HAS_MATH_LIB FALSE PARENT_SCOPE)
+set(YARP_HAS_MATH_LIB FALSE)
 if (CREATE_LIB_MATH)
-  set(YARP_HAS_MATH_LIB TRUE PARENT_SCOPE)
+  set(YARP_HAS_MATH_LIB TRUE)
 endif()
+
+# Export this variable to the caller
+set(YARP_HAS_MATH_LIB ${YARP_HAS_MATH_LIB} PARENT_SCOPE)
 
 if (YARP_HAS_MATH_LIB)
 
