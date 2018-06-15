@@ -51,7 +51,7 @@ public:
      *
      * @param rhs the NestedContact to be moved
      */
-    NestedContact(NestedContact&& rhs);
+    NestedContact(NestedContact&& rhs) noexcept;
 
     /**
      * @brief Destructor.
@@ -72,7 +72,7 @@ public:
      * @param rhs the NestedContact to be moved
      * @return this object
      */
-    NestedContact& operator=(NestedContact&& rhs);
+    NestedContact& operator=(NestedContact&& rhs) noexcept;
 
     /** @} */
     /** @{ */
