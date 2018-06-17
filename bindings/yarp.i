@@ -447,6 +447,7 @@ MAKE_COMMS(Bottle)
 #endif
 %include <yarp/dev/IPidControl.h>
 %include <yarp/dev/IPositionDirect.h>
+%include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
@@ -862,6 +863,60 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return result;
     }
 
+    yarp::dev::IThreeAxisGyroscopes *viewIThreeAxisGyroscopes() {
+        yarp::dev::IThreeAxisGyroscopes *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::IThreeAxisLinearAccelerometers *viewIThreeAxisLinearAccelerometers() {
+        yarp::dev::IThreeAxisLinearAccelerometers *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::IThreeAxisMagnetometers *viewIThreeAxisMagnetometers() {
+        yarp::dev::IThreeAxisMagnetometers *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::IOrientationSensors *viewIOrientationSensors() {
+        yarp::dev::IOrientationSensors *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::ITemperatureSensors *viewITemperatureSensors() {
+        yarp::dev::ITemperatureSensors *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::ISixAxisForceTorqueSensors *viewISixAxisForceTorqueSensors() {
+        yarp::dev::ISixAxisForceTorqueSensors *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::IContactLoadCellArrays *viewIContactLoadCellArrays() {
+        yarp::dev::IContactLoadCellArrays *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::IEncoderArrays *viewIEncoderArrays() {
+        yarp::dev::IEncoderArrays *result;
+        self->view(result);
+        return result;
+    }
+
+    yarp::dev::ISkinPatches *viewISkinPatches() {
+        yarp::dev::ISkinPatches *result;
+        self->view(result);
+        return result;
+    }
+
     // you'll need to add an entry for every interface you wish
     // to use
 }
@@ -1145,6 +1200,29 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 }
 
+%extend yarp::dev::IThreeAxisGyroscopes {
+    std::string getThreeAxisGyroscopeName(int sens_index) const {
+        std::string name;
+        bool ok = self->getThreeAxisGyroscopeName(sens_index,name);
+        if (!ok) return "unknown";
+        return name;
+    }
+
+    std::string getThreeAxisGyroscopeFrameName(int sens_index) const {
+        std::string frameName;
+        bool ok = self->getThreeAxisGyroscopeFrameName(sens_index,frameName);
+        if (!ok) return "unknown";
+        return frameName;
+    }
+
+    double getThreeAxisGyroscopeMeasure(int sens_index, yarp::sig::Vector& out) const {
+        double timestamp;
+        bool ok = self->getThreeAxisGyroscopeMeasure(sens_index, out, timestamp);
+        if (!ok) return -1;
+        return timestamp;
+    }
+}
+
 %extend yarp::sig::Vector {
 
     double get(int j)
@@ -1425,59 +1503,58 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 // Deal with IFrameGrabberControls pointer arguments that don't translate
-      %extend yarp::dev::IFrameGrabberControls {
-        CameraDescriptor getCameraDescription() {
-            CameraDescriptor result;
-            self->getCameraDescription(&result);
-            return result;
-        }
+%extend yarp::dev::IFrameGrabberControls {
+    CameraDescriptor getCameraDescription() {
+        CameraDescriptor result;
+        self->getCameraDescription(&result);
+        return result;
+    }
 
-        bool hasFeature(int feature) {
-            bool result;
-            self->hasFeature(feature, &result);
-            return result;
-        }
+    bool hasFeature(int feature) {
+        bool result;
+        self->hasFeature(feature, &result);
+        return result;
+    }
 
-        double getFeature(int feature) {
-            double result;
-            self->getFeature(feature, &result);
-            return result;
-        }
+    double getFeature(int feature) {
+        double result;
+        self->getFeature(feature, &result);
+        return result;
+    }
 
-        bool hasOnOff(int feature) {
-            bool result;
-            self->hasOnOff(feature, &result);
-            return result;
-        }
+    bool hasOnOff(int feature) {
+        bool result;
+        self->hasOnOff(feature, &result);
+        return result;
+    }
 
-        bool getActive(int feature) {
-            bool result;
-            self->getActive(feature, &result);
-            return result;
-        }
+    bool getActive(int feature) {
+        bool result;
+        self->getActive(feature, &result);
+        return result;
+    }
 
-        bool hasAuto(int feature) {
-            bool result;
-            self->hasAuto(feature, &result);
-            return result;
-        }
+    bool hasAuto(int feature) {
+        bool result;
+        self->hasAuto(feature, &result);
+        return result;
+    }
 
-        bool hasManual(int feature) {
-            bool result;
-            self->hasManual(feature, &result);
-            return result;
-        }
+    bool hasManual(int feature) {
+        bool result;
+        self->hasManual(feature, &result);
+        return result;
+    }
 
-        bool hasOnePush(int feature) {
-            bool result;
-            self->hasOnePush(feature, &result);
-            return result;
-        }
+    bool hasOnePush(int feature) {
+        bool result;
+        self->hasOnePush(feature, &result);
+        return result;
+    }
 
-        FeatureMode getMode(int feature) {
-            FeatureMode result;
-            self->getMode(feature, &result);
-            return result;
-        }
-      }
-
+    FeatureMode getMode(int feature) {
+        FeatureMode result;
+        self->getMode(feature, &result);
+        return result;
+    }
+}
