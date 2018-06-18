@@ -90,7 +90,9 @@ install(TARGETS yarpmod
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 include(YarpInstallBasicPackageFiles)
-list(REMOVE_DUPLICATES YARP_yarpmod_PRIVATE_DEPS)
+if(YARP_yarpmod_PRIVATE_DEPS)
+  list(REMOVE_DUPLICATES YARP_yarpmod_PRIVATE_DEPS)
+endif()
 yarp_install_basic_package_files(YARP_yarpmod
                                  FIRST_TARGET yarpmod
                                  DEPENDENCIES ${YARP_yarpmod_PUBLIC_DEPS}
