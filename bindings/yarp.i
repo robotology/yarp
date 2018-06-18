@@ -432,6 +432,7 @@ MAKE_COMMS(Bottle)
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 %include <yarp/dev/IControlMode2.h>
 #endif
+%include <yarp/dev/IInteractionMode.h>
 %include <yarp/dev/IEncoders.h>
 %include <yarp/dev/IMotorEncoders.h>
 %include <yarp/dev/ITorqueControl.h>
@@ -807,6 +808,12 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 #endif
 
+    yarp::dev::IInteractionMode *viewIInteractionMode() {
+        yarp::dev::IInteractionMode *result;
+        self->view(result);
+        return result;
+    }
+
     yarp::dev::IPWMControl *viewIPWMControl() {
             yarp::dev::IPWMControl *result;
         self->view(result);
@@ -862,6 +869,15 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 
 //////////////////////////////////////////////////////////////////////////
 // Deal with ControlBoardInterfaces pointer arguments that don't translate
+
+%extend yarp::dev::IImpedanceControl {
+    int getAxes() {
+        int buffer;
+        bool ok = self->getAxes(&buffer);
+        if (!ok) return 0;
+        return buffer;
+    }
+}
 
 %extend yarp::dev::IPositionControl {
     int getAxes() {
@@ -1096,6 +1112,14 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 
     bool setControlModes(int n_joint, std::vector<int>& joints, std::vector<int>& data) {
         return self->setControlModes(n_joint, &joints[0], &data[0]);
+    }
+}
+
+%extend yarp::dev::IInteractionMode {
+    yarp::dev::InteractionModeEnum getInteractionMode(int axis) {
+       yarp::dev::InteractionModeEnum mode = VOCAB_IM_UNKNOWN;
+       self->getInteractionMode(axis, &mode);
+       return mode;
     }
 }
 
