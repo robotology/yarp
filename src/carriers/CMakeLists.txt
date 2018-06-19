@@ -34,7 +34,9 @@ install(TARGETS yarpcar
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
 include(YarpInstallBasicPackageFiles)
-list(REMOVE_DUPLICATES YARP_yarpcar_PRIVATE_DEPS)
+if(YARP_yarpcar_PRIVATE_DEPS)
+  list(REMOVE_DUPLICATES YARP_yarpcar_PRIVATE_DEPS)
+endif()
 yarp_install_basic_package_files(YARP_yarpcar
                                  FIRST_TARGET yarpcar
                                  DEPENDENCIES ${YARP_yarpcar_PUBLIC_DEPS}
