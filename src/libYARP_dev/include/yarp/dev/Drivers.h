@@ -178,11 +178,7 @@ public:
      * Get the global factory for devices.
      * @return the global factory for devices.
      */
-    static Drivers& factory() {
-        static Drivers instance;
-        return instance;
-    }
-
+    static Drivers& factory();
     /**
      * Create and configure a device, by name.  If you need
      * to pass configuration options to the device (usually the

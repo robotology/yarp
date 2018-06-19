@@ -233,6 +233,12 @@ public:
 
 #define HELPER(x) (*(((DriversHelper*)(x))))
 
+Drivers& Drivers::factory()
+{
+   static Drivers instance;
+   return instance;
+}
+
 Drivers::Drivers() {
     implementation = new DriversHelper;
     yAssert(implementation!=nullptr);
