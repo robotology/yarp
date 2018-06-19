@@ -4,7 +4,7 @@
 // This software may be modified and distributed under the terms of the
 // BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-%define RESET_CONSTANTS
+%define RESET_CONSTANTS_IN_EXTENDED_ANALOG_SENSOR_INTERFACE
 #undef ThreeAxisGyroscopes_EXTENDED_INTERFACE
 #undef ThreeAxisLinearAccelerometers_EXTENDED_INTERFACE
 #undef ThreeAxisMagnetometers_EXTENDED_INTERFACE
@@ -18,7 +18,7 @@
 
 %define EXTENDED_ANALOG_SENSOR_INTERFACE(sensor)
 
-RESET_CONSTANTS
+RESET_CONSTANTS_IN_EXTENDED_ANALOG_SENSOR_INTERFACE
 
 #define sensor ## _EXTENDED_INTERFACE 1
 

@@ -460,7 +460,7 @@ MAKE_COMMS(Bottle)
 
   #ifdef SWIGMATLAB
     // Extend IVector for handling conversion of vectors from and to Matlab
-    %include "matlab/IVector_fromTo_matlab.i"
+    %include "matlab/vectors_fromTo_matlab.i"
   #endif
 
   #if defined(SWIGCSHARP)
