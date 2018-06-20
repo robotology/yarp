@@ -185,6 +185,15 @@ include(${YARP_MODULE_DIR}/YarpInstallationHelpers.cmake)
 
 
 ################################################################################
+# If FeatureSummary was included, add DESCRIPTION and URL
+
+if(COMMAND set_package_properties)
+    set_package_properties(YARP PROPERTIES DESCRIPTION "A library and toolkit for communication and device interfaces"
+                                           URL "https://www.yarp.it/")
+endif()
+
+
+################################################################################
 # Deprecated variables
 
 if(NOT YARP_NO_DEPRECATED AND NOT COMMAND _YARP_DEPRECATED_VARIABLE_WARNING)
