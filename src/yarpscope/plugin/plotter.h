@@ -48,7 +48,7 @@ public:
 
     void clearData();
 
-    Connection *getConnetion();
+    Connection *getConnection();
 
     double lastX;
     double lastY;
@@ -99,7 +99,8 @@ public:
     Connection(QString remotePortName, QString localPortName, QObject *parent = 0);
 
     ~Connection();
-    void connect(const yarp::os::ContactStyle &style) ;
+    void connect(const yarp::os::ContactStyle &style);
+    void freeResources();
 
 public:
     QString remotePortName;

@@ -23,11 +23,11 @@ QtYARPScope::QtYARPScope(QQuickItem *parent):
     i(0),
     yarp(yarp::os::YARP_CLOCK_SYSTEM),
     loader(nullptr),
+    plotManager(PlotManager::instance()),
     topLevel(nullptr),
     bPressed(false),
     currentSelectedPlotter(nullptr)
 {
-    plotManager = PlotManager::instance();
     setFlag(ItemHasContents, true);
 
     setAcceptedMouseButtons(Qt::AllButtons);
@@ -35,16 +35,29 @@ QtYARPScope::QtYARPScope(QQuickItem *parent):
 
     connect(this, SIGNAL(widthChanged()), this, SLOT(updateCustomPlotSize()) );
     connect(this, SIGNAL(heightChanged()), this, SLOT(updateCustomPlotSize()));
-    connect(plotManager,SIGNAL(requestRepaint()),this,SLOT(onRepaint()),Qt::QueuedConnection);
 
 }
 
 QtYARPScope::~QtYARPScope()
 {
     playPressed(false);
-    if(plotManager){
-        delete plotManager;
+    if (plotManager)
+    {
+        for (auto pltr : *(plotManager->getPlotters()))
+        {
+            if (pltr)
+            {
+                for (auto graph : static_cast<Plotter*> (pltr)->graphList)
+                {
+                    if (graph)
+                    {
+                        static_cast<Graph*> (graph)->getConnection()->freeResources();
+                    }
+                }
+            }
+        }
     }
+
     if(loader){
         delete loader;
     }
@@ -54,6 +67,15 @@ QtYARPScope::~QtYARPScope()
 */
 bool QtYARPScope::parseParameters(QStringList params)
 {
+    //YARP network initialization
+    if (!yarp.checkNetwork()) {
+        qCritical("Cannot connect to yarp network");
+        return false;
+    }
+    else
+    {
+        connect(plotManager,SIGNAL(requestRepaint()),this,SLOT(onRepaint()),Qt::QueuedConnection);
+    }
     // Setup resource finder
     yarp::os::ResourceFinder rf;
     rf.setVerbose();
@@ -89,19 +111,10 @@ bool QtYARPScope::parseParameters(QStringList params)
         return false;
     }
 
-    //YARP network initialization
-    if (!yarp.checkNetwork()) {
-        qCritical("Cannot connect to yarp network");
-        for(int i=0;i<params.count();i++) {
-            free(v[i]);
-        }
-        free(v);
-        return false;
+    for(int i=0;i<params.count();i++) {
+        free(v[i]);
     }
-        for(int i=0;i<params.count();i++) {
-            free(v[i]);
-        }
-        free(v);
+    free(v);
 
 //********************** Deprecated options
     // local

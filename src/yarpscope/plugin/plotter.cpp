@@ -117,7 +117,7 @@ Graph * Plotter::addGraph(QString remotePort,QString localPort,int index, QStrin
 
     for(int i=0;i<graphList.count();i++) {
         Graph *g = (Graph *)graphList.at(i);
-        Connection *con = g->getConnetion();
+        Connection *con = g->getConnection();
         if(!con){
             continue;
         }
@@ -285,7 +285,7 @@ Graph::~Graph()
     }
     clearData();
 }
-Connection *Graph::getConnetion()
+Connection *Graph::getConnection()
 {
     return curr_connection;
 }
@@ -405,11 +405,7 @@ Connection::Connection(QString remotePortName,  QString localPortName, QObject *
 
 Connection::~Connection()
 {
-
-
-    yarp::os::Network::disconnect(remotePortName.toLatin1().data(), localPort->getName().c_str(), style);
-    delete localPort;
-
+    freeResources();
 }
 
 /*! \brief Connect local port to remote port */
@@ -440,4 +436,12 @@ void Connection::connect(const yarp::os::ContactStyle &style) {
     }
 }
 
-
+void Connection::freeResources()
+{
+    if(localPort)
+    {
+        yarp::os::Network::disconnect(remotePortName.toLatin1().data(), localPort->getName().c_str(), style);
+        delete localPort;
+        localPort = nullptr;
+    }
+}
