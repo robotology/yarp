@@ -28,8 +28,6 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-Drivers Drivers::instance;
-
 class DriversHelper : public YarpPluginSelector {
 public:
     std::vector<DriverCreator *> delegates;
@@ -234,6 +232,12 @@ public:
 };
 
 #define HELPER(x) (*(((DriversHelper*)(x))))
+
+Drivers& Drivers::factory()
+{
+   static Drivers instance;
+   return instance;
+}
 
 Drivers::Drivers() {
     implementation = new DriversHelper;

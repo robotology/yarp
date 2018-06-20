@@ -178,10 +178,7 @@ public:
      * Get the global factory for devices.
      * @return the global factory for devices.
      */
-    static Drivers& factory() {
-        return instance;
-    }
-
+    static Drivers& factory();
     /**
      * Create and configure a device, by name.  If you need
      * to pass configuration options to the device (usually the
@@ -263,8 +260,6 @@ private:
     void *implementation;
 
     Drivers();
-
-    static Drivers instance;
 };
 
 #endif // YARP_DRIVERS_H
