@@ -58,9 +58,9 @@ public:
     virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys) = 0;
 };
 
-#define VOCAB_REMOTE_VARIABILE_INTERFACE   VOCAB4('i','v','a','r')
-#define VOCAB_VARIABLE                     VOCAB4('m','v','a','r')
-#define VOCAB_LIST_VARIABLES               VOCAB4('l','v','a','r')
+constexpr yarp::conf::vocab32_t VOCAB_REMOTE_VARIABILE_INTERFACE   = yarp::os::createVocab('i','v','a','r');
+constexpr yarp::conf::vocab32_t VOCAB_VARIABLE                     = yarp::os::createVocab('m','v','a','r');
+constexpr yarp::conf::vocab32_t VOCAB_LIST_VARIABLES               = yarp::os::createVocab('l','v','a','r');
 
 
 #endif // YARP_DEV_IREMOTEVARIABLES_H

@@ -20,16 +20,16 @@ namespace yarp {
 
         enum NavigationStatusEnum
         {
-            navigation_status_idle                  = VOCAB4('i', 'd', 'l', 'e'),
-            navigation_status_preparing_before_move = VOCAB4('p', 'r', 'e', 'p'),
-            navigation_status_moving                = VOCAB4('m', 'o', 'v', 'g'),
-            navigation_status_waiting_obstacle      = VOCAB4('w', 'a', 'i', 't'),
-            navigation_status_goal_reached          = VOCAB4('r', 'e', 'c', 'h'),
-            navigation_status_aborted               = VOCAB4('a', 'b', 'r', 't'),
-            navigation_status_failing               = VOCAB4('f', 'a', 'i', 'l'),
-            navigation_status_paused                = VOCAB4('p', 'a', 'u', 's'),
-            navigation_status_thinking              = VOCAB4('t', 'h', 'n', 'k'),
-            navigation_status_error                 = VOCAB3('e', 'r', 'r'),
+            navigation_status_idle                  = yarp::os::createVocab('i', 'd', 'l', 'e'),
+            navigation_status_preparing_before_move = yarp::os::createVocab('p', 'r', 'e', 'p'),
+            navigation_status_moving                = yarp::os::createVocab('m', 'o', 'v', 'g'),
+            navigation_status_waiting_obstacle      = yarp::os::createVocab('w', 'a', 'i', 't'),
+            navigation_status_goal_reached          = yarp::os::createVocab('r', 'e', 'c', 'h'),
+            navigation_status_aborted               = yarp::os::createVocab('a', 'b', 'r', 't'),
+            navigation_status_failing               = yarp::os::createVocab('f', 'a', 'i', 'l'),
+            navigation_status_paused                = yarp::os::createVocab('p', 'a', 'u', 's'),
+            navigation_status_thinking              = yarp::os::createVocab('t', 'h', 'n', 'k'),
+            navigation_status_error                 = yarp::os::createVocab('e', 'r', 'r'),
         };
       }
 }
@@ -168,29 +168,27 @@ public:
     virtual bool resumeNavigation() = 0;
 };
 
-#define VOCAB_INAVIGATION           VOCAB4('i','n','a','v')
+constexpr yarp::conf::vocab32_t VOCAB_INAVIGATION           = yarp::os::createVocab('i','n','a','v');
 
-#define VOCAB_NAV_GOTOABS           VOCAB4('s','a','b','s')
-#define VOCAB_NAV_GOTOREL           VOCAB4('s','r','e','l')
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GOTOABS           = yarp::os::createVocab('s','a','b','s');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GOTOREL           = yarp::os::createVocab('s','r','e','l');
 
-#define VOCAB_NAV_GET_LOCATION      VOCAB4('g','l','o','c')
-#define VOCAB_NAV_GET_LOCATION_LIST VOCAB4('l','i','s','t')
-#define VOCAB_NAV_GET_ABS_TARGET    VOCAB4('g','a','b','s')
-#define VOCAB_NAV_GET_REL_TARGET    VOCAB4('g','r','e','l')
-#define VOCAB_NAV_GET_NAME_TARGET   VOCAB4('g','n','a','m')
-#define VOCAB_NAV_GET_CURRENT_POS   VOCAB4('g','p','o','s')
-#define VOCAB_NAV_SET_INITIAL_POS   VOCAB4('i','p','o','s')
-#define VOCAB_NAV_GET_STATUS        VOCAB4('g','s','t','s')
-#define VOCAB_NAV_CLEAR             VOCAB4('c','l','r','l')
-#define VOCAB_NAV_DELETE            VOCAB4('d','e','l','l')
-#define VOCAB_NAV_STORE_ABS         VOCAB4('s','t','o','a')
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCATION      = yarp::os::createVocab('g','l','o','c');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCATION_LIST = yarp::os::createVocab('l','i','s','t');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_ABS_TARGET    = yarp::os::createVocab('g','a','b','s');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_REL_TARGET    = yarp::os::createVocab('g','r','e','l');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_NAME_TARGET   = yarp::os::createVocab('g','n','a','m');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_CURRENT_POS   = yarp::os::createVocab('g','p','o','s');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_SET_INITIAL_POS   = yarp::os::createVocab('i','p','o','s');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_STATUS        = yarp::os::createVocab('g','s','t','s');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_CLEAR             = yarp::os::createVocab('c','l','r','l');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_DELETE            = yarp::os::createVocab('d','e','l','l');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_STORE_ABS         = yarp::os::createVocab('s','t','o','a');
 
-#define VOCAB_NAV_STOP              VOCAB4('s','t','o','p')
-#define VOCAB_NAV_SUSPEND           VOCAB4('s','u','s','p')
-#define VOCAB_NAV_RESUME            VOCAB4('r','e','s','m')
+constexpr yarp::conf::vocab32_t VOCAB_NAV_STOP              = yarp::os::createVocab('s','t','o','p');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_SUSPEND           = yarp::os::createVocab('s','u','s','p');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_RESUME            = yarp::os::createVocab('r','e','s','m');
 
-#define VOCAB_OK                    VOCAB2('o','k')
-#define VOCAB_ERR                   VOCAB3('e','r','r')
 
 
 #endif // YARP_DEV_INAVIGATION2D_H

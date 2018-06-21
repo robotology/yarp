@@ -63,9 +63,9 @@ YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IControlCalibration instead") IContr
 
         enum JointTypeEnum
         {
-            VOCAB_JOINTTYPE_REVOLUTE  = VOCAB4('a', 't', 'r', 'v'),
-            VOCAB_JOINTTYPE_PRISMATIC = VOCAB4('a', 't', 'p', 'r'),
-            VOCAB_JOINTTYPE_UNKNOWN   = VOCAB4('u', 'n', 'k', 'n')
+            VOCAB_JOINTTYPE_REVOLUTE  = yarp::os::createVocab('a', 't', 'r', 'v'),
+            VOCAB_JOINTTYPE_PRISMATIC = yarp::os::createVocab('a', 't', 'p', 'r'),
+            VOCAB_JOINTTYPE_UNKNOWN   = yarp::os::createVocab('u', 'n', 'k', 'n')
         };
     }
 }
@@ -705,105 +705,74 @@ public:
 
 /* Vocabs representing the above interfaces */
 
-#define VOCAB_CALIBRATE_JOINT VOCAB4('c','a','l','j')
-#define VOCAB_CALIBRATE_JOINT_PARAMS VOCAB4('c','l','j','p')
-#define VOCAB_CALIBRATE VOCAB3('c','a','l')
-#define VOCAB_ABORTCALIB VOCAB4('a','b','c','a')
-#define VOCAB_ABORTPARK VOCAB4('a','b','p','a')
-#define VOCAB_CALIBRATE_DONE VOCAB4('c','a','l','d')
-#define VOCAB_PARK VOCAB4('p','a','r','k')
-#define VOCAB_SET VOCAB3('s','e','t')
-#define VOCAB_GET VOCAB3('g','e','t')
-#define VOCAB_IS VOCAB2('i','s')
-#define VOCAB_FAILED VOCAB4('f','a','i','l')
-#define VOCAB_OK VOCAB2('o','k')
+constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE_JOINT        = yarp::os::createVocab('c','a','l','j');
+constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE_JOINT_PARAMS = yarp::os::createVocab('c','l','j','p');
+constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE              = yarp::os::createVocab('c','a','l');
+constexpr yarp::conf::vocab32_t VOCAB_ABORTCALIB             = yarp::os::createVocab('a','b','c','a');
+constexpr yarp::conf::vocab32_t VOCAB_ABORTPARK              = yarp::os::createVocab('a','b','p','a');
+constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE_DONE         = yarp::os::createVocab('c','a','l','d');
+constexpr yarp::conf::vocab32_t VOCAB_PARK                   = yarp::os::createVocab('p','a','r','k');
 
-#define VOCAB_OFFSET VOCAB3('o', 'f', 'f')
-
-// interface IPidControl sets.
-#define VOCAB_PID VOCAB3('p','i','d')
-#define VOCAB_PIDS VOCAB4('p','i','d','s')
-#define VOCAB_REF VOCAB3('r','e','f')
-#define VOCAB_REFS VOCAB4('r','e','f','s')
-#define VOCAB_REFG VOCAB4('r','e','f','g')
-#define VOCAB_LIM VOCAB3('l','i','m')
-#define VOCAB_LIMS VOCAB4('l','i','m','s')
-#define VOCAB_RESET VOCAB3('r','e','s')
-#define VOCAB_DISABLE VOCAB3('d','i','s')
-#define VOCAB_ENABLE VOCAB3('e','n','a')
-
-// interface IPidControl gets.
-#define VOCAB_ERR VOCAB3('e','r','r')
-#define VOCAB_ERRS VOCAB4('e','r','r','s')
-#define VOCAB_OUTPUT VOCAB3('o','u','t')
-#define VOCAB_OUTPUTS VOCAB4('o','u','t','s')
-#define VOCAB_REFERENCE VOCAB3('r','e','f')
-#define VOCAB_REFERENCES VOCAB4('r','e','f','s')
-
-// interface IPositionControl gets
-#define VOCAB_AXES VOCAB4('a','x','e','s')
-#define VOCAB_MOTION_DONE VOCAB3('d','o','n')
-#define VOCAB_MOTION_DONES VOCAB4('d','o','n','s')
+constexpr yarp::conf::vocab32_t VOCAB_MOTION_DONE  = yarp::os::createVocab('d','o','n');
+constexpr yarp::conf::vocab32_t VOCAB_MOTION_DONES = yarp::os::createVocab('d','o','n','s');
 
 // interface IPositionControl sets
-#define VOCAB_POSITION_MODE VOCAB4('p','o','s','d')
-#define VOCAB_POSITION_MOVE VOCAB3('p','o','s')
-#define VOCAB_POSITION_MOVES VOCAB4('p','o','s','s')
-#define VOCAB_RELATIVE_MOVE VOCAB3('r','e','l')
+constexpr yarp::conf::vocab32_t VOCAB_POSITION_MODE  = yarp::os::createVocab('p','o','s','d');
+constexpr yarp::conf::vocab32_t VOCAB_POSITION_MOVE  = yarp::os::createVocab('p','o','s');
+constexpr yarp::conf::vocab32_t VOCAB_POSITION_MOVES = yarp::os::createVocab('p','o','s','s');
+constexpr yarp::conf::vocab32_t VOCAB_RELATIVE_MOVE  = yarp::os::createVocab('r','e','l');
 
-#define VOCAB_RELATIVE_MOVES VOCAB4('r','e','l','s')
-#define VOCAB_REF_SPEED VOCAB3('v','e','l')
-#define VOCAB_REF_SPEEDS VOCAB4('v','e','l','s')
-#define VOCAB_REF_ACCELERATION VOCAB3('a','c','c')
-#define VOCAB_REF_ACCELERATIONS VOCAB4('a','c','c','s')
-#define VOCAB_STOP VOCAB3('s','t','o')
-#define VOCAB_STOPS VOCAB4('s','t','o','s')
+constexpr yarp::conf::vocab32_t VOCAB_RELATIVE_MOVES    = yarp::os::createVocab('r','e','l','s');
+constexpr yarp::conf::vocab32_t VOCAB_REF_SPEED         = yarp::os::createVocab('v','e','l');
+constexpr yarp::conf::vocab32_t VOCAB_REF_SPEEDS        = yarp::os::createVocab('v','e','l','s');
+constexpr yarp::conf::vocab32_t VOCAB_REF_ACCELERATION  = yarp::os::createVocab('a','c','c');
+constexpr yarp::conf::vocab32_t VOCAB_REF_ACCELERATIONS = yarp::os::createVocab('a','c','c','s');
+constexpr yarp::conf::vocab32_t VOCAB_STOP              = yarp::os::createVocab('s','t','o');
+constexpr yarp::conf::vocab32_t VOCAB_STOPS             = yarp::os::createVocab('s','t','o','s');
 
 // interface IVelocityControl sets
-#define VOCAB_VELOCITY_MODE VOCAB4('v','e','l','d')
-#define VOCAB_VELOCITY_MOVE VOCAB3('v','m','o')
-#define VOCAB_VELOCITY_MOVES VOCAB4('v','m','o','s')
+constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_MODE  = yarp::os::createVocab('v','e','l','d');
+constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_MOVE  = yarp::os::createVocab('v','m','o');
+constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_MOVES = yarp::os::createVocab('v','m','o','s');
 
 // interface IAmplifierControl sets/gets
-#define VOCAB_AMP_ENABLE            VOCAB3('a','e','n')
-#define VOCAB_AMP_DISABLE           VOCAB3('a','d','i')
-#define VOCAB_AMP_STATUS            VOCAB4('a','s','t','a')
-#define VOCAB_AMP_STATUS_SINGLE     VOCAB4('a','s','t','s')
-#define VOCAB_AMP_CURRENT           VOCAB3('a','c','u')
-#define VOCAB_AMP_CURRENTS          VOCAB4('a','c','u','s')
-#define VOCAB_AMP_MAXCURRENT        VOCAB4('m','a','x','c')
-#define VOCAB_AMP_NOMINAL_CURRENT   VOCAB4('a','c','n','o')
-#define VOCAB_AMP_PEAK_CURRENT      VOCAB4('a','c','p','k')
-#define VOCAB_AMP_PWM               VOCAB3('p','w','m')
-#define VOCAB_AMP_PWM_LIMIT         VOCAB4('p','w','m','l')
-#define VOCAB_AMP_VOLTAGE_SUPPLY    VOCAB4('a','v','s','u')
+constexpr yarp::conf::vocab32_t VOCAB_AMP_ENABLE            = yarp::os::createVocab('a','e','n');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_DISABLE           = yarp::os::createVocab('a','d','i');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_STATUS            = yarp::os::createVocab('a','s','t','a');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_STATUS_SINGLE     = yarp::os::createVocab('a','s','t','s');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_CURRENT           = yarp::os::createVocab('a','c','u');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_CURRENTS          = yarp::os::createVocab('a','c','u','s');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_MAXCURRENT        = yarp::os::createVocab('m','a','x','c');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_NOMINAL_CURRENT   = yarp::os::createVocab('a','c','n','o');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_PEAK_CURRENT      = yarp::os::createVocab('a','c','p','k');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_PWM               = yarp::os::createVocab('p','w','m');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_PWM_LIMIT         = yarp::os::createVocab('p','w','m','l');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_VOLTAGE_SUPPLY    = yarp::os::createVocab('a','v','s','u');
 
 // interface IControlLimits sets/gets
-#define VOCAB_LIMITS VOCAB4('l','l','i','m')
-#define VOCAB_VEL_LIMITS VOCAB4('v','l','i','m')
+constexpr yarp::conf::vocab32_t VOCAB_LIMITS     = yarp::os::createVocab('l','l','i','m');
+constexpr yarp::conf::vocab32_t VOCAB_VEL_LIMITS = yarp::os::createVocab('v','l','i','m');
 
 
 // interface IAxisInfo
-#define VOCAB_INFO_NAME VOCAB4('n','a','m','e')
-#define VOCAB_INFO_TYPE VOCAB4('t','y','p','e')
-
-#define VOCAB_TIMESTAMP VOCAB4('t','s','t','a')
-#define VOCAB_TORQUE VOCAB4('t','o','r','q')
-#define VOCAB_TORQUE_MODE VOCAB4('t','r','q','d')
-#define VOCAB_TRQS VOCAB4('t','r','q','s')
-#define VOCAB_TRQ  VOCAB3('t','r','q')
-#define VOCAB_BEMF VOCAB3('b','m','f')
-#define VOCAB_MOTOR_PARAMS  VOCAB4('m','t','p','s')
-#define VOCAB_RANGES VOCAB4('r','n','g','s')
-#define VOCAB_RANGE  VOCAB3('r','n','g')
-#define VOCAB_IMP_PARAM   VOCAB3('i','p','r')
-#define VOCAB_IMP_OFFSET  VOCAB3('i','o','f')
-
-#define VOCAB_TORQUES_DIRECTS VOCAB4('d','t','q','s') //This implements the setRefTorques for the whole part
-#define VOCAB_TORQUES_DIRECT VOCAB3('d','t','q') //This implements the setRefTorque for a single joint
-#define VOCAB_TORQUES_DIRECT_GROUP VOCAB4('d','t','q','g') //This implements the setRefTorques with joint list
+constexpr yarp::conf::vocab32_t VOCAB_INFO_NAME            = yarp::os::createVocab('n','a','m','e');
+constexpr yarp::conf::vocab32_t VOCAB_INFO_TYPE            = yarp::os::createVocab('t','y','p','e');
+constexpr yarp::conf::vocab32_t VOCAB_TIMESTAMP            = yarp::os::createVocab('t','s','t','a');
+constexpr yarp::conf::vocab32_t VOCAB_TORQUE               = yarp::os::createVocab('t','o','r','q');
+constexpr yarp::conf::vocab32_t VOCAB_TORQUE_MODE          = yarp::os::createVocab('t','r','q','d');
+constexpr yarp::conf::vocab32_t VOCAB_TRQS                 = yarp::os::createVocab('t','r','q','s');
+constexpr yarp::conf::vocab32_t VOCAB_TRQ                  = yarp::os::createVocab('t','r','q');
+constexpr yarp::conf::vocab32_t VOCAB_BEMF                 = yarp::os::createVocab('b','m','f');
+constexpr yarp::conf::vocab32_t VOCAB_MOTOR_PARAMS         = yarp::os::createVocab('m','t','p','s');
+constexpr yarp::conf::vocab32_t VOCAB_RANGES               = yarp::os::createVocab('r','n','g','s');
+constexpr yarp::conf::vocab32_t VOCAB_RANGE                = yarp::os::createVocab('r','n','g');
+constexpr yarp::conf::vocab32_t VOCAB_IMP_PARAM            = yarp::os::createVocab('i','p','r');
+constexpr yarp::conf::vocab32_t VOCAB_IMP_OFFSET           = yarp::os::createVocab('i','o','f');
+constexpr yarp::conf::vocab32_t VOCAB_TORQUES_DIRECTS      = yarp::os::createVocab('d','t','q','s'); //This implements the setRefTorques for the whole part
+constexpr yarp::conf::vocab32_t VOCAB_TORQUES_DIRECT       = yarp::os::createVocab('d','t','q'); //This implements the setRefTorque for a single joint
+constexpr yarp::conf::vocab32_t VOCAB_TORQUES_DIRECT_GROUP = yarp::os::createVocab('d','t','q','g'); //This implements the setRefTorques with joint list
 
 // protocol version
-#define VOCAB_PROTOCOL_VERSION VOCAB('p', 'r', 'o', 't')
+constexpr yarp::conf::vocab32_t VOCAB_PROTOCOL_VERSION = yarp::os::createVocab('p', 'r', 'o', 't');
 
 #endif // YARP_DEV_CONTROLBOARDINTERFACES_H

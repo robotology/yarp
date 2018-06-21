@@ -10,6 +10,7 @@
 #define YARP_DEV_IPWMCONTROL_H
 
 #include <yarp/dev/api.h>
+#include <yarp/os/Vocab.h>
 
 namespace yarp {
     namespace dev {
@@ -140,11 +141,11 @@ public:
 };
 
 // Interface name
-#define VOCAB_PWMCONTROL_INTERFACE   VOCAB4('i','p','w','m')
+constexpr yarp::conf::vocab32_t VOCAB_PWMCONTROL_INTERFACE   = yarp::os::createVocab('i','p','w','m');
 // methods names
-#define VOCAB_PWMCONTROL_REF_PWM     VOCAB3('r','e','f')
-#define VOCAB_PWMCONTROL_REF_PWMS    VOCAB4('r','e','f','s')
-#define VOCAB_PWMCONTROL_PWM_OUTPUT  VOCAB3('p','w','m')
-#define VOCAB_PWMCONTROL_PWM_OUTPUTS VOCAB4('p','w','m','s')
+constexpr yarp::conf::vocab32_t VOCAB_PWMCONTROL_REF_PWM     = yarp::os::createVocab('r','e','f');
+constexpr yarp::conf::vocab32_t VOCAB_PWMCONTROL_REF_PWMS    = yarp::os::createVocab('r','e','f','s');
+constexpr yarp::conf::vocab32_t VOCAB_PWMCONTROL_PWM_OUTPUT  = yarp::os::createVocab('p','w','m');
+constexpr yarp::conf::vocab32_t VOCAB_PWMCONTROL_PWM_OUTPUTS = yarp::os::createVocab('p','w','m','s');
 
 #endif // YARP_DEV_IPWMCONTROL_H

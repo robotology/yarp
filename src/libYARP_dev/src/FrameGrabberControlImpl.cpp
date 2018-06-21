@@ -8,6 +8,7 @@
 
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/FrameGrabberControlImpl.h>
+#include <yarp/dev/GenericVocabs.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;

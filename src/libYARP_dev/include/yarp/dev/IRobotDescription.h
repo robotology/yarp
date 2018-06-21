@@ -62,12 +62,12 @@ public:
     virtual bool unregisterDevice(const std::string& device_name) = 0;
 };
 
-#define VOCAB_IROBOT_DESCRIPTION            VOCAB4('i','r','o','b')
-#define VOCAB_IROBOT_GET                    VOCAB3('g','e','t')
-#define VOCAB_IROBOT_SET                    VOCAB3('s','e','t')
-#define VOCAB_IROBOT_DELETE                 VOCAB3('d','e','l')
-#define VOCAB_IROBOT_ALL                    VOCAB3('a','l','l')
-#define VOCAB_IROBOT_DEVICE                 VOCAB3('d','e','v')
-#define VOCAB_IROBOT_BY_TYPE                VOCAB4('t','y','p','e')
+constexpr yarp::conf::vocab32_t VOCAB_IROBOT_DESCRIPTION            = yarp::os::createVocab('i','r','o','b');
+constexpr yarp::conf::vocab32_t VOCAB_IROBOT_GET                    = yarp::os::createVocab('g','e','t');
+constexpr yarp::conf::vocab32_t VOCAB_IROBOT_SET                    = yarp::os::createVocab('s','e','t');
+constexpr yarp::conf::vocab32_t VOCAB_IROBOT_DELETE                 = yarp::os::createVocab('d','e','l');
+constexpr yarp::conf::vocab32_t VOCAB_IROBOT_ALL                    = yarp::os::createVocab('a','l','l');
+constexpr yarp::conf::vocab32_t VOCAB_IROBOT_DEVICE                 = yarp::os::createVocab('d','e','v');
+constexpr yarp::conf::vocab32_t VOCAB_IROBOT_BY_TYPE                = yarp::os::createVocab('t','y','p','e');
 
 #endif // YARP_DEV_IROBOTDESCRIPTION_H

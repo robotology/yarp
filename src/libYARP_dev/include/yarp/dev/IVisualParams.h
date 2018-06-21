@@ -40,32 +40,25 @@ struct yarp::dev::CameraConfig {
 YARP_END_PACK
 
 // Interface name
-#define VOCAB_RGB_VISUAL_PARAMS       VOCAB4('v','i','s','r')
-#define VOCAB_DEPTH_VISUAL_PARAMS     VOCAB4('v','i','s','d')
+constexpr yarp::conf::vocab32_t VOCAB_RGB_VISUAL_PARAMS       = yarp::os::createVocab('v','i','s','r');
+constexpr yarp::conf::vocab32_t VOCAB_DEPTH_VISUAL_PARAMS     = yarp::os::createVocab('v','i','s','d');
 
 // Common
-#define VOCAB_SET               VOCAB3('s','e','t')
-#define VOCAB_GET               VOCAB3('g','e','t')
-#define VOCAB_IS                VOCAB2('i','s')
-#define VOCAB_OK                VOCAB2('o','k')
-#define VOCAB_FAILED            VOCAB4('f','a','i','l')
 
 // Rgb and depth
-#define VOCAB_RGB               VOCAB3('r','g','b')
-#define VOCAB_DEPTH             VOCAB4('d','e','p','t')
-#define VOCAB_MIRROR            VOCAB4('m','i','r','r')
+constexpr yarp::conf::vocab32_t VOCAB_RGB               = yarp::os::createVocab('r','g','b');
+constexpr yarp::conf::vocab32_t VOCAB_DEPTH             = yarp::os::createVocab('d','e','p','t');
+constexpr yarp::conf::vocab32_t VOCAB_MIRROR            = yarp::os::createVocab('m','i','r','r');
 
 // Methods
-#define VOCAB_WIDTH             VOCAB1('w')
-#define VOCAB_HEIGHT            VOCAB1('h')
-#define VOCAB_RESOLUTION        VOCAB3('r','e','s')
-#define VOCAB_FOV               VOCAB3('f','o','v')
-#define VOCAB_INTRINSIC_PARAM   VOCAB4('i','n','t','p')
-#define VOCAB_SUPPORTED_CONF    VOCAB4('c','o','n','f')
+constexpr yarp::conf::vocab32_t VOCAB_RESOLUTION        = yarp::os::createVocab('r','e','s');
+constexpr yarp::conf::vocab32_t VOCAB_FOV               = yarp::os::createVocab('f','o','v');
+constexpr yarp::conf::vocab32_t VOCAB_INTRINSIC_PARAM   = yarp::os::createVocab('i','n','t','p');
+constexpr yarp::conf::vocab32_t VOCAB_SUPPORTED_CONF    = yarp::os::createVocab('c','o','n','f');
 
 // Depth only
-#define VOCAB_ACCURACY          VOCAB4('a','c','r','c')
-#define VOCAB_CLIP_PLANES       VOCAB4('c','l','i','p')
+constexpr yarp::conf::vocab32_t VOCAB_ACCURACY          = yarp::os::createVocab('a','c','r','c');
+constexpr yarp::conf::vocab32_t VOCAB_CLIP_PLANES       = yarp::os::createVocab('c','l','i','p');
 
 
 

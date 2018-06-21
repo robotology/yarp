@@ -160,11 +160,11 @@ public:
 };
 
 // interface IMotorEncoders gets
-#define VOCAB_MOTORS_NUMBER        VOCAB4('m','t','n','m')
-#define VOCAB_TEMPERATURE          VOCAB3('t','m','p')
-#define VOCAB_GEARBOX_RATIO        VOCAB4('g','b','x','r')
-#define VOCAB_TEMPERATURES         VOCAB4('t','m','p','s')
-#define VOCAB_TEMPERATURE_LIMIT    VOCAB4('t','m','p','l')
+constexpr yarp::conf::vocab32_t VOCAB_MOTORS_NUMBER        = yarp::os::createVocab('m','t','n','m');
+constexpr yarp::conf::vocab32_t VOCAB_TEMPERATURE          = yarp::os::createVocab('t','m','p');
+constexpr yarp::conf::vocab32_t VOCAB_GEARBOX_RATIO        = yarp::os::createVocab('g','b','x','r');
+constexpr yarp::conf::vocab32_t VOCAB_TEMPERATURES         = yarp::os::createVocab('t','m','p','s');
+constexpr yarp::conf::vocab32_t VOCAB_TEMPERATURE_LIMIT    = yarp::os::createVocab('t','m','p','l');
 
 
 #endif // YARP_DEV_IMOTOR_H
