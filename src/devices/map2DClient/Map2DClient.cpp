@@ -11,6 +11,7 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LockGuard.h>
 #include <yarp/dev/INavigation2D.h>
+#include <yarp/dev/GenericVocabs.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;

@@ -23,7 +23,7 @@
 #include <yarp/os/Value.h>
 #include <yarp/dev/IVisualParams.h>
 
-#define VOCAB_LINE VOCAB4('l','i','n','e')
+constexpr yarp::conf::vocab32_t VOCAB_LINE = yarp::os::createVocab('l','i','n','e');
 
 namespace yarp {
     namespace dev {

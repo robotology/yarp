@@ -9,6 +9,7 @@
 #include "Map2DServer.h"
 #include <yarp/dev/IMap2D.h>
 #include <yarp/dev/INavigation2D.h>
+#include <yarp/dev/GenericVocabs.h>
 #include <yarp/math/Math.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
