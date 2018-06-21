@@ -287,32 +287,17 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %define _YARP2_NETINT32_
 %enddef
 namespace yarp {
-  namespace os {
+namespace os {
     typedef int NetInt32;
-  }
-}
+} // os
+namespace conf
+{
+    typedef int vocab32_t;
+} // conf
+} // yarp
 
 // Define macros for handling the multiple analog sensors interfaces
 %include macrosForMultipleAnalogSensors.i
-
-// We skip macros from Vocab.h via SWIG_PREPROCESSOR_SHOULD_SKIP_THIS directive
-// But cannot define YARP_OS_VOCAB_H as we would miss encode/decode
-#if (SWIG_VERSION >= 0x030011) && (!defined(SWIGCSHARP))
-    %define VOCAB(x1,x2,x3,x4) x4*16777216+x3*65536+x2*256+x1 // Tested on Lua and Python
-    %enddef
-#elif defined(SWIGCSHARP)
-    // We'd rather no VOCAB vs a defective VOCAB (value 0), but required for CSHARP.
-    %define VOCAB(x1,x2,x3,x4) 0 // VOCABs in enum should be generated in Lua and Python, not C#
-    %enddef
-#endif // If old SWIG and not CSHARP, no global defined (but enum should be) VOCABs wrappers generated
-%define VOCAB4(x1,x2,x3,x4) VOCAB(x1,x2,x3,x4)
-%enddef
-%define VOCAB3(x1,x2,x3) VOCAB(x1,x2,x3,0)
-%enddef
-%define VOCAB2(x1,x2) VOCAB(x1,x2,0,0)
-%enddef
-%define VOCAB1(x1) VOCAB(x1,0,0,0)
-%enddef
 
 %define YARP_BEGIN_PACK
 %enddef
