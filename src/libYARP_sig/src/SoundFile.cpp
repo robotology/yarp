@@ -85,7 +85,7 @@ bool PcmWavHeader::parse_from_file(FILE *fp)
     //extra chuncks
     fread(&dummyHeader,sizeof(dummyHeader),1,fp);
 
-    while (dummyHeader!=VOCAB4('d','a','t','a'))
+    while (dummyHeader!=yarp::os::createVocab('d','a','t','a'))
     {
         fread(&dummyLength,sizeof(dummyLength),1,fp);
         dummyData.clear();
@@ -107,10 +107,10 @@ void PcmWavHeader::setup_to_write(const Sound& src, FILE *fp)
     int bytes = channels*src.getSamples()*2;
     int align = channels*((bitsPerSample+7)/8);
 
-    wavHeader = VOCAB4('R','I','F','F');
+    wavHeader = yarp::os::createVocab('R','I','F','F');
     wavLength = bytes + sizeof(PcmWavHeader) - 2*sizeof(NetInt32);
-    formatHeader1 = VOCAB4('W','A','V','E');
-    formatHeader2 = VOCAB4('f','m','t',' ');
+    formatHeader1 = yarp::os::createVocab('W','A','V','E');
+    formatHeader2 = yarp::os::createVocab('f','m','t',' ');
     formatLength = sizeof(pcm);
 
     pcm.pcmFormatTag = 1; /* PCM! */
@@ -120,7 +120,7 @@ void PcmWavHeader::setup_to_write(const Sound& src, FILE *fp)
     pcm.pcmBlockAlign = align;
     pcm.pcmBitsPerSample = bitsPerSample;
 
-    dataHeader = VOCAB4('d','a','t','a');
+    dataHeader = yarp::os::createVocab('d','a','t','a');
     dataLength = bytes;
 
 

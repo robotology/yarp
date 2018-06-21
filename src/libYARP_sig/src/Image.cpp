@@ -760,7 +760,7 @@ bool Image::write(yarp::os::ConnectionWriter& connection) const {
     header.listTag = BOTTLE_TAG_LIST;
     header.listLen = 4;
     header.paramNameTag = BOTTLE_TAG_VOCAB;
-    header.paramName = VOCAB3('m','a','t');
+    header.paramName = yarp::os::createVocab('m','a','t');
     header.paramIdTag = BOTTLE_TAG_VOCAB;
     header.id = getPixelCode();
     header.paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT32;
