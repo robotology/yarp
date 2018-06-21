@@ -107,7 +107,7 @@ bool WireReader::readBool(bool& x)
         return false;
     }
     std::int32_t v = reader.expectInt32();
-    x = (v!=0) && (v!=VOCAB4('f', 'a', 'i', 'l'));
+    x = (v!=0) && (v!=yarp::os::createVocab('f', 'a', 'i', 'l'));
     state->len--;
     return !reader.isError();
 }
@@ -516,7 +516,7 @@ bool WireReader::readListReturn()
     if (!readVocab(v)) {
         return false;
     }
-    if (v!=VOCAB2('i', 's')) {
+    if (v!=yarp::os::createVocab('i', 's')) {
         return false;
     }
     std::string dummy;

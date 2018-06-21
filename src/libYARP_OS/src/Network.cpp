@@ -200,7 +200,7 @@ static int enactConnection(const Contact& src,
         return 1;
     }
 
-    int act = (mode==YARP_ENACT_DISCONNECT)?VOCAB3('d', 'e', 'l'):VOCAB3('a', 'd', 'd');
+    int act = (mode==YARP_ENACT_DISCONNECT)?yarp::os::createVocab('d', 'e', 'l'):yarp::os::createVocab('a', 'd', 'd');
 
     // Let's ask the destination to connect/disconnect to the source.
     // We assume the YARP carrier will reverse the connection if

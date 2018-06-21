@@ -118,9 +118,9 @@ void Terminee::run() {
 		}
         if (cmd.get(0).asString()=="quit") {
             quit = true;
-            reply.addVocab(VOCAB2('o', 'k'));
+            reply.addVocab(yarp::os::createVocab('o', 'k'));
         } else {
-            reply.addVocab(VOCAB4('h', 'u', 'h', '?'));
+            reply.addVocab(yarp::os::createVocab('h', 'u', 'h', '?'));
         }
         helper.reply(reply);
     }

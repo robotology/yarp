@@ -222,7 +222,7 @@ void BottleImpl::fromString(const std::string& line)
                         (nestedAlt == 0) && (nested == 0)) {
                         if (arg != "") {
                             if (arg == "null") {
-                                add(new StoreVocab(VOCAB4('n', 'u', 'l', 'l')));
+                                add(new StoreVocab(yarp::os::createVocab('n', 'u', 'l', 'l')));
                             } else {
                                 smartAdd(arg);
                             }
