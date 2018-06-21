@@ -348,7 +348,7 @@ else()
   endif()
 endif()
 
-set(RTF_REQUIRED_VERSION 1.4.0)
+set(RTF_REQUIRED_VERSION 1.4.61)
 find_package(RTF ${RTF_REQUIRED_VERSION} QUIET)
 checkandset_dependency(RTF)
 
