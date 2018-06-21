@@ -110,7 +110,12 @@ if(NOT YARP_IS_SHARED_LIBRARY OR NOT YARP_NO_DEPRECATED)
   # use find_package instead of find_dependency.
   # WARNING find_package(YCM) will overwrite the PACKAGE_PREFIX_DIR variable,
   #         therefore this variable is no longer valid after this line
+  get_property(_yarp_ycm_transitive_dependency_set GLOBAL PROPERTY _CMAKE_YCM_TRANSITIVE_DEPENDENCY SET)
   find_package(YCM @YCM_REQUIRED_VERSION@ QUIET)
+  # Ensure that YCM is not shown by FeatureSummary if not requested by the user
+  if(NOT _yarp_ycm_transitive_dependency_set)
+    set_property(GLOBAL PROPERTY _CMAKE_YCM_TRANSITIVE_DEPENDENCY TRUE)
+  endif()
   if(NOT YARP_NO_DEPRECATED AND NOT YCM_FOUND)
     set(_YARP_YCM_MODULE_PATH "${YARP_MODULE_DIR}/ycm-@YCM_REQUIRED_VERSION@/find-modules"
                               "${YARP_MODULE_DIR}/ycm-@YCM_REQUIRED_VERSION@/modules"
@@ -182,6 +187,15 @@ check_required_components(YARP)
 include(${YARP_MODULE_DIR}/YarpIDL.cmake)
 include(${YARP_MODULE_DIR}/YarpPlugin.cmake)
 include(${YARP_MODULE_DIR}/YarpInstallationHelpers.cmake)
+
+
+################################################################################
+# If FeatureSummary was included, add DESCRIPTION and URL
+
+if(COMMAND set_package_properties)
+    set_package_properties(YARP PROPERTIES DESCRIPTION "A library and toolkit for communication and device interfaces"
+                                           URL "https://www.yarp.it/")
+endif()
 
 
 ################################################################################
