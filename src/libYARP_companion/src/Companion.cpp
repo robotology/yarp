@@ -99,7 +99,7 @@ static char* command_generator (const char* text, int state)
         if (helpOk)
         {
             yarp::os::Bottle* cmdList = nullptr;
-            if (helpBottle.get(0).isVocab() && helpBottle.get(0).asVocab()==VOCAB4('m', 'a', 'n', 'y') )
+            if (helpBottle.get(0).isVocab() && helpBottle.get(0).asVocab()==yarp::os::createVocab('m', 'a', 'n', 'y') )
             {
                 cmdList=helpBottle.get(1).asList();
             }
@@ -640,7 +640,7 @@ int Companion::cmdName(int argc, char *argv[]) {
     }
     if (reply.size()==1&&reply.get(0).isString()) {
         printf("%s", reply.get(0).asString().c_str());
-    } else if (reply.get(0).isVocab() && reply.get(0).asVocab()==VOCAB4('m', 'a', 'n', 'y')) {
+    } else if (reply.get(0).isVocab() && reply.get(0).asVocab()==yarp::os::createVocab('m', 'a', 'n', 'y')) {
         for (size_t i=1; i<reply.size(); i++) {
             Value& v = reply.get(i);
             if (v.isString()) {
@@ -1813,7 +1813,7 @@ int Companion::cmdTopic(int argc, char *argv[]) {
                                  false,
                                  true);
     if (ok) {
-        ok = reply.get(0).asVocab()==VOCAB2('o', 'k');
+        ok = reply.get(0).asVocab()==yarp::os::createVocab('o', 'k');
     }
     if (!ok) {
         fprintf(stderr, "Failed to %s topic %s:\n  %s\n",
@@ -2044,7 +2044,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
                     resendCount++;
                     break;
                 }
-                if (reply.get(0).isVocab() && reply.get(0).asVocab()==VOCAB4('m', 'a', 'n', 'y')) {
+                if (reply.get(0).isVocab() && reply.get(0).asVocab()==yarp::os::createVocab('m', 'a', 'n', 'y')) {
                     printf("Responses:\n");
                     Bottle *lst = &reply;
                     int start = 1;
