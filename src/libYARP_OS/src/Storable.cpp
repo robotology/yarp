@@ -349,7 +349,7 @@ std::string StoreVocab::toString() const
     if (x == '1') {
         return "true";
     }
-    return std::string(Vocab::decode(x).c_str());
+    return Vocab::decode(x);
 }
 
 void StoreVocab::fromString(const std::string& src)
