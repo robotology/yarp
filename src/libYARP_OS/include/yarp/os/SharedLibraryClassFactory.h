@@ -41,7 +41,7 @@ public:
         return (T *)getApi().create();
     }
 
-    void destroy(T *obj)
+    void destroy(T *obj) const
     {
         if (!isValid()) {
             return;
