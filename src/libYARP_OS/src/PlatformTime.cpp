@@ -36,7 +36,7 @@ void yarp::os::impl::getTime(YARP_timeval& now) {
 
 void yarp::os::impl::sleepThread(YARP_timeval& sleep_period) {
     if (Time::isSystemClock()) {
-        std::this_thread::sleep_for(std::chrono::duration<double>(toDouble(sleep_period)));
+        yarp::os::SystemClock::delaySystem(toDouble(sleep_period));
     } else {
         Time::delay(toDouble(sleep_period));
     }
