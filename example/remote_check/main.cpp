@@ -38,13 +38,13 @@ public:
         printf("command received: %s\n", cmd.toString().c_str());
         int code = cmd.get(0).asVocab();
         switch (code) {
-        case VOCAB3('s','e','t'):
+        case yarp::os::createVocab('s','e','t'):
             printf("set command received\n");
             prop.put(cmd.get(1).asString().c_str(),cmd.get(2));
             break;
-        case VOCAB3('g','e','t'):
+        case yarp::os::createVocab('g','e','t'):
             printf("get command received\n");
-            response.addVocab(VOCAB2('i','s'));
+            response.addVocab(yarp::os::createVocab('i','s'));
             response.add(cmd.get(1));
             response.add(prop.find(cmd.get(1).asString().c_str()));
             break;
