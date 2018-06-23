@@ -88,7 +88,7 @@ if (_nested_build)
   # bindings for other languages to be compiled from the build material.
 
   # Install main CMakeLists and Swig input file
-  foreach(f CMakeLists.txt yarp.i README.md)
+  foreach(f CMakeLists.txt yarp.i macrosForMultipleAnalogSensors.i matlab/vectors_fromTo_matlab.i README.md)
       install(FILES ${CMAKE_SOURCE_DIR}/bindings/${f}
               COMPONENT development
               DESTINATION ${CMAKE_INSTALL_DATADIR}/yarp/bindings)

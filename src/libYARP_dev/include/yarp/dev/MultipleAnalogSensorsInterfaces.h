@@ -17,21 +17,32 @@
 
 namespace yarp
 {
-namespace dev
-{
-
-/**
- * Status of a given analog sensor exposed by a multiple analog sensors interface. 
- */
-enum MAS_status
-{
-   MAS_OK=0,         ///< The sensor is working correctly.
-   MAS_ERROR=1,      ///< The sensor is in generic error state.
-   MAS_OVF=2,        ///< The sensor reached an overflow.
-   MAS_TIMEOUT=3,    ///< The sensor is read through the network, and the latest measurement was received before an implementation-define timeout period.
-   MAS_WAITING_FOR_FIRST_READ=4, ///< The sensor is read through the network, and the device is waiting to receive the first measurement.
-   MAS_UNKNOWN=5     ///< The sensor is in an unknown state.
-};
+    namespace dev
+    {
+        class IThreeAxisGyroscopes;
+        class IThreeAxisLinearAccelerometers;
+        class IThreeAxisMagnetometers;
+        class IOrientationSensors;
+        class ITemperatureSensors;
+        class ISixAxisForceTorqueSensors;
+        class IContactLoadCellArrays;
+        class IEncoderArrays;
+        class ISkinPatches;
+        
+        /**
+         * Status of a given analog sensor exposed by a multiple analog sensors interface.
+         */
+        enum MAS_status
+        {
+            MAS_OK=0,         ///< The sensor is working correctly.
+            MAS_ERROR=1,      ///< The sensor is in generic error state.
+            MAS_OVF=2,        ///< The sensor reached an overflow.
+            MAS_TIMEOUT=3,    ///< The sensor is read through the network, and the latest measurement was received before an implementation-define timeout period.
+            MAS_WAITING_FOR_FIRST_READ=4, ///< The sensor is read through the network, and the device is waiting to receive the first measurement.
+            MAS_UNKNOWN=5     ///< The sensor is in an unknown state.
+        };
+    }
+}
 
 /**
  * @ingroup dev_iface_multiple_analog
@@ -48,7 +59,7 @@ enum MAS_status
  * | `ThreeAxisGyroscopes` |
  * 
  */
-class YARP_dev_API IThreeAxisGyroscopes
+class YARP_dev_API yarp::dev::IThreeAxisGyroscopes
 {
 public:
    /**
@@ -102,7 +113,7 @@ public:
  * |:-----------------:|
  * | `ThreeAxisLinearAccelerometers` |
  */
-class YARP_dev_API IThreeAxisLinearAccelerometers
+class YARP_dev_API yarp::dev::IThreeAxisLinearAccelerometers
 {
 public:
    /**
@@ -149,7 +160,7 @@ public:
  * |:-----------------:|
  * | `ThreeAxisMagnetometers` |
  */
-class YARP_dev_API IThreeAxisMagnetometers
+class YARP_dev_API yarp::dev::IThreeAxisMagnetometers
 {
 public:
    /**
@@ -201,7 +212,7 @@ public:
  * |:-----------------:|
  * | `OrientationSensors` |
  */
-class YARP_dev_API IOrientationSensors
+class YARP_dev_API yarp::dev::IOrientationSensors
 {
 public:
    /**
@@ -292,7 +303,7 @@ public:
  * |:-----------------:|
  * | `TemperatureSensors` |
  */
-class YARP_dev_API ITemperatureSensors
+class YARP_dev_API yarp::dev::ITemperatureSensors
 {
 public:
    /**
@@ -346,7 +357,7 @@ public:
  * |:-----------------:|
  * | `SixAxisForceTorqueSensors` |
  */
-class YARP_dev_API ISixAxisForceTorqueSensors
+class YARP_dev_API yarp::dev::ISixAxisForceTorqueSensors
 {
 public:
    /**
@@ -395,7 +406,7 @@ public:
  * @note This interface is meant to expose array of sensors of normal force 
  *       for contact, such as the FSR array present in the Nao Robot ( http://doc.aldebaran.com/1-14/family/robots/fsr_robot.html ). 
  */
-class YARP_dev_API IContactLoadCellArrays
+class YARP_dev_API yarp::dev::IContactLoadCellArrays
 {
 public:
    /**
@@ -448,7 +459,7 @@ public:
  *       motor control, such as IEncoders and IPositionControl, such as 
  *       encoders measuring the complete state in an underactuated mechanism.
  */
-class YARP_dev_API IEncoderArrays
+class YARP_dev_API yarp::dev::IEncoderArrays
 {
 public:
    /**
@@ -497,7 +508,7 @@ public:
  * 
  * \brief Device interface to one or multiple patches of tacticle sensors. 
  */
-class YARP_dev_API ISkinPatches
+class YARP_dev_API yarp::dev::ISkinPatches
 {
 public:
    /**
@@ -533,9 +544,6 @@ public:
    
    virtual ~ISkinPatches(){}
 };
-
-}
-}
 
 #endif
 
