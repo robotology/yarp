@@ -40,6 +40,7 @@ if(NOT SKIP_rpLidar2)
   yarp_add_plugin(yarp_rpLidar2 rpLidar2.h
                                 rpLidar2.cpp
                                 ${RPLIDAR_SDK_SRCS})
+  target_compile_definitions(yarp_rpLidar2 PRIVATE _USE_MATH_DEFINES)
 
   target_include_directories(yarp_rpLidar2 SYSTEM PRIVATE ${RPLIDAR_SDK_ROOT}/include
                                                           ${RPLIDAR_SDK_ROOT}/src)
