@@ -33,6 +33,8 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Election.h
                  include/yarp/os/Event.h
                  include/yarp/os/Face.h
+                 include/yarp/os/FixedSizeBuffersManager.h
+                 include/yarp/os/FixedSizeBuffersManager-inl.h
                  include/yarp/os/IConfig.h
                  include/yarp/os/InputProtocol.h
                  include/yarp/os/InputStream.h
