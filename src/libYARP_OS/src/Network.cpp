@@ -1502,8 +1502,11 @@ public:
         factory = nullptr;
     }
 
+    virtual Carrier& getContent() {
+        return car.getContent();
+    }
 
-    virtual Carrier& getContent() const {
+    virtual const Carrier& getContent() const {
         return car.getContent();
     }
 
@@ -1736,7 +1739,11 @@ public:
         }
     }
 
-    Carrier& getContent() const override {
+    Carrier& getContent() override {
+        return car.getContent();
+    }
+
+    const Carrier& getContent() const override {
         return car.getContent();
     }
 
