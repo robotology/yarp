@@ -29,6 +29,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/FrameGrabberInterfaces.h
                   include/yarp/dev/GazeControl.h
                   include/yarp/dev/GenericSensorInterfaces.h
+                  include/yarp/dev/GenericVocabs.h
                   include/yarp/dev/GPUInterface.h
                   include/yarp/dev/IAnalogSensor.h
                   include/yarp/dev/IBattery.h
