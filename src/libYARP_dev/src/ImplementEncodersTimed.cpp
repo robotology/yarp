@@ -16,7 +16,7 @@ using namespace yarp::dev;
 
 ////////////////////////
 // Encoder Interface Timed Implementation
-ImplementEncodersTimed::ImplementEncodersTimed(IEncodersTimedRaw *y):nj(0)
+ImplementEncodersTimed::ImplementEncodersTimed(IEncodersTimedRaw *y):buffManager(nullptr)
 {
     iEncoders=y;
     helper = nullptr;
@@ -35,7 +35,8 @@ bool ImplementEncodersTimed:: initialize (int size, const int *amap, const doubl
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert (helper != nullptr);
     
-    nj = size;
+    buffManager = new yarp::os::FixedSizeBuffersManager<int> (size);
+    yAssert (buffManager != nullptr);
     return true;
 }
 
@@ -87,13 +88,21 @@ bool ImplementEncodersTimed::setEncoder(int j, double val)
 
 bool ImplementEncodersTimed::setEncoders(const double *val)
 {
-    double * tmp = new double[nj];
-    castToMapper(helper)->posA2E(val, tmp);
+    try
+    {
+        Buffer<double> b;
+        double * tmp = buffManager->getBuffer(b);
+        castToMapper(helper)->posA2E(val, tmp);
 
-    bool ret = iEncoders->setEncodersRaw(tmp);
-    
-    delete []tmp;
-    return ret;
+        bool ret = iEncoders->setEncodersRaw(tmp);
+
+        buffManager->releaseBuffer(b);
+        return ret;
+    }
+    catch (const std::bad_alloc& e)
+    {
+        return false;
+    }
 }
 
 bool ImplementEncodersTimed::getEncoder(int j, double *v)
@@ -114,13 +123,21 @@ bool ImplementEncodersTimed::getEncoder(int j, double *v)
 
 bool ImplementEncodersTimed::getEncoders(double *v)
 {
-    bool ret;
-    double *my_enc = new double[nj];
-    ret=iEncoders->getEncodersRaw(my_enc);
+    try
+    {
+        Buffer<double> b;
+        double * tmp = buffManager->getBuffer(b);
+        castToMapper(helper)->posA2E(val, tmp);
 
-    castToMapper(helper)->posE2A(my_enc, v);
-    delete [] my_enc;
-    return ret;
+        bool ret = iEncoders->setEncodersRaw(tmp);
+
+        buffManager->releaseBuffer(b);
+        return ret;
+    }
+    catch (const std::bad_alloc& e)
+    {
+        return false;
+    }
 }
 
 bool ImplementEncodersTimed::getEncoderSpeed(int j, double *v)
@@ -141,13 +158,21 @@ bool ImplementEncodersTimed::getEncoderSpeed(int j, double *v)
 
 bool ImplementEncodersTimed::getEncoderSpeeds(double *v)
 {
-    bool ret;
-    double *tmp = new double[nj];
-    ret=iEncoders->getEncoderSpeedsRaw(tmp);
+    try
+    {
+        Buffer<double> b;
+        double * tmp = buffManager->getBuffer(b);
 
-    castToMapper(helper)->velE2A(tmp, v);
-    delete [] tmp;
-    return ret;
+        bool ret=iEncoders->getEncoderSpeedsRaw(tmp);
+        castToMapper(helper)->velE2A(tmp, v);
+
+        buffManager->releaseBuffer(b);
+        return ret;
+    }
+    catch (const std::bad_alloc& e)
+    {
+        return false;
+    }
 }
 
 bool ImplementEncodersTimed::getEncoderAcceleration(int j, double *v)
@@ -168,13 +193,21 @@ bool ImplementEncodersTimed::getEncoderAcceleration(int j, double *v)
 
 bool ImplementEncodersTimed::getEncoderAccelerations(double *v)
 {
-    bool ret;
-    double *tmp = new double[nj];
-    ret=iEncoders->getEncoderAccelerationsRaw(tmp);
+    try
+    {
+        Buffer<double> b;
+        double * tmp = buffManager->getBuffer(b);
 
-    castToMapper(helper)->accE2A(tmp, v);
-    delete [] tmp;
-    return ret;
+        bool ret = iEncoders->getEncoderAccelerationsRaw(tmp);
+        castToMapper(helper)->accE2A(tmp, v);
+
+        buffManager->releaseBuffer(b);
+        return ret;
+    }
+    catch (const std::bad_alloc& e)
+    {
+        return false;
+    }
 }
 
 bool ImplementEncodersTimed::getEncoderTimed(int j, double *v, double *t)
@@ -196,16 +229,22 @@ bool ImplementEncodersTimed::getEncoderTimed(int j, double *v, double *t)
 
 bool ImplementEncodersTimed::getEncodersTimed(double *v, double *t)
 {
-    bool ret;
-    double *tmp_v = new double[nj];
-    double *tmp_t = new double[nj];
-    ret=iEncoders->getEncodersTimedRaw(tmp_v, tmp_t);
+    try
+    {
+        Buffer<double> b_v, b_t;
+        double *tmp_v = buffManager->getBuffer(b_v);
+        double *tmp_t = buffManager->getBuffer(b_t);
+        bool ret=iEncoders->getEncodersTimedRaw(tmp_v, tmp_t);
 
-    castToMapper(helper)->posE2A(tmp_v, v);
-    castToMapper(helper)->toUser(tmp_t, t);
+        castToMapper(helper)->posE2A(tmp_v, v);
+        castToMapper(helper)->toUser(tmp_t, t);
 
-    delete [] tmp_v;
-    delete [] tmp_t;
-
-    return ret;
+        buffManager->releaseBuffer(b_v);
+        buffManager->releaseBuffer(b_t);
+        return ret;
+    }
+    catch (const std::bad_alloc& e)
+    {
+        return false;
+    }
 }

@@ -11,6 +11,7 @@
 
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/api.h>
+#include <yarp/os/FixedSizeBuffersManager.h>
 
 namespace yarp {
     namespace dev {
@@ -23,6 +24,8 @@ class YARP_dev_API yarp::dev::ImplementControlMode: public IControlMode
     void *helper;
     int nj;
     yarp::dev::IControlModeRaw *raw;
+    yarp::os::FixedSizeBuffersManager<int> *buffManager;
+
 public:
     bool initialize(int k, const int *amap);
     bool uninitialize();

@@ -11,9 +11,10 @@
 
 #include <cstdio>
 using namespace yarp::dev;
+using namespace yarp::os;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 #define MJOINTIDCHECK if (joints[idx] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
-#define MJOINTIDCHECK_DEL if (joints[idx] >= castToMapper(helper)->axes()){yError("joint id out of bound"); delete [] tmp_joints; return false;}
+#define MJOINTIDCHECK_DEL if (joints[idx] >= castToMapper(helper)->axes()){yError("joint id out of bound"); buffManager->releaseBuffer(b); return false;}
 
 ImplementControlMode::ImplementControlMode(IControlModeRaw *r): nj(0)
 {
@@ -26,11 +27,11 @@ bool ImplementControlMode::initialize(int size, const int *amap)
     if (helper!=nullptr)
         return false;
 
-    nj = size;
-
     helper=(void *)(new ControlBoardHelper(size, amap));
     yAssert (helper != nullptr);
 
+    buffManager = new yarp::os::FixedSizeBuffersManager<int> (size);
+    yAssert (buffManager != nullptr);
     return true;
 }
 
@@ -47,6 +48,11 @@ bool ImplementControlMode::uninitialize ()
         helper=nullptr;
     }
 
+    if (buffManager!=nullptr)
+    {
+        delete buffManager;
+        buffManager=nullptr;
+    }
     return true;
 }
 
@@ -59,26 +65,47 @@ bool ImplementControlMode::getControlMode(int j, int *f)
 
 bool ImplementControlMode::getControlModes(int *modes)
 {
-    int *tmp=new int [nj];
-    bool ret=raw->getControlModesRaw(tmp);
-    castToMapper(helper)->toUser(tmp, modes);
-    delete [] tmp;
-    return ret;
+    try
+    {
+        Buffer<int> b;
+        int *dataPtr = buffManager->getBuffer(b);
+
+        bool ret=raw->getControlModesRaw(dataPtr);
+        castToMapper(helper)->toUser(dataPtr, modes);
+
+        buffManager->releaseBuffer(b);
+        return ret;
+    }
+    catch (const std::bad_alloc& e)
+    {
+        yFatal() << "ImplementControlMode::getControlModes(int *modes) gets a" << e.what() <<" exception!!";
+        return false;
+    }
 }
 
 bool ImplementControlMode::getControlModes(const int n_joint, const int *joints, int *modes)
 {
-    int *tmp_joints=new int [nj];
-    for(int idx=0; idx<n_joint; idx++)
+    try
     {
-        MJOINTIDCHECK_DEL
-        tmp_joints[idx] = castToMapper(helper)->toHw(joints[idx]);
+        Buffer<int> b;
+        int *tmp_joints = buffManager->getBuffer(b);
+
+        for(int idx=0; idx<n_joint; idx++)
+        {
+            MJOINTIDCHECK_DEL
+            tmp_joints[idx] = castToMapper(helper)->toHw(joints[idx]);
+        }
+
+        bool ret = raw->getControlModesRaw(n_joint, tmp_joints, modes);
+        buffManager->releaseBuffer(b);
+        return ret;
+    }
+    catch (const std::bad_alloc& e)
+    {
+        yFatal() << "ImplementControlMode::getControlModes(const int n_joint, const int *joints, int *modes) gets a" << e.what() <<" exception!!";
+        return false;
     }
 
-    bool ret = raw->getControlModesRaw(n_joint, tmp_joints, modes);
-
-    delete [] tmp_joints;
-    return ret;
 }
 
 bool ImplementControlMode::setControlMode(const int j, const int mode)
@@ -90,16 +117,24 @@ bool ImplementControlMode::setControlMode(const int j, const int mode)
 
 bool ImplementControlMode::setControlModes(const int n_joint, const int *joints, int *modes)
 {
-    int *tmp_joints=new int [nj];
-    for(int idx=0; idx<n_joint; idx++)
+    try
     {
-        MJOINTIDCHECK_DEL
-        tmp_joints[idx] = castToMapper(helper)->toHw(joints[idx]);
-    }
-    bool ret = raw->setControlModesRaw(n_joint, tmp_joints, modes);
+        Buffer<int> b;
+        int *tmp_joints = buffManager->getBuffer(b);
 
-    delete [] tmp_joints;
-    return ret;
+        for(int idx=0; idx<n_joint; idx++)
+        {
+            MJOINTIDCHECK_DEL
+            tmp_joints[idx] = castToMapper(helper)->toHw(joints[idx]);
+        }
+        bool ret = raw->setControlModesRaw(n_joint, tmp_joints, modes);
+        buffManager->releaseBuffer(b);
+        return ret;
+    }
+    catch (const std::bad_alloc& e)
+    {
+        return false;
+    }
 }
 
 bool ImplementControlMode::setControlModes(int *modes)

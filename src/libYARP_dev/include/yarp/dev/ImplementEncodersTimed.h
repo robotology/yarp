@@ -10,6 +10,7 @@
 #define YARP_DEV_IMPLEMENTENCODERSTIMED_H
 
 #include <yarp/dev/IEncodersTimed.h>
+#include <yarp/os/FixedSizeBuffersManager.h>
 
 namespace yarp {
     namespace dev {
@@ -22,7 +23,7 @@ class YARP_dev_API yarp::dev::ImplementEncodersTimed: public IEncodersTimed
 protected:
     IEncodersTimedRaw *iEncoders;
     void *helper;
-    int nj;
+    yarp::os::FixedSizeBuffersManager<double> *buffManager;
 
 
     /**
