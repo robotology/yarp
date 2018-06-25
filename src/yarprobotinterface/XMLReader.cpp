@@ -569,10 +569,14 @@ RobotInterface::Param RobotInterface::XMLReader::Private::readParamTag(TiXmlElem
     // yDebug() << "Found param [" << param.name() << "]";
 
     const char *valueText = paramElem->GetText();
-    if (!valueText) {
+    if (!valueText)
+    {
         SYNTAX_ERROR(paramElem->Row()) << "\"param\" element should have a value [ \"name\" = " << param.name() << "]";
     }
-    param.value() = valueText;
+    else
+    {
+        param.value() = valueText;
+    }
 
     // yDebug() << param;
     return param;
@@ -645,10 +649,14 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamListTag(T
         }
 
         const char *valueText = childElem->GetText();
-        if (!valueText) {
+        if (!valueText)
+        {
             SYNTAX_ERROR(childElem->Row()) << "\"elem\" element should have a value [ \"name\" = " << childParam.name() << "]";
         }
-        childParam.value() = valueText;
+        else
+        {
+            childParam.value() = valueText;
+        }
 
         params.push_back(childParam);
     }
