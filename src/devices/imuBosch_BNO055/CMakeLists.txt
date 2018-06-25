@@ -27,6 +27,7 @@ if(ENABLE_imuBosch_BNO055)
   target_compile_definitions(yarp_imuBosch_BNO055 PRIVATE ${I2C_DEFINITIONS})
   target_include_directories(yarp_imuBosch_BNO055 SYSTEM PRIVATE ${I2C_INCLUDE_DIRS})
   target_link_libraries(yarp_imuBosch_BNO055 PRIVATE ${I2C_LIBRARIES})
+#   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS I2C) (not using targets)
 
   yarp_install(TARGETS yarp_imuBosch_BNO055
                EXPORT YARP_${YARP_PLUGIN_MASTER}
