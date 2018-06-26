@@ -123,6 +123,8 @@ public:
 
     bool cmdList(NameTripleState& act);
 
+    bool cmdListRunners(NameTripleState& act);
+
     bool cmdSet(NameTripleState& act);
 
     bool cmdGet(NameTripleState& act);
