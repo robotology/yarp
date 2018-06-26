@@ -17,6 +17,9 @@ macro(add_lua_unit_test luascript)
 endmacro()
 
 add_lua_unit_test(test_bottle_and_property.lua)
-add_lua_unit_test(test_resource_finder.lua)
-add_lua_unit_test(test_vocab.lua)
+add_lua_unit_test(test_image.lua)
 add_lua_unit_test(test_port.lua)
+add_lua_unit_test(test_resource_finder.lua)
+add_lua_unit_test(test_time_delay.lua)
+add_lua_unit_test(test_vocab.lua)
+
