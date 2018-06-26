@@ -157,11 +157,16 @@ foreach(_yarp_module ${YARP_FIND_COMPONENTS})
   if(YARP_FIND_QUIETLY)
     set(_YARP_FIND_PARTS_QUIET QUIET)
   endif()
+  get_property(_yarp_${_yarp_module}_transitive_dependency_set GLOBAL PROPERTY _CMAKE_YARP_${_yarp_module}_TRANSITIVE_DEPENDENCY SET)
   find_package(YARP_${_yarp_module}
                ${_YARP_FIND_PARTS_QUIET}
                ${_YARP_FIND_PART_${_yarp_module}_REQUIRED}
                HINTS "${YARP_CMAKECONFIG_DIR}"
                NO_DEFAULT_PATH)
+  # Ensure that YCM is not shown by FeatureSummary if not requested by the user
+  if(NOT _yarp_${_yarp_module}_transitive_dependency_set)
+    set_property(GLOBAL PROPERTY _CMAKE_YARP_${_yarp_module}_TRANSITIVE_DEPENDENCY TRUE)
+  endif()
   if(YARP_${_yarp_module}_FOUND)
     list(APPEND YARP_LIBRARIES YARP::YARP_${_yarp_module})
   endif()
