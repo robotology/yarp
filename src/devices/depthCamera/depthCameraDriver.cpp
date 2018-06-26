@@ -877,9 +877,6 @@ IRGBDSensor::RGBDSensor_status depthCameraDriver::getSensorStatus()
     case DEVICE_STATE_NOT_READY:
         return RGBD_SENSOR_NOT_READY;
 
-    case DEVICE_STATE_ERROR:
-        return RGBD_SENSOR_GENERIC_ERROR;
-
     default:
         return RGBD_SENSOR_GENERIC_ERROR;
     }
