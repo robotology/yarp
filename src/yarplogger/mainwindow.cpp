@@ -445,7 +445,7 @@ QString MainWindow::recomputeFilters()
     bool e_error   = this->ui->DisplayErrorEnable->isChecked();
     bool e_all     = this->ui->DisplayUnformattedEnable->isChecked();
     int f = 0;
-    if (e_trace)   {if (f>0) filter=filter +"|"; filter = filter + "^TRACE$";   f++;}
+    if (e_trace)                                {filter = filter + "^TRACE$";   f++;}
     if (e_debug)   {if (f>0) filter=filter +"|"; filter = filter + "^DEBUG$";   f++;}
     if (e_info)    {if (f>0) filter=filter +"|"; filter = filter + "^INFO$";    f++;}
     if (e_warning) {if (f>0) filter=filter +"|"; filter = filter + "^WARNING$"; f++;}
