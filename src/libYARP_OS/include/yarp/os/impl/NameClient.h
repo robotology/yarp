@@ -11,6 +11,7 @@
 #define YARP_OS_IMPL_NAMECLIENT_H
 
 #include <yarp/os/Contact.h>
+#include <yarp/os/ContactStyle.h>
 #include <yarp/os/Nodes.h>
 
 namespace yarp {
@@ -118,7 +119,7 @@ public:
      *
      * @return the reply from the name server.
      */
-    std::string send(const std::string& cmd, bool multi = true);
+    std::string send(const std::string& cmd, bool multi = true, const ContactStyle& style = ContactStyle());
 
     /**
      * Send a message to the nameserver in Bottle format, and return the
