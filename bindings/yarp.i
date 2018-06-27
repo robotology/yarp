@@ -37,6 +37,8 @@
   %apply (int ARGC, char **ARGV) { (int argc, char *argv[]) }
 #endif
 
+%include <stdint.i>
+%include <std_vector.i>
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %include "std_vector.i"
@@ -284,14 +286,6 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS(...) __VA_ARGS__
 %enddef
 
-%define _YARP2_NETINT32_
-%enddef
-namespace yarp {
-  namespace os {
-    typedef int NetInt32;
-  }
- }
-
 // We skip macros from Vocab.h via SWIG_PREPROCESSOR_SHOULD_SKIP_THIS directive
 // But cannot define YARP_OS_VOCAB_H as we would miss encode/decode
 #if (SWIG_VERSION >= 0x030011) && (!defined(SWIGCSHARP))
@@ -310,6 +304,7 @@ namespace yarp {
 %enddef
 %define VOCAB1(x1) VOCAB(x1,0,0,0)
 %enddef
+
 
 %define YARP_BEGIN_PACK
 %enddef
@@ -339,6 +334,11 @@ namespace yarp {
 };
 #endif
 
+%include <yarp/conf/numeric.h>
+%include <yarp/os/NetInt8.h>
+%include <yarp/os/NetInt16.h>
+%include <yarp/os/NetInt32.h>
+%include <yarp/os/NetInt64.h>
 %include <yarp/os/PortReport.h>
 %include <yarp/os/Contact.h>
 %include <yarp/os/ConnectionReader.h>
@@ -402,8 +402,6 @@ namespace yarp {
 %template(TypedReader ## name) yarp::os::TypedReader<name>;
 %template(name ## Callback) yarp::os::TypedReaderCallback<name>;
 %template(BufferedPort ## name) yarp::os::BufferedPort<name>;
-%feature("notabstract") yarp::os::BufferedPort<name>;
-%feature("notabstract") BufferedPort ## name;
 %enddef
 
 MAKE_COMMS(Property)
