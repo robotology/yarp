@@ -37,6 +37,8 @@ constexpr yarp::conf::vocab32_t VOCAB_OUTPUTS    = yarp::os::createVocab('o','u'
 constexpr yarp::conf::vocab32_t VOCAB_REFERENCE  = yarp::os::createVocab('r','e','f');
 constexpr yarp::conf::vocab32_t VOCAB_REFERENCES = yarp::os::createVocab('r','e','f','s');
 constexpr yarp::conf::vocab32_t VOCAB_AXES       = yarp::os::createVocab('a','x','e','s');
+constexpr yarp::conf::vocab32_t VOCAB_COUNT      = yarp::os::createVocab('c','n','t');
+constexpr yarp::conf::vocab32_t VOCAB_VALUE      = yarp::os::createVocab('v','a','l');
 
 // Image, matrix etc
 constexpr yarp::conf::vocab32_t VOCAB_WIDTH      = yarp::os::createVocab('w');

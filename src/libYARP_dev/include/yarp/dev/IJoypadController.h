@@ -13,6 +13,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/PeriodicThread.h>
+#include <yarp/dev/GenericVocabs.h>
 #include <map>
 #include <vector>
 
@@ -276,12 +277,8 @@ public:
 #define YRPJOY_HAT_LEFTUP	 (YRPJOY_HAT_LEFT |YRPJOY_HAT_UP)
 #define YRPJOY_HAT_LEFTDOWN	 (YRPJOY_HAT_LEFT |YRPJOY_HAT_DOWN)
 
-constexpr yarp::conf::vocab32_t VOCAB_OK          = yarp::os::createVocab('o','k');
-constexpr yarp::conf::vocab32_t VOCAB_FAILED      = yarp::os::createVocab('f','a','i','l');
 constexpr yarp::conf::vocab32_t VOCAB_IJOYPADCTRL = yarp::os::createVocab('i','j','p','c');
-#ifndef VOCAB_GET
-constexpr yarp::conf::vocab32_t VOCAB_GET         = yarp::os::createVocab('g','e','t');
-#endif
+
 constexpr yarp::conf::vocab32_t VOCAB_BUTTON      = yarp::os::createVocab('b','u','t','n');
 constexpr yarp::conf::vocab32_t VOCAB_TRACKBALL   = yarp::os::createVocab('t','r','b','l');
 constexpr yarp::conf::vocab32_t VOCAB_HAT         = yarp::os::createVocab('h','a','t');
@@ -289,8 +286,6 @@ constexpr yarp::conf::vocab32_t VOCAB_AXIS        = yarp::os::createVocab('a','x
 constexpr yarp::conf::vocab32_t VOCAB_STICK       = yarp::os::createVocab('s','t','c','k');
 constexpr yarp::conf::vocab32_t VOCAB_STICKDOF    = yarp::os::createVocab('s','d','o','f');
 constexpr yarp::conf::vocab32_t VOCAB_TOUCH       = yarp::os::createVocab('t','u','c','h');
-constexpr yarp::conf::vocab32_t VOCAB_COUNT       = yarp::os::createVocab('c','n','t');
-constexpr yarp::conf::vocab32_t VOCAB_VALUE       = yarp::os::createVocab('v','a','l');
 constexpr yarp::conf::vocab32_t VOCAB_POLAR       = yarp::os::createVocab('p','o','l','r');
 constexpr yarp::conf::vocab32_t VOCAB_CARTESIAN   = yarp::os::createVocab('c','a','r','t');
 
