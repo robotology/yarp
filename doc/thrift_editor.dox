@@ -46,7 +46,7 @@ int main() {
     port.lockCallback();    // lock reads while we show settings
     printf("Settings %s\n", settings.toString().c_str());
     port.unlockCallback();  // unlock reads
-    Time::delay(1);         // wait a little bit
+    yarp::os::Time::delay(1);         // wait a little bit
   }
   return 0;
 }
