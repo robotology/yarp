@@ -15,7 +15,6 @@
 #include <yarp/sig/Vector.h>
 
 constexpr yarp::conf::vocab32_t VOCAB_IANALOG           = yarp::os::createVocab('i','a','n','a');
-constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE_CHANNEL = yarp::os::createVocab('c','a','l','c');
 
 /*! \file IAnalogSensor.h analog sensor interface */
 namespace yarp {

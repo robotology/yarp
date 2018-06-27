@@ -708,6 +708,7 @@ public:
 constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE_JOINT        = yarp::os::createVocab('c','a','l','j');
 constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE_JOINT_PARAMS = yarp::os::createVocab('c','l','j','p');
 constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE              = yarp::os::createVocab('c','a','l');
+constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE_CHANNEL      = yarp::os::createVocab('c','a','l','c');
 constexpr yarp::conf::vocab32_t VOCAB_ABORTCALIB             = yarp::os::createVocab('a','b','c','a');
 constexpr yarp::conf::vocab32_t VOCAB_ABORTPARK              = yarp::os::createVocab('a','b','p','a');
 constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE_DONE         = yarp::os::createVocab('c','a','l','d');
