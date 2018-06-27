@@ -81,6 +81,9 @@ if(MSVC)
   set(dirent_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/dirent/dirent/include" PARENT_SCOPE)
 endif()
 
+# md5
+set(md5_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/md5" PARENT_SCOPE)
+
 # ROS messages
 unset(ROS_MSG_PACKAGES)
 

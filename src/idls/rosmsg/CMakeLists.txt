@@ -10,21 +10,25 @@ if(NOT SKIP_ACE)
   include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 endif()
 
+set(md5_SRCS "${md5_ROOT}/md5.c")
+set(md5_HDRS "${md5_ROOT}/md5.h")
+
 set(yarpidl_rosmsg_SRCS src/main.cpp
                         src/RosType.cpp
-                        src/RosTypeCodeGenYarp.cpp
-                        src/md5.c)
+                        src/RosTypeCodeGenYarp.cpp)
 set(yarpidl_rosmsg_HDRS src/RosType.h
-                        src/RosTypeCodeGenYarp.h
-                        src/md5.h)
+                        src/RosTypeCodeGenYarp.h)
 
 add_executable(yarpidl_rosmsg ${yarpidl_rosmsg_SRCS}
-                              ${yarpidl_rosmsg_HDRS})
+                              ${yarpidl_rosmsg_HDRS}
+                              ${md5_SRCS}
+                              ${md5_HDRS})
 add_executable(YARP::yarpidl_rosmsg ALIAS yarpidl_rosmsg)
 
-target_link_libraries(yarpidl_rosmsg YARP::YARP_init
-                                     YARP::YARP_OS
-                                     ${ACE_LIBRARIES})
+target_include_directories(yarpidl_rosmsg SYSTEM PRIVATE "${md5_ROOT}")
+target_link_libraries(yarpidl_rosmsg PRIVATE YARP::YARP_init
+                                             YARP::YARP_OS
+                                             ${ACE_LIBRARIES})
 install(TARGETS yarpidl_rosmsg
         EXPORT YARP
         COMPONENT utilities
