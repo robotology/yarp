@@ -394,7 +394,7 @@ int main(int argc, char *argv[]) {
         Bottle b;
         p.read(b);
         string r;
-        if (in&&b.get(0).asVocab()==VOCAB3('r','p','c')&&b.get(1).isList()) {
+        if (in&&b.get(0).asVocab()==yarp::os::createVocab('r','p','c')&&b.get(1).isList()) {
 
             r = showFormat(*b.get(1).asList(),"v");
         } else {

@@ -9,8 +9,8 @@
 #ifndef YARP_DEV_PIDCONTROL_H
 #define YARP_DEV_PIDCONTROL_H
 
-#include <yarp/os/Vocab.h>
 #include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/GenericVocabs.h>
 #include <yarp/dev/PidEnums.h>
 #include <yarp/dev/ControlBoardPid.h>
 
@@ -379,37 +379,9 @@ public:
     virtual bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled) = 0;
 };
 
-/* Vocabs representing the above interfaces */
-
-#define VOCAB_SET VOCAB3('s','e','t')
-#define VOCAB_GET VOCAB3('g','e','t')
-#define VOCAB_IS VOCAB2('i','s')
-#define VOCAB_FAILED VOCAB4('f','a','i','l')
-#define VOCAB_OK VOCAB2('o','k')
-
-#define VOCAB_OFFSET VOCAB3('o', 'f', 'f')
-
-// interface IPidControl sets.
-#define VOCAB_PID VOCAB3('p','i','d')
-#define VOCAB_PIDS VOCAB4('p','i','d','s')
-#define VOCAB_REF VOCAB3('r','e','f')
-#define VOCAB_REFS VOCAB4('r','e','f','s')
-#define VOCAB_REFG VOCAB4('r','e','f','g')
-#define VOCAB_LIM VOCAB3('l','i','m')
-#define VOCAB_LIMS VOCAB4('l','i','m','s')
-#define VOCAB_RESET VOCAB3('r','e','s')
-#define VOCAB_DISABLE VOCAB3('d','i','s')
-#define VOCAB_ENABLE VOCAB3('e','n','a')
-
-// interface IPidControl gets.
-#define VOCAB_ERR VOCAB3('e','r','r')
-#define VOCAB_ERRS VOCAB4('e','r','r','s')
-#define VOCAB_OUTPUT VOCAB3('o','u','t')
-#define VOCAB_OUTPUTS VOCAB4('o','u','t','s')
-#define VOCAB_REFERENCE VOCAB3('r','e','f')
-#define VOCAB_REFERENCES VOCAB4('r','e','f','s')
-
 // interface IPositionControl gets
-#define VOCAB_AXES VOCAB4('a','x','e','s')
+constexpr yarp::conf::vocab32_t VOCAB_PID     = yarp::os::createVocab('p','i','d');
+constexpr yarp::conf::vocab32_t VOCAB_PIDS    = yarp::os::createVocab('p','i','d','s');
+
 
 #endif // YARP_DEV_CONTROLBOARDINTERFACES_H

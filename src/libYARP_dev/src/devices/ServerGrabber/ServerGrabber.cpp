@@ -16,6 +16,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/PortablePair.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/GenericVocabs.h>
 
 #include <cstring>
 

@@ -22,17 +22,17 @@ public:
 
     void checkConvert() {
         report(0,"checking vocabulary conversions");
-        checkEqual(VOCAB2('h','i'),Vocab::encode("hi"),"encoding");
+        checkEqual(yarp::os::createVocab('h','i'),Vocab::encode("hi"),"encoding");
         checkEqual(Vocab::decode(Vocab::encode("hi")).c_str(),"hi","decoding");
-        checkEqual(VOCAB4('h','i','g','h'),Vocab::encode("high"),"encoding");
+        checkEqual(yarp::os::createVocab('h','i','g','h'),Vocab::encode("high"),"encoding");
         checkEqual(Vocab::decode(Vocab::encode("high")).c_str(),"high","decoding");
         report(0,"checking compile-time functions");
         NetInt32 code = Vocab::encode("stop");
         switch(code) {
-        case VOCAB3('s','e','t'):
+        case yarp::os::createVocab('s','e','t'):
             report(1,"very strange error switching");
             break;
-        case VOCAB4('s','t','o','p'):
+        case yarp::os::createVocab('s','t','o','p'):
             report(0,"good switch");
             break;
         default:

@@ -59,7 +59,7 @@ public:
         listTag = BOTTLE_TAG_LIST;
         listLen = 4;
         paramNameTag = BOTTLE_TAG_VOCAB;
-        paramName = VOCAB3('m','a','t');
+        paramName = yarp::os::createVocab('m','a','t');
         paramIdTag = BOTTLE_TAG_VOCAB;
         id = image.getPixelCode();
         paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT32;

@@ -12,6 +12,7 @@
 #include <cstring>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/dev/GenericVocabs.h>
 #include <yarp/rosmsg/impl/yarpRosHelper.h>
 #include "rosPixelCode.h"
 

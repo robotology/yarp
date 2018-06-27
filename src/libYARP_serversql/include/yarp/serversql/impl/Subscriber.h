@@ -106,7 +106,7 @@ public:
                                      dest,
                                      mode);
                 reply.clear();
-                reply.addVocab(ok?VOCAB2('o','k'):VOCAB4('f','a','i','l'));
+                reply.addVocab(ok?yarp::os::createVocab('o','k'):yarp::os::createVocab('f','a','i','l'));
                 return ok;
             } else {
                 // list subscriptions
@@ -118,7 +118,7 @@ public:
             ok = removeSubscription(cmd.get(1).asString().c_str(),
                                     cmd.get(2).asString().c_str());
             reply.clear();
-            reply.addVocab(ok?VOCAB2('o','k'):VOCAB4('f','a','i','l'));
+            reply.addVocab(ok?yarp::os::createVocab('o','k'):yarp::os::createVocab('f','a','i','l'));
             return ok;
         }
         if (tag=="announce") {
@@ -128,7 +128,7 @@ public:
                 welcome(cmd.get(1).asString().c_str(),true);
             }
             reply.clear();
-            reply.addVocab(VOCAB2('o','k'));
+            reply.addVocab(yarp::os::createVocab('o','k'));
             return true;
         }
         if (tag=="topic") {
@@ -185,7 +185,7 @@ public:
     }
 
     int replyCode(bool flag) {
-        return flag?VOCAB2('o','k'):VOCAB4('f','a','i','l');
+        return flag?yarp::os::createVocab('o','k'):yarp::os::createVocab('f','a','i','l');
     }
 
     void setDelegate(yarp::os::NameSpace *delegate) {

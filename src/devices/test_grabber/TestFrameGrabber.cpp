@@ -19,11 +19,11 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::sig::draw;
 
-#define VOCAB_BALL VOCAB4('b','a','l','l')
-#define VOCAB_GRID VOCAB4('g','r','i','d')
-#define VOCAB_RAND VOCAB4('r','a','n','d')
-#define VOCAB_NONE VOCAB4('n','o','n','e')
-#define VOCAB_GRID_MULTISIZE VOCAB4('s','i','z','e')
+constexpr yarp::conf::vocab32_t VOCAB_BALL           = yarp::os::createVocab('b','a','l','l');
+constexpr yarp::conf::vocab32_t VOCAB_GRID           = yarp::os::createVocab('g','r','i','d');
+constexpr yarp::conf::vocab32_t VOCAB_RAND           = yarp::os::createVocab('r','a','n','d');
+constexpr yarp::conf::vocab32_t VOCAB_NONE           = yarp::os::createVocab('n','o','n','e');
+constexpr yarp::conf::vocab32_t VOCAB_GRID_MULTISIZE = yarp::os::createVocab('s','i','z','e');
 TestFrameGrabber::TestFrameGrabber() :
     ct(0),
     bx(0),

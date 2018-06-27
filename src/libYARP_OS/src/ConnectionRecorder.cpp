@@ -268,7 +268,7 @@ bool yarp::os::impl::ConnectionRecorder::write(yarp::os::ConnectionWriter& conne
         connection.appendInt32(BOTTLE_TAG_LIST); // nested structure
         connection.appendInt32(3); // with three elements
         connection.appendInt32(BOTTLE_TAG_VOCAB);
-        connection.appendInt32(VOCAB3('r', 'p', 'c'));
+        connection.appendInt32(yarp::os::createVocab('r', 'p', 'c'));
         bool ok = readerStore.write(connection);
         if (ok) {
             writerStore.write(connection);

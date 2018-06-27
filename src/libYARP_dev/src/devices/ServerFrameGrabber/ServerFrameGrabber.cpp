@@ -181,18 +181,6 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
                 singleThreaded);
     active = true;
 
-/*
-#define VOCAB_BRIGHTNESS VOCAB3('b','r','i')
-#define VOCAB_EXPOSURE VOCAB4('e','x','p','o')
-#define VOCAB_SHARPNESS VOCAB4('s','h','a','r')
-#define VOCAB_WHITE VOCAB4('w','h','i','t')
-#define VOCAB_HUE VOCAB3('h','u','e')
-#define VOCAB_SATURATION VOCAB4('s','a','t','u')
-#define VOCAB_GAMMA VOCAB4('g','a','m','m')
-#define VOCAB_SHUTTER VOCAB4('s','h','u','t')
-#define VOCAB_GAIN VOCAB4('g','a','i','n')
-#define VOCAB_IRIS VOCAB4('i','r','i','s')
-*/
 
     DeviceResponder::makeUsage();
     addUsage("[set] [bri] $fBrightness", "set brightness");

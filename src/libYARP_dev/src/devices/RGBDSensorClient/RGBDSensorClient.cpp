@@ -10,6 +10,7 @@
 #include "RGBDSensorClient_StreamingMsgParser.h"
 #include <yarp/os/Portable.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/dev/GenericVocabs.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;

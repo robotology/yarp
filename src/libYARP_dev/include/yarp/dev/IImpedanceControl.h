@@ -10,6 +10,7 @@
 #define YARP_DEV_IIMPEDANCECONTROL_H
 
 #include <yarp/dev/api.h>
+#include <yarp/os/Vocab.h>
 
 namespace yarp{
     namespace dev {
@@ -113,9 +114,9 @@ public:
 };
 
 //interface
-#define VOCAB_IMPEDANCE VOCAB4('i','i','m','p')
-#define VOCAB_ICONTROLMODE VOCAB4('i','c','m','d')
-#define VOCAB_POSITION VOCAB3('p','o','s')
-#define VOCAB_VELOCITY VOCAB3('v','e','l')
+constexpr yarp::conf::vocab32_t VOCAB_IMPEDANCE    = yarp::os::createVocab('i','i','m','p');
+
+constexpr yarp::conf::vocab32_t VOCAB_POSITION     = yarp::os::createVocab('p','o','s');
+constexpr yarp::conf::vocab32_t VOCAB_VELOCITY     = yarp::os::createVocab('v','e','l');
 
 #endif // YARP_DEV_IIMPEDANCECONTROL_H

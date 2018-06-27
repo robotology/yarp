@@ -1847,7 +1847,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     indent(out) << "yarp::os::idl::WireWriter writer(reader);" << endl;
     indent(out) << "if (writer.isNull()) return true;" << endl;
     indent(out) << "writer.writeListHeader(1);" << endl;
-    indent(out) << "writer.writeVocab(VOCAB2('o','k'));" << endl;
+    indent(out) << "writer.writeVocab(yarp::os::createVocab('o','k'));" << endl;
     indent(out) << "return true;" << endl;
     scope_down(out);
 

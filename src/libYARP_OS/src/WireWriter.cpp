@@ -57,7 +57,7 @@ bool WireWriter::writeNested(const yarp::os::PortWriter& obj) const {
 
 bool WireWriter::writeBool(bool x) const {
     writer.appendInt32(BOTTLE_TAG_VOCAB);
-    writer.appendInt32(x?VOCAB2('o', 'k'):VOCAB4('f', 'a', 'i', 'l'));
+    writer.appendInt32(x?yarp::os::createVocab('o', 'k'):yarp::os::createVocab('f', 'a', 'i', 'l'));
     return !writer.isError();
 }
 
@@ -156,7 +156,7 @@ bool WireWriter::writeListHeader(int len) const {
     if (get_mode) {
         writer.appendInt32(len+3);
         writer.appendInt32(BOTTLE_TAG_VOCAB);
-        writer.appendInt32(VOCAB2('i', 's'));
+        writer.appendInt32(yarp::os::createVocab('i', 's'));
         if (get_is_vocab) {
             writer.appendInt32(BOTTLE_TAG_VOCAB);
             writer.appendInt32(Vocab::encode(get_string.c_str()));
@@ -206,6 +206,6 @@ bool WireWriter::writeMapEnd() const {
 bool WireWriter::writeOnewayResponse() const {
     if (!writeListHeader(1)) return false;
     writer.appendInt32(BOTTLE_TAG_VOCAB);
-    writer.appendInt32(VOCAB4('d', 'o', 'n', 'e'));
+    writer.appendInt32(yarp::os::createVocab('d', 'o', 'n', 'e'));
     return true;
 }

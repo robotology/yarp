@@ -115,40 +115,39 @@ public:
 
 // new style VOCABS
 // Interface
-#define VOCAB_ICONTROLMODE          VOCAB4('i','c','m','d')
-
+constexpr yarp::conf::vocab32_t VOCAB_ICONTROLMODE = yarp::os::createVocab('i','c','m','d');
 // Methods
-#define VOCAB_CM_CONTROL_MODE           VOCAB4('c','m','o','d')
-#define VOCAB_CM_CONTROL_MODE_GROUP     VOCAB4('c','m','o','g')
-#define VOCAB_CM_CONTROL_MODES          VOCAB4('c','m','d','s')
+constexpr yarp::conf::vocab32_t VOCAB_CM_CONTROL_MODE       =   yarp::os::createVocab('c','m','o','d');
+constexpr yarp::conf::vocab32_t VOCAB_CM_CONTROL_MODE_GROUP =   yarp::os::createVocab('c','m','o','g');
+constexpr yarp::conf::vocab32_t VOCAB_CM_CONTROL_MODES      =   yarp::os::createVocab('c','m','d','s');
 
 // Values
 // Read / Write
-#define VOCAB_CM_IDLE               VOCAB3('i','d','l')
-#define VOCAB_CM_TORQUE             VOCAB4('t','o','r','q')
-#define VOCAB_CM_POSITION           VOCAB3('p','o','s')
-#define VOCAB_CM_POSITION_DIRECT    VOCAB4('p','o','s','d')
-#define VOCAB_CM_VELOCITY           VOCAB3('v','e','l')
-#define VOCAB_CM_CURRENT            VOCAB4('i','c','u','r')
-#define VOCAB_CM_PWM                VOCAB4('i','p','w','m')
-#define VOCAB_CM_IMPEDANCE_POS      VOCAB4('i','m','p','o')  // deprecated
-#define VOCAB_CM_IMPEDANCE_VEL      VOCAB4('i','m','v','e')  // deprecated
+constexpr yarp::conf::vocab32_t VOCAB_CM_IDLE            =   yarp::os::createVocab('i','d','l');
+constexpr yarp::conf::vocab32_t VOCAB_CM_TORQUE          =   yarp::os::createVocab('t','o','r','q');
+constexpr yarp::conf::vocab32_t VOCAB_CM_POSITION        =   yarp::os::createVocab('p','o','s');
+constexpr yarp::conf::vocab32_t VOCAB_CM_POSITION_DIRECT =   yarp::os::createVocab('p','o','s','d');
+constexpr yarp::conf::vocab32_t VOCAB_CM_VELOCITY        =   yarp::os::createVocab('v','e','l');
+constexpr yarp::conf::vocab32_t VOCAB_CM_CURRENT         =   yarp::os::createVocab('i','c','u','r');
+constexpr yarp::conf::vocab32_t VOCAB_CM_PWM             =   yarp::os::createVocab('i','p','w','m');
+constexpr yarp::conf::vocab32_t VOCAB_CM_IMPEDANCE_POS   =   yarp::os::createVocab('i','m','p','o');  // deprecated
+constexpr yarp::conf::vocab32_t VOCAB_CM_IMPEDANCE_VEL   =   yarp::os::createVocab('i','m','v','e');  // deprecated
 
 // Values
 // Read / Write
-#define VOCAB_CM_MIXED              VOCAB3('m','i','x')
+constexpr yarp::conf::vocab32_t  VOCAB_CM_MIXED = yarp::os::createVocab('m','i','x');
 
 // Write only (only from high level toward the joint)
-#define VOCAB_CM_FORCE_IDLE         VOCAB4('f','i','d','l')
+constexpr yarp::conf::vocab32_t  VOCAB_CM_FORCE_IDLE =   yarp::os::createVocab('f','i','d','l');
 
 // Read only (imposed by the board on special events)
-#define VOCAB_CM_HW_FAULT           VOCAB4('h','w','f','a')
-#define VOCAB_CM_CALIBRATING        VOCAB3('c','a','l')     // the joint is calibrating
-#define VOCAB_CM_CALIB_DONE         VOCAB4('c','a','l','d') // calibration successfully completed
-#define VOCAB_CM_NOT_CONFIGURED     VOCAB4('c','f','g','n') // missing initial configuration (default value at start-up)
-#define VOCAB_CM_CONFIGURED         VOCAB4('c','f','g','y') // initial configuration completed, if any
+constexpr yarp::conf::vocab32_t  VOCAB_CM_HW_FAULT       =    yarp::os::createVocab('h','w','f','a');
+constexpr yarp::conf::vocab32_t  VOCAB_CM_CALIBRATING    =    yarp::os::createVocab('c','a','l');     // the joint is calibrating
+constexpr yarp::conf::vocab32_t  VOCAB_CM_CALIB_DONE     =    yarp::os::createVocab('c','a','l','d'); // calibration successfully completed
+constexpr yarp::conf::vocab32_t  VOCAB_CM_NOT_CONFIGURED =    yarp::os::createVocab('c','f','g','n'); // missing initial configuration (default value at start-up)
+constexpr yarp::conf::vocab32_t  VOCAB_CM_CONFIGURED     =    yarp::os::createVocab('c','f','g','y'); // initial configuration completed, if any
 
 // Read only (cannot be set from user)
-#define VOCAB_CM_UNKNOWN            VOCAB4('u','n','k','w')
+constexpr yarp::conf::vocab32_t VOCAB_CM_UNKNOWN =   yarp::os::createVocab('u','n','k','w');
 
 #endif // YARP_DEV_ICONTROLMODE_H

@@ -276,23 +276,23 @@ public:
 #define YRPJOY_HAT_LEFTUP	 (YRPJOY_HAT_LEFT |YRPJOY_HAT_UP)
 #define YRPJOY_HAT_LEFTDOWN	 (YRPJOY_HAT_LEFT |YRPJOY_HAT_DOWN)
 
-#define VOCAB_OK          VOCAB2('o','k')
-#define VOCAB_FAILED      VOCAB4('f','a','i','l')
-#define VOCAB_IJOYPADCTRL VOCAB4('i','j','p','c')
+constexpr yarp::conf::vocab32_t VOCAB_OK          = yarp::os::createVocab('o','k');
+constexpr yarp::conf::vocab32_t VOCAB_FAILED      = yarp::os::createVocab('f','a','i','l');
+constexpr yarp::conf::vocab32_t VOCAB_IJOYPADCTRL = yarp::os::createVocab('i','j','p','c');
 #ifndef VOCAB_GET
-#define VOCAB_GET         VOCAB3('g','e','t')
+constexpr yarp::conf::vocab32_t VOCAB_GET         = yarp::os::createVocab('g','e','t');
 #endif
-#define VOCAB_BUTTON      VOCAB4('b','u','t','n')
-#define VOCAB_TRACKBALL   VOCAB4('t','r','b','l')
-#define VOCAB_HAT         VOCAB3('h','a','t')
-#define VOCAB_AXIS        VOCAB4('a','x','i','s')
-#define VOCAB_STICK       VOCAB4('s','t','c','k')
-#define VOCAB_STICKDOF    VOCAB4('s','d','o','f')
-#define VOCAB_TOUCH       VOCAB4('t','u','c','h')
-#define VOCAB_COUNT       VOCAB3('c','n','t')
-#define VOCAB_VALUE       VOCAB3('v','a','l')
-#define VOCAB_POLAR       VOCAB4('p','o','l','r')
-#define VOCAB_CARTESIAN   VOCAB4('c','a','r','t')
+constexpr yarp::conf::vocab32_t VOCAB_BUTTON      = yarp::os::createVocab('b','u','t','n');
+constexpr yarp::conf::vocab32_t VOCAB_TRACKBALL   = yarp::os::createVocab('t','r','b','l');
+constexpr yarp::conf::vocab32_t VOCAB_HAT         = yarp::os::createVocab('h','a','t');
+constexpr yarp::conf::vocab32_t VOCAB_AXIS        = yarp::os::createVocab('a','x','i','s');
+constexpr yarp::conf::vocab32_t VOCAB_STICK       = yarp::os::createVocab('s','t','c','k');
+constexpr yarp::conf::vocab32_t VOCAB_STICKDOF    = yarp::os::createVocab('s','d','o','f');
+constexpr yarp::conf::vocab32_t VOCAB_TOUCH       = yarp::os::createVocab('t','u','c','h');
+constexpr yarp::conf::vocab32_t VOCAB_COUNT       = yarp::os::createVocab('c','n','t');
+constexpr yarp::conf::vocab32_t VOCAB_VALUE       = yarp::os::createVocab('v','a','l');
+constexpr yarp::conf::vocab32_t VOCAB_POLAR       = yarp::os::createVocab('p','o','l','r');
+constexpr yarp::conf::vocab32_t VOCAB_CARTESIAN   = yarp::os::createVocab('c','a','r','t');
 
 #endif //#define YARP_DEV_IJOYPADCONTROLLER_H
 

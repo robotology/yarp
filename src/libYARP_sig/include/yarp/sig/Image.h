@@ -45,32 +45,32 @@ namespace yarp {
 enum YarpVocabPixelTypesEnum
 {
     VOCAB_PIXEL_INVALID = 0,
-    VOCAB_PIXEL_MONO = VOCAB4('m','o','n','o'),
-    VOCAB_PIXEL_MONO16 = VOCAB4('m','o','1','6'),
-    VOCAB_PIXEL_RGB = VOCAB3('r','g','b'),
-    VOCAB_PIXEL_RGBA = VOCAB4('r','g','b','a'),
-    VOCAB_PIXEL_BGRA = VOCAB4('b','g','r','a'),
-    VOCAB_PIXEL_INT = VOCAB3('i','n','t'),
-    VOCAB_PIXEL_HSV = VOCAB3('h','s','v'),
-    VOCAB_PIXEL_BGR = VOCAB3('b','g','r'),
-    VOCAB_PIXEL_MONO_SIGNED = VOCAB4('s','i','g','n'),
-    VOCAB_PIXEL_RGB_SIGNED = VOCAB4('r','g','b','-'),
-    VOCAB_PIXEL_RGB_INT = VOCAB4('r','g','b','i'),
-    VOCAB_PIXEL_MONO_FLOAT = VOCAB3('d','e','c'),
-    VOCAB_PIXEL_RGB_FLOAT = VOCAB4('r','g','b','.'),
-    VOCAB_PIXEL_HSV_FLOAT = VOCAB4('h','s','v','.'),
-    VOCAB_PIXEL_ENCODING_BAYER_GRBG8 = VOCAB4('g', 'r', 'b', 'g'),   //grbg8
-    VOCAB_PIXEL_ENCODING_BAYER_GRBG16 = VOCAB4('g', 'r', '1', '6'),  //grbg16
-    VOCAB_PIXEL_ENCODING_BAYER_BGGR8 = VOCAB4('b', 'g', 'g', 'r'),     //bggr8
-    VOCAB_PIXEL_ENCODING_BAYER_BGGR16 = VOCAB4('b', 'g', '1', '6'),  //bggr16
-    VOCAB_PIXEL_ENCODING_BAYER_GBRG8 = VOCAB4('g', 'b', 'r', 'g'),  //gbrg8
-    VOCAB_PIXEL_ENCODING_BAYER_GBRG16 = VOCAB4('g', 'b', '1', '6'),  //gbrg16
-    VOCAB_PIXEL_ENCODING_BAYER_RGGB8 = VOCAB4('r', 'g', 'g', 'b'),   //rggb8
-    VOCAB_PIXEL_ENCODING_BAYER_RGGB16 = VOCAB4('r', 'g', '1', '6'),  //rggb16
-    VOCAB_PIXEL_YUV_420 = VOCAB4('y','u','v','a'),
-    VOCAB_PIXEL_YUV_444 = VOCAB4('y','u','v','b'),
-    VOCAB_PIXEL_YUV_422 = VOCAB4('y','u','v','c'),
-    VOCAB_PIXEL_YUV_411 = VOCAB4('y','u','v','d')
+    VOCAB_PIXEL_MONO = yarp::os::createVocab('m','o','n','o'),
+    VOCAB_PIXEL_MONO16 = yarp::os::createVocab('m','o','1','6'),
+    VOCAB_PIXEL_RGB = yarp::os::createVocab('r','g','b'),
+    VOCAB_PIXEL_RGBA = yarp::os::createVocab('r','g','b','a'),
+    VOCAB_PIXEL_BGRA = yarp::os::createVocab('b','g','r','a'),
+    VOCAB_PIXEL_INT = yarp::os::createVocab('i','n','t'),
+    VOCAB_PIXEL_HSV = yarp::os::createVocab('h','s','v'),
+    VOCAB_PIXEL_BGR = yarp::os::createVocab('b','g','r'),
+    VOCAB_PIXEL_MONO_SIGNED = yarp::os::createVocab('s','i','g','n'),
+    VOCAB_PIXEL_RGB_SIGNED = yarp::os::createVocab('r','g','b','-'),
+    VOCAB_PIXEL_RGB_INT = yarp::os::createVocab('r','g','b','i'),
+    VOCAB_PIXEL_MONO_FLOAT = yarp::os::createVocab('d','e','c'),
+    VOCAB_PIXEL_RGB_FLOAT = yarp::os::createVocab('r','g','b','.'),
+    VOCAB_PIXEL_HSV_FLOAT = yarp::os::createVocab('h','s','v','.'),
+    VOCAB_PIXEL_ENCODING_BAYER_GRBG8 = yarp::os::createVocab('g', 'r', 'b', 'g'),   //grbg8
+    VOCAB_PIXEL_ENCODING_BAYER_GRBG16 = yarp::os::createVocab('g', 'r', '1', '6'),  //grbg16
+    VOCAB_PIXEL_ENCODING_BAYER_BGGR8 = yarp::os::createVocab('b', 'g', 'g', 'r'),     //bggr8
+    VOCAB_PIXEL_ENCODING_BAYER_BGGR16 = yarp::os::createVocab('b', 'g', '1', '6'),  //bggr16
+    VOCAB_PIXEL_ENCODING_BAYER_GBRG8 = yarp::os::createVocab('g', 'b', 'r', 'g'),  //gbrg8
+    VOCAB_PIXEL_ENCODING_BAYER_GBRG16 = yarp::os::createVocab('g', 'b', '1', '6'),  //gbrg16
+    VOCAB_PIXEL_ENCODING_BAYER_RGGB8 = yarp::os::createVocab('r', 'g', 'g', 'b'),   //rggb8
+    VOCAB_PIXEL_ENCODING_BAYER_RGGB16 = yarp::os::createVocab('r', 'g', '1', '6'),  //rggb16
+    VOCAB_PIXEL_YUV_420 = yarp::os::createVocab('y','u','v','a'),
+    VOCAB_PIXEL_YUV_444 = yarp::os::createVocab('y','u','v','b'),
+    VOCAB_PIXEL_YUV_422 = yarp::os::createVocab('y','u','v','c'),
+    VOCAB_PIXEL_YUV_411 = yarp::os::createVocab('y','u','v','d')
 };
 
 /**

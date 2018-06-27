@@ -8,6 +8,7 @@
 
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/IVisualParamsImpl.h>
+#include <yarp/dev/GenericVocabs.h>
 #include <cstring>
 
 using namespace yarp::os;

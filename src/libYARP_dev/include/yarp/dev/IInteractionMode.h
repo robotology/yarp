@@ -19,17 +19,17 @@ namespace yarp {
 
         enum InteractionModeEnum
         {
-            VOCAB_IM_STIFF        =   VOCAB4('s','t','i','f'),
-            VOCAB_IM_COMPLIANT    =   VOCAB4('c','o','m','p'),
-            VOCAB_IM_UNKNOWN      =   VOCAB4('u','n','k','n')
+            VOCAB_IM_STIFF        =   yarp::os::createVocab('s','t','i','f'),
+            VOCAB_IM_COMPLIANT    =   yarp::os::createVocab('c','o','m','p'),
+            VOCAB_IM_UNKNOWN      =   yarp::os::createVocab('u','n','k','n')
         };
     }
 }
 
-#define VOCAB_INTERFACE_INTERACTION_MODE    VOCAB4('i','n','t','m')
-#define VOCAB_INTERACTION_MODE              VOCAB4('m','o','d','e')
-#define VOCAB_INTERACTION_MODE_GROUP        VOCAB4('m','o','d','g')
-#define VOCAB_INTERACTION_MODES             VOCAB4('m','o','d','s')
+constexpr yarp::conf::vocab32_t VOCAB_INTERFACE_INTERACTION_MODE    = yarp::os::createVocab('i','n','t','m');
+constexpr yarp::conf::vocab32_t VOCAB_INTERACTION_MODE              = yarp::os::createVocab('m','o','d','e');
+constexpr yarp::conf::vocab32_t VOCAB_INTERACTION_MODE_GROUP        = yarp::os::createVocab('m','o','d','g');
+constexpr yarp::conf::vocab32_t VOCAB_INTERACTION_MODES             = yarp::os::createVocab('m','o','d','s');
 
 
 

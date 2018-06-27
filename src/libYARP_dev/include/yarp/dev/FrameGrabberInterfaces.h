@@ -37,46 +37,38 @@ typedef struct {
 /*
  *  Vocab for interfaces
  */
-#define VOCAB_FRAMEGRABBER_IMAGE        VOCAB3('f','g','i')
-#define VOCAB_FRAMEGRABBER_IMAGERAW     VOCAB4('f','g','i','r')
+constexpr yarp::conf::vocab32_t VOCAB_FRAMEGRABBER_IMAGE        = yarp::os::createVocab('f','g','i');
+constexpr yarp::conf::vocab32_t VOCAB_FRAMEGRABBER_IMAGERAW     = yarp::os::createVocab('f','g','i','r');
 
 /*
  * Generic capabilities defines
  */
 
-#define VOCAB_BRIGHTNESS                VOCAB3('b','r','i')
-#define VOCAB_EXPOSURE                  VOCAB4('e','x','p','o')
-#define VOCAB_SHARPNESS                 VOCAB4('s','h','a','r')
-#define VOCAB_WHITE                     VOCAB4('w','h','i','t')
-#define VOCAB_HUE                       VOCAB3('h','u','e')
-#define VOCAB_SATURATION                VOCAB4('s','a','t','u')
-#define VOCAB_GAMMA                     VOCAB4('g','a','m','m')
-#define VOCAB_SHUTTER                   VOCAB4('s','h','u','t')
-#define VOCAB_GAIN                      VOCAB4('g','a','i','n')
-#define VOCAB_IRIS                      VOCAB4('i','r','i','s')
+constexpr yarp::conf::vocab32_t VOCAB_BRIGHTNESS                = yarp::os::createVocab('b','r','i');
+constexpr yarp::conf::vocab32_t VOCAB_EXPOSURE                  = yarp::os::createVocab('e','x','p','o');
+constexpr yarp::conf::vocab32_t VOCAB_SHARPNESS                 = yarp::os::createVocab('s','h','a','r');
+constexpr yarp::conf::vocab32_t VOCAB_WHITE                     = yarp::os::createVocab('w','h','i','t');
+constexpr yarp::conf::vocab32_t VOCAB_HUE                       = yarp::os::createVocab('h','u','e');
+constexpr yarp::conf::vocab32_t VOCAB_SATURATION                = yarp::os::createVocab('s','a','t','u');
+constexpr yarp::conf::vocab32_t VOCAB_GAMMA                     = yarp::os::createVocab('g','a','m','m');
+constexpr yarp::conf::vocab32_t VOCAB_SHUTTER                   = yarp::os::createVocab('s','h','u','t');
+constexpr yarp::conf::vocab32_t VOCAB_GAIN                      = yarp::os::createVocab('g','a','i','n');
+constexpr yarp::conf::vocab32_t VOCAB_IRIS                      = yarp::os::createVocab('i','r','i','s');
 
 // General usage vocabs
-#define VOCAB_SET                       VOCAB3('s','e','t')
-#define VOCAB_GET                       VOCAB3('g','e','t')
-#define VOCAB_IS                        VOCAB2('i','s')
-#define VOCAB_WIDTH                     VOCAB1('w')
-#define VOCAB_HEIGHT                    VOCAB1('h')
-
-#define VOCAB_CROP                      VOCAB4('c','r','o','p')
-
-
-#define VOCAB_FRAMEGRABBER_CONTROL      VOCAB3('f','g','c')
-#define VOCAB_FRAMEGRABBER_CONTROL_DC1394      VOCAB4('f','g','f','w')
-#define VOCAB_CAMERA_DESCRIPTION        VOCAB4('c','a','m','d')
-#define VOCAB_HAS                       VOCAB3('h','a','s')
-#define VOCAB_FEATURE                   VOCAB4('f','e','a','t')
-#define VOCAB_FEATURE2                  VOCAB4('f','e','a','2')
-#define VOCAB_ONOFF                     VOCAB4('o','n','o','f')
-#define VOCAB_AUTO                      VOCAB4('a','u','t','o')
-#define VOCAB_MANUAL                    VOCAB3('m','a','n')
-#define VOCAB_ONEPUSH                   VOCAB4('o','n','e','p')
-#define VOCAB_ACTIVE                    VOCAB4('a','c','t','v')
-#define VOCAB_MODE                      VOCAB4('m','o','d','e')
+constexpr yarp::conf::vocab32_t VOCAB_CROP                      = yarp::os::createVocab('c','r','o','p');
+constexpr yarp::conf::vocab32_t VOCAB_FRAMEGRABBER_CONTROL      = yarp::os::createVocab('f','g','c');
+constexpr yarp::conf::vocab32_t VOCAB_FRAMEGRABBER_CONTROL_DC1394 = yarp::os::createVocab('f','g','f','w');
+constexpr yarp::conf::vocab32_t VOCAB_CAMERA_DESCRIPTION        = yarp::os::createVocab('c','a','m','d');
+constexpr yarp::conf::vocab32_t VOCAB_HAS                       = yarp::os::createVocab('h','a','s');
+constexpr yarp::conf::vocab32_t VOCAB_FEATURE                   = yarp::os::createVocab('f','e','a','t');
+constexpr yarp::conf::vocab32_t VOCAB_FEATURE2                  = yarp::os::createVocab('f','e','a','2');
+constexpr yarp::conf::vocab32_t VOCAB_ONOFF                     = yarp::os::createVocab('o','n','o','f');
+constexpr yarp::conf::vocab32_t VOCAB_AUTO                      = yarp::os::createVocab('a','u','t','o');
+constexpr yarp::conf::vocab32_t VOCAB_MANUAL                    = yarp::os::createVocab('m','a','n');
+constexpr yarp::conf::vocab32_t VOCAB_ONEPUSH                   = yarp::os::createVocab('o','n','e','p');
+constexpr yarp::conf::vocab32_t VOCAB_ACTIVE                    = yarp::os::createVocab('a','c','t','v');
+constexpr yarp::conf::vocab32_t VOCAB_MODE                      = yarp::os::createVocab('m','o','d','e');
 
 
 typedef enum {
@@ -118,59 +110,49 @@ typedef enum {
  * For usage with IFrameGrabberControlsDC1394 interface
  */
 
-#define VOCAB_DRHASFEA VOCAB4('D','R','2','a') // 00
-#define VOCAB_DRSETVAL VOCAB4('D','R','2','b') // 01
-#define VOCAB_DRGETVAL VOCAB4('D','R','2','c') // 02
-
-#define VOCAB_DRHASACT VOCAB4('D','R','2','d') // 03
-#define VOCAB_DRSETACT VOCAB4('D','R','2','e') // 04
-#define VOCAB_DRGETACT VOCAB4('D','R','2','f') // 05
-
-#define VOCAB_DRHASMAN VOCAB4('D','R','2','g') // 06
-#define VOCAB_DRHASAUT VOCAB4('D','R','2','h') // 07
-#define VOCAB_DRHASONP VOCAB4('D','R','2','i') // 08
-#define VOCAB_DRSETMOD VOCAB4('D','R','2','j') // 09
-#define VOCAB_DRGETMOD VOCAB4('D','R','2','k') // 10
-#define VOCAB_DRSETONP VOCAB4('D','R','2','l') // 11
+constexpr yarp::conf::vocab32_t VOCAB_DRHASFEA = yarp::os::createVocab('D','R','2','a');// 00
+constexpr yarp::conf::vocab32_t VOCAB_DRSETVAL = yarp::os::createVocab('D','R','2','b');// 01
+constexpr yarp::conf::vocab32_t VOCAB_DRGETVAL = yarp::os::createVocab('D','R','2','c');// 02
+constexpr yarp::conf::vocab32_t VOCAB_DRHASACT = yarp::os::createVocab('D','R','2','d');// 03
+constexpr yarp::conf::vocab32_t VOCAB_DRSETACT = yarp::os::createVocab('D','R','2','e');// 04
+constexpr yarp::conf::vocab32_t VOCAB_DRGETACT = yarp::os::createVocab('D','R','2','f');// 05
+constexpr yarp::conf::vocab32_t VOCAB_DRHASMAN = yarp::os::createVocab('D','R','2','g');// 06
+constexpr yarp::conf::vocab32_t VOCAB_DRHASAUT = yarp::os::createVocab('D','R','2','h');// 07
+constexpr yarp::conf::vocab32_t VOCAB_DRHASONP = yarp::os::createVocab('D','R','2','i');// 08
+constexpr yarp::conf::vocab32_t VOCAB_DRSETMOD = yarp::os::createVocab('D','R','2','j');// 09
+constexpr yarp::conf::vocab32_t VOCAB_DRGETMOD = yarp::os::createVocab('D','R','2','k');// 10
+constexpr yarp::conf::vocab32_t VOCAB_DRSETONP = yarp::os::createVocab('D','R','2','l');// 11
 
 // masks
-#define VOCAB_DRGETMSK VOCAB4('D','R','2','m') // 12
-#define VOCAB_DRGETVMD VOCAB4('D','R','2','n') // 13
-#define VOCAB_DRSETVMD VOCAB4('D','R','2','o') // 14
+constexpr yarp::conf::vocab32_t VOCAB_DRGETMSK = yarp::os::createVocab('D','R','2','m'); // 12
+constexpr yarp::conf::vocab32_t VOCAB_DRGETVMD = yarp::os::createVocab('D','R','2','n'); // 13
+constexpr yarp::conf::vocab32_t VOCAB_DRSETVMD = yarp::os::createVocab('D','R','2','o'); // 14
+constexpr yarp::conf::vocab32_t VOCAB_DRGETFPM = yarp::os::createVocab('D','R','2','p'); // 15
+constexpr yarp::conf::vocab32_t VOCAB_DRGETFPS = yarp::os::createVocab('D','R','2','q'); // 16
+constexpr yarp::conf::vocab32_t VOCAB_DRSETFPS = yarp::os::createVocab('D','R','2','r'); // 17
+constexpr yarp::conf::vocab32_t VOCAB_DRGETISO = yarp::os::createVocab('D','R','2','s'); // 18
+constexpr yarp::conf::vocab32_t VOCAB_DRSETISO = yarp::os::createVocab('D','R','2','t'); // 19
+constexpr yarp::conf::vocab32_t VOCAB_DRGETCCM = yarp::os::createVocab('D','R','2','u'); // 20
+constexpr yarp::conf::vocab32_t VOCAB_DRGETCOD = yarp::os::createVocab('D','R','2','v'); // 21
+constexpr yarp::conf::vocab32_t VOCAB_DRSETCOD = yarp::os::createVocab('D','R','2','w'); // 22
+constexpr yarp::conf::vocab32_t VOCAB_DRSETWHB = yarp::os::createVocab('D','R','2','x'); // 23
+constexpr yarp::conf::vocab32_t VOCAB_DRGETWHB = yarp::os::createVocab('D','R','2','y'); // 24
+constexpr yarp::conf::vocab32_t VOCAB_DRGETF7M = yarp::os::createVocab('D','R','2','z'); // 25
+constexpr yarp::conf::vocab32_t VOCAB_DRGETWF7 = yarp::os::createVocab('D','R','2','A'); // 26
+constexpr yarp::conf::vocab32_t VOCAB_DRSETWF7 = yarp::os::createVocab('D','R','2','B'); // 27
+constexpr yarp::conf::vocab32_t VOCAB_DRSETOPM = yarp::os::createVocab('D','R','2','C'); // 28
+constexpr yarp::conf::vocab32_t VOCAB_DRGETOPM = yarp::os::createVocab('D','R','2','D'); // 29
+constexpr yarp::conf::vocab32_t VOCAB_DRSETTXM = yarp::os::createVocab('D','R','2','E'); // 30
+constexpr yarp::conf::vocab32_t VOCAB_DRGETTXM = yarp::os::createVocab('D','R','2','F'); // 31
 
-#define VOCAB_DRGETFPM VOCAB4('D','R','2','p') // 15
-#define VOCAB_DRGETFPS VOCAB4('D','R','2','q') // 16
-#define VOCAB_DRSETFPS VOCAB4('D','R','2','r') // 17
 
-#define VOCAB_DRGETISO VOCAB4('D','R','2','s') // 18
-#define VOCAB_DRSETISO VOCAB4('D','R','2','t') // 19
-
-#define VOCAB_DRGETCCM VOCAB4('D','R','2','u') // 20
-#define VOCAB_DRGETCOD VOCAB4('D','R','2','v') // 21
-#define VOCAB_DRSETCOD VOCAB4('D','R','2','w') // 22
-
-#define VOCAB_DRSETWHB VOCAB4('D','R','2','x') // 23
-#define VOCAB_DRGETWHB VOCAB4('D','R','2','y') // 24
-
-#define VOCAB_DRGETF7M VOCAB4('D','R','2','z') // 25
-#define VOCAB_DRGETWF7 VOCAB4('D','R','2','A') // 26
-#define VOCAB_DRSETWF7 VOCAB4('D','R','2','B') // 27
-
-#define VOCAB_DRSETOPM VOCAB4('D','R','2','C') // 28
-#define VOCAB_DRGETOPM VOCAB4('D','R','2','D') // 29
-#define VOCAB_DRSETTXM VOCAB4('D','R','2','E') // 30
-#define VOCAB_DRGETTXM VOCAB4('D','R','2','F') // 31
-//#define VOCAB_DRSETBAY VOCAB4('D','R','2','G') // 32
-//#define VOCAB_DRGETBAY VOCAB4('D','R','2','H') // 33
-
-#define VOCAB_DRSETBCS VOCAB4('D','R','2','I') // 34
-#define VOCAB_DRSETDEF VOCAB4('D','R','2','J') // 35
-#define VOCAB_DRSETRST VOCAB4('D','R','2','K') // 36
-#define VOCAB_DRSETPWR VOCAB4('D','R','2','L') // 37
-
-#define VOCAB_DRSETCAP VOCAB4('D','R','2','M') // 38
-#define VOCAB_DRSETBPP VOCAB4('D','R','2','N') // 39
-#define VOCAB_DRGETBPP VOCAB4('D','R','2','O') // 40
+constexpr yarp::conf::vocab32_t VOCAB_DRSETBCS = yarp::os::createVocab('D','R','2','I'); // 34
+constexpr yarp::conf::vocab32_t VOCAB_DRSETDEF = yarp::os::createVocab('D','R','2','J'); // 35
+constexpr yarp::conf::vocab32_t VOCAB_DRSETRST = yarp::os::createVocab('D','R','2','K'); // 36
+constexpr yarp::conf::vocab32_t VOCAB_DRSETPWR = yarp::os::createVocab('D','R','2','L'); // 37
+constexpr yarp::conf::vocab32_t VOCAB_DRSETCAP = yarp::os::createVocab('D','R','2','M'); // 38
+constexpr yarp::conf::vocab32_t VOCAB_DRSETBPP = yarp::os::createVocab('D','R','2','N'); // 39
+constexpr yarp::conf::vocab32_t VOCAB_DRGETBPP = yarp::os::createVocab('D','R','2','O'); // 40
 
 namespace yarp{
 namespace dev {
@@ -522,7 +504,7 @@ public:
     virtual double getIris() { return -1.0; }
 #endif
 
-    cameraFeature_id_t featureVocab2Enum(int vocab)
+    cameraFeature_id_t featureVOCABEnum(int vocab)
     {
         switch (vocab) {
         case VOCAB_BRIGHTNESS:

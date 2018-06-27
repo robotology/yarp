@@ -105,7 +105,7 @@ public:
                          yarp::os::Bottle& reply) {
         mutex.lock();
         switch (command.get(0).asVocab()) {
-        case VOCAB3('a','d','d'):
+        case yarp::os::createVocab('a','d','d'):
             {
                 string name = command.get(1).asString().c_str();
                 if (name!="") {
@@ -120,7 +120,7 @@ public:
                 }
             }
             break;
-        case VOCAB3('d','e','l'):
+        case yarp::os::createVocab('d','e','l'):
             {
                 if (command.get(1).isInt32()) {
                     int idx = command.get(1).asInt32();
@@ -153,7 +153,7 @@ public:
                 } 
             }
             break;
-        case VOCAB4('l','i','s','t'):
+        case yarp::os::createVocab('l','i','s','t'):
             {
                 reply.clear();
                 addQueue(reply);

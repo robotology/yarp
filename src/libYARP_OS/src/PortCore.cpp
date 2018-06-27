@@ -1652,23 +1652,23 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     // We support ROS client API these days.  Here we recode some long ROS
     // command names, just for convenience.
     if (cmd.get(0).asString()=="publisherUpdate") {
-        vocab = VOCAB4('r', 'p', 'u', 'p');
+        vocab = yarp::os::createVocab('r', 'p', 'u', 'p');
     }
     if (cmd.get(0).asString()=="requestTopic") {
-        vocab = VOCAB4('r', 't', 'o', 'p');
+        vocab = yarp::os::createVocab('r', 't', 'o', 'p');
     }
     if (cmd.get(0).asString()=="getPid") {
-        vocab = VOCAB3('p', 'i', 'd');
+        vocab = yarp::os::createVocab('p', 'i', 'd');
     }
     if (cmd.get(0).asString()=="getBusInfo") {
-        vocab = VOCAB3('b', 'u', 's');
+        vocab = yarp::os::createVocab('b', 'u', 's');
     }
 
     std::string infoMsg;
     switch (vocab) {
-    case VOCAB4('h', 'e', 'l', 'p'):
+    case yarp::os::createVocab('h', 'e', 'l', 'p'):
         // We give a list of the most useful administrative commands.
-        result.addVocab(VOCAB4('m', 'a', 'n', 'y'));
+        result.addVocab(yarp::os::createVocab('m', 'a', 'n', 'y'));
         result.addString("[help]                  # give this help");
         result.addString("[ver]                   # report protocol version information");
         result.addString("[add] $portname         # add an output connection");
@@ -1692,7 +1692,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         //result.addString("[atch] $portname $prop  # attach a portmonitor plug-in to the connection to/from $portname");
         //result.addString("[dtch] $portname        # detach any portmonitor plug-in from the connection to/from $portname");
         break;
-    case VOCAB3('v', 'e', 'r'):
+    case yarp::os::createVocab('v', 'e', 'r'):
         // Gives a version number for the administrative commands.
         // It is distinct from YARP library versioning.
         result.addVocab(Vocab::encode("ver"));
@@ -1700,7 +1700,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addInt32(2);
         result.addInt32(3);
         break;
-    case VOCAB3('a', 'd', 'd'):
+    case yarp::os::createVocab('a', 'd', 'd'):
         {
             // Add an output to the port.
             std::string output = cmd.get(1).asString().c_str();
@@ -1715,10 +1715,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             result.addString(r.c_str());
         }
         break;
-    case VOCAB4('a', 't', 'c', 'h'):
+    case yarp::os::createVocab('a', 't', 'c', 'h'):
         {
             switch (cmd.get(1).asVocab()) {
-            case VOCAB3('o', 'u', 't'): {
+            case yarp::os::createVocab('o', 'u', 't'): {
                 std::string propString = cmd.get(2).asString().c_str();
                 Property prop(propString.c_str());
                 std::string errMsg;
@@ -1733,7 +1733,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 }
             }
             break;
-            case VOCAB2('i', 'n'): {
+            case yarp::os::createVocab('i', 'n'): {
                 std::string propString = cmd.get(2).asString().c_str();
                 Property prop(propString.c_str());
                 std::string errMsg;
@@ -1755,17 +1755,17 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             };
         }
         break;
-    case VOCAB4('d', 't', 'c', 'h'):
+    case yarp::os::createVocab('d', 't', 'c', 'h'):
         {
             switch (cmd.get(1).asVocab()) {
-            case VOCAB3('o', 'u', 't'): {
+            case yarp::os::createVocab('o', 'u', 't'): {
                 if (dettachPortMonitor(true))
                     result.addVocab(Vocab::encode("ok"));
                 else
                     result.addVocab(Vocab::encode("fail"));
             }
             break;
-            case VOCAB2('i', 'n'): {
+            case yarp::os::createVocab('i', 'n'): {
                 if (dettachPortMonitor(false))
                     result.addVocab(Vocab::encode("ok"));
                 else
@@ -1779,7 +1779,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             };
         }
         break;
-    case VOCAB3('d', 'e', 'l'):
+    case yarp::os::createVocab('d', 'e', 'l'):
         {
             // Delete any inputs or outputs involving the named port.
             removeOutput(std::string(cmd.get(1).asString().c_str()), id, &cache);
@@ -1798,9 +1798,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             }
         }
         break;
-    case VOCAB4('l', 'i', 's', 't'):
+    case yarp::os::createVocab('l', 'i', 's', 't'):
         switch (cmd.get(1).asVocab()) {
-        case VOCAB2('i', 'n'):
+        case yarp::os::createVocab('i', 'n'):
             {
                 // Return a list of all input connections.
                 std::string target = cmd.get(2).asString();
@@ -1840,7 +1840,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 stateSema.post();
             }
             break;
-        case VOCAB3('o', 'u', 't'):
+        case yarp::os::createVocab('o', 'u', 't'):
         default:
             {
                 // Return a list of all output connections.
@@ -1880,9 +1880,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
         break;
 
-    case VOCAB3('s', 'e', 't'):
+    case yarp::os::createVocab('s', 'e', 't'):
         switch (cmd.get(1).asVocab()) {
-        case VOCAB2('i', 'n'):
+        case yarp::os::createVocab('i', 'n'):
             {
                 // Set carrier parameters on a given input connection.
                 std::string target = cmd.get(2).asString();
@@ -1937,7 +1937,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 stateSema.post();
             }
             break;
-        case VOCAB3('o', 'u', 't'):
+        case yarp::os::createVocab('o', 'u', 't'):
         default:
             {
                 // Set carrier parameters on a given output connection.
@@ -1996,9 +1996,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
         break;
 
-    case VOCAB3('g', 'e', 't'):
+    case yarp::os::createVocab('g', 'e', 't'):
         switch (cmd.get(1).asVocab()) {
-        case VOCAB2('i', 'n'):
+        case yarp::os::createVocab('i', 'n'):
             {
                 // Get carrier parameters for a given input connection.
                 std::string target = cmd.get(2).asString();
@@ -2047,7 +2047,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 stateSema.post();
             }
             break;
-        case VOCAB3('o', 'u', 't'):
+        case yarp::os::createVocab('o', 'u', 't'):
         default:
             {
                 // Get carrier parameters for a given output connection.
@@ -2101,7 +2101,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
         break;
 
-    case VOCAB4('r', 'p', 'u', 'p'):
+    case yarp::os::createVocab('r', 'p', 'u', 'p'):
         {
             // When running against a ROS name server, we need to
             // support ROS-style callbacks for connecting publishers
@@ -2220,7 +2220,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             reader.requestDrop(); // ROS needs us to close down.
         }
         break;
-    case VOCAB4('r', 't', 'o', 'p'):
+    case yarp::os::createVocab('r', 't', 'o', 'p'):
         {
             // ROS-style query for topics.
             YARP_SPRINTF1(log, debug, "requestTopic! --> %s",
@@ -2236,7 +2236,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             reader.requestDrop(); // ROS likes to close down.
         }
         break;
-    case VOCAB3('p', 'i', 'd'):
+    case yarp::os::createVocab('p', 'i', 'd'):
         {
             // ROS-style query for PID.
             result.addInt32(1);
@@ -2245,7 +2245,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             reader.requestDrop(); // ROS likes to close down.
         }
         break;
-    case VOCAB3('b', 'u', 's'):
+    case yarp::os::createVocab('b', 'u', 's'):
         {
             // ROS-style query for bus information - we support this
             // in yarp::os::Node but not otherwise.
@@ -2255,11 +2255,11 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             reader.requestDrop(); // ROS likes to close down.
         }
         break;
-    case VOCAB4('p', 'r', 'o', 'p'):
+    case yarp::os::createVocab('p', 'r', 'o', 'p'):
         {
             // Set/get arbitrary properties on a port.
             switch (cmd.get(1).asVocab()) {
-            case VOCAB3('g', 'e', 't'):
+            case yarp::os::createVocab('g', 'e', 't'):
                 {
                     Property *p = acquireProperties(false);
                     if (p) {
@@ -2353,7 +2353,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     releaseProperties(p);
                 }
                 break;
-            case VOCAB3('s', 'e', 't'):
+            case yarp::os::createVocab('s', 'e', 't'):
                 {
                     Property *p = acquireProperties(false);
                     bool bOk = true;
@@ -2446,10 +2446,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                                     // the expected levels are: LOW, NORM, HIGH, CRIT
                                                     int dscp;
                                                     switch(priority) {
-                                                        case VOCAB3('L', 'O', 'W')    : dscp = 10; break;
-                                                        case VOCAB4('N', 'O', 'R', 'M'): dscp = 0;  break;
-                                                        case VOCAB4('H', 'I', 'G', 'H'): dscp = 36; break;
-                                                        case VOCAB4('C', 'R', 'I', 'T'): dscp = 44; break;
+                                                        case yarp::os::createVocab('L', 'O', 'W')    : dscp = 10; break;
+                                                        case yarp::os::createVocab('N', 'O', 'R', 'M'): dscp = 0;  break;
+                                                        case yarp::os::createVocab('H', 'I', 'G', 'H'): dscp = 36; break;
+                                                        case yarp::os::createVocab('C', 'R', 'I', 'T'): dscp = 44; break;
                                                         default: dscp = -1;
                                                     };
                                                     if (dscp >= 0) {
