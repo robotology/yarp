@@ -2282,25 +2282,6 @@ public:
     }
 
     /**
-     * Read the electric current going to all motors.
-     * @param vals pointer to storage for the output values
-     * @return hopefully true, false in bad luck.
-     */
-    virtual bool getCurrents(double *vals) override {
-        return get1VDA(VOCAB_AMP_CURRENTS, vals);
-    }
-
-    /**
-     * Read the electric current going to a given motor.
-     * @param m motor number
-     * @param val pointer to storage for the output value
-     * @return probably true, might return false in bad time
-     */
-    virtual bool getCurrent(int j, double *val) override {
-        return get1V1I1D(VOCAB_AMP_CURRENT, j, val);
-    }
-
-    /**
      * Set the maximum electric current going to a given motor. The behavior
      * of the board/amplifier when this limit is reached depends on the
      * implementation.
@@ -3259,13 +3240,34 @@ public:
         return true;
     }
 
-//    virtual bool getCurrent(int j, double *t)
-//    {
-//    }
+    /**
+     * Read the electric current going to all motors.
+     * @param vals pointer to storage for the output values
+     * @return hopefully true, false in bad luck.
+     */
+    virtual bool getCurrents(double *vals) override
+    {
+        double localArrivalTime=0.0;
+        extendedPortMutex.lock();
+        bool ret = extendedIntputStatePort.getLastVector(VOCAB_AMP_CURRENTS, vals, lastStamp, localArrivalTime);
+        extendedPortMutex.unlock();
+        return ret;
+    }
 
-//    virtual bool getCurrents(double *t)
-//    {
-//    }
+    /**
+     * Read the electric current going to a given motor.
+     * @param m motor number
+     * @param val pointer to storage for the output value
+     * @return probably true, might return false in bad time
+     */
+    virtual bool getCurrent(int j, double *val) override
+    {
+        double localArrivalTime=0.0;
+        extendedPortMutex.lock();
+        bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_AMP_CURRENT, val, lastStamp, localArrivalTime);
+        extendedPortMutex.unlock();
+        return ret;
+    }
 
     virtual bool getCurrentRange(int j, double *min, double *max) override
     {
