@@ -345,8 +345,8 @@ private:
     inline void printError(std::string func_name, std::string info, bool result)
     {
         //If result is false, this means that en error occured in function named func_name, otherwise means that the device doesn't implement the interface to witch func_name belongs to.
-        if(false == result)
-            yError() << "CBW(" << partName << "): " << func_name.c_str() << " on device" << info.c_str() << " returns false";
+       // if(false == result)
+       //    yError() << "CBW(" << partName << "): " << func_name.c_str() << " on device" << info.c_str() << " returns false";
         //Commented in order to mantain the old behaviour (none message appear if device desn't implement the interface)
         //else
             // yError() << "CBW(" << partName << "): " << func_name.c_str() << " on device" << info.c_str() << ": the interface is not available.";
