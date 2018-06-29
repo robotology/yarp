@@ -3442,55 +3442,6 @@ bool ControlBoardWrapper::getAmpStatus(int j, int *v)
     return false;
 }
 
-bool ControlBoardWrapper::getCurrents(double *vals)
-{
-    double *currs = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for(unsigned int d=0; d<device.subdevices.size(); d++)
-    {
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
-        if(!p)
-        {
-            ret = false;
-            break;
-        }
-        
-        if( (p->amp) &&(ret = p->amp->getCurrents(currs)))
-        {
-            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
-            {
-                vals[juser] = currs[jdevice];
-            }
-        }
-        else
-        {
-            printError("getCurrents", p->id, ret);
-            ret = false;
-            break;
-        }
-    }
-    
-    delete [] currs;
-    return ret;
-}
-
-bool ControlBoardWrapper::getCurrent(int j, double *val)
-{
-    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
-    int subIndex=device.lut[j].deviceEntry;
-
-    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-    if (!p)
-        return false;
-
-    if (p->amp)
-    {
-        return p->amp->getCurrent(off+p->base,val);
-    }
-    *val=0.0;
-    return false;
-}
-
 bool ControlBoardWrapper::setMaxCurrent(int j, double v)
 {
     int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
@@ -5128,8 +5079,67 @@ bool ControlBoardWrapper::getDutyCycles(double *v)
 //
 
 //bool ControlBoardWrapper::getAxes(int *ax);
-//bool ControlBoardWrapper::getCurrent(int j, double *t);
-//bool ControlBoardWrapper::getCurrents(double *t);
+
+bool ControlBoardWrapper::getCurrents(double *vals)
+{
+    double *currs = new double[device.maxNumOfJointsInDevices];
+    bool ret = true;
+    for(unsigned int d=0; d<device.subdevices.size(); d++)
+    {
+        ret = false;
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
+        if(!p)
+        {
+            break;
+        }
+
+        if(p->iCurr)
+        {
+            ret = p->iCurr->getCurrents(currs);
+        }
+        else if(p->amp)
+        {
+            ret = p->amp->getCurrents(currs);
+        }
+
+        if(ret)
+        {
+            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
+            {
+                vals[juser] = currs[jdevice];
+            }
+        }
+        else
+        {
+            printError("getCurrents", p->id, ret);
+            break;
+        }
+    }
+    delete [] currs;
+    return ret;
+}
+
+bool ControlBoardWrapper::getCurrent(int j, double *val)
+{
+    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
+    int subIndex=device.lut[j].deviceEntry;
+
+    yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+    if (!p)
+        return false;
+
+    if (p->iCurr)
+    {
+        return p->iCurr->getCurrent(off+p->base,val);
+    }
+    else if (p->amp)
+    {
+        return p->amp->getCurrent(off+p->base,val);
+    }
+    *val=0.0;
+    return false;
+}
+
 bool ControlBoardWrapper::getCurrentRange(int j, double *min, double *max)
 {
     int off; try{ off = device.lut.at(j).offset; }
