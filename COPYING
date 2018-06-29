@@ -34,9 +34,9 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Tobias Fischer
   Valentina Gaggero
   Francesco Nori
+  Bartek Łukawski
   Juan G. Victores
   Andrea Del Prete
-  Bartek Łukawski
   Arjan Gijsberts
   Carlos Beltran-Gonzalez
   Claudio Castellini
@@ -82,16 +82,34 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Zero King
 
 The list of copyright holders for YARP is:
-  Copyright 2000, 2006, 2008, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2018
-  Istituto Italiano di Tecnologia (IIT)
-  RobotCub Consortium 
-  Digia Plc and/or its subsidiary(-ies)
-  The MathWorks, Inc.
-  Collabora Ltd.
-  Kitware, Inc.
-  Benjamin Eikel
-  Laurent Montel
-  Ze Ji
+  Copyright (C) 1995, 2000, 2003, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018
+    Istituto Italiano di Tecnologia (IIT) (1969 files)
+    RobotCub Consortium (729 files)
+    Daniel Krieg <krieg@fias.uni-frankfurt.de> (16 files)
+    David Miller <miller@oxygen-icons.org> (13 files)
+    David Vignoni <david@icon-king.com> (13 files)
+    Johann Ollivier Lapeyre <johann@oxygen-icons.org> (13 files)
+    Kenneth Wimer <kwwii@bootsplash.org> (13 files)
+    Nuno Pinheiro <nuno@oxygen-icons.org> (13 files)
+    Riccardo Iaconelli <riccardo@oxygen-icons.org> (13 files)
+    Anne van Rossum <anne@almende.com> (11 files)
+    Giacomo Spigler (11 files)
+    Arjan Gijsberts (9 files)
+    Alexandre Bernardino (5 files)
+    Carlos Beltran-Gonzalez (5 files)
+    Renaud Detry (5 files)
+    Digia Plc and/or its subsidiary(-ies) (4 files)
+    Ze Ji (3 files)
+    Eric Mislivec (2 files)
+    Freyr Magnusson (2 files)
+    Intel Corporation (2 files)
+    Fabrice Bellard (1 file)
+    Francesco Giovannini (1 file)
+    Jonas Ruesch (1 file)
+    Julio Gomes (1 file)
+    Open Perception, Inc. (1 file)
+    The MathWorks, Inc. (1 file)
+    Willow Garage, Inc. (1 file)
 
 The identifier "RobotCub Consortium" used in some copyright statements is
 equivalent to the following list of institutions:
@@ -126,157 +144,155 @@ rather than the LGPL.
 
 cmake/FindGraphviz.cmake
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 example/yayarpview/CImg.h
+  Copyright: David Tschumperle
   Copyright: 2004 David Tschumperle
-CopyPolicy: CeCILL license (use, modify, redistribute)
+  CopyPolicy: CeCILL license (use, modify, redistribute)
 
 example/ContainerExample/qtquick2applicationviewer/qtquick2applicationviewer.cpp
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 example/ContainerExample/qtquick2applicationviewer/qtquick2applicationviewer.h
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 CTestConfig.cmake
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpview/src/qtquick2applicationviewer/qtquick2applicationviewer.cpp
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpview/src/qtquick2applicationviewer/qtquick2applicationviewer.h
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/libYARP_gsl/include/yarp/gsl/Gsl.h
   Copyright: (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/libYARP_gsl/include/yarp/gsl/impl/gsl_structs.h
   Copyright: (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
-CopyPolicy: unknown
+  Copyright: (C) 2006-2010 RobotCub Consortium
+  CopyPolicy: unknown
 
 src/libYARP_gsl/include/yarp/gsl/api.h
   Copyright: (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/libYARP_gsl/src/Gsl.cpp
   Copyright: (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpscope/plugin/portreader.h
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpscope/plugin/portreader.cpp
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpscope/src/qtquick2applicationviewer/qtquick2applicationviewer.cpp
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpscope/src/qtquick2applicationviewer/qtquick2applicationviewer.h
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/devices/ffmpeg/avpreamble.h
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/devices/imuBosch_BNO055/imuBosch_BNO055.h
   Copyright: (C) 2016 Istituto Italiano di Tecnologia (IIT)
-CopyPolicy: GPLv2
+  CopyPolicy: GPLv2
 
 src/devices/imuBosch_BNO055/imuBosch_BNO055.cpp
   Copyright: (C) 2016 Istituto Italiano di Tecnologia (IIT)
-CopyPolicy: GPLv2
+  CopyPolicy: GPLv2
 
 src/devices/depthCamera/depthCameraDriver.cpp
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/carriers/portmonitor_carrier/lua/lua_swig.h
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpviz/src/informationdialog.h
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpviz/src/batchqosconfdialog.cpp
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpviz/src/portloggerdialog.h
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpviz/src/informationdialog.cpp
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpviz/src/batchqosconfdialog.h
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpviz/src/qosconfigdialog.cpp
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpviz/src/qosconfigdialog.h
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpviz/src/portloggerdialog.cpp
   Copyright: unknown
-CopyPolicy: unknown
-
-src/idls/rosmsg/src/md5.c
-  Copyright: (C) 1999, 2000, 2002 Aladdin Enterprises.  All rights reserved.
-CopyPolicy: zlib
-
-src/idls/rosmsg/src/md5.h
-  Copyright: (C) 1999, 2002 Aladdin Enterprises.  All rights reserved.
-CopyPolicy: zlib
+  CopyPolicy: unknown
 
 src/yarpdataplayer/include/log.h
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpdataplayer/include/loadingwidget.h
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpdataplayer/include/mainwindow.h
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpdataplayer/include/genericinfodlg.h
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpdataplayer/include/aboutdlg.h
-  Copyright: , QString website, QWidget
-CopyPolicy: unknown
+  Copyright: unknown
+  CopyPolicy: unknown
+
+src/yarpdataplayer/src/aboutdlg.cpp
+  Copyright: unknown
+  CopyPolicy: unknown
 
 src/yarpdataplayer/src/main.cpp
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpdataplayer/src/mainwindow.cpp
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpdataplayer/src/genericinfodlg.cpp
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 
 src/yarpdataplayer/src/loadingwidget.cpp
   Copyright: unknown
-CopyPolicy: unknown
+  CopyPolicy: unknown
 

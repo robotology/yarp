@@ -139,7 +139,7 @@ bool StateExtendedInputPort::getLastSingle(int j, int field, double *data, Stamp
                 *data = last.pwmDutycycle[j];
             break;
 
-            case VOCAB_AMP_CURRENTS:
+            case VOCAB_AMP_CURRENT:
                 ret = last.current_isValid;
                 *data = last.current[j];
                 break;

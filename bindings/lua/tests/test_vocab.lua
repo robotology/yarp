@@ -2,7 +2,7 @@
 
 -- Copyright: (C) 2018 Juan G Victores
 -- Author: Juan G Victores
--- Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+-- CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 require("yarp")
 

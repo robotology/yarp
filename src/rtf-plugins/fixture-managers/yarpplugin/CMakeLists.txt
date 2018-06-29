@@ -21,6 +21,6 @@ target_link_libraries(rtf_fixturemanager_yarpplugin PRIVATE RTF::RTF
                                                             YARP::YARP_dev)
 
 yarp_install(TARGETS rtf_fixturemanager_yarpplugin
-             EXPORT YARP
-             COMPONENT runtime
+             EXPORT YARP_RTF_plugins
+             COMPONENT YARP_RTF_plugins
              LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/rtf)

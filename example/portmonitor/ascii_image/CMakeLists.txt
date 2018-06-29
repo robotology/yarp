@@ -26,7 +26,7 @@ yarp_add_plugin(yarp_pm_asciiimage
                 AsciiImage.h)
 target_link_libraries(yarp_pm_asciiimage ${YARP_LIBRARIES})
 yarp_install(TARGETS yarp_pm_asciiimage
-             EXPORT YARP
+             EXPORT yarp_pm_asciiimage
              COMPONENT runtime
              LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
              ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})

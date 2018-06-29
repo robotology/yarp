@@ -26,7 +26,7 @@ yarp_add_plugin(yarp_pm_simple
                 Simple.h)
 target_link_libraries(yarp_pm_simple ${YARP_LIBRARIES})
 yarp_install(TARGETS yarp_pm_simple
-             EXPORT YARP
+             EXPORT yarp_pm_simple
              COMPONENT runtime
              LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
              ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})

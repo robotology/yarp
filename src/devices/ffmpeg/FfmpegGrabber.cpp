@@ -1,8 +1,9 @@
 /*
- * Copyright (C) 2006 RobotCub Consortium, Jonas Ruesch, Arjan Gijsberts
+ * Copyright (C) 2006 RobotCub Consortium
+ * Copyright (C) 2006 Jonas Ruesch
+ * Copyright (C) 2006 Arjan Gijsberts
  * Authors: Paul Fitzpatrick, Jonas Ruesch, Arjan Gijsberts
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
- *
  */
 
 #include "FfmpegGrabber.h"
