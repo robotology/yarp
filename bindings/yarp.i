@@ -37,6 +37,8 @@
   %apply (int ARGC, char **ARGV) { (int argc, char *argv[]) }
 #endif
 
+%include <stdint.i>
+%include <std_vector.i>
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %include "std_vector.i"
@@ -284,20 +286,15 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS(...) __VA_ARGS__
 %enddef
 
-%define _YARP2_NETINT32_
-%enddef
 namespace yarp {
-namespace os {
-    typedef int NetInt32;
-} // os
-namespace conf
-{
+namespace conf {
     typedef int vocab32_t;
 } // conf
 } // yarp
 
 // Define macros for handling the multiple analog sensors interfaces
 %include macrosForMultipleAnalogSensors.i
+
 
 %define YARP_BEGIN_PACK
 %enddef
@@ -327,6 +324,11 @@ namespace conf
 };
 #endif
 
+%include <yarp/conf/numeric.h>
+%include <yarp/os/NetInt8.h>
+%include <yarp/os/NetInt16.h>
+%include <yarp/os/NetInt32.h>
+%include <yarp/os/NetInt64.h>
 %include <yarp/os/PortReport.h>
 %include <yarp/os/Contact.h>
 %include <yarp/os/ConnectionReader.h>
@@ -390,8 +392,6 @@ namespace conf
 %template(TypedReader ## name) yarp::os::TypedReader<name>;
 %template(name ## Callback) yarp::os::TypedReaderCallback<name>;
 %template(BufferedPort ## name) yarp::os::BufferedPort<name>;
-%feature("notabstract") yarp::os::BufferedPort<name>;
-%feature("notabstract") BufferedPort ## name;
 %enddef
 
 MAKE_COMMS(Property)
