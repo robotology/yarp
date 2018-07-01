@@ -18,6 +18,7 @@ class Robot;
 class XMLReaderFileVx
 {
 public:
+    virtual ~XMLReaderFileVx() {};
     virtual  Robot& getRobotFile(const std::string &filename)=0;
 };
 

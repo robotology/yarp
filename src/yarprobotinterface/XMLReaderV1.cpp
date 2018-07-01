@@ -36,7 +36,7 @@ class RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1
 {
 public:
     privateXMLReaderFileV1(XMLReaderFileV1 *parent);
-    ~privateXMLReaderFileV1();
+    virtual ~privateXMLReaderFileV1();
 
     RobotInterface::Robot& readRobotFile(const std::string &fileName);
     RobotInterface::Robot& readRobotTag(TiXmlElement *robotElem);
@@ -211,6 +211,7 @@ RobotInterface::DeviceList RobotInterface::XMLReaderFileV1::privateXMLReaderFile
     {
         SYNTAX_ERROR(devicesElem->Row()) << "Expected \"device\" or \"devices\". Found" << valueStr;
     }
+    return DeviceList();
 }
 
 RobotInterface::Device RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::readDeviceTag(TiXmlElement *deviceElem)
@@ -256,7 +257,7 @@ RobotInterface::Device RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::
 
 RobotInterface::DeviceList RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::readDevicesTag(TiXmlElement *devicesElem)
 {
-    const std::string &valueStr = devicesElem->ValueStr();
+    //const std::string &valueStr = devicesElem->ValueStr();
 
     std::string filename;
     if (devicesElem->QueryStringAttribute("file", &filename) == TIXML_SUCCESS) {
@@ -389,6 +390,7 @@ RobotInterface::ParamList RobotInterface::XMLReaderFileV1::privateXMLReaderFileV
     {
         SYNTAX_ERROR(paramsElem->Row()) << "Expected \"param\", \"group\", \"paramlist\", \"subdevice\", or \"params\". Found" << valueStr;
     }
+    return ParamList();
 }
 
 
@@ -554,7 +556,7 @@ RobotInterface::ParamList RobotInterface::XMLReaderFileV1::privateXMLReaderFileV
 
 RobotInterface::ParamList RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::readParamsTag(TiXmlElement *paramsElem)
 {
-    const std::string &valueStr = paramsElem->ValueStr();
+    //const std::string &valueStr = paramsElem->ValueStr();
 
     std::string filename;
     if (paramsElem->QueryStringAttribute("file", &filename) == TIXML_SUCCESS) {
@@ -719,7 +721,7 @@ RobotInterface::Action RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::
 
 RobotInterface::ActionList RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::readActionsTag(TiXmlElement *actionsElem)
 {
-    const std::string &valueStr = actionsElem->ValueStr();
+    //const std::string &valueStr = actionsElem->ValueStr();
 
     std::string filename;
     if (actionsElem->QueryStringAttribute("file", &filename) == TIXML_SUCCESS) {

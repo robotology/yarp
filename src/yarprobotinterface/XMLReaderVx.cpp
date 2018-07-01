@@ -87,10 +87,6 @@ RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fi
             << ". Found" << DocTypeToString(dtd.type);
     }
 
-//    if (dtd.majorVersion != 1 || dtd.minorVersion != 0) {
-//        SYNTAX_WARNING(doc->Row()) << "Only yarprobotinterface DTD version 1.0 is supported";
-//    }
-
     if (dtd.majorVersion == 1)
     {
         mReader = new RobotInterface::XMLReaderFileV1;
@@ -103,6 +99,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fi
     }
     
     //ERROR HERE
-    RobotInterface::Robot r;
-    return r;
+    yFatal() << "Invalid DTD version. Unable to choose parser for DTD.major:" << dtd.majorVersion;
+    RobotInterface::Robot* r=0;
+    return *r;
 }
