@@ -20,7 +20,8 @@ macro(_yarp_choose_idl _prefix)
   if(NOT "${ARGN}" STREQUAL "")
     if(BUILD_SHARED_LIBS AND
        NOT CMAKE_CROSSCOMPILING AND
-       NOT ALLOW_IDL_GENERATION)
+       NOT ALLOW_IDL_GENERATION AND
+       YARP_COMPILE_EXECUTABLES)
       yarp_add_idl(${_prefix}_GEN_FILES
 #                   NO_RECURSE # Temporarily disable until the md5sum generated is correct
                    ${ARGN})
