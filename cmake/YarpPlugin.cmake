@@ -295,6 +295,25 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
     set(_YPP_OPTION ENABLE_${_plugin_fullname})
   endif()
 
+  # Check if on previous CMake run the plugin was disabled due to missing
+  # dependencies, and eventually remove the variable
+  if(DEFINED ${_YPP_OPTION})
+    get_property(_option_strings_set CACHE ${_YPP_OPTION} PROPERTY STRINGS SET)
+    if(_option_strings_set)
+      # If the user thinks he is smarter than the machine, he deserves an error
+      get_property(_option_strings CACHE ${_YPP_OPTION} PROPERTY STRINGS)
+      list(GET _option_strings 0 _option_strings_first)
+      string(REGEX REPLACE ".+\"(.+)\".+" "\\1" _option_strings_first "${_option_strings_first}")
+      list(LENGTH _option_strings _option_strings_length)
+      math(EXPR _option_strings_last_index "${_option_strings_length} - 1")
+      list(GET _option_strings ${_option_strings_last_index} _option_strings_last)
+      if("${${_YPP_OPTION}}" STREQUAL "${_option_strings_last}")
+        message(SEND_ERROR "That was a trick, you cannot outsmart me! I will never let you win! ${_YPP_OPTION} stays OFF until I say so! \"${_option_strings_first}\" is needed to build ${_plugin_name}. Now stop bothering me, and install your dependencies, if you really want this plugin.")
+      endif()
+      unset(${_YPP_OPTION} CACHE)
+    endif()
+  endif()
+
   # The bundle is enabled if this is a bundle and YARP_BUNDLE_DISABLED
   # is false/not set), or if this is not a bundle
   get_property(_bundle_disabled GLOBAL PROPERTY YARP_BUNDLE_DISABLED)
@@ -343,6 +362,22 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
     endif()
     if(DEFINED _missing_deps)
       set(_disable_reason " (dependencies unsatisfied: \"${_missing_deps}\")")
+      # Set a value that can be visualized on ccmake and on cmake-gui, but
+      # still evaluates to false (
+      set(${_YPP_OPTION} "OFF - Dependencies unsatisfied: \"${_missing_deps}\" - ${_plugin_name}-NOTFOUND" CACHE STRING "${_option_doc}" FORCE)
+      string(REPLACE ";" "\;" _missing_deps "${_missing_deps}")
+      set_property(CACHE ${_YPP_OPTION}
+                   PROPERTY STRINGS "OFF - Dependencies unsatisfied: \"${_missing_deps}\" - ${_plugin_name}-NOTFOUND"
+                                    "OFF - You can try as much as you want, but \"${_missing_deps}\" is needed to build ${_plugin_name} - ${_plugin_name}-NOTFOUND"
+                                    "OFF - Are you crazy or what? \"${_missing_deps}\" is needed to build ${_plugin_name} - ${_plugin_name}-NOTFOUND"
+                                    "OFF - Didn't I already tell you that \"${_missing_deps}\" is needed to build ${_plugin_name}? - ${_plugin_name}-NOTFOUND"
+                                    "OFF - Stop it! - ${_plugin_name}-NOTFOUND"
+                                    "OFF - This is insane! Leave me alone! - ${_plugin_name}-NOTFOUND"
+                                    "ON - All right, you win. The plugin is enabled. Are you happy now? You just broke the build.")
+      # Set non-cache variable that will override the value in current scope
+      # For parent scopes, the "-NOTFOUND ensures that the variable still
+      # evaluates to false
+      set(${_YPP_OPTION} OFF)
     endif()
 
   else()
