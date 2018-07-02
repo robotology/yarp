@@ -29,7 +29,7 @@
 # - the variable will be used only by applications spawned by the shell
 #   and not by other processes.
 #
-# RPATH is aimed to solve the issues introduced by the second
+# RPATH aims in solving the issues introduced by the second
 # installation method. Using run-path dependent libraries you can
 # create a directory structure containing executables and dependent
 # libraries that users can relocate without breaking it.
@@ -48,7 +48,9 @@
 #    enabled shared library, i.e. its install name will be resolved
 #    only at run time.
 #  - In all cases (building executables and/or shared libraries)
-#    dependent shared libraries with RPATH support will be properly
+#    dependent shared libraries with RPATH support will have their name
+#    resolved only at run time, by embedding the search path directly
+#    into the built binary.
 #
 # The command has the following parameters:
 #

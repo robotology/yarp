@@ -307,7 +307,8 @@ message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
 
 # FIND PACKAGES:
 
-# YCM is located in the main CMakeLists.txt file
+# YCM is already searched in the main extern/ycm, therefore there is no need to
+# look for it here.
 checkandset_dependency(YCM)
 
 if(SKIP_ACE)
