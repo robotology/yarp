@@ -96,8 +96,8 @@ add_executable(yarpidl_thrift ${yarpidl_thrift_SRCS}
 
 add_executable(YARP::yarpidl_thrift ALIAS yarpidl_thrift)
 install(TARGETS yarpidl_thrift
-        EXPORT YARP
-        COMPONENT utilities
+        EXPORT YARP_idl_tools
+        COMPONENT YARP_idl_tools
         DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 set_property(TARGET yarpidl_thrift PROPERTY FOLDER "Command Line Tools")

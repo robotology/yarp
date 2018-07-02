@@ -43,7 +43,7 @@
 
 
 # Avoid multiple inclusions of this file
-if(COMMAND yarp_add_idl)
+if(COMMAND _yarp_idl_rosmsg_to_file_list)
   return()
 endif()
 

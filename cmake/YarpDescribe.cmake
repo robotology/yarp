@@ -18,6 +18,9 @@ set(YARP_DEFAULT_FIND_COMPONENTS OS
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_DEFAULT_FIND_COMPONENTS math)
 endif()
+if(YARP_COMPILE_EXECUTABLES)
+  list(APPEND YARP_DEFAULT_FIND_COMPONENTS idl_tools)
+endif()
 
 configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in"
                               "${CMAKE_BINARY_DIR}/YARPConfig.cmake"
@@ -48,12 +51,6 @@ configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cma
 write_basic_package_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
                                  VERSION ${YARP_VERSION_SHORT}
                                  COMPATIBILITY SameMajorVersion)
-
-
-# YARPTargets.cmake (build tree)
-export(EXPORT YARP
-       NAMESPACE YARP::
-       FILE ${CMAKE_BINARY_DIR}/YARPTargets.cmake)
 
 if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.7)
   message(AUTHOR_WARNING "Searching for packages in \"lib/cmake\" is supported on Windows since CMake 3.7. You can remove this check")
@@ -114,10 +111,3 @@ yarp_restore_variable(YARP_MODULE_DIR)
 yarp_restore_variable(YARP_IDL_BINARY_HINT)
 yarp_restore_variable(YARP_BINDINGS)
 yarp_restore_variable(YARP_INSTALL_PREFIX)
-
-
-# YARPTargets.cmake (installed)
-install(EXPORT YARP
-        NAMESPACE YARP::
-        DESTINATION ${YARP_CMAKE_DESTINATION}
-        FILE YARPTargets.cmake)
