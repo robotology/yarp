@@ -21,29 +21,21 @@ if(NOT ${CMAKE_VERSION} VERSION_LESS 3.10)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-# Pick up our CMake scripts - they are all in the cmake subdirectory.
-set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
-set(YARP_MODULE_PATH "${YARP_MODULE_DIR}")
-
-set(YCM_REQUIRED_VERSION 0.8.1) # Used also by YarpFindDependencies
-find_package(YCM ${YCM_REQUIRED_VERSION} QUIET)
-if(NOT YCM_FOUND)
-  list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/find-modules"
-                               "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/modules"
-                               "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/3rdparty")
-  if(${CMAKE_VERSION} VERSION_LESS 3.8)
-    list(APPEND YARP_MODULE_PATH "${YARP_MODULE_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules")
-  endif()
-endif()
-
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-
 # Main project
 project(YARP
         VERSION 3.0.100
         LANGUAGES C CXX)
 set(PROJECT_DESCRIPTION "YARP: A thin middleware for humanoid robots and more")
 
+
+# Pick up our CMake scripts - they are all in the cmake subdirectory.
+set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_DIR})
+
+
+# Find or use YCM version in extern.
+# This is required here, because YarpVersion uses GitInfo from YCM
+add_subdirectory(extern/ycm)
 
 # Get the current YARP version.
 # See cmake/YarpVersion.cmake.

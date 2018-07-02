@@ -26,11 +26,14 @@ env:
     - TRAVIS_WITH_INTEGRATION_TESTS=false
     - TRAVIS_WITH_ACE=true
     - TRAVIS_WITH_MATH=true
+    - TRAVIS_WITH_BINDINGS=true
     - TRAVIS_STATIC=false
     - TRAVIS_CLEAN_API=false
     - TRAVIS_WITH_VALGRIND=false
     - TRAVIS_NO_DEPRECATED=false
+    - TRAVIS_WITH_EXECUTABLES=true
     - TRAVIS_WITH_BROKEN_TESTS=false
+    - TRAVIS_RUN_UNIT_TESTS=true
 # ROS-related env variables. Used only by integration tests
     - ROS_HOSTNAME=localhost
     - ROS_MASTER_URI=http://localhost:11311
@@ -108,22 +111,31 @@ matrix:
     # No YARP_math build (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_MATH=false
+      env:
+        - TRAVIS_WITH_MATH=false
+        - TRAVIS_WITH_BINDINGS=false
 
     # No YARP_math build (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_MATH=false
+        - TRAVIS_WITH_MATH=false
+        - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with CLEAN_API (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_CLEAN_API=true
+      env:
+        - TRAVIS_CLEAN_API=true
+        - TRAVIS_RUN_UNIT_TESTS=false
+        - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with CLEAN_API (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_CLEAN_API=true
+      env:
+        - TRAVIS_CLEAN_API=true
+        - TRAVIS_RUN_UNIT_TESTS=false
+        - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with Ninja generator (linux, gcc)
     - os: linux
@@ -158,54 +170,92 @@ matrix:
     # Static build, no ACE (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=false TRAVIS_STATIC=true
+      env:
+        - TRAVIS_WITH_ACE=false
+        - TRAVIS_STATIC=true
+        - TRAVIS_WITH_BINDINGS=false
 
     # Static build, no ACE (linux, clang)
     - os: linux
       compiler: clang
-      env: TRAVIS_WITH_ACE=false TRAVIS_STATIC=true
+      env:
+        - TRAVIS_WITH_ACE=false
+        - TRAVIS_STATIC=true
+        - TRAVIS_WITH_BINDINGS=false
+
+    # No-executables build (linux, gcc)
+    - os: linux
+      compiler: gcc
+      env:
+        - TRAVIS_WITH_EXECUTABLES=false
+        - TRAVIS_RUN_UNIT_TESTS=false
+
+    # No-executables build (linux, clang)
+    - os: linux
+      compiler: clang
+      env:
+        - TRAVIS_WITH_EXECUTABLES=false
+        - TRAVIS_RUN_UNIT_TESTS=false
 
     # Normal build with valgrind (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_VALGRIND=true
+      env:
+        - TRAVIS_WITH_VALGRIND=true
+        - TRAVIS_WITH_BINDINGS=false
 
     # No ACE build with valgrind (linux, gcc)
     - os: linux
       compiler: gcc
-      env: TRAVIS_WITH_ACE=false TRAVIS_WITH_VALGRIND=true
+      env:
+        - TRAVIS_WITH_ACE=false
+        - TRAVIS_WITH_VALGRIND=true
+        - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with valgrind and broken tests (linux, gcc)
 #    - os: linux
 #      compiler: gcc
-#      env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
+#      env:
+#        - TRAVIS_WITH_VALGRIND=true
+#        - TRAVIS_WITH_BROKEN_TESTS=true
+#        - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with clang (osx, clang)
     - os: osx
       osx_image: xcode8.3
       compiler: clang
+      env:
+        - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with Xcode 8.3 (osx, clang)
     - os: osx
       osx_image: xcode8.3
       compiler: clang
-      env: TRAVIS_CMAKE_GENERATOR="Xcode"
+      env:
+        - TRAVIS_CMAKE_GENERATOR="Xcode"
+        - TRAVIS_WITH_BINDINGS=false
 
-    # Normal build with Xcode 9.1 (osx, clang)
+    # Normal build with Xcode 9.4 (osx, clang)
     - os: osx
-      osx_image: xcode9.1
+      osx_image: xcode9.4
       compiler: clang
-      env: TRAVIS_CMAKE_GENERATOR="Xcode"
+      env:
+        - TRAVIS_CMAKE_GENERATOR="Xcode"
+        - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with Coverage (linux, gcc)
 #    - os: linux
 #      compiler: gcc
-#      env: TRAVIS_BUILD_TYPE=Profile
+#      env:
+#        - TRAVIS_BUILD_TYPE=Profile
+#        - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with integration tests (linux, gcc)
 #    - os: linux
 #      compiler: gcc
-#      env: TRAVIS_WITH_INTEGRATION_TESTS=true
+#      env:
+#        - TRAVIS_WITH_INTEGRATION_TESTS=true
+#        - TRAVIS_WITH_BINDINGS=false
 #      addons:
 #         apt:
 #           sources:
@@ -217,7 +267,9 @@ matrix:
     # Normal build with integration tests (linux, clang)
 #    - os: linux
 #      compiler: clang
-#      env: TRAVIS_WITH_INTEGRATION_TESTS=true
+#      env:
+#        - TRAVIS_WITH_INTEGRATION_TESTS=true
+#        - TRAVIS_WITH_BINDINGS=false
 #      addons:
 #         apt:
 #           sources:
@@ -228,7 +280,9 @@ matrix:
 
 #  allow_failures:
 #    # Broken tests are supposed to fail
-#    - env: TRAVIS_WITH_VALGRIND=true TRAVIS_WITH_BROKEN_TESTS=true
+#    - env:
+#        - TRAVIS_WITH_VALGRIND=true
+#        - TRAVIS_WITH_BROKEN_TESTS=true
 
 
 notifications:
@@ -334,9 +388,11 @@ before_script:
   - if ! $TRAVIS_WITH_ACE; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=ON -DYARP_TEST_HEAP=ON"; fi
   - if ! $TRAVIS_WITH_MATH; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_LIB_MATH:BOOL=OFF -DENABLE_yarpmod_fakeIMU:BOOL=OFF -DENABLE_yarpmod_fakeLaser:BOOL=OFF"; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpcar_h264:BOOL=ON"; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_COMPILE_BINDINGS=ON -DCREATE_LUA=ON -DCREATE_RUBY=ON -DCREATE_PYTHON=ON -DCREATE_TCL=ON -DCREATE_JAVA=ON -DCREATE_CSHARP=ON"; fi
+  - if $TRAVIS_WITH_BINDINGS; then export YARP_BINDINGS_OPTIONS="-DYARP_COMPILE_BINDINGS=ON -DCREATE_LUA=ON -DCREATE_RUBY=ON -DCREATE_PYTHON=ON -DCREATE_TCL=ON -DCREATE_JAVA=ON -DCREATE_CSHARP=ON"; fi
+  - if $TRAVIS_WITH_BINDINGS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} ${YARP_BINDINGS_OPTIONS}"; fi
   - if $TRAVIS_STATIC; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DBUILD_SHARED_LIBS=OFF"; fi
   - if $TRAVIS_CLEAN_API; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_CLEAN_API=ON -DYARP_COMPILE_TESTS=OFF"; fi
+  - if ! $TRAVIS_WITH_EXECUTABLES; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_COMPILE_EXECUTABLES=OFF -DYARP_COMPILE_TESTS=OFF"; fi
   - if $TRAVIS_WITH_VALGRIND; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_VALGRIND_TESTS=ON -DYARP_VALGRIND_DRD_TESTS=OFF -DYARP_VALGRIND_HELGRIND_TESTS=OFF YARP_VALGRIND_MEMCHECK_TESTS=ON YARP_VALGRIND_SGCHECK_TESTS=OFF"; fi
   - if $TRAVIS_NO_DEPRECATED; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_NO_DEPRECATED=ON"; fi
   - if $TRAVIS_WITH_BROKEN_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_ENABLE_BROKEN_TESTS=ON"; fi
@@ -379,10 +435,15 @@ script:
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then build/bin/yarp conf 0 0 local; fi
 
   # Run unit tests
-  - if ! $TRAVIS_CLEAN_API; then (cd build; travis_wait 50 ctest --output-on-failure --build . -C ${TRAVIS_BUILD_TYPE}); fi
+  - if $TRAVIS_RUN_UNIT_TESTS; then (cd build; travis_wait 50 ctest --output-on-failure --build . -C ${TRAVIS_BUILD_TYPE}); fi
 
   # Test installation
   - (cd build; cmake --build . --config ${TRAVIS_BUILD_TYPE} --target install)
+
+  # Test bindings from yarp installation
+  - if $TRAVIS_WITH_BINDINGS; then mkdir -p "${PWD}/install/share/yarp/bindings/build"; fi
+  - if $TRAVIS_WITH_BINDINGS; then (cd "${PWD}/install/share/yarp/bindings/build" && cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DYARP_DIR=${YARP_INSTALL_PREFIX}/lib/cmake/YARP ${YARP_BINDINGS_OPTIONS} ..); fi
+  - if $TRAVIS_WITH_BINDINGS; then (cd "${PWD}/install/share/yarp/bindings/build" && cmake --build . --config ${TRAVIS_BUILD_TYPE}); fi
 
   # Build also the os examples
   - mkdir example/os/build

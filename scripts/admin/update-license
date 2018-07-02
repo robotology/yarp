@@ -25,7 +25,7 @@ for f in `cd license_check; find . -type f -iname "*.cpp" \
                                        -or -iname "*.h" \
                                        -or -iname "*.cmake" \
                                        -or -name "CMakeLists.txt" \
-                | grep -v "/extern" | grep -v "/cmake/ycm-" \
+                | grep -v "/extern" \
 `; do
     ignore=0
 

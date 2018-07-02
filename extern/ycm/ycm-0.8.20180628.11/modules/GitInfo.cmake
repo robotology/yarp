@@ -167,6 +167,35 @@ set(__GIT_INFO_INCLUDED 1)
 
 include(CMakeParseArguments)
 
+macro(_check_git_and_repo _source_dir _fatal)
+  # Check repository
+  if(NOT EXISTS "${_source_dir}/.git")
+    # This is not a git folder.
+    if(${_fatal})
+      message(FATAL_ERROR "Source dir \"${_source_dir}\" is not a git repository.")
+    else()
+      if(GIT_INFO_DEBUG)
+        message(STATUS "Source dir \"${_source_dir}\" is not a git repository.")
+      endif()
+      return()
+    endif()
+  endif()
+
+  # Check Git executable
+  find_package(Git QUIET)
+  if(NOT GIT_FOUND)
+    # Cannot extract version without git
+    if(${_fatal})
+      message(FATAL_ERROR "Git not found. Cannot extract version without git.")
+    else()
+      if(GIT_INFO_DEBUG)
+        message(STATUS "Git not found. Cannot extract version without git.")
+      endif()
+      return()
+    endif()
+  endif()
+endmacro()
+
 function(git_commit_info)
 
   # Parse arguments and check values
@@ -198,25 +227,7 @@ function(git_commit_info)
   endif()
 
   # Check repository
-  if(NOT EXISTS "${_GCI_SOURCE_DIR}/.git")
-    # This is not a git folder.
-    if(_GCI_FATAL)
-      message(FATAL_ERROR "Source dir \"${_GCI_SOURCE_DIR}\" is not a git repository.")
-    else()
-      return()
-    endif()
-  endif()
-
-  # Check Git executable
-  find_package(Git QUIET)
-  if(NOT GIT_FOUND)
-    # Cannot extract version without git
-    if(_GCI_FATAL)
-      message(FATAL_ERROR "Source dir \"${_GCI_SOURCE_DIR}\" is not a git repository.")
-    else()
-      return()
-    endif()
-  endif()
+  _check_git_and_repo("${_GCI_SOURCE_DIR}" ${_GCI_FATAL})
 
   # Check revision and get HASH
   execute_process(
@@ -398,6 +409,9 @@ function(git_wt_info)
   if(_GWTI_FATAL)
     set(${_fatal} FATAL)
   endif()
+
+  # Check repository
+  _check_git_and_repo("${_GWTI_SOURCE_DIR}" ${_GWTI_FATAL})
 
   # Get info about the HEAD commit
   git_commit_info(SOURCE_DIR "${_GWTI_SOURCE_DIR}"
