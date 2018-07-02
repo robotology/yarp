@@ -30,8 +30,8 @@ target_link_libraries(yarpidl_rosmsg PRIVATE YARP::YARP_init
                                              YARP::YARP_OS
                                              ${ACE_LIBRARIES})
 install(TARGETS yarpidl_rosmsg
-        EXPORT YARP
-        COMPONENT utilities
+        EXPORT YARP_idl_tools
+        COMPONENT YARP_idl_tools
         DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 set_property(TARGET yarpidl_rosmsg PROPERTY FOLDER "Command Line Tools")

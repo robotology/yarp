@@ -132,13 +132,6 @@ if(NOT YARP_IS_SHARED_LIBRARY OR NOT YARP_NO_DEPRECATED)
 endif()
 
 
-# Include YARPTargets.cmake file (that includes for now, targets without a
-# specific destination
-if(NOT TARGET YARP::yarpidl_thrift)
-  include("${CMAKE_CURRENT_LIST_DIR}/YARPTargets.cmake")
-endif()
-
-
 if(YARP_FIND_COMPONENTS STREQUAL "")
   # No components requested.
   # Search for the main YARP libraries only.
@@ -163,7 +156,8 @@ foreach(_yarp_module ${YARP_FIND_COMPONENTS})
                ${_YARP_FIND_PART_${_yarp_module}_REQUIRED}
                HINTS "${YARP_CMAKECONFIG_DIR}"
                NO_DEFAULT_PATH)
-  # Ensure that YCM is not shown by FeatureSummary if not requested by the user
+  # Ensure that YARP components are not shown by FeatureSummary if not requested
+  # by the user
   if(NOT _yarp_${_yarp_module}_transitive_dependency_set)
     set_property(GLOBAL PROPERTY _CMAKE_YARP_${_yarp_module}_TRANSITIVE_DEPENDENCY TRUE)
   endif()
@@ -184,7 +178,6 @@ check_required_components(YARP)
 ################################################################################
 # Load CMake helper functions
 
-include(${YARP_MODULE_DIR}/YarpIDL.cmake)
 include(${YARP_MODULE_DIR}/YarpPlugin.cmake)
 include(${YARP_MODULE_DIR}/YarpInstallationHelpers.cmake)
 
@@ -271,5 +264,41 @@ if(NOT YARP_NO_DEPRECATED AND NOT COMMAND _YARP_DEPRECATED_VARIABLE_WARNING)
 
   # YARP_HAS_IDL is deprecated since YARP 3.0.0
   variable_watch(YARP_HAS_IDL _yarp_deprecated_variable_warning)
+
+  if(NOT COMMAND yarp_add_idl)
+    macro(YARP_ADD_IDL)
+      message(DEPRECATION "Calling \"yarp_add_idl\" without including YARP \"idl_tools\" COMPONENT in \"find_package(YARP)\" is deprecated.")
+      get_property(_yarp_idl_tools_transitive_dependency_set GLOBAL PROPERTY _CMAKE_YARP_idl_tools_TRANSITIVE_DEPENDENCY SET)
+      find_package(YARP_idl_tools
+                  ${_YARP_FIND_PARTS_QUIET}
+                  ${_YARP_FIND_PART_idl_tools_REQUIRED}
+                  HINTS "${YARP_CMAKECONFIG_DIR}"
+                  NO_DEFAULT_PATH)
+      # Ensure that YARP_idl_tools is not shown by FeatureSummary if not requested
+      # by the user
+      if(NOT _yarp_idl_tools_transitive_dependency_set)
+        set_property(GLOBAL PROPERTY _CMAKE_YARP_idl_tools_TRANSITIVE_DEPENDENCY TRUE)
+      endif()
+      yarp_add_idl(${ARGN})
+    endmacro()
+  endif()
+
+  if(NOT COMMAND yarp_idl_to_dir)
+    macro(YARP_IDL_TO_DIR)
+      message(DEPRECATION "Calling \"yarp_idl_to_dir\" without including YARP \"idl_tools\" COMPONENT in \"find_package(YARP)\" is deprecated.")
+      get_property(_yarp_idl_tools_transitive_dependency_set GLOBAL PROPERTY _CMAKE_YARP_idl_tools_TRANSITIVE_DEPENDENCY SET)
+      find_package(YARP_idl_tools
+                  ${_YARP_FIND_PARTS_QUIET}
+                  ${_YARP_FIND_PART_idl_tools_REQUIRED}
+                  HINTS "${YARP_CMAKECONFIG_DIR}"
+                  NO_DEFAULT_PATH)
+      # Ensure that YARP_idl_tools is not shown by FeatureSummary if not requested
+      # by the user
+      if(NOT _yarp_idl_tools_transitive_dependency_set)
+        set_property(GLOBAL PROPERTY _CMAKE_YARP_idl_tools_TRANSITIVE_DEPENDENCY TRUE)
+      endif()
+      yarp_idl_to_dir(${ARGN})
+    endmacro()
+  endif()
 
 endif()

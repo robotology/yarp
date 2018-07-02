@@ -57,7 +57,6 @@ macro(YARP_INSTALL_BASIC_PACKAGE_FILES _export)
   if(NOT BUILD_SHARED_LIBS AND DEFINED _YIBPF_STATIC_CONFIG_TEMPLATE)
     set(_config_template CONFIG_TEMPLATE "${_YIBPF_STATIC_CONFIG_TEMPLATE}")
   endif()
-
   install_basic_package_files(${_export}
                               ${_first_target}
                               ${_config_template}
@@ -70,5 +69,6 @@ macro(YARP_INSTALL_BASIC_PACKAGE_FILES _export)
                               NO_SET_AND_CHECK_MACRO
                               NO_COMPATIBILITY_VARS
                               NAMESPACE YARP::
-                              UPPERCASE_FILENAMES)
+                              UPPERCASE_FILENAMES
+                              ${_YIBPF_UNPARSED_ARGUMENTS})
 endmacro()

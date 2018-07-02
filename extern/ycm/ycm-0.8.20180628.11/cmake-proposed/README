@@ -1,0 +1,26 @@
+Files in this folder and its subfolder originally come from CMake git
+repository:
+
+  git://cmake.org/cmake.git
+
+They contain some patch or modification to fix some bugs or to add some
+new features that are planned to be reviewed by CMake developers and
+eventually merged in CMake repository.
+
+                                WARNING
+
+During this process these files are subject to change, therefore they
+shouldn't be considered "stable". If you use some new feature in these
+files, you should be aware that they might not be available in next YCM
+or CMake releases.
+
+
+CMake files included by these files using
+  include(${CMAKE_CURRENT_LIST_DIR}/<module>.cmake)
+are also modified to use
+  include(<module>)
+in order not to require all the dependencies.
+
+
+These files are distributed under the OSI-approved BSD License;
+see accompanying file Copyright.txt for details.

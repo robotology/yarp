@@ -5,7 +5,18 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 if(YARP_COMPILE_DEVICE_PLUGINS)
-  yarp_add_idl(MAS_THRIFT_GEN_FILES "${CMAKE_CURRENT_SOURCE_DIR}/multipleAnalogSensorsSerializations.thrift")
+
+  if(YARP_COMPILE_EXECUTABLES)
+    yarp_add_idl(MAS_THRIFT_GEN_FILES "${CMAKE_CURRENT_SOURCE_DIR}/multipleAnalogSensorsSerializations.thrift")
+    set(MAS_THRIFT_INTERFACE_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/include")
+  else()
+    yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/multipleAnalogSensorsSerializations.thrift"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
+                    MAS_THRIFT_GEN_SRCS
+                    MAS_THRIFT_GEN_HDRS
+                    MAS_THRIFT_INTERFACE_INCLUDE_DIRS)
+    set(MAS_THRIFT_GEN_FILES ${MAS_THRIFT_GEN_SRCS} ${MAS_THRIFT_GEN_HDRS})
+  endif()
 
   # See https://gitlab.kitware.com/cmake/cmake/issues/14778
   # See https://gitlab.kitware.com/cmake/cmake/merge_requests/1524
@@ -17,7 +28,7 @@ if(YARP_COMPILE_DEVICE_PLUGINS)
   target_compile_definitions(multipleAnalogSensorsSerializations PRIVATE $<TARGET_PROPERTY:YARP::YARP_OS,INTERFACE_COMPILE_DEFINITIONS>)
   target_include_directories(multipleAnalogSensorsSerializations PRIVATE $<TARGET_PROPERTY:YARP::YARP_sig,INTERFACE_INCLUDE_DIRECTORIES>)
   target_compile_definitions(multipleAnalogSensorsSerializations PRIVATE $<TARGET_PROPERTY:YARP::YARP_sig,INTERFACE_COMPILE_DEFINITIONS>)
-  target_include_directories(multipleAnalogSensorsSerializations INTERFACE ${CMAKE_CURRENT_BINARY_DIR}/include)
+  target_include_directories(multipleAnalogSensorsSerializations PUBLIC ${MAS_THRIFT_INTERFACE_INCLUDE_DIRS})
 
   set_property(TARGET multipleAnalogSensorsSerializations PROPERTY FOLDER "Libraries/Msgs")
 endif()

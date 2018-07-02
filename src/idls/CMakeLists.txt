@@ -6,3 +6,10 @@
 
 add_subdirectory(thrift)
 add_subdirectory(rosmsg)
+
+if(NOT CREATE_SHARED_LIBS)
+  include(YarpInstallBasicPackageFiles)
+  yarp_install_basic_package_files(YARP_idl_tools
+                                   FIRST_TARGET yarpidl_thrift
+                                   INCLUDE_CONTENT "include(\${YARP_MODULE_DIR}/YarpIDL.cmake)")
+endif()
