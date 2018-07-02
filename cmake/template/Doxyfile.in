@@ -171,7 +171,7 @@ STRIP_FROM_INC_PATH    = @CMAKE_BINARY_DIR@/src/libYARP_conf/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_name/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_gsl/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_eigen/include/ \
-                         @CMAKE_BINARY_DIR@/src/libYARP_rosmsg/include/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_rosmsg/idl_generated_code/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_run/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_rtf/include/ \
                          @CMAKE_SOURCE_DIR@/src/devices \
@@ -812,7 +812,7 @@ INPUT                  = @CMAKE_BINARY_DIR@/src/conf/libYARP_conf/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_gsl/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_gsl/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_eigen/include \
-                         @CMAKE_BINARY_DIR@/src/libYARP_rosmsg/include/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_rosmsg/idl_generated_code/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_run/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_run/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_rtf/include/ \
