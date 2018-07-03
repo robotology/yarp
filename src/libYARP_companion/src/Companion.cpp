@@ -549,7 +549,8 @@ int Companion::ping(const char *port, bool quiet) {
 
 int Companion::cmdExists(int argc, char *argv[]) {
     if (argc == 1) {
-        return NetworkBase::exists(argv[0], true);
+        bool ok = NetworkBase::exists(argv[0], true);
+        return ok?0:1;
     }
     if (argc == 2) {
         bool ok = NetworkBase::isConnected(argv[0], argv[1], false);
