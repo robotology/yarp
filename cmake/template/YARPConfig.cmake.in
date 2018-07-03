@@ -116,12 +116,13 @@ if(NOT YARP_IS_SHARED_LIBRARY OR NOT YARP_NO_DEPRECATED)
     set_property(GLOBAL PROPERTY _CMAKE_YCM_TRANSITIVE_DEPENDENCY TRUE)
   endif()
   if(NOT YARP_NO_DEPRECATED AND NOT YCM_FOUND)
-    set(_YARP_YCM_MODULE_PATH "${YARP_MODULE_DIR}/ycm-@YCM_REQUIRED_VERSION@/find-modules"
-                              "${YARP_MODULE_DIR}/ycm-@YCM_REQUIRED_VERSION@/modules"
-                              "${YARP_MODULE_DIR}/ycm-@YCM_REQUIRED_VERSION@/3rdparty"
-                              "${YARP_MODULE_DIR}/ycm-@YCM_REQUIRED_VERSION@/cmake-proposed")
+    set_and_check(YARP_YCM_MODULE_DIR "@PACKAGE_YARP_YCM_MODULE_DIR@")
+    set(_YARP_YCM_MODULE_PATH "${YARP_YCM_MODULE_DIR}/find-modules"
+                              "${YARP_YCM_MODULE_DIR}/modules"
+                              "${YARP_YCM_MODULE_DIR}/3rdparty"
+                              "${YARP_YCM_MODULE_DIR}/cmake-proposed")
     if(${CMAKE_VERSION} VERSION_LESS 3.8)
-      list(APPEND _YARP_YCM_MODULE_PATH "${YARP_MODULE_DIR}/ycm-@YCM_REQUIRED_VERSION@/cmake-3.8/Modules")
+      list(APPEND _YARP_YCM_MODULE_PATH "${YARP_YCM_MODULE_DIR}/cmake-3.8/Modules")
     endif()
 
     # We need these paths in order to use the find modules in the following

@@ -11,6 +11,7 @@ include(YarpBackupVariable)
 
 set(YARP_BINDINGS "${CMAKE_SOURCE_DIR}/bindings")
 set(YARP_CMAKECONFIG_DIR "${CMAKE_BINARY_DIR}")
+set(YARP_YCM_MODULE_DIR "${CMAKE_SOURCE_DIR}/extern/ycm/ycm-${YCM_REQUIRED_VERSION}")
 
 set(YARP_DEFAULT_FIND_COMPONENTS OS
                                  sig
@@ -46,7 +47,8 @@ configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cma
                                         YARP_STATIC_PLUGINS_INSTALL_DIR
                                         YARP_DYNAMIC_PLUGINS_INSTALL_DIR
                                         YARP_QML2_IMPORT_DIR
-                                        YARP_CMAKECONFIG_DIR)
+                                        YARP_CMAKECONFIG_DIR
+                                        YARP_YCM_MODULE_DIR)
 
 write_basic_package_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
                                  VERSION ${YARP_VERSION_SHORT}
@@ -72,7 +74,8 @@ set(YARP_BINDINGS "${CMAKE_INSTALL_FULL_DATADIR}/yarp/bindings")
 set(YARP_MODULE_DIR "${CMAKE_INSTALL_FULL_DATADIR}/yarp/cmake")
 set(YARP_IDL_BINARY_HINT "${CMAKE_INSTALL_FULL_BINDIR}")
 set(YARP_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
-set(YARP_CMAKECONFIG_DIR "${YARP_CMAKE_DESTINATION}/..")
+get_filename_component(YARP_CMAKECONFIG_DIR "${CMAKE_INSTALL_PREFIX}/${YARP_CMAKE_DESTINATION}/.." REALPATH)
+set(YARP_YCM_MODULE_DIR "${CMAKE_INSTALL_FULL_DATADIR}/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}")
 
 configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in"
                               "${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake"
@@ -97,7 +100,8 @@ configure_package_config_file("${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cma
                                         YARP_STATIC_PLUGINS_INSTALL_DIR
                                         YARP_DYNAMIC_PLUGINS_INSTALL_DIR
                                         YARP_QML2_IMPORT_DIR
-                                        YARP_CMAKECONFIG_DIR)
+                                        YARP_CMAKECONFIG_DIR
+                                        YARP_YCM_MODULE_DIR)
 install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake
         RENAME YARPConfig.cmake
         COMPONENT configuration
