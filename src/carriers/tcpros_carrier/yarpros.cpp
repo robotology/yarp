@@ -338,7 +338,7 @@ int main(int argc, char *argv[]) {
                       lookup.portnum,
                       reply);
         printf("%s\n", reply.toString().c_str());
-        return ok?0:1;
+        return 0;
     } else if (tag=="subscriber"||tag=="sub") {
         Bottle req, reply;
         if (cmd.size()!=3 && cmd.size()!=4) {

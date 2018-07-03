@@ -599,12 +599,12 @@ void EntitiesTreeWidget::onEdit()
 void EntitiesTreeWidget::onReopen()
 {
     QTreeWidgetItem *it = currentItem();
-    QTreeWidgetItem *parent = it -> parent();
-    int index = it -> parent() -> indexOfChild(it);
-
     if (!it) {
         return;
     }
+
+    QTreeWidgetItem *parent = it -> parent();
+    int index = it -> parent() -> indexOfChild(it);
 
     if (it->parent() == applicationNode) {
         if (it->data(0,Qt::UserRole)  == yarp::manager::APPLICATION) {
