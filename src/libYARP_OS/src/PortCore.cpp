@@ -2560,6 +2560,7 @@ bool PortCore::setTypeOfService(PortCoreUnit *unit, int tos)
     if (unit->isInput())
     {
         PortCoreInputUnit* inUnit = dynamic_cast<PortCoreInputUnit*>(unit);
+        if (inUnit)
         {
             InputProtocol* ip = inUnit->getInPutProtocol();
             if (ip && ip->getOutput().isOk())

@@ -41,13 +41,13 @@ using namespace yarp::os;
 AuthHMAC::AuthHMAC() :
         authentication_enabled(false)
 {
+    memset(&context, 0, sizeof(HMAC_CONTEXT));
     static int auth_warning_shown = false;
     if (auth_warning_shown) {
         // If the warning was already shown, we have nothing to do.
         // return as soon as possible
         return;
     }
-    memset(&context, 0, sizeof(HMAC_CONTEXT));
     std::string key;
     ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
     std::string fname;
