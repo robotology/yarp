@@ -15,8 +15,9 @@ the circulatory system.
 
 More specifically, YARP supports building a robot control system as a
 \ref note_ports "collection of programs" communicating in a
-peer-to-peer way, with an extensible \ref carrier_config "family of connection
-types" (tcp, udp, multicast, local, MPI, mjpg-over-http, XML/RPC, tcpros, ...)
+peer-to-peer way, with an extensible
+\ref carrier_config "family of connection types"
+(tcp, udp, multicast, local, MPI, mjpg-over-http, XML/RPC, tcpros, ...)
 that can be swapped in and out to match your needs.
 We also support similarly flexible interfacing
 with hardware devices.  Our strategic goal
