@@ -764,6 +764,7 @@ bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& imag
             }
             av_seek_frame(pFormatCtx,-1,0,AVSEEK_FLAG_BACKWARD);
             startTime = SystemClock::nowSystem();
+            triedAgain = true;
         }
     } while (tryAgain);
 

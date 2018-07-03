@@ -806,12 +806,6 @@ bool MainWindow::onTabClose(int index)
     if(w->getType() == yarp::manager::APPLICATION){
         ApplicationViewWidget *aw = ((ApplicationViewWidget*)w);
 
-        if (!aw)
-        {
-            yError("ApplicationViewWidget is NULL!");
-            return false;
-        }
-
         if(aw && aw->isRunning()){
             QMessageBox msgBox;
             msgBox.setIcon(QMessageBox::Icon::Warning);

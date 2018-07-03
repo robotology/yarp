@@ -309,7 +309,7 @@ void PropertiesTable::onModItemChanged(QTreeWidgetItem *it,int col)
 
             string strPrefix;
             Application* application = manager->getKnowledgeBase()->getApplication();
-            if(application){
+            if(application) {
                 strPrefix = string(application->getPrefix()) + string(modPrefix->text(1).toLatin1().data());
                 for(int j=0; j<currentModule->getInnerModule()->outputCount(); j++){
                     OutputData *output = &currentModule->getInnerModule()->getOutputAt(j);
@@ -330,40 +330,34 @@ void PropertiesTable::onModItemChanged(QTreeWidgetItem *it,int col)
                                         Arrow *a = currentModule->oPorts.at(k)->getArrows()->at(h);
                                         if( a->getTo() == updatedCon.to()){
                                             a->updateConnectionFrom(QString(strFrom.c_str()));
-
                                         }
-
                                     }
-
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            for(int j=0; j<currentModule->getInnerModule()->inputCount(); j++){
-                InputData *input = &currentModule->getInnerModule()->getInputAt(j);
-                for(int i=0; i<application->connectionCount(); i++){
-                    Connection con = application->getConnectionAt(i);
-                    Connection updatedCon = con;
-                    if(con.getCorInputData()){
-                        if(con.getCorInputData() == input){
-                            string strTo = strPrefix + string(input->getPort());
-//                            updatedCon.setTo(strTo.c_str());
-//                            manager->getKnowledgeBase()->updateConnectionOfApplication(application,
-//                                                        con, updatedCon);
+                for(int j=0; j<currentModule->getInnerModule()->inputCount(); j++){
+                    InputData *input = &currentModule->getInnerModule()->getInputAt(j);
+                    for(int i=0; i<application->connectionCount(); i++){
+                        Connection con = application->getConnectionAt(i);
+                        Connection updatedCon = con;
+                        if(con.getCorInputData()){
+                            if(con.getCorInputData() == input){
+                                string strTo = strPrefix + string(input->getPort());
+//                              updatedCon.setTo(strTo.c_str());
+//                              manager->getKnowledgeBase()->updateConnectionOfApplication(application,
+//                                                          con, updatedCon);
 
-                            for(int k=0;k<currentModule->iPorts.count();k++){
-                                for(int h=0; h<currentModule->iPorts.at(k)->getArrows()->count();h++){
-                                    Arrow *a = currentModule->iPorts.at(k)->getArrows()->at(h);
-                                    if(a->getFrom() == updatedCon.from() ){
-                                        a->updateConnectionTo(QString(strTo.c_str()));
-
+                                for(int k=0;k<currentModule->iPorts.count();k++){
+                                    for(int h=0; h<currentModule->iPorts.at(k)->getArrows()->count();h++){
+                                        Arrow *a = currentModule->iPorts.at(k)->getArrows()->at(h);
+                                        if(a->getFrom() == updatedCon.from() ){
+                                            a->updateConnectionTo(QString(strTo.c_str()));
+                                        }
                                     }
-
                                 }
-
                             }
                         }
                     }

@@ -1472,10 +1472,6 @@ void CustomView::contextMenuEvent(QContextMenuEvent *event)
 
             menu.addSeparator();
 
-            if(!it){
-                copyAction->setEnabled(false);
-                deleteAction->setEnabled(false);
-            }
             if(!copiedItems.isEmpty()){
                 pasteAction->setEnabled(true);
             }else{

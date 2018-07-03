@@ -877,8 +877,8 @@ std::string RosTypeSearch::findFile(const char *tname) {
             fprintf(fout,"uint32 seq\n");
             fprintf(fout,"time stamp\n");
             fprintf(fout,"string frame_id\n");
+            fclose(fout);
         }
-        fclose(fout);
         return target_full;
     }
 
