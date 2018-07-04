@@ -101,6 +101,12 @@ Type::Type(const Type& rhs) :
 {
 }
 
+Type::Type(Type&& rhs) noexcept :
+        mPriv(rhs.mPriv)
+{
+    rhs.mPriv = nullptr;
+}
+
 Type::~Type()
 {
     delete mPriv;
@@ -110,6 +116,14 @@ Type& Type::operator=(const Type& rhs)
 {
     if (&rhs != this) {
         *mPriv = *(rhs.mPriv);
+    }
+    return *this;
+}
+
+Type& Type::operator=(Type&& rhs) noexcept
+{
+    if (&rhs != this) {
+        std::swap(mPriv, rhs.mPriv);
     }
     return *this;
 }
