@@ -175,7 +175,7 @@ public:
     yarp::os::Type getType() const override
     {
         yarp::os::Type typ = yarp::os::Type::byName("TickDuration", "TickDuration");
-        typ.addProperty("md5sum", yarp::os::Value("4f8dc7710c22b42c7b09295dcda33fa0"));
+        typ.addProperty("md5sum", yarp::os::Value("4771ad66fef816d2e4bead2f45a1cde6"));
         typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
         return typ;
     }

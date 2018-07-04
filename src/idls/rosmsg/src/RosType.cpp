@@ -116,6 +116,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
                 isPrimitive = false;
                 RosType t1;
                 t1.rosType = "uint32";
+                t1.rosRawType = "uint32";
                 t1.rosName = "sec";
                 t1.isPrimitive = true;
                 t1.isRosPrimitive = true;
@@ -124,6 +125,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
                 subRosType.push_back(t1);
                 RosType t2;
                 t2.rosType = "uint32";
+                t2.rosRawType = "uint32";
                 t2.rosName = "nsec";
                 t2.isPrimitive = true;
                 t2.isRosPrimitive = true;
