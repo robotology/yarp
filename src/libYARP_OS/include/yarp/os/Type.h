@@ -9,84 +9,88 @@
 #ifndef YARP_OS_TYPE_H
 #define YARP_OS_TYPE_H
 
-#include <yarp/os/Searchable.h>
+#include <yarp/os/api.h>
+
 #include <string>
 
 namespace yarp {
-    namespace os {
-        class Type;
-        class Property;
-    }
-}
+namespace os {
 
-class YARP_OS_API yarp::os::Type {
+class Property;
+class Searchable;
+class Value;
+
+class YARP_OS_API Type
+{
 public:
+
+/** @{ */
+
+    /**
+     * @brief Constructor.
+     */
     Type();
 
-    Type(const Type& alt);
+    /**
+     * @brief Copy constructor.
+     *
+     * @param rhs the Type to copy
+     */
+    Type(const Type& rhs);
 
+    /**
+     * @brief Destructor.
+     */
     virtual ~Type();
 
-    const Type& operator =(const Type& alt);
+    /**
+     * Copy assignment operator.
+     *
+     * @param rhs the Type to copy
+     * @return this object
+     */
+    Type& operator=(const Type& rhs);
 
-    static Type byName(const char *name) {
-        Type t;
-        t.name = name;
-        return t;
-    }
+/** @} */
+/** @{ */
 
-    static Type byName(const char *name, const char *name_on_wire) {
-        Type t;
-        t.name = name;
-        t.name_on_wire = name_on_wire;
-        return t;
-    }
+    std::string getName() const;
 
-    static Type byNameOnWire(const char *name_on_wire) {
-        Type t;
-        t.name = "yarp/bottle";
-        t.name_on_wire = name_on_wire;
-        return t;
-    }
+    std::string getNameOnWire() const;
 
-    static Type anon() {
-        return Type();
-    }
+    bool hasName() const;
 
-    std::string getName() const {
-        return name;
-    }
+    bool isValid() const;
 
-    std::string getNameOnWire() const {
-        return name_on_wire;
-    }
-
-    bool hasName() const {
-        return name!="";
-    }
-
-    bool isValid() const {
-        return hasName();
-    }
-
-    std::string toString() const {
-        if (name_on_wire!="") {
-            return name + ":" + name_on_wire;
-        }
-        if (name!="") return name;
-        return "null";
-    }
+    std::string toString() const;
 
     const Searchable& readProperties() const;
 
     Property& writeProperties();
 
-    Type& addProperty(const char *key, const Value& val);
+    Type& addProperty(const char* key, const Value& val);
 
+/** @} */
+/** @{ */
+
+    static Type byName(const char* name);
+
+    static Type byName(const char* name, const char* name_on_wire);
+
+    static Type byNameOnWire(const char* name_on_wire);
+
+    static Type anon();
+
+/** @} */
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name_on_wire;
-    Property *prop;
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_TYPE_H
