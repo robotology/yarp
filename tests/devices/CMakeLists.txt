@@ -37,11 +37,9 @@ if(ENABLE_yarpmod_portaudio)
                     portaudio_basic.ini)
 endif()
 
-if(YARP_ENABLE_BROKEN_TESTS) # controlboard was removed since YARP 2.3.70
-  list(APPEND _inis controlboard_basic.ini)
-  if(ENABLE_yarpmod_test_grabber)
-    list(APPEND _inis group_basic.ini)
-  endif()
+list(APPEND _inis controlboardwrapper2_basic.ini)
+if(ENABLE_yarpmod_test_grabber)
+  list(APPEND _inis group_basic.ini)
 endif()
 
 foreach(X ${_inis})

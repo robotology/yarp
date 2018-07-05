@@ -18,9 +18,9 @@ axes 10
 device test_grabber
 
 [part broadcast]
-device controlboard
+device controlboardwrapper2
 subdevice mymotor
-allow-deprecated-devices 1
+name /mymotor
 \endverbatim
 If this text is saved in a file called group_basic.ini then the device can be created by doing:
 \verbatim
@@ -54,17 +54,17 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>mycam.horizontalFov</td><td>desired horizontal fov of test image</td><td>1.0</td></tr>
 <tr><td>mycam.verticalFov</td><td>desired vertical fov of test image</td><td>2.0</td></tr>
 <tr><td>mycam.mirror</td><td>mirroring disabled by default</td><td>0</td></tr>
-<tr><td>mycam.focalLengthX</td><td></td><td>4.0</td></tr>
-<tr><td>mycam.focalLengthY</td><td></td><td>5.0</td></tr>
-<tr><td>mycam.principalPointX</td><td></td><td>6.0</td></tr>
-<tr><td>mycam.principalPointY</td><td></td><td>7.0</td></tr>
-<tr><td>mycam.retificationMatrix</td><td></td><td>1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0</td></tr>
-<tr><td>mycam.distortionModel</td><td></td><td>FishEye</td></tr>
-<tr><td>mycam.k1</td><td></td><td>8.0</td></tr>
-<tr><td>mycam.k2</td><td></td><td>9.0</td></tr>
-<tr><td>mycam.k3</td><td></td><td>10.0</td></tr>
-<tr><td>mycam.t1</td><td></td><td>11.0</td></tr>
-<tr><td>mycam.t2</td><td></td><td>12.0</td></tr>
+<tr><td>mycam.focalLengthX</td><td>Horizontal component of the focal lenght of the test_grabber</td><td>4.0</td></tr>
+<tr><td>mycam.focalLengthY</td><td>Vertical component of the focal lenght of the test_grabber</td><td>5.0</td></tr>
+<tr><td>mycam.principalPointX</td><td>X coordinate of the principal point of the test_grabber</td><td>6.0</td></tr>
+<tr><td>mycam.principalPointY</td><td>Y coordinate of the principal point of the test_grabber</td><td>7.0</td></tr>
+<tr><td>mycam.retificationMatrix</td><td>Matrix that describes the lens' distortion(fake)</td><td>1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0</td></tr>
+<tr><td>mycam.distortionModel</td><td>Reference to group of parameters describing the distortion model of the camera</td><td>FishEye</td></tr>
+<tr><td>mycam.k1</td><td>Radial distortion coefficient of the lens(fake)</td><td>8.0</td></tr>
+<tr><td>mycam.k2</td><td>Radial distortion coefficient of the lens(fake)</td><td>9.0</td></tr>
+<tr><td>mycam.k3</td><td>Radial distortion coefficient of the lens(fake)</td><td>10.0</td></tr>
+<tr><td>mycam.t1</td><td>Tangential distortion of the lens(fake)</td><td>11.0</td></tr>
+<tr><td>mycam.t2</td><td>Tangential distortion of the lens(fake)</td><td>12.0</td></tr>
 <tr><td>mycam.freq</td><td>rate of test images in Hz</td><td></td></tr>
 <tr><td>mycam.period</td><td>period of test images in seconds</td><td></td></tr>
 <tr><td>mycam.mode</td><td>bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none]</td><td>line</td></tr>
@@ -74,12 +74,12 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>broadcast</td><td></td><td></td></tr>
 <tr><td>broadcast.device</td><td></td><td></td></tr>
 <tr><td>broadcast.wrapped</td><td></td><td></td></tr>
-<tr><td>broadcast.verbose</td><td>if present, give detailed output</td><td></td></tr>
-<tr><td>broadcast.threadrate</td><td>thread rate in ms. for streaming encoder data</td><td>20</td></tr>
-<tr><td>broadcast.stream_state</td><td>whether to stream state (1) or not (0)</td><td>1</td></tr>
-<tr><td>broadcast.subdevice</td><td>name of specific control device to wrap</td><td></td></tr>
-<tr><td>broadcast.name</td><td>prefix for port names</td><td>/controlboard</td></tr>
-<tr><td>broadcast.allow-deprecated-devices</td><td></td><td></td></tr>
+<tr><td>broadcast.rootName</td><td></td><td></td></tr>
+<tr><td>broadcast.name</td><td></td><td></td></tr>
+<tr><td>subdevice</td><td></td><td></td></tr>
+<tr><td>broadcast.ROS</td><td></td><td></td></tr>
+<tr><td>rootName</td><td>starting '/' if needed.</td><td>/</td></tr>
+<tr><td>name</td><td>prefix for port names</td><td>controlboard</td></tr>
 </table>
 
 \sa yarp::dev::DeviceGroup

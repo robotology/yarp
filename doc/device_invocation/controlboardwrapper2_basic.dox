@@ -1,0 +1,43 @@
+/**
+ * \ingroup dev_examples
+ *
+ * \defgroup controlboardwrapper2_basic Example for controlboardwrapper2 (controlboardwrapper2_basic)
+
+Instantiates \ref cmd_device_controlboardwrapper2 "controlboardwrapper2" device implemented by yarp::dev::ControlBoardWrapper2.
+\verbatim
+device controlboardwrapper2
+subdevice test_motor
+name /mymotor
+axes 16
+\endverbatim
+If this text is saved in a file called controlboardwrapper2_basic.ini then the device can be created by doing:
+\verbatim
+yarpdev --file controlboardwrapper2_basic.ini
+\endverbatim
+Of course, the configuration could be passed just as command line options, or as a yarp::os::Property object in a program:
+\code
+Property p;
+p.fromConfigFile("controlboardwrapper2_basic.ini");
+// of course you could construct the Property object on-the-fly
+PolyDriver dev;
+dev.open(p);
+if (dev.isValid()) { /* use the device via view method */ }
+\endcode
+Here is a list of properties checked when starting up a device based on this configuration file.  Note that which properties are checked can depend on whether other properties are present.  In some cases properties can also vary between operating systems.  So this is just an example
+
+<table>
+<tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
+<tr><td>device</td><td></td><td></td></tr>
+<tr><td>rootName</td><td>starting '/' if needed.</td><td>/</td></tr>
+<tr><td>name</td><td>prefix for port names</td><td>controlboard</td></tr>
+<tr><td>subdevice</td><td></td><td></td></tr>
+<tr><td>test_motor.device</td><td></td><td></td></tr>
+<tr><td>test_motor.wrapped</td><td></td><td></td></tr>
+<tr><td>test_motor.axes</td><td>number of axes to pretend to have</td><td>4</td></tr>
+<tr><td>test_motor.delay</td><td>delay in each call for debugging purpose, in ms</td><td>0</td></tr>
+<tr><td>ROS</td><td></td><td></td></tr>
+</table>
+
+\sa yarp::dev::ControlBoardWrapper2
+
+ */
