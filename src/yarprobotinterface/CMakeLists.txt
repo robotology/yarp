@@ -17,7 +17,10 @@ if(CREATE_YARPROBOTINTERFACE)
       Param.cpp
       Robot.cpp
       Types.cpp
-      XMLReader.cpp)
+      XMLReaderVx.cpp
+      XMLReaderV1.cpp
+      XMLReaderV3.cpp
+      RobotInterfaceDTD.cpp)
 
   set(yarprobotinterface_HDRS
       Action.h
@@ -27,7 +30,8 @@ if(CREATE_YARPROBOTINTERFACE)
       Param.h
       Robot.h
       Types.h
-      XMLReader.h)
+      XMLReader.h
+      RobotInterfaceDTD.h)
 
   set(yarprobotinterface_IDLS
       yarprobotinterface.thrift)
