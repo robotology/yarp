@@ -84,14 +84,6 @@ bool NameConfig::fromString(const std::string& txt) {
 }
 
 std::string NameConfig::expandFilename(const char *fname) {
-#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
-    std::string yarp_conf = NetworkBase::getEnvironment("YARP_CONF");
-    if (!yarp_conf.empty()) {
-        YARP_WARN(Logger::get(), "The YARP_CONF variable is deprecated and it is no longer used. "
-                                 "Please check the documentation for yarp::os::ResourceFinder::getConfigHome()");
-    }
-#endif
-
     std::string root = ResourceFinder::getConfigHome();
     std::string conf;
     if (!root.empty()) {

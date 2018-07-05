@@ -42,7 +42,7 @@ public:
                 worked = false;
                 break;
             }
-            // Using SystemClock since yarp version 2.3.70 as part of global clock refactoring & bugFixing
+            // Always use SystemClock for this delay
             yarp::os::SystemClock::delaySystem(delay);
             delay *= 2;
         }

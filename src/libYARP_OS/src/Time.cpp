@@ -52,7 +52,6 @@ static void printNoClock_ErrorMessage()
 
 static Clock *getClock()
 {
-    // if no clock was ever set, fallback to System Clock
     if(pclock == nullptr)
     {
         /*
@@ -73,10 +72,7 @@ static Clock *getClock()
          * So now initialize a system clock and exit.
          */
         printNoClock_ErrorMessage();
-
-#ifdef YARP_NO_DEPRECATED // Since YARP 2.3.70
-        ::exit(-1);
-#endif
+        std::exit(-1);
     }
     return pclock;
 }
@@ -142,9 +138,7 @@ void Time::yield() {
 
 void Time::useSystemClock()
 {
-#ifdef YARP_NO_DEPRECATED // Since YARP 2.3.70
     if(!isSystemClock())
-#endif
     {
         getTimeMutex().lock();
 
@@ -161,7 +155,6 @@ void Time::useSystemClock()
 
         getTimeMutex().unlock();
     }
-
 }
 
 /* Creation of network clock may fail for different causes:
@@ -264,16 +257,7 @@ void Time::useCustomClock(Clock *clock) {
 }
 
 bool Time::isSystemClock() {
-#ifdef YARP_NO_DEPRECATED // Since YARP 2.3.70
     return (yarp_clock_type==YARP_CLOCK_SYSTEM);
-#else
-    if(yarp_clock_type==YARP_CLOCK_UNINITIALIZED)
-    {
-        printNoClock_ErrorMessage();
-        yarp_clock_type=YARP_CLOCK_SYSTEM;
-    }
-    return (yarp_clock_type==YARP_CLOCK_SYSTEM);
-#endif
 }
 
 bool Time::isNetworkClock() {
@@ -323,11 +307,6 @@ std::string Time::clockTypeToString(yarpClockType type)
 
 bool Time::isValid()
 {
-#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
-    if( (yarp_clock_type == YARP_CLOCK_SYSTEM) || (yarp_clock_type==YARP_CLOCK_UNINITIALIZED) )
-        return true;
-    else
-#endif
     // The clock must never be NULL here
     return getClock()->isValid();
 }

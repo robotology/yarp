@@ -48,14 +48,4 @@ yarp_install_basic_package_files(YARP_yarpcar
 set_property(TARGET yarpcar PROPERTY FOLDER "Plugins/Carrier")
 
 include(YarpDeprecatedOption)
-yarp_renamed_option(ENABLE_yarpcar_bayer_carrier ENABLE_yarpcar_bayer) # since YARP 2.3.68
-yarp_renamed_option(ENABLE_yarpcar_human_carrier ENABLE_yarpcar_human) # since YARP 2.3.68
-yarp_renamed_option(ENABLE_yarpcar_mjpeg_carrier ENABLE_yarpcar_mjpeg) # since YARP 2.3.68
-yarp_renamed_option(ENABLE_yarpcar_mpi_carrier ENABLE_yarpcar_mpi) # since YARP 2.3.68
-yarp_renamed_option(ENABLE_yarpcar_mpibcast_carrier ENABLE_yarpcar_mpibcast) # since YARP 2.3.68
-yarp_renamed_option(ENABLE_yarpcar_portmonitor_carrier ENABLE_yarpcar_portmonitor) # since YARP 2.3.68
-yarp_renamed_option(ENABLE_yarpcar_priority_carrier ENABLE_yarpcar_priority) # since YARP 2.3.68
-yarp_renamed_option(ENABLE_yarpcar_tcpros_carrier ENABLE_yarpcar_tcpros) # since YARP 2.3.68
-yarp_renamed_option(ENABLE_yarpcar_rossrv_carrier ENABLE_yarpcar_rossrv) # since YARP 2.3.68
-yarp_renamed_option(ENABLE_yarpcar_xmlrpc_carrier ENABLE_yarpcar_xmlrpc) # since YARP 2.3.68
 yarp_renamed_option(CREATE_OPTIONAL_CARRIERS YARP_COMPILE_CARRIER_PLUGINS) # since YARP 3.0.0
