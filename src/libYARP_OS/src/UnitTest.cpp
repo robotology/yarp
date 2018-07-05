@@ -193,16 +193,16 @@ bool UnitTest::checkEqualishImpl(double x, double y,
                                  const char *txt2,
                                  const char *fname,
                                  int fline) {
-    char buf[1000];
-    sprintf(buf, "in file %s:%d [%s] %s (%g) == %s (%g)",
-                    fname, fline, desc, txt1, x, txt2, y);
-    bool ok = (fabs(x-y)<0.0001);
-    if (ok) {
-        report(0, std::string("  [") + desc + "] passed ok");
+    std::ostringstream ost;
+    if (fabs(x-y)<0.0001) {
+        ost << "  [" << desc << "] passed ok";
+        report(0, ost.str());
+        return true;
     } else {
-        report(1, std::string("  FAILURE ") + buf);
+        ost << "  FAILURE in file " << fname << ":" << fline << " [" << desc << "] " << txt1 << " (" << x << ") == " << txt2 << " (" << y << ")";
+        report(1, ost.str());
+        return false;
     }
-    return ok;
 }
 
 
@@ -212,16 +212,16 @@ bool UnitTest::checkEqualImpl(const std::string& x, const std::string& y,
                               const char *txt2,
                               const char *fname,
                               int fline) {
-    char buf[1000];
-    sprintf(buf, "in file %s:%d [%s] %s (%s) == %s (%s)",
-                    fname, fline, desc, txt1, humanize(x).c_str(), txt2, humanize(y).c_str());
-    bool ok = (x==y);
-    if (ok) {
-        report(0, std::string("  [") + desc + "] passed ok");
+    std::ostringstream ost;
+    if (x == y) {
+        ost << "  [" << desc << "] passed ok";
+        report(0, ost.str());
+        return true;
     } else {
-        report(1, std::string("  FAILURE ") + buf);
+        ost << "  FAILURE in file " << fname << ":" << fline << " [" << desc << "] " << txt1 << " (" << humanize(x) << ") == " << txt2 << " (" << humanize(y) << ")";
+        report(1, ost.str());
+        return false;
     }
-    return ok;
 }
 
 
