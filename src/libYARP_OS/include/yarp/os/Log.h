@@ -64,7 +64,7 @@ public:
     void info(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
     void warning(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
     void error(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
-    void fatal(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
+    YARP_NORETURN void fatal(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
 
     LogStream trace() const;
     LogStream debug() const;

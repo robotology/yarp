@@ -148,6 +148,12 @@ recommended usage of this header within YARP is:
 #  define YARP_NODISCARD
 #endif
 
+// YARP_NORETURN
+#if YARP_COMPILER_CXX_ATTRIBUTES
+#  define YARP_NORETURN [[noreturn]]
+#else
+#  define YARP_NORETURN
+#endif
 
 // YARP_UNUSED: Suppress unused variable warnings
 #define YARP_UNUSED(var) (void)var
