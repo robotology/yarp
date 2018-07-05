@@ -274,6 +274,9 @@ int yarp::serversql::Server::run(int argc, char** argv)
     ok = server.open(nc.where(),false);
     if (!ok) {
         fprintf(stderr, "Name server failed to open\n");
+        if (silent) {
+            fclose(out);
+        }
         return 1;
     }
 

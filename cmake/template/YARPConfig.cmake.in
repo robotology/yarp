@@ -115,20 +115,24 @@ if(NOT YARP_IS_SHARED_LIBRARY OR NOT YARP_NO_DEPRECATED)
   if(NOT _yarp_ycm_transitive_dependency_set)
     set_property(GLOBAL PROPERTY _CMAKE_YCM_TRANSITIVE_DEPENDENCY TRUE)
   endif()
-  if(NOT YARP_NO_DEPRECATED AND NOT YCM_FOUND)
-    set_and_check(YARP_YCM_MODULE_DIR "@PACKAGE_YARP_YCM_MODULE_DIR@")
-    set(_YARP_YCM_MODULE_PATH "${YARP_YCM_MODULE_DIR}/find-modules"
-                              "${YARP_YCM_MODULE_DIR}/modules"
-                              "${YARP_YCM_MODULE_DIR}/3rdparty"
-                              "${YARP_YCM_MODULE_DIR}/cmake-proposed")
-    if(${CMAKE_VERSION} VERSION_LESS 3.8)
-      list(APPEND _YARP_YCM_MODULE_PATH "${YARP_YCM_MODULE_DIR}/cmake-3.8/Modules")
-    endif()
+  if(NOT YARP_NO_DEPRECATED)
+    if(YCM_FOUND)
+      set(_YARP_YCM_MODULE_PATH ${YCM_MODULE_PATH})
+    else()
+      set_and_check(YARP_YCM_MODULE_DIR "@PACKAGE_YARP_YCM_MODULE_DIR@")
+      set(_YARP_YCM_MODULE_PATH "${YARP_YCM_MODULE_DIR}/find-modules"
+                                "${YARP_YCM_MODULE_DIR}/modules"
+                                "${YARP_YCM_MODULE_DIR}/3rdparty"
+                                "${YARP_YCM_MODULE_DIR}/cmake-proposed")
+      if(${CMAKE_VERSION} VERSION_LESS 3.8)
+        list(APPEND _YARP_YCM_MODULE_PATH "${YARP_YCM_MODULE_DIR}/cmake-3.8/Modules")
+      endif()
 
-    # We need these paths in order to use the find modules in the following
-    # find_package/find_dependency calls (those are automatically added by
-    # YCM)
-    list(APPEND CMAKE_MODULE_PATH ${_YARP_YCM_MODULE_PATH})
+      # We need these paths in order to use the find modules in the following
+      # find_package/find_dependency calls (those are automatically added by
+      # YCM)
+      list(APPEND CMAKE_MODULE_PATH ${_YARP_YCM_MODULE_PATH})
+    endif()
   endif()
 endif()
 
