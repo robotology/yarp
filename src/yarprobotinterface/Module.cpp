@@ -63,7 +63,9 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
     const std::string &filename = rf.findFile("config");
     yTrace() << "Reading robot config file" << filename;
 
+    bool verbosity = rf.check("verbose");
     RobotInterface::XMLReader reader;
+    reader.setVerbose(verbosity);
     mPriv->robot = reader.getRobot(filename.c_str());
     // yDebug() << mPriv->robot;
 
@@ -72,7 +74,7 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
     // argument
     setName(mPriv->robot.portprefix().c_str());
 
-    mPriv->robot.setVerbose(rf.check("verbose"));
+    mPriv->robot.setVerbose(verbosity);
     mPriv->robot.setAllowDeprecatedDevices(rf.check("allow-deprecated-devices"));
 
     std::string rpcPortName("/" + getName() + "/yarprobotinterface");
