@@ -19,9 +19,9 @@
 
 #include <mutex>
 
-#ifdef ACE_WIN32
+#if defined(_WIN32)
 // for WIN32 MM functions
-#include <mmsystem.h>
+# include <mmsystem.h>
 #endif
 
 using namespace yarp::os;
