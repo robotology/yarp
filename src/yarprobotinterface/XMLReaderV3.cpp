@@ -65,7 +65,7 @@ public:
 #endif
 
     Robot robot;
-
+    bool verbose_output;
     std::string curr_filename;
     unsigned int minorVersion;
     unsigned int majorVersion;
@@ -77,6 +77,7 @@ RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::privateXMLReaderFileV3(
         minorVersion(0),
         majorVersion(0)
 {
+    verbose_output = false;
 }
 
 RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::~privateXMLReaderFileV3()
@@ -132,8 +133,12 @@ RobotInterface::Robot& RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::
     double end_time = yarp::os::Time::now();
     std::string full_log_withpath = current_path + std::string("\\") + log_filename;
     std::replace(full_log_withpath.begin(), full_log_withpath.end(), '\\', '/');
-    yDebug() << "Preprocessor complete in: " << end_time-start_time << "s, output stored in: "<< full_log_withpath;
-    doc->SaveFile(full_log_withpath);
+    yDebug() << "Preprocessor complete in: " << end_time - start_time << "s";
+    yDebug() << "Preprocessor output stored in: " << full_log_withpath;
+    if (verbose_output)
+    {
+        doc->SaveFile(full_log_withpath);
+    }
     readRobotTag(doc->RootElement());
     delete doc;
 
@@ -153,7 +158,12 @@ bool RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::PerformInclusions(
         yDebug() << "Parsing" << childElem->Value() << a; 
 #endif
         std::string elemString = childElem->ValueStr();
-        if (elemString.compare("xi:include") == 0)
+        if (elemString.compare("file") == 0)
+        {
+            yFatal() << "'file' attribute is forbidden in yarprobotinterface DTD format 3.0. Error found in " << parent_fileName;
+            return false;
+        }
+        else if (elemString.compare("xi:include") == 0)
         {
             std::string href_filename;
             std::string included_filename;
@@ -169,6 +179,8 @@ bool RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::PerformInclusions(
                 if (included_file.LoadFile(full_path_file))
                 {
                     PerformInclusions(included_file.RootElement(), included_filename, included_path);
+                    //included_file.RootElement()->SetAttribute("xml:base", href_filename); //not yet implemented
+                    included_file.RootElement()->RemoveAttribute("xmlns:xi");
                     if (pParent->ReplaceChild(childElem, *included_file.FirstChildElement()))
                     {
                         //the replace operation invalidates the iterator, hence we need to restart the parsing of this level
@@ -640,8 +652,9 @@ RobotInterface::ActionList RobotInterface::XMLReaderFileV3::privateXMLReaderFile
 }
 
 
-RobotInterface::Robot& RobotInterface::XMLReaderFileV3::getRobotFile(const std::string& filename)
+RobotInterface::Robot& RobotInterface::XMLReaderFileV3::getRobotFile(const std::string& filename, bool verb)
 {
+    mPriv->verbose_output = verb;
     return mPriv->readRobotFile(filename);
 }
 

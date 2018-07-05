@@ -18,8 +18,9 @@ class Robot;
 class XMLReaderFileVx
 {
 public:
+    bool verbose;
     virtual ~XMLReaderFileVx() {};
-    virtual  Robot& getRobotFile(const std::string &filename)=0;
+    virtual  Robot& getRobotFile(const std::string &filename, bool verbose = false)=0;
 };
 
 class XMLReaderFileV1 : public XMLReaderFileVx
@@ -28,7 +29,7 @@ public:
     XMLReaderFileV1();
     virtual ~XMLReaderFileV1();
 
-    virtual Robot& getRobotFile(const std::string &filename) override;
+    virtual Robot& getRobotFile(const std::string &filename, bool verbose = false) override;
 
 private:
     class privateXMLReaderFileV1;
@@ -41,7 +42,7 @@ public:
     XMLReaderFileV3();
     virtual ~XMLReaderFileV3();
 
-    virtual Robot& getRobotFile(const std::string &filename) override;
+    virtual Robot& getRobotFile(const std::string &filename, bool verbose = false) override;
 
 private:
     class privateXMLReaderFileV3;
@@ -55,8 +56,9 @@ public:
     virtual ~XMLReader();
 
     Robot& getRobot(const std::string &filename);
-
+    void setVerbose(bool verbose);
 private:
+    bool verbose;
     XMLReaderFileVx * mReader;
 }; // class XMLReader
 

@@ -36,6 +36,7 @@
 RobotInterface::XMLReader::XMLReader() :
     mReader(0)
 {
+    verbose = false;
 }
 
 RobotInterface::XMLReader::~XMLReader()
@@ -45,6 +46,11 @@ RobotInterface::XMLReader::~XMLReader()
         delete mReader;
         mReader = 0;
     }
+}
+
+void RobotInterface::XMLReader::setVerbose(bool verb)
+{
+    verbose = verb;
 }
 
 RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fileName)
@@ -90,12 +96,12 @@ RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fi
     if (dtd.majorVersion == 1)
     {
         mReader = new RobotInterface::XMLReaderFileV1;
-        return mReader->getRobotFile(filename);
+        return mReader->getRobotFile(filename,verbose);
     }
     else if (dtd.majorVersion == 3)
     {
         mReader = new RobotInterface::XMLReaderFileV3;
-        return mReader->getRobotFile(filename);
+        return mReader->getRobotFile(filename,verbose);
     }
     
     //ERROR HERE

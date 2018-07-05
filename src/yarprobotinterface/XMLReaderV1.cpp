@@ -67,7 +67,7 @@ public:
 #endif
 
     Robot robot;
-
+    bool verbose_output;
     std::string curr_filename;
     unsigned int minorVersion;
     unsigned int majorVersion;
@@ -822,8 +822,9 @@ RobotInterface::ActionList RobotInterface::XMLReaderFileV1::privateXMLReaderFile
     return actions;
 }
 
-RobotInterface::Robot& RobotInterface::XMLReaderFileV1::getRobotFile(const std::string& filename)
+RobotInterface::Robot& RobotInterface::XMLReaderFileV1::getRobotFile(const std::string& filename, bool verb)
 {
+    mPriv->verbose_output = verb;
     return mPriv->readRobotFile(filename);
 }
 
