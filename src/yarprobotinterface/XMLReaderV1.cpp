@@ -35,7 +35,7 @@
 class RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1
 {
 public:
-    privateXMLReaderFileV1(XMLReaderFileV1 *parent);
+    explicit privateXMLReaderFileV1(XMLReaderFileV1 *parent);
     virtual ~privateXMLReaderFileV1();
 
     RobotInterface::Robot& readRobotFile(const std::string &fileName);
@@ -79,6 +79,7 @@ RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::privateXMLReaderFileV1(
         minorVersion(0),
         majorVersion(0)
 {
+    verbose_output = false;
 }
 
 RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::~privateXMLReaderFileV1()

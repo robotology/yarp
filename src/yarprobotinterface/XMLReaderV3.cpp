@@ -35,7 +35,7 @@
 class RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3
 {
 public:
-    privateXMLReaderFileV3(XMLReaderFileV3 *parent);
+    explicit privateXMLReaderFileV3(XMLReaderFileV3 *parent);
     virtual ~privateXMLReaderFileV3();
 
     RobotInterface::Robot& readRobotFile(const std::string &fileName);
@@ -56,7 +56,7 @@ public:
     RobotInterface::Action readActionTag(TiXmlElement *actionElem);
     RobotInterface::ActionList readActionsTag(TiXmlElement *actionsElem);
 
-    bool PerformInclusions(TiXmlNode* pParent, std::string parent_fileName, std::string current_path);
+    bool PerformInclusions(TiXmlNode* pParent, const std::string& parent_fileName, const std::string& current_path);
 
     XMLReaderFileV3 * const parent;
 
@@ -134,9 +134,9 @@ RobotInterface::Robot& RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::
     std::string full_log_withpath = current_path + std::string("\\") + log_filename;
     std::replace(full_log_withpath.begin(), full_log_withpath.end(), '\\', '/');
     yDebug() << "Preprocessor complete in: " << end_time - start_time << "s";
-    yDebug() << "Preprocessor output stored in: " << full_log_withpath;
     if (verbose_output)
     {
+        yDebug() << "Preprocessor output stored in: " << full_log_withpath;
         doc->SaveFile(full_log_withpath);
     }
     readRobotTag(doc->RootElement());
@@ -147,7 +147,7 @@ RobotInterface::Robot& RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::
     return robot;
 }
 
-bool RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::PerformInclusions(TiXmlNode* pParent, std::string parent_fileName, std::string current_path)
+bool RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::PerformInclusions(TiXmlNode* pParent, const std::string& parent_fileName, const std::string& current_path)
 {
     loop_start: //goto label
     for (TiXmlElement* childElem = pParent->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement())

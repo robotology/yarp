@@ -81,7 +81,7 @@ void RobotInterfaceDTD::setDefault()
     minorVersion = 0;
 }
 
-bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, std::string curr_filename) {
+bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, const std::string& curr_filename) {
     // Very basic and ugly DTD tag parsing as TinyXML does not support it
     // We just need the version numbers.
 
@@ -136,15 +136,16 @@ bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, std::string curr_filena
     uri = tokens.at(4);
 
     // Extract version numbers from the URI
-    if (uri.find(RobotInterfaceDTD::baseUri) != 0) {
+    std::size_t end1 = uri.find(RobotInterfaceDTD::ext, 0);
+    if (end1 == std::string::npos) {
         SYNTAX_WARNING(unknownNode->Row()) << "Unknown document type. Unknown url" << uri;
     }
     std::size_t start = RobotInterfaceDTD::baseUri.size();
-    std::size_t end = uri.find(RobotInterfaceDTD::ext, start);
-    if (end == std::string::npos) {
+    std::size_t end2 = uri.find(RobotInterfaceDTD::ext, start);
+    if (end2 == std::string::npos) {
         SYNTAX_WARNING(unknownNode->Row()) << "Unknown document type. Unknown url" << uri;
     }
-    std::string versionString = uri.substr(start, end - start);
+    std::string versionString = uri.substr(start, end2 - start);
     std::size_t dot = versionString.find('.');
     if (dot == std::string::npos) {
         SYNTAX_WARNING(unknownNode->Row()) << "Unknown document type. Unknown url" << uri;

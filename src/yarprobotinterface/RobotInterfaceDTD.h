@@ -49,7 +49,7 @@ public:
         majorVersion(0),
         minorVersion(0) {}
 
-    bool parse(TiXmlUnknown* unknownNode, std::string curr_filename);
+    bool parse(TiXmlUnknown* unknownNode, const std::string& curr_filename);
 
     bool valid();
 

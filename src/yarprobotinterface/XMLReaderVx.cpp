@@ -95,17 +95,17 @@ RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fi
 
     if (dtd.majorVersion == 1)
     {
+        yDebug() << "yarprobotinterface: using xml parser for DTD v1.x";
         mReader = new RobotInterface::XMLReaderFileV1;
         return mReader->getRobotFile(filename,verbose);
     }
     else if (dtd.majorVersion == 3)
     {
+        yDebug() << "yarprobotinterface: using xml parser for DTD v3.x";
         mReader = new RobotInterface::XMLReaderFileV3;
         return mReader->getRobotFile(filename,verbose);
     }
     
     //ERROR HERE
     yFatal() << "Invalid DTD version. Unable to choose parser for DTD.major:" << dtd.majorVersion;
-    RobotInterface::Robot* r=0;
-    return *r;
 }
