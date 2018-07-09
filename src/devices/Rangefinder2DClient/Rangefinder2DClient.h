@@ -84,7 +84,6 @@ protected:
     std::string remote;
     yarp::os::Stamp lastTs; //used by IPreciselyTimed
     std::string deviceId;
-    int _rate;
 
     double scan_angle_min;
     double scan_angle_max;

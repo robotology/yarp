@@ -177,16 +177,6 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    if (config.check("period"))
-    {
-        _rate = config.find("period").asInt32();
-    }
-    else
-    {
-        yError("Rangefinder2DClient::open() missing period parameter");
-        return false;
-    }
-
     std::string local_rpc = local;
     local_rpc += "/rpc:o";
     std::string remote_rpc = remote;
