@@ -19,7 +19,47 @@
 
 %define SWIG_PREPROCESSOR_SHOULD_SKIP_THIS %enddef
 
+// YARP_conf
+%{
+#include <yarp/conf/version.h>
+#include <yarp/conf/compiler.h>
+#include <yarp/conf/system.h>
+#include <yarp/conf/options.h>
+#include <yarp/conf/api.h>
+#include <yarp/conf/numeric.h>
+%}
+
+%include "yarp/conf/version.h"
+%import "yarp/conf/compiler.h"
+%import "yarp/conf/system.h"
+%import "yarp/conf/options.h"
 %import "yarp/conf/api.h"
+%import "yarp/conf/numeric.h"
+
+// YARP_OS
+%{
+#include <yarp/os/api.h>
+%}
+
+%import <yarp/os/api.h>
+
+// YARP_sig
+%{
+#include <yarp/sig/api.h>
+%}
+
+%import <yarp/sig/api.h>
+
+// YARP_dev
+%{
+#include <yarp/dev/api.h>
+%}
+
+%import <yarp/dev/api.h>
+
+
+
+
 
 #if !defined (SWIGMATLAB)
 %feature("director") yarp::os::PortReader;
@@ -261,31 +301,6 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 #endif
 
 
-// Now we parse the original header files
-// Redefine a few things that SWIG currently chokes on
-%define YARP_OS_API
-%enddef
-%define YARP_sig_API
-%enddef
-%define YARP_dev_API
-%enddef
-%define YARP_init_API
-%enddef
-%define YARP_OS_DEPRECATED_API
-%enddef
-%define YARP_OS_DEPRECATED_API_MSG(msg)
-%enddef
-%define YARP_DISABLE_DEPRECATED_WARNING
-%enddef
-%define YARP_DISABLE_DLL_INTERFACE_WARNING
-%enddef
-%define YARP_SUPPRESS_DLL_INTERFACE_WARNING
-%enddef
-%define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(x) x
-%enddef
-%define YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARGS(...) __VA_ARGS__
-%enddef
-
 // We skip macros from Vocab.h via SWIG_PREPROCESSOR_SHOULD_SKIP_THIS directive
 // But cannot define YARP_OS_VOCAB_H as we would miss encode/decode
 #if (SWIG_VERSION >= 0x030011) && (!defined(SWIGCSHARP))
@@ -303,12 +318,6 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %define VOCAB2(x1,x2) VOCAB(x1,x2,0,0)
 %enddef
 %define VOCAB1(x1) VOCAB(x1,0,0,0)
-%enddef
-
-
-%define YARP_BEGIN_PACK
-%enddef
-%define YARP_END_PACK
 %enddef
 
 #if defined( SWIGALLEGROCL )
@@ -334,7 +343,6 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 };
 #endif
 
-%include <yarp/conf/numeric.h>
 %include <yarp/os/NetInt8.h>
 %include <yarp/os/NetInt16.h>
 %include <yarp/os/NetInt32.h>
