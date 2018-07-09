@@ -255,7 +255,12 @@ public:
 
     IJoypadEventDriven();
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+#if defined(_MSC_VER) && _MSC_VER <= 1900 // VS 2015
     explicit IJoypadEventDriven(YARP_DEPRECATED_MSG("Use IJoypadEventDriven(double)") int rate);
+#else
+    YARP_DEPRECATED_MSG("Use IJoypadEventDriven(double)")
+    explicit IJoypadEventDriven(int rate);
+#endif
 #endif
     explicit IJoypadEventDriven(double period);
 
