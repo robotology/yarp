@@ -24,6 +24,7 @@ namespace yarp {
 // method.
 extern yarp::os::impl::UnitTest& getImageTest();
 extern yarp::os::impl::UnitTest& getVectorTest();
+extern yarp::os::impl::UnitTest& getVectorOfTest();
 extern yarp::os::impl::UnitTest& getSoundTest();
 extern yarp::os::impl::UnitTest& getMatrixTest();
 extern yarp::os::impl::UnitTest& getPointCloudTest();
@@ -34,6 +35,7 @@ public:
         yarp::os::impl::UnitTest& root = yarp::os::impl::UnitTest::getRoot();
         root.add(getImageTest());
         root.add(getVectorTest());
+        root.add(getVectorOfTest());
         root.add(getMatrixTest());
         root.add(getSoundTest());
         root.add(getPointCloudTest());
