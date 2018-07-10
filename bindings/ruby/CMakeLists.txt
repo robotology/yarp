@@ -26,6 +26,11 @@ if(NOT MSVC)
   if(CXX_HAS_WNO_SIGN_COMPARE)
     target_compile_options(${SWIG_MODULE_yarp_ruby_REAL_NAME} PRIVATE "-Wno-sign-compare")
   endif()
+
+  check_cxx_compiler_flag("-Wno-ignored-qualifiers" CXX_HAS_WNO_IGNORED_QUALIFIERS)
+  if(CXX_HAS_WNO_IGNORED_QUALIFIERS)
+    target_compile_options(${SWIG_MODULE_yarp_ruby_REAL_NAME} PRIVATE "-Wno-ignored-qualifiers")
+  endif()
 endif()
 
 # Define CMAKE_INSTALL_RUBYDIR for installing Ruby libraries
