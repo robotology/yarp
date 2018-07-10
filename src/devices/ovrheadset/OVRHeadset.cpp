@@ -775,7 +775,7 @@ void yarp::dev::OVRHeadset::threadRelease()
         // Disable Performance Hud Mode before destroying the session,
         // or it will stay after the device is closed.
         int PerfHudMode = (int)ovrPerfHud_Off;
-        ovr_SetInt32(session, OVR_PERF_HUD_MODE, PerfHudMode);
+        ovr_SetInt(session, OVR_PERF_HUD_MODE, PerfHudMode);
 
         ovr_Destroy(session);
         session = 0;
@@ -847,8 +847,8 @@ bool yarp::dev::OVRHeadset::updateService()
     const double delay = 5.0;
     yDebug("Thread ran %d times, est period %lf[ms], used %lf[ms]",
            getIterations(),
-           getEstPeriod(),
-           getEstUsed());
+           getEstimatedPeriod()*1000,
+           getEstimatedUsed()*1000);
     yDebug("Display refresh: %3.1f[hz]", getIterations()/delay);
 
     for (int eye = 0; eye < ovrEye_Count; ++eye) {
@@ -960,10 +960,12 @@ void yarp::dev::OVRHeadset::run()
         rpyHead[2] = rpyRobot[2];
         T_Head     = yarp::math::rpy2dcm(rpyHead);
 
-        tfPublisher->setTransform(left_frame,    root_frame, yarp::math::operator*(T_Head.transposed(), T_LHand));
-        tfPublisher->setTransform(right_frame,   root_frame, yarp::math::operator*(T_Head.transposed(), T_RHand));
+        tfPublisher->setTransform(left_frame,    root_frame, operator*(T_Head.transposed(), T_LHand));
+        tfPublisher->setTransform(right_frame,   root_frame, operator*(T_Head.transposed(), T_RHand));
     }
+
     else
+
     {
         OVR::Quatf lRot = OVR::Quatf(ts.HandPoses[ovrHand_Left].ThePose.Orientation)  * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI_2);
         OVR::Quatf rRot = OVR::Quatf(ts.HandPoses[ovrHand_Right].ThePose.Orientation) * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI_2);
@@ -1386,9 +1388,9 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
         break;
     case GLFW_KEY_SLASH:
         {
-            int PerfHudMode = ovr_GetInt32(session, OVR_PERF_HUD_MODE, 0);
+            int PerfHudMode = ovr_GetInt(session, OVR_PERF_HUD_MODE, 0);
             PerfHudMode = (PerfHudMode + 1) % 8;
-            ovr_SetInt32(session, OVR_PERF_HUD_MODE, PerfHudMode);
+            ovr_SetInt(session, OVR_PERF_HUD_MODE, PerfHudMode);
         }
         break;
     case GLFW_KEY_G:
