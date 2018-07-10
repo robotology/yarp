@@ -8,7 +8,7 @@ The command-line utility "yarprun" provides a client-server environment that is 
 
 Typical Yarp applications consist of several intercommunicating modules distributed on different machines. If a yarprun server is running on each machine, distributed applications can be remotely launched, monitored and terminated by yarprun commands.
 
-yarprun is also an API library that supplies access to yarprun services. See \ref yarp::os::Run class for documentation.
+yarprun is also an API library that supplies access to yarprun services. See \ref yarp::run::Run class for documentation.
 
 \section yarprun_server Running a server
 
