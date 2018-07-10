@@ -562,6 +562,7 @@ typedef yarp::os::BufferedPort<yarp::sig::Vector> BufferedPortVector;
 %feature("notabstract") yarp::os::BufferedPort<Vector>;
 %feature("notabstract") BufferedPortVector;
 
+%template(Vector) yarp::sig::VectorOf<double>;
 %template(ImageRgb) yarp::sig::ImageOf<yarp::sig::PixelRgb>;
 %template(TypedReaderImageRgb) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
 %template(TypedReaderCallbackImageRgb) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
