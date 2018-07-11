@@ -123,7 +123,7 @@ Clearly different carriers have a lot of freedom in how they operate.
     `LEN` is the number of blocks of user data need to be sent.
     This byte-sequence says there are `LEN` send blocks, 1 reply block expected,
     and that the sizes will be listed individually next (this odd format is for
-    backward compatability with older YARP versions).
+    backward compatibility with older YARP versions).
 
   - The sender transmits `LEN` 4-byte little-endian integers, one for each of
     the `LEN` blocks of user data, giving the length of each block.

@@ -109,7 +109,7 @@ YARP_EXTERNAL;raw1394;dc1394_control
 In this example we are telling CMake that the device driver foo
 depends on the packages raw1394 and dc1394_control. In this case cmake
 will not do any check, but will print a warning message saying that
-these modules are required. It is the user's responsability (for now,
+these modules are required. It is the user's responsibility (for now,
 and perhaps forever) to install these packages in the correct locations.
 
 Everything going well, you will see on CMake a list of variables whose

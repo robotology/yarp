@@ -232,7 +232,7 @@ bool ControlBoardWrapper::checkROSParams(Searchable &config)
 
     // check for rosNodeName parameter
     // UPDATE: joint names are got from MotionControl subdevice now.
-    // An error should be thrown later on in case we fail geting names from device
+    // An error should be thrown later on in case we fail getting names from device
     if(!rosGroup.check("jointNames"))
     {
         yInfo() << partName << "ROS topic has been required, jointNames will be got from motionControl subdevice.";
@@ -464,13 +464,13 @@ bool ControlBoardWrapper::open(Searchable& config)
         return false;
     }
 
-    // call ROS node/topic initilization, if needed
+    // call ROS node/topic initialization, if needed
     if(!initialize_ROS() )
     {
         return false;
     }
 
-    // call YARP port initilization, if needed
+    // call YARP port initialization, if needed
     if(!initialize_YARP(prop) )
     {
         yError() << partName << "Something wrong when initting yarp ports";
@@ -627,7 +627,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 }
 
 // For the simulator, if a subdevice parameter is given to the wrapper, it will
-// open it and and attach to immediatly.
+// open it and attach to immediately.
 bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
 {
     Property p;
@@ -639,7 +639,7 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     p.unput("device");
     p.put("device", subdevice);  // subdevice was already checked before
 
-    // if error occour during open, quit here.
+    // if errors occurred during open, quit here.
     yDebug("opening controlBoardWrapper2 subdevice\n");
     subDeviceOwned->open(p);
 
@@ -1514,7 +1514,7 @@ bool ControlBoardWrapper::positionMove(const double *refs)
 
 /** Set new reference point for a subset of axis.
  * @param joints pointer to the array of joint numbers
- * @param refs   pointer to the array specifing the new reference points
+ * @param refs   pointer to the array specifying the new reference points
  * @return true/false on success/failure
  */
 bool ControlBoardWrapper::positionMove(const int n_joints, const int *joints, const double *refs)

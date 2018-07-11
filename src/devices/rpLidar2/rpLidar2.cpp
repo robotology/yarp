@@ -155,7 +155,7 @@ bool RpLidar2::open(yarp::os::Searchable& config)
         handleError(result);
         return false;
     }
-    yInfo() << "Motor started succesfully";
+    yInfo() << "Motor started successfully";
 
     if (m_pwm_val!=0)
     {
@@ -188,7 +188,7 @@ bool RpLidar2::open(yarp::os::Searchable& config)
         handleError(result);
         return false;
     }
-    yInfo() << "Scan started succesfully";
+    yInfo() << "Scan started successfully";
 
     yInfo() << "Device info:" << m_info;
     yInfo("max_angle %f, min_angle %f", m_max_angle, m_min_angle);

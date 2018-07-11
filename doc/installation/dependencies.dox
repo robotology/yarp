@@ -94,7 +94,7 @@ can just install that and you are done. Otherwise you need to download
     \endverbatim
     (the \c .so may be \c .dylib or other variants):
 \li One thing remains to be done; programs need to be able to find the
-    ACE library at run time. You can set this up by runing one of the
+    ACE library at run time. You can set this up by running one of the
     following:
     \verbatim
     export LD_LIBRARY_PATH=$ACE_ROOT/lib:$LD_LIBRARY_PATH
@@ -171,7 +171,7 @@ sudo apt-get install libeigen3-dev
 
 \subsubsection dependencies_eigen_macos macOS
 The most convenient way of installing Eigen in macOS is using <a href="http://brew.sh">homebrew</a>.
-If you have installed homebrew on your computer, you can instal eigen by typing on a terminal:
+If you have installed homebrew on your computer, you can install eigen by typing on a terminal:
 ~~~
 brew install eigen
 ~~~

@@ -183,6 +183,6 @@ void QosConfigDialog::apply() {
 
     // something went wrong
     QMessageBox messageBox;
-    messageBox.critical(nullptr,"Error","An error has occured while applying the QoS configuration! \n Please check the QoS paramters carefully.");
+    messageBox.critical(nullptr,"Error","An error has occurred while applying the QoS configuration! \n Please check the QoS parameters carefully.");
     messageBox.setFixedSize(500,200);    
 }

@@ -21,7 +21,7 @@
 #define YARP_GSL_IMPL_GSL_COMPATIBILITY_H
 
 /*
- * This file defines types for binary compatibily with the GSL.
+ * This file defines types for binary compatibility with the GSL.
  */
 
 #include <cstddef>

@@ -58,7 +58,7 @@ Received:hello yarp
 ...
 \endcode
 
-You can verify the existance of a node called /yarp/listener by running:
+You can verify the existence of a node called /yarp/listener by running:
 
 \verbatim
 $ rosnode list
@@ -89,7 +89,7 @@ yarp: Sending output from /chatter+@/yarp/talker to /listener using tcpros
 yarp: Removing output from /chatter+@/yarp/talker to /listener
 \endverbatim
 
-You can verify the existance of a node called /yarp/talker and topic /chatter
+You can verify the existence of a node called /yarp/talker and topic /chatter
 by running:
 
 \verbatim

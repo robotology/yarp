@@ -90,7 +90,7 @@ Note that semi-colon is optional; hex values are valid here.
 If any typedef (see \ref thrift_tutorial_subs_typedef) or constant value is defined, a \<thriftFileName\>_common.h file is generated, which contains all typedefs and constants; this file is automatically included by all other generated files.
 
 \subsection thrift_tutorial_subs_enums Enums
-Enums are specified C-style. Compiler assigns default values starting at 0, but specific integral values (in the range of postive 32-bit integers) can be specified for constants. Hex values are also acceptable.
+Enums are specified C-style. Compiler assigns default values starting at 0, but specific integral values (in the range of positive 32-bit integers) can be specified for constants. Hex values are also acceptable.
 
 \code
 enum PointQuality{
@@ -124,7 +124,7 @@ namespace yarp { namespace test {
 
 \subsection thrift_tutorial_subs_include Includes
 
-It is often useful to split up Thrift definitions in separate files to ease maintainance, enable reuse and improve modularity/organization. Thrift allows files to include other Thrift files. Included files are looked up in the current directory and by searching relative to the path from which the \c yarp_idl_to_dir macro is executed (see \ref thrift_tutorial_sec_codegen ).
+It is often useful to split up Thrift definitions in separate files to ease maintenance, enable reuse and improve modularity/organization. Thrift allows files to include other Thrift files. Included files are looked up in the current directory and by searching relative to the path from which the \c yarp_idl_to_dir macro is executed (see \ref thrift_tutorial_sec_codegen ).
 \code
 include "firstInterface/PointD.thrift"
 \endcode

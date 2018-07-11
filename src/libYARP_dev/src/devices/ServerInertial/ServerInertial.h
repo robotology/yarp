@@ -205,8 +205,8 @@ private:
     // Open the wrapper only, the attach method needs to be called before using it
     bool openDeferredAttach(yarp::os::Property& prop);
 
-    // Iif a subdevice parameter is given to the wrapper, it will open it as well
-    // and and attach to it immediatly.
+    // If a subdevice parameter is given to the wrapper, it will open it as well
+    // and attach to it immediately.
     bool openAndAttachSubDevice(yarp::os::Property& prop);
 };
 

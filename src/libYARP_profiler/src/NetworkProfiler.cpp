@@ -362,7 +362,7 @@ bool NetworkProfiler::updateConnectionQosStatus(yarp::profiler::graph::Graph& gr
                         edge.property.put("ToPacketPriority", toStyle.getPacketPriorityAsLevel());
                     }
                     else
-                        yWarning()<<"Cannot retrive Qos property of"<<v1.property.find("name").asString()<<"->"<<v2.property.find("name").asString();
+                        yWarning()<<"Cannot retrieve Qos property of"<<v1.property.find("name").asString()<<"->"<<v2.property.find("name").asString();
                 }
             }
         }

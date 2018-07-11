@@ -206,7 +206,7 @@ bool RGBDSensorWrapper::open(yarp::os::Searchable &config)
 
     if(!fromConfig(config))
     {
-        yError() << "Device RGBDSensorWrapper failed to open, check previous log for error messsages.\n";
+        yError() << "Device RGBDSensorWrapper failed to open, check previous log for error messages.\n";
         return false;
     }
 
@@ -257,7 +257,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
     if(rosGroup.isNull())
     {
         if(verbose >= 3)
-            yInfo() << "RGBDSensorWrapper: ROS configuration paramters are not set, skipping ROS topic initialization.";
+            yInfo() << "RGBDSensorWrapper: ROS configuration parameters are not set, skipping ROS topic initialization.";
         use_ROS  = false;
         use_YARP = true;
     }
@@ -371,7 +371,7 @@ bool RGBDSensorWrapper::openAndAttachSubDevice(Searchable& prop)
     p.unput("device");
     p.put("device",prop.find("subdevice").asString());  // subdevice was already checked before
 
-    // if error occour during open, quit here.
+    // if errors occurred during open, quit here.
     yDebug("opening IRGBDSensor subdevice\n");
     subDeviceOwned->open(p);
 

@@ -233,7 +233,7 @@ private:
     bool openDeferredAttach(yarp::os::Searchable &prop);
 
     // For the simulator, if a subdevice parameter is given to the wrapper, it will
-    // open it and and attach to it immediatly.
+    // open it and attach to it immediately.
     yarp::dev::PolyDriver *subDeviceOwned;
     bool openAndAttachSubDevice(yarp::os::Searchable &prop);
 

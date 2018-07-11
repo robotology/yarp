@@ -134,7 +134,7 @@ void Sound::init(size_t bytesPerSample) {
     implementation = new FlexImage();
     yAssert(implementation!=nullptr);
 
-    yAssert(bytesPerSample==2); // that's all thats implemented right now
+    yAssert(bytesPerSample==2); // that's all that's implemented right now
     HELPER(implementation).setPixelCode(VOCAB_PIXEL_MONO16);
     HELPER(implementation).setQuantum(2);
 

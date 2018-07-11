@@ -153,8 +153,8 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
             return false;
 
         // When data is read here using the reader passed to this functions,
-        // then it wont be available for modifyIncomingData(). Thus, we write
-        // it to a dumy connection and pass it to the modifyOutgoingData() using
+        // then it won't be available for modifyIncomingData(). Thus, we write
+        // it to a dummy connection and pass it to the modifyOutgoingData() using
         // localReader.
         // localReader points to a connection reader which contains
         // either the original or modified data.

@@ -329,7 +329,7 @@ public:
      */
     virtual bool getPWM(int j, double* val) override;
 
-    /* Get the PWM limit fot the given motor.
+    /* Get the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
      * @param j joint number
      * @param val filled with PWM limit value.
@@ -337,7 +337,7 @@ public:
      */
     virtual bool getPWMLimit(int j, double* val) override;
 
-    /* Set the PWM limit fot the given motor.
+    /* Set the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
      * @param j joint number
      * @param val new value for the PWM limit.

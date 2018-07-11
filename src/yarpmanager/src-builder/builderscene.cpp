@@ -54,7 +54,7 @@ void BuilderScene::dropEvent(QGraphicsSceneDragDropEvent *event)
     qlonglong pointer = event->mimeData()->data("pointer").toLongLong();
     QString itemType = event->mimeData()->text();
 
-    // Unselect all
+    // Deselect all
     foreach (QGraphicsItem *it, selectedItems()) {
         it->setSelected(false);
     }

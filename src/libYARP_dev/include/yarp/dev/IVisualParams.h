@@ -72,7 +72,7 @@ YARP_END_PACK
 /**
  * @ingroup dev_iface_other
  *
- * An interface for retriving intrinsic parameter from a rgb camera
+ * An interface for retrieving intrinsic parameter from a rgb camera
  *
  */
 class YARP_dev_API yarp::dev::IRgbVisualParams
@@ -144,8 +144,8 @@ public:
      *
      * |  Parameter name              | SubParameter        | Type                | Units          | Default Value | Required                         | Description                                                                            | Notes                                                                 |
      * |:----------------------------:|:-------------------:|:-------------------:|:--------------:|:-------------:|:--------------------------------:|:--------------------------------------------------------------------------------------:|:---------------------------------------------------------------------:|
-     * |  focalLengthX                |      -              | double              | mm             |   -           |   Yes                            |  Horizontal component of the focal lenght                                              |                                                                       |
-     * |  focalLengthY                |      -              | double              | mm             |   -           |   Yes                            |  Vertical component of the focal lenght                                                |                                                                       |
+     * |  focalLengthX                |      -              | double              | mm             |   -           |   Yes                            |  Horizontal component of the focal length                                              |                                                                       |
+     * |  focalLengthY                |      -              | double              | mm             |   -           |   Yes                            |  Vertical component of the focal length                                                |                                                                       |
      * |  principalPointX             |      -              | double              | pixel          |   -           |   Yes                            |  X coordinate of the principal point                                                   |                                                                       |
      * |  principalPointY             |      -              | double              | pixel          |   -           |   Yes                            |  Y coordinate of the principal point                                                   |                                                                       |
      * |  retificationMatrix          |      -              | 4x4 double matrix   | -              |   -           |   Yes                            |  Matrix that describes the lens' distortion                                            |                                                                       |
@@ -181,7 +181,7 @@ public:
 /**
  * @ingroup dev_iface_other
  *
- * An interface for retriving intrinsic parameter from a depth camera
+ * An interface for retrieving intrinsic parameter from a depth camera
  *
  */
 class YARP_dev_API yarp::dev::IDepthVisualParams

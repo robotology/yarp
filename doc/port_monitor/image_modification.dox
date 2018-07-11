@@ -150,7 +150,7 @@ PortMonitor.setparam <span style="color:#0100b6;font-weight:700">=</span> <span 
             PortMonitor.bg.b <span style="color:#0100b6;font-weight:700">=</span> bt:get(<span style="color:#cd0000;font-style:italic">3</span>):asInt32()
         <span style="color:#0100b6;font-weight:700">end</span>
     <span style="color:#0100b6;font-weight:700">end</span>
-    bt <span style="color:#0100b6;font-weight:700">=</span> property:findGroup(<span style="color:#d80800">"fg"</span>, <span style="color:#d80800">"forground color"</span>)
+    bt <span style="color:#0100b6;font-weight:700">=</span> property:findGroup(<span style="color:#d80800">"fg"</span>, <span style="color:#d80800">"foreground color"</span>)
     <span style="color:#0100b6;font-weight:700">if</span> bt:isNull() <span style="color:#0100b6;font-weight:700">~=</span> <span style="color:#585cf6;font-style:italic">true</span> <span style="color:#0100b6;font-weight:700">then</span>
         <span style="color:#0100b6;font-weight:700">if</span> bt:size() <span style="color:#0100b6;font-weight:700">>=</span><span style="color:#cd0000;font-style:italic">4</span>  <span style="color:#0100b6;font-weight:700">then</span>
             PortMonitor.fg.r <span style="color:#0100b6;font-weight:700">=</span> bt:get(<span style="color:#cd0000;font-style:italic">1</span>):asInt32()

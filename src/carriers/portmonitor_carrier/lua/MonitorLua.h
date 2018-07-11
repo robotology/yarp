@@ -79,7 +79,7 @@ private:
                        const std::string& oldStr, const std::string& newStr);
     bool isKeyword(const char* str);
 
-    /* lua accessible fucntion*/
+    /* lua accessible function*/
     static int setConstraint(lua_State* L);
     static int getConstraint(lua_State* L);
     static int setEvent(lua_State* L);

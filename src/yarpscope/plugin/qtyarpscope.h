@@ -23,11 +23,11 @@
 /*! \class QtYARPScope
     \brief The plugin Core class
 
-    this is the plugin core class wich acts as bridge between the QML and c++.
+    this is the plugin core class which acts as bridge between the QML and c++.
     in the C++ code is implemented the backend logic, instead in the QML is
     implemented the Visual part.
     This Core plugin derived from QQuickPaintedItem and has the flag ItemHasContents
-    setted to true, so it can paint itself what it needs.
+    set to true, so it can paint itself what it needs.
 */
 class QtYARPScope : public QQuickPaintedItem
 {

@@ -231,7 +231,7 @@ bool AnalogWrapper::openAndAttachSubDevice(Searchable &prop)
     p.unput("device");
     p.put("device", prop.find("subdevice").asString());  // subdevice was already checked before
 
-    // if error occour during open, quit here.
+    // if errors occurred during open, quit here.
     yDebug("opening AnalogWrapper subdevice...");
     subDeviceOwned->open(p);
 
@@ -486,7 +486,7 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
             useROS = ROS_config_error;
             return false;
         }
-        // Throw an error if noth new and old are present
+        // Throw an error if both new and old are present
         if(oldParam && newParam)
         {
             yError() << sensorId << " found both DEPRECATED 'joint_names' and new 'jointNames' parameters. Please remove the old 'joint_names' from your config file.";
@@ -557,7 +557,7 @@ bool AnalogWrapper::initialize_ROS()
 		yError() << sensorId << "Invalid rosMsgType: " << rosMsgType;
 	    }
 
-   	    yInfo() << sensorId << "ROS initialized succesfully, node:" << rosNodeName << " topic:" << rosTopicName;
+   	    yInfo() << sensorId << "ROS initialized successfully, node:" << rosNodeName << " topic:" << rosTopicName;
 						
             success = true;
         } break;

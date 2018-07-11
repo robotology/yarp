@@ -305,7 +305,7 @@ bool yarp::dev::Rangefinder2DClient::getLaserMeasurement(std::vector<LaserMeasur
     {
         double angle = (i / double(size)*laser_angle_of_view + device_position_theta + scan_angle_min)* DEG2RAD;
         double value = ranges[i];
-#if 1 //cartesian version is preferrable, even if more computationally expensive, since it takes in account device_position
+#if 1 //cartesian version is preferable, even if more computationally expensive, since it takes in account device_position
         data[i].set_cartesian(value * cos(angle) + device_position_x, value * sin(angle) + device_position_y);
 #else
         data[i].set_polar(value,angle);

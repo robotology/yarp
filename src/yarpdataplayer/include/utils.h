@@ -132,7 +132,7 @@ public:
     */
     void getMaxTimeStamp();
     /**
-     * function that gets the minimun timestamp of all parts
+     * function that gets the minimum timestamp of all parts
      */
     void getMinTimeStamp();
     /**

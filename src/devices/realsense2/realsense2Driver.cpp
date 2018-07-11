@@ -794,13 +794,13 @@ bool realsense2Driver::setRgbResolution(int width, int height)
 
 bool realsense2Driver::setRgbFOV(double horizontalFov, double verticalFov)
 {
-    // It seems to be not avilable...
+    // It seems to be not available...
     return false;
 }
 
 bool realsense2Driver::setDepthFOV(double horizontalFov, double verticalFov)
 {
-    // It seems to be not avilable...
+    // It seems to be not available...
     return false;
 }
 

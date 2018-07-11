@@ -205,7 +205,7 @@ public:
      */
     virtual bool getPWM(int j, double* val) {return false;};
 
-    /* Get the PWM limit fot the given motor.
+    /* Get the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
      * @param j joint number
      * @param val filled with PWM limit value.
@@ -213,7 +213,7 @@ public:
      */
     virtual bool getPWMLimit(int j, double* val) {return false;};
 
-    /* Set the PWM limit fot the given motor.
+    /* Set the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
      * @param j joint number
      * @param val new value for the PWM limit.
@@ -351,7 +351,7 @@ public:
      */
     virtual bool getPWMRaw(int j, double* val) {return false;};
 
-    /* Get the PWM limit fot the given motor.
+    /* Get the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
      * @param j joint number
      * @param val filled with PWM limit value.
@@ -359,7 +359,7 @@ public:
      */
     virtual bool getPWMLimitRaw(int j, double* val) {return false;};
 
-    /* Set the PWM limit fot the given motor.
+    /* Set the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
      * @param j joint number
      * @param val new value for the PWM limit.

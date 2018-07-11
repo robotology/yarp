@@ -62,8 +62,8 @@ bool TestFrameGrabber::open(yarp::os::Searchable& config) {
                                "desired vertical fov of test image").asFloat64();
     mirror=config.check("mirror",Value(false),
                         "mirroring disabled by default").asBool();
-    intrinsic.put("focalLengthX",config.check("focalLengthX",Value(4.0),"Horizontal component of the focal lenght of the test_grabber").asFloat64());
-    intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"Vertical component of the focal lenght of the test_grabber").asFloat64());
+    intrinsic.put("focalLengthX",config.check("focalLengthX",Value(4.0),"Horizontal component of the focal length of the test_grabber").asFloat64());
+    intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"Vertical component of the focal length of the test_grabber").asFloat64());
     intrinsic.put("principalPointX",config.check("principalPointX",Value(6.0),"X coordinate of the principal point of the test_grabber").asFloat64());
     intrinsic.put("principalPointY",config.check("principalPointY",Value(7.0),"Y coordinate of the principal point of the test_grabber").asFloat64());
     intrinsic.put("retificationMatrix",config.check("retificationMatrix",*retM,"Matrix that describes the lens' distortion(fake)"));

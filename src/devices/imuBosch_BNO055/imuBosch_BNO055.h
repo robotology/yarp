@@ -20,7 +20,7 @@ namespace yarp {
     }
 }
 
-/* Serial protocol desciption
+/* Serial protocol description
  *
  *  Write operation on a register:
  * | Byte 1 |  Byte 2 |  Byte 3  | Byte 4 |  Byte 5 |  ...  |  Byte (n+4) |
@@ -37,7 +37,7 @@ namespace yarp {
  * | Start  |  Read   |  Reg Addr| Length |
  * |  0xAA  |  0x01   |  <...>   | <...>  |
  *
- * Response to a succesfull read command:
+ * Response to a successful read command:
  * | Byte 1 |  Byte 2 |  Byte 3 |  ...  |  Byte (n+2) |
  * |  Resp  |  Length |  Data 1 |  ...  |   Data n    |
  * |  0xBB  |  <...>  |  <...>  |  ...  |    <...>    |

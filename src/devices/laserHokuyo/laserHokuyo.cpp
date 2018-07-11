@@ -270,7 +270,7 @@ bool laserHokuyo::close()
 
 bool laserHokuyo::getDistanceRange(double& min, double& max)
 {
-    //should return range 0.1-30m (or 100, 30000mm depending on the measurment units)
+    //should return range 0.1-30m (or 100, 30000mm depending on the measurement units)
     min = 0.1;
     max = 30;
     return true;
@@ -474,7 +474,7 @@ int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_dat
         if (calculateCheckSum(text_data, text_data_len - 2, expected_checksum) < 0)
         {
             #ifdef LASER_DEBUG
-            yDebug("Cheksum error, line: %d: %s\n", current_line, text_data);
+            yDebug("Checksum error, line: %d: %s\n", current_line, text_data);
             #endif
             return HOKUYO_STATUS_ERROR_INVALID_CHECKSUM;
         }

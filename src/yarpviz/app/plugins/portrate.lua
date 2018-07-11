@@ -9,7 +9,7 @@ require("yarp")
 
 
 -- 
--- Auxilary functions 
+-- Auxiliary functions
 --
 
 -- save the log data into a file

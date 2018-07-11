@@ -326,7 +326,7 @@ bool JoypadControlServer::openAndAttachSubDevice(Searchable& prop)
     p.unput("device");
     p.put("device",prop.find("subdevice").asString());  // subdevice was already checked before
 
-    // if error occour during open, quit here.
+    // if errors occurred during open, quit here.
     m_subDeviceOwned->open(p);
 
     if (!m_subDeviceOwned->isValid())

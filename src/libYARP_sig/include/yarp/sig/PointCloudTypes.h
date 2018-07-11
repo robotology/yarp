@@ -35,7 +35,7 @@ enum PointCloudBasicType : std::int32_t {
     PC_XYZ_DATA                 =      (1 << 1) ,
     PC_RGBA_DATA                =      (1 << 2) ,
     PC_INTENSITY_DATA           =      (1 << 3) ,
-    PC_INTEREST_DATA            =      (1 << 4) ,  // in PCL this field is also called strenght
+    PC_INTEREST_DATA            =      (1 << 4) ,  // in PCL this field is also called strength
     PC_NORMAL_DATA              =      (1 << 5) ,
     PC_CURVATURE_DATA           =      (1 << 6) ,
     PC_RANGE_DATA               =      (1 << 7) ,

@@ -63,7 +63,7 @@ void InputCallback::onRead(ImageType &img)
         if(i % 2) {
             // Check if this is a RED pixel (255,0,0)
             // lossy carriers will change the value, so we look for a
-            // pixel close enought to the one we are looking for
+            // pixel close enough to the one we are looking for
             if (pix[0] <= 5 && pix[1] >= 250 && pix[2] <= 5) {
                 found = i;
                 break;

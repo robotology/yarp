@@ -455,7 +455,7 @@ bool yarp::dev::IJoypadController::parseActions(const yarp::os::Searchable& cfg,
     }
 
     actCount = i;
-    myInfo() << actCount << "action parsed succesfully";
+    myInfo() << actCount << "action parsed successfully";
     return true;
 }
 

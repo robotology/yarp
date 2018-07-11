@@ -40,7 +40,7 @@ bool SDLJoypad::open(yarp::os::Searchable& rf)
     {
         yInfo() << "parameters:\n\n" <<
                    "UseAllJoypadAsOne     - set it to 1 to have all the connected joypad as one\n" <<
-                   "DefaultJoystickNumber - select the id of the joypad to use if there are more than one joypad and UseAllJoypadAsOne is setted to 0\n" <<
+                   "DefaultJoystickNumber - select the id of the joypad to use if there are more than one joypad and UseAllJoypadAsOne is set to 0\n" <<
                    "stick                 - the number of stick to configure. a stick is simply a wrapping of 2 or more axes so for every stick\n" <<
                    "                        a group named STICK*ID* containing the stick's parameters is searched. \n" <<
                    "\n\n" <<
@@ -151,7 +151,7 @@ bool SDLJoypad::open(yarp::os::Searchable& rf)
                 yError() << "SDLJoypad:" << SDL_GetError();
                 return false;
             }
-            yInfo() << "SDLJoypad: Actions succesfully parsed and linked to the joypad";
+            yInfo() << "SDLJoypad: Actions successfully parsed and linked to the joypad";
         }
     }
     else

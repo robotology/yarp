@@ -83,7 +83,7 @@ Environment variables related to YARP, but not consumed by YARP itself
 | Environmental variable        | Description | Related documentation page |
 |:-----------------------------:|:-----------:|:--------------------------:|
 | `YARP_DIR`                    | Variable consumed by CMake to find the location of YARP. See https://cmake.org/cmake/help/latest/command/find_package.html for more info | |
-| `YARP_ROOT`                   | Variable that usually points to the source directory of the YARP repository, used tipically in YARP documentation. | |
+| `YARP_ROOT`                   | Variable that usually points to the source directory of the YARP repository, used typically in YARP documentation. | |
 
 
 Deprecated Environmental Variables

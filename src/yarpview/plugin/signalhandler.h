@@ -22,7 +22,7 @@
 
     This class is used to unlock the backend thread from the GUI thread. It is mainly used for
     receive the frame from the callback and then redirect the signal to its own thread
-    using a conenction in Qt::QueuedConnection modality
+    using a connection in Qt::QueuedConnection modality
 */
 class SignalHandler : public QObject
 {

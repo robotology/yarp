@@ -43,7 +43,7 @@ QtYARPView::~QtYARPView()
 
 /*! \brief Freeze the video stream.
  *
- *  \param check a bool parameter that enbales or disables the freeze state
+ *  \param check a bool parameter that enables or disables the freeze state
  */
 void QtYARPView::freeze(bool check)
 {
