@@ -1,0 +1,130 @@
+// WARNING semicolumns in this file should be escaped using 3 backslashes,
+//         i.e. \\\;
+
+// BEGIN compiler.epilog.in
+
+#else
+#  error Unsupported compiler
+#endif
+
+
+// Due to the "#error Unsupported compiler" in the generated file, it is
+// impossible to enter the section where these defines are actually defined,
+// therefore this part is copied and pasted here.
+#if defined(SWIG) || defined(DOXYGEN)
+# ifdef __cplusplus
+
+#  if defined(YARP_COMPILER_CXX_ALIGNAS) && YARP_COMPILER_CXX_ALIGNAS
+#    define YARP_ALIGNAS(X) alignas(X)
+#  elif YARP_COMPILER_IS_GNU || YARP_COMPILER_IS_Clang || YARP_COMPILER_IS_AppleClang
+#    define YARP_ALIGNAS(X) __attribute__ ((__aligned__(X)))
+#  elif YARP_COMPILER_IS_MSVC
+#    define YARP_ALIGNAS(X) __declspec(align(X))
+#  else
+#    define YARP_ALIGNAS(X)
+#  endif
+
+
+#  if defined(YARP_COMPILER_CXX_ALIGNOF) && YARP_COMPILER_CXX_ALIGNOF
+#    define YARP_ALIGNOF(X) alignof(X)
+#  elif YARP_COMPILER_IS_GNU || YARP_COMPILER_IS_Clang || YARP_COMPILER_IS_AppleClang
+#    define YARP_ALIGNOF(X) __alignof__(X)
+#  elif YARP_COMPILER_IS_MSVC
+#    define YARP_ALIGNOF(X) __alignof(X)
+#  endif
+
+
+#  ifndef YARP_DEPRECATED
+#    if defined(YARP_COMPILER_CXX_ATTRIBUTE_DEPRECATED) && YARP_COMPILER_CXX_ATTRIBUTE_DEPRECATED
+#      define YARP_DEPRECATED [[deprecated]]
+#      define YARP_DEPRECATED_MSG(MSG) [[deprecated(MSG)]]
+#    elif YARP_COMPILER_IS_GNU || YARP_COMPILER_IS_Clang
+#      define YARP_DEPRECATED __attribute__((__deprecated__))
+#      define YARP_DEPRECATED_MSG(MSG) __attribute__((__deprecated__(MSG)))
+#    elif YARP_COMPILER_IS_MSVC
+#      define YARP_DEPRECATED __declspec(deprecated)
+#      define YARP_DEPRECATED_MSG(MSG) __declspec(deprecated(MSG))
+#    else
+#      define YARP_DEPRECATED
+#      define YARP_DEPRECATED_MSG(MSG)
+#    endif
+#  endif
+
+
+#  if defined(YARP_COMPILER_CXX_CONSTEXPR) && YARP_COMPILER_CXX_CONSTEXPR
+#    define YARP_CONSTEXPR constexpr
+#  else
+#    define YARP_CONSTEXPR
+#  endif
+
+
+#  if defined(YARP_COMPILER_CXX_DELETED_FUNCTIONS) && YARP_COMPILER_CXX_DELETED_FUNCTIONS
+#    define YARP_DELETED_FUNCTION = delete
+#  else
+#    define YARP_DELETED_FUNCTION
+#  endif
+
+
+#  if defined(YARP_COMPILER_CXX_EXTERN_TEMPLATES) && YARP_COMPILER_CXX_EXTERN_TEMPLATES
+#    define YARP_EXTERN_TEMPLATE extern
+#  else
+#    define YARP_EXTERN_TEMPLATE
+#  endif
+
+
+#  if defined(YARP_COMPILER_CXX_FINAL) && YARP_COMPILER_CXX_FINAL
+#    define YARP_FINAL final
+#  else
+#    define YARP_FINAL
+#  endif
+
+
+#  if defined(YARP_COMPILER_CXX_NOEXCEPT) && YARP_COMPILER_CXX_NOEXCEPT
+#    define YARP_NOEXCEPT noexcept
+#    define YARP_NOEXCEPT_EXPR(X) noexcept(X)
+#  else
+#    define YARP_NOEXCEPT
+#    define YARP_NOEXCEPT_EXPR(X)
+#  endif
+
+
+#  if defined(YARP_COMPILER_CXX_NULLPTR) && YARP_COMPILER_CXX_NULLPTR
+#    define YARP_NULLPTR nullptr
+#  else
+#    define YARP_NULLPTR 0
+#  endif
+
+
+#  if defined(YARP_COMPILER_CXX_OVERRIDE) && YARP_COMPILER_CXX_OVERRIDE
+#    define YARP_OVERRIDE override
+#  else
+#    define YARP_OVERRIDE
+#  endif
+
+#  if defined(YARP_COMPILER_CXX_STATIC_ASSERT) && YARP_COMPILER_CXX_STATIC_ASSERT
+#    define YARP_STATIC_ASSERT(X) static_assert(X, #X)
+#    define YARP_STATIC_ASSERT_MSG(X, MSG) static_assert(X, MSG)
+#  else
+#    define YARP_STATIC_ASSERT_JOIN(X, Y) YARP_STATIC_ASSERT_JOIN_IMPL(X, Y)
+#    define YARP_STATIC_ASSERT_JOIN_IMPL(X, Y) X##Y
+template<bool> struct YARPStaticAssert\\\;
+template<> struct YARPStaticAssert<true>{}\\\;
+#    define YARP_STATIC_ASSERT(X) enum { YARP_STATIC_ASSERT_JOIN(YARPStaticAssertEnum, __LINE__) = sizeof(YARPStaticAssert<X>) }
+#    define YARP_STATIC_ASSERT_MSG(X, MSG) enum { YARP_STATIC_ASSERT_JOIN(YARPStaticAssertEnum, __LINE__) = sizeof(YARPStaticAssert<X>) }
+#  endif
+
+
+#  if defined(YARP_COMPILER_CXX_THREAD_LOCAL) && YARP_COMPILER_CXX_THREAD_LOCAL
+#    define YARP_THREAD_LOCAL thread_local
+#  elif YARP_COMPILER_IS_GNU || YARP_COMPILER_IS_Clang || YARP_COMPILER_IS_AppleClang
+#    define YARP_THREAD_LOCAL __thread
+#  elif YARP_COMPILER_IS_MSVC
+#    define YARP_THREAD_LOCAL __declspec(thread)
+#  else
+// YARP_THREAD_LOCAL not defined for this configuration.
+#  endif
+
+# endif //__cplusplus
+#endif // defined(SWIG) || defined(DOXYGEN)
+
+// END compiler.epilog.in

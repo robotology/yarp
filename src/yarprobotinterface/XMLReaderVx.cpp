@@ -105,7 +105,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fi
         mReader = new RobotInterface::XMLReaderFileV3;
         return mReader->getRobotFile(filename,verbose);
     }
-    
+
     //ERROR HERE
-    yFatal() << "Invalid DTD version. Unable to choose parser for DTD.major:" << dtd.majorVersion;
+    yFatal("Invalid DTD version. Unable to choose parser for DTD.major: %d", dtd.majorVersion);
 }

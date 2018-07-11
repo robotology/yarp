@@ -47,12 +47,12 @@ public:
     void internal_info(const std::string& txt);
     void internal_warning(const std::string& txt);
     void internal_error(const std::string& txt);
-    void internal_fail(const std::string& txt);
+    YARP_NORETURN void internal_fail(const std::string& txt);
     void internal_debug(const char *txt);
     void internal_info(const char *txt);
     void internal_warning(const char *txt);
     void internal_error(const char *txt);
-    void internal_fail(const char *txt);
+    YARP_NORETURN void internal_fail(const char *txt);
     void assertion(bool cond);
     void setVerbosity(int verbose = 0);
     void setPrefix(const char *prefix);

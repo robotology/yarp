@@ -197,11 +197,8 @@
 #  define YARP_END_PACK \
      _Pragma("pack()")
 #else
-//#warning "Platform not known, guessing, please update "
-#  define YARP_BEGIN_PACK \
-     _Pragma("pack(1)")
-#  define YARP_END_PACK \
-     _Pragma("pack()")
+#  define YARP_BEGIN_PACK
+#  define YARP_END_PACK
 #endif
 
 
