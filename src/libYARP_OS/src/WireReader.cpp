@@ -372,14 +372,6 @@ bool WireReader::readString(std::string& str, bool *is_vocab)
     }
     str.resize(len);
     reader.expectBlock(const_cast<char*>(str.data()), len);
-#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.72
-    // This is needed for compatibility with versions of yarp before March 2015
-    if (len>0) {
-        if (str[len-1] == '\0') {
-            str.resize(len-1);
-        }
-    }
-#endif // YARP_NO_DEPRECATED
     return !reader.isError();
 }
 

@@ -13,7 +13,7 @@ if(NOT YCM_FOUND)
                       "${CMAKE_CURRENT_LIST_DIR}/ycm-${YCM_REQUIRED_VERSION}/modules"
                       "${CMAKE_CURRENT_LIST_DIR}/ycm-${YCM_REQUIRED_VERSION}/3rdparty")
   if(${CMAKE_VERSION} VERSION_LESS 3.8)
-    list(APPEND YARP_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules")
+    list(APPEND YCM_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules")
   endif()
 
 

@@ -68,36 +68,6 @@ int yarp::os::getpid()
     return pid;
 }
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-void yarp::os::setprogname(const char *progname)
-{
-#ifdef YARP_HAS_ACE
-    ACE_OS::setprogname(ACE::basename(progname));
-#else
-    // not available
-    YARP_UNUSED(progname);
-#endif
-}
-
-
-void yarp::os::getprogname(char* progname, size_t size)
-{
-#ifdef YARP_HAS_ACE
-    const char* tmp = ACE_OS::getprogname();
-    if (std::strlen(tmp)==0) {
-        std::strncpy(progname, "no_progname", size);
-    } else {
-        std::strncpy(progname, tmp, size);
-    }
-#else
-    // not available
-    *progname = '\0';
-    YARP_UNUSED(size);
-#endif
-}
-#endif // YARP_NO_DEPRECATED
-
-
 void yarp::os::gethostname(char* hostname, size_t size)
 {
     yarp::os::impl::gethostname(hostname, size);
@@ -125,45 +95,34 @@ void yarp::os::setEnergySavingModeState(bool enabled)
 }
 
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
-yarp::os::YarpSignalHandler yarp::os::signal(int signum, yarp::os::YarpSignalHandler sighandler)
+void yarp::os::setprogname(const char *progname)
 {
-    switch (signum) {
-        case yarp::os::YARP_SIGINT:
-            return yarp::os::impl::signal(SIGINT, sighandler);
-        case yarp::os::YARP_SIGTERM:
-            return yarp::os::impl::signal(SIGTERM, sighandler);
-        default:
-            return nullptr; //signal not implemented yet
-    }
+#ifdef YARP_HAS_ACE
+    ACE_OS::setprogname(ACE::basename(progname));
+#else
+    // not available
+    YARP_UNUSED(progname);
+#endif
 }
-#endif // YARP_NO_DEPRECATED
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
-void yarp::os::exit(int exit_code)
+void yarp::os::getprogname(char* progname, size_t size)
 {
-    std::exit(exit_code); //may cause crash... exit is not recommended in processes with multi thread, see http://www.cplusplus.com/reference/cstdlib/exit/
-}
-#endif // YARP_NO_DEPRECATED
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.70
-void yarp::os::abort(bool verbose)
-{
-#if defined(_WIN32)
-    if (verbose==false) {
-        //to suppress windows dialog message
-        _set_abort_behavior(0, _WRITE_ABORT_MSG);
-        _set_abort_behavior(0, _CALL_REPORTFAULT);
+#ifdef YARP_HAS_ACE
+    const char* tmp = ACE_OS::getprogname();
+    if (std::strlen(tmp)==0) {
+        std::strncpy(progname, "no_progname", size);
+    } else {
+        std::strncpy(progname, tmp, size);
     }
 #else
-    YARP_UNUSED(verbose);
+    // not available
+    *progname = '\0';
+    YARP_UNUSED(size);
 #endif
-    std::abort();   // exit is not recommended in processes with multi thread, see http://www.cplusplus.com/reference/cstdlib/exit/ and http://www.cplusplus.com/reference/cstdlib/abort/
 }
-#endif // YARP_NO_DEPRECATED
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 int yarp::os::fork()
 {
 #if defined(YARP_HAS_ACE)
@@ -175,4 +134,5 @@ YARP_COMPILER_ERROR(Cannot implement fork on this platform)
 #endif
     return pid;
 }
+
 #endif // YARP_NO_DEPRECATED

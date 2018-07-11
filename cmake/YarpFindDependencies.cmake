@@ -428,35 +428,14 @@ checkandset_dependency(GLEW)
 find_package(FTDI QUIET)
 checkandset_dependency(FTDI)
 
-# FindCUDA bug when crosscompiling
-# See https://gitlab.kitware.com/cmake/cmake/issues/16509
-if(NOT CMAKE_CROSSCOMPILING)
-  find_package(CUDA QUIET)
-else()
-  set(CUDA_FOUND FALSE)
-endif()
-checkandset_dependency(CUDA)
-
 find_package(FFMPEG QUIET)
 checkandset_dependency(FFMPEG)
-
-find_package(wxWidgets QUIET)
-checkandset_dependency(wxWidgets)
 
 find_package(SDL QUIET)
 checkandset_dependency(SDL)
 
 find_package(PortAudio QUIET)
 checkandset_dependency(PortAudio)
-
-find_package(NVIDIACg QUIET)
-checkandset_dependency(NVIDIACg)
-
-find_package(Libusb1 QUIET)
-checkandset_dependency(Libusb1)
-
-find_package(Stage QUIET)
-checkandset_dependency(Stage)
 
 set(ZFP_REQUIRED_VERSION 0.5.1)
 find_package(ZFP ${ZFP_REQUIRED_VERSION} QUIET)
@@ -518,14 +497,9 @@ print_dependency(Libdc1394)
 print_dependency(JPEG)
 print_dependency(MPI)
 print_dependency(FTDI)
-print_dependency(CUDA)
 print_dependency(FFMPEG)
-print_dependency(wxWidgets)
 print_dependency(SDL)
 print_dependency(PortAudio)
-print_dependency(NVIDIACg)
-print_dependency(Libusb1)
-print_dependency(Stage)
 print_dependency(ZFP)
 print_dependency(OpenNI2)
 print_dependency(realsense2)

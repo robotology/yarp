@@ -645,21 +645,3 @@ void typedReaderMissingCallback()
 {
     YARP_ERROR(Logger::get(), "Missing or incorrectly typed onRead function");
 }
-
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.72
-void PortReaderBufferBase::release(PortReader *completed)
-{
-    YARP_UNUSED(completed);
-    //mPriv->stateMutex.wait();
-    //mPriv->configure(completed, true, false);
-    //mPriv->stateMutex.post();
-    printf("release not implemented anymore; not needed\n");
-    std::exit(1);
-}
-
-void PortReaderBufferBase::setAllowReuse(bool flag)
-{
-    YARP_UNUSED(flag);
-}
-#endif // YARP_NO_DEPRECATED

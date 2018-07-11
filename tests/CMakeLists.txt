@@ -201,8 +201,4 @@ if(YARP_COMPILE_TESTS)
     endforeach()
   endif()
 
-  yarp_deprecated_option(TEST_yarpidl_rosmsg) # Since YARP 2.3.70
-  yarp_deprecated_option(TEST_yarpidl_thrift) # Since YARP 2.3.70
-  yarp_deprecated_option(CREATE_PLUGIN_TESTS) # Since YARP 2.3.70
-  yarp_deprecated_option(ENABLE_YARPRUNTESTS) # Since YARP 2.3.70
 endif()

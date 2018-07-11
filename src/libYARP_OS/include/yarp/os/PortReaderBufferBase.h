@@ -73,11 +73,6 @@ public:
     // user gives back an object
     void release(void* key);
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 2.3.72
-    YARP_DEPRECATED void setAllowReuse(bool flag = true);
-    YARP_DEPRECATED void release(yarp::os::PortReader* completed);
-#endif // YARP_NO_DEPRECATED
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
     class Private;

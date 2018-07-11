@@ -27,17 +27,11 @@ install(FILES ${YARP_TEMPLATE_FILES}
         COMPONENT scripts
         DESTINATION share/yarp/cmake/template)
 
-if(NOT YARP_NO_DEPRECATED) # since YARP 2.3.68
-  set(YARP_PRIVATE_CMAKE_FILES YarpDeprecatedOption.cmake
-                               YarpRenamedOption.cmake
-                               YarpBackupVariable.cmake)
-  install(FILES ${YARP_PRIVATE_CMAKE_FILES}
-          COMPONENT scripts
-          DESTINATION share/yarp/cmake/deprecated)
-endif()
-
 # Remove renamed files from installation
-foreach(_f YarpDeprecatedWarning.cmake)                           # since YARP 3.0.0
+foreach(_f YarpDeprecatedWarning.cmake   # since YARP 3.0.0
+           deprecated/YarpDeprecatedOption.cmake
+           deprecated/YarpRenamedOption.cmake
+           deprecated/YarpBackupVariable.cmake)
   if(EXISTS "${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}")
     install(CODE
  "if(EXISTS \"${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_f}\")
