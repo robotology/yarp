@@ -390,13 +390,13 @@ public:
         return true;
     }
 
-    virtual bool calibrate(int j, unsigned int iv, double v1, double v2, double v3) override
+    virtual bool calibrateAxisWithParams(int j, unsigned int iv, double v1, double v2, double v3) override
     {
         fprintf(stderr, "FakeBot: calibrating joint %d with parameters %u %lf %lf %lf\n", j, iv, v1, v2, v3);
         return true;
     }
 
-    virtual bool done(int j) override
+    virtual bool calibrationDone(int j) override
     {
         fprintf(stderr , "FakeBot: calibration done on joint %d.\n", j);
         return true;
