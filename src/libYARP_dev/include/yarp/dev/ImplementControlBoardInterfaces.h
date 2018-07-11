@@ -174,14 +174,11 @@ public:
      */
     virtual ~ImplementControlCalibration();
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-    virtual bool calibrate(int j, double p) override;
-#endif
-    virtual bool calibrate(int axis, unsigned int type, double p1, double p2, double p3) override;
+    virtual bool calibrateAxisWithParams(int axis, unsigned int type, double p1, double p2, double p3) override;
 
     virtual bool setCalibrationParameters(int axis, const CalibrationParameters& params) override;
 
-    virtual bool done(int j) override;
+    virtual bool calibrationDone(int j) override;
 };
 
 

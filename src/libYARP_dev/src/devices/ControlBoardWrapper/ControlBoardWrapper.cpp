@@ -3791,25 +3791,7 @@ bool ControlBoardWrapper::quitPark()
 
 
 /* IControlCalibration */
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-bool ControlBoardWrapper::calibrate(int j, double p)
-{
-    int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
-    int subIndex=device.lut[j].deviceEntry;
-
-    yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
-    if (!s)
-        return false;
-
-    if (s->calib)
-    {
-        return s->calib->calibrate(off+s->base, p);
-    }
-    return false;
-}
-#endif
-
-bool ControlBoardWrapper::calibrate(int j, unsigned int ui, double v1, double v2, double v3)
+bool ControlBoardWrapper::calibrateAxisWithParams(int j, unsigned int ui, double v1, double v2, double v3)
 {
     int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
@@ -3817,7 +3799,7 @@ bool ControlBoardWrapper::calibrate(int j, unsigned int ui, double v1, double v2
     yarp::dev::impl::SubDevice *p = device.getSubdevice(subIndex);
     if (p && p->calib)
     {
-        return p->calib->calibrate(off+p->base, ui,v1,v2,v3);
+        return p->calib->calibrateAxisWithParams(off+p->base, ui,v1,v2,v3);
     }
     return false;
 }
@@ -3835,7 +3817,7 @@ bool ControlBoardWrapper::setCalibrationParameters(int j, const CalibrationParam
     return false;
 }
 
-bool ControlBoardWrapper::done(int j)
+bool ControlBoardWrapper::calibrationDone(int j)
 {
     int off; try{off = device.lut.at(j).offset;} catch(...){yError() << "joint number " << j <<  " out of bound [0-"<< controlledJoints << "] for part " << partName; return false; }
     int subIndex=device.lut[j].deviceEntry;
@@ -3846,7 +3828,7 @@ bool ControlBoardWrapper::done(int j)
 
     if (p->calib)
     {
-        return p->calib->done(off+p->base);
+        return p->calib->calibrationDone(off+p->base);
     }
     return false;
 }

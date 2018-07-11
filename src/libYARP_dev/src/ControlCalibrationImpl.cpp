@@ -31,7 +31,7 @@ bool IControlCalibration::setCalibrator(ICalibrator *c)
     return false;
 }
 
-bool IControlCalibration::calibrate()
+bool IControlCalibration::calibrateRobot()
 {
     bool ret = false;
     if (calibrator!=nullptr)

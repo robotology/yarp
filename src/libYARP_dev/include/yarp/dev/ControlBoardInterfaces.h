@@ -388,37 +388,19 @@ public:
      */
     virtual ~IControlCalibrationRaw() {}
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-    /**
-     *  Start calibration, this method is very often platform
-     * specific.
-     * @deprecated Since YARP 3.0.0
-     * @return true/false on success failure
-     */
-    virtual bool calibrateRaw(int j, double p) { return false; }
-
-    /**
-     * Start calibration, this method is very often platform
-     * specific.
-     * @deprecated Since YARP 3.0.0
-     * @return true/false on success failure
-     */
-    virtual bool calibrate2Raw(int axis, unsigned int type, double p1, double p2, double p3) { return false;}
-#endif
-
     /**
      * Check if the calibration is terminated, on a particular joint.
      * Non blocking.
      * @return true/false
      */
-    virtual bool doneRaw(int j)=0;
+    virtual bool calibrationDoneRaw(int j)=0;
 
     /**
      *  Start calibration, this method is very often platform
      * specific.
      * @return true/false on success failure
      */
-    virtual bool calibrateRaw(int axis, unsigned int type, double p1, double p2, double p3)=0;
+    virtual bool calibrateAxisWithParamsRaw(int axis, unsigned int type, double p1, double p2, double p3)=0;
 
     /**
      *  Start calibration, this method is very often platform
@@ -446,32 +428,12 @@ public:
      */
     virtual ~IControlCalibration() {}
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-    /**
-     *  Start calibration, this method is very often platform
-     * specific.
-     * @return true/false on success failure
-     * @deprecated Since YARP 3.0.0
-     */
-    YARP_DEPRECATED
-    virtual bool calibrate(int j, double p) { return false; }
-
-    /**
-     *  Start calibration, this method is very often platform
-     * specific.
-     * @return true/false on success failure
-     * @deprecated Since YARP 3.0.0
-     */
-    YARP_DEPRECATED_MSG("Use calibrate instead")
-    virtual bool calibrate2(int axis, unsigned int type, double p1, double p2, double p3) { return calibrate(axis, type, p1, p2, p3); }
-#endif
-
     /**
      *  Start calibration, this method is very often platform
      * specific.
      * @return true/false on success failure
      */
-    virtual bool calibrate(int axis, unsigned int type, double p1, double p2, double p3)=0;
+    virtual bool calibrateAxisWithParams(int axis, unsigned int type, double p1, double p2, double p3)=0;
 
     /**
      *  Start calibration, this method is very often platform
@@ -485,7 +447,7 @@ public:
      * Non blocking.
      * @return true/false
      */
-    virtual bool done(int j)=0;
+    virtual bool calibrationDone(int j)=0;
 
     /**
      * Set the calibrator object to be used to calibrate the robot.
@@ -500,7 +462,7 @@ public:
      * method.
      * @return true/false on success failure
      */
-    virtual bool calibrate();
+    virtual bool calibrateRobot();
 
     virtual bool park(bool wait=true);
 

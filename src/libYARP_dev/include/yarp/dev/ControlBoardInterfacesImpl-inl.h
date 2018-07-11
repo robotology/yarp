@@ -237,30 +237,20 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>::uninitialize ()
     return true;
 }
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 template <class DERIVED, class IMPLEMENT>
-bool ImplementControlCalibration<DERIVED, IMPLEMENT>::calibrate(int j, double p)
+bool ImplementControlCalibration<DERIVED, IMPLEMENT>::calibrationDone(int j)
 {
     int k=castToMapper(helper)->toHw(j);
 
-    return iCalibrate->calibrateRaw(k, p);
-}
-#endif
-
-template <class DERIVED, class IMPLEMENT>
-bool ImplementControlCalibration<DERIVED, IMPLEMENT>::done(int j)
-{
-    int k=castToMapper(helper)->toHw(j);
-
-    return iCalibrate->doneRaw(k);
+    return iCalibrate->calibrationDoneRaw(k);
 }
 
 template <class DERIVED, class IMPLEMENT>
-bool ImplementControlCalibration<DERIVED, IMPLEMENT>::calibrate(int axis, unsigned int type, double p1, double p2, double p3)
+bool ImplementControlCalibration<DERIVED, IMPLEMENT>::calibrateAxisWithParams(int axis, unsigned int type, double p1, double p2, double p3)
 {
     int k=castToMapper(helper)->toHw(axis);
 
-    return iCalibrate->calibrateRaw(k, type, p1, p2, p3);
+    return iCalibrate->calibrateAxisWithParamsRaw(k, type, p1, p2, p3);
 }
 
 template <class DERIVED, class IMPLEMENT>
