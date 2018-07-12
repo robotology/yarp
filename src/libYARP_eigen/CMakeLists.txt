@@ -20,15 +20,8 @@ target_include_directories(YARP_eigen INTERFACE $<BUILD_INTERFACE:${CMAKE_CURREN
 target_link_libraries(YARP_eigen INTERFACE YARP_sig)
 list(APPEND YARP_eigen_PUBLIC_DEPS YARP_sig)
 
-if(NOT eigen3_FOUND OR TARGET Eigen3::Eigen)
-  # If Eigen was not found we still install the library, but the user will
-  # need Eigen3 >= 3.3.1 in order to use it.
-  target_link_libraries(YARP_eigen INTERFACE Eigen3::Eigen)
-  list(APPEND YARP_eigen_PUBLIC_DEPS "Eigen3 3.3.1")
-else()
-  target_include_directories(YARP_eigen INTERFACE ${EIGEN3_INCLUDE_DIR})
-  # list(APPEND YARP_eigen_PUBLIC_DEPS Eigen3) (not using targets)
-endif()
+target_link_libraries(YARP_eigen INTERFACE Eigen3::Eigen)
+list(APPEND YARP_eigen_PUBLIC_DEPS Eigen3)
 
 install(TARGETS YARP_eigen
         EXPORT YARP_eigen
