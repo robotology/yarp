@@ -30,7 +30,6 @@ class YARP_dev_API ImplementControlLimits: public IControlLimits
 protected:
     IControlLimitsRaw *iLimits2;
     void    *helper;
-    int nj;
 
     /**
      * Initialize the internal data and alloc memory.

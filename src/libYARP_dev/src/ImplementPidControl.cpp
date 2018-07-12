@@ -12,17 +12,16 @@
 #include <cmath>
 
 using namespace yarp::dev;
+using namespace yarp::os;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
-#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
-#define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 //////////////////// Implement PidControl interface
-ImplementPidControl::ImplementPidControl(IPidControlRaw *y)
+ImplementPidControl::ImplementPidControl(IPidControlRaw *y):
+helper(nullptr),
+doubleBuffManager(nullptr),
+pidBuffManager(nullptr)
 {
     iPid= dynamic_cast<IPidControlRaw *> (y);
-    helper = nullptr;
-    temp=nullptr;
-    tmpPids=nullptr;
 }
 
 ImplementPidControl::~ImplementPidControl()
@@ -37,10 +36,12 @@ bool ImplementPidControl:: initialize (int size, const int *amap, const double *
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,newtons,amps,nullptr,dutys));
     yAssert (helper != nullptr);
-    temp=new double [size];
-    yAssert (temp != nullptr);
-    tmpPids=new Pid[size];
-    yAssert (tmpPids != nullptr);
+
+    doubleBuffManager = new FixedSizeBuffersManager<double> (size);
+    yAssert (doubleBuffManager != nullptr);
+
+    pidBuffManager = new FixedSizeBuffersManager<Pid> (size);
+    yAssert (pidBuffManager != nullptr);
 
     return true;
 }
@@ -52,11 +53,22 @@ bool ImplementPidControl:: initialize (int size, const int *amap, const double *
 bool ImplementPidControl::uninitialize ()
 {
     if (helper!=nullptr)
+    {
         delete castToMapper(helper);
-    helper=nullptr;
+        helper=nullptr;
+    }
 
-    checkAndDestroy(tmpPids);
-    checkAndDestroy(temp);
+    if(doubleBuffManager)
+    {
+        delete doubleBuffManager;
+        doubleBuffManager=nullptr;
+    }
+
+    if(pidBuffManager)
+    {
+        delete pidBuffManager;
+        pidBuffManager=nullptr;
+    }
 
      return true;
 }
@@ -75,16 +87,19 @@ bool ImplementPidControl::setPids(const PidControlTypeEnum& pidtype,  const Pid 
 {
     ControlBoardHelper* cb_helper = castToMapper(helper);
     int nj= cb_helper->axes();
-
+    Buffer<Pid> buffValues = pidBuffManager->getBuffer();
     for(int j=0;j<nj;j++)
     {
         Pid pid_machine;
         int k;
         cb_helper->convert_pid_to_machine(pidtype,  pids[j], j, pid_machine, k);
-        tmpPids[k] = pid_machine;
+        buffValues[k] = pid_machine;
     }
 
-    return iPid->setPidsRaw(pidtype, tmpPids);
+
+    bool ret = iPid->setPidsRaw(pidtype, buffValues.getData());
+    pidBuffManager->releaseBuffer(buffValues);
+    return ret;
 }
 
 bool ImplementPidControl::setPidReference(const PidControlTypeEnum& pidtype,  int j, double ref)
@@ -100,8 +115,11 @@ bool ImplementPidControl::setPidReference(const PidControlTypeEnum& pidtype,  in
 bool ImplementPidControl::setPidReferences(const PidControlTypeEnum& pidtype,  const double *refs)
 {
     ControlBoardHelper* cb_helper = castToMapper(helper);
-    cb_helper->convert_pidunits_to_machine(pidtype,refs,temp);
-    return iPid->setPidReferencesRaw(pidtype, temp);
+    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    cb_helper->convert_pidunits_to_machine(pidtype,refs,buffValues.getData());
+    bool ret = iPid->setPidReferencesRaw(pidtype, buffValues.getData());
+    doubleBuffManager->releaseBuffer(buffValues);
+    return ret;
 }
 
 bool ImplementPidControl::setPidErrorLimit(const PidControlTypeEnum& pidtype,  int j, double limit)
@@ -117,8 +135,11 @@ bool ImplementPidControl::setPidErrorLimit(const PidControlTypeEnum& pidtype,  i
 bool ImplementPidControl::setPidErrorLimits(const PidControlTypeEnum& pidtype,  const double *limits)
 {
     ControlBoardHelper* cb_helper = castToMapper(helper);
-    cb_helper->convert_pidunits_to_machine(pidtype,limits,temp);
-    return iPid->setPidErrorLimitsRaw(pidtype, temp);
+    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    cb_helper->convert_pidunits_to_machine(pidtype,limits,buffValues.getData());
+    bool ret = iPid->setPidErrorLimitsRaw(pidtype, buffValues.getData());
+    doubleBuffManager->releaseBuffer(buffValues);
+    return ret;
 }
 
 
@@ -140,9 +161,10 @@ bool ImplementPidControl::getPidErrors(const PidControlTypeEnum& pidtype,  doubl
 {
     bool ret;
     ControlBoardHelper* cb_helper = castToMapper(helper);
-    ret=iPid->getPidErrorsRaw(pidtype, temp);
-
-    cb_helper->convert_pidunits_to_user(pidtype,temp,errs);
+    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    ret=iPid->getPidErrorsRaw(pidtype, buffValues.getData());
+    cb_helper->convert_pidunits_to_user(pidtype,buffValues.getData(),errs);
+    doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
@@ -168,16 +190,18 @@ bool ImplementPidControl::getPidOutputs(const PidControlTypeEnum& pidtype, doubl
 {
     ControlBoardHelper* cb_helper = castToMapper(helper);
     int nj = cb_helper->axes();
-    bool ret = iPid->getPidOutputsRaw(pidtype, temp);
+    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    bool ret = iPid->getPidOutputsRaw(pidtype, buffValues.getData());
     if (ret)
     {
-        castToMapper(cb_helper)->toUser(temp, outs);
+        castToMapper(cb_helper)->toUser(buffValues.getData(), outs);
         for (int j = 0; j < nj; j++)
         {
             double output_conversion_units_user2raw = cb_helper->get_pidoutput_conversion_factor_user2raw(pidtype, j);
             outs[j] = outs[j] / output_conversion_units_user2raw;
         }
     }
+    doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
@@ -188,8 +212,8 @@ bool ImplementPidControl::getPid(const PidControlTypeEnum& pidtype, int j, Pid *
     int k_raw;
     k_raw=cb_helper->toHw(j);
     Pid rawPid;
-    bool b =iPid->getPidRaw(pidtype, k_raw, &rawPid);
-    if (b)
+    bool ret = iPid->getPidRaw(pidtype, k_raw, &rawPid);
+    if (ret)
     {
         cb_helper->convert_pid_to_user(pidtype, rawPid, k_raw, *pid, j);
         return true;
@@ -199,7 +223,13 @@ bool ImplementPidControl::getPid(const PidControlTypeEnum& pidtype, int j, Pid *
 
 bool ImplementPidControl::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
 {
-    bool ret=iPid->getPidsRaw(pidtype, tmpPids);
+    Buffer<Pid> buffValues = pidBuffManager->getBuffer();
+    if(!iPid->getPidsRaw(pidtype, buffValues.getData()))
+    {
+        pidBuffManager->releaseBuffer(buffValues);
+        return false;
+    }
+
     ControlBoardHelper* cb_helper = castToMapper(helper);
     int nj=cb_helper->axes();
 
@@ -207,10 +237,11 @@ bool ImplementPidControl::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
     {
         int j_usr;
         Pid outpid;
-        cb_helper->convert_pid_to_user(pidtype, tmpPids[k_raw], k_raw, outpid, j_usr);
+        cb_helper->convert_pid_to_user(pidtype, buffValues[k_raw], k_raw, outpid, j_usr);
         pids[j_usr] = outpid;
     }
-    return ret;
+    pidBuffManager->releaseBuffer(buffValues);
+    return true;
 }
 
 bool ImplementPidControl::getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref)
@@ -232,9 +263,11 @@ bool ImplementPidControl::getPidReferences(const PidControlTypeEnum& pidtype, do
 {
     bool ret;
     ControlBoardHelper* cb_helper = castToMapper(helper);
-    ret=iPid->getPidReferencesRaw(pidtype, temp);
+    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    ret=iPid->getPidReferencesRaw(pidtype, buffValues.getData());
 
-    cb_helper->convert_pidunits_to_user(pidtype,temp,refs);
+    cb_helper->convert_pidunits_to_user(pidtype,buffValues.getData(),refs);
+    doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
@@ -257,9 +290,10 @@ bool ImplementPidControl::getPidErrorLimits(const PidControlTypeEnum& pidtype, d
 {
     bool ret;
     ControlBoardHelper* cb_helper = castToMapper(helper);
-    ret=iPid->getPidErrorLimitsRaw(pidtype, temp);
+    Buffer<double > buffValues = doubleBuffManager->getBuffer();
+    ret=iPid->getPidErrorLimitsRaw(pidtype, buffValues.getData());
 
-    cb_helper->convert_pidunits_to_user(pidtype,temp,refs);
+    cb_helper->convert_pidunits_to_user(pidtype,buffValues.getData(),refs);
     return ret;
 }
 

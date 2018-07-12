@@ -12,15 +12,14 @@
 #include <cstdio>
 using namespace yarp::dev;
 using namespace yarp::os;
-#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
-#define MJOINTIDCHECK if (joints[idx] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
-#define MJOINTIDCHECK_DEL if (joints[idx] >= castToMapper(helper)->axes()){yError("joint id out of bound"); buffManager->releaseBuffer(b); return false;}
 
-ImplementControlMode::ImplementControlMode(IControlModeRaw *r): nj(0)
-{
-    raw=r;
-    helper=nullptr;
-}
+#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+
+ImplementControlMode::ImplementControlMode(IControlModeRaw *r):
+    helper(nullptr),
+    raw(r),
+    buffManager(nullptr)
+{;}
 
 bool ImplementControlMode::initialize(int size, const int *amap)
 {
@@ -65,47 +64,30 @@ bool ImplementControlMode::getControlMode(int j, int *f)
 
 bool ImplementControlMode::getControlModes(int *modes)
 {
-    try
-    {
-        Buffer<int> b;
-        int *dataPtr = buffManager->getBuffer(b);
+    Buffer<int> buffValues = buffManager->getBuffer();
 
-        bool ret=raw->getControlModesRaw(dataPtr);
-        castToMapper(helper)->toUser(dataPtr, modes);
+    bool ret=raw->getControlModesRaw(buffValues.getData());
+    castToMapper(helper)->toUser(buffValues.getData(), modes);
 
-        buffManager->releaseBuffer(b);
-        return ret;
-    }
-    catch (const std::bad_alloc& e)
-    {
-        yFatal() << "ImplementControlMode::getControlModes(int *modes) gets a" << e.what() <<" exception!!";
-        return false;
-    }
+    buffManager->releaseBuffer(buffValues);
+    return ret;
 }
 
 bool ImplementControlMode::getControlModes(const int n_joint, const int *joints, int *modes)
 {
-    try
-    {
-        Buffer<int> b;
-        int *tmp_joints = buffManager->getBuffer(b);
-
-        for(int idx=0; idx<n_joint; idx++)
-        {
-            MJOINTIDCHECK_DEL
-            tmp_joints[idx] = castToMapper(helper)->toHw(joints[idx]);
-        }
-
-        bool ret = raw->getControlModesRaw(n_joint, tmp_joints, modes);
-        buffManager->releaseBuffer(b);
-        return ret;
-    }
-    catch (const std::bad_alloc& e)
-    {
-        yFatal() << "ImplementControlMode::getControlModes(const int n_joint, const int *joints, int *modes) gets a" << e.what() <<" exception!!";
+    if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
         return false;
-    }
 
+    Buffer<int> buffValues = buffManager->getBuffer();
+
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        buffValues[idx] = castToMapper(helper)->toHw(joints[idx]);
+    }
+    bool ret = raw->getControlModesRaw(n_joint, buffValues.getData(), modes);
+
+    buffManager->releaseBuffer(buffValues);
+    return ret;
 }
 
 bool ImplementControlMode::setControlMode(const int j, const int mode)
@@ -117,24 +99,19 @@ bool ImplementControlMode::setControlMode(const int j, const int mode)
 
 bool ImplementControlMode::setControlModes(const int n_joint, const int *joints, int *modes)
 {
-    try
-    {
-        Buffer<int> b;
-        int *tmp_joints = buffManager->getBuffer(b);
-
-        for(int idx=0; idx<n_joint; idx++)
-        {
-            MJOINTIDCHECK_DEL
-            tmp_joints[idx] = castToMapper(helper)->toHw(joints[idx]);
-        }
-        bool ret = raw->setControlModesRaw(n_joint, tmp_joints, modes);
-        buffManager->releaseBuffer(b);
-        return ret;
-    }
-    catch (const std::bad_alloc& e)
-    {
+    if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
         return false;
+
+    Buffer<int> buffValues  = buffManager->getBuffer();
+
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        buffValues[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
+    bool ret = raw->setControlModesRaw(n_joint, buffValues.getData(), modes);
+
+    buffManager->releaseBuffer(buffValues);
+    return ret;
 }
 
 bool ImplementControlMode::setControlModes(int *modes)

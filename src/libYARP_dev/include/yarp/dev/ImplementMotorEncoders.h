@@ -11,6 +11,8 @@
 
 #include <yarp/dev/IMotorEncoders.h>
 
+#include <yarp/os/FixedSizeBuffersManager.h>
+
 namespace yarp {
     namespace dev {
         class ImplementMotorEncoders;
@@ -22,7 +24,7 @@ class YARP_dev_API yarp::dev::ImplementMotorEncoders: public IMotorEncoders
 protected:
     IMotorEncodersRaw *iMotorEncoders;
     void *helper;
-    int nj;
+    yarp::os::FixedSizeBuffersManager<double> *buffManager;
 
 
     /**

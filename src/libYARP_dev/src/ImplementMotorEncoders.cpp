@@ -11,15 +11,17 @@
 
 #include <cstdio>
 using namespace yarp::dev;
+using namespace yarp::os;
+
 #define JOINTIDCHECK if (m >= castToMapper(helper)->axes()){yError("motor id out of bound"); return false;}
-#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+
 ////////////////////////
 // Encoder Interface Timed Implementation
-ImplementMotorEncoders::ImplementMotorEncoders(IMotorEncodersRaw *y):nj(0)
-{
-    iMotorEncoders=y;
-    helper = nullptr;
-}
+ImplementMotorEncoders::ImplementMotorEncoders(IMotorEncodersRaw *y):
+    iMotorEncoders(y),
+    helper(nullptr),
+    buffManager(nullptr)
+{;}
 
 ImplementMotorEncoders::~ImplementMotorEncoders()
 {
@@ -33,7 +35,9 @@ bool ImplementMotorEncoders:: initialize (int size, const int *amap, const doubl
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert (helper != nullptr);
-    nj = size;
+
+    buffManager = new FixedSizeBuffersManager<double> (size);
+    yAssert (buffManager != nullptr);
     return true;
 }
 
@@ -47,6 +51,12 @@ bool ImplementMotorEncoders::uninitialize ()
     {
         delete castToMapper(helper);
         helper=nullptr;
+    }
+
+    if(buffManager)
+    {
+        delete buffManager;
+        buffManager=nullptr;
     }
 
     return true;
@@ -106,12 +116,11 @@ bool ImplementMotorEncoders::setMotorEncoderCountsPerRevolution(int m, double cp
 
 bool ImplementMotorEncoders::setMotorEncoders(const double *val)
 {
-    double *tmp = new double[nj];
-    castToMapper(helper)->posA2E(val, tmp);
+    Buffer<double> buffValues = buffManager->getBuffer();
+    castToMapper(helper)->posA2E(val, buffValues.getData());
 
-    bool ret = iMotorEncoders->setMotorEncodersRaw(tmp);
-    delete [] tmp;
-    
+    bool ret = iMotorEncoders->setMotorEncodersRaw(buffValues.getData());
+    buffManager->releaseBuffer(buffValues);
     return ret;
 }
 
@@ -133,13 +142,10 @@ bool ImplementMotorEncoders::getMotorEncoder(int m, double *v)
 
 bool ImplementMotorEncoders::getMotorEncoders(double *v)
 {
-    bool ret;
-    double *tmp = new double[nj];
-    ret=iMotorEncoders->getMotorEncodersRaw(tmp);
-
-    castToMapper(helper)->posE2A(tmp, v);
-    delete [] tmp;
-    
+    Buffer<double> buffValues = buffManager->getBuffer();
+    bool ret=iMotorEncoders->getMotorEncodersRaw(buffValues.getData());
+    castToMapper(helper)->posE2A(buffValues.getData(), v);
+    buffManager->releaseBuffer(buffValues);
     return ret;
 }
 
@@ -161,12 +167,10 @@ bool ImplementMotorEncoders::getMotorEncoderSpeed(int m, double *v)
 
 bool ImplementMotorEncoders::getMotorEncoderSpeeds(double *v)
 {
-    bool ret;
-    double *tmp = new double[nj];
-    ret=iMotorEncoders->getMotorEncoderSpeedsRaw(tmp);
-
-    castToMapper(helper)->velE2A(tmp, v);
-    delete [] tmp;
+    Buffer<double> buffValues = buffManager->getBuffer();
+    bool ret=iMotorEncoders->getMotorEncoderSpeedsRaw(buffValues.getData());
+    castToMapper(helper)->velE2A(buffValues.getData(), v);
+    buffManager->releaseBuffer(buffValues);
     return ret;
 }
 
@@ -188,12 +192,10 @@ bool ImplementMotorEncoders::getMotorEncoderAcceleration(int m, double *v)
 
 bool ImplementMotorEncoders::getMotorEncoderAccelerations(double *v)
 {
-    bool ret;
-    double *tmp = new double[nj];
-    ret=iMotorEncoders->getMotorEncoderAccelerationsRaw(tmp);
-
-    castToMapper(helper)->accE2A(tmp, v);
-    delete [] tmp;
+    Buffer<double> buffValues = buffManager->getBuffer();
+    bool ret=iMotorEncoders->getMotorEncoderAccelerationsRaw(buffValues.getData());
+    castToMapper(helper)->accE2A(buffValues.getData(), v);
+    buffManager->releaseBuffer(buffValues);
     return ret;
 }
 
@@ -216,15 +218,12 @@ bool ImplementMotorEncoders::getMotorEncoderTimed(int m, double *v, double *t)
 
 bool ImplementMotorEncoders::getMotorEncodersTimed(double *v, double *t)
 {
-    bool ret;
-    double *tmp_v = new double[nj];
-    double *tmp_t = new double[nj];
-    ret=iMotorEncoders->getMotorEncodersTimedRaw(tmp_v, tmp_t);
-
-    castToMapper(helper)->posE2A(tmp_v, v);
-    castToMapper(helper)->toUser(tmp_t, t);
-    delete [] tmp_t;
-    delete [] tmp_v;
-
+    Buffer<double>b_v = buffManager->getBuffer();
+    Buffer<double>b_t = buffManager->getBuffer();
+    bool ret=iMotorEncoders->getMotorEncodersTimedRaw(b_v.getData(), b_t.getData());
+    castToMapper(helper)->posE2A(b_v.getData(), v);
+    castToMapper(helper)->toUser(b_t.getData(), t);
+    buffManager->releaseBuffer(b_v);
+    buffManager->releaseBuffer(b_t);
     return ret;
 }

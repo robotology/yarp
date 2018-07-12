@@ -11,6 +11,7 @@
 
 #include <yarp/dev/ICurrentControl.h>
 #include <yarp/dev/api.h>
+#include <yarp/os/FixedSizeBuffersManager.h>
 
 namespace yarp {
     namespace dev {
@@ -23,7 +24,8 @@ class YARP_dev_API yarp::dev::ImplementCurrentControl: public ICurrentControl
 protected:
     yarp::dev::ICurrentControlRaw *iCurrentRaw;
     void *helper;
-    int nj;
+    yarp::os::FixedSizeBuffersManager<int> *intBuffManager;
+    yarp::os::FixedSizeBuffersManager<double> *doubleBuffManager;
 
     /**
      * Initialize the internal data and alloc memory.

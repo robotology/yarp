@@ -13,6 +13,7 @@
 #include <yarp/dev/IPWMControl.h>
 #include <yarp/dev/api.h>
 #include <yarp/conf/system.h>
+#include <yarp/os/FixedSizeBuffersManager.h>
 
 namespace yarp {
     namespace dev {
@@ -24,7 +25,7 @@ class YARP_dev_API yarp::dev::ImplementPWMControl: public IPWMControl
 {
     void *helper;
     yarp::dev::IPWMControlRaw *raw;
-    double *dummy;
+    yarp::os::FixedSizeBuffersManager<double> *doubleBuffManager;
 public:
     bool initialize(int k, const int *amap, const double* dutyToPWM);
     bool uninitialize();

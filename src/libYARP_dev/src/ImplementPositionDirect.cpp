@@ -13,18 +13,16 @@
 #include <yarp/os/Log.h>
 
 using namespace yarp::dev;
-#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
-#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
-#define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
-#define MJOINTIDCHECK_DEL1(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); delete [] tmp_joints; return false;}
-#define MJOINTIDCHECK_DEL2(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); delete [] tmp_joints; delete [] tmp_refs;return false;}
+using namespace yarp::os;
 
-ImplementPositionDirect::ImplementPositionDirect(IPositionDirectRaw *y) :
+#define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
+
+ImplementPositionDirect::ImplementPositionDirect(IPositionDirectRaw *y):
     iPDirect(y),
     helper(nullptr),
-    nj(0)
-{
-}
+    doubleBuffManager(nullptr),
+    intBuffManager(nullptr)
+{;}
 
 
 ImplementPositionDirect::~ImplementPositionDirect()
@@ -40,7 +38,12 @@ bool ImplementPositionDirect::initialize(int size, const int *amap, const double
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert(helper != nullptr);
 
-    nj=size;
+    intBuffManager = new FixedSizeBuffersManager<int> (size);
+    yAssert (intBuffManager != nullptr);
+
+    doubleBuffManager = new FixedSizeBuffersManager<double> (size);
+    yAssert (doubleBuffManager != nullptr);
+
     return true;
 }
 
@@ -50,6 +53,18 @@ bool ImplementPositionDirect::uninitialize()
     {
         delete castToMapper(helper);
         helper=nullptr;
+    }
+
+    if(intBuffManager)
+    {
+        delete intBuffManager;
+        intBuffManager=nullptr;
+    }
+
+    if(doubleBuffManager)
+    {
+        delete doubleBuffManager;
+        doubleBuffManager=nullptr;
     }
 
     return true;
@@ -72,28 +87,35 @@ bool ImplementPositionDirect::setPosition(int j, double ref)
 
 bool ImplementPositionDirect::setPositions(const int n_joint, const int *joints, const double *refs)
 {
-    int *tmp_joints =  new int [nj];
-    double *tmp_refs = new double [nj];
+    if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
+        return false;
+
+    Buffer<int> buffJoints = intBuffManager->getBuffer();
+    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+
+    if(n_joint > intBuffManager->getBufferSize())
+        return false;
+
     for(int idx=0; idx<n_joint; idx++)
     {
-        MJOINTIDCHECK_DEL2(idx)
-        castToMapper(helper)->posA2E(refs[idx], joints[idx], tmp_refs[idx], tmp_joints[idx]);
+        buffJoints.setValue(idx, castToMapper(helper)->toHw(joints[idx]));
+        buffValues.setValue(idx, castToMapper(helper)->posA2E(refs[idx], joints[idx]));
     }
-    bool ret = iPDirect->setPositionsRaw(n_joint, tmp_joints, tmp_refs);
-    delete [] tmp_joints;
-    delete [] tmp_refs;
-    
+
+    bool ret = iPDirect->setPositionsRaw(n_joint, buffJoints.getData(), buffValues.getData());
+
+    doubleBuffManager->releaseBuffer(buffValues);
+    intBuffManager->releaseBuffer(buffJoints);
+
     return ret;
 }
 
 bool ImplementPositionDirect::setPositions(const double *refs)
 {
-    double *tmp = new double[nj];
-    castToMapper(helper)->posA2E(refs, tmp);
-
-    bool ret = iPDirect->setPositionsRaw(tmp);
-    
-    delete [] tmp;
+    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    castToMapper(helper)->posA2E(refs, buffValues.getData());
+    bool ret = iPDirect->setPositionsRaw(buffValues.getData());
+    doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
@@ -112,33 +134,36 @@ bool ImplementPositionDirect::getRefPosition(const int j, double* ref)
 
 bool ImplementPositionDirect::getRefPositions(const int n_joint, const int* joints, double* refs)
 {
-    int * tmp_joints = new int[nj];
-    for(int idx=0; idx<n_joint; idx++)
-    {
-        MJOINTIDCHECK_DEL1(idx)
-        tmp_joints[idx]=castToMapper(helper)->toHw(joints[idx]);
-    }
+    if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
+        return false;
 
-    double *tmp_refs = new double[nj];
-    bool ret = iPDirect->getRefPositionsRaw(n_joint, tmp_joints, tmp_refs);
+    Buffer<int> buffJoints = intBuffManager->getBuffer();
 
     for(int idx=0; idx<n_joint; idx++)
     {
-        refs[idx]=castToMapper(helper)->posE2A(tmp_refs[idx], tmp_joints[idx]);
+        buffJoints.setValue(idx, castToMapper(helper)->toHw(joints[idx]));
     }
-    
-    delete [] tmp_joints;
-    delete [] tmp_refs;
-    
+
+    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    bool ret = iPDirect->getRefPositionsRaw(n_joint, buffJoints.getData(), buffValues.getData());
+
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        refs[idx]=castToMapper(helper)->posE2A(buffValues.getValue(idx), buffJoints.getValue(idx));
+    }
+
+    doubleBuffManager->releaseBuffer(buffValues);
+    intBuffManager->releaseBuffer(buffJoints);
+
     return ret;
 }
 
 bool ImplementPositionDirect::getRefPositions(double* refs)
 {
-    double *tmp=new double[nj];
-    bool ret = iPDirect->getRefPositionsRaw(tmp);
-    castToMapper(helper)->posE2A(tmp, refs);
-    delete [] tmp;
+    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    bool ret = iPDirect->getRefPositionsRaw(buffValues.getData());
+    castToMapper(helper)->posE2A(buffValues.getData(), refs);
+    doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 

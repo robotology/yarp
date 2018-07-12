@@ -10,6 +10,7 @@
 #define YARP_DEV_IMPLEMENTPIDCONTROL_H
 
 #include <yarp/dev/IPidControl.h>
+#include <yarp/os/FixedSizeBuffersManager.h>
 
 namespace yarp {
     namespace dev {
@@ -22,8 +23,8 @@ class YARP_dev_API yarp::dev::ImplementPidControl : public IPidControl
 protected:
     IPidControlRaw *iPid;
     void *helper;
-    double *temp;
-    yarp::dev::Pid *tmpPids;
+    yarp::os::FixedSizeBuffersManager<double> *doubleBuffManager;
+    yarp::os::FixedSizeBuffersManager<yarp::dev::Pid> *pidBuffManager;
 
     /**
     * Initialize the internal data and alloc memory.
@@ -73,6 +74,7 @@ public:
     virtual bool disablePid(const PidControlTypeEnum& pidtype, int j) override;
     virtual bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v) override;
     virtual bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled) override;
+    void b();
 };
 
 #endif // YARP_DEV_IMPLEMENTPIDCONTROL_H

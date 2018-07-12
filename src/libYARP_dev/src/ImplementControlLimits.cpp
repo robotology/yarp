@@ -16,10 +16,8 @@ using namespace yarp::dev;
 
 ImplementControlLimits::ImplementControlLimits(yarp::dev::IControlLimitsRaw *y) :
     iLimits2(y),
-    helper(nullptr),nj(0)
-{
-
-}
+    helper(nullptr)
+{;}
 
 
 ImplementControlLimits::~ImplementControlLimits()
@@ -48,7 +46,6 @@ bool ImplementControlLimits::initialize(int size, const int *amap, const double 
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert(helper != nullptr);
-    nj = size;
     return true;
 }
 

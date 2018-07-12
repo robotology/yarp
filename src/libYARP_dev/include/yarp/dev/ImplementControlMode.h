@@ -22,7 +22,6 @@ namespace yarp {
 class YARP_dev_API yarp::dev::ImplementControlMode: public IControlMode
 {
     void *helper;
-    int nj;
     yarp::dev::IControlModeRaw *raw;
     yarp::os::FixedSizeBuffersManager<int> *buffManager;
 
