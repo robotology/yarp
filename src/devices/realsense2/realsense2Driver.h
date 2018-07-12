@@ -203,6 +203,7 @@ private:
     rs2::context m_ctx;
     rs2::config m_cfg;
     rs2::pipeline m_pipeline;
+    rs2::pipeline_profile m_profile;
     rs2::device  m_device;
     std::vector<rs2::sensor> m_sensors;
     rs2::sensor* m_depth_sensor;
