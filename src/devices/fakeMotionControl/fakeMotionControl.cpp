@@ -106,7 +106,7 @@ static inline bool DEPRECATED(const char *txt)
 
 // replace with to_string as soon as C++11 is required by YARP
 /**
- * @brief convert an arbitary type to string.
+ * @brief convert an arbitrary type to string.
  *
  */
 template<typename T>
@@ -355,7 +355,7 @@ bool FakeMotionControl::dealloc()
 
 FakeMotionControl::FakeMotionControl() :
     PeriodicThread(0.01),
-    ImplementControlCalibration<FakeMotionControl, IControlCalibration>(this),
+    ImplementControlCalibration(this),
     ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>(this),
     ImplementPidControl(this),
     ImplementEncodersTimed(this),
@@ -583,7 +583,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
 
     ControlBoardHelper cb(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM);
     ControlBoardHelper cb_copy_test(cb);
-    ImplementControlCalibration<FakeMotionControl, IControlCalibration>::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementControlCalibration::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementEncodersTimed::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementMotorEncoders::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
@@ -1459,7 +1459,7 @@ bool FakeMotionControl::close()
     ImplementPositionControl::uninitialize();
     ImplementVelocityControl::uninitialize();
     ImplementPidControl::uninitialize();
-    ImplementControlCalibration<FakeMotionControl, IControlCalibration>::uninitialize();
+    ImplementControlCalibration::uninitialize();
     ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>::uninitialize();
     ImplementImpedanceControl::uninitialize();
     ImplementControlLimits::uninitialize();
@@ -1882,13 +1882,13 @@ bool FakeMotionControl::setCalibrationParametersRaw(int j, const CalibrationPara
     return true;
 }
 
-bool FakeMotionControl::calibrateRaw(int j, unsigned int type, double p1, double p2, double p3)
+bool FakeMotionControl::calibrateAxisWithParamsRaw(int j, unsigned int type, double p1, double p2, double p3)
 {
     yTrace() << "calibrateRaw for joint" << j;
     return true;
 }
 
-bool FakeMotionControl::doneRaw(int axis)
+bool FakeMotionControl::calibrationDoneRaw(int axis)
 {
     bool result = false;
 
@@ -3019,7 +3019,7 @@ bool FakeMotionControl::getInteractionModesRaw(yarp::dev::InteractionModeEnum* m
 bool FakeMotionControl::setInteractionModeRaw(int j, yarp::dev::InteractionModeEnum _mode)
 {
     if(verbose >= VERY_VERBOSE)
-        yTrace() << "j: " << j << " intercation mode: " << yarp::os::Vocab::decode(_mode);
+        yTrace() << "j: " << j << " interaction mode: " << yarp::os::Vocab::decode(_mode);
     
     _interactMode[j] = _mode;
    

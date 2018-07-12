@@ -10,12 +10,12 @@
 #define YARP_DEV_IMPLEMENTCONTROLBOARDINTERFACES_H
 
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/ImplementControlCalibration.h>
 #include <yarp/dev/api.h>
 namespace yarp{
     namespace dev {
         template <class DERIVED, class IMPLEMENT> class ImplementEncoders;
         template <class DERIVED, class IMPLEMENT> class ImplementAmplifierControl;
-        template <class DERIVED, class IMPLEMENT> class ImplementControlCalibration;
         class StubImplPositionControlRaw;
         class StubImplEncodersRaw;
     }
@@ -137,53 +137,6 @@ public:
      */
     virtual bool getEncoderAccelerations(double *accs) override;
 };
-
-template <class DERIVED, class IMPLEMENT>
-class yarp::dev::ImplementControlCalibration: public IMPLEMENT
-{
-protected:
-    IControlCalibrationRaw *iCalibrate;
-    void *helper;
-    double *temp;
-
-    /**
-     * Initialize the internal data and alloc memory.
-     * @param size is the number of controlled axes the driver deals with.
-     * @param amap is a lookup table mapping axes onto physical drivers.
-     * @param enc is an array containing the encoder to angles conversion factors.
-     * @param zos is an array containing the zeros of the encoders.
-     * @return true if initialized succeeded, false if it wasn't executed, or assert.
-     */
-    bool initialize (int size, const int *amap, const double *enc, const double *zos);
-
-    /**
-     * Clean up internal data and memory.
-     * @return true if uninitialization is executed, false otherwise.
-     */
-    bool uninitialize ();
-
-public:
-    /* Constructor.
-     * @param y is the pointer to the class instance inheriting from this
-     *  implementation.
-     */
-    ImplementControlCalibration(DERIVED *y);
-
-    /**
-     * Destructor. Perform uninitialize if needed.
-     */
-    virtual ~ImplementControlCalibration();
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-    virtual bool calibrate(int j, double p) override;
-#endif
-    virtual bool calibrate(int axis, unsigned int type, double p1, double p2, double p3) override;
-
-    virtual bool setCalibrationParameters(int axis, const CalibrationParameters& params) override;
-
-    virtual bool done(int j) override;
-};
-
 
 template <class DERIVED, class IMPLEMENT>
 class yarp::dev::ImplementAmplifierControl: public IMPLEMENT

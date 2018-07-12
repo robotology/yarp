@@ -106,7 +106,7 @@ class yarp::dev::FakeMotionControl :    public DeviceDriver,
                                         public IInteractionModeRaw,
                                         public IAxisInfoRaw,
                                         public IVirtualAnalogSensorRaw, //*
-                                        public ImplementControlCalibration<FakeMotionControl, IControlCalibration>,
+                                        public ImplementControlCalibration,
                                         public ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>,
                                         public ImplementPidControl,
                                         public ImplementEncodersTimed,
@@ -129,7 +129,7 @@ private:
     enum VerboseLevel
     {
         MUTE                = 0,    // only errors that prevent device from working
-        QUIET               = 1,    // adds errors that can cause misfunctioning
+        QUIET               = 1,    // adds errors that can cause malfunctioning
         DEFAULT             = 2,    // adds warnings // DEFAULT // show noisy messages about back-compatible changes
         CHATTY              = 3,    // adds info messages
         VERBOSE             = 4,    // adds debug messages
@@ -178,7 +178,7 @@ private:
 
     std::string *_axisName;                          /** axis name */
     JointTypeEnum *_jointType;                          /** axis type */
-//     ImpedanceLimits     *_impedance_limits;     /** impedancel imits */
+//     ImpedanceLimits     *_impedance_limits;     /** impedance limits */
     double *_limitsMin;                         /** joint limits, max*/
     double *_limitsMax;                         /** joint limits, min*/
     double *_kinematic_mj;                      /** the kinematic coupling matrix from joints space to motor space */
@@ -323,8 +323,8 @@ public:
 
     // calibration2raw
     virtual bool setCalibrationParametersRaw(int axis, const CalibrationParameters& params) override;
-    virtual bool calibrateRaw(int axis, unsigned int type, double p1, double p2, double p3) override;
-    virtual bool doneRaw(int j) override;
+    virtual bool calibrateAxisWithParamsRaw(int axis, unsigned int type, double p1, double p2, double p3) override;
+    virtual bool calibrationDoneRaw(int j) override;
 
 
     /////////////////////////////// END Position Control INTERFACE

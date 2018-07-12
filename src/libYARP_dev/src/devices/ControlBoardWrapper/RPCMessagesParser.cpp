@@ -1688,7 +1688,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                         if (rpc_Icalib==nullptr)
                             yError("Sorry I don't have a IControlCalibration2 interface\n");
                         else
-                            ok=rpc_Icalib->calibrate(j,ui,v1,v2,v3);
+                            ok=rpc_Icalib->calibrateAxisWithParams(j,ui,v1,v2,v3);
                     }
                     break;
 
@@ -1717,7 +1717,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                         rec=true;
                         if (ControlBoardWrapper_p->verbose())
                             yDebug("Calling calibrate\n");
-                        ok=rpc_Icalib->calibrate();
+                        ok=rpc_Icalib->calibrateRobot();
                     }
                     break;
 
@@ -1727,7 +1727,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                         if (ControlBoardWrapper_p->verbose())
                             yDebug("Calling calibrate done\n");
                         int j=cmd.get(1).asInt32();
-                        ok=rpc_Icalib->done(j);
+                        ok=rpc_Icalib->calibrationDone(j);
                     }
                     break;
 

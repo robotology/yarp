@@ -2453,7 +2453,7 @@ public:
     }
 
     /* IControlCalibration */
-    bool virtual calibrate() override
+    bool virtual calibrateRobot() override
     { return send1V(VOCAB_CALIBRATE); }
 
     bool virtual abortCalibration() override
@@ -2465,7 +2465,7 @@ public:
     bool virtual park(bool wait=true) override
     { return send1V(VOCAB_PARK); }
 
-    bool virtual calibrate(int j, unsigned int ui, double v1, double v2, double v3) override
+    bool virtual calibrateAxisWithParams(int j, unsigned int ui, double v1, double v2, double v3) override
     {
         Bottle cmd, response;
 
@@ -2504,7 +2504,7 @@ public:
         return false;
     }
 
-    bool virtual done(int j) override
+    bool virtual calibrationDone(int j) override
     { return send1V1I(VOCAB_CALIBRATE_DONE, j); }
 
     bool getRefTorque(int j, double *t) override

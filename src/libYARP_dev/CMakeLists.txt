@@ -60,6 +60,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ImplementPWMControl.h
                   include/yarp/dev/ImplementRemoteVariables.h
                   include/yarp/dev/ImplementTorqueControl.h
+                  include/yarp/dev/ImplementControlCalibration.h
                   include/yarp/dev/IPidControl.h
                   include/yarp/dev/PidEnums.h
                   include/yarp/dev/IPidControlImpl.h
@@ -69,6 +70,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IPositionControl2Impl.h
                   include/yarp/dev/IPositionDirect.h
                   include/yarp/dev/IPositionDirectImpl.h
+                  include/yarp/dev/IControlCalibration.h
                   include/yarp/dev/IPWMControl.h
                   include/yarp/dev/IRangefinder2D.h
                   include/yarp/dev/IRemoteVariables.h
@@ -109,7 +111,7 @@ set(YARP_dev_IMPL_HDRS )
 set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/ControlBoardHelper.cpp
                   src/ControlBoardPid.cpp
-                  src/ControlCalibrationImpl.cpp
+                  src/IControlCalibrationImpl.cpp
                   src/ControlModeImpl.cpp
                   src/CurrentControlImpl.cpp
                   src/DeviceDriver.cpp
