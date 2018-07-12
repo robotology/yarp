@@ -564,7 +564,7 @@ ExecMachine::ExecMachine(Executable* pExecutable)
     dying = new Dying(executable, this);
     dead = new Dead(executable, this);
 
-    // seting initial state
+    // setting initial state
     setInitState(suspended);
 
     // transitions from suspended
@@ -713,7 +713,7 @@ void ExecMachine::connectionFailed(void* which)
     }
 }
 
-// For debuging
+// For debugging
 void ExecMachine::onTransition(StateBase* previous,
                                 Event* event, StateBase* current)
 {

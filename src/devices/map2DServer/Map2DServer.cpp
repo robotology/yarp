@@ -73,7 +73,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
                 }
                 else
                 {
-                    //the map alreay exists
+                    //the map already exists
                     m_maps_storage[map_name] = the_map;
                     out.clear();
                     out.addVocab(VOCAB_IMAP_OK);
@@ -403,7 +403,7 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
     }
     else
     {
-        out.addString("request not undestood, call 'help' to see a list of avaiable commands");
+        out.addString("request not understood, call 'help' to see a list of available commands");
     }
 
     //updateVizMarkers();
@@ -563,7 +563,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
         }
         if (loadMaps(collection_file_with_path))
         {
-            yInfo() << "Map collection file:" << collection_file_with_path << "succesfully loaded.";
+            yInfo() << "Map collection file:" << collection_file_with_path << "successfully loaded.";
             yInfo() << "Available maps are:";
             for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); ++it)
             {

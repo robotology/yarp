@@ -10,7 +10,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
-//-----Openable and JoyPort are for confortable loop managing of ports
+//-----Openable and JoyPort are for comfortable loop managing of ports
 namespace yarp
 {
     namespace dev

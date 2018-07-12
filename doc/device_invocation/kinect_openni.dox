@@ -46,7 +46,7 @@ Instantiation of the \ref cmd_device_kinect_device_client  device implemented by
 To use this device the OpenNI and NITE APIs need to be installed and the CMake build should have been made with the ENABLE_yarpmod_KinectDeviceClient checked.
 The Kinect sensor should be connected to a computer where the \ref cmd_device_kinect_device_server is running.
 
-The \ref cmd_device_kinect_device_server has to be excuted with the ports running by using the property portPrefix described above.
+The \ref cmd_device_kinect_device_server has to be executed with the ports running by using the property portPrefix described above.
 
 The kinect device client can be started as a yarp::os::Property object in a program:
 \code

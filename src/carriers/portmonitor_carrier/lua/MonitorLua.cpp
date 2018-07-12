@@ -408,7 +408,7 @@ bool MonitorLua::canAccept()
 
     /**
      * following piece of code replaces each event symbolic name
-     * with a boolean value based on their existance in MonitorEventRecord
+     * with a boolean value based on their existence in MonitorEventRecord
      */
     string strConstraint = constraint;
     string strDummy = strConstraint;

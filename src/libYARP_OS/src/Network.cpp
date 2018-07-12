@@ -437,7 +437,7 @@ static int metaConnect(const std::string& src,
                     srcIsCompetent = true;
                 } else {
                     //if the srcCarrier is not competent, (that is it can't perform the starting yarp handshaking)
-                    //set the carrier contraint equal to the carrier with which the posrt had been registered.
+                    //set the carrier constraint equal to the carrier with which the posrt had been registered.
                     carrierConstraint = staticSrc.getCarrier();
                     CARRIER_DEBUG(" it is NOT competent. its constraint is %s\n\n", carrierConstraint.c_str());
                 }
@@ -467,7 +467,7 @@ static int metaConnect(const std::string& src,
                     destIsCompetent = true;
                 } else {
                     //if the destCarrier is not competent, (that is it can't perform the starting yarp handshaking)
-                    //set the carrier contraint equal to the carrier with which the posrt had been registered.
+                    //set the carrier constraint equal to the carrier with which the posrt had been registered.
                     carrierConstraint = staticDest.getCarrier();
                     CARRIER_DEBUG(" it is NOT competent. its constraint is %s\n\n", carrierConstraint.c_str());
                 }
@@ -537,7 +537,7 @@ static int metaConnect(const std::string& src,
 
     CARRIER_DEBUG("at the end style style.carrier is %s\n ", style.carrier.c_str());
 
-    //here we'll check if the style carrier and the contraint carrier are equal.
+    //here we'll check if the style carrier and the constraint carrier are equal.
     //note that in both string may contain params of carrier, so we need to comapare only the name of carrier.
     if(style.carrier!="" && carrierConstraint!="") {
         //get only carrier name of style.

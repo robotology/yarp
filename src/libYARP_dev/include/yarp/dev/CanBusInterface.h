@@ -143,7 +143,7 @@ public:
 
         if (m==0)
             {
-                yError("Warning trying to detroy non valid buffer\n");
+                yError("Warning trying to destroy non valid buffer\n");
                 return;
             }
 

@@ -2198,7 +2198,7 @@ void ApplicationViewWidget::onConDisconnect(int which)
     emit selfDisconnect(which);
 }
 
-/*! \brief Called when a resource became avaible
+/*! \brief Called when a resource became available
     \param which
 */
 void ApplicationViewWidget::onResAvailable(int which)
@@ -2206,7 +2206,7 @@ void ApplicationViewWidget::onResAvailable(int which)
     emit selfResAvailable(which);
 }
 
-/*! \brief Called when a resource become unavaible
+/*! \brief Called when a resource become unavailable
     \param which
 */
 void ApplicationViewWidget::onResUnAvailable(int which)
@@ -2214,7 +2214,7 @@ void ApplicationViewWidget::onResUnAvailable(int which)
     emit selfResUnavailable(which);
 }
 
-/*! \brief Called when a connection become avaible
+/*! \brief Called when a connection become available
     \param which
 */
 void ApplicationViewWidget::onConAvailable(int from, int to)
@@ -2237,7 +2237,7 @@ void ApplicationViewWidget::onConAvailable(int from, int to)
     reportErrors();
 }
 
-/*! \brief Called when a connection become unavaible
+/*! \brief Called when a connection become unavailable
     \param which
 */
 void ApplicationViewWidget::onConUnAvailable(int from, int to)

@@ -3,7 +3,7 @@
 
 \author Daniel Krieg
 
-The MPI carriers are supposed be a high-performance equivalent to YARPs standard carriers  (Shared memory, TCP, Mcast) while also adding the possibilty for using
+The MPI carriers are supposed be a high-performance equivalent to YARPs standard carriers  (Shared memory, TCP, Mcast) while also adding the possibility for using
 Infiniband (Highspeed node interconnect). But they do not allow for process-local connections.
 
 \note They are still work in progress and should be considered experimental. Please report any problems.
@@ -29,7 +29,7 @@ yarp disconnect /port1 /port2
 \li The 'bcast' carrier is using collective broadcasting (similar to mcast but reliable ), i.e. the data is only send once by the sender and passed on by the receivers as needed. This leads to a decreased transmission time, roughly O(log_2(n)).
 \li It does not support replies.
 \li As of SVN rev. 8752, the disconnect (should) works as usual.
-\li Older versions: the disconnect does not works proberly: it is not possible to disconnect only one receiver. And in order to disconnect all at once you need to disconnect the connection which was created first.
+\li Older versions: the disconnect does not works properly: it is not possible to disconnect only one receiver. And in order to disconnect all at once you need to disconnect the connection which was created first.
 
 \section carrier_config_mpi_intro What is MPI?
 
@@ -53,7 +53,7 @@ According to some first bandwidth tests, it is more efficient than YARPs standar
 
 
 
-\section carrier_config_mpi_compliation Compling YARP with MPI support
+\section carrier_config_mpi_compliation Compiling YARP with MPI support
 Enable the creation of one or both carriers in cmake:
 \code
 ENABLE_yarpcar_mpi_carrier          => ON

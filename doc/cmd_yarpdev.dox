@@ -201,7 +201,7 @@ do to make the device match our system.
 
 \section devices_parameters Detailed parameters description
 
-Each device class has a description page where input parameters are desribed in
+Each device class has a description page where input parameters are described in
 more detail. You can find a list of devices in \ref dev_impl "Device implementation page" subdivided by type.
 
 For example the description for the

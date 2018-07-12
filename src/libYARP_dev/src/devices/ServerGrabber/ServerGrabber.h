@@ -93,7 +93,7 @@ typedef struct
  * \section ServerGrabber Description of input parameters
  * A Network grabber for camera devices.
  * In base of the configuration this device can handle one or two cameras.\n
- * In case of two cameras, the RGB or RAW streaming will be produced on two separated ports or on a sigle port with the two images
+ * In case of two cameras, the RGB or RAW streaming will be produced on two separated ports or on a single port with the two images
  * stitched horizontally.\n
  * Moreover it has two rpc ports that have the same name of the streaming ports + "/rpc" suffix.\n
  * The inheritance from yarp::dev::IWrapper and yarp::dev::IMultipleWrapper allows to be instantiated also through yarprobotinterface.
@@ -227,7 +227,7 @@ private:
     // Typical usage: yarprobotinterface
     bool openDeferredAttach(yarp::os::Searchable& prop);
 
-    // If a subdevice parameter is given, the wrapper will open it(or them) and attach to immediatly.
+    // If a subdevice parameter is given, the wrapper will open it(or them) and attach to immediately.
     // Typical usage: simulator or command line
     bool                           isSubdeviceOwned;
     bool                           openAndAttachSubDevice(yarp::os::Searchable& prop);

@@ -285,7 +285,7 @@ bool PriorityGroup::recalculate(double t)
         return false;
     }
 
-    // inverting the weigth matrix
+    // inverting the weight matrix
     InvA = yarp::math::luinv(InvA);
     Y = InvA * B;
 

@@ -106,7 +106,7 @@ static inline bool DEPRECATED(const char *txt)
 
 // replace with to_string as soon as C++11 is required by YARP
 /**
- * @brief convert an arbitary type to string.
+ * @brief convert an arbitrary type to string.
  *
  */
 template<typename T>
@@ -1360,7 +1360,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
             //return false;
         }
         // current limit
-        if (!extractGroup(coupling, xtmp, "kinematic_mj","the kinematic matrix 4x4 which tranforms from joint space to motor space", 16))
+        if (!extractGroup(coupling, xtmp, "kinematic_mj","the kinematic matrix 4x4 which transforms from joint space to motor space", 16))
         {
             for(i=1; i<xtmp.size(); i++) _kinematic_mj[i-1]=0.0;
         }
@@ -3019,7 +3019,7 @@ bool FakeMotionControl::getInteractionModesRaw(yarp::dev::InteractionModeEnum* m
 bool FakeMotionControl::setInteractionModeRaw(int j, yarp::dev::InteractionModeEnum _mode)
 {
     if(verbose >= VERY_VERBOSE)
-        yTrace() << "j: " << j << " intercation mode: " << yarp::os::Vocab::decode(_mode);
+        yTrace() << "j: " << j << " interaction mode: " << yarp::os::Vocab::decode(_mode);
     
     _interactMode[j] = _mode;
    

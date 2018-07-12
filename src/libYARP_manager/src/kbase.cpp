@@ -367,7 +367,7 @@ bool KnowledgeBase::makeupApplication(Application* application)
 
                 repapp = replicateApplication(tmpGraph, repapp, newname.str().c_str());
 
-                // seting application base prefix
+                // setting application base prefix
                 repapp->setBasePrefix(interfaceApp.getPrefix());
 
                 // adding applicattion prefix to child application
@@ -671,7 +671,7 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
             newname<<application->getName()<<":";
             newname<<interfaceApp.getName()<<":"<<appList[interfaceApp.getName()];
             repapp = replicateApplication(tmpGraph, repapp, newname.str().c_str());
-            // seting application base prefix
+            // setting application base prefix
             repapp->setBasePrefix(interfaceApp.getPrefix());
 
             // adding application prefix to child application
@@ -902,7 +902,7 @@ bool KnowledgeBase::reasolveDependency(Application* app,
                                             app,
                                             app->getLabel());
 
-    //internaly used by makeup application and addIApplicationToApplication
+    //internally used by makeup application and addIApplicationToApplication
     appList.clear();
     // extend application to its child applications and modules
     if(!makeupApplication(mainApplication))
@@ -1580,7 +1580,7 @@ bool KnowledgeBase::checkConsistency()
     //ErrorLogger* logger  = ErrorLogger::Instance();
 
     /**
-     *  check whether there is atleast one application
+     *  check whether there is at least one application
      */
     /*
      if(!application)

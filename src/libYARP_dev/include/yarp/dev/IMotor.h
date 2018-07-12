@@ -56,7 +56,7 @@ public:
 
     /**
      * Retreives the current temperature limit for a specific motor.
-     * The specific behavior of the motor when the temperature limit is exceeded depends on the implementation (power off recommeneded)
+     * The specific behavior of the motor when the temperature limit is exceeded depends on the implementation (power off recommended)
      * @param m motor number
      * @param temp the current temperature limit.
      * @return true/false
@@ -65,7 +65,7 @@ public:
 
     /**
      * Set the temperature limit for a specific motor.
-     * The specific behavior of the motor when the temperature limit is exceeded depends on the implementation (power off recommeneded)
+     * The specific behavior of the motor when the temperature limit is exceeded depends on the implementation (power off recommended)
      * @param m motor number
      * @param temp the temperature limit to be set
      * @return true/false
@@ -126,7 +126,7 @@ public:
 
     /**
      * Retreives the current temperature limit for a specific motor.
-     * The specific behavior of the motor when the temperature limit is exceeded depends on the implementation (power off recommeneded)
+     * The specific behavior of the motor when the temperature limit is exceeded depends on the implementation (power off recommended)
      * @param m motor number
      * @param temp the current temperature limit.
      * @return true/false
@@ -135,7 +135,7 @@ public:
 
     /**
      * Set the temperature limit for a specific motor.
-     * The specific behavior of the motor when the temperature limit is exceeded depends on the implementation (power off recommeneded)
+     * The specific behavior of the motor when the temperature limit is exceeded depends on the implementation (power off recommended)
      * @param m motor number
      * @param temp the temperature limit to be set
      * @return true/false

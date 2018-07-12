@@ -432,7 +432,7 @@ void MainWindow::on_yarprunTreeView_doubleClicked(const QModelIndex &pre_index)
         int newtab_index = ui->logtabs->addTab(tab, tabname);
         ui->logtabs->setCurrentIndex(newtab_index);
     }
-    apply_button_filters(); //@@@@NOT WOKRING HERE
+    apply_button_filters(); //@@@@NOT WORKING HERE
 }
 
 QString MainWindow::recomputeFilters()

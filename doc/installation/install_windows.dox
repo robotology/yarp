@@ -31,11 +31,8 @@ Alternatively you can compile all dependencies yourself following the procedure 
 
 To compile YARP from sources, you need a C++ compiler.
 
-On Windows, you can compile Visual Studio 2013 Community Edition
-from the [Microsoft website](https://www.visualstudio.com/en-en/downloads/download-visual-studio-vs.aspx#).
-
-Please note that is reccomended to use Visual Studio 2013 because at the moment we do not provide precompiled
-binaries for YARP dependencies for Visual Studio 2015.
+On Windows, you can download Visual Studio 2017 Community Edition
+from the [Microsoft website](https://visualstudio.microsoft.com/downloads/).
 
 Besides the C++ compiler you also need the following tools.
 

@@ -20,7 +20,7 @@ using namespace yarp::math::impl;
 
 /*
 * This class was used in the past to wrap random generation
-* routines that were not thread safe. Nowdays it could be no
+* routines that were not thread safe. Nowadays it could be no
 * longer required because gsl routines are already declared to be
 * thread safe.
 */

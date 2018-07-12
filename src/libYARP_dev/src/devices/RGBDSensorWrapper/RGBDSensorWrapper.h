@@ -197,7 +197,7 @@ private:
     // Typical usage: yarprobotinterface
     bool                           openDeferredAttach(yarp::os::Searchable& prop);
 
-    // If a subdevice parameter is given, the wrapper will open it and attach to immediatly.
+    // If a subdevice parameter is given, the wrapper will open it and attach to immediately.
     // Typical usage: simulator or command line
     bool                           isSubdeviceOwned;
     yarp::dev::PolyDriver*         subDeviceOwned;

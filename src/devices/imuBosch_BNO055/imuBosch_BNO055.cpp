@@ -467,7 +467,7 @@ void BoschIMU::run()
     ///////////////////////////////////////////
 
     if (sendReadCommand(REG_ACC_DATA, 6, response, "Read accelerations")) {
-        // Manually compose the data to safely handling endianess
+        // Manually compose the data to safely handling endianness
         raw_data[0] = response[3] << 8 | response[2];
         raw_data[1] = response[5] << 8 | response[4];
         raw_data[2] = response[7] << 8 | response[6];
@@ -486,7 +486,7 @@ void BoschIMU::run()
     ///////////////////////////////////////////
 
     if (sendReadCommand(REG_GYRO_DATA, 6, response, "Read Gyros")) {
-        // Manually compose the data to handle endianess safely
+        // Manually compose the data to handle endianness safely
         raw_data[0] = response[3] << 8 | response[2];
         raw_data[1] = response[5] << 8 | response[4];
         raw_data[2] = response[7] << 8 | response[6];
@@ -506,7 +506,7 @@ void BoschIMU::run()
     ///////////////////////////////////////////
 
     if (sendReadCommand(REG_MAGN_DATA, 6, response, "Read Magnetometer")) {
-        // Manually compose the data to safely handling endianess
+        // Manually compose the data to safely handling endianness
         raw_data[0]  = response[3] << 8 | response[2];
         raw_data[1]  = response[5] << 8 | response[4];
         raw_data[2]  = response[7] << 8 | response[6];
@@ -527,7 +527,7 @@ void BoschIMU::run()
 
     quaternion_tmp = quaternion;
     if (sendReadCommand(REG_QUATERN_DATA, 8, response, "Read quaternion")) {
-        // Manually compose the data to safely handling endianess
+        // Manually compose the data to safely handling endianness
         raw_data[0] = response[3] << 8 | response[2];
         raw_data[1] = response[5] << 8 | response[4];
         raw_data[2] = response[7] << 8 | response[6];

@@ -49,11 +49,11 @@ public:
 * | `multipleanalogsensorsclient` |
 *
 * The parameters accepted by this device are:
-* | Parameter name | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                       | Notes |
-* |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
-* | remote         |       -        | string  | -              |   -           | Yes          | Prefix of the ports to which to connect, opened by MultipleAnalogSensorsServer device. | |
-* | local          |       -        | string  | -              |   -           | Yes          | Port prefix of the ports openened by this device.  |                                     |
-* | timeout        |       -        | double  | seconds        | 0.01          | No           | Timeout after which the device reports an error if no measurement was received. |        |
+* | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                                            | Notes |
+* |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:------------:|:--------------------------------------------------------------------------------------:|:-----:|
+* | remote         |       -        | string  | -              |   -           | Yes          | Prefix of the ports to which to connect, opened by MultipleAnalogSensorsServer device. |       |
+* | local          |       -        | string  | -              |   -           | Yes          | Port prefix of the ports opened by this device.                                        |       |
+* | timeout        |       -        | double  | seconds        | 0.01          | No           | Timeout after which the device reports an error if no measurement was received.        |       |
 *
 */
 class yarp::dev::MultipleAnalogSensorsClient: public DeviceDriver,

@@ -395,7 +395,7 @@ void BinaryExpParser::printTruthTable(std::string lopr)
 
 bool LinkTrainer::train(const std::vector<std::vector<int> >&  truthTable)
 {
-    // reseting weights
+    // resetting weights
     int n = truthTable.size();
     errors.clear();
     alphas.clear();

@@ -302,7 +302,7 @@ bool ServerGrabber::open(yarp::os::Searchable& config) {
 
     if(!fromConfig(config))
     {
-        yError() << "Device ServerGrabber failed to open, check previous log for error messsages.\n";
+        yError() << "Device ServerGrabber failed to open, check previous log for error messages.\n";
         return false;
     }
 
@@ -387,7 +387,7 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
             param.cap=RAW;
     }
     else
-        yWarning()<<"ServerGrabber: 'capabilities' parameter not found or mispelled, the option available are COLOR(default) and RAW, using default";
+        yWarning()<<"ServerGrabber: 'capabilities' parameter not found or misspelled, the option available are COLOR(default) and RAW, using default";
     param.canDrop = !config.check("no_drop","if present, use strict policy for sending data");
     param.addStamp = config.check("stamp","if present, add timestamps to data");
 
@@ -1092,7 +1092,7 @@ bool ServerGrabber::openAndAttachSubDevice(Searchable &prop){
         }
         //COSA FA? Serve? Guardarci
         //p.setMonitor(prop.getMonitor(), "subdevice"); // pass on any monitoring
-        // if error occour during open, quit here.
+        // if errors occurred during open, quit here.
         poly->open(p);
         poly2->open(p2);
 
@@ -1125,7 +1125,7 @@ bool ServerGrabber::openAndAttachSubDevice(Searchable &prop){
         p.unput("device");
         p.put("device",prop.find("subdevice").asString());  // subdevice was already checked before
 
-        // if error occour during open, quit here.
+        // if errors occurred during open, quit here.
         poly->open(p);
 
         if (!(poly->isValid()))

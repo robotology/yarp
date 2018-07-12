@@ -10,7 +10,7 @@
 
 // Generated from the following "geometry_msgs/Point32" msg definition:
 //   # This contains the position of a point in free space(with 32 bits of precision).
-//   # It is recommeded to use Point wherever possible instead of Point32.  
+//   # It is recommended to use Point wherever possible instead of Point32.
 //   # 
 //   # This recommendation is to promote interoperability.  
 //   #
@@ -154,7 +154,7 @@ public:
     {
         return std::string("\
 # This contains the position of a point in free space(with 32 bits of precision).\n\
-# It is recommeded to use Point wherever possible instead of Point32.  \n\
+# It is recommended to use Point wherever possible instead of Point32.  \n\
 # \n\
 # This recommendation is to promote interoperability.  \n\
 #\n\

@@ -54,10 +54,10 @@ public:
     // return the device with the given name or <fatal error> if not found
     Device* findDevice(const std::string &name);
 
-    // open all the devices and return true if all the open calls were succesful
+    // open all the devices and return true if all the open calls were successful
     bool openDevices();
 
-    // close all the devices and return true if all the close calls were succesful
+    // close all the devices and return true if all the close calls were successful
     bool closeDevices();
 
     // return a vector of levels that have actions in the requested phase

@@ -84,7 +84,7 @@ public:
 
     /** Set new torque reference for a subset of joints.
      * @param joints pointer to the array of joint numbers
-     * @param refs   pointer to the array specifing the new torque reference
+     * @param refs   pointer to the array specifying the new torque reference
      * @return true/false on success/failure
      */
     virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) {return false;}  // this function has a default implementation to keep backward compatibility with existing devices
@@ -200,7 +200,7 @@ public:
 
     /** Set new torque reference for a subset of joints.
      * @param joints pointer to the array of joint numbers
-     * @param refs   pointer to the array specifing the new torque reference
+     * @param refs   pointer to the array specifying the new torque reference
      * @return true/false on success/failure
      */
     virtual bool setRefTorquesRaw(const int n_joint, const int *joints, const double *t) {return false;}  // this function has a default implementation to keep backward compatibility with existing devices

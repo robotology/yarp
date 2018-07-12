@@ -225,8 +225,8 @@ bool yarp::dev::ServerInertial::openDeferredAttach(yarp::os::Property& prop)
     return true;
 }
 
-// Iif a subdevice parameter is given to the wrapper, it will open it as well
-// and and attach to it immediatly.
+// If a subdevice parameter is given to the wrapper, it will open it as well
+// and attach to it immediately.
 bool yarp::dev::ServerInertial::openAndAttachSubDevice(yarp::os::Property& prop)
 {
     yarp::os::Value &subdevice = prop.find("subdevice");
@@ -329,7 +329,7 @@ bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
         writer.attach(p);
     }
 
-    // call ROS node/topic initilization, if needed
+    // call ROS node/topic initialization, if needed
     if(!initialize_ROS() )
     {
         return false;

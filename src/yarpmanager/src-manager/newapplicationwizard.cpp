@@ -253,7 +253,7 @@ void NewApplicationWizard::accept()
     if (alreadyExists)
     {
         QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "Quit", "The file choosen already exists, do you want to overwrite it?", QMessageBox::Yes|QMessageBox::No);
+        reply = QMessageBox::question(this, "Quit", "The file chosen already exists, do you want to overwrite it?", QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::No)
         {
             QDialog::reject();

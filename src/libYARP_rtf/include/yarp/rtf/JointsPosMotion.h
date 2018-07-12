@@ -60,7 +60,7 @@ public:
      * @brief Sets speed of each joint used in position control.
      *
      * @param vector of speed. The vector must have size equal to @jlist in
-     *               costructor.
+     *               constructor.
      */
     void setSpeed(yarp::sig::Vector &speedlist);
 
@@ -90,7 +90,7 @@ public:
                     double *reached_pos = nullptr);
 
     /**
-     * @brief Moves joints in corrisponding positions specified by
+     * @brief Moves joints in corresponding positions specified by
      * @a positions and checks if all joints reach its target within tolerance
      * range in maximun timeout seconds.
      *

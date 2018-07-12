@@ -239,7 +239,7 @@ public:
 };
 
 /**
- * Class storing the decomposition of a subset ot the total
+ * Class storing the decomposition of a subset of the total
  * remapped axes of the remapped controlboard in the
  * corresponding subsets of the axes of the SubControlBoard.
  *
@@ -251,7 +251,7 @@ class ControlBoardArbitraryAxesDecomposition
 {
     /**
      * Fill the buffer containing the structure of the decomposition between the
-     * desired list of joints and and their mapping in the subControlboards.
+     * desired list of joints and their mapping in the subControlboards.
      */
     void createListOfJointsDecomposition(const int n_joints, const int *joints, const RemappedControlBoards & remappedControlBoards);
 

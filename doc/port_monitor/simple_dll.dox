@@ -16,7 +16,7 @@ This example demonstrates how to simply use the port monitor carrier to modify d
 
 \section simple_dll_running Running the example
 
-\li Open a terminal and follow the bellow instruction to compile and build the dll
+\li Open a terminal and follow the below instruction to compile and build the dll
 \verbatim
    $ mkdir $YARP_ROOT/example/portmonitor/simple_dll/build
    $ cd $YARP_ROOT/example/portmonitor/simple_dll/build
