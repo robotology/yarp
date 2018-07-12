@@ -44,7 +44,7 @@ bool Transforms_server_storage::delete_transform(int id)
     return false;
 }
 
-bool Transforms_server_storage::set_transform(FrameTransform t)
+bool Transforms_server_storage::set_transform(const FrameTransform& t)
 {
     LockGuard lock(m_mutex);
     for (size_t i = 0; i < m_transforms.size(); i++)
