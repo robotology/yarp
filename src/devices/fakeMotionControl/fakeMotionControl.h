@@ -27,7 +27,6 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
-#include <yarp/dev/ControlBoardInterfacesImpl-inl.h>
 #include <yarp/dev/IVirtualAnalogSensor.h>
 #include <yarp/dev/IVirtualAnalogSensorImpl.h>
 
@@ -107,7 +106,7 @@ class yarp::dev::FakeMotionControl :    public DeviceDriver,
                                         public IAxisInfoRaw,
                                         public IVirtualAnalogSensorRaw, //*
                                         public ImplementControlCalibration,
-                                        public ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>,
+                                        public ImplementAmplifierControl,
                                         public ImplementPidControl,
                                         public ImplementEncodersTimed,
                                         public ImplementPositionControl,

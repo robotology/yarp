@@ -18,7 +18,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ControlBoardHelpers.h
                   include/yarp/dev/ControlBoardInterfaces.h
                   include/yarp/dev/ControlBoardInterfacesImpl.h
-                  include/yarp/dev/ControlBoardInterfacesImpl-inl.h
                   include/yarp/dev/ControlBoardPid.h
                   include/yarp/dev/DataSource.h
                   include/yarp/dev/DeviceDriver.h
@@ -61,6 +60,8 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ImplementRemoteVariables.h
                   include/yarp/dev/ImplementTorqueControl.h
                   include/yarp/dev/ImplementControlCalibration.h
+                  include/yarp/dev/ImplementEncoders.h
+                  include/yarp/dev/ImplementAmplifierControl.h
                   include/yarp/dev/IPidControl.h
                   include/yarp/dev/PidEnums.h
                   include/yarp/dev/IPidControlImpl.h
@@ -133,6 +134,8 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/IRemoteVariablesImpl.cpp
                   src/IVelocityControlImpl.cpp
                   src/IVisualParamsImpl.cpp
+                  src/IAmplifierControlImpl.cpp
+                  src/IEncodersImpl.cpp
                   src/LaserMeasurementData.cpp
                   src/MultipleAnalogSensorsInterfaces.cpp
                   src/PolyDriver.cpp

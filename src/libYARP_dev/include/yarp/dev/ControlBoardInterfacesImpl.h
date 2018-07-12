@@ -24,6 +24,8 @@
 #include <yarp/dev/ImplementImpedanceControl.h>
 #include <yarp/dev/ImplementAxisInfo.h>
 #include <yarp/dev/ImplementControlCalibration.h>
+#include <yarp/dev/ImplementAmplifierControl.h>
+#include <yarp/dev/ImplementEncoders.h>
 #include <yarp/dev/IPidControlImpl.h>
 #include <yarp/dev/IPositionControl2Impl.h>
 #include <yarp/dev/IVelocityControl2Impl.h>
