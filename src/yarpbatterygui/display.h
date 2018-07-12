@@ -26,7 +26,7 @@ class MainWindow :public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(yarp::os::ResourceFinder rf, yarp::dev::IBattery* ibat, QWidget *parent = 0);
+    explicit MainWindow(const yarp::os::ResourceFinder& rf, yarp::dev::IBattery* ibat, QWidget *parent = 0);
     ~MainWindow();
 
     private slots:
