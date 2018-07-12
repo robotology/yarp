@@ -376,7 +376,7 @@ bool realsense2Driver::pipelineStartup()
 {
     try
     {
-        m_pipeline.start(m_cfg);
+        m_profile = m_pipeline.start(m_cfg);
     }
     catch (const rs2::error& e)
     {
@@ -480,11 +480,8 @@ bool realsense2Driver::initializeRealsenseDevice()
         m_pipeline.wait_for_frames();
     }
     yInfo()<<"realsense2Driver:....device ready!";
-    // First, create a rs2::context.
-    rs2::device_list devices = m_ctx.query_devices();
 
-    rs2::device selected_device;
-    if (devices.size() == 0)
+    if (m_ctx.query_devices().size() == 0)
     {
         yError() << "realsense2Driver: No device connected, please connect a RealSense device";
 
@@ -497,7 +494,7 @@ bool realsense2Driver::initializeRealsenseDevice()
     {
         //TODO: if more are connected?!
         // Update the selected device
-        m_device = devices[0];
+        m_device = m_profile.get_device();
         if (m_verbose)
             yInfo()<<get_device_information(m_device).c_str();
     }
