@@ -37,7 +37,6 @@ using namespace std;
 class yfn {
 public:
   std::string name;
-  bool split;
   int len;
 
   yfn(const std::string& name) {
@@ -58,8 +57,6 @@ public:
         if (ct1>ct_max) ct_max = ct1;
       }
     }
-    //split = (ct_max<=4);
-    //len = split?ct:1;
     len = ct;
   }
 };
