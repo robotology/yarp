@@ -867,12 +867,15 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
         // make sure system is actually able to do things fast
         yarp::os::impl::Time::startTurboBoost();
 
-        __yarp_is_initialized++;
+        // MultiNameSpace is a c++11 singleton and need to be initialized
+        // before the first port that is opened and it has to exist until
+        // the last port is closed.
+        getNameSpace();
+
         if(yarp::os::Time::getClockType() == YARP_CLOCK_UNINITIALIZED)
             NetworkBase::yarpClockInit(clockType, nullptr);
-    } else {
-        __yarp_is_initialized++;
     }
+    __yarp_is_initialized++;
 }
 
 void NetworkBase::finiMinimum()
