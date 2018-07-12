@@ -173,7 +173,7 @@ bool MultipleAnalogSensorsRemapper::genericAttachAll(const MAS_SensorType sensor
             for (size_t s=0; s < nrOfSensorsInSubDevice; s++)
             {
                 std::string name;
-                bool ok = genericGetName(sensorType, s, name, subDeviceVec, getNameMethodPtr);
+                bool ok = MAS_CALL_MEMBER_FN(subDeviceVec[p], getNameMethodPtr)(s,name);
                 if (!ok)
                 {
                     yError() << "MultipleAnalogSensorsRemapper: Failure in getting a name in the device " << polylist[p]->key;
