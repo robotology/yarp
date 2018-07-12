@@ -77,7 +77,7 @@ public:
     int wbase; //wrapper base
     int wtop; //wrapper top
     int axes; //number of used axis of this subdevice
-    int totalAxis; //Numeber of total axis taht the subdevice can control
+    int totalAxis; //Numeber of total axis that the subdevice can control
 
     bool configuredF;
 

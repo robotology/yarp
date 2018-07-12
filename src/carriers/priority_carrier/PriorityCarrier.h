@@ -135,7 +135,7 @@ public:
     void stimulate(double t) {
 
         temporalStimulation = getActualStimulation(t);
-        // if it is in active sate, stimulates.
+        // if it is in active state, stimulates.
         if(!isResting(temporalStimulation))
         {
             temporalStimulation += stimulation;

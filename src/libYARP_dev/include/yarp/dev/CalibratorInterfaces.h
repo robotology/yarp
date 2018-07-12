@@ -100,37 +100,37 @@ public:
     /**
      * @brief homingSingleJoint: call the homing procedure for a single joint
      * @param j: joint to be calibrated
-     * @return true if homing was succesful, false otherwise
+     * @return true if homing was successful, false otherwise
      */
     virtual bool homingSingleJoint(int j)=0;
 
     /**
      * @brief homingWholePart: call the homing procedure for a the whole part/device
-     * @return true if homing was succesful, false otherwise
+     * @return true if homing was successful, false otherwise
      */
     virtual bool homingWholePart()=0;
 
     /**
      * @brief parkSingleJoint(): start the parking procedure for the single joint
-     * @return true if succesful
+     * @return true if successful
      */
     virtual bool parkSingleJoint(int j, bool _wait=true)=0;
 
     /**
      * @brief parkWholePart: start the parking procedure for the whole part
-     * @return true if succesful
+     * @return true if successful
      */
     virtual bool parkWholePart()=0;
 
     /**
      * @brief quitCalibrate: interrupt the calibration procedure
-     * @return true if succesful
+     * @return true if successful
      */
     virtual bool quitCalibrate()=0;
 
     /**
      * @brief quitPark: interrupt the park procedure
-     * @return true if succesful
+     * @return true if successful
      */
     virtual bool quitPark()=0;
 };

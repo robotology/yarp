@@ -495,7 +495,7 @@ bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
     }
 
 
-    // call ROS node/topic initilization, if needed
+    // call ROS node/topic initialization, if needed
     if (!initialize_ROS())
     {
         return false;

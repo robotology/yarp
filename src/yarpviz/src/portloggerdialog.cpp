@@ -175,7 +175,7 @@ void PortLoggerDialog::startStopLoggers() {
         {
             // something went wrong
             QMessageBox messageBox;
-            messageBox.critical(nullptr,"Error","An error has occured while starting the portrate plugin for some ports ! \n Please check if the LUA portmonitor carrier is enabled in YARP and portrate plugin can be found by the portmonitor.");
+            messageBox.critical(nullptr,"Error","An error has occurred while starting the portrate plugin for some ports ! \n Please check if the LUA portmonitor carrier is enabled in YARP and portrate plugin can be found by the portmonitor.");
             messageBox.setFixedSize(500,200);
         }
     }

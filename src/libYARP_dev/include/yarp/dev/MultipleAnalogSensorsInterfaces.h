@@ -78,7 +78,7 @@ public:
     * Get the name of the specified sensor. 
     *
     * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfThreeAxisGyroscopes()-1).
-    * @return false if an error occured, true otherwise.
+    * @return false if an error occurred, true otherwise.
     */
    virtual bool getThreeAxisGyroscopeName(size_t sens_index, std::string &name) const = 0;
    
@@ -86,7 +86,7 @@ public:
     * Get the name of the frame of the specified sensor.
     *
     * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfThreeAxisGyroscopes()-1).
-    * @return false if an error occured, true otherwise.
+    * @return false if an error occurred, true otherwise.
     */
    virtual bool getThreeAxisGyroscopeFrameName(size_t sens_index, std::string &frameName) const = 0;
 
@@ -96,7 +96,7 @@ public:
     * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfThreeAxisGyroscopes()-1).
     * @param[out] out The requested measure. The vector should be 3-dimensional. The measure is expressed in degrees/seconds.
     * @param[out] timestamp The timestamp of the requested measure, expressed in seconds.
-    * @return false if an error occured, true otherwise.
+    * @return false if an error occurred, true otherwise.
     */
    virtual bool getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const = 0;
 
@@ -128,13 +128,13 @@ public:
    
    /**
     * Get the name of the specified sensor. 
-    * @return false if an error occured, true otherwise.
+    * @return false if an error occurred, true otherwise.
     */
    virtual bool getThreeAxisLinearAccelerometerName(size_t sens_index, std::string &name) const = 0;
 
    /**
     * Get the name of the frame of the specified sensor.
-    * @return false if an error occured, true otherwise.
+    * @return false if an error occurred, true otherwise.
     */
    virtual bool getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string &frameName) const = 0;
    
@@ -144,7 +144,7 @@ public:
     * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfThreeAxisLinearAccelerometers()-1).
     * @param[out] out The requested measure. The vector should be 3-dimensional. The measure is expressed in meters^2/seconds.
     * @param[out] timestamp The timestamp of the requested measure, expressed in seconds.
-    * @return false if an error occured, true otherwise.
+    * @return false if an error occurred, true otherwise.
     */
    virtual bool getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const = 0;
 
@@ -175,13 +175,13 @@ public:
    
    /**
     * Get the name of the specified sensor.
-    * @return false if an error occured, true otherwise.
+    * @return false if an error occurred, true otherwise.
     */
    virtual bool getThreeAxisMagnetometerName(size_t sens_index, std::string &name) const = 0;
 
    /**
     * Get the name of the frame of the specified sensor.
-    * @return false if an error occured, true otherwise.
+    * @return false if an error occurred, true otherwise.
     */
    virtual bool getThreeAxisMagnetometerFrameName(size_t sens_index, std::string &frameName) const = 0;
    
@@ -191,7 +191,7 @@ public:
     * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfThreeAxisMagnetometers()-1).
     * @param[out] out The requested measure. The vector should be 3-dimensional. The measure is expressed in tesla .
     * @param[out] timestamp The timestamp of the requested measure, expressed in seconds.
-    * @return false if an error occured, true otherwise.
+    * @return false if an error occurred, true otherwise.
     */
    virtual bool getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const = 0;
 
@@ -227,7 +227,7 @@ public:
    
    /**
     * Get the name of the specified sensor. 
-    * @return false if an error occured, true otherwise.
+    * @return false if an error occurred, true otherwise.
     */
    virtual bool getOrientationSensorName(size_t sens_index, std::string &name) const = 0;
 
@@ -237,7 +237,7 @@ public:
     * @note This is an implementation specific method, that may return the name of the sensor
     *       frame in a scenegraph 
     *
-    * @return false if an error occured, true otherwise.
+    * @return false if an error occurred, true otherwise.
     */
    virtual bool getOrientationSensorFrameName(size_t sens_index, std::string &frameName) const = 0;
    
@@ -286,7 +286,7 @@ public:
     * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfOrientationSensors()-1).
     * @param[out] out The requested measure. The vector should be 3-dimensional. The measure is expressed in degrees .
     * @param[out] timestamp The timestamp of the requested measure, expressed in seconds.
-    * @return false if an error occured, true otherwise.
+    * @return false if an error occurred, true otherwise.
     */
    virtual bool getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& rpy, double& timestamp) const = 0;
 
@@ -338,7 +338,7 @@ public:
     * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfTemperatureSensors()-1).
     * @param[out] out The requested measure. The vector should be 1-dimensional. The measure is expressed in celsius degrees .
     * @param[out] timestamp The timestamp of the requested measure, expressed in seconds.
-    * @return false if an error occured, true otherwise.
+    * @return false if an error occurred, true otherwise.
     */
    virtual bool getTemperatureSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const = 0;
    
@@ -421,7 +421,7 @@ public:
    
    /**
     * Get the name of the specified sensor.
-    * @return false if an error occured, true otherwise.
+    * @return false if an error occurred, true otherwise.
     */
    virtual bool getContactLoadCellArrayName(size_t sens_index, std::string &name) const = 0;
 
@@ -432,7 +432,7 @@ public:
     * @param[out] out The requested measure. The vector should be getContactLoadCellArrayMeasure(sens_index)-dimensional.
     *                 The measure is expressed in Newton.
     * @param[out] timestamp The timestamp of the requested measure, expressed in seconds.
-    * @return false if an error occured, true otherwise.
+    * @return false if an error occurred, true otherwise.
     */
    virtual bool getContactLoadCellArrayMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const = 0;
    
@@ -454,8 +454,8 @@ public:
  * |:-----------------:|
  * | `EncoderArrays` |
  * 
- * @note This interface is tipically used for group of encoders that are not 
- *       explicitly controlled by one of the interfaces tipically used for 
+ * @note This interface is typically used for group of encoders that are not
+ *       explicitly controlled by one of the interfaces typically used for
  *       motor control, such as IEncoders and IPositionControl, such as 
  *       encoders measuring the complete state in an underactuated mechanism.
  */

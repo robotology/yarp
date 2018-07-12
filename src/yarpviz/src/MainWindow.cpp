@@ -410,7 +410,7 @@ void MainWindow::edgeContextMenu(QGVEdge* edge) {
         return;
 
     //yInfo()<<"edge clicked!";
-    //Context menu exemple
+    //Context menu example
     QMenu menu(edge->label());
     menu.addSeparator();
     menu.addAction(tr("Information..."));
@@ -476,7 +476,7 @@ void MainWindow::onAbout() {
 }
 
 void MainWindow::onNodeContextMenuPort(QGVNode *node, GraphicVertex* vertex) {
-    //Context menu exemple
+    //Context menu example
     QMenu menu(node->label());
     menu.addSeparator();
     menu.addAction(tr("Information..."));
@@ -548,7 +548,7 @@ void MainWindow::onProfileYarpNetwork() {
     for(size_t i=0; i<ports.size(); i++) {
         NetworkProfiler::PortDetails info;
         std::string portname = ports[i].find("name").asString();
-        std::string msg = string("Cheking ") + portname + "...";
+        std::string msg = string("Checking ") + portname + "...";
         messages.append(QString(msg.c_str()));
         if(NetworkProfiler::getPortDetails(portname, info))
             portsInfo.push_back(info);

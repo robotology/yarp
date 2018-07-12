@@ -138,7 +138,7 @@ For each part initialized (e.g. right_leg):
 
 \section conf_file_sec Configuration Files
 
-Passed with the paremter --from, configure the layout of the gui.
+Passed with the parameter --from, configure the layout of the gui.
 \code
 name icub
 parts (head torso right_arm left_arm)

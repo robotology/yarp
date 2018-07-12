@@ -24,7 +24,7 @@ namespace yarp{
 #define DEFAULT_PERIOD 0.01   //s
 
 /**
-* \brief `fakeIMU` : fake device implementing the device interface tipically implemented by an Inertial Measurement Unit
+* \brief `fakeIMU` : fake device implementing the device interface typically implemented by an Inertial Measurement Unit
 *
 * | YARP device name |
 * |:-----------------:|

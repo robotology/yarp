@@ -134,7 +134,7 @@ bool JoypadControlClient::open(yarp::os::Searchable& config)
         return false;
     }
 
-    yInfo() << "handshake succeded! retrieving info";
+    yInfo() << "handshake succeeded! retrieving info";
 
     if(!getJoypadInfo())
     {

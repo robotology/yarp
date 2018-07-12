@@ -475,7 +475,7 @@ bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
 
             if(m_yarp_static_transform_storage->set_transform(t))
             {
-                yInfo() << tfName << "from" << t.src_frame_id << "to" << t.dst_frame_id << "succesfully set";
+                yInfo() << tfName << "from" << t.src_frame_id << "to" << t.dst_frame_id << "successfully set";
             }
         }
         return true;

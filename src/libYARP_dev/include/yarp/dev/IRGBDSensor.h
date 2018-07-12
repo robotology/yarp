@@ -103,7 +103,7 @@ public:
      */
 
     /**
-     * Get the extrinsic parameters ofrom the device
+     * Get the extrinsic parameters from the device
      * @param  extrinsic  return a rototranslation matrix describing the position
      *         of the depth optical frame with respect to the rgb frame
      * @return true if success
@@ -112,7 +112,7 @@ public:
 
     /**
      * Return an error message in case of error. For debugging purpose and user notification.
-     * Error message will be reset after any succesful command
+     * Error message will be reset after any successful command
      * @return A string explaining the last error occurred.
      */
     virtual std::string getLastErrorMsg(yarp::os::Stamp *timeStamp = NULL) = 0;
@@ -120,7 +120,7 @@ public:
     /**
      * Get the rgb frame from the device.
      * The pixel type of the source image will usually be set as a VOCAB_PIXEL_RGB,
-     * but the user can call the function with the pixel type of his/her choise. The convertion
+     * but the user can call the function with the pixel type of his/her choice. The conversion
      * if possible, will be done automatically on client side (TO BO VERIFIED).
      * Note: this will consume CPU power because it will not use GPU optimization.
      * Use VOCAB_PIXEL_RGB for best performances.
@@ -134,7 +134,7 @@ public:
     /**
      * Get the depth frame from the device.
      * The pixel type of the source image will usually be set as a VOCAB_PIXEL_RGB,
-     * but the user can call the function with the pixel type of his/her choise. The convertion
+     * but the user can call the function with the pixel type of his/her choice. The conversion
      * if possible, will be done automatically on client side.
      * Note: this will consume CPU power because it will not use GPU optimization.
      * Use VOCAB_PIXEL_RGB for best performances.

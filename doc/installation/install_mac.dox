@@ -194,7 +194,7 @@ If the options above are not enough and you want to install YARP with additional
  CMAKE_INSTALL_PREFIX
  \endcode
 
- configure (press 'c' until all the * disappers) & generate ('g'), then:
+ configure (press 'c' until all the * disappears) & generate ('g'), then:
 
  \code
  make

@@ -44,7 +44,7 @@ namespace yarp {
 *
 * A Base class for a VectorOf<T>, provide default implementation for
 * read/write methods. Warning: the current implementation assumes the same
-* representation for data type (endianess).
+* representation for data type (endianness).
 */
 class YARP_sig_API yarp::sig::VectorBase : public yarp::os::Portable
 {
@@ -110,7 +110,7 @@ inline int BottleTagMap <int> () {
 * Warning: the class is designed to work with simple types (i.e. types
 * that do not allocate internal memory). Template instantiation needs to
 * be checked to avoid unresolved externals. Network communication assumes
-* same data representation (endianess) between machines.
+* same data representation (endianness) between machines.
 */
 template<class T>
 class yarp::sig::VectorOf : public VectorBase

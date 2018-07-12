@@ -87,7 +87,7 @@ public:
     /**  Set the reference value of the current for a group of motors.
     * @param n_motor size of motors ans currs arrays
     * @param motors  pointer to the array containing the list of motor numbers
-    * @param currs   pointer to the array specifing the new current references
+    * @param currs   pointer to the array specifying the new current references
     * @return true/false on success/failure
     */
     virtual bool setRefCurrents(const int n_motor, const int *motors, const double *currs) = 0;
@@ -173,7 +173,7 @@ public:
     /**  Set the reference value of the current for a group of motors.
      * @param n_motor size of motors ans currs arrays
      * @param motors pointer to the array of motor numbers
-     * @param refs   pointer to the array specifing the new current reference
+     * @param refs   pointer to the array specifying the new current reference
      * @return true/false on success/failure
      */
     virtual bool setRefCurrentsRaw(const int n_motor, const int *motors, const double *currs) = 0;

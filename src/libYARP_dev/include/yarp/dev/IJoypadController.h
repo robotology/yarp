@@ -54,7 +54,7 @@ public:
      * @brief eventDriven
      * @param enable a bool to turn on or off the eventDriven mode
      * * @param event a pointer to a valid yarp::dev::IJoypadEvent object whom action() method will be called on event detection
-     * @return true if succeded. false otherwise
+     * @return true if succeeded. false otherwise
      */
     virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = nullptr){return false;}
     virtual bool isEventDriven(){return false;}
@@ -63,7 +63,7 @@ public:
       Get number of Axes
      * @brief getAxisCount
      * @param axes_count unsigned int reference that will contain the result
-     * @return true if succeded. false otherwise
+     * @return true if succeeded. false otherwise
      */
     virtual bool getAxisCount(unsigned int& axis_count) = 0;
 
@@ -71,7 +71,7 @@ public:
       Get number of Buttons
      * @brief getButtonCount
      * @param button_count unsigned int reference that will contain the result
-     * @return true if succeded. false otherwise
+     * @return true if succeeded. false otherwise
      */
     virtual bool getButtonCount(unsigned int& button_count) = 0;
 
@@ -79,7 +79,7 @@ public:
       Get number of trackballs
      * @brief getTrackballCount
      * @param Trackball_count unsigned int reference that will contain the result
-     * @return true if succeded. false otherwise
+     * @return true if succeeded. false otherwise
      */
     virtual bool getTrackballCount(unsigned int& Trackball_count) = 0;
 
@@ -87,7 +87,7 @@ public:
       Get number of Hats
      * @brief getHatsCount
      * @param Hat_count unsigned int reference that will contain the result
-     * @return true if succeded. false otherwise
+     * @return true if succeeded. false otherwise
      */
     virtual bool getHatCount(unsigned int& Hat_count) = 0;
 
@@ -96,7 +96,7 @@ public:
       or a combination of the two
      * @brief hasTouchSurface
      * @param touch_count unsigned int reference that will contain the result
-     * @return true if succeded. false otherwise
+     * @return true if succeeded. false otherwise
      */
     virtual bool getTouchSurfaceCount(unsigned int& touch_count) = 0;
 
@@ -104,7 +104,7 @@ public:
       get the number of the sticks
      * @brief getStickCount
      * @param stick_count unsigned int reference that will contain the result
-     * @return bool if succeded, false otherwise
+     * @return bool if succeeded, false otherwise
      */
     virtual bool getStickCount(unsigned int& stick_count) = 0;
 
@@ -113,7 +113,7 @@ public:
     * @brief getStickDoF
     * @param stick_id Id of the stick. must be > -1 && < getStickCount(), return false otherwise
     * @param DoF an unsigned int reference that will contain the value.
-    * @return true if succeded, false otherwise
+    * @return true if succeeded, false otherwise
     */
     virtual bool getStickDoF(unsigned int stick_id, unsigned int& DoF) = 0;
 
@@ -122,7 +122,7 @@ public:
     * @brief getButton
     * @param button_id Id of the button to get. Must be > -1 && < getButtonCount(), return false otherwise
     * @param value reference to be valued. The value will be from 0.0 (not even touched) to 1.0 (fully pressed)
-    * @return true if succeded, false otherwise
+    * @return true if succeeded, false otherwise
     */
     virtual bool getButton(unsigned int button_id, float& value) = 0;
 
@@ -131,7 +131,7 @@ public:
     * @brief getTrackball
     * @param trackball_id Id of the Trackball to get. Must be > -1 && < getTrackballCount(), return false otherwise
     * @param value reference to be valued. the value will be from 0.0 (not moving) to 1.0 (full velocity)
-    * @return true if succeded, false otherwise
+    * @return true if succeeded, false otherwise
     */
     virtual bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) = 0;
 
@@ -140,7 +140,7 @@ public:
     * @brief getHat
     * @param hat_id Id of the POV hat to get. Must be > -1 && < getHatCount(), return false otherwise
     * @param value reference to be valued. use the YRPJOY_HAT_ macro series to get the currently pressed directions
-    * @return true if succeded, false otherwise
+    * @return true if succeeded, false otherwise
     */
     virtual bool getHat(unsigned int hat_id, unsigned char& value) = 0;
 
@@ -151,7 +151,7 @@ public:
     * @param value reference to be valued. the absolute boundaries for the values should be -1.0 and 1.0 However
     * the actual range depends on the physical device (example: analog trigger does not have a central position thus can
     * give a value from 0.0 to 0.1)
-    * @return true if succeded, false otherwise
+    * @return true if succeeded, false otherwise
     */
     virtual bool getAxis(unsigned int axis_id, double& value) = 0;
 
@@ -162,7 +162,7 @@ public:
     * @param value a vector that will contain the joystick position. the size of the vector will give you the Number of degrees of freedom
     * and the value will be from -1.0 to 1.0
     * @param coordinate_mode to get data in cartesian mode or polar (spheric in 3 dof position cases) mode
-    * @return true if succeded, false otherwise
+    * @return true if succeeded, false otherwise
     */
     virtual bool getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) = 0;
 
@@ -170,7 +170,7 @@ public:
      Get the value of a touch if present, return false otherwise
     * @brief getTouch
     * @param value a vector that will contain the touch values normalized from 0.0 to 1.0.
-    * @return true if succeded, false otherwise
+    * @return true if succeeded, false otherwise
     */
     virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) = 0;
 };

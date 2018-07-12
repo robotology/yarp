@@ -602,7 +602,7 @@ private:
     int  getTypeOfService(PortCoreUnit *unit);
 
     // set the scheduling properties of all threads
-    // whithin the process scope.
+    // within the process scope.
     bool setProcessSchedulingParam(int priority=-1, int policy=-1);
 
     // attach a portmonitor plugin to the port or to a specific connection

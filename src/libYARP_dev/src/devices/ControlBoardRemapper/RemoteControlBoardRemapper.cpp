@@ -102,7 +102,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
         remoteControlBoardsPorts[ax] = remoteControlBoards->get(ax).asString().c_str();
     }
 
-    // Load the REMOTE_CONTROLBOARD_OPTIONS, containg any additional option to pass to the remote control boards
+    // Load the REMOTE_CONTROLBOARD_OPTIONS, containing any additional option to pass to the remote control boards
     Property remoteControlBoardsOptions;
 
     Bottle & optionsGroupBot = prop.findGroup("REMOTE_CONTROLBOARD_OPTIONS");
@@ -139,7 +139,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
             return false;
         }
 
-        // We use the remote name of the remote_controlboard as the key for it, in absense of anything better
+        // We use the remote name of the remote_controlboard as the key for it, in absence of anything better
         remoteControlBoardsList.push((m_remoteControlBoardDevices[ctrlBrd]),remote.c_str());
     }
 

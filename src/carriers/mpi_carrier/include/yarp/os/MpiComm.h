@@ -50,7 +50,7 @@ extern yarp::os::MpiControlThread *MpiControl;
  * Wrapper for MPI_Comm communicator.
  *
  * Uses the dynamic process management from the MPI-2 standard to
- * set up a communicator between two seperate processes.
+ * set up a communicator between two separate processes.
  *
  * @note Needs an MPI implementation with THREAD_MULTIPLE support.
  */

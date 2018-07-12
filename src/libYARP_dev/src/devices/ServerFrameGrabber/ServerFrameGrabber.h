@@ -58,7 +58,7 @@ namespace yarp {
  * Parameters are:
  * --width, --height set the size of the frame in pixels
  * --name portname set the name of the output port
- * --framerate set the frequency (Hz) at which images will be read and boradcast to
+ * --framerate set the frequency (Hz) at which images will be read and broadcast to
  * the network; if the parameter is not set images are provided at the maximum speed
  * supported by the device. Notice that the maximum frame rate is determined by
  * the device.

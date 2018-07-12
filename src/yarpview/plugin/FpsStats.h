@@ -65,7 +65,7 @@ public:
         prev=now;
         iterations++;
     }
-    /*! \brief This function returns the Minimun, Maximum and Average values
+    /*! \brief This function returns the Minimum, Maximum and Average values
         \param av the average value
         \param m the minimum value
         \param M the maximum value

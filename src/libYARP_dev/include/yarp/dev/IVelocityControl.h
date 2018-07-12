@@ -235,7 +235,7 @@ public:
      * @param n_joint how many joints this command is referring to
      * @param joints of joints controlled. The size of this array is n_joints
      * @param spds pointer to the array containing the new speed values, one value for each joint, the size of the array is n_joints.
-     * The first value will be the new reference fot the joint joints[0].
+     * The first value will be the new reference for the joint joints[0].
      *          for example:
      *          n_joint  3
      *          joints   0  2  4
@@ -271,7 +271,7 @@ public:
      * @param n_joint how many joints this command is referring to
      * @param joints list of joints controlled. The size of this array is n_joints
      * @param accs   pointer to the array containing acceleration values, one value for each joint, the size of the array is n_joints.
-     * The first value will be the new reference fot the joint joints[0].
+     * The first value will be the new reference for the joint joints[0].
      *          for example:
      *          n_joint  3
      *          joints   0  2  4
@@ -285,7 +285,7 @@ public:
      * @param n_joint how many joints this command is referring to
      * @param joints list of joints controlled. The size of this array is n_joints
      * @param accs   pointer to the array containing acceleration values, one value for each joint, the size of the array is n_joints.
-     * The first value will be the new reference fot the joint joints[0].
+     * The first value will be the new reference for the joint joints[0].
      *          for example:
      *          n_joint  3
      *          joints   0  2  4

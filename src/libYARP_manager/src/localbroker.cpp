@@ -35,7 +35,7 @@
     #define PIPE_TIMEOUT        0
     #define PIPE_EVENT          1
     #define PIPE_SIGNALED       2
-    #define C_MAXARGS           128         // max number of the command parametes
+    #define C_MAXARGS           128         // max number of the command parameters
 #endif
 
 using namespace yarp::os;
@@ -331,7 +331,7 @@ int LocalBroker::running()
 
 
 /**
- *  connecttion broker
+ *  connection broker
  */
 bool LocalBroker::connect(const char* from, const char* to,
             const char* carrier, bool persist)
@@ -514,7 +514,7 @@ void LocalBroker::run()
 {
 
 #if defined(_WIN32)
-    //windows implementaion
+    //windows implementation
     DWORD dwRead;
     CHAR buff[1024];
     while(!Thread::isStopping())
@@ -747,7 +747,7 @@ bool LocalBroker::stopCmd(int pid)
     // I believe we do not need this. It is ignored by console applications created with CREATE_NEW_PROCESS_GROUP
     GenerateConsoleCtrlEvent(CTRL_C_EVENT, pid);
 
-    //send BREAK_EVENT becaue we created the process with CREATE_NEW_PROCESS_GROUP
+    //send BREAK_EVENT because we created the process with CREATE_NEW_PROCESS_GROUP
     GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, pid);
 
     CloseHandle(hProc);

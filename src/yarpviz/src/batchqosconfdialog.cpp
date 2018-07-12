@@ -135,7 +135,7 @@ void BatchQosConfDialog::updateQos()
             item->setText(5, qosStr);
         }
         else
-            yWarning()<<"Cannot retrive Qos property of"<<item->text(0).toUtf8().constData()<<"->"<<item->text(0).toUtf8().constData();
+            yWarning()<<"Cannot retrieve Qos property of"<<item->text(0).toUtf8().constData()<<"->"<<item->text(0).toUtf8().constData();
     }
     ui->treeWidgetCons->update();
 }

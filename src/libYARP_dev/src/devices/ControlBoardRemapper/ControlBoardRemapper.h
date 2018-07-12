@@ -112,11 +112,11 @@ private:
     // Buffer data used for full controlboard methods
     ControlBoardSubControlBoardAxesDecomposition allJointsBuffers;
 
-    // Buffer data for multiple arbitary joint methods
+    // Buffer data for multiple arbitrary joint methods
     ControlBoardArbitraryAxesDecomposition selectedJointsBuffers;
 
     /**
-     * Set the number of controlled axes, resizing appropriatly
+     * Set the number of controlled axes, resizing appropriately
      * all the necessary buffers.
      */
     void setNrOfControlledAxes(const size_t nrOfControlledAxes);

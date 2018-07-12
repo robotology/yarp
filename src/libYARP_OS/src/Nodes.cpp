@@ -23,25 +23,19 @@ public:
     ~Private();
 
     void clear();
-
     Node* getNode(const std::string& name, bool create);
-
     void add(Contactable& contactable);
     void update(Contactable& contactable);
     void prepare(const std::string& name);
     void remove(Contactable& contactable);
     Contact query(const std::string& name, const std::string& category);
     void interrupt();
-
     bool enable(bool flag);
-
     Contact getParent(const std::string& name);
     Contact getURI(const std::string& name);
-
     void setActiveName(const std::string& name);
     std::string getActiveName();
     bool requireActiveName();
-
     void addExternalNode(const std::string& name, Node& node);
     void removeExternalNode(const std::string& name);
 
@@ -108,7 +102,7 @@ Node* yarp::os::Nodes::Private::getNode(const std::string& name, bool create)
             nodes_map[nc.getNodeName()] = std::make_pair(node, false);
             node->prepare(nc.getNodeName());
         } else {
-            // The node was not created by some other thread while this
+            // The node was created by some other thread while this
             // thread was waiting on the lock.
             delete node;
             node = it->second.first;

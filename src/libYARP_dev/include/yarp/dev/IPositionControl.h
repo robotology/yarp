@@ -383,7 +383,7 @@ public:
 
     /** Set new reference point for a subset of joints.
      * @param joints pointer to the array of joint numbers
-     * @param refs   pointer to the array specifing the new reference points
+     * @param refs   pointer to the array specifying the new reference points
      * @return true/false on success/failure
      */
     virtual bool positionMove(const int n_joint, const int *joints, const double *refs)=0;

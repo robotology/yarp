@@ -474,7 +474,7 @@ namespace yarp
         * @param in nonsymmetric n-by-n matrix
         * @param real the real part of eigen values
         * @param img the imaginary part of eigen values
-        * @return the real and imaginary part of the eigen values in seperate matrices
+        * @return the real and imaginary part of the eigen values in separate matrices
         */
         YARP_math_API bool eigenValues(const yarp::sig::Matrix& in, yarp::sig::Vector &real, yarp::sig::Vector &img);
 

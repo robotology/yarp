@@ -191,8 +191,8 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
     {
         out.addVocab(Vocab::encode("many"));
         out.addString("'get_transform <src> <dst>: print the transform from <src> to <dst>");
-        out.addString("'list_frames: print all the available refence frames");
-        out.addString("'list_ports: print all the opened ports for tranform broadcasting");
+        out.addString("'list_frames: print all the available reference frames");
+        out.addString("'list_ports: print all the opened ports for transform broadcasting");
         out.addString("'publish_transform <src> <dst> <portname> <format>: opens a port to publish transform from src to dst");
         out.addString("'unpublish_transform <portname>: closes a previously opened port to publish a transform");
         out.addString("'unpublish_all <portname>: closes a all previously opened ports to publish a transform");
@@ -218,7 +218,7 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
         out.addVocab(Vocab::encode("many"));
         yarp::sig::Matrix m;
         this->getTransform(src, dst, m);
-        out.addString("Tranform from " + src + " to " + dst + " is: ");
+        out.addString("Transform from " + src + " to " + dst + " is: ");
         out.addString(m.toString());
     }
     else if (request == "list_ports")
@@ -511,7 +511,7 @@ bool yarp::dev::FrameTransformClient::clear()
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "FrameTransformClient::clear() recived error from server";
+            yError() << "FrameTransformClient::clear() received error from server";
             return false;
         }
     }
@@ -693,7 +693,7 @@ bool yarp::dev::FrameTransformClient::setTransform(const std::string& target_fra
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "FrameTransformClient::setTransform() recived error from server on creating frame between " + source_frame_id + " and " + target_frame_id;
+            yError() << "FrameTransformClient::setTransform() received error from server on creating frame between " + source_frame_id + " and " + target_frame_id;
             return false;
         }
     }
@@ -747,7 +747,7 @@ bool yarp::dev::FrameTransformClient::setTransformStatic(const std::string &targ
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "FrameTransformClient::setTransform() recived error from server on creating frame between " + source_frame_id + " and " + target_frame_id;
+            yError() << "FrameTransformClient::setTransform() received error from server on creating frame between " + source_frame_id + " and " + target_frame_id;
             return false;
         }
     }
@@ -772,7 +772,7 @@ bool yarp::dev::FrameTransformClient::deleteTransform(const std::string &target_
     {
         if (resp.get(0).asVocab()!=VOCAB_OK)
         {
-            yError() << "recived error from server on deleting frame between "+source_frame_id+" and "+target_frame_id;
+            yError() << "received error from server on deleting frame between "+source_frame_id+" and "+target_frame_id;
             return false;
         }
     }

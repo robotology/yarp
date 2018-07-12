@@ -220,7 +220,7 @@ bool yarp::dev::Navigation2DClient::gotoTargetByLocationName(std::string locatio
     {
         if (resp_loc.get(0).asVocab() != VOCAB_OK || resp_loc.size() != 5)
         {
-            yError() << "Navigation2DClient::gotoTargetByLocationName() recived error from locations server";
+            yError() << "Navigation2DClient::gotoTargetByLocationName() received error from locations server";
             return false;
         }
     }
@@ -248,7 +248,7 @@ bool yarp::dev::Navigation2DClient::gotoTargetByLocationName(std::string locatio
     {
         if (resp_nav.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::gotoTargetByLocationName() recived error from navigation server";
+            yError() << "Navigation2DClient::gotoTargetByLocationName() received error from navigation server";
             return false;
         }
     }
@@ -330,7 +330,7 @@ bool  yarp::dev::Navigation2DClient::getCurrentPosition(Map2DLocation& loc)
     {
         if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 5)
         {
-            yError() << "Navigation2DClient::getCurrentPosition() recived error from localization server";
+            yError() << "Navigation2DClient::getCurrentPosition() received error from localization server";
             return false;
         }
         else
@@ -421,7 +421,7 @@ bool yarp::dev::Navigation2DClient::getNameOfCurrentTarget(std::string& location
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::getNameOfCurrentTarget() recived error from server";
+            yError() << "Navigation2DClient::getNameOfCurrentTarget() received error from server";
             return false;
         }
         else

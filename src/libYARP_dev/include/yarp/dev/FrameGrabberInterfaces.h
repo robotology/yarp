@@ -257,7 +257,7 @@ public:
      *
      * Note: this is not configuring the camera sensor to acquire a crop
      *       of the image, nor to generate a cropped version of the streaming.
-     *       Instead, the full image is aquired and then a crop is created from
+     *       Instead, the full image is acquired and then a crop is created from
      *       it. The crop is meant to be created by the image producer upon user
      *       request via RPC call.
      *
@@ -307,7 +307,7 @@ public:
      *
      * Note: this is not configuring the camera sensor to acquire a crop
      *       of the image, nor to generate a cropped version of the streaming.
-     *       Instead, the full image is aquired and then a crop is created from
+     *       Instead, the full image is acquired and then a crop is created from
      *       it. The crop is meant to be created by the image producer upon user
      *       request via RPC call.
      *

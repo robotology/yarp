@@ -150,7 +150,7 @@ public:
     bool operator==(const yarp::dev::Pid &p);
 
     /*!
-    * \brief Set all pid paramters to zero
+    * \brief Set all pid parameters to zero
     *
     */
     void clear();

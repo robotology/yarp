@@ -51,7 +51,7 @@ inline bool fromPCL(const ::pcl::PointCloud< T1 > &pclCloud, yarp::sig::PointClo
 
 /**
  * Save a yarp::sig::PointCloud to PCD file, ASCII format
- * @param[in] file_name name of the file to be created wth the cloud
+ * @param[in] file_name name of the file to be created with the cloud
  * @param[in] yarpCloud yarp::sig::PointCloud input
  * @return result of the save operation(see pcl::io::savePCDFile documentation)
  */

@@ -127,7 +127,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
 
     if (id!=k)
     {
-        yError("ControlBoardWrapper for part <%s>: Wrong or unknow device %s. Cannot attach to it.", parentName.c_str(), k.c_str());
+        yError("ControlBoardWrapper for part <%s>: Wrong or unknown device %s. Cannot attach to it.", parentName.c_str(), k.c_str());
         return false;
     }
 

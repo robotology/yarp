@@ -665,7 +665,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
     //first check that the received image size is reasonable
     if (header.width == 0 || header.height == 0)
     {
-        // I maintain the prevous logic, although we should probably return false
+        // I maintain the previous logic, although we should probably return false
         return !connection.isError();
     }
 

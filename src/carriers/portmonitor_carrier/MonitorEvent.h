@@ -22,13 +22,13 @@ public:
     MonitorEvent(const char* _name, MonitorBinding* _owner, double lf=-1.0) {
         if(_name) name = _name;
         owner = _owner;
-        lifetime = lf;              // default: infinit life time
+        lifetime = lf;              // default: infinite life time
         create_time = yarp::os::Time::now();
     }
 
     MonitorBinding* owner;          // event's owner
     std::string name;     // event's symbolic name
-    double lifetime;                // event's life time in second. negative value means infinit life time.
+    double lifetime;                // event's life time in second. negative value means infinite life time.
     double create_time;             // event's creation or updating time
 };
 
@@ -43,7 +43,7 @@ public:
     typedef vector_type::const_iterator const_iterator;
 
     void setEvent(const char* name, MonitorBinding* owner, double lifetime=-1.0) {
-        // if event already exisits just update the create_time and lifetime
+        // if event already exists just update the create_time and lifetime
         MonitorEventRecord::iterator itr = findEvent(name, owner);
         if(itr != events.end())
         {

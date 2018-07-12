@@ -50,7 +50,7 @@ typedef struct mOptions pgmOptions;
 /*! \class QtYARPView
     \brief The plugin Core class
 
-    this is the plugin core class wich acts as bridge between the QML and c++.
+    this is the plugin core class which acts as bridge between the QML and c++.
     in the C++ code is implemented the backend logic, instead in the QML is
     implemented the Visual part.
 */
@@ -104,7 +104,7 @@ private:
 private:
     VideoProducer videoProducer;
 
-    // This Network yarp must be placed before any other yarp dependant member
+    // This Network yarp must be placed before any other yarp dependent member
     yarp::os::Network yarp;
     SignalHandler sigHandler;
 #ifdef YARP_LITTLE_ENDIAN

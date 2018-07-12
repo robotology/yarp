@@ -152,7 +152,7 @@ private:
     void smartAdd(const std::string& str);
 
     /*
-     * Bottle is using a lazy syncronization method. Whenever some operation
+     * Bottle is using a lazy synchronization method. Whenever some operation
      * is performed, a dirty flag is set, and when it is used, the synch()
      * method is called.
      *

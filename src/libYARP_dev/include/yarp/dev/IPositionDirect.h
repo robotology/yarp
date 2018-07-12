@@ -54,7 +54,7 @@ public:
      * @param n_joint how many joints this command is referring to
      * @param joints list of joints controlled. The size of this array is n_joints
      * @param refs array, new reference points, one value for each joint, the size is n_joints.
-     *        The first value will be the new reference fot the joint joints[0].
+     *        The first value will be the new reference for the joint joints[0].
      *          for example:
      *          n_joint  3
      *          joints   0  2  4
@@ -138,7 +138,7 @@ public:
     /** Set new reference point for all axes.
      * @param n_joint how many joints this command is referring to
      * @param joints list of joints controlled. The size of this array is n_joints
-     * @param refs array, new reference points, one value for each joint, the size is n_joints. The first value will be the new reference fot the joint joints[0].
+     * @param refs array, new reference points, one value for each joint, the size is n_joints. The first value will be the new reference for the joint joints[0].
      *          for example:
      *          n_joint  3
      *          joints   0  2  4

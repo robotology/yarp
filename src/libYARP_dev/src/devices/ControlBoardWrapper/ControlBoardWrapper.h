@@ -135,12 +135,12 @@ public:
 
     void destroy()
     {
-        // relese matrix memory
+        // release matrix memory
         delete[] jointNumbers[0];
         delete[] values[0];
         delete[] modes[0];
 
-        // relese vector of pointers
+        // release vector of pointers
         delete[] jointNumbers;
         delete[] values;
         delete[] modes;
@@ -160,7 +160,7 @@ public:
  *
  * \section ControlBoardWrapper Description of input parameters
  * A updated version of the controlBoard network wrapper.
- * It can merge toghether more than one control board device, or use only a
+ * It can merge together more than one control board device, or use only a
  * portion of it by remapping functionality.
  * Allows also deferred attach/detach of a subdevice.
  *
@@ -196,7 +196,7 @@ public:
  * ...
  * \endcode
  *
- * XML format, using 'networks' keywork. This file is meant to be used in junction with yarprobotinterface executable,
+ * XML format, using 'networks' keyword. This file is meant to be used in junction with yarprobotinterface executable,
  * therefore has an addictional section at the end.
  *
  * \code{.xml}
@@ -337,17 +337,17 @@ private:
     bool openDeferredAttach(yarp::os::Property& prop);
 
     // For the simulator, if a subdevice parameter is given to the wrapper, it will
-    // open it and and attach to it immediatly.
+    // open it and attach to it immediately.
     yarp::dev::PolyDriver *subDeviceOwned;
     bool openAndAttachSubDevice(yarp::os::Property& prop);
 
     bool ownDevices;
     inline void printError(std::string func_name, std::string info, bool result)
     {
-        //If result is false, this means that en error occured in function named func_name, otherwise means that the device doesn't implement the interface to witch func_name belongs to.
+        //If result is false, this means that en error occurred in function named func_name, otherwise means that the device doesn't implement the interface to witch func_name belongs to.
        // if(false == result)
        //    yError() << "CBW(" << partName << "): " << func_name.c_str() << " on device" << info.c_str() << " returns false";
-        //Commented in order to mantain the old behaviour (none message appear if device desn't implement the interface)
+        //Commented in order to maintain the old behaviour (none message appear if device desn't implement the interface)
         //else
             // yError() << "CBW(" << partName << "): " << func_name.c_str() << " on device" << info.c_str() << ": the interface is not available.";
     }
@@ -456,7 +456,7 @@ public:
 
     /** Set new reference point for a subset of axis.
      * @param joints pointer to the array of joint numbers
-     * @param refs   pointer to the array specifing the new reference points
+     * @param refs   pointer to the array specifying the new reference points
      * @return true/false on success/failure
      */
     virtual bool positionMove(const int n_joints, const int *joints, const double *refs) override;
@@ -958,7 +958,7 @@ public:
      */
     virtual bool getPWM(int m, double* val) override;
 
-    /* Get the PWM limit fot the given motor.
+    /* Get the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
      * @param m motor number
      * @param val filled with PWM limit value.
@@ -966,7 +966,7 @@ public:
      */
     virtual bool getPWMLimit(int m, double* val) override;
 
-    /* Set the PWM limit fot the given motor.
+    /* Set the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
      * @param m motor number
      * @param val new value for the PWM limit.
@@ -1055,37 +1055,37 @@ public:
     /**
      * @brief homingSingleJoint: call the homing procedure for a single joint
      * @param j: joint to be calibrated
-     * @return true if homing was succesful, false otherwise
+     * @return true if homing was successful, false otherwise
      */
     virtual bool homingSingleJoint(int j) override;
 
     /**
      * @brief homingWholePart: call the homing procedure for a the whole part/device
-     * @return true if homing was succesful, false otherwise
+     * @return true if homing was successful, false otherwise
      */
     virtual bool homingWholePart() override;
 
     /**
      * @brief parkSingleJoint(): start the parking procedure for the single joint
-     * @return true if succesful
+     * @return true if successful
      */
     virtual bool parkSingleJoint(int j, bool _wait=true) override;
 
     /**
      * @brief parkWholePart: start the parking procedure for the whole part
-     * @return true if succesful
+     * @return true if successful
      */
     virtual bool parkWholePart() override;
 
     /**
      * @brief quitCalibrate: interrupt the calibration procedure
-     * @return true if succesful
+     * @return true if successful
      */
     virtual bool quitCalibrate() override;
 
     /**
      * @brief quitPark: interrupt the park procedure
-     * @return true if succesful
+     * @return true if successful
      */
     virtual bool quitPark() override;
 

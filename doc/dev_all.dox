@@ -129,7 +129,7 @@
  * \defgroup dev_impl_remappers Remappers
  *
  * These devices are meant expose a group of existing devices as a unique device,
- * or to expose a subset of the resourses exposed by a device as an indipendent device.
+ * or to expose a subset of the resourses exposed by a device as an independent device.
  */
 
 /**

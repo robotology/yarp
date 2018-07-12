@@ -54,7 +54,7 @@ bool RGBDSensorClient::open(yarp::os::Searchable& config)
 
     if(!fromConfig(config))
     {
-        yError() << "Device RGBDSensorClient failed to open, check previous log for error messsages.";
+        yError() << "Device RGBDSensorClient failed to open, check previous log for error messages.";
         return false;
     }
 
@@ -81,7 +81,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
     if(rosGroup.isNull())
     {
         if(verbose >= 3)
-            yInfo() << "RGBDSensorClient: ROS configuration paramters are not set, skipping ROS topic initialization.";
+            yInfo() << "RGBDSensorClient: ROS configuration parameters are not set, skipping ROS topic initialization.";
         use_ROS  = false;
     }
     else
@@ -395,7 +395,7 @@ bool RGBDSensorClient::getImages(FlexImage &rgbImage, ImageOf<PixelFloat> &depth
 }
 
 //
-// IFrame Grabber Control 2 inteface is implemented by FrameGrabberControls2_Sender
+// IFrame Grabber Control 2 interface is implemented by FrameGrabberControls2_Sender
 //
 
 //

@@ -53,13 +53,13 @@ public:
     RandnScalar(int seed);
 
     /**
-    * Inizialize the generator.
+    * Initialize the generator.
     * Uses current time for the seed.
     */
     void init();
 
     /**
-    * Inizialize the generator.
+    * Initialize the generator.
     * Provide a seed.
     * @param seed the seed
     */

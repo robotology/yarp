@@ -201,7 +201,7 @@ bool depthCameraDriver::initializeOpeNIDevice()
         {
             if (m_device.setImageRegistrationMode(IMAGE_REGISTRATION_DEPTH_TO_COLOR) == STATUS_OK)
             {
-                yInfo() << "DepthCameraDriver:Depth succesfully registered on rgb sensor";
+                yInfo() << "DepthCameraDriver:Depth successfully registered on rgb sensor";
             }
             else
             {
@@ -355,7 +355,7 @@ bool depthCameraDriver::setParams()
             yarp::os::SystemClock::delaySystem(0.5);
             if (setRgbMirroring(v.asBool()))
             {
-                yInfo() << "depthCamera: rgb mirroring parameter set succesfully";
+                yInfo() << "depthCamera: rgb mirroring parameter set successfully";
                 mirrorOk = true;
                 break;
             }
@@ -385,7 +385,7 @@ bool depthCameraDriver::setParams()
             yarp::os::SystemClock::delaySystem(0.5);
             if (setDepthMirroring(v.asBool()))
             {
-                yInfo() << "depthCamera: depth mirroring parameter setted succesfully";
+                yInfo() << "depthCamera: depth mirroring parameter set successfully";
                 mirrorOk = true;
                 break;
             }

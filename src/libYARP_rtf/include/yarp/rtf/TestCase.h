@@ -22,7 +22,7 @@ namespace rtf {
  * settings which are developed for YARP.
  *
  * The class simply looks for test configuration file given using "--from"
- * paramter to the test case and loads it into a yarp::os::Property object.
+ * parameter to the test case and loads it into a yarp::os::Property object.
  *
  * If any environment property is given using "testrunner -e" or using
  * \<environment> \</environment> tag within suite XML file, that will be used

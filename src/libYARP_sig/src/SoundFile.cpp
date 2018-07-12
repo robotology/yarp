@@ -82,7 +82,7 @@ bool PcmWavHeader::parse_from_file(FILE *fp)
     pcmExtraData.allocate(extra_size);
     fread(&pcmExtraData,extra_size,1,fp);
 
-    //extra chuncks
+    //extra chunks
     fread(&dummyHeader,sizeof(dummyHeader),1,fp);
 
     while (dummyHeader!=yarp::os::createVocab('d','a','t','a'))

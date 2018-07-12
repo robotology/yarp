@@ -28,12 +28,12 @@ private:
     NetFloat64 timeStamp;
 public:
     /**
-     * Constuct an invalid Stamp.
+     * Construct an invalid Stamp.
      */
     explicit Stamp();
 
     /**
-     * Constuct a Stamp with a given sequence number and time.
+     * Construct a Stamp with a given sequence number and time.
      *
      * @param count the sequence number.
      * @param time the time stamp (in seconds, relative to an arbitrary.

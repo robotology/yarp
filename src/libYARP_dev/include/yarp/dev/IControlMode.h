@@ -49,7 +49,7 @@ public:
     * @param n_joints how many joints this command is referring to
     * @param joints list of joint numbers, the size of this array is n_joints
     * @param modes array containing the new controlmodes, one value for each joint, the size is n_joints.
-    *          The first value will be the new reference fot the joint joints[0].
+    *          The first value will be the new reference for the joint joints[0].
     *          for example:
     *          n_joint  3
     *          joints   0  2  4
@@ -72,7 +72,7 @@ public:
     * @param n_joints how many joints this command is referring to
     * @param joints list of joint numbers, the size of this array is n_joints
     * @param modes array containing the new controlmodes, one value for each joint, the size is n_joints.
-    *          The first value will be the new reference fot the joint joints[0].
+    *          The first value will be the new reference for the joint joints[0].
     *          for example:
     *          n_joint  3
     *          joints   0  2  4

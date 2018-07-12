@@ -125,11 +125,11 @@ public:
 * from the one that opened the controlboard device.
 *
 *  Parameters required by this device are:
-* | Parameter name | SubParameter   | Type    | Units | Default Value | Required     | Description                       | Notes |
-* |:--------------:|:--------------:|:-------:|:-----:|:-------------:|:-----------: |:---------------------------------:|:-----:|
-* | remote         |       -        | string  | -     |   -           | Yes          | Prefix of the port to which to connect.  |       |
-* | local          |       -        | string  | -     |   -           | Yes          | Port prefix of the port openend by this device.  |       |
-* | writeStrict    |       -        | string  | -     | See note      | No           |                                   |       |
+* | Parameter name | SubParameter   | Type    | Units | Default Value | Required     | Description                                    | Notes |
+* |:--------------:|:--------------:|:-------:|:-----:|:-------------:|:-----------: |:----------------------------------------------:|:-----:|
+* | remote         |       -        | string  | -     |   -           | Yes          | Prefix of the port to which to connect.        |       |
+* | local          |       -        | string  | -     |   -           | Yes          | Port prefix of the port opened by this device. |       |
+* | writeStrict    |       -        | string  | -     | See note      | No           |                                                |       |
 *
 */
 class yarp::dev::RemoteControlBoard :
@@ -2376,7 +2376,7 @@ public:
         return ret;
     }
 
-    /* Get the PWM limit fot the given motor.
+    /* Get the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
      * @param m motor number
      * @param val filled with PWM limit value.
@@ -2387,7 +2387,7 @@ public:
         return get1V1I1D(VOCAB_AMP_PWM_LIMIT, m, val);
     }
 
-    /* Set the PWM limit fot the given motor.
+    /* Set the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
      * @param m motor number
      * @param val new value for the PWM limit.
@@ -3109,7 +3109,7 @@ public:
     /**
      * @brief homingSingleJoint: call the homing procedure for a single joint
      * @param j: joint to be calibrated
-     * @return true if homing was succesful, false otherwise
+     * @return true if homing was successful, false otherwise
      */
     bool homingSingleJoint(int j) override
     {
@@ -3118,7 +3118,7 @@ public:
 
     /**
      * @brief homingWholePart: call the homing procedure for a the whole part/device
-     * @return true if homing was succesful, false otherwise
+     * @return true if homing was successful, false otherwise
      */
     bool homingWholePart() override
     {
@@ -3133,7 +3133,7 @@ public:
 
     /**
      * @brief parkSingleJoint(): start the parking procedure for the single joint
-     * @return true if succesful
+     * @return true if successful
      */
     bool parkSingleJoint(int j, bool _wait=true) override
     {
@@ -3142,7 +3142,7 @@ public:
 
     /**
      * @brief parkWholePart: start the parking procedure for the whole part
-     * @return true if succesful
+     * @return true if successful
      */
     bool parkWholePart() override
     {
@@ -3156,7 +3156,7 @@ public:
 
     /**
      * @brief quitCalibrate: interrupt the calibration procedure
-     * @return true if succesful
+     * @return true if successful
      */
     bool quitCalibrate() override
     {
@@ -3170,7 +3170,7 @@ public:
 
     /**
      * @brief quitPark: interrupt the park procedure
-     * @return true if succesful
+     * @return true if successful
      */
     bool quitPark() override
     {

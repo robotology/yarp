@@ -53,7 +53,7 @@ bool DepthImageConverter::accept(yarp::os::Things& thing)
         return true;
     }
 
-    printf("DepthImageConverter: expected %s, got %s, not doing any convertion!\n", yarp::os::Vocab::decode(VOCAB_PIXEL_MONO_FLOAT).c_str(), yarp::os::Vocab::decode(img->getPixelCode()).c_str() );
+    printf("DepthImageConverter: expected %s, got %s, not doing any conversion!\n", yarp::os::Vocab::decode(VOCAB_PIXEL_MONO_FLOAT).c_str(), yarp::os::Vocab::decode(img->getPixelCode()).c_str() );
     return false;
 }
 

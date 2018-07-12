@@ -1775,7 +1775,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             default:
                 result.clear();
                 result.addVocab(Vocab::encode("fail"));
-                result.addString("dettach command must be followd by [out] or [in]");
+                result.addString("detach command must be followd by [out] or [in]");
             };
         }
         break;
@@ -2336,7 +2336,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                     } // end for loop
                                 } // end portName == getname()
 
-                                if (!bFound) {  // cannot find any port matchs the requested one
+                                if (!bFound) {  // cannot find any port matches the requested one
                                     result.clear();
                                     result.addVocab(Vocab::encode("fail"));
                                     std::string msg = "cannot find any connection to/from ";
