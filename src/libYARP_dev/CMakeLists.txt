@@ -32,7 +32,11 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/GPUInterface.h
                   include/yarp/dev/IAnalogSensor.h
                   include/yarp/dev/IBattery.h
+                  include/yarp/dev/IAxisInfo.h
+                  include/yarp/dev/IAmplifierControl.h
+                  include/yarp/dev/IControlDebug.h
                   include/yarp/dev/IControlLimitsImpl.h
+                  include/yarp/dev/IControlLimits.h
                   include/yarp/dev/IControlLimits2.h
                   include/yarp/dev/IControlLimits2Impl.h
                   include/yarp/dev/IControlMode2.h
