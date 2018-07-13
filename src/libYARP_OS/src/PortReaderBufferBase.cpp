@@ -572,35 +572,24 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
             mPriv->consumeSema.wait();
         }
     }
-    bool ok = true;
-    if (ok) {
-        reader->setExternal(obj, wrapper);
 
-        mPriv->stateMutex.lock();
-        bool pruned = false;
-        if (mPriv->ct>0 && mPriv->prune) {
-            PortReaderPacket *readerPacket =
-                mPriv->dropContent();
-            pruned = (readerPacket!=nullptr);
-        }
-        //mPriv->configure(reader, false, true);
-        mPriv->pool.addActivePacket(reader);
-        mPriv->ct++;
-        mPriv->stateMutex.unlock();
-        if (!pruned) {
-            mPriv->contentSema.post();
-        }
-        //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> adding data");
-    } else {
-        mPriv->stateMutex.lock();
-        mPriv->pool.addInactivePacket(reader);
-        mPriv->stateMutex.unlock();
-        //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> skipping data");
+    reader->setExternal(obj, wrapper);
 
-        // important to give reader a shot anyway, allowing proper closing
-        YARP_DEBUG(Logger::get(), "giving PortReaderBuffer chance to close");
+    mPriv->stateMutex.lock();
+    bool pruned = false;
+    if (mPriv->ct>0 && mPriv->prune) {
+        PortReaderPacket *readerPacket =
+            mPriv->dropContent();
+        pruned = (readerPacket!=nullptr);
+    }
+    //mPriv->configure(reader, false, true);
+    mPriv->pool.addActivePacket(reader);
+    mPriv->ct++;
+    mPriv->stateMutex.unlock();
+    if (!pruned) {
         mPriv->contentSema.post();
     }
+    //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> adding data");
 
     return true;
 }
