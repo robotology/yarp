@@ -69,14 +69,8 @@ if (YARP_HAS_MATH_LIB)
                                     YARP_sig)
   list(APPEND YARP_math_PRIVATE_DEPS YARP_eigen)
 
-  # NOTE: Fix this when Eigen3 3.3.1 is available on all supported distributions
-  if(TARGET Eigen3::Eigen)
-    target_link_libraries(YARP_math PRIVATE Eigen3::Eigen)
-    list(APPEND YARP_math_PRIVATE_DEPS "Eigen3 3.3.1")
-  else()
-    target_include_directories(YARP_math SYSTEM PRIVATE ${EIGEN3_INCLUDE_DIR})
-#     list(APPEND YARP_math_PRIVATE_DEPS Eigen3) (not using targets)
-  endif()
+  target_link_libraries(YARP_math PRIVATE Eigen3::Eigen)
+  list(APPEND YARP_math_PRIVATE_DEPS Eigen3)
 
   # import math symbols from standard cmath
   target_compile_definitions(YARP_math PRIVATE _USE_MATH_DEFINES)
