@@ -1,3 +1,7 @@
+#.rst:
+# StyleNONE
+# ---------
+
 #=============================================================================
 # Copyright 2013-2017 Istituto Italiano di Tecnologia (IIT)
 #   Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
