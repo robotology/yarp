@@ -3118,7 +3118,10 @@ bool ControlBoardRemapper::calibrate(int j, double p)
 
     if (s->calib)
     {
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
         return s->calib->calibrate(off, p);
+YARP_WARNING_POP
     }
 
     return false;

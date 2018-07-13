@@ -323,6 +323,7 @@ public:
 
     // calibration2raw
     virtual bool setCalibrationParametersRaw(int axis, const CalibrationParameters& params) override;
+    using yarp::dev::IControlCalibrationRaw::calibrateRaw;
     virtual bool calibrateRaw(int axis, unsigned int type, double p1, double p2, double p3) override;
     virtual bool doneRaw(int j) override;
 

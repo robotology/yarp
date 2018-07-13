@@ -447,6 +447,7 @@ public:
     virtual bool calibrate(int j, double p) override;
 #endif
 
+    using yarp::dev::IControlCalibration::calibrate;
     virtual bool calibrate(int j, unsigned int ui, double v1, double v2, double v3) override;
 
     virtual bool setCalibrationParameters(int j, const CalibrationParameters &params) override;

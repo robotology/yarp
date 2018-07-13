@@ -174,6 +174,7 @@ public:
      */
     virtual ~ImplementControlCalibration();
 
+    using yarp::dev::IControlCalibration::calibrate;
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     virtual bool calibrate(int j, double p) override;
 #endif

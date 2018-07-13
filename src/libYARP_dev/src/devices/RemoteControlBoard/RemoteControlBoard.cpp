@@ -2465,6 +2465,7 @@ public:
     bool virtual park(bool wait=true) override
     { return send1V(VOCAB_PARK); }
 
+    using yarp::dev::IControlCalibration::calibrate;
     bool virtual calibrate(int j, unsigned int ui, double v1, double v2, double v3) override
     {
         Bottle cmd, response;
