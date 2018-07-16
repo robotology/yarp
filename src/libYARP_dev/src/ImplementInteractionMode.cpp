@@ -51,7 +51,7 @@ bool ImplementInteractionMode::initialize(int size, const int *amap, const doubl
     intBuffManager = new FixedSizeBuffersManager<int> (size);
     yAssert (intBuffManager != nullptr);
 
-    imodeBuffManager = new FixedSizeBuffersManager<yarp::dev::InteractionModeEnum> (size);
+    imodeBuffManager = new FixedSizeBuffersManager<yarp::dev::InteractionModeEnum> (size, 1);
     yAssert (imodeBuffManager != nullptr);
 
     return true;

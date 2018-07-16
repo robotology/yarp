@@ -40,7 +40,7 @@ bool ImplementPidControl:: initialize (int size, const int *amap, const double *
     doubleBuffManager = new FixedSizeBuffersManager<double> (size);
     yAssert (doubleBuffManager != nullptr);
 
-    pidBuffManager = new FixedSizeBuffersManager<Pid> (size);
+    pidBuffManager = new FixedSizeBuffersManager<Pid> (size, 1);
     yAssert (pidBuffManager != nullptr);
 
     return true;
