@@ -130,8 +130,8 @@ bool ImplementCurrentControl::setRefCurrents(const int n_joint, const int *joint
 
     for(int idx=0; idx<n_joint; idx++)
     {
-        buffJoints.setValue(idx, castToMapper(helper)->toHw(joints[idx]));
-        buffValues.setValue(idx, castToMapper(helper)->ampereA2S(t[idx], joints[idx]));
+        buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
+        buffValues[idx] = castToMapper(helper)->ampereA2S(t[idx], joints[idx]);
     }
 
     bool ret = iCurrentRaw->setRefCurrentsRaw(n_joint, buffJoints.getData(), buffValues.getData());

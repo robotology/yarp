@@ -144,6 +144,8 @@ bool ImplementPositionControl::relativeMove(const int n_joint, const int *joints
         buffValues[idx] = castToMapper(helper)->velA2E(deltas[idx], joints[idx]);
     }
     bool ret = iPosition->relativeMoveRaw(n_joint, buffJoints.getData(), buffValues.getData());
+    doubleBuffManager->releaseBuffer(buffValues);
+    intBuffManager->releaseBuffer(buffJoints);
     return ret;
 }
 
@@ -152,6 +154,7 @@ bool ImplementPositionControl::relativeMove(const double *deltas)
     Buffer<double> buffValues = doubleBuffManager->getBuffer();
     castToMapper(helper)->velA2E(deltas, buffValues.getData());
     bool ret = iPosition->relativeMoveRaw(buffValues.getData());
+    doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
@@ -168,13 +171,13 @@ bool ImplementPositionControl::checkMotionDone(const int n_joint, const int *joi
     if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
         return false;
 
-    Buffer<int> buffValues = intBuffManager->getBuffer();
+    Buffer<int> buffJoints = intBuffManager->getBuffer();
     for(int idx=0; idx<n_joint; idx++)
     {
-        buffValues[idx] = castToMapper(helper)->toHw(joints[idx]);
+        buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
-    bool ret = iPosition->checkMotionDoneRaw(n_joint, buffValues.getData(), flags);
-    intBuffManager->releaseBuffer(buffValues);
+    bool ret = iPosition->checkMotionDoneRaw(n_joint, buffJoints.getData(), flags);
+    intBuffManager->releaseBuffer(buffJoints);
     return ret;
 }
 
@@ -334,7 +337,7 @@ bool ImplementPositionControl::getRefAccelerations(const int n_joint, const int 
 
     for(int idx=0; idx<n_joint; idx++)
     {
-        accs[idx]=castToMapper(helper)->accE2A_abs(buffValues.getValue(idx), buffJoints.getValue(idx));
+        accs[idx]=castToMapper(helper)->accE2A_abs(buffValues[idx], buffJoints[idx]);
     }
     doubleBuffManager->releaseBuffer(buffValues);
     intBuffManager->releaseBuffer(buffJoints);

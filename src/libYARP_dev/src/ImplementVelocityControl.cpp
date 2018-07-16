@@ -93,8 +93,8 @@ bool ImplementVelocityControl::velocityMove(const int n_joint, const int *joints
 
     for(int idx=0; idx<n_joint; idx++)
     {
-        buffJoints.setValue(idx, castToMapper(helper)->velA2E(spds[idx], joints[idx]));
-        buffValues.setValue(idx, castToMapper(helper)->velA2E(spds[idx], joints[idx]));
+        buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
+        buffValues[idx] = castToMapper(helper)->velA2E(spds[idx], joints[idx]);
     }
     bool ret = iVelocity->velocityMoveRaw(n_joint, buffJoints.getData(), buffValues.getData());
 
@@ -105,10 +105,10 @@ bool ImplementVelocityControl::velocityMove(const int n_joint, const int *joints
 
 bool ImplementVelocityControl::velocityMove(const double *sp)
 {
-    Buffer<double> b = doubleBuffManager->getBuffer();
-    castToMapper(helper)->velA2E(sp, b.getData());
-    bool ret = iVelocity->velocityMoveRaw(b.getData());
-    doubleBuffManager->releaseBuffer(b);
+    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    castToMapper(helper)->velA2E(sp, buffValues.getData());
+    bool ret = iVelocity->velocityMoveRaw(buffValues.getData());
+    doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
@@ -125,10 +125,10 @@ bool ImplementVelocityControl::getRefVelocity(const int j, double* vel)
 
 bool ImplementVelocityControl::getRefVelocities(double *vels)
 {
-    Buffer<double> b = doubleBuffManager->getBuffer();
-    bool ret=iVelocity->getRefVelocitiesRaw(b.getData());
-    castToMapper(helper)->velE2A(b.getData(), vels);
-    doubleBuffManager->releaseBuffer(b);
+    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    bool ret=iVelocity->getRefVelocitiesRaw(buffValues.getData());
+    castToMapper(helper)->velE2A(buffValues.getData(), vels);
+    doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
@@ -149,7 +149,7 @@ bool ImplementVelocityControl::getRefVelocities(const int n_joint, const int *jo
 
     for(int idx=0; idx<n_joint; idx++)
     {
-        vels[idx]=castToMapper(helper)->velE2A(buffJoints[idx], buffValues[idx]);
+        vels[idx]=castToMapper(helper)->velE2A(buffValues[idx], buffJoints[idx]);
     }
 
     intBuffManager->releaseBuffer(buffJoints);

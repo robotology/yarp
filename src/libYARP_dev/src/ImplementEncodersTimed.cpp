@@ -120,8 +120,8 @@ bool ImplementEncodersTimed::getEncoder(int j, double *v)
 bool ImplementEncodersTimed::getEncoders(double *v)
 {
     Buffer<double> buffValues =buffManager->getBuffer();
-    castToMapper(helper)->posA2E(v, buffValues.getData());
     bool ret = iEncoders->getEncodersRaw(buffValues.getData());
+    castToMapper(helper)->posE2A(buffValues.getData(), v);
     buffManager->releaseBuffer(buffValues);
     return ret;
 }

@@ -141,7 +141,7 @@ bool ImplementPositionDirect::getRefPositions(const int n_joint, const int* join
 
     for(int idx=0; idx<n_joint; idx++)
     {
-        buffJoints.setValue(idx, castToMapper(helper)->toHw(joints[idx]));
+        buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
 
     Buffer<double> buffValues = doubleBuffManager->getBuffer();
@@ -149,7 +149,7 @@ bool ImplementPositionDirect::getRefPositions(const int n_joint, const int* join
 
     for(int idx=0; idx<n_joint; idx++)
     {
-        refs[idx]=castToMapper(helper)->posE2A(buffValues.getValue(idx), buffJoints.getValue(idx));
+        refs[idx]=castToMapper(helper)->posE2A(buffValues[idx], buffJoints[idx]);
     }
 
     doubleBuffManager->releaseBuffer(buffValues);
