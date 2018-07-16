@@ -8,7 +8,6 @@
  */
 
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
-#include "yarp/dev/ControlBoardInterfacesImpl-inl.h" //ControlBoardHelper
 #include <yarp/os/Log.h>
 
 #include <cstdio>

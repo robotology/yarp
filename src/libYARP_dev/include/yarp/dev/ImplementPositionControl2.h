@@ -10,7 +10,7 @@
 #define YARP_DEV_IPOSITIONCONTROL2IMPL_H
 
 
-#include <yarp/dev/IPositionControlImpl.h>
+#include <yarp/dev/ImplementPositionControl.h>
 
 namespace yarp{
     namespace dev {

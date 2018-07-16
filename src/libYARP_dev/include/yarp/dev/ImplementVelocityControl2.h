@@ -10,7 +10,7 @@
 #define YARP_DEV_IVELOCITYCONTROL2IMPL_H
 
 
-#include <yarp/dev/IVelocityControlImpl.h>
+#include <yarp/dev/ImplementVelocityControl.h>
 #include <yarp/os/Log.h>
 
 namespace yarp {

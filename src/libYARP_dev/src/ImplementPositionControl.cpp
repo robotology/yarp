@@ -8,7 +8,7 @@
 
 #include <cstdio>
 
-#include <yarp/dev/IPositionControlImpl.h>
+#include <yarp/dev/ImplementPositionControl.h>
 #include <yarp/dev/ControlBoardHelper.h>
 #include <yarp/os/Log.h>
 
