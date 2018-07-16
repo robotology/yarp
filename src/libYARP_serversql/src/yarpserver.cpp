@@ -253,6 +253,9 @@ int yarp::serversql::Server::run(int argc, char** argv)
 
     NameServerContainer nc;
     if (!nc.open(options)) {
+        if (silent) {
+            fclose(out);
+        }
         return 1;
     }
 
@@ -320,10 +323,10 @@ int yarp::serversql::Server::run(int argc, char** argv)
     }
 
     fprintf(out, "closing yarp server\n");
+    server.close();
     if (silent) {
         fclose(out);
     }
-    server.close();
     return 0;
 }
 
