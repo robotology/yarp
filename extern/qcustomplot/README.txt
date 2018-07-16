@@ -1,4 +1,5 @@
 QCustomPlot
+-----------
 
 QCustomPlot is a Qt C++ widget for plotting and data visualization.
 

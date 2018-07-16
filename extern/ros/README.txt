@@ -1,4 +1,5 @@
 ROS message definitions
+-----------------------
 
 Homepage: https://github.com/ros/std_msgs
           https://github.com/ros/common_msgs
