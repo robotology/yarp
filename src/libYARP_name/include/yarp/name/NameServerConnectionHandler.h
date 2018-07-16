@@ -16,13 +16,14 @@
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
-#include <string>
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
 
 #include <yarp/name/NameService.h>
 
 #include <cstdio>
+#include <string>
+#include <algorithm>
 
 namespace yarp {
     namespace name {
@@ -75,22 +76,12 @@ public:
                 for (size_t i=1; i<reply.size(); i++) {
                     yarp::os::Value& v = reply.get(i);
                     if (v.isList()) {
-                        std::string si = v.asList()->toString();
-                        char *buf = (char*)si.c_str();
-                        size_t idx = 0;
                         // old name server messages don't have quotes,
                         // so we strip them.
-                        for (size_t i=0; i<si.length(); i++) {
-                            if (si[i]!='\"') {
-                                if (idx!=i) {
-                                    buf[idx] = si[i];
-                                }
-                                idx++;
-                            }
-                        }
-                        std::string so(si.c_str(),idx);
-                        if (so.length()>0) {
-                            writer->appendString(so.c_str());
+                        std::string si = v.asList()->toString();
+                        si.erase(std::remove(si.begin(), si.end(), '\"'), si.end());
+                        if (si.length()>0) {
+                            writer->appendString(si.c_str());
                         }
                     } else {
                         if (v.isString()) {
