@@ -140,8 +140,7 @@ int main(int argc, char *argv[])
             desc_driver_options.put("device", "robotDescriptionClient");
             desc_driver_options.put("local", descLocalName);
             desc_driver_options.put("remote", "/robotDescription");
-            desc_driver->open(desc_driver_options);
-            if (desc_driver && desc_driver->isValid())
+            if (desc_driver && desc_driver->open(desc_driver_options))
             {
                 IRobotDescription* idesc = nullptr;
                 desc_driver->view(idesc);
@@ -157,6 +156,12 @@ int main(int argc, char *argv[])
                         pParts.addString(wrappers_list[i].device_name);
                     }
                 }
+            }
+
+            if (desc_driver)
+            {
+                desc_driver->close();
+                delete desc_driver;
             }
         }
         else

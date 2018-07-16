@@ -300,7 +300,7 @@ void MainWindow::ctxMenu(const QPoint &pos)
     menu->exec(ui->yarprunTreeView->mapToGlobal(pos));
 }
 
-MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
+MainWindow::MainWindow(const yarp::os::ResourceFinder& rf, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {

@@ -100,10 +100,10 @@ GraphicModel* Arrow::getModel()
     return &model;
 }
 
-void Arrow::setConnection(Connection conn)
+void Arrow::setConnection(const Connection& conn)
 {
     connection = conn;
-    QString label = conn.carrier();
+    QString label = connection.carrier();
     if(!label.isEmpty()){
         textLbl.setText(label);
     }

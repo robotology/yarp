@@ -111,7 +111,7 @@ public:
     int getId();
     QString getFrom();
     QString getTo();
-    void setConnection(Connection conn);
+    void setConnection(const Connection& conn);
     void setConnectionSelected(bool selected);
     void updateModel();
     void updateCarrier(QString carrier);

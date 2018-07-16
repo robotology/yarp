@@ -126,7 +126,7 @@ bool OpenCVGrabber::open(Searchable & config) {
             m_cap.set(CV_CAP_PROP_FRAME_HEIGHT, m_h);
         }
     } else {
-        m_w = (size_t)m_cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+        m_h = (size_t)m_cap.get(CV_CAP_PROP_FRAME_HEIGHT);
     }
 
     // Ignore capture properties - they are unreliable

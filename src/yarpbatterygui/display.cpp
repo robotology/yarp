@@ -187,7 +187,7 @@ void MainWindow::updateMain()
     return;
 }
 
-MainWindow::MainWindow(yarp::os::ResourceFinder rf, yarp::dev::IBattery* p_ibat, QWidget *parent) : QMainWindow(parent),
+MainWindow::MainWindow(const yarp::os::ResourceFinder& rf, yarp::dev::IBattery* p_ibat, QWidget *parent) : QMainWindow(parent),
     ibat(p_ibat),
     drv(nullptr),
     ui(new Ui::MainWindow),
