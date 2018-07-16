@@ -160,7 +160,7 @@ bool ImplementPositionControl::checkMotionDone(const int n_joint, const int *joi
 
 bool ImplementPositionControl::checkMotionDone(bool *flag)
 {
-    bool flags_tmp[nj];
+    bool *flags_tmp = new bool[nj];
     bool ret = iPosition->checkMotionDoneRaw(flags_tmp);
     for(int i=0; i<nj; i++)
     {
