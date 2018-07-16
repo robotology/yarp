@@ -8,7 +8,7 @@
 
 #include <cstdio>
 
-#include <yarp/dev/IVelocityControlImpl.h>
+#include <yarp/dev/ImplementVelocityControl.h>
 #include <yarp/dev/ControlBoardHelper.h>
 #include <yarp/os/Log.h>
 

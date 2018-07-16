@@ -35,10 +35,10 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IAxisInfo.h
                   include/yarp/dev/IAmplifierControl.h
                   include/yarp/dev/IControlDebug.h
-                  include/yarp/dev/IControlLimitsImpl.h
+                  include/yarp/dev/ImplementControlLimits.h
                   include/yarp/dev/IControlLimits.h
                   include/yarp/dev/IControlLimits2.h
-                  include/yarp/dev/IControlLimits2Impl.h
+                  include/yarp/dev/ImplementControlLimits2.h
                   include/yarp/dev/IControlMode2.h
                   include/yarp/dev/IControlMode.h
                   include/yarp/dev/ICurrentControl.h
@@ -47,7 +47,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IHapticDevice.h
                   include/yarp/dev/IImpedanceControl.h
                   include/yarp/dev/IInteractionMode.h
-                  include/yarp/dev/IInteractionModeImpl.h
+                  include/yarp/dev/ImplementInteractionMode.h
                   include/yarp/dev/IJoypadController.h
                   include/yarp/dev/IMotorEncoders.h
                   include/yarp/dev/IMotor.h
@@ -68,13 +68,13 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ImplementAmplifierControl.h
                   include/yarp/dev/IPidControl.h
                   include/yarp/dev/PidEnums.h
-                  include/yarp/dev/IPidControlImpl.h
+                  include/yarp/dev/ImplementPidControl.h
                   include/yarp/dev/IPositionControl.h
-                  include/yarp/dev/IPositionControlImpl.h
+                  include/yarp/dev/ImplementPositionControl.h
                   include/yarp/dev/IPositionControl2.h
-                  include/yarp/dev/IPositionControl2Impl.h
+                  include/yarp/dev/ImplementPositionControl2.h
                   include/yarp/dev/IPositionDirect.h
-                  include/yarp/dev/IPositionDirectImpl.h
+                  include/yarp/dev/ImplementPositionDirect.h
                   include/yarp/dev/IControlCalibration.h
                   include/yarp/dev/IPWMControl.h
                   include/yarp/dev/IRangefinder2D.h
@@ -84,8 +84,8 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ITorqueControl.h
                   include/yarp/dev/IVelocityControl.h
                   include/yarp/dev/IVelocityControl2.h
-                  include/yarp/dev/IVelocityControlImpl.h
-                  include/yarp/dev/IVelocityControl2Impl.h
+                  include/yarp/dev/ImplementVelocityControl.h
+                  include/yarp/dev/ImplementVelocityControl2.h
                   include/yarp/dev/IVirtualAnalogSensor.h
                   include/yarp/dev/IVisualParams.h
                   include/yarp/dev/IVisualParamsImpl.h
@@ -100,7 +100,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/SerialInterfaces.h
                   include/yarp/dev/ServiceInterfaces.h
                   include/yarp/dev/Wrapper.h
-                  include/yarp/dev/IVirtualAnalogSensorImpl.h)
+                  include/yarp/dev/ImplementVirtualAnalogSensor.h)
 
 if (CREATE_LIB_MATH)
   list(APPEND YARP_dev_HDRS include/yarp/dev/IFrameTransform.h
@@ -116,41 +116,41 @@ set(YARP_dev_IMPL_HDRS )
 set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/ControlBoardHelper.cpp
                   src/ControlBoardPid.cpp
-                  src/IControlCalibrationImpl.cpp
-                  src/ControlModeImpl.cpp
-                  src/CurrentControlImpl.cpp
+                  src/ImplementControlCalibration.cpp
+                  src/ImplementControlMode.cpp
+                  src/ImplementCurrentControl.cpp
                   src/DeviceDriver.cpp
                   src/Drivers.cpp
                   src/FrameGrabberControlImpl.cpp
-                  src/IAxisInfoImpl.cpp
+                  src/ImplementAxisInfo.cpp
                   src/IBattery.cpp
-                  src/IControlLimitsImpl.cpp
-                  src/IEncodersTimedImpl.cpp
-                  src/IInteractionModeImpl.cpp
+                  src/ImplementControlLimits.cpp
+                  src/ImplementEncodersTimed.cpp
+                  src/ImplementInteractionMode.cpp
                   src/IJoypadController.cpp
-                  src/IMotorEncodersImpl.cpp
-                  src/IMotorImpl.cpp
-                  src/ImpedanceControlImpl.cpp
-                  src/IPidControlImpl.cpp
-                  src/IPositionControlImpl.cpp
-                  src/IPositionDirectImpl.cpp
+                  src/ImplementMotorEncoders.cpp
+                  src/ImplementMotor.cpp
+                  src/ImplementImpedanceControl.cpp
+                  src/ImplementPidControl.cpp
+                  src/ImplementPositionControl.cpp
+                  src/ImplementPositionDirect.cpp
                   src/IRangefinder2D.cpp
-                  src/IRemoteVariablesImpl.cpp
-                  src/IVelocityControlImpl.cpp
+                  src/ImplementRemoteVariables.cpp
+                  src/ImplementVelocityControl.cpp
                   src/IVisualParamsImpl.cpp
-                  src/IAmplifierControlImpl.cpp
-                  src/IEncodersImpl.cpp
+                  src/ImplementAmplifierControl.cpp
+                  src/ImplementEncoders.cpp
                   src/LaserMeasurementData.cpp
                   src/MultipleAnalogSensorsInterfaces.cpp
                   src/PolyDriver.cpp
                   src/PolyDriverDescriptor.cpp
                   src/PolyDriverList.cpp
                   src/PopulateDrivers.cpp
-                  src/PWMControlImpl.cpp
-                  src/RemoteCalibratorImpl.cpp
-                  src/TorqueControlImpl.cpp
+                  src/ImplementPWMControl.cpp
+                  src/ImplementRemoteCalibrator.cpp
+                  src/ImplementTorqueControl.cpp
                   src/RGBDSensorParamParser.cpp
-                  src/VirtualAnalogSensorImpl.cpp)
+                  src/ImplementVirtualAnalogSensor.cpp)
 
 if(CREATE_LIB_MATH)
   list(APPEND YARP_dev_SRCS src/IFrameTransform.cpp

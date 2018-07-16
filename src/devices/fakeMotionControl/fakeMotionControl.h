@@ -28,7 +28,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/IVirtualAnalogSensor.h>
-#include <yarp/dev/IVirtualAnalogSensorImpl.h>
+#include <yarp/dev/ImplementVirtualAnalogSensor.h>
 
 namespace yarp {
     namespace dev {

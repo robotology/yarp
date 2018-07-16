@@ -8,7 +8,7 @@
 
 #include <cstdio>
 
-#include <yarp/dev/IControlLimitsImpl.h>
+#include <yarp/dev/ImplementControlLimits.h>
 #include <yarp/dev/ControlBoardHelper.h>
 
 using namespace yarp::dev;
