@@ -1,4 +1,5 @@
 hmac
+----
 
 Software implementation in C of the FIPS 198 Keyed-Hash Message
 Authentication Code HMAC for SHA2 (namely HMAC-SHA-224, HMAC-SHA-256,

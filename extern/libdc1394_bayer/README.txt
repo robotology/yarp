@@ -1,3 +1,6 @@
+libdc1394_bayer
+---------------
+
 This is a two-file fragment from libdc1394.  Read conversions.h to see
 adaptation to MSVC.  It is used by the optional bayer carrier.  If a system
 version is found, it will be preferred over this. you can use the
