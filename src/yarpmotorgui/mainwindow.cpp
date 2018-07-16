@@ -591,7 +591,7 @@ bool MainWindow::init(QStringList enabledParts,
         int         part_id = i_parts->second.partindex;
         part = new PartItem(robot_name_without_slash.c_str(), part_id, part_name_without_slash.c_str(), finder, debug_param_enabled, speedview_param_enabled, enable_calib_all, scroll);
 
-        if(!part->getInterfaceError())
+        if(part && !part->getInterfaceError())
         {
             connect(part,SIGNAL(sequenceActivated()),this,SLOT(onSequenceActivated()));
             connect(part,SIGNAL(sequenceStopped()),this,SLOT(onSequenceStopped()));

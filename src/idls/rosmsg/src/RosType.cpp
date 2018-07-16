@@ -196,8 +196,8 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         source = "";
 
         RosType *cursor = this;
+        char buf[2048];
         do {
-            char buf[2048];
             result = fgets(buf,sizeof(buf),fin);
             if (result==nullptr) break;
             txt += "//   ";

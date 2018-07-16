@@ -508,10 +508,10 @@ void RpLidar::run()
 
     unsigned char minibuff[15];
     unsigned int ok_count = 0;
+    bool new_scan = false;
     do
     {
         buffer->select_elems(minibuff,15);
-        bool new_scan = false;
 
         int start = (minibuff[0]) & 0x01;
         int lock = (minibuff[0] >> 1) & 0x01;

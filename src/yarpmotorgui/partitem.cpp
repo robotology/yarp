@@ -1899,14 +1899,7 @@ void PartItem::onViewPositionTarget(bool ena)
     for (int i = 0; i<m_layout->count(); i++)
     {
         JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
-        if (ena)
-        {
-            joint->viewPositionTarget(ena);
-        }
-        else
-        {
-            joint->viewPositionTarget(ena);
-        }
+        joint->viewPositionTarget(ena);
     }
 }
 
