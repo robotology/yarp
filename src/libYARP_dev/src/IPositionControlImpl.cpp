@@ -160,7 +160,14 @@ bool ImplementPositionControl::checkMotionDone(const int n_joint, const int *joi
 
 bool ImplementPositionControl::checkMotionDone(bool *flag)
 {
-    return iPosition->checkMotionDoneRaw(flag);
+    bool *flags_tmp = new bool[nj];
+    bool ret = iPosition->checkMotionDoneRaw(flags_tmp);
+    for(int i=0; i<nj; i++)
+    {
+        flag[i] = flags_tmp[castToMapper(helper)->toHw(i)];
+    }
+    delete []flags_tmp;
+    return ret;
 }
 
 bool ImplementPositionControl::setRefSpeed(int j, double sp)
