@@ -129,7 +129,7 @@ bool ImplementInteractionMode::setInteractionModes(yarp::dev::InteractionModeEnu
     for(int idx=0; idx< castToMapper(helper)->axes(); idx++)
     {
         int j = castToMapper(helper)->toHw(idx);
-        temp_modes[idx] = modes[j];
+        temp_modes[j] = modes[idx];
     }
     bool ret = iInteraction->setInteractionModesRaw(temp_modes);
     delete [] temp_modes;

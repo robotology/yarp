@@ -135,8 +135,8 @@ bool ImplementCurrentControl::getCurrentRanges(double *min, double *max)
     double *tmp_min = new double[nj];
     double *tmp_max = new double[nj];
     bool ret = iCurrentRaw->getCurrentRangesRaw(tmp_min, tmp_max);
-    castToMapper(helper)->toUser(tmp_min, min);
-    castToMapper(helper)->toUser(tmp_max, max);
+    castToMapper(helper)->ampereS2A(tmp_min, min);
+    castToMapper(helper)->ampereS2A(tmp_max, max);
     delete [] tmp_min;
     delete [] tmp_max;
     return ret;
@@ -147,5 +147,9 @@ bool ImplementCurrentControl::getCurrentRange(int j, double *min, double *max)
     JOINTIDCHECK
     int k;
     k=castToMapper(helper)->toHw(j);
-    return iCurrentRaw->getCurrentRangeRaw(k, min, max);
+    double min_t, max_t;
+    bool ret = iCurrentRaw->getCurrentRangeRaw(k, &min_t, &max_t);
+    *min = castToMapper(helper)->ampereS2A(min_t, k);
+    *max = castToMapper(helper)->ampereS2A(max_t, k);
+    return ret;
 }
