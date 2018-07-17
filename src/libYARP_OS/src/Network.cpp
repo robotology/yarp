@@ -1339,7 +1339,7 @@ std::string NetworkBase::getEnvironment(const char *key,
     if (found != nullptr) {
         *found = (result!=nullptr);
     }
-    if (result == nullptr) {
+    if (!result) {
         return "";
     }
     return result;
