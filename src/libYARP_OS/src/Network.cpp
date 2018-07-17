@@ -1340,9 +1340,9 @@ std::string NetworkBase::getEnvironment(const char *key,
         *found = (result!=nullptr);
     }
     if (!result) {
-        return "";
+        return std::string("");
     }
-    return result;
+    return std::string(result);
 }
 
 void NetworkBase::setEnvironment(const std::string& key, const std::string& val) {
