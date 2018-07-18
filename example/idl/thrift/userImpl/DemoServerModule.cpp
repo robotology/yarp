@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
     
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
-    rf.configure("YARP_POLICY", argc, argv);
+    rf.configure(argc, argv);
 
     DemoServerModule demoMod; 
 

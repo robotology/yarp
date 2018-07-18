@@ -11,15 +11,20 @@
 cmake_minimum_required(VERSION 3.5)
 project(Matrix)
 
-find_package(YARP REQUIRED)
+find_package(YARP REQUIRED COMPONENTS sig math gsl)
 
 find_package(GSL REQUIRED)
 
 include_directories(${CMAKE_SOURCE_DIR})
 
 add_executable(basic_ops basic_ops.cpp)
-target_link_libraries(basic_ops ${YARP_LIBRARIES})
+target_link_libraries(basic_ops YARP::YARP_sig
+                                YARP::YARP_math)
 
 add_executable(gsl_example gsl_example.cpp)
-target_link_libraries(gsl_example ${YARP_LIBRARIES} YARP::YARP_gsl GSL::gsl GSL::gslcblas)
+target_link_libraries(gsl_example YARP::YARP_sig
+                                  YARP::YARP_math
+                                  YARP::YARP_gsl
+                                  GSL::gsl
+                                  GSL::gslcblas)
 

@@ -5,6 +5,7 @@
  * This software may be modified and distributed under the terms of the
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
+
 #include <yarp/dev/RGBDSensorParamParser.h>
 #include <yarp/os/LogStream.h>
 

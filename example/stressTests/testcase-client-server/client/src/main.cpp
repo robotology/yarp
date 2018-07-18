@@ -10,7 +10,7 @@
 #include <yarp/os/Network.h>
 #include <stdio.h>
 
-#include "client.hpp"
+#include "client.h"
 
 using namespace yarp;
 using namespace yarp::os;

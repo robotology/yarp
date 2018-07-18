@@ -11,8 +11,8 @@
 #include <yarp/os/Bottle.h>
 #include <stdio.h>
 
-#include "vocabs.hpp"
-#include "client.hpp"
+#include "vocabs.h"
+#include "client.h"
 
 using namespace yarp;
 using namespace yarp::os;

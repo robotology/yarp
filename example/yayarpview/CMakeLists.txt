@@ -1,29 +1,28 @@
-# Make sure that YARP_DIR is set in your environment to wherever you 
-# compiled YARP.
-
-# Copyright: (C) 2010 Renaud Detry
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 cmake_minimum_required(VERSION 3.5)
 project(yayarpview)
 
-# replace with the path to your YARP binaries if needed
-set(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
-
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS OS sig REQUIRED)
 
 find_package(X11)
-include_directories(${X11_INCLUDE_DIR})
 
-# add_definitions("-Dcimg_use_png -Dcimg_use_jpeg")
+set(yayarpview_HDRS CImg.h
+                    stmac.h
+                    YarpCImgViewer.h)
 
-file(GLOB HEADERS *.h)
-file(GLOB CODE *.cpp)
+set(yayarpview_SRCS main.cpp
+                    YarpCImgViewer.cpp)
 
-add_executable(yayarpview ${HEADERS} ${CODE})
+add_executable(yayarpview ${yayarpview_HDRS}
+                          ${yayarpview_SRCS})
 
-target_link_libraries(yayarpview ${YARP_LIBRARIES}
-                                 ${X11_LIBRARIES}
-                                 -lpthread
-                                 -lm)
-# target_link_libraries("yayarpview -ljpeg -lpng -lpthread -lm")
+target_include_directories(yayarpview SYSTEM PRIVATE ${X11_INCLUDE_DIR})
+
+target_link_libraries(yayarpview PRIVATE ${YARP_LIBRARIES}
+                                         ${X11_LIBRARIES}
+                                         pthread)

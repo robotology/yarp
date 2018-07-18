@@ -1,4 +1,12 @@
-// This is an automatically-generated file.
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+// This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
 #include <yarp/os/Wire.h>
@@ -15,7 +23,7 @@ int PointQualityVocab::fromString(const std::string& input) {
   if (input=="BAD") return (int)BAD;
   return -1;
 }
-std::string PointQualityVocab::toString(int input) {
+std::string PointQualityVocab::toString(int input) const {
   switch((PointQuality)input) {
   case UNKNOWN:
     return "UNKNOWN";

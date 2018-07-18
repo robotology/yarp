@@ -14,7 +14,7 @@ set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")
 yarp_idl_to_dir(demo.thrift ${generated_libs_dir})
 
 # CMake has compiled the file during the configuration process, so now we can include the generated .cmake file that lists all sources into "headers" and "sources" variables
-include(demo_thrift.cmake)
+include(${generated_libs_dir}/demo_thrift.cmake)
 include_directories(${generated_libs_dir}/include)
 
 # Create the server executable that implements the interface
