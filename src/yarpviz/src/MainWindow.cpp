@@ -183,13 +183,13 @@ void MainWindow::drawGraph(Graph &graph)
                     sgraph->setAttribute("label", prop.find("hostname").toString().c_str());
                     string host = prop.find("os").asString();
                     if(host == "Linux")
-                        sgraph->setIcon(QImage(":/icons/resources/Linux-icon.png"));
+                        sgraph->setIcon(QImage(":/icons/resources/os-linux.png"));
                     else if(host == "Windows")
-                        sgraph->setIcon(QImage(":/icons/resources/Windows-icon.png"));
+                        sgraph->setIcon(QImage(":/icons/resources/os-windows.png"));
                     else if(host == "Mac")
-                        sgraph->setIcon(QImage(":/icons/resources/Mac-icon.png"));
+                        sgraph->setIcon(QImage(":/icons/resources/os-macos.png"));
                     else
-                        sgraph->setIcon(QImage(":/icons/resources/Gnome-System-Run-64.png"));
+                        sgraph->setIcon(QImage(":/icons/resources/system-run.png"));
                     std::string endNodeName = key.str() + ".end";
                     QGVNode * node = sgraph->addNode(endNodeName.c_str());
                     node->setAttribute("shape", "circle");

@@ -234,8 +234,8 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/images/all_ico_b.png</normaloff>
-             <normalon>:/images/all_ico.png</normalon>:/images/all_ico_b.png</iconset>
+             <normaloff>:/images/all_b.png</normaloff>
+             <normalon>:/images/all.png</normalon>:/images/all_b.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -273,8 +273,8 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/images/warning_ico_b.png</normaloff>
-             <normalon>:/images/warning_ico.png</normalon>:/images/warning_ico_b.png</iconset>
+             <normaloff>:/images/warning_b.png</normaloff>
+             <normalon>:/images/warning.png</normalon>:/images/warning_b.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -312,8 +312,8 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/images/info_ico_b.png</normaloff>
-             <normalon>:/images/info_ico.png</normalon>:/images/info_ico_b.png</iconset>
+             <normaloff>:/images/info_b.png</normaloff>
+             <normalon>:/images/info.png</normalon>:/images/info_b.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -351,8 +351,8 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/images/debug_ico_b.png</normaloff>
-             <normalon>:/images/debug_ico.png</normalon>:/images/debug_ico_b.png</iconset>
+             <normaloff>:/images/debug_b.png</normaloff>
+             <normalon>:/images/debug.png</normalon>:/images/debug_b.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -390,8 +390,8 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/images/error_ico_b.png</normaloff>
-             <normalon>:/images/error_ico.png</normalon>:/images/error_ico_b.png</iconset>
+             <normaloff>:/images/error_b.png</normaloff>
+             <normalon>:/images/error.png</normalon>:/images/error_b.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -452,8 +452,8 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/images/trace_ico_b.png</normaloff>
-             <normalon>:/images/trace_ico.png</normalon>:/images/trace_ico_b.png</iconset>
+             <normaloff>:/images/trace_b.png</normaloff>
+             <normalon>:/images/trace.png</normalon>:/images/trace_b.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -586,7 +586,7 @@
   <action name="actionSave_Log">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/save_ico.png</normaloff>:/images/save_ico.png</iconset>
+     <normaloff>:/images/save.png</normaloff>:/images/save.png</iconset>
    </property>
    <property name="text">
     <string>Save Log Session</string>
@@ -600,7 +600,7 @@
   <action name="actionStart_Logger">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/run_ico.png</normaloff>:/images/run_ico.png</iconset>
+     <normaloff>:/images/run.png</normaloff>:/images/run.png</iconset>
    </property>
    <property name="text">
     <string>Start Logger</string>
@@ -614,7 +614,7 @@
   <action name="actionStop_Logger">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/stop_ico.png</normaloff>:/images/stop_ico.png</iconset>
+     <normaloff>:/images/stop.png</normaloff>:/images/stop.png</iconset>
    </property>
    <property name="text">
     <string>Stop Logger</string>
@@ -672,7 +672,7 @@
   <action name="actionRefresh">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/progress_ico.png</normaloff>:/images/progress_ico.png</iconset>
+     <normaloff>:/images/progress.png</normaloff>:/images/progress.png</iconset>
    </property>
    <property name="text">
     <string>Refresh</string>

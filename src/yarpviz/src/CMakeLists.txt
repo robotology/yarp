@@ -24,7 +24,7 @@ set(yarpviz_qt_HDRS MainWindow.h
                     portloggerdialog.h
                     batchqosconfdialog.h)
 
-set(yarpviz_qt_QRC_FILES ress.qrc)
+set(yarpviz_qt_QRC_FILES res.qrc)
 
 set(yarpviz_qt_UI_FILES MainWindow.ui
                         informationdialog.ui
