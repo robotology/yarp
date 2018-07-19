@@ -34,6 +34,7 @@ protected:
     void    *helper;
     yarp::os::FixedSizeBuffersManager<int> *intBuffManager;
     yarp::os::FixedSizeBuffersManager<double> *doubleBuffManager;
+    yarp::os::FixedSizeBuffersManager<bool> *boolBuffManager;
 
     /**
      * Initialize the internal data and alloc memory.

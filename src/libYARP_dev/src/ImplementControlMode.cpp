@@ -116,12 +116,12 @@ bool ImplementControlMode::setControlModes(const int n_joint, const int *joints,
 
 bool ImplementControlMode::setControlModes(int *modes)
 {
-    int *modes_tmp=new int [nj];
-    for(int idx=0; idx<nj; idx++)
+    Buffer<int> buffValues  = buffManager->getBuffer();
+    for(int idx=0; idx<castToMapper(helper)->axes(); idx++)
     {
-        modes_tmp[castToMapper(helper)->toHw(idx)] = modes[idx];
+        buffValues[castToMapper(helper)->toHw(idx)] = modes[idx];
     }
-    bool ret = raw->setControlModesRaw(modes_tmp);
-    delete [] modes_tmp;
+    bool ret = raw->setControlModesRaw(buffValues.getData());
+    buffManager->releaseBuffer(buffValues);
     return ret;
 }

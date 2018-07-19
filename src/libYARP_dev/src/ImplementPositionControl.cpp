@@ -51,6 +51,8 @@ bool ImplementPositionControl::initialize(int size, const int *amap, const doubl
     doubleBuffManager = new FixedSizeBuffersManager<double> (size);
     yAssert (doubleBuffManager != nullptr);
 
+    boolBuffManager = new FixedSizeBuffersManager<bool> (size, 1);
+    yAssert (boolBuffManager != nullptr);
     return true;
 }
 
@@ -78,6 +80,11 @@ bool ImplementPositionControl::uninitialize()
         doubleBuffManager=nullptr;
     }
 
+    if(boolBuffManager)
+    {
+        delete boolBuffManager;
+        boolBuffManager=nullptr;
+    }
 
     return true;
 }
@@ -183,13 +190,16 @@ bool ImplementPositionControl::checkMotionDone(const int n_joint, const int *joi
 
 bool ImplementPositionControl::checkMotionDone(bool *flag)
 {
-    bool *flags_tmp = new bool[nj];
-    bool ret = iPosition->checkMotionDoneRaw(flags_tmp);
-    for(int i=0; i<nj; i++)
+    Buffer<bool> flags_tmp = boolBuffManager->getBuffer();
+    bool ret = iPosition->checkMotionDoneRaw(flags_tmp.getData());
+    if(ret)
     {
-        flag[i] = flags_tmp[castToMapper(helper)->toHw(i)];
+        for(int i=0; i<castToMapper(helper)->axes(); i++)
+        {
+            flag[i] = flags_tmp[castToMapper(helper)->toHw(i)];
+        }
     }
-    delete []flags_tmp;
+    boolBuffManager->releaseBuffer(flags_tmp);
     return ret;
 }
 
