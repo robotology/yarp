@@ -1,3 +1,11 @@
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
 #demo.thrift
 
 /**
@@ -24,7 +32,7 @@ enum DemoEnum {
 struct DemoStruct {
   /** this is the x part */
   1: i32 x = 0,
- 
+
   /** this is the y part */
   2: i32 y
 }
@@ -36,7 +44,7 @@ struct DemoStructList {
 struct DemoStructExt {
   /** this is the x part */
   1: i32 x = 0,
- 
+
   /** this is the y part */
   2: i32 y = 0,
 

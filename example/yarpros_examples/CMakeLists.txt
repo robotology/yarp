@@ -1,4 +1,3 @@
-# This is in large part a generated file.  Modifications to it are:
 # Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
 # Copyright (C) 2006-2010 RobotCub Consortium
 # All rights reserved.

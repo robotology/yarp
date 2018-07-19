@@ -1,8 +1,18 @@
 /*
- * Copyright (C) 2015 Istituto Italiano di Tecnologia (IIT)
- * Authors: Ali Paikan
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LICENSE
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
  *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <fstream>
@@ -472,7 +482,7 @@ void MainWindow::onSubGraphContextMenuProcess(QGVSubGraph *sgraph) {
 
 void MainWindow::onAbout() {
     QMessageBox::about(this, "yarpviz (version 2.0.0)",
-                       "A graphical tool for a graphical tool for profiling and visualizing Yarp network!\n\nAuthors:\n\t-Ali Paikan <ali.paikan@iit.it>\n\t-Nicolò Genesio <nicolo.genesio@iit.it>");
+                       "A graphical tool for a graphical tool for profiling and visualizing Yarp network!");
 }
 
 void MainWindow::onNodeContextMenuPort(QGVNode *node, GraphicVertex* vertex) {
