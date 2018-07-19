@@ -9,24 +9,16 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <Demo.h>
+#include <secondInterface/Demo.h>
 #include <yarp/os/idl/WireTypes.h>
 
+namespace yarp { namespace test {
 
 
 class Demo_get_answer : public yarp::os::Portable {
 public:
   std::int32_t _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
-  virtual bool read(yarp::os::ConnectionReader& connection) override;
-};
-
-class Demo_set_answer : public yarp::os::Portable {
-public:
-  std::int32_t rightAnswer;
-  bool _return;
-  void init(const std::int32_t rightAnswer);
   virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
@@ -40,26 +32,21 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-class Demo_start : public yarp::os::Portable {
+class Demo_double_down : public yarp::os::Portable {
 public:
-  bool _return;
-  void init();
+  std::int32_t x;
+  std::int32_t _return;
+  void init(const std::int32_t x);
   virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-class Demo_stop : public yarp::os::Portable {
+class Demo_add_point : public yarp::os::Portable {
 public:
-  bool _return;
-  void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
-  virtual bool read(yarp::os::ConnectionReader& connection) override;
-};
-
-class Demo_is_running : public yarp::os::Portable {
-public:
-  bool _return;
-  void init();
+   ::yarp::test::PointD x;
+   ::yarp::test::PointD y;
+   ::yarp::test::PointD _return;
+  void init(const  ::yarp::test::PointD& x, const  ::yarp::test::PointD& y);
   virtual bool write(yarp::os::ConnectionWriter& connection) const override;
   virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
@@ -85,29 +72,6 @@ void Demo_get_answer::init() {
   _return = 0;
 }
 
-bool Demo_set_answer::write(yarp::os::ConnectionWriter& connection) const {
-  yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(3)) return false;
-  if (!writer.writeTag("set_answer",1,2)) return false;
-  if (!writer.writeI32(rightAnswer)) return false;
-  return true;
-}
-
-bool Demo_set_answer::read(yarp::os::ConnectionReader& connection) {
-  yarp::os::idl::WireReader reader(connection);
-  if (!reader.readListReturn()) return false;
-  if (!reader.readBool(_return)) {
-    reader.fail();
-    return false;
-  }
-  return true;
-}
-
-void Demo_set_answer::init(const std::int32_t rightAnswer) {
-  _return = false;
-  this->rightAnswer = rightAnswer;
-}
-
 bool Demo_add_one::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
   if (!writer.writeListHeader(3)) return false;
@@ -131,67 +95,51 @@ void Demo_add_one::init(const std::int32_t x) {
   this->x = x;
 }
 
-bool Demo_start::write(yarp::os::ConnectionWriter& connection) const {
+bool Demo_double_down::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(1)) return false;
-  if (!writer.writeTag("start",1,1)) return false;
+  if (!writer.writeListHeader(3)) return false;
+  if (!writer.writeTag("double_down",1,2)) return false;
+  if (!writer.writeI32(x)) return false;
   return true;
 }
 
-bool Demo_start::read(yarp::os::ConnectionReader& connection) {
+bool Demo_double_down::read(yarp::os::ConnectionReader& connection) {
   yarp::os::idl::WireReader reader(connection);
   if (!reader.readListReturn()) return false;
-  if (!reader.readBool(_return)) {
+  if (!reader.readI32(_return)) {
     reader.fail();
     return false;
   }
   return true;
 }
 
-void Demo_start::init() {
-  _return = false;
+void Demo_double_down::init(const std::int32_t x) {
+  _return = 0;
+  this->x = x;
 }
 
-bool Demo_stop::write(yarp::os::ConnectionWriter& connection) const {
+bool Demo_add_point::write(yarp::os::ConnectionWriter& connection) const {
   yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(1)) return false;
-  if (!writer.writeTag("stop",1,1)) return false;
+  if (!writer.writeListHeader(8)) return false;
+  if (!writer.writeTag("add_point",1,2)) return false;
+  if (!writer.write(x)) return false;
+  if (!writer.write(y)) return false;
   return true;
 }
 
-bool Demo_stop::read(yarp::os::ConnectionReader& connection) {
+bool Demo_add_point::read(yarp::os::ConnectionReader& connection) {
   yarp::os::idl::WireReader reader(connection);
   if (!reader.readListReturn()) return false;
-  if (!reader.readBool(_return)) {
+  if (!reader.read(_return)) {
     reader.fail();
     return false;
   }
   return true;
 }
 
-void Demo_stop::init() {
-  _return = false;
-}
-
-bool Demo_is_running::write(yarp::os::ConnectionWriter& connection) const {
-  yarp::os::idl::WireWriter writer(connection);
-  if (!writer.writeListHeader(2)) return false;
-  if (!writer.writeTag("is_running",1,2)) return false;
-  return true;
-}
-
-bool Demo_is_running::read(yarp::os::ConnectionReader& connection) {
-  yarp::os::idl::WireReader reader(connection);
-  if (!reader.readListReturn()) return false;
-  if (!reader.readBool(_return)) {
-    reader.fail();
-    return false;
-  }
-  return true;
-}
-
-void Demo_is_running::init() {
-  _return = false;
+void Demo_add_point::init(const  ::yarp::test::PointD& x, const  ::yarp::test::PointD& y) {
+  this->x = x;
+  this->y = y;
 }
 
 Demo::Demo() {
@@ -207,16 +155,6 @@ std::int32_t Demo::get_answer() {
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
-bool Demo::set_answer(const std::int32_t rightAnswer) {
-  bool _return = false;
-  Demo_set_answer helper;
-  helper.init(rightAnswer);
-  if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","bool Demo::set_answer(const std::int32_t rightAnswer)");
-  }
-  bool ok = yarp().write(helper,helper);
-  return ok?helper._return:_return;
-}
 std::int32_t Demo::add_one(const std::int32_t x) {
   std::int32_t _return = 0;
   Demo_add_one helper;
@@ -227,32 +165,22 @@ std::int32_t Demo::add_one(const std::int32_t x) {
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
-bool Demo::start() {
-  bool _return = false;
-  Demo_start helper;
-  helper.init();
+std::int32_t Demo::double_down(const std::int32_t x) {
+  std::int32_t _return = 0;
+  Demo_double_down helper;
+  helper.init(x);
   if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","bool Demo::start()");
+    yError("Missing server method '%s'?","std::int32_t Demo::double_down(const std::int32_t x)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
 }
-bool Demo::stop() {
-  bool _return = false;
-  Demo_stop helper;
-  helper.init();
+ ::yarp::test::PointD Demo::add_point(const  ::yarp::test::PointD& x, const  ::yarp::test::PointD& y) {
+   ::yarp::test::PointD _return;
+  Demo_add_point helper;
+  helper.init(x,y);
   if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","bool Demo::stop()");
-  }
-  bool ok = yarp().write(helper,helper);
-  return ok?helper._return:_return;
-}
-bool Demo::is_running() {
-  bool _return = false;
-  Demo_is_running helper;
-  helper.init();
-  if (!yarp().canWrite()) {
-    yError("Missing server method '%s'?","bool Demo::is_running()");
+    yError("Missing server method '%s'?"," ::yarp::test::PointD Demo::add_point(const  ::yarp::test::PointD& x, const  ::yarp::test::PointD& y)");
   }
   bool ok = yarp().write(helper,helper);
   return ok?helper._return:_return;
@@ -278,27 +206,10 @@ bool Demo::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
-    if (tag == "set_answer") {
-      std::int32_t rightAnswer;
-      if (!reader.readI32(rightAnswer)) {
-        reader.fail();
-        return false;
-      }
-      bool _return;
-      _return = set_answer(rightAnswer);
-      yarp::os::idl::WireWriter writer(reader);
-      if (!writer.isNull()) {
-        if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeBool(_return)) return false;
-      }
-      reader.accept();
-      return true;
-    }
     if (tag == "add_one") {
       std::int32_t x;
       if (!reader.readI32(x)) {
-        reader.fail();
-        return false;
+        x = 0;
       }
       std::int32_t _return;
       _return = add_one(x);
@@ -310,35 +221,39 @@ bool Demo::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
-    if (tag == "start") {
-      bool _return;
-      _return = start();
+    if (tag == "double_down") {
+      std::int32_t x;
+      if (!reader.readI32(x)) {
+        reader.fail();
+        return false;
+      }
+      std::int32_t _return;
+      _return = double_down(x);
       yarp::os::idl::WireWriter writer(reader);
       if (!writer.isNull()) {
         if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeBool(_return)) return false;
+        if (!writer.writeI32(_return)) return false;
       }
       reader.accept();
       return true;
     }
-    if (tag == "stop") {
-      bool _return;
-      _return = stop();
-      yarp::os::idl::WireWriter writer(reader);
-      if (!writer.isNull()) {
-        if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeBool(_return)) return false;
+    if (tag == "add_point") {
+       ::yarp::test::PointD x;
+       ::yarp::test::PointD y;
+      if (!reader.read(x)) {
+        reader.fail();
+        return false;
       }
-      reader.accept();
-      return true;
-    }
-    if (tag == "is_running") {
-      bool _return;
-      _return = is_running();
+      if (!reader.read(y)) {
+        reader.fail();
+        return false;
+      }
+       ::yarp::test::PointD _return;
+      _return = add_point(x,y);
       yarp::os::idl::WireWriter writer(reader);
       if (!writer.isNull()) {
-        if (!writer.writeListHeader(1)) return false;
-        if (!writer.writeBool(_return)) return false;
+        if (!writer.writeListHeader(3)) return false;
+        if (!writer.write(_return)) return false;
       }
       reader.accept();
       return true;
@@ -378,31 +293,23 @@ std::vector<std::string> Demo::help(const std::string& functionName) {
   if(showAll) {
     helpString.push_back("*** Available commands:");
     helpString.push_back("get_answer");
-    helpString.push_back("set_answer");
     helpString.push_back("add_one");
-    helpString.push_back("start");
-    helpString.push_back("stop");
-    helpString.push_back("is_running");
+    helpString.push_back("double_down");
+    helpString.push_back("add_point");
     helpString.push_back("help");
   }
   else {
     if (functionName=="get_answer") {
       helpString.push_back("std::int32_t get_answer() ");
     }
-    if (functionName=="set_answer") {
-      helpString.push_back("bool set_answer(const std::int32_t rightAnswer) ");
-    }
     if (functionName=="add_one") {
-      helpString.push_back("std::int32_t add_one(const std::int32_t x) ");
+      helpString.push_back("std::int32_t add_one(const std::int32_t x = 0) ");
     }
-    if (functionName=="start") {
-      helpString.push_back("bool start() ");
+    if (functionName=="double_down") {
+      helpString.push_back("std::int32_t double_down(const std::int32_t x) ");
     }
-    if (functionName=="stop") {
-      helpString.push_back("bool stop() ");
-    }
-    if (functionName=="is_running") {
-      helpString.push_back("bool is_running() ");
+    if (functionName=="add_point") {
+      helpString.push_back(" ::yarp::test::PointD add_point(const  ::yarp::test::PointD& x, const  ::yarp::test::PointD& y) ");
     }
     if (functionName=="help") {
       helpString.push_back("std::vector<std::string> help(const std::string& functionName=\"--all\")");
@@ -414,5 +321,6 @@ std::vector<std::string> Demo::help(const std::string& functionName) {
   if ( helpString.empty()) helpString.push_back("Command not found");
   return helpString;
 }
+}} // namespace
 
 

@@ -10,8 +10,8 @@
 #include <yarp/os/Bottle.h>
 #include <stdio.h>
 
-#include "vocabs.hpp"
-#include "server.hpp"
+#include "vocabs.h"
+#include "server.h"
 
 using namespace yarp;
 using namespace yarp::os;

@@ -15,7 +15,7 @@ find_package(YARP REQUIRED)
 # and in principle it would be better to list these files
 # manually.
 file(GLOB folder_source src/*.cpp)
-file(GLOB folder_header include/*.hpp include/*.h ../common/*.hpp ../common/*.h)
+file(GLOB folder_header include/*.h ../common/*.h)
 
 # Declare groups of source and header, makes tings pretty in VisualStudio.
 source_group("Source Files" FILES ${folder_source})
