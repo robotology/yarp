@@ -1,0 +1,20 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/icons">
+    <file alias="resources/atooma.svg">../../../data/icons/scalable/atooma.svg</file>
+    <file alias="resources/computer_B.svg">../../../data/icons/scalable/computer_B.svg</file>
+    <file alias="resources/debugMode.svg">../../../data/icons/scalable/debugMode.svg</file>
+    <file alias="resources/module.svg">../../../data/icons/scalable/module.svg</file>
+    <file alias="resources/port.svg">../../../data/icons/scalable/port.svg</file>
+    <file alias="resources/port_hide.svg">../../../data/icons/scalable/port_hide.svg</file>
+    <file alias="resources/system-run.png">../../../data/icons/64x64/system-run.png</file>
+    <file alias="resources/os-linux.png">../../../data/icons/128x128/os-linux.png</file>
+    <file alias="resources/os-macos.png">../../../data/icons/128x128/os-macos.png</file>
+    <file alias="resources/os-windows.png">../../../data/icons/128x128/os-windows.png</file>
+    <file alias="resources/profile_rate.png">../../../data/icons/128x128/profile_rate.png</file>
+    <file alias="resources/qos.png">../../../data/icons/128x128/qos.png</file>
+    <file alias="resources/arrow_down.png">../../../data/icons/512x512/arrow_down.png</file>
+    <file alias="resources/arrow_up.png">../../../data/icons/512x512/arrow_up.png</file>
+    <file alias="resources/chain.png">../../../data/icons/512x512/chain.png</file>
+    <file alias="resources/profiling.png">../../../data/icons/512x512/profiling.png</file>
+</qresource>
+</RCC>
