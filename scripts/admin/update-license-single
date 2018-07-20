@@ -66,15 +66,17 @@ if ($txt =~ /CopyPolicy\:\s*(.*)/i) {
     } else {
         $policy = "BSD-2-Clause";
     }
-} elsif ($txt =~ /GNU Lesser General Public License/) {
-    if ($txt =~ /either version 2.1/) {
+} elsif ($txt =~ /GNU Lesser General Public/) {
+    if ($txt =~ /version 2.1.+later/) {
         $policy = "LGPLv2.1 or later";
     }
 } elsif ($txt =~ /LGPLv2.1\+/) {
     $policy = "LGPLv2.1 or later";
 } elsif ($txt =~ /GNU General Public License/) {
-    if ($txt =~ /version 2 or/) {
+    if ($txt =~ /version 2 of the License, or/) {
         $policy = "GPLv2 or later";
+    } elsif ($txt =~ /version 3 of the License, or/) {
+        $policy = "GPLv3 or later";
     }
 } elsif ($txt =~ /GNU Library General Public/) {
     if ($txt =~ /version 2 of the License. or/) {
@@ -128,10 +130,12 @@ for(@copyright) {s/^\s*:\s*//g};
 @copyright = grep(!/setText/, @copyright);
 @copyright = grep(!/vSpacing/, @copyright);
 @copyright = grep(!/0\)\)\)/, @copyright);
-@copyright = grep(!/HOLDERS/, @copyright);
+@copyright = grep(!/HOLDER/, @copyright);
+@copyright = grep(!/holder/, @copyright);
 @copyright = grep(!/into macOS bundles/, @copyright);
 @copyright = grep(!/statement follows/, @copyright);
 @copyright = grep(!/this permission notice/, @copyright);
+@copyright = grep(!/\\n\\/, @copyright);
 
 # If we removed all lines reset to "unknown"
 if (scalar(@copyright) == 0) {
@@ -165,6 +169,10 @@ if ($policy =~ /BSD-3-Clause/) {
     close(FOUT);
 } elsif ($policy =~ /GPLv2 or later/) {
     open(FOUT,">>license-gpl2+.txt");
+    print FOUT $txt2;
+    close(FOUT);
+} elsif ($policy =~ /GPLv3 or later/) {
+    open(FOUT,">>license-gpl3+.txt");
     print FOUT $txt2;
     close(FOUT);
 } else {
