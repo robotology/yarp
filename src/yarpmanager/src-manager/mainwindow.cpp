@@ -1,14 +1,25 @@
 /*
  * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
- * All rights reserved.
  *
- * This software may be modified and distributed under the terms of the
- * LGPLv2.1+ license. See the accompanying LICENSE file for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <yarp/conf/version.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/ResourceFinder.h>
 #include <dirent.h>
@@ -54,10 +65,6 @@
 
 #ifndef APP_NAME
  #define APP_NAME "yarpmanager"
-#endif
-
-#ifndef APP_VERSION
- #define APP_VERSION "1.0"
 #endif
 
 using namespace std;
@@ -1410,10 +1417,10 @@ void MainWindow::onOpen()
 /*! \brief Opens the About Dialog */
 void MainWindow::onAbout()
 {
-    QString copyright = "2014 (C) Istituto Italiano di Tecnologia (IIT)";
+    QString copyright = "Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)";
     QString name = APP_NAME;
-    QString version = APP_VERSION;
-    AboutDlg dlg(name,version,copyright,"http://www.icub.org/");
+    QString version = YARP_VERSION;
+    AboutDlg dlg(name,version,copyright,"https://www.iit.it/");
     dlg.exec();
 }
 

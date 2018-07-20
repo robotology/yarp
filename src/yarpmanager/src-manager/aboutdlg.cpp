@@ -1,9 +1,19 @@
 /*
  * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
- * All rights reserved.
  *
- * This software may be modified and distributed under the terms of the
- * LGPLv2.1+ license. See the accompanying LICENSE file for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include "aboutdlg.h"
@@ -25,7 +35,6 @@ AboutDlg::AboutDlg(QString appName,QString version,QString copyright,QString web
             <a href=\""+ webSite + "\"><span style=\" text-decoration: underline; color:#0000ff;\">"+ webSite +"</span></a></p>";
     ui->website->setHtml(auxWebSite);
 
-    connect(ui->btnCredits,SIGNAL(clicked()),this,SLOT(onCredits()));
     connect(ui->btnLicence,SIGNAL(clicked()),this,SLOT(onLicence()));
     connect(ui->btnClose,SIGNAL(clicked()),this,SLOT(accept()));
 }
@@ -35,27 +44,53 @@ AboutDlg::~AboutDlg()
     delete ui;
 }
 
-void AboutDlg::onCredits()
-{
-    QString text = "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\
-            p, li { white-space: pre-wrap; } \
-            </style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8pt; font-weight:400; font-style:normal;\"> \
-            <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8.25pt;\">Ali Paikan &lt;</span><a href=\"mailto:elena.ceseracciu@iit.it\"><span style=\" text-decoration: underline; color:#0000ff;\">ali.paikan@iit.it</span></a><span style=\" font-size:8.25pt;\">&gt;</span></p> \
-            <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8.25pt;\">Elena Ceseracciu &lt;</span><a href=\"mailto:elena.ceseracciu@gmail.com\"><span style=\" text-decoration: underline; color:#0000ff;\">elena.ceseracciu@gmail.com</span></a><span style=\" font-size:8.25pt;\">&gt;</span></p> \
-            <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8.25pt;\">Alessandro Roncone &lt;</span><a href=\"mailto:Alessandro.Roncone@iit.it\"><span style=\" text-decoration: underline; color:#0000ff;\">Alessandro.Roncone@iit.it</span></a><span style=\" font-size:8.25pt;\">&gt;</span></p> \
-            <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8.25pt;\">Davide Perrone &lt;</span><a href=\"mailto:aitek4iit@aitek.it\"><span style=\" text-decoration: underline; color:#0000ff;\">aitek4iit@aitek.it</span></a><span style=\" font-size:8.25pt;\">&gt;</span></p> </body></html> \
-            <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8.25pt;\">Nicolò Genesio &lt;</span><a href=\"mailto:nicogene@hotmail.it\"><span style=\" text-decoration: underline; color:#0000ff;\">nicogene@hotmail.it</span></a><span style=\" font-size:8.25pt;\">&gt;</span></p> </body></html>";
-    GenericInfoDlg dlg("Credits","Written by:",text);
-    dlg.exec();
-}
-
 void AboutDlg::onLicence()
 {
-    QString text = "Permission is granted to copy, distribute, and/or modify this program "
-            "under the terms of the GNU General Public License,version 2 or any "
-            "later version published by the Free Software Foundation."
-            "<br><br>A copy of the license can be found at<br>"
-            "<a href=\"http://www.robotcub.org/icub/license/gpl.txt\"><span style=\" text-decoration: underline; color:#0000ff;\">http://www.robotcub.org/icub/license/gpl.txt</span>";
-    GenericInfoDlg dlg("Licence","",text);
+    QString text = "\
+BSD-3-Clause<br />\
+<pre>\
+ Redistribution and use in source and binary forms, with or without\n\
+ modification, are permitted provided that the following conditions are met:\n\
+\n\
+     1. Redistributions of source code must retain the above copyright notice,\n\
+        this list of conditions and the following disclaimer.\n\
+     2. Redistributions in binary form must reproduce the above copyright\n\
+        notice, this list of conditions and the following disclaimer in the\n\
+        documentation and/or other materials provided with the distribution.\n\
+     3. Neither the name of the copyright holder nor the names of its\n\
+        contributors may be used to endorse or promote products derived from\n\
+        this software without specific prior written permission.\n\
+\n\
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\n\
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\n\
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\n\
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE\n\
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL\n\
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR\n\
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER\n\
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,\n\
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\n\
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\
+</pre>\
+<br />\
+<br />\
+LGPL-2.1+<br />\
+<pre>\
+ This library is free software; you can redistribute it and/or modify it under\n\
+ the terms of the GNU Lesser General Public License as published by the Free\n\
+ Software Foundation; either version 2.1 of the License, or (at your option) any\n\
+ later version.\n\
+\n\
+ This library is distributed in the hope that it will be useful, but WITHOUT ANY\n\
+ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\n\
+ PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more\n\
+ details.\n\
+\n\
+ You should have received a copy of the GNU Lesser General Public License along\n\
+ with this library; if not, write to the Free Software Foundation, Inc., 51\n\
+ Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA\n\
+</pre>\
+";
+    GenericInfoDlg dlg("Licence","Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)",text);
     dlg.exec();
 }

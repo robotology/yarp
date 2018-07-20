@@ -11,38 +11,55 @@ project(YARP_conf)
 # Generate compiler.h header
 
 # In all the following files, change offset here in case the initial comment
-# changes
+# changes.
+set(_offset_unix 341)
+set(_offset_win 352)
+# The first end of line is at the 3rd character of the file
+set(_first_eol_offset 2)
+
+# Test if the end of lines are windows or unix.
+file(READ
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/yarp/conf/compiler.dox.in"
+    _test_eol
+    OFFSET ${_first_eol_offset}
+    LIMIT 2
+    HEX)
+if("${_test_eol}" STREQUAL "0d0a")
+  set(_offset ${_offset_win})
+else()
+  set(_offset ${_offset_unix})
+endif()
 
 # Read the file containing all the documentation for compiler.h
 file(READ
      "${CMAKE_CURRENT_SOURCE_DIR}/include/yarp/conf/compiler.dox.in"
      _compiler_dox
-     OFFSET 97)
+     OFFSET ${_offset})
 
 # Read the prolog file containing defines to skip parsing with custom
 # pre-processors
 file(READ
      "${CMAKE_CURRENT_SOURCE_DIR}/include/yarp/conf/compiler.prolog.in"
      _compiler_prolog
-     OFFSET 97)
+     OFFSET ${_offset})
 
 # Read the epilog file for swig
 file(READ
      "${CMAKE_CURRENT_SOURCE_DIR}/include/yarp/conf/compiler.epilog.swig.in"
      _compiler_epilog_swig
-     OFFSET 97)
+     OFFSET ${_offset})
 
 # Read the epilog file for doxygen
 file(READ
      "${CMAKE_CURRENT_SOURCE_DIR}/include/yarp/conf/compiler.epilog.doxygen.in"
      _compiler_epilog_doxygen
-     OFFSET 97)
+     OFFSET ${_offset})
 
 # Read the epilog file common for all custom pre-processors
 file(READ
      "${CMAKE_CURRENT_SOURCE_DIR}/include/yarp/conf/compiler.epilog.in"
      _compiler_epilog
-     OFFSET 97)
+     OFFSET ${_offset})
 
 
 include(WriteCompilerDetectionHeader)
