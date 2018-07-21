@@ -146,11 +146,6 @@ cmake/FindGraphviz.cmake
   Copyright: unknown
   CopyPolicy: unknown
 
-example/yayarpview/CImg.h
-  Copyright: David Tschumperle
-  Copyright: 2004 David Tschumperle
-  CopyPolicy: CeCILL license (use, modify, redistribute)
-
 example/ContainerExample/qtquick2applicationviewer/qtquick2applicationviewer.cpp
   Copyright: unknown
   CopyPolicy: unknown

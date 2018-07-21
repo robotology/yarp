@@ -1,7 +1,15 @@
-struct RotationMatrix 
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+struct RotationMatrix
 {
   1: list<double> content;
-} 
+}
 (
   yarp.name = "yarp::sig::Matrix"
   yarp.includefile="yarp/sig/Matrix.h"
@@ -24,7 +32,7 @@ struct RGBA{
 }
 
 struct SurfaceMesh
-{ 
+{
 1: string meshName
 2: list<PointXYZ> points;
 3: optional list<RGBA> rgbColour;
