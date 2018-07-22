@@ -411,6 +411,10 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/FrameGrabberInterfaces.h>
 %include <yarp/dev/AudioVisualInterfaces.h>
 %include <yarp/dev/ControlBoardInterfaces.h>
+%include <yarp/dev/IAxisInfo.h>
+%include <yarp/dev/IAmplifierControl.h>
+%include <yarp/dev/IControlDebug.h>
+%include <yarp/dev/IControlLimits.h>
 %include <yarp/dev/ControlBoardPid.h>
 %include <yarp/dev/CartesianControl.h>
 %include <yarp/dev/GazeControl.h>
