@@ -99,9 +99,9 @@ RESET_CONSTANTS_IN_TO_MATLAB
     RESET(0)
 }
 
-%extend yarp::sig::Vector {
+%extend yarp::sig::VectorOf<double> {
     TO_MATLAB(double,mxCreateDoubleMatrix)
-    FROM_MATLAB(double,double,mxCreateDoubleMatrix,yarp::sig::Vector)
+    FROM_MATLAB(double,double,mxCreateDoubleMatrix,yarp::sig::VectorOf<double>)
     RESET(0)
 }
 
