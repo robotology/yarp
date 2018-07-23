@@ -257,6 +257,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction *viewSpeedValues = windows->addAction("View Speed Values");
     QAction *viewCurrentValues = windows->addAction("View Current Values");
     QAction *viewMotorPosition = windows->addAction("View Motor Position");
+    QAction *viewDutyCycles = windows->addAction("View Duty Cycles");
     QAction *viewPositionTarget = windows->addAction("View Position Target");
     QAction *enableControlVelocity = windows->addAction("Enable Velocity Control");
     QAction *enableControlMixed = windows->addAction("Enable Mixed Control");
@@ -270,6 +271,7 @@ MainWindow::MainWindow(QWidget *parent) :
     viewSpeedValues->setCheckable(true);
     viewCurrentValues->setCheckable(true);
     viewMotorPosition->setCheckable(true);
+    viewDutyCycles->setCheckable(true);
     enableControlVelocity->setCheckable(true);
     enableControlMixed->setCheckable(true);
     enableControlPositionDirect->setCheckable(true);
@@ -283,6 +285,7 @@ MainWindow::MainWindow(QWidget *parent) :
     bool bSpeedValues = settings.value("SpeedValuesVisible",false).toBool();
     bool bViewPositionTarget = settings.value("ViewPositionTarget", true).toBool();
     bool bviewMotorPosition = settings.value("MotorPositionVisible", false).toBool();
+    bool bviewDutyCycles = settings.value("DutyCycleVisible", false).toBool();
     bool bCurrentValues = settings.value("CurrentsVisible", false).toBool();
 
     viewGlobalToolbar->setChecked(bViewGlobalToolbar);
@@ -290,6 +293,7 @@ MainWindow::MainWindow(QWidget *parent) :
     viewSpeedValues->setChecked(bSpeedValues);
     viewCurrentValues->setChecked(bCurrentValues);
     viewMotorPosition->setChecked(bviewMotorPosition);
+    viewDutyCycles->setChecked(bviewDutyCycles);
     viewPositionTarget->setChecked(bViewPositionTarget);
     enableControlVelocity->setChecked(false);
     enableControlMixed->setChecked(false);
@@ -305,6 +309,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(viewSpeedValues,SIGNAL(triggered(bool)),this,SLOT(onViewSpeeds(bool)));
     connect(viewCurrentValues, SIGNAL(triggered(bool)), this, SLOT(onViewCurrents(bool)));
     connect(viewMotorPosition, SIGNAL(triggered(bool)), this, SLOT(onViewMotorPositions(bool)));
+    connect(viewDutyCycles, SIGNAL(triggered(bool)), this, SLOT(onViewDutyCycles(bool)));
     connect(viewPositionTarget, SIGNAL(triggered(bool)), this, SLOT(onViewPositionTarget(bool)));
     connect(enableControlVelocity, SIGNAL(triggered(bool)), this, SLOT(onEnableControlVelocity(bool)));
     connect(enableControlMixed, SIGNAL(triggered(bool)), this, SLOT(onEnableControlMixed(bool)));
@@ -472,6 +477,14 @@ void MainWindow::onViewMotorPositions(bool val)
     emit sig_viewMotorPositions(val);
 }
 
+void MainWindow::onViewDutyCycles(bool val)
+{
+    QSettings settings("YARP", "yarpmotorgui");
+    settings.setValue("DutyCyclesVisible", val);
+
+    emit sig_viewDutyCycles(val);
+}
+
 void MainWindow::onViewPositionTarget(bool val)
 {
     QSettings settings("YARP", "yarpmotorgui");
@@ -620,6 +633,7 @@ bool MainWindow::init(QStringList enabledParts,
             connect(this,SIGNAL(sig_viewSpeedValues(bool)),part,SLOT(onViewSpeedValues(bool)));
             connect(this, SIGNAL(sig_viewCurrentValues(bool)), part, SLOT(onViewCurrentValues(bool)));
             connect(this, SIGNAL(sig_viewMotorPositions(bool)), part, SLOT(onViewMotorPositions(bool)));
+            connect(this, SIGNAL(sig_viewDutyCycles(bool)), part, SLOT(onViewDutyCycles(bool)));
             connect(this, SIGNAL(sig_setPosSliderOptionMW(int, double)), part, SLOT(onSetPosSliderOptionPI(int, double)));
             connect(this, SIGNAL(sig_setVelSliderOptionMW(int, double)), part, SLOT(onSetVelSliderOptionPI(int, double)));
             connect(this, SIGNAL(sig_setTrqSliderOptionMW(int, double)), part, SLOT(onSetTrqSliderOptionPI(int, double)));
@@ -679,10 +693,12 @@ bool MainWindow::init(QStringList enabledParts,
     bool speedVisible = settings.value("SpeedValuesVisible",false).toBool();
     bool motorPosVisible = settings.value("MotorPositionVisible", false).toBool();
     bool currentVisible = settings.value("CurrentsVisible", false).toBool();
+    bool dutyVisible = settings.value("DutyCyclesVisible", false).toBool();
 
     onViewSpeeds(speedVisible);
     onViewCurrents(currentVisible);
     onViewMotorPositions(motorPosVisible);
+    onViewDutyCycles(dutyVisible);
     return true;
 }
 

@@ -128,6 +128,7 @@ private slots:
     void onViewSpeeds(bool);
     void onViewCurrents(bool);
     void onViewMotorPositions(bool);
+    void onViewDutyCycles(bool);
     void onViewPositionTarget(bool);
     void onEnableControlVelocity(bool val);
     void onEnableControlMixed(bool val);
@@ -148,6 +149,7 @@ signals:
     void sig_viewSpeedValues(bool);
     void sig_viewCurrentValues(bool);
     void sig_viewMotorPositions(bool);
+    void sig_viewDutyCycles(bool);
     void sig_setPosSliderOptionMW(int, double);
     void sig_setVelSliderOptionMW(int, double);
     void sig_setTrqSliderOptionMW(int, double);

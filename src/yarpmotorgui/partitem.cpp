@@ -58,9 +58,11 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
     m_speeds(nullptr),
     m_currents(nullptr),
     m_motorPositions(nullptr),
+    m_dutyCycles(nullptr),
     m_done(nullptr),
     m_part_speedVisible(false),
     m_part_motorPositionVisible(false),
+    m_part_dutyVisible(false),
     m_part_currentVisible(false),
     m_interactionModes(nullptr),
     m_finder(&_finder),
@@ -155,6 +157,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
         m_speeds = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_speeds[i] = std::nan("");
         m_currents = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_currents[i] = std::nan("");
         m_motorPositions = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_motorPositions[i] = std::nan("");
+        m_dutyCycles = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_dutyCycles[i] = std::nan("");
         m_done = new bool[number_of_joints];
         m_interactionModes = new yarp::dev::InteractionModeEnum[number_of_joints];
 
@@ -323,6 +326,7 @@ PartItem::~PartItem()
     if (m_speeds) { delete[] m_speeds; m_speeds = nullptr; }
     if (m_currents) { delete[] m_currents; m_currents = nullptr; }
     if (m_motorPositions) { delete[] m_motorPositions; m_motorPositions = nullptr; }
+    if (m_dutyCycles) { delete[] m_dutyCycles; m_dutyCycles = nullptr; }
     if (m_done) { delete[] m_done; m_done = nullptr; }
 }
 
@@ -535,8 +539,8 @@ void PartItem::onDumpAllRemoteVariables()
         if (m_iVar->getRemoteVariablesList(&keys))
         {
             std::string s = keys.toString();
-            int keys_size = keys.size();
-            for (int i = 0; i < keys_size; i++)
+            size_t keys_size = keys.size();
+            for (size_t i = 0; i < keys_size; i++)
             {
                 std::string key_name;
                 if (keys.get(i).isString())
@@ -1910,6 +1914,16 @@ void PartItem::onViewMotorPositions(bool view)
     }
 }
 
+void PartItem::onViewDutyCycles(bool view)
+{
+    m_part_dutyVisible = view;
+    for (int i = 0; i<m_layout->count(); i++)
+    {
+        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        joint->setDutyVisible(view);
+    }
+}
+
 void PartItem::onViewCurrentValues(bool view)
 {
     m_part_currentVisible = view;
@@ -2150,7 +2164,12 @@ bool PartItem::updatePart()
         b = m_iMot->getMotorEncoders(m_motorPositions);
         if (!b) { yWarning("Unable to update motorPositions"); }
     }
-    
+    if (this->m_part_dutyVisible)
+    {
+        b = m_iPWM->getDutyCycles(m_dutyCycles);
+        if (!b) { yWarning("Unable to update dutyCycles"); }
+    }
+
     // *** update checkMotionDone, refTorque, refTrajectorySpeed, refSpeed ***
     // (only one at a time in order to save bandwidth)
     bool b_motdone = m_iPos->checkMotionDone(m_slow_k, &m_done[m_slow_k]); //using k to save bandwidth
@@ -2193,6 +2212,8 @@ bool PartItem::updatePart()
         if (1) { joint->setCurrent(m_currents[jk]); }
         else {}
         if (1) { joint->setMotorPosition(m_motorPositions[jk]); }
+        else {}
+        if (1) { joint->setDutyCycles(m_dutyCycles[jk]); }
         else {}
     }
     

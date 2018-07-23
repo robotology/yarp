@@ -130,9 +130,11 @@ private:
     double* m_speeds;
     double* m_currents;
     double* m_motorPositions;
+    double* m_dutyCycles;
     bool*   m_done;
     bool    m_part_speedVisible;
     bool    m_part_motorPositionVisible;
+    bool    m_part_dutyVisible;
     bool    m_part_currentVisible;
     yarp::dev::InteractionModeEnum* m_interactionModes;
 
@@ -178,6 +180,7 @@ public slots:
     bool updatePart();
     void onViewSpeedValues(bool);
     void onViewMotorPositions(bool);
+    void onViewDutyCycles(bool);
     void onViewCurrentValues(bool);
     void onSetPosSliderOptionPI(int mode, double step);
     void onSetVelSliderOptionPI(int mode, double step);

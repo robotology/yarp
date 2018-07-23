@@ -22,7 +22,7 @@
   <property name="minimumSize">
    <size>
     <width>300</width>
-    <height>240</height>
+    <height>302</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -53,7 +53,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -61,7 +61,7 @@
      <property name="minimumSize">
       <size>
        <width>300</width>
-       <height>0</height>
+       <height>300</height>
       </size>
      </property>
      <property name="title">
@@ -258,7 +258,7 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>100</width>
+             <width>82</width>
              <height>20</height>
             </size>
            </property>
@@ -283,7 +283,7 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>100</width>
+             <width>82</width>
              <height>20</height>
             </size>
            </property>
@@ -308,7 +308,7 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>100</width>
+             <width>82</width>
              <height>20</height>
             </size>
            </property>
@@ -333,7 +333,7 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>100</width>
+             <width>82</width>
              <height>20</height>
             </size>
            </property>
@@ -358,7 +358,7 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>100</width>
+             <width>82</width>
              <height>20</height>
             </size>
            </property>
@@ -423,7 +423,7 @@ QSlider::groove:horizontal:disabled {
  }</string>
         </property>
         <property name="currentIndex">
-         <number>7</number>
+         <number>5</number>
         </property>
         <widget class="QWidget" name="pageIdle">
          <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -499,7 +499,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="3" column="2">
-              <widget class="QLabel" name="labelIdleMotorPositionUnits">
+              <widget class="QLabel" name="labelIdleMotorPosUnits">
                <property name="text">
                 <string>deg</string>
                </property>
@@ -513,7 +513,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QLineEdit" name="editIdleMotorPosition">
+              <widget class="QLineEdit" name="editIdleMotorPos">
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(255, 255, 255);</string>
                </property>
@@ -553,7 +553,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="3" column="0">
-              <widget class="QLabel" name="labelIdleMotorPosition">
+              <widget class="QLabel" name="labelIdleMotorPos">
                <property name="text">
                 <string>MotorPos:</string>
                </property>
@@ -570,7 +570,7 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_7">
+              <widget class="QLabel" name="labelIdleJointPos">
                <property name="text">
                 <string>Encoder:</string>
                </property>
@@ -789,6 +789,27 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
+             <item row="0" column="2">
+              <widget class="QLabel" name="labelPositionposUnits">
+               <property name="text">
+                <string>deg</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="2">
+              <widget class="QLabel" name="labelPositionvelUnits">
+               <property name="text">
+                <string>deg/s</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelPositionJointPos">
+               <property name="text">
+                <string>Encoder:</string>
+               </property>
+              </widget>
+             </item>
              <item row="5" column="2">
               <widget class="QLabel" name="labelPositionCurrentUnits">
                <property name="text">
@@ -796,31 +817,13 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="4" column="2">
-              <widget class="QLabel" name="labelPositionMotorPositionUnits">
-               <property name="text">
-                <string>deg</string>
+             <item row="5" column="1">
+              <widget class="QLineEdit" name="editPositionCurrent">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
                </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="labelPositionSpeed">
-               <property name="text">
-                <string>Speed:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="labelPositionMotorPosition">
-               <property name="text">
-                <string>MotorPos:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="labelPositionTorque">
-               <property name="text">
-                <string>Torque:</string>
+               <property name="readOnly">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -847,6 +850,27 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
+             <item row="4" column="2">
+              <widget class="QLabel" name="labelPositionMotorPosUnits">
+               <property name="text">
+                <string>deg</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="labelPositionSpeed">
+               <property name="text">
+                <string>Speed:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="labelPositionMotorPos">
+               <property name="text">
+                <string>MotorPos:</string>
+               </property>
+              </widget>
+             </item>
              <item row="1" column="1">
               <widget class="QLineEdit" name="editPositionTorque">
                <property name="maximumSize">
@@ -863,27 +887,13 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="3" column="2">
-              <widget class="QLabel" name="labelPositionvelUnits">
-               <property name="text">
-                <string>deg/s</string>
-               </property>
-              </widget>
-             </item>
              <item row="4" column="1">
-              <widget class="QLineEdit" name="editPositionMotorPosition">
+              <widget class="QLineEdit" name="editPositionMotorPos">
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(255, 255, 255);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="labelPositionJointPos">
-               <property name="text">
-                <string>Encoder:</string>
                </property>
               </widget>
              </item>
@@ -898,20 +908,10 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="0" column="2">
-              <widget class="QLabel" name="labelPositionposUnits">
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelPositionTorque">
                <property name="text">
-                <string>deg</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QLineEdit" name="editPositionCurrent">
-               <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
+                <string>Torque:</string>
                </property>
               </widget>
              </item>
@@ -1015,8 +1015,8 @@ QSlider::groove:horizontal:disabled {
              <property name="rightMargin">
               <number>2</number>
              </property>
-             <item row="3" column="1">
-              <widget class="QLineEdit" name="editPositionDirCurrent">
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="editPositionDirJointPos">
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(255, 255, 255);</string>
                </property>
@@ -1025,28 +1025,35 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="3" column="2">
-              <widget class="QLabel" name="labelPositionDirCurrentUnits">
-               <property name="text">
-                <string>A</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="labelPositionDirCurrent">
-               <property name="text">
-                <string>Current</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
+             <item row="2" column="0">
               <widget class="QLabel" name="labelPositionDirTorque">
                <property name="text">
                 <string>Torque:</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
+             <item row="5" column="0">
+              <widget class="QLabel" name="labelPositionDirCurrent">
+               <property name="text">
+                <string>Current</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QLabel" name="labelPositionDirposUnits">
+               <property name="text">
+                <string>deg</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="QLabel" name="labelPositionDirtrqUnits">
+               <property name="text">
+                <string>Nm</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
               <widget class="QLineEdit" name="editPositionDirSpeed">
                <property name="maximumSize">
                 <size>
@@ -1062,28 +1069,45 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="1" column="2">
-              <widget class="QLabel" name="labelPositionDirtrqUnits">
+             <item row="5" column="2">
+              <widget class="QLabel" name="labelPositionDirCurrentUnits">
                <property name="text">
-                <string>Nm</string>
+                <string>A</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelPositionDirJointPos">
+               <property name="text">
+                <string>Encoder:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
               <widget class="QLabel" name="labelPositionDirSpeed">
                <property name="text">
                 <string>Speed:</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="2">
+             <item row="3" column="2">
               <widget class="QLabel" name="labelPositionDirvelUnits">
                <property name="text">
                 <string>deg/s</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
+             <item row="5" column="1">
+              <widget class="QLineEdit" name="editPositionDirCurrent">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
               <widget class="QLineEdit" name="editPositionDirTorque">
                <property name="maximumSize">
                 <size>
@@ -1099,27 +1123,45 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="editPositionDirJointPos">
-               <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
+             <item row="4" column="0">
+              <widget class="QLabel" name="labelPositionDirMotorPos">
+               <property name="text">
+                <string>MotorPos:</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="2">
-              <widget class="QLabel" name="labelPositionDirposUnits">
+             <item row="4" column="1">
+              <widget class="QLineEdit" name="editPositionDirMotorPos">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="2">
+              <widget class="QLabel" name="labelPositionDirMotorPosUnits">
                <property name="text">
                 <string>deg</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="labelPositionDirJointPos">
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="editPositionDirDuty">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QLabel" name="labelPositionDirDutyUnits">
                <property name="text">
-                <string>Encoder:</string>
+                <string>%</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelPositionDirDuty">
+               <property name="text">
+                <string>DutyCycle:</string>
                </property>
               </widget>
              </item>
@@ -1309,22 +1351,28 @@ QSlider::groove:horizontal:disabled {
              <property name="horizontalSpacing">
               <number>6</number>
              </property>
-             <item row="3" column="2">
-              <widget class="QLabel" name="labelMixedCurrentUnits">
+             <item row="2" column="2">
+              <widget class="QLabel" name="labelMixedvelUnits">
                <property name="text">
-                <string>A</string>
+                <string>deg/s</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="labelMixedCurrent">
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelMixedJointPos">
                <property name="text">
-                <string>Current:</string>
+                <string>Encoder:</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
-              <widget class="QLineEdit" name="editMixedCurrent">
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="editMixedTorque">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(255, 255, 255);</string>
                </property>
@@ -1333,15 +1381,26 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="1" column="2">
-              <widget class="QLabel" name="labelMixedtrqUnits">
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelMixedSpeed">
                <property name="text">
-                <string>Nm</string>
+                <string>Speed:</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="editMixedTorque">
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="editMixedJointPos">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);
+</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="editMixedSpeed">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1363,28 +1422,22 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="2" column="2">
-              <widget class="QLabel" name="labelMixedvelUnits">
+             <item row="1" column="2">
+              <widget class="QLabel" name="labelMixedtrqUnits">
                <property name="text">
-                <string>deg/s</string>
+                <string>Nm</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="labelMixedSpeed">
+             <item row="4" column="0">
+              <widget class="QLabel" name="labelMixedCurrent">
                <property name="text">
-                <string>Speed:</string>
+                <string>Current:</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
-              <widget class="QLineEdit" name="editMixedSpeed">
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>16777215</height>
-                </size>
-               </property>
+             <item row="4" column="1">
+              <widget class="QLineEdit" name="editMixedCurrent">
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(255, 255, 255);</string>
                </property>
@@ -1393,21 +1446,10 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="labelMixedJointPos">
+             <item row="4" column="2">
+              <widget class="QLabel" name="labelMixedCurrentUnits">
                <property name="text">
-                <string>Encoder:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="editMixedJointPos">
-               <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);
-</string>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
+                <string>A</string>
                </property>
               </widget>
              </item>
@@ -1415,6 +1457,27 @@ QSlider::groove:horizontal:disabled {
               <widget class="QLabel" name="labelMixedposUnits">
                <property name="text">
                 <string>deg</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="labelMixedMotorPos">
+               <property name="text">
+                <string>MotorPos:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="2">
+              <widget class="QLabel" name="labelMixedMotorPosUnits">
+               <property name="text">
+                <string>deg</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="editMixedMotorPos">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
                </property>
               </widget>
              </item>
@@ -1503,43 +1566,17 @@ QSlider::groove:horizontal:disabled {
              <property name="rightMargin">
               <number>2</number>
              </property>
-             <item row="3" column="0">
-              <widget class="QLabel" name="labelVelocityCurrent">
+             <item row="1" column="2">
+              <widget class="QLabel" name="labelVelocitytrqUnits">
                <property name="text">
-                <string>Current:</string>
+                <string>Nm</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="2">
-              <widget class="QLabel" name="labelVelocityCurrentUnits">
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelVelocitySpeed">
                <property name="text">
-                <string>A</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QLineEdit" name="editVelocityCurrent">
-               <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="editVelocityTorque">
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
+                <string>Speed:</string>
                </property>
               </widget>
              </item>
@@ -1559,6 +1596,36 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="labelVelocityCurrent">
+               <property name="text">
+                <string>Current:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="editVelocityTorque">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="2">
+              <widget class="QLabel" name="labelVelocityCurrentUnits">
+               <property name="text">
+                <string>A</string>
+               </property>
+              </widget>
+             </item>
              <item row="1" column="0">
               <widget class="QLabel" name="labelVelocityTorque">
                <property name="text">
@@ -1566,24 +1633,20 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
+             <item row="4" column="1">
+              <widget class="QLineEdit" name="editVelocityCurrent">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
              <item row="2" column="2">
               <widget class="QLabel" name="labelVelocityvelUnits">
                <property name="text">
                 <string>deg/s</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="2">
-              <widget class="QLabel" name="labelVelocitytrqUnits">
-               <property name="text">
-                <string>Nm</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="labelVelocitySpeed">
-               <property name="text">
-                <string>Speed:</string>
                </property>
               </widget>
              </item>
@@ -1605,9 +1668,30 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="0" column="0">
-              <widget class="QLabel" name="lavelVelocityJointPos">
+              <widget class="QLabel" name="labelVelocityJointPos">
                <property name="text">
                 <string>Encoder:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="editVelocityMotorPos">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="2">
+              <widget class="QLabel" name="labelVelocityMotorPosUnits">
+               <property name="text">
+                <string>deg</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="labelVelocityMotorPos">
+               <property name="text">
+                <string>MotorPos:</string>
                </property>
               </widget>
              </item>
@@ -1693,31 +1777,45 @@ QSlider::groove:horizontal:disabled {
              <property name="rightMargin">
               <number>2</number>
              </property>
-             <item row="4" column="0">
-              <widget class="QLabel" name="labelTorqueCurrent">
+             <item row="0" column="2">
+              <widget class="QLabel" name="labelTorquetrqUnits">
                <property name="text">
-                <string>Current:</string>
+                <string>Nm</string>
                </property>
               </widget>
              </item>
-             <item row="4" column="2">
+             <item row="6" column="2">
               <widget class="QLabel" name="labelTorqueCurrentUnits">
                <property name="text">
                 <string>A</string>
                </property>
               </widget>
              </item>
-             <item row="4" column="1">
-              <widget class="QLineEdit" name="editTorqueCurrent">
-               <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
-               </property>
-               <property name="readOnly">
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelTorqueTorque">
+               <property name="enabled">
                 <bool>true</bool>
+               </property>
+               <property name="text">
+                <string>Torque:</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
+             <item row="4" column="0">
+              <widget class="QLabel" name="labelTorqueSpeed">
+               <property name="text">
+                <string>Speed:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="2">
+              <widget class="QLabel" name="labelTorquevelUnits">
+               <property name="text">
+                <string>deg/s</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
               <widget class="QLineEdit" name="editTorqueJointPos">
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(255, 255, 255);</string>
@@ -1727,21 +1825,24 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="labelTorqueSpeed">
-               <property name="text">
-                <string>Speed:</string>
+             <item row="6" column="1">
+              <widget class="QLineEdit" name="editTorqueCurrent">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="3" column="2">
-              <widget class="QLabel" name="labelTorquevelUnits">
+             <item row="6" column="0">
+              <widget class="QLabel" name="labelTorqueCurrent">
                <property name="text">
-                <string>deg/s</string>
+                <string>Current:</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
+             <item row="4" column="1">
               <widget class="QLineEdit" name="editTorqueSpeed">
                <property name="maximumSize">
                 <size>
@@ -1754,20 +1855,6 @@ QSlider::groove:horizontal:disabled {
                </property>
                <property name="readOnly">
                 <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_17">
-               <property name="text">
-                <string>Encoder:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="2">
-              <widget class="QLabel" name="labelTorqueposUnits">
-               <property name="text">
-                <string>deg</string>
                </property>
               </widget>
              </item>
@@ -1787,20 +1874,59 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="0" column="2">
-              <widget class="QLabel" name="labelTorquetrqUnits">
+             <item row="2" column="2">
+              <widget class="QLabel" name="labelTorqueposUnits">
                <property name="text">
-                <string>Nm</string>
+                <string>deg</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="labelTorqueTorque">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelTorqueJointPos">
                <property name="text">
-                <string>Torque:</string>
+                <string>Encoder:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="labelTorqueMotorPos">
+               <property name="text">
+                <string>MotorPos:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="2">
+              <widget class="QLabel" name="labelTorqueMotorPosUnits">
+               <property name="text">
+                <string>deg</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QLineEdit" name="editTorqueMotorPos">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelTorqueDuty">
+               <property name="text">
+                <string>DutyCycle:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="editTorqueDuty">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QLabel" name="labelTorqueDutyUnits">
+               <property name="text">
+                <string>%</string>
                </property>
               </widget>
              </item>
@@ -1899,29 +2025,6 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="labelPWMSpeed">
-               <property name="text">
-                <string>Speed:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLineEdit" name="editPWMTorque">
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
              <item row="3" column="1">
               <widget class="QLineEdit" name="editPWMSpeed">
                <property name="maximumSize">
@@ -1945,10 +2048,19 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="labelPWMJointPos">
-               <property name="text">
-                <string>Encoder:</string>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="editPWMTorque">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -1959,24 +2071,41 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="1" column="2">
-              <widget class="QLabel" name="labelPWMposUnits">
+             <item row="3" column="0">
+              <widget class="QLabel" name="labelPWMSpeed">
                <property name="text">
-                <string>deg</string>
+                <string>Speed:</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="labelPWMOutput">
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelPWMJointPos">
                <property name="text">
-                <string>DutyCycle</string>
+                <string>Encoder:</string>
                </property>
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLabel" name="labelPWMOutputUnits">
+              <widget class="QLabel" name="labelPWMDutyUnits">
                <property name="text">
                 <string>%</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QLineEdit" name="editPWMCurrent">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelPWMDuty">
+               <property name="text">
+                <string>DutyCycle:</string>
                </property>
               </widget>
              </item>
@@ -1990,10 +2119,28 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="editPWMOutput"/>
+             <item row="1" column="2">
+              <widget class="QLabel" name="labelPWMposUnits">
+               <property name="text">
+                <string>deg</string>
+               </property>
+              </widget>
              </item>
-             <item row="4" column="0">
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="editPWMDuty">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="2">
+              <widget class="QLabel" name="labelPWMCurrentUnits">
+               <property name="text">
+                <string>A</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
               <widget class="QLabel" name="labelPWMCurrent">
                <property name="text">
                 <string>Current:</string>
@@ -2001,19 +2148,23 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="4" column="2">
-              <widget class="QLabel" name="labelPWMCurrentUnits">
+              <widget class="QLabel" name="labelPWMMotorPosUnits">
                <property name="text">
-                <string>A</string>
+                <string>deg</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="labelPWMMotorPos">
+               <property name="text">
+                <string>MotorPos:</string>
                </property>
               </widget>
              </item>
              <item row="4" column="1">
-              <widget class="QLineEdit" name="editPWMCurrent">
+              <widget class="QLineEdit" name="editPWMMotorPos">
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(255, 255, 255);</string>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -2105,37 +2256,21 @@ QSlider::groove:horizontal:disabled {
              <property name="rightMargin">
               <number>2</number>
              </property>
-             <item row="3" column="2">
+             <item row="4" column="2">
               <widget class="QLabel" name="labelCurrentvelUnits">
                <property name="text">
                 <string>deg/s</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
-              <widget class="QLineEdit" name="editCurrentSpeed">
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
+             <item row="3" column="0">
               <widget class="QLabel" name="labelCurrentTorque">
                <property name="text">
                 <string>Torque:</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
+             <item row="3" column="1">
               <widget class="QLineEdit" name="editCurrentTorque">
                <property name="maximumSize">
                 <size>
@@ -2152,28 +2287,20 @@ QSlider::groove:horizontal:disabled {
               </widget>
              </item>
              <item row="2" column="2">
-              <widget class="QLabel" name="labelCurrenttrqUnits">
+              <widget class="QLabel" name="labelCurrentposUnits">
                <property name="text">
-                <string>Nm</string>
+                <string>deg</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="labelCurrentSpeed">
-               <property name="text">
-                <string>Speed:</string>
+             <item row="4" column="1">
+              <widget class="QLineEdit" name="editCurrentSpeed">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
                </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="labelCurrent_21">
-               <property name="text">
-                <string>Encoder:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="editCurrentJointPos">
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(255, 255, 255);</string>
                </property>
@@ -2182,10 +2309,17 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="1" column="2">
-              <widget class="QLabel" name="labelCurrentposUnits">
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="editCurrentCurrent">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QLabel" name="labelCurrent_2">
                <property name="text">
-                <string>deg</string>
+                <string>A</string>
                </property>
               </widget>
              </item>
@@ -2196,13 +2330,76 @@ QSlider::groove:horizontal:disabled {
                </property>
               </widget>
              </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="editCurrentCurrent"/>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="editCurrentJointPos">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
-             <item row="0" column="2">
-              <widget class="QLabel" name="labelCurrent_2">
+             <item row="3" column="2">
+              <widget class="QLabel" name="labelCurrenttrqUnits">
                <property name="text">
-                <string>A</string>
+                <string>Nm</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="labelCurrentMotorPos">
+               <property name="text">
+                <string>MotorPos:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelCurrent_21">
+               <property name="text">
+                <string>Encoder:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QLineEdit" name="editCurrentMotorPos">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="labelCurrentSpeed">
+               <property name="text">
+                <string>Speed:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="2">
+              <widget class="QLabel" name="labelCurrentMotorPosUnits">
+               <property name="text">
+                <string>deg</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelCurrentDuty">
+               <property name="text">
+                <string>DutyCycle:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QLabel" name="labelCurrentDutyUnits">
+               <property name="text">
+                <string>%</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="editCurrentDuty">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(255, 255, 255);</string>
                </property>
               </widget>
              </item>

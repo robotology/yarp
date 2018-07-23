@@ -58,6 +58,7 @@ class JointItem : public QWidget
     void setRefTrajectoryPosition(double ref);
     void setSpeed(double val);
     void setMotorPosition(double meas);
+    void setDutyCycles(double duty);
     void setRefPWM(double ref);
     void setCurrent(double meas);
     void setRefCurrent(double ref);
@@ -79,6 +80,7 @@ class JointItem : public QWidget
 
     void setSpeedVisible(bool);
     void setMotorPositionVisible(bool);
+    void setDutyVisible(bool);
     void setCurrentsVisible(bool);
     void setUnits(yarp::dev::JointTypeEnum t);
     void viewPositionTarget(bool);
@@ -146,6 +148,7 @@ private:
     bool joint_speedVisible;
     bool joint_motorPositionVisible;
     bool joint_currentVisible;
+    bool joint_dutyVisible;
     QTimer velocityTimer;
     double lastVelocity;
     bool velocityModeEnabled;
