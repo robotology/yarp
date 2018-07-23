@@ -51,15 +51,17 @@ class JointItem : public QWidget
     void setJointInteraction(JointInteraction interaction);
     void setJointState(JointState);
     void setPosition(double val);
-    void setTorque(double val);
-    void setRefTorque(double val);
-    void setRefVelocitySpeed(double val);
-    void setRefTrajectorySpeed(double val);
-    void setRefTrajectoryPosition(double val);
+    void setTorque(double meas);
+    void setRefTorque(double ref);
+    void setRefVelocitySpeed(double ref);
+    void setRefTrajectorySpeed(double ref);
+    void setRefTrajectoryPosition(double ref);
     void setSpeed(double val);
-    void setMotorPosition(double val);
-    void setPWM(double val);
-    void setCurrent(double val);
+    void setMotorPosition(double meas);
+    void setDutyCycles(double duty);
+    void setRefPWM(double ref);
+    void setCurrent(double meas);
+    void setRefCurrent(double ref);
     void updateMotionDone(bool done);
     void setJointName(QString name);
     QString getJointName();
@@ -78,6 +80,8 @@ class JointItem : public QWidget
 
     void setSpeedVisible(bool);
     void setMotorPositionVisible(bool);
+    void setDutyVisible(bool);
+    void setCurrentsVisible(bool);
     void setUnits(yarp::dev::JointTypeEnum t);
     void viewPositionTarget(bool);
     void enableControlVelocity(bool control);
@@ -140,10 +144,11 @@ private:
     bool sliderPWMPressed;
     bool sliderCurrentPressed;
     bool motionDone;
-    QString movingSliderStyle;
     bool enableCalib;
     bool joint_speedVisible;
     bool joint_motorPositionVisible;
+    bool joint_currentVisible;
+    bool joint_dutyVisible;
     QTimer velocityTimer;
     double lastVelocity;
     bool velocityModeEnabled;
