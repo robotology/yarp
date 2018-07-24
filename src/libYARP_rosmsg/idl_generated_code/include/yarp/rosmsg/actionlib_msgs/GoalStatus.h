@@ -208,10 +208,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::actionlib_msgs::GoalStatus> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::actionlib_msgs::GoalStatus> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "actionlib_msgs/GoalStatus";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "d388f9b87b3c471f784434d671988d4a";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 GoalID goal_id\n\
 uint8 status\n\
 uint8 PENDING         = 0   # The goal has yet to be processed by the action server\n\
@@ -235,23 +239,26 @@ uint8 LOST            = 9   # An action client can determine that a goal is LOST
 #Allow for the user to associate a string with GoalStatus for debugging\n\
 string text\n\
 \n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: actionlib_msgs/GoalID\n\
-") + yarp::rosmsg::actionlib_msgs::GoalID::typeText();
-    }
+# The stamp should store the time at which this goal was requested.\n\
+# It is used by an action server when it tries to preempt all\n\
+# goals that were requested before a certain time\n\
+time stamp\n\
+\n\
+# The id provides a way to associate feedback and\n\
+# result message with specific goal requests. The id\n\
+# specified must be unique.\n\
+string id\n\
+\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::actionlib_msgs::GoalStatus::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("actionlib_msgs/GoalStatus", "actionlib_msgs/GoalStatus");
-        typ.addProperty("md5sum", yarp::os::Value("d388f9b87b3c471f784434d671988d4a"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

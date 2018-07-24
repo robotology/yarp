@@ -156,10 +156,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::geometry_msgs::TwistWithCovariance> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::TwistWithCovariance> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "geometry_msgs/TwistWithCovariance";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "1fe8a28e6890a4cc3ae4c3ca5c7d82e6";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This expresses velocity in free space with uncertainty.\n\
 \n\
 Twist twist\n\
@@ -169,23 +173,32 @@ Twist twist\n\
 # In order, the parameters are:\n\
 # (x, y, z, rotation about X axis, rotation about Y axis, rotation about Z axis)\n\
 float64[36] covariance\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Twist\n\
-") + yarp::rosmsg::geometry_msgs::Twist::typeText();
-    }
+# This expresses velocity in free space broken into its linear and angular parts.\n\
+Vector3  linear\n\
+Vector3  angular\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Vector3\n\
+# This represents a vector in free space. \n\
+# It is only meant to represent a direction. Therefore, it does not\n\
+# make sense to apply a translation to it (e.g., when applying a \n\
+# generic rigid transformation to a Vector3, tf2 will only apply the\n\
+# rotation). If you want your data to be translatable too, use the\n\
+# geometry_msgs/Point message instead.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::geometry_msgs::TwistWithCovariance::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/TwistWithCovariance", "geometry_msgs/TwistWithCovariance");
-        typ.addProperty("md5sum", yarp::os::Value("1fe8a28e6890a4cc3ae4c3ca5c7d82e6"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

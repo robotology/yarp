@@ -131,29 +131,37 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::geometry_msgs::Polygon> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Polygon> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "geometry_msgs/Polygon";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "cd60a26494a087f577976f0329fa120e";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 #A specification of a polygon where the first and last points are assumed to be connected\n\
 Point32[] points\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Point32\n\
-") + yarp::rosmsg::geometry_msgs::Point32::typeText();
-    }
+# This contains the position of a point in free space(with 32 bits of precision).\n\
+# It is recommeded to use Point wherever possible instead of Point32.  \n\
+# \n\
+# This recommendation is to promote interoperability.  \n\
+#\n\
+# This message is designed to take up less space when sending\n\
+# lots of points at once, as in the case of a PointCloud.  \n\
+\n\
+float32 x\n\
+float32 y\n\
+float32 z\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::geometry_msgs::Polygon::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Polygon", "geometry_msgs/Polygon");
-        typ.addProperty("md5sum", yarp::os::Value("cd60a26494a087f577976f0329fa120e"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

@@ -160,10 +160,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::tf2_msgs::TF2Error> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::tf2_msgs::TF2Error> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "tf2_msgs/TF2Error";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "bc6848fd6fd750c92e38575618a4917d";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 uint8 NO_ERROR = 0\n\
 uint8 LOOKUP_ERROR = 1\n\
 uint8 CONNECTIVITY_ERROR = 2\n\
@@ -174,20 +178,13 @@ uint8 TRANSFORM_ERROR = 6\n\
 \n\
 uint8 error\n\
 string error_string\n\
-");
-    }
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::tf2_msgs::TF2Error::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("tf2_msgs/TF2Error", "tf2_msgs/TF2Error");
-        typ.addProperty("md5sum", yarp::os::Value("bc6848fd6fd750c92e38575618a4917d"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

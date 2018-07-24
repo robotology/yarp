@@ -152,33 +152,62 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::std_msgs::Int32MultiArray> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::Int32MultiArray> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "std_msgs/Int32MultiArray";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "1d99f79f8b325b44fee908053e9c945b";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # Please look at the MultiArrayLayout message definition for\n\
 # documentation on all multiarrays.\n\
 \n\
 MultiArrayLayout  layout        # specification of data layout\n\
 int32[]           data          # array of data\n\
 \n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: std_msgs/MultiArrayLayout\n\
-") + yarp::rosmsg::std_msgs::MultiArrayLayout::typeText();
-    }
+# The multiarray declares a generic multi-dimensional array of a\n\
+# particular data type.  Dimensions are ordered from outer most\n\
+# to inner most.\n\
+\n\
+MultiArrayDimension[] dim # Array of dimension properties\n\
+uint32 data_offset        # padding elements at front of data\n\
+\n\
+# Accessors should ALWAYS be written in terms of dimension stride\n\
+# and specified outer-most dimension first.\n\
+# \n\
+# multiarray(i,j,k) = data[data_offset + dim_stride[1]*i + dim_stride[2]*j + k]\n\
+#\n\
+# A standard, 3-channel 640x480 image with interleaved color channels\n\
+# would be specified as:\n\
+#\n\
+# dim[0].label  = \"height\"\n\
+# dim[0].size   = 480\n\
+# dim[0].stride = 3*640*480 = 921600  (note dim[0] stride is just size of image)\n\
+# dim[1].label  = \"width\"\n\
+# dim[1].size   = 640\n\
+# dim[1].stride = 3*640 = 1920\n\
+# dim[2].label  = \"channel\"\n\
+# dim[2].size   = 3\n\
+# dim[2].stride = 3\n\
+#\n\
+# multiarray(i,j,k) refers to the ith row, jth column, and kth channel.\n\
+\n\
+================================================================================\n\
+MSG: std_msgs/MultiArrayDimension\n\
+string label   # label of given dimension\n\
+uint32 size    # size of given dimension (in type units)\n\
+uint32 stride  # stride of given dimension\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::std_msgs::Int32MultiArray::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Int32MultiArray", "std_msgs/Int32MultiArray");
-        typ.addProperty("md5sum", yarp::os::Value("1d99f79f8b325b44fee908053e9c945b"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

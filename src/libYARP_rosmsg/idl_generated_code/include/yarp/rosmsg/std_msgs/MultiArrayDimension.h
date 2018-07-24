@@ -149,26 +149,24 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::std_msgs::MultiArrayDimension> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::MultiArrayDimension> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "std_msgs/MultiArrayDimension";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "4cd0c83a8683deae40ecdac60e53bfa8";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 string label   # label of given dimension\n\
 uint32 size    # size of given dimension (in type units)\n\
-uint32 stride  # stride of given dimension");
-    }
+uint32 stride  # stride of given dimension\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::std_msgs::MultiArrayDimension::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("std_msgs/MultiArrayDimension", "std_msgs/MultiArrayDimension");
-        typ.addProperty("md5sum", yarp::os::Value("4cd0c83a8683deae40ecdac60e53bfa8"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

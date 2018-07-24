@@ -492,10 +492,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::BatteryState> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::BatteryState> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/BatteryState";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "476f837fa6771f6e16e3bf4ef96f8770";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 \n\
 # Constants are chosen to match the enums in the linux kernel\n\
 # defined in include/linux/power_supply.h as of version 3.7\n\
@@ -545,23 +549,31 @@ float32[] cell_voltage   # An array of individual cell voltages for each cell in
                          # If individual voltages unknown but number of cells known set each to NaN\n\
 string location          # The location into which the battery is inserted. (slot number or plug)\n\
 string serial_number     # The best approximation of the battery serial number\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText();
-    }
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::BatteryState::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/BatteryState", "sensor_msgs/BatteryState");
-        typ.addProperty("md5sum", yarp::os::Value("476f837fa6771f6e16e3bf4ef96f8770"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

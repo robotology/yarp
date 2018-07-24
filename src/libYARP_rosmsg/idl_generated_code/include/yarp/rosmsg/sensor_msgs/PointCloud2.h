@@ -329,10 +329,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::PointCloud2> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::PointCloud2> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/PointCloud2";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "1158d486dd51d683ce2f1be655c3c181";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This message holds a collection of N-dimensional points, which may\n\
 # contain additional information such as normals, intensity, etc. The\n\
 # point data is stored as a binary blob, its layout described by the\n\
@@ -360,26 +364,49 @@ uint32  row_step     # Length of a row in bytes\n\
 uint8[] data         # Actual point data, size is (row_step*height)\n\
 \n\
 bool is_dense        # True if there are no invalid points\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: sensor_msgs/PointField\n\
-") + yarp::rosmsg::sensor_msgs::PointField::typeText();
-    }
+# This message holds the description of one point entry in the\n\
+# PointCloud2 message format.\n\
+uint8 INT8    = 1\n\
+uint8 UINT8   = 2\n\
+uint8 INT16   = 3\n\
+uint8 UINT16  = 4\n\
+uint8 INT32   = 5\n\
+uint8 UINT32  = 6\n\
+uint8 FLOAT32 = 7\n\
+uint8 FLOAT64 = 8\n\
+\n\
+string name      # Name of field\n\
+uint32 offset    # Offset from start of point struct\n\
+uint8  datatype  # Datatype enumeration, see above\n\
+uint32 count     # How many elements in the field\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::PointCloud2::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/PointCloud2", "sensor_msgs/PointCloud2");
-        typ.addProperty("md5sum", yarp::os::Value("1158d486dd51d683ce2f1be655c3c181"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

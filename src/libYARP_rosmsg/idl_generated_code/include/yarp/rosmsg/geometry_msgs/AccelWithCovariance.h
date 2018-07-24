@@ -156,10 +156,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::geometry_msgs::AccelWithCovariance> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::AccelWithCovariance> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "geometry_msgs/AccelWithCovariance";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "ad5a718d699c6be72a02b8d6a139f334";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This expresses acceleration in free space with uncertainty.\n\
 \n\
 Accel accel\n\
@@ -169,23 +173,32 @@ Accel accel\n\
 # In order, the parameters are:\n\
 # (x, y, z, rotation about X axis, rotation about Y axis, rotation about Z axis)\n\
 float64[36] covariance\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Accel\n\
-") + yarp::rosmsg::geometry_msgs::Accel::typeText();
-    }
+# This expresses acceleration in free space broken into its linear and angular parts.\n\
+Vector3  linear\n\
+Vector3  angular\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Vector3\n\
+# This represents a vector in free space. \n\
+# It is only meant to represent a direction. Therefore, it does not\n\
+# make sense to apply a translation to it (e.g., when applying a \n\
+# generic rigid transformation to a Vector3, tf2 will only apply the\n\
+# rotation). If you want your data to be translatable too, use the\n\
+# geometry_msgs/Point message instead.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::geometry_msgs::AccelWithCovariance::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/AccelWithCovariance", "geometry_msgs/AccelWithCovariance");
-        typ.addProperty("md5sum", yarp::os::Value("ad5a718d699c6be72a02b8d6a139f334"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

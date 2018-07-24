@@ -170,10 +170,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::std_msgs::Header> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::Header> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "std_msgs/Header";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "2176decaecbce78abc3b96ef049fabed";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # Standard metadata for higher-level stamped data types.\n\
 # This is generally used to communicate timestamped data \n\
 # in a particular coordinate frame.\n\
@@ -189,20 +193,13 @@ time stamp\n\
 # 0: no frame\n\
 # 1: global frame\n\
 string frame_id\n\
-");
-    }
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::std_msgs::Header::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Header", "std_msgs/Header");
-        typ.addProperty("md5sum", yarp::os::Value("2176decaecbce78abc3b96ef049fabed"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

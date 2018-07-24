@@ -156,10 +156,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::geometry_msgs::PoseWithCovariance> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::PoseWithCovariance> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "geometry_msgs/PoseWithCovariance";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "c23e848cf1b7533a8d7c259073a97e6f";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This represents a pose in free space with uncertainty.\n\
 \n\
 Pose pose\n\
@@ -169,23 +173,35 @@ Pose pose\n\
 # In order, the parameters are:\n\
 # (x, y, z, rotation about X axis, rotation about Y axis, rotation about Z axis)\n\
 float64[36] covariance\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Pose\n\
-") + yarp::rosmsg::geometry_msgs::Pose::typeText();
-    }
+# A representation of pose in free space, composed of position and orientation. \n\
+Point position\n\
+Quaternion orientation\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Point\n\
+# This contains the position of a point in free space\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Quaternion\n\
+# This represents an orientation in free space in quaternion form.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+float64 w\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::geometry_msgs::PoseWithCovariance::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PoseWithCovariance", "geometry_msgs/PoseWithCovariance");
-        typ.addProperty("md5sum", yarp::os::Value("c23e848cf1b7533a8d7c259073a97e6f"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

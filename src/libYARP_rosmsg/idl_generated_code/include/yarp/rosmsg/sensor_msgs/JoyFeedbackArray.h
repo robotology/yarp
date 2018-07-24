@@ -130,28 +130,40 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::JoyFeedbackArray> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::JoyFeedbackArray> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/JoyFeedbackArray";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "cde5730a895b1fc4dee6f91b754b213d";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This message publishes values for multiple feedback at once. \n\
-JoyFeedback[] array") + std::string("\n\
+JoyFeedback[] array\n\
 ================================================================================\n\
 MSG: sensor_msgs/JoyFeedback\n\
-") + yarp::rosmsg::sensor_msgs::JoyFeedback::typeText();
-    }
+# Declare of the type of feedback\n\
+uint8 TYPE_LED    = 0\n\
+uint8 TYPE_RUMBLE = 1\n\
+uint8 TYPE_BUZZER = 2\n\
+\n\
+uint8 type\n\
+\n\
+# This will hold an id number for each type of each feedback.\n\
+# Example, the first led would be id=0, the second would be id=1\n\
+uint8 id\n\
+\n\
+# Intensity of the feedback, from 0.0 to 1.0, inclusive.  If device is\n\
+# actually binary, driver should treat 0<=x<0.5 as off, 0.5<=x<=1 as on.\n\
+float32 intensity\n\
+\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::JoyFeedbackArray::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/JoyFeedbackArray", "sensor_msgs/JoyFeedbackArray");
-        typ.addProperty("md5sum", yarp::os::Value("cde5730a895b1fc4dee6f91b754b213d"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

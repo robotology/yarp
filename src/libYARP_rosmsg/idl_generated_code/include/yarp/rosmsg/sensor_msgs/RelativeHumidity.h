@@ -158,10 +158,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::RelativeHumidity> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::RelativeHumidity> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/RelativeHumidity";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "8730015b05955b7e992ce29a2678d90f";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
  # Single reading from a relative humidity sensor.  Defines the ratio of partial\n\
  # pressure of water vapor to the saturated vapor pressure at a temperature.\n\
 \n\
@@ -173,23 +177,31 @@ public:
                            # 0.0 is no partial pressure of water vapor\n\
                            # 1.0 represents partial pressure of saturation\n\
 \n\
- float64 variance          # 0 is interpreted as variance unknown") + std::string("\n\
+ float64 variance          # 0 is interpreted as variance unknown\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText();
-    }
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::RelativeHumidity::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/RelativeHumidity", "sensor_msgs/RelativeHumidity");
-        typ.addProperty("md5sum", yarp::os::Value("8730015b05955b7e992ce29a2678d90f"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

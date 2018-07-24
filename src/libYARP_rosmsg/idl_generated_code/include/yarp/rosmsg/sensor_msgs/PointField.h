@@ -204,10 +204,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::PointField> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::PointField> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/PointField";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "268eacb2962780ceac86cbd17e328150";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This message holds the description of one point entry in the\n\
 # PointCloud2 message format.\n\
 uint8 INT8    = 1\n\
@@ -223,20 +227,13 @@ string name      # Name of field\n\
 uint32 offset    # Offset from start of point struct\n\
 uint8  datatype  # Datatype enumeration, see above\n\
 uint32 count     # How many elements in the field\n\
-");
-    }
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::PointField::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/PointField", "sensor_msgs/PointField");
-        typ.addProperty("md5sum", yarp::os::Value("268eacb2962780ceac86cbd17e328150"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

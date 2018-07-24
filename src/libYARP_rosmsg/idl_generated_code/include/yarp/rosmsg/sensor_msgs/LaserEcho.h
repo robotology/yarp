@@ -124,28 +124,26 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::LaserEcho> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::LaserEcho> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/LaserEcho";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "8bc5ae449b200fba4d552b4225586696";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This message is a submessage of MultiEchoLaserScan and is not intended\n\
 # to be used separately.\n\
 \n\
 float32[] echoes  # Multiple values of ranges or intensities.\n\
-                  # Each array represents data from the same angle increment.");
-    }
+                  # Each array represents data from the same angle increment.\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::LaserEcho::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/LaserEcho", "sensor_msgs/LaserEcho");
-        typ.addProperty("md5sum", yarp::os::Value("8bc5ae449b200fba4d552b4225586696"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

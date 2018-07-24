@@ -210,10 +210,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::trajectory_msgs::MultiDOFJointTrajectory> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::trajectory_msgs::MultiDOFJointTrajectory> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "trajectory_msgs/MultiDOFJointTrajectory";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "ef145a45a5f47b77b7f5cdde4b16c942";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # The header is used to specify the coordinate frame and the reference time for the trajectory durations\n\
 Header header\n\
 \n\
@@ -224,26 +228,78 @@ Header header\n\
 \n\
 string[] joint_names\n\
 MultiDOFJointTrajectoryPoint[] points\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: trajectory_msgs/MultiDOFJointTrajectoryPoint\n\
-") + yarp::rosmsg::trajectory_msgs::MultiDOFJointTrajectoryPoint::typeText();
-    }
+# Each multi-dof joint can specify a transform (up to 6 DOF)\n\
+geometry_msgs/Transform[] transforms\n\
+\n\
+# There can be a velocity specified for the origin of the joint \n\
+geometry_msgs/Twist[] velocities\n\
+\n\
+# There can be an acceleration specified for the origin of the joint \n\
+geometry_msgs/Twist[] accelerations\n\
+\n\
+duration time_from_start\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Transform\n\
+# This represents the transform between two coordinate frames in free space.\n\
+\n\
+Vector3 translation\n\
+Quaternion rotation\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Vector3\n\
+# This represents a vector in free space. \n\
+# It is only meant to represent a direction. Therefore, it does not\n\
+# make sense to apply a translation to it (e.g., when applying a \n\
+# generic rigid transformation to a Vector3, tf2 will only apply the\n\
+# rotation). If you want your data to be translatable too, use the\n\
+# geometry_msgs/Point message instead.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+================================================================================\n\
+MSG: geometry_msgs/Quaternion\n\
+# This represents an orientation in free space in quaternion form.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+float64 w\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Twist\n\
+# This expresses velocity in free space broken into its linear and angular parts.\n\
+Vector3  linear\n\
+Vector3  angular\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::trajectory_msgs::MultiDOFJointTrajectory::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("trajectory_msgs/MultiDOFJointTrajectory", "trajectory_msgs/MultiDOFJointTrajectory");
-        typ.addProperty("md5sum", yarp::os::Value("ef145a45a5f47b77b7f5cdde4b16c942"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

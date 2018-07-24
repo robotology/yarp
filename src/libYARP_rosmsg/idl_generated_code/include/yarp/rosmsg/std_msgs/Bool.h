@@ -106,25 +106,22 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::std_msgs::Bool> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::Bool> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "std_msgs/Bool";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "8b94c1b53db61fb6aed406028ad6332a";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 bool data\n\
-");
-    }
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::std_msgs::Bool::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Bool", "std_msgs/Bool");
-        typ.addProperty("md5sum", yarp::os::Value("8b94c1b53db61fb6aed406028ad6332a"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

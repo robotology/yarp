@@ -194,10 +194,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::MagneticField> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::MagneticField> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/MagneticField";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "2f3b0b43eed0c9501de0fa3ff89a45aa";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
  # Measurement of the Magnetic Field vector at a specific location.\n\
 \n\
  # If the covariance of the measurement is known, it should be filled in\n\
@@ -219,26 +223,44 @@ public:
                                       # put NaNs in the components not reported.\n\
 \n\
  float64[9] magnetic_field_covariance # Row major about x, y, z axes\n\
-                                      # 0 is interpreted as variance unknown") + std::string("\n\
+                                      # 0 is interpreted as variance unknown\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
-") + yarp::rosmsg::geometry_msgs::Vector3::typeText();
-    }
+# This represents a vector in free space. \n\
+# It is only meant to represent a direction. Therefore, it does not\n\
+# make sense to apply a translation to it (e.g., when applying a \n\
+# generic rigid transformation to a Vector3, tf2 will only apply the\n\
+# rotation). If you want your data to be translatable too, use the\n\
+# geometry_msgs/Point message instead.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::MagneticField::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/MagneticField", "sensor_msgs/MagneticField");
-        typ.addProperty("md5sum", yarp::os::Value("2f3b0b43eed0c9501de0fa3ff89a45aa"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

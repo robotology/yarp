@@ -161,28 +161,25 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::std_msgs::ColorRGBA> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::ColorRGBA> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "std_msgs/ColorRGBA";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "a29a96539573343b1310c73607334b00";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 float32 r\n\
 float32 g\n\
 float32 b\n\
 float32 a\n\
-");
-    }
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::std_msgs::ColorRGBA::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("std_msgs/ColorRGBA", "std_msgs/ColorRGBA");
-        typ.addProperty("md5sum", yarp::os::Value("a29a96539573343b1310c73607334b00"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

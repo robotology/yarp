@@ -157,32 +157,64 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::diagnostic_msgs::DiagnosticArray> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::diagnostic_msgs::DiagnosticArray> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "diagnostic_msgs/DiagnosticArray";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "60810da900de1dd6ddd437c3503511da";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This message is used to send diagnostic information about the state of the robot\n\
 Header header #for timestamp\n\
-DiagnosticStatus[] status # an array of components being reported on") + std::string("\n\
+DiagnosticStatus[] status # an array of components being reported on\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: diagnostic_msgs/DiagnosticStatus\n\
-") + yarp::rosmsg::diagnostic_msgs::DiagnosticStatus::typeText();
-    }
+# This message holds the status of an individual component of the robot.\n\
+# \n\
+\n\
+# Possible levels of operations\n\
+byte OK=0\n\
+byte WARN=1\n\
+byte ERROR=2\n\
+byte STALE=3\n\
+\n\
+byte level # level of operation enumerated above \n\
+string name # a description of the test/component reporting\n\
+string message # a description of the status\n\
+string hardware_id # a hardware unique string\n\
+KeyValue[] values # an array of values associated with the status\n\
+\n\
+\n\
+================================================================================\n\
+MSG: diagnostic_msgs/KeyValue\n\
+string key # what to label this value when viewing\n\
+string value # a value to track over time\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::diagnostic_msgs::DiagnosticArray::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("diagnostic_msgs/DiagnosticArray", "diagnostic_msgs/DiagnosticArray");
-        typ.addProperty("md5sum", yarp::os::Value("60810da900de1dd6ddd437c3503511da"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

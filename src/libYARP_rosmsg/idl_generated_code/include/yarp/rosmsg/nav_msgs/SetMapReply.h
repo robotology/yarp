@@ -105,24 +105,22 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::nav_msgs::SetMapReply> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::SetMapReply> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
-");
-    }
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "nav_msgs/SetMapReply";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::nav_msgs::SetMapReply::typeText();
-    }
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "358e233cde0c8a8bcfea4ce193f8fc15";
 
-    // Name the class, ROS will need this
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
+\n\
+";
+
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/SetMapReply", "nav_msgs/SetMapReply");
-        typ.addProperty("md5sum", yarp::os::Value("358e233cde0c8a8bcfea4ce193f8fc15"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

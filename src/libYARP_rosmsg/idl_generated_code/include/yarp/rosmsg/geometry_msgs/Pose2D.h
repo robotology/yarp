@@ -143,28 +143,26 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::geometry_msgs::Pose2D> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Pose2D> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "geometry_msgs/Pose2D";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "938fa65709584ad8e77d238529be13b8";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This expresses a position and orientation on a 2D manifold.\n\
 \n\
 float64 x\n\
 float64 y\n\
-float64 theta");
-    }
+float64 theta\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::geometry_msgs::Pose2D::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Pose2D", "geometry_msgs/Pose2D");
-        typ.addProperty("md5sum", yarp::os::Value("938fa65709584ad8e77d238529be13b8"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };
