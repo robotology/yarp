@@ -872,10 +872,17 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
         // the last port is closed.
         getNameSpace();
 
+        // Increment counter before initializing the clock.
+        __yarp_is_initialized++;
+
+        // The network clock open a port, and inside the open of the port
+        // the __yarp_is_initialized counter is checked > 0.
         if(yarp::os::Time::getClockType() == YARP_CLOCK_UNINITIALIZED)
             NetworkBase::yarpClockInit(clockType, nullptr);
     }
-    __yarp_is_initialized++;
+    else {
+        __yarp_is_initialized++;
+    }
 }
 
 void NetworkBase::finiMinimum()
