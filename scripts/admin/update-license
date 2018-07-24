@@ -11,38 +11,22 @@ echo "Puts license text in order."
 echo "Make sure you run this as ./scripts/admin/update-license"
 
 # reset change log
-echo -n | tee license-changes.txt
-echo -n | tee license-ignored.txt
-echo -n | tee license-good.txt
-echo -n | tee license-odd.txt
+rm -f license-*.txt copyright-*.txt
 
 rm -rf ./license_check
 mkdir ./license_check
 git archive HEAD | tar -x -C ./license_check
 
 for f in `cd license_check; find . -type f -iname "*.cpp" \
-                                       -or -iname "*.c" \
                                        -or -iname "*.h" \
                                        -or -iname "*.cmake" \
                                        -or -name "CMakeLists.txt" \
                 | grep -v "/extern" \
+                | grep -v "/qtquick2applicationviewer/" \
+                | grep -v "CTestConfig.cmake" \
+                | grep -v "src/carriers/portmonitor_carrier/lua/lua_swig.h" \
 `; do
-    ignore=0
-
-    # Ignore auto-generated IDL files
-    grep -q ALLOW_IDL_GENERATION $f
-    if [ $? -eq 0 ]; then
-        echo $f | grep -q "YarpIDL.cmake\|t_yarp_generator.cc\|placeGeneratedYarpIdlFiles.cmake.in\|CMakeLists.txt"
-        if [ $? -ne 0 ]; then
-            ignore=1
-        fi
-    fi
-
-    if [ $ignore -ne 0 ]; then
-        echo "$f" >> license-ignored.txt
-    else
-        ./scripts/admin/update-license-single $f
-    fi
+    ./scripts/admin/update-license-single $f
 done
 
 
@@ -51,6 +35,7 @@ done
 # license-bsd4.txt has files under BSD-4-Clause
 # license-lgpl2.1+ has files under LGPL2.1+
 # license-gpl2+.txt has files under GPL2+
+# license-gpl3+.txt has files under GPL3+
 # license-odd.txt has everything else
 
 if [ -f license-bsd3.txt ]; then
@@ -79,6 +64,11 @@ if [ -f license-gpl2+.txt ]; then
   cat license-gpl2+.txt >> license-good.txt
 fi
 
+if [ -f license-gpl3+.txt ]; then
+  cat license-gpl3+.txt  | grep "Copyright:" > copyright-gpl3+.txt
+  cat license-gpl3+.txt >> license-good.txt
+fi
+
 cat license-good.txt  | grep "Copyright:" > copyright-good.txt
 
 
@@ -95,6 +85,80 @@ Unless otherwise stated, files in YARP are:
 
   This software may be modified and distributed under the terms of the
   BSD-3-Clause license. See the accompanying LICENSE file for details.
+EOF
+
+cat<<EOF
+
+Most YARP components are released under the terms of the BSD-3-Clause.
+Some optional components are released under the terms of the LGPL-2.1 or later,
+GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
+ * Some components are released under the terms of the LGPL license, version 2.1
+   or later.
+   + devices:
+     - \`batteryClient\`
+     - \`batteryWrapper\`
+     - \`depthCamera\`
+     - \`imuBosch_BNO055\`
+     - \`laserFromDepth\`
+     - \`laserHokuyo\`
+     - \`localization2DClient\`
+     - \`map2DClient\`
+     - \`map2DServer\`
+     - \`navigation2DClient\`
+     - \`opencv\`
+     - \`ovrheadset\`
+     - \`portaudio\`
+     - \`Rangefinder2DClient\`
+     - \`Rangefinder2DWrapper\`
+     - \`rpLidar\`
+     - \`rpLidar2\`
+     - \`SDLJoypad\`
+     - \`transformClient\`
+     - \`transformServer\`
+   + tools:
+     - \`yarplogger-console\`
+     - \`yarpmanager-console\`
+     - \`yarprobotinterface\`
+   + GUIs:
+     - \`yarpbatterygui\`
+     - \`yarpdataplayer\`
+     - \`yarplaserscannergui\`
+     - \`yarplogger\`
+     - \`yarpmanager\`
+     - \`yarpmotorgui\`
+     - \`QtYARPView\` and \`yarpview\`
+ * Some optional components use 3rd party libraries that may have some extra
+   requirements.
+   + \`libYARP_rtf\` and the RTF plugins use
+     [RTF](https://github.com/robotology/robot-testing/blob/master/LICENSE).
+   + The \`xmlrpc\` carrier uses a custom version of the
+     [xmlrpcpp](https://sourceforge.net/projects/xmlrpcpp/) library.
+   + The \`bayer\` carrier uses alternatively
+     [libdc1394](http://damien.douxchamps.net/ieee1394/libdc1394/) or, if the
+     library is not available, links statically a few files taken from
+     [libdc1394](http://libdc1394.git.sourceforge.net/git/gitweb.cgi?p=libdc1394/libdc1394;a=blob_plain;f=libdc1394/dc1394/bayer.c;hb=HEAD).
+   + The \`h264\` carrier uses glib (LGPLv2.1 or later) and gstreamer (LGPLv2.1 or
+     later).
+   + The \`mpi\` carrier uses MPI (license dependent on the implementation).
+   + The \`dynamixelAX12Ftdi\` device uses
+     [libftdi](https://www.intra2net.com/en/developer/libftdi/).
+   + The \`SDLJoypad\` device uses alternatively
+     [SDL 1.2](https://libsdl.org/license.php).
+   + The ffmpeg_grabber and ffmpeg_writer devices use
+     [Ffmpeg](https://github.com/FFmpeg/FFmpeg/blob/master/LICENSE.md).
+   + The ovrheadset device use the
+     [Oculis SDK](https://developer.oculus.com/licenses/).
+ * A few optional parts of YARP are released under the terms of the GPL license,
+   version 2 or later:
+   + \`libYARP_math\` uses the GNU Scientific Library, under the GPL 2 or later.
+   + \`example/matrix/gsl_example.cpp\` uses GSL, under the GPL 2 or later.
+ * A few optional parts of YARP are released under the terms of the GPL license,
+   version 3 or later:
+   + \`QtYARPScope\` uses QCustomPlot that is GPL3+ and it is therefore GPL3+.
+   + \`yarpscope\` uses \`QtYARPScope\` that is GPL3+ and it is therefore GPL3+.
+   + \`yarpviz\` uses qgv that is GPL3+ and it is therefore GPL3+.
+   + \`example/ContainerExample\` uses \`QtYARPScope\` and it is therefore GPL3+.
+ * The \`yarpidl_thrift\` tool is released under the Apache-2.0 License.
 EOF
 
 cat<<EOF
@@ -137,19 +201,24 @@ equivalent to the following list of institutions:
     Automation - Salford - United Kingdom
   * [2009-2010] The University of Sheffield, Dept. of Automatic Control &
     Systems Engineering, Sheffield, UK
+EOF
 
-Certain files are integrated in YARP from other sources with
-friendly licenses.  Here is a list of these files and a summary of
-their copyright.  See the individual files for more details.
-All files used in the default YARP build are compatible with the
-LGPL.  Optional modules may require use of YARP under the GPL,
-rather than the LGPL.
+if [ -f license-odd.txt ]; then
+  cat<<EOF
+
+The following files licenses are odd, or unknown:
 
 EOF
 
-cat license-odd.txt | sed "s|^\./||"
+  cat license-odd.txt | sed "s|^\./||"
+fi
+
 
 ) > license-statement.txt
 
 echo
 echo "License statement in license-statement.txt"
+echo
+echo "You can now run:"
+echo "   cp license-statement.txt COPYING"
+echo

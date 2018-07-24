@@ -71,17 +71,9 @@ License
 Material included in YARP is Copyright of Istituto Italiano di Tecnologia (IIT),
 RobotCub Consortium and other contributors.
 
- * Most YARP components are released under the terms of the BSD-3-Clause.
- * Some components are released under the BSD-3-Clause, but use LGPL 3rd party
-   libraries, therefore they have to be considered LGPL if these libraries are
-   linked statically.
- * Some components are released under the terms of the LGPL license, version 2.1
-   or later.
- * A few optional parts of YARP are released under the terms of the GPL license,
-   version 2 or later:
-   + libYARP_math uses the GNU Scientific Library, under the GPL.
-   + devices urbtc, vfw, dimax_u2c have components that are under the GPL.
-
+Most YARP components are released under the terms of the BSD-3-Clause.
+Some optional components are released under the terms of the LGPL-2.1 or later,
+GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License.
 See the file COPYING and LICENSE files for details.
 
 
