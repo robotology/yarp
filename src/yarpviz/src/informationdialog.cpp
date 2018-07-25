@@ -78,17 +78,17 @@ void InformationDialog::setProcessVertexInfo(yarp::profiler::graph::ProcessVerte
 
 
 void InformationDialog::setPortVertexInfo(yarp::profiler::graph::PortVertex* vertex) {
-     QTreeWidgetItem* item;
-     QStringList prop;
-     prop.clear();
-     prop.append("Name");
-     prop.append(vertex->property.find("name").asString().c_str());
-     item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
+    QTreeWidgetItem* item;
+    QStringList prop;
+    prop.clear();
+    prop.append("Name");
+    prop.append(vertex->property.find("name").asString().c_str());
+    item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
 
-     prop.clear();
-     prop.append("Type");
-     prop.append(vertex->property.find("dir").asString().c_str());
-     item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
+    prop.clear();
+    prop.append("Type");
+    prop.append(vertex->property.find("dir").asString().c_str());
+    item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
 }
 
 void InformationDialog::setEdgeInfo(yarp::profiler::graph::Edge* edge) {
