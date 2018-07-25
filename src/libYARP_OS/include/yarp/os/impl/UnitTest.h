@@ -71,7 +71,7 @@ public:
              typename T2,
              typename = typename std::enable_if<is_supported<T1>::value && is_supported<T2>::value>::type>
     bool checkEqualImpl(T1 x, T2 y,
-                        const char *desc,
+                        const std::string& desc,
                         const char *txt1,
                         const char *txt2,
                         const char *fname,
@@ -90,14 +90,14 @@ public:
     }
 
     bool checkEqualishImpl(double x, double y,
-                           const char *desc,
+                           const std::string& desc,
                            const char *txt1,
                            const char *txt2,
                            const char *fname,
                            int fline);
 
     bool checkEqualImpl(const std::string& x, const std::string& y,
-                        const char *desc,
+                        const std::string& desc,
                         const char *txt1,
                         const char *txt2,
                         const char *fname,

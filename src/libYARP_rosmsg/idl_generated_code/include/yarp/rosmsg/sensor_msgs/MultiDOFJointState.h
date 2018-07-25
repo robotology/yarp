@@ -314,10 +314,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::MultiDOFJointState> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::MultiDOFJointState> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/MultiDOFJointState";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "690f272f0640d2631c305eeb8301e59d";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # Representation of state for joints with multiple degrees of freedom, \n\
 # following the structure of JointState.\n\
 #\n\
@@ -344,32 +348,72 @@ string[] joint_names\n\
 geometry_msgs/Transform[] transforms\n\
 geometry_msgs/Twist[] twist\n\
 geometry_msgs/Wrench[] wrench\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Transform\n\
-") + yarp::rosmsg::geometry_msgs::Transform::typeText() + std::string("\n\
+# This represents the transform between two coordinate frames in free space.\n\
+\n\
+Vector3 translation\n\
+Quaternion rotation\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Vector3\n\
+# This represents a vector in free space. \n\
+# It is only meant to represent a direction. Therefore, it does not\n\
+# make sense to apply a translation to it (e.g., when applying a \n\
+# generic rigid transformation to a Vector3, tf2 will only apply the\n\
+# rotation). If you want your data to be translatable too, use the\n\
+# geometry_msgs/Point message instead.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+================================================================================\n\
+MSG: geometry_msgs/Quaternion\n\
+# This represents an orientation in free space in quaternion form.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+float64 w\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Twist\n\
-") + yarp::rosmsg::geometry_msgs::Twist::typeText() + std::string("\n\
+# This expresses velocity in free space broken into its linear and angular parts.\n\
+Vector3  linear\n\
+Vector3  angular\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Wrench\n\
-") + yarp::rosmsg::geometry_msgs::Wrench::typeText();
-    }
+# This represents force in free space, separated into\n\
+# its linear and angular parts.\n\
+Vector3  force\n\
+Vector3  torque\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::MultiDOFJointState::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/MultiDOFJointState", "sensor_msgs/MultiDOFJointState");
-        typ.addProperty("md5sum", yarp::os::Value("690f272f0640d2631c305eeb8301e59d"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

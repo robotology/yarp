@@ -140,33 +140,49 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::geometry_msgs::PointStamped> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::PointStamped> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "geometry_msgs/PointStamped";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "c63aecb41bfdfd6b7e1fac37c7cbe7bf";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This represents a Point with reference coordinate frame and timestamp\n\
 Header header\n\
 Point point\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Point\n\
-") + yarp::rosmsg::geometry_msgs::Point::typeText();
-    }
+# This contains the position of a point in free space\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::geometry_msgs::PointStamped::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PointStamped", "geometry_msgs/PointStamped");
-        typ.addProperty("md5sum", yarp::os::Value("c63aecb41bfdfd6b7e1fac37c7cbe7bf"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

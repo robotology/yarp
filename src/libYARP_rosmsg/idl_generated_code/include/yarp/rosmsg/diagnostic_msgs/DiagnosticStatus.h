@@ -252,10 +252,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::diagnostic_msgs::DiagnosticStatus> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::diagnostic_msgs::DiagnosticStatus> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "diagnostic_msgs/DiagnosticStatus";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "d0ce08bc6e5ba34c7754f563a9cabaf1";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This message holds the status of an individual component of the robot.\n\
 # \n\
 \n\
@@ -271,23 +275,18 @@ string message # a description of the status\n\
 string hardware_id # a hardware unique string\n\
 KeyValue[] values # an array of values associated with the status\n\
 \n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: diagnostic_msgs/KeyValue\n\
-") + yarp::rosmsg::diagnostic_msgs::KeyValue::typeText();
-    }
+string key # what to label this value when viewing\n\
+string value # a value to track over time\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::diagnostic_msgs::DiagnosticStatus::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("diagnostic_msgs/DiagnosticStatus", "diagnostic_msgs/DiagnosticStatus");
-        typ.addProperty("md5sum", yarp::os::Value("d0ce08bc6e5ba34c7754f563a9cabaf1"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

@@ -103,24 +103,22 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::std_msgs::Float64> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::Float64> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
-float64 data");
-    }
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "std_msgs/Float64";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::std_msgs::Float64::typeText();
-    }
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "fdb28210bfa9d7c91146260178d9a584";
 
-    // Name the class, ROS will need this
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
+float64 data\n\
+";
+
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("std_msgs/Float64", "std_msgs/Float64");
-        typ.addProperty("md5sum", yarp::os::Value("fdb28210bfa9d7c91146260178d9a584"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

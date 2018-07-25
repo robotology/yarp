@@ -509,10 +509,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::CameraInfo> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::CameraInfo> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/CameraInfo";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "c9a58c1b0b154e0e6da7578cb991d214";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This message defines meta information for a camera. It should be in a\n\
 # camera namespace on topic \"camera_info\" and accompanied by up to five\n\
 # image topics named:\n\
@@ -644,26 +648,53 @@ uint32 binning_y\n\
 # The default setting of roi (all values 0) is considered the same as\n\
 #  full resolution (roi.width = width, roi.height = height).\n\
 RegionOfInterest roi\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: sensor_msgs/RegionOfInterest\n\
-") + yarp::rosmsg::sensor_msgs::RegionOfInterest::typeText();
-    }
+# This message is used to specify a region of interest within an image.\n\
+#\n\
+# When used to specify the ROI setting of the camera when the image was\n\
+# taken, the height and width fields should either match the height and\n\
+# width fields for the associated image; or height = width = 0\n\
+# indicates that the full resolution image was captured.\n\
+\n\
+uint32 x_offset  # Leftmost pixel of the ROI\n\
+                 # (0 if the ROI includes the left edge of the image)\n\
+uint32 y_offset  # Topmost pixel of the ROI\n\
+                 # (0 if the ROI includes the top edge of the image)\n\
+uint32 height    # Height of ROI\n\
+uint32 width     # Width of ROI\n\
+\n\
+# True if a distinct rectified ROI should be calculated from the \"raw\"\n\
+# ROI in this message. Typically this should be False if the full image\n\
+# is captured (ROI not used), and True if a subwindow is captured (ROI\n\
+# used).\n\
+bool do_rectify\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::CameraInfo::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/CameraInfo", "sensor_msgs/CameraInfo");
-        typ.addProperty("md5sum", yarp::os::Value("c9a58c1b0b154e0e6da7578cb991d214"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

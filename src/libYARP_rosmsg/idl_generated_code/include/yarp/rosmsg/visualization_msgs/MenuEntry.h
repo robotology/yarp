@@ -254,10 +254,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::visualization_msgs::MenuEntry> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::MenuEntry> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "visualization_msgs/MenuEntry";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "b90ec63024573de83b57aa93eb39be2d";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # MenuEntry message.\n\
 \n\
 # Each InteractiveMarker message has an array of MenuEntry messages.\n\
@@ -312,20 +316,13 @@ uint8 FEEDBACK=0\n\
 uint8 ROSRUN=1\n\
 uint8 ROSLAUNCH=2\n\
 uint8 command_type\n\
-");
-    }
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::visualization_msgs::MenuEntry::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/MenuEntry", "visualization_msgs/MenuEntry");
-        typ.addProperty("md5sum", yarp::os::Value("b90ec63024573de83b57aa93eb39be2d"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

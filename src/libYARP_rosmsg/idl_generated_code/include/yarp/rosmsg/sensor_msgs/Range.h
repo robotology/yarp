@@ -246,10 +246,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::Range> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::Range> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/Range";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "c005c34273dc426c67a020a87bc24148";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # Single range reading from an active ranger that emits energy and reports\n\
 # one range reading that is valid along an arc at the distance measured. \n\
 # This message is  not appropriate for laser scanners. See the LaserScan\n\
@@ -289,23 +293,31 @@ float32 range           # range data [m]\n\
                         # -Inf represents a detection within fixed distance.\n\
                         # (Detection too close to the sensor to quantify)\n\
                         # +Inf represents no detection within the fixed distance.\n\
-                        # (Object out of range)") + std::string("\n\
+                        # (Object out of range)\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText();
-    }
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::Range::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/Range", "sensor_msgs/Range");
-        typ.addProperty("md5sum", yarp::os::Value("c005c34273dc426c67a020a87bc24148"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

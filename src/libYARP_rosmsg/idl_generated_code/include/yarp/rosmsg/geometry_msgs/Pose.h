@@ -140,33 +140,40 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::geometry_msgs::Pose> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Pose> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "geometry_msgs/Pose";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "e45d45a5a1ce597b249e23fb30fc871f";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # A representation of pose in free space, composed of position and orientation. \n\
 Point position\n\
 Quaternion orientation\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Point\n\
-") + yarp::rosmsg::geometry_msgs::Point::typeText() + std::string("\n\
+# This contains the position of a point in free space\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
-") + yarp::rosmsg::geometry_msgs::Quaternion::typeText();
-    }
+# This represents an orientation in free space in quaternion form.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+float64 w\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::geometry_msgs::Pose::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Pose", "geometry_msgs/Pose");
-        typ.addProperty("md5sum", yarp::os::Value("e45d45a5a1ce597b249e23fb30fc871f"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

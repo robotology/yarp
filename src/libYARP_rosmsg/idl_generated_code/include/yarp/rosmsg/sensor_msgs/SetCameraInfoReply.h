@@ -131,24 +131,22 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::SetCameraInfoReply> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::SetCameraInfoReply> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
-");
-    }
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/SetCameraInfoReply";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::SetCameraInfoReply::typeText();
-    }
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "2ec6f3eff0161f4257b808b12bc830c2";
 
-    // Name the class, ROS will need this
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
+\n\
+";
+
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/SetCameraInfoReply", "sensor_msgs/SetCameraInfoReply");
-        typ.addProperty("md5sum", yarp::os::Value("2ec6f3eff0161f4257b808b12bc830c2"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

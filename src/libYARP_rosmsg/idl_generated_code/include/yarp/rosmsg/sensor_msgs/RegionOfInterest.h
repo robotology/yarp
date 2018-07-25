@@ -196,10 +196,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::RegionOfInterest> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::RegionOfInterest> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/RegionOfInterest";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "bdb633039d588fcccb441a4d43ccfe09";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This message is used to specify a region of interest within an image.\n\
 #\n\
 # When used to specify the ROI setting of the camera when the image was\n\
@@ -219,20 +223,13 @@ uint32 width     # Width of ROI\n\
 # is captured (ROI not used), and True if a subwindow is captured (ROI\n\
 # used).\n\
 bool do_rectify\n\
-");
-    }
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::RegionOfInterest::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/RegionOfInterest", "sensor_msgs/RegionOfInterest");
-        typ.addProperty("md5sum", yarp::os::Value("bdb633039d588fcccb441a4d43ccfe09"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

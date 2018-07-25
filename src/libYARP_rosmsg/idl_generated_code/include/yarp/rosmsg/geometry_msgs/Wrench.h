@@ -140,31 +140,38 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::geometry_msgs::Wrench> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Wrench> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "geometry_msgs/Wrench";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "4f539cf138b23283b520fd271b567936";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This represents force in free space, separated into\n\
 # its linear and angular parts.\n\
 Vector3  force\n\
 Vector3  torque\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Vector3\n\
-") + yarp::rosmsg::geometry_msgs::Vector3::typeText();
-    }
+# This represents a vector in free space. \n\
+# It is only meant to represent a direction. Therefore, it does not\n\
+# make sense to apply a translation to it (e.g., when applying a \n\
+# generic rigid transformation to a Vector3, tf2 will only apply the\n\
+# rotation). If you want your data to be translatable too, use the\n\
+# geometry_msgs/Point message instead.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::geometry_msgs::Wrench::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Wrench", "geometry_msgs/Wrench");
-        typ.addProperty("md5sum", yarp::os::Value("4f539cf138b23283b520fd271b567936"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

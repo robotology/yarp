@@ -173,10 +173,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::std_msgs::MultiArrayLayout> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::std_msgs::MultiArrayLayout> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "std_msgs/MultiArrayLayout";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "0fed2a11c13e11c5571b4e2a995a91a3";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # The multiarray declares a generic multi-dimensional array of a\n\
 # particular data type.  Dimensions are ordered from outer most\n\
 # to inner most.\n\
@@ -203,23 +207,19 @@ uint32 data_offset        # padding elements at front of data\n\
 # dim[2].stride = 3\n\
 #\n\
 # multiarray(i,j,k) refers to the ith row, jth column, and kth channel.\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: std_msgs/MultiArrayDimension\n\
-") + yarp::rosmsg::std_msgs::MultiArrayDimension::typeText();
-    }
+string label   # label of given dimension\n\
+uint32 size    # size of given dimension (in type units)\n\
+uint32 stride  # stride of given dimension\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::std_msgs::MultiArrayLayout::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("std_msgs/MultiArrayLayout", "std_msgs/MultiArrayLayout");
-        typ.addProperty("md5sum", yarp::os::Value("0fed2a11c13e11c5571b4e2a995a91a3"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

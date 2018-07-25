@@ -83,6 +83,7 @@ if(YARP_COMPILE_TESTS)
 
   set(targets OS
               sig
+              rosmsg
               dev
               serversql
               run)
@@ -114,6 +115,7 @@ if(YARP_COMPILE_TESTS)
     target_link_libraries(${EXE} YARP::YARP_OS
                                  YARP::YARP_init
                                  YARP::YARP_sig
+                                 YARP::YARP_rosmsg
                                  YARP::YARP_dev
                                  YARP::YARP_serversql
                                  YARP::YARP_run

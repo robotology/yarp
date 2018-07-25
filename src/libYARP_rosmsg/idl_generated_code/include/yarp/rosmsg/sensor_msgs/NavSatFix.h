@@ -303,10 +303,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::NavSatFix> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::NavSatFix> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/NavSatFix";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "2d3a8cd499b9b4a0249fb98fd05cfa48";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # Navigation Satellite fix for any Global Navigation Satellite System\n\
 #\n\
 # Specified using the WGS 84 reference ellipsoid\n\
@@ -353,26 +357,56 @@ uint8 COVARIANCE_TYPE_DIAGONAL_KNOWN = 2\n\
 uint8 COVARIANCE_TYPE_KNOWN = 3\n\
 \n\
 uint8 position_covariance_type\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: sensor_msgs/NavSatStatus\n\
-") + yarp::rosmsg::sensor_msgs::NavSatStatus::typeText();
-    }
+# Navigation Satellite fix status for any Global Navigation Satellite System\n\
+\n\
+# Whether to output an augmented fix is determined by both the fix\n\
+# type and the last time differential corrections were received.  A\n\
+# fix is valid when status >= STATUS_FIX.\n\
+\n\
+int8 STATUS_NO_FIX =  -1        # unable to fix position\n\
+int8 STATUS_FIX =      0        # unaugmented fix\n\
+int8 STATUS_SBAS_FIX = 1        # with satellite-based augmentation\n\
+int8 STATUS_GBAS_FIX = 2        # with ground-based augmentation\n\
+\n\
+int8 status\n\
+\n\
+# Bits defining which Global Navigation Satellite System signals were\n\
+# used by the receiver.\n\
+\n\
+uint16 SERVICE_GPS =     1\n\
+uint16 SERVICE_GLONASS = 2\n\
+uint16 SERVICE_COMPASS = 4      # includes BeiDou.\n\
+uint16 SERVICE_GALILEO = 8\n\
+\n\
+uint16 service\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::NavSatFix::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/NavSatFix", "sensor_msgs/NavSatFix");
-        typ.addProperty("md5sum", yarp::os::Value("2d3a8cd499b9b4a0249fb98fd05cfa48"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

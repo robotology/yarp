@@ -203,10 +203,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::nav_msgs::MapMetaData> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::MapMetaData> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "nav_msgs/MapMetaData";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "10cfc8a2818024d3248802c00c95f11b";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This hold basic information about the characterists of the OccupancyGrid\n\
 \n\
 # The time at which the map was loaded\n\
@@ -219,23 +223,35 @@ uint32 width\n\
 uint32 height\n\
 # The origin of the map [m, m, rad].  This is the real-world pose of the\n\
 # cell (0,0) in the map.\n\
-geometry_msgs/Pose origin") + std::string("\n\
+geometry_msgs/Pose origin\n\
 ================================================================================\n\
 MSG: geometry_msgs/Pose\n\
-") + yarp::rosmsg::geometry_msgs::Pose::typeText();
-    }
+# A representation of pose in free space, composed of position and orientation. \n\
+Point position\n\
+Quaternion orientation\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Point\n\
+# This contains the position of a point in free space\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Quaternion\n\
+# This represents an orientation in free space in quaternion form.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+float64 w\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::nav_msgs::MapMetaData::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/MapMetaData", "nav_msgs/MapMetaData");
-        typ.addProperty("md5sum", yarp::os::Value("10cfc8a2818024d3248802c00c95f11b"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

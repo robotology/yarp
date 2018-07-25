@@ -167,10 +167,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::NavSatStatus> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::NavSatStatus> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/NavSatStatus";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "331cdbddfa4bc96ffc3b9ad98900a54c";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # Navigation Satellite fix status for any Global Navigation Satellite System\n\
 \n\
 # Whether to output an augmented fix is determined by both the fix\n\
@@ -193,20 +197,13 @@ uint16 SERVICE_COMPASS = 4      # includes BeiDou.\n\
 uint16 SERVICE_GALILEO = 8\n\
 \n\
 uint16 service\n\
-");
-    }
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::NavSatStatus::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/NavSatStatus", "sensor_msgs/NavSatStatus");
-        typ.addProperty("md5sum", yarp::os::Value("331cdbddfa4bc96ffc3b9ad98900a54c"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

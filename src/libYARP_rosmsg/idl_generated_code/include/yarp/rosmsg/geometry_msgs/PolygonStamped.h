@@ -140,33 +140,61 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::geometry_msgs::PolygonStamped> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::PolygonStamped> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "geometry_msgs/PolygonStamped";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "c6be8f7dc3bee7fe9e8d296070f53340";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This represents a Polygon with reference coordinate frame and timestamp\n\
 Header header\n\
 Polygon polygon\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Polygon\n\
-") + yarp::rosmsg::geometry_msgs::Polygon::typeText();
-    }
+#A specification of a polygon where the first and last points are assumed to be connected\n\
+Point32[] points\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Point32\n\
+# This contains the position of a point in free space(with 32 bits of precision).\n\
+# It is recommeded to use Point wherever possible instead of Point32.  \n\
+# \n\
+# This recommendation is to promote interoperability.  \n\
+#\n\
+# This message is designed to take up less space when sending\n\
+# lots of points at once, as in the case of a PointCloud.  \n\
+\n\
+float32 x\n\
+float32 y\n\
+float32 z\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::geometry_msgs::PolygonStamped::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PolygonStamped", "geometry_msgs/PolygonStamped");
-        typ.addProperty("md5sum", yarp::os::Value("c6be8f7dc3bee7fe9e8d296070f53340"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

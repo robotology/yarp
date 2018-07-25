@@ -399,10 +399,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::visualization_msgs::InteractiveMarkerControl> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::visualization_msgs::InteractiveMarkerControl> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "visualization_msgs/InteractiveMarkerControl";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "b3c81e785788195d1840b86c28da1aac";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # Represents a control that is to be displayed together with an interactive marker\n\
 \n\
 # Identifying string for this control.\n\
@@ -480,26 +484,119 @@ bool independent_marker_orientation\n\
 # e.g. \"Move the robot\". \n\
 # Default: A generic description based on the interaction mode\n\
 string description\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Quaternion\n\
-") + yarp::rosmsg::geometry_msgs::Quaternion::typeText() + std::string("\n\
+# This represents an orientation in free space in quaternion form.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+float64 w\n\
+\n\
 ================================================================================\n\
 MSG: visualization_msgs/Marker\n\
-") + yarp::rosmsg::visualization_msgs::Marker::typeText();
-    }
+# See http://www.ros.org/wiki/rviz/DisplayTypes/Marker and http://www.ros.org/wiki/rviz/Tutorials/Markers%3A%20Basic%20Shapes for more information on using this message with rviz\n\
+\n\
+uint8 ARROW=0\n\
+uint8 CUBE=1\n\
+uint8 SPHERE=2\n\
+uint8 CYLINDER=3\n\
+uint8 LINE_STRIP=4\n\
+uint8 LINE_LIST=5\n\
+uint8 CUBE_LIST=6\n\
+uint8 SPHERE_LIST=7\n\
+uint8 POINTS=8\n\
+uint8 TEXT_VIEW_FACING=9\n\
+uint8 MESH_RESOURCE=10\n\
+uint8 TRIANGLE_LIST=11\n\
+\n\
+uint8 ADD=0\n\
+uint8 MODIFY=0\n\
+uint8 DELETE=2\n\
+uint8 DELETEALL=3\n\
+\n\
+Header header                        # header for time/frame information\n\
+string ns                            # Namespace to place this object in... used in conjunction with id to create a unique name for the object\n\
+int32 id 		                         # object ID useful in conjunction with the namespace for manipulating and deleting the object later\n\
+int32 type 		                       # Type of object\n\
+int32 action 	                       # 0 add/modify an object, 1 (deprecated), 2 deletes an object, 3 deletes all objects\n\
+geometry_msgs/Pose pose                 # Pose of the object\n\
+geometry_msgs/Vector3 scale             # Scale of the object 1,1,1 means default (usually 1 meter square)\n\
+std_msgs/ColorRGBA color             # Color [0.0-1.0]\n\
+duration lifetime                    # How long the object should last before being automatically deleted.  0 means forever\n\
+bool frame_locked                    # If this marker should be frame-locked, i.e. retransformed into its frame every timestep\n\
+\n\
+#Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, ...)\n\
+geometry_msgs/Point[] points\n\
+#Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, ...)\n\
+#number of colors must either be 0 or equal to the number of points\n\
+#NOTE: alpha is not yet used\n\
+std_msgs/ColorRGBA[] colors\n\
+\n\
+# NOTE: only used for text markers\n\
+string text\n\
+\n\
+# NOTE: only used for MESH_RESOURCE markers\n\
+string mesh_resource\n\
+bool mesh_use_embedded_materials\n\
+\n\
+================================================================================\n\
+MSG: std_msgs/Header\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Pose\n\
+# A representation of pose in free space, composed of position and orientation. \n\
+Point position\n\
+Quaternion orientation\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Point\n\
+# This contains the position of a point in free space\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Vector3\n\
+# This represents a vector in free space. \n\
+# It is only meant to represent a direction. Therefore, it does not\n\
+# make sense to apply a translation to it (e.g., when applying a \n\
+# generic rigid transformation to a Vector3, tf2 will only apply the\n\
+# rotation). If you want your data to be translatable too, use the\n\
+# geometry_msgs/Point message instead.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+================================================================================\n\
+MSG: std_msgs/ColorRGBA\n\
+float32 r\n\
+float32 g\n\
+float32 b\n\
+float32 a\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::visualization_msgs::InteractiveMarkerControl::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("visualization_msgs/InteractiveMarkerControl", "visualization_msgs/InteractiveMarkerControl");
-        typ.addProperty("md5sum", yarp::os::Value("b3c81e785788195d1840b86c28da1aac"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

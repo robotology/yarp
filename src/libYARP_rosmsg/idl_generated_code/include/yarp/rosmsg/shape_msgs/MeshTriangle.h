@@ -123,26 +123,23 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::shape_msgs::MeshTriangle> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::shape_msgs::MeshTriangle> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "shape_msgs/MeshTriangle";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "23688b2e6d2de3d32fe8af104a903253";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # Definition of a triangle's vertices\n\
 uint32[3] vertex_indices\n\
-");
-    }
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::shape_msgs::MeshTriangle::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("shape_msgs/MeshTriangle", "shape_msgs/MeshTriangle");
-        typ.addProperty("md5sum", yarp::os::Value("23688b2e6d2de3d32fe8af104a903253"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

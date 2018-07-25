@@ -163,10 +163,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::JoyFeedback> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::JoyFeedback> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/JoyFeedback";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "f4dcd73460360d98f36e55ee7f2e46f1";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # Declare of the type of feedback\n\
 uint8 TYPE_LED    = 0\n\
 uint8 TYPE_RUMBLE = 1\n\
@@ -182,20 +186,13 @@ uint8 id\n\
 # actually binary, driver should treat 0<=x<0.5 as off, 0.5<=x<=1 as on.\n\
 float32 intensity\n\
 \n\
-");
-    }
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::JoyFeedback::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/JoyFeedback", "sensor_msgs/JoyFeedback");
-        typ.addProperty("md5sum", yarp::os::Value("f4dcd73460360d98f36e55ee7f2e46f1"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };
