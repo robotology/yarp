@@ -47,10 +47,15 @@ private:
 
     void init();
 public:
-    FakeBot() {
-        njoints = 2;
-        m_w = 128;
-        m_h = 128;
+    FakeBot() :
+        njoints(2),
+        m_w(128),
+        m_h(128),
+        xScale(1),
+        yScale(1),
+        noiseLevel(0),
+        lifetime(-1)
+    {
         pos.resize(njoints);
         dpos.resize(njoints);
         vel.resize(njoints);
@@ -58,8 +63,6 @@ public:
         acc.resize(njoints);
         loc.resize(njoints);
         amp.resize(njoints);
-        xScale = 1;
-        yScale = 1;
         for (int i=0; i<njoints; i++) {
             pos[i] = 0;
             dpos[i] = 0;
@@ -69,7 +72,6 @@ public:
             loc[i] = 0;
             amp[i] = 1; // initially on - ok for simulator
         }
-        lifetime = -1;
         init();
     }
 

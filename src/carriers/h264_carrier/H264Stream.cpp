@@ -29,13 +29,13 @@ using namespace std;
 
 H264Stream::H264Stream(h264Decoder_cfgParamters &config) :
         delegate(NULL),
+        blobHeader{0,0,0},
         phase(0),
         cursor(NULL),
         remaining(0),
+        decoder(nullptr),
         cfg(config)
-{
-    ;
-}
+{}
 
 H264Stream::~H264Stream()
 {

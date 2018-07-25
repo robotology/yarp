@@ -255,6 +255,7 @@ int yarp::serversql::Server::run(int argc, char** argv)
     if (!nc.open(options)) {
         if (silent) {
             fclose(out);
+            delete out;
         }
         return 1;
     }
@@ -279,6 +280,7 @@ int yarp::serversql::Server::run(int argc, char** argv)
         fprintf(stderr, "Name server failed to open\n");
         if (silent) {
             fclose(out);
+            delete out;
         }
         return 1;
     }
@@ -326,6 +328,7 @@ int yarp::serversql::Server::run(int argc, char** argv)
     server.close();
     if (silent) {
         fclose(out);
+        delete out;
     }
     return 0;
 }

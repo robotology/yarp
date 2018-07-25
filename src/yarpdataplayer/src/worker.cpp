@@ -271,14 +271,13 @@ MasterThread::MasterThread(Utilities *utilities, int numPart, QMainWindow *gui, 
     PeriodicThread (0.002),
     utilities(utilities),
     numPart(numPart),
+    numThreads(0),
     timePassed(0.0),
     initTime(0),
     virtualTime(0.0),
+    stepfromCmd(false),
     wnd(gui)
-{
-    //stepfromCmd = false;
-    //guiUpdate = new UpdateGui( this->utilities, this->numPart, this->wnd );
-}
+{}
 
 /**********************************************************/
 bool MasterThread::threadInit()

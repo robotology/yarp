@@ -23,7 +23,7 @@ namespace yarp {
 /**
  *
  * A carrier for receiving frames compressed in h264 over rtp.
- * This carrier uses gstreamer libraries to read rtp packets and to decode the h264 stream.
+ * This carrier uses gstreamer libraries (libgstreamer1.0-dev and libgstreamer-plugins-base1.0-dev) to read rtp packets and to decode the h264 stream.
  *
  * Use this carrier in the following way:
  * - suppose there is a server that streams video frames to IP x.x.x.x and to port p:
@@ -41,12 +41,11 @@ namespace yarp {
 class yarp::os::H264Carrier : public Carrier
 {
 private:
-    bool decoderIsRunning;
     std::string envelope;
     h264Decoder_cfgParamters cfgParams;
 public:
     H264Carrier()
-    {;}
+    {}
 
     virtual Carrier *create() const override
     {

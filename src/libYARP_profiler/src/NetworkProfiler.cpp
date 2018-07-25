@@ -255,11 +255,13 @@ bool NetworkProfiler::creatSimpleModuleGraph(yarp::profiler::graph::Graph& graph
         else
         {
             MachineVertex* mv1 = dynamic_cast<MachineVertex*>(*itr);
-            MachineVertex* mv2 = new MachineVertex(mv1->property.find("os").asString(),
-                                                   mv1->property.find("hostname").asString());
-            mv2->property = mv1->property;
-
-            subgraph.insert(*mv2);
+            if (mv1)
+            {
+                MachineVertex* mv2 = new MachineVertex(mv1->property.find("os").asString(),
+                                                       mv1->property.find("hostname").asString());
+                mv2->property = mv1->property;
+                subgraph.insert(*mv2);
+            }
         }
     }
 
@@ -267,10 +269,13 @@ bool NetworkProfiler::creatSimpleModuleGraph(yarp::profiler::graph::Graph& graph
         if(!dynamic_cast<ProcessVertex*>(*itr))
             continue;
         ProcessVertex* pv1 = dynamic_cast<ProcessVertex*>(*itr);
-        ProcessVertex* pv2 = new ProcessVertex(pv1->property.find("pid").asInt32(),
-                                               pv1->property.find("hostname").asString());
-        pv2->property = pv1->property;
-        subgraph.insert(*pv2);
+        if (pv1)
+        {
+            ProcessVertex* pv2 = new ProcessVertex(pv1->property.find("pid").asInt32(),
+                                                   pv1->property.find("hostname").asString());
+            pv2->property = pv1->property;
+            subgraph.insert(*pv2);
+        }
     }
     // insert edges
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
