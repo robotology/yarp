@@ -74,6 +74,8 @@ void InformationDialog::setProcessVertexInfo(yarp::profiler::graph::ProcessVerte
     prop.append("Policy");
     prop.append(QString::number(vertex->property.find("policy").asInt32()));
     item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
+
+    YARP_UNUSED(item);
 }
 
 
@@ -89,6 +91,9 @@ void InformationDialog::setPortVertexInfo(yarp::profiler::graph::PortVertex* ver
     prop.append("Type");
     prop.append(vertex->property.find("dir").asString().c_str());
     item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
+
+    YARP_UNUSED(item);
+
 }
 
 void InformationDialog::setEdgeInfo(yarp::profiler::graph::Edge* edge) {
@@ -146,4 +151,6 @@ void InformationDialog::setEdgeInfo(yarp::profiler::graph::Edge* edge) {
         prop.append(QString::number(edge->property.find("FromThreadPolicy").asInt32()));
         item = new QTreeWidgetItem( ui->treeWidgetProperty, prop);
     }
+
+    YARP_UNUSED(item);
 }

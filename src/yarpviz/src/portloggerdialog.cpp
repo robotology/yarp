@@ -72,6 +72,7 @@ PortLoggerDialog::PortLoggerDialog(Graph *graph, QWidget *parent) :
                     prop.append(destination.c_str());
                     prop.append(carrier.c_str());
                     item = new QTreeWidgetItem( ui->treeWidgetCons, prop);
+                    YARP_UNUSED(item);
                 }
             }
         }
@@ -119,7 +120,7 @@ void PortLoggerDialog::openCons()
             prop.append(sample.get(1).asString().c_str());
             prop.append(sample.get(2).asString().c_str());
             item = new QTreeWidgetItem( ui->treeWidgetCons, prop);
-
+            YARP_UNUSED(item);
         }
         else
             yWarning()<<"Wrong connection data at line"<<count;
@@ -139,6 +140,7 @@ void PortLoggerDialog::addConnections() {
         prop.append(item->text(2));
         newitem = new QTreeWidgetItem( ui->treeWidgetSelectedCons, prop);
         delete item;
+        YARP_UNUSED(newitem);
     }
     ui->pushButtonStart->setEnabled(ui->treeWidgetSelectedCons->topLevelItemCount() > 0);
     ui->pushButtonAdd->setEnabled(ui->treeWidgetCons->topLevelItemCount() > 0);
@@ -157,6 +159,7 @@ void PortLoggerDialog::removeConnections() {
         prop.append(item->text(2));
         newitem = new QTreeWidgetItem( ui->treeWidgetCons, prop);
         delete item;
+        YARP_UNUSED(newitem);
     }
     ui->pushButtonStart->setEnabled(ui->treeWidgetSelectedCons->topLevelItemCount() > 0);
     ui->pushButtonAdd->setEnabled(ui->treeWidgetCons->topLevelItemCount() > 0);
