@@ -271,7 +271,7 @@ bool PortLoggerDialog::saveLog(std::string filename, yarp::os::Bottle* samples) 
         return false;
     }
 
-    for(int k=0; k<samples->size(); k++) {
+    for(size_t k=0; k<samples->size(); k++) {
         Bottle* smp = samples->get(k).asList();
         file<<smp->toString().c_str()<<endl;
     }
