@@ -282,10 +282,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::stereo_msgs::DisparityImage> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::stereo_msgs::DisparityImage> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "stereo_msgs/DisparityImage";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "04a177815f75271039fa21f16acad8c9";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # Separate header for compatibility with current TimeSynchronizer.\n\
 # Likely to be removed in a later release, use image.header instead.\n\
 Header header\n\
@@ -315,29 +319,83 @@ float32 max_disparity\n\
 # Smallest allowed disparity increment. The smallest achievable depth range\n\
 # resolution is delta_Z = (Z^2/fT)*delta_d.\n\
 float32 delta_d\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: sensor_msgs/Image\n\
-") + yarp::rosmsg::sensor_msgs::Image::typeText() + std::string("\n\
+# This message contains an uncompressed image\n\
+# (0, 0) is at top-left corner of image\n\
+#\n\
+\n\
+Header header        # Header timestamp should be acquisition time of image\n\
+                     # Header frame_id should be optical frame of camera\n\
+                     # origin of frame should be optical center of cameara\n\
+                     # +x should point to the right in the image\n\
+                     # +y should point down in the image\n\
+                     # +z should point into to plane of the image\n\
+                     # If the frame_id here and the frame_id of the CameraInfo\n\
+                     # message associated with the image conflict\n\
+                     # the behavior is undefined\n\
+\n\
+uint32 height         # image height, that is, number of rows\n\
+uint32 width          # image width, that is, number of columns\n\
+\n\
+# The legal values for encoding are in file src/image_encodings.cpp\n\
+# If you want to standardize a new string format, join\n\
+# ros-users@lists.sourceforge.net and send an email proposing a new encoding.\n\
+\n\
+string encoding       # Encoding of pixels -- channel meaning, ordering, size\n\
+                      # taken from the list of strings in include/sensor_msgs/image_encodings.h\n\
+\n\
+uint8 is_bigendian    # is this data bigendian?\n\
+uint32 step           # Full row length in bytes\n\
+uint8[] data          # actual matrix data, size is (step * rows)\n\
+\n\
 ================================================================================\n\
 MSG: sensor_msgs/RegionOfInterest\n\
-") + yarp::rosmsg::sensor_msgs::RegionOfInterest::typeText();
-    }
+# This message is used to specify a region of interest within an image.\n\
+#\n\
+# When used to specify the ROI setting of the camera when the image was\n\
+# taken, the height and width fields should either match the height and\n\
+# width fields for the associated image; or height = width = 0\n\
+# indicates that the full resolution image was captured.\n\
+\n\
+uint32 x_offset  # Leftmost pixel of the ROI\n\
+                 # (0 if the ROI includes the left edge of the image)\n\
+uint32 y_offset  # Topmost pixel of the ROI\n\
+                 # (0 if the ROI includes the top edge of the image)\n\
+uint32 height    # Height of ROI\n\
+uint32 width     # Width of ROI\n\
+\n\
+# True if a distinct rectified ROI should be calculated from the \"raw\"\n\
+# ROI in this message. Typically this should be False if the full image\n\
+# is captured (ROI not used), and True if a subwindow is captured (ROI\n\
+# used).\n\
+bool do_rectify\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::stereo_msgs::DisparityImage::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("stereo_msgs/DisparityImage", "stereo_msgs/DisparityImage");
-        typ.addProperty("md5sum", yarp::os::Value("04a177815f75271039fa21f16acad8c9"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

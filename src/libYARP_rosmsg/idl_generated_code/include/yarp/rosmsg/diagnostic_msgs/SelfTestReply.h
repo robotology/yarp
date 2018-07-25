@@ -173,27 +173,44 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::diagnostic_msgs::SelfTestReply> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::diagnostic_msgs::SelfTestReply> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
-") + std::string("\n\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "diagnostic_msgs/SelfTestReply";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "ac21b1bab7ab17546986536c22eb34e9";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
+\n\
 ================================================================================\n\
 MSG: diagnostic_msgs/DiagnosticStatus\n\
-") + yarp::rosmsg::diagnostic_msgs::DiagnosticStatus::typeText();
-    }
+# This message holds the status of an individual component of the robot.\n\
+# \n\
+\n\
+# Possible levels of operations\n\
+byte OK=0\n\
+byte WARN=1\n\
+byte ERROR=2\n\
+byte STALE=3\n\
+\n\
+byte level # level of operation enumerated above \n\
+string name # a description of the test/component reporting\n\
+string message # a description of the status\n\
+string hardware_id # a hardware unique string\n\
+KeyValue[] values # an array of values associated with the status\n\
+\n\
+\n\
+================================================================================\n\
+MSG: diagnostic_msgs/KeyValue\n\
+string key # what to label this value when viewing\n\
+string value # a value to track over time\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::diagnostic_msgs::SelfTestReply::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("diagnostic_msgs/SelfTestReply", "diagnostic_msgs/SelfTestReply");
-        typ.addProperty("md5sum", yarp::os::Value("ac21b1bab7ab17546986536c22eb34e9"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

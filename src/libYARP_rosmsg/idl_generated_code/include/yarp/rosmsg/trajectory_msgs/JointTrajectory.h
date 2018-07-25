@@ -202,32 +202,53 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::trajectory_msgs::JointTrajectory> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::trajectory_msgs::JointTrajectory> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "trajectory_msgs/JointTrajectory";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "65b4f94a94d1ed67169da35a02f33d3f";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 Header header\n\
 string[] joint_names\n\
-JointTrajectoryPoint[] points") + std::string("\n\
+JointTrajectoryPoint[] points\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: trajectory_msgs/JointTrajectoryPoint\n\
-") + yarp::rosmsg::trajectory_msgs::JointTrajectoryPoint::typeText();
-    }
+# Each trajectory point specifies either positions[, velocities[, accelerations]]\n\
+# or positions[, effort] for the trajectory to be executed.\n\
+# All specified values are in the same order as the joint names in JointTrajectory.msg\n\
+\n\
+float64[] positions\n\
+float64[] velocities\n\
+float64[] accelerations\n\
+float64[] effort\n\
+duration time_from_start\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::trajectory_msgs::JointTrajectory::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("trajectory_msgs/JointTrajectory", "trajectory_msgs/JointTrajectory");
-        typ.addProperty("md5sum", yarp::os::Value("65b4f94a94d1ed67169da35a02f33d3f"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

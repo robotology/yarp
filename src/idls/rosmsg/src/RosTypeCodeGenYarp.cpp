@@ -742,11 +742,10 @@ bool RosTypeCodeGenYarp::endWrite(bool bare)
 }
 
 
-static void output_type(FILE *out,
+static bool output_type(FILE *out,
                         const RosField& field,
                         std::map<std::string, int>& processed)
 {
-    fprintf(out, "std::string(\"\\\n");
     const std::string& name = getDoubleName(field.rosType);
     processed[name] = 1;
     const std::string& source = field.source;
@@ -769,8 +768,10 @@ static void output_type(FILE *out,
         }
         fprintf(out, "%c", ch);
     }
-    fprintf(out, "\")");
-
+    bool ends_with_eol = false;
+    if (source.size() > 0 && source[source.size() -1] == '\n') {
+        ends_with_eol = true;
+    }
     for (const auto& sub_field : field.subRosType) {
         if (!sub_field.isStruct) {
             continue;
@@ -782,15 +783,12 @@ static void output_type(FILE *out,
         if (sub_name == "TickTime" || sub_name == "TickDuration") {
             continue;
         }
-        processed[sub_name] = 1;
-        string fullClassName = "yarp::rosmsg::" + getDoubleName(sub_field.rosType, "::");
-        fprintf(out, " + std::string(\"\\n\\\n");
+        fprintf(out, "\\n\\\n");
         fprintf(out, "================================================================================\\n\\\n");
         fprintf(out, "MSG: %s\\n\\\n", (sub_name == "Header" ? "std_msgs/Header" : sub_name.c_str()));
-        fprintf(out, "\")");
-        fprintf(out, " + %s::typeText()", fullClassName.c_str());
+        ends_with_eol = output_type(out, sub_field, processed);
     }
-
+    return ends_with_eol;
 }
 
 bool RosTypeCodeGenYarp::endType(const std::string& tname,
@@ -804,29 +802,30 @@ bool RosTypeCodeGenYarp::endType(const std::string& tname,
     fprintf(out, "    typedef yarp::os::idl::BareStyle<%s> rosStyle;\n", fullClassName.c_str());
     fprintf(out, "    typedef yarp::os::idl::BottleStyle<%s> bottleStyle;\n\n", fullClassName.c_str());
 
+    fprintf(out, "    // The name for this message, ROS will need this\n");
+    fprintf(out, "    static constexpr const char* typeName = \"%s\";\n", dbl_name.c_str());
+    fprintf(out, "\n");
+
+    fprintf(out, "    // The checksum for this message, ROS will need this\n");
+    fprintf(out, "    static constexpr const char* typeChecksum = \"%s\";\n", field.checksum.c_str());
+    fprintf(out, "\n");
+
     // See http://wiki.ros.org/roslib/gentools for details about the format
-    fprintf(out, "    // Give source text for class, ROS will need this\n");
-    fprintf(out, "    static std::string typeText()\n");
-    fprintf(out, "    {\n");
-    fprintf(out, "        return ");
+    fprintf(out, "    // The source text for this message, ROS will need this\n");
+    fprintf(out, "    static constexpr const char* typeText = \"\\\n");
     std::map<std::string, int> processed;
-    output_type(out, field, processed);
-    fprintf(out, ";\n");
-    fprintf(out, "    }\n");
+    bool ends_with_eol = output_type(out, field, processed);
+    if (!ends_with_eol) {
+        fprintf(out, "\\n\\\n");
+    }
+    fprintf(out, "\";\n");
     fprintf(out, "\n");
 
-    fprintf(out, "    std::string getTypeText() const\n");
-    fprintf(out, "    {\n");
-    fprintf(out, "        return %s::typeText();\n", fullClassName.c_str());
-    fprintf(out, "    }\n");
-    fprintf(out, "\n");
-
-    fprintf(out, "    // Name the class, ROS will need this\n");
     fprintf(out, "    yarp::os::Type getType() const override\n");
     fprintf(out, "    {\n");
-    fprintf(out, "        yarp::os::Type typ = yarp::os::Type::byName(\"%s\", \"%s\");\n", dbl_name.c_str(), dbl_name.c_str());
-    fprintf(out, "        typ.addProperty(\"md5sum\", yarp::os::Value(\"%s\"));\n", field.checksum.c_str());
-    fprintf(out, "        typ.addProperty(\"message_definition\", yarp::os::Value(getTypeText()));\n");
+    fprintf(out, "        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);\n");
+    fprintf(out, "        typ.addProperty(\"md5sum\", yarp::os::Value(typeChecksum));\n");
+    fprintf(out, "        typ.addProperty(\"message_definition\", yarp::os::Value(typeText));\n");
     fprintf(out, "        return typ;\n");
     fprintf(out, "    }\n");
     fprintf(out, "};\n\n");

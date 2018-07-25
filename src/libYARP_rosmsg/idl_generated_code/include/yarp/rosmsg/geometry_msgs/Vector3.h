@@ -148,10 +148,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::geometry_msgs::Vector3> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::Vector3> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "geometry_msgs/Vector3";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "4a842b65f413084dc2b10fb484ea7f17";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This represents a vector in free space. \n\
 # It is only meant to represent a direction. Therefore, it does not\n\
 # make sense to apply a translation to it (e.g., when applying a \n\
@@ -161,20 +165,14 @@ public:
 \n\
 float64 x\n\
 float64 y\n\
-float64 z");
-    }
+float64 z\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::geometry_msgs::Vector3::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/Vector3", "geometry_msgs/Vector3");
-        typ.addProperty("md5sum", yarp::os::Value("4a842b65f413084dc2b10fb484ea7f17"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

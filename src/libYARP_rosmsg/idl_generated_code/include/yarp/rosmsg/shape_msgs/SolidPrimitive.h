@@ -216,10 +216,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::shape_msgs::SolidPrimitive> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::shape_msgs::SolidPrimitive> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "shape_msgs/SolidPrimitive";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "d8f8cbc74c5ff283fca29569ccefb45d";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # Define box, sphere, cylinder, cone \n\
 # All shapes are defined to have their bounding boxes centered around 0,0,0.\n\
 \n\
@@ -262,20 +266,13 @@ uint8 CYLINDER_RADIUS=1\n\
 \n\
 uint8 CONE_HEIGHT=0\n\
 uint8 CONE_RADIUS=1\n\
-");
-    }
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::shape_msgs::SolidPrimitive::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("shape_msgs/SolidPrimitive", "shape_msgs/SolidPrimitive");
-        typ.addProperty("md5sum", yarp::os::Value("d8f8cbc74c5ff283fca29569ccefb45d"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

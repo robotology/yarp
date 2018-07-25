@@ -141,34 +141,77 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::geometry_msgs::PoseWithCovarianceStamped> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::PoseWithCovarianceStamped> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "geometry_msgs/PoseWithCovarianceStamped";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "953b798c0f514ff060a53a3498ce6246";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This expresses an estimated pose with a reference coordinate frame and timestamp\n\
 \n\
 Header header\n\
 PoseWithCovariance pose\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/PoseWithCovariance\n\
-") + yarp::rosmsg::geometry_msgs::PoseWithCovariance::typeText();
-    }
+# This represents a pose in free space with uncertainty.\n\
+\n\
+Pose pose\n\
+\n\
+# Row-major representation of the 6x6 covariance matrix\n\
+# The orientation parameters use a fixed-axis representation.\n\
+# In order, the parameters are:\n\
+# (x, y, z, rotation about X axis, rotation about Y axis, rotation about Z axis)\n\
+float64[36] covariance\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Pose\n\
+# A representation of pose in free space, composed of position and orientation. \n\
+Point position\n\
+Quaternion orientation\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Point\n\
+# This contains the position of a point in free space\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Quaternion\n\
+# This represents an orientation in free space in quaternion form.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+float64 w\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::geometry_msgs::PoseWithCovarianceStamped::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/PoseWithCovarianceStamped", "geometry_msgs/PoseWithCovarianceStamped");
-        typ.addProperty("md5sum", yarp::os::Value("953b798c0f514ff060a53a3498ce6246"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

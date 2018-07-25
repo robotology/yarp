@@ -213,10 +213,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::PointCloud> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::PointCloud> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/PointCloud";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "d8e9c3f5afbdd8a130fd1d2763945fca";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This message holds a collection of 3d points, plus optional additional\n\
 # information about each point.\n\
 \n\
@@ -231,29 +235,71 @@ geometry_msgs/Point32[] points\n\
 # and the data in each channel should correspond 1:1 with each point.\n\
 # Channel names in common practice are listed in ChannelFloat32.msg.\n\
 ChannelFloat32[] channels\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Point32\n\
-") + yarp::rosmsg::geometry_msgs::Point32::typeText() + std::string("\n\
+# This contains the position of a point in free space(with 32 bits of precision).\n\
+# It is recommeded to use Point wherever possible instead of Point32.  \n\
+# \n\
+# This recommendation is to promote interoperability.  \n\
+#\n\
+# This message is designed to take up less space when sending\n\
+# lots of points at once, as in the case of a PointCloud.  \n\
+\n\
+float32 x\n\
+float32 y\n\
+float32 z\n\
 ================================================================================\n\
 MSG: sensor_msgs/ChannelFloat32\n\
-") + yarp::rosmsg::sensor_msgs::ChannelFloat32::typeText();
-    }
+# This message is used by the PointCloud message to hold optional data\n\
+# associated with each point in the cloud. The length of the values\n\
+# array should be the same as the length of the points array in the\n\
+# PointCloud, and each value should be associated with the corresponding\n\
+# point.\n\
+\n\
+# Channel names in existing practice include:\n\
+#   \"u\", \"v\" - row and column (respectively) in the left stereo image.\n\
+#              This is opposite to usual conventions but remains for\n\
+#              historical reasons. The newer PointCloud2 message has no\n\
+#              such problem.\n\
+#   \"rgb\" - For point clouds produced by color stereo cameras. uint8\n\
+#           (R,G,B) values packed into the least significant 24 bits,\n\
+#           in order.\n\
+#   \"intensity\" - laser or pixel intensity.\n\
+#   \"distance\"\n\
+\n\
+# The channel name should give semantics of the channel (e.g.\n\
+# \"intensity\" instead of \"value\").\n\
+string name\n\
+\n\
+# The values array should be 1-1 with the elements of the associated\n\
+# PointCloud.\n\
+float32[] values\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::PointCloud::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/PointCloud", "sensor_msgs/PointCloud");
-        typ.addProperty("md5sum", yarp::os::Value("d8e9c3f5afbdd8a130fd1d2763945fca"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

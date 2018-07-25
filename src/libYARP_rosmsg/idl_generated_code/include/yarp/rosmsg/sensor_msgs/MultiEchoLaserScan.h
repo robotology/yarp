@@ -354,10 +354,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::MultiEchoLaserScan> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::MultiEchoLaserScan> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/MultiEchoLaserScan";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "6fefb0c6da89d7c8abe4b339f5c2f8fb";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # Single scan from a multi-echo planar laser range-finder\n\
 #\n\
 # If you have another ranging device with different behavior (e.g. a sonar\n\
@@ -388,26 +392,39 @@ LaserEcho[] ranges       # range data [m] (Note: NaNs, values < range_min or > r
                          # -Inf measurements are too close to determine exact distance.\n\
 LaserEcho[] intensities  # intensity data [device-specific units].  If your\n\
                          # device does not provide intensities, please leave\n\
-                         # the array empty.") + std::string("\n\
+                         # the array empty.\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: sensor_msgs/LaserEcho\n\
-") + yarp::rosmsg::sensor_msgs::LaserEcho::typeText();
-    }
+# This message is a submessage of MultiEchoLaserScan and is not intended\n\
+# to be used separately.\n\
+\n\
+float32[] echoes  # Multiple values of ranges or intensities.\n\
+                  # Each array represents data from the same angle increment.\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::MultiEchoLaserScan::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/MultiEchoLaserScan", "sensor_msgs/MultiEchoLaserScan");
-        typ.addProperty("md5sum", yarp::os::Value("6fefb0c6da89d7c8abe4b339f5c2f8fb"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

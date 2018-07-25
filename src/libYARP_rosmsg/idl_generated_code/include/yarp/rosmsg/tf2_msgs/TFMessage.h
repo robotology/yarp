@@ -130,28 +130,81 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::tf2_msgs::TFMessage> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::tf2_msgs::TFMessage> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "tf2_msgs/TFMessage";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "94810edda583a504dfda3829e70d7eec";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 geometry_msgs/TransformStamped[] transforms\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/TransformStamped\n\
-") + yarp::rosmsg::geometry_msgs::TransformStamped::typeText();
-    }
+# This expresses a transform from coordinate frame header.frame_id\n\
+# to the coordinate frame child_frame_id\n\
+#\n\
+# This message is mostly used by the \n\
+# <a href=\"http://wiki.ros.org/tf\">tf</a> package. \n\
+# See its documentation for more information.\n\
+\n\
+Header header\n\
+string child_frame_id # the frame id of the child frame\n\
+Transform transform\n\
+\n\
+================================================================================\n\
+MSG: std_msgs/Header\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Transform\n\
+# This represents the transform between two coordinate frames in free space.\n\
+\n\
+Vector3 translation\n\
+Quaternion rotation\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Vector3\n\
+# This represents a vector in free space. \n\
+# It is only meant to represent a direction. Therefore, it does not\n\
+# make sense to apply a translation to it (e.g., when applying a \n\
+# generic rigid transformation to a Vector3, tf2 will only apply the\n\
+# rotation). If you want your data to be translatable too, use the\n\
+# geometry_msgs/Point message instead.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+================================================================================\n\
+MSG: geometry_msgs/Quaternion\n\
+# This represents an orientation in free space in quaternion form.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+float64 w\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::tf2_msgs::TFMessage::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("tf2_msgs/TFMessage", "tf2_msgs/TFMessage");
-        typ.addProperty("md5sum", yarp::os::Value("94810edda583a504dfda3829e70d7eec"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

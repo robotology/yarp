@@ -139,32 +139,73 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::geometry_msgs::InertiaStamped> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::geometry_msgs::InertiaStamped> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "geometry_msgs/InertiaStamped";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "ddee48caeab5a966c5e8d166654a9ac7";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 Header header\n\
 Inertia inertia\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/Inertia\n\
-") + yarp::rosmsg::geometry_msgs::Inertia::typeText();
-    }
+# Mass [kg]\n\
+float64 m\n\
+\n\
+# Center of mass [m]\n\
+geometry_msgs/Vector3 com\n\
+\n\
+# Inertia Tensor [kg-m^2]\n\
+#     | ixx ixy ixz |\n\
+# I = | ixy iyy iyz |\n\
+#     | ixz iyz izz |\n\
+float64 ixx\n\
+float64 ixy\n\
+float64 ixz\n\
+float64 iyy\n\
+float64 iyz\n\
+float64 izz\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Vector3\n\
+# This represents a vector in free space. \n\
+# It is only meant to represent a direction. Therefore, it does not\n\
+# make sense to apply a translation to it (e.g., when applying a \n\
+# generic rigid transformation to a Vector3, tf2 will only apply the\n\
+# rotation). If you want your data to be translatable too, use the\n\
+# geometry_msgs/Point message instead.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::geometry_msgs::InertiaStamped::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("geometry_msgs/InertiaStamped", "geometry_msgs/InertiaStamped");
-        typ.addProperty("md5sum", yarp::os::Value("ddee48caeab5a966c5e8d166654a9ac7"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

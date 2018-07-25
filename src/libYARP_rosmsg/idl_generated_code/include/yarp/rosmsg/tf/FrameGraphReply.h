@@ -111,24 +111,22 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::tf::FrameGraphReply> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::tf::FrameGraphReply> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
-");
-    }
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "tf/FrameGraphReply";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::tf::FrameGraphReply::typeText();
-    }
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "c4af9ac907e58e906eb0b6e3c58478c0";
 
-    // Name the class, ROS will need this
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
+\n\
+";
+
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("tf/FrameGraphReply", "tf/FrameGraphReply");
-        typ.addProperty("md5sum", yarp::os::Value("c4af9ac907e58e906eb0b6e3c58478c0"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

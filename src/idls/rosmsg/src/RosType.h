@@ -106,7 +106,6 @@ public:
     RosType *reply;
     std::string package;
     bool verbose;
-    bool no_recurse;
 
     RosType() :
             isValid(false),
@@ -116,8 +115,7 @@ public:
             isRosPrimitive(false),
             isStruct(false),
             reply(nullptr),
-            verbose(false),
-            no_recurse(false)
+            verbose(false)
     {
     }
 
@@ -163,10 +161,6 @@ public:
 
     void setVerbose() {
         verbose = true;
-    }
-
-    void setNoRecurse() {
-        no_recurse = true;
     }
 };
 

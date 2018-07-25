@@ -188,7 +188,7 @@ void UnitTest::stopTestSystem() {
 }
 
 bool UnitTest::checkEqualishImpl(double x, double y,
-                                 const char *desc,
+                                 const std::string& desc,
                                  const char *txt1,
                                  const char *txt2,
                                  const char *fname,
@@ -207,7 +207,7 @@ bool UnitTest::checkEqualishImpl(double x, double y,
 
 
 bool UnitTest::checkEqualImpl(const std::string& x, const std::string& y,
-                              const char *desc,
+                              const std::string& desc,
                               const char *txt1,
                               const char *txt2,
                               const char *fname,

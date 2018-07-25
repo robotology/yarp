@@ -196,10 +196,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::nav_msgs::Odometry> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::nav_msgs::Odometry> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "nav_msgs/Odometry";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "cd5e73d190d741a2f92e81eda573aca7";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # This represents an estimate of a position and velocity in free space.  \n\
 # The pose in this message should be specified in the coordinate frame given by header.frame_id.\n\
 # The twist in this message should be specified in the coordinate frame given by the child_frame_id\n\
@@ -207,29 +211,96 @@ Header header\n\
 string child_frame_id\n\
 geometry_msgs/PoseWithCovariance pose\n\
 geometry_msgs/TwistWithCovariance twist\n\
-") + std::string("\n\
+\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText() + std::string("\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/PoseWithCovariance\n\
-") + yarp::rosmsg::geometry_msgs::PoseWithCovariance::typeText() + std::string("\n\
+# This represents a pose in free space with uncertainty.\n\
+\n\
+Pose pose\n\
+\n\
+# Row-major representation of the 6x6 covariance matrix\n\
+# The orientation parameters use a fixed-axis representation.\n\
+# In order, the parameters are:\n\
+# (x, y, z, rotation about X axis, rotation about Y axis, rotation about Z axis)\n\
+float64[36] covariance\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Pose\n\
+# A representation of pose in free space, composed of position and orientation. \n\
+Point position\n\
+Quaternion orientation\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Point\n\
+# This contains the position of a point in free space\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Quaternion\n\
+# This represents an orientation in free space in quaternion form.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+float64 w\n\
+\n\
 ================================================================================\n\
 MSG: geometry_msgs/TwistWithCovariance\n\
-") + yarp::rosmsg::geometry_msgs::TwistWithCovariance::typeText();
-    }
+# This expresses velocity in free space with uncertainty.\n\
+\n\
+Twist twist\n\
+\n\
+# Row-major representation of the 6x6 covariance matrix\n\
+# The orientation parameters use a fixed-axis representation.\n\
+# In order, the parameters are:\n\
+# (x, y, z, rotation about X axis, rotation about Y axis, rotation about Z axis)\n\
+float64[36] covariance\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Twist\n\
+# This expresses velocity in free space broken into its linear and angular parts.\n\
+Vector3  linear\n\
+Vector3  angular\n\
+\n\
+================================================================================\n\
+MSG: geometry_msgs/Vector3\n\
+# This represents a vector in free space. \n\
+# It is only meant to represent a direction. Therefore, it does not\n\
+# make sense to apply a translation to it (e.g., when applying a \n\
+# generic rigid transformation to a Vector3, tf2 will only apply the\n\
+# rotation). If you want your data to be translatable too, use the\n\
+# geometry_msgs/Point message instead.\n\
+\n\
+float64 x\n\
+float64 y\n\
+float64 z\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::nav_msgs::Odometry::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("nav_msgs/Odometry", "nav_msgs/Odometry");
-        typ.addProperty("md5sum", yarp::os::Value("cd5e73d190d741a2f92e81eda573aca7"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

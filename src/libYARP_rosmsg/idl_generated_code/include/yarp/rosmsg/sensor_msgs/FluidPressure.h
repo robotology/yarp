@@ -158,10 +158,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::sensor_msgs::FluidPressure> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::sensor_msgs::FluidPressure> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "sensor_msgs/FluidPressure";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "804dc5cea1c5306d6a2eb80b9833befe";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
  # Single pressure reading.  This message is appropriate for measuring the\n\
  # pressure inside of a fluid (air, water, etc).  This also includes\n\
  # atmospheric or barometric pressure.\n\
@@ -173,23 +177,31 @@ public:
 \n\
  float64 fluid_pressure  # Absolute pressure reading in Pascals.\n\
 \n\
- float64 variance        # 0 is interpreted as variance unknown") + std::string("\n\
+ float64 variance        # 0 is interpreted as variance unknown\n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
-") + yarp::rosmsg::std_msgs::Header::typeText();
-    }
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::sensor_msgs::FluidPressure::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("sensor_msgs/FluidPressure", "sensor_msgs/FluidPressure");
-        typ.addProperty("md5sum", yarp::os::Value("804dc5cea1c5306d6a2eb80b9833befe"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

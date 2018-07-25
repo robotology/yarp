@@ -129,10 +129,14 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::shape_msgs::Plane> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::shape_msgs::Plane> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "shape_msgs/Plane";
+
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "2c1b92ed8f31492f8e73f6a4a44ca796";
+
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
 # Representation of a plane, using the plane equation ax + by + cz + d = 0\n\
 \n\
 # a := coef[0]\n\
@@ -141,20 +145,13 @@ public:
 # d := coef[3]\n\
 \n\
 float64[4] coef\n\
-");
-    }
+";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::shape_msgs::Plane::typeText();
-    }
-
-    // Name the class, ROS will need this
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("shape_msgs/Plane", "shape_msgs/Plane");
-        typ.addProperty("md5sum", yarp::os::Value("2c1b92ed8f31492f8e73f6a4a44ca796"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };

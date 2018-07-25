@@ -159,24 +159,22 @@ public:
     typedef yarp::os::idl::BareStyle<yarp::rosmsg::TickDuration> rosStyle;
     typedef yarp::os::idl::BottleStyle<yarp::rosmsg::TickDuration> bottleStyle;
 
-    // Give source text for class, ROS will need this
-    static std::string typeText()
-    {
-        return std::string("\
-");
-    }
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "TickDuration";
 
-    std::string getTypeText() const
-    {
-        return yarp::rosmsg::TickDuration::typeText();
-    }
+    // The checksum for this message, ROS will need this
+    static constexpr const char* typeChecksum = "4771ad66fef816d2e4bead2f45a1cde6";
 
-    // Name the class, ROS will need this
+    // The source text for this message, ROS will need this
+    static constexpr const char* typeText = "\
+\n\
+";
+
     yarp::os::Type getType() const override
     {
-        yarp::os::Type typ = yarp::os::Type::byName("TickDuration", "TickDuration");
-        typ.addProperty("md5sum", yarp::os::Value("4f8dc7710c22b42c7b09295dcda33fa0"));
-        typ.addProperty("message_definition", yarp::os::Value(getTypeText()));
+        yarp::os::Type typ = yarp::os::Type::byName(typeName, typeName);
+        typ.addProperty("md5sum", yarp::os::Value(typeChecksum));
+        typ.addProperty("message_definition", yarp::os::Value(typeText));
         return typ;
     }
 };
