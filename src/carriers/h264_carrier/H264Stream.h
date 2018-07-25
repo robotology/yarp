@@ -36,7 +36,6 @@ private:
     char *cursor;
     int remaining;
     H264Decoder *decoder;
-    int remotePort;
     h264Decoder_cfgParamters cfg;
 public:
     H264Stream(h264Decoder_cfgParamters &config);
