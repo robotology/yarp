@@ -373,113 +373,89 @@ FakeMotionControl::FakeMotionControl() :
     ImplementMotor(this),
     ImplementAxisInfo(this),
     ImplementVirtualAnalogSensor(this),
-    _mutex()
-//     SAFETY_THRESHOLD(2.0)
+    _mutex(),
+    _njoints       (0),
+    _axisMap       (nullptr),
+    _angleToEncoder(nullptr),
+    _encodersStamp (nullptr),
+    _ampsToSensor  (nullptr),
+    _dutycycleToPWM(nullptr),
+    _DEPRECATED_encoderconversionfactor (nullptr),
+    _DEPRECATED_encoderconversionoffset (nullptr),
+    _jointEncoderRes        (nullptr),
+    _rotorEncoderRes        (nullptr),
+    _gearbox                (nullptr),
+    _hasHallSensor          (nullptr),
+    _hasTempSensor          (nullptr),
+    _hasRotorEncoder        (nullptr),
+    _hasRotorEncoderIndex   (nullptr),
+    _rotorIndexOffset       (nullptr),
+    _motorPoles             (nullptr),
+    _rotorlimits_max        (nullptr),
+    _rotorlimits_min        (nullptr),
+    _ppids                  (nullptr),
+    _tpids                  (nullptr),
+    _cpids                  (nullptr),
+    _vpids                  (nullptr),
+    _ppids_ena              (nullptr),
+    _tpids_ena              (nullptr),
+    _cpids_ena              (nullptr),
+    _vpids_ena              (nullptr),
+    _ppids_lim              (nullptr),
+    _tpids_lim              (nullptr),
+    _cpids_lim              (nullptr),
+    _vpids_lim              (nullptr),
+    _ppids_ref              (nullptr),
+    _tpids_ref              (nullptr),
+    _cpids_ref              (nullptr),
+    _vpids_ref              (nullptr),
+    _axisName               (nullptr),
+    _jointType              (nullptr),
+    _limitsMin              (nullptr),
+    _limitsMax              (nullptr),
+    _kinematic_mj           (nullptr),
+    _maxJntCmdVelocity      (nullptr),
+    _maxMotorVelocity       (nullptr),
+    _velocityShifts         (nullptr),
+    _velocityTimeout        (nullptr),
+    _kbemf                  (nullptr),
+    _ktau                   (nullptr),
+    _kbemf_scale            (nullptr),
+    _ktau_scale             (nullptr),
+    _filterType             (nullptr),
+    _torqueSensorId         (nullptr),
+    _torqueSensorChan       (nullptr),
+    _maxTorque              (nullptr),
+    _newtonsToSensor        (nullptr),
+    checking_motiondone     (nullptr),
+    _last_position_move_time(nullptr),
+    _motorPwmLimits         (nullptr),
+    _torques                (nullptr),
+    useRawEncoderData       (false),
+    _pwmIsLimited           (false),
+    _torqueControlEnabled   (false),
+    _torqueControlUnits     (T_MACHINE_UNITS),
+    _positionControlUnits   (P_MACHINE_UNITS),
+    _controlModes           (nullptr),
+    _interactMode           (nullptr),
+    _enabledAmp             (nullptr),
+    _enabledPid             (nullptr),
+    _calibrated             (nullptr),
+    _posCtrl_references     (nullptr),
+    _posDir_references      (nullptr),
+    _ref_speeds             (nullptr),
+    _command_speeds         (nullptr),
+    _ref_accs               (nullptr),
+    _ref_torques            (nullptr),
+    _ref_currents           (nullptr),
+    prev_time               (0.0),
+    opened                  (false),
+    verbose                 (VERY_VERBOSE)
 {
-    verbose = VERY_VERBOSE;
-    _njoints = 2;
-    opened = false;
-
     resizeBuffers();
-
-    _controlModes = nullptr;
-    _interactMode = nullptr;
-
-    _gearbox       = nullptr;
-//     opened        = 0;
-    _ppids         = nullptr;
-    _tpids        = nullptr;
-    _cpids        = nullptr;
-    _vpids        = nullptr;
-    _ppids_ena         = nullptr;
-    _tpids_ena        = nullptr;
-    _cpids_ena        = nullptr;
-    _vpids_ena        = nullptr;
-    _ppids_lim         = nullptr;
-    _tpids_lim        = nullptr;
-    _cpids_lim        = nullptr;
-    _vpids_lim        = nullptr;
-    _ppids_ref         = nullptr;
-    _tpids_ref        = nullptr;
-    _cpids_ref        = nullptr;
-    _vpids_ref        = nullptr;
-    _njoints      = 0;
-    _axisMap      = nullptr;
-    _encodersStamp = nullptr;
-    _DEPRECATED_encoderconversionfactor = nullptr;
-    _DEPRECATED_encoderconversionoffset = nullptr;
-    _angleToEncoder = nullptr;
-    _dutycycleToPWM = nullptr;
-    _ampsToSensor = nullptr;
-    _hasHallSensor = nullptr;
-    _hasTempSensor = nullptr;
-    _hasRotorEncoder = nullptr;
-    _hasRotorEncoderIndex = nullptr;
-    _rotorIndexOffset = nullptr;
-    _motorPoles       = nullptr;
-//     _impedance_params = NULL;
-//     _impedance_limits = NULL;
-    _rotorlimits_max  = nullptr;
-    _rotorlimits_min  = nullptr;
-
-    _axisName         = nullptr;
-    _jointType         = nullptr;
-    _limitsMin        = nullptr;
-    _limitsMax        = nullptr;
-//     _currentLimits    = NULL;
-    _motorPwmLimits   = nullptr;
-    _velocityShifts   = nullptr;
-    _velocityTimeout  = nullptr;
-    _torqueSensorId   = nullptr;
-    _torqueSensorChan = nullptr;
-    _maxTorque        = nullptr;
-    _maxJntCmdVelocity= nullptr;
-    _maxMotorVelocity = nullptr;
-    _newtonsToSensor  = nullptr;
-    _jointEncoderRes  = nullptr;
-//     _jointEncoderType = NULL;
-    _rotorEncoderRes  = nullptr;
-//     _rotorEncoderType = NULL;
-    _ref_accs         = nullptr;
-    _command_speeds   = nullptr;
-    _posCtrl_references    = nullptr;
-    _posDir_references    = nullptr;
-    _ref_speeds       = nullptr;
-    _ref_torques      = nullptr;
-    _ref_currents     = nullptr;
-    _kinematic_mj     = nullptr;
-    _kbemf            = nullptr;
-    _ktau             = nullptr;
-    _kbemf_scale      = nullptr;
-    _ktau_scale       = nullptr;
-    _filterType       = nullptr;
-    _torques          = nullptr;
-    _positionControlUnits = P_MACHINE_UNITS;
-    _torqueControlUnits = T_MACHINE_UNITS;
-    _torqueControlEnabled = false;
-
-    checking_motiondone = nullptr;
-
-    // Check status of joints
-    _enabledPid       = nullptr;
-    _enabledAmp       = nullptr;
-    _calibrated       = nullptr;
-    _last_position_move_time = nullptr;
-    // NV stuff
-
-    useRawEncoderData = false;
-    _pwmIsLimited     = false;
-
     std::string tmp = NetworkBase::getEnvironment("VERBOSE_STICA");
-    if (tmp != "")
-    {
-        verbosewhenok = (bool)NetType::toInt(tmp);
-    }
-    else
-    {
-        verbosewhenok = false;
-    }
-
+    verbosewhenok = (tmp != "") ? (bool)NetType::toInt(tmp) :
+                                  false;
 }
 
 FakeMotionControl::~FakeMotionControl()

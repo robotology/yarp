@@ -88,13 +88,14 @@ private:
     openni::VideoFrameRef   frameRef;
 };
 
-streamFrameListener::streamFrameListener()
+streamFrameListener::streamFrameListener() :
+    pixF(openni::PixelFormat::PIXEL_FORMAT_DEPTH_1_MM),
+    w(0),
+    h(0),
+    dataSize(0),
+    isReady(false)
 {
     image.setPixelCode(VOCAB_PIXEL_RGB);
-    w        = 0;
-    h        = 0;
-    dataSize = 0;
-    isReady  = false;
 }
 
 void streamFrameListener::onNewFrame(openni::VideoStream& stream)

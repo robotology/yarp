@@ -566,7 +566,9 @@ class yarp::sig::ImageOf : public Image
 private:
     T nullPixel;
 public:
-    ImageOf() : Image() {
+    ImageOf() : Image(),
+        nullPixel()
+    {
         setPixelCode(getPixelCode());
     }
 

@@ -355,7 +355,13 @@ bool laserHokuyo::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 #endif
         size_t size = laser_data.size();
         data.resize(size);
-        if (max_angle < min_angle) { yError() << "getLaserMeasurement failed"; return false; }
+        if (max_angle < min_angle)
+        {
+            yError() << "getLaserMeasurement failed";
+            mutex.unlock();
+            return false;
+        }
+
         double laser_angle_of_view = max_angle - min_angle;
         for (size_t i = 0; i < size; i++)
         {
@@ -579,7 +585,6 @@ void laserHokuyo::run()
     }
 
     //SystemClock::delaySystem (0.100);
-    mutex.unlock();
 }
 
 void laserHokuyo::threadRelease()

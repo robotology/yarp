@@ -29,15 +29,22 @@ using namespace yarp::sig;
 using namespace yarp::os;
 
 
-typedef struct
+struct data_for_gst_callback
 {
+    data_for_gst_callback() :
+        m(nullptr),
+        img(nullptr),
+        isNew(false),
+        s(nullptr),
+        isReq(false)
+    {}
+
     Mutex *m;
     ImageOf<PixelRgb> *img;
     bool isNew;
     Semaphore *s;
     bool isReq;
-
-} data_for_gst_callback;
+};
 //-------------------------------------------------------------------
 //---------------  CALLBACK FUNCTIONS -------------------------------
 //-------------------------------------------------------------------
@@ -288,7 +295,17 @@ public:
 
     ImageOf<PixelRgb> myframe;
 
-    H264DecoderHelper( Mutex * m_ptr, Semaphore *s_ptr)
+    H264DecoderHelper(Mutex* m_ptr, Semaphore* s_ptr) :
+        pipeline(nullptr),
+        source(nullptr),
+        sink(nullptr),
+        rtpDepay(nullptr),
+        parser(nullptr),
+        convert(nullptr),
+        decoder(nullptr),
+        sizeChanger(nullptr),
+        verbose(false),
+        bus(nullptr)
     {
         gst_cbk_data.m = m_ptr;
         gst_cbk_data.img = &myframe;
@@ -392,7 +409,9 @@ public:
 
 #define GET_HELPER(x) (*((H264DecoderHelper*)(x)))
 
-H264Decoder::H264Decoder(h264Decoder_cfgParamters &config) : sysResource(nullptr), cfg(config)
+H264Decoder::H264Decoder(h264Decoder_cfgParamters &config) :
+    sysResource(nullptr),
+    cfg(config)
 {
     sysResource = new H264DecoderHelper(&mutex, &semaphore);
     yAssert(sysResource != nullptr);
