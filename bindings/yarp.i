@@ -768,6 +768,11 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     CAST_POLYDRIVER_TO_INTERFACE(IPositionDirect)
     CAST_POLYDRIVER_TO_INTERFACE(IRemoteVariables)
     CAST_POLYDRIVER_TO_INTERFACE(IAxisInfo)
+
+// These views are currently disabled in SWIG + java generator since they are
+// useless without the EXTENDED_ANALOG_SENSOR_INTERFACE part.
+// See also https://github.com/robotology/yarp/issues/1770
+#if !defined(SWIGJAVA)
     CAST_POLYDRIVER_TO_INTERFACE(IThreeAxisGyroscopes)
     CAST_POLYDRIVER_TO_INTERFACE(IThreeAxisLinearAccelerometers)
     CAST_POLYDRIVER_TO_INTERFACE(IThreeAxisMagnetometers)
@@ -777,6 +782,8 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     CAST_POLYDRIVER_TO_INTERFACE(IContactLoadCellArrays)
     CAST_POLYDRIVER_TO_INTERFACE(IEncoderArrays)
     CAST_POLYDRIVER_TO_INTERFACE(ISkinPatches)
+#endif
+
     // you'll need to add an entry for every interface you wish
     // to use
 }
@@ -1060,15 +1067,20 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 }
 
-%extend yarp::dev::IThreeAxisGyroscopes {EXTENDED_ANALOG_SENSOR_INTERFACE(ThreeAxisGyroscope)}
-%extend yarp::dev::IThreeAxisLinearAccelerometers {EXTENDED_ANALOG_SENSOR_INTERFACE(ThreeAxisLinearAccelerometer)}
-%extend yarp::dev::IThreeAxisMagnetometers {EXTENDED_ANALOG_SENSOR_INTERFACE(ThreeAxisMagnetometer)}
-%extend yarp::dev::IOrientationSensors {EXTENDED_ANALOG_SENSOR_INTERFACE(OrientationSensor)}
-%extend yarp::dev::ITemperatureSensors {EXTENDED_ANALOG_SENSOR_INTERFACE(TemperatureSensor)}
-%extend yarp::dev::ISixAxisForceTorqueSensors {EXTENDED_ANALOG_SENSOR_INTERFACE(SixAxisForceTorqueSensor)}
-%extend yarp::dev::IContactLoadCellArrays {EXTENDED_ANALOG_SENSOR_INTERFACE(ContactLoadCellArray)}
-%extend yarp::dev::IEncoderArrays {EXTENDED_ANALOG_SENSOR_INTERFACE(EncoderArray)}
-%extend yarp::dev::ISkinPatches {EXTENDED_ANALOG_SENSOR_INTERFACE(SkinPatch)}
+// This is part is currently broken in SWIG + java generator since SWIG 3.0.3
+// (last swig version tested: 3.0.12)
+// See also https://github.com/robotology/yarp/issues/1770
+#if !defined(SWIGJAVA)
+    %extend yarp::dev::IThreeAxisGyroscopes {EXTENDED_ANALOG_SENSOR_INTERFACE(ThreeAxisGyroscope)}
+    %extend yarp::dev::IThreeAxisLinearAccelerometers {EXTENDED_ANALOG_SENSOR_INTERFACE(ThreeAxisLinearAccelerometer)}
+    %extend yarp::dev::IThreeAxisMagnetometers {EXTENDED_ANALOG_SENSOR_INTERFACE(ThreeAxisMagnetometer)}
+    %extend yarp::dev::IOrientationSensors {EXTENDED_ANALOG_SENSOR_INTERFACE(OrientationSensor)}
+    %extend yarp::dev::ITemperatureSensors {EXTENDED_ANALOG_SENSOR_INTERFACE(TemperatureSensor)}
+    %extend yarp::dev::ISixAxisForceTorqueSensors {EXTENDED_ANALOG_SENSOR_INTERFACE(SixAxisForceTorqueSensor)}
+    %extend yarp::dev::IContactLoadCellArrays {EXTENDED_ANALOG_SENSOR_INTERFACE(ContactLoadCellArray)}
+    %extend yarp::dev::IEncoderArrays {EXTENDED_ANALOG_SENSOR_INTERFACE(EncoderArray)}
+    %extend yarp::dev::ISkinPatches {EXTENDED_ANALOG_SENSOR_INTERFACE(SkinPatch)}
+#endif
 
 %extend yarp::sig::VectorOf<double> {
 
