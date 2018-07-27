@@ -35,6 +35,32 @@
 #include <map>
 #include <vector>
 
+/**
+* @ingroup dev_impl_other
+*
+* \section SDLJoypad Description of input parameters
+* \brief Device that reads inputs of Joypads compatible with the SDL library.
+*
+* Parameters accepted in the config argument of the open method:
+* |   Parameter name      | Type   | Units | Default Value | Required  | Description                               | Notes |
+* |:---------------------:|:------:|:-----:|:-------------:|:---------:|:-----------------------------------------:|:-----:|
+* | tfLocal               | string |       |               | yes       | local port name receiving and posting tf  |       |
+* | tfRemote              | string |       |               | yes       | name of the transformServer port          |       |
+* | tf_left_hand_frame    | string |       |               | Yes       | name of the left hand frame               |       |
+* | tf_right_hand_frame   | string |       |               | yes       | name of the right hand frame              |       |
+* | tf_root_frame         | string |       |               | yes       | name of the root frame                    |       |
+* | stick_as_axis         | bool   |       |               | yes       | if axes shoud be published as sticks      |       |
+* | gui_elements          | int    |       |               | yes       | number of the gui element to visualize    |       |
+
+Gui Groups parameters
+* |   Parameter name      | Type   | Units | Default Value | Required  | Description               | Notes |
+* | width                 | double | pixel |               | yes       | width of the widget       |       |
+* | height                | double | pixel |               | yes       | height of the widget      |       |
+* | x                     | double | pixel |               | yes       | x position of the widget  |       |
+* | y                     | double | pixel |               | yes       | y position of the widget  |       |
+* | z                     | double | pixel |               | yes       | z position of the widget  |       |
+* | alpha                 | double |       |               | yes       | alpha value of the widget |       |
+**/
 
 
 namespace yarp { namespace os { template <typename T> class BufferedPort; }}
