@@ -6,14 +6,14 @@
 
 Latest YARP release is:
 
- + YARP 3.0.1 (2018-07-25)
+ + YARP 3.1.0 (2018-07-31)
 
 \section download_source_code Source Code
 
 Latest release can be downloaded from here:
 
- + https://github.com/robotology/yarp/archive/v3.0.1.tar.gz
- + https://github.com/robotology/yarp/archive/v3.0.1.zip
+ + https://github.com/robotology/yarp/archive/v3.1.0.tar.gz
+ + https://github.com/robotology/yarp/archive/v3.1.0.zip
 
 \section download_binary Binary releases
 
@@ -30,11 +30,11 @@ __Installers__:
 
 |       |             MSVC 2015/2017        |
 |-------|:---------------------------------:|
-| Win32 | [yarp_3.0.1_v14_x86_1.exe]        |
-| x64   | [yarp_3.0.1_v14_x86_amd64_1.exe]  |
+| Win32 | [yarp_3.1.0_v14_x86_1.exe]        |
+| x64   | [yarp_3.1.0_v14_x86_amd64_1.exe]  |
 
-[yarp_3.0.1_v14_x86_1.exe]: https://github.com/robotology/yarp/releases/download/v3.0.1/yarp_3.0.1_v14_x86_1.exe
-[yarp_3.0.1_v14_x86_amd64_1.exe]: https://github.com/robotology/yarp/releases/download/v3.0.1/yarp_3.0.1_v14_x86_amd64_1.exe
+[yarp_3.1.0_v14_x86_1.exe]: https://github.com/robotology/yarp/releases/download/v3.1.0/yarp_3.1.0_v14_x86_1.exe
+[yarp_3.1.0_v14_x86_amd64_1.exe]: https://github.com/robotology/yarp/releases/download/v3.1.0/yarp_3.1.0_v14_x86_amd64_1.exe
 
 
 \subsection download_linux Linux (Debian/Ubuntu)
@@ -60,6 +60,7 @@ Previous versions are hosted on
 
 __Previous releases version and dates__:
 
+ + YARP 3.0.1 (2018-07-25)
  + YARP 3.0.0 (2018-06-11)
  + YARP 2.3.72.1 (2018-06-11)
  + YARP 2.3.72 (2018-02-12)
