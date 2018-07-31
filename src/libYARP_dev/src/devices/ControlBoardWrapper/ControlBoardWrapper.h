@@ -345,8 +345,8 @@ private:
     inline void printError(std::string func_name, std::string info, bool result)
     {
         //If result is false, this means that en error occurred in function named func_name, otherwise means that the device doesn't implement the interface to witch func_name belongs to.
-        if(false == result)
-            yError() << "CBW(" << partName << "): " << func_name.c_str() << " on device" << info.c_str() << " returns false";
+       // if(false == result)
+       //    yError() << "CBW(" << partName << "): " << func_name.c_str() << " on device" << info.c_str() << " returns false";
         //Commented in order to maintain the old behaviour (none message appear if device desn't implement the interface)
         //else
             // yError() << "CBW(" << partName << "): " << func_name.c_str() << " on device" << info.c_str() << ": the interface is not available.";
@@ -1090,19 +1090,7 @@ public:
     virtual bool quitPark() override;
 
     /* IControlCalibration */
-    using yarp::dev::IControlCalibration::calibrate;
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-    /**
-    * Calibrate a single joint, the calibration method accepts a parameter
-    * that is used to accomplish various things internally and is implementation
-    * dependent.
-    * @param j the axis number.
-    * @param p is a double value that is passed to the calibration procedure.
-    * @return true/false on success/failure.
-    */
-    virtual bool calibrate(int j, double p) override;
-#endif
-    virtual bool calibrate(int j, unsigned int ui, double v1, double v2, double v3) override;
+    virtual bool calibrateAxisWithParams(int j, unsigned int ui, double v1, double v2, double v3) override;
 
     virtual bool setCalibrationParameters(int j, const CalibrationParameters& params) override;
 
@@ -1111,7 +1099,7 @@ public:
     * @param j is the joint that has started a calibration procedure.
     * @return true/false on success/failure.
     */
-    virtual bool done(int j) override;
+    virtual bool calibrationDone(int j) override;
 
     virtual bool abortPark() override;
 

@@ -23,7 +23,7 @@
 #include <yarp/os/Value.h>
 #include <yarp/dev/IVisualParams.h>
 
-#define VOCAB_LINE VOCAB4('l','i','n','e')
+constexpr yarp::conf::vocab32_t VOCAB_LINE = yarp::os::createVocab('l','i','n','e');
 
 namespace yarp {
     namespace dev {
@@ -165,6 +165,13 @@ private:
     bool makeSimpleBayer(yarp::sig::ImageOf<yarp::sig::PixelRgb>& src,
                          yarp::sig::ImageOf<yarp::sig::PixelMono>& bayer);
 
+    void printTime(unsigned char* pixbuf, int pixbuf_w, int pixbuf_h, int x, int y, char* s, int size);
+    struct txtnum_type
+    {
+        char data[16];
+    };
+    txtnum_type num[12];
+    double start_time;
 };
 
 

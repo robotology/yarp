@@ -13,21 +13,6 @@
 #include <yarp/os/NetInt32.h>
 #include <string>
 
-namespace yarp {
-    namespace os {
-        class Vocab;
-    }
-}
-
-// We need a macro for efficient switching.
-// Use as, for example, VOCAB3('s','e','t')
-#ifndef SWIG_PREPROCESSOR_SHOULD_SKIP_THIS
-#define VOCAB(a,b,c,d) ((((int)(d))<<24)+(((int)(c))<<16)+(((int)(b))<<8)+((int)(a)))
-#define VOCAB4(a,b,c,d) VOCAB((a),(b),(c),(d))
-#define VOCAB3(a,b,c) VOCAB((a),(b),(c),(0))
-#define VOCAB2(a,b) VOCAB((a),(b),(0),(0))
-#define VOCAB1(a) VOCAB((a),(0),(0),(0))
-#endif // SWIG_PREPROCESSOR_SHOULD_SKIP_THIS
 
 /**
  * Short readable codes.  They are integers, for efficient switching,
@@ -37,14 +22,12 @@ namespace yarp {
  * This is a compromise to allow the creation of messages that
  * can be parsed very efficiently by machine but nevertheless are
  * human readable and writable.
- * When switching on a Vocab code, we suggest you use the
- * VOCABn macro defined in yarp/os/Vocab.h.
  * \code
  *   switch(code) {
- *      case VOCAB3('s','e','t'): // switch on "set"
+ *      case createVocab('s','e','t'): // switch on "set"
  *          ...
  *          break;
- *      case VOCAB4('s','t','o','p'): // switch on "stop"
+ *      case createVocab('s','t','o','p'): // switch on "stop"
  *          ...
  *          break;
  *   }
@@ -53,8 +36,18 @@ namespace yarp {
  * traverse the network will be human readable/writable.
  *
  */
-class YARP_OS_API yarp::os::Vocab {
-public:
+namespace yarp {
+namespace os {
+// We need a constexpr for efficient switching.
+// Use as, for example, createVocab('s','e','t')
+constexpr yarp::conf::vocab32_t createVocab(char a, char b = 0, char c = 0, char d = 0)  {
+    return ((yarp::conf::vocab32_t)a)    +
+           ((yarp::conf::vocab32_t)b<<8) +
+           ((yarp::conf::vocab32_t)c<<16)+
+           ((yarp::conf::vocab32_t)d<<24);
+}
+
+namespace Vocab {
     /**
      * Convert a string into a vocabulary identifier.  If the string
      * is longer than four characters, only the first four characters
@@ -62,14 +55,29 @@ public:
      * @param str the string to convert
      * @result the integer equivalent of the string form of the identifier
      */
-    static NetInt32 encode(const std::string& str);
+    YARP_OS_API NetInt32 encode(const std::string& str);
 
     /**
      * Convert a vocabulary identifier into a string.
      * @param code the vocabulary identifier to convert
      * @result the string equivalent of the integer form of the identifier
      */
-    static std::string decode(NetInt32 code);
-};
+    YARP_OS_API std::string decode(NetInt32 code);
+} // Vocab
+} // os
+} // yarp
+
+#ifndef YARP_NO_DEPRECATED // since YARP 3.1.0
+YARP_DEPRECATED_MSG("Use yarp::os::createVocab() instead")
+constexpr int32_t VOCAB(char a, char b, char c, char d)  { return yarp::os::createVocab(a,b,c,d); }
+YARP_DEPRECATED_MSG("Use yarp::os::createVocab() instead")
+constexpr int32_t VOCAB4(char a, char b, char c, char d) { return yarp::os::createVocab(a,b,c,d); }
+YARP_DEPRECATED_MSG("Use yarp::os::createVocab() instead")
+constexpr int32_t VOCAB3(char a, char b, char c)         { return yarp::os::createVocab(a,b,c,0); }
+YARP_DEPRECATED_MSG("Use yarp::os::createVocab() instead")
+constexpr int32_t VOCAB2(char a, char b)                 { return yarp::os::createVocab(a,b,0,0); }
+YARP_DEPRECATED_MSG("Use yarp::os::createVocab() instead")
+constexpr int32_t VOCAB1(char a)                         { return yarp::os::createVocab(a,0,0,0); }
+#endif // YARP_NO_DEPRECATED
 
 #endif // YARP_OS_VOCAB_H

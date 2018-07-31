@@ -374,6 +374,54 @@ bool NameServiceOnTriples::cmdUnregister(NameTripleState& act) {
     return cmdQuery(act);
 }
 
+bool NameServiceOnTriples::cmdListRunners(NameTripleState& act)
+{ // this is a combination of cmdList and cmdCheck codes
+    if (!act.bottleMode)
+    {
+        act.reply.addString("old");
+    } else
+    {
+        act.reply.addString("ports");
+    }
+    lock();
+    Triple t;
+    t.setNameValue("port","*");
+
+    // obtain all ports names
+    list<Triple> lst = act.mem.query(t, nullptr);
+    act.nestedMode = true;
+
+    for (auto& it : lst)
+    { // check yarprun property for each port
+        std::string port    = it.value.c_str();
+        act.mem.reset();
+
+        Triple t;
+        t.setNameValue("port",port.c_str());
+        int rid = act.mem.find(t, nullptr);
+        if (rid == -1) {
+            unlock();
+            return false;
+        }
+
+        // find all triples with yarprun = true for the specified RID (at most one)
+        TripleContext context;
+        context.setRid(rid);
+        t.setNameValue("yarprun","true");
+        list<Triple> lst = act.mem.query(t,&context);
+
+        if (!lst.empty())
+        { // if the port is a runner, do a classic query to build the reply with complete information about the port
+            act.cmd.clear();
+            act.cmd.addString("query");
+            act.cmd.addString(port);
+            act.mem.reset();
+            cmdQuery(act, true);
+        }
+    }
+    unlock();
+    return true;
+}
 
 bool NameServiceOnTriples::cmdList(NameTripleState& act) {
     if (!act.bottleMode) {
@@ -390,15 +438,15 @@ bool NameServiceOnTriples::cmdList(NameTripleState& act) {
     }
     list<Triple> lst = act.mem.query(t, nullptr);
     act.nestedMode = true;
-    for (list<Triple>::iterator it=lst.begin(); it!=lst.end(); it++) {
+    for (auto& it : lst) {
         if (prefix=="") {
             act.cmd.clear();
             act.cmd.addString("query");
-            act.cmd.addString(it->value.c_str());
+            act.cmd.addString(it.value.c_str());
             act.mem.reset();
             cmdQuery(act,true);
         } else {
-            std::string iname = it->value.c_str();
+            std::string iname = it.value.c_str();
             if (iname.find(prefix)==0) {
                 if (iname==prefix || iname[prefix.length()]=='/' ||
                     prefix[prefix.length()-1]=='/') {
@@ -564,7 +612,7 @@ bool NameServiceOnTriples::cmdHelp(NameTripleState& act) {
         bot.addString("Here are some ways to use the name server:");
     }
     bot.addString("+ help");
-    bot.addString("+ list");
+    bot.addString("+ list [$prefix]");
     bot.addString("+ register $portname");
     bot.addString("+ register $portname $carrier $ipAddress $portNumber");
     bot.addString("  (if you want a field set automatically, write '...')");
@@ -573,8 +621,9 @@ bool NameServiceOnTriples::cmdHelp(NameTripleState& act) {
     bot.addString("+ set $portname $property $value");
     bot.addString("+ get $portname $property");
     bot.addString("+ check $portname $property");
-    bot.addString("+ match $portname $property $prefix");
     bot.addString("+ route $port1 $port2");
+    bot.addString("+ runners");
+    bot.addString("  (to get a list of the yarprun ports)");
     return true;
 }
 
@@ -632,6 +681,8 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
         return cmdQuery(act);
     } else if (key=="list") {
         return cmdList(act);
+    } else if (key=="runners") {
+        return cmdListRunners(act);
     } else if (key=="set") {
         return cmdSet(act);
     } else if (key=="get") {

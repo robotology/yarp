@@ -9,14 +9,10 @@
 
 #include <stdio.h>
 #include <yarp/os/all.h>
+#include <yarp/dev/GenericVocabs.h>
 
 using namespace yarp::os;
 
-#define VOCAB_SET VOCAB3('s','e','t')
-#define VOCAB_GET VOCAB3('g','e','t')
-#define VOCAB_NOT VOCAB3('n','o','t')
-#define VOCAB_IS VOCAB2('i','s')
-#define VOCAB_REMOVE VOCAB2('r','m')
 
 
 int main(int argc, char *argv[]) {

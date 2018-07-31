@@ -16,6 +16,10 @@
 #include <yarp/dev/CartesianControl.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
+#include <yarp/dev/IAxisInfo.h>
+#include <yarp/dev/IAmplifierControl.h>
+#include <yarp/dev/IControlDebug.h>
+#include <yarp/dev/IControlLimits.h>
 #include <yarp/dev/ControlBoardPid.h>
 #include <yarp/dev/DataSource.h>
 #include <yarp/dev/DeviceDriver.h>
@@ -32,6 +36,7 @@
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/IVisualServoing.h>
+#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ServiceInterfaces.h>
 #include <yarp/dev/Wrapper.h>

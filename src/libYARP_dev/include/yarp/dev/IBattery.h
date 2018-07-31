@@ -11,9 +11,10 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/os/Vocab.h>
 
-#define VOCAB_IBATTERY     VOCAB4('i','b','a','t')
-#define VOCAB_BATTERY_INFO VOCAB4('b','t','n','f')
+constexpr yarp::conf::vocab32_t VOCAB_IBATTERY     = yarp::os::createVocab('i','b','a','t');
+constexpr yarp::conf::vocab32_t VOCAB_BATTERY_INFO = yarp::os::createVocab('b','t','n','f');
 
 /*! \file Ibattery.h battery interface */
 namespace yarp {

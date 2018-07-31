@@ -193,13 +193,13 @@ public:
 };
 
 // Interface name
-#define VOCAB_CURRENTCONTROL_INTERFACE VOCAB4('i','c','u','r')
+constexpr yarp::conf::vocab32_t VOCAB_CURRENTCONTROL_INTERFACE = yarp::os::createVocab('i','c','u','r');
 // methods names
 
-#define VOCAB_CURRENT_REF          VOCAB3('r','e','f')
-#define VOCAB_CURRENT_REFS         VOCAB4('r','e','f','s')
-#define VOCAB_CURRENT_REF_GROUP    VOCAB4('r','e','f','g')
-#define VOCAB_CURRENT_RANGE        VOCAB3('r','n','g')
-#define VOCAB_CURRENT_RANGES       VOCAB4('r','n','g','s')
+constexpr yarp::conf::vocab32_t VOCAB_CURRENT_REF          = yarp::os::createVocab('r','e','f');
+constexpr yarp::conf::vocab32_t VOCAB_CURRENT_REFS         = yarp::os::createVocab('r','e','f','s');
+constexpr yarp::conf::vocab32_t VOCAB_CURRENT_REF_GROUP    = yarp::os::createVocab('r','e','f','g');
+constexpr yarp::conf::vocab32_t VOCAB_CURRENT_RANGE        = yarp::os::createVocab('r','n','g');
+constexpr yarp::conf::vocab32_t VOCAB_CURRENT_RANGES       = yarp::os::createVocab('r','n','g','s');
 
 #endif // YARP_DEV_ICURRENTCONTROL_H

@@ -6,7 +6,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "yarp/dev/IVirtualAnalogSensorImpl.h"
+#include "yarp/dev/ImplementVirtualAnalogSensor.h"
 #include <yarp/dev/ControlBoardHelper.h>
 #include "yarp/sig/Vector.h"
 #include <cstdio>

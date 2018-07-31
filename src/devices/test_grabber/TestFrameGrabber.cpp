@@ -19,11 +19,13 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::sig::draw;
 
-#define VOCAB_BALL VOCAB4('b','a','l','l')
-#define VOCAB_GRID VOCAB4('g','r','i','d')
-#define VOCAB_RAND VOCAB4('r','a','n','d')
-#define VOCAB_NONE VOCAB4('n','o','n','e')
-#define VOCAB_GRID_MULTISIZE VOCAB4('s','i','z','e')
+constexpr yarp::conf::vocab32_t VOCAB_BALL           = yarp::os::createVocab('b','a','l','l');
+constexpr yarp::conf::vocab32_t VOCAB_GRID           = yarp::os::createVocab('g','r','i','d');
+constexpr yarp::conf::vocab32_t VOCAB_RAND           = yarp::os::createVocab('r','a','n','d');
+constexpr yarp::conf::vocab32_t VOCAB_NONE           = yarp::os::createVocab('n','o','n','e');
+constexpr yarp::conf::vocab32_t VOCAB_GRID_MULTISIZE = yarp::os::createVocab('s','i','z','e');
+constexpr yarp::conf::vocab32_t VOCAB_TIMETEXT       = yarp::os::createVocab('t','i','m','e');
+
 TestFrameGrabber::TestFrameGrabber() :
     ct(0),
     bx(0),
@@ -41,7 +43,22 @@ TestFrameGrabber::TestFrameGrabber() :
     use_bayer(false),
     use_mono(false),
     mirror(false)
-{}
+{
+    //the following data are used by [time] test
+    snprintf(num[0].data,  16, "**** ** ** ****");
+    snprintf(num[1].data,  16, " *  *  *  *  * ");
+    snprintf(num[2].data,  16, "***  *****  ***");
+    snprintf(num[3].data,  16, "***  ****  ****");
+    snprintf(num[4].data,  16, "* ** ****  *  *");
+    snprintf(num[5].data,  16, "****  ***  ****");
+    snprintf(num[6].data,  16, "****  **** ****");
+    snprintf(num[7].data,  16, "***  *  *  *  *");
+    snprintf(num[8].data,  16, "**** ***** ****");
+    snprintf(num[9].data,  16, "**** ****  ****");
+    snprintf(num[10].data, 16, "               ");
+    snprintf(num[11].data, 16, "          ** **");
+    start_time = yarp::os::Time::now();
+}
 
 
 bool TestFrameGrabber::close() {
@@ -96,7 +113,7 @@ bool TestFrameGrabber::open(yarp::os::Searchable& config) {
     }
     mode = config.check("mode",
                         yarp::os::Value(VOCAB_LINE, true),
-                        "bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none]").asVocab();
+                        "bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time]").asVocab();
 
     if (config.check("src")) {
         if (!yarp::sig::file::read(background,
@@ -252,6 +269,57 @@ bool TestFrameGrabber::setMode(int feature, FeatureMode mode) { return false; }
 bool TestFrameGrabber::getMode(int feature, FeatureMode *mode) { return false; }
 bool TestFrameGrabber::setOnePush(int feature) { return false; }
 
+void TestFrameGrabber::printTime(unsigned char* pixbuf, int pixbuf_w, int pixbuf_h, int x, int y, char* s, int size)
+{
+    int pixelsize = 5;
+    for (int i = 0; i<size; i++)
+    {
+        char* num_p = 0;
+        switch (s[i])
+        {
+            case '0': num_p = num[0].data; break;
+            case '1': num_p = num[1].data; break;
+            case '2': num_p = num[2].data; break;
+            case '3': num_p = num[3].data; break;
+            case '4': num_p = num[4].data; break;
+            case '5': num_p = num[5].data; break;
+            case '6': num_p = num[6].data; break;
+            case '7': num_p = num[7].data; break;
+            case '8': num_p = num[8].data; break;
+            case '9': num_p = num[9].data; break;
+            case ' ': num_p = num[10].data; break;
+            case '.': num_p = num[11].data; break;
+        }
+
+        for (int yi = 0; yi<5; yi++)
+            for (int xi = 0; xi<3; xi++)
+            {
+                int ii = yi * 3 + xi;
+                if (num_p[ii] == '*')
+                {
+                    for (int r = yi * pixelsize; r<yi*pixelsize + pixelsize; r++)
+                    {
+                        int off = i * (pixelsize + 20);
+                        for (int c = xi * pixelsize + off; c<xi*pixelsize + pixelsize + off; c++)
+                        {
+                            if (c >= pixbuf_h ||
+                                r >= pixbuf_w)
+                            {
+                                //avoid drawing out of the image memory
+                                return;
+                            }
+                            unsigned char *pixel = pixbuf;
+                            size_t offset = c * 3 + r * (pixbuf_w * 3);
+                            pixel = pixel + offset;
+                            pixel[0] = 0;
+                            pixel[1] = 0;
+                            pixel[2] = 255;
+                        }
+                    }
+                }
+            }
+    }
+}
 
 void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
                                        image) {
@@ -267,6 +335,18 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
         image.zero();
     }
     switch (mode) {
+    case VOCAB_TIMETEXT:
+        {
+            char txtbuf[50];
+            double time = yarp::os::Time::now() - start_time;
+            snprintf(txtbuf, 50, "%.3f", time);
+            int len = strlen(txtbuf);
+            if (len < 20)
+            {
+                printTime((unsigned char*)image.getRawImage(), image.width(), image.height(), 0, 0, txtbuf, len);
+            }
+        }
+        break;
     case VOCAB_BALL:
         {
             addCircle(image,PixelRgb(0,255,0),bx,by,15);

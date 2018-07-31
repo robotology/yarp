@@ -23,16 +23,16 @@ namespace yarp {
 
 
 // Interface name
-#define VOCAB_RGBD_SENSOR            VOCAB4('r','g','d','b')
-#define VOCAB_RGBD_PROTOCOL_VERSION  VOCAB4('p','r','o','t')
+constexpr yarp::conf::vocab32_t VOCAB_RGBD_SENSOR            = yarp::os::createVocab('r','g','d','b');
+constexpr yarp::conf::vocab32_t VOCAB_RGBD_PROTOCOL_VERSION  = yarp::os::createVocab('p','r','o','t');
 
 // Methods
-#define VOCAB_EXTRINSIC_PARAM   VOCAB3('e','x','t')
-#define VOCAB_ERROR_MSG         VOCAB4('m','e','s','s')
-#define VOCAB_RGB_IMAGE         VOCAB4('i','m','g','r')
-#define VOCAB_DEPTH_IMAGE       VOCAB4('i','m','g'.'d')
-#define VOCAB_IMAGES            VOCAB4('i','m','m','s')
-#define VOCAB_STATUS            VOCAB4('s','t','a','t')
+constexpr yarp::conf::vocab32_t VOCAB_EXTRINSIC_PARAM   = yarp::os::createVocab('e','x','t');
+constexpr yarp::conf::vocab32_t VOCAB_ERROR_MSG         = yarp::os::createVocab('m','e','s','s');
+constexpr yarp::conf::vocab32_t VOCAB_RGB_IMAGE         = yarp::os::createVocab('i','m','g','r');
+constexpr yarp::conf::vocab32_t VOCAB_DEPTH_IMAGE       = yarp::os::createVocab('i','m','g','d');
+constexpr yarp::conf::vocab32_t VOCAB_IMAGES            = yarp::os::createVocab('i','m','m','s');
+constexpr yarp::conf::vocab32_t VOCAB_STATUS            = yarp::os::createVocab('s','t','a','t');
 
 
 /**

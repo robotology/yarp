@@ -52,6 +52,7 @@
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/GenericVocabs.h>
 
 #include <assert.h>
 
@@ -59,8 +60,6 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp;
 
-#define VOCAB_HELP VOCAB4('h','e','l','p')
-#define VOCAB_QUIT VOCAB4('q','u','i','t')
 
 //
 int main(int argc, char *argv[]) 

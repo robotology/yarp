@@ -38,7 +38,7 @@ void DeviceResponder::addUsage(const Bottle& bot, const char *explain) {
 
 bool DeviceResponder::respond(const Bottle& command, Bottle& reply) {
     switch (command.get(0).asVocab()) {
-    case VOCAB4('h','e','l','p'):
+    case yarp::os::createVocab('h','e','l','p'):
         if (examples.size()>=1) {
             reply.add(Value::makeVocab("many"));
             if (command.get(1).toString()=="more") {

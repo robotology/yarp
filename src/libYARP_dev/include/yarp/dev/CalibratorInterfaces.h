@@ -11,6 +11,7 @@
 #define YARP_DEV_CALIBRATORINTERFACES_H
 
 #include <yarp/dev/DeviceDriver.h>
+#include <yarp/os/Vocab.h>
 
 namespace yarp {
     namespace dev {
@@ -134,16 +135,15 @@ public:
     virtual bool quitPark()=0;
 };
 
-#define VOCAB_REMOTE_CALIBRATOR_INTERFACE           VOCAB4('r','e','c','a')
-
-#define VOCAB_IS_CALIBRATOR_PRESENT                 VOCAB4('i','s','c','a')
-#define VOCAB_CALIBRATE_SINGLE_JOINT                VOCAB3('c','a','l')
-#define VOCAB_CALIBRATE_WHOLE_PART                  VOCAB4('c','a','l','s')
-#define VOCAB_HOMING_SINGLE_JOINT                   VOCAB3('h','o','m')
-#define VOCAB_HOMING_WHOLE_PART                     VOCAB4('h','o','m','s')
-#define VOCAB_PARK_SINGLE_JOINT                     VOCAB3('p','a','r')
-#define VOCAB_PARK_WHOLE_PART                       VOCAB4('p','a','r','s')
-#define VOCAB_QUIT_CALIBRATE                        VOCAB4('q','u','c','a')
-#define VOCAB_QUIT_PARK                             VOCAB4('q','u','p','a')
+constexpr yarp::conf::vocab32_t VOCAB_REMOTE_CALIBRATOR_INTERFACE           = yarp::os::createVocab('r','e','c','a');
+constexpr yarp::conf::vocab32_t VOCAB_IS_CALIBRATOR_PRESENT                 = yarp::os::createVocab('i','s','c','a');
+constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE_SINGLE_JOINT                = yarp::os::createVocab('c','a','l');
+constexpr yarp::conf::vocab32_t VOCAB_CALIBRATE_WHOLE_PART                  = yarp::os::createVocab('c','a','l','s');
+constexpr yarp::conf::vocab32_t VOCAB_HOMING_SINGLE_JOINT                   = yarp::os::createVocab('h','o','m');
+constexpr yarp::conf::vocab32_t VOCAB_HOMING_WHOLE_PART                     = yarp::os::createVocab('h','o','m','s');
+constexpr yarp::conf::vocab32_t VOCAB_PARK_SINGLE_JOINT                     = yarp::os::createVocab('p','a','r');
+constexpr yarp::conf::vocab32_t VOCAB_PARK_WHOLE_PART                       = yarp::os::createVocab('p','a','r','s');
+constexpr yarp::conf::vocab32_t VOCAB_QUIT_CALIBRATE                        = yarp::os::createVocab('q','u','c','a');
+constexpr yarp::conf::vocab32_t VOCAB_QUIT_PARK                             = yarp::os::createVocab('q','u','p','a');
 
 #endif // YARP_DEV_CALIBRATORINTERFACES_H

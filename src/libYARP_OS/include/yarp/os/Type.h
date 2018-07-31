@@ -39,6 +39,13 @@ public:
     Type(const Type& rhs);
 
     /**
+     * @brief Move constructor.
+     *
+     * @param rhs the Type to be moved
+     */
+    Type(Type&& rhs) noexcept;
+
+    /**
      * @brief Destructor.
      */
     virtual ~Type();
@@ -50,6 +57,14 @@ public:
      * @return this object
      */
     Type& operator=(const Type& rhs);
+
+    /**
+     * @brief Move assignment operator.
+     *
+     * @param rhs the Type to be moved
+     * @return this object
+     */
+    Type& operator=(Type&& rhs) noexcept;
 
 /** @} */
 /** @{ */

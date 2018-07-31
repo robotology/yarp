@@ -6,7 +6,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/dev/IPidControlImpl.h>
+#include <yarp/dev/ImplementPidControl.h>
 #include <yarp/dev/ControlBoardHelper.h>
 #include <yarp/os/LogStream.h>
 #include <cmath>

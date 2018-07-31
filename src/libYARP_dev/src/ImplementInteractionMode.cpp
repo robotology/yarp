@@ -10,7 +10,7 @@
 
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelper.h>
-#include <yarp/dev/IInteractionModeImpl.h>
+#include <yarp/dev/ImplementInteractionMode.h>
 
 using namespace yarp::dev;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}

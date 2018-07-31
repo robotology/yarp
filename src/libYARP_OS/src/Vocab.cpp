@@ -28,7 +28,7 @@ NetInt32 Vocab::encode(const std::string& str) {
             }
         }
     }
-    return VOCAB(a, b, c, d);
+    return createVocab(a, b, c, d);
 }
 
 

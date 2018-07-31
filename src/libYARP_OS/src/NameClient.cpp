@@ -299,8 +299,7 @@ Contact NameClient::extractAddress(const Bottle& bot)
     return Contact();
 }
 
-std::string NameClient::send(const std::string& cmd, bool multi)
-{
+std::string NameClient::send(const std::string& cmd, bool multi, const ContactStyle& style) {
     //printf("*** OLD YARP command %s\n", cmd.c_str());
     setup();
 
@@ -321,6 +320,10 @@ std::string NameClient::send(const std::string& cmd, bool multi)
     std::string result;
     Contact server = getAddress();
     float timeout = 10;
+    if (style.timeout > 0)
+    {
+        timeout = style.timeout;
+    }
     server.setTimeout(timeout);
 
     do {

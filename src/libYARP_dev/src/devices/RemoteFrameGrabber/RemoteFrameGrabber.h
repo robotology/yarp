@@ -17,6 +17,7 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/FrameGrabberControlImpl.h>
 #include <yarp/dev/IVisualParamsImpl.h>
+#include <yarp/dev/GenericVocabs.h>
 
 namespace yarp{
     namespace dev {

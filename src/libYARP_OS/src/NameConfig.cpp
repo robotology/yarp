@@ -351,7 +351,7 @@ bool NameConfig::isLocalName(const std::string& name) {
     if (strcmp(hostname, name.c_str()) == 0) result = true;
     if (!result) {
         Bottle lst = getIpsAsBottle();
-        for (int i=0; i<lst.size(); i++) {
+        for (size_t i=0; i<lst.size(); i++) {
             if (lst.get(i).asString()==name) {
                 result = true;
                 break;

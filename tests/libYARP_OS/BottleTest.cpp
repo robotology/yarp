@@ -423,7 +423,7 @@ public:
         Bottle bot("[send] 10 20");
         checkEqual(bot.size(),(size_t) 3,"plausible parse");
         checkTrue(bot.get(0).isVocab(),"vocab present");
-        checkEqual(bot.get(0).asInt32(),VOCAB('s','e','n','d'),
+        checkEqual(bot.get(0).asInt32(),yarp::os::createVocab('s','e','n','d'),
                    "vocab match");
     }
 

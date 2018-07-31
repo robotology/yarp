@@ -407,25 +407,25 @@ bool test_partial() {
     msg.fromString("add pair 4");
     client_port.write(msg,reply);
     printf("(incomplete) %s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asVocab() != VOCAB4('f','a','i','l')) return false;
+    if (reply.get(0).asVocab() != yarp::os::createVocab('f','a','i','l')) return false;
 
     msg.fromString("add pair");
     reply.fromString("0");
     client_port.write(msg,reply);
     printf("(incomplete) %s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asVocab() != VOCAB4('f','a','i','l')) return false;
+    if (reply.get(0).asVocab() != yarp::os::createVocab('f','a','i','l')) return false;
 
     msg.fromString("add");
     reply.fromString("0");
     client_port.write(msg,reply);
     printf("(incomplete) %s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asVocab() != VOCAB4('f','a','i','l')) return false;
+    if (reply.get(0).asVocab() != yarp::os::createVocab('f','a','i','l')) return false;
 
     msg.fromString("");
     reply.fromString("0");
     client_port.write(msg,reply);
     printf("(incomplete) %s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asVocab() != VOCAB4('f','a','i','l')) return false;
+    if (reply.get(0).asVocab() != yarp::os::createVocab('f','a','i','l')) return false;
 
     msg.fromString("add pair 10 20");
     reply.fromString("0");
@@ -443,7 +443,7 @@ bool test_partial() {
     reply.fromString("0");
     client_port.write(msg,reply);
     printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asVocab() != VOCAB4('f','a','i','l')) return false;
+    if (reply.get(0).asVocab() != yarp::os::createVocab('f','a','i','l')) return false;
 
     return true;
 }
@@ -477,7 +477,7 @@ bool test_defaults_with_rpc() {
     msg.fromString("test longer tail defaults");
     client_port.write(msg,reply);
     printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
-    if (reply.get(0).asVocab() != VOCAB4('f','a','i','l')) return false;
+    if (reply.get(0).asVocab() != yarp::os::createVocab('f','a','i','l')) return false;
 
     msg.fromString("test longer tail defaults 888");
     client_port.write(msg,reply);

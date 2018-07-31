@@ -443,16 +443,11 @@ public:
 
     /* IControlCalibration */
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-    virtual bool calibrate(int j, double p) override;
-#endif
-
-    using yarp::dev::IControlCalibration::calibrate;
-    virtual bool calibrate(int j, unsigned int ui, double v1, double v2, double v3) override;
+    virtual bool calibrateAxisWithParams(int j, unsigned int ui, double v1, double v2, double v3) override;
 
     virtual bool setCalibrationParameters(int j, const CalibrationParameters &params) override;
 
-    virtual bool done(int j) override;
+    virtual bool calibrationDone(int j) override;
 
     virtual bool abortPark() override;
 

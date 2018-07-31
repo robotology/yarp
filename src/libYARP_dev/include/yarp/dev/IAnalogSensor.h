@@ -10,11 +10,11 @@
 #ifndef YARP_DEV_IANALOGSENSOR_H
 #define YARP_DEV_IANALOGSENSOR_H
 
+#include <yarp/os/Vocab.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
 
-#define VOCAB_IANALOG VOCAB4('i','a','n','a')
-#define VOCAB_CALIBRATE_CHANNEL VOCAB4('c','a','l','c')
+constexpr yarp::conf::vocab32_t VOCAB_IANALOG           = yarp::os::createVocab('i','a','n','a');
 
 /*! \file IAnalogSensor.h analog sensor interface */
 namespace yarp {

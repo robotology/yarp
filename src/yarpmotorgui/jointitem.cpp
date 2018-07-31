@@ -77,6 +77,8 @@ JointItem::JointItem(int index,QWidget *parent) :
     enableCalib = true;
     joint_speedVisible = false;
     joint_motorPositionVisible = false;
+    joint_currentVisible = false;
+    joint_dutyVisible = false;
     lastVelocity = 0;
     velocityModeEnabled = false;
     motionDone = true;
@@ -174,31 +176,6 @@ JointItem::JointItem(int index,QWidget *parent) :
 
 
 
-    movingSliderStyle = "QSlider::groove:horizontal:enabled {"
-            "border: 1px solid #999999;"
-            "height: 8px;"
-            "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FF2E2E, stop:1 #FDA6A6);"
-            "margin: 2px 0;}"
-       "QSlider::groove:horizontal:disabled {"
-            "border: 1px solid #c8c8c8;"
-            "height: 8px;"
-            "background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #f0f0f0, stop:1 #dcdcdc);"
-            "margin: 2px 0;}"
-        "QSlider::handle:horizontal:enabled {"
-            "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);"
-            "border: 1px solid #5c5c5c;"
-            "width: 30px;"
-            "margin: -2px 0;"
-            "border-radius: 3px;}"
-        "QSlider::handle:horizontal:disabled {"
-            "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #e6e6e6, stop:1 #c8c8c8);"
-            "border: 1px solid #c8c8c8;"
-            "width: 30px;"
-            "margin: -2px 0;"
-            "border-radius: 3px;}";
-
-
-
     comboStyle1 = "QComboBox {"
             "border: 1px solid gray;"
             "border-radius: 3px;"
@@ -249,16 +226,16 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->comboMode->setItemData( PWM,            Pwm, Qt::UserRole);
     ui->comboMode->setItemData( CURRENT,        Current, Qt::UserRole);
 
-    QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(149,221,186);} %2").arg(comboStyle1).arg(comboStyle2);
-    ui->comboMode->setStyleSheet(styleSheet);
+  //  QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(149,221,186);} %2").arg(comboStyle1).arg(comboStyle2);
+ //   ui->comboMode->setStyleSheet(styleSheet);
 
     setJointInternalState(IDLE);
 
     QVariant variant = ui->comboInteraction->itemData(0,Qt::BackgroundRole);
-    QColor c = variant.value<QColor>();
+//    QColor c = variant.value<QColor>();
 
-    styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(%2,%3,%4);} %5").arg(comboStyle1).arg(c.red()).arg(c.green()).arg(c.blue()).arg(comboStyle2);
-    ui->comboInteraction->setStyleSheet(styleSheet);
+  //  styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(%2,%3,%4);} %5").arg(comboStyle1).arg(c.red()).arg(c.green()).arg(c.blue()).arg(comboStyle2);
+//    ui->comboInteraction->setStyleSheet(styleSheet);
 
 
     ui->stackedWidget->widget(VELOCITY)->setEnabled(false);
@@ -515,9 +492,260 @@ void JointItem::setUnits(yarp::dev::JointTypeEnum t)
 void JointItem::setMotorPositionVisible(bool visible)
 {
     joint_motorPositionVisible = visible;
-    ui->editPositionMotorPosition->setVisible(visible);
-    ui->labelPositionMotorPosition->setVisible(visible);
-    ui->labelPositionMotorPositionUnits->setVisible(visible);
+    ui->editIdleMotorPos->setVisible(visible);
+    ui->editPositionMotorPos->setVisible(visible);
+    ui->editPositionDirMotorPos->setVisible(visible);
+    ui->editMixedMotorPos->setVisible(visible);
+    ui->editTorqueMotorPos->setVisible(visible);
+    ui->editPWMMotorPos->setVisible(visible);
+    ui->editCurrentMotorPos->setVisible(visible);
+    ui->editVelocityMotorPos->setVisible(visible);
+
+    ui->labelIdleMotorPos->setVisible(visible);
+    ui->labelPositionMotorPos->setVisible(visible);
+    ui->labelPositionDirMotorPos->setVisible(visible);
+    ui->labelMixedMotorPos->setVisible(visible);
+    ui->labelTorqueMotorPos->setVisible(visible);
+    ui->labelPWMMotorPos->setVisible(visible);
+    ui->labelCurrentMotorPos->setVisible(visible);
+    ui->labelVelocityMotorPos->setVisible(visible);
+
+    ui->labelIdleMotorPosUnits->setVisible(visible);
+    ui->labelPositionMotorPosUnits->setVisible(visible);
+    ui->labelPositionDirMotorPosUnits->setVisible(visible);
+    ui->labelMixedMotorPosUnits->setVisible(visible);
+    ui->labelTorqueMotorPosUnits->setVisible(visible);
+    ui->labelPWMMotorPosUnits->setVisible(visible);
+    ui->labelCurrentMotorPosUnits->setVisible(visible);
+    ui->labelVelocityMotorPosUnits->setVisible(visible);
+
+    if (!visible) {
+        ui->editIdleMotorPos->setMinimumHeight(0);
+        ui->editPositionMotorPos->setMinimumHeight(0);
+        ui->editPositionDirMotorPos->setMinimumHeight(0);
+        ui->editMixedMotorPos->setMinimumHeight(0);
+        ui->editTorqueMotorPos->setMinimumHeight(0);
+        ui->editPWMMotorPos->setMinimumHeight(0);
+        ui->editCurrentMotorPos->setMinimumHeight(0);
+        ui->editVelocityMotorPos->setMinimumHeight(0);
+
+        ui->labelPositionMotorPos->setMinimumHeight(0);
+        ui->labelPositionMotorPosUnits->setMinimumHeight(0);
+        ui->labelPositionDirMotorPos->setMinimumHeight(0);
+        ui->labelPositionDirMotorPosUnits->setMinimumHeight(0);
+        ui->labelMixedMotorPos->setMinimumHeight(0);
+        ui->labelMixedMotorPosUnits->setMinimumHeight(0);
+        ui->labelTorqueMotorPos->setMinimumHeight(0);
+        ui->labelTorqueMotorPosUnits->setMinimumHeight(0);
+        ui->labelPWMMotorPos->setMinimumHeight(0);
+        ui->labelPWMMotorPosUnits->setMinimumHeight(0);
+        ui->labelCurrentMotorPos->setMinimumHeight(0);
+        ui->labelCurrentMotorPosUnits->setMinimumHeight(0);
+        ui->labelVelocityMotorPos->setMinimumHeight(0);
+        ui->labelVelocityMotorPosUnits->setMinimumHeight(0);
+        ui->labelIdleMotorPos->setMinimumHeight(0);
+        ui->labelIdleMotorPosUnits->setMinimumHeight(0);
+    }
+    else {
+        ui->editIdleMotorPos->setMinimumHeight(20);
+        ui->editPositionMotorPos->setMinimumHeight(20);
+        ui->editPositionDirMotorPos->setMinimumHeight(20);
+        ui->editMixedMotorPos->setMinimumHeight(20);
+        ui->editTorqueMotorPos->setMinimumHeight(20);
+        ui->editPWMMotorPos->setMinimumHeight(20);
+        ui->editCurrentMotorPos->setMinimumHeight(20);
+        ui->editVelocityMotorPos->setMinimumHeight(20);
+
+        ui->labelPositionMotorPos->setMinimumHeight(20);
+        ui->labelPositionMotorPosUnits->setMinimumHeight(20);
+        ui->labelPositionDirMotorPos->setMinimumHeight(20);
+        ui->labelPositionDirMotorPosUnits->setMinimumHeight(20);
+        ui->labelMixedMotorPos->setMinimumHeight(20);
+        ui->labelMixedMotorPosUnits->setMinimumHeight(20);
+        ui->labelTorqueMotorPos->setMinimumHeight(20);
+        ui->labelTorqueMotorPosUnits->setMinimumHeight(20);
+        ui->labelPWMMotorPos->setMinimumHeight(20);
+        ui->labelPWMMotorPosUnits->setMinimumHeight(20);
+        ui->labelCurrentMotorPos->setMinimumHeight(20);
+        ui->labelCurrentMotorPosUnits->setMinimumHeight(20);
+        ui->labelVelocityMotorPos->setMinimumHeight(20);
+        ui->labelVelocityMotorPosUnits->setMinimumHeight(20);
+        ui->labelIdleMotorPos->setMinimumHeight(20);
+        ui->labelIdleMotorPosUnits->setMinimumHeight(20);
+    }
+}
+
+void JointItem::setDutyVisible(bool visible)
+{
+    joint_dutyVisible = visible;
+    //ui->editIdleDuty->setVisible(visible);
+    //ui->editPositionDuty->setVisible(visible);
+    //ui->editPositionDirDuty->setVisible(visible);
+   // ui->editMixedDuty->setVisible(visible);
+    ui->editTorqueDuty->setVisible(visible);
+    ui->editCurrentDuty->setVisible(visible);
+    //ui->editPWMDuty->setVisible(visible);
+    //ui->editDutyDuty->setVisible(visible);
+    //ui->editVelocityDuty->setVisible(visible);
+
+    //ui->labelIdleDuty->setVisible(visible);
+    //ui->labelIdleDutyUnits->setVisible(visible);
+    //ui->labelPositionDuty->setVisible(visible);
+    //ui->labelPositionDutyUnits->setVisible(visible);
+    //ui->labelPositionDirDuty->setVisible(visible);
+    //ui->labelPositionDirDutyUnits->setVisible(visible);
+    //ui->labelMixedDuty->setVisible(visible);
+    //ui->labelMixedDutyUnits->setVisible(visible);
+    ui->labelTorqueDuty->setVisible(visible);
+    ui->labelTorqueDutyUnits->setVisible(visible);
+    //ui->labelPWMDuty->setVisible(visible);
+    ui->labelCurrentDuty->setVisible(visible);
+    //ui->labelPWMDutyUnits->setVisible(visible);
+    ui->labelCurrentDutyUnits->setVisible(visible);
+    //ui->labelVelocityDuty->setVisible(visible);
+    //ui->labelVelocityDutyUnits->setVisible(visible);
+
+
+    if (!visible) {
+        //ui->editIdleDuty->setMinimumHeight(0);
+        //ui->editPositionDuty->setMinimumHeight(0);
+        //ui->editPositionDirDuty->setMinimumHeight(0);
+        //ui->editMixedDuty->setMinimumHeight(0);
+        //ui->editTorqueDuty->setMinimumHeight(0);
+        //ui->editPWMDuty->setMinimumHeight(0);
+        //ui->editDutyDuty->setMinimumHeight(0);
+        //ui->editVelocityDuty->setMinimumHeight(0);
+
+        //ui->labelPositionDuty->setMinimumHeight(0);
+        //ui->labelPositionDutyUnits->setMinimumHeight(0);
+        //ui->labelPositionDirDuty->setMinimumHeight(0);
+        //ui->labelPositionDirDutyUnits->setMinimumHeight(0);
+        //ui->labelMixedDuty->setMinimumHeight(0);
+        //ui->labelMixedDutyUnits->setMinimumHeight(0);
+        ui->labelTorqueDuty->setMinimumHeight(0);
+        ui->labelTorqueDutyUnits->setMinimumHeight(0);
+        //ui->labelPWMDuty->setMinimumHeight(0);
+        //ui->labelPWMDutyUnits->setMinimumHeight(0);
+        ui->labelCurrentDuty->setMinimumHeight(0);
+        ui->labelCurrentDutyUnits->setMinimumHeight(0);
+        //ui->labelVelocityDuty->setMinimumHeight(0);
+        //ui->labelVelocityDutyUnits->setMinimumHeight(0);
+        //ui->labelIdleDuty->setMinimumHeight(0);
+        //ui->labelIdleDutyUnits->setMinimumHeight(0);
+    }
+    else {
+        //ui->editIdleDuty->setMinimumHeight(20);
+        //ui->editPositionDuty->setMinimumHeight(20);
+        //ui->editPositionDirDuty->setMinimumHeight(20);
+        //ui->editMixedDuty->setMinimumHeight(20);
+        ui->editTorqueDuty->setMinimumHeight(20);
+        //ui->editPWMDuty->setMinimumHeight(20);
+        ui->editCurrentDuty->setMinimumHeight(20);
+        //ui->editVelocityDuty->setMinimumHeight(20);
+
+        //ui->labelPositionDuty->setMinimumHeight(20);
+        //ui->labelPositionDutyUnits->setMinimumHeight(20);
+        //ui->labelPositionDirDuty->setMinimumHeight(20);
+        //ui->labelPositionDirDutyUnits->setMinimumHeight(20);
+        //ui->labelMixedDuty->setMinimumHeight(20);
+        //ui->labelMixedDutyUnits->setMinimumHeight(20);
+        ui->labelTorqueDuty->setMinimumHeight(20);
+        ui->labelTorqueDutyUnits->setMinimumHeight(20);
+        //ui->labelPWMDuty->setMinimumHeight(20);
+        //ui->labelPWMDutyUnits->setMinimumHeight(20);
+        ui->labelCurrentDuty->setMinimumHeight(20);
+        ui->labelCurrentDutyUnits->setMinimumHeight(20);
+        //ui->labelVelocityDuty->setMinimumHeight(20);
+        //ui->labelVelocityDutyUnits->setMinimumHeight(20);
+        //ui->labelIdleDuty->setMinimumHeight(20);
+        //ui->labelIdleDutyUnits->setMinimumHeight(20);
+    }
+}
+
+void JointItem::setCurrentsVisible(bool visible)
+{
+    joint_currentVisible = visible;
+    ui->editIdleCurrent->setVisible(visible);
+    ui->editPositionCurrent->setVisible(visible);
+    ui->editPositionDirCurrent->setVisible(visible);
+    ui->editMixedCurrent->setVisible(visible);
+    ui->editTorqueCurrent->setVisible(visible);
+    ui->editPWMCurrent->setVisible(visible);
+    //ui->editCurrentCurrent->setVisible(visible);
+    ui->editVelocityCurrent->setVisible(visible);
+
+    ui->labelIdleCurrent->setVisible(visible);
+    ui->labelIdleCurrentUnits->setVisible(visible);
+    ui->labelPositionCurrent->setVisible(visible);
+    ui->labelPositionCurrentUnits->setVisible(visible);
+    ui->labelPositionDirCurrent->setVisible(visible);
+    ui->labelPositionDirCurrentUnits->setVisible(visible);
+    ui->labelMixedCurrent->setVisible(visible);
+    ui->labelMixedCurrentUnits->setVisible(visible);
+    ui->labelTorqueCurrent->setVisible(visible);
+    ui->labelTorqueCurrentUnits->setVisible(visible);
+    ui->labelPWMCurrent->setVisible(visible);
+    //ui->labelCurrentCurrent->setVisible(visible);
+    ui->labelPWMCurrentUnits->setVisible(visible);
+    //ui->labelCurrentCurrentUnits->setVisible(visible);
+    ui->labelVelocityCurrent->setVisible(visible);
+    ui->labelVelocityCurrentUnits->setVisible(visible);
+
+
+    if (!visible) {
+        ui->editIdleCurrent->setMinimumHeight(0);
+        ui->editPositionCurrent->setMinimumHeight(0);
+        ui->editPositionDirCurrent->setMinimumHeight(0);
+        ui->editMixedCurrent->setMinimumHeight(0);
+        ui->editTorqueCurrent->setMinimumHeight(0);
+        ui->editPWMCurrent->setMinimumHeight(0);
+        //ui->editCurrentCurrent->setMinimumHeight(0);
+        ui->editVelocityCurrent->setMinimumHeight(0);
+
+        ui->labelPositionCurrent->setMinimumHeight(0);
+        ui->labelPositionCurrentUnits->setMinimumHeight(0);
+        ui->labelPositionDirCurrent->setMinimumHeight(0);
+        ui->labelPositionDirCurrentUnits->setMinimumHeight(0);
+        ui->labelMixedCurrent->setMinimumHeight(0);
+        ui->labelMixedCurrentUnits->setMinimumHeight(0);
+        ui->labelTorqueCurrent->setMinimumHeight(0);
+        ui->labelTorqueCurrentUnits->setMinimumHeight(0);
+        ui->labelPWMCurrent->setMinimumHeight(0);
+        ui->labelPWMCurrentUnits->setMinimumHeight(0);
+        //ui->labelCurrentCurrent->setMinimumHeight(0);
+        //ui->labelCurrentCurrentUnits->setMinimumHeight(0);
+        ui->labelVelocityCurrent->setMinimumHeight(0);
+        ui->labelVelocityCurrentUnits->setMinimumHeight(0);
+        ui->labelIdleCurrent->setMinimumHeight(0);
+        ui->labelIdleCurrentUnits->setMinimumHeight(0);
+    }
+    else {
+        ui->editIdleCurrent->setMinimumHeight(20);
+        ui->editPositionCurrent->setMinimumHeight(20);
+        ui->editPositionDirCurrent->setMinimumHeight(20);
+        ui->editMixedCurrent->setMinimumHeight(20);
+        ui->editTorqueCurrent->setMinimumHeight(20);
+        ui->editPWMCurrent->setMinimumHeight(20);
+        //ui->editCurrentCurrent->setMinimumHeight(20);
+        ui->editVelocityCurrent->setMinimumHeight(20);
+
+        ui->labelPositionCurrent->setMinimumHeight(20);
+        ui->labelPositionCurrentUnits->setMinimumHeight(20);
+        ui->labelPositionDirCurrent->setMinimumHeight(20);
+        ui->labelPositionDirCurrentUnits->setMinimumHeight(20);
+        ui->labelMixedCurrent->setMinimumHeight(20);
+        ui->labelMixedCurrentUnits->setMinimumHeight(20);
+        ui->labelTorqueCurrent->setMinimumHeight(20);
+        ui->labelTorqueCurrentUnits->setMinimumHeight(20);
+        ui->labelPWMCurrent->setMinimumHeight(20);
+        ui->labelPWMCurrentUnits->setMinimumHeight(20);
+        //ui->labelCurrentCurrent->setMinimumHeight(20);
+        //ui->labelCurrentCurrentUnits->setMinimumHeight(20);
+        ui->labelVelocityCurrent->setMinimumHeight(20);
+        ui->labelVelocityCurrentUnits->setMinimumHeight(20);
+        ui->labelIdleCurrent->setMinimumHeight(20);
+        ui->labelIdleCurrentUnits->setMinimumHeight(20);
+    }
 }
 
 void JointItem::setSpeedVisible(bool visible)
@@ -772,7 +1000,7 @@ void JointItem::enableCurrentSliderDoubleAuto()
     int v = ui->sliderCurrentOutput->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setCurrent(ref_current);
+    setRefCurrent(ref_current);
 }
 
 void JointItem::enableCurrentSliderDoubleValue(double value)
@@ -786,7 +1014,7 @@ void JointItem::enableCurrentSliderDoubleValue(double value)
     int v = ui->sliderCurrentOutput->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setCurrent(ref_current);
+    setRefCurrent(ref_current);
 }
 
 void JointItem::disableCurrentSliderDouble()
@@ -805,7 +1033,7 @@ void JointItem::disableCurrentSliderDouble()
     int v = ui->sliderCurrentOutput->value();
     if (v > sliderMax) {}
     if (v < sliderMin) {}
-    setCurrent(ref_current);
+    setRefCurrent(ref_current);
 }
 
 void JointItem::enableTrajectoryVelocitySliderDoubleAuto()
@@ -1134,21 +1362,21 @@ void JointItem::updateMotionDone(bool done)
     int index = ui->stackedWidget->currentIndex();
     if (index == POSITION) {
         if(!done){
-            ui->editPositionCurrentPos->setStyleSheet("background-color: rgb(255, 38, 41);");
+            ui->editPositionJointPos->setStyleSheet("background-color: rgb(255, 38, 41);");
         }else{
-            ui->editPositionCurrentPos->setStyleSheet("background-color: rgb(255, 255, 255);");
+            ui->editPositionJointPos->setStyleSheet("background-color: rgb(255, 255, 255);");
         }
     } else if (index == POSITION_DIR) {
         if(!done){
-            ui->editPositionDirCurrentPos->setStyleSheet("background-color: rgb(255, 38, 41);");
+            ui->editPositionDirJointPos->setStyleSheet("background-color: rgb(255, 38, 41);");
         }else{
-            ui->editPositionDirCurrentPos->setStyleSheet("background-color: rgb(255, 255, 255);");
+            ui->editPositionDirJointPos->setStyleSheet("background-color: rgb(255, 255, 255);");
         }
     } else if (index == MIXED) {
         if(!done){
-            ui->editMixedCurrentPos->setStyleSheet("background-color: rgb(255, 38, 41);");
+            ui->editMixedJointPos->setStyleSheet("background-color: rgb(255, 38, 41);");
         }else{
-            ui->editMixedCurrentPos->setStyleSheet("background-color: rgb(255, 255, 255);");
+            ui->editMixedJointPos->setStyleSheet("background-color: rgb(255, 255, 255);");
         }
     }
 }
@@ -1212,7 +1440,7 @@ void JointItem::updateSliderTrajectoryVelocity(double val)
     ui->sliderTrajectoryVelocity->setValue(val);
 }
 
-void JointItem::setPWM(double pwmValue)
+void JointItem::setRefPWM(double pwmValue)
 {
     if(sliderPWMPressed){
         return;
@@ -1221,11 +1449,11 @@ void JointItem::setPWM(double pwmValue)
         updateSliderPWM(pwmValue);
         QString sVal;
         sVal = QString("%L1").arg(pwmValue, 0, 'f', 3);
-        ui->editPWMOutput->setText(sVal);
+        ui->editPWMDuty->setText(sVal);
     }
 }
 
-void JointItem::setCurrent(double currentValue)
+void JointItem::setRefCurrent(double currentValue)
 {
     if (sliderCurrentPressed){
         return;
@@ -1234,7 +1462,7 @@ void JointItem::setCurrent(double currentValue)
         updateSliderCurrent(currentValue);
         QString sVal;
         sVal = QString("%L1").arg(currentValue, 0, 'f', 3);
-        ui->editCurrentOutput->setText(sVal);
+        ui->editCurrentCurrent->setText(sVal);
     }
 }
 
@@ -1253,36 +1481,36 @@ void JointItem::setPosition(double val)
     }
 
     if(ui->stackedWidget->currentIndex() == IDLE){
-        ui->editIdleCurrentPos->setText(sVal);
+        ui->editIdleJointPos->setText(sVal);
     }
 
     if(ui->stackedWidget->currentIndex() == POSITION){
-        ui->editPositionCurrentPos->setText(sVal);
+        ui->editPositionJointPos->setText(sVal);
         updateSliderPosition(ui->sliderTrajectoryPosition, val);
     }
 
     if(ui->stackedWidget->currentIndex() == POSITION_DIR){
-        ui->editPositionDirCurrentPos->setText(sVal);
+        ui->editPositionDirJointPos->setText(sVal);
         updateSliderPosition(ui->sliderDirectPosition, val);
     }
 
     if(ui->stackedWidget->currentIndex() == MIXED){
-        ui->editMixedCurrentPos->setText(sVal);
+        ui->editMixedJointPos->setText(sVal);
         updateSliderPosition(ui->sliderMixedPosition, val);
     }
 
     if(ui->stackedWidget->currentIndex() == VELOCITY){
-        ui->editVelocityCurrentPos->setText(sVal);
+        ui->editVelocityJointPos->setText(sVal);
 
     }
     if(ui->stackedWidget->currentIndex() == TORQUE){
-        ui->editTorqueCurrentPos->setText(sVal);
+        ui->editTorqueJointPos->setText(sVal);
     }
     if(ui->stackedWidget->currentIndex() == PWM){
-        ui->editPWMCurrentPos->setText(sVal);
+        ui->editPWMJointPos->setText(sVal);
     }
     if (ui->stackedWidget->currentIndex() == CURRENT){
-        ui->editCurrentCurrentPos->setText(sVal);
+        ui->editCurrentJointPos->setText(sVal);
     }
 
 }
@@ -1373,22 +1601,88 @@ void JointItem::setMotorPosition(double val)
     QString sVal = QString("%1").arg(mot, 0, 'f', 1);
 
     if (ui->stackedWidget->currentIndex() == IDLE){
-        ui->editIdleMotorPosition->setText(sVal);
+        ui->editIdleMotorPos->setText(sVal);
     }
 
     if (ui->stackedWidget->currentIndex() == POSITION){
-        ui->editPositionMotorPosition->setText(sVal);
+        ui->editPositionMotorPos->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == POSITION_DIR) {
+        ui->editPositionDirMotorPos->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == MIXED) {
+        ui->editMixedMotorPos->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == VELOCITY) {
+        ui->editVelocityMotorPos->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == TORQUE) {
+        ui->editTorqueMotorPos->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == PWM) {
+        ui->editPWMMotorPos->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == CURRENT) {
+        ui->editCurrentMotorPos->setText(sVal);
     }
 }
 
-void JointItem::setSpeed(double val)
+void JointItem::setDutyCycles(double val)
+{
+    if (!joint_dutyVisible) {
+        return;
+    }
+
+    double mot = val;
+    QString sVal = QString("%1").arg(mot, 0, 'f', 1);
+
+    //if (ui->stackedWidget->currentIndex() == IDLE) {
+    //    ui->editIdleDuty->setText(sVal);
+    //}
+
+    //if (ui->stackedWidget->currentIndex() == POSITION) {
+    //    ui->editPositionDuty->setText(sVal);
+    //}
+
+    //if (ui->stackedWidget->currentIndex() == POSITION_DIR) {
+    //    ui->editPositionDirDuty->setText(sVal);
+    //}
+
+    //if (ui->stackedWidget->currentIndex() == MIXED) {
+    //    ui->editMixedDuty->setText(sVal);
+    //}
+
+    //if (ui->stackedWidget->currentIndex() == VELOCITY) {
+    //    ui->editVelocityDuty->setText(sVal);
+    //}
+
+    if (ui->stackedWidget->currentIndex() == TORQUE) {
+        ui->editTorqueDuty->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == PWM) {
+        ui->editPWMDuty->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == CURRENT) {
+        ui->editCurrentDuty->setText(sVal);
+    }
+}
+
+void JointItem::setSpeed(double meas)
 {
     if (!joint_speedVisible){
         return;
     }
     //TODO
 
-    double speed = val;
+    double speed = meas;
     QString sVal = QString("%1").arg(speed,0,'f',1);
 
     if(ui->stackedWidget->currentIndex() == IDLE){
@@ -1426,6 +1720,46 @@ void JointItem::setSpeed(double val)
 
 }
 
+void JointItem::setCurrent(double meas)
+{
+    if (!joint_currentVisible) {
+        return;
+    }
+    //TODO
+
+    double current = meas;
+    QString sVal = QString("%1").arg(current, 0, 'f', 3);
+
+    if (ui->stackedWidget->currentIndex() == IDLE) {
+        ui->editIdleCurrent->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == POSITION) {
+        ui->editPositionCurrent->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == POSITION_DIR) {
+        ui->editPositionDirCurrent->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == MIXED) {
+        ui->editMixedCurrent->setText(sVal);
+    }
+
+    if (ui->stackedWidget->currentIndex() == VELOCITY) {
+        ui->editVelocityCurrent->setText(sVal);
+    }
+    if (ui->stackedWidget->currentIndex() == TORQUE) {
+        ui->editTorqueCurrent->setText(sVal);
+    }
+    if (ui->stackedWidget->currentIndex() == PWM) {
+        ui->editPWMCurrent->setText(sVal);
+    }
+    if (ui->stackedWidget->currentIndex() == CURRENT) {
+        ui->editCurrentCurrent->setText(sVal);
+    }
+
+}
 
 
 
@@ -1438,10 +1772,10 @@ void JointItem::setJointInternalInteraction(int interaction)
 
     if(ui->stackedWidget->widget(interaction)){
         QVariant variant = ui->comboInteraction->itemData(interaction,Qt::BackgroundRole);
-        QColor c = variant.value<QColor>();
+  //      QColor c = variant.value<QColor>();
 
-        QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(%2,%3,%4);} %5").arg(comboStyle1).arg(c.red()).arg(c.green()).arg(c.blue()).arg(comboStyle2);
-        ui->comboInteraction->setStyleSheet(styleSheet);
+  //      QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(%2,%3,%4);} %5").arg(comboStyle1).arg(c.red()).arg(c.green()).arg(c.blue()).arg(comboStyle2);
+  //      ui->comboInteraction->setStyleSheet(styleSheet);
     }
 }
 
@@ -1490,7 +1824,7 @@ void JointItem::setJointInternalState(int mode)
         setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
 
         QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(%2,%3,%4);} %5").arg(comboStyle1).arg(c.red()).arg(c.green()).arg(c.blue()).arg(comboStyle2);
-        ui->comboMode->setStyleSheet(styleSheet);
+  //      ui->comboMode->setStyleSheet(styleSheet);
     }
 }
 

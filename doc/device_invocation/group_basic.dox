@@ -67,7 +67,7 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>mycam.t2</td><td>Tangential distortion of the lens(fake)</td><td>12.0</td></tr>
 <tr><td>mycam.freq</td><td>rate of test images in Hz</td><td></td></tr>
 <tr><td>mycam.period</td><td>period of test images in seconds</td><td></td></tr>
-<tr><td>mycam.mode</td><td>bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none]</td><td>line</td></tr>
+<tr><td>mycam.mode</td><td>bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time]</td><td>line</td></tr>
 <tr><td>mycam.src</td><td></td><td></td></tr>
 <tr><td>mycam.bayer</td><td>should emit bayer test image?</td><td></td></tr>
 <tr><td>mycam.mono</td><td>should emit a monochrome image?</td><td></td></tr>

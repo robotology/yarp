@@ -355,8 +355,8 @@ bool FakeMotionControl::dealloc()
 
 FakeMotionControl::FakeMotionControl() :
     PeriodicThread(0.01),
-    ImplementControlCalibration<FakeMotionControl, IControlCalibration>(this),
-    ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>(this),
+    ImplementControlCalibration(this),
+    ImplementAmplifierControl(this),
     ImplementPidControl(this),
     ImplementEncodersTimed(this),
     ImplementPositionControl(this),
@@ -559,8 +559,8 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
 
     ControlBoardHelper cb(_njoints, _axisMap, _angleToEncoder, nullptr, _newtonsToSensor, _ampsToSensor, _dutycycleToPWM);
     ControlBoardHelper cb_copy_test(cb);
-    ImplementControlCalibration<FakeMotionControl, IControlCalibration>::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
-    ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementControlCalibration::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
+    ImplementAmplifierControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementEncodersTimed::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementMotorEncoders::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
     ImplementPositionControl::initialize(_njoints, _axisMap, _angleToEncoder, nullptr);
@@ -1435,8 +1435,8 @@ bool FakeMotionControl::close()
     ImplementPositionControl::uninitialize();
     ImplementVelocityControl::uninitialize();
     ImplementPidControl::uninitialize();
-    ImplementControlCalibration<FakeMotionControl, IControlCalibration>::uninitialize();
-    ImplementAmplifierControl<FakeMotionControl, IAmplifierControl>::uninitialize();
+    ImplementControlCalibration::uninitialize();
+    ImplementAmplifierControl::uninitialize();
     ImplementImpedanceControl::uninitialize();
     ImplementControlLimits::uninitialize();
     ImplementTorqueControl::uninitialize();
@@ -1858,13 +1858,13 @@ bool FakeMotionControl::setCalibrationParametersRaw(int j, const CalibrationPara
     return true;
 }
 
-bool FakeMotionControl::calibrateRaw(int j, unsigned int type, double p1, double p2, double p3)
+bool FakeMotionControl::calibrateAxisWithParamsRaw(int j, unsigned int type, double p1, double p2, double p3)
 {
     yTrace() << "calibrateRaw for joint" << j;
     return true;
 }
 
-bool FakeMotionControl::doneRaw(int axis)
+bool FakeMotionControl::calibrationDoneRaw(int axis)
 {
     bool result = false;
 

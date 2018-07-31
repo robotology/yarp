@@ -16,21 +16,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <cstdlib>
-#include <unistd.h>
-#include <termios.h> // terminal io (serial port) interface
-#include <fcntl.h>   // File control definitions
-#include <cerrno>   // Error number definitions
 #include <arpa/inet.h>
-#include <iostream>
-#include <cstring>
+#include <cerrno>   // Error number definitions
 #include <cmath>
+#include <cstdlib>
+#include <cstring>
+#include <fcntl.h>   // File control definitions
+#include <iostream>
+#include <termios.h> // terminal io (serial port) interface
+#include <unistd.h>
 
-#include <yarp/os/Time.h>
-#include <yarp/os/LogStream.h>
-#include <yarp/os/Log.h>
-#include <yarp/math/Math.h>
+#include <linux/i2c-dev.h>
+#ifdef I2C_HAS_SMBUS_H
+# include <i2c/smbus.h>
+#endif
+#include <linux/kernel.h>
+
+#include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #include <yarp/os/LockGuard.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
+#include <yarp/math/Math.h>
+#include <yarp/os/Time.h>
 
 #include "imuBosch_BNO055.h"
 
@@ -38,16 +48,21 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
+constexpr uint8_t i2cAddrA = 0x28;
+//constexpr uint8_t i2cAddrB = 0x29;
+
 BoschIMU::BoschIMU() : PeriodicThread(0.02),
     verbose(false),
     status(0),
     nChannels(12),
     timeStamp(0.0),
     timeLastReport(0.0),
+    i2c_flag(false),
     checkError(false),
-    fd_ser(0),
+    fd(0),
+    readFunc(&BoschIMU::sendReadCommandSer),
     totMessagesRead(0),
-    errs({0,0,0,0})
+    errs(0)
 {
     data.resize(12);
     data.zero();
@@ -65,69 +80,103 @@ bool BoschIMU::open(yarp::os::Searchable& config)
     //debug
     yTrace("Parameters are:\n\t%s", config.toString().c_str());
 
-    if(!config.check("comport"))
+    if(!config.check("comport") && !config.check("i2c"))
     {
-        yError() << "Param 'comport' not found";
+        yError() << "BoshImu: Params 'comport' and 'i2c' not found";
         return false;
     }
+
+    if (config.check("comport") && config.check("i2c"))
+    {
+        yError() << "BoshImu: Params 'comport' and 'i2c' both specified";
+        return false;
+    }
+
+    i2c_flag = config.check("i2c");
+
+    readFunc = i2c_flag ? &BoschIMU::sendReadCommandI2c : &BoschIMU::sendReadCommandSer;
+
+    if (i2c_flag)
+    {
+        if (!config.find("i2c").isString())
+        {
+            yError()<<"BoshImu: i2c param malformed, it should be a string, aborting.";
+            return false;
+        }
+
+        std::string i2cDevFile = config.find("i2c").asString();
+        fd = ::open(i2cDevFile.c_str(), O_RDWR);
+
+        if (fd < 0)
+        {
+            yError("BoshImu: can't open %s, %s", i2cDevFile.c_str(), strerror(errno));
+            return false;
+        }
+
+        if (::ioctl(fd, I2C_SLAVE, i2cAddrA) < 0)
+        {
+            yError("BoshImu: ioctl failed on %s, %s", i2cDevFile.c_str(), strerror(errno));
+            return false;
+        }
+
+    }
+    else
+    {
+        fd = ::open(config.find("comport").toString().c_str(), O_RDWR | O_NOCTTY );
+        if (fd < 0) {
+            yError("can't open %s, %s", config.find("comport").toString().c_str(), strerror(errno));
+            return false;
+        }
+        //Get the current options for the port...
+        struct termios options;
+        tcgetattr(fd, &options);
+
+        cfmakeraw(&options);
+
+        //set the baud rate to 115200
+        int baudRate = B115200;
+        cfsetospeed(&options, baudRate);
+        cfsetispeed(&options, baudRate);
+
+        //set the number of data bits.
+        options.c_cflag &= ~CSIZE;  // Mask the character size bits
+        options.c_cflag |= CS8;
+
+        //set the number of stop bits to 1
+        options.c_cflag &= ~CSTOPB;
+
+        //Set parity to None
+        options.c_cflag &=~PARENB;
+
+        //set for non-canonical (raw processing, no echo, etc.)
+        //     options.c_iflag = IGNPAR; // ignore parity check
+        options.c_oflag = 0; // raw output
+        options.c_lflag = 0; // raw input
+
+        // SET NOT BLOCKING READ
+        options.c_cc[VMIN]  = 0;   // block reading until RX x characters. If x = 0, it is non-blocking.
+        options.c_cc[VTIME] = 2;   // Inter-Character Timer -- i.e. timeout= x*.1 s
+
+        //Set local mode and enable the receiver
+        options.c_cflag |= (CLOCAL | CREAD);
+
+        tcflush(fd, TCIOFLUSH);
+
+        //Set the new options for the port...
+        if ( tcsetattr(fd, TCSANOW, &options) != 0)
+        {
+            yError("Configuring comport failed");
+            return false;
+        }
+
+    }
+
+    nChannels = config.check("channels", Value(12)).asInt32();
 
     double period = config.check("period",Value(10),"Thread period in ms").asInt32() / 1000.0;
     setPeriod(period);
 
-    nChannels = config.check("channels", Value(12)).asInt32();
-
-    fd_ser = ::open(config.find("comport").toString().c_str(), O_RDWR | O_NOCTTY );
-    if (fd_ser < 0) {
-        yError("can't open %s, %s", config.find("comport").toString().c_str(), strerror(errno));
-        return false;
-    }
-
-    //Get the current options for the port...
-    struct termios options;
-    tcgetattr(fd_ser, &options);
-
-    cfmakeraw(&options);
-
-    //set the baud rate to 115200
-    int baudRate = B115200;
-    cfsetospeed(&options, baudRate);
-    cfsetispeed(&options, baudRate);
-
-    //set the number of data bits.
-    options.c_cflag &= ~CSIZE;  // Mask the character size bits
-    options.c_cflag |= CS8;
-
-    //set the number of stop bits to 1
-    options.c_cflag &= ~CSTOPB;
-
-    //Set parity to None
-    options.c_cflag &=~PARENB;
-
-    //set for non-canonical (raw processing, no echo, etc.)
-//     options.c_iflag = IGNPAR; // ignore parity check
-    options.c_oflag = 0; // raw output
-    options.c_lflag = 0; // raw input
-
-    // SET NOT BLOCKING READ
-    options.c_cc[VMIN]  = 0;   // block reading until RX x characters. If x = 0, it is non-blocking.
-    options.c_cc[VTIME] = 2;   // Inter-Character Timer -- i.e. timeout= x*.1 s
-
-    //Set local mode and enable the receiver
-    options.c_cflag |= (CLOCAL | CREAD);
-
-    tcflush(fd_ser, TCIOFLUSH);
-
-    //Set the new options for the port...
-    if ( tcsetattr(fd_ser, TCSANOW, &options) != 0)
-    {
-        yError("Configuring comport failed");
-        return false;
-    }
-
-    if(!PeriodicThread::start())
-        return false;
-
-    return true;
+    return PeriodicThread::start();
 }
 
 bool BoschIMU::close()
@@ -191,7 +240,7 @@ bool BoschIMU::checkWriteResponse(unsigned char* response)
     return false;
 }
 
-bool BoschIMU::sendReadCommand(unsigned char register_add, int len, unsigned char* buf, std::string comment)
+bool BoschIMU::sendReadCommandSer(unsigned char register_add, int len, unsigned char* buf, std::string comment)
 {
     int command_len;
     int nbytes_w;
@@ -213,7 +262,7 @@ bool BoschIMU::sendReadCommand(unsigned char register_add, int len, unsigned cha
 //         printf("\nCommand is:\n");
 //         printBuffer(command, command_len);
 
-        nbytes_w = ::write(fd_ser, (void*)command, command_len);
+        nbytes_w = ::write(fd, (void*)command, command_len);
 
         if(nbytes_w != command_len)
         {
@@ -251,7 +300,7 @@ bool BoschIMU::sendReadCommand(unsigned char register_add, int len, unsigned cha
     return success;
 }
 
-bool BoschIMU::sendWriteCommand(unsigned char register_add, int len, unsigned char* cmd, std::string comment)
+bool BoschIMU::sendWriteCommandSer(unsigned char register_add, int len, unsigned char* cmd, std::string comment)
 {
     int command_len = 4+len;
     int nbytes_w;
@@ -267,7 +316,7 @@ bool BoschIMU::sendWriteCommand(unsigned char register_add, int len, unsigned ch
 //     printf("\nCommand is:\n");
 //     printBuffer(command, command_len);
 
-    nbytes_w = ::write(fd_ser, (void*)command, command_len);
+    nbytes_w = ::write(fd, (void*)command, command_len);
     if(nbytes_w != command_len)
     {
         yError() << "BoschIMU device cannot correctly send the message: " << comment;
@@ -297,7 +346,7 @@ int BoschIMU::readBytes(unsigned char* buffer, int bytes)
     int bytesRead = 0;
     do
     {
-        r = ::read(fd_ser, (void*)&buffer[bytesRead], 1);
+        r = ::read(fd, (void*)&buffer[bytesRead], 1);
         if(r > 0)
             bytesRead += r;
     }
@@ -309,7 +358,7 @@ int BoschIMU::readBytes(unsigned char* buffer, int bytes)
 void BoschIMU::dropGarbage()
 {
     char byte;
-    while( (::read(fd_ser,  (void*) &byte, 1) > 0 ))
+    while( (::read(fd,  (void*) &byte, 1) > 0 ))
     {
 //         printf("Dropping byte 0x%02X \n", byte);
     }
@@ -331,12 +380,12 @@ void BoschIMU::readSysError()
 
     checkError = true;
     yarp::os::SystemClock::delaySystem(0.002);
-    if(!sendReadCommand(REG_SYS_STATUS, 1, response, "Read SYS_STATUS register") )
+    if(!sendReadCommandSer(REG_SYS_STATUS, 1, response, "Read SYS_STATUS register") )
     {
         yError()  << "@ line " << __LINE__;
     }
 
-    if(!sendReadCommand(REG_SYS_ERR, 1, response, "Read SYS_ERR register") )
+    if(!sendReadCommandSer(REG_SYS_ERR, 1, response, "Read SYS_ERR register") )
     {
         yError()  << "@ line " << __LINE__;
     }
@@ -344,227 +393,233 @@ void BoschIMU::readSysError()
     return;
 }
 
-bool BoschIMU::sendAndVerifyCommand(unsigned char register_add, int len, unsigned char* cmd, std::string comment)
+bool BoschIMU::sendAndVerifyCommandSer(unsigned char register_add, int len, unsigned char* cmd, std::string comment)
 {
     uint8_t attempts=0;
     bool ret;
     do
     {
-      ret=sendWriteCommand(register_add, len, cmd, comment);
+      ret=sendWriteCommandSer(register_add, len, cmd, comment);
       attempts++;
     }while((attempts<= ATTEMPTS_NUM_OF_SEND_CONFIG_CMD) && (ret==false));
 
     return(ret);
 }
 
+bool BoschIMU::sendReadCommandI2c(unsigned char register_add, int len, unsigned char* buf, std::string comment)
+{
+    if (i2c_smbus_read_i2c_block_data(fd, register_add, len, buf) < 0)
+    {
+        yError() << "BoschIMU device cannot correctly send the message: " << comment;
+        return false;
+    }
+    return true;
+}
+
 bool BoschIMU::threadInit()
 {
-    unsigned char msg;
-    timeLastReport = yarp::os::SystemClock::nowSystem();
-
-    msg = 0x00;
-    if(!sendAndVerifyCommand(REG_PAGE_ID, 1, &msg, "PAGE_ID") )
+    if (i2c_flag)
     {
-        yError()  << "BoschIMU: set page id 0 failed";
-        return(false);
+        int trials = 0;
+        // Make sure we have the right device
+        while (i2c_smbus_read_byte_data(fd, REG_CHIP_ID) != BNO055_ID)
+        {
+            if (trials == 10)
+            {
+                yError()<<"BoshImu: wrong device on the bus, it is not BNO055";
+                return false;
+            }
+            yarp::os::Time::delay(0.1);
+            trials++;
+
+        }
+
+        yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
+
+        // Set the device in config mode
+        if (i2c_smbus_write_byte_data(fd, REG_OP_MODE, CONFIG_MODE) < 0)
+        {
+            yError()<<"BoshImu: Unable to set the Config mode";
+            return false;
+        }
+
+        yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
+
+        if (i2c_smbus_write_byte_data(fd, REG_SYS_TRIGGER, TRIG_EXT_CLK_SEL) < 0)
+        {
+            yError()<<"BoshImu: Unable to set external clock";
+            return false;
+        }
+
+        yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
+
+        // Perform any required configuration
+
+
+        if (i2c_smbus_write_byte_data(fd, REG_PAGE_ID, 0x00) < 0)
+        {
+            yError()<<"BoshImu: Unable to set the page ID";
+            return false;
+        }
+
+        yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
+        // Set the device into operative mode
+
+        if (i2c_smbus_write_byte_data(fd, REG_OP_MODE, NDOF_MODE) < 0)
+        {
+            yError()<<"BoshImu: Unable to set the Operative mode";
+            return false;
+        }
+
+        yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
+        return true;
+
+
+
+    }
+    else
+    {
+        unsigned char msg;
+        timeLastReport = yarp::os::SystemClock::nowSystem();
+
+        msg = 0x00;
+        if(!sendAndVerifyCommandSer(REG_PAGE_ID, 1, &msg, "PAGE_ID") )
+        {
+            yError()  << "BoschIMU: set page id 0 failed";
+            return(false);
+        }
+
+        yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
+
+    //Removed because useless
+        ///////////////////////////////////////
+        //
+        //      Set power mode
+        //
+        ///////////////////////////////////////
+    //     msg = 0x00;
+    //     if(!sendAndVerifyCommand(REG_POWER_MODE, 1, &msg, "Set power mode") )
+    //     {
+    //          yError()  << "BoschIMU: set power mode failed";
+    //          return(false);
+    //     }
+    //
+    //     yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
+
+
+        ///////////////////////////////////////
+        //
+        //  Set the device in config mode
+        //
+        ///////////////////////////////////////
+
+        msg = CONFIG_MODE;
+        if(!sendAndVerifyCommandSer(REG_OP_MODE, 1, &msg, "Set config mode") )
+        {
+            yError()  << "BoschIMU: set config mode failed";
+            return(false);
+        }
+
+        yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
+
+
+        ///////////////////////////////////////
+        //
+        //     Set external clock
+        //
+        ///////////////////////////////////////
+
+        msg = TRIG_EXT_CLK_SEL;
+        if(!sendAndVerifyCommandSer(REG_SYS_TRIGGER, 1, &msg, "Set external clock") )
+        {
+            yError()  << "BoschIMU: set external clock failed";
+            return(false);
+        }
+        yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
+
+        ///////////////////////////////////////
+        //
+        // Perform any required configuration
+        //
+        ///////////////////////////////////////
+
+
+
+        /// TODO: meas units, offset and so on ...
+
+        ///////////////////////////////////////
+        //
+        // Set the device into operative mode
+        //
+        ///////////////////////////////////////
+
+        msg = NDOF_MODE;
+        if(!sendAndVerifyCommandSer(REG_OP_MODE, 1, &msg, "Set config NDOF_MODE") )
+        {
+            yError()  << "BoschIMU: set config NDOF_MODE failed";
+            return false;
+        }
+
+        yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
+
+        return true;
     }
 
-    yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
-
-//Removed because useless
-    ///////////////////////////////////////
-    //
-    //      Set power mode
-    //
-    ///////////////////////////////////////
-//     msg = 0x00;
-//     if(!sendAndVerifyCommand(REG_POWER_MODE, 1, &msg, "Set power mode") )
-//     {
-//          yError()  << "BoschIMU: set power mode failed";
-//          return(false);
-//     }
-//
-//     yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
-
-
-    ///////////////////////////////////////
-    //
-    //  Set the device in config mode
-    //
-    ///////////////////////////////////////
-
-    msg = CONFIG_MODE;
-    if(!sendAndVerifyCommand(REG_OP_MODE, 1, &msg, "Set config mode") )
-    {
-        yError()  << "BoschIMU: set config mode failed";
-        return(false);
-    }
-
-    yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
-
-
-    ///////////////////////////////////////
-    //
-    //     Set external clock
-    //
-    ///////////////////////////////////////
-
-    msg = TRIG_EXT_CLK_SEL;
-    if(!sendAndVerifyCommand(REG_SYS_TRIGGER, 1, &msg, "Set external clock") )
-    {
-        yError()  << "BoschIMU: set external clock failed";
-        return(false);
-    }
-    yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
-
-    ///////////////////////////////////////
-    //
-    // Perform any required configuration
-    //
-    ///////////////////////////////////////
-
-
-
-    /// TODO: meas units, offset and so on ...
-
-    ///////////////////////////////////////
-    //
-    // Set the device into operative mode
-    //
-    ///////////////////////////////////////
-
-    msg = NDOF_MODE;
-    if(!sendAndVerifyCommand(REG_OP_MODE, 1, &msg, "Set config NDOF_MODE") )
-    {
-        yError()  << "BoschIMU: set config NDOF_MODE failed";
-    }
-
-    yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
-
-    return true;
 }
 
 void BoschIMU::run()
 {
     timeStamp = yarp::os::SystemClock::nowSystem();
 
-    int16_t raw_data[4];
-//     void *tmp = (void*) &response[2];
-//     raw_data = static_cast<int16_t *> (tmp);
+    int16_t raw_data[16];
 
     // In order to avoid zeros when a single read from a sensor is missing,
     // initialize the new measure to be equal to the previous one
     data_tmp = data;
 
-    ///////////////////////////////////////////
-    //
-    //  Read RPY values  --> no!! There are bad spikes on yaw values!!
-    //  Read quaternion and convert back to RPY afterwards
-    //
-    ///////////////////////////////////////////
 
-//     if(!sendReadCommand(REG_RPY_DATA, 6, response, "Read RPY ... ") )
-//     {
-//         yError()  << "@ line " << __LINE__;
-//     }
-
-//     data[2] = (double) raw_data[0]/16.0;
-//     data[0] = (double) raw_data[1]/16.0;
-//     data[1] = (double) raw_data[2]/16.0;
-//     yDebug() << "RPY x: " << data[0] << "y: " << data[1] << "z: " << data[2];
-
-    ///////////////////////////////////////////
-    //
-    //      Read accel values
-    //
-    ///////////////////////////////////////////
-
-    if (sendReadCommand(REG_ACC_DATA, 6, response, "Read accelerations")) {
-        // Manually compose the data to safely handling endianness
-        raw_data[0] = response[3] << 8 | response[2];
-        raw_data[1] = response[5] << 8 | response[4];
-        raw_data[2] = response[7] << 8 | response[6];
-        data_tmp[3] = (double)raw_data[0] / 100.0;
-        data_tmp[4] = (double)raw_data[1] / 100.0;
-        data_tmp[5] = (double)raw_data[2] / 100.0;
+    if (!(this->*readFunc)(REG_ACC_DATA, 32, response, "Read all"))
+    {
+        yError()<<"BoshImu: failed to read all the data";
+        errs++;
     }
-    else {
-        errs.acceError++;
-    }
+    else
+    {
+        // Correctly construct int16 data
+        for(int i=0; i<16; i++)
+        {
+            raw_data[i] = response[3+ i*2] << 8 | response[2 +i*2];
+        }
 
-    ///////////////////////////////////////////
-    //
-    //      Read Gyro values
-    //
-    ///////////////////////////////////////////
+        // Get quaternion
+        quaternion_tmp = quaternion;
+        quaternion_tmp.w() = ((double)raw_data[12]) / (2 << 13);
+        quaternion_tmp.x() = ((double)raw_data[13]) / (2 << 13);
+        quaternion_tmp.y() = ((double)raw_data[14]) / (2 << 13);
+        quaternion_tmp.z() = ((double)raw_data[15]) / (2 << 13);
 
-    if (sendReadCommand(REG_GYRO_DATA, 6, response, "Read Gyros")) {
-        // Manually compose the data to handle endianness safely
-        raw_data[0] = response[3] << 8 | response[2];
-        raw_data[1] = response[5] << 8 | response[4];
-        raw_data[2] = response[7] << 8 | response[6];
-        data_tmp[6] = (double)raw_data[0] / 16.0;
-        data_tmp[7] = (double)raw_data[1] / 16.0;
-        data_tmp[8] = (double)raw_data[2] / 16.0;
-        //     yDebug() << "Gyro x: " << data[6] << "y: " << data[7] << "z: " << data[8];
-    }
-    else {
-        errs.gyroError++;
-    }
-
-    ///////////////////////////////////////////
-    //
-    //      Read Magnetometer values
-    //
-    ///////////////////////////////////////////
-
-    if (sendReadCommand(REG_MAGN_DATA, 6, response, "Read Magnetometer")) {
-        // Manually compose the data to safely handling endianness
-        raw_data[0]  = response[3] << 8 | response[2];
-        raw_data[1]  = response[5] << 8 | response[4];
-        raw_data[2]  = response[7] << 8 | response[6];
-        data_tmp[9]  = (double)raw_data[0] / 16.0;
-        data_tmp[10] = (double)raw_data[1] / 16.0;
-        data_tmp[11] = (double)raw_data[2] / 16.0;
-        // yDebug() << "Magn x: " << data[9] << "y: " << data[10] << "z: " << data[11];
-    }
-    else {
-        errs.magnError++;
-    }
-
-    ///////////////////////////////////////////
-    //
-    //      Read Quaternion
-    //
-    ///////////////////////////////////////////
-
-    quaternion_tmp = quaternion;
-    if (sendReadCommand(REG_QUATERN_DATA, 8, response, "Read quaternion")) {
-        // Manually compose the data to safely handling endianness
-        raw_data[0] = response[3] << 8 | response[2];
-        raw_data[1] = response[5] << 8 | response[4];
-        raw_data[2] = response[7] << 8 | response[6];
-        raw_data[3] = response[9] << 8 | response[8];
-
-        quaternion_tmp.w() = ((double)raw_data[0]) / (2 << 13);
-        quaternion_tmp.x() = ((double)raw_data[1]) / (2 << 13);
-        quaternion_tmp.y() = ((double)raw_data[2]) / (2 << 13);
-        quaternion_tmp.z() = ((double)raw_data[3]) / (2 << 13);
-
+        // Convert to RPY angles
         RPY_angle.resize(3);
         RPY_angle   = yarp::math::dcm2rpy(quaternion.toRotationMatrix4x4());
         data_tmp[0] = RPY_angle[0] * 180 / M_PI;
         data_tmp[1] = RPY_angle[1] * 180 / M_PI;
         data_tmp[2] = RPY_angle[2] * 180 / M_PI;
-    }
-    else {
-        errs.quatError++;
-    }
 
-    // If 100ms have passed since the last received message
-    if (timeStamp+0.1 < yarp::os::SystemClock::nowSystem())
-    {
-//         status=TIMEOUT;
+        // Fill in accel values
+        data_tmp[3] = (double)raw_data[0] / 100.0;
+        data_tmp[4] = (double)raw_data[1] / 100.0;
+        data_tmp[5] = (double)raw_data[2] / 100.0;
+
+
+        // Fill in Gyro values
+        data_tmp[6] = (double)raw_data[6] / 100.0;
+        data_tmp[7] = (double)raw_data[7] / 100.0;
+        data_tmp[8] = (double)raw_data[8] / 100.0;
+
+        // Fill in Magnetometer values
+        data_tmp[9]  = (double)raw_data[3] / 100.0;
+        data_tmp[10] = (double)raw_data[4] / 100.0;
+        data_tmp[11] = (double)raw_data[5] / 100.0;
     }
 
     // Protect only this section in order to avoid slow race conditions when gathering this data
@@ -576,19 +631,13 @@ void BoschIMU::run()
 
     if (timeStamp > timeLastReport + TIME_REPORT_INTERVAL) {
         // if almost 1 errors occourred in last interval, then print report
-        if(errs.acceError + errs.gyroError + errs.magnError + errs.quatError != 0)
+        if(errs != 0)
         {
             yDebug(" IMUBOSCH periodic error report of last %d sec:", TIME_REPORT_INTERVAL);
-            yDebug("\t errors while reading acceleration: %d", errs.acceError);
-            yDebug("\t errors while reading gyroscope   : %d", errs.gyroError);
-            yDebug("\t errors while reading magnetometer: %d", errs.magnError);
-            yDebug("\t errors while reading angles      : %d", errs.quatError);
+            yDebug("\t errors while reading data: %d", errs);
         }
 
-        errs.acceError = 0;
-        errs.gyroError = 0;
-        errs.magnError = 0;
-        errs.quatError = 0;
+        errs = 0;
         timeLastReport=timeStamp;
     }
 }
@@ -609,13 +658,13 @@ bool BoschIMU::read(yarp::sig::Vector &out)
     }
 
     return true;
-};
+}
 
 bool BoschIMU::getChannels(int *nc)
 {
     *nc = nChannels;
     return true;
-};
+}
 
 bool BoschIMU::calibrate(int ch, double v)
 {
@@ -624,7 +673,7 @@ bool BoschIMU::calibrate(int ch, double v)
     // into memory for the next run.
     // This procedure should be abortable by CTRL+C
     return false;
-};
+}
 
 void BoschIMU::threadRelease()
 {
@@ -633,6 +682,6 @@ void BoschIMU::threadRelease()
 //    for(unsigned int i=0; i<errorCounter.size(); i++)
 //        printf("Error type %d, counter is %d\n", i, (int)errorCounter[i]);
 //    printf("On overall read operations of %ld\n", totMessagesRead);
-    ::close(fd_ser);
+    ::close(fd);
 }
 

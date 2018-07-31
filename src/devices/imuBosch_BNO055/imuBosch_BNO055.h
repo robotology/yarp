@@ -64,7 +64,7 @@ namespace yarp {
  * Read error code:  TODO
  */
 
-#define MAX_MSG_LENGTH  128
+constexpr int MAX_MSG_LENGTH = 128;
 
 // Commands
 #define START_BYTE  0xAA
@@ -116,6 +116,8 @@ namespace yarp {
 #define TRIG_RESET_SYSTEM   0x20    // reset system
 #define TRIG_SELF_TEST      0x01    // Start self test
 
+#define BNO055_ID 	        0xA0
+
 #define RESP_HEADER_SIZE                 2
 // Time to wait while switching to and from config_mode & any operation_mode
 #define SWITCHING_TIME                   0.020  //   20ms
@@ -135,9 +137,10 @@ namespace yarp {
 * Parameters accepted in the config argument of the open method:
 * | Parameter name | Type   | Units | Default Value | Required  | Description   | Notes |
 * |:--------------:|:------:|:-----:|:-------------:|:--------: |:-------------:|:-----:|
-* | comport        | string |       |               | Yes       | full name of device file  | ex '/dev/ttyUSB0' |
-* | baudrate       | int    | Hz    |               | Yes       | baudrate setting of COM port | ex 115200 |
-*
+* | comport        | string |       |               | Yes if i2c not specified | full name of device file  | ex '/dev/ttyUSB0', it is mutually exclusive with 'i2c' parameter|
+* | baudrate       | int    | Hz    |               | Yes if i2c not specified | baudrate setting of COM port | ex 115200, used only with serial configuration |
+* | i2c            | string |       |               | Yes if comport not specified | full name of device file  | ex '/dev/i2c-5', it is mutually exclusive with 'comport' parameter, necessary for i2c configuration|
+* | period         | int    | ms    |       10      | No       | period of the thread | |
 **/
 
 class yarp::dev::BoschIMU:   public yarp::dev::DeviceDriver,
@@ -157,11 +160,15 @@ protected:
     double                      timeStamp;
     double                      timeLastReport;
     yarp::os::Mutex             mutex;
+    bool                        i2c_flag;
 
     bool                        checkError;
 
-    int                         fd_ser;
+    int                         fd;
     yarp::os::ResourceFinder    rf;
+
+    using ReadFuncPtr = bool (BoschIMU::*)(unsigned char, int, unsigned char*, std::string);
+    ReadFuncPtr readFunc;
 
     unsigned char command[MAX_MSG_LENGTH];
     unsigned char response[MAX_MSG_LENGTH];
@@ -178,20 +185,15 @@ protected:
     yarp::sig::Vector  errorReading;
 
     void readSysError();
+    // Serial
+    bool sendReadCommandSer(unsigned char register_add, int len, unsigned char* buf, std::string comment = "");
+    bool sendWriteCommandSer(unsigned char register_add, int len, unsigned char* cmd, std::string comment = "");
+    bool sendAndVerifyCommandSer(unsigned char register_add, int len, unsigned char* cmd, std::string comment);
 
-    bool sendReadCommand(unsigned char register_add, int len, unsigned char* buf, std::string comment = "");
-    bool sendWriteCommand(unsigned char register_add, int len, unsigned char* cmd, std::string comment = "");
-    bool sendAndVerifyCommand(unsigned char register_add, int len, unsigned char* cmd, std::string comment);
+    // i2c
+    bool sendReadCommandI2c(unsigned char register_add, int len, unsigned char* buf, std::string comment = "");
 
-    struct errCounter
-    {
-        int acceError;
-        int gyroError;
-        int magnError;
-        int quatError;
-    };
-
-    errCounter errs;
+    int errs;
 
 public:
     BoschIMU();
@@ -201,7 +203,7 @@ public:
     virtual bool open(yarp::os::Searchable& config) override;
     virtual bool close() override;
 
-    /*
+    /**
      * Read a vector from the sensor.
      * @param out a vector containing the sensor's last readings.
      * @return true/false success/failure

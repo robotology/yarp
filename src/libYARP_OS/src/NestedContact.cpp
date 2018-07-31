@@ -111,7 +111,7 @@ NestedContact::NestedContact(const NestedContact& rhs) :
 {
 }
 
-NestedContact::NestedContact(NestedContact&& rhs) :
+NestedContact::NestedContact(NestedContact&& rhs) noexcept :
         mPriv(rhs.mPriv)
 {
     rhs.mPriv = nullptr;
@@ -130,7 +130,7 @@ NestedContact& NestedContact::operator=(const NestedContact& rhs)
     return *this;
 }
 
-NestedContact& NestedContact::operator=(NestedContact&& rhs)
+NestedContact& NestedContact::operator=(NestedContact&& rhs) noexcept
 {
     if (&rhs != this) {
         std::swap(mPriv, rhs.mPriv);

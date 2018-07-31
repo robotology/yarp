@@ -524,9 +524,9 @@ bool RFModule::safeRespond(const Bottle& command, Bottle& reply) {
 
 bool RFModule::basicRespond(const Bottle& command, Bottle& reply) {
     switch (command.get(0).asVocab()) {
-    case VOCAB4('q', 'u', 'i', 't'):
-    case VOCAB4('e', 'x', 'i', 't'):
-    case VOCAB3('b', 'y', 'e'):
+    case yarp::os::createVocab('q', 'u', 'i', 't'):
+    case yarp::os::createVocab('e', 'x', 'i', 't'):
+    case yarp::os::createVocab('b', 'y', 'e'):
         reply.addVocab(Vocab::encode("bye"));
         stopModule(false); //calls interruptModule()
    //     interruptModule();

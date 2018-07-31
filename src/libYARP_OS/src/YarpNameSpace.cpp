@@ -154,7 +154,6 @@ Contact YarpNameSpace::detectNameServer(bool useDetectedServer,
 bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
                                       PortReader& reply,
                                       const ContactStyle& style) {
-    YARP_UNUSED(style);
     Contact srv = getNameServerContact();
     std::string cmd0 = "NAME_SERVER";
 
@@ -167,7 +166,7 @@ bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
         cmd0 += in.get(i).toString().c_str();
     }
     NameClient& nic = HELPER(this);
-    std::string result = nic.send(cmd0);
+    std::string result = nic.send(cmd0, true, style);
     Bottle reply2;
     reply2.addString(result.c_str());
     DummyConnector con;

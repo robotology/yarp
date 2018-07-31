@@ -9,7 +9,7 @@ yarp_prepare_plugin(imuBosch_BNO055
                     TYPE yarp::dev::BoschIMU
                     INCLUDE imuBosch_BNO055.h
                     EXTRA_CONFIG WRAPPER=inertial
-                    DEPENDS "NOT WIN32;YARP_HAS_MATH_LIB")
+                    DEPENDS "NOT WIN32;YARP_HAS_MATH_LIB;YARP_HAS_I2C")
 
 if(ENABLE_imuBosch_BNO055)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -23,6 +23,11 @@ if(ENABLE_imuBosch_BNO055)
                                                       YARP_sig
                                                       YARP_dev
                                                       YARP_math)
+
+  target_compile_definitions(yarp_imuBosch_BNO055 PRIVATE ${I2C_DEFINITIONS})
+  target_include_directories(yarp_imuBosch_BNO055 SYSTEM PRIVATE ${I2C_INCLUDE_DIRS})
+  target_link_libraries(yarp_imuBosch_BNO055 PRIVATE ${I2C_LIBRARIES})
+#   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS I2C) (not using targets)
 
   yarp_install(TARGETS yarp_imuBosch_BNO055
                EXPORT YARP_${YARP_PLUGIN_MASTER}

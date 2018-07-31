@@ -221,7 +221,7 @@
 %ignore yarp::sig::Image::getRow(int) const;
 %ignore yarp::sig::Image::getIplImage() const;
 %ignore yarp::sig::Image::getReadType() const;
-%ignore yarp::sig::Vector::getType() const;
+%ignore yarp::sig::VectorOf<double>::getType() const;
 %ignore yarp::os::Property::put(const char *,Value *);
 %ignore yarp::os::Bottle::add(Value *);
 %rename(toString) std::string::operator const char *() const;
@@ -301,24 +301,8 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 #endif
 
 
-// We skip macros from Vocab.h via SWIG_PREPROCESSOR_SHOULD_SKIP_THIS directive
-// But cannot define YARP_OS_VOCAB_H as we would miss encode/decode
-#if (SWIG_VERSION >= 0x030011) && (!defined(SWIGCSHARP))
-    %define VOCAB(x1,x2,x3,x4) x4*16777216+x3*65536+x2*256+x1 // Tested on Lua and Python
-    %enddef
-#elif defined(SWIGCSHARP)
-    // We'd rather no VOCAB vs a defective VOCAB (value 0), but required for CSHARP.
-    %define VOCAB(x1,x2,x3,x4) 0 // VOCABs in enum should be generated in Lua and Python, not C#
-    %enddef
-#endif // If old SWIG and not CSHARP, no global defined (but enum should be) VOCABs wrappers generated
-%define VOCAB4(x1,x2,x3,x4) VOCAB(x1,x2,x3,x4)
-%enddef
-%define VOCAB3(x1,x2,x3) VOCAB(x1,x2,x3,0)
-%enddef
-%define VOCAB2(x1,x2) VOCAB(x1,x2,0,0)
-%enddef
-%define VOCAB1(x1) VOCAB(x1,0,0,0)
-%enddef
+// Define macros for handling the multiple analog sensors interfaces
+%include macrosForMultipleAnalogSensors.i
 
 #if defined( SWIGALLEGROCL )
   %include "allegro/compat.h"
@@ -427,6 +411,10 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/FrameGrabberInterfaces.h>
 %include <yarp/dev/AudioVisualInterfaces.h>
 %include <yarp/dev/ControlBoardInterfaces.h>
+%include <yarp/dev/IAxisInfo.h>
+%include <yarp/dev/IAmplifierControl.h>
+%include <yarp/dev/IControlDebug.h>
+%include <yarp/dev/IControlLimits.h>
 %include <yarp/dev/ControlBoardPid.h>
 %include <yarp/dev/CartesianControl.h>
 %include <yarp/dev/GazeControl.h>
@@ -438,6 +426,7 @@ MAKE_COMMS(Bottle)
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 %include <yarp/dev/IControlMode2.h>
 #endif
+%include <yarp/dev/IInteractionMode.h>
 %include <yarp/dev/IEncoders.h>
 %include <yarp/dev/IMotorEncoders.h>
 %include <yarp/dev/ITorqueControl.h>
@@ -452,16 +441,18 @@ MAKE_COMMS(Bottle)
 #endif
 %include <yarp/dev/IPidControl.h>
 %include <yarp/dev/IPositionDirect.h>
+%include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
   %template(BVector) std::vector<bool>;
   %template(SVector) std::vector<std::string>;
-#ifdef SWIGMATLAB
-  // Extend IVector for handling conversion of vectors from and to Matlab
-  %include "matlab/IVector_fromTo_matlab.i"
-#endif
   %template(IVector) std::vector<int>;
+
+  #ifdef SWIGMATLAB
+    // Extend IVector for handling conversion of vectors from and to Matlab
+    %include "matlab/vectors_fromTo_matlab.i"
+  #endif
 
   #if defined(SWIGCSHARP)
       SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(Pid,yarp::dev::Pid)
@@ -544,9 +535,9 @@ typedef yarp::os::BufferedPort<Sound> BufferedPortSound;
 %}
 
 %{
-typedef yarp::os::TypedReader<yarp::sig::Vector> TypedReaderVector;
-typedef yarp::os::TypedReaderCallback<yarp::sig::Vector> TypedReaderCallbackVector;
-typedef yarp::os::BufferedPort<yarp::sig::Vector> BufferedPortVector;
+typedef yarp::os::TypedReader<yarp::sig::VectorOf<double>> TypedReaderVector;
+typedef yarp::os::TypedReaderCallback<yarp::sig::VectorOf<double>> TypedReaderCallbackVector;
+typedef yarp::os::BufferedPort<yarp::sig::VectorOf<double>> BufferedPortVector;
 %}
 
 %feature("notabstract") ImageRgb;
@@ -577,6 +568,7 @@ typedef yarp::os::BufferedPort<yarp::sig::Vector> BufferedPortVector;
 %feature("notabstract") yarp::os::BufferedPort<Vector>;
 %feature("notabstract") BufferedPortVector;
 
+%template(Vector) yarp::sig::VectorOf<double>;
 %template(ImageRgb) yarp::sig::ImageOf<yarp::sig::PixelRgb>;
 %template(TypedReaderImageRgb) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
 %template(TypedReaderCallbackImageRgb) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
@@ -610,9 +602,9 @@ typedef yarp::os::BufferedPort<yarp::sig::Vector> BufferedPortVector;
 %template(TypedReaderCallbackSound) yarp::os::TypedReaderCallback<yarp::sig::Sound>;
 %template(BufferedPortSound) yarp::os::BufferedPort<yarp::sig::Sound >;
 
-%template(TypedReaderVector) yarp::os::TypedReader<yarp::sig::Vector >;
-%template(TypedReaderCallbackVector) yarp::os::TypedReaderCallback<yarp::sig::Vector>;
-%template(BufferedPortVector) yarp::os::BufferedPort<yarp::sig::Vector >;
+%template(TypedReaderVector) yarp::os::TypedReader<yarp::sig::VectorOf<double> >;
+%template(TypedReaderCallbackVector) yarp::os::TypedReaderCallback<yarp::sig::VectorOf<double>>;
+%template(BufferedPortVector) yarp::os::BufferedPort<yarp::sig::VectorOf<double> >;
 
 // Add getPixel and setPixel methods to access float values
 %extend yarp::sig::ImageOf<yarp::sig::PixelFloat> {
@@ -727,84 +719,30 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 //////////////////////////////////////////////////////////////////////////
 // Deal with PolyDriver idiom that doesn't translate too well
 
+%define CAST_POLYDRIVER_TO_INTERFACE(interface)
+    yarp::dev:: ## interface *view ## interface ## () {
+        yarp::dev:: ## interface *result;
+        self->view(result);
+        return result;
+    }
+%enddef
+
 %extend yarp::dev::PolyDriver {
-    yarp::dev::IFrameGrabberImage *viewFrameGrabberImage() {
-        yarp::dev::IFrameGrabberImage *result;
-        self->view(result);
-        return result;
-    }
 
-    yarp::dev::IPositionControl *viewIPositionControl() {
-        yarp::dev::IPositionControl *result;
-        self->view(result);
-        return result;
-    }
+    CAST_POLYDRIVER_TO_INTERFACE(IFrameGrabberImage)
+    CAST_POLYDRIVER_TO_INTERFACE(IPositionControl)
+    CAST_POLYDRIVER_TO_INTERFACE(IVelocityControl)
+    CAST_POLYDRIVER_TO_INTERFACE(IEncoders)
+    CAST_POLYDRIVER_TO_INTERFACE(IMotorEncoders)
+    CAST_POLYDRIVER_TO_INTERFACE(IPidControl)
+    CAST_POLYDRIVER_TO_INTERFACE(IAmplifierControl)
+    CAST_POLYDRIVER_TO_INTERFACE(IControlLimits)
+    CAST_POLYDRIVER_TO_INTERFACE(ICartesianControl)
+    CAST_POLYDRIVER_TO_INTERFACE(IGazeControl)
+    CAST_POLYDRIVER_TO_INTERFACE(IImpedanceControl)
+    CAST_POLYDRIVER_TO_INTERFACE(ITorqueControl)
+    CAST_POLYDRIVER_TO_INTERFACE(IControlMode)
 
-    yarp::dev::IVelocityControl *viewIVelocityControl() {
-        yarp::dev::IVelocityControl *result;
-        self->view(result);
-        return result;
-    }
-
-    yarp::dev::IEncoders *viewIEncoders() {
-        yarp::dev::IEncoders *result;
-        self->view(result);
-        return result;
-    }
-
-    yarp::dev::IMotorEncoders *viewIMotorEncoders() {
-        yarp::dev::IMotorEncoders *result;
-        self->view(result);
-        return result;
-    }
-
-    yarp::dev::IPidControl *viewIPidControl() {
-        yarp::dev::IPidControl *result;
-        self->view(result);
-        return result;
-    }
-
-    yarp::dev::IAmplifierControl *viewIAmplifierControl() {
-        yarp::dev::IAmplifierControl *result;
-        self->view(result);
-        return result;
-    }
-
-    yarp::dev::IControlLimits *viewIControlLimits() {
-        yarp::dev::IControlLimits *result;
-        self->view(result);
-        return result;
-    }
-
-    yarp::dev::ICartesianControl *viewICartesianControl() {
-        yarp::dev::ICartesianControl *result;
-        self->view(result);
-        return result;
-    }
-
-    yarp::dev::IGazeControl *viewIGazeControl() {
-      yarp::dev::IGazeControl *result;
-      self->view(result);
-      return result;
-    }
-
-    yarp::dev::IImpedanceControl *viewIImpedanceControl() {
-        yarp::dev::IImpedanceControl *result;
-        self->view(result);
-        return result;
-    }
-
-    yarp::dev::ITorqueControl *viewITorqueControl() {
-        yarp::dev::ITorqueControl *result;
-        self->view(result);
-        return result;
-    }
-
-    yarp::dev::IControlMode *viewIControlMode() {
-        yarp::dev::IControlMode *result;
-        self->view(result);
-        return result;
-    }
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     yarp::dev::IControlMode *viewIControlMode2() {
         yarp::dev::IControlMode *result;
@@ -813,23 +751,11 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 #endif
 
-    yarp::dev::IPWMControl *viewIPWMControl() {
-            yarp::dev::IPWMControl *result;
-        self->view(result);
-        return result;
-    }
+    CAST_POLYDRIVER_TO_INTERFACE(IInteractionMode)
+    CAST_POLYDRIVER_TO_INTERFACE(IPWMControl)
+    CAST_POLYDRIVER_TO_INTERFACE(ICurrentControl)
+    CAST_POLYDRIVER_TO_INTERFACE(IAnalogSensor)
 
-    yarp::dev::ICurrentControl *viewICurrentControl() {
-            yarp::dev::ICurrentControl *result;
-        self->view(result);
-        return result;
-    }
-
-    yarp::dev::IAnalogSensor *viewIAnalogSensor() {
-        yarp::dev::IAnalogSensor *result;
-        self->view(result);
-        return result;
-    }
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     yarp::dev::IFrameGrabberControls *viewIFrameGrabberControls2() {
         yarp::dev::IFrameGrabberControls *result;
@@ -837,29 +763,26 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return result;
     }
 #endif
-    yarp::dev::IFrameGrabberControls *viewIFrameGrabberControls() {
-        yarp::dev::IFrameGrabberControls *result;
-        self->view(result);
-        return result;
-    }
 
-    yarp::dev::IPositionDirect *viewIPositionDirect() {
-        yarp::dev::IPositionDirect *result;
-        self->view(result);
-        return result;
-    }
+    CAST_POLYDRIVER_TO_INTERFACE(IFrameGrabberControls)
+    CAST_POLYDRIVER_TO_INTERFACE(IPositionDirect)
+    CAST_POLYDRIVER_TO_INTERFACE(IRemoteVariables)
+    CAST_POLYDRIVER_TO_INTERFACE(IAxisInfo)
 
-    yarp::dev::IRemoteVariables *viewIRemoteVariables() {
-        yarp::dev::IRemoteVariables *result;
-        self->view(result);
-        return result;
-    }
-
-    yarp::dev::IAxisInfo *viewIAxisInfo() {
-        yarp::dev::IAxisInfo *result;
-        self->view(result);
-        return result;
-    }
+// These views are currently disabled in SWIG + java generator since they are
+// useless without the EXTENDED_ANALOG_SENSOR_INTERFACE part.
+// See also https://github.com/robotology/yarp/issues/1770
+#if !defined(SWIGJAVA)
+    CAST_POLYDRIVER_TO_INTERFACE(IThreeAxisGyroscopes)
+    CAST_POLYDRIVER_TO_INTERFACE(IThreeAxisLinearAccelerometers)
+    CAST_POLYDRIVER_TO_INTERFACE(IThreeAxisMagnetometers)
+    CAST_POLYDRIVER_TO_INTERFACE(IOrientationSensors)
+    CAST_POLYDRIVER_TO_INTERFACE(ITemperatureSensors)
+    CAST_POLYDRIVER_TO_INTERFACE(ISixAxisForceTorqueSensors)
+    CAST_POLYDRIVER_TO_INTERFACE(IContactLoadCellArrays)
+    CAST_POLYDRIVER_TO_INTERFACE(IEncoderArrays)
+    CAST_POLYDRIVER_TO_INTERFACE(ISkinPatches)
+#endif
 
     // you'll need to add an entry for every interface you wish
     // to use
@@ -868,6 +791,15 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 
 //////////////////////////////////////////////////////////////////////////
 // Deal with ControlBoardInterfaces pointer arguments that don't translate
+
+%extend yarp::dev::IImpedanceControl {
+    int getAxes() {
+        int buffer;
+        bool ok = self->getAxes(&buffer);
+        if (!ok) return 0;
+        return buffer;
+    }
+}
 
 %extend yarp::dev::IPositionControl {
     int getAxes() {
@@ -1105,6 +1037,14 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 }
 
+%extend yarp::dev::IInteractionMode {
+    yarp::dev::InteractionModeEnum getInteractionMode(int axis) {
+       yarp::dev::InteractionModeEnum mode = VOCAB_IM_UNKNOWN;
+       self->getInteractionMode(axis, &mode);
+       return mode;
+    }
+}
+
 %extend yarp::dev::IPositionDirect {
     int getAxes() {
         int buffer;
@@ -1127,7 +1067,22 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 }
 
-%extend yarp::sig::Vector {
+// This is part is currently broken in SWIG + java generator since SWIG 3.0.3
+// (last swig version tested: 3.0.12)
+// See also https://github.com/robotology/yarp/issues/1770
+#if !defined(SWIGJAVA)
+    %extend yarp::dev::IThreeAxisGyroscopes {EXTENDED_ANALOG_SENSOR_INTERFACE(ThreeAxisGyroscope)}
+    %extend yarp::dev::IThreeAxisLinearAccelerometers {EXTENDED_ANALOG_SENSOR_INTERFACE(ThreeAxisLinearAccelerometer)}
+    %extend yarp::dev::IThreeAxisMagnetometers {EXTENDED_ANALOG_SENSOR_INTERFACE(ThreeAxisMagnetometer)}
+    %extend yarp::dev::IOrientationSensors {EXTENDED_ANALOG_SENSOR_INTERFACE(OrientationSensor)}
+    %extend yarp::dev::ITemperatureSensors {EXTENDED_ANALOG_SENSOR_INTERFACE(TemperatureSensor)}
+    %extend yarp::dev::ISixAxisForceTorqueSensors {EXTENDED_ANALOG_SENSOR_INTERFACE(SixAxisForceTorqueSensor)}
+    %extend yarp::dev::IContactLoadCellArrays {EXTENDED_ANALOG_SENSOR_INTERFACE(ContactLoadCellArray)}
+    %extend yarp::dev::IEncoderArrays {EXTENDED_ANALOG_SENSOR_INTERFACE(EncoderArray)}
+    %extend yarp::dev::ISkinPatches {EXTENDED_ANALOG_SENSOR_INTERFACE(SkinPatch)}
+#endif
+
+%extend yarp::sig::VectorOf<double> {
 
     double get(int j)
     {
@@ -1379,8 +1334,8 @@ public:
         return self->cast_as<yarp::os::Property>();
     }
 
-    yarp::sig::Vector* asVector() {
-        return self->cast_as<yarp::sig::Vector>();
+    yarp::sig::VectorOf<double>* asVector() {
+        return self->cast_as<yarp::sig::VectorOf<double>>();
     }
 
     yarp::sig::Matrix* asMatrix() {
@@ -1407,59 +1362,58 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 // Deal with IFrameGrabberControls pointer arguments that don't translate
-      %extend yarp::dev::IFrameGrabberControls {
-        CameraDescriptor getCameraDescription() {
-            CameraDescriptor result;
-            self->getCameraDescription(&result);
-            return result;
-        }
+%extend yarp::dev::IFrameGrabberControls {
+    CameraDescriptor getCameraDescription() {
+        CameraDescriptor result;
+        self->getCameraDescription(&result);
+        return result;
+    }
 
-        bool hasFeature(int feature) {
-            bool result;
-            self->hasFeature(feature, &result);
-            return result;
-        }
+    bool hasFeature(int feature) {
+        bool result;
+        self->hasFeature(feature, &result);
+        return result;
+    }
 
-        double getFeature(int feature) {
-            double result;
-            self->getFeature(feature, &result);
-            return result;
-        }
+    double getFeature(int feature) {
+        double result;
+        self->getFeature(feature, &result);
+        return result;
+    }
 
-        bool hasOnOff(int feature) {
-            bool result;
-            self->hasOnOff(feature, &result);
-            return result;
-        }
+    bool hasOnOff(int feature) {
+        bool result;
+        self->hasOnOff(feature, &result);
+        return result;
+    }
 
-        bool getActive(int feature) {
-            bool result;
-            self->getActive(feature, &result);
-            return result;
-        }
+    bool getActive(int feature) {
+        bool result;
+        self->getActive(feature, &result);
+        return result;
+    }
 
-        bool hasAuto(int feature) {
-            bool result;
-            self->hasAuto(feature, &result);
-            return result;
-        }
+    bool hasAuto(int feature) {
+        bool result;
+        self->hasAuto(feature, &result);
+        return result;
+    }
 
-        bool hasManual(int feature) {
-            bool result;
-            self->hasManual(feature, &result);
-            return result;
-        }
+    bool hasManual(int feature) {
+        bool result;
+        self->hasManual(feature, &result);
+        return result;
+    }
 
-        bool hasOnePush(int feature) {
-            bool result;
-            self->hasOnePush(feature, &result);
-            return result;
-        }
+    bool hasOnePush(int feature) {
+        bool result;
+        self->hasOnePush(feature, &result);
+        return result;
+    }
 
-        FeatureMode getMode(int feature) {
-            FeatureMode result;
-            self->getMode(feature, &result);
-            return result;
-        }
-      }
-
+    FeatureMode getMode(int feature) {
+        FeatureMode result;
+        self->getMode(feature, &result);
+        return result;
+    }
+}
