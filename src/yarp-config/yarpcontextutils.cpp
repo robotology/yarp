@@ -862,8 +862,15 @@ int diffList(folderType fType, bool verbose)
             std::string userPath = rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR + (*subDirIt)).c_str(), opts);
             if (userPath == "")
                 continue;
-            if (recursiveDiff(installedPath + PATH_SEPARATOR + (*subDirIt).c_str(), userPath, tmp)>0)
-                std::cout << (*subDirIt) << std::endl;
+            try
+            {
+                if (recursiveDiff(installedPath + PATH_SEPARATOR + (*subDirIt).c_str(), userPath, tmp)>0)
+                    std::cout << (*subDirIt) << std::endl;
+            }
+            catch (...)
+            {
+                printf("Excpetion occurred during call to diffList() on path \"%s\"\n", userPath.c_str());
+            }
         }
     }
 
