@@ -8,6 +8,7 @@
 
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
 #include <cstdio>
 using namespace yarp::dev;
@@ -35,10 +36,10 @@ bool ImplementTorqueControl::initialize(int size, const int *amap, const double 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw, amps, nullptr, dutys,bemfs,ktaus));
     yAssert (helper != nullptr);
 
-    intBuffManager = new FixedSizeBuffersManager<int> (size);
+    intBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<int> (size);
     yAssert (intBuffManager != nullptr);
 
-    doubleBuffManager = new FixedSizeBuffersManager<double> (size);
+    doubleBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
     yAssert (doubleBuffManager != nullptr);
 
     return true;
@@ -120,7 +121,7 @@ bool ImplementTorqueControl::getMotorTorqueParams(int j,  yarp::dev::MotorTorque
 
 bool ImplementTorqueControl::getRefTorques(double *t)
 {
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     bool ret = iTorqueRaw->getRefTorquesRaw(buffValues.getData());
     castToMapper(helper)->trqS2N(buffValues.getData(),t);
     doubleBuffManager->releaseBuffer(buffValues);
@@ -129,7 +130,7 @@ bool ImplementTorqueControl::getRefTorques(double *t)
 
 bool ImplementTorqueControl::setRefTorques(const double *t)
 {
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     castToMapper(helper)->trqN2S(t, buffValues.getData());
     bool ret = iTorqueRaw->setRefTorquesRaw(buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
@@ -147,7 +148,7 @@ bool ImplementTorqueControl::setRefTorque(int j, double t)
 
 bool ImplementTorqueControl::getTorques(double *t)
 {
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     bool ret = iTorqueRaw->getTorquesRaw(buffValues.getData());
     castToMapper(helper)->toUser(buffValues.getData(), t);
     doubleBuffManager->releaseBuffer(buffValues);
@@ -160,8 +161,8 @@ bool ImplementTorqueControl::setRefTorques(const int n_joint, const int *joints,
     if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
         return false;
 
-    Buffer<int> buffJoints =  intBuffManager->getBuffer();
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
 
     for(int idx=0; idx<n_joint; idx++)
     {
@@ -185,8 +186,8 @@ bool ImplementTorqueControl::getTorque(int j, double *t)
 
 bool ImplementTorqueControl::getTorqueRanges(double *min, double *max)
 {
-    Buffer<double> buffMin = doubleBuffManager->getBuffer();
-    Buffer<double> buffMax = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffMin = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffMax = doubleBuffManager->getBuffer();
 
     bool ret = iTorqueRaw->getTorqueRangesRaw(buffMin.getData(),buffMax.getData());
     castToMapper(helper)->toUser(buffMin.getData(), min);

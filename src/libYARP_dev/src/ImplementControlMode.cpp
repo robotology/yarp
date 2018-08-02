@@ -8,6 +8,7 @@
 
 #include <yarp/dev/ImplementControlMode.h>
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
 #include <cstdio>
 using namespace yarp::dev;
@@ -29,7 +30,7 @@ bool ImplementControlMode::initialize(int size, const int *amap)
     helper=(void *)(new ControlBoardHelper(size, amap));
     yAssert (helper != nullptr);
 
-    buffManager = new yarp::os::FixedSizeBuffersManager<int> (size);
+    buffManager = new yarp::dev::impl::FixedSizeBuffersManager<int> (size);
     yAssert (buffManager != nullptr);
     return true;
 }
@@ -64,7 +65,7 @@ bool ImplementControlMode::getControlMode(int j, int *f)
 
 bool ImplementControlMode::getControlModes(int *modes)
 {
-    Buffer<int> buffValues = buffManager->getBuffer();
+    yarp::dev::impl::Buffer<int> buffValues = buffManager->getBuffer();
 
     bool ret=raw->getControlModesRaw(buffValues.getData());
     castToMapper(helper)->toUser(buffValues.getData(), modes);
@@ -78,7 +79,7 @@ bool ImplementControlMode::getControlModes(const int n_joint, const int *joints,
     if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
         return false;
 
-    Buffer<int> buffValues = buffManager->getBuffer();
+    yarp::dev::impl::Buffer<int> buffValues = buffManager->getBuffer();
 
     for(int idx=0; idx<n_joint; idx++)
     {
@@ -102,7 +103,7 @@ bool ImplementControlMode::setControlModes(const int n_joint, const int *joints,
     if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
         return false;
 
-    Buffer<int> buffValues  = buffManager->getBuffer();
+    yarp::dev::impl::Buffer<int> buffValues  = buffManager->getBuffer();
 
     for(int idx=0; idx<n_joint; idx++)
     {
@@ -116,7 +117,7 @@ bool ImplementControlMode::setControlModes(const int n_joint, const int *joints,
 
 bool ImplementControlMode::setControlModes(int *modes)
 {
-    Buffer<int> buffValues  = buffManager->getBuffer();
+    yarp::dev::impl::Buffer<int> buffValues  = buffManager->getBuffer();
     for(int idx=0; idx<castToMapper(helper)->axes(); idx++)
     {
         buffValues[castToMapper(helper)->toHw(idx)] = modes[idx];

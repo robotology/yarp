@@ -11,6 +11,7 @@
 #include <yarp/dev/ImplementVelocityControl.h>
 #include <yarp/dev/ControlBoardHelper.h>
 #include <yarp/os/Log.h>
+#include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -36,10 +37,10 @@ bool ImplementVelocityControl::initialize(int size, const int *axis_map, const d
     helper=(void *)(new ControlBoardHelper(size, axis_map, enc, zeros));
     yAssert (helper != nullptr);
 
-    intBuffManager = new FixedSizeBuffersManager<int> (size);
+    intBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<int> (size);
     yAssert (intBuffManager != nullptr);
 
-    doubleBuffManager = new FixedSizeBuffersManager<double> (size);
+    doubleBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
     yAssert (doubleBuffManager != nullptr);
 
     return true;
@@ -88,8 +89,8 @@ bool ImplementVelocityControl::velocityMove(const int n_joint, const int *joints
     if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
         return false;
 
-    Buffer<int> buffJoints =  intBuffManager->getBuffer();
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
 
     for(int idx=0; idx<n_joint; idx++)
     {
@@ -105,7 +106,7 @@ bool ImplementVelocityControl::velocityMove(const int n_joint, const int *joints
 
 bool ImplementVelocityControl::velocityMove(const double *sp)
 {
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     castToMapper(helper)->velA2E(sp, buffValues.getData());
     bool ret = iVelocity->velocityMoveRaw(buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
@@ -125,7 +126,7 @@ bool ImplementVelocityControl::getRefVelocity(const int j, double* vel)
 
 bool ImplementVelocityControl::getRefVelocities(double *vels)
 {
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     bool ret=iVelocity->getRefVelocitiesRaw(buffValues.getData());
     castToMapper(helper)->velE2A(buffValues.getData(), vels);
     doubleBuffManager->releaseBuffer(buffValues);
@@ -137,8 +138,8 @@ bool ImplementVelocityControl::getRefVelocities(const int n_joint, const int *jo
     if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
         return false;
 
-    Buffer<int> buffJoints = intBuffManager->getBuffer();
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
 
     for(int idx=0; idx<n_joint; idx++)
     {
@@ -171,8 +172,8 @@ bool ImplementVelocityControl::setRefAccelerations(const int n_joint, const int 
     if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
         return false;
 
-    Buffer<int> buffJoints =  intBuffManager->getBuffer();
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
 
     for(int idx=0; idx<n_joint; idx++)
     {
@@ -188,7 +189,7 @@ bool ImplementVelocityControl::setRefAccelerations(const int n_joint, const int 
 
 bool ImplementVelocityControl::setRefAccelerations(const double *accs)
 {
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     castToMapper(helper)->accA2E_abs(accs, buffValues.getData());
     bool ret = iVelocity->setRefAccelerationsRaw(buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
@@ -211,8 +212,8 @@ bool ImplementVelocityControl::getRefAccelerations(const int n_joint, const int 
     if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
         return false;
 
-    Buffer<int> buffJoints =  intBuffManager->getBuffer();
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
 
     for(int idx=0; idx<n_joint; idx++)
     {
@@ -234,7 +235,7 @@ bool ImplementVelocityControl::getRefAccelerations(const int n_joint, const int 
 
 bool ImplementVelocityControl::getRefAccelerations(double *accs)
 {
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     bool ret=iVelocity->getRefAccelerationsRaw(buffValues.getData());
     castToMapper(helper)->accE2A_abs(buffValues.getData(), accs);
     doubleBuffManager->releaseBuffer(buffValues);
@@ -256,7 +257,7 @@ bool ImplementVelocityControl::stop(const int n_joint, const int *joints)
     if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
         return false;
 
-    Buffer<int> buffJoints =  intBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
     for(int idx=0; idx<n_joint; idx++)
     {
         buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);

@@ -9,6 +9,8 @@
 #include <yarp/dev/ImplementPidControl.h>
 #include <yarp/dev/ControlBoardHelper.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/dev/impl/FixedSizeBuffersManager.h>
+
 #include <cmath>
 
 using namespace yarp::dev;
@@ -37,10 +39,10 @@ bool ImplementPidControl:: initialize (int size, const int *amap, const double *
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,newtons,amps,nullptr,dutys));
     yAssert (helper != nullptr);
 
-    doubleBuffManager = new FixedSizeBuffersManager<double> (size);
+    doubleBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
     yAssert (doubleBuffManager != nullptr);
 
-    pidBuffManager = new FixedSizeBuffersManager<Pid> (size, 1);
+    pidBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<Pid> (size, 1);
     yAssert (pidBuffManager != nullptr);
 
     return true;
@@ -87,7 +89,7 @@ bool ImplementPidControl::setPids(const PidControlTypeEnum& pidtype,  const Pid 
 {
     ControlBoardHelper* cb_helper = castToMapper(helper);
     int nj= cb_helper->axes();
-    Buffer<Pid> buffValues = pidBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<Pid> buffValues = pidBuffManager->getBuffer();
     for(int j=0;j<nj;j++)
     {
         Pid pid_machine;
@@ -115,7 +117,7 @@ bool ImplementPidControl::setPidReference(const PidControlTypeEnum& pidtype,  in
 bool ImplementPidControl::setPidReferences(const PidControlTypeEnum& pidtype,  const double *refs)
 {
     ControlBoardHelper* cb_helper = castToMapper(helper);
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     cb_helper->convert_pidunits_to_machine(pidtype,refs,buffValues.getData());
     bool ret = iPid->setPidReferencesRaw(pidtype, buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
@@ -135,7 +137,7 @@ bool ImplementPidControl::setPidErrorLimit(const PidControlTypeEnum& pidtype,  i
 bool ImplementPidControl::setPidErrorLimits(const PidControlTypeEnum& pidtype,  const double *limits)
 {
     ControlBoardHelper* cb_helper = castToMapper(helper);
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     cb_helper->convert_pidunits_to_machine(pidtype,limits,buffValues.getData());
     bool ret = iPid->setPidErrorLimitsRaw(pidtype, buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
@@ -161,7 +163,7 @@ bool ImplementPidControl::getPidErrors(const PidControlTypeEnum& pidtype,  doubl
 {
     bool ret;
     ControlBoardHelper* cb_helper = castToMapper(helper);
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     ret=iPid->getPidErrorsRaw(pidtype, buffValues.getData());
     cb_helper->convert_pidunits_to_user(pidtype,buffValues.getData(),errs);
     doubleBuffManager->releaseBuffer(buffValues);
@@ -190,7 +192,7 @@ bool ImplementPidControl::getPidOutputs(const PidControlTypeEnum& pidtype, doubl
 {
     ControlBoardHelper* cb_helper = castToMapper(helper);
     int nj = cb_helper->axes();
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     bool ret = iPid->getPidOutputsRaw(pidtype, buffValues.getData());
     if (ret)
     {
@@ -223,7 +225,7 @@ bool ImplementPidControl::getPid(const PidControlTypeEnum& pidtype, int j, Pid *
 
 bool ImplementPidControl::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
 {
-    Buffer<Pid> buffValues = pidBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<Pid> buffValues = pidBuffManager->getBuffer();
     if(!iPid->getPidsRaw(pidtype, buffValues.getData()))
     {
         pidBuffManager->releaseBuffer(buffValues);
@@ -263,7 +265,7 @@ bool ImplementPidControl::getPidReferences(const PidControlTypeEnum& pidtype, do
 {
     bool ret;
     ControlBoardHelper* cb_helper = castToMapper(helper);
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     ret=iPid->getPidReferencesRaw(pidtype, buffValues.getData());
 
     cb_helper->convert_pidunits_to_user(pidtype,buffValues.getData(),refs);
@@ -290,7 +292,7 @@ bool ImplementPidControl::getPidErrorLimits(const PidControlTypeEnum& pidtype, d
 {
     bool ret;
     ControlBoardHelper* cb_helper = castToMapper(helper);
-    Buffer<double > buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double > buffValues = doubleBuffManager->getBuffer();
     ret=iPid->getPidErrorLimitsRaw(pidtype, buffValues.getData());
 
     cb_helper->convert_pidunits_to_user(pidtype,buffValues.getData(),refs);

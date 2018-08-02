@@ -11,20 +11,29 @@
 
 #include <yarp/dev/IMotorEncoders.h>
 
-#include <yarp/os/FixedSizeBuffersManager.h>
-
 namespace yarp {
     namespace dev {
         class ImplementMotorEncoders;
     }
 }
 
+namespace yarp {
+namespace dev {
+namespace impl {
+
+template <typename T>
+class FixedSizeBuffersManager;
+
+} // namespace impl
+} // namespace dev
+} // namespace yarp
+
 class YARP_dev_API yarp::dev::ImplementMotorEncoders: public IMotorEncoders
 {
 protected:
     IMotorEncodersRaw *iMotorEncoders;
     void *helper;
-    yarp::os::FixedSizeBuffersManager<double> *buffManager;
+    yarp::dev::impl::FixedSizeBuffersManager<double> *buffManager;
 
 
     /**

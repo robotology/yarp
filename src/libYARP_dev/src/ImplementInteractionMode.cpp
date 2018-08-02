@@ -11,6 +11,7 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelper.h>
 #include <yarp/dev/ImplementInteractionMode.h>
+#include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -48,10 +49,10 @@ bool ImplementInteractionMode::initialize(int size, const int *amap, const doubl
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert(helper != nullptr);
 
-    intBuffManager = new FixedSizeBuffersManager<int> (size);
+    intBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<int> (size);
     yAssert (intBuffManager != nullptr);
 
-    imodeBuffManager = new FixedSizeBuffersManager<yarp::dev::InteractionModeEnum> (size, 1);
+    imodeBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<yarp::dev::InteractionModeEnum> (size, 1);
     yAssert (imodeBuffManager != nullptr);
 
     return true;
@@ -94,7 +95,7 @@ bool ImplementInteractionMode::getInteractionModes(int n_joints, int *joints, ya
     if(!castToMapper(helper)->checkAxesIds(n_joints, joints))
         return false;
 
-    Buffer<int> buffJoints =  intBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
 
     for (int i = 0; i < n_joints; i++)
     {
@@ -108,7 +109,7 @@ bool ImplementInteractionMode::getInteractionModes(int n_joints, int *joints, ya
 
 bool ImplementInteractionMode::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
-    Buffer<yarp::dev::InteractionModeEnum> buffValues = imodeBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<yarp::dev::InteractionModeEnum> buffValues = imodeBuffManager->getBuffer();
     if(!iInteraction->getInteractionModesRaw(buffValues.getData()) )
     {
         imodeBuffManager->releaseBuffer(buffValues);
@@ -134,7 +135,7 @@ bool ImplementInteractionMode::setInteractionModes(int n_joints, int *joints, ya
     if(!castToMapper(helper)->checkAxesIds(n_joints, joints))
         return false;
 
-    Buffer<int> buffJoints =  intBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
 
     for(int idx=0; idx<n_joints; idx++)
     {
@@ -147,7 +148,7 @@ bool ImplementInteractionMode::setInteractionModes(int n_joints, int *joints, ya
 
 bool ImplementInteractionMode::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
-    Buffer<yarp::dev::InteractionModeEnum> buffValues = imodeBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<yarp::dev::InteractionModeEnum> buffValues = imodeBuffManager->getBuffer();
     for(int idx=0; idx< castToMapper(helper)->axes(); idx++)
     {
         int j = castToMapper(helper)->toHw(idx);

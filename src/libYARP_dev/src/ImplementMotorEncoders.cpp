@@ -8,6 +8,7 @@
 
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
 #include <cstdio>
 using namespace yarp::dev;
@@ -36,7 +37,7 @@ bool ImplementMotorEncoders:: initialize (int size, const int *amap, const doubl
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert (helper != nullptr);
 
-    buffManager = new FixedSizeBuffersManager<double> (size);
+    buffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
     yAssert (buffManager != nullptr);
     return true;
 }
@@ -116,7 +117,7 @@ bool ImplementMotorEncoders::setMotorEncoderCountsPerRevolution(int m, double cp
 
 bool ImplementMotorEncoders::setMotorEncoders(const double *val)
 {
-    Buffer<double> buffValues = buffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = buffManager->getBuffer();
     castToMapper(helper)->posA2E(val, buffValues.getData());
 
     bool ret = iMotorEncoders->setMotorEncodersRaw(buffValues.getData());
@@ -142,7 +143,7 @@ bool ImplementMotorEncoders::getMotorEncoder(int m, double *v)
 
 bool ImplementMotorEncoders::getMotorEncoders(double *v)
 {
-    Buffer<double> buffValues = buffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = buffManager->getBuffer();
     bool ret=iMotorEncoders->getMotorEncodersRaw(buffValues.getData());
     castToMapper(helper)->posE2A(buffValues.getData(), v);
     buffManager->releaseBuffer(buffValues);
@@ -167,7 +168,7 @@ bool ImplementMotorEncoders::getMotorEncoderSpeed(int m, double *v)
 
 bool ImplementMotorEncoders::getMotorEncoderSpeeds(double *v)
 {
-    Buffer<double> buffValues = buffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = buffManager->getBuffer();
     bool ret=iMotorEncoders->getMotorEncoderSpeedsRaw(buffValues.getData());
     castToMapper(helper)->velE2A(buffValues.getData(), v);
     buffManager->releaseBuffer(buffValues);
@@ -192,7 +193,7 @@ bool ImplementMotorEncoders::getMotorEncoderAcceleration(int m, double *v)
 
 bool ImplementMotorEncoders::getMotorEncoderAccelerations(double *v)
 {
-    Buffer<double> buffValues = buffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = buffManager->getBuffer();
     bool ret=iMotorEncoders->getMotorEncoderAccelerationsRaw(buffValues.getData());
     castToMapper(helper)->accE2A(buffValues.getData(), v);
     buffManager->releaseBuffer(buffValues);
@@ -218,8 +219,8 @@ bool ImplementMotorEncoders::getMotorEncoderTimed(int m, double *v, double *t)
 
 bool ImplementMotorEncoders::getMotorEncodersTimed(double *v, double *t)
 {
-    Buffer<double>b_v = buffManager->getBuffer();
-    Buffer<double>b_t = buffManager->getBuffer();
+    yarp::dev::impl::Buffer<double>b_v = buffManager->getBuffer();
+    yarp::dev::impl::Buffer<double>b_t = buffManager->getBuffer();
     bool ret=iMotorEncoders->getMotorEncodersTimedRaw(b_v.getData(), b_t.getData());
     castToMapper(helper)->posE2A(b_v.getData(), v);
     castToMapper(helper)->toUser(b_t.getData(), t);

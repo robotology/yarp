@@ -8,6 +8,7 @@
 
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
 #include <cstdio>
 using namespace yarp::dev;
@@ -35,7 +36,7 @@ bool ImplementEncodersTimed:: initialize (int size, const int *amap, const doubl
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert (helper != nullptr);
 
-    buffManager = new yarp::os::FixedSizeBuffersManager<double> (size);
+    buffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
     yAssert (buffManager != nullptr);
     return true;
 }
@@ -94,7 +95,7 @@ bool ImplementEncodersTimed::setEncoder(int j, double val)
 bool ImplementEncodersTimed::setEncoders(const double *val)
 {
 
-    Buffer<double> buffValues = buffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = buffManager->getBuffer();
     castToMapper(helper)->posA2E(val, buffValues.getData());
     bool ret = iEncoders->setEncodersRaw(buffValues.getData());
     buffManager->releaseBuffer(buffValues);
@@ -119,7 +120,7 @@ bool ImplementEncodersTimed::getEncoder(int j, double *v)
 
 bool ImplementEncodersTimed::getEncoders(double *v)
 {
-    Buffer<double> buffValues =buffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues =buffManager->getBuffer();
     bool ret = iEncoders->getEncodersRaw(buffValues.getData());
     castToMapper(helper)->posE2A(buffValues.getData(), v);
     buffManager->releaseBuffer(buffValues);
@@ -144,7 +145,7 @@ bool ImplementEncodersTimed::getEncoderSpeed(int j, double *v)
 
 bool ImplementEncodersTimed::getEncoderSpeeds(double *v)
 {
-    Buffer<double> buffValues = buffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = buffManager->getBuffer();
     bool ret=iEncoders->getEncoderSpeedsRaw(buffValues.getData());
     castToMapper(helper)->velE2A(buffValues.getData(), v);
     buffManager->releaseBuffer(buffValues);
@@ -169,7 +170,7 @@ bool ImplementEncodersTimed::getEncoderAcceleration(int j, double *v)
 
 bool ImplementEncodersTimed::getEncoderAccelerations(double *v)
 {
-    Buffer<double> buffValues = buffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = buffManager->getBuffer();
     bool ret = iEncoders->getEncoderAccelerationsRaw(buffValues.getData());
     castToMapper(helper)->accE2A(buffValues.getData(), v);
     buffManager->releaseBuffer(buffValues);
@@ -195,8 +196,8 @@ bool ImplementEncodersTimed::getEncoderTimed(int j, double *v, double *t)
 
 bool ImplementEncodersTimed::getEncodersTimed(double *v, double *t)
 {
-    Buffer<double> b_v = buffManager->getBuffer();
-    Buffer<double> b_t = buffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> b_v = buffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> b_t = buffManager->getBuffer();
     bool ret=iEncoders->getEncodersTimedRaw(b_v.getData(), b_t.getData());
 
     castToMapper(helper)->posE2A(b_v.getData(), v);

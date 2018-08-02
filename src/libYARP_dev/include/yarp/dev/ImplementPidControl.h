@@ -10,7 +10,6 @@
 #define YARP_DEV_IMPLEMENTPIDCONTROL_H
 
 #include <yarp/dev/IPidControl.h>
-#include <yarp/os/FixedSizeBuffersManager.h>
 
 namespace yarp {
     namespace dev {
@@ -18,13 +17,24 @@ namespace yarp {
     }
 }
 
+namespace yarp {
+namespace dev {
+namespace impl {
+
+template <typename T>
+class FixedSizeBuffersManager;
+
+} // namespace impl
+} // namespace dev
+} // namespace yarp
+
 class YARP_dev_API yarp::dev::ImplementPidControl : public IPidControl
 {
 protected:
     IPidControlRaw *iPid;
     void *helper;
-    yarp::os::FixedSizeBuffersManager<double> *doubleBuffManager;
-    yarp::os::FixedSizeBuffersManager<yarp::dev::Pid> *pidBuffManager;
+    yarp::dev::impl::FixedSizeBuffersManager<double> *doubleBuffManager;
+    yarp::dev::impl::FixedSizeBuffersManager<yarp::dev::Pid> *pidBuffManager;
 
     /**
     * Initialize the internal data and alloc memory.

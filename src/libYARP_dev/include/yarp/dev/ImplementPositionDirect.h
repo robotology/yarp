@@ -11,7 +11,6 @@
 
 
 #include <yarp/dev/IPositionDirect.h>
-#include <yarp/os/FixedSizeBuffersManager.h>
 
 namespace yarp{
     namespace dev {
@@ -20,6 +19,16 @@ namespace yarp{
     }
 }
 
+namespace yarp {
+namespace dev {
+namespace impl {
+
+template <typename T>
+class FixedSizeBuffersManager;
+
+} // namespace impl
+} // namespace dev
+} // namespace yarp
 
 /**
  * Default implementation of the IPositionDirect interface. This class can
@@ -31,8 +40,8 @@ class YARP_dev_API yarp::dev::ImplementPositionDirect : public yarp::dev::IPosit
 protected:
     IPositionDirectRaw *iPDirect;
     void    *helper;
-    yarp::os::FixedSizeBuffersManager<int> *intBuffManager;
-    yarp::os::FixedSizeBuffersManager<double> *doubleBuffManager;
+    yarp::dev::impl::FixedSizeBuffersManager<int> *intBuffManager;
+    yarp::dev::impl::FixedSizeBuffersManager<double> *doubleBuffManager;
 
     /**
      * Initialize the internal data and alloc memory.

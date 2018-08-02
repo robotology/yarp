@@ -8,6 +8,7 @@
 
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
 #include <stdio.h>
 using namespace yarp::dev;
@@ -32,10 +33,10 @@ bool ImplementCurrentControl::initialize(int size, const int *amap, const double
     if (helper!=nullptr)
         return false;
 
-    intBuffManager = new FixedSizeBuffersManager<int> (size);
+    intBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<int> (size);
     yAssert (intBuffManager != nullptr);
 
-    doubleBuffManager = new FixedSizeBuffersManager<double> (size);
+    doubleBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
     yAssert (doubleBuffManager != nullptr);
 
     helper = (void *)(new ControlBoardHelper(size, amap, nullptr, nullptr, nullptr, ampsToSens, nullptr, nullptr));
@@ -86,7 +87,7 @@ bool ImplementCurrentControl::getRefCurrent(int j, double *r)
 
 bool ImplementCurrentControl::getRefCurrents(double *t)
 {
-    Buffer <double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     bool ret = iCurrentRaw->getRefCurrentsRaw(buffValues.getData());
     castToMapper(helper)->ampereS2A(buffValues.getData(),t);
     doubleBuffManager->releaseBuffer(buffValues);
@@ -95,7 +96,7 @@ bool ImplementCurrentControl::getRefCurrents(double *t)
 
 bool ImplementCurrentControl::setRefCurrents(const double *t)
 {
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     castToMapper(helper)->ampereA2S(t, buffValues.getData());
     bool ret = iCurrentRaw->setRefCurrentsRaw(buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
@@ -113,7 +114,7 @@ bool ImplementCurrentControl::setRefCurrent(int j, double t)
 
 bool ImplementCurrentControl::getCurrents(double *t)
 {
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     bool ret = iCurrentRaw->getCurrentsRaw(buffValues.getData());
     castToMapper(helper)->ampereS2A(buffValues.getData(), t);
     doubleBuffManager->releaseBuffer(buffValues);
@@ -125,8 +126,8 @@ bool ImplementCurrentControl::setRefCurrents(const int n_joint, const int *joint
     if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
         return false;
 
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
-    Buffer<int> buffJoints = intBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
 
     for(int idx=0; idx<n_joint; idx++)
     {
@@ -155,8 +156,8 @@ bool ImplementCurrentControl::getCurrent(int j, double *t)
 
 bool ImplementCurrentControl::getCurrentRanges(double *min, double *max)
 {
-    Buffer<double> b_min = doubleBuffManager->getBuffer();
-    Buffer<double> b_max = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> b_min = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> b_max = doubleBuffManager->getBuffer();
     bool ret = iCurrentRaw->getCurrentRangesRaw(b_min.getData(), b_max.getData());
     castToMapper(helper)->ampereS2A(b_min.getData(), min);
     castToMapper(helper)->ampereS2A(b_max.getData(), max);

@@ -11,6 +11,7 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelper.h>
 #include <yarp/os/Log.h>
+#include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -20,8 +21,8 @@ using namespace yarp::os;
 ImplementPositionDirect::ImplementPositionDirect(IPositionDirectRaw *y):
     iPDirect(y),
     helper(nullptr),
-    doubleBuffManager(nullptr),
-    intBuffManager(nullptr)
+    intBuffManager(nullptr),
+    doubleBuffManager(nullptr)
 {;}
 
 
@@ -38,10 +39,10 @@ bool ImplementPositionDirect::initialize(int size, const int *amap, const double
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert(helper != nullptr);
 
-    intBuffManager = new FixedSizeBuffersManager<int> (size);
+    intBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<int> (size);
     yAssert (intBuffManager != nullptr);
 
-    doubleBuffManager = new FixedSizeBuffersManager<double> (size);
+    doubleBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
     yAssert (doubleBuffManager != nullptr);
 
     return true;
@@ -90,10 +91,10 @@ bool ImplementPositionDirect::setPositions(const int n_joint, const int *joints,
     if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
         return false;
 
-    Buffer<int> buffJoints = intBuffManager->getBuffer();
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
 
-    if(n_joint > intBuffManager->getBufferSize())
+    if(n_joint > (int)intBuffManager->getBufferSize())
         return false;
 
     for(int idx=0; idx<n_joint; idx++)
@@ -112,7 +113,7 @@ bool ImplementPositionDirect::setPositions(const int n_joint, const int *joints,
 
 bool ImplementPositionDirect::setPositions(const double *refs)
 {
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     castToMapper(helper)->posA2E(refs, buffValues.getData());
     bool ret = iPDirect->setPositionsRaw(buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
@@ -137,14 +138,14 @@ bool ImplementPositionDirect::getRefPositions(const int n_joint, const int* join
     if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
         return false;
 
-    Buffer<int> buffJoints = intBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
 
     for(int idx=0; idx<n_joint; idx++)
     {
         buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
 
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     bool ret = iPDirect->getRefPositionsRaw(n_joint, buffJoints.getData(), buffValues.getData());
 
     for(int idx=0; idx<n_joint; idx++)
@@ -160,7 +161,7 @@ bool ImplementPositionDirect::getRefPositions(const int n_joint, const int* join
 
 bool ImplementPositionDirect::getRefPositions(double* refs)
 {
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     bool ret = iPDirect->getRefPositionsRaw(buffValues.getData());
     castToMapper(helper)->posE2A(buffValues.getData(), refs);
     doubleBuffManager->releaseBuffer(buffValues);

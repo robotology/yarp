@@ -12,8 +12,6 @@
 
 #include <yarp/dev/IPositionControl.h>
 
-#include <yarp/os/FixedSizeBuffersManager.h>
-
 namespace yarp{
     namespace dev {
         class ImplementPositionControl;
@@ -21,6 +19,16 @@ namespace yarp{
     }
 }
 
+namespace yarp {
+namespace dev {
+namespace impl {
+
+template <typename T>
+class FixedSizeBuffersManager;
+
+} // namespace impl
+} // namespace dev
+} // namespace yarp
 
 /**
  * Default implementation of the IPositionControl interface. This class can
@@ -32,9 +40,9 @@ class YARP_dev_API yarp::dev::ImplementPositionControl : public IPositionControl
 protected:
     IPositionControlRaw *iPosition;
     void    *helper;
-    yarp::os::FixedSizeBuffersManager<int> *intBuffManager;
-    yarp::os::FixedSizeBuffersManager<double> *doubleBuffManager;
-    yarp::os::FixedSizeBuffersManager<bool> *boolBuffManager;
+    yarp::dev::impl::FixedSizeBuffersManager<int> *intBuffManager;
+    yarp::dev::impl::FixedSizeBuffersManager<double> *doubleBuffManager;
+    yarp::dev::impl::FixedSizeBuffersManager<bool> *boolBuffManager;
 
     /**
      * Initialize the internal data and alloc memory.

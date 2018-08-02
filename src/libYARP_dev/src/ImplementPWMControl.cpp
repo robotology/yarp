@@ -9,6 +9,7 @@
 #include "yarp/dev/ImplementPWMControl.h"
 #include <yarp/dev/ControlBoardHelper.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/dev/impl/FixedSizeBuffersManager.h>
 #include <iostream>
 
 using namespace yarp::dev;
@@ -31,7 +32,7 @@ bool ImplementPWMControl::initialize(int size, const int *amap, const double* du
     helper = (void *)(new ControlBoardHelper(size, amap, nullptr, nullptr, nullptr, nullptr, nullptr, dutyToPWM));
     yAssert(helper != nullptr);
 
-    doubleBuffManager = new FixedSizeBuffersManager<double> (size);
+    doubleBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
     yAssert (doubleBuffManager != nullptr);
 
     return true;
@@ -75,7 +76,7 @@ bool ImplementPWMControl::setRefDutyCycle(int j, double duty)
 
 bool ImplementPWMControl::setRefDutyCycles(const double *duty)
 {
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     castToMapper(helper)->dutycycle2PWM(duty, buffValues.getData());
     bool ret = raw->setRefDutyCyclesRaw( buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);
@@ -94,7 +95,7 @@ bool ImplementPWMControl::getRefDutyCycle(int j, double *v)
 
 bool ImplementPWMControl::getRefDutyCycles(double *duty)
 {
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     bool ret = raw->getRefDutyCyclesRaw(buffValues.getData());
     castToMapper(helper)->PWM2dutycycle(buffValues.getData(), duty);
     doubleBuffManager->releaseBuffer(buffValues);
@@ -113,7 +114,7 @@ bool ImplementPWMControl::getDutyCycle(int j, double *duty)
 
 bool ImplementPWMControl::getDutyCycles(double *duty)
 {
-    Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
     bool ret = raw->getDutyCyclesRaw(buffValues.getData());
     castToMapper(helper)->PWM2dutycycle(buffValues.getData(), duty);
     doubleBuffManager->releaseBuffer(buffValues);
