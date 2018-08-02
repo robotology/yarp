@@ -267,15 +267,12 @@ std::string NameConfig::getHostName(bool prefer_loopback, const std::string& see
 
             if (ip.find(':')!=std::string::npos) continue;
 
-            bool would_be_loopback = false;
-            if (ip == "127.0.0.1" || ip == "127.1.0.1" ||
-                ip == "127.0.1.1") {
-                would_be_loopback = true;
-            }
-#ifdef YARP_HAS_ACE
-#ifdef ACE_ADDR_HAS_LOOPBACK_METHOD
-            would_be_loopback = ips[i].is_loopback();
-#endif
+#if defined YARP_HAS_ACE && defined ACE_ADDR_HAS_LOOPBACK_METHOD
+            bool would_be_loopback = ips[i].is_loopback();
+#else
+            bool would_be_loopback = (ip == "127.0.0.1" ||
+                                      ip == "127.1.0.1" ||
+                                      ip == "127.0.1.1");
 #endif
 
             // If we haven't any interface yet, take this one
