@@ -363,8 +363,7 @@ bool LocalBroker::connect(const char* from, const char* to,
         return false;
     }
 
-    NetworkBase::connect(from, to, carrier);
-    if(!connected(from, to, carrier))
+    if(!NetworkBase::connect(from, to, carrier) || !connected(from, to, carrier))
     {
         strError = "cannot connect ";
         strError +=from;
@@ -978,7 +977,11 @@ int LocalBroker::ExecuteCmd()
         close(pipe_child_to_parent[WRITE_TO_PIPE]);
         FILE* in_from_child = fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
         int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_GETFL,0);
-        fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK);
+        if (fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK) == -1)
+        {
+            strError = string("Can't set flag on pipe: ") + string(strerror(errno));
+            return 0;
+        }
 
         string retError;
         waitPipe(pipe_child_to_parent[READ_FROM_PIPE]);
