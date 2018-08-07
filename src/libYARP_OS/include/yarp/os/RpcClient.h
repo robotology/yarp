@@ -35,6 +35,7 @@ public:
      */
     virtual ~RpcClient();
 
+    // Non-copyable
     RpcClient(const RpcClient& alt) = delete;
     const RpcClient& operator=(const RpcClient& alt) = delete;
 
@@ -47,24 +48,19 @@ public:
     // documented in UnbufferedContactable
     virtual bool replyAndDrop(PortWriter& writer) override;
 
-
     void setInputMode(bool expectInput) override;
     void setOutputMode(bool expectOutput) override;
     void setRpcMode(bool expectRpc) override;
 
-    virtual Port& asPort() override
-    {
-        return port;
-    }
+    virtual Port& asPort() override;
+    virtual const Port& asPort() const override;
 
-    virtual const Port& asPort() const override
-    {
-        return port;
-    }
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-    // an RpcClient may be implemented with a regular port
-    Port port;
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+
 };
 
 } // namespace os
