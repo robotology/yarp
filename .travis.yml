@@ -1,5 +1,5 @@
 sudo: required
-dist: trusty
+dist: xenial
 language: cpp
 
 cache:
@@ -52,7 +52,7 @@ addons:
     update: true
     sources:
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-trusty-8
+      - llvm-toolchain-xenial-8
     packages:
       # gcc
       - gcc-8
@@ -319,10 +319,10 @@ matrix:
 #      addons:
 #         apt:
 #           sources:
-#             - sourceline: 'deb http://packages.ros.org/ros/ubuntu trusty main'
+#             - sourceline: 'deb http://packages.ros.org/ros/ubuntu xenial main'
 #               key_url: 'http://packages.ros.org/ros.key'
 #           packages:
-#             - ros-jade-desktop-full
+#             - ros-lunar-desktop-full
 
     # Normal build with integration tests (linux, clang)
 #    - stage: test
@@ -334,10 +334,10 @@ matrix:
 #      addons:
 #         apt:
 #           sources:
-#             - sourceline: 'deb http://packages.ros.org/ros/ubuntu trusty main'
+#             - sourceline: 'deb http://packages.ros.org/ros/ubuntu xenial main'
 #               key_url: 'http://packages.ros.org/ros.key'
 #           packages:
-#             - ros-jade-desktop-full
+#             - ros-lunar-desktop-full
 
 #  allow_failures:
 #    # Broken tests are supposed to fail
@@ -368,19 +368,14 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang-8; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang++-8; fi
 
-  # These can be removed for ccache 3.2 (at the moment Ubunty trusty has 3.1.9)
-  # see https://bugzilla.samba.org/show_bug.cgi?id=8118
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "clang" ]; then export CFLAGS="$CFLAGS -Qunused-arguments"; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "clang" ]; then export CXXFLAGS="$CXXFLAGS -Qunused-arguments"; fi; fi
-
   # Force gcc-8
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "gcc" ]; then export CC=gcc-8; export CXX=g++-8; fi; fi
 
   # Force clang-8
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "clang" ]; then export CC=clang-8; export CXX=clang++-8; fi; fi
 
-  # Remove default clang from path
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export PATH=`echo $PATH | sed -e 's/\/usr\/local\/clang-3.5.0\/bin://'`; fi
+  ## Remove default clang from path
+  #- if [ "$TRAVIS_OS_NAME" == "linux" ]; then export PATH=`echo $PATH | sed -e 's/\/usr\/local\/clang-3.5.0\/bin://'`; fi
 
   # Print some more system information after installing all build tools
   - echo "-------------------- BEGIN SYSTEM INFORMATION --------------------"
@@ -410,19 +405,16 @@ before_install:
 install:
   # Install Qt5 GUIs dependencies
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export Qt5_DIR="/usr/local/opt/qt5/lib/cmake/Qt5"; fi
-  
+
   # Install opencv@3 (keg-only)
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew link --force opencv@3; fi
 
-  # Fix issue in trusty version of Qt5
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo sed -i 's/COPY_ONLY/COPYONLY/g' /usr/lib/x86_64-linux-gnu/cmake/Qt5Core/Qt5CoreMacros.cmake; fi
-
   # Install swig stuff
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then wget https://github.com/robotology-dependencies/swigs/releases/download/v0.0.5/swigs.zip; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then wget https://github.com/robotology-dependencies/swigs/releases/download/v0.0.7/swigs.zip; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then unzip -q swigs.zip; mkdir -p cache; mv swigs cache/swig; fi
 
   # Init ROS
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/jade/setup.bash; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/lunar/setup.bash; fi
 
 
 before_script:
