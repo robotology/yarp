@@ -12,6 +12,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/SystemInfo.h>
+#include <yarp/os/impl/PlatformLimits.h>
 
 yarp::os::Semaphore *yarp::os::LogForwarder::sem = nullptr;
 
@@ -47,12 +48,12 @@ yarp::os::LogForwarder::LogForwarder()
     yAssert(sem);
     outputPort =nullptr;
     outputPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
-    char host_name [MAX_STRING_SIZE]; //unsafe
-    yarp::os::gethostname(host_name, MAX_STRING_SIZE);
+    char hostname[HOST_NAME_MAX];
+    yarp::os::gethostname(hostname, HOST_NAME_MAX);
 
     yarp::os::SystemInfo::ProcessInfo processInfo = yarp::os::SystemInfo::getProcessInfo();
 
-    std::snprintf(logPortName, MAX_STRING_SIZE, "/log/%s/%s/%d", host_name, processInfo.name.c_str(), processInfo.pid);
+    std::snprintf(logPortName, MAX_STRING_SIZE, "/log/%s/%s/%d", hostname, processInfo.name.c_str(), processInfo.pid);
 
     if (outputPort->open(logPortName) == false)
     {

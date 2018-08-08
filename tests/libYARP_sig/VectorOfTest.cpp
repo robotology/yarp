@@ -107,7 +107,7 @@ public:
 
             //compare vector and tmp
             success = true;
-            if (tmp2.size() != (int)vector.size())
+            if (tmp2.size() != vector.size())
             {
                 success = false;
             }

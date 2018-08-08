@@ -257,9 +257,9 @@ bool fakeDepthCameraDriver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp
 {
     if (!image->getImage(imageof)) {return false;}
     depthImage.resize(imageof);
-    for (int i = 0; i < imageof.width(); i++)
+    for (size_t i = 0; i < imageof.width(); i++)
     {
-        for (int j = 0; j < imageof.height(); j++)
+        for (size_t j = 0; j < imageof.height(); j++)
         {
             PixelRgb pix = (*(PixelRgb*)imageof.getPixelAddress(i, j));
             *(PixelFloat*)depthImage.getPixelAddress(i, j) = (float(pix.b) / 255.0)/3.0 + (float(pix.g) / 255.0) / 3.0 + (float(pix.r) / 255.0) / 3.0;
