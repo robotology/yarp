@@ -42,6 +42,11 @@ class yarp::dev::INavigation2DTargetActions
 {
 public:
     /**
+    * Destructor.
+    */
+    virtual ~INavigation2DTargetActions() {}
+
+    /**
     * Ask the robot to reach a position defined in the world reference frame
     * @param loc the location to be reached
     * @return true/false
@@ -85,6 +90,11 @@ public:
 class yarp::dev::INavigation2DControlActions
 {
 public:
+    /**
+    * Destructor.
+    */
+    virtual ~INavigation2DControlActions() {}
+
     /**
     * Gets the current status of the navigation task.
     * @return true/false

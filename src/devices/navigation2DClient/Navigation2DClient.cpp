@@ -21,6 +21,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LockGuard.h>
+#include <cmath>
 
 /*! \file Navigation2DClient.cpp */
 
@@ -847,9 +848,9 @@ bool   yarp::dev::Navigation2DClient::getCurrentNavigationWaypoint(yarp::dev::Ma
         {
             //not available
             curr_waypoint.map_id = "invalid";
-            curr_waypoint.x = nanf("");
-            curr_waypoint.y = nanf("");
-            curr_waypoint.theta = nanf("");
+            curr_waypoint.x = std::nan("");
+            curr_waypoint.y = std::nan("");
+            curr_waypoint.theta = std::nan("");
             return false;
         }
     }
