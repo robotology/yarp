@@ -70,7 +70,7 @@ public:
     bool close() override;
 
     /* The following methods belong to IMap2D interface */
-    virtual bool     clear      () override;
+    virtual bool     clearAllMaps  () override;
     virtual bool     remove_map (std::string map_name) override;
     virtual bool     store_map  (const yarp::dev::MapGrid2D& map) override;
     virtual bool     get_map    (std::string map_name, yarp::dev::MapGrid2D& map) override;

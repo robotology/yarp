@@ -160,7 +160,7 @@ public:
         b1 = (names.size() == 1);
         checkTrue(b1, "IMap2D remove_map operation successfull");
 
-        imap->clear();
+        imap->clearAllMaps();
         imap->get_map_names(names);
         b1 = (names.size() == 0);
         checkTrue(b1, "IMap2D clear operation successfull");

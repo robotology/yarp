@@ -272,6 +272,33 @@ bool yarp::dev::Navigation2DClient::gotoTargetByLocationName(std::string locatio
     return true;
 }
 
+bool yarp::dev::Navigation2DClient::gotoTargetByRelativeLocation(double x, double y)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_GOTOREL);
+    b.addFloat64(x);
+    b.addFloat64(y);
+
+    bool ret = m_rpc_port_navigation_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yError() << "Navigation2DClient::gotoTargetByRelativeLocation() received error from navigation server";
+            return false;
+        }
+    }
+    else
+    {
+        yError() << "Navigation2DClient::gotoTargetByRelativeLocation() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
 bool yarp::dev::Navigation2DClient::gotoTargetByRelativeLocation(double x, double y, double theta)
 {
     yarp::os::Bottle b;
@@ -362,13 +389,14 @@ bool  yarp::dev::Navigation2DClient::getCurrentPosition(Map2DLocation& loc)
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::suspendNavigation()
+bool yarp::dev::Navigation2DClient::suspendNavigation(const double time_s)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
     b.addVocab(VOCAB_NAV_SUSPEND);
+    b.addFloat64(time_s);
 
     bool ret = m_rpc_port_navigation_server.write(b, resp);
     if (ret)
@@ -741,6 +769,93 @@ bool yarp::dev::Navigation2DClient::resumeNavigation()
     else
     {
         yError() << "Navigation2DClient::resumeNavigation() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
+bool   yarp::dev::Navigation2DClient::getNavigationWaypoints(std::vector<yarp::dev::Map2DLocation>& waypoints)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_GET_NAVIGATION_WAYPOINTS);
+
+    bool ret = m_rpc_port_navigation_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yError() << "Navigation2DClient::getNavigationWaypoints() received error from navigation server";
+            return false;
+        }
+        else if (resp.get(1).isList() && resp.get(1).asList()->size()>0)
+        {
+            waypoints.clear();
+            for (size_t i = 0; i < resp.get(1).asList()->size(); i++)
+            {
+                yarp::dev::Map2DLocation loc;
+                loc.map_id = resp.get(1).asString();
+                loc.x = resp.get(2).asFloat64();
+                loc.y = resp.get(3).asFloat64();
+                loc.theta = resp.get(4).asFloat64();
+                waypoints.push_back(loc);
+            }
+            return true;
+        }
+        else
+        {
+            //not available
+            waypoints.clear();
+            return false;
+        }
+    }
+    else
+    {
+        yError() << "Navigation2DClient::getCurrentPosition() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
+bool   yarp::dev::Navigation2DClient::getCurrentNavigationWaypoint(yarp::dev::Map2DLocation& curr_waypoint)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_GET_CURRENT_WAYPOINT);
+
+    bool ret = m_rpc_port_navigation_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yError() << "Navigation2DClient::getCurrentNavigationWaypoint() received error from navigation server";
+            return false;
+        }
+        else if (resp.size() != 5)
+        {
+            curr_waypoint.map_id = resp.get(1).asString();
+            curr_waypoint.x      = resp.get(2).asFloat64();
+            curr_waypoint.y      = resp.get(3).asFloat64();
+            curr_waypoint.theta  = resp.get(4).asFloat64();
+            return true;
+        }
+        else
+        {
+            //not available
+            curr_waypoint.map_id = "invalid";
+            curr_waypoint.x = nanf("");
+            curr_waypoint.y = nanf("");
+            curr_waypoint.theta = nanf("");
+            return false;
+        }
+    }
+    else
+    {
+        yError() << "Navigation2DClient::getCurrentPosition() error on writing on rpc port";
         return false;
     }
     return true;
