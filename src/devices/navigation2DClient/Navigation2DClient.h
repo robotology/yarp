@@ -100,8 +100,9 @@ public:
     bool   stopNavigation() override;
     bool   suspendNavigation(const double time_s) override;
     bool   resumeNavigation() override;
-    bool   getNavigationWaypoints(std::vector<yarp::dev::Map2DLocation>& waypoints) override;
+    bool   getAllNavigationWaypoints(std::vector<yarp::dev::Map2DLocation>& waypoints) override;
     bool   getCurrentNavigationWaypoint(yarp::dev::Map2DLocation& curr_waypoint) override;
+    bool   getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type, yarp::dev::MapGrid2D& map) override;
 };
 
 #endif // YARP_DEV_NAVIGATION2DCLIENT_H

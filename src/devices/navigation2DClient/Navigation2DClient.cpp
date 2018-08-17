@@ -775,7 +775,7 @@ bool yarp::dev::Navigation2DClient::resumeNavigation()
     return true;
 }
 
-bool   yarp::dev::Navigation2DClient::getNavigationWaypoints(std::vector<yarp::dev::Map2DLocation>& waypoints)
+bool   yarp::dev::Navigation2DClient::getAllNavigationWaypoints(std::vector<yarp::dev::Map2DLocation>& waypoints)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -861,6 +861,46 @@ bool   yarp::dev::Navigation2DClient::getCurrentNavigationWaypoint(yarp::dev::Ma
     }
     return true;
 }
+
+bool yarp::dev::Navigation2DClient::getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type, yarp::dev::MapGrid2D& map)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_GET_NAV_MAP);
+    b.addVocab(map_type);
+
+    bool ret = m_rpc_port_navigation_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yError() << "Navigation2DClient::getCurrentNavigationMap() received error from server";
+            return false;
+        }
+        else
+        {
+            Value& b = resp.get(1);
+            if (Property::copyPortable(b, map))
+            {
+                return true;
+            }
+            else
+            {
+                yError() << "Navigation2DClient::getCurrentNavigationMap() failed copyPortable()";
+                return false;
+            }
+        }
+    }
+    else
+    {
+        yError() << "Navigation2DClient::getCurrentNavigationMap() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
 
 yarp::dev::DriverCreator *createNavigation2DClient()
 {
