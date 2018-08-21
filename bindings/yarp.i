@@ -443,6 +443,10 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IPositionDirect.h>
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
+inline %{
+typedef yarp::sig::VectorOf<double> Vector;
+%}
+
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
   %template(BVector) std::vector<bool>;
