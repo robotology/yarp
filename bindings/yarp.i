@@ -776,7 +776,7 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 // These views are currently disabled in SWIG + java generator since they are
 // useless without the EXTENDED_ANALOG_SENSOR_INTERFACE part.
 // See also https://github.com/robotology/yarp/issues/1770
-#if !defined(SWIGJAVA) and !defined(SWIGCSHARP)
+#if !defined(SWIGJAVA) && !defined(SWIGCSHARP)
     CAST_POLYDRIVER_TO_INTERFACE(IThreeAxisGyroscopes)
     CAST_POLYDRIVER_TO_INTERFACE(IThreeAxisLinearAccelerometers)
     CAST_POLYDRIVER_TO_INTERFACE(IThreeAxisMagnetometers)
@@ -1074,7 +1074,7 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 // This is part is currently broken in SWIG + java generator since SWIG 3.0.3
 // (last swig version tested: 3.0.12)
 // See also https://github.com/robotology/yarp/issues/1770
-#if !defined(SWIGJAVA) and !defined(SWIGCSHARP)
+#if !defined(SWIGJAVA) && !defined(SWIGCSHARP)
     %extend yarp::dev::IThreeAxisGyroscopes {EXTENDED_ANALOG_SENSOR_INTERFACE(ThreeAxisGyroscope)}
     %extend yarp::dev::IThreeAxisLinearAccelerometers {EXTENDED_ANALOG_SENSOR_INTERFACE(ThreeAxisLinearAccelerometer)}
     %extend yarp::dev::IThreeAxisMagnetometers {EXTENDED_ANALOG_SENSOR_INTERFACE(ThreeAxisMagnetometer)}
