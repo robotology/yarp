@@ -95,7 +95,7 @@ static gboolean link_videosrc2rtpdepay(GstElement *e1, GstElement *e2, bool verb
     gboolean link_ok;
     GstCaps *caps;
 
-
+/*
 // "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96, a-framerate=(string)30"
     caps = gst_caps_new_simple("application/x-rtp",
                                "media", G_TYPE_STRING, "video",
@@ -103,6 +103,13 @@ static gboolean link_videosrc2rtpdepay(GstElement *e1, GstElement *e2, bool verb
                                "encoding-name", G_TYPE_STRING, "H264",
                                "payload", G_TYPE_INT, 96,
                                "a-framerate", G_TYPE_STRING, "30",
+                               NULL);
+*/
+// "application/x-rtp, media=(string)video,  encoding-name=(string)H264, payload=(int)96"
+    caps = gst_caps_new_simple("application/x-rtp",
+                               "media", G_TYPE_STRING, "video",
+                               "encoding-name", G_TYPE_STRING, "H264",
+                               "payload", G_TYPE_INT, 96,
                                NULL);
 
 
@@ -281,6 +288,7 @@ public:
     GstElement *pipeline;
     GstElement *source;
     GstElement *sink;
+    GstElement *jitterBuff;
     GstElement *rtpDepay;
     GstElement *parser;
     GstElement *convert;
@@ -319,6 +327,7 @@ public:
         gst_init(NULL, NULL);
         pipeline = gst_pipeline_new ("video-player");
         source   = gst_element_factory_make ("udpsrc",       "video-source");
+        jitterBuff = gst_element_factory_make ("rtpjitterbuffer", "jitterBuffer");
         rtpDepay = gst_element_factory_make ("rtph264depay", "rtp-depay");
         parser   = gst_element_factory_make ("h264parse",    "parser");
         decoder  = gst_element_factory_make ("avdec_h264",   "decoder");
@@ -326,7 +335,7 @@ public:
         convert  = gst_element_factory_make ("videoconvert", "convert"); //because use RGB space
         sink     = gst_element_factory_make ("appsink",      "video-output");
 
-        if (!pipeline || !source || !rtpDepay || !parser || !decoder || !convert || !sink || !sizeChanger)
+        if (!pipeline || !source || !rtpDepay || !parser || !decoder || !convert || !sink || !sizeChanger || !jitterBuff)
         {
             g_printerr ("GSTREAMER: one element could not be created. Exiting.\n");
             return false;
@@ -377,14 +386,14 @@ public:
         if(verbose) g_print("GSTREAMER: try to add elements to pipeline..... \n");
         /* we add all elements into the pipeline */
         gst_bin_add_many (GST_BIN (pipeline),
-                        source, rtpDepay, parser, decoder, sizeChanger, convert, sink, NULL);
+                        source, jitterBuff, rtpDepay, parser, decoder, sizeChanger, convert, sink, NULL);
 
         if(verbose) g_print("GSTREAMER: elements have been added in pipeline!\n");
 
 
         /* autovideosrc ! "video/x-raw, width=640, height=480, format=(string)I420" ! videoconvert ! 'video/x-raw, format=(string)RGB'  ! yarpdevice ! glimagesink */
         if(verbose) g_print("GSTREAMER: try to link_videosrc2convert..... \n");
-        gboolean result = link_videosrc2rtpdepay(source, rtpDepay, verbose);
+        gboolean result = link_videosrc2rtpdepay(source, jitterBuff, verbose);
         if(!result)
         {
             return false;
@@ -398,7 +407,7 @@ public:
         }
 
         if(verbose)g_print("GSTREAMER: try to link all other elements..... \n");
-        gst_element_link_many(rtpDepay, parser, decoder, sizeChanger, convert, NULL);
+        gst_element_link_many(jitterBuff, rtpDepay, parser, decoder, sizeChanger, convert, NULL);
 
         return true;
     }
