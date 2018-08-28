@@ -1246,6 +1246,48 @@ public:
     }
 
 
+    void testBuffInterrupt() {
+        report(0,"checking interrupt for BufferedPort...");
+        BufferedPort<Bottle> input, output;
+        input.open("/in");
+        output.open("/out");
+        checkTrue(yarp::os::Network::connect("/out","/in"),"checking connection");
+
+        Bottle& botOut1 = output.prepare();
+        botOut1.clear();
+        botOut1.addInt32(0);
+        output.writeStrict();
+
+        yarp::os::Time::delay(0.1);
+
+        Bottle *botIn1 = input.read();
+        checkTrue(botIn1!=nullptr,"Inserted message received");
+        if (botIn1)
+        {
+            checkEqual(botIn1->get(0).asInt32(),0,"Checking data validity");
+        }
+
+        report(0,"interrupting...");
+        output.interrupt();
+        report(0,"resuming...");
+        output.resume();
+
+        Bottle& botOut2 = output.prepare();
+        botOut2.clear();
+        botOut2.addInt32(1);
+        output.writeStrict();
+
+        yarp::os::Time::delay(0.1);
+
+        Bottle *botIn2 = input.read();
+        checkTrue(botIn2!=nullptr,"Inserted message received");
+        checkEqual(botIn2->get(0).asInt32(),1,"Checking data validity");
+
+        output.close();
+        input.close();
+    }
+
+
     void testInterruptInputReaderBuf() {
         report(0,"checking interrupt on input side...");
         PortReaderBuffer<Bottle> buf;
@@ -1585,6 +1627,7 @@ public:
         testReportsWithRpcClient();
 
         testInterrupt();
+        testBuffInterrupt();
 
         testInterruptReply();
 
