@@ -794,13 +794,15 @@ bool   yarp::dev::Navigation2DClient::getAllNavigationWaypoints(std::vector<yarp
         else if (resp.get(1).isList() && resp.get(1).asList()->size()>0)
         {
             waypoints.clear();
-            for (size_t i = 0; i < resp.get(1).asList()->size(); i++)
+            Bottle* waypoints_bottle = resp.get(1).asList();
+            if (waypoints_bottle == 0) { return false; }
+            for (size_t i = 0; i < waypoints_bottle->size(); i++)
             {
                 yarp::dev::Map2DLocation loc;
-                loc.map_id = resp.get(1).asString();
-                loc.x = resp.get(2).asFloat64();
-                loc.y = resp.get(3).asFloat64();
-                loc.theta = resp.get(4).asFloat64();
+                loc.map_id = waypoints_bottle->get(0).asString();
+                loc.x = waypoints_bottle->get(1).asFloat64();
+                loc.y = waypoints_bottle->get(2).asFloat64();
+                loc.theta = waypoints_bottle->get(3).asFloat64();
                 waypoints.push_back(loc);
             }
             return true;
@@ -836,7 +838,7 @@ bool   yarp::dev::Navigation2DClient::getCurrentNavigationWaypoint(yarp::dev::Ma
             yError() << "Navigation2DClient::getCurrentNavigationWaypoint() received error from navigation server";
             return false;
         }
-        else if (resp.size() != 5)
+        else if (resp.size() == 5)
         {
             curr_waypoint.map_id = resp.get(1).asString();
             curr_waypoint.x      = resp.get(2).asFloat64();
