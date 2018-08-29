@@ -176,7 +176,7 @@ T* yarp::os::BufferedPort<T>::lastRead()
 template <typename T>
 bool yarp::os::BufferedPort<T>::isClosed()
 {
-    return reader.isClosed();
+    return !port.isOpen();
 }
 
 template <typename T>
