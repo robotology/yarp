@@ -443,10 +443,6 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IPositionDirect.h>
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
-inline %{
-typedef yarp::sig::VectorOf<double> Vector;
-%}
-
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
   %template(BVector) std::vector<bool>;
@@ -538,10 +534,15 @@ typedef yarp::os::TypedReaderCallback<Sound> TypedReaderCallbackSound;
 typedef yarp::os::BufferedPort<Sound> BufferedPortSound;
 %}
 
+%inline
 %{
-typedef yarp::os::TypedReader<yarp::sig::VectorOf<double>> TypedReaderVector;
-typedef yarp::os::TypedReaderCallback<yarp::sig::VectorOf<double>> TypedReaderCallbackVector;
-typedef yarp::os::BufferedPort<yarp::sig::VectorOf<double>> BufferedPortVector;
+typedef yarp::sig::VectorOf<double> Vector;
+%}
+
+%{
+typedef yarp::os::TypedReader<Vector> TypedReaderVector;
+typedef yarp::os::TypedReaderCallback<Vector> TypedReaderCallbackVector;
+typedef yarp::os::BufferedPort<Vector> BufferedPortVector;
 %}
 
 %feature("notabstract") ImageRgb;
@@ -572,7 +573,6 @@ typedef yarp::os::BufferedPort<yarp::sig::VectorOf<double>> BufferedPortVector;
 %feature("notabstract") yarp::os::BufferedPort<Vector>;
 %feature("notabstract") BufferedPortVector;
 
-%template(Vector) yarp::sig::VectorOf<double>;
 %template(ImageRgb) yarp::sig::ImageOf<yarp::sig::PixelRgb>;
 %template(TypedReaderImageRgb) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
 %template(TypedReaderCallbackImageRgb) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
@@ -606,8 +606,9 @@ typedef yarp::os::BufferedPort<yarp::sig::VectorOf<double>> BufferedPortVector;
 %template(TypedReaderCallbackSound) yarp::os::TypedReaderCallback<yarp::sig::Sound>;
 %template(BufferedPortSound) yarp::os::BufferedPort<yarp::sig::Sound >;
 
+%template(Vector) yarp::sig::VectorOf<double>;
 %template(TypedReaderVector) yarp::os::TypedReader<yarp::sig::VectorOf<double> >;
-%template(TypedReaderCallbackVector) yarp::os::TypedReaderCallback<yarp::sig::VectorOf<double>>;
+%template(TypedReaderCallbackVector) yarp::os::TypedReaderCallback<yarp::sig::VectorOf<double> >;
 %template(BufferedPortVector) yarp::os::BufferedPort<yarp::sig::VectorOf<double> >;
 
 // Add getPixel and setPixel methods to access float values

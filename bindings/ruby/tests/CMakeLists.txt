@@ -15,3 +15,4 @@ file(GLOB yarp_ruby_test_files "${CMAKE_CURRENT_SOURCE_DIR}/*.rb")
 
 add_ruby_unit_test(test_buffered_port.rb)
 add_ruby_unit_test(test_image.rb)
+add_ruby_unit_test(test_vector.rb)
