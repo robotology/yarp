@@ -144,7 +144,7 @@ bool yarp::dev::Map2DClient::get_map(std::string map_name, MapGrid2D& map)
     return true;
 }
 
-bool yarp::dev::Map2DClient::clear()
+bool yarp::dev::Map2DClient::clearAllMaps()
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;

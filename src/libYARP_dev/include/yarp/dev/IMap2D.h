@@ -41,7 +41,7 @@ public:
      Removes all the registered maps from the server.
     * @return true/false
     */
-    virtual bool     clear () = 0;
+    virtual bool     clearAllMaps () = 0;
 
     /**
     Stores a map into the map server.

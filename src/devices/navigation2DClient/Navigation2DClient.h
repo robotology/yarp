@@ -80,6 +80,7 @@ public:
     bool   gotoTargetByAbsoluteLocation(Map2DLocation loc) override;
     bool   gotoTargetByLocationName(std::string location_name) override;
     bool   gotoTargetByRelativeLocation(double x, double y, double theta) override;
+    bool   gotoTargetByRelativeLocation(double x, double y) override;
 
     bool   getAbsoluteLocationOfCurrentTarget(Map2DLocation& loc) override;
     bool   getNameOfCurrentTarget(std::string& location_name);
@@ -97,8 +98,11 @@ public:
     bool   getNavigationStatus(NavigationStatusEnum& status) override;
     bool   clearAllLocations() override;
     bool   stopNavigation() override;
-    bool   suspendNavigation() override;
+    bool   suspendNavigation(const double time_s) override;
     bool   resumeNavigation() override;
+    bool   getAllNavigationWaypoints(std::vector<yarp::dev::Map2DLocation>& waypoints) override;
+    bool   getCurrentNavigationWaypoint(yarp::dev::Map2DLocation& curr_waypoint) override;
+    bool   getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type, yarp::dev::MapGrid2D& map) override;
 };
 
 #endif // YARP_DEV_NAVIGATION2DCLIENT_H

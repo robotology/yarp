@@ -64,8 +64,4 @@ constexpr yarp::conf::vocab32_t VOCAB_NAV_CLEAR              = yarp::os::createV
 constexpr yarp::conf::vocab32_t VOCAB_NAV_DELETE             = yarp::os::createVocab('d','e','l','l');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_STORE_ABS          = yarp::os::createVocab('s','t','o','a');
 
-constexpr yarp::conf::vocab32_t VOCAB_NAV_STOP               = yarp::os::createVocab('s','t','o','p');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_SUSPEND            = yarp::os::createVocab('s','u','s','p');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_RESUME             = yarp::os::createVocab('r','e','s','m');
-
 #endif // YARP_DEV_ILOCALIZATION2D_H
