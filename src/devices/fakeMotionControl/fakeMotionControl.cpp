@@ -2256,6 +2256,7 @@ bool FakeMotionControl::setControlModeRaw(const int j, const int _mode)
     {
         _controlModes[j] = _mode;
     }
+    _posCtrl_references[j] = pos[j];
     return true;
 }
 

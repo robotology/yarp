@@ -327,7 +327,7 @@ static int metaConnect(const std::string& src,
     // check if source name and destination name contain spaces
     if(dest.find(" ") != std::string::npos || src.find(" ") != std::string::npos)
     {
-        fprintf(stderr, "Failure: no way to make connection %s->%s,\n", src.c_str(), dest.c_str());
+        fprintf(stderr, "Failure: no way to make connection %s->%s, one of the port names contains a space character.\n", src.c_str(), dest.c_str());
         return 1;
     }
 
