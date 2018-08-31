@@ -795,14 +795,16 @@ bool   yarp::dev::Navigation2DClient::getAllNavigationWaypoints(std::vector<yarp
         {
             waypoints.clear();
             Bottle* waypoints_bottle = resp.get(1).asList();
-            if (waypoints_bottle == 0) { return false; }
+            if (waypoints_bottle == 0) { yError() << "getNavigationWaypoints parsing error"; return false; }
             for (size_t i = 0; i < waypoints_bottle->size(); i++)
             {
+                Bottle* the_waypoint = waypoints_bottle->get(i).asList();
+                if (the_waypoint == 0) { yError() << "getNavigationWaypoints parsing error"; return false; }
                 yarp::dev::Map2DLocation loc;
-                loc.map_id = waypoints_bottle->get(0).asString();
-                loc.x = waypoints_bottle->get(1).asFloat64();
-                loc.y = waypoints_bottle->get(2).asFloat64();
-                loc.theta = waypoints_bottle->get(3).asFloat64();
+                loc.map_id = the_waypoint->get(0).asString();
+                loc.x = the_waypoint->get(1).asFloat64();
+                loc.y = the_waypoint->get(2).asFloat64();
+                loc.theta = the_waypoint->get(3).asFloat64();
                 waypoints.push_back(loc);
             }
             return true;
