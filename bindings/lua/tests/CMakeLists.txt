@@ -21,5 +21,6 @@ add_lua_unit_test(test_image.lua)
 add_lua_unit_test(test_port.lua)
 add_lua_unit_test(test_resource_finder.lua)
 add_lua_unit_test(test_time_delay.lua)
+add_lua_unit_test(test_vector.lua)
 add_lua_unit_test(test_vocab.lua)
 
