@@ -10,6 +10,7 @@
 #ifndef YARP_DEV_ICONTROLLIMITS_H
 #define YARP_DEV_ICONTROLLIMITS_H
 
+#include <yarp/os/Vocab.h>
 #include <yarp/dev/DeviceDriver.h>
 
 /*! \file IControlLimits.h define control board standard interfaces*/
