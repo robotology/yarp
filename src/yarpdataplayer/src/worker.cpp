@@ -156,6 +156,7 @@ int WorkerClass::sendImages(int part, int frame)
 {
     string tmpPath = utilities->partDetails[part].path;
     string tmpName, tmp;
+    bool fileValid = false;
     if (utilities->withExtraColumn) {
         tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(1).asString().c_str();
         tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().tail().tail().toString().c_str();
@@ -178,10 +179,9 @@ int WorkerClass::sendImages(int part, int frame)
     IplImage* img_ipl = nullptr;
     if (code==VOCAB_PIXEL_MONO_FLOAT) {
         img_yarp = unique_ptr<Image>(new ImageOf<PixelFloat>);
-        if ( read(*static_cast<ImageOf<PixelFloat>*>(img_yarp.get()),tmpPath.c_str()) ) {
-            img_ipl=(IplImage*)img_yarp->getIplImage();
-        }
-    } else {
+        fileValid = read(*static_cast<ImageOf<PixelFloat>*>(img_yarp.get()),tmpPath.c_str());
+    }
+    else {
         img_ipl=cvLoadImage(tmpPath.c_str(),CV_LOAD_IMAGE_UNCHANGED);
         if ( img_ipl!=nullptr ) {
             if (code==VOCAB_PIXEL_RGB)
@@ -205,16 +205,11 @@ int WorkerClass::sendImages(int part, int frame)
             }
             img_yarp->resize(img_ipl->width, img_ipl->height);
             cvCopy( img_ipl, (IplImage *) img_yarp->getIplImage());
+            cvReleaseImage(&img_ipl);
+            fileValid = true;
         }
     }
-
-    if ( img_ipl==nullptr ) {
-        LOG_ERROR("Cannot load file %s !\n", tmpPath.c_str() );
-        return 1;
-    } else {
-        utilities->partDetails[part].imagePort.prepare()=*img_yarp;
 #else
-    bool fileValid = true;
     if (code==VOCAB_PIXEL_RGB) {
         img_yarp = unique_ptr<Image>(new ImageOf<PixelRgb>);
         fileValid = read(*static_cast<ImageOf<PixelRgb>*>(img_yarp.get()),tmpPath.c_str());
@@ -234,13 +229,15 @@ int WorkerClass::sendImages(int part, int frame)
         img_yarp = unique_ptr<Image>(new ImageOf<PixelRgb>);
         fileValid = read(*static_cast<ImageOf<PixelRgb>*>(img_yarp.get()),tmpPath.c_str());
     }
-
+#endif
     if (!fileValid) {
         LOG_ERROR("Cannot load file %s !\n", tmpPath.c_str() );
         return 1;
-    } else {
+    }
+    else
+    {
         utilities->partDetails[part].imagePort.prepare()=*img_yarp;
-#endif
+
         Stamp ts(frame,utilities->partDetails[part].timestamp[frame]);
         utilities->partDetails[part].imagePort.setEnvelope(ts);
 
@@ -249,12 +246,6 @@ int WorkerClass::sendImages(int part, int frame)
         } else {
             utilities->partDetails[part].imagePort.write();
         }
-
-#ifdef HAS_OPENCV
-        if (img_yarp==nullptr) {
-            cvReleaseImage(&img_ipl);
-        }
-#endif
     }
 
     return 0;
