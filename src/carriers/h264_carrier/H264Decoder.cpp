@@ -305,7 +305,8 @@ public:
         decoder(nullptr),
         sizeChanger(nullptr),
         verbose(false),
-        bus(nullptr)
+        bus(nullptr),
+        bus_watch_id(0)
     {
         gst_cbk_data.m = m_ptr;
         gst_cbk_data.img = &myframe;
