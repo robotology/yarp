@@ -151,6 +151,8 @@ bool StateExtendedInputPort::getLastSingle(int j, int field, double *data, Stamp
 
         localArrivalTime=now;
         stamp = lastStamp;
+        if (ret && ( (Time::now()-localArrivalTime) > TIMEOUT_EXT) )
+            ret = false;
     }
     mutex.unlock();
 
@@ -181,6 +183,9 @@ bool StateExtendedInputPort::getLastSingle(int j, int field, int *data, Stamp &s
         }
         localArrivalTime=now;
         stamp = lastStamp;
+        if (ret && ( (Time::now()-localArrivalTime) > TIMEOUT_EXT) )
+            ret = false;
+
     }
     mutex.unlock();
     return ret;
@@ -246,6 +251,8 @@ bool StateExtendedInputPort::getLastVector(int field, double* data, Stamp& stamp
 
         localArrivalTime=now;
         stamp = lastStamp;
+        if (ret && ( (Time::now()-localArrivalTime) > TIMEOUT_EXT) )
+            ret = false;
     }
     mutex.unlock();
 
@@ -276,6 +283,8 @@ bool StateExtendedInputPort::getLastVector(int field, int* data, Stamp& stamp, d
         }
         localArrivalTime=now;
         stamp = lastStamp;
+        if (ret && ( (Time::now()-localArrivalTime) > TIMEOUT_EXT) )
+            ret = false;
     }
     mutex.unlock();
     return ret;
