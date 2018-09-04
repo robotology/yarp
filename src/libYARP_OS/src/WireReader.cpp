@@ -582,7 +582,10 @@ void WireReader::readListBegin(WireState& nstate, std::uint32_t& len)
     nstate.parent = state;
     state = &nstate;
     len = 0;
-    readListHeader();
+    if (!readListHeader())
+    {
+        return;
+    }
     len = (std::uint32_t)state->len;
 }
 
