@@ -27,7 +27,7 @@ This GUI can be used for the following pouposes:
 \section parameters_sec Parameters
 
 \code
---name:     name of the robot (used to form port names)
+--robot:    name of the robot (used to form port names)
 --parts:    a list of parts to be added.
 --skip:     skips the initial dialog and keeps the default parts.
 --speed:    enables the speed visualisation.
@@ -39,7 +39,7 @@ This GUI can be used for the following pouposes:
 \endcode
 Example:
 \code
-yarpmotorgui --name icub --parts (head torso left_arm right_arm left_leg right_leg)
+yarpmotorgui --robot icub --parts (head torso left_arm right_arm left_leg right_leg)
 \endcode
 
 These parameters can be specified in a single file, passed with the
@@ -140,7 +140,7 @@ For each part initialized (e.g. right_leg):
 
 Passed with the parameter --from, configure the layout of the gui.
 \code
-name icub
+robot icub
 parts (head torso right_arm left_arm)
 \endcode
 
