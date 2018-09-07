@@ -980,6 +980,7 @@ int LocalBroker::ExecuteCmd()
         if (fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK) == -1)
         {
             strError = string("Can't set flag on pipe: ") + string(strerror(errno));
+            fclose(in_from_child);
             return 0;
         }
 
