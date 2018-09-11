@@ -47,10 +47,14 @@ int yarp::os::mkdir_p(const char *p, int ignoreLevels)
 
     size_t index = fileName.rfind('/');
     if (index==std::string::npos) {
+#if defined(_WIN32)
         index = fileName.rfind('\\');
         if (index==std::string::npos) {
             return 1;
         }
+#else
+        return 1;
+#endif
     }
     std::string base = fileName.substr(0, index);
     if (yarp::os::stat((char*)base.c_str())<0) {
