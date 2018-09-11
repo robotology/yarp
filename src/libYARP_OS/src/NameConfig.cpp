@@ -126,11 +126,6 @@ std::string NameConfig::getConfigFileName(const char *stem, const char *ns) {
     return expandFilename(fname.c_str());
 }
 
-
-bool NameConfig::createPath(const std::string& fileName, int ignoreLevel) {
-    return yarp::os::mkdir_p(filename.c_str(), ignoreLevel) == 0;
-}
-
 std::string NameConfig::readConfig(const std::string& fileName) {
     char buf[25600];
     FILE *fin = fopen(fileName.c_str(), "r");
@@ -179,7 +174,7 @@ Contact NameConfig::getAddress() {
 
 
 bool NameConfig::writeConfig(const std::string& fileName, const std::string& text) {
-    if (!createPath(fileName)) {
+    if (!yarp::os::mkdir_p(fileName.c_str(), -1)) {
         return false;
     }
     FILE *fout = fopen(fileName.c_str(), "w");

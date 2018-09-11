@@ -1033,7 +1033,7 @@ std::string ResourceFinder::createIfAbsent(bool mayCreate,
                                            const std::string& path)
 {
     if (!mayCreate) return path;
-    NameConfig::createPath(path, 0);
+    yarp::os::mkdir_p(path.c_str(), 0);
     return path;
 }
 
