@@ -128,29 +128,7 @@ std::string NameConfig::getConfigFileName(const char *stem, const char *ns) {
 
 
 bool NameConfig::createPath(const std::string& fileName, int ignoreLevel) {
-    size_t index = fileName.rfind('/');
-    if (index==std::string::npos) {
-        index = fileName.rfind('\\');
-        if (index==std::string::npos) {
-            return false;
-        }
-    }
-    std::string base = fileName.substr(0, index);
-    if (yarp::os::stat((char*)base.c_str())<0) {
-        bool result = createPath(base, ignoreLevel-1);
-        if (result==false) {
-            return false;
-        }
-    }
-    if (ignoreLevel<=0) {
-        if (yarp::os::stat(fileName.c_str())<0) {
-            if (yarp::os::mkdir(fileName.c_str())>=0) {
-                return true;
-            }
-            return false;
-        }
-    }
-    return true;
+    return yarp::os::mkdir_p(filename.c_str(), ignoreLevel) == 0;
 }
 
 std::string NameConfig::readConfig(const std::string& fileName) {
