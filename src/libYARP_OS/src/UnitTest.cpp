@@ -60,13 +60,16 @@ void operator delete(void *ptr) {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-class RootUnitTest : public UnitTest {
+class RootUnitTest : public UnitTest
+{
 public:
-    RootUnitTest(UnitTest *parent) : UnitTest(parent) {
+    RootUnitTest(UnitTest *parent) : UnitTest(parent)
+    {
         // no parent
     }
 
-    virtual std::string getName() const override {
+    virtual std::string getName() const override
+    {
         return "root";
     }
 };
@@ -75,20 +78,23 @@ public:
 
 
 
-UnitTest::UnitTest() {
-    parent = &UnitTest::getRoot();
-    hasProblem = false;
+UnitTest::UnitTest() :
+        parent(&UnitTest::getRoot()),
+        hasProblem(0)
+{
 }
 
-UnitTest::UnitTest(UnitTest *parent) {
-    this->parent = parent;
+UnitTest::UnitTest(UnitTest *parent) :
+        parent(parent),
+        hasProblem(0)
+{
     if (parent!=nullptr) {
         parent->add(*this);
     }
-    hasProblem = false;
 }
 
-void UnitTest::add(UnitTest& unit) {
+void UnitTest::add(UnitTest& unit)
+{
     for (unsigned int i=0; i<subTests.size(); i++) {
         if (subTests[i]==&unit) {
             return; // already present, no need to add
@@ -97,11 +103,13 @@ void UnitTest::add(UnitTest& unit) {
     subTests.push_back(&unit);
 }
 
-void UnitTest::clear() {
+void UnitTest::clear()
+{
     subTests.clear();
 }
 
-void UnitTest::report(int severity, const std::string& problem) {
+void UnitTest::report(int severity, const std::string& problem)
+{
     if (parent!=nullptr) {
         parent->report(severity, getName() + ": " + problem);
     } else {
@@ -111,29 +119,24 @@ void UnitTest::report(int severity, const std::string& problem) {
     count(severity);
 }
 
-void UnitTest::count(int severity) {
+void UnitTest::count(int severity)
+{
     if (severity>0) {
         // could do something more sophisticated with the reports than this...
-        hasProblem = true;
+        hasProblem++;
     }
 }
 
-
-void UnitTest::runSubTests(int argc, char *argv[]) {
-    for (unsigned int i=0; i<subTests.size(); i++) {
-        subTests[i]->run(argc, argv);
-    }
-}
-
-
-int UnitTest::run() {
+int UnitTest::run()
+{
     run(0, nullptr);
     return hasProblem;
 }
 
+int UnitTest::run(int argc, char *argv[])
+{
+    static bool ran = false;
 
-int UnitTest::run(int argc, char *argv[]) {
-    bool ran = false;
     if (argc==0) {
         runTests();
         ran = true;
@@ -151,21 +154,34 @@ int UnitTest::run(int argc, char *argv[]) {
             ran = true;
         }
     }
-    runSubTests(argc, argv);
+
+    // Run sub tests
+    for (unsigned int i=0; i<subTests.size(); i++) {
+        hasProblem += subTests[i]->run(argc, argv);
+    }
+
+    if (parent != nullptr) {
+        return hasProblem;
+    }
+
     if (hasProblem) {
         report(0, "A PROBLEM WAS ENCOUNTERED");
+        return 1;
     }
-    else {
-        if (ran) {
-            report(0, "no problems reported");
-        }
+
+    if (!ran) {
+        report(0, "no test found");
+        return 2;
     }
-    return hasProblem;
+
+    report(0, "no problems reported");
+    return 0;
 }
 
 
 
-void UnitTest::startTestSystem() {
+void UnitTest::startTestSystem()
+{
     if (theRoot==nullptr) {
         theRoot = new RootUnitTest(nullptr);
     }
@@ -173,14 +189,16 @@ void UnitTest::startTestSystem() {
 
 // system starts on first call, probably from a static object - this
 // is to avoid link order dependency problems
-UnitTest& UnitTest::getRoot() {
+UnitTest& UnitTest::getRoot()
+{
     startTestSystem();
     yAssert(theRoot!=nullptr);
     return *theRoot;
 }
 
 // this is the important one to call
-void UnitTest::stopTestSystem() {
+void UnitTest::stopTestSystem()
+{
     if (theRoot!=nullptr) {
         delete theRoot;
         theRoot = nullptr;
@@ -192,7 +210,8 @@ bool UnitTest::checkEqualishImpl(double x, double y,
                                  const char *txt1,
                                  const char *txt2,
                                  const char *fname,
-                                 int fline) {
+                                 int fline)
+{
     std::ostringstream ost;
     if (fabs(x-y)<0.0001) {
         ost << "  [" << desc << "] passed ok";
@@ -211,7 +230,8 @@ bool UnitTest::checkEqualImpl(const std::string& x, const std::string& y,
                               const char *txt1,
                               const char *txt2,
                               const char *fname,
-                              int fline) {
+                              int fline)
+{
     std::ostringstream ost;
     if (x == y) {
         ost << "  [" << desc << "] passed ok";
@@ -225,7 +245,8 @@ bool UnitTest::checkEqualImpl(const std::string& x, const std::string& y,
 }
 
 
-std::string UnitTest::humanize(const std::string& txt) {
+std::string UnitTest::humanize(const std::string& txt)
+{
     std::string result("");
     for (unsigned int i=0; i<txt.length(); i++) {
         char ch = txt[i];
@@ -243,7 +264,8 @@ std::string UnitTest::humanize(const std::string& txt) {
 }
 
 
-void UnitTest::saveEnvironment(const char *key) {
+void UnitTest::saveEnvironment(const char *key)
+{
     bool found = false;
     std::string val = NetworkBase::getEnvironment(key, &found);
     Bottle& lst = env.addList();
@@ -252,7 +274,8 @@ void UnitTest::saveEnvironment(const char *key) {
     lst.addInt32(found?1:0);
 }
 
-void UnitTest::restoreEnvironment() {
+void UnitTest::restoreEnvironment()
+{
     for (size_t i=0; i<env.size(); i++) {
         Bottle *lst = env.get(i).asList();
         if (lst==nullptr) continue;
@@ -269,7 +292,8 @@ void UnitTest::restoreEnvironment() {
 }
 
 
-bool UnitTest::heapMonitorSupported() {
+bool UnitTest::heapMonitorSupported()
+{
 #ifdef YARP_TEST_HEAP
     return true;
 #else
@@ -277,7 +301,8 @@ bool UnitTest::heapMonitorSupported() {
 #endif
 }
 
-void UnitTest::heapMonitorBegin(bool expectAllocations) {
+void UnitTest::heapMonitorBegin(bool expectAllocations)
+{
 #ifdef YARP_TEST_HEAP
     heapMonitorEnd();
     heap_count_ops = 0;
@@ -289,7 +314,8 @@ void UnitTest::heapMonitorBegin(bool expectAllocations) {
 #endif
 }
 
-int UnitTest::heapMonitorOps() {
+int UnitTest::heapMonitorOps()
+{
 #ifdef YARP_TEST_HEAP
     heap_count_mutex->lock();
     int diff = heap_count_ops;
@@ -304,7 +330,8 @@ int UnitTest::heapMonitorOps() {
 #endif
 }
 
-int UnitTest::heapMonitorEnd() {
+int UnitTest::heapMonitorEnd()
+{
 #ifdef YARP_TEST_HEAP
     if (!heap_count_mutex) return 0;
     heap_count_mutex->lock();
