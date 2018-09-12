@@ -1860,7 +1860,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
         std::string slash=NetworkBase::getDirectorySeparator();
         hist_file += slash;
         hist_file += "yarp_write";
-        if (yarp::os::mkdir(hist_file.c_str()) != 0)
+        if (yarp::os::mkdir_p(hist_file.c_str(), 1) != 0)
         {
             fprintf(stderr, "Unable to create directory into \"%s\"\n",
                     yarp::os::ResourceFinder::getDataHome().c_str());
