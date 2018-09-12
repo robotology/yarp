@@ -39,8 +39,6 @@ public:
     std::string getConfigFileName(const char *stem = nullptr,
                                   const char *ns = nullptr);
 
-    static bool createPath(const std::string& fileName, int ignoreLevel = 1);
-
     std::string readConfig(const std::string& fileName);
 
     bool writeConfig(const std::string& fileName, const std::string& text);

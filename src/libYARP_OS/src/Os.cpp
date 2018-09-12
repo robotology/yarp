@@ -41,9 +41,37 @@ int yarp::os::mkdir(const char *p)
     return yarp::os::impl::mkdir(p, 0755);
 }
 
-int yarp::os::mkdir_p(const char *p, int ignoreLevels) {
-    bool ok = yarp::os::impl::NameConfig::createPath(p, ignoreLevels);
-    return ok ? 0 : 1;
+int yarp::os::mkdir_p(const char *p, int ignoreLevels)
+{
+    std::string fileName(p);
+
+    size_t index = fileName.rfind('/');
+    if (index==std::string::npos) {
+#if defined(_WIN32)
+        index = fileName.rfind('\\');
+        if (index==std::string::npos) {
+            return 1;
+        }
+#else
+        return 1;
+#endif
+    }
+    std::string base = fileName.substr(0, index);
+    if (yarp::os::stat((char*)base.c_str())<0) {
+        int result = yarp::os::mkdir_p(base.c_str(), ignoreLevels-1);
+        if (result != 0) {
+            return 1;
+        }
+    }
+    if (ignoreLevels<=0) {
+        if (yarp::os::stat(fileName.c_str())<0) {
+            if (yarp::os::mkdir(fileName.c_str())>=0) {
+                return 0;
+            }
+            return 1;
+        }
+    }
+    return 0;
 }
 
 int yarp::os::rmdir(const char *p)
