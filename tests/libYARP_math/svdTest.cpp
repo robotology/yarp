@@ -218,61 +218,61 @@ public:
     void projMat()
     {
         report(0, "checking projection matrix");
-        int m=7, n=3, nTest=1;
-        Matrix M, Mp;
-        Matrix U(m,n), V(n,n);
+        int m=7;
+        int n=3;
+        int nTest=1;
+        Matrix M;
+        Matrix Mp;
+        Matrix U(m, n);
+        Matrix V(n, n);
         Vector s(n);
-        for(int i=0; i<nTest; i++)
-        {
-            do
-            {
-                M = Rand::matrix(m,n)*100;  // skinny full rank matrix
+        for(int i = 0; i < nTest; i++) {
+            do {
+                M = Rand::matrix(m, n) * 100;  // skinny full rank matrix
                 SVD(M, U, s, V);
-            }while(s[n-1] < TOL);
+            } while(s[n-1] < TOL);
             Mp = projectionMatrix(M, TOL);
             assertEqual(Mp*M, M, "projection matrix of full-rank skinny matrix");
         }
 
-        for(int i=0; i<nTest; i++)
-        {
-            do
-            {
-                M = Rand::matrix(n,m)*100;  // fat full rank matrix
+        for(int i = 0; i < nTest; i++) {
+            do {
+                M = Rand::matrix(n, m) * 100;  // fat full rank matrix
                 SVD(M, U, s, V);
-            }while(s[n-1] < TOL);
+            } while(s[n-1] < TOL);
             Mp = projectionMatrix(M, TOL);
             assertEqual(Mp, eye(n), "projection matrix of full-rank fat matrix");
         }
     }
 
-     void nullspaceMat()
+    void nullspaceMat()
     {
         report(0, "checking nullspace projection matrix");
-        int m=7, n=3, nTest=1;
-        Matrix M, N;
-        Matrix U(m,n), V(n,n);
+        int m=7;
+        int n=3;
+        int nTest=1;
+        Matrix M;
+        Matrix N;
+        Matrix U(m, n);
+        Matrix V(n, n);
         Vector s(n);
-        for(int i=0; i<nTest; i++)
-        {
-            do
-            {
-                M = Rand::matrix(m,n)*100;  // skinny full rank matrix
+        for(int i = 0; i < nTest; i++) {
+            do {
+                M = Rand::matrix(m, n) * 100;  // skinny full rank matrix
                 SVD(M, U, s, V);
-            }while(s[n-1] < TOL);
+            } while(s[n-1] < TOL);
             N = nullspaceProjection(M, TOL);
             assertEqual(N, zeros(n,n), "nullspace projection matrix of full-rank skinny matrix is zero");
         }
 
-        for(int i=0; i<nTest; i++)
-        {
-            do
-            {
-                M = Rand::matrix(n,m)*100;  // fat full rank matrix
+        for(int i = 0; i < nTest; i++) {
+            do {
+                M = Rand::matrix(n, m) * 100;  // fat full rank matrix
                 SVD(M, U, s, V);
-            }while(s[n-1] < TOL);
+            } while(s[n-1] < TOL);
             N = nullspaceProjection(M, TOL);
-            assertNotEqual(N, zeros(m,m), "nullspace projection matrix of full-rank fat matrix is not zero");
-            assertEqual(M*N, zeros(n,m), "nullspace projection matrix of full-rank fat matrix");
+            assertNotEqual(N, zeros(m, m), "nullspace projection matrix of full-rank fat matrix is not zero");
+            assertEqual(M * N, zeros(n, m), "nullspace projection matrix of full-rank fat matrix");
         }
     }
 
