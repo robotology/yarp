@@ -40,7 +40,7 @@ namespace yarp {
 */
 
 class yarp::dev::RobotDescriptionClient : public DeviceDriver,
-                                       public IRobotDescription
+                                          public IRobotDescription
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:

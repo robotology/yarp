@@ -2565,7 +2565,7 @@ void t_yarp_generator::generate_serialize_map_element(ofstream& out,
   generate_serialize_field(out, &kfield, "");
 
   t_field vfield(tmap->get_val_type(), iter + "->second");
-  generate_serialize_field(out, &vfield, "");
+  generate_serialize_field(out, &vfield, "", "", true);
 
   indent(out) << "if (!writer.writeListEnd()) return false;" << endl;
 }
@@ -2789,7 +2789,7 @@ void t_yarp_generator::generate_deserialize_map_element(ofstream& out,
     declare_field(&fval, false, false, false, true) << " = " <<
     prefix << "[" << key << "];" << endl;
 
-  generate_deserialize_field(out, &fval);
+  generate_deserialize_field(out, &fval, "", "", true);
 
   out <<
     indent() << "reader.readListEnd();" << endl;

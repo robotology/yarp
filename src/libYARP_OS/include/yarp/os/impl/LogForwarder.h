@@ -10,33 +10,34 @@
 #define YARP_OS_IMPL_LOGFORWARDER_H
 
 #include <yarp/os/api.h>
-#include <yarp/os/BufferedPort.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/Mutex.h>
 #include <string>
 
 namespace yarp {
 namespace os {
+namespace impl {
 
-#define MAX_STRING_SIZE 255
-
-class YARP_OS_API LogForwarder
+class YARP_OS_impl_API LogForwarder
 {
     public:
-        static LogForwarder* getInstance();
-        void forward (const std::string& message);
-    protected:
-        LogForwarder();
         ~LogForwarder();
+        static LogForwarder& getInstance();
+
+        void forward (const std::string& message);
+        static void shutdown();
+
     private:
-        static yarp::os::Semaphore *sem;
-        char logPortName[MAX_STRING_SIZE];
-        yarp::os::BufferedPort<yarp::os::Bottle>* outputPort;
-    private:
-        LogForwarder(LogForwarder const&){}
-        LogForwarder& operator=(LogForwarder const&){return *this;}
+        LogForwarder();
+        LogForwarder(LogForwarder const&) = delete;
+        LogForwarder& operator=(LogForwarder const&) = delete;
+
+        yarp::os::Mutex mutex;
+        yarp::os::Port outputPort;
+        static bool started;
 };
 
+} // namespace impl
 } // namespace os
 } // namespace yarp
 

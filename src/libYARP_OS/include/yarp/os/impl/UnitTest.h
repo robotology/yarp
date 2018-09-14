@@ -56,12 +56,6 @@ public:
 
     virtual int run(int argc, char *argv[]);
 
-    virtual void runTests()
-    {
-    }
-
-    virtual void runSubTests(int argc, char *argv[]);
-
     template< class T >
     struct is_supported : std::integral_constant<bool,
                                                  std::is_arithmetic<T>::value ||
@@ -158,10 +152,17 @@ public:
      */
     int heapMonitorEnd();
 
+protected:
+    /**
+     * This method is overridden by each unit test and should execute the actual
+     * test.
+     */
+    virtual void runTests() {}
+
 private:
     UnitTest *parent;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<UnitTest*>) subTests;
-    bool hasProblem;
+    int hasProblem;
     yarp::os::Bottle env;
     static UnitTest *theRoot;
 

@@ -151,7 +151,7 @@ void yarp::os::impl::LogImpl::forward_callback(yarp::os::Log::LogType t,
     }
 
     std::stringstream stringstream_buffer;
-    LogForwarder* theForwarder = LogForwarder::getInstance();
+    LogForwarder& theForwarder = LogForwarder::getInstance();
 
     switch (t) {
     case yarp::os::Log::TraceType:
@@ -161,7 +161,7 @@ void yarp::os::impl::LogImpl::forward_callback(yarp::os::Log::LogType t,
             } else {
                 stringstream_buffer << "[TRACE]" << func << msg << std::endl;
             }
-            theForwarder->forward(stringstream_buffer.str());
+            theForwarder.forward(stringstream_buffer.str());
         }
         break;
     case yarp::os::Log::DebugType:
@@ -171,7 +171,7 @@ void yarp::os::impl::LogImpl::forward_callback(yarp::os::Log::LogType t,
             } else {
                 stringstream_buffer << "[DEBUG]" << msg << std::endl;
             }
-            theForwarder->forward(stringstream_buffer.str());
+            theForwarder.forward(stringstream_buffer.str());
         }
         break;
     case yarp::os::Log::InfoType:
@@ -180,7 +180,7 @@ void yarp::os::impl::LogImpl::forward_callback(yarp::os::Log::LogType t,
             } else {
                 stringstream_buffer << "[INFO]" << msg << std::endl;
             }
-            theForwarder->forward(stringstream_buffer.str());
+            theForwarder.forward(stringstream_buffer.str());
         break;
     case yarp::os::Log::WarningType:
             if (verbose_output) {
@@ -188,7 +188,7 @@ void yarp::os::impl::LogImpl::forward_callback(yarp::os::Log::LogType t,
             } else {
                 stringstream_buffer << "[WARNING]" << msg << std::endl;
             }
-            theForwarder->forward(stringstream_buffer.str());
+            theForwarder.forward(stringstream_buffer.str());
         break;
     case yarp::os::Log::ErrorType:
             if (verbose_output) {
@@ -196,7 +196,7 @@ void yarp::os::impl::LogImpl::forward_callback(yarp::os::Log::LogType t,
             } else {
                 stringstream_buffer << "[ERROR]" << msg << std::endl;
             }
-            theForwarder->forward(stringstream_buffer.str());
+            theForwarder.forward(stringstream_buffer.str());
         break;
     case yarp::os::Log::FatalType:
             if (verbose_output) {
@@ -204,7 +204,7 @@ void yarp::os::impl::LogImpl::forward_callback(yarp::os::Log::LogType t,
             } else {
                 stringstream_buffer << "[FATAL]" << msg << std::endl;
             }
-            theForwarder->forward(stringstream_buffer.str());
+            theForwarder.forward(stringstream_buffer.str());
             yarp_print_trace(stderr, file, line);
         break;
     default:
