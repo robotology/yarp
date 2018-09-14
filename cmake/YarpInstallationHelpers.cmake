@@ -89,8 +89,14 @@ type \"@_type@\"
 
   set(_path "${CMAKE_BINARY_DIR}/${${YCPI_INSTALL_VARS_PREFIX}_DYNAMIC_PLUGINS_INSTALL_DIR}") # (build tree)
   configure_file("${_in_file}" "${_build_file}" @ONLY)
+  if(WIN32)
+    string(REPLACE "/" "\\" _path ${_path})
+  endif()
 
   set(_path "${CMAKE_INSTALL_PREFIX}/${${YCPI_INSTALL_VARS_PREFIX}_DYNAMIC_PLUGINS_INSTALL_DIR}") # (install tree)
+  if(WIN32)
+    string(REPLACE "/" "\\" _path ${_path})
+  endif()
   configure_file("${_in_file}" "${_install_file}" @ONLY)
   install(FILES "${_install_file}"
           RENAME ${_package}.ini
@@ -245,6 +251,9 @@ function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
 path \"@_path@\"
 ")
       set(_path "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/${_name}")
+      if(WIN32)
+        string(REPLACE "/" "\\" _path ${_path})
+      endif()
       configure_file("${_in_file}" "${_install_file}" @ONLY)
 
       # Install the file into yarp config dir
@@ -280,6 +289,9 @@ path \"@_path@\"
         # Suggest to use the build tree
         set(_msg "Using YARP from build tree")
         set(_path "${CMAKE_BINARY_DIR}/${${_NAME}_DATA_INSTALL_DIR}")
+      endif()
+      if(WIN32)
+        string(REPLACE "/" "\\" _path ${_path})
       endif()
       message(STATUS "${_msg}: no file will we be installed into path.d folder, you need to set YARP_DATA_DIRS environment variable to ${_data_dirs}${_path_separator}${_path}")
     endif()
