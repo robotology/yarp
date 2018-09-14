@@ -24,6 +24,7 @@
 
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogForwarder.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdlib.h>
@@ -888,6 +889,11 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
 void NetworkBase::finiMinimum()
 {
     if (__yarp_is_initialized == 1) {
+        // The log forwarder needs to be shut down in order to close the
+        // internal port. The shutdown method will do nothing if the
+        // LogForwarded was not used.
+        yarp::os::impl::LogForwarder::shutdown();
+
         Time::useSystemClock();
         yarp::os::impl::Time::removeClock();
 
