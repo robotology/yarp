@@ -9,6 +9,7 @@
 #ifndef YARP_DEV_IROBOTDESCRIPTION_H
 #define YARP_DEV_IROBOTDESCRIPTION_H
 
+#include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Log.h>
 #include <vector>
@@ -33,7 +34,7 @@ namespace yarp {
  * This interface allows users to retrieve a list which contains the names and the types of the currently running devices.
  * This list is stored in a RobotDescriptionsServer class. The user can access to the data opening a RobotDescriptionsClient in its own module.
  */
-class yarp::dev::IRobotDescription
+class YARP_dev_API yarp::dev::IRobotDescription
 {
 public:
     /**

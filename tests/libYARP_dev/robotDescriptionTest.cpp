@@ -29,7 +29,7 @@ public:
 
     virtual std::string getName() const override
     {
-        return "RobotDescriptionTest";
+        return "robotDescriptionTest";
     }
 
     void testRobotDescription()

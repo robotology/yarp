@@ -167,7 +167,7 @@ void yarp::math::projectionMatrix(const Matrix &A, Matrix &out, double tol)
     Vector Sdiag(k);
     yarp::math::SVD(A, U, Sdiag, V);
     Matrix UT = U.transposed();
-    for(int c = 0; c < m; c++) {
+    for(int c = 0; c < k; c++) {
         if(Sdiag(c) <= tol) {
             UT.setRow(c, zeros(m));
         }
@@ -192,7 +192,7 @@ void yarp::math::nullspaceProjection(const Matrix &A, Matrix &out, double tol)
     Vector Sdiag(k);
     yarp::math::SVD(A, U, Sdiag, V);
     Matrix VT = V.transposed();
-    for (int c = 0; c < n; c++) {
+    for (int c = 0; c < k; c++) {
         if (Sdiag(c) <= tol) {
             VT.setRow(c, zeros(n));
         }
