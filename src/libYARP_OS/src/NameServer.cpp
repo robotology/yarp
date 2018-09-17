@@ -9,7 +9,7 @@
 
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/PortCore.h>
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/impl/SplitString.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/impl/NameConfig.h>

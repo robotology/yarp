@@ -10,8 +10,8 @@
 #define YARP_OS_NETWORKCLOCK_H
 
 #include <yarp/os/Clock.h>
-#include <yarp/os/BufferedPort.h>
 #include <yarp/os/NetInt32.h>
+#include <yarp/os/Port.h>
 #include <yarp/conf/numeric.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Mutex.h>

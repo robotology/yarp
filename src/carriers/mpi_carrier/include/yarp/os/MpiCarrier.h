@@ -10,10 +10,10 @@
 #ifndef YARP_MPICARRIER
 #define YARP_MPICARRIER
 
-#include <yarp/os/all.h>
-
 #include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/Bytes.h>
+#include <yarp/os/ConnectionState.h>
+#include <yarp/os/SizedWriter.h>
 
 #include <string>
 #include <iostream>

@@ -13,12 +13,13 @@
  *
  */
 
+#include <yarp/sig/PointCloud.h>
+#include <yarp/os/BufferedPort.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/NetType.h>
-#include <yarp/sig/PointCloud.h>
 #include <yarp/os/PortReaderBuffer.h>
 
 #include "TestList.h"

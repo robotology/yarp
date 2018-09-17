@@ -6,10 +6,12 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <cstdio>
-#include <yarp/os/all.h>
-
 #include <tcpros_carrier_api.h>
+
+#include <yarp/os/Contact.h>
+
+#include <cstdio>
+#include <string>
 
 class YARP_tcpros_carrier_API RosLookup {
 public:

@@ -9,12 +9,10 @@
 
 #include <yarp/conf/system.h>
 
+#include <yarp/os/DummyConnector.h>
 #include <yarp/os/impl/FallbackNameServer.h>
-
-
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/NameConfig.h>
-#include <yarp/os/all.h>
 
 #include <yarp/name/NameServerConnectionHandler.h>
 

@@ -17,6 +17,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/RosNameSpace.h>
+#include <yarp/os/Type.h>
 #include <cstdlib>
 #include <yarp/os/impl/NameClient.h>
 

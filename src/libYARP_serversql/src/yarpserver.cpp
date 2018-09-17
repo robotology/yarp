@@ -19,7 +19,6 @@
 #include <yarp/serversql/impl/ParseName.h>
 
 #include <yarp/conf/system.h>
-#include <yarp/os/all.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/RosNameSpace.h>
 #include <yarp/os/Carriers.h>

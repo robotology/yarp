@@ -14,6 +14,7 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 
 #include <yarp/os/impl/PlatformTime.h>

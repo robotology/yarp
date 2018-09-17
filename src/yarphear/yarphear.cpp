@@ -12,7 +12,6 @@
 #include <cstdio>
 #include <cmath>
 
-#include <yarp/os/all.h>
 #include <yarp/os/Log.h>
 
 #include <yarp/dev/PolyDriver.h>

@@ -11,7 +11,6 @@
 #define YARP_OS_RFMODULE_H
 
 #include <yarp/os/Port.h>
-#include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/ResourceFinder.h>
 

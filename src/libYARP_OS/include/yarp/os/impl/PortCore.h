@@ -15,6 +15,7 @@
 #include <yarp/os/Carriers.h>
 #include <yarp/os/Contactable.h>
 #include <yarp/os/Contact.h>
+#include <yarp/os/Type.h>
 #include <yarp/os/impl/PortManager.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortReaderCreator.h>

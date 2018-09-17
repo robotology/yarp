@@ -16,11 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <cmath>
-#include <algorithm>
+#include "depthCameraDriver.h"
+
+#include <yarp/os/LockGuard.h>
 #include <yarp/os/Value.h>
 
-#include "depthCameraDriver.h"
+#include <algorithm>
+#include <cmath>
 
 using namespace yarp::dev::impl;
 using namespace yarp::dev;

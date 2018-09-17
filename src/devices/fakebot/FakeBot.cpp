@@ -11,7 +11,6 @@
 
 #include <yarp/sig/all.h>
 #include <yarp/sig/ImageFile.h>
-#include <yarp/os/all.h>
 #include <random>
 
 using namespace yarp::os;

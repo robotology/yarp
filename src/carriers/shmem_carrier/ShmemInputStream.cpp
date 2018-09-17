@@ -8,6 +8,7 @@
  */
 
 #include "ShmemInputStream.h"
+#include <yarp/os/Bytes.h>
 #include <yarp/os/impl/PlatformTime.h>
 
 #include <ace/Lib_Find.h>
