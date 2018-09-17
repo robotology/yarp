@@ -3,7 +3,7 @@
 # --------
 #
 # Wrap kitware's original ``FindGLUT`` script to work on windows with
-# binary distribution. Standardize varibles.
+# binary distribution. Standardize variables.
 #
 # In windows require you set ``GLUT_DIR``
 #

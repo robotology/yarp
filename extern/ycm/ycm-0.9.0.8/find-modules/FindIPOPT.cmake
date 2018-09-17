@@ -5,11 +5,11 @@
 # Try to locate the IPOPT library
 #
 # On non Windows systems, use pkg-config to try to locate the library,
-# if this fails then try to locate the library in the directory pointed by
-# the IPOPT_DIR enviromental variable.
+# if this fails then try to locate the library in the directory pointed
+# by the IPOPT_DIR environment variable.
 #
 # On Windows systems,  just try to find the library using the IPOPT_DIR
-# enviromental variable.
+# environment variable.
 #
 # Create the following variables::
 #

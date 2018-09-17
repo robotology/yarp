@@ -118,8 +118,8 @@
 # If ``SCM_DISCONNECTED`` is set, the update step is not executed
 # automatically when building the main target. The update step can still
 # be added as a step target and called manually. This is useful if you
-# want to allow to build the project when you are disconnected from the
-# network (you might still need the network for the download step).
+# want to allow one to build the project when you are disconnected from
+# the network (you might still need the network for the download step).
 # This is disabled by default.
 # The directory property ``EP_SCM_DISCONNECTED`` can be used to change
 # the default value for all the external projects in the current

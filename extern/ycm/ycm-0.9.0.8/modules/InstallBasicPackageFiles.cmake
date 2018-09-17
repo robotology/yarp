@@ -202,8 +202,8 @@
 # When a ``CONFIG_TEMPLATE`` is passed, or a ``<Name>ConfigVersion.cmake.in`` or
 # a ``<name>-config-version.cmake.in file is available, these 2 arguments are
 # used to replace the ``@INCLUDED_CONTENT@`` string in this file.
-# This allows to inject custom code to this file, useful e.g. to set additional
-# variables which are loaded by downstream projects.
+# This allows one to inject custom code to this file, useful e.g. to set
+# additional variables which are loaded by downstream projects.
 #
 # If the ``COMPONENT`` argument is passed, it is forwarded to the
 # :command:`install` commands, otherwise ``<Name>`` is used.
