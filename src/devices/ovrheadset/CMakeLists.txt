@@ -8,7 +8,7 @@ yarp_prepare_plugin(ovrheadset
                     CATEGORY device
                     TYPE yarp::dev::OVRHeadset
                     INCLUDE OVRHeadset.h
-                    DEPENDS "YARP_HAS_MATH_LIB;YARP_HAS_LIBOVR;YARP_HAS_GLFW3;YARP_HAS_GLEW")
+                    DEPENDS "YARP_HAS_MATH_LIB;YARP_HAS_LIBOVR;YARP_HAS_GLFW3;YARP_HAS_GLEW;YARP_HAS_OPENGL")
 
 if(NOT SKIP_ovrheadset)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -65,6 +65,9 @@ if(NOT SKIP_ovrheadset)
 
   target_link_libraries(yarp_ovrheadset PRIVATE GLFW3::GLFW3)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS GLFW3)
+
+  target_link_libraries(yarp_ovrheadset PRIVATE OpenGL::GL)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS OpenGL)
 
   yarp_install(TARGETS yarp_ovrheadset
                EXPORT YARP_${YARP_PLUGIN_MASTER}

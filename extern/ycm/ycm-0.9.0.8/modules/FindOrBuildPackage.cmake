@@ -116,7 +116,7 @@ function(FIND_OR_BUILD_PACKAGE _pkg)
                         CMAKE_FIND_ROOT_PATH_BOTH
                         ONLY_CMAKE_FIND_ROOT_PATH
                         NO_CMAKE_FIND_ROOT_PATH)
-            if("${_version}" STREQUAL "${arg}")
+            if("${_version}" STREQUAL "${_arg}")
                 unset(_version)
                 break()
             endif()
