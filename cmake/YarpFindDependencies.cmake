@@ -420,6 +420,9 @@ checkandset_dependency(GLFW3)
 find_package(GLEW QUIET)
 checkandset_dependency(GLEW)
 
+find_package(OpenGL QUIET)
+checkandset_dependency(OpenGL)
+
 find_package(FTDI QUIET)
 checkandset_dependency(FTDI)
 
@@ -488,6 +491,7 @@ print_dependency(Lua)
 print_dependency(LibOVR)
 print_dependency(GLFW3)
 print_dependency(GLEW)
+print_dependency(OpenGL)
 print_dependency(Libdc1394)
 print_dependency(JPEG)
 print_dependency(MPI)
