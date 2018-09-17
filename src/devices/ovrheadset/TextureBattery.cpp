@@ -102,7 +102,7 @@ bool TextureBattery::initBatteryClient()
     options.put("device", "BatteryClient");
     options.put("local", localPort.c_str());
     options.put("remote", remotePort.c_str());
-    options.put("period", getRate());
+    options.put("period", getPeriod()*1000);     //s to ms
     options.put("quiet", true);
 
     drv = new yarp::dev::PolyDriver(options);
