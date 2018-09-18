@@ -24,7 +24,6 @@ namespace dev {
  * @brief The RGBDSensorParamParser class.
  * This class has been designed to uniform the parsing of RGBD yarp devices.
  */
-
 class YARP_dev_API RGBDSensorParamParser
 {
 public:
@@ -83,7 +82,8 @@ public:
      * RGBD sensor.
      * @return true on success, false otherwise.
      */
-    bool parseParam(yarp::os::Searchable& config, std::vector<RGBDParam *> &params);
+    bool parseParam(const yarp::os::Searchable& config, std::vector<RGBDParam *> &params);
+
     yarp::sig::IntrinsicParams         depthIntrinsic;
     yarp::sig::IntrinsicParams         rgbIntrinsic;
     yarp::sig::Matrix       transformationMatrix;

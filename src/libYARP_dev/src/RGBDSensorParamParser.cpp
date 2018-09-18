@@ -152,7 +152,7 @@ static bool parseIntrinsic(const Searchable& config, const string& groupName, ya
     return true;
 }
 
-bool RGBDSensorParamParser::parseParam(Searchable &config, std::vector<RGBDParam*>& params)
+bool RGBDSensorParamParser::parseParam(const Searchable &config, std::vector<RGBDParam*>& params)
 {
     bool ret = true;
 
