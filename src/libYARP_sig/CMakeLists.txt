@@ -14,6 +14,7 @@ set(YARP_sig_HDRS include/yarp/sig/all.h
                   include/yarp/sig/ImageFile.h
                   include/yarp/sig/ImageNetworkHeader.h
                   include/yarp/sig/ImageUtils.h
+                  include/yarp/sig/IntrinsicParams.h
                   include/yarp/sig/Matrix.h
                   include/yarp/sig/PointCloud.h
                   include/yarp/sig/PointCloudBase.h
@@ -34,6 +35,7 @@ set(YARP_sig_SRCS src/ImageCopy.cpp
                   src/Image.cpp
                   src/ImageFile.cpp
                   src/ImageUtils.cpp
+                  src/IntrinsicParams.cpp
                   src/IplImage.cpp
                   src/Matrix.cpp
                   src/PointCloudBase.cpp
