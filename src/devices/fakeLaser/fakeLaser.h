@@ -28,7 +28,12 @@ using namespace yarp::dev;
 
 /**
 * @ingroup dev_impl_media
-* FakeLaser sensor device for testing purposes and reference for IRangefinder2D devices
+*
+* @brief `fakeLaser` : fake sensor device driver for testing purposes and reference for IRangefinder2D devices.
+*
+* | YARP device name |
+* |:-----------------:|
+* | `fakeLaser` |
 *
 * \section Description of input parameters
 *

@@ -78,7 +78,7 @@ public:
 };
 
 /**
- * @ingroup dev_impl_media
+ * @ingroup dev_impl_other
  *
  * A basic Serial Communications Link (RS232, USB).
  *

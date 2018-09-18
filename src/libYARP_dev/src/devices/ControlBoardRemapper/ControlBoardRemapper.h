@@ -32,11 +32,13 @@ namespace dev {
 
 
 /**
- *  @ingroup dev_impl_remappers
+ * @ingroup dev_impl_remappers
  *
- * \section ControlBoardRemapper
- * A device that takes a list of axes from multiple controlboards and
- *  expose them as a single controlboard.
+ * @brief `controlboardremapper` : device that takes a list of axes from multiple controlboards and expose them as a single controlboard.
+ *
+ * | YARP device name |
+ * |:-----------------:|
+ * | `controlboardremapper` |
  *
  *
  *  Parameters required by this device are:

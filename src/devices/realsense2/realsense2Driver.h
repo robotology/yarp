@@ -36,10 +36,10 @@ namespace yarp
 /**
  *  @ingroup dev_impl_media
  *
+ * @brief `realsense2` : driver for realsense2 compatible devices.
  *
- * This device is a YARP plugin for realsense2 compatible devices, and exposes the IRGBDSensor and IFrameGrabberControls
+ * This device driver exposes the IRGBDSensor and IFrameGrabberControls
  * interfaces to read the images and operate on the available settings.
- *
  * See the documentation for more details about each interface.
  *
  * This device is paired with its server called RGBDSensorWrapper to stream the images and perform remote operations.
@@ -64,6 +64,10 @@ namespace yarp
  *  but not initial setting will be performed. Device will start with manufacturer default values.
  * \warning A single parameter cannot be present into both SETTINGS and HW_DESCRIPTION groups.
  * \warning whenever more then one value is required by the setting, the values must be in parenthesys!
+ *
+ * | YARP device name |
+ * |:-----------------:|
+ * | `realsense2` |
  *
  *   Parameters used by this device are:
  * | Parameter name               | SubParameter        | Type                |  Read / write   | Units          | Default Value | Required                         | Description                                                                            | Notes                                                                 |
