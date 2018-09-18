@@ -67,10 +67,6 @@ public:
         YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::Value>) val;
     };
 
-    yarp::sig::IntrinsicParams         depthIntrinsic;
-    yarp::sig::IntrinsicParams         rgbIntrinsic;
-    yarp::sig::Matrix       transformationMatrix;
-    bool                    isOptionalExtrinsic;
 
     /**
      * @brief RGBDSensorParamParser, default constructor.
@@ -88,6 +84,10 @@ public:
      * @return true on success, false otherwise.
      */
     bool parseParam(yarp::os::Searchable& config, std::vector<RGBDParam *> &params);
+    yarp::sig::IntrinsicParams         depthIntrinsic;
+    yarp::sig::IntrinsicParams         rgbIntrinsic;
+    yarp::sig::Matrix       transformationMatrix;
+    bool                    isOptionalExtrinsic;
 };
 
 } // dev
