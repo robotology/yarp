@@ -10,6 +10,8 @@
 #include <yarp/sig/Matrix.h>
 #include <yarp/dev/api.h>
 
+#include <yarp/sig/IntrinsicParams.h>
+
 #include <vector>
 
 #ifndef YARP_DEV_RGBDSENSORPARAMPARSER_H
@@ -18,32 +20,14 @@
 namespace yarp {
 namespace dev {
 
+
 class YARP_dev_API RGBDSensorParamParser
 {
 public:
-    struct YARP_dev_API IntrinsicParams
-    {
-        struct YARP_dev_API plum_bob
-        {
-            double k1;
-            double k2;
-            double t1;
-            double t2;
-            double k3;
-            plum_bob(): k1(0.0), k2(0.0),
-                        t1(0.0), t2(0.0),
-                        k3(0.0) {}
-        };
-        double   principalPointX;
-        double   principalPointY;
-        double   focalLengthX;
-        double   focalLengthY;
-        plum_bob distortionModel;
-        bool     isOptional;
-        IntrinsicParams(): principalPointX(0.0), principalPointY(0.0),
-                           focalLengthX(0.0), focalLengthY(0.0),
-                           distortionModel(), isOptional(false) {}
-    };
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.2.0
+    YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::sig::IntrinsicParams instead") yarp::sig::IntrinsicParams IntrinsicParams;
+#endif
     struct YARP_dev_API RGBDParam
     {
         RGBDParam() : name("unknown"), isSetting(false), isDescription(false), size(1)
@@ -66,8 +50,8 @@ public:
         YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::Value>) val;
     };
 
-    IntrinsicParams         depthIntrinsic;
-    IntrinsicParams         rgbIntrinsic;
+    yarp::sig::IntrinsicParams         depthIntrinsic;
+    yarp::sig::IntrinsicParams         rgbIntrinsic;
     yarp::sig::Matrix       transformationMatrix;
     bool                    isOptionalExtrinsic;
 
