@@ -835,19 +835,17 @@ bool realsense2Driver::setRgbMirroring(bool mirror)
 
 bool realsense2Driver::setIntrinsic(Property& intrinsic, const rs2_intrinsics &values)
 {
-    intrinsic.put("focalLengthX",       values.fx);
-    intrinsic.put("focalLengthY",       values.fy);
-    intrinsic.put("principalPointX",    values.ppx);
-    intrinsic.put("principalPointY",    values.ppy);
-
-    intrinsic.put("distortionModel", "plumb_bob");
-    intrinsic.put("k1", values.coeffs[0]);
-    intrinsic.put("k2", values.coeffs[1]);
-    intrinsic.put("t1", values.coeffs[2]);
-    intrinsic.put("t2", values.coeffs[3]);
-    intrinsic.put("k3", values.coeffs[4]);
-
-    intrinsic.put("stamp", yarp::os::Time::now());
+    yarp::sig::IntrinsicParams params;
+    params.focalLengthX       = values.fx;
+    params.focalLengthY       = values.fy;
+    params.principalPointX    = values.ppx;
+    params.principalPointY    = values.ppy;
+    params.distortionModel.k1 = values.coeffs[0];
+    params.distortionModel.k2 = values.coeffs[1];
+    params.distortionModel.t1 = values.coeffs[2];
+    params.distortionModel.t2 = values.coeffs[3];
+    params.distortionModel.k3 = values.coeffs[4];
+    params.toProperty(intrinsic);
     return true;
 }
 
