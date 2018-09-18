@@ -279,7 +279,7 @@ private:
     bool        getImage(depthImage& Frame, Stamp* Stamp, impl::streamFrameListener *sourceFrame);
     bool        setResolution(int w, int h, openni::VideoStream &stream);
     bool        setFOV(double horizontalFov, double verticalFov, openni::VideoStream &stream);
-    bool        setIntrinsic(yarp::os::Property& intrinsic, const RGBDSensorParamParser::IntrinsicParams& values);
+    bool        setIntrinsic(yarp::os::Property& intrinsic, const yarp::sig::IntrinsicParams& values);
     void        settingErrorMsg(const std::string& error, bool& ret);
 
     //properties
