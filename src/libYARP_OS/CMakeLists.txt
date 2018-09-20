@@ -303,9 +303,10 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Runnable.cpp
                  src/Searchable.cpp
                  src/Semaphore.cpp
-                 src/SizedWriter.cpp
                  src/SharedLibrary.cpp
                  src/SharedLibraryFactory.cpp
+                 src/ShiftStream.cpp
+                 src/SizedWriter.cpp
                  src/SocketTwoWayStream.cpp
                  src/SplitString.cpp
                  src/Stamp.cpp
