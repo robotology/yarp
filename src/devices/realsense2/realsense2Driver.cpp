@@ -340,6 +340,16 @@ static size_t bytesPerPixel(const rs2_format format)
     return bytes_per_pixel;
 }
 
+static YarpDistortion rsDistToYarpDist(const rs2_distortion dist)
+{
+    switch (dist) {
+    case RS2_DISTORTION_BROWN_CONRADY:
+        return YarpDistortion::YARP_PLUM_BOB;
+    default:
+        return YarpDistortion::YARP_UNSUPPORTED;
+    }
+
+}
 
 realsense2Driver::realsense2Driver() : m_depth_sensor(nullptr), m_color_sensor(nullptr),
                                        m_paramParser(nullptr), m_verbose(false),
@@ -840,6 +850,8 @@ bool realsense2Driver::setIntrinsic(Property& intrinsic, const rs2_intrinsics &v
     params.focalLengthY       = values.fy;
     params.principalPointX    = values.ppx;
     params.principalPointY    = values.ppy;
+    // distortion model
+    params.distortionModel.type = rsDistToYarpDist(values.model);
     params.distortionModel.k1 = values.coeffs[0];
     params.distortionModel.k2 = values.coeffs[1];
     params.distortionModel.t1 = values.coeffs[2];
