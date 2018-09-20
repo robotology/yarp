@@ -10,147 +10,79 @@
 #ifndef YARP_OS_PING_H
 #define YARP_OS_PING_H
 
+#include <yarp/os/api.h>
+
 #include <cmath>
 #include <string>
 
-#include <yarp/os/api.h>
 
 namespace yarp {
-    namespace os {
-        class Stat;
-        class ConnectResult;
-        class RateResult;
-        class Ping;
-    }
-}
+namespace os {
 
-class yarp::os::Stat {
+class Stat
+{
 public:
-    Stat() {
-        clear();
-    }
+    Stat();
 
-    void clear() {
-        tot = tot2 = 0;
-        ct = at = 0;
-        mu = 0;
-        sigma = 1e10;
-        // infinity would be better, but methods of getting infinity
-        // require awkward dependencies
-    }
+    void clear();
 
-    void add(double val) {
-        tot += val;
-        tot2 += val*val;
-        ct++;
-    }
+    void add(double val);
+    void add(const Stat& alt);
+    double mean();
+    double deviation();
+    double count();
 
-    void add(const Stat& alt) {
-        tot += alt.tot;
-        tot2 += alt.tot2;
-        ct += alt.ct;
-    }
-
-    double mean() {
-        compute();
-        return mu;
-    }
-
-    double deviation() {
-        compute();
-        return sigma;
-    }
-
-    double count() {
-        return ct;
-    }
-
-    operator double() {
-        return mean();
-    }
+    operator double();
 
 private:
-    void compute() {
-        if (ct!=at) {
-            // ct must be > 0
-            mu = tot/ct;
-            sigma = tot2/ct - mu*mu;
-            if (sigma<0) sigma = 0; // round-off error
-            sigma = sqrt(sigma);
-            at = ct;
-        }
-    }
+    void compute();
 
-    int ct, at;
-    double tot, tot2;
-    double mu, sigma;
+    int ct;
+    int at;
+    double tot;
+    double tot2;
+    double mu;
+    double sigma;
 };
 
-class yarp::os::ConnectResult {
+class ConnectResult
+{
 public:
-    Stat totalTime;  // total includes name server lookups
+    Stat totalTime; // total includes name server lookups
     Stat targetTime; // all time involving the target port
 
-    void clear() {
-        totalTime.clear();
-        targetTime.clear();
-    }
-
-    void add(const ConnectResult& alt) {
-        totalTime.add(alt.totalTime);
-        targetTime.add(alt.targetTime);
-    }
+    void clear();
+    void add(const ConnectResult& alt);
 };
 
-class yarp::os::RateResult {
+class RateResult
+{
 public:
     Stat period;
 
-    void clear() {
-        period.clear();
-    }
-
-    void add(const RateResult& alt) {
-        period.add(alt.period);
-    }
+    void clear();
+    void add(const RateResult& alt);
 };
 
 
 /**
- *
  * Measure performance of a YARP port.  Can also be partially used for
  * non-YARP ports with a compatible protocol.
- *
  */
-class YARP_OS_API yarp::os::Ping {
+class YARP_OS_API Ping
+{
 public:
-    Ping(const char *target = nullptr) {
-        if (target != nullptr) {
-            setTarget(target);
-        }
-    }
+    Ping(const char* target = nullptr);
 
-    bool setTarget(const char *target) {
-        this->target = target;
-        return true;
-    }
+    bool setTarget(const char* target);
 
     void connect();
 
     void sample();
 
-    void clear() {
-        lastConnect.clear();
-        accumConnect.clear();
-    }
-
-    ConnectResult getLastConnect() {
-        return lastConnect;
-    }
-
-    ConnectResult getAverageConnect() {
-        return accumConnect;
-    }
+    void clear();
+    ConnectResult getLastConnect();
+    ConnectResult getAverageConnect();
 
     void report();
 
@@ -161,5 +93,7 @@ private:
     ConnectResult lastConnect, accumConnect;
 };
 
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_PING_H
