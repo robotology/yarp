@@ -17,25 +17,47 @@
 namespace yarp {
 namespace sig {
 /**
+ * @brief The YarpDistortion enum to define the
+ * type of the distortion model of the camera.
+ *
+ * In geometric optics, distortion is a deviation from rectilinear projection;
+ * a projection in which straight lines in a scene remain straight in an image.
+ * Although distortion can be irregular or follow many patterns, the most commonly
+ * encountered distortions are radially symmetric. These can be represent by models
+ * that allow us to undistort the images knowing the parameters of the distortion
+ * (k1, k2, t1, t2, k3).
+ */
+enum class YarpDistortion : std::int32_t
+{
+    YARP_DISTORTION_NONE, /**< Rectilinear images. No distortion compensation required. */
+    YARP_PLUM_BOB,        /**< Plumb bob distortion model */
+    YARP_FISH_EYE,        /**< Fish eye distortion model */
+    YARP_UNSUPPORTED,     /**< Unsupported distortion model */
+    YARP_DISTORTION_COUNT /**< Number of enumeration values. Not a valid input: intended to be used in for-loops. */
+};
+
+/**
  * @brief The IntrinsicParams struct to handle the intrinsic parameter
  * of cameras(RGB and RGBD either).
  */
 struct YARP_sig_API IntrinsicParams : public yarp::os::Portable
 {
     /**
-     * @brief The plum_bob struct representing the distortion model
+     * @brief The DistortionModel struct representing the distortion model
      * of the camera.
      */
-    struct YARP_sig_API plum_bob
+    struct YARP_sig_API DistortionModel
     {
         double k1;
         double k2;
         double t1;
         double t2;
         double k3;
-        plum_bob(): k1(0.0), k2(0.0),
-                    t1(0.0), t2(0.0),
-                    k3(0.0) {}
+        YarpDistortion type;
+
+        DistortionModel(): k1(0.0), k2(0.0),
+                           t1(0.0), t2(0.0),
+                           k3(0.0), type(YarpDistortion::YARP_DISTORTION_NONE) {}
     };
 
     /**
@@ -70,11 +92,11 @@ struct YARP_sig_API IntrinsicParams : public yarp::os::Portable
     bool read(yarp::os::ConnectionReader& reader) override;
     bool write(yarp::os::ConnectionWriter& writer) const override;
 
-    double   principalPointX;
-    double   principalPointY;
-    double   focalLengthX;
-    double   focalLengthY;
-    plum_bob distortionModel;
+    double   principalPointX;        /**< Horizontal coordinate of the principal point of the image, as a pixel offset from the left edge */
+    double   principalPointY;        /**< Vertical coordinate of the principal point of the image, as a pixel offset from the top edge */
+    double   focalLengthX;           /**< Result of the product of the physical focal length(mm) and the size sx of the individual imager elements (pixels per mm) */
+    double   focalLengthY;           /**< Result of the product of the physical focal length(mm) and the size sy of the individual imager elements (pixels per mm) */
+    DistortionModel distortionModel; /**< Distortion model of the image */
     bool     isOptional;
 };
 

@@ -26,15 +26,18 @@ void IntrinsicParams::toProperty(yarp::os::Property& intrinsic) const
     intrinsic.put("focalLengthY",       focalLengthY);
     intrinsic.put("principalPointX",    principalPointX);
     intrinsic.put("principalPointY",    principalPointY);
+    intrinsic.put("stamp", yarp::os::Time::now());
 
+    if (distortionModel.type != YarpDistortion::YARP_PLUM_BOB) {
+        intrinsic.put("distortionModel", "none");
+        return;
+    }
     intrinsic.put("distortionModel", "plumb_bob");
     intrinsic.put("k1", distortionModel.k1);
     intrinsic.put("k2", distortionModel.k2);
     intrinsic.put("t1", distortionModel.t1);
     intrinsic.put("t2", distortionModel.t2);
     intrinsic.put("k3", distortionModel.k3);
-
-    intrinsic.put("stamp", yarp::os::Time::now());
 }
 
 void IntrinsicParams::fromProperty(const yarp::os::Property& intrinsic)
@@ -49,6 +52,10 @@ void IntrinsicParams::fromProperty(const yarp::os::Property& intrinsic)
     principalPointY = intrinsic.find("principalPointY").asFloat64();
 
     // The distortion parameters are optional
+    if (intrinsic.find("distortionModel").asString() !=  "plumb_bob") {
+        return;
+    }
+    distortionModel.type = YarpDistortion::YARP_PLUM_BOB;
     distortionModel.k1 = intrinsic.check("k1", yarp::os::Value(0.0)).asFloat64();
     distortionModel.k2 = intrinsic.check("k2", yarp::os::Value(0.0)).asFloat64();
     distortionModel.t1 = intrinsic.check("t1", yarp::os::Value(0.0)).asFloat64();
