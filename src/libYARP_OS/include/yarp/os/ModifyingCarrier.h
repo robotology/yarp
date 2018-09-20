@@ -12,17 +12,15 @@
 #include <yarp/os/AbstractCarrier.h>
 
 namespace yarp {
-    namespace os {
-        class ModifyingCarrier;
-    }
-}
+namespace os {
 
 /**
  * A starter class for implementing simple modifying carriers.
  * These are not standalone carriers, they just tweak payload data
  * in custom ways.
  */
-class YARP_OS_API yarp::os::ModifyingCarrier : public AbstractCarrier {
+class YARP_OS_API ModifyingCarrier : public AbstractCarrier
+{
 public:
 
     virtual Carrier *create() const override = 0;
@@ -40,5 +38,8 @@ public:
     virtual bool configureFromProperty(yarp::os::Property& prop) override;
     // only remains to implement modifyIncomingData()
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_MODIFYINGCARRIER_H

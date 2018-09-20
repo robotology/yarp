@@ -13,15 +13,13 @@
 #include <yarp/os/api.h>
 
 namespace yarp {
-    namespace os {
-        class Runnable;
-    }
-}
+namespace os {
 
 /**
  * A class that can be managed by another thread.
  */
-class YARP_OS_API yarp::os::Runnable {
+class YARP_OS_API Runnable
+{
 public:
     /**
      * Destructor
@@ -72,5 +70,8 @@ public:
      */
     virtual void threadRelease();
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_OS_RUNNABLE_H

@@ -18,17 +18,19 @@
 #include <yarp/os/Connection.h>
 
 namespace yarp {
-    namespace os {
-        class OutputProtocol;
-        class InputProtocol;
-        class Contactable;
-    }
+namespace os {
+class InputProtocol;
+class Contactable;
+}
 }
 
+namespace yarp {
+namespace os {
 /**
  * The output side of an active connection between two ports.
  */
-class YARP_OS_API yarp::os::OutputProtocol {
+class YARP_OS_API OutputProtocol
+{
 public:
     /**
      * Destructor.
@@ -152,5 +154,8 @@ public:
      */
     virtual void beginWrite() = 0;
 };
+
+} // namespace yarp
+} // namespace os
 
 #endif // YARP_OS_OUTPUTPROTOCOL_H

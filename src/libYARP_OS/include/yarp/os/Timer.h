@@ -6,19 +6,17 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#ifndef YARP_OS_TIMER_H
+#define YARP_OS_TIMER_H
+
 #include <yarp/os/api.h>
 #include <yarp/os/Mutex.h>
 #include <functional>
 
 namespace yarp {
-    namespace os {
-        class Timer;
-        struct YarpTimerEvent;
-        struct TimerSettings;
-    }
-}
+namespace os {
 
-struct YARP_OS_API yarp::os::YarpTimerEvent
+struct YARP_OS_API YarpTimerEvent
 {
     /**
      * @brief lastExpected when the last callback actually happened
@@ -52,7 +50,7 @@ struct YARP_OS_API yarp::os::YarpTimerEvent
     unsigned int runCount;
 };
 
-struct YARP_OS_API yarp::os::TimerSettings
+struct YARP_OS_API TimerSettings
 {
     TimerSettings(double inPeriod) :
             period(inPeriod),
@@ -98,7 +96,7 @@ struct YARP_OS_API yarp::os::TimerSettings
     double tolerance;
 };
 
-class YARP_OS_API yarp::os::Timer
+class YARP_OS_API Timer
 {
 public:
     typedef std::function<bool(const yarp::os::YarpTimerEvent&)> TimerCallback;
@@ -184,3 +182,8 @@ private:
     PrivateImpl* impl;
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
+
+} // namespace os
+} // namespace yarp
+
+#endif // YARP_OS_TIMER_H

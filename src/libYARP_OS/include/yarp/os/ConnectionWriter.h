@@ -15,23 +15,27 @@
 #include <yarp/conf/numeric.h>
 
 namespace yarp {
-    namespace os {
-        class ConnectionWriter;
-        class ConnectionReader;
-        class PortReader;
-        class PortWriter;
-        class Portable;
-        class SizedWriter;
-        class OutputStream;
-    }
-}
+namespace os {
+class ConnectionReader;
+class PortReader;
+class PortWriter;
+class Portable;
+class SizedWriter;
+class OutputStream;
+} // namespace os
+} // namespace yarp
+
+
+namespace yarp {
+namespace os {
 
 /**
  * An interface for writing to a network connection.
  *
  * @see Port, PortWriter, ConnectionReader
  */
-class YARP_OS_API yarp::os::ConnectionWriter {
+class YARP_OS_API ConnectionWriter
+{
 public:
 
     /**
@@ -236,5 +240,8 @@ public:
 
     static bool writeToStream(PortWriter& portable, OutputStream& os);
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_CONNECTIONWRITER_H

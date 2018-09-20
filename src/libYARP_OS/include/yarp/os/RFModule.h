@@ -15,17 +15,13 @@
 #include <yarp/os/ResourceFinder.h>
 
 namespace yarp {
-    namespace os {
-        class RFModule;
-    }
-}
-
+namespace os {
 
 /**
- * A base-class for standard Yarp modules that supports ResourceFinder.
+ * A base-class for standard YARP modules that supports ResourceFinder.
  */
-class YARP_OS_API yarp::os::RFModule {
-
+class YARP_OS_API RFModule
+{
 public:
     /**
      * Constructor.
@@ -291,5 +287,8 @@ private:
 
     virtual bool basicRespond(const Bottle& command, Bottle& reply);
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_RFMODULE_H

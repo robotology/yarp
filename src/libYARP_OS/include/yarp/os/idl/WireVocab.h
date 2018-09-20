@@ -12,18 +12,19 @@
 #include <yarp/os/api.h>
 
 namespace yarp {
-    namespace os {
-        namespace idl {
-            class WireVocab;
-        }
-    }
-}
+namespace os {
+namespace idl {
 
-class YARP_OS_API yarp::os::idl::WireVocab {
+class YARP_OS_API WireVocab
+{
 public:
     virtual ~WireVocab() {}
     virtual int fromString(const std::string& input) = 0;
     virtual std::string toString(int input) const = 0;
 };
+
+} // namespace idl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IDL_WIREVOCAB_H

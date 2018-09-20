@@ -15,19 +15,14 @@
 #include <yarp/os/Contactable.h>
 
 namespace yarp {
-    namespace os {
-        class ConnectionState;
-        class Connection;
-    }
-}
-
+namespace os {
 
 /**
  *
  * The basic state of a connection - route, streams in use, etc.
  *
  */
-class YARP_OS_API yarp::os::ConnectionState {
+class YARP_OS_API ConnectionState {
 public:
 
     /**
@@ -138,5 +133,9 @@ public:
      */
     virtual const std::string& getEnvelope() const = 0;
 };
+
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_CONNECTIONSTATE_H

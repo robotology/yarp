@@ -20,10 +20,7 @@
 
 
 namespace yarp {
-    namespace os {
-        class Carriers;
-    }
-}
+namespace os {
 
 /**
  * Collection of carriers, a singleton.
@@ -31,7 +28,7 @@ namespace yarp {
  * This is the starting point for creating connections
  * between ports.
  */
-class YARP_OS_API yarp::os::Carriers
+class YARP_OS_API Carriers
 {
 public:
 
@@ -112,6 +109,9 @@ private:
     class Private;
     Private * const mPriv;
 };
+
+} // namespace os
+} // namespace yarp
 
 
 #endif // YARP_OS_CARRIERS_H

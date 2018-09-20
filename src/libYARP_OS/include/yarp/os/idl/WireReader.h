@@ -21,20 +21,15 @@
 #include <string>
 
 namespace yarp {
-    namespace os {
-        namespace idl {
-            class WireReader;
-        }
-    }
-}
+namespace os {
+namespace idl {
 
 /**
- *
  * IDL-friendly connection reader.  Used by YARP IDL tools, not intended
  * for end-user.
- *
  */
-class YARP_OS_API yarp::os::idl::WireReader {
+class YARP_OS_API WireReader
+{
 public:
     WireReader(ConnectionReader& reader);
 
@@ -183,6 +178,10 @@ private:
 
     void scanString(std::string& str, bool is_vocab);
 };
+
+} // namespace idl
+} // namespace os
+} // namespace yarp
 
 
 #endif // YARP_OS_IDL_WIREREADER_H

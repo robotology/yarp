@@ -14,17 +14,15 @@
 #include <yarp/os/Value.h>
 
 namespace yarp {
-    namespace os {
-        class NullConnectionReader;
-    }
-}
+namespace os {
 
 /**
  *
  * Dummy ConnectionReader that has no data.
  *
  */
-class YARP_OS_API yarp::os::NullConnectionReader : public ConnectionReader {
+class YARP_OS_API NullConnectionReader : public ConnectionReader
+{
 private:
     Value blank;
 public:
@@ -52,5 +50,7 @@ public:
     virtual const Searchable& getConnectionModifiers() const override;
 };
 
+} // namespace yarp
+} // namespace os
 
 #endif // YARP_OS_NULLCONNECTIONREADER_H

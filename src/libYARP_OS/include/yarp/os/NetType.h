@@ -18,15 +18,13 @@
 #include <string>
 
 namespace yarp {
-    namespace os {
-        class NetType;
-    }
-}
+namespace os {
 
 /**
  * Various utilities related to types and formats.
  */
-class YARP_OS_API yarp::os::NetType {
+class YARP_OS_API NetType
+{
 public:
 
     static int netInt(const yarp::os::Bytes& code);
@@ -38,5 +36,8 @@ public:
     static int toInt(const std::string& x);
     static unsigned long int getCrc(char *buf, size_t len);
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_NETTYPE_H

@@ -17,11 +17,14 @@
 #include <string>
 
 namespace yarp {
-    namespace os {
-        class Contact;
-        class Searchable;
-    }
-}
+namespace os {
+class Searchable;
+} // namespace os
+} // namespace yarp
+
+
+namespace yarp {
+namespace os {
 
 /**
  * @ingroup comm_class
@@ -31,7 +34,8 @@ namespace yarp {
  * Use the constructors or the factory methods (Contact::fromString,
  * Contact::fromConfig) to create Contact objects.
  */
-class YARP_OS_API yarp::os::Contact {
+class YARP_OS_API Contact
+{
 public:
 
 /** @{ */
@@ -323,5 +327,8 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_CONTACT_H

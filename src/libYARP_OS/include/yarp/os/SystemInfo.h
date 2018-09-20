@@ -15,11 +15,7 @@
 
 
 namespace yarp {
-  namespace os {
-        class SystemInfo;
-  }
-}
-
+namespace os {
 
 /**
  * \ingroup key_class
@@ -28,7 +24,7 @@ namespace yarp {
  * available memory, storage, CPU load and etc.
  */
 
-class YARP_OS_API yarp::os::SystemInfo
+class YARP_OS_API SystemInfo
 {
 public:
     typedef int capacity_t;
@@ -165,6 +161,10 @@ public:
 
     //static NetworkInfo getNetworkInfo();
 };
+
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_SYSTEMINFO_H
 

@@ -14,11 +14,7 @@
 #include <string>
 
 namespace yarp {
-    namespace os {
-        class Property;
-    }
-}
-
+namespace os {
 
 /**
  * \ingroup key_class
@@ -32,8 +28,8 @@ namespace yarp {
  * Searchable object (include Bottle objects) using the fromString() method.
  * Property objects can be searched efficiently.
  */
-class YARP_OS_API yarp::os::Property : public Searchable, public Portable {
-
+class YARP_OS_API Property : public Searchable, public Portable
+{
 public:
     using Searchable::check;
     using Searchable::findGroup;
@@ -436,5 +432,8 @@ private:
     void summon();
     bool check() const;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_PROPERTY_H

@@ -27,10 +27,7 @@
 
 
 namespace yarp {
-    namespace os {
-        class Carrier;
-    }
-}
+namespace os {
 
 /**
  * \brief A base class for connection types (tcp, mcast, shmem, ...) which are
@@ -47,7 +44,7 @@ namespace yarp {
  * To understand the protocol phases involved, see see
  * \ref yarp_protocol.
  */
-class YARP_OS_API yarp::os::Carrier : public Connection
+class YARP_OS_API Carrier : public Connection
 {
 public:
 
@@ -463,5 +460,8 @@ public:
      */
     virtual yarp::os::Face* createFace() const;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_CARRIER_H

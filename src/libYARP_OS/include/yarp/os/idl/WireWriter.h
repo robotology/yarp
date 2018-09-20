@@ -20,20 +20,15 @@
 #include <string>
 
 namespace yarp {
-    namespace os {
-        namespace idl {
-            class WireWriter;
-        }
-    }
-}
+namespace os {
+namespace idl {
 
 /**
- *
  * IDL-friendly connection writer. Used by YARP IDL tools, not intended
  * for end-user.
- *
  */
-class YARP_OS_API yarp::os::idl::WireWriter {
+class YARP_OS_API WireWriter
+{
 public:
 
     WireWriter(ConnectionWriter& writer);
@@ -109,5 +104,9 @@ private:
     mutable bool need_ok;
     ConnectionWriter& writer;
 };
+
+} // namespace idl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IDL_WIREWRITER_H

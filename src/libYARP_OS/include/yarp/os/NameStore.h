@@ -14,16 +14,13 @@
 #include <yarp/os/Bottle.h>
 
 namespace yarp {
-    namespace os {
-        class NameStore;
-    }
-}
-
+namespace os {
 
 /**
  * Abstract interface for a database of port names.
  */
-class YARP_OS_API yarp::os::NameStore {
+class YARP_OS_API NameStore
+{
 public:
     virtual ~NameStore();
     virtual Contact query(const std::string& name) = 0;
@@ -33,5 +30,7 @@ public:
                          const Contact& source) = 0;
 };
 
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_NAMESTORE_H

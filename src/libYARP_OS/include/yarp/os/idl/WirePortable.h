@@ -12,22 +12,25 @@
 #include <yarp/os/Portable.h>
 
 namespace yarp {
-    namespace os {
-        namespace idl {
-            class WireReader;
-            class WireWriter;
-            class WirePortable;
-        }
-    }
-}
+namespace os {
+namespace idl {
+class WireReader;
+class WireWriter;
+} // namespace idl
+} // namespace os
+} // namespace yarp
+
+
+namespace yarp {
+namespace os {
+namespace idl {
 
 /**
- *
  * A "tamed" Portable, that promises to serialize itself in an IDL-friendly
  * way.
- *
  */
-class YARP_OS_API yarp::os::idl::WirePortable : public yarp::os::Portable {
+class YARP_OS_API WirePortable : public yarp::os::Portable
+{
 public:
     using yarp::os::Portable::read;
     using yarp::os::Portable::write;
@@ -36,21 +39,29 @@ public:
 
     virtual bool write(const yarp::os::idl::WireWriter& writer) const;
 
-    virtual bool readBare(yarp::os::ConnectionReader& reader) {
+    virtual bool readBare(yarp::os::ConnectionReader& reader)
+    {
         return read(reader);
     }
 
-    virtual bool writeBare(yarp::os::ConnectionWriter& writer) const {
+    virtual bool writeBare(yarp::os::ConnectionWriter& writer) const
+    {
         return write(writer);
     }
 
-    virtual bool readBottle(yarp::os::ConnectionReader& reader) {
+    virtual bool readBottle(yarp::os::ConnectionReader& reader)
+    {
         return read(reader);
     }
 
-    virtual bool writeBottle(yarp::os::ConnectionWriter& writer) const {
+    virtual bool writeBottle(yarp::os::ConnectionWriter& writer) const
+    {
         return write(writer);
     }
 };
+
+} // namespace idl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IDL_WIREPORTABLE_H

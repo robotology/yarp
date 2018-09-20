@@ -18,14 +18,18 @@
 #include <cstddef> // defines size_t
 
 namespace yarp {
-    namespace os {
-        class Value;
-        class Property;
-        namespace impl {
-            class Storable;
-        }
-    }
+namespace os {
+class Property;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+namespace impl {
+class Storable;
 }
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+}
+}
+
+namespace yarp {
+namespace os {
 
 /**
  * A single value (typically within a Bottle). Values can be integers, strings,
@@ -37,15 +41,9 @@ namespace yarp {
  * find anything in them unless they are actually a list.
  *
  */
-class YARP_OS_API yarp::os::Value : public Portable,
-                                    public Searchable
+class YARP_OS_API Value : public Portable,
+                          public Searchable
 {
-private:
-    yarp::os::impl::Storable *proxy;
-
-    void setProxy(yarp::os::impl::Storable *proxy);
-    void ok() const;
-
 public:
     using Searchable::check;
     using Searchable::findGroup;
@@ -519,7 +517,18 @@ public:
      * @return an invalid "null" Value
      */
     static Value& getNullValue();
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+    yarp::os::impl::Storable *proxy;
+
+    void setProxy(yarp::os::impl::Storable *proxy);
+    void ok() const;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+
 };
 
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_VALUE_H

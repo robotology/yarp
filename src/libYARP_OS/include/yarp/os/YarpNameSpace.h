@@ -14,13 +14,9 @@
 #include <cstdio>
 
 namespace yarp {
-    namespace os {
-        class YarpNameSpace;
-        class YarpDummyNameSpace;
-    }
-}
+namespace os {
 
-class YARP_OS_API yarp::os::YarpNameSpace : public NameSpace
+class YARP_OS_API YarpNameSpace : public NameSpace
 {
 public:
     YarpNameSpace(const Contact& contact);
@@ -175,7 +171,7 @@ private:
     Contact contact;
 };
 
-class yarp::os::YarpDummyNameSpace : public YarpNameSpace
+class YarpDummyNameSpace : public YarpNameSpace
 {
 public:
     YarpDummyNameSpace() : YarpNameSpace(Contact())
@@ -192,5 +188,8 @@ public:
         return Contact("/root");
     }
  };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_YARPNAMESPACE_H

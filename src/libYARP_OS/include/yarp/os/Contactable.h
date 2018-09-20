@@ -16,10 +16,7 @@
 #include <yarp/os/PortReport.h>
 #include <yarp/os/Mutex.h>
 
-// Defined in this file:
-namespace yarp { namespace os { class Contactable; }}
-
-// Other forward declarations:
+// Forward declarations:
 namespace yarp { namespace os { class Property; }}
 
 

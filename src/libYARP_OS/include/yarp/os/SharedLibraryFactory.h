@@ -17,10 +17,7 @@
 
 
 namespace yarp {
-    namespace os {
-        class SharedLibraryFactory;
-    }
-}
+namespace os {
 
 /**
  * A wrapper for a named factory method in a named shared library.
@@ -28,7 +25,8 @@ namespace yarp {
  * indeed behave like a YARP plugin hook before offering access to it.
  * This is to avoid accidents, it is not a security mechanism.
  */
-class YARP_OS_API yarp::os::SharedLibraryFactory {
+class YARP_OS_API SharedLibraryFactory
+{
 public:
     /**
      * The status of a factory can be:
@@ -168,5 +166,7 @@ private:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) error;
 };
 
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_SHAREDLIBRARYFACTORY_H

@@ -20,18 +20,19 @@
 
 
 namespace yarp {
-    namespace os {
-        class Value;
-        class Bottle;
-        class Searchable;
-        class SearchMonitor;
-        class SearchReport;
-    }
+namespace os {
+class Value;
+class Bottle;
 }
+}
+
+namespace yarp {
+namespace os {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-class YARP_OS_API yarp::os::SearchReport {
+class YARP_OS_API SearchReport
+{
 public:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) key;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) value;
@@ -43,7 +44,8 @@ public:
     explicit SearchReport();
 };
 
-class YARP_OS_API yarp::os::SearchMonitor {
+class YARP_OS_API SearchMonitor
+{
 public:
     virtual ~SearchMonitor();
     virtual void report(const SearchReport& report, const char *context) = 0;
@@ -53,16 +55,15 @@ public:
 
 
 /**
- *
  * A base class for nested structures that can be searched.
  * A Searchable object promises that you can look inside it
  * with the find() and findGroup() methods to get values and
  * lists corresponding to keywords.
  *
  * @see Property Bottle Value
- *
  */
-class YARP_OS_API yarp::os::Searchable {
+class YARP_OS_API Searchable
+{
 private:
     SearchMonitor *monitor;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) monitorContext;
@@ -195,5 +196,7 @@ public:
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 };
 
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_SEARCHABLE_H

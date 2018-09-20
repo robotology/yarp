@@ -13,12 +13,10 @@
 #include <yarp/os/NameStore.h>
 
 namespace yarp {
-    namespace os {
-        class MultiNameSpace;
-    }
-}
+namespace os {
 
-class YARP_OS_API yarp::os::MultiNameSpace : public NameSpace {
+class YARP_OS_API MultiNameSpace : public NameSpace
+{
 public:
     MultiNameSpace();
 
@@ -106,5 +104,8 @@ private:
     void *system_resource;
     NameStore *altStore;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_MULTINAMESPACE_H

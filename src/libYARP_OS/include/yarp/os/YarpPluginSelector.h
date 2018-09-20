@@ -16,10 +16,7 @@
 #include <yarp/os/LockGuard.h>
 
 namespace yarp {
-    namespace os {
-        class YarpPluginSelector;
-    }
-}
+namespace os {
 
 /**
  *
@@ -28,7 +25,8 @@ namespace yarp {
  * called with [plugin] sections found in configuration files.
  *
  */
-class YARP_OS_API yarp::os::YarpPluginSelector {
+class YARP_OS_API YarpPluginSelector
+{
 private:
     Bottle plugins;
     Bottle search_path;
@@ -82,5 +80,8 @@ public:
         return search_path;
     }
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_YARPPLUGINSELECTOR_H

@@ -18,10 +18,7 @@
 #include <string>
 
 namespace yarp {
-    namespace os {
-        class ResourceFinder;
-    }
-}
+namespace os {
 
 /**
  *
@@ -31,7 +28,8 @@ namespace yarp {
  * \ref yarp_resource_finder_tutorials.
  *
  */
-class YARP_OS_API yarp::os::ResourceFinder : public Searchable {
+class YARP_OS_API ResourceFinder : public Searchable
+{
 public:
     ResourceFinder();
 
@@ -425,5 +423,7 @@ private:
     static std::string createIfAbsent(bool mayCreate, const std::string& path);
 };
 
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_RESOURCEFINDER_H

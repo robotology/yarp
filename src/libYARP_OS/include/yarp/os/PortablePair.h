@@ -14,13 +14,10 @@
 #include <yarp/os/Bottle.h>
 
 namespace yarp {
-    namespace os {
-        class PortablePairBase;
-        template <class HEAD, class BODY> class PortablePair;
-    }
-}
+namespace os {
 
-class YARP_OS_API yarp::os::PortablePairBase : public Portable {
+class YARP_OS_API PortablePairBase : public Portable
+{
 public:
     /**
      * Reads an object pair from a network connection.
@@ -50,7 +47,8 @@ public:
  * Handy for adding general-purpose headers, for example.
  */
 template <class HEAD, class BODY>
-class yarp::os::PortablePair : public PortablePairBase {
+class PortablePair : public PortablePairBase
+{
 public:
     /**
      * An object of the first type (HEAD).
@@ -89,5 +87,8 @@ public:
         body.onCompletion();
     }
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_PORTABLEPAIR_H

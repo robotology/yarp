@@ -13,17 +13,15 @@
 #include <yarp/os/ConnectionWriter.h>
 
 namespace yarp {
-    namespace os {
-        class NullConnectionWriter;
-    }
-}
+namespace os {
 
 /**
  *
  * A dummy ConnectionWriter that consumes data without effect.
  *
  */
-class YARP_OS_API yarp::os::NullConnectionWriter : public ConnectionWriter {
+class YARP_OS_API NullConnectionWriter : public ConnectionWriter
+{
 public:
     virtual void appendBlock(const char *data, size_t len) override;
     virtual void appendInt8(std::int8_t data) override;
@@ -47,5 +45,8 @@ public:
     virtual bool isNull() const override;
     virtual SizedWriter *getBuffer() const override;
 };
+
+} // namespace yarp
+} // namespace os
 
 #endif // YARP_OS_NULLCONNECTIONWRITER_H

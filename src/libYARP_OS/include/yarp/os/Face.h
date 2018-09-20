@@ -15,15 +15,13 @@
 #include <yarp/os/OutputProtocol.h>
 
 namespace yarp {
-    namespace os {
-        class Face;
-    }
-}
+namespace os {
 
 /**
  * The initial point-of-contact with a port.
  */
-class YARP_OS_API yarp::os::Face {
+class YARP_OS_API Face
+{
 public:
     /**
      * Constructor.
@@ -89,5 +87,8 @@ public:
         return Contact();
     }
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_FACE_H

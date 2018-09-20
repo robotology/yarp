@@ -29,7 +29,9 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 
 
-class RFModuleRespondHandler : public yarp::os::PortReader, public Thread {
+class RFModuleRespondHandler : public yarp::os::PortReader,
+                               public yarp::os::Thread
+{
 private:
     RFModule& owner;
     bool attachedToPort;

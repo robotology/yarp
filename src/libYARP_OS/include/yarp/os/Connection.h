@@ -13,19 +13,13 @@
 #include <yarp/os/Bytes.h>
 
 namespace yarp {
-    namespace os {
-        class Connection;
-        class NullConnection;
-    }
-}
+namespace os {
 
 /**
- *
  * A controller for an individual connection.  A bundle of callbacks
  * that defines how the connection behaves.
- *
  */
-class YARP_OS_API yarp::os::Connection
+class YARP_OS_API Connection
 {
 public:
 
@@ -266,7 +260,7 @@ public:
 };
 
 
-class YARP_OS_API yarp::os::NullConnection : public Connection
+class YARP_OS_API NullConnection : public Connection
 {
 public:
     virtual bool isValid() const override { return false; }
@@ -344,5 +338,9 @@ public:
         return "null";
     }
 };
+
+} // namespace os
+} // namespace yarp
+
 
 #endif // YARP_OS_CONNECTION_H

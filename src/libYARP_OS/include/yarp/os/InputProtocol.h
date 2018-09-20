@@ -20,17 +20,21 @@
 #include <yarp/os/SizedWriter.h>
 
 namespace yarp {
-    namespace os {
-        class InputProtocol;
-        class OutputProtocol;
-        class Contactable;
-    }
-}
+namespace os {
+class OutputProtocol;
+class Contactable;
+} // namespace os
+} // namespace yarp
+
+
+namespace yarp {
+namespace os {
 
 /**
  * The input side of an active connection between two ports.
  */
-class YARP_OS_API yarp::os::InputProtocol {
+class YARP_OS_API InputProtocol
+{
 public:
     /**
      *
@@ -177,5 +181,8 @@ public:
      */
     virtual bool isReplying() const = 0;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_INPUTPROTOCOL_H

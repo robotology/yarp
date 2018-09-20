@@ -12,20 +12,25 @@
 #include <yarp/os/api.h>
 #include <string>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace yarp {
-    namespace os {
-        class SharedLibrary;
-        namespace impl {
-            class SharedLibraryImpl;
-        }
-    }
+namespace os {
+namespace impl {
+class SharedLibraryImpl;
 }
+}
+}
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+
+namespace yarp {
+namespace os {
 
 /**
  * Low-level wrapper for loading shared libraries (DLLs) and accessing
  * symbols within it.
  */
-class YARP_OS_API yarp::os::SharedLibrary {
+class YARP_OS_API SharedLibrary
+{
 public:
     /**
      * Initialize, without opening a shared library yet.
@@ -38,6 +43,9 @@ public:
      * @param filename name of file (see open method)
      */
     SharedLibrary(const char *filename);
+
+    SharedLibrary(const SharedLibrary&) = delete;
+    SharedLibrary& operator=(const SharedLibrary&) = delete;
 
     /**
      * Destructor.  Will close() if needed.
@@ -81,11 +89,14 @@ public:
      */
     bool isValid() const;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
     yarp::os::impl::SharedLibraryImpl* const implementation;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
-    SharedLibrary(const SharedLibrary&); // Not implemented
-    SharedLibrary& operator=(const SharedLibrary&); // Not implemented
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_SHAREDLIBRARY_H

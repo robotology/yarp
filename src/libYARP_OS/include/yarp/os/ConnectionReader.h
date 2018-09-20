@@ -17,21 +17,25 @@
 #include <yarp/conf/numeric.h>
 
 namespace yarp {
-    namespace os {
-        class ConnectionReader;
-        class ConnectionWriter;
-        class PortReader;
-        class Portable;
-        class InputStream;
-    }
-}
+namespace os {
+class ConnectionWriter;
+class PortReader;
+class Portable;
+class InputStream;
+} // namespace os
+} // namespace yarp
+
+
+namespace yarp {
+namespace os {
 
 /**
  * An interface for reading from a network connection.
  *
  * @see Port, PortReader, ConnectionWriter
  */
-class YARP_OS_API yarp::os::ConnectionReader {
+class YARP_OS_API ConnectionReader
+{
 public:
     /**
      * Destructor.
@@ -238,5 +242,8 @@ public:
      */
     virtual void setParentConnectionReader(ConnectionReader *parentConnectionReader);
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_CONNECTIONREADER_H

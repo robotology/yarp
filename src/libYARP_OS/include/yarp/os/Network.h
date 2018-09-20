@@ -21,18 +21,18 @@
 
 
 namespace yarp {
-    namespace os {
-        class NetworkBase;
-        class Network;
-        class ContactStyle;
-        class QosStyle;
-    }
+namespace os {
+class ContactStyle;
+class QosStyle;
+}
 }
 
 // Make plugins in a library available for use
 #define YARP_DECLARE_PLUGINS(name) extern "C" void add_ ## name ## _plugins();
 #define YARP_REGISTER_PLUGINS(name) add_ ## name ## _plugins();
 
+namespace yarp {
+namespace os {
 
 /**
  * \ingroup comm_class
@@ -40,7 +40,8 @@ namespace yarp {
  * Utilities for manipulating the YARP network, excluding initialization
  * and shutdown.
  */
-class YARP_OS_API yarp::os::NetworkBase {
+class YARP_OS_API NetworkBase
+{
 public:
     /**
      * Basic system initialization, not including plugins.
@@ -685,7 +686,8 @@ public:
  * Utilities for manipulating the YARP network, including initialization
  * and shutdown.
  */
-class YARP_init_API yarp::os::Network : public NetworkBase {
+class YARP_init_API Network : public NetworkBase
+{
 public:
     /**
      * Constructor.  Configures process to use the YARP network.
@@ -736,5 +738,8 @@ public:
      */
     static void fini();
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_NETWORK_H

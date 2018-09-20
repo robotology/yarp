@@ -38,7 +38,6 @@ constexpr std::int32_t BOTTLE_TAG_INT = BOTTLE_TAG_INT32;
 
 namespace yarp {
     namespace os {
-        class Bottle;
         class NetworkBase;
         namespace impl {
             class BottleImpl;
@@ -47,6 +46,9 @@ namespace yarp {
         }
     }
 }
+
+namespace yarp {
+namespace os {
 
 /**
  * \ingroup key_class
@@ -67,7 +69,7 @@ namespace yarp {
  * will eventually wash ashore somewhere else.  In the very early days
  * of YARP, that is what communication felt like.
  */
-class YARP_OS_API yarp::os::Bottle : public Portable, public Searchable
+class YARP_OS_API Bottle : public Portable, public Searchable
 {
 public:
     using Searchable::check;
@@ -443,5 +445,8 @@ private:
     yarp::os::impl::BottleImpl* const implementation;
 
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_BOTTLE_H

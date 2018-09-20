@@ -14,10 +14,7 @@
 #include <string>
 
 namespace yarp {
-    namespace os {
-        class ContactStyle;
-    }
-}
+namespace os {
 
 /**
  * \ingroup comm_class
@@ -26,7 +23,7 @@ namespace yarp {
  * All fields have sensible defaults.
  *
  */
-class YARP_OS_API yarp::os::ContactStyle {
+class YARP_OS_API ContactStyle {
 public:
     /**
      *
@@ -109,5 +106,8 @@ public:
      */
     explicit ContactStyle();
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_CONTACTSTYLE_H

@@ -14,10 +14,7 @@
 #include <yarp/os/ConnectionWriter.h>
 
 namespace yarp {
-    namespace os {
-        class DummyConnector;
-    }
-}
+namespace os {
 
 /**
  *
@@ -38,7 +35,8 @@ namespace yarp {
  * \author Freyr Magnusson
  *
  */
-class YARP_OS_API yarp::os::DummyConnector {
+class YARP_OS_API DummyConnector
+{
 public:
     /**
      * Default constructor. TextMode set to false.
@@ -89,5 +87,7 @@ private:
     void *implementation;
 };
 
+} // namespace os
+} // namespace yarp
 
 #endif // DUMMYCONNECTOR_H

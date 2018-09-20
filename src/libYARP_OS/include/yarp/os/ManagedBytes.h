@@ -15,16 +15,14 @@
 #include <yarp/os/Portable.h>
 
 namespace yarp {
-    namespace os {
-        class ManagedBytes;
-    }
-}
+namespace os {
 
 /**
  * An abstraction for a block of bytes, with optional
  * responsibility for allocating/destroying that block.
  */
-class YARP_OS_API yarp::os::ManagedBytes : public Portable {
+class YARP_OS_API ManagedBytes : public Portable
+{
 public:
     /**
      * Constructor.  No data present.
@@ -155,5 +153,8 @@ private:
     size_t use;
     bool use_set;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_MANAGEDBYTES_H

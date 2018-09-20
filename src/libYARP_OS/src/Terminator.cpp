@@ -7,26 +7,27 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <cstdio>
-#include <yarp/os/impl/SocketTwoWayStream.h>
-#include <yarp/os/impl/PortCommand.h>
-
-#include <yarp/os/Terminator.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Terminator.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/impl/PortCommand.h>
+#include <yarp/os/impl/SocketTwoWayStream.h>
+
+#include <cstdio>
 
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-bool Terminator::terminateByName(const char *name) {
+bool Terminator::terminateByName(const char* name)
+{
     if (name == nullptr)
         return false;
 
     std::string s(name);
 
-    if (s.find("/quit")==std::string::npos) {
+    if (s.find("/quit") == std::string::npos) {
         // name doesn't include /quit
         // old mechanism won't work, let's try new
         PortCommand pc('\0', "i");
@@ -58,7 +59,8 @@ bool Terminator::terminateByName(const char *name) {
 #define TermineeHelper Port
 #define HELPER(x) (*((TermineeHelper*)(x)))
 
-Terminee::Terminee(const char *name) {
+Terminee::Terminee(const char* name)
+{
     ok = false;
     implementation = nullptr;
     if (name == nullptr) {
@@ -75,7 +77,7 @@ Terminee::Terminee(const char *name) {
     }
 
     implementation = new TermineeHelper();
-    yAssert(implementation!=nullptr);
+    yAssert(implementation != nullptr);
     TermineeHelper& helper = HELPER(implementation);
     ok = helper.open(s.c_str());
     if (!ok) {
@@ -90,11 +92,12 @@ Terminee::Terminee(const char *name) {
 void Terminee::onStop()
 {
     TermineeHelper& helper = HELPER(implementation);
-	quit = true;
+    quit = true;
     helper.interrupt();
 }
 
-Terminee::~Terminee() {
+Terminee::~Terminee()
+{
     TermineeHelper& helper = HELPER(implementation);
     if (!quit) {
         Terminator::terminateByName(helper.getName().c_str());
@@ -102,21 +105,22 @@ Terminee::~Terminee() {
 
     stop();
 
-    if (implementation!=nullptr) {
+    if (implementation != nullptr) {
         delete &HELPER(implementation);
     }
 }
 
 
-void Terminee::run() {
+void Terminee::run()
+{
     TermineeHelper& helper = HELPER(implementation);
     while (!isStopping() && !quit) {
         Bottle cmd, reply;
         bool ok = helper.read(cmd, true);
-		if (!ok) {
-			continue;
-		}
-        if (cmd.get(0).asString()=="quit") {
+        if (!ok) {
+            continue;
+        }
+        if (cmd.get(0).asString() == "quit") {
             quit = true;
             reply.addVocab(yarp::os::createVocab('o', 'k'));
         } else {
@@ -124,4 +128,21 @@ void Terminee::run() {
         }
         helper.reply(reply);
     }
+}
+
+bool Terminee::waitQuit() const
+{
+    // not yet implemented
+    return false;
+}
+
+bool Terminee::mustQuit() const
+{
+    return quit;
+}
+
+
+bool Terminee::isOk() const
+{
+    return ok;
 }

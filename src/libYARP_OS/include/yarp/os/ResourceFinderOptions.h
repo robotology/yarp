@@ -13,22 +13,18 @@
 #include <string>
 
 namespace yarp {
-    namespace os {
-        class ResourceFinderOptions;
-    }
-}
+namespace os {
 
 /**
- *
  * These options are loosely based on
  *   http://wiki.icub.org/wiki/YARP_ResourceFinder
  *
  * For a User search location:
  *   YARP_CONFIG_HOME is only checked if the searchFlavor is ConfigLike
  *   YARP_DATA_HOME is only checked if the searchFlavor is DataLike
- *
  */
-class YARP_OS_API yarp::os::ResourceFinderOptions {
+class YARP_OS_API ResourceFinderOptions
+{
 public:
 
     enum SearchLocations {
@@ -85,5 +81,8 @@ public:
         return ResourceFinderOptions(ModuleDefault, All);
     }
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_RESOURCEFINDER_H

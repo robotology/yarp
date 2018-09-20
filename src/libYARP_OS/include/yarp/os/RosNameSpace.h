@@ -18,12 +18,10 @@
 #include <cstdio>
 
 namespace yarp {
-    namespace os {
-        class RosNameSpace;
-    }
-}
+namespace os {
 
-class YARP_OS_API yarp::os::RosNameSpace : public NameSpace, public Thread {
+class YARP_OS_API RosNameSpace : public NameSpace, public Thread
+{
 public:
     RosNameSpace(const Contact& contact);
 
@@ -105,5 +103,8 @@ private:
     Bottle pending;
     Mutex mutex;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_ROSNAMESPACE_H

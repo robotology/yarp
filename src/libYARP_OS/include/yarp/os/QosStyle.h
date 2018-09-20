@@ -13,21 +13,17 @@
 #include <string>
 
 namespace yarp {
-    namespace os {
-        class QosStyle;
-    }
-}
+namespace os {
 
 /**
  * \ingroup comm_class
  *
  * Preferences for the port's Quality of Service.
  * All fields have sensible defaults.
- *
  */
-class YARP_OS_API yarp::os::QosStyle {
+class YARP_OS_API QosStyle
+{
 public:
-
     /**
      * The PacketPriorityLevel defines the packets
      * quality of service (priority) levels
@@ -204,5 +200,8 @@ private:
     int packetPriority;
 
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_QOSSTYLE_H

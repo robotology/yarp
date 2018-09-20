@@ -13,15 +13,13 @@
 #include <yarp/os/Contact.h>
 
 namespace yarp {
-    namespace os {
-        class Name;
-    }
-}
+namespace os {
 
 /**
  * Simple abstraction for a YARP port name.
  */
-class YARP_OS_API yarp::os::Name {
+class YARP_OS_API Name
+{
 public:
 
     /**
@@ -53,5 +51,8 @@ public:
 private:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) txt;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_NAME_H

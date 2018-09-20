@@ -13,10 +13,7 @@
 #include <yarp/os/AbstractContactable.h>
 
 namespace yarp {
-    namespace os {
-        class RpcServer;
-    }
-}
+namespace os {
 
 /**
  * \ingroup comm_class
@@ -26,7 +23,8 @@ namespace yarp {
  * those connections.
  *
  */
-class YARP_OS_API yarp::os::RpcServer : public AbstractContactable {
+class YARP_OS_API RpcServer : public AbstractContactable
+{
 public:
     /**
      * Constructor.
@@ -71,5 +69,8 @@ private:
     RpcServer(const RpcServer& alt);
     const RpcServer& operator = (const RpcServer& alt);
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_RPCSERVER_H

@@ -6,11 +6,28 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/SystemClock.h>
 #include <yarp/conf/system.h>
+
+#include <yarp/os/SystemClock.h>
 
 #include <chrono>
 #include <thread>
+
+
+double yarp::os::SystemClock::now()
+{
+    return nowSystem();
+}
+
+void yarp::os::SystemClock::delay(double seconds)
+{
+    delaySystem(seconds);
+}
+
+bool yarp::os::SystemClock::isValid() const
+{
+    return true;
+}
 
 void yarp::os::SystemClock::delaySystem(double seconds)
 {

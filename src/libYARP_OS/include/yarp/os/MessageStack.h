@@ -13,17 +13,13 @@
 #include <string>
 
 namespace yarp {
-    namespace os {
-        class MessageStack;
-    }
-}
+namespace os {
 
 /**
- *
  * Maintain a stack of messages to send asynchronously.
- *
  */
-class YARP_OS_API yarp::os::MessageStack {
+class YARP_OS_API MessageStack
+{
 public:
     /**
      *
@@ -61,5 +57,8 @@ private:
     int max_threads;
     void *implementation;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_MESSAGESTACK_H
