@@ -9,15 +9,20 @@
 #ifndef YARP_OS_CONNECTIONSTATE_H
 #define YARP_OS_CONNECTIONSTATE_H
 
-#include <yarp/os/Route.h>
-#include <yarp/os/TwoWayStream.h>
-#include <yarp/os/Log.h>
-#include <yarp/os/Contactable.h>
-#include <yarp/os/Connection.h>
-#include <yarp/os/Portable.h>
+#include <yarp/os/api.h>
 
 namespace yarp {
 namespace os {
+
+// Forward declarations
+class Connection;
+class InputStream;
+class OutputStream;
+class Portable;
+class Route;
+class TwoWayStream;
+class Log;
+class Contactable;
 
 /**
  *

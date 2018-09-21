@@ -10,15 +10,17 @@
 #define YARP_OS_CONNECTION_H
 
 #include <yarp/os/api.h>
-#include <yarp/os/Bytes.h>
-#include <yarp/os/ConnectionReader.h>
-#include <yarp/os/PortReader.h>
-#include <yarp/os/PortWriter.h>
-#include <yarp/os/Property.h>
 #include <string>
 
 namespace yarp {
 namespace os {
+
+// Forward declarations
+class Bytes;
+class ConnectionReader;
+class PortWriter;
+class PortReader;
+class Property;
 
 /**
  * A controller for an individual connection.  A bundle of callbacks

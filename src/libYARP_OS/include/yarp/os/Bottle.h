@@ -37,18 +37,18 @@ YARP_DEPRECATED_INTERNAL_MSG("Use BOTTLE_TAG_FLOAT64 instead") // Since YARP 3.0
 constexpr std::int32_t BOTTLE_TAG_INT = BOTTLE_TAG_INT32;
 
 namespace yarp {
-    namespace os {
-        class NetworkBase;
-        namespace impl {
-            class BottleImpl;
-            class Storable;
-            class StoreList;
-        }
-    }
-}
-
-namespace yarp {
 namespace os {
+
+// Forward declarations
+class NetworkBase;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+namespace impl {
+class BottleImpl;
+class Storable;
+class StoreList;
+} // namespace impl
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+
 
 /**
  * \ingroup key_class
@@ -439,11 +439,12 @@ protected:
 
 private:
     friend class yarp::os::NetworkBase;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     friend class yarp::os::impl::Storable;
     friend class yarp::os::impl::StoreList;
     friend class yarp::os::impl::BottleImpl;
     yarp::os::impl::BottleImpl* const implementation;
-
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
 } // namespace os

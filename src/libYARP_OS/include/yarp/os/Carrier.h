@@ -10,16 +10,7 @@
 #ifndef YARP_OS_CARRIER_H
 #define YARP_OS_CARRIER_H
 
-#include <yarp/os/ShiftStream.h>
-#include <yarp/os/SizedWriter.h>
-#include <yarp/os/Bytes.h>
-#include <yarp/os/Contact.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/ConnectionReader.h>
 #include <yarp/os/Connection.h>
-#include <yarp/os/ConnectionState.h>
-#include <yarp/os/Face.h>
-
 
 #define YARP_ENACT_CONNECT 1
 #define YARP_ENACT_DISCONNECT 2
@@ -28,6 +19,16 @@
 
 namespace yarp {
 namespace os {
+
+// Forward declarations
+class SizedWriter;
+class Bytes;
+class Contact;
+class ContactStyle;
+class ConnectionReader;
+class ConnectionState;
+class Face;
+
 
 /**
  * \brief A base class for connection types (tcp, mcast, shmem, ...) which are
