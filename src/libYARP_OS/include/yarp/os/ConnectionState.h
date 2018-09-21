@@ -13,6 +13,8 @@
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Contactable.h>
+#include <yarp/os/Connection.h>
+#include <yarp/os/Portable.h>
 
 namespace yarp {
 namespace os {

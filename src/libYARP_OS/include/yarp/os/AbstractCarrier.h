@@ -13,11 +13,6 @@
 #include <yarp/os/Carrier.h>
 #include <yarp/os/NetType.h>
 
-
-// Defined in this file:
-namespace yarp { namespace os { class AbstractCarrier; }}
-
-
 namespace yarp {
 namespace os {
 

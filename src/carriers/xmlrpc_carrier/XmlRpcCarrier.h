@@ -10,6 +10,7 @@
 #define YARP_XMLRPC_CARRIER_XMLRPCCARRIER_H
 
 #include <yarp/os/Carrier.h>
+#include <yarp/os/ConnectionState.h>
 #include "XmlRpcStream.h"
 
 namespace yarp {

@@ -12,11 +12,6 @@
 #include <yarp/os/UnbufferedContactable.h>
 #include <yarp/os/Port.h>
 
-
-// Defined in this file:
-namespace yarp { namespace os { class AbstractContactable; }}
-
-
 namespace yarp {
 namespace os {
 

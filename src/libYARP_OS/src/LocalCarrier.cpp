@@ -9,6 +9,9 @@
 
 #include <yarp/os/impl/LocalCarrier.h>
 #include <yarp/os/Portable.h>
+#include <yarp/os/ConnectionState.h>
+#include <yarp/os/Route.h>
+#include <yarp/os/SizedWriter.h>
 #include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os;

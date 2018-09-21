@@ -6,7 +6,12 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include "PriorityCarrier.h"
+
 #include <yarp/os/Log.h>
+#include <yarp/os/ConnectionState.h>
+#include <yarp/os/ConnectionState.h>
+#include <yarp/os/Route.h>
 #include <string>
 
 #ifdef WITH_YARPMATH
@@ -15,17 +20,9 @@
 using namespace yarp::math;
 #endif
 
-#include "PriorityCarrier.h"
 
 
 using namespace yarp::os;
-
-#ifdef _MSC_VER
-#define safe_printf sprintf_s
-#else
-#define safe_printf snprintf
-#endif
-
 
 /**
  * Class PriorityCarrier
@@ -84,17 +81,17 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
     {
         std::string msg;
         char dummy[1024];
-        safe_printf(dummy, 1024, "\n%s:\n", sourceName.c_str());
+        std::snprintf(dummy, 1024, "\n%s:\n", sourceName.c_str());
         msg+= dummy;
-        safe_printf(dummy, 1024, "   stimulation: %.2f\n", stimulation);
+        std::snprintf(dummy, 1024, "   stimulation: %.2f\n", stimulation);
         msg+= dummy;
-        safe_printf(dummy, 1024, "   bias: %.2f\n", baias);
+        std::snprintf(dummy, 1024, "   bias: %.2f\n", baias);
         msg+= dummy;
-        safe_printf(dummy, 1024, "   tc: %.2fs\n", timeConstant);
+        std::snprintf(dummy, 1024, "   tc: %.2fs\n", timeConstant);
         msg+= dummy;
-        safe_printf(dummy, 1024, "   tr: %.2fs\n", timeResting);
+        std::snprintf(dummy, 1024, "   tr: %.2fs\n", timeResting);
         msg+= dummy;
-        safe_printf(dummy, 1024, "   ex: ");
+        std::snprintf(dummy, 1024, "   ex: ");
         msg+= dummy;
         for(size_t i=0; i<excitation.size(); i++)
         {
@@ -102,19 +99,19 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
             if(v.isList() && (v.asList()->size()>=2))
             {
                 Bottle* b = v.asList();
-                safe_printf(dummy, 1024, "(%s, %.2f) ",
+                std::snprintf(dummy, 1024, "(%s, %.2f) ",
                                 b->get(0).asString().c_str(),
                                 b->get(1).asFloat64()/10.0 );
                 msg+= dummy;
             }
         }
-        //safe_printf(dummy, 1024, "\n");
+        //std::snprintf(dummy, 1024, "\n");
         msg+= "\n";
-        safe_printf(dummy, 1024, "   virtual: %s\n",
+        std::snprintf(dummy, 1024, "   virtual: %s\n",
                             (isVirtual)?"yes":"no");
         msg+= dummy;
         double rate = options.check("rate", Value(10)).asInt32() / 1000.0;
-        safe_printf(dummy, 1024, "   db.rate: %fs\n", rate);
+        std::snprintf(dummy, 1024, "   db.rate: %fs\n", rate);
         msg+= dummy;
         yInfo("%s", msg.c_str());
         debugger.stop();
