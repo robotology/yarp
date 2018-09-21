@@ -65,6 +65,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/NetworkClock.h
                  include/yarp/os/Nodes.h
                  include/yarp/os/Node.h
+                 include/yarp/os/NullConnection.h
                  include/yarp/os/NullConnectionReader.h
                  include/yarp/os/NullConnectionWriter.h
                  include/yarp/os/Os.h
@@ -219,6 +220,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Bytes.cpp
                  src/Carrier.cpp
                  src/Carriers.cpp
+                 src/Connection.cpp
                  src/ConnectionReader.cpp
                  src/ConnectionRecorder.cpp
                  src/ConnectionWriter.cpp
@@ -267,6 +269,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/NetworkClock.cpp
                  src/Nodes.cpp
                  src/Node.cpp
+                 src/NullConnection.cpp
                  src/NullConnectionReader.cpp
                  src/NullConnectionWriter.cpp
                  src/Os.cpp

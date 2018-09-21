@@ -13,7 +13,7 @@
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/InputProtocol.h>
 #include <yarp/os/ConnectionState.h>
-
+#include <yarp/os/NullConnection.h>
 #include <yarp/os/Carrier.h>
 #include <yarp/os/ShiftStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
