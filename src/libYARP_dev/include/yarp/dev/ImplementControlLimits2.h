@@ -10,7 +10,7 @@
 #define YARP_DEV_ICONTROLLIMITS2IMPL_H
 
 
-#include <yarp/dev/IControlLimitsImpl.h>
+#include <yarp/dev/ImplementControlLimits.h>
 #include <yarp/dev/api.h>
 #include <yarp/os/Log.h>
 
