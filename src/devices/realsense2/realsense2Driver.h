@@ -68,6 +68,8 @@ namespace yarp
  *   Parameters used by this device are:
  * | Parameter name               | SubParameter        | Type                |  Read / write   | Units          | Default Value | Required                         | Description                                                                            | Notes                                                                 |
  * |:----------------------------:|:-------------------:|:-------------------:|:---------------:|:--------------:|:-------------:|:--------------------------------:|:--------------------------------------------------------------------------------------:|:---------------------------------------------------------------------:|
+ * |  stereoMode                  |      -              | bool                |  Read / write   |                |   false       |  No(see notes)                   | Flag for using the realsense as stereo camera                                          |  This option is to use it with yarp::dev::ServerGrabber as network wrapper. The stereo images provided are raw images(yarp::sig::PixelMono) and note that not all the realsense devices have the stereo streams. |
+ * |  verbose                     |      -              | bool                |  Read / write   |                |   false       |  No                              | Flag for enabling debug prints                                                         |                                                                       |
  * |  SETTINGS                    |      -              | group               |  Read / write   | -              |   -           |  Yes                             | Initial setting of the device.                                                         |  Properties must be read/writable in order for setting to work        |
  * |                              |  rgbResolution      | int, int            |  Read / write   | pixels         |   -           |  Yes                             | Size of rgb image in pixels                                                            |  2 values expected as height, width                                   |
  * |                              |  depthResolution    | int, int            |  Read / write   | pixels         |   -           |  Yes                             | Size of depth image in pixels                                                          |  Values are height, width                                             |
@@ -78,7 +80,7 @@ namespace yarp
  * |  HW_DESCRIPTION              |      -              |  group              |                 | -              |   -           |  Yes                             | Hardware description of device property.                                               |  Read only property. Setting will be disabled                         |
  * |                              |  clipPlanes         | double, double      |  Read / write   | meters         |   -           |  No                              | Minimum and maximum distance at which an object is seen by the depth sensor            |  parameter introduced mainly for simulated sensors, it can be used to set the clip planes if Openni gives wrong values |
  *
- * Configuration file using .ini format, using subdevice keyword.
+ * Configuration file using .ini format, for using as RGBD device:
  *
  * \code{.unparsed}
 
@@ -96,6 +98,24 @@ needAlignment   true
 [HW_DESCRIPTION]
 clipPlanes (0.2 10.0)
  *
+ * \endcode
+ *
+ * Configuration file using .ini format, for using as stereo camera:
+ * \code{.unparsed}
+device       grabberDual
+subdevice    realsense2
+name         /stereoCamera
+capabilities RAW
+stereoMode   true
+
+[SETTINGS]
+rgbResolution   (640 480)
+depthResolution   (640 480)
+framerate       30
+enableEmitter   false
+
+[HW_DESCRIPTION]
+clipPlanes (0.2 10.0)
  * \endcode
  */
 
