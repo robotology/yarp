@@ -21,7 +21,8 @@ ImplementPositionControl::ImplementPositionControl(yarp::dev::IPositionControlRa
     iPosition(y),
     helper(nullptr),
     intBuffManager(nullptr),
-    doubleBuffManager(nullptr)
+    doubleBuffManager(nullptr),
+    boolBuffManager(nullptr)
 {;}
 
 
