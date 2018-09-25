@@ -28,13 +28,20 @@ Latest release can be downloaded from here:
 
 __Installers__:
 
+\warning Unfortunatly, no Windows binary installers are available for YARP 3.1.0 at the moment.
+\warning If you just need to install the YARP dependencies to compile YARP from source, you can
+use the installers for YARP 3.0.0 linked in the following, but remember to disable the installation
+of yarp itself as documented in \ref install_yarp_windows .
+
+\warning
 |       |             MSVC 2015/2017        |
 |-------|:---------------------------------:|
-| Win32 | [yarp_3.1.0_v14_x86_1.exe]        |
-| x64   | [yarp_3.1.0_v14_x86_amd64_1.exe]  |
+| Win32 | [yarp_3.0.1_v14_x86_1.exe]        |
+| x64   | [yarp_3.0.1_v14_x86_amd64_1.exe]  |
 
-[yarp_3.1.0_v14_x86_1.exe]: https://github.com/robotology/yarp/releases/download/v3.1.0/yarp_3.1.0_v14_x86_1.exe
-[yarp_3.1.0_v14_x86_amd64_1.exe]: https://github.com/robotology/yarp/releases/download/v3.1.0/yarp_3.1.0_v14_x86_amd64_1.exe
+[yarp_3.0.1_v14_x86_1.exe]: https://github.com/robotology/yarp/releases/download/v3.0.1/yarp_3.0.1_v14_x86_1.exe
+[yarp_3.0.1_v14_x86_amd64_1.exe]: https://github.com/robotology/yarp/releases/download/v3.0.1/yarp_3.0.1_v14_x86_amd64_1.exe
+
 
 
 \subsection download_linux Linux (Debian/Ubuntu)
