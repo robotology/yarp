@@ -12,10 +12,18 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Log.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <vector>
 
 namespace yarp {
     namespace dev {
         class ILocalization2D;
+
+        enum LocalizationStatusEnum
+        {
+            localization_status_not_yet_localized = yarp::os::createVocab('l', 'o', 'c', 'n'),
+            localization_status_localized_ok      = yarp::os::createVocab('l', 'o', 'c', 'y'),
+            localization_status_error             = yarp::os::createVocab('e', 'r', 'r')
+        };
     }
 }
 
@@ -31,6 +39,18 @@ public:
      * Destructor.
      */
     virtual ~ILocalization2D() {}
+
+    /**
+    * Gets the current status of the localization task.
+    * @return true/false
+    */
+    virtual bool   getLocalizationStatus(LocalizationStatusEnum& status) = 0;
+
+    /**
+    * Gets a set of pose estimates computed by the localization algorithm.
+    * @return true/false
+    */
+    virtual bool   getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses) = 0;
 
     /**
     * Gets the current position of the robot w.r.t world reference frame
@@ -52,16 +72,18 @@ constexpr yarp::conf::vocab32_t VOCAB_INAVIGATION            = yarp::os::createV
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GOTOABS            = yarp::os::createVocab('s','a','b','s');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GOTOREL            = yarp::os::createVocab('s','r','e','l');
 
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCATION       = yarp::os::createVocab('g','l','o','c');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCATION_LIST  = yarp::os::createVocab('l','i','s','t');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_ABS_TARGET     = yarp::os::createVocab('g','a','b','s');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_REL_TARGET     = yarp::os::createVocab('g','r','e','l');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_NAME_TARGET    = yarp::os::createVocab('g','n','a','m');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_CURRENT_POS    = yarp::os::createVocab('g','p','o','s');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_SET_INITIAL_POS    = yarp::os::createVocab('i','p','o','s');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_STATUS         = yarp::os::createVocab('g','s','t','s');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_CLEAR              = yarp::os::createVocab('c','l','r','l');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_DELETE             = yarp::os::createVocab('d','e','l','l');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_STORE_ABS          = yarp::os::createVocab('s','t','o','a');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCATION          = yarp::os::createVocab('g','l','o','c');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCATION_LIST     = yarp::os::createVocab('l','i','s','t');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_ABS_TARGET        = yarp::os::createVocab('g','a','b','s');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_REL_TARGET        = yarp::os::createVocab('g','r','e','l');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_NAME_TARGET       = yarp::os::createVocab('g','n','a','m');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_CURRENT_POS       = yarp::os::createVocab('g','p','o','s');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_SET_INITIAL_POS       = yarp::os::createVocab('i','p','o','s');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_NAVIGATION_STATUS = yarp::os::createVocab('n','s','t','s');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCALIZER_STATUS  = yarp::os::createVocab('l','s','t','s');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCALIZER_POSES   = yarp::os::createVocab('l','p','s','s');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_CLEAR                 = yarp::os::createVocab('c','l','r','l');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_DELETE                = yarp::os::createVocab('d','e','l','l');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_STORE_ABS             = yarp::os::createVocab('s','t','o','a');
 
 #endif // YARP_DEV_ILOCALIZATION2D_H

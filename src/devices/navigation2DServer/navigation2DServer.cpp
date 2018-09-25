@@ -207,7 +207,7 @@ bool navigation2DServer::read(yarp::os::ConnectionReader& connection)
                     reply.addVocab(VOCAB_ERR);
                 }
             }
-            else if (request == VOCAB_NAV_GET_STATUS)
+            else if (request == VOCAB_NAV_GET_NAVIGATION_STATUS)
             {
                 yarp::dev::NavigationStatusEnum nav_status = yarp::dev::navigation_status_error;
                 iNav_ctrl->getNavigationStatus(nav_status);
