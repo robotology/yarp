@@ -84,10 +84,10 @@ public:
      */
     bool parseParam(const yarp::os::Searchable& config, std::vector<RGBDParam *> &params);
 
-    yarp::sig::IntrinsicParams         depthIntrinsic;
-    yarp::sig::IntrinsicParams         rgbIntrinsic;
-    yarp::sig::Matrix       transformationMatrix;
-    bool                    isOptionalExtrinsic;
+    yarp::sig::IntrinsicParams depthIntrinsic;
+    yarp::sig::IntrinsicParams rgbIntrinsic;
+    yarp::sig::Matrix transformationMatrix;
+    bool isOptionalExtrinsic;
 };
 
 } // dev

@@ -22,10 +22,10 @@ IntrinsicParams::IntrinsicParams(const yarp::os::Property &intrinsic, bool isOpt
 
 void IntrinsicParams::toProperty(yarp::os::Property& intrinsic) const
 {
-    intrinsic.put("focalLengthX",       focalLengthX);
-    intrinsic.put("focalLengthY",       focalLengthY);
-    intrinsic.put("principalPointX",    principalPointX);
-    intrinsic.put("principalPointY",    principalPointY);
+    intrinsic.put("focalLengthX", focalLengthX);
+    intrinsic.put("focalLengthY", focalLengthY);
+    intrinsic.put("principalPointX", principalPointX);
+    intrinsic.put("principalPointY", principalPointY);
     intrinsic.put("stamp", yarp::os::Time::now());
 
     if (distortionModel.type != YarpDistortion::YARP_PLUM_BOB) {
