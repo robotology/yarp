@@ -243,7 +243,7 @@ bool FrameGrabberControls_Parser::respond(const yarp::os::Bottle& cmd, yarp::os:
 
     if(!fgCtrl)
     {
-        yError() << " Selected camera device has no IFrameGrabberControl2 interface";
+        yError() << " Selected camera device has no IFrameGrabberControl interface";
         return false;
     }
 

@@ -385,22 +385,6 @@ bool RGBDSensorWrapper::openAndAttachSubDevice(Searchable& prop)
     if(!attach(subDeviceOwned))
         return false;
 
-    if(!rgbdParser.configure(sensor_p) || !rgbdParser.configure(fgCtrl))
-    {
-        yError() << "RGBD wrapper: error configuring interfaces for parsers";
-        return false;
-    }
-
-    /*
-    bool conf = rgbParser.configure(rgbVis_p);
-    conf &= depthParser.configure(depthVis_p);
-
-    if(!conf)
-    {
-        yError() << "RGBD wrapper: error configuring interfaces for parsers";
-        return false;
-    }
-    */
     return true;
 }
 
@@ -577,14 +561,14 @@ bool RGBDSensorWrapper::attach(yarp::dev::IRGBDSensor *s)
         return false;
     }
     sensor_p = s;
-    if(!rgbdParser.configure(sensor_p) )
+    if(!rgbdParser.configure(sensor_p))
     {
         yError() << "RGBD wrapper: error configuring interfaces for parsers";
         return false;
     }
     if (fgCtrl)
     {
-        if(!rgbdParser.configure(fgCtrl) )
+        if(!rgbdParser.configure(fgCtrl))
         {
             yError() << "RGBD wrapper: error configuring interfaces for parsers";
             return false;
@@ -609,11 +593,17 @@ bool RGBDSensorWrapper::attach(PolyDriver* poly)
         return false;
     }
 
-    if(!rgbdParser.configure(sensor_p) || !rgbdParser.configure(fgCtrl))
+    if(!rgbdParser.configure(sensor_p))
     {
-        yError() << "RGBD wrapper: error configuring interfaces for parsers";
+        yError() << "RGBD wrapper: error configuring IRGBD interface";
         return false;
     }
+
+    if (!rgbdParser.configure(fgCtrl))
+    {
+        yWarning() <<"RGBDWrapper: interface IFrameGrabberControl not implemented by the device";
+    }
+
     PeriodicThread::setPeriod(period);
     return PeriodicThread::start();
 }

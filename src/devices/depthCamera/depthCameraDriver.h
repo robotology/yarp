@@ -59,8 +59,9 @@ namespace yarp
 /**
  *  @ingroup dev_impl_media
  *
+ * @brief `depthCamera` : YARP driver for OpenNI2 compatible devices.
  *
- * This device is a YARP plugin for OpenNI2 compatible devices, and exposes the IRGBDSensor and IFrameGrabberControls
+ * This device driver exposes the IRGBDSensor and IFrameGrabberControls
  * interfaces to read the images and operate on the available settings.
  *
  * See the documentation for more details about each interface.
@@ -95,6 +96,10 @@ namespace yarp
  * a 4x4 rototranslation matrix.
  *
  * \warning: whenever more then one value is required by the setting, the values must be in parenthesys!
+ *
+ * | YARP device name |
+ * |:-----------------:|
+ * | `depthCamera` |
  *
  *   Parameters used by this device are:
  * | Parameter name               | SubParameter        | Type                |  Read / write   | Units          | Default Value | Required                         | Description                                                                            | Notes                                                                 |

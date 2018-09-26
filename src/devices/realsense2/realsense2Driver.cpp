@@ -803,7 +803,12 @@ bool realsense2Driver::setDepthFOV(double horizontalFov, double verticalFov)
 
 bool realsense2Driver::setDepthAccuracy(double accuracy)
 {
-    return setOption(RS2_OPTION_ACCURACY, m_depth_sensor, accuracy);;
+    std::lock_guard<std::mutex> guard(m_mutex);
+    bool ok = setOption(RS2_OPTION_DEPTH_UNITS, m_depth_sensor, accuracy);
+    if (ok) {
+        m_scale = accuracy;
+    }
+    return ok;
 }
 
 bool realsense2Driver::getRgbFOV(double &horizontalFov, double &verticalFov)
@@ -903,7 +908,7 @@ bool realsense2Driver::getDepthIntrinsicParam(Property& intrinsic)
 double realsense2Driver::getDepthAccuracy()
 {
     float accuracy = 0.0;
-    if (getOption(RS2_OPTION_ACCURACY, m_depth_sensor, accuracy))
+    if (getOption(RS2_OPTION_DEPTH_UNITS, m_depth_sensor, accuracy))
     {
         return accuracy;
     }
