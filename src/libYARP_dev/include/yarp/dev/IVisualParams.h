@@ -249,14 +249,14 @@ public:
     virtual bool getDepthIntrinsicParam(yarp::os::Property &intrinsic) = 0;
 
     /**
-     * Get the accuracy of the depth measure in [meter]
-     * @return the accuracy of the sensor in meters.
+     * Get the minimum detectable variation in distance [meter]
+     * @return the sensor resolution in meters.
      */
     virtual double getDepthAccuracy() = 0;
 
     /**
-     * Set the accuracy of the depth measure in [meter] when possible
-     * @param the accuracy of the sensor in meters.
+     * Set the minimum detectable variation in distance [meter] when possible
+     * @param the desired resolution in meters.
      * @return true on success
      */
     virtual bool setDepthAccuracy(double accuracy) = 0;
