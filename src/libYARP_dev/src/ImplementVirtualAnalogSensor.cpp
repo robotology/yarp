@@ -13,7 +13,6 @@
 
 using namespace yarp::dev;
 #define JOINTIDCHECK if (ch >= castToMapper(helper)->axes()){yError("channel id out of bound"); return false;}
-#define PJOINTIDCHECK(j) if (ch >= castToMapper(helper)->axes()){yError("channel id out of bound"); return false;}
 
 ImplementVirtualAnalogSensor::ImplementVirtualAnalogSensor(IVirtualAnalogSensorRaw *virt)
 {

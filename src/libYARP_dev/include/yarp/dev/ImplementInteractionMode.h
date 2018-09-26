@@ -43,8 +43,8 @@ protected:
     yarp::dev::IInteractionModeRaw *iInteraction;
     void    *helper;                                // class controlBoardHelper, to handle axis map and conversion unit, where needed
 
-    yarp::dev::impl::FixedSizeBuffersManager<yarp::dev::InteractionModeEnum> *imodeBuffManager; //Buffer manager to handle temporary buffer of type yarp::dev::InteractionModeEnum
-    yarp::dev::impl::FixedSizeBuffersManager<int> *intBuffManager; //Buffer manager to handle temporary buffer of type int
+    yarp::dev::impl::FixedSizeBuffersManager<yarp::dev::InteractionModeEnum> *imodeBuffManager; //This Buffer Manager handles temporary buffers of type yarp::dev::InteractionModeEnum
+    yarp::dev::impl::FixedSizeBuffersManager<int> *intBuffManager; //This Buffer Manager handles temporary buffers  of type int
     /**
      * Initialize the internal data and alloc memory, smaller version.
      * @param size is the number of controlled axes the driver deals with.

@@ -79,7 +79,7 @@ public:
  * @brief A manager of fixed size buffers in multi-thread environment.
  *
  * When it is created it allocates @c initialNumOfBuffers buffers of size
- * @c zizeOfBuffers.
+ * @c sizeOfBuffers.
  * The user can get a buffer, uses and releases it when he/she doesn't need
  * anymore.
  * If all buffers are busy and a new buffer is required, than the manager
@@ -92,9 +92,9 @@ public:
     /**
      * @brief Constructor.
      *
-     * Allocate @c initialNumOfBuffers buffers of size zizeOfBuffers.
+     * Allocate @c initialNumOfBuffers buffers of size sizeOfBuffers.
      */
-    explicit FixedSizeBuffersManager(uint32_t zizeOfBuffers, std::size_t initialNumOfBuffers = 3);
+    explicit FixedSizeBuffersManager(uint32_t sizeOfBuffers, std::size_t initialNumOfBuffers = 3);
 
     /**
      * @brief Destructor

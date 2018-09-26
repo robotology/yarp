@@ -45,7 +45,7 @@ T yarp::dev::impl::Buffer<T>::getValue(uint32_t index)
     if (index < numOfElements) {
         return dataPtr[index];
     } else {
-        throw std::out_of_range("yarp::dev::impl::Buffer::getValue(index): index is out f range");
+        throw std::out_of_range("yarp::dev::impl::Buffer::getValue(index): index is out of range");
     }
 }
 
@@ -56,7 +56,7 @@ void yarp::dev::impl::Buffer<T>::setValue(uint32_t index, T value)
     if (index < numOfElements) {
         dataPtr[index] = value;
     } else {
-        throw std::out_of_range("yarp::dev::impl::Buffer::setValue(index, value): index is out f range");
+        throw std::out_of_range("yarp::dev::impl::Buffer::setValue(index, value): index is out of range");
     }
 }
 
@@ -87,7 +87,7 @@ template <typename T>
 yarp::dev::impl::Buffer<T> yarp::dev::impl::FixedSizeBuffersManager<T>::getBuffer(void)
 {
     m_mutex.lock();
-    //get fisrt  free buffer
+    //get first free buffer
     Buffer<T> buffer;
     uint32_t i;
     T* dataPtr;
@@ -107,20 +107,20 @@ yarp::dev::impl::Buffer<T> yarp::dev::impl::FixedSizeBuffersManager<T>::getBuffe
     }
 
     //if all buffers are used, I create new one and return it
-    if (needNewBuff) {
-        //         for(std::size_t x=0; x<m_buffers.size(); x++)
-        //             yError() << "buff["<< x<< "]: addr = " << m_buffers[x] << "; it is used?" << m_usedBuffers[x] ;
-
+    if (needNewBuff)
+    {
         dataPtr = new T[m_numElem];
         if (nullptr == dataPtr) {
-            //I should not never been here because if no more memory is available I should be in "catch" branch
+            //I should not never be here because, if no more memory is available, I should be in "catch" branch
             yError() << "FixedSizeBuffersManager::getBuffer() no more memory!!";
         }
         m_buffers.push_back(dataPtr);
         m_usedBuffers.push_back(true);
         // yError() << "I need to create a new buffer. Now size is " << m_buffers.size() << "pointer is " << dataPtr;
         i = m_buffers.size() - 1;
-    } else {
+    }
+    else
+    {
         //use the first free buffer
         dataPtr = m_buffers[i];
         m_usedBuffers[i] = true;
