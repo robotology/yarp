@@ -9,6 +9,7 @@
 #ifndef YARP_DEV_IVISUALPARAMS_H
 #define YARP_DEV_IVISUALPARAMS_H
 
+#include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Property.h>
 #include <yarp/sig/Image.h>
