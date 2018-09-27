@@ -41,17 +41,14 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(multipleanalogsensorsserver)
   add_subdirectory(multipleanalogsensorsclient)
   add_subdirectory(multipleanalogsensorsremapper)
+  add_subdirectory(transformClient)
+  add_subdirectory(transformServer)
+  add_subdirectory(localization2DClient)
+  add_subdirectory(map2DClient)
+  add_subdirectory(map2DServer)
+  add_subdirectory(navigation2DClient)
   add_subdirectory(navigation2DServer)
-
-  if(CREATE_LIB_MATH)
-    add_subdirectory(transformClient)
-    add_subdirectory(transformServer)
-    add_subdirectory(localization2DClient)
-    add_subdirectory(map2DClient)
-    add_subdirectory(map2DServer)
-    add_subdirectory(navigation2DClient)
-    add_subdirectory(Rangefinder2DClient)
-  endif()
+  add_subdirectory(Rangefinder2DClient)
 
   # We can also suck in other device libraries built the same way.
   # We seek an ExternalModules.cmake file either in the conf directory
