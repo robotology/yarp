@@ -7,6 +7,7 @@ yarp_prepare_plugin(navigation2DServer
                     CATEGORY device
                     TYPE navigation2DServer
                     INCLUDE navigation2DServer.h
+                    DEPENDS "YARP_HAS_MATH_LIB"
                     DEFAULT ON)
 
 if(NOT SKIP_navigation2DServer)
