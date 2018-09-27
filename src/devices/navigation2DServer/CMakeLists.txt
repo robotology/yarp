@@ -1,23 +1,27 @@
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
+
 yarp_prepare_plugin(navigation2DServer
                     CATEGORY device
                     TYPE navigation2DServer
                     INCLUDE navigation2DServer.h
+                    DEPENDS "YARP_HAS_MATH_LIB"
                     DEFAULT ON)
 
 if(NOT SKIP_navigation2DServer)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-include_directories(${ICUB_INCLUDE_DIRS})
-
 yarp_add_plugin(yarp_navigation2DServer navigation2DServer.h
-                                   navigation2DServer.cpp
-                                  ${ROS_MSG})
-                              
+                                        navigation2DServer.cpp)
+
 target_link_libraries(yarp_navigation2DServer YARP::YARP_OS
-                                   YARP::YARP_sig
-                                   YARP::YARP_dev
-                                   YARP::YARP_math
-                                   YARP::YARP_rosmsg)
+                                              YARP::YARP_sig
+                                              YARP::YARP_dev
+                                              YARP::YARP_math
+                                              YARP::YARP_rosmsg)
 
 yarp_install(TARGETS yarp_navigation2DServer
            EXPORT YARP_${YARP_PLUGIN_MASTER}
