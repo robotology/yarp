@@ -278,11 +278,7 @@ protected:
 
     void stopThread();
 
-    void split(const yarp::sig::Image& inputImage, yarp::sig::Image& _img, yarp::sig::Image& _img2);
-
     void setupFlexImage(const yarp::sig::Image& img, yarp::sig::FlexImage& flex_i);
-
-    void stitch(yarp::sig::FlexImage& flex_i,const yarp::sig::Image& _img,const yarp::sig::Image& _img2);
 
     void shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest);
 
