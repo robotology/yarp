@@ -9,10 +9,11 @@ project(YARP_sig)
 
 set(YARP_sig_HDRS include/yarp/sig/all.h
                   include/yarp/sig/api.h
+                  include/yarp/sig/Image.h
                   include/yarp/sig/ImageDraw.h
                   include/yarp/sig/ImageFile.h
-                  include/yarp/sig/Image.h
                   include/yarp/sig/ImageNetworkHeader.h
+                  include/yarp/sig/ImageUtils.h
                   include/yarp/sig/Matrix.h
                   include/yarp/sig/PointCloud.h
                   include/yarp/sig/PointCloudBase.h
@@ -32,6 +33,7 @@ set(YARP_sig_IMPL_HDRS include/yarp/sig/impl/DeBayer.h
 set(YARP_sig_SRCS src/ImageCopy.cpp
                   src/Image.cpp
                   src/ImageFile.cpp
+                  src/ImageUtils.cpp
                   src/IplImage.cpp
                   src/Matrix.cpp
                   src/PointCloudBase.cpp

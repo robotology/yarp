@@ -1,0 +1,113 @@
+/*
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+#include <yarp/sig/ImageUtils.h>
+#include <cstring>
+
+using namespace yarp::sig;
+
+static bool checkImages(const Image& bigImg, const Image& smallImg1, const Image& smallImg2)
+{
+    return bigImg.getPixelCode() == smallImg1.getPixelCode() &&
+           bigImg.getPixelCode() == smallImg2.getPixelCode() &&
+           smallImg1.width()  == smallImg2.width() &&
+           smallImg1.height() == smallImg2.height() &&
+           bigImg.getRawImageSize() == 2*smallImg1.getRawImageSize();
+
+}
+
+
+bool utils::vertSplit(const Image& inImg, Image& outImgL, Image& outImgR)
+{
+    outImgL.resize(inImg.width()/2, inImg.height());
+    outImgR.resize(inImg.width()/2, inImg.height());
+
+    if (!checkImages(inImg, outImgL, outImgR)) {
+        return false;
+    }
+
+    size_t inHeight = inImg.height();
+    size_t singleImage_rowSizeByte = outImgL.getRowSize();
+    unsigned char *pixelLeft = outImgL.getRawImage();
+    unsigned char *pixelRight = outImgR.getRawImage();
+    unsigned char *pixelInput = inImg.getRawImage();
+
+    for(size_t h=0; h<inHeight; h++)
+    {
+        // Copy the memory
+        memcpy(pixelLeft  + h*singleImage_rowSizeByte, pixelInput, singleImage_rowSizeByte);
+        memcpy(pixelRight + h*singleImage_rowSizeByte, pixelInput+=singleImage_rowSizeByte, singleImage_rowSizeByte);
+
+        // Update the pointers
+        pixelInput+= singleImage_rowSizeByte;
+    }
+    return true;
+}
+
+bool utils::horzSplit(const Image& inImg, Image& outImgUp, Image& outImgDown)
+{
+    outImgUp.resize(inImg.width(), inImg.height()/2);
+    outImgDown.resize(inImg.width(), inImg.height()/2);
+
+    if (!checkImages(inImg, outImgUp, outImgDown)) {
+        return false;
+    }
+    // Copy the memory
+    size_t imgSize = outImgUp.getRawImageSize();
+    memcpy(outImgUp.getRawImage(), inImg.getRawImage(), imgSize);
+    memcpy(outImgDown.getRawImage(), inImg.getRawImage() + imgSize, imgSize);
+    return true;
+}
+
+
+
+bool utils::horzConcat(const Image& inImgL, const Image& inImgR, Image& outImg)
+{
+    outImg.resize(inImgL.width()*2, inImgL.height());
+
+    if (!checkImages(outImg, inImgL, inImgR)) {
+        return false;
+    }
+
+    size_t singleImage_rowSizeByte  = inImgL.getRowSize();
+    unsigned char * pixelLeft = inImgL.getRawImage();
+    unsigned char * pixelRight = inImgR.getRawImage();
+    unsigned char * pixelOutLeft = outImg.getRawImage();
+    unsigned char * pixelOutRight = outImg.getRawImage() + singleImage_rowSizeByte;
+
+    size_t height = inImgL.height();
+
+    for(size_t h=0; h<height; h++)
+    {
+        // Copy the memory
+        memcpy(pixelOutLeft, pixelLeft, singleImage_rowSizeByte);
+        memcpy(pixelOutRight, pixelRight, singleImage_rowSizeByte);
+
+        // Update the pointers
+        pixelOutLeft  += 2*singleImage_rowSizeByte;
+        pixelOutRight += 2*singleImage_rowSizeByte;
+        pixelLeft     += singleImage_rowSizeByte;
+        pixelRight    += singleImage_rowSizeByte;
+    }
+    return true;
+}
+
+bool utils::vertConcat(const Image& inImgUp, const Image& inImgDown, Image& outImg)
+{
+    outImg.resize(inImgUp.width(), inImgUp.height()*2);
+
+    if (!checkImages(outImg, inImgUp, inImgDown)) {
+        return false;
+    }
+
+    // Copy the memory
+    size_t imgSize = inImgUp.getRawImageSize();
+    memcpy(outImg.getRawImage(), inImgUp.getRawImage(), imgSize);
+    memcpy(outImg.getRawImage() + imgSize, inImgDown.getRawImage(), imgSize);
+    return true;
+}
