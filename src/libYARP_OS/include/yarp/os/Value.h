@@ -11,11 +11,13 @@
 #define YARP_OS_VALUE_H
 
 #include <yarp/conf/numeric.h>
-#include <yarp/os/Searchable.h>
-#include <yarp/os/Portable.h>
+
 #include <yarp/os/Bottle.h>
-#include <string>
+#include <yarp/os/Portable.h>
+#include <yarp/os/Searchable.h>
+
 #include <cstddef> // defines size_t
+#include <string>
 
 namespace yarp {
 namespace os {
@@ -25,8 +27,8 @@ namespace impl {
 class Storable;
 }
 #endif // DOXYGEN_SHOULD_SKIP_THIS
-}
-}
+} // namespace os
+} // namespace yarp
 
 namespace yarp {
 namespace os {
@@ -41,8 +43,7 @@ namespace os {
  * find anything in them unless they are actually a list.
  *
  */
-class YARP_OS_API Value : public Portable,
-                          public Searchable
+class YARP_OS_API Value : public Portable, public Searchable
 {
 public:
     using Searchable::check;
@@ -80,7 +81,7 @@ public:
      * @param data the data to copy
      * @param length the size of the data in bytes
      */
-    Value(void *data, int length);
+    Value(void* data, int length);
 
     /**
      * Copy constructor.
@@ -112,7 +113,10 @@ public:
      * @warning Unsafe, sizeof(int) is platform dependent. Use isInt32 instead.
      */
     YARP_DEPRECATED_INTERNAL_MSG("Use isInt32 instead") // Since YARP 3.0.0
-    inline virtual bool isInt() const final { return isInt32(); }
+    inline virtual bool isInt() const final
+    {
+        return isInt32();
+    }
 
     /**
      * Checks if value is a 8-bit integer. If so, asInt8() will
@@ -149,7 +153,10 @@ public:
      * @warning Unsafe, sizeof(double) is platform dependent. Use isFloat64 instead.
      */
     YARP_DEPRECATED_INTERNAL_MSG("Use isFloat64 instead") // Since YARP 3.0.0
-    inline virtual bool isDouble() const final { return isFloat64(); }
+    inline virtual bool isDouble() const final
+    {
+        return isFloat64();
+    }
 
     /**
      * Checks if value is a 32-bit floating point number.
@@ -214,7 +221,10 @@ public:
      * @warning Unsafe, sizeof(int) is platform dependent. Use asInt32 instead.
      */
     YARP_DEPRECATED_INTERNAL_MSG("Use asInt32 instead") // Since YARP 3.0.0
-    inline virtual int asInt() const final { return static_cast<int>(asInt32()); }
+    inline virtual int asInt() const final
+    {
+        return static_cast<int>(asInt32());
+    }
 
     /**
      * Get 8-bit integer value.
@@ -268,7 +278,10 @@ public:
      * @warning Unsafe, sizeof(double) is platform dependent. Use asFloat64 instead.
      */
     YARP_DEPRECATED_INTERNAL_MSG("Use asFloat64 instead") // Since YARP 3.0.0
-    inline virtual double asDouble() const final { return static_cast<double>(asFloat64()); }
+    inline virtual double asDouble() const final
+    {
+        return static_cast<double>(asFloat64());
+    }
 
     /**
      * Get 32-bit floating point value.
@@ -310,28 +323,28 @@ public:
      * @return pointer to list if value is indeed a list.
      * Otherwise returns nullptr
      */
-    virtual Bottle *asList() const;
+    virtual Bottle* asList() const;
 
     /**
      * Get dictionary (hash table) value.
      * @return pointer to dictionary if value is indeed of the right type.
      * Otherwise returns nullptr
      */
-    virtual Property *asDict() const;
+    virtual Property* asDict() const;
 
     /**
      * Get dictionary or list value
      * @return pointer to dictionary or list value if present.
      * Otherwise returns nullptr
      */
-    virtual Searchable *asSearchable() const;
+    virtual Searchable* asSearchable() const;
 
     /**
      * Get binary data value.
      * @return pointer to binary data if value is indeed binary data.
      * Otherwise returns nullptr
      */
-    virtual const char *asBlob() const;
+    virtual const char* asBlob() const;
 
     /**
      * Get binary data length.
@@ -375,7 +388,7 @@ public:
      * if str="(1 2 3)" the value will be a list.
      * @param str the textual representation.
      */
-    void fromString(const char *str);
+    void fromString(const char* str);
 
     std::string toString() const override;
 
@@ -383,13 +396,13 @@ public:
      * Create a new value of the same type.
      * @return the new value.
      */
-    virtual Value *create() const;
+    virtual Value* create() const;
 
     /**
      * Create a copy of the value
      * @return the new value, which will equal this.
      */
-    virtual Value *clone() const;
+    virtual Value* clone() const;
 
     /**
      * Get standard type code of value.
@@ -408,7 +421,10 @@ public:
      * @warning Unsafe, sizeof(int) is platform dependent. Use makeInt instead.
      */
     YARP_DEPRECATED_INTERNAL_MSG("Use makeInt32 instead") // Since YARP 3.0.0
-    inline static Value* makeInt(int x) { return makeInt32(static_cast<std::int32_t>(x)); }
+    inline static Value* makeInt(int x)
+    {
+        return makeInt32(static_cast<std::int32_t>(x));
+    }
 
     /**
      * Create a 8-bit integer Value
@@ -445,7 +461,10 @@ public:
      * @warning Unsafe, sizeof(double) is platform dependent. Use makeFloat64 instead.
      */
     YARP_DEPRECATED_INTERNAL_MSG("Use makeFloat64 instead") // Since YARP 3.0.0
-    inline static Value* makeDouble(double x) { return makeFloat64(static_cast<yarp::conf::float64_t>(x)); }
+    inline static Value* makeDouble(double x)
+    {
+        return makeFloat64(static_cast<yarp::conf::float64_t>(x));
+    }
 
     /**
      * Create a 32-bit floating point Value
@@ -466,7 +485,7 @@ public:
      * @param str the value to take on
      * @return a string Value
      */
-    static Value *makeString(const std::string& str);
+    static Value* makeString(const std::string& str);
 
     /**
      * Create a vocabulary identifier Value
@@ -480,7 +499,7 @@ public:
      * @param str the value to take on
      * @return a vocabulary identifier Value
      */
-    static Value *makeVocab(const std::string& str);
+    static Value* makeVocab(const std::string& str);
 
     /**
      * Create a Value containing binary data
@@ -488,20 +507,20 @@ public:
      * @param length the size of the data in bytes
      * @return a Value containing binary data
      */
-    static Value *makeBlob(void *data, int length);
+    static Value* makeBlob(void* data, int length);
 
     /**
      * Create a list Value
      * @return a list Value
      */
-    static Value *makeList();
+    static Value* makeList();
 
     /**
      * Create a list Value and initialize it
      * @param txt the list in text form, e.g. "1 2.0 (4 5) xyz"
      * @return a list Value
      */
-    static Value *makeList(const char *txt);
+    static Value* makeList(const char* txt);
 
     /**
      * Create a Value from a text description.
@@ -509,7 +528,7 @@ public:
      * "(5 6 7)" will create a list.
      * @return the Value to which the text description corresponds
      */
-    static Value *makeValue(const std::string& txt);
+    static Value* makeValue(const std::string& txt);
 
 
     /**
@@ -520,12 +539,11 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-    yarp::os::impl::Storable *proxy;
+    yarp::os::impl::Storable* proxy;
 
-    void setProxy(yarp::os::impl::Storable *proxy);
+    void setProxy(yarp::os::impl::Storable* proxy);
     void ok() const;
 #endif // DOXYGEN_SHOULD_SKIP_THIS
-
 };
 
 } // namespace os

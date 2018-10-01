@@ -10,49 +10,57 @@
 #ifndef YARP_OS_STRINGOUTPUTSTREAM_H
 #define YARP_OS_STRINGOUTPUTSTREAM_H
 
-#include <yarp/os/OutputStream.h>
 #include <yarp/os/Bytes.h>
+#include <yarp/os/OutputStream.h>
+
 #include <string>
 
 namespace yarp {
-    namespace os {
-        class StringOutputStream;
-    }
-}
+namespace os {
 
 /**
  * An OutputStream that produces a string.  Handy for testing purposes.
  */
-class yarp::os::StringOutputStream : public OutputStream {
+class StringOutputStream : public OutputStream
+{
 public:
     using OutputStream::write;
 
-    StringOutputStream() { }
+    StringOutputStream() {}
 
-    std::string toString() const {
+    std::string toString() const
+    {
         return data;
     }
 
-    void reset() {
+    void reset()
+    {
         data = "";
     }
 
-    virtual void write(const Bytes& b) override {
+    virtual void write(const Bytes& b) override
+    {
         std::string tmp((char*)b.get(), b.length());
         data += tmp;
     }
 
-    virtual void close() override {
-    }
+    virtual void close() override {}
 
-    virtual bool isOk() const override {
+    virtual bool isOk() const override
+    {
         return true;
     }
 
-    const std::string& str() const { return data; }
+    const std::string& str() const
+    {
+        return data;
+    }
 
 private:
-    std::string data;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) data;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_STRINGOUTPUTSTREAM_H

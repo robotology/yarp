@@ -10,9 +10,10 @@
 #define YARP_OS_YARPPLUGINSETTINGS_H
 
 #include <yarp/os/api.h>
-#include <yarp/os/YarpPluginSelector.h>
-#include <yarp/os/SharedLibraryClass.h>
+
 #include <yarp/os/Log.h>
+#include <yarp/os/SharedLibraryClass.h>
+#include <yarp/os/YarpPluginSelector.h>
 
 namespace yarp {
 namespace os {
@@ -23,11 +24,12 @@ namespace os {
 class YARP_OS_API YarpPluginSettings
 {
 public:
-
     /**
      * Constructor.
      */
-    YarpPluginSettings() : wrapper_name("unknown") {
+    YarpPluginSettings() :
+            wrapper_name("unknown")
+    {
         verbose = false;
         selector = nullptr;
     }
@@ -44,7 +46,8 @@ public:
      * as a factory
      */
     void setLibraryMethodName(const std::string& dll_name,
-                              const std::string& fn_name) {
+                              const std::string& fn_name)
+    {
         this->dll_name = dll_name;
         this->fn_name = fn_name;
     }
@@ -56,7 +59,8 @@ public:
      *
      * @param name the name of the plugin to load
      */
-    void setPluginName(const std::string& name) {
+    void setPluginName(const std::string& name)
+    {
         this->name = name;
     }
 
@@ -68,7 +72,8 @@ public:
      * @param baseclass_name the name of the base class
      */
     void setClassInfo(const std::string& class_name,
-                      const std::string& baseclass_name) {
+                      const std::string& baseclass_name)
+    {
         this->class_name = class_name;
         this->baseclass_name = baseclass_name;
     }
@@ -83,7 +88,8 @@ public:
      *
      * @return true if a section about the plugin was found
      */
-    bool setSelector(YarpPluginSelector& selector) {
+    bool setSelector(YarpPluginSelector& selector)
+    {
         this->selector = &selector;
         if (name != "") {
             return readFromSelector(name);
@@ -96,7 +102,8 @@ public:
      *
      * @param verbose verbosity flag
      */
-    void setVerboseMode(bool verbose) {
+    void setVerboseMode(bool verbose)
+    {
         this->verbose = verbose;
     }
 
@@ -109,14 +116,18 @@ public:
      *
      * @return true on success
      */
-    bool readFromSearchable(Searchable& options, const std::string& name) {
+    bool readFromSearchable(Searchable& options, const std::string& name)
+    {
         std::string iname = options.find("library").toString();
         std::string pname = options.find("part").toString();
 
-        if (iname=="") iname = name;
-        if (pname=="") pname = name;
+        if (iname == "")
+            iname = name;
+        if (pname == "")
+            pname = name;
 
-        if (this->name=="") this->name = iname;
+        if (this->name == "")
+            this->name = iname;
         this->dll_name = iname;
         this->fn_name = pname;
         this->wrapper_name = options.find("wrapper").toString();
@@ -126,49 +137,56 @@ public:
     /**
      * @return the name of the plugin, if set
      */
-    std::string getPluginName() const {
+    std::string getPluginName() const
+    {
         return name;
     }
 
     /**
      * @return the name of the shared library, if set
      */
-    std::string getLibraryName() const {
+    std::string getLibraryName() const
+    {
         return dll_name;
     }
 
     /**
      * @return the name of the factory method, if set
      */
-    std::string getMethodName() const {
+    std::string getMethodName() const
+    {
         return fn_name;
     }
 
     /**
      * @return the selector object, if set
      */
-    YarpPluginSelector *getSelector() const {
+    YarpPluginSelector* getSelector() const
+    {
         return selector;
     }
 
     /**
      * @return the name of the wrapper, if set
      */
-    std::string getWrapperName() const {
+    std::string getWrapperName() const
+    {
         return wrapper_name;
     }
 
     /**
      * @return the name of the class, if set
      */
-    std::string getClassName() const {
+    std::string getClassName() const
+    {
         return class_name;
     }
 
     /**
      * @return the name of the base class, if set
      */
-    std::string getBaseClassName() const {
+    std::string getBaseClassName() const
+    {
         return class_name;
     }
 
@@ -201,22 +219,30 @@ private:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) wrapper_name;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) class_name;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) baseclass_name;
-    YarpPluginSelector *selector;
+    YarpPluginSelector* selector;
     bool verbose;
 
-    bool subopen(SharedLibraryFactory& factory, const std::string& dll_name,
+    bool subopen(SharedLibraryFactory& factory,
+                 const std::string& dll_name,
                  const std::string& fn_name);
 
-    bool open(SharedLibraryFactory& factory, const std::string& dll_name,
+    bool open(SharedLibraryFactory& factory,
+              const std::string& dll_name,
               const std::string& fn_name);
 
-    bool readFromSelector(const std::string& name) {
-        if (!selector) return false;
+    bool readFromSelector(const std::string& name)
+    {
+        if (!selector)
+            return false;
         Bottle plugins = selector->getSelectedPlugins();
         Bottle group = plugins.findGroup(name.c_str()).tail();
         if (group.isNull()) {
-            yError("Cannot find \"%s\" plugin (not built in, and no .ini file found for it)", name.c_str());
-            yError("Check that YARP_DATA_DIRS leads to at least one directory with plugins/%s.ini or share/yarp/plugins/%s.ini in it", name.c_str(), name.c_str());
+            yError("Cannot find \"%s\" plugin (not built in, and no .ini file found for it)\n"
+                   "Check that YARP_DATA_DIRS leads to at least one directory with plugins/%s.ini "
+                   "or share/yarp/plugins/%s.ini in it",
+                   name.c_str(),
+                   name.c_str(),
+                   name.c_str());
             return false;
         }
         return readFromSearchable(group, name);

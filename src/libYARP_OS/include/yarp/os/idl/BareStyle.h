@@ -14,23 +14,26 @@
 #include <yarp/os/idl/WireWriter.h>
 
 namespace yarp {
-    namespace os {
-        namespace idl {
-            template <class T> class BareStyle;
-        }
-    }
-}
+namespace os {
+namespace idl {
 
 template <class T>
-class yarp::os::idl::BareStyle : public T {
+class BareStyle : public T
+{
 public:
-    virtual bool read(yarp::os::ConnectionReader& reader) override {
+    virtual bool read(yarp::os::ConnectionReader& reader) override
+    {
         return T::readBare(reader);
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) const override {
+    virtual bool write(yarp::os::ConnectionWriter& writer) const override
+    {
         return T::writeBare(writer);
     }
 };
+
+} // namespace idl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IDL_BARESTYLE_H

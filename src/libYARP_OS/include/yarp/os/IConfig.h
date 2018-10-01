@@ -26,7 +26,6 @@ namespace os {
 class YARP_OS_API IConfig
 {
 public:
-
     /**
      * Destructor.
      */

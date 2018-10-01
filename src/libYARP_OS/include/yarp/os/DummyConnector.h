@@ -84,7 +84,7 @@ public:
     void reset();
 
 private:
-    void *implementation;
+    void* implementation;
 };
 
 } // namespace os

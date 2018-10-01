@@ -10,6 +10,7 @@
 #define YARP_OS_NULLCONNECTIONWRITER_H
 
 #include <yarp/os/api.h>
+
 #include <yarp/os/ConnectionWriter.h>
 
 namespace yarp {
@@ -23,30 +24,30 @@ namespace os {
 class YARP_OS_API NullConnectionWriter : public ConnectionWriter
 {
 public:
-    virtual void appendBlock(const char *data, size_t len) override;
+    virtual void appendBlock(const char* data, size_t len) override;
     virtual void appendInt8(std::int8_t data) override;
     virtual void appendInt16(std::int16_t data) override;
     virtual void appendInt32(std::int32_t data) override;
     virtual void appendInt64(std::int64_t data) override;
     virtual void appendFloat32(yarp::conf::float32_t data) override;
     virtual void appendFloat64(yarp::conf::float64_t data) override;
-    virtual void appendString(const char *str, int terminate = '\n') override;
-    virtual void appendExternalBlock(const char *data, size_t len) override;
+    virtual void appendString(const char* str, int terminate = '\n') override;
+    virtual void appendExternalBlock(const char* data, size_t len) override;
     virtual bool isTextMode() const override;
     virtual bool isBareMode() const override;
-    virtual void declareSizes(int argc, int *argv) override;
+    virtual void declareSizes(int argc, int* argv) override;
     virtual void setReplyHandler(PortReader& reader) override;
-    virtual void setReference(Portable *obj) override;
+    virtual void setReference(Portable* obj) override;
     virtual bool convertTextMode() override;
     virtual bool isValid() const override;
     virtual bool isActive() const override;
     virtual bool isError() const override;
     virtual void requestDrop() override;
     virtual bool isNull() const override;
-    virtual SizedWriter *getBuffer() const override;
+    virtual SizedWriter* getBuffer() const override;
 };
 
-} // namespace yarp
 } // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_NULLCONNECTIONWRITER_H

@@ -11,6 +11,7 @@
 
 #include <yarp/os/Portable.h>
 
+// Forward declarations
 namespace yarp {
 namespace os {
 namespace idl {

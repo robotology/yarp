@@ -10,9 +10,9 @@
 #define YARP_OS_NAMESPACE_H
 
 #include <yarp/os/Contact.h>
-#include <yarp/os/Value.h>
-#include <yarp/os/Network.h>
 #include <yarp/os/NameStore.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Value.h>
 
 namespace yarp {
 namespace os {
@@ -94,7 +94,7 @@ public:
      * would have access to).
      */
     virtual Contact registerAdvanced(const Contact& contact,
-                                     NameStore *store)
+                                     NameStore* store)
     {
         YARP_UNUSED(store);
         return registerContact(contact);
@@ -105,7 +105,7 @@ public:
      * information of other ports for cross-referencing.
      */
     virtual Contact unregisterAdvanced(const std::string& name,
-                                       NameStore *store)
+                                       NameStore* store)
     {
         YARP_UNUSED(store);
         return unregisterName(name);

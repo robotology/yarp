@@ -10,6 +10,7 @@
 #define YARP_OS_MESSAGESTACK_H
 
 #include <yarp/os/Portable.h>
+
 #include <string>
 
 namespace yarp {
@@ -53,9 +54,10 @@ public:
      *
      */
     void stack(PortWriter& msg, const std::string& tag = "");
+
 private:
     int max_threads;
-    void *implementation;
+    void* implementation;
 };
 
 } // namespace os

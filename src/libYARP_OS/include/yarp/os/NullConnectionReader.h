@@ -10,6 +10,7 @@
 #define YARP_OS_NULLCONNECTIONREADER_H
 
 #include <yarp/os/api.h>
+
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/Value.h>
 
@@ -25,8 +26,9 @@ class YARP_OS_API NullConnectionReader : public ConnectionReader
 {
 private:
     Value blank;
+
 public:
-    virtual bool expectBlock(char *data, size_t len) override;
+    virtual bool expectBlock(char* data, size_t len) override;
     virtual std::string expectText(int terminatingChar = '\n') override;
     virtual std::int8_t expectInt8() override;
     virtual std::int16_t expectInt16() override;
@@ -38,9 +40,9 @@ public:
     virtual bool isTextMode() const override;
     virtual bool convertTextMode() override;
     virtual size_t getSize() const override;
-    virtual ConnectionWriter *getWriter() override;
+    virtual ConnectionWriter* getWriter() override;
     virtual Bytes readEnvelope() override;
-    virtual Portable *getReference() const override;
+    virtual Portable* getReference() const override;
     virtual Contact getRemoteContact() const override;
     virtual Contact getLocalContact() const override;
     virtual bool isValid() const override;
@@ -50,7 +52,7 @@ public:
     virtual const Searchable& getConnectionModifiers() const override;
 };
 
-} // namespace yarp
 } // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_NULLCONNECTIONREADER_H

@@ -125,7 +125,7 @@ bool yarp::os::BufferedPort<T>::unprepare()
 template <typename T>
 void yarp::os::BufferedPort<T>::write(bool forceStrict)
 {
-    if(isClosed()) {
+    if (isClosed()) {
         return;
     }
     writer.write(forceStrict);
@@ -161,7 +161,7 @@ T* yarp::os::BufferedPort<T>::read(bool shouldWait)
     }
     T* result = reader.read(shouldWait);
     // in some circs PortReaderBuffer::read(true) may return false
-    while (result==nullptr && shouldWait && !reader.isClosed() && !interrupted) {
+    while (result == nullptr && shouldWait && !reader.isClosed() && !interrupted) {
         result = reader.read(shouldWait);
     }
     return result;

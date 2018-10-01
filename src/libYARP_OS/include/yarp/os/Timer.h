@@ -10,7 +10,9 @@
 #define YARP_OS_TIMER_H
 
 #include <yarp/os/api.h>
+
 #include <yarp/os/Mutex.h>
+
 #include <functional>
 
 namespace yarp {
@@ -116,7 +118,10 @@ public:
      *        or with all the timers with newThread == false (in any case they
      *        will not run in the main thread)
      */
-    Timer(const yarp::os::TimerSettings& settings, TimerCallback callback, bool newThread, yarp::os::Mutex* mutex = nullptr);
+    Timer(const yarp::os::TimerSettings& settings,
+          TimerCallback callback,
+          bool newThread,
+          yarp::os::Mutex* mutex = nullptr);
 
     /**
      * @brief Timer constructor
@@ -178,6 +183,7 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     class PrivateImpl;
+
 private:
     PrivateImpl* impl;
 #endif // DOXYGEN_SHOULD_SKIP_THIS

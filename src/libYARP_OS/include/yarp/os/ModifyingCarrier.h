@@ -22,13 +22,12 @@ namespace os {
 class YARP_OS_API ModifyingCarrier : public AbstractCarrier
 {
 public:
-
-    virtual Carrier *create() const override = 0;
+    virtual Carrier* create() const override = 0;
 
     virtual std::string getName() const override = 0;
 
-    virtual bool checkHeader(const yarp::os::Bytes &header) override;
-    virtual void getHeader(yarp::os::Bytes &header) const override;
+    virtual bool checkHeader(const yarp::os::Bytes& header) override;
+    virtual void getHeader(yarp::os::Bytes& header) const override;
     virtual bool respondToHeader(yarp::os::ConnectionState& proto) override;
     virtual bool modifiesIncomingData() const override;
     virtual bool modifiesOutgoingData() const override;

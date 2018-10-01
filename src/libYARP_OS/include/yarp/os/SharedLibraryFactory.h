@@ -10,9 +10,11 @@
 #define YARP_OS_SHAREDLIBRARYFACTORY_H
 
 #include <yarp/os/api.h>
-#include <yarp/os/Vocab.h>
+
 #include <yarp/os/SharedLibrary.h>
 #include <yarp/os/SharedLibraryClassApi.h>
+#include <yarp/os/Vocab.h>
+
 #include <string>
 
 
@@ -37,7 +39,8 @@ public:
      *  - STATUS_FACTORY_NOT_FOUND: Named method wasn't present in library
      *  - STATUS_FACTORY_NOT_FUNCTIONAL: Named method is not working right
      */
-    enum {
+    enum
+    {
         STATUS_NONE,                                         //!< Not configured yet.
         STATUS_OK = yarp::os::createVocab('o', 'k'),                         //!< Present and sane.
         STATUS_LIBRARY_NOT_FOUND = yarp::os::createVocab('f', 'o', 'u', 'n'),  //!< Named shared library was not found.
@@ -57,8 +60,8 @@ public:
      * @param dll_name name/path of shared library.
      * @param fn_name name of factory method, a symbol within the shared library.
      */
-    SharedLibraryFactory(const char *dll_name,
-                         const char *fn_name = nullptr);
+    SharedLibraryFactory(const char* dll_name,
+                         const char* fn_name = nullptr);
 
     /**
      * Destructor
@@ -72,7 +75,7 @@ public:
      * @param fn_name name of factory method, a symbol within the shared library.
      * @return true on success.
      */
-    bool open(const char *dll_name, const char *fn_name = nullptr);
+    bool open(const char* dll_name, const char* fn_name = nullptr);
 
     /**
      * Check if factory is configured and present.
@@ -153,7 +156,8 @@ public:
      * @result true on success.
      *
      */
-    bool useFactoryFunction(void *factory);
+    bool useFactoryFunction(void* factory);
+
 private:
     SharedLibrary lib;
     int status;

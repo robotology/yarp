@@ -9,8 +9,9 @@
 #ifndef YARP_OS_NODE_H
 #define YARP_OS_NODE_H
 
-#include <yarp/os/Contactables.h>
 #include <yarp/conf/compiler.h>
+
+#include <yarp/os/Contactables.h>
 
 namespace yarp {
 namespace os {

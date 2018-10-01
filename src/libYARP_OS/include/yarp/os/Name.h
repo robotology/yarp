@@ -21,7 +21,6 @@ namespace os {
 class YARP_OS_API Name
 {
 public:
-
     /**
      * Constructor.
      *
@@ -46,7 +45,7 @@ public:
      */
     Contact toAddress() const;
 
-    std::string getCarrierModifier(const char *mod, bool *hasModifier = nullptr);
+    std::string getCarrierModifier(const char* mod, bool* hasModifier = nullptr);
 
 private:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) txt;

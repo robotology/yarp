@@ -9,11 +9,11 @@
 #ifndef YARP_OS_ROSNAMESPACE_H
 #define YARP_OS_ROSNAMESPACE_H
 
+#include <yarp/os/Bottle.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/NameSpace.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/Bottle.h>
 #include <yarp/os/Thread.h>
-#include <yarp/os/Mutex.h>
 
 #include <cstdio>
 
@@ -35,15 +35,15 @@ public:
     virtual Contact unregisterName(const std::string& name) override;
     virtual Contact unregisterContact(const Contact& contact) override;
     virtual Contact registerAdvanced(const Contact& contact,
-                                     NameStore *store) override;
+                                     NameStore* store) override;
     virtual Contact unregisterAdvanced(const std::string& name,
-                                       NameStore *store) override;
+                                       NameStore* store) override;
 
     virtual bool setProperty(const std::string& name,
                              const std::string& key,
                              const Value& value) override;
 
-    virtual Value *getProperty(const std::string& name,
+    virtual Value* getProperty(const std::string& name,
                                const std::string& key) override;
 
     virtual bool connectPortToTopic(const Contact& src,

@@ -11,6 +11,7 @@
 #define YARP_OS_PORTABLE_H
 
 #include <yarp/os/api.h>
+
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortWriter.h>
 
@@ -24,8 +25,7 @@ namespace os {
  * and be written to the YARP network.  It is a simple union of
  * PortReader and PortWriter.
  */
-class YARP_OS_API Portable : public PortReader,
-                             public PortWriter
+class YARP_OS_API Portable : public PortReader, public PortWriter
 {
 public:
     // reiterate the key inherited virtual methods, just as a reminder

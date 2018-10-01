@@ -11,6 +11,7 @@
 #define YARP_OS_NETUINT16_H
 
 #include <yarp/conf/numeric.h>
+
 #include <yarp/os/api.h>
 
 ////////////////////////////////////////////////////////////////////////
@@ -40,6 +41,7 @@ private:
     std::uint16_t swap(std::uint16_t x) const;
     std::uint16_t get() const;
     void set(std::uint16_t v);
+
 public:
     NetUint16();
     NetUint16(std::uint16_t val);

@@ -10,9 +10,10 @@
 #ifndef YARP_OS_PORTREADERCREATOR_H
 #define YARP_OS_PORTREADERCREATOR_H
 
-#include <string>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/PortReader.h>
+
+#include <string>
 
 namespace yarp {
 namespace os {
@@ -32,7 +33,6 @@ namespace os {
 class YARP_OS_API PortReaderCreator
 {
 public:
-
     /**
      * Destructor.
      */
@@ -43,7 +43,7 @@ public:
      * @return A new PortReader object -- used to read from a connection to
      * a Port
      */
-    virtual PortReader *create() const = 0;
+    virtual PortReader* create() const = 0;
 };
 
 } // namespace os

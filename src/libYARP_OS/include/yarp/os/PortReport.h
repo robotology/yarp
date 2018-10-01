@@ -15,8 +15,8 @@
 namespace yarp {
 namespace os {
 class PortInfo;
-}
-}
+} // namespace os
+} // namespace yarp
 
 namespace yarp {
 namespace os {

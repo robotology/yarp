@@ -10,9 +10,11 @@
 #ifndef YARP_OS_CONNECTIONWRITER_H
 #define YARP_OS_CONNECTIONWRITER_H
 
-#include <yarp/os/api.h>
-#include <string>
 #include <yarp/conf/numeric.h>
+
+#include <yarp/os/api.h>
+
+#include <string>
 
 namespace yarp {
 namespace os {
@@ -37,7 +39,6 @@ namespace os {
 class YARP_OS_API ConnectionWriter
 {
 public:
-
     /**
      * Destructor.
      */
@@ -53,7 +54,7 @@ public:
      * @param data the start of the data block
      * @param len  the length of the data block
      */
-    virtual void appendBlock(const char *data, size_t len) = 0;
+    virtual void appendBlock(const char* data, size_t len) = 0;
 
     /**
      * Send a representation of an integer to the network connection.
@@ -61,7 +62,10 @@ public:
      * @warning Unsafe, sizeof(int) is platform dependent. Use appendInt32 instead.
      */
     YARP_DEPRECATED_INTERNAL_MSG("Use appendInt32 instead") // Since YARP 3.0.0
-    virtual void appendInt(int data) final { appendInt32(static_cast<std::int32_t>(data)); }
+    virtual void appendInt(int data) final
+    {
+        appendInt32(static_cast<std::int32_t>(data));
+    }
 
     /**
      * Send a representation of a 8-bit integer to the network connection.
@@ -95,7 +99,10 @@ public:
      * @warning Unsafe, sizeof(double) is platform dependent. Use appendFloat64 instead.
      */
     YARP_DEPRECATED_INTERNAL_MSG("Use appendFloat64 instead") // Since YARP 3.0.0
-    virtual void appendDouble(double data) { appendFloat64(static_cast<yarp::conf::float64_t>(data)); }
+    virtual void appendDouble(double data)
+    {
+        appendFloat64(static_cast<yarp::conf::float64_t>(data));
+    }
 
     /**
      * Send a representation of a 32-bit floating point number to the network
@@ -118,7 +125,7 @@ public:
      * @param str the character sequence to send
      * @param terminate the terminating character to use
      */
-    virtual void appendString(const char *str, int terminate = '\n') = 0;
+    virtual void appendString(const char* str, int terminate = '\n') = 0;
 
     /**
      * Send a block of data to the network connection, without making a copy.
@@ -128,7 +135,7 @@ public:
      * @param data the start of the data block
      * @param len  the length of the data block
      */
-    virtual void appendExternalBlock(const char *data, size_t len) = 0;
+    virtual void appendExternalBlock(const char* data, size_t len) = 0;
 
     /**
      * Check if the connection is text mode.  If it is, you are
@@ -152,7 +159,7 @@ public:
      * @param argc Number of blocks
      * @param argv An array of integers, giving the length of each block
      */
-    virtual void declareSizes(int argc, int *argv) = 0;
+    virtual void declareSizes(int argc, int* argv) = 0;
 
     /**
      * This sets a handler to deal with replies to the message.  The
@@ -167,7 +174,7 @@ public:
      * This is useful for local communication, to bypass
      * serialization.
      */
-    virtual void setReference(Portable *obj) = 0;
+    virtual void setReference(Portable* obj) = 0;
 
 
     /**
@@ -222,10 +229,11 @@ public:
      * @return a buffer if one is present.
      *
      */
-    virtual SizedWriter *getBuffer() const = 0;
+    virtual SizedWriter* getBuffer() const = 0;
 
 
-    virtual void appendRawString(const std::string& str) {
+    virtual void appendRawString(const std::string& str)
+    {
         appendInt32(static_cast<std::int32_t>(str.length()));
         appendBlock((char*)str.c_str(), str.length());
     }
@@ -236,7 +244,7 @@ public:
      * to a buffer which can be read later using getBuffer()
      *
      */
-    static ConnectionWriter *createBufferedConnectionWriter();
+    static ConnectionWriter* createBufferedConnectionWriter();
 
     static bool writeToStream(PortWriter& portable, OutputStream& os);
 };

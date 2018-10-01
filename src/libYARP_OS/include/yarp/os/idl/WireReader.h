@@ -10,12 +10,13 @@
 #define YARP_OS_IDL_WIREREADER_H
 
 #include <yarp/conf/numeric.h>
+
+#include <yarp/os/Bottle.h>
 #include <yarp/os/NullConnectionReader.h>
 #include <yarp/os/NullConnectionWriter.h>
-#include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
-#include <yarp/os/idl/WireState.h>
 #include <yarp/os/idl/WirePortable.h>
+#include <yarp/os/idl/WireState.h>
 #include <yarp/os/idl/WireVocab.h>
 
 #include <string>
@@ -71,41 +72,53 @@ public:
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     YARP_DEPRECATED_MSG("Use readI8 instead")
-    bool readByte(std::int8_t& x) { return readI8(x); }
+    bool readByte(std::int8_t& x)
+    {
+        return readI8(x);
+    }
 
     YARP_DEPRECATED_MSG("Use readFloat64 instead")
-    bool readDouble(double& x) { return readFloat64(x); }
+    bool readDouble(double& x)
+    {
+        return readFloat64(x);
+    }
 #endif // YARP_NO_DEPRECATED
 
-    std::int8_t expectInt8() {
+    std::int8_t expectInt8()
+    {
         std::int8_t x;
         readI8(x);
         return x;
     }
-    std::int16_t expectInt16() {
+    std::int16_t expectInt16()
+    {
         std::int16_t x;
         readI16(x);
         return x;
     }
-    std::int32_t expectInt32() {
+    std::int32_t expectInt32()
+    {
         std::int32_t x;
         readI32(x);
         return x;
     }
 
-    std::int64_t expectInt64() {
+    std::int64_t expectInt64()
+    {
         std::int64_t x;
         readI64(x);
         return x;
     }
 
-    yarp::conf::float32_t expectFloat32() {
+    yarp::conf::float32_t expectFloat32()
+    {
         yarp::conf::float32_t x;
         readFloat32(x);
         return x;
     }
 
-    yarp::conf::float64_t expectFloat64() {
+    yarp::conf::float64_t expectFloat64()
+    {
         yarp::conf::float64_t x;
         readFloat64(x);
         return x;
@@ -113,13 +126,19 @@ public:
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     YARP_DEPRECATED_MSG("Use expectInt32 instead")
-    int expectInt() { return (int)expectInt32(); }
+    int expectInt()
+    {
+        return (int)expectInt32();
+    }
 
     YARP_DEPRECATED_MSG("Use expectFloat64 instead")
-    double expectDouble() { return (double)expectFloat64(); }
+    double expectDouble()
+    {
+        return (double)expectFloat64();
+    }
 #endif // YARP_NO_DEPRECATED
 
-    bool readString(std::string& str, bool *is_vocab = nullptr);
+    bool readString(std::string& str, bool* is_vocab = nullptr);
 
     bool readBinary(std::string& str);
 
@@ -131,7 +150,8 @@ public:
 
     bool readListReturn();
 
-    int getLength() const {
+    int getLength() const
+    {
         return state->len;
     }
 
@@ -167,7 +187,7 @@ private:
     NullConnectionWriter null_writer;
     ConnectionReader& reader;
     WireState baseState;
-    WireState *state;
+    WireState* state;
     bool flush_if_needed;
     bool support_get_mode;
     bool expecting;

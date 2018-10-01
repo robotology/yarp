@@ -38,14 +38,16 @@ public:
 
     virtual Contact unregisterContact(const Contact& contact) override;
 
-    virtual bool setProperty(const std::string& name, const std::string& key,
+    virtual bool setProperty(const std::string& name,
+                             const std::string& key,
                              const Value& value) override;
 
-    virtual Value *getProperty(const std::string& name, const std::string& key) override;
+    virtual Value* getProperty(const std::string& name,
+                               const std::string& key) override;
 
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style)  override
+                                    ContactStyle style) override
     {
         return connectTopic("subscribe", false, true, src, dest, style);
     }
@@ -97,7 +99,7 @@ public:
         Contact dynamicDest = dest;
         Bottle cmd, reply;
         cmd.addString(dir.c_str());
-        if (style.carrier!="") {
+        if (style.carrier != "") {
             if (!destIsTopic) {
                 dynamicDest.setCarrier(style.carrier);
             } else {
@@ -120,16 +122,12 @@ public:
         }
         bool ok = false;
         if (!NetworkBase::getQueryBypass()) {
-            ok = NetworkBase::write(getNameServerContact(),
-                                    cmd,
-                                    reply);
+            ok = NetworkBase::write(getNameServerContact(), cmd, reply);
         } else {
             ContactStyle style;
-            ok = NetworkBase::writeToNameServer(cmd,
-                                                reply,
-                                                style);
+            ok = NetworkBase::writeToNameServer(cmd, reply, style);
         }
-        bool fail = (reply.get(0).toString()=="fail")||!ok;
+        bool fail = (reply.get(0).toString() == "fail") || !ok;
         if (fail) {
             if (!style.quiet) {
                 fprintf(stderr, "Failure: name server did not accept connection to topic.\n");
@@ -167,16 +165,14 @@ public:
                                    const ContactStyle& style) override;
 
 private:
-    void *system_resource;
+    void* system_resource;
     Contact contact;
 };
 
 class YarpDummyNameSpace : public YarpNameSpace
 {
 public:
-    YarpDummyNameSpace() : YarpNameSpace(Contact())
-    {
-    }
+    YarpDummyNameSpace() : YarpNameSpace(Contact()) {}
 
     virtual bool localOnly() const override
     {
@@ -187,7 +183,7 @@ public:
     {
         return Contact("/root");
     }
- };
+};
 
 } // namespace os
 } // namespace yarp

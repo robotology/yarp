@@ -15,8 +15,8 @@
 namespace yarp {
 namespace os {
 class Port;
-}
-}
+} // namespace os
+} // namespace yarp
 
 
 namespace yarp {
@@ -29,13 +29,13 @@ class PortWriterBufferManager
 public:
     virtual ~PortWriterBufferManager();
 
-    virtual void onCompletion(void *tracker) = 0;
+    virtual void onCompletion(void* tracker) = 0;
 };
 
 class PortWriterWrapper : public PortWriter
 {
 public:
-    virtual PortWriter *getInternal() = 0;
+    virtual PortWriter* getInternal() = 0;
 };
 
 template <class T>
@@ -44,11 +44,12 @@ class PortWriterBufferAdaptor : public PortWriterWrapper
 public:
     PortWriterBufferManager& creator;
     T writer;
-    void *tracker;
+    void* tracker;
 
     PortWriterBufferAdaptor(PortWriterBufferManager& creator,
-                            void *tracker) :
-        creator(creator), tracker(tracker)
+                            void* tracker) :
+            creator(creator),
+            tracker(tracker)
     {
     }
 
@@ -68,7 +69,7 @@ public:
         writer.onCommencement();
     }
 
-    virtual PortWriter *getInternal() override
+    virtual PortWriter* getInternal() override
     {
         return &writer;
     }
@@ -99,11 +100,10 @@ public:
     void waitForWrite();
 
 protected:
-
     void init();
 
 private:
-    void *implementation;
+    void* implementation;
 };
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
@@ -118,12 +118,11 @@ template <class T>
 class PortWriterBuffer : public PortWriterBufferBase
 {
 public:
-
     //typedef T Type;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    virtual PortWriterWrapper *create(PortWriterBufferManager& man,
-                                      void *tracker) override
+    virtual PortWriterWrapper* create(PortWriterBufferManager& man,
+                                      void* tracker) override
     {
         return new PortWriterBufferAdaptor<T>(man, tracker);
     }
@@ -161,7 +160,7 @@ public:
      */
     T& get()
     {
-        PortWriterBufferAdaptor<T> *content = (PortWriterBufferAdaptor<T>*)getContent();  // guaranteed to be non-NULL
+        PortWriterBufferAdaptor<T>* content = (PortWriterBufferAdaptor<T>*)getContent(); // guaranteed to be non-NULL
         return content->writer;
     }
 
@@ -190,7 +189,7 @@ public:
     /**
      * Try to write the last buffer returned by PortWriterBuffer::get.
      */
-    void write(bool forceStrict=false)
+    void write(bool forceStrict = false)
     {
         PortWriterBufferBase::write(forceStrict);
     }

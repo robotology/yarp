@@ -10,14 +10,15 @@
 #ifndef YARP_OS_INPUTPROTOCOL_H
 #define YARP_OS_INPUTPROTOCOL_H
 
-#include <yarp/os/Route.h>
+#include <yarp/os/Connection.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
-#include <string>
 #include <yarp/os/Property.h>
-#include <yarp/os/Connection.h>
+#include <yarp/os/Route.h>
 #include <yarp/os/SizedWriter.h>
+
+#include <string>
 
 namespace yarp {
 namespace os {
@@ -172,7 +173,7 @@ public:
      * Set the port to be associated with the connection.
      *
      */
-    virtual void attachPort(Contactable *port) = 0;
+    virtual void attachPort(Contactable* port) = 0;
 
     /**
      *

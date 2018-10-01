@@ -10,7 +10,9 @@
 #define YARP_OS_NETWORKCLOCK_H
 
 #include <yarp/os/api.h>
+
 #include <yarp/os/Clock.h>
+
 #include <string>
 
 namespace yarp {

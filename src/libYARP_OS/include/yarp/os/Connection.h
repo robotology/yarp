@@ -10,6 +10,7 @@
 #define YARP_OS_CONNECTION_H
 
 #include <yarp/os/api.h>
+
 #include <string>
 
 namespace yarp {
@@ -29,7 +30,6 @@ class Property;
 class YARP_OS_API Connection
 {
 public:
-
     /**
      * Destructor.
      */
@@ -119,7 +119,7 @@ public:
      */
     virtual bool isPush() const = 0;
 
-   /**
+    /**
      * Check if this carrier is connectionless (like udp, mcast) or
      * connection based (like tcp).
      *

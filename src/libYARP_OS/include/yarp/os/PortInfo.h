@@ -11,7 +11,9 @@
 #define YARP_OS_PORTINFO_H
 
 #include <yarp/os/api.h>
+
 #include <yarp/os/Vocab.h>
+
 #include <string>
 
 
@@ -32,7 +34,8 @@ public:
     explicit PortInfo();
 
     /// Possible tag values
-    enum {
+    enum
+    {
         /// No information.
         PORTINFO_NULL = 0,
 

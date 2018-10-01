@@ -23,7 +23,6 @@ namespace os {
 class YARP_OS_API PeriodicThread
 {
 public:
-
     /**
      * Constructor.  Thread begins in a dormant state.  Call PeriodicThread::start
      * to get things going.
@@ -35,7 +34,8 @@ public:
      * use the system clock, or depend on the current
      * configuration of the network.
      */
-    explicit PeriodicThread(double period, ShouldUseSystemClock useSystemClock = ShouldUseSystemClock::No);
+    explicit PeriodicThread(double period,
+                            ShouldUseSystemClock useSystemClock = ShouldUseSystemClock::No);
 
     virtual ~PeriodicThread();
 
@@ -60,7 +60,7 @@ public:
      */
     void stop();
 
-     /**
+    /**
      * Stop the thread. Like stop but it does not call join, safe
      * to be called from run().
      */
@@ -115,7 +115,7 @@ public:
      * @param[out] av average value
      * @param[out] std standard deviation
      */
-    void getEstimatedPeriod(double &av, double &std) const;
+    void getEstimatedPeriod(double& av, double& std) const;
 
     /**
      * @brief Return the number of iterations performed since last reset.
@@ -133,7 +133,7 @@ public:
      * @param[out] av average value
      * @param[out] std standard deviation
      */
-    void getEstimatedUsed(double &av, double &std) const;
+    void getEstimatedUsed(double& av, double& std) const;
 
     /**
      * @brief Set the priority and scheduling policy of the thread, if the OS supports that.
@@ -148,7 +148,7 @@ public:
      * SCHED_FIFO  : policy=1, priority=[1 .. 99]
      * SCHED_RR    : policy=2, priority=[1 .. 99]
      */
-    int setPriority(int priority, int policy=-1);
+    int setPriority(int priority, int policy = -1);
 
     /**
      * @brief Query the current priority of the thread, if the OS supports that.
@@ -182,7 +182,7 @@ protected:
      * resources that were initialized in threadInit() (release memory,
      * and device driver resources).
      */
-     virtual void threadRelease();
+    virtual void threadRelease();
 
     /**
      * Loop function. This is the thread itself.

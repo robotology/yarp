@@ -56,7 +56,7 @@ public:
      * is made.
      * @return this object
      */
-    const ManagedBytes& operator = (const ManagedBytes& alt);
+    const ManagedBytes& operator=(const ManagedBytes& alt);
 
     /**
      * Destructor.
@@ -143,7 +143,8 @@ public:
      * @return true iff the managed data block is owned by this object
      *
      */
-    bool isOwner() const {
+    bool isOwner() const
+    {
         return owned;
     }
 

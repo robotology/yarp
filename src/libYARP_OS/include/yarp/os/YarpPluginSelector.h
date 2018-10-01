@@ -10,10 +10,11 @@
 #define YARP_OS_YARPPLUGINSELECTOR_H
 
 #include <yarp/os/api.h>
+
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Property.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/LockGuard.h>
+#include <yarp/os/Mutex.h>
+#include <yarp/os/Property.h>
 
 namespace yarp {
 namespace os {
@@ -32,6 +33,7 @@ private:
     Bottle search_path;
     Property config;
     mutable yarp::os::Mutex mutex;
+
 public:
     /**
      *
@@ -47,7 +49,11 @@ public:
      * @return true if plugin is of interest.  By default, always returns true.
      *
      */
-    virtual bool select(Searchable& options) { YARP_UNUSED(options); return true; }
+    virtual bool select(Searchable& options)
+    {
+        YARP_UNUSED(options);
+        return true;
+    }
 
 
     /**
@@ -64,7 +70,8 @@ public:
      * during the last call to scan.
      *
      */
-    Bottle getSelectedPlugins() const {
+    Bottle getSelectedPlugins() const
+    {
         yarp::os::LockGuard guard(mutex);
         return plugins;
     }
@@ -75,7 +82,8 @@ public:
      * sections.
      *
      */
-    Bottle getSearchPath() const {
+    Bottle getSearchPath() const
+    {
         yarp::os::LockGuard lock(mutex);
         return search_path;
     }

@@ -12,8 +12,8 @@
 #define YARP_OS_BOTTLE_H
 
 #include <yarp/os/Portable.h>
-#include <yarp/os/Searchable.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
 
 #include <string>
@@ -124,7 +124,10 @@ public:
      * @warning Unsafe, sizeof(int) is platform dependent. Use addInt32 instead.
      */
     YARP_DEPRECATED_INTERNAL_MSG("Use addInt32 instead") // Since YARP 3.0.0
-    inline void addInt(int x) { addInt32(static_cast<std::int32_t>(x)); }
+    inline void addInt(int x)
+    {
+        addInt32(static_cast<std::int32_t>(x));
+    }
 
     /**
      * Places a 8-bit integer in the bottle, at the end of the list.
@@ -169,7 +172,10 @@ public:
      * @warning Unsafe, sizeof(double) is platform dependent. Use addFloat64 instead.
      */
     YARP_DEPRECATED_INTERNAL_MSG("Use addFloat64 instead") // Since YARP 3.0.0
-    inline void addDouble(double x) { addFloat64(static_cast<yarp::conf::float64_t>(x)); }
+    inline void addDouble(double x)
+    {
+        addFloat64(static_cast<yarp::conf::float64_t>(x));
+    }
 
     /**
      * Places a 32-bit floating point number in the bottle, at the end of the

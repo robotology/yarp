@@ -11,10 +11,12 @@
 #define YARP_OS_NETTYPE_H
 
 #include <yarp/conf/numeric.h>
+
 #include <yarp/os/Bytes.h>
 #include <yarp/os/InputStream.h>
-#include <yarp/os/NetInt32.h>
 #include <yarp/os/NetFloat64.h>
+#include <yarp/os/NetInt32.h>
+
 #include <string>
 
 namespace yarp {
@@ -26,7 +28,6 @@ namespace os {
 class YARP_OS_API NetType
 {
 public:
-
     static int netInt(const yarp::os::Bytes& code);
     static bool netInt(int data, yarp::os::Bytes& code);
     static std::string toHexString(int x);
@@ -34,7 +35,7 @@ public:
     static std::string toString(long x);
     static std::string toString(unsigned int x);
     static int toInt(const std::string& x);
-    static unsigned long int getCrc(char *buf, size_t len);
+    static unsigned long int getCrc(char* buf, size_t len);
 };
 
 } // namespace os

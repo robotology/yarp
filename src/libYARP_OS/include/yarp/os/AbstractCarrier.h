@@ -24,11 +24,10 @@ namespace os {
 class YARP_OS_API AbstractCarrier : public Carrier
 {
 public:
-
-/** @{ */
+    /** @{ */
 
     // Documented in Carrier
-    virtual Carrier *create() const override = 0;
+    virtual Carrier* create() const override = 0;
 
     // Documented in Carrier
     virtual std::string getName() const override = 0;
@@ -47,8 +46,8 @@ public:
     // Documented in Carrier
     virtual void getCarrierParams(yarp::os::Property& params) const override;
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     // Documented in Carrier
     virtual bool isConnectionless() const override;
@@ -72,8 +71,8 @@ public:
     // Documented in Carrier
     virtual bool isActive() const override;
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
     // Sender methods
 
     // Documented in Carrier
@@ -85,8 +84,8 @@ public:
     // Documented in Carrier
     virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer);
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
     // Receiver methods
 
     // Documented in Carrier
@@ -102,8 +101,8 @@ public:
     // Documented in Carrier
     virtual bool expectAck(ConnectionState& proto) override;
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
     // some default implementations of protocol phases used by
     // certain YARP carriers
 
@@ -142,11 +141,10 @@ public:
      */
     void writeYarpInt(int n, ConnectionState& proto);
 
-/** @} */
+    /** @} */
 
 protected:
-
-/** @{ */
+    /** @{ */
 
     int getSpecifier(const Bytes& b) const;
     void createStandardHeader(int specifier, yarp::os::Bytes& header) const;
@@ -157,14 +155,13 @@ protected:
     bool sendConnectionStateSpecifier(ConnectionState& proto);
     bool sendSenderSpecifier(ConnectionState& proto);
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     static int interpretYarpNumber(const yarp::os::Bytes& b);
     static void createYarpNumber(int x, yarp::os::Bytes& header);
 
-/** @} */
-
+    /** @} */
 };
 
 } // namespace os

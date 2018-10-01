@@ -11,6 +11,7 @@
 #define YARP_OS_TWOWAYSTREAM_H
 
 #include <yarp/conf/numeric.h>
+
 #include <yarp/os/Contact.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
@@ -104,12 +105,11 @@ public:
 /**
  * A "null" stream, always invalid.
  */
-class YARP_OS_API NullStream : public TwoWayStream,
-                               public InputStream,
-                               public OutputStream
+class YARP_OS_API NullStream : public TwoWayStream, public InputStream, public OutputStream
 {
 private:
     Contact address;
+
 public:
     virtual ~NullStream();
 

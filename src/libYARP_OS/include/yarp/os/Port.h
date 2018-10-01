@@ -11,14 +11,13 @@
 #define YARP_OS_PORT_H
 
 #include <yarp/os/api.h>
+
+#include <yarp/os/PortReader.h>
+#include <yarp/os/PortReaderCreator.h>
+#include <yarp/os/PortWriter.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/UnbufferedContactable.h>
-#include <yarp/os/PortReader.h>
-#include <yarp/os/PortWriter.h>
-#include <yarp/os/PortReaderCreator.h>
 
-// Defined in this file:
-namespace yarp { namespace os { class Port; }}
 
 namespace yarp {
 namespace os {
@@ -109,12 +108,12 @@ public:
 
     // Documented in UnbufferedContactable
     bool write(const PortWriter& writer,
-               const PortWriter *callback = nullptr) const override;
+               const PortWriter* callback = nullptr) const override;
 
     // Documented in UnbufferedContactable
     bool write(const PortWriter& writer,
                PortReader& reader,
-               const PortWriter *callback = nullptr) const override;
+               const PortWriter* callback = nullptr) const override;
 
     // Documented in UnbufferedContactable
     bool read(PortReader& reader, bool willReply = false) override;
@@ -228,10 +227,10 @@ public:
     virtual void promiseType(const Type& typ) override;
 
     // Documented in Contactable
-    virtual Property *acquireProperties(bool readOnly) override;
+    virtual Property* acquireProperties(bool readOnly) override;
 
     // Documented in Contactable
-    virtual void releaseProperties(Property *prop) override;
+    virtual void releaseProperties(Property* prop) override;
 
     // Documented in Contactable
     virtual void includeNodeInName(bool flag) override;
@@ -242,7 +241,7 @@ public:
     bool isOpen() const;
 
     // Documented in Contactable
-    virtual bool setCallbackLock(yarp::os::Mutex *mutex = nullptr) override;
+    virtual bool setCallbackLock(yarp::os::Mutex* mutex = nullptr) override;
 
     // Documented in Contactable
     virtual bool removeCallbackLock() override;
@@ -257,15 +256,14 @@ public:
     virtual void unlockCallback() override;
 
 private:
-    void *implementation;
+    void* implementation;
     bool owned;
 
-    void *needImplementation() const;
+    void* needImplementation() const;
 
     bool open(const Contact& contact,
               bool registerName,
-              const char *fakeName);
-
+              const char* fakeName);
 };
 
 } // namespace os

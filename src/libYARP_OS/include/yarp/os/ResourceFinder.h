@@ -10,11 +10,12 @@
 #ifndef YARP_OS_RESOURCEFINDER_H
 #define YARP_OS_RESOURCEFINDER_H
 
-#include <yarp/os/Searchable.h>
-#include <yarp/os/Value.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinderOptions.h>
+#include <yarp/os/Searchable.h>
+#include <yarp/os/Value.h>
+
 #include <string>
 
 namespace yarp {
@@ -37,7 +38,7 @@ public:
 
     virtual ~ResourceFinder();
 
-    const ResourceFinder& operator= (const ResourceFinder& alt);
+    const ResourceFinder& operator=(const ResourceFinder& alt);
 
 
     /**
@@ -78,7 +79,7 @@ public:
      * perfectly valid for it to be
      * absent).
      */
-    bool configure(int argc, char *argv[], bool skipFirstArgument = true);
+    bool configure(int argc, char* argv[], bool skipFirstArgument = true);
 
     /**
      * Sets the context for the current ResourceFinder object.
@@ -92,7 +93,8 @@ public:
      * @param contextName The name of the context
      * @return true on success, false otherwise
      */
-    bool setDefaultContext(const char *contextName) {
+    bool setDefaultContext(const char* contextName)
+    {
         clearContext();
         return addContext(contextName);
     }
@@ -105,7 +107,8 @@ public:
      *
      * @see setDefaultContext(const char *contextName)
      */
-    bool setDefaultContext(const std::string& contextName) {
+    bool setDefaultContext(const std::string& contextName)
+    {
         return setDefaultContext(contextName.c_str());
     }
 
@@ -115,7 +118,7 @@ public:
      * The provided \c val will be converted to a yarp::os::Value, so also
      * string representations for lists and numerical values are accepted.
      */
-    bool setDefault(const char *key, const std::string& val);
+    bool setDefault(const char* key, const std::string& val);
 
     /**
      * Provide a default value for a given key.
@@ -123,7 +126,7 @@ public:
      * The provided \c val will be converted to a 32-bit integer
      * yarp::os::Value.
      */
-    bool setDefault(const char *key, std::int32_t val);
+    bool setDefault(const char* key, std::int32_t val);
 
     /**
      * Provide a default value for a given key.
@@ -131,14 +134,14 @@ public:
      * The provided \c val will be converted to a 64-bit floating point
      * yarp::os::Value.
      */
-    bool setDefault(const char *key, yarp::conf::float64_t val);
+    bool setDefault(const char* key, yarp::conf::float64_t val);
 
     /**
      *
      * Provide a default value for a given key
      *
      */
-    bool setDefault(const char *key, const yarp::os::Value& val);
+    bool setDefault(const char* key, const yarp::os::Value& val);
 
     /**
      *
@@ -146,7 +149,8 @@ public:
      * (can be overridden from command line with the --from argument)
      *
      */
-    bool setDefaultConfigFile(const char *fname) {
+    bool setDefaultConfigFile(const char* fname)
+    {
         return setDefault("from", fname);
     }
 
@@ -251,10 +255,11 @@ public:
      * @return A ResourceFinder corresponding to the named section
      *
      */
-    virtual ResourceFinder findNestedResourceFinder(const char *key);
+    virtual ResourceFinder findNestedResourceFinder(const char* key);
 
 
-    bool isConfigured() const {
+    bool isConfigured() const
+    {
         return isConfiguredFlag;
     }
 
@@ -292,7 +297,8 @@ public:
      *     (an OSX-specific case remains to be defined)
      *
      */
-    static std::string getDataHome() {
+    static std::string getDataHome()
+    {
         return getDataHomeWithPossibleCreation(true);
     }
 
@@ -303,7 +309,8 @@ public:
      * returned.
      *
      */
-    static std::string getDataHomeNoCreate() {
+    static std::string getDataHomeNoCreate()
+    {
         return getDataHomeWithPossibleCreation(false);
     }
 
@@ -322,7 +329,8 @@ public:
      *     (an OSX-specific case remains to be defined)
      *
      */
-    static std::string getConfigHome() {
+    static std::string getConfigHome()
+    {
         return getConfigHomeWithPossibleCreation(true);
     }
 
@@ -332,7 +340,8 @@ public:
      * returned.
      *
      */
-    static std::string getConfigHomeNoCreate() {
+    static std::string getConfigHomeNoCreate()
+    {
         return getConfigHomeWithPossibleCreation(false);
     }
 
@@ -343,7 +352,7 @@ public:
      */
     std::string getHomeContextPath();
 
-     /**
+    /**
      *
      * Return the path to the "user" robot directory
      *
@@ -388,13 +397,13 @@ public:
                                const ResourceFinderOptions& options);
 
     std::string findPath(const std::string& name,
-                                   const ResourceFinderOptions& options);
+                         const ResourceFinderOptions& options);
 
     std::string findFile(const std::string& name,
-                                   const ResourceFinderOptions& options);
+                         const ResourceFinderOptions& options);
 
     std::string findFileByName(const std::string& name,
-                                   const ResourceFinderOptions& options);
+                               const ResourceFinderOptions& options);
 
     bool readConfig(Property& config,
                     const std::string& key,
@@ -403,20 +412,19 @@ public:
     /* YARP 2.4 changes end */
 
 private:
-
     // this might be useful, but is not in spec
-    bool addContext(const char *appName);
+    bool addContext(const char* appName);
 
     // this might be useful, but is not in spec
     bool clearContext();
 
-    void *implementation;
+    void* implementation;
     bool owned;
     bool nullConfig;
     bool isConfiguredFlag;
     yarp::os::Property config;
 
-    ResourceFinder(Searchable& data, void *implementation);
+    ResourceFinder(Searchable& data, void* implementation);
 
     static std::string getDataHomeWithPossibleCreation(bool mayCreate);
     static std::string getConfigHomeWithPossibleCreation(bool mayCreate);

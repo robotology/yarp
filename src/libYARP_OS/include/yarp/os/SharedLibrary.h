@@ -10,6 +10,7 @@
 #define YARP_OS_SHAREDLIBRARY_H
 
 #include <yarp/os/api.h>
+
 #include <string>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -18,8 +19,8 @@ namespace os {
 namespace impl {
 class SharedLibraryImpl;
 }
-}
-}
+} // namespace os
+} // namespace yarp
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 namespace yarp {
@@ -42,7 +43,7 @@ public:
      *
      * @param filename name of file (see open method)
      */
-    SharedLibrary(const char *filename);
+    SharedLibrary(const char* filename);
 
     SharedLibrary(const SharedLibrary&) = delete;
     SharedLibrary& operator=(const SharedLibrary&) = delete;
@@ -61,7 +62,7 @@ public:
      * @param filename name of file.
      * @return true on success
      */
-    bool open(const char *filename);
+    bool open(const char* filename);
 
     /**
      * Shared library no longer needed, unload if not in use elsewhere.
@@ -80,7 +81,7 @@ public:
     /**
      * Look up a symbol in the shared library.
      */
-    void *getSymbol(const char *symbolName);
+    void* getSymbol(const char* symbolName);
 
     /**
      * Check if the shared library is valid
@@ -93,7 +94,6 @@ public:
 private:
     yarp::os::impl::SharedLibraryImpl* const implementation;
 #endif // DOXYGEN_SHOULD_SKIP_THIS
-
 };
 
 } // namespace os

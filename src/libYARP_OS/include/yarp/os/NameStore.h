@@ -10,8 +10,8 @@
 #ifndef YARP_OS_NAMESTORE_H
 #define YARP_OS_NAMESTORE_H
 
-#include <yarp/os/Contact.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Contact.h>
 
 namespace yarp {
 namespace os {

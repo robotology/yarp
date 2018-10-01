@@ -11,19 +11,23 @@
 #define YARP_OS_TIME_H
 
 #include <yarp/os/Clock.h>
-#include <yarp/os/SystemClock.h>
 #include <yarp/os/NetworkClock.h>
+#include <yarp/os/SystemClock.h>
 
 #include <string>
 
 namespace yarp {
 namespace os {
 
-enum class ShouldUseSystemClock { No = 0, Yes = 1 };
+enum class ShouldUseSystemClock
+{
+    No = 0,
+    Yes = 1
+};
 
 enum yarpClockType
 {
-    YARP_CLOCK_UNINITIALIZED=-1,
+    YARP_CLOCK_UNINITIALIZED = -1,
     YARP_CLOCK_DEFAULT,
     YARP_CLOCK_SYSTEM,
     YARP_CLOCK_NETWORK,
@@ -74,7 +78,7 @@ YARP_OS_API void useSystemClock();
  *
  * Throws assert in case of failure
  */
-YARP_OS_API void useNetworkClock(const std::string& clock, std::string localPortName="");
+YARP_OS_API void useNetworkClock(const std::string& clock, std::string localPortName = "");
 
 /**
  * Configure YARP clients to use a custom clock source provided by the
@@ -86,7 +90,7 @@ YARP_OS_API void useNetworkClock(const std::string& clock, std::string localPort
  *
  * Throws assert in case of failure
  */
-YARP_OS_API void useCustomClock(Clock *clock);
+YARP_OS_API void useCustomClock(Clock* clock);
 
 /**
  * Check if YARP is providing system time.

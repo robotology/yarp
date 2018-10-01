@@ -11,11 +11,12 @@
 #define YARP_OS_SEARCHABLE_H
 
 #include <yarp/os/api.h>
-#include <string>
+
 #include <cstddef>
+#include <string>
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-# include <yarp/os/ConstString.h>
+#    include <yarp/os/ConstString.h>
 #endif // YARP_NO_DEPRECATED
 
 
@@ -23,8 +24,8 @@ namespace yarp {
 namespace os {
 class Value;
 class Bottle;
-}
-}
+} // namespace os
+} // namespace yarp
 
 namespace yarp {
 namespace os {
@@ -48,7 +49,7 @@ class YARP_OS_API SearchMonitor
 {
 public:
     virtual ~SearchMonitor();
-    virtual void report(const SearchReport& report, const char *context) = 0;
+    virtual void report(const SearchReport& report, const char* context) = 0;
 };
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
@@ -65,8 +66,9 @@ public:
 class YARP_OS_API Searchable
 {
 private:
-    SearchMonitor *monitor;
+    SearchMonitor* monitor;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) monitorContext;
+
 public:
     /**
      * Default constructor.
@@ -157,7 +159,8 @@ public:
      * false otherwise.  See the find() method for interpreting the
      * value found.
      */
-    virtual bool check(const std::string& key, Value *& result,
+    virtual bool check(const std::string& key,
+                       Value*& result,
                        const std::string& comment = "") const;
 
 
@@ -170,7 +173,8 @@ public:
      * or the default if nothing is found.  See the find() method for
      * interpreting the value found.
      */
-    virtual Value check(const std::string& key, const Value& fallback,
+    virtual Value check(const std::string& key,
+                        const Value& fallback,
                         const std::string& comment = "") const;
 
     /**
@@ -189,8 +193,8 @@ public:
     virtual std::string toString() const = 0;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    virtual void setMonitor(SearchMonitor *monitor, const char *context="");
-    virtual SearchMonitor *getMonitor() const;
+    virtual void setMonitor(SearchMonitor* monitor, const char* context = "");
+    virtual SearchMonitor* getMonitor() const;
     virtual std::string getMonitorContext() const;
     virtual void reportToMonitor(const SearchReport& report) const;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */

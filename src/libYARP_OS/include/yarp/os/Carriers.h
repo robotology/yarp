@@ -10,13 +10,14 @@
 #ifndef YARP_OS_CARRIERS_H
 #define YARP_OS_CARRIERS_H
 
+#include <yarp/os/Bottle.h>
 #include <yarp/os/Bytes.h>
-#include <string>
+#include <yarp/os/Carrier.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Face.h>
 #include <yarp/os/OutputProtocol.h>
-#include <yarp/os/Carrier.h>
-#include <yarp/os/Bottle.h>
+
+#include <string>
 
 
 namespace yarp {
@@ -31,19 +32,18 @@ namespace os {
 class YARP_OS_API Carriers
 {
 public:
-
     /**
      * Select a carrier by name.
      *
      * @param name the name of the desired carrier.
      * @return the desired carrier, or nullptr if not found.
      */
-    static Carrier *chooseCarrier(const std::string& name);
+    static Carrier* chooseCarrier(const std::string& name);
 
     /**
      * Get template for carrier.
      */
-    static Carrier *getCarrierTemplate(const std::string& name);
+    static Carrier* getCarrierTemplate(const std::string& name);
 
     /**
      * Select a carrier by 8-byte header.
@@ -51,7 +51,7 @@ public:
      * @param bytes the 8-byte header describing the desired carrier.
      * @return the desired carrier, or nullptr if not found.
      */
-    static Carrier *chooseCarrier(const Bytes& bytes);
+    static Carrier* chooseCarrier(const Bytes& bytes);
 
     /**
      * Create a "proto-carrier" interface object that waits for
@@ -67,7 +67,7 @@ public:
      *                listen to.
      * @return the interface object.
      */
-    static Face *listen(const Contact& address);
+    static Face* listen(const Contact& address);
 
     /**
      * Initiate a connection to an address.
@@ -76,7 +76,7 @@ public:
      *                connect to.
      * @return the protocol object.
      */
-    static OutputProtocol *connect(const Contact& address);
+    static OutputProtocol* connect(const Contact& address);
 
     /**
      * Destructor.
@@ -97,7 +97,7 @@ public:
      *                destroying it on shutdown.
      * @return true on success.
      */
-    static bool addCarrierPrototype(Carrier *carrier);
+    static bool addCarrierPrototype(Carrier* carrier);
 
     static Carriers& getInstance();
 
@@ -107,7 +107,7 @@ private:
     Carriers();
 
     class Private;
-    Private * const mPriv;
+    Private* const mPriv;
 };
 
 } // namespace os

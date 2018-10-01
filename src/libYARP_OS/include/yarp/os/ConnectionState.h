@@ -29,14 +29,13 @@ class Contactable;
  * The basic state of a connection - route, streams in use, etc.
  *
  */
-class YARP_OS_API ConnectionState {
+class YARP_OS_API ConnectionState
+{
 public:
-
     /**
      * Destructor.
      */
-    virtual ~ConnectionState() {
-    }
+    virtual ~ConnectionState() {}
 
     /**
      * Get the route associated with this connection. A route is
@@ -93,21 +92,21 @@ public:
      * The connection becomes the owner of these streams.
      * Any streams already in use are closed and destroyed.
      */
-    virtual void takeStreams(TwoWayStream *streams) = 0;
+    virtual void takeStreams(TwoWayStream* streams) = 0;
 
     /**
      * Take ownership of the streams associated with
      * the connection.  The connection will never touch
      * them again after this call.
      */
-    virtual TwoWayStream *giveStreams() = 0;
+    virtual TwoWayStream* giveStreams() = 0;
 
     /**
      * Give a direct pointer to an object being sent
      * on the connection.  This allows serialization
      * to be bypassed for local connections.
      */
-    virtual void setReference(yarp::os::Portable *ref) = 0;
+    virtual void setReference(yarp::os::Portable* ref) = 0;
 
     /**
      * Check whether streams are in a good state.
@@ -117,20 +116,22 @@ public:
     /**
      * Get the port associated with the connection.
      */
-    virtual Contactable *getContactable() const = 0;
+    virtual Contactable* getContactable() const = 0;
 
 
     /**
      * Shorthand for getOutputStream()
      */
-    OutputStream& os() {
+    OutputStream& os()
+    {
         return getOutputStream();
     }
 
     /**
      * Shorthand for getInputStream()
      */
-    InputStream& is() {
+    InputStream& is()
+    {
         return getInputStream();
     }
 

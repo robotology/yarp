@@ -9,25 +9,14 @@
 #ifndef YARP_OS_LOCKGUARD_H
 #define YARP_OS_LOCKGUARD_H
 
-#include <yarp/os/api.h>
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+#    include <yarp/os/api.h>
+#else // YARP_NO_DEPRECATED
+#    include <mutex>
+#endif // YARP_NO_DEPRECATED
 
 namespace yarp {
-    namespace os {
-        template <typename Lockable>
-        class AbstractLockGuard;
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-        class Mutex;
-        class RecursiveMutex;
-#else
-        using Mutex = std::mutex;
-        using RecursiveMutex = std::recursive_mutex;
-#endif
-
-        typedef AbstractLockGuard<Mutex> LockGuard;
-        typedef AbstractLockGuard<RecursiveMutex> RecursiveLockGuard;
-    }
-}
+namespace os {
 
 /**
  * This class is a mutex wrapper that provides a convenient RAII-style mechanism for owning
@@ -38,7 +27,8 @@ namespace yarp {
  * The lock_guard class is non-copyable.
  */
 template <typename Lockable>
-class yarp::os::AbstractLockGuard {
+class AbstractLockGuard
+{
 public:
     /**
      * Acquires ownership of the given mutex _mutex.
@@ -53,7 +43,6 @@ public:
     ~AbstractLockGuard();
 
 private:
-
     /** Copy constructor is disabled */
     AbstractLockGuard(const AbstractLockGuard&);
 
@@ -64,10 +53,10 @@ private:
 };
 
 
-//Implementation
+// Implementation
 template <typename Lockable>
-yarp::os::AbstractLockGuard<Lockable>::AbstractLockGuard(Lockable& _lock)
-    : lock(_lock)
+yarp::os::AbstractLockGuard<Lockable>::AbstractLockGuard(Lockable& _lock) :
+        lock(_lock)
 {
     lock.lock();
 }
@@ -79,10 +68,31 @@ yarp::os::AbstractLockGuard<Lockable>::~AbstractLockGuard()
 }
 
 template <typename Lockable>
-yarp::os::AbstractLockGuard<Lockable>::AbstractLockGuard(const AbstractLockGuard& lg)
-: lock(lg.lock) { }
+yarp::os::AbstractLockGuard<Lockable>::AbstractLockGuard(const AbstractLockGuard& lg) :
+        lock(lg.lock)
+{
+}
 
 template <typename Lockable>
-yarp::os::AbstractLockGuard<Lockable>& yarp::os::AbstractLockGuard<Lockable>::operator=(const AbstractLockGuard&) { return *this; }
+yarp::os::AbstractLockGuard<Lockable>& yarp::os::AbstractLockGuard<Lockable>::operator=(const AbstractLockGuard&)
+{
+    return *this;
+}
+
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+class Mutex;
+class RecursiveMutex;
+#else
+using Mutex = std::mutex;
+using RecursiveMutex = std::recursive_mutex;
+#endif
+
+typedef AbstractLockGuard<Mutex> LockGuard;
+typedef AbstractLockGuard<RecursiveMutex> RecursiveLockGuard;
+
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_LOCKGUARD_H

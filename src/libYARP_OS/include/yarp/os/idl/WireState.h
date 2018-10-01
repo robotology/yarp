@@ -24,7 +24,7 @@ public:
     int len;
     int code;
     bool need_ok;
-    WireState *parent;
+    WireState* parent;
 
     WireState();
 
