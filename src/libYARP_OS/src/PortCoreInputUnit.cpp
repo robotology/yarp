@@ -204,7 +204,7 @@ void PortCoreInputUnit::run() {
                 if (!br.isActive()) { break; }
                 if (!ok) continue;
             } else {
-                PortManager& man = getOwner();
+                PortCore& man = getOwner();
                 bool ok = man.readBlock(br, id, nullptr);
                 if (!br.isActive()) { break; }
                 if (!ok) continue;
@@ -232,7 +232,7 @@ void PortCoreInputUnit::run() {
         //printf("Port command is [%c:%d/%s]\n",
         //         (key>=32)?key:'?', key, cmd.getText().c_str());
 
-        PortManager& man = getOwner();
+        PortCore& man = getOwner();
         OutputStream *os = nullptr;
         if (br.isTextMode()) {
             os = &(ip->getOutputStream());

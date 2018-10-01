@@ -16,7 +16,6 @@
 #include <yarp/os/Contactable.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Type.h>
-#include <yarp/os/impl/PortManager.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortReaderCreator.h>
 #include <yarp/os/PortWriter.h>
@@ -32,14 +31,10 @@
 #include <vector>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class PortCore;
-            class PortCoreUnit;
-            class PortDataModifier;
-        }
-    }
-}
+namespace os {
+namespace impl {
+
+class PortCoreUnit;
 
 #define PORTCORE_SEND_NORMAL (1)
 #define PORTCORE_SEND_LOG (2)
@@ -108,7 +103,7 @@ namespace yarp {
  * @brief The yarp::os::impl::PortDataModifier class is a helper
  *  class to manage the port data modifiers
  */
-class YARP_OS_impl_API yarp::os::impl::PortDataModifier
+class YARP_OS_impl_API PortDataModifier
 {
 public:
     PortDataModifier() :
@@ -148,10 +143,10 @@ public:
     yarp::os::Mutex    inputMutex;
 };
 
-class YARP_OS_impl_API yarp::os::impl::PortCore : public ThreadImpl, public PortManager, public yarp::os::PortReader
+class YARP_OS_impl_API PortCore : public ThreadImpl,
+                                  public yarp::os::PortReader
 {
 public:
-
     /**
      * Constructor.
      */
@@ -160,7 +155,135 @@ public:
     /**
      * Destructor.
      */
-    virtual ~PortCore();
+    ~PortCore();
+
+    /**
+     * Add an output connection to this port.
+     * @param dest the name of the target
+     * @param id an opaque tracker for the connection
+     * @param os the output stream for messages about this operation
+     * @param onlyIfNeeded if true, don't add the connection if there
+     * is already a connection to the named target
+     * @return true on success
+     */
+    bool addOutput(const std::string& dest,
+                   void *id,
+                   yarp::os::OutputStream *os,
+                   bool onlyIfNeeded = false);
+
+    /**
+     * Add another output to the port.
+     */
+    void addOutput(OutputProtocol *op);
+
+    /**
+     * Remove an input connection.
+     * @param src the name of the source port
+     * @param id an opaque tracker for the connection
+     * @param os the output stream for messages about this operation
+     */
+    void removeInput(const std::string& src,
+                     void *id,
+                     yarp::os::OutputStream *os);
+
+    /**
+     * Remove an output connection.
+     * @param dest the name of the target port
+     * @param id an opaque tracker for the connection
+     * @param os the output stream for messages about this operation
+     */
+    void removeOutput(const std::string& dest,
+                      void *id,
+                      yarp::os::OutputStream *os);
+
+    /**
+     * Remove any connection matching the supplied route.
+     * @param route the source/target/carrier associated with the connection
+     * @param synch true if we should wait for removal to complete
+     * @return true if a connection was found that needed removal
+     */
+    bool removeIO(const Route& route, bool synch = false);
+
+    /**
+     * Produce a text description of the port and its connections.
+     * @param id opaque identifier of connection that needs the description
+     * @param os stream to write on
+     */
+    void describe(void *id, yarp::os::OutputStream *os);
+
+    /**
+     * Generate a description of the connections associated with the
+     * port.
+     */
+    void describe(yarp::os::PortReport& reporter);
+
+    /**
+     * Read a block of regular payload data.
+     * @param reader source of data
+     * @param id opaque identifier of connection providing data
+     * @param os stream to write error messages on
+     */
+    bool readBlock(ConnectionReader& reader,
+                   void *id,
+                   yarp::os::OutputStream *os);
+
+    /**
+     * Read a block of administrative data.
+     * Process an administrative message.
+     * @param reader source of data
+     * @param id opaque identifier of connection providing data
+     * @param os stream to write error messages on
+     */
+    bool adminBlock(ConnectionReader& reader,
+                    void *id,
+                    yarp::os::OutputStream *os);
+
+    /**
+     * Set the name of this port.
+     * @param name the name of this port
+     */
+    void setName(const std::string& name);
+
+    /**
+     * @return the name of this port
+     */
+    std::string getName();
+
+    /**
+     * Set some envelope information to pass along with a message
+     * without actually being part of the message.
+     * @param envelope the extra message to send
+     */
+    void setEnvelope(const std::string& envelope);
+
+    /**
+     * Set some extra meta data to pass along with the message
+     */
+    bool setEnvelope(yarp::os::PortWriter& envelope);
+
+    std::string getEnvelope();
+
+    /**
+     * Get any meta data associated with the last message received
+     */
+    bool getEnvelope(yarp::os::PortReader& envelope);
+
+    /**
+     * Handle a port event (connection, disconnection, etc)
+     * Generate a description of the connections associated with the
+     * port.
+     * @param info the event description
+     */
+    void report(const yarp::os::PortInfo& info);
+
+    /**
+     * Called by a connection handler with active=true just after it
+     * is fully configured, and with active=false just before it shuts
+     * itself down.
+     * @param unit the connection handler starting up / shutting down
+     * @param active true if the handler is starting up, false if shutting down
+     */
+    void reportUnit(PortCoreUnit *unit, bool active);
 
     /**
      * Configure the port to meet certain restrictions in behavior.
@@ -251,7 +374,6 @@ public:
      */
     virtual bool start() override;
 
-
     /**
      * Start up the port, but without a main thread.
      */
@@ -296,23 +418,14 @@ public:
     /**
      * Get the address associated with the port.
      */
-    const Contact& getAddress() const
-    {
-        return address;
-    }
+    const Contact& getAddress() const;
 
-    void resetPortName(const std::string& str)
-    {
-        address.setName(str);
-    }
+    void resetPortName(const std::string& str);
 
     /**
      * Get the creator of callbacks.
      */
-    yarp::os::PortReaderCreator *getReadCreator()
-    {
-        return readableCreator;
-    }
+    yarp::os::PortReaderCreator *getReadCreator();
 
     /**
      * Call the right onCompletion() after sending message
@@ -320,30 +433,10 @@ public:
     void notifyCompletion(void *tracker);
 
     /**
-     * Set some extra meta data to pass along with the message
-     */
-    bool setEnvelope(yarp::os::PortWriter& envelope);
-
-    /**
-     * Set some extra meta data to pass along with the message
-     */
-    void setEnvelope(const std::string& envelope) override;
-
-    std::string getEnvelope();
-
-    /**
-     * Get any meta data associated with the last message received
-     */
-    bool getEnvelope(yarp::os::PortReader& envelope);
-
-    /**
      * Normally the port will unregister its name with the name server
      * when shutting down.  This can be inhibited.
      */
-    void setControlRegistration(bool flag)
-    {
-        controlRegistration = flag;
-    }
+    void setControlRegistration(bool flag);
 
     /**
      * Prepare the port to be shut down.
@@ -356,12 +449,6 @@ public:
     void resume();
 
     /**
-     * Generate a description of the connections associated with the
-     * port.
-     */
-    virtual void describe(yarp::os::PortReport& reporter);
-
-    /**
      * Set a callback to be notified of changes in port status.
      */
     void setReportCallback(yarp::os::PortReport *reporter);
@@ -372,179 +459,51 @@ public:
     void resetReportCallback();
 
     /**
-     * Process an administrative message.
-     */
-    bool adminBlock(yarp::os::ConnectionReader& reader, void *id,
-                    OutputStream *os) override;
-
-
-    /**
-     *
      * @return true if there is a server socket/thread currently
      * associated with this port.
-     *
      */
-    bool isListening() const
-    {
-        return listening;
-    }
+    bool isListening() const;
 
     /**
-     *
      * @return true if there the port is configured to operate without
      * a server socket/thread.
-     *
      */
-    bool isManual() const
-    {
-        return manual;
-    }
+    bool isManual() const;
 
     /**
-     *
      * @return true if port operation has been interrupted.
-     *
      */
-    bool isInterrupted() const
-    {
-        return interrupted;
-    }
+    bool isInterrupted() const;
 
-public:
+    void setTimeout(float timeout);
 
-    // documented in PortManager
-    virtual bool addOutput(const std::string& dest, void *id, OutputStream *os,
-                           bool onlyIfNeeded) override;
+    void setVerbosity(int level);
 
-    // documented in PortManager
-    virtual void removeOutput(const std::string& dest, void *id, OutputStream *os) override;
-
-    // documented in PortManager
-    virtual void removeInput(const std::string& dest, void *id, OutputStream *os) override;
-
-    // documented in PortManager
-    virtual void describe(void *id, OutputStream *os) override;
-
-    // documented in PortManager
-    virtual bool readBlock(yarp::os::ConnectionReader& reader, void *id, OutputStream *os) override;
-
-
-    /**
-     * Generate a description of the connections associated with the
-     * port.
-     */
-    virtual void report(const yarp::os::PortInfo& info) override;
-
-    /**
-     * Add another output to the port.
-     */
-    void addOutput(OutputProtocol *op);
-
-    virtual bool removeIO(const Route& route, bool synch) override
-    {
-        return removeUnit(route, synch);
-    }
-
-    virtual void reportUnit(PortCoreUnit *unit, bool active) override;
-
-    void setTimeout(float timeout)
-    {
-        this->timeout = timeout;
-    }
-
-    void setVerbosity(int level)
-    {
-        verbosity = level;
-    }
-
-    int getVerbosity()
-    {
-        return verbosity;
-    }
+    int getVerbosity();
 
     Property *acquireProperties(bool readOnly);
     void releaseProperties(Property *prop);
 
-    bool setCallbackLock(yarp::os::Mutex *mutex = nullptr)
-    {
-        removeCallbackLock();
-        if (mutex) {
-            this->mutex = mutex;
-            mutexOwned = false;
-        } else {
-            this->mutex = new yarp::os::Mutex();
-            mutexOwned = true;
-        }
-        return true;
-    }
+    bool setCallbackLock(yarp::os::Mutex *mutex = nullptr);
 
-    bool removeCallbackLock()
-    {
-        if (mutexOwned&&mutex) {
-            delete mutex;
-        }
-        mutex = nullptr;
-        mutexOwned = false;
-        return true;
-    }
+    bool removeCallbackLock();
 
-    bool lockCallback()
-    {
-        if (!mutex) return false;
-        mutex->lock();
-        return true;
-    }
+    bool lockCallback();
 
-    bool tryLockCallback()
-    {
-        if (!mutex) return true;
-        return mutex->try_lock();
-    }
+    bool tryLockCallback();
 
-    void unlockCallback()
-    {
-        if (!mutex) return;
-        mutex->unlock();
-    }
+    void unlockCallback();
 
-    void take(PortCore *alt)
-    {
-        YARP_UNUSED(alt);
-    }
+    yarp::os::impl::PortDataModifier& getPortModifier();
 
-    yarp::os::impl::PortDataModifier& getPortModifier()
-    {
-        return modifier;
-    }
+    void checkType(PortReader& reader);
 
-    void checkType(PortReader& reader)
-    {
-        typeMutex.lock();
-        if (!checkedType) {
-            if (!typ.isValid()) {
-                typ = reader.getReadType();
-            }
-            checkedType = true;
-        }
-        typeMutex.unlock();
-    }
+    yarp::os::Type getType();
 
-    yarp::os::Type getType()
-    {
-        typeMutex.lock();
-        Type t = typ;
-        typeMutex.unlock();
-        return t;
-    }
-
-    void promiseType(const Type& typ)
-    {
-        typeMutex.lock();
-        this->typ = typ;
-        typeMutex.unlock();
-    }
+    void promiseType(const Type& typ);
 
 private:
+    yarp::os::OutputStream *os;
 
     // main internal PortCore state and operations
     std::vector<PortCoreUnit *> units;  ///< list of connections
@@ -637,13 +596,11 @@ private:
     bool removeUnit(const Route& route, bool synch = false,
                     bool *except = nullptr);
 
-    int getNextIndex()
-    {
-        int result = counter;
-        counter++;
-        if (counter<0) counter = 1;
-        return result;
-    }
+    int getNextIndex();
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_PORTCORE_H

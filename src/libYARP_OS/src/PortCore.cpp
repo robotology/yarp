@@ -58,6 +58,7 @@ using namespace yarp::os;
 using namespace yarp;
 
 PortCore::PortCore() :
+        os(nullptr),
         stateSema(1),
         packetMutex(),
         connectionChange(1),
@@ -163,10 +164,10 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     // Now that we are on the network, we can let the name server know this.
     if (shouldAnnounce) {
         if (!(NetworkBase::getLocalMode()&&NetworkBase::getQueryBypass()==nullptr)) {
-            std::string portName = address.getRegName().c_str();
+            std::string portName = address.getRegName();
             Bottle cmd, reply;
             cmd.addString("announce");
-            cmd.addString(portName.c_str());
+            cmd.addString(portName);
             ContactStyle style;
             NetworkBase::writeToNameServer(cmd, reply, style);
         }
@@ -459,12 +460,12 @@ void PortCore::closeMain()
         if (!done) {
             YARP_DEBUG(log, std::string("requesting removal of connection from ")+
                        removeName);
-            bool result = NetworkBase::disconnect(removeName.c_str(),
-                                                  getName().c_str(),
+            bool result = NetworkBase::disconnect(removeName,
+                                                  getName(),
                                                   true);
             if (!result) {
-                NetworkBase::disconnectInput(getName().c_str(),
-                                             removeName.c_str(),
+                NetworkBase::disconnectInput(getName(),
+                                             removeName,
                                              true);
             }
             prevName = removeName;
@@ -560,7 +561,7 @@ void PortCore::closeMain()
         std::string name = getName();
         if (name!=std::string("")) {
             if (controlRegistration) {
-                NetworkBase::unregisterName(name.c_str());
+                NetworkBase::unregisterName(name);
             }
         }
     }
@@ -916,7 +917,7 @@ bool PortCore::addOutput(const std::string& dest,
 
     // Look up the address we'll be connectioning to.
     Contact parts = Name(dest).toAddress();
-    Contact contact = NetworkBase::queryName(parts.getRegName().c_str());
+    Contact contact = NetworkBase::queryName(parts.getRegName());
     Contact address = contact;
 
     // If we can't find it, say so and abort.
@@ -1180,9 +1181,8 @@ void PortCore::describe(PortReport& reporter)
     // Report name and address of port.
     PortInfo baseInfo;
     baseInfo.tag = yarp::os::PortInfo::PORTINFO_MISC;
-    std::string portName = address.getRegName().c_str();
-    baseInfo.message = (std::string("This is ") + portName.c_str() + " at " +
-                        address.toURI()).c_str();
+    std::string portName = address.getRegName();
+    baseInfo.message = std::string("This is ") + portName + " at " + address.toURI();
     reporter.report(baseInfo);
 
     // Report outgoing connections.
@@ -1197,13 +1197,13 @@ void PortCore::describe(PortReport& reporter)
                     " to " + route.getToName() + " using " +
                     route.getCarrierName();
                 PortInfo info;
-                info.message = msg.c_str();
+                info.message = msg;
                 info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
                 info.incoming = false;
                 info.portName = portName;
-                info.sourceName = route.getFromName().c_str();
-                info.targetName = route.getToName().c_str();
-                info.carrierName = route.getCarrierName().c_str();
+                info.sourceName = route.getFromName();
+                info.targetName = route.getToName();
+                info.carrierName = route.getCarrierName();
                 reporter.report(info);
                 oct++;
             }
@@ -1228,13 +1228,13 @@ void PortCore::describe(PortReport& reporter)
                     " to " + route.getToName() + " using " +
                     route.getCarrierName();
                 PortInfo info;
-                info.message = msg.c_str();
+                info.message = msg;
                 info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
                 info.incoming = true;
                 info.portName = portName;
-                info.sourceName = route.getFromName().c_str();
-                info.targetName = route.getToName().c_str();
-                info.carrierName = route.getCarrierName().c_str();
+                info.sourceName = route.getFromName();
+                info.targetName = route.getToName();
+                info.carrierName = route.getCarrierName();
                 reporter.report(info);
                 ict++;
             }
@@ -1573,7 +1573,7 @@ std::string PortCore::getEnvelope()
 bool PortCore::getEnvelope(PortReader& envelope)
 {
     StringInputStream sis;
-    sis.add(this->envelope.c_str());
+    sis.add(this->envelope);
     sis.add("\r\n");
     StreamConnectionReader sbr;
     Route route;
@@ -1582,7 +1582,7 @@ bool PortCore::getEnvelope(PortReader& envelope)
 }
 
 // Shorthand to create a nested (tag, val) pair to add to a message.
-#define STANZA(name, tag, val) Bottle name; name.addString(tag); name.addString(val.c_str());
+#define STANZA(name, tag, val) Bottle name; name.addString(tag); name.addString(val);
 #define STANZA_INT(name, tag, val) Bottle name; name.addString(tag); name.addInt32(val);
 
 // Make an RPC connection to talk to a ROS API, send a message, get reply.
@@ -1703,8 +1703,8 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     case yarp::os::createVocab('a', 'd', 'd'):
         {
             // Add an output to the port.
-            std::string output = cmd.get(1).asString().c_str();
-            std::string carrier = cmd.get(2).asString().c_str();
+            std::string output = cmd.get(1).asString();
+            std::string carrier = cmd.get(2).asString();
             if (carrier!="") {
                 output = carrier + ":/" + output;
             }
@@ -1712,20 +1712,20 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             std::string r = cache.toString();
             int v = (r[0]=='A')?0:-1;
             result.addInt32(v);
-            result.addString(r.c_str());
+            result.addString(r);
         }
         break;
     case yarp::os::createVocab('a', 't', 'c', 'h'):
         {
             switch (cmd.get(1).asVocab()) {
             case yarp::os::createVocab('o', 'u', 't'): {
-                std::string propString = cmd.get(2).asString().c_str();
+                std::string propString = cmd.get(2).asString();
                 Property prop(propString.c_str());
                 std::string errMsg;
                 if (!attachPortMonitor(prop, true, errMsg)) {
                     result.clear();
                     result.addVocab(Vocab::encode("fail"));
-                    result.addString(errMsg.c_str());
+                    result.addString(errMsg);
                 }
                 else {
                     result.clear();
@@ -1734,13 +1734,13 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             }
             break;
             case yarp::os::createVocab('i', 'n'): {
-                std::string propString = cmd.get(2).asString().c_str();
+                std::string propString = cmd.get(2).asString();
                 Property prop(propString.c_str());
                 std::string errMsg;
                 if (!attachPortMonitor(prop, false, errMsg)) {
                     result.clear();
                     result.addVocab(Vocab::encode("fail"));
-                    result.addString(errMsg.c_str());
+                    result.addString(errMsg);
                 }
                 else {
                     result.clear();
@@ -1782,19 +1782,19 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     case yarp::os::createVocab('d', 'e', 'l'):
         {
             // Delete any inputs or outputs involving the named port.
-            removeOutput(std::string(cmd.get(1).asString().c_str()), id, &cache);
+            removeOutput(cmd.get(1).asString(), id, &cache);
             std::string r1 = cache.toString();
             cache.reset();
-            removeInput(std::string(cmd.get(1).asString().c_str()), id, &cache);
+            removeInput(cmd.get(1).asString(), id, &cache);
             std::string r2 = cache.toString();
             int v = (r1[0]=='R'||r2[0]=='R')?0:-1;
             result.addInt32(v);
             if (r1[0]=='R' && r2[0]!='R') {
-                result.addString(r1.c_str());
+                result.addString(r1);
             } else if (r1[0]!='R' && r2[0]=='R') {
-                result.addString(r2.c_str());
+                result.addString(r2);
             } else {
-                result.addString((r1 + r2).c_str());
+                result.addString(r1 + r2);
             }
         }
         break;
@@ -1813,9 +1813,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             if (target=="") {
                                 const std::string& name = route.getFromName();
                                 if (name!="") {
-                                    result.addString(name.c_str());
+                                    result.addString(name);
                                 }
-                            } else if (route.getFromName()==target.c_str()) {
+                            } else if (route.getFromName()==target) {
                                 STANZA(bfrom, "from", route.getFromName());
                                 STANZA(bto, "to", route.getToName());
                                 STANZA(bcarrier, "carrier",
@@ -1852,8 +1852,8 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                         if (unit->isOutput()&&!unit->isFinished()) {
                             Route route = unit->getRoute();
                             if (target=="") {
-                                result.addString(route.getToName().c_str());
-                            } else if (route.getToName()==target.c_str()) {
+                                result.addString(route.getToName());
+                            } else if (route.getToName() == target) {
                                 STANZA(bfrom, "from", route.getFromName());
                                 STANZA(bto, "to", route.getToName());
                                 STANZA(bcarrier, "carrier",
@@ -1899,7 +1899,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                         if (!setParamPortMonitor(property, false, errMsg)) {
                             result.clear();
                             result.addVocab(Vocab::encode("fail"));
-                            result.addString(errMsg.c_str());
+                            result.addString(errMsg);
                         }
                         else {
                             result.clear();
@@ -1911,15 +1911,15 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             PortCoreUnit *unit = units[i];
                             if (unit && unit->isInput() && !unit->isFinished()) {
                                 Route route = unit->getRoute();
-                                if (route.getFromName() == target.c_str()) {
+                                if (route.getFromName() == target) {
                                     yarp::os::Property property;
                                     property.fromString(cmd.toString());
                                     unit->setCarrierParams(property);
                                     result.addInt32(0);
                                     std::string msg = "Configured connection from ";
-                                    msg += route.getFromName().c_str();
+                                    msg += route.getFromName();
                                     msg += "\r\n";
-                                    result.addString(msg.c_str());
+                                    result.addString(msg);
                                     break;
                                 }
                             }
@@ -1929,9 +1929,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     {
                         result.addInt32(-1);
                         std::string msg = "Could not find an incoming connection from ";
-                        msg += target.c_str();
+                        msg += target;
                         msg += "\r\n";
-                        result.addString(msg.c_str());
+                        result.addString(msg);
                     }
                 }
                 stateSema.post();
@@ -1955,7 +1955,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                         if (!setParamPortMonitor(property, true, errMsg)) {
                             result.clear();
                             result.addVocab(Vocab::encode("fail"));
-                            result.addString(errMsg.c_str());
+                            result.addString(errMsg);
                         }
                         else {
                             result.clear();
@@ -1967,15 +1967,15 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             PortCoreUnit *unit = units[i];
                             if (unit && unit->isOutput() && !unit->isFinished()) {
                                 Route route = unit->getRoute();
-                                if (route.getToName() == target.c_str()) {
+                                if (route.getToName() == target) {
                                     yarp::os::Property property;
                                     property.fromString(cmd.toString());
                                     unit->setCarrierParams(property);
                                     result.addInt32(0);
                                     std::string msg = "Configured connection to ";
-                                    msg += route.getToName().c_str();
+                                    msg += route.getToName();
                                     msg += "\r\n";
-                                    result.addString(msg.c_str());
+                                    result.addString(msg);
                                     break;
                                 }
                             }
@@ -1985,9 +1985,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     {
                         result.addInt32(-1);
                         std::string msg = "Could not find an incoming connection to ";
-                        msg += target.c_str();
+                        msg += target;
                         msg += "\r\n";
-                        result.addString(msg.c_str());
+                        result.addString(msg);
                     }
                 }
                 stateSema.post();
@@ -2014,7 +2014,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                         if (!getParamPortMonitor(property, false, errMsg)) {
                             result.clear();
                             result.addVocab(Vocab::encode("fail"));
-                            result.addString(errMsg.c_str());
+                            result.addString(errMsg);
                         }
                         else {
                             result.clear();
@@ -2026,7 +2026,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             PortCoreUnit *unit = units[i];
                             if (unit && unit->isInput() && !unit->isFinished()) {
                                 Route route = unit->getRoute();
-                                if (route.getFromName() == target.c_str()) {
+                                if (route.getFromName() == target) {
                                     yarp::os::Property property;
                                     unit->getCarrierParams(property);
                                     result.addDict() = property;
@@ -2038,9 +2038,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                         {
                             result.addInt32(-1);
                             std::string msg = "Could not find an incoming connection from ";
-                            msg += target.c_str();
+                            msg += target;
                             msg += "\r\n";
-                            result.addString(msg.c_str());
+                            result.addString(msg);
                         }
                     }
                 }
@@ -2064,7 +2064,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                         if (!getParamPortMonitor(property, true, errMsg)) {
                             result.clear();
                             result.addVocab(Vocab::encode("fail"));
-                            result.addString(errMsg.c_str());
+                            result.addString(errMsg);
                         }
                         else {
                             result.clear();
@@ -2076,7 +2076,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             PortCoreUnit *unit = units[i];
                             if (unit && unit->isOutput() && !unit->isFinished()) {
                                 Route route = unit->getRoute();
-                                if (route.getToName() == target.c_str()) {
+                                if (route.getToName() == target) {
                                     yarp::os::Property property;
                                     property.fromString(cmd.toString());
                                     unit->getCarrierParams(property);
@@ -2089,9 +2089,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                         {
                             result.addInt32(-1);
                             std::string msg = "Could not find an incoming connection to ";
-                            msg += target.c_str();
+                            msg += target;
                             msg += "\r\n";
-                            result.addString(msg.c_str());
+                            result.addString(msg);
                         }
                     }
                 }
@@ -2143,7 +2143,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                         Bottle req, reply;
                         req.addString("requestTopic");
                         NestedContact nc(getName());
-                        req.addString(nc.getNodeName().c_str());
+                        req.addString(nc.getNodeName());
                         req.addString(topic);
                         Bottle& lst = req.addList();
                         Bottle& sublst = lst.addList();
@@ -2173,7 +2173,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             } else {
                                 Value hostname2 = pref->get(1);
                                 Value portnum2 = pref->get(2);
-                                hostname = hostname2.asString().c_str();
+                                hostname = hostname2.asString();
                                 portnum = portnum2.asInt32();
                                 carrier = "tcpros+role.pub+topic.";
                                 carrier += topic;
@@ -2183,11 +2183,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                               portnum);
                             }
                             if (portnum!=0) {
-                                Contact addr(hostname.c_str(), portnum);
+                                Contact addr(hostname, portnum);
                                 OutputProtocol *op = nullptr;
-                                Route r = Route(getName(),
-                                                pub.c_str(),
-                                                carrier.c_str());
+                                Route r = Route(getName(), pub, carrier);
                                 op = Carriers::connect(addr);
                                 if (op==nullptr) {
                                     fprintf(stderr, "NO CONNECTION\n");
@@ -2227,11 +2225,11 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                           cmd.toString().c_str());
             result.addInt32(1);
             NestedContact nc(getName());
-            result.addString(nc.getNodeName().c_str());
+            result.addString(nc.getNodeName());
             Bottle& lst = result.addList();
             Contact addr = getAddress();
             lst.addString("TCPROS");
-            lst.addString(addr.getHost().c_str());
+            lst.addString(addr.getHost());
             lst.addInt32(addr.getPort());
             reader.requestDrop(); // ROS likes to close down.
         }
@@ -2341,7 +2339,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                     result.addVocab(Vocab::encode("fail"));
                                     std::string msg = "cannot find any connection to/from ";
                                     msg = msg + portName;
-                                    result.addString(msg.c_str());
+                                    result.addString(msg);
                                 }
                             } // end of (portName[0] == '/')
                             else
@@ -2794,4 +2792,158 @@ void PortCore::releaseProperties(Property *prop)
 {
     YARP_UNUSED(prop);
     stateSema.post();
+}
+
+bool PortCore::removeIO(const Route& route, bool synch)
+{
+    return removeUnit(route, synch);
+}
+
+void PortCore::setName(const std::string& name)
+{
+    this->name = name;
+}
+
+std::string PortCore::getName()
+{
+    return name;
+}
+
+int PortCore::getNextIndex()
+{
+    int result = counter;
+    counter++;
+    if (counter<0) counter = 1;
+    return result;
+}
+
+const Contact& PortCore::getAddress() const
+{
+    return address;
+}
+
+void PortCore::resetPortName(const std::string& str)
+{
+    address.setName(str);
+}
+
+yarp::os::PortReaderCreator *PortCore::getReadCreator()
+{
+    return readableCreator;
+}
+
+void PortCore::setControlRegistration(bool flag)
+{
+    controlRegistration = flag;
+}
+
+bool PortCore::isListening() const
+{
+    return listening;
+}
+
+bool PortCore::isManual() const
+{
+    return manual;
+}
+
+bool PortCore::isInterrupted() const
+{
+    return interrupted;
+}
+
+void PortCore::setTimeout(float timeout)
+{
+    this->timeout = timeout;
+}
+
+void PortCore::setVerbosity(int level)
+{
+    verbosity = level;
+}
+
+int PortCore::getVerbosity()
+{
+    return verbosity;
+}
+
+bool PortCore::setCallbackLock(yarp::os::Mutex *mutex)
+{
+    removeCallbackLock();
+    if (mutex) {
+        this->mutex = mutex;
+        mutexOwned = false;
+    } else {
+        this->mutex = new yarp::os::Mutex();
+        mutexOwned = true;
+    }
+    return true;
+}
+
+bool PortCore::removeCallbackLock()
+{
+    if (mutexOwned&&mutex) {
+        delete mutex;
+    }
+    mutex = nullptr;
+    mutexOwned = false;
+    return true;
+}
+
+bool PortCore::lockCallback()
+{
+    if (!mutex) {
+        return false;
+    }
+    mutex->lock();
+    return true;
+}
+
+bool PortCore::tryLockCallback()
+{
+    if (!mutex) {
+        return true;
+    }
+    return mutex->try_lock();
+}
+
+void PortCore::unlockCallback()
+{
+    if (!mutex) {
+        return;
+    }
+    mutex->unlock();
+}
+
+
+yarp::os::impl::PortDataModifier& PortCore::getPortModifier()
+{
+    return modifier;
+}
+
+void PortCore::checkType(PortReader& reader)
+{
+    typeMutex.lock();
+    if (!checkedType) {
+        if (!typ.isValid()) {
+            typ = reader.getReadType();
+        }
+        checkedType = true;
+    }
+    typeMutex.unlock();
+}
+
+yarp::os::Type PortCore::getType()
+{
+    typeMutex.lock();
+    Type t = typ;
+    typeMutex.unlock();
+    return t;
+}
+
+void PortCore::promiseType(const Type& typ)
+{
+    typeMutex.lock();
+    this->typ = typ;
+    typeMutex.unlock();
 }

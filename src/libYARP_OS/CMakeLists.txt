@@ -189,7 +189,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/PortCorePacket.h
                       include/yarp/os/impl/PortCorePackets.h
                       include/yarp/os/impl/PortCoreUnit.h
-                      include/yarp/os/impl/PortManager.h
                       include/yarp/os/impl/Protocol.h
                       include/yarp/os/impl/Runnable.h
                       include/yarp/os/impl/SocketTwoWayStream.h
