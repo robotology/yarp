@@ -19,6 +19,13 @@ branches:
   except:
     - /^.*appveyor.*$/
 
+stages:
+  - check
+  - test
+  - test-static
+  - test-valgrind
+  - test-osx
+
 env:
   global:
     - TRAVIS_CMAKE_GENERATOR="Unix Makefiles"
@@ -92,7 +99,7 @@ addons:
       # Ruby bindings
       - ruby-dev
       - ruby
-      # Perl bindings
+      # Perl bindings and license check
       - perl
 
 matrix:
@@ -100,31 +107,45 @@ matrix:
   - os: osx
 
   include:
+    # Static check only.
+    - stage: check
+      os: linux
+      compiler: gcc
+      before_install: skip
+      script: (cd build; make test ARGS="-VV -R misc")
+      after_success: skip
+
     # No ACE build (linux, gcc)
-    - os: linux
+    - stage: test
+      os: linux
       compiler: gcc
       env: TRAVIS_WITH_ACE=false
 
     # No ACE build (linux, clang)
-    - os: linux
+    - stage: test
+      os: linux
       compiler: clang
       env: TRAVIS_WITH_ACE=false
 
     # No YARP_math build (linux, gcc)
-    - os: linux
+    - stage: test
+      os: linux
       compiler: gcc
       env:
         - TRAVIS_WITH_MATH=false
         - TRAVIS_WITH_BINDINGS=false
 
     # No YARP_math build (linux, clang)
-    - os: linux
+    - stage: test
+      os: linux
       compiler: clang
+      env:
         - TRAVIS_WITH_MATH=false
         - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with CLEAN_API (linux, gcc)
-    - os: linux
+    - stage: test
+      os: linux
       compiler: gcc
       env:
         - TRAVIS_CLEAN_API=true
@@ -132,7 +153,8 @@ matrix:
         - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with CLEAN_API (linux, clang)
-    - os: linux
+    - stage: test
+      os: linux
       compiler: clang
       env:
         - TRAVIS_CLEAN_API=true
@@ -140,37 +162,60 @@ matrix:
         - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with Ninja generator (linux, gcc)
-    - os: linux
+    - stage: test
+      os: linux
       compiler: gcc
       env: TRAVIS_CMAKE_GENERATOR="Ninja"
 
     # Normal build with Ninja generator (linux, clang)
-    - os: linux
+    - stage: test
+      os: linux
       compiler: clang
       env: TRAVIS_CMAKE_GENERATOR="Ninja"
 
     # Normal build no deprecated (linux, gcc)
-    - os: linux
+    - stage: test
+      os: linux
       compiler: gcc
       env: TRAVIS_NO_DEPRECATED=true
 
     # Normal build no deprecated (linux, clang)
-    - os: linux
+    - stage: test
+      os: linux
       compiler: clang
       env: TRAVIS_NO_DEPRECATED=true
 
+    # No-executables build (linux, gcc)
+    - stage: test
+      os: linux
+      compiler: gcc
+      env:
+        - TRAVIS_WITH_EXECUTABLES=false
+        - TRAVIS_RUN_UNIT_TESTS=false
+
+    # No-executables build (linux, clang)
+    - stage: test
+      os: linux
+      compiler: clang
+      env:
+        - TRAVIS_WITH_EXECUTABLES=false
+        - TRAVIS_RUN_UNIT_TESTS=false
+
     # Static build (linux, gcc)
-    - os: linux
+    - stage: test-static
+      os: linux
       compiler: gcc
       env: TRAVIS_STATIC=true
 
     # Static build (linux, clang)
-    - os: linux
+    - stage: test-static
+      os: linux
       compiler: clang
       env: TRAVIS_STATIC=true
 
     # Static build, no ACE (linux, gcc)
-    - os: linux
+    - stage: test-static
+      os: linux
       compiler: gcc
       env:
         - TRAVIS_WITH_ACE=false
@@ -178,36 +223,25 @@ matrix:
         - TRAVIS_WITH_BINDINGS=false
 
     # Static build, no ACE (linux, clang)
-    - os: linux
+    - stage: test-static
+      os: linux
       compiler: clang
       env:
         - TRAVIS_WITH_ACE=false
         - TRAVIS_STATIC=true
         - TRAVIS_WITH_BINDINGS=false
 
-    # No-executables build (linux, gcc)
-    - os: linux
-      compiler: gcc
-      env:
-        - TRAVIS_WITH_EXECUTABLES=false
-        - TRAVIS_RUN_UNIT_TESTS=false
-
-    # No-executables build (linux, clang)
-    - os: linux
-      compiler: clang
-      env:
-        - TRAVIS_WITH_EXECUTABLES=false
-        - TRAVIS_RUN_UNIT_TESTS=false
-
     # Normal build with valgrind (linux, gcc)
-    - os: linux
+    - stage: test-valgrind
+      os: linux
       compiler: gcc
       env:
         - TRAVIS_WITH_VALGRIND=true
         - TRAVIS_WITH_BINDINGS=false
 
     # No ACE build with valgrind (linux, gcc)
-    - os: linux
+    - stage: test-valgrind
+      os: linux
       compiler: gcc
       env:
         - TRAVIS_WITH_ACE=false
@@ -215,7 +249,8 @@ matrix:
         - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with valgrind and broken tests (linux, gcc)
-#    - os: linux
+#    - stage: test-valgrind
+#      os: linux
 #      compiler: gcc
 #      env:
 #        - TRAVIS_WITH_VALGRIND=true
@@ -223,14 +258,16 @@ matrix:
 #        - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with clang (osx, clang)
-    - os: osx
+    - stage: test-osx
+      os: osx
       osx_image: xcode8.3
       compiler: clang
       env:
         - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with Xcode 8.3 (osx, clang)
-    - os: osx
+    - stage: test-osx
+      os: osx
       osx_image: xcode8.3
       compiler: clang
       env:
@@ -238,7 +275,8 @@ matrix:
         - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with Xcode 9.4 (osx, clang)
-    - os: osx
+    - stage: test-osx
+      os: osx
       osx_image: xcode9.4
       compiler: clang
       env:
@@ -246,14 +284,16 @@ matrix:
         - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with Coverage (linux, gcc)
-#    - os: linux
+#    - stage: test
+#      os: linux
 #      compiler: gcc
 #      env:
 #        - TRAVIS_BUILD_TYPE=Profile
 #        - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with integration tests (linux, gcc)
-#    - os: linux
+#    - stage: test
+#      os: linux
 #      compiler: gcc
 #      env:
 #        - TRAVIS_WITH_INTEGRATION_TESTS=true
@@ -267,7 +307,8 @@ matrix:
 #             - ros-jade-desktop-full
 
     # Normal build with integration tests (linux, clang)
-#    - os: linux
+#    - stage: test
+#      os: linux
 #      compiler: clang
 #      env:
 #        - TRAVIS_WITH_INTEGRATION_TESTS=true
