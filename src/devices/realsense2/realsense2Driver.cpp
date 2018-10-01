@@ -12,6 +12,7 @@
 #include <cstdint>
 
 #include <yarp/os/Value.h>
+#include <yarp/sig/ImageUtils.h>
 
 #include <librealsense2/rsutil.h>
 #include "realsense2Driver.h"
@@ -1491,29 +1492,17 @@ bool realsense2Driver::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 
     int pixCode = pixFormatToCode(frm1.get_profile().format());
 
-    if (pixCode != VOCAB_PIXEL_MONO && pixCode != VOCAB_PIXEL_MONO16)
+    if (pixCode != VOCAB_PIXEL_MONO)
     {
-        yError() << "realsense2Driver: expecting Pixel Format MONO or MONO16";
+        yError() << "realsense2Driver: expecting Pixel Format MONO";
         return false;
     }
 
-    size_t singleImage_rowSizeByte   =  image.getRowSize()/2;
-    unsigned char * pixelLeft     =  (unsigned char*) (frm1.get_data());
-    unsigned char * pixelRight    =  (unsigned char*) (frm2.get_data());
-    unsigned char * pixelOutLeft  =  image.getRawImage();
-    unsigned char * pixelOutRight =  image.getRawImage() + singleImage_rowSizeByte;
-
-    for (size_t h=0; h< image.height(); h++)
-    {
-        memcpy(pixelOutLeft, pixelLeft, singleImage_rowSizeByte);
-        memcpy(pixelOutRight, pixelRight, singleImage_rowSizeByte);
-        pixelOutLeft  += 2*singleImage_rowSizeByte;
-        pixelOutRight += 2*singleImage_rowSizeByte;
-        pixelLeft     += singleImage_rowSizeByte;
-        pixelRight    += singleImage_rowSizeByte;
-    }
-    return true;
-
+    // Wrap rs images with yarp ones.
+    ImageOf<PixelMono> imgL, imgR;
+    imgL.setExternal((unsigned char*) (frm1.get_data()), frm1.get_width(), frm1.get_height());
+    imgR.setExternal((unsigned char*) (frm2.get_data()), frm2.get_width(), frm2.get_height());
+    return utils::horzConcat(imgL, imgR, image);
 }
 
 int  realsense2Driver::height() const

@@ -17,6 +17,7 @@
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageDraw.h>
+#include <yarp/sig/ImageUtils.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Port.h>
@@ -613,6 +614,149 @@ static const size_t EXT_HEIGHT = 64;
         
     }
 
+    void testSplitConcat() {
+
+        report(0,"Horizontal concatenation");
+        ImageOf<PixelRgb> imL, imR;
+        imL.resize(8,4);
+        imR.resize(8,4);
+
+        // Prepare the images
+        for (size_t i=0; i<imL.width(); ++i) {
+            for (size_t j=0; j<imL.height(); ++j) {
+                imL.pixel(i,j).r=255;
+                imL.pixel(i,j).g=0;
+                imL.pixel(i,j).b=0;
+            }
+        }
+
+        for (size_t i=0; i<imR.width(); ++i) {
+            for (size_t j=0; j<imR.height(); ++j) {
+                imR.pixel(i,j).r=0;
+                imR.pixel(i,j).g=0;
+                imR.pixel(i,j).b=255;
+            }
+        }
+
+        ImageOf<PixelRgb> bigImg;
+        checkTrue(utils::horzConcat(imL, imR, bigImg), "Check horizontal concatenation");
+        checkEqual(bigImg.width(), imL.width()*2,"Checking width of the big image");
+        checkEqual(bigImg.height(), imL.height(),"Checking height of the big image");
+
+        bool ok = true;
+        for (size_t i=0; i<bigImg.width(); ++i) {
+            for (size_t j=0; j<bigImg.height(); ++j) {
+                if (i<imL.width()) {
+                    ok &= bigImg.pixel(i,j).r == 255;
+                    ok &= bigImg.pixel(i,j).g == 0;
+                    ok &= bigImg.pixel(i,j).b == 0;
+                }
+                else {
+                    ok &= bigImg.pixel(i,j).r == 0;
+                    ok &= bigImg.pixel(i,j).g == 0;
+                    ok &= bigImg.pixel(i,j).b == 255;
+                }
+            }
+        }
+        checkTrue(ok, "Checking data consistency");
+
+        report(0, "Vertical split");
+
+        ImageOf<PixelRgb> splitL, splitR;
+
+        checkTrue(utils::vertSplit(bigImg, splitL, splitR), "Check vertical split");
+        checkEqual(splitL.width(), imL.width(), "Check width left split");
+        checkEqual(splitR.width(), imR.width(), "Check width right split");
+        checkEqual(splitL.height(), imL.height(), "Check height left split");
+        checkEqual(splitR.height(), imR.height(), "Check height right split");
+
+        ok = true;
+
+        for (size_t i=0; i<imL.width(); ++i) {
+            for (size_t j=0; j<imL.height(); ++j) {
+                ok &= imL.pixel(i,j).r == splitL.pixel(i,j).r;
+                ok &= imL.pixel(i,j).g == splitL.pixel(i,j).g;
+                ok &= imL.pixel(i,j).b == splitL.pixel(i,j).b;
+            }
+        }
+
+        checkTrue(ok, "Checking data consistency left split");
+        ok = true;
+
+        for (size_t i=0; i<imR.width(); ++i) {
+            for (size_t j=0; j<imR.height(); ++j) {
+                ok &= imR.pixel(i,j).r == splitR.pixel(i,j).r;
+                ok &= imR.pixel(i,j).g == splitR.pixel(i,j).g;
+                ok &= imR.pixel(i,j).b == splitR.pixel(i,j).b;
+            }
+        }
+
+        checkTrue(ok, "Checking data consistency right split");
+
+
+        report(0, "Vertical concatenation");
+
+        ImageOf<PixelRgb> imUp(imL);
+        ImageOf<PixelRgb> imDown(imR);
+        bigImg.zero();
+
+        checkTrue(utils::vertConcat(imUp, imDown, bigImg), "Check vertical concatenation");
+        checkEqual(bigImg.width(), imUp.width() ,"Checking width of the big image");
+        checkEqual(bigImg.height(), imDown.height()*2, "Checking height of the big image");
+
+        ok = true;
+        for (size_t i=0; i<bigImg.width(); ++i) {
+            for (size_t j=0; j<bigImg.height(); ++j) {
+                if (j<imUp.height()) {
+                    ok &= bigImg.pixel(i,j).r == 255;
+                    ok &= bigImg.pixel(i,j).g == 0;
+                    ok &= bigImg.pixel(i,j).b == 0;
+                }
+                else {
+                    ok &= bigImg.pixel(i,j).r == 0;
+                    ok &= bigImg.pixel(i,j).g == 0;
+                    ok &= bigImg.pixel(i,j).b == 255;
+                }
+            }
+        }
+
+        checkTrue(ok, "Checking data consistency");
+
+        report(0, "Horizontal split");
+
+        ImageOf<PixelRgb> splitUp, splitDown;
+
+        checkTrue(utils::horzSplit(bigImg, splitUp, splitDown), "Check horizontal split");
+        checkEqual(splitUp.width(), imUp.width(), "Check width top split");
+        checkEqual(splitDown.width(), imDown.width(), "Check width bottom split");
+        checkEqual(splitUp.height(), imUp.height(), "Check height top split");
+        checkEqual(splitDown.height(), imDown.height(), "Check height bottom split");
+
+        ok = true;
+
+        for (size_t i=0; i<imUp.width(); ++i) {
+            for (size_t j=0; j<imUp.height(); ++j) {
+                ok &= imUp.pixel(i,j).r == splitUp.pixel(i,j).r;
+                ok &= imUp.pixel(i,j).g == splitUp.pixel(i,j).g;
+                ok &= imUp.pixel(i,j).b == splitUp.pixel(i,j).b;
+            }
+        }
+
+        checkTrue(ok, "Checking data consistency top split");
+        ok = true;
+
+        for (size_t i=0; i<imDown.width(); ++i) {
+            for (size_t j=0; j<imDown.height(); ++j) {
+                ok &= imDown.pixel(i,j).r == splitDown.pixel(i,j).r;
+                ok &= imDown.pixel(i,j).g == splitDown.pixel(i,j).g;
+                ok &= imDown.pixel(i,j).b == splitDown.pixel(i,j).b;
+            }
+        }
+
+        checkTrue(ok, "Checking data consistency bottom split");
+
+    }
+
 
     virtual void runTests() override {
         readWrite();
@@ -635,6 +779,7 @@ static const size_t EXT_HEIGHT = 64;
         testRgbInt();
         testOrigin();
         testExternalRepeat();
+        testSplitConcat();
     }
 };
 
