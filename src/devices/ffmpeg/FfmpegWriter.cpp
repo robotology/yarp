@@ -432,16 +432,14 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
     }
 
     video_outbuf = nullptr;
-    if (!(oc->oformat->flags & AVFMT_RAWPICTURE)) {
-        /* allocate output buffer */
-        /* XXX: API change will be done */
-        /* buffers passed into lav* can be allocated any way you prefer,
-           as long as they're aligned enough for the architecture, and
-           they're freed appropriately (such as using av_free for buffers
-           allocated with av_malloc) */
-        video_outbuf_size = 200000;
-        video_outbuf = (uint8_t*)av_malloc(video_outbuf_size);
-    }
+    /* allocate output buffer */
+    /* XXX: API change will be done */
+    /* buffers passed into lav* can be allocated any way you prefer,
+       as long as they're aligned enough for the architecture, and
+       they're freed appropriately (such as using av_free for buffers
+       allocated with av_malloc) */
+    video_outbuf_size = 200000;
+    video_outbuf = (uint8_t*)av_malloc(video_outbuf_size);
 
     /* allocate the encoded raw picture */
     picture = alloc_picture(c->pix_fmt, c->width, c->height);
@@ -496,64 +494,50 @@ void FfmpegWriter::write_video_frame(AVFormatContext *oc, AVStream *st,
         fill_rgb_image(picture, frame_count, c->width, c->height, img);
     }
 
-
-    if (oc->oformat->flags & AVFMT_RAWPICTURE) {
-        /* raw video case. The API will change slightly in the near
-           futur for that */
+    /* encode the image */
+    AVPacket tmp;
+    int got_packet = 0;
+    av_init_packet(&tmp);
+    tmp.data = video_outbuf;
+    tmp.size = video_outbuf_size;
+    out_size = avcodec_encode_video2(c, &tmp, picture, &got_packet);
+    if (tmp.side_data_elems > 0) {
+        for (int i = 0; i < tmp.side_data_elems; i++) {
+                av_free(tmp.side_data[i].data);
+        }
+        av_freep(&tmp.side_data);
+        tmp.side_data_elems = 0;
+    }
+    /* if zero size, it means the image was buffered */
+    if (out_size > 0) {
         AVPacket pkt;
         av_init_packet(&pkt);
 
-        pkt.flags |= AV_PKT_FLAG_KEY;
+        pkt.pts= av_rescale_q(c->coded_frame->pts, c->time_base, st->time_base);
+        if(c->coded_frame->key_frame)
+            pkt.flags |= AV_PKT_FLAG_KEY;
         pkt.stream_index= st->index;
-        pkt.data= (uint8_t *)picture;
-        pkt.size= sizeof(AVPicture);
+        pkt.data= video_outbuf;
+        pkt.size= out_size;
 
+        /*
+        static int x = 0;
+        printf("%ld / %ld  :  %ld / %ld  --> %d\n",
+                (long int) c->time_base.num,
+                (long int) c->time_base.den,
+                (long int) st->time_base.num,
+                (long int) st->time_base.den,
+                x);
+        pkt.pts = x;
+        x++;
+        */
+
+        /* write the compressed frame in the media file */
         ret = av_write_frame(oc, &pkt);
     } else {
-        /* encode the image */
-        AVPacket tmp;
-        int got_packet = 0;
-        av_init_packet(&tmp);
-        tmp.data = video_outbuf;
-        tmp.size = video_outbuf_size;
-        out_size = avcodec_encode_video2(c, &tmp, picture, &got_packet);
-        if (tmp.side_data_elems > 0) {
-            for (int i = 0; i < tmp.side_data_elems; i++) {
-                  av_free(tmp.side_data[i].data);
-            }
-            av_freep(&tmp.side_data);
-            tmp.side_data_elems = 0;
-        }
-        /* if zero size, it means the image was buffered */
-        if (out_size > 0) {
-            AVPacket pkt;
-            av_init_packet(&pkt);
-
-            pkt.pts= av_rescale_q(c->coded_frame->pts, c->time_base, st->time_base);
-            if(c->coded_frame->key_frame)
-                pkt.flags |= AV_PKT_FLAG_KEY;
-            pkt.stream_index= st->index;
-            pkt.data= video_outbuf;
-            pkt.size= out_size;
-
-            /*
-            static int x = 0;
-            printf("%ld / %ld  :  %ld / %ld  --> %d\n",
-                   (long int) c->time_base.num,
-                   (long int) c->time_base.den,
-                   (long int) st->time_base.num,
-                   (long int) st->time_base.den,
-                   x);
-            pkt.pts = x;
-            x++;
-            */
-
-            /* write the compressed frame in the media file */
-            ret = av_write_frame(oc, &pkt);
-        } else {
-            ret = 0;
-        }
+        ret = 0;
     }
+
     if (ret != 0) {
         fprintf(stderr, "Error while writing video frame\n");
         ::exit(1);
@@ -737,12 +721,12 @@ bool FfmpegWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
 
     /* compute current audio and video time */
     if (audio_st)
-        audio_pts = (double)audio_st->pts.val * audio_st->time_base.num / audio_st->time_base.den;
+        audio_pts = (double)av_stream_get_end_pts(audio_st) * audio_st->time_base.num / audio_st->time_base.den;
     else
         audio_pts = 0.0;
 
     if (video_st)
-        video_pts = (double)video_st->pts.val * video_st->time_base.num / video_st->time_base.den;
+        video_pts = (double)av_stream_get_end_pts(video_st) * video_st->time_base.num / video_st->time_base.den;
     else
         video_pts = 0.0;
 

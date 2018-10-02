@@ -120,7 +120,7 @@ public:
         pCodecCtx=pFormatCtx->streams[index]->codec;
 
         // Find the decoder for the video stream
-        pCodec=avcodec_find_decoder(pCodecCtx->codec_id);
+        pCodec = avcodec_find_decoder(pFormatCtx->streams[index]->codecpar->codec_id);
         if(pCodec==nullptr) {
             printf("Codec not found\n");
             return false; // Codec not found
