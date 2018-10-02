@@ -206,4 +206,6 @@ if(YARP_COMPILE_TESTS)
     endforeach()
   endif()
 
+  add_subdirectory(misc)
+
 endif()
