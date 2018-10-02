@@ -74,6 +74,8 @@ public:
     /* The following methods belong to ILocalization2D interface */
     bool   getCurrentPosition(yarp::dev::Map2DLocation &loc) override;
     bool   setInitialPose(yarp::dev::Map2DLocation& loc) override;
+    bool   getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status) override;
+    bool   getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses) override;
 };
 
 #endif // YARP_DEV_LOCALIZATION2DCLIENT_H

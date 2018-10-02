@@ -164,7 +164,7 @@ bool yarp::dev::Navigation2DClient::getNavigationStatus(NavigationStatusEnum& st
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_GET_STATUS);
+    b.addVocab(VOCAB_NAV_GET_NAVIGATION_STATUS);
     bool ret = m_rpc_port_navigation_server.write(b, resp);
     if (ret)
     {
@@ -905,6 +905,75 @@ bool yarp::dev::Navigation2DClient::getCurrentNavigationMap(yarp::dev::Navigatio
     return true;
 }
 
+bool  yarp::dev::Navigation2DClient::getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_GET_LOCALIZER_STATUS);
+
+    bool ret = m_rpc_port_localization_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 2)
+        {
+            yError() << "Navigation2DClient::getLocalizationStatus() received error from localization server";
+            return false;
+        }
+        else
+        {
+            status = (yarp::dev::LocalizationStatusEnum)(resp.get(1).asVocab());
+            return true;
+        }
+    }
+    else
+    {
+        yError() << "Navigation2DClient::getLocalizationStatus() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
+bool  yarp::dev::Navigation2DClient::getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_GET_LOCALIZER_POSES);
+
+    bool ret = m_rpc_port_localization_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 5)
+        {
+            yError() << "Localization2DClient::getEstimatedPoses() received error from localization server";
+            return false;
+        }
+        else
+        {
+            int nposes = resp.get(1).asInt32();
+            poses.clear();
+            for (int i = 0; i < nposes; i++)
+            {
+                yarp::dev::Map2DLocation loc;
+                loc.map_id = resp.get(1 + 0 + i * 4).asString();
+                loc.x = resp.get(1 + 1 + i * 4).asFloat64();
+                loc.y = resp.get(1 + 2 + i * 4).asFloat64();
+                loc.theta = resp.get(1 + 3 + i * 4).asFloat64();
+                poses.push_back(loc);
+            }
+            return true;
+        }
+    }
+    else
+    {
+        yError() << "Localization2DClient::getCurrentPosition() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
 
 yarp::dev::DriverCreator *createNavigation2DClient()
 {

@@ -77,17 +77,19 @@ public:
     bool close() override;
 
     /* The following methods belong to INavigation2D interface */
-    bool   gotoTargetByAbsoluteLocation(Map2DLocation loc) override;
+    bool   gotoTargetByAbsoluteLocation(yarp::dev::Map2DLocation loc) override;
     bool   gotoTargetByLocationName(std::string location_name) override;
     bool   gotoTargetByRelativeLocation(double x, double y, double theta) override;
     bool   gotoTargetByRelativeLocation(double x, double y) override;
 
-    bool   getAbsoluteLocationOfCurrentTarget(Map2DLocation& loc) override;
+    bool   getAbsoluteLocationOfCurrentTarget(yarp::dev::Map2DLocation& loc) override;
     bool   getNameOfCurrentTarget(std::string& location_name);
     bool   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;
 
-    bool   getCurrentPosition(Map2DLocation &loc) override;
+    bool   getCurrentPosition(yarp::dev::Map2DLocation &loc) override;
     bool   setInitialPose(yarp::dev::Map2DLocation& loc) override;
+    bool   getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status) override;
+    bool   getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses) override;
 
     bool   storeCurrentPosition(std::string location_name) override;
     bool   storeLocation(std::string location_name, Map2DLocation loc) override;
@@ -95,7 +97,7 @@ public:
     bool   deleteLocation(std::string location_name) override;
     bool   getLocationsList(std::vector<std::string>& locations) override;
 
-    bool   getNavigationStatus(NavigationStatusEnum& status) override;
+    bool   getNavigationStatus(yarp::dev::NavigationStatusEnum& status) override;
     bool   clearAllLocations() override;
     bool   stopNavigation() override;
     bool   suspendNavigation(const double time_s) override;
