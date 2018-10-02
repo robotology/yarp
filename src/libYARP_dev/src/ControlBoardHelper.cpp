@@ -224,16 +224,18 @@ bool ControlBoardHelper::checkAxisId(int id)
 bool ControlBoardHelper::checkAxesIds(const int n_axes, const int* axesList)
 {
     if(n_axes > mPriv->nj)
+    {
         if(mPriv->verbose)
             yError("checkAxesIds: num of axes is too big");
         return false;
-
+    }
     for(int idx = 0; idx<n_axes; idx++)
     {
         if( (axesList[idx]<0) || (axesList[idx]>= mPriv->nj) )
         {
             if(mPriv->verbose)
                 yError("checkAxesIds: joint id out of bound");
+
             return false;
         }
     }
