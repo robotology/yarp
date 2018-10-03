@@ -28,16 +28,16 @@ var devel = gitGraph.orphanBranch({
 
 devel.commit("Work in progress");
 
-master.commit({ message: "YARP 2.3.64.5", tag: "v2.3.64.5" });
+master.commit({ message: "YARP 3.0.1", tag: "v3.0.1" });
 master.merge(devel, "Merge branch origin/master into devel");
 
 devel.commit("Get ready for the new stable release");
 
 
 devel.merge(master, "Merge branch origin/devel into master");
-master.commit({ message: "YARP 2.3.66", tag: "v2.3.66" });
+master.commit({ message: "YARP 3.1.0", tag: "v3.1.0" });
 master.merge(devel, "Merge branch origin/master into devel");
-devel.commit({ message: "Start YARP 2.3.68 development", tag: "(v2.3.67)" });
+devel.commit({ message: "Start YARP 3.2 development", tag: "(v3.1.100)" });
 
 
 var feature_foo = devel.branch({ name: "feature_foo", column: 3 });
@@ -45,12 +45,12 @@ feature_foo.commit("Start working on feature 'foo'");
 feature_foo.commit("Continue working on feature 'foo'");
 feature_foo.commit("Finish implementing feature 'foo'");
 feature_foo.merge(devel, "Merge branch feature_foo into devel");
-devel.commit({ message: "Bump tweak number", tag: "(v2.3.67.1)" });
+devel.commit({ message: "Bump tweak number", tag: "(v3.1.101)" });
 
 
 var bugfix_xxx = master.branch({ name: "bugfix_xxx", column: 1 });
 bugfix_xxx.commit("Start working on issue #xxx");
 bugfix_xxx.commit("Fix issue #xxx");
 bugfix_xxx.merge(master, "Merge pull request #xxy from <user>/bugfix_xxx")
-master.commit({ message: "YARP 2.3.66.1", tag: "v2.3.66.1" });
+master.commit({ message: "YARP 3.1.1", tag: "v3.1.1" });
 master.merge(devel, "Merge branch origin/master into devel")
