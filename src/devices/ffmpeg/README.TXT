@@ -13,4 +13,3 @@ On debian/ubuntu, these are:
    libavutil-dev
    libavdevice-dev
    libswscale-dev
-
