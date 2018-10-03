@@ -11,12 +11,12 @@
 
 #include <cstdio>
 using namespace yarp::dev;
+
 #define JOINTIDCHECK if (m >= castToMapper(helper)->axes()){yError("motor id out of bound"); return false;}
-#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 ////////////////////////
 // Encoder Interface Timed Implementation
-ImplementMotor::ImplementMotor(IMotorRaw *y):nj(0)
+ImplementMotor::ImplementMotor(IMotorRaw *y)
 {
     imotor=y;
     helper = nullptr;
@@ -35,7 +35,6 @@ bool ImplementMotor:: initialize (int size, const int *amap)
     helper=(void *)(new ControlBoardHelper(size, amap));
     yAssert (helper != nullptr);
 
-    nj=size;
     return true;
 }
 

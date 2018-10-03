@@ -111,7 +111,8 @@ if (CREATE_LIB_MATH)
                             include/yarp/dev/MapGrid2D.h)
 endif()
 
-set(YARP_dev_IMPL_HDRS )
+set(YARP_dev_IMPL_HDRS include/yarp/dev/impl/FixedSizeBuffersManager.h
+                       include/yarp/dev/impl/FixedSizeBuffersManager-inl.h)
 
 set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/ControlBoardHelper.cpp

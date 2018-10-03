@@ -19,6 +19,16 @@ namespace yarp{
     }
 }
 
+namespace yarp {
+namespace dev {
+namespace impl {
+
+template <typename T>
+class FixedSizeBuffersManager;
+
+} // namespace impl
+} // namespace dev
+} // namespace yarp
 
 /**
  * Default implementation of the IPositionDirect interface. This class can
@@ -30,7 +40,9 @@ class YARP_dev_API yarp::dev::ImplementPositionDirect : public yarp::dev::IPosit
 protected:
     IPositionDirectRaw *iPDirect;
     void    *helper;
-    int nj;
+    yarp::dev::impl::FixedSizeBuffersManager<int> *intBuffManager;
+    yarp::dev::impl::FixedSizeBuffersManager<double> *doubleBuffManager;
+
     /**
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.

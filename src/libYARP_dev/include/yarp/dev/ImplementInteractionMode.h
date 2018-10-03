@@ -20,6 +20,17 @@ namespace yarp {
     }
 }
 
+namespace yarp {
+namespace dev {
+namespace impl {
+
+template <typename T>
+class FixedSizeBuffersManager;
+
+} // namespace impl
+} // namespace dev
+} // namespace yarp
+
 /**
  * @ingroup dev_iface_motor
  *
@@ -31,8 +42,9 @@ class YARP_dev_API yarp::dev::ImplementInteractionMode : public yarp::dev::IInte
 protected:
     yarp::dev::IInteractionModeRaw *iInteraction;
     void    *helper;                                // class controlBoardHelper, to handle axis map and conversion unit, where needed
-    int      nj;                                    //number of controlled axes the driver deals with.
 
+    yarp::dev::impl::FixedSizeBuffersManager<yarp::dev::InteractionModeEnum> *imodeBuffManager; //This Buffer Manager handles temporary buffers of type yarp::dev::InteractionModeEnum
+    yarp::dev::impl::FixedSizeBuffersManager<int> *intBuffManager; //This Buffer Manager handles temporary buffers  of type int
     /**
      * Initialize the internal data and alloc memory, smaller version.
      * @param size is the number of controlled axes the driver deals with.

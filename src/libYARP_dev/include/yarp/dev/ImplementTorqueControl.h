@@ -18,14 +18,24 @@ namespace yarp {
     }
 }
 
+namespace yarp {
+namespace dev {
+namespace impl {
+
+template <typename T>
+class FixedSizeBuffersManager;
+
+} // namespace impl
+} // namespace dev
+} // namespace yarp
 
 class YARP_dev_API yarp::dev::ImplementTorqueControl: public ITorqueControl
 {
 protected:
     yarp::dev::ITorqueControlRaw *iTorqueRaw;
     void *helper;
-    int nj;
-
+    yarp::dev::impl::FixedSizeBuffersManager<int> *intBuffManager;
+    yarp::dev::impl::FixedSizeBuffersManager<double> *doubleBuffManager;
     /**
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.

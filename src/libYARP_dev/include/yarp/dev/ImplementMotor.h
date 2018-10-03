@@ -22,7 +22,6 @@ class YARP_dev_API yarp::dev::ImplementMotor: public IMotor
 protected:
     IMotorRaw *imotor;
     void *helper;
-    int nj;
 
 
     /**

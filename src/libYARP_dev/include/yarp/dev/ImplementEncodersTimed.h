@@ -17,12 +17,23 @@ namespace yarp {
     }
 }
 
+namespace yarp {
+namespace dev {
+namespace impl {
+
+template <typename T>
+class FixedSizeBuffersManager;
+
+} // namespace impl
+} // namespace dev
+} // namespace yarp
+
 class YARP_dev_API yarp::dev::ImplementEncodersTimed: public IEncodersTimed
 {
 protected:
     IEncodersTimedRaw *iEncoders;
     void *helper;
-    int nj;
+    yarp::dev::impl::FixedSizeBuffersManager<double> *buffManager;
 
 
     /**
