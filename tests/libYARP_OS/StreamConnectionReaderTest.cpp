@@ -11,17 +11,18 @@
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/StringOutputStream.h>
 
-#include <yarp/os/impl/UnitTest.h>
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-class StreamConnectionReaderTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "StreamConnectionReaderTest"; }
+TEST_CASE("OS::StreamConnectionReaderTest", "[yarp::os]") {
 
-    void testRead() {
-        report(0,"testing reading...");
+    SECTION("testing reading") {
         StringInputStream sis;
         StringOutputStream sos;
         sis.add("Hello\ngood evening and welcome");
@@ -29,17 +30,6 @@ public:
         Route route;
         sbr.reset(sis,nullptr,route,10,true);
         std::string line = sbr.expectLine();
-        checkEqual(line,"Hello","one line");
+        CHECK(line == "Hello"); // one line
     }
-
-    virtual void runTests() override {
-        testRead();
-    }
-};
-
-static StreamConnectionReaderTest theStreamConnectionReaderTest;
-
-UnitTest& getStreamConnectionReaderTest() {
-    return theStreamConnectionReaderTest;
 }
-
