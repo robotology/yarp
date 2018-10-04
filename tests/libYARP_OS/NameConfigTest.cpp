@@ -9,34 +9,21 @@
 
 #include <yarp/os/impl/NameConfig.h>
 
-#include <yarp/os/impl/UnitTest.h>
-//#include "TestList.h"
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-class NameConfigTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "NameConfigTest"; }
-
-    void testRead() {
-        report(0,"no tests yet");
-        //report(0,"checking writing the config file");
+TEST_CASE("OS::impl::NameConfig", "[yarp::os::impl]")
+{
+    SECTION("testing compilation") {
         NameConfig nc;
-        //bool result = nc.createPath("/tmp/work/bozo/foo/namer.conf");
         std::string fname = nc.getConfigFileName();
-        //std::string txt = nc.readConfig(fname);
-        report(0,fname);
-        //report(0,txt);
+        INFO(fname);
+        CHECK(true);
     }
-
-    virtual void runTests() override {
-        testRead();
-    }
-};
-
-static NameConfigTest theNameConfigTest;
-
-UnitTest& getNameConfigTest() {
-    return theNameConfigTest;
 }
