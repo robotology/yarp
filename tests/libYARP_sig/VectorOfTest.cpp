@@ -6,6 +6,12 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
+
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Port.h>
@@ -14,25 +20,18 @@
 #include <yarp/os/Time.h>
 #include <yarp/sig/Vector.h>
 
-//#include <vector>
-#include <algorithm>
-
 #include <yarp/gsl/impl/gsl_structs.h>
 
-#include "TestList.h"
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::sig;
 
 
-class VectorOfTest : public UnitTest {
+TEST_CASE("sig::VectorOfTest", "[yarp::sig]") {
 
-public:
-    virtual std::string getName() const override { return "VectorOfTest"; }
-    void checkSendReceiveInt()
-    {
-        report(0, "check VectorO<int> send receive");
+    SECTION("Check send and receive integers") {
+        INFO("check VectorO<int> send receive");
 
         {
             Port portIn;
@@ -73,14 +72,14 @@ public:
                 }
             }
 
-            checkTrue(success, "VectorOf<int> was sent and received correctly");
+            CHECK(success); // VectorOf<int> was sent and received correctly
             portOut.interrupt();
             portOut.close();
             portIn.interrupt();
             portIn.close();
         }
 
-        report(0, "check VectorOf<int> bottle compatibility");
+        INFO("check VectorOf<int> bottle compatibility");
         {
             //write the same vector again and receive it as a bottle
             Port portIn;
@@ -104,7 +103,7 @@ public:
             portOut.write(vector);
             Bottle tmp2;
             success = portIn.read(tmp2);
-            checkTrue(success,"correctly read from the port");
+            CHECK(success); // correctly read from the port
 
             //compare vector and tmp
             success = true;
@@ -121,7 +120,7 @@ public:
                 }
             }
 
-            checkTrue(success, "VectorOf<int> was received correctly in a Bottle");
+            CHECK(success); // VectorOf<int> was received correctly in a Bottle
             portOut.interrupt();
             portOut.close();
             portIn.interrupt();
@@ -129,10 +128,9 @@ public:
         }
     }
 
-    void testToString()
-    {
+    SECTION("check toString") {
         {
-            report(0, "testing toString int");
+            INFO("testing toString int");
             bool ok = true;
             VectorOf<int> vec;
             std::string strToCheck = "0 1 2 3 4 5 6 7 8 9";
@@ -142,11 +140,11 @@ public:
             }
 
             ok = vec.toString() == strToCheck;
-            checkTrue(ok, "string correctly formatted");
+            CHECK(ok); // string correctly formatted
         }
 
         {
-            report(0, "testing toString double");
+            INFO("testing toString double");
             bool ok = true;
             VectorOf<double> vec;
             std::string strToCheck = " 0.000000\t 1.000000\t 2.000000\t 3.000000\t 4.000000\t"
@@ -157,80 +155,9 @@ public:
             }
 
             ok = vec.toString() == strToCheck;
-            checkTrue(ok, "string correctly formatted");
+            CHECK(ok); // string correctly formatted
         }
 
     }
 
-    void checkInitializerListConctor() {
-        report(0,"Checking the functionalities of the initializer list constructor");
-        VectorOf<int> v{1, 2, 3};
-        checkTrue(v.size() == (size_t) 3, "Checking size");
-
-        checkTrue(v[0] == 1, "Checking data consistency");
-        checkTrue(v[1] == 2, "Checking data consistency");
-        checkTrue(v[2] == 3, "Checking data consistency");
-    }
-
-    void checkRangeFor() {
-        report(0,"Checking the the for range based");
-        VectorOf<int> v{0,1,2,3,4};
-        int i = 0;
-        for(const auto& el:v) {
-            checkTrue(el==i,"Checking data consistency");
-            i++;
-        }
-        report(0,"Checking the std::transform");
-        std::transform(v.begin(), v.end(), v.begin(), [](int i) { return i*2; });
-        checkTrue(v[0] == 0, "Checking data consistency");
-        checkTrue(v[1] == 2, "Checking data consistency");
-        checkTrue(v[2] == 4, "Checking data consistency");
-        checkTrue(v[3] == 6, "Checking data consistency");
-        checkTrue(v[4] == 8, "Checking data consistency");
-    }
-
-    void checkReserve() {
-        report(0,"Checking reserve()");
-        VectorOf<int> v(0);
-        checkTrue(v.size() == (size_t) 0, "Checking size() after constructor");
-        checkTrue(v.capacity() == (size_t) 0, "Checking memory allocated after constructor");
-        v.push_back(1);
-        checkTrue(v[0] == 1, "Checking data consistency");
-        checkTrue(v.size() == (size_t) 1, "Checking size() after push_back");
-        checkTrue(v.capacity() == (size_t) 1, "Checking capacity() after push_back");
-        v.reserve(10);
-        checkTrue(v[0] == 1, "Checking data consistency");
-        checkTrue(v.size() == (size_t) 1, "The memory has been allocated but the vector is empty");
-        checkTrue(v.capacity() == (size_t) 10, "Checking memory allocated");
-        v.push_back(2);
-        checkTrue(v[0] == 1, "Checking data consistency");
-        checkTrue(v[1] == 2, "Checking data consistency");
-        checkTrue(v.size() == (size_t) 2, "Checking size() after push_back");
-        checkTrue(v.capacity() == (size_t) 10, "Checking capacity() after push_back");
-        v.resize(11);
-        checkTrue(v[0] == 1, "Checking data consistency");
-        checkTrue(v[1] == 2, "Checking data consistency");
-        checkTrue(v.size() == (size_t) 11, "Checking size() after resize()");
-        checkTrue(v.capacity() == (size_t) 11, "Checking size() after resize()");
-        v.resize(1);
-        checkTrue(v[0] == 1, "Checking data consistency");
-        checkTrue(v.size() == (size_t) 1, "Checking size() after push_back");
-        checkTrue(v.capacity() == (size_t) 11, "Checking capacity() after push_back");
-    }
-
-    virtual void runTests() override {
-        Network::setLocalMode(true);
-        checkSendReceiveInt();
-        testToString();
-        checkInitializerListConctor();
-        checkRangeFor();
-        checkReserve();
-        Network::setLocalMode(false);
-    }
-};
-
-static VectorOfTest theVectorOfTest;
-
-UnitTest& getVectorOfTest() {
-    return theVectorOfTest;
 }
