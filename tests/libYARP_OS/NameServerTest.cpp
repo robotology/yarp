@@ -36,8 +36,7 @@ void checkCompanion(bool fake) {
     NetworkBase::setLocalMode(false);
 }
 
-TEST_CASE( "os::impl::NameServerTest", "[yarp::os::impl]" ) {
-    
+TEST_CASE("OS::impl::NameServerTest", "[yarp::os::impl]") {
     SECTION( "check register") {
         Contact address("tcp", "127.0.0.1", safePort());
         NameServer ns;
