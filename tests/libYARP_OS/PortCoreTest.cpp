@@ -12,22 +12,19 @@
 #include <yarp/os/Carriers.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/impl/BottleImpl.h>
-#include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/Network.h>
-#include <yarp/companion/impl/Companion.h>
-//#include "TestList.h"
 
-using namespace yarp::os::impl;
+#include <catch.hpp>
+
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
-class PortCoreTest : public UnitTest, public PortReader {
+class PortCoreTest : public PortReader {
 public:
     int safePort() { return Network::getDefaultPortRange()+100; }
 
-    virtual std::string getName() const override { return "PortCoreTest"; }
-
-    std::string expectation;
     int receives;
+    std::string expectation;
 
     bool read(ConnectionReader& reader) override {
         if (!reader.isValid()) {
@@ -37,21 +34,19 @@ public:
         BottleImpl bot;
         bot.read(reader);
         if (expectation==std::string("")) {
-            report(1,"got unexpected input");
+            WARN("got unexpected input");
             return false;
         }
-        checkEqual(bot.toString(),expectation,"received bottle");
+        CHECK(bot.toString() == expectation); // "received bottle"
         return true;
     }
 
     void testStartStop() {
-        report(0,"checking start/stop works...");
-
         Contact address("/port", "tcp", "127.0.0.1", safePort());
         PortCore core;
         core.listen(address);
         core.start();
-        report(0,"there will be a small delay, stress-testing port...");
+        INFO("there will be a small delay, stress-testing port");
         int tct = 10;
         int ct = 0;
         for (int i=0; i<tct; i++) {
@@ -63,7 +58,7 @@ public:
                 delete op;
                 ct++; // connect is an event
             } else {
-                report(1,"a connection failed");
+                INFO("a connection failed");
             }
         }
 
@@ -74,16 +69,12 @@ public:
         core.close();
         ct++; // close is an event
 
-        report(0,"finished stress-testing port...");
-
         core.join();
-        checkEqual(core.getEventCount(),ct,"Got all events");
+        CHECK(core.getEventCount() == ct); // "Got all events"
     }
 
 
     void testBottle() {
-        report(0,"simple bottle transmission check...");
-
         expectation = "";
         receives = 0;
 
@@ -91,8 +82,8 @@ public:
         Contact read = NetworkBase::registerContact(Contact("/read", "tcp", "127.0.0.1", safePort()+1));
         Contact fake("tcp", "127.0.0.1", safePort()+2);
 
-        checkEqual(NetworkBase::queryName("/write").isValid(),true,"name server sanity");
-        checkEqual(NetworkBase::queryName("/read").isValid(),true,"name server sanity");
+        CHECK(NetworkBase::queryName("/write").isValid() == true); // "name server sanity"
+        CHECK(NetworkBase::queryName("/read").isValid()  == true); // "name server sanity"
 
 
         PortCore sender;
@@ -106,29 +97,27 @@ public:
         Bottle bot;
         bot.addInt32(0);
         bot.addString("Hello world");
-        report(0,"sending bottle, should received nothing");
+        // INFO("sending bottle, should received nothing");
         expectation = "";
         sender.send(bot);
         Time::delay(0.3);
-        checkEqual(receives,0,"nothing received");
+        CHECK(receives == 0); // "nothing received");
         NetworkBase::connect("/write", "/read");
         Time::delay(0.3);
-        report(0,"sending bottle, should receive it this time");
+        // INFO("sending bottle, should receive it this time");
         expectation = bot.toString();
         sender.send(bot);
         for (int i=0; i<1000; i++) {
             if (receives==1) break;
             Time::delay(0.3);
         }
-        checkEqual(receives,1,"something received");
+        CHECK(receives == 1); // "something received");
         sender.close();
         receiver.close();
     }
 
 
     void testBackground() {
-        report(0,"background transmission check...");
-
         expectation = "";
         receives = 0;
 
@@ -136,8 +125,8 @@ public:
         Contact read = NetworkBase::registerContact(Contact("/read", "tcp", "127.0.0.1", safePort()+1));
         Contact fake("tcp", "127.0.0.1", safePort()+2);
 
-        checkEqual(NetworkBase::queryName("/write").isValid(),true,"name server sanity");
-        checkEqual(NetworkBase::queryName("/read").isValid(),true,"name server sanity");
+        CHECK(NetworkBase::queryName("/write").isValid() == true); // "name server sanity");
+        CHECK(NetworkBase::queryName("/read"). isValid() == true); // "name server sanity");
 
         PortCore sender;
 
@@ -154,37 +143,41 @@ public:
         Bottle bot;
         bot.addInt32(0);
         bot.addString("Hello world");
-        report(0,"sending bottle, should received nothing");
+        // report(0,"sending bottle, should received nothing");
         expectation = "";
         sender.send(bot);
         Time::delay(0.3);
-        checkEqual(receives,0,"nothing received");
+        CHECK(receives == 0); // "nothing received");
         NetworkBase::connect("/write", "/read");
         Time::delay(0.3);
-        report(0,"sending bottle, should receive it this time");
+
         expectation = bot.toString();
         sender.send(bot);
         for (int i=0; i<1000; i++) {
             if (receives==1) break;
             Time::delay(0.3);
         }
-        checkEqual(receives,1,"something received");
+        CHECK(receives == 1);  // "something received");
         sender.close();
         receiver.close();
     }
-
-
-    virtual void runTests() override {
-        Network::setLocalMode(true);
-        testStartStop();
-        testBottle();
-        testBackground();
-        Network::setLocalMode(false);
-    }
 };
 
-static PortCoreTest thePortCoreTest;
+TEST_CASE("OS::impl::PortCoreTest", "[yarp::os::impl]") {
+    Network::setLocalMode(true);
+    PortCoreTest thePortCoreTest;
 
-UnitTest& getPortCoreTest() {
-    return thePortCoreTest;
+    SECTION("checking start/stop works") {
+        thePortCoreTest.testStartStop();
+    }
+
+    SECTION("simple bottle transmission check") {
+        thePortCoreTest.testBottle();
+    }
+    
+    SECTION("background transmission check") {
+        thePortCoreTest.testBackground();
+    }
+    
+    Network::setLocalMode(false);
 }
