@@ -9,40 +9,28 @@
 
 #include <yarp/os/StringOutputStream.h>
 
-#include <yarp/os/impl/UnitTest.h>
-
-#include <cstdio>
-#include <cstdlib>
 #include <cstring>
 
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
+
+
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
-class StringOutputStreamTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "StringOutputStreamTest"; }
+TEST_CASE("OS::StringOutputStreamTest", "[yarp::os]") {
 
-    void testWrite() {
-        report(0,"testing writing...");
+    SECTION("testing writing") {
         StringOutputStream sos;
         char txt[] = "Hello my friend";
-        Bytes b(txt,strlen(txt));
+        Bytes b(txt, strlen(txt));
         sos.write(b);
-        checkEqual(txt,sos.toString(),"single write");
+        CHECK(sos.toString() == txt); // single write
         StringOutputStream sos2;
         sos2.write('y');
         sos2.write('o');
-        checkEqual("yo",sos2.toString(),"multiple writes");
+        CHECK(sos2.toString() == "yo"); // multiple writes
     }
-
-    virtual void runTests() override {
-        testWrite();
-    }
-};
-
-static StringOutputStreamTest theStringOutputStreamTest;
-
-UnitTest& getStringOutputStreamTest() {
-    return theStringOutputStreamTest;
 }
-
