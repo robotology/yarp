@@ -8,6 +8,7 @@
  */
 
 #include <yarp/os/Port.h>
+
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/PeriodicThread.h>

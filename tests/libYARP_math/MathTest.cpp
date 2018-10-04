@@ -97,7 +97,7 @@ void assertEqual(const double &a, const double &b){
         CHECK(true);
 }
 
-TEST_CASE("Math::MathTest", "[yarp::math]") {
+TEST_CASE("math::MathTest", "[yarp::math]") {
 
     SECTION("check matrix misc operations") {
         Matrix mm(4,4);
