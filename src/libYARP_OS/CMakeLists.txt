@@ -176,6 +176,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/PlatformSignal.h
                       include/yarp/os/impl/PlatformStdio.h
                       include/yarp/os/impl/PlatformStdlib.h
+                      include/yarp/os/impl/PlatformSysStat.h
                       include/yarp/os/impl/PlatformSysWait.h
                       include/yarp/os/impl/PlatformTime.h
                       include/yarp/os/impl/PlatformUnistd.h
