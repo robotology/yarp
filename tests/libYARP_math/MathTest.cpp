@@ -9,7 +9,11 @@
 
 #define _USE_MATH_DEFINES
 
-#include <yarp/os/impl/UnitTest.h>
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
 
 #include <yarp/math/Math.h>
 #include <yarp/sig/Vector.h>
@@ -29,23 +33,19 @@ using namespace std;
 
 const double TOL = 1e-8;
 
-class MathTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "MathTest"; }
-
     // Assert that 2 vectors are equal
     void assertEqual(const Vector &a, const Vector &b, string testName, bool verbose=false){
         if(a.size() != b.size()){
             if(verbose) printf("a != b: %s != %s\n", a.toString(3).c_str(), b.toString(3).c_str());
-            checkTrue(false, testName.c_str());
+            CHECK(false);
         }
         for(size_t i=0; i<a.size(); i++){
             if(fabs(a[i]-b[i])>TOL){
                 if(verbose) printf("a != b: %s != %s\n", a.toString(3).c_str(), b.toString(3).c_str());
-                checkTrue(false, testName.c_str());
+                CHECK(false);
             }
         }
-        checkTrue(true, testName.c_str());
+        CHECK(true);
     }
 
     // Assert that a vector (1 dim) is equal to a scalar
@@ -61,17 +61,17 @@ public:
     void assertEqual(const Matrix &A, const Matrix &B, string testName, bool verbose=false){
         if(A.cols() != B.cols() || A.rows()!=B.rows()){
             if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
-            checkTrue(false, testName.c_str());
+            CHECK(false);
         }
         for(size_t r=0; r<A.rows(); r++){
             for(size_t c=0; c<A.cols(); c++){
                 if(fabs(A(r,c)-B(r,c))>TOL){
                     if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
-                    checkTrue(false, testName.c_str());
+                    CHECK(false);
                 }
             }
         }
-        checkTrue(true, testName.c_str());
+        CHECK(true);
     }
 
     // Assert that a matrix and a vector are equal (the matrix has to have either one row or one column)
@@ -83,7 +83,7 @@ public:
         else if(A.rows()==1)
             assertEqual(A.getRow(0), b, testName);
         else
-            checkTrue(false, testName.c_str());
+            CHECK(false);
     }
 
     void assertEqual(const Vector &b, const Matrix &A, string testName, bool verbose=false){
@@ -92,13 +92,14 @@ public:
 
     void assertEqual(const double &a, const double &b, string testName, bool verbose=false){
         if(fabs(a-b)>TOL)
-            checkTrue(false, testName.c_str());
+            CHECK(false);
         else
-            checkTrue(true, testName.c_str());
+            CHECK(true);
     }
 
-    void checkMiscOperations() {
-        report(0,"check matrix misc operations...");
+TEST_CASE("Math::MathTest", "[yarp::math]") {
+
+    SECTION("check matrix misc operations") {
         Matrix mm(4,4);
         mm.zero();
         mm=eye(5,5);
@@ -127,10 +128,7 @@ public:
         testName = "A(B+C) = AB+AC"; assertEqual(Amn.transposed()*(Bmn+Cmn), Amn.transposed()*Bmn + Amn.transposed()*Cmn, testName);
     }
 
-    void vectorOps()
-    {
-        report(0,"checking vector operators...");
-
+    SECTION("check vector operators.") {
         Vector a(3);
         Vector b(3);
         Vector c;
@@ -141,16 +139,16 @@ public:
         c=a+b;
 
         double acc=c[0]+c[1]+c[2];
-        checkTrue(acc==6, "operator+ on vectors");
+        CHECK(acc==6); // operator+ on vectors
 
         c=a-b;
         acc=c[0]+c[1]+c[2];
-        checkTrue(acc==0,  "operator- on vectors");
+        CHECK(acc==0); // operator- on vectors
 
         a=2;
         b=2;
         acc=dot(a,b);
-        checkTrue(acc==12,  "dot product on vectors");
+        CHECK(acc==12); // dot product on vectors
 
         //scalar mult
         a=1;
@@ -158,20 +156,19 @@ public:
         Vector m2=3*a;
 
         acc=m1[0]+m1[1]+m1[2];
-        checkTrue(acc==9, "element wise operator*");
+        CHECK(acc==9); // element wise operator*
         acc=m2[0]+m2[1]+m2[2];
-        checkTrue(acc==9, "element wise operator*");
+        CHECK(acc==9); // element wise operator*
 
         //scalar division
         a=9.0;
         m1=a/3.0;
 
         acc=m1[0]+m1[1]+m1[2];
-        checkTrue(acc==9, "element wise operator/");
+        CHECK(acc==9); // element wise operator/
     }
 
-    void vectMatrix()
-    {
+    SECTION("check matrix and vector operations.") {
 
         Matrix m(3,2);
         m=eye(3,2);
@@ -191,15 +188,12 @@ public:
         ret2(2)=0;
 
         a1=v1*m;
-        checkTrue((ret1==a1), "Vector by Matrix multiplication");
+        CHECK(ret1==a1); // "Vector by Matrix multiplication"
         a2=m*v2;
-        checkTrue((ret2==a2), "Matrix by Vector multiplication");
+        CHECK(ret2==a2); // "Matrix by Vector multiplication"
     }
 
-    void matrixOps()
-    {
-        report(0,"checking matrix operations...");
-
+    SECTION("check matrix operations.") {
         Matrix A(3,4);
         Matrix B(4,2);
         A=2;
@@ -209,8 +203,7 @@ public:
         Matrix exp(3,2);
         exp=24; //expected result
 
-        bool ret=(exp==C);
-        checkTrue(ret, "Matrix::operator*");
+        CHECK(exp==C); // "Matrix::operator*");
 
         A=9;  //initialize all with 9
         Matrix res;
@@ -223,7 +216,7 @@ public:
 
         double expected=res.rows()*res.cols()*3.0;
 
-        checkTrue((acc==expected), "Matrix element wise division");
+        CHECK(acc==expected); // "Matrix element wise division"
 
         A=3.0; //initialize all with 3
         res=A*3.0;   // multiply all by 3
@@ -237,11 +230,11 @@ public:
 
         expected=res.rows()*res.cols()*9;
 
-        checkTrue((acc==expected), "Matrix element wise multiplication");
+        CHECK(acc==expected); // "Matrix element wise multiplication"
     }
 
-    void svd()
-    {
+    SECTION("check SVD.") {
+
         Matrix M(6,5);
         M=1;
         Matrix U,V;
@@ -264,10 +257,8 @@ public:
         printf("%s\n", T.toString().c_str());
     }
 
-    void matrixInv() {
+    SECTION("checking matrix inversions.") {
         Vector v(0);
-
-        report(0,"checking matrix inversions...");
         Matrix A(4,4);
         int counter = 1;
         for(size_t r = 0; r < A.rows(); r++) {
@@ -288,7 +279,7 @@ public:
 
             }
 
-        checkTrue(invGood, "luinv");
+        CHECK(invGood); // "luinv"
 
         //printf("luinv: %s\n", I.toString().c_str());
 
@@ -308,8 +299,7 @@ public:
 
     }
 
-    void matrixDet() {
-        report(0,"checking matrix determinant...");
+    SECTION("checking matrix determinant.") {
         Matrix A(4,4);
         A(0,0) = 2;
         A(0,1) = 3;
@@ -333,12 +323,11 @@ public:
 
         double val = det(A);
         bool ok = ((val - -163) < 1e-10 && (-163 - val) < 1e-10);
-        checkTrue(ok, "Matrix determinant");
+        CHECK(ok); // "Matrix determinant"
         //printf("det: %g\n", val);
     }
 
-    void sumSubtractionOperators() {
-        report(0,"checking sum and subtraction operators...");
+    SECTION("checking sum and subtraction operators.") {
         int n = 3, m=2;
         Vector rangeMin(n, -100);
         Vector rangeMax(n, 100);
@@ -399,9 +388,7 @@ public:
         assertEqual(Amn, Bmn-Cmn, testName);
     }
 
-    void productOperator()
-    {
-        report(0,"checking product operator...");
+    SECTION("checking product operator.") {
         int n = 3, m=2;
         Vector rangeMin(n, -100);
         Vector rangeMax(n, 100);
@@ -457,9 +444,7 @@ public:
         Amn = Bmn; Amn *= Ann; assertEqual(Amn, Bmn*Ann, testName);
     }
 
-    void divisionOperator()
-    {
-        report(0,"checking division operator...");
+    SECTION("check division operator.") {
         int n = 3, m=2;
         Vector rangeMin(n, -100);
         Vector rangeMax(n, 100);
@@ -482,14 +467,12 @@ public:
         an=bn; an/=cn; assertEqual(an, bn/cn, testName);
         testName = "matrix / scalar";
         assertEqual(Amn/1, Amn, testName);
-        checkEqualish((Amn/s)(0,0), Amn(0,0)/s, testName.c_str());
+        CHECK((Amn/s)(0,0) == Approx(Amn(0,0)/s));
         testName = "matrix /= scalar";
         Amn=Bmn; Amn/=s; assertEqual(Amn, Bmn/s, testName);
     }
 
-    void crossProduct()
-    {
-        report(0,"checking cross product...");
+    SECTION("check cross product.") {
         int n = 3;
         Vector rangeMin(n, -100);
         Vector rangeMax(n, 100);
@@ -511,29 +494,7 @@ public:
         assertEqual(cross(an, bn), -1.0*cross(bn, an), testName);
     }
 
-    virtual void runTests() override
-    {
-        checkMiscOperations();
-        vectorOps();
-        matrixOps();
-        vectMatrix();
-        matrixInv();
-        matrixDet();
-        sumSubtractionOperators();
-        productOperator();
-        divisionOperator();
-        crossProduct();
-        eulerTests();
-        signTest();
-        eigenTest();
-        elementTest();
-        catAndPileTest();
-        quaternionTest();
-    }
-
-    void eulerTests()
-    {
-        report(0, "checking conversions from euler angles to matrix...");
+    SECTION("check conversions from euler angles to matrix.") {
         Vector euler;
         euler.resize(3,0.0);
         Matrix R;
@@ -550,10 +511,10 @@ public:
         R(2,2)=0.0;
         assertEqual(euler2dcm(euler),R.transposed(), " euler2dcm([pi, pi/2, -pi]) = [0 0 1 0; 0 -1 0 0; 1 0 0 0; 0 0 0 1] ");
 
-        report(0, "checking conversions from matrix to euler angles...");
+        INFO("check conversions from matrix to euler angles.");
         assertEqual(dcm2euler(R),euler, " dcm2euler(matrix-of-previous-test)=[0, pi/2, -pi] ");
 
-        report(0, "checking conversions from matrix to axis/angle...");
+        INFO("check conversions from matrix to axis/angle.");
         R.eye();
         R(0,0)=-1.0;
         R(0,1)=0.0;
@@ -570,9 +531,7 @@ public:
         assertEqual(m, R, " axis2dcm");
     }
 
-    void signTest()
-    {
-        report(0, "checking sign function...");
+    SECTION("check sign function.") {
         double a;
         a=-2.0;
         assertEqual(sign(a), -1.0, " sign(double)= +/-1 ");
@@ -589,9 +548,7 @@ public:
         assertEqual(sign(b), c, "  sign(vector)=vector cointaing signs of elements ");
     }
 
-    void eigenTest()
-    {
-        report(0, "checking eigenValues function...");
+    SECTION("check eigenValues function.") {
         Matrix A;
         Vector real, img, real2, img2;
         real.resize(2,0.0);
@@ -612,9 +569,7 @@ public:
         assertEqual(img, img2, " eigenValues(matrix)=img part of eigenValues ");
     }
 
-    void elementTest()
-    {
-        report(0, "checking max and min element..");
+    SECTION("check max and min element.") {
         Vector a;
         a.resize(3,0.0);
         a[0]=2.5;
@@ -624,9 +579,7 @@ public:
         assertEqual(findMin(a), 2.5, " findMin(vector)=min-elem ");
     }
 
-    void quaternionTest()
-    {
-        report(0, "checking Quaternion class");
+    SECTION("check Quaternion class,") {
         Quaternion q1;
         Quaternion q2;
         Quaternion q3;
@@ -713,12 +666,10 @@ public:
 
         assertEqual(vz_out, vz,                 "check toAxisAngle");
 
-        report(0, string("check toString() method: ") + q1.toString());
+        INFO( string("check toString() method: ") + q1.toString());
     }
 
-    void catAndPileTest()
-    {
-        report(0, "checking Matrix concatenations..");
+    SECTION("check Matrix concatenations") {
         Matrix a, b, c;
         b.resize(2,1);
         c.resize(3,1);
@@ -770,12 +721,4 @@ public:
         f[4]=5.0;
         assertEqual(cat(1.0, 2.0, 3.0, 4.0, 5.0), f, " cat(n1, n2, n3, n4, n5)=[n1, n2, n3, n4, n5] " );
     }
-
-};
-
-static MathTest theMathTest;
-
-UnitTest& getMathTest() {
-    return theMathTest;
 }
-
