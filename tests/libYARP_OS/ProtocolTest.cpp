@@ -7,36 +7,47 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/impl/FakeTwoWayStream.h>
 #include <yarp/os/impl/Protocol.h>
+
+#include <yarp/os/impl/FakeTwoWayStream.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
-#include <cstdio>
 #include <yarp/os/impl/UnitTest.h>
+
+#include <cstdio>
+#include <catch.hpp>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-class ProtocolTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "ProtocolTest"; }
-
-    std::string simplify(std::string x) {
-        return humanize(x);
+std::string simplify(std::string x) {
+    std::string result("");
+    for (unsigned int i=0; i<x.length(); i++) {
+        char ch = x[i];
+        if (ch == '\n') {
+            result += "\\n";
+        } else if (ch == '\r') {
+            result += "\\r";
+        } else if (ch == '\0') {
+            result += "\\0";
+        } else {
+            result += ch;
+        }
     }
+    return result;   
+}
 
-    void show(FakeTwoWayStream *fake1, FakeTwoWayStream *fake2) {
-        printf("fake1  //  in: [%s]  //  out: [%s]\n",
-                       simplify(fake1->getInputText()).c_str(),
-                       simplify(fake1->getOutputText()).c_str());
-        printf("fake2  //  in: [%s]  //  out: [%s]\n\n",
-                       simplify(fake2->getInputText()).c_str(),
-                       simplify(fake2->getOutputText()).c_str());
-    }
+void show(FakeTwoWayStream *fake1, FakeTwoWayStream *fake2) {
+    printf("fake1  //  in: [%s]  //  out: [%s]\n",
+                    simplify(fake1->getInputText()).c_str(),
+                    simplify(fake1->getOutputText()).c_str());
+    printf("fake2  //  in: [%s]  //  out: [%s]\n\n",
+                    simplify(fake2->getInputText()).c_str(),
+                    simplify(fake2->getOutputText()).c_str());
+}
 
-
-    void testBottle() {
-        report(0,"trying to send a bottle across a fake stream");
-
+TEST_CASE("OS::impl::ProtocolTest", "[yarp::os::impl]") {
+    
+    SECTION("trying to send a bottle across a fake stream") {
         // set up a fake sender/receiver pair
         FakeTwoWayStream *fake1 = new FakeTwoWayStream();
         FakeTwoWayStream *fake2 = new FakeTwoWayStream();
@@ -49,13 +60,11 @@ public:
 
         p1.open(Route("/out","/in","text"));
 
-        checkEqual(fake1->getOutputText(),"CONNECT /out\r\n",
-                   "text carrier header");
+        CHECK(fake1->getOutputText() == "CONNECT /out\r\n");    // "text carrier header");
 
         p2.open("/in");
 
-        checkEqual(fake2->getOutputText(),"Welcome /out\r\n",
-                   "text carrier response");
+        CHECK(fake2->getOutputText() == "Welcome /out\r\n");    // "text carrier response");
 
         BufferedConnectionWriter writer;
         writer.appendLine("d");
@@ -63,26 +72,15 @@ public:
         p1.write(writer);
 
         const char *expect = "CONNECT /out\r\nd\r\n0 \"Hello\"\r\n";
-        checkEqual(fake1->getOutputText(),expect,
-                   "added a bottle");
+        CHECK(fake1->getOutputText() == expect); // added a bottle
 
         ConnectionReader& reader = p2.beginRead();
         std::string str1 = reader.expectText().c_str();
         std::string str2 = reader.expectText().c_str();
         p2.endRead();
 
-        checkEqual(str1,std::string("d"),"data tag");
+        CHECK(str1 == std::string("d")); // data tag
         const char *expect2 = "0 \"Hello\"";
-        checkEqual(str2,std::string(expect2),"bottle representation");
-    }
-
-    virtual void runTests() override {
-        testBottle();
+        CHECK(str2 == std::string(expect2)); // bottle representation
     }
 };
-
-static ProtocolTest theProtocolTest;
-
-UnitTest& getProtocolTest() {
-    return theProtocolTest;
-}
