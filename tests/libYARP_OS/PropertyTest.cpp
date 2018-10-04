@@ -11,7 +11,6 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/Value.h>
 
-#include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformSysStat.h>
 
@@ -20,144 +19,145 @@
 #include <cstdio>
 #include <cfloat>
 
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
+
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-class PropertyTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "PropertyTest"; }
+static void printStringToFile(const char * filename, const char * filecontent)
+{
+    FILE *fout = fopen(filename,"w");
+    yAssert(fout!=nullptr);
+    fprintf(fout,"%s",filecontent);
+    fclose(fout);
+    fout = nullptr;
+}
 
-    void checkPutGet() {
-        report(0,"checking puts and gets");
+TEST_CASE("OS::PropertyTest", "[yarp::os]") {
+
+    SECTION("checking puts and gets") {
         Property p;
         p.put("hello","there");
         p.put("hello","friend");
         p.put("x","y");
-        checkTrue(p.check("hello"), "key 1 exists");
-        checkTrue(p.check("x"), "key 2 exists");
-        checkTrue(!(p.check("y")), "other key should not exist");
-        checkEqual(p.find("hello").toString().c_str(),"friend",
-                   "key 1 has good value");
-        checkEqual(p.find("x").toString().c_str(),"y",
-                   "key 2 has good value");
+        CHECK(p.check("hello")); // key 1 exists
+        CHECK(p.check("x")); // key 2 exists
+        CHECK(!(p.check("y"))); // other key should not exist
+        CHECK(p.find("hello").toString() =="friend"); // key 1 has good value
+        CHECK(p.find("x").toString() == "y"); // key 2 has good value
         p.fromString("(hello)");
-        checkTrue(p.check("hello"), "key exists");
+        CHECK(p.check("hello")); // key exists
         Value *v;
-        checkFalse(p.check("hello",v), "has no value");
+        CHECK_FALSE(p.check("hello",v)); // has no value
     }
 
 
-    void checkTypes() {
-        report(0,"checking puts and gets of various types");
+    SECTION("checking puts and gets of various types") {
         Property p;
         p.put("ten",10);
         p.put("pi",(double)3.14);
-        checkEqual(p.find("ten").asInt32(),10,"ten");
-        checkTrue(p.find("pi").asFloat64()>3,"pi>3");
-        checkTrue(p.find("pi").asFloat64()<4,"pi<4");
+        CHECK(p.find("ten").asInt32() == 10); // ten
+        CHECK(p.find("pi").asFloat64()>3); // pi>3
+        CHECK(p.find("pi").asFloat64()<4); // pi<4
         p.unput("ten");
-        checkTrue(p.find("ten").isNull(),"unput");
+        CHECK(p.find("ten").isNull()); // unput
     }
-    void checkAsDoublePrec()
+    SECTION("checking that issue https://github.com/robotology/yarp/issues/1057 is properly solved")
     {
         Property p;
-        report(0,"checking that issue https://github.com/robotology/yarp/issues/1057 is properly solved");
         double val = 1e-5;
         p.fromString("(dbl 0.00001)");
-        checkTrue(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON, "checking 1e-5");
+        CHECK(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON); // checking 1e-5
         p.unput("dbl");
         val = 1e-6;
         p.fromString("(dbl 0.000001)");
-        checkTrue(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON, "checking 1e-6");
+        CHECK(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON); // checking 1e-6
         p.unput("dbl");
         val = 1e-7;
         p.fromString("(dbl 0.0000001)");
-        checkTrue(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON, "checking 1e-7");
+        CHECK(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON); // checking 1e-7
         p.unput("dbl");
         val = 1e-8;
         p.fromString("(dbl 0.00000001)");
-        checkTrue(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON, "checking 1e-8");
+        CHECK(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON); // checking 1e-8
         p.unput("dbl");
         val = 1e-9;
         p.fromString("(dbl 0.000000001)");
-        checkTrue(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON, "checking 1e-9");
+        CHECK(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON); // checking 1e-9
     }
 
 
-    void checkNegative() {
-        report(0,"checking things are NOT found in correct manner");
+    SECTION("checking that issue https://github.com/robotology/yarp/issues/1057 is properly solved") {
         Property p;
         p.put("ten",10);
-        checkTrue(p.check("ten"),"found");
-        checkFalse(p.check("eleven"),"not found");
+        CHECK(p.check("ten")); // found
+        CHECK_FALSE(p.check("eleven")); // not found
         Bottle& bot = p.findGroup("twelve");
-        checkTrue(bot.isNull(),"group not found");
+        CHECK(bot.isNull()); // group not found
     }
 
-    void checkExternal() {
-        report(0,"checking external forms");
+    SECTION("checking external forms") {
         Property p;
         p.fromString("(foo 12) (testing left right)");
-        checkEqual(p.find("foo").asInt32(),12,"good key 1");
-        checkEqual(p.find("testing").asString().c_str(),"left","good key 2");
-        checkEqual(p.findGroup("testing").toString().c_str(),
-                   "testing left right","good key 2 (more)");
+        CHECK(p.find("foo").asInt32() == 12); // good key 1
+        CHECK(p.find("testing").asString() == "left"); // good key 2
+        CHECK(p.findGroup("testing").toString() == "testing left right"); // good key 2 (more)
 
         Property p2;
-        p2.fromString(p.toString().c_str());
-        checkEqual(p.find("testing").asString().c_str(),"left","good key after copy");
+        p2.fromString(p.toString());
+        CHECK(p.find("testing").asString() == "left"); // good key after copy
 
         Property p3;
         const char *args[] = {"CMD","--size","10","20","--mono","on"};
         p3.fromCommand(5,args);
-        Bottle bot(p3.toString().c_str());
-        checkEqual(bot.size(),(size_t) 2,"right number of terms");
-        checkEqual(p3.findGroup("size").get(1).toString().c_str(),"10","width");
-        checkEqual(p3.findGroup("size").get(2).toString().c_str(),"20","height");
-        checkTrue(p3.findGroup("size").get(1).isInt32(),"width type");
-        checkEqual(p3.findGroup("size").get(1).asInt32(),10,"width type val");
+        Bottle bot(p3.toString());
+        CHECK(bot.size() == (size_t) 2); // right number of terms
+        CHECK(p3.findGroup("size").get(1).toString() == "10"); // width
+        CHECK(p3.findGroup("size").get(2).toString() == "20"); // height
+        CHECK(p3.findGroup("size").get(1).isInt32()); // width type
+        CHECK(p3.findGroup("size").get(1).asInt32() == 10); // width type val
 
-        report(0,"reading from config-style string");
+        INFO("reading from config-style string");
         Property p4;
         p4.fromConfig("size 10 20\nmono on\n");
-        Bottle bot2(p4.toString().c_str());
-        checkEqual(bot2.size(),(size_t) 2,"right number of terms");
-        checkEqual(p4.findGroup("size").get(1).toString().c_str(),"10","width");
-        checkEqual(p4.findGroup("size").get(2).toString().c_str(),"20","height");
-        checkTrue(p4.findGroup("size").get(1).isInt32(),"width type");
-        checkEqual(p4.findGroup("size").get(1).asInt32(),10,"width type val");
+        Bottle bot2(p4.toString());
+        CHECK(bot2.size() == (size_t) 2); // right number of terms
+        CHECK(p4.findGroup("size").get(1).toString() == "10"); // width
+        CHECK(p4.findGroup("size").get(2).toString() == "20"); // height
+        CHECK(p4.findGroup("size").get(1).isInt32()); // width type
+        CHECK(p4.findGroup("size").get(1).asInt32() == 10); // width type val
 
-        report(0,"more realistic config-style string");
+        INFO("more realistic config-style string");
         Property p5;
         p5.fromConfig("[cat1]\nsize 10 20\nmono on\n[cat2]\nfoo\t100\n");
-        Bottle bot3(p5.toString().c_str());
-        checkEqual(bot3.size(),(size_t) 2,"right number of terms");
-        checkEqual(p5.findGroup("cat1").findGroup("size").get(1).asInt32(),
-                   10,"category 1, size, width");
-        checkEqual(p5.findGroup("cat2").findGroup("foo").get(1).asInt32(),
-                   100,"category 2, foo");
+        Bottle bot3(p5.toString());
+        CHECK(bot3.size() == (size_t) 2); // right number of terms
+        CHECK(p5.findGroup("cat1").findGroup("size").get(1).asInt32() == 10); // category 1, size, width
+        CHECK(p5.findGroup("cat2").findGroup("foo").get(1).asInt32() == 100); // category 2, foo
 
-        report(0,"command line style string");
+        INFO("command line style string");
         Property p6;
         const char *strs[] = { "program", "--name", "/foo" };
         p6.fromCommand(3,strs);
-        checkEqual(p6.find("name").asString().c_str(),"/foo",
-                   "command line name");
+        CHECK(p6.find("name").asString() == "/foo"); // command line name
         Value *v = nullptr;
         p6.check("name",v);
-        checkTrue(v!=nullptr,"check method");
+        CHECK(v!=nullptr); // check method
 
         Searchable *network = &p6.findGroup("NETWORK");
         if (network->isNull()) { network = &p6; }
         v = nullptr;
         network->check("name",v);
-        checkTrue(v!=nullptr,"check method 2");
+        CHECK(v!=nullptr); // check method 2
 
         Property p7;
     }
 
-    void checkNestedCommandLine() {
-        report(0,"checking command line parsing");
+    SECTION("checking command line parsing") {
         const char *argv[] = {
             "program",
             "--on",
@@ -170,83 +170,75 @@ public:
         int argc = 7;
         Property p;
         p.fromCommand(argc,argv);
-        checkEqual(p.findGroup("x").findGroup("y").find("z").asInt32(),10,"x::y::z ok");
+        CHECK(p.findGroup("x").findGroup("y").find("z").asInt32() == 10); // x::y::z ok
         Property p2("(x (y (z 45) (r 92))) (winding roads)");
         p2.fromCommand(argc,argv,true,false);
-        checkEqual(p2.findGroup("x").findGroup("y").find("z").asInt32(),10,"x::y::z #2 ok");
-        checkEqual(p2.findGroup("x").findGroup("y").find("r").asInt32(),92,"x::y::r ok");
+        CHECK(p2.findGroup("x").findGroup("y").find("z").asInt32() == 10); // x::y::z #2 ok
+        CHECK(p2.findGroup("x").findGroup("y").find("r").asInt32() == 92); // x::y::r ok
     }
 
-    void checkLineBreak() {
-        report(0,"checking line break");
+    SECTION("checking line break") {
         Property p;
         p.fromConfig("x to\\\ny 20\n");
-        checkFalse(p.check("y"),"ran on ok");
-        checkEqual(p.findGroup("x").get(1).asString().c_str(),"toy","splice ok");
+        CHECK_FALSE(p.check("y")); // ran on ok
+        CHECK(p.findGroup("x").get(1).asString() == "toy"); // splice ok
     }
 
-    void checkHex() {
-        report(0,"checking hex");
+    SECTION("checking hex") {
         Property p;
         p.fromString("(CanAddress 0x0C)");
-        checkEqual(p.find("CanAddress").asInt32(),12,"0x0C");
+        CHECK(p.find("CanAddress").asInt32() == 12); // 0x0C
         p.fromString("(CanAddress 0x0E)");
-        checkEqual(p.find("CanAddress").asInt32(),14,"0x0E");
+        CHECK(p.find("CanAddress").asInt32() == 14); // 0x0E
         p.fromString("(CanAddress 0x0c)");
-        checkEqual(p.find("CanAddress").asInt32(),12,"0x0c");
+        CHECK(p.find("CanAddress").asInt32() == 12); // 0x0c
         p.fromString("(CanAddress 0x0e)");
-        checkEqual(p.find("CanAddress").asInt32(),14,"0x0e");
+        CHECK(p.find("CanAddress").asInt32() == 14); // 0x0e
         p.fromString("(CanAddress 0xff)");
-        checkEqual(p.find("CanAddress").asInt32(),255,"0xff");
+        CHECK(p.find("CanAddress").asInt32() == 255); // 0xff
         p.fromConfig("\
 CanAddress1 0x0C\n\
 CanAddress2 0x0E\n\
 ");
-        checkEqual(p.find("CanAddress1").asInt32(),12,"config text 0x0C");
-        checkEqual(p.find("CanAddress2").asInt32(),14,"config text 0x0E");
+        CHECK(p.find("CanAddress1").asInt32() == 12); // config text 0x0C
+        CHECK(p.find("CanAddress2").asInt32() == 14); // config text 0x0E
 
         const char *fname1 = "_yarp_regression_test1.txt";
 
         FILE *fout = fopen(fname1,"w");
-        yAssert(fout!=nullptr);
+        REQUIRE(fout!=nullptr);
         fprintf(fout,"CanAddress1 0x0E\n");
         fprintf(fout,"CanAddress2 0x0C\n");
         fclose(fout);
         fout = nullptr;
 
         p.fromConfigFile(fname1);
-        checkEqual(p.find("CanAddress1").asInt32(),14,"config text 0x0E");
-        checkEqual(p.find("CanAddress2").asInt32(),12,"config text 0x0C");
+        CHECK(p.find("CanAddress1").asInt32() == 14); // config text 0x0E
+        CHECK(p.find("CanAddress2").asInt32() == 12); // config text 0x0C
     }
 
-    virtual void checkCopy() {
-        report(0,"checking copy");
+    SECTION("checking copy") {
         Property p0;
         p0.fromString("(foo 12) (testing left right)");
         {
             Property p(p0);
-            checkEqual(p.find("foo").asInt32(),12,"good key 1");
-            checkEqual(p.find("testing").asString().c_str(),"left",
-                       "good key 2");
-            checkEqual(p.findGroup("testing").toString().c_str(),
-                       "testing left right","good key 2 (more)");
+            CHECK(p.find("foo").asInt32() == 12); // good key 1
+            CHECK(p.find("testing").asString() == "left"); // good key 2
+            CHECK(p.findGroup("testing").toString() == "testing left right"); // good key 2 (more)");
         }
         {
             Property p;
             p.fromString("bozo");
             p = p0;
-            checkEqual(p.find("foo").asInt32(),12,"good key 1");
-            checkEqual(p.find("testing").asString().c_str(),"left",
-                       "good key 2");
-            checkEqual(p.findGroup("testing").toString().c_str(),
-                       "testing left right","good key 2 (more)");
+            CHECK(p.find("foo").asInt32() == 12); // good key 1
+            CHECK(p.find("testing").asString() == "left"); // good key 2
+            CHECK(p.findGroup("testing").toString() == "testing left right"); // good key 2 (more)
         }
 
     }
 
 
-    virtual void checkExpansion() {
-        report(0,"checking expansion");
+    SECTION("checking expansion") {
         Property p;
         p.fromConfig("\
 color red\n\
@@ -254,11 +246,10 @@ yarp1 $__YARP__\n\
 yarp2 ${__YARP__}\n\
 yarp3 pre_${__YARP__}_post\n\
 ");
-        checkEqual(p.find("color").asString().c_str(),"red","normal key");
-        checkEqual(p.find("yarp1").asInt32(),1,"basic expansion");
-        checkEqual(p.find("yarp2").asInt32(),1,"expansion with parenthesis");
-        checkEqual(p.find("yarp3").asString().c_str(),"pre_1_post",
-                   "expansion with neighbor");
+        CHECK(p.find("color").asString() == "red"); // normal key
+        CHECK(p.find("yarp1").asInt32() == 1); // basic expansion
+        CHECK(p.find("yarp2").asInt32() == 1); // expansion with parenthesis
+        CHECK(p.find("yarp3").asString() == "pre_1_post"); // expansion with neighbor
 
         Property env;
         env.put("TARGET","Earth");
@@ -267,101 +258,93 @@ yarp3 pre_${__YARP__}_post\n\
 targ $TARGET\n\
 path $WIN_PATH\n\
 ",env);
-        checkEqual(p.find("targ").asString().c_str(),"Earth",
-                   "environment addition");
-        checkEqual(p.find("path").asString().c_str(),"c:\\foo",
-                   "path interpretation");
+        CHECK(p.find("targ").asString() == "Earth"); // environment addition
+        CHECK(p.find("path").asString() == "c:\\foo"); // path interpretation
 
         p.fromConfig("\
 x 10\n\
 y 20\n\
 check $x $y\n\
 ");
-        checkEqual(p.findGroup("check").get(1).asInt32(),10,"local x is ok");
-        checkEqual(p.findGroup("check").get(2).asInt32(),20,"local y is ok");
+        CHECK(p.findGroup("check").get(1).asInt32() == 10); // local x is ok
+        CHECK(p.findGroup("check").get(2).asInt32() == 20); // local y is ok
     }
 
 
-    virtual void checkUrl() {
-        report(0,"checking url parsing");
+    SECTION("checking url parsing") {
         Property p;
         p.fromQuery("prop1=val1&prop2=val2");
-        checkEqual(p.find("prop1").asString().c_str(),"val1","basic prop 1");
-        checkEqual(p.find("prop2").asString().c_str(),"val2","basic prop 2");
+        CHECK(p.find("prop1").asString() == "val1"); // basic prop 1
+        CHECK(p.find("prop2").asString() == "val2"); // basic prop 2
         p.fromQuery("http://foo.bar.org/link?prop3=val3&prop4=val4",true);
-        checkEqual(p.find("prop3").asString().c_str(),"val3","full prop 3");
-        checkEqual(p.find("prop4").asString().c_str(),"val4","full prop 4");
+        CHECK(p.find("prop3").asString() == "val3"); // full prop 3
+        CHECK(p.find("prop4").asString() == "val4"); // full prop 4
         p.fromQuery("prop1=val+one&prop2=val%2Ftwo%2C");
-        checkEqual(p.find("prop1").asString().c_str(),"val one","mix prop 1");
-        checkEqual(p.find("prop2").asString().c_str(),"val/two,","mix prop 2");
+        CHECK(p.find("prop1").asString() == "val one"); // mix prop 1
+        CHECK(p.find("prop2").asString() == "val/two,"); // mix prop 2
     }
 
 
-    void checkNesting() {
-        report(0,"checking nested forms");
+    SECTION("checking nested forms") {
         Property p;
         p.fromConfig("[sect a]\nhello there\n[sect b]\nx 10\n");
         std::string sects = p.findGroup("sect").tail().toString();
-        checkEqual(sects.c_str(),"a b","section list present");
+        CHECK(sects == "a b"); // section list present
         std::string hello = p.findGroup("a").find("hello").asString();
-        checkEqual(hello.c_str(),"there","individual sections present");
+        CHECK(hello == "there"); // individual sections present
     }
 
-    void checkComment() {
-        report(0,"checking comments");
+    SECTION("checking comments") {
         Property p;
         p.fromConfig("x 10\n// x 11\n");
-        checkEqual(p.find("x").asInt32(),10,"comment ignored ok");
+        CHECK(p.find("x").asInt32() == 10); // comment ignored ok
         p.fromConfig("url \"http://www.robotcub.org\"\n");
-        checkEqual(p.find("url").asString().c_str(),"http://www.robotcub.org","url with // passed ok");
+        CHECK(p.find("url").asString() == "http://www.robotcub.org"); // url with // passed ok
         p.fromConfig("x 10 # 15");
-        checkEqual(p.findGroup("x").size(),(size_t) 2,"group size with # ok");
+        CHECK(p.findGroup("x").size() == (size_t) 2); // group size with # ok
         p.fromConfig("x 10 // 15");
-        checkEqual(p.findGroup("x").size(),(size_t) 2,"group size with // ok");
+        CHECK(p.findGroup("x").size() == (size_t) 2); // group size with // ok
         p.fromConfig("x \"# 1 // 2\" 4 5");
-        checkEqual(p.findGroup("x").size(),(size_t) 4,"group size with quoting ok");
+        CHECK(p.findGroup("x").size() == (size_t) 4); // group size with quoting ok
         p.fromConfig("x 10#15 4 5");
-        checkEqual(p.findGroup("x").size(),(size_t) 4,"group size with x#y ok");
-        report(0,"checking comment in configuration file");
+        CHECK(p.findGroup("x").size() == (size_t) 4); // group size with x#y ok
+        INFO("checking comment in configuration file");
         p.fromConfig("robotName icub \n urdf_file model.urdf \n # this is trash \n");
-        checkEqual(p.check("#"),false,"presence of comment line properly ignored in fromConfig");
+        CHECK(p.check("#") == false); // presence of comment line properly ignored in fromConfig
         const char *fname1 = "_yarp_regression_test_ini_comments.txt";
         FILE *fout = fopen(fname1,"w");
-        yAssert(fout!=nullptr);
+        REQUIRE(fout!=nullptr);
         fprintf(fout,"robotName icub\n");
         fprintf(fout,"urdf_file model.urdf\n");
         fprintf(fout,"# this is trash\n");
         fclose(fout);
         fout = nullptr;
-        checkEqual(p.fromConfigFile(fname1),true,"test file correctly loaded");
-        checkEqual(p.check("#"),false,"presence of comment line properly ignored in fromConfigFile");
+        CHECK(p.fromConfigFile(fname1) == true); // test file correctly loaded
+        CHECK(p.check("#") == false); // presence of comment line properly ignored in fromConfigFile
     }
 
-    void checkListWithSpaces()
+    SECTION("checking loading of list with spaces")
     {
-        report(0,"checking loading of list with spaces");
         Property p_spaces, p_no_spaces;
         p_spaces.fromConfig("torso_yaw = ((0.275,\"0B3M0\") ,(0.275,\"0B3M1\") ,(0.55,\"0B4M0\"))\n");
         p_no_spaces.fromConfig("torso_yaw = ((0.275,\"0B3M0\"),(0.275,\"0B3M1\"),(0.55,\"0B4M0\"))\n");
-        checkEqual(p_no_spaces.find("torso_yaw").isList(),true,"list without spaces correctly loaded");
-        checkEqual(p_spaces.find("torso_yaw").isList(),true,"list with spaces correctly loaded");
-        checkEqual(p_no_spaces.find("torso_yaw").asList()->size(),(size_t) 3,"list without spaces loaded with correct size");
-        checkEqual(p_spaces.find("torso_yaw").asList()->size(),(size_t) 3,"list with spaces loaded with correct size");
+        CHECK(p_no_spaces.find("torso_yaw").isList() == true); // list without spaces correctly loaded
+        CHECK(p_spaces.find("torso_yaw").isList() == true); // list with spaces correctly loaded
+        CHECK(p_no_spaces.find("torso_yaw").asList()->size() == (size_t) 3); // list without spaces loaded with correct size
+        CHECK(p_spaces.find("torso_yaw").asList()->size() == (size_t) 3); // list with spaces loaded with correct size
     }
 
-    virtual void checkWipe() {
-        report(0,"checking wipe suppression");
+    SECTION("checking wipe suppression") {
         Property p;
         p.put("x",12);
         p.fromConfig("y 20",false);
-        checkEqual(p.find("x").asInt32(),12,"x is ok");
-        checkEqual(p.find("y").asInt32(),20,"y is ok");
+        CHECK(p.find("x").asInt32() == 12); // x is ok
+        CHECK(p.find("y").asInt32() == 20); // y is ok
     }
 
-    virtual void checkBackslashPath() {
+    SECTION("checking backslash path behavior") {
         // on windows, backslashes are used in paths
         // if passed on command-line, don't be shocked
-        report(0,"checking backslash path behavior");
         Property p;
         std::string target = "conf\\brains-brains.ini";
         const char *argv[] = {
@@ -371,13 +354,11 @@ check $x $y\n\
         };
         int argc = 3;
         p.fromCommand(argc,argv);
-        checkEqual(p.find("file").asString().c_str(),target.c_str(),
-                   "string with slash");
+        CHECK(p.find("file").asString() == target); // string with slash
     }
 
 
-    virtual void checkIncludes() {
-        report(0,"checking include behavior");
+    SECTION("checking include behavior") {
 
         const char *fname1 = "_yarp_regression_test1.txt";
         const char *fname2 = "_yarp_regression_test2.txt";
@@ -386,13 +367,13 @@ check $x $y\n\
 
         {
             FILE *fout = fopen(fname1,"w");
-            yAssert(fout!=nullptr);
+            REQUIRE(fout!=nullptr);
             fprintf(fout,"x 1\n");
             fclose(fout);
             fout = nullptr;
 
             fout = fopen(fname2,"w");
-            yAssert(fout!=nullptr);
+            REQUIRE(fout!=nullptr);
             fprintf(fout,"[include %s]\n",fname1);
             fprintf(fout,"y 2\n");
             fclose(fout);
@@ -400,51 +381,41 @@ check $x $y\n\
 
             Property p;
             p.fromConfigFile(fname2);
-            checkEqual(p.find("x").asInt32(),1,"x is ok");
-            checkEqual(p.find("y").asInt32(),2,"y is ok");
+            CHECK(p.find("x").asInt32() == 1); // x is ok
+            CHECK(p.find("y").asInt32() == 2); // y is ok
         }
 
 
         {
             FILE *fout = fopen(fname1,"w");
-            yAssert(fout!=nullptr);
+            REQUIRE(fout!=nullptr);
             fprintf(fout,"x 1\n");
             fclose(fout);
             fout = nullptr;
 
             fout = fopen(fname2,"w");
-            yAssert(fout!=nullptr);
+            REQUIRE(fout!=nullptr);
             fprintf(fout,"[include base %s]\n",fname1);
             fprintf(fout,"y 2\n");
             fclose(fout);
             fout = nullptr;
 
-            /*
-            ofstream fout1(fname1);
-            fout1 << "x 1" << endl;
-            fout1.close();
-            ofstream fout2(fname2);
-            fout2 << "[include base " << fname1 << "]" << endl;
-            fout2 << "y 2" << endl;
-            fout2.close();
-            */
             Property p;
             p.fromConfigFile(fname2);
-            checkEqual(p.findGroup("base").find("x").asInt32(),1,"x is ok");
-            checkEqual(p.find("y").asInt32(),2,"y is ok");
-            checkEqual(p.findGroup("base").toString().c_str(),
-                       "base (x 1)","expected external structure");
+            CHECK(p.findGroup("base").find("x").asInt32() == 1); // x is ok
+            CHECK(p.find("y").asInt32() == 2); // y is ok
+            CHECK(p.findGroup("base").toString() == "base (x 1)"); // expected external structure
         }
 
         {
             FILE *fout = fopen(fname1,"w");
-            yAssert(fout!=nullptr);
+            REQUIRE(fout!=nullptr);
             fprintf(fout,"x 1\n");
             fclose(fout);
             fout = nullptr;
 
             fout = fopen(fname2,"w");
-            yAssert(fout!=nullptr);
+            REQUIRE(fout!=nullptr);
             fprintf(fout,"[base]\n");
             fprintf(fout,"w 4\n");
             fprintf(fout,"[base]\n");
@@ -456,21 +427,21 @@ check $x $y\n\
 
             Property p;
             p.fromConfigFile(fname2);
-            checkEqual(p.findGroup("base").find("x").asInt32(),1,"x is ok");
-            checkEqual(p.find("y").asInt32(),2,"y is ok");
-            checkEqual(p.findGroup("base").find("z").asInt32(),3,"z is ok");
-            checkEqual(p.findGroup("base").find("w").asInt32(),4,"w is ok");
+            CHECK(p.findGroup("base").find("x").asInt32() == 1); // x is ok
+            CHECK(p.find("y").asInt32() == 2); // y is ok
+            CHECK(p.findGroup("base").find("z").asInt32() == 3); // z is ok
+            CHECK(p.findGroup("base").find("w").asInt32() == 4); // w is ok
         }
 
         {
             FILE *fout = fopen(fname1,"w");
-            yAssert(fout!=nullptr);
+            REQUIRE(fout!=nullptr);
             fprintf(fout,"x 1\n");
             fclose(fout);
             fout = nullptr;
 
             fout = fopen(fname2,"w");
-            yAssert(fout!=nullptr);
+            REQUIRE(fout!=nullptr);
             fprintf(fout,"[b1]\n");
             fprintf(fout,"z 3\n");
             fprintf(fout,"[include base b1 %s]\n",fname1);
@@ -481,26 +452,16 @@ check $x $y\n\
 
             Property p;
             p.fromConfigFile(fname2);
-            checkEqual(p.findGroup("b1").find("x").asInt32(),1,"x is ok");
-            checkEqual(p.findGroup("base").get(1).asString().c_str(),
-                       "b1","list element 1 is ok");
-            checkEqual(p.findGroup("b2").find("x").asInt32(),1,"x is ok");
-            checkEqual(p.findGroup("base").get(2).asString().c_str(),
-                       "b2","list element 2 is ok");
+            CHECK(p.findGroup("b1").find("x").asInt32() == 1); // x is ok
+            CHECK(p.findGroup("base").get(1).asString() == "b1"); // list element 1 is ok
+            CHECK(p.findGroup("b2").find("x").asInt32() == 1); // x is ok
+            CHECK(p.findGroup("base").get(2).asString() == "b2"); // list element 2 is ok
         }
     }
 
-    virtual void printStringToFile(const char * filename, const char * filecontent)
-    {
-        FILE *fout = fopen(filename,"w");
-        yAssert(fout!=nullptr);
-        fprintf(fout,"%s",filecontent);
-        fclose(fout);
-        fout = nullptr;
-    }
 
-    virtual void checkIncludesIssue459() {
-        report(0,"checking that issue https://github.com/robotology/yarp/issues/459 is properly solved");
+
+    SECTION("checking that issue https://github.com/robotology/yarp/issues/459 is properly solved") {
 
         // create test files
         const char *include_one_name = "_yarp_regression_include_one.ini";
@@ -551,18 +512,17 @@ check $x $y\n\
         // in all groups
 
         Property propRoot,propRootCheck;
-        report(0,"Parsing root_file ");
+        INFO("Parsing root_file ");
         propRoot.fromConfigFile(root_file_name);
-        report(0,"Parsing root_file_check ");
+        INFO("Parsing root_file_check ");
         propRootCheck.fromConfigFile(root_file_check_name);
-        checkEqual(propRoot.findGroup("root_group").find("bau").asInt32(),10,"root_group is found in root_file");
-        checkEqual(propRootCheck.findGroup("root_group").find("bau").asInt32(),10,"root_group is found in root_file_check");
+        CHECK(propRoot.findGroup("root_group").find("bau").asInt32() == 10); // root_group is found in root_file
+        CHECK(propRootCheck.findGroup("root_group").find("bau").asInt32() == 10); // root_group is found in root_file_check
 
     }
 
 
-    virtual void checkCommand() {
-        report(0,"checking command line parsing");
+    SECTION("checking command line parsing") {
         const char *argv[] = {
             "program",
             "--on",
@@ -577,23 +537,22 @@ check $x $y\n\
         std::string target2 = "(on \"/server\") (cmd \"ls foo\")";
         std::string actual = p.toString();
         if (actual==target1) {
-            checkEqual(actual.c_str(),target1.c_str(),"command ok");
+            CHECK(actual == target1); // command ok
         } else {
-            checkEqual(actual.c_str(),target2.c_str(),"command ok");
+            CHECK(actual == target2); // command ok
         }
     }
 
-    virtual void checkDirectory() {
-        report(0,"checking directory scanning");
+    SECTION("checking directory scanning") {
         // change directory name if test files removed
         std::string dirname = "__test_dir_1";
         if (yarp::os::stat(dirname.c_str())<0) {
             yarp::os::mkdir(dirname.c_str());
         }
-        checkTrue(yarp::os::stat(dirname.c_str())>=0,"test directory present");
+        CHECK(yarp::os::stat(dirname.c_str())>=0); // test directory present
         {
             FILE *fout = fopen((dirname + "/t1.ini").c_str(),"w");
-            yAssert(fout!=nullptr);
+            REQUIRE(fout!=nullptr);
             fprintf(fout,"x 3\n");
             fprintf(fout,"[nesttest]\n");
             fprintf(fout,"z 14\n");
@@ -602,74 +561,36 @@ check $x $y\n\
         }
         {
             FILE *fout = fopen((dirname + "/t2.ini").c_str(),"w");
-            yAssert(fout!=nullptr);
+            REQUIRE(fout!=nullptr);
             fprintf(fout,"y 4\n");
             fclose(fout);
             fout = nullptr;
         }
         Property p;
         p.fromConfigFile(dirname.c_str());
-        checkEqual(p.find("x").asInt32(),3,"t1 read");
-        checkEqual(p.find("y").asInt32(),4,"t2 read");
+        CHECK(p.find("x").asInt32() == 3); // t1 read
+        CHECK(p.find("y").asInt32() == 4); // t2 read
     }
 
-    virtual void checkMonitor() {
-        report(0,"checking monitoring");
-    }
-
-    virtual void checkLongLongHex() {
-        report(0,"checking long long hex");
+    SECTION("checking long long hex") {
         const char* parms[]={"foo","--longlonghex","0xFEDCBA9876543210"};
         yarp::os::Property config;
         config.fromCommand(3,parms);
-        checkEqual(config.find("longlonghex").asString(),
-                   "0xFEDCBA9876543210","hex that is too big remains a string");
+        CHECK(config.find("longlonghex").asString() == "0xFEDCBA9876543210"); // hex that is too big remains a string
     }
 
-    virtual void checkAddGroup() {
-        report(0,"check add group");
+    SECTION("check add group") {
         Property p;
         p.put("x",1);
         Property& psub = p.addGroup("psub");
         psub.put("y",2);
-        checkEqual(p.find("x").asInt32(),1,"basic int");
-        checkEqual(p.findGroup("psub").find("y").asInt32(),2,"nested int");
+        CHECK(p.find("x").asInt32() == 1); // basic int
+        CHECK(p.findGroup("psub").find("y").asInt32() == 2); // nested int
         Property pCopy = p;
-        checkEqual(pCopy.toString(),p.toString(),"test if addGroup works fine with Property copy assigment");
+        CHECK(pCopy.toString() == p.toString()); // test if addGroup works fine with Property copy assigment
         Property pCopy2;
         pCopy2 = p;
-        checkEqual(pCopy.toString(),p.toString(),"test if addGroup works fine with Property copy operator");
+        CHECK(pCopy.toString() == p.toString()); // test if addGroup works fine with Property copy operator
     }
 
-    virtual void runTests() override {
-        checkPutGet();
-        checkExternal();
-        checkTypes();
-        checkAsDoublePrec();
-        checkNegative();
-        checkCopy();
-        checkExpansion();
-        checkUrl();
-        checkNesting();
-        checkWipe();
-        checkBackslashPath();
-        checkIncludes();
-        checkIncludesIssue459();
-        checkCommand();
-        checkComment();
-        checkListWithSpaces();
-        checkLineBreak();
-        checkMonitor();
-        checkHex();
-        checkNestedCommandLine();
-        checkDirectory();
-        checkLongLongHex();
-        checkAddGroup();
-    }
-};
-
-static PropertyTest thePropertyTest;
-
-UnitTest& getPropertyTest() {
-    return thePropertyTest;
 }
