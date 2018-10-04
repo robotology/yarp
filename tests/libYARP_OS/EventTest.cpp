@@ -13,15 +13,12 @@
 #include "catch.hpp"
 #endif
 
-#include <cmath>
+#include <yarp/os/Event.h>
+#include <yarp/os/Thread.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/Time.h>
+// #include <cmath>
 
-#include <yarp/conf/system.h>
-#include <yarp/os/all.h>
-
-#include <yarp/os/impl/UnitTest.h>
-#include <yarp/os/impl/Logger.h>
-
-using namespace yarp::os::impl;
 using namespace yarp::os;
 
 class EventTestHelper : public Thread {
