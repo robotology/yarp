@@ -7,23 +7,27 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/PortablePair.h>
+
+#include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
 
-#include <yarp/os/impl/UnitTest.h>
-//#include "TestList.h"
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-class PortablePairTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "PortablePairTest"; }
-    
-    void checkStandard() {
+TEST_CASE("OS::PortablePairTest", "[yarp::os]") {
+
+    Network::setLocalMode(true);
+
+    SECTION("Test standard PortablePair") {
         PortablePair<Bottle,Bottle> pp;
         pp.head.fromString("1 2 3");
         pp.body.fromString("yes no");
@@ -32,16 +36,12 @@ public:
         std::string s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),s.length());
-        checkEqual(bot.size(),(size_t) 2,"it is a pair");
-        checkEqual(bot.get(0).asList()->size(),(size_t) 3,"head len is right");
-        checkEqual(bot.get(1).asList()->size(),(size_t) 2,"body len is right");
+        CHECK(bot.size() == (size_t) 2); // it is a pair
+        CHECK(bot.get(0).asList()->size() == (size_t) 3); // head len is right
+        CHECK(bot.get(1).asList()->size() == (size_t) 2); // body len is right
     }
 
-
-
-    void checkTransmit() {
-        report(0,"testing pair transmission...");
-
+    SECTION("testing PortablePair transmission") {
         PortablePair<Bottle,Bottle> pp;
         pp.head.fromString("1 2 3");
         pp.body.fromString("yes no");
@@ -55,32 +55,18 @@ public:
         buf.attach(input);
         Network::connect("/out","/in");
 
-        report(0,"writing...");
+        INFO("Writing...");
         output.write(pp);
-        report(0,"reading...");
+        INFO("Reading...");
         PortablePair<Bottle,Bottle> *result = buf.read();
-        
-        checkTrue(result!=nullptr,"got something check");
-        if (result!=nullptr) {
-            checkEqual(result->head.size(),(size_t) 3,"head len is right");
-            checkEqual(result->body.size(),(size_t) 2,"body len is right");
-        }
+
+        REQUIRE(result!=nullptr); // got something check
+        CHECK(result->head.size() == (size_t) 3); // head len is right
+        CHECK(result->body.size() == (size_t) 2); // body len is right
 
         output.close();
         input.close();
     }
 
-    
-    virtual void runTests() override {
-        checkStandard();
-        bool netMode = Network::setLocalMode(true);
-        checkTransmit();
-        Network::setLocalMode(netMode);
-    }
-};
-
-static PortablePairTest thePortablePairTest;
-
-UnitTest& getPortablePairTest() {
-    return thePortablePairTest;
+    Network::setLocalMode(false);
 }
