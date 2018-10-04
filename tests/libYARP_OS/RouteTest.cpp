@@ -6,198 +6,156 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/Route.h>
 #include <yarp/os/Contact.h>
 
-using namespace yarp::os::impl;
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
+
 using namespace yarp::os;
 
-class RouteTest : public UnitTest
-{
-public:
-    virtual std::string getName() const override
-    {
-        return "RouteTest";
+TEST_CASE("OS::RouteTest", "[yarp::os]") {
+
+    SECTION("checking constructor with no parameters") {
+        Route r;
+        CHECK(r.getFromName() == ""); // empty from name
+        CHECK(r.getToName() == ""); // empty to name
+        CHECK(r.getCarrierName() == ""); // empty carrier name
+        CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
     }
 
-    void testRoute()
-    {
-        {
-            report(0, "checking constructor with no parameters");
-            Route r;
-            checkEqual(r.getFromName().c_str(), "", "empty from name");
-            checkEqual(r.getToName().c_str(), "", "empty to name");
-            checkEqual(r.getCarrierName().c_str(), "", "empty carrier name");
-            checkFalse(r.getToContact().isValid(), "invalid to contact");
-        }
-
-        {
-            report(0, "checking constructor");
-            Route r("/foo", "/bar", "baz");
-            checkEqual(r.getFromName().c_str(), "/foo", "from name is set");
-            checkEqual(r.getToName().c_str(), "/bar", "to name is set");
-            checkEqual(r.getCarrierName().c_str(), "baz", "carrier name is set");
-            checkFalse(r.getToContact().isValid(), "invalid to contact");
-        }
-
-        {
-            report(0, "checking copy assignment operator with empty Route");
-            Route r1;
-            Route r2;
-            r1 = r2;
-            checkEqual(r1.getFromName().c_str(), "", "empty from name");
-            checkEqual(r1.getToName().c_str(), "", "empty to name");
-            checkEqual(r1.getCarrierName().c_str(), "", "empty carrier name");
-            checkFalse(r1.getToContact().isValid(), "invalid to contact");
-        }
-
-        {
-            report(0, "checking copy assignment operator with non empty Route");
-            Route r1;
-            Route r2("/foo", "/bar", "baz");
-            r1 = r2;
-            checkEqual(r1.getFromName().c_str(), "/foo", "from name is set");
-            checkEqual(r1.getToName().c_str(), "/bar", "to name is set");
-            checkEqual(r1.getCarrierName().c_str(), "baz", "carrier name is set");
-            checkFalse(r1.getToContact().isValid(), "invalid to contact");
-        }
-
-        {
-            report(0, "checking copy constructor");
-            Route r1("/foo", "/bar", "baz");
-            Route r2(r1);
-            checkEqual(r2.getFromName().c_str(), "/foo", "from name is set");
-            checkEqual(r2.getToName().c_str(), "/bar", "to name is set");
-            checkEqual(r2.getCarrierName().c_str(), "baz", "carrier name is set");
-            checkFalse(r2.getToContact().isValid(), "invalid to contact");
-        }
-
-        {
-            report(0, "checking move constructor");
-            Route r1("/foo", "/bar", "baz");
-            Route r2 = std::move(r1);
-            checkEqual(r2.getFromName().c_str(), "/foo", "from name is set");
-            checkEqual(r2.getToName().c_str(), "/bar", "to name is set");
-            checkEqual(r2.getCarrierName().c_str(), "baz", "carrier name is set");
-            checkFalse(r2.getToContact().isValid(), "invalid to contact");
-        }
-
-        {
-            report(0, "checking move assignment operator");
-            Route r;
-            r = Route("/foo", "/bar", "baz");
-            checkEqual(r.getFromName().c_str(), "/foo", "from name is set");
-            checkEqual(r.getToName().c_str(), "/bar", "to name is set");
-            checkEqual(r.getCarrierName().c_str(), "baz", "carrier name is set");
-            checkFalse(r.getToContact().isValid(), "invalid to contact");
-        }
+    SECTION("checking constructor") {
+        Route r("/foo", "/bar", "baz");
+        CHECK(r.getFromName() == "/foo"); // from name is set
+        CHECK(r.getToName() == "/bar"); // to name is set
+        CHECK(r.getCarrierName() == "baz"); // carrier name is set
+        CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
     }
 
-    void testSetter()
-    {
-        {
-            report(0, "checking setFromName");
-            Route r("/foo", "/bar", "baz");
-            checkEqual(r.getFromName().c_str(), "/foo", "from name is set");
-            checkEqual(r.getToName().c_str(), "/bar", "to name is set");
-            checkEqual(r.getCarrierName().c_str(), "baz", "carrier name is set");
-            checkFalse(r.getToContact().isValid(), "invalid to contact");
-            r.setFromName("/zap");
-            checkEqual(r.getFromName().c_str(), "/zap", "from name is updated");
-            checkEqual(r.getToName().c_str(), "/bar", "to name is not updated");
-            checkEqual(r.getCarrierName().c_str(), "baz", "carrier name is not updated");
-            checkFalse(r.getToContact().isValid(), "invalid to contact");
-        }
-
-        {
-            report(0, "checking setToName");
-            Route r("/foo", "/bar", "baz");
-            checkEqual(r.getFromName().c_str(), "/foo", "from name is set");
-            checkEqual(r.getToName().c_str(), "/bar", "from name is set");
-            checkEqual(r.getCarrierName().c_str(), "baz", "carrier name is set");
-            checkFalse(r.getToContact().isValid(), "invalid to contact");
-            r.setToName("/zap");
-            checkEqual(r.getFromName().c_str(), "/foo", "from name is not updated");
-            checkEqual(r.getToName().c_str(), "/zap", "to name is updated");
-            checkEqual(r.getCarrierName().c_str(), "baz", "carrier name is not updated");
-            checkFalse(r.getToContact().isValid(), "invalid to contact");
-        }
-
-        {
-            report(0, "checking setCarrierName");
-            Route r("/foo", "/bar", "baz");
-            checkEqual(r.getFromName().c_str(), "/foo", "from name is set");
-            checkEqual(r.getToName().c_str(), "/bar", "from name is set");
-            checkEqual(r.getCarrierName().c_str(), "baz", "carrier name is set");
-            checkFalse(r.getToContact().isValid(), "invalid to contact");
-            r.setCarrierName("zap");
-            checkEqual(r.getFromName().c_str(), "/foo", "from name is not updated");
-            checkEqual(r.getToName().c_str(), "/bar", "to name is not updated");
-            checkEqual(r.getCarrierName().c_str(), "zap", "carrier name is updated");
-            checkFalse(r.getToContact().isValid(), "invalid to contact");
-        }
-
-        {
-            report(0, "checking setToContact()");
-            Route r("/foo", "/bar", "baz");
-            checkEqual(r.getFromName().c_str(), "/foo", "from name is set");
-            checkEqual(r.getToName().c_str(), "/bar", "from name is set");
-            checkEqual(r.getCarrierName().c_str(), "baz", "carrier name is set");
-            checkFalse(r.getToContact().isValid(), "invalid to contact");
-            r.setToContact(Contact("tcp", "127.0.0.1", 10000));
-            checkEqual(r.getFromName().c_str(), "/foo", "from name is not updated");
-            checkEqual(r.getToName().c_str(), "/bar", "to name is not updated");
-            checkEqual(r.getCarrierName().c_str(), "baz", "carrier name is not updated");
-            checkEqual(r.getToContact().toURI().c_str(), "tcp://127.0.0.1:10000/", "to contact is updated");
-        }
-
+    SECTION("checking copy assignment operator with empty Route") {
+        Route r1;
+        Route r2;
+        r1 = r2;
+        CHECK(r1.getFromName() == ""); // empty from name
+        CHECK(r1.getToName() == ""); // empty to name
+        CHECK(r1.getCarrierName() == ""); // empty carrier name
+        CHECK_FALSE(r1.getToContact().isValid()); // invalid to contact
     }
 
-    void testSwapNames()
-    {
-        {
-            report(0, "checking swapNames");
-            Route r("/foo", "/bar", "baz");
-            checkEqual(r.getFromName().c_str(), "/foo", "from name is set");
-            checkEqual(r.getToName().c_str(), "/bar", "to name is set");
-            checkEqual(r.getCarrierName().c_str(), "baz", "carrier name is set");
-            checkFalse(r.getToContact().isValid(), "invalid to contact");
-            r.swapNames();
-            checkEqual(r.getFromName().c_str(), "/bar", "from name is swapped");
-            checkEqual(r.getToName().c_str(), "/foo", "to name is swapped");
-            checkEqual(r.getCarrierName().c_str(), "baz", "carrier name is not updated");
-            checkFalse(r.getToContact().isValid(), "invalid to contact");
-        }
+    SECTION("checking copy assignment operator with non empty Route") {
+        Route r1;
+        Route r2("/foo", "/bar", "baz");
+        r1 = r2;
+        CHECK(r1.getFromName() == "/foo"); // from name is set
+        CHECK(r1.getToName() == "/bar"); // to name is set
+        CHECK(r1.getCarrierName() == "baz"); // carrier name is set
+        CHECK_FALSE(r1.getToContact().isValid()); // invalid to contact
     }
 
-    void testToString()
-    {
-        {
-            report(0, "checking toString no parameters");
-            Route r;
-            checkEqual(r.toString().c_str(), "->->", "toString() is correct");
-        }
-
-        {
-            report(0, "checking constructor");
-            Route r("/foo", "/bar", "baz");
-            checkEqual(r.toString().c_str(), "/foo->baz->/bar", "toString() is correct");
-        }
-
+    SECTION("checking copy constructor") {
+        Route r1("/foo", "/bar", "baz");
+        Route r2(r1);
+        CHECK(r2.getFromName() == "/foo"); // from name is set
+        CHECK(r2.getToName() == "/bar"); // to name is set
+        CHECK(r2.getCarrierName() == "baz"); // carrier name is set
+        CHECK_FALSE(r2.getToContact().isValid()); // invalid to contact
     }
 
-    virtual void runTests() override {
-        testRoute();
-        testSetter();
-        testSwapNames();
-        testToString();
+    SECTION("checking move constructor") {
+        Route r1("/foo", "/bar", "baz");
+        Route r2 = std::move(r1);
+        CHECK(r2.getFromName() == "/foo"); // from name is set
+        CHECK(r2.getToName() == "/bar"); // to name is set
+        CHECK(r2.getCarrierName() == "baz"); // carrier name is set
+        CHECK_FALSE(r2.getToContact().isValid()); // invalid to contact
     }
-};
 
-static RouteTest theRouteTest;
+    SECTION("checking move assignment operator") {
+        Route r;
+        r = Route("/foo", "/bar", "baz");
+        CHECK(r.getFromName() == "/foo"); // from name is set
+        CHECK(r.getToName() == "/bar"); // to name is set
+        CHECK(r.getCarrierName() == "baz"); // carrier name is set
+        CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
+    }
 
-UnitTest& getRouteTest() {
-    return theRouteTest;
+
+    SECTION("checking setFromName") {
+        Route r("/foo", "/bar", "baz");
+        CHECK(r.getFromName() == "/foo"); // from name is set
+        CHECK(r.getToName() == "/bar"); // to name is set
+        CHECK(r.getCarrierName() == "baz"); // carrier name is set
+        CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
+        r.setFromName("/zap");
+        CHECK(r.getFromName() == "/zap"); // from name is updated
+        CHECK(r.getToName() == "/bar"); // to name is not updated
+        CHECK(r.getCarrierName() == "baz"); // carrier name is not updated
+        CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
+    }
+
+    SECTION("checking setToName") {
+        Route r("/foo", "/bar", "baz");
+        CHECK(r.getFromName() == "/foo"); // from name is set
+        CHECK(r.getToName() == "/bar"); // from name is set
+        CHECK(r.getCarrierName() == "baz"); // carrier name is set
+        CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
+        r.setToName("/zap");
+        CHECK(r.getFromName() == "/foo"); // from name is not updated
+        CHECK(r.getToName() == "/zap"); // to name is updated
+        CHECK(r.getCarrierName() == "baz"); // carrier name is not updated
+        CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
+    }
+
+    SECTION("checking setCarrierName") {
+        Route r("/foo", "/bar", "baz");
+        CHECK(r.getFromName() == "/foo"); // from name is set
+        CHECK(r.getToName() == "/bar"); // from name is set
+        CHECK(r.getCarrierName() == "baz"); // carrier name is set
+        CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
+        r.setCarrierName("zap");
+        CHECK(r.getFromName() == "/foo"); // from name is not updated
+        CHECK(r.getToName() == "/bar"); // to name is not updated
+        CHECK(r.getCarrierName() == "zap"); // carrier name is updated
+        CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
+    }
+
+    SECTION("checking setToContact()") {
+        Route r("/foo", "/bar", "baz");
+        CHECK(r.getFromName() == "/foo"); // from name is set
+        CHECK(r.getToName() == "/bar"); // from name is set
+        CHECK(r.getCarrierName() == "baz"); // carrier name is set
+        CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
+        r.setToContact(Contact("tcp", "127.0.0.1", 10000));
+        CHECK(r.getFromName() == "/foo"); // from name is not updated
+        CHECK(r.getToName() == "/bar"); // to name is not updated
+        CHECK(r.getCarrierName() == "baz"); // carrier name is not updated
+        CHECK(r.getToContact().toURI() == "tcp://127.0.0.1:10000/"); // to contact is updated
+    }
+
+    SECTION("checking swapNames") {
+        Route r("/foo", "/bar", "baz");
+        CHECK(r.getFromName() == "/foo"); // from name is set
+        CHECK(r.getToName() == "/bar"); // to name is set
+        CHECK(r.getCarrierName() == "baz"); // carrier name is set
+        CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
+        r.swapNames();
+        CHECK(r.getFromName() == "/bar"); // from name is swapped
+        CHECK(r.getToName() == "/foo"); // to name is swapped
+        CHECK(r.getCarrierName() == "baz"); // carrier name is not updated
+        CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
+    }
+
+    SECTION("checking toString no parameters") {
+        Route r;
+        CHECK(r.toString() == "->->"); // toString() is correct
+    }
+
+    SECTION("checking constructor") {
+        Route r("/foo", "/bar", "baz");
+        CHECK(r.toString() == "/foo->baz->/bar"); // toString() is correct
+    }
+
 }
-
