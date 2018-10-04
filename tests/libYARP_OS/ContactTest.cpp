@@ -234,7 +234,7 @@ TEST_CASE("OS::ContactTest", "[yarp::os]") {
         CHECK(c.getName() == "/my/url"); // good port name
     }
 
-    SECTION( "checking Contact wrapper on short url");
+    SECTION("checking Contact wrapper on short url")
     {
         Contact c = Contact::fromString("tcp://192.168.1.3:43705");
         CHECK(c.isValid()); // valid Contact
