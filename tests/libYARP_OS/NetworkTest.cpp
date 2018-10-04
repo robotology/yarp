@@ -106,6 +106,8 @@ static bool waitConnect(const std::string& n1,
 
 TEST_CASE("OS::NetworkTest", "[yarp::os]") {
 
+    Network::setLocalMode(true);
+
     SECTION("checking return value of connect method") {
         Port p1;
         Port p2;
@@ -247,4 +249,6 @@ TEST_CASE("OS::NetworkTest", "[yarp::os]") {
         p1.close();
         p2.close();
     }
+
+    Network::setLocalMode(false);
 }
