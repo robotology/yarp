@@ -6,14 +6,13 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-
-#include <yarp/os/impl/UnitTest.h>
-
 #include <yarp/os/Publisher.h>
 #include <yarp/os/Subscriber.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
+
+#include <catch.hpp>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -30,13 +29,9 @@ static bool waitForOutput(Contactable& c,double timeout) {
 }
 
 
-class PublisherTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "PublisherTest"; }
+TEST_CASE("OS::PublisherTest", "[yarp::os]") {
 
-    void testPublisherToBufferedPort() {
-        report(0,"Publisher to BufferedPort test");
-
+    SECTION("Publisher to BufferedPort test") {
         Node n("/node");
         Publisher<Bottle> p("/very_interesting_topic");
 
@@ -56,15 +51,13 @@ public:
             p.waitForWrite();
 
             Bottle *bin = pin.read();
-            checkTrue(bin!=nullptr,"message arrived");
-            if (!bin) return;
-            checkEqual(bin->get(0).asInt32(),42,"message is correct");
+            REQUIRE(bin!=nullptr); // "message arrived"
+
+            CHECK(bin->get(0).asInt32() == 42);  // "message is correct"
         }
     }
 
-    void testBufferedPortToSubscriber() {
-        report(0,"BufferedPort to Subscriber test");
-
+    SECTION("BufferedPort to Subscriber test") {
         Node n("/node");
         BufferedPort<Bottle> pout;
         pout.setWriteOnly();
@@ -84,19 +77,16 @@ public:
             pout.waitForWrite();
 
             Bottle *bin = pin.read();
-            checkTrue(bin!=nullptr,"message arrived");
-            if (!bin) return;
-            checkEqual(bin->get(0).asInt32(),42,"message is correct");
+            REQUIRE(bin != nullptr);  // "message arrived"
+            
+            CHECK(bin->get(0).asInt32() == 42);  // "message is correct"
         }
     }
 
-    void testPublisherToSubscriber() {
-        report(0,"Publisher to Subscriber test");
-
+    SECTION("Publisher to Subscriber test") {
         Node n("/node");
         Publisher<Bottle> pout;
         pout.topic("/very_interesting_topic");
-
         {
             Node n2("/node2");
             Subscriber<Bottle> pin("/very_interesting_topic");
@@ -111,14 +101,13 @@ public:
             pout.waitForWrite();
 
             Bottle *bin = pin.read();
-            checkTrue(bin!=nullptr,"message arrived");
-            if (!bin) return;
-            checkEqual(bin->get(0).asInt32(),42,"message is correct");
+            REQUIRE(bin != nullptr);  // "message arrived"
+
+            CHECK(bin->get(0).asInt32() == 42);  // "message is correct"
         }
     }
 
-    void testUnbufferedPublisher() {
-        report(0,"Unbuffered Publisher test");
+    SECTION("Unbuffered Publisher test") {
 
         Node n("/node");
         Publisher<Bottle> p("/very_interesting_topic");
@@ -137,15 +126,13 @@ public:
             p.write(b);
 
             Bottle *bin = pin.read();
-            checkTrue(bin!=nullptr,"message arrived");
-            if (!bin) return;
-            checkEqual(bin->get(0).asInt32(),42,"message is correct");
+            REQUIRE(bin != nullptr); // "message arrived"
+            
+            CHECK(bin->get(0).asInt32() == 42);  // "message is correct"
         }
     }
 
-    void testUnbufferedSubscriber() {
-        report(0,"Unbuffereded Subscriber test");
-
+    SECTION("Unbuffereded Subscriber test") {
         Node n("/node");
         BufferedPort<Bottle> pout;
         pout.setWriteOnly();
@@ -166,25 +153,8 @@ public:
             bin.addInt32(99);
             pin.read(bin);
             pout.waitForWrite();
-            checkEqual(bin.get(0).asInt32(),42,"message is correct");
+            CHECK(bin.get(0).asInt32() == 42);  // "message is correct"
         }
     }
-
-    virtual void runTests() override {
-        Network::setLocalMode(true);
-        testPublisherToBufferedPort();
-        testBufferedPortToSubscriber();
-        testPublisherToSubscriber();
-        testUnbufferedPublisher();
-        testUnbufferedSubscriber();
-        Network::setLocalMode(false);
-    }
 };
-
-
-static PublisherTest thePublisherTest;
-
-UnitTest& getPublisherTest() {
-    return thePublisherTest;
-}
 
