@@ -30,27 +30,16 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-/*
-static double myfabs(double x) {
-    if (x>=0) return x;
-    return -x;
-}
-
-static bool similar(double x, double y, double eps) {
-    return myfabs(x-y)<eps;
-}
-*/
-
 TEST_CASE("OS::BottleTest", "[yarp::os]") {
     SECTION("testing sizes") {
         BottleImpl bot;
-        CHECK(bot.size() == 0); // "empty bottle"
+        CHECK(bot.size() == (size_t) 0); // "empty bottle"
         bot.addInt32(1);
-        CHECK(bot.size() == 1); // "add int"
+        CHECK(bot.size() == (size_t) 1); // "add int"
         bot.addString("hello");
-        CHECK(bot.size() == 2); // "add string"
+        CHECK(bot.size() == (size_t) 2); // "add string"
         bot.clear();
-        CHECK(bot.size() == 0); // "clear");
+        CHECK(bot.size() == (size_t) 0); // "clear");
     }
 
     SECTION("testing string representation") {
@@ -63,7 +52,7 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(txt == expect); // "string rep"
         BottleImpl bot2;
         bot2.fromString(txt);
-        CHECK(bot2.size() == 2); //"return from string rep"
+        CHECK(bot2.size() == (size_t) 2); //"return from string rep"
     }
 
     SECTION("testing binary representation") {
@@ -76,7 +65,7 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         bot.toBytes(store.bytes());
         BottleImpl bot2;
         bot2.fromBytes(store.bytes());
-        CHECK(bot2.size() == 2); // "recovery binary, length"
+        CHECK(bot2.size() == (size_t) 2); // "recovery binary, length"
         CHECK(bot2.isInt32(0) == bot.isInt32(0)); //"recovery binary, integer"
         CHECK(bot2.isString(1) == bot.isString(1)); //"recovery binary, integer"
         BottleImpl bot3;
@@ -92,7 +81,7 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         const char *hbuf = bot4.toBinary(&hsize);
         Bottle bot5;
         bot5.fromBinary(hbuf,hsize);
-        CHECK(bot5.size() == 4); // "player bug"
+        CHECK(bot5.size() == (size_t) 4); // "player bug"
     }
 
     SECTION("testing hexadecimal") {
@@ -170,25 +159,25 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
     SECTION("testing clear") {
         Bottle b;
         b.addString("hello");
-        CHECK(b.size() == 1); // "size ok"
+        CHECK(b.size() == (size_t) 1); // "size ok"
         b.clear();
-        CHECK(b.size() == 0); // "size ok"
+        CHECK(b.size() == (size_t) 0); // "size ok"
         b.addString("there");
-        CHECK(b.size() == 1); // "size ok"
+        CHECK(b.size() == (size_t) 1); // "size ok"
     }
 
     SECTION("testing lists") {
         BottleImpl bot, bot2, bot3;
         bot.fromString("(1 (2 3 7) 3) (0.0 \"b\" 1)");
-        CHECK(bot.size() == 2); // "list test 1"
+        CHECK(bot.size() == (size_t) 2); // "list test 1"
         bot2.fromString(bot.toString());
-        CHECK(bot2.size() == 2); // "list test 2"
+        CHECK(bot2.size() == (size_t) 2); // "list test 2"
 
         bot.fromString("(1 2) 4");
         ManagedBytes store(bot.byteCount());
         bot.toBytes(store.bytes());
         bot3.fromBytes(store.bytes());
-        CHECK(bot3.size() == 2); // "list test 3"
+        CHECK(bot3.size() == (size_t) 2); // "list test 3"
         INFO("bot3 is " << bot3.toString());
 
         Bottle bot10;
@@ -204,7 +193,7 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
             bb.addInt(5);
             bb.addInt(6);
         }
-        CHECK(bot10.size() == 2); // "construction test 1"
+        CHECK(bot10.size() == (size_t) 2); // "construction test 1"
         CHECK(bot10.toString() == "(1 2 3) (4 5 6)"); // "construction test 2"
         CHECK(bot10.get(1).isList()); // "construction test 3"
         CHECK(bot10.get(1).asList()->toString() == "4 5 6"); // "construction test 4"
@@ -234,10 +223,10 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         Bottle bot1("1 (2 3) (4 5 6) 7");
         Bottle bot2;
         bot2.copy(bot1,1,2);
-        CHECK(bot2.size() == 2); // "subrange"
+        CHECK(bot2.size() == (size_t) 2); // "subrange"
         CHECK(bot2.get(0).toString() == "2 3"); // "subrange"
         bot2.copy(bot2,0,1);
-        CHECK(bot2.size() == 1); // "self copy"
+        CHECK(bot2.size() == (size_t) 1); // "self copy"
     }
 
     SECTION("testing find") {
@@ -260,7 +249,7 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
 
     SECTION("testing vocab") {
         Bottle bot("[send] 10 20");
-        CHECK(bot.size() == 3); // "plausible parse"
+        CHECK(bot.size() == (size_t) 3); // "plausible parse"
         CHECK(bot.get(0).isVocab()); // "vocab present"
         CHECK(bot.get(0).asInt() == yarp::os::createVocab('s','e','n','d')); // "vocab match"
     }
@@ -268,7 +257,7 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
 
     SECTION("testing blob") {
         Bottle bot("{4 42 255} 10 20");
-        CHECK(bot.size() == 3); // "plausible parse"
+        CHECK(bot.size() == (size_t) 3); // "plausible parse"
         CHECK(bot.get(0).isBlob()); // "blob present"
         CHECK(bot.get(0).asBlobLength() == 3); // "blob length"
         CHECK(bot.get(0).asBlob()[1] == 42); // "blob match"
@@ -280,9 +269,9 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK_FALSE(v.isNull()); // "value non-null"
         Bottle b;
         b.add(v);
-        CHECK(b.size() == 1); // "insertion happened"
+        CHECK(b.size() == (size_t) 1); // "insertion happened"
         CHECK(b.get(0).isBlob()); // "insertion is right type"
-        CHECK(b.get(0).asBlobLength() == 12); // "length within bottle"
+        CHECK(b.get(0).asBlobLength() == (size_t) 12); // "length within bottle"
     }
 
 
@@ -313,10 +302,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(s.length() == sizeof(NetInt32)*(10)); // "nested example"
     }
 
-#if 0
 
-    void testReread() {
-        report(0,"testing reread specialization is not broken...");
+    SECTION("testing reread specialization"){
 
         Bottle bot("10 20 30");  // first a specialized list
         Bottle bot2;
@@ -328,12 +315,9 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
             StreamConnectionReader br;
             br.reset(sis,nullptr,Route(),sis.toString().length(),false);
             bot2.read(br);
-            //printf("bot is %s\n", bot.toString().c_str());
-            //printf("bot2 is %s\n", bot2.toString().c_str());
-            checkEqual(bot.size(),bot2.size(),"length check");
-            checkTrue(bot2.get(2).isInt(),"type check");
-            checkEqual(bot.toString().c_str(),bot2.toString().c_str(),
-                       "content check");
+            CHECK(bot.size() == bot2.size()); // length check
+            CHECK(bot2.get(2).isInt32()); // type check
+            CHECK(bot.toString() == bot2.toString()); // content check
         }
         bot.fromString("10 20 30.5"); // now an unspecialized list
         {
@@ -344,161 +328,144 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
             StreamConnectionReader br;
             br.reset(sis,nullptr,Route(),sis.toString().length(),false);
             bot2.read(br);
-            checkEqual(bot.size(),bot2.size(),"length check");
-            checkTrue(bot2.get(2).isDouble(),"type check");
-            checkEqual(bot.toString().c_str(),bot2.toString().c_str(),
-                       "content check");
+            CHECK(bot.size() == bot2.size()); // length check
+            CHECK(bot2.get(2).isFloat64()); // type check
+            CHECK(bot.toString() == bot2.toString()); // content check
         }
 
     }
 
 
-    void testWhiteSpace() {
-        report(0,"testing white space behavior...");
+    SECTION("testing white space behavior") {
         Bottle bot;
         bot.fromString("\t\thello\t10\n");
-        checkEqual(bot.size(),2,"ok with tab");
-        checkEqual(bot.get(0).asString().c_str(),"hello","pre-tab ok");
-        checkEqual(bot.get(1).asInt(),10,"post-tab ok");
+        CHECK(bot.size() == (size_t) 2); // ok with tab
+        CHECK(bot.get(0).asString() == "hello"); // pre-tab ok
+        CHECK(bot.get(1).asInt32() == 10); // post-tab ok
 
-        report(0, "checking pasa problem with lists missing last element...");
         std::string s2 = "[set] [poss] (10.0 20.0 30.0 40.0 5.1)\n";
         Bottle p;
         p.fromString(s2.c_str());
-        checkEqual(p.get(2).asList()->size(),5,"newline test checks out");
+        CHECK(p.get(2).asList()->size() == (size_t) 5); // newline test checks out
     }
 
-    void testNestDetection() {
-        report(0,"testing nesting detection...");
-        checkTrue(!BottleImpl::isComplete("(1 2 3"), "incomplete");
-        checkTrue(BottleImpl::isComplete("(1 2 3)"), "complete");
+    SECTION("testing nesting detection") {
+        CHECK(!BottleImpl::isComplete("(1 2 3"));
+        CHECK(BottleImpl::isComplete("(1 2 3)"));
     }
 
 
-    void testSpecialChars() {
-        report(0,"testing special characters...");
+    SECTION("testing special characters") {
         Bottle bot("file ../foo.txt");
-        checkTrue(bot.get(1).isString(),"paths starting with a decimal");
+        CHECK(bot.get(1).isString()); // paths starting with a decimal
         Bottle bot2;
         std::string test = "\"\n\r\"";
         bot2.addString(test);
         Bottle bot3;
         bot3.fromString(bot2.toString());
-        checkEqual(bot3.get(0).asString().c_str(),test.c_str(),
-                   "roundtripping quotes newline etc");
+        CHECK(bot3.get(0).asString() == test); // roundtripping quotes newline etc
     }
 
-    void testAppend() {
-        report(0,"testing append...");
+    SECTION("testing append") {
         Bottle bot1("1 2 3");
         Bottle bot2("4 5");
         bot1.append(bot2);
-        checkEqual(bot1.size(),5,"add two bottles");
+        CHECK(bot1.size() == 5); // add two bottles
     }
 
-    void testStack() {
-        report(0,"testing stack functionality...");
+    SECTION("testing stack functionality") {
         Bottle bot;
-        bot.addInt(10);
-        bot.addInt(11);
+        bot.addInt32(10);
+        bot.addInt32(11);
         bot.addString("Foo");
         Bottle& bot2 = bot.addList();
-        bot2.addInt(3);
-        bot.addDouble(2.71828);
-        checkTrue(bot.pop().isDouble(),"popping double");
-        checkEqual(bot.size(),4,"bottle size decreased after pop");
-        checkEqual(bot.pop().asList()->pop().asInt(),3,"popping list and nested int");
-        checkEqual(bot.pop().asString().c_str(),"Foo", "popping string");
+        bot2.addInt32(3);
+        bot.addFloat64(2.71828);
+        CHECK(bot.pop().isFloat64()); // popping double
+        CHECK(bot.size() == (size_t) 4); // bottle size decreased after pop
+        CHECK(bot.pop().asList()->pop().asInt32() == 3); // popping list and nested int
+        CHECK(bot.pop().asString() == "Foo"); // popping string
         Value val;
         val = bot.pop();
-        checkTrue(val.isInt(), "popped value is of type int");
-        checkEqual(val.asInt(), 11, "popped value is integer 11");
+        CHECK(val.isInt32()); // popped value is of type int
+        CHECK(val.asInt32() == 11); // popped value is integer 11
         val = bot.pop();
-        checkTrue(val.isInt(), "popped value is of type int");
-        checkEqual(val.asInt(), 10, "popped value is integer 10");
+        CHECK(val.isInt32()); // popped value is of type int
+        CHECK(val.asInt32() == 10); // popped value is integer 10
         val = bot.pop();
-        checkTrue(bot.pop().isNull(), "empty bottle pops null");
-        checkEqual(bot.size(),0,"bottle is empty after popping");
+        CHECK(bot.pop().isNull()); // empty bottle pops null
+        CHECK(bot.size() == 0); // bottle is empty after pop
     }
 
-    void testTypeDetection() {
-        report(0,"test type detection...");
+    SECTION("test type detection") {
         Bottle bot;
         bot.fromString("hello ip 10.0.0.10");
-        checkEqual(bot.size(),3,"right length");
-        checkTrue(bot.get(2).isString(),"right type");
-        checkEqual(bot.get(2).asString().c_str(),"10.0.0.10","multiple period test");
+        CHECK(bot.size() == (size_t) 3); // right length
+        CHECK(bot.get(2).isString()); // right type
+        CHECK(bot.get(2).asString() == "10.0.0.10"); // multiple period test
     }
 
-    void testModify() {
-        report(0,"test bottle modification...");
+    SECTION("test bottle modification...") {
         Bottle b;
-        b.addInt(3);
-        b.get(0) = 5;
+        b.addInt32(3);
+        b.get(0) = Value(5);
         b.hasChanged();
-        checkEqual(b.get(0).asInt(),5,"assignment works");
+        CHECK(b.get(0).asInt32() == 5); // assignment works
     }
 
-    void testScientific() {
-        report(0,"test scientific notation...");
+    SECTION("test scientific notation...") {
         Bottle b;
         b.fromString("10.0e5");
-        checkTrue(similar(b.get(0).asDouble(),10e5, 1),
-                  "positive positive lower case");
+        CHECK(b.get(0).asFloat64() == Approx(10e5).epsilon(1)); // positive positive lower case
         b.fromString("10.0e-2");
-        checkTrue(similar(b.get(0).asDouble(),10e-2, 1e-2),
-                  "positive negative lower case");
+        CHECK(b.get(0).asFloat64() == Approx(10e-2).epsilon(1e-2)); // positive negative lower case
         b.fromString("1E-8");
-        checkTrue(b.get(0).isDouble(),"type check");
-        checkTrue(similar(b.get(0).asDouble(),1e-8, 1e-9),
-                  "positive negative upper case");
+        CHECK(b.get(0).isFloat64());
+        CHECK(b.get(0).asDouble() == Approx(1e-8).epsilon(1e-9)); // positive negative upper case
     }
 
-    void testContinuation() {
-        report(0,"test continuation...");
+    SECTION("test continuation") {
         Bottle b("x (1 2\n3 4\n5 6)\ny (1 2)");
-        checkEqual(b.find("x").asList()->size(),6,"x has right length");
-        checkEqual(b.find("y").asList()->size(),2,"y has right length");
+        CHECK(b.find("x").asList()->size() == (size_t) 6); // x has right length
+        CHECK(b.find("y").asList()->size() == (size_t) 2); // y has right length
     }
 
-    void testAssignment() {
-        report(0,"test assignment...");
+    SECTION("test assignment") {
         Bottle b("x (1 2\n3 4\n5 6)\ny (1 2)");
         Bottle b2;
         b2 = b;
-        checkEqual(b2.size(),4,"initial copy ok");
+        CHECK(b2.size() == (size_t) 4); // initial copy ok
         b2 = b2;
-        checkEqual(b2.size(),4,"re-copy ok");
+        CHECK(b2.size() == (size_t) 4); // re-copy ok
         Bottle b3("zig zag");
         b2.clear();
-        checkFalse(b2.isNull(),"have a non-null bottle");
-        checkEqual(b2.size(),0,"have an empty bottle");
+        CHECK(!b2.isNull()); // have a non-null bottle
+        CHECK(b2.size() == (size_t) 0); // have an empty bottle
         b3 = b2;
 
-        checkFalse(b3.isNull(),"copied a non-null bottle");
+        CHECK(!b3.isNull()); // copied a non-null bottle
 
-        checkEqual(b3.size(),0,"copied an empty bottle");
+        CHECK(b3.size() == (size_t) 0); // copied an empty bottle
         Bottle& nullBot = b.findGroup("zig");
-        checkTrue(nullBot.isNull(),"have a null bottle");
+        CHECK(nullBot.isNull()); // have a null bottle
         b = nullBot;
 
         // The expected result has flipped, due to popular demand [Massera :-)]
         //checkFalse(b.isNull(),"failed, as expected");
-        checkTrue(b.isNull(),"isNull() preserved correctly");
+        CHECK(b.isNull()); // isNull() preserved correctly
     }
 
-    void testEmptyList() {
+    SECTION("test empty list") {
         // based on a case submitted by Stephane Lallee; doesn't appear to
         // fail here as he sees going from TCL to C++
-        report(0,"test empty list");
         Bottle b;
         b.fromString("appp plan-clean (\"<Plan>\" \"<Names>\" cover \"</Names>\" \"<isAtomic>\" 1 \"</isAtomic>\" \"<motorCommand>\" () \"</motorCommand>\" \"<Primitive>\" (cover 28988.470168 \"<args>\" \"7106\" \"7103\" \"</args>\" \"<argsRole>\" object1 arg2 object2 arg1 subject \"7107\" \"</argsRole>\" \"<preReqRelations>\" \"</preReqRelations>\" \"<preForRelations>\" \"</preForRelations>\" \"<postAddRelations>\" \"</postAddRelations>\" \"<postRemRelations>\" \"</postRemRelations>\" \"<addRelations>\" \"</addRelations>\" \"<remRelations>\" visible null arg2 \"</remRelations>\") \"</Primitive>\" \"<SubPlans>\" \"</SubPlans>\" \"</Plan>\")");
         Bottle b2 = b;
-        checkEqual(b2.size(),3,"copy ok level 1");
+        CHECK(b2.size() == (size_t) 3); // copy ok level 1
         Bottle *sub = b2.get(2).asList();
-        checkTrue(sub!=nullptr,"list where list expected");
+        CHECK(sub!=nullptr); // list where list expected
         if (sub!=nullptr) {
-            checkEqual(sub->size(),16,"copy ok level 2");
+            CHECK(sub->size() == (size_t) 16); // copy ok level 2
         }
 
         DummyConnector con;
@@ -506,77 +473,72 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         b.write(con.getWriter());
         Bottle b3;
         b3.read(con.getReader());
-        checkEqual(b3.size(),b.size(),"binary read/write ok");
+        CHECK(b3.size() == b.size()); // binary read/write ok
         sub = b3.get(2).asList();
-        checkTrue(sub!=nullptr,"list where list expected");
+        CHECK(sub!=nullptr); // list where list expected
         if (sub!=nullptr) {
-            checkEqual(sub->size(),16,"copy ok level 2");
+            CHECK(sub->size() == (size_t) 16); // copy ok level 2
         }
     }
 
-    void testNull() {
-        report(0,"test null bottle");
+    SECTION("test null bottle") {
         Bottle bAll("(x 1) (y 2)");
         Bottle& b1 = bAll.findGroup("groupToFind");
-        checkTrue(b1.isNull(), "bottle null referenced correctly");
+        CHECK(b1.isNull()); // bottle null referenced correctly
         Bottle b2 = bAll.findGroup("groupToFind");
-        checkTrue(b2.isNull(), "bottle null copied correctly");
+        CHECK(b2.isNull()); // bottle null copied correctly
     }
 
-    void testSerialCopy() {
-        report(0,"test serialization by copy");
+    SECTION("test serialization by copy") {
         Value v(3.14);
         Bottle b;
         b.read(v);
-        checkEqualish(b.get(0).asDouble(),3.14,"copy to bottle succeeded");
+        CHECK(b.get(0).asFloat64() == Approx(3.14)); // copy to bottle succeeded
         Bottle b2;
         b.write(b2);
-        checkEqualish(b2.get(0).asDouble(),3.14,"copy from bottle succeeded");
+        CHECK(b2.get(0).asFloat64() == Approx(3.14)); // copy from bottle succeeded
     }
 
-    void testStringWithNull() {
-        report(0,"test string with null");
+    SECTION("test string with null") {
         char buf1[] = "hello world";
         char buf2[] = "hello world";
         buf2[5] = '\0';
         size_t len = 11;
         std::string str1(buf1,len);
         std::string str2(buf2,len);
-        checkEqual(str1.length(),len,"unmodified string length ok");
-        checkEqual(str2.length(),len,"modified string length ok");
+        CHECK(str1.length() == len); // unmodified string length ok
+        CHECK(str2.length() == len); // modified string length ok
         std::string str3(str2);
-        checkEqual(str3.length(),len,"copied string length ok");
+        CHECK(str3.length() == len); // copied string length ok
         Bottle bot;
         bot.addString(str2);
-        checkEqual(bot.get(0).asString().length(),len,"bottled string asString() length ok");
-        checkEqual(bot.get(0).toString().length(),len,"bottled string toString() length ok");
+        CHECK(bot.get(0).asString().length() == len); // bottled string asString() length ok
+        CHECK(bot.get(0).toString().length() == len); // bottled string toString() length ok
         Bottle bot2 = bot;
-        checkEqual(bot2.get(0).asString().length(),len,"bottled, copied string length ok");
+        CHECK(bot2.get(0).asString().length() == len); // bottled, copied string length ok
 
         Bottle bot3;
         bot.write(bot3);
-        checkEqual(bot3.get(0).asString().length(),len,"bottled, serialized string length ok");
+        CHECK(bot3.get(0).asString().length() == len); // bottled, serialized string length ok
 
         Bottle bot4;
         bot4.fromString(bot.toString());
-        checkEqual(bot4.get(0).asString().length(),len,"bottled, text-serialized string length ok");
+        CHECK(bot4.get(0).asString().length() == len); // bottled, text-serialized string length ok
     }
 
-    void testBool() {
-        report(0,"test boolean values");
+    SECTION("test boolean values") {
         Bottle bot("1 true \"true\" false \"false\" 0 [ok]");
-        checkTrue(bot.get(1).isBool(),"true is boolean");
-        checkFalse(bot.get(2).isBool(),"quoted true is not boolean");
-        checkTrue(bot.get(3).isBool(),"false is boolean");
-        checkFalse(bot.get(4).isBool(),"quoted false is not boolean");
-        checkFalse(bot.get(6).isBool(),"not all vocabs are boolean");
-        checkTrue(bot.get(1).asBool(),"true is true");
-        checkFalse(bot.get(3).asBool(),"false is false");
-        checkEqual(bot.get(1).asString().c_str(),"true","true can spell");
-        checkEqual(bot.get(3).asString().c_str(),"false","false can spell");
+        CHECK(bot.get(1).isBool()); // true is boolean
+        CHECK(!bot.get(2).isBool()); // quoted true is not boolean
+        CHECK(bot.get(3).isBool()); // false is boolean
+        CHECK(!bot.get(4).isBool()); // quoted false is not boolean
+        CHECK(!bot.get(6).isBool()); // not all vocabs are boolean
+        CHECK(bot.get(1).asBool()); // true is true
+        CHECK(!bot.get(3).asBool()); // false is false
+        CHECK(bot.get(1).asString() == "true");  // true can spell
+        CHECK(bot.get(3).asString() == "false"); // false can spell
     }
 
-#endif //0
 
     SECTION("test dictionary values") {
         Bottle bot("1");
@@ -597,9 +559,9 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
 
     SECTION("test infinite loop tickled by yarpmanager + string type change") {
         Bottle pos("Pos ((x 349.5) (y 122)) ((x 286) (y 122)) ((x 413) (y 122))");
-        CHECK(pos.get(1).find("x").asDouble() == Approx(349.5));
-        CHECK(pos.get(2).find("x").asDouble() == Approx(286.0));
-        CHECK(pos.get(3).find("x").asDouble() == Approx(413.0));
+        CHECK(pos.get(1).find("x").asFloat64() == Approx(349.5));
+        CHECK(pos.get(2).find("x").asFloat64() == Approx(286.0));
+        CHECK(pos.get(3).find("x").asFloat64() == Approx(413.0));
     }
 
     SECTION("test a string with several minus characters") {
@@ -611,12 +573,12 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         Bottle b1("1 2 3"), b2;
         Portable::copyPortable(b1,b2);
         CHECK(b2.size() == b1.size()); // "length ok"
-        CHECK(b2.get(2).asInt() == 3); // "content ok"
+        CHECK(b2.get(2).asInt32() == 3); // "content ok"
         Stamp s1(42,10.0),s2,s3;
         Portable::copyPortable(s1,s2);
         CHECK(s1.getCount() == 42); // "stamp-to-stamp ok"
         Portable::copyPortable(s1,b1);
-        CHECK(b1.get(0).asInt() == 42); // "stamp-to-bottle ok"
+        CHECK(b1.get(0).asInt32() == 42); // "stamp-to-bottle ok"
         Portable::copyPortable(b1,s3);
         CHECK(s3.getCount() == 42); // "bottle-to-stamp ok"
     }
