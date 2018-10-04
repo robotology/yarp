@@ -7,16 +7,18 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/BinPortable.h>
+
+#include <yarp/os/DummyConnector.h>
+#include <yarp/os/NetInt32.h>
+#include <yarp/os/Network.h>
+
 #if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
 #else
 #include "catch.hpp"
 #endif
 
-#include <yarp/os/BinPortable.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/DummyConnector.h>
-#include <yarp/os/NetInt32.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;

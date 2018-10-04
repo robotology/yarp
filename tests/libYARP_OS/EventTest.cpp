@@ -7,17 +7,17 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/Event.h>
+
+#include <yarp/os/Thread.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/Time.h>
+
 #if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
 #else
 #include "catch.hpp"
 #endif
-
-#include <yarp/os/Event.h>
-#include <yarp/os/Thread.h>
-#include <yarp/os/Semaphore.h>
-#include <yarp/os/Time.h>
-// #include <cmath>
 
 using namespace yarp::os;
 

@@ -8,11 +8,12 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#if defined(USE_SYSTEM_CATCH)
-#include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <yarp/os/Bottle.h>
+
+#include <yarp/os/DummyConnector.h>
+#include <yarp/os/ManagedBytes.h>
+#include <yarp/os/Stamp.h>
+#include <yarp/os/Vocab.h>
 
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
@@ -20,11 +21,12 @@
 #include <yarp/os/impl/FakeTwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
 
-#include <yarp/os/Bottle.h>
-#include <yarp/os/DummyConnector.h>
-#include <yarp/os/ManagedBytes.h>
-#include <yarp/os/Stamp.h>
-#include <yarp/os/Vocab.h>
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
+
 
 
 using namespace yarp::os::impl;

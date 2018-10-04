@@ -7,18 +7,19 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#if defined(USE_SYSTEM_CATCH)
-#include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <yarp/os/impl/BufferedConnectionWriter.h>
 
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/StringOutputStream.h>
-#include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/sig/Image.h>
+
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -28,7 +29,7 @@ typedef PortablePair<PortablePair<PortablePair<Bottle, ImageOf<PixelRgb> >,
                                   PortablePair<ImageOf<PixelRgb>, Stamp> >,
                      Bottle> Monster;
 
-TEST_CASE("OS::BufferedConnectionWriterTest", "[yarp::os]") {
+TEST_CASE("OS::impl::BufferedConnectionWriterTest", "[yarp::os::impl]") {
 
     SECTION("testing writing") {
         StringOutputStream sos;
@@ -52,21 +53,14 @@ TEST_CASE("OS::BufferedConnectionWriterTest", "[yarp::os]") {
             bbr.reset(false);
             std::string msg1("Hello");
             std::string msg2("Greetings");
-//            heapMonitorBegin();
             bbr.appendLine(msg1);
             bbr.appendLine(msg2);
-//            int ops = heapMonitorEnd();
             bbr.write(sos);
             CHECK(sos.toString() == "Hello\r\nGreetings\r\n"); // two line writes;
-//            if (heapMonitorSupported()) {
-//                CHECK(ops > 0) // memory allocation happened;
-//            }
             sos.reset();
-//            heapMonitorBegin(false);
             bbr.restart();
             bbr.appendLine(msg1);
             bbr.appendLine(msg2);
-//            heapMonitorEnd();
             bbr.write(sos);
             CHECK(sos.toString() == "Hello\r\nGreetings\r\n"); // two line writes dup;
 
@@ -90,12 +84,10 @@ TEST_CASE("OS::BufferedConnectionWriterTest", "[yarp::os]") {
             std::string expect = test + "\r\n" + test + "\r\n" + test + "\r\n";
             CHECK(result == expect); // long text
             sos.reset();
-//             heapMonitorBegin(false);
             bbr.restart();
             bbr.appendLine(test);
             bbr.appendLine(test);
             bbr.appendLine(test);
-//             heapMonitorEnd();
             bbr.write(sos);
             result = sos.toString();
             CHECK(result == expect); // long text, take 2
@@ -116,9 +108,7 @@ TEST_CASE("OS::BufferedConnectionWriterTest", "[yarp::os]") {
             img2.resize(1,1);
             // Now resend, checking that no memory is allocated
             bbr.restart();
-//             heapMonitorBegin(false);
             img1.write(bbr);
-//             heapMonitorEnd();
             bbr.write(img2);
             CHECK(img2.width() == img1.width()); // image width still matches
             CHECK(img2.height() == img1.height()); // image height still matches
@@ -135,9 +125,7 @@ TEST_CASE("OS::BufferedConnectionWriterTest", "[yarp::os]") {
             // Now resend, checking that no memory is allocated
             m2 = Monster();
             bbr.restart();
-//             heapMonitorBegin(false);
             m1.write(bbr);
-//             heapMonitorEnd();
             bbr.write(m2);
             CHECK(m2.body.get(0).asString() == "hello"); // tail still matches
 
@@ -150,9 +138,7 @@ TEST_CASE("OS::BufferedConnectionWriterTest", "[yarp::os]") {
             // Now resend, checking that no memory is allocated
             stamp2 = Stamp();
             bbr.restart();
-//             heapMonitorBegin(false);
             stamp1.write(bbr);
-//             heapMonitorEnd();
             bbr.write(stamp2);
             CHECK(stamp1.getCount() == stamp2.getCount()); // stamp still matches
 

@@ -7,17 +7,16 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-// first include: stuff under test
 #include <yarp/os/impl/DgramTwoWayStream.h>
 
 #include <cstdio>
 #include <string>
 
-// #include <yarp/conf/system.h>
-// #include <yarp/os/NetType.h>
-
-// last include catch
+#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -120,7 +119,7 @@ public:
 };
 
 
-TEST_CASE( "os::impl::DgramTwoWayStreamTest", "[yarp::os::impl]" ) {
+TEST_CASE("os::impl::DgramTwoWayStreamTest", "[yarp::os::impl]") {
 
     int sz = 100;
     DgramTest in;
@@ -128,8 +127,9 @@ TEST_CASE( "os::impl::DgramTwoWayStreamTest", "[yarp::os::impl]" ) {
     bool mismatch = false;
     ManagedBytes msg(200);
     ManagedBytes recv(200);
-    
-    SECTION( "checkNormal" ) {
+
+    SECTION("Test Dgram") {
+        INFO("checking that dgrams are output sensibly");
         out.openMonitor(sz,sz);
         for (size_t i=0; i<msg.length(); i++) {
             msg.get()[i] = i%128;
@@ -140,12 +140,10 @@ TEST_CASE( "os::impl::DgramTwoWayStreamTest", "[yarp::os::impl]" ) {
         out.endPacket();
         printf("created %d packets\n", out.size());
         CHECK(3 == out.size()); // "right number of packets"
-    }
-        
+
         ////////////////////////////////////////////////////////////////////
         // Send a multi-dgram message, see if it gets through
-
-    SECTION( "checking that dgrams can be reassembled into messages") {
+        INFO( "checking that dgrams can be reassembled into messages");
         in.openMonitor(sz,sz);
         for (size_t i=0; i<recv.length(); i++) {
             recv.get()[i] = 0;
@@ -162,39 +160,36 @@ TEST_CASE( "os::impl::DgramTwoWayStreamTest", "[yarp::os::impl]" ) {
             }
         }
         CHECK_FALSE(mismatch); // "received what is sent"
-    }
 
         ////////////////////////////////////////////////////////////////////
         // Send three messages, see if all get through
         // (just testing the receiver side)
-
-        SECTION("checking reassembly for multiple messages") {
-            in.clear();
-            in.copyMonitor(out);
-            in.copyMonitor(out);
-            in.copyMonitor(out);
-            mismatch = false;
-            for (int k=0; k<3; k++) {
-                for (size_t i=0; i<recv.length(); i++) {
-                    recv.get()[i] = 0;
-                }
-                in.beginPacket();
-                in.readFull(recv.bytes());
-                in.endPacket();
-                for (size_t i=0; i<recv.length(); i++) {
-                    if (recv.get()[i]!=msg.get()[i]) {
-                        INFO("Mismatch, at least as early as byte " << (int)i);
-                        mismatch = true;
-                        break;
-                    }
+        INFO("checking reassembly for multiple messages");
+        in.clear();
+        in.copyMonitor(out);
+        in.copyMonitor(out);
+        in.copyMonitor(out);
+        mismatch = false;
+        for (int k=0; k<3; k++) {
+            for (size_t i=0; i<recv.length(); i++) {
+                recv.get()[i] = 0;
+            }
+            in.beginPacket();
+            in.readFull(recv.bytes());
+            in.endPacket();
+            for (size_t i=0; i<recv.length(); i++) {
+                if (recv.get()[i]!=msg.get()[i]) {
+                    INFO("Mismatch, at least as early as byte " << (int)i);
+                    mismatch = true;
+                    break;
                 }
             }
+        }
         CHECK_FALSE(mismatch);  // "multiple messages ok"
 
 
         ////////////////////////////////////////////////////////////////////
         // Send three messages, corrupt in different ways
-
         for (int problem=0; problem<3; problem++) {
 
             in.clear();

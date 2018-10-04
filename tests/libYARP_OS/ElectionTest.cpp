@@ -7,13 +7,13 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/Election.h>
+
 #if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
 #else
 #include "catch.hpp"
 #endif
-
-#include <yarp/os/Election.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
