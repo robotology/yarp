@@ -7,7 +7,8 @@
 
 project(YARP_companion)
 
-set(YARP_companion_HDRS include/yarp/companion/yarpcompanion.h)
+set(YARP_companion_HDRS include/yarp/companion/api.h
+                        include/yarp/companion/yarpcompanion.h)
 
 set(YARP_companion_IMPL_HDRS include/yarp/companion/impl/Companion.h)
 
