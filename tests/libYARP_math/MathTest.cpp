@@ -33,69 +33,69 @@ using namespace std;
 
 const double TOL = 1e-8;
 
-    // Assert that 2 vectors are equal
-    void assertEqual(const Vector &a, const Vector &b, string testName, bool verbose=false){
-        if(a.size() != b.size()){
+// Assert that 2 vectors are equal
+void assertEqual(const Vector &a, const Vector &b, bool verbose=false){
+    if(a.size() != b.size()){
+        if(verbose) printf("a != b: %s != %s\n", a.toString(3).c_str(), b.toString(3).c_str());
+        CHECK(false);
+    }
+    for(size_t i=0; i<a.size(); i++){
+        if(fabs(a[i]-b[i])>TOL){
             if(verbose) printf("a != b: %s != %s\n", a.toString(3).c_str(), b.toString(3).c_str());
             CHECK(false);
         }
-        for(size_t i=0; i<a.size(); i++){
-            if(fabs(a[i]-b[i])>TOL){
-                if(verbose) printf("a != b: %s != %s\n", a.toString(3).c_str(), b.toString(3).c_str());
+    }
+    CHECK(true);
+}
+
+// Assert that a vector (1 dim) is equal to a scalar
+void assertEqual(const Vector &a, const double &b){
+    assertEqual(a, Vector(1,b));
+}
+
+void assertEqual(const double &b, const Vector &a){
+    assertEqual(a, Vector(1,b));
+}
+
+// Assert that 2 matrices are equal
+void assertEqual(const Matrix &A, const Matrix &B){
+    if(A.cols() != B.cols() || A.rows()!=B.rows()){
+        printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
+        CHECK(false);
+    }
+    for(size_t r=0; r<A.rows(); r++){
+        for(size_t c=0; c<A.cols(); c++){
+            if(fabs(A(r,c)-B(r,c))>TOL){
+                printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
                 CHECK(false);
             }
         }
+    }
+    CHECK(true);
+}
+
+// Assert that a matrix and a vector are equal (the matrix has to have either one row or one column)
+void assertEqual(const Matrix &A, const Vector &b){
+    if(A.cols()==1){
+        Vector a = A.getCol(0);
+        assertEqual(a, b);
+    }
+    else if(A.rows()==1)
+        assertEqual(A.getRow(0), b);
+    else
+        CHECK(false);
+}
+
+void assertEqual(const Vector &b, const Matrix &A){
+    assertEqual(A, b);
+}
+
+void assertEqual(const double &a, const double &b){
+    if(fabs(a-b)>TOL)
+        CHECK(false);
+    else
         CHECK(true);
-    }
-
-    // Assert that a vector (1 dim) is equal to a scalar
-    void assertEqual(const Vector &a, const double &b, string testName, bool verbose=false){
-        assertEqual(a, Vector(1,b), testName);
-    }
-
-    void assertEqual(const double &b, const Vector &a, string testName, bool verbose=false){
-        assertEqual(a, Vector(1,b), testName);
-    }
-
-    // Assert that 2 matrices are equal
-    void assertEqual(const Matrix &A, const Matrix &B, string testName, bool verbose=false){
-        if(A.cols() != B.cols() || A.rows()!=B.rows()){
-            if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
-            CHECK(false);
-        }
-        for(size_t r=0; r<A.rows(); r++){
-            for(size_t c=0; c<A.cols(); c++){
-                if(fabs(A(r,c)-B(r,c))>TOL){
-                    if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
-                    CHECK(false);
-                }
-            }
-        }
-        CHECK(true);
-    }
-
-    // Assert that a matrix and a vector are equal (the matrix has to have either one row or one column)
-    void assertEqual(const Matrix &A, const Vector &b, string testName, bool verbose=false){
-        if(A.cols()==1){
-            Vector a = A.getCol(0);
-            assertEqual(a, b, testName);
-        }
-        else if(A.rows()==1)
-            assertEqual(A.getRow(0), b, testName);
-        else
-            CHECK(false);
-    }
-
-    void assertEqual(const Vector &b, const Matrix &A, string testName, bool verbose=false){
-        assertEqual(A, b, testName);
-    }
-
-    void assertEqual(const double &a, const double &b, string testName, bool verbose=false){
-        if(fabs(a-b)>TOL)
-            CHECK(false);
-        else
-            CHECK(true);
-    }
+}
 
 TEST_CASE("Math::MathTest", "[yarp::math]") {
 
@@ -121,11 +121,11 @@ TEST_CASE("Math::MathTest", "[yarp::math]") {
         Matrix An = Rand::matrix(n,1), Bn = Rand::matrix(n,1);
         Matrix Ann = Rand::matrix(n,n), Amn = Rand::matrix(m,n), Bmn = Rand::matrix(m,n), Cmn = Rand::matrix(m,n);
         printf("(x y z are scalar; a b c are vectors; A B C are matrices)\n");
-        string testName = "a(x+y) = ax+ay"; assertEqual(an*(s+s2), an*s + an*s2, testName);
-        testName = "a(b+c) = ab+ac"; assertEqual(an*(bn+cn), an*bn + an*cn, testName);
-        testName = "a(b+x) = ab+ax"; assertEqual(an*(bn+s), an*bn + an*s, testName);
-        testName = "a(x+b) = ax+ab"; assertEqual(an*(s+bn), an*s + an*bn, testName);
-        testName = "A(B+C) = AB+AC"; assertEqual(Amn.transposed()*(Bmn+Cmn), Amn.transposed()*Bmn + Amn.transposed()*Cmn, testName);
+        assertEqual(an*(s+s2), an*s + an*s2); // "a(x+y) = ax+ay";
+        assertEqual(an*(bn+cn), an*bn + an*cn); // "a(b+c) = ab+ac";
+        assertEqual(an*(bn+s), an*bn + an*s); // "a(b+x) = ab+ax";
+        assertEqual(an*(s+bn), an*s + an*bn); // "a(x+b) = ax+ab";
+        assertEqual(Amn.transposed()*(Bmn+Cmn), Amn.transposed()*Bmn + Amn.transposed()*Cmn); // "A(B+C) = AB+AC";
     }
 
     SECTION("check vector operators.") {
@@ -340,52 +340,51 @@ TEST_CASE("Math::MathTest", "[yarp::math]") {
         Vector cn = Rand::vector(rangeMin, rangeMax);         // n dim vector
         Matrix An = Rand::matrix(n,1), Bn = Rand::matrix(n,1);
         Matrix Ann = Rand::matrix(n,n), Amn = Rand::matrix(m,n), Bmn = Rand::matrix(m,n), Cmn = Rand::matrix(m,n);
-        std::string testName;
-        testName = "vector + scalar"; assertEqual(a1+s, a1[0]+s, testName);
-        testName = "vector - scalar"; assertEqual(a1-s, a1[0]-s, testName);
-        testName = "vector + scalar - scalar"; assertEqual((an+s)-s, an, testName);
-        testName = "scalar + vector"; assertEqual(s+a1, a1[0]+s, testName);
-        testName = "scalar + vector - scalar"; assertEqual(s+an-s, an, testName);
-        testName = "scalar - vector"; assertEqual(s-a1, s-a1[0], testName);
-        testName = "vector + scalar - vector"; assertEqual(an+s-an, Vector(n,s), testName);
-        testName = "vector += scalar";
+        assertEqual(a1+s, a1[0]+s); // "vector + scalar";
+        assertEqual(a1-s, a1[0]-s); // "vector - scalar";
+        assertEqual((an+s)-s, an);  // "vector + scalar - scalar";
+        assertEqual(s+a1, a1[0]+s); // "scalar + vector";
+        assertEqual(s+an-s, an);    // "scalar + vector - scalar";
+        assertEqual(s-a1, s-a1[0]); // "scalar - vector";
+        assertEqual(an+s-an, Vector(n,s)); // "vector + scalar - vector";
+        // "vector += scalar";
         b1 = a1; b1 += s;
-        assertEqual(b1, a1[0]+s, testName);
-        testName = "vector -= scalar";
+        assertEqual(b1, a1[0]+s);
+        // "vector -= scalar";
         b1 = a1; b1 -= s;
-        assertEqual(b1, a1[0]-s, testName);
-        testName = "vector + vector";
-        assertEqual(a1+b1, a1[0]+b1[0], testName);
-        assertEqual(an+zeros(n), an, testName);
-        testName = "vector - vector";
-        assertEqual(a1-b1, a1[0]-b1[0], testName);
-        assertEqual(an-zeros(n), an, testName);
-        testName = "vector += vector";
+        assertEqual(b1, a1[0]-s);
+        // "vector + vector";
+        assertEqual(a1+b1, a1[0]+b1[0]);
+        assertEqual(an+zeros(n), an);
+        // "vector - vector";
+        assertEqual(a1-b1, a1[0]-b1[0]);
+        assertEqual(an-zeros(n), an);
+        // "vector += vector";
         cn = bn; cn+=an;
-        assertEqual(cn, bn+an, testName);
+        assertEqual(cn, bn+an);
         bn=an; bn+=zeros(n);
-        assertEqual(bn, an, testName);
-        testName = "vector -= vector";
+        assertEqual(bn, an);
+        // "vector -= vector";
         cn = bn; cn-=an;
-        assertEqual(cn, bn-an, testName);
+        assertEqual(cn, bn-an);
         bn=an; bn-=zeros(n);
-        assertEqual(bn, an, testName);
-        testName = "matrix + matrix";
-        assertEqual(Amn+zeros(m,n), Amn, testName);
-        assertEqual(An+Bn, An.getCol(0)+Bn.getCol(0), testName);
-        testName = "matrix - matrix";
-        assertEqual(Amn-zeros(m,n), Amn, testName);
-        assertEqual(An-Bn, An.getCol(0)-Bn.getCol(0), testName);
-        testName = "matrix += matrix";
+        assertEqual(bn, an);
+        // "matrix + matrix";
+        assertEqual(Amn+zeros(m,n), Amn);
+        assertEqual(An+Bn, An.getCol(0)+Bn.getCol(0));
+        // "matrix - matrix";
+        assertEqual(Amn-zeros(m,n), Amn);
+        assertEqual(An-Bn, An.getCol(0)-Bn.getCol(0));
+        // "matrix += matrix";
         Amn = Bmn; Amn+=zeros(m,n);
-        assertEqual(Amn, Bmn, testName);
+        assertEqual(Amn, Bmn);
         Amn = Bmn; Amn+=Cmn;
-        assertEqual(Amn, Bmn+Cmn, testName);
-        testName = "matrix -= matrix";
+        assertEqual(Amn, Bmn+Cmn);
+        // "matrix -= matrix";
         Amn = Bmn; Amn-=zeros(m,n);
-        assertEqual(Amn, Bmn, testName);
+        assertEqual(Amn, Bmn);
         Amn = Bmn; Amn-=Cmn;
-        assertEqual(Amn, Bmn-Cmn, testName);
+        assertEqual(Amn, Bmn-Cmn);
     }
 
     SECTION("checking product operator.") {
@@ -401,47 +400,47 @@ TEST_CASE("Math::MathTest", "[yarp::math]") {
         Vector cn = Rand::vector(rangeMin, rangeMax);         // n dim vector
         Matrix An = Rand::matrix(n,1), Bn = Rand::matrix(n,1);
         Matrix Ann = Rand::matrix(n,n), Amn = Rand::matrix(m,n), Bmn = Rand::matrix(m,n), Cmn = Rand::matrix(m,n);
-        string testName = "scalar * vector";
-        assertEqual(0*an, zeros(n), testName);
-        assertEqual(1*an, an, testName);
-        testName = "vector * scalar";
-        assertEqual(an*0, zeros(n), testName);
-        assertEqual(an*1, an, testName);
-        assertEqual(an*s, s*an, testName);
-        testName = "vector *= scalar";
-        an=bn; an*=s; assertEqual(an, bn*s, testName);
-        testName = "vector * vector";
-        assertEqual(an*zeros(n), zeros(n), testName);
-        assertEqual(an*ones(n), an, testName);
-        testName = "vector *= vector";
-        an=bn; an*=cn; assertEqual(an, bn*cn, testName);
-        testName = "scalar * matrix";
-        assertEqual(0*Amn, zeros(m,n), testName);
-        assertEqual(1*Amn, Amn, testName);
-        testName = "matrix * scalar";
-        assertEqual(Amn*0, zeros(m,n), testName);
-        assertEqual(Amn*1, Amn, testName);
-        assertEqual(Amn*s, s*Amn, testName);
-        testName = "matrix *= scalar";
-        Amn=Bmn; Amn*=s; assertEqual(Amn, Bmn*s, testName);
-        testName = "vector * matrix";
-        assertEqual(zeros(m)*Amn, zeros(n), testName);
+        // "scalar * vector";
+        assertEqual(0*an, zeros(n));
+        assertEqual(1*an, an);
+        // "vector * scalar";
+        assertEqual(an*0, zeros(n));
+        assertEqual(an*1, an);
+        assertEqual(an*s, s*an);
+        // "vector *= scalar";
+        an=bn; an*=s; assertEqual(an, bn*s);
+        // "vector * vector";
+        assertEqual(an*zeros(n), zeros(n));
+        assertEqual(an*ones(n), an);
+        // "vector *= vector";
+        an=bn; an*=cn; assertEqual(an, bn*cn);
+        // "scalar * matrix";
+        assertEqual(0*Amn, zeros(m,n));
+        assertEqual(1*Amn, Amn);
+        // "matrix * scalar";
+        assertEqual(Amn*0, zeros(m,n));
+        assertEqual(Amn*1, Amn);
+        assertEqual(Amn*s, s*Amn);
+        // "matrix *= scalar";
+        Amn=Bmn; Amn*=s; assertEqual(Amn, Bmn*s);
+        // "vector * matrix";
+        assertEqual(zeros(m)*Amn, zeros(n));
         Vector e1m(m,0.0); e1m[0]=1;
-        assertEqual(e1m*Amn, Amn.getRow(0), testName);
-        testName = "matrix * vector";
-        assertEqual(Amn*zeros(n), zeros(m), testName);
+        assertEqual(e1m*Amn, Amn.getRow(0));
+        // "matrix * vector";
+        assertEqual(Amn*zeros(n), zeros(m));
         Vector e1n(n,0.0); e1n[0]=1;
-        assertEqual(Amn*e1n, Amn.getCol(0), testName);
-        testName = "vector *= matrix";
-        an=bn; an*=Ann; assertEqual(an, bn*Ann, testName);
-        testName = "matrix * matrix";
-        assertEqual(Amn*zeros(n,n), zeros(m,n), testName);
-        assertEqual(zeros(m,m)*Amn, zeros(m,n), testName);
-        assertEqual(Amn*eye(n,n), Amn, testName);
-        assertEqual(eye(m,m)*Amn, Amn, testName);
-        assertEqual(Amn*Bmn.transposed(), (Bmn*Amn.transposed()).transposed(), testName);
-        testName = "matrix *= matrix";
-        Amn = Bmn; Amn *= Ann; assertEqual(Amn, Bmn*Ann, testName);
+        assertEqual(Amn*e1n, Amn.getCol(0));
+        // "vector *= matrix";
+        an=bn; an*=Ann; assertEqual(an, bn*Ann);
+        // "matrix * matrix";
+        assertEqual(Amn*zeros(n,n), zeros(m,n));
+        assertEqual(zeros(m,m)*Amn, zeros(m,n));
+        assertEqual(Amn*eye(n,n), Amn);
+        assertEqual(eye(m,m)*Amn, Amn);
+        assertEqual(Amn*Bmn.transposed(), (Bmn*Amn.transposed()).transposed());
+        // "matrix *= matrix";
+        Amn = Bmn; Amn *= Ann; assertEqual(Amn, Bmn*Ann);
     }
 
     SECTION("check division operator.") {
@@ -455,21 +454,21 @@ TEST_CASE("Math::MathTest", "[yarp::math]") {
         Vector bn = Rand::vector(rangeMin, rangeMax);         // n dim vector
         Vector cn = Rand::vector(rangeMin, rangeMax);         // n dim vector
         Matrix Amn = Rand::matrix(m,n), Bmn = Rand::matrix(m,n);
-        string testName = "vector / scalar";
-        assertEqual(an/1, an, testName);
-        assertEqual(a1/s, a1[0]/s, testName);
-        testName = "vector /= scalar";
-        an=bn; an/=s; assertEqual(an, bn/s, testName);
-        testName = "vector / vector";
-        assertEqual(an/ones(n), an, testName);
-        assertEqual(a1/b1, a1[0]/b1[0], testName);
-        testName = "vector /= vector";
-        an=bn; an/=cn; assertEqual(an, bn/cn, testName);
-        testName = "matrix / scalar";
-        assertEqual(Amn/1, Amn, testName);
+         // "vector / scalar";
+        assertEqual(an/1, an);
+        assertEqual(a1/s, a1[0]/s);
+        // "vector /= scalar";
+        an=bn; an/=s; assertEqual(an, bn/s);
+        // "vector / vector";
+        assertEqual(an/ones(n), an);
+        assertEqual(a1/b1, a1[0]/b1[0]);
+        // "vector /= vector";
+        an=bn; an/=cn; assertEqual(an, bn/cn);
+        // "matrix / scalar";
+        assertEqual(Amn/1, Amn);
         CHECK((Amn/s)(0,0) == Approx(Amn(0,0)/s));
-        testName = "matrix /= scalar";
-        Amn=Bmn; Amn/=s; assertEqual(Amn, Bmn/s, testName);
+        // "matrix /= scalar";
+        Amn=Bmn; Amn/=s; assertEqual(Amn, Bmn/s);
     }
 
     SECTION("check cross product.") {
@@ -482,16 +481,16 @@ TEST_CASE("Math::MathTest", "[yarp::math]") {
         double ann = norm(an);
         double bnn = norm(bn);
 
-        string testName = "a x a = 0";
-        assertEqual(cross(an,an), zeros(n), testName);
-        testName = "norm(a x b) = norm(a)*norm(b)*sin(theta)";
-        assertEqual(norm(cross(an,bn)), ann*bnn*sqrt(1.0-pow(dot(an,bn)/(ann*bnn),2)), testName.c_str());
-        testName = "cross product = cross product matrix";
-        assertEqual(cross(an, bn), crossProductMatrix(an)*bn, testName);
+        // "a x a = 0";
+        assertEqual(cross(an,an), zeros(n));
+        // "norm(a x b) = norm(a)*norm(b)*sin(theta)";
+        assertEqual(norm(cross(an,bn)), ann*bnn*sqrt(1.0-pow(dot(an,bn)/(ann*bnn),2)));
+        // "cross product = cross product matrix";
+        assertEqual(cross(an, bn), crossProductMatrix(an)*bn);
         crossProductMatrix(an, A);
-        assertEqual(A, crossProductMatrix(an), testName);
-        testName = "a x b = -b x a";
-        assertEqual(cross(an, bn), -1.0*cross(bn, an), testName);
+        assertEqual(A, crossProductMatrix(an));
+        // "a x b = -b x a";
+        assertEqual(cross(an, bn), -1.0*cross(bn, an));
     }
 
     SECTION("check conversions from euler angles to matrix.") {
@@ -500,7 +499,7 @@ TEST_CASE("Math::MathTest", "[yarp::math]") {
         Matrix R;
         R.resize(4,4);
         R.eye();
-        assertEqual(euler2dcm(euler),R, " euler2dcm([0 0 0]) = [1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1] ");
+        assertEqual(euler2dcm(euler),R); // " euler2dcm([0 0 0]) = [1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1] "
         euler[0]=0;
         euler[1]=M_PI/2;
         euler[2]=M_PI;
@@ -509,10 +508,10 @@ TEST_CASE("Math::MathTest", "[yarp::math]") {
         R(1,1)=-1.0;
         R(2,0)=1.0;
         R(2,2)=0.0;
-        assertEqual(euler2dcm(euler),R.transposed(), " euler2dcm([pi, pi/2, -pi]) = [0 0 1 0; 0 -1 0 0; 1 0 0 0; 0 0 0 1] ");
+        assertEqual(euler2dcm(euler),R.transposed()); // " euler2dcm([pi, pi/2, -pi]) = [0 0 1 0; 0 -1 0 0; 1 0 0 0; 0 0 0 1] "
 
         INFO("check conversions from matrix to euler angles.");
-        assertEqual(dcm2euler(R),euler, " dcm2euler(matrix-of-previous-test)=[0, pi/2, -pi] ");
+        assertEqual(dcm2euler(R),euler); // " dcm2euler(matrix-of-previous-test)=[0, pi/2, -pi] ");
 
         INFO("check conversions from matrix to axis/angle.");
         R.eye();
@@ -528,13 +527,13 @@ TEST_CASE("Math::MathTest", "[yarp::math]") {
         assertEqual(v,axis, " dcm2axis([-1.0 0 0 0; 0 1 0 0; 0 0 -1 0; 0 0 O 1]) = [0 0 1 0; 0 -1 0 0; 1 0 0 0; 0 0 0 1] ");
 
         yarp::sig::Matrix m = axis2dcm(v);
-        assertEqual(m, R, " axis2dcm");
+        assertEqual(m, R); // " axis2dcm"
     }
 
     SECTION("check sign function.") {
         double a;
         a=-2.0;
-        assertEqual(sign(a), -1.0, " sign(double)= +/-1 ");
+        assertEqual(sign(a), -1.0); // " sign(double)= +/-1 "
 
         Vector b,c;
         b.resize(3,0.0);
@@ -594,10 +593,10 @@ TEST_CASE("Math::MathTest", "[yarp::math]") {
         Matrix mB = euler2dcm(Vector(3, vB));
         q3.fromRotationMatrix(mA);
         q4.fromRotationMatrix(mB);
-        assertEqual(mA*mB, (q3 * q4).toRotationMatrix4x4(), "check quaternion multiplication");
+        assertEqual(mA*mB, (q3 * q4).toRotationMatrix4x4()); // "check quaternion multiplication"
         q3 = Quaternion(2.0, 3.0, 4.0, 5.0);
         q3.normalize();
-        assertEqual(q3.w()*q3.w() + q3.x()*q3.x() + q3.y()*q3.y() + q3.z()*q3.z(), 1, "check quaternion normalization");
+        assertEqual(q3.w()*q3.w() + q3.x()*q3.x() + q3.y()*q3.y() + q3.z()*q3.z(), 1); // "check quaternion normalization"
 
         Vector vx(4);
         Vector vy(4);
@@ -629,7 +628,7 @@ TEST_CASE("Math::MathTest", "[yarp::math]") {
         m_check[1][0] = 0.7893123335109140;    m_check[1][1] = 0.0445650105750650;    m_check[1][2] = -0.6123724356957946;  m_check[1][3] = 0;
         m_check[2][0] = 0.2230062590462850;    m_check[2][1] = 0.9084427381107635;    m_check[2][2] = 0.3535533905932738;   m_check[2][3] = 0;
         m_check[3][0] = 0;                     m_check[3][1] = 0;                     m_check[3][2] = 0;                    m_check[3][3] = 1.0;
-        assertEqual(m, m_check, "check m computation");
+        assertEqual(m, m_check); // "check m computation");
 
         // q1
         //0.8201 -0.3369i -0.4579j -0.06527k
@@ -640,29 +639,29 @@ TEST_CASE("Math::MathTest", "[yarp::math]") {
         v_check[3] = 0.42922225513145423;
 
         q1.fromRotationMatrix(m);
-        assertEqual(q1.w(), v_check[0], "check w value method fromRotationMatrix");
-        assertEqual(q1.x(), v_check[1], "check x value method fromRotationMatrix");
-        assertEqual(q1.y(), v_check[2], "check y value method fromRotationMatrix");
-        assertEqual(q1.z(), v_check[3], "check z value method fromRotationMatrix");
+        assertEqual(q1.w(), v_check[0]); // "check w value method fromRotationMatrix"
+        assertEqual(q1.x(), v_check[1]); // "check x value method fromRotationMatrix"
+        assertEqual(q1.y(), v_check[2]); // "check y value method fromRotationMatrix"
+        assertEqual(q1.z(), v_check[3]); // "check z value method fromRotationMatrix"
 
         q2 = q1;
 
         m = q2.toRotationMatrix4x4();
-        assertEqual(m, m_check, "check method toRotationMatrix4x4");
+        assertEqual(m, m_check); // "check method toRotationMatrix4x4"
 
         Vector v = q2.toVector();
-        assertEqual(v, v_check, "check method toVector");
+        assertEqual(v, v_check); // "check method toVector"
 
         double quat_mod = q2.abs();
-        assertEqual(quat_mod, 1.0, "check quaternion modulus");
+        assertEqual(quat_mod, 1.0); // "check quaternion modulus"
 
         q3.fromAxisAngle(vz);
         Vector vz_out = q3.toAxisAngle();
 
-        assertEqual(q3.w(), 0.951056516295154,  "check w value method fromAxisAngle");
-        assertEqual(q3.x(), 0,                  "check x value method fromAxisAngle");
-        assertEqual(q3.y(), 0,                  "check y value method fromAxisAngle");
-        assertEqual(q3.z(), 0.309016994374947,  "check z value method fromAxisAngle");
+        assertEqual(q3.w(), 0.951056516295154); // "check w value method fromAxisAngle"
+        assertEqual(q3.x(), 0);                 // "check x value method fromAxisAngle"
+        assertEqual(q3.y(), 0);                 // "check y value method fromAxisAngle"
+        assertEqual(q3.z(), 0.309016994374947); // "check z value method fromAxisAngle"
 
         assertEqual(vz_out, vz,                 "check toAxisAngle");
 
@@ -678,7 +677,7 @@ TEST_CASE("Math::MathTest", "[yarp::math]") {
         c(0,0)=c(1,0)=c(2,0)=2;
         a(0,0)=a(1,0)=1;
         a(2,0)=a(3,0)=a(4,0)=2;
-        assertEqual(pile(b,c),a, " pile(matrix1, matrix2)=[matrix1; matrix2] ");
+        assertEqual(pile(b,c),a); // " pile(matrix1, matrix2)=[matrix1; matrix2] "
 
         Vector d;
         d.resize(1,0.0);
@@ -686,10 +685,10 @@ TEST_CASE("Math::MathTest", "[yarp::math]") {
         a.resize(3,1);
         a(0,0)=a(0,1)=1;
         a(0,2)=4;
-        assertEqual(pile(b,d),a, " pile(matrix, vector)=[matrix; vector] ");
+        assertEqual(pile(b,d),a); // " pile(matrix, vector)=[matrix; vector] "
         a(0,0)=4;
         a(0,2)=1;
-        assertEqual(pile(d,b),a, " pile(vector, matrix)=[vector; matrix] ");
+        assertEqual(pile(d,b),a); // " pile(vector, matrix)=[vector; matrix] "
 
         Vector e,f;
         e.resize(1,0.0);
@@ -697,28 +696,28 @@ TEST_CASE("Math::MathTest", "[yarp::math]") {
         f.resize(2,0.0);
         f[0]=4;
         f[1]=-3;
-        assertEqual(pile(d,e),f, " pile(vector, vector)=[vector; vector] ");
+        assertEqual(pile(d,e),f); // " pile(vector, vector)=[vector; vector] "
         a.resize(1,5);
         a(0,0)=a(0,1)=1;
         a(0,2)=a(0,3)=a(0,4)=2;
-        assertEqual(cat(b.transposed(), c.transposed()), a, " cat(matrix1, matrix2)=[matrix1, matrix2] ");
+        assertEqual(cat(b.transposed(), c.transposed()), a); // " cat(matrix1, matrix2)=[matrix1, matrix2] "
         a.resize(1,3);
         a(0,2)=4;
-        assertEqual(cat(b.transposed(),d), a, " cat(matrix,v)=[matrix, vector] ");
+        assertEqual(cat(b.transposed(),d), a); // " cat(matrix,v)=[matrix, vector] "
         a(0,0)=4;
         a(0,2)=1;
-        assertEqual(cat(d,b.transposed()), a, " cat(v, matrix)=[vector, matrix] ");
+        assertEqual(cat(d,b.transposed()), a); // " cat(v, matrix)=[vector, matrix] "
         f[1]=2.0;
-        assertEqual(cat(d,2.0),f, " cat(vector, double)=[vector, double] ");
+        assertEqual(cat(d,2.0),f); // " cat(vector, double)=[vector, double] "
         f[0]=2.0;
         f[1]=4.0;
-        assertEqual(cat(2.0,d),f, " cat(double, vector)=[double, vector] ");
+        assertEqual(cat(2.0,d),f); // " cat(double, vector)=[double, vector] "
         f.resize(5,0.0);
         f[0]=1.0;
         f[1]=2.0;
         f[2]=3.0;
         f[3]=4.0;
         f[4]=5.0;
-        assertEqual(cat(1.0, 2.0, 3.0, 4.0, 5.0), f, " cat(n1, n2, n3, n4, n5)=[n1, n2, n3, n4, n5] " );
+        assertEqual(cat(1.0, 2.0, 3.0, 4.0, 5.0), f); // " cat(n1, n2, n3, n4, n5)=[n1, n2, n3, n4, n5] "
     }
 }
