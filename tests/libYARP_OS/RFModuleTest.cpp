@@ -7,13 +7,18 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <string>
-#include <yarp/os/all.h>
-#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/RFModule.h>
 
-#include <yarp/os/impl/UnitTest.h>
-//#include "TestList.h"
+#include <yarp/os/ResourceFinder.h>
+#include <yarp/os/Network.h>
+
+#include <string>
+
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -48,62 +53,42 @@ public:
 
 };
 
-class RFModuleTest : public UnitTest
-{
-public:
-    virtual std::string getName() const override { return "RFModuleTest"; }
+TEST_CASE("OS::RFModuleTest", "[yarp::os]") {
 
+    Network::setLocalMode(true);
 
-    void testPort()
-    {
-        report(0, "[Test] Checking Port network responses...");
+    SECTION("Checking Port network responses") {
 
         MyModule mm;
         Port p1, p2;
         mm.attach(p2);
         bool ok1 = p1.open("/p1");
         bool ok2 = p2.open("/p2");
-        checkTrue(ok1 && ok2, "[Test] Ports opened ok");
-        if (!(ok1 && ok2)) { return; }
-
-        Network::connect("/p1","/p2");
+        REQUIRE(ok1); // /p1 opened ok
+        REQUIRE(ok2); // /p2 opened ok
         Network::sync("/p1");
         Network::sync("/p2");
-        Bottle out, in;
+        Network::connect("/p1","/p2");
+
+        Bottle out;
+        Bottle in;
         out.addInt32(42);
         p1.write(out,in);
-        checkEqual(in.get(0).asInt32(), out.get(0).asInt32(), "[Test] Port response");
+        CHECK(in.get(0).asInt32() == out.get(0).asInt32()); // Port response
     }
 
-    void testThread()
-    {
-        report(0, "[Test] Checking threaded RFModule...");
+    SECTION("Checking threaded RFModule...") {
 
         MyModule mm;
         ResourceFinder rf;
 
-        checkEqual(mm.joinModule(),        true, "[Test] Module not threadified");
-        checkEqual(mm.configure(rf),       true, "[Test] Configure completed");
-        checkEqual(mm.runModuleThreaded(), 0,    "[Test] Module threaded");
+        CHECK(mm.joinModule() == true); // Module not threadified
+        CHECK(mm.configure(rf) == true); // Configure completed
+        CHECK(mm.runModuleThreaded() == 0); // Module threaded
         mm.stopModule();
-        checkEqual(mm.isStopping(),        true, "[Test] Module stopping");
-        checkEqual(mm.joinModule(),        true, "[Test] Module threaded finished");
+        CHECK(mm.isStopping() == true); // Module stopping
+        CHECK(mm.joinModule() == true); // Module threaded finished
     }
 
-    virtual void runTests() override
-    {
-        Network::setLocalMode(true);
-
-        testPort();
-        testThread();
-
-        Network::setLocalMode(false);
-    }
-};
-
-static RFModuleTest theRFModuleTest;
-
-UnitTest& getRFModuleTest()
-{
-    return theRFModuleTest;
+    Network::setLocalMode(false);
 }
