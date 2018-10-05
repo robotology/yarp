@@ -10,44 +10,27 @@
 #include <string>
 #include <yarp/os/Vocab.h>
 
-#include <yarp/os/impl/UnitTest.h>
-//#include "TestList.h"
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
-class VocabTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "VocabTest"; }
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
 
-    void checkConvert() {
-        report(0,"checking vocabulary conversions");
-        checkEqual(yarp::os::createVocab('h','i'),Vocab::encode("hi"),"encoding");
-        checkEqual(Vocab::decode(Vocab::encode("hi")).c_str(),"hi","decoding");
-        checkEqual(yarp::os::createVocab('h','i','g','h'),Vocab::encode("high"),"encoding");
-        checkEqual(Vocab::decode(Vocab::encode("high")).c_str(),"high","decoding");
-        report(0,"checking compile-time functions");
+
+TEST_CASE("OS::VocabTest", "[yarp::os]") {
+
+    SECTION("checking vocabulary conversions") {
+        CHECK(yarp::os::createVocab('h','i') == Vocab::encode("hi")); //  encoding
+        CHECK(Vocab::decode(Vocab::encode("hi")) == "hi"); // decoding
+        CHECK(yarp::os::createVocab('h','i','g','h') == Vocab::encode("high")); // encoding
+        CHECK(Vocab::decode(Vocab::encode("high")) == "high"); // decoding
+        INFO("checking compile-time functions");
         NetInt32 code = Vocab::encode("stop");
-        switch(code) {
-        case yarp::os::createVocab('s','e','t'):
-            report(1,"very strange error switching");
-            break;
-        case yarp::os::createVocab('s','t','o','p'):
-            report(0,"good switch");
-            break;
-        default:
-            report(1,"error switching");
-            break;
-        }
+        CHECK_FALSE(code == yarp::os::createVocab('s','e','t')); // very strange error switching
+        CHECK(code == yarp::os::createVocab('s','t','o','p')); // good switch
     }
 
-    virtual void runTests() override {
-        checkConvert();
-    }
-};
-
-static VocabTest theVocabTest;
-
-UnitTest& getVocabTest() {
-    return theVocabTest;
 }
