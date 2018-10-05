@@ -22,6 +22,9 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
+namespace harness_OS {
+namespace periodicThread {
+
 class MyClock : public Clock {
 public:
     double t;
@@ -289,6 +292,11 @@ double test(double period, double delay)
     delete thread1;
     return estPeriod;
 }
+
+} // namespace harness_OS
+} // namespace periodicThread
+
+using namespace harness_OS::periodicThread;
 
 TEST_CASE("OS::PeriodicThreadTest", "[yarp::os]") {
         
