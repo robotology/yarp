@@ -15,6 +15,7 @@
 #include <yarp/os/Portable.h>
 #include <string>
 #include <yarp/os/ManagedBytes.h>
+#include <yarp/os/Type.h>
 
 #include <yarp/sig/api.h>
 #include <yarp/os/Log.h>

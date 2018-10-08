@@ -14,8 +14,10 @@
 #include <map>
 
 #include <yarp/os/Bytes.h>
+#include <yarp/os/ConnectionState.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/Name.h>
+#include <yarp/os/Route.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;

@@ -11,22 +11,17 @@
 #define YARP_OS_RFMODULE_H
 
 #include <yarp/os/Port.h>
-#include <yarp/os/PortReaderBuffer.h>
-#include <yarp/os/RpcServer.h>
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/os/RpcServer.h>
 
 namespace yarp {
-    namespace os {
-        class RFModule;
-    }
-}
-
+namespace os {
 
 /**
- * A base-class for standard Yarp modules that supports ResourceFinder.
+ * A base-class for standard YARP modules that supports ResourceFinder.
  */
-class YARP_OS_API yarp::os::RFModule {
-
+class YARP_OS_API RFModule
+{
 public:
     /**
      * Constructor.
@@ -64,7 +59,7 @@ public:
      * in order to facilitate other threads to run.
      *
      * @return true iff module should continue
-    */
+     */
     virtual bool updateModule() = 0;
 
     /**
@@ -98,7 +93,7 @@ public:
      * @param rf a previously initialized ResourceFinder
      * @return 0 upon success, non-zero upon failure
      */
-    virtual int runModule(yarp::os::ResourceFinder &rf);
+    virtual int runModule(yarp::os::ResourceFinder& rf);
 
     /**
      * Calls updateModule() on a separate thread until that returns false.
@@ -132,7 +127,7 @@ public:
      * @param rf a previously initialized ResourceFinder
      * @return 0 upon success, non-zero upon failure
      */
-    virtual int runModuleThreaded(yarp::os::ResourceFinder &rf);
+    virtual int runModuleThreaded(yarp::os::ResourceFinder& rf);
 
     /**
      * Configure the module, pass a ResourceFinder object to the module.
@@ -149,7 +144,7 @@ public:
      * \note attachTerminal() is no longer called automatically. You
      * can call it in the configure function.
      */
-    virtual bool configure(yarp::os::ResourceFinder &rf);
+    virtual bool configure(yarp::os::ResourceFinder& rf);
 
     /**
      * Respond to a message.
@@ -275,7 +270,7 @@ public:
      *
      * @param name the desired name of the module
      */
-    void setName(const char *name);
+    void setName(const char* name);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     /**
@@ -286,11 +281,14 @@ public:
 
 private:
     ResourceFinder resourceFinder;
-    void *implementation;
+    void* implementation;
     bool stopFlag;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
 
     virtual bool basicRespond(const Bottle& command, Bottle& reply);
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_RFMODULE_H

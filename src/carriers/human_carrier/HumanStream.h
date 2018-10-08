@@ -7,8 +7,11 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/all.h>
-#include <yarp/os/Carrier.h>
+#include <yarp/os/TwoWayStream.h>
+#include <yarp/os/InputStream.h>
+#include <yarp/os/OutputStream.h>
+#include <yarp/os/ConnectionState.h>
+#include <yarp/os/SystemClock.h>
 
 #include <iostream>
 #include <string>
@@ -17,7 +20,10 @@
 using namespace yarp::os;
 
 
-class HumanStream : public TwoWayStream, public InputStream, public OutputStream {
+class HumanStream : public TwoWayStream,
+                    public InputStream,
+                    public OutputStream
+{
 private:
     bool interrupting;
     bool needInterrupt;

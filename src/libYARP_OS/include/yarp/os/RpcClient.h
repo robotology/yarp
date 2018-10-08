@@ -13,10 +13,7 @@
 #include <yarp/os/AbstractContactable.h>
 
 namespace yarp {
-    namespace os {
-        class RpcClient;
-    }
-}
+namespace os {
 
 /**
  * \ingroup comm_class
@@ -25,7 +22,8 @@ namespace yarp {
  * connect to a single server, and receive replies on the same connection.
  *
  */
-class YARP_OS_API yarp::os::RpcClient : public AbstractContactable {
+class YARP_OS_API RpcClient : public AbstractContactable
+{
 public:
     /**
      * Constructor.
@@ -36,6 +34,9 @@ public:
      * Destructor.
      */
     virtual ~RpcClient();
+
+    RpcClient(const RpcClient& alt) = delete;
+    const RpcClient& operator=(const RpcClient& alt) = delete;
 
     // documented in UnbufferedContactable
     virtual bool read(PortReader& reader, bool willReply = false) override;
@@ -51,22 +52,22 @@ public:
     void setOutputMode(bool expectOutput) override;
     void setRpcMode(bool expectRpc) override;
 
-    virtual Port& asPort() override {
+    virtual Port& asPort() override
+    {
         return port;
     }
 
-    virtual const Port& asPort() const override {
+    virtual const Port& asPort() const override
+    {
         return port;
     }
 
 private:
     // an RpcClient may be implemented with a regular port
     Port port;
-
-    // forbid copy constructor and assignment operator by making them private
-    // and not implementing them
-    RpcClient(const RpcClient& alt);
-    const RpcClient& operator = (const RpcClient& alt);
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_RPCCLIENT_H

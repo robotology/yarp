@@ -9,57 +9,73 @@
 #ifndef YARP_OS_LOGSTREAM_H
 #define YARP_OS_LOGSTREAM_H
 
-#include <iosfwd>
-#include <sstream>
-#include <vector>
-
 #include <yarp/os/api.h>
-#include <string>
+
 #include <yarp/os/Log.h>
 #include <yarp/os/Os.h>
 
 #include <cstdio>
 #include <cstdlib>
+#include <iosfwd>
+#include <sstream>
+#include <string>
+#include <vector>
 
 namespace std {
 template <typename T>
-std::ostream& operator<<(std::ostream &os, const std::vector<T> &t);
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& t);
 }
 
 namespace yarp {
 namespace os {
 
-class YARP_OS_API LogStream {
-    struct Stream {
-        Stream(Log::LogType t, const char *fn, unsigned int l, const char *f) : type(t), file(fn), line(l), func(f), ref(1) {}
-               std::ostringstream oss;
-               Log::LogType type;
-               const char *file;
-               unsigned int line;
-               const char *func;
-               int ref;
-    } *stream;
-public:
+class YARP_OS_API LogStream
+{
+    struct Stream
+    {
+        Stream(Log::LogType t, const char* fn, unsigned int l, const char* f) :
+                type(t), file(fn), line(l), func(f), ref(1)
+        {
+        }
+        std::ostringstream oss;
+        Log::LogType type;
+        const char* file;
+        unsigned int line;
+        const char* func;
+        int ref;
+    } * stream;
 
+public:
     inline LogStream(Log::LogType type,
-                     const char *file,
+                     const char* file,
                      unsigned int line,
-                     const char *func) :
-        stream(new Stream(type, file, line, func))
+                     const char* func) :
+            stream(new Stream(type, file, line, func))
     {
     }
 
-    inline LogStream(const LogStream &o) : stream(o.stream) {
+    inline LogStream(const LogStream& o) :
+            stream(o.stream)
+    {
         ++stream->ref;
     }
 
-    inline ~LogStream() {
+    inline ~LogStream()
+    {
         if (!--stream->ref) {
             if (Log::print_callback) {
-                Log::print_callback(stream->type, stream->oss.str().c_str(), stream->file, stream->line, stream->func);
+                Log::print_callback(stream->type,
+                                    stream->oss.str().c_str(),
+                                    stream->file,
+                                    stream->line,
+                                    stream->func);
             }
             if (Log::forward_callback) {
-                Log::forward_callback(stream->type, stream->oss.str().c_str(), stream->file, stream->line, stream->func);
+                Log::forward_callback(stream->type,
+                                      stream->oss.str().c_str(),
+                                      stream->file,
+                                      stream->line,
+                                      stream->func);
             }
             if (stream->type == yarp::os::Log::FatalType) {
                 yarp_print_trace(stderr, stream->file, stream->line);
@@ -70,85 +86,100 @@ public:
         }
     }
 
-    inline LogStream& operator<<(bool t) {
+    inline LogStream& operator<<(bool t)
+    {
         stream->oss << (t ? "true" : "false");
         stream->oss << ' ';
         return *this;
     }
-    inline LogStream& operator<<(char t) {
+    inline LogStream& operator<<(char t)
+    {
         stream->oss << t;
         stream->oss << ' ';
         return *this;
     }
-    inline LogStream& operator<<(signed short t) {
+    inline LogStream& operator<<(signed short t)
+    {
         stream->oss << t;
         stream->oss << ' ';
         return *this;
     }
-    inline LogStream& operator<<(unsigned short t) {
+    inline LogStream& operator<<(unsigned short t)
+    {
         stream->oss << t;
         stream->oss << ' ';
         return *this;
     }
-    inline LogStream& operator<<(signed int t) {
+    inline LogStream& operator<<(signed int t)
+    {
         stream->oss << t;
         stream->oss << ' ';
         return *this;
     }
-    inline LogStream& operator<<(unsigned int t) {
+    inline LogStream& operator<<(unsigned int t)
+    {
         stream->oss << t;
         stream->oss << ' ';
         return *this;
     }
-    inline LogStream& operator<<(signed long t) {
+    inline LogStream& operator<<(signed long t)
+    {
         stream->oss << t;
         stream->oss << ' ';
         return *this;
     }
-    inline LogStream& operator<<(unsigned long t) {
+    inline LogStream& operator<<(unsigned long t)
+    {
         stream->oss << t;
         stream->oss << ' ';
         return *this;
     }
-    inline LogStream& operator<<(signed long long t) {
+    inline LogStream& operator<<(signed long long t)
+    {
         stream->oss << t;
         stream->oss << ' ';
         return *this;
     }
-    inline LogStream& operator<<(unsigned long long t) {
+    inline LogStream& operator<<(unsigned long long t)
+    {
         stream->oss << t;
         stream->oss << ' ';
         return *this;
     }
-    inline LogStream& operator<<(float t) {
+    inline LogStream& operator<<(float t)
+    {
         stream->oss << t;
         stream->oss << ' ';
         return *this;
     }
-    inline LogStream& operator<<(double t) {
+    inline LogStream& operator<<(double t)
+    {
         stream->oss << t;
         stream->oss << ' ';
         return *this;
     }
-    inline LogStream& operator<<(const char* t) {
+    inline LogStream& operator<<(const char* t)
+    {
         stream->oss << t;
         stream->oss << ' ';
         return *this;
     }
-    inline LogStream& operator<<(const void * t) {
+    inline LogStream& operator<<(const void* t)
+    {
         stream->oss << t;
         stream->oss << ' ';
         return *this;
     }
 
-    inline LogStream& operator<<(const std::string &t) {
+    inline LogStream& operator<<(const std::string& t)
+    {
         stream->oss << t.c_str();
         stream->oss << ' ';
         return *this;
     }
 
     template <typename T>
-    inline LogStream& operator<<(const std::vector<T> &t)
+    inline LogStream& operator<<(const std::vector<T>& t)
     {
         stream->oss << t;
         stream->oss << ' ';
@@ -160,13 +191,12 @@ public:
 } // namespace yarp
 
 
-
 template <typename T>
-inline std::ostream& std::operator<<(std::ostream &os, const std::vector<T> &t)
+inline std::ostream& std::operator<<(std::ostream& os, const std::vector<T>& t)
 {
     os << '[';
     for (typename std::vector<T>::const_iterator it = t.begin(); it != t.end(); ++it) {
-        const T &p = *it;
+        const T& p = *it;
         if (it != t.begin()) {
             os << ", ";
         }

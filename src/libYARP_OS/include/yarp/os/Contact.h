@@ -10,18 +10,22 @@
 #ifndef YARP_OS_CONTACT_H
 #define YARP_OS_CONTACT_H
 
-#include <yarp/conf/system.h>
 #include <yarp/conf/compiler.h>
+#include <yarp/conf/system.h>
+
 #include <yarp/os/NestedContact.h>
 
 #include <string>
 
 namespace yarp {
-    namespace os {
-        class Contact;
-        class Searchable;
-    }
-}
+namespace os {
+class Searchable;
+} // namespace os
+} // namespace yarp
+
+
+namespace yarp {
+namespace os {
 
 /**
  * @ingroup comm_class
@@ -31,10 +35,10 @@ namespace yarp {
  * Use the constructors or the factory methods (Contact::fromString,
  * Contact::fromConfig) to create Contact objects.
  */
-class YARP_OS_API yarp::os::Contact {
+class YARP_OS_API Contact
+{
 public:
-
-/** @{ */
+    /** @{ */
 
     /**
      * @brief Constructor.
@@ -104,8 +108,8 @@ public:
      */
     Contact& operator=(Contact&& rhs) noexcept;
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief Factory method.
@@ -129,8 +133,8 @@ public:
      */
     static Contact fromString(const std::string& txt);
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief Get the name associated with this Contact.
@@ -159,8 +163,8 @@ public:
      */
     std::string getRegName() const;
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief Get the host name associated with this Contact for socket
@@ -178,8 +182,8 @@ public:
      */
     void setHost(const std::string& hostname);
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief Get the port number associated with this Contact for socket
@@ -198,8 +202,8 @@ public:
      */
     void setPort(int port);
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief Get the carrier associated with this Contact for socket
@@ -217,8 +221,8 @@ public:
      */
     void setCarrier(const std::string& carrier);
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief Get the NestedContact containing extra information for this
@@ -236,8 +240,8 @@ public:
      */
     void setNestedContact(const yarp::os::NestedContact& nestedContact);
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief Check if this Contact has a timeout.
@@ -260,8 +264,8 @@ public:
      */
     void setTimeout(float timeout);
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief Set information to a Contact about how to reach it using socket
@@ -276,8 +280,8 @@ public:
                    const std::string& hostname,
                    int port);
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief Checks if a Contact is tagged as valid.
@@ -303,8 +307,8 @@ public:
      */
     std::string toURI(bool includeCarrier = true) const;
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief If the host is a machine name, convert it to a plausible IP
@@ -312,16 +316,18 @@ public:
      *
      * @param name the name to convert
      */
-    static std::string convertHostToIp(const char *name);
+    static std::string convertHostToIp(const char* name);
 
-/** @} */
+    /** @} */
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
     class Private;
-    Private * mPriv;
+    Private* mPriv;
 #endif // DOXYGEN_SHOULD_SKIP_THIS
-
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_CONTACT_H

@@ -13,6 +13,7 @@
 #include <yarp/conf/numeric.h>
 
 #include <yarp/os/api.h>
+
 #include <yarp/os/PortWriter.h>
 
 namespace yarp {

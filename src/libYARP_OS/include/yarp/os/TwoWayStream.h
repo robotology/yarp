@@ -11,16 +11,13 @@
 #define YARP_OS_TWOWAYSTREAM_H
 
 #include <yarp/conf/numeric.h>
+
 #include <yarp/os/Contact.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
 
 namespace yarp {
-    namespace os {
-        class TwoWayStream;
-        class NullStream;
-    }
-}
+namespace os {
 
 /**
  * A stream which can be asked to perform bidirectional communication.
@@ -28,7 +25,8 @@ namespace yarp {
  * in which case it should fail if requested to communicate in an
  * unsupported direction.
  */
-class YARP_OS_API yarp::os::TwoWayStream {
+class YARP_OS_API TwoWayStream
+{
 public:
     /**
      * Destructor.
@@ -107,11 +105,11 @@ public:
 /**
  * A "null" stream, always invalid.
  */
-class YARP_OS_API yarp::os::NullStream : public TwoWayStream,
-                                         public InputStream,
-                                         public OutputStream {
+class YARP_OS_API NullStream : public TwoWayStream, public InputStream, public OutputStream
+{
 private:
     Contact address;
+
 public:
     virtual ~NullStream();
 
@@ -133,5 +131,8 @@ public:
     using yarp::os::OutputStream::write;
     virtual void write(const Bytes& b) override;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_TWOWAYSTREAM_H

@@ -13,8 +13,12 @@
 #include "RosType.h"
 #include "RosTypeCodeGenYarp.h"
 
-#include <yarp/os/all.h>
 #include <yarp/os/NetType.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/Searchable.h>
+#include <yarp/os/Type.h>
+#include <yarp/os/Value.h>
 #include <yarp/os/impl/PlatformSysStat.h>
 #include <yarp/os/impl/PlatformSysWait.h>
 

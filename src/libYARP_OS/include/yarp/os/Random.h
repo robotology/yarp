@@ -19,17 +19,15 @@
 
 
 namespace yarp {
-    namespace os {
-        class Random;
-    }
-}
+namespace os {
 
 /**
  * \ingroup key_class
  *
  * A collection of basic random number generation algorithms.
  */
-class YARP_OS_API yarp::os::Random {
+class YARP_OS_API Random
+{
 public:
     /**
      * Generates a random number in the range 0 to 1.
@@ -66,5 +64,7 @@ public:
     static int uniform(int min, int max);
 };
 
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_RANDOM_H

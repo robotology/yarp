@@ -24,24 +24,22 @@ template <class T>
 class SharedLibraryClassFactory : public SharedLibraryFactory
 {
 public:
-    SharedLibraryClassFactory()
-    {
-    }
+    SharedLibraryClassFactory() {}
 
-    SharedLibraryClassFactory(const char *dll_name, const char *fn_name = nullptr) :
+    SharedLibraryClassFactory(const char* dll_name, const char* fn_name = nullptr) :
             SharedLibraryFactory(dll_name, fn_name)
     {
     }
 
-    T *create()
+    T* create()
     {
         if (!isValid()) {
             return nullptr;
         }
-        return (T *)getApi().create();
+        return (T*)getApi().create();
     }
 
-    void destroy(T *obj) const
+    void destroy(T* obj) const
     {
         if (!isValid()) {
             return;

@@ -14,6 +14,7 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 
 #include <yarp/os/impl/PlatformTime.h>
@@ -28,7 +29,9 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 
 
-class RFModuleRespondHandler : public yarp::os::PortReader, public Thread {
+class RFModuleRespondHandler : public yarp::os::PortReader,
+                               public yarp::os::Thread
+{
 private:
     RFModule& owner;
     bool attachedToPort;

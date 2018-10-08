@@ -11,16 +11,17 @@
 #define YARP_OS_CONTACTABLE_H
 
 #include <yarp/os/Contact.h>
-#include <yarp/os/PortReader.h>
-#include <yarp/os/PortWriter.h>
-#include <yarp/os/PortReport.h>
 #include <yarp/os/Mutex.h>
+#include <yarp/os/PortReader.h>
+#include <yarp/os/PortReport.h>
+#include <yarp/os/PortWriter.h>
 
-// Defined in this file:
-namespace yarp { namespace os { class Contactable; }}
-
-// Other forward declarations:
-namespace yarp { namespace os { class Property; }}
+// Forward declarations:
+namespace yarp {
+namespace os {
+class Property;
+} // namespace os
+} // namespace yarp
 
 
 namespace yarp {
@@ -35,7 +36,6 @@ class YARP_OS_API Contactable
 {
 
 public:
-
     /**
      * Destructor.
      */
@@ -279,14 +279,14 @@ public:
      * @return the port properties (or nullptr if readOnly and none have
      *         been set)
      */
-    virtual Property *acquireProperties(bool readOnly) = 0;
+    virtual Property* acquireProperties(bool readOnly) = 0;
 
     /**
      * End access unstructured port properties.
      *
      * @param prop the port property object provided by acquireProperties()
      */
-    virtual void releaseProperties(Property *prop) = 0;
+    virtual void releaseProperties(Property* prop) = 0;
 
     /**
      * Choose whether to prepend a node name (if one is available) to
@@ -327,7 +327,7 @@ public:
      * @param mutex the lock to use. If nullptr, a mutex will be allocated
      * internally by the port, and destroyed with the port.
      */
-    virtual bool setCallbackLock(yarp::os::Mutex *mutex = nullptr) = 0;
+    virtual bool setCallbackLock(yarp::os::Mutex* mutex = nullptr) = 0;
 
     /**
      * Remove a lock on callbacks added with setCallbackLock()

@@ -10,39 +10,38 @@
 #define YARP_OS_CONNECTION_H
 
 #include <yarp/os/api.h>
-#include <yarp/os/Bytes.h>
+
+#include <string>
 
 namespace yarp {
-    namespace os {
-        class Connection;
-        class NullConnection;
-    }
-}
+namespace os {
+
+// Forward declarations
+class Bytes;
+class ConnectionReader;
+class PortWriter;
+class PortReader;
+class Property;
 
 /**
- *
  * A controller for an individual connection.  A bundle of callbacks
  * that defines how the connection behaves.
- *
  */
-class YARP_OS_API yarp::os::Connection
+class YARP_OS_API Connection
 {
 public:
-
     /**
      * Destructor.
      */
-    virtual ~Connection() {}
+    virtual ~Connection();
 
     /**
-     *
      * Check if this object is really a connection, or just
      * an empty placeholder
      *
      * @return true if a valid connection
-     *
      */
-    virtual bool isValid() const { return true; }
+    virtual bool isValid() const;
 
     /**
      * Check if carrier is textual in nature
@@ -56,7 +55,7 @@ public:
      *
      * @return true if carrier is bare
      */
-    virtual bool isBareMode() const { return false; }
+    virtual bool isBareMode() const;
 
     /**
      * Carriers that do not distinguish data from administrative headers
@@ -120,7 +119,7 @@ public:
      */
     virtual bool isPush() const = 0;
 
-   /**
+    /**
      * Check if this carrier is connectionless (like udp, mcast) or
      * connection based (like tcp).
      *
@@ -265,84 +264,8 @@ public:
     virtual std::string getName() const = 0;
 };
 
+} // namespace os
+} // namespace yarp
 
-class YARP_OS_API yarp::os::NullConnection : public Connection
-{
-public:
-    virtual bool isValid() const override { return false; }
-    virtual bool isTextMode() const override { return true; }
-    virtual bool canEscape() const override { return true; }
-    virtual void handleEnvelope(const std::string& envelope) override { YARP_UNUSED(envelope); }
-    virtual bool requireAck() const override { return false; }
-    virtual bool supportReply() const override { return false; }
-    virtual bool isLocal() const override { return false; }
-    virtual bool isPush() const override { return true; }
-    virtual bool isConnectionless() const override { return false; }
-    virtual bool isBroadcast() const override { return false; }
-    virtual bool isActive() const override { return false; }
-
-    virtual bool modifiesIncomingData() const override { return false; }
-
-    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) override
-    {
-        return reader;
-    }
-
-    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) override
-    {
-        YARP_UNUSED(reader);
-        return true;
-    }
-
-    virtual bool modifiesOutgoingData() const override
-    {
-        return false;
-    }
-
-    virtual const PortWriter& modifyOutgoingData(const PortWriter& writer) override
-    {
-        return writer;
-    }
-
-    virtual bool acceptOutgoingData(const PortWriter& writer) override
-    {
-        YARP_UNUSED(writer);
-        return true;
-    }
-
-    virtual bool modifiesReply() const override
-    {
-        return false;
-    }
-
-    virtual PortReader& modifyReply(PortReader& reader) override
-    {
-        return reader;
-    }
-
-    virtual void setCarrierParams(const yarp::os::Property& params) override
-    {
-        YARP_UNUSED(params);
-    }
-
-    virtual void getCarrierParams(yarp::os::Property& params) const override
-    {
-        YARP_UNUSED(params);
-    }
-
-    virtual void getHeader(yarp::os::Bytes& header) const override
-    {
-        for (size_t i=0; i<header.length(); i++) {
-            header.get()[i] = '\0';
-        }
-    }
-
-    virtual void prepareDisconnect() override {}
-
-    virtual std::string getName() const override
-    {
-        return "null";
-    }
-};
 
 #endif // YARP_OS_CONNECTION_H

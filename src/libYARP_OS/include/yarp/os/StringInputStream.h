@@ -10,54 +10,59 @@
 #ifndef YARP_OS_STRINGINPUTSTREAM_H
 #define YARP_OS_STRINGINPUTSTREAM_H
 
-#include <yarp/os/InputStream.h>
 #include <yarp/os/Bytes.h>
+#include <yarp/os/InputStream.h>
+
 #include <string>
 
 namespace yarp {
-    namespace os {
-        class StringInputStream;
-    }
-}
+namespace os {
 
 /**
  * An InputStream that reads from a string.  Handy For testing purposes.
  */
-class yarp::os::StringInputStream : public InputStream {
+class StringInputStream : public InputStream
+{
 public:
     using InputStream::read;
 
-    StringInputStream() {
+    StringInputStream()
+    {
         at = 0;
         data = "";
     }
 
-    void reset() {
+    void reset()
+    {
         at = 0;
         data = "";
     }
 
-    void reset(const std::string& str) {
+    void reset(const std::string& str)
+    {
         at = 0;
         data = str;
     }
 
-    void add(const std::string& txt) {
+    void add(const std::string& txt)
+    {
         data += txt;
     }
 
-    void add(const Bytes& b) {
-        for (size_t i=0; i<b.length(); i++) {
+    void add(const Bytes& b)
+    {
+        for (size_t i = 0; i < b.length(); i++) {
             data += b.get()[i];
         }
     }
 
-    virtual yarp::conf::ssize_t read(Bytes& b) override {
-        char *base = b.get();
+    virtual yarp::conf::ssize_t read(Bytes& b) override
+    {
+        char* base = b.get();
         size_t space = b.length();
         yarp::conf::ssize_t ct = 0;
-        for (size_t i=0; i<space; i++) {
-            if (at<data.length()) {
+        for (size_t i = 0; i < space; i++) {
+            if (at < data.length()) {
                 base[i] = data[at];
                 at++;
                 ct++;
@@ -66,20 +71,24 @@ public:
         return ct;
     }
 
-    virtual void close() override {
-    }
+    virtual void close() override {}
 
-    virtual std::string toString() const {
+    virtual std::string toString() const
+    {
         return data;
     }
 
-    virtual bool isOk() const override {
+    virtual bool isOk() const override
+    {
         return true;
     }
 
 private:
-    std::string data;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) data;
     unsigned int at;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_STRINGINPUTSTREAM_H

@@ -13,6 +13,9 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/ManagedBytes.h>
+#include <yarp/os/ConnectionState.h>
+#include <yarp/os/Route.h>
+#include <yarp/os/SizedWriter.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;

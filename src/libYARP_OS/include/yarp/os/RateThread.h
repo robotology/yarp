@@ -10,14 +10,14 @@
 #ifndef YARP_OS_RATETHREAD_H
 #define YARP_OS_RATETHREAD_H
 
+#include <yarp/os/api.h>
+
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Runnable.h>
-#include <yarp/os/api.h>
 
 namespace yarp {
 namespace os {
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-
 
 
 /**
@@ -30,7 +30,6 @@ namespace os {
 class YARP_OS_DEPRECATED_API_MSG("Use PeriodicThread instead") RateThread : private PeriodicThread
 {
 public:
-
     /**
      * Constructor.  Thread begins in a dormant state.  Call RateThread::start
      * to get things going.
@@ -64,7 +63,7 @@ public:
      */
     void stop();
 
-     /**
+    /**
      * Stop the thread. Like stop but it does not call join, safe
      * to be called from run().
      */
@@ -118,7 +117,7 @@ public:
      * @param av average value
      * @param std standard deviation
      */
-    void getEstPeriod(double &av, double &std);
+    void getEstPeriod(double& av, double& std);
 
     /**
      * Return the number of iterations performed since last reset.
@@ -136,7 +135,7 @@ public:
      * @param av average value
      * @param std standard deviation
      */
-    void getEstUsed(double &av, double &std);
+    void getEstUsed(double& av, double& std);
 
     /**
      * Set the priority and scheduling policy of the thread, if the OS supports that.
@@ -151,7 +150,7 @@ public:
      * SCHED_FIFO  : policy=1, priority=[1 .. 99]
      * SCHED_RR    : policy=2, priority=[1 .. 99]
      */
-    int setPriority(int priority, int policy=-1);
+    int setPriority(int priority, int policy = -1);
 
     /**
      * Query the current priority of the thread, if the OS supports that.
@@ -185,7 +184,7 @@ protected:
      * resources that were initialized in threadInit() (release memory,
      * and device driver resources).
      */
-     virtual void threadRelease() override;
+    virtual void threadRelease() override;
 
     /**
      * Loop function. This is the thread itself.
@@ -215,7 +214,7 @@ protected:
 };
 
 
-class YARP_OS_DEPRECATED_API_MSG("Use PeriodicThread(..., == ShouldUseSystemClock::Yes) instead")  SystemRateThread : public PeriodicThread
+class YARP_OS_DEPRECATED_API_MSG("Use PeriodicThread(..., == ShouldUseSystemClock::Yes) instead") SystemRateThread : public PeriodicThread
 {
 public:
     SystemRateThread(int period);
@@ -234,21 +233,22 @@ public:
 class YARP_OS_API RateThreadWrapper : public PeriodicThread
 {
 private:
-    yarp::os::Runnable *helper;
+    yarp::os::Runnable* helper;
     int owned;
+
 public:
     /**
      * Default constructor.
      */
     RateThreadWrapper();
-    RateThreadWrapper(Runnable *helper);
+    RateThreadWrapper(Runnable* helper);
     RateThreadWrapper(Runnable& helper);
 
     virtual ~RateThreadWrapper();
 
     void detach();
     virtual bool attach(Runnable& helper);
-    virtual bool attach(Runnable *helper);
+    virtual bool attach(Runnable* helper);
 
     bool open(double framerate = -1, bool polling = false);
     void close();
@@ -260,7 +260,7 @@ public:
     virtual void afterStart(bool success) override;
     virtual void beforeStart() override;
 
-    Runnable *getAttachment() const;
+    Runnable* getAttachment() const;
 };
 
 } // namespace os

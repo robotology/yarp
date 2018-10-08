@@ -9,6 +9,9 @@
 
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/TextCarrier.h>
+#include <yarp/os/ConnectionState.h>
+#include <yarp/os/OutputStream.h>
+#include <yarp/os/Route.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;

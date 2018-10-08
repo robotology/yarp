@@ -7,10 +7,12 @@
  */
 
 #include <cstdio>
-#include <yarp/os/all.h>
+
 #include "RosSlave.h"
 #include "RosLookup.h"
 #include "TcpRosStream.h"
+
+#include <yarp/os/Vocab.h>
 
 #include <string>
 

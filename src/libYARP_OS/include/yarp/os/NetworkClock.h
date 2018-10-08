@@ -9,48 +9,36 @@
 #ifndef YARP_OS_NETWORKCLOCK_H
 #define YARP_OS_NETWORKCLOCK_H
 
+#include <yarp/os/api.h>
+
 #include <yarp/os/Clock.h>
-#include <yarp/os/BufferedPort.h>
-#include <yarp/os/NetInt32.h>
-#include <yarp/conf/numeric.h>
-#include <yarp/os/Semaphore.h>
-#include <yarp/os/Mutex.h>
+
+#include <string>
 
 namespace yarp {
-    namespace os {
-        class NetworkClock;
-    }
-}
+namespace os {
 
-
-class YARP_OS_API yarp::os::NetworkClock : public Clock, PortReader
+class YARP_OS_API NetworkClock : public Clock
 {
 public:
     NetworkClock();
     virtual ~NetworkClock();
 
-    bool open(const std::string& clockSourcePortName, std::string localPortName="");
+    bool open(const std::string& clockSourcePortName, std::string localPortName = "");
 
     virtual double now() override;
     virtual void delay(double seconds) override;
     virtual bool isValid() const override;
 
-    virtual bool read(ConnectionReader& reader) override;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) clockName;
-
-    void *pwaiters;
-    Port port;
-
-    Mutex listMutex;
-    Mutex timeMutex;
-
-    std::int32_t sec;
-    std::int32_t nsec;
-    double _time;
-    bool closing;
-    bool initted;
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
+
+} // namespace os
+} // namespace yarp
+
 
 #endif // YARP_OS_NETWORKCLOCK_H

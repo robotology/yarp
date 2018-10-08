@@ -11,6 +11,7 @@
 #define YARP_OS_NETINT64_H
 
 #include <yarp/conf/numeric.h>
+
 #include <yarp/os/api.h>
 
 ////////////////////////////////////////////////////////////////////////
@@ -46,6 +47,7 @@ private:
     std::int64_t swap(std::int64_t x) const;
     RawNetInt64 get() const;
     void set(RawNetInt64 v);
+
 public:
     NetInt64();
     NetInt64(RawNetInt64 val);

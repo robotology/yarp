@@ -14,6 +14,10 @@
 #include <yarp/os/Name.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Route.h>
+#include <yarp/os/SizedWriter.h>
+#include <yarp/os/Contactable.h>
+#include <yarp/os/Network.h>
 
 #include <cstdio>
 

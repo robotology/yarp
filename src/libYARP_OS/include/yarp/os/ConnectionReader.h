@@ -10,28 +10,34 @@
 #ifndef YARP_OS_CONNECTIONREADER_H
 #define YARP_OS_CONNECTIONREADER_H
 
-#include <string>
-#include <yarp/os/Contact.h>
-#include <yarp/os/Bytes.h>
-#include <yarp/os/Searchable.h>
 #include <yarp/conf/numeric.h>
 
+#include <yarp/os/Bytes.h>
+#include <yarp/os/Contact.h>
+#include <yarp/os/Searchable.h>
+
+#include <string>
+
 namespace yarp {
-    namespace os {
-        class ConnectionReader;
-        class ConnectionWriter;
-        class PortReader;
-        class Portable;
-        class InputStream;
-    }
-}
+namespace os {
+class ConnectionWriter;
+class PortReader;
+class Portable;
+class InputStream;
+} // namespace os
+} // namespace yarp
+
+
+namespace yarp {
+namespace os {
 
 /**
  * An interface for reading from a network connection.
  *
  * @see Port, PortReader, ConnectionWriter
  */
-class YARP_OS_API yarp::os::ConnectionReader {
+class YARP_OS_API ConnectionReader
+{
 public:
     /**
      * Destructor.
@@ -45,7 +51,7 @@ public:
      *
      * @return true on success
      */
-    virtual bool expectBlock(char *data, size_t len) = 0;
+    virtual bool expectBlock(char* data, size_t len) = 0;
 
     /**
      * Read some text from the network connection.
@@ -60,7 +66,10 @@ public:
      * @warning Unsafe, sizeof(int) is platform dependent. Use expectInt32 instead.
      */
     YARP_DEPRECATED_INTERNAL_MSG("Use expectInt32 instead") // Since YARP 3.0.0
-    virtual int expectInt() final { return static_cast<int>(expectInt32()); }
+    virtual int expectInt() final
+    {
+        return static_cast<int>(expectInt32());
+    }
 
     /**
      * Read a 8-bit integer from the network connection.
@@ -92,7 +101,10 @@ public:
      * @warning Unsafe, sizeof(double) is platform dependent. Use expectFloat64 instead.
      */
     YARP_DEPRECATED_INTERNAL_MSG("Use expectFloat64 instead") // Since YARP 3.0.0
-    virtual double expectDouble() { return static_cast<double>(expectFloat64()); }
+    virtual double expectDouble()
+    {
+        return static_cast<double>(expectFloat64());
+    }
 
     /**
      * Read a 32-bit floating point number from the network connection.
@@ -143,7 +155,7 @@ public:
      * @return An object that permits replies, or nullptr if this cannot be
      *         done.
      */
-    virtual ConnectionWriter *getWriter() = 0;
+    virtual ConnectionWriter* getWriter() = 0;
 
     /**
      *
@@ -159,7 +171,7 @@ public:
      * this returns nullptr.
      * @return The message object, or nullptr if not available
      */
-    virtual Portable *getReference() const = 0;
+    virtual Portable* getReference() const = 0;
 
     /**
      * Gets information about who is supplying the data being read, if
@@ -227,7 +239,7 @@ public:
      * implementation.
      *
      */
-    static ConnectionReader *createConnectionReader(InputStream& is);
+    static ConnectionReader* createConnectionReader(InputStream& is);
 
     static bool readFromStream(PortReader& portable, InputStream& is);
 
@@ -236,7 +248,10 @@ public:
      *
      * Used by PortCoreInputUnit
      */
-    virtual void setParentConnectionReader(ConnectionReader *parentConnectionReader);
+    virtual void setParentConnectionReader(ConnectionReader* parentConnectionReader);
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_CONNECTIONREADER_H

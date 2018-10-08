@@ -19,6 +19,7 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/RpcServer.h>
+#include <yarp/os/Semaphore.h>
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/SystemInfoSerializer.h>
 #include <yarp/os/Time.h>

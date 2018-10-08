@@ -8,6 +8,8 @@
  */
 
 #include <yarp/os/impl/TcpCarrier.h>
+#include <yarp/os/ConnectionState.h>
+#include <yarp/os/TwoWayStream.h>
 #include <string>
 
 using namespace yarp::os;

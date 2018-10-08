@@ -11,6 +11,7 @@
 #define YARP_OS_NETFLOAT32_H
 
 #include <yarp/conf/numeric.h>
+
 #include <yarp/os/api.h>
 
 ////////////////////////////////////////////////////////////////////////
@@ -46,16 +47,19 @@ typedef yarp::conf::float32_t NetFloat32;
 #else // YARP_LITTLE_ENDIAN
 
 typedef yarp::conf::float32_t RawNetFloat32;
-union UnionNetFloat32 {
+union UnionNetFloat32
+{
     yarp::conf::float32_t d;
     unsigned char c[4];
 };
-class YARP_OS_API NetFloat32 {
+class YARP_OS_API NetFloat32
+{
 private:
     double raw_value;
     double swap(double x) const;
     RawNetFloat32 get() const;
     void set(RawNetFloat32 v);
+
 public:
     NetFloat32();
     NetFloat32(RawNetFloat32 val);

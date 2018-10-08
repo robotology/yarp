@@ -13,6 +13,10 @@
 #include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Mutex.h>
+#include <yarp/os/TwoWayStream.h>
+#include <yarp/os/InputStream.h>
+#include <yarp/os/OutputStream.h>
+#include <yarp/os/Portable.h>
 
 
 namespace yarp {

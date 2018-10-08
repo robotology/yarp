@@ -16,10 +16,6 @@
 #include <yarp/os/PortWriterBuffer.h>
 
 
-// Defined in this file:
-namespace yarp { namespace os { template <typename T> class BufferedPort; }}
-
-
 namespace yarp {
 namespace os {
 
@@ -64,9 +60,7 @@ namespace os {
  * @li @ref yarp_buffering
  */
 template <typename T>
-class BufferedPort : public Contactable,
-                     public TypedReader<T>,
-                     public TypedReaderCallback<T>
+class BufferedPort : public Contactable, public TypedReader<T>, public TypedReaderCallback<T>
 {
 public:
     using yarp::os::TypedReaderCallback<T>::onRead;
@@ -253,10 +247,10 @@ public:
     virtual void setReporter(PortReport& reporter) override;
 
     // documented in Contactable
-    virtual void resetReporter() override ;
+    virtual void resetReporter() override;
 
     // documented in TypedReader
-    virtual void* acquire() override ;
+    virtual void* acquire() override;
 
     // documented in TypedReader
     virtual void release(void* handle) override;

@@ -9,13 +9,8 @@
 #ifndef YARP_OS_ABSTRACTCONTACTABLE_H
 #define YARP_OS_ABSTRACTCONTACTABLE_H
 
-#include <yarp/os/UnbufferedContactable.h>
 #include <yarp/os/Port.h>
-
-
-// Defined in this file:
-namespace yarp { namespace os { class AbstractContactable; }}
-
+#include <yarp/os/UnbufferedContactable.h>
 
 namespace yarp {
 namespace os {
@@ -146,7 +141,7 @@ public:
     virtual void includeNodeInName(bool flag) override;
 
     // Documented in Contactable
-    virtual bool setCallbackLock(yarp::os::Mutex *mutex = nullptr) override;
+    virtual bool setCallbackLock(yarp::os::Mutex* mutex = nullptr) override;
 
     // Documented in Contactable
     virtual bool removeCallbackLock() override;

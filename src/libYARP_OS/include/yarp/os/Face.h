@@ -15,15 +15,13 @@
 #include <yarp/os/OutputProtocol.h>
 
 namespace yarp {
-    namespace os {
-        class Face;
-    }
-}
+namespace os {
 
 /**
  * The initial point-of-contact with a port.
  */
-class YARP_OS_API yarp::os::Face {
+class YARP_OS_API Face
+{
 public:
     /**
      * Constructor.
@@ -62,7 +60,7 @@ public:
      *         failure.
      *
      */
-    virtual InputProtocol *read() = 0;
+    virtual InputProtocol* read() = 0;
 
     /**
      *
@@ -74,7 +72,7 @@ public:
      * @return a protocol object to talk with, or nullptr on failure.
      *
      */
-    virtual OutputProtocol *write(const Contact& address) = 0;
+    virtual OutputProtocol* write(const Contact& address) = 0;
 
 
     /**
@@ -85,9 +83,13 @@ public:
      * @return an address
      *
      */
-    virtual Contact getLocalAddress() const {
+    virtual Contact getLocalAddress() const
+    {
         return Contact();
     }
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_FACE_H

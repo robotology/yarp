@@ -11,23 +11,22 @@
 #define YARP_OS_PORTINFO_H
 
 #include <yarp/os/api.h>
+
 #include <yarp/os/Vocab.h>
+
 #include <string>
 
 
 namespace yarp {
-    namespace os {
-        class PortInfo;
-    }
-}
-
+namespace os {
 
 /**
  * \ingroup comm_class
  *
  * Information about a port connection or event.
  */
-class YARP_OS_API yarp::os::PortInfo {
+class YARP_OS_API PortInfo
+{
 public:
     /**
      * Constructor
@@ -35,7 +34,8 @@ public:
     explicit PortInfo();
 
     /// Possible tag values
-    enum {
+    enum
+    {
         /// No information.
         PORTINFO_NULL = 0,
 
@@ -72,5 +72,7 @@ public:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) message;
 };
 
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_PORTINFO_H

@@ -13,12 +13,6 @@
 #include <yarp/os/Portable.h>
 
 namespace yarp {
-    namespace os {
-        template <class T> class BinPortable;
-    }
-}
-
-namespace yarp {
 namespace os {
 
 /**

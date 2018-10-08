@@ -10,9 +10,9 @@
 #define YARP_OS_MUTEX_H
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-#include <yarp/os/api.h>
+#    include <yarp/os/api.h>
 #else // YARP_NO_DEPRECATED
-#include <mutex>
+#    include <mutex>
 #endif // YARP_NO_DEPRECATED
 
 namespace yarp {

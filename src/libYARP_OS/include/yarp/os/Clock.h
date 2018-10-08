@@ -12,12 +12,10 @@
 #include <yarp/os/api.h>
 
 namespace yarp {
-    namespace os {
-        class Clock;
-    }
-}
+namespace os {
 
-class YARP_OS_API yarp::os::Clock {
+class YARP_OS_API Clock
+{
 public:
     /**
      *
@@ -50,5 +48,8 @@ public:
      */
     virtual bool isValid() const = 0;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_CLOCK_H

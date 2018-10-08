@@ -9,6 +9,8 @@
 
 #include "ShmemOutputStream.h"
 
+#include <yarp/conf/numeric.h>
+#include <yarp/os/Bytes.h>
 #include <ace/Lib_Find.h>
 // In one the ACE headers there is a definition of "main" for WIN32
 # ifdef main

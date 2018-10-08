@@ -14,7 +14,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/impl/ThreadImpl.h>
+#include <yarp/os/Thread.h>
 #include <yarp/os/impl/TimeImpl.h>
 
 #include <mutex>

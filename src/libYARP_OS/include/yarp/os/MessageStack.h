@@ -10,20 +10,17 @@
 #define YARP_OS_MESSAGESTACK_H
 
 #include <yarp/os/Portable.h>
+
 #include <string>
 
 namespace yarp {
-    namespace os {
-        class MessageStack;
-    }
-}
+namespace os {
 
 /**
- *
  * Maintain a stack of messages to send asynchronously.
- *
  */
-class YARP_OS_API yarp::os::MessageStack {
+class YARP_OS_API MessageStack
+{
 public:
     /**
      *
@@ -57,9 +54,13 @@ public:
      *
      */
     void stack(PortWriter& msg, const std::string& tag = "");
+
 private:
     int max_threads;
-    void *implementation;
+    void* implementation;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_MESSAGESTACK_H

@@ -9,16 +9,11 @@
 #ifndef YARP_OS_SHAREDLIBRARYCLASS_H
 #define YARP_OS_SHAREDLIBRARYCLASS_H
 
-#include <yarp/os/SharedLibraryClassFactory.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/SharedLibraryClassFactory.h>
 
 namespace yarp {
-    namespace os {
-        template <class T>
-        class SharedLibraryClass;
-    }
-}
-
+namespace os {
 
 /**
  * Container for an object created using a factory provided by a shared library.
@@ -26,19 +21,17 @@ namespace yarp {
  * shared library.  Mixing creation and destruction methods could be very bad.
  */
 template <class T>
-class yarp::os::SharedLibraryClass {
+class SharedLibraryClass
+{
 private:
-    T *content;
-    SharedLibraryClassFactory<T> *pfactory;
-public:
+    T* content;
+    SharedLibraryClassFactory<T>* pfactory;
 
+public:
     /**
      * Constructor for empty instance.
      */
-    SharedLibraryClass() :
-            content(nullptr),
-            pfactory(nullptr) {
-    }
+    SharedLibraryClass() : content(nullptr), pfactory(nullptr) {}
 
     /**
      * Constructor for valid instance of a class from a shared library.
@@ -48,7 +41,8 @@ public:
      */
     SharedLibraryClass(SharedLibraryClassFactory<T>& factory) :
             content(nullptr),
-            pfactory(nullptr) {
+            pfactory(nullptr)
+    {
         open(factory);
     }
 
@@ -60,7 +54,8 @@ public:
      * destroy) the instance.
      * @return true on success
      */
-    bool open(SharedLibraryClassFactory<T>& factory) {
+    bool open(SharedLibraryClassFactory<T>& factory)
+    {
         close();
         content = factory.create();
         pfactory = &factory;
@@ -74,7 +69,8 @@ public:
      *
      * @return true on success
      */
-    virtual bool close() {
+    virtual bool close()
+    {
         if (content != nullptr) {
             pfactory->destroy(content);
             NetworkBase::lock();
@@ -93,7 +89,8 @@ public:
     /**
      * Destructor.
      */
-    virtual ~SharedLibraryClass() {
+    virtual ~SharedLibraryClass()
+    {
         close();
     }
 
@@ -105,7 +102,8 @@ public:
      *
      * @return the created instance
      */
-    T& getContent() {
+    T& getContent()
+    {
         return *content;
     }
 
@@ -117,7 +115,8 @@ public:
      *
      * @return the created instance
      */
-    const T& getContent() const {
+    const T& getContent() const
+    {
         return *content;
     }
 
@@ -126,7 +125,8 @@ public:
      *
      * @return true iff a valid instance has been created
      */
-    bool isValid() const {
+    bool isValid() const
+    {
         return content != nullptr;
     }
 
@@ -135,7 +135,8 @@ public:
      *
      * @return the created instance
      */
-    T& operator*() {
+    T& operator*()
+    {
         return *content;
     }
 
@@ -144,7 +145,8 @@ public:
      *
      * @return the created instance
      */
-    const T& operator*() const {
+    const T& operator*() const
+    {
         return *content;
     }
 
@@ -154,7 +156,8 @@ public:
      * @return a pointer to the created instance, or nullptr if there is
      *         none
      */
-    T *operator->() {
+    T* operator->()
+    {
         return content;
     }
 
@@ -164,10 +167,13 @@ public:
      * @return a pointer to the created instance, or nullptr if there is
      *         none
      */
-    const T *operator->() const {
+    const T* operator->() const
+    {
         return content;
     }
 };
 
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_SHAREDLIBRARYCLASS_H

@@ -20,7 +20,6 @@
 #include "partitem.h"
 #include "log.h"
 
-#include <yarp/os/all.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
 

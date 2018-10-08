@@ -12,6 +12,7 @@
 
 #include <yarp/os/Carrier.h>
 #include <yarp/os/NetType.h>
+#include <yarp/os/ConnectionState.h>
 #include "MjpegStream.h"
 
 #include <cstring>

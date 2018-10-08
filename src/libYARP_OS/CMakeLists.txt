@@ -65,6 +65,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/NetworkClock.h
                  include/yarp/os/Nodes.h
                  include/yarp/os/Node.h
+                 include/yarp/os/NullConnection.h
                  include/yarp/os/NullConnectionReader.h
                  include/yarp/os/NullConnectionWriter.h
                  include/yarp/os/Os.h
@@ -188,7 +189,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/PortCorePacket.h
                       include/yarp/os/impl/PortCorePackets.h
                       include/yarp/os/impl/PortCoreUnit.h
-                      include/yarp/os/impl/PortManager.h
                       include/yarp/os/impl/Protocol.h
                       include/yarp/os/impl/Runnable.h
                       include/yarp/os/impl/SocketTwoWayStream.h
@@ -219,6 +219,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Bytes.cpp
                  src/Carrier.cpp
                  src/Carriers.cpp
+                 src/Connection.cpp
                  src/ConnectionReader.cpp
                  src/ConnectionRecorder.cpp
                  src/ConnectionWriter.cpp
@@ -267,6 +268,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/NetworkClock.cpp
                  src/Nodes.cpp
                  src/Node.cpp
+                 src/NullConnection.cpp
                  src/NullConnectionReader.cpp
                  src/NullConnectionWriter.cpp
                  src/Os.cpp
@@ -303,9 +305,10 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Runnable.cpp
                  src/Searchable.cpp
                  src/Semaphore.cpp
-                 src/SizedWriter.cpp
                  src/SharedLibrary.cpp
                  src/SharedLibraryFactory.cpp
+                 src/ShiftStream.cpp
+                 src/SizedWriter.cpp
                  src/SocketTwoWayStream.cpp
                  src/SplitString.cpp
                  src/Stamp.cpp
@@ -332,6 +335,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Vocab.cpp
                  src/YarpNameSpace.cpp
                  src/YarpPlugin.cpp
+                 src/WireLink.cpp
                  src/WirePortable.cpp
                  src/WireReader.cpp
                  src/WireState.cpp

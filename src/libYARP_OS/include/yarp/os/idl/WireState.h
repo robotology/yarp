@@ -12,29 +12,27 @@
 #include <yarp/os/api.h>
 
 namespace yarp {
-    namespace os {
-        namespace idl {
-            class WireState;
-        }
-    }
-}
+namespace os {
+namespace idl {
 
 /**
- *
  * IDL-friendly state.
- *
  */
-class YARP_OS_API yarp::os::idl::WireState {
+class YARP_OS_API WireState
+{
 public:
     int len;
     int code;
     bool need_ok;
-    WireState *parent;
+    WireState* parent;
 
     WireState();
 
     bool isValid() const;
 };
 
+} // namespace idl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IDL_WIRESTATE_H

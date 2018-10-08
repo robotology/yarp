@@ -10,16 +10,17 @@
 #define YARP_OS_LOG_H
 
 #include <yarp/os/api.h>
+
 #include <iosfwd>
 
-#if defined (__GNUC__)
-# define __YFUNCTION__ __PRETTY_FUNCTION__
+#if defined(__GNUC__)
+#    define __YFUNCTION__ __PRETTY_FUNCTION__
 #elif defined(_MSC_VER)
-# define __YFUNCTION__ __FUNCSIG__
+#    define __YFUNCTION__ __FUNCSIG__
 #elif (__cplusplus <= 199711)
-# define __YFUNCTION__ __func__
+#    define __YFUNCTION__ __func__
 #else
-# define __YFUNCTION__ "(unknown function)"
+#    define __YFUNCTION__ "(unknown function)"
 #endif // __GNUC__
 
 // check arguments of the c-style debug functions to make sure that the
@@ -27,14 +28,23 @@
 // specified, and that the conversions specified in the format string
 // make sense. On gcc the warning is enabled by -Wformat.
 #if defined(__GNUC__)
-# define YARP_ATTRIBUTE_FORMAT(style, fmt, args) __attribute__((format(printf, (fmt), (args))))
+#    define YARP_ATTRIBUTE_FORMAT(style, fmt, args) __attribute__((format(printf, (fmt), (args))))
 #else
-# define YARP_ATTRIBUTE_FORMAT(style, fmt, args)
+#    define YARP_ATTRIBUTE_FORMAT(style, fmt, args)
 #endif
 
 
-namespace yarp { namespace os { class LogStream; }}
-namespace yarp { namespace os { namespace impl { class LogImpl; }}}
+// Forward declarations
+namespace yarp {
+namespace os {
+class LogStream;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+namespace impl {
+class LogImpl;
+} // namespace impl
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+} // namespace os
+} // namespace yarp
 
 
 namespace yarp {
@@ -43,14 +53,14 @@ namespace os {
 class YARP_OS_API Log
 {
 public:
-
-    Log(const char *file,
+    Log(const char* file,
         const unsigned int line,
-        const char *func);
+        const char* func);
     Log();
     virtual ~Log();
 
-    enum LogType {
+    enum LogType
+    {
         TraceType,
         DebugType,
         InfoType,
@@ -59,12 +69,12 @@ public:
         FatalType
     };
 
-    void trace(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
-    void debug(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
-    void info(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
-    void warning(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
-    void error(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
-    YARP_NORETURN void fatal(const char *msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
+    void trace(const char* msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
+    void debug(const char* msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
+    void info(const char* msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
+    void warning(const char* msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
+    void error(const char* msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
+    YARP_NORETURN void fatal(const char* msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
 
     LogStream trace() const;
     LogStream debug() const;
@@ -74,15 +84,17 @@ public:
     LogStream fatal() const;
 
     typedef void (*LogCallback)(yarp::os::Log::LogType,
-                                const char *,
-                                const char *,
+                                const char*,
+                                const char*,
                                 const unsigned int,
-                                const char *);
+                                const char*);
 
     static void setLogCallback(LogCallback);
 
 private:
-    yarp::os::impl::LogImpl * const mPriv;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    yarp::os::impl::LogImpl* const mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     static LogCallback print_callback;
     static LogCallback forward_callback;
@@ -101,7 +113,10 @@ private:
 #define yError   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).error
 #define yFatal   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).fatal
 
-#define yAssert(x)  if (!(x)) { yFatal("Assertion failure at %s:%d (%s)", __FILE__, __LINE__, #x); }
+#define yAssert(x)                                                         \
+    if (!(x)) {                                                            \
+        yFatal("Assertion failure at %s:%d (%s)", __FILE__, __LINE__, #x); \
+    }
 
 #define YARP_FIXME_NOTIMPLEMENTED(what) yWarning("FIXME: %s not yet implemented", what);
 
@@ -109,7 +124,7 @@ private:
 /**
  * Low level function for printing a stack trace, if implemented (ACE or gcc/Linux).
  */
-YARP_OS_API void yarp_print_trace(FILE *out, const char *file, int line);
+YARP_OS_API void yarp_print_trace(FILE* out, const char* file, int line);
 
 
 #endif // YARP_OS_LOG_H

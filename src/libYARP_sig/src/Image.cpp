@@ -15,6 +15,7 @@
 #include <yarp/sig/Image.h>
 
 #include <yarp/os/Bottle.h>
+#include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Time.h>

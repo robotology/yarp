@@ -24,7 +24,6 @@ namespace os {
 class YARP_OS_API Thread
 {
 public:
-
     /**
      * Constructor.  Thread begins in a dormant state.  Call Thread::start
      * to get things going.
@@ -107,7 +106,9 @@ public:
      * same thread that is executing the "start" method.
      */
     virtual bool threadInit()
-    { return true;}
+    {
+        return true;
+    }
 
     /**
      * Release method. The thread executes this function once when
@@ -115,8 +116,7 @@ public:
      * resources that were initialized in threadInit() (release memory,
      * and device driver resources).
      */
-    virtual void threadRelease()
-    {}
+    virtual void threadRelease() {}
 
 
     /**
@@ -164,7 +164,7 @@ public:
      * SCHED_FIFO  : policy=1, priority=[1 .. 99]
      * SCHED_RR    : policy=2, priority=[1 .. 99]
      */
-    int setPriority(int priority, int policy=-1);
+    int setPriority(int priority, int policy = -1);
 
     /**
      * Query the current priority of the thread, if the OS supports that.

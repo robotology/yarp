@@ -10,8 +10,6 @@
 #ifndef YARP_MPISTREAM
 #define YARP_MPISTREAM
 
-#include <yarp/os/all.h>
-
 #include <yarp/os/TwoWayStream.h>
 #include <string>
 #include <yarp/os/Bytes.h>

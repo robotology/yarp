@@ -13,10 +13,7 @@
 #include <yarp/os/YarpPluginSettings.h>
 
 namespace yarp {
-    namespace os {
-        template <class T> class YarpPlugin;
-    }
-}
+namespace os {
 
 /**
  *
@@ -24,9 +21,10 @@ namespace yarp {
  *
  */
 template <class T>
-class yarp::os::YarpPlugin {
+class YarpPlugin
+{
 private:
-    SharedLibraryClassFactory<T> *factory;
+    SharedLibraryClassFactory<T>* factory;
     SharedLibraryClass<T> content;
     YarpPluginSettings settings;
 
@@ -36,7 +34,8 @@ public:
      * Constructor.
      *
      */
-    YarpPlugin() {
+    YarpPlugin()
+    {
         factory = nullptr;
     }
 
@@ -45,7 +44,8 @@ public:
      * Destructor.
      *
      */
-    virtual ~YarpPlugin() {
+    virtual ~YarpPlugin()
+    {
         close();
     }
 
@@ -59,10 +59,12 @@ public:
      * @return true on success
      *
      */
-    bool open(YarpPluginSettings& settings) {
+    bool open(YarpPluginSettings& settings)
+    {
         close();
         factory = new SharedLibraryClassFactory<T>();
-        if (!factory) return false;
+        if (!factory)
+            return false;
         if (!settings.open(*factory)) {
             settings.reportStatus(*factory);
             close();
@@ -79,12 +81,13 @@ public:
      * @return true on success
      *
      */
-    bool close() {
+    bool close()
+    {
         if (!factory) {
             return true;
         }
         factory->removeRef();
-        if (factory->getReferenceCount()<=0) {
+        if (factory->getReferenceCount() <= 0) {
             delete factory;
             factory = nullptr;
         }
@@ -96,7 +99,8 @@ public:
      * @return true if the plugin is correctly loaded
      *
      */
-    bool isValid() const {
+    bool isValid() const
+    {
         return (factory != nullptr);
     }
 
@@ -108,7 +112,8 @@ public:
      *         failure)
      *
      */
-    T *create() {
+    T* create()
+    {
         if (!factory) {
             return nullptr;
         }
@@ -122,7 +127,8 @@ public:
      * @param obj the object to destroy
      *
      */
-    void destroy(T *obj) {
+    void destroy(T* obj)
+    {
         if (!factory) {
             return;
         }
@@ -134,7 +140,8 @@ public:
      * @return the name of the objects constructed by this plugin
      *
      */
-    std::string getName() {
+    std::string getName()
+    {
         if (!factory) {
             return std::string();
         }
@@ -146,7 +153,8 @@ public:
      * @return the type of the objects constructed by this plugin
      *
      */
-    std::string getClassName() {
+    std::string getClassName()
+    {
         if (!factory) {
             return std::string();
         }
@@ -158,7 +166,8 @@ public:
      * @return the base class the objects constructed by this plugin
      *
      */
-    std::string getBaseClassName() {
+    std::string getBaseClassName()
+    {
         if (!factory) {
             return std::string();
         }
@@ -170,9 +179,13 @@ public:
      * @return the factory object associated with the plugin
      *
      */
-    SharedLibraryClassFactory<T> *getFactory() const {
+    SharedLibraryClassFactory<T>* getFactory() const
+    {
         return factory;
     }
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_YARPPLUGIN_H

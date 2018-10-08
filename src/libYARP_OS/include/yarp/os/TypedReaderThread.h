@@ -12,20 +12,25 @@
 
 #include <yarp/os/Thread.h>
 
-// Defined in this file:
-namespace yarp { namespace os { template <typename T> class TypedReaderThread; }}
-
-namespace yarp { namespace os { template <typename T> class TypedReader; }}
-namespace yarp { namespace os { template <typename T> class TypedReaderCallback; }}
+// Forward declarations
+namespace yarp {
+namespace os {
+template <typename T>
+class TypedReader;
+template <typename T>
+class TypedReaderCallback;
+} // namespace os
+} // namespace yarp
 
 namespace yarp {
 namespace os {
 
 template <typename T>
-class TypedReaderThread : public Thread {
+class TypedReaderThread : public Thread
+{
 public:
-    TypedReader<T> *reader;
-    TypedReaderCallback<T> *callback;
+    TypedReader<T>* reader;
+    TypedReaderCallback<T>* callback;
 
     TypedReaderThread();
 

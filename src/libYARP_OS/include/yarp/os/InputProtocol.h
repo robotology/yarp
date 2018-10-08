@@ -10,27 +10,32 @@
 #ifndef YARP_OS_INPUTPROTOCOL_H
 #define YARP_OS_INPUTPROTOCOL_H
 
-#include <yarp/os/Route.h>
+#include <yarp/os/Connection.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
-#include <string>
 #include <yarp/os/Property.h>
-#include <yarp/os/Connection.h>
+#include <yarp/os/Route.h>
 #include <yarp/os/SizedWriter.h>
 
+#include <string>
+
 namespace yarp {
-    namespace os {
-        class InputProtocol;
-        class OutputProtocol;
-        class Contactable;
-    }
-}
+namespace os {
+class OutputProtocol;
+class Contactable;
+} // namespace os
+} // namespace yarp
+
+
+namespace yarp {
+namespace os {
 
 /**
  * The input side of an active connection between two ports.
  */
-class YARP_OS_API yarp::os::InputProtocol {
+class YARP_OS_API InputProtocol
+{
 public:
     /**
      *
@@ -168,7 +173,7 @@ public:
      * Set the port to be associated with the connection.
      *
      */
-    virtual void attachPort(Contactable *port) = 0;
+    virtual void attachPort(Contactable* port) = 0;
 
     /**
      *
@@ -177,5 +182,8 @@ public:
      */
     virtual bool isReplying() const = 0;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_INPUTPROTOCOL_H

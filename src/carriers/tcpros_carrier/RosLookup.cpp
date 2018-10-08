@@ -8,6 +8,10 @@
 
 #include "RosLookup.h"
 
+#include <yarp/os/Bottle.h>
+#include <yarp/os/ContactStyle.h>
+#include <yarp/os/Network.h>
+
 #include <cstdlib>
 
 using namespace yarp::os;

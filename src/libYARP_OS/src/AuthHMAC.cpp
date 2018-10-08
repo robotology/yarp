@@ -15,6 +15,7 @@
 #include <ctime>
 #include <random>
 #include <string>
+#include <yarp/os/Bytes.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/ResourceFinder.h>

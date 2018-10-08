@@ -14,46 +14,51 @@
 #include <yarp/os/idl/WireWriter.h>
 
 namespace yarp {
-    namespace os {
-        namespace idl {
-            template <class T> class Unwrapped;
-            template <class T> class UnwrappedView;
-        }
-    }
-}
+namespace os {
+namespace idl {
 
 template <class T>
-class yarp::os::idl::Unwrapped : public yarp::os::Portable {
+class Unwrapped : public yarp::os::Portable
+{
 public:
     T content;
 
-    virtual bool read(yarp::os::ConnectionReader& reader) override {
+    virtual bool read(yarp::os::ConnectionReader& reader) override
+    {
         WireReader wreader(reader);
         return content.read(wreader);
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) const override {
+    virtual bool write(yarp::os::ConnectionWriter& writer) const override
+    {
         WireWriter wwriter(writer);
         return content.write(wwriter);
     }
 };
 
 template <class T>
-class yarp::os::idl::UnwrappedView : public yarp::os::Portable {
+class UnwrappedView : public yarp::os::Portable
+{
 public:
     T& content;
 
     UnwrappedView(T& content) : content(content) {}
 
-    virtual bool read(yarp::os::ConnectionReader& reader) override {
+    virtual bool read(yarp::os::ConnectionReader& reader) override
+    {
         WireReader wreader(reader);
         return content.read(wreader);
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) const override {
+    virtual bool write(yarp::os::ConnectionWriter& writer) const override
+    {
         WireWriter wwriter(writer);
         return content.write(wwriter);
     }
 };
+
+} // namespace idl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IDL_UNWRAPPED_H

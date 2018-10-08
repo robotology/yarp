@@ -10,6 +10,8 @@
 #include "ShmemCarrier.h"
 #include "ShmemHybridStream.h"
 
+#include <yarp/os/ConnectionState.h>
+
 #include <string>
 #include <cstdlib>
 

@@ -12,12 +12,12 @@
 
 #include <yarp/os/PortReader.h>
 
-
-// Defined in this file:
-namespace yarp { namespace os { class PortReaderBufferBase; }}
-
-// Other forward declarations:
-namespace yarp { namespace os { class PortReaderBufferBaseCreator; }}
+// Forward declarations:
+namespace yarp {
+namespace os {
+class PortReaderBufferBaseCreator;
+} // namespace os
+} // namespace yarp
 
 
 namespace yarp {
