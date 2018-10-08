@@ -480,8 +480,12 @@ script:
   # Configure yarp
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then build/bin/yarp conf 0 0 local; fi
 
-  # Run unit tests
-  - if $TRAVIS_RUN_UNIT_TESTS; then (cd build; travis_wait 50 ctest --output-on-failure --build . -C ${TRAVIS_BUILD_TYPE}); fi
+  # Run unit tests (but do not fail on error)
+  - if $TRAVIS_RUN_UNIT_TESTS; then (cd build; travis_wait 50 ctest --output-on-failure --build . -C ${TRAVIS_BUILD_TYPE} || true); fi
+
+  # Run failed unit tests again (this should help preventing failures due to
+  # known race conditions, see #880).
+  - if $TRAVIS_RUN_UNIT_TESTS; then (cd build; ctest --rerun-failed --output-on-failure --build . -C ${TRAVIS_BUILD_TYPE}); fi
 
   # Test installation
   - (cd build; cmake --build . --config ${TRAVIS_BUILD_TYPE} --target install)
