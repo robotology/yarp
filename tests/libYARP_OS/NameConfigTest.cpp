@@ -18,7 +18,7 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-TEST_CASE("OS::impl::NameConfig", "[yarp::os::impl]")
+TEST_CASE("OS::impl::NameConfig", "[yarp::os][yarp::os::impl]")
 {
     SECTION("testing compilation") {
         NameConfig nc;

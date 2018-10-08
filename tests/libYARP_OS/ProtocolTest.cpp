@@ -45,7 +45,7 @@ void show(FakeTwoWayStream *fake1, FakeTwoWayStream *fake2) {
                     simplify(fake2->getOutputText()).c_str());
 }
 
-TEST_CASE("OS::impl::ProtocolTest", "[yarp::os::impl]") {
+TEST_CASE("OS::impl::ProtocolTest", "[yarp::os][yarp::os::impl]") {
     
     SECTION("trying to send a bottle across a fake stream") {
         // set up a fake sender/receiver pair

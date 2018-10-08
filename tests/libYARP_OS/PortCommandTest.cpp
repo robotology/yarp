@@ -40,7 +40,7 @@ static std::string humanize(const std::string& txt)
     return result;
 }
 
-TEST_CASE("OS::impl::PortCommandTest", "[yarp::os::impl]") {
+TEST_CASE("OS::impl::PortCommandTest", "[yarp::os][yarp::os::impl]") {
 
     SECTION("testing text-mode writing...") {
 

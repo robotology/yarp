@@ -119,7 +119,7 @@ public:
 };
 
 
-TEST_CASE("OS::impl::DgramTwoWayStreamTest", "[yarp::os::impl]") {
+TEST_CASE("OS::impl::DgramTwoWayStreamTest", "[yarp::os][yarp::os::impl]") {
 
     int sz = 100;
     DgramTest in;

@@ -29,7 +29,7 @@ typedef PortablePair<PortablePair<PortablePair<Bottle, ImageOf<PixelRgb> >,
                                   PortablePair<ImageOf<PixelRgb>, Stamp> >,
                      Bottle> Monster;
 
-TEST_CASE("OS::impl::BufferedConnectionWriterTest", "[yarp::os::impl]") {
+TEST_CASE("OS::impl::BufferedConnectionWriterTest", "[yarp::os][yarp::os::impl]") {
 
     SECTION("testing writing") {
         StringOutputStream sos;

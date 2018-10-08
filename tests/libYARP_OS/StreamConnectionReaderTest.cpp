@@ -20,7 +20,7 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-TEST_CASE("OS::StreamConnectionReaderTest", "[yarp::os]") {
+TEST_CASE("OS::impl::StreamConnectionReaderTest", "[yarp::os][yarp::os::impl]") {
 
     SECTION("testing reading") {
         StringInputStream sis;
