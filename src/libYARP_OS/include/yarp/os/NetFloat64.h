@@ -11,6 +11,7 @@
 #define YARP_OS_NETFLOAT64_H
 
 #include <yarp/conf/numeric.h>
+
 #include <yarp/os/api.h>
 
 ////////////////////////////////////////////////////////////////////////
@@ -46,16 +47,19 @@ typedef yarp::conf::float64_t NetFloat64;
 #else // YARP_LITTLE_ENDIAN
 
 typedef yarp::conf::float64_t RawNetFloat64;
-union UnionNetFloat64 {
+union UnionNetFloat64
+{
     yarp::conf::float64_t d;
     unsigned char c[8];
 };
-class YARP_OS_API NetFloat64 {
+class YARP_OS_API NetFloat64
+{
 private:
     double raw_value;
     double swap(double x) const;
     RawNetFloat64 get() const;
     void set(RawNetFloat64 v);
+
 public:
     NetFloat64();
     NetFloat64(RawNetFloat64 val);

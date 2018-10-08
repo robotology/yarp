@@ -23,8 +23,7 @@ class Value;
 class YARP_OS_API Type
 {
 public:
-
-/** @{ */
+    /** @{ */
 
     /**
      * @brief Constructor.
@@ -66,8 +65,8 @@ public:
      */
     Type& operator=(Type&& rhs) noexcept;
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     std::string getName() const;
 
@@ -85,8 +84,8 @@ public:
 
     Type& addProperty(const char* key, const Value& val);
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     static Type byName(const char* name);
 
@@ -96,7 +95,7 @@ public:
 
     static Type anon();
 
-/** @} */
+    /** @} */
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:

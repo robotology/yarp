@@ -10,44 +10,42 @@
 #ifndef YARP_OS_ELECTION_H
 #define YARP_OS_ELECTION_H
 
-#include <string>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/Mutex.h>
 
 #include <map>
+#include <string>
 
 namespace yarp {
-    namespace os {
-        template <class T> class PeerRecord;
-        template <class PR> class ElectionOf;
-    }
-}
+namespace os {
 
 template <class T>
-class yarp::os::PeerRecord {
+class PeerRecord
+{
 public:
     typedef T peer_type;
-    typedef std::map<T *, bool> map_type;
+    typedef std::map<T*, bool> map_type;
     map_type peerSet;
     typedef typename map_type::iterator iterator;
     typedef typename map_type::const_iterator const_iterator;
 
-    PeerRecord() {
-    }
+    PeerRecord() {}
 
-    PeerRecord(const PeerRecord& alt) {
-    }
+    PeerRecord(const PeerRecord& alt) {}
 
-    void add(T *entity) {
+    void add(T* entity)
+    {
         peerSet[entity] = true;
     }
 
-    void remove(T *entity) {
+    void remove(T* entity)
+    {
         peerSet.erase(entity);
     }
 
-    T *getFirst() {
-        if (peerSet.begin()!=peerSet.end()) {
+    T* getFirst()
+    {
+        if (peerSet.begin() != peerSet.end()) {
             return peerSet.begin()->first;
         }
         return nullptr;
@@ -63,9 +61,10 @@ public:
  * PR should be a subclass of PeerRecord.
  */
 template <class PR>
-class yarp::os::ElectionOf {
+class ElectionOf
+{
 private:
-    typedef void *voidPtr;
+    typedef void* voidPtr;
 
     yarp::os::Mutex mutex;
 
@@ -73,7 +72,8 @@ private:
     map_type nameMap;
     long ct;
 
-    PR *getRecordRaw(const std::string& key, bool create = false) {
+    PR* getRecordRaw(const std::string& key, bool create = false)
+    {
         typename map_type::iterator entry = nameMap.find(key);
         if (entry == nameMap.end() && create) {
             nameMap[key] = PR();
@@ -84,33 +84,39 @@ private:
         }
         return &(entry->second);
     }
- public:
-    ElectionOf() : mutex() {
+
+public:
+    ElectionOf() :
+            mutex()
+    {
         ct = 0;
     }
     virtual ~ElectionOf() {}
 
-    PR *add(const std::string& key, typename PR::peer_type *entity) {
+    PR* add(const std::string& key, typename PR::peer_type* entity)
+    {
         mutex.lock();
         ct++;
-        PR *rec = getRecordRaw(key, true);
+        PR* rec = getRecordRaw(key, true);
         yAssert(rec);
         rec->add(entity);
         mutex.unlock();
         return rec;
     }
-    void remove(const std::string& key, typename PR::peer_type *entity) {
+    void remove(const std::string& key, typename PR::peer_type* entity)
+    {
         mutex.lock();
         ct++;
-        PR *rec = getRecordRaw(key, false);
+        PR* rec = getRecordRaw(key, false);
         yAssert(rec);
         rec->remove(entity);
         mutex.unlock();
     }
 
-    typename PR::peer_type *getElect(const std::string& key) {
+    typename PR::peer_type* getElect(const std::string& key)
+    {
         mutex.lock();
-        PR *rec = getRecordRaw(key, false);
+        PR* rec = getRecordRaw(key, false);
         mutex.unlock();
         if (rec) {
             return rec->getFirst();
@@ -118,49 +124,30 @@ private:
         return nullptr;
     }
 
-    PR *getRecord(const std::string& key) {
+    PR* getRecord(const std::string& key)
+    {
         mutex.lock();
-        PR *rec = getRecordRaw(key, false);
+        PR* rec = getRecordRaw(key, false);
         mutex.unlock();
         return rec;
     }
 
-    long getEventCount() {
+    long getEventCount()
+    {
         return ct;
     }
 
-    void lock() { mutex.lock(); }
-    void unlock() { mutex.unlock(); }
+    void lock()
+    {
+        mutex.lock();
+    }
+    void unlock()
+    {
+        mutex.unlock();
+    }
 };
 
-
-/**
- * Type-safe wrapper for the Election class.
- */
-/*
-template <class T, class PR>
-class yarp::os::ElectionOf : protected Election<PR> {
-public:
-    PR *add(const std::string& key, T *entity) {
-        return Election<PR>::add(key, entity);
-    }
-
-    void remove(const std::string& key, T *entity) {
-        Election<PR>::remove(key, entity);
-    }
-
-    T *getElect(const std::string& key) {
-        return (T *)Election<PR>::getElect(key);
-    }
-
-    PR *getRecord(const std::string& key) {
-        return Election<PR>::getRecord(key);
-    }
-
-    void lock() { Election<PR>::lock(); }
-
-    void unlock() { Election<PR>::unlock(); }
-};
-*/
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_ELECTION_H

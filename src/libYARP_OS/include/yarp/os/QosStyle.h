@@ -10,32 +10,30 @@
 #define YARP_OS_QOSSTYLE_H
 
 #include <yarp/os/api.h>
+
 #include <string>
 
 namespace yarp {
-    namespace os {
-        class QosStyle;
-    }
-}
+namespace os {
 
 /**
  * \ingroup comm_class
  *
  * Preferences for the port's Quality of Service.
  * All fields have sensible defaults.
- *
  */
-class YARP_OS_API yarp::os::QosStyle {
+class YARP_OS_API QosStyle
+{
 public:
-
     /**
      * The PacketPriorityLevel defines the packets
      * quality of service (priority) levels
      */
-    enum PacketPriorityLevel {
+    enum PacketPriorityLevel
+    {
         PacketPriorityInvalid = -1,
         PacketPriorityNormal = 0,
-        PacketPriorityLow  = 10,
+        PacketPriorityLow = 10,
         PacketPriorityHigh = 36,
         PacketPriorityCritical = 44,
         PacketPriorityUndefined = 0x7FFF
@@ -46,7 +44,8 @@ public:
      * The PacketPriorityDSCP defines the packets
      * quality of service (priority) using DSCP
      */
-    enum PacketPriorityDSCP {
+    enum PacketPriorityDSCP
+    {
         DSCP_Invalid = -1,
         DSCP_CS0 = 0,
         DSCP_CS1 = 8,
@@ -98,7 +97,8 @@ public:
      * @brief sets the packet priority given as TOS value
      * @param tos the packet TOS
      */
-    void setPacketPrioritybyTOS(int tos) {
+    void setPacketPrioritybyTOS(int tos)
+    {
         packetPriority = tos;
     }
 
@@ -127,7 +127,8 @@ public:
      * @brief sets the communication thread priority level
      * @param priority the thread's priority
      */
-    void setThreadPriority(int priority) {
+    void setThreadPriority(int priority)
+    {
         threadPriority = priority;
     }
 
@@ -136,7 +137,8 @@ public:
      * @brief sets the communication thread scheduling policy
      * @param policy the thread's real-time scheduling policy
      */
-    void setThreadPolicy(int policy) {
+    void setThreadPolicy(int policy)
+    {
         threadPolicy = policy;
     }
 
@@ -145,7 +147,8 @@ public:
      * @brief returns the packet TOS value
      * @return the TOS
      */
-    int getPacketPriorityAsTOS() const {
+    int getPacketPriorityAsTOS() const
+    {
         return packetPriority;
     }
 
@@ -168,7 +171,8 @@ public:
      * @brief returns the communication thread priority level
      * @return the thread priority
      */
-    int getThreadPriority() const {
+    int getThreadPriority() const
+    {
         return threadPriority;
     }
 
@@ -177,7 +181,8 @@ public:
      * @brief returns the communication thread scheduling policy
      * @return the thread scheduling policy
      */
-    int getThreadPolicy() const {
+    int getThreadPolicy() const
+    {
         return threadPolicy;
     }
 
@@ -202,7 +207,9 @@ private:
     int threadPriority;
     int threadPolicy;
     int packetPriority;
-
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_QOSSTYLE_H

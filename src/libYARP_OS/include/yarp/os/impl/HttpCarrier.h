@@ -14,6 +14,8 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/StringOutputStream.h>
+#include <yarp/os/TwoWayStream.h>
+#include <yarp/os/Property.h>
 
 namespace yarp {
     namespace os {

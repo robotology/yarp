@@ -10,11 +10,8 @@
 #ifndef YARP_OS_TYPEDREADER_H
 #define YARP_OS_TYPEDREADER_H
 
-// Defined in this file:
-namespace yarp { namespace os { template <typename T> class TypedReader; }}
 
 #include <yarp/os/TypedReaderCallback.h>
-
 
 
 namespace yarp {
@@ -50,7 +47,7 @@ public:
      *         The object is available to the user until the next call to one of
      *         the read methods, after which it should not be accessed again.
      */
-    virtual T *read(bool shouldWait = true) = 0;
+    virtual T* read(bool shouldWait = true) = 0;
 
     /**
      * Abort any read operation currently in progress.
@@ -62,7 +59,7 @@ public:
      *
      * @return pointer to last data returned by read(), or nullptr on failure.
      */
-    virtual T *lastRead() = 0;
+    virtual T* lastRead() = 0;
 
     /**
      * Returns whether the port associated with this reader has been closed
@@ -101,7 +98,7 @@ public:
     virtual std::string getName() const = 0;
 
 
-   /**
+    /**
      * If a message is received that requires a reply, use this handler.
      *
      * No buffering happens.
@@ -124,7 +121,7 @@ public:
      * back control of the last object read.
      *
      */
-    virtual void *acquire() = 0;
+    virtual void* acquire() = 0;
 
 
     /**
@@ -136,7 +133,7 @@ public:
      * the object was taken by the user.
      *
      */
-    virtual void release(void *handle) = 0;
+    virtual void release(void* handle) = 0;
 
 
     /**

@@ -20,7 +20,7 @@ namespace os {
  * \ingroup key_class
  * @brief A helper class to pass the SystemInfo object around the YARP network
  */
-class YARP_OS_API SystemInfoSerializer: public yarp::os::Portable
+class YARP_OS_API SystemInfoSerializer : public yarp::os::Portable
 {
 public:
     /**
@@ -77,7 +77,7 @@ public:
      */
     yarp::os::SystemInfo::UserInfo user;
 
-    //yarp::os::SystemInfo::NetworkInfo network;
+    // yarp::os::SystemInfo::NetworkInfo network;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:

@@ -134,6 +134,7 @@ git pull --rebase origin devel
 ```
 git merge master
 ```
+
 ##### Work in progress PR
 As final note, in case you need to start a PR but you deem it still **work-in-progress**
 and don't want anyone to merge it by mistake, do the following:
@@ -171,20 +172,20 @@ This is an example of workflow involving:
 * A bug fixed in the `bugfix_xxx` branch (gray) and later merged on the `master`
   branch (blue).
 * A few stable tags in the `master` branch:
-  * **v2.3.64.5** is latest stable tag for the YARP 2.3.64 release series.
-  * **v2.3.66** is the first stable tag for the YARP 2.3.66 release series.
-  * **v2.3.66.1** is a stable tag (bug fixes only) for the YARP 2.3.66 release
-    series. **v2.3.66** and **v2.3.66.1** are compatible (both API and ABI).
+  * **v3.0.1** is latest stable tag for the YARP 3.0 release series.
+  * **v3.1.0** is the first stable tag for the YARP 3.1 release series.
+  * **v3.1.1** is a stable tag (bug fixes only) for the YARP 3.1 release
+    series. **v3.1.0** and **v3.1.1** are compatible (both API and ABI).
 * The development of a new feature developed in the `feature_foo` branch (orange)
   and later merged in the `devel` branch (purple).
 * Two fake development tag in the `devel` branch:
-  * **v2.3.67** that represents the beginning of the development of the next
+  * **v3.1.100** that represents the beginning of the development of the next
     stable release.
-  * **v2.3.67.1** that includes one new feature.
+  * **v3.1.101** that includes one new feature.
   These are not tagged for real in the repository, but represents the actual
   version number that other projects can check in order to require a specific
   feature and print an error that is easy to understand when that feature is not
-  available (i.e. in CMake `find_package(YARP 2.3.67.1 REQUIRED)`)
+  available (i.e. in CMake `find_package(YARP 3.1.101 REQUIRED)`)
 
 ![YARP Workflow](workflow.png)
 
@@ -194,17 +195,17 @@ This is an example of workflow involving:
 - **Downstream projects**: code repositories that depend on the project under
   subject.
 - **Versioning format**: the versioning system we adopt complies with the format
-  <**major**>.<**minor**>.<**patch**>.<**tweak**>.
-  Starting with YARP 2.3.66, the _patch_ version number is an _even_ number for
-  stable releases (tagged in `master`), and an _odd_ number for unstable releases
-  (tagged in `devel`).
+  <**major**>.<**minor**>.<**patch**>.
+  Starting with YARP 3.0.0, the _patch_ version number is a number lower than
+  100 for stable releases (tagged in `master`), and a number greater or equal
+  than 100 for unstable releases (tagged in `devel`).
 
 
 
 Policies
 --------
 
-### Deprecated features
+### Deprecated Features
 
 Deprecated methods, features, classes, and tools are marked as deprecated
 instead of removed. This will generate a warning when using these from other
@@ -220,14 +221,20 @@ major release, in order to simplify as much as possible the migration.
 During this period, it is also allowed to do breaking changes that cannot be
 deprecated using the `YARP_DEPRECATED` methods.
 
+### `impl` Classes
+
+Classes in the "impl" namespace are not considered public. Their API is subject
+to changes, without deprecation, even in a minor release.
+
 
 ### Supported Systems
 
 * **Linux**: See [YARP Supported Distributions](http://wiki.icub.org/wiki/YARP_Supported_Distributions)
 * **Windows**:
-  * Visual Studio 12 2013 32/64 bit
   * Visual Studio 14 2015 32/64 bit
-  * Visual Studio 15 2017 32/64 bit (work in progress)
+  * Visual Studio 15 2017 32/64 bit
 * **macOS**:
   * 10.11 El Capitan
   * 10.12 Sierra
+  * 10.13 High Sierra
+  * 10.14 Mojave

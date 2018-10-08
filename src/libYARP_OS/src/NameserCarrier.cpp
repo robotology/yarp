@@ -8,6 +8,9 @@
  */
 
 #include <yarp/os/impl/NameserCarrier.h>
+#include <yarp/os/ConnectionState.h>
+#include <yarp/os/Route.h>
+#include <yarp/os/SizedWriter.h>
 #include <string>
 
 using namespace yarp::os;

@@ -10,16 +10,13 @@
 #ifndef YARP_OS_SYSTEMINFO_H
 #define YARP_OS_SYSTEMINFO_H
 
-#include <string>
 #include <yarp/os/Property.h>
+
+#include <string>
 
 
 namespace yarp {
-  namespace os {
-        class SystemInfo;
-  }
-}
-
+namespace os {
 
 /**
  * \ingroup key_class
@@ -28,7 +25,7 @@ namespace yarp {
  * available memory, storage, CPU load and etc.
  */
 
-class YARP_OS_API yarp::os::SystemInfo
+class YARP_OS_API SystemInfo
 {
 public:
     typedef int capacity_t;
@@ -36,7 +33,8 @@ public:
     /**
      * @brief The MemoryInfo struct holds the system memory information
      */
-    typedef struct MemoryInfo {
+    typedef struct MemoryInfo
+    {
         capacity_t totalSpace;
         capacity_t freeSpace;
     } MemoryInfo;
@@ -45,7 +43,8 @@ public:
     /**
      * @brief The StorageInfo struct holds the system storage information
      */
-    typedef struct StorageInfo {
+    typedef struct StorageInfo
+    {
         capacity_t totalSpace;
         capacity_t freeSpace;
     } StorageInfo;
@@ -53,7 +52,8 @@ public:
     /**
      * @brief The ProcessorInfo struct holds the processor information
      */
-    typedef struct ProcessorInfo {
+    typedef struct ProcessorInfo
+    {
         std::string architecture;
         std::string model;
         std::string vendor;
@@ -68,7 +68,8 @@ public:
     /**
      * @brief The LoadInfo struct holds the current cpu load information
      */
-    typedef struct LoadInfo {
+    typedef struct LoadInfo
+    {
         double cpuLoad1;
         double cpuLoad5;
         double cpuLoad15;
@@ -79,7 +80,8 @@ public:
     /**
      * @brief The PlatformInfo struct holds the operating system information
      */
-    typedef struct PlatformInfo {
+    typedef struct PlatformInfo
+    {
         std::string name;
         std::string distribution;
         std::string release;
@@ -91,7 +93,8 @@ public:
     /**
      * @brief The UserInfo struct holds the current user information
      */
-    typedef struct UserInfo {
+    typedef struct UserInfo
+    {
         std::string userName;
         std::string realName;
         std::string homeDir;
@@ -109,7 +112,8 @@ public:
     /**
      * @brief The ProcessInfo struct provides the operating system process information.
      */
-    typedef struct ProcessInfo {
+    typedef struct ProcessInfo
+    {
         std::string name;
         std::string arguments;
         int schedPolicy;
@@ -163,8 +167,11 @@ public:
      */
     static ProcessInfo getProcessInfo(int pid = 0);
 
-    //static NetworkInfo getNetworkInfo();
+    // static NetworkInfo getNetworkInfo();
 };
 
-#endif // YARP_OS_SYSTEMINFO_H
 
+} // namespace os
+} // namespace yarp
+
+#endif // YARP_OS_SYSTEMINFO_H

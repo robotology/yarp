@@ -11,7 +11,9 @@
 #define YARP_OS_INPUTSTREAM_H
 
 #include <yarp/conf/numeric.h>
+
 #include <yarp/os/api.h>
+
 #include <string>
 
 namespace yarp {

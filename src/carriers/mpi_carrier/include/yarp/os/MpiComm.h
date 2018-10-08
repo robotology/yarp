@@ -10,10 +10,9 @@
 #ifndef YARP_MPICOMM
 #define YARP_MPICOMM
 
-#include <yarp/os/all.h>
-
 #include <string>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/SystemClock.h>
 #include <yarp/os/Thread.h>
 
 #include <string>

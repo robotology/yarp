@@ -20,7 +20,8 @@ namespace os {
  * Generic interface for a container of `yarp::os::Contactable` objects.
  * Implemented by ROS related classes `yarp::os::Node` and `yarp::os::Nodes`.
  */
-class YARP_OS_API Contactables {
+class YARP_OS_API Contactables
+{
 public:
     virtual ~Contactables() {}
 

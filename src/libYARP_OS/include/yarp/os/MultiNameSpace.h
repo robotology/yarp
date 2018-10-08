@@ -13,12 +13,10 @@
 #include <yarp/os/NameStore.h>
 
 namespace yarp {
-    namespace os {
-        class MultiNameSpace;
-    }
-}
+namespace os {
 
-class YARP_OS_API yarp::os::MultiNameSpace : public NameSpace {
+class YARP_OS_API MultiNameSpace : public NameSpace
+{
 public:
     MultiNameSpace();
 
@@ -40,10 +38,11 @@ public:
 
     virtual Contact unregisterContact(const Contact& contact) override;
 
-    virtual bool setProperty(const std::string& name, const std::string& key,
+    virtual bool setProperty(const std::string& name,
+                             const std::string& key,
                              const Value& value) override;
 
-    virtual Value *getProperty(const std::string& name, const std::string& key) override;
+    virtual Value* getProperty(const std::string& name, const std::string& key) override;
 
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
@@ -84,7 +83,7 @@ public:
      * YARP, so you don't end up with a loop.
      *
      */
-    virtual void queryBypass(NameStore *store);
+    virtual void queryBypass(NameStore* store);
 
     /**
      *
@@ -92,7 +91,7 @@ public:
      * was set by queryBypass()
      *
      */
-    virtual NameStore *getQueryBypass();
+    virtual NameStore* getQueryBypass();
 
     virtual Contact detectNameServer(bool useDetectedServer,
                                      bool& scanNeeded,
@@ -103,8 +102,11 @@ public:
                                    const ContactStyle& style) override;
 
 private:
-    void *system_resource;
-    NameStore *altStore;
+    void* system_resource;
+    NameStore* altStore;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_MULTINAMESPACE_H

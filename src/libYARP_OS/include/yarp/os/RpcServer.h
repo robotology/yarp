@@ -13,10 +13,7 @@
 #include <yarp/os/AbstractContactable.h>
 
 namespace yarp {
-    namespace os {
-        class RpcServer;
-    }
-}
+namespace os {
 
 /**
  * \ingroup comm_class
@@ -26,7 +23,8 @@ namespace yarp {
  * those connections.
  *
  */
-class YARP_OS_API yarp::os::RpcServer : public AbstractContactable {
+class YARP_OS_API RpcServer : public AbstractContactable
+{
 public:
     /**
      * Constructor.
@@ -40,12 +38,12 @@ public:
 
     // documented in UnbufferedContactable
     virtual bool write(const PortWriter& writer,
-                       const PortWriter *callback = nullptr) const override;
+                       const PortWriter* callback = nullptr) const override;
 
     // documented in UnbufferedContactable
     virtual bool write(const PortWriter& writer,
                        PortReader& reader,
-                       const PortWriter *callback = nullptr) const override;
+                       const PortWriter* callback = nullptr) const override;
 
     // documented in UnbufferedContactable
     virtual bool read(PortReader& reader, bool willReply = true) override;
@@ -54,11 +52,13 @@ public:
     virtual void setOutputMode(bool expectOutput) override;
     virtual void setRpcMode(bool expectRpc) override;
 
-    virtual Port& asPort() override {
+    virtual Port& asPort() override
+    {
         return port;
     }
 
-    virtual const Port& asPort() const override {
+    virtual const Port& asPort() const override
+    {
         return port;
     }
 
@@ -69,7 +69,10 @@ private:
     // forbid copy constructor and assignment operator by making them private
     // and not implementing them
     RpcServer(const RpcServer& alt);
-    const RpcServer& operator = (const RpcServer& alt);
+    const RpcServer& operator=(const RpcServer& alt);
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_RPCSERVER_H

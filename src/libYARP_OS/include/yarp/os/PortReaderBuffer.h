@@ -10,26 +10,22 @@
 #ifndef YARP_OS_PORTREADERBUFFER_H
 #define YARP_OS_PORTREADERBUFFER_H
 
-#include <yarp/os/PortReader.h>
-#include <yarp/os/Port.h>
-#include <yarp/os/Thread.h>
-#include <string>
-#include <yarp/os/LocalReader.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/LocalReader.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/PortReader.h>
+#include <yarp/os/PortReaderBufferBase.h>
+#include <yarp/os/PortReaderBufferBaseCreator.h>
+#include <yarp/os/Thread.h>
 #include <yarp/os/TypedReader.h>
 #include <yarp/os/TypedReaderCallback.h>
 #include <yarp/os/TypedReaderThread.h>
-#include <yarp/os/PortReaderBufferBase.h>
-#include <yarp/os/PortReaderBufferBaseCreator.h>
 
 #include <cstdio>
+#include <string>
 
 namespace yarp {
-    namespace os {
-        template <typename T> class PortReaderBuffer;
-    }
-}
-
+namespace os {
 
 /**
  * Buffer incoming data to a port.
@@ -40,13 +36,12 @@ namespace yarp {
  * class, such as Bottle.
  */
 template <typename T>
-class yarp::os::PortReaderBuffer :
+class PortReaderBuffer :
         public yarp::os::TypedReader<T>,
         public yarp::os::LocalReader<T>,
         public yarp::os::PortReaderBufferBaseCreator
 {
 public:
-
     /**
      * Constructor.
      *
@@ -76,13 +71,13 @@ public:
     virtual int getPendingReads() override;
 
     // documented in TypedReader
-    virtual T *read(bool shouldWait=true) override;
+    virtual T* read(bool shouldWait = true) override;
 
     // documented in TypedReader
     virtual void interrupt() override;
 
     // documented in TypedReader
-    virtual T *lastRead() override;
+    virtual T* lastRead() override;
 
     /**
      * Attach this buffer to a particular port.
@@ -116,7 +111,7 @@ public:
      *
      * @return new instance of the templated type.
      */
-    virtual PortReader *create() const override;
+    virtual PortReader* create() const override;
 
     // documented in TypedReader
     virtual void setReplier(PortReader& reader) override;
@@ -130,16 +125,16 @@ public:
     virtual std::string getName() const override;
 
     // documented in LocalReader
-    virtual bool acceptObject(T* obj, PortWriter *wrapper) override;
+    virtual bool acceptObject(T* obj, PortWriter* wrapper) override;
 
     // documented in LocalReader
-    virtual bool forgetObject(T *obj, yarp::os::PortWriter *wrapper) override;
+    virtual bool forgetObject(T* obj, yarp::os::PortWriter* wrapper) override;
 
     // documented in TypedReader
-    virtual void *acquire() override;
+    virtual void* acquire() override;
 
     // documented in TypedReader
-    virtual void release(void *handle) override;
+    virtual void release(void* handle) override;
 
     // documented in TypedReader
     virtual void setTargetPeriod(double period) override;
@@ -147,11 +142,13 @@ public:
 private:
     yarp::os::PortReaderBufferBase implementation;
     bool autoDiscard;
-    T *last;
-    T *default_value;
-    TypedReaderThread<T> *reader;
+    T* last;
+    T* default_value;
+    TypedReaderThread<T>* reader;
 };
 
+} // namespace os
+} // namespace yarp
 
 #include <yarp/os/PortReaderBuffer-inl.h>
 

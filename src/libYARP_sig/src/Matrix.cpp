@@ -13,6 +13,7 @@
 
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetFloat64.h>

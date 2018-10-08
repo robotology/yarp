@@ -7,6 +7,16 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Mutex.h>
+#include <yarp/os/PeriodicThread.h>
+#include <yarp/os/PortInfo.h>
+#include <yarp/os/ResourceFinder.h>
+#include <yarp/os/RFModule.h>
+#include <yarp/os/Stamp.h>
+
+#include <yarp/sig/all.h>
+
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -18,8 +28,6 @@
     #include <opencv2/opencv.hpp>
 #endif
 
-#include <yarp/os/all.h>
-#include <yarp/sig/all.h>
 
 using namespace std;
 using namespace yarp::os;

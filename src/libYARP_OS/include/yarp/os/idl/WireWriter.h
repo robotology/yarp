@@ -10,32 +10,28 @@
 #define YARP_OS_IDL_WIREWRITER_H
 
 #include <yarp/conf/numeric.h>
+
 #include <yarp/os/api.h>
-#include <yarp/os/ConnectionWriter.h>
-#include <yarp/os/idl/WireReader.h>
-#include <yarp/os/idl/WirePortable.h>
-#include <yarp/os/Vocab.h>
+
 #include <yarp/os/Bottle.h>
+#include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/Vocab.h>
+#include <yarp/os/idl/WirePortable.h>
+#include <yarp/os/idl/WireReader.h>
 
 #include <string>
 
 namespace yarp {
-    namespace os {
-        namespace idl {
-            class WireWriter;
-        }
-    }
-}
+namespace os {
+namespace idl {
 
 /**
- *
  * IDL-friendly connection writer. Used by YARP IDL tools, not intended
  * for end-user.
- *
  */
-class YARP_OS_API yarp::os::idl::WireWriter {
+class YARP_OS_API WireWriter
+{
 public:
-
     WireWriter(ConnectionWriter& writer);
 
     WireWriter(WireReader& reader);
@@ -68,10 +64,16 @@ public:
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
     YARP_DEPRECATED_MSG("Use writeI8 instead")
-    bool writeByte(std::int8_t x) const { return writeI8(x); }
+    bool writeByte(std::int8_t x) const
+    {
+        return writeI8(x);
+    }
 
     YARP_DEPRECATED_MSG("Use writeFloat64 instead")
-    bool writeDouble(double x) const { return writeFloat64(static_cast<yarp::conf::float64_t>(x)); }
+    bool writeDouble(double x) const
+    {
+        return writeFloat64(static_cast<yarp::conf::float64_t>(x));
+    }
 #endif // YARP_NO_DEPRECATED
 
     bool writeVocab(std::int32_t x) const;
@@ -80,7 +82,7 @@ public:
 
     bool isError() const;
 
-    bool writeTag(const char *tag, int split, int len) const;
+    bool writeTag(const char* tag, int split, int len) const;
 
     bool writeString(const std::string& tag) const;
 
@@ -109,5 +111,9 @@ private:
     mutable bool need_ok;
     ConnectionWriter& writer;
 };
+
+} // namespace idl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IDL_WIREWRITER_H

@@ -9,15 +9,12 @@
 #ifndef YARP_OS_PUBLISHER_H
 #define YARP_OS_PUBLISHER_H
 
-#include <yarp/os/Log.h>
 #include <yarp/os/AbstractContactable.h>
 #include <yarp/os/BufferedPort.h>
+#include <yarp/os/Log.h>
 
 namespace yarp {
-    namespace os {
-         template <class T> class Publisher;
-    }
-}
+namespace os {
 
 /**
  *
@@ -27,7 +24,8 @@ namespace yarp {
  *
  */
 template <class T>
-class yarp::os::Publisher : public AbstractContactable {
+class Publisher : public AbstractContactable
+{
 public:
     using AbstractContactable::write;
 
@@ -38,14 +36,15 @@ public:
      * @param name optional topic name to publish to.
      *
      */
-    Publisher(const std::string& name = "") {
+    Publisher(const std::string& name = "")
+    {
         buffered_port = nullptr;
         T example;
         port.promiseType(example.getType());
         port.setInputMode(false);
         port.setOutputMode(true);
         port.setRpcMode(false);
-        if (name!="") {
+        if (name != "") {
             yAssert(topic(name));
         }
     }
@@ -55,7 +54,8 @@ public:
      * Destructor.
      *
      */
-    virtual ~Publisher() {
+    virtual ~Publisher()
+    {
         clear();
     }
 
@@ -68,40 +68,47 @@ public:
      * @return true on success
      *
      */
-    bool topic(const std::string& name) {
+    bool topic(const std::string& name)
+    {
         port.includeNodeInName(true);
         return open(name);
     }
 
     // documentation provided in Contactable
-    virtual bool open(const std::string& name) override {
+    virtual bool open(const std::string& name) override
+    {
         clear();
         return port.open(name);
     }
 
     // documentation provided in Contactable
-    virtual bool open(const Contact& contact, bool registerName = true) override {
+    virtual bool open(const Contact& contact, bool registerName = true) override
+    {
         clear();
         return port.open(contact, registerName);
     }
 
     // documentation provided in Contactable
-    virtual void close() override {
+    virtual void close() override
+    {
         active().close();
     }
 
     // documentation provided in Contactable
-    virtual void interrupt() override {
+    virtual void interrupt() override
+    {
         active().interrupt();
     }
 
     // documentation provided in Contactable
-    virtual void resume() override {
+    virtual void resume() override
+    {
         active().resume();
     }
 
     // documented in Contactable
-    void setReader(PortReader& reader) override {
+    void setReader(PortReader& reader) override
+    {
         active().setReader(reader);
     }
 
@@ -121,7 +128,8 @@ public:
      * of memory would be unnecessary and inefficient.
      * @return the next object that will be written
      */
-    T& prepare() {
+    T& prepare()
+    {
         return buffer().prepare();
     }
 
@@ -130,7 +138,8 @@ public:
      *
      * @return true if there was a prepared object to return.
      */
-    bool unprepare() {
+    bool unprepare()
+    {
         return buffer().unprepare();
     }
 
@@ -145,7 +154,8 @@ public:
      * connections that are currently busy.
      *
      */
-    void write(bool forceStrict=false) {
+    void write(bool forceStrict = false)
+    {
         buffer().write(forceStrict);
     }
 
@@ -154,34 +164,41 @@ public:
      * Wait for any pending writes to complete.
      *
      */
-    void waitForWrite() {
+    void waitForWrite()
+    {
         buffer().waitForWrite();
     }
 
-    virtual int getPendingReads() {
+    virtual int getPendingReads()
+    {
         if (buffered_port)
             return buffered_port->getPendingReads();
         return 0;
     }
 
-    virtual Port& asPort() override {
+    virtual Port& asPort() override
+    {
         return port;
     }
 
-    virtual const Port& asPort() const override {
+    virtual const Port& asPort() const override
+    {
         return port;
     }
 
 private:
     Port port;
-    BufferedPort<T> *buffered_port;
+    BufferedPort<T>* buffered_port;
 
-    Contactable& active() {
-        if (buffered_port) return *buffered_port;
+    Contactable& active()
+    {
+        if (buffered_port)
+            return *buffered_port;
         return port;
     }
 
-    BufferedPort<T>& buffer() {
+    BufferedPort<T>& buffer()
+    {
         if (!buffered_port) {
             buffered_port = new BufferedPort<T>(port);
             yAssert(buffered_port);
@@ -189,11 +206,16 @@ private:
         return *buffered_port;
     }
 
-    void clear() {
-        if (!buffered_port) return;
+    void clear()
+    {
+        if (!buffered_port)
+            return;
         delete buffered_port;
         buffered_port = nullptr;
     }
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_PUBLISHER_H

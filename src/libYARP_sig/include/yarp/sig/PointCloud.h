@@ -11,6 +11,7 @@
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/PointCloudBase.h>
+#include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
 
 

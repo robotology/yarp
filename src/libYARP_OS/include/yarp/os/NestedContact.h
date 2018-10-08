@@ -11,6 +11,7 @@
 #define YARP_OS_NESTEDCONTACT_H
 
 #include <yarp/os/api.h>
+
 #include <string>
 
 namespace yarp {

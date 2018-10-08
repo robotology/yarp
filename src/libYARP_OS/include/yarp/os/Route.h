@@ -11,15 +11,17 @@
 #define YARP_OS_ROUTE_H
 
 #include <yarp/conf/compiler.h>
+
 #include <yarp/os/api.h>
+
 #include <string>
 
-// Defined in this file:
-namespace yarp { namespace os { class Route; }}
-
-// Other forward declarations:
-namespace yarp { namespace os { class Contact; }}
-
+// Forward declarations:
+namespace yarp {
+namespace os {
+class Contact;
+} // namespace os
+} // namespace yarp
 
 namespace yarp {
 namespace os {
@@ -31,10 +33,10 @@ namespace os {
  * Contains the names of the endpoints, and the name of
  * the carrier in use between them.
  */
-class YARP_OS_API Route {
+class YARP_OS_API Route
+{
 public:
-
-/** @{ */
+    /** @{ */
 
     /**
      * @brief Default constructor.
@@ -87,8 +89,8 @@ public:
      */
     Route& operator=(Route&& rhs) noexcept;
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief Get the source of the route.
@@ -104,8 +106,8 @@ public:
      */
     void setFromName(const std::string& fromName);
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief Get the destination of the route.
@@ -121,8 +123,8 @@ public:
      */
     void setToName(const std::string& toName);
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief Get the destination contact of the route, if available
@@ -138,8 +140,8 @@ public:
      */
     void setToContact(const Contact& toContact);
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief Get the carrier type of the route.
@@ -155,16 +157,16 @@ public:
      */
     void setCarrierName(const std::string& carrierName);
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief Swap from and to names
      */
     void swapNames();
 
-/** @} */
-/** @{ */
+    /** @} */
+    /** @{ */
 
     /**
      * @brief Render a text form of the route, "source->carrier->dest"
@@ -173,12 +175,12 @@ public:
      */
     std::string toString() const;
 
-/** @} */
+    /** @} */
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
     class Private;
-    Private * mPriv;
+    Private* mPriv;
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 

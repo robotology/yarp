@@ -15,7 +15,6 @@
 #include <yarp/os/RateThread.h>
 #include <yarp/sig/all.h>
 #include <yarp/sig/Matrix.h>
-#include <yarp/os/all.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>

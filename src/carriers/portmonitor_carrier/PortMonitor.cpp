@@ -9,6 +9,10 @@
 #include <yarp/os/Log.h>
 #include <string>
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/os/ConnectionState.h>
+#include <yarp/os/Route.h>
+#include <yarp/os/Contactable.h>
+#include <yarp/os/Network.h>
 
 #include "PortMonitor.h"
 

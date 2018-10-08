@@ -13,10 +13,7 @@
 #include <yarp/os/TwoWayStream.h>
 
 namespace yarp {
-    namespace os {
-        class ShiftStream;
-    }
-}
+namespace os {
 
 /**
  * A container for a stream, allowing the stream implementation to
@@ -25,73 +22,38 @@ namespace yarp {
  * an optimized stream type with user-preferred properties and
  * trade-offs.
  */
-class YARP_OS_API yarp::os::ShiftStream : public TwoWayStream {
+class YARP_OS_API ShiftStream : public TwoWayStream
+{
 public:
     /**
      * Constructor.
      */
-    ShiftStream() : stream(nullptr)
-    {
-    }
+    ShiftStream();
 
     /**
      * Destructor.
      */
-    virtual ~ShiftStream() {
-        close();
-    }
+    virtual ~ShiftStream();
 
     /**
      * Perform maintenance actions, if needed.
      */
-    virtual void check() const {
-    }
+    virtual void check() const;
 
-    virtual InputStream& getInputStream() override {
-        check();
-        if (stream == nullptr) {
-            return nullStream;
-        }
-        return stream->getInputStream();
-    }
+    virtual InputStream& getInputStream() override;
+    virtual OutputStream& getOutputStream() override;
 
-    virtual OutputStream& getOutputStream() override {
-        check();
-        if (stream == nullptr) {
-            return nullStream;
-        }
-        return stream->getOutputStream();
-    }
+    virtual const Contact& getLocalAddress() const override;
+    virtual const Contact& getRemoteAddress() const override;
 
-    virtual const Contact& getLocalAddress() const override {
-        check();
-        return (stream == nullptr) ? nullStream.getLocalAddress()
-                                        : (stream->getLocalAddress());
-    }
-
-    virtual const Contact& getRemoteAddress() const override {
-        check();
-        return (stream == nullptr) ? nullStream.getRemoteAddress()
-                                        : (stream->getRemoteAddress());
-    }
-
-    virtual void close() override {
-        if (stream != nullptr) {
-            stream->close();
-            delete stream;
-            stream = nullptr;
-        }
-    }
+    virtual void close() override;
 
     /**
      * Wrap the supplied stream.  If a stream is already wrapped,
      * it will be closed and destroyed.
      * @param stream the stream to wrap.
      */
-    virtual void takeStream(TwoWayStream *stream) {
-        close();
-        this->stream = stream;
-    }
+    virtual void takeStream(TwoWayStream* stream);
 
     /**
      * Removes the wrapped stream and returns it.
@@ -99,55 +61,35 @@ public:
      * @return the wrapped stream (which after this call will be the
      * caller's responsibility).
      */
-    virtual TwoWayStream *giveStream() {
-        TwoWayStream *result = stream;
-        stream = nullptr;
-        return result;
-    }
+    virtual TwoWayStream* giveStream();
 
     /**
      * @return the wrapped stream (which after this call will remain
      * this container's responsibility - compare with giveStream).
      */
-    virtual TwoWayStream *getStream() const {
-        return stream;
-    }
+    virtual TwoWayStream* getStream() const;
 
     /**
      * @return true if there is no wrapped stream.
      */
-    virtual bool isEmpty() const {
-        return stream == nullptr;
-    }
+    virtual bool isEmpty() const;
 
-    virtual bool isOk() const override {
-        if (stream != nullptr) {
-            return stream->isOk();
-        }
-        return false;
-    }
+    virtual bool isOk() const override;
 
-    virtual void reset() override {
-        if (stream != nullptr) {
-            stream->reset();
-        }
-    }
+    virtual void reset() override;
 
-    virtual void beginPacket() override {
-        if (stream != nullptr) {
-            stream->beginPacket();
-        }
-    }
+    virtual void beginPacket() override;
 
-    virtual void endPacket() override {
-        if (stream != nullptr) {
-            stream->endPacket();
-        }
-    }
+    virtual void endPacket() override;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-    TwoWayStream *stream;
-    NullStream nullStream;
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_SHIFTSTREAM_H

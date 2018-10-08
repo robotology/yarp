@@ -11,6 +11,7 @@
 #define YARP_OS_IMPL_PORTCOREPACKETS_H
 
 #include <yarp/os/impl/PortCorePacket.h>
+#include <yarp/os/impl/Logger.h>
 #ifdef YARP_HAS_ACE
 # include <ace/config.h>
 # include <ace/String_Base.h>

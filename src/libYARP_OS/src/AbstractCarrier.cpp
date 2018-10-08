@@ -8,7 +8,11 @@
  */
 
 #include <yarp/os/AbstractCarrier.h>
+#include <yarp/os/ConnectionState.h>
 #include <yarp/os/ManagedBytes.h>
+#include <yarp/os/OutputStream.h>
+#include <yarp/os/Route.h>
+#include <yarp/os/SizedWriter.h>
 #include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os;

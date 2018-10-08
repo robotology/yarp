@@ -7,8 +7,9 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <cstring>
 #include "HumanStream.h"
+#include <yarp/os/Bytes.h>
+#include <cstring>
 
 yarp::conf::ssize_t HumanStream::read(Bytes& b) {
     if (interrupting) { return -1; }

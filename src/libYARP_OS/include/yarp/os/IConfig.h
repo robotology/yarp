@@ -14,10 +14,7 @@
 #include <yarp/os/Searchable.h>
 
 namespace yarp {
-    namespace os {
-        class IConfig;
-    }
-}
+namespace os {
 
 /**
  *
@@ -26,9 +23,9 @@ namespace yarp {
  * files, command line options, or GUIs.
  *
  */
-class YARP_OS_API yarp::os::IConfig {
+class YARP_OS_API IConfig
+{
 public:
-
     /**
      * Destructor.
      */
@@ -58,5 +55,8 @@ public:
      */
     virtual bool configure(Searchable& config);
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_ICONFIG_H

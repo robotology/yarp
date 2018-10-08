@@ -27,10 +27,9 @@ template <class T>
 void yarp::os::TypedReaderThread<T>::run()
 {
     if (reader != nullptr && callback != nullptr) {
-        while (!isStopping()&&!reader->isClosed()) {
+        while (!isStopping() && !reader->isClosed()) {
             if (reader->read()) {
-                callback->onRead(*(reader->lastRead()),
-                                    *reader);
+                callback->onRead(*(reader->lastRead()), *reader);
             }
         }
     }
@@ -43,4 +42,3 @@ void yarp::os::TypedReaderThread<T>::onStop()
         reader->interrupt();
     }
 }
-

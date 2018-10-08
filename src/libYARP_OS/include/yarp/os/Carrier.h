@@ -10,16 +10,7 @@
 #ifndef YARP_OS_CARRIER_H
 #define YARP_OS_CARRIER_H
 
-#include <yarp/os/ShiftStream.h>
-#include <yarp/os/SizedWriter.h>
-#include <yarp/os/Bytes.h>
-#include <yarp/os/Contact.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/ConnectionReader.h>
 #include <yarp/os/Connection.h>
-#include <yarp/os/ConnectionState.h>
-#include <yarp/os/Face.h>
-
 
 #define YARP_ENACT_CONNECT 1
 #define YARP_ENACT_DISCONNECT 2
@@ -27,10 +18,17 @@
 
 
 namespace yarp {
-    namespace os {
-        class Carrier;
-    }
-}
+namespace os {
+
+// Forward declarations
+class SizedWriter;
+class Bytes;
+class Contact;
+class ContactStyle;
+class ConnectionReader;
+class ConnectionState;
+class Face;
+
 
 /**
  * \brief A base class for connection types (tcp, mcast, shmem, ...) which are
@@ -47,17 +45,15 @@ namespace yarp {
  * To understand the protocol phases involved, see see
  * \ref yarp_protocol.
  */
-class YARP_OS_API yarp::os::Carrier : public Connection
+class YARP_OS_API Carrier : public Connection
 {
 public:
-
-
     /**
      * Factory method.  Get a new object of the same type as this one.
      *
      * @return a new object of the same type as this one.
      */
-    virtual Carrier *create() const = 0;
+    virtual Carrier* create() const = 0;
 
     /**
      * Given the first 8 bytes received on a connection, decide if
@@ -463,5 +459,8 @@ public:
      */
     virtual yarp::os::Face* createFace() const;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_CARRIER_H

@@ -10,17 +10,14 @@
 #ifndef YARP_OS_PORTABLEPAIR_H
 #define YARP_OS_PORTABLEPAIR_H
 
-#include <yarp/os/Portable.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Portable.h>
 
 namespace yarp {
-    namespace os {
-        class PortablePairBase;
-        template <class HEAD, class BODY> class PortablePair;
-    }
-}
+namespace os {
 
-class YARP_OS_API yarp::os::PortablePairBase : public Portable {
+class YARP_OS_API PortablePairBase : public Portable
+{
 public:
     /**
      * Reads an object pair from a network connection.
@@ -50,7 +47,8 @@ public:
  * Handy for adding general-purpose headers, for example.
  */
 template <class HEAD, class BODY>
-class yarp::os::PortablePair : public PortablePairBase {
+class PortablePair : public PortablePairBase
+{
 public:
     /**
      * An object of the first type (HEAD).
@@ -67,7 +65,8 @@ public:
      * @param connection an interface to the network connection for reading
      * @return true iff the object pair was successfully read
      */
-    virtual bool read(ConnectionReader& connection) override {
+    virtual bool read(ConnectionReader& connection) override
+    {
         return readPair(connection, head, body);
     }
 
@@ -76,7 +75,8 @@ public:
      * @param connection an interface to the network connection for writing
      * @return true iff the object pair was successfully written
      */
-    virtual bool write(ConnectionWriter& connection) const override {
+    virtual bool write(ConnectionWriter& connection) const override
+    {
         return writePair(connection, head, body);
     }
 
@@ -84,10 +84,14 @@ public:
      * This is called when the port has finished all writing operations.
      * Passes call on to head and body.
      */
-    virtual void onCompletion() const override {
+    virtual void onCompletion() const override
+    {
         head.onCompletion();
         body.onCompletion();
     }
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_PORTABLEPAIR_H

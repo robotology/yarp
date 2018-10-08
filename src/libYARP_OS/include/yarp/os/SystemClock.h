@@ -12,28 +12,21 @@
 #include <yarp/os/Clock.h>
 
 namespace yarp {
-    namespace os {
-        class SystemClock;
-    }
-}
+namespace os {
 
-
-class YARP_OS_API yarp::os::SystemClock : public Clock {
+class YARP_OS_API SystemClock : public Clock
+{
 public:
-    virtual double now() override {
-        return nowSystem();
-    }
+    virtual double now() override;
+    virtual void delay(double seconds) override;
 
-    virtual void delay(double seconds) override {
-        delaySystem(seconds);
-    }
-
-    virtual bool isValid() const override { return true; }
+    virtual bool isValid() const override;
 
     static double nowSystem();
     static void delaySystem(double seconds);
-
 };
 
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_SYSTEMCLOCK_H

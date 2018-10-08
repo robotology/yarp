@@ -12,7 +12,11 @@
 #include <yarp/os/Contactables.h>
 
 // forward declarations:
-namespace yarp { namespace os { class Node; }}
+namespace yarp {
+namespace os {
+class Node;
+} // namespace os
+} // namespace yarp
 
 namespace yarp {
 namespace os {
@@ -144,8 +148,8 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace yarp
 } // namespace os
+} // namespace yarp
 
 
 #endif // YARP_OS_NODES_H

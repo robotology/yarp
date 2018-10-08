@@ -11,14 +11,13 @@
 #define YARP_OS_PROPERTY_H
 
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Portable.h>
+#include <yarp/os/Searchable.h>
+
 #include <string>
 
 namespace yarp {
-    namespace os {
-        class Property;
-    }
-}
-
+namespace os {
 
 /**
  * \ingroup key_class
@@ -32,8 +31,8 @@ namespace yarp {
  * Searchable object (include Bottle objects) using the fromString() method.
  * Property objects can be searched efficiently.
  */
-class YARP_OS_API yarp::os::Property : public Searchable, public Portable {
-
+class YARP_OS_API Property : public Searchable, public Portable
+{
 public:
     using Searchable::check;
     using Searchable::findGroup;
@@ -51,7 +50,7 @@ public:
     /**
      * Initialize from a string, using fromString().
      */
-    Property(const char *str);
+    Property(const char* str);
 
 
     /**
@@ -109,7 +108,7 @@ public:
      * @param key the key
      * @param value the value
      */
-    void put(const std::string& key, Value *value);
+    void put(const std::string& key, Value* value);
 
     /**
      * \brief Associate the given \c key with the given integer.
@@ -194,7 +193,7 @@ public:
      * @param txt the textual form of the Property object
      * @param wipe should Property be emptied first
      */
-    void fromString(const std::string& txt, bool wipe=true);
+    void fromString(const std::string& txt, bool wipe = true);
 
     /**
      * \brief Interprets a list of command arguments as a list of properties.
@@ -220,8 +219,7 @@ public:
      * (which is the right thing to do for arguments passed to main())
      * @param wipe should Property be emptied first
      */
-    void fromCommand(int argc, char *argv[], bool skipFirst=true,
-                     bool wipe=true);
+    void fromCommand(int argc, char* argv[], bool skipFirst = true, bool wipe = true);
 
     /**
      * \brief Interprets a list of command arguments as a list of properties.
@@ -247,8 +245,7 @@ public:
      * (which is the right thing to do for arguments passed to main())
      * @param wipe should Property be emptied first
      */
-    void fromCommand(int argc, const char *argv[], bool skipFirst=true,
-                     bool wipe=true);
+    void fromCommand(int argc, const char* argv[], bool skipFirst = true, bool wipe = true);
 
     /**
      * \brief Interprets a list of command arguments as a list of properties.
@@ -271,7 +268,7 @@ public:
      * @param arguments the command arguments
      * @param wipe should Property be emptied first
      */
-    void fromArguments(const char *arguments, bool wipe=true);
+    void fromArguments(const char* arguments, bool wipe = true);
 
     /**
      * \brief Interprets a file as a list of properties.
@@ -349,7 +346,7 @@ public:
      * @param wipe should Property be emptied first
      * @return true if file exists and can be read
      */
-    bool fromConfigFile(const std::string& fname, bool wipe=true);
+    bool fromConfigFile(const std::string& fname, bool wipe = true);
 
     /**
      * \brief Variant of fromConfigFile(fname, wipe) that includes extra
@@ -366,7 +363,7 @@ public:
      */
     bool fromConfigFile(const std::string& fname,
                         Searchable& env,
-                        bool wipe=true);
+                        bool wipe = true);
 
     /**
      * \brief Interprets all files in a directory as lists of properties as
@@ -389,7 +386,7 @@ public:
      * @param txt the configuration text
      * @param wipe should Property be emptied first
      */
-    void fromConfig(const char *txt, bool wipe=true);
+    void fromConfig(const char* txt, bool wipe = true);
 
     /**
      * Variant of fromConfig(const char*, bool) that includes extra
@@ -403,9 +400,9 @@ public:
      * @param env extra set of environment variables
      * @param wipe should Property be emptied first
      */
-    void fromConfig(const char *txt,
+    void fromConfig(const char* txt,
                     Searchable& env,
-                    bool wipe=true);
+                    bool wipe = true);
 
     /**
      * \brief Parses text in a url.
@@ -416,8 +413,8 @@ public:
      *            <code>...prop1=val1&prop2=val2...</code>
      * @param wipe should Property be emptied first
      */
-    void fromQuery(const char *url,
-                   bool wipe=true);
+    void fromQuery(const char* url,
+                   bool wipe = true);
 
 
     // documented in Searchable
@@ -430,11 +427,14 @@ public:
     bool write(ConnectionWriter& writer) const override;
 
 private:
-    void *implementation;
+    void* implementation;
     int hash_size;
 
     void summon();
     bool check() const;
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_PROPERTY_H

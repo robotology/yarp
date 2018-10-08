@@ -13,14 +13,16 @@
 #include <yarp/os/api.h>
 
 namespace yarp {
-    namespace os {
-        class MonitorObject;
-        class Property;
-        class Things;
-    }
-}
+namespace os {
+class Property;
+class Things;
+} // namespace os
+} // namespace yarp
 
-class YARP_OS_API yarp::os::MonitorObject
+namespace yarp {
+namespace os {
+
+class YARP_OS_API MonitorObject
 {
 public:
     virtual ~MonitorObject();
@@ -93,5 +95,8 @@ public:
      */
     virtual yarp::os::Things& updateReply(yarp::os::Things& thing);
 };
+
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_MONITOROBJECT_H

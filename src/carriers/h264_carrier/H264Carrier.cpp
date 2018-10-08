@@ -6,14 +6,13 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <cstdio>
-
-
 #include "H264Carrier.h"
 #include "H264Stream.h"
-#include "yarp/os/Contact.h"
-#include "yarp/os/impl/FakeFace.h"
+#include <yarp/os/Contact.h>
+#include <yarp/os/impl/FakeFace.h>
 #include <yarp/os/Name.h>
+#include <yarp/os/ConnectionState.h>
+#include <cstdio>
 
 
 using namespace yarp::os;

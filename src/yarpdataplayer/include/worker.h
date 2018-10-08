@@ -24,6 +24,7 @@
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/PeriodicThread.h>
+#include <yarp/os/Semaphore.h>
 #include <yarp/sig/ImageFile.h>
 #include "include/utils.h"
 #include <yarp/os/Event.h>

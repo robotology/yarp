@@ -8,6 +8,7 @@
 
 #include "BayerCarrier.h"
 
+#include <yarp/os/Route.h>
 #include <yarp/sig/ImageDraw.h>
 #include <cstring>
 #include <cstdlib>

@@ -8,6 +8,8 @@
  */
 
 #include <yarp/os/impl/UdpCarrier.h>
+#include <yarp/os/ConnectionState.h>
+#include <yarp/os/Log.h>
 #include <string>
 
 using namespace yarp::os;

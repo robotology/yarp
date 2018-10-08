@@ -12,8 +12,6 @@
 
 #include <yarp/os/api.h>
 
-namespace yarp { namespace os { class PortReaderBufferBaseCreator; }}
-
 namespace yarp {
 namespace os {
 
@@ -22,7 +20,7 @@ class YARP_OS_API PortReaderBufferBaseCreator
 public:
     virtual ~PortReaderBufferBaseCreator();
 
-    virtual yarp::os::PortReader *create() const = 0;
+    virtual yarp::os::PortReader* create() const = 0;
 };
 
 } // namespace os

@@ -12,6 +12,8 @@
 #include <cstdlib>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/ConnectionState.h>
+#include <yarp/os/Route.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;

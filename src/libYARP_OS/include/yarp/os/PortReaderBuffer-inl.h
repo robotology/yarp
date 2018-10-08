@@ -56,8 +56,9 @@ void yarp::os::PortReaderBuffer<T>::setStrict(bool strict)
 }
 
 template <typename T>
-bool yarp::os::PortReaderBuffer<T>::check() {
-    return implementation.check()>0;
+bool yarp::os::PortReaderBuffer<T>::check()
+{
+    return implementation.check() > 0;
 }
 
 template <typename T>
@@ -83,7 +84,7 @@ T* yarp::os::PortReaderBuffer<T>::read(bool shouldWait)
         if (autoDiscard) {
             // go up to date
             while (check()) {
-                //printf("Dropping something\n");
+                // printf("Dropping something\n");
                 bool tmp;
                 last = static_cast<T*>(implementation.readBase(tmp, true));
             }
@@ -117,7 +118,7 @@ T* yarp::os::PortReaderBuffer<T>::lastRead()
 template <typename T>
 void yarp::os::PortReaderBuffer<T>::attach(Port& port)
 {
-    //port.setReader(*this);
+    // port.setReader(*this);
     implementation.attachBase(port);
 }
 

@@ -10,8 +10,8 @@
 #ifndef YARP_OS_STAMP_H
 #define YARP_OS_STAMP_H
 
-#include <yarp/os/NetInt32.h>
 #include <yarp/os/NetFloat64.h>
+#include <yarp/os/NetInt32.h>
 #include <yarp/os/Portable.h>
 
 
@@ -26,6 +26,7 @@ class YARP_OS_API Stamp : public Portable
 private:
     NetInt32 sequenceNumber;
     NetFloat64 timeStamp;
+
 public:
     /**
      * Construct an invalid Stamp.

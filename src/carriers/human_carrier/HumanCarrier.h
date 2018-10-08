@@ -7,6 +7,9 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/Carrier.h>
+#include <yarp/os/Route.h>
+#include <yarp/os/SizedWriter.h>
 #include "HumanStream.h"
 
 class HumanCarrier : public Carrier {

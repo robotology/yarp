@@ -12,16 +12,17 @@
 
 #include <yarp/os/api.h>
 
-// Defined in this file:
-namespace yarp { namespace os { template <typename T> class TypedReaderCallback; }}
-
-// Other forward declarations:
-namespace yarp { namespace os { template <typename T> class TypedReader; }}
+// Forward declarations:
+namespace yarp {
+namespace os {
+template <typename T>
+class TypedReader;
+} // namespace os
+} // namespace yarp
 
 
 namespace yarp {
 namespace os {
-
 
 /**
  * A callback for typed data from a port.
@@ -59,7 +60,6 @@ public:
      */
     virtual void onRead(T& datum, const yarp::os::TypedReader<T>& reader);
 };
-
 
 } // namespace os
 } // namespace yarp
