@@ -109,7 +109,7 @@ void Pid::setKff(double ff)
     kff=ff;
 }
 
-bool Pid::operator==(const yarp::dev::Pid &p)
+bool Pid::operator==(const yarp::dev::Pid &p) const
 {
 
     if(kp != p.kp)

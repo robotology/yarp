@@ -35,7 +35,7 @@ public:
     const char* getName(void) { return strName.c_str(); }
     const char* getEmail(void) { return strEmail.c_str(); }
 
-    bool operator==(const Author& alt) {
+    bool operator==(const Author& alt) const {
         return (strName == alt.strName);
     }
 
@@ -70,7 +70,7 @@ public:
     const char* getDescription(void) { return strDesc.c_str(); }
     bool isSwitch(void) { return bSwitch; }
     bool isRequired(void) {return bRequired; }
-    bool operator==(const Argument& alt) {
+    bool operator==(const Argument& alt) const {
         return (strParam == alt.strParam);
     }
 
