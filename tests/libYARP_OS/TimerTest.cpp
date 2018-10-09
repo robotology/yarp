@@ -6,14 +6,14 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <string>
-#include <yarp/os/Network.h>
-#include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/Timer.h>
+
+#include <yarp/os/Network.h>
+#include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
-#include <string>
-#include <yarp/os/LogStream.h>
+
 #include <cmath>
+#include <string>
 
 #if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>

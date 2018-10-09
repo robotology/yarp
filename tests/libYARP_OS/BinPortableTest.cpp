@@ -12,6 +12,7 @@
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/PortReaderBuffer.h>
 
 #if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
