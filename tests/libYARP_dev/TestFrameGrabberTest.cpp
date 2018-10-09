@@ -6,436 +6,418 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <string>
+#include <yarp/dev/FrameGrabberInterfaces.h>
+
 #include <yarp/os/Network.h>
-#include <yarp/os/LogStream.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IVisualParams.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/os/Time.h>
 
-#include "TestList.h"
+#include <string>
+
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
 
+TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]") {
 
-class TestFrameGrabberTest : public UnitTest
-{
-public:
-    virtual std::string getName() const override { return "TestFrameGrabberTest"; }
+    Network::setLocalMode(true);
 
-    void testTestFrameGrabber() {
-        report(0,"\ntest the TestFrameGrabber ");
-        yInfo() << "Test 1";
-        //First test: I try to open a TestFrameGrabber I check its existence,
-        //I try to take an image and I check the relative port and rpc port
-        {
-            PolyDriver dd;
-            Property p;
-            p.put("device","grabber");
-            p.put("subdevice","test_grabber");
-            bool result;
-            result = dd.open(p);
-            checkTrue(result,"open reported successful");
-            if(!result) {
-                return;
-            }
-            IFrameGrabberImage *grabber = nullptr;
-            result = dd.view(grabber);
-            checkTrue(result,"interface reported");
-            ImageOf<PixelRgb> img;
-            grabber->getImage(img);
-            checkTrue(img.width()>0,"interface seems functional");
-            result = dd.close();
-            checkTrue(result,"close reported successful");
-        }
-        yDebug("\n\n---------------------------------------\n\n");
-
-        yInfo() << "Test 2";
-        {
-            report(0,"test the grabber wrapper");
-            bool result;
-            PolyDriver dd,dd2;
-            Property p,p2;
-            p.put("device","remote_grabber");
-            p.put("remote","/grabber");
-            p.put("local","/grabber/client");
-            p2.put("device","grabber");
-            p2.put("subdevice","test_grabber");
-            result =dd2.open(p2);
-            checkTrue(result,"server open reported successful");
-            result = dd.open(p);
-            checkTrue(result,"client open reported successful");
-
-            IFrameGrabberImage *grabber = nullptr;
-            result = dd.view(grabber);
-            checkTrue(result,"interface reported");
-            yarp::os::SystemClock::delaySystem(0.5);
-            ImageOf<PixelRgb> img;
-            grabber->getImage(img);
-            checkTrue(img.width()>0,"interface seems functional");
-            result = dd2.close() && dd.close();
-            checkTrue(result,"close reported successful");
-        }
-
-
-        yDebug("\n\n---------------------------------------\n\n");
-
-        yInfo() << "Test 3";
-        //Second test: I try to open a TestFrameGrabber and I check all the parameters
-        {
-            report(0,"test the IRgbVisualParams interface");
-            PolyDriver dd, dd2;
-            Property p, p2, intrinsics;
-            Bottle* retM=nullptr;
-            p.put("device","remote_grabber");
-            p.put("remote","/grabber");
-            p.put("local","/grabber/client");
-            p.put("no_stream", 1);
-
-            p2.put("device","grabber");
-            p2.put("subdevice","test_grabber");
-            bool result;
-            result = dd2.open(p2);
-            result &= dd.open(p);
-            checkTrue(result,"open reported successful");
-            IRgbVisualParams* rgbParams=nullptr;
-            result= dd.view(rgbParams);
-            checkTrue(result,"interface rgb params reported");
-            // check the default parameter
-            double hfov=0.0,vfov=0.0;
-            rgbParams->getRgbFOV(hfov,vfov);
-            result=(hfov==1.0 && vfov==2.0);
-            checkTrue(result,"checking fov");
-            result=rgbParams->getRgbHeight()== 240;
-            checkTrue(result,"checking height");
-            result=rgbParams->getRgbWidth()== 320;
-            checkTrue(result,"checking width");
-            rgbParams->getRgbMirroring(result);
-            checkFalse(result,"checking mirroring");
-            rgbParams->getRgbIntrinsicParam(intrinsics);
-            result=(intrinsics.find("focalLengthX").asFloat64())==4.0;
-            checkTrue(result,"checking focalLength X");
-            result=(intrinsics.find("focalLengthY").asFloat64())==5.0;
-            checkTrue(result,"checking focalLength Y");
-            result=(intrinsics.find("principalPointX").asFloat64())==6.0;
-            checkTrue(result,"checking principalPoint X");
-            result=(intrinsics.find("principalPointY").asFloat64())==7.0;
-            checkTrue(result,"checking principalPoint Y");
-            result=(intrinsics.find("k1").asFloat64())==8.0;
-            checkTrue(result,"checking k1");
-            result=(intrinsics.find("k2").asFloat64())==9.0;
-            checkTrue(result,"checking k2");
-            result=(intrinsics.find("k3").asFloat64())==10.0;
-            checkTrue(result,"checking k3");
-            result=(intrinsics.find("t1").asFloat64())==11.0;
-            checkTrue(result,"checking t1");
-            result=(intrinsics.find("t2").asFloat64())==12.0;
-            checkTrue(result,"checking t2");
-            result=(intrinsics.find("distortionModel").asString())=="FishEye";
-            checkTrue(result,"checking distorionModel");
-            retM=intrinsics.find("retificationMatrix").asList();
-            double data[9]= {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
-            Vector v(9,data);
-            Vector v2;
-            Portable::copyPortable(*retM,v2);
-            result=true;
-            for(int i=0; i<3; i++)
-            {
-                for(int j=0; j<3; j++)
-                {
-                    if(retM->get(i*3+j).asFloat64()!=v(i*3+j) || v2(i*3+j)!=v(i*3+j))
-                        result=false;
-                }
-            }
-            checkTrue(result,"checking the retificationMatrix");
-            int height,width;
-            result=rgbParams->getRgbResolution(width,height);
-            result&= (width==320) && (height==240);
-            checkTrue(result,"checking getRgbResolution");
-            VectorOf<CameraConfig> configurations;
-            result= rgbParams->getRgbSupportedConfigurations(configurations);
-            result&= configurations.size()==3;
-            checkTrue(result,"checking configurations szie");
-            result=configurations[0].height==128
-                    && configurations[0].width==128
-                    && configurations[0].framerate==60.0
-                    && configurations[0].pixelCoding==VOCAB_PIXEL_RGB;
-            checkTrue(result,"checking first supported configuration");
-            result=configurations[1].height==256
-                    && configurations[1].width==256
-                    && configurations[1].framerate==30.0
-                    && configurations[1].pixelCoding==VOCAB_PIXEL_BGR;
-            checkTrue(result,"checking second supported configuration");
-            result=configurations[2].height==512
-                    && configurations[2].width==512
-                    && configurations[2].framerate==15.0
-                    && configurations[2].pixelCoding==VOCAB_PIXEL_MONO;
-            checkTrue(result,"checking third supported configuration");
-
-            // Test the crop function - must NOT work.
-            // It is not implemeted in the old server
-            IFrameGrabberImage *grabber = nullptr;
-            result = dd.view(grabber);
-            ImageOf<PixelRgb> img, crop;
-            grabber->getImage(img);
-
-            yarp::sig::VectorOf<std::pair< int, int> > vertices;
-            vertices.clear();
-            vertices.resize(2);
-            vertices[0] = std::pair <int, int> (0, 0);
-            vertices[1] = std::pair <int, int> ( 10, 10);        // Configure a doable crop.
-            bool ret = grabber->getImageCrop(YARP_CROP_RECT, vertices, crop);
-
-            checkFalse(ret, "check crop function must not work on old server (call does not hangs)");
-
-            result = dd2.close() && dd.close();
-            checkTrue(result,"close reported successful");
-        }
-
-        yInfo() << "Test 4";
-         //Testing the new ServerGrabber
-         {
-            report(0,"test the IRgbVisualParams interface");
-            PolyDriver dd, dd2;
-            Property p, p2, intrinsics;
-            Bottle* retM=nullptr;
-            p.put("device","remote_grabber");
-            p.put("remote","/grabber/left/rpc");
-            p.put("local","/grabber/client");
-
-            p2.put("device","grabberDual");
-            p2.put("context","TestFrameGrabberTest");
-            p2.put("left_config","left_test.ini");
-            p2.put("right_config","right_test.ini");
-            bool result;
-            result = dd2.open(p2);
-            result &= dd.open(p);
-            checkTrue(result,"open reported successful");
-            IRgbVisualParams* rgbParams=nullptr;
-            result= dd.view(rgbParams);
-            checkTrue(result,"interface rgb params reported");
-            // I check the default parameters
-            double hfov=0.0,vfov=0.0;
-            rgbParams->getRgbFOV(hfov,vfov);
-            result=(hfov==1.0 && vfov==2.0);
-            checkTrue(result,"checking fov");
-            result=rgbParams->getRgbHeight()== 240;
-            checkTrue(result,"checking height");
-            result=rgbParams->getRgbWidth()== 320;
-            checkTrue(result,"checking width");
-            rgbParams->getRgbMirroring(result);
-            checkFalse(result,"checking mirroring");
-            rgbParams->getRgbIntrinsicParam(intrinsics);
-            result=(intrinsics.find("focalLengthX").asFloat64())==4.0;
-            checkTrue(result,"checking focalLength X");
-            result=(intrinsics.find("focalLengthY").asFloat64())==5.0;
-            checkTrue(result,"checking focalLength Y");
-            result=(intrinsics.find("principalPointX").asFloat64())==6.0;
-            checkTrue(result,"checking principalPoint X");
-            result=(intrinsics.find("principalPointY").asFloat64())==7.0;
-            checkTrue(result,"checking principalPoint Y");
-            result=(intrinsics.find("k1").asFloat64())==8.0;
-            checkTrue(result,"checking k1");
-            result=(intrinsics.find("k2").asFloat64())==9.0;
-            checkTrue(result,"checking k2");
-            result=(intrinsics.find("k3").asFloat64())==10.0;
-            checkTrue(result,"checking k3");
-            result=(intrinsics.find("t1").asFloat64())==11.0;
-            checkTrue(result,"checking t1");
-            result=(intrinsics.find("t2").asFloat64())==12.0;
-            checkTrue(result,"checking t2");
-            result=(intrinsics.find("distortionModel").asString())=="FishEye";
-            checkTrue(result,"checking distorionModel");
-            retM=intrinsics.find("retificationMatrix").asList();
-            double data[9]= {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
-            Vector v(9,data);
-            Vector v2;
-            Portable::copyPortable(*retM,v2);
-            result=true;
-            for(int i=0; i<3; i++)
-            {
-                for(int j=0; j<3; j++)
-                {
-                    if(retM->get(i*3+j).asFloat64()!=v(i*3+j) || v2(i*3+j)!=v(i*3+j))
-                        result=false;
-                }
-            }
-            checkTrue(result,"checking the retificationMatrix");
-            Bottle bt=intrinsics.findGroup("right");
-            result=!bt.isNull();
-            checkTrue(result,"checking second intrinsics");
-            result=(bt.find("focalLengthX").asFloat64())==4.0;
-            checkTrue(result,"checking focalLength X");
-            result=(bt.find("focalLengthY").asFloat64())==5.0;
-            checkTrue(result,"checking focalLength Y");
-            result=(bt.find("principalPointX").asFloat64())==6.0;
-            checkTrue(result,"checking principalPoint X");
-            result=(bt.find("principalPointY").asFloat64())==7.0;
-            checkTrue(result,"checking principalPoint Y");
-            result=(bt.find("k1").asFloat64())==8.0;
-            checkTrue(result,"checking k1");
-            result=(bt.find("k2").asFloat64())==9.0;
-            checkTrue(result,"checking k2");
-            result=(bt.find("k3").asFloat64())==10.0;
-            checkTrue(result,"checking k3");
-            result=(bt.find("t1").asFloat64())==11.0;
-            checkTrue(result,"checking t1");
-            result=(bt.find("t2").asFloat64())==12.0;
-            checkTrue(result,"checking t2");
-            result=(bt.find("distortionModel").asString())=="FishEye";
-            checkTrue(result,"checking distorionModel");
-            result=Network::exists("/grabber") && Network::exists("/grabber/left/rpc")
-                    && Network::exists("/grabber/right/rpc");
-            checkTrue(result,"checking if all the ports have been opened correctly");
-            retM=bt.find("retificationMatrix").asList();
-            Portable::copyPortable(*retM,v2);
-            result=true;
-            for(int i=0; i<3; i++)
-            {
-                for(int j=0; j<3; j++)
-                {
-                    if(retM->get(i*3+j).asFloat64()!=v(i*3+j) || v2(i*3+j)!=v(i*3+j))
-                        result=false;
-                }
-            }
-            checkTrue(result,"checking the retificationMatrix");
-
-            result = dd.close();
-            checkTrue(result, "checking closure");
-            p.unput("remote");
-            p.put("remote","/grabber/right/rpc");
-
-            yarp::os::SystemClock::delaySystem(0.5);
-            result = dd.open(p);
-            checkTrue(result, "checking opening client");
-            rgbParams=nullptr;
-            result= dd.view(rgbParams);
-            checkTrue(result,"interface rgb params reported");
-            // I check the default parameters
-            rgbParams->getRgbFOV(hfov,vfov);
-            result=(hfov==1.0 && vfov==2.0);
-            checkTrue(result,"checking fov");
-            result=rgbParams->getRgbHeight()== 240;
-            checkTrue(result,"checking height");
-            result=rgbParams->getRgbWidth()== 320;
-            checkTrue(result,"checking width");
-            rgbParams->getRgbMirroring(result);
-            checkFalse(result,"checking mirroring");
-            rgbParams->getRgbIntrinsicParam(intrinsics);
-            result=(intrinsics.find("focalLengthX").asFloat64())==4.0;
-            checkTrue(result,"checking focalLength X");
-            result=(intrinsics.find("focalLengthY").asFloat64())==5.0;
-            checkTrue(result,"checking focalLength Y");
-            result=(intrinsics.find("principalPointX").asFloat64())==6.0;
-            checkTrue(result,"checking principalPoint X");
-            result=(intrinsics.find("principalPointY").asFloat64())==7.0;
-            checkTrue(result,"checking principalPoint Y");
-            result=(intrinsics.find("k1").asFloat64())==8.0;
-            checkTrue(result,"checking k1");
-            result=(intrinsics.find("k2").asFloat64())==9.0;
-            checkTrue(result,"checking k2");
-            result=(intrinsics.find("k3").asFloat64())==10.0;
-            checkTrue(result,"checking k3");
-            result=(intrinsics.find("t1").asFloat64())==11.0;
-            checkTrue(result,"checking t1");
-            result=(intrinsics.find("t2").asFloat64())==12.0;
-            checkTrue(result,"checking t2");
-            result=(intrinsics.find("distortionModel").asString())=="FishEye";
-            checkTrue(result,"checking distorionModel");
-            retM=intrinsics.find("retificationMatrix").asList();
-            result=true;
-            for(int i=0; i<3; i++)
-            {
-                for(int j=0; j<3; j++)
-                {
-                    if(retM->get(i*3+j).asFloat64()!=v(i*3+j) || v2(i*3+j)!=v(i*3+j))
-                        result=false;
-                }
-            }
-            checkTrue(result,"checking the retificationMatrix");
-            result = dd2.close();
-            checkTrue(result,"close reported successful");
-        }
-
-        yDebug("\n\n---------------------------------------\n\n");
-        //Testing the "SplitterMode"
-        yInfo() << "Test 5";
-        {
-            report(0,"test the splitter mode");
-            bool result;
-            PolyDriver dd,dd2;
-            Property p,p2;
-            p.put("device","remote_grabber");
-            p.put("remote","/grabber/left");
-            p.put("local","/grabber/client");
-            p2.put("device","grabberDual");
-            p2.put("subdevice","test_grabber");
-            int width = 320;
-            p2.put("width",width);
-            p2.put("split",true);
-            result =dd2.open(p2);
-            checkTrue(result,"server open reported successful");
-            result = dd.open(p);
-            checkTrue(result,"client open reported successful");
-
-            IFrameGrabberImage *grabber = nullptr;
-            result = dd.view(grabber);
-            checkTrue(result,"interface reported");
-            ImageOf<PixelRgb> img;
-            grabber->getImage(img);
-            checkTrue(img.width()>0,"interface seems functional");
-            result=Network::exists("/grabber/rpc") && Network::exists("/grabber/left")
-                    && Network::exists("/grabber/right");
-            checkTrue(result,"checking if all the ports have been opened correctly");
-            yarp::os::BufferedPort<ImageOf<PixelRgb>> pLeft, pRight;
-            result &= pLeft.open("/provaLeft");
-            result &= pRight.open("/provaRight");
-            checkTrue(result,"checking if all the test ports have been opened correctly");
-            result &= Network::connect("/grabber/left",pLeft.getName());
-            result &= Network::connect("/grabber/right",pRight.getName());
-            checkTrue(result,"checking the connections");
-            ImageOf<PixelRgb>* imgL;
-            ImageOf<PixelRgb>* imgR;
-            imgL = pLeft.read();
-            imgR = pRight.read();
-            result &= imgL->width() == (size_t) width/2;
-            result &= imgR->width() == (size_t) width/2;
-
-            //Test the crop function - must work
-            ImageOf<PixelRgb> crop;
-
-            yarp::sig::VectorOf<std::pair< int, int> > vertices;
-            vertices.clear();
-            vertices.resize(2);
-            vertices[0] = std::pair <int, int> (0, 0);
-            vertices[1] = std::pair <int, int> ( 10, 10);        // Configure a doable crop.
-            bool ret = grabber->getImageCrop(YARP_CROP_RECT, vertices, crop);
-
-            checkTrue(ret && crop.width() >0 && crop.height()>0, "check crop function");
-
-            checkTrue(result,"checking imgL and imgR dimensions");
-            result = dd2.close() && dd.close();
-            checkTrue(result,"close reported successful");
-        }
-
+    SECTION("Test the TestFrameGrabber")
+    {
+        // Try to open a TestFrameGrabber I check its existence,
+        // try to take an image and check the relative port and rpc port
+        PolyDriver dd;
+        Property p;
+        p.put("device","grabber");
+        p.put("subdevice","test_grabber");
+        REQUIRE(dd.open(p)); // open reported successful
+        IFrameGrabberImage *grabber = nullptr;
+        REQUIRE(dd.view(grabber)); // interface reported
+        ImageOf<PixelRgb> img;
+        grabber->getImage(img);
+        CHECK(img.width() > 0); // interface seems functional");
+        CHECK(dd.close()); // close reported successful
     }
 
-    virtual void runTests() override {
-        Network::setLocalMode(true);
-        testTestFrameGrabber();
-        Network::setLocalMode(false);
+    SECTION("Test the grabber wrapper")
+    {
+        PolyDriver dd;
+        PolyDriver dd2;
+        Property p;
+        Property p2;
+        p.put("device","remote_grabber");
+        p.put("remote","/grabber");
+        p.put("local","/grabber/client");
+        p2.put("device","grabber");
+        p2.put("subdevice","test_grabber");
+
+        REQUIRE(dd2.open(p2)); // server open reported successful
+        REQUIRE(dd.open(p)); // client open reported successful
+
+        IFrameGrabberImage *grabber = nullptr;
+        REQUIRE(dd.view(grabber)); // interface reported
+
+        yarp::os::SystemClock::delaySystem(0.5);
+
+        ImageOf<PixelRgb> img;
+        grabber->getImage(img);
+        CHECK(img.width() > 0); // interface seems functional
+        CHECK(dd2.close()); // server close reported successful
+        CHECK(dd.close()); // client close reported successful
     }
-};
 
-static TestFrameGrabberTest theTestFrameGrabberTest;
+    SECTION("Test the IRgbVisualParams interface")
+    {
+        // Try to open a TestFrameGrabber and I check all the parameters
+        PolyDriver dd;
+        PolyDriver dd2;
+        Property p;
+        Property p2;
+        Property intrinsics;
+        Bottle* retM = nullptr;
 
-UnitTest& getTestFrameGrabberTest() {
-    return theTestFrameGrabberTest;
+        p.put("device","remote_grabber");
+        p.put("remote","/grabber");
+        p.put("local","/grabber/client");
+        p.put("no_stream", 1);
+
+        p2.put("device","grabber");
+        p2.put("subdevice","test_grabber");
+
+        REQUIRE(dd2.open(p2)); // server open reported successful
+        REQUIRE(dd.open(p)); // client open reported successful
+
+        IRgbVisualParams* rgbParams = nullptr;
+        REQUIRE(dd.view(rgbParams)); // interface rgb params reported
+
+        // check the default parameters
+
+        // checking fov
+        double hfov=0.0;
+        double vfov=0.0;
+        rgbParams->getRgbFOV(hfov,vfov);
+        CHECK(hfov == 1.0);
+        CHECK(vfov == 2.0);
+
+        // checking height
+        CHECK(rgbParams->getRgbHeight() == 240);
+
+        // checking width
+        CHECK(rgbParams->getRgbWidth() == 320); 
+
+        // checking mirroring
+        bool rgbMirroring;
+        rgbParams->getRgbMirroring(rgbMirroring);
+        CHECK_FALSE(rgbMirroring);
+
+        // checking intrinsics
+        rgbParams->getRgbIntrinsicParam(intrinsics);
+        CHECK(intrinsics.find("focalLengthX").asFloat64() == 4.0); // checking focalLength X
+        CHECK(intrinsics.find("focalLengthY").asFloat64() == 5.0); // checking focalLength Y
+        CHECK(intrinsics.find("principalPointX").asFloat64() == 6.0); // checking principalPoint X
+        CHECK(intrinsics.find("principalPointY").asFloat64() == 7.0); // checking principalPoint Y
+        CHECK(intrinsics.find("k1").asFloat64() == 8.0); // checking k1
+        CHECK(intrinsics.find("k2").asFloat64() == 9.0); // checking k2
+        CHECK(intrinsics.find("k3").asFloat64() == 10.0); // checking k3
+        CHECK(intrinsics.find("t1").asFloat64() == 11.0); // checking t1
+        CHECK(intrinsics.find("t2").asFloat64() == 12.0);  // checking t2
+        CHECK(intrinsics.find("distortionModel").asString() == "FishEye"); // checking distorionModel
+
+        // checking the retificationMatrix
+        retM = intrinsics.find("retificationMatrix").asList();
+        double data[9]= {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
+        Vector v(9,data);
+        Vector v2;
+        Portable::copyPortable(*retM,v2);
+        for(int i=0; i<3; i++) {
+            for(int j=0; j<3; j++) {
+                CHECK(retM->get(i*3+j).asFloat64() == v(i*3+j));
+                CHECK(v2(i*3+j) == v(i*3+j));
+            }
+        }
+
+        // checking getRgbResolution
+        int height, width;
+        rgbParams->getRgbResolution(width,height);
+        CHECK(width==320);
+        CHECK(height==240);
+
+        // checking configurations size
+        VectorOf<CameraConfig> configurations;
+        CHECK(rgbParams->getRgbSupportedConfigurations(configurations));
+        CHECK(configurations.size() == 3);
+
+        // checking first supported configuration
+        CHECK(configurations[0].height == 128);
+        CHECK(configurations[0].width == 128);
+        CHECK(configurations[0].framerate == 60.0);
+        CHECK(configurations[0].pixelCoding == VOCAB_PIXEL_RGB);
+
+        // checking second supported configuration
+        CHECK(configurations[1].height == 256);
+        CHECK(configurations[1].width == 256);
+        CHECK(configurations[1].framerate == 30.0);
+        CHECK(configurations[1].pixelCoding == VOCAB_PIXEL_BGR);
+
+        // checking third supported configuration
+        CHECK(configurations[2].height == 512);
+        CHECK(configurations[2].width == 512);
+        CHECK(configurations[2].framerate == 15.0);
+        CHECK(configurations[2].pixelCoding == VOCAB_PIXEL_MONO);
+
+        // Test the crop function - must NOT work.
+        // It is not implemeted in the old server
+        IFrameGrabberImage *grabber = nullptr;
+        REQUIRE(dd.view(grabber));
+        ImageOf<PixelRgb> img, crop;
+        grabber->getImage(img);
+
+        yarp::sig::VectorOf<std::pair< int, int> > vertices;
+        vertices.clear();
+        vertices.resize(2);
+        vertices[0] = std::pair <int, int> (0, 0);
+        vertices[1] = std::pair <int, int> ( 10, 10); // Configure a doable crop.
+        // check crop function must not work on old server (call does not hangs)
+        CHECK_FALSE(grabber->getImageCrop(YARP_CROP_RECT, vertices, crop));
+
+        CHECK(dd2.close()); // server close reported successful
+        CHECK(dd.close()); // client close reported successful
+    }
+
+    //Testing the new ServerGrabber
+    SECTION("Test the IRgbVisualParams interface")
+    {
+        PolyDriver dd;
+        PolyDriver dd2;
+        Property p;
+        Property p2;
+        Property intrinsics;
+        Bottle* retM = nullptr;
+
+        p.put("device","remote_grabber");
+        p.put("remote","/grabber/left/rpc");
+        p.put("local","/grabber/client");
+
+        p2.put("device","grabberDual");
+        p2.put("context","TestFrameGrabberTest");
+        p2.put("left_config","left_test.ini");
+        p2.put("right_config","right_test.ini");
+
+        REQUIRE(dd2.open(p2)); // server open reported successful
+        REQUIRE(dd.open(p)); // client open reported successful
+
+        IRgbVisualParams* rgbParams = nullptr;
+        REQUIRE(dd.view(rgbParams)); // interface rgb params reported
+
+        // check the default parameters
+
+        // checking fov
+        double hfov=0.0;
+        double vfov=0.0;
+        rgbParams->getRgbFOV(hfov,vfov);
+        CHECK(hfov == 1.0);
+        CHECK(vfov == 2.0);
+
+        // checking height
+        CHECK(rgbParams->getRgbHeight() == 240);
+
+        // checking width
+        CHECK(rgbParams->getRgbWidth() == 320); 
+
+        // checking mirroring
+        bool rgbMirroring;
+        rgbParams->getRgbMirroring(rgbMirroring);
+        CHECK_FALSE(rgbMirroring);
+
+        // checking intrinsics
+        rgbParams->getRgbIntrinsicParam(intrinsics);
+        CHECK(intrinsics.find("focalLengthX").asFloat64() == 4.0); // checking focalLength X
+        CHECK(intrinsics.find("focalLengthY").asFloat64() == 5.0); // checking focalLength Y
+        CHECK(intrinsics.find("principalPointX").asFloat64() == 6.0); // checking principalPoint X
+        CHECK(intrinsics.find("principalPointY").asFloat64() == 7.0); // checking principalPoint Y
+        CHECK(intrinsics.find("k1").asFloat64() == 8.0); // checking k1
+        CHECK(intrinsics.find("k2").asFloat64() == 9.0); // checking k2
+        CHECK(intrinsics.find("k3").asFloat64() == 10.0); // checking k3
+        CHECK(intrinsics.find("t1").asFloat64() == 11.0); // checking t1
+        CHECK(intrinsics.find("t2").asFloat64() == 12.0);  // checking t2
+        CHECK(intrinsics.find("distortionModel").asString() == "FishEye"); // checking distorionModel
+
+        // checking the retificationMatrix
+        retM = intrinsics.find("retificationMatrix").asList();
+        double data[9]= {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
+        Vector v(9,data);
+        Vector v2;
+        Portable::copyPortable(*retM, v2);
+        for(int i=0; i<3; i++) {
+            for(int j=0; j<3; j++) {
+                CHECK(retM->get(i*3+j).asFloat64() == v(i*3+j));
+                CHECK(v2(i*3+j) == v(i*3+j));
+            }
+        }
+
+        Bottle bt = intrinsics.findGroup("right");
+        CHECK_FALSE(bt.isNull()); //checking second intrinsics
+
+        CHECK(bt.find("focalLengthX").asFloat64() == 4.0); // checking focalLength X
+        CHECK(bt.find("focalLengthY").asFloat64() == 5.0); // checking focalLength Y
+        CHECK(bt.find("principalPointX").asFloat64() == 6.0); // checking principalPoint X
+        CHECK(bt.find("principalPointY").asFloat64() == 7.0); // checking principalPoint Y
+        CHECK(bt.find("k1").asFloat64() == 8.0); // checking k1
+        CHECK(bt.find("k2").asFloat64() == 9.0); // checking k2
+        CHECK(bt.find("k3").asFloat64() == 10.0); // checking k3
+        CHECK(bt.find("t1").asFloat64() == 11.0); // checking t1
+        CHECK(bt.find("t2").asFloat64() == 12.0); // checking t2
+        CHECK(bt.find("distortionModel").asString() == "FishEye"); // checking distorionModel
+
+        // checking if all the ports have been opened correctly
+        CHECK(Network::exists("/grabber"));
+        CHECK(Network::exists("/grabber/left/rpc"));
+        CHECK(Network::exists("/grabber/right/rpc"));
+
+        // checking the retificationMatrix
+        retM = bt.find("retificationMatrix").asList();
+        Portable::copyPortable(*retM,v2);
+        for(int i=0; i<3; i++) {
+            for(int j=0; j<3; j++) {
+                CHECK(retM->get(i*3+j).asFloat64() == v(i*3+j));
+                CHECK(v2(i*3+j) == v(i*3+j));
+            }
+        }
+
+        CHECK(dd.close()); // client close reported successful
+
+        yarp::os::SystemClock::delaySystem(0.5);
+
+        p.unput("remote");
+        p.put("remote","/grabber/right/rpc");
+
+        REQUIRE(dd.open(p)); // checking opening client
+
+        rgbParams = nullptr;
+        REQUIRE(dd.view(rgbParams)); // interface rgb params reported
+
+        // check the default parameters
+
+        // checking fov
+        rgbParams->getRgbFOV(hfov,vfov);
+        CHECK(hfov == 1.0);
+        CHECK(vfov == 2.0);
+
+        // checking height
+        CHECK(rgbParams->getRgbHeight() == 240);
+
+        // checking width
+        CHECK(rgbParams->getRgbWidth() == 320); 
+
+        // checking mirroring
+        rgbParams->getRgbMirroring(rgbMirroring);
+        CHECK_FALSE(rgbMirroring);
+
+        // checking intrinsics
+        rgbParams->getRgbIntrinsicParam(intrinsics);
+        CHECK(intrinsics.find("focalLengthX").asFloat64() == 4.0); // checking focalLength X
+        CHECK(intrinsics.find("focalLengthY").asFloat64() == 5.0); // checking focalLength Y
+        CHECK(intrinsics.find("principalPointX").asFloat64() == 6.0); // checking principalPoint X
+        CHECK(intrinsics.find("principalPointY").asFloat64() == 7.0); // checking principalPoint Y
+        CHECK(intrinsics.find("k1").asFloat64() == 8.0); // checking k1
+        CHECK(intrinsics.find("k2").asFloat64() == 9.0); // checking k2
+        CHECK(intrinsics.find("k3").asFloat64() == 10.0); // checking k3
+        CHECK(intrinsics.find("t1").asFloat64() == 11.0); // checking t1
+        CHECK(intrinsics.find("t2").asFloat64() == 12.0);  // checking t2
+        CHECK(intrinsics.find("distortionModel").asString() == "FishEye"); // checking distorionModel
+
+        // checking the retificationMatrix
+        retM = intrinsics.find("retificationMatrix").asList();
+
+        Portable::copyPortable(*retM, v2);
+        for(int i=0; i<3; i++) {
+            for(int j=0; j<3; j++) {
+                CHECK(retM->get(i*3+j).asFloat64() == v(i*3+j));
+                CHECK(v2(i*3+j) == v(i*3+j));
+            }
+        }
+
+        CHECK(dd2.close()); // server close reported successful
+        CHECK(dd.close()); // client close reported successful
+    }
+
+    SECTION("test the splitter mode")
+    {
+        PolyDriver dd;
+        PolyDriver dd2;
+        Property p;
+        Property p2;
+
+        p.put("device","remote_grabber");
+        p.put("remote","/grabber/left");
+        p.put("local","/grabber/client");
+
+        p2.put("device","grabberDual");
+        p2.put("subdevice","test_grabber");
+        size_t width = 320;
+        p2.put("width", (int)width);
+        p2.put("split", true);
+
+        REQUIRE(dd2.open(p2)); // server open reported successful
+        REQUIRE(dd.open(p)); // client open reported successful
+
+        IFrameGrabberImage *grabber = nullptr;
+        REQUIRE(dd.view(grabber)); // interface reported
+
+        ImageOf<PixelRgb> img;
+        grabber->getImage(img);
+        CHECK(img.width() > 0); // interface seems functional
+
+        // checking if all the ports have been opened correctly
+        CHECK(Network::exists("/grabber/rpc"));
+        CHECK(Network::exists("/grabber/left"));
+        CHECK(Network::exists("/grabber/right"));
+
+        yarp::os::BufferedPort<ImageOf<PixelRgb>> pLeft, pRight;
+        CHECK(pLeft.open("/pLeft")); // checking if /pLeft was opened correctly
+        CHECK(pRight.open("/pRight")); // checking if /pRight was opened correctly
+
+        // checking the connections
+        CHECK(Network::connect("/grabber/left", pLeft.getName()));
+        CHECK(Network::connect("/grabber/right", pRight.getName()));
+
+        ImageOf<PixelRgb>* imgL = pLeft.read();
+        ImageOf<PixelRgb>* imgR = pRight.read();
+        REQUIRE(imgL != nullptr);
+        REQUIRE(imgR != nullptr);
+
+        // checking imgL and imgR dimensions
+        CHECK(imgL->width() == width/2);
+        CHECK(imgR->width() == width/2);
+
+        //Test the crop function - must work
+        ImageOf<PixelRgb> crop;
+
+        // Configure a doable crop.
+        yarp::sig::VectorOf<std::pair< int, int> > vertices;
+        vertices.clear();
+        vertices.resize(2);
+        vertices[0] = std::pair <int, int> (0, 0);
+        vertices[1] = std::pair <int, int> (10, 10);
+
+        // check crop function
+        CHECK(grabber->getImageCrop(YARP_CROP_RECT, vertices, crop));
+        CHECK(crop.width() > 0);
+        CHECK(crop.height() > 0);
+
+        CHECK(dd2.close()); // server close reported successful
+        CHECK(dd.close()); // client close reported successful
+    }
+
+    Network::setLocalMode(false);
 }
