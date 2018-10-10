@@ -65,7 +65,7 @@ public:
     void setOwner(Node* owner){ appOwner = owner; }
     Node* owner(void) { return appOwner; }
 
-    bool operator==(const Arbitrator& alt) {
+    bool operator==(const Arbitrator& alt) const {
         return (strPort == alt.strPort);
     }
 

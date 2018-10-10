@@ -147,7 +147,7 @@ public:
      *
      * \param p pid to be compared
      */
-    bool operator==(const yarp::dev::Pid &p);
+    bool operator==(const yarp::dev::Pid &p) const;
 
     /*!
     * \brief Set all pid parameters to zero
