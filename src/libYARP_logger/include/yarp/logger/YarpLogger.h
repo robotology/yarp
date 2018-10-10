@@ -86,15 +86,15 @@ namespace yarp
             {
                 e_level = level;
             }
-            bool operator == (const LogLevel& other)
+            bool operator == (const LogLevel& other) const
             {
                 return this->e_level == other.e_level;
             }
-            bool operator == (const loglLevelEnum& other)
+            bool operator == (const loglLevelEnum& other) const
             {
                 return this->e_level == other;
             }
-            bool operator > (const LogLevel& other)
+            bool operator > (const LogLevel& other) const
             {
                 return this->e_level > other.e_level;
             }

@@ -43,7 +43,7 @@ public:
     //virtual Node* clone(void);
     virtual bool satisfy(GenericResource* resource) = 0;
 
-    bool operator==(const GenericResource& res) {
+    bool operator==(const GenericResource& res) const {
         return (strName == res.strName);
     }
 

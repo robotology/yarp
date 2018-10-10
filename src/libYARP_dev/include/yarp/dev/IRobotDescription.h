@@ -23,7 +23,10 @@ namespace yarp {
         {
             std::string  device_name;
             std::string  device_type;
-            bool operator ==(DeviceDescription const& b) { return this->device_name == b.device_name && this->device_type == b.device_type; }
+            bool operator ==(DeviceDescription const& b) const
+            {
+                return this->device_name == b.device_name && this->device_type == b.device_type;
+            }
         };
       }
 }

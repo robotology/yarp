@@ -51,7 +51,7 @@ public:
     void setOwner(Node* owner) { modOwner = owner; }
     Node* owner(void) { return modOwner; }
 
-    bool operator==(const InputData& input) {
+    bool operator==(const InputData& input) const {
         return (strName == input.strName);
     }
 
@@ -96,7 +96,7 @@ public:
     Node* owner(void) { return modOwner; }
 
 
-    bool operator==(const OutputData& output) {
+    bool operator==(const OutputData& output) const {
         return (strName == output.strName);
     }
 

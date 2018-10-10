@@ -74,8 +74,8 @@ public:
     GraphIterator(const GraphIterator& mit) : itr(mit.itr) {}
     GraphIterator& operator++() {++itr;return *this;}
     GraphIterator operator++(int) {GraphIterator tmp(*this); operator++(); return tmp;}
-    bool operator==(const GraphIterator& rhs) {return itr==rhs.itr;}
-    bool operator!=(const GraphIterator& rhs) {return itr!=rhs.itr;}
+    bool operator==(const GraphIterator& rhs) const {return itr==rhs.itr;}
+    bool operator!=(const GraphIterator& rhs) const {return itr!=rhs.itr;}
     Node*& operator*() {return (*itr).second;}
     friend class Graph;
 
