@@ -35,12 +35,11 @@ TEST_CASE("dev::AnalogWrapperTest", "[yarp::dev]") {
         p.put("subdevice","fakeAnalogSensor");
 
         PolyDriver dd;
-        bool result = dd.open(p);
+        REQUIRE(dd.open(p));
 
         Network::sync("/testAnalogWrapper/rpc:i");
         Network::sync("/testAnalogWrapper");
 
-        CHECK(result); // Open of AnalogWrapper1 with one port open reported successful
         CHECK(Network::exists("/testAnalogWrapper/rpc:i")); // /testAnalogWrapper/rpc:i port created succefully
         CHECK(Network::exists("/testAnalogWrapper")); // /testAnalogWrapper port created succefully
         CHECK(dd.close()); // close reported successful
@@ -86,7 +85,7 @@ TEST_CASE("dev::AnalogWrapperTest", "[yarp::dev]") {
         p.fromString("(ports (left_hand left_forearm left_arm)) (left_hand 0 0 0 0) (left_forearm 0 0 0 0) (left_arm 0 0 0 0)", false);
 
         PolyDriver dd;
-        CHECK(dd.open(p)); // Open of AnalogWrapper with multiple port open reported successful
+        REQUIRE(dd.open(p)); // Open of AnalogWrapper with multiple port open reported successful
 
         Network::sync("/testAnalogWrapperMultip/left_hand");
         Network::sync("/testAnalogWrapperMultip/left_hand/rpc:i");
