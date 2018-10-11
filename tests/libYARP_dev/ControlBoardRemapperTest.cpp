@@ -68,24 +68,19 @@ const char *wrapperC_file_content   = "device controlboardwrapper2\n"
 static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t nrOfRemappedAxes)
 {
     IPositionControl *pos = nullptr;
-    bool ok = ddRemapper.view(pos);
-    CHECK(ok); // interface position correctly opened
+    REQUIRE(ddRemapper.view(pos)); // interface position correctly opened
     int axes = 0;
-    ok = pos->getAxes(&axes);
-    CHECK(ok); // getAxes returned correctly
+    CHECK(pos->getAxes(&axes)); // getAxes returned correctly
     CHECK((size_t) axes == nrOfRemappedAxes); // remapper seems functional
 
     IPositionDirect *posdir = nullptr;
-    ok = ddRemapper.view(posdir);
-    CHECK(ok); // direct position interface correctly opened
+    REQUIRE(ddRemapper.view(posdir)); // direct position interface correctly opened
 
     IEncoders * encs = nullptr;
-    ok = ddRemapper.view(encs);
-    CHECK(ok); // encoders interface correctly opened
+    REQUIRE(ddRemapper.view(encs)); // encoders interface correctly opened
 
     IControlMode *ctrlmode = nullptr;
-    ok = ddRemapper.view(ctrlmode);
-    CHECK(ok); // control mode interface correctly opened
+    REQUIRE(ddRemapper.view(ctrlmode)); // control mode interface correctly opened
 
     // Vector used for setting/getting data from the controlboard
     std::vector<double> setPosition(nrOfRemappedAxes,-10),
@@ -104,21 +99,19 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
     std::vector<int>    settedControlMode(nrOfRemappedAxes,VOCAB_CM_POSITION_DIRECT);
     std::vector<int>    readedControlMode(nrOfRemappedAxes,VOCAB_CM_POSITION);
 
-    ok = ctrlmode->setControlModes(settedControlMode.data());
-    CHECK(ok); // setControlModes correctly called
+    CHECK(ctrlmode->setControlModes(settedControlMode.data())); // setControlModes correctly called
 
     // Check that the readed control mode is actually position direct
     // Let's try 10 times because if the remapper is using some remotecontrolboards,
     // it is possible that this return false if it is called before the first message
     // has been received from the controlboardwrapper
-    ok = false;
-    for(int wait=0; wait < 10 && !ok; wait++)
+    bool getControlModesOk = false;
+    for(int wait=0; wait < 10 && !getControlModesOk; wait++)
     {
-        ok = ctrlmode->getControlModes(readedControlMode.data());
+        getControlModesOk = ctrlmode->getControlModes(readedControlMode.data());
         yarp::os::Time::delay(0.001);
     }
-
-    CHECK(ok); // getControlModes correctly called
+    CHECK(getControlModesOk); // getControlModes correctly called
 
     for(size_t i=0; i < nrOfRemappedAxes; i++)
     {
@@ -128,21 +121,18 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
     // Test position direct methods
 
     // Set position
-    ok = posdir->setPositions(setPosition.data());
-    CHECK(ok); // setPositions correctly called
+    CHECK(posdir->setPositions(setPosition.data())); // setPositions correctly called
 
     // Set also the speeds in the mean time, so we are sure that we don't get
     // spurios successful set/get of position because of intermediate buffers
-    ok = pos->setRefSpeeds(setRefSpeeds.data());
-    CHECK(ok); // setRefSpeeds correctly called
+    CHECK(pos->setRefSpeeds(setRefSpeeds.data())); // setRefSpeeds correctly called
 
     // Wait some time to make sure that the vector has been correctly propagated
     // back and forth
     yarp::os::Time::delay(0.1);
 
     // Read position
-    ok = posdir->getRefPositions(readedPosition.data());
-    CHECK(ok); // getRefPositions correctly called
+    CHECK(posdir->getRefPositions(readedPosition.data())); // getRefPositions correctly called
 
     // Check that the two vector match
     for(size_t i=0; i < nrOfRemappedAxes; i++)
@@ -152,8 +142,7 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
 
     // Do a similar test for the encoders
     // in fakeMotionControl their value is the one setted with setPosition
-    ok = encs->getEncoders(readedEncoders.data());
-    CHECK(ok); // getEncoders correctly called
+    CHECK(encs->getEncoders(readedEncoders.data())); // getEncoders correctly called
 
     // Check that the two vector match
     for(size_t i=0; i < nrOfRemappedAxes; i++)
@@ -199,20 +188,13 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]") {
             if(i==1) { p.fromConfig(fmcB_file_content); }
             if(i==2) { p.fromConfig(fmcC_file_content); }
 
-            bool result;
-            result = fmcbs[i]->open(p);
-            CHECK(result); // fakeMotionControlBoard open reported successful
+            REQUIRE(fmcbs[i]->open(p)); // fakeMotionControlBoard open reported successful
 
-
-            if(result)
-            {
-                IPositionControl *pos = nullptr;
-                result = fmcbs[i]->view(pos);
-                CHECK(result); // interface position correctly opened
-                int axes = 0;
-                pos->getAxes(&axes);
-                CHECK(axes == fmcbsSizes[i]); // fakeMotionControlBoard seems functional
-            }
+            IPositionControl *pos = nullptr;
+            REQUIRE(fmcbs[i]->view(pos)); // interface position correctly opened
+            int axes = 0;
+            pos->getAxes(&axes);
+            CHECK(axes == fmcbsSizes[i]); // fakeMotionControlBoard seems functional
 
             // Open the wrapper
             wrappers[i] = new PolyDriver();
@@ -221,18 +203,15 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]") {
             if(i==1) { p.fromConfig(wrapperB_file_content); }
             if(i==2) { p.fromConfig(wrapperC_file_content); }
 
-            result = wrappers[i]->open(p);
-            CHECK(result); // controlboardwrapper2 open reported successful
+            REQUIRE(wrappers[i]->open(p)); // controlboardwrapper2 open reported successful
 
             yarp::dev::IMultipleWrapper *iwrap = nullptr;
-            result = wrappers[i]->view(iwrap);
-            CHECK(result); // interface for multiple wrapper correctly opened for the controlboardwrapper2
+            REQUIRE(wrappers[i]->view(iwrap)); // interface for multiple wrapper correctly opened for the controlboardwrapper2
 
             PolyDriverList pdList;
             pdList.push(fmcbs[i],wrapperNetworks[i].c_str());
 
-            result = iwrap->attachAll(pdList);
-            CHECK(result); // controlboardwrapper2 attached successfully to the device
+            CHECK(iwrap->attachAll(pdList)); // controlboardwrapper2 attached successfully to the device
         }
 
         // Create a list containing all the fake controlboards
@@ -258,22 +237,17 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]") {
         axesListWN.addString("axisA2");
         axesListWN.addString("thisIsAnAxisNameThatDoNotExist");
 
-
-        bool ok = ddRemapperWN.open(pRemapperWN);
-        CHECK(ok); // controlboardremapper with wrong names open reported successful
+        REQUIRE(ddRemapperWN.open(pRemapperWN)); // controlboardremapper with wrong names open reported successful
 
         yarp::dev::IMultipleWrapper *imultwrapWN = nullptr;
-        ok = ddRemapperWN.view(imultwrapWN);
-        CHECK(ok); // interface for multiple wrapper with wrong names correctly opened
+        REQUIRE(ddRemapperWN.view(imultwrapWN)); // interface for multiple wrapper with wrong names correctly opened
 
 
-        ok = imultwrapWN->attachAll(fmcList);
-        CHECK_FALSE(ok); // attachAll for controlboardremapper with wrong names successful
+        CHECK_FALSE(imultwrapWN->attachAll(fmcList)); // attachAll for controlboardremapper with wrong names successful
 
         // Make sure that a controlboard in which attachAll is not successfull
         // closes correctly
-        ok = ddRemapperWN.close();
-        CHECK(ok); // controlboardremapper with wrong names close was successful
+        CHECK(ddRemapperWN.close()); // controlboardremapper with wrong names close was successful
 
         // Open the controlboardremapper
         PolyDriver ddRemapper;
@@ -289,15 +263,12 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]") {
         axesList.addString("axisA2");
         size_t nrOfRemappedAxes = 6;
 
-        ok = ddRemapper.open(pRemapper);
-        CHECK(ok); // controlboardremapper open reported successful
+        REQUIRE(ddRemapper.open(pRemapper)); // controlboardremapper open reported successful
 
         yarp::dev::IMultipleWrapper *imultwrap = nullptr;
-        ok = ddRemapper.view(imultwrap);
-        CHECK(ok); // interface for multiple wrapper correctly opened
+        REQUIRE(ddRemapper.view(imultwrap)); // interface for multiple wrapper correctly opened
 
-        ok = imultwrap->attachAll(fmcList);
-        CHECK(ok); // attachAll for controlboardremapper successful
+        CHECK(imultwrap->attachAll(fmcList)); // attachAll for controlboardremapper successful
 
 
         // Test the controlboardremapper
@@ -328,8 +299,7 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]") {
         Property & opts = pRemoteRemapper.addGroup("REMOTE_CONTROLBOARD_OPTIONS");
         opts.put("writeStrict","on");
 
-        ok = ddRemoteRemapper.open(pRemoteRemapper);
-        CHECK(ok); // remotecontrolboardremapper open reported successful, testing it
+        REQUIRE(ddRemoteRemapper.open(pRemoteRemapper)); // remotecontrolboardremapper open reported successful, testing it
 
         // Test the remotecontrolboardremapper
         checkRemapper(ddRemoteRemapper,100,nrOfRemappedAxes);
