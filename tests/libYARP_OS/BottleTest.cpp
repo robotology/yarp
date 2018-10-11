@@ -89,17 +89,17 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
     SECTION("testing hexadecimal") {
         Bottle b;
         b.fromString("0x0C");
-        CHECK(b.get(0).isInt()); // "0x0C is an integer"
-        CHECK(b.get(0).asInt() == 12); // "0x0C" == 12
+        CHECK(b.get(0).isInt32()); // "0x0C is an integer"
+        CHECK(b.get(0).asInt32() == 12); // "0x0C" == 12
         b.fromString("0x0E");
-        CHECK(b.get(0).isInt()); // "0x0E is an integer"
-        CHECK(b.get(0).asInt() == 14); // "0x0E"
+        CHECK(b.get(0).isInt32()); // "0x0E is an integer"
+        CHECK(b.get(0).asInt32() == 14); // "0x0E"
         b.fromString("0x0c");
-        CHECK(b.get(0).asInt() == 12); // "0x0c"
+        CHECK(b.get(0).asInt32() == 12); // "0x0c"
         b.fromString("0x0e");
-        CHECK(b.get(0).asInt() == 14); // "0x0e"
+        CHECK(b.get(0).asInt32() == 14); // "0x0e"
         b.fromString("0xff");
-        CHECK(b.get(0).asInt() == 255); // "0xff"
+        CHECK(b.get(0).asInt32() == 255); // "0xff"
     }
 
     SECTION("testing streaming (just text mode)") {
@@ -127,7 +127,7 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
     SECTION("testing types") {
         BottleImpl bot[3];
         bot[0].fromString("5 10.2 \"hello\" -0xF -15.0");
-        CHECK(bot[0].get(3).asInt() == -15); // "hex works"
+        CHECK(bot[0].get(3).asInt32() == -15); // "hex works"
         bot[1].addInt32(5);
         bot[1].addFloat64(10.2);
         bot[1].addString("hello");
@@ -185,15 +185,15 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         Bottle bot10;
         {
             Bottle& bb = bot10.addList();
-            bb.addInt(1);
-            bb.addInt(2);
-            bb.addInt(3);
+            bb.addInt32(1);
+            bb.addInt32(2);
+            bb.addInt32(3);
         }
         {
             Bottle& bb = bot10.addList();
-            bb.addInt(4);
-            bb.addInt(5);
-            bb.addInt(6);
+            bb.addInt32(4);
+            bb.addInt32(5);
+            bb.addInt32(6);
         }
         CHECK(bot10.size() == (size_t) 2); // "construction test 1"
         CHECK(bot10.toString() == "(1 2 3) (4 5 6)"); // "construction test 2"
@@ -203,11 +203,11 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
 
     SECTION("testing Value interface") {
         Bottle bot("1 \"hi\" (4 \"foo\") 6 7");
-        CHECK(bot.get(0).isInt());
+        CHECK(bot.get(0).isInt32());
         CHECK(bot.get(1).isString());
         CHECK(bot.get(2).isList());
         REQUIRE(bot.get(2).asList() != nullptr); // "can get sublist"
-        CHECK(bot.get(2).asList()->get(0).isInt());
+        CHECK(bot.get(2).asList()->get(0).isInt32());
         CHECK(bot.get(2).asList()->get(1).isString());
         CHECK(bot.get(50).isNull()); // "null type check"
     }
@@ -237,7 +237,7 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK_FALSE(bot.check("goodbye")); // "group check fails ok"
 
         // shortcut find, some people use it
-        CHECK(bot.find("green").asInt() == 255); // "shortcut find succeeds ok"
+        CHECK(bot.find("green").asInt32() == 255); // "shortcut find succeeds ok"
         CHECK(bot.find("red").isNull()); // "shortcut find fails ok"
 
         // shortcut check?
@@ -253,7 +253,7 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         Bottle bot("[send] 10 20");
         CHECK(bot.size() == (size_t) 3); // "plausible parse"
         CHECK(bot.get(0).isVocab()); // "vocab present"
-        CHECK(bot.get(0).asInt() == yarp::os::createVocab('s','e','n','d')); // "vocab match"
+        CHECK(bot.get(0).asInt32() == yarp::os::createVocab('s','e','n','d')); // "vocab match"
     }
 
 
@@ -423,7 +423,7 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(b.get(0).asFloat64() == Approx(10e-2).epsilon(1e-2)); // positive negative lower case
         b.fromString("1E-8");
         CHECK(b.get(0).isFloat64());
-        CHECK(b.get(0).asDouble() == Approx(1e-8).epsilon(1e-9)); // positive negative upper case
+        CHECK(b.get(0).asFloat64() == Approx(1e-8).epsilon(1e-9)); // positive negative upper case
     }
 
     SECTION("test continuation") {
