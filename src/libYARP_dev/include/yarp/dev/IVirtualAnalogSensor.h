@@ -20,13 +20,14 @@ namespace yarp {
     namespace dev {
         class IVirtualAnalogSensor;
         class IVirtualAnalogSensorRaw;
-        enum class VAS_status;
     }
 }
 
+namespace yarp {
+namespace dev {
 YARP_WARNING_PUSH
 YARP_DISABLE_CLASS_ENUM_API_WARNING
-enum class YARP_dev_API yarp::dev::VAS_status
+enum class YARP_dev_API VAS_status
 {
     VAS_OK = 0,
     VAS_ERROR = 1,      // generic error
@@ -34,6 +35,8 @@ enum class YARP_dev_API yarp::dev::VAS_status
     VAS_TIMEOUT = 3
 };
 YARP_WARNING_POP
+} // namespace dev
+} // namespace yarp
 
 /**
  * @ingroup dev_iface_other
