@@ -329,6 +329,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_12">
          <item>
           <widget class="CustomTreeWidget" name="nodestreeWidget">
+           <property name="columnCount">
+            <number>6</number>
+           </property>
            <column>
             <property name="text">
              <string>Status</string>
@@ -347,6 +350,11 @@
            <column>
             <property name="text">
              <string>User</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Address</string>
             </property>
            </column>
            <column>
@@ -436,11 +444,6 @@
         </spacer>
        </item>
       </layout>
-      <zorder>line_5</zorder>
-      <zorder>line_2</zorder>
-      <zorder>line</zorder>
-      <zorder>label_6</zorder>
-      <zorder>line_3</zorder>
      </widget>
     </widget>
    </item>

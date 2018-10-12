@@ -102,7 +102,7 @@ void ClusterWidget::init()
     for (size_t i = 0; i<cluster.nodes.size(); i++)
     {
         ClusterNode node = cluster.nodes[i];
-        addRow(node.name, node.displayValue, node.user, node.onOff, node.log, i);
+        addRow(node.name, node.displayValue, node.user, node.address, node.onOff, node.log, i);
     }
 
     //check if all the nodes are up
@@ -246,7 +246,7 @@ void ClusterWidget::onRunSelected()
             cmdRunYarprun = cmdRunYarprun + " 'export DISPLAY=" + node.displayValue + " && ";
 
         }
-        if (qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 4))->isChecked())
+        if (qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 5))->isChecked())
         {
             cmdRunYarprun = cmdRunYarprun + " yarprun --server "+ portName  + " --log 2>&1 2>/tmp/yarprunserver.log";
         }
@@ -396,16 +396,17 @@ void ClusterWidget::onNodeSelectionChanged()
 
 
 void ClusterWidget::addRow(const std::string& name,const std::string& display,
-                           const std::string& user, bool onOff, bool log, int id)
+                           const std::string& user, const std::string& address,
+                           bool onOff, bool log, int id)
 {
     QStringList stringList;
-    stringList <<""<< QString(name.c_str()) << QString(display.c_str()) << QString(user.c_str())<< "" <<QString(std::to_string(id).c_str());
+    stringList <<""<< QString(name.c_str()) << QString(display.c_str()) << QString(user.c_str()) << QString(address.c_str())<< "" <<QString(std::to_string(id).c_str());
     QTreeWidgetItem* it = new QTreeWidgetItem(stringList);
     ui->nodestreeWidget->addTopLevelItem(it);
-    ui->nodestreeWidget->setItemWidget((QTreeWidgetItem *) it, 4, new QCheckBox(this));
+    ui->nodestreeWidget->setItemWidget((QTreeWidgetItem *) it, 5, new QCheckBox(this));
 
     //initialize checkboxes
-    qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 4))->setChecked(log);
+    qobject_cast<QCheckBox*>(ui->nodestreeWidget->itemWidget((QTreeWidgetItem *)it, 5))->setChecked(log);
 
     //initialize icon
     if (onOff)

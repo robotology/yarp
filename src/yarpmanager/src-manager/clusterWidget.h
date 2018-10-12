@@ -53,7 +53,7 @@ public:
 
 private:
     void addRow(const std::string& name="", const std::string& display="none",
-                const std::string& user="", bool onOff=false, bool log=true, int id=0);
+                const std::string& user="", const std::string& address="", bool onOff=false, bool log=true, int id=0);
     std::string getSSHCmd(const std::string& user, const std::string& host, const std::string& ssh_options);
     bool checkNameserver();
     bool checkNode(const std::string& name);
