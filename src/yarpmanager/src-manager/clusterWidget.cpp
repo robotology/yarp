@@ -240,7 +240,7 @@ void ClusterWidget::onRunSelected()
             continue;
         }
 
-        string cmdRunYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
+        string cmdRunYarprun = getSSHCmd(node.user, node.address, node.ssh_options);
         if (node.display)
         {
             cmdRunYarprun = cmdRunYarprun + " 'export DISPLAY=" + node.displayValue + " && ";
@@ -293,7 +293,7 @@ void ClusterWidget::onStopSelected()
             portName = "/" + portName;
         }
 
-        string cmdStopYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
+        string cmdStopYarprun = getSSHCmd(node.user, node.address, node.ssh_options);
 
         cmdStopYarprun = cmdStopYarprun + " yarprun --exit --on "+ portName + " &";
 
@@ -325,7 +325,7 @@ void ClusterWidget::onKillSelected()
             continue;
         }
 
-        string cmdKillYarprun = getSSHCmd(node.user, node.name, node.ssh_options);
+        string cmdKillYarprun = getSSHCmd(node.user, node.address, node.ssh_options);
 
         cmdKillYarprun = cmdKillYarprun + " killall -9 yarprun &";
 
@@ -357,7 +357,7 @@ void ClusterWidget::onExecute()
         int itr = it->text(5).toInt();
         ClusterNode node = cluster.nodes[itr];
 
-        string cmdExecute = getSSHCmd(node.user, node.name, node.ssh_options);
+        string cmdExecute = getSSHCmd(node.user, node.address, node.ssh_options);
 
         cmdExecute = cmdExecute + " "+ ui->lineEditExecute->text().toStdString();
 

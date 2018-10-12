@@ -133,6 +133,15 @@ bool XmlClusterLoader::parseXmlFile(Cluster &_cluster)
         }
         cluster.nodes.push_back(c_node);
 
+        if (node->Attribute("address"))
+        {
+            c_node.address = node->Attribute("address");
+        }
+        else
+        {
+            c_node.address = c_node.name;
+        }
+
 
     }
     _cluster = cluster;
