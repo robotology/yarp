@@ -398,6 +398,10 @@ void Port::interrupt()
 void Port::resume()
 {
     PortCoreAdapter& core = IMPL();
+    if(!core.isInterrupted()) {
+        // prevent resuming when the port is not interrupted
+        return;
+    }
     core.resumeFull();
     Nodes& nodes = NameClient::getNameClient().getNodes();
     nodes.add(*this);
