@@ -909,5 +909,24 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]") {
 
     }
 
+    SECTION("Testing depthToPC")
+    {
+        ImageOf<PixelFloat> depth;
+        size_t width{320};
+        size_t height{240};
+        depth.resize(width, height);
+        IntrinsicParams intp;
+
+        auto pc = utils::depthToPC(depth, intp);
+        CHECK(pc.width() == depth.width()); // Checking PC width
+        CHECK(pc.height() == depth.height()); // Checking PC height
+
+        ImageOf<PixelBgra> color;
+        color.resize(width, height);
+        auto pcCol = utils::depthRgbToPC<DataXYZRGBA, PixelBgra>(depth, color, intp);
+        CHECK(pcCol.width() == depth.width()); // Checking PC width
+        CHECK(pcCol.height() == depth.height()); // Checking PC height
+
+    }
     Network::setLocalMode(false);
 }
