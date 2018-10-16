@@ -13,7 +13,9 @@
  *
  */
 
+#include <yarp/sig/Image.h>
 #include <yarp/sig/PointCloud.h>
+#include <yarp/sig/PointCloudUtils.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
@@ -922,6 +924,28 @@ public:
 
     }
 
+    void depthToPCTest()
+    {
+        report(0,"Testing depthToPC");
+        ImageOf<PixelFloat> depth;
+        size_t width{320};
+        size_t height{240};
+        depth.resize(width, height);
+        IntrinsicParams intp;
+
+        auto pc = utils::depthToPC(depth, intp);
+        checkEqual(pc.width(), depth.width(), "Checking PC width");
+        checkEqual(pc.height(), depth.height(), "Checking PC height");
+        report(0,"Testing depthRgbToPC");
+
+        ImageOf<PixelBgra> color;
+        color.resize(width, height);
+        auto pcCol = utils::depthRgbToPC<DataXYZRGBA, PixelBgra>(depth, color, intp);
+        checkEqual(pcCol.width(), depth.width(), "Checking PC width");
+        checkEqual(pcCol.height(), depth.height(), "Checking PC height");
+
+    }
+
     virtual void runTests() override
     {
         readWriteMatchTest();
@@ -932,6 +956,7 @@ public:
         concatenationTest();
         toFromBottle();
         readWritetoFromBottle();
+        depthToPCTest();
     }
 };
 
