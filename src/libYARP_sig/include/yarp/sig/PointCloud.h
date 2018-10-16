@@ -120,7 +120,6 @@ public:
      */
     inline T& operator()(size_t u, size_t v)
     {
-        yAssert(isOrganized());
         return m_storage[u + v * width()];
     }
 
@@ -132,7 +131,6 @@ public:
      */
     inline const T& operator()(size_t u, size_t v) const
     {
-        yAssert(isOrganized());
         return m_storage[u + v * width()];
     }
 
