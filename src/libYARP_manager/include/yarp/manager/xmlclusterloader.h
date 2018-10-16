@@ -20,6 +20,7 @@ namespace manager {
 struct ClusterNode
 {
     std::string name = "";
+    std::string address = "";
     bool display = false;
     std::string displayValue = "none";
     std::string user = "";
