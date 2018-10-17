@@ -4,7 +4,7 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-include_directories(${QCustomPlot_INCLUDE_DIRS})
+include_directories(SYSTEM ${QCustomPlot_INCLUDE_DIRS})
 
 set(QtYARPScopePlugin_SRCS portreader.cpp
                            simpleloader.cpp
