@@ -2151,7 +2151,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                         YARP_SPRINTF2(log, debug,
                                       "Sending [%s] to %s", req.toString().c_str(),
                                       pub.c_str());
-                        Contact c = Contact::fromString(pub.c_str());
+                        Contact c = Contact::fromString(pub);
                         if (!__pc_rpc(c, "xmlrpc", req, reply, false)) {
                             fprintf(stderr, "Cannot connect to ROS subscriber %s\n",
                                     pub.c_str());

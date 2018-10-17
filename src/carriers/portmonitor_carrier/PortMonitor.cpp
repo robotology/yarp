@@ -34,7 +34,7 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
     if (!group) return false;
 
     Property options;
-    options.fromString(proto.getSenderSpecifier().c_str());
+    options.fromString(proto.getSenderSpecifier());
     options.put("source", sourceName);
     options.put("destination", portName);
     options.put("sender_side",
@@ -72,7 +72,7 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options) {
         yarp::os::ResourceFinder rf;
         rf.setDefaultContext(context.c_str());
         rf.configure(0, nullptr);
-        strFile = rf.findFile(filename.c_str());
+        strFile = rf.findFile(filename);
         if(strFile == "")
             strFile = rf.findFile(filename+".lua");
     }

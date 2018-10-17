@@ -652,8 +652,7 @@ void DgramTwoWayStream::interrupt() {
                 if (mgram) {
                     YARP_DEBUG(Logger::get(),
                                std::string("* mcast interrupt, interface ") +
-                               restrictInterfaceIp.toString().c_str()
-                               );
+                               restrictInterfaceIp.toString());
                     tmp.join(localAddress, true,
                              restrictInterfaceIp);
                 } else {

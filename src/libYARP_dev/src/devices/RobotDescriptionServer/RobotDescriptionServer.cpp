@@ -24,7 +24,7 @@ using namespace yarp::sig;
 bool yarp::dev::RobotDescriptionServer::open(yarp::os::Searchable &config)
 {
     m_local_name.clear();
-    m_local_name = config.find("local").asString().c_str();
+    m_local_name = config.find("local").asString();
 
     if (m_local_name == "")
     {
@@ -35,7 +35,7 @@ bool yarp::dev::RobotDescriptionServer::open(yarp::os::Searchable &config)
     std::string local_rpc = m_local_name;
     local_rpc += "/rpc";
 
-    if (!m_rpc_port.open(local_rpc.c_str()))
+    if (!m_rpc_port.open(local_rpc))
     {
         yError("RobotDescriptionServer::open() error could not open rpc port %s, check network", local_rpc.c_str());
         return false;

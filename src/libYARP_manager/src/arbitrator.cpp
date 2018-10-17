@@ -84,7 +84,7 @@ bool Arbitrator::trainWeights(const char* opnd)
 
     // parsing the compact logic
     rule = string(opnd) + " : " + rule;
-    if(!parser.parse(rule.c_str()))
+    if(!parser.parse(rule))
         return false;
 
     // trining the weights

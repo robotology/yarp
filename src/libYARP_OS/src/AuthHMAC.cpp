@@ -66,7 +66,7 @@ AuthHMAC::AuthHMAC() :
     }
 
     Property config;
-    config.fromConfigFile(fname.c_str());
+    config.fromConfigFile(fname);
     Bottle group = config.findGroup("AUTH");
 
     if (group.isNull()) {

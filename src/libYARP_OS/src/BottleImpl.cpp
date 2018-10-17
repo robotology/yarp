@@ -449,7 +449,7 @@ bool BottleImpl::read(ConnectionReader& reader)
     bool result = false;
 
     if (reader.isTextMode()) {
-        std::string str = reader.expectText().c_str();
+        std::string str = reader.expectText();
         if (reader.isError()) {
             return false;
         }
@@ -457,7 +457,7 @@ bool BottleImpl::read(ConnectionReader& reader)
         while (!done) {
             if (str[str.length() - 1] == '\\') {
                 str = str.substr(0, str.length() - 1);
-                str += reader.expectText().c_str();
+                str += reader.expectText();
                 if (reader.isError()) {
                     return false;
                 }
@@ -466,7 +466,7 @@ bool BottleImpl::read(ConnectionReader& reader)
                     done = true;
                 } else {
                     str += "\n";
-                    str += reader.expectText().c_str();
+                    str += reader.expectText();
                     if (reader.isError()) {
                         return false;
                     }

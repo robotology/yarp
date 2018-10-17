@@ -235,7 +235,7 @@ bool YarpBroker::stop()
     grp.addString("sigterm");
     grp.addString(strTag.c_str());
     msg.addList()=grp;
-    int ret = SendMsg(msg, strHost.c_str(), response, CONNECTION_TIMEOUT);
+    int ret = SendMsg(msg, strHost, response, CONNECTION_TIMEOUT);
     if(ret != YARPRUN_OK)
     {
         strError = "cannot ask ";
@@ -283,7 +283,7 @@ bool YarpBroker::kill()
     grp.addString(strTag.c_str());
     grp.addInt32(SIGKILL);
     msg.addList() = grp;
-    int ret = SendMsg(msg, strHost.c_str(), response, CONNECTION_TIMEOUT);
+    int ret = SendMsg(msg, strHost, response, CONNECTION_TIMEOUT);
     if(ret != YARPRUN_OK)
     {
         strError = "cannot ask ";
@@ -333,7 +333,7 @@ int YarpBroker::running()
     grp.addString(strTag.c_str());
     msg.addList()=grp;
 
-    int ret = SendMsg(msg, strHost.c_str(), response, 3.0);
+    int ret = SendMsg(msg, strHost, response, 3.0);
     if(ret != YARPRUN_OK)
     {
         strError = "cannot ask ";
@@ -363,15 +363,15 @@ Property& YarpBroker::runProperty()
 {
     command.clear();
     string cmd = strCmd + string(" ") + strParam;
-    command.put("cmd", cmd.c_str());
-    command.put("on", strHost.c_str());
-    command.put("as", strTag.c_str());
+    command.put("cmd", cmd);
+    command.put("on", strHost);
+    command.put("as", strTag);
     if(!strWorkdir.empty())
-        command.put("workdir", strWorkdir.c_str());
+        command.put("workdir", strWorkdir);
     if(!strStdio.empty())
-        command.put("stdio", strStdio.c_str());
+        command.put("stdio", strStdio);
     if(!strEnv.empty())
-        command.put("env", strEnv.c_str());
+        command.put("env", strEnv);
     //command.put("hold", "hold");
     return command;
 }
@@ -440,8 +440,8 @@ bool YarpBroker::connect(const char* from, const char* to,
     else
     {
         string topic = string("topic:/") + string(from) + string(to);
-        NetworkBase::connect(from, topic.c_str(), style);
-        NetworkBase::connect(topic.c_str(), to, style);
+        NetworkBase::connect(from, topic, style);
+        NetworkBase::connect(topic, to, style);
         if(!connected(from, to, carrier))
         {
             strError = "a persistent connection from ";
@@ -532,7 +532,7 @@ const char* YarpBroker::requestRpc(const char* szport, const char* request, doub
     style.timeout = (timeout>0.0) ? timeout : CONNECTION_TIMEOUT;
     bool ret;
     for(int i=0; i<10; i++) {
-        ret = NetworkBase::connect(port.getName().c_str(), szport, style);
+        ret = NetworkBase::connect(port.getName(), szport, style);
         if(ret) break;
         SystemClock::delaySystem(1.0);
     }
@@ -545,7 +545,7 @@ const char* YarpBroker::requestRpc(const char* szport, const char* request, doub
     Bottle msg, response;
     msg.fromString(request);
     ret = port.write(msg, response);
-    NetworkBase::disconnect(port.getName().c_str(), szport);
+    NetworkBase::disconnect(port.getName(), szport);
     if(!response.size() || !ret) {
         port.close();
         return nullptr;
@@ -593,7 +593,7 @@ bool YarpBroker::getSystemInfo(const char* server, SystemInfoSerializer& info)
     //style.carrier = carrier;
 
 
-    __trace_message = "(getSystemInfo) connecting to " + string(port.getName().c_str());
+    __trace_message = "(getSystemInfo) connecting to " + string(port.getName());
     bool connected = yarp::os::NetworkBase::connect(port.getName(), server, style);
     if(!connected)
     {
@@ -604,10 +604,10 @@ bool YarpBroker::getSystemInfo(const char* server, SystemInfoSerializer& info)
         return false;
     }
 
-    __trace_message = "(getSystemInfo) writing to " + string(port.getName().c_str());
+    __trace_message = "(getSystemInfo) writing to " + string(port.getName());
     bool ret = port.write(msg, info);
-    __trace_message = "(getSystemInfo) disconnecting from " + string(port.getName().c_str());
-    NetworkBase::disconnect(port.getName().c_str(), server);
+    __trace_message = "(getSystemInfo) disconnecting from " + string(port.getName());
+    NetworkBase::disconnect(port.getName(), server);
 
     if(!ret)
     {
@@ -649,7 +649,7 @@ bool YarpBroker::getAllPorts(vector<string> &ports)
     {
         str = str.substr(pos1+strlen(delm));
         if((pos2 = str.find(" ")) != std::string::npos)
-            ports.push_back(str.substr(0, pos2).c_str());
+            ports.push_back(str.substr(0, pos2));
     }
 
     return true;
@@ -683,7 +683,7 @@ bool YarpBroker::getAllProcesses(const char* server,
             if(response.get(i).check("env") &&
                response.get(i).find("env").asString().length())
                sprc = sprc + std::string("; ") + response.get(i).find("env").asString();
-            proc.command = sprc.c_str();
+            proc.command = sprc;
             processes.push_back(proc);
         }
         return true;
@@ -799,7 +799,7 @@ bool YarpBroker::threadInit()
     style.timeout = CONNECTION_TIMEOUT;
     while(!timeout(base, 5.0))
     {
-        if(NetworkBase::connect(strStdioPort.c_str(), stdioPort.getName(), style))
+        if(NetworkBase::connect(strStdioPort, stdioPort.getName(), style))
             return true;
     }
 
@@ -823,7 +823,7 @@ void YarpBroker::run()
 
 void YarpBroker::threadRelease()
 {
-    NetworkBase::disconnect(stdioPort.getName(), strStdioUUID.c_str());
+    NetworkBase::disconnect(stdioPort.getName(), strStdioUUID);
     stdioPort.close();
 }
 
@@ -851,10 +851,10 @@ int YarpBroker::SendMsg(Bottle& msg, std::string target, Bottle& response, float
     style.timeout = CONNECTION_TIMEOUT;
 
     bool ret;
-    __trace_message = "(SendMsg) connecting to " + string(target.c_str());
+    __trace_message = "(SendMsg) connecting to " + string(target);
     for(int i=0; i<10; i++)
     {
-        ret = NetworkBase::connect(port.getName().c_str(), target.c_str(), style);
+        ret = NetworkBase::connect(port.getName(), target, style);
         if(ret) break;
         SystemClock::delaySystem(1.0);
     }
@@ -867,10 +867,10 @@ int YarpBroker::SendMsg(Bottle& msg, std::string target, Bottle& response, float
         return YARPRUN_CONNECTION_TIMOUT;
     }
 
-    __trace_message = "(SendMsg) writing to " + string(target.c_str());
+    __trace_message = "(SendMsg) writing to " + string(target);
     ret = port.write(msg, response);
-    __trace_message = "(SendMsg) disconnecting from " + string(target.c_str());
-    NetworkBase::disconnect(port.getName().c_str(),target.c_str());
+    __trace_message = "(SendMsg) disconnecting from " + string(target);
+    NetworkBase::disconnect(port.getName(),target);
     __trace_message.clear();
     semParam.post();
 
@@ -917,7 +917,7 @@ int YarpBroker::requestServer(Property& config)
             return ret;
 
         if(response.size() > 2)
-            strStdioUUID = response.get(2).asString().c_str();
+            strStdioUUID = response.get(2).asString();
 
         return ((response.get(0).asInt32()>0)?YARPRUN_OK:YARPRUN_UNDEF);
     }

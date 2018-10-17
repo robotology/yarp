@@ -460,7 +460,7 @@ yarp::os::Bottle yarp::run::Run::sendMsg(yarp::os::Bottle& msg, std::string targ
         }
         RUNLOG(">>>port.write(msg, response)")
 
-        yarp::os::Network::disconnect(port.getName().c_str(), target.c_str());
+        yarp::os::Network::disconnect(port.getName(), target);
         port.close();
 
         fprintf(stderr, "RESPONSE:\n=========\n");
@@ -893,7 +893,7 @@ int yarp::run::Run::server()
 
         yarp::os::RpcServer port;
 
-        if (!port.open(mPortName.c_str()))
+        if (!port.open(mPortName))
         {
             yError() << "Yarprun failed to open port: " << mPortName.c_str();
 
@@ -1083,7 +1083,7 @@ int yarp::run::Run::server()
 
                         yarp::os::ContactStyle style;
                         style.persistent=true;
-                        yarp::os::Network::connect(portName.c_str(), mLoggerPort.c_str(), style);
+                        yarp::os::Network::connect(portName, mLoggerPort, style);
                     }
 
                     yarp::os::Bottle cmdResult;
@@ -1534,7 +1534,7 @@ int yarp::run::Run::client(yarp::os::Property& config)
         RUNLOG("<<<port.write(msg, info)")
         int ret = port.write(msg, info);
         RUNLOG(">>>port.write(msg, info)")
-        yarp::os::Network::disconnect(port.getName().c_str(), config.find("on").asString());
+        yarp::os::Network::disconnect(port.getName(), config.find("on").asString());
         port.close();
         //yarp::os::Network::unregisterName(port.getName());
         fprintf(stdout, "RESPONSE:\n=========\n\n");
@@ -3716,7 +3716,7 @@ int yarp::run::Run::start(const std::string &node, yarp::os::Property &command, 
 
     printf(":: %s\n", msg.toString().c_str());
 
-    response=sendMsg(msg, dest_srv.c_str());
+    response=sendMsg(msg, dest_srv);
 
     char buff[16];
     sprintf(buff, "%d", response.get(0).asInt32());
@@ -3741,7 +3741,7 @@ int yarp::run::Run::sigterm(const std::string &node, const std::string &keyv)
 
     printf(":: %s\n", msg.toString().c_str());
 
-    response=sendMsg(msg, node.c_str());
+    response=sendMsg(msg, node);
 
     return response.get(0).asString()=="sigterm OK"?0:YARPRUN_ERROR;
 }
@@ -3761,7 +3761,7 @@ int yarp::run::Run::sigterm(const std::string &node)
 
     printf(":: %s\n", msg.toString().c_str());
 
-    response=sendMsg(msg, node.c_str());
+    response=sendMsg(msg, node);
 
     return response.get(0).asString()=="sigtermall OK"?0:YARPRUN_ERROR;
 }
@@ -3783,7 +3783,7 @@ int yarp::run::Run::kill(const std::string &node, const std::string &keyv, int s
 
     printf(":: %s\n", msg.toString().c_str());
 
-    response=sendMsg(msg, node.c_str());
+    response=sendMsg(msg, node);
 
     return response.get(0).asString()=="kill OK"?0:YARPRUN_ERROR;
 }
@@ -3804,7 +3804,7 @@ bool yarp::run::Run::isRunning(const std::string &node, std::string &keyv)
 
     printf(":: %s\n", msg.toString().c_str());
 
-    response=sendMsg(msg, node.c_str());
+    response=sendMsg(msg, node);
 
     if (!response.size()) return false;
 

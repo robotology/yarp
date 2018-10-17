@@ -128,7 +128,7 @@ yarp::dev::DriverCreator *createFakeMotionControl()
 bool FakeMotionControl::extractGroup(Bottle &input, Bottle &out, const std::string &key1, const std::string &txt, int size)
 {
     size++;
-    Bottle &tmp=input.findGroup(key1.c_str(), txt.c_str());
+    Bottle &tmp=input.findGroup(key1, txt);
 
     if (tmp.isNull())
     {
@@ -525,7 +525,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
 //         else
 //             str=" ";
 //     }
-    str=config.toString().c_str();
+    str=config.toString();
     yTrace() << str;
 
     //

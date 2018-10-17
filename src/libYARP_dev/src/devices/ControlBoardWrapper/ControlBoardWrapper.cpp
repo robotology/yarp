@@ -333,8 +333,8 @@ bool ControlBoardWrapper::initialize_YARP(yarp::os::Searchable &prop)
                 break;
             }
 
-            rootName = prop.check("rootName",Value("/"), "starting '/' if needed.").asString().c_str();
-            partName=prop.check("name",Value("controlboard"), "prefix for port names").asString().c_str();
+            rootName = prop.check("rootName",Value("/"), "starting '/' if needed.").asString();
+            partName=prop.check("name",Value("controlboard"), "prefix for port names").asString();
             rootName+=(partName);
             if( rootName.find("//") != std::string::npos )
             {
@@ -363,7 +363,7 @@ bool ControlBoardWrapper::initialize_YARP(yarp::os::Searchable &prop)
             inputStreamingPort.setStrict();
             inputStreamingPort.useCallback(streaming_parser);
 
-            if(!outputPositionStatePort.open((rootName+"/state:o").c_str()) )
+            if(!outputPositionStatePort.open(rootName+"/state:o") )
             {
                 yError() <<"Error opening port "<< rootName+"/state:o\n";
                 success = false;
@@ -394,7 +394,7 @@ bool ControlBoardWrapper::initialize_YARP(yarp::os::Searchable &prop)
 bool ControlBoardWrapper::open(Searchable& config)
 {
     Property prop;
-    prop.fromString(config.toString().c_str());
+    prop.fromString(config.toString());
 
     _verb = (prop.check("verbose","if present, give detailed output"));
     if (_verb)
@@ -523,7 +523,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         int wBase;
         int wTop;
 
-        parameters=prop.findGroup(nets->get(k).asString().c_str());
+        parameters=prop.findGroup(nets->get(k).asString());
 
         if(parameters.size()==2)
         {
@@ -580,7 +580,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         tmpDevice->setVerbose(_verb);
 
         int axes=top-base+1;
-        if (!tmpDevice->configure(wBase, wTop, base, top, axes, nets->get(k).asString().c_str(), this))
+        if (!tmpDevice->configure(wBase, wTop, base, top, axes, nets->get(k).asString(), this))
         {
             yError() <<"configure of subdevice ret false";
             return false;
@@ -632,7 +632,7 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
 {
     Property p;
     subDeviceOwned = new PolyDriver;
-    p.fromString(prop.toString().c_str());
+    p.fromString(prop.toString());
 
     std::string subdevice = prop.find("subdevice").asString();
     p.setMonitor(prop.getMonitor(), subdevice.c_str()); // pass on any monitoring
@@ -681,7 +681,7 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     SubDevice *tmpDevice=device.getSubdevice(0);
     tmpDevice->setVerbose(_verb);
 
-    std::string subDevName ((partName + "_" + subdevice.c_str()));
+    std::string subDevName ((partName + "_" + subdevice));
     if (!tmpDevice->configure(wbase, wtop, base, top, controlledJoints, subDevName, this) )
     {
         yError() <<"configure of subdevice ret false";
@@ -742,7 +742,7 @@ bool ControlBoardWrapper::updateAxisName()
     {
         if( (ret = getAxisName(i, tmp) && ret) )
         {
-            std::string tmp2(tmp.c_str());
+            std::string tmp2(tmp);
             tmpVect.push_back(tmp2);
         }
     }
@@ -789,7 +789,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
     for(int p=0;p<polylist.size();p++)
     {
         // look if we have to attach to a calibrator
-        std::string tmpKey=polylist[p]->key.c_str();
+        std::string tmpKey=polylist[p]->key;
         if(tmpKey == "Calibrator" || tmpKey == "calibrator")
         {
             // Set the IRemoteCalibrator interface, the wrapper must point to the calibrato rdevice

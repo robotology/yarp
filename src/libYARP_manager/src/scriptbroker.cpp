@@ -122,7 +122,7 @@ bool ScriptYarprunBroker::whichFile(const char* server, const char* filename, st
     yarp::os::Value filenameReader;
     bool ret = port.write(msg, filenameReader);
     filenameWithPath=filenameReader.asString();
-    NetworkBase::disconnect(port.getName().c_str(), server);
+    NetworkBase::disconnect(port.getName(), server);
     port.close();
 
     if(!ret)

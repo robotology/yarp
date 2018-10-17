@@ -164,12 +164,12 @@ void Bottle::fromString(const std::string& text)
 {
     implementation->edit();
     implementation->invalid = false;
-    implementation->fromString(text.c_str());
+    implementation->fromString(text);
 }
 
 std::string Bottle::toString() const
 {
-    return std::string(implementation->toString().c_str());
+    return implementation->toString();
 }
 
 void Bottle::fromBinary(const char* buf, size_t len)
@@ -272,7 +272,7 @@ Bottle& Bottle::findGroup(const std::string& key) const
         }
         reportToMonitor(report);
         if (bb.isList()) {
-            std::string context = getMonitorContext().c_str();
+            std::string context = getMonitorContext();
             context += ".";
             context += key;
             bb.asList()->setMonitor(getMonitor(),
@@ -306,7 +306,7 @@ Bottle& Bottle::getNullBottle()
 
 bool Bottle::operator==(const Bottle& alt) const
 {
-    return std::string(toString().c_str()) == alt.toString().c_str();
+    return toString() == alt.toString();
 }
 
 bool Bottle::write(PortReader& reader, bool textMode)

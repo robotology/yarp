@@ -57,7 +57,7 @@ bool MultipleAnalogSensorsServer::open(os::Searchable& config)
         return false;
     }
 
-    std::string name = config.find("name").asString().c_str();
+    std::string name = config.find("name").asString();
 
     // Reserve a fair amount of elements
     // It would be great if yarp::sig::Vector had a reserve method

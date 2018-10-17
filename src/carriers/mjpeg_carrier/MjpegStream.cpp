@@ -59,7 +59,7 @@ yarp::conf::ssize_t MjpegStream::read(Bytes& b) {
         if (debug) {
             printf("Read content length - \"%s\"\n", s.c_str());
         }
-        Bottle b(s.c_str());
+        Bottle b(s);
         if (b.get(0).asString()!="Content-Length:") {
             if (!delegate->getInputStream().isOk()) {
                 break;

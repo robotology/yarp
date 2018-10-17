@@ -104,7 +104,7 @@ static int noteDud(const Contact& src)
 {
     NameStore *store = getNameSpace().getQueryBypass();
     if (store != nullptr) {
-        return store->announce(src.getName().c_str(), 0);
+        return store->announce(src.getName(), 0);
     }
     Bottle cmd, reply;
     cmd.addString("announce");
@@ -427,7 +427,7 @@ static int metaConnect(const std::string& src,
             Carrier *srcCarrier = nullptr;
             CARRIER_DEBUG("staticSrc.getCarrier= %s  ", staticSrc.getCarrier().c_str());
             if (staticSrc.getCarrier()!="") {
-                srcCarrier = Carriers::chooseCarrier(staticSrc.getCarrier().c_str());
+                srcCarrier = Carriers::chooseCarrier(staticSrc.getCarrier());
             }
             if (srcCarrier!=nullptr) {
                 CARRIER_DEBUG("srcCarrier is NOT null; its name is %s;  ", srcCarrier->getName().c_str());
@@ -458,7 +458,7 @@ static int metaConnect(const std::string& src,
             Carrier *destCarrier = nullptr;
             CARRIER_DEBUG("staticDest.getCarrier= %s  ", staticDest.getCarrier().c_str());
             if (staticDest.getCarrier()!="") {
-                destCarrier = Carriers::chooseCarrier(staticDest.getCarrier().c_str());
+                destCarrier = Carriers::chooseCarrier(staticDest.getCarrier());
             }
             if (destCarrier!=nullptr) {
                 CARRIER_DEBUG("destCarrier is NOT null; its name is %s;  ", destCarrier->getName().c_str());
@@ -592,7 +592,7 @@ static int metaConnect(const std::string& src,
     bool connectionIsPull = false;
     Carrier *connectionCarrier = nullptr;
     if (style.carrier!="topic") {
-        connectionCarrier = Carriers::chooseCarrier(style.carrier.c_str());
+        connectionCarrier = Carriers::chooseCarrier(style.carrier);
         if (connectionCarrier!=nullptr) {
             connectionIsPush = connectionCarrier->isPush();
             connectionIsPull = !connectionIsPush;
@@ -793,9 +793,9 @@ bool NetworkBase::waitPort(const std::string& target, bool quiet)
 
 bool NetworkBase::sync(const std::string& port, bool quiet)
 {
-    bool result = waitPort(port.c_str(), quiet);
+    bool result = waitPort(port, quiet);
     if (result) {
-        poll(port.c_str(), true);
+        poll(port, true);
     }
     return result;
 }
@@ -852,12 +852,12 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
 #endif
 
         std::string quiet = getEnvironment("YARP_QUIET");
-        Bottle b2(quiet.c_str());
+        Bottle b2(quiet);
         if (b2.get(0).asInt32()>0) {
             Logger::get().setVerbosity(-b2.get(0).asInt32());
         } else {
             std::string verbose = getEnvironment("YARP_VERBOSE");
-            Bottle b(verbose.c_str());
+            Bottle b(verbose);
             if (b.get(0).asInt32()>0) {
                 YARP_INFO(Logger::get(),
                           "YARP_VERBOSE environment variable is set");
@@ -1297,7 +1297,7 @@ bool NetworkBase::isConnected(const std::string& src, const std::string& dest,
 std::string NetworkBase::getNameServerName() {
     NameConfig nc;
     std::string name = nc.getNamespace(false);
-    return name.c_str();
+    return name;
 }
 
 
@@ -1417,7 +1417,7 @@ int NetworkBase::sendMessage(const std::string& port,
                              bool quiet)
 {
     output = "";
-    Contact srcAddress = NetworkBase::queryName(port.c_str());
+    Contact srcAddress = NetworkBase::queryName(port);
     if (!srcAddress.isValid()) {
         if (!quiet) {
             fprintf(stderr, "Cannot find port named %s\n", port.c_str());
@@ -1463,7 +1463,7 @@ int NetworkBase::sendMessage(const std::string& port,
     Bottle b;
     b.read(con);
     b.read(con);
-    output = b.toString().c_str();
+    output = b.toString();
     if (!quiet) {
         //fprintf(stderr, "%s\n", b.toString().c_str());
         YARP_SPRINTF1(Logger::get(), info, "%s", b.toString().c_str());
@@ -1853,14 +1853,14 @@ bool NetworkBase::writeToNameServer(PortWriter& cmd,
 
 
 std::string NetworkBase::getConfigFile(const char *fname) {
-    return NameConfig::expandFilename(fname).c_str();
+    return NameConfig::expandFilename(fname);
 }
 
 
 int NetworkBase::getDefaultPortRange() {
     std::string range = NetworkBase::getEnvironment("YARP_PORT_RANGE");
     if (range!="") {
-        int irange = NetType::toInt(range.c_str());
+        int irange = NetType::toInt(range);
         if (irange != 0) return irange;
     }
     return 10000;

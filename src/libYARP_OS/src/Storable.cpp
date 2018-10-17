@@ -56,8 +56,6 @@ const int StoreDict::code = BOTTLE_TAG_LIST | BOTTLE_TAG_DICT;
 
 
 
-#define YARP_STRINIT(len) ((size_t)(len)), 0
-
 /*
  * The maximum string length for a 'double' printed as a string using ("%.*g", DBL_DIG) will be:
  *  Initial +/- sign                        1 char
@@ -206,7 +204,7 @@ bool Storable::check(const std::string& key) const
 
 bool Storable::operator==(const Value& alt) const
 {
-    return std::string(toString().c_str()) == alt.toString().c_str();
+    return toString() == alt.toString();
 }
 
 
@@ -354,7 +352,7 @@ std::string StoreVocab::toString() const
 
 void StoreVocab::fromString(const std::string& src)
 {
-    x = Vocab::encode(src.c_str());
+    x = Vocab::encode(src);
 }
 
 std::string StoreVocab::toStringNested() const
@@ -374,8 +372,7 @@ void StoreVocab::fromStringNested(const std::string& src)
     if (src.length() > 0) {
         if (src[0] == '[') {
             // ignore first [ and last ]
-            std::string buf = src.substr(1, src.length() - 2);
-            fromString(buf.c_str());
+            fromString(src.substr(1, src.length() - 2));
         } else if (src == "true") {
             x = static_cast<int>('1');
         } else if (src == "false") {
@@ -603,8 +600,8 @@ std::string StoreBlob::toStringNested() const
 
 void StoreBlob::fromString(const std::string& src)
 {
-    Bottle bot(src.c_str());
-    std::string buf(YARP_STRINIT(bot.size()));
+    Bottle bot(src);
+    std::string buf(bot.size(), 0);
     for (size_t i = 0; i < bot.size(); i++) {
         buf[i] =
             static_cast<char>(static_cast<unsigned char>(bot.get(i).asInt32()));
@@ -618,7 +615,7 @@ void StoreBlob::fromStringNested(const std::string& src)
         if (src[0] == '{') {
             // ignore first { and last }
             std::string buf = src.substr(1, src.length() - 2);
-            fromString(buf.c_str());
+            fromString(buf);
         }
     }
 }
@@ -644,17 +641,17 @@ bool StoreBlob::writeRaw(ConnectionWriter& writer) const
 
 std::string StoreList::toString() const
 {
-    return std::string(content.toString().c_str());
+    return content.toString();
 }
 
 std::string StoreList::toStringNested() const
 {
-    return std::string("(") + content.toString().c_str() + ")";
+    return std::string("(") + content.toString() + ")";
 }
 
 void StoreList::fromString(const std::string& src)
 {
-    content.fromString(src.c_str());
+    content.fromString(src);
 }
 
 void StoreList::fromStringNested(const std::string& src)
@@ -663,7 +660,7 @@ void StoreList::fromStringNested(const std::string& src)
         if (src[0] == '(') {
             // ignore first ( and last )
             std::string buf = src.substr(1, src.length() - 2);
-            content.fromString(buf.c_str());
+            content.fromString(buf);
         }
     }
 }
@@ -693,17 +690,17 @@ std::int32_t StoreList::subCode() const
 
 std::string StoreDict::toString() const
 {
-    return std::string(content.toString().c_str());
+    return std::string(content.toString());
 }
 
 std::string StoreDict::toStringNested() const
 {
-    return std::string("(") + content.toString().c_str() + ")";
+    return std::string("(") + content.toString() + ")";
 }
 
 void StoreDict::fromString(const std::string& src)
 {
-    content.fromString(src.c_str());
+    content.fromString(src);
 }
 
 void StoreDict::fromStringNested(const std::string& src)
@@ -712,7 +709,7 @@ void StoreDict::fromStringNested(const std::string& src)
         if (src[0] == '(') {
             // ignore first ( and last )
             std::string buf = src.substr(1, src.length() - 2);
-            content.fromString(buf.c_str());
+            content.fromString(buf);
         }
     }
 }

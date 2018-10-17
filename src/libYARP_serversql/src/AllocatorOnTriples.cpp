@@ -55,7 +55,7 @@ Contact AllocatorOnTriples::completePortName(const Contact& c) {
     t.setNsNameValue("alloc",name.c_str(),"in_use");
     db->update(t,&context);
 
-    return Contact(name.c_str(),
+    return Contact(name,
                    c.getCarrier(),
                    c.getHost(),
                    c.getPort());
@@ -208,15 +208,15 @@ Contact AllocatorOnTriples::completeHost(const yarp::os::Contact& c) {
     db->update(t,&context);
 
     Contact contact = c;
-    contact.setHost(name.c_str());
+    contact.setHost(name);
     return contact;
 }
 
 
 bool AllocatorOnTriples::freePortResources(const yarp::os::Contact& c) {
-    string portName = c.getName().c_str();
+    string portName = c.getName();
     int portNumber = c.getPort();
-    string hostName = c.getHost().c_str();
+    string hostName = c.getHost();
 
     // free up automatic name for port, if one was allocated
     Triple t;

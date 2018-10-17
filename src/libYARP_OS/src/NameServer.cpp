@@ -532,7 +532,7 @@ std::string NameServer::cmdBot(int argc, char *argv[]) {
         argc--;
         argv++;
         Bottle result = ndispatcher.dispatch(this, key.c_str(), argc, argv);
-        txt = result.toString().c_str();
+        txt = result.toString();
     }
     return txt;
 }
@@ -608,7 +608,7 @@ yarp::os::Bottle NameServer::ncmdGet(int argc, char *argv[]) {
         std::string target = STR(argv[0]);
         std::string key = argv[1];
         NameRecord& nameRecord = getNameRecord(target);
-        return Bottle(nameRecord.getProp(key).c_str());
+        return Bottle(nameRecord.getProp(key));
     }
     return response;
 }
@@ -703,7 +703,7 @@ std::string NameServer::apply(const std::string& txt, const Contact& remote) {
         if (result == "") {
             Bottle b = ndispatcher.dispatch(this, key.c_str(), ss.size()-1,
                                             (char **)(ss.get()+1));
-            result = b.toString().c_str();
+            result = b.toString();
             if (result!="") {
                 result = result + "\n";
                 result = terminate(result);
@@ -722,9 +722,9 @@ bool NameServer::apply(const Bottle& cmd, Bottle& result,
     Bottle rcmd;
     rcmd.addString("ignored_legacy");
     rcmd.append(cmd);
-    std::string in = rcmd.toString().c_str();
-    std::string out = apply(in, remote).c_str();
-    result.fromString(out.c_str());
+    std::string in = rcmd.toString();
+    std::string out = apply(in, remote);
+    result.fromString(out);
     return true;
 }
 
@@ -748,12 +748,12 @@ public:
         bool haveMessage = false;
         if (ok) {
             if (reader.isTextMode()) {
-                msg = reader.expectText().c_str();
+                msg = reader.expectText();
             } else {
                 // migrate to binary mode support, eventually optimize
                 Bottle b;
                 b.read(reader);
-                msg = b.toString().c_str();
+                msg = b.toString();
             }
             haveMessage = (msg!="");
             msg = ref + msg;

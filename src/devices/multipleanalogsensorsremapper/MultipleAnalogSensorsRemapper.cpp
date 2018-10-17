@@ -80,7 +80,7 @@ bool MultipleAnalogSensorsRemapper::close()
 bool MultipleAnalogSensorsRemapper::open(Searchable& config)
 {
     Property prop;
-    prop.fromString(config.toString().c_str());
+    prop.fromString(config.toString());
 
     m_verbose = (prop.check("verbose","if present, give detailed output"));
     if (m_verbose)
@@ -100,10 +100,10 @@ bool MultipleAnalogSensorsRemapper::open(Searchable& config)
 bool getVectorOfStringFromListInConfig(const std::string& key, const os::Searchable& config, std::vector<std::string> & vectorOfStrings)
 {
     yarp::os::Property prop;
-    prop.fromString(config.toString().c_str());
-    bool keyExists = prop.check(key.c_str());
+    prop.fromString(config.toString());
+    bool keyExists = prop.check(key);
 
-    yarp::os::Bottle *propList=prop.find(key.c_str()).asList();
+    yarp::os::Bottle *propList=prop.find(key).asList();
     if (!propList && keyExists)
     {
        yError() <<"MultipleAnalogSensorsRemapper : Error parsing parameters: if present " << key << " should be followed by a list of strings.\n";
@@ -119,7 +119,7 @@ bool getVectorOfStringFromListInConfig(const std::string& key, const os::Searcha
     vectorOfStrings.resize(propList->size());
     for (size_t ax=0; ax < propList->size(); ax++)
     {
-        vectorOfStrings[ax] = propList->get(ax).asString().c_str();
+        vectorOfStrings[ax] = propList->get(ax).asString();
     }
 
     return true;

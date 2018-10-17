@@ -318,7 +318,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
                 use_ROS = false;
                 return false;
             }
-            *(prm->var) = rosGroup.find(prm->parname).asString().c_str();
+            *(prm->var) = rosGroup.find(prm->parname).asString();
         }
 
         if (rosGroup.check("forceInfoSync"))
@@ -330,7 +330,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
     if(use_YARP)
     {
         std::string rootName;
-        rootName = config.check("name",Value("/"), "starting '/' if needed.").asString().c_str();
+        rootName = config.check("name",Value("/"), "starting '/' if needed.").asString();
 
         if (!config.check("name", "Prefix name of the ports opened by the RGBD wrapper."))
         {
@@ -340,7 +340,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
         }
         else
         {
-            rootName = config.find("name").asString().c_str();
+            rootName = config.find("name").asString();
             rpcPort_Name  = rootName + "/rpc:i";
             colorFrame_StreamingPort_Name = rootName + "/rgbImage:o";
             depthFrame_StreamingPort_Name = rootName + "/depthImage:o";
@@ -366,7 +366,7 @@ bool RGBDSensorWrapper::openAndAttachSubDevice(Searchable& prop)
 {
     Property p;
     subDeviceOwned = new PolyDriver;
-    p.fromString(prop.toString().c_str());
+    p.fromString(prop.toString());
 
     p.setMonitor(prop.getMonitor(), "subdevice"); // pass on any monitoring
     p.unput("device");
@@ -441,19 +441,19 @@ bool RGBDSensorWrapper::initialize_YARP(yarp::os::Searchable &params)
     // Open ports
     bool bRet;
     bRet = true;
-    if(!rpcPort.open(rpcPort_Name.c_str()))
+    if(!rpcPort.open(rpcPort_Name))
     {
         yError() << "RGBDSensorWrapper: unable to open rpc Port" << rpcPort_Name.c_str();
         bRet = false;
     }
     rpcPort.setReader(rgbdParser);
 
-    if(!colorFrame_StreamingPort.open(colorFrame_StreamingPort_Name.c_str()))
+    if(!colorFrame_StreamingPort.open(colorFrame_StreamingPort_Name))
     {
         yError() << "RGBDSensorWrapper: unable to open color streaming Port" << colorFrame_StreamingPort_Name.c_str();
         bRet = false;
     }
-    if(!depthFrame_StreamingPort.open(depthFrame_StreamingPort_Name.c_str()))
+    if(!depthFrame_StreamingPort.open(depthFrame_StreamingPort_Name))
     {
         yError() << "RGBDSensorWrapper: unable to open depth streaming Port" << depthFrame_StreamingPort_Name.c_str();
         bRet = false;

@@ -54,7 +54,7 @@ public:
         bool ok = handler.apply(con.getReader(),&(con2.getWriter()));
         std::string result = "";
         if (ok) {
-            result = con2.getReader().expectText().c_str();
+            result = con2.getReader().expectText();
         }
         printf("ASKED %s, GAVE %s\n", txt.c_str(), result.c_str());
         return result;

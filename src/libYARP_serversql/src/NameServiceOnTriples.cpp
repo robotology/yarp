@@ -53,7 +53,7 @@ Contact NameServiceOnTriples::query(const std::string& portName,
             t.setNameValue("host","*");
             list<Triple> lst = act.mem.query(t,&context);
             if (lst.size()>0) {
-                host = lst.begin()->value.c_str();
+                host = lst.begin()->value;
             }
         }
         if (host=="") {
@@ -69,13 +69,13 @@ Contact NameServiceOnTriples::query(const std::string& portName,
         std::string carrier = "tcp";
         lst = act.mem.query(t,&context);
         if (lst.size()>0) {
-            carrier = lst.begin()->value.c_str();
+            carrier = lst.begin()->value;
         }
         t.setNameValue("type","*");
         std::string typ = "*";
         lst = act.mem.query(t,&context);
         if (lst.size()>0) {
-            typ = lst.begin()->value.c_str();
+            typ = lst.begin()->value;
         }
         if (!nested) unlock();
         Contact result = Contact(portName, carrier, host, sock);
@@ -110,7 +110,7 @@ bool NameServiceOnTriples::cmdQuery(NameTripleState& act, bool nested) {
     std::string port = act.cmd.get(1).asString();
 
     ParseName parser;
-    parser.apply(port.c_str());
+    parser.apply(port);
     port = parser.getPortName();
 
     /*
@@ -296,7 +296,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
     Contact c(port, carrier, machine, sock);
     c = alloc->completeSocket(c);
     sock = c.getPort();
-    machine = c.getHost().c_str();
+    machine = c.getHost();
     t.setNameValue("host",machine.c_str());
     act.mem.update(t,&context);
     sprintf(buf,"%d",sock);
@@ -393,7 +393,7 @@ bool NameServiceOnTriples::cmdListRunners(NameTripleState& act)
 
     for (auto& it : lst)
     { // check yarprun property for each port
-        std::string port    = it.value.c_str();
+        std::string port    = it.value;
         act.mem.reset();
 
         Triple t;
@@ -446,7 +446,7 @@ bool NameServiceOnTriples::cmdList(NameTripleState& act) {
             act.mem.reset();
             cmdQuery(act,true);
         } else {
-            std::string iname = it.value.c_str();
+            std::string iname = it.value;
             if (iname.find(prefix)==0) {
                 if (iname==prefix || iname[prefix.length()]=='/' ||
                     prefix[prefix.length()-1]=='/') {
@@ -570,7 +570,7 @@ bool NameServiceOnTriples::cmdCheck(NameTripleState& act) {
     q.addString("present");
     std::string present = "false";
     for (list<Triple>::iterator it=lst.begin(); it!=lst.end(); it++) {
-        if (val == it->value.c_str()) {
+        if (val == it->value) {
             present = "true";
         }
     }
@@ -636,9 +636,9 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
 
     access.wait();
     if (key=="register") {
-        lastRegister = cmd.get(1).asString().c_str();
+        lastRegister = cmd.get(1).asString();
     } else if (key=="set") {
-        if (cmd.get(1).asString()==lastRegister.c_str()) {
+        if (cmd.get(1).asString()==lastRegister) {
             prefix = "   + ";
         }
     } else {

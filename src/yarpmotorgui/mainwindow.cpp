@@ -104,7 +104,7 @@ MainWindow::MainWindow(QWidget *parent) :
     yarp::os::ResourceFinder &finder = yarp::os::ResourceFinder::getResourceFinderSingleton();
     //Positions have the following form: "customPosition_{NAME_OF_CUSTOM_POSITION}"
     //To iterate on all groups, transform the finder into Bottle
-    yarp::os::Bottle ini(finder.toString().c_str());
+    yarp::os::Bottle ini(finder.toString());
 
     std::map<std::string, yarp::os::Bottle> customPositions;
 

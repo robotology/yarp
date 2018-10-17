@@ -504,7 +504,7 @@ bool Map2DServer::loadMaps(std::string mapsfile)
             iss >> mapfilename;
             string option;
             iss >> option;
-            string mapfilenameWithPath = m_rf_mapCollection.findFile(mapfilename.c_str());
+            string mapfilenameWithPath = m_rf_mapCollection.findFile(mapfilename);
             yarp::dev::MapGrid2D map;
             bool r = map.loadFromFile(mapfilenameWithPath);
             if (r)
@@ -542,7 +542,7 @@ bool Map2DServer::loadMaps(std::string mapsfile)
 bool Map2DServer::open(yarp::os::Searchable &config)
 {
     Property params;
-    params.fromString(config.toString().c_str());
+    params.fromString(config.toString());
 
     string collection_file_name="maps_collection.ini";
     string locations_file_name="locations.ini";
@@ -596,11 +596,11 @@ bool Map2DServer::open(yarp::os::Searchable &config)
     }
     else
     {
-        m_rpcPortName = config.find("name").asString().c_str();
+        m_rpcPortName = config.find("name").asString();
     }
 
     //open rpc port
-    if (!m_rpcPort.open(m_rpcPortName.c_str()))
+    if (!m_rpcPort.open(m_rpcPortName))
     {
         yError("Map2DServer: failed to open port %s", m_rpcPortName.c_str());
         return false;

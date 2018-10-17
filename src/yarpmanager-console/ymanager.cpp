@@ -170,7 +170,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
      *  preparing default options
      */
 
-    std::string inifile=rf.findFile("from").c_str();
+    std::string inifile=rf.findFile("from");
     std::string inipath="";
     size_t lastSlash=inifile.rfind("/");
     if (lastSlash!=std::string::npos)
@@ -250,7 +250,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
     if(config.check("modpath"))
     {
         string strPath;
-        stringstream modPaths(config.find("modpath").asString().c_str());
+        stringstream modPaths(config.find("modpath").asString());
         while (getline(modPaths, strPath, ';'))
         {
             trimString(strPath);
@@ -263,7 +263,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
     if(config.check("respath"))
     {
         string strPath;
-        stringstream resPaths(config.find("respath").asString().c_str());
+        stringstream resPaths(config.find("respath").asString());
         while (getline(resPaths, strPath, ';'))
         {
             trimString(strPath);
@@ -277,7 +277,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
     if(config.check("apppath"))
     {
         string strPath;
-        stringstream appPaths(config.find("apppath").asString().c_str());
+        stringstream appPaths(config.find("apppath").asString());
         while (getline(appPaths, strPath, ';'))
         {
             trimString(strPath);
@@ -914,8 +914,8 @@ bool YConsoleManager::process(const vector<string> &cmdList)
      if((cmdList.size() == 3) &&
         (cmdList[0] == "set"))
      {
-         config.unput(cmdList[1].c_str());
-         config.put(cmdList[1].c_str(), cmdList[2].c_str());
+         config.unput(cmdList[1]);
+         config.put(cmdList[1], cmdList[2]);
 
         if(cmdList[1] == string("watchdog"))
         {
@@ -961,10 +961,10 @@ bool YConsoleManager::process(const vector<string> &cmdList)
      if((cmdList.size() == 2) &&
         (cmdList[0] == "get"))
      {
-         if(config.check(cmdList[1].c_str()))
+         if(config.check(cmdList[1]))
          {
             cout<<OKBLUE<<cmdList[1]<<INFO<<" = ";
-            cout<<OKGREEN<<config.find(cmdList[1].c_str()).asString()<<ENDC<<endl;
+            cout<<OKGREEN<<config.find(cmdList[1]).asString()<<ENDC<<endl;
          }
          else
             cout<<FAIL<<"ERROR:   "<<INFO<<"'"<<cmdList[1].c_str()<<"' not found."<<ENDC<<endl;

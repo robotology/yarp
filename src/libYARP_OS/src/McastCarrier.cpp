@@ -50,7 +50,7 @@ yarp::os::impl::McastCarrier::~McastCarrier() {
             McastCarrier *peer = getCaster().getElect(key);
             if (peer==nullptr) {
                 // time to remove registration
-                NetworkBase::unregisterName(mcastName.c_str());
+                NetworkBase::unregisterName(mcastName);
             }
             else
             {
@@ -103,7 +103,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto) {
             // mark owner of mcast address
             NetworkBase::setProperty(proto.getRoute().getFromName().c_str(),
                                      "owns",
-                                     Value(mcastName.c_str()));
+                                     Value(mcastName));
         }
     }
 

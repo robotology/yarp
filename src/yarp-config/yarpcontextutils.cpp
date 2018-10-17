@@ -307,14 +307,14 @@ std::vector<std::string> listContentFiles(const std::string &curPath)
                 printf("Error in checking properties for %s\n", path.c_str());
             if ((statbuf.st_mode & S_IFMT) == S_IFREG)
             {
-                fileList.push_back(path.c_str());
+                fileList.push_back(path);
             }
 
             if ((statbuf.st_mode & S_IFMT) == S_IFDIR)
             {
                 std::vector<std::string> nestedFiles = listContentFiles(path);
                 for (std::vector<std::string>::iterator nestedIt = nestedFiles.begin(); nestedIt != nestedFiles.end(); ++nestedIt)
-                    fileStack.push_back((path + PATH_SEPARATOR + (*nestedIt)).c_str());
+                    fileStack.push_back(path + PATH_SEPARATOR + (*nestedIt));
             }
         }
         fileStack.pop_front();
@@ -443,15 +443,15 @@ bool recursiveFileList(const char* basePath, const char* suffix, std::set<std::s
         yarp::os::impl::YARP_stat statbuf;
         if (name != "." && name != "..")
         {
-            yarp::os::impl::stat((strPath + PATH_SEPARATOR + name.c_str()).c_str(), &statbuf);
+            yarp::os::impl::stat((strPath + PATH_SEPARATOR + name).c_str(), &statbuf);
             if ((statbuf.st_mode & S_IFMT) == S_IFREG)
             {
-                filenames.insert(mySuffix + name.c_str());
+                filenames.insert(mySuffix + name);
             }
             else
             if ((statbuf.st_mode & S_IFMT) == S_IFDIR)
             {
-                ok = ok && recursiveFileList(basePath, (mySuffix + name.c_str()).c_str(), filenames);
+                ok = ok && recursiveFileList(basePath, (mySuffix + name).c_str(), filenames);
             }
         }
         free(namelist[i]);
@@ -600,7 +600,7 @@ int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
 {
     std::string contextName;
     if (importArg.size() >1)
-        contextName = importArg.get(1).asString().c_str();
+        contextName = importArg.get(1).asString();
     if (contextName == "")
     {
         printf("No %s name provided\n", fType == CONTEXTS ? "context" : "robot");
@@ -610,7 +610,7 @@ int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
     rf.setVerbose(verbose);
     ResourceFinderOptions opts;
     opts.searchLocations = ResourceFinderOptions::Installed;
-    std::string originalpath = rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR + contextName).c_str(), opts);
+    std::string originalpath = rf.findPath(getFolderStringName(fType) + PATH_SEPARATOR + contextName, opts);
     std::string destDirname = rf.getDataHome() + PATH_SEPARATOR + getFolderStringName(fType) + PATH_SEPARATOR + contextName;
     //tmp:
     std::string hiddenDirname = rf.getDataHome() + PATH_SEPARATOR + getFolderStringNameHidden(fType) + PATH_SEPARATOR + contextName;
@@ -657,7 +657,7 @@ int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
         {
             printf("Copied %s %s from %s to %s .\n", fType == CONTEXTS ? "context" : "robot", contextName.c_str(), originalpath.c_str(), destDirname.c_str());
             printf("Current locations for this %s:\n", fType == CONTEXTS ? "context" : "robot");
-            yarp::os::Bottle paths = rf.findPaths((getFolderStringName(fType) + PATH_SEPARATOR + contextName).c_str());
+            yarp::os::Bottle paths = rf.findPaths(getFolderStringName(fType) + PATH_SEPARATOR + contextName);
             for (size_t curCont = 0; curCont<paths.size(); ++curCont)
                 printf("%s\n", paths.get(curCont).asString().c_str());
         }
@@ -720,7 +720,7 @@ int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose)
 {
     std::string contextName;
     if (removeArg.size() >1)
-        contextName = removeArg.get(1).asString().c_str();
+        contextName = removeArg.get(1).asString();
     if (contextName == "")
     {
         printf("No %s name provided\n", fType == CONTEXTS ? "context" : "robot");
@@ -730,7 +730,7 @@ int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose)
     rf.setVerbose(verbose);
     ResourceFinderOptions opts;
     opts.searchLocations = ResourceFinderOptions::User;
-    std::string targetPath = rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR + contextName).c_str(), opts);
+    std::string targetPath = rf.findPath(getFolderStringName(fType) + PATH_SEPARATOR + contextName, opts);
     if (targetPath == "")
     {
         printf("Could not find %s %s !\n", fType == CONTEXTS ? "context" : "robot", contextName.c_str());
@@ -747,15 +747,15 @@ int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose)
             YARP_UNUSED(got);
             if (choice == 'y')
             {
-                int result = recursiveRemove(targetPath.c_str());
+                int result = recursiveRemove(targetPath);
                 if (result < 0)
                     printf("ERRORS OCCURRED WHILE REMOVING %s\n", targetPath.c_str());
                 else
                     printf("Removed folder %s\n", targetPath.c_str());
                 //remove hidden folder:
-                std::string hiddenPath = rf.findPath((getFolderStringNameHidden(fType) + PATH_SEPARATOR + contextName).c_str(), opts);
+                std::string hiddenPath = rf.findPath(getFolderStringNameHidden(fType) + PATH_SEPARATOR + contextName, opts);
                 if (hiddenPath != "")
-                    recursiveRemove(hiddenPath.c_str(), false);
+                    recursiveRemove(hiddenPath, false);
                 return result;
             }
             else
@@ -774,7 +774,7 @@ int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose)
             {
                 bool ok = true;
                 bool removeHidden = true;
-                std::string hiddenPath = rf.findPath((getFolderStringNameHidden(fType) + PATH_SEPARATOR + contextName).c_str(), opts);
+                std::string hiddenPath = rf.findPath(getFolderStringNameHidden(fType) + PATH_SEPARATOR + contextName, opts);
                 if (hiddenPath != "")
                     removeHidden = false;
 
@@ -820,10 +820,10 @@ int diff(std::string contextName, folderType fType, bool verbose)
 
     ResourceFinderOptions opts;
     opts.searchLocations = ResourceFinderOptions::User;
-    std::string userPath = rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR + contextName).c_str(), opts);
+    std::string userPath = rf.findPath(getFolderStringName(fType) + PATH_SEPARATOR + contextName, opts);
 
     opts.searchLocations = ResourceFinderOptions::Installed;
-    std::string installedPath = rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR + contextName).c_str(), opts);
+    std::string installedPath = rf.findPath(getFolderStringName(fType) + PATH_SEPARATOR + contextName, opts);
 
 #ifdef DO_TEXT_DIFF
     //use this for an internal diff implementation
@@ -859,12 +859,12 @@ int diffList(folderType fType, bool verbose)
             ostream tmp(nullptr);
             opts.searchLocations = ResourceFinderOptions::User;
             rf.setQuiet();
-            std::string userPath = rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR + (*subDirIt)).c_str(), opts);
+            std::string userPath = rf.findPath(getFolderStringName(fType) + PATH_SEPARATOR + (*subDirIt), opts);
             if (userPath == "")
                 continue;
             try
             {
-                if (recursiveDiff(installedPath + PATH_SEPARATOR + (*subDirIt).c_str(), userPath, tmp)>0)
+                if (recursiveDiff(installedPath + PATH_SEPARATOR + *subDirIt, userPath, tmp)>0)
                     std::cout << (*subDirIt) << std::endl;
             }
             catch (...)
@@ -881,7 +881,7 @@ int merge(yarp::os::Bottle& mergeArg, folderType fType, bool verbose)
 {
     std::string contextName;
     if (mergeArg.size() >1)
-        contextName = mergeArg.get(1).asString().c_str();
+        contextName = mergeArg.get(1).asString();
     if (contextName == "")
     {
         printf("No %s name provided\n", fType == CONTEXTS ? "context" : "robot");
@@ -899,12 +899,12 @@ int merge(yarp::os::Bottle& mergeArg, folderType fType, bool verbose)
             {
                 ResourceFinderOptions opts;
                 opts.searchLocations = ResourceFinderOptions::User;
-                std::string userFileName = rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR + contextName + PATH_SEPARATOR + fileName).c_str(), opts);
+                std::string userFileName = rf.findPath(getFolderStringName(fType) + PATH_SEPARATOR + contextName + PATH_SEPARATOR + fileName, opts);
 
-                std::string hiddenFileName = rf.findPath((getFolderStringNameHidden(fType) + PATH_SEPARATOR + contextName + PATH_SEPARATOR + fileName).c_str(), opts);
+                std::string hiddenFileName = rf.findPath(getFolderStringNameHidden(fType) + PATH_SEPARATOR + contextName + PATH_SEPARATOR + fileName, opts);
 
                 opts.searchLocations = ResourceFinderOptions::Installed;
-                std::string installedFileName = rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR + contextName + PATH_SEPARATOR + fileName).c_str(), opts);
+                std::string installedFileName = rf.findPath(getFolderStringName(fType) + PATH_SEPARATOR + contextName + PATH_SEPARATOR + fileName, opts);
 
                 if (userFileName != "" && hiddenFileName != "" && installedFileName != "")
                     fileMerge(installedFileName, userFileName, hiddenFileName);
@@ -919,12 +919,12 @@ int merge(yarp::os::Bottle& mergeArg, folderType fType, bool verbose)
     {
         ResourceFinderOptions opts;
         opts.searchLocations = ResourceFinderOptions::User;
-        std::string userPath = rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR + contextName).c_str(), opts);
+        std::string userPath = rf.findPath(getFolderStringName(fType) + PATH_SEPARATOR + contextName, opts);
 
-        std::string hiddenUserPath = rf.findPath((getFolderStringNameHidden(fType) + PATH_SEPARATOR + contextName).c_str(), opts);
+        std::string hiddenUserPath = rf.findPath(getFolderStringNameHidden(fType) + PATH_SEPARATOR + contextName, opts);
 
         opts.searchLocations = ResourceFinderOptions::Installed;
-        std::string installedPath = rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR + contextName).c_str(), opts);
+        std::string installedPath = rf.findPath(getFolderStringName(fType) + PATH_SEPARATOR + contextName, opts);
 
         recursiveMerge(installedPath, userPath, hiddenUserPath);
     }

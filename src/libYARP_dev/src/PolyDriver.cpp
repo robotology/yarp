@@ -29,7 +29,7 @@ public:
 
     virtual void report(const SearchReport& report, const char *context) override {
         std::string ctx = context;
-        std::string key = report.key.c_str();
+        std::string key = report.key;
         std::string prefix = "";
 
         prefix = ctx;
@@ -40,23 +40,23 @@ public:
             key = key.substr(1,key.length());
         }
 
-        if (!present.check(key.c_str())) {
-            present.put(key.c_str(),"present");
+        if (!present.check(key)) {
+            present.put(key,"present");
             order.addString(key.c_str());
         }
 
         if (report.isFound) {
-            actual.put(key.c_str(),report.value);
+            actual.put(key,report.value);
             return;
         }
 
         if (report.isComment==true) {
-            comment.put(key.c_str(),report.value);
+            comment.put(key,report.value);
             return;
         }
 
         if (report.isDefault==true) {
-            fallback.put(key.c_str(),report.value);
+            fallback.put(key,report.value);
             return;
         }
     }
@@ -215,7 +215,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
     std::string str = prop.toString();
     Value *part;
     if (prop.check("device",part)) {
-        str = part->toString().c_str();
+        str = part->toString();
     }
 
     DeviceDriver *driver = nullptr;
@@ -232,8 +232,8 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
                 p.unput("wrapped");
                 config = &p;
                 if (wrapCreator!=creator) {
-                    p.put("subdevice",str.c_str());
-                    p.put("device",wrapper.c_str());
+                    p.put("subdevice",str);
+                    p.put("device",wrapper);
                     p.setMonitor(prop.getMonitor(),
                                  wrapper.c_str()); // pass on any monitoring
                     driver = wrapCreator->create();

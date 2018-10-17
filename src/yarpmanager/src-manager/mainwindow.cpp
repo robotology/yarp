@@ -218,11 +218,11 @@ void MainWindow::init(yarp::os::Property config)
     this->config = config;
     const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
 
-    string basepath=config.check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
+    string basepath=config.check("ymanagerini_dir", yarp::os::Value("")).asString();
 
     if(config.check("modpath")){
         string strPath;
-        string modPaths(config.find("modpath").asString().c_str());
+        string modPaths(config.find("modpath").asString());
         while (modPaths!=""){
             string::size_type pos=modPaths.find(";");
             strPath=modPaths.substr(0, pos);
@@ -241,7 +241,7 @@ void MainWindow::init(yarp::os::Property config)
 
     if(config.check("respath")){
         string strPath;
-        string resPaths(config.find("respath").asString().c_str());
+        string resPaths(config.find("respath").asString());
         while (resPaths!=""){
             string::size_type pos=resPaths.find(";");
             strPath=resPaths.substr(0, pos);
@@ -265,7 +265,7 @@ void MainWindow::init(yarp::os::Property config)
 
     if(config.check("apppath")){
         string strPath;
-        string appPaths(config.find("apppath").asString().c_str());
+        string appPaths(config.find("apppath").asString());
         while (appPaths!=""){
             string::size_type pos=appPaths.find(";");
             strPath=appPaths.substr(0, pos);
@@ -298,7 +298,7 @@ void MainWindow::init(yarp::os::Property config)
 
     if (config.check("templpath")){
         string strPath;
-        string templPaths(config.find("templpath").asString().c_str());
+        string templPaths(config.find("templpath").asString());
         while (templPaths!=""){
             string::size_type pos=templPaths.find(";");
             strPath=templPaths.substr(0, pos);

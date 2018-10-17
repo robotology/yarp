@@ -231,7 +231,7 @@ bool WireTwiddler::configure(const char *txt, const char *prompt) {
 
     dbg_printf("Configure as %s\n", str.c_str());
 
-    Bottle desc(str.c_str());
+    Bottle desc(str);
 
     buffer_start = 0;
     buffer.clear();
@@ -324,7 +324,7 @@ std::string WireTwiddler::fromTemplate(const yarp::os::Bottle& msg) {
         result += codeName;
         result += " ";
     }
-    result += NetType::toString(len).c_str();
+    result += NetType::toString(len);
     result += " ";
     for (int i=0; i<len; i++) {
         Value&v = msg.get(i);

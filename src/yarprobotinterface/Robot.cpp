@@ -290,7 +290,7 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
         yarp::os::Bottle &targetNetworks = *(v.asList());
 
         for (size_t i = 0; i < targetNetworks.size(); ++i) {
-            std::string targetNetwork = targetNetworks.get(i).toString().c_str();
+            std::string targetNetwork = targetNetworks.get(i).toString();
 
             if (!RobotInterface::hasParam(params, targetNetwork)) {
                 yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires one parameter per network. \"" << targetNetwork << "\" parameter is missing.";

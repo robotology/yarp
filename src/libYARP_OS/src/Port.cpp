@@ -276,7 +276,7 @@ bool Port::open(const Contact& contact, bool registerName,
     if (success) {
         // create a node if needed
         Nodes& nodes = NameClient::getNameClient().getNodes();
-        nodes.prepare(address.getRegName().c_str());
+        nodes.prepare(address.getRegName());
     }
 
     // If we are a service client, go ahead and connect
@@ -305,7 +305,7 @@ bool Port::open(const Contact& contact, bool registerName,
             contact2.setSocket(address.getCarrier(),
                                address.getHost(),
                                address.getPort());
-            contact2.setName(address.getRegName().c_str());
+            contact2.setName(address.getRegName());
             Contact newName = NetworkBase::registerContact(contact2);
             core.resetPortName(newName.getName());
             address = core.getAddress();
@@ -342,7 +342,7 @@ bool Port::open(const Contact& contact, bool registerName,
                    (address.isValid()?" at ":"") +
                    (address.isValid()?address.toURI():std::string("")) +
                    " (" +
-                   blame.c_str() +
+                   blame +
                    ")");
     }
 
@@ -426,11 +426,10 @@ bool Port::addOutput(const Contact& contact)
         name = contact.toURI();
     }
     if (!core.isListening()) {
-        return core.addOutput(name.c_str(), nullptr, nullptr, true);
+        return core.addOutput(name, nullptr, nullptr, true);
     }
     Contact me = where();
-    return NetworkBase::connect(me.getName().c_str(),
-                                name.c_str());
+    return NetworkBase::connect(me.getName(), name);
 }
 
 

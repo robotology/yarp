@@ -342,7 +342,7 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
 bool FrameTransformServer::threadInit()
 {
     //open rpc port
-    if (!m_rpcPort.open(m_rpcPortName.c_str()))
+    if (!m_rpcPort.open(m_rpcPortName))
     {
         yError("FrameTransformServer: failed to open port %s", m_rpcPortName.c_str());
         return false;
@@ -350,7 +350,7 @@ bool FrameTransformServer::threadInit()
     m_rpcPort.setReader(*this);
 
     // open data port
-    if (!m_streamingPort.open(m_streamingPortName.c_str()))
+    if (!m_streamingPort.open(m_streamingPortName))
     {
         yError("FrameTransformServer: failed to open port %s", m_streamingPortName.c_str());
         return false;
@@ -502,7 +502,7 @@ bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
 bool FrameTransformServer::open(yarp::os::Searchable &config)
 {
     Property params;
-    params.fromString(config.toString().c_str());
+    params.fromString(config.toString());
 
     if (!config.check("period"))
     {
@@ -527,7 +527,7 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
     }
     else
     {
-        name = config.find("name").asString().c_str();
+        name = config.find("name").asString();
     }
     m_streamingPortName =  "/"+ name + "/transforms:o";
     m_rpcPortName = "/" + name + "/rpc";

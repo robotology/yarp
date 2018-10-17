@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
     yarp::os::getcwd(current_dir,cur_dir_max_size);
     config.put("current_dir", current_dir);
 
-    std::string inifile=rf.findFile("from").c_str();
+    std::string inifile=rf.findFile("from");
     std::string inipath="";
     size_t lastSlash=inifile.rfind("/");
     if (lastSlash!=std::string::npos){
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
     }
 
     if(!config.check("ymanagerini_dir")){
-        config.put("ymanagerini_dir", inipath.c_str());
+        config.put("ymanagerini_dir", inipath);
     }
 
     yarp::os::Bottle appPaths;

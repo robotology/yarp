@@ -85,7 +85,7 @@ int yarp_robot_main(int argc, char *argv[]) {
 
     if(options.check("where"))
     {
-        std::string contextName=options.find("where").asString().c_str();
+        std::string contextName=options.find("where").asString();
         if (contextName=="")
         {
             printf("No robot name provided\n");
@@ -105,7 +105,7 @@ int yarp_robot_main(int argc, char *argv[]) {
         yarp::os::ResourceFinder rf;
         if (options.check("verbose"))
             rf.setVerbose(true);
-        yarp::os::Bottle paths=rf.findPaths((std::string("robots") + PATH_SEPARATOR +contextName).c_str(), opts);
+        yarp::os::Bottle paths=rf.findPaths(std::string("robots") + PATH_SEPARATOR +contextName, opts);
         for (size_t curCont=0; curCont<paths.size(); ++curCont)
             printf("%s\n", paths.get(curCont).asString().c_str());
         return 0;
@@ -145,7 +145,7 @@ int yarp_robot_main(int argc, char *argv[]) {
 
     if(options.check("diff"))
     {
-        std::string contextName=options.find("diff").asString().c_str();
+        std::string contextName=options.find("diff").asString();
         if (contextName=="")
         {
             printf("No robot name provided\n");

@@ -358,8 +358,7 @@ Bottle Carriers::listCarriers()
         settings.setSelector(*instance.mPriv);
         settings.readFromSearchable(options, name);
         settings.open(lib);
-        std::string location = lib.getName().c_str();
-        if (location=="") {
+        if (lib.getName().empty()) {
             continue;
         }
         lst.addString(name);

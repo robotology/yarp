@@ -110,7 +110,7 @@ void PortCoreInputUnit::run() {
 
     bool ok = true;
     if (!reversed) {
-        ip->open(getName().c_str());
+        ip->open(getName());
     }
     if (!ok) {
             YARP_DEBUG(Logger::get(), std::string("new input connection to ")+
@@ -156,10 +156,10 @@ void PortCoreInputUnit::run() {
         info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
         info.incoming = true;
         info.created = true;
-        info.sourceName = route.getFromName().c_str();
-        info.targetName = route.getToName().c_str();
+        info.sourceName = route.getFromName();
+        info.targetName = route.getToName();
         info.portName = info.targetName;
-        info.carrierName = route.getCarrierName().c_str();
+        info.carrierName = route.getCarrierName();
 
         if (info.sourceName!="admin"&&info.sourceName!="null") {
             getOwner().report(info);
@@ -419,14 +419,14 @@ void PortCoreInputUnit::run() {
     if (wasNoticed) {
         // Report the disappearing connection
         PortInfo info;
-        info.message = msg.c_str();
+        info.message = msg;
         info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
         info.incoming = true;
         info.created = false;
-        info.sourceName = route.getFromName().c_str();
-        info.targetName = route.getToName().c_str();
+        info.sourceName = route.getFromName();
+        info.targetName = route.getToName();
         info.portName = info.targetName;
-        info.carrierName = route.getCarrierName().c_str();
+        info.carrierName = route.getCarrierName();
 
         if (info.sourceName!="admin") {
             getOwner().report(info);

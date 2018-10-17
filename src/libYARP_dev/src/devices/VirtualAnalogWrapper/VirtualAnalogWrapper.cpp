@@ -145,7 +145,7 @@ bool VirtualAnalogWrapper::open(Searchable& config)
 
     for (size_t k=0; k<networks->size(); ++k)
     {
-        Bottle parameters=config.findGroup(networks->get(k).asString().c_str());
+        Bottle parameters=config.findGroup(networks->get(k).asString());
 
         if (parameters.size()!=5)    // mapping joints using the paradigm: part from - to / network from - to
         {
@@ -171,7 +171,7 @@ bool VirtualAnalogWrapper::open(Searchable& config)
             mChan2BAddr[j]=j-map0+map2;
         }
 
-        if (!mSubdevices[k].configure(map2,map3,networks->get(k).asString().c_str()))
+        if (!mSubdevices[k].configure(map2,map3,networks->get(k).asString()))
         {
             yError() << "VirtualAnalogWrapper: configure of subdevice ret false";
             return false;
@@ -195,10 +195,10 @@ bool VirtualAnalogWrapper::open(Searchable& config)
         return false;
     }
 
-    std::string port_name = config.check("name",Value("controlboard"),"Virtual analog wrapper port name, e.g. /icub/joint_vsens/left_arm:i").asString().c_str();
-    std::string robot_name = config.find("robotName").asString().c_str();
+    std::string port_name = config.check("name",Value("controlboard"),"Virtual analog wrapper port name, e.g. /icub/joint_vsens/left_arm:i").asString();
+    std::string robot_name = config.find("robotName").asString();
 
-    if (!mPortInputTorques.open(port_name.c_str()))
+    if (!mPortInputTorques.open(port_name))
     {
         yError() << "VirtualAnalogWrapper: can't open port " << port_name.c_str();
         return false;
@@ -221,7 +221,7 @@ bool VirtualAnalogWrapper::attachAll(const PolyDriverList &polylist)
 
     for (int p=0; p<polylist.size(); ++p)
     {
-        std::string key=polylist[p]->key.c_str();
+        std::string key=polylist[p]->key;
 
         // find appropriate entry in list of subdevices and attach
         for (unsigned int k=0; k<mSubdevices.size(); ++k)

@@ -92,7 +92,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         }
         std::string idx = base.substr(at+1,base.length()-at-2);
         if (idx!="") {
-            yarp::os::Bottle b(idx.c_str());
+            yarp::os::Bottle b(idx);
             arrayLength = b.get(0).asInt32();
         } else {
             arrayLength = -1;

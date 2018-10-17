@@ -164,7 +164,7 @@ Transforms_client_storage::Transforms_client_storage(std::string local_streaming
     m_now = Time::now();
     m_prev = m_now;
 
-    if (!this->open(local_streaming_name.c_str()))
+    if (!this->open(local_streaming_name))
     {
         yError("FrameTransformClient::open() error could not open port %s, check network", local_streaming_name.c_str());
     }
@@ -368,8 +368,8 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
     m_local_name.clear();
     m_remote_name.clear();
 
-    m_local_name  = config.find("local").asString().c_str();
-    m_remote_name = config.find("remote").asString().c_str();
+    m_local_name  = config.find("local").asString();
+    m_remote_name = config.find("remote").asString();
 
     if (m_local_name == "")
     {
@@ -403,13 +403,13 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
     std::string local_streaming_name = m_local_name;
     local_streaming_name += "/transforms:i";
 
-    if (!m_rpc_InterfaceToUser.open(local_rpcUser.c_str()))
+    if (!m_rpc_InterfaceToUser.open(local_rpcUser))
     {
         yError("FrameTransformClient::open() error could not open rpc port %s, check network", local_rpcUser.c_str());
         return false;
     }
 
-    if (!m_rpc_InterfaceToServer.open(local_rpcServer.c_str()))
+    if (!m_rpc_InterfaceToServer.open(local_rpcServer))
     {
         yError("FrameTransformClient::open() error could not open rpc port %s, check network", local_rpcServer.c_str());
         return false;
@@ -423,7 +423,7 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    ok = Network::connect(local_rpcServer.c_str(), remote_rpc.c_str());
+    ok = Network::connect(local_rpcServer, remote_rpc);
     if (!ok)
     {
         yError("FrameTransformClient::open() error could not connect to %s", remote_rpc.c_str());

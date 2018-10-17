@@ -225,7 +225,7 @@ bool AnalogWrapper::openAndAttachSubDevice(Searchable &prop)
 {
     Property p;
     subDeviceOwned = new PolyDriver;
-    p.fromString(prop.toString().c_str());
+    p.fromString(prop.toString());
 
 //     p.setMonitor(prop.getMonitor(), "subdevice"); // pass on any monitoring
     p.unput("device");
@@ -347,7 +347,7 @@ bool AnalogWrapper::threadInit()
     for(unsigned int i=0; i<analogPorts.size(); i++)
     {
         // open data port
-        if (!analogPorts[i].port.open(analogPorts[i].port_name.c_str()))
+        if (!analogPorts[i].port.open(analogPorts[i].port_name))
            {
                yError("AnalogWrapper: failed to open port %s", analogPorts[i].port_name.c_str());
                return false;
@@ -586,7 +586,7 @@ bool AnalogWrapper::initialize_ROS()
 bool AnalogWrapper::open(yarp::os::Searchable &config)
 {
     Property params;
-    params.fromString(config.toString().c_str());
+    params.fromString(config.toString());
     yTrace() << "AnalogWrapper params are: " << config.toString();
 
     if (!config.check("period"))
@@ -615,7 +615,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
     }
     else
     {
-        streamingPortName  = config.find("name").asString().c_str();
+        streamingPortName  = config.find("name").asString();
         setId("AnalogServer");
     }
 
@@ -703,7 +703,7 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
 
                 for(size_t k=0; k<ports->size(); k++)
                 {
-                    Bottle parameters=params.findGroup(ports->get(k).asString().c_str());
+                    Bottle parameters=params.findGroup(ports->get(k).asString());
 
                     if (parameters.size()!=5)
                     {
@@ -713,8 +713,8 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                         return false;
                     }
 
-                    if (Network::exists(streamingPortName + "/" + string(ports->get(k).asString().c_str()) + "/rpc:i")
-                        || Network::exists(streamingPortName + "/" + string(ports->get(k).asString().c_str())))
+                    if (Network::exists(streamingPortName + "/" + string(ports->get(k).asString()) + "/rpc:i")
+                        || Network::exists(streamingPortName + "/" + string(ports->get(k).asString())))
                     {
                         yError() << "AnalogWrapper: unable to open the analog server, address conflict";
                         return false;
@@ -737,7 +737,7 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                     tmpPorts[k].length = portChannels;
                     tmpPorts[k].offset = wBase;
                     yDebug() << "opening port " << ports->get(k).asString().c_str();
-                    tmpPorts[k].port_name = streamingPortName+ "/" + string(ports->get(k).asString().c_str());
+                    tmpPorts[k].port_name = streamingPortName+ "/" + string(ports->get(k).asString());
 
                     sumOfChannels+=portChannels;
                 }

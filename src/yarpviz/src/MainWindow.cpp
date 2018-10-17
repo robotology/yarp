@@ -229,7 +229,7 @@ void MainWindow::drawGraph(Graph &graph)
             stringstream hexStream;
             hexStream<<std::hex<< randNum;
             string hexRandNum ="#" + hexStream.str();
-            string name =  std::string(prop.find("name").asString().c_str()) + std::to_string(countChild);
+            string name =  std::string(prop.find("name").asString()) + std::to_string(countChild);
             if(layoutSubgraph)
             {
                 std::stringstream key;
@@ -616,7 +616,7 @@ void MainWindow::onHighlightLoops() {
             pvertex_set &vset = scc[i];
             QColor color(udistH(randengine), udistL(randengine), udistH(randengine));
             for(size_t j=0; j<vset.size(); j++)
-                vset[j]->property.put("color", color.name().toStdString().c_str());
+                vset[j]->property.put("color", color.name().toStdString());
         }
     }
     else {

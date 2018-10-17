@@ -246,7 +246,7 @@ RobotInterface::Device RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::
         SYNTAX_ERROR(deviceElem->Row()) << "\"device\" element should contain the \"type\" attribute";
     }
 
-    device.params().push_back(Param("robotName", robot.portprefix().c_str()));
+    device.params().push_back(Param("robotName", robot.portprefix()));
 
     for (TiXmlElement* childElem = deviceElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         if (childElem->ValueStr().compare("action") == 0 ||

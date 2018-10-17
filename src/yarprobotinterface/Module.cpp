@@ -77,7 +77,7 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
     bool verbosity = rf.check("verbose");
     RobotInterface::XMLReader reader;
     reader.setVerbose(verbosity);
-    mPriv->robot = reader.getRobot(filename.c_str());
+    mPriv->robot = reader.getRobot(filename);
     // yDebug() << mPriv->robot;
 
     // User can use YARP_PORT_PREFIX environment variable to override

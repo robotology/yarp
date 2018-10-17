@@ -193,7 +193,7 @@ public:
                         from.c_str());
             }
             mainActive = true;
-            std::string corrected = findFile(config, from.c_str(), nullptr);
+            std::string corrected = findFile(config, from, nullptr);
             mainActive = false;
             if (corrected!="") {
                 from = corrected;
@@ -441,7 +441,7 @@ public:
 
         if ((locs & ResourceFinderOptions::NearMainConfig) && useNearMain) {
             if (configFilePath!="") {
-                std::string str = check(configFilePath.c_str(), resourceType, "", name, isDir, doc, "defaultConfigFile path");
+                std::string str = check(configFilePath, resourceType, "", name, isDir, doc, "defaultConfigFile path");
                 if (str!="") {
                     addString(output, str);
                     if (justTop) return;
@@ -462,10 +462,10 @@ public:
             opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(ResourceFinderOptions::User | ResourceFinderOptions::Sysadmin | ResourceFinderOptions::Installed);
             opts2.resourceType = "robots";
             opts2.duplicateFilesPolicy = ResourceFinderOptions::All;
-            findFileBaseInner(config, robot.c_str(), true, allowPathd, paths, opts2, doc, "robot");
+            findFileBaseInner(config, robot, true, allowPathd, paths, opts2, doc, "robot");
             appendResourceType(paths, resourceType);
             for (size_t j=0; j<paths.size(); j++) {
-                std::string str = check(paths.get(j).asString().c_str(),
+                std::string str = check(paths.get(j).asString(),
                                         "", "",
                                         name, isDir, doc, "robot");
                 if (str!="") {
@@ -489,10 +489,10 @@ public:
                 prependResourceType(app, "contexts");
                 opts2.searchLocations = (ResourceFinderOptions::SearchLocations)ResourceFinderOptions::Default;
                 opts2.duplicateFilesPolicy = ResourceFinderOptions::All;
-                findFileBaseInner(config, app.c_str(), true, allowPathd, paths, opts2, doc, "context");
+                findFileBaseInner(config, app, true, allowPathd, paths, opts2, doc, "context");
                 appendResourceType(paths, resourceType);
                 for (size_t j=0; j<paths.size(); j++) {
-                    std::string str = check(paths.get(j).asString().c_str(), "", "",
+                    std::string str = check(paths.get(j).asString(), "", "",
                                             name, isDir, doc, "context");
                     if (str!="") {
                         addString(output, str);
@@ -508,7 +508,7 @@ public:
             std::string home = ResourceFinder::getConfigHomeNoCreate();
             if (home!="") {
                 appendResourceType(home, resourceType);
-                std::string str = check(home.c_str(), "", "", name, isDir,
+                std::string str = check(home, "", "", name, isDir,
                                         doc, "YARP_CONFIG_HOME");
                 if (str!="") {
                     addString(output, str);
@@ -523,7 +523,7 @@ public:
             std::string home = ResourceFinder::getDataHomeNoCreate();
             if (home!="") {
                 appendResourceType(home, resourceType);
-                std::string str = check(home.c_str(), "", "", name, isDir,
+                std::string str = check(home, "", "", name, isDir,
                                         doc, "YARP_DATA_HOME");
                 if (str!="") {
                     addString(output, str);
@@ -537,7 +537,7 @@ public:
             Bottle dirs = ResourceFinder::getConfigDirs();
             appendResourceType(dirs, resourceType);
             for (size_t i=0; i<dirs.size(); i++) {
-                std::string str = check(dirs.get(i).asString().c_str(),
+                std::string str = check(dirs.get(i).asString(),
                                         "", "", name, isDir,
                                         doc, "YARP_CONFIG_DIRS");
                 if (str!="") {
@@ -552,7 +552,7 @@ public:
             Bottle dirs = ResourceFinder::getDataDirs();
             appendResourceType(dirs, resourceType);
             for (size_t i=0; i<dirs.size(); i++) {
-                std::string str = check(dirs.get(i).asString().c_str(),
+                std::string str = check(dirs.get(i).asString(),
                                         "", "", name, isDir,
                                         doc, "YARP_DATA_DIRS");
                 if (str!="") {
@@ -587,7 +587,7 @@ public:
                     Bottle paths = group.findGroup("path").tail();
                     appendResourceType(paths, resourceType);
                     for (size_t j=0; j<paths.size(); j++) {
-                        std::string str = check(paths.get(j).asString().c_str(), "", "",
+                        std::string str = check(paths.get(j).asString(), "", "",
                                                 name, isDir, doc, "yarp.d");
                         if (str!="") {
                             addString(output, str);

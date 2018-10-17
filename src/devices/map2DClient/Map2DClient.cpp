@@ -36,8 +36,8 @@ bool yarp::dev::Map2DClient::open(yarp::os::Searchable &config)
     m_local_name.clear();
     m_map_server.clear();
 
-    m_local_name       = config.find("local").asString().c_str();
-    m_map_server       = config.find("remote").asString().c_str();
+    m_local_name       = config.find("local").asString();
+    m_map_server       = config.find("remote").asString();
 
     if (m_local_name == "")
     {
@@ -56,14 +56,14 @@ bool yarp::dev::Map2DClient::open(yarp::os::Searchable &config)
     std::string remote_rpc1 = m_map_server;
     remote_rpc1 += "/rpc";
 
-    if (!m_rpcPort_to_Map2DServer.open(local_rpc1.c_str()))
+    if (!m_rpcPort_to_Map2DServer.open(local_rpc1))
     {
         yError("Map2DClient::open() error could not open rpc port %s, check network", local_rpc1.c_str());
         return false;
     }
 
     bool ok=false;
-    ok=Network::connect(local_rpc1.c_str(), remote_rpc1.c_str());
+    ok=Network::connect(local_rpc1, remote_rpc1);
     if (!ok)
     {
         yError("Map2DClient::open() error could not connect to %s", remote_rpc1.c_str());

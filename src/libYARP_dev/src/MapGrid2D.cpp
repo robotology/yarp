@@ -728,8 +728,8 @@ bool  MapGrid2D::saveToFile(std::string map_file_with_path) const
     //std::string ppm_flg_filename = (pgm_occ_filename.substr(0, pgm_occ_filename.size() - 4)) + "_yarpflags" + ".ppm";
     std::string ppm_flg_filename = yarp_filename;
     bool ret = true;
-    ret &= yarp::sig::file::write(img_occ, pgm_occ_filename.c_str());
-    ret &= yarp::sig::file::write(img_flg, ppm_flg_filename.c_str());
+    ret &= yarp::sig::file::write(img_occ, pgm_occ_filename);
+    ret &= yarp::sig::file::write(img_flg, ppm_flg_filename);
     return ret;
 }
 
@@ -796,7 +796,7 @@ bool MapGrid2D::write(yarp::os::ConnectionWriter& connection) const
     connection.appendInt32(BOTTLE_TAG_FLOAT64);
     connection.appendFloat64(m_resolution);
     connection.appendInt32(BOTTLE_TAG_STRING);
-    connection.appendRawString(m_map_name.c_str());
+    connection.appendRawString(m_map_name);
 
     unsigned char *mem = nullptr;
     int            memsize = 0;

@@ -98,7 +98,7 @@ public:
     void preregister(const Contact& c)
     {
         Network::registerContact(c);
-        subscriber.welcome(c.getName().c_str(),1);
+        subscriber.welcome(c.getName(),1);
     }
 
     bool open(Searchable& options)
@@ -148,7 +148,7 @@ public:
             pmem->setVerbose(1);
         }
 
-        if (!subscriber.open(subdbFilename.c_str())) {
+        if (!subscriber.open(subdbFilename)) {
             fprintf(stderr,"Aborting, subscription database failed to open.\n");
             return false;
         }
@@ -169,7 +169,7 @@ public:
 
         if (options.check("ros") || NetworkBase::getEnvironment("YARP_USE_ROS")!="") {
             yarp::os::Bottle lst = yarp::os::Carriers::listCarriers();
-            std::string lstStr(lst.toString().c_str());
+            std::string lstStr(lst.toString());
             if (lstStr.find("rossrv") == std::string::npos ||
                 lstStr.find("tcpros") == std::string::npos ||
                 lstStr.find("xmlrpc") == std::string::npos) {
@@ -180,7 +180,7 @@ public:
                 return false;
             }
             std::string addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
-            Contact c = Contact::fromString(addr.c_str());
+            Contact c = Contact::fromString(addr);
             if (c.isValid()) {
                 c.setCarrier("xmlrpc");
                 c.setName("/ros");

@@ -317,7 +317,7 @@ Contact RosNameSpace::unregisterAdvanced(const std::string& name, NameStore *sto
     cmd.addString("unregisterPublisher");
     cmd.addString(name);
     cmd.addString("/yarp/registration");
-    Contact c("http", contact.getHost().c_str(), contact.getPort());
+    Contact c("http", contact.getHost(), contact.getPort());
     cmd.addString(c.toString());
     bool ok = NetworkBase::write(getNameServerContact(),
                                  cmd, reply);
@@ -333,7 +333,7 @@ Contact RosNameSpace::unregisterContact(const Contact& contact) {
     cmd.addString("unregisterSubscriber");
     cmd.addString(contact.getName());
     cmd.addString("/yarp/registration");
-    Contact c("http", contact.getHost().c_str(), contact.getPort());
+    Contact c("http", contact.getHost(), contact.getPort());
     cmd.addString(c.toString());
     bool ok = NetworkBase::write(getNameServerContact(),
                                  cmd, reply);
@@ -501,10 +501,10 @@ Contact RosNameSpace::detectNameServer(bool useDetectedServer,
         scanNeeded = true;
         fprintf(stderr, "Checking for ROS_MASTER_URI...\n");
         std::string addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
-        c = Contact::fromString(addr.c_str());
+        c = Contact::fromString(addr);
         if (c.isValid()) {
             c.setCarrier("xmlrpc");
-            c.setName(nc.getNamespace().c_str());
+            c.setName(nc.getNamespace());
             NameConfig nc;
             nc.setAddress(c);
             nc.setMode("ros");
@@ -527,11 +527,11 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
 
     Bottle cmd2, cache;
     if (key=="query") {
-        Contact c = queryName(arg1.c_str());
+        Contact c = queryName(arg1);
         c.setName("");
         Bottle reply2;
-        reply2.addString(arg1.c_str());
-        reply2.addString(c.toString().c_str());
+        reply2.addString(arg1);
+        reply2.addString(c.toString());
         DummyConnector con;
         reply2.write(con.getWriter());
         reply.read(con.getReader());
