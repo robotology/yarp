@@ -169,12 +169,12 @@ bool RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::PerformInclusions(
         yDebug() << "Parsing" << childElem->Value() << a; 
 #endif
         std::string elemString = childElem->ValueStr();
-        if (elemString.compare("file") == 0)
+        if (elemString == "file")
         {
             yFatal() << "'file' attribute is forbidden in yarprobotinterface DTD format 3.0. Error found in " << parent_fileName;
             return false;
         }
-        else if (elemString.compare("xi:include") == 0)
+        else if (elemString == "xi:include")
         {
             std::string href_filename;
             std::string included_filename;
@@ -226,7 +226,7 @@ bool RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::PerformInclusions(
 
 RobotInterface::Robot& RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::readRobotTag(TiXmlElement *robotElem)
 {
-    if (robotElem->ValueStr().compare("robot") != 0) {
+    if (robotElem->ValueStr() != "robot") {
         SYNTAX_ERROR(robotElem->Row()) << "Root element should be \"robot\". Found" << robotElem->ValueStr();
     }
 
@@ -259,7 +259,7 @@ RobotInterface::Robot& RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::
     for (TiXmlElement* childElem = robotElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement())
     {
         std::string elemString = childElem->ValueStr();
-        if (elemString.compare("device") == 0 || elemString.compare("devices") == 0)
+        if (elemString == "device" || elemString == "devices")
         {
             DeviceList childDevices = readDevices(childElem);
             for (DeviceList::const_iterator it = childDevices.begin(); it != childDevices.end(); ++it) {
@@ -284,13 +284,13 @@ RobotInterface::DeviceList RobotInterface::XMLReaderFileV3::privateXMLReaderFile
 {
     const std::string &valueStr = devicesElem->ValueStr();
 
-    if (valueStr.compare("device") == 0) {
+    if (valueStr == "device") {
         // yDebug() << valueStr;
         DeviceList deviceList;
         deviceList.push_back(readDeviceTag(devicesElem));
         return deviceList;
     }
-    else if (valueStr.compare("devices") == 0) {
+    else if (valueStr == "devices") {
         // "devices"
         return readDevicesTag(devicesElem);
     }
@@ -305,7 +305,7 @@ RobotInterface::Device RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::
 {
     const std::string &valueStr = deviceElem->ValueStr();
 
-    if (valueStr.compare("device") != 0) {
+    if (valueStr != "device") {
         SYNTAX_ERROR(deviceElem->Row()) << "Expected \"device\". Found" << valueStr;
     }
 
@@ -325,8 +325,8 @@ RobotInterface::Device RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::
 
     for (TiXmlElement* childElem = deviceElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement())
     {
-        if (childElem->ValueStr().compare("action") == 0 ||
-            childElem->ValueStr().compare("actions") == 0)
+        if (childElem->ValueStr() == "action" ||
+            childElem->ValueStr() == "actions")
         {
             ActionList childActions = readActions(childElem);
             for (ActionList::const_iterator it = childActions.begin(); it != childActions.end(); ++it)
@@ -367,19 +367,19 @@ RobotInterface::ParamList RobotInterface::XMLReaderFileV3::privateXMLReaderFileV
 {
     const std::string &valueStr = paramsElem->ValueStr();
 
-    if (valueStr.compare("param") == 0) {
+    if (valueStr == "param") {
         ParamList params;
         params.push_back(readParamTag(paramsElem));
         return params;
-    } else if (valueStr.compare("group") == 0) {
+    } else if (valueStr == "group") {
         ParamList params;
         params.push_back(readGroupTag(paramsElem));
         return params;
-    } else if (valueStr.compare("paramlist") == 0) {
+    } else if (valueStr == "paramlist") {
         return readParamListTag(paramsElem);
-    } else if (valueStr.compare("subdevice") == 0) {
+    } else if (valueStr == "subdevice") {
         return readSubDeviceTag(paramsElem);
-    } else if (valueStr.compare("params") == 0) {
+    } else if (valueStr == "params") {
         return readParamsTag(paramsElem);
     }
     else
@@ -392,7 +392,7 @@ RobotInterface::ParamList RobotInterface::XMLReaderFileV3::privateXMLReaderFileV
 
 RobotInterface::Param RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::readParamTag(TiXmlElement *paramElem)
 {
-    if (paramElem->ValueStr().compare("param") != 0) {
+    if (paramElem->ValueStr() != "param") {
         SYNTAX_ERROR(paramElem->Row()) << "Expected \"param\". Found" << paramElem->ValueStr();
     }
 
@@ -416,7 +416,7 @@ RobotInterface::Param RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::r
 
 RobotInterface::Param RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::readGroupTag(TiXmlElement* groupElem)
 {
-    if (groupElem->ValueStr().compare("group") != 0) {
+    if (groupElem->ValueStr() != "group") {
         SYNTAX_ERROR(groupElem->Row()) << "Expected \"group\". Found" << groupElem->ValueStr();
     }
 
@@ -454,7 +454,7 @@ RobotInterface::Param RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::r
 
 RobotInterface::ParamList RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::readParamListTag(TiXmlElement* paramListElem)
 {
-    if (paramListElem->ValueStr().compare("paramlist") != 0) {
+    if (paramListElem->ValueStr() != "paramlist") {
         SYNTAX_ERROR(paramListElem->Row()) << "Expected \"paramlist\". Found" << paramListElem->ValueStr();
     }
 
@@ -470,7 +470,7 @@ RobotInterface::ParamList RobotInterface::XMLReaderFileV3::privateXMLReaderFileV
     // yDebug() << "Found paramlist [" << params.at(0).name() << "]";
 
     for (TiXmlElement* childElem = paramListElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
-        if (childElem->ValueStr().compare("elem") != 0) {
+        if (childElem->ValueStr() != "elem") {
             SYNTAX_ERROR(childElem->Row()) << "Expected \"elem\". Found" << childElem->ValueStr();
         }
 
@@ -506,7 +506,7 @@ RobotInterface::ParamList RobotInterface::XMLReaderFileV3::privateXMLReaderFileV
 
 RobotInterface::ParamList RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::readSubDeviceTag(TiXmlElement *subDeviceElem)
 {
-    if (subDeviceElem->ValueStr().compare("subdevice") != 0) {
+    if (subDeviceElem->ValueStr() != "subdevice") {
         SYNTAX_ERROR(subDeviceElem->Row()) << "Expected \"subdevice\". Found" << subDeviceElem->ValueStr();
     }
 
@@ -561,13 +561,13 @@ RobotInterface::ActionList RobotInterface::XMLReaderFileV3::privateXMLReaderFile
 {
     const std::string &valueStr = actionsElem->ValueStr();
 
-    if (valueStr.compare("action") != 0 &&
-        valueStr.compare("actions") != 0)
+    if (valueStr != "action" &&
+        valueStr != "actions")
     {
         SYNTAX_ERROR(actionsElem->Row()) << "Expected \"action\" or \"actions\". Found" << valueStr;
     }
 
-    if (valueStr.compare("action") == 0) {
+    if (valueStr == "action") {
         ActionList actionList;
         actionList.push_back(readActionTag(actionsElem));
         return actionList;
@@ -578,7 +578,7 @@ RobotInterface::ActionList RobotInterface::XMLReaderFileV3::privateXMLReaderFile
 
 RobotInterface::Action RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::readActionTag(TiXmlElement* actionElem)
 {
-    if (actionElem->ValueStr().compare("action") != 0) {
+    if (actionElem->ValueStr() != "action") {
         SYNTAX_ERROR(actionElem->Row()) << "Expected \"action\". Found" << actionElem->ValueStr();
     }
 

@@ -79,7 +79,7 @@ RobotInterface::ParamList RobotInterface::mergeDuplicateGroups(const RobotInterf
         RobotInterface::Param &param1 = *it1;
         for (RobotInterface::ParamList::iterator it2 = it1 + 1; it2 != params.end(); ) {
             RobotInterface::Param &param2 = *it2;
-            if (param1.name().compare(param2.name()) == 0) {
+            if (param1.name() == param2.name()) {
                 if (!param1.isGroup() || !param2.isGroup()) {
                     yFatal() << "Duplicate parameter \"" << param1.name() << "\" found and at least one of them is not a group.";
                 }
