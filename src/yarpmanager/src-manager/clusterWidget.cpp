@@ -230,7 +230,7 @@ void ClusterWidget::onRunSelected()
         ClusterNode node = cluster.nodes[itr];
         string portName = node.name;
 
-        if (portName.find("/") == std::string::npos)
+        if (portName.find('/') == std::string::npos)
         {
             portName.insert(0, 1, '/');
         }
@@ -288,7 +288,7 @@ void ClusterWidget::onStopSelected()
             continue;
         }
         string portName = node.name;
-        if (portName.find("/") == std::string::npos)
+        if (portName.find('/') == std::string::npos)
         {
             portName.insert(0, 1, '/');
         }
@@ -448,7 +448,7 @@ bool ClusterWidget::checkNameserver()
         return false;
     }
 
-    if (name.find("/") == std::string::npos)
+    if (name.find('/') == std::string::npos)
     {
         name = "/" + name;
     }
@@ -492,7 +492,7 @@ bool ClusterWidget::checkNameserver()
 bool ClusterWidget::checkNode(const string &name)
 {
     string portname = name;
-    if (portname.find("/") == std::string::npos)
+    if (portname.find('/') == std::string::npos)
     {
         portname = "/" + portname;
     }

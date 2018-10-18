@@ -648,7 +648,7 @@ bool YarpBroker::getAllPorts(vector<string> &ports)
     while((pos1 = str.find(delm)) != std::string::npos)
     {
         str = str.substr(pos1+strlen(delm));
-        if((pos2 = str.find(" ")) != std::string::npos)
+        if((pos2 = str.find(' ')) != std::string::npos)
             ports.push_back(str.substr(0, pos2));
     }
 

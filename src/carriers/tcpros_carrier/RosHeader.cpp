@@ -74,7 +74,7 @@ bool RosHeader::readHeader(const string& bin) {
         at += 4;
         len -= 4;
         string keyval(at,slen);
-        size_t delim = keyval.find_first_of("=",0);
+        size_t delim = keyval.find_first_of('=',0);
         if (delim == string::npos) {
             fprintf(stderr, "warning: corrupt ROS header\n");
         }

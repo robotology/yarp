@@ -326,7 +326,7 @@ static int metaConnect(const std::string& src,
                   (mode==YARP_ENACT_CONNECT)?"connect":((mode==YARP_ENACT_DISCONNECT)?"disconnect":"check")
                   );
     // check if source name and destination name contain spaces
-    if(dest.find(" ") != std::string::npos || src.find(" ") != std::string::npos)
+    if(dest.find(' ') != std::string::npos || src.find(' ') != std::string::npos)
     {
         fprintf(stderr, "Failure: no way to make connection %s->%s, one of the port names contains a space character.\n", src.c_str(), dest.c_str());
         return 1;
@@ -1157,7 +1157,7 @@ bool NetworkBase::isValidPortName(const std::string& portName)
         return false;
     }
 
-    if (portName.find(" ") != std::string::npos)
+    if (portName.find(' ') != std::string::npos)
     {
         return false;
     }

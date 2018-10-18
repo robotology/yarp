@@ -108,7 +108,7 @@ RobotInterface::Robot& RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::
 #ifdef WIN32
     path = filename.substr(0, filename.rfind("\\"));
 #else // WIN32
-    path = filename.substr(0, filename.rfind("/"));
+    path = filename.substr(0, filename.rfind('/'));
 #endif //WIN32
 
     yDebug() << "Reading file" << filename.c_str();

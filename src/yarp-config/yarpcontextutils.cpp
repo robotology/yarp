@@ -399,12 +399,12 @@ void prepareHomeFolder(yarp::os::ResourceFinder &rf, folderType ftype)
 bool prepareSubFolders(const std::string& startDir, const std::string& fileName)
 {
     string fname(fileName);
-    if (fname.find(PATH_SEPARATOR) == string::npos)
+    if (fname.find('/') == string::npos)
         return true;
     else
     {
         size_t curPos, startPos = 0;
-        while ((curPos = fname.find(PATH_SEPARATOR, startPos)) != string::npos)
+        while ((curPos = fname.find('/', startPos)) != string::npos)
         {
             yarp::os::mkdir((startDir + PATH_SEPARATOR + fname.substr(0, curPos)).c_str());
             startPos = curPos + string(PATH_SEPARATOR).length();
@@ -416,14 +416,14 @@ bool prepareSubFolders(const std::string& startDir, const std::string& fileName)
 bool recursiveFileList(const char* basePath, const char* suffix, std::set<std::string>& filenames)
 {
     string strPath = string(basePath);
-    if ((strPath.rfind(PATH_SEPARATOR) == string::npos) ||
-        (strPath.rfind(PATH_SEPARATOR) != strPath.size() - 1))
+    if ((strPath.rfind('/') == string::npos) ||
+        (strPath.rfind('/') != strPath.size() - 1))
         strPath = strPath + string(PATH_SEPARATOR);
 
     string mySuffix = string(suffix);
 
-    if (((mySuffix.rfind(PATH_SEPARATOR) == string::npos) ||
-        (mySuffix.rfind(PATH_SEPARATOR) != mySuffix.size() - 1)) && mySuffix != "")
+    if (((mySuffix.rfind('/') == string::npos) ||
+        (mySuffix.rfind('/') != mySuffix.size() - 1)) && mySuffix != "")
         mySuffix = mySuffix + string(PATH_SEPARATOR);
 
     strPath += mySuffix;

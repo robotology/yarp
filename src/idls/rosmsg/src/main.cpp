@@ -140,8 +140,8 @@ int generate_cpp(int argc, char *argv[])
 
     fname = argv[argc-1];
 
-    if (fname.rfind(".")!=string::npos) {
-        string ext = fname.substr(fname.rfind("."),fname.length());
+    if (fname.rfind('.')!=string::npos) {
+        string ext = fname.substr(fname.rfind('.'),fname.length());
         if (ext==".srv" || ext==".SRV") {
             is_service = true;
         }

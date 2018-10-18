@@ -224,7 +224,7 @@ void MainWindow::init(yarp::os::Property config)
         string strPath;
         string modPaths(config.find("modpath").asString());
         while (modPaths!=""){
-            string::size_type pos=modPaths.find(";");
+            string::size_type pos=modPaths.find(';');
             strPath=modPaths.substr(0, pos);
             yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
@@ -243,7 +243,7 @@ void MainWindow::init(yarp::os::Property config)
         string strPath;
         string resPaths(config.find("respath").asString());
         while (resPaths!=""){
-            string::size_type pos=resPaths.find(";");
+            string::size_type pos=resPaths.find(';');
             strPath=resPaths.substr(0, pos);
             yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
@@ -267,7 +267,7 @@ void MainWindow::init(yarp::os::Property config)
         string strPath;
         string appPaths(config.find("apppath").asString());
         while (appPaths!=""){
-            string::size_type pos=appPaths.find(";");
+            string::size_type pos=appPaths.find(';');
             strPath=appPaths.substr(0, pos);
             yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str())){
@@ -300,7 +300,7 @@ void MainWindow::init(yarp::os::Property config)
         string strPath;
         string templPaths(config.find("templpath").asString());
         while (templPaths!=""){
-            string::size_type pos=templPaths.find(";");
+            string::size_type pos=templPaths.find(';');
             strPath=templPaths.substr(0, pos);
             yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str())){
@@ -1357,7 +1357,7 @@ void MainWindow::onSaveAs()
             return;
         }
         QString appName = fileName.toStdString().substr(0,it1).c_str();
-        size_t it2 =appName.toStdString().find_last_of("/");
+        size_t it2 =appName.toStdString().find_last_of('/');
         if(it2 != string::npos)
         {
             currentAppName = appName.toStdString().substr(it2+1).c_str();

@@ -49,12 +49,12 @@ bool RosLookup::lookupCore(const std::string& name) {
         fprintf(stderr, "url not understood: %s\n", url.c_str());
         return false;
     }
-    std::string::size_type break2 = url.find(":",break1+3);
+    std::string::size_type break2 = url.find(':',break1+3);
     if (break2==std::string::npos) {
         fprintf(stderr, "url not understood: %s\n", url.c_str());
         return false;
     }
-    std::string::size_type break3 = url.find("/",break2+1);
+    std::string::size_type break3 = url.find('/',break2+1);
     if (break3==std::string::npos) {
         fprintf(stderr, "url not understood: %s\n", url.c_str());
         return false;

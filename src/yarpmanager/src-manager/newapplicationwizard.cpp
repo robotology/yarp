@@ -129,7 +129,7 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
 
         do
         {
-            string::size_type pos=appPaths.find(";");
+            string::size_type pos=appPaths.find(';');
             strPath=appPaths.substr(0, pos);
             trimString(strPath);
             if (!absolute(strPath.c_str()))

@@ -27,9 +27,9 @@ using namespace std;
 string extractPathFromFile(string full_filename)
 {
     size_t found;
-    found = full_filename.find_last_of("/");
+    found = full_filename.find_last_of('/');
     if (found != string::npos) return full_filename.substr(0, found)+"/";
-    found = full_filename.find_last_of("\\");
+    found = full_filename.find_last_of('\\');
     if (found != string::npos) return full_filename.substr(0, found)+"\\";
     return full_filename;
 }

@@ -172,12 +172,12 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 
     std::string inifile=rf.findFile("from");
     std::string inipath;
-    size_t lastSlash=inifile.rfind("/");
+    size_t lastSlash=inifile.rfind('/');
     if (lastSlash!=std::string::npos)
         inipath=inifile.substr(0, lastSlash+1);
     else
     {
-        lastSlash=inifile.rfind("\\");
+        lastSlash=inifile.rfind('\\');
         if (lastSlash!=std::string::npos)
             inipath=inifile.substr(0, lastSlash+1);
     }

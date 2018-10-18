@@ -543,8 +543,8 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             s += v->toString();
             s += "/quit";
         }
-        if (s.find("=") == std::string::npos &&
-            s.find("@") == std::string::npos) {
+        if (s.find('=') == std::string::npos &&
+            s.find('@') == std::string::npos) {
             terminee = new Terminee(s.c_str());
             terminatorKey = s;
             if (terminee == nullptr) {
