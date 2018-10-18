@@ -227,7 +227,7 @@ Contact NameClient::registerName(const std::string& name, const Contact& suggest
         std::string cmdOffers = "set /port offers ";
         yarp::os::Bottle lst = yarp::os::Carriers::listCarriers();
         for (size_t i = 0; i < lst.size(); i++) {
-            cmdOffers = cmdOffers + " " + lst.get(i).asString();
+            cmdOffers.append(" ").append(lst.get(i).asString());
         }
 
 

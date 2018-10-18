@@ -549,7 +549,7 @@ void PartItem::onDumpAllRemoteVariables()
                     if (m_iVar->getRemoteVariable(key_name, val))
                     {
                         std::string key_value = val.toString();
-                        std::string p_value = key_name + ' ' + key_value + '\n';
+                        std::string p_value = std::string(key_name).append(" ").append(key_value).append("\n");
                         fputs(p_value.c_str(), dumpfile);
                     }
                 }

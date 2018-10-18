@@ -228,10 +228,10 @@ void MainWindow::init(yarp::os::Property config)
             strPath=modPaths.substr(0, pos);
             yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
-                strPath=basepath+strPath;
+                strPath.insert(0, basepath);
             if((strPath.rfind(directorySeparator)==string::npos) ||
             (strPath.rfind(directorySeparator)!=strPath.size()-1))
-                strPath = strPath + string(directorySeparator);
+                strPath.append(directorySeparator);
             lazyManager.addModules(strPath.c_str());
             if (pos==string::npos || pos==0)
                 break;
@@ -247,11 +247,11 @@ void MainWindow::init(yarp::os::Property config)
             strPath=resPaths.substr(0, pos);
             yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
-                strPath=basepath+strPath;
+                strPath.insert(0, basepath);
 
             if((strPath.rfind(directorySeparator)==string::npos) ||
             (strPath.rfind(directorySeparator)!=strPath.size()-1))
-                strPath = strPath + string(directorySeparator);
+                strPath.append(directorySeparator);
 
             lazyManager.addResources(strPath.c_str());
             if (pos==string::npos)
@@ -271,12 +271,12 @@ void MainWindow::init(yarp::os::Property config)
             strPath=appPaths.substr(0, pos);
             yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str())){
-                strPath=basepath+strPath;
+                strPath.insert(0, basepath);
             }
 
             if((strPath.rfind(directorySeparator)==string::npos) ||
                 (strPath.rfind(directorySeparator)!=strPath.size()-1)){
-                    strPath = strPath + string(directorySeparator);
+                    strPath.append(directorySeparator);
             }
 
             if(config.find("load_subfolders").asString() == "yes"){
@@ -304,7 +304,7 @@ void MainWindow::init(yarp::os::Property config)
             strPath=templPaths.substr(0, pos);
             yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str())){
-                strPath=basepath+strPath;
+                strPath.insert(0, basepath);
             }
 
             if(!loadRecursiveTemplates(strPath.c_str())){
@@ -433,8 +433,9 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
     const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
     string strPath = szPath;
     if((strPath.rfind(directorySeparator)==string::npos) ||
-            (strPath.rfind(directorySeparator)!=strPath.size()-1))
-            strPath = strPath + string(directorySeparator);
+            (strPath.rfind(directorySeparator)!=strPath.size()-1)) {
+        strPath.append(directorySeparator);
+    }
 
     DIR *dir;
     struct dirent *entry;
@@ -475,7 +476,7 @@ bool MainWindow::loadRecursiveApplications(const char* szPath)
     string strPath = szPath;
     if((strPath.rfind(directorySeparator)==string::npos) ||
             (strPath.rfind(directorySeparator)!=strPath.size()-1))
-            strPath = strPath + string(directorySeparator);
+            strPath = strPath + directorySeparator;
 
     DIR *dir;
     struct dirent *entry;

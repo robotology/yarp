@@ -340,7 +340,7 @@ public:
                 ok = ok && readFile(fname, result, false);
                 result += "\n[]\n";  // reset any nested sections
             } else {
-                result += "[include " + section + " \"" + fname + "\" \"" + fname + "\"]\n";
+                result.append("[include ").append(section).append(" \"").append(fname).append("\" \"").append(fname).append("\"]\n");
             }
         }
         free(namelist);
@@ -390,7 +390,7 @@ public:
                 trial += fname;
 
                 YARP_DEBUG(Logger::get(),
-                           std::string("looking for ") + fname + " as " + trial);
+                           std::string("looking for ").append(fname).append(" as ").append(trial));
 
                 txt = "";
                 if (readFile(trial, txt, true)) {

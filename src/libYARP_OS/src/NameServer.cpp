@@ -494,9 +494,8 @@ std::string NameServer::cmdCheck(int argc, char *argv[]) {
         if (i>2) {
             response += "\n";
         }
-        response += "port ";
-        response += target + " property " +
-            key + " value " + argv[i] + " present " + val;
+        response.append("port ").append(target).append(" property ")
+            .append(key).append(" value ").append(argv[i]).append(" present ").append(val);
     }
     response += "\n";
     return terminate(response);

@@ -78,9 +78,9 @@ void Protocol::setRoute(const Route& route)
                 Value& v = b.get(i);
                 Bottle* lst = v.asList();
                 if (lst != nullptr) {
-                    carrier = carrier + "+" + lst->get(0).toString() + "." + lst->get(1).toString();
+                    carrier.append("+").append(lst->get(0).toString()).append(".").append(lst->get(1).toString());
                 } else {
-                    carrier = carrier + "+" + v.toString();
+                    carrier.append("+").append(v.toString());
                 }
             }
             r.setCarrierName(carrier);

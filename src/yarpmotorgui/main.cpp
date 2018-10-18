@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
                 string ss = b_part->get(i).asString();
                 if (ss.at(0) != '/')
                 {
-                    ss = "/" + robotName + "/" + ss;
+                    ss.insert(0, "/" + robotName + "/");
                 }
                 else
                 {

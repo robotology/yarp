@@ -255,7 +255,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         {
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
-                strPath=inipath+strPath;
+                strPath = std::string(inipath).append(strPath);
             addModules(strPath.c_str());
         }
     }
@@ -268,7 +268,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         {
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
-                strPath=inipath+strPath;
+                strPath = std::string(inipath).append(strPath);
             addResources(strPath.c_str());
         }
     }
@@ -282,7 +282,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         {
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
-                strPath=inipath+strPath;
+                strPath = std::string(inipath).append(strPath);
             if(config.find("load_subfolders").asString() == "yes")
             {
                 if(!loadRecursiveApplications(strPath.c_str()))

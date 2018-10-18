@@ -181,9 +181,9 @@ bool RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::PerformInclusions(
             std::string included_path;
             if (childElem->QueryStringAttribute("href", &href_filename) == TIXML_SUCCESS)
             {
-                included_path = current_path + std::string("\\") + href_filename.substr(0, href_filename.find_last_of("\\/"));
+                included_path = std::string(current_path).append("\\").append(href_filename.substr(0, href_filename.find_last_of("\\/")));
                 included_filename = href_filename.substr(href_filename.find_last_of("\\/") + 1);
-                std::string full_path_file = included_path + std::string("\\") + included_filename;
+                std::string full_path_file = std::string(included_path).append("\\").append(included_filename);
                 TiXmlDocument included_file;
 
                 std::replace(full_path_file.begin(), full_path_file.end(), '\\', '/');

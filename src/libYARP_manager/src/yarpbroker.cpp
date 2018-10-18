@@ -682,7 +682,7 @@ bool YarpBroker::getAllProcesses(const char* server,
                sprc = response.get(i).find("cmd").asString();
             if(response.get(i).check("env") &&
                response.get(i).find("env").asString().length())
-               sprc = sprc + std::string("; ") + response.get(i).find("env").asString();
+               sprc.append("; ").append(response.get(i).find("env").asString());
             proc.command = sprc;
             processes.push_back(proc);
         }

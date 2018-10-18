@@ -785,7 +785,7 @@ bool Map2DServer::save_locations(std::string locations_file)
     for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it)
     {
         l = it->second;
-        file << it->first + s + l.map_id + s << l.x << s << l.y << s << l.theta << "\n";
+        file << it->first << s << l.map_id << s << l.x << s << l.y << s << l.theta << "\n";
     }
 
     file.close();
