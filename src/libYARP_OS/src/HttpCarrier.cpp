@@ -21,7 +21,7 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 
 static std::string quoteFree(const std::string &src) {
-    std::string result = "";
+    std::string result;
     for (unsigned int i=0; i<src.length(); i++) {
         char ch = src[i];
         if (ch=='"') {
@@ -176,7 +176,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
         return;
     }
     std::string s(txt);
-    std::string sData = "";
+    std::string sData;
     Property& p = prop;
     //p.fromQuery(txt);
     format = p.check("format", Value("html")).asString();
@@ -196,8 +196,8 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
             s = p.check("data", Value("")).asString();
         }
         s += " ";
-        std::string sFixed = "";
-        std::string var = "";
+        std::string sFixed;
+        std::string var;
         bool arg = false;
         for (unsigned int i=0; i<s.length(); i++) {
             char ch = s[i];
@@ -435,7 +435,7 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
                 part += org;
                 org += " ";
                 bool arg = false;
-                std::string var = "";
+                std::string var;
                 for (i=0; i<org.length(); i++) {
                     char ch = org[i];
                     if (arg) {

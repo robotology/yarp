@@ -37,7 +37,7 @@ yarp::conf::ssize_t MjpegStream::read(Bytes& b) {
         }
     }
     while (phase==0 && delegate->getInputStream().isOk()) {
-        std::string s = "";
+        std::string s;
         do {
             s = delegate->getInputStream().readLine();
             if (debug) {

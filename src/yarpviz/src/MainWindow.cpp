@@ -371,7 +371,7 @@ void MainWindow::drawGraph(Graph &graph)
                 if(edge.property.find("type").asString() == "connection") {                    
                     //QGVEdge* gve = scene->addEdge(nodeSet[&v1], nodeSet[&v2],
                     //                               edge.property.find("carrier").asString().c_str());
-                    string lable="";
+                    string lable;
                     if(!ui->actionHideConnectionsLable->isChecked())
                         lable = edge.property.find("carrier").asString();
                     QGVEdge* gve = scene->addEdge((QGVNode*)((GraphicVertex*)&v1)->getGraphicItem(),

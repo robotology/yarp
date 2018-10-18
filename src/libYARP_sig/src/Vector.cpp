@@ -97,7 +97,7 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) const {
 
 std::string VectorBase::getFormatStr(int tag) const
 {
-    std::string ret = "";
+    std::string ret;
     auto it = tag2FormatStr.find(tag);
 
     if (it != tag2FormatStr.end())

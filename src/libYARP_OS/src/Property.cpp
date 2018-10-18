@@ -232,7 +232,7 @@ public:
     }
 
     void fromCommand(int argc, char *argv[], bool wipe=true) {
-        std::string tag = "";
+        std::string tag;
         Bottle accum;
         Bottle total;
         bool qualified = false;
@@ -259,7 +259,7 @@ public:
                     // Specifically when reading from the command
                     // line, we will allow windows-style paths.
                     // Hence we have to break the "\" character
-                    std::string buf = "";
+                    std::string buf;
                     for (unsigned int i=0; i<work.length(); i++) {
                         buf += work[i];
                         if (work[i]=='\\') {
@@ -377,7 +377,7 @@ public:
                    std::string("looking for ") + fname + ", search path: " +
                    searchPath);
 
-        std::string pathPrefix("");
+        std::string pathPrefix;
         std::string txt;
 
         bool ok = true;
@@ -402,7 +402,7 @@ public:
             }
         }
 
-        std::string path("");
+        std::string path;
         size_t index = fname.rfind('/');
         if (index==std::string::npos) {
             index = fname.rfind('\\');
@@ -463,7 +463,7 @@ public:
         if (wipe) {
             clear();
         }
-        std::string tag = "";
+        std::string tag;
         Bottle accum;
         bool done = false;
         do {
@@ -700,8 +700,8 @@ public:
             return txt;
         }
         // check if variables present
-        std::string output = "";
-        std::string var = "";
+        std::string output;
+        std::string var;
         bool inVar = false;
         bool varHasParen = false;
         bool quoted = false;
@@ -760,7 +760,7 @@ public:
                         // Specifically when reading from the command
                         // line, we will allow windows-style paths.
                         // Hence we have to break the "\" character
-                        std::string buf = "";
+                        std::string buf;
                         for (unsigned int i=0; i<add.length(); i++) {
                             buf += add[i];
                             if (add[i]=='\\') {
@@ -1085,9 +1085,9 @@ void Property::fromQuery(const char *url, bool wipe) {
     }
     std::string str = url;
     str += "&";
-    std::string buf = "";
-    std::string key = "";
-    std::string val = "";
+    std::string buf;
+    std::string key;
+    std::string val;
     int code = 0;
     int coding = 0;
 

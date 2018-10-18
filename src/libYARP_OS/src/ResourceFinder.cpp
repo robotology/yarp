@@ -247,7 +247,7 @@ public:
             return name;
         }
 
-        std::string s = "";
+        std::string s;
         std::string slash = NetworkBase::getDirectorySeparator();
 
         if (base1!="") {

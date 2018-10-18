@@ -63,7 +63,7 @@ a:hover{\n\
 
     if ((!content.check(uri))||options.check("no-web-cache")) {
         if (options.check("web")) {
-            std::string accum = "";
+            std::string accum;
             bool first = true;
             for (size_t i=0; i<fileName.length(); i++) {
                 char ch = fileName[i];

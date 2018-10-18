@@ -581,7 +581,7 @@ bool StoreString::writeRaw(ConnectionWriter& writer) const
 
 std::string StoreBlob::toString() const
 {
-    std::string result = "";
+    std::string result;
     for (unsigned int i = 0; i < x.length(); i++) {
         if (i > 0) {
             result += " ";

@@ -129,8 +129,8 @@ yarp::conf::ssize_t XmlRpcStream::read(Bytes& b)
             if (ok) {
                 //printf("got a block!\n");
                 XmlRpcValue xresult;
-                std::string prefix = "";
-                std::string cprefix = "";
+                std::string prefix;
+                std::string cprefix;
                 if (sender) {
                     client.parseResponse(xresult);
                 } else {

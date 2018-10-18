@@ -161,7 +161,7 @@ bool Port::open(const Contact& contact, bool registerName,
         if (nc.getNestedName()!="") {
             if (nc.getCategory()=="") {
                 // we need to add in a category
-                std::string cat = "";
+                std::string cat;
                 if (currentCore->commitToRead) {
                     cat = "-";
                 } else if (currentCore->commitToWrite) {

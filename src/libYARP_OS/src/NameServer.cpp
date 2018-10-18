@@ -158,7 +158,7 @@ Contact NameServer::registerName(const std::string& name,
 
 Contact NameServer::queryName(const std::string& name) {
     std::string base = name;
-    std::string pat = "";
+    std::string pat;
     if (name.find("/net=") == 0) {
         size_t patStart = 5;
         size_t patEnd = name.find('/', patStart);
@@ -360,7 +360,7 @@ std::string NameServer::cmdRoute(int argc, char *argv[]) {
 
     NameRecord& srcRec = getNameRecord(src);
     NameRecord& destRec = getNameRecord(dest);
-    std::string pref = "";
+    std::string pref;
 
     for (int i=0; i<argc; i++) {
         std::string carrier = argv[i];
@@ -482,7 +482,7 @@ std::string NameServer::cmdCheck(int argc, char *argv[]) {
     if (argc<2) {
         return "need at least two arguments: the port name, and a key";
     }
-    std::string response = "";
+    std::string response;
     std::string target = STR(argv[0]);
     std::string key = argv[1];
     NameRecord& nameRecord = getNameRecord(target);
@@ -506,7 +506,7 @@ std::string NameServer::cmdCheck(int argc, char *argv[]) {
 std::string NameServer::cmdList(int argc, char *argv[]) {
     YARP_UNUSED(argc);
     YARP_UNUSED(argv);
-    std::string response = "";
+    std::string response;
 
     std::multiset<std::string> lines;
     for (auto it = nameMap.begin(); it!=nameMap.end(); ++it) {
@@ -524,7 +524,7 @@ std::string NameServer::cmdList(int argc, char *argv[]) {
 
 
 std::string NameServer::cmdBot(int argc, char *argv[]) {
-    std::string txt = "";
+    std::string txt;
     argc--;
     argv++;
     if (argc>=1) {
@@ -541,7 +541,7 @@ std::string NameServer::cmdBot(int argc, char *argv[]) {
 Bottle NameServer::ncmdList(int argc, char *argv[]) {
     Bottle response;
 
-    std::string prefix = "";
+    std::string prefix;
 
     if (argc==1) {
         prefix = STR(argv[0]);
@@ -618,7 +618,7 @@ yarp::os::Bottle NameServer::ncmdGet(int argc, char *argv[]) {
 std::string NameServer::cmdGarbageCollect(int argc, char *argv[]) {
     YARP_UNUSED(argc);
     YARP_UNUSED(argv);
-    std::string response = "";
+    std::string response;
 
     response = "No cleaning done.\n";
 
@@ -627,7 +627,7 @@ std::string NameServer::cmdGarbageCollect(int argc, char *argv[]) {
 
 
 std::string NameServer::textify(const Contact& address) {
-    std::string result = "";
+    std::string result;
     if (address.isValid()) {
         if (address.getPort()>=0) {
             result = "registration name ";

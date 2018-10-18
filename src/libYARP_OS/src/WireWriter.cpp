@@ -116,7 +116,7 @@ bool WireWriter::writeTag(const char *tag, int split, int len) const {
     if (!split) {
         return writeString(tag);
     }
-    std::string bit = "";
+    std::string bit;
     char ch = 'x';
     while (ch!='\0') {
         ch = *tag;

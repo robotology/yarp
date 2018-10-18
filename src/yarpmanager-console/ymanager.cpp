@@ -56,13 +56,13 @@ using namespace std;
 # if defined(YARP_HAS_SYS_PRCTL_H)
 #  include <sys/prctl.h>
 # endif
-    std::string HEADER = "";
-    std::string OKBLUE = "";
-    std::string OKGREEN = "";
-    std::string WARNING = "";
-    std::string FAIL = "";
-    std::string INFO = "";
-    std::string ENDC = "";
+    std::string HEADER;
+    std::string OKBLUE;
+    std::string OKGREEN;
+    std::string WARNING;
+    std::string FAIL;
+    std::string INFO;
+    std::string ENDC;
 #endif
 
 
@@ -171,7 +171,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
      */
 
     std::string inifile=rf.findFile("from");
-    std::string inipath="";
+    std::string inipath;
     size_t lastSlash=inifile.rfind("/");
     if (lastSlash!=std::string::npos)
         inipath=inifile.substr(0, lastSlash+1);

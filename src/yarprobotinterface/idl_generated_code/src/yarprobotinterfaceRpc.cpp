@@ -221,7 +221,7 @@ yarprobotinterfaceRpc::yarprobotinterfaceRpc() {
   yarp().setOwner(*this);
 }
 std::string yarprobotinterfaceRpc::get_phase() {
-  std::string _return = "";
+  std::string _return;
   yarprobotinterfaceRpc_get_phase helper;
   helper.init();
   if (!yarp().canWrite()) {
@@ -241,7 +241,7 @@ std::int32_t yarprobotinterfaceRpc::get_level() {
   return ok?helper._return:_return;
 }
 std::string yarprobotinterfaceRpc::get_robot() {
-  std::string _return = "";
+  std::string _return;
   yarprobotinterfaceRpc_get_robot helper;
   helper.init();
   if (!yarp().canWrite()) {
@@ -261,7 +261,7 @@ bool yarprobotinterfaceRpc::is_ready() {
   return ok?helper._return:_return;
 }
 std::string yarprobotinterfaceRpc::quit() {
-  std::string _return = "";
+  std::string _return;
   yarprobotinterfaceRpc_quit helper;
   helper.init();
   if (!yarp().canWrite()) {
@@ -271,7 +271,7 @@ std::string yarprobotinterfaceRpc::quit() {
   return ok?helper._return:_return;
 }
 std::string yarprobotinterfaceRpc::bye() {
-  std::string _return = "";
+  std::string _return;
   yarprobotinterfaceRpc_bye helper;
   helper.init();
   if (!yarp().canWrite()) {
@@ -281,7 +281,7 @@ std::string yarprobotinterfaceRpc::bye() {
   return ok?helper._return:_return;
 }
 std::string yarprobotinterfaceRpc::exit() {
-  std::string _return = "";
+  std::string _return;
   yarprobotinterfaceRpc_exit helper;
   helper.init();
   if (!yarp().canWrite()) {

@@ -55,7 +55,7 @@ bool InputStream::setReadTimeout(double timeout)
 
 std::string InputStream::readLine(int terminal, bool* success)
 {
-    std::string buf("");
+    std::string buf;
     bool done = false;
     int esc = 0;
     if (success != nullptr) {

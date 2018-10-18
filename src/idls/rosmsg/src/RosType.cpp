@@ -66,7 +66,7 @@ std::vector<std::string> normalizedMessage(const std::string& line) {
 
 bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
                    int nesting) {
-    std::string indent = "";
+    std::string indent;
     for (int i=0; i<nesting; i++) {
         indent += "  ";
     }
@@ -227,7 +227,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
             continue;
         }
         bool have_const = false;
-        std::string const_txt = "";
+        std::string const_txt;
         if (msg.size()>2) {
             if (msg[2]=="=") {
                 have_const = true;
@@ -394,7 +394,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
             std::string add = e.rosType + " " + e.rosName + "=" + e.initializer + "\n";
             checksum_const_text.push_back(add);
         } else {
-            std::string add = "";
+            std::string add;
             if (e.isRosPrimitive) {
                 add += e.rosRawType;
             } else {
@@ -414,7 +414,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
         }
     }
 
-    std::string sum = "";
+    std::string sum;
     for (const auto& txt : checksum_const_text) {
         sum += txt;
     }
@@ -524,7 +524,7 @@ std::string RosTypeSearch::readFile(const char *fname) {
     char buf[25600];
     FILE *fin = fopen(fname,"r");
     if (fin==nullptr) return "";
-    std::string result = "";
+    std::string result;
     while(fgets(buf, sizeof(buf)-1, fin) != nullptr) {
         result += buf;
     }

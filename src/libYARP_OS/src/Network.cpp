@@ -231,7 +231,7 @@ static int enactConnection(const Contact& src,
         noteDud(src);
         return 1;
     }
-    std::string msg = "";
+    std::string msg;
     if (reply.get(0).isInt32()) {
         ok = (reply.get(0).asInt32()==0);
         msg = reply.get(1).asString();
@@ -417,7 +417,7 @@ static int metaConnect(const std::string& src,
         staticDest.setCarrier("tcp");
     }
 
-    std::string carrierConstraint = "";
+    std::string carrierConstraint;
 
     // see if we can do business with the source port
     bool srcIsCompetent = false;
@@ -908,7 +908,7 @@ void NetworkBase::finiMinimum()
 
 void yarp::os::NetworkBase::yarpClockInit(yarp::os::yarpClockType clockType, Clock *custom)
 {
-    std::string clock="";
+    std::string clock;
     if(clockType == YARP_CLOCK_DEFAULT)
     {
         clock = yarp::os::Network::getEnvironment("YARP_CLOCK");

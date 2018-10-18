@@ -386,7 +386,7 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
         ip->getOutputStream().flush();
         bool more = multi;
         while (more) {
-            std::string line = "";
+            std::string line;
             line = ip->getInputStream().readLine();
             if (!(ip->isOk())) {
                 //YARP_DEBUG(Logger::get(), e.toString() + " <<< exception from name server");

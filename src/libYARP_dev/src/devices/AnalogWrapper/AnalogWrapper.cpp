@@ -462,7 +462,7 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     }
     else if (rosMsgType == "sensor_msgs/JointState")
     {
-        std::string jointName = "";
+        std::string jointName;
         yInfo() << sensorId << "ROS_msgType is " << rosMsgType;
         bool oldParam = false;
         bool newParam = false;

@@ -185,7 +185,7 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
     int _write_size = -1;
 
     std::string _env_dgram = NetworkBase::getEnvironment("YARP_DGRAM_SIZE");
-    std::string _env_mode = "";
+    std::string _env_mode;
     if (multiMode) {
         _env_mode = NetworkBase::getEnvironment("YARP_MCAST_SIZE");
     } else {

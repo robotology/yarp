@@ -310,7 +310,7 @@ static void toDox(PolyDriver& dd, FILE *os) {
         std::string desc = dd.getComment(name.c_str());
         Value def = dd.getDefaultValue(name.c_str());
         Value actual = dd.getValue(name.c_str());
-        std::string out = "";
+        std::string out;
         out += name;
         if (!actual.isNull()) {
             if (actual.toString()!="") {
@@ -344,7 +344,7 @@ static void toDox(PolyDriver& dd, FILE *os) {
 }
 
 
-static std::string terminatorKey = "";
+static std::string terminatorKey;
 static bool terminated = false;
 static void handler (int) {
     Time::useSystemClock();

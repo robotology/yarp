@@ -132,7 +132,7 @@ std::string NameConfig::readConfig(const std::string& fileName) {
     if (!fin) {
         return "";
     }
-    std::string result = "";
+    std::string result;
     while(fgets(buf, sizeof(buf)-1, fin) != nullptr) {
         result += buf;
     }
@@ -157,7 +157,7 @@ bool NameConfig::fromFile(const char *ns) {
 bool NameConfig::toFile(bool clean) {
     std::string fname = getConfigFileName();
     if (fname!="") {
-        std::string txt = "";
+        std::string txt;
         if (!clean) {
             std::string m = (mode!="")?mode:"yarp";
             txt += address.getHost() + " " + NetType::toString(address.getPort()) + " " + m + "\n";
@@ -387,7 +387,7 @@ yarp::os::Bottle NameConfig::getIpsAsBottle() {
 
 std::string NameConfig::getIps() {
     yarp::os::Bottle bot = getIpsAsBottle();
-    std::string result = "";
+    std::string result;
     for (size_t i=0; i<bot.size(); i++) {
         std::string ip = bot.get(i).asString();
         if (i>0) {

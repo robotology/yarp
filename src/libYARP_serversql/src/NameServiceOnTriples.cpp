@@ -36,7 +36,7 @@ Contact NameServiceOnTriples::query(const std::string& portName,
     TripleContext context;
     context.setRid(result);
     if (result!=-1) {
-        std::string host = "";
+        std::string host;
         if (std::string(prefix)!="") {
             printf("LOOKING AT IPS FOR %s\n", prefix.c_str());
             t.setNameValue("ips","*");
@@ -432,7 +432,7 @@ bool NameServiceOnTriples::cmdList(NameTripleState& act) {
     lock();
     Triple t;
     t.setNameValue("port","*");
-    std::string prefix = "";
+    std::string prefix;
     if (act.cmd.size()>1) {
         prefix = act.cmd.get(1).asString();
     }

@@ -171,7 +171,7 @@ void Ping::report()
 
 std::string Ping::renderTime(double t, int space, int decimal)
 {
-    std::string unit = "";
+    std::string unit;
     double times = 1;
     if (space < 0) {
         yError("Negative space");

@@ -19,7 +19,7 @@ static std::string getPackageName(const std::string& name)
 {
 
     string tname = name;
-    string pname = "";
+    string pname;
     if (name == "Header") {
         tname = "std_msgs";
     } else {
@@ -862,7 +862,7 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field)
         return ry;
     }
     string name = field.rosType;
-    string flavor = "";
+    string flavor;
     if (name == "bool" && !field.isArray) {
         ry.yarpType = "bool";
         ry.writer = "appendInt8";

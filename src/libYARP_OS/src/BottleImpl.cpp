@@ -176,7 +176,7 @@ void BottleImpl::fromString(const std::string& line)
 {
     clear();
     dirty = true;
-    std::string arg = "";
+    std::string arg;
     bool quoted = false;
     bool back = false;
     bool begun = false;
@@ -298,7 +298,7 @@ bool BottleImpl::isComplete(const char* txt)
 
 std::string BottleImpl::toString() const
 {
-    std::string result = "";
+    std::string result;
     for (unsigned int i = 0; i < content.size(); i++) {
         if (i > 0) {
             result += " ";

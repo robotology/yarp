@@ -52,7 +52,7 @@ public:
         ConnectionWriter& writer = con.getWriter();
         writer.appendString(txt.c_str());
         bool ok = handler.apply(con.getReader(),&(con2.getWriter()));
-        std::string result = "";
+        std::string result;
         if (ok) {
             result = con2.getReader().expectText();
         }

@@ -198,8 +198,8 @@ int yarp::run::Run::main(int argc, char *argv[])
     {
         yarp::os::impl::Logger::get().setVerbosity(-1);
         std::string uuid=config.findGroup("readwrite").get(1).asString();
-        std::string fPortName("");
-        std::string lPortName("");
+        std::string fPortName;
+        std::string lPortName;
 
         if (config.check("forward"))
         {

@@ -188,9 +188,9 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
     size_t pub_idx = name.find("+#");
     size_t sub_idx = name.find("-#");
 
-    std::string node = "";
-    std::string pub = "";
-    std::string sub = "";
+    std::string node;
+    std::string pub;
+    std::string sub;
     if (pub_idx!=std::string::npos) {
         node = name.substr(0, pub_idx);
         pub = name.substr(pub_idx+2, name.length());
@@ -288,9 +288,9 @@ Contact RosNameSpace::unregisterAdvanced(const std::string& name, NameStore *sto
     size_t pub_idx = name.find("+#");
     size_t sub_idx = name.find("-#");
 
-    std::string node = "";
-    std::string pub = "";
-    std::string sub = "";
+    std::string node;
+    std::string pub;
+    std::string sub;
     if (pub_idx!=std::string::npos) {
         node = name.substr(0, pub_idx);
         pub = name.substr(pub_idx+2, name.length());

@@ -17,7 +17,7 @@ using namespace yarp::serversql::impl;
 using namespace std;
 
 Contact AllocatorOnTriples::completePortName(const Contact& c) {
-    string name = "";
+    string name;
     Triple t;
     t.setNsNameValue("alloc","tmpid","*");
     TripleContext context;
@@ -78,9 +78,9 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
     // we also try to keep port numbers stable for port names,
     // when possible.
 
-    string npref = "";
+    string npref;
     int pref = -1;
-    string nstring = "";
+    string nstring;
     int number = -1;
     Triple t;
     t.setNsNameValue("alloc","regid","*");
@@ -162,7 +162,7 @@ Contact AllocatorOnTriples::completeHost(const yarp::os::Contact& c) {
         return c;
     }
 
-    string name = "";
+    string name;
     Triple t;
     t.setNsNameValue("alloc","mcastCursor","*");
     TripleContext context;

@@ -248,7 +248,7 @@ int main(int argc, char *argv[])
         std::string tag = req.get(0).asString();
         string fname0 = req.get(1).asString();
         string fname = env.findFile(fname0.c_str());
-        string txt = "";
+        string txt;
         if (tag=="raw") {
             txt = env.readFile(fname.c_str());
             resp.addString(txt);

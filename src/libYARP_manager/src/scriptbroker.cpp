@@ -66,7 +66,7 @@ bool ScriptLocalBroker::init(const char* szcmd, const char* szparam,
 {
     OSTRINGSTREAM strDevParam;
     std::string strParam;
-    std::string strCmd="";
+    std::string strCmd;
     if(szcmd)
     {
         yarp::os::Bottle possiblePaths = parsePaths(yarp::os::NetworkBase::getEnvironment("PATH"));

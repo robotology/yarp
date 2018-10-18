@@ -429,10 +429,10 @@ void PortCore::closeMain()
     // This is because other ports may need to talk to the server
     // to organize details of how a connection should be broken down.
     bool done = false;
-    std::string prevName = "";
+    std::string prevName;
     while (!done) {
         done = true;
-        std::string removeName = "";
+        std::string removeName;
         stateSema.wait();
         for (unsigned int i=0; i<units.size(); i++) {
             PortCoreUnit *unit = units[i];
@@ -962,8 +962,8 @@ bool PortCore::addOutput(const std::string& dest,
     // Check for any restrictions on the port.  Perhaps it can only
     // read, or write.
     bool allowed = true;
-    std::string err = "";
-    std::string append = "";
+    std::string err;
+    std::string append;
     int f = getFlags();
     bool allow_output = (f&PORTCORE_IS_OUTPUT);
     bool rpc = (f&PORTCORE_IS_RPC);
@@ -2160,8 +2160,8 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             __tcp_check(c);
                         } else {
                             Bottle *pref = reply.get(2).asList();
-                            std::string hostname = "";
-                            std::string carrier = "";
+                            std::string hostname;
+                            std::string carrier;
                             int portnum = 0;
                             if (reply.get(0).asInt32()!=1) {
                                 fprintf(stderr, "Failure looking up topic %s: %s\n", topic.c_str(), reply.toString().c_str());

@@ -267,7 +267,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
         //if(verbose >= 2)
         //    yWarning() << "RGBDSensorWrapper: ROS topic support is not yet implemented";
 
-        string confUseRos = "";
+        string confUseRos;
 
         if (!rosGroup.check("use_ROS"))
         {

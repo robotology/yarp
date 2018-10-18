@@ -321,7 +321,7 @@ std::string Contact::toString() const
 
 std::string Contact::toURI(bool includeCarrier) const
 {
-    std::string result = "";
+    std::string result;
     if (includeCarrier && mPriv->carrier!="") {
         result += mPriv->carrier;
         result += ":/";

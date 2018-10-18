@@ -35,7 +35,7 @@ bool yarp::os::impl::Terminal::EOFreached()
 }
 
 std::string yarp::os::impl::Terminal::getStdin() {
-    std::string txt = "";
+    std::string txt;
 
 #ifdef WITH_LIBEDIT
     if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin))) {

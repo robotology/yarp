@@ -50,8 +50,8 @@ bool TcpRosCarrier::checkHeader(const Bytes& header) {
 
 
 std::string TcpRosCarrier::getRosType(ConnectionState& proto) {
-    std::string typ = "";
-    std::string rtyp = "";
+    std::string typ;
+    std::string rtyp;
     if (proto.getContactable()) {
         Type t = proto.getContactable()->getType(); 
         typ = t.getName();
@@ -179,7 +179,7 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
     }
     header.readHeader(string(m.get(),m.length()));
     dbg_printf("Message header: %s\n", header.toString().c_str());
-    std::string rosname = "";
+    std::string rosname;
     if (header.data.find("type")!=header.data.end()) {
         rosname = header.data["type"];
     }
@@ -249,7 +249,7 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     header.readHeader(string(m.get(),m.length()));
     dbg_printf("Got header %s\n", header.toString().c_str());
 
-    std::string rosname = "";
+    std::string rosname;
     if (header.data.find("type")!=header.data.end()) {
         rosname = header.data["type"];
     }
