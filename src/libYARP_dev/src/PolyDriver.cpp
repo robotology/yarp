@@ -272,9 +272,9 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
             driver->view(ddd);
             if(ddd) {
                 if(config->check("allow-deprecated-devices")) {
-                    yWarning("Device \"%s\" is deprecated. Opening since the \"allow-deprecated-devices\" option was passed in the configuration.", str.c_str());
+                    yWarning(R"(Device "%s" is deprecated. Opening since the "allow-deprecated-devices" option was passed in the configuration.)", str.c_str());
                 } else {
-                    yError("Device \"%s\" is deprecated. Pass the \"allow-deprecated-devices\" option in the configuration if you want to open it anyway.", str.c_str());
+                    yError(R"(Device "%s" is deprecated. Pass the "allow-deprecated-devices" option in the configuration if you want to open it anyway.)", str.c_str());
                     driver->close();
                     delete driver;
                     return false;

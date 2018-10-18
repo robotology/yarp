@@ -161,7 +161,7 @@ RobotInterface::Robot& RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::
     }
 
     if (robotElem->QueryStringAttribute("name", &robot.name()) != TIXML_SUCCESS) {
-        SYNTAX_ERROR(robotElem->Row()) << "\"robot\" element should contain the \"name\" attribute";
+        SYNTAX_ERROR(robotElem->Row()) << R"("robot" element should contain the "name" attribute)";
     }
 
 #if TINYXML_UNSIGNED_INT_BUG
@@ -173,14 +173,14 @@ RobotInterface::Robot& RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::
     int tmp;
     if (robotElem->QueryIntAttribute("build", &tmp) != TIXML_SUCCESS || tmp < 0) {
         // No build attribute. Assuming build="0"
-        SYNTAX_WARNING(robotElem->Row()) << "\"robot\" element should contain the \"build\" attribute [unsigned int]. Assuming 0";
+        SYNTAX_WARNING(robotElem->Row()) << R"("robot" element should contain the "build" attribute [unsigned int]. Assuming 0)";
         tmp = 0;
     }
     robot.build() = (unsigned)tmp;
 #endif
 
     if (robotElem->QueryStringAttribute("portprefix", &robot.portprefix()) != TIXML_SUCCESS) {
-        SYNTAX_WARNING(robotElem->Row()) << "\"robot\" element should contain the \"portprefix\" attribute. Using \"name\" attribute";
+        SYNTAX_WARNING(robotElem->Row()) << R"("robot" element should contain the "portprefix" attribute. Using "name" attribute)";
         robot.portprefix() = robot.name();
     }
 
@@ -221,7 +221,7 @@ RobotInterface::DeviceList RobotInterface::XMLReaderFileV1::privateXMLReaderFile
     }
     else
     {
-        SYNTAX_ERROR(devicesElem->Row()) << "Expected \"device\" or \"devices\". Found" << valueStr;
+        SYNTAX_ERROR(devicesElem->Row()) << R"(Expected "device" or "devices". Found)" << valueStr;
     }
     return DeviceList();
 }
@@ -237,13 +237,13 @@ RobotInterface::Device RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::
     Device device;
 
     if (deviceElem->QueryStringAttribute("name", &device.name()) != TIXML_SUCCESS) {
-        SYNTAX_ERROR(deviceElem->Row()) << "\"device\" element should contain the \"name\" attribute";
+        SYNTAX_ERROR(deviceElem->Row()) << R"("device" element should contain the "name" attribute)";
     }
 
     // yDebug() << "Found device [" << device.name() << "]";
 
     if (deviceElem->QueryStringAttribute("type", &device.type()) != TIXML_SUCCESS) {
-        SYNTAX_ERROR(deviceElem->Row()) << "\"device\" element should contain the \"type\" attribute";
+        SYNTAX_ERROR(deviceElem->Row()) << R"("device" element should contain the "type" attribute)";
     }
 
     device.params().push_back(Param("robotName", robot.portprefix()));
@@ -400,7 +400,7 @@ RobotInterface::ParamList RobotInterface::XMLReaderFileV1::privateXMLReaderFileV
     }
     else
     {
-        SYNTAX_ERROR(paramsElem->Row()) << "Expected \"param\", \"group\", \"paramlist\", \"subdevice\", or \"params\". Found" << valueStr;
+        SYNTAX_ERROR(paramsElem->Row()) << R"(Expected "param", "group", "paramlist", "subdevice", or "params". Found)" << valueStr;
     }
     return ParamList();
 }
@@ -415,7 +415,7 @@ RobotInterface::Param RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::r
     Param param;
 
     if (paramElem->QueryStringAttribute("name", &param.name()) != TIXML_SUCCESS) {
-        SYNTAX_ERROR(paramElem->Row()) << "\"param\" element should contain the \"name\" attribute";
+        SYNTAX_ERROR(paramElem->Row()) << R"("param" element should contain the "name" attribute)";
     }
 
     // yDebug() << "Found param [" << param.name() << "]";
@@ -423,7 +423,7 @@ RobotInterface::Param RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::r
     const char *valueText = paramElem->GetText();
     if (!valueText)
     {
-        SYNTAX_ERROR(paramElem->Row()) << "\"param\" element should have a value [ \"name\" = " << param.name() << "]";
+        SYNTAX_ERROR(paramElem->Row()) << R"("param" element should have a value [ "name" = )" << param.name() << "]";
     }
     else
     {
@@ -443,7 +443,7 @@ RobotInterface::Param RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::r
     Param group(true);
 
     if (groupElem->QueryStringAttribute("name", &group.name()) != TIXML_SUCCESS) {
-        SYNTAX_ERROR(groupElem->Row()) << "\"group\" element should contain the \"name\" attribute";
+        SYNTAX_ERROR(groupElem->Row()) << R"("group" element should contain the "name" attribute)";
     }
 
     // yDebug() << "Found group [" << group.name() << "]";
@@ -482,7 +482,7 @@ RobotInterface::ParamList RobotInterface::XMLReaderFileV1::privateXMLReaderFileV
     Param mainparam;
 
     if (paramListElem->QueryStringAttribute("name", &mainparam.name()) != TIXML_SUCCESS) {
-        SYNTAX_ERROR(paramListElem->Row()) << "\"paramlist\" element should contain the \"name\" attribute";
+        SYNTAX_ERROR(paramListElem->Row()) << R"("paramlist" element should contain the "name" attribute)";
     }
 
     params.push_back(mainparam);
@@ -497,13 +497,13 @@ RobotInterface::ParamList RobotInterface::XMLReaderFileV1::privateXMLReaderFileV
         Param childParam;
 
         if (childElem->QueryStringAttribute("name", &childParam.name()) != TIXML_SUCCESS) {
-            SYNTAX_ERROR(childElem->Row()) << "\"elem\" element should contain the \"name\" attribute";
+            SYNTAX_ERROR(childElem->Row()) << R"("elem" element should contain the "name" attribute)";
         }
 
         const char *valueText = childElem->GetText();
         if (!valueText)
         {
-            SYNTAX_ERROR(childElem->Row()) << "\"elem\" element should have a value [ \"name\" = " << childParam.name() << "]";
+            SYNTAX_ERROR(childElem->Row()) << R"("elem" element should have a value [ "name" = )" << childParam.name() << "]";
         }
         else
         {
@@ -547,7 +547,7 @@ RobotInterface::ParamList RobotInterface::XMLReaderFileV1::privateXMLReaderFileV
 //    }
 
     if (subDeviceElem->QueryStringAttribute("type", &subDeviceParam.value()) != TIXML_SUCCESS) {
-        SYNTAX_ERROR(subDeviceElem->Row()) << "\"subdevice\" element should contain the \"type\" attribute";
+        SYNTAX_ERROR(subDeviceElem->Row()) << R"("subdevice" element should contain the "type" attribute)";
     }
 
 //FIXME    params.push_back(featIdParam);
@@ -677,7 +677,7 @@ RobotInterface::ActionList RobotInterface::XMLReaderFileV1::privateXMLReaderFile
     if (valueStr != "action" &&
         valueStr != "actions")
     {
-        SYNTAX_ERROR(actionsElem->Row()) << "Expected \"action\" or \"actions\". Found" << valueStr;
+        SYNTAX_ERROR(actionsElem->Row()) << R"(Expected "action" or "actions". Found)" << valueStr;
     }
 
     if (valueStr == "action") {
@@ -698,12 +698,12 @@ RobotInterface::Action RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::
     Action action;
 
     if (actionElem->QueryValueAttribute<ActionPhase>("phase", &action.phase()) != TIXML_SUCCESS || action.phase() == ActionPhaseUnknown) {
-        SYNTAX_ERROR(actionElem->Row()) << "\"action\" element should contain the \"phase\" attribute [startup|interrupt{1,2,3}|shutdown]";
+        SYNTAX_ERROR(actionElem->Row()) << R"("action" element should contain the "phase" attribute [startup|interrupt{1,2,3}|shutdown])";
     }
 
 
     if (actionElem->QueryValueAttribute<ActionType>("type", &action.type()) != TIXML_SUCCESS || action.type() == ActionTypeUnknown) {
-        SYNTAX_ERROR(actionElem->Row()) << "\"action\" element should contain the \"type\" attribute [configure|calibrate|attach|abort|detach|park|custom]";
+        SYNTAX_ERROR(actionElem->Row()) << R"("action" element should contain the "type" attribute [configure|calibrate|attach|abort|detach|park|custom])";
     }
 
     // yDebug() << "Found action [ ]";
@@ -715,7 +715,7 @@ RobotInterface::Action RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::
 #else
     int tmp;
     if (actionElem->QueryIntAttribute("level", &tmp) != TIXML_SUCCESS || tmp < 0) {
-        SYNTAX_ERROR(actionElem->Row()) << "\"action\" element should contain the \"level\" attribute [unsigned int]";
+        SYNTAX_ERROR(actionElem->Row()) << R"("action" element should contain the "level" attribute [unsigned int])";
     }
     action.level() = (unsigned)tmp;
 #endif
@@ -749,7 +749,7 @@ RobotInterface::ActionList RobotInterface::XMLReaderFileV1::privateXMLReaderFile
 
     std::string robotName;
     if (actionsElem->QueryStringAttribute("robot", &robotName) != TIXML_SUCCESS) {
-        SYNTAX_WARNING(actionsElem->Row()) << "\"actions\" element should contain the \"robot\" attribute";
+        SYNTAX_WARNING(actionsElem->Row()) << R"("actions" element should contain the "robot" attribute)";
     }
 
     if (robotName != robot.name()) {
@@ -766,7 +766,7 @@ RobotInterface::ActionList RobotInterface::XMLReaderFileV1::privateXMLReaderFile
     int tmp;
     if (actionsElem->QueryIntAttribute("build", &tmp) != TIXML_SUCCESS || tmp < 0) {
         // No build attribute. Assuming build="0"
-        SYNTAX_WARNING(actionsElem->Row()) << "\"actions\" element should contain the \"build\" attribute [unsigned int]. Assuming 0";
+        SYNTAX_WARNING(actionsElem->Row()) << R"("actions" element should contain the "build" attribute [unsigned int]. Assuming 0)";
         tmp = 0;
     }
     build = (unsigned)tmp;

@@ -685,7 +685,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
     from += home.getHost();
     from += ":";
     from += NetType::toString(home.getPort());
-    from += "/web/main.css\" rel=\"stylesheet\" type=\"text/css\"/></head><body bgcolor='#ffffcc'><h1>yarp port ";
+    from += R"(/web/main.css" rel="stylesheet" type="text/css"/></head><body bgcolor='#ffffcc'><h1>yarp port )";
     from += proto.getRoute().getToName();
     from += "</h1>\n";
 
@@ -715,7 +715,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
 
     from += "</p>\n";
     from += "<p>\n";
-    from += "<form method=\"post\" action=\"http://";
+    from += R"(<form method="post" action="http://)";
     from += me.getHost();
     from += ":";
     from += NetType::toString(me.getPort());

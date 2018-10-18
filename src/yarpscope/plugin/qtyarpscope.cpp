@@ -254,7 +254,7 @@ void QtYARPScope::usage() {
 //    qDebug("                        Depending on index it must be a [string] or an array of [string]s.");
     qDebug(" --color [...]          Graph color(s).");
     qDebug("                        Depending on index it must be a [string] or an array of [string]s.");
-    qDebug(" --type [...]           Graph type(s). Accepted values are \"points\", \"lines\" and \"bars\" (default = \"lines\")");
+    qDebug(R"( --type [...]           Graph type(s). Accepted values are "points", "lines" and "bars" (default = "lines"))");
     qDebug("                        Depending on index it must be a [string] or an array of [string]s.");
     qDebug(" --graph_size [...]     Graph size(s) (thickness of the points) (default = 1)");
     qDebug("                        Depending on index it must be a [uint] or an array of [uint]s.\n");

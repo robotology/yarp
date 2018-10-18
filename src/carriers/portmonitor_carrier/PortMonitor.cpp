@@ -58,7 +58,7 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options) {
     // check which monitor should be used
     if((binder = MonitorBinding::create(script.c_str())) == nullptr)
     {
-         yError("Currently only \'lua\' script and \'dll\' object is supported by portmonitor");
+         yError(R"(Currently only 'lua' script and 'dll' object is supported by portmonitor)");
          return false;
     }
 

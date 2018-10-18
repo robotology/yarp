@@ -358,7 +358,7 @@ void PortCoreInputUnit::run() {
                 bw.appendLine("This is a YARP port.  Here are the commands it responds to:");
                 bw.appendLine("*       Gives a description of this port");
                 bw.appendLine("d       Signals the beginning of input for the port's owner");
-                bw.appendLine("do      The same as \"d\" except replies should be suppressed (\"data-only\")");
+                bw.appendLine(R"(do      The same as "d" except replies should be suppressed ("data-only"))");
                 bw.appendLine("q       Disconnects");
 #if !defined(NDEBUG)
                 bw.appendLine("i       Interrupt parent process (unix only)");
