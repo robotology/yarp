@@ -21,7 +21,7 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 
 static std::string quoteFree(const std::string &src) {
-    std::string result = "";
+    std::string result;
     for (unsigned int i=0; i<src.length(); i++) {
         char ch = src[i];
         if (ch=='"') {
@@ -171,20 +171,20 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
     if (writer) {
         Bottle b;
         b.addString(txt);
-        sis.add(b.toString().c_str());
+        sis.add(b.toString());
         sis.add("\n");
         return;
     }
     std::string s(txt);
-    std::string sData = "";
+    std::string sData;
     Property& p = prop;
     //p.fromQuery(txt);
-    format = p.check("format", Value("html")).asString().c_str();
-    outer = p.check("outer", Value("auto")).asString().c_str();
+    format = p.check("format", Value("html")).asString();
+    outer = p.check("outer", Value("auto")).asString();
     bool admin = p.check("admin");
     bool req = p.check("req");
     if (p.check("cmd")) {
-        s = p.check("cmd", Value("")).asString().c_str();
+        s = p.check("cmd", Value("")).asString();
     } else if (p.check("data")||req) {
         if (req) {
             s = p.check("req", Value("")).asString();
@@ -196,8 +196,8 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
             s = p.check("data", Value("")).asString();
         }
         s += " ";
-        std::string sFixed = "";
-        std::string var = "";
+        std::string sFixed;
+        std::string var;
         bool arg = false;
         for (unsigned int i=0; i<s.length(); i++) {
             char ch = s[i];
@@ -209,7 +209,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
                     var += ch;
                 } else {
                     arg = false;
-                    sFixed+=p.check(var.c_str(), Value("")).toString().c_str();
+                    sFixed+=p.check(var, Value("")).toString();
                     if (i!=s.length()-1) {
                         sFixed += ch; // omit padding
                     }
@@ -237,7 +237,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
 
     std::string from = prefix;
     from += "<input type=text name=data value=\"";
-    from += quoteFree(sData.c_str());
+    from += quoteFree(sData);
 
     from += "\"><input type=submit value=\"send data\"></form></p>\n";
     from += "<pre>\n";
@@ -409,7 +409,7 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
                     }
                 }
                 proc += "(";
-                proc += addr.toString().c_str();
+                proc += addr.toString();
                 proc += ")";
                 proc += "\n";
             } else {
@@ -435,7 +435,7 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
                 part += org;
                 org += " ";
                 bool arg = false;
-                std::string var = "";
+                std::string var;
                 for (i=0; i<org.length(); i++) {
                     char ch = org[i];
                     if (arg) {
@@ -648,7 +648,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
         } else {
             //printf(">>> %s\n", result.c_str());
             Bottle b;
-            b.fromString(result.c_str());
+            b.fromString(result);
             if (b.get(0).asString()=="Content-Length:") {
                 //printf("]]] got length %d\n", b.get(1).asInt32());
                 contentLength = b.get(1).asInt32();
@@ -675,7 +675,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
         input = url;
     }
     prop.fromQuery(input.c_str());
-    prop.put("REQUEST_URI", url.c_str());
+    prop.put("REQUEST_URI", url);
     //printf("Property %s\n", prop.toString().c_str());
 
     Contact home = NetworkBase::getNameServerContact();
@@ -685,7 +685,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
     from += home.getHost();
     from += ":";
     from += NetType::toString(home.getPort());
-    from += "/web/main.css\" rel=\"stylesheet\" type=\"text/css\"/></head><body bgcolor='#ffffcc'><h1>yarp port ";
+    from += R"(/web/main.css" rel="stylesheet" type="text/css"/></head><body bgcolor='#ffffcc'><h1>yarp port )";
     from += proto.getRoute().getToName();
     from += "</h1>\n";
 
@@ -715,7 +715,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
 
     from += "</p>\n";
     from += "<p>\n";
-    from += "<form method=\"post\" action=\"http://";
+    from += R"(<form method="post" action="http://)";
     from += me.getHost();
     from += ":";
     from += NetType::toString(me.getPort());
@@ -801,7 +801,7 @@ bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& wri
     std::string body = b.find("web").toString();
     if (body.length()!=0) {
         std::string header;
-        header += NetType::toHexString((int)body.length()).c_str();
+        header += NetType::toHexString((int)body.length());
         header += "\r\n";
 
         Bytes b2((char*)header.c_str(), header.length());
@@ -816,7 +816,7 @@ bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& wri
     } else {
         std::string txt = b.toString() + "\r\n";
         std::string header;
-        header += NetType::toHexString((int)txt.length()).c_str();
+        header += NetType::toHexString((int)txt.length());
         header += "\r\n";
         Bytes b2((char*)header.c_str(), header.length());
         proto.os().write(b2);

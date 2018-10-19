@@ -26,7 +26,7 @@ bool PortCommand::read(ConnectionReader& reader) {
             ch = base[5];
             if (ch=='\0') {
                 //str = reader.expectString(reader.getSize());
-                str = reader.expectText('\0').c_str();
+                str = reader.expectText('\0');
                 if (reader.isError()) return false;
                 if (str.length()>0) {
                     ch = str[0];
@@ -36,7 +36,7 @@ bool PortCommand::read(ConnectionReader& reader) {
             return false;
         }
     } else {
-        str = reader.expectText().c_str();
+        str = reader.expectText();
         if (reader.isError()) return false;
         if (str.length()>0) {
             ch = str[0];

@@ -551,7 +551,7 @@ std::string WireReader::readTag()
     }
     scanString(str, is_vocab);
     if (!is_vocab) {
-        return str.c_str();
+        return str;
     }
     while (is_vocab&&state->len>0) {
         if (state->code>=0) {
@@ -574,7 +574,7 @@ std::string WireReader::readTag()
             str += str2;
         }
     }
-    return str.c_str();
+    return str;
 }
 
 void WireReader::readListBegin(WireState& nstate, std::uint32_t& len)

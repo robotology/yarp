@@ -94,7 +94,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
         {
             string localization_port_name = config.check("localization_port", Value(string("/fakeLaser/location:i")), "name of localization input port").asString();
             m_loc_port = new yarp::os::BufferedPort<yarp::os::Bottle>;
-            m_loc_port->open(localization_port_name.c_str());
+            m_loc_port->open(localization_port_name);
             yInfo() << "Robot localization will be obtained from port" << localization_port_name;
             m_loc_mode = LOC_FROM_PORT;
         }
@@ -103,7 +103,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
             Property loc_options;
             string localization_device_name = config.check("localization_client", Value(string("/fakeLaser/localizationClient")), "local name of localization client device").asString();
             loc_options.put("device", "localization2DClient");
-            loc_options.put("local", localization_device_name.c_str());
+            loc_options.put("local", localization_device_name);
             loc_options.put("remote", "/localizationServer");
             loc_options.put("period", 10);
             m_pLoc = new PolyDriver;

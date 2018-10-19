@@ -111,7 +111,7 @@ string showFormat(Bottle& b, string root) {
                              "BOTTLE_TAG_VOCAB");
                 r += "\n";
             }
-            r += addPart("int32",val_name,v.asInt32(),nullptr,v.toString().c_str(),"vocab");
+            r += addPart("int32",val_name,v.asInt32(),nullptr,v.toString(),"vocab");
             r += "\n";
         } else if (v.isInt32()) {
             if (!specialized) {
@@ -119,7 +119,7 @@ string showFormat(Bottle& b, string root) {
                              "BOTTLE_TAG_INT32");
                 r += "\n";
             }
-            r += addPart("int32",val_name,v.asInt32(),&v,v.toString().c_str());
+            r += addPart("int32",val_name,v.asInt32(),&v,v.toString());
             r += "\n";
         } else if (v.isFloat64()) {
             if (!specialized) {
@@ -127,7 +127,7 @@ string showFormat(Bottle& b, string root) {
                              "BOTTLE_TAG_FLOAT64");
                 r += "\n";
             }
-            r += addPart("float64",val_name,v.asInt32(),&v,v.toString().c_str());
+            r += addPart("float64",val_name,v.asInt32(),&v,v.toString());
             r += "\n";
         } else if (v.isList()) {
             r += showFormat(*v.asList(), val_name);
@@ -144,11 +144,11 @@ string showFormat(Bottle& b, string root) {
                              "BOTTLE_TAG_STRING");
                 r += "\n";
             }
-            r += addPart("string",val_name,0,nullptr,v.asString().c_str(),"string");
+            r += addPart("string",val_name,0,nullptr,v.asString(),"string");
             r += "\n";
         } else {
             r += "IGNORED ";
-            r += v.toString().c_str();
+            r += v.toString();
             r += "\n";
         }
     }
@@ -323,11 +323,11 @@ int main(int argc, char *argv[]) {
         }
         RosLookup lookup(verbose);
         if (verbose) printf("  * looking up ros node %s\n", ros_port.c_str());
-        bool ok = lookup.lookupCore(ros_port.c_str());
+        bool ok = lookup.lookupCore(ros_port);
         if (!ok) return 1;
         if (verbose) printf("  * found ros node %s\n", ros_port.c_str());
         if (verbose) printf("  * looking up topic %s\n", topic.c_str());
-        ok = lookup.lookupTopic(topic.c_str());
+        ok = lookup.lookupTopic(topic);
         if (!ok) return 1;
         if (verbose) printf("  * found topic %s\n", topic.c_str());
         string carrier = "tcpros+role.pub+topic.";
@@ -335,7 +335,7 @@ int main(int argc, char *argv[]) {
             carrier = "rossrv+service.";
         }
         register_port(yarp_port.c_str(),
-                      (carrier+topic.c_str()).c_str(),
+                      (carrier+topic).c_str(),
                       lookup.hostname.c_str(),
                       lookup.portnum,
                       reply);
@@ -359,11 +359,11 @@ int main(int argc, char *argv[]) {
         }
         RosLookup lookup(verbose);
         if (verbose) printf("  * looking up ros node %s\n", ros_port.c_str());
-        bool ok = lookup.lookupCore(ros_port.c_str());
+        bool ok = lookup.lookupCore(ros_port);
         if (!ok) return 1;
         if (verbose) printf("  * found ros node %s\n", ros_port.c_str());
         ok = register_port(yarp_port.c_str(),
-                      (string("tcpros+role.sub+topic.")+topic.c_str()).c_str(),
+                      (string("tcpros+role.sub+topic.")+topic).c_str(),
                       lookup.hostname.c_str(),
                       lookup.portnum,
                       reply);

@@ -247,7 +247,7 @@ bool UnitTest::checkEqualImpl(const std::string& x, const std::string& y,
 
 std::string UnitTest::humanize(const std::string& txt)
 {
-    std::string result("");
+    std::string result;
     for (unsigned int i=0; i<txt.length(); i++) {
         char ch = txt[i];
         if (ch == '\n') {

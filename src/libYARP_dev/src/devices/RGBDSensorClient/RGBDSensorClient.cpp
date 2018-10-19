@@ -103,7 +103,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         }
         else
         {
-            local_colorFrame_StreamingPort_name  = config.find("localImagePort").asString().c_str();
+            local_colorFrame_StreamingPort_name  = config.find("localImagePort").asString();
         }
 
         if (!config.check("localDepthPort", "full name of the port for streaming depth image"))
@@ -114,7 +114,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         }
         else
         {
-            local_depthFrame_StreamingPort_name  = config.find("localDepthPort").asString().c_str();
+            local_depthFrame_StreamingPort_name  = config.find("localDepthPort").asString();
         }
 
         // Parse REMOTE port names
@@ -126,7 +126,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         }
         else
         {
-            remote_colorFrame_StreamingPort_name  = config.find("remoteImagePort").asString().c_str();
+            remote_colorFrame_StreamingPort_name  = config.find("remoteImagePort").asString();
         }
 
         if (!config.check("remoteDepthPort", "full name of the port for streaming depth image"))
@@ -137,7 +137,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         }
         else
         {
-            remote_depthFrame_StreamingPort_name  = config.find("remoteDepthPort").asString().c_str();
+            remote_depthFrame_StreamingPort_name  = config.find("remoteDepthPort").asString();
         }
 
         // Single RPC port
@@ -149,7 +149,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         }
         else
         {
-            local_rpcPort_name  = config.find("localRpcPort").asString().c_str();
+            local_rpcPort_name  = config.find("localRpcPort").asString();
         }
 
         if (!config.check("remoteRpcPort", "full name of the port for streaming depth image"))
@@ -160,7 +160,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         }
         else
         {
-            remote_rpcPort_name  = config.find("remoteRpcPort").asString().c_str();
+            remote_rpcPort_name  = config.find("remoteRpcPort").asString();
         }
 
 
@@ -196,8 +196,8 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable &config)
     bool ret;
 
     // Opening Streaming ports
-    ret  = colorFrame_StreamingPort.open(local_colorFrame_StreamingPort_name.c_str());
-    ret &= depthFrame_StreamingPort.open(local_depthFrame_StreamingPort_name.c_str());
+    ret  = colorFrame_StreamingPort.open(local_colorFrame_StreamingPort_name);
+    ret &= depthFrame_StreamingPort.open(local_depthFrame_StreamingPort_name);
 
     if(!ret)
     {
@@ -230,7 +230,7 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable &config)
         rpcPort.close();
     }
 
-    if(! rpcPort.addOutput(remote_rpcPort_name.c_str()) )
+    if(! rpcPort.addOutput(remote_rpcPort_name) )
     {
         yError() << sensorId << " cannot connect to port " << remote_rpcPort_name;
         colorFrame_StreamingPort.close();

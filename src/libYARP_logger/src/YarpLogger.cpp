@@ -101,7 +101,7 @@ void LoggerEngine::discover  (std::list<std::string>& ports)
     string logger_portname = log_updater->getPortName();
     p.open(logger_portname+"/discover");
     std::string yarpservername = yarp::os::Network::getNameServerName();
-    yarp::os::Network::connect(logger_portname+"/discover",yarpservername.c_str());
+    yarp::os::Network::connect(logger_portname+"/discover",yarpservername);
     Bottle cmd,response;
     cmd.addString("bot");
     cmd.addString("list");
@@ -185,9 +185,9 @@ void LoggerEngine::connect (const std::list<std::string>& ports)
     std::list<std::string>::const_iterator it;
     for (it = ports.begin(); it != ports.end(); it++)
     {
-        if (yarp::os::Network::exists(it->c_str(),style) == true)
+        if (yarp::os::Network::exists(*it,style) == true)
         {
-            yarp::os::Network::connect(it->c_str(),this->log_updater->getPortName().c_str());
+            yarp::os::Network::connect(*it,this->log_updater->getPortName());
         }
         else
         {
@@ -395,13 +395,13 @@ bool LoggerEngine::start_logging()
         return true;
     }
 
-    if (yarp::os::Network::exists(log_updater->getPortName().c_str()))
+    if (yarp::os::Network::exists(log_updater->getPortName()))
     {
         fprintf(stderr, "Unable to start logger: port %s is unavailable because another instance of the logger is already running (or address conflict)\n", log_updater->getPortName().c_str());
         return false;
     }
 
-    if (log_updater->logger_port.open(log_updater->getPortName().c_str()))
+    if (log_updater->logger_port.open(log_updater->getPortName()))
     {
         fprintf(stdout,"Logger successfully started, listening on port %s\n", log_updater->getPortName().c_str());
     }

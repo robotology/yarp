@@ -61,9 +61,9 @@ bool NameConfig::fromString(const std::string& txt) {
                 fprintf(stderr, "Cannot find yarp group in config file\n");
                 std::exit(1);
             }
-            address = Contact(b.find("host").asString().c_str(),
+            address = Contact(b.find("host").asString(),
                               b.find("port").asInt32());
-            mode = b.check("mode", Value("yarp")).asString().c_str();
+            mode = b.check("mode", Value("yarp")).asString();
             return (address.getPort()!=0);
         }
     }
@@ -92,8 +92,8 @@ std::string NameConfig::expandFilename(const char *fname) {
         conf = fname;
     }
 
-    YARP_DEBUG(Logger::get(), std::string("Configuration file: ") + conf.c_str());
-    return conf.c_str();
+    YARP_DEBUG(Logger::get(), std::string("Configuration file: ") + conf);
+    return conf;
 }
 
 std::string NameConfig::getSafeString(const std::string& txt) {
@@ -132,7 +132,7 @@ std::string NameConfig::readConfig(const std::string& fileName) {
     if (!fin) {
         return "";
     }
-    std::string result = "";
+    std::string result;
     while(fgets(buf, sizeof(buf)-1, fin) != nullptr) {
         result += buf;
     }
@@ -157,7 +157,7 @@ bool NameConfig::fromFile(const char *ns) {
 bool NameConfig::toFile(bool clean) {
     std::string fname = getConfigFileName();
     if (fname!="") {
-        std::string txt = "";
+        std::string txt;
         if (!clean) {
             std::string m = (mode!="")?mode:"yarp";
             txt += address.getHost() + " " + NetType::toString(address.getPort()) + " " + m + "\n";
@@ -235,8 +235,7 @@ std::string NameConfig::getHostName(bool prefer_loopback, const std::string& see
             ip = std::string(hostname);
 #endif
 
-            YARP_DEBUG(Logger::get(), std::string("scanning network interface ") +
-                       ip.c_str());
+            YARP_DEBUG(Logger::get(), std::string("scanning network interface ") + ip);
 
             if (ip.find(':')!=std::string::npos) continue;
 
@@ -291,7 +290,7 @@ std::string NameConfig::getHostName(bool prefer_loopback, const std::string& see
     freeifaddrs(ifaddr);
 #endif
 
-    return result.c_str();
+    return result;
 }
 
 
@@ -388,7 +387,7 @@ yarp::os::Bottle NameConfig::getIpsAsBottle() {
 
 std::string NameConfig::getIps() {
     yarp::os::Bottle bot = getIpsAsBottle();
-    std::string result = "";
+    std::string result;
     for (size_t i=0; i<bot.size(); i++) {
         std::string ip = bot.get(i).asString();
         if (i>0) {
@@ -396,7 +395,7 @@ std::string NameConfig::getIps() {
         }
         result += ip;
     }
-    return result.c_str();
+    return result;
 }
 
 
@@ -414,12 +413,12 @@ std::string NameConfig::getNamespace(bool refresh) {
     if (space==""||refresh) {
         std::string senv = NetworkBase::getEnvironment("YARP_NAMESPACE");
         if (senv!="") {
-            spaces.fromString(senv.c_str());
+            spaces.fromString(senv);
         } else {
             std::string fname = getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
-            spaces.fromString(readConfig(fname).c_str());
+            spaces.fromString(readConfig(fname));
         }
-        space = spaces.get(0).asString().c_str();
+        space = spaces.get(0).asString();
         if (space=="") {
             space = "/root";
         }

@@ -608,7 +608,7 @@ void YarpRunCmdWithStdioInfo::TerminateStdio()
     else
     {
         yarp::os::Bottle msg;
-        msg.fromString((std::string("(killstdio ")+mAlias+")").c_str());
+        msg.fromString(std::string("(killstdio ")+mAlias+")");
         yarp::run::Run::sendMsg(msg, mStdio);
     }
 }

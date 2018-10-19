@@ -475,7 +475,7 @@ std::string Rangefinder2DWrapper::getId()
 bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
 {
     Property params;
-    params.fromString(config.toString().c_str());
+    params.fromString(config.toString());
 
     if (!config.check("period"))
     {
@@ -493,7 +493,7 @@ bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
     }
     else
     {
-        streamingPortName  = config.find("name").asString().c_str();
+        streamingPortName  = config.find("name").asString();
         rpcPortName = streamingPortName + "/rpc:i";
         setId("Rangefinder2DWrapper");
     }
@@ -541,12 +541,12 @@ bool Rangefinder2DWrapper::initialize_YARP(yarp::os::Searchable &params)
 {
     if(useROS != ROS_only)
     {
-        if (!streamingPort.open(streamingPortName.c_str()))
+        if (!streamingPort.open(streamingPortName))
             {
                 yError("Rangefinder2DWrapper: failed to open port %s", streamingPortName.c_str());
                 return false;
             }
-        if (!rpcPort.open(rpcPortName.c_str()))
+        if (!rpcPort.open(rpcPortName))
             {
                 yError("Rangefinder2DWrapper: failed to open port %s", rpcPortName.c_str());
                 return false;

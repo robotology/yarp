@@ -140,8 +140,8 @@ int generate_cpp(int argc, char *argv[])
 
     fname = argv[argc-1];
 
-    if (fname.rfind(".")!=string::npos) {
-        string ext = fname.substr(fname.rfind("."),fname.length());
+    if (fname.rfind('.')!=string::npos) {
+        string ext = fname.substr(fname.rfind('.'),fname.length());
         if (ext==".srv" || ext==".SRV") {
             is_service = true;
         }
@@ -246,9 +246,9 @@ int main(int argc, char *argv[])
         }
         Bottle resp;
         std::string tag = req.get(0).asString();
-        string fname0 = req.get(1).asString().c_str();
+        string fname0 = req.get(1).asString();
         string fname = env.findFile(fname0.c_str());
-        string txt = "";
+        string txt;
         if (tag=="raw") {
             txt = env.readFile(fname.c_str());
             resp.addString(txt);

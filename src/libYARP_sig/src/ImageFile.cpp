@@ -420,7 +420,7 @@ bool file::read(ImageOf<PixelMono> & dest, const std::string& src, image_filefor
 
 bool file::read(ImageOf<PixelFloat>& dest, const std::string& src, image_fileformat format)
 {
-    return ImageReadFloat(dest, src.c_str());
+    return ImageReadFloat(dest, src);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

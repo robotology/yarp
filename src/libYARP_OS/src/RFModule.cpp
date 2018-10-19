@@ -56,7 +56,7 @@ public:
         while (!(isEof || isStopping() || owner.isStopping())) {
             std::string str = yarp::os::impl::Terminal::readString(&isEof);
             if (!isEof) {
-                Bottle cmd(str.c_str());
+                Bottle cmd(str);
                 Bottle reply;
                 bool ok = owner.safeRespond(cmd, reply);
                 if (ok) {
@@ -494,7 +494,7 @@ std::string RFModule::getName(const std::string& subName) {
         return name;
     }
 
-    std::string base = name.c_str();
+    std::string base = name;
 
     // Support legacy behavior, check if a "/" needs to be
     // appended before subName.
@@ -506,7 +506,7 @@ std::string RFModule::getName(const std::string& subName) {
     }
 
     base += subName;
-    return base.c_str();
+    return base;
 }
 
 

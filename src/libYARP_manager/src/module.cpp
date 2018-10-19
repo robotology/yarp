@@ -283,7 +283,7 @@ bool Module::getParamValue(const char* key, bool bSwitch, std::string &param)
 
     //printf("\n\nparsing '%s' for %s (switch:%d)\n", strParam.c_str(), key, bSwitch);
     string strKey = string("--") + string(key);
-    size_t pos = strParam.find(strKey.c_str());
+    size_t pos = strParam.find(strKey);
     if(pos == string::npos)
     {
         param = "off";
@@ -312,6 +312,6 @@ bool Module::getParamValue(const char* key, bool bSwitch, std::string &param)
     size_t pos2 = pos;
     while((pos2 < strParam.length()) && (strParam.at(pos2) != ' '))
         pos2++;
-    param = strParam.substr(pos, pos2-pos).c_str();
+    param = strParam.substr(pos, pos2-pos);
     return true;
 }

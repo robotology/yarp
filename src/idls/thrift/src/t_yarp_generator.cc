@@ -2327,7 +2327,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
                    << endl;
     indent(f_cpp_) << "std::string next_tag = reader.readTag();" << endl;
     indent(f_cpp_) << "if (next_tag==\"\") break;" << endl;
-    indent(f_cpp_) << "tag = tag + \"_\" + next_tag;" << endl;
+    indent(f_cpp_) << "tag.append(\"_\").append(next_tag);" << endl;
     indent_down();
     indent(f_cpp_) << "}" << endl;
     indent(f_cpp_) << "return false;" << endl;

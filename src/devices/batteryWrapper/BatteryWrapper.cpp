@@ -148,7 +148,7 @@ bool BatteryWrapper::read(yarp::os::ConnectionReader& connection)
 bool BatteryWrapper::threadInit()
 {
     // open data port
-    if (!streamingPort.open(streamingPortName.c_str()))
+    if (!streamingPort.open(streamingPortName))
         {
             yError("BatteryWrapper: failed to open port %s", streamingPortName.c_str());
             return false;
@@ -170,7 +170,7 @@ std::string BatteryWrapper::getId()
 bool BatteryWrapper::open(yarp::os::Searchable &config)
 {
     Property params;
-    params.fromString(config.toString().c_str());
+    params.fromString(config.toString());
 
     if (!config.check("period"))
     {
@@ -188,12 +188,12 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
     }
     else
     {
-        streamingPortName  = config.find("name").asString().c_str();
+        streamingPortName  = config.find("name").asString();
         rpcPortName = streamingPortName + "/rpc:i";
         setId("batteryWrapper");
     }
 
-    if(!initialize_YARP(config) )
+    if(!initialize_YARP(config))
     {
         yError() << sensorId << "Error initializing YARP ports";
         return false;
@@ -203,8 +203,8 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
 
 bool BatteryWrapper::initialize_YARP(yarp::os::Searchable &params)
 {
-    streamingPort.open(streamingPortName.c_str());
-    rpcPort.open(rpcPortName.c_str() );
+    streamingPort.open(streamingPortName);
+    rpcPort.open(rpcPortName);
     rpcPort.setReader(*this);
     return true;
 }

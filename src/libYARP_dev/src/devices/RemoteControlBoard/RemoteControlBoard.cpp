@@ -84,7 +84,7 @@ public:
     void setOwner(StateExtendedInputPort *o)
     {
         owner=o;
-        ownerName=owner->getName().c_str();
+        ownerName=owner->getName();
     }
 
     void run() override
@@ -989,8 +989,8 @@ public:
     }
 
     virtual bool open(Searchable& config) override {
-        remote = config.find("remote").asString().c_str();
-        local = config.find("local").asString().c_str();
+        remote = config.find("remote").asString();
+        local = config.find("local").asString();
 
         // check the Qos perefernces if available (local and remote)
         yarp::os::QosStyle localQos;
@@ -1048,19 +1048,19 @@ public:
         std::string carrier =
             config.check("carrier",
             Value("udp"),
-            "default carrier for streaming robot state").asString().c_str();
+            "default carrier for streaming robot state").asString();
 
         bool portProblem = false;
         if (local != "") {
             std::string s1 = local;
             s1 += "/rpc:o";
-            if (!rpc_p.open(s1.c_str())) { portProblem = true; }
+            if (!rpc_p.open(s1)) { portProblem = true; }
             s1 = local;
             s1 += "/command:o";
-            if (!command_p.open(s1.c_str())) { portProblem = true; }
+            if (!command_p.open(s1)) { portProblem = true; }
             s1 = local;
             s1 += "/stateExt:i";
-            if (!extendedIntputStatePort.open(s1.c_str())) { portProblem = true; }
+            if (!extendedIntputStatePort.open(s1)) { portProblem = true; }
             if (!portProblem)
             {
                 extendedIntputStatePort.useCallback();
@@ -1078,7 +1078,7 @@ public:
             // RPC port needs to be tcp, therefore no carrier option is added here
             // ok=Network::connect(s2.c_str(), s1.c_str());         //This doesn't take into consideration possible YARP_PORT_PREFIX on local ports
             // ok=Network::connect(rpc_p.getName(), s1.c_str());    //This should work also with YARP_PORT_PREFIX because getting back the name of the port will return the modified name
-            ok=rpc_p.addOutput(s1.c_str());                         //This works because we are manipulating only remote side and let yarp handle the local side
+            ok=rpc_p.addOutput(s1);                         //This works because we are manipulating only remote side and let yarp handle the local side
             if (!ok) {
                 yError("Problem connecting to %s, is the remote device available?\n", s1.c_str());
                 connectionProblem = true;
@@ -1090,14 +1090,14 @@ public:
             s2 += "/command:o";
             //ok = Network::connect(s2.c_str(), s1.c_str(), carrier);
             // ok=Network::connect(command_p.getName(), s1.c_str(), carrier); //doesn't take into consideration possible YARP_PORT_PREFIX on local ports
-            ok = command_p.addOutput(s1.c_str(), carrier);
+            ok = command_p.addOutput(s1, carrier);
             if (!ok) {
                 yError("Problem connecting to %s, is the remote device available?\n", s1.c_str());
                 connectionProblem = true;
             }
             // set the QoS preferences for the 'command' port
             if (config.check("local_qos") || config.check("remote_qos"))
-                NetworkBase::setConnectionQos(command_p.getName(), s1.c_str(), localQos, remoteQos, false);
+                NetworkBase::setConnectionQos(command_p.getName(), s1, localQos, remoteQos, false);
 
             s1 = remote;
             s1 += "/stateExt:o";

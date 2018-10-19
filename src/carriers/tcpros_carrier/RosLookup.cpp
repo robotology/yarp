@@ -49,12 +49,12 @@ bool RosLookup::lookupCore(const std::string& name) {
         fprintf(stderr, "url not understood: %s\n", url.c_str());
         return false;
     }
-    std::string::size_type break2 = url.find(":",break1+3);
+    std::string::size_type break2 = url.find(':',break1+3);
     if (break2==std::string::npos) {
         fprintf(stderr, "url not understood: %s\n", url.c_str());
         return false;
     }
-    std::string::size_type break3 = url.find("/",break2+1);
+    std::string::size_type break3 = url.find('/',break2+1);
     if (break3==std::string::npos) {
         fprintf(stderr, "url not understood: %s\n", url.c_str());
         return false;
@@ -83,7 +83,7 @@ bool RosLookup::lookupTopic(const std::string& name) {
     Bottle& sublst = lst.addList();
     sublst.addString("TCPROS");
     //printf("Sending [%s] to %s\n", req.toString().c_str(),toString().c_str());
-    Contact c = Contact::fromString(toString().c_str());
+    Contact c = Contact::fromString(toString());
     rpc(c,"xmlrpc",req,reply, verbose);
     if (reply.get(0).asInt32()!=1) {
         fprintf(stderr,"Failure looking up topic %s: %s\n", name.c_str(), reply.toString().c_str());
@@ -101,7 +101,7 @@ bool RosLookup::lookupTopic(const std::string& name) {
     }
     Value hostname2 = pref->get(1);
     Value portnum2 = pref->get(2);
-    hostname = hostname2.asString().c_str();
+    hostname = hostname2.asString();
     portnum = portnum2.asInt32();
     protocol = "tcpros";
     if (verbose) {
@@ -113,7 +113,7 @@ bool RosLookup::lookupTopic(const std::string& name) {
 
 yarp::os::Contact RosLookup::getRosCoreAddressFromEnv() {
     std::string addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
-    Contact c = Contact::fromString(addr.c_str());
+    Contact c = Contact::fromString(addr);
     if (c.isValid()) {
         c.setCarrier("xmlrpc");
     }

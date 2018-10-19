@@ -71,16 +71,16 @@ void Protocol::setRoute(const Route& route)
     std::string from = r.getFromName();
     std::string carrier = r.getCarrierName();
     if (from.find(' ') != std::string::npos) {
-        Bottle b(from.c_str());
+        Bottle b(from);
         if (b.size() > 1) {
-            r.setFromName(b.get(0).toString().c_str());
+            r.setFromName(b.get(0).toString());
             for (size_t i = 1; i < b.size(); i++) {
                 Value& v = b.get(i);
                 Bottle* lst = v.asList();
                 if (lst != nullptr) {
-                    carrier = carrier + "+" + lst->get(0).toString().c_str() + "." + lst->get(1).toString().c_str();
+                    carrier.append("+").append(lst->get(0).toString()).append(".").append(lst->get(1).toString());
                 } else {
-                    carrier = carrier + "+" + v.toString().c_str();
+                    carrier.append("+").append(v.toString());
                 }
             }
             r.setCarrierName(carrier);
@@ -92,7 +92,7 @@ void Protocol::setRoute(const Route& route)
 
     // Check if we have a receiver modifier.
     if (!recv_delegate) {
-        Bottle b(getSenderSpecifier().c_str());
+        Bottle b(getSenderSpecifier());
         if (b.check("recv")) {
             need_recv_delegate = true;
         }
@@ -100,7 +100,7 @@ void Protocol::setRoute(const Route& route)
 
     // Check if we have a sender modifier.
     if (!send_delegate) {
-        Bottle b(getSenderSpecifier().c_str());
+        Bottle b(getSenderSpecifier());
         if (b.check("send")) {
             need_send_delegate = true;
         }
@@ -439,10 +439,10 @@ bool Protocol::getRecvDelegate()
         return true;
     if (recv_delegate_fail)
         return false;
-    Bottle b(getSenderSpecifier().c_str());
+    Bottle b(getSenderSpecifier());
     // Check for a "recv" qualifier.
     std::string tag = b.find("recv").asString();
-    recv_delegate = Carriers::chooseCarrier(std::string(tag.c_str()));
+    recv_delegate = Carriers::chooseCarrier(tag);
     if (!recv_delegate) {
         fprintf(stderr, "Need carrier \"%s\", but cannot find it.\n", tag.c_str());
         recv_delegate_fail = true;
@@ -475,10 +475,10 @@ bool Protocol::getSendDelegate()
         return true;
     if (send_delegate_fail)
         return false;
-    Bottle b(getSenderSpecifier().c_str());
+    Bottle b(getSenderSpecifier());
     // Check for a "send" qualifier.
     std::string tag = b.find("send").asString();
-    send_delegate = Carriers::chooseCarrier(std::string(tag.c_str()));
+    send_delegate = Carriers::chooseCarrier(tag);
     if (!send_delegate) {
         fprintf(stderr, "Need carrier \"%s\", but cannot find it.\n", tag.c_str());
         send_delegate_fail = true;

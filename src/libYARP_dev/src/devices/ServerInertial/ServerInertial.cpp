@@ -278,7 +278,7 @@ bool yarp::dev::ServerInertial::openAndAttachSubDevice(yarp::os::Property& prop)
 bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
 {
     Property prop;
-    prop.fromString(config.toString().c_str());
+    prop.fromString(config.toString());
 
     p.setReader(*this);
 

@@ -104,7 +104,7 @@ bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer)
         return false;
     }
     Bottle *bot = v.asList();
-    bot->fromString(body.c_str());
+    bot->fromString(body);
     std::string methodName;
     if (sender) {
         methodName = bot->get(0).toString();

@@ -66,19 +66,19 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
 
 #if defined(_MSC_VER) && !defined(NDEBUG)
             // MSVC DEBUG build: try debug name before basic name
-            fullpath = path + "/" + basename + "d" + ext;
+            fullpath = std::string(path).append("/").append(basename).append("d").append(ext);
             if (subopen(factory, fullpath, fn))
                 return true;
 #endif // defined(_MSC_VER) && !defined(NDEBUG)
 
             // Basic name
-            fullpath = path + "/" + basename + ext;
+            fullpath = std::string(path).append("/").append(basename).append(ext);
             if (subopen(factory, fullpath, fn))
                 return true;
 
 #if defined(_MSC_VER) && defined(NDEBUG)
             // MSVC RELEASE build: try debug name after basic name
-            fullpath = path + "/" + basename + "d" + ext;
+            fullpath = std::string(path).append("/").append(basename).append("d").append(ext);
             if (subopen(factory, fullpath, fn))
                 return true;
 #endif // defined(_MSC_VER) && defined(NDEBUG)
@@ -90,19 +90,19 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
 
 #if defined(_MSC_VER) && !defined(NDEBUG)
             // MSVC DEBUG build: try debug name before basic name
-            fullpath = path + "/" +  CMAKE_INTDIR + "/" + dll_name + "d" + ext;
+            fullpath = std::string(path).append("/" CMAKE_INTDIR "/").append(dll_name).append("d").append(ext);
             if (subopen(factory, fullpath, fn))
                 return true;
 #endif // defined(_MSC_VER) && !defined(NDEBUG)
 
             // Basic name
-            fullpath = path + "/" +  CMAKE_INTDIR + "/" + dll_name + ext;
+            fullpath = std::string(path).append("/" CMAKE_INTDIR "/").append(dll_name).append(ext);
             if (subopen(factory, fullpath, fn))
                 return true;
 
 #if defined(_MSC_VER) && defined(NDEBUG)
             // MSVC RELEASE build: try debug name after basic name
-            fullpath = path + "/" +  CMAKE_INTDIR + "/" + dll_name + "d" + ext;
+            fullpath = std::string(path).append("/" CMAKE_INTDIR "/").append(dll_name).append("d").append(ext);
             if (subopen(factory, fullpath, fn))
                 return true;
 #endif // defined(_MSC_VER) && defined(NDEBUG)

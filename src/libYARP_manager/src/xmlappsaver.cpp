@@ -53,14 +53,14 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
     root->LinkEndChild(appName);
 
 
-    if (strcmp(app->getDescription(), ""))
+    if (strcmp(app->getDescription(), "") != 0)
     {
         TiXmlElement * desc= new TiXmlElement( "description");
         desc->LinkEndChild(new TiXmlText( app->getDescription()));
         root->LinkEndChild(desc);
     }
 
-    if(strcmp (app->getVersion(), ""))
+    if(strcmp (app->getVersion(), "") != 0)
     {
         TiXmlElement * vers= new TiXmlElement( "version");
         vers->LinkEndChild(new TiXmlText( app->getVersion()));
@@ -121,21 +121,21 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
             prefix->LinkEndChild(new TiXmlText(curMod.getPrefix()));
             newMod->LinkEndChild(prefix);
 
-            if(strcmp(curMod.getStdio(), ""))
+            if(strcmp(curMod.getStdio(), "") != 0)
             {
                 TiXmlElement *stdio=new TiXmlElement("stdio");
                 stdio->LinkEndChild(new TiXmlText(curMod.getStdio()));
                 newMod->LinkEndChild(stdio);
             }
 
-            if(strcmp(curMod.getWorkDir(), ""))
+            if(strcmp(curMod.getWorkDir(), "") != 0)
             {
                 TiXmlElement *workdir=new TiXmlElement("workdir");
                 workdir->LinkEndChild(new TiXmlText(curMod.getWorkDir()));
                 newMod->LinkEndChild(workdir);
             }
 
-            if(strcmp(curMod.getBroker(), ""))
+            if(strcmp(curMod.getBroker(), "") != 0)
             {
                 TiXmlElement *broker=new TiXmlElement("deployer");
                 broker->LinkEndChild(new TiXmlText(curMod.getBroker()));

@@ -275,7 +275,7 @@ yarpClockType Time::getClockType()
 
 std::string Time::clockTypeToString(yarpClockType type)
 {
-    std::string clockTypeString("");
+    std::string clockTypeString;
     if(type == -1)
         type = yarp_clock_type;
 

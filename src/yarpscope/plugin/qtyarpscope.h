@@ -24,7 +24,7 @@
 #include "plotmanager.h"
 #include <QTimer>
 #include <QMutex>
-#include "qcustomplot.h"
+#include <qcustomplot.h>
 
 /*! \class QtYARPScope
     \brief The plugin Core class

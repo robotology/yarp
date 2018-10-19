@@ -137,14 +137,14 @@ void PortCoreOutputUnit::runSingleThreaded()
 
         // Report the new connection
         PortInfo info;
-        info.message = msg.c_str();
+        info.message = msg;
         info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
         info.incoming = false;
         info.created = true;
-        info.sourceName = route.getFromName().c_str();
-        info.targetName = route.getToName().c_str();
+        info.sourceName = route.getFromName();
+        info.targetName = route.getToName();
         info.portName = info.sourceName;
-        info.carrierName = route.getCarrierName().c_str();
+        info.carrierName = route.getCarrierName();
         getOwner().report(info);
     }
 
@@ -166,8 +166,8 @@ void PortCoreOutputUnit::closeBasic()
                          debug,
                          "output for route %s asking other side to close by out-of-band means",
                          route.toString().c_str());
-            NetworkBase::disconnectInput(route.getToName().c_str(),
-                                       route.getFromName().c_str(), true);
+            NetworkBase::disconnectInput(route.getToName(),
+                                         route.getFromName(), true);
         } else {
             if (op->getConnection().canEscape()) {
                 BufferedConnectionWriter buf(op->getConnection().isTextMode(),
@@ -193,14 +193,14 @@ void PortCoreOutputUnit::closeBasic()
 
         // Report the disappearing connection
         PortInfo info;
-        info.message = msg.c_str();
+        info.message = msg;
         info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
         info.incoming = false;
         info.created = false;
-        info.sourceName = route.getFromName().c_str();
-        info.targetName = route.getToName().c_str();
+        info.sourceName = route.getFromName();
+        info.targetName = route.getToName();
         info.portName = info.sourceName;
-        info.carrierName = route.getCarrierName().c_str();
+        info.carrierName = route.getCarrierName();
         getOwner().report(info);
     }
 

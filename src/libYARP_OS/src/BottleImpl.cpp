@@ -176,7 +176,7 @@ void BottleImpl::fromString(const std::string& line)
 {
     clear();
     dirty = true;
-    std::string arg = "";
+    std::string arg;
     bool quoted = false;
     bool back = false;
     bool begun = false;
@@ -298,7 +298,7 @@ bool BottleImpl::isComplete(const char* txt)
 
 std::string BottleImpl::toString() const
 {
-    std::string result = "";
+    std::string result;
     for (unsigned int i = 0; i < content.size(); i++) {
         if (i > 0) {
             result += " ";
@@ -449,7 +449,7 @@ bool BottleImpl::read(ConnectionReader& reader)
     bool result = false;
 
     if (reader.isTextMode()) {
-        std::string str = reader.expectText().c_str();
+        std::string str = reader.expectText();
         if (reader.isError()) {
             return false;
         }
@@ -457,7 +457,7 @@ bool BottleImpl::read(ConnectionReader& reader)
         while (!done) {
             if (str[str.length() - 1] == '\\') {
                 str = str.substr(0, str.length() - 1);
-                str += reader.expectText().c_str();
+                str += reader.expectText();
                 if (reader.isError()) {
                     return false;
                 }
@@ -466,7 +466,7 @@ bool BottleImpl::read(ConnectionReader& reader)
                     done = true;
                 } else {
                     str += "\n";
-                    str += reader.expectText().c_str();
+                    str += reader.expectText();
                     if (reader.isError()) {
                         return false;
                     }

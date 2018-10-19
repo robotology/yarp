@@ -50,8 +50,8 @@ bool TcpRosCarrier::checkHeader(const Bytes& header) {
 
 
 std::string TcpRosCarrier::getRosType(ConnectionState& proto) {
-    std::string typ = "";
-    std::string rtyp = "";
+    std::string typ;
+    std::string rtyp;
     if (proto.getContactable()) {
         Type t = proto.getContactable()->getType(); 
         typ = t.getName();
@@ -124,9 +124,9 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
 
     std::string rtyp = getRosType(proto);
     if (rtyp!="") {
-        header.data["type"] = rtyp.c_str();
+        header.data["type"] = rtyp;
     }
-    header.data[mode.c_str()] = modeValue.c_str();
+    header.data[mode] = modeValue;
     header.data["md5sum"] = (md5sum!="")?md5sum:"*";
     if (message_definition!="") {
         header.data["message_definition"] = message_definition;
@@ -179,9 +179,9 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
     }
     header.readHeader(string(m.get(),m.length()));
     dbg_printf("Message header: %s\n", header.toString().c_str());
-    std::string rosname = "";
+    std::string rosname;
     if (header.data.find("type")!=header.data.end()) {
-        rosname = header.data["type"].c_str();
+        rosname = header.data["type"];
     }
     dbg_printf("<incoming> Type of data is [%s]s\n", rosname.c_str());
     if (header.data.find("callerid")!=header.data.end()) {
@@ -189,7 +189,7 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
         dbg_printf("<incoming> callerid is %s\n", name.c_str());
         dbg_printf("Route was %s\n", proto.getRoute().toString().c_str());
         Route route = proto.getRoute();
-        route.setToName(name.c_str());
+        route.setToName(name);
         proto.setRoute(route);
         dbg_printf("Route is now %s\n", proto.getRoute().toString().c_str());
     }
@@ -198,7 +198,7 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
         isService = (header.data.find("request_type")!=header.data.end());
     }
     if (rosname!="" && (user_type != wire_type || user_type == "")) {
-        kind = TcpRosStream::rosToKind(rosname.c_str()).c_str();
+        kind = TcpRosStream::rosToKind(rosname.c_str());
         TcpRosStream::configureTwiddler(twiddler,kind.c_str(),rosname.c_str(),false,false);
         translate = TCPROS_TRANSLATE_TWIDDLER;
     } else {
@@ -249,9 +249,9 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     header.readHeader(string(m.get(),m.length()));
     dbg_printf("Got header %s\n", header.toString().c_str());
 
-    std::string rosname = "";
+    std::string rosname;
     if (header.data.find("type")!=header.data.end()) {
-        rosname = header.data["type"].c_str();
+        rosname = header.data["type"];
     }
     std::string rtyp = getRosType(proto);
     if (rtyp!="") {
@@ -266,7 +266,7 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
 
     route = proto.getRoute();
     if (header.data.find("callerid")!=header.data.end()) {
-        route.setFromName(header.data["callerid"].c_str());
+        route.setFromName(header.data["callerid"]);
     } else {
         route.setFromName("tcpros");
     }
@@ -276,7 +276,7 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     // send the same header right back.
     // **UPDATE** Oh, ok, let's modify the callerid.  Begrudgingly.
     NestedContact nc(proto.getRoute().getToName());
-    header.data["callerid"] = nc.getNodeName().c_str();
+    header.data["callerid"] = nc.getNodeName();
 
     string header_serial = header.writeHeader();
     string header_len(4,'\0');
@@ -305,7 +305,7 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     }
     if (rosname!="" && (user_type != wire_type || user_type == "")) {
         if (wire_type!="sensor_msgs/Image") { // currently using a custom method for images
-            kind = TcpRosStream::rosToKind(rosname.c_str()).c_str();
+            kind = TcpRosStream::rosToKind(rosname.c_str());
             TcpRosStream::configureTwiddler(twiddler,kind.c_str(),rosname.c_str(),true,true);
             translate = TCPROS_TRANSLATE_TWIDDLER;
         }
@@ -463,16 +463,16 @@ int TcpRosCarrier::connect(const yarp::os::Contact& src,
 
     Contact fullDest = dest;
     if (fullDest.getPort()<=0) {
-        fullDest = NetworkBase::queryName(fullDest.getName().c_str());
+        fullDest = NetworkBase::queryName(fullDest.getName());
     }
 
     Contact fullSrc = src;
     if (fullSrc.getPort()<=0) {
-        fullSrc = NetworkBase::queryName(fullSrc.getName().c_str());
+        fullSrc = NetworkBase::queryName(fullSrc.getName());
     }
 
-    Name n((style.carrier + "://test").c_str());
-    std::string topic = n.getCarrierModifier("topic").c_str();
+    Name n(style.carrier + "://test");
+    std::string topic = n.getCarrierModifier("topic");
     if (topic=="") {
         printf("Warning, no topic!\n");
         topic = "notopic";

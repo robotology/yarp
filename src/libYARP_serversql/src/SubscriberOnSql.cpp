@@ -212,17 +212,17 @@ bool SubscriberOnSql::addSubscription(const std::string& src,
     if (ok) {
         if (psrc.getCarrier()!="topic") {
             if (pdest.getCarrier()!="topic") {
-                checkSubscription(psrc.getPortName().c_str(),
-                                  pdest.getPortName().c_str(),
+                checkSubscription(psrc.getPortName(),
+                                  pdest.getPortName(),
                                   src,
                                   dest,
                                   mode);
             } else {
-                hookup(psrc.getPortName().c_str());
+                hookup(psrc.getPortName());
             }
         } else {
             if (pdest.getCarrier()!="topic") {
-                hookup(pdest.getPortName().c_str());
+                hookup(pdest.getPortName());
             }
         }
     }

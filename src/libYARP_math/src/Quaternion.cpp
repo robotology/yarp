@@ -251,7 +251,7 @@ yarp::sig::Matrix Quaternion::toRotationMatrix3x3() const
 
 std::string Quaternion::toString(int precision, int width) const
 {
-    std::string ret = "";
+    std::string ret;
     char tmp[350];
     if (width<0)
     {

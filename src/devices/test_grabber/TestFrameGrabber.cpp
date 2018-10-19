@@ -119,7 +119,7 @@ bool TestFrameGrabber::open(yarp::os::Searchable& config) {
         if (!yarp::sig::file::read(background,
                                    config.check("src",
                                                 yarp::os::Value("test.ppm"),
-                                                "background image to use, if any").asString().c_str())) {
+                                                "background image to use, if any").asString())) {
             return false;
         }
         if (background.width()>0) {

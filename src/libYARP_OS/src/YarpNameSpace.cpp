@@ -44,11 +44,10 @@ Contact YarpNameSpace::registerName(const std::string& name) {
 
 Contact YarpNameSpace::registerContact(const Contact& contact) {
     NameClient& nic = HELPER(this);
-    Contact address = nic.registerName(contact.getName().c_str(),
-                                       contact);
+    Contact address = nic.registerName(contact.getName(), contact);
     if (address.isValid()) {
         NestedContact nc;
-        nc.fromString(address.getRegName().c_str());
+        nc.fromString(address.getRegName());
         std::string cat = nc.getCategory();
         if (nc.getNestedName()!="") {
             //bool service = (cat.find("1") != std::string::npos);
@@ -140,7 +139,7 @@ Contact YarpNameSpace::detectNameServer(bool useDetectedServer,
     serverUsed = nic.didSave();
 
     Contact c = nic.getAddress();
-    c.setName(nc.getNamespace().c_str());
+    c.setName(nc.getNamespace());
     //Contact c = nic.getAddress().toContact();
     //    if (scanNeeded) {
     //        Address addr = nic.getAddress();
@@ -163,7 +162,7 @@ bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
     in.read(con0.getReader());
     for (size_t i=0; i<in.size(); i++) {
         cmd0 += " ";
-        cmd0 += in.get(i).toString().c_str();
+        cmd0 += in.get(i).toString();
     }
     NameClient& nic = HELPER(this);
     std::string result = nic.send(cmd0, true, style);

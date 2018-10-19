@@ -60,7 +60,7 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
     if (!group) return false;
 
     Property options;
-    options.fromString(proto.getSenderSpecifier().c_str());
+    options.fromString(proto.getSenderSpecifier());
 
     timeConstant = fabs(options.check("tc",Value(1.0)).asFloat64());
     timeResting = fabs(options.check("tr",Value(0.0)).asFloat64());
@@ -210,7 +210,7 @@ double PriorityCarrier::getActualInput(double t)
                 {
                     Bottle* b = v.asList();
                     // an exitatory to this priority carrier
-                    if(sourceName == b->get(0).asString().c_str())
+                    if(sourceName == b->get(0).asString())
                         E += peer->getActualInput(t) * (b->get(1).asFloat64()/10.0);
                 }
             }
@@ -263,7 +263,7 @@ bool PriorityGroup::recalculate(double t)
                 {
                     Bottle* b = v.asList();
                     // an exitatory link to this connection
-                    if(peer->sourceName == b->get(0).asString().c_str())
+                    if(peer->sourceName == b->get(0).asString())
                         InvA(row,col) = -(b->get(1).asFloat64()/10.0)*xi;
                 }
             }
@@ -396,7 +396,7 @@ void PriorityDebugThread::run()
 bool PriorityDebugThread::threadInit()
 {
     debugPortName = pcarrier->portName + pcarrier->sourceName + std::string(":debug");
-    return debugPort.open(debugPortName.c_str());
+    return debugPort.open(debugPortName);
 }
 
 void PriorityDebugThread::threadRelease()

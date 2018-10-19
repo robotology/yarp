@@ -42,7 +42,7 @@ bool Terminator::terminateByName(const char* name)
     }
 
     Bottle cmd("quit"), reply;
-    Contact c = NetworkBase::queryName(s.c_str());
+    Contact c = NetworkBase::queryName(s);
     if (!c.isValid()) {
         fprintf(stderr, "Terminator port not found\n");
         return false;
@@ -79,7 +79,7 @@ Terminee::Terminee(const char* name)
     implementation = new TermineeHelper();
     yAssert(implementation != nullptr);
     TermineeHelper& helper = HELPER(implementation);
-    ok = helper.open(s.c_str());
+    ok = helper.open(s);
     if (!ok) {
         quit = true;
         fprintf(stderr, "Kill port conflict: make sure you supply a distinct --name /PORTNAME\n");

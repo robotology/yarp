@@ -21,10 +21,10 @@ void ParseName::apply(const std::string& s) {
     portName = "";
     int mid = name.find(":/");
     if (mid>0) {
-        carrier = name.substr(0,mid).c_str();
+        carrier = name.substr(0,mid);
         std::string tail = name.substr(mid+2);
         if (carrier.length()>0 && carrier[0]=='/') {
-            carrier = string(carrier.c_str()).substr(1).c_str();
+            carrier = carrier.substr(1);
         }
         name = tail;
     }
@@ -32,9 +32,9 @@ void ParseName::apply(const std::string& s) {
         int patStart = 5;
         int patEnd = name.find('/',patStart);
         if (patEnd>=patStart) {
-            networkChoice = name.substr(patStart,patEnd-patStart).c_str();
+            networkChoice = name.substr(patStart,patEnd-patStart);
             name = name.substr(patEnd);
         }
     }
-    portName = name.c_str();
+    portName = name;
 }

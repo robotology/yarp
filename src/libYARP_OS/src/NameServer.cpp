@@ -158,7 +158,7 @@ Contact NameServer::registerName(const std::string& name,
 
 Contact NameServer::queryName(const std::string& name) {
     std::string base = name;
-    std::string pat = "";
+    std::string pat;
     if (name.find("/net=") == 0) {
         size_t patStart = 5;
         size_t patEnd = name.find('/', patStart);
@@ -360,7 +360,7 @@ std::string NameServer::cmdRoute(int argc, char *argv[]) {
 
     NameRecord& srcRec = getNameRecord(src);
     NameRecord& destRec = getNameRecord(dest);
-    std::string pref = "";
+    std::string pref;
 
     for (int i=0; i<argc; i++) {
         std::string carrier = argv[i];
@@ -482,7 +482,7 @@ std::string NameServer::cmdCheck(int argc, char *argv[]) {
     if (argc<2) {
         return "need at least two arguments: the port name, and a key";
     }
-    std::string response = "";
+    std::string response;
     std::string target = STR(argv[0]);
     std::string key = argv[1];
     NameRecord& nameRecord = getNameRecord(target);
@@ -494,9 +494,8 @@ std::string NameServer::cmdCheck(int argc, char *argv[]) {
         if (i>2) {
             response += "\n";
         }
-        response += "port ";
-        response += target + " property " +
-            key + " value " + argv[i] + " present " + val;
+        response.append("port ").append(target).append(" property ")
+            .append(key).append(" value ").append(argv[i]).append(" present ").append(val);
     }
     response += "\n";
     return terminate(response);
@@ -506,7 +505,7 @@ std::string NameServer::cmdCheck(int argc, char *argv[]) {
 std::string NameServer::cmdList(int argc, char *argv[]) {
     YARP_UNUSED(argc);
     YARP_UNUSED(argv);
-    std::string response = "";
+    std::string response;
 
     std::multiset<std::string> lines;
     for (auto it = nameMap.begin(); it!=nameMap.end(); ++it) {
@@ -524,7 +523,7 @@ std::string NameServer::cmdList(int argc, char *argv[]) {
 
 
 std::string NameServer::cmdBot(int argc, char *argv[]) {
-    std::string txt = "";
+    std::string txt;
     argc--;
     argv++;
     if (argc>=1) {
@@ -532,7 +531,7 @@ std::string NameServer::cmdBot(int argc, char *argv[]) {
         argc--;
         argv++;
         Bottle result = ndispatcher.dispatch(this, key.c_str(), argc, argv);
-        txt = result.toString().c_str();
+        txt = result.toString();
     }
     return txt;
 }
@@ -541,7 +540,7 @@ std::string NameServer::cmdBot(int argc, char *argv[]) {
 Bottle NameServer::ncmdList(int argc, char *argv[]) {
     Bottle response;
 
-    std::string prefix = "";
+    std::string prefix;
 
     if (argc==1) {
         prefix = STR(argv[0]);
@@ -608,7 +607,7 @@ yarp::os::Bottle NameServer::ncmdGet(int argc, char *argv[]) {
         std::string target = STR(argv[0]);
         std::string key = argv[1];
         NameRecord& nameRecord = getNameRecord(target);
-        return Bottle(nameRecord.getProp(key).c_str());
+        return Bottle(nameRecord.getProp(key));
     }
     return response;
 }
@@ -618,7 +617,7 @@ yarp::os::Bottle NameServer::ncmdGet(int argc, char *argv[]) {
 std::string NameServer::cmdGarbageCollect(int argc, char *argv[]) {
     YARP_UNUSED(argc);
     YARP_UNUSED(argv);
-    std::string response = "";
+    std::string response;
 
     response = "No cleaning done.\n";
 
@@ -627,7 +626,7 @@ std::string NameServer::cmdGarbageCollect(int argc, char *argv[]) {
 
 
 std::string NameServer::textify(const Contact& address) {
-    std::string result = "";
+    std::string result;
     if (address.isValid()) {
         if (address.getPort()>=0) {
             result = "registration name ";
@@ -703,7 +702,7 @@ std::string NameServer::apply(const std::string& txt, const Contact& remote) {
         if (result == "") {
             Bottle b = ndispatcher.dispatch(this, key.c_str(), ss.size()-1,
                                             (char **)(ss.get()+1));
-            result = b.toString().c_str();
+            result = b.toString();
             if (result!="") {
                 result = result + "\n";
                 result = terminate(result);
@@ -722,9 +721,9 @@ bool NameServer::apply(const Bottle& cmd, Bottle& result,
     Bottle rcmd;
     rcmd.addString("ignored_legacy");
     rcmd.append(cmd);
-    std::string in = rcmd.toString().c_str();
-    std::string out = apply(in, remote).c_str();
-    result.fromString(out.c_str());
+    std::string in = rcmd.toString();
+    std::string out = apply(in, remote);
+    result.fromString(out);
     return true;
 }
 
@@ -748,12 +747,12 @@ public:
         bool haveMessage = false;
         if (ok) {
             if (reader.isTextMode()) {
-                msg = reader.expectText().c_str();
+                msg = reader.expectText();
             } else {
                 // migrate to binary mode support, eventually optimize
                 Bottle b;
                 b.read(reader);
-                msg = b.toString().c_str();
+                msg = b.toString();
             }
             haveMessage = (msg!="");
             msg = ref + msg;

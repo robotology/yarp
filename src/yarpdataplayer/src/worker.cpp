@@ -158,11 +158,11 @@ int WorkerClass::sendImages(int part, int frame)
     string tmpName, tmp;
     bool fileValid = false;
     if (utilities->withExtraColumn) {
-        tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(1).asString().c_str();
-        tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().tail().tail().toString().c_str();
+        tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(1).asString();
+        tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().tail().tail().toString();
     } else {
-        tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(0).asString().c_str();
-        tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().tail().toString().c_str();
+        tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(0).asString();
+        tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().tail().toString();
     }
 
     int code = 0;
@@ -179,7 +179,7 @@ int WorkerClass::sendImages(int part, int frame)
     IplImage* img_ipl = nullptr;
     if (code==VOCAB_PIXEL_MONO_FLOAT) {
         img_yarp = unique_ptr<Image>(new ImageOf<PixelFloat>);
-        fileValid = read(*static_cast<ImageOf<PixelFloat>*>(img_yarp.get()),tmpPath.c_str());
+        fileValid = read(*static_cast<ImageOf<PixelFloat>*>(img_yarp.get()),tmpPath);
     }
     else {
         img_ipl=cvLoadImage(tmpPath.c_str(),CV_LOAD_IMAGE_UNCHANGED);

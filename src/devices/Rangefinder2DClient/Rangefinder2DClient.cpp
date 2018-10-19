@@ -175,8 +175,8 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
     local.clear();
     remote.clear();
 
-    local  = config.find("local").asString().c_str();
-    remote = config.find("remote").asString().c_str();
+    local  = config.find("local").asString();
+    remote = config.find("remote").asString();
 
     if (local=="")
     {
@@ -194,14 +194,14 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
     std::string remote_rpc = remote;
     remote_rpc += "/rpc:i";
 
-    if (!inputPort.open(local.c_str()))
+    if (!inputPort.open(local))
     {
         yError("Rangefinder2DClient::open() error could not open port %s, check network\n",local.c_str());
         return false;
     }
     inputPort.useCallback();
 
-    if (!rpcPort.open(local_rpc.c_str()))
+    if (!rpcPort.open(local_rpc))
     {
         yError("Rangefinder2DClient::open() error could not open rpc port %s, check network\n", local_rpc.c_str());
         return false;
@@ -214,7 +214,7 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    ok=Network::connect(local_rpc.c_str(), remote_rpc.c_str());
+    ok=Network::connect(local_rpc, remote_rpc);
     if (!ok)
     {
         yError("Rangefinder2DClient::open() error could not connect to %s\n", remote_rpc.c_str());
