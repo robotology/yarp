@@ -89,7 +89,7 @@ static std::string getFile(const char *fname) {
     char buf[25600];
     FILE *fin = fopen(fname,"r");
     if (fin==nullptr) return "";
-    std::string result;
+    std::string result = "";
     while(fgets(buf, sizeof(buf)-1, fin) != nullptr) {
         result += buf;
     }
@@ -127,7 +127,7 @@ static void toDox(PolyDriver& dd, FILE *os) {
         }
         std::string desc = dd.getComment(name.c_str());
         std::string def = dd.getDefaultValue(name.c_str()).toString();
-        std::string out;
+        std::string out = "";
         out += "<tr><td>";
         out += name.c_str();
         out += "</td><td>";
@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
     printf("YARP_DATA_DIRS=\"%s\"\n", Network::getEnvironment("YARP_DATA_DIRS").c_str());
 
     // check where to put description of device
-    std::string dest;
+    std::string dest = "";
     dest = p.check("doc",Value("")).toString();
 
     std::string fileName = p.check("file",Value("default.ini")).asString();
@@ -200,7 +200,7 @@ int main(int argc, char *argv[]) {
     Network::setLocalMode(true);
 
     std::string seek = fileName.c_str();
-    std::string exampleName;
+    std::string exampleName = "";
     int pos = seek.rfind('/');
     if (pos==-1) {
         pos = seek.rfind('\\');
@@ -226,8 +226,8 @@ int main(int argc, char *argv[]) {
     YARP_DEBUG(Logger::get(), "harness opened.");
     result = ok?0:1;
 
-    std::string wrapperName;
-    std::string codeName;
+    std::string wrapperName = "";
+    std::string codeName = "";
 
     DriverCreator *creator =
         Drivers::factory().find(deviceName.c_str());
