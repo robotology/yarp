@@ -314,7 +314,7 @@ public:
     }
     ~H264DecoderHelper(){;}
 
-    bool istantiateElements(void)
+    bool istantiateElements()
     {
         gst_init(NULL, NULL);
         pipeline = gst_pipeline_new ("video-player");
@@ -371,7 +371,7 @@ public:
 
     }
 
-    bool linkElements(void)
+    bool linkElements()
     {
 
         if(verbose) g_print("GSTREAMER: try to add elements to pipeline..... \n");
@@ -421,7 +421,7 @@ H264Decoder::H264Decoder(h264Decoder_cfgParamters &config) :
     helper.verbose = cfg.verbose;
 }
 
-bool H264Decoder::init(void)
+bool H264Decoder::init()
 {
     H264DecoderHelper &helper = GET_HELPER(sysResource);
     if(!helper.istantiateElements())
@@ -476,7 +476,7 @@ H264Decoder::~H264Decoder()
 
 }
 
-ImageOf<PixelRgb> & H264Decoder::getLastFrame(void)
+ImageOf<PixelRgb> & H264Decoder::getLastFrame()
 {
     H264DecoderHelper &helper = GET_HELPER(sysResource);
     helper.gst_cbk_data.isNew = false;
@@ -484,19 +484,19 @@ ImageOf<PixelRgb> & H264Decoder::getLastFrame(void)
     return helper.myframe;
 }
 
-bool H264Decoder::newFrameIsAvailable(void)
+bool H264Decoder::newFrameIsAvailable()
 {
     H264DecoderHelper &helper = GET_HELPER(sysResource);
     return helper.gst_cbk_data.isNew;
 }
 
-int H264Decoder::getLastFrameSize(void)
+int H264Decoder::getLastFrameSize()
 {
     H264DecoderHelper &helper = GET_HELPER(sysResource);
     return (helper.myframe.width() * helper.myframe.height() * 3);
 }
 
-void H264Decoder::setReq(void)
+void H264Decoder::setReq()
 {
     H264DecoderHelper &helper = GET_HELPER(sysResource);
     helper.gst_cbk_data.isReq = true;

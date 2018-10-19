@@ -289,7 +289,7 @@ void PortAudioDeviceDriver::handleError()
     }
 }
 
-bool PortAudioDeviceDriver::close(void)
+bool PortAudioDeviceDriver::close()
 {
     pThread.stop();
     if (stream != 0)
@@ -365,7 +365,7 @@ bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound)
     return true;
 }
 
-bool PortAudioDeviceDriver::abortSound(void)
+bool PortAudioDeviceDriver::abortSound()
 {
     printf("\n=== Stopping and clearing stream.===\n"); fflush(stdout);
     err = Pa_StopStream( stream );
