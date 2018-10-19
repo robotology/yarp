@@ -123,13 +123,13 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
 
     const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
     if(m_config->check("apppath")){
-        string basepath=m_config->check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
-        string appPaths(m_config->find("apppath").asString().c_str());
+        string basepath=m_config->check("ymanagerini_dir", yarp::os::Value("")).asString();
+        string appPaths(m_config->find("apppath").asString());
         string strPath;
 
         do
         {
-            string::size_type pos=appPaths.find(";");
+            string::size_type pos=appPaths.find(';');
             strPath=appPaths.substr(0, pos);
             trimString(strPath);
             if (!absolute(strPath.c_str()))
@@ -147,8 +147,8 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
         while (appPaths!="");
     }
     if (m_config->check("yarpdatahome")){
-       string appPaths(m_config->find("apppath").asString().c_str());
-       string homePath=m_config->find("yarpdatahome").asString().c_str();
+       string appPaths(m_config->find("apppath").asString());
+       string homePath=m_config->find("yarpdatahome").asString();
 
        homePath +=  string(directorySeparator) + string("applications");
 

@@ -39,10 +39,10 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
     m_map_locations_server_name.clear();
     m_localization_server_name.clear();
 
-    m_local_name           = config.find("local").asString().c_str();
-    m_navigation_server_name = config.find("navigation_server").asString().c_str();
-    m_map_locations_server_name = config.find("map_locations_server").asString().c_str();
-    m_localization_server_name = config.find("localization_server").asString().c_str();
+    m_local_name = config.find("local").asString();
+    m_navigation_server_name = config.find("navigation_server").asString();
+    m_map_locations_server_name = config.find("map_locations_server").asString();
+    m_localization_server_name = config.find("localization_server").asString();
 
     if (m_local_name == "")
     {
@@ -97,19 +97,19 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
     remote_streaming_name = m_localization_server_name + "/stream:o";
     local_streaming_name  = m_local_name           + "/stream:i";
 
-    if (!m_rpc_port_navigation_server.open(local_rpc_1.c_str()))
+    if (!m_rpc_port_navigation_server.open(local_rpc_1))
     {
         yError("Navigation2DClient::open() error could not open rpc port %s, check network", local_rpc_1.c_str());
         return false;
     }
 
-    if (!m_rpc_port_map_locations_server.open(local_rpc_2.c_str()))
+    if (!m_rpc_port_map_locations_server.open(local_rpc_2))
     {
         yError("Navigation2DClient::open() error could not open rpc port %s, check network", local_rpc_2.c_str());
         return false;
     }
 
-    if (!m_rpc_port_localization_server.open(local_rpc_3.c_str()))
+    if (!m_rpc_port_localization_server.open(local_rpc_3))
     {
         yError("Navigation2DClient::open() error could not open rpc port %s, check network", local_rpc_3.c_str());
         return false;
@@ -126,21 +126,21 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
 
     bool ok = true;
 
-    ok = Network::connect(local_rpc_1.c_str(), remote_rpc_1.c_str());
+    ok = Network::connect(local_rpc_1, remote_rpc_1);
     if (!ok)
     {
         yError("Navigation2DClient::open() error could not connect to %s", remote_rpc_1.c_str());
         return false;
     }
 
-    ok = Network::connect(local_rpc_2.c_str(), remote_rpc_2.c_str());
+    ok = Network::connect(local_rpc_2, remote_rpc_2);
     if (!ok)
     {
         yError("Navigation2DClient::open() error could not connect to %s", remote_rpc_2.c_str());
         return false;
     }
 
-    ok = Network::connect(local_rpc_3.c_str(), remote_rpc_3.c_str());
+    ok = Network::connect(local_rpc_3, remote_rpc_3);
     if (!ok)
     {
         yError("Navigation2DClient::open() error could not connect to %s", remote_rpc_3.c_str());

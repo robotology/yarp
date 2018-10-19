@@ -589,7 +589,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 string strCarrier;
                 if((protocol=(TiXmlElement*) cnn->FirstChild("protocol")) &&
                     protocol->GetText())
-                    strCarrier = parser->parseText(protocol->GetText()).c_str();
+                    strCarrier = parser->parseText(protocol->GetText());
                 Connection connection(parser->parseText(from->GetText()).c_str(),
                                     parser->parseText(to->GetText()).c_str(),
                                     strCarrier.c_str());

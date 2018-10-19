@@ -32,7 +32,7 @@ AboutDlg::AboutDlg(QString appName,QString version,QString copyright,QString web
     ui->copyright->setText(copyright);
 
     QString auxWebSite = "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"> \
-            <a href=\""+ webSite + "\"><span style=\" text-decoration: underline; color:#0000ff;\">"+ webSite +"</span></a></p>";
+            <a href=\""+ webSite + R"("><span style=" text-decoration: underline; color:#0000ff;">)"+ webSite +"</span></a></p>";
     ui->website->setHtml(auxWebSite);
 
     connect(ui->btnLicence,SIGNAL(clicked()),this,SLOT(onLicence()));

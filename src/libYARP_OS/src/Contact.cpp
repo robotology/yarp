@@ -128,9 +128,9 @@ Contact Contact::fromConfig(const Searchable& config)
 {
     Contact result;
     result.mPriv->port = config.check("port_number", Value(-1)).asInt32();
-    result.mPriv->hostname = config.check("ip", Value("")).asString().c_str();
-    result.mPriv->regName = config.check("name", Value("")).asString().c_str();
-    result.mPriv->carrier = config.check("carrier", Value("tcp")).asString().c_str();
+    result.mPriv->hostname = config.check("ip", Value("")).asString();
+    result.mPriv->regName = config.check("name", Value("")).asString();
+    result.mPriv->carrier = config.check("carrier", Value("tcp")).asString();
     return result;
 }
 
@@ -196,7 +196,7 @@ Contact Contact::fromString(const std::string& txt)
     }
     std::string rname = str.substr(start);
     if (rname!="/") {
-        c.mPriv->regName = rname.c_str();
+        c.mPriv->regName = rname;
     }
     return c;
 }
@@ -321,7 +321,7 @@ std::string Contact::toString() const
 
 std::string Contact::toURI(bool includeCarrier) const
 {
-    std::string result = "";
+    std::string result;
     if (includeCarrier && mPriv->carrier!="") {
         result += mPriv->carrier;
         result += ":/";

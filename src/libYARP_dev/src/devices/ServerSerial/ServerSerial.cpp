@@ -155,15 +155,15 @@ bool ServerSerial::open(Searchable& prop)
 
     std::string rootName =
         prop.check("name",Value("/serial"),
-                    "prefix for port names").asString().c_str();
+                    "prefix for port names").asString();
 
     command_buffer.attach(toDevice);
     reply_buffer.attach(fromDevice);
 
     command_buffer.useCallback(callback_impl);
 
-    toDevice.open((rootName+"/in").c_str());
-    fromDevice.open((rootName+"/out").c_str());
+    toDevice.open(rootName+"/in");
+    fromDevice.open(rootName+"/out");
 
 
 

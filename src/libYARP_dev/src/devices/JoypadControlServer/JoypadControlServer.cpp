@@ -278,7 +278,7 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
         return false;
     }
     m_coordsMode = yarp::dev::IJoypadController::JypCtrlcoord_CARTESIAN;
-    rootName = params.check("name",Value("/"), "starting '/' if needed.").asString().c_str();
+    rootName = params.check("name",Value("/"), "starting '/' if needed.").asString();
 
     if (!params.check("name", "Prefix name of the ports opened by the JoypadControlServer."))
     {
@@ -287,7 +287,7 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
         return false;
     }
 
-        rootName             = params.find("name").asString().c_str();
+        rootName             = params.find("name").asString();
         m_rpcPortName        = rootName + "/rpc:i";
         m_portButtons.name   = rootName + "/buttons:o";
         m_portAxis.name      = rootName + "/axis:o";
@@ -321,7 +321,7 @@ bool JoypadControlServer::openAndAttachSubDevice(Searchable& prop)
 
     m_subDeviceOwned = new PolyDriver;
 
-    p.fromString(prop.toString().c_str());
+    p.fromString(prop.toString());
     p.setMonitor(prop.getMonitor(), "subdevice"); // pass on any monitoring
     p.unput("device");
     p.put("device",prop.find("subdevice").asString());  // subdevice was already checked before

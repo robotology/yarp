@@ -83,7 +83,7 @@ public:
             settings.setSelector(*this);
             settings.readFromSearchable(prop,name);
             settings.open(lib);
-            std::string location = lib.getName().c_str();
+            std::string location = lib.getName();
             if (location=="") {
               // A wrong library name ends up with empty location
               yWarning("Wrong library name for plugin %s", name.c_str());
@@ -111,7 +111,7 @@ public:
                 //s += "network wrapper unknown";
             } else if (wrapper!=name) {
                 s += ", wrapped by \"";
-                s += wrapper.c_str();
+                s += wrapper;
                 s += "\"";
             } else {
                 s += ", is a network wrapper";
@@ -310,13 +310,13 @@ static void toDox(PolyDriver& dd, FILE *os) {
         std::string desc = dd.getComment(name.c_str());
         Value def = dd.getDefaultValue(name.c_str());
         Value actual = dd.getValue(name.c_str());
-        std::string out = "";
+        std::string out;
         out += name;
         if (!actual.isNull()) {
             if (actual.toString()!="") {
                 out += "=";
                 if (actual.toString().length()<40) {
-                    out += actual.toString().c_str();
+                    out += actual.toString();
                 } else {
                     out += "(value too long)";
                 }
@@ -326,7 +326,7 @@ static void toDox(PolyDriver& dd, FILE *os) {
             if (def.toString()!="") {
                 out += " [";
                 if (def.toString().length()<40) {
-                    out += def.toString().c_str();
+                    out += def.toString();
                 } else {
                     out += "(value too long)";
                 }
@@ -335,7 +335,7 @@ static void toDox(PolyDriver& dd, FILE *os) {
         }
         if (desc!="") {
             out += "\n    ";
-            out += desc.c_str();
+            out += desc;
         }
         fprintf(os,"%s\n", out.c_str());
     }
@@ -344,7 +344,7 @@ static void toDox(PolyDriver& dd, FILE *os) {
 }
 
 
-static std::string terminatorKey = "";
+static std::string terminatorKey;
 static bool terminated = false;
 static void handler (int) {
     Time::useSystemClock();
@@ -410,7 +410,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
 
     // interpret command line options as a set of flags
     //options.fromCommand(argc,argv,true,false);
-    options.fromString(rf.toString().c_str(), false);
+    options.fromString(rf.toString(), false);
 
     // check if we're being asked to read the options from file
     Value *val;
@@ -543,10 +543,10 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             s += v->toString();
             s += "/quit";
         }
-        if (s.find("=") == std::string::npos &&
-            s.find("@") == std::string::npos) {
+        if (s.find('=') == std::string::npos &&
+            s.find('@') == std::string::npos) {
             terminee = new Terminee(s.c_str());
-            terminatorKey = s.c_str();
+            terminatorKey = s;
             if (terminee == nullptr) {
                 yError("Can't allocate terminator port\n");
                 terminatorKey = "";

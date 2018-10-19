@@ -441,7 +441,7 @@ const char* LocalBroker::requestRpc(const char* szport, const char* request, dou
     style.timeout = (timeout>0.0) ? timeout : CONNECTION_TIMEOUT;
     bool ret;
     for(int i=0; i<10; i++) {
-        ret = NetworkBase::connect(port.getName().c_str(), szport, style);
+        ret = NetworkBase::connect(port.getName(), szport, style);
         if(ret) break;
         SystemClock::delaySystem(1.0);
     }
@@ -454,7 +454,7 @@ const char* LocalBroker::requestRpc(const char* szport, const char* request, dou
     Bottle msg, response;
     msg.fromString(request);
     ret = port.write(msg, response);
-    NetworkBase::disconnect(port.getName().c_str(), szport);
+    NetworkBase::disconnect(port.getName(), szport);
     if(!response.size() || !ret) {
         port.close();
         return nullptr;

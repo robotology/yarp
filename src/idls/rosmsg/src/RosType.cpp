@@ -66,7 +66,7 @@ std::vector<std::string> normalizedMessage(const std::string& line) {
 
 bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
                    int nesting) {
-    std::string indent = "";
+    std::string indent;
     for (int i=0; i<nesting; i++) {
         indent += "  ";
     }
@@ -92,7 +92,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         }
         std::string idx = base.substr(at+1,base.length()-at-2);
         if (idx!="") {
-            yarp::os::Bottle b(idx.c_str());
+            yarp::os::Bottle b(idx);
             arrayLength = b.get(0).asInt32();
         } else {
             arrayLength = -1;
@@ -104,7 +104,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
 
     isStruct = true;
     rosRawType = base;
-    if (base[0]>='a'&&base[0]<='z'&&base.find("/")==std::string::npos&&base.find(".")==std::string::npos) {
+    if (base[0]>='a'&&base[0]<='z'&&base.find('/')==std::string::npos&&base.find('.')==std::string::npos) {
         isStruct = false;
         isRosPrimitive = true;
         if (base=="time"||base=="duration") {
@@ -140,15 +140,15 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         isValid = true;
         return true;
     }
-    if (rosType.find(".")!=std::string::npos) {
-        rosType = rosType.substr(0,rosType.rfind("."));
+    if (rosType.find('.')!=std::string::npos) {
+        rosType = rosType.substr(0,rosType.rfind('.'));
     }
 
     if (isStruct) {
-        size_t at = rosType.rfind("/");
+        size_t at = rosType.rfind('/');
         if (at != std::string::npos) {
             std::string temp = rosType.substr(0, at);
-            at = temp.rfind("/");
+            at = temp.rfind('/');
             if (at != std::string::npos) {
                 package = temp.substr(at+1);
             } else {
@@ -156,10 +156,10 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
             }
             if (package == "srv" || package == "msg")
             {
-                at = temp.rfind("/");
+                at = temp.rfind('/');
                 if (at != std::string::npos) {
                     temp = temp.substr(0, at);
-                    at = temp.rfind("/");
+                    at = temp.rfind('/');
                     if (at != std::string::npos) {
                         package = temp.substr(at+1);
                     } else {
@@ -227,7 +227,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
             continue;
         }
         bool have_const = false;
-        std::string const_txt = "";
+        std::string const_txt;
         if (msg.size()>2) {
             if (msg[2]=="=") {
                 have_const = true;
@@ -297,23 +297,23 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
 bool RosType::cache(const char *tname, RosTypeSearch& env,
                     RosTypeCodeGen& gen) {
     std::string rosType = tname;
-    size_t at = rosType.rfind(".");
+    size_t at = rosType.rfind('.');
     if (at == std::string::npos) {
         return false;
     }
     std::string ext = rosType.substr(at+1);
     rosType = rosType.substr(0,at);
     std::string pkg;
-    at = rosType.rfind("/");
+    at = rosType.rfind('/');
     if (at != std::string::npos && at > 0) {
-        size_t pkg_at = rosType.rfind("/", at-1);
+        size_t pkg_at = rosType.rfind('/', at-1);
         pkg = rosType.substr(pkg_at+1, at-pkg_at-1);
         if (pkg == "srv" || pkg == "msg") {
-            pkg_at = rosType.rfind("/", pkg_at-1);
+            pkg_at = rosType.rfind('/', pkg_at-1);
             pkg = rosType.substr(pkg_at+1, at-pkg_at-5); // -1 -("/msg" or "/srv") = -5
         }
     }
-    rosType = rosType.substr(rosType.rfind("/")+1);
+    rosType = rosType.substr(rosType.rfind('/')+1);
     std::string outfile = rosType + "." + ext;
     if (!pkg.empty()) {
         outfile = pkg + "/" + outfile;
@@ -394,7 +394,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
             std::string add = e.rosType + " " + e.rosName + "=" + e.initializer + "\n";
             checksum_const_text.push_back(add);
         } else {
-            std::string add = "";
+            std::string add;
             if (e.isRosPrimitive) {
                 add += e.rosRawType;
             } else {
@@ -414,7 +414,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
         }
     }
 
-    std::string sum = "";
+    std::string sum;
     for (const auto& txt : checksum_const_text) {
         sum += txt;
     }
@@ -524,7 +524,7 @@ std::string RosTypeSearch::readFile(const char *fname) {
     char buf[25600];
     FILE *fin = fopen(fname,"r");
     if (fin==nullptr) return "";
-    std::string result = "";
+    std::string result;
     while(fgets(buf, sizeof(buf)-1, fin) != nullptr) {
         result += buf;
     }
@@ -586,7 +586,7 @@ bool RosTypeSearch::fetchFromWeb(const std::string& target_file,
                                  const std::string& type_name,
                                  bool find_service) {
     bool success = false;
-    size_t idx = type_name.find("/");
+    size_t idx = type_name.find('/');
     if (idx!=std::string::npos) {
         std::string package = type_name.substr(0,idx);
         std::string typ = type_name.substr(idx+1,type_name.length());
@@ -662,17 +662,17 @@ std::string RosTypeSearch::findFile(const char *tname) {
     if (stat(tname, &dummy) == 0)
     {
         if (source_dir.empty() && package_name.empty()) {
-            size_t at = target.rfind("/");
+            size_t at = target.rfind('/');
             if (at != std::string::npos) {
                 source_dir = target.substr(0, at);
-                at = source_dir.rfind("/");
+                at = source_dir.rfind('/');
                 if (at != std::string::npos) {
                     package_name = source_dir.substr(at+1);
                     source_dir = source_dir.substr(0, at);
                 }
                 if (package_name == "srv" || package_name == "msg")
                 {
-                    size_t at = source_dir.rfind("/");
+                    size_t at = source_dir.rfind('/');
                     if (at != std::string::npos) {
                         package_name = source_dir.substr(at+1);
                         source_dir = source_dir.substr(0, at);
@@ -687,7 +687,7 @@ std::string RosTypeSearch::findFile(const char *tname) {
 
     std::string target2;
     if (!source_dir.empty()) {
-        size_t at = target.rfind("/");
+        size_t at = target.rfind('/');
         if (at != std::string::npos) {
             target2 = target.substr(0, at) + (find_service? "/srv/" : "/msg/") + target.substr(at+1);
         }

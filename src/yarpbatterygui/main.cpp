@@ -89,10 +89,10 @@ int main(int argc, char *argv[])
     std::string remotePort = "/" + robot_name + "/battery:o";
 
     yarp::os::Property options;
-    options.put("robot", robot_name.c_str());
+    options.put("robot", robot_name);
     options.put("device", "batteryClient");
-    options.put("local", localPort.c_str());
-    options.put("remote", remotePort.c_str());
+    options.put("local", localPort);
+    options.put("remote", remotePort);
     options.put("period", 10);
 
     drv = new yarp::dev::PolyDriver(options);

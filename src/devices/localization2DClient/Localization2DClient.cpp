@@ -36,8 +36,8 @@ bool yarp::dev::Localization2DClient::open(yarp::os::Searchable &config)
     m_local_name.clear();
     m_remote_name.clear();
 
-    m_local_name           = config.find("local").asString().c_str();
-    m_remote_name = config.find("remote").asString().c_str();
+    m_local_name = config.find("local").asString();
+    m_remote_name = config.find("remote").asString();
 
     if (m_local_name == "")
     {
@@ -62,7 +62,7 @@ bool yarp::dev::Localization2DClient::open(yarp::os::Searchable &config)
     remote_streaming_name = m_remote_name + "/stream:o";
     local_streaming_name  = m_local_name  + "/stream:i";
 
-    if (!m_rpc_port_localization_server.open(local_rpc.c_str()))
+    if (!m_rpc_port_localization_server.open(local_rpc))
     {
         yError("Localization2DClient::open() error could not open rpc port %s, check network", local_rpc.c_str());
         return false;
@@ -79,7 +79,7 @@ bool yarp::dev::Localization2DClient::open(yarp::os::Searchable &config)
 
     bool ok = true;
 
-    ok = Network::connect(local_rpc.c_str(), remote_rpc.c_str());
+    ok = Network::connect(local_rpc, remote_rpc);
     if (!ok)
     {
         yError("Localization2DClient::open() error could not connect to %s", remote_rpc.c_str());

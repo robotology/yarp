@@ -232,7 +232,7 @@ public:
     }
 
     void fromCommand(int argc, char *argv[], bool wipe=true) {
-        std::string tag = "";
+        std::string tag;
         Bottle accum;
         Bottle total;
         bool qualified = false;
@@ -259,7 +259,7 @@ public:
                     // Specifically when reading from the command
                     // line, we will allow windows-style paths.
                     // Hence we have to break the "\" character
-                    std::string buf = "";
+                    std::string buf;
                     for (unsigned int i=0; i<work.length(); i++) {
                         buf += work[i];
                         if (work[i]=='\\') {
@@ -269,7 +269,7 @@ public:
                     work = buf;
                 }
             }
-            accum.add(Value::makeValue(work.c_str()));
+            accum.add(Value::makeValue(work));
         }
         if (tag!="") {
             total.addList().copy(accum);
@@ -297,7 +297,7 @@ public:
                 } else {
                     key = "";
                 }
-                Bottle& result = (cursor!=nullptr)? (cursor->findGroup(base.c_str())) : owner.findGroup(base.c_str());
+                Bottle& result = (cursor!=nullptr)? (cursor->findGroup(base)) : owner.findGroup(base);
                 if (result.isNull()) {
                     if (!cursor) {
                         cursor = &putBottle((base).c_str());
@@ -340,7 +340,7 @@ public:
                 ok = ok && readFile(fname, result, false);
                 result += "\n[]\n";  // reset any nested sections
             } else {
-                result += "[include " + section + " \"" + fname + "\" \"" + fname + "\"]\n";
+                result.append("[include ").append(section).append(" \"").append(fname).append("\" \"").append(fname).append("\"]\n");
             }
         }
         free(namelist);
@@ -371,13 +371,13 @@ public:
         std::string searchPath =
             env.check("CONFIG_PATH",
                       Value(""),
-                      "path to search for config files").toString().c_str();
+                      "path to search for config files").toString();
 
         YARP_DEBUG(Logger::get(),
-                   std::string("looking for ") + fname.c_str() + ", search path: " +
+                   std::string("looking for ") + fname + ", search path: " +
                    searchPath);
 
-        std::string pathPrefix("");
+        std::string pathPrefix;
         std::string txt;
 
         bool ok = true;
@@ -390,11 +390,10 @@ public:
                 trial += fname;
 
                 YARP_DEBUG(Logger::get(),
-                           std::string("looking for ") + fname + " as " +
-                           trial.c_str());
+                           std::string("looking for ").append(fname).append(" as ").append(trial));
 
                 txt = "";
-                if (readFile(trial.c_str(), txt, true)) {
+                if (readFile(trial, txt, true)) {
                     ok = true;
                     pathPrefix = ss.get(i);
                     pathPrefix += '/';
@@ -403,7 +402,7 @@ public:
             }
         }
 
-        std::string path("");
+        std::string path;
         size_t index = fname.rfind('/');
         if (index==std::string::npos) {
             index = fname.rfind('\\');
@@ -426,7 +425,7 @@ public:
             }
             searchPath += pathPrefix;
             searchPath += path;
-            envExtended.put("CONFIG_PATH", searchPath.c_str());
+            envExtended.put("CONFIG_PATH", searchPath);
         }
 
         fromConfig(txt.c_str(), envExtended, wipe);
@@ -439,7 +438,7 @@ public:
             return fromConfigFile(dirname, p, wipe);
         }
 
-        YARP_DEBUG(Logger::get(), std::string("looking for ") + dirname.c_str());
+        YARP_DEBUG(Logger::get(), std::string("looking for ") + dirname);
 
         yarp::os::impl::DIR *dir = yarp::os::impl::opendir(dirname.c_str());
         if (!dir) {
@@ -464,7 +463,7 @@ public:
         if (wipe) {
             clear();
         }
-        std::string tag = "";
+        std::string tag;
         Bottle accum;
         bool done = false;
         do {
@@ -516,7 +515,7 @@ public:
                 }
 
                 // expand any environment references
-                buf = expand(buf.c_str(), env, owner).c_str();
+                buf = expand(buf.c_str(), env, owner);
 
                 if (buf.length()>0 && buf[0]=='[') {
                     size_t stop = buf.find(']');
@@ -524,7 +523,7 @@ public:
                         buf = buf.substr(1, stop-1);
                         size_t space = buf.find(' ');
                         if (space!=std::string::npos) {
-                            Bottle bot(buf.c_str());
+                            Bottle bot(buf);
                             // BEGIN Handle include option
                             if (bot.size()>1) {
                                 if (bot.get(0).toString() == "include") {
@@ -553,8 +552,7 @@ public:
                                             key = bot.get(1).toString();
                                             subName = bot.get(2).toString();
                                             fname = bot.get(3).toString();
-                                            Bottle *target =
-                                                getBottle(key.c_str());
+                                            Bottle *target = getBottle(key);
                                             if (target==nullptr) {
                                                 Bottle init;
                                                 init.addString(key.c_str());
@@ -577,10 +575,9 @@ public:
                                             //printf(">>> prior p %s\n",
                                             //     p.toString().c_str());
                                         }
-                                        p.fromConfigFile(fname.c_str(),
-                                                         env, false);
+                                        p.fromConfigFile(fname, env, false);
                                         accum.fromString(p.toString());
-                                        tag = subName.c_str();
+                                        tag = subName;
                                         //printf(">>> tag %s accum %s\n",
                                         //     tag.c_str(),
                                         //     accum.toString().c_str());
@@ -601,24 +598,23 @@ public:
                                         std::string fname =
                                             bot.get(1).toString();
                                         //printf("Including %s\n", fname.c_str());
-                                        fromConfigFile(fname.c_str(),
-                                                       env, false);
+                                        fromConfigFile(fname, env, false);
                                     }
                                 }
                             }
                             // END handle include option
                             // BEGIN handle group
                             if (bot.size()==2 && !including) {
-                                buf = bot.get(1).toString().c_str();
-                                std::string key = bot.get(0).toString().c_str();
-                                Bottle *target = getBottle(key.c_str());
+                                buf = bot.get(1).toString();
+                                std::string key = bot.get(0).toString();
+                                Bottle *target = getBottle(key);
                                 if (target==nullptr) {
                                     Bottle init;
-                                    init.addString(key.c_str());
-                                    init.addString(buf.c_str());
+                                    init.addString(key);
+                                    init.addString(buf);
                                     putBottleCompat(key.c_str(), init);
                                 } else {
-                                    target->addString(buf.c_str());
+                                    target->addString(buf);
                                 }
                             }
                             // END handle group
@@ -631,7 +627,7 @@ public:
             }
             if (!isTag && !including) {
                 Bottle bot;
-                bot.fromString(buf.c_str());
+                bot.fromString(buf);
                 if (bot.size()>=1) {
                     if (tag=="") {
                         putBottleCompat(bot.get(0).toString().c_str(), bot);
@@ -658,11 +654,11 @@ public:
                 }
                 tag = buf;
                 accum.clear();
-                accum.addString(tag.c_str());
+                accum.addString(tag);
                 if (tag!="") {
-                    if (getBottle(tag.c_str())!=nullptr) {
+                    if (getBottle(tag)!=nullptr) {
                         // merge data
-                        accum.append(getBottle(tag.c_str())->tail());
+                        accum.append(getBottle(tag)->tail());
                         //printf("MERGE %s, got %s\n", tag.c_str(),
                         //     accum.toString().c_str());
                     }
@@ -704,8 +700,8 @@ public:
             return txt;
         }
         // check if variables present
-        std::string output = "";
-        std::string var = "";
+        std::string output;
+        std::string var;
         bool inVar = false;
         bool varHasParen = false;
         bool quoted = false;
@@ -748,12 +744,12 @@ public:
                     }
                     inVar = false;
                     //printf("VARIABLE %s\n", var.c_str());
-                    std::string add = NetworkBase::getEnvironment(var.c_str()).c_str();
+                    std::string add = NetworkBase::getEnvironment(var.c_str());
                     if (add=="") {
-                        add = env.find(var.c_str()).toString().c_str();
+                        add = env.find(var).toString();
                     }
                     if (add=="") {
-                        add = env2.find(var.c_str()).toString().c_str();
+                        add = env2.find(var).toString();
                     }
                     if (add=="") {
                         if (var=="__YARP__") {
@@ -764,7 +760,7 @@ public:
                         // Specifically when reading from the command
                         // line, we will allow windows-style paths.
                         // Hence we have to break the "\" character
-                        std::string buf = "";
+                        std::string buf;
                         for (unsigned int i=0; i<add.length(); i++) {
                             buf += add[i];
                             if (add[i]=='\\') {
@@ -1089,9 +1085,9 @@ void Property::fromQuery(const char *url, bool wipe) {
     }
     std::string str = url;
     str += "&";
-    std::string buf = "";
-    std::string key = "";
-    std::string val = "";
+    std::string buf;
+    std::string key;
+    std::string val;
     int code = 0;
     int coding = 0;
 
@@ -1107,7 +1103,7 @@ void Property::fromQuery(const char *url, bool wipe) {
             val = buf;
             buf = "";
             if (key!="" && val!="") {
-                put(key.c_str(), val.c_str());
+                put(key, val);
             }
             key = "";
         } else if (ch=='?') {

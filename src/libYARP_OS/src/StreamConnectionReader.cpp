@@ -268,7 +268,7 @@ std::string StreamConnectionReader::expectText(int terminatingChar)
     if (lsuccess) {
         messageLen -= result.length()+1;
     }
-    return std::string(result.c_str());
+    return result;
 }
 
 bool StreamConnectionReader::isTextMode() const
@@ -392,7 +392,7 @@ const Searchable& StreamConnectionReader::getConnectionModifiers() const
 {
     if (config.size()==0) {
         if (protocol) {
-            const_cast<Bottle&>(config).fromString(protocol->getSenderSpecifier().c_str());
+            const_cast<Bottle&>(config).fromString(protocol->getSenderSpecifier());
         }
     }
     return config;

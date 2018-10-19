@@ -367,7 +367,7 @@ bool Demo::read(yarp::os::ConnectionReader& connection) {
     if (reader.noMore()) { reader.fail(); return false; }
     std::string next_tag = reader.readTag();
     if (next_tag=="") break;
-    tag = tag + "_" + next_tag;
+    tag.append("_").append(next_tag);
   }
   return false;
 }

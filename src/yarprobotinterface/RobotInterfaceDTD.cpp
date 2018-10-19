@@ -136,7 +136,7 @@ bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, const std::string& curr
     type = StringToDocType(tokens.at(1));
     if(type == RobotInterfaceDTD::DocTypeUnknown)
     {
-        SYNTAX_WARNING(unknownNode->Row()) << "Unknown document type. Supported document types are: \"robot\", \"devices\", \"params\"";
+        SYNTAX_WARNING(unknownNode->Row()) << R"(Unknown document type. Supported document types are: "robot", "devices", "params")";
     }
 
     if(tokens.at(2) != "PUBLIC") {

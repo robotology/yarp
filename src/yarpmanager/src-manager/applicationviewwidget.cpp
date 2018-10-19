@@ -686,7 +686,7 @@ void ApplicationViewWidget::updateApplicationWindow()
         {
             carrier = "tcp";
         }
-        size_t pos = carrier.toStdString().find("+");
+        size_t pos = carrier.toStdString().find('+');
         if(pos != std::string::npos)
         {
             modifier = carrier.mid(pos);
@@ -1565,7 +1565,7 @@ void ApplicationViewWidget::updateConnection(int index, std::vector<int>& CIDs)
 
         //checking if in the carrier has been added a modifier
 
-        size_t pos = carrier.toStdString().find("+");
+        size_t pos = carrier.toStdString().find('+');
         if(pos != std::string::npos)
         {
             modifier = carrier.mid(pos);

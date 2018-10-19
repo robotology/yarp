@@ -109,7 +109,7 @@ void PortLoggerDialog::openCons()
     unsigned int count = 0;
     while(getline(file, line)) {
         count++;
-        Bottle sample(line.c_str());
+        Bottle sample(line);
         if(sample.size() == 3) {
             //data.addList() = sample;
             //yInfo()<<sample.toString();

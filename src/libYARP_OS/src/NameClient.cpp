@@ -148,14 +148,14 @@ Contact NameClient::queryName(const std::string& name)
     std::string np = name;
     size_t i1 = np.find(':');
     if (i1 != std::string::npos) {
-        Contact c = c.fromString(np.c_str());
+        Contact c = c.fromString(np);
         if (c.isValid() && c.getPort() > 0) {
             return c;
         }
     }
 
     if (altStore != nullptr) {
-        Contact c = altStore->query(np.c_str());
+        Contact c = altStore->query(np);
         return c;
     }
 
@@ -194,9 +194,9 @@ Contact NameClient::registerName(const std::string& name, const Contact& suggest
             if (prefix != "") {
                 Bottle ips = NameConfig::getIpsAsBottle();
                 for (size_t i = 0; i < ips.size(); i++) {
-                    std::string ip = ips.get(i).asString().c_str();
+                    std::string ip = ips.get(i).asString();
                     if (ip.find(prefix) == 0) {
-                        prefix = ip.c_str();
+                        prefix = ip;
                         break;
                     }
                 }
@@ -227,12 +227,12 @@ Contact NameClient::registerName(const std::string& name, const Contact& suggest
         std::string cmdOffers = "set /port offers ";
         yarp::os::Bottle lst = yarp::os::Carriers::listCarriers();
         for (size_t i = 0; i < lst.size(); i++) {
-            cmdOffers = cmdOffers + " " + lst.get(i).asString();
+            cmdOffers.append(" ").append(lst.get(i).asString());
         }
 
 
         cmd.fromString(cmdOffers);
-        cmd.get(1) = Value(reg.c_str());
+        cmd.get(1) = Value(reg);
         send(cmd, reply);
 
         // accept the same set of carriers
@@ -290,9 +290,9 @@ Contact NameClient::extractAddress(const Bottle& bot)
 {
     if (bot.size() >= 9) {
         if (bot.get(0).asString() == "registration") {
-            return Contact(bot.get(2).asString().c_str(), // regname
-                           bot.get(8).asString().c_str(), // carrier
-                           bot.get(4).asString().c_str(), // ip
+            return Contact(bot.get(2).asString(), // regname
+                           bot.get(8).asString(), // carrier
+                           bot.get(4).asString(), // ip
                            bot.get(6).asInt32()); // port number
         }
     }
@@ -305,7 +305,7 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
 
     if (NetworkBase::getQueryBypass()) {
         ContactStyle style;
-        Bottle bcmd(cmd.c_str()), reply;
+        Bottle bcmd(cmd), reply;
         NetworkBase::writeToNameServer(bcmd, reply, style);
         std::string si = reply.toString(), so;
         for (int i = 0; i < (int)si.length(); i++) {
@@ -313,7 +313,7 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
                 so += si[i];
             }
         }
-        return so.c_str();
+        return so;
     }
     bool retried = false;
     bool retry = false;
@@ -386,7 +386,7 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
         ip->getOutputStream().flush();
         bool more = multi;
         while (more) {
-            std::string line = "";
+            std::string line;
             line = ip->getInputStream().readLine();
             if (!(ip->isOk())) {
                 //YARP_DEBUG(Logger::get(), e.toString() + " <<< exception from name server");
@@ -496,7 +496,7 @@ NameStore* NameClient::getQueryBypass()
 
 std::string NameClient::getMode()
 {
-    return mode.c_str();
+    return mode;
 }
 
 yarp::os::Nodes& NameClient::getNodes()

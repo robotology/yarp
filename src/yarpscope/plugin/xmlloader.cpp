@@ -134,17 +134,17 @@ XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent)
                 if(graphAttributes.hasAttribute("remote")) {
                     graph_remote = graphAttributes.value("remote").toString();
                 } else {
-                    qCritical("Syntax error while loading %s. \"remote\" attribute not found in element \"graph\"",fileName.toLatin1().data());
+                    qCritical(R"(Syntax error while loading %s. "remote" attribute not found in element "graph")",fileName.toLatin1().data());
                     break;
                 }
                 if(graphAttributes.hasAttribute("index")) {
                     graph_index = graphAttributes.value("index").toInt();
                     if(graph_index < 0) {
-                        qCritical("Syntax error while loading %s. \"index\" attribute not found in element \"graph\"",fileName.toLatin1().data());
+                        qCritical(R"(Syntax error while loading %s. "index" attribute not found in element "graph")",fileName.toLatin1().data());
                         break;
                     }
                 } else {
-                    qCritical("Syntax error while loading %s. \"index\" attribute in element \"graph\" should be >= 0",fileName.toLatin1().data());
+                    qCritical(R"(Syntax error while loading %s. "index" attribute in element "graph" should be >= 0)",fileName.toLatin1().data());
                     break;
                 }
                 if(graphAttributes.hasAttribute("title")) {

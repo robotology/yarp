@@ -348,11 +348,11 @@ int main(int argc, char *argv[])
     std::vector<yarp::dev::LaserMeasurementData> laser_data;
 
     BufferedPort<yarp::os::Bottle> laserMapInPort;
-    laserMapInPort.open(laser_map_port_name.c_str());
+    laserMapInPort.open(laser_map_port_name);
     BufferedPort<yarp::sig::Vector> compassInPort;
-    compassInPort.open(compass_port_name.c_str());
+    compassInPort.open(compass_port_name);
     BufferedPort<yarp::os::Bottle> navDisplayInPort;
-    navDisplayInPort.open(nav_display.c_str());
+    navDisplayInPort.open(nav_display);
 
     IplImage *img  = cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,3);
     IplImage *img2 = cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,3);

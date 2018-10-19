@@ -116,7 +116,7 @@ bool WireWriter::writeTag(const char *tag, int split, int len) const {
     if (!split) {
         return writeString(tag);
     }
-    std::string bit = "";
+    std::string bit;
     char ch = 'x';
     while (ch!='\0') {
         ch = *tag;
@@ -125,7 +125,7 @@ bool WireWriter::writeTag(const char *tag, int split, int len) const {
             if (bit.length()<=4) {
                 writeVocab(Vocab::encode(bit));
             } else {
-                writeString(bit.c_str());
+                writeString(bit);
             }
             bit.clear();
         } else {
@@ -159,7 +159,7 @@ bool WireWriter::writeListHeader(int len) const {
         writer.appendInt32(yarp::os::createVocab('i', 's'));
         if (get_is_vocab) {
             writer.appendInt32(BOTTLE_TAG_VOCAB);
-            writer.appendInt32(Vocab::encode(get_string.c_str()));
+            writer.appendInt32(Vocab::encode(get_string));
         } else {
             writeString(get_string);
         }

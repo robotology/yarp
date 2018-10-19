@@ -229,7 +229,7 @@ bool RobotInterface::Robot::Private::configure(const RobotInterface::Device &dev
 bool RobotInterface::Robot::Private::calibrate(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
     if (!RobotInterface::hasParam(params, "target")) {
-        yError() << "Action \"" << ActionTypeToString(ActionTypeCalibrate) << "\" requires \"target\" parameter";
+        yError() << "Action \"" << ActionTypeToString(ActionTypeCalibrate) << R"(" requires "target" parameter)";
         return false;
     }
     std::string targetDeviceName = RobotInterface::findParam(params, "target");
@@ -252,7 +252,7 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
 
     if (check>1)
     {
-        yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" : you can have only one option: \"network\" , \"networks\" or \"all\" ";
+        yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << R"(" : you can have only one option: "network" , "networks" or "all" )";
         return false;
     }
 
@@ -262,7 +262,7 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
         std::string targetNetwork = RobotInterface::findParam(params, "network");
 
         if (!RobotInterface::hasParam(params, "device")) {
-            yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires \"device\" parameter";
+            yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << R"(" requires "device" parameter)";
             return false;
         }
         std::string targetDeviceName = RobotInterface::findParam(params, "device");
@@ -290,7 +290,7 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
         yarp::os::Bottle &targetNetworks = *(v.asList());
 
         for (size_t i = 0; i < targetNetworks.size(); ++i) {
-            std::string targetNetwork = targetNetworks.get(i).toString().c_str();
+            std::string targetNetwork = targetNetworks.get(i).toString();
 
             if (!RobotInterface::hasParam(params, targetNetwork)) {
                 yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires one parameter per network. \"" << targetNetwork << "\" parameter is missing.";
@@ -309,7 +309,7 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
     }
     else
     {
-        yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires either \"network\" or \"networks\" parameter";
+        yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << R"(" requires either "network" or "networks" parameter)";
         return false;
     }
 
@@ -341,7 +341,7 @@ bool RobotInterface::Robot::Private::detach(const RobotInterface::Device &device
 bool RobotInterface::Robot::Private::park(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
     if (!RobotInterface::hasParam(params, "target")) {
-        yError() << "Action \"" << ActionTypeToString(ActionTypePark) << "\" requires \"target\" parameter";
+        yError() << "Action \"" << ActionTypeToString(ActionTypePark) << R"(" requires "target" parameter)";
         return false;
     }
     std::string targetDeviceName = RobotInterface::findParam(params, "target");

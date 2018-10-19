@@ -29,7 +29,7 @@ void RosHeader::appendString(char *&buf,const string& str) {
 
 
 string RosHeader::showMessage(string s) {
-    string result = "";
+    string result;
     for (unsigned int i=0; i<s.length(); i++) {
         char buf[256];
         char ch = s[i];
@@ -74,7 +74,7 @@ bool RosHeader::readHeader(const string& bin) {
         at += 4;
         len -= 4;
         string keyval(at,slen);
-        size_t delim = keyval.find_first_of("=",0);
+        size_t delim = keyval.find_first_of('=',0);
         if (delim == string::npos) {
             fprintf(stderr, "warning: corrupt ROS header\n");
         }
@@ -90,7 +90,7 @@ bool RosHeader::readHeader(const string& bin) {
 
 
 std::string RosHeader::toString() const {
-    string result = "";
+    string result;
     for (map<string,string>::const_iterator it = data.begin();
          it!=data.end(); it++) {
         string key = it->first;

@@ -294,8 +294,8 @@ bool NetworkProfiler::creatSimpleModuleGraph(yarp::profiler::graph::Graph& graph
                 const Vertex& p2 = (*peitr).second();
                 Property prop((*peitr).property);
                 string lable = p1.property.find("name").asString();
-                lable = lable + " - " + p2.property.find("name").asString();
-                prop.put("lable", lable.c_str());
+                lable.append(" - ").append(p2.property.find("name").asString());
+                prop.put("lable", lable);
                 subgraph.insertEdge(*v1, p2.outEdges()[0].second(), prop);
             }
         }

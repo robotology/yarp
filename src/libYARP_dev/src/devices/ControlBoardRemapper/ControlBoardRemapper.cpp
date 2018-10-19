@@ -51,7 +51,7 @@ bool ControlBoardRemapper::close()
 bool ControlBoardRemapper::open(Searchable& config)
 {
     Property prop;
-    prop.fromString(config.toString().c_str());
+    prop.fromString(config.toString());
 
     _verb = (prop.check("verbose","if present, give detailed output"));
     if (_verb)
@@ -114,7 +114,7 @@ bool ControlBoardRemapper::parseAxesNames(const Property& prop)
     axesNames.resize(propAxesNames->size());
     for(size_t ax=0; ax < propAxesNames->size(); ax++)
     {
-        axesNames[ax] = propAxesNames->get(ax).asString().c_str();
+        axesNames[ax] = propAxesNames->get(ax).asString();
     }
 
     this->setNrOfControlledAxes(axesNames.size());
@@ -152,7 +152,7 @@ bool ControlBoardRemapper::parseNetworks(const Property& prop)
         int base;
         int top;
 
-        parameters=prop.findGroup(nets->get(k).asString().c_str());
+        parameters=prop.findGroup(nets->get(k).asString());
 
         if(parameters.size()==2)
         {
@@ -208,7 +208,7 @@ bool ControlBoardRemapper::parseNetworks(const Property& prop)
              "I was expecting a well form quadruple of numbers, got instead: "<< parameters.toString().c_str();
         }
 
-        tmpDevice->id = nets->get(k).asString().c_str();
+        tmpDevice->id = nets->get(k).asString();
 
         for(int j=wBase;j<=wTop;j++)
         {
@@ -240,7 +240,7 @@ bool ControlBoardRemapper::updateAxesName()
         bool ok = this->getAxisName(l,axNameYARP);
         if( ok )
         {
-            axesNames[l] = axNameYARP.c_str();
+            axesNames[l] = axNameYARP;
         }
 
         ret = ret && ok;
@@ -308,7 +308,7 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
         // If there is a device with a specific device key, use it
         // as a calibrator, otherwise rely on the subcontrolboards
         // as usual
-        std::string deviceKey=polylist[p]->key.c_str();
+        std::string deviceKey=polylist[p]->key;
         if(deviceKey == "Calibrator" || deviceKey == "calibrator")
         {
             // Set the IRemoteCalibrator interface, the wrapper must point to the calibrator rdevice
@@ -346,7 +346,7 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
             std::string axNameYARP;
             ok = iaxinfos->getAxisName(axInSubDevice,axNameYARP);
 
-            std::string axName = axNameYARP.c_str();
+            std::string axName = axNameYARP;
 
             if( !ok )
             {
@@ -441,7 +441,7 @@ bool ControlBoardRemapper::attachAllUsingNetworks(const PolyDriverList &polylist
     for(int p=0;p<polylist.size();p++)
     {
         // look if we have to attach to a calibrator
-        std::string subDeviceKey = polylist[p]->key.c_str();
+        std::string subDeviceKey = polylist[p]->key;
         if(subDeviceKey == "Calibrator" || subDeviceKey == "calibrator")
         {
             // Set the IRemoteCalibrator interface, the wrapper must point to the calibrator rdevice

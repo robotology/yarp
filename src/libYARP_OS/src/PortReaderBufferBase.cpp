@@ -299,7 +299,7 @@ public:
             return false;
         }
         StringInputStream sis;
-        sis.add(prev->envelope.c_str());
+        sis.add(prev->envelope);
         sis.add("\r\n");
         StreamConnectionReader sbr;
         Route route;

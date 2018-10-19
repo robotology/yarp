@@ -30,7 +30,7 @@ Value toValue(XmlRpcValue& v, bool outer)
         {
             string s = (string)v;
             if (s.length()==0 || s[0]!='[') {
-                return Value(s.c_str());
+                return Value(s);
             } else {
                 Value v;
                 v.fromString(s.c_str());
@@ -129,8 +129,8 @@ yarp::conf::ssize_t XmlRpcStream::read(Bytes& b)
             if (ok) {
                 //printf("got a block!\n");
                 XmlRpcValue xresult;
-                std::string prefix = "";
-                std::string cprefix = "";
+                std::string prefix;
+                std::string cprefix;
                 if (sender) {
                     client.parseResponse(xresult);
                 } else {
@@ -157,9 +157,9 @@ yarp::conf::ssize_t XmlRpcStream::read(Bytes& b)
                 //printf("xmlrpc block is %s\n", xresult.toXml().c_str());
                 Value v = toValue(xresult,true);
                 if (!v.isNull()) {
-                    sis.reset((prefix + v.toString().c_str() + "\n").c_str());
+                    sis.reset(prefix + v.toString() + "\n");
                 } else {
-                    sis.reset((prefix + "\n").c_str());
+                    sis.reset(prefix + "\n");
                 }
                 //printf("String version is %s\n", sis.toString().c_str());
                 result = sis.read(b);

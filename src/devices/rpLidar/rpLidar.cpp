@@ -145,10 +145,10 @@ bool RpLidar::open(yarp::os::Searchable& config)
     Property prop;
     ResourceFinder rf;
     rf.setVerbose();
-    std::string serial_completefilename= rf.findFileByName(serial_filename.c_str());
+    std::string serial_completefilename= rf.findFileByName(serial_filename);
 
     prop.put("device", "serialport");
-    ok = prop.fromConfigFile(serial_completefilename.c_str(), config, false);
+    ok = prop.fromConfigFile(serial_completefilename, config, false);
     if (!ok)
     {
         yError("Unable to read from serial port configuration file");

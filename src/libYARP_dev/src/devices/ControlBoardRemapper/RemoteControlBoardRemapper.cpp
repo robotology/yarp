@@ -73,7 +73,7 @@ bool RemoteControlBoardRemapper::close()
 bool RemoteControlBoardRemapper::open(Searchable& config)
 {
     Property prop;
-    prop.fromString(config.toString().c_str());
+    prop.fromString(config.toString());
 
     std::string localPortPrefix;
     std::vector<std::string> remoteControlBoardsPorts;
@@ -81,7 +81,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
     // Check if the required parameters  are found
     if( prop.check("localPortPrefix") && prop.find("localPortPrefix").isString() )
     {
-        localPortPrefix = prop.find("localPortPrefix").asString().c_str();
+        localPortPrefix = prop.find("localPortPrefix").asString();
     }
     else
     {
@@ -99,7 +99,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
     remoteControlBoardsPorts.resize(remoteControlBoards->size());
     for(size_t ax=0; ax < remoteControlBoards->size(); ax++)
     {
-        remoteControlBoardsPorts[ax] = remoteControlBoards->get(ax).asString().c_str();
+        remoteControlBoardsPorts[ax] = remoteControlBoards->get(ax).asString();
     }
 
     // Load the REMOTE_CONTROLBOARD_OPTIONS, containing any additional option to pass to the remote control boards

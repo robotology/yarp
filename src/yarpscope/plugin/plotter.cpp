@@ -447,7 +447,7 @@ void Connection::freeResources()
 {
     if(localPort)
     {
-        yarp::os::Network::disconnect(remotePortName.toLatin1().data(), localPort->getName().c_str(), style);
+        yarp::os::Network::disconnect(remotePortName.toLatin1().data(), localPort->getName(), style);
         delete localPort;
         localPort = nullptr;
     }

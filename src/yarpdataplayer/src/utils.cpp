@@ -232,7 +232,7 @@ bool Utilities::checkLogValidity(const char *filename)
         string line;
         int itr = 0;
         while( getline( str, line ) && itr < 3){
-            Bottle b( line.c_str() );
+            Bottle b( line );
             if (itr >= 0){
                 if ( b.size() < 1){
                     check = false;
@@ -260,13 +260,13 @@ bool Utilities::setupDataFromParts(partsData &part)
         string line;
         int itr = 0;
         while( getline( str, line ) && (itr <= 1) ){
-            Bottle b( line.c_str() );
+            Bottle b( line );
             if (itr == 0){
-                part.type = b.get(1).toString().c_str();
+                part.type = b.get(1).toString();
                 part.type.erase(part.type.size() -1 );      // remove the ";" character
             }
             if (itr == 1){
-                part.portName = b.get(1).toString().c_str();
+                part.portName = b.get(1).toString();
                 LOG( "the name of the port is %s\n",part.portName.c_str());
             }
             itr++;
@@ -285,7 +285,7 @@ bool Utilities::setupDataFromParts(partsData &part)
         string line;
         int itr = 0;
         while( getline( str, line ) ){
-            Bottle b( line.c_str() );
+            Bottle b( line );
             part.bot.addList() = b;
             int timeStampCol = 1;
             if (withExtraColumn){
@@ -364,18 +364,18 @@ bool Utilities::configurePorts(partsData &part)
     }
 
     if (strcmp (part.type.c_str(),"Bottle") == 0){
-        if ( !yarp::os::Network::exists(tmp_port_name.c_str()) ){
+        if ( !yarp::os::Network::exists(tmp_port_name) ){
             LOG("need to create new port %s for %s\n",part.type.c_str(), part.name.c_str());
             part.bottlePort.close();
             LOG("creating and opening %s port for part %s\n",part.type.c_str(), part.name.c_str());
-            part.bottlePort.open(tmp_port_name.c_str());
+            part.bottlePort.open(tmp_port_name);
         }
     } else if (strcmp (part.type.c_str(),"Image:ppm") == 0 || strcmp (part.type.c_str(),"Image") == 0){
-        if ( !yarp::os::Network::exists(tmp_port_name.c_str()) ){
+        if ( !yarp::os::Network::exists(tmp_port_name) ){
             LOG("need to create new port %s for %s\n",part.type.c_str(), part.name.c_str());
             part.imagePort.close();
             LOG("creating and opening image port for part %s\n",part.name.c_str());
-            part.imagePort.open(tmp_port_name.c_str());
+            part.imagePort.open(tmp_port_name);
         }
     }
     else {

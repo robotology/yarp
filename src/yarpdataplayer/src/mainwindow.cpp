@@ -207,7 +207,7 @@ void MainWindow::onInternalGetFrame(const string &name, int *frame)
 /**********************************************************/
 bool MainWindow::load(const string &path)
 {
-    string cmdPath = path.c_str();
+    string cmdPath = path;
     QString sPath = QString("%1").arg(path.c_str());
 
     size_t slashErr = cmdPath.find('/');

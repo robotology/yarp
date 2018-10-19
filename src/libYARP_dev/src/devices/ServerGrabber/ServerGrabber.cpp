@@ -467,7 +467,7 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
     // Open ports
     bool bRet;
     bRet = true;
-    if(!rpcPort.open(rpcPort_Name.c_str()))
+    if(!rpcPort.open(rpcPort_Name))
     {
         yError() << "ServerGrabber: unable to open rpc Port" << rpcPort_Name.c_str();
         bRet = false;
@@ -476,7 +476,7 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
 
     pImg.promiseType(Type::byName("yarp/image"));
     pImg.setWriteOnly();
-    if(!pImg.open(pImg_Name.c_str()))
+    if(!pImg.open(pImg_Name))
     {
         yError() << "ServerGrabber: unable to open image streaming Port" << pImg_Name.c_str();
         bRet = false;
@@ -485,7 +485,7 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
 
     if(param.twoCameras)
     {
-        if(!rpcPort2.open(rpcPort2_Name.c_str()))
+        if(!rpcPort2.open(rpcPort2_Name))
         {
             yError() << "ServerGrabber: unable to open rpc Port" << rpcPort2_Name.c_str();
             bRet = false;
@@ -497,7 +497,7 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
         pImg2.promiseType(Type::byName("yarp/image"));
         pImg2.setWriteOnly();
 
-        if(!pImg2.open(pImg2_Name.c_str()))
+        if(!pImg2.open(pImg2_Name))
         {
             yError() << "ServerGrabber: unable to open image streaming Port" << pImg2_Name.c_str();
             bRet = false;
@@ -1078,7 +1078,7 @@ bool ServerGrabber::openAndAttachSubDevice(Searchable &prop){
     {
         Property p;
         poly  = new PolyDriver;
-        p.fromString(prop.toString().c_str());
+        p.fromString(prop.toString());
         if(param.cap==COLOR){
             p.put("pixelType", VOCAB_PIXEL_RGB);
         }

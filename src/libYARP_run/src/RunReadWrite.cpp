@@ -20,15 +20,15 @@ int RunWrite::loop()
 {
     RUNLOG("<<<loop()")
 
-    if (!wPort.open(wPortName.c_str()))
+    if (!wPort.open(wPortName))
     {
         RUNLOG("RunWrite: could not open output port")
         fprintf(stderr, "RunWrite: could not open output port\n");
         return 1;
     }
-    if (yarp::os::Network::exists(wLoggerName.c_str()))
+    if (yarp::os::Network::exists(wLoggerName))
     {
-        if (yarp::os::Network::connect(wPortName.c_str(), wLoggerName.c_str())==false)
+        if (yarp::os::Network::connect(wPortName, wLoggerName)==false)
         {
             fprintf(stderr, "RunWrite: could not mmake connection with the logger\n");
         }
@@ -61,7 +61,7 @@ int RunRead::loop()
 {
     RUNLOG("<<<loop()")
 
-    if (!rPort.open(rPortName.c_str()))
+    if (!rPort.open(rPortName))
     {
         RUNLOG("RunRead: could not open input port")
         fprintf(stderr, "RunRead: could not open input port\n");
@@ -104,7 +104,7 @@ int RunReadWrite::loop()
 {
     RUNLOG("<<<loop()")
 
-    if (!rPort.open(rPortName.c_str()))
+    if (!rPort.open(rPortName))
     {
         RUNLOG("RunReadWrite: could not open input port")
         fprintf(stderr, "RunReadWrite: could not open input port\n");
@@ -114,7 +114,7 @@ int RunReadWrite::loop()
     yarp::os::ContactStyle style;
     style.persistent=true;
 
-    yarp::os::Network::connect((UUID+"/stdout").c_str(), rPortName.c_str(), style);
+    yarp::os::Network::connect(UUID+"/stdout", rPortName, style);
 
     // forwarded section
     std::string tag;
@@ -122,7 +122,7 @@ int RunReadWrite::loop()
     if (mForwarded)
     {
         tag=std::string("[")+fPortName+std::string("]");
-        if (!fPort.open(fPortName.c_str()))
+        if (!fPort.open(fPortName))
         {
             RUNLOG("RunReadWrite: could not open forward port")
             fprintf(stderr, "RunReadWrite: could not open forward port\n");
@@ -220,7 +220,7 @@ void RunReadWrite::run()
 
     RUNLOG("<<<run()")
 
-    if (!wPort.open(wPortName.c_str()))
+    if (!wPort.open(wPortName))
     {
         RUNLOG("RunReadWrite: could not open output port")
         fprintf(stderr, "RunReadWrite: could not open output port\n");
@@ -230,7 +230,7 @@ void RunReadWrite::run()
     yarp::os::ContactStyle style;
     style.persistent=true;
 
-    yarp::os::Network::connect(wPortName.c_str(), (UUID+"/stdin").c_str(), style);
+    yarp::os::Network::connect(wPortName, UUID+"/stdin", style);
 
     while (mRunning)
     {

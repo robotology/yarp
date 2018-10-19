@@ -23,7 +23,7 @@
 #include "yarp/os/Network.h"
 #include <QTimer>
 #include <QVariant>
-#include "qcustomplot.h"
+#include <qcustomplot.h>
 
 #define GRAPH_TYPE_LINE     0
 #define GRAPH_TYPE_BARS     1

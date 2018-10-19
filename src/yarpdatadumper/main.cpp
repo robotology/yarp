@@ -64,7 +64,7 @@ public:
 
     const string toFile(const string &dirName, unsigned int cnt) override
     {
-        string ret=p->toString().c_str();
+        string ret=p->toString();
         return ret;
     }
 
@@ -513,7 +513,7 @@ public:
     void report(const PortInfo &info) override
     {
         if ((thread!=nullptr) && info.incoming)
-            thread->writeSource(info.sourceName.c_str(),info.created);
+            thread->writeSource(info.sourceName,info.created);
     }
 };
 
@@ -548,17 +548,17 @@ public:
 
     bool configure(ResourceFinder &rf) override
     {
-        portName=rf.check("name",Value("/dump")).asString().c_str();
+        portName=rf.check("name",Value("/dump")).asString();
         if (portName[0]!='/')
             portName="/"+portName;
 
         bool saveData=true;
         bool videoOn=false;
-        string videoType=rf.check("videoType",Value("mkv")).asString().c_str();
+        string videoType=rf.check("videoType",Value("mkv")).asString();
 
         if (rf.check("type"))
         {
-            string optTypeName=rf.find("type").asString().c_str();
+            string optTypeName=rf.find("type").asString();
             if (optTypeName=="bottle")
                 type=bottle;
             else if (optTypeName=="image")
@@ -594,7 +594,7 @@ public:
         dwnsample=rf.check("downsample",Value(1)).asInt32();
         rxTime=rf.check("rxTime");
         txTime=rf.check("txTime");
-        string templateDirName=rf.check("dir")?rf.find("dir").asString().c_str():portName;
+        string templateDirName=rf.check("dir")?rf.find("dir").asString():portName;
         if (templateDirName[0]!='/')
             templateDirName="/"+templateDirName;
 
@@ -621,7 +621,7 @@ public:
         yarp::os::mkdir_p(dirName.c_str());
 
         q=new DumpQueue();
-        t=new DumpThread(type,*q,dirName.c_str(),100,saveData,videoOn,videoType);
+        t=new DumpThread(type,*q,dirName,100,saveData,videoOn,videoType);
 
         if (!t->start())
         {
@@ -637,7 +637,7 @@ public:
         {
             p_bottle=new DumpPort<Bottle>(*q,dwnsample,rxTime,txTime);
             p_bottle->useCallback();
-            p_bottle->open(portName.c_str());
+            p_bottle->open(portName);
             p_bottle->setStrict();
             p_bottle->setReporter(reporter);
         }
@@ -645,14 +645,14 @@ public:
         {
             p_image=new DumpPort<Image>(*q,dwnsample,rxTime,txTime);
             p_image->useCallback();
-            p_image->open(portName.c_str());
+            p_image->open(portName);
             p_image->setStrict();
             p_image->setReporter(reporter);
         }
 
         if (rf.check("connect"))
         {
-            string srcPort=rf.find("connect").asString().c_str();
+            string srcPort=rf.find("connect").asString();
             bool ok=Network::connect(srcPort.c_str(),
                                      (type==bottle)?p_bottle->getName().c_str():
                                      p_image->getName().c_str(),"tcp");
@@ -667,7 +667,7 @@ public:
         }
 
         // this port serves to handle the "quit" rpc command
-        rpcPort.open((portName+"/rpc").c_str());
+        rpcPort.open(portName+"/rpc");
         attach(rpcPort);
 
         yInfo() << "Service yarp port: " << portName;

@@ -19,17 +19,17 @@ static std::string getPackageName(const std::string& name)
 {
 
     string tname = name;
-    string pname = "";
+    string pname;
     if (name == "Header") {
         tname = "std_msgs";
     } else {
-        size_t at = tname.rfind("/");
+        size_t at = tname.rfind('/');
         if (at == string::npos) {
             tname = "";
         } else {
             tname = pname = tname.substr(0, at);
             do {
-                at = pname.rfind("/");
+                at = pname.rfind('/');
                 if (at == string::npos) {
                     tname = pname;
                     break;
@@ -48,12 +48,12 @@ static std::string getPackageName(const std::string& name)
 static std::string getPartName(const std::string& tname)
 {
     string part_tname = tname;
-    size_t at = tname.rfind("/");
+    size_t at = tname.rfind('/');
     if (at != string::npos) {
         part_tname = tname.substr(at+1, tname.length());
     }
-    if (part_tname.find(".") != string::npos) {
-        part_tname = part_tname.substr(0, part_tname.rfind("."));
+    if (part_tname.find('.') != string::npos) {
+        part_tname = part_tname.substr(0, part_tname.rfind('.'));
     }
     return part_tname;
 }
@@ -862,7 +862,7 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field)
         return ry;
     }
     string name = field.rosType;
-    string flavor = "";
+    string flavor;
     if (name == "bool" && !field.isArray) {
         ry.yarpType = "bool";
         ry.writer = "appendInt8";

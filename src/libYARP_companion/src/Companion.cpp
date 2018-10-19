@@ -140,7 +140,7 @@ static char ** my_completion (const char* text, int start, int end)
        Otherwise, stop completing. */
     if (start == 0)
         matches = rl_completion_matches(text, &command_generator);
-    else if (start == 5 && strncmp (text, "help ", 5))
+    else if (start == 5 && strncmp (text, "help ", 5) != 0)
         matches = rl_completion_matches(text, &command_generator);
     else
         rl_attempted_completion_over=1;
@@ -527,7 +527,7 @@ int Companion::ping(const char *port, bool quiet) {
         bool done = false;
         while (!done) {
             resp.read(reader);
-            std::string str = resp.toString().c_str();
+            std::string str = resp.toString();
             if (resp.get(0).asString()!="<ACK>") {
                 printf("%s\n", str.c_str());
             } else {
@@ -1032,7 +1032,7 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
             response = cmd;
         } else {
             std::string txt = yarp::os::impl::Terminal::getStdin();
-            response.fromString(txt.c_str());
+            response.fromString(txt);
         }
         if (drop) {
             port.replyAndDrop(response);
@@ -1100,7 +1100,7 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
         if (yarp::os::impl::Terminal::EOFreached()) {
             break;
         }
-        Bottle cmd(txt.c_str()), reply;
+        Bottle cmd(txt), reply;
         ok = p.write(cmd, reply);
         if (ok) {
             printf("%s\n", reply.toString().c_str());
@@ -1304,7 +1304,7 @@ int Companion::cmdNamespace(int argc, char *argv[]) {
         for (int i=0; i<argc; i++) {
             cmd.addString(argv[i]);
         }
-        nc.writeConfig(fname, cmd.toString().c_str());
+        nc.writeConfig(fname, cmd.toString());
     }
 
     Bottle ns = nc.getNamespaces();
@@ -1339,7 +1339,7 @@ int Companion::cmdClean(int argc, char *argv[]) {
     msg.addString("bot");
     msg.addString("list");
     printf("Requesting list of ports from name server... ");
-    NetworkBase::write(name.c_str(),
+    NetworkBase::write(name,
                        msg,
                        reply);
     int ct = reply.size()-1;
@@ -1358,7 +1358,7 @@ int Companion::cmdClean(int argc, char *argv[]) {
         Bottle *entry = reply.get(i).asList();
         if (entry != nullptr) {
             std::string port = entry->check("name", Value("")).asString();
-            if (port!="" && port!="fallback" && port!=name.c_str()) {
+            if (port!="" && port!="fallback" && port!=name) {
                 Contact c = Contact::fromConfig(*entry);
                 if (c.getCarrier()=="mcast") {
                     printf("Skipping mcast port %s...\n", port.c_str());
@@ -1374,7 +1374,7 @@ int Companion::cmdClean(int argc, char *argv[]) {
                         OutputProtocol *out = Carriers::connect(addr);
                         if (out == nullptr) {
                             printf("* No response, removing port %s\n", port.c_str());
-                            NetworkBase::unregisterName(port.c_str());
+                            NetworkBase::unregisterName(port);
                         } else {
                             delete out;
                         }
@@ -1922,7 +1922,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
                 bot.addInt32(0);
                 bot.addString(txt.c_str());
             } else {
-                bot.fromString(txt.c_str());
+                bot.fromString(txt);
             }
             //core.send(bot);
             if (waitConnect) {
@@ -2036,7 +2036,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
                 }
                 Bottle bot;
                 if (!resendFlag) {
-                    bot.fromString(txt.c_str());
+                    bot.fromString(txt);
                 } else {
                     bot = resendContent;
                     resendFlag = false;
@@ -2372,7 +2372,7 @@ int Companion::cmdMerge(int argc, char *argv[]) {
         inPort[i].open(buff);
     }
     s = options.check("output", Value("/portsMerge/o0")).asString();
-    outPort.open(s.c_str());
+    outPort.open(s);
 
     //makes the connection
     for (int i=0; i<nPorts; i++) {
@@ -2434,7 +2434,7 @@ int Companion::cmdSample(int argc, char *argv[]) {
         return 1;
     }
 
-    if (!port.open(options.find("output").asString().c_str())) {
+    if (!port.open(options.find("output").asString())) {
         fprintf(stderr, "Failed to open output port\n");
         return 1;
     }
@@ -2451,7 +2451,7 @@ int Companion::cmdSample(int argc, char *argv[]) {
             NetworkBase::connect(input.c_str(), port.getName().c_str(),
                                  carrier.c_str());
         } else {
-            NetworkBase::connect(input.c_str(), port.getName().c_str());
+            NetworkBase::connect(input, port.getName());
         }
     }
 

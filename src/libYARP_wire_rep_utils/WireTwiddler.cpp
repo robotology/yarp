@@ -48,7 +48,7 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
     bool loading = false;
     bool computing = false;
     std::string kind = desc.get(offset).asString();
-    std::string var = "";
+    std::string var;
     offset++;
     if (kind=="---") {
         offset = desc.size();
@@ -231,7 +231,7 @@ bool WireTwiddler::configure(const char *txt, const char *prompt) {
 
     dbg_printf("Configure as %s\n", str.c_str());
 
-    Bottle desc(str.c_str());
+    Bottle desc(str);
 
     buffer_start = 0;
     buffer.clear();
@@ -303,7 +303,7 @@ std::string nameThatCode(int code) {
 }
 
 std::string WireTwiddler::fromTemplate(const yarp::os::Bottle& msg) {
-    string result = "";
+    string result;
 
     // assume we want to remove any meta-information
 
@@ -324,7 +324,7 @@ std::string WireTwiddler::fromTemplate(const yarp::os::Bottle& msg) {
         result += codeName;
         result += " ";
     }
-    result += NetType::toString(len).c_str();
+    result += NetType::toString(len);
     result += " ";
     for (int i=0; i<len; i++) {
         Value&v = msg.get(i);
@@ -361,9 +361,9 @@ void WireTwiddler::show() {
 }
 
 std::string WireTwiddler::toString() const {
-    std::string result = "";
+    std::string result;
     for (size_t i=0; i<gaps.size(); i++) {
-        std::string item = "";
+        std::string item;
         const WireTwiddlerGap& gap = gaps[i];
         item += gap.origin;
         //if (gap.buffer_length!=0) {
@@ -726,7 +726,7 @@ bool WireTwiddlerWriter::update() {
 
     for (int i=0; i<twiddler->getGapCount(); i++) {
         if (errorState) return false;
-        std::string item = "";
+        std::string item;
         const WireTwiddlerGap& gap = twiddler->getGap(i);
         if (gap.buffer_length!=0) {
             dbg_printf("Skip %d bytes\n", gap.byte_length);

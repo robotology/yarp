@@ -26,8 +26,8 @@ bool yarp::dev::RobotDescriptionClient::open(yarp::os::Searchable &config)
     m_local_name.clear();
     m_remote_name.clear();
 
-    m_local_name           = config.find("local").asString().c_str();
-    m_remote_name          = config.find("remote").asString().c_str();
+    m_local_name           = config.find("local").asString();
+    m_remote_name          = config.find("remote").asString();
 
     if (m_local_name == "")
     {
@@ -46,7 +46,7 @@ bool yarp::dev::RobotDescriptionClient::open(yarp::os::Searchable &config)
     local_rpc  = m_local_name + "/rpc";
     remote_rpc = m_remote_name + "/rpc";
 
-    if (!m_rpc_port.open(local_rpc.c_str()))
+    if (!m_rpc_port.open(local_rpc))
     {
         yError("RobotDescriptionClient::open() error could not open rpc port %s, check network", local_rpc.c_str());
         return false;
@@ -55,7 +55,7 @@ bool yarp::dev::RobotDescriptionClient::open(yarp::os::Searchable &config)
 
     bool ok = true;
 
-    ok = Network::connect(local_rpc.c_str(), remote_rpc.c_str());
+    ok = Network::connect(local_rpc, remote_rpc);
     if (!ok)
     {
         yError("RobotDescriptionClient::open() error could not connect to %s", remote_rpc.c_str());

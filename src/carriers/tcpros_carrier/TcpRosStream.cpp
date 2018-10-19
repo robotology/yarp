@@ -152,7 +152,7 @@ void TcpRosStream::updateKind(const char *kind, bool sender, bool reply) {
     string code = rosToKind(kind);
     if (code!="") {
         configureTwiddler(twiddler,code.c_str(),kind,sender,reply);
-        this->kind = code.c_str();
+        this->kind = code;
     } else {
         this->kind = "";
     }
