@@ -18,7 +18,7 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-typedef std::vector<NameSpace *> SpaceList;
+using SpaceList = std::vector<NameSpace*>;
 
 // private implementation of a namespace container
 class MultiNameSpaceHelper {

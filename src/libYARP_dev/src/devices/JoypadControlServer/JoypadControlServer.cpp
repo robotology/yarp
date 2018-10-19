@@ -508,7 +508,7 @@ bool JoypadControlServer::openPorts()
 //    return true;
     if(m_separatePorts)
     {
-        typedef bool (IJoypadController::*countGet)(unsigned int&);
+        using countGet = bool (IJoypadController::*)(unsigned int&);
 
         struct solver
         {

@@ -303,7 +303,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
         }
 
     /* retrieving modules information*/
-    typedef void (ModuleInterface::*setter)(const char*);
+    using setter = void (ModuleInterface::*)(const char*);
 
     vector<pair<const char*, setter> > modList;
     pair<const char*, setter>          pairNode;

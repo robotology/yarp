@@ -26,7 +26,7 @@ protected:
     bool runTimer(unsigned int iteration, YarpTimerEvent event);
 
 public:
-    typedef yarp::os::Timer::TimerCallback TimerCallback;
+    using TimerCallback = yarp::os::Timer::TimerCallback;
 
     PrivateImpl(TimerSettings sett, TimerCallback call, yarp::os::Mutex* mutex = nullptr) :
             m_settings(sett),
@@ -182,7 +182,7 @@ void TimerSingleton::run()
 class ThreadedTimer : public yarp::os::Timer::PrivateImpl,
                       public yarp::os::PeriodicThread
 {
-    typedef yarp::os::Timer::TimerCallback TimerCallback;
+    using TimerCallback = yarp::os::Timer::TimerCallback;
     virtual void run() override;
     virtual bool threadInit() override;
     bool singleStep{ false };

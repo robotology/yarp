@@ -65,7 +65,7 @@ typedef struct {
     JOCTET cache[1000000];  // need to make this variable...
 } net_destination_mgr;
 
-typedef net_destination_mgr *net_destination_ptr;
+using net_destination_ptr = net_destination_mgr*;
 
 void send_net_data(JOCTET *data, int len, void *client) {
     dbg_printf("Send %d bytes\n", len);
