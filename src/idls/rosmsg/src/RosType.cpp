@@ -49,7 +49,7 @@ std::vector<std::string> normalizedMessage(const std::string& line) {
             }
             result = "";
             if (ch=='=') {
-                all.push_back("=");
+                all.emplace_back("=");
                 can_quote = false;
             }
         } else {

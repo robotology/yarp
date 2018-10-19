@@ -946,7 +946,7 @@ bool WireTwiddlerWriter::emit(const char *src, int len) {
         if (push) {
             dbg_printf("  ** emit %ld len %d offset %d\n", (long int)activeEmit,
                        activeEmitLength, activeEmitOffset);
-            srcs.push_back(WireTwiddlerSrc((char*)activeEmit,activeEmitLength,activeEmitOffset));
+            srcs.emplace_back((char*)activeEmit,activeEmitLength,activeEmitOffset);
             activeEmit = nullptr;
             activeEmitLength = 0;
             activeEmitOffset = -1;

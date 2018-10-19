@@ -290,7 +290,7 @@ std::vector<std::string> listContentFiles(const std::string &curPath)
     std::list<std::string> fileStack;
     for (int i = 0; i<n; i++)
     {
-        fileStack.push_back(namelist[i]->d_name);
+        fileStack.emplace_back(namelist[i]->d_name);
         free(namelist[i]);
     }
     free(namelist);

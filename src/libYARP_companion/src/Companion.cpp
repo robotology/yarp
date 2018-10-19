@@ -111,7 +111,7 @@ static char* command_generator (const char* text, int state)
                     commands.push_back(cmdList->get(i).asString());
             }
         }
-        commands.push_back(" ");
+        commands.emplace_back(" ");
         commandListInitialized=true;
     }
     while ((list_index<commands.size()) && (name = (char*)commands[list_index].c_str()))
@@ -310,11 +310,11 @@ void Companion::add(const char* name,
     Entry e(name, fn);
     action[std::string(name)] = e;
     // maintain a record of order of keys
-    names.push_back(std::string(name));
+    names.emplace_back(name);
     if (tip != nullptr) {
-        tips.push_back(std::string(tip));
+        tips.emplace_back(tip);
     } else {
-        tips.push_back(std::string(""));
+        tips.emplace_back("");
     }
 }
 

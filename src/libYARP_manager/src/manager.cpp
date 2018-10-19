@@ -91,7 +91,7 @@ Manager::~Manager()
 bool Manager::addApplication(const char* szFileName, char** szAppName_, bool modifyName)
 {
     if(find(listOfXml.begin(), listOfXml.end(),szFileName) == listOfXml.end())
-        listOfXml.push_back(szFileName);
+        listOfXml.emplace_back(szFileName);
     else
         return true;//it means that the app exist already so it is safe to return true
     XmlAppLoader appload(szFileName);
@@ -115,7 +115,7 @@ bool Manager::addApplications(const char* szPath)
     {
         const char* currentFile = application->getXmlFile();
         knowledge.addApplication(application);
-        listOfXml.push_back(currentFile);
+        listOfXml.emplace_back(currentFile);
     }
     return true;
 }

@@ -207,7 +207,7 @@ std::vector<std::pair<RobotInterface::Device, RobotInterface::Action> > RobotInt
         for (ActionList::const_iterator ait = device.actions().begin(); ait != device.actions().end(); ++ait) {
             const Action &action = *ait;
             if (action.phase() == phase && action.level() == level) {
-                actions.push_back(std::make_pair(device, action));
+                actions.emplace_back(device, action);
             }
         }
     }

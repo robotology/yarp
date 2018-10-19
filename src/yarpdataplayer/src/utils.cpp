@@ -170,14 +170,14 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
                     LOG(" %s IS present adding it to the gui\n",filename);
 
                     if (recursiveName.empty()){
-                        names.push_back( string( direntp->d_name) );//pass also previous subDir name
+                        names.emplace_back( direntp->d_name );//pass also previous subDir name
                     } else {
-                        names.push_back( string(recursiveName + "_" + direntp->d_name) );//pass only subDir name
+                        names.emplace_back(recursiveName + "_" + direntp->d_name );//pass only subDir name
                     }
 
-                    info.push_back( string(dir + "/" + direntp->d_name + "/info.log") );
-                    logs.push_back( string(dir + "/" + direntp->d_name + "/data.log") );
-                    paths.push_back( string(dir + "/" + direntp->d_name + "/") ); //pass full path
+                    info.emplace_back(dir + "/" + direntp->d_name + "/info.log" );
+                    logs.emplace_back(dir + "/" + direntp->d_name + "/data.log" );
+                    paths.emplace_back(dir + "/" + direntp->d_name + "/" ); //pass full path
                     dir_count++;
                 } else {
                     if (!checkLog){

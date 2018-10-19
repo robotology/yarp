@@ -66,7 +66,7 @@ public:
 
     void stack(PortWriter& msg, const std::string& tag) {
         mutex.lock();
-        msgs.push_back(Bottle());
+        msgs.emplace_back();
         if (tag!="") {
             Bottle b;
             b.read(msg);

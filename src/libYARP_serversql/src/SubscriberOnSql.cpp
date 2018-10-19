@@ -639,11 +639,11 @@ bool SubscriberOnSql::setTopic(const std::string& port, const std::string& struc
         char *destFull = (char *)sqlite3_column_text(statement,3);
         char *mode = (char *)sqlite3_column_text(statement,4);
         vector<std::string> sub;
-        sub.push_back(src);
-        sub.push_back(dest);
-        sub.push_back(srcFull);
-        sub.push_back(destFull);
-        sub.push_back(mode?mode:"");
+        sub.emplace_back(src);
+        sub.emplace_back(dest);
+        sub.emplace_back(srcFull);
+        sub.emplace_back(destFull);
+        sub.emplace_back(mode?mode:"");
         subs.push_back(sub);
     }
     sqlite3_finalize(statement);

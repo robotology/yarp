@@ -143,16 +143,16 @@ void FrameTransformServer::list_response(yarp::os::Bottle& out)
     std::vector<Transforms_server_storage*> storages;
     std::vector<string>                     storageDescription;
     storages.push_back(m_ros_timed_transform_storage);
-    storageDescription.push_back("ros timed transforms");
+    storageDescription.emplace_back("ros timed transforms");
 
     storages.push_back(m_ros_static_transform_storage);
-    storageDescription.push_back("ros static transforms");
+    storageDescription.emplace_back("ros static transforms");
 
     storages.push_back(m_yarp_timed_transform_storage);
-    storageDescription.push_back("yarp timed transforms");
+    storageDescription.emplace_back("yarp timed transforms");
 
     storages.push_back(m_yarp_static_transform_storage);
-    storageDescription.push_back("yarp static transforms");
+    storageDescription.emplace_back("yarp static transforms");
 
     if (storages[0]->size() == 0 &&
         storages[1]->size() == 0 &&

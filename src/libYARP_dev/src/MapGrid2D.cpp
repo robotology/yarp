@@ -206,7 +206,7 @@ bool MapGrid2D::enlargeObstacles(double size)
                     this->m_map_flags.safePixel(x, y) == MAP_CELL_UNKNOWN ||
                     this->m_map_flags.safePixel(x, y) == MAP_CELL_TEMPORARY_OBSTACLE)
                 {
-                    list_of_cells.push_back(XYCell(x, y));
+                    list_of_cells.emplace_back(x, y);
                 }
             }
         }

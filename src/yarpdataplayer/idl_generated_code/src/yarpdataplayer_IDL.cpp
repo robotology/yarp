@@ -492,72 +492,72 @@ std::vector<std::string> yarpdataplayer_IDL::help(const std::string& functionNam
   bool showAll=(functionName=="--all");
   std::vector<std::string> helpString;
   if(showAll) {
-    helpString.push_back("*** Available commands:");
-    helpString.push_back("step");
-    helpString.push_back("setFrame");
-    helpString.push_back("getFrame");
-    helpString.push_back("load");
-    helpString.push_back("play");
-    helpString.push_back("pause");
-    helpString.push_back("stop");
-    helpString.push_back("quit");
-    helpString.push_back("help");
+    helpString.emplace_back("*** Available commands:");
+    helpString.emplace_back("step");
+    helpString.emplace_back("setFrame");
+    helpString.emplace_back("getFrame");
+    helpString.emplace_back("load");
+    helpString.emplace_back("play");
+    helpString.emplace_back("pause");
+    helpString.emplace_back("stop");
+    helpString.emplace_back("quit");
+    helpString.emplace_back("help");
   }
   else {
     if (functionName=="step") {
-      helpString.push_back("bool step() ");
-      helpString.push_back("Steps the player once. The player will be stepped ");
-      helpString.push_back("until all parts have sent data ");
-      helpString.push_back("@return true/false on success/failure ");
+      helpString.emplace_back("bool step() ");
+      helpString.emplace_back("Steps the player once. The player will be stepped ");
+      helpString.emplace_back("until all parts have sent data ");
+      helpString.emplace_back("@return true/false on success/failure ");
     }
     if (functionName=="setFrame") {
-      helpString.push_back("bool setFrame(const std::string& name, const std::int32_t frameNum) ");
-      helpString.push_back("Sets the frame number to the user desired frame. ");
-      helpString.push_back("@param name specifies the name of the loaded data ");
-      helpString.push_back("@param frameNum specifies the frame number the user ");
-      helpString.push_back(" would like to skip to ");
-      helpString.push_back("@return true/false on success/failure ");
+      helpString.emplace_back("bool setFrame(const std::string& name, const std::int32_t frameNum) ");
+      helpString.emplace_back("Sets the frame number to the user desired frame. ");
+      helpString.emplace_back("@param name specifies the name of the loaded data ");
+      helpString.emplace_back("@param frameNum specifies the frame number the user ");
+      helpString.emplace_back(" would like to skip to ");
+      helpString.emplace_back("@return true/false on success/failure ");
     }
     if (functionName=="getFrame") {
-      helpString.push_back("std::int32_t getFrame(const std::string& name) ");
-      helpString.push_back("Gets the frame number the user is requesting ");
-      helpString.push_back("@param name specifies the name of the data to modify ");
-      helpString.push_back(" would like to skip to ");
-      helpString.push_back("@return i32 returns the current frame index ");
+      helpString.emplace_back("std::int32_t getFrame(const std::string& name) ");
+      helpString.emplace_back("Gets the frame number the user is requesting ");
+      helpString.emplace_back("@param name specifies the name of the data to modify ");
+      helpString.emplace_back(" would like to skip to ");
+      helpString.emplace_back("@return i32 returns the current frame index ");
     }
     if (functionName=="load") {
-      helpString.push_back("bool load(const std::string& path) ");
-      helpString.push_back("Loads a dataset from a path ");
-      helpString.push_back("@return true/false on success/failure ");
+      helpString.emplace_back("bool load(const std::string& path) ");
+      helpString.emplace_back("Loads a dataset from a path ");
+      helpString.emplace_back("@return true/false on success/failure ");
     }
     if (functionName=="play") {
-      helpString.push_back("bool play() ");
-      helpString.push_back("Plays the dataSets ");
-      helpString.push_back("@return true/false on success/failure ");
+      helpString.emplace_back("bool play() ");
+      helpString.emplace_back("Plays the dataSets ");
+      helpString.emplace_back("@return true/false on success/failure ");
     }
     if (functionName=="pause") {
-      helpString.push_back("bool pause() ");
-      helpString.push_back("Pauses the dataSets ");
-      helpString.push_back("@return true/false on success/failure ");
+      helpString.emplace_back("bool pause() ");
+      helpString.emplace_back("Pauses the dataSets ");
+      helpString.emplace_back("@return true/false on success/failure ");
     }
     if (functionName=="stop") {
-      helpString.push_back("bool stop() ");
-      helpString.push_back("Stops the dataSets ");
-      helpString.push_back("@return true/false on success/failure ");
+      helpString.emplace_back("bool stop() ");
+      helpString.emplace_back("Stops the dataSets ");
+      helpString.emplace_back("@return true/false on success/failure ");
     }
     if (functionName=="quit") {
-      helpString.push_back("bool quit() ");
-      helpString.push_back("Quit the module. ");
-      helpString.push_back("@return true/false on success/failure ");
+      helpString.emplace_back("bool quit() ");
+      helpString.emplace_back("Quit the module. ");
+      helpString.emplace_back("@return true/false on success/failure ");
     }
     if (functionName=="help") {
-      helpString.push_back("std::vector<std::string> help(const std::string& functionName=\"--all\")");
-      helpString.push_back("Return list of available commands, or help message for a specific function");
-      helpString.push_back("@param functionName name of command for which to get a detailed description. If none or '--all' is provided, print list of available commands");
-      helpString.push_back("@return list of strings (one string per line)");
+      helpString.emplace_back("std::vector<std::string> help(const std::string& functionName=\"--all\")");
+      helpString.emplace_back("Return list of available commands, or help message for a specific function");
+      helpString.emplace_back("@param functionName name of command for which to get a detailed description. If none or '--all' is provided, print list of available commands");
+      helpString.emplace_back("@return list of strings (one string per line)");
     }
   }
-  if ( helpString.empty()) helpString.push_back("Command not found");
+  if ( helpString.empty()) helpString.emplace_back("Command not found");
   return helpString;
 }
 
