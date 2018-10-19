@@ -212,9 +212,9 @@ bool MapGrid2D::enlargeObstacles(double size)
         }
 
         //process each cell of the list and enlarges it
-        for (auto it = list_of_cells.begin(); it != list_of_cells.end(); it++)
+        for (auto& list_of_cell : list_of_cells)
         {
-            enlargeCell(*it);
+            enlargeCell(list_of_cell);
         }
     }
     return true;

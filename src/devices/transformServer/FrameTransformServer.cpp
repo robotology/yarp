@@ -59,13 +59,13 @@ bool Transforms_server_storage::delete_transform(int id)
 bool Transforms_server_storage::set_transform(const FrameTransform& t)
 {
     LockGuard lock(m_mutex);
-    for (size_t i = 0; i < m_transforms.size(); i++)
+    for (auto& m_transform : m_transforms)
     {
        //@@@ this linear search requires optimization!
-       if (m_transforms[i].dst_frame_id == t.dst_frame_id && m_transforms[i].src_frame_id == t.src_frame_id)
+       if (m_transform.dst_frame_id == t.dst_frame_id && m_transform.src_frame_id == t.src_frame_id)
        {
           //transform already exists, update it
-          m_transforms[i]=t;
+          m_transform=t;
           return true;
        }
     }

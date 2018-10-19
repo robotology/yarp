@@ -98,10 +98,10 @@ std::string NameConfig::expandFilename(const char *fname) {
 
 std::string NameConfig::getSafeString(const std::string& txt) {
     std::string result = txt;
-    for (unsigned int i=0; i<result.length(); i++) {
-        char ch = result[i];
+    for (char & i : result) {
+        char ch = i;
         if (!((ch>='0'&&ch<='9')||(ch>='A'&&ch<='Z')||(ch>='a'&&ch<='z'))) {
-            result[i] = '_';
+            i = '_';
         }
     }
     return result;

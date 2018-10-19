@@ -173,16 +173,16 @@ void BuilderWindow::prepareManagerFrom(Manager* lazy,
     KnowledgeBase* lazy_kb = lazy->getKnowledgeBase();
 
     ModulePContainer mods =  lazy_kb->getModules();
-    for(ModulePIterator itr=mods.begin(); itr!=mods.end(); itr++)
-        manager.getKnowledgeBase()->addModule((*itr));
+    for(auto& mod : mods)
+        manager.getKnowledgeBase()->addModule(mod);
 
     ResourcePContainer res =  lazy_kb->getResources();
-    for(ResourcePIterator itr=res.begin(); itr!=res.end(); itr++)
-        manager.getKnowledgeBase()->addResource((*itr));
+    for(auto& re : res)
+        manager.getKnowledgeBase()->addResource(re);
 
     ApplicaitonPContainer apps =  lazy_kb->getApplications();
-    for(ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++)
-        manager.getKnowledgeBase()->addApplication((*itr));
+    for(auto& app : apps)
+        manager.getKnowledgeBase()->addApplication(app);
 
     // loading application
     manager.loadApplication(szAppName);

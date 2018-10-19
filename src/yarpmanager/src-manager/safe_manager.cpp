@@ -67,16 +67,16 @@ bool SafeManager::prepare(Manager* lazy,
     KnowledgeBase* lazy_kb = lazy->getKnowledgeBase();
 
     ModulePContainer mods =  lazy_kb->getModules();
-    for(ModulePIterator itr=mods.begin(); itr!=mods.end(); itr++)
-        getKnowledgeBase()->addModule((*itr));
+    for(auto& mod : mods)
+        getKnowledgeBase()->addModule(mod);
 
     ResourcePContainer res =  lazy_kb->getResources();
-    for(ResourcePIterator itr=res.begin(); itr!=res.end(); itr++)
-        getKnowledgeBase()->addResource((*itr));
+    for(auto& re : res)
+        getKnowledgeBase()->addResource(re);
 
     ApplicaitonPContainer apps =  lazy_kb->getApplications();
-    for(ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++)
-        getKnowledgeBase()->addApplication((*itr));
+    for(auto& app : apps)
+        getKnowledgeBase()->addApplication(app);
 
     return true;
 }
@@ -111,23 +111,23 @@ void SafeManager::run()
     switch(local_action){
     case MRUN:{
             std::vector<double> waitVec;
-            for (unsigned int i=0; i<local_modIds.size(); i++)
+            for (int local_modId : local_modIds)
             {
-                Executable * exec = Manager::getExecutableById(local_modIds[i]);
+                Executable * exec = Manager::getExecutableById(local_modId);
                 if (exec)
                 {
                     waitVec.push_back(exec->getPostExecWait());
                 }
             }
             double minWait=*std::min_element(waitVec.begin(), waitVec.end());
-            for (unsigned int i=0; i<local_modIds.size(); i++)
+            for (int local_modId : local_modIds)
             {
-                Executable * exec = Manager::getExecutableById(local_modIds[i]);
+                Executable * exec = Manager::getExecutableById(local_modId);
                 if (exec)
                 {
                     exec->setPostExecWait(exec->getPostExecWait() - minWait);
                 }
-                Manager::run(local_modIds[i], true);
+                Manager::run(local_modId, true);
             }
 
             /*
@@ -161,23 +161,23 @@ void SafeManager::run()
         }
     case MSTOP:{
             std::vector<double> waitVec;
-            for (unsigned int i=0; i<local_modIds.size(); i++)
+            for (int local_modId : local_modIds)
             {
-                Executable * exec = Manager::getExecutableById(local_modIds[i]);
+                Executable * exec = Manager::getExecutableById(local_modId);
                 if (exec)
                 {
                     waitVec.push_back(exec->getPostStopWait());
                 }
             }
             double minWait=*std::min_element(waitVec.begin(), waitVec.end());
-            for (unsigned int i=0; i<local_modIds.size(); i++)
+            for (int local_modId : local_modIds)
             {
-                Executable * exec = Manager::getExecutableById(local_modIds[i]);
+                Executable * exec = Manager::getExecutableById(local_modId);
                 if (exec)
                 {
                     exec->setPostStopWait(exec->getPostStopWait() - minWait);
                 }
-                Manager::stop(local_modIds[i], true);
+                Manager::stop(local_modId, true);
             }
             /*for(unsigned int i=0; i<local_modIds.size(); i++)
                 Manager::waitingModuleStop(local_modIds[i]);
@@ -208,8 +208,8 @@ void SafeManager::run()
             break;
         }
     case MKILL:{
-            for(unsigned int i=0; i<local_modIds.size(); i++)
-                Manager::kill(local_modIds[i], true);
+            for(int local_modId : local_modIds)
+                Manager::kill(local_modId, true);
             /*for(unsigned int i=0; i<local_modIds.size(); i++)
                 Manager::waitingModuleKill(local_modIds[i]);
 
@@ -239,32 +239,32 @@ void SafeManager::run()
             break;
         }
     case MCONNECT:{
-            for(unsigned int i=0; i<local_conIds.size(); i++)
+            for(int local_conId : local_conIds)
             {
-                if(Manager::connect(local_conIds[i]))
+                if(Manager::connect(local_conId))
                 {
-                    if(eventReceiver) eventReceiver->onConConnect(local_conIds[i]);
+                    if(eventReceiver) eventReceiver->onConConnect(local_conId);
                 }
                 else
                 {
-                    if(eventReceiver) eventReceiver->onConDisconnect(local_conIds[i]);
+                    if(eventReceiver) eventReceiver->onConDisconnect(local_conId);
                 }
-                refreshPortStatus(local_conIds[i]);
+                refreshPortStatus(local_conId);
             }
             break;
         }
     case MDISCONNECT:{
-            for(unsigned int i=0; i<local_conIds.size(); i++)
+            for(int local_conId : local_conIds)
             {
-                if(Manager::disconnect(local_conIds[i]))
+                if(Manager::disconnect(local_conId))
                 {
-                    if(eventReceiver) eventReceiver->onConDisconnect(local_conIds[i]);
+                    if(eventReceiver) eventReceiver->onConDisconnect(local_conId);
                 }
                 else
                 {
-                    if(eventReceiver) eventReceiver->onConConnect(local_conIds[i]);
+                    if(eventReceiver) eventReceiver->onConConnect(local_conId);
                 }
-                refreshPortStatus(local_conIds[i]);
+                refreshPortStatus(local_conId);
             }
             break;
         }
@@ -272,40 +272,40 @@ void SafeManager::run()
     case MREFRESH:{
             busyAction = true;
 
-            for(unsigned int i=0; i<local_modIds.size(); i++)
+            for(int local_modId : local_modIds)
             {
-                if(Manager::running(local_modIds[i]))
+                if(Manager::running(local_modId))
                 {
-                    if(eventReceiver) eventReceiver->onModStart(local_modIds[i]);
+                    if(eventReceiver) eventReceiver->onModStart(local_modId);
                 }
                 else //if(Manager::suspended(local_modIds[i]))
                 {
-                    if(eventReceiver) eventReceiver->onModStop(local_modIds[i]);
+                    if(eventReceiver) eventReceiver->onModStop(local_modId);
                 }
             }
 
-            for(unsigned int i=0; i<local_conIds.size(); i++)
+            for(int local_conId : local_conIds)
             {
-                if(Manager::connected(local_conIds[i]))
+                if(Manager::connected(local_conId))
                 {
-                    if(eventReceiver) eventReceiver->onConConnect(local_conIds[i]);
+                    if(eventReceiver) eventReceiver->onConConnect(local_conId);
                 }
                 else
                 {
-                    if(eventReceiver) eventReceiver->onConDisconnect(local_conIds[i]);
+                    if(eventReceiver) eventReceiver->onConDisconnect(local_conId);
                 }
-                refreshPortStatus(local_conIds[i]);
+                refreshPortStatus(local_conId);
             }
 
-            for(unsigned int i=0; i<local_resIds.size(); i++)
+            for(int local_resId : local_resIds)
             {
-                if(Manager::exist(local_resIds[i]))
+                if(Manager::exist(local_resId))
                 {
-                    if(eventReceiver) eventReceiver->onResAvailable(local_resIds[i]);
+                    if(eventReceiver) eventReceiver->onResAvailable(local_resId);
                 }
                 else
                 {
-                    if(eventReceiver) eventReceiver->onResUnAvailable(local_resIds[i]);
+                    if(eventReceiver) eventReceiver->onResUnAvailable(local_resId);
                 }
             }
             busyAction = false;
@@ -313,30 +313,30 @@ void SafeManager::run()
         }
 
     case MREFRESH_CNN:{
-            for(unsigned int i=0; i<local_conIds.size(); i++)
+            for(int local_conId : local_conIds)
             {
-                if(Manager::connected(local_conIds[i]))
+                if(Manager::connected(local_conId))
                 {
-                    if(eventReceiver) eventReceiver->onConConnect(local_conIds[i]);
+                    if(eventReceiver) eventReceiver->onConConnect(local_conId);
                 }
                 else
                 {
-                    if(eventReceiver) eventReceiver->onConDisconnect(local_conIds[i]);
+                    if(eventReceiver) eventReceiver->onConDisconnect(local_conId);
                 }
-                refreshPortStatus(local_conIds[i]);
+                refreshPortStatus(local_conId);
             }
             break;
         }
 
     case MATTACHSTDOUT:{
-            for(unsigned int i=0; i<local_modIds.size(); i++)
-                Manager::attachStdout(local_modIds[i]);
+            for(int local_modId : local_modIds)
+                Manager::attachStdout(local_modId);
             break;
         }
 
     case MDETACHSTDOUT:{
-            for(unsigned int i=0; i<local_modIds.size(); i++)
-                Manager::detachStdout(local_modIds[i]);
+            for(int local_modId : local_modIds)
+                Manager::detachStdout(local_modId);
             break;
         }
 

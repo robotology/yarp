@@ -41,8 +41,7 @@ public:
 
     void clear() {
         // remove all namespaces and reset flags
-        for (int i=0; i<(int)spaces.size(); i++) {
-            NameSpace *ns = spaces[i];
+        for (auto ns : spaces) {
             if (ns) {
                 delete ns;
                 ns = nullptr;
@@ -61,8 +60,7 @@ public:
         _usesCentralServer = false;
         _serverAllocatesPortNumbers = true;
         // now scan each namespace
-        for (int i=0; i<(int)spaces.size(); i++) {
-            NameSpace *ns = spaces[i];
+        for (auto ns : spaces) {
             if (!ns) continue;
             // if any namespace is nonlocal, combination is nonlocal
             if (!ns->localOnly()) _localOnly = false;
@@ -163,8 +161,7 @@ public:
     Contact queryName(const std::string& name) {
         activate();
         // try query against each namespace in order
-        for (int i=0; i<(int)spaces.size(); i++) {
-            NameSpace *ns = spaces[i];
+        for (auto ns : spaces) {
             if (!ns) continue;
             if (ns->getNameServerName()==name) {
                 // optimization: return cached server address for

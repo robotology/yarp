@@ -66,12 +66,10 @@ Value toValue(XmlRpcValue& v, bool outer)
             Bottle *bot = vbot.asList();
             XmlRpcValue::ValueStruct& vals = v;
             bot->addString("dict");
-            for (XmlRpcValue::ValueStruct::iterator it = vals.begin();
-                 it!= vals.end();
-                 it++) {
-                XmlRpcValue& v2 = it->second;
+            for (auto& val : vals) {
+                XmlRpcValue& v2 = val.second;
                 Bottle& sub = bot->addList();
-                sub.addString(it->first.c_str());
+                sub.addString(val.first.c_str());
                 if (v2.getType()!=XmlRpcValue::TypeInvalid) {
                     sub.add(toValue(v2,false));
                 }

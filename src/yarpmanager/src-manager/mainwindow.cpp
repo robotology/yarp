@@ -384,9 +384,9 @@ void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
     yarp::manager::KnowledgeBase* kb = lazyManager.getKnowledgeBase();
     yarp::manager::ApplicaitonPContainer apps =  kb->getApplications();
     unsigned int cnt = 0;
-    for(yarp::manager::ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++){
+    for(auto& itr : apps){
         cnt++;
-        yarp::manager::Application *app = dynamic_cast<yarp::manager::Application*>(*itr);
+        yarp::manager::Application *app = dynamic_cast<yarp::manager::Application*>(itr);
         if(app){
             ui->entitiesTree->addApplication(app);
             if(strcmp(selectNodeForEditing.toLatin1().data(),app->getName())==0){
@@ -399,16 +399,16 @@ void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
     watcher->addPaths(listOfAppFiles);
 
     yarp::manager::ResourcePContainer resources = kb->getResources();
-    for(yarp::manager::ResourcePIterator itr=resources.begin(); itr!=resources.end(); itr++){
-        yarp::manager::Computer* comp = dynamic_cast<yarp::manager::Computer*>(*itr);
+    for(auto& resource : resources) {
+        yarp::manager::Computer* comp = dynamic_cast<yarp::manager::Computer*>(resource);
         if(comp){
             ui->entitiesTree->addComputer(comp);
         }
     }
 
     yarp::manager::ModulePContainer modules = kb->getModules();
-    for(yarp::manager::ModulePIterator itr=modules.begin(); itr!=modules.end(); itr++){
-        yarp::manager::Module *mod = dynamic_cast<yarp::manager::Module*>(*itr);
+    for(auto& module : modules) {
+        yarp::manager::Module *mod = dynamic_cast<yarp::manager::Module*>(module);
         if(mod){
             ui->entitiesTree->addModule(mod);
         }
@@ -545,9 +545,9 @@ QString MainWindow::getAppNameFromXml(QString fileName)
     QString appName("");
     yarp::manager::KnowledgeBase* kb = lazyManager.getKnowledgeBase();
     yarp::manager::ApplicaitonPContainer apps =  kb->getApplications();
-    for(yarp::manager::ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++)
+    for(auto& itr : apps)
     {
-        yarp::manager::Application *app = dynamic_cast<yarp::manager::Application*>(*itr);
+        yarp::manager::Application *app = dynamic_cast<yarp::manager::Application*>(itr);
         if(app)
         {
             if(app->getXmlFile() == fileName.toStdString())
@@ -1293,11 +1293,11 @@ void MainWindow::onYarpNameList()
     ui->entitiesTree->clearPorts();
     yarp::profiler::NetworkProfiler::ports_name_set ports;
     yarp::profiler::NetworkProfiler::yarpNameList(ports, true);
-    for(size_t i = 0; i<ports.size(); i++)
+    for(auto& port : ports)
     {
-        std::string portName = ports[i].find("name").asString();
-        std::string portIp   = ports[i].find("ip").asString() + " port " +
-                    std::to_string(ports[i].find("port_number").asInt32());
+        std::string portName = port.find("name").asString();
+        std::string portIp   = port.find("ip").asString() + " port " +
+                    std::to_string(port.find("port_number").asInt32());
         ui->entitiesTree->addPort(QStringList() << QString(portName.c_str())
                                   << QString(portIp.c_str()));
     }

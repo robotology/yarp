@@ -75,8 +75,8 @@ static void generateTypeMap1(RosType& t, std::string& txt)
             txt += " list ";
             txt += NetType::toString((int)lst.size());
 
-            for (size_t i=0; i<lst.size(); i++) {
-                generateTypeMap1(lst[i],txt);
+            for (auto& i : lst) {
+                generateTypeMap1(i, txt);
             }
         } else {
             txt += " vector ";

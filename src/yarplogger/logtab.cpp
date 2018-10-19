@@ -182,10 +182,10 @@ void LogTab::updateLog(bool from_beginning)
 
         if (displayColors_enabled)
         {
-            for (QList<QStandardItem *>::iterator col_it = rowItem.begin(); col_it != rowItem.end(); col_it++)
+            for (auto& col_it : rowItem)
             {
-                (*col_it)->setBackground(rowbgcolor);
-                (*col_it)->setForeground(rowfgcolor);
+                col_it->setBackground(rowbgcolor);
+                col_it->setForeground(rowfgcolor);
             }
         }
         rootNode->appendRow(rowItem);

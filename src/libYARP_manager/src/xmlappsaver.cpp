@@ -231,8 +231,8 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
             if(model.points.size()>0)
             {
                 txt<<"(Pos ";
-                for(unsigned int i=0; i<model.points.size(); i++)
-                    txt<<"((x "<<model.points[i].x<<") "<<"(y "<<model.points[i].y<<")) ";
+                for(auto& point : model.points)
+                    txt<<"((x "<<point.x<<") "<<"(y "<<point.y<<")) ";
                 txt<<" )";
                 TiXmlElement *geometry=new TiXmlElement("geometry");
                 geometry->LinkEndChild(new TiXmlText(txt.str().c_str()));
@@ -255,11 +255,11 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
             newArb->LinkEndChild(port);
 
             std::map<string, string> &rules = arb.getRuleMap();
-            for(std::map<string, string>::iterator it=rules.begin(); it!=rules.end(); ++it)
+            for(auto& it : rules)
             {
                 TiXmlElement *rule = new TiXmlElement("rule");
-                rule->SetAttribute("connection", it->first.c_str());
-                rule->LinkEndChild(new TiXmlText(it->second.c_str()));
+                rule->SetAttribute("connection", it.first.c_str());
+                rule->LinkEndChild(new TiXmlText(it.second.c_str()));
                 newArb->LinkEndChild(rule);
             }
 
@@ -268,8 +268,8 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
             if(model.points.size()>0)
             {
                 txt<<"(Pos ";
-                for(unsigned int i=0; i<model.points.size(); i++)
-                    txt<<"((x "<<model.points[i].x<<") "<<"(y "<<model.points[i].y<<")) ";
+                for(auto& point : model.points)
+                    txt<<"((x "<<point.x<<") "<<"(y "<<point.y<<")) ";
                 txt<<" )";
                 TiXmlElement *geometry=new TiXmlElement("geometry");
                 geometry->LinkEndChild(new TiXmlText(txt.str().c_str()));

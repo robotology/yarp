@@ -48,8 +48,8 @@ public:
     Params()
     {
         argc = 0;
-        for (int i = 0; i < MAX_ARG_CT; i++) {
-            argv[i] = nullptr;
+        for (auto & i : argv) {
+            i = nullptr;
         }
     }
 
@@ -308,9 +308,9 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
         Bottle bcmd(cmd), reply;
         NetworkBase::writeToNameServer(bcmd, reply, style);
         std::string si = reply.toString(), so;
-        for (int i = 0; i < (int)si.length(); i++) {
-            if (si[i] != '\"') {
-                so += si[i];
+        for (char i : si) {
+            if (i != '\"') {
+                so += i;
             }
         }
         return so;

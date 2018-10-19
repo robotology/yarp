@@ -101,10 +101,10 @@ void MultiResource::swap(const MultiResource &res)
 
 void MultiResource::clear()
 {
-    for(unsigned int i=0; i<resources.size(); i++)
+    for(auto& resource : resources)
     {
-        delete resources[i];
-        resources[i] = nullptr;
+        delete resource;
+        resource = nullptr;
     }
     resources.clear();
 }

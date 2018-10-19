@@ -199,9 +199,9 @@ AnalogWrapper::~AnalogWrapper()
 
 void AnalogWrapper::setHandlers()
 {
-    for(unsigned int i=0;i<analogPorts.size(); i++)
+    for(auto& analogPort : analogPorts)
     {
-        std::string rpcPortName = analogPorts[i].port_name;
+        std::string rpcPortName = analogPort.port_name;
         rpcPortName += "/rpc:i";
         AnalogServerHandler* ash = new AnalogServerHandler(rpcPortName.c_str());
         handlers.push_back(ash);
@@ -210,12 +210,12 @@ void AnalogWrapper::setHandlers()
 
 void AnalogWrapper::removeHandlers()
 {
-    for(unsigned int i=0; i<handlers.size(); i++)
+    for(auto& handler : handlers)
     {
-        if (handlers[i]!=nullptr)
+        if (handler != nullptr)
         {
-            delete handlers[i];
-            handlers[i] = nullptr;
+            delete handler;
+            handler = nullptr;
         }
     }
     handlers.clear();
@@ -344,12 +344,12 @@ void AnalogWrapper::detach()
 
 bool AnalogWrapper::threadInit()
 {
-    for(unsigned int i=0; i<analogPorts.size(); i++)
+    for(auto& analogPort : analogPorts)
     {
         // open data port
-        if (!analogPorts[i].port.open(analogPorts[i].port_name))
+        if (!analogPort.port.open(analogPort.port_name))
            {
-               yError("AnalogWrapper: failed to open port %s", analogPorts[i].port_name.c_str());
+               yError("AnalogWrapper: failed to open port %s", analogPort.port_name.c_str());
                return false;
            }
     }
@@ -756,10 +756,10 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
 
 void AnalogWrapper::threadRelease()
 {
-    for(unsigned int i=0; i<analogPorts.size(); i++)
+    for(auto& analogPort : analogPorts)
     {
-        analogPorts[i].port.interrupt();
-        analogPorts[i].port.close();
+        analogPort.port.interrupt();
+        analogPort.port.close();
     }
 }
 
@@ -779,25 +779,25 @@ void AnalogWrapper::run()
                 {
                     lastStateStamp.update();
                     // send the data on the port(s), splitting them as specified in the config file
-                    for(unsigned int i=0; i<analogPorts.size(); i++)
+                    for(auto& analogPort : analogPorts)
                     {
-                        yarp::sig::Vector &pv = analogPorts[i].port.prepare();
-                        first = analogPorts[i].offset;
-                        if(analogPorts[i].length==-1)   // read the max length available
+                        yarp::sig::Vector &pv = analogPort.port.prepare();
+                        first = analogPort.offset;
+                        if(analogPort.length == -1)   // read the max length available
                             last = lastDataRead.size()-1;
                         else
-                            last = analogPorts[i].offset + analogPorts[i].length - 1;
+                            last = analogPort.offset + analogPort.length - 1;
 
                         // check vector limit
                         if(last>=(int)lastDataRead.size()){
-                            yError()<<"AnalogWrapper: error while sending analog sensor output on port "<< analogPorts[i].port_name
+                            yError()<<"AnalogWrapper: error while sending analog sensor output on port "<< analogPort.port_name
                                     <<" Vector size expected to be at least "<<last<<" whereas it is "<< lastDataRead.size();
                             continue;
                         }
                         pv = lastDataRead.subVector(first, last);
 
-                        analogPorts[i].port.setEnvelope(lastStateStamp);
-                        analogPorts[i].port.write();
+                        analogPort.port.setEnvelope(lastStateStamp);
+                        analogPort.port.write();
                     }
                 }
 

@@ -668,9 +668,9 @@ void RpLidar::run()
             }
         }
 
-        for (size_t i = 0; i < range_skip_vector.size(); i++)
+        for (auto& i : range_skip_vector)
         {
-            if (angle>range_skip_vector[i].min && angle < range_skip_vector[i].max)
+            if (angle > i.min && angle < i.max)
             {
                 distance = std::numeric_limits<double>::infinity();
             }

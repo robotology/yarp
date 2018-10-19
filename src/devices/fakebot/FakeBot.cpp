@@ -57,8 +57,8 @@ void FakeBot::init() {
     m_dx = m_dy = 0;
 
     std::normal_distribution<double> ndist(0,255);
-    for (int k=0; k<MAXRND; k++) {
-        rnds[k] = int(ndist(randengine));
+    for (int & rnd : rnds) {
+        rnd = int(ndist(randengine));
     }
 
     fore.resize(64,64);

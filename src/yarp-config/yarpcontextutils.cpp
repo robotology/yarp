@@ -313,8 +313,8 @@ std::vector<std::string> listContentFiles(const std::string &curPath)
             if ((statbuf.st_mode & S_IFMT) == S_IFDIR)
             {
                 std::vector<std::string> nestedFiles = listContentFiles(path);
-                for (std::vector<std::string>::iterator nestedIt = nestedFiles.begin(); nestedIt != nestedFiles.end(); ++nestedIt)
-                    fileStack.push_back(path + PATH_SEPARATOR + (*nestedIt));
+                for (auto& nestedFile : nestedFiles)
+                    fileStack.push_back(path + PATH_SEPARATOR + nestedFile);
             }
         }
         fileStack.pop_front();
@@ -325,8 +325,8 @@ std::vector<std::string> listContentFiles(const std::string &curPath)
 void printContentDirs(const std::string &curPath)
 {
     std::vector<std::string> dirsList = listContentDirs(curPath);
-    for (std::vector<std::string>::iterator dirsIt = dirsList.begin(); dirsIt != dirsList.end(); ++dirsIt)
-        printf("%s\n", (*dirsIt).c_str());
+    for (auto& dirsIt : dirsList)
+        printf("%s\n", dirsIt.c_str());
 }
 
 
@@ -471,13 +471,13 @@ int recursiveDiff(std::string srcDirName, std::string destDirName, std::ostream 
     if (!ok)
         return -1;
     size_t nModifiedFiles = 0;
-    for (std::set<std::string>::iterator srcIt = srcFileList.begin(); srcIt != srcFileList.end(); ++srcIt)
+    for (const auto& srcIt : srcFileList)
     {
-        std::set<std::string>::iterator destPos = destFileList.find(*srcIt);
+        std::set<std::string>::iterator destPos = destFileList.find(srcIt);
         if (destPos != destFileList.end())
         {
             diff_match_patch<std::string> dmp;
-            std::string srcFileName = srcDirName + PATH_SEPARATOR + (*srcIt);
+            std::string srcFileName = srcDirName + PATH_SEPARATOR + srcIt;
             if (isHidden(srcFileName))
                 continue;
 
@@ -489,7 +489,7 @@ int recursiveDiff(std::string srcDirName, std::string destDirName, std::ostream 
             std::string patchString = dmp.patch_toText(dmp.patch_make(srcStr, destStr));
             if (patchString != "")
             {
-                output << "- " << srcDirName + PATH_SEPARATOR + (*srcIt) << endl;
+                output << "- " << srcDirName + PATH_SEPARATOR + srcIt << endl;
                 output << "+ " << destDirName + PATH_SEPARATOR + (*destPos) << endl;
                 output << dmp.patch_toText(dmp.patch_make(srcStr, destStr)) << std::endl;
                 nModifiedFiles++;
@@ -553,17 +553,17 @@ int recursiveMerge(std::string srcDirName, std::string destDirName, std::string 
     if (!ok)
         return -1;
 
-    for (std::set<std::string>::iterator srcIt = srcFileList.begin(); srcIt != srcFileList.end(); ++srcIt)
+    for (const auto& srcIt : srcFileList)
     {
-        std::string srcFileName = srcDirName + PATH_SEPARATOR + (*srcIt);
+        std::string srcFileName = srcDirName + PATH_SEPARATOR + srcIt;
         if (isHidden(srcFileName))
             continue;
 
-        std::set<std::string>::iterator destPos = destFileList.find(*srcIt);
+        std::set<std::string>::iterator destPos = destFileList.find(srcIt);
         if (destPos != destFileList.end())
         {
             std::string destFileName = destDirName + PATH_SEPARATOR + (*destPos);
-            std::set<std::string>::iterator hiddenDestPos = hiddenFilesList.find(*srcIt);
+            std::set<std::string>::iterator hiddenDestPos = hiddenFilesList.find(srcIt);
             if (hiddenDestPos != hiddenFilesList.end())
             {
                 std::string hiddenFileName = commonParentName + PATH_SEPARATOR + (*hiddenDestPos);
@@ -854,18 +854,18 @@ int diffList(folderType fType, bool verbose)
     {
         std::string installedPath = installedPaths.get(n).asString();
         std::vector<std::string> subDirs = listContentDirs(installedPath);
-        for (std::vector<std::string>::iterator subDirIt = subDirs.begin(); subDirIt != subDirs.end(); ++subDirIt)
+        for (auto& subDir : subDirs)
         {
             ostream tmp(nullptr);
             opts.searchLocations = ResourceFinderOptions::User;
             rf.setQuiet();
-            std::string userPath = rf.findPath(getFolderStringName(fType).append(PATH_SEPARATOR).append(*subDirIt), opts);
+            std::string userPath = rf.findPath(getFolderStringName(fType).append(PATH_SEPARATOR).append(subDir), opts);
             if (userPath == "")
                 continue;
             try
             {
-                if (recursiveDiff(installedPath.append(PATH_SEPARATOR).append(*subDirIt), userPath, tmp)>0)
-                    std::cout << (*subDirIt) << std::endl;
+                if (recursiveDiff(installedPath.append(PATH_SEPARATOR).append(subDir), userPath, tmp)>0)
+                    std::cout << subDir << std::endl;
             }
             catch (...)
             {

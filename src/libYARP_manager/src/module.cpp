@@ -232,11 +232,10 @@ void Module::clear()
     strEnvironment.clear();
     strBasePrefix.clear();
     strDisplay.clear();
-    for(ResourcePIterator itr = resources.begin();
-        itr != resources.end(); itr++)
+    for(auto& resource : resources)
     {
-        delete (*itr);
-        *itr = nullptr;
+        delete resource;
+        resource = nullptr;
     }
     resources.clear();
     waitStart = waitStop = 0.0;

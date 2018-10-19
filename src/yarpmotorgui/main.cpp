@@ -159,10 +159,10 @@ int main(int argc, char *argv[])
                     std::vector<DeviceDescription> wrappers_list;
                     wrappers_list.reserve(cbw2_list.size());
                     wrappers_list.insert(wrappers_list.end(), cbw2_list.begin(), cbw2_list.end());
-                    for (size_t i = 0; i < wrappers_list.size(); i++)
+                    for (auto& i : wrappers_list)
                     {
-                        yDebug() << wrappers_list[i].device_name;
-                        pParts.addString(wrappers_list[i].device_name);
+                        yDebug() << i.device_name;
+                        pParts.addString(i.device_name);
                     }
                 }
             }

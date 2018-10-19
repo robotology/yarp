@@ -58,8 +58,8 @@ bool BinaryExpParser::parse(string _exp)
     {
         ErrorLogger* logger = ErrorLogger::Instance();
         string msg = "Invalid operands";
-        for(int i=0; i<(int)invalidOperands.size(); i++)
-            msg += " '" + invalidOperands[i] + "'";
+        for(const auto& invalidOperand : invalidOperands)
+            msg += " '" + invalidOperand + "'";
         logger->addError(msg);
         return false;
     }

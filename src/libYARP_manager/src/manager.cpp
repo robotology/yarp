@@ -237,9 +237,9 @@ bool Manager::loadApplication(const char* szAppName)
 
     // set all resources as unavailable
     ResourcePContainer allresources = knowledge.getResources();
-    for(unsigned int i=0; i<allresources.size(); i++)
+    for(auto& allresource : allresources)
     {
-        Computer* comp = dynamic_cast<Computer*>(allresources[i]);
+        Computer* comp = dynamic_cast<Computer*>(allresource);
         if(comp)
             comp->setAvailability(false);
     }
@@ -356,9 +356,9 @@ bool Manager::prepare(bool silent)
         /**
          * Adding resources to their owners
          */
-        for(unsigned int i=0; i<resources.size(); i++)
+        for(auto& resource : resources)
         {
-            ResYarpPort* res = dynamic_cast<ResYarpPort*>(resources[i]);
+            ResYarpPort* res = dynamic_cast<ResYarpPort*>(resource);
             if(res && (res->owner() == (*itr)))
                 exe->addResource(*res);
         }
@@ -538,9 +538,9 @@ bool Manager::updateResources()
     broker.getAllPorts(ports);
 
     ResourcePContainer allresources = knowledge.getResources();
-    for(unsigned int i=0; i<allresources.size(); i++)
+    for(auto& allresource : allresources)
     {
-        Computer* comp = dynamic_cast<Computer*>(allresources[i]);
+        Computer* comp = dynamic_cast<Computer*>(allresource);
         if(comp && updateResource(comp))
         {
             //set all as unavailable
@@ -553,11 +553,11 @@ bool Manager::updateResources()
             }
 
             // adding all available yarp ports as peripherals
-            for(unsigned int i=0; i<ports.size(); i++)
+            for(auto& port : ports)
             {
                 ResYarpPort resport;
-                resport.setName(ports[i].c_str());
-                resport.setPort(ports[i].c_str());
+                resport.setName(port.c_str());
+                resport.setPort(port.c_str());
 
                 bool bfound = false;
                 for(int i=0; i<comp->peripheralCount(); i++)

@@ -54,10 +54,10 @@ public:
         for (size_t i=0; i<threads.size(); i++) {
             produce.post();
         }
-        for (std::list<MessageStackThread *>::iterator it = threads.begin(); it != threads.end(); ++it) {
-            (*it)->stop();
-            delete (*it);
-            *it = nullptr;
+        for (auto& thread : threads) {
+            thread->stop();
+            delete thread;
+            thread = nullptr;
         }
         threads.clear();
         msgs.clear();

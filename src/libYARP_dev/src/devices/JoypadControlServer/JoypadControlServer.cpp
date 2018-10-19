@@ -528,18 +528,18 @@ bool JoypadControlServer::openPorts()
         getters.push_back(solver(&IJoypadController::getTrackballCount,    &m_portTrackball));
         getters.push_back(solver(&IJoypadController::getHatCount,          &m_portHats     ));
 
-        for(size_t i = 0; i < getters.size(); ++i)
+        for(auto& getter : getters)
         {
-            if((m_device->*(getters[i].getter))(getters[i].port->count))
+            if((m_device->*(getter.getter))(getter.port->count))
             {
-                if(getters[i].port->count == 0)
+                if(getter.port->count == 0)
                 {
-                    getters[i].port->valid = false;
+                    getter.port->valid = false;
                 }
                 else
                 {
-                    getters[i].port->contactable->open(getters[i].port->name);
-                    getters[i].port->valid = true;
+                    getter.port->contactable->open(getter.port->name);
+                    getter.port->valid = true;
                 }
             }
             else

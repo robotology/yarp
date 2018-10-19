@@ -650,8 +650,7 @@ bool SubscriberOnSql::setTopic(const std::string& port, const std::string& struc
     sqlite3_free(query);
     mutex.unlock();
 
-    for (int i=0; i<(int)subs.size(); i++) {
-        vector<std::string>& sub = subs[i];
+    for (auto& sub : subs) {
         checkSubscription(sub[0],sub[1],sub[2],sub[3],sub[4]);
     }
 

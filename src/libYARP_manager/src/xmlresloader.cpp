@@ -168,9 +168,9 @@ GenericResource* XmlResLoader::getNextResource()
          {
              if(parsXml((*itr).c_str()))
              {
-                for(ComputerIterator itr = computers.begin(); itr != computers.end(); itr++)
-                if(string((*itr).getName()) == strName)
-                    return &(*itr);
+                for(auto& computer : computers)
+                if(string(computer.getName()) == strName)
+                    return &computer;
              }
          }
     }

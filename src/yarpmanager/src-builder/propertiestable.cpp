@@ -178,8 +178,8 @@ void PropertiesTable::showModuleTab(ModuleItem *mod)
         nodeCombo->addItem("localhost");
     }
     ResourcePContainer resources = manager->getKnowledgeBase()->getResources();
-    for(ResourcePIterator itr=resources.begin(); itr!=resources.end(); itr++){
-        Computer* comp = dynamic_cast<Computer*>(*itr);
+    for(auto& resource : resources) {
+        Computer* comp = dynamic_cast<Computer*>(resource);
         if(comp && !compareString(comp->getName(), "localhost")){
             nodeCombo->addItem(comp->getName());
         }

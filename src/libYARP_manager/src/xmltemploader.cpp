@@ -193,9 +193,9 @@ AppTemplate* XmlTempLoader::parsXml(const char* szFile)
     else
     {
         string strname = name->GetText();
-        for(unsigned int i=0; i<strname.size(); i++)
-            if(strname[i] == ' ')
-                strname[i] = '_';
+        for(char& i : strname)
+            if(i == ' ')
+                i = '_';
         app.name = strname;
     }
 
