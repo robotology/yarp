@@ -487,8 +487,7 @@ std::string StoreString::toStringNested() const
     }
 
     result += "\"";
-    for (unsigned int j = 0; j < x.length(); j++) {
-        char ch = x[j];
+    for (char ch : x) {
         if (ch == '\n') {
             result += '\\';
             result += 'n';

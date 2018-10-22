@@ -207,8 +207,7 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::profiler
         // find the current port vertex in the graph
         pvertex_iterator vi1 = graph.find(PortVertex(info.name));
         yAssert(vi1 != graph.vertices().end());
-        for(size_t i=0; i<info.outputs.size(); i++) {
-            ConnectionInfo cnn = info.outputs[i];
+        for(auto cnn : info.outputs) {
             pvertex_iterator vi2 = graph.find(PortVertex(cnn.name));
             if(vi2 != graph.vertices().end()) {
                 //yInfo()<<"connecting "<<(*vi1)->property.find("name").asString()<<"->"<<(*vi2)->property.find("name").asString();

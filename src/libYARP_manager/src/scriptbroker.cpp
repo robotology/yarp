@@ -29,8 +29,7 @@ static Bottle parsePaths(const std::string& txt) {
     const char *at = txt.c_str();
     int slash_tweak = 0;
     int len = 0;
-    for (std::string::size_type i=0; i<txt.length(); i++) {
-        char ch = txt[i];
+    for (char ch : txt) {
         if (ch==sep) {
             result.addString(std::string(at,len-slash_tweak));
             at += len+1;

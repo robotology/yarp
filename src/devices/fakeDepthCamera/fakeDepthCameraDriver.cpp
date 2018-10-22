@@ -49,17 +49,17 @@ bool fakeDepthCameraDriver::open(Searchable& config)
     testgrabber.view(image);
 
     vector<tuple<double*, string, double> > param;
-    param.push_back(make_tuple(&rgb_h,    "rgb_h",    480.0));
-    param.push_back(make_tuple(&rgb_w,    "rgb_w",    640.0));
-    param.push_back(make_tuple(&dep_h,    "rgb_h",    480.0));
-    param.push_back(make_tuple(&dep_w,    "rgb_w",    640.0));
-    param.push_back(make_tuple(&accuracy, "accuracy", 0.001));
-    param.push_back(make_tuple(&rgb_Vfov, "rgb_Vfov", 50.0));
-    param.push_back(make_tuple(&rgb_Hfov, "rgb_Hfov", 36.0));
-    param.push_back(make_tuple(&dep_Vfov, "dep_Vfov", 50.0));
-    param.push_back(make_tuple(&dep_Hfov, "dep_Hfov", 36.0));
-    param.push_back(make_tuple(&dep_near, "dep_near", 0.2));
-    param.push_back(make_tuple(&dep_far,  "dep_far",  6.0));
+    param.emplace_back(&rgb_h,    "rgb_h",    480.0);
+    param.emplace_back(&rgb_w,    "rgb_w",    640.0);
+    param.emplace_back(&dep_h,    "rgb_h",    480.0);
+    param.emplace_back(&dep_w,    "rgb_w",    640.0);
+    param.emplace_back(&accuracy, "accuracy", 0.001);
+    param.emplace_back(&rgb_Vfov, "rgb_Vfov", 50.0);
+    param.emplace_back(&rgb_Hfov, "rgb_Hfov", 36.0);
+    param.emplace_back(&dep_Vfov, "dep_Vfov", 50.0);
+    param.emplace_back(&dep_Hfov, "dep_Hfov", 36.0);
+    param.emplace_back(&dep_near, "dep_near", 0.2);
+    param.emplace_back(&dep_far,  "dep_far",  6.0);
     for (auto p : param)
     {
         if (config.check(get<1>(p)))

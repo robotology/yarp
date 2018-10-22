@@ -227,9 +227,9 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     if(name)
     {
         string strname = parser->parseText(name->GetText());
-        for(unsigned int i=0; i<strname.size(); i++)
-            if(strname[i] == ' ')
-                strname[i] = '_';
+        for(char& i : strname)
+            if(i == ' ')
+                i = '_';
         app.setName(strname.c_str());
     }
 
@@ -303,7 +303,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
         }
 
     /* retrieving modules information*/
-    typedef void (ModuleInterface::*setter)(const char*);
+    using setter = void (ModuleInterface::*)(const char*);
 
     vector<pair<const char*, setter> > modList;
     pair<const char*, setter>          pairNode;
@@ -336,9 +336,9 @@ Application* XmlAppLoader::parsXml(const char* szFile)
 
                 ModuleInterface module(text);
 
-                for(size_t i = 0; i < modList.size(); i++)
+                for(auto& i : modList)
                 {
-                    if((element = (TiXmlElement*) mod->FirstChild(modList[i].first)))
+                    if((element = (TiXmlElement*) mod->FirstChild(i.first)))
                     {
                         text = nullptr;
                         if(element->GetText())
@@ -347,7 +347,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                             text     = elemText.c_str();
                         }
 
-                        (module.*(modList[i].second))(text);
+                        (module.*(i.second))(text);
                     }
                 }
 

@@ -299,12 +299,12 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
         std::vector<param<string> >     rosStringParam;
         param<string>*                  prm;
 
-        rosStringParam.push_back(param<string>(nodeName,       nodeName_param          ));
-        rosStringParam.push_back(param<string>(rosFrameId,     frameId_param           ));
-        rosStringParam.push_back(param<string>(colorTopicName, colorTopicName_param    ));
-        rosStringParam.push_back(param<string>(depthTopicName, depthTopicName_param    ));
-        rosStringParam.push_back(param<string>(cInfoTopicName, depthInfoTopicName_param));
-        rosStringParam.push_back(param<string>(dInfoTopicName, colorInfoTopicName_param));
+        rosStringParam.emplace_back(nodeName,       nodeName_param          );
+        rosStringParam.emplace_back(rosFrameId,     frameId_param           );
+        rosStringParam.emplace_back(colorTopicName, colorTopicName_param    );
+        rosStringParam.emplace_back(depthTopicName, depthTopicName_param    );
+        rosStringParam.emplace_back(cInfoTopicName, depthInfoTopicName_param);
+        rosStringParam.emplace_back(dInfoTopicName, colorInfoTopicName_param);
 
         for (i = 0; i < rosStringParam.size(); i++)
         {
@@ -755,16 +755,16 @@ bool RGBDSensorWrapper::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& camera
     //std::vector<param<string> >     rosStringParam;
     //rosStringParam.push_back(param<string>(nodeName, "asd"));
 
-    parVector.push_back(param<double>(fx,"focalLengthX"));
-    parVector.push_back(param<double>(fy,"focalLengthY"));
-    parVector.push_back(param<double>(cx,"principalPointX"));
-    parVector.push_back(param<double>(cy,"principalPointY"));
-    parVector.push_back(param<double>(k1,"k1"));
-    parVector.push_back(param<double>(k2,"k2"));
-    parVector.push_back(param<double>(t1,"t1"));
-    parVector.push_back(param<double>(t2,"t2"));
-    parVector.push_back(param<double>(k3,"k3"));
-    parVector.push_back(param<double>(stamp,"stamp"));
+    parVector.emplace_back(fx,"focalLengthX");
+    parVector.emplace_back(fy,"focalLengthY");
+    parVector.emplace_back(cx,"principalPointX");
+    parVector.emplace_back(cy,"principalPointY");
+    parVector.emplace_back(k1,"k1");
+    parVector.emplace_back(k2,"k2");
+    parVector.emplace_back(t1,"t1");
+    parVector.emplace_back(t2,"t2");
+    parVector.emplace_back(k3,"k3");
+    parVector.emplace_back(stamp,"stamp");
     for(i = 0; i < parVector.size(); i++)
     {
         par = &parVector[i];

@@ -817,11 +817,11 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
 
     //check if all devices are attached to the driver
     bool ready=true;
-    for(unsigned int k=0; k<device.subdevices.size(); k++)
+    for(auto& subdevice : device.subdevices)
     {
-        if (!device.subdevices[k].isAttached())
+        if (!subdevice.isAttached())
         {
-            yError("ControlBoardWrapper: device %s was not found in the list passed to attachAll", device.subdevices[k].id.c_str());
+            yError("ControlBoardWrapper: device %s was not found in the list passed to attachAll", subdevice.id.c_str());
             ready=false;
         }
     }
@@ -878,16 +878,16 @@ void ControlBoardWrapper::run()
     // Update the time by averaging all timestamps
     double joint_timeStamp = 0.0;
 
-    for (unsigned int k = 0; k < device.subdevices.size(); k++)
+    for (auto& subdevice : device.subdevices)
     {
-        int axes = device.subdevices[k].axes;
+        int axes = subdevice.axes;
 
-        device.subdevices[k].refreshJointEncoders();
-        device.subdevices[k].refreshMotorEncoders();
+        subdevice.refreshJointEncoders();
+        subdevice.refreshMotorEncoders();
 
         for (int l = 0; l < axes; l++)
         {
-            joint_timeStamp+=device.subdevices[k].jointEncodersTimes[l];
+            joint_timeStamp+=subdevice.jointEncodersTimes[l];
         }
     }
 
@@ -902,15 +902,15 @@ void ControlBoardWrapper::run()
 
         double *joint_encoders=v.data();
 
-        for (unsigned int k = 0; k < device.subdevices.size(); k++)
+        for (auto& subdevice : device.subdevices)
         {
-            int axes=device.subdevices[k].axes;
+            int axes=subdevice.axes;
 
             for(int l = 0; l < axes; l++)
             {
-                joint_encoders[l]=device.subdevices[k].subDev_joint_encoders[l];
+                joint_encoders[l]=subdevice.subDev_joint_encoders[l];
             }
-            joint_encoders+=device.subdevices[k].axes; //jump to next group
+            joint_encoders+=subdevice.axes; //jump to next group
         }
 
         outputPositionStatePort.setEnvelope(time);

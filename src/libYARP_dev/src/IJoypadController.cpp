@@ -148,7 +148,7 @@ void yarp::dev::IJoypadEventDriven::run()
             if(!isEqual(value, old_buttons[i], 0.00001f))
             {
                 perform = true;
-                buttons.push_back(JoyData<float>(i, value));
+                buttons.emplace_back(i, value);
                 old_buttons[i] = value;
             }
         }
@@ -163,7 +163,7 @@ void yarp::dev::IJoypadEventDriven::run()
             if(!isEqual(value, old_axes[i], 0.00001))
             {
                 perform = true;
-                axes.push_back(JoyData<double>(i, value));
+                axes.emplace_back(i, value);
                 old_axes[i] = value;
             }
         }
@@ -178,7 +178,7 @@ void yarp::dev::IJoypadEventDriven::run()
             if(value != old_hats[i])
             {
                 perform = true;
-                hats.push_back(JoyData<unsigned char>(i, value));
+                hats.emplace_back(i, value);
                 old_hats[i] = value;
             }
         }
@@ -193,7 +193,7 @@ void yarp::dev::IJoypadEventDriven::run()
             if(!isEqual(value, old_trackballs[i], 0.00001))
             {
                 perform = true;
-                trackBalls.push_back(JoyData<yarp::sig::Vector>(i, value));
+                trackBalls.emplace_back(i, value);
                 old_trackballs[i] = value;
             }
         }
@@ -208,7 +208,7 @@ void yarp::dev::IJoypadEventDriven::run()
             if(!isEqual(value, old_sticks[i], 0.00001))
             {
                 perform = true;
-                sticks.push_back(JoyData<yarp::sig::Vector>(i, value));
+                sticks.emplace_back(i, value);
                 old_sticks[i] = value;
             }
         }
@@ -223,7 +223,7 @@ void yarp::dev::IJoypadEventDriven::run()
             if(!isEqual(value, old_touches[i], 0.00001))
             {
                 perform = true;
-                Touch.push_back(JoyData<yarp::sig::Vector>(i, value));
+                Touch.emplace_back(i, value);
                 old_touches[i] = value;
             }
         }

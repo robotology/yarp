@@ -262,8 +262,8 @@ const ResourcePContainer& KnowledgeBase::getResources(Application* parent)
         if(res)
         {
             bool bHas = false;
-            for(unsigned int i=0; i<dummyResources.size(); i++)
-                if(string(dummyResources[i]->getName()) == string(res->getName()))
+            for(auto& dummyResource : dummyResources)
+                if(string(dummyResource->getName()) == string(res->getName()))
                 {
                     bHas = true;
                     break;
@@ -279,8 +279,8 @@ const ResourcePContainer& KnowledgeBase::getResources(Application* parent)
         if(res)
         {
             bool bHas = false;
-            for(unsigned int i=0; i<dummyResources.size(); i++)
-                if(string(dummyResources[i]->getName()) == string(res->getName()))
+            for(auto& dummyResource : dummyResources)
+                if(string(dummyResource->getName()) == string(res->getName()))
                 {
                     bHas = true;
                     break;
@@ -941,9 +941,9 @@ bool KnowledgeBase::reasolveDependency(Application* app,
     selapplications.clear();
     selresources.clear();
 
-    for(ResourcePIterator itr=resources.begin(); itr!=resources.end(); itr++)
+    for(auto& resource : resources)
     {
-       MultiResource* mres = dynamic_cast<MultiResource*>(*itr);
+       MultiResource* mres = dynamic_cast<MultiResource*>(resource);
        if(mres)
        {
            for(int i=0; i<mres->resourceCount(); i++)
@@ -971,24 +971,24 @@ bool KnowledgeBase::reasolveDependency(Application* app,
        }
        else
        {
-            if(find(selresources.begin(), selresources.end(), (*itr))
+            if(find(selresources.begin(), selresources.end(), resource)
                 == selresources.end())
-                selresources.push_back((*itr));
+                selresources.push_back(resource);
        }
     }
 
-    for(ModulePIterator itr=modules.begin(); itr!=modules.end(); itr++)
+    for(auto& module : modules)
     {
-       if(find(selmodules.begin(), selmodules.end(), (*itr))
+       if(find(selmodules.begin(), selmodules.end(), module)
           == selmodules.end())
-            selmodules.push_back((*itr));
+            selmodules.push_back(module);
     }
 
-    for(ApplicationPIterator itr=applications.begin(); itr!=applications.end(); itr++)
+    for(auto& application : applications)
     {
-       if(find(selapplications.begin(), selapplications.end(), (*itr))
+       if(find(selapplications.begin(), selapplications.end(), application)
           == selapplications.end())
-            selapplications.push_back((*itr));
+            selapplications.push_back(application);
     }
 
 

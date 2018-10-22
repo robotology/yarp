@@ -133,8 +133,8 @@ bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer)
             fprintf(stderr, "XmlRpcCarrier fail, %s:%d\n", __FILE__, __LINE__);
             return false;
         }
-        for (int i=0; i<(int)req.length(); i++) {
-            if (req[i] == '\n') {
+        for (char i : req) {
+            if (i == '\n') {
                 start++;
                 break;
             }

@@ -1204,20 +1204,20 @@ static void CopyPixels(const T1 *osrc, int q1, T2 *odest, int q2,
 }
 
 
-typedef PixelMono Def_VOCAB_PIXEL_MONO;
-typedef PixelMono16 Def_VOCAB_PIXEL_MONO16;
-typedef PixelRgb Def_VOCAB_PIXEL_RGB;
-typedef PixelRgba Def_VOCAB_PIXEL_RGBA;
-typedef PixelBgra Def_VOCAB_PIXEL_BGRA;
-typedef PixelHsv Def_VOCAB_PIXEL_HSV;
-typedef PixelBgr Def_VOCAB_PIXEL_BGR;
-typedef PixelMonoSigned Def_VOCAB_PIXEL_MONO_SIGNED;
-typedef PixelRgbSigned Def_VOCAB_PIXEL_RGB_SIGNED;
-typedef PixelFloat Def_VOCAB_PIXEL_MONO_FLOAT;
-typedef PixelRgbFloat Def_VOCAB_PIXEL_RGB_FLOAT;
-typedef PixelHsvFloat Def_VOCAB_PIXEL_HSV_FLOAT;
-typedef PixelInt Def_VOCAB_PIXEL_INT;
-typedef PixelRgbInt Def_VOCAB_PIXEL_RGB_INT;
+using Def_VOCAB_PIXEL_MONO = PixelMono;
+using Def_VOCAB_PIXEL_MONO16 = PixelMono16;
+using Def_VOCAB_PIXEL_RGB = PixelRgb;
+using Def_VOCAB_PIXEL_RGBA = PixelRgba;
+using Def_VOCAB_PIXEL_BGRA = PixelBgra;
+using Def_VOCAB_PIXEL_HSV = PixelHsv;
+using Def_VOCAB_PIXEL_BGR = PixelBgr;
+using Def_VOCAB_PIXEL_MONO_SIGNED = PixelMonoSigned;
+using Def_VOCAB_PIXEL_RGB_SIGNED = PixelRgbSigned;
+using Def_VOCAB_PIXEL_MONO_FLOAT = PixelFloat;
+using Def_VOCAB_PIXEL_RGB_FLOAT = PixelRgbFloat;
+using Def_VOCAB_PIXEL_HSV_FLOAT = PixelHsvFloat;
+using Def_VOCAB_PIXEL_INT = PixelInt;
+using Def_VOCAB_PIXEL_RGB_INT = PixelRgbInt;
 
 #define HASH(id1, id2) ((int)(((int)(id1%65537))*11 + ((long int)(id2))))
 #define HANDLE_CASE(len, x1, T1, q1, o1, x2, T2, q2, o2) CopyPixels(reinterpret_cast<const T1*>(x1), q1, reinterpret_cast<T2*>(x2), q2, w, h, o1!=o2);

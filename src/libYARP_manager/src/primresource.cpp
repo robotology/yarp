@@ -343,10 +343,10 @@ void Computer::swap(const Computer &comp)
 
 void Computer::clear()
 {
-    for(unsigned int i=0; i<peripheralResources.size(); i++)
+    for(auto& peripheralResource : peripheralResources)
     {
-        delete peripheralResources[i];
-        peripheralResources[i] = nullptr;
+        delete peripheralResource;
+        peripheralResource = nullptr;
     }
     peripheralResources.clear();
     processes.clear();

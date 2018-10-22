@@ -22,8 +22,7 @@ using namespace yarp::os::impl;
 
 static std::string quoteFree(const std::string &src) {
     std::string result;
-    for (unsigned int i=0; i<src.length(); i++) {
-        char ch = src[i];
+    for (char ch : src) {
         if (ch=='"') {
             result += "&quot;";
         } else {
@@ -46,8 +45,7 @@ static bool asJson(std::string &accum,
     if (v.isString()||v.isVocab()) {
         std::string x = v.toString();
         accum += "\"";
-        for (int j=0; j<(int)x.length(); j++) {
-            char ch = x[j];
+        for (char ch : x) {
             if (ch=='\n') {
                 accum += '\\';
                 accum += 'n';
@@ -305,12 +303,12 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
         if (chunked) {
             filterData = true;
         }
-        for (unsigned int i=0; i<s.length(); i++) {
-            if (s[i]==',') {
-                s[i] = '\n';
+        for (char& ch : s) {
+            if (ch == ',') {
+                ch = '\n';
             }
-            if (s[i]=='+') {
-                s[i] = ' ';
+            if (ch == '+') {
+                ch = ' ';
             }
         }
         if (chunked) {
@@ -629,9 +627,9 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
     proto.setRoute(route);
     std::string remainder = proto.is().readLine();
     if (!urlDone) {
-        for (unsigned int i=0; i<remainder.length(); i++) {
-            if (remainder[i]!=' ') {
-                url += remainder[i];
+        for (char i : remainder) {
+            if (i != ' ') {
+                url += i;
             } else {
                 break;
             }

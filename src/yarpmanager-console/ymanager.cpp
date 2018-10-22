@@ -801,10 +801,10 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         KnowledgeBase* kb = getKnowledgeBase();
         ModulePContainer mods =  kb->getModules();
         int id = 0;
-        for(ModulePIterator itr=mods.begin(); itr!=mods.end(); itr++)
+        for(auto& mod : mods)
         {
             string fname;
-            string fpath = (*itr)->getXmlFile();
+            string fpath = mod->getXmlFile();
 
             size_t pos = fpath.rfind(directorySeparator);
             if(pos!=string::npos)
@@ -812,7 +812,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
             else
                 fname = fpath;
             cout<<INFO<<"("<<id++<<") ";
-            cout<<OKBLUE<<(*itr)->getName()<<ENDC;
+            cout<<OKBLUE<<mod->getName()<<ENDC;
             cout<<INFO<<" ["<<fname<<"]"<<ENDC<<endl;
         }
         return true;
@@ -828,10 +828,10 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         KnowledgeBase* kb = getKnowledgeBase();
         ApplicaitonPContainer apps =  kb->getApplications();
         int id = 0;
-        for(ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++)
+        for(auto& app : apps)
         {
             string fname;
-            string fpath = (*itr)->getXmlFile();
+            string fpath = app->getXmlFile();
 
             size_t pos = fpath.rfind(directorySeparator);
             if(pos!=string::npos)
@@ -839,7 +839,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
             else
                 fname = fpath;
             cout<<INFO<<"("<<id++<<") ";
-            cout<<OKBLUE<<(*itr)->getName()<<ENDC;
+            cout<<OKBLUE<<app->getName()<<ENDC;
             cout<<INFO<<" ["<<fname<<"]"<<ENDC<<endl;
         }
         return true;
@@ -854,9 +854,9 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         KnowledgeBase* kb = getKnowledgeBase();
         ResourcePContainer resources = kb->getResources();
         int id = 0;
-        for(ResourcePIterator itr=resources.begin(); itr!=resources.end(); itr++)
+        for(auto& resource : resources)
         {
-            Computer* comp = dynamic_cast<Computer*>(*itr);
+            Computer* comp = dynamic_cast<Computer*>(resource);
             if(comp)
             {
                 string fname;
@@ -1198,8 +1198,8 @@ void YConsoleManager::updateAppNames(vector<string>* names)
     names->clear();
     KnowledgeBase* kb = getKnowledgeBase();
     ApplicaitonPContainer apps =  kb->getApplications();
-    for(ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++)
-        names->push_back((*itr)->getName());
+    for(auto& app : apps)
+        names->push_back(app->getName());
 }
 
 

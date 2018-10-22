@@ -410,54 +410,54 @@ std::vector<std::string> yarprobotinterfaceRpc::help(const std::string& function
   bool showAll=(functionName=="--all");
   std::vector<std::string> helpString;
   if(showAll) {
-    helpString.push_back("*** Available commands:");
-    helpString.push_back("get_phase");
-    helpString.push_back("get_level");
-    helpString.push_back("get_robot");
-    helpString.push_back("is_ready");
-    helpString.push_back("quit");
-    helpString.push_back("bye");
-    helpString.push_back("exit");
-    helpString.push_back("help");
+    helpString.emplace_back("*** Available commands:");
+    helpString.emplace_back("get_phase");
+    helpString.emplace_back("get_level");
+    helpString.emplace_back("get_robot");
+    helpString.emplace_back("is_ready");
+    helpString.emplace_back("quit");
+    helpString.emplace_back("bye");
+    helpString.emplace_back("exit");
+    helpString.emplace_back("help");
   }
   else {
     if (functionName=="get_phase") {
-      helpString.push_back("std::string get_phase() ");
-      helpString.push_back("Returns current phase. ");
+      helpString.emplace_back("std::string get_phase() ");
+      helpString.emplace_back("Returns current phase. ");
     }
     if (functionName=="get_level") {
-      helpString.push_back("std::int32_t get_level() ");
-      helpString.push_back("Returns current level. ");
+      helpString.emplace_back("std::int32_t get_level() ");
+      helpString.emplace_back("Returns current level. ");
     }
     if (functionName=="get_robot") {
-      helpString.push_back("std::string get_robot() ");
-      helpString.push_back("Returns robot name. ");
+      helpString.emplace_back("std::string get_robot() ");
+      helpString.emplace_back("Returns robot name. ");
     }
     if (functionName=="is_ready") {
-      helpString.push_back("bool is_ready() ");
-      helpString.push_back("Returns true if yarprobotinterface is ready (all startup actions ");
-      helpString.push_back("performed and no interrupt called). ");
+      helpString.emplace_back("bool is_ready() ");
+      helpString.emplace_back("Returns true if yarprobotinterface is ready (all startup actions ");
+      helpString.emplace_back("performed and no interrupt called). ");
     }
     if (functionName=="quit") {
-      helpString.push_back("std::string quit() ");
-      helpString.push_back("Closes yarprobotinterface. ");
+      helpString.emplace_back("std::string quit() ");
+      helpString.emplace_back("Closes yarprobotinterface. ");
     }
     if (functionName=="bye") {
-      helpString.push_back("std::string bye() ");
-      helpString.push_back("Closes yarprobotinterface. ");
+      helpString.emplace_back("std::string bye() ");
+      helpString.emplace_back("Closes yarprobotinterface. ");
     }
     if (functionName=="exit") {
-      helpString.push_back("std::string exit() ");
-      helpString.push_back("Closes yarprobotinterface. ");
+      helpString.emplace_back("std::string exit() ");
+      helpString.emplace_back("Closes yarprobotinterface. ");
     }
     if (functionName=="help") {
-      helpString.push_back("std::vector<std::string> help(const std::string& functionName=\"--all\")");
-      helpString.push_back("Return list of available commands, or help message for a specific function");
-      helpString.push_back("@param functionName name of command for which to get a detailed description. If none or '--all' is provided, print list of available commands");
-      helpString.push_back("@return list of strings (one string per line)");
+      helpString.emplace_back("std::vector<std::string> help(const std::string& functionName=\"--all\")");
+      helpString.emplace_back("Return list of available commands, or help message for a specific function");
+      helpString.emplace_back("@param functionName name of command for which to get a detailed description. If none or '--all' is provided, print list of available commands");
+      helpString.emplace_back("@return list of strings (one string per line)");
     }
   }
-  if ( helpString.empty()) helpString.push_back("Command not found");
+  if ( helpString.empty()) helpString.emplace_back("Command not found");
   return helpString;
 }
 

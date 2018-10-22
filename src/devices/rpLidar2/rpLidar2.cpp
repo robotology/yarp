@@ -407,9 +407,9 @@ void RpLidar2::run()
             }
         }
 
-        for (size_t i = 0; i < m_range_skip_vector.size(); i++)
+        for (auto& i : m_range_skip_vector)
         {
-            if (angle>m_range_skip_vector[i].min && angle < m_range_skip_vector[i].max)
+            if (angle > i.min && angle < i.max)
             {
                 distance = std::numeric_limits<double>::infinity();
             }
@@ -490,9 +490,9 @@ std::string RpLidar2::deviceinfo()
             return "";
         }
 
-        for (int i = 0; i < 16; ++i)
+        for (unsigned char i : info.serialnum)
         {
-            serialNumber += to_string(info.serialnum[i]);
+            serialNumber += to_string(i);
         }
 
         return "Firmware Version: "   + to_string(info.firmware_version) +

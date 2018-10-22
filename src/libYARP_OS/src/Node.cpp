@@ -252,8 +252,8 @@ public:
         Bottle* connections = v.asList();
 
         mutex.lock();
-        for (std::multimap<std::string, NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
-            NodeItem& item = it->second;
+        for (auto& it : by_part_name) {
+            NodeItem& item = it.second;
             if (!(item.isSubscriber() || item.isPublisher())) {
                 continue;
             }
@@ -314,8 +314,8 @@ public:
         Value v;
         Bottle* subscriptions = v.asList();
         mutex.lock();
-        for (std::multimap<std::string, NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
-            NodeItem& item = it->second;
+        for (auto& it : by_part_name) {
+            NodeItem& item = it.second;
             if (!item.isSubscriber()) {
                 continue;
             }
@@ -334,8 +334,8 @@ public:
         Value v;
         Bottle* publications = v.asList();
         mutex.lock();
-        for (std::multimap<std::string, NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
-            NodeItem& item = it->second;
+        for (auto& it : by_part_name) {
+            NodeItem& item = it.second;
             if (!item.isPublisher()) {
                 continue;
             }
@@ -363,8 +363,7 @@ public:
             return;
         }
 
-        for (std::vector<Contact>::iterator it = contacts.begin(); it != contacts.end(); ++it) {
-            Contact &c = *it;
+        for (auto& c : contacts) {
             if (!c.isValid()) {
                 continue;
             }
@@ -390,9 +389,7 @@ public:
             na.fail("Cannot find topic");
             return;
         }
-        for (std::vector<Contact>::iterator it = contacts.begin(); it != contacts.end(); ++it) {
-            Contact &c = *it;
-
+        for (auto& c : contacts) {
             if (!c.isValid()) {
                 continue;
             }

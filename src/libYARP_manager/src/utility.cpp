@@ -107,7 +107,7 @@ ErrorLogger* ErrorLogger::Instance()
 
 void ErrorLogger::addWarning(const char* szWarning) {
     if(szWarning)
-        warnings.push_back(string(szWarning));
+        warnings.emplace_back(szWarning);
 }
 
 void ErrorLogger::addWarning(const string &str) {
@@ -120,7 +120,7 @@ void ErrorLogger::addWarning(OSTRINGSTREAM &stream) {
 
 void ErrorLogger::addError(const char* szError) {
     if(szError)
-        errors.push_back(string(szError));
+        errors.emplace_back(szError);
 }
 
 void ErrorLogger::addError(const string &str) {

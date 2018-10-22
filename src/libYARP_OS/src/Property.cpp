@@ -260,10 +260,10 @@ public:
                     // line, we will allow windows-style paths.
                     // Hence we have to break the "\" character
                     std::string buf;
-                    for (unsigned int i=0; i<work.length(); i++) {
-                        buf += work[i];
-                        if (work[i]=='\\') {
-                            buf += work[i];
+                    for (char i : work) {
+                        buf += i;
+                        if (i=='\\') {
+                            buf += i;
                         }
                     }
                     work = buf;
@@ -682,8 +682,8 @@ public:
 
     std::string toString() const {
         Bottle bot;
-        for (std::map<std::string, PropertyItem>::const_iterator it = data.begin(); it != data.end(); ++it) {
-            const PropertyItem& rec = it->second;
+        for (const auto& it : data) {
+            const PropertyItem& rec = it.second;
             Bottle& sub = bot.addList();
             rec.flush();
             sub.copy(rec.bot);
@@ -761,10 +761,10 @@ public:
                         // line, we will allow windows-style paths.
                         // Hence we have to break the "\" character
                         std::string buf;
-                        for (unsigned int i=0; i<add.length(); i++) {
-                            buf += add[i];
-                            if (add[i]=='\\') {
-                                buf += add[i];
+                        for (char i : add) {
+                            buf += i;
+                            if (i=='\\') {
+                                buf += i;
                             }
                         }
                         add = buf;
@@ -1091,8 +1091,7 @@ void Property::fromQuery(const char *url, bool wipe) {
     int code = 0;
     int coding = 0;
 
-    for (unsigned int i=0; i<str.length(); i++) {
-        char ch = str[i];
+    for (char ch : str) {
         if (ch=='=') {
             key = buf;
             val = "";

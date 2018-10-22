@@ -508,7 +508,7 @@ bool JoypadControlServer::openPorts()
 //    return true;
     if(m_separatePorts)
     {
-        typedef bool (IJoypadController::*countGet)(unsigned int&);
+        using countGet = bool (IJoypadController::*)(unsigned int&);
 
         struct solver
         {
@@ -521,25 +521,25 @@ bool JoypadControlServer::openPorts()
 
         vector<solver> getters;
 
-        getters.push_back(solver(&IJoypadController::getAxisCount,         &m_portAxis     ));
-        getters.push_back(solver(&IJoypadController::getButtonCount,       &m_portButtons  ));
-        getters.push_back(solver(&IJoypadController::getStickCount,        &m_portStick    ));
-        getters.push_back(solver(&IJoypadController::getTouchSurfaceCount, &m_portTouch    ));
-        getters.push_back(solver(&IJoypadController::getTrackballCount,    &m_portTrackball));
-        getters.push_back(solver(&IJoypadController::getHatCount,          &m_portHats     ));
+        getters.emplace_back(&IJoypadController::getAxisCount,         &m_portAxis     );
+        getters.emplace_back(&IJoypadController::getButtonCount,       &m_portButtons  );
+        getters.emplace_back(&IJoypadController::getStickCount,        &m_portStick    );
+        getters.emplace_back(&IJoypadController::getTouchSurfaceCount, &m_portTouch    );
+        getters.emplace_back(&IJoypadController::getTrackballCount,    &m_portTrackball);
+        getters.emplace_back(&IJoypadController::getHatCount,          &m_portHats     );
 
-        for(size_t i = 0; i < getters.size(); ++i)
+        for(auto& getter : getters)
         {
-            if((m_device->*(getters[i].getter))(getters[i].port->count))
+            if((m_device->*(getter.getter))(getter.port->count))
             {
-                if(getters[i].port->count == 0)
+                if(getter.port->count == 0)
                 {
-                    getters[i].port->valid = false;
+                    getter.port->valid = false;
                 }
                 else
                 {
-                    getters[i].port->contactable->open(getters[i].port->name);
-                    getters[i].port->valid = true;
+                    getter.port->contactable->open(getter.port->name);
+                    getter.port->valid = true;
                 }
             }
             else

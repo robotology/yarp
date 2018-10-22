@@ -160,9 +160,9 @@ YarpRunInfoVector::YarpRunInfoVector()
 {
     m_nProcesses=0;
     m_pStdioMate = nullptr;
-    for (int i=0; i<MAX_PROCESSES; ++i)
+    for (auto & i : m_apList)
     {
-        m_apList[i] = nullptr;
+        i = nullptr;
     }
 }
 
@@ -170,12 +170,12 @@ YarpRunInfoVector::~YarpRunInfoVector()
 {
     WAIT()
 
-    for (int i=0; i<MAX_PROCESSES; ++i)
+    for (auto & i : m_apList)
     {
-        if (m_apList[i])
+        if (i)
         {
-            delete m_apList[i];
-            m_apList[i] = nullptr;
+            delete i;
+            i = nullptr;
         }
     }
 

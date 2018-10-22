@@ -440,11 +440,11 @@ RobotInterface::Param RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::r
     }
 
     std::string groupString;
-    for (ParamList::iterator it = params.begin(); it != params.end(); ++it) {
+    for (auto& param : params) {
         if (!groupString.empty()) {
             groupString += " ";
         }
-        groupString += "(" + it->name() + " " + it->value() + ")";
+        groupString += "(" + param.name() + " " + param.value() + ")";
     }
 
     group.value() = groupString;

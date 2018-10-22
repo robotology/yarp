@@ -130,8 +130,7 @@ public:
     inline void stopThreads() const
     {
         lst_sem()->wait();
-        for (RobotInterface::ThreadList::iterator tit = thr()->begin(); tit != thr()->end(); tit++) {
-            yarp::os::Thread *thread = *tit;
+        for (auto* thread : *thr()) {
             thread->stop();
         }
         lst_sem()->post();

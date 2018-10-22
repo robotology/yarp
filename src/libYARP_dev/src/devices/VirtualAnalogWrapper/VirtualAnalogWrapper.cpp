@@ -224,11 +224,11 @@ bool VirtualAnalogWrapper::attachAll(const PolyDriverList &polylist)
         std::string key=polylist[p]->key;
 
         // find appropriate entry in list of subdevices and attach
-        for (unsigned int k=0; k<mSubdevices.size(); ++k)
+        for (auto& mSubdevice : mSubdevices)
         {
-            if (mSubdevices[k].getKey()==key)
+            if (mSubdevice.getKey() == key)
             {
-                if (!mSubdevices[k].attach(polylist[p]->poly,key))
+                if (!mSubdevice.attach(polylist[p]->poly,key))
                 {
                     mMutex.unlock();
                     return false;
@@ -238,9 +238,9 @@ bool VirtualAnalogWrapper::attachAll(const PolyDriverList &polylist)
     }
 
     //check if all devices are attached to the driver
-    for (unsigned int k=0; k<mSubdevices.size(); ++k)
+    for (auto& mSubdevice : mSubdevices)
     {
-        if (!mSubdevices[k].isAttached())
+        if (!mSubdevice.isAttached())
         {
             mMutex.unlock();
             return false;

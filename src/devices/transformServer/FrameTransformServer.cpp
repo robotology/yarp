@@ -59,13 +59,13 @@ bool Transforms_server_storage::delete_transform(int id)
 bool Transforms_server_storage::set_transform(const FrameTransform& t)
 {
     LockGuard lock(m_mutex);
-    for (size_t i = 0; i < m_transforms.size(); i++)
+    for (auto& m_transform : m_transforms)
     {
        //@@@ this linear search requires optimization!
-       if (m_transforms[i].dst_frame_id == t.dst_frame_id && m_transforms[i].src_frame_id == t.src_frame_id)
+       if (m_transform.dst_frame_id == t.dst_frame_id && m_transform.src_frame_id == t.src_frame_id)
        {
           //transform already exists, update it
-          m_transforms[i]=t;
+          m_transform=t;
           return true;
        }
     }
@@ -143,16 +143,16 @@ void FrameTransformServer::list_response(yarp::os::Bottle& out)
     std::vector<Transforms_server_storage*> storages;
     std::vector<string>                     storageDescription;
     storages.push_back(m_ros_timed_transform_storage);
-    storageDescription.push_back("ros timed transforms");
+    storageDescription.emplace_back("ros timed transforms");
 
     storages.push_back(m_ros_static_transform_storage);
-    storageDescription.push_back("ros static transforms");
+    storageDescription.emplace_back("ros static transforms");
 
     storages.push_back(m_yarp_timed_transform_storage);
-    storageDescription.push_back("yarp timed transforms");
+    storageDescription.emplace_back("yarp timed transforms");
 
     storages.push_back(m_yarp_static_transform_storage);
-    storageDescription.push_back("yarp static transforms");
+    storageDescription.emplace_back("yarp static transforms");
 
     if (storages[0]->size() == 0 &&
         storages[1]->size() == 0 &&

@@ -18,9 +18,9 @@ using yarp::os::impl::SplitString;
 SplitString::SplitString() :
         argc(0)
 {
-    for (int i=0; i<MAX_ARG_CT; i++)
+    for (auto & i : argv)
     {
-        argv[i] = nullptr;
+        i = nullptr;
     }
 }
 

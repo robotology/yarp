@@ -2340,11 +2340,11 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     indent(f_cpp_) << "std::vector<std::string> helpString;" << endl;
     indent(f_cpp_) << "if(showAll) {" << endl;
     indent_up();
-    indent(f_cpp_) << "helpString.push_back(\"*** Available commands:\");" << endl;
+    indent(f_cpp_) << "helpString.emplace_back(\"*** Available commands:\");" << endl;
     for (fn_iter = functions.begin() ; fn_iter != functions.end(); fn_iter++) {
-        indent(f_cpp_) << "helpString.push_back(\"" << (*fn_iter)->get_name() << "\");" << endl;
+        indent(f_cpp_) << "helpString.emplace_back(\"" << (*fn_iter)->get_name() << "\");" << endl;
     }
-    indent(f_cpp_) << "helpString.push_back(\"help\");" << endl;
+    indent(f_cpp_) << "helpString.emplace_back(\"help\");" << endl;
     indent_down();
     indent(f_cpp_) << "}" << endl;
     indent(f_cpp_) << "else {"<<endl;
@@ -2354,7 +2354,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
       indent_up();
       std::vector<std::string> helpList=print_help(*fn_iter);
       for (std::vector<std::string>::iterator helpIt=helpList.begin(); helpIt!=helpList.end(); ++helpIt)
-        indent(f_cpp_) << "helpString.push_back(\""<< *helpIt<<" \");" <<endl;
+        indent(f_cpp_) << "helpString.emplace_back(\""<< *helpIt<<" \");" <<endl;
 
       indent_down();
       indent(f_cpp_) << "}" <<endl;
@@ -2362,16 +2362,16 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 
     indent(f_cpp_) << "if (functionName==\"help\") {" << endl;
     indent_up();
-    indent(f_cpp_) << "helpString.push_back(\"std::vector<std::string> help(const std::string& functionName=\\\"--all\\\")\");" <<endl;
-    indent(f_cpp_) << "helpString.push_back(\"Return list of available commands, or help message for a specific function\");" <<endl;
-    indent(f_cpp_) << "helpString.push_back(\"@param functionName name of command for which to get a detailed description. If none or '--all' is provided, print list of available commands\");" <<endl;
-    indent(f_cpp_) << "helpString.push_back(\"@return list of strings (one string per line)\");" <<endl;
+    indent(f_cpp_) << "helpString.emplace_back(\"std::vector<std::string> help(const std::string& functionName=\\\"--all\\\")\");" <<endl;
+    indent(f_cpp_) << "helpString.emplace_back(\"Return list of available commands, or help message for a specific function\");" <<endl;
+    indent(f_cpp_) << "helpString.emplace_back(\"@param functionName name of command for which to get a detailed description. If none or '--all' is provided, print list of available commands\");" <<endl;
+    indent(f_cpp_) << "helpString.emplace_back(\"@return list of strings (one string per line)\");" <<endl;
     indent_down();
     indent(f_cpp_) << "}" <<endl;
 
     indent_down();
     indent(f_cpp_) << "}" <<endl;
-    indent(f_cpp_) << "if ( helpString.empty()) helpString.push_back(\"Command not found\");"<<endl;
+    indent(f_cpp_) << "if ( helpString.empty()) helpString.emplace_back(\"Command not found\");"<<endl;
     indent(f_cpp_) << "return helpString;" << endl;
     indent_down();
     indent(f_cpp_) << "}" << endl;
@@ -2820,7 +2820,7 @@ void t_yarp_generator::generate_deserialize_list_element(ofstream& out,
     t_field felem(tlist->get_elem_type(), elem);
     indent(out) << declare_field(&felem) << endl;
     generate_deserialize_field(out, &felem,"","",true);
-    indent(out) << prefix << ".push_back(" << elem << ");" << endl;
+    indent(out) << prefix << ".push_back( /*baz*/" << elem << ");" << endl;
   } else {
     t_field felem(tlist->get_elem_type(), prefix + "[" + index + "]");
     generate_deserialize_field(out, &felem,"","",true);

@@ -371,7 +371,7 @@ public:
 
     void mkdir(const Bottle& dirs) {
         std::string slash = Network::getDirectorySeparator();
-        std::string dir;
+        std::string dir = "";
         for (size_t i=0; i<dirs.size(); i++) {
             if (i>0) dir += slash;
             dir = dir + dirs.get(i).asString();
