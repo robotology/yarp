@@ -198,9 +198,9 @@ double PriorityCarrier::getActualInput(double t)
         return 0.0;
 
     double E = 0;
-    for (PriorityGroup::iterator it = group->peerSet.begin(); it!=group->peerSet.end(); it++)
+    for (auto& it : group->peerSet)
     {
-        PriorityCarrier *peer = it->first;
+        PriorityCarrier *peer = it.first;
         if(peer != this)
         {
             for(size_t i=0; i<peer->excitation.size(); i++)
@@ -243,9 +243,9 @@ bool PriorityGroup::recalculate(double t)
     InvA.eye();
 
     int row = 0;
-    for(PriorityGroup::iterator rowItr=peerSet.begin(); rowItr!=peerSet.end(); rowItr++)
+    for(auto& rowItr : peerSet)
     {
-        PriorityCarrier *peer = rowItr->first;
+        PriorityCarrier* peer = rowItr.first;
         // call 'getActualStimulation' to update 'isActive'
         peer->getActualStimulation(t);
         double xi = (peer->isActive) ? STIMUL_THRESHOLD : 0.0;
@@ -253,9 +253,9 @@ bool PriorityGroup::recalculate(double t)
         X(row,0) = xi;
 
         int col = 0;
-        for(PriorityGroup::iterator colItr=peerSet.begin(); colItr!=peerSet.end(); colItr++)
+        for(auto& it : peerSet)
         {
-            PriorityCarrier *peerCol = colItr->first;
+            PriorityCarrier *peerCol = it.first;
             for(size_t i=0; i<peerCol->excitation.size(); i++)
             {
                 Value v = peerCol->excitation.get(i);
@@ -313,9 +313,9 @@ bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
     int row = 0;
     PriorityCarrier *maxPeer = nullptr;
     double maxStimuli = 0.0;
-    for(PriorityGroup::iterator it=peerSet.begin(); it!=peerSet.end(); it++)
+    for(auto& it : peerSet)
     {
-        PriorityCarrier *peer = it->first;
+        PriorityCarrier *peer = it.first;
         double output = Y(row,0) * X(row,0);
         peer->yi = output;      // only for debug purpose
 
@@ -337,9 +337,9 @@ bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
     accept = (actualInput > 0);
     if(accept)
     {
-        for (PriorityGroup::iterator it = peerSet.begin(); it!=peerSet.end(); it++)
+        for (auto& it : peerSet)
         {
-            PriorityCarrier *peer = it->first;
+            PriorityCarrier *peer = it.first;
             if(peer != source)
             {
                 if(actualInput < peer->getActualInput(tNow))

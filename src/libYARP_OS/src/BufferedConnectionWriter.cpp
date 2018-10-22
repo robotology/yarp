@@ -514,8 +514,8 @@ bool BufferedConnectionWriter::applyConvertTextMode()
         const std::string& str = sos.str();
         b.fromBinary(str.c_str(), (int)str.length());
         std::string replacement = b.toString() + "\n";
-        for (size_t i = 0; i < lst.size(); i++) {
-            delete lst[i];
+        for (auto& i : lst) {
+            delete i;
         }
         lst_used = 0;
         target = &lst;

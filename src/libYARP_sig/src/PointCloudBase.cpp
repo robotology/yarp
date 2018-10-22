@@ -122,10 +122,10 @@ void PointCloudBase::copyFromRawData(const char* dst, const char* source, std::v
     size_t sizeDst = pointType2Size(getPointType());
     const size_t numPts = height() * width();
     for (size_t i = 0; i < numPts; i++) {
-        for (size_t j = 0; j < recipe.size(); j++) {
-            size_t sizeToRead = pointType2Size(recipe[j]);
-            if ((header.pointType & recipe[j])) {
-                size_t offset = getOffset(header.pointType, recipe[j]);
+        for (int j : recipe) {
+            size_t sizeToRead = pointType2Size(j);
+            if ((header.pointType & j)) {
+                size_t offset = getOffset(header.pointType, j);
                 std::memcpy(tmpDst + i * sizeDst + offset, tmpSrc, sizeToRead);
             }
 

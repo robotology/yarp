@@ -81,9 +81,9 @@ bool yarp::dev::RobotDescriptionServer::close()
 bool yarp::dev::RobotDescriptionServer::add_device(DeviceDescription dev)
 {
     LockGuard guard(m_internal_mutex);
-    for (std::vector<DeviceDescription>::iterator it = m_robot_devices.begin(); it != m_robot_devices.end(); it++)
+    for (auto& m_robot_device : m_robot_devices)
     {
-        if (dev.device_name == it->device_name)
+        if (dev.device_name == m_robot_device.device_name)
         {
             yWarning() << "RobotDescriptionServer::add_device() device" << dev.device_name << "already exists, skipping";
             return false;
@@ -132,10 +132,10 @@ bool yarp::dev::RobotDescriptionServer::read(yarp::os::ConnectionReader& connect
             {
                 out.addVocab(VOCAB_OK);
                 Bottle& l = out.addList();
-                for (size_t i = 0; i < m_robot_devices.size(); i++)
+                for (auto& m_robot_device : m_robot_devices)
                 {
-                    l.addString(m_robot_devices[i].device_name);
-                    l.addString(m_robot_devices[i].device_type);
+                    l.addString(m_robot_device.device_name);
+                    l.addString(m_robot_device.device_type);
                 }
                 ret = true;
             }
@@ -144,12 +144,12 @@ bool yarp::dev::RobotDescriptionServer::read(yarp::os::ConnectionReader& connect
                 std::string type = in.get(3).asString();
                 out.addVocab(VOCAB_OK);
                 Bottle& l = out.addList();
-                for (size_t i = 0; i < m_robot_devices.size(); i++)
+                for (auto& m_robot_device : m_robot_devices)
                 {
-                    if (m_robot_devices[i].device_type == type)
+                    if (m_robot_device.device_type == type)
                     {
-                        l.addString(m_robot_devices[i].device_name);
-                        l.addString(m_robot_devices[i].device_type);
+                        l.addString(m_robot_device.device_name);
+                        l.addString(m_robot_device.device_type);
                     }
                 }
                 ret = true;

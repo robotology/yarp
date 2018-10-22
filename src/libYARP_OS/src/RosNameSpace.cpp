@@ -596,9 +596,9 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
 std::string RosNameSpace::toRosName(const std::string& name) {
     if (name.find(':')==std::string::npos) return name;
     std::string result;
-    for (size_t i=0; i<name.length(); i++) {
-        if (name[i]!=':') {
-            result += name[i];
+    for (char i : name) {
+        if (i != ':') {
+            result += i;
         } else {
             result += "__";
         }
@@ -611,10 +611,10 @@ std::string RosNameSpace::fromRosName(const std::string& name) {
     // length is at least 2
     std::string result;
     int ct = 0;
-    for (size_t i=0; i<name.length(); i++) {
-        if (name[i]!='_') {
+    for (char i : name) {
+        if (i != '_') {
             if (ct) result += '_';
-            result += name[i];
+            result += i;
             ct = 0;
         } else {
             ct++;

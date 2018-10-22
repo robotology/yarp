@@ -22,7 +22,7 @@ using namespace yarp::os;
 
 yarp::os::MpiControlThread *MpiControl = NULL;
 
-void finalizeMPI(void) {
+void finalizeMPI() {
     if (MpiControl) {
         MpiControl->finalize();
         delete MpiControl;

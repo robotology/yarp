@@ -206,15 +206,15 @@ bool MapGrid2D::enlargeObstacles(double size)
                     this->m_map_flags.safePixel(x, y) == MAP_CELL_UNKNOWN ||
                     this->m_map_flags.safePixel(x, y) == MAP_CELL_TEMPORARY_OBSTACLE)
                 {
-                    list_of_cells.push_back(XYCell(x, y));
+                    list_of_cells.emplace_back(x, y);
                 }
             }
         }
 
         //process each cell of the list and enlarges it
-        for (auto it = list_of_cells.begin(); it != list_of_cells.end(); it++)
+        for (auto& list_of_cell : list_of_cells)
         {
-            enlargeCell(*it);
+            enlargeCell(list_of_cell);
         }
     }
     return true;

@@ -252,8 +252,7 @@ bool WireTwiddler::configure(const char *txt, const char *prompt) {
     }
     dbg_printf("buffer has %zu items\n", buffer.size());
     dbg_printf("gaps has %zu items\n", gaps.size());
-    for (size_t i=0; i<gaps.size(); i++) {
-        WireTwiddlerGap& gap = gaps[i];
+    for (auto& gap : gaps) {
         if (gap.buffer_length!=0) {
             gap.byte_start = (char *) (&buffer[gap.buffer_start]);
             gap.byte_length = gap.buffer_length*4;
@@ -362,9 +361,8 @@ void WireTwiddler::show() {
 
 std::string WireTwiddler::toString() const {
     std::string result;
-    for (size_t i=0; i<gaps.size(); i++) {
+    for (const auto& gap : gaps) {
         std::string item;
-        const WireTwiddlerGap& gap = gaps[i];
         item += gap.origin;
         //if (gap.buffer_length!=0) {
         //  char buf[1024];
@@ -948,7 +946,7 @@ bool WireTwiddlerWriter::emit(const char *src, int len) {
         if (push) {
             dbg_printf("  ** emit %ld len %d offset %d\n", (long int)activeEmit,
                        activeEmitLength, activeEmitOffset);
-            srcs.push_back(WireTwiddlerSrc((char*)activeEmit,activeEmitLength,activeEmitOffset));
+            srcs.emplace_back((char*)activeEmit,activeEmitLength,activeEmitOffset);
             activeEmit = nullptr;
             activeEmitLength = 0;
             activeEmitOffset = -1;

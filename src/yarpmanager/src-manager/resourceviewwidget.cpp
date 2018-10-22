@@ -127,8 +127,7 @@ void ResourceViewWidget::init()
 
     yarp::manager::ProcessContainer procs = res->getProcesses();
 
-    for(size_t i=0; i<procs.size();i++){
-        yarp::manager::Process p  = procs.at(i);
+    for(auto p : procs){
         QTreeWidgetItem *it = new QTreeWidgetItem(processesItem,QStringList() << QString("%1").arg(p.pid));
         Q_UNUSED(it);
     }

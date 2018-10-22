@@ -64,7 +64,7 @@ bool H264Stream::setStream(yarp::os::impl::DgramTwoWayStream *stream)
     return true;
 }
 
-void H264Stream::start (void)
+void H264Stream::start()
 {
     decoder = new H264Decoder(this->cfg);
     decoder->init();

@@ -249,9 +249,9 @@ ElectionOf<PortMonitorGroup>& PortMonitor::getPeers() {
 bool PortMonitorGroup::acceptIncomingData(PortMonitor *source)
 {
     //bool accept = true;
-    for (PeerRecord<PortMonitor>::iterator it = peerSet.begin(); it!=peerSet.end(); it++)
+    for (auto& it : peerSet)
     {
-        PortMonitor *peer = it->first;
+        PortMonitor *peer = it.first;
         if(peer != source)
         {
             peer->lock();

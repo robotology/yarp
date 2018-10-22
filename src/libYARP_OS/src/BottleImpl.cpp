@@ -69,8 +69,8 @@ void BottleImpl::add(Storable* s)
 
 void BottleImpl::clear()
 {
-    for (unsigned int i = 0; i < content.size(); i++) {
-        delete content[i];
+    for (auto& i : content) {
+        delete i;
     }
     content.clear();
     dirty = true;
@@ -184,8 +184,7 @@ void BottleImpl::fromString(const std::string& line)
     int nestedAlt = 0;
     std::string nline = line + " ";
 
-    for (unsigned int i = 0; i < nline.length(); i++) {
-        char ch = nline[i];
+    for (char ch : nline) {
         if (back) {
             arg += ch;
             back = false;
@@ -248,8 +247,7 @@ bool BottleImpl::isComplete(const char* txt)
     std::string nline = txt;
     nline += " ";
 
-    for (unsigned int i = 0; i < nline.length(); i++) {
-        char ch = nline[i];
+    for (char ch : nline) {
         if (back) {
             back = false;
         } else {
@@ -534,8 +532,7 @@ void BottleImpl::synch()
         }
         YMSG(("bottle length %zd\n", size()));
         writer.appendInt32(static_cast<std::int32_t>(size()));
-        for (unsigned int i = 0; i < content.size(); i++) {
-            Storable* s = content[i];
+        for (auto s : content) {
             if (speciality == 0) {
                 YMSG(("subcode %" PRId32 "\n", s->getCode()));
                 writer.appendInt32(s->getCode());

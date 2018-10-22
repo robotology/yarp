@@ -31,7 +31,7 @@ void Things::setPortWriter(yarp::os::PortWriter* writer)
     yarp::os::Things::writer = writer;
 }
 
-yarp::os::PortWriter* Things::getPortWriter(void)
+yarp::os::PortWriter* Things::getPortWriter()
 {
     return writer;
 }
@@ -41,7 +41,7 @@ void Things::setPortReader(yarp::os::PortReader* reader)
     yarp::os::Things::reader = reader;
 }
 
-yarp::os::PortReader* Things::getPortReader(void)
+yarp::os::PortReader* Things::getPortReader()
 {
     return reader;
 }

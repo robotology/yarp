@@ -304,9 +304,9 @@ bool MainWindow::updateFrameNumber(const char* part, int frameNum)
         //if (frameNum == 0)
             //frameNum = 1;
 
-        for (std::map<const char*,int>::iterator itr=partMap.begin(); itr != partMap.end(); itr++){
-            utilities->masterThread->virtualTime = utilities->partDetails[(*itr).second].timestamp[utilities->partDetails[(*itr).second].currFrame];
-            utilities->partDetails[(*itr).second].currFrame = frameNum;
+        for (auto& itr : partMap){
+            utilities->masterThread->virtualTime = utilities->partDetails[itr.second].timestamp[utilities->partDetails[itr.second].currFrame];
+            utilities->partDetails[itr.second].currFrame = frameNum;
         }
         utilities->masterThread->virtualTime = utilities->partDetails[0].timestamp[utilities->partDetails[0].currFrame];
         return true;
@@ -319,9 +319,9 @@ bool MainWindow::updateFrameNumber(const char* part, int frameNum)
 void MainWindow::getFrameCmd( const char* part , int *frame)
 {
     if (subDirCnt > 0){
-        for (std::map<const char*,int>::iterator itr=partMap.begin(); itr != partMap.end(); itr++){
-            if (strcmp (part,(*itr).first) == 0){
-                *frame = utilities->partDetails[(*itr).second].currFrame;
+        for (auto& itr : partMap) {
+            if (strcmp (part, itr.first) == 0) {
+                *frame = utilities->partDetails[itr.second].currFrame;
             }
         }
     }

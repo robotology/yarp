@@ -33,9 +33,9 @@ public:
     std::vector<DriverCreator *> delegates;
 
     ~DriversHelper() {
-        for (unsigned int i=0; i<delegates.size(); i++) {
-            if (delegates[i]==nullptr) continue;
-            delete delegates[i];
+        for (auto& delegate : delegates) {
+            if (delegate==nullptr) continue;
+            delete delegate;
         }
         delegates.clear();
     }
@@ -47,23 +47,23 @@ public:
     std::string toString() {
         std::string s;
         Property done;
-        for (unsigned int i=0; i<delegates.size(); i++) {
-            if (delegates[i]==nullptr) continue;
-            std::string name = delegates[i]->getName();
+        for (auto& delegate : delegates) {
+            if (delegate==nullptr) continue;
+            std::string name = delegate->getName();
             done.put(name,1);
-            std::string wrapper = delegates[i]->getWrapper();
+            std::string wrapper = delegate->getWrapper();
             s += "Device \"";
-            s += delegates[i]->getName();
+            s += delegate->getName();
             s += "\"";
             s += ",";
             s += " C++ class ";
-            s += delegates[i]->getCode();
+            s += delegate->getCode();
             s += ", ";
             if (wrapper=="") {
                 s += "has no network wrapper";
             } else if (wrapper!=name) {
                 s += "wrapped by \"";
-                s += delegates[i]->getWrapper();
+                s += delegate->getWrapper();
                 s += "\"";
             } else {
                 s += "is a network wrapper.";
@@ -131,23 +131,23 @@ public:
     DriverCreator *load(const char *name);
 
     DriverCreator *find(const char *name) {
-        for (unsigned int i=0; i<delegates.size(); i++) {
-            if (delegates[i]==nullptr) continue;
-            std::string s = delegates[i]->toString();
+        for (auto& delegate : delegates) {
+            if (delegate == nullptr) continue;
+            std::string s = delegate->toString();
             if (s==name) {
-                return delegates[i];
+                return delegate;
             }
         }
         return load(name);
     }
 
     bool remove(const char *name) {
-        for (unsigned int i=0; i<delegates.size(); i++) {
-            if (delegates[i]==nullptr) continue;
-            std::string s = delegates[i]->toString();
+        for (auto& delegate : delegates) {
+            if (delegate == nullptr) continue;
+            std::string s = delegate->toString();
             if (s==name) {
-                delete delegates[i];
-                delegates[i] = nullptr;
+                delete delegate;
+                delegate = nullptr;
             }
         }
         return false;

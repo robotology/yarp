@@ -602,16 +602,16 @@ bool MainWindow::init(QStringList enabledParts,
         parts[ss.substr(b2)] = p;
     }
 
-    for (auto i_robot = robots.begin(); i_robot != robots.end(); i_robot++)
+    for (auto& robot : robots)
     {
         QTreeWidgetItem *robot_top = new QTreeWidgetItem();
-        robot_top->setText(0, i_robot->first.c_str());
+        robot_top->setText(0, robot.first.c_str());
         m_ui->treeWidgetMode->addTopLevelItem(robot_top);
         robot_top->setExpanded(true);
-        i_robot->second.tree_pointer = robot_top;
+        robot.second.tree_pointer = robot_top;
     }
 
-    for (auto i_parts = parts.begin(); i_parts != parts.end(); i_parts++)
+    for (auto& i_parts : parts)
     {
         //JointItem *item = new JointItem();
         //layout->addWidget(item);
@@ -619,11 +619,11 @@ bool MainWindow::init(QStringList enabledParts,
         scroll->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         scroll->setWidgetResizable(true);
-        std::string part_name = i_parts->first;
-        std::string robot_name = i_parts->second.robot_name;
-        std::string robot_name_without_slash = i_parts->second.robot_name_without_slash;
-        std::string part_name_without_slash = i_parts->second.part_name_without_slash;
-        int         part_id = i_parts->second.partindex;
+        std::string part_name = i_parts.first;
+        std::string robot_name = i_parts.second.robot_name;
+        std::string robot_name_without_slash = i_parts.second.robot_name_without_slash;
+        std::string part_name_without_slash = i_parts.second.part_name_without_slash;
+        int         part_id = i_parts.second.partindex;
         part = new PartItem(robot_name_without_slash.c_str(), part_id, part_name_without_slash.c_str(), finder, debug_param_enabled, speedview_param_enabled, enable_calib_all, scroll);
 
         if(part && !part->getInterfaceError())
@@ -656,7 +656,7 @@ bool MainWindow::init(QStringList enabledParts,
 
             QTreeWidgetItem *mode = new QTreeWidgetItem();
             mode->setText(0, part_name.c_str());
-            QTreeWidgetItem *tp = robots[i_parts->second.robot_name].tree_pointer;
+            QTreeWidgetItem *tp = robots[i_parts.second.robot_name].tree_pointer;
             tp->addChild(mode);
             mode->setExpanded(false);
             part->setTreeWidgetModeNode(mode);

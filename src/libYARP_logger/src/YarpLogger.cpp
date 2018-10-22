@@ -774,7 +774,7 @@ bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
             file1 << it1->local_timestamp << std::endl;
             file1 << it1->level.toInt() << std::endl;
             file1 << start_string;
-            for (unsigned int s=0; s< it1->text.size(); s++) file1.put(it1->text[s]);
+            for (char s : it1->text) file1.put(s);
             file1 << end_string <<endl;
         }
     }

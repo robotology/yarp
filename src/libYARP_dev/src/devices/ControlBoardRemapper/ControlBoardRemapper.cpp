@@ -379,12 +379,12 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
 
     // Once we build the axis map, we build the mapping between the remapped axes and
     // the couple subControlBoard, axis in subControlBoard
-    for(size_t l=0; l < axesNames.size(); l++)
+    for(const auto& axesName : axesNames)
     {
-        std::map<std::string, axisLocation>::iterator it = axesLocationMap.find(axesNames[l]);
+        std::map<std::string, axisLocation>::iterator it = axesLocationMap.find(axesName);
         if( it == axesLocationMap.end() )
         {
-            yError() <<"ControlBoardRemapper: axis " << axesNames[l]
+            yError() <<"ControlBoardRemapper: axis " << axesName
                      <<" specified in axesNames was not found in the axes of the controlboards "
                      <<"passed to attachAll, attachAll failed. ";
             return false;

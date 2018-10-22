@@ -41,12 +41,12 @@ bool JoypadControlClient::getJoypadInfo()
     temp       = m_rpc_only;
     m_rpc_only = true;
     vector<tuple<int, JoypadControl::LoopablePort*, string> > vocabs_ports;
-    vocabs_ports.push_back(make_tuple(VOCAB_BUTTON,    &m_buttonsPort,   "/buttons"));
-    vocabs_ports.push_back(make_tuple(VOCAB_AXIS,      &m_axisPort,      "/axis"));
-    vocabs_ports.push_back(make_tuple(VOCAB_STICK,     &m_stickPort,     "/stick"));
-    vocabs_ports.push_back(make_tuple(VOCAB_TRACKBALL, &m_trackballPort, "/trackballs"));
-    vocabs_ports.push_back(make_tuple(VOCAB_TOUCH,     &m_touchPort,     "/touch"));
-    vocabs_ports.push_back(make_tuple(VOCAB_HAT,       &m_hatsPort,      "/hat"));
+    vocabs_ports.emplace_back(VOCAB_BUTTON,    &m_buttonsPort,   "/buttons");
+    vocabs_ports.emplace_back(VOCAB_AXIS,      &m_axisPort,      "/axis");
+    vocabs_ports.emplace_back(VOCAB_STICK,     &m_stickPort,     "/stick");
+    vocabs_ports.emplace_back(VOCAB_TRACKBALL, &m_trackballPort, "/trackballs");
+    vocabs_ports.emplace_back(VOCAB_TOUCH,     &m_touchPort,     "/touch");
+    vocabs_ports.emplace_back(VOCAB_HAT,       &m_hatsPort,      "/hat");
 
     for(auto vocab_port : vocabs_ports)
     {

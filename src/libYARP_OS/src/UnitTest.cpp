@@ -95,8 +95,8 @@ UnitTest::UnitTest(UnitTest *parent) :
 
 void UnitTest::add(UnitTest& unit)
 {
-    for (unsigned int i=0; i<subTests.size(); i++) {
-        if (subTests[i]==&unit) {
+    for (auto& subTest : subTests) {
+        if (subTest == &unit) {
             return; // already present, no need to add
         }
     }
@@ -156,8 +156,8 @@ int UnitTest::run(int argc, char *argv[])
     }
 
     // Run sub tests
-    for (unsigned int i=0; i<subTests.size(); i++) {
-        hasProblem += subTests[i]->run(argc, argv);
+    for (auto& subTest : subTests) {
+        hasProblem += subTest->run(argc, argv);
     }
 
     if (parent != nullptr) {
@@ -248,8 +248,7 @@ bool UnitTest::checkEqualImpl(const std::string& x, const std::string& y,
 std::string UnitTest::humanize(const std::string& txt)
 {
     std::string result;
-    for (unsigned int i=0; i<txt.length(); i++) {
-        char ch = txt[i];
+    for (char ch : txt) {
         if (ch == '\n') {
             result += "\\n";
         } else if (ch == '\r') {

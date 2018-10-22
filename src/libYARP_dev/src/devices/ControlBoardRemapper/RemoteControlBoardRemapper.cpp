@@ -39,13 +39,13 @@ RemoteControlBoardRemapper::~RemoteControlBoardRemapper()
 
 void RemoteControlBoardRemapper::closeAllRemoteControlBoards()
 {
-    for(size_t ctrlBrd=0; ctrlBrd < m_remoteControlBoardDevices.size(); ctrlBrd++)
+    for(auto& m_remoteControlBoardDevice : m_remoteControlBoardDevices)
     {
-        if( m_remoteControlBoardDevices[ctrlBrd] )
+        if( m_remoteControlBoardDevice )
         {
-            m_remoteControlBoardDevices[ctrlBrd]->close();
-            delete m_remoteControlBoardDevices[ctrlBrd];
-            m_remoteControlBoardDevices[ctrlBrd] = nullptr;
+            m_remoteControlBoardDevice->close();
+            delete m_remoteControlBoardDevice;
+            m_remoteControlBoardDevice = nullptr;
         }
     }
 

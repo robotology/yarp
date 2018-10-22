@@ -47,9 +47,9 @@ struct net_error_mgr {
     struct jpeg_error_mgr pub;
     jmp_buf setjmp_buffer;
 };
-typedef struct net_error_mgr *net_error_ptr;
+using net_error_ptr = struct net_error_mgr*;
 
-typedef jpeg_source_mgr *net_src_ptr;
+using net_src_ptr = jpeg_source_mgr*;
 
 void init_net_source (j_decompress_ptr cinfo) {
     //net_src_ptr src = (net_src_ptr) cinfo->src;

@@ -508,8 +508,8 @@ std::string NameServer::cmdList(int argc, char *argv[]) {
     std::string response;
 
     std::multiset<std::string> lines;
-    for (auto it = nameMap.begin(); it!=nameMap.end(); ++it) {
-        NameRecord& rec = it->second;
+    for (auto& it : nameMap) {
+        NameRecord& rec = it.second;
         lines.insert(textify(rec.getAddress()));
     }
 
@@ -547,8 +547,8 @@ Bottle NameServer::ncmdList(int argc, char *argv[]) {
     }
 
     response.addString("ports");
-    for (auto it = nameMap.begin(); it!=nameMap.end(); ++it) {
-        NameRecord& rec = it->second;
+    for (auto& it : nameMap) {
+        NameRecord& rec = it.second;
         std::string iname = rec.getAddress().getRegName();
         if (iname.find(prefix)==0) {
             if (iname==prefix || iname[prefix.length()]=='/' ||
@@ -776,11 +776,11 @@ public:
                     }
                     // This change is just to make Microsoft Telnet happy
                     std::string tmp;
-                    for (unsigned int i=0; i<result.length(); i++) {
-                        if (result[i]=='\n') {
+                    for (char i : result) {
+                        if (i=='\n') {
                             tmp += '\r';
                         }
-                        tmp += result[i];
+                        tmp += i;
                     }
                     tmp += '\r';
                     os->appendString(tmp.c_str(), '\n');

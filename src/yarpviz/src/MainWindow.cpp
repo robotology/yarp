@@ -612,11 +612,10 @@ void MainWindow::onHighlightLoops() {
         std::uniform_int_distribution<int> udistH(128, 255);
         std::uniform_int_distribution<int> udistL(0, 128);
 
-        for(size_t i=0; i<scc.size(); i++) {
-            pvertex_set &vset = scc[i];
+        for(auto& vset : scc) {
             QColor color(udistH(randengine), udistL(randengine), udistH(randengine));
-            for(size_t j=0; j<vset.size(); j++)
-                vset[j]->property.put("color", color.name().toStdString());
+            for(auto& j : vset)
+                j->property.put("color", color.name().toStdString());
         }
     }
     else {

@@ -41,10 +41,10 @@ Contact NameServiceOnTriples::query(const std::string& portName,
             printf("LOOKING AT IPS FOR %s\n", prefix.c_str());
             t.setNameValue("ips","*");
             list<Triple> lst = act.mem.query(t,&context);
-            for (list<Triple>::iterator it=lst.begin();it!=lst.end();it++) {
-                printf("LOOKING AT IPS %s\n", it->value.c_str());
-                if (it->value.find(prefix)==0) {
-                    host = it->value;
+            for (auto& it : lst) {
+                printf("LOOKING AT IPS %s\n", it.value.c_str());
+                if (it.value.find(prefix)==0) {
+                    host = it.value;
                     break;
                 }
             }
@@ -347,10 +347,10 @@ bool NameServiceOnTriples::cmdUnregister(NameTripleState& act) {
         t.setNameValue("owns","*");
         list<Triple> lst = act.mem.query(t,&context);
         unlock();
-        for (list<Triple>::iterator it=lst.begin();it!=lst.end();it++) {
+        for (auto& it : lst) {
             act.cmd.clear();
             act.cmd.addString("unregister");
-            act.cmd.addString(it->value.c_str());
+            act.cmd.addString(it.value.c_str());
             cmdUnregister(act);
         }
         lock();
@@ -526,13 +526,13 @@ bool NameServiceOnTriples::cmdGet(NameTripleState& act) {
         q.addString("property");
         q.addString(key);
         q.addString("=");
-        for (list<Triple>::iterator it=lst.begin(); it!=lst.end(); it++) {
-            q.addString(it->value.c_str());
+        for (auto& it : lst) {
+            q.addString(it.value.c_str());
         }
     } else {
-        for (list<Triple>::iterator it=lst.begin(); it!=lst.end(); it++) {
+        for (auto& it : lst) {
             Value v;
-            v.fromString(it->value.c_str());
+            v.fromString(it.value.c_str());
             q.add(v);
         }
     }
@@ -569,8 +569,8 @@ bool NameServiceOnTriples::cmdCheck(NameTripleState& act) {
     q.addString(val);
     q.addString("present");
     std::string present = "false";
-    for (list<Triple>::iterator it=lst.begin(); it!=lst.end(); it++) {
-        if (val == it->value) {
+    for (auto& it : lst) {
+        if (val == it.value) {
             present = "true";
         }
     }

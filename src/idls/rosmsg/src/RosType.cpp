@@ -49,7 +49,7 @@ std::vector<std::string> normalizedMessage(const std::string& line) {
             }
             result = "";
             if (ch=='=') {
-                all.push_back("=");
+                all.emplace_back("=");
                 can_quote = false;
             }
         } else {
@@ -444,63 +444,63 @@ bool RosType::emitType(RosTypeCodeGen& gen,
 
     state.usedVariables.clear();
     state.txt = txt;
-    for (size_t i=0; i<subRosType.size(); i++) {
-        state.useVariable(subRosType[i].rosName);
+    for (auto& i : subRosType) {
+        state.useVariable(i.rosName);
     }
 
-    for (size_t i=0; i<subRosType.size(); i++) {
-        if (subRosType[i].isStruct && std::find(state.dependencies[rosType].begin(), state.dependencies[rosType].end(), subRosType[i].rosType) == state.dependencies[rosType].end()) {
-            state.dependencies[rosType].push_back(subRosType[i].rosType);
-            state.dependenciesAsPaths[rosType].push_back((subRosType[i].rosPath=="")?subRosType[i].rosType:subRosType[i].rosPath);
+    for (auto& i : subRosType) {
+        if (i.isStruct && std::find(state.dependencies[rosType].begin(), state.dependencies[rosType].end(), i.rosType) == state.dependencies[rosType].end()) {
+            state.dependencies[rosType].push_back(i.rosType);
+            state.dependenciesAsPaths[rosType].push_back((i.rosPath=="")?i.rosType:i.rosPath);
         }
     }
 
     if (!gen.beginType(rosType,state)) return false;
 
     if (!gen.beginDeclare()) return false;
-    for (size_t i=0; i<subRosType.size(); i++) {
-        if (!gen.declareField(subRosType[i])) return false;
+    for (const auto& i : subRosType) {
+        if (!gen.declareField(i)) return false;
     }
     if (!gen.endDeclare()) return false;
 
     if (!gen.beginConstruct()) return false;
     bool isFirst = true;
-    for (size_t i=0; i<subRosType.size(); i++) {
-        if (!gen.initField(subRosType[i], isFirst)) return false;
+    for (const auto& i : subRosType) {
+        if (!gen.initField(i, isFirst)) return false;
     }
     if (!gen.endInitConstruct()) return false;
-    for (size_t i=0; i<subRosType.size(); i++) {
-        if (!gen.constructField(subRosType[i])) return false;
+    for (const auto& i : subRosType) {
+        if (!gen.constructField(i)) return false;
     }
     if (!gen.endConstruct()) return false;
 
     if (!gen.beginClear()) return false;
-    for (size_t i=0; i<subRosType.size(); i++) {
-        if (!gen.clearField(subRosType[i])) return false;
+    for (const auto& i : subRosType) {
+        if (!gen.clearField(i)) return false;
     }
     if (!gen.endClear()) return false;
 
     if (!gen.beginRead(true,(int)subRosType.size())) return false;
-    for (size_t i=0; i<subRosType.size(); i++) {
-        if (!gen.readField(true,subRosType[i])) return false;
+    for (const auto& i : subRosType) {
+        if (!gen.readField(true,i)) return false;
     }
     if (!gen.endRead(true)) return false;
 
     if (!gen.beginRead(false,(int)subRosType.size())) return false;
-    for (size_t i=0; i<subRosType.size(); i++) {
-        if (!gen.readField(false,subRosType[i])) return false;
+    for (const auto& i : subRosType) {
+        if (!gen.readField(false,i)) return false;
     }
     if (!gen.endRead(false)) return false;
 
     if (!gen.beginWrite(true,(int)subRosType.size())) return false;
-    for (size_t i=0; i<subRosType.size(); i++) {
-        if (!gen.writeField(true,subRosType[i])) return false;
+    for (const auto& i : subRosType) {
+        if (!gen.writeField(true,i)) return false;
     }
     if (!gen.endWrite(true)) return false;
 
     if (!gen.beginWrite(false,(int)subRosType.size())) return false;
-    for (size_t i=0; i<subRosType.size(); i++) {
-        if (!gen.writeField(false,subRosType[i])) return false;
+    for (const auto& i : subRosType) {
+        if (!gen.writeField(false,i)) return false;
     }
     if (!gen.endWrite(false)) return false;
 
@@ -622,8 +622,7 @@ bool RosTypeSearch::fetchFromWeb(const std::string& target_file,
                 std::string def2;
                 std::string tag;
                 bool tagging = false;
-                for (size_t j=0; j<def.length(); j++) {
-                    char ch = def[j];
+                for (char ch : def) {
                     if (tagging||ch=='<') {
                         tagging = true;
                         tag += ch;

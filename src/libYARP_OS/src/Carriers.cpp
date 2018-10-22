@@ -69,8 +69,8 @@ Carrier* Carriers::Private::chooseCarrier(const std::string *name,
             name = &s;
         }
     }
-    for (size_t i = 0; i < delegates.size(); i++) {
-        Carrier& c = *delegates[i];
+    for (auto& delegate : delegates) {
+        Carrier& c = *delegate;
         bool match = false;
         if (name != nullptr) {
             if ((*name) == c.getName()) {
@@ -145,13 +145,13 @@ bool Carriers::Private::matchCarrier(const Bytes *header, Bottle& code)
         Value& v = code.get(i);
         if (v.isString()) {
             std::string str = v.asString();
-            for (int j=0; j<(int)str.length(); j++) {
+            for (char j : str) {
                 if ((int)header->length()<=at) {
                     success = false;
                     done = true;
                     break;
                 }
-                if (str[j] != header->get()[at]) {
+                if (j != header->get()[at]) {
                     success = false;
                     done = true;
                     break;
@@ -222,9 +222,9 @@ Carriers::~Carriers()
 
 void Carriers::clear()
 {
-    for (unsigned int i=0; i<mPriv->delegates.size(); i++) {
-        delete mPriv->delegates[i];
-        mPriv->delegates[i] = nullptr;
+    for (auto& delegate : mPriv->delegates) {
+        delete delegate;
+        delegate = nullptr;
     }
     mPriv->delegates.clear();
 }
@@ -338,8 +338,8 @@ Bottle Carriers::listCarriers()
     Property done;
 
     std::vector<Carrier*>& delegates = instance.mPriv->delegates;
-    for (size_t i = 0; i < delegates.size(); i++) {
-        Carrier& c = *delegates[i];
+    for (auto& delegate : delegates) {
+        Carrier& c = *delegate;
         lst.addString(c.getName());
         done.put(c.getName(), 1);
     }

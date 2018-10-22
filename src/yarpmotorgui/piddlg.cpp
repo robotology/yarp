@@ -107,10 +107,10 @@ void PidDlg::onDumpRemoteVariables()
 
 PidDlg::~PidDlg()
 {
-    for (size_t cc = 0; cc < buttons.size(); cc++)
+    for (auto& button : buttons)
     {
-        delete buttons[cc];
-        buttons[cc] = nullptr;
+        delete button;
+        button = nullptr;
     }
     buttons.clear();
     delete ui;
@@ -263,10 +263,10 @@ void PidDlg::initRemoteVariables(IRemoteVariables* iVar)
         {
             std::string s = keys.toString();
             int keys_size = keys.size();
-            for (size_t cc = 0; cc < buttons.size(); cc++)
+            for (auto& button : buttons)
             {
-                delete buttons[cc];
-                buttons[cc] = nullptr;
+                delete button;
+                button = nullptr;
             }
             buttons.clear();
             buttons.resize(keys_size);

@@ -122,9 +122,9 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             out.clear();
             out.addVocab(VOCAB_IMAP_OK);
 
-            for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); ++it)
+            for (auto& it : m_maps_storage)
             {
-                out.addString(it->first);
+                out.addString(it.first);
             }
         }
         else if (cmd == VOCAB_IMAP_REMOVE)
@@ -468,13 +468,13 @@ bool Map2DServer::saveMaps(std::string mapsfile)
         return false;
     }
     bool ret = true;
-    for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); ++it)
+    for (auto& it : m_maps_storage)
     {
-        string map_filename = it->first + ".map";
+        string map_filename = it.first + ".map";
         file << "mapfile: ";
         file << map_filename;
         file << endl;
-        ret &= it->second.saveToFile(map_filename);
+        ret &= it.second.saveToFile(map_filename);
     }
     file.close();
     return ret;
@@ -578,9 +578,9 @@ bool Map2DServer::open(yarp::os::Searchable &config)
         {
             yInfo() << "Map collection file:" << collection_file_with_path << "successfully loaded.";
             yInfo() << "Available maps are:";
-            for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); ++it)
+            for (auto& it : m_maps_storage)
             {
-                yInfo() << it->first;
+                yInfo() << it.first;
             }
         }
         else
