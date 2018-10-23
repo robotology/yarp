@@ -1500,5 +1500,14 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         CHECK(p.close()); // Closing the broken_device
     }
 
+    SECTION("testing lockup if resume is called when not interrupted") {
+        Port p;
+        CHECK(p.open("/test")); // Checking the open of the port
+        p.interrupt();
+        p.resume();
+        p.resume(); //should not lockup here
+        p.close();
+    }
+
     NetworkBase::setLocalMode(false);
 }
