@@ -1582,6 +1582,16 @@ public:
         checkTrue(p.close(),"Closing the broken_device");
     }
 
+    void testPortResumeDeadlock() {
+        report(0, "testing lockup if resume is called when not interrupted");
+        Port p;
+        checkTrue(p.open("/test"), "Checking the open of the port");
+        p.interrupt();
+        p.resume();
+        p.resume(); //should not lockup here
+        p.close();
+    }
+
     virtual void runTests() override {
         NetworkBase::setLocalMode(true);
 
@@ -1648,6 +1658,7 @@ public:
                                                       "brokenDevice",
                                                       "yarp::dev::BrokenDevice"));
         testPrepareDeadlock();
+        testPortResumeDeadlock();
 
 
 
