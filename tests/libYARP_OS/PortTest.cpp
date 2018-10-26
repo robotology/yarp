@@ -25,7 +25,6 @@
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/PortInfo.h>
-#include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Drivers.h>
@@ -34,26 +33,23 @@
 
 #include <yarp/companion/impl/Companion.h>
 
-//#include "TestList.h"
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
+
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-namespace yarp {
-    namespace dev {
-        class BrokenDevice;
-    }
-}
 
 /**
  * @ingroup dev_impl_media
  *
  * A fake device for testing closure after a prepare of a closed port.
  */
-class yarp::dev::BrokenDevice : public DeviceDriver,
-                                public yarp::os::PeriodicThread
+class BrokenDevice : public yarp::dev::DeviceDriver,
+                     public yarp::os::PeriodicThread
 {
 private:
 
@@ -61,7 +57,7 @@ public:
     /**
      * Constructor.
      */
-    BrokenDevice():PeriodicThread(0.03), img(nullptr){}
+    BrokenDevice() : PeriodicThread(0.03), img(nullptr) {}
 
     virtual bool close() override
     {
@@ -138,7 +134,8 @@ public:
     }
 };
 
-class ServiceProvider : public PortReader {
+class ServiceProvider : public PortReader
+{
 public:
 
     virtual bool read(ConnectionReader& connection) override {
@@ -153,13 +150,11 @@ public:
     }
 };
 
-class ServiceTester : public Portable {
+class ServiceTester : public Portable
+{
 public:
-    UnitTest& owner;
     Bottle send, receive;
     mutable int ct;
-
-    ServiceTester(UnitTest& owner) : owner(owner) {}
 
     virtual bool write(ConnectionWriter& connection) const override {
         ct = 0;
@@ -175,13 +170,13 @@ public:
     }
 
     void finalCheck() {
-        owner.checkEqual(receive.size(),send.size()+1,"size incremented");
-        owner.checkEqual(ct,1,"just one read");
+        CHECK(receive.size() == send.size()+1); // size incremented
+        CHECK(ct == 1); // just one read
     }
 };
 
-
-class DelegatedReader : public Thread {
+class DelegatedReader : public Thread
+{
 public:
     bool faithful;
     Port p;
@@ -205,7 +200,8 @@ public:
     }
 };
 
-class DelegatedWriter : public Thread {
+class DelegatedWriter : public Thread
+{
 public:
     Port p;
     int total;
@@ -228,7 +224,8 @@ public:
 };
 
 
-class DelegatedCallback : public TypedReaderCallback<Bottle> {
+class DelegatedCallback : public TypedReaderCallback<Bottle>
+{
 public:
     Bottle saved;
     Semaphore produce;
@@ -243,7 +240,8 @@ public:
 };
 
 
-class MyReport : public PortReport {
+class MyReport : public PortReport
+{
 public:
     int ct;
     int oct;
@@ -265,7 +263,8 @@ public:
     }
 };
 
-class WriteReader : public Thread {
+class WriteReader : public Thread
+{
 public:
     Port p;
     bool done;
@@ -289,7 +288,8 @@ public:
     }
 };
 
-class ServiceUser : public Thread {
+class ServiceUser : public Thread
+{
 public:
     Port p;
 
@@ -304,7 +304,8 @@ public:
     }
 };
 
-class StreamUser : public Thread {
+class StreamUser : public Thread
+{
 public:
     Port p;
 
@@ -320,7 +321,8 @@ public:
     }
 };
 
-class DataPort : public BufferedPort<Bottle> {
+class DataPort : public BufferedPort<Bottle>
+{
 public:
     int ct;
 
@@ -334,47 +336,48 @@ public:
     }
 };
 
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
+static int safePort()
+{
+    return Network::getDefaultPortRange() + 100;
+}
 
+TEST_CASE("OS::PortTest", "[yarp::os]") {
 
-class PortTest : public UnitTest {
-public:
-    int safePort() { return Network::getDefaultPortRange()+100; }
+    NetworkBase::setLocalMode(true);
 
-    virtual std::string getName() const override { return "PortTest"; }
+    yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<BrokenDevice>("brokenDevice",
+                                                                                   "brokenDevice",
+                                                                                   "BrokenDevice"));
 
-    void testOpen() {
-        report(0,"checking opening and closing ports");
+    SECTION("checking opening and closing ports") {
         Port out, in;
 
         in.open("/in");
         out.open(Contact("tcp", "", safePort()));
 
-        checkTrue(in.isOpen(), "/in port is open");
-        checkTrue(out.isOpen(), "/out port is open");
+        CHECK(in.isOpen()); // /in port is open
+        CHECK(out.isOpen()); // /out port is open
 
         Contact conIn = in.where();
         Contact conOut = out.where();
 
-        checkTrue(conIn.isValid(),"valid address for /in");
-        checkTrue(conOut.isValid(),"valid address for /out");
+        CHECK(conIn.isValid()); // valid address for /in
+        CHECK(conOut.isValid()); // valid address for /out
 
         out.addOutput(Contact("/in", "tcp"));
         //Time::delay(0.2);
 
-        checkEqual(conIn.getName().c_str(),"/in","name is recorded");
-
-        checkTrue(conOut.getName().find("/tmp")==0,
-                  "name is created");
+        CHECK(conIn.getName() == "/in"); // name is recorded
+        CHECK(conOut.getName().find("/tmp") == 0); // name is created
 
         Bottle bot1, bot2;
         bot1.fromString("5 10 \"hello\"");
         out.enableBackgroundWrite(true);
         out.write(bot1);
         in.read(bot2);
-        checkEqual(bot1.get(0).asInt32(),5,"check bot[0]");
-        checkEqual(bot1.get(1).asInt32(),10,"check bot[1]");
-        checkEqual(bot1.get(2).asString().c_str(),"hello","check bot[2]");
+        CHECK(bot1.get(0).asInt32() == 5); // check bot[0]
+        CHECK(bot1.get(1).asInt32() == 10); // check bot[1]
+        CHECK(bot1.get(2).asString() == "hello"); // check bot[2]
 
         while (out.isWriting()) {
             printf("Waiting...\n");
@@ -384,15 +387,14 @@ public:
         bot1.fromString("18");
         out.write(bot1);
         in.read(bot2);
-        checkEqual(bot1.get(0).asInt32(),18,"check one more send/receive");
+        CHECK(bot1.get(0).asInt32() == 18); // check one more send/receive
 
         in.close();
         out.close();
     }
 
-
-    void testReadBuffer() {
-        report(0,"checking read buffering");
+#if 0
+    SECTION("checking read buffering") {
         Bottle bot1;
         PortReaderBuffer<Bottle> buf;
         buf.setStrict(true);
@@ -412,31 +414,28 @@ public:
         output.addOutput(Contact("/in", "udp"));
         //Time::delay(0.2);
 
-        report(0,"writing...");
+        INFO("writing...");
         output.write(bot1);
         output.write(bot1);
         output.write(bot1);
-        report(0,"reading...");
+        INFO("reading...");
         Bottle *result = buf.read();
 
         for (int j=0; j<3; j++) {
             if (j!=0) {
                 result = buf.read();
             }
-            checkTrue(result!=nullptr,"got something check");
-            if (result!=nullptr) {
-                checkEqual(bot1.size(),result->size(),"size check");
-                YARP_INFO(Logger::get(),std::string("size is in fact ") +
-                          NetType::toString((unsigned int) result->size()));
-            }
+            REQUIRE(result!=nullptr); // got something check
+            CHECK(bot1.size() == result->size()); // size check
+            INFO("size is in fact " << result->size());
         }
 
         output.close();
         input.close();
     }
+#endif
 
-    void testUdp() {
-        report(0,"checking udp");
+    SECTION("checking udp") {
 
         Bottle bot1;
         PortReaderBuffer<Bottle> buf;
@@ -456,32 +455,27 @@ public:
         output.addOutput(Contact("/in", "udp"));
         //Time::delay(0.2);
 
-        report(0,"writing/reading three times...");
+        INFO("writing/reading three times...");
 
-        report(0,"checking for whatever got through...");
+        INFO("checking for whatever got through...");
         int ct = 0;
         while (buf.check()) {
             ct++;
             Bottle *result = buf.read();
-            checkTrue(result!=nullptr,"got something check");
-            if (result!=nullptr) {
-                checkEqual(bot1.size(),result->size(),"size check");
-                YARP_INFO(Logger::get(),std::string("size is in fact ") +
-                          NetType::toString((unsigned int) result->size()));
-            }
+            REQUIRE(result!=nullptr); // got something check
+            CHECK(bot1.size() == result->size()); // size check
+            INFO("size is in fact " << result->size());
         }
         if (ct==0) {
-            report(0,"NOTHING got through - possible but sad");
+            INFO("NOTHING got through - possible but sad");
         }
 
         output.close();
         input.close();
     }
 
-
-    void testHeavy() {
-        report(0,"checking heavy udp");
-
+#if 0
+    SECTION("checking heavy udp") {
         Bottle bot1;
         PortReaderBuffer<Bottle> buf;
 
@@ -500,35 +494,30 @@ public:
         output.addOutput(Contact("/in", "udp"));
         //Time::delay(0.2);
 
-
         for (int j=0; j<3; j++) {
-            report(0,"writing/reading three times...");
+            INFO("writing/reading three times...");
             output.write(bot1);
         }
 
-        report(0,"checking for whatever got through...");
+        INFO("checking for whatever got through...");
         int ct = 0;
         while (buf.check()) {
             ct++;
             Bottle *result = buf.read();
-            checkTrue(result!=nullptr,"got something check");
-            if (result!=nullptr) {
-                checkEqual(bot1.size(),result->size(),"size check");
-                YARP_INFO(Logger::get(),std::string("size is in fact ") +
-                          NetType::toString((unsigned int) result->size()));
-            }
+            REQUIRE(result!=nullptr); // got something check
+            CHECK(bot1.size() == result->size()); // size check
+            INFO("size is in fact " << result->size());
         }
         if (ct==0) {
-            report(0,"NOTHING got through - possible but sad");
+            INFO("NOTHING got through - possible but sad");
         }
 
         output.close();
         input.close();
     }
+#endif
 
-
-    void testPair() {
-        report(0,"checking paired send/receive");
+    SECTION("checking paired send/receive") {
         PortReaderBuffer<PortablePair<Bottle,Bottle> > buf;
 
         Port input, output;
@@ -541,34 +530,26 @@ public:
         output.addOutput(Contact("/in", "tcp"));
         //Time::delay(0.2);
 
-
         PortablePair<Bottle,Bottle> bot1;
         bot1.head.fromString("1 2 3");
         bot1.body.fromString("4 5 6 7");
 
-        report(0,"writing...");
+        INFO("writing...");
         output.write(bot1);
         bool ok = output.write(bot1);
-        checkTrue(ok,"output proceeding");
-        report(0,"reading...");
+        CHECK(ok); // output proceeding
+        INFO("reading...");
         PortablePair<Bottle,Bottle> *result = buf.read();
 
-        checkTrue(result!=nullptr,"got something check");
-        if(result == nullptr)
-        {
-            report(1, "PortReadBuffer gave nothing..");
-            return;
-        }
-        checkEqual(bot1.head.size(),result->head.size(),"head size check");
-        checkEqual(bot1.body.size(),result->body.size(),"body size check");
+        REQUIRE(result!=nullptr); // got something check
+        CHECK(bot1.head.size() == result->head.size()); // head size check
+        CHECK(bot1.body.size() == result->body.size()); // body size check
 
         output.close();
         input.close();
     }
 
-
-    void testReply() {
-        report(0,"checking reply processing");
+    SECTION ("checking reply processing") {
         ServiceProvider provider;
 
         Port input, output;
@@ -579,7 +560,7 @@ public:
 
         output.addOutput(Contact("/in", "tcp"));
         Time::delay(0.1);
-        ServiceTester tester(*this);
+        ServiceTester tester;
         output.write(tester);
         Time::delay(0.1);
         tester.finalCheck();
@@ -588,9 +569,7 @@ public:
         input.close();
     }
 
-
-    virtual void testBackground() {
-        report(0,"test communication in background mode");
+    SECTION("test communication in background mode") {
 
         Port input, output;
         input.open("/in");
@@ -603,33 +582,32 @@ public:
 
         output.addOutput("/in");
 
-        report(0,"writing...");
+        INFO("writing...");
         output.write(bout);
-        report(0,"reading...");
+        INFO("reading...");
         input.read(bin);
 
-        checkEqual(bout.content(),bin.content(),"successful transmit");
+        CHECK(bout.content() == bin.content()); // successful transmit
 
         while (output.isWriting()) {
-            report(0,"waiting for port to stabilize");
+            INFO("waiting for port to stabilize");
             Time::delay(0.2);
         }
 
         bout.content() = 88;
 
-        report(0,"writing...");
+        INFO("writing...");
         output.write(bout);
-        report(0,"reading...");
+        INFO("reading...");
         input.read(bin);
 
-        checkEqual(bout.content(),bin.content(),"successful transmit");
+        CHECK(bout.content() == bin.content()); // successful transmit
 
         output.close();
         input.close();
     }
 
-    void testWriteBuffer() {
-        report(0,"testing write buffering");
+    SECTION("testing write buffering") {
 
         Port input, output, altInput;
         input.open("/in");
@@ -637,7 +615,7 @@ public:
         output.open("/out");
         output.addOutput("/in");
 
-        report(0,"beginning...");
+        INFO("beginning...");
 
         BinPortable<int> bin;
         PortWriterBuffer<BinPortable<int> > binOut;
@@ -656,91 +634,85 @@ public:
         binOut.write();
 
         input.read(bin);
-        checkEqual(val1,bin.content(),"successful transmit");
+        CHECK(val1 == bin.content()); // successful transmit
 
         altInput.read(bin);
-        checkEqual(val2,bin.content(),"successful transmit");
+        CHECK(val2 == bin.content()); // successful transmit
 
         while (output.isWriting()) {
-            report(0,"waiting for port to stabilize");
+            INFO("waiting for port to stabilize");
             Time::delay(0.2);
         }
 
-        report(0,"port stabilized");
+        INFO("port stabilized");
         output.close();
-        report(0,"shut down output buffering");
+        INFO("shut down output buffering");
     }
 
-    void testBufferedPort() {
-        report(0,"checking buffered port");
+    SECTION("checking buffered port") {
         BufferedPort<BinPortable<int> > output, input;
         output.open("/out");
         input.open("/in");
 
-        report(0,"is write a no-op when no connection exists?...");
+        INFO("is write a no-op when no connection exists?...");
         BinPortable<int>& datum0 = output.prepare();
         datum0.content() = 123;
-        report(0,"writing...");
+        INFO("writing...");
         output.write();
 
         output.addOutput("/in");
-        report(0,"now with a connection...");
+        INFO("now with a connection...");
         BinPortable<int>& datum = output.prepare();
         datum.content() = 999;
-        report(0,"writing...");
+        INFO("writing...");
         output.write();
-        report(0,"reading...");
+        INFO("reading...");
         BinPortable<int> *bin = input.read();
-        checkEqual(bin->content(),999,"good send");
+        CHECK(bin->content() == 999); // good send
     }
 
-    void testCloseOrder() {
-        report(0,"check that port close order doesn't matter...");
-
+    SECTION("check that port close order doesn't matter (test 1)") {
         for (int i=0; i<4; i++) {
             // on OSX there is a problem only tickled upon repetition
-            {
-                Port input, output;
-                input.open("/in");
-                output.open("/out");
-                output.addOutput("/in");
+            Port input, output;
+            input.open("/in");
+            output.open("/out");
+            output.addOutput("/in");
 
-                report(0,"closing in");
-                input.close();
+            INFO("closing in");
+            input.close();
 
-                report(0,"closing out");
-                output.close();
-            }
-
-            {
-                Port input, output;
-                input.open("/in");
-                output.open("/out");
-                output.addOutput("/in");
-
-                report(0,"closing out");
-                output.close();
-
-                report(0,"closing in");
-                input.close();
-            }
+            INFO("closing out");
+            output.close();
         }
     }
 
+    SECTION("check that port close order doesn't matter (test 2)") {
+        for (int i=0; i<4; i++) {
+            Port input, output;
+            input.open("/in");
+            output.open("/out");
+            output.addOutput("/in");
 
-    virtual void testDelegatedReadReply() {
-        report(0,"check delegated read and reply...");
+            INFO("closing out");
+            output.close();
+
+            INFO("closing in");
+            input.close();
+        }
+    }
+
+    SECTION("check delegated read and reply") {
         DelegatedReader reader;
         DelegatedWriter writer;
         reader.start();
         writer.start();
         writer.stop();
         reader.stop();
-        checkEqual(writer.total,6,"read/replies give right checksum");
+        CHECK(writer.total == 6); // read/replies give right checksum
     }
 
-    virtual void testReaderHandler() {
-        report(0,"check reader handler...");
+    SECTION("check reader handler") {
         Port in;
         Port out;
         DelegatedCallback callback;
@@ -754,14 +726,13 @@ public:
         Bottle src("10 10 20");
         out.write(src);
         callback.produce.wait();
-        checkEqual(callback.saved.size(),(size_t) 3,"object came through");
+        CHECK(callback.saved.size() == 3); // object came through
         reader.disableCallback();
         out.close();
         in.close();
     }
 
-    virtual void testReaderHandler2() {
-        report(0,"check reader handler, bufferedport style...");
+    SECTION("check reader handler, bufferedport style") {
         BufferedPort<Bottle> in;
         Port out;
         DelegatedCallback callback;
@@ -773,56 +744,52 @@ public:
         Bottle src("10 10 20");
         out.write(src);
         callback.produce.wait();
-        checkEqual(callback.saved.size(),(size_t) 3,"object came through");
+        CHECK(callback.saved.size() == 3); // object came through
         in.disableCallback();
     }
 
-    virtual void testReaderHandlerNoOpen() {
-        report(0,"check reader handler without open...");
-        {
-            report(0, "test 1");
-            Port in;
-            DelegatedCallback callback;
-            PortReaderBuffer<Bottle> reader;
-            reader.setStrict();
-            reader.attach(in);
-            reader.useCallback(callback);
-            reader.disableCallback();
-            in.close();
-        }
-        {
-            report(0, "test 2");
-            Port in;
-            DelegatedCallback callback;
-            PortReaderBuffer<Bottle> reader;
-            reader.setStrict();
-            reader.attach(in);
-            reader.useCallback(callback);
-            reader.disableCallback();
-        }
-        {
-            report(0, "test 3");
-            Port in;
-            DelegatedCallback callback;
-            PortReaderBuffer<Bottle> reader;
-            reader.setStrict();
-            reader.attach(in);
-            reader.useCallback(callback);
-            in.close();
-        }
-        {
-            report(0, "test 4");
-            Port in;
-            DelegatedCallback callback;
-            PortReaderBuffer<Bottle> reader;
-            reader.setStrict();
-            reader.attach(in);
-            reader.useCallback(callback);
-        }
+    SECTION("check reader handler without open (test 1)") {
+        Port in;
+        DelegatedCallback callback;
+        PortReaderBuffer<Bottle> reader;
+        reader.setStrict();
+        reader.attach(in);
+        reader.useCallback(callback);
+        reader.disableCallback();
+        in.close();
     }
 
-    virtual void testStrictWriter() {
-        report(0,"check strict writer...");
+    SECTION("check reader handler without open (test 2)") {
+        Port in;
+        DelegatedCallback callback;
+        PortReaderBuffer<Bottle> reader;
+        reader.setStrict();
+        reader.attach(in);
+        reader.useCallback(callback);
+        reader.disableCallback();
+    }
+
+    SECTION("check reader handler without open (test 3)") {
+        Port in;
+        DelegatedCallback callback;
+        PortReaderBuffer<Bottle> reader;
+        reader.setStrict();
+        reader.attach(in);
+        reader.useCallback(callback);
+        in.close();
+    }
+
+    SECTION("check reader handler without open (test 4)") {
+        INFO( "test 4");
+        Port in;
+        DelegatedCallback callback;
+        PortReaderBuffer<Bottle> reader;
+        reader.setStrict();
+        reader.attach(in);
+        reader.useCallback(callback);
+    }
+
+    SECTION("check strict writer") {
         BufferedPort<Bottle> in;
         BufferedPort<Bottle> out;
         in.setStrict();
@@ -842,22 +809,20 @@ public:
         out.write(true);
 
         Bottle *inBot1 = in.read();
-        checkTrue(inBot1!=nullptr,"got 1 of 2 items");
+        CHECK(inBot1!=nullptr); // got 1 of 2 items
         if (inBot1!=nullptr) {
             printf("Bottle 1 is: %s\n", inBot1->toString().c_str());
-            checkEqual(inBot1->size(),(size_t) 2,"match for item 1");
+            CHECK(inBot1->size() == 2); // match for item 1
         }
         Bottle *inBot2 = in.read();
-        checkTrue(inBot2!=nullptr,"got 2 of 2 items");
+        CHECK(inBot2!=nullptr); // got 2 of 2 items
         if (inBot2!=nullptr) {
             printf("Bottle 2 is: %s\n", inBot2->toString().c_str());
-            checkEqual(inBot2->size(),(size_t) 5,"match for item 1");
+            CHECK(inBot2->size() == 5); // match for item 1
         }
     }
 
-
-    virtual void testRecentReader() {
-        report(0,"check recent reader...");
+    SECTION("check recent reader") {
         BufferedPort<Bottle> in;
         BufferedPort<Bottle> out;
         in.setStrict(false);
@@ -879,16 +844,15 @@ public:
         Time::delay(0.25);
 
         Bottle *inBot2 = in.read();
-        checkTrue(inBot2!=nullptr,"got 2 of 2 items");
+        CHECK(inBot2!=nullptr); // got 2 of 2 items
         if (inBot2!=nullptr) {
             printf("Bottle 2 is: %s\n", inBot2->toString().c_str());
-            checkEqual(inBot2->size(),(size_t) 5,"match for item 1");
+            CHECK(inBot2->size() == 5); // match for item 1
         }
     }
 
 
-    virtual void testUnbufferedClose() {
-        report(0,"check that ports that receive data and do not read it can close...");
+    SECTION("check that ports that receive data and do not read it can close") {
         BufferedPort<Bottle> sender;
         Port receiver;
         sender.open("/sender");
@@ -900,14 +864,13 @@ public:
         bot.addInt32(1);
         sender.write();
         Time::delay(0.25);
-        report(0,"if this hangs, PortTest::testUnbufferedClose is unhappy");
+        INFO("if this hangs, PortTest::testUnbufferedClose is unhappy");
         receiver.close();
         sender.close();
     }
 
-    virtual void testCloseOpenRepeats() {
-        report(0,"check that opening-closing-opening etc is ok...");
-        report(0,"non-buffered port:");
+    SECTION("check that opening-closing-opening etc is ok") {
+        INFO("non-buffered port");
         Port p;
         p.open("/test1");
         p.open("/test2");
@@ -915,7 +878,7 @@ public:
         p.close();
         p.open("/test4");
         p.close();
-        report(0,"buffered port:");
+        INFO("buffered port:");
         BufferedPort<Bottle> p2, p3;
         p2.open("/test1");
         p2.open("/test2");
@@ -924,9 +887,9 @@ public:
         Network::connect("/out","/in");
         p3.prepare().fromString("10 20 30");
         p3.write();
-        report(0,"wait for input...");
+        INFO("wait for input...");
         p2.read(true);
-        report(0,"... got it");
+        INFO("... got it");
         p3.prepare().fromString("10 20 30");
         p3.write();
         p2.open("/test1");
@@ -934,11 +897,11 @@ public:
         Network::connect("/test2","/test1");
         p3.prepare().fromString("10 20 30");
         p3.write();
-        report(0,"wait for input...");
+        INFO("wait for input...");
         p2.read(true);
-        report(0,"... got it");
+        INFO("... got it");
 
-        report(0,"fast loop on temporary port");
+        INFO("fast loop on temporary port");
         for (int i=0; i<20; i++) {
             Port p;
             Port p2;
@@ -960,18 +923,16 @@ public:
         }
     }
 
-
-    virtual void testCounts() {
-
-        report(0,"check that input/output counts are accurate...");
+#if 0
+    SECTION("check that input/output counts are accurate...") {
         int top = 3;
         Port p[3];
         p[0].open("/a");
         p[1].open("/b");
         p[2].open("/c");
         for (int i=0; i<top; i++) {
-            checkEqual(p[i].getInputCount(),0,"no input connections");
-            checkEqual(p[i].getOutputCount(),0,"no output connections");
+            CHECK(p[i].getInputCount() == 0); // no input connections
+            CHECK(p[i].getOutputCount() == 0); // no output connections
         }
         Network::connect("/a","/b");
         Network::connect("/a","/c");
@@ -980,12 +941,12 @@ public:
         Network::sync("/b");
         Network::sync("/c");
 
-        checkEqual(p[0].getInputCount(),0,"input connections");
-        checkEqual(p[0].getOutputCount(),2,"output connections");
-        checkEqual(p[1].getInputCount(),1,"input connections");
-        checkEqual(p[1].getOutputCount(),0,"output connections");
-        checkEqual(p[2].getInputCount(),1,"input connections");
-        checkEqual(p[2].getOutputCount(),0,"output connections");
+        CHECK(p[0].getInputCount() == 0); // input connections
+        CHECK(p[0].getOutputCount() == 2); // output connections
+        CHECK(p[1].getInputCount() == 1); // input connections
+        CHECK(p[1].getOutputCount() == 0); // output connections
+        CHECK(p[2].getInputCount() == 1); // input connections
+        CHECK(p[2].getOutputCount() == 0); // output connections
 
         Network::disconnect("/a","/c");
 
@@ -993,19 +954,17 @@ public:
         Network::sync("/b");
         Network::sync("/c");
 
-        checkEqual(p[0].getInputCount(),0,"input connections");
-        checkEqual(p[0].getOutputCount(),1,"output connections");
-        checkEqual(p[1].getInputCount(),1,"input connections");
-        checkEqual(p[1].getOutputCount(),0,"output connections");
-        checkEqual(p[2].getInputCount(),0,"input connections");
-        checkEqual(p[2].getOutputCount(),0,"output connections");
+        CHECK(p[0].getInputCount() == 0); // input connections
+        CHECK(p[0].getOutputCount() == 1); // output connections
+        CHECK(p[1].getInputCount() == 1); // input connections
+        CHECK(p[1].getOutputCount() == 0); // output connections
+        CHECK(p[2].getInputCount() == 0); // input connections
+        CHECK(p[2].getOutputCount() == 0); // output connections
 
     }
+#endif
 
-
-    virtual void testReadNoReply() {
-        report(0,"check that we survive if no reply() made when promised...");
-
+    SECTION("check that we survive if no reply() made when promised") {
         Port p1;
         DelegatedReader reader(false);
         reader.start();
@@ -1021,97 +980,81 @@ public:
         reader.stop();
     }
 
-
-    virtual void testReports() {
-        report(0,"check port status report...");
-
-
-        {
-            Port p1;
-            Port p2;
-            p1.open("/foo");
-            p2.open("/bar");
-            Network::connect("/foo","/bar");
-            Network::sync("/foo");
-            Network::sync("/bar");
-            MyReport report;
-            p1.getReport(report);
-            checkTrue(report.ct>0,"got some report");
-            checkEqual(report.oct,1,"exactly one output");
-            p1.close();
-            p2.close();
-        }
-
-        {
-            Port p1;
-            Port p2;
-            MyReport report1, report2;
-            p1.setReporter(report1);
-            p2.setReporter(report2);
-            p1.open("/foo");
-            p2.open("/bar");
-            Network::connect("/foo","/bar");
-            Network::sync("/foo");
-            Network::sync("/bar");
-            checkTrue(report1.ct>0,"sender got report callback");
-            checkEqual(report1.oct,1,"exactly one output callback");
-            checkEqual(report1.ict,0,"exactly zero input callbacks");
-            checkTrue(report2.ct>0,"receiver got report callback");
-            checkEqual(report2.oct,0,"exactly zero output callbacks");
-            checkEqual(report2.ict,1,"exactly one input callback");
-            p1.close();
-            p2.close();
-        }
-
+    SECTION("check port status report (test 1)") {
+        Port p1;
+        Port p2;
+        p1.open("/foo");
+        p2.open("/bar");
+        Network::connect("/foo","/bar");
+        Network::sync("/foo");
+        Network::sync("/bar");
+        MyReport report;
+        p1.getReport(report);
+        CHECK(report.ct>0); // got some report
+        CHECK(report.oct == 1); // exactly one output
+        p1.close();
+        p2.close();
     }
 
-
-    virtual void testReportsWithRpcClient() {
-        report(0,"check port status report with rpc client...");
-
-        {
-            RpcClient p1;
-            RpcServer p2;
-            p1.open("/foo");
-            p2.open("/bar");
-            Network::connect("/foo","/bar");
-            Network::sync("/foo");
-            Network::sync("/bar");
-            MyReport report;
-            p1.getReport(report);
-            checkTrue(report.ct>0,"got some report");
-            checkEqual(report.oct,1,"exactly one output");
-            p1.close();
-            p2.close();
-        }
-
-        {
-            RpcClient p1;
-            RpcServer p2;
-            MyReport report1, report2;
-            p1.setReporter(report1);
-            p2.setReporter(report2);
-            p1.open("/foo");
-            p2.open("/bar");
-            Network::connect("/foo","/bar");
-            Network::sync("/foo");
-            Network::sync("/bar");
-            checkTrue(report1.ct>0,"sender got report callback");
-            checkEqual(report1.oct,1,"exactly one output callback");
-            checkEqual(report1.ict,0,"exactly zero input callbacks");
-            checkTrue(report2.ct>0,"receiver got report callback");
-            checkEqual(report2.oct,0,"exactly zero output callbacks");
-            checkEqual(report2.ict,1,"exactly one input callback");
-            p1.close();
-            p2.close();
-        }
-
+    SECTION("check port status report (test 2)") {
+        Port p1;
+        Port p2;
+        MyReport report1, report2;
+        p1.setReporter(report1);
+        p2.setReporter(report2);
+        p1.open("/foo");
+        p2.open("/bar");
+        Network::connect("/foo","/bar");
+        Network::sync("/foo");
+        Network::sync("/bar");
+        CHECK(report1.ct>0); // sender got report callback
+        CHECK(report1.oct == 1); // exactly one output callback
+        CHECK(report1.ict == 0); // exactly zero input callbacks
+        CHECK(report2.ct>0); // receiver got report callback
+        CHECK(report2.oct == 0); // exactly zero output callbacks
+        CHECK(report2.ict == 1); // exactly one input callback
+        p1.close();
+        p2.close();
     }
 
+    SECTION("check port status report with rpc client (test 1)") {
+        RpcClient p1;
+        RpcServer p2;
+        p1.open("/foo");
+        p2.open("/bar");
+        Network::connect("/foo","/bar");
+        Network::sync("/foo");
+        Network::sync("/bar");
+        MyReport report;
+        p1.getReport(report);
+        CHECK(report.ct>0); // got some report
+        CHECK(report.oct == 1); // exactly one output
+        p1.close();
+        p2.close();
+    }
 
-    virtual void testAdmin() {
-        report(0,"check port admin interface...");
+    SECTION("check port status report with rpc client (test 2)") {
+        RpcClient p1;
+        RpcServer p2;
+        MyReport report1, report2;
+        p1.setReporter(report1);
+        p2.setReporter(report2);
+        p1.open("/foo");
+        p2.open("/bar");
+        Network::connect("/foo","/bar");
+        Network::sync("/foo");
+        Network::sync("/bar");
+        CHECK(report1.ct>0); // sender got report callback
+        CHECK(report1.oct == 1); // exactly one output callback
+        CHECK(report1.ict == 0); // exactly zero input callbacks
+        CHECK(report2.ct>0); // receiver got report callback
+        CHECK(report2.oct == 0); // exactly zero output callbacks
+        CHECK(report2.ict == 1); // exactly one input callback
+        p1.close();
+        p2.close();
+    }
 
+    SECTION("check port admin interface") {
         BufferedPort<Bottle> p1;
         Port p2;
         p1.open("/p1");
@@ -1124,15 +1067,13 @@ public:
         p2.setAdminMode();
         p2.write(cmd,reply);
 
-        checkTrue(reply.size()>=(size_t) 1, "got a reply");
+        CHECK(reply.size()>=1); // got a reply
 
         p1.close();
         p2.close();
     }
 
-    virtual void testAcquire() {
-        report(0, "checking acquire/release...");
-
+    SECTION("checking acquire/release") {
         BufferedPort<Bottle> in;
         BufferedPort<Bottle> out;
         in.setStrict();
@@ -1145,9 +1086,9 @@ public:
         out.write(true);
 
         Bottle *bot = in.read();
-        checkTrue(bot!=nullptr,"Inserted message received");
+        CHECK(bot!=nullptr); // Inserted message received
         if (bot!=nullptr) {
-            checkEqual(bot->size(),(size_t) 1,"right length");
+            CHECK(bot->size() == 1); // right length
         }
 
         out.prepare().fromString("1 2");
@@ -1155,9 +1096,9 @@ public:
 
         void *key = in.acquire();
         Bottle *bot2 = in.read();
-        checkTrue(bot2!=nullptr,"Inserted message received");
+        CHECK(bot2!=nullptr); // Inserted message received
         if (bot2!=nullptr) {
-            checkEqual(bot2->size(),(size_t) 2,"right length");
+            CHECK(bot2->size() == 2); // right length
         }
 
         out.prepare().fromString("1 2 3");
@@ -1165,40 +1106,36 @@ public:
 
         void *key2 = in.acquire();
         Bottle *bot3 = in.read();
-        checkTrue(bot3!=nullptr,"Inserted message received");
+        CHECK(bot3!=nullptr); // Inserted message received
         if (bot3!=nullptr) {
-            checkEqual(bot3->size(),(size_t) 3,"right length");
+            CHECK(bot3->size() == 3); // right length
         }
         if (bot2!=nullptr) {
-            checkEqual(bot2->size(),(size_t) 2,"original (2) still ok");
+            CHECK(bot2->size() == 2); // original (2) still ok
         }
         if (bot!=nullptr) {
-            checkEqual(bot->size(),(size_t) 1,"original (1) still ok");
+            CHECK(bot->size() == 1); // original (1) still ok
         }
 
         in.release(key);
         in.release(key2);
     }
 
-
-    virtual void testTimeout() {
-        report(0,"check N second timeout...");
+    SECTION("check N second timeout") {
         Port a;
         Port b;
         bool ok = a.setTimeout(0.5);
-        checkTrue(a.setTimeout(0.5),"set timeout");
+        CHECK(a.setTimeout(0.5)); // set timeout
         if (!ok) return;
         a.open("/a");
         b.open("/b");
         NetworkBase::connect("/a","/b");
         Bottle msg("hello"), reply;
         ok = a.write(msg,reply);
-        checkFalse(ok,"send failed correctly");
+        CHECK_FALSE(ok); // send failed correctly
     }
 
-    // regression test for bug reported by Andrea Del Prete and Ugo Pattacini
-    virtual void testYarpRead() {
-        report(0,"check yarp ... /write works ...");
+    SECTION("check yarp ... /write works") {
         WriteReader writer;
         writer.start();
         int argc = 2;
@@ -1207,16 +1144,14 @@ public:
         writer.finish();
     }
 
-    virtual void testMissingSlash() {
-        report(0,"check behavior on missing slash...");
+    SECTION("check behavior on missing slash") {
         Port p;
         const char *name = "something/without/slash";
         bool opened = p.open(name);
-        checkFalse(opened,"correctly rejected port");
+        CHECK_FALSE(opened); // correctly rejected port
     }
 
-    void testInterrupt() {
-        report(0,"checking interrupt...");
+    SECTION("checking interrupt") {
         PortReaderBuffer<PortablePair<Bottle,Bottle> > buf;
 
         Port input, output;
@@ -1232,26 +1167,24 @@ public:
         bot1.head.fromString("1 2 3");
         bot1.body.fromString("4 5 6 7");
 
-        report(0,"interrupting...");
+        INFO("interrupting...");
         output.interrupt();
-        report(0,"writing...");
+        INFO("writing...");
         bool ok = output.write(bot1);
-        checkFalse(ok,"output rejected correctly");
+        CHECK_FALSE(ok); // output rejected correctly
         output.resume();
         ok = output.write(bot1);
-        checkTrue(ok,"output goes through after resume");
+        CHECK(ok); // output goes through after resume
 
         output.close();
         input.close();
     }
 
-
-    void testBuffInterrupt() {
-        report(0,"checking interrupt for BufferedPort...");
+    SECTION("checking interrupt for BufferedPort") {
         BufferedPort<Bottle> input, output;
         input.open("/in");
         output.open("/out");
-        checkTrue(yarp::os::Network::connect("/out","/in"),"checking connection");
+        CHECK(yarp::os::Network::connect("/out","/in")); // checking connection
 
         Bottle& botOut1 = output.prepare();
         botOut1.clear();
@@ -1261,15 +1194,15 @@ public:
         yarp::os::Time::delay(0.1);
 
         Bottle *botIn1 = input.read();
-        checkTrue(botIn1!=nullptr,"Inserted message received");
+        CHECK(botIn1!=nullptr); // Inserted message received
         if (botIn1)
         {
-            checkEqual(botIn1->get(0).asInt32(),0,"Checking data validity");
+            CHECK(botIn1->get(0).asInt32() == 0); // Checking data validity
         }
 
-        report(0,"interrupting...");
+        INFO("interrupting...");
         output.interrupt();
-        report(0,"resuming...");
+        INFO("resuming...");
         output.resume();
 
         Bottle& botOut2 = output.prepare();
@@ -1280,16 +1213,14 @@ public:
         yarp::os::Time::delay(0.1);
 
         Bottle *botIn2 = input.read();
-        checkTrue(botIn2!=nullptr,"Inserted message received");
-        checkEqual(botIn2->get(0).asInt32(),1,"Checking data validity");
+        CHECK(botIn2!=nullptr); // Inserted message received
+        CHECK(botIn2->get(0).asInt32() == 1); // Checking data validity
 
         output.close();
         input.close();
     }
 
-
-    void testInterruptInputReaderBuf() {
-        report(0,"checking interrupt on input side...");
+    SECTION("checking interrupt on input side") {
         PortReaderBuffer<Bottle> buf;
         buf.setStrict(true);
 
@@ -1309,21 +1240,21 @@ public:
         for (int i=0; i<20 && buf.getPendingReads()<1; i++) {
             Time::delay(0.1);
         }
-        checkEqual(buf.getPendingReads(),1,"first msg came through");
+        CHECK(buf.getPendingReads() == 1); // first msg came through
         Bottle *bot2 = buf.read();
         yAssert(bot2);
-        checkEqual(bot2->size(),(size_t) 3,"data looks ok");
+        CHECK(bot2->size() == 3); // data looks ok
 
         bot1.addInt32(4);
 
-        report(0,"interrupting...");
+        INFO("interrupting...");
         input.interrupt();
 
         output.write(bot1);
         for (int i=0; i<10 && buf.getPendingReads()<1; i++) {
             Time::delay(0.1);
         }
-        checkEqual(buf.getPendingReads(),0,"msg after interrupt ignored");
+        CHECK(buf.getPendingReads() == 0); // msg after interrupt ignored
 
         bot1.addInt32(5);
 
@@ -1332,19 +1263,16 @@ public:
         for (int i=0; i<20 && buf.getPendingReads()<1; i++) {
             Time::delay(0.1);
         }
-        checkEqual(buf.getPendingReads(),1,"next msg came through");
+        CHECK(buf.getPendingReads() == 1); // next msg came through
         bot2 = buf.read();
         yAssert(bot2);
-        checkEqual(bot2->size(),(size_t) 5,"data looks ok");
+        CHECK(bot2->size() == 5); // data looks ok
 
         output.close();
         input.close();
     }
 
-
-    void testInterruptInputNoBuf() {
-        report(0,"checking interrupt on input side without buffering...");
-
+    SECTION("checking interrupt on input side without buffering") {
         Port input, output;
         input.open("/in");
         output.enableBackgroundWrite(true);
@@ -1357,35 +1285,34 @@ public:
 
         output.write(bot1);
         bool ok = input.read(bot2);
-        checkTrue(ok,"first msg came through");
-        checkEqual(bot2.size(),(size_t) 3,"data looks ok");
+        CHECK(ok); // first msg came through
+        CHECK(bot2.size() == 3); // data looks ok
 
         bot1.addInt32(4);
 
-        report(0,"interrupting...");
+        INFO("interrupting...");
         input.interrupt();
 
         output.write(bot1);
-        checkFalse(input.read(bot2),"msg after interrupt ignored");
+        CHECK_FALSE(input.read(bot2)); // msg after interrupt ignored
 
         Time::delay(1);
 
         bot1.addInt32(5);
 
-        report(0,"resuming");
+        INFO("resuming");
         input.resume();
         output.write(bot1);
         ok = input.read(bot2);
-        checkTrue(ok,"next msg came through");
-        checkEqual(bot2.size(),(size_t) 5,"data looks ok");
+        CHECK(ok); // next msg came through
+        CHECK(bot2.size() == 5); // data looks ok
 
         output.close();
         input.close();
     }
 
 
-    void testInterruptReply() {
-        report(0,"checking interrupt for a port with pending reply...");
+    SECTION("checking interrupt for a port with pending reply") {
         PortReaderBuffer<PortablePair<Bottle,Bottle> > buf;
 
         ServiceUser output("/out");
@@ -1396,17 +1323,16 @@ public:
         Bottle cmd, reply;
         input.read(cmd,true);
         reply.addInt32(cmd.get(1).asInt32()+cmd.get(2).asInt32());
-        checkEqual(cmd.toString().c_str(),"[add] 1 2","cmd received ok");
+        CHECK(cmd.toString() == "[add] 1 2"); // cmd received ok
         input.interrupt();
         input.reply(reply);
         input.close();
         output.stop();
         output.p.close();
-        report(0,"successfully closed");
+        INFO("successfully closed");
     }
 
-    void testInterruptWithBadReader() {
-        report(0,"checking interrupt with bad reader...");
+    SECTION("checking interrupt with bad reader") {
 
         StreamUser output("/out");
         Port input;
@@ -1417,17 +1343,16 @@ public:
         output.start();
         Time::delay(2);
 
-        report(0,"interrupting output...");
+        INFO("interrupting output...");
         output.p.interrupt();
         output.stop();
-        report(0,"made it through");
+        INFO("made it through");
 
         input.close();
     }
 
 
-    void testReopen() {
-        report(0,"checking opening/closing/reopening ports...");
+    SECTION("checking opening/closing/reopening ports") {
 
         BufferedPort<Bottle> port2;
         port2.open("/test2");
@@ -1445,14 +1370,14 @@ public:
             Time::delay(0.1);
         }
 
-        checkFalse(port.isClosed(),"port tagged as open");
+        CHECK_FALSE(port.isClosed()); // port tagged as open
         port.close();
-        checkTrue(port.isClosed(),"port tagged as closed");
+        CHECK(port.isClosed()); // port tagged as closed
         port.open("/test");
-        checkFalse(port.isClosed(),"port tagged as open");
+        CHECK_FALSE(port.isClosed()); // port tagged as open
 
         Bottle *bot = port.read(false);
-        checkTrue(bot==nullptr,"reader correctly reset");
+        CHECK(bot==nullptr); // reader correctly reset
 
         Network::connect("/test2", "/test");
         Network::sync("/test");
@@ -1461,14 +1386,11 @@ public:
         port2.write();
 
         bot = port.read();
-        checkFalse(bot==nullptr,"reader working");
-        if (bot) {
-            checkEqual(bot->get(0).asInt32(),2,"reader read correct message");
-        }
+        REQUIRE(bot != nullptr); // reader working
+        CHECK(bot->get(0).asInt32() == 2); // reader read correct message
     }
 
-    virtual void testBufferedPortCallback() {
-        report(0,"checking BufferedPort callback...");
+    SECTION("checking BufferedPort callback") {
         DataPort pin;
         pin.useCallback();
         BufferedPort<Bottle> pout;
@@ -1484,39 +1406,35 @@ public:
         pout.waitForWrite();
         pout.close();
         pin.close();
-        checkEqual(pin.ct,1,"callback happened");
+        CHECK(pin.ct == 1); // callback happened
     }
 
-    virtual void testBufferedPortCallbackNoOpen() {
-        report(0,"checking BufferedPort callback without open...");
-        {
-            report(0, "test 1");
-            DataPort pin;
-            pin.useCallback();
-            pin.disableCallback();
-        }
-        {
-            report(0, "test 2");
-            DataPort pin;
-            pin.useCallback();
-            pin.disableCallback();
-            pin.close();
-        }
-        {
-            report(0, "test 3");
-            DataPort pin;
-            pin.useCallback();
-        }
-        {
-            report(0, "test 4");
-            DataPort pin;
-            pin.useCallback();
-            pin.close();
-        }
+    SECTION("checking BufferedPort callback without open (test 1)") {
+        INFO( "");
+        DataPort pin;
+        pin.useCallback();
+        pin.disableCallback();
     }
 
-    void testAdminReader() {
-        report(0,"checking user-level admin message reads");
+    SECTION("checking BufferedPort callback without open (test 2)") {
+        DataPort pin;
+        pin.useCallback();
+        pin.disableCallback();
+        pin.close();
+    }
+
+    SECTION("checking BufferedPort callback without open (test 3)") {
+        DataPort pin;
+        pin.useCallback();
+    }
+
+    SECTION("checking BufferedPort callback without open (test 4)") {
+        DataPort pin;
+        pin.useCallback();
+        pin.close();
+    }
+
+    SECTION("checking user-level admin message reads") {
         Port pin;
         ServiceProvider admin_reader;
         pin.setAdminReader(admin_reader);
@@ -1527,14 +1445,13 @@ public:
         Network::connect("/out","/in");
         Bottle cmd("hello"), reply;
         pout.write(cmd,reply);
-        checkEqual(reply.get(1).asInt32(),5,"admin_reader was called");
+        CHECK(reply.get(1).asInt32() == 5); // admin_reader was called
         cmd.fromString("[ver]");
         pout.write(cmd,reply);
-        checkTrue(reply.size()>=(size_t) 4,"yarp commands still work");
+        CHECK(reply.size()>=4); // yarp commands still work
     }
 
-    void testCallbackLock() {
-        report(0,"checking callback locking");
+    SECTION("checking callback locking") {
         Port pin, pout;
         Bottle data;
         pin.setCallbackLock();
@@ -1547,19 +1464,19 @@ public:
         pin.lockCallback();
         pout.write(cmd);
         Time::delay(0.25);
-        checkEqual(data.size(),(size_t) 0,"data does not arrive too early");
+        CHECK(data.size() == 0); // data does not arrive too early
         pin.unlockCallback();
         while (pout.isWriting()) {
-            report(0,"waiting for port to stabilize");
+            INFO("waiting for port to stabilize");
             Time::delay(0.2);
         }
-        checkEqual(data.size(),(size_t) 1,"data does eventually arrive");
+        CHECK(data.size() == 1); // data does eventually arrive
         pin.close();
         pout.close();
     }
 
-    void testTcp()
-    {
+#ifdef BROKEN_TEST
+    SECTION("checking tcp") {
         for(int i = 0; i < 50; i++)
         {
             TcpTestServer server;
@@ -1572,105 +1489,15 @@ public:
             server.stop();
         }
     }
+#endif
 
-    void testPrepareDeadlock(){
-        report(0,"testing the deadlock when you close a device(PeriodicThread) after the prepare of a closed port");
+    SECTION("testing the deadlock when you close a device(PeriodicThread) after the prepare of a closed port") {
         yarp::dev::PolyDriver p;
         Property prop;
         prop.put("device","brokenDevice");
-        checkTrue(p.open(prop),"Opening the broken_device");
-        checkTrue(p.close(),"Closing the broken_device");
+        CHECK(p.open(prop)); // Opening the broken_device
+        CHECK(p.close()); // Closing the broken_device
     }
 
-    void testPortResumeDeadlock() {
-        report(0, "testing lockup if resume is called when not interrupted");
-        Port p;
-        checkTrue(p.open("/test"), "Checking the open of the port");
-        p.interrupt();
-        p.resume();
-        p.resume(); //should not lockup here
-        p.close();
-    }
-
-    virtual void runTests() override {
-        NetworkBase::setLocalMode(true);
-
-        //Progression test:
-#ifdef BROKEN_TEST
-        testTcp();
-#endif
-        testOpen();
-        //bbb testReadBuffer();
-        testPair();
-        testReply();
-        testUdp();
-        //testHeavy();
-
-        testBackground();
-        testWriteBuffer();
-        testBufferedPort();
-        testCloseOrder();
-        testDelegatedReadReply();
-        testReaderHandler();
-        testReaderHandler2();
-        testReaderHandlerNoOpen();
-        testStrictWriter();
-        testRecentReader();
-
-        testUnbufferedClose(); //TODO
-
-        testCloseOpenRepeats(); //bring this back soon
-
-        //testCounts(); // bring this back soon
-
-        testReadNoReply();
-        testAdmin();
-        testAcquire();
-
-        testTimeout();
-
-        testYarpRead();
-
-        testMissingSlash();
-
-        testReports();
-        testReportsWithRpcClient();
-
-        testInterrupt();
-        testBuffInterrupt();
-
-        testInterruptReply();
-
-        testReopen();
-
-        testInterruptInputReaderBuf();
-        testInterruptInputNoBuf();
-        testInterruptWithBadReader();
-
-        testBufferedPortCallback();
-        testBufferedPortCallbackNoOpen();
-
-        testAdminReader();
-
-        testCallbackLock();
-
-        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::BrokenDevice>("brokenDevice",
-                                                      "brokenDevice",
-                                                      "yarp::dev::BrokenDevice"));
-        testPrepareDeadlock();
-        testPortResumeDeadlock();
-
-
-
-
-
-        NetworkBase::setLocalMode(false);
-    }
-};
-
-static PortTest thePortTest;
-
-UnitTest& getPortTest() {
-    return thePortTest;
+    NetworkBase::setLocalMode(false);
 }
-
