@@ -28,10 +28,10 @@ using namespace yarp::sig;
 using namespace std;
 
 H264Stream::H264Stream(h264Decoder_cfgParamters &config) :
-        delegate(NULL),
+        delegate(nullptr),
         blobHeader{0,0,0},
         phase(0),
-        cursor(NULL),
+        cursor(nullptr),
         remaining(0),
         decoder(nullptr),
         cfg(config)
@@ -39,16 +39,16 @@ H264Stream::H264Stream(h264Decoder_cfgParamters &config) :
 
 H264Stream::~H264Stream()
 {
-    if (decoder!=NULL)
+    if (decoder!=nullptr)
     {
         delete decoder;
-        decoder = NULL;
+        decoder = nullptr;
     }
 
-    if (delegate!=NULL)
+    if (delegate!=nullptr)
     {
         delete delegate;
-        delegate = NULL;
+        delegate = nullptr;
     }
 }
 

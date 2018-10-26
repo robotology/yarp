@@ -524,7 +524,7 @@ void PartItem::onSliderDirectPositionCommand(double dirpos, int index)
 
 void PartItem::onDumpAllRemoteVariables()
 {
-    if (m_iVar == 0)
+    if (m_iVar == nullptr)
     {
         return;
     }
@@ -532,7 +532,7 @@ void PartItem::onDumpAllRemoteVariables()
     QString fileName = QFileDialog::getSaveFileName(this, QString("Save Dump for Remote Variables as:"), QDir::homePath()+QString("/RemoteVariablesDump.txt"));
 
     FILE* dumpfile = fopen(fileName.toStdString().c_str(), "w");
-    if (dumpfile != NULL)
+    if (dumpfile != nullptr)
     {
         yarp::os::Bottle keys;
         if (m_iVar->getRemoteVariablesList(&keys))

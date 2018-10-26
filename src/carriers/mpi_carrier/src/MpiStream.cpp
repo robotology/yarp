@@ -18,7 +18,7 @@ using namespace yarp::os;
 
 MpiStream::MpiStream(std::string n, MpiComm* c)
     : terminate(false), name(n), comm(c) {
-    readBuffer = NULL;
+    readBuffer = nullptr;
     resetBuffer();
 
 }
@@ -33,7 +33,7 @@ void MpiStream::resetBuffer() {
     readAt = 0;
     readAvail = 0;
     delete [] readBuffer;
-    readBuffer = NULL;
+    readBuffer = nullptr;
 }
 
 bool MpiStream::isOk() const {

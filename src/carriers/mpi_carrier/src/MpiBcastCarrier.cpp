@@ -26,7 +26,7 @@ void MpiBcastCarrier::close() {
     if (electionMember) {
         getCaster().remove(name, this);
         MpiBcastCarrier* elect = getCaster().getElect(name);
-        if (elect == NULL) {
+        if (elect == nullptr) {
             delete comm;
         }
     } else {
@@ -37,7 +37,7 @@ void MpiBcastCarrier::close() {
 void MpiBcastCarrier::createStream(bool sender) {
     if (sender) {
         MpiBcastCarrier* elect = getCaster().getElect(name);
-        if (elect != NULL) {
+        if (elect != nullptr) {
             comm = elect->comm;
         }
         else {
@@ -81,14 +81,14 @@ void MpiBcastCarrier::prepareDisconnect() {
  * Adopted from MCastCarrier
  * ----------------------------
  */
-ElectionOf<yarp::os::PeerRecord<MpiBcastCarrier> > *MpiBcastCarrier::caster = NULL;
+ElectionOf<yarp::os::PeerRecord<MpiBcastCarrier> > *MpiBcastCarrier::caster = nullptr;
 
 ElectionOf<yarp::os::PeerRecord<MpiBcastCarrier> >& MpiBcastCarrier::getCaster() {
     yarp::os::NetworkBase::lock();
-    if (caster==NULL) {
+    if (caster==nullptr) {
         caster = new ElectionOf<yarp::os::PeerRecord<MpiBcastCarrier> >;
         yarp::os::NetworkBase::unlock();
-        if (caster==NULL) {
+        if (caster==nullptr) {
             yError("No memory for MpiBcastCarrier::caster");
             std::exit(1);
         }
@@ -99,7 +99,7 @@ ElectionOf<yarp::os::PeerRecord<MpiBcastCarrier> >& MpiBcastCarrier::getCaster()
 }
 bool MpiBcastCarrier::isElect() const {
     MpiBcastCarrier *elect = getCaster().getElect(name);
-    return elect==this || elect==NULL;
+    return elect==this || elect==nullptr;
 }
 
 bool MpiBcastCarrier::isActive() const {

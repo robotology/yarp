@@ -70,7 +70,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
             finished = paContinue;
         }
 
-        if( inputBuffer == NULL )
+        if( inputBuffer == nullptr )
         {
             for( i=0; i<framesToCalc; i++ )
             {
@@ -135,12 +135,12 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
 }
 
 PortAudioDeviceDriver::PortAudioDeviceDriver() :
-    stream(0),
+    stream(nullptr),
     err(paNoError),
     i(0),
     numSamples(0),
     numBytes(0),
-    system_resource(NULL),
+    system_resource(nullptr),
     numChannels(0),
     frequency(0),
     loopBack(false),
@@ -213,9 +213,9 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config)
     numBytes = numSamples * sizeof(SAMPLE) * numChannels;
     int twiceTheBuffer = numBytes * 2;
     dataBuffers.numChannels=numChannels;
-    if (dataBuffers.playData==0)
+    if (dataBuffers.playData==nullptr)
         dataBuffers.playData = new circularBuffer(twiceTheBuffer);
-    if (dataBuffers.recData==0)
+    if (dataBuffers.recData==nullptr)
         dataBuffers.recData = new circularBuffer(twiceTheBuffer);
     if (wantRead) dataBuffers.canRec = true;
     if (wantWrite) dataBuffers.canPlay = true;
@@ -230,21 +230,21 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config)
     printf("Device number %d\n", inputParameters.device);
     inputParameters.channelCount = numChannels;
     inputParameters.sampleFormat = PA_SAMPLE_TYPE;
-    if ((Pa_GetDeviceInfo( inputParameters.device ))!=0) {
+    if ((Pa_GetDeviceInfo( inputParameters.device ))!=nullptr) {
         inputParameters.suggestedLatency = Pa_GetDeviceInfo( inputParameters.device )->defaultLowInputLatency;
     }
-    inputParameters.hostApiSpecificStreamInfo = NULL;
+    inputParameters.hostApiSpecificStreamInfo = nullptr;
 
     outputParameters.device = (deviceNumber==-1)?Pa_GetDefaultOutputDevice():deviceNumber;
     outputParameters.channelCount = numChannels;
     outputParameters.sampleFormat = PA_SAMPLE_TYPE;
     outputParameters.suggestedLatency = Pa_GetDeviceInfo( outputParameters.device )->defaultLowOutputLatency;
-    outputParameters.hostApiSpecificStreamInfo = NULL;
+    outputParameters.hostApiSpecificStreamInfo = nullptr;
 
     err = Pa_OpenStream(
               &stream,
-              wantRead?(&inputParameters):NULL,
-              wantWrite?(&outputParameters):NULL,
+              wantRead?(&inputParameters):nullptr,
+              wantWrite?(&outputParameters):nullptr,
               frequency,
               DEFAULT_FRAMES_PER_BUFFER,
               paClipOff,
@@ -292,7 +292,7 @@ void PortAudioDeviceDriver::handleError()
 bool PortAudioDeviceDriver::close()
 {
     pThread.stop();
-    if (stream != 0)
+    if (stream != nullptr)
     {
         err = Pa_CloseStream( stream );
         if( err != paNoError )
@@ -303,15 +303,15 @@ bool PortAudioDeviceDriver::close()
         }
     }
 
-    if (this->dataBuffers.playData != 0)
+    if (this->dataBuffers.playData != nullptr)
     {
         delete this->dataBuffers.playData;
-        this->dataBuffers.playData = 0;
+        this->dataBuffers.playData = nullptr;
     }
-    if (this->dataBuffers.recData != 0)
+    if (this->dataBuffers.recData != nullptr)
     {
         delete this->dataBuffers.recData;
-        this->dataBuffers.recData = 0;
+        this->dataBuffers.recData = nullptr;
     }
 
     return (err==paNoError);

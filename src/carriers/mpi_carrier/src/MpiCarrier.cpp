@@ -18,7 +18,7 @@ using namespace yarp::os;
 using yarp::os::impl::Logger;
 #endif
 
-MpiCarrier::MpiCarrier() : stream(NULL), comm(NULL) {
+MpiCarrier::MpiCarrier() : stream(nullptr), comm(nullptr) {
     #ifdef MPI_DEBUG
     Logger::get().setVerbosity(1);
     #endif

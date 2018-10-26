@@ -37,17 +37,17 @@ MainWindow::~MainWindow()
     if (mainTimer)
     {
         delete mainTimer;
-        mainTimer = 0;
+        mainTimer = nullptr;
     }
     if (ui)
     {
         delete ui;
-        ui = 0;
+        ui = nullptr;
     }
     if (scene)
     {
         delete scene;
-        scene = 0;
+        scene = nullptr;
     }
 }
 

@@ -18,7 +18,7 @@ using namespace yarp::dev;
 
 /////////////// implement ImplemenPWMControl
 ImplementPWMControl::ImplementPWMControl(IPWMControlRaw *r) :
-    helper(0),
+    helper(nullptr),
     raw(r),
     dummy(nullptr)
 {}

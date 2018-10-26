@@ -274,7 +274,7 @@ void TestFrameGrabber::printTime(unsigned char* pixbuf, int pixbuf_w, int pixbuf
     int pixelsize = 5;
     for (int i = 0; i<size; i++)
     {
-        char* num_p = 0;
+        char* num_p = nullptr;
         switch (s[i])
         {
             case '0': num_p = num[0].data; break;

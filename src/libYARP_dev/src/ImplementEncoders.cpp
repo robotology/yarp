@@ -23,8 +23,8 @@ using namespace yarp::dev;
 ImplementEncoders::ImplementEncoders(yarp::dev::IEncodersRaw  *y)
 {
     iEncoders= y;
-    helper = 0;
-    temp=0;
+    helper = nullptr;
+    temp=nullptr;
 }
 
 ImplementEncoders::~ImplementEncoders()
@@ -34,13 +34,13 @@ ImplementEncoders::~ImplementEncoders()
 
 bool ImplementEncoders:: initialize (int size, const int *amap, const double *enc, const double *zos)
 {
-    if (helper!=0)
+    if (helper!=nullptr)
         return false;
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-    yAssert (helper != 0);
+    yAssert (helper != nullptr);
     temp=new double [size];
-    yAssert (temp != 0);
+    yAssert (temp != nullptr);
     return true;
 }
 
@@ -50,10 +50,10 @@ bool ImplementEncoders:: initialize (int size, const int *amap, const double *en
 */
 bool ImplementEncoders::uninitialize ()
 {
-    if (helper!=0)
+    if (helper!=nullptr)
     {
         delete castToMapper(helper);
-        helper=0;
+        helper=nullptr;
     }
 
     checkAndDestroy(temp);

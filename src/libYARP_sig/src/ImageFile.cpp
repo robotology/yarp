@@ -263,7 +263,7 @@ static bool SaveJPG(char *src, const char *filename, int h, int w, int rowSize)
     cinfo.err = jpeg_std_error(&jerr);
     jpeg_create_compress(&cinfo);
 
-    if ((outfile = fopen(filename, "wb")) == NULL)
+    if ((outfile = fopen(filename, "wb")) == nullptr)
     {
         yError("can't write file: %s\n", filename);
         return false;
