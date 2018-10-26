@@ -24,8 +24,8 @@
 #include <yarp/os/LockGuard.h>
 #include <yarp/os/ResourceFinder.h>
 #include <iostream>
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdlib>
 #include <limits>
 
 #ifndef _USE_MATH_DEFINES

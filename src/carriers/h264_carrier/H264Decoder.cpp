@@ -15,8 +15,8 @@
 #include <glib.h>
 
 #include <gst/app/gstappsink.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 //#define debug_time 1
 

@@ -26,7 +26,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LockGuard.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <fstream>
 #include <yarp/os/Publisher.h>
 #include <yarp/os/Subscriber.h>
