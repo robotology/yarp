@@ -269,7 +269,7 @@ void BufferedConnectionWriter::appendBlock(const char* data, size_t len)
     appendBlockCopy(yarp::os::Bytes((char*)data, len));
 }
 
-void BufferedConnectionWriter::appendString(const char* str, int terminate)
+void BufferedConnectionWriter::appendString(const char* str, const char terminate)
 {
     if (terminate == '\n') {
         appendLine(str);

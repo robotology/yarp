@@ -109,7 +109,7 @@ public:
     /**
      * Read a block of text terminated with a specific marker (or EOF).
      */
-    std::string readLine(int terminal = '\n', bool* success = nullptr);
+    std::string readLine(const char terminal = '\n', bool* success = nullptr);
 
     /**
      * Keep reading until buffer is full.

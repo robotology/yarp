@@ -125,7 +125,7 @@ public:
      * @param str the character sequence to send
      * @param terminate the terminating character to use
      */
-    virtual void appendString(const char* str, int terminate = '\n') = 0;
+    virtual void appendString(const char* str, const char terminate = '\n') = 0;
 
     /**
      * Send a block of data to the network connection, without making a copy.

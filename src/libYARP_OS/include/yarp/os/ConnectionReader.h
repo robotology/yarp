@@ -58,7 +58,7 @@ public:
      * @param terminatingChar The marker for the end of the text
      * @return the text read from the connection
      */
-    virtual std::string expectText(int terminatingChar = '\n') = 0;
+    virtual std::string expectText(const char terminatingChar = '\n') = 0;
 
     /**
      * Read an integer from the network connection.

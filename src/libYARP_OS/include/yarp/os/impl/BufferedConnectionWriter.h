@@ -133,7 +133,7 @@ public:
     virtual void appendFloat32(yarp::conf::float32_t data) override;
     virtual void appendFloat64(yarp::conf::float64_t data) override;
     virtual void appendBlock(const char* data, size_t len) override;
-    virtual void appendString(const char* str, int terminate = '\n') override;
+    virtual void appendString(const char* str, const char terminate = '\n') override;
     virtual void appendExternalBlock(const char* data, size_t len) override;
 
     /**

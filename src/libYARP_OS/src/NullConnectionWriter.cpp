@@ -45,7 +45,7 @@ void yarp::os::NullConnectionWriter::appendFloat64(yarp::conf::float64_t data)
     YARP_UNUSED(data);
 }
 
-void yarp::os::NullConnectionWriter::appendString(const char *str, int terminate)
+void yarp::os::NullConnectionWriter::appendString(const char *str, const char terminate)
 {
     YARP_UNUSED(str);
     YARP_UNUSED(terminate);

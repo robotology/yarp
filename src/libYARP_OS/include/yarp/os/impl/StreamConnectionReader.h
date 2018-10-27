@@ -71,7 +71,7 @@ public:
     virtual yarp::conf::float32_t expectFloat32() override;
     virtual yarp::conf::float64_t expectFloat64() override;
     virtual bool expectBlock(char *data, size_t len) override;
-    virtual std::string expectText(int terminatingChar) override;
+    virtual std::string expectText(const char terminatingChar) override;
     virtual bool isTextMode() const override;
     virtual bool isBareMode() const override;
     virtual bool convertTextMode() override;

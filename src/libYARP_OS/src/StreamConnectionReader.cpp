@@ -257,7 +257,7 @@ bool StreamConnectionReader::expectBlock(char *data, size_t len)
     return expectBlock(bytes);
 }
 
-std::string StreamConnectionReader::expectText(int terminatingChar)
+std::string StreamConnectionReader::expectText(const char terminatingChar)
 {
     if (!isGood()) {
         return "";
