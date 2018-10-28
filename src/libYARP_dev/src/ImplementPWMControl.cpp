@@ -72,7 +72,7 @@ bool ImplementPWMControl::setRefDutyCycle(int j, double duty)
 
 bool ImplementPWMControl::setRefDutyCycles(const double *duty)
 {
-    double *aux = new double[castToMapper(helper)->axes()];
+    auto* aux = new double[castToMapper(helper)->axes()];
     castToMapper(helper)->dutycycle2PWM(duty, aux);
     bool ret = raw->setRefDutyCyclesRaw(aux);
     delete [] aux;
@@ -91,7 +91,7 @@ bool ImplementPWMControl::getRefDutyCycle(int j, double *v)
 
 bool ImplementPWMControl::getRefDutyCycles(double *duty)
 {
-    double *aux = new double[castToMapper(helper)->axes()];
+    auto* aux = new double[castToMapper(helper)->axes()];
     bool ret = raw->getRefDutyCyclesRaw(aux);
     castToMapper(helper)->PWM2dutycycle(aux, duty);
     delete [] aux;
@@ -110,7 +110,7 @@ bool ImplementPWMControl::getDutyCycle(int j, double *duty)
 
 bool ImplementPWMControl::getDutyCycles(double *duty)
 {
-    double *aux = new double[castToMapper(helper)->axes()];
+    auto* aux = new double[castToMapper(helper)->axes()];
     bool ret = raw->getDutyCyclesRaw(aux);
     castToMapper(helper)->PWM2dutycycle(aux, duty);
     delete [] aux;

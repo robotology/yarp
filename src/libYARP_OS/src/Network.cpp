@@ -1736,7 +1736,7 @@ public:
     }
 
     Carrier *create() const override {
-        ForwardingCarrier *ncar = new ForwardingCarrier(plugin.getFactory(), const_cast<StubCarrier*>(this));
+        auto* ncar = new ForwardingCarrier(plugin.getFactory(), const_cast<StubCarrier*>(this));
         if (ncar==nullptr) {
             return nullptr;
         }

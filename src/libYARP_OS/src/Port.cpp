@@ -200,7 +200,7 @@ bool Port::open(const Contact& contact, bool registerName,
 
     // Allow for open() to be called safely many times on the same Port
     if (currentCore && currentCore->isOpened()) {
-        PortCoreAdapter *newCore = new PortCoreAdapter(*this);
+        auto* newCore = new PortCoreAdapter(*this);
         yAssert(newCore != nullptr);
         // copy state that should survive in a new open()
         if (currentCore->checkPortReader() != nullptr) {

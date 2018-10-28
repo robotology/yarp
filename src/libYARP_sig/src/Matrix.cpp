@@ -271,7 +271,7 @@ void Matrix::resize(size_t new_r, size_t new_c)
     if(new_r==nrows && new_c==ncols)
         return;
 
-    double *new_storage=new double[new_r*new_c];
+    auto* new_storage=new double[new_r*new_c];
 
     const size_t copy_r=(new_r<nrows) ? new_r:nrows;
     const size_t copy_c=(new_c<ncols) ? new_c:ncols;

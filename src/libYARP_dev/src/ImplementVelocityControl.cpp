@@ -71,7 +71,7 @@ bool ImplementVelocityControl::velocityMove(int j, double sp)
 bool ImplementVelocityControl::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
     int *tmp_joints=new int[nj];
-    double *tmp_vals=new double[nj];
+    auto* tmp_vals=new double[nj];
     for(int idx=0; idx<n_joint; idx++)
     {
         MJOINTIDCHECK_DEL2(idx)
@@ -85,7 +85,7 @@ bool ImplementVelocityControl::velocityMove(const int n_joint, const int *joints
 
 bool ImplementVelocityControl::velocityMove(const double *sp)
 {
-    double *tmp=new double[nj];
+    auto* tmp=new double[nj];
     castToMapper(helper)->velA2E(sp, tmp);
     bool ret = iVelocity->velocityMoveRaw(tmp);
     delete [] tmp;
@@ -105,7 +105,7 @@ bool ImplementVelocityControl::getRefVelocity(const int j, double* vel)
 
 bool ImplementVelocityControl::getRefVelocities(double *vels)
 {
-    double *tmp=new double[nj];
+    auto* tmp=new double[nj];
     bool ret=iVelocity->getRefVelocitiesRaw(tmp);
     castToMapper(helper)->velE2A(tmp, vels);
     delete [] tmp;
@@ -120,7 +120,7 @@ bool ImplementVelocityControl::getRefVelocities(const int n_joint, const int *jo
         MJOINTIDCHECK_DEL1(idx)
         tmp_joints[idx]=castToMapper(helper)->toHw(joints[idx]);
     }
-    double *tmp_vels =new double [nj];
+    auto* tmp_vels =new double [nj];
     bool ret = iVelocity->getRefVelocitiesRaw(n_joint, tmp_joints, tmp_vels);
 
     for(int idx=0; idx<n_joint; idx++)
@@ -143,7 +143,7 @@ bool ImplementVelocityControl::setRefAcceleration(int j, double acc)
 bool ImplementVelocityControl::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
 {
     int *tmp_joints=new int[nj];
-    double *tmp_vals=new double[nj];
+    auto* tmp_vals=new double[nj];
     for(int idx=0; idx<n_joint; idx++)
     {
         MJOINTIDCHECK_DEL2(idx)
@@ -158,7 +158,7 @@ bool ImplementVelocityControl::setRefAccelerations(const int n_joint, const int 
 
 bool ImplementVelocityControl::setRefAccelerations(const double *accs)
 {
-    double *tmp=new double[nj];
+    auto* tmp=new double[nj];
     castToMapper(helper)->accA2E_abs(accs, tmp);
     bool ret = iVelocity->setRefAccelerationsRaw(tmp);
     delete[] tmp;
@@ -184,7 +184,7 @@ bool ImplementVelocityControl::getRefAccelerations(const int n_joint, const int 
         MJOINTIDCHECK_DEL1(idx)
         tmp_joints[idx]=castToMapper(helper)->toHw(joints[idx]);
     }
-    double *tmp_accs=new double[nj];
+    auto* tmp_accs=new double[nj];
     bool ret = iVelocity->getRefAccelerationsRaw(n_joint, tmp_joints, tmp_accs);
 
     for(int idx=0; idx<n_joint; idx++)
@@ -199,7 +199,7 @@ bool ImplementVelocityControl::getRefAccelerations(const int n_joint, const int 
 
 bool ImplementVelocityControl::getRefAccelerations(double *accs)
 {
-    double *tmp=new double[nj];
+    auto* tmp=new double[nj];
     bool ret=iVelocity->getRefAccelerationsRaw(tmp);
     castToMapper(helper)->accE2A_abs(tmp, accs);
     delete[]tmp;

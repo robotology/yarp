@@ -105,7 +105,7 @@ Graph::Graph(yarp::profiler::graph::Graph& graph) {
 */
 
 Graph::~Graph() {
-    pvertex_iterator itr = mVertices.begin();
+    auto itr = mVertices.begin();
     for(;itr!=mVertices.end(); itr++) {
         Vertex* v = *itr;
         delete v;
@@ -157,7 +157,7 @@ void Graph::insertEdge(const pvertex_iterator vi1, const pvertex_iterator vi2,
 }
 
 const pvertex_iterator Graph::find(const Vertex &vertex) {
-    pvertex_iterator itr = mVertices.begin();
+    auto itr = mVertices.begin();
     for(;itr!=mVertices.end(); itr++) {
         if(*(*itr) == vertex)
             return itr;
@@ -167,7 +167,7 @@ const pvertex_iterator Graph::find(const Vertex &vertex) {
 }
 
 size_t Graph::size() {
-    pvertex_iterator itr = mVertices.begin();
+    auto itr = mVertices.begin();
     size_t count = 0;
     for(; itr!=mVertices.end(); itr++)
         count += (**itr).degree();
@@ -180,7 +180,7 @@ size_t Graph::nodesCount() {
 
 
 void Graph::clear() {
-    pvertex_iterator itr = mVertices.begin();
+    auto itr = mVertices.begin();
     for(; itr!=mVertices.end(); itr++)
         delete *itr;
     mVertices.clear();

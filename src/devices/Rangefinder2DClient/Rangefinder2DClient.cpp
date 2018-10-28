@@ -138,7 +138,7 @@ bool Rangefinder2DInputPortProcessor::getData(yarp::sig::Vector &ranges)
 yarp::dev::IRangefinder2D::Device_status Rangefinder2DInputPortProcessor::getStatus()
 {
     mutex.lock();
-    yarp::dev::IRangefinder2D::Device_status status = (yarp::dev::IRangefinder2D::Device_status) lastBottle.get(3).asInt32();
+    auto status = (yarp::dev::IRangefinder2D::Device_status) lastBottle.get(3).asInt32();
     mutex.unlock();
     return status;
 }
@@ -230,7 +230,7 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
     device_position_x = 0;
     device_position_y = 0;
     device_position_theta = 0;
-    yarp::dev::PolyDriver* drv = new yarp::dev::PolyDriver;
+    auto* drv = new yarp::dev::PolyDriver;
     Property   TransformClientOptions;
     TransformClientOptions.put("device", "transformClient");
     TransformClientOptions.put("local", "/rangefinder2DTransformClient");

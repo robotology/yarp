@@ -915,7 +915,7 @@ void LoggerEngine::get_log_lines_max_size          (bool& enabled, int& current_
     if (log_updater == nullptr) return;
     if (log_updater->log_list.empty() == true) return;
     log_updater->mutex.lock();
-    std::list<LogEntry>::iterator it = log_updater->log_list.begin();
+    auto it = log_updater->log_list.begin();
     current_size = it->getLogEntryMaxSize();
     enabled = it->getLogEntryMaxSizeEnabled();
     log_updater->mutex.unlock();

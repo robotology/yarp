@@ -17,7 +17,7 @@
 using namespace yarp::os;
 
 static NetInt32 getInt(char *cursor) {
-    NetInt32 *icursor = reinterpret_cast<NetInt32 *> (cursor);
+    auto* icursor = reinterpret_cast<NetInt32 *> (cursor);
     return *icursor;
 }
 

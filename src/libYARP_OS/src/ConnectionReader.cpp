@@ -29,7 +29,7 @@ void ConnectionReader::setParentConnectionReader(ConnectionReader* parentConnect
 
 ConnectionReader *ConnectionReader::createConnectionReader(InputStream& is)
 {
-    StreamConnectionReader *reader = new StreamConnectionReader();
+    auto* reader = new StreamConnectionReader();
     Route r;
     reader->reset(is, nullptr, r, 0, false);
     return reader;

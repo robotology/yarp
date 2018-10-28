@@ -189,7 +189,7 @@ Contact NameServer::queryName(const std::string& name) {
 
 NameServer::NameRecord *NameServer::getNameRecord(const std::string& name,
                                                   bool create) {
-    std::map<std::string, NameRecord>::iterator entry = nameMap.find(name);
+    auto entry = nameMap.find(name);
     if (entry == nameMap.end()) {
         if (!create) {
             return nullptr;
@@ -204,7 +204,7 @@ NameServer::NameRecord *NameServer::getNameRecord(const std::string& name,
 
 NameServer::HostRecord *NameServer::getHostRecord(const std::string& name,
                                                   bool create) {
-    std::map<std::string, HostRecord>::iterator entry = hostMap.find(name);
+    auto entry = hostMap.find(name);
     if (entry == hostMap.end()) {
         if (!create) {
             return nullptr;

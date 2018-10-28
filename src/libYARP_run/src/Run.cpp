@@ -2819,7 +2819,7 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
                 CLOSE(pipe_cmd_to_stdout[WRITE_TO_PIPE]);
                 CLOSE(pipe_child_to_parent[WRITE_TO_PIPE]);
 
-                YarpRunCmdWithStdioInfo* pInf = new YarpRunCmdWithStdioInfo(
+                auto* pInf = new YarpRunCmdWithStdioInfo(
                         strAlias,
                         mPortName,
                         strStdio,
@@ -3174,7 +3174,7 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
                 CLOSE(pipe_cmd_to_stdout[WRITE_TO_PIPE]);
                 CLOSE(pipe_child_to_parent[WRITE_TO_PIPE]);
 
-                YarpRunCmdWithStdioInfo* pInf = new YarpRunCmdWithStdioInfo(
+                auto* pInf = new YarpRunCmdWithStdioInfo(
                         strAlias,
                         mPortName,
                         portName,
@@ -3602,7 +3602,7 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 
     if (IS_PARENT_OF(pid_cmd))
     {
-        YarpRunProcInfo* pInf = new YarpRunProcInfo(strAlias, mPortName, pid_cmd, nullptr, false);
+        auto* pInf = new YarpRunProcInfo(strAlias, mPortName, pid_cmd, nullptr, false);
         pInf->setCmd(strCmd);
         if (msg.check("env")) pInf->setEnv(msg.find("env").asString());
         mProcessVector->Add(pInf);

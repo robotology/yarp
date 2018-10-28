@@ -376,7 +376,7 @@ static bool ImageWriteFloat(ImageOf<PixelFloat>& img, const char *filename)
 
     size_t bw = 0;
     size_t size_ = sizeof(float);
-    size_t count_ = (size_t)(dims[0] * dims[1]);
+    auto count_ = (size_t)(dims[0] * dims[1]);
 
     if (fwrite(dims, sizeof(dims), 1, fp) > 0) {
         bw = fwrite(&img(0, 0), size_, count_, fp);

@@ -279,7 +279,7 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
 }
 
 DriverCreator *DriversHelper::load(const char *name) {
-    StubDriver *result = new StubDriver(name,false);
+    auto* result = new StubDriver(name,false);
     if (!result->isValid()) {
         delete result;
         result = nullptr;
@@ -612,7 +612,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
 
 DeviceDriver *StubDriverCreator::create() const {
     //yDebug("Creating %s from %s\n", desc.c_str(), libname.c_str());
-    StubDriver *result = new StubDriver(libname.c_str(),fnname.c_str(),false);
+    auto* result = new StubDriver(libname.c_str(),fnname.c_str(),false);
     if (result==nullptr) return result;
     if (!result->isValid()) {
         delete result;

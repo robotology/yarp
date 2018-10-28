@@ -98,7 +98,7 @@ RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::~privateXMLReaderFileV3
 RobotInterface::Robot& RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::readRobotFile(const std::string &fileName)
 {
     yDebug() << "Reading file" << fileName.c_str();
-    TiXmlDocument *doc = new TiXmlDocument(fileName.c_str());
+    auto* doc = new TiXmlDocument(fileName.c_str());
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
     }
@@ -494,7 +494,7 @@ RobotInterface::ParamList RobotInterface::XMLReaderFileV3::privateXMLReaderFileV
     }
 
     // +1 skips the first element, that is the main param
-    for (ParamList::iterator it = params.begin() + 1; it != params.end(); ++it) {
+    for (auto it = params.begin() + 1; it != params.end(); ++it) {
         Param &param = *it;
         params.at(0).value() += (params.at(0).value().empty() ? "(" : " ") + param.name();
     }

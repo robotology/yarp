@@ -334,7 +334,7 @@ int yarp::serversql::Server::run(int argc, char** argv)
 
 yarp::os::NameStore *yarpserver_create(yarp::os::Searchable& options)
 {
-    NameServerContainer *nc = new NameServerContainer;
+    auto* nc = new NameServerContainer;
     if (!nc) {
         return nullptr;
     }

@@ -170,7 +170,7 @@ GstFlowReturn new_sample(GstAppSink *appsink, gpointer user_data)
 
 #endif
 
-    data_for_gst_callback *dec_data = (data_for_gst_callback*)user_data;
+    auto* dec_data = (data_for_gst_callback*)user_data;
 
     GstSample *sample = nullptr;
     g_signal_emit_by_name (appsink, "pull-sample", &sample, NULL);

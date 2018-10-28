@@ -41,7 +41,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
                          PaStreamCallbackFlags statusFlags,
                          void *userData )
 {
-    circularDataBuffers* dataBuffers = static_cast<circularDataBuffers*>(userData);
+    auto* dataBuffers = static_cast<circularDataBuffers*>(userData);
     circularBuffer *playdata = dataBuffers->playData;
     circularBuffer *recdata  = dataBuffers->recData;
     int num_channels         = dataBuffers->numChannels;
@@ -49,7 +49,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
 
     if (dataBuffers->canRec)
     {
-        const SAMPLE *rptr = (const SAMPLE*)inputBuffer;
+        const auto* rptr = (const SAMPLE*)inputBuffer;
         unsigned int framesToCalc;
         unsigned int i;
         unsigned long framesLeft = recdata->getMaxSize()-recdata->size();
@@ -92,7 +92,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
 
     if (dataBuffers->canPlay)
     {
-        SAMPLE *wptr = (SAMPLE*)outputBuffer;
+        auto* wptr = (SAMPLE*)outputBuffer;
         unsigned int i;
 
         unsigned int framesLeft = playdata->size();

@@ -105,7 +105,7 @@ bool TripleSourceCreator::close() {
         accessor = nullptr;
     }
     if (implementation != nullptr) {
-        sqlite3 *db = (sqlite3 *)implementation;
+        auto* db = (sqlite3 *)implementation;
         sqlite3_close(db);
         implementation = nullptr;
     }

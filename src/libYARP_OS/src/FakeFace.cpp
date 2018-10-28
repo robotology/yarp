@@ -35,6 +35,6 @@ InputProtocol *FakeFace::read()
 OutputProtocol *FakeFace::write(const Contact& address)
 {
     YARP_UNUSED(address);
-    Protocol *prot = new Protocol(new FakeTwoWayStream());
+    auto* prot = new Protocol(new FakeTwoWayStream());
     return prot;
 }

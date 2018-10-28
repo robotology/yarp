@@ -508,7 +508,7 @@ int MonitorLua::setConstraint(lua_State* L)
             return 0;
         }
 
-        MonitorLua* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
+        auto* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
         yAssert(owner);
         owner->setAcceptConstraint(cst);
     }
@@ -524,7 +524,7 @@ int MonitorLua::getConstraint(lua_State* L)
         return 0;
     }
 
-    MonitorLua* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
+    auto* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
     yAssert(owner);
     lua_pushstring(L, owner->getAcceptConstraint());
     return 0;
@@ -556,7 +556,7 @@ int MonitorLua::setEvent(lua_State* L)
             yError("Cannot get PortMonitor_Owner");
             return 0;
         }
-        MonitorLua* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
+        auto* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
         yAssert(owner);
         if(owner->isKeyword(event_name))
             return 0;
@@ -579,7 +579,7 @@ int MonitorLua::unsetEvent(lua_State* L)
             yError("Cannot get PortMonitor_Owner");
             return 0;
         }
-        MonitorLua* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
+        auto* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
         yAssert(owner);
         if(owner->isKeyword(event_name))
             return 0;
@@ -615,7 +615,7 @@ int MonitorLua::setTrigInterval(lua_State* L)
         return 0;
     }
 
-    MonitorLua* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
+    auto* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
     yAssert(owner);
 
     // start the trigger thread (MonitorTrigger) if it is not running

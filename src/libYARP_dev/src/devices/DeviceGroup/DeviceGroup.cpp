@@ -91,7 +91,7 @@ public:
 
     bool add(const std::string& name, yarp::os::Searchable& config) {
         //printf("ADDING %s\n", config.toString().c_str());
-        PolyDriver *pd = new PolyDriver();
+        auto* pd = new PolyDriver();
         yAssert(pd!=nullptr);
         bool result = pd->open(config);
         if (!result) {

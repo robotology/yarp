@@ -89,7 +89,7 @@ bool ImplementInteractionMode::getInteractionModes(int n_joints, int *joints, ya
 
 bool ImplementInteractionMode::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
-    yarp::dev::InteractionModeEnum *temp_modes=new yarp::dev::InteractionModeEnum [nj];
+    auto* temp_modes=new yarp::dev::InteractionModeEnum [nj];
     if(!iInteraction->getInteractionModesRaw(temp_modes) )
     {
         delete [] temp_modes;
@@ -125,7 +125,7 @@ bool ImplementInteractionMode::setInteractionModes(int n_joints, int *joints, ya
 
 bool ImplementInteractionMode::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
-    yarp::dev::InteractionModeEnum *temp_modes=new yarp::dev::InteractionModeEnum [nj];
+    auto* temp_modes=new yarp::dev::InteractionModeEnum [nj];
     for(int idx=0; idx< castToMapper(helper)->axes(); idx++)
     {
         int j = castToMapper(helper)->toHw(idx);

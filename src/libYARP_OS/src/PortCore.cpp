@@ -2520,7 +2520,7 @@ bool PortCore::setTypeOfService(PortCoreUnit *unit, int tos)
 
     if (unit->isOutput())
     {
-        PortCoreOutputUnit* outUnit = dynamic_cast<PortCoreOutputUnit*>(unit);
+        auto* outUnit = dynamic_cast<PortCoreOutputUnit*>(unit);
         if (outUnit)
         {
             OutputProtocol* op = outUnit->getOutPutProtocol();
@@ -2536,7 +2536,7 @@ bool PortCore::setTypeOfService(PortCoreUnit *unit, int tos)
 
     if (unit->isInput())
     {
-        PortCoreInputUnit* inUnit = dynamic_cast<PortCoreInputUnit*>(unit);
+        auto* inUnit = dynamic_cast<PortCoreInputUnit*>(unit);
         if (inUnit)
         {
             InputProtocol* ip = inUnit->getInPutProtocol();
@@ -2557,7 +2557,7 @@ int PortCore::getTypeOfService(PortCoreUnit *unit)
 
     if (unit->isOutput())
     {
-        PortCoreOutputUnit* outUnit = dynamic_cast<PortCoreOutputUnit*>(unit);
+        auto* outUnit = dynamic_cast<PortCoreOutputUnit*>(unit);
         if (outUnit)
         {
             OutputProtocol* op = outUnit->getOutPutProtocol();
@@ -2573,7 +2573,7 @@ int PortCore::getTypeOfService(PortCoreUnit *unit)
 
     if (unit->isInput())
     {
-        PortCoreInputUnit* inUnit = dynamic_cast<PortCoreInputUnit*>(unit);
+        auto* inUnit = dynamic_cast<PortCoreInputUnit*>(unit);
         if (inUnit)
         {
             InputProtocol* ip = inUnit->getInPutProtocol();

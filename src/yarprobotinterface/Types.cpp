@@ -71,9 +71,9 @@ std::string RobotInterface::findGroup(const RobotInterface::ParamList &list, con
 RobotInterface::ParamList RobotInterface::mergeDuplicateGroups(const RobotInterface::ParamList &list)
 {
     RobotInterface::ParamList params = list;
-    for (RobotInterface::ParamList::iterator it1 = params.begin(); it1 != params.end(); ++it1) {
+    for (auto it1 = params.begin(); it1 != params.end(); ++it1) {
         RobotInterface::Param &param1 = *it1;
-        for (RobotInterface::ParamList::iterator it2 = it1 + 1; it2 != params.end(); ) {
+        for (auto it2 = it1 + 1; it2 != params.end(); ) {
             RobotInterface::Param &param2 = *it2;
             if (param1.name() == param2.name()) {
                 if (!param1.isGroup() || !param2.isGroup()) {

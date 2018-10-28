@@ -145,7 +145,7 @@ void ModuleItem::init()
 
 
     if(!nestedInApp){
-        QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect();
+        auto* effect = new QGraphicsDropShadowEffect();
         effect->setColor(QColor(80,80,80,80));
         effect->setBlurRadius(5);
         setGraphicsEffect(effect);

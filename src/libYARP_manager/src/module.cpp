@@ -77,7 +77,7 @@ Module::~Module() { }
 
 Node* Module::clone()
 {
-    Module* mod = new Module(*this);
+    auto* mod = new Module(*this);
     return mod;
 }
 
@@ -91,7 +91,7 @@ bool Module::addArgument(Argument &argument)
 
 bool Module::removeArgument(Argument& argument)
 {
-    ArgumentIterator itr = findArgument(argument);
+    auto itr = findArgument(argument);
     if(itr == arguments.end())
         return true;
     arguments.erase(itr);
@@ -111,7 +111,7 @@ bool Module::removeOutput(OutputData& output)
 {
     //__CHECK_NULLPTR(output);
 
-    OutputIterator itr = findOutput(output);
+    auto itr = findOutput(output);
     if(itr == outputs.end())
         return true;
     outputs.erase(itr);
@@ -131,7 +131,7 @@ bool Module::removeInput(InputData& input)
 {
     //__CHECK_NULLPTR(input);
 
-    InputIterator itr = findInput(input);
+    auto itr = findInput(input);
     if(itr == inputs.end())
         return true;
     inputs.erase(itr);
@@ -141,7 +141,7 @@ bool Module::removeInput(InputData& input)
 
 bool Module::addResource(GenericResource& res)
 {
-    GenericResource* newres = (GenericResource*) res.clone();
+    auto* newres = (GenericResource*) res.clone();
     newres->setOwner(this);
     resources.push_back(newres);
     return true;
@@ -150,7 +150,7 @@ bool Module::addResource(GenericResource& res)
 
 bool Module::removeResource(GenericResource& res)
 {
-    ResourcePIterator itr = findResource(res);
+    auto itr = findResource(res);
     if(itr == resources.end())
         return true;
     resources.erase(itr);

@@ -249,7 +249,7 @@ bool yarp::os::impl::LocalCarrier::expectExtraHeader(ConnectionState& proto) {
 }
 
 bool yarp::os::impl::LocalCarrier::becomeLocal(ConnectionState& proto, bool sender) {
-    LocalCarrierStream *stream = new LocalCarrierStream();
+    auto* stream = new LocalCarrierStream();
     if (stream != nullptr) {
         stream->attach(this, sender);
     }

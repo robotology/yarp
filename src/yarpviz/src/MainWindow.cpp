@@ -289,8 +289,8 @@ void MainWindow::drawGraph(Graph &graph)
         const Property& prop = (*itr)->property;
         string portName = prop.find("name").asString();
         if(dynamic_cast<PortVertex*>(*itr)) {
-            PortVertex* pv = dynamic_cast<PortVertex*>(*itr);
-            ProcessVertex* v = (ProcessVertex*) pv->getOwner();
+            auto* pv = dynamic_cast<PortVertex*>(*itr);
+            auto* v = (ProcessVertex*) pv->getOwner();
             if(ui->actionHideDisconnectedPorts->isChecked() && pv->property.find("orphan").asBool())
                 continue;
             if(!ui->actionDebugMode->isChecked() && (portName.find("/log") != string::npos || portName.find("/yarplogger") != string::npos ))
@@ -443,7 +443,7 @@ void MainWindow::edgeContextMenu(QGVEdge* edge) {
 
 void MainWindow::nodeContextMenu(QGVNode *node)
 {
-    GraphicVertex* v = (GraphicVertex*) node->getVertex();
+    auto* v = (GraphicVertex*) node->getVertex();
     yAssert(v != nullptr);
     if(v->property.find("type").asString() == "port")
         onNodeContextMenuPort(node, v);
@@ -672,7 +672,7 @@ void MainWindow::populateTreeWidget(){
             {
                 continue;
             }
-            NodeWidgetItem *moduleItem =  new NodeWidgetItem(moduleParentItem, (*itr), MODULE);
+            auto* moduleItem =  new NodeWidgetItem(moduleParentItem, (*itr), MODULE);
             moduleItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable );
             moduleItem->check(true);
         }
@@ -684,12 +684,12 @@ void MainWindow::populateTreeWidget(){
             }
             if(!ui->actionDebugMode->isChecked() && (portName.find("/log") != string::npos || portName.find("/yarplogger") != string::npos ))
                 continue;
-            NodeWidgetItem *portItem =  new NodeWidgetItem(portParentItem, (*itr), PORT);
+            auto* portItem =  new NodeWidgetItem(portParentItem, (*itr), PORT);
             portItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable );
             portItem->check(true);
         }
         else if(dynamic_cast<MachineVertex*>(*itr)) {
-            NodeWidgetItem *machineItem =  new NodeWidgetItem(machinesParentItem, (*itr), MACHINE);
+            auto* machineItem =  new NodeWidgetItem(machinesParentItem, (*itr), MACHINE);
             machineItem->setFlags( /*Qt::ItemIsSelectable | */Qt::ItemIsEnabled /*| Qt::ItemIsUserCheckable */);
             machineItem->check(true);
         }
@@ -763,8 +763,8 @@ void MainWindow::onNodesTreeItemClicked(QTreeWidgetItem *item, int column){
     QList<QGraphicsItem *> items = scene->selectedItems();
     foreach( QGraphicsItem *item, items )
         item->setSelected(false);
-    GraphicVertex* yv = (GraphicVertex*)((NodeWidgetItem*)(item))->getVertex();
-    QGraphicsItem* graphicItem = (QGraphicsItem*) yv->getGraphicItem();
+    auto* yv = (GraphicVertex*)((NodeWidgetItem*)(item))->getVertex();
+    auto* graphicItem = (QGraphicsItem*) yv->getGraphicItem();
     if(graphicItem) {
         graphicItem->setSelected(true);
         if(state){

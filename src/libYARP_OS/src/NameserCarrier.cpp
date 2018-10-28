@@ -184,8 +184,7 @@ bool yarp::os::impl::NameserCarrier::expectAck(ConnectionState& proto) {
 
 bool yarp::os::impl::NameserCarrier::respondToHeader(ConnectionState& proto) {
     // I am the receiver
-    NameserTwoWayStream *stream =
-        new NameserTwoWayStream(proto.giveStreams());
+    auto* stream = new NameserTwoWayStream(proto.giveStreams());
     proto.takeStreams(stream);
     return true;
 }

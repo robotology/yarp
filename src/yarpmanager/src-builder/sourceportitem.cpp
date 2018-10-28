@@ -52,7 +52,7 @@ SourcePortItem::SourcePortItem(QString itemName, bool isInApp,
     setFlag(ItemSendsGeometryChanges,true);
 
     if(!isInApp){
-        QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect();
+        auto* effect = new QGraphicsDropShadowEffect();
         effect->setColor(QColor(80,80,80,80));
         effect->setBlurRadius(5);
         setGraphicsEffect(effect);
@@ -62,7 +62,7 @@ SourcePortItem::SourcePortItem(QString itemName, bool isInApp,
     allowOutputs = true;
 
     lineEditWidget = new QGraphicsProxyWidget(this);
-    QLineEdit *lineEdit = new QLineEdit();
+    auto* lineEdit = new QLineEdit();
     QObject::connect(lineEdit,SIGNAL(editingFinished()),signalHandler(),SLOT(onEditingFinished()));
     QObject::connect(lineEdit,SIGNAL(returnPressed()),signalHandler(),SLOT(onEditingFinished()));
     lineEdit->setText(itemName);

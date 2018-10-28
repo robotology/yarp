@@ -133,7 +133,7 @@ bool MultipleAnalogSensorsRemapper::parseOptions(const Property& prop)
 
     for (size_t i = 0; i < MAS_NrOfSensorTypes; i++)
     {
-        MAS_SensorType sensType = static_cast<MAS_SensorType>(i);
+        auto sensType = static_cast<MAS_SensorType>(i);
         std::string optionName = MAS_getTagFromEnum(sensType) +"Names";
         ok = getVectorOfStringFromListInConfig(optionName , prop, m_remappedSensors[i]);
         if (!ok)

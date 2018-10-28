@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
+    auto* window = qobject_cast<QQuickWindow *>(topLevel);
     if (minimal)
     {
         window->setFlags(Qt::FramelessWindowHint);
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
     }
 
     // Call the parseParameters of the qml object called YARPVideoSurface
-    QObject *yarpVideoSurface = topLevel->findChild<QObject*>("YARPVideoSurface");
+    auto* yarpVideoSurface = topLevel->findChild<QObject*>("YARPVideoSurface");
     QMetaObject::invokeMethod(yarpVideoSurface,"parseParameters",
                               Qt::DirectConnection,
                               Q_RETURN_ARG(QVariant, retVal),

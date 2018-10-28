@@ -141,7 +141,7 @@ bool ShmemInputStreamImpl::Resize()
         return false;
     }
 
-    ShmemHeader_t* pNewHeader = (ShmemHeader_t*)pNewMap->malloc();
+    auto* pNewHeader = (ShmemHeader_t*)pNewMap->malloc();
     char* pNewData = (char*)(pNewHeader + 1);
 
     m_pMap->close();

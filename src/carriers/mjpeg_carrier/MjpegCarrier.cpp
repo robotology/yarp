@@ -69,7 +69,7 @@ using net_destination_ptr = net_destination_mgr*;
 
 void send_net_data(JOCTET *data, int len, void *client) {
     dbg_printf("Send %d bytes\n", len);
-    ConnectionState *p = (ConnectionState *)client;
+    auto* p = (ConnectionState *)client;
     char hdr[1000];
     sprintf(hdr,"\n");
     const char *brk = "\n";
@@ -101,7 +101,7 @@ Content-Length: %d%s%s", brk, len, brk, brk);
 
 static void init_net_destination(j_compress_ptr cinfo) {
     //printf("Initializing destination\n");
-    net_destination_ptr dest = (net_destination_ptr)cinfo->dest;
+    auto dest = (net_destination_ptr)cinfo->dest;
     dest->buffer = &(dest->cache[0]);
     dest->bufsize = sizeof(dest->cache);
     dest->pub.next_output_byte = dest->buffer;
@@ -109,7 +109,7 @@ static void init_net_destination(j_compress_ptr cinfo) {
 }
 
 static boolean empty_net_output_buffer(j_compress_ptr cinfo) {
-    net_destination_ptr dest = (net_destination_ptr)cinfo->dest;
+    auto dest = (net_destination_ptr)cinfo->dest;
     printf("Empty buffer - PROBLEM\n");
     send_net_data(dest->buffer,dest->bufsize-dest->pub.free_in_buffer,
                   cinfo->client_data);
@@ -119,7 +119,7 @@ static boolean empty_net_output_buffer(j_compress_ptr cinfo) {
 }
 
 static void term_net_destination(j_compress_ptr cinfo) {
-    net_destination_ptr dest = (net_destination_ptr)cinfo->dest;
+    auto dest = (net_destination_ptr)cinfo->dest;
     //printf("Terminating net %d %d\n", dest->bufsize,dest->pub.free_in_buffer);
     send_net_data(dest->buffer,dest->bufsize-dest->pub.free_in_buffer,
                   cinfo->client_data);
@@ -153,7 +153,7 @@ bool MjpegCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     int w = img->width();
     int h = img->height();
     int row_stride = img->getRowSize();
-    JOCTET *data = (JOCTET*)img->getRawImage();
+    auto* data = (JOCTET*)img->getRawImage();
 
     JSAMPROW row_pointer[1];
 

@@ -354,7 +354,7 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
                 return false;
             }
 
-            std::map<std::string, axisLocation>::iterator it = axesLocationMap.find(axName);
+            auto it = axesLocationMap.find(axName);
             if( it != axesLocationMap.end() )
             {
                 yError() <<"ControlBoardRemapper: multiple axes have the same name " << axName
@@ -381,7 +381,7 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
     // the couple subControlBoard, axis in subControlBoard
     for(const auto& axesName : axesNames)
     {
-        std::map<std::string, axisLocation>::iterator it = axesLocationMap.find(axesName);
+        auto it = axesLocationMap.find(axesName);
         if( it == axesLocationMap.end() )
         {
             yError() <<"ControlBoardRemapper: axis " << axesName

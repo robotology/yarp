@@ -90,7 +90,7 @@ public:
     }
 
     PropertyItem *getProp(const std::string& key, bool create = true) {
-        std::map<std::string, PropertyItem>::iterator entry = data.find(key);
+        auto entry = data.find(key);
         if (entry == data.end()) {
             if (!create) {
                 return nullptr;

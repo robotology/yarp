@@ -225,7 +225,7 @@ int YarpRunInfoVector::Signal(std::string& alias, int signum)
 {
     WAIT()
 
-    YarpRunProcInfo **aKill=new YarpRunProcInfo*[m_nProcesses];
+    auto* *aKill=new YarpRunProcInfo*[m_nProcesses];
     int nKill=0;
 
     for (int i=0; i<m_nProcesses; ++i)
@@ -253,7 +253,7 @@ int YarpRunInfoVector::Killall(int signum)
 {
     WAIT()
 
-    YarpRunProcInfo **aKill=new YarpRunProcInfo*[m_nProcesses];
+    auto* *aKill=new YarpRunProcInfo*[m_nProcesses];
     int nKill=0;
 
     for (int i=0; i<m_nProcesses; ++i)

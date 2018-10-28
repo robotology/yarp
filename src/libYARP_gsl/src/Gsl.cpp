@@ -31,8 +31,8 @@ using namespace yarp::sig;
 
 GslMatrix::GslMatrix(const Matrix &v)
 {
-    gsl_matrix *mat = new gsl_matrix;
-    gsl_block *bl = new gsl_block;
+    auto* mat = new gsl_matrix;
+    auto* bl = new gsl_block;
 
     mat->block = bl;
 
@@ -41,7 +41,7 @@ GslMatrix::GslMatrix(const Matrix &v)
 
     gslData = mat;
 
-    gsl_matrix *tmp = static_cast<gsl_matrix *>(gslData);
+    auto* tmp = static_cast<gsl_matrix *>(gslData);
     tmp->block->data = const_cast<double *>(v.data());
     tmp->data = tmp->block->data;
     tmp->block->size = v.rows()*v.cols();
@@ -53,7 +53,7 @@ GslMatrix::GslMatrix(const Matrix &v)
 
 GslMatrix::~GslMatrix()
 {
-    gsl_matrix *tmp = (gsl_matrix *)(gslData);
+    auto* tmp = (gsl_matrix *)(gslData);
 
     if (tmp != nullptr)
     {
@@ -78,8 +78,8 @@ const void *GslMatrix::getGslMatrix() const
 
 GslVector::GslVector(const Vector &v)
 {
-    gsl_vector *vect = new gsl_vector;
-    gsl_block *bl = new gsl_block;
+    auto* vect = new gsl_vector;
+    auto* bl = new gsl_block;
 
     vect->block = bl;
 
@@ -89,7 +89,7 @@ GslVector::GslVector(const Vector &v)
 
     gslData = vect;
 
-    gsl_vector *tmp = static_cast<gsl_vector *>(gslData);
+    auto* tmp = static_cast<gsl_vector *>(gslData);
     tmp->block->data = const_cast<double * > (v.data());
     tmp->data = tmp->block->data;
     tmp->block->size = v.size();
@@ -100,7 +100,7 @@ GslVector::GslVector(const Vector &v)
 
 GslVector::~GslVector()
 {
-    gsl_vector *tmp = (gsl_vector *)(gslData);
+    auto* tmp = (gsl_vector *)(gslData);
 
     if (tmp != nullptr)
     {

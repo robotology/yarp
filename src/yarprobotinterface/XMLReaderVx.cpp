@@ -74,7 +74,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fi
     std::string path = filename.substr(0, filename.rfind(yarp::os::Network::getDirectorySeparator()));
 
     yDebug() << "Reading file" << filename.c_str();
-    TiXmlDocument *doc = new TiXmlDocument(filename.c_str());
+    auto* doc = new TiXmlDocument(filename.c_str());
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
     }

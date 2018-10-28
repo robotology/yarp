@@ -76,7 +76,7 @@ public:
 /**************************************************************************/
 DumpObj *factory(Bottle& obj)
 {
-    DumpBottle *p=new DumpBottle(obj);
+    auto* p=new DumpBottle(obj);
     return p;
 }
 
@@ -137,7 +137,7 @@ public:
 /**************************************************************************/
 DumpObj *factory(Image &obj)
 {
-    DumpImage *p=new DumpImage(obj);
+    auto* p=new DumpImage(obj);
     return p;
 }
 

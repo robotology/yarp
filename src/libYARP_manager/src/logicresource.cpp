@@ -35,7 +35,7 @@ Platform::Platform(const Platform &resource) : GenericResource(resource)
 
 Node* Platform::clone()
 {
-    Platform* resource = new Platform(*this);
+    auto* resource = new Platform(*this);
     return resource;
 }
 
@@ -44,7 +44,7 @@ bool Platform::satisfy(GenericResource* resource)
     if(!getAvailability() || getDisable())
         return false;
 
-    Platform* os = dynamic_cast<Platform*>(resource);
+    auto* os = dynamic_cast<Platform*>(resource);
     if(os)
         return satisfy_platform(os);
 
@@ -88,7 +88,7 @@ ResYarpPort::ResYarpPort(const ResYarpPort &resource) : GenericResource(resource
 
 Node* ResYarpPort::clone()
 {
-    ResYarpPort* resource = new ResYarpPort(*this);
+    auto* resource = new ResYarpPort(*this);
     return resource;
 }
 
@@ -97,7 +97,7 @@ bool ResYarpPort::satisfy(GenericResource* resource)
     if(!getAvailability() || getDisable())
         return false;
 
-    ResYarpPort* resport = dynamic_cast<ResYarpPort*>(resource);
+    auto* resport = dynamic_cast<ResYarpPort*>(resource);
     if(!resport)
         return false;
     return (strPort == string(resport->getPort()) ||

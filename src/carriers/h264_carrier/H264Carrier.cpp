@@ -158,7 +158,7 @@ bool H264Carrier::expectReplyToHeader(ConnectionState& proto)
 
     cfgParams.remotePort = proto.getRoute().getToContact().getPort();
 
-    H264Stream *stream = new H264Stream(cfgParams);
+    auto* stream = new H264Stream(cfgParams);
     if (stream==nullptr) { return false; }
 
     yarp::os::Contact remote = proto.getStreams().getRemoteAddress();

@@ -316,7 +316,7 @@ int main(int argc, char *argv[])
     int width = 600;
     int height = 600;
 
-    yarp::dev::PolyDriver* drv = new yarp::dev::PolyDriver;
+    auto* drv = new yarp::dev::PolyDriver;
     Property   lasOptions;
     lasOptions.put("device", "Rangefinder2DClient");
     lasOptions.put("local", "/laserScannerGui/laser:i");

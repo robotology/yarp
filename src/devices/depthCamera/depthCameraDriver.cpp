@@ -947,7 +947,7 @@ bool depthCameraDriver::setFeature(int feature, double value)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     switch(f)
     {
     case YARP_FEATURE_EXPOSURE:
@@ -988,7 +988,7 @@ bool depthCameraDriver::getFeature(int feature, double *value)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     switch(f)
     {
     case YARP_FEATURE_EXPOSURE:
@@ -1030,7 +1030,7 @@ bool depthCameraDriver::hasOnOff(  int feature, bool *HasOnOff)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     if (f == YARP_FEATURE_WHITE_BALANCE || f == YARP_FEATURE_MIRROR)
     {
         *HasOnOff = true;
@@ -1100,7 +1100,7 @@ bool depthCameraDriver::hasAuto(int feature, bool *hasAuto)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     if (f == YARP_FEATURE_EXPOSURE || f == YARP_FEATURE_WHITE_BALANCE)
     {
         *hasAuto = true;
@@ -1119,7 +1119,7 @@ bool depthCameraDriver::hasManual( int feature, bool* hasManual)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     if (f == YARP_FEATURE_EXPOSURE || f == YARP_FEATURE_FRAME_RATE || f == YARP_FEATURE_GAIN)
     {
         *hasManual = true;
@@ -1150,7 +1150,7 @@ bool depthCameraDriver::setMode(int feature, FeatureMode mode)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     if (f == YARP_FEATURE_EXPOSURE)
     {
         switch(mode)
@@ -1182,7 +1182,7 @@ bool depthCameraDriver::getMode(int feature, FeatureMode* mode)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     if (f == YARP_FEATURE_EXPOSURE)
     {
         *mode = m_imageStream.getCameraSettings()->getAutoExposureEnabled() ? MODE_AUTO : MODE_MANUAL;

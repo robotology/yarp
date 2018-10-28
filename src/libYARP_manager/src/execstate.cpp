@@ -627,7 +627,7 @@ ExecMachine::~ExecMachine()
 
 void ExecMachine::refresh()
 {
-    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    auto* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
         tr->refresh();
     }
@@ -635,7 +635,7 @@ void ExecMachine::refresh()
 
 void ExecMachine::start()
 {
-    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    auto* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
         tr->start();
     }
@@ -643,7 +643,7 @@ void ExecMachine::start()
 
 void ExecMachine::stop()
 {
-    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    auto* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
         tr->stop();
     }
@@ -651,7 +651,7 @@ void ExecMachine::stop()
 
 void ExecMachine::kill()
 {
-    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    auto* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
         tr->kill();
     }
@@ -659,7 +659,7 @@ void ExecMachine::kill()
 
 void ExecMachine::startModule()
 {
-    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    auto* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
         tr->startModule();
     }
@@ -667,7 +667,7 @@ void ExecMachine::startModule()
 
 void ExecMachine::stopModule()
 {
-    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    auto* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
         tr->stopModule();
     }
@@ -675,7 +675,7 @@ void ExecMachine::stopModule()
 
 void ExecMachine::killModule()
 {
-    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    auto* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
         tr->killModule();
     }
@@ -683,7 +683,7 @@ void ExecMachine::killModule()
 
 void ExecMachine::connectAllPorts()
 {
-    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    auto* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
         tr->connectAllPorts();
     }
@@ -691,7 +691,7 @@ void ExecMachine::connectAllPorts()
 
 void ExecMachine::disconnectAllPorts()
 {
-    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    auto* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
         tr->disconnectAllPorts();
     }
@@ -699,7 +699,7 @@ void ExecMachine::disconnectAllPorts()
 
 void ExecMachine::moduleFailed()
 {
-    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    auto* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
         tr->moduleFailed();
     }
@@ -707,7 +707,7 @@ void ExecMachine::moduleFailed()
 
 void ExecMachine::connectionFailed(void* which)
 {
-    ITransition* tr = dynamic_cast<ITransition*>(currentState());
+    auto* tr = dynamic_cast<ITransition*>(currentState());
     if (tr) {
         tr->connectionFailed(which);
     }

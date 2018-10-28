@@ -481,7 +481,7 @@ void SafeManager::safeLoadBalance()
 void SafeManager::onExecutableStart(void* which)
 {
     WAIT_SEMAPHOR();
-    Executable* exe = static_cast<Executable*>(which);
+    auto* exe = static_cast<Executable*>(which);
     if(eventReceiver && exe)
         eventReceiver->onModStart(exe->getID());
     POST_SEMAPHOR();
@@ -490,7 +490,7 @@ void SafeManager::onExecutableStart(void* which)
 void SafeManager::onExecutableStop(void* which)
 {
     WAIT_SEMAPHOR();
-    Executable* exe = static_cast<Executable*>(which);
+    auto* exe = static_cast<Executable*>(which);
     if(eventReceiver && exe)
         eventReceiver->onModStop(exe->getID());
     POST_SEMAPHOR();
@@ -515,7 +515,7 @@ void SafeManager::onExecutableStop(void* which)
 void SafeManager::onExecutableDied(void* which)
 {
     WAIT_SEMAPHOR();
-    Executable* exe = static_cast<Executable*>(which);
+    auto* exe = static_cast<Executable*>(which);
     if(eventReceiver && exe)
         eventReceiver->onModStop(exe->getID());
     POST_SEMAPHOR();
@@ -526,7 +526,7 @@ void SafeManager::onExecutableFailed(void* which)
 {
     WAIT_SEMAPHOR();
     ErrorLogger* logger  = ErrorLogger::Instance();
-    Executable* exe = static_cast<Executable*>(which);
+    auto* exe = static_cast<Executable*>(which);
     if(exe)
     {
         if(m_pConfig->find("module_failure").asString() == "prompt")
@@ -568,7 +568,7 @@ void SafeManager::onCnnFailed(void* which)
 {
     WAIT_SEMAPHOR();
     ErrorLogger* logger  = ErrorLogger::Instance();
-    Connection* cnn = static_cast<Connection*>(which);
+    auto* cnn = static_cast<Connection*>(which);
     if(cnn)
     {
         if( m_pConfig->find("connection_failure").asString() == "prompt")
@@ -596,7 +596,7 @@ void SafeManager::onCnnFailed(void* which)
 void SafeManager::onExecutableStdout(void* which, const char* msg)
 {
     WAIT_SEMAPHOR();
-    Executable* exe = static_cast<Executable*>(which);
+    auto* exe = static_cast<Executable*>(which);
     if(eventReceiver)
         eventReceiver->onModStdout(exe->getID(), msg);
     POST_SEMAPHOR();

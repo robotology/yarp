@@ -67,7 +67,7 @@ EntitiesTreeWidget::EntitiesTreeWidget(QWidget *parent) : QTreeWidget(parent)
     topLevelMenu.addAction(importFile);
 
     loadFiles = new QAction("Load",this);
-    QAction *separator = new QAction(this);
+    auto* separator = new QAction(this);
     separator->setSeparator(true);
     reopen = new QAction("Refresh",this);
     remove = new QAction("Remove",this);
@@ -324,7 +324,7 @@ void EntitiesTreeWidget::mouseMoveEvent(QMouseEvent *event)
         }
         qlonglong pointer = selectedItem->data(0,Qt::UserRole + 1).toLongLong();
 
-        QMimeData *mimeData = new QMimeData;
+        auto* mimeData = new QMimeData;
         QByteArray strPointer = QString("%1").arg(pointer).toLatin1();
         mimeData->setData("pointer",strPointer);
 
@@ -338,7 +338,7 @@ void EntitiesTreeWidget::mouseMoveEvent(QMouseEvent *event)
         QFontMetrics fontMetric(font());
         //int textWidth = fontMetric.width(selectedItem->text(0));
 
-        QDrag *drag = new QDrag(this);
+        auto* drag = new QDrag(this);
         drag->setMimeData(mimeData);
 
 //        QPixmap pix(textWidth + 40,18);

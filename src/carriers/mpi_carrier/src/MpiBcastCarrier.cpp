@@ -44,7 +44,7 @@ void MpiBcastCarrier::createStream(bool sender) {
             comm = new MpiComm(name+"->bcast");
         }
         stream = new MpiBcastStream(name+"->bcast", comm);
-        MpiBcastStream *mpiStream = dynamic_cast<MpiBcastStream*> (stream);
+        auto* mpiStream = dynamic_cast<MpiBcastStream*> (stream);
         if(mpiStream)
             mpiStream->startJoin();
         getCaster().add(name, this);

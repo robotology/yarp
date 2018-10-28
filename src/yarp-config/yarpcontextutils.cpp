@@ -473,7 +473,7 @@ int recursiveDiff(std::string srcDirName, std::string destDirName, std::ostream 
     size_t nModifiedFiles = 0;
     for (const auto& srcIt : srcFileList)
     {
-        std::set<std::string>::iterator destPos = destFileList.find(srcIt);
+        auto destPos = destFileList.find(srcIt);
         if (destPos != destFileList.end())
         {
             diff_match_patch<std::string> dmp;
@@ -559,11 +559,11 @@ int recursiveMerge(std::string srcDirName, std::string destDirName, std::string 
         if (isHidden(srcFileName))
             continue;
 
-        std::set<std::string>::iterator destPos = destFileList.find(srcIt);
+        auto destPos = destFileList.find(srcIt);
         if (destPos != destFileList.end())
         {
             std::string destFileName = destDirName + PATH_SEPARATOR + (*destPos);
-            std::set<std::string>::iterator hiddenDestPos = hiddenFilesList.find(srcIt);
+            auto hiddenDestPos = hiddenFilesList.find(srcIt);
             if (hiddenDestPos != hiddenFilesList.end())
             {
                 std::string hiddenFileName = commonParentName + PATH_SEPARATOR + (*hiddenDestPos);

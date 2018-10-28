@@ -84,7 +84,7 @@ static void showError(Logger& log) {
  */
 InputProtocol *TcpFace::read() {
 
-    SocketTwoWayStream *stream  = new SocketTwoWayStream();
+    auto* stream  = new SocketTwoWayStream();
     yAssert(stream!=nullptr);
 
     int result = stream->open(peerAcceptor);
@@ -115,7 +115,7 @@ InputProtocol *TcpFace::read() {
 }
 
 OutputProtocol *TcpFace::write(const Contact& address) {
-    SocketTwoWayStream *stream  = new SocketTwoWayStream();
+    auto* stream  = new SocketTwoWayStream();
     int result = stream->open(address);
     if (result<0) {
         stream->close();

@@ -350,14 +350,14 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
     {
         switch((*itr)->getType()) {
             case MODULE: {
-                    Module* mod = (Module*)(*itr);
+                    auto* mod = (Module*)(*itr);
                     dot<<"\""<<mod->getLabel()<<"\"";
                     dot<<" [label=\""<< mod->getName()<<"\"";
                     dot<<" shape=component, color=midnightblue, fillcolor=lightslategrey, peripheries=1, style=filled, penwidth=2];"<<endl;
                     for(int i=0; i<mod->sucCount(); i++)
                     {
                         Link l = mod->getLinkAt(i);
-                        InputData* in = (InputData*)l.to();
+                        auto* in = (InputData*)l.to();
                         dot<<"\""<<mod->getLabel()<<"\" -> ";
                         dot<<"\""<<in->getLabel()<<"\"";
                         if(!l.isVirtual())
@@ -370,7 +370,7 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
                     break;
                 }
             case INPUTD:{
-                    InputData* in = (InputData*)(*itr);
+                    auto* in = (InputData*)(*itr);
                     dot<<"\""<<in->getLabel()<<"\"";
                     if(in->withPriority())
                     {
@@ -385,7 +385,7 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
                     for(int i=0; i<in->sucCount(); i++)
                     {
                         Link l = in->getLinkAt(i);
-                        OutputData* out = (OutputData*)l.to();
+                        auto* out = (OutputData*)l.to();
                         dot<<"\""<<in->getLabel()<<"\" -> ";
                         dot<<"\""<<out->getLabel()<<"\"";
                         if(!l.isVirtual())
@@ -397,14 +397,14 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
                     break;
                 }
             case OUTPUTD:{
-                    OutputData* out = (OutputData*)(*itr);
+                    auto* out = (OutputData*)(*itr);
                     dot<<"\""<<out->getLabel()<<"\"";
                     dot<<" [color=black, fillcolor=wheat, peripheries=1, style=filled";
                     dot<<" label=\""<< out->getName()<<"\\n"<<out->getPort()<<"\"];"<<endl;
                     for(int i=0; i<out->sucCount(); i++)
                     {
                         Link l = out->getLinkAt(i);
-                        Module* mod = (Module*)l.to();
+                        auto* mod = (Module*)l.to();
                         dot<<"\""<<out->getLabel()<<"\" -> ";
                         dot<<"\""<<mod->getLabel()<<"\"";
                         dot<<" [label=\"\" arrowhead=none];"<<endl;
@@ -414,14 +414,14 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
                 }
 
             case APPLICATION:{
-                    Application* app = (Application*)(*itr);
+                    auto* app = (Application*)(*itr);
                     dot<<"\""<<app->getLabel()<<"\"";
                     dot<<" [shape=folder, color=darkgreen, fillcolor=darkseagreen, peripheries=1, style=filled, penwidth=2";
                     dot<<" label=\""<<app->getLabel()<<"\""<<"];"<<endl;
                     for(int i=0; i<app->sucCount(); i++)
                     {
                         Link l = app->getLinkAt(i);
-                        Module* mod = (Module*)l.to();
+                        auto* mod = (Module*)l.to();
                         dot<<"\""<<app->getLabel()<<"\" -> ";
                         dot<<"\""<<mod->getLabel()<<"\"";
                         if(!l.isVirtual())
@@ -433,7 +433,7 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
             }
 
             case RESOURCE:{
-                    GenericResource* res = (GenericResource*)(*itr);
+                    auto* res = (GenericResource*)(*itr);
                     dot<<"\""<<res->getLabel()<<"\"";
                     if(res->owner())
                         dot<<" [shape=rect, color=black, fillcolor=salmon, peripheries=1, style=filled ";

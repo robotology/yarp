@@ -182,7 +182,7 @@ AppTemplate* XmlTempLoader::parsXml(const char* szFile)
     app.tmpFileName = szFile;
 
     /* retrieving name */
-    TiXmlElement* name = (TiXmlElement*) root->FirstChild("name");
+    auto* name = (TiXmlElement*) root->FirstChild("name");
     if(!name || !name->GetText())
     {
         OSTRINGSTREAM err;

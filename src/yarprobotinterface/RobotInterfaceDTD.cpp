@@ -104,13 +104,13 @@ bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, const std::string& curr
               std::back_inserter<std::vector<std::string> >(tokens));
 
     // Merge token in quotes (and remove quotes)
-    for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); ++it) {
+    for (auto it = tokens.begin(); it != tokens.end(); ++it) {
         if(it->at(0) == '"' ) {
             if (it->at(it->size() - 1) == '"') {
                 *it = it->substr(1, it->size() - 2);
             } else {
                 std::string s = it->substr(1) + " ";
-                for (std::vector<std::string>::iterator cit = it + 1; cit != tokens.end(); ) {
+                for (auto cit = it + 1; cit != tokens.end(); ) {
                     if (cit->at(cit->size() - 1) == '"') {
                         s += cit->substr(0, cit->size() - 1);
                         cit = tokens.erase(cit);

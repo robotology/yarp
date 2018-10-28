@@ -518,8 +518,8 @@ bool TestFrameGrabber::makeSimpleBayer(
 
     size_t i, j;
     for (i = 0; i < h; i++) {
-        PixelRgb *row = (PixelRgb *)img.getRow(i);
-        PixelMono *rd = (PixelMono *)bayer.getRow(i);
+        auto* row = (PixelRgb *)img.getRow(i);
+        auto* rd = (PixelMono *)bayer.getRow(i);
 
         for (j = 0; j < w; j++) {
 

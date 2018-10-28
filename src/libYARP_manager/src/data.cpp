@@ -48,7 +48,7 @@ InputData::~InputData() { }
 
 Node* InputData::clone()
 {
-    InputData* input = new InputData(*this);
+    auto* input = new InputData(*this);
     return input;
 }
 
@@ -89,6 +89,6 @@ OutputData::~OutputData() { }
 
 Node* OutputData::clone()
 {
-    OutputData* output = new OutputData(*this);
+    auto* output = new OutputData(*this);
     return output;
 }

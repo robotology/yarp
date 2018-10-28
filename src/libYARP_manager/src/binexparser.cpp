@@ -69,7 +69,7 @@ bool BinaryExpParser::parse(string _exp)
     int n = truthTable.size();
     for(int x = 0; x < (1 << (n-1)); ++x)
     {
-        map<string, bool>::iterator itr = operands.begin();
+        auto itr = operands.begin();
         for(int y = 0; y < (n-1); ++y)
             (*itr++).second = (truthTable[y][x] != 0);
         truthTable[n-1][x] = evalTree(root, operands);
@@ -90,14 +90,14 @@ bool BinaryExpParser::exportDotGraph(const char* szFileName)
     {
         switch((*itr)->getType()) {
             case OPERATOR: {
-                    BinaryNodePtr node = (BinaryNodePtr)(*itr);
+                    auto node = (BinaryNodePtr)(*itr);
                     dot<<"\""<<node->getLabel()<<"\"";
                     dot<<" [label=\""<< node->getName()<<"\"";
                     dot<<" shape=circle, fillcolor=lightslategrey, style=filled];"<<endl;
                     for(int i=0; i<node->sucCount(); i++)
                     {
                         Link l = node->getLinkAt(i);
-                        BinaryNodePtr to = (BinaryNodePtr)l.to();
+                        auto to = (BinaryNodePtr)l.to();
                         dot<<"\""<<node->getLabel()<<"\" -> ";
                         dot<<"\""<<to->getLabel()<<"\"";
                         dot<<" [label=\"\"];"<<endl;
@@ -105,7 +105,7 @@ bool BinaryExpParser::exportDotGraph(const char* szFileName)
                     break;
                 }
              case OPERAND: {
-                    BinaryNodePtr node = (BinaryNodePtr)(*itr);
+                    auto node = (BinaryNodePtr)(*itr);
                     dot<<"\""<<node->getLabel()<<"\"";
                     dot<<" [label=\""<< node->getName()<<"\"";
                     dot<<" shape=square];"<<endl;
@@ -133,21 +133,21 @@ bool BinaryExpParser::evalTree(BinaryNodePtr node, std::map<std::string, bool>& 
     {
         if(strcmp(node->getName(), "~") == 0)
         {
-            BinaryNodePtr left = (BinaryNodePtr)node->getLinkAt(0).to();
+            auto left = (BinaryNodePtr)node->getLinkAt(0).to();
             result = !evalTree(left, opnd);
             node->setValue(result);
         }
         else if(strcmp(node->getName(), "&") == 0)
         {
-            BinaryNodePtr left = (BinaryNodePtr)node->getLinkAt(0).to();
-            BinaryNodePtr right = (BinaryNodePtr)node->getLinkAt(1).to();
+            auto left = (BinaryNodePtr)node->getLinkAt(0).to();
+            auto right = (BinaryNodePtr)node->getLinkAt(1).to();
             result = evalTree(left, opnd) && evalTree(right, opnd);
             node->setValue(result);
         }
         else if(strcmp(node->getName(), "|") == 0)
         {
-            BinaryNodePtr left = (BinaryNodePtr)node->getLinkAt(0).to();
-            BinaryNodePtr right = (BinaryNodePtr)node->getLinkAt(1).to();
+            auto left = (BinaryNodePtr)node->getLinkAt(0).to();
+            auto right = (BinaryNodePtr)node->getLinkAt(1).to();
             result = evalTree(left, opnd) || evalTree(right, opnd);
             node->setValue(result);
         }

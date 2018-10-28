@@ -153,7 +153,7 @@ bool RobotInterface::Robot::Private::openDevices()
 bool RobotInterface::Robot::Private::closeDevices()
 {
     bool ret = true;
-    for (RobotInterface::DeviceList::reverse_iterator it = devices.rbegin(); it != devices.rend(); ++it) {
+    for (auto it = devices.rbegin(); it != devices.rend(); ++it) {
         RobotInterface::Device &device = *it;
 
         // yDebug() << device;
@@ -189,7 +189,7 @@ std::vector<unsigned int> RobotInterface::Robot::Private::getLevels(RobotInterfa
     }
 
     std::sort(levels.begin(), levels.end());
-    std::vector<unsigned int>::iterator it = std::unique(levels.begin(), levels.end());
+    auto it = std::unique(levels.begin(), levels.end());
     levels.resize(it - levels.begin());
 
     return levels;
