@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <utility>
 
 #if defined(YARP_HAS_ACE)
 # include <ace/INET_Addr.h>
@@ -47,13 +48,13 @@ using yarp::os::impl::NameConfig;
 class Contact::Private
 {
 public:
-    Private(const std::string& regName,
-            const std::string& carrier,
-            const std::string& hostname,
+    Private(std::string regName,
+            std::string carrier,
+            std::string hostname,
             int port) :
-        regName(regName),
-        carrier(carrier),
-        hostname(hostname),
+        regName(std::move(regName)),
+        carrier(std::move(carrier)),
+        hostname(std::move(hostname)),
         port(port),
         timeout(-1)
     {

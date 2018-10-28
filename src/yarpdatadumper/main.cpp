@@ -23,6 +23,7 @@
 #include <sstream>
 #include <string>
 #include <deque>
+#include <utility>
 
 #ifdef ADD_VIDEO
     #include <opencv2/opencv.hpp>
@@ -300,19 +301,19 @@ private:
 #endif
 
 public:
-    DumpThread(DumpType _type, DumpQueue &Q, const string &_dirName, int szToWrite,
-               bool _saveData, bool _videoOn, const string &_videoType) :
+    DumpThread(DumpType _type, DumpQueue &Q, string _dirName, int szToWrite,
+               bool _saveData, bool _videoOn, string _videoType) :
         PeriodicThread(0.05),
         buf(Q),
         type(_type),
-        dirName(_dirName),
+        dirName(std::move(_dirName)),
         blockSize(szToWrite),
         cumulSize(0),
         counter(0),
         oldTime(0.0),
         saveData(_saveData),
         videoOn(_videoOn),
-        videoType(_videoType),
+        videoType(std::move(_videoType)),
         closing(false)
     {
         infoFile=dirName;

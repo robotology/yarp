@@ -9,6 +9,7 @@
 
 #include <yarp/os/Route.h>
 #include <string>
+#include <utility>
 #include <yarp/os/Contact.h>
 
 
@@ -20,14 +21,14 @@ using yarp::os::Contact;
 class Route::Private
 {
 public:
-    Private(const std::string& fromName,
-            const std::string& toName,
-            const Contact& toContact,
-            const std::string& carrierName) :
-        fromName(fromName),
-        toName(toName),
-        toContact(toContact),
-        carrierName(carrierName)
+    Private(std::string fromName,
+            std::string toName,
+            Contact toContact,
+            std::string carrierName) :
+        fromName(std::move(fromName)),
+        toName(std::move(toName)),
+        toContact(std::move(toContact)),
+        carrierName(std::move(carrierName))
     {
     }
 

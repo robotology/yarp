@@ -20,6 +20,7 @@
 #include "yarp/os/Time.h"
 #include "yarp/os/Stamp.h"
 #include <QDebug>
+#include <utility>
 
 /*! \brief Constructor of the class.
  *
@@ -257,10 +258,10 @@ Graph::Graph(int index, QString title, QString color, QString type, int size, do
     buffer_size(buffer_size),
     numberAcquiredData(0),
     lastIndex(0),
-    type(type),
-    color(color),
+    type(std::move(type)),
+    color(std::move(color)),
     lineSize(size),
-    title(title)
+    title(std::move(title))
 {}
 
 

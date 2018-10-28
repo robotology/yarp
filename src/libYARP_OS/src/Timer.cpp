@@ -12,6 +12,7 @@
 #include <cmath>
 #include <map>
 #include <mutex>
+#include <utility>
 
 using namespace yarp::os;
 
@@ -30,7 +31,7 @@ public:
 
     PrivateImpl(TimerSettings sett, TimerCallback call, yarp::os::Mutex* mutex = nullptr) :
             m_settings(sett),
-            m_callback(call),
+            m_callback(std::move(call)),
             m_mutex(mutex)
     {
     }

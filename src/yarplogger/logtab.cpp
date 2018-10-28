@@ -20,11 +20,12 @@
 #include "ui_logtab.h"
 
 #include <QFontDatabase>
+#include <utility>
 
 LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _system_message, std::string _portName, QWidget *parent, int refreshRate) :
     QFrame(parent),
     ui(new Ui::LogTab),
-    portName(_portName),
+    portName(std::move(_portName)),
     theLogger(_theLogger),
     system_message(_system_message),
     displayYarprunTimestamp_enabled(true),

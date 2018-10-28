@@ -13,6 +13,7 @@
 #include <mpi.h>
 
 #include <cstdlib>
+#include <utility>
 #include <unistd.h>
 
 using namespace yarp::os;
@@ -80,7 +81,7 @@ bool MpiControlThread::threadInit() {
 /* --------------------------------------- */
 /* MpiComm */
 
-MpiComm::MpiComm(std::string name) : name(name) {
+MpiComm::MpiComm(std::string name) : name(std::move(name)) {
     if (MpiControl == nullptr) {
         MpiControl = new yarp::os::MpiControlThread;
     }

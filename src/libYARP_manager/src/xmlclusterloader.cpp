@@ -16,6 +16,7 @@
 #include <cctype>
 #include <string>
 #include <fstream>
+#include <utility>
 #include <yarp/os/Network.h>
 
 
@@ -26,7 +27,7 @@ using namespace yarp::manager;
 /**
  * load only one application indicated by its xml file name
  */
-XmlClusterLoader::XmlClusterLoader(const string &szFileName):confFile(szFileName)
+XmlClusterLoader::XmlClusterLoader(string szFileName) : confFile(std::move(szFileName))
 {
 }
 

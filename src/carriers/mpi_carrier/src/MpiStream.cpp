@@ -10,6 +10,8 @@
 #include <yarp/os/MpiStream.h>
 #include <yarp/os/Log.h>
 
+#include <utility>
+
 using namespace yarp::os;
 
 
@@ -17,7 +19,7 @@ using namespace yarp::os;
 /* MpiStream */
 
 MpiStream::MpiStream(std::string n, MpiComm* c)
-    : terminate(false), name(n), comm(c) {
+    : terminate(false), name(std::move(n)), comm(c) {
     readBuffer = nullptr;
     resetBuffer();
 
