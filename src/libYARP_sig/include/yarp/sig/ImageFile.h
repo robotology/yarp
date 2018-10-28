@@ -29,7 +29,8 @@ namespace yarp {
                     FORMAT_PGM,
                     FORMAT_PPM,
                     FORMAT_JPG,
-                    FORMAT_NUMERIC
+                    FORMAT_NUMERIC,
+                    FORMAT_PNG
                 };
 
             // PPM/PGM format

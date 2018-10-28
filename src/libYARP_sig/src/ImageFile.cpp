@@ -18,6 +18,10 @@
 #include "jpeglib.h"
 #endif
 
+#if YARP_HAS_PNG_C
+#include <png.h>
+#endif
+
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -250,6 +254,93 @@ static bool ImageReadMono(ImageOf<PixelMono> &img, const char *filename)
 // private write methods
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#if YARP_HAS_PNG_C
+static bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t rowSize, png_byte color_type, png_byte bit_depth)
+{
+    // create file 
+    FILE *fp = fopen(filename, "wb");
+    if (!fp)
+    {
+        yError("[write_png_file] File %s could not be opened for writing", filename);
+        return false;
+    }
+
+    // initialize stuff
+    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (!png_ptr)
+    {
+        yError("[write_png_file] png_create_write_struct failed");
+        fclose(fp);
+        return false;
+    }
+
+    png_infop info_ptr = png_create_info_struct(png_ptr);
+    if (!info_ptr)
+    {
+        yError("[write_png_file] png_create_info_struct failed");
+        fclose(fp);
+        return false;
+    }
+    
+    png_bytep * row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * h);
+    for (size_t y = 0; y < h; y++)
+    {
+        row_pointers[y] = (png_bytep)(src)+y*w;
+    }
+
+    if (setjmp(png_jmpbuf(png_ptr)))
+    {
+        yError("[write_png_file] Error during init_io");
+        free(row_pointers);
+        fclose(fp);
+        return false;
+    }
+    png_init_io(png_ptr, fp);
+
+
+    // write header
+    if (setjmp(png_jmpbuf(png_ptr)))
+    {
+        yError("[write_png_file] Error during writing header");
+        free(row_pointers);
+        return false;
+    }
+    png_set_IHDR(png_ptr, info_ptr, w, h,
+        bit_depth, color_type, PNG_INTERLACE_NONE,
+        PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+
+    png_write_info(png_ptr, info_ptr);
+
+
+    // write bytes
+    if (setjmp(png_jmpbuf(png_ptr)))
+    {
+        yError("[write_png_file] Error during writing bytes");
+        free(row_pointers);
+        fclose(fp);
+        return false;
+    }
+    png_write_image(png_ptr, row_pointers);
+
+
+    // end write
+    if (setjmp(png_jmpbuf(png_ptr)))
+    {
+        yError("[write_png_file] Error during end of write");
+        free(row_pointers);
+        fclose(fp);
+        return false;
+    }
+    png_write_end(png_ptr, NULL);
+
+    // cleanup heap allocation
+    free(row_pointers);
+
+    fclose(fp);
+    return true;
+}
+#endif
+
 static bool SaveJPG(char *src, const char *filename, int h, int w, int rowSize)
 {
 #if YARP_HAS_JPEG_C
@@ -354,6 +445,26 @@ static bool ImageWriteJPG(ImageOf<PixelRgb>& img, const char *filename)
     return SaveJPG((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize());
 }
 
+static bool ImageWritePNG(ImageOf<PixelRgb>& img, const char *filename)
+{
+#if YARP_HAS_PNG_C
+    return SavePNG((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize(), PNG_COLOR_TYPE_RGB, 24);
+#else
+    yError() << "libpng not installed";
+    return false;
+#endif
+}
+
+static bool ImageWritePNG(ImageOf<PixelMono>& img, const char *filename)
+{
+#if YARP_HAS_PNG_C
+    return SavePNG((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize(), PNG_COLOR_TYPE_GRAY, 8);
+#else
+    yError() << "libpng not installed";
+    return false;
+#endif
+}
+
 static bool ImageWriteRGB(ImageOf<PixelRgb>& img, const char *filename)
 {
     return SavePPM((char*)img.getRawImage(),filename,img.height(),img.width(),img.getRowSize());
@@ -437,6 +548,10 @@ bool file::write(const ImageOf<PixelRgb> & src, const std::string& dest, image_f
     {
         return ImageWriteJPG(const_cast<ImageOf<PixelRgb> &>(src), dest.c_str());
     }
+    else  if (format == FORMAT_PNG)
+    {
+        return ImageWritePNG(const_cast<ImageOf<PixelRgb> &>(src), dest.c_str());
+    }
     else
     {
         yError() << "Invalid format, operation not supported";
@@ -455,6 +570,10 @@ bool file::write(const ImageOf<PixelBgr> & src, const std::string& dest, image_f
     else  if (format == FORMAT_JPG)
     {
         return ImageWriteJPG(const_cast<ImageOf<PixelRgb> &>(imgRGB), dest.c_str());
+    }
+    else  if (format == FORMAT_PNG)
+    {
+        return ImageWritePNG(const_cast<ImageOf<PixelRgb> &>(imgRGB), dest.c_str());
     }
     else
     {
@@ -476,6 +595,10 @@ bool file::write(const ImageOf<PixelRgba> & src, const std::string& dest, image_
     {
         return ImageWriteJPG(const_cast<ImageOf<PixelRgb> &>(imgRGB), dest.c_str());
     }
+    else  if (format == FORMAT_PNG)
+    {
+        return ImageWritePNG(const_cast<ImageOf<PixelRgb> &>(imgRGB), dest.c_str());
+    }
     else
     {
         yError() << "Invalid format, operation not supported";
@@ -489,6 +612,10 @@ bool file::write(const ImageOf<PixelMono> & src, const std::string& dest, image_
     if (format == FORMAT_PGM)
     {
         return ImageWriteMono(const_cast<ImageOf<PixelMono> &>(src), dest.c_str());
+    }
+    else  if (format == FORMAT_PNG)
+    {
+        return ImageWritePNG(const_cast<ImageOf<PixelMono> &>(src), dest.c_str());
     }
     else
     {
