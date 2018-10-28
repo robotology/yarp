@@ -42,7 +42,7 @@ public:
 
     std::string clockName;
 
-    typedef std::list<std::pair<double, Semaphore*>> Waiters;
+    using Waiters = std::list<std::pair<double, Semaphore*>>;
     Waiters* waiters;
     Port port;
 

@@ -34,7 +34,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 /**************************************************************************/
-typedef enum { bottle, image } DumpType;
+enum DumpType { bottle, image };
 bool save_jpeg = false;
 
 // Abstract object definition for queueing
@@ -185,12 +185,12 @@ public:
 
 // Definition of item to be put in the queue
 /**************************************************************************/
-typedef struct
+struct DumpItem
 {
     int            seqNumber;
     DumpTimeStamp  timeStamp;
     DumpObj       *obj;
-} DumpItem;
+};
 
 
 // Definition of the queue

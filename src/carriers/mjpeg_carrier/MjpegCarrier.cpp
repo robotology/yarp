@@ -57,13 +57,14 @@ using namespace yarp::sig;
 
 #define dbg_printf if (0) printf
 
-typedef struct {
+struct net_destination_mgr
+{
     struct jpeg_destination_mgr pub;
 
     JOCTET *buffer;
     int bufsize;
     JOCTET cache[1000000];  // need to make this variable...
-} net_destination_mgr;
+};
 
 using net_destination_ptr = net_destination_mgr*;
 
