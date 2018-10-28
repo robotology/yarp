@@ -214,7 +214,7 @@ bool H264Carrier::expectAck(ConnectionState& proto)
 
 std::string H264Carrier::getBootstrapCarrierName() const
 {
-    return "";
+    return {};
 }
 
 yarp::os::Face* H264Carrier::createFace() const

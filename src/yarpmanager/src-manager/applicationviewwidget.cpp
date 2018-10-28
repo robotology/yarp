@@ -214,7 +214,7 @@ QString ApplicationViewWidget::getFileName()
     if (builder)
         return builder->getFileName();
     else
-        return "";
+        return {};
 }
 
 void ApplicationViewWidget::setFileName(QString filename)
@@ -230,7 +230,7 @@ QString ApplicationViewWidget::getAppName()
         return builder->getAppName();
     }
     else
-        return "";
+        return {};
 }
 
 void ApplicationViewWidget::setAppName(QString appName)

@@ -206,7 +206,7 @@ public:
 
     std::string getBootstrapCarrierName() const override
     {
-        return "";
+        return {};
     }
 
 private:

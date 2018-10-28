@@ -188,7 +188,7 @@ Bottle PolyDriver::getOptions() {
 
 std::string PolyDriver::getComment(const char *option) {
     if (system_resource==nullptr) {
-        return "";
+        return {};
     }
     return HELPER(system_resource).getComment(option);
 }

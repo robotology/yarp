@@ -251,7 +251,7 @@ public:
         if (port!=nullptr) {
             return port->getName();
         }
-        return "";
+        return {};
     }
 
     PortReaderPacket *get()

@@ -144,7 +144,7 @@ Bytes& ManagedBytes::bytes() {
 }
 
 Bytes ManagedBytes::usedBytes() {
-    return Bytes(get(), used());
+    return {get(), used()};
 }
 
 size_t ManagedBytes::setUsed(size_t used) {

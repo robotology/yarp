@@ -140,7 +140,7 @@ QString BuilderWindow::getFileName()
 {
     Application* application = manager.getKnowledgeBase()->getApplication();
     if(!application)
-        return "";
+        return {};
     return QString(application->getXmlFile());
 }
 void BuilderWindow::setFileName(QString filename)
@@ -154,7 +154,7 @@ QString BuilderWindow::getAppName()
 {
     Application* application = manager.getKnowledgeBase()->getApplication();
     if(!application)
-        return "";
+        return {};
     return QString(application->getName());
 }
 void BuilderWindow::setAppName(QString appName)

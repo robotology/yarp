@@ -981,7 +981,7 @@ void Property::fromString(const std::string& txt, bool wipe) {
 
 
 std::string Property::toString() const {
-    if (!check()) return "";
+    if (!check()) return {};
     return HELPER(implementation).toString();
 }
 

@@ -213,7 +213,7 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
         return true;
     }
 
-    std::string getBootstrapCarrierName() const override { return ""; }
+    std::string getBootstrapCarrierName() const override { return {}; }
 
     virtual bool autoCompression() const;
 };

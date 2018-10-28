@@ -130,7 +130,7 @@ std::string NameConfig::readConfig(const std::string& fileName) {
     char buf[25600];
     FILE *fin = fopen(fileName.c_str(), "r");
     if (!fin) {
-        return "";
+        return {};
     }
     std::string result;
     while(fgets(buf, sizeof(buf)-1, fin) != nullptr) {

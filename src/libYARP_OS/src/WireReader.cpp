@@ -547,7 +547,7 @@ std::string WireReader::readTag()
     bool is_vocab;
     if (!readString(str, &is_vocab)) {
         fail();
-        return "";
+        return {};
     }
     scanString(str, is_vocab);
     if (!is_vocab) {
@@ -558,7 +558,7 @@ std::string WireReader::readTag()
             is_vocab = (state->code==BOTTLE_TAG_VOCAB);
         } else {
             if (noMore()) {
-                return "";
+                return {};
             }
             std::int32_t x = reader.expectInt32();
             reader.pushInt(x);
@@ -567,7 +567,7 @@ std::string WireReader::readTag()
         if (is_vocab) {
             std::string str2;
             if (!readString(str2, &is_vocab)) {
-                return "";
+                return {};
             }
             scanString(str2, is_vocab);
             str += "_";

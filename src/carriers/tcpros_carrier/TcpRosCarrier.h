@@ -181,7 +181,7 @@ public:
         return true;
     }
 
-    std::string getBootstrapCarrierName() const override { return ""; }
+    std::string getBootstrapCarrierName() const override { return {}; }
 
     virtual int connect(const yarp::os::Contact& src,
                         const yarp::os::Contact& dest,

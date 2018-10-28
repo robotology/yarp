@@ -61,7 +61,7 @@ std::string getFolderStringName(folderType ftype)
     case 1:
         return std::string("robots");
     default:
-        return std::string("");
+        return {};
     }
 }
 
@@ -74,7 +74,7 @@ std::string getFolderStringNameHidden(folderType ftype)
     case 1:
         return std::string(".robots");
     default:
-        return std::string("");
+        return {};
     }
 }
 

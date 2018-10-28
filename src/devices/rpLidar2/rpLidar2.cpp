@@ -487,7 +487,7 @@ std::string RpLidar2::deviceinfo()
         if (result != RESULT_OK)
         {
             handleError(result);
-            return "";
+            return {};
         }
 
         for (unsigned char i : info.serialnum)
@@ -500,7 +500,7 @@ std::string RpLidar2::deviceinfo()
                "\nModel: "            + to_string(info.model) +
                "\nSerial Number:"     + serialNumber;
     }
-    return "";
+    return {};
 }
 
 bool RpLidar2::getDeviceInfo(std::string &device_info)

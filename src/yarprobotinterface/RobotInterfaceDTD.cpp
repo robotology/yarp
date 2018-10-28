@@ -74,7 +74,7 @@ std::string DocTypeToString(RobotInterfaceDTD::DocType doctype)
     case RobotInterfaceDTD::DocTypeActions:
         return std::string("actions");
     default:
-        return std::string();
+        return {};
     }
 }
 

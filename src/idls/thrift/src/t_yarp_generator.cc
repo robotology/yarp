@@ -1162,7 +1162,7 @@ string t_yarp_generator::get_include_prefix(const t_program& program) const {
   if (!use_include_prefix_ ||
       (include_prefix.size() > 0 && include_prefix[0] == '/')) {
     // if flag is turned off or this is absolute path, return empty prefix
-    return "";
+    return {};
   }
 
   string::size_type last_slash = string::npos;
@@ -1171,7 +1171,7 @@ string t_yarp_generator::get_include_prefix(const t_program& program) const {
    return include_prefix.substr(0, last_slash) + "/";
   }
 
-  return "";
+  return {};
 }
 
 /**

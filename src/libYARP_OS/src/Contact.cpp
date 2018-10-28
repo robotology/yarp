@@ -213,7 +213,7 @@ std::string Contact::getName() const
             NetType::toString(mPriv->port);
         return name;
     }
-    return std::string();
+    return {};
 }
 
 std::string Contact::getRegName() const

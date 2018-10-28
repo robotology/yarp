@@ -1325,7 +1325,7 @@ std::string NetworkBase::getEnvironment(const char *key,
         *found = (result!=nullptr);
     }
     if (!result) {
-        return std::string("");
+        return {};
     }
     return std::string(result);
 }

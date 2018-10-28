@@ -295,7 +295,7 @@ public:
             int flag = prev->get(1).asInt32();
             if (SystemClock::nowSystem()-t<RESOURCE_FINDER_CACHE_TIME) {
                 if (flag) return s;
-                return "";
+                return {};
             }
         }
 
@@ -318,7 +318,7 @@ public:
             }
             return s;
         }
-        return "";
+        return {};
     }
 
     std::string findPath(Property& config, const std::string& name,
@@ -990,7 +990,7 @@ std::string ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
                               + slash + "share"
                               + slash + "yarp");
     }
-    return "";
+    return {};
 }
 
 
@@ -1027,7 +1027,7 @@ std::string ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
                               + slash + ".config"
                               + slash + "yarp");
     }
-    return "";
+    return {};
 }
 
 std::string ResourceFinder::createIfAbsent(bool mayCreate,

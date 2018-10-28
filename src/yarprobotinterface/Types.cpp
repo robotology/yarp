@@ -44,7 +44,7 @@ std::string RobotInterface::findParam(const RobotInterface::ParamList &list, con
         }
     }
     yError() << "Param" << name << "not found";
-    return std::string();
+    return {};
 }
 
 bool RobotInterface::hasGroup(const RobotInterface::ParamList &list, const std::string& name)
@@ -65,7 +65,7 @@ std::string RobotInterface::findGroup(const RobotInterface::ParamList &list, con
         }
     }
     yError() << "Param" << name << "not found";
-    return std::string();
+    return {};
 }
 
 RobotInterface::ParamList RobotInterface::mergeDuplicateGroups(const RobotInterface::ParamList &list)
@@ -125,7 +125,7 @@ std::string RobotInterface::ActionPhaseToString(RobotInterface::ActionPhase acti
         return std::string("shutdown");
     case RobotInterface::ActionPhaseUnknown:
     default:
-        return std::string();
+        return {};
     }
 }
 
@@ -175,7 +175,7 @@ std::string RobotInterface::ActionTypeToString(RobotInterface::ActionType action
         return std::string("custom");
     case RobotInterface::ActionTypeUnknown:
     default:
-        return std::string();
+        return {};
     }
 }
 

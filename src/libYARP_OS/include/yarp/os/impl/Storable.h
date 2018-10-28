@@ -108,7 +108,7 @@ public:
     yarp::conf::float64_t asFloat64() const override { return 0.0; }
 
     bool isString() const override { return false; }
-    std::string asString() const override { return std::string(""); }
+    std::string asString() const override { return {}; }
 
     bool isList() const override { return false; }
     yarp::os::Bottle* asList() const override { return nullptr; }
@@ -179,7 +179,7 @@ public:
     Storable* createStorable() const override { return new StoreNull(); }
     void copy(const Storable& alt) override { YARP_UNUSED(alt); }
 
-    std::string toString() const override { return ""; }
+    std::string toString() const override { return {}; }
     void fromString(const std::string& src) override { YARP_UNUSED(src); }
 
     std::int32_t getCode() const override { return -1; }

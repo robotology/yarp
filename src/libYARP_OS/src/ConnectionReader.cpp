@@ -19,7 +19,7 @@ ConnectionReader::~ConnectionReader()
 
 Bytes ConnectionReader::readEnvelope()
 {
-    return Bytes(nullptr, 0);
+    return {nullptr, 0};
 }
 
 void ConnectionReader::setParentConnectionReader(ConnectionReader* parentConnectionReader)

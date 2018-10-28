@@ -175,7 +175,7 @@ std::map<std::string, std::string> TcpRosStream::rosToKind() {
 }
 
 std::string TcpRosStream::rosToKind(const char *rosname) {
-    if (std::string(rosname)=="") return "";
+    if (std::string(rosname)=="") return {};
     std::map<std::string, std::string> kinds = rosToKind();
 
     if (kinds.find(rosname)!=kinds.end()) {
@@ -198,7 +198,7 @@ std::string TcpRosStream::rosToKind(const char *rosname) {
         fprintf(stderr, "Could not connect to a type server to look up type '%s'\n", rosname);
         ::exit(1);
     }
-    return "";
+    return {};
 }
 
 
