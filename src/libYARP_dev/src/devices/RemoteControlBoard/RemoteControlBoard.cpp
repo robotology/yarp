@@ -988,7 +988,7 @@ public:
         return true;
     }
 
-    virtual bool open(Searchable& config) override {
+    bool open(Searchable& config) override {
         remote = config.find("remote").asString();
         local = config.find("local").asString();
 
@@ -1192,7 +1192,7 @@ public:
      * Close the device driver and stop the port connections.
      * @return true/false on success/failure.
      */
-    virtual bool close() override {
+    bool close() override {
 
         if (diagnosticThread!=nullptr)
         {
@@ -1206,7 +1206,7 @@ public:
         return true;
     }
 
-    virtual bool setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid) override {
+    bool setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid) override {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_PID);
@@ -1228,7 +1228,7 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
-    virtual bool setPids(const PidControlTypeEnum& pidtype, const Pid *pids) override {
+    bool setPids(const PidControlTypeEnum& pidtype, const Pid *pids) override {
         if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -1255,32 +1255,32 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
-    virtual bool setPidReference(const PidControlTypeEnum& pidtype, int j, double ref) override
+    bool setPidReference(const PidControlTypeEnum& pidtype, int j, double ref) override
     {
         return setValWithPidType(VOCAB_REF, pidtype, j, ref);
     }
 
-    virtual bool setPidReferences(const PidControlTypeEnum& pidtype, const double *refs) override {
+    bool setPidReferences(const PidControlTypeEnum& pidtype, const double *refs) override {
         return setValWithPidType(VOCAB_REFS, pidtype, refs);
     }
 
-    virtual bool setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit) override {
+    bool setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit) override {
         return setValWithPidType(VOCAB_LIM, pidtype, j, limit);
     }
 
-    virtual bool setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits) override {
+    bool setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits) override {
         return setValWithPidType(VOCAB_LIMS, pidtype, limits);
     }
 
-    virtual bool getPidError(const PidControlTypeEnum& pidtype, int j, double *err) override {
+    bool getPidError(const PidControlTypeEnum& pidtype, int j, double *err) override {
         return getValWithPidType(VOCAB_ERR, pidtype, j, err);
     }
 
-    virtual bool getPidErrors(const PidControlTypeEnum& pidtype, double *errs) override {
+    bool getPidErrors(const PidControlTypeEnum& pidtype, double *errs) override {
         return getValWithPidType(VOCAB_ERRS, pidtype, errs);
     }
 
-    virtual bool getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid) override {
+    bool getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid) override {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_PID);
@@ -1308,7 +1308,7 @@ public:
         return false;
     }
 
-    virtual bool getPids(const PidControlTypeEnum& pidtype, Pid *pids) override {
+    bool getPids(const PidControlTypeEnum& pidtype, Pid *pids) override {
         if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
@@ -1345,23 +1345,23 @@ public:
         return false;
     }
 
-    virtual bool getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref) override {
+    bool getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref) override {
         return getValWithPidType(VOCAB_REF, pidtype, j, ref);
     }
 
-    virtual bool getPidReferences(const PidControlTypeEnum& pidtype, double *refs) override {
+    bool getPidReferences(const PidControlTypeEnum& pidtype, double *refs) override {
         return getValWithPidType(VOCAB_REFS, pidtype, refs);
     }
 
-    virtual bool getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit) override {
+    bool getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit) override {
         return getValWithPidType(VOCAB_LIM, pidtype, j, limit);
     }
 
-    virtual bool getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits) override {
+    bool getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits) override {
         return getValWithPidType(VOCAB_LIMS, pidtype, limits);
     }
 
-    virtual bool resetPid(const PidControlTypeEnum& pidtype, int j) override {
+    bool resetPid(const PidControlTypeEnum& pidtype, int j) override {
         if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -1373,7 +1373,7 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
-    virtual bool disablePid(const PidControlTypeEnum& pidtype, int j) override {
+    bool disablePid(const PidControlTypeEnum& pidtype, int j) override {
         if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -1385,7 +1385,7 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
-    virtual bool enablePid(const PidControlTypeEnum& pidtype, int j) override {
+    bool enablePid(const PidControlTypeEnum& pidtype, int j) override {
         if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -1397,7 +1397,7 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
-    virtual bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled) override
+    bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled) override
     {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
@@ -1414,17 +1414,17 @@ public:
         return false;
     }
 
-    virtual bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out) override
+    bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out) override
     {
         return getValWithPidType(VOCAB_OUTPUT, pidtype, j, out);
     }
 
-    virtual bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs) override
+    bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs) override
     {
         return getValWithPidType(VOCAB_OUTPUTS, pidtype, outs);
     }
 
-    virtual bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v) override
+    bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v) override
     {
         return setValWithPidType(VOCAB_OFFSET, pidtype, j, v);
     }
@@ -1436,7 +1436,7 @@ public:
      * @param j is the axis number
      * @return true/false on success/failure
      */
-    virtual bool resetEncoder(int j) override {
+    bool resetEncoder(int j) override {
         return set1V1I(VOCAB_E_RESET, j);
     }
 
@@ -1444,7 +1444,7 @@ public:
      * Reset encoders. Set the encoders value to zero
      * @return true/false
      */
-    virtual bool resetEncoders() override {
+    bool resetEncoders() override {
         return set1V(VOCAB_E_RESETS);
     }
 
@@ -1454,7 +1454,7 @@ public:
      * @param val new value
      * @return true/false on success/failure
      */
-    virtual bool setEncoder(int j, double val) override {
+    bool setEncoder(int j, double val) override {
         return set1V1I1D(VOCAB_ENCODER, j, val);
     }
 
@@ -1463,7 +1463,7 @@ public:
      * @param vals pointer to the new values
      * @return true/false
      */
-    virtual bool setEncoders(const double *vals) override {
+    bool setEncoders(const double *vals) override {
         return set1VDA(VOCAB_ENCODERS, vals);
     }
 
@@ -1473,7 +1473,7 @@ public:
      * @param v pointer to storage for the return value
      * @return true/false, upon success/failure (you knew it, uh?)
      */
-    virtual bool getEncoder(int j, double *v) override
+    bool getEncoder(int j, double *v) override
     {
         double localArrivalTime = 0.0;
 
@@ -1493,7 +1493,7 @@ public:
      * @param v pointer to storage for the return value
      * @return true/false, upon success/failure (you knew it, uh?)
      */
-    virtual bool getEncoderTimed(int j, double *v, double *t) override
+    bool getEncoderTimed(int j, double *v, double *t) override
     {
         double localArrivalTime = 0.0;
 
@@ -1517,7 +1517,7 @@ public:
      * @return true/false on success/failure. Failure means encoders have not been received
      * from the server or that they are not being streamed with the expected rate.
      */
-    virtual bool getEncoders(double *encs) override {
+    bool getEncoders(double *encs) override {
         double localArrivalTime = 0.0;
 
         extendedPortMutex.lock();
@@ -1533,7 +1533,7 @@ public:
      * @param ts pointer to the array that will contain timestamps
      * @return true/false on success/failure
      */
-    virtual bool getEncodersTimed(double *encs, double *ts) override {
+    bool getEncodersTimed(double *encs, double *ts) override {
         double localArrivalTime=0.0;
 
         extendedPortMutex.lock();
@@ -1552,7 +1552,7 @@ public:
      * @param sp pointer to storage for the output
      * @return true if successful, false ... otherwise.
      */
-    virtual bool getEncoderSpeed(int j, double *sp) override
+    bool getEncoderSpeed(int j, double *sp) override
     {
         double localArrivalTime=0.0;
 
@@ -1568,7 +1568,7 @@ public:
      * @param spds pointer to storage for the output values
      * @return guess what? (true/false on success or failure).
      */
-    virtual bool getEncoderSpeeds(double *spds) override
+    bool getEncoderSpeeds(double *spds) override
     {
         double localArrivalTime=0.0;
 
@@ -1584,7 +1584,7 @@ public:
      * @param acc pointer to the array that will contain the output
      */
 
-    virtual bool getEncoderAcceleration(int j, double *acc) override
+    bool getEncoderAcceleration(int j, double *acc) override
     {
         double localArrivalTime=0.0;
         extendedPortMutex.lock();
@@ -1598,7 +1598,7 @@ public:
      * @param accs pointer to the array that will contain the output
      * @return true if all goes well, false if anything bad happens.
      */
-    virtual bool getEncoderAccelerations(double *accs) override
+    bool getEncoderAccelerations(double *accs) override
     {
         double localArrivalTime=0.0;
         extendedPortMutex.lock();
@@ -1608,7 +1608,7 @@ public:
     }
 
     /* IRemoteVariable */
-    virtual bool getRemoteVariable(std::string key, yarp::os::Bottle& val) override {
+    bool getRemoteVariable(std::string key, yarp::os::Bottle& val) override {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
@@ -1623,7 +1623,7 @@ public:
         return false;
     }
 
-    virtual bool setRemoteVariable(std::string key, const yarp::os::Bottle& val) override {
+    bool setRemoteVariable(std::string key, const yarp::os::Bottle& val) override {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
@@ -1637,7 +1637,7 @@ public:
     }
 
 
-    virtual bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys) override {
+    bool getRemoteVariablesList(yarp::os::Bottle* listOfKeys) override {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_REMOTE_VARIABILE_INTERFACE);
@@ -1654,27 +1654,27 @@ public:
     }
 
     /* IMotor */
-    virtual bool getNumberOfMotors(int *num) override {
+    bool getNumberOfMotors(int *num) override {
         return get1V1I(VOCAB_MOTORS_NUMBER, *num);
     }
 
-    virtual bool getTemperature      (int m, double* val) override {
+    bool getTemperature      (int m, double* val) override {
         return get1V1I1D(VOCAB_TEMPERATURE, m, val);
     }
 
-    virtual bool getTemperatures     (double *vals) override {
+    bool getTemperatures     (double *vals) override {
         return get1VDA(VOCAB_TEMPERATURES, vals);
     }
 
-    virtual bool getTemperatureLimit (int m, double* val) override {
+    bool getTemperatureLimit (int m, double* val) override {
         return get1V1I1D(VOCAB_TEMPERATURE_LIMIT, m, val);
     }
 
-    virtual bool setTemperatureLimit (int m, const double val) override {
+    bool setTemperatureLimit (int m, const double val) override {
         return set1V1I1D(VOCAB_TEMPERATURE_LIMIT, m, val);
     }
 
-    virtual bool getGearboxRatio(int m, double* val) override {
+    bool getGearboxRatio(int m, double* val) override {
         return get1V1I1D(VOCAB_GEARBOX_RATIO, m, val);
     }
 
@@ -1688,7 +1688,7 @@ public:
      * @param j is the axis number
      * @return true/false on success/failure
      */
-    virtual bool resetMotorEncoder(int j) override {
+    bool resetMotorEncoder(int j) override {
         return set1V1I(VOCAB_MOTOR_E_RESET, j);
     }
 
@@ -1696,7 +1696,7 @@ public:
      * Reset encoders. Set the encoders value to zero
      * @return true/false
      */
-    virtual bool resetMotorEncoders() override {
+    bool resetMotorEncoders() override {
         return set1V(VOCAB_MOTOR_E_RESETS);
     }
 
@@ -1706,7 +1706,7 @@ public:
      * @param val new value
      * @return true/false on success/failure
      */
-    virtual bool setMotorEncoder(int j, const double val) override {
+    bool setMotorEncoder(int j, const double val) override {
         return set1V1I1D(VOCAB_MOTOR_ENCODER, j, val);
     }
 
@@ -1716,7 +1716,7 @@ public:
      * @param cpr new parameter
      * @return true/false
      */
-    virtual bool setMotorEncoderCountsPerRevolution(int m, const double cpr) override {
+    bool setMotorEncoderCountsPerRevolution(int m, const double cpr) override {
         return set1V1I1D(VOCAB_MOTOR_CPR, m, cpr);
     }
 
@@ -1726,7 +1726,7 @@ public:
      * @param cpr pointer to storage for the return value
      * @return true/false
      */
-    virtual bool getMotorEncoderCountsPerRevolution(int m, double *cpr) override {
+    bool getMotorEncoderCountsPerRevolution(int m, double *cpr) override {
          return get1V1I1D(VOCAB_MOTOR_CPR, m, cpr);
     }
 
@@ -1735,7 +1735,7 @@ public:
      * @param vals pointer to the new values
      * @return true/false
      */
-    virtual bool setMotorEncoders(const double *vals) override {
+    bool setMotorEncoders(const double *vals) override {
         return set1VDA(VOCAB_MOTOR_ENCODERS, vals);
     }
 
@@ -1745,7 +1745,7 @@ public:
      * @param v pointer to storage for the return value
      * @return true/false, upon success/failure (you knew it, uh?)
      */
-    virtual bool getMotorEncoder(int j, double *v) override
+    bool getMotorEncoder(int j, double *v) override
     {
         double localArrivalTime = 0.0;
 
@@ -1765,7 +1765,7 @@ public:
      * @param v pointer to storage for the return value
      * @return true/false, upon success/failure (you knew it, uh?)
      */
-    virtual bool getMotorEncoderTimed(int j, double *v, double *t) override
+    bool getMotorEncoderTimed(int j, double *v, double *t) override
     {
         double localArrivalTime = 0.0;
 
@@ -1789,7 +1789,7 @@ public:
      * @return true/false on success/failure. Failure means encoders have not been received
      * from the server or that they are not being streamed with the expected rate.
      */
-    virtual bool getMotorEncoders(double *encs) override
+    bool getMotorEncoders(double *encs) override
     {
         double localArrivalTime=0.0;
 
@@ -1806,7 +1806,7 @@ public:
      * @param ts pointer to the array that will contain timestamps
      * @return true/false on success/failure
      */
-    virtual bool getMotorEncodersTimed(double *encs, double *ts) override
+    bool getMotorEncodersTimed(double *encs, double *ts) override
     {
         double localArrivalTime=0.0;
 
@@ -1826,7 +1826,7 @@ public:
      * @param sp pointer to storage for the output
      * @return true if successful, false ... otherwise.
      */
-    virtual bool getMotorEncoderSpeed(int j, double *sp) override
+    bool getMotorEncoderSpeed(int j, double *sp) override
     {
         double localArrivalTime=0.0;
         extendedPortMutex.lock();
@@ -1840,7 +1840,7 @@ public:
      * @param spds pointer to storage for the output values
      * @return guess what? (true/false on success or failure).
      */
-    virtual bool getMotorEncoderSpeeds(double *spds) override
+    bool getMotorEncoderSpeeds(double *spds) override
     {
         double localArrivalTime=0.0;
         extendedPortMutex.lock();
@@ -1855,7 +1855,7 @@ public:
      * @param acc pointer to the array that will contain the output
      */
 
-    virtual bool getMotorEncoderAcceleration(int j, double *acc) override
+    bool getMotorEncoderAcceleration(int j, double *acc) override
     {
         double localArrivalTime=0.0;
         extendedPortMutex.lock();
@@ -1869,7 +1869,7 @@ public:
      * @param accs pointer to the array that will contain the output
      * @return true if all goes well, false if anything bad happens.
      */
-    virtual bool getMotorEncoderAccelerations(double *accs) override
+    bool getMotorEncoderAccelerations(double *accs) override
     {
         double localArrivalTime=0.0;
         extendedPortMutex.lock();
@@ -1883,7 +1883,7 @@ public:
      * Get the time stamp for the last read data
      * @return last time stamp.
      */
-    virtual Stamp getLastInputStamp() override {
+    Stamp getLastInputStamp() override {
         Stamp ret;
 //        mutex.lock();
         ret = lastStamp;
@@ -1896,7 +1896,7 @@ public:
      * @param m pointer to a value representing the number of available motor encoders.
      * @return true/false
      */
-    virtual bool getNumberOfMotorEncoders(int *num) override {
+    bool getNumberOfMotorEncoders(int *num) override {
         return get1V1I(VOCAB_MOTOR_ENCODER_NUMBER, *num);
     }
 
@@ -1908,7 +1908,7 @@ public:
      * @param ax pointer to storage
      * @return true/false.
      */
-    virtual bool getAxes(int *ax) override {
+    bool getAxes(int *ax) override {
         return get1V1I(VOCAB_AXES, *ax);
     }
 
@@ -1918,7 +1918,7 @@ public:
      * @param ref specifies the new ref point
      * @return true/false on success/failure
      */
-    virtual bool positionMove(int j, double ref) override {
+    bool positionMove(int j, double ref) override {
         return set1V1I1D(VOCAB_POSITION_MOVE, j, ref);
     }
 
@@ -1929,7 +1929,7 @@ public:
      * @param refs specifies the new reference points
      * @return true/false on success/failure
      */
-    virtual bool positionMove(const int n_joint, const int *joints, const double *refs) override {
+    bool positionMove(const int n_joint, const int *joints, const double *refs) override {
         return set1V1I1IA1DA(VOCAB_POSITION_MOVE_GROUP, n_joint, joints, refs);
     }
 
@@ -1938,7 +1938,7 @@ public:
      * @param refs array, new reference points
      * @return true/false on success/failure
      */
-    virtual bool positionMove(const double *refs) override {
+    bool positionMove(const double *refs) override {
         return set1VDA(VOCAB_POSITION_MOVES, refs);
     }
 
@@ -1951,7 +1951,7 @@ public:
      * @param ref last reference sent using PositionMove functions
      * @return true/false on success/failure
      */
-    virtual bool getTargetPosition(const int joint, double *ref) override
+    bool getTargetPosition(const int joint, double *ref) override
     {
         return get1V1I1D(VOCAB_POSITION_MOVE, joint, ref);
     }
@@ -1965,7 +1965,7 @@ public:
      * @param ref last reference sent using PositionMove functions
      * @return true/false on success/failure
      */
-    virtual bool getTargetPositions(double *refs) override
+    bool getTargetPositions(double *refs) override
     {
         return get1V1DA(VOCAB_POSITION_MOVES, refs);
     }
@@ -1979,7 +1979,7 @@ public:
      * @param ref last reference sent using PositionMove functions
      * @return true/false on success/failure
      */
-    virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs) override
+    bool getTargetPositions(const int n_joint, const int *joints, double *refs) override
     {
         return get1V1I1IA1DA(VOCAB_POSITION_MOVE_GROUP, n_joint, joints, refs);
     }
@@ -1991,7 +1991,7 @@ public:
      * @param delta relative command
      * @return true/false on success/failure
      */
-    virtual bool relativeMove(int j, double delta) override {
+    bool relativeMove(int j, double delta) override {
         return set1V1I1D(VOCAB_RELATIVE_MOVE, j, delta);
     }
 
@@ -2001,7 +2001,7 @@ public:
      * @param refs pointer to the array of relative commands
      * @return true/false on success/failure
      */
-    virtual bool relativeMove(const int n_joint, const int *joints, const double *refs) override {
+    bool relativeMove(const int n_joint, const int *joints, const double *refs) override {
         return set1V1I1IA1DA(VOCAB_RELATIVE_MOVE_GROUP, n_joint, joints, refs);
     }
 
@@ -2010,7 +2010,7 @@ public:
      * @param deltas pointer to the relative commands
      * @return true/false on success/failure
      */
-    virtual bool relativeMove(const double *deltas) override {
+    bool relativeMove(const double *deltas) override {
         return set1VDA(VOCAB_RELATIVE_MOVES, deltas);
     }
 
@@ -2019,7 +2019,7 @@ public:
      * @param flag true/false if trajectory is terminated or not.
      * @return true on success/failure.
      */
-    virtual bool checkMotionDone(int j, bool *flag) override {
+    bool checkMotionDone(int j, bool *flag) override {
         return get1V1I1B(VOCAB_MOTION_DONE, j, *flag);
     }
 
@@ -2029,7 +2029,7 @@ public:
      *        (a single value which is the 'and' of all joints')
      * @return true/false if network communication went well.
      */
-    virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flag) override {
+    bool checkMotionDone(const int n_joint, const int *joints, bool *flag) override {
         return get1V1I1IA1B(VOCAB_MOTION_DONE_GROUP, n_joint, joints, *flag);
     }
 
@@ -2038,7 +2038,7 @@ public:
      *        (a single value which is the 'and' of all joints')
      * @return true on success/failure.
      */
-    virtual bool checkMotionDone(bool *flag) override {
+    bool checkMotionDone(bool *flag) override {
         return get1V1B(VOCAB_MOTION_DONES, *flag);
     }
 
@@ -2049,7 +2049,7 @@ public:
      * @param sp speed value
      * @return true/false upon success/failure
      */
-    virtual bool setRefSpeed(int j, double sp) override {
+    bool setRefSpeed(int j, double sp) override {
         return set1V1I1D(VOCAB_REF_SPEED, j, sp);
     }
 
@@ -2059,7 +2059,7 @@ public:
      * @param spds   pointer to the array with speed values.
      * @return true/false upon success/failure
      */
-    virtual bool setRefSpeeds(const int n_joint, const int *joints, const double *spds) override {
+    bool setRefSpeeds(const int n_joint, const int *joints, const double *spds) override {
         return set1V1I1IA1DA(VOCAB_REF_SPEED_GROUP, n_joint, joints, spds);
     }
 
@@ -2069,7 +2069,7 @@ public:
      * @param spds pointer to the array of speed values.
      * @return true/false upon success/failure
      */
-    virtual bool setRefSpeeds(const double *spds) override {
+    bool setRefSpeeds(const double *spds) override {
         return set1VDA(VOCAB_REF_SPEEDS, spds);
     }
 
@@ -2080,7 +2080,7 @@ public:
      * @param acc acceleration value
      * @return true/false upon success/failure
      */
-    virtual bool setRefAcceleration(int j, double acc) override {
+    bool setRefAcceleration(int j, double acc) override {
         return set1V1I1D(VOCAB_REF_ACCELERATION, j, acc);
     }
 
@@ -2090,7 +2090,7 @@ public:
      * @param accs   pointer to the array with acceleration values
      * @return true/false upon success/failure
      */
-    virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs) override {
+    bool setRefAccelerations(const int n_joint, const int *joints, const double *accs) override {
         return set1V1I1IA1DA(VOCAB_REF_ACCELERATION_GROUP, n_joint, joints, accs);
     }
 
@@ -2100,7 +2100,7 @@ public:
      * @param accs pointer to the array of acceleration values
      * @return true/false upon success/failure
      */
-    virtual bool setRefAccelerations(const double *accs) override {
+    bool setRefAccelerations(const double *accs) override {
         return set1VDA(VOCAB_REF_ACCELERATIONS, accs);
     }
 
@@ -2111,7 +2111,7 @@ public:
      * @param ref pointer to storage for the return value
      * @return true/false on success or failure
      */
-    virtual bool getRefSpeed(int j, double *ref) override {
+    bool getRefSpeed(int j, double *ref) override {
         return get1V1I1D(VOCAB_REF_SPEED, j, ref);
     }
 
@@ -2121,7 +2121,7 @@ public:
      * @param spds   pointer to the array with speed values.
      * @return true/false upon success/failure
      */
-    virtual bool getRefSpeeds(const int n_joint, const int *joints, double *spds) override {
+    bool getRefSpeeds(const int n_joint, const int *joints, double *spds) override {
         return get1V1I1IA1DA(VOCAB_REF_SPEED_GROUP, n_joint, joints, spds);
     }
 
@@ -2130,7 +2130,7 @@ public:
      * interpolation of the trajectory.
      * @param spds pointer to the array that will store the speed values.
      */
-    virtual bool getRefSpeeds(double *spds) override {
+    bool getRefSpeeds(double *spds) override {
         return get1VDA(VOCAB_REF_SPEEDS, spds);
     }
 
@@ -2141,7 +2141,7 @@ public:
      * @param acc pointer to storage for the return value
      * @return true/false on success/failure
      */
-    virtual bool getRefAcceleration(int j, double *acc) override {
+    bool getRefAcceleration(int j, double *acc) override {
         return get1V1I1D(VOCAB_REF_ACCELERATION, j, acc);
     }
 
@@ -2151,7 +2151,7 @@ public:
      * @param accs   pointer to the array that will store the acceleration values
      * @return true/false on success/failure
      */
-    virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs) override {
+    bool getRefAccelerations(const int n_joint, const int *joints, double *accs) override {
         return get1V1I1IA1DA(VOCAB_REF_ACCELERATION_GROUP, n_joint, joints, accs);
     }
 
@@ -2161,7 +2161,7 @@ public:
      * @param accs pointer to the array that will store the acceleration values.
      * @return true/false on success or failure
      */
-    virtual bool getRefAccelerations(double *accs) override {
+    bool getRefAccelerations(double *accs) override {
         return get1VDA(VOCAB_REF_ACCELERATIONS, accs);
     }
 
@@ -2170,7 +2170,7 @@ public:
      * @param j joint number
      * @return true/false on success/failure
      */
-    virtual bool stop(int j) override {
+    bool stop(int j) override {
         return set1V1I(VOCAB_STOP, j);
     }
 
@@ -2179,7 +2179,7 @@ public:
      * @param val1 list of joints
      * @return true/false on success/failure
      */
-    virtual bool stop(const int len, const int *val1) override
+    bool stop(const int len, const int *val1) override
     {
         if (!isLive()) return false;
         Bottle cmd, response;
@@ -2199,7 +2199,7 @@ public:
      * Stop motion, multiple joints
      * @return true/false on success/failure
      */
-    virtual bool stop() override {
+    bool stop() override {
         return set1V(VOCAB_STOPS);
     }
 
@@ -2210,7 +2210,7 @@ public:
      * @param v specifies the new ref speed
      * @return true/false on success/failure
      */
-    virtual bool velocityMove(int j, double v) override {
+    bool velocityMove(int j, double v) override {
      //   return set1V1I1D(VOCAB_VELOCITY_MOVE, j, v);
         if (!isLive()) return false;
         CommandMessage& c = command_buffer.get();
@@ -2228,7 +2228,7 @@ public:
      * @param v is a vector of double representing the requested speed.
      * @return true/false on success/failure.
      */
-    virtual bool velocityMove(const double *v) override {
+    bool velocityMove(const double *v) override {
         if (!isLive()) return false;
         CommandMessage& c = command_buffer.get();
         c.head.clear();
@@ -2247,7 +2247,7 @@ public:
      * generating abrupt movements.
      * @return true/false on success/failure
      */
-    virtual bool enableAmp(int j) override
+    bool enableAmp(int j) override
     { return set1V1I(VOCAB_AMP_ENABLE, j); }
 
     /**
@@ -2256,7 +2256,7 @@ public:
      * @return true/false on success/failure
      */
 
-    virtual bool disableAmp(int j) override {
+    bool disableAmp(int j) override {
         return set1V1I(VOCAB_AMP_DISABLE, j);
     }
 
@@ -2267,7 +2267,7 @@ public:
      * @param st pointer to storage
      * @return true in good luck, false otherwise.
      */
-    virtual bool getAmpStatus(int *st) override {
+    bool getAmpStatus(int *st) override {
         return get1VIA(VOCAB_AMP_STATUS, st);
     }
 
@@ -2276,7 +2276,7 @@ public:
      * @param st storage for return value
      * @return true/false success failure.
      */
-    virtual bool getAmpStatus(int j, int *st) override
+    bool getAmpStatus(int j, int *st) override
     {
         return get1V1I1I(VOCAB_AMP_STATUS_SINGLE, j, st);
     }
@@ -2289,7 +2289,7 @@ public:
      * @param v the new value
      * @return probably true, might return false in bad time
      */
-    virtual bool setMaxCurrent(int j, double v) override {
+    bool setMaxCurrent(int j, double v) override {
         return set1V1I1D(VOCAB_AMP_MAXCURRENT, j, v);
     }
 
@@ -2301,7 +2301,7 @@ public:
     * @param v the return value
     * @return probably true, might return false in bad times
     */
-    virtual bool getMaxCurrent(int j, double *v) override {
+    bool getMaxCurrent(int j, double *v) override {
         return get1V1I1D(VOCAB_AMP_MAXCURRENT, j, v);
     }
 
@@ -2314,7 +2314,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool getNominalCurrent(int m, double *val) override
+    bool getNominalCurrent(int m, double *val) override
     {
         return get1V1I1D(VOCAB_AMP_NOMINAL_CURRENT, m, val);
     }
@@ -2328,7 +2328,7 @@ public:
     * @param val storage for return value. [Ampere]
     * @return true/false success failure.
     */
-    virtual bool setNominalCurrent(int m, const double val) override
+    bool setNominalCurrent(int m, const double val) override
     {
         return set1V1I1D(VOCAB_AMP_NOMINAL_CURRENT, m, val);
     }
@@ -2342,7 +2342,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool getPeakCurrent(int m, double *val) override
+    bool getPeakCurrent(int m, double *val) override
     {
         return get1V1I1D(VOCAB_AMP_PEAK_CURRENT, m, val);
     }
@@ -2357,7 +2357,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool setPeakCurrent(int m, const double val) override
+    bool setPeakCurrent(int m, const double val) override
     {
         return set1V1I1D(VOCAB_AMP_PEAK_CURRENT, m, val);
     }
@@ -2367,7 +2367,7 @@ public:
      * @param val filled with PWM value [DutyCycle]
      * @return true/false success failure.
      */
-    virtual bool getPWM(int m, double* val) override
+    bool getPWM(int m, double* val) override
     {
         double localArrivalTime = 0.0;
         extendedPortMutex.lock();
@@ -2382,7 +2382,7 @@ public:
      * @param val filled with PWM limit value.
      * @return true/false success failure.
      */
-    virtual bool getPWMLimit(int m, double* val) override
+    bool getPWMLimit(int m, double* val) override
     {
         return get1V1I1D(VOCAB_AMP_PWM_LIMIT, m, val);
     }
@@ -2393,7 +2393,7 @@ public:
      * @param val new value for the PWM limit.
      * @return true/false success failure.
      */
-    virtual bool setPWMLimit(int m, const double val) override
+    bool setPWMLimit(int m, const double val) override
     {
         return set1V1I1D(VOCAB_AMP_PWM_LIMIT, m, val);
     }
@@ -2403,7 +2403,7 @@ public:
      * @param val filled with return value.
      * @return true/false success failure.
      */
-    virtual bool getPowerSupplyVoltage(int m, double* val) override
+    bool getPowerSupplyVoltage(int m, double* val) override
     {
         return get1V1I1D(VOCAB_AMP_VOLTAGE_SUPPLY, m, val);
     }
@@ -2418,7 +2418,7 @@ public:
      * @param max the value of the upper limit
      * @return true or false on success or failure
      */
-    virtual bool setLimits(int axis, double min, double max) override {
+    bool setLimits(int axis, double min, double max) override {
         return set1V1I2D(VOCAB_LIMITS, axis, min, max);
     }
 
@@ -2429,43 +2429,43 @@ public:
      * @param max pointer to store the value of the upper limit
      * @return true if everything goes fine, false if something bad happens
      */
-    virtual bool getLimits(int axis, double *min, double *max) override {
+    bool getLimits(int axis, double *min, double *max) override {
         return get1V1I2D(VOCAB_LIMITS, axis, min, max);
     }
 
-    virtual bool setVelLimits(int axis, double min, double max) override
+    bool setVelLimits(int axis, double min, double max) override
     {
         return set1V1I2D(VOCAB_VEL_LIMITS, axis, min, max);
     }
 
-    virtual bool getVelLimits(int axis, double *min, double *max) override
+    bool getVelLimits(int axis, double *min, double *max) override
     {
         return get1V1I2D(VOCAB_VEL_LIMITS, axis, min, max);
     }
 
     /* IAxisInfo */
-    virtual bool getAxisName(int j, std::string& name) override {
+    bool getAxisName(int j, std::string& name) override {
         return get1V1I1S(VOCAB_INFO_NAME, j, name);
     }
 
-    virtual bool getJointType(int j, yarp::dev::JointTypeEnum& type) override {
+    bool getJointType(int j, yarp::dev::JointTypeEnum& type) override {
         return get1V1I1I(VOCAB_INFO_TYPE, j, (int*)&type);
     }
 
     /* IControlCalibration */
-    bool virtual calibrateRobot() override
+    bool calibrateRobot() override
     { return send1V(VOCAB_CALIBRATE); }
 
-    bool virtual abortCalibration() override
+    bool abortCalibration() override
     { return send1V(VOCAB_ABORTCALIB); }
 
-    bool virtual abortPark() override
+    bool abortPark() override
     { return send1V(VOCAB_ABORTPARK); }
 
-    bool virtual park(bool wait=true) override
+    bool park(bool wait=true) override
     { return send1V(VOCAB_PARK); }
 
-    bool virtual calibrateAxisWithParams(int j, unsigned int ui, double v1, double v2, double v3) override
+    bool calibrateAxisWithParams(int j, unsigned int ui, double v1, double v2, double v3) override
     {
         Bottle cmd, response;
 
@@ -2484,7 +2484,7 @@ public:
         return false;
     }
 
-    bool virtual setCalibrationParameters(int j, const CalibrationParameters& params) override
+    bool setCalibrationParameters(int j, const CalibrationParameters& params) override
     {
         Bottle cmd, response;
 
@@ -2504,7 +2504,7 @@ public:
         return false;
     }
 
-    bool virtual calibrationDone(int j) override
+    bool calibrationDone(int j) override
     { return send1V1I(VOCAB_CALIBRATE_DONE, j); }
 
     bool getRefTorque(int j, double *t) override
@@ -3186,17 +3186,17 @@ public:
 //    {
 //    }
 
-    virtual bool getRefCurrents(double *t) override
+    bool getRefCurrents(double *t) override
     {
         return get2V1DA(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_REFS, t);
     }
 
-    virtual bool getRefCurrent(int j, double *t) override
+    bool getRefCurrent(int j, double *t) override
     {
         return get2V1I1D(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_REF, j, t);
     }
 
-    virtual bool setRefCurrents(const double *refs) override
+    bool setRefCurrents(const double *refs) override
     {
         if (!isLive()) return false;
         CommandMessage& c = command_buffer.get();
@@ -3209,7 +3209,7 @@ public:
         return true;
     }
 
-    virtual bool setRefCurrent(int j, double ref) override
+    bool setRefCurrent(int j, double ref) override
     {
         if (!isLive()) return false;
         CommandMessage& c = command_buffer.get();
@@ -3223,7 +3223,7 @@ public:
         return true;
     }
 
-    virtual bool setRefCurrents(const int n_joint, const int *joints, const double *refs) override
+    bool setRefCurrents(const int n_joint, const int *joints, const double *refs) override
     {
         if (!isLive()) return false;
         CommandMessage& c = command_buffer.get();
@@ -3245,7 +3245,7 @@ public:
      * @param vals pointer to storage for the output values
      * @return hopefully true, false in bad luck.
      */
-    virtual bool getCurrents(double *vals) override
+    bool getCurrents(double *vals) override
     {
         double localArrivalTime=0.0;
         extendedPortMutex.lock();
@@ -3260,7 +3260,7 @@ public:
      * @param val pointer to storage for the output value
      * @return probably true, might return false in bad time
      */
-    virtual bool getCurrent(int j, double *val) override
+    bool getCurrent(int j, double *val) override
     {
         double localArrivalTime=0.0;
         extendedPortMutex.lock();
@@ -3269,18 +3269,18 @@ public:
         return ret;
     }
 
-    virtual bool getCurrentRange(int j, double *min, double *max) override
+    bool getCurrentRange(int j, double *min, double *max) override
     {
         return get2V1I2D(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_RANGE, j, min, max);
     }
 
-    virtual bool getCurrentRanges(double *min, double *max) override
+    bool getCurrentRanges(double *min, double *max) override
     {
         return get2V2DA(VOCAB_CURRENTCONTROL_INTERFACE, VOCAB_CURRENT_RANGES, min, max);
     }
 
     //iPWMControl
-    virtual bool setRefDutyCycle(int j, double v) override
+    bool setRefDutyCycle(int j, double v) override
     {
         // using the streaming port
         if (!isLive()) return false;
@@ -3298,7 +3298,7 @@ public:
         return true;
     }
 
-    virtual bool setRefDutyCycles(const double *v) override
+    bool setRefDutyCycles(const double *v) override
     {
         // using the streaming port
         if (!isLive()) return false;
@@ -3316,7 +3316,7 @@ public:
         return true;
     }
 
-    virtual bool getRefDutyCycle(int j, double *ref) override
+    bool getRefDutyCycle(int j, double *ref) override
     {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
@@ -3339,12 +3339,12 @@ public:
             return false;
     }
 
-    virtual bool getRefDutyCycles(double *refs) override
+    bool getRefDutyCycles(double *refs) override
     {
         return get2V1DA(VOCAB_PWMCONTROL_INTERFACE, VOCAB_PWMCONTROL_REF_PWMS, refs);
     }
 
-    virtual bool getDutyCycle(int j, double *out) override
+    bool getDutyCycle(int j, double *out) override
     {
         double localArrivalTime = 0.0;
         extendedPortMutex.lock();
@@ -3353,7 +3353,7 @@ public:
         return ret;
     }
 
-    virtual bool getDutyCycles(double *outs) override
+    bool getDutyCycles(double *outs) override
     {
         double localArrivalTime = 0.0;
         extendedPortMutex.lock();

@@ -38,15 +38,15 @@ public:
         data = "";
     }
 
-    virtual void write(const Bytes& b) override
+    void write(const Bytes& b) override
     {
         std::string tmp((char*)b.get(), b.length());
         data += tmp;
     }
 
-    virtual void close() override {}
+    void close() override {}
 
-    virtual bool isOk() const override
+    bool isOk() const override
     {
         return true;
     }

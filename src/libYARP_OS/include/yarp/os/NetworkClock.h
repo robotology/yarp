@@ -26,9 +26,9 @@ public:
 
     bool open(const std::string& clockSourcePortName, std::string localPortName = "");
 
-    virtual double now() override;
-    virtual void delay(double seconds) override;
-    virtual bool isValid() const override;
+    double now() override;
+    void delay(double seconds) override;
+    bool isValid() const override;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:

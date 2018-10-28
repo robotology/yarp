@@ -61,31 +61,31 @@ public:
     virtual void setReference(yarp::os::Portable *obj);
 
     /**** OVERRIDES ****/
-    virtual bool setSize(size_t len) override;
-    virtual size_t getSize() const override;
-    virtual bool pushInt(int x) override;
-    virtual std::int8_t expectInt8() override;
-    virtual std::int16_t expectInt16() override;
-    virtual std::int32_t expectInt32() override;
-    virtual std::int64_t expectInt64() override;
-    virtual yarp::conf::float32_t expectFloat32() override;
-    virtual yarp::conf::float64_t expectFloat64() override;
-    virtual bool expectBlock(char *data, size_t len) override;
-    virtual std::string expectText(int terminatingChar) override;
-    virtual bool isTextMode() const override;
-    virtual bool isBareMode() const override;
-    virtual bool convertTextMode() override;
-    virtual yarp::os::ConnectionWriter *getWriter() override;
-    virtual yarp::os::Contact getRemoteContact() const override;
-    virtual yarp::os::Contact getLocalContact() const override;
-    virtual bool isValid() const override;
-    virtual bool isError() const override;
-    virtual bool isActive() const override;
-    virtual yarp::os::Portable *getReference() const override;
-    virtual yarp::os::Bytes readEnvelope() override;
-    virtual void requestDrop() override;
-    virtual const yarp::os::Searchable& getConnectionModifiers() const override;
-    virtual void setParentConnectionReader(ConnectionReader *parentConnectionReader) override;
+    bool setSize(size_t len) override;
+    size_t getSize() const override;
+    bool pushInt(int x) override;
+    std::int8_t expectInt8() override;
+    std::int16_t expectInt16() override;
+    std::int32_t expectInt32() override;
+    std::int64_t expectInt64() override;
+    yarp::conf::float32_t expectFloat32() override;
+    yarp::conf::float64_t expectFloat64() override;
+    bool expectBlock(char *data, size_t len) override;
+    std::string expectText(int terminatingChar) override;
+    bool isTextMode() const override;
+    bool isBareMode() const override;
+    bool convertTextMode() override;
+    yarp::os::ConnectionWriter *getWriter() override;
+    yarp::os::Contact getRemoteContact() const override;
+    yarp::os::Contact getLocalContact() const override;
+    bool isValid() const override;
+    bool isError() const override;
+    bool isActive() const override;
+    yarp::os::Portable *getReference() const override;
+    yarp::os::Bytes readEnvelope() override;
+    void requestDrop() override;
+    const yarp::os::Searchable& getConnectionModifiers() const override;
+    void setParentConnectionReader(ConnectionReader *parentConnectionReader) override;
 
 private:
 

@@ -56,7 +56,7 @@ public:
      * Start a thread running to serve this input.
      *
      */
-    virtual bool start() override;
+    bool start() override;
 
     /**
      *
@@ -65,28 +65,28 @@ public:
      * data gets to the user
      *
      */
-    virtual void run() override;
+    void run() override;
 
-    virtual bool isInput() override;
+    bool isInput() override;
 
-    virtual void close() override;
+    void close() override;
 
-    virtual bool isFinished() override;
+    bool isFinished() override;
 
     const std::string& getName();
 
-    virtual Route getRoute() override;
+    Route getRoute() override;
 
-    virtual bool interrupt() override;
+    bool interrupt() override;
 
-    virtual void setCarrierParams(const yarp::os::Property& params) override;
+    void setCarrierParams(const yarp::os::Property& params) override;
 
-    virtual void getCarrierParams(yarp::os::Property& params) override;
+    void getCarrierParams(yarp::os::Property& params) override;
 
     // return the protocol object
     InputProtocol* getInPutProtocol();
 
-    virtual bool isBusy() override;
+    bool isBusy() override;
 
 private:
     InputProtocol *ip;

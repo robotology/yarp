@@ -29,12 +29,12 @@ public:
 
     virtual ~TcpFace();
 
-    virtual bool open(const Contact& address) override;
-    virtual void close() override;
-    virtual InputProtocol *read() override;
-    virtual OutputProtocol *write(const Contact& address) override;
+    bool open(const Contact& address) override;
+    void close() override;
+    InputProtocol *read() override;
+    OutputProtocol *write(const Contact& address) override;
 
-    virtual Contact getLocalAddress() const override;
+    Contact getLocalAddress() const override;
 
     /*
      * This class like all classes except the port objects does

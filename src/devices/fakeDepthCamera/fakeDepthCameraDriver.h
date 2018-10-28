@@ -44,42 +44,42 @@ public:
     ~fakeDepthCameraDriver();
 
     // DeviceDriver
-    virtual bool open(yarp::os::Searchable& config) override;
-    virtual bool close() override;
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
     // IRGBDSensor
-    virtual int    getRgbHeight() override;
-    virtual int    getRgbWidth() override;
-    virtual bool   getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) override;
-    virtual bool   getRgbResolution(int &width, int &height) override;
-    virtual bool   setRgbResolution(int width, int height) override;
-    virtual bool   getRgbFOV(double& horizontalFov, double& verticalFov) override;
-    virtual bool   setRgbFOV(double horizontalFov, double verticalFov) override;
-    virtual bool   getRgbMirroring(bool& mirror) override;
-    virtual bool   setRgbMirroring(bool mirror) override;
+    int    getRgbHeight() override;
+    int    getRgbWidth() override;
+    bool   getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) override;
+    bool   getRgbResolution(int &width, int &height) override;
+    bool   setRgbResolution(int width, int height) override;
+    bool   getRgbFOV(double& horizontalFov, double& verticalFov) override;
+    bool   setRgbFOV(double horizontalFov, double verticalFov) override;
+    bool   getRgbMirroring(bool& mirror) override;
+    bool   setRgbMirroring(bool mirror) override;
 
-    virtual bool   getRgbIntrinsicParam(Property& intrinsic) override;
-    virtual int    getDepthHeight() override;
-    virtual int    getDepthWidth() override;
-    virtual bool   setDepthResolution(int width, int height) override;
-    virtual bool   getDepthFOV(double& horizontalFov, double& verticalFov) override;
-    virtual bool   setDepthFOV(double horizontalFov, double verticalFov) override;
-    virtual bool   getDepthIntrinsicParam(Property& intrinsic) override;
-    virtual double getDepthAccuracy() override;
-    virtual bool   setDepthAccuracy(double accuracy) override;
-    virtual bool   getDepthClipPlanes(double& nearPlane, double& farPlane) override;
-    virtual bool   setDepthClipPlanes(double nearPlane, double farPlane) override;
-    virtual bool   getDepthMirroring(bool& mirror) override;
-    virtual bool   setDepthMirroring(bool mirror) override;
+    bool   getRgbIntrinsicParam(Property& intrinsic) override;
+    int    getDepthHeight() override;
+    int    getDepthWidth() override;
+    bool   setDepthResolution(int width, int height) override;
+    bool   getDepthFOV(double& horizontalFov, double& verticalFov) override;
+    bool   setDepthFOV(double horizontalFov, double verticalFov) override;
+    bool   getDepthIntrinsicParam(Property& intrinsic) override;
+    double getDepthAccuracy() override;
+    bool   setDepthAccuracy(double accuracy) override;
+    bool   getDepthClipPlanes(double& nearPlane, double& farPlane) override;
+    bool   setDepthClipPlanes(double nearPlane, double farPlane) override;
+    bool   getDepthMirroring(bool& mirror) override;
+    bool   setDepthMirroring(bool mirror) override;
 
 
-    virtual bool   getExtrinsicParam(sig::Matrix &extrinsic) override;
-    virtual bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = NULL) override;
-    virtual bool   getDepthImage(depthImage& depthImage, Stamp* timeStamp = NULL) override;
-    virtual bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL) override;
+    bool   getExtrinsicParam(sig::Matrix &extrinsic) override;
+    bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = NULL) override;
+    bool   getDepthImage(depthImage& depthImage, Stamp* timeStamp = NULL) override;
+    bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL) override;
 
-    virtual RGBDSensor_status     getSensorStatus() override;
-    virtual std::string getLastErrorMsg(Stamp* timeStamp = NULL) override;
+    RGBDSensor_status     getSensorStatus() override;
+    std::string getLastErrorMsg(Stamp* timeStamp = NULL) override;
 
 private:
     double rgb_h{480};

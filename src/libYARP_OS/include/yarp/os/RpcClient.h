@@ -40,20 +40,20 @@ public:
     const RpcClient& operator=(const RpcClient& alt) = delete;
 
     // documented in UnbufferedContactable
-    virtual bool read(PortReader& reader, bool willReply = false) override;
+    bool read(PortReader& reader, bool willReply = false) override;
 
     // documented in UnbufferedContactable
-    virtual bool reply(PortWriter& writer) override;
+    bool reply(PortWriter& writer) override;
 
     // documented in UnbufferedContactable
-    virtual bool replyAndDrop(PortWriter& writer) override;
+    bool replyAndDrop(PortWriter& writer) override;
 
     void setInputMode(bool expectInput) override;
     void setOutputMode(bool expectOutput) override;
     void setRpcMode(bool expectRpc) override;
 
-    virtual Port& asPort() override;
-    virtual const Port& asPort() const override;
+    Port& asPort() override;
+    const Port& asPort() const override;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:

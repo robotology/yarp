@@ -86,7 +86,7 @@ public:
     void drawGraph(yarp::profiler::graph::Graph &graph);
 
 public:
-    virtual void onProgress(unsigned int percentage) override;
+    void onProgress(unsigned int percentage) override;
 
 private:
     void initScene();

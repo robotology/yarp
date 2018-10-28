@@ -61,13 +61,13 @@ public:
      * generating abrupt movements.
      * @return true/false on success/failure
      */
-    virtual bool enableAmp(int j) override;
+    bool enableAmp(int j) override;
 
     /** Disable the amplifier on a specific joint. All computations within the board
      * will be carried out normally, but the output will be disabled.
      * @return true/false on success/failure
      */
-    virtual bool disableAmp(int j) override;
+    bool disableAmp(int j) override;
 
     /* Get the status of the amplifiers, coded in a 32 bits integer for
      * each amplifier (at the moment contains only the fault, it will be
@@ -75,22 +75,22 @@ public:
      * @param st pointer to storage
      * @return true in good luck, false otherwise.
      */
-    virtual bool getAmpStatus(int *st) override;
+    bool getAmpStatus(int *st) override;
 
-    virtual bool getAmpStatus(int j, int *st) override;
+    bool getAmpStatus(int j, int *st) override;
 
     /* Read the electric current going to all motors.
      * @param vals pointer to storage for the output values
      * @return hopefully true, false in bad luck.
      */
-    virtual bool getCurrents(double *vals) override;
+    bool getCurrents(double *vals) override;
 
     /* Read the electric current going to a given motor.
      * @param j motor number
      * @param val pointer to storage for the output value
      * @return probably true, might return false in bad times
      */
-    virtual bool getCurrent(int j, double *val) override;
+    bool getCurrent(int j, double *val) override;
 
     /* Set the maximum electric current going to a given motor. The behavior
      * of the board/amplifier when this limit is reached depends on the
@@ -99,7 +99,7 @@ public:
      * @param v the new value
      * @return probably true, might return false in bad times
      */
-    virtual bool setMaxCurrent(int j, double v) override;
+    bool setMaxCurrent(int j, double v) override;
 
     /**
     * Returns the maximum electric current allowed for a given motor. The behavior
@@ -109,7 +109,7 @@ public:
     * @param v the return value
     * @return probably true, might return false in bad times
     */
-    virtual bool getMaxCurrent(int j, double *v) override;
+    bool getMaxCurrent(int j, double *v) override;
 
     /* Get the the nominal current which can be kept for an indefinite amount of time
      * without harming the motor. This value is specific for each motor and it is typically
@@ -120,7 +120,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool getNominalCurrent(int m, double *val) override;
+    bool getNominalCurrent(int m, double *val) override;
 
     /* Set the the nominal current which can be kept for an indefinite amount of time
     * without harming the motor. This value is specific for each motor and it is typically
@@ -131,7 +131,7 @@ public:
     * @param val storage for return value. [Ampere]
     * @return true/false success failure.
     */
-    virtual bool setNominalCurrent(int m, const double val) override;
+    bool setNominalCurrent(int m, const double val) override;
 
     /* Get the the peak current which causes damage to the motor if maintained
      * for a long amount of time.
@@ -142,7 +142,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool getPeakCurrent(int m, double *val) override;
+    bool getPeakCurrent(int m, double *val) override;
 
     /* Set the the peak current. This value  which causes damage to the motor if maintained
      * for a long amount of time.
@@ -153,7 +153,7 @@ public:
      * @param val storage for return value. [Ampere]
      * @return true/false success failure.
      */
-    virtual bool setPeakCurrent(int m, const double val) override;
+    bool setPeakCurrent(int m, const double val) override;
 
     /* Get the the current PWM value used to control the motor.
      * The units are firmware dependent, either machine units or percentage.
@@ -161,7 +161,7 @@ public:
      * @param val filled with PWM value.
      * @return true/false success failure.
      */
-    virtual bool getPWM(int j, double* val) override;
+    bool getPWM(int j, double* val) override;
 
     /* Get the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
@@ -169,7 +169,7 @@ public:
      * @param val filled with PWM limit value.
      * @return true/false success failure.
      */
-    virtual bool getPWMLimit(int j, double* val) override;
+    bool getPWMLimit(int j, double* val) override;
 
     /* Set the PWM limit for the given motor.
      * The units are firmware dependent, either machine units or percentage.
@@ -177,14 +177,14 @@ public:
      * @param val new value for the PWM limit.
      * @return true/false success failure.
      */
-    virtual bool setPWMLimit(int j, const double val) override;
+    bool setPWMLimit(int j, const double val) override;
 
     /* Get the power source voltage for the given motor in Volt.
      * @param j joint number
      * @param val filled with return value.
      * @return true/false success failure.
      */
-    virtual bool getPowerSupplyVoltage(int j, double* val) override;
+    bool getPowerSupplyVoltage(int j, double* val) override;
 };
 
 

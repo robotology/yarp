@@ -24,9 +24,9 @@ class SingleAppLoader : public AppLoader {
 public:
     SingleAppLoader(const char* szModule, const char* strHost);
     virtual ~SingleAppLoader();
-    virtual bool init(void) override;
-    virtual void fini(void) override;
-    virtual Application* getNextApplication(void) override;
+    bool init(void) override;
+    void fini(void) override;
+    Application* getNextApplication(void) override;
 
 protected:
 

@@ -36,15 +36,15 @@ public:
         inputCache = outputCache = "";
     }
 
-    virtual void close() override {
+    void close() override {
         std::cout << "Bye bye" << std::endl;
     }
 
-    virtual bool isOk() const override {
+    bool isOk() const override {
         return true;
     }
 
-    virtual void interrupt() override {
+    void interrupt() override {
         interrupting = true;
         while (needInterrupt) {
             std::cout << "*** INTERRUPT: Please hit enter ***" << std::endl;
@@ -56,44 +56,44 @@ public:
 
     // InputStream
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(Bytes& b) override;
+    yarp::conf::ssize_t read(Bytes& b) override;
 
     // OutputStream
     using yarp::os::OutputStream::write;
-    virtual void write(const Bytes& b) override;
+    void write(const Bytes& b) override;
 
     // TwoWayStream
 
-    virtual InputStream& getInputStream() override {
+    InputStream& getInputStream() override {
         return *this;
     }
 
-    virtual OutputStream& getOutputStream() override {
+    OutputStream& getOutputStream() override {
         return *this;
     }
 
-    virtual const yarp::os::Contact& getLocalAddress() const override {
+    const yarp::os::Contact& getLocalAddress() const override {
         // left undefined
         return local;
     }
 
-    virtual const yarp::os::Contact& getRemoteAddress() const override {
+    const yarp::os::Contact& getRemoteAddress() const override {
         // left undefined
         return remote;
     }
 
-    virtual void reset() override {
+    void reset() override {
         inputCache = outputCache = "";
         std::cout << "Stream reset" << std::endl;
     }
 
-    virtual void beginPacket() override {
+    void beginPacket() override {
         std::cout << "Packet begins" << std::endl;
         inputCache = "";
         outputCache = "";
     }
 
-    virtual void endPacket() override {
+    void endPacket() override {
         std::cout << "Packet ends" << std::endl;
     }
 

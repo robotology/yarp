@@ -27,7 +27,7 @@ public:
         count = 1;
     }
 
-    virtual void report(const SearchReport& report, const char *context) override {
+    void report(const SearchReport& report, const char *context) override {
         std::string ctx = context;
         std::string key = report.key;
         std::string prefix;

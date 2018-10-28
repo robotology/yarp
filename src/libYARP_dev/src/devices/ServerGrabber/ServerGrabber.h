@@ -48,7 +48,7 @@ public:
     DC1394Parser();
     virtual ~DC1394Parser() {};
     bool configure(yarp::dev::IFrameGrabberControlsDC1394 *interface);
-    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
+    bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
 class yarp::dev::impl::ServerGrabberResponder :public DeviceResponder
@@ -241,15 +241,15 @@ public:
     ~ServerGrabber();
 
     //DeviceDriver
-    virtual bool close() override;
+    bool close() override;
     /**
      * Configure with a set of options.
      * @param config The options to use
      * @return true iff the object could be configured.
      */
-    virtual bool open(yarp::os::Searchable& config) override;
+    bool open(yarp::os::Searchable& config) override;
 
-    //virtual bool read(ConnectionReader& connection) override;
+    //bool read(ConnectionReader& connection) override;
 
     //DeviceResponder
     bool respond(const yarp::os::Bottle& command,

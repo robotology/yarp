@@ -46,7 +46,7 @@ public:
         fallback = nullptr;
     }
 
-    virtual std::string apply(const std::string& txt, const Contact& remote) override {
+    std::string apply(const std::string& txt, const Contact& remote) override {
         DummyConnector con, con2;
         con.setTextMode(true);
         ConnectionWriter& writer = con.getWriter();

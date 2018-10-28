@@ -181,7 +181,7 @@ public:
         return ok;
     }
 
-    virtual void onEvent(yarp::os::Bottle& event) override {
+    void onEvent(yarp::os::Bottle& event) override {
     }
 
     int replyCode(bool flag) {

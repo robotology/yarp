@@ -52,60 +52,60 @@ public:
         sender = false;
     }
 
-    virtual Carrier *create() const override {
+    Carrier *create() const override {
         return new MjpegCarrier();
     }
 
-    virtual std::string getName() const override {
+    std::string getName() const override {
         return "mjpeg";
     }
 
-    virtual bool isConnectionless() const override {
+    bool isConnectionless() const override {
         return false;
     }
 
-    virtual bool canAccept() const override {
+    bool canAccept() const override {
         return true;
     }
 
-    virtual bool canOffer() const override {
+    bool canOffer() const override {
         return true;
     }
 
-    virtual bool isTextMode() const override {
+    bool isTextMode() const override {
         return false;
     }
 
-    virtual bool canEscape() const override {
+    bool canEscape() const override {
         return false;
     }
 
-    virtual void handleEnvelope(const std::string& envelope) override {
+    void handleEnvelope(const std::string& envelope) override {
         this->envelope = envelope;
     }
 
-    virtual bool requireAck() const override {
+    bool requireAck() const override {
         return false;
     }
 
-    virtual bool supportReply() const override {
+    bool supportReply() const override {
         return false;
     }
 
-    virtual bool isLocal() const override {
+    bool isLocal() const override {
         return false;
     }
 
     // this is important - flips expected flow of messages
-    virtual bool isPush() const override {
+    bool isPush() const override {
         return false;
     }
 
-    virtual std::string toString() const override {
+    std::string toString() const override {
         return "mjpeg_carrier";
     }
 
-    virtual void getHeader(Bytes& header) const override {
+    void getHeader(Bytes& header) const override {
         // GET /?action=stream HTTP/1.1
         const char *target = "GET /?ac";
         for (size_t i=0; i<8 && i<header.length(); i++) {
@@ -113,7 +113,7 @@ public:
         }
     }
 
-    virtual bool checkHeader(const Bytes& header) override {
+    bool checkHeader(const Bytes& header) override {
         if (header.length()!=8) {
             return false;
         }
@@ -127,25 +127,25 @@ public:
         return true;
     }
 
-    virtual void setParameters(const Bytes& header) override {
+    void setParameters(const Bytes& header) override {
         // no parameters - no carrier variants
     }
 
 
     // Now, the initial hand-shaking
 
-    virtual bool prepareSend(ConnectionState& proto) override {
+    bool prepareSend(ConnectionState& proto) override {
         // nothing special to do
         return true;
     }
 
-    virtual bool sendHeader(ConnectionState& proto) override;
+    bool sendHeader(ConnectionState& proto) override;
 
-    virtual bool expectSenderSpecifier(ConnectionState& proto) override {
+    bool expectSenderSpecifier(ConnectionState& proto) override {
         return true;
     }
 
-    virtual bool expectExtraHeader(ConnectionState& proto) override {
+    bool expectExtraHeader(ConnectionState& proto) override {
         std::string txt;
         do {
             txt = proto.is().readLine();
@@ -172,7 +172,7 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
         return true;
     }
 
-    virtual bool expectReplyToHeader(ConnectionState& proto) override {
+    bool expectReplyToHeader(ConnectionState& proto) override {
         std::string txt;
         do {
             txt = proto.is().readLine();
@@ -186,34 +186,34 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
         return true;
     }
 
-    virtual bool isActive() const override {
+    bool isActive() const override {
         return true;
     }
 
 
     // Payload time!
 
-    virtual bool write(ConnectionState& proto, SizedWriter& writer) override;
+    bool write(ConnectionState& proto, SizedWriter& writer) override;
 
-    virtual bool reply(ConnectionState& proto, SizedWriter& writer) override;
+    bool reply(ConnectionState& proto, SizedWriter& writer) override;
 
     virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer) {
         return true;
     }
 
-    virtual bool expectIndex(ConnectionState& proto) override {
+    bool expectIndex(ConnectionState& proto) override {
         return true;
     }
 
-    virtual bool sendAck(ConnectionState& proto) override {
+    bool sendAck(ConnectionState& proto) override {
         return true;
     }
 
-    virtual bool expectAck(ConnectionState& proto) override {
+    bool expectAck(ConnectionState& proto) override {
         return true;
     }
 
-    virtual std::string getBootstrapCarrierName() const override { return ""; }
+    std::string getBootstrapCarrierName() const override { return ""; }
 
     virtual bool autoCompression() const;
 };

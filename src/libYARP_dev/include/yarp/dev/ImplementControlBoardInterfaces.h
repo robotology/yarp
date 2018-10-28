@@ -48,37 +48,37 @@ private:
 public:
     virtual ~StubImplEncodersRaw(){}
 
-    virtual bool getAxes(int *ax) override
+    bool getAxes(int *ax) override
     {return NOT_YET_IMPLEMENTED("getAxes");}
 
-    virtual bool resetEncoderRaw(int j) override
+    bool resetEncoderRaw(int j) override
     {return NOT_YET_IMPLEMENTED("resetEncoderRaw");}
 
-    virtual bool resetEncodersRaw() override
+    bool resetEncodersRaw() override
     {return NOT_YET_IMPLEMENTED("resetEncodersRaw");}
 
-    virtual bool setEncoderRaw(int j, double val) override
+    bool setEncoderRaw(int j, double val) override
     {return NOT_YET_IMPLEMENTED("setEncoderRaw");}
 
-    virtual bool setEncodersRaw(const double *vals) override
+    bool setEncodersRaw(const double *vals) override
     {return NOT_YET_IMPLEMENTED("setEncodersRaw");}
 
-    virtual bool getEncoderRaw(int j, double *v) override
+    bool getEncoderRaw(int j, double *v) override
     {return NOT_YET_IMPLEMENTED("getEncoderRaw");}
 
-    virtual bool getEncodersRaw(double *encs) override
+    bool getEncodersRaw(double *encs) override
     {return NOT_YET_IMPLEMENTED("getEncodersRaw");}
 
-    virtual bool getEncoderSpeedRaw(int j, double *sp) override
+    bool getEncoderSpeedRaw(int j, double *sp) override
     {return NOT_YET_IMPLEMENTED("getEncoderSpeedRaw");}
 
-    virtual bool getEncoderSpeedsRaw(double *spds) override
+    bool getEncoderSpeedsRaw(double *spds) override
     {return NOT_YET_IMPLEMENTED("getEncoderSpeedsRaw");}
 
-    virtual bool getEncoderAccelerationRaw(int j, double *spds) override
+    bool getEncoderAccelerationRaw(int j, double *spds) override
     {return NOT_YET_IMPLEMENTED("getEncoderAccelerationRaw");}
 
-    virtual bool getEncoderAccelerationsRaw(double *accs) override
+    bool getEncoderAccelerationsRaw(double *accs) override
     {return NOT_YET_IMPLEMENTED("getEncoderAccelerationsRaw");}
 };
 

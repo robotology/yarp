@@ -49,7 +49,7 @@ public:
 
     int check();
 
-    virtual bool read(yarp::os::ConnectionReader& connection) override;
+    bool read(yarp::os::ConnectionReader& connection) override;
 
     yarp::os::PortReader* readBase(bool& missed, bool cleanup);
 

@@ -114,15 +114,15 @@ public:
         }
     }
 
-    virtual Carrier *create() const override {
+    Carrier *create() const override {
         return new PriorityCarrier();
     }
 
-    virtual std::string getName() const override {
+    std::string getName() const override {
         return "priority";
     }
 
-    virtual std::string toString() const override {
+    std::string toString() const override {
         return "priority_carrier";
     }
 
@@ -154,11 +154,11 @@ public:
 
     double getActualInput(double t);
 
-    virtual bool configure(yarp::os::ConnectionState& proto) override;
+    bool configure(yarp::os::ConnectionState& proto) override;
 
-    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) override;
+    bool acceptIncomingData(yarp::os::ConnectionReader& reader) override;
 
-    virtual void setCarrierParams(const yarp::os::Property& params) override {
+    void setCarrierParams(const yarp::os::Property& params) override {
         yarp::os::Property property = params;
         timeConstant = property.check("tc", Value(timeConstant)).asFloat64();
         timeResting = property.check("tr", Value(timeResting)).asFloat64();
@@ -169,7 +169,7 @@ public:
             excitation = property.findGroup("ex");
     }
 
-    virtual void getCarrierParams(yarp::os::Property& params) const override {
+    void getCarrierParams(yarp::os::Property& params) const override {
         params.put("tc", timeConstant);
         params.put("tr", timeResting);
         params.put("st", stimulation);

@@ -40,7 +40,7 @@ public:
         delegates.clear();
     }
 
-    virtual bool select(Searchable& options) override {
+    bool select(Searchable& options) override {
         return options.check("type",Value("none")).asString() == "device";
     }
 
@@ -192,12 +192,12 @@ public:
         return dev.isValid();
     }
 
-    virtual bool open(yarp::os::Searchable& config) override {
+    bool open(yarp::os::Searchable& config) override {
         if (!isValid()) return false;
         return dev.getContent().open(config);
     }
 
-    virtual bool close() override {
+    bool close() override {
         if (!isValid()) return false;
         return dev.getContent().close();
     }

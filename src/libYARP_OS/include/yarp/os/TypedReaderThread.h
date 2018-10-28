@@ -37,9 +37,9 @@ public:
     TypedReaderThread(TypedReader<T>& reader,
                       TypedReaderCallback<T>& callback);
 
-    virtual void run() override;
+    void run() override;
 
-    virtual void onStop() override;
+    void onStop() override;
 };
 
 } // namespace os

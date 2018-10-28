@@ -57,7 +57,7 @@ public:
     void detach();
 
     // documented in TypedReader
-    virtual void setStrict(bool strict = true) override;
+    void setStrict(bool strict = true) override;
 
     /**
      * Check if data is available.
@@ -68,16 +68,16 @@ public:
     bool check();
 
     // documented in TypedReader
-    virtual int getPendingReads() override;
+    int getPendingReads() override;
 
     // documented in TypedReader
-    virtual T* read(bool shouldWait = true) override;
+    T* read(bool shouldWait = true) override;
 
     // documented in TypedReader
-    virtual void interrupt() override;
+    void interrupt() override;
 
     // documented in TypedReader
-    virtual T* lastRead() override;
+    T* lastRead() override;
 
     /**
      * Attach this buffer to a particular port.
@@ -89,10 +89,10 @@ public:
     void attach(Port& port);
 
     // documented in TypedReader
-    virtual void useCallback(TypedReaderCallback<T>& callback) override;
+    void useCallback(TypedReaderCallback<T>& callback) override;
 
     // documented in TypedReader
-    virtual void disableCallback() override;
+    void disableCallback() override;
 
     /**
      * Reads objects from a network connection.
@@ -111,33 +111,33 @@ public:
      *
      * @return new instance of the templated type.
      */
-    virtual PortReader* create() const override;
+    PortReader* create() const override;
 
     // documented in TypedReader
-    virtual void setReplier(PortReader& reader) override;
+    void setReplier(PortReader& reader) override;
 
     virtual bool getEnvelope(PortReader& envelope);
 
     // documented in TypedReader
-    virtual bool isClosed() override;
+    bool isClosed() override;
 
     // documented in TypedReader
-    virtual std::string getName() const override;
+    std::string getName() const override;
 
     // documented in LocalReader
-    virtual bool acceptObject(T* obj, PortWriter* wrapper) override;
+    bool acceptObject(T* obj, PortWriter* wrapper) override;
 
     // documented in LocalReader
-    virtual bool forgetObject(T* obj, yarp::os::PortWriter* wrapper) override;
+    bool forgetObject(T* obj, yarp::os::PortWriter* wrapper) override;
 
     // documented in TypedReader
-    virtual void* acquire() override;
+    void* acquire() override;
 
     // documented in TypedReader
-    virtual void release(void* handle) override;
+    void release(void* handle) override;
 
     // documented in TypedReader
-    virtual void setTargetPeriod(double period) override;
+    void setTargetPeriod(double period) override;
 
 private:
     yarp::os::PortReaderBufferBase implementation;

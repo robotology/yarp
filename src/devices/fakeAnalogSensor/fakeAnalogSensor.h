@@ -51,24 +51,24 @@ public:
 
     ~FakeAnalogSensor();
 
-    virtual bool open(yarp::os::Searchable& config) override;
-    virtual bool close() override;
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
     //IAnalogSensor interface
-    virtual int getChannels() override;
-    virtual int getState(int ch) override;
-    virtual int read(yarp::sig::Vector &out) override;
+    int getChannels() override;
+    int getState(int ch) override;
+    int read(yarp::sig::Vector &out) override;
 
-    virtual int calibrateSensor() override;
-    virtual int calibrateSensor(const yarp::sig::Vector& v) override;
+    int calibrateSensor() override;
+    int calibrateSensor(const yarp::sig::Vector& v) override;
 
-    virtual int calibrateChannel(int ch) override;
-    virtual int calibrateChannel(int ch, double v) override;
+    int calibrateChannel(int ch) override;
+    int calibrateChannel(int ch, double v) override;
 
     // RateThread interface
-    virtual void run() override;
-    virtual bool threadInit() override;
-    virtual void threadRelease() override;
+    void run() override;
+    bool threadInit() override;
+    void threadRelease() override;
 };
 
 

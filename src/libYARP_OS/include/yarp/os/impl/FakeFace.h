@@ -26,10 +26,10 @@ namespace yarp {
 class YARP_OS_impl_API yarp::os::impl::FakeFace : public yarp::os::Face
 {
 public:
-    virtual bool open(const Contact& address) override;
-    virtual void close() override;
-    virtual InputProtocol *read() override;
-    virtual OutputProtocol *write(const Contact& address) override;
+    bool open(const Contact& address) override;
+    void close() override;
+    InputProtocol *read() override;
+    OutputProtocol *write(const Contact& address) override;
 private:
 };
 

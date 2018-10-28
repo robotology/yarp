@@ -21,12 +21,12 @@ template <class T>
 class BareStyle : public T
 {
 public:
-    virtual bool read(yarp::os::ConnectionReader& reader) override
+    bool read(yarp::os::ConnectionReader& reader) override
     {
         return T::readBare(reader);
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) const override
+    bool write(yarp::os::ConnectionWriter& writer) const override
     {
         return T::writeBare(writer);
     }

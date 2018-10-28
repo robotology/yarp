@@ -362,7 +362,7 @@ public:
     /**
      * Callback for data.
      */
-    virtual bool read(yarp::os::ConnectionReader& reader) override
+    bool read(yarp::os::ConnectionReader& reader) override
     {
         // does nothing by default
         YARP_UNUSED(reader);
@@ -372,7 +372,7 @@ public:
     /**
      * Begin main thread.
      */
-    virtual bool start() override;
+    bool start() override;
 
     /**
      * Start up the port, but without a main thread.
@@ -403,12 +403,12 @@ public:
     /**
      * Shut down port.
      */
-    virtual void close() override;
+    void close() override;
 
     /**
      * The body of the main thread.
      */
-    virtual void run() override;
+    void run() override;
 
     /**
      * A diagnostic for testing purposes.

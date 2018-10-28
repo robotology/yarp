@@ -159,10 +159,10 @@ public:
     void unput(const std::string& key);
 
     // documented in Searchable
-    virtual Value& find(const std::string& key) const override;
+    Value& find(const std::string& key) const override;
 
     // documented in Searchable
-    virtual Bottle& findGroup(const std::string& key) const override;
+    Bottle& findGroup(const std::string& key) const override;
 
     /**
      * \brief Remove all associations.

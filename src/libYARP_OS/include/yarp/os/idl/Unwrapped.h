@@ -23,13 +23,13 @@ class Unwrapped : public yarp::os::Portable
 public:
     T content;
 
-    virtual bool read(yarp::os::ConnectionReader& reader) override
+    bool read(yarp::os::ConnectionReader& reader) override
     {
         WireReader wreader(reader);
         return content.read(wreader);
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) const override
+    bool write(yarp::os::ConnectionWriter& writer) const override
     {
         WireWriter wwriter(writer);
         return content.write(wwriter);
@@ -44,13 +44,13 @@ public:
 
     UnwrappedView(T& content) : content(content) {}
 
-    virtual bool read(yarp::os::ConnectionReader& reader) override
+    bool read(yarp::os::ConnectionReader& reader) override
     {
         WireReader wreader(reader);
         return content.read(wreader);
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) const override
+    bool write(yarp::os::ConnectionWriter& writer) const override
     {
         WireWriter wwriter(writer);
         return content.write(wwriter);

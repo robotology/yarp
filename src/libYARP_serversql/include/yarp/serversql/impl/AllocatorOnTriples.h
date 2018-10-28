@@ -39,15 +39,15 @@ public:
         mcastCursor = -1;
     }
 
-    virtual yarp::os::Contact completePortName(const yarp::os::Contact& c) override;
+    yarp::os::Contact completePortName(const yarp::os::Contact& c) override;
 
-    virtual yarp::os::Contact completeSocket(const yarp::os::Contact& c) override;
+    yarp::os::Contact completeSocket(const yarp::os::Contact& c) override;
 
     yarp::os::Contact completePortNumber(const yarp::os::Contact& c);
 
     yarp::os::Contact completeHost(const yarp::os::Contact& c);
 
-    virtual bool freePortResources(const yarp::os::Contact& c) override;
+    bool freePortResources(const yarp::os::Contact& c) override;
 
 private:
 

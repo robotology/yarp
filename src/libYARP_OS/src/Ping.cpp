@@ -209,7 +209,7 @@ public:
     {
     }
 
-    virtual bool read(ConnectionReader& connection) override
+    bool read(ConnectionReader& connection) override
     {
         double now = SystemClock::nowSystem();
         Bottle b;

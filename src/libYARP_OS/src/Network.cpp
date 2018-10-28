@@ -1498,7 +1498,7 @@ public:
         return car.getContent();
     }
 
-    virtual Carrier *create() const override {
+    Carrier *create() const override {
         return owner->create();
     }
 
@@ -1509,178 +1509,178 @@ public:
         return car.isValid();
     }
 
-    virtual bool isTextMode() const override {
+    bool isTextMode() const override {
         return getContent().isTextMode();
     }
 
-    virtual bool isBareMode() const override {
+    bool isBareMode() const override {
         return getContent().isBareMode();
     }
 
-    virtual bool canEscape() const override {
+    bool canEscape() const override {
         return getContent().canEscape();
     }
 
-    virtual void handleEnvelope(const std::string& envelope) override {
+    void handleEnvelope(const std::string& envelope) override {
         getContent().handleEnvelope(envelope);
     }
 
-    virtual bool requireAck() const override {
+    bool requireAck() const override {
         return getContent().requireAck();
     }
 
-    virtual bool supportReply() const override {
+    bool supportReply() const override {
         return getContent().supportReply();
     }
 
-    virtual bool isLocal() const override {
+    bool isLocal() const override {
         return getContent().isLocal();
     }
 
-    virtual bool isPush() const override {
+    bool isPush() const override {
         return getContent().isPush();
     }
 
-    virtual bool isConnectionless() const override {
+    bool isConnectionless() const override {
         return getContent().isConnectionless();
     }
 
-    virtual bool isBroadcast() const override {
+    bool isBroadcast() const override {
         return getContent().isBroadcast();
     }
 
-    virtual bool isActive() const override {
+    bool isActive() const override {
         return getContent().isActive();
     }
 
-    virtual bool modifiesIncomingData() const override {
+    bool modifiesIncomingData() const override {
         return getContent().modifiesIncomingData();
     }
 
-    virtual ConnectionReader& modifyIncomingData(ConnectionReader& reader) override {
+    ConnectionReader& modifyIncomingData(ConnectionReader& reader) override {
         return getContent().modifyIncomingData(reader);
     }
 
-    virtual bool acceptIncomingData(ConnectionReader& reader) override {
+    bool acceptIncomingData(ConnectionReader& reader) override {
         return getContent().acceptIncomingData(reader);
     }
 
-    virtual bool modifiesOutgoingData() const override {
+    bool modifiesOutgoingData() const override {
         return getContent().modifiesOutgoingData();
     }
 
-    virtual const PortWriter& modifyOutgoingData(const PortWriter& writer) override {
+    const PortWriter& modifyOutgoingData(const PortWriter& writer) override {
         return getContent().modifyOutgoingData(writer);
     }
 
-    virtual bool acceptOutgoingData(const PortWriter& writer) override {
+    bool acceptOutgoingData(const PortWriter& writer) override {
         return getContent().acceptOutgoingData(writer);
     }
 
-    virtual bool modifiesReply() const override {
+    bool modifiesReply() const override {
         return getContent().modifiesReply();
     }
 
-    virtual PortReader& modifyReply(PortReader& reader) override {
+    PortReader& modifyReply(PortReader& reader) override {
         return getContent().modifyReply(reader);
     }
 
-    virtual void setCarrierParams(const Property& params) override {
+    void setCarrierParams(const Property& params) override {
         getContent().setCarrierParams(params);
     }
 
-    virtual void getCarrierParams(Property& params) const override {
+    void getCarrierParams(Property& params) const override {
         getContent().getCarrierParams(params);
     }
 
-    virtual void getHeader(yarp::os::Bytes& header) const override {
+    void getHeader(yarp::os::Bytes& header) const override {
         getContent().getHeader(header);
     }
 
-    virtual void prepareDisconnect() override {
+    void prepareDisconnect() override {
         getContent().prepareDisconnect();
     }
 
-    virtual std::string getName() const override {
+    std::string getName() const override {
         return getContent().getName();
     }
 
 
     // Forward yarp::os::Carrier methods
 
-    virtual bool checkHeader(const yarp::os::Bytes& header) override {
+    bool checkHeader(const yarp::os::Bytes& header) override {
         return getContent().checkHeader(header);
     }
 
-    virtual void setParameters(const yarp::os::Bytes& header) override {
+    void setParameters(const yarp::os::Bytes& header) override {
         getContent().setParameters(header);
     }
 
-    virtual bool canAccept() const override {
+    bool canAccept() const override {
         return getContent().canAccept();
     }
 
-    virtual bool canOffer() const override {
+    bool canOffer() const override {
         return getContent().canOffer();
     }
 
-    virtual bool prepareSend(ConnectionState& proto) override {
+    bool prepareSend(ConnectionState& proto) override {
         return getContent().prepareSend(proto);
     }
 
-    virtual bool sendHeader(ConnectionState& proto) override {
+    bool sendHeader(ConnectionState& proto) override {
         return getContent().sendHeader(proto);
     }
 
-    virtual bool expectReplyToHeader(ConnectionState& proto) override {
+    bool expectReplyToHeader(ConnectionState& proto) override {
         return getContent().expectReplyToHeader(proto);
     }
 
-    virtual bool write(ConnectionState& proto, SizedWriter& writer) override {
+    bool write(ConnectionState& proto, SizedWriter& writer) override {
         return getContent().write(proto, writer);
     }
 
-    virtual bool reply(ConnectionState& proto, SizedWriter& writer) override {
+    bool reply(ConnectionState& proto, SizedWriter& writer) override {
         return getContent().reply(proto, writer);
     }
 
-    virtual bool expectExtraHeader(ConnectionState& proto) override {
+    bool expectExtraHeader(ConnectionState& proto) override {
         return getContent().expectExtraHeader(proto);
     }
 
-    virtual bool respondToHeader(ConnectionState& proto) override {
+    bool respondToHeader(ConnectionState& proto) override {
         return getContent().respondToHeader(proto);
     }
 
-    virtual bool expectIndex(ConnectionState& proto) override {
+    bool expectIndex(ConnectionState& proto) override {
         return getContent().expectIndex(proto);
     }
 
-    virtual bool expectSenderSpecifier(ConnectionState& proto) override {
+    bool expectSenderSpecifier(ConnectionState& proto) override {
         return getContent().expectSenderSpecifier(proto);
     }
 
-    virtual bool sendAck(ConnectionState& proto) override {
+    bool sendAck(ConnectionState& proto) override {
         return getContent().sendAck(proto);
     }
 
-    virtual bool expectAck(ConnectionState& proto) override {
+    bool expectAck(ConnectionState& proto) override {
         return getContent().expectAck(proto);
     }
 
-    virtual std::string toString() const override {
+    std::string toString() const override {
         return getContent().toString();
     }
 
-    virtual void close() override {
+    void close() override {
         getContent().close();
     }
 
-    virtual std::string getBootstrapCarrierName() const override {
+    std::string getBootstrapCarrierName() const override {
         return getContent().getBootstrapCarrierName();
     }
 
-    virtual int connect(const yarp::os::Contact& src,
+    int connect(const yarp::os::Contact& src,
                         const yarp::os::Contact& dest,
                         const yarp::os::ContactStyle& style,
                         int mode,
@@ -1688,14 +1688,14 @@ public:
         return getContent().connect(src, dest, style, mode, reversed);
     }
 
-    virtual bool configure(ConnectionState& proto) override {
+    bool configure(ConnectionState& proto) override {
         return getContent().configure(proto);
     }
-    virtual bool configureFromProperty(yarp::os::Property& options) override {
+    bool configureFromProperty(yarp::os::Property& options) override {
         return getContent().configureFromProperty(options);
     }
 
-    virtual yarp::os::Face* createFace() const override {
+    yarp::os::Face* createFace() const override {
         return getContent().createFace();
     }
 };
@@ -1735,7 +1735,7 @@ public:
         return car.getContent();
     }
 
-    virtual Carrier *create() const override {
+    Carrier *create() const override {
         ForwardingCarrier *ncar = new ForwardingCarrier(plugin.getFactory(), const_cast<StubCarrier*>(this));
         if (ncar==nullptr) {
             return nullptr;

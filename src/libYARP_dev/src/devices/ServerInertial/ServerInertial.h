@@ -165,37 +165,37 @@ public:
      * @param config The options to use
      * @return true iff the object could be configured.
      */
-    virtual bool open(yarp::os::Searchable& config) override;
+    bool open(yarp::os::Searchable& config) override;
 
-    virtual bool close() override;
+    bool close() override;
 
     virtual bool getInertial(yarp::os::Bottle &bot);
 
-    virtual void run() override;
+    void run() override;
 
-    virtual bool read(yarp::os::ConnectionReader& connection) override;
+    bool read(yarp::os::ConnectionReader& connection) override;
 
-    virtual bool read(yarp::sig::Vector &out) override;
+    bool read(yarp::sig::Vector &out) override;
 
-    virtual bool getChannels(int *nc) override;
+    bool getChannels(int *nc) override;
 
-    virtual bool calibrate(int ch, double v) override;
+    bool calibrate(int ch, double v) override;
 
     /**    IWrapper interface
      * Attach to another object.
      * @param poly the polydriver that you want to attach to.
      * @return true/false on success failure.
      */
-    virtual bool attach(PolyDriver *poly) override;
-    virtual bool detach() override;
+    bool attach(PolyDriver *poly) override;
+    bool detach() override;
 
     /**   IMultipleWrapper interface
      * Attach to a list of objects.
      * @param p the polydriver list that you want to attach to.
      * @return true/false on success failure.
      */
-    virtual bool attachAll(const PolyDriverList &p) override;
-    virtual bool detachAll() override;
+    bool attachAll(const PolyDriverList &p) override;
+    bool detachAll() override;
 
 private:
 

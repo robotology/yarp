@@ -50,12 +50,12 @@ public:
      * Prepare to serve this output.  A thread will start if a call
      * to send() has been made with options that require a thread.
      */
-    virtual bool start() override;
+    bool start() override;
 
     /**
      * The body of a thread managing background sends.
      */
-    virtual void run() override;
+    void run() override;
 
     /**
      * Perform send operations without a separate thread.
@@ -63,25 +63,25 @@ public:
     virtual void runSingleThreaded();
 
     // documented in PortCoreUnit
-    virtual bool isOutput() override
+    bool isOutput() override
     {
         return true;
     }
 
     // documented in PortCoreUnit
-    virtual void close() override
+    void close() override
     {
         closeMain();
     }
 
     // documented in PortCoreUnit
-    virtual bool isFinished() override
+    bool isFinished() override
     {
         return finished;
     }
 
     // documented in PortCoreUnit
-    virtual Route getRoute() override;
+    Route getRoute() override;
 
     // documented in PortCoreUnit
     virtual void *send(const yarp::os::PortWriter& writer,
@@ -94,16 +94,16 @@ public:
                        bool *gotReply) override;
 
     // documented in PortCoreUnit
-    virtual void *takeTracker() override;
+    void *takeTracker() override;
 
     // documented in PortCoreUnit
-    virtual bool isBusy() override;
+    bool isBusy() override;
 
     // documented in PortCoreUnit
-    virtual void setCarrierParams(const yarp::os::Property& params) override;
+    void setCarrierParams(const yarp::os::Property& params) override;
 
     // documented in PortCoreUnit
-    virtual void getCarrierParams(yarp::os::Property& params) override;
+    void getCarrierParams(yarp::os::Property& params) override;
 
     // return the protocol object
     OutputProtocol* getOutPutProtocol();

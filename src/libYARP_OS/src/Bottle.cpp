@@ -31,7 +31,7 @@ public:
     {
         setReadOnly(true);
     }
-    virtual bool isNull() const override
+    bool isNull() const override
     {
         return true;
     }

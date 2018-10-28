@@ -84,29 +84,29 @@ public:
 
     virtual ~DgramTwoWayStream();
 
-    virtual InputStream& getInputStream() override
+    InputStream& getInputStream() override
     {
         return *this;
     }
 
-    virtual OutputStream& getOutputStream() override
+    OutputStream& getOutputStream() override
     {
         return *this;
     }
 
-    virtual const Contact& getLocalAddress() const override
+    const Contact& getLocalAddress() const override
     {
         return localAddress;
     }
 
-    virtual const Contact& getRemoteAddress() const override
+    const Contact& getRemoteAddress() const override
     {
         return remoteAddress;
     }
 
-    virtual void interrupt() override;
+    void interrupt() override;
 
-    virtual void close() override
+    void close() override
     {
         closeMain();
     }
@@ -114,26 +114,26 @@ public:
     virtual void closeMain();
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
+    yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     using yarp::os::OutputStream::write;
-    virtual void write(const yarp::os::Bytes& b) override;
+    void write(const yarp::os::Bytes& b) override;
 
-    virtual void flush() override;
+    void flush() override;
 
-    virtual bool isOk() const override;
+    bool isOk() const override;
 
-    virtual void reset() override;
+    void reset() override;
 
-    virtual void beginPacket() override;
+    void beginPacket() override;
 
-    virtual void endPacket() override;
+    void endPacket() override;
 
     yarp::os::Bytes getMonitor();
 
-    virtual bool setTypeOfService(int tos) override;
+    bool setTypeOfService(int tos) override;
 
-    virtual int getTypeOfService() override;
+    int getTypeOfService() override;
 
     void setMonitor(const yarp::os::Bytes& data)
     {

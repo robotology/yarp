@@ -107,7 +107,7 @@ public:
         return cback!=nullptr;
     }
 
-    virtual void onCompletion(void *tracker) override {
+    void onCompletion(void *tracker) override {
         stateSema.wait();
         YARP_DEBUG(Logger::get(), "freeing up a writer buffer");
         packets.freePacket((PortCorePacket*)tracker, false);

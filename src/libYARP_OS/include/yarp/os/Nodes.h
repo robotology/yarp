@@ -44,13 +44,13 @@ public:
      * this container.
      * @param contactable to be added
      */
-    virtual void add(Contactable& contactable) override;
+    void add(Contactable& contactable) override;
 
     /**
      * remove a Contactable from the Node specified in the contactable's name.
      * @param contactable to be removed
      */
-    virtual void remove(Contactable& contactable) override;
+    void remove(Contactable& contactable) override;
 
     /**
      * query the list of Node to find a Contact with the specified name.

@@ -739,7 +739,7 @@ public:
         this->server = server;
     }
 
-    virtual bool read(ConnectionReader& reader) override {
+    bool read(ConnectionReader& reader) override {
         YTRACE("NameServer::read start");
         std::string ref = "NAME_SERVER ";
         bool ok = true;
@@ -817,13 +817,13 @@ public:
         this->port = &port;
     }
 
-    virtual void onEvent(Bottle& event) override {
+    void onEvent(Bottle& event) override {
         if (port!=nullptr) {
             port->write(event);
         }
     }
 
-    virtual PortReader *create() const override {
+    PortReader *create() const override {
         return new MainNameServerWorker(const_cast<MainNameServer*>(this));
     }
 };

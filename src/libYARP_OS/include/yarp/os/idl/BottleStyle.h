@@ -21,12 +21,12 @@ template <class T>
 class BottleStyle : public T
 {
 public:
-    virtual bool read(yarp::os::ConnectionReader& reader) override
+    bool read(yarp::os::ConnectionReader& reader) override
     {
         return T::readBottle(reader);
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) const override
+    bool write(yarp::os::ConnectionWriter& writer) const override
     {
         return T::writeBottle(writer);
     }

@@ -62,19 +62,19 @@ public:
         system_resource = NULL;
     }
 
-    virtual bool open(yarp::os::Searchable & config) override;
+    bool open(yarp::os::Searchable & config) override;
 
-    virtual bool close() override;
+    bool close() override;
 
-    virtual bool putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) override;
+    bool putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) override;
 
     virtual bool putAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                                 yarp::sig::Sound& sound) override;
 
 
-    virtual bool hasAudio() override { return true; }
+    bool hasAudio() override { return true; }
 
-    virtual bool hasVideo() override { return true; }
+    bool hasVideo() override { return true; }
 
 private:
     void *system_resource;

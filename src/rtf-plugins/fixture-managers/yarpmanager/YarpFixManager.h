@@ -40,8 +40,8 @@ public:
     }
 
 protected:
-    virtual void onExecutableFailed(void* which) override;
-    virtual void onCnnFailed(void* which) override;
+    void onExecutableFailed(void* which) override;
+    void onCnnFailed(void* which) override;
 private:
     RTF::FixtureEvents* dispatcher;
 
@@ -53,9 +53,9 @@ public:
     YarpFixManager();
     virtual ~YarpFixManager();
 
-    virtual bool setup(int argc, char** argv) override;
+    bool setup(int argc, char** argv) override;
 
-    virtual void tearDown() override;
+    void tearDown() override;
 
 private:
     bool initialized;

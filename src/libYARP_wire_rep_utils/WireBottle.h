@@ -26,41 +26,41 @@ public:
         payload_offset = offset;
     }
 
-    virtual size_t length() const override {
+    size_t length() const override {
         return delegate->length()-payload_index;
     }
 
-    virtual size_t headerLength() const override {
+    size_t headerLength() const override {
         return 0; // not supported
     }
 
-    virtual size_t length(size_t index) const override {
+    size_t length(size_t index) const override {
         index += payload_index;
         if (index==payload_index) return delegate->length(index)-payload_offset;
         return delegate->length(index);
     }
 
-    virtual const char *data(size_t index) const override {
+    const char *data(size_t index) const override {
         index += payload_index;
         if (index==payload_index) return delegate->data(index)+payload_offset;
         return delegate->data(index);
     }
 
-    virtual yarp::os::PortReader *getReplyHandler() override {
+    yarp::os::PortReader *getReplyHandler() override {
         return delegate->getReplyHandler();
     }
 
-    virtual yarp::os::Portable *getReference() override {
+    yarp::os::Portable *getReference() override {
         return delegate->getReference();
     }
 
-    virtual bool dropRequested() override { return false; }
+    bool dropRequested() override { return false; }
 
 
-    virtual void startWrite() const override {
+    void startWrite() const override {
     }
 
-    virtual void stopWrite() const override {
+    void stopWrite() const override {
     }
 };
 

@@ -56,9 +56,9 @@ public:
      */
     virtual const char* getRawData() const = 0;
 
-    virtual bool read(yarp::os::ConnectionReader& connection) override = 0;
+    bool read(yarp::os::ConnectionReader& connection) override = 0;
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) const override = 0;
+    bool write(yarp::os::ConnectionWriter& writer) const override = 0;
 
     virtual int getBottleTag() const = 0;
 
@@ -77,7 +77,7 @@ public:
      */
     virtual int getPointType() const;
 
-    virtual yarp::os::Type getType() const override;
+    yarp::os::Type getType() const override;
 
     /**
      * @return true if the point cloud is organized in an image-like structure

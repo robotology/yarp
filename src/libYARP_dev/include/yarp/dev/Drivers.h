@@ -104,23 +104,23 @@ public:
     {
     }
 
-    virtual std::string toString() const override {
+    std::string toString() const override {
         return desc;
     }
 
-    virtual std::string getName() const override {
+    std::string getName() const override {
         return desc;
     }
 
-    virtual std::string getWrapper() const override {
+    std::string getWrapper() const override {
         return wrap;
     }
 
-    virtual std::string getCode() const override {
+    std::string getCode() const override {
         return code;
     }
 
-    virtual DeviceDriver *create() const override {
+    DeviceDriver *create() const override {
         return new T;
     }
 };
@@ -140,23 +140,23 @@ public:
     {
     }
 
-    virtual std::string toString() const override {
+    std::string toString() const override {
         return desc;
     }
 
-    virtual std::string getName() const override {
+    std::string getName() const override {
         return desc;
     }
 
-    virtual std::string getWrapper() const override {
+    std::string getWrapper() const override {
         return wrap;
     }
 
-    virtual std::string getCode() const override {
+    std::string getCode() const override {
         return code;
     }
 
-    virtual DeviceDriver *create() const override;
+    DeviceDriver *create() const override;
 };
 
 

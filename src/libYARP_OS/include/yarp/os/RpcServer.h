@@ -46,18 +46,18 @@ public:
                        const PortWriter* callback = nullptr) const override;
 
     // documented in UnbufferedContactable
-    virtual bool read(PortReader& reader, bool willReply = true) override;
+    bool read(PortReader& reader, bool willReply = true) override;
 
-    virtual void setInputMode(bool expectInput) override;
-    virtual void setOutputMode(bool expectOutput) override;
-    virtual void setRpcMode(bool expectRpc) override;
+    void setInputMode(bool expectInput) override;
+    void setOutputMode(bool expectOutput) override;
+    void setRpcMode(bool expectRpc) override;
 
-    virtual Port& asPort() override
+    Port& asPort() override
     {
         return port;
     }
 
-    virtual const Port& asPort() const override
+    const Port& asPort() const override
     {
         return port;
     }

@@ -38,7 +38,7 @@ public:
     Private();
     ~Private();
 
-    virtual bool read(ConnectionReader& reader) override;
+    bool read(ConnectionReader& reader) override;
 
     std::string clockName;
 

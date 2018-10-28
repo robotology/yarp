@@ -117,7 +117,7 @@ public:
      */
     ServerFrameGrabber();
 
-    virtual bool close() override;
+    bool close() override;
     /**
      * Configure with a set of options. These are:
      * <TABLE>
@@ -128,9 +128,9 @@ public:
      * @param config The options to use
      * @return true iff the object could be configured.
      */
-    virtual bool open(yarp::os::Searchable& config) override;
+    bool open(yarp::os::Searchable& config) override;
 
-    //virtual bool read(ConnectionReader& connection) override;
+    //bool read(ConnectionReader& connection) override;
 
     virtual bool respond(const yarp::os::Bottle& command,
                          yarp::os::Bottle& reply) override;
@@ -139,35 +139,35 @@ public:
 
     bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
 
-    virtual bool getDatum(yarp::sig::Sound& sound) override;
+    bool getDatum(yarp::sig::Sound& sound) override;
 
-    virtual bool getDatum(ImageRgbSound& imageSound) override;
+    bool getDatum(ImageRgbSound& imageSound) override;
 
     virtual bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                           yarp::sig::Sound& sound) override;
 
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
+    bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
 
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image);
 
-    virtual bool getSound(yarp::sig::Sound& sound) override;
+    bool getSound(yarp::sig::Sound& sound) override;
 
-    virtual bool startRecording() override;
+    bool startRecording() override;
 
-    virtual bool stopRecording() override;
+    bool stopRecording() override;
 
     virtual bool getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                                 yarp::sig::Sound& sound) override;
 
-    virtual int height() const override;
+    int height() const override;
 
-    virtual int width() const override;
+    int width() const override;
 
-    virtual bool startService() override;
+    bool startService() override;
 
-    virtual bool stopService() override;
+    bool stopService() override;
 
-    virtual bool updateService() override;
+    bool updateService() override;
 };
 
 #endif // YARP_DEV_SERVERFRAMEGRABBER_H

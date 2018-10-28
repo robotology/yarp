@@ -44,22 +44,22 @@ public:
         this->port = &port;
     }
 
-    virtual void onEvent(yarp::os::Bottle& event) override {
+    void onEvent(yarp::os::Bottle& event) override {
         ns.onEvent(event);
         if (port!=NULL) {
             port->write(event);
         }
     }
 
-    virtual yarp::os::PortReader *create() const override {
+    yarp::os::PortReader *create() const override {
         return new NameServerConnectionHandler(const_cast<NameServerManager*>(this));
     }
 
-    virtual void lock() override {
+    void lock() override {
         mutex.lock();
     }
 
-    virtual void unlock() override {
+    void unlock() override {
         mutex.unlock();
     }
 

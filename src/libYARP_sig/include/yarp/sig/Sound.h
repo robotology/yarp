@@ -102,9 +102,9 @@ public:
 
     size_t getChannels() const { return channels; }
 
-    virtual bool read(yarp::os::ConnectionReader& connection) override;
+    bool read(yarp::os::ConnectionReader& connection) override;
 
-    virtual bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
 
     unsigned char *getRawData() const;
 

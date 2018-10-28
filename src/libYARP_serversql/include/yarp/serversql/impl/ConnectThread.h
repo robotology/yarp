@@ -41,7 +41,7 @@ public:
         positive = true;
     }
 
-    virtual void run() override {
+    void run() override {
         do {
             mutex.lock();
             if (ct==0) {

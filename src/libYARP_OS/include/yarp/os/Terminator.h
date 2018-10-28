@@ -67,7 +67,7 @@ public:
     virtual ~Terminee();
 
 
-    virtual void run() override;
+    void run() override;
 
     /**
      * Call this method to wait for a quit message.

@@ -51,16 +51,16 @@ public:
      */
     virtual ~ImplementCurrentControl();
 
-    virtual bool getNumberOfMotors(int *ax) override;
-    virtual bool getRefCurrent(int j, double *) override;
-    virtual bool getRefCurrents(double *t) override;
-    virtual bool setRefCurrents(const double *t) override;
-    virtual bool setRefCurrent(int j, double t) override;
-    virtual bool setRefCurrents(const int n_joint, const int *joints, const double *t) override;
-    virtual bool getCurrents(double *t) override;
-    virtual bool getCurrent(int j, double *t) override;
-    virtual bool getCurrentRange(int j, double *min, double *max) override;
-    virtual bool getCurrentRanges(double *min, double *max) override;
+    bool getNumberOfMotors(int *ax) override;
+    bool getRefCurrent(int j, double *) override;
+    bool getRefCurrents(double *t) override;
+    bool setRefCurrents(const double *t) override;
+    bool setRefCurrent(int j, double t) override;
+    bool setRefCurrents(const int n_joint, const int *joints, const double *t) override;
+    bool getCurrents(double *t) override;
+    bool getCurrent(int j, double *t) override;
+    bool getCurrentRange(int j, double *min, double *max) override;
+    bool getCurrentRanges(double *min, double *max) override;
 };
 
 #endif // YARP_DEV_IMPLEMENTCURRENTCONTROL_H

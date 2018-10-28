@@ -87,120 +87,120 @@ public:
         if (local) delete local;
     }
 
-    virtual Carrier *create() const override {
+    Carrier *create() const override {
         return new BayerCarrier();
     }
 
-    virtual std::string getName() const override {
+    std::string getName() const override {
         return "bayer";
     }
 
-    virtual std::string toString() const override {
+    std::string toString() const override {
         return "bayer_carrier";
     }
 
-    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) override;
+    yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) override;
 
 
     ////////////////////////////////////////////////////////////////////////
     // ConnectionReader methods
 
-    virtual bool expectBlock(char *data, size_t len) override {
+    bool expectBlock(char *data, size_t len) override {
         return local->expectBlock(data,len);
     }
 
-    virtual std::string expectText(int terminatingChar = '\n') override {
+    std::string expectText(int terminatingChar = '\n') override {
         return local->expectText(terminatingChar);
     }
 
-    virtual std::int8_t expectInt8() override {
+    std::int8_t expectInt8() override {
         return local->expectInt8();
     }
 
-    virtual std::int16_t expectInt16() override {
+    std::int16_t expectInt16() override {
         return local->expectInt64();
     }
 
-    virtual std::int32_t expectInt32() override {
+    std::int32_t expectInt32() override {
         return local->expectInt32();
     }
 
-    virtual std::int64_t expectInt64() override {
+    std::int64_t expectInt64() override {
         return local->expectInt64();
     }
 
-    virtual bool pushInt(int x) override {
+    bool pushInt(int x) override {
         return local->pushInt(x);
     }
 
-    virtual yarp::conf::float32_t expectFloat32() override {
+    yarp::conf::float32_t expectFloat32() override {
         return local->expectFloat32();
     }
 
-    virtual yarp::conf::float64_t expectFloat64() override {
+    yarp::conf::float64_t expectFloat64() override {
         return local->expectFloat64();
     }
 
-    virtual bool isTextMode() const override {
+    bool isTextMode() const override {
         return false;
     }
 
-    virtual bool isBareMode() const override {
+    bool isBareMode() const override {
         return false;
     }
 
-    virtual bool convertTextMode() override {
+    bool convertTextMode() override {
         return true;
     }
 
-    virtual size_t getSize() const override {
+    size_t getSize() const override {
         if (image_data_len) {
             processBuffered();
         }
         return sizeof(header)+image_data_len;
     }
 
-    virtual ConnectionWriter *getWriter() override {
+    ConnectionWriter *getWriter() override {
         return parent->getWriter();
     }
 
-    virtual Bytes readEnvelope() override {
+    Bytes readEnvelope() override {
         return parent->readEnvelope();
     }
 
-    virtual Portable *getReference() const override {
+    Portable *getReference() const override {
         return parent->getReference();
     }
 
-    virtual Contact getRemoteContact() const override {
+    Contact getRemoteContact() const override {
         return parent->getRemoteContact();
     }
 
-    virtual Contact getLocalContact() const override {
+    Contact getLocalContact() const override {
         return parent->getLocalContact();
     }
 
-    virtual bool isValid() const override {
+    bool isValid() const override {
         return true;
     }
 
-    virtual bool isActive() const override {
+    bool isActive() const override {
         return parent->isActive();
     }
 
-    virtual bool isError() const override {
+    bool isError() const override {
         return parent->isError()||!happy;
     }
 
-    virtual void requestDrop() override {
+    void requestDrop() override {
         parent->requestDrop();
     }
 
-    virtual const yarp::os::Searchable& getConnectionModifiers() const override {
+    const yarp::os::Searchable& getConnectionModifiers() const override {
         return parent->getConnectionModifiers();
     }
 
-    virtual bool setSize(size_t len) override {
+    bool setSize(size_t len) override {
         return parent->setSize(len);
     }
 
@@ -208,12 +208,12 @@ public:
     // InputStream methods
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
+    yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
-    virtual void close() override {
+    void close() override {
     }
 
-    virtual bool isOk() const override {
+    bool isOk() const override {
         return happy;
     }
 
