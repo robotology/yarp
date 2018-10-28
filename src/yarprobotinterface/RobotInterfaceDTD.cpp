@@ -49,13 +49,13 @@ const std::string RobotInterfaceDTD::ext(".dtd");
 
 
 RobotInterfaceDTD::DocType StringToDocType(const std::string &type) {
-    if (!type.compare("robot")) {
+    if (type == "robot") {
         return RobotInterfaceDTD::DocTypeRobot;
-    } else if (!type.compare("devices")) {
+    } else if (type == "devices") {
         return RobotInterfaceDTD::DocTypeDevices;
-    } else if (!type.compare("params")) {
+    } else if (type == "params") {
         return RobotInterfaceDTD::DocTypeParams;
-    } else if (!type.compare("actions")) {
+    } else if (type == "actions") {
         return RobotInterfaceDTD::DocTypeActions;
     }
     return RobotInterfaceDTD::DocTypeUnknown;

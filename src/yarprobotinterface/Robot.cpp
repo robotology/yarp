@@ -111,7 +111,7 @@ public:
 bool RobotInterface::Robot::Private::hasDevice(const std::string &name) const
 {
     for (const auto& device : devices) {
-        if (!name.compare(device.name())) {
+        if (name == device.name()) {
             return true;
         }
     }
@@ -121,7 +121,7 @@ bool RobotInterface::Robot::Private::hasDevice(const std::string &name) const
 RobotInterface::Device* RobotInterface::Robot::Private::findDevice(const std::string &name)
 {
     for (auto& device : devices) {
-        if (!name.compare(device.name())) {
+        if (name == device.name()) {
             return &device;
         }
     }
