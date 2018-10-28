@@ -348,8 +348,8 @@ bool NetworkProfiler::updateConnectionQosStatus(yarp::profiler::graph::Graph& gr
 
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         const Vertex &v1 = (**itr);
-        for(size_t i=0; i<v1.outEdges().size(); i++) {
-            Edge& edge = (Edge&) v1.outEdges()[i];
+        for(const auto& i : v1.outEdges()) {
+            Edge& edge = (Edge&) i;
             const Vertex &v2 = edge.second();
             if(!v1.property.check("hidden") && !v2.property.check("hidden")) {
                 if(edge.property.find("type").asString() == "connection") {

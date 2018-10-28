@@ -354,8 +354,7 @@ void MainWindow::drawGraph(Graph &graph)
 
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         const Vertex &v1 = (**itr);
-        for(size_t i=0; i<v1.outEdges().size(); i++) {
-            const Edge& edge = v1.outEdges()[i];
+        for(const auto& edge : v1.outEdges()) {
             const Vertex &v2 = edge.second();
             string targetName = v2.property.find("name").asString();
             if(!ui->actionDebugMode->isChecked() && targetName.find("/yarplogger") != string::npos)
@@ -821,8 +820,8 @@ void MainWindow::onExportConList() {
     const pvertex_set& vertices = currentGraph->vertices();
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         const Vertex &v1 = (**itr);
-        for(size_t i=0; i<v1.outEdges().size(); i++) {
-            Edge& edge = (Edge&) v1.outEdges()[i];
+        for(const auto& i : v1.outEdges()) {
+            Edge& edge = (Edge&) i;
             const Vertex &v2 = edge.second();
             if(!v1.property.find("hidden").asBool() && !v2.property.find("hidden").asBool()) {
                 if(edge.property.find("type").asString() == "connection") {
