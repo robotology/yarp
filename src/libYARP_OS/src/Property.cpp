@@ -790,7 +790,7 @@ public:
                 }
             }
         }
-        return output.c_str();
+        return output;
     }
 
     void fromArguments(const char *command, bool wipe=true) {
