@@ -605,7 +605,7 @@ void FrameTransformServer::threadRelease()
 void FrameTransformServer::run()
 {
     LockGuard lock(m_mutex);
-    if (1)
+    if (true)
     {
         double current_time = yarp::os::Time::now();
 

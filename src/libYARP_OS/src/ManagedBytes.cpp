@@ -128,7 +128,7 @@ void ManagedBytes::clear() {
         if (get()!=nullptr) {
             delete[] get();
         }
-        owned = 0;
+        owned = false;
     }
     b = Bytes(nullptr, 0);
     use = 0;

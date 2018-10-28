@@ -76,7 +76,7 @@ void Transforms_client_storage::onRead(yarp::os::Bottle &b)
 
     //now compare timestamps
    // if ((1000 * (newStamp.getTime() - m_lastStamp.getTime()))<TRANSFORM_TIMEOUT)
-    if (1)
+    if (true)
     {
         m_state = IFrameTransform::TRANSFORM_OK;
 

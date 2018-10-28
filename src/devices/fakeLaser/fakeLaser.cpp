@@ -393,7 +393,7 @@ double FakeLaser::checkStraightLine(MapGrid2D::XYCell src, MapGrid2D::XYCell dst
     if (src.x < dst.x) { sx = 1; } else { sx = -1; }
     if (src.y < dst.y) { sy = 1; } else { sy = -1; }
 
-    while (1)
+    while (true)
     {
         //if (m_map.isFree(src) == false)
         if (m_map.isWall(src))

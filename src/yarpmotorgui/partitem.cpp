@@ -2138,12 +2138,12 @@ bool PartItem::updatePart()
 
     // *** update measured encoders, velocity, torques ***
     bool b = true;
-    if (1)
+    if (true)
     {
         b = m_iencs->getEncoders(m_positions);
         if (!b) { yWarning("Unable to update encoders"); return false; }
     }
-    if (1)
+    if (true)
     {
         b = m_iTrq->getTorques(m_torques);
         if (!b) { yWarning("Unable to update torques"); }
@@ -2202,17 +2202,17 @@ bool PartItem::updatePart()
     for (int jk = 0; jk < number_of_joints; jk++)
     {
         auto* joint = (JointItem*)m_layout->itemAt(jk)->widget();
-        if (1) { joint->setPosition(m_positions[jk]); }
+        if (true) { joint->setPosition(m_positions[jk]); }
         else {}
-        if (1) { joint->setTorque(m_torques[jk]); }
+        if (true) { joint->setTorque(m_torques[jk]); }
         else {}
-        if (1) { joint->setSpeed(m_speeds[jk]); }
+        if (true) { joint->setSpeed(m_speeds[jk]); }
         else {}
-        if (1) { joint->setCurrent(m_currents[jk]); }
+        if (true) { joint->setCurrent(m_currents[jk]); }
         else {}
-        if (1) { joint->setMotorPosition(m_motorPositions[jk]); }
+        if (true) { joint->setMotorPosition(m_motorPositions[jk]); }
         else {}
-        if (1) { joint->setDutyCycles(m_dutyCycles[jk]); }
+        if (true) { joint->setDutyCycles(m_dutyCycles[jk]); }
         else {}
     }
     
