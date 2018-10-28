@@ -81,10 +81,7 @@ MapGrid2D::MapGrid2D()
     }
 }
 
-MapGrid2D::~MapGrid2D()
-{
-
-}
+MapGrid2D::~MapGrid2D() = default;
 
 bool MapGrid2D::isNotFree(MapGrid2D::XYCell cell) const
 {

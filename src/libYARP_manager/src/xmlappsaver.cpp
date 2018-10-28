@@ -35,7 +35,7 @@ bool XmlAppSaver::save(Application* application)
     return serialXml(application, strFileName.c_str());
 }
 
-XmlAppSaver::~XmlAppSaver(){}
+XmlAppSaver::~XmlAppSaver() = default;
 
 bool XmlAppSaver::serialXml(Application* app, const char* szFile)
 {

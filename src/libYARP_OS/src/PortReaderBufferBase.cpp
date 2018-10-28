@@ -348,9 +348,7 @@ public:
 
 
 
-PortReaderBufferBaseCreator::~PortReaderBufferBaseCreator()
-{
-}
+PortReaderBufferBaseCreator::~PortReaderBufferBaseCreator() = default;
 
 PortReaderBufferBase::PortReaderBufferBase(unsigned int maxBuffer) :
         mPriv(new Private(*this, maxBuffer))

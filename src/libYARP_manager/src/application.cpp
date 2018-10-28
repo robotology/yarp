@@ -103,7 +103,7 @@ Application::Application(const Application &app) : Node(app)
 }
 
 
-Application::~Application() { }
+Application::~Application() = default;
 
 
 Node* Application::clone()

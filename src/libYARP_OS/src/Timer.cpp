@@ -35,9 +35,7 @@ public:
     {
     }
 
-    virtual ~PrivateImpl()
-    {
-    }
+    virtual ~PrivateImpl() = default;
 
     virtual bool startTimer() = 0;
 

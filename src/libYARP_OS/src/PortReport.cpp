@@ -10,5 +10,4 @@
 #include <yarp/os/PortReport.h>
 
 
-yarp::os::PortReport::~PortReport() {
-}
+yarp::os::PortReport::~PortReport() = default;

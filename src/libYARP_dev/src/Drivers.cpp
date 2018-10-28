@@ -175,8 +175,7 @@ public:
         init();
     }
 
-    virtual ~StubDriver() {
-    }
+    virtual ~StubDriver() = default;
 
     void init() {
         if (plugin.open(settings)) {

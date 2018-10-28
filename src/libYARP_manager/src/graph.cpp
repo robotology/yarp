@@ -10,7 +10,7 @@
 
 using namespace yarp::manager;
 
-Graph::Graph() { }
+Graph::Graph() = default;
 
 Graph::~Graph()
 {

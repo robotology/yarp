@@ -32,9 +32,9 @@ using namespace std;
 using namespace yarp::manager;
 
 
-BinaryExpParser::BinaryExpParser() { }
+BinaryExpParser::BinaryExpParser() = default;
 
-BinaryExpParser::~BinaryExpParser() { }
+BinaryExpParser::~BinaryExpParser() = default;
 
 bool BinaryExpParser::parse(string _exp)
 {

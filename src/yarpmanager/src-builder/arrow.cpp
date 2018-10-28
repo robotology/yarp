@@ -558,11 +558,7 @@ LineHandle::LineHandle(QPointF center, Arrow *parent) : QGraphicsRectItem(parent
     qDebug() << "CENTER CREATED IN " << center;
 }
 
-LineHandle::~LineHandle()
-{
-    //parent->removeHandle(this);
-    //scene()->removeItem(this);
-}
+LineHandle::~LineHandle() = default;
 
 QPointF LineHandle::computeTopLeftGridPoint(const QPointF &pointP){
     int gridSize = 16;
@@ -749,10 +745,8 @@ Label::Label(QString label, QGraphicsItem *parent) : QGraphicsTextItem(label,par
     parentArrow->update();
 
 }
-Label::~Label()
-{
-    //scene()->removeItem(this);
-}
+
+Label::~Label() = default;
 
 void Label::setHasMoved(bool moved)
 {

@@ -43,7 +43,7 @@ InputData::InputData(const InputData &input) : Node(input)
 }
 
 
-InputData::~InputData() { }
+InputData::~InputData() = default;
 
 
 Node* InputData::clone()
@@ -84,7 +84,7 @@ OutputData::OutputData(const OutputData &output) : Node(output)
 }
 
 
-OutputData::~OutputData() { }
+OutputData::~OutputData() = default;
 
 
 Node* OutputData::clone()

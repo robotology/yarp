@@ -36,7 +36,7 @@ GenericResource::GenericResource(const GenericResource &resource) : Node(resourc
     strXmlFile = resource.strXmlFile;
 }
 
-GenericResource::~GenericResource() { }
+GenericResource::~GenericResource() = default;
 
 
 

@@ -11,9 +11,7 @@
 #include <yarp/os/AbstractContactable.h>
 
 
-yarp::os::Contactable::~Contactable()
-{
-}
+yarp::os::Contactable::~Contactable() = default;
 
 std::string yarp::os::Contactable::getName() const
 {

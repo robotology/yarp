@@ -31,9 +31,7 @@ XmlClusterLoader::XmlClusterLoader(const string &szFileName):confFile(szFileName
 }
 
 
-XmlClusterLoader::~XmlClusterLoader()
-{
-}
+XmlClusterLoader::~XmlClusterLoader() = default;
 
 bool XmlClusterLoader::parseXmlFile(Cluster &_cluster)
 {

@@ -26,9 +26,7 @@ public:
     {
     }
 
-    virtual ~Private()
-    {
-    }
+    virtual ~Private() = default;
 
     void beforeStart() override
     {

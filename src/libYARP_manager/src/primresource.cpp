@@ -57,7 +57,7 @@ Node* Memory::clone()
 }
 
 
-Memory::~Memory() { }
+Memory::~Memory() = default;
 
 
 
@@ -104,7 +104,7 @@ Node* Storage::clone()
 }
 
 
-Storage::~Storage() { }
+Storage::~Storage() = default;
 
 
 
@@ -150,7 +150,7 @@ Node* Network::clone()
 }
 
 
-Network::~Network() { }
+Network::~Network() = default;
 
 
 
@@ -217,7 +217,7 @@ Node* Processor::clone()
 }
 
 
-Processor::~Processor() { }
+Processor::~Processor() = default;
 
 
 

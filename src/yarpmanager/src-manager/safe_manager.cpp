@@ -32,7 +32,7 @@ SafeManager::SafeManager() :
     busyAction(false)
 {}
 
-SafeManager::~SafeManager() { }
+SafeManager::~SafeManager() = default;
 
 void SafeManager::close() {
     yarp::os::Thread::stop();

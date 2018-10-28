@@ -48,9 +48,7 @@ Suspended::Suspended(Executable* pExecutable, FSM::IEventSink* pEventSink)
 }
 
 
-Suspended::~Suspended()
-{
-}
+Suspended::~Suspended() = default;
 
 void Suspended::start()
 {
@@ -97,9 +95,7 @@ Ready::Ready(Executable* pExecutable, FSM::IEventSink* pEventSink)
 }
 
 
-Ready::~Ready()
-{
-}
+Ready::~Ready() = default;
 
 bool Ready::checkPriorityPorts()
 {
@@ -261,9 +257,7 @@ Connecting::Connecting(Executable* pExecutable, FSM::IEventSink* pEventSink)
                       bAborted(false)
 {}
 
-Connecting::~Connecting()
-{
-}
+Connecting::~Connecting() = default;
 
 bool Connecting::checkNormalPorts()
 {
@@ -349,9 +343,7 @@ Running::Running(Executable* pExecutable, FSM::IEventSink* pEventSink)
 }
 
 
-Running::~Running()
-{
-}
+Running::~Running() = default;
 
 void Running::refresh()
 {
@@ -402,9 +394,7 @@ Dying::Dying(Executable* pExecutable, FSM::IEventSink* pEventSink)
 }
 
 
-Dying::~Dying()
-{
-}
+Dying::~Dying() = default;
 
 void Dying::stopModule()
 {
@@ -510,9 +500,7 @@ Dead::Dead(Executable* pExecutable, FSM::IEventSink* pEventSink)
 }
 
 
-Dead::~Dead()
-{
-}
+Dead::~Dead() = default;
 
 void Dead::start()
 {

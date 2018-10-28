@@ -22,11 +22,13 @@ MpiStream::MpiStream(std::string n, MpiComm* c)
     resetBuffer();
 
 }
+#ifdef MPI_DEBUG
 MpiStream::~MpiStream() {
-    #ifdef MPI_DEBUG
     printf("[MpiStream @ %s] Destructor\n", name.c_str());
-    #endif
 }
+#else
+MpiStream::~MpiStream() = default;
+#endif
 
 void MpiStream::resetBuffer() {
     // reset buffer

@@ -42,7 +42,7 @@ bool save_jpeg = false;
 class DumpObj
 {
 public:
-    virtual ~DumpObj() { }
+    virtual ~DumpObj() = default;
     virtual const string toFile(const string&, unsigned int) = 0;
     virtual void *getPtr() = 0;
 };

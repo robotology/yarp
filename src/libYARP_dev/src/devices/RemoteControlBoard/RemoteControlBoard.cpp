@@ -971,8 +971,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~RemoteControlBoard() {
-    }
+    virtual ~RemoteControlBoard() = default;
 
 
     /**

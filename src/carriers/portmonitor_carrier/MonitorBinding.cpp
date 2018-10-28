@@ -22,9 +22,7 @@ using namespace yarp::os;
  * Class MonitorBinding
  */
 
-MonitorBinding::~MonitorBinding() 
-{
-} 
+MonitorBinding::~MonitorBinding() = default;
 
 MonitorBinding* MonitorBinding::create(const char* script_type)
 {

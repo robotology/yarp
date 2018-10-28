@@ -59,7 +59,7 @@ bool Platform::satisfy_platform(Platform* os)
     return ret;
 }
 
-Platform::~Platform() { }
+Platform::~Platform() = default;
 
 
 
@@ -104,4 +104,4 @@ bool ResYarpPort::satisfy(GenericResource* resource)
             strPort == string(resport->getName()) );
 }
 
-ResYarpPort::~ResYarpPort() { }
+ResYarpPort::~ResYarpPort() = default;

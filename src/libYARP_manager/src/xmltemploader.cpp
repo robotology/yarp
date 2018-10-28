@@ -52,9 +52,7 @@ XmlTempLoader::XmlTempLoader(const char* szFileName)
 }
 
 
-XmlTempLoader::~XmlTempLoader()
-{
-}
+XmlTempLoader::~XmlTempLoader() = default;
 
 
 bool XmlTempLoader::init()

@@ -163,8 +163,7 @@ private:
 };
 
 
-PortWriterBufferManager::~PortWriterBufferManager() {
-}
+PortWriterBufferManager::~PortWriterBufferManager() = default;
 
 
 #define HELPER(x) (*((PortWriterBufferBaseHelper*)(x)))

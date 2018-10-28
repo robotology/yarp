@@ -91,9 +91,7 @@ RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::privateXMLReaderFileV3(
     verbose_output = false;
 }
 
-RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::~privateXMLReaderFileV3()
-{
-}
+RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::~privateXMLReaderFileV3() = default;
 
 RobotInterface::Robot& RobotInterface::XMLReaderFileV3::privateXMLReaderFileV3::readRobotFile(const std::string &fileName)
 {

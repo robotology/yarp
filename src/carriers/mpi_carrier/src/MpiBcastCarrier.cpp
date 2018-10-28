@@ -13,11 +13,13 @@
 
 using namespace yarp::os;
 
+#ifdef MPI_DEBUG
 MpiBcastCarrier::~MpiBcastCarrier() {
-    #ifdef MPI_DEBUG
     printf("[MpiBcastCarrier @ %s] Destructor\n", name.c_str());
-    #endif
 }
+#else
+MpiBcastCarrier::~MpiBcastCarrier() = default;
+#endif
 
 void MpiBcastCarrier::close() {
     #ifdef MPI_DEBUG

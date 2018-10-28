@@ -32,9 +32,7 @@ fakeDepthCameraDriver::fakeDepthCameraDriver() :
     image(nullptr)
 {}
 
-fakeDepthCameraDriver::~fakeDepthCameraDriver()
-{
-}
+fakeDepthCameraDriver::~fakeDepthCameraDriver() = default;
 
 bool fakeDepthCameraDriver::open(Searchable& config)
 {

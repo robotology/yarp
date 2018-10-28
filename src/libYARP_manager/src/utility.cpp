@@ -22,13 +22,13 @@ using namespace std;
 
 //#if defined(_MSC_VER) && (_MSC_VER == 1600)
 
-StrStream::StrStream() { }
+StrStream::StrStream() = default;
 
 StrStream::StrStream(const std::string str) {
     dummyStr = str;
 }
 
-StrStream::~StrStream() { }
+StrStream::~StrStream() = default;
 
 std::string StrStream::str() {
     return dummyStr;

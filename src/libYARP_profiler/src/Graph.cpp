@@ -38,7 +38,7 @@ Edge::Edge(const Edge& edge)
     secondVertex = edge.secondVertex;
 }
 
-Edge::~Edge() { }
+Edge::~Edge() = default;
 
 const Vertex& Edge::first() const {
     return *firstVertex;
@@ -62,12 +62,9 @@ bool Edge::operator == (const yarp::profiler::graph::Edge &edge) const {
 Vertex::Vertex(const yarp::os::Property &prop) : property(prop) { }
 
 
-Vertex::Vertex(const Vertex &vertex)
-    : property(vertex.property),
-      outs(vertex.outs),
-      ins(vertex.ins) { }
+Vertex::Vertex(const Vertex &vertex) = default;
 
-Vertex::~Vertex() { }
+Vertex::~Vertex() = default;
 
 void Vertex::insertOuts(const yarp::profiler::graph::Edge& edge) {
     if( find(outs.begin(), outs.end(), edge) != outs.end()) return;
@@ -95,8 +92,7 @@ bool Vertex::operator<(const Vertex &v1) const {
  *
  */
 
-Graph::Graph() {
-}
+Graph::Graph() = default;
 
 /*
 Graph::Graph(yarp::profiler::graph::Graph& graph) {

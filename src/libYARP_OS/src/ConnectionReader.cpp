@@ -13,9 +13,7 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-ConnectionReader::~ConnectionReader()
-{
-}
+ConnectionReader::~ConnectionReader() = default;
 
 Bytes ConnectionReader::readEnvelope()
 {

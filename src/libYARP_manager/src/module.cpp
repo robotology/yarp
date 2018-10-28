@@ -72,7 +72,7 @@ void Module::swap(const Module &mod)
 }
 
 
-Module::~Module() { }
+Module::~Module() = default;
 
 
 Node* Module::clone()

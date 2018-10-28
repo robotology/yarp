@@ -400,9 +400,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         YConsoleManager::myMain();
 }
 
-YConsoleManager::~YConsoleManager()
-{
-}
+YConsoleManager::~YConsoleManager() = default;
 
 
 

@@ -20,13 +20,9 @@ namespace dev {
 
 MultipleAnalogSensorsServer::MultipleAnalogSensorsServer(): PeriodicThread(0.02)
 {
-
 }
 
-MultipleAnalogSensorsServer::~MultipleAnalogSensorsServer()
-{
-
-}
+MultipleAnalogSensorsServer::~MultipleAnalogSensorsServer() = default;
 
 bool MultipleAnalogSensorsServer::open(os::Searchable& config)
 {

@@ -33,8 +33,7 @@ using namespace yarp::os;
 #define dbg_flag 0
 #define dbg_printf if (dbg_flag) printf
 
-WireTwiddlerWriter::~WireTwiddlerWriter() {
-}
+WireTwiddlerWriter::~WireTwiddlerWriter() = default;
 
 
 int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,

@@ -34,8 +34,7 @@ public:
     std::multimap<std::string, std::string> outgoingURIs;
     std::multimap<std::string, std::string> incomingURIs;
 
-    ROSReport() {
-    }
+    ROSReport() = default;
 
     void report(const PortInfo& info) override {
         if (info.tag == PortInfo::PORTINFO_CONNECTION) {

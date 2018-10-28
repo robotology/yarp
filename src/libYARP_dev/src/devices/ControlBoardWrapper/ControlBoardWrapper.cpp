@@ -71,7 +71,7 @@ void ControlBoardWrapper::cleanup_yarpPorts()
     rpcData.destroy();
 }
 
-ControlBoardWrapper::~ControlBoardWrapper() { }
+ControlBoardWrapper::~ControlBoardWrapper() = default;
 
 bool ControlBoardWrapper::close()
 {

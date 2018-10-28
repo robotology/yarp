@@ -886,9 +886,7 @@ FrameTransformClient::FrameTransformClient() : PeriodicThread(0.01),
 {
 }
 
-FrameTransformClient::~FrameTransformClient()
-{
-}
+FrameTransformClient::~FrameTransformClient() = default;
 
 bool     yarp::dev::FrameTransformClient::threadInit()
 {

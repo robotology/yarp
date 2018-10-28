@@ -31,8 +31,7 @@ using namespace yarp::os;
 
 struct data_for_gst_callback
 {
-    data_for_gst_callback()
-    {}
+    data_for_gst_callback() = default;
 
     Mutex *m{nullptr};
     ImageOf<PixelRgb> *img{nullptr};

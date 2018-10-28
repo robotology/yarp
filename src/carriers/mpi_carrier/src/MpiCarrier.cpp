@@ -24,11 +24,13 @@ MpiCarrier::MpiCarrier() : stream(nullptr), comm(nullptr) {
     #endif
 }
 
+#ifdef MPI_DEBUG
 MpiCarrier::~MpiCarrier() {
-    #ifdef MPI_DEBUG
     printf("[MpiCarrier @ %s] Destructor called \n", route.c_str() );
-    #endif
 }
+#else
+MpiCarrier::~MpiCarrier() = default;
+#endif
 
 void  MpiCarrier::getHeader(Bytes& header) const {
     for (size_t i=0; i<8 && i<header.length(); i++) {

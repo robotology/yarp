@@ -10,9 +10,7 @@
 #include <yarp/os/Runnable.h>
 
 
-yarp::os::Runnable::~Runnable()
-{
-}
+yarp::os::Runnable::~Runnable() = default;
 
 void yarp::os::Runnable::run()
 {

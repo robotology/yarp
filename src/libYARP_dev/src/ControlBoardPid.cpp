@@ -39,10 +39,7 @@ Pid::Pid(double p, double d, double i,
     kff(ff)
 {}
 
-Pid::~Pid()
-{
-
-}
+Pid::~Pid() = default;
 
 Pid::Pid()
 {

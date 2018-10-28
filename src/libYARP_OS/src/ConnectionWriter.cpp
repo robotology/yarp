@@ -15,8 +15,7 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-ConnectionWriter::~ConnectionWriter() {
-}
+ConnectionWriter::~ConnectionWriter() = default;
 
 bool ConnectionWriter::isNull() const {
     return false;

@@ -23,8 +23,7 @@ yarp::os::SearchReport::SearchReport() :
         isDefault(false) {
 }
 
-yarp::os::SearchMonitor::~SearchMonitor() {
-}
+yarp::os::SearchMonitor::~SearchMonitor() = default;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 
@@ -32,8 +31,7 @@ yarp::os::Searchable::Searchable() :
         monitor(nullptr) {
 }
 
-yarp::os::Searchable::~Searchable() {
-}
+yarp::os::Searchable::~Searchable() = default;
 
 bool yarp::os::Searchable::check(const std::string& key,
                                  yarp::os::Value *& result,

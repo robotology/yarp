@@ -39,9 +39,7 @@ ControlBoardRemapper::ControlBoardRemapper() :
     axesNames.clear();
 }
 
-ControlBoardRemapper::~ControlBoardRemapper()
-{
-}
+ControlBoardRemapper::~ControlBoardRemapper() = default;
 
 bool ControlBoardRemapper::close()
 {

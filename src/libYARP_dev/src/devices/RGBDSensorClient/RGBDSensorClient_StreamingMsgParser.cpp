@@ -13,8 +13,8 @@ using namespace yarp::dev;
 using namespace yarp::dev::impl;
 
 // Callback reader for rgb
-RgbImageReader_Impl::RgbImageReader_Impl() { }
-RgbImageReader_Impl::~RgbImageReader_Impl() { }
+RgbImageReader_Impl::RgbImageReader_Impl() = default;
+RgbImageReader_Impl::~RgbImageReader_Impl() = default;
 
 void RgbImageReader_Impl::onRead(yarp::sig::FlexImage& datum)
 {
@@ -28,8 +28,8 @@ yarp::sig::FlexImage RgbImageReader_Impl::getImage()
 
 
 // callback reader for depthImage
-FloatImageReader_Impl::FloatImageReader_Impl() { }
-FloatImageReader_Impl::~FloatImageReader_Impl() { }
+FloatImageReader_Impl::FloatImageReader_Impl() = default;
+FloatImageReader_Impl::~FloatImageReader_Impl() = default;
 
 void FloatImageReader_Impl::onRead(yarp::sig::ImageOf< yarp::sig::PixelFloat> & datum)
 {

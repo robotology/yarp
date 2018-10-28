@@ -57,10 +57,7 @@ Map2DServer::Map2DServer()
     m_rosNode = nullptr;
 }
 
-Map2DServer::~Map2DServer()
-{
-
-}
+Map2DServer::~Map2DServer() = default;
 
 void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& out)
 {
