@@ -20,9 +20,9 @@ YARP_BEGIN_PACK
 class QuaternionPortContentHeader
 {
 public:
-    yarp::os::NetInt32 listTag;
-    yarp::os::NetInt32 listLen;
-    QuaternionPortContentHeader() : listTag(0), listLen(0) {}
+    yarp::os::NetInt32 listTag{0};
+    yarp::os::NetInt32 listLen{0};
+    QuaternionPortContentHeader()  {}
 };
 YARP_END_PACK
 

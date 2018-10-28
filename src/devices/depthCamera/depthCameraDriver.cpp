@@ -64,10 +64,11 @@ public:
     yarp::os::Mutex         mutex;
     yarp::os::Stamp         stamp;
     yarp::sig::FlexImage    image;
-    openni::PixelFormat     pixF;
-    int                     w, h;
-    size_t                  dataSize;
-    bool                    isReady;
+    openni::PixelFormat     pixF{openni::PixelFormat::PIXEL_FORMAT_DEPTH_1_MM};
+    int                     w{0};
+    int                     h{0};
+    size_t                  dataSize{0};
+    bool                    isReady{false};
 
     //Method
     streamFrameListener();
@@ -90,12 +91,7 @@ private:
     openni::VideoFrameRef   frameRef;
 };
 
-streamFrameListener::streamFrameListener() :
-    pixF(openni::PixelFormat::PIXEL_FORMAT_DEPTH_1_MM),
-    w(0),
-    h(0),
-    dataSize(0),
-    isReady(false)
+streamFrameListener::streamFrameListener()
 {
     image.setPixelCode(VOCAB_PIXEL_RGB);
 }

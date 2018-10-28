@@ -2249,17 +2249,14 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
 
 class CompanionMergeInput : public TypedReaderCallback<Bottle> {
 public:
-    Contactable *port;
-    Semaphore *sema;
+    Contactable *port{nullptr};
+    Semaphore *sema{nullptr};
     Mutex mutex;
 
     Bottle value;
     Stamp stamp;
 
-    CompanionMergeInput() : port(nullptr),
-                            sema(nullptr),
-                            mutex() {
-    }
+    CompanionMergeInput() = default;
 
     void init(Contactable& port, Semaphore& sema) {
         this->port = &port;

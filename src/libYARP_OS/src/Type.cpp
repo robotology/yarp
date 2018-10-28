@@ -17,10 +17,7 @@ using namespace yarp::os;
 class Type::Private
 {
 public:
-    Private() :
-            prop(nullptr)
-    {
-    }
+    Private() = default;
 
     Private(const Private& rhs) :
             prop(nullptr),
@@ -84,7 +81,7 @@ public:
         prop->put(key, val);
     }
 
-    Property* prop;
+    Property* prop{nullptr};
     std::string name;
     std::string name_on_wire;
 };

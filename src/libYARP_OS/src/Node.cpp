@@ -176,17 +176,14 @@ public:
     std::multimap<std::string, NodeItem> by_category;
     std::map<Contactable*, NodeItem> name_cache;
     Port port;
-    Node *owner;
+    Node *owner{nullptr};
 
     Mutex mutex;
     std::string name;
     std::string prev_name;
-    bool has_prev_name;
+    bool has_prev_name{false};
 
-    Helper() :
-            owner(nullptr),
-            prev_name(""),
-            has_prev_name(false)
+    Helper()
     {
         clear();
         port.includeNodeInName(false);

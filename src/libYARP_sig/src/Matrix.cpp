@@ -33,19 +33,16 @@ YARP_BEGIN_PACK
 class MatrixPortContentHeader
 {
 public:
-    yarp::os::NetInt32 outerListTag;
-    yarp::os::NetInt32 outerListLen;
-    yarp::os::NetInt32 rowsTag;
-    yarp::os::NetInt32 rows;
-    yarp::os::NetInt32 colsTag;
-    yarp::os::NetInt32 cols;
-    yarp::os::NetInt32 listTag;
-    yarp::os::NetInt32 listLen;
+    yarp::os::NetInt32 outerListTag{0};
+    yarp::os::NetInt32 outerListLen{0};
+    yarp::os::NetInt32 rowsTag{0};
+    yarp::os::NetInt32 rows{0};
+    yarp::os::NetInt32 colsTag{0};
+    yarp::os::NetInt32 cols{0};
+    yarp::os::NetInt32 listTag{0};
+    yarp::os::NetInt32 listLen{0};
 
-    MatrixPortContentHeader() : outerListTag(0), outerListLen(0),
-                                rowsTag(0), rows(0),
-                                colsTag(0), cols(0),
-                                listTag(0), listLen(0) {}
+    MatrixPortContentHeader()  {}
 };
 YARP_END_PACK
 

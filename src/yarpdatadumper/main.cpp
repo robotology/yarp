@@ -146,18 +146,14 @@ DumpObj *factory(Image &obj)
 /**************************************************************************/
 class DumpTimeStamp
 {
-    double rxStamp;
-    double txStamp;
-    bool   rxOk;
-    bool   txOk;
+    double rxStamp{0.0};
+    double txStamp{0.0};
+    bool   rxOk{false};
+    bool   txOk{false};
 
 public:
-    DumpTimeStamp() :
-        rxStamp(0.0),
-        txStamp(0.0),
-        rxOk(false),
-        txOk(false)
-    {}
+    DumpTimeStamp() = default;
+
     void setRxStamp(const double stamp) { rxStamp=stamp; rxOk=true; }
     void setTxStamp(const double stamp) { txStamp=stamp; txOk=true; }
     double getStamp() const
@@ -505,10 +501,10 @@ public:
 class DumpReporter : public PortReport
 {
 private:
-    DumpThread *thread;
+    DumpThread *thread{nullptr};
 
 public:
-    DumpReporter() : thread(nullptr) { }
+    DumpReporter() = default;
     void setThread(DumpThread *thread) { this->thread=thread; }
     void report(const PortInfo &info) override
     {
@@ -522,29 +518,20 @@ public:
 class DumpModule: public RFModule
 {
 private:
-    DumpQueue        *q;
-    DumpPort<Bottle> *p_bottle;
-    DumpPort<Image>  *p_image;
-    DumpThread       *t;
+    DumpQueue        *q{nullptr};
+    DumpPort<Bottle> *p_bottle{nullptr};
+    DumpPort<Image>  *p_image{nullptr};
+    DumpThread       *t{nullptr};
     DumpReporter      reporter;
     Port              rpcPort;
-    DumpType          type;
-    bool              rxTime;
-    bool              txTime;
-    unsigned int      dwnsample;
+    DumpType          type{bottle};
+    bool              rxTime{false};
+    bool              txTime{false};
+    unsigned int      dwnsample{0};
     string            portName;
 
 public:
-    DumpModule() :
-        q(nullptr),
-        p_bottle(nullptr),
-        p_image(nullptr),
-        t(nullptr),
-        type(bottle),
-        rxTime(false),
-        txTime(false),
-        dwnsample(0)
-    {}
+    DumpModule() = default;
 
     bool configure(ResourceFinder &rf) override
     {

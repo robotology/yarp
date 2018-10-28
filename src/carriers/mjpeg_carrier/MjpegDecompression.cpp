@@ -115,17 +115,14 @@ void jpeg_net_src (j_decompress_ptr cinfo, char *buf, int buflen) {
 
 class MjpegDecompressionHelper {
 public:
-    bool active;
+    bool active{false};
     struct jpeg_decompress_struct cinfo;
     struct net_error_mgr jerr;
     JOCTET error_buffer[4];
-    yarp::os::InputStream::readEnvelopeCallbackType readEnvelopeCallback;
-    void* readEnvelopeCallbackData;
+    yarp::os::InputStream::readEnvelopeCallbackType readEnvelopeCallback{nullptr};
+    void* readEnvelopeCallbackData{nullptr};
 
-    MjpegDecompressionHelper() :
-            active(false),
-            readEnvelopeCallback(nullptr),
-            readEnvelopeCallbackData(nullptr)
+    MjpegDecompressionHelper()
     {
         memset(&cinfo, 0, sizeof(jpeg_decompress_struct));
         memset(&jerr, 0, sizeof(net_error_mgr));

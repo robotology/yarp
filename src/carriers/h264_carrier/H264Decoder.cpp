@@ -31,19 +31,14 @@ using namespace yarp::os;
 
 struct data_for_gst_callback
 {
-    data_for_gst_callback() :
-        m(nullptr),
-        img(nullptr),
-        isNew(false),
-        s(nullptr),
-        isReq(false)
+    data_for_gst_callback()
     {}
 
-    Mutex *m;
-    ImageOf<PixelRgb> *img;
-    bool isNew;
-    Semaphore *s;
-    bool isReq;
+    Mutex *m{nullptr};
+    ImageOf<PixelRgb> *img{nullptr};
+    bool isNew{false};
+    Semaphore *s{nullptr};
+    bool isReq{false};
 };
 //-------------------------------------------------------------------
 //---------------  CALLBACK FUNCTIONS -------------------------------

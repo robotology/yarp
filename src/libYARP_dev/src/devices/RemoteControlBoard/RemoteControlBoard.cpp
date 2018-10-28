@@ -161,12 +161,12 @@ class yarp::dev::RemoteControlBoard :
 protected:
     Port rpc_p;
     Port command_p;
-    DiagnosticThread *diagnosticThread;
+    DiagnosticThread *diagnosticThread{nullptr};
 
     PortReaderBuffer<yarp::sig::Vector> state_buffer;
     PortWriterBuffer<CommandMessage> command_buffer;
-    bool writeStrict_singleJoint;
-    bool writeStrict_moreJoints;
+    bool writeStrict_singleJoint{true};
+    bool writeStrict_moreJoints{false};
 
     // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated
     // from the YARP .thrift file
@@ -181,8 +181,8 @@ protected:
     std::string local;
     mutable Stamp lastStamp;  //this is shared among all calls that read encoders
     // Mutex mutex;
-    int nj;
-    bool njIsKnown;
+    int nj{0};
+    bool njIsKnown{false};
 
     ProtocolVersion protocolVersion;
 
@@ -965,11 +965,6 @@ public:
      * Constructor.
      */
     RemoteControlBoard() :
-        diagnosticThread(nullptr),
-        writeStrict_singleJoint(true),
-        writeStrict_moreJoints (false),
-        nj(0),
-        njIsKnown(false),
         protocolVersion(ProtocolVersion{0,0,0})
     {}
 

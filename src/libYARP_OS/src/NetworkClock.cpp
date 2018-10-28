@@ -49,21 +49,15 @@ public:
     Mutex listMutex;
     Mutex timeMutex;
 
-    std::int32_t sec;
-    std::int32_t nsec;
-    double _time;
-    bool closing;
-    bool initted;
+    std::int32_t sec{0};
+    std::int32_t nsec{0};
+    double _time{0};
+    bool closing{false};
+    bool initted{false};
 };
 
 NetworkClock::Private::Private() :
-        clockName(""),
-        waiters(new Waiters()),
-        sec(0),
-        nsec(0),
-        _time(0),
-        closing(false),
-        initted(false)
+        waiters(new Waiters())
 {
 }
 

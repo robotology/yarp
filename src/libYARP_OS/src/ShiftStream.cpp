@@ -22,14 +22,11 @@ public:
     ~Private();
     void close();
 
-    TwoWayStream* stream;
+    TwoWayStream* stream{nullptr};
     NullStream nullStream;
 };
 
-ShiftStream::Private::Private() :
-        stream(nullptr)
-{
-}
+ShiftStream::Private::Private() = default;
 
 ShiftStream::Private::~Private()
 {
