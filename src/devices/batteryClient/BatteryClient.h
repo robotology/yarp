@@ -142,7 +142,7 @@ public:
     * @param status the battery status
     * @return true/false.
     */
-    bool getBatteryStatus(int &status) override;
+    bool getBatteryStatus(Battery_status &status) override;
 
     /**
     * get the battery hardware charactestics (e.g. max voltage etc)

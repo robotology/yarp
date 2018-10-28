@@ -43,13 +43,14 @@ yarp::dev::DriverCreator *createBatteryWrapper() {
 BatteryWrapper::BatteryWrapper() : PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
     _period = DEFAULT_THREAD_PERIOD;
-    battery_p = nullptr;
+    ibattery_p = nullptr;
+    ownDevices = false;
 }
 
 BatteryWrapper::~BatteryWrapper()
 {
     threadRelease();
-    battery_p = nullptr;
+    ibattery_p = nullptr;
 }
 
 /**
@@ -58,6 +59,11 @@ BatteryWrapper::~BatteryWrapper()
 
 bool BatteryWrapper::attachAll(const PolyDriverList &battery2attach)
 {
+    if (ownDevices)
+    {
+        return false;
+    }
+
     if (battery2attach.size() != 1)
     {
         yError("BatteryWrapper: cannot attach more than one device");
@@ -68,33 +74,37 @@ bool BatteryWrapper::attachAll(const PolyDriverList &battery2attach)
 
     if (Idevice2attach->isValid())
     {
-        Idevice2attach->view(battery_p);
+        Idevice2attach->view(ibattery_p);
     }
 
-    if(nullptr == battery_p)
+    if(nullptr == ibattery_p)
     {
         yError("BatteryWrapper: subdevice passed to attach method is invalid");
         return false;
     }
-    attach(battery_p);
+    attach(ibattery_p);
     PeriodicThread::setPeriod(_period);
     return PeriodicThread::start();
 }
 
 bool BatteryWrapper::detachAll()
 {
-    battery_p = nullptr;
+    if (PeriodicThread::isRunning())
+    {
+        PeriodicThread::stop();
+    }
+    ibattery_p = nullptr;
     return true;
 }
 
 void BatteryWrapper::attach(yarp::dev::IBattery *s)
 {
-    battery_p=s;
+    ibattery_p=s;
 }
 
 void BatteryWrapper::detach()
 {
-    battery_p = nullptr;
+    ibattery_p = nullptr;
 }
 
 bool BatteryWrapper::read(yarp::os::ConnectionReader& connection)
@@ -112,10 +122,10 @@ bool BatteryWrapper::read(yarp::os::ConnectionReader& connection)
         int cmd = in.get(1).asVocab();
         if (cmd == VOCAB_BATTERY_INFO)
         {
-            if (battery_p)
+            if (ibattery_p)
             {
                 std::string info;
-                battery_p->getBatteryInfo(info);
+                ibattery_p->getBatteryInfo(info);
                 out.addVocab(VOCAB_IS);
                 out.addVocab(cmd);
                 out.addString(info);
@@ -147,12 +157,7 @@ bool BatteryWrapper::read(yarp::os::ConnectionReader& connection)
 
 bool BatteryWrapper::threadInit()
 {
-    // open data port
-    if (!streamingPort.open(streamingPortName))
-        {
-            yError("BatteryWrapper: failed to open port %s", streamingPortName.c_str());
-            return false;
-        }
+
     return true;
 }
 
@@ -174,11 +179,14 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
 
     if (!config.check("period"))
     {
-        yError() << "BatteryWrapper: missing 'period' parameter. Check you configuration file\n";
-        return false;
+        _period = 1.0;
+        yWarning() << "BatteryWrapper: missing 'period' parameter. Assuming default value 1.0 s\n";
     }
     else
+    {
         _period = config.find("period").asInt32() / 1000.0;
+    }
+    yInfo() << "BatteryWrapper using period: " << _period << "s";
 
     if (!config.check("name"))
     {
@@ -198,49 +206,81 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
         yError() << sensorId << "Error initializing YARP ports";
         return false;
     }
+
+    if (config.check("subdevice"))
+    {
+        Property       p;
+        PolyDriverList driverlist;
+
+        p.fromString(config.toString(), false);
+        p.put("device", config.find("subdevice").asString());
+        p.unput("subdevice");
+
+        if (!driver.open(p) || !driver.isValid())
+        {
+            yError() << "BatteryWrapper: failed to open subdevice.. check params";
+            return false;
+        }
+
+        driverlist.push(&driver, "1");
+        if (!attachAll(driverlist))
+        {
+            yError() << "BatteryWrapper: failed to open subdevice.. check params";
+            return false;
+        }
+        ownDevices = true;
+    }
+
     return true;
 }
 
 bool BatteryWrapper::initialize_YARP(yarp::os::Searchable &params)
 {
-    streamingPort.open(streamingPortName);
-    rpcPort.open(rpcPortName);
+    if (!streamingPort.open(streamingPortName.c_str()))
+    {
+        yError() << "Error opening port " << streamingPortName << "\n";
+        return false;
+    }
+    if (!rpcPort.open(rpcPortName.c_str()))
+    {
+        yError() << "Error opening port " << rpcPortName << "\n";
+        return false;
+    }
     rpcPort.setReader(*this);
     return true;
 }
 
 void BatteryWrapper::threadRelease()
 {
-    streamingPort.interrupt();
-    streamingPort.close();
-    rpcPort.interrupt();
-    rpcPort.close();
 }
 
 void BatteryWrapper::run()
 {
-    if (battery_p!=nullptr)
+    if (ibattery_p!=nullptr)
     {
         double charge  = 0;
         double voltage = 0;
         double current = 0;
         double temperature = 0;
+        IBattery::Battery_status status;
 
         bool ret = true;
-        ret &= battery_p->getBatteryCharge(charge);
-        ret &= battery_p->getBatteryVoltage(voltage);
-        ret &= battery_p->getBatteryCurrent(current);
-        ret &= battery_p->getBatteryTemperature(temperature);
+        ret &= ibattery_p->getBatteryCharge(charge);
+        ret &= ibattery_p->getBatteryVoltage(voltage);
+        ret &= ibattery_p->getBatteryCurrent(current);
+        ret &= ibattery_p->getBatteryTemperature(temperature);
+        ret &= ibattery_p->getBatteryStatus(status);
 
         if (ret)
         {
             lastStateStamp.update();
             yarp::os::Bottle& b = streamingPort.prepare();
             b.clear();
-            b.addFloat64(voltage);
-            b.addFloat64(current);
-            b.addFloat64(charge);
-            b.addFloat64(temperature);
+            b.addFloat64(voltage); //0
+            b.addFloat64(current); //1
+            b.addFloat64(charge);  //2
+            b.addFloat64(temperature); //3
+            b.addInt32(status); //4
             streamingPort.setEnvelope(lastStateStamp);
             streamingPort.write();
         }
@@ -258,6 +298,14 @@ bool BatteryWrapper::close()
     {
         PeriodicThread::stop();
     }
+
+    //close the device
+    driver.close();
+
+    streamingPort.interrupt();
+    streamingPort.close();
+    rpcPort.interrupt();
+    rpcPort.close();
 
     PeriodicThread::stop();
     detachAll();

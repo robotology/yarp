@@ -77,7 +77,7 @@ void BatteryInputPortProcessor::onRead(yarp::os::Bottle &b)
     Stamp newStamp;
     getEnvelope(newStamp);
 
-    //initialialization (first received data)
+    //initialization (first received data)
     if (lastStamp.isValid()==false)
     {
         lastStamp = newStamp;
@@ -138,7 +138,7 @@ double BatteryInputPortProcessor::getCharge()
 int    BatteryInputPortProcessor::getStatus()
 {
     mutex.lock();
-    int status = lastBottle.get(3).asInt32();
+    int status = lastBottle.get(4).asInt32();
     mutex.unlock();
     return status;
 }
@@ -146,7 +146,7 @@ int    BatteryInputPortProcessor::getStatus()
 double BatteryInputPortProcessor::getTemperature()
 {
     mutex.lock();
-    double temperature = lastBottle.get(4).asInt32();
+    double temperature = lastBottle.get(3).asInt32();
     mutex.unlock();
     return temperature;
 }
@@ -182,18 +182,18 @@ bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
 {
     local.clear();
     remote.clear();
-
+    yDebug() << config.toString();
     local  = config.find("local").asString();
     remote = config.find("remote").asString();
 
     if (local=="")
     {
-        yError("BatteryClient::open() error you have to provide valid local name");
+        yError("BatteryClient::open() error you have to provide valid local name. --local parameter missing.");
         return false;
     }
     if (remote=="")
     {
-        yError("BatteryClient::open() error you have to provide valid remote name");
+        yError("BatteryClient::open() error you have to provide valid remote name. --remote parameter missing.");
         return false;
     }
 
@@ -267,9 +267,9 @@ bool yarp::dev::BatteryClient::getBatteryCharge(double &charge)
     return true;
 }
 
-bool yarp::dev::BatteryClient::getBatteryStatus(int &status)
+bool yarp::dev::BatteryClient::getBatteryStatus(Battery_status &status)
 {
-    status = inputPort.getStatus();
+    status = (Battery_status)inputPort.getStatus();
     return true;
 }
 

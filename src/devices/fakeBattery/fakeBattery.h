@@ -49,12 +49,8 @@ protected:
     std::string         localName;
 
 public:
-    FakeBattery(int period = 20) : PeriodicThread((double)period/1000.0), mutex(1)
-    {}
-
-    ~FakeBattery()
-    {
-    }
+    FakeBattery(int period=20);
+    virtual ~FakeBattery();
 
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
@@ -62,7 +58,7 @@ public:
     virtual bool getBatteryVoltage     (double &voltage);
     virtual bool getBatteryCurrent     (double &current);
     virtual bool getBatteryCharge      (double &charge);
-    virtual bool getBatteryStatus      (int &status);
+    virtual bool getBatteryStatus      (Battery_status &status);
     virtual bool getBatteryInfo        (std::string &info);
     virtual bool getBatteryTemperature (double &temperature);
 

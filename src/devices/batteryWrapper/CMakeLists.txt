@@ -8,6 +8,7 @@ yarp_prepare_plugin(batteryWrapper
                     CATEGORY device
                     TYPE yarp::dev::BatteryWrapper
                     INCLUDE BatteryWrapper.h
+                    EXTRA_CONFIG WRAPPER=batteryWrapper
                     DEFAULT ON)
 
 if(NOT SKIP_batteryWrapper)

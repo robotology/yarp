@@ -44,8 +44,6 @@ using namespace yarp::dev;
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-
     // Guis shall run always on system clock. No need to have it in synch with network clock
     yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
 
@@ -59,10 +57,15 @@ int main(int argc, char *argv[])
     rf.setVerbose(true);
     rf.configure(argc,argv);
 
+    QApplication a(argc, argv);
+
     if (rf.check("help"))
     {
         yInfo() << "Options:";
-        yInfo() << "No options at the moment";
+        yInfo() << "--name <name> (DEPRECATED) The full name of the port to connect to, e.g. /mybattery:o";
+        yInfo() << "--local <name> The name of local openend by this module. e.g. batteryMonitor";
+        yInfo() << "--remote <name> The full name of the port to connect to, e.g. /mybattery:o";
+        yInfo() << "--robot <robotname> (DEPRECATED) This option is equivalent to: --name /<robotname>/battery:o";
         return 0;
     }
 
@@ -70,9 +73,28 @@ int main(int argc, char *argv[])
     yarp::dev::PolyDriver* drv = 0;
 
     std::string robot_name = "icub";
+    std::string remotePort = "";
     if (rf.check("robot"))
     {
+        yWarning() << "This option is deprecated. Use --remote instead";
         robot_name = rf.find("robot").asString();
+    }
+
+    if (rf.check("name"))
+    {
+        yWarning() << "This option is deprecated. Use --remote instead";
+        remotePort = rf.find("name").asString();
+    }
+
+    if (rf.check("remote"))
+    {
+        remotePort = rf.find("name").asString();
+    }
+
+    if (rf.check("local"))
+    {
+        yError() << "--local option not yet implemented";
+        return false;
     }
 
     char pname[500];
@@ -86,7 +108,7 @@ int main(int argc, char *argv[])
     } while (b == true);
 
     std::string localPort = pname;
-    std::string remotePort = "/" + robot_name + "/battery:o";
+    if (remotePort == "") { remotePort = "/" + robot_name + "/battery:o"; }
 
     yarp::os::Property options;
     options.put("robot", robot_name);

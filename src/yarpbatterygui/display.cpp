@@ -234,5 +234,5 @@ MainWindow::MainWindow(const yarp::os::ResourceFinder& rf, yarp::dev::IBattery* 
     img_numbers.setMask(img_numbers.createMaskFromColor(QColor(255, 0, 255)));
 
     scene = new QGraphicsScene;
-    updateMain();
+    QTimer::singleShot(0, this, &MainWindow::updateMain);
 }

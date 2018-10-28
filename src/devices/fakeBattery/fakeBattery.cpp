@@ -20,30 +20,41 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
+FakeBattery::FakeBattery(int period) : PeriodicThread((double)period / 1000.0)
+{
+    logEnable = false;
+    verboseEnable = false;
+    screenEnable = false;
+    debugEnable = false;
+    shutdownEnable = false;
+}
+
+FakeBattery::~FakeBattery()
+{
+}
+
 bool FakeBattery::open(yarp::os::Searchable& config)
 {
     bool correct=true;
 
-    //debug
-    yDebug("%s\n", config.toString().c_str());
-
     Bottle& group_general = config.findGroup("GENERAL");
+
+    int period = config.find("thread_period").asInt32();
+    setPeriod((double)period / 1000.0);
 
     if (group_general.isNull())
     {
-        yError() << "Insufficient parameters to FakeBattery, section GENERAL missing";
-        return false;
+        yWarning() << "GENERAL group parameters missing, assuming default";
     }
-
-    int period=config.find("thread_period").asInt32();
-    setPeriod((double)period/1000.0);
-
-    // Other options
-    this->logEnable = group_general.check("logToFile", Value(0), "enable / disable the log to file").asBool();
-    this->verboseEnable = group_general.check("verbose", Value(0), "enable/disable the verbose mode").asBool();
-    this->screenEnable = group_general.check("screen", Value(0), "enable/disable the screen output").asBool();
-    this->debugEnable = group_general.check("debug", Value(0), "enable/disable the debug mode").asBool();
-    this->shutdownEnable = group_general.check("shutdown", Value(0), "enable/disable the automatic shutdown").asBool();
+    else
+    {
+        // Other options
+        this->logEnable = group_general.check("logToFile", Value(0), "enable / disable the log to file").asBool();
+        this->verboseEnable = group_general.check("verbose", Value(0), "enable/disable the verbose mode").asBool();
+        this->screenEnable = group_general.check("screen", Value(0), "enable/disable the screen output").asBool();
+        this->debugEnable = group_general.check("debug", Value(0), "enable/disable the debug mode").asBool();
+        this->shutdownEnable = group_general.check("shutdown", Value(0), "enable/disable the automatic shutdown").asBool();
+    }
 
     PeriodicThread::start();
     return true;
@@ -88,10 +99,19 @@ void FakeBattery::run()
     }
 
     log_buffer[0] = 0;
-    battery_voltage     = 40.0;
-    battery_current = 5.0;
-    battery_charge = 72.0;
-    battery_temperature = 35.0;
+    
+    battery_voltage += 0.5;
+    battery_current += 0.5;
+    battery_charge += 0.5;
+    battery_temperature += 0.5;
+
+    if (battery_voltage > 50)
+    {
+        battery_voltage = 40.0;
+        battery_current = 5.0;
+        battery_charge = 72.0;
+        battery_temperature = 35.0;
+    }
 
 
 
@@ -144,16 +164,20 @@ bool FakeBattery::getBatteryCharge(double &charge)
     return true;
 }
 
-bool FakeBattery::getBatteryStatus(int &status)
+bool FakeBattery::getBatteryStatus(Battery_status &status)
 {
-    //yError("Not yet implemented");
-    return false;
+    this->mutex.wait();
+    status = BATTERY_OK_IN_USE;
+    this->mutex.post();
+    return true;
 }
 
 bool FakeBattery::getBatteryTemperature(double &temperature)
 {
-    //yError("Not yet implemented");
-    return false;
+    this->mutex.wait();
+    temperature = 20;
+    this->mutex.post();
+    return true;
 }
 
 bool FakeBattery::getBatteryInfo(string &info)

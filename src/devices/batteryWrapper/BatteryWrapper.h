@@ -68,7 +68,6 @@ public:
 
     bool open(yarp::os::Searchable &params) override;
     bool close() override;
-    yarp::os::Bottle getOptions();
 
     void setId(const std::string &id);
     std::string getId();
@@ -88,13 +87,15 @@ public:
 
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+    yarp::dev::PolyDriver driver;
     std::string streamingPortName;
     std::string rpcPortName;
     yarp::os::Port rpcPort;
     yarp::os::BufferedPort<yarp::os::Bottle> streamingPort;
-    yarp::dev::IBattery *battery_p;             // the battery read from
+    yarp::dev::IBattery *ibattery_p;             // the battery read from
     yarp::os::Stamp lastStateStamp;             // the last reading time stamp
     double _period;
+    bool ownDevices;
     std::string sensorId;
 
     bool initialize_YARP(yarp::os::Searchable &config);
