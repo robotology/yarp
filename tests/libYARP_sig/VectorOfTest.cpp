@@ -169,4 +169,22 @@ TEST_CASE("sig::VectorOfTest", "[yarp::sig]") {
         CHECK(v[1] == 2); // Checking data consistency
         CHECK(v[2] == 3); // Checking data consistency
     }
+
+    SECTION("Checking the the for range based")
+    {
+        VectorOf<int> v{0,1,2,3,4};
+        int i = 0;
+        for(const auto& el:v) {
+            CHECK(el == i); // Checking data consistency
+            i++;
+        }
+        INFO("Checking the std::transform");
+        std::transform(v.begin(), v.end(), v.begin(), [](int i) { return i*2; });
+        // Checking data consistency
+        CHECK(v[0] == 0);
+        CHECK(v[1] == 2);
+        CHECK(v[2] == 4);
+        CHECK(v[3] == 6);
+        CHECK(v[4] == 8);
+    }
 }

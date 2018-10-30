@@ -20,6 +20,8 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
 
+#include <algorithm>
+
 #include <yarp/gsl/Gsl.h>
 #include <yarp/gsl/impl/gsl_structs.h>
 
@@ -345,5 +347,23 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]") {
         CHECK(v[0] == 1.0); // Checking data consistency
         CHECK(v[1] == 2.0); // Checking data consistency
         CHECK(v[2] == 3.0); // Checking data consistency
+    }
+
+    SECTION("Checking the the for range based") {
+        Vector v{0.0, 1.0, 2.0, 3.0, 4.0};
+        double i = 0.0;
+        for(const auto& el:v) {
+            CHECK(el == i); // Checking data consistency
+            i+=1.0;
+        }
+
+        INFO("Checking the std::transform");
+        std::transform(v.begin(), v.end(), v.begin(), [](double d) { return d*2; });
+        // Checking data consistency
+        CHECK(v[0] == 0.0);
+        CHECK(v[1] == 2.0);
+        CHECK(v[2] == 4.0);
+        CHECK(v[3] == 6.0);
+        CHECK(v[4] == 8.0);
     }
 }
