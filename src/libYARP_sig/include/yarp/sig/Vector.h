@@ -133,6 +133,9 @@ private:
     }
 
 public:
+    typedef T* iterator;
+    typedef const T* const_iterator;
+
     VectorOf() {
         bytes.allocate(16*sizeof(T)); // preallocate space for 16 elements
         bytes.setUsed(0);
@@ -482,6 +485,37 @@ public:
 
     }
 
+    /**
+     * @brief Returns an iterator to the beginning of the VectorOf
+     * @note At the moment iterator is implemented as a pointer, it may change in the future.
+     * For this reason it should not be used as a pointer to the data, use data() instead.
+     */
+    iterator begin() noexcept {
+        return first;
+    }
+
+    /**
+     * @brief Returns an iterator to the end of the VectorOf
+     */
+    iterator end() noexcept {
+        return first + len;
+    }
+
+    /**
+     * @brief Returns a const iterator to the beginning of the VectorOf
+     * @note At the moment iterator is implemented as a pointer, it may change in the future.
+     * For this reason it should not be used as a pointer to the data, use data() instead.
+     */
+    const_iterator cbegin() const noexcept {
+        return first;
+    }
+
+    /**
+     * @brief Returns a const iterator to the end of the VectorOf.
+     */
+    const_iterator cend() const noexcept {
+        return first + len;
+    }
     void clear() {
         bytes.clear();
         bytes.setUsed(0);
