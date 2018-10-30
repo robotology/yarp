@@ -310,6 +310,29 @@ public:
         bytes.setUsed(bytes.used()+sizeof(T));
         _updatePointers();
         first[len-1] = elem;
+
+    /**
+     * @brief Move a new element in the vector: size is changed
+     * @param elem, element to be moved.
+     */
+    inline void push_back (T&& elem)
+    {
+        this->emplace_back(std::move(elem));
+    }
+
+    /**
+     * @brief Construct a new element in the vector: size is changed
+     * @param args, arguments to be forwarded for constructing the new element.
+     * @return the reference to the new element contructed.
+     */
+    template<typename... _Args>
+    inline T& emplace_back(_Args&&... args)
+    {
+        bytes.allocateOnNeed(bytes.used()+sizeof(T),bytes.length()*2+sizeof(T));
+        bytes.setUsed(bytes.used()+sizeof(T));
+        _updatePointers();
+        new (&((*this)[len-1])) T(std::forward<_Args>(args)...); // non-allocating placement operator new
+        return (*this)[len-1];
     }
 
     /**
