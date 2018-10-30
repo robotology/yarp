@@ -171,12 +171,30 @@ public:
         checkTrue(v[2] == 3, "Checking data consistency");
     }
 
+    void checkRangeFor() {
+        report(0,"Checking the the for range based");
+        VectorOf<int> v{0,1,2,3,4};
+        int i = 0;
+        for(const auto& el:v) {
+            checkTrue(el==i,"Checking data consistency");
+            i++;
+        }
+        report(0,"Checking the std::transform");
+        std::transform(v.begin(), v.end(), v.begin(), [](int i) { return i*2; });
+        checkTrue(v[0] == 0, "Checking data consistency");
+        checkTrue(v[1] == 2, "Checking data consistency");
+        checkTrue(v[2] == 4, "Checking data consistency");
+        checkTrue(v[3] == 6, "Checking data consistency");
+        checkTrue(v[4] == 8, "Checking data consistency");
+    }
+
 
     virtual void runTests() override {
         Network::setLocalMode(true);
         checkSendReceiveInt();
         testToString();
         checkInitializerListConctor();
+        checkRangeFor();
         Network::setLocalMode(false);
     }
 };
