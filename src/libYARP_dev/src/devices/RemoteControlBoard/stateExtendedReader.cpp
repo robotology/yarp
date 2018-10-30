@@ -196,47 +196,47 @@ bool StateExtendedInputPort::getLastVector(int field, double* data, Stamp& stamp
         {
             case VOCAB_ENCODERS:
                 ret = last.jointPosition_isValid;
-                memcpy(data, last.jointPosition.getFirst(), last.jointPosition.size() * last.jointPosition.getElementSize() );
+                memcpy(data, last.jointPosition.data(), last.jointPosition.size() * last.jointPosition.getElementSize() );
             break;
 
             case VOCAB_ENCODER_SPEEDS:
                 ret = last.jointVelocity_isValid;
-                memcpy(data, last.jointVelocity.getFirst(), last.jointVelocity.size() * last.jointVelocity.getElementSize() );
+                memcpy(data, last.jointVelocity.data(), last.jointVelocity.size() * last.jointVelocity.getElementSize() );
             break;
 
             case VOCAB_ENCODER_ACCELERATIONS:
                 ret = last.jointAcceleration_isValid;
-                memcpy(data, last.jointAcceleration.getFirst(), last.jointAcceleration.size() * last.jointAcceleration.getElementSize() );
+                memcpy(data, last.jointAcceleration.data(), last.jointAcceleration.size() * last.jointAcceleration.getElementSize() );
             break;
 
             case VOCAB_MOTOR_ENCODERS:
                 ret = last.motorPosition_isValid;
-                memcpy(data, last.motorPosition.getFirst(), last.motorPosition.size() * last.motorPosition.getElementSize() );
+                memcpy(data, last.motorPosition.data(), last.motorPosition.size() * last.motorPosition.getElementSize() );
             break;
 
             case VOCAB_MOTOR_ENCODER_SPEEDS:
                 ret = last.motorVelocity_isValid;
-                memcpy(data, last.motorVelocity.getFirst(), last.motorVelocity.size() * last.motorVelocity.getElementSize() );
+                memcpy(data, last.motorVelocity.data(), last.motorVelocity.size() * last.motorVelocity.getElementSize() );
             break;
 
             case VOCAB_MOTOR_ENCODER_ACCELERATIONS:
                 ret = last.motorAcceleration_isValid;
-                memcpy(data, last.motorAcceleration.getFirst(), last.motorAcceleration.size() * last.motorAcceleration.getElementSize() );
+                memcpy(data, last.motorAcceleration.data(), last.motorAcceleration.size() * last.motorAcceleration.getElementSize() );
             break;
 
             case VOCAB_TRQS:
                 ret = last.torque_isValid;
-                memcpy(data, last.torque.getFirst(), last.torque.size() * last.torque.getElementSize() );
+                memcpy(data, last.torque.data(), last.torque.size() * last.torque.getElementSize() );
             break;
 
             case VOCAB_PWMCONTROL_PWM_OUTPUTS:
                 ret = last.pwmDutycycle_isValid;
-                memcpy(data, last.pwmDutycycle.getFirst(), last.pwmDutycycle.size() * last.pwmDutycycle.getElementSize());
+                memcpy(data, last.pwmDutycycle.data(), last.pwmDutycycle.size() * last.pwmDutycycle.getElementSize());
             break;
 
             case VOCAB_AMP_CURRENTS:
                 ret = last.current_isValid;
-                memcpy(data, last.current.getFirst(), last.current.size() * last.current.getElementSize());
+                memcpy(data, last.current.data(), last.current.size() * last.current.getElementSize());
                 break;
 
             default:
@@ -262,12 +262,12 @@ bool StateExtendedInputPort::getLastVector(int field, int* data, Stamp& stamp, d
         {
             case VOCAB_CM_CONTROL_MODES:
                 ret = last.controlMode_isValid;
-                memcpy(data, last.controlMode.getFirst(), last.controlMode.size() * last.controlMode.getElementSize());
+                memcpy(data, last.controlMode.data(), last.controlMode.size() * last.controlMode.getElementSize());
             break;
 
             case VOCAB_INTERACTION_MODES:
                 ret = last.interactionMode_isValid;
-                memcpy(data, last.interactionMode.getFirst(), last.interactionMode.size() * last.interactionMode.getElementSize());
+                memcpy(data, last.interactionMode.data(), last.interactionMode.size() * last.interactionMode.getElementSize());
             break;
 
             default:

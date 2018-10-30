@@ -930,17 +930,17 @@ void ControlBoardWrapper::run()
         yarp_struct.controlMode.resize(controlledJoints);
         yarp_struct.interactionMode.resize(controlledJoints);
 
-        yarp_struct.jointPosition_isValid       = getEncoders(yarp_struct.jointPosition.getFirst());
-        yarp_struct.jointVelocity_isValid       = getEncoderSpeeds(yarp_struct.jointVelocity.getFirst());
-        yarp_struct.jointAcceleration_isValid   = getEncoderAccelerations(yarp_struct.jointAcceleration.getFirst());
-        yarp_struct.motorPosition_isValid       = getMotorEncoders(yarp_struct.motorPosition.getFirst());
-        yarp_struct.motorVelocity_isValid       = getMotorEncoderSpeeds(yarp_struct.motorVelocity.getFirst());
-        yarp_struct.motorAcceleration_isValid   = getMotorEncoderAccelerations(yarp_struct.motorAcceleration.getFirst());
-        yarp_struct.torque_isValid              = getTorques(yarp_struct.torque.getFirst());
-        yarp_struct.pwmDutycycle_isValid        = getDutyCycles(yarp_struct.pwmDutycycle.getFirst());
-        yarp_struct.current_isValid             = getCurrents(yarp_struct.current.getFirst());
-        yarp_struct.controlMode_isValid         = getControlModes(yarp_struct.controlMode.getFirst());
-        yarp_struct.interactionMode_isValid     = getInteractionModes((yarp::dev::InteractionModeEnum* ) yarp_struct.interactionMode.getFirst());
+        yarp_struct.jointPosition_isValid       = getEncoders(yarp_struct.jointPosition.data());
+        yarp_struct.jointVelocity_isValid       = getEncoderSpeeds(yarp_struct.jointVelocity.data());
+        yarp_struct.jointAcceleration_isValid   = getEncoderAccelerations(yarp_struct.jointAcceleration.data());
+        yarp_struct.motorPosition_isValid       = getMotorEncoders(yarp_struct.motorPosition.data());
+        yarp_struct.motorVelocity_isValid       = getMotorEncoderSpeeds(yarp_struct.motorVelocity.data());
+        yarp_struct.motorAcceleration_isValid   = getMotorEncoderAccelerations(yarp_struct.motorAcceleration.data());
+        yarp_struct.torque_isValid              = getTorques(yarp_struct.torque.data());
+        yarp_struct.pwmDutycycle_isValid        = getDutyCycles(yarp_struct.pwmDutycycle.data());
+        yarp_struct.current_isValid             = getCurrents(yarp_struct.current.data());
+        yarp_struct.controlMode_isValid         = getControlModes(yarp_struct.controlMode.data());
+        yarp_struct.interactionMode_isValid     = getInteractionModes((yarp::dev::InteractionModeEnum* ) yarp_struct.interactionMode.data());
 
         extendedOutputStatePort.setEnvelope(time);
         extendedOutputState_buffer.write();
