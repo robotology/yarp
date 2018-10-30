@@ -292,6 +292,16 @@ public:
     }
 
     /**
+     * @brief reserve, increase the capacity of the vector to a value that's greater or equal to size.
+     * If size is greater than the current capacity(), new storage is allocated, otherwise the method does nothing.
+     * @param size, new size of the vector.
+     */
+    void reserve(size_t size) {
+        bytes.allocateOnNeed(size*sizeof(T),size*sizeof(T));
+        _updatePointers();
+    }
+
+    /**
     * Push a new element in the vector: size is changed
     */
     inline void push_back (const T &elem)
@@ -364,6 +374,14 @@ public:
     */
     inline size_t length() const
     { return this->size();}
+
+    /**
+     * @brief capacity
+     * @return the number of elements that the container has currently allocated space for.
+     */
+    inline size_t capacity() const {
+        return bytes.length()/sizeof(T);
+    }
 
     /**
     * Zero the elements of the vector.
