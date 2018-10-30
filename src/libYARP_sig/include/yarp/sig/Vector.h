@@ -309,7 +309,8 @@ public:
         bytes.allocateOnNeed(bytes.used()+sizeof(T),bytes.length()*2+sizeof(T));
         bytes.setUsed(bytes.used()+sizeof(T));
         _updatePointers();
-        first[len-1] = elem;
+        new (&((*this)[len-1])) T(elem); // non-allocating placement operator new
+    }
 
     /**
      * @brief Move a new element in the vector: size is changed
