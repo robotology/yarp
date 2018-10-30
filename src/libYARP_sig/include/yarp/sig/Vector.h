@@ -12,8 +12,10 @@
 
 #include <cstring>
 #include <cstddef> //defines size_t
-#include <yarp/os/Portable.h>
+#include <memory>
 #include <string>
+
+#include <yarp/os/Portable.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Type.h>
 
@@ -141,6 +143,18 @@ public:
     VectorOf(size_t size) : bytes(size*sizeof(T)) {
         bytes.setUsed(size*sizeof(T));
         _updatePointers();
+    }
+
+    /**
+     * @brief Initializer list constructor.
+     * @param[in] values, list of values with which initialize the Vector.
+     */
+    VectorOf(std::initializer_list<T> values) : bytes(values.size()*sizeof(T))
+    {
+        bytes.setUsed(values.size()*sizeof(T));
+        len = values.size();
+        _updatePointers();
+        std::uninitialized_copy(values.begin(), values.end(), first);
     }
 
     /**
