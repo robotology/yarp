@@ -230,16 +230,21 @@ public:
     {
         return bytes.get();
     }
-
+#ifndef YARP_NO_DEPRECATED // since YARP 3.2.0
+    YARP_DEPRECATED_MSG("Use either data() if you need the pointer to the first element,"
+                        " or cbegin() if you need the iterator")
     inline const T *getFirst() const
     {
         return first;
     }
 
+    YARP_DEPRECATED_MSG("Use either data() if you need the pointer to the first element,"
+                        " or begin() if you need the iterator")
     inline T *getFirst()
     {
         return first;
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
     * Return a pointer to the first element of the vector.
