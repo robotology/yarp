@@ -68,7 +68,6 @@ Example:
 * Lowercase commands, i.e. `if` instead of `IF`
 * No spaces between the command and the bracket, i.e. `if()` instead of `if ()`
 * Do not repeat the argument in the commands closing blocks, i.e. `if(FOO) ... else() ... endif()` instead of `if(FOO) ... else(FOO) ... endif(FOO)`
-* Do not use the new CMake comment style, as that is supported only starting from CMake 3.0
 * No white spaces at the end of the line
 * One EOL at the end of the file
 * All files should use UNIX end of lines
