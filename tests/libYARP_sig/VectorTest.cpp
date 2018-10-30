@@ -350,6 +350,16 @@ public:
         checkTrue(v.data()!=nullptr, "size 2 => non-null data()");
     }
 
+    void checkInitializerListConctor() {
+        report(0,"Checking the functionalities of the initializer list constructor");
+        Vector v{1.0, 2.0, 3.0};
+        checkTrue(v.size() == (size_t) 3, "Checking size");
+
+        checkTrue(v[0] == 1.0, "Checking data consistency");
+        checkTrue(v[1] == 2.0, "Checking data consistency");
+        checkTrue(v[2] == 3.0, "Checking data consistency");
+    }
+
     virtual void runTests() override {
         Network::setLocalMode(true);
         checkFormat();
@@ -360,6 +370,7 @@ public:
         checkGsl();
         checkResize();
         checkEmpty();
+        checkInitializerListConctor();
         Network::setLocalMode(false);
     }
 };

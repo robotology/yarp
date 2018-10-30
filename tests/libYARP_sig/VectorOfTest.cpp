@@ -161,12 +161,22 @@ public:
 
     }
 
+    void checkInitializerListConctor() {
+        report(0,"Checking the functionalities of the initializer list constructor");
+        VectorOf<int> v{1, 2, 3};
+        checkTrue(v.size() == (size_t) 3, "Checking size");
+
+        checkTrue(v[0] == 1, "Checking data consistency");
+        checkTrue(v[1] == 2, "Checking data consistency");
+        checkTrue(v[2] == 3, "Checking data consistency");
+    }
 
 
     virtual void runTests() override {
         Network::setLocalMode(true);
         checkSendReceiveInt();
         testToString();
+        checkInitializerListConctor();
         Network::setLocalMode(false);
     }
 };
