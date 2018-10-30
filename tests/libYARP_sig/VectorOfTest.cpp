@@ -160,4 +160,13 @@ TEST_CASE("sig::VectorOfTest", "[yarp::sig]") {
 
     }
 
+    SECTION("Checking the functionalities of the initializer list constructor")
+    {
+        VectorOf<int> v{1, 2, 3};
+        CHECK(v.size() == (size_t) 3); // Checking size
+
+        CHECK(v[0] == 1); // Checking data consistency
+        CHECK(v[1] == 2); // Checking data consistency
+        CHECK(v[2] == 3); // Checking data consistency
+    }
 }

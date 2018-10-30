@@ -337,5 +337,13 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]") {
         v.resize(2);
         CHECK(v.data()!=nullptr); // size 2 => non-null data()
     }
-};
 
+    SECTION("Checking the functionalities of the initializer list constructor") {
+        Vector v{1.0, 2.0, 3.0};
+        CHECK(v.size() == (size_t) 3); // Checking size
+
+        CHECK(v[0] == 1.0); // Checking data consistency
+        CHECK(v[1] == 2.0); // Checking data consistency
+        CHECK(v[2] == 3.0); // Checking data consistency
+    }
+}
