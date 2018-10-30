@@ -15,6 +15,7 @@
 #include <yarp/sig/Vector.h>
 
 //#include <vector>
+#include <algorithm>
 
 #include <yarp/gsl/impl/gsl_structs.h>
 
@@ -188,6 +189,34 @@ public:
         checkTrue(v[4] == 8, "Checking data consistency");
     }
 
+    void checkReserve() {
+        report(0,"Checking reserve()");
+        VectorOf<int> v(0);
+        checkTrue(v.size() == (size_t) 0, "Checking size() after constructor");
+        checkTrue(v.capacity() == (size_t) 0, "Checking memory allocated after constructor");
+        v.push_back(1);
+        checkTrue(v[0] == 1, "Checking data consistency");
+        checkTrue(v.size() == (size_t) 1, "Checking size() after push_back");
+        checkTrue(v.capacity() == (size_t) 1, "Checking capacity() after push_back");
+        v.reserve(10);
+        checkTrue(v[0] == 1, "Checking data consistency");
+        checkTrue(v.size() == (size_t) 1, "The memory has been allocated but the vector is empty");
+        checkTrue(v.capacity() == (size_t) 10, "Checking memory allocated");
+        v.push_back(2);
+        checkTrue(v[0] == 1, "Checking data consistency");
+        checkTrue(v[1] == 2, "Checking data consistency");
+        checkTrue(v.size() == (size_t) 2, "Checking size() after push_back");
+        checkTrue(v.capacity() == (size_t) 10, "Checking capacity() after push_back");
+        v.resize(11);
+        checkTrue(v[0] == 1, "Checking data consistency");
+        checkTrue(v[1] == 2, "Checking data consistency");
+        checkTrue(v.size() == (size_t) 11, "Checking size() after resize()");
+        checkTrue(v.capacity() == (size_t) 11, "Checking size() after resize()");
+        v.resize(1);
+        checkTrue(v[0] == 1, "Checking data consistency");
+        checkTrue(v.size() == (size_t) 1, "Checking size() after push_back");
+        checkTrue(v.capacity() == (size_t) 11, "Checking capacity() after push_back");
+    }
 
     virtual void runTests() override {
         Network::setLocalMode(true);
@@ -195,6 +224,7 @@ public:
         testToString();
         checkInitializerListConctor();
         checkRangeFor();
+        checkReserve();
         Network::setLocalMode(false);
     }
 };
