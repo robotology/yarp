@@ -20,6 +20,8 @@
 #include <yarp/os/Time.h>
 #include <yarp/sig/Vector.h>
 
+#include <algorithm>
+
 #include <yarp/gsl/impl/gsl_structs.h>
 
 
@@ -186,5 +188,34 @@ TEST_CASE("sig::VectorOfTest", "[yarp::sig]") {
         CHECK(v[2] == 4);
         CHECK(v[3] == 6);
         CHECK(v[4] == 8);
+    }
+
+    SECTION("Checking reserve()")
+    {
+        VectorOf<int> v(0);
+        CHECK(v.size() == (size_t) 0); // Checking size() after constructor
+        CHECK(v.capacity() == (size_t) 0); // Checking memory allocated after constructor
+        v.push_back(1);
+        CHECK(v[0] == 1); // Checking data consistency
+        CHECK(v.size() == (size_t) 1); // Checking size() after push_back
+        CHECK(v.capacity() == (size_t) 1); // Checking capacity() after push_back
+        v.reserve(10);
+        CHECK(v[0] == 1); // Checking data consistency
+        CHECK(v.size() == (size_t) 1); // The memory has been allocated but the vector is empty
+        CHECK(v.capacity() == (size_t) 10); // Checking memory allocated
+        v.push_back(2);
+        CHECK(v[0] == 1); // Checking data consistency
+        CHECK(v[1] == 2); // Checking data consistency
+        CHECK(v.size() == (size_t) 2); // Checking size() after push_back
+        CHECK(v.capacity() == (size_t) 10); // Checking capacity() after push_back
+        v.resize(11);
+        CHECK(v[0] == 1); // Checking data consistency
+        CHECK(v[1] == 2); // Checking data consistency
+        CHECK(v.size() == (size_t) 11); // Checking size() after resize()
+        CHECK(v.capacity() == (size_t) 11); // Checking size() after resize()
+        v.resize(1);
+        CHECK(v[0] == 1); // Checking data consistency
+        CHECK(v.size() == (size_t) 1); // Checking size() after push_back
+        CHECK(v.capacity() == (size_t) 11); // Checking capacity() after push_back
     }
 }
