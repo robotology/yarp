@@ -24,7 +24,12 @@ class VectorTest(unittest.TestCase):
         mat.eye()
         vecTest = yarp.Vector(mat.getRow(0))
         self.assertEqual(vecTest.size(), 3)
-
+        # Initializer list constructor
+        vec2 = yarp.Vector([1.0, 2.0, 3.0])
+        self.assertEqual(vec2.size(), 3)
+        self.assertEqual(vec2.get(0), 1.0)
+        self.assertEqual(vec2.get(1), 2.0)
+        self.assertEqual(vec2.get(2), 3.0)
 
 
 if __name__ == '__main__':

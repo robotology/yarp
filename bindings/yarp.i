@@ -222,6 +222,7 @@
 %ignore yarp::sig::Image::getIplImage() const;
 %ignore yarp::sig::Image::getReadType() const;
 %ignore yarp::sig::VectorOf<double>::getType() const;
+%ignore yarp::sig::VectorOf<double>::VectorOf(std::initializer_list<double>);
 %ignore yarp::os::Property::put(const char *,Value *);
 %ignore yarp::os::Bottle::add(Value *);
 %rename(toString) std::string::operator const char *() const;
@@ -607,6 +608,10 @@ typedef yarp::os::BufferedPort<Vector> BufferedPortVector;
 %template(BufferedPortSound) yarp::os::BufferedPort<yarp::sig::Sound >;
 
 %template(Vector) yarp::sig::VectorOf<double>;
+#if SWIG_VERSION < 0x030012
+%rename(VectorIterator) yarp::sig::VectorOf<double>::iterator;
+%rename(VectorConstIterator) yarp::sig::VectorOf<double>::const_iterator;
+#endif
 %template(TypedReaderVector) yarp::os::TypedReader<yarp::sig::VectorOf<double> >;
 %template(TypedReaderCallbackVector) yarp::os::TypedReaderCallback<yarp::sig::VectorOf<double> >;
 %template(BufferedPortVector) yarp::os::BufferedPort<yarp::sig::VectorOf<double> >;
@@ -1088,6 +1093,18 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 #endif
 
 %extend yarp::sig::VectorOf<double> {
+
+    // This in not a real constructor actually, it is converted by swig to a function returning a pointer.
+    // See: http://www.swig.org/Doc3.0/CPlusPlus11.html#CPlusPlus11_initializer_lists
+    VectorOf<double>(const std::vector<double>& values)
+    {
+        VectorOf<double>* newVec = new VectorOf<double>(0);
+        newVec->reserve(values.size());
+        for (const auto& element : values) {
+            newVec->push_back(element);
+        }
+        return newVec;
+    }
 
     double get(int j)
     {
