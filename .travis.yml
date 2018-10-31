@@ -4,8 +4,6 @@ language: cpp
 
 cache:
   ccache: true
-  directories:
-    - $HOME/Library/Caches/Homebrew
 
 os:
   - linux
@@ -101,6 +99,18 @@ addons:
       - ruby
       # Perl bindings and license check
       - perl
+  homebrew:
+    update: true
+    packages:
+    - ace
+    - sqlite
+    - tinyxml
+    - libedit
+    - qt5
+    - opencv
+    - eigen
+    - graphviz
+    - ccache
 
 matrix:
   exclude:
@@ -341,11 +351,7 @@ notifications:
 
 
 before_install:
-  # Update repositories (macOS)
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
-
-  # Install ccache on osx
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ccache; fi
+  # Enable ccache on osx
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH="/usr/local/opt/ccache/libexec:$PATH"; fi
 
   # Use ccache also for clang and clang++ on linux
@@ -394,22 +400,11 @@ before_install:
 
 
 install:
-  # Install ACE
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then if $TRAVIS_WITH_ACE; then brew install ace; fi; fi
-
-  # Install other core dependencies (sqlite, tinyxml, libedit)
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install sqlite tinyxml libedit; fi
-
   # Install Qt5 GUIs dependencies
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt5; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export Qt5_DIR="/usr/local/opt/qt5/lib/cmake/Qt5"; fi
 
   # Fix issue in trusty version of Qt5
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo sed -i 's/COPY_ONLY/COPYONLY/g' /usr/lib/x86_64-linux-gnu/cmake/Qt5Core/Qt5CoreMacros.cmake; fi
-
-  # Install other dependencies (opencv, eigen, graphviz)
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then /usr/bin/yes | pip2 uninstall numpy || true; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install opencv eigen graphviz; fi
 
   # Install swig stuff
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then wget https://github.com/robotology-dependencies/swigs/releases/download/v0.0.5/swigs.zip; fi
