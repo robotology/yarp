@@ -30,7 +30,28 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-
+namespace
+{
+static std::string bytes_to_string(const Bytes& header)
+{
+    std::string ret;
+    for (size_t i = 0; i < header.length(); i++) {
+        ret += NetType::toString(header.get()[i]);
+        ret += " ";
+    }
+    ret += "[";
+    for (size_t i = 0; i < header.length(); i++) {
+        char ch = header.get()[i];
+        if (ch>=32) {
+            ret += ch;
+        } else {
+            ret += '.';
+        }
+    }
+    ret += "]";
+    return ret;
+}
+}
 
 class Carriers::Private : public YarpPluginSelector
 {
@@ -39,106 +60,87 @@ public:
 
     std::vector<Carrier*> delegates;
 
-    Carrier* chooseCarrier(const std::string* name,
-                           const Bytes* header,
+    Carrier* chooseCarrier(const std::string &name,
                            bool load_if_needed = true,
                            bool return_template = false);
+    Carrier* chooseCarrier(const Bytes& header,
+                           bool load_if_needed = true);
 
-    static bool matchCarrier(const Bytes *header, Bottle& code);
-    static bool checkForCarrier(const Bytes *header, Searchable& group);
-    static bool scanForCarrier(const Bytes *header);
+    static bool matchCarrier(const Bytes& header, Bottle& code);
+    static bool checkForCarrier(const Bytes& header, Searchable& group);
+    static bool scanForCarrier(const Bytes& header);
 
     virtual bool select(Searchable& options) override;
 };
 
 yarp::os::Mutex Carriers::Private::mutex {};
 
-
-Carrier* Carriers::Private::chooseCarrier(const std::string *name,
-                                          const Bytes *header,
+Carrier* Carriers::Private::chooseCarrier(const std::string& name,
                                           bool load_if_needed,
                                           bool return_template)
 {
-    std::string s;
-    if (name != nullptr) {
-        s = *name;
-        size_t i = s.find('+');
-        if (i!=std::string::npos) {
-            s[i] = '\0';
-            s = s.c_str();
-            name = &s;
-        }
+    auto pos = name.find('+');
+    if (pos != std::string::npos) {
+        return chooseCarrier(name.substr(0, pos), load_if_needed, return_template);
     }
+
     for (auto& delegate : delegates) {
         Carrier& c = *delegate;
-        bool match = false;
-        if (name != nullptr) {
-            if ((*name) == c.getName()) {
-                match = true;
-            }
-        }
-        if (header != nullptr) {
-            if (c.checkHeader(*header)) {
-                match = true;
-            }
-        }
-        if (match) {
+        if (name == c.getName()) {
             if (!return_template) {
                 return c.create();
             }
             return &c;
         }
     }
-    if (load_if_needed) {
-        if (name != nullptr) {
-            // ok, we didn't find a carrier, but we have a name.
-            // let's try to register it, and see if a dll is found.
-            if (NetworkBase::registerCarrier(name->c_str(), nullptr)) {
-                // We made progress, let's try again...
-                return Carriers::Private::chooseCarrier(name, header, false);
-            }
-        } else {
-            if (scanForCarrier(header)) {
-                // We made progress, let's try again...
-                return Carriers::Private::chooseCarrier(name, header, true);
-            }
-        }
-    }
-    if (name == nullptr) {
-        std::string txt;
-        for (int i=0; i<(int)header->length(); i++) {
-            txt += NetType::toString(header->get()[i]);
-            txt += " ";
-        }
-        txt += "[";
-        for (int i=0; i<(int)header->length(); i++) {
-            char ch = header->get()[i];
-            if (ch>=32) {
-                txt += ch;
-            } else {
-                txt += '.';
-            }
-        }
-        txt += "]";
 
-        YARP_SPRINTF1(Logger::get(),
-                      error,
-                      "Could not find carrier for a connection starting with: %s",
-                      txt.c_str());
-    } else {
-        YARP_SPRINTF1(Logger::get(),
-                      error,
-                      "Could not find carrier \"%s\"",
-                      (name != nullptr) ? name->c_str() : "[bytes]");;
+    if (load_if_needed) {
+        // ok, we didn't find a carrier, but we have a name.
+        // let's try to register it, and see if a dll is found.
+        if (NetworkBase::registerCarrier(name.c_str(), nullptr)) {
+            // We made progress, let's try again...
+            return Carriers::Private::chooseCarrier(name, false);
+        }
     }
+
+    YARP_SPRINTF1(Logger::get(),
+                  error,
+                  "Could not find carrier \"%s\"",
+                  (!name.empty()) ? name.c_str() : "[bytes]");;
+
+    return nullptr;
+}
+
+Carrier* Carriers::Private::chooseCarrier(const Bytes& header,
+                                          bool load_if_needed)
+{
+    for (auto& delegate : delegates) {
+        Carrier& c = *delegate;
+        if (c.checkHeader(header)) {
+            return c.create();
+        }
+    }
+
+    if (load_if_needed) {
+        if (scanForCarrier(header)) {
+            // We made progress, let's try again...
+            return Carriers::Private::chooseCarrier(header, true);
+        }
+    }
+
+    YARP_SPRINTF1(Logger::get(),
+                  error,
+                  "Could not find carrier for a connection starting with: %s",
+                  bytes_to_string(header).c_str());
+
     return nullptr;
 }
 
 
 
-bool Carriers::Private::matchCarrier(const Bytes *header, Bottle& code)
+bool Carriers::Private::matchCarrier(const Bytes& header, Bottle& code)
 {
-    int at = 0;
+    size_t at = 0;
     bool success = true;
     bool done = false;
     for (size_t i=0; i<code.size() && !done; i++) {
@@ -146,12 +148,12 @@ bool Carriers::Private::matchCarrier(const Bytes *header, Bottle& code)
         if (v.isString()) {
             std::string str = v.asString();
             for (char j : str) {
-                if ((int)header->length()<=at) {
+                if (header.length() <= at) {
                     success = false;
                     done = true;
                     break;
                 }
-                if (j != header->get()[at]) {
+                if (j != header.get()[at]) {
                     success = false;
                     done = true;
                     break;
@@ -165,7 +167,7 @@ bool Carriers::Private::matchCarrier(const Bytes *header, Bottle& code)
     return success;
 }
 
-bool Carriers::Private::checkForCarrier(const Bytes *header, Searchable& group)
+bool Carriers::Private::checkForCarrier(const Bytes& header, Searchable& group)
 {
     Bottle code = group.findGroup("code").tail();
     if (code.size()==0) return false;
@@ -178,7 +180,7 @@ bool Carriers::Private::checkForCarrier(const Bytes *header, Searchable& group)
     return false;
 }
 
-bool Carriers::Private::scanForCarrier(const Bytes *header)
+bool Carriers::Private::scanForCarrier(const Bytes& header)
 {
     YARP_SPRINTF0(Logger::get(),
                   debug,
@@ -231,18 +233,18 @@ void Carriers::clear()
 
 Carrier *Carriers::chooseCarrier(const std::string& name)
 {
-    return getInstance().mPriv->chooseCarrier(&name, nullptr);
+    return getInstance().mPriv->chooseCarrier(name);
 }
 
 Carrier *Carriers::getCarrierTemplate(const std::string& name)
 {
-    return getInstance().mPriv->chooseCarrier(&name, nullptr, true, true);
+    return getInstance().mPriv->chooseCarrier(name, true, true);
 }
 
 
 Carrier *Carriers::chooseCarrier(const Bytes& bytes)
 {
-    return getInstance().mPriv->chooseCarrier(nullptr, &bytes);
+    return getInstance().mPriv->chooseCarrier(bytes);
 }
 
 

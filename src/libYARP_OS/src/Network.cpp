@@ -256,46 +256,18 @@ static int enactConnection(const Contact& src,
     return ok ? 0 : 1;
 }
 
-
-
-static char* findCarrierParamsPointer(std::string &carrier_name)
-{
-    size_t i = carrier_name.find('+');
-    if (i!=std::string::npos) {
-        return &(carrier_name[i]);
-    }
-    else
-        return nullptr;
-}
-
 static std::string collectParams(Contact &c)
 {
-
     std::string carrier_name = c.getCarrier();
-    char *params_ptr = findCarrierParamsPointer(carrier_name);
-    std::string params;
-    params.clear();
-
-    if(nullptr != params_ptr)
-    {
-        params+=params_ptr;
-    }
-
-    CARRIER_DEBUG("\n ***** SONO NELLA COLLECTPARAMS: carrier=%s, params=%s\n\n ", c.getCarrier().c_str(), params.c_str());
-    return params;
-
+    auto pos = carrier_name.find('+');
+    if (pos != std::string::npos)
+        return carrier_name.substr(pos);
+    return {};
 }
 
-static std::string extractCarrierNameOnly(std::string &carrier_name_with_params)
+static std::string extractCarrierNameOnly(const std::string& carrier_name_with_params)
 {
-
-    std::string carrier_name = carrier_name_with_params;
-    char *c = findCarrierParamsPointer(carrier_name);
-    if(nullptr != c){
-        *c = '\0';
-        carrier_name = carrier_name.c_str();
-    }
-    return carrier_name;
+    return carrier_name_with_params.substr(0, carrier_name_with_params.find('+'));
 }
 
 /*

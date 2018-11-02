@@ -143,17 +143,19 @@ public:
         return verbose;
     }
 
-    static std::string extractPath(const char *fname) {
-        std::string s = fname;
-        size_t n = s.rfind('/');
+    static std::string extractPath(const char *fname)
+    {
+        std::string s{fname};
+        auto n = s.rfind('/');
+#if defined(_WIN32)
         if (n == std::string::npos) {
             n = s.rfind('\\');
         }
+#endif
         if (n != std::string::npos) {
-            s[n] = '\0';
-            return std::string(s.c_str());
+            return s.substr(0,n);
         }
-        return "";
+        return {};
     }
 
     bool configure(Property& config, int argc, char *argv[], bool skip)
