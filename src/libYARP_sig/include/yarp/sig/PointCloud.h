@@ -40,7 +40,7 @@ public:
      */
     PointCloud()
     {
-        data.clear();
+        m_storage.clear();
         setPointType();
     }
 
@@ -65,7 +65,7 @@ public:
     {
         header.width = width;
         header.height = height;
-        data.resize(width * height);
+        m_storage.resize(width * height);
     }
 
     /**
@@ -79,12 +79,12 @@ public:
     {
         header.width = width;
         header.height = 1;
-        data.resize(width);
+        m_storage.resize(width);
     }
 
     virtual const char* getRawData() const override
     {
-        return data.getMemoryBlock();
+        return m_storage.getMemoryBlock();
     }
 
     /**
@@ -109,7 +109,7 @@ public:
 
     virtual size_t size() const override
     {
-        return data.size();
+        return m_storage.size();
     }
 
     /**
@@ -121,7 +121,7 @@ public:
     inline T& operator()(size_t u, size_t v)
     {
         yAssert(isOrganized());
-        return data[u + v * width()];
+        return m_storage[u + v * width()];
     }
 
     /**
@@ -133,7 +133,7 @@ public:
     inline const T& operator()(size_t u, size_t v) const
     {
         yAssert(isOrganized());
-        return data[u + v * width()];
+        return m_storage[u + v * width()];
     }
 
     /**
@@ -142,7 +142,7 @@ public:
      */
     inline T& operator()(size_t i)
     {
-        return data[i];
+        return m_storage[i];
     }
 
     /**
@@ -151,7 +151,7 @@ public:
      */
     inline const T& operator()(size_t i) const
     {
-        return data[i];
+        return m_storage[i];
     }
 
     template <class T1>
@@ -178,13 +178,13 @@ public:
 
         yAssert(getPointType() == rhs.getPointType());
 
-        size_t nr_points = data.size();
-        data.resize(nr_points + rhs.size());
-        for (size_t i = nr_points; i < data.size(); ++i) {
-            data[i] = rhs.data[i - nr_points];
+        size_t nr_points = m_storage.size();
+        m_storage.resize(nr_points + rhs.size());
+        for (size_t i = nr_points; i < m_storage.size(); ++i) {
+            m_storage[i] = rhs.m_storage[i - nr_points];
         }
 
-        header.width = data.size();
+        header.width = m_storage.size();
         header.height = 1;
         if (rhs.isDense() && isDense()) {
             header.isDense = 1;
@@ -212,8 +212,8 @@ public:
      */
     inline void push_back(const T& pt)
     {
-        data.push_back(pt);
-        header.width = data.size();
+        m_storage.push_back(pt);
+        header.width = m_storage.size();
         header.height = 1;
     }
 
@@ -222,7 +222,7 @@ public:
      */
     virtual inline void clear()
     {
-        data.clear();
+        m_storage.clear();
         header.width = 0;
         header.height = 0;
     }
@@ -276,18 +276,18 @@ public:
             return false;
         }
 
-        data.resize(_header.height * _header.width);
-        std::memset((void*)data.getFirst(), 0, data.size() * sizeof(T));
+        m_storage.resize(_header.height * _header.width);
+        std::memset((void*)m_storage.data(), 0, m_storage.size() * sizeof(T));
 
         header.height = _header.height;
         header.width = _header.width;
         header.isDense = _header.isDense;
 
         if (header.pointType == _header.pointType) {
-            return data.read(connection);
+            return m_storage.read(connection);
         }
 
-        T* tmp = data.getFirst();
+        T* tmp = m_storage.data();
 
         yAssert(tmp != nullptr);
 
@@ -298,7 +298,7 @@ public:
         std::vector<int> recipe = getComposition(_header.pointType);
 
         yarp::os::ManagedBytes dummy;
-        for (size_t i = 0; i < data.size(); i++) {
+        for (size_t i = 0; i < m_storage.size(); i++) {
             for (size_t j = 0; j < recipe.size(); j++) {
                 size_t sizeToRead = pointType2Size(recipe[j]);
                 if ((header.pointType & recipe[j])) {
@@ -318,7 +318,7 @@ public:
     virtual bool write(yarp::os::ConnectionWriter& writer) const override
     {
         writer.appendBlock((char*)&header, sizeof(PointCloudNetworkHeader));
-        return data.write(writer);
+        return m_storage.write(writer);
     }
 
     virtual std::string toString(int precision = -1, int width = -1) const
@@ -398,7 +398,7 @@ public:
     }
 
 private:
-    yarp::sig::VectorOf<T> data;
+    yarp::sig::VectorOf<T> m_storage;
 
     void setPointType()
     {

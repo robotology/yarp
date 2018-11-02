@@ -15,6 +15,7 @@
 #include <yarp/sig/Vector.h>
 
 //#include <vector>
+#include <algorithm>
 
 #include <yarp/gsl/impl/gsl_structs.h>
 
@@ -161,12 +162,69 @@ public:
 
     }
 
+    void checkInitializerListConctor() {
+        report(0,"Checking the functionalities of the initializer list constructor");
+        VectorOf<int> v{1, 2, 3};
+        checkTrue(v.size() == (size_t) 3, "Checking size");
 
+        checkTrue(v[0] == 1, "Checking data consistency");
+        checkTrue(v[1] == 2, "Checking data consistency");
+        checkTrue(v[2] == 3, "Checking data consistency");
+    }
+
+    void checkRangeFor() {
+        report(0,"Checking the the for range based");
+        VectorOf<int> v{0,1,2,3,4};
+        int i = 0;
+        for(const auto& el:v) {
+            checkTrue(el==i,"Checking data consistency");
+            i++;
+        }
+        report(0,"Checking the std::transform");
+        std::transform(v.begin(), v.end(), v.begin(), [](int i) { return i*2; });
+        checkTrue(v[0] == 0, "Checking data consistency");
+        checkTrue(v[1] == 2, "Checking data consistency");
+        checkTrue(v[2] == 4, "Checking data consistency");
+        checkTrue(v[3] == 6, "Checking data consistency");
+        checkTrue(v[4] == 8, "Checking data consistency");
+    }
+
+    void checkReserve() {
+        report(0,"Checking reserve()");
+        VectorOf<int> v(0);
+        checkTrue(v.size() == (size_t) 0, "Checking size() after constructor");
+        checkTrue(v.capacity() == (size_t) 0, "Checking memory allocated after constructor");
+        v.push_back(1);
+        checkTrue(v[0] == 1, "Checking data consistency");
+        checkTrue(v.size() == (size_t) 1, "Checking size() after push_back");
+        checkTrue(v.capacity() == (size_t) 1, "Checking capacity() after push_back");
+        v.reserve(10);
+        checkTrue(v[0] == 1, "Checking data consistency");
+        checkTrue(v.size() == (size_t) 1, "The memory has been allocated but the vector is empty");
+        checkTrue(v.capacity() == (size_t) 10, "Checking memory allocated");
+        v.push_back(2);
+        checkTrue(v[0] == 1, "Checking data consistency");
+        checkTrue(v[1] == 2, "Checking data consistency");
+        checkTrue(v.size() == (size_t) 2, "Checking size() after push_back");
+        checkTrue(v.capacity() == (size_t) 10, "Checking capacity() after push_back");
+        v.resize(11);
+        checkTrue(v[0] == 1, "Checking data consistency");
+        checkTrue(v[1] == 2, "Checking data consistency");
+        checkTrue(v.size() == (size_t) 11, "Checking size() after resize()");
+        checkTrue(v.capacity() == (size_t) 11, "Checking size() after resize()");
+        v.resize(1);
+        checkTrue(v[0] == 1, "Checking data consistency");
+        checkTrue(v.size() == (size_t) 1, "Checking size() after push_back");
+        checkTrue(v.capacity() == (size_t) 11, "Checking capacity() after push_back");
+    }
 
     virtual void runTests() override {
         Network::setLocalMode(true);
         checkSendReceiveInt();
         testToString();
+        checkInitializerListConctor();
+        checkRangeFor();
+        checkReserve();
         Network::setLocalMode(false);
     }
 };

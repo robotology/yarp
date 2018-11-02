@@ -15,6 +15,7 @@
 #include <yarp/os/Time.h>
 
 //#include <vector>
+#include <algorithm>
 
 #include <yarp/gsl/Gsl.h>
 #include <yarp/gsl/impl/gsl_structs.h>
@@ -350,6 +351,34 @@ public:
         checkTrue(v.data()!=nullptr, "size 2 => non-null data()");
     }
 
+    void checkInitializerListConctor() {
+        report(0,"Checking the functionalities of the initializer list constructor");
+        Vector v{1.0, 2.0, 3.0};
+        checkTrue(v.size() == (size_t) 3, "Checking size");
+
+        checkTrue(v[0] == 1.0, "Checking data consistency");
+        checkTrue(v[1] == 2.0, "Checking data consistency");
+        checkTrue(v[2] == 3.0, "Checking data consistency");
+    }
+
+    void checkRangeFor() {
+        report(0,"Checking the the for range based");
+        Vector v{0.0, 1.0, 2.0, 3.0, 4.0};
+        double i = 0.0;
+        for(const auto& el:v) {
+            checkTrue(el==i,"Checking data consistency");
+            i+=1.0;
+        }
+
+        report(0,"Checking the std::transform");
+        std::transform(v.begin(), v.end(), v.begin(), [](double d) { return d*2; });
+        checkTrue(v[0] == 0.0, "Checking data consistency");
+        checkTrue(v[1] == 2.0, "Checking data consistency");
+        checkTrue(v[2] == 4.0, "Checking data consistency");
+        checkTrue(v[3] == 6.0, "Checking data consistency");
+        checkTrue(v[4] == 8.0, "Checking data consistency");
+    }
+
     virtual void runTests() override {
         Network::setLocalMode(true);
         checkFormat();
@@ -360,6 +389,8 @@ public:
         checkGsl();
         checkResize();
         checkEmpty();
+        checkInitializerListConctor();
+        checkRangeFor();
         Network::setLocalMode(false);
     }
 };
