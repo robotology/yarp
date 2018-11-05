@@ -63,7 +63,7 @@ bool yarp::os::impl::ConnectionRecorder::expectBlock(char* data, size_t len)
     return ok;
 }
 
-std::string yarp::os::impl::ConnectionRecorder::expectText(int terminatingChar)
+std::string yarp::os::impl::ConnectionRecorder::expectText(const char terminatingChar)
 {
     std::string str = reader->expectText(terminatingChar);
     readerStore.appendString(str.c_str(), terminatingChar);
@@ -235,7 +235,7 @@ void yarp::os::impl::ConnectionRecorder::appendFloat64(yarp::conf::float64_t dat
     writerStore.appendFloat64(data);
 }
 
-void yarp::os::impl::ConnectionRecorder::appendString(const char* str, int terminate)
+void yarp::os::impl::ConnectionRecorder::appendString(const char* str, const char terminate)
 {
     writer->appendString(str, terminate);
     writerStore.appendString(str, terminate);
