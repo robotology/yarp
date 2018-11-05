@@ -25,6 +25,7 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/dev/SerialInterfaces.h>
 #include <yarp/dev/GenericSensorInterfaces.h>
+#include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/math/Quaternion.h>
 #include <yarp/os/Mutex.h>
 
@@ -141,39 +142,46 @@ constexpr int MAX_MSG_LENGTH = 128;
 * | baudrate       | int    | Hz    |               | Yes if i2c not specified | baudrate setting of COM port | ex 115200, used only with serial configuration |
 * | i2c            | string |       |               | Yes if comport not specified | full name of device file  | ex '/dev/i2c-5', it is mutually exclusive with 'comport' parameter, necessary for i2c configuration|
 * | period         | int    | ms    |       10      | No       | period of the thread | |
+* | sensor_name    | string |       | sensor_imu_bosch_bno055 | No | full name of the device | |
+* | frame_name     | string |       | set same as `sensor_name` | No | full name of the sensor frame in which the measurements are expressed | |
 **/
 
 class yarp::dev::BoschIMU:   public yarp::dev::DeviceDriver,
                              public yarp::os::PeriodicThread,
-                             public yarp::dev::IGenericSensor
+                             public yarp::dev::IGenericSensor,
+                             public yarp::dev::IThreeAxisGyroscopes,
+                             public yarp::dev::IThreeAxisLinearAccelerometers,
+                             public yarp::dev::IThreeAxisMagnetometers,
+                             public yarp::dev::IOrientationSensors    
 {
 protected:
 
-    bool                        verbose;
-    short                       status;
-    int                         nChannels;
-    yarp::sig::Vector           data;
-    yarp::sig::Vector           data_tmp;
-    yarp::math::Quaternion      quaternion;
-    yarp::math::Quaternion      quaternion_tmp;
-    yarp::sig::Vector           RPY_angle;
-    double                      timeStamp;
-    double                      timeLastReport;
-    yarp::os::Mutex             mutex;
-    bool                        i2c_flag;
+    bool                        verbose;              ///< Flag to get verbose output 
+    short                       status;               ///< device status - UNUSED
+    int                         nChannels;            ///< number of channels in the output port. Default 12. If 16, also includes quaternion data
+    yarp::sig::Vector           data;                 ///< sensor data buffer
+    yarp::sig::Vector           data_tmp;             ///< sensor data temporary buffer
+    yarp::math::Quaternion      quaternion;           ///< orientation in quaternion representation
+    yarp::math::Quaternion      quaternion_tmp;       ///< orientation in quaternion representation
+    yarp::sig::Vector           RPY_angle;            ///< orientation in Euler angle representation
+    double                      timeStamp;            ///< device timestamp
+    double                      timeLastReport;       ///< timestamp of last reported data
+    mutable yarp::os::Mutex             mutex;        ///< mutex to avoid resource clash
+    bool                        i2c_flag;             ///< flag to check if device connected through i2c commununication
 
-    bool                        checkError;
+    bool                        checkError;           ///< flag to check read error of sensor data
 
-    int                         fd;
-    yarp::os::ResourceFinder    rf;
+    int                         fd;                   ///< file descriptor to open device at system level 
+    yarp::os::ResourceFinder    rf;                   ///< resource finder object to load config parameters
 
-    using ReadFuncPtr = bool (BoschIMU::*)(unsigned char, int, unsigned char*, std::string);
-    ReadFuncPtr readFunc;
+    using ReadFuncPtr = bool (BoschIMU::*)(unsigned char, int, unsigned char*, std::string);  ///< Functor to choose between i2c or serial comm
+    ReadFuncPtr readFunc;                             ///< Functor object
 
-    unsigned char command[MAX_MSG_LENGTH];
-    unsigned char response[MAX_MSG_LENGTH];
+    unsigned char command[MAX_MSG_LENGTH];            ///< packet to be written to the device
+    unsigned char response[MAX_MSG_LENGTH];           ///< packet to be read from the device
 
-    bool checkWriteResponse(unsigned char *response);
+    
+    bool checkWriteResponse(unsigned char *response); 
     bool checkReadResponse(unsigned char *response);
 
     void printBuffer(unsigned char *buffer, int length);
@@ -200,34 +208,222 @@ public:
 
     ~BoschIMU();
 
+    /**
+     * Open the device and set up parameters/communication
+     * @param[in] config searchable object with desired configuration parameters
+     * @return true/false success/failure
+     */
     virtual bool open(yarp::os::Searchable& config) override;
+    
+    /**
+     * Close the device
+     * @return true/false success/failure
+     */ 
     virtual bool close() override;
 
     /**
      * Read a vector from the sensor.
-     * @param out a vector containing the sensor's last readings.
+     * @param[out] out a vector containing the sensor's last readings.
      * @return true/false success/failure
      */
     virtual bool read(yarp::sig::Vector &out) override;
 
     /**
      * Get the number of channels of the sensor.
-     * @param nc pointer to storage, return value
+     * @param[out] nc pointer to storage, return value
      * @return true/false success/failure
      */
     virtual bool getChannels(int *nc) override;
 
     /**
      * Calibrate the sensor, single channel.
-     * @param ch channel number
-     * @param v reset valure
+     * @param[in] ch channel number
+     * @param[in] v reset value
      * @return true/false success/failure
      */
     virtual bool calibrate(int ch, double v) override;
+    
+    /* IThreeAxisGyroscopes methods */
+    /**
+     * Get the  number of three axis gyroscopes in the device
+     * @return 1
+     */
+    virtual size_t getNrOfThreeAxisGyroscopes() const override;
+    
+    /**
+     * Get the status of three axis gyroscope 
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @return MAS_OK/MAS_ERROR if status ok/failure
+     */
+    virtual yarp::dev::MAS_status getThreeAxisGyroscopeStatus(size_t sens_index) const override;
 
+    /**
+     * Get the name of three axis gyroscope
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @param[out] name name of the sensor
+     * @return true/false success/failure
+     */
+    virtual bool getThreeAxisGyroscopeName(size_t sens_index, std::string &name) const override;
+
+    /**
+     * Get the name of the frame in which three axis gyroscope measurements are expressed
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @param[out] frameName name of the sensor frame
+     * @return true/false success/failure
+     */  
+    virtual bool getThreeAxisGyroscopeFrameName(size_t sens_index, std::string &frameName) const override;
+    
+    
+    /**
+     * Get three axis gyroscope measurements 
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @param[out] out 3D angular velocity measurement in deg/s
+     * @param[out] timestamp timestamp of measurement
+     * @return true/false success/failure
+     */
+    virtual bool getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
+
+    /* IThreeAxisLinearAccelerometers methods */
+    /**
+     * Get the  number of three axis linear accelerometers in the device
+     * @return 1
+     */
+    virtual size_t getNrOfThreeAxisLinearAccelerometers() const override;
+    
+    /**
+     * Get the status of three axis linear accelerometer
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @return MAS_OK/MAS_ERROR if status ok/failure
+     */
+    virtual yarp::dev::MAS_status getThreeAxisLinearAccelerometerStatus(size_t sens_index) const override;
+    
+    /**
+     * Get the name of three axis linear accelerometer
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @param[out] name name of the sensor
+     * @return true/false success/failure
+     */
+    virtual bool getThreeAxisLinearAccelerometerName(size_t sens_index, std::string &name) const override;
+    
+    /**
+     * Get the name of the frame in which three axis linear accelerometer measurements are expressed
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @param[out] frameName name of the sensor frame
+     * @return true/false success/failure
+     */  
+    virtual bool getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string &frameName) const override;
+    
+    /**
+     * Get three axis linear accelerometer measurements 
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @param[out] out 3D linear acceleration measurement in m/s^2
+     * @param[out] timestamp timestamp of measurement
+     * @return true/false success/failure
+     */
+    virtual bool getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
+
+    /* IThreeAxisMagnetometers methods */
+    /**
+     * Get the  number of three axis magnetometers in the device
+     * @return 1
+     */
+    virtual size_t getNrOfThreeAxisMagnetometers() const override;
+    
+    /**
+     * Get the status of three axis magnetometer 
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @return MAS_OK/MAS_ERROR if status ok/failure
+     */
+    virtual yarp::dev::MAS_status getThreeAxisMagnetometerStatus(size_t sens_index) const override;
+    
+    /**
+     * Get the name of three axis magnetometer
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @param[out] name name of the sensor
+     * @return true/false success/failure
+     */
+    virtual bool getThreeAxisMagnetometerName(size_t sens_index, std::string &name) const override;
+    
+    /**
+     * Get the name of the frame in which three axis magnetometer measurements are expressed
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @param[out] frameName name of the sensor frame
+     * @return true/false success/failure
+     */  
+    virtual bool getThreeAxisMagnetometerFrameName(size_t sens_index, std::string &frameName) const override;
+    
+    /**
+     * Get three axis magnetometer measurements 
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @param[out] out 3D magnetometer measurement
+     * @param[out] timestamp timestamp of measurement
+     * @return true/false success/failure
+     */
+    virtual bool getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
+
+    /* IOrientationSensors methods */
+    /**
+     * Get the  number of orientation sensors in the device
+     * @return 1
+     */
+    virtual size_t getNrOfOrientationSensors() const override;
+    
+    /**
+     * Get the status of orientation sensor
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @return MAS_OK/MAS_ERROR if status ok/failure
+     */
+    virtual yarp::dev::MAS_status getOrientationSensorStatus(size_t sens_index) const override;
+    
+    /**
+     * Get the name of orientation sensor
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @param[out] name name of the sensor
+     * @return true/false success/failure
+     */
+    virtual bool getOrientationSensorName(size_t sens_index, std::string &name) const override;
+    
+    /**
+     * Get the name of the frame in which orientation sensor measurements are expressed
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @param[out] frameName name of the sensor frame
+     * @return true/false success/failure
+     */  
+    virtual bool getOrientationSensorFrameName(size_t sens_index, std::string &frameName) const override;
+    
+    /**
+     * Get orientation sensor measurements 
+     * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
+     * @param[out] out RPY Euler angles in deg
+     * @param[out] timestamp timestamp of measurement
+     * @return true/false success/failure
+     */
+    virtual bool getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& rpy, double& timestamp) const override;
+
+    /**
+     * Initialize process with desired device configurations
+     * @return true/false success/failure
+     */  
     virtual bool threadInit() override;
+    
+    
+    /**
+     * Terminate communication with the device and release the thread.
+     */
     virtual void threadRelease() override;
+    
+    /**
+     * Update loop where measurements are read from the device.
+     */  
     virtual void run() override;
+    
+private:
+    yarp::dev::MAS_status genericGetStatus(size_t sens_index) const;
+    bool genericGetSensorName(size_t sens_index, std::string &name) const;
+    bool genericGetFrameName(size_t sens_index, std::string &frameName) const;
+    
+    std::string m_sensorName;     ///< name of the device
+    std::string m_frameName;      ///< name of the frame in which the measurements will be expressed
 };
 
 
