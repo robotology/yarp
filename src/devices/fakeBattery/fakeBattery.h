@@ -1,8 +1,10 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-
-// Copyright: (C) 2015 iCub Facility
-// Authors: Marco Randazzo <marco.randazzo@iit.it>
-// CopyPolicy: Released under the terms of the GNU GPL v2.0.
+/*
+* Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+* All rights reserved.
+*
+* This software may be modified and distributed under the terms of the
+* BSD-3-Clause license. See the accompanying LICENSE file for details.
+*/
 
 #ifndef __FAKEBATTERY_H__
 #define __FAKEBATTERY_H__
@@ -25,7 +27,6 @@ class yarp::dev::FakeBattery : public yarp::os::PeriodicThread, public yarp::dev
 protected:
     yarp::os::Semaphore mutex;
 
-    unsigned short     batteryId;
     short              status;
     double             timeStamp;
     yarp::sig::Vector  data;
