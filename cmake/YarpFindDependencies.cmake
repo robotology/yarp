@@ -407,6 +407,9 @@ checkandset_dependency(Libdc1394)
 find_package(JPEG QUIET)
 checkandset_dependency(JPEG)
 
+find_package(PNG QUIET)
+checkandset_dependency(PNG)
+
 find_package(MPI QUIET)
 checkandset_dependency(MPI)
 
@@ -494,6 +497,7 @@ print_dependency(GLEW)
 print_dependency(OpenGL)
 print_dependency(Libdc1394)
 print_dependency(JPEG)
+print_dependency(PNG)
 print_dependency(MPI)
 print_dependency(FTDI)
 print_dependency(FFMPEG)

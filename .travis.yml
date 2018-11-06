@@ -78,6 +78,7 @@ addons:
       - libgraphviz-dev
       - libgstreamer1.0-dev
       - libgstreamer-plugins-base1.0-dev
+      - libpng-dev
       # Bindings
       - swig3.0
       # C# bindings
@@ -111,6 +112,7 @@ addons:
     - eigen
     - graphviz
     - ccache
+    - libpng
 
 matrix:
   exclude:

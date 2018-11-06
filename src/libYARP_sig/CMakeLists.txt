@@ -78,6 +78,13 @@ if(YARP_HAS_JPEG)
   list(APPEND YARP_sig_PRIVATE_DEPS JPEG)
 endif()
 
+if(YARP_HAS_PNG)
+  target_include_directories(YARP_sig SYSTEM PRIVATE ${PNG_INCLUDE_DIR})
+  target_compile_definitions(YARP_sig PRIVATE YARP_HAS_PNG)
+  target_link_libraries(YARP_sig PRIVATE ${PNG_LIBRARY})
+  list(APPEND YARP_sig_PRIVATE_DEPS PNG)
+endif()
+
 target_compile_features(YARP_sig PUBLIC cxx_override)
 
 set_property(TARGET YARP_sig PROPERTY PUBLIC_HEADER ${YARP_sig_HDRS})
