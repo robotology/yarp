@@ -125,7 +125,7 @@ public:
 };
 
 class VectorTest : public UnitTest {
-    
+
     bool checkConsistency(Vector &a)
     {
         gsl_vector *tmp;

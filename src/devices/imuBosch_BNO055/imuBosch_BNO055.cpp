@@ -82,13 +82,13 @@ bool BoschIMU::open(yarp::os::Searchable& config)
 
     if(!config.check("comport") && !config.check("i2c"))
     {
-        yError() << "BoshImu: Params 'comport' and 'i2c' not found";
+        yError() << "BoschImu: Params 'comport' and 'i2c' not found";
         return false;
     }
 
     if (config.check("comport") && config.check("i2c"))
     {
-        yError() << "BoshImu: Params 'comport' and 'i2c' both specified";
+        yError() << "BoschImu: Params 'comport' and 'i2c' both specified";
         return false;
     }
 
@@ -100,7 +100,7 @@ bool BoschIMU::open(yarp::os::Searchable& config)
     {
         if (!config.find("i2c").isString())
         {
-            yError()<<"BoshImu: i2c param malformed, it should be a string, aborting.";
+            yError()<<"BoschImu: i2c param malformed, it should be a string, aborting.";
             return false;
         }
 
@@ -109,13 +109,13 @@ bool BoschIMU::open(yarp::os::Searchable& config)
 
         if (fd < 0)
         {
-            yError("BoshImu: can't open %s, %s", i2cDevFile.c_str(), strerror(errno));
+            yError("BoschImu: can't open %s, %s", i2cDevFile.c_str(), strerror(errno));
             return false;
         }
 
         if (::ioctl(fd, I2C_SLAVE, i2cAddrA) < 0)
         {
-            yError("BoshImu: ioctl failed on %s, %s", i2cDevFile.c_str(), strerror(errno));
+            yError("BoschImu: ioctl failed on %s, %s", i2cDevFile.c_str(), strerror(errno));
             return false;
         }
 
@@ -175,7 +175,27 @@ bool BoschIMU::open(yarp::os::Searchable& config)
 
     double period = config.check("period",Value(10),"Thread period in ms").asInt32() / 1000.0;
     setPeriod(period);
-
+    
+    if (config.check("sensor_name") && config.find("sensor_name").isString())
+    {
+        m_sensorName = config.find("sensor_name").asString();
+    }
+    else
+    {
+        m_sensorName = "sensor_imu_bosch_bno055";
+        yWarning() << "Bosch BNO055 IMU -  Parameter \"sensor_name\" not set. Using default value  \"" << m_sensorName << "\" for this parameter.";
+    }
+    
+    if (config.check("frame_name") && config.find("frame_name").isString())
+    {
+        m_frameName = config.find("frame_name").asString();
+    }
+    else
+    {
+        m_frameName = m_sensorName;
+        yWarning() << "Bosch BNO055 IMU -  Parameter \"frame_name\" not set. Using the same value as \"sensor_name\" for this parameter.";
+    }
+    
     return PeriodicThread::start();
 }
 
@@ -426,7 +446,7 @@ bool BoschIMU::threadInit()
         {
             if (trials == 10)
             {
-                yError()<<"BoshImu: wrong device on the bus, it is not BNO055";
+                yError()<<"BoschImu: wrong device on the bus, it is not BNO055";
                 return false;
             }
             yarp::os::Time::delay(0.1);
@@ -439,7 +459,7 @@ bool BoschIMU::threadInit()
         // Set the device in config mode
         if (i2c_smbus_write_byte_data(fd, REG_OP_MODE, CONFIG_MODE) < 0)
         {
-            yError()<<"BoshImu: Unable to set the Config mode";
+            yError()<<"BoschImu: Unable to set the Config mode";
             return false;
         }
 
@@ -447,7 +467,7 @@ bool BoschIMU::threadInit()
 
         if (i2c_smbus_write_byte_data(fd, REG_SYS_TRIGGER, TRIG_EXT_CLK_SEL) < 0)
         {
-            yError()<<"BoshImu: Unable to set external clock";
+            yError()<<"BoschImu: Unable to set external clock";
             return false;
         }
 
@@ -458,7 +478,7 @@ bool BoschIMU::threadInit()
 
         if (i2c_smbus_write_byte_data(fd, REG_PAGE_ID, 0x00) < 0)
         {
-            yError()<<"BoshImu: Unable to set the page ID";
+            yError()<<"BoschImu: Unable to set the page ID";
             return false;
         }
 
@@ -467,7 +487,7 @@ bool BoschIMU::threadInit()
 
         if (i2c_smbus_write_byte_data(fd, REG_OP_MODE, NDOF_MODE) < 0)
         {
-            yError()<<"BoshImu: Unable to set the Operative mode";
+            yError()<<"BoschImu: Unable to set the Operative mode";
             return false;
         }
 
@@ -580,7 +600,7 @@ void BoschIMU::run()
 
     if (!(this->*readFunc)(REG_ACC_DATA, 32, response, "Read all"))
     {
-        yError()<<"BoshImu: failed to read all the data";
+        yError()<<"BoschImu: failed to read all the data";
         errs++;
     }
     else
@@ -674,6 +694,199 @@ bool BoschIMU::calibrate(int ch, double v)
     // This procedure should be abortable by CTRL+C
     return false;
 }
+
+
+yarp::dev::MAS_status BoschIMU::genericGetStatus(size_t sens_index) const
+{
+    if (sens_index != 0)        
+    {
+        yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        return yarp::dev::MAS_status::MAS_ERROR;
+    }
+    
+    return yarp::dev::MAS_status::MAS_OK;
+}
+
+bool BoschIMU::genericGetSensorName(size_t sens_index, string& name) const
+{
+    if (sens_index != 0)
+    {
+        yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        return false;
+    }
+    
+    name = m_sensorName;
+    return true;
+}
+
+bool BoschIMU::genericGetFrameName(size_t sens_index, string& frameName) const
+{
+    if (sens_index != 0)
+    {
+        yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        return false;
+    }
+    
+    frameName = m_frameName;
+    return true;
+
+}
+
+size_t BoschIMU::getNrOfThreeAxisLinearAccelerometers() const
+{
+    return 1;
+}
+
+
+yarp::dev::MAS_status BoschIMU::getThreeAxisLinearAccelerometerStatus(size_t sens_index) const
+{
+    return genericGetStatus(sens_index);
+}
+
+bool BoschIMU::getThreeAxisLinearAccelerometerName(size_t sens_index, string& name) const
+{
+    return genericGetSensorName(sens_index, name);
+}
+
+bool BoschIMU::getThreeAxisLinearAccelerometerFrameName(size_t sens_index, string& frameName) const
+{
+    return genericGetFrameName(sens_index, frameName);
+}
+
+bool BoschIMU::getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+{
+    if (sens_index != 0)
+    {
+        yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        return false;
+    }
+    
+    out.resize(3);    
+    LockGuard guard(mutex);
+    out[0] = data[3];
+    out[1] = data[4];
+    out[2] = data[5];
+    
+    timestamp = timeLastReport;
+    return true;
+}
+
+
+size_t BoschIMU::getNrOfThreeAxisGyroscopes() const
+{
+    return 1;
+}
+
+
+yarp::dev::MAS_status BoschIMU::getThreeAxisGyroscopeStatus(size_t sens_index) const
+{
+    return genericGetStatus(sens_index);
+}
+
+bool BoschIMU::getThreeAxisGyroscopeName(size_t sens_index, string& name) const
+{
+    return genericGetSensorName(sens_index, name);
+}
+
+bool BoschIMU::getThreeAxisGyroscopeFrameName(size_t sens_index, string& frameName) const
+{
+    return genericGetFrameName(sens_index, frameName);
+}
+
+bool BoschIMU::getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+{
+    if (sens_index != 0)
+    {
+        yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        return false;
+    }
+    
+    out.resize(3);    
+    LockGuard guard(mutex);
+    out[0] = data[6];
+    out[1] = data[7];
+    out[2] = data[8];
+    
+    timestamp = timeLastReport;
+    return true;
+}
+
+size_t BoschIMU::getNrOfOrientationSensors() const
+{
+    return 1;
+}
+
+yarp::dev::MAS_status BoschIMU::getOrientationSensorStatus(size_t sens_index) const
+{
+    return genericGetStatus(sens_index);
+}
+
+bool BoschIMU::getOrientationSensorName(size_t sens_index, string& name) const
+{
+    return genericGetSensorName(sens_index, name);
+}
+
+bool BoschIMU::getOrientationSensorFrameName(size_t sens_index, string& frameName) const
+{
+    return genericGetFrameName(sens_index, frameName);
+}
+
+bool BoschIMU::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& rpy, double& timestamp) const
+{
+    if (sens_index != 0)
+    {
+        yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        return false;
+    }
+    
+    rpy.resize(3);    
+    LockGuard guard(mutex);
+    rpy[0] = data[0];
+    rpy[1] = data[1];
+    rpy[2] = data[2];
+    
+    timestamp = timeLastReport;
+    return true;
+}
+
+size_t BoschIMU::getNrOfThreeAxisMagnetometers() const
+{
+    return 1;
+}
+
+yarp::dev::MAS_status BoschIMU::getThreeAxisMagnetometerStatus(size_t sens_index) const
+{
+    return genericGetStatus(sens_index);
+}
+
+bool BoschIMU::getThreeAxisMagnetometerName(size_t sens_index, string& name) const
+{
+    return genericGetSensorName(sens_index, name);
+}
+
+bool BoschIMU::getThreeAxisMagnetometerFrameName(size_t sens_index, string& frameName) const
+{
+    return genericGetFrameName(sens_index, frameName);
+}
+
+bool BoschIMU::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+{
+    if (sens_index != 0)
+    {
+        yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        return false;
+    }
+    
+    out.resize(3);    
+    LockGuard guard(mutex);
+    out[0] = data[9];
+    out[1] = data[10];
+    out[2] = data[11];
+    
+    timestamp = timeLastReport;
+    return true;
+}
+
 
 void BoschIMU::threadRelease()
 {
