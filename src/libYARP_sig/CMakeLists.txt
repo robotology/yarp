@@ -80,7 +80,7 @@ endif()
 
 if(YARP_HAS_PNG)
   target_include_directories(YARP_sig SYSTEM PRIVATE ${PNG_INCLUDE_DIR})
-  target_compile_definitions(YARP_sig PRIVATE YARP_HAS_PNG_C=1)
+  target_compile_definitions(YARP_sig PRIVATE YARP_HAS_PNG)
   target_link_libraries(YARP_sig PRIVATE ${PNG_LIBRARY})
   list(APPEND YARP_sig_PRIVATE_DEPS PNG)
 endif()

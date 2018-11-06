@@ -18,7 +18,7 @@
 #include "jpeglib.h"
 #endif
 
-#if YARP_HAS_PNG_C
+#if defined (YARP_HAS_PNG)
 #include <png.h>
 #endif
 
@@ -254,10 +254,22 @@ static bool ImageReadMono(ImageOf<PixelMono> &img, const char *filename)
 // private write methods
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if YARP_HAS_PNG_C
+#if defined (YARP_HAS_PNG)
 static bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t rowSize, png_byte color_type, png_byte bit_depth)
 {
     // create file 
+    if (src == nullptr)
+    {
+        yError("[write_png_file] Cannot write to file a nullptr image");
+        return false;
+    }
+
+    if (filename == nullptr)
+    {
+        yError("[write_png_file] Filename is nullptr");
+        return false;
+    }
+
     FILE *fp = fopen(filename, "wb");
     if (!fp)
     {
@@ -447,20 +459,20 @@ static bool ImageWriteJPG(ImageOf<PixelRgb>& img, const char *filename)
 
 static bool ImageWritePNG(ImageOf<PixelRgb>& img, const char *filename)
 {
-#if YARP_HAS_PNG_C
+#if defined (YARP_HAS_PNG)
     return SavePNG((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize(), PNG_COLOR_TYPE_RGB, 24);
 #else
-    yError() << "libpng not installed";
+    yError() << "YARP was not built with png support";
     return false;
 #endif
 }
 
 static bool ImageWritePNG(ImageOf<PixelMono>& img, const char *filename)
 {
-#if YARP_HAS_PNG_C
+#if defined (YARP_HAS_PNG)
     return SavePNG((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize(), PNG_COLOR_TYPE_GRAY, 8);
 #else
-    yError() << "libpng not installed";
+    yError() << "YARP was not built with png support";
     return false;
 #endif
 }
