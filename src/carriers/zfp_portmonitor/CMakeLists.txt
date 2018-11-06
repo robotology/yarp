@@ -20,7 +20,7 @@ if(NOT SKIP_zfp)
                                                       YARP_sig)
 
   target_include_directories(yarp_pm_zfp SYSTEM PRIVATE ${ZFP_INCLUDE_DIRS})
-  target_include_directories(yarp_pm_zfp PRIVATE ${ZFP_LIBRARIES})
+  target_link_libraries(yarp_pm_zfp PRIVATE ${ZFP_LIBRARIES})
 #   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ZFP) (not using targets)
 
   yarp_install(TARGETS yarp_pm_zfp
