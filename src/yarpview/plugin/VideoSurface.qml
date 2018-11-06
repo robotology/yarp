@@ -52,6 +52,8 @@ Rectangle {
                 dataArea.avgFps = avg
                 dataArea.minFps = min
                 dataArea.maxFps = max
+                dataArea.portSizeX = yarpViewCore.videoProducer.frameWidth
+                dataArea.portSizeY = yarpViewCore.videoProducer.frameHeight
             }
         }
         onSendDisplayFps:{
@@ -59,6 +61,8 @@ Rectangle {
                 dataArea.displayAvgFps = avg
                 dataArea.displayMinFps = min
                 dataArea.displayMaxFps= max
+                dataArea.displaySizeX = width
+                dataArea.displaySizeY = height
             }
         }
 
