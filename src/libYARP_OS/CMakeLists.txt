@@ -33,6 +33,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Election.h
                  include/yarp/os/Event.h
                  include/yarp/os/Face.h
+                 include/yarp/os/HierarchicalMutex.h
                  include/yarp/os/IConfig.h
                  include/yarp/os/InputProtocol.h
                  include/yarp/os/InputStream.h
@@ -234,6 +235,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/FakeFace.cpp
                  src/FallbackNameClient.cpp
                  src/FallbackNameServer.cpp
+                 src/HierarchicalMutex.cpp
                  src/HttpCarrier.cpp
                  src/IConfig.cpp
                  src/InputStream.cpp
