@@ -89,14 +89,8 @@ type \"@_type@\"
 
   set(_path "${CMAKE_BINARY_DIR}/${${YCPI_INSTALL_VARS_PREFIX}_DYNAMIC_PLUGINS_INSTALL_DIR}") # (build tree)
   configure_file("${_in_file}" "${_build_file}" @ONLY)
-  if(WIN32)
-    string(REPLACE "/" "\\" _path ${_path})
-  endif()
 
   set(_path "${CMAKE_INSTALL_PREFIX}/${${YCPI_INSTALL_VARS_PREFIX}_DYNAMIC_PLUGINS_INSTALL_DIR}") # (install tree)
-  if(WIN32)
-    string(REPLACE "/" "\\" _path ${_path})
-  endif()
   configure_file("${_in_file}" "${_install_file}" @ONLY)
   install(FILES "${_install_file}"
           RENAME ${_package}.ini
