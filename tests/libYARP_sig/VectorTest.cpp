@@ -7,13 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#if defined(USE_SYSTEM_CATCH)
-#include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
 #include <yarp/sig/Vector.h>
+
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Thread.h>
@@ -25,6 +20,11 @@
 #include <yarp/gsl/Gsl.h>
 #include <yarp/gsl/impl/gsl_structs.h>
 
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
 
 using namespace yarp::os::impl;
 using namespace yarp::os;

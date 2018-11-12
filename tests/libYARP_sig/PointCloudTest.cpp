@@ -624,289 +624,288 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]") {
         }
 
         {
-             INFO("Testing fromBottle(toBottle) XYZ_NORMAL");
-             PointCloud<DataXYZNormal> testPC;
-             size_t width = 21; size_t height = 32;
-             testPC.resize(width, height);
-             for (size_t i=0; i<width*height; i++)
-             {
-                 testPC(i).x = static_cast<float>(i);
-                 testPC(i).y = static_cast<float>(i + 1);
-                 testPC(i).z = static_cast<float>(i + 2);
-                 testPC(i).normal_x = static_cast<float>(i*2);
-                 testPC(i).normal_y = static_cast<float>(i*3);
-                 testPC(i).normal_z = static_cast<float>(i*4);
-                 testPC(i).curvature = static_cast<float>(i*5);
-             }
-             PointCloud<DataXYZNormal> testPC2;
-             Bottle bt = testPC.toBottle();
-             testPC2.fromBottle(bt);
-             CHECK(testPC.width() ==  testPC2.width()); // Checking width
-             CHECK(testPC.height() ==  testPC2.height()); // Checking height
+            INFO("Testing fromBottle(toBottle) XYZ_NORMAL");
+            PointCloud<DataXYZNormal> testPC;
+            size_t width = 21; size_t height = 32;
+            testPC.resize(width, height);
+            for (size_t i=0; i<width*height; i++)
+            {
+                testPC(i).x = static_cast<float>(i);
+                testPC(i).y = static_cast<float>(i + 1);
+                testPC(i).z = static_cast<float>(i + 2);
+                testPC(i).normal_x = static_cast<float>(i*2);
+                testPC(i).normal_y = static_cast<float>(i*3);
+                testPC(i).normal_z = static_cast<float>(i*4);
+                testPC(i).curvature = static_cast<float>(i*5);
+            }
+            PointCloud<DataXYZNormal> testPC2;
+            Bottle bt = testPC.toBottle();
+            testPC2.fromBottle(bt);
+            CHECK(testPC.width() ==  testPC2.width()); // Checking width
+            CHECK(testPC.height() ==  testPC2.height()); // Checking height
 
-             bool ok = true;
+            bool ok = true;
 
-             for (size_t i=0; i<width*height; i++)
-             {
-                 ok &= testPC2(i).x == i;
-                 ok &= testPC2(i).y == i + 1;
-                 ok &= testPC2(i).z == i + 2;
-                 ok &= testPC2(i).normal_x == i*2;
-                 ok &= testPC2(i).normal_y == i*3;
-                 ok &= testPC2(i).normal_z == i*4;
-                 ok &= testPC2(i).curvature ==i*5;
-             }
-             CHECK(ok); // Checking data consistency
-         }
-
-        {
-             INFO("Testing fromBottle(toBottle) XYZ_RGBA");
-             PointCloud<DataXYZRGBA> testPC;
-             size_t width = 21; size_t height = 32;
-             testPC.resize(width, height);
-             for (size_t i=0; i<width*height; i++)
-             {
-                 testPC(i).x = static_cast<float>(i);
-                 testPC(i).y = static_cast<float>(i + 1);
-                 testPC(i).z = static_cast<float>(i + 2);
-                 testPC(i).r = 'r';
-                 testPC(i).g = 'g';
-                 testPC(i).b = 'b';
-                 testPC(i).a = 'a';
-             }
-             PointCloud<DataXYZRGBA> testPC2;
-             Bottle bt = testPC.toBottle();
-             testPC2.fromBottle(bt);
-             CHECK(testPC.width() ==  testPC2.width()); // Checking width
-             CHECK(testPC.height() ==  testPC2.height()); // Checking height
-
-             bool ok = true;
-
-             for (size_t i=0; i<width*height; i++)
-             {
-                 ok &= testPC2(i).x == i;
-                 ok &= testPC2(i).y == i + 1;
-                 ok &= testPC2(i).z == i + 2;
-                 ok &= testPC2(i).r == 'r';
-                 ok &= testPC2(i).g == 'g';
-                 ok &= testPC2(i).b == 'b';
-                 ok &= testPC2(i).a == 'a';
-             }
-             CHECK(ok); // Checking data consistency
-         }
+            for (size_t i=0; i<width*height; i++)
+            {
+                ok &= testPC2(i).x == i;
+                ok &= testPC2(i).y == i + 1;
+                ok &= testPC2(i).z == i + 2;
+                ok &= testPC2(i).normal_x == i*2;
+                ok &= testPC2(i).normal_y == i*3;
+                ok &= testPC2(i).normal_z == i*4;
+                ok &= testPC2(i).curvature ==i*5;
+            }
+            CHECK(ok); // Checking data consistency
+        }
 
         {
-             INFO("Testing fromBottle(toBottle) XYZ");
-             PointCloud<DataXYZ> testPC;
-             size_t width = 21; size_t height = 32;
-             testPC.resize(width, height);
-             for (size_t i=0; i<width*height; i++)
-             {
-                 testPC(i).x = static_cast<float>(i);
-                 testPC(i).y = static_cast<float>(i + 1);
-                 testPC(i).z = static_cast<float>(i + 2);
-             }
-             PointCloud<DataXYZ> testPC2;
-             Bottle bt = testPC.toBottle();
-             testPC2.fromBottle(bt);
-             CHECK(testPC.width() ==  testPC2.width()); // Checking width
-             CHECK(testPC.height() ==  testPC2.height()); // Checking height
+            INFO("Testing fromBottle(toBottle) XYZ_RGBA");
+            PointCloud<DataXYZRGBA> testPC;
+            size_t width = 21; size_t height = 32;
+            testPC.resize(width, height);
+            for (size_t i=0; i<width*height; i++)
+            {
+                testPC(i).x = static_cast<float>(i);
+                testPC(i).y = static_cast<float>(i + 1);
+                testPC(i).z = static_cast<float>(i + 2);
+                testPC(i).r = 'r';
+                testPC(i).g = 'g';
+                testPC(i).b = 'b';
+                testPC(i).a = 'a';
+            }
+            PointCloud<DataXYZRGBA> testPC2;
+            Bottle bt = testPC.toBottle();
+            testPC2.fromBottle(bt);
+            CHECK(testPC.width() ==  testPC2.width()); // Checking width
+            CHECK(testPC.height() ==  testPC2.height()); // Checking height
 
-             bool ok = true;
+            bool ok = true;
 
-             for (size_t i=0; i<width*height; i++)
-             {
-                 ok &= testPC2(i).x == i;
-                 ok &= testPC2(i).y == i + 1;
-                 ok &= testPC2(i).z == i + 2;
-             }
-             CHECK(ok); // Checking data consistency
-         }
+            for (size_t i=0; i<width*height; i++)
+            {
+                ok &= testPC2(i).x == i;
+                ok &= testPC2(i).y == i + 1;
+                ok &= testPC2(i).z == i + 2;
+                ok &= testPC2(i).r == 'r';
+                ok &= testPC2(i).g == 'g';
+                ok &= testPC2(i).b == 'b';
+                ok &= testPC2(i).a == 'a';
+            }
+            CHECK(ok); // Checking data consistency
+        }
 
         {
-             INFO("Testing fromBottle(toBottle) NORMAL");
-             PointCloud<DataNormal> testPC;
-             size_t width = 3;
-             size_t height = 3;
-             testPC.resize(width, height);
-             for (size_t i=0; i<width*height; i++)
-             {
-                 testPC(i).normal_x = static_cast<float>(i*2);
-                 testPC(i).normal_y = static_cast<float>(i*3);
-                 testPC(i).normal_z = static_cast<float>(i*4);
-                 testPC(i).curvature = static_cast<float>(i*5);
-             }
-             PointCloud<DataNormal> testPC2;
-             Bottle bt = testPC.toBottle();
-             testPC2.fromBottle(bt);
-             CHECK(testPC.width() ==  testPC2.width()); // Checking width
-             CHECK(testPC.height() ==  testPC2.height()); // Checking height
+            INFO("Testing fromBottle(toBottle) XYZ");
+            PointCloud<DataXYZ> testPC;
+            size_t width = 21; size_t height = 32;
+            testPC.resize(width, height);
+            for (size_t i=0; i<width*height; i++)
+            {
+                testPC(i).x = static_cast<float>(i);
+                testPC(i).y = static_cast<float>(i + 1);
+                testPC(i).z = static_cast<float>(i + 2);
+            }
+            PointCloud<DataXYZ> testPC2;
+            Bottle bt = testPC.toBottle();
+            testPC2.fromBottle(bt);
+            CHECK(testPC.width() ==  testPC2.width()); // Checking width
+            CHECK(testPC.height() ==  testPC2.height()); // Checking height
 
-             bool ok = true;
+            bool ok = true;
 
-             for (size_t i=0; i<width*height; i++)
-             {
-                 ok &= testPC2(i).normal_x == i*2;
-                 ok &= testPC2(i).normal_y == i*3;
-                 ok &= testPC2(i).normal_z == i*4;
-                 ok &= testPC2(i).curvature ==i*5;
-             }
-             CHECK(ok); // Checking data consistency
-         }
+            for (size_t i=0; i<width*height; i++)
+            {
+                ok &= testPC2(i).x == i;
+                ok &= testPC2(i).y == i + 1;
+                ok &= testPC2(i).z == i + 2;
+            }
+            CHECK(ok); // Checking data consistency
+        }
+
+        {
+            INFO("Testing fromBottle(toBottle) NORMAL");
+            PointCloud<DataNormal> testPC;
+            size_t width = 3;
+            size_t height = 3;
+            testPC.resize(width, height);
+            for (size_t i=0; i<width*height; i++)
+            {
+                testPC(i).normal_x = static_cast<float>(i*2);
+                testPC(i).normal_y = static_cast<float>(i*3);
+                testPC(i).normal_z = static_cast<float>(i*4);
+                testPC(i).curvature = static_cast<float>(i*5);
+            }
+            PointCloud<DataNormal> testPC2;
+            Bottle bt = testPC.toBottle();
+            testPC2.fromBottle(bt);
+            CHECK(testPC.width() ==  testPC2.width()); // Checking width
+            CHECK(testPC.height() ==  testPC2.height()); // Checking height
+
+            bool ok = true;
+
+            for (size_t i=0; i<width*height; i++)
+            {
+                ok &= testPC2(i).normal_x == i*2;
+                ok &= testPC2(i).normal_y == i*3;
+                ok &= testPC2(i).normal_z == i*4;
+                ok &= testPC2(i).curvature ==i*5;
+            }
+            CHECK(ok); // Checking data consistency
+        }
 
     }
 
     SECTION("check read/write from bottle") {
         {
-             INFO("Testing readWriteFromBottle(toBottle) XYZ_NORMAL_RGBA");
-             PointCloud<DataXYZNormalRGBA> testPC;
-             Port outPort;
-             Port inPort;
-             CHECK(outPort.open("/test/pointcloud/out")); // Opening output port
-             CHECK(inPort.open("/test/pointcloud/in")); // Opening input port
-             CHECK(NetworkBase::connect(outPort.getName(), inPort.getName())); // "Checking connection"
-             size_t width = 21; size_t height = 32;
-             testPC.resize(width, height);
-             for (size_t i=0; i<width*height; i++)
-             {
-                 testPC(i).x = static_cast<float>(i);
-                 testPC(i).y = static_cast<float>(i + 1);
-                 testPC(i).z = static_cast<float>(i + 2);
-                 testPC(i).normal_x = static_cast<float>(i*2);
-                 testPC(i).normal_y = static_cast<float>(i*3);
-                 testPC(i).normal_z = static_cast<float>(i*4);
-                 testPC(i).curvature = static_cast<float>(i*5);
-                 testPC(i).r = 'r';
-                 testPC(i).g = 'g';
-                 testPC(i).b = 'b';
-                 testPC(i).a = 'a';
-             }
+            INFO("Testing readWriteFromBottle(toBottle) XYZ_NORMAL_RGBA");
+            PointCloud<DataXYZNormalRGBA> testPC;
+            Port outPort;
+            Port inPort;
+            CHECK(outPort.open("/test/pointcloud/out")); // Opening output port
+            CHECK(inPort.open("/test/pointcloud/in")); // Opening input port
+            CHECK(NetworkBase::connect(outPort.getName(), inPort.getName())); // "Checking connection"
+            size_t width = 21; size_t height = 32;
+            testPC.resize(width, height);
+            for (size_t i=0; i<width*height; i++)
+            {
+                testPC(i).x = static_cast<float>(i);
+                testPC(i).y = static_cast<float>(i + 1);
+                testPC(i).z = static_cast<float>(i + 2);
+                testPC(i).normal_x = static_cast<float>(i*2);
+                testPC(i).normal_y = static_cast<float>(i*3);
+                testPC(i).normal_z = static_cast<float>(i*4);
+                testPC(i).curvature = static_cast<float>(i*5);
+                testPC(i).r = 'r';
+                testPC(i).g = 'g';
+                testPC(i).b = 'b';
+                testPC(i).a = 'a';
+            }
 
-             Bottle outBt = testPC.toBottle();
-             outPort.enableBackgroundWrite(true);
-             CHECK(outPort.write(outBt)); // Checking write
-             yarp::os::Time::delay(0.2);
-             Bottle inBt;
-             CHECK(inPort.read(inBt)); // Checking read
-             PointCloud<DataXYZNormalRGBA> testPC2;
-             testPC2.fromBottle(inBt);
-             CHECK(testPC.width() ==  testPC2.width()); // Checking width
-             CHECK(testPC.height() ==  testPC2.height()); // Checking height
+            Bottle outBt = testPC.toBottle();
+            outPort.enableBackgroundWrite(true);
+            CHECK(outPort.write(outBt)); // Checking write
+            yarp::os::Time::delay(0.2);
+            Bottle inBt;
+            CHECK(inPort.read(inBt)); // Checking read
+            PointCloud<DataXYZNormalRGBA> testPC2;
+            testPC2.fromBottle(inBt);
+            CHECK(testPC.width() ==  testPC2.width()); // Checking width
+            CHECK(testPC.height() ==  testPC2.height()); // Checking height
 
-             bool ok = true;
+            bool ok = true;
 
-             for (size_t i=0; i<width*height; i++)
-             {
-                 ok &= testPC2(i).x == i;
-                 ok &= testPC2(i).y == i + 1;
-                 ok &= testPC2(i).z == i + 2;
-                 ok &= testPC2(i).normal_x == i*2;
-                 ok &= testPC2(i).normal_y == i*3;
-                 ok &= testPC2(i).normal_z == i*4;
-                 ok &= testPC2(i).curvature ==i*5;
-                 ok &= testPC2(i).r == 'r';
-                 ok &= testPC2(i).g == 'g';
-                 ok &= testPC2(i).b == 'b';
-                 ok &= testPC2(i).a == 'a';
-             }
-             CHECK(ok); // Checking data consistency
+            for (size_t i=0; i<width*height; i++)
+            {
+                ok &= testPC2(i).x == i;
+                ok &= testPC2(i).y == i + 1;
+                ok &= testPC2(i).z == i + 2;
+                ok &= testPC2(i).normal_x == i*2;
+                ok &= testPC2(i).normal_y == i*3;
+                ok &= testPC2(i).normal_z == i*4;
+                ok &= testPC2(i).curvature ==i*5;
+                ok &= testPC2(i).r == 'r';
+                ok &= testPC2(i).g == 'g';
+                ok &= testPC2(i).b == 'b';
+                ok &= testPC2(i).a == 'a';
+            }
+            CHECK(ok); // Checking data consistency
 
-             PointCloud<DataXYZNormal> testPCfail;
-             CHECK(!testPCfail.fromBottle(inBt)); // from bottle correctly failing... type mismatch
+            PointCloud<DataXYZNormal> testPCfail;
+            CHECK(!testPCfail.fromBottle(inBt)); // from bottle correctly failing... type mismatch
         }
         {
-             INFO("Testing readWriteFromBottle(toBottle) XYZ_NORMAL");
-             PointCloud<DataXYZNormal> testPC;
-             Port outPort;
-             Port inPort;
-             CHECK(outPort.open("/test/pointcloud/out")); // Opening output port
-             CHECK(inPort.open("/test/pointcloud/in")); // Opening input port
-             CHECK(NetworkBase::connect(outPort.getName(), inPort.getName())); // "Checking connection"
-             size_t width = 21; size_t height = 32;
-             testPC.resize(width, height);
-             for (size_t i=0; i<width*height; i++)
-             {
-                 testPC(i).x = static_cast<float>(i);
-                 testPC(i).y = static_cast<float>(i + 1);
-                 testPC(i).z = static_cast<float>(i + 2);
-                 testPC(i).normal_x = static_cast<float>(i*2);
-                 testPC(i).normal_y = static_cast<float>(i*3);
-                 testPC(i).normal_z = static_cast<float>(i*4);
-                 testPC(i).curvature = static_cast<float>(i*5);
-             }
+            INFO("Testing readWriteFromBottle(toBottle) XYZ_NORMAL");
+            PointCloud<DataXYZNormal> testPC;
+            Port outPort;
+            Port inPort;
+            CHECK(outPort.open("/test/pointcloud/out")); // Opening output port
+            CHECK(inPort.open("/test/pointcloud/in")); // Opening input port
+            CHECK(NetworkBase::connect(outPort.getName(), inPort.getName())); // "Checking connection"
+            size_t width = 21; size_t height = 32;
+            testPC.resize(width, height);
+            for (size_t i=0; i<width*height; i++)
+            {
+                testPC(i).x = static_cast<float>(i);
+                testPC(i).y = static_cast<float>(i + 1);
+                testPC(i).z = static_cast<float>(i + 2);
+                testPC(i).normal_x = static_cast<float>(i*2);
+                testPC(i).normal_y = static_cast<float>(i*3);
+                testPC(i).normal_z = static_cast<float>(i*4);
+                testPC(i).curvature = static_cast<float>(i*5);
+            }
 
-             Bottle outBt = testPC.toBottle();
-             outPort.enableBackgroundWrite(true);
-             CHECK(outPort.write(outBt)); // Checking write
-             yarp::os::Time::delay(0.2);
-             Bottle inBt;
-             CHECK(inPort.read(inBt)); // Checking read
-             PointCloud<DataXYZNormal> testPC2;
-             testPC2.fromBottle(inBt);
-             CHECK(testPC.width() ==  testPC2.width()); // Checking width
-             CHECK(testPC.height() ==  testPC2.height()); // Checking height
+            Bottle outBt = testPC.toBottle();
+            outPort.enableBackgroundWrite(true);
+            CHECK(outPort.write(outBt)); // Checking write
+            yarp::os::Time::delay(0.2);
+            Bottle inBt;
+            CHECK(inPort.read(inBt)); // Checking read
+            PointCloud<DataXYZNormal> testPC2;
+            testPC2.fromBottle(inBt);
+            CHECK(testPC.width() ==  testPC2.width()); // Checking width
+            CHECK(testPC.height() ==  testPC2.height()); // Checking height
 
-             bool ok = true;
+            bool ok = true;
 
-             for (size_t i=0; i<width*height; i++)
-             {
-                 ok &= testPC2(i).x == i;
-                 ok &= testPC2(i).y == i + 1;
-                 ok &= testPC2(i).z == i + 2;
-                 ok &= testPC2(i).normal_x == i*2;
-                 ok &= testPC2(i).normal_y == i*3;
-                 ok &= testPC2(i).normal_z == i*4;
-                 ok &= testPC2(i).curvature ==i*5;
-             }
-             CHECK(ok); // Checking data consistency
+            for (size_t i=0; i<width*height; i++)
+            {
+                ok &= testPC2(i).x == i;
+                ok &= testPC2(i).y == i + 1;
+                ok &= testPC2(i).z == i + 2;
+                ok &= testPC2(i).normal_x == i*2;
+                ok &= testPC2(i).normal_y == i*3;
+                ok &= testPC2(i).normal_z == i*4;
+                ok &= testPC2(i).curvature ==i*5;
+            }
+            CHECK(ok); // Checking data consistency
 
-             PointCloud<DataXYZ> testPCfail;
-             CHECK(!(testPCfail.fromBottle(inBt))); //  from bottle correctly failing... type mismatch
-         }
+            PointCloud<DataXYZ> testPCfail;
+            CHECK(!(testPCfail.fromBottle(inBt))); //  from bottle correctly failing... type mismatch
+        }
 
 
         {
-             INFO("Testing readWriteFromBottle(toBottle) XYZ");
-             PointCloud<DataXYZ> testPC;
-             Port outPort;
-             Port inPort;
-             CHECK(outPort.open("/test/pointcloud/out")); // Opening output port
-             CHECK(inPort.open("/test/pointcloud/in")); // Opening input port
-             CHECK(NetworkBase::connect(outPort.getName(), inPort.getName())); // "Checking connection"
-             size_t width = 21; size_t height = 32;
-             testPC.resize(width, height);
-             for (size_t i=0; i<width*height; i++)
-             {
-                 testPC(i).x = static_cast<float>(i);
-                 testPC(i).y = static_cast<float>(i + 1);
-                 testPC(i).z = static_cast<float>(i + 2);
-             }
+            INFO("Testing readWriteFromBottle(toBottle) XYZ");
+            PointCloud<DataXYZ> testPC;
+            Port outPort;
+            Port inPort;
+            CHECK(outPort.open("/test/pointcloud/out")); // Opening output port
+            CHECK(inPort.open("/test/pointcloud/in")); // Opening input port
+            CHECK(NetworkBase::connect(outPort.getName(), inPort.getName())); // "Checking connection"
+            size_t width = 21; size_t height = 32;
+            testPC.resize(width, height);
+            for (size_t i=0; i<width*height; i++)
+            {
+                testPC(i).x = static_cast<float>(i);
+                testPC(i).y = static_cast<float>(i + 1);
+                testPC(i).z = static_cast<float>(i + 2);
+            }
 
-             Bottle outBt = testPC.toBottle();
-             outPort.enableBackgroundWrite(true);
-             CHECK(outPort.write(outBt)); // Checking write
-             yarp::os::Time::delay(0.2);
-             Bottle inBt;
-             CHECK(inPort.read(inBt)); // Checking read
-             PointCloud<DataXYZ> testPC2;
-             testPC2.fromBottle(inBt);
-             CHECK(testPC.width() ==  testPC2.width()); // Checking width
-             CHECK(testPC.height() ==  testPC2.height()); // Checking height
+            Bottle outBt = testPC.toBottle();
+            outPort.enableBackgroundWrite(true);
+            CHECK(outPort.write(outBt)); // Checking write
+            yarp::os::Time::delay(0.2);
+            Bottle inBt;
+            CHECK(inPort.read(inBt)); // Checking read
+            PointCloud<DataXYZ> testPC2;
+            testPC2.fromBottle(inBt);
+            CHECK(testPC.width() ==  testPC2.width()); // Checking width
+            CHECK(testPC.height() ==  testPC2.height()); // Checking height
 
-             bool ok = true;
+            bool ok = true;
 
-             for (size_t i=0; i<width*height; i++)
-             {
-                 ok &= testPC2(i).x == i;
-                 ok &= testPC2(i).y == i + 1;
-                 ok &= testPC2(i).z == i + 2;
-             }
-             CHECK(ok); // Checking data consistency
+            for (size_t i=0; i<width*height; i++)
+            {
+                ok &= testPC2(i).x == i;
+                ok &= testPC2(i).y == i + 1;
+                ok &= testPC2(i).z == i + 2;
+            }
+            CHECK(ok); // Checking data consistency
 
-             PointCloud<DataNormal> testPCfail;
-             CHECK(!(testPCfail.fromBottle(inBt))); // from bottle correctly failing... type mismatch
-         }
-
+            PointCloud<DataNormal> testPCfail;
+            CHECK(!(testPCfail.fromBottle(inBt))); // from bottle correctly failing... type mismatch
+        }
     }
 
     SECTION("Testing depthToPC")
