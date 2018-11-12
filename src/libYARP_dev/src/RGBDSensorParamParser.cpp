@@ -71,7 +71,7 @@ static bool checkParam(const Bottle& settings, const Bottle& description, RGBDSe
 }
 
 
-static bool parseIntrinsic(const Searchable& config, const string& groupName, RGBDSensorParamParser::IntrinsicParams &params)
+static bool parseIntrinsic(const Searchable& config, const string& groupName, yarp::sig::IntrinsicParams &params)
 {
 
     pair<string, double*>          realparam;
@@ -152,7 +152,7 @@ static bool parseIntrinsic(const Searchable& config, const string& groupName, RG
     return true;
 }
 
-bool RGBDSensorParamParser::parseParam(Searchable &config, std::vector<RGBDParam*>& params)
+bool RGBDSensorParamParser::parseParam(const Searchable &config, std::vector<RGBDParam*>& params)
 {
     bool ret = true;
 
