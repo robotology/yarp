@@ -28,7 +28,9 @@
 
 #include <linux/i2c-dev.h>
 #ifdef I2C_HAS_SMBUS_H
+extern "C" {
 # include <i2c/smbus.h>
+}
 #endif
 #include <linux/kernel.h>
 
