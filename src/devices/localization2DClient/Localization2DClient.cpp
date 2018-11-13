@@ -162,7 +162,7 @@ bool  yarp::dev::Localization2DClient::getEstimatedPoses(std::vector<yarp::dev::
     bool ret = m_rpc_port_localization_server.write(b, resp);
     if (ret)
     {
-        if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 5)
+        if (resp.get(0).asVocab() != VOCAB_OK)
         {
             yError() << "Localization2DClient::getEstimatedPoses() received error from localization server";
             return false;
@@ -174,10 +174,20 @@ bool  yarp::dev::Localization2DClient::getEstimatedPoses(std::vector<yarp::dev::
             for (int i = 0; i < nposes; i++)
             {
                 yarp::dev::Map2DLocation loc;
-                loc.map_id = resp.get(1 + 0 + i * 4).asString();
-                loc.x      = resp.get(1 + 1 + i * 4).asFloat64();
-                loc.y      = resp.get(1 + 2 + i * 4).asFloat64();
-                loc.theta  = resp.get(1 + 3 + i * 4).asFloat64();
+                Bottle* b = resp.get(2 + i).asList();
+                if (b)
+                {
+                    loc.map_id = b->get(0).asString();
+                    loc.x = b->get(1).asFloat64();
+                    loc.y = b->get(2).asFloat64();
+                    loc.theta = b->get(3).asFloat64();
+                }
+                else
+                {
+                    poses.clear();
+                    yError() << "Localization2DClient::getEstimatedPoses() parsing error";
+                    return false;
+                }
                 poses.push_back(loc);
             }
             return true;
@@ -185,7 +195,7 @@ bool  yarp::dev::Localization2DClient::getEstimatedPoses(std::vector<yarp::dev::
     }
     else
     {
-        yError() << "Localization2DClient::getCurrentPosition() error on writing on rpc port";
+        yError() << "Localization2DClient::getEstimatedPoses() error on writing on rpc port";
         return false;
     }
     return true;

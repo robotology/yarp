@@ -216,6 +216,21 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
                 reply.addVocab(VOCAB_OK);
                 reply.addVocab(status);
             }
+            else if (request == VOCAB_NAV_GET_LOCALIZER_POSES)
+            {
+                std::vector<yarp::dev::Map2DLocation> poses;
+                iLoc->getEstimatedPoses(poses);
+                reply.addVocab(VOCAB_OK);
+                reply.addInt32(poses.size());
+                for (size_t i=0; i<poses.size(); i++)
+                {
+                    Bottle& b = reply.addList();
+                    b.addString(poses[i].map_id);
+                    b.addFloat64(poses[i].x);
+                    b.addFloat64(poses[i].y);
+                    b.addFloat64(poses[i].theta);
+                }
+            }
             else
             {
                 reply.addVocab(VOCAB_ERR);
