@@ -197,24 +197,18 @@ bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    if (config.check("period"))
-    {
-        _rate = config.find("period").asInt32();
-    }
-    else
-    {
-        yError("BatteryClient::open() missing period parameter");
-        return false;
-    }
-
+    std::string local_stream = local;
+    local_stream += "/data:i";
     std::string local_rpc = local;
     local_rpc += "/rpc:o";
+    std::string remote_stream = remote;
+    remote_stream += "/data:o";
     std::string remote_rpc = remote;
     remote_rpc += "/rpc:i";
 
-    if (!inputPort.open(local))
+    if (!inputPort.open(local_stream))
     {
-        yError("BatteryClient::open() error could not open port %s, check network",local.c_str());
+        yError("BatteryClient::open() error could not open port %s, check network", local_stream.c_str());
         return false;
     }
     inputPort.useCallback();
@@ -225,17 +219,17 @@ bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    bool ok=Network::connect(remote.c_str(), local.c_str(), "udp");
+    bool ok=Network::connect(remote_stream.c_str(), local_stream.c_str(), "udp");
     if (!ok)
     {
-        yError("BatteryClient::open() error could not connect to %s", remote.c_str());
+        yError("BatteryClient::open() error could not connect %s -> %s", remote_stream.c_str(), local_stream.c_str());
         return false;
     }
 
     ok=Network::connect(local_rpc, remote_rpc);
     if (!ok)
     {
-       yError("BatteryClient::open() error could not connect to %s", remote_rpc.c_str());
+       yError("BatteryClient::open() error could not connect %s -> %s", remote_rpc.c_str(), local_rpc.c_str());
        return false;
     }
 

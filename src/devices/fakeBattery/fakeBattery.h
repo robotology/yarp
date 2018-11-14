@@ -1,10 +1,10 @@
 /*
-* Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
-* All rights reserved.
-*
-* This software may be modified and distributed under the terms of the
-* BSD-3-Clause license. See the accompanying LICENSE file for details.
-*/
+ * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
 
 #ifndef __FAKEBATTERY_H__
 #define __FAKEBATTERY_H__
@@ -37,14 +37,8 @@ protected:
     std::string        battery_info;
     unsigned char      backpack_status;
 
-    bool logEnable;
-    bool verboseEnable;
-    bool screenEnable;
     bool debugEnable;
-    bool shutdownEnable;
 
-    char                log_buffer[1024];
-    FILE                *logFile;
     yarp::os::ResourceFinder   rf;
     std::string         remoteName;
     std::string         localName;
@@ -53,23 +47,19 @@ public:
     FakeBattery(int period=20);
     virtual ~FakeBattery();
 
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    virtual bool open(yarp::os::Searchable& config) override;
+    virtual bool close() override;
 
-    virtual bool getBatteryVoltage     (double &voltage);
-    virtual bool getBatteryCurrent     (double &current);
-    virtual bool getBatteryCharge      (double &charge);
-    virtual bool getBatteryStatus      (Battery_status &status);
-    virtual bool getBatteryInfo        (std::string &info);
-    virtual bool getBatteryTemperature (double &temperature);
+    virtual bool getBatteryVoltage     (double &voltage) override;
+    virtual bool getBatteryCurrent     (double &current) override;
+    virtual bool getBatteryCharge      (double &charge) override;
+    virtual bool getBatteryStatus      (Battery_status &status) override;
+    virtual bool getBatteryInfo        (std::string &info) override;
+    virtual bool getBatteryTemperature (double &temperature) override;
 
-    virtual bool threadInit();
-    virtual void threadRelease();
-    virtual void run();
-
-    void check_battery_status();
-    void notify_message(std::string msg);
-    void stop_robot(std::string quit_port);
+    virtual bool threadInit() override;
+    virtual void threadRelease() override;
+    virtual void run() override;
 };
 
 

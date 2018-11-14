@@ -197,7 +197,7 @@ void MainWindow::updateMain()
     return;
 }
 
-MainWindow::MainWindow(const yarp::os::ResourceFinder& rf, yarp::dev::IBattery* p_ibat, QWidget *parent) : QMainWindow(parent),
+MainWindow::MainWindow(const yarp::os::ResourceFinder& rf, yarp::dev::IBattery* p_ibat, QWidget *parent, double refresh_period) : QMainWindow(parent),
     ibat(p_ibat),
     drv(nullptr),
     ui(new Ui::MainWindow),
@@ -210,7 +210,7 @@ MainWindow::MainWindow(const yarp::os::ResourceFinder& rf, yarp::dev::IBattery* 
     ui->setupUi(this);
     mainTimer = new QTimer(this);
     connect(mainTimer, SIGNAL(timeout()), this, SLOT(updateMain()));
-    mainTimer->start(1000*10); //10 seconds
+    mainTimer->start(1000*refresh_period); //10 seconds
     
     //this->setWindowFlags(Qt::BypassWindowManagerHint); //Set window with no title bar
     //this->setWindowFlags(Qt::CustomizeWindowHint); //Set window with no title bar

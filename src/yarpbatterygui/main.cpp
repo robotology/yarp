@@ -62,39 +62,47 @@ int main(int argc, char *argv[])
     if (rf.check("help"))
     {
         yInfo() << "Options:";
-        yInfo() << "--name <name> (DEPRECATED) The full name of the port to connect to, e.g. /mybattery:o";
-        yInfo() << "--local <name> The name of local openend by this module. e.g. batteryMonitor";
-        yInfo() << "--remote <name> The full name of the port to connect to, e.g. /mybattery:o";
-        yInfo() << "--robot <robotname> (DEPRECATED) This option is equivalent to: --name /<robotname>/battery:o";
+        yInfo() << "--local <name> The name of local opened by this module. e.g. batteryMonitor";
+        yInfo() << "--remote <name> The prefix name of the port to connect to, e.g. /mybattery. The port name is completed by the client adding /data:o, /rpc:i";
+        yInfo() << "--refresh_period <seconds> Refresh period of the gui. Default value: 10s";
         return 0;
     }
 
     yarp::dev::IBattery*   ibat = 0;
     yarp::dev::PolyDriver* drv = 0;
 
-    std::string robot_name = "icub";
-    std::string remotePort = "";
     if (rf.check("robot"))
     {
-        yWarning() << "This option is deprecated. Use --remote instead";
-        robot_name = rf.find("robot").asString();
+        yError() << "This option is deprecated. Use --remote instead";
+        return 0;
     }
 
     if (rf.check("name"))
     {
-        yWarning() << "This option is deprecated. Use --remote instead";
-        remotePort = rf.find("name").asString();
+        yError() << "This option is deprecated. Use --remote instead";
+        return 0;
     }
 
+    std::string remotePort = "";
     if (rf.check("remote"))
     {
-        remotePort = rf.find("name").asString();
+        remotePort = rf.find("remote").asString();
     }
 
-    if (rf.check("local"))
+    double refresh_period = 10.0;
+    if (rf.check("refresh_period"))
     {
-        yError() << "--local option not yet implemented";
-        return false;
+        refresh_period = rf.find("refresh_period").asFloat32();
+        if (refresh_period <= 0)
+        {
+            yError() << "refresh_period cannot be <=0. Using default value.";
+            refresh_period = 10;
+        }
+        yInfo() << "refresh_period set to:" << refresh_period << "s";
+    }
+    else
+    {
+        yInfo() << "refresh_period parameter missing. Using default value:" << refresh_period << "s";
     }
 
     char pname[500];
@@ -106,16 +114,18 @@ int main(int argc, char *argv[])
         b = yarp::os::Network::exists(pname);
         trial++;
     } while (b == true);
-
     std::string localPort = pname;
-    if (remotePort == "") { remotePort = "/" + robot_name + "/battery:o"; }
+
+    if (rf.check("local"))
+    {
+        localPort = rf.find("local").asString();
+    }
+    yInfo() << "Using local port:" << localPort;
 
     yarp::os::Property options;
-    options.put("robot", robot_name);
     options.put("device", "batteryClient");
     options.put("local", localPort);
     options.put("remote", remotePort);
-    options.put("period", 10);
 
     drv = new yarp::dev::PolyDriver(options);
     if (!drv || !(drv->isValid()))
@@ -134,7 +144,7 @@ int main(int argc, char *argv[])
         return 2;
     }
 
-    MainWindow w(rf, ibat, NULL);
+    MainWindow w(rf, ibat, NULL, refresh_period);
     w.show();
     int ret = a.exec();
 

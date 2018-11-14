@@ -99,7 +99,6 @@ protected:
     std::string remote;
     yarp::os::Stamp lastTs; //used by IPreciselyTimed
     std::string deviceId;
-    int _rate;
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
