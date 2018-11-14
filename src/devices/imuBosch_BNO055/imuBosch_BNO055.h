@@ -165,6 +165,7 @@ protected:
     bool                        checkError;
 
     int                         fd;
+    size_t                      responseOffset;
     yarp::os::ResourceFinder    rf;
 
     using ReadFuncPtr = bool (BoschIMU::*)(unsigned char, int, unsigned char*, std::string);
