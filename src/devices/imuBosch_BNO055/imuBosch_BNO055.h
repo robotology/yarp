@@ -172,6 +172,7 @@ protected:
     bool                        checkError;           ///< flag to check read error of sensor data
 
     int                         fd;                   ///< file descriptor to open device at system level 
+    size_t                      responseOffset;
     yarp::os::ResourceFinder    rf;                   ///< resource finder object to load config parameters
 
     using ReadFuncPtr = bool (BoschIMU::*)(unsigned char, int, unsigned char*, std::string);  ///< Functor to choose between i2c or serial comm

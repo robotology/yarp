@@ -11,7 +11,7 @@
 #define YARP_SIG_MATRIX_H
 
 #include <cstdlib> //defines size_t
-#include <memory.h> //memset
+#include <cstring> //memset
 #include <yarp/os/Portable.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/ManagedBytes.h>

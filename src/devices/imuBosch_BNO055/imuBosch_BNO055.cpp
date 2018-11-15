@@ -62,6 +62,7 @@ BoschIMU::BoschIMU() : PeriodicThread(0.02),
     i2c_flag(false),
     checkError(false),
     fd(0),
+    responseOffset(0),
     readFunc(&BoschIMU::sendReadCommandSer),
     totMessagesRead(0),
     errs(0)
@@ -97,6 +98,10 @@ bool BoschIMU::open(yarp::os::Searchable& config)
     i2c_flag = config.check("i2c");
 
     readFunc = i2c_flag ? &BoschIMU::sendReadCommandI2c : &BoschIMU::sendReadCommandSer;
+
+    // In case of reading through serial the first two bytes of the response are the ack, so
+    // they need to be discarded when publishing the data.
+    responseOffset = i2c_flag ? 0 : 2;
 
     if (i2c_flag)
     {
@@ -610,7 +615,7 @@ void BoschIMU::run()
         // Correctly construct int16 data
         for(int i=0; i<16; i++)
         {
-            raw_data[i] = response[3+ i*2] << 8 | response[2 +i*2];
+            raw_data[i] = response[responseOffset+1+i*2] << 8 | response[responseOffset+i*2];
         }
 
         // Get quaternion
