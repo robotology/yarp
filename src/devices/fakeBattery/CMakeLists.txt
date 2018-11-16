@@ -4,35 +4,36 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-yarp_prepare_plugin(batteryWrapper
+yarp_prepare_plugin(fakeBattery
                     CATEGORY device
-                    TYPE yarp::dev::BatteryWrapper
-                    INCLUDE BatteryWrapper.h
-                    EXTRA_CONFIG WRAPPER=batteryWrapper
-                    DEFAULT ON)
+                    TYPE yarp::dev::FakeBattery
+                    INCLUDE fakeBattery.h
+                    EXTRA_CONFIG WRAPPER=batteryWrapper)
 
-if(NOT SKIP_batteryWrapper)
+if(NOT SKIP_fakeBattery)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-  yarp_add_plugin(yarp_batteryWrapper BatteryWrapper.cpp
-                                      BatteryWrapper.h)
-  target_link_libraries(yarp_batteryWrapper PRIVATE YARP::YARP_OS
-                                                    YARP::YARP_sig
-                                                    YARP::YARP_dev)
+  yarp_add_plugin(yarp_fakeBattery fakeBattery.cpp
+                                   fakeBattery.h)
+                                   
+  target_link_libraries(yarp_fakeBattery PRIVATE YARP::YARP_OS
+                                                 YARP::YARP_sig
+                                                 YARP::YARP_dev)
+                                                 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
                                                       YARP_sig
                                                       YARP_dev)
 
-  yarp_install(TARGETS yarp_batteryWrapper
+  yarp_install(TARGETS yarp_fakeBattery
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-  yarp_install(FILES batteryWrapper.ini
+  yarp_install(FILES fakeBattery.ini
                COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_batteryWrapper PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_fakeBattery PROPERTY FOLDER "Plugins/Device/Fake")
 endif()
+

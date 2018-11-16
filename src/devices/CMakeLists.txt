@@ -16,6 +16,7 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(fakebot)
   add_subdirectory(fakeMotionControl)
   add_subdirectory(fakeAnalogSensor)
+  add_subdirectory(fakeBattery)
   add_subdirectory(fakeIMU)
   add_subdirectory(SerialServoBoard)
   add_subdirectory(ffmpeg)
