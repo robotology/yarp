@@ -9,7 +9,7 @@
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
 #include <yarp/dev/ControlBoardHelper.h>
 
-#include <stdio.h>
+#include <cstdio>
 using namespace yarp::dev;
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 #define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
@@ -69,7 +69,7 @@ bool ImplementCurrentControl::getRefCurrent(int j, double *r)
 bool ImplementCurrentControl::getRefCurrents(double *t)
 {
     bool ret;
-    double *tmp = new double[nj];
+    auto* tmp = new double[nj];
     ret = iCurrentRaw->getRefCurrentsRaw(tmp);
     castToMapper(helper)->ampereS2A(tmp,t);
     delete [] tmp;
@@ -78,7 +78,7 @@ bool ImplementCurrentControl::getRefCurrents(double *t)
 
 bool ImplementCurrentControl::setRefCurrents(const double *t)
 {
-    double *tmp = new double[nj];
+    auto* tmp = new double[nj];
     castToMapper(helper)->ampereA2S(t, tmp);
     bool ret = iCurrentRaw->setRefCurrentsRaw(tmp);
     delete [] tmp;
@@ -96,7 +96,7 @@ bool ImplementCurrentControl::setRefCurrent(int j, double t)
 
 bool ImplementCurrentControl::getCurrents(double *t)
 {
-    double *tmp = new double[nj];
+    auto* tmp = new double[nj];
     bool ret = iCurrentRaw->getCurrentsRaw(tmp);
     castToMapper(helper)->ampereS2A(tmp, t);
     delete [] tmp;
@@ -105,7 +105,7 @@ bool ImplementCurrentControl::getCurrents(double *t)
 
 bool ImplementCurrentControl::setRefCurrents(const int n_joint, const int *joints, const double *t)
 {
-    double *tmp = new double[nj];
+    auto* tmp = new double[nj];
     int *tmp_joints = new int[nj];
     for(int idx=0; idx<n_joint; idx++)
     {
@@ -132,8 +132,8 @@ bool ImplementCurrentControl::getCurrent(int j, double *t)
 
 bool ImplementCurrentControl::getCurrentRanges(double *min, double *max)
 {
-    double *tmp_min = new double[nj];
-    double *tmp_max = new double[nj];
+    auto* tmp_min = new double[nj];
+    auto* tmp_max = new double[nj];
     bool ret = iCurrentRaw->getCurrentRangesRaw(tmp_min, tmp_max);
     castToMapper(helper)->ampereS2A(tmp_min, min);
     castToMapper(helper)->ampereS2A(tmp_max, max);

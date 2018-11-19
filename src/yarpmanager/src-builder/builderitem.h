@@ -59,9 +59,9 @@ public:
         sigHandler(nullptr)
     {}
 
-    virtual QRectF boundingRect() const override = 0;
+    QRectF boundingRect() const override = 0;
     virtual QPointF connectionPoint() = 0;
-    virtual int type() const override = 0;
+    int type() const override = 0;
 
     QString getItemName();
     QPointF getStartingPoint();

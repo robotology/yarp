@@ -604,7 +604,7 @@ bool MainWindow::init(QStringList enabledParts,
 
     for (auto& robot : robots)
     {
-        QTreeWidgetItem *robot_top = new QTreeWidgetItem();
+        auto* robot_top = new QTreeWidgetItem();
         robot_top->setText(0, robot.first.c_str());
         m_ui->treeWidgetMode->addTopLevelItem(robot_top);
         robot_top->setExpanded(true);
@@ -654,7 +654,7 @@ bool MainWindow::init(QStringList enabledParts,
                 this->m_partName->setText(QString("%1 Commands ").arg(auxName));
             }
 
-            QTreeWidgetItem *mode = new QTreeWidgetItem();
+            auto* mode = new QTreeWidgetItem();
             mode->setText(0, part_name.c_str());
             QTreeWidgetItem *tp = robots[i_parts.second.robot_name].tree_pointer;
             tp->addChild(mode);
@@ -682,7 +682,7 @@ bool MainWindow::init(QStringList enabledParts,
         return false;
     }
 
-    QHBoxLayout *lay = new QHBoxLayout();
+    auto* lay = new QHBoxLayout();
     lay->setMargin(0);
     lay->setSpacing(0);
     m_ui->mainContainer->setLayout(lay);
@@ -715,8 +715,8 @@ void MainWindow::onCurrentPartChanged(int index)
     m_currentPartMenu->setTitle(QString("%1 Commands").arg(auxName));
     this->m_partName->setText(QString("%1 Commands").arg(auxName));
 
-    QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(index);
-    PartItem *part = (PartItem*)scroll->widget();
+    auto* scroll = (QScrollArea *)m_tabPanel->widget(index);
+    auto* part = (PartItem*)scroll->widget();
     if(!part){
         return;
     }
@@ -731,8 +731,8 @@ void MainWindow::onCalibSinglePart()
         return;
     }
 
-    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
-    PartItem *part = (PartItem*)scroll->widget();
+    auto* scroll = (QScrollArea *)m_tabPanel->currentWidget();
+    auto* part = (PartItem*)scroll->widget();
     if(!part){
         return;
     }
@@ -813,8 +813,8 @@ void MainWindow::onHomeSinglePart()
         return;
     }
 
-    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
-    PartItem *part = (PartItem*)scroll->widget();
+    auto* scroll = (QScrollArea *)m_tabPanel->currentWidget();
+    auto* part = (PartItem*)scroll->widget();
     if (!part){
         return;
     }
@@ -834,8 +834,8 @@ void MainWindow::onHomeAllParts()
 
     for (int i = 0; i<m_tabPanel->count(); i++)
     {
-        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
-        PartItem *part = (PartItem*)scroll->widget();
+        auto* scroll = (QScrollArea *)m_tabPanel->widget(i);
+        auto* part = (PartItem*)scroll->widget();
         if (!part)
         {
             continue;
@@ -857,8 +857,8 @@ void MainWindow::onHomeAllPartsToCustomPosition(const yarp::os::Bottle& position
 
     for (int i = 0; i<m_tabPanel->count(); i++)
     {
-        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
-        PartItem *part = (PartItem*)scroll->widget();
+        auto* scroll = (QScrollArea *)m_tabPanel->widget(i);
+        auto* part = (PartItem*)scroll->widget();
         if(!part)
         {
             continue;
@@ -877,8 +877,8 @@ void MainWindow::onHomeSinglePartToCustomPosition(const yarp::os::Bottle& positi
         return;
     }
 
-    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
-    PartItem *part = (PartItem*)scroll->widget();
+    auto* scroll = (QScrollArea *)m_tabPanel->currentWidget();
+    auto* part = (PartItem*)scroll->widget();
     if(!part){
         return;
     }
@@ -892,8 +892,8 @@ void MainWindow::onIdleSinglePart()
         return;
     }
 
-    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
-    PartItem *part = (PartItem*)scroll->widget();
+    auto* scroll = (QScrollArea *)m_tabPanel->currentWidget();
+    auto* part = (PartItem*)scroll->widget();
     if(!part){
         return;
     }
@@ -910,8 +910,8 @@ void MainWindow::onCycleTimeAllSeq()
     QString notSelectedParts;
 
     for (int i = 0; i<m_tabPanel->count(); i++){
-        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
-        PartItem *part = (PartItem*)scroll->widget();
+        auto* scroll = (QScrollArea *)m_tabPanel->widget(i);
+        auto* part = (PartItem*)scroll->widget();
         if(!part){
             continue;
         }
@@ -935,8 +935,8 @@ void MainWindow::onCycleAllSeq()
     QString notSelectedParts;
 
     for (int i = 0; i<m_tabPanel->count(); i++){
-        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
-        PartItem *part = (PartItem*)scroll->widget();
+        auto* scroll = (QScrollArea *)m_tabPanel->widget(i);
+        auto* part = (PartItem*)scroll->widget();
         if(!part){
             continue;
         }
@@ -960,8 +960,8 @@ void MainWindow::onRunAllSeq()
     QString notSelectedParts;
 
     for (int i = 0; i<m_tabPanel->count(); i++){
-        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
-        PartItem *part = (PartItem*)scroll->widget();
+        auto* scroll = (QScrollArea *)m_tabPanel->widget(i);
+        auto* part = (PartItem*)scroll->widget();
         if(!part){
             continue;
         }
@@ -986,8 +986,8 @@ void MainWindow::onRunTimeAllSeq()
     QString notSelectedParts;
 
     for (int i = 0; i<m_tabPanel->count(); i++){
-        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
-        PartItem *part = (PartItem*)scroll->widget();
+        auto* scroll = (QScrollArea *)m_tabPanel->widget(i);
+        auto* part = (PartItem*)scroll->widget();
         if(!part){
             continue;
         }
@@ -1010,8 +1010,8 @@ void MainWindow::onLoadAllSeq()
 
 
     for (int i = 0; i<m_tabPanel->count(); i++){
-        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
-        PartItem *part = (PartItem*)scroll->widget();
+        auto* scroll = (QScrollArea *)m_tabPanel->widget(i);
+        auto* part = (PartItem*)scroll->widget();
         if(!part){
             continue;
         }
@@ -1031,8 +1031,8 @@ void MainWindow::onSaveAllSeq()
 
     for (int i = 0; i<m_tabPanel->count(); i++)
     {
-        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
-        PartItem *part = (PartItem*)scroll->widget();
+        auto* scroll = (QScrollArea *)m_tabPanel->widget(i);
+        auto* part = (PartItem*)scroll->widget();
         if(!part)
         {
             continue;
@@ -1050,8 +1050,8 @@ void MainWindow::onStopAllSeq()
 
 
     for (int i = 0; i<m_tabPanel->count(); i++){
-        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
-        PartItem *part = (PartItem*)scroll->widget();
+        auto* scroll = (QScrollArea *)m_tabPanel->widget(i);
+        auto* part = (PartItem*)scroll->widget();
         if(!part){
             continue;
         }
@@ -1071,8 +1071,8 @@ void MainWindow::onGoAll()
     QString notSelectedParts;
 
     for (int i = 0; i<m_tabPanel->count(); i++){
-        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
-        PartItem *part = (PartItem*)scroll->widget();
+        auto* scroll = (QScrollArea *)m_tabPanel->widget(i);
+        auto* part = (PartItem*)scroll->widget();
         if(!part){
             continue;
         }
@@ -1101,8 +1101,8 @@ void MainWindow::onIdleAllParts()
 
     for (int i = 0; i<m_tabPanel->count(); i++)
     {
-        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
-        PartItem *part = (PartItem*)scroll->widget();
+        auto* scroll = (QScrollArea *)m_tabPanel->widget(i);
+        auto* part = (PartItem*)scroll->widget();
         if (!part){
             continue;
         }
@@ -1118,8 +1118,8 @@ void MainWindow::onRunAllParts()
     }
 
     for (int i = 0; i<m_tabPanel->count(); i++){
-        QScrollArea *scroll = (QScrollArea *)m_tabPanel->widget(i);
-        PartItem *part = (PartItem*)scroll->widget();
+        auto* scroll = (QScrollArea *)m_tabPanel->widget(i);
+        auto* part = (PartItem*)scroll->widget();
         if(!part){
             continue;
         }
@@ -1134,8 +1134,8 @@ void MainWindow::onRunSinglePart()
         return;
     }
 
-    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
-    PartItem *part = (PartItem*)scroll->widget();
+    auto* scroll = (QScrollArea *)m_tabPanel->currentWidget();
+    auto* part = (PartItem*)scroll->widget();
     if(!part){
         return;
     }
@@ -1149,8 +1149,8 @@ void MainWindow::onOpenSequenceTab()
         return;
     }
 
-    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
-    PartItem *part = (PartItem*)scroll->widget();
+    auto* scroll = (QScrollArea *)m_tabPanel->currentWidget();
+    auto* part = (PartItem*)scroll->widget();
     if(!part){
         return;
     }
@@ -1166,20 +1166,20 @@ void MainWindow::onUpdate()
     }
     m_mutex.lock();
 
-    QScrollArea *scroll = (QScrollArea *)m_tabPanel->currentWidget();
+    auto* scroll = (QScrollArea *)m_tabPanel->currentWidget();
     if(!scroll){
         m_mutex.unlock();
         return;
     }
-    PartItem *currentPart = (PartItem*)scroll->widget();
+    auto* currentPart = (PartItem*)scroll->widget();
     if(!currentPart){
         m_mutex.unlock();
         return;
     }
     for (int i = 0; i<m_tabPanel->count(); i++)
     {
-        QScrollArea *tabScroll = (QScrollArea *)m_tabPanel->widget(i);
-        PartItem *item = (PartItem*)tabScroll->widget();
+        auto* tabScroll = (QScrollArea *)m_tabPanel->widget(i);
+        auto* item = (PartItem*)tabScroll->widget();
         item->updateControlMode();
         updateModesTree(item);
         if(item == currentPart)
@@ -1337,7 +1337,7 @@ void MainWindow::updateModesTree(PartItem *part)
         for(int i=0; i<modes.count(); i++){
             QString mode;
             mode = getStringMode(modes.at(i));
-            QTreeWidgetItem *jointNode = new QTreeWidgetItem(parentNode);
+            auto* jointNode = new QTreeWidgetItem(parentNode);
             jointNode->setText(0,QString("Joint %1").arg(i));
             jointNode->setText(1,mode);
             QColor c = getColorMode(modes.at(i));

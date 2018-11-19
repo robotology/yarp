@@ -263,7 +263,7 @@ static bool SaveJPG(char *src, const char *filename, int h, int w, int rowSize)
     cinfo.err = jpeg_std_error(&jerr);
     jpeg_create_compress(&cinfo);
 
-    if ((outfile = fopen(filename, "wb")) == NULL)
+    if ((outfile = fopen(filename, "wb")) == nullptr)
     {
         yError("can't write file: %s\n", filename);
         return false;
@@ -376,7 +376,7 @@ static bool ImageWriteFloat(ImageOf<PixelFloat>& img, const char *filename)
 
     size_t bw = 0;
     size_t size_ = sizeof(float);
-    size_t count_ = (size_t)(dims[0] * dims[1]);
+    auto count_ = (size_t)(dims[0] * dims[1]);
 
     if (fwrite(dims, sizeof(dims), 1, fp) > 0) {
         bw = fwrite(&img(0, 0), size_, count_, fp);

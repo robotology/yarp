@@ -103,7 +103,7 @@ bool ImplementTorqueControl::getMotorTorqueParams(int j,  yarp::dev::MotorTorque
 bool ImplementTorqueControl::getRefTorques(double *t)
 {
     bool ret;
-    double *refTorques = new double[nj];
+    auto* refTorques = new double[nj];
     ret = iTorqueRaw->getRefTorquesRaw(refTorques);
     castToMapper(helper)->trqS2N(refTorques,t);
     delete [] refTorques;
@@ -112,7 +112,7 @@ bool ImplementTorqueControl::getRefTorques(double *t)
 
 bool ImplementTorqueControl::setRefTorques(const double *t)
 {
-    double *refTorques = new double[nj];
+    auto* refTorques = new double[nj];
     castToMapper(helper)->trqN2S(t, refTorques);
     bool ret = iTorqueRaw->setRefTorquesRaw(refTorques);
     delete [] refTorques;
@@ -130,7 +130,7 @@ bool ImplementTorqueControl::setRefTorque(int j, double t)
 
 bool ImplementTorqueControl::getTorques(double *t)
 {
-    double *torques = new double[nj];
+    auto* torques = new double[nj];
     bool ret = iTorqueRaw->getTorquesRaw(torques);
     castToMapper(helper)->toUser(torques, t);
     delete [] torques;
@@ -140,7 +140,7 @@ bool ImplementTorqueControl::getTorques(double *t)
 bool ImplementTorqueControl::setRefTorques(const int n_joint, const int *joints, const double *t)
 {
     int *temp_int = new int[nj];
-    double *temp = new double[nj];
+    auto* temp = new double[nj];
     for(int idx=0; idx<n_joint; idx++)
     {
         MJOINTIDCHECK_DEL(idx)
@@ -162,8 +162,8 @@ bool ImplementTorqueControl::getTorque(int j, double *t)
 
 bool ImplementTorqueControl::getTorqueRanges(double *min, double *max)
 {
-    double *t_min = new double[nj];
-    double *t_max = new double[nj];
+    auto* t_min = new double[nj];
+    auto* t_max = new double[nj];
     bool ret = iTorqueRaw->getTorqueRangesRaw(t_min,t_max);
     castToMapper(helper)->toUser(t_min, min);
     castToMapper(helper)->toUser(t_max, max);

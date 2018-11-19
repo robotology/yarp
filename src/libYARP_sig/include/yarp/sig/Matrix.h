@@ -321,13 +321,13 @@ public:
       * Read vector from a connection.
       * return true iff a vector was read correctly
       */
-      virtual bool read(yarp::os::ConnectionReader& connection) override;
+      bool read(yarp::os::ConnectionReader& connection) override;
 
       /**
       * Write vector to a connection.
       * return true iff a vector was written correctly
       */
-      virtual bool write(yarp::os::ConnectionWriter& connection) const override;
+      bool write(yarp::os::ConnectionWriter& connection) const override;
 
 };
 

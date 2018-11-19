@@ -29,13 +29,9 @@ using namespace yarp::os;
  * Implementation of TcpConnector
  * **************************************************************************************/
 
-TcpConnector::TcpConnector() {
+TcpConnector::TcpConnector() = default;
 
-}
-
-TcpConnector::~TcpConnector() {
-
-}
+TcpConnector::~TcpConnector() = default;
 
 int TcpConnector::open(TcpStream &stream) {
     if ((stream.get_handle() == -1) && (stream.open() == -1)) return -1;

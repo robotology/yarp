@@ -109,7 +109,7 @@ private:
     bool checkROSParams(yarp::os::Searchable &config);
     bool initialize_ROS();
     bool initialize_YARP(yarp::os::Searchable &config);
-    virtual bool read(yarp::os::ConnectionReader& connection) override;
+    bool read(yarp::os::ConnectionReader& connection) override;
 
     // ROS data
     ROSTopicUsageType                                   useROS;                     // decide if open ROS topic or not

@@ -65,7 +65,7 @@ public:
      * @param connection an interface to the network connection for reading
      * @return true iff the object pair was successfully read
      */
-    virtual bool read(ConnectionReader& connection) override
+    bool read(ConnectionReader& connection) override
     {
         return readPair(connection, head, body);
     }
@@ -75,7 +75,7 @@ public:
      * @param connection an interface to the network connection for writing
      * @return true iff the object pair was successfully written
      */
-    virtual bool write(ConnectionWriter& connection) const override
+    bool write(ConnectionWriter& connection) const override
     {
         return writePair(connection, head, body);
     }
@@ -84,7 +84,7 @@ public:
      * This is called when the port has finished all writing operations.
      * Passes call on to head and body.
      */
-    virtual void onCompletion() const override
+    void onCompletion() const override
     {
         head.onCompletion();
         body.onCompletion();

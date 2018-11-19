@@ -211,9 +211,12 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
 
     processRosHeader(header);
 
-    TcpRosStream *stream = new TcpRosStream(proto.giveStreams(),sender,
-                                            sender,
-                                            isService,raw,rosname.c_str());
+    auto* stream = new TcpRosStream(proto.giveStreams(),
+                                    sender,
+                                    sender,
+                                    isService,
+                                    raw,
+                                    rosname.c_str());
 
     if (stream==nullptr) { return false; }
 
@@ -317,10 +320,12 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     processRosHeader(header);
 
     if (isService) {
-        TcpRosStream *stream = new TcpRosStream(proto.giveStreams(),sender,
-                                                false,
-                                                isService,raw,rosname.c_str());
-        
+        auto* stream = new TcpRosStream(proto.giveStreams(),
+                                        sender,
+                                        false,
+                                        isService,
+                                        raw,
+                                        rosname.c_str());
         if (stream==nullptr) { return false; }
         proto.takeStreams(stream);
         return proto.is().isOk();

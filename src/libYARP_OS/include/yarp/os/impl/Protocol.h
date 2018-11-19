@@ -44,47 +44,47 @@ public:
     virtual ~Protocol();
 
     // yarp::os::ConnectionState.
-    virtual void setRoute(const Route& route) override;
-    virtual const Route& getRoute() const override;
-    virtual TwoWayStream& getStreams() override;
-    virtual void takeStreams(TwoWayStream* streams) override;
-    virtual TwoWayStream* giveStreams() override;
-    virtual bool checkStreams() const override;
-    virtual void setReference(yarp::os::Portable* ref) override;
-    virtual std::string getSenderSpecifier() const override;
-    virtual const std::string& getEnvelope() const override;
-    virtual Log& getLog() const override;
-    virtual void setRemainingLength(int len) override;
-    virtual Connection& getConnection() override;
-    virtual Contactable* getContactable() const override;
+    void setRoute(const Route& route) override;
+    const Route& getRoute() const override;
+    TwoWayStream& getStreams() override;
+    void takeStreams(TwoWayStream* streams) override;
+    TwoWayStream* giveStreams() override;
+    bool checkStreams() const override;
+    void setReference(yarp::os::Portable* ref) override;
+    std::string getSenderSpecifier() const override;
+    const std::string& getEnvelope() const override;
+    Log& getLog() const override;
+    void setRemainingLength(int len) override;
+    Connection& getConnection() override;
+    Contactable* getContactable() const override;
 
 
     // yarp::os::InputProtocol.
-    virtual bool open(const std::string& name) override;
-    virtual void close() override;
-    virtual void interrupt() override;
-    virtual OutputStream& getOutputStream() override;
-    virtual InputStream& getInputStream() override;
-    virtual void reply(SizedWriter& writer) override;
-    virtual OutputProtocol& getOutput() override;
-    virtual yarp::os::ConnectionReader& beginRead() override;
-    virtual void endRead() override;
-    virtual void suppressReply() override;
-    virtual bool setTimeout(double timeout) override;
-    virtual void setEnvelope(const std::string& str) override;
-    virtual Connection& getReceiver() override;
-    virtual void attachPort(yarp::os::Contactable* port) override;
-    virtual bool isReplying() const override;
+    bool open(const std::string& name) override;
+    void close() override;
+    void interrupt() override;
+    OutputStream& getOutputStream() override;
+    InputStream& getInputStream() override;
+    void reply(SizedWriter& writer) override;
+    OutputProtocol& getOutput() override;
+    yarp::os::ConnectionReader& beginRead() override;
+    void endRead() override;
+    void suppressReply() override;
+    bool setTimeout(double timeout) override;
+    void setEnvelope(const std::string& str) override;
+    Connection& getReceiver() override;
+    void attachPort(yarp::os::Contactable* port) override;
+    bool isReplying() const override;
 
 
     // yarp::os::OutputProtocol.
-    virtual bool open(const Route& route) override;
-    virtual void rename(const Route& route) override;
-    virtual bool isOk() const override;
-    virtual bool write(SizedWriter& writer) override;
-    virtual InputProtocol& getInput() override;
-    virtual void beginWrite() override;
-    virtual Connection& getSender() override;
+    bool open(const Route& route) override;
+    void rename(const Route& route) override;
+    bool isOk() const override;
+    bool write(SizedWriter& writer) override;
+    InputProtocol& getInput() override;
+    void beginWrite() override;
+    Connection& getSender() override;
 
 
     /**

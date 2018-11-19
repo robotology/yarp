@@ -49,8 +49,8 @@ using namespace yarp::os;
 
 static bool checkCrc(char *buf, yarp::conf::ssize_t length, yarp::conf::ssize_t crcLength, int pct,
                      int *store_altPct = nullptr) {
-    NetInt32 alt =
-        (NetInt32)NetType::getCrc(buf+crcLength, (length>crcLength)?(length-crcLength):0);
+    auto alt = (NetInt32)NetType::getCrc(buf + crcLength,
+                                         (length > crcLength) ? (length - crcLength) : 0);
     Bytes b(buf, 4);
     Bytes b2(buf+4, 4);
     NetInt32 curr = NetType::netInt(b);
@@ -73,9 +73,8 @@ static bool checkCrc(char *buf, yarp::conf::ssize_t length, yarp::conf::ssize_t 
 
 
 static void addCrc(char *buf, yarp::conf::ssize_t length, yarp::conf::ssize_t crcLength, int pct) {
-    NetInt32 alt =
-        (NetInt32)NetType::getCrc(buf+crcLength,
-                                           (length>crcLength)?(length-crcLength):0);
+    auto alt = (NetInt32)NetType::getCrc(buf + crcLength,
+                                         (length > crcLength) ? (length - crcLength) : 0);
     Bytes b(buf, 4);
     Bytes b2(buf+4, 4);
     NetType::netInt((NetInt32)alt, b);
@@ -423,7 +422,7 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
     mcastOptions = static_cast<ACE_SOCK_Dgram_Mcast::options>(ACE_SOCK_Dgram_Mcast::OPT_BINDADDR_NO | ACE_SOCK_Dgram_Mcast::DEFOPT_NULLIFACE);
     #endif
 
-    ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast(mcastOptions);
+    auto* dmcast = new ACE_SOCK_Dgram_Mcast(mcastOptions);
     dgram = dmcast;
     mgram = dmcast;
     yAssert(dgram != nullptr);
@@ -529,7 +528,7 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
     mcastOptions = static_cast<ACE_SOCK_Dgram_Mcast::options>(ACE_SOCK_Dgram_Mcast::OPT_BINDADDR_NO | ACE_SOCK_Dgram_Mcast::DEFOPT_NULLIFACE);
 #endif
 
-    ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast(mcastOptions);
+    auto* dmcast = new ACE_SOCK_Dgram_Mcast(mcastOptions);
 
     dgram = dmcast;
     mgram = dmcast;

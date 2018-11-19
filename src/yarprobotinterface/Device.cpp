@@ -115,7 +115,7 @@ public:
         // stopThreads() must pass this semaphore, but in order to avoid to
         // stop an already deleted thread we need a second semaphore.
         reg_sem()->wait();
-        RobotInterface::ThreadList::iterator tit = thr()->begin();
+        auto tit = thr()->begin();
         while (tit != thr()->end()) {
             yarp::os::Thread *thread = *tit;
             thread->join();

@@ -27,9 +27,7 @@ yarp::os::SharedLibraryFactory::SharedLibraryFactory(const char *dll_name,
     open(dll_name, fn_name);
 }
 
-yarp::os::SharedLibraryFactory::~SharedLibraryFactory()
-{
-}
+yarp::os::SharedLibraryFactory::~SharedLibraryFactory() = default;
 
 bool yarp::os::SharedLibraryFactory::open(const char *dll_name, const char *fn_name)
 {

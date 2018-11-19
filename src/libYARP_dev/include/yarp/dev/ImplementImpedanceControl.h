@@ -50,12 +50,12 @@ public:
      */
     virtual ~ImplementImpedanceControl();
 
-    virtual bool getAxes(int *ax) override;
-    virtual bool getImpedance(int j, double *stiffness, double *damping) override;
-    virtual bool setImpedance(int j, double  stiffness, double  damping) override;
-    virtual bool setImpedanceOffset(int j, double offset) override;
-    virtual bool getImpedanceOffset(int j, double* offset) override;
-    virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp) override;
+    bool getAxes(int *ax) override;
+    bool getImpedance(int j, double *stiffness, double *damping) override;
+    bool setImpedance(int j, double  stiffness, double  damping) override;
+    bool setImpedanceOffset(int j, double offset) override;
+    bool getImpedanceOffset(int j, double* offset) override;
+    bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp) override;
 
 };
 

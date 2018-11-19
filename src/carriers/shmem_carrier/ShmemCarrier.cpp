@@ -64,7 +64,7 @@ void ShmemCarrier::setParameters(const yarp::os::Bytes& header)
 
 bool ShmemCarrier::becomeShmemVersionHybridStream(yarp::os::ConnectionState& proto, bool sender)
 {
-    ShmemHybridStream* stream = new ShmemHybridStream();
+    auto* stream = new ShmemHybridStream();
     yAssert(stream != nullptr);
     yarp::os::Contact base;
 

@@ -585,8 +585,7 @@ std::string StoreBlob::toString() const
         if (i > 0) {
             result += " ";
         }
-        const unsigned char* src =
-            reinterpret_cast<const unsigned char*>(&x[i]);
+        const auto* src = reinterpret_cast<const unsigned char*>(&x[i]);
         result += NetType::toString(*src);
     }
     return result;

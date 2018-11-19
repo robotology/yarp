@@ -75,35 +75,35 @@ public:
         if (binder) delete binder;
     }
 
-    virtual Carrier *create() const override {
+    Carrier *create() const override {
         return new PortMonitor();
     }
 
-    virtual std::string getName() const override {
+    std::string getName() const override {
         return "portmonitor";
     }
 
-    virtual std::string toString() const override {
+    std::string toString() const override {
         return "portmonitor_carrier";
     }
 
-    virtual bool configure(yarp::os::ConnectionState& proto) override;
-    virtual bool configureFromProperty(yarp::os::Property& options) override;
+    bool configure(yarp::os::ConnectionState& proto) override;
+    bool configureFromProperty(yarp::os::Property& options) override;
 
-    //virtual bool modifiesIncomingData() override;
-    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) override;
+    //bool modifiesIncomingData() override;
+    bool acceptIncomingData(yarp::os::ConnectionReader& reader) override;
 
-    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) override;
+    yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) override;
 
-    virtual const yarp::os::PortWriter& modifyOutgoingData(const yarp::os::PortWriter& writer) override;
+    const yarp::os::PortWriter& modifyOutgoingData(const yarp::os::PortWriter& writer) override;
 
-    virtual bool acceptOutgoingData(const yarp::os::PortWriter& writer) override;
+    bool acceptOutgoingData(const yarp::os::PortWriter& writer) override;
 
-    virtual yarp::os::PortReader& modifyReply(yarp::os::PortReader& reader) override;
+    yarp::os::PortReader& modifyReply(yarp::os::PortReader& reader) override;
 
-    virtual void setCarrierParams(const yarp::os::Property& params) override;
+    void setCarrierParams(const yarp::os::Property& params) override;
 
-    virtual void getCarrierParams(yarp::os::Property& params) const override;
+    void getCarrierParams(yarp::os::Property& params) const override;
 
 
     void lock() const { mutex.lock(); }

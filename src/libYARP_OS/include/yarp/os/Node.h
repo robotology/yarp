@@ -35,14 +35,14 @@ public:
      * takes the name from the node specified in the contactable.
      * @param contactable to be adde
      */
-    virtual void add(Contactable& contactable) override;
+    void add(Contactable& contactable) override;
 
     /**
      * remove specified contactable from the list of contactables associated
      * with this Node.
      * @param contactable to be removed
      */
-    virtual void remove(Contactable& contactable) override;
+    void remove(Contactable& contactable) override;
 
     /**
      * query the Node to obtain Contact information about a nested port

@@ -38,7 +38,7 @@ Edge::Edge(const Edge& edge)
     secondVertex = edge.secondVertex;
 }
 
-Edge::~Edge() { }
+Edge::~Edge() = default;
 
 const Vertex& Edge::first() const {
     return *firstVertex;
@@ -62,12 +62,9 @@ bool Edge::operator == (const yarp::profiler::graph::Edge &edge) const {
 Vertex::Vertex(const yarp::os::Property &prop) : property(prop) { }
 
 
-Vertex::Vertex(const Vertex &vertex)
-    : property(vertex.property),
-      outs(vertex.outs),
-      ins(vertex.ins) { }
+Vertex::Vertex(const Vertex &vertex) = default;
 
-Vertex::~Vertex() { }
+Vertex::~Vertex() = default;
 
 void Vertex::insertOuts(const yarp::profiler::graph::Edge& edge) {
     if( find(outs.begin(), outs.end(), edge) != outs.end()) return;
@@ -95,8 +92,7 @@ bool Vertex::operator<(const Vertex &v1) const {
  *
  */
 
-Graph::Graph() {
-}
+Graph::Graph() = default;
 
 /*
 Graph::Graph(yarp::profiler::graph::Graph& graph) {
@@ -105,7 +101,7 @@ Graph::Graph(yarp::profiler::graph::Graph& graph) {
 */
 
 Graph::~Graph() {
-    pvertex_iterator itr = mVertices.begin();
+    auto itr = mVertices.begin();
     for(;itr!=mVertices.end(); itr++) {
         Vertex* v = *itr;
         delete v;
@@ -157,7 +153,7 @@ void Graph::insertEdge(const pvertex_iterator vi1, const pvertex_iterator vi2,
 }
 
 const pvertex_iterator Graph::find(const Vertex &vertex) {
-    pvertex_iterator itr = mVertices.begin();
+    auto itr = mVertices.begin();
     for(;itr!=mVertices.end(); itr++) {
         if(*(*itr) == vertex)
             return itr;
@@ -167,7 +163,7 @@ const pvertex_iterator Graph::find(const Vertex &vertex) {
 }
 
 size_t Graph::size() {
-    pvertex_iterator itr = mVertices.begin();
+    auto itr = mVertices.begin();
     size_t count = 0;
     for(; itr!=mVertices.end(); itr++)
         count += (**itr).degree();
@@ -180,7 +176,7 @@ size_t Graph::nodesCount() {
 
 
 void Graph::clear() {
-    pvertex_iterator itr = mVertices.begin();
+    auto itr = mVertices.begin();
     for(; itr!=mVertices.end(); itr++)
         delete *itr;
     mVertices.clear();

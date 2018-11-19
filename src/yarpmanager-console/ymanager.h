@@ -46,12 +46,12 @@ public:
 
 
 protected:
-    virtual void onExecutableStart(void* which) override;
-    virtual void onExecutableStop(void* which) override;
-    virtual void onExecutableDied(void* which) override;
-    virtual void onExecutableFailed(void* which) override;
-    virtual void onCnnStablished(void* which) override;
-    virtual void onCnnFailed(void* which) override;
+    void onExecutableStart(void* which) override;
+    void onExecutableStop(void* which) override;
+    void onExecutableDied(void* which) override;
+    void onExecutableFailed(void* which) override;
+    void onCnnStablished(void* which) override;
+    void onCnnFailed(void* which) override;
 
 private:
     bool bShouldRun;

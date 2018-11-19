@@ -23,6 +23,7 @@
 #include <sstream>
 #include <string>
 #include <deque>
+#include <utility>
 
 #ifdef ADD_VIDEO
     #include <opencv2/opencv.hpp>
@@ -34,7 +35,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 /**************************************************************************/
-typedef enum { bottle, image } DumpType;
+enum DumpType { bottle, image };
 bool save_jpeg = false;
 
 // Abstract object definition for queueing
@@ -42,7 +43,7 @@ bool save_jpeg = false;
 class DumpObj
 {
 public:
-    virtual ~DumpObj() { }
+    virtual ~DumpObj() = default;
     virtual const string toFile(const string&, unsigned int) = 0;
     virtual void *getPtr() = 0;
 };
@@ -76,7 +77,7 @@ public:
 /**************************************************************************/
 DumpObj *factory(Bottle& obj)
 {
-    DumpBottle *p=new DumpBottle(obj);
+    auto* p=new DumpBottle(obj);
     return p;
 }
 
@@ -137,7 +138,7 @@ public:
 /**************************************************************************/
 DumpObj *factory(Image &obj)
 {
-    DumpImage *p=new DumpImage(obj);
+    auto* p=new DumpImage(obj);
     return p;
 }
 
@@ -146,18 +147,14 @@ DumpObj *factory(Image &obj)
 /**************************************************************************/
 class DumpTimeStamp
 {
-    double rxStamp;
-    double txStamp;
-    bool   rxOk;
-    bool   txOk;
+    double rxStamp{0.0};
+    double txStamp{0.0};
+    bool   rxOk{false};
+    bool   txOk{false};
 
 public:
-    DumpTimeStamp() :
-        rxStamp(0.0),
-        txStamp(0.0),
-        rxOk(false),
-        txOk(false)
-    {}
+    DumpTimeStamp() = default;
+
     void setRxStamp(const double stamp) { rxStamp=stamp; rxOk=true; }
     void setTxStamp(const double stamp) { txStamp=stamp; txOk=true; }
     double getStamp() const
@@ -189,12 +186,12 @@ public:
 
 // Definition of item to be put in the queue
 /**************************************************************************/
-typedef struct
+struct DumpItem
 {
     int            seqNumber;
     DumpTimeStamp  timeStamp;
     DumpObj       *obj;
-} DumpItem;
+};
 
 
 // Definition of the queue
@@ -304,19 +301,19 @@ private:
 #endif
 
 public:
-    DumpThread(DumpType _type, DumpQueue &Q, const string &_dirName, int szToWrite,
-               bool _saveData, bool _videoOn, const string &_videoType) :
+    DumpThread(DumpType _type, DumpQueue &Q, string _dirName, int szToWrite,
+               bool _saveData, bool _videoOn, string _videoType) :
         PeriodicThread(0.05),
         buf(Q),
         type(_type),
-        dirName(_dirName),
+        dirName(std::move(_dirName)),
         blockSize(szToWrite),
         cumulSize(0),
         counter(0),
         oldTime(0.0),
         saveData(_saveData),
         videoOn(_videoOn),
-        videoType(_videoType),
+        videoType(std::move(_videoType)),
         closing(false)
     {
         infoFile=dirName;
@@ -505,10 +502,10 @@ public:
 class DumpReporter : public PortReport
 {
 private:
-    DumpThread *thread;
+    DumpThread *thread{nullptr};
 
 public:
-    DumpReporter() : thread(nullptr) { }
+    DumpReporter() = default;
     void setThread(DumpThread *thread) { this->thread=thread; }
     void report(const PortInfo &info) override
     {
@@ -522,29 +519,20 @@ public:
 class DumpModule: public RFModule
 {
 private:
-    DumpQueue        *q;
-    DumpPort<Bottle> *p_bottle;
-    DumpPort<Image>  *p_image;
-    DumpThread       *t;
+    DumpQueue        *q{nullptr};
+    DumpPort<Bottle> *p_bottle{nullptr};
+    DumpPort<Image>  *p_image{nullptr};
+    DumpThread       *t{nullptr};
     DumpReporter      reporter;
     Port              rpcPort;
-    DumpType          type;
-    bool              rxTime;
-    bool              txTime;
-    unsigned int      dwnsample;
+    DumpType          type{bottle};
+    bool              rxTime{false};
+    bool              txTime{false};
+    unsigned int      dwnsample{0};
     string            portName;
 
 public:
-    DumpModule() :
-        q(nullptr),
-        p_bottle(nullptr),
-        p_image(nullptr),
-        t(nullptr),
-        type(bottle),
-        rxTime(false),
-        txTime(false),
-        dwnsample(0)
-    {}
+    DumpModule() = default;
 
     bool configure(ResourceFinder &rf) override
     {

@@ -67,7 +67,7 @@ std::string InputStream::readLine(int terminal, bool* success)
             if (success != nullptr) {
                 *success = false;
             }
-            return "";
+            return {};
         }
         char ch = (char)v;
         if (v == '\\') {

@@ -208,7 +208,7 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
             yarp::os::SystemClock::delaySystem(0.005);
             m_iPid->getPid(VOCAB_PIDTYPE_POSITION, k, &myPid);
             
-            JointItem *joint = new JointItem(k);
+            auto* joint = new JointItem(k);
             joint->setJointName(jointname.c_str());
             joint->setPWMRange(-100.0, 100.0);
             joint->setCurrentRange(min_cur, max_cur);
@@ -298,7 +298,7 @@ PartItem::~PartItem()
     }
 
     for (int i = 0; i<m_layout->count(); i++){
-        JointItem *joint = (JointItem *)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem *)m_layout->itemAt(i)->widget();
         if(joint){
             disconnect(joint,SIGNAL(changeMode(int,JointItem*)), this, SLOT(onJointChangeMode(int,JointItem*)));
             disconnect(joint,SIGNAL(changeInteraction(int,JointItem*)), this, SLOT(onJointInteraction(int,JointItem*)));
@@ -524,7 +524,7 @@ void PartItem::onSliderDirectPositionCommand(double dirpos, int index)
 
 void PartItem::onDumpAllRemoteVariables()
 {
-    if (m_iVar == 0)
+    if (m_iVar == nullptr)
     {
         return;
     }
@@ -532,7 +532,7 @@ void PartItem::onDumpAllRemoteVariables()
     QString fileName = QFileDialog::getSaveFileName(this, QString("Save Dump for Remote Variables as:"), QDir::homePath()+QString("/RemoteVariablesDump.txt"));
 
     FILE* dumpfile = fopen(fileName.toStdString().c_str(), "w");
-    if (dumpfile != NULL)
+    if (dumpfile != nullptr)
     {
         yarp::os::Bottle keys;
         if (m_iVar->getRemoteVariablesList(&keys))
@@ -1756,9 +1756,9 @@ void PartItem::fixedTimeMove(SequenceItem sequence)
 {
     int NUM_JOINTS;
     m_iPos->getAxes(&NUM_JOINTS);
-    double *cmdPositions = new double[NUM_JOINTS];
-    double *cmdVelocities = new double[NUM_JOINTS];
-    double *startPositions = new double[NUM_JOINTS];
+    auto* cmdPositions = new double[NUM_JOINTS];
+    auto* cmdVelocities = new double[NUM_JOINTS];
+    auto* startPositions = new double[NUM_JOINTS];
     double cmdTime = sequence.getTiming();
 
     while (!m_iencs->getEncoders(startPositions)){
@@ -1812,7 +1812,7 @@ void PartItem::onSequenceActivated()
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         if(joint){
             joint->sequenceActivated();
         }
@@ -1826,7 +1826,7 @@ void PartItem::onSequenceStopped()
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         if(joint){
             joint->sequenceStopped();
         }
@@ -1840,7 +1840,7 @@ void PartItem::onSequenceWindowDoubleClicked(int sequenceNum)
     QList<double>speeds;
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         values.append(this->m_positions[i]);
         speeds.append(joint->getTrajectoryVelocityValue());
     }
@@ -1852,7 +1852,7 @@ void PartItem::onEnableControlVelocity(bool control)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         joint->enableControlVelocity(control);
     }
 }
@@ -1861,7 +1861,7 @@ void PartItem::onEnableControlMixed(bool control)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         joint->enableControlMixed(control);
     }
 }
@@ -1870,7 +1870,7 @@ void PartItem::onEnableControlPositionDirect(bool control)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         joint->enableControlPositionDirect(control);
     }
 }
@@ -1879,7 +1879,7 @@ void PartItem::onEnableControlPWM(bool control)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         joint->enableControlPWM(control);
     }
 }
@@ -1888,7 +1888,7 @@ void PartItem::onEnableControlCurrent(bool control)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         joint->enableControlCurrent(control);
     }
 }
@@ -1898,7 +1898,7 @@ void PartItem::onViewSpeedValues(bool view)
     m_part_speedVisible = view;
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         joint->setSpeedVisible(view);
     }
 }
@@ -1908,7 +1908,7 @@ void PartItem::onViewMotorPositions(bool view)
     m_part_motorPositionVisible = view;
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         joint->setMotorPositionVisible(view);
     }
 }
@@ -1918,7 +1918,7 @@ void PartItem::onViewDutyCycles(bool view)
     m_part_dutyVisible = view;
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         joint->setDutyVisible(view);
     }
 }
@@ -1928,7 +1928,7 @@ void PartItem::onViewCurrentValues(bool view)
     m_part_currentVisible = view;
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         joint->setCurrentsVisible(view);
     }
 }
@@ -1937,7 +1937,7 @@ void PartItem::onViewPositionTarget(bool ena)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         joint->viewPositionTarget(ena);
     }
 }
@@ -1946,7 +1946,7 @@ void PartItem::onSetPosSliderOptionPI(int mode, double step)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         if (mode==0)
         {
             joint->enablePositionSliderDoubleAuto();
@@ -1969,7 +1969,7 @@ void PartItem::onSetVelSliderOptionPI(int mode, double step)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         if (mode == 0)
         {
             joint->enableVelocitySliderDoubleAuto();
@@ -1997,7 +1997,7 @@ void PartItem::onSetCurSliderOptionPI(int mode, double step)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         if (mode == 0)
         {
             joint->enableCurrentSliderDoubleAuto();
@@ -2021,7 +2021,7 @@ void PartItem::onSetTrqSliderOptionPI(int mode, double step)
 {
     for (int i = 0; i<m_layout->count(); i++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
         if (mode == 0)
         {
             joint->enableTorqueSliderDoubleAuto();
@@ -2130,7 +2130,7 @@ bool PartItem::updatePart()
         SystemClock::delaySystem(0.1);
 
         for (int i = 0; i<m_layout->count(); i++){
-            JointItem *joint = (JointItem*)m_layout->itemAt(i)->widget();
+            auto* joint = (JointItem*)m_layout->itemAt(i)->widget();
             joint->setJointState(JointItem::Disconnected);
         }
         return false;
@@ -2138,12 +2138,12 @@ bool PartItem::updatePart()
 
     // *** update measured encoders, velocity, torques ***
     bool b = true;
-    if (1)
+    if (true)
     {
         b = m_iencs->getEncoders(m_positions);
         if (!b) { yWarning("Unable to update encoders"); return false; }
     }
-    if (1)
+    if (true)
     {
         b = m_iTrq->getTorques(m_torques);
         if (!b) { yWarning("Unable to update torques"); }
@@ -2201,24 +2201,24 @@ bool PartItem::updatePart()
     // *** update the widget every cycle ***
     for (int jk = 0; jk < number_of_joints; jk++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(jk)->widget();
-        if (1) { joint->setPosition(m_positions[jk]); }
+        auto* joint = (JointItem*)m_layout->itemAt(jk)->widget();
+        if (true) { joint->setPosition(m_positions[jk]); }
         else {}
-        if (1) { joint->setTorque(m_torques[jk]); }
+        if (true) { joint->setTorque(m_torques[jk]); }
         else {}
-        if (1) { joint->setSpeed(m_speeds[jk]); }
+        if (true) { joint->setSpeed(m_speeds[jk]); }
         else {}
-        if (1) { joint->setCurrent(m_currents[jk]); }
+        if (true) { joint->setCurrent(m_currents[jk]); }
         else {}
-        if (1) { joint->setMotorPosition(m_motorPositions[jk]); }
+        if (true) { joint->setMotorPosition(m_motorPositions[jk]); }
         else {}
-        if (1) { joint->setDutyCycles(m_dutyCycles[jk]); }
+        if (true) { joint->setDutyCycles(m_dutyCycles[jk]); }
         else {}
     }
     
     // *** update the widget NOT every cycle ***
     {
-        JointItem *joint_slow_k = (JointItem*)m_layout->itemAt(m_slow_k)->widget();
+        auto* joint_slow_k = (JointItem*)m_layout->itemAt(m_slow_k)->widget();
         if (b_refTrq) { joint_slow_k->setRefTorque(m_refTorques[m_slow_k]); }
         else {}
         if (b_refPosSpeed) { joint_slow_k->setRefTrajectorySpeed(m_refTrajectorySpeeds[m_slow_k]); }
@@ -2245,7 +2245,7 @@ bool PartItem::updatePart()
 
     for (int k = 0; k < number_of_joints; k++)
     {
-        JointItem *joint = (JointItem*)m_layout->itemAt(k)->widget();
+        auto* joint = (JointItem*)m_layout->itemAt(k)->widget();
         switch (m_controlModes[k])
         {
             case VOCAB_CM_IDLE:

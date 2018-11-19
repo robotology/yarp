@@ -218,9 +218,9 @@ bool XmlRpcCarrier::respondToHeader(ConnectionState& proto)
 {
     shouldInterpretRosMessages(proto);
     sender = false;
-    XmlRpcStream *stream = new XmlRpcStream(proto.giveStreams(),
-                                            sender,
-                                            interpretRos);
+    auto* stream = new XmlRpcStream(proto.giveStreams(),
+                                    sender,
+                                    interpretRos);
     if (stream == nullptr) {
         return false;
     }

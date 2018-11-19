@@ -25,25 +25,25 @@ class TextCarrier : public TcpCarrier
 public:
     TextCarrier(bool ackVariant = false);
 
-    virtual Carrier* create() const override;
+    Carrier* create() const override;
 
-    virtual std::string getName() const override;
+    std::string getName() const override;
 
     virtual std::string getSpecifierName() const;
 
-    virtual bool checkHeader(const Bytes& header) override;
-    virtual void getHeader(Bytes& header) const override;
-    virtual bool requireAck() const override;
-    virtual bool isTextMode() const override;
-    virtual bool supportReply() const override;
-    virtual bool sendHeader(ConnectionState& proto) override;
-    virtual bool expectReplyToHeader(ConnectionState& proto) override;
-    virtual bool expectSenderSpecifier(ConnectionState& proto) override;
-    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer) override;
-    virtual bool expectIndex(ConnectionState& proto) override;
-    virtual bool sendAck(ConnectionState& proto) override;
-    virtual bool expectAck(ConnectionState& proto) override;
-    virtual bool respondToHeader(ConnectionState& proto) override;
+    bool checkHeader(const Bytes& header) override;
+    void getHeader(Bytes& header) const override;
+    bool requireAck() const override;
+    bool isTextMode() const override;
+    bool supportReply() const override;
+    bool sendHeader(ConnectionState& proto) override;
+    bool expectReplyToHeader(ConnectionState& proto) override;
+    bool expectSenderSpecifier(ConnectionState& proto) override;
+    bool sendIndex(ConnectionState& proto, SizedWriter& writer) override;
+    bool expectIndex(ConnectionState& proto) override;
+    bool sendAck(ConnectionState& proto) override;
+    bool expectAck(ConnectionState& proto) override;
+    bool respondToHeader(ConnectionState& proto) override;
 
 private:
     bool ackVariant;

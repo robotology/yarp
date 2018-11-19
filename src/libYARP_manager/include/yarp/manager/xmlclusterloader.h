@@ -44,7 +44,7 @@ struct Cluster
 class XmlClusterLoader {
 
 public:
-    XmlClusterLoader(const std::string& szFileName);
+    XmlClusterLoader(std::string szFileName);
     virtual ~XmlClusterLoader();
     bool parseXmlFile(Cluster& _cluster);
 

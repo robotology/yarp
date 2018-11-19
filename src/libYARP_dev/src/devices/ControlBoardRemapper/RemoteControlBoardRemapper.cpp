@@ -29,13 +29,9 @@ DriverCreator *createRemoteControlBoardRemapper()
             ("remotecontrolboardremapper", "controlboardwrapper2", "yarp::dev::RemoteControlBoardRemapper");
 }
 
-RemoteControlBoardRemapper::RemoteControlBoardRemapper()
-{
-}
+RemoteControlBoardRemapper::RemoteControlBoardRemapper() = default;
 
-RemoteControlBoardRemapper::~RemoteControlBoardRemapper()
-{
-}
+RemoteControlBoardRemapper::~RemoteControlBoardRemapper() = default;
 
 void RemoteControlBoardRemapper::closeAllRemoteControlBoards()
 {

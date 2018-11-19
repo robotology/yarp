@@ -109,7 +109,7 @@ public:
      */
     virtual ~PolyDriver();
 
-    virtual bool close() override {
+    bool close() override {
         return closeMain();
     }
 

@@ -24,7 +24,7 @@ XmlLoader::XmlLoader(QString fileName, PlotManager *plotManager,QObject *parent)
     plotter = nullptr;
     this->plotManager = plotManager;
 
-    QFile* file = new QFile(fileName);
+    auto* file = new QFile(fileName);
        /* If we can't open it, let's show an error message. */
        if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
            return;

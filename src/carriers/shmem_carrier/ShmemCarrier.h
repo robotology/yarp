@@ -22,18 +22,18 @@ public:
     ShmemCarrier();
     virtual ~ShmemCarrier();
 
-    virtual Carrier* create() const override;
+    Carrier* create() const override;
 
-    virtual std::string getName() const override;
+    std::string getName() const override;
 
     virtual int getSpecifierCode() const;
-    virtual bool requireAck() const override;
-    virtual bool isConnectionless() const override;
-    virtual bool checkHeader(const yarp::os::Bytes& header) override;
-    virtual void getHeader(yarp::os::Bytes& header) const override;
-    virtual void setParameters(const yarp::os::Bytes& header) override;
-    virtual bool respondToHeader(yarp::os::ConnectionState& proto) override;
-    virtual bool expectReplyToHeader(yarp::os::ConnectionState& proto) override;
+    bool requireAck() const override;
+    bool isConnectionless() const override;
+    bool checkHeader(const yarp::os::Bytes& header) override;
+    void getHeader(yarp::os::Bytes& header) const override;
+    void setParameters(const yarp::os::Bytes& header) override;
+    bool respondToHeader(yarp::os::ConnectionState& proto) override;
+    bool expectReplyToHeader(yarp::os::ConnectionState& proto) override;
 
 private:
     bool becomeShmemVersionHybridStream(yarp::os::ConnectionState& proto, bool sender);

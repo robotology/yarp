@@ -558,7 +558,7 @@ bool PortCoreInputUnit::isBusy() {
 
 void PortCoreInputUnit::envelopeReadCallback(void* data, const Bytes& envelope)
 {
-    PortCoreInputUnit *p = reinterpret_cast<PortCoreInputUnit*>(data);
+    auto* p = reinterpret_cast<PortCoreInputUnit*>(data);
     if (!p) {
         return;
     }

@@ -61,9 +61,9 @@ public:
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
-    virtual bool detachAll() override;
-    virtual bool attachAll(const yarp::dev::PolyDriverList &l) override;
-    virtual bool read(yarp::os::ConnectionReader& connection) override;
+    bool detachAll() override;
+    bool attachAll(const yarp::dev::PolyDriverList &l) override;
+    bool read(yarp::os::ConnectionReader& connection) override;
 
 private:
     bool add_device(DeviceDescription dev);

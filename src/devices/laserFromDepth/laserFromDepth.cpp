@@ -273,7 +273,7 @@ void LaserFromDepth::run()
     }
 
 
-    float* pointer = (float*)m_depth_image.getPixelAddress(0, m_depth_height / 2);
+    auto* pointer = (float*)m_depth_image.getPixelAddress(0, m_depth_height / 2);
     double angle, distance, infinity, angleShift;
     size_t i;
 

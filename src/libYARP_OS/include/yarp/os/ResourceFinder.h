@@ -240,11 +240,11 @@ public:
     yarp::os::Bottle getContexts();
 
     // Searchable interface
-    virtual bool check(const std::string& key) const override;
-    virtual Value& find(const std::string& key) const override;
-    virtual Bottle& findGroup(const std::string& key) const override;
-    virtual bool isNull() const override;
-    virtual std::string toString() const override;
+    bool check(const std::string& key) const override;
+    Value& find(const std::string& key) const override;
+    Bottle& findGroup(const std::string& key) const override;
+    bool isNull() const override;
+    std::string toString() const override;
 
 
     /**

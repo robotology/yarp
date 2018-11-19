@@ -49,13 +49,13 @@ const std::string RobotInterfaceDTD::ext(".dtd");
 
 
 RobotInterfaceDTD::DocType StringToDocType(const std::string &type) {
-    if (!type.compare("robot")) {
+    if (type == "robot") {
         return RobotInterfaceDTD::DocTypeRobot;
-    } else if (!type.compare("devices")) {
+    } else if (type == "devices") {
         return RobotInterfaceDTD::DocTypeDevices;
-    } else if (!type.compare("params")) {
+    } else if (type == "params") {
         return RobotInterfaceDTD::DocTypeParams;
-    } else if (!type.compare("actions")) {
+    } else if (type == "actions") {
         return RobotInterfaceDTD::DocTypeActions;
     }
     return RobotInterfaceDTD::DocTypeUnknown;
@@ -74,7 +74,7 @@ std::string DocTypeToString(RobotInterfaceDTD::DocType doctype)
     case RobotInterfaceDTD::DocTypeActions:
         return std::string("actions");
     default:
-        return std::string();
+        return {};
     }
 }
 
@@ -104,13 +104,13 @@ bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, const std::string& curr
               std::back_inserter<std::vector<std::string> >(tokens));
 
     // Merge token in quotes (and remove quotes)
-    for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); ++it) {
+    for (auto it = tokens.begin(); it != tokens.end(); ++it) {
         if(it->at(0) == '"' ) {
             if (it->at(it->size() - 1) == '"') {
                 *it = it->substr(1, it->size() - 2);
             } else {
                 std::string s = it->substr(1) + " ";
-                for (std::vector<std::string>::iterator cit = it + 1; cit != tokens.end(); ) {
+                for (auto cit = it + 1; cit != tokens.end(); ) {
                     if (cit->at(cit->size() - 1) == '"') {
                         s += cit->substr(0, cit->size() - 1);
                         cit = tokens.erase(cit);

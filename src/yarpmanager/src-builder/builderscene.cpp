@@ -70,11 +70,11 @@ void BuilderScene::dropEvent(QGraphicsSceneDragDropEvent *event)
     }
 
     if(itemType == "module" ){
-        Module *mod = (yarp::manager::Module*)pointer;
+        auto* mod = (yarp::manager::Module*)pointer;
         emit addedModule((void*)mod,event->scenePos());
     }
     if(itemType == "application" ){
-        Application *app = (yarp::manager::Application*)pointer;
+        auto* app = (yarp::manager::Application*)pointer;
         emit addedApplication((void*)app,event->scenePos());
     }
 
@@ -172,8 +172,8 @@ void BuilderScene::onNewConnectionAdded(QPointF p,QGraphicsItem *item)
             currentLine = nullptr;
         }
 
-            BuilderItem *startItem = (BuilderItem*)startConnectionItem;
-            BuilderItem *endItem = (BuilderItem*)item;
+            auto* startItem = (BuilderItem*)startConnectionItem;
+            auto* endItem = (BuilderItem*)item;
 
             if(!startItem || !endItem){
                 return;
@@ -240,7 +240,7 @@ void BuilderScene::onSceneChanged(QList<QRectF> rects)
                     return;
 
                 }
-                BuilderItem *it = (BuilderItem*)gIt;
+                auto* it = (BuilderItem*)gIt;
                 it->updateConnections();
                 //qDebug() << "UPDATE";
             }

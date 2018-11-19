@@ -40,7 +40,7 @@ public:
     XMLReaderFileV1();
     virtual ~XMLReaderFileV1();
 
-    virtual Robot& getRobotFile(const std::string &filename, bool verbose = false) override;
+    Robot& getRobotFile(const std::string &filename, bool verbose = false) override;
 
 private:
     class privateXMLReaderFileV1;
@@ -53,7 +53,7 @@ public:
     XMLReaderFileV3();
     virtual ~XMLReaderFileV3();
 
-    virtual Robot& getRobotFile(const std::string &filename, bool verbose = false) override;
+    Robot& getRobotFile(const std::string &filename, bool verbose = false) override;
 
 private:
     class privateXMLReaderFileV3;

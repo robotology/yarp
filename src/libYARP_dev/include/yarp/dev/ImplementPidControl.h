@@ -52,27 +52,27 @@ public:
     */
     virtual ~ImplementPidControl();
 
-    virtual bool setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid) override;
-    virtual bool setPids(const PidControlTypeEnum& pidtype, const Pid *pids) override;
-    virtual bool setPidReference(const PidControlTypeEnum& pidtype, int j, double ref) override;
-    virtual bool setPidReferences(const PidControlTypeEnum& pidtype, const double *refs) override;
-    virtual bool setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit) override;
-    virtual bool setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits) override;
-    virtual bool getPidError(const PidControlTypeEnum& pidtype, int j, double *err) override;
-    virtual bool getPidErrors(const PidControlTypeEnum& pidtype, double *errs) override;
-    virtual bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out) override;
-    virtual bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs) override;
-    virtual bool getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid) override;
-    virtual bool getPids(const PidControlTypeEnum& pidtype, Pid *pids) override;
-    virtual bool getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref) override;
-    virtual bool getPidReferences(const PidControlTypeEnum& pidtype, double *refs) override;
-    virtual bool getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *ref) override;
-    virtual bool getPidErrorLimits(const PidControlTypeEnum& pidtype, double *refs) override;
-    virtual bool resetPid(const PidControlTypeEnum& pidtype, int j) override;
-    virtual bool enablePid(const PidControlTypeEnum& pidtype, int j) override;
-    virtual bool disablePid(const PidControlTypeEnum& pidtype, int j) override;
-    virtual bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v) override;
-    virtual bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled) override;
+    bool setPid(const PidControlTypeEnum& pidtype, int j, const Pid &pid) override;
+    bool setPids(const PidControlTypeEnum& pidtype, const Pid *pids) override;
+    bool setPidReference(const PidControlTypeEnum& pidtype, int j, double ref) override;
+    bool setPidReferences(const PidControlTypeEnum& pidtype, const double *refs) override;
+    bool setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit) override;
+    bool setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits) override;
+    bool getPidError(const PidControlTypeEnum& pidtype, int j, double *err) override;
+    bool getPidErrors(const PidControlTypeEnum& pidtype, double *errs) override;
+    bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out) override;
+    bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs) override;
+    bool getPid(const PidControlTypeEnum& pidtype, int j, Pid *pid) override;
+    bool getPids(const PidControlTypeEnum& pidtype, Pid *pids) override;
+    bool getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref) override;
+    bool getPidReferences(const PidControlTypeEnum& pidtype, double *refs) override;
+    bool getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *ref) override;
+    bool getPidErrorLimits(const PidControlTypeEnum& pidtype, double *refs) override;
+    bool resetPid(const PidControlTypeEnum& pidtype, int j) override;
+    bool enablePid(const PidControlTypeEnum& pidtype, int j) override;
+    bool disablePid(const PidControlTypeEnum& pidtype, int j) override;
+    bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v) override;
+    bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled) override;
 };
 
 #endif // YARP_DEV_IMPLEMENTPIDCONTROL_H

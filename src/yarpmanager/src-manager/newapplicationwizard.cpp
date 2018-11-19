@@ -44,7 +44,7 @@ inline bool absolute(const char *path) {  //copied from yarp_OS ResourceFinder.c
 
 NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _saveAs):alreadyExists(false), saveAs(_saveAs)
 {
-    CustomWizardPage *page = new CustomWizardPage;
+    auto* page = new CustomWizardPage;
 
     this->m_config = config;
     page->setTitle("Application Properties");
@@ -94,7 +94,7 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
 
 
 
-    QGridLayout *layout = new QGridLayout;
+    auto* layout = new QGridLayout;
     layout->addWidget(nameLbl,0,0);
     layout->addWidget(nameEdit,0,1);
 

@@ -17,10 +17,10 @@ namespace os {
 class YARP_OS_API SystemClock : public Clock
 {
 public:
-    virtual double now() override;
-    virtual void delay(double seconds) override;
+    double now() override;
+    void delay(double seconds) override;
 
-    virtual bool isValid() const override;
+    bool isValid() const override;
 
     static double nowSystem();
     static void delaySystem(double seconds);

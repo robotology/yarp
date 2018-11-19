@@ -98,10 +98,10 @@ public:
     void close() override;
 
     // Documented in Contactable
-    virtual void interrupt() override;
+    void interrupt() override;
 
     // Documented in Contactable
-    virtual void resume() override;
+    void resume() override;
 
     // Documented in Contactable
     Contact where() const override;
@@ -128,7 +128,7 @@ public:
     void setReader(PortReader& reader) override;
 
     // Documented in Contactable
-    virtual void setAdminReader(PortReader& reader) override;
+    void setAdminReader(PortReader& reader) override;
 
     /**
      * Set a creator for readers for port data.
@@ -154,25 +154,25 @@ public:
     bool isWriting() override;
 
     // Documented in Contactable
-    virtual bool setEnvelope(PortWriter& envelope) override;
+    bool setEnvelope(PortWriter& envelope) override;
 
     // Documented in Contactable
-    virtual bool getEnvelope(PortReader& envelope) override;
+    bool getEnvelope(PortReader& envelope) override;
 
     // Documented in Contactable
-    virtual int getInputCount() override;
+    int getInputCount() override;
 
     // Documented in Contactable
-    virtual int getOutputCount() override;
+    int getOutputCount() override;
 
     // Documented in Contactable
-    virtual void getReport(PortReport& reporter) override;
+    void getReport(PortReport& reporter) override;
 
     // Documented in Contactable
-    virtual void setReporter(PortReport& reporter) override;
+    void setReporter(PortReport& reporter) override;
 
     // Documented in Contactable
-    virtual void resetReporter() override;
+    void resetReporter() override;
 
     /**
      * Turn on/off "admin" mode.
@@ -221,19 +221,19 @@ public:
     int getVerbosity();
 
     // Documented in Contactable
-    virtual Type getType() override;
+    Type getType() override;
 
     // Documented in Contactable
-    virtual void promiseType(const Type& typ) override;
+    void promiseType(const Type& typ) override;
 
     // Documented in Contactable
-    virtual Property* acquireProperties(bool readOnly) override;
+    Property* acquireProperties(bool readOnly) override;
 
     // Documented in Contactable
-    virtual void releaseProperties(Property* prop) override;
+    void releaseProperties(Property* prop) override;
 
     // Documented in Contactable
-    virtual void includeNodeInName(bool flag) override;
+    void includeNodeInName(bool flag) override;
 
     /**
      * Check if the port has been opened.
@@ -241,19 +241,19 @@ public:
     bool isOpen() const;
 
     // Documented in Contactable
-    virtual bool setCallbackLock(yarp::os::Mutex* mutex = nullptr) override;
+    bool setCallbackLock(yarp::os::Mutex* mutex = nullptr) override;
 
     // Documented in Contactable
-    virtual bool removeCallbackLock() override;
+    bool removeCallbackLock() override;
 
     // Documented in Contactable
-    virtual bool lockCallback() override;
+    bool lockCallback() override;
 
     // Documented in Contactable
-    virtual bool tryLockCallback() override;
+    bool tryLockCallback() override;
 
     // Documented in Contactable
-    virtual void unlockCallback() override;
+    void unlockCallback() override;
 
 private:
     void* implementation;

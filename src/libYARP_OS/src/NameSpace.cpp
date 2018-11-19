@@ -14,8 +14,7 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 
 
-NameSpace::~NameSpace() {
-}
+NameSpace::~NameSpace() = default;
 
 bool NameSpace::checkNetwork() {
     if (localOnly()) return true;

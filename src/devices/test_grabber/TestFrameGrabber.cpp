@@ -274,7 +274,7 @@ void TestFrameGrabber::printTime(unsigned char* pixbuf, int pixbuf_w, int pixbuf
     int pixelsize = 5;
     for (int i = 0; i<size; i++)
     {
-        char* num_p = 0;
+        char* num_p = nullptr;
         switch (s[i])
         {
             case '0': num_p = num[0].data; break;
@@ -518,8 +518,8 @@ bool TestFrameGrabber::makeSimpleBayer(
 
     size_t i, j;
     for (i = 0; i < h; i++) {
-        PixelRgb *row = (PixelRgb *)img.getRow(i);
-        PixelMono *rd = (PixelMono *)bayer.getRow(i);
+        auto* row = (PixelRgb *)img.getRow(i);
+        auto* rd = (PixelMono *)bayer.getRow(i);
 
         for (j = 0; j < w; j++) {
 

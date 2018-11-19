@@ -64,13 +64,13 @@ public:
         last = -1;
     }
 
-    virtual bool getAxes(int *ax) override {
+    bool getAxes(int *ax) override {
         *ax = njoints;
         yInfo("TestMotor reporting %d axes present", *ax);
         return true;
     }
 
-    virtual bool open(yarp::os::Searchable& config) override {
+    bool open(yarp::os::Searchable& config) override {
         njoints = config.check("axes",yarp::os::Value(4),"number of axes to pretend to have").asInt32();
         pos.resize(njoints);
         speed.resize(njoints);
@@ -88,7 +88,7 @@ public:
     }
 
 
-    virtual bool positionMove(int j, double ref) override {
+    bool positionMove(int j, double ref) override {
         posMode = true;
         if (j<njoints) {
             pos[j] = ref;
@@ -97,7 +97,7 @@ public:
     }
 
 
-    virtual bool positionMove(const double *refs) override {
+    bool positionMove(const double *refs) override {
         posMode = true;
         for (int i=0; i<njoints; i++) {
             pos[i] = refs[i];
@@ -106,7 +106,7 @@ public:
     }
 
 
-    virtual bool relativeMove(int j, double delta) override {
+    bool relativeMove(int j, double delta) override {
         posMode = true;
         if (j<njoints) {
             pos[j] += delta;
@@ -115,7 +115,7 @@ public:
     }
 
 
-    virtual bool relativeMove(const double *deltas) override {
+    bool relativeMove(const double *deltas) override {
         posMode = true;
         for (int i=0; i<njoints; i++) {
             pos[i] += deltas[i];
@@ -124,18 +124,18 @@ public:
     }
 
 
-    virtual bool checkMotionDone(int j, bool *flag) override {
+    bool checkMotionDone(int j, bool *flag) override {
         yarp::os::Time::delay(delay/1000.0);
         return true;
     }
 
 
-    virtual bool checkMotionDone(bool *flag) override {
+    bool checkMotionDone(bool *flag) override {
         return true;
     }
 
 
-    virtual bool setRefSpeed(int j, double sp) override {
+    bool setRefSpeed(int j, double sp) override {
         if (j<njoints) {
             speed[j] = sp;
         }
@@ -143,7 +143,7 @@ public:
     }
 
 
-    virtual bool setRefSpeeds(const double *spds) override {
+    bool setRefSpeeds(const double *spds) override {
         for (int i=0; i<njoints; i++) {
             speed[i] = spds[i];
         }
@@ -151,7 +151,7 @@ public:
     }
 
 
-    virtual bool setRefAcceleration(int j, double acc) override {
+    bool setRefAcceleration(int j, double acc) override {
         if (j<njoints) {
             this->acc[j] = acc;
         }
@@ -159,7 +159,7 @@ public:
     }
 
 
-    virtual bool setRefAccelerations(const double *accs) override {
+    bool setRefAccelerations(const double *accs) override {
         for (int i=0; i<njoints; i++) {
             acc[i] = accs[i];
         }
@@ -167,7 +167,7 @@ public:
     }
 
 
-    virtual bool getRefSpeed(int j, double *ref) override {
+    bool getRefSpeed(int j, double *ref) override {
         if (j<njoints) {
             (*ref) = speed[j];
         }
@@ -175,7 +175,7 @@ public:
     }
 
 
-    virtual bool getRefSpeeds(double *spds) override {
+    bool getRefSpeeds(double *spds) override {
         for (int i=0; i<njoints; i++) {
             spds[i] = speed[i];
         }
@@ -183,7 +183,7 @@ public:
     }
 
 
-    virtual bool getRefAcceleration(int j, double *acc) override {
+    bool getRefAcceleration(int j, double *acc) override {
         if (j<njoints) {
             (*acc) = this->acc[j];
         }
@@ -191,7 +191,7 @@ public:
     }
 
 
-    virtual bool getRefAccelerations(double *accs) override {
+    bool getRefAccelerations(double *accs) override {
         for (int i=0; i<njoints; i++) {
             accs[i] = acc[i];
         }
@@ -199,87 +199,87 @@ public:
     }
 
 
-    virtual bool stop(int j) override {
+    bool stop(int j) override {
         return true;
     }
 
 
-    virtual bool stop() override {
+    bool stop() override {
         return true;
     }
 
-    virtual bool positionMove(const int n_joint, const int *joints, const double *refs) override
+    bool positionMove(const int n_joint, const int *joints, const double *refs) override
     {
         return false;
     }
 
-    virtual bool relativeMove(const int n_joint, const int *joints, const double *deltas) override
+    bool relativeMove(const int n_joint, const int *joints, const double *deltas) override
     {
         return false;
     }
 
-    virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flags) override
+    bool checkMotionDone(const int n_joint, const int *joints, bool *flags) override
     {
         return false;
     }
 
-    virtual bool setRefSpeeds(const int n_joint, const int *joints, const double *spds) override
+    bool setRefSpeeds(const int n_joint, const int *joints, const double *spds) override
     {
         return false;
     }
 
-    virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs) override
+    bool setRefAccelerations(const int n_joint, const int *joints, const double *accs) override
     {
         return false;
     }
 
-    virtual bool getRefSpeeds(const int n_joint, const int *joints, double *spds) override
+    bool getRefSpeeds(const int n_joint, const int *joints, double *spds) override
     {
         return false;
     }
 
-    virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs) override
+    bool getRefAccelerations(const int n_joint, const int *joints, double *accs) override
     {
         return false;
     }
 
-    virtual bool stop(const int n_joint, const int *joints) override
+    bool stop(const int n_joint, const int *joints) override
     {
         return false;
     }
 
-    virtual bool getTargetPosition(const int joint, double *ref) override
+    bool getTargetPosition(const int joint, double *ref) override
     {
         return false;
     }
 
-    virtual bool getTargetPositions(double *refs) override
+    bool getTargetPositions(double *refs) override
     {
         return false;
     }
 
-    virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs) override
+    bool getTargetPositions(const int n_joint, const int *joints, double *refs) override
     {
         return false;
     }
 
-    virtual bool velocityMove(const int n_joint, const int *joints, const double *spds) override
+    bool velocityMove(const int n_joint, const int *joints, const double *spds) override
     {
         return false;
     }
 
-    virtual bool close() override {
+    bool close() override {
         return true;
     }
 
-    virtual bool resetEncoder(int j) override {
+    bool resetEncoder(int j) override {
         if (j<njoints) {
             pos[j] = 0;
         }
         return true;
     }
 
-    virtual bool resetEncoders() override {
+    bool resetEncoders() override {
         for (int i=0; i<njoints; i++) {
             pos[i] = 0;
         }
@@ -287,7 +287,7 @@ public:
         return true;
     }
 
-    virtual bool setEncoder(int j, double val) override {
+    bool setEncoder(int j, double val) override {
         if (j<njoints) {
             pos[j] = val;
         }
@@ -295,7 +295,7 @@ public:
         return true;
     }
 
-    virtual bool setEncoders(const double *vals) override {
+    bool setEncoders(const double *vals) override {
         for (int i=0; i<njoints; i++) {
             pos[i] = vals[i];
         }
@@ -303,7 +303,7 @@ public:
         return true;
     }
 
-    virtual bool getEncoder(int j, double *v) override {
+    bool getEncoder(int j, double *v) override {
         update();
         if (j<njoints) {
             (*v) = pos[j];
@@ -311,7 +311,7 @@ public:
         return true;
     }
 
-    virtual bool getEncoders(double *encs) override {
+    bool getEncoders(double *encs) override {
         update();
         for (int i=0; i<njoints; i++) {
             encs[i] = pos[i];
@@ -320,49 +320,49 @@ public:
     }
 
 
-    virtual bool getEncoderTimed(int j, double *encs, double *time) override
+    bool getEncoderTimed(int j, double *encs, double *time) override
     {
         bool ret = getEncoder(j, encs);
         *time = yarp::os::Time::now();
         return ret;
     }
 
-    virtual bool getEncodersTimed(double *encs, double *time) override
+    bool getEncodersTimed(double *encs, double *time) override
     {
         bool ret = getEncoders(encs);
         *time = yarp::os::Time::now();
         return ret;
     }
 
-    virtual bool getEncoderSpeed(int j, double *sp) override {
+    bool getEncoderSpeed(int j, double *sp) override {
         if (j<njoints) {
             (*sp) = 0;
         }
         return true;
     }
 
-    virtual bool getEncoderSpeeds(double *spds) override {
+    bool getEncoderSpeeds(double *spds) override {
         for (int i=0; i<njoints; i++) {
             spds[i] = 0;
         }
         return true;
     }
 
-    virtual bool getEncoderAcceleration(int j, double *spds) override {
+    bool getEncoderAcceleration(int j, double *spds) override {
         if (j<njoints) {
             (*spds) = 0;
         }
         return true;
     }
 
-    virtual bool getEncoderAccelerations(double *accs) override {
+    bool getEncoderAccelerations(double *accs) override {
         for (int i=0; i<njoints; i++) {
             accs[i] = 0;
         }
         return true;
     }
 
-    virtual bool velocityMove(int j, double sp) override {
+    bool velocityMove(int j, double sp) override {
         posMode = false;
         if (j<njoints) {
             vel[j] = sp;
@@ -370,7 +370,7 @@ public:
         return true;
     }
 
-    virtual bool velocityMove(const double *sp) override {
+    bool velocityMove(const double *sp) override {
         posMode = false;
         for (int i=0; i<njoints; i++) {
             vel[i] = sp[i];

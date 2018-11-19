@@ -10,6 +10,8 @@
 #include <yarp/os/MpiStream.h>
 #include <yarp/os/Log.h>
 
+#include <utility>
+
 using namespace yarp::os;
 
 
@@ -17,23 +19,25 @@ using namespace yarp::os;
 /* MpiStream */
 
 MpiStream::MpiStream(std::string n, MpiComm* c)
-    : terminate(false), name(n), comm(c) {
-    readBuffer = NULL;
+    : terminate(false), name(std::move(n)), comm(c) {
+    readBuffer = nullptr;
     resetBuffer();
 
 }
+#ifdef MPI_DEBUG
 MpiStream::~MpiStream() {
-    #ifdef MPI_DEBUG
     printf("[MpiStream @ %s] Destructor\n", name.c_str());
-    #endif
 }
+#else
+MpiStream::~MpiStream() = default;
+#endif
 
 void MpiStream::resetBuffer() {
     // reset buffer
     readAt = 0;
     readAvail = 0;
     delete [] readBuffer;
-    readBuffer = NULL;
+    readBuffer = nullptr;
 }
 
 bool MpiStream::isOk() const {

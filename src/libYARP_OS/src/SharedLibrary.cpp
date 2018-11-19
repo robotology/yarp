@@ -31,7 +31,7 @@ using yarp::os::impl::SharedLibraryImpl;
 class yarp::os::impl::SharedLibraryImpl
 {
 public:
-    SharedLibraryImpl() : dll(nullptr), error(std::string()) {}
+    SharedLibraryImpl() = default;
 
     inline char* getError()
     {
@@ -46,7 +46,7 @@ public:
     }
 
 #ifdef YARP_HAS_ACE
-    ACE_DLL* dll;
+    ACE_DLL* dll{nullptr};
 #else
     void* dll;
 #endif

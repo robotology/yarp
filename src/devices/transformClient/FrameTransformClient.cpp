@@ -76,7 +76,7 @@ void Transforms_client_storage::onRead(yarp::os::Bottle &b)
 
     //now compare timestamps
    // if ((1000 * (newStamp.getTime() - m_lastStamp.getTime()))<TRANSFORM_TIMEOUT)
-    if (1)
+    if (true)
     {
         m_state = IFrameTransform::TRANSFORM_OK;
 
@@ -281,7 +281,7 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
         }
         if (ret == true)
         {
-            broadcast_port_t* b = new broadcast_port_t;
+            auto* b = new broadcast_port_t;
             b->transform_src = src;
             b->transform_dst = dst;
             b->format = format;
@@ -886,9 +886,7 @@ FrameTransformClient::FrameTransformClient() : PeriodicThread(0.01),
 {
 }
 
-FrameTransformClient::~FrameTransformClient()
-{
-}
+FrameTransformClient::~FrameTransformClient() = default;
 
 bool     yarp::dev::FrameTransformClient::threadInit()
 {

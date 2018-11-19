@@ -291,7 +291,7 @@ void QtYARPScope::paint(QPainter *painter)
     for (int i=0; i<plotManager->getPlotters()->count();i++)
     {
         painter->beginNativePainting(); // Workaround to flush the painter
-        Plotter *plotter = (Plotter*)plotManager->getPlotters()->at(i);
+        auto* plotter = (Plotter*)plotManager->getPlotters()->at(i);
 
         int hSpan = plotter->hspan;
         int vSpan = plotter->vspan;
@@ -374,7 +374,7 @@ void QtYARPScope::routeMouseEvents( QMouseEvent* event )
 
     for (int i=0; i<plotManager->getPlotters()->count();i++)
     {
-        Plotter *plotter = (Plotter*)plotManager->getPlotters()->at(i);
+        auto* plotter = (Plotter*)plotManager->getPlotters()->at(i);
         QRectF r = plotter->paintRectGeometry;
 
         if(r.contains(x,y)){
@@ -398,7 +398,7 @@ void QtYARPScope::routeMouseEvents( QWheelEvent* event )
 
     for (int i=0; i<plotManager->getPlotters()->count();i++)
     {
-        Plotter *plotter = (Plotter*)plotManager->getPlotters()->at(i);
+        auto* plotter = (Plotter*)plotManager->getPlotters()->at(i);
         QRectF r = plotter->paintRectGeometry;
 
         if(r.contains(x,y)){
@@ -427,7 +427,7 @@ void QtYARPScope::updateCustomPlotSize()
 
     int plottersCount = plotManager->getPlotters()->count();
     for(int i=0; i<plottersCount; i++){
-        Plotter * plotter = (Plotter*)plotManager->getPlotters()->at(i);
+        auto* plotter = (Plotter*)plotManager->getPlotters()->at(i);
 
         int hSpan = plotter->hspan;
         int vSpan = plotter->vspan;

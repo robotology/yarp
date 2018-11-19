@@ -50,9 +50,7 @@ RobotInterface::Module::Private::Private(Module *parent) :
 {
 }
 
-RobotInterface::Module::Private::~Private()
-{
-}
+RobotInterface::Module::Private::~Private() = default;
 
 
 RobotInterface::Module::Module() :

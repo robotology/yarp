@@ -400,7 +400,7 @@ void ClusterWidget::addRow(const std::string& name,const std::string& display,
 {
     QStringList stringList;
     stringList <<""<< QString(name.c_str()) << QString(display.c_str()) << QString(user.c_str())<< "" <<QString(std::to_string(id).c_str());
-    QTreeWidgetItem* it = new QTreeWidgetItem(stringList);
+    auto* it = new QTreeWidgetItem(stringList);
     ui->nodestreeWidget->addTopLevelItem(it);
     ui->nodestreeWidget->setItemWidget((QTreeWidgetItem *) it, 4, new QCheckBox(this));
 

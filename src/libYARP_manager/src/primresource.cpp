@@ -43,7 +43,7 @@ bool Memory::satisfy(GenericResource* resource)
     if(!getAvailability() || getDisable())
         return false;
 
-    Memory* mem = dynamic_cast<Memory*>(resource);
+    auto* mem = dynamic_cast<Memory*>(resource);
     if(!mem)
         return false;
     return ( (freeSpace >= mem->getFreeSpace()) &&
@@ -52,12 +52,12 @@ bool Memory::satisfy(GenericResource* resource)
 
 Node* Memory::clone()
 {
-    Memory* resource = new Memory(*this);
+    auto* resource = new Memory(*this);
     return resource;
 }
 
 
-Memory::~Memory() { }
+Memory::~Memory() = default;
 
 
 
@@ -90,7 +90,7 @@ bool Storage::satisfy(GenericResource* resource)
     if(!getAvailability() || getDisable())
         return false;
 
-    Storage* mem = dynamic_cast<Storage*>(resource);
+    auto* mem = dynamic_cast<Storage*>(resource);
     if(!mem)
         return false;
     return ( (freeSpace >= mem->getFreeSpace()) &&
@@ -99,12 +99,12 @@ bool Storage::satisfy(GenericResource* resource)
 
 Node* Storage::clone()
 {
-    Storage* resource = new Storage(*this);
+    auto* resource = new Storage(*this);
     return resource;
 }
 
 
-Storage::~Storage() { }
+Storage::~Storage() = default;
 
 
 
@@ -134,7 +134,7 @@ bool Network::satisfy(GenericResource* resource)
     if(!getAvailability() || getDisable())
         return false;
 
-    Network* net = dynamic_cast<Network*>(resource);
+    auto* net = dynamic_cast<Network*>(resource);
     if(!net)
         return false;
     bool ret = (!strlen(net->getIP4()))? true : (strIP4 == string(net->getIP4()));
@@ -145,12 +145,12 @@ bool Network::satisfy(GenericResource* resource)
 
 Node* Network::clone()
 {
-    Network* resource = new Network(*this);
+    auto* resource = new Network(*this);
     return resource;
 }
 
 
-Network::~Network() { }
+Network::~Network() = default;
 
 
 
@@ -197,7 +197,7 @@ bool Processor::satisfy(GenericResource* resource)
     if(!getAvailability() || getDisable())
         return false;
 
-    Processor* proc = dynamic_cast<Processor*>(resource);
+    auto* proc = dynamic_cast<Processor*>(resource);
     if(!proc)
         return false;
 
@@ -212,12 +212,12 @@ bool Processor::satisfy(GenericResource* resource)
 
 Node* Processor::clone()
 {
-    Processor* resource = new Processor(*this);
+    auto* resource = new Processor(*this);
     return resource;
 }
 
 
-Processor::~Processor() { }
+Processor::~Processor() = default;
 
 
 
@@ -253,7 +253,7 @@ Computer& Computer::operator=(const Computer& rhs)
 
 bool Computer::addPeripheral(GenericResource& res)
 {
-    GenericResource* newres = (GenericResource*) res.clone();
+    auto* newres = (GenericResource*) res.clone();
     peripheralResources.push_back(newres);
     return true;
 }
@@ -264,14 +264,14 @@ bool Computer::satisfy(GenericResource* resource)
     if(!getAvailability() || getDisable())
         return false;
 
-    MultiResource* mres = dynamic_cast<MultiResource*>(resource);
+    auto* mres = dynamic_cast<MultiResource*>(resource);
     if(mres)
     {
         if(!mres->resourceCount())
             return true;
         for(int i=0; i<mres->resourceCount(); i++)
         {
-            Computer* comp = dynamic_cast<Computer*>(&mres->getResourceAt(i));
+            auto* comp = dynamic_cast<Computer*>(&mres->getResourceAt(i));
             if(comp &&satisfyComputer(comp))
                 return true;
             else if(satisfyComputerResource(&mres->getResourceAt(i)))
@@ -280,7 +280,7 @@ bool Computer::satisfy(GenericResource* resource)
         return false;
     }
 
-    Computer* comp = dynamic_cast<Computer*>(resource);
+    auto* comp = dynamic_cast<Computer*>(resource);
     if(comp)
         return satisfyComputer(comp);
 
@@ -323,7 +323,7 @@ bool Computer::satisfyComputerResource(GenericResource* resource)
 
 Node* Computer::clone()
 {
-    Computer* resource = new Computer(*this);
+    auto* resource = new Computer(*this);
     return resource;
 }
 

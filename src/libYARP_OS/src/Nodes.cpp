@@ -45,14 +45,12 @@ public:
     std::map<std::string, std::pair<Node*, bool>> nodes_map;
 
     Mutex mutex;
-    bool active;
+    bool active{false};
     std::string active_name;
-    Node* dummy;
+    Node* dummy{nullptr};
 };
 
-yarp::os::Nodes::Private::Private() :
-        active(false),
-        dummy(nullptr)
+yarp::os::Nodes::Private::Private()
 {
     clear();
 }

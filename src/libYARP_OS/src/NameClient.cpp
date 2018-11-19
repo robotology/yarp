@@ -356,7 +356,7 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
 #ifdef YARP_HAS_ACE
                     alt = FallbackNameClient::seek();
 #else
-                    return ""; // nothing to do, nowhere to turn
+                    return {}; // nothing to do, nowhere to turn
 #endif
                 }
             }
@@ -374,10 +374,10 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
                 if (ip == nullptr) {
                     YARP_ERROR(Logger::get(),
                                "no connection to nameserver, scanning mcast");
-                    return "";
+                    return {};
                 }
             } else {
-                return "";
+                return {};
             }
         }
         std::string cmdn = cmd + "\n";

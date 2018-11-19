@@ -103,10 +103,10 @@ struct yarp::dev::JoypadControl::JoyPort : public  yarp::dev::JoypadControl::Loo
         contactable = this;
     }
     using bufferedPort::useCallback;
-    virtual void useCallback() override {bufferedPort::useCallback();}
+    void useCallback() override {bufferedPort::useCallback();}
 
     using yarp::os::TypedReaderCallback<T>::onRead;
-    virtual void onRead(T& datum) override
+    void onRead(T& datum) override
     {
         now = yarp::os::Time::now();
         mutex.lock();

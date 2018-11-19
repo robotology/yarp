@@ -523,7 +523,7 @@ static std::vector<std::string> &split(const std::string &s, char delim, std::ve
 std::string RosTypeSearch::readFile(const char *fname) {
     char buf[25600];
     FILE *fin = fopen(fname,"r");
-    if (fin==nullptr) return "";
+    if (fin==nullptr) return {};
     std::string result;
     while(fgets(buf, sizeof(buf)-1, fin) != nullptr) {
         result += buf;
@@ -884,5 +884,5 @@ std::string RosTypeSearch::findFile(const char *tname) {
         fprintf(stderr, "[type] %s not found. Continuing\n", tname);
     }
 
-    return std::string();
+    return {};
 }

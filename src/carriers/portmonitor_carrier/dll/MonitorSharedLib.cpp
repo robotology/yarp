@@ -19,7 +19,7 @@ using namespace std;
 
 
 class MonitorSelector : public YarpPluginSelector {
-    virtual bool select(Searchable& options) override {
+    bool select(Searchable& options) override {
         return options.check("type",Value("none")).asString() == "portmonitor";
     }
 };

@@ -88,7 +88,7 @@ public:
      * @param header a buffer to hold the first 8 bytes to send on a
      *               connection
      */
-    virtual void getHeader(Bytes& header) const override = 0;
+    void getHeader(Bytes& header) const override = 0;
 
 
     /**
@@ -101,7 +101,7 @@ public:
      *
      * @return true if carrier is connectionless
      */
-    virtual bool isConnectionless() const override = 0;
+    bool isConnectionless() const override = 0;
 
 
     /**
@@ -113,7 +113,7 @@ public:
      *
      * @return true if carrier uses a broadcast mechanism.
      */
-    virtual bool isBroadcast() const override;
+    bool isBroadcast() const override;
 
     /**
      * Check if reading is implemented for this carrier.
@@ -134,7 +134,7 @@ public:
      *
      * @return true if carrier is text-based
      */
-    virtual bool isTextMode() const override = 0;
+    bool isTextMode() const override = 0;
 
     /**
      * Check if carrier can encode administrative messages, as opposed
@@ -143,7 +143,7 @@ public:
      *
      * @return true if carrier can encode administrative messages
      */
-    virtual bool canEscape() const override = 0;
+    bool canEscape() const override = 0;
 
     /**
      * Carriers that do not distinguish data from administrative headers
@@ -155,7 +155,7 @@ public:
      *
      * @param envelope the envelope to transmit bundled with data.
      */
-    virtual void handleEnvelope(const std::string& envelope) override;
+    void handleEnvelope(const std::string& envelope) override;
 
     /**
      * Check if carrier has flow control, requiring sent messages
@@ -163,7 +163,7 @@ public:
      *
      * @return true if carrier requires acknowledgement.
      */
-    virtual bool requireAck() const override = 0;
+    bool requireAck() const override = 0;
 
     /**
      * This flag is used by YARP to determine whether the connection
@@ -171,7 +171,7 @@ public:
      *
      * @return true if carrier supports replies
      */
-    virtual bool supportReply() const override = 0;
+    bool supportReply() const override = 0;
 
     /**
      * Check if carrier operates within a single process.
@@ -181,7 +181,7 @@ public:
      *
      * @return true if carrier will only operate within a single process
      */
-    virtual bool isLocal() const override = 0;
+    bool isLocal() const override = 0;
 
 
     /**
@@ -195,7 +195,7 @@ public:
      *
      * @return true if carrier is "push" style, false if "pull" style
      */
-    virtual bool isPush() const override;
+    bool isPush() const override;
 
     /**
      * Perform any initialization needed before writing on a connection.
@@ -289,13 +289,13 @@ public:
      *
      * @return true if carrier is active.
      */
-    virtual bool isActive() const override = 0;
+    bool isActive() const override = 0;
 
     /**
      * Do cleanup and preparation for the coming disconnect, if
      * necessary.
      */
-    virtual void prepareDisconnect() override;
+    void prepareDisconnect() override;
 
 
     /**
@@ -358,7 +358,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyIncomingData called.
      */
-    virtual bool modifiesIncomingData() const override;
+    bool modifiesIncomingData() const override;
 
     /**
      * Modify incoming payload data, if appropriate.
@@ -374,7 +374,7 @@ public:
      *       input, the setParentConnectionReader(&reader) should be called for
      *       the new one, or the envelope will not be handled correctly.
      */
-    virtual ConnectionReader& modifyIncomingData(ConnectionReader& reader) override;
+    ConnectionReader& modifyIncomingData(ConnectionReader& reader) override;
 
     /**
      * Determine whether incoming data should be accepted.
@@ -383,7 +383,7 @@ public:
      * @return true if data should be accepted, false if it should be
      *         discarded.
      */
-    virtual bool acceptIncomingData(ConnectionReader& reader) override;
+    bool acceptIncomingData(ConnectionReader& reader) override;
 
     /**
      * Check if this carrier modifies outgoing data through the
@@ -391,7 +391,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyOutgoingData called.
      */
-    virtual bool modifiesOutgoingData() const override;
+    bool modifiesOutgoingData() const override;
 
     /**
      * Modify outgoing payload data, if appropriate.
@@ -403,7 +403,7 @@ public:
      * @param writer for outgoing data.
      * @return writer for modified version of outgoing data.
      */
-    virtual const PortWriter& modifyOutgoingData(const PortWriter& writer) override;
+    const PortWriter& modifyOutgoingData(const PortWriter& writer) override;
 
     /**
      * Check if this carrier modifies outgoing data through the
@@ -411,7 +411,7 @@ public:
      *
      * @return true if carrier wants Carrier::modifyReply called.
      */
-    virtual bool modifiesReply() const override;
+    bool modifiesReply() const override;
 
     /**
      * Modify reply payload data, if appropriate.
@@ -419,7 +419,7 @@ public:
      * @param reader for the replied message.
      * @return reader for modified version of the replied message.
      */
-    virtual PortReader& modifyReply(PortReader& reader) override;
+    PortReader& modifyReply(PortReader& reader) override;
 
     /**
      * Determine whether outgoing data should be accepted.
@@ -428,7 +428,7 @@ public:
      * @return true if data should be accepted, false if it should be
      *         discarded.
      */
-    virtual bool acceptOutgoingData(const PortWriter& writer) override;
+    bool acceptOutgoingData(const PortWriter& writer) override;
 
     /**
      * Give carrier a shot at looking at how the connection is set up.
@@ -444,14 +444,14 @@ public:
      *
      * @param params properties
      */
-    virtual void setCarrierParams(const Property& params) override;
+    void setCarrierParams(const Property& params) override;
     /**
      * Get carrier configuration and deliver it by port administrative
      * commands.
      *
      * @param params properties
      */
-    virtual void getCarrierParams(Property& params) const override;
+    void getCarrierParams(Property& params) const override;
 
     /**
      * Create new Face object that the carrier needs.

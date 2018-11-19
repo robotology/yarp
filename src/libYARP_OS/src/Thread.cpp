@@ -26,26 +26,24 @@ public:
     {
     }
 
-    virtual ~Private()
-    {
-    }
+    virtual ~Private() = default;
 
-    virtual void beforeStart() override
+    void beforeStart() override
     {
         owner.beforeStart();
     }
 
-    virtual void afterStart(bool success) override
+    void afterStart(bool success) override
     {
         owner.afterStart(success);
     }
 
-    virtual void run() override
+    void run() override
     {
         owner.run();
     }
 
-    virtual void close() override
+    void close() override
     {
         if (isRunning()) {
             owner.onStop();
@@ -53,12 +51,12 @@ public:
         ThreadImpl::close();
     }
 
-    virtual bool threadInit() override
+    bool threadInit() override
     {
         return owner.threadInit();
     }
 
-    virtual void threadRelease() override
+    void threadRelease() override
     {
         owner.threadRelease();
     }

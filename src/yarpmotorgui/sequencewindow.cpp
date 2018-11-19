@@ -94,10 +94,10 @@ SequenceWindow::SequenceWindow(QString partName, int count,QWidget *parent) :
         ss << "0";
         ss1 << "10";
     }
-    QTreeWidgetItem *itemPos = new QTreeWidgetItem(ss);
+    auto* itemPos = new QTreeWidgetItem(ss);
     ui->treePositions->addTopLevelItem(itemPos);
 
-    QTreeWidgetItem *itemSpeed = new QTreeWidgetItem(ss1);
+    auto* itemSpeed = new QTreeWidgetItem(ss1);
     ui->treeSpeed->addTopLevelItem(itemSpeed);
 }
 
@@ -188,11 +188,11 @@ void SequenceWindow::onDoubleClickPositions(QTreeWidgetItem *item,int column)
     for(int i=0; i<jointCount;i++){
         ss << "0";
     }
-    QTreeWidgetItem *newItem = new QTreeWidgetItem(ss);
+    auto* newItem = new QTreeWidgetItem(ss);
     item->setFlags(newItem->flags() & ~Qt::ItemIsEditable);
     ui->treePositions->addTopLevelItem(newItem);
 
-    QTreeWidgetItem *newItem1 = new QTreeWidgetItem(ss1);
+    auto* newItem1 = new QTreeWidgetItem(ss1);
     ui->treeSpeed->addTopLevelItem(newItem1);
 
 
@@ -410,11 +410,11 @@ void SequenceWindow::loadSequence(QList<SequenceItem> sequence)
             ss1.append(QString("%1").arg(seq.getSpeeds().at(i)));
         }
 
-        QTreeWidgetItem *newItem = new QTreeWidgetItem(ss);
+        auto* newItem = new QTreeWidgetItem(ss);
         ui->treePositions->addTopLevelItem(newItem);
 
 
-        QTreeWidgetItem *newItem1 = new QTreeWidgetItem(ss1);
+        auto* newItem1 = new QTreeWidgetItem(ss1);
         ui->treeSpeed->addTopLevelItem(newItem1);
 
         ss.clear();

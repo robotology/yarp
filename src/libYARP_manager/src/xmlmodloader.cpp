@@ -209,7 +209,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
     }
 
     /* retrieving name */
-    TiXmlElement* name = (TiXmlElement*) root->FirstChild("name");
+    auto* name = (TiXmlElement*) root->FirstChild("name");
     if(!name || !name->GetText())
     {
         OSTRINGSTREAM err;
@@ -620,7 +620,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                     if(compareString(comptag->Value(), "yarp_port"))
                     {
                         ResYarpPort yport;
-                        TiXmlElement* element = (TiXmlElement*) comptag->FirstChild("name");
+                        auto* element = (TiXmlElement*) comptag->FirstChild("name");
                         if(element && element->GetText())
                         {
                             yport.setName(parser->parseText(element->GetText()).c_str());

@@ -43,12 +43,12 @@ InputData::InputData(const InputData &input) : Node(input)
 }
 
 
-InputData::~InputData() { }
+InputData::~InputData() = default;
 
 
 Node* InputData::clone()
 {
-    InputData* input = new InputData(*this);
+    auto* input = new InputData(*this);
     return input;
 }
 
@@ -84,11 +84,11 @@ OutputData::OutputData(const OutputData &output) : Node(output)
 }
 
 
-OutputData::~OutputData() { }
+OutputData::~OutputData() = default;
 
 
 Node* OutputData::clone()
 {
-    OutputData* output = new OutputData(*this);
+    auto* output = new OutputData(*this);
     return output;
 }

@@ -58,7 +58,7 @@ public:
 
     virtual ~BinaryNode() { }
 
-    virtual Node* clone(void) override {
+    Node* clone(void) override {
         BinaryNode* binode = new BinaryNode(*this);
         return binode;
     }

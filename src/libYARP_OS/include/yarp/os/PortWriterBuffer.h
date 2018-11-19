@@ -53,23 +53,23 @@ public:
     {
     }
 
-    virtual bool write(ConnectionWriter& connection) const override
+    bool write(ConnectionWriter& connection) const override
     {
         return writer.write(connection);
     }
 
-    virtual void onCompletion() const override
+    void onCompletion() const override
     {
         writer.onCompletion();
         creator.onCompletion(tracker);
     }
 
-    virtual void onCommencement() const override
+    void onCommencement() const override
     {
         writer.onCommencement();
     }
 
-    virtual PortWriter* getInternal() override
+    PortWriter* getInternal() override
     {
         return &writer;
     }

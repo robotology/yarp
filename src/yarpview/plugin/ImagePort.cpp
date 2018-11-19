@@ -34,8 +34,7 @@ InputCallback::InputCallback()
     counter = 0;
 }
 
-InputCallback::~InputCallback()
-{}
+InputCallback::~InputCallback() = default;
 
 /*! \brief the function callback
     \param img the image received

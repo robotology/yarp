@@ -36,7 +36,7 @@ GenericResource::GenericResource(const GenericResource &resource) : Node(resourc
     strXmlFile = resource.strXmlFile;
 }
 
-GenericResource::~GenericResource() { }
+GenericResource::~GenericResource() = default;
 
 
 
@@ -71,7 +71,7 @@ MultiResource& MultiResource::operator=(const MultiResource& rhs)
 
 bool MultiResource::addResource(GenericResource& res)
 {
-    GenericResource* newres = (GenericResource*) res.clone();
+    auto* newres = (GenericResource*) res.clone();
     resources.push_back(newres);
     return true;
 }
@@ -87,7 +87,7 @@ bool MultiResource::satisfy(GenericResource* resource)
 
 Node* MultiResource::clone()
 {
-    MultiResource* resource = new MultiResource(*this);
+    auto* resource = new MultiResource(*this);
     return resource;
 }
 

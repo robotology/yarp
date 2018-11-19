@@ -54,13 +54,13 @@ public:
     }
     virtual ~ZombieHunterThread(){}
 
-    virtual void onStop() override
+    void onStop() override
     {
         close(pipe_sync[0]);
         close(pipe_sync[1]);
     }
 
-    virtual void run() override
+    void run() override
     {
         char dummy[8];
 
@@ -224,9 +224,9 @@ public:
 
     virtual ~YarpRunCmdWithStdioInfo(){}
 
-    virtual bool Clean() override;
+    bool Clean() override;
 
-    virtual void finalize() override
+    void finalize() override
     {
         TerminateStdio();
     }
@@ -234,7 +234,7 @@ public:
     void TerminateStdio();
 
 #if !defined(_WIN32)
-    virtual bool Clean(PID pid, YarpRunProcInfo* &pRef) override
+    bool Clean(PID pid, YarpRunProcInfo* &pRef) override
     {
         pRef = nullptr;
 

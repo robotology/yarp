@@ -272,7 +272,7 @@ public:
 
     bool _handleIAnalog(yarp::os::Bottle &cmd, yarp::os::Bottle &reply);
 
-    virtual bool read(yarp::os::ConnectionReader& connection) override;
+    bool read(yarp::os::ConnectionReader& connection) override;
 };
 
 

@@ -19,9 +19,7 @@
 #include "yarpbuilderlib.h"
 
 
-YarpBuilderLib::YarpBuilderLib()
-{
-}
+YarpBuilderLib::YarpBuilderLib() = default;
 
 BuilderWindow *YarpBuilderLib::getBuilder(Application *app, Manager *lazyManager, SafeManager *manager, bool editingMode)
 {

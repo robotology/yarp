@@ -234,19 +234,19 @@ protected:
 
 public:
 
-    virtual bool getAxisCount(unsigned int& axis_count) override final;
-    virtual bool getButtonCount(unsigned int& button_count) override final;
-    virtual bool getTrackballCount(unsigned int& Trackball_count) override final;
-    virtual bool getHatCount(unsigned int& Hat_count) override final;
-    virtual bool getTouchSurfaceCount(unsigned int& touch_count) override final;
-    virtual bool getStickCount(unsigned int& stick_count) override final;
-    virtual bool getStickDoF(unsigned int stick_id, unsigned int& DoF) override final;
-    virtual bool getButton(unsigned int button_id, float& value) override final;
-    virtual bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) override final;
-    virtual bool getHat(unsigned int hat_id, unsigned char& value) override final;
-    virtual bool getAxis(unsigned int axis_id, double& value) override final;
-    virtual bool getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) override final;
-    virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) override final;
+    bool getAxisCount(unsigned int& axis_count) override final;
+    bool getButtonCount(unsigned int& button_count) override final;
+    bool getTrackballCount(unsigned int& Trackball_count) override final;
+    bool getHatCount(unsigned int& Hat_count) override final;
+    bool getTouchSurfaceCount(unsigned int& touch_count) override final;
+    bool getStickCount(unsigned int& stick_count) override final;
+    bool getStickDoF(unsigned int stick_id, unsigned int& DoF) override final;
+    bool getButton(unsigned int button_id, float& value) override final;
+    bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) override final;
+    bool getHat(unsigned int hat_id, unsigned char& value) override final;
+    bool getAxis(unsigned int axis_id, double& value) override final;
+    bool getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) override final;
+    bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) override final;
     using IJoypadController::JoypadCtrl_coordinateMode;
     using IJoypadController::JypCtrlcoord_CARTESIAN;
     using IJoypadController::JypCtrlcoord_POLAR;
@@ -264,11 +264,11 @@ public:
 #endif
     explicit IJoypadEventDriven(double period);
 
-    virtual bool threadInit() override final;
-    virtual void run() override final;
+    bool threadInit() override final;
+    void run() override final;
 
-    virtual bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = nullptr) override;
-    virtual bool isEventDriven() override { return EventDrivenEnabled;}
+    bool eventDriven(bool enable, yarp::dev::IJoypadEvent* event = nullptr) override;
+    bool isEventDriven() override { return EventDrivenEnabled;}
 };
 
 

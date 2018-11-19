@@ -10,9 +10,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Things.h>
 
-yarp::os::MonitorObject::~MonitorObject()
-{
-}
+yarp::os::MonitorObject::~MonitorObject() = default;
 
 bool yarp::os::MonitorObject::create(const yarp::os::Property& options)
 {

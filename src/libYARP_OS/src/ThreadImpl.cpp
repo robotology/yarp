@@ -55,7 +55,7 @@ void theExecutiveBranch(void *args)
     fprintf(stderr, "Blocking signals\n");
     */
 
-    ThreadImpl *thread = (ThreadImpl *)args;
+    auto* thread = (ThreadImpl *)args;
 
     YARP_DEBUG(Logger::get(), "Thread starting up");
 

@@ -104,26 +104,26 @@ public:
     {
     }
 
-    virtual bool open(yarp::os::Searchable& config) override;
-    virtual bool close() override;
-    virtual bool threadInit() override;
-    virtual void threadRelease() override;
-    virtual void run() override;
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
+    bool threadInit() override;
+    void threadRelease() override;
+    void run() override;
 
 public:
     //IRangefinder2D interface
-    virtual bool getRawData(yarp::sig::Vector &data) override;
-    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) override;
-    virtual bool getDeviceStatus     (Device_status &status) override;
-    virtual bool getDeviceInfo       (std::string &device_info) override;
-    virtual bool getDistanceRange    (double& min, double& max) override;
-    virtual bool setDistanceRange    (double min, double max) override;
-    virtual bool getScanLimits        (double& min, double& max) override;
-    virtual bool setScanLimits        (double min, double max) override;
-    virtual bool getHorizontalResolution      (double& step) override;
-    virtual bool setHorizontalResolution      (double step) override;
-    virtual bool getScanRate         (double& rate) override;
-    virtual bool setScanRate         (double rate) override;
+    bool getRawData(yarp::sig::Vector &data) override;
+    bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) override;
+    bool getDeviceStatus     (Device_status &status) override;
+    bool getDeviceInfo       (std::string &device_info) override;
+    bool getDistanceRange    (double& min, double& max) override;
+    bool setDistanceRange    (double min, double max) override;
+    bool getScanLimits        (double& min, double& max) override;
+    bool setScanLimits        (double min, double max) override;
+    bool getHorizontalResolution      (double& step) override;
+    bool setHorizontalResolution      (double step) override;
+    bool getScanRate         (double& rate) override;
+    bool setScanRate         (double rate) override;
 
 private:
     //laser methods

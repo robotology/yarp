@@ -400,9 +400,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         YConsoleManager::myMain();
 }
 
-YConsoleManager::~YConsoleManager()
-{
-}
+YConsoleManager::~YConsoleManager() = default;
 
 
 
@@ -731,7 +729,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         (cmdList[0] == "check") && (cmdList[1] == "state"))
     {
         ExecutablePContainer modules = getExecutables();
-        unsigned int id = (unsigned int)atoi(cmdList[2].c_str());
+        auto id = (unsigned int)atoi(cmdList[2].c_str());
         if(id>=modules.size())
         {
             cout<<FAIL<<"ERROR:   "<<INFO<<"Module id is out of range."<<ENDC<<endl;
@@ -765,7 +763,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
     {
 
         CnnContainer connections  = getConnections();
-        unsigned int id = (unsigned int)atoi(cmdList[2].c_str());
+        auto id = (unsigned int)atoi(cmdList[2].c_str());
         if(id>=connections.size())
         {
             cout<<FAIL<<"ERROR:   "<<INFO<<"Connection id is out of range."<<ENDC<<endl;
@@ -856,7 +854,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         int id = 0;
         for(auto& resource : resources)
         {
-            Computer* comp = dynamic_cast<Computer*>(resource);
+            auto* comp = dynamic_cast<Computer*>(resource);
             if(comp)
             {
                 string fname;
@@ -1124,7 +1122,7 @@ void YConsoleManager::onExecutableDied(void* which) { }
 
 void YConsoleManager::onExecutableFailed(void* which)
 {
-    Executable* exe = (Executable*) which;
+    auto* exe = (Executable*) which;
     if(config.find("module_failure").asString() == "prompt")
         cout<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed!"<<endl;
 
@@ -1147,7 +1145,7 @@ void YConsoleManager::onCnnStablished(void* which) { }
 
 void YConsoleManager::onCnnFailed(void* which)
 {
-    Connection* cnn = (Connection*) which;
+    auto* cnn = (Connection*) which;
     if(config.check("connection_failure") &&
      config.find("connection_failure").asString() == "prompt")
         cout<<endl<<"connection failed between "<<cnn->from()<<" and "<<cnn->to()<<endl;

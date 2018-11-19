@@ -99,7 +99,7 @@ public:
     * Callback function.
     * @param v is the Vector being received.
     */
-    virtual void onRead(CommandMessage& v) override;
+    void onRead(CommandMessage& v) override;
 
     bool initialize();
 };

@@ -66,7 +66,7 @@ public:
         return worked;
     }
 
-    virtual bool read(yarp::os::ConnectionReader& reader) override {
+    bool read(yarp::os::ConnectionReader& reader) override {
         yarp::os::Bottle cmd, reply;
         bool ok = cmd.read(reader);
         if (!ok) return false;

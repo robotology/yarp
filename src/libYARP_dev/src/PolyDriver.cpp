@@ -27,7 +27,7 @@ public:
         count = 1;
     }
 
-    virtual void report(const SearchReport& report, const char *context) override {
+    void report(const SearchReport& report, const char *context) override {
         std::string ctx = context;
         std::string key = report.key;
         std::string prefix;
@@ -188,7 +188,7 @@ Bottle PolyDriver::getOptions() {
 
 std::string PolyDriver::getComment(const char *option) {
     if (system_resource==nullptr) {
-        return "";
+        return {};
     }
     return HELPER(system_resource).getComment(option);
 }

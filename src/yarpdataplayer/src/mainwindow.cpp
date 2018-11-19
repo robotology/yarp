@@ -583,9 +583,9 @@ void MainWindow::onInitDone(int subDirCount)
 void MainWindow::addPart(const char* szName, const char* type, int frames, const char* portName, const char* szFileName )
 {
     partMap[szName] = itr;
-    QTreeWidgetItem *item = new QTreeWidgetItem();
+    auto* item = new QTreeWidgetItem();
     ui->mainWidget->addTopLevelItem(item);
-    QCheckBox *checkBox = new QCheckBox();
+    auto* checkBox = new QCheckBox();
     checkBox->setChecked(true);
     ui->mainWidget->setItemWidget(item,ACTIVE,checkBox);
     if(szName){
@@ -604,7 +604,7 @@ void MainWindow::addPart(const char* szName, const char* type, int frames, const
         ui->mainWidget->resizeColumnToContents(PORT);
     }
 
-    QProgressBar *progress = new QProgressBar();
+    auto* progress = new QProgressBar();
     progress->setMaximum(100);
     progress->setValue(0);
     progress->setAlignment(Qt::AlignCenter);

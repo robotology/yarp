@@ -60,24 +60,24 @@ class yarp::os::impl::LocalCarrierStream : public TwoWayStream,
 public:
     void attach(LocalCarrier *owner, bool sender);
 
-    virtual InputStream& getInputStream() override;
-    virtual OutputStream& getOutputStream() override;
-    virtual const Contact& getLocalAddress() const override;
-    virtual const Contact& getRemoteAddress() const override;
-    virtual bool setTypeOfService(int tos) override;
+    InputStream& getInputStream() override;
+    OutputStream& getOutputStream() override;
+    const Contact& getLocalAddress() const override;
+    const Contact& getRemoteAddress() const override;
+    bool setTypeOfService(int tos) override;
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
+    yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     using yarp::os::OutputStream::write;
-    virtual void write(const yarp::os::Bytes& b) override;
+    void write(const yarp::os::Bytes& b) override;
 
-    virtual void reset() override;
-    virtual void beginPacket() override;
-    virtual void endPacket() override;
-    virtual void interrupt() override;
-    virtual void close() override;
-    virtual bool isOk() const override;
+    void reset() override;
+    void beginPacket() override;
+    void endPacket() override;
+    void interrupt() override;
+    void close() override;
+    bool isOk() const override;
 
 private:
     Contact localAddress, remoteAddress;
@@ -96,25 +96,25 @@ public:
 
     virtual ~LocalCarrier();
 
-    virtual Carrier *create() const override;
+    Carrier *create() const override;
 
-    virtual std::string getName() const override;
+    std::string getName() const override;
 
-    virtual bool requireAck() const override;
-    virtual bool isConnectionless() const override;
-    virtual bool canEscape() const override;
-    virtual bool isLocal() const override;
+    bool requireAck() const override;
+    bool isConnectionless() const override;
+    bool canEscape() const override;
+    bool isLocal() const override;
     virtual std::string getSpecifierName() const;
-    virtual bool checkHeader(const Bytes& header) override;
-    virtual void getHeader(Bytes& header) const override;
-    virtual void setParameters(const Bytes& header) override;
-    virtual bool sendHeader(ConnectionState& proto) override;
-    virtual bool expectExtraHeader(ConnectionState& proto) override;
+    bool checkHeader(const Bytes& header) override;
+    void getHeader(Bytes& header) const override;
+    void setParameters(const Bytes& header) override;
+    bool sendHeader(ConnectionState& proto) override;
+    bool expectExtraHeader(ConnectionState& proto) override;
     virtual bool becomeLocal(ConnectionState& proto, bool sender);
-    virtual bool write(ConnectionState& proto, SizedWriter& writer) override;
-    virtual bool respondToHeader(ConnectionState& proto) override;
-    virtual bool expectReplyToHeader(ConnectionState& proto) override;
-    virtual bool expectIndex(ConnectionState& proto) override;
+    bool write(ConnectionState& proto, SizedWriter& writer) override;
+    bool respondToHeader(ConnectionState& proto) override;
+    bool expectReplyToHeader(ConnectionState& proto) override;
+    bool expectIndex(ConnectionState& proto) override;
 
     void removePeer();
     void shutdown();

@@ -45,7 +45,7 @@
 #define TINYXML_UNSIGNED_INT_BUG 0
 
 RobotInterface::XMLReader::XMLReader() :
-    mReader(0)
+    mReader(nullptr)
 {
     verbose = false;
 }
@@ -55,7 +55,7 @@ RobotInterface::XMLReader::~XMLReader()
     if (mReader)
     {
         delete mReader;
-        mReader = 0;
+        mReader = nullptr;
     }
 }
 
@@ -74,7 +74,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fi
     std::string path = filename.substr(0, filename.rfind(yarp::os::Network::getDirectorySeparator()));
 
     yDebug() << "Reading file" << filename.c_str();
-    TiXmlDocument *doc = new TiXmlDocument(filename.c_str());
+    auto* doc = new TiXmlDocument(filename.c_str());
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
     }
@@ -85,7 +85,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fi
 
     RobotInterfaceDTD dtd;
 
-    for (TiXmlNode* childNode = doc->FirstChild(); childNode != 0; childNode = childNode->NextSibling()) {
+    for (TiXmlNode* childNode = doc->FirstChild(); childNode != nullptr; childNode = childNode->NextSibling()) {
         if (childNode->Type() == TiXmlNode::TINYXML_UNKNOWN) {
             if (dtd.parse(childNode->ToUnknown(), curr_filename)) {
                 break;

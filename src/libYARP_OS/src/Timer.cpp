@@ -12,6 +12,7 @@
 #include <cmath>
 #include <map>
 #include <mutex>
+#include <utility>
 
 using namespace yarp::os;
 
@@ -30,14 +31,12 @@ public:
 
     PrivateImpl(TimerSettings sett, TimerCallback call, yarp::os::Mutex* mutex = nullptr) :
             m_settings(sett),
-            m_callback(call),
+            m_callback(std::move(call)),
             m_mutex(mutex)
     {
     }
 
-    virtual ~PrivateImpl()
-    {
-    }
+    virtual ~PrivateImpl() = default;
 
     virtual bool startTimer() = 0;
 
@@ -69,19 +68,19 @@ public:
         return PrivateImpl::getEventNow(m_runTimes);
     }
 
-    virtual bool startTimer() override
+    bool startTimer() override
     {
         m_startStamp = yarp::os::Time::now();
         m_active     = true;
         return true;
     }
 
-    virtual void stopTimer() override
+    void stopTimer() override
     {
         m_active = false;
     }
 
-    virtual bool stepTimer() override
+    bool stepTimer() override
     {
         return step(getEventNow(), true);
     }
@@ -95,7 +94,7 @@ public:
         return m_active;
     }
 
-    virtual bool timerIsRunning() override
+    bool timerIsRunning() override
     {
         return m_active;
     }
@@ -110,9 +109,9 @@ class TimerSingleton : public yarp::os::PeriodicThread
     {
     }
 
-    virtual void run() override;
+    void run() override;
 
-    virtual ~TimerSingleton()
+    ~TimerSingleton() override
     {
         stop();
     }
@@ -183,8 +182,8 @@ class ThreadedTimer : public yarp::os::Timer::PrivateImpl,
                       public yarp::os::PeriodicThread
 {
     using TimerCallback = yarp::os::Timer::TimerCallback;
-    virtual void run() override;
-    virtual bool threadInit() override;
+    void run() override;
+    bool threadInit() override;
     bool singleStep{ false };
 
 public:
@@ -198,25 +197,25 @@ public:
         stop();
     }
 
-    virtual bool startTimer() override
+    bool startTimer() override
     {
         m_startStamp = yarp::os::Time::now();
         return start();
     }
 
-    virtual bool stepTimer() override
+    bool stepTimer() override
     {
         singleStep = true;
         step();
         return true;
     }
 
-    virtual void stopTimer() override
+    void stopTimer() override
     {
         return stop();
     }
 
-    virtual bool timerIsRunning() override
+    bool timerIsRunning() override
     {
         return isRunning();
     }

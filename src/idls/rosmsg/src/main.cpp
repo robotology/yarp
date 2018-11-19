@@ -62,10 +62,10 @@ static void generateTypeMap1(RosType& t, std::string& txt)
     std::vector<RosType>& lst = t.subRosType;
     if (lst.size()>0) {
         bool simple = true;
-        for (size_t i=0; i<lst.size(); i++) {
-            if (lst[i].rosType != lst[0].rosType ||
-                (!lst[i].isPrimitive) ||
-                lst[i].isArray) {
+        for (auto& type : lst) {
+            if (type.rosType != lst[0].rosType ||
+                (!type.isPrimitive) ||
+                type.isArray) {
                 simple = false;
                 break;
             }

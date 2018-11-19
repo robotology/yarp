@@ -55,11 +55,11 @@ public:
      */
     virtual ~ImplementControlCalibration();
 
-    virtual bool calibrateAxisWithParams(int axis, unsigned int type, double p1, double p2, double p3) override;
+    bool calibrateAxisWithParams(int axis, unsigned int type, double p1, double p2, double p3) override;
 
-    virtual bool setCalibrationParameters(int axis, const CalibrationParameters& params) override;
+    bool setCalibrationParameters(int axis, const CalibrationParameters& params) override;
 
-    virtual bool calibrationDone(int j) override;
+    bool calibrationDone(int j) override;
 };
 
 

@@ -46,29 +46,29 @@ public:
 
     virtual ~MpiBcastCarrier();
 
-    virtual void close() override;
+    void close() override;
 
-    virtual Carrier *create() const override {
+    Carrier *create() const override {
         return new MpiBcastCarrier();
     }
 
-    virtual void createStream(bool sender) override;
+    void createStream(bool sender) override;
 
-    virtual std::string getName() const override {
+    std::string getName() const override {
         return "bcast";
     }
 
-    virtual bool supportReply() const override {
+    bool supportReply() const override {
         return false;
     }
 
-    virtual bool isBroadcast() const override {
+    bool isBroadcast() const override {
         return true;
     }
 
-    virtual void prepareDisconnect() override;
+    void prepareDisconnect() override;
 
-    virtual bool expectReplyToHeader(ConnectionState&  proto) override {
+    bool expectReplyToHeader(ConnectionState&  proto) override {
         bool ok = MpiCarrier::expectReplyToHeader(proto);
         MpiBcastStream *mpiStream = dynamic_cast<MpiBcastStream*> (stream);
         if(mpiStream)
@@ -76,7 +76,7 @@ public:
         return ok;
     }
 
-    virtual bool isActive() const override;
+    bool isActive() const override;
 
     virtual bool isElect() const;
 };

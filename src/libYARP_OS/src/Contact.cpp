@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <utility>
 
 #if defined(YARP_HAS_ACE)
 # include <ace/INET_Addr.h>
@@ -47,13 +48,13 @@ using yarp::os::impl::NameConfig;
 class Contact::Private
 {
 public:
-    Private(const std::string& regName,
-            const std::string& carrier,
-            const std::string& hostname,
+    Private(std::string regName,
+            std::string carrier,
+            std::string hostname,
             int port) :
-        regName(regName),
-        carrier(carrier),
-        hostname(hostname),
+        regName(std::move(regName)),
+        carrier(std::move(carrier)),
+        hostname(std::move(hostname)),
         port(port),
         timeout(-1)
     {
@@ -213,7 +214,7 @@ std::string Contact::getName() const
             NetType::toString(mPriv->port);
         return name;
     }
-    return std::string();
+    return {};
 }
 
 std::string Contact::getRegName() const
@@ -363,10 +364,10 @@ std::string Contact::convertHostToIp(const char *name)
         void *addr;
 
         if (p->ai_family == AF_INET) { // IPv4
-            struct sockaddr_in *ipv4 = (struct sockaddr_in *)p->ai_addr;
+            auto *ipv4 = (struct sockaddr_in *)p->ai_addr;
             addr = &(ipv4->sin_addr);
         } else { // IPv6
-            struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)p->ai_addr;
+            auto *ipv6 = (struct sockaddr_in6 *)p->ai_addr;
             addr = &(ipv6->sin6_addr);
         }
 

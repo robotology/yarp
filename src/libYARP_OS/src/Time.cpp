@@ -185,7 +185,7 @@ void Time::useNetworkClock(const std::string& clock, std::string localPortName)
 
     Clock *old_pclock = pclock;   // store current clock pointer to delete it afterward
     bool old_clock_owned = clock_owned;
-    NetworkClock *_networkClock = new NetworkClock();
+    auto* _networkClock = new NetworkClock();
     if(_networkClock == nullptr)
     {
         YARP_FAIL(Logger::get(), "failed creating NetworkClock client");

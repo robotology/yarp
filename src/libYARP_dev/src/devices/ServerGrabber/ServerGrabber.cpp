@@ -163,7 +163,7 @@ yarp::dev::impl::ServerGrabberResponder::ServerGrabberResponder(bool _left) :
     server(nullptr)
 {}
 
-yarp::dev::impl::ServerGrabberResponder::~ServerGrabberResponder(){}
+yarp::dev::impl::ServerGrabberResponder::~ServerGrabberResponder() = default;
 
 bool yarp::dev::impl::ServerGrabberResponder::configure(yarp::dev::ServerGrabber* _server)
 {

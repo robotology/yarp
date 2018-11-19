@@ -108,7 +108,7 @@ int TcpAcceptor::shared_open(const Contact& address) {
  * Accept connection and set field for clientAddress.
  */
 int TcpAcceptor::accept(TcpStream &new_stream) {
-    sockaddr *addr = 0;
+    sockaddr *addr = nullptr;
     int len = 0; int *len_ptr = &len;
 
     new_stream.set_handle( ::accept(get_handle(), (struct sockaddr *)&addr, (socklen_t*)len_ptr) );

@@ -73,7 +73,7 @@ bool ImplementPositionDirect::setPosition(int j, double ref)
 bool ImplementPositionDirect::setPositions(const int n_joint, const int *joints, const double *refs)
 {
     int *tmp_joints =  new int [nj];
-    double *tmp_refs = new double [nj];
+    auto* tmp_refs = new double [nj];
     for(int idx=0; idx<n_joint; idx++)
     {
         MJOINTIDCHECK_DEL2(idx)
@@ -88,7 +88,7 @@ bool ImplementPositionDirect::setPositions(const int n_joint, const int *joints,
 
 bool ImplementPositionDirect::setPositions(const double *refs)
 {
-    double *tmp = new double[nj];
+    auto* tmp = new double[nj];
     castToMapper(helper)->posA2E(refs, tmp);
 
     bool ret = iPDirect->setPositionsRaw(tmp);
@@ -119,7 +119,7 @@ bool ImplementPositionDirect::getRefPositions(const int n_joint, const int* join
         tmp_joints[idx]=castToMapper(helper)->toHw(joints[idx]);
     }
 
-    double *tmp_refs = new double[nj];
+    auto* tmp_refs = new double[nj];
     bool ret = iPDirect->getRefPositionsRaw(n_joint, tmp_joints, tmp_refs);
 
     for(int idx=0; idx<n_joint; idx++)
@@ -135,7 +135,7 @@ bool ImplementPositionDirect::getRefPositions(const int n_joint, const int* join
 
 bool ImplementPositionDirect::getRefPositions(double* refs)
 {
-    double *tmp=new double[nj];
+    auto* tmp=new double[nj];
     bool ret = iPDirect->getRefPositionsRaw(tmp);
     castToMapper(helper)->posE2A(tmp, refs);
     delete [] tmp;

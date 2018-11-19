@@ -355,13 +355,13 @@ public:
 
     void onCommencement() const override;
 
-    virtual bool check(const std::string& key) const override;
+    bool check(const std::string& key) const override;
 
-    virtual Value& find(const std::string& key) const override;
+    Value& find(const std::string& key) const override;
 
     Bottle& findGroup(const std::string& key) const override;
 
-    virtual bool isNull() const override;
+    bool isNull() const override;
 
     /**
      * Copy all or part of another Bottle.

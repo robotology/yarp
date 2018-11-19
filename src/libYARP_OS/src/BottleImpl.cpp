@@ -644,14 +644,14 @@ Storable& BottleImpl::get(size_t index) const
 
 yarp::os::Bottle& BottleImpl::addList()
 {
-    StoreList* lst = new StoreList();
+    auto* lst = new StoreList();
     add(lst);
     return lst->internal();
 }
 
 yarp::os::Property& BottleImpl::addDict()
 {
-    StoreDict* lst = new StoreDict();
+    auto* lst = new StoreDict();
     add(lst);
     return lst->internal();
 }

@@ -174,11 +174,11 @@ public:
     virtual ~WireTwiddlerReader() {}
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
+    yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
-    virtual void close() override { is.close(); }
+    void close() override { is.close(); }
 
-    virtual bool isOk() const override { return is.isOk(); }
+    bool isOk() const override { return is.isOk(); }
 
     yarp::conf::ssize_t readMapped(yarp::os::InputStream& is,
                                    yarp::os::Bytes& b,
@@ -294,28 +294,28 @@ public:
 
     bool update();
 
-    virtual size_t length() const override {
+    size_t length() const override {
         return srcs.size();
     }
 
-    virtual size_t headerLength() const override {
+    size_t headerLength() const override {
         return 0;
     }
 
-    virtual size_t length(size_t index) const override {
+    size_t length(size_t index) const override {
         return srcs[index].len;
     }
 
-    virtual const char *data(size_t index) const override {
+    const char *data(size_t index) const override {
         if (srcs[index].offset<0) return srcs[index].src;
         return scratch.get()+srcs[index].offset;
     }
 
-    virtual yarp::os::PortReader *getReplyHandler() override {
+    yarp::os::PortReader *getReplyHandler() override {
         return parent->getReplyHandler();
     }
 
-    virtual yarp::os::Portable *getReference() override {
+    yarp::os::Portable *getReference() override {
         return parent->getReference();
     }
 
@@ -337,15 +337,15 @@ public:
     int readLength();
 
     //virtual void write(OutputStream& os);
-    virtual bool dropRequested() override {
+    bool dropRequested() override {
         return false;
     }
 
-    virtual void startWrite() const override {
+    void startWrite() const override {
         parent->startWrite();
     }
 
-    virtual void stopWrite() const override {
+    void stopWrite() const override {
         parent->stopWrite();
     }
 };

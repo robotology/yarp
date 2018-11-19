@@ -143,7 +143,7 @@ public:
     std::string getName()
     {
         if (!factory) {
-            return std::string();
+            return {};
         }
         return factory->getName();
     }
@@ -156,7 +156,7 @@ public:
     std::string getClassName()
     {
         if (!factory) {
-            return std::string();
+            return {};
         }
         return factory->getClassName();
     }
@@ -169,7 +169,7 @@ public:
     std::string getBaseClassName()
     {
         if (!factory) {
-            return std::string();
+            return {};
         }
         return factory->getBaseClassName();
     }

@@ -354,19 +354,19 @@ public:
     virtual size_t asBlobLength() const;
 
     // documented in Portable
-    virtual bool read(ConnectionReader& connection) override;
+    bool read(ConnectionReader& connection) override;
 
     // documented in Portable
-    virtual bool write(ConnectionWriter& connection) const override;
+    bool write(ConnectionWriter& connection) const override;
 
     // documented in Searchable
-    virtual bool check(const std::string& key) const override;
+    bool check(const std::string& key) const override;
 
     // documented in Searchable
-    virtual Value& find(const std::string& key) const override;
+    Value& find(const std::string& key) const override;
 
     // documented in Searchable
-    virtual Bottle& findGroup(const std::string& key) const override;
+    Bottle& findGroup(const std::string& key) const override;
 
     /**
      * Equality test.
@@ -410,7 +410,7 @@ public:
      */
     virtual std::int32_t getCode() const;
 
-    virtual bool isNull() const override;
+    bool isNull() const override;
 
     virtual bool isLeaf() const;
 

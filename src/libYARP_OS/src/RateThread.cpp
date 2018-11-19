@@ -29,9 +29,7 @@ RateThread::RateThread(int period) :
 {
 }
 
-RateThread::~RateThread()
-{
-}
+RateThread::~RateThread() = default;
 
 bool RateThread::setRate(int period)
 {
@@ -157,9 +155,7 @@ SystemRateThread::SystemRateThread(int period) : PeriodicThread(period/1000.0, S
 {
 }
 
-SystemRateThread::~SystemRateThread()
-{
-}
+SystemRateThread::~SystemRateThread() = default;
 
 bool SystemRateThread::stepSystem()
 {

@@ -18,8 +18,7 @@ class Semaphore::Private
 {
 public:
     Private(unsigned int initialCount = 1) :
-            count(initialCount),
-            wakeups(0)
+            count(initialCount)
     {
     }
 
@@ -83,7 +82,7 @@ private:
     std::mutex mutex;
     std::condition_variable cond;
     int count;
-    int wakeups;
+    int wakeups{0};
 };
 
 

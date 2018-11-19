@@ -36,19 +36,19 @@ public:
 
     virtual ~DeviceGroup();
 
-    virtual bool open(yarp::os::Searchable& config) override;
+    bool open(yarp::os::Searchable& config) override;
 
-    virtual bool close() override {
+    bool close() override {
         return closeMain();
     }
 
-    virtual bool startService() override;
+    bool startService() override;
 
-    virtual bool stopService() override {
+    bool stopService() override {
         return close();
     }
 
-    virtual bool updateService() override;
+    bool updateService() override;
 
 private:
     void *implementation;

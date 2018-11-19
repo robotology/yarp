@@ -247,7 +247,7 @@ JointItem::JointItem(int index,QWidget *parent) :
 bool JointItem::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease) {
-        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        auto* keyEvent = static_cast<QKeyEvent *>(event);
         int key = keyEvent->key();
         if(key == Qt::Key_Left || key == Qt::Key_Right  || key == Qt::Key_Up ||
            key == Qt::Key_Down || key == Qt::Key_PageUp || key == Qt::Key_PageDown){
@@ -1134,7 +1134,7 @@ int JointItem::getJointIndex()
 
 void JointItem::installFilter()
 {
-    WheelEventFilter *filter = new WheelEventFilter();
+    auto* filter = new WheelEventFilter();
     ui->comboMode->installEventFilter(filter);
     ui->comboInteraction->installEventFilter(filter);
 

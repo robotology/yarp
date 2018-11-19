@@ -176,7 +176,7 @@ protected:
      * to afterStart(). Note that afterStart() is called by the
      * same thread that is executing the "start" method.
      */
-    virtual bool threadInit() override;
+    bool threadInit() override;
 
     /**
      * Release method. The thread executes this function once when
@@ -184,7 +184,7 @@ protected:
      * resources that were initialized in threadInit() (release memory,
      * and device driver resources).
      */
-    virtual void threadRelease() override;
+    void threadRelease() override;
 
     /**
      * Loop function. This is the thread itself.
@@ -197,20 +197,20 @@ protected:
      * Note: after each run is completed, the thread will call a yield()
      * in order to facilitate other threads to run.
      */
-    virtual void run() override = 0;
+    void run() override = 0;
 
     /**
      * Called just before a new thread starts. This method is executed
      * by the same thread that calls start().
      */
-    virtual void beforeStart() override;
+    void beforeStart() override;
 
     /**
      * Called just after a new thread starts (or fails to start), this
      * is executed by the same thread that calls start().
      * @param success true iff the new thread started successfully.
      */
-    virtual void afterStart(bool success) override;
+    void afterStart(bool success) override;
 };
 
 
@@ -254,11 +254,11 @@ public:
     void close();
     void stop();
 
-    virtual void run() override;
-    virtual bool threadInit() override;
-    virtual void threadRelease() override;
-    virtual void afterStart(bool success) override;
-    virtual void beforeStart() override;
+    void run() override;
+    bool threadInit() override;
+    void threadRelease() override;
+    void afterStart(bool success) override;
+    void beforeStart() override;
 
     Runnable* getAttachment() const;
 };

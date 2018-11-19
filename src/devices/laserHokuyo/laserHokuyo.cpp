@@ -115,7 +115,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
         return false;
     }
 
-    pSerial=0;
+    pSerial=nullptr;
     driver.view(pSerial);
 
     if (!pSerial)

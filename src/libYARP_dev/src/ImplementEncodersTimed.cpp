@@ -87,7 +87,7 @@ bool ImplementEncodersTimed::setEncoder(int j, double val)
 
 bool ImplementEncodersTimed::setEncoders(const double *val)
 {
-    double * tmp = new double[nj];
+    auto* tmp = new double[nj];
     castToMapper(helper)->posA2E(val, tmp);
 
     bool ret = iEncoders->setEncodersRaw(tmp);
@@ -115,7 +115,7 @@ bool ImplementEncodersTimed::getEncoder(int j, double *v)
 bool ImplementEncodersTimed::getEncoders(double *v)
 {
     bool ret;
-    double *my_enc = new double[nj];
+    auto* my_enc = new double[nj];
     ret=iEncoders->getEncodersRaw(my_enc);
 
     castToMapper(helper)->posE2A(my_enc, v);
@@ -142,7 +142,7 @@ bool ImplementEncodersTimed::getEncoderSpeed(int j, double *v)
 bool ImplementEncodersTimed::getEncoderSpeeds(double *v)
 {
     bool ret;
-    double *tmp = new double[nj];
+    auto* tmp = new double[nj];
     ret=iEncoders->getEncoderSpeedsRaw(tmp);
 
     castToMapper(helper)->velE2A(tmp, v);
@@ -169,7 +169,7 @@ bool ImplementEncodersTimed::getEncoderAcceleration(int j, double *v)
 bool ImplementEncodersTimed::getEncoderAccelerations(double *v)
 {
     bool ret;
-    double *tmp = new double[nj];
+    auto* tmp = new double[nj];
     ret=iEncoders->getEncoderAccelerationsRaw(tmp);
 
     castToMapper(helper)->accE2A(tmp, v);
@@ -197,8 +197,8 @@ bool ImplementEncodersTimed::getEncoderTimed(int j, double *v, double *t)
 bool ImplementEncodersTimed::getEncodersTimed(double *v, double *t)
 {
     bool ret;
-    double *tmp_v = new double[nj];
-    double *tmp_t = new double[nj];
+    auto* tmp_v = new double[nj];
+    auto* tmp_t = new double[nj];
     ret=iEncoders->getEncodersTimedRaw(tmp_v, tmp_t);
 
     castToMapper(helper)->posE2A(tmp_v, v);

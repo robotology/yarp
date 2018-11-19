@@ -251,7 +251,7 @@ public:
         if (port!=nullptr) {
             return port->getName();
         }
-        return "";
+        return {};
     }
 
     PortReaderPacket *get()
@@ -348,9 +348,7 @@ public:
 
 
 
-PortReaderBufferBaseCreator::~PortReaderBufferBaseCreator()
-{
-}
+PortReaderBufferBaseCreator::~PortReaderBufferBaseCreator() = default;
 
 PortReaderBufferBase::PortReaderBufferBase(unsigned int maxBuffer) :
         mPriv(new Private(*this, maxBuffer))

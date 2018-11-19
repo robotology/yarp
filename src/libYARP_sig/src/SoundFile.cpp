@@ -173,7 +173,7 @@ bool yarp::sig::file::read(Sound& dest, const char *src)
     result = fread(bytes.get(),bytes.length(),1,fp);
     YARP_UNUSED(result);
 
-    NetInt16 *data = reinterpret_cast<NetInt16*>(bytes.get());
+    auto* data = reinterpret_cast<NetInt16*>(bytes.get());
     int ct = 0;
     for (int i=0; i<samples; i++) {
         for (int j=0; j<channels; j++) {
@@ -199,7 +199,7 @@ bool yarp::sig::file::write(const Sound& src, const char *dest)
     header.setup_to_write(src, fp);
 
     ManagedBytes bytes(header.dataLength);
-    NetInt16 *data = reinterpret_cast<NetInt16*>(bytes.get());
+    auto* data = reinterpret_cast<NetInt16*>(bytes.get());
     int ct = 0;
     int samples = src.getSamples();
     int channels = src.getChannels();
@@ -267,7 +267,7 @@ size_t yarp::sig::file::soundStreamReader::readBlock(Sound& dest, size_t block_s
 
     //this probably works only if soundInfo.bits=16
     int expected_words=expected_bytes/(soundInfo.bits/8);
-    NetInt16     *data = new NetInt16 [expected_words];
+    auto* data = new NetInt16 [expected_words];
 
     size_t bytes_read = fread(data,1,expected_bytes,fp);
     size_t samples_read = bytes_read/(soundInfo.bits/8)/soundInfo.channels;

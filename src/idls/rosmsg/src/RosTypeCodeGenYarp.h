@@ -51,33 +51,33 @@ public:
     virtual bool beginType(const std::string& tname,
                            RosTypeCodeGenState& state) override;
 
-    virtual bool beginDeclare() override;
-    virtual bool declareField(const RosField& field) override;
-    virtual bool endDeclare() override;
+    bool beginDeclare() override;
+    bool declareField(const RosField& field) override;
+    bool endDeclare() override;
 
-    virtual bool beginConstruct() override;
-    virtual bool initField(const RosField& field, bool &isFirstToInit) override;
-    virtual bool endInitConstruct() override;
-    virtual bool constructField(const RosField& field) override;
-    virtual bool endConstruct() override;
+    bool beginConstruct() override;
+    bool initField(const RosField& field, bool &isFirstToInit) override;
+    bool endInitConstruct() override;
+    bool constructField(const RosField& field) override;
+    bool endConstruct() override;
 
-    virtual bool beginClear() override;
-    virtual bool clearField(const RosField& field) override;
-    virtual bool endClear() override;
+    bool beginClear() override;
+    bool clearField(const RosField& field) override;
+    bool endClear() override;
 
-    virtual bool beginRead(bool bare, int len) override;
-    virtual bool readField(bool bare, const RosField& field) override;
-    virtual bool endRead(bool bare) override;
+    bool beginRead(bool bare, int len) override;
+    bool readField(bool bare, const RosField& field) override;
+    bool endRead(bool bare) override;
 
-    virtual bool beginWrite(bool bare, int len) override;
-    virtual bool writeField(bool bare,const RosField& field) override;
-    virtual bool endWrite(bool bare) override;
+    bool beginWrite(bool bare, int len) override;
+    bool writeField(bool bare,const RosField& field) override;
+    bool endWrite(bool bare) override;
 
     virtual bool endType(const std::string& tname,
                          const RosField& field) override;
 
-    virtual bool writeIndex(RosTypeCodeGenState& state) override;
-    virtual bool hasNativeTimeClass() const override {
+    bool writeIndex(RosTypeCodeGenState& state) override;
+    bool hasNativeTimeClass() const override {
         return false;
     }
 

@@ -51,7 +51,7 @@ public:
 
     virtual void write(OutputStream& os);
 
-    virtual bool write(ConnectionWriter& connection) const override;
+    bool write(ConnectionWriter& connection) const override;
 
     virtual bool dropRequested() = 0;
 

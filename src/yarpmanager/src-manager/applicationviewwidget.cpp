@@ -214,7 +214,7 @@ QString ApplicationViewWidget::getFileName()
     if (builder)
         return builder->getFileName();
     else
-        return "";
+        return {};
 }
 
 void ApplicationViewWidget::setFileName(QString filename)
@@ -230,7 +230,7 @@ QString ApplicationViewWidget::getAppName()
         return builder->getAppName();
     }
     else
-        return "";
+        return {};
 }
 
 void ApplicationViewWidget::setAppName(QString appName)
@@ -697,13 +697,13 @@ void ApplicationViewWidget::updateApplicationWindow()
 
         QStringList l;
         l << type << sId << status << from << to << carrier << modifier;
-        CustomTreeWidgetItem *it = new CustomTreeWidgetItem(ui->connectionList,l);
+        auto* it = new CustomTreeWidgetItem(ui->connectionList,l);
         ui->moduleList->addTopLevelItem(it);
 
         //scanning available carriers:
         scanAvailableCarriers(carrier,false);
 
-        QComboBox *comboBox = new QComboBox(this);
+        auto* comboBox = new QComboBox(this);
         comboBox->addItems(stringLst);
         comboBox->setEditable(true);
         ui->connectionList->setItemWidget((QTreeWidgetItem *) it,5, comboBox);
@@ -745,7 +745,7 @@ void ApplicationViewWidget::updateApplicationWindow()
 
         QStringList l;
         l << res << sId << type << status ;
-        CustomTreeWidgetItem *it = new CustomTreeWidgetItem(ui->resourcesList,l);
+        auto* it = new CustomTreeWidgetItem(ui->resourcesList,l);
         ui->moduleList->addTopLevelItem(it);
         it->setData(0,Qt::UserRole,yarp::manager::RESOURCE);
         if (type == "computer") {
@@ -828,7 +828,7 @@ void ApplicationViewWidget::onCloseStdOut(int id)
             closeNestedApplicationStdOut(it,id);
         } else {
             if (it->text(1).toInt() == id) {
-                StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(it->data(0,Qt::UserRole));
+                auto* stdouWin = qvariant_cast<StdoutWindow *>(it->data(0,Qt::UserRole));
                 if (stdouWin && stdouWin->getId() == id) {
                     delete stdouWin;
                     it->setData(0,Qt::UserRole,QVariant::fromValue(NULL));
@@ -847,7 +847,7 @@ void ApplicationViewWidget::closeNestedApplicationStdOut(QTreeWidgetItem *it, in
             closeNestedApplicationStdOut(it,id);
         } else {
             if (ch->text(1).toInt() == id) {
-                StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(ch->data(0,Qt::UserRole));
+                auto* stdouWin = qvariant_cast<StdoutWindow *>(ch->data(0,Qt::UserRole));
                 if (stdouWin && stdouWin->getId() == id) {
                     delete stdouWin;
                     ch->setData(0,Qt::UserRole,QVariant::fromValue(NULL));
@@ -969,7 +969,7 @@ void ApplicationViewWidget::onAttachStdout()
             if (it->isSelected()) {
                 int id = it->text(1).toInt();
 
-                StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(it->data(0,Qt::UserRole));
+                auto* stdouWin = qvariant_cast<StdoutWindow *>(it->data(0,Qt::UserRole));
                 if (stdouWin && stdouWin->getId() == id) {
                     // found
                     continue;
@@ -1005,7 +1005,7 @@ void ApplicationViewWidget::attachStdOutNestedApplication(QTreeWidgetItem *it,st
             if (ch->isSelected()) {
                 int id = ch->text(1).toInt();
 
-                StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(ch->data(0,Qt::UserRole));
+                auto* stdouWin = qvariant_cast<StdoutWindow *>(ch->data(0,Qt::UserRole));
                 if (stdouWin && stdouWin->getId() == id) {
                     // found
                     continue;
@@ -1551,7 +1551,7 @@ void ApplicationViewWidget::updateConnection(int index, std::vector<int>& CIDs)
 {
     QTreeWidgetItem *it = ui->connectionList->topLevelItem(index);
     if (it->isSelected()) {
-        QComboBox* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
+        auto* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
         QString carrier, modifier;
         if (box)
         {
@@ -2023,7 +2023,7 @@ void ApplicationViewWidget::onSelfConnect(int which)
         it->setTextColor(2,QColor("#008C00"));
         QString from = it->text(3);
         QString to = it->text(4);
-        QComboBox* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
+        auto* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
         box->setEnabled(false);
         builder->setConnectionConnected(true,from,to);
     }
@@ -2052,7 +2052,7 @@ void ApplicationViewWidget::onSelfDisconnect(int which)
         it->setTextColor(2,QColor("#BF0303"));
         QString from = it->text(3);
         QString to = it->text(4);
-        QComboBox* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
+        auto* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
         box->setEnabled(true);
         builder->setConnectionConnected(false,from,to);
     }
@@ -2166,7 +2166,7 @@ void ApplicationViewWidget::onModStdout(int which, const char* msg)
         if (it->data(0,Qt::UserRole) == APPLICATION) {
             modStdOutNestedApplication(it,which,s);
         } else {
-            StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(it->data(0,Qt::UserRole));
+            auto* stdouWin = qvariant_cast<StdoutWindow *>(it->data(0,Qt::UserRole));
             if (stdouWin && stdouWin->getId() == which) {
                 stdouWin->addMessage(s);
                 break;
@@ -2183,7 +2183,7 @@ void ApplicationViewWidget::modStdOutNestedApplication(QTreeWidgetItem *it, int 
         if (ch->data(0,Qt::UserRole) == APPLICATION) {
             modStdOutNestedApplication(ch,id,s);
         } else {
-            StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(ch->data(0,Qt::UserRole));
+            auto* stdouWin = qvariant_cast<StdoutWindow *>(ch->data(0,Qt::UserRole));
             if (stdouWin && stdouWin->getId() == id) {
                 stdouWin->addMessage(s);
                 break;

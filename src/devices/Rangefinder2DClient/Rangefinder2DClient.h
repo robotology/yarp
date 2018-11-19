@@ -63,7 +63,7 @@ public:
     Rangefinder2DInputPortProcessor();
 
     using yarp::os::BufferedPort<yarp::os::Bottle>::onRead;
-    virtual void onRead(yarp::os::Bottle &v) override;
+    void onRead(yarp::os::Bottle &v) override;
 
     inline int getLast(yarp::os::Bottle &data, yarp::os::Stamp &stmp);
 
@@ -126,14 +126,14 @@ public:
     * @param data a vector containing the measurement data, expressed in cartesian/polar format
     * @return true/false..
     */
-    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) override;
+    bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) override;
 
     /**
     * Get the device measurements
     * @param ranges the vector containing the raw measurement data, as acquired by the device.
     * @return true/false.
     */
-    virtual bool getRawData(yarp::sig::Vector &data) override;
+    bool getRawData(yarp::sig::Vector &data) override;
 
     /**
     * get the device status

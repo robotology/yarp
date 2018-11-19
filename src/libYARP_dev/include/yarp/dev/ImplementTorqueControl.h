@@ -54,18 +54,18 @@ public:
      */
     virtual ~ImplementTorqueControl();
 
-    virtual bool getAxes(int *ax) override;
-    virtual bool getRefTorque(int j, double *) override;
-    virtual bool getRefTorques(double *t) override;
-    virtual bool setRefTorques(const double *t) override;
-    virtual bool setRefTorque(int j, double t) override;
-    virtual bool setRefTorques(const int n_joint, const int *joints, const double *t) override;
-    virtual bool getTorques(double *t) override;
-    virtual bool getTorque(int j, double *t) override;
-    virtual bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params) override;
-    virtual bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters *params) override;
-    virtual bool getTorqueRange(int j, double *min, double *max) override;
-    virtual bool getTorqueRanges(double *min, double *max) override;
+    bool getAxes(int *ax) override;
+    bool getRefTorque(int j, double *) override;
+    bool getRefTorques(double *t) override;
+    bool setRefTorques(const double *t) override;
+    bool setRefTorque(int j, double t) override;
+    bool setRefTorques(const int n_joint, const int *joints, const double *t) override;
+    bool getTorques(double *t) override;
+    bool getTorque(int j, double *t) override;
+    bool setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params) override;
+    bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters *params) override;
+    bool getTorqueRange(int j, double *min, double *max) override;
+    bool getTorqueRanges(double *min, double *max) override;
 };
 
 #endif // YARP_DEV_IMPLEMENTTORQUECONTROL_H

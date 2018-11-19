@@ -205,7 +205,7 @@ bool movessc32(int j, double ref, double *positions, double *speeds, ISerialDevi
 
 
 bool moveminissc(int j, double ref, double *positions, double *speeds, ISerialDevice *serial) {
-    unsigned char pos=(unsigned char)((int)(positions[j]*1.411) + 127);
+    auto pos=(unsigned char)((int)(positions[j]*1.411) + 127);
 
     char cmd[3];
 
@@ -221,7 +221,7 @@ bool moveminissc(int j, double ref, double *positions, double *speeds, ISerialDe
 
 
 bool movepontech(int j, double ref, double *positions, double *speeds, ISerialDevice *serial) {
-    unsigned char pos=(unsigned char)((int)(positions[j]*1.411) + 127);
+    auto pos=(unsigned char)((int)(positions[j]*1.411) + 127);
 
     Bottle bot;
     char str[80];
@@ -236,7 +236,7 @@ bool movepontech(int j, double ref, double *positions, double *speeds, ISerialDe
 
 
 bool movemondotronic(int j, double ref, double *positions, double *speeds, ISerialDevice *serial) {
-    unsigned char pos=(unsigned char)((int)(positions[j]*1.411) + 127);
+    auto pos=(unsigned char)((int)(positions[j]*1.411) + 127);
 
     char cmd[3];
 
@@ -285,7 +285,7 @@ bool movepicopic(int j, double ref, double *positions, double *speeds, ISerialDe
     if(FABS(speeds[j])<0.1) {
         cmd[4]=255; //speed
     } else {
-        unsigned char speed=(unsigned char)((int)(speeds[j]*1.411) + 127);
+        auto speed=(unsigned char)((int)(speeds[j]*1.411) + 127);
 
         cmd[4]=speed; //speed
     }

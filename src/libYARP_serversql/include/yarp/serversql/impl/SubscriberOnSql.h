@@ -51,7 +51,7 @@ public:
     virtual bool listSubscriptions(const std::string& port,
                                    yarp::os::Bottle& reply) override;
 
-    virtual bool welcome(const std::string& port, int activity) override;
+    bool welcome(const std::string& port, int activity) override;
 
     bool hookup(const std::string& port);
 
@@ -60,7 +60,7 @@ public:
     virtual bool setTopic(const std::string& port,
                           const std::string& structure, bool active) override;
 
-    virtual bool listTopics(yarp::os::Bottle& topics) override;
+    bool listTopics(yarp::os::Bottle& topics) override;
 
     bool transitiveWelcome(const std::string& topic,
                            const std::string& src,

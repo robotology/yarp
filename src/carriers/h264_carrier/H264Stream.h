@@ -46,16 +46,16 @@ public:
 
     void start (void);
 
-    virtual InputStream& getInputStream() override;
-    virtual OutputStream& getOutputStream() override;
+    InputStream& getInputStream() override;
+    OutputStream& getOutputStream() override;
 
     using yarp::os::OutputStream::write;
-    virtual void write(const Bytes& b) override;
+    void write(const Bytes& b) override;
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(Bytes& b) override;
+    yarp::conf::ssize_t read(Bytes& b) override;
 
-    virtual bool setReadEnvelopeCallback(InputStream::readEnvelopeCallbackType callback, void* data) override;
+    bool setReadEnvelopeCallback(InputStream::readEnvelopeCallbackType callback, void* data) override;
 
 };
 

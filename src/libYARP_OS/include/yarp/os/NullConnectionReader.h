@@ -28,28 +28,28 @@ private:
     Value blank;
 
 public:
-    virtual bool expectBlock(char* data, size_t len) override;
-    virtual std::string expectText(int terminatingChar = '\n') override;
-    virtual std::int8_t expectInt8() override;
-    virtual std::int16_t expectInt16() override;
-    virtual std::int32_t expectInt32() override;
-    virtual std::int64_t expectInt64() override;
-    virtual yarp::conf::float32_t expectFloat32() override;
-    virtual yarp::conf::float64_t expectFloat64() override;
-    virtual bool pushInt(int x) override;
-    virtual bool isTextMode() const override;
-    virtual bool convertTextMode() override;
-    virtual size_t getSize() const override;
-    virtual ConnectionWriter* getWriter() override;
-    virtual Bytes readEnvelope() override;
-    virtual Portable* getReference() const override;
-    virtual Contact getRemoteContact() const override;
-    virtual Contact getLocalContact() const override;
-    virtual bool isValid() const override;
-    virtual bool isActive() const override;
-    virtual bool isError() const override;
-    virtual void requestDrop() override;
-    virtual const Searchable& getConnectionModifiers() const override;
+    bool expectBlock(char* data, size_t len) override;
+    std::string expectText(int terminatingChar = '\n') override;
+    std::int8_t expectInt8() override;
+    std::int16_t expectInt16() override;
+    std::int32_t expectInt32() override;
+    std::int64_t expectInt64() override;
+    yarp::conf::float32_t expectFloat32() override;
+    yarp::conf::float64_t expectFloat64() override;
+    bool pushInt(int x) override;
+    bool isTextMode() const override;
+    bool convertTextMode() override;
+    size_t getSize() const override;
+    ConnectionWriter* getWriter() override;
+    Bytes readEnvelope() override;
+    Portable* getReference() const override;
+    Contact getRemoteContact() const override;
+    Contact getLocalContact() const override;
+    bool isValid() const override;
+    bool isActive() const override;
+    bool isError() const override;
+    void requestDrop() override;
+    const Searchable& getConnectionModifiers() const override;
 };
 
 } // namespace os
