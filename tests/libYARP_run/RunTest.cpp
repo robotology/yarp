@@ -7,6 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+
 #include <yarp/run/Run.h>
 
 #include <yarp/os/Network.h>
@@ -17,7 +18,12 @@
 #include <cstring>
 #include <cstdio>
 
-#include <yarp/os/impl/UnitTest.h>
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
+
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -67,17 +73,14 @@ public:
 };
 
 
-class RunTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "RunTest"; }
+TEST_CASE("run::RunTest", "[yarp::run]") {
 
-    virtual void testRun() {
+    SECTION("testRun") {
         //this could be local or using an external nameserver, to be decided
-        Network::setLocalMode(false);
-        Network yarp;
+        Network::setLocalMode(true);
         YarpRun runner;
 
-        report(0,"checking yarprun");
+        INFO("checking yarprun");
 
         const int argc=3;
         const char *argv[argc];
@@ -98,36 +101,8 @@ public:
         Time::delay(1);
 
         bool isRunning=yarp::run::Run::isRunning("/run", moduleTag);
-        checkTrue(isRunning,"isRunning");
-
-    //    terminate("/prova");
-
+        CHECK(isRunning); // isRunning
         fprintf(stderr, "done!\n");
-        //Time::delay(10);
-        //Run
-        //NetworkBase::exists(""
-        checkTrue(false,"test ok");
+        Network::setLocalMode(false);
     }
-
-    void terminate(const std::string &server)
-    {
-        Port tmpPort;
-        tmpPort.open("...");
-        Network::connect(tmpPort.getName().c_str(), "/run");
-
-        Bottle msg, reply;
-        msg.fromString("(exit)");
-        tmpPort.write(msg, reply);
-    }
-
-    virtual void runTests() override {
-        testRun();
-    }
-};
-
-static RunTest theRunTest;
-
-UnitTest& getRunTest() {
-    return theRunTest;
 }
-
