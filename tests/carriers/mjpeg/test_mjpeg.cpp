@@ -6,47 +6,57 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <MjpegDecompression.h>
+
+#include <yarp/dev/PolyDriver.h>
 #include <yarp/os/all.h>
+#include <yarp/os/Network.h>
 #include <yarp/sig/all.h>
 
-#include <MjpegDecompression.h>
+#if defined(USE_SYSTEM_CATCH)
+#include <catch.hpp>
+#else
+#include "catch.hpp"
+#endif
 
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::mjpeg;
 
-int main(int argc, char *argv[]) {
+TEST_CASE("carriers::MjpegTest", "[carriers::mjpeg]") {
     Network yarp;
+    yarp.setLocalMode(true);
+    SECTION("test compression-decompression") {
 
-    Property options;
-    options.fromCommand(argc,argv);
+        std::string inName {"/mjpeg/in"};
+        std::string outName {"/mjpeg/out"};
 
-    std::string inName = options.check("in",Value("/mjpeg/in")).asString();
-    std::string outName = options.check("out",Value("/mjpeg/out")).asString();
+        BufferedPort<ImageOf<PixelRgb>> in;
+        BufferedPort<ImageOf<PixelRgb>> out;
 
-    BufferedPort<ManagedBytes> in; 
-    // BufferedPort<Bottle> would also work fine, but less efficient
+        REQUIRE(in.open(inName));
+        REQUIRE(out.open(outName));
+        REQUIRE(Network::connect(out.getName(), in.getName(), "mjpeg"));
 
-    BufferedPort<FlexImage> out;
+        MjpegDecompression decompression; // just for compile
 
-    if (!in.open(inName)) return 1;
-    if (!out.open(outName)) return 1;
+        size_t width {320};
+        size_t height {240};
+        ImageOf<PixelRgb>& outImg = out.prepare();
+        outImg.resize(width, height);
 
-    MjpegDecompression decompression;
-    if (decompression.isAutomatic()) {
-        fprintf(stderr,"For this test, turn MJPEG_AUTOCOMPRESS off\n");
-        return 1;
-    }
-    while (true) {
-        ManagedBytes *data = in.read();
-        if (!data) continue;
-        if (!decompression.decompress(data->bytes(),out.prepare())) {
-            fprintf(stderr,"Decompression failed!\n");
-            return 1;
-        }
         out.write();
+        yarp::os::Time::delay(0.4);
+
+        ImageOf<PixelRgb>* inImg = in.read();
+        REQUIRE(inImg != nullptr);
+        CHECK(inImg->width() == width);
+        CHECK(inImg->height() == height);
+
+        in.interrupt();
+        in.close();
+        out.interrupt();
+        out.close();
     }
-
-    return 0;
+    yarp.setLocalMode(false);
 }
-
