@@ -50,8 +50,8 @@ namespace yarp{
             const std::string nodeName_param           = "ROS_nodeName";
             const std::string colorTopicName_param     = "ROS_colorTopicName";
             const std::string depthTopicName_param     = "ROS_depthTopicName";
-            const std::string depthInfoTopicName_param = "ROS_colorInfoTopicName";
-            const std::string colorInfoTopicName_param = "ROS_depthInfoTopicName";
+            const std::string depthInfoTopicName_param = "ROS_depthInfoTopicName";
+            const std::string colorInfoTopicName_param = "ROS_colorInfoTopicName";
             class RGBDSensorParser;
         }
     }
