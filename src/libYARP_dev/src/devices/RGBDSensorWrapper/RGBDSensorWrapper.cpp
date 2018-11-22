@@ -303,8 +303,8 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
         rosStringParam.emplace_back(rosFrameId,     frameId_param           );
         rosStringParam.emplace_back(colorTopicName, colorTopicName_param    );
         rosStringParam.emplace_back(depthTopicName, depthTopicName_param    );
-        rosStringParam.emplace_back(cInfoTopicName, depthInfoTopicName_param);
-        rosStringParam.emplace_back(dInfoTopicName, colorInfoTopicName_param);
+        rosStringParam.emplace_back(cInfoTopicName, colorInfoTopicName_param);
+        rosStringParam.emplace_back(dInfoTopicName, depthInfoTopicName_param);
 
         for (i = 0; i < rosStringParam.size(); i++)
         {
