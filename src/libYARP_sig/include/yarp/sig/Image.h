@@ -33,7 +33,7 @@ namespace yarp {
          * @param pad is the desired padding (e.g. 8 bytes)
          * @return the number of extra bytes to add at the end of the image row
          */
-        inline int PAD_BYTES (size_t len, size_t pad) {
+        inline size_t PAD_BYTES (size_t len, size_t pad) {
             const size_t rem = len % pad;
             return (rem != 0) ? (pad - rem) : rem;
         }
