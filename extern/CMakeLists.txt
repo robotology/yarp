@@ -4,16 +4,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-# Do not build extern stuff with experimental warnings
-if(YARP_EXPERIMENTAL_WARNINGS)
-  string(REPLACE "${EXPERIMENTAL_WARNING_FLAGS} " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-endif()
-
-# Do not build with -Wsuggest-override
-string(REPLACE "-Wsuggest-override" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-if(CXX_HAS_WSUGGEST_OVERRIDE)
-  string(APPEND CMAKE_CXX_FLAGS " -Wno-suggest-override")
-endif()
+# disable all warnings for current folder and subfolders
+set(CMAKE_C_FLAGS -w)
+set(CMAKE_CXX_FLAGS -w)
 
 # TinyXML
 if(YARP_BUILD_TINYXML)

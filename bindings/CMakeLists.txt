@@ -11,6 +11,10 @@ include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
 include(GNUInstallDirs)
 
+# disable all warnings for current folder and subfolders
+set(CMAKE_C_FLAGS -w)
+set(CMAKE_CXX_FLAGS -w)
+
 if(NOT YARP_VERSION)
 
   #############################################################################
@@ -131,40 +135,12 @@ if(YARP_COMPILE_BINDINGS)
   # Include SWIG use file
   include(${SWIG_USE_FILE})
 
-  set(SWIG_YARP_LIBRARIES YARP::YARP_OS YARP::YARP_sig YARP::YARP_dev YARP::YARP_init)
-  # link_libraries(YARP::YARP_OS YARP::YARP_sig YARP::YARP_dev YARP::YARP_init)
+  set(SWIG_YARP_LIBRARIES YARP::YARP_OS
+                          YARP::YARP_sig
+                          YARP::YARP_dev
+                          YARP::YARP_init)
 
   set(SWIG_BINDINGS_SOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/yarp.i")
-
-  #############################################################################
-  ## Disable deprecated warnings, since we are building bindings also for
-  ## deprecated methods
-
-  if(NOT YARP_NO_DEPRECATED)
-    if(MSVC)
-      # TODO: Move to target_compile_definitions
-      add_definitions(/wd4996)
-    else()
-      check_cxx_compiler_flag("-Wno-deprecated-declarations" CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
-      if(CXX_HAS_WNO_DEPRECATED_DECLARATIONS)
-        # TODO: Move to target_compile_definitions
-        add_definitions(-Wno-deprecated-declarations)
-      endif()
-    endif()
-  endif()
-
-
-  #############################################################################
-  ## Disable suggest-override warnings
-
-  if(NOT MSVC)
-    check_cxx_compiler_flag("-Wno-suggest-override" CXX_HAS_WNO_SUGGEST_OVERRIDE)
-    if(CXX_HAS_WNO_SUGGEST_OVERRIDE)
-      # TODO: Move to target_compile_definitions
-      add_definitions(-Wno-suggest-override)
-    endif()
-  endif()
-
 
   #############################################################################
   # Create bindings for enabled languages

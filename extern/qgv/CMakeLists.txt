@@ -33,25 +33,6 @@ set(qgvcore_HDRS qgv/QGVCore/qgv.h
 
 add_definitions(-DQGVCORE_LIB -DWITH_CGRAPH)
 
-if(NOT MSVC)
-  check_cxx_compiler_flag("-Wno-undef" CXX_HAS_WNO_UNDEF)
-  if(CXX_HAS_WNO_UNDEF)
-    set_property(SOURCE ${qgvcore_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-undef")
-  endif()
-  check_cxx_compiler_flag("-Wno-reorder" CXX_HAS_WNO_REORDER)
-  if(CXX_HAS_WNO_REORDER)
-    set_property(SOURCE ${qgvcore_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-reorder")
-  endif()
-  check_cxx_compiler_flag("-Wno-unused-parameter" CXX_HAS_WNO_UNUSED_PARAMETER)
-  if(CXX_HAS_WNO_UNUSED_PARAMETER)
-    set_property(SOURCE ${qgvcore_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-unused-parameter")
-  endif()
-  check_cxx_compiler_flag("-Wno-redundant-decls" CXX_HAS_WNO_REDUNDANT_DECLS)
-  if(CXX_HAS_WNO_REDUNDANT_DECLS)
-    set_property(SOURCE ${qgvcore_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-redundant-decls")
-  endif()
-endif()
-
 include_directories(${Graphviz_INCLUDE_DIR}
                     ${CMAKE_CURRENT_SOURCE_DIR}/qgv/QGVCore
                     ${CMAKE_CURRENT_SOURCE_DIR}/qgv/QGVCore/private
