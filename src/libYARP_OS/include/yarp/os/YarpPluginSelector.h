@@ -36,18 +36,14 @@ private:
 
 public:
     /**
-     *
      * Destructor.
-     *
      */
     virtual ~YarpPluginSelector() {}
 
     /**
-     *
      * Determine whether a plugin is of interest.
      *
      * @return true if plugin is of interest.  By default, always returns true.
-     *
      */
     virtual bool select(Searchable& options)
     {
@@ -57,18 +53,14 @@ public:
 
 
     /**
-     *
      * Find plugin configuration files, and run [plugin] sections
      * through the select method.
-     *
      */
     void scan();
 
     /**
-     *
      * @return a list of plugin sections that passed the select method
      * during the last call to scan.
-     *
      */
     Bottle getSelectedPlugins() const
     {
@@ -77,10 +69,8 @@ public:
     }
 
     /**
-     *
      * @return possible locations for plugin libraries found in [search]
      * sections.
-     *
      */
     Bottle getSearchPath() const
     {
