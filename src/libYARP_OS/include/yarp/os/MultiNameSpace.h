@@ -26,23 +26,23 @@ public:
 
     bool activate(bool force = false);
 
-    virtual Contact getNameServerContact() const override;
+    Contact getNameServerContact() const override;
 
-    virtual Contact queryName(const std::string& name) override;
+    Contact queryName(const std::string& name) override;
 
-    virtual Contact registerName(const std::string& name) override;
+    Contact registerName(const std::string& name) override;
 
-    virtual Contact registerContact(const Contact& contact) override;
+    Contact registerContact(const Contact& contact) override;
 
-    virtual Contact unregisterName(const std::string& name) override;
+    Contact unregisterName(const std::string& name) override;
 
-    virtual Contact unregisterContact(const Contact& contact) override;
+    Contact unregisterContact(const Contact& contact) override;
 
     virtual bool setProperty(const std::string& name,
                              const std::string& key,
                              const Value& value) override;
 
-    virtual Value* getProperty(const std::string& name, const std::string& key) override;
+    Value* getProperty(const std::string& name, const std::string& key) override;
 
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
@@ -68,13 +68,13 @@ public:
                                                   const Contact& dest,
                                                   ContactStyle style) override;
 
-    virtual bool localOnly() const override;
+    bool localOnly() const override;
 
-    virtual bool usesCentralServer() const override;
+    bool usesCentralServer() const override;
 
-    virtual bool serverAllocatesPortNumbers() const override;
+    bool serverAllocatesPortNumbers() const override;
 
-    virtual bool connectionHasNameOfEndpoints() const override;
+    bool connectionHasNameOfEndpoints() const override;
 
     /**
      *

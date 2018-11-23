@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 #endif
     engine.load(QUrl("qrc:/qml/QtYARPScope/main.qml"));
     QObject *topLevel = engine.rootObjects().value(0);
-    QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
+    auto* window = qobject_cast<QQuickWindow *>(topLevel);
 
     // Pack the argc and argv to a QStringList so we can pass them easily to the plugin
     QStringList params;

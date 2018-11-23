@@ -27,60 +27,60 @@ public:
     /** @{ */
 
     // Documented in Carrier
-    virtual Carrier* create() const override = 0;
+    Carrier* create() const override = 0;
 
     // Documented in Carrier
-    virtual std::string getName() const override = 0;
+    std::string getName() const override = 0;
 
     // Documented in Carrier
-    virtual bool checkHeader(const yarp::os::Bytes& header) override = 0;
+    bool checkHeader(const yarp::os::Bytes& header) override = 0;
 
     // Documented in Carrier
-    virtual void setParameters(const yarp::os::Bytes& header) override;
+    void setParameters(const yarp::os::Bytes& header) override;
 
     // Documented in Carrier
-    virtual void getHeader(yarp::os::Bytes& header) const override = 0;
+    void getHeader(yarp::os::Bytes& header) const override = 0;
 
     // Documented in Carrier
-    virtual void setCarrierParams(const yarp::os::Property& params) override;
+    void setCarrierParams(const yarp::os::Property& params) override;
     // Documented in Carrier
-    virtual void getCarrierParams(yarp::os::Property& params) const override;
+    void getCarrierParams(yarp::os::Property& params) const override;
 
     /** @} */
     /** @{ */
 
     // Documented in Carrier
-    virtual bool isConnectionless() const override;
+    bool isConnectionless() const override;
     // Documented in Carrier
-    virtual bool supportReply() const override;
+    bool supportReply() const override;
     // Documented in Carrier
-    virtual bool canAccept() const override;
+    bool canAccept() const override;
     // Documented in Carrier
-    virtual bool canOffer() const override;
+    bool canOffer() const override;
     // Documented in Carrier
-    virtual bool isTextMode() const override;
+    bool isTextMode() const override;
     // Documented in Carrier
-    virtual bool requireAck() const override;
+    bool requireAck() const override;
     // Documented in Carrier
-    virtual bool canEscape() const override;
+    bool canEscape() const override;
     // Documented in Carrier
-    virtual bool isLocal() const override;
+    bool isLocal() const override;
     // Documented in Carrier
-    virtual std::string toString() const override;
+    std::string toString() const override;
 
     // Documented in Carrier
-    virtual bool isActive() const override;
+    bool isActive() const override;
 
     /** @} */
     /** @{ */
     // Sender methods
 
     // Documented in Carrier
-    virtual bool prepareSend(ConnectionState& proto) override;
+    bool prepareSend(ConnectionState& proto) override;
     // Documented in Carrier
-    virtual bool sendHeader(ConnectionState& proto) override;
+    bool sendHeader(ConnectionState& proto) override;
     // Documented in Carrier
-    virtual bool expectReplyToHeader(ConnectionState& proto) override;
+    bool expectReplyToHeader(ConnectionState& proto) override;
     // Documented in Carrier
     virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer);
 
@@ -89,17 +89,17 @@ public:
     // Receiver methods
 
     // Documented in Carrier
-    virtual bool expectExtraHeader(ConnectionState& proto) override;
+    bool expectExtraHeader(ConnectionState& proto) override;
     // Documented in Carrier
-    virtual bool respondToHeader(ConnectionState& proto) override = 0; // left abstract, no good default
+    bool respondToHeader(ConnectionState& proto) override = 0; // left abstract, no good default
     // Documented in Carrier
-    virtual bool expectIndex(ConnectionState& proto) override;
+    bool expectIndex(ConnectionState& proto) override;
     // Documented in Carrier
-    virtual bool expectSenderSpecifier(ConnectionState& proto) override;
+    bool expectSenderSpecifier(ConnectionState& proto) override;
     // Documented in Carrier
-    virtual bool sendAck(ConnectionState& proto) override;
+    bool sendAck(ConnectionState& proto) override;
     // Documented in Carrier
-    virtual bool expectAck(ConnectionState& proto) override;
+    bool expectAck(ConnectionState& proto) override;
 
     /** @} */
     /** @{ */
@@ -150,7 +150,7 @@ protected:
     void createStandardHeader(int specifier, yarp::os::Bytes& header) const;
 
     // Documented in Carrier
-    virtual bool write(ConnectionState& proto, SizedWriter& writer) override;
+    bool write(ConnectionState& proto, SizedWriter& writer) override;
 
     bool sendConnectionStateSpecifier(ConnectionState& proto);
     bool sendSenderSpecifier(ConnectionState& proto);

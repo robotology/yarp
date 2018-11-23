@@ -15,8 +15,8 @@
 #include <glib.h>
 
 #include <gst/app/gstappsink.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 //#define debug_time 1
 
@@ -31,19 +31,13 @@ using namespace yarp::os;
 
 struct data_for_gst_callback
 {
-    data_for_gst_callback() :
-        m(nullptr),
-        img(nullptr),
-        isNew(false),
-        s(nullptr),
-        isReq(false)
-    {}
+    data_for_gst_callback() = default;
 
-    Mutex *m;
-    ImageOf<PixelRgb> *img;
-    bool isNew;
-    Semaphore *s;
-    bool isReq;
+    Mutex *m{nullptr};
+    ImageOf<PixelRgb> *img{nullptr};
+    bool isNew{false};
+    Semaphore *s{nullptr};
+    bool isReq{false};
 };
 //-------------------------------------------------------------------
 //---------------  CALLBACK FUNCTIONS -------------------------------
@@ -177,9 +171,9 @@ GstFlowReturn new_sample(GstAppSink *appsink, gpointer user_data)
 
 #endif
 
-    data_for_gst_callback *dec_data = (data_for_gst_callback*)user_data;
+    auto* dec_data = (data_for_gst_callback*)user_data;
 
-    GstSample *sample = NULL;
+    GstSample *sample = nullptr;
     g_signal_emit_by_name (appsink, "pull-sample", &sample, NULL);
     if(!sample)
     {
@@ -324,7 +318,7 @@ public:
 
     bool istantiateElements()
     {
-        gst_init(NULL, NULL);
+        gst_init(nullptr, nullptr);
         pipeline = gst_pipeline_new ("video-player");
         source   = gst_element_factory_make ("udpsrc",       "video-source");
         jitterBuff = gst_element_factory_make ("rtpjitterbuffer", "jitterBuffer");
@@ -358,10 +352,10 @@ public:
         GstAppSinkCallbacks cbs; // Does this need to be kept alive?
 
         // Set Video Sink callback methods
-        cbs.eos = NULL;
-        cbs.new_preroll = NULL;
+        cbs.eos = nullptr;
+        cbs.new_preroll = nullptr;
         cbs.new_sample = &new_sample;
-        gst_app_sink_set_callbacks( GST_APP_SINK( sink ), &cbs, &gst_cbk_data, NULL );
+        gst_app_sink_set_callbacks( GST_APP_SINK( sink ), &cbs, &gst_cbk_data, nullptr );
 
   /*      //3) add watch ( a message handler)
         bus = gst_pipeline_get_bus (GST_PIPELINE (pipeline));

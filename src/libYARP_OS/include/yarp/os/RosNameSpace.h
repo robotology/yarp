@@ -27,13 +27,13 @@ public:
 
     virtual ~RosNameSpace();
 
-    virtual Contact getNameServerContact() const override;
+    Contact getNameServerContact() const override;
 
-    virtual Contact queryName(const std::string& name) override;
-    virtual Contact registerName(const std::string& name) override;
-    virtual Contact registerContact(const Contact& contact) override;
-    virtual Contact unregisterName(const std::string& name) override;
-    virtual Contact unregisterContact(const Contact& contact) override;
+    Contact queryName(const std::string& name) override;
+    Contact registerName(const std::string& name) override;
+    Contact registerContact(const Contact& contact) override;
+    Contact unregisterName(const std::string& name) override;
+    Contact unregisterContact(const Contact& contact) override;
     virtual Contact registerAdvanced(const Contact& contact,
                                      NameStore* store) override;
     virtual Contact unregisterAdvanced(const std::string& name,
@@ -71,10 +71,10 @@ public:
                               ContactStyle style,
                               bool activeRegistration);
 
-    virtual bool localOnly() const override;
-    virtual bool usesCentralServer() const override;
-    virtual bool serverAllocatesPortNumbers() const override;
-    virtual bool connectionHasNameOfEndpoints() const override;
+    bool localOnly() const override;
+    bool usesCentralServer() const override;
+    bool serverAllocatesPortNumbers() const override;
+    bool connectionHasNameOfEndpoints() const override;
 
     virtual Contact detectNameServer(bool useDetectedServer,
                                      bool& scanNeeded,
@@ -96,7 +96,7 @@ public:
     static std::string fromRosNodeName(const std::string& name);
     static Contact rosify(const Contact& contact);
 
-    virtual void run() override;
+    void run() override;
 
 private:
     Contact contact;

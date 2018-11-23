@@ -50,11 +50,11 @@ void CustomTree::mousePressEvent(QMouseEvent *event)
     // If the selected Item exists
     if (selectedItem){
 
-        QMimeData *mimeData = new QMimeData;
+        auto* mimeData = new QMimeData;
         //qDebug() << "DRAG " << selectedItem->data(0,Qt::UserRole).toInt();
         mimeData->setText(QString("%1").arg(selectedItem->data(0,Qt::UserRole).toInt()));
         // Create drag
-        QDrag *drag = new QDrag(this);
+        auto* drag = new QDrag(this);
         drag->setMimeData(mimeData);
 
 

@@ -113,23 +113,23 @@ private:
 public:
     virtual ~NullStream();
 
-    virtual InputStream& getInputStream() override;
-    virtual OutputStream& getOutputStream() override;
+    InputStream& getInputStream() override;
+    OutputStream& getOutputStream() override;
 
-    virtual const Contact& getLocalAddress() const override;
-    virtual const Contact& getRemoteAddress() const override;
+    const Contact& getLocalAddress() const override;
+    const Contact& getRemoteAddress() const override;
 
-    virtual bool isOk() const override;
-    virtual void reset() override;
-    virtual void close() override;
-    virtual void beginPacket() override;
-    virtual void endPacket() override;
+    bool isOk() const override;
+    void reset() override;
+    void close() override;
+    void beginPacket() override;
+    void endPacket() override;
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(Bytes& b) override;
+    yarp::conf::ssize_t read(Bytes& b) override;
 
     using yarp::os::OutputStream::write;
-    virtual void write(const Bytes& b) override;
+    void write(const Bytes& b) override;
 };
 
 } // namespace os

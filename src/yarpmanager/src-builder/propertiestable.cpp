@@ -41,7 +41,7 @@ PropertiesTable::PropertiesTable(Manager *manager,QWidget *parent) :
     nodeCombo(nullptr),
     deployerCombo(nullptr)
 {
-    QHBoxLayout *lay = new QHBoxLayout(this);
+    auto* lay = new QHBoxLayout(this);
     propertiesTab = new QTabWidget(this);
     appProperties = new QTreeWidget(this);
     moduleProperties = new QTreeWidget(this);
@@ -179,7 +179,7 @@ void PropertiesTable::showModuleTab(ModuleItem *mod)
     }
     ResourcePContainer resources = manager->getKnowledgeBase()->getResources();
     for(auto& resource : resources) {
-        Computer* comp = dynamic_cast<Computer*>(resource);
+        auto* comp = dynamic_cast<Computer*>(resource);
         if(comp && !compareString(comp->getName(), "localhost")){
             nodeCombo->addItem(comp->getName());
         }
@@ -200,7 +200,7 @@ void PropertiesTable::showModuleTab(ModuleItem *mod)
      for(int i=0;i<mod->getInnerModule()->argumentCount();i++){
          Argument a = mod->getInnerModule()->getArgumentAt(i);
          QTreeWidgetItem *it = new QTreeWidgetItem(modParams,QStringList() << a.getParam());
-         QComboBox *paramCombo = new QComboBox();
+         auto* paramCombo = new QComboBox();
          paramCombo->setEditable(true);
          paramCombo->addItem(a.getValue());
          if(strcmp(a.getDefault(),a.getValue()) != 0 ){

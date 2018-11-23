@@ -19,7 +19,7 @@ bool yarp::os::NullConnectionReader::expectBlock(char *data, size_t len)
 std::string yarp::os::NullConnectionReader::expectText(const char terminatingChar)
 {
     YARP_UNUSED(terminatingChar);
-    return "";
+    return {};
 }
 
 std::int8_t yarp::os::NullConnectionReader::expectInt8()
@@ -79,7 +79,7 @@ yarp::os::ConnectionWriter *yarp::os::NullConnectionReader::getWriter()
 
 yarp::os::Bytes yarp::os::NullConnectionReader::readEnvelope()
 {
-    return Bytes(nullptr, 0);
+    return {nullptr, 0};
 }
 
 yarp::os::Portable *yarp::os::NullConnectionReader::getReference() const

@@ -13,6 +13,7 @@
 #include <mpi.h>
 
 #include <cstdlib>
+#include <utility>
 #include <unistd.h>
 
 using namespace yarp::os;
@@ -20,13 +21,13 @@ using namespace yarp::os;
 /* --------------------------------------- */
 /* MpiControlThread */
 
-yarp::os::MpiControlThread *MpiControl = NULL;
+yarp::os::MpiControlThread *MpiControl = nullptr;
 
 void finalizeMPI() {
     if (MpiControl) {
         MpiControl->finalize();
         delete MpiControl;
-        MpiControl = NULL;
+        MpiControl = nullptr;
     }
     int ct = 0;
     int finalized;
@@ -60,7 +61,7 @@ bool MpiControlThread::threadInit() {
     // We need full multithread support for MPI
     int requested = MPI_THREAD_MULTIPLE;
     // Passing NULL for argc/argv pointers is fine for MPI-2
-    int err = MPI_Init_thread(NULL, NULL, requested , &provided);
+    int err = MPI_Init_thread(nullptr, nullptr, requested , &provided);
     if (err != MPI_SUCCESS ) {
         yError("MpiControlThread: Couldn't initialize MPI\n");
         return false;
@@ -80,8 +81,8 @@ bool MpiControlThread::threadInit() {
 /* --------------------------------------- */
 /* MpiComm */
 
-MpiComm::MpiComm(std::string name) : name(name) {
-    if (MpiControl == NULL) {
+MpiComm::MpiComm(std::string name) : name(std::move(name)) {
+    if (MpiControl == nullptr) {
         MpiControl = new yarp::os::MpiControlThread;
     }
     if (! MpiControl->isRunning()) {

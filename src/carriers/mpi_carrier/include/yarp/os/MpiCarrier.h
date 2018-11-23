@@ -40,32 +40,32 @@ protected:
 public:
     MpiCarrier() ;
     virtual ~MpiCarrier();
-    virtual void close() override = 0;
-    virtual Carrier *create() const override = 0;
-    virtual std::string getName() const override = 0;
+    void close() override = 0;
+    Carrier *create() const override = 0;
+    std::string getName() const override = 0;
 
     virtual void createStream(bool sender) = 0;
 
-    virtual bool isConnectionless() const override {
+    bool isConnectionless() const override {
         return false;
     }
 
-    virtual bool canEscape() const override {
+    bool canEscape() const override {
         return true;
     }
 
-    virtual bool supportReply() const override = 0;
+    bool supportReply() const override = 0;
 
 
-    virtual void getHeader(Bytes& header) const override;
-    virtual bool checkHeader(const Bytes& header) override;
+    void getHeader(Bytes& header) const override;
+    bool checkHeader(const Bytes& header) override;
 
 
-    virtual bool sendHeader(ConnectionState& proto) override;
-    virtual bool expectSenderSpecifier(ConnectionState& proto) override;
+    bool sendHeader(ConnectionState& proto) override;
+    bool expectSenderSpecifier(ConnectionState& proto) override;
 
-    virtual bool respondToHeader(ConnectionState& proto) override;
-    virtual bool expectReplyToHeader(ConnectionState& proto) override;
+    bool respondToHeader(ConnectionState& proto) override;
+    bool expectReplyToHeader(ConnectionState& proto) override;
 
 
     /////////////////////////////////////////////////
@@ -76,22 +76,22 @@ public:
         return proto.os().isOk();
     }
 
-    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer) override {
+    bool sendIndex(ConnectionState& proto, SizedWriter& writer) override {
         return true;
     }
 
-    virtual bool expectIndex(ConnectionState& proto) override {
+    bool expectIndex(ConnectionState& proto) override {
         return true;
     }
 
     /////////////////////////////////////////////////
     // Acknowledgements, we don't do them
 
-    virtual bool sendAck(ConnectionState& proto) override {
+    bool sendAck(ConnectionState& proto) override {
         return true;
     }
 
-    virtual bool expectAck(ConnectionState& proto) override {
+    bool expectAck(ConnectionState& proto) override {
         return true;
     }
 

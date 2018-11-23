@@ -51,7 +51,7 @@ bool ModuleInterface::addPortmap(Portmap &portmap)
 
 bool ModuleInterface::removePortmap(Portmap& portmap)
 {
-    PortmapIterator itr = findPortmap(portmap);
+    auto itr = findPortmap(portmap);
     if(itr == portmaps.end())
         return true;
     portmaps.erase(itr);
@@ -103,12 +103,12 @@ Application::Application(const Application &app) : Node(app)
 }
 
 
-Application::~Application() { }
+Application::~Application() = default;
 
 
 Node* Application::clone()
 {
-    Application* app = new Application(*this);
+    auto* app = new Application(*this);
     return app;
 }
 
@@ -122,7 +122,7 @@ bool Application::addImodule(ModuleInterface &imod)
 
 bool Application::removeImodule(ModuleInterface& imod)
 {
-    IModuleIterator itr = findImodule(imod);
+    auto itr = findImodule(imod);
     if(itr == Imodules.end())
         return true;
     Imodules.erase(itr);
@@ -133,14 +133,14 @@ bool Application::removeImodule(ModuleInterface& imod)
 Connection& Application::addConnection(Connection &cnn)
 {
     connections.push_back(cnn);
-    CnnIterator itr = findConnection(cnn);
+    auto itr = findConnection(cnn);
     return (*itr);
 }
 
 
 bool Application::removeConnection(Connection& cnn)
 {
-    CnnIterator itr = findConnection(cnn);
+    auto itr = findConnection(cnn);
     if(itr == connections.end())
         return true;
     connections.erase(itr);
@@ -151,13 +151,13 @@ bool Application::removeConnection(Connection& cnn)
 Arbitrator& Application::addArbitrator(Arbitrator &arb)
 {
     arbitrators.push_back(arb);
-    ArbIterator itr = findArbitrator(arb);
+    auto itr = findArbitrator(arb);
     return(*itr);
 }
 
 bool Application::removeArbitrator(Arbitrator& arb)
 {
-    ArbIterator itr = findArbitrator(arb);
+    auto itr = findArbitrator(arb);
     if(itr == arbitrators.end())
         return true;
     arbitrators.erase(itr);
@@ -196,7 +196,7 @@ bool Application::addIapplication(ApplicationInterface &iapp)
 
 bool Application::removeIapplication(ApplicationInterface& iapp)
 {
-    IApplicationIterator itr = findIapplication(iapp);
+    auto itr = findIapplication(iapp);
     if(itr == Iapplications.end())
         return true;
     Iapplications.erase(itr);
@@ -212,7 +212,7 @@ bool Application::addResource(ResYarpPort &res)
 
 bool Application::removeResource(ResYarpPort& res)
 {
-    ResourceIterator itr = findResource(res);
+    auto itr = findResource(res);
     if(itr == resources.end())
         return true;
     resources.erase(itr);

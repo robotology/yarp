@@ -40,6 +40,7 @@
 #include "include/utils.h"
 
 #include <iostream>
+#include <utility>
 #include "include/mainwindow.h"
 #include "include/log.h"
 
@@ -67,7 +68,7 @@ Utilities::~Utilities()
 /**********************************************************/
 Utilities::Utilities(string name, bool _add_prefix, QObject *parent) : QObject(parent),
     dir_count(0),
-    moduleName(name),
+    moduleName(std::move(name)),
     add_prefix(_add_prefix),
     partDetails(nullptr),
     speed(1.0),

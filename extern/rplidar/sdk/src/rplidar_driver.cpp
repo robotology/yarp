@@ -788,7 +788,7 @@ u_result RPlidarDriverSerialImpl::_waitCapsuledNode(rplidar_response_capsule_mea
 u_result RPlidarDriverSerialImpl::_sendCommand(_u8 cmd, const void * payload, size_t payloadsize)
 {
     _u8 pkt_header[10];
-    rplidar_cmd_packet_t * header = reinterpret_cast<rplidar_cmd_packet_t * >(pkt_header);
+    auto* header = reinterpret_cast<rplidar_cmd_packet_t * >(pkt_header);
     _u8 checksum = 0;
 
     if (!_isConnected) return RESULT_OPERATION_FAIL;

@@ -58,7 +58,7 @@ public:
      * Callback function.
      * @param b is the Bottle being received.
      */
-    virtual void onRead(Bottle& b) override;
+    void onRead(Bottle& b) override;
 };
 
 
@@ -108,14 +108,14 @@ public:
 
     virtual ~ServerSerial();
 
-    virtual bool send(const Bottle& msg) override;
-    virtual bool send(char *msg, size_t size) override;
-    virtual bool receive(Bottle& msg) override;
-    virtual int receiveChar(char& c) override;
-    virtual int flush () override;
-    virtual int receiveLine(char* line, const int MaxLineLength) override;
-    virtual int receiveBytes(unsigned char* bytes, const int size) override;
-    virtual bool setDTR(bool enable) override;
+    bool send(const Bottle& msg) override;
+    bool send(char *msg, size_t size) override;
+    bool receive(Bottle& msg) override;
+    int receiveChar(char& c) override;
+    int flush () override;
+    int receiveLine(char* line, const int MaxLineLength) override;
+    int receiveBytes(unsigned char* bytes, const int size) override;
+    bool setDTR(bool enable) override;
 
     /**
     * Default open() method.
@@ -127,7 +127,7 @@ public:
     * Close the device driver by deallocating all resources and closing ports.
     * @return true if successful or false otherwise.
     */
-    virtual bool close() override;
+    bool close() override;
 
     /**
      * Open the device driver.
@@ -139,12 +139,12 @@ public:
      * and all parameters requied by the wrapped device driver.
      * @return true iff the object could be configured.
      */
-    virtual bool open(Searchable& prop) override;
+    bool open(Searchable& prop) override;
 
     /**
      * The thread main loop deals with writing on ports here.
      */
-    virtual void run() override;
+    void run() override;
 };
 
 #endif // YARP_DEV_SERVERSERIAL_H

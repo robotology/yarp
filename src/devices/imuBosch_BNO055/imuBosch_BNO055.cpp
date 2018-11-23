@@ -75,7 +75,7 @@ BoschIMU::BoschIMU() : PeriodicThread(0.02),
     errorCounter.zero();
 }
 
-BoschIMU::~BoschIMU() { }
+BoschIMU::~BoschIMU() = default;
 
 
 bool BoschIMU::open(yarp::os::Searchable& config)

@@ -30,8 +30,8 @@ class YARP_OS_API Portable : public PortReader, public PortWriter
 public:
     // reiterate the key inherited virtual methods, just as a reminder
 
-    virtual bool read(ConnectionReader& reader) override = 0;
-    virtual bool write(ConnectionWriter& writer) const override = 0;
+    bool read(ConnectionReader& reader) override = 0;
+    bool write(ConnectionWriter& writer) const override = 0;
 
     virtual Type getType() const;
 

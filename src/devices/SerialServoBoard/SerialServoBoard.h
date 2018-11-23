@@ -72,16 +72,16 @@ public:
     bool getRefAccelerations(double *accs) override;
     bool stop(int j) override;
     bool stop() override;
-    virtual bool positionMove(const int n_joint, const int *joints, const double *refs) override;
-    virtual bool relativeMove(const int n_joint, const int *joints, const double *deltas) override;
-    virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flags) override;
-    virtual bool setRefSpeeds(const int n_joint, const int *joints, const double *spds) override;
-    virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs) override;
-    virtual bool getRefSpeeds(const int n_joint, const int *joints, double *spds) override;
-    virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs) override;
-    virtual bool stop(const int n_joint, const int *joints) override;
+    bool positionMove(const int n_joint, const int *joints, const double *refs) override;
+    bool relativeMove(const int n_joint, const int *joints, const double *deltas) override;
+    bool checkMotionDone(const int n_joint, const int *joints, bool *flags) override;
+    bool setRefSpeeds(const int n_joint, const int *joints, const double *spds) override;
+    bool setRefAccelerations(const int n_joint, const int *joints, const double *accs) override;
+    bool getRefSpeeds(const int n_joint, const int *joints, double *spds) override;
+    bool getRefAccelerations(const int n_joint, const int *joints, double *accs) override;
+    bool stop(const int n_joint, const int *joints) override;
 
-    virtual bool open(Searchable& config) override {
+    bool open(Searchable& config) override {
         if(config.check("help")==true) {
           printf("SerialServoBoard Available Options:\n");
           printf(" -board NAME, where name is one of ssc32, minissc, pontech_sv203x, mondotronic_smi, parallax, pololu_usb_16servo, picopic\n");
@@ -153,7 +153,7 @@ public:
         return true;
     }
 
-    virtual bool close() override {
+    bool close() override {
         dd.close();
 
         free(positions);

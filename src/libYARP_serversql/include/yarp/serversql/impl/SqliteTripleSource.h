@@ -239,7 +239,7 @@ public:
     }
 
 
-    virtual void begin(TripleContext *context) override {
+    void begin(TripleContext *context) override {
         int result = sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
         if (verbose) {
             printf("Query: BEGIN TRANSACTION;\n");
@@ -249,7 +249,7 @@ public:
         }
     }
 
-    virtual void end(TripleContext *context) override {
+    void end(TripleContext *context) override {
         int result = sqlite3_exec(db, "END TRANSACTION;", nullptr, nullptr, nullptr);
         if (verbose) {
             printf("Query: END TRANSACTION;\n");

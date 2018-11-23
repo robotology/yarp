@@ -43,7 +43,7 @@ public:
     virtual ~JoypadCtrlParser(){}
 
     bool         configure(yarp::dev::IJoypadController* interface);
-    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
+    bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
 class yarp::dev::JoypadControlServer: public yarp::dev::DeviceDriver,

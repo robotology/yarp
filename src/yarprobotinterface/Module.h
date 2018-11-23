@@ -33,24 +33,24 @@ public:
     virtual ~Module();
 
     // yarp::os::RFModule
-    virtual double getPeriod() override;
-    virtual bool updateModule() override;
-    virtual bool close() override;
-    virtual bool interruptModule() override;
-    virtual bool configure(yarp::os::ResourceFinder &rf) override;
+    double getPeriod() override;
+    bool updateModule() override;
+    bool close() override;
+    bool interruptModule() override;
+    bool configure(yarp::os::ResourceFinder &rf) override;
 
     using yarp::os::RFModule::attach;
-    virtual bool attach(yarp::os::RpcServer &source) override;
+    bool attach(yarp::os::RpcServer &source) override;
 
     // yarprobotinterfaceRpc
-    virtual std::string get_phase() override;
-    virtual int32_t get_level() override;
-    virtual bool is_ready() override;
-    virtual std::string get_robot() override;
+    std::string get_phase() override;
+    int32_t get_level() override;
+    bool is_ready() override;
+    std::string get_robot() override;
 
-    virtual std::string quit() override;
-    inline virtual std::string bye() override { return quit(); }
-    inline virtual std::string exit() override { return quit(); }
+    std::string quit() override;
+    inline std::string bye() override { return quit(); }
+    inline std::string exit() override { return quit(); }
 
 private:
     class Private;

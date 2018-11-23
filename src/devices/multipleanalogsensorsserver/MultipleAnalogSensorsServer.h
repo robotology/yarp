@@ -104,7 +104,7 @@ public:
     void run() override;
 
     /* MultipleAnalogSensorsMetadata */
-    virtual SensorRPCData getMetadata() override;
+    SensorRPCData getMetadata() override;
 };
 
 #endif

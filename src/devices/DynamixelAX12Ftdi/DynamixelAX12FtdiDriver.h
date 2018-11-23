@@ -173,14 +173,14 @@ public:
         @param config Config file containing string pairs for parameters
         @return true on success
      */
-    virtual bool open(yarp::os::Searchable& config) override;
+    bool open(yarp::os::Searchable& config) override;
 
     /** Close device
         Closes the device and shuts down connection.
 
         @return true on success
      */
-    virtual bool close(void) override;
+    bool close(void) override;
 
     /** Configure device online
         Configures parts of the device that can be configures online.
@@ -188,7 +188,7 @@ public:
         @param config Config file containing string pairs for parameters
         @return true on success
      */
-    virtual bool configure(yarp::os::Searchable& config) override;
+    bool configure(yarp::os::Searchable& config) override;
 
     /** Send instruction to device
         Send an instruction to a device of given ID. The instruction has to be a byte arry containing

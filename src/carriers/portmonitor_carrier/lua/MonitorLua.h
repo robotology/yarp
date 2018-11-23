@@ -102,7 +102,7 @@ public:
     virtual ~MonitorTrigger() { }
 
     // inherited from the yarp::os::RateThread
-    virtual void run () override {
+    void run () override {
         monitor->peerTrigged();
     }
 

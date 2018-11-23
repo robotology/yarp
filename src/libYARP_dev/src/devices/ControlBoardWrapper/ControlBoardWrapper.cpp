@@ -71,7 +71,7 @@ void ControlBoardWrapper::cleanup_yarpPorts()
     rpcData.destroy();
 }
 
-ControlBoardWrapper::~ControlBoardWrapper() { }
+ControlBoardWrapper::~ControlBoardWrapper() = default;
 
 bool ControlBoardWrapper::close()
 {
@@ -1118,7 +1118,7 @@ bool ControlBoardWrapper::getPidError(const PidControlTypeEnum& pidtype, int j, 
 
 bool ControlBoardWrapper::getPidErrors(const PidControlTypeEnum& pidtype, double *errs)
 {
-    double * errors = new double [device.maxNumOfJointsInDevices];
+    auto* errors = new double [device.maxNumOfJointsInDevices];
     
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
@@ -1167,7 +1167,7 @@ bool ControlBoardWrapper::getPidOutput(const PidControlTypeEnum& pidtype, int j,
 
 bool ControlBoardWrapper::getPidOutputs(const PidControlTypeEnum& pidtype, double *outs)
 {
-    double *outputs = new double[device.maxNumOfJointsInDevices];
+    auto* outputs = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -1278,7 +1278,7 @@ bool ControlBoardWrapper::getPidReference(const PidControlTypeEnum& pidtype, int
 
 bool ControlBoardWrapper::getPidReferences(const PidControlTypeEnum& pidtype, double *refs) 
 {
-    double *references = new double[device.maxNumOfJointsInDevices];
+    auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -1325,7 +1325,7 @@ bool ControlBoardWrapper::getPidErrorLimit(const PidControlTypeEnum& pidtype, in
 
 bool ControlBoardWrapper::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits) 
 {
-    double *lims = new double[device.maxNumOfJointsInDevices];
+    auto* lims = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -1590,7 +1590,7 @@ bool ControlBoardWrapper::getTargetPosition(const int j, double* ref)
 */
 bool ControlBoardWrapper::getTargetPositions(double *spds) 
 {
-    double *targets = new double[device.maxNumOfJointsInDevices];
+    auto* targets = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -2186,7 +2186,7 @@ bool ControlBoardWrapper::getRefSpeed(int j, double *ref) {
 */
 bool ControlBoardWrapper::getRefSpeeds(double *spds) 
 {
-    double *references = new double[device.maxNumOfJointsInDevices];
+    auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -2321,7 +2321,7 @@ bool ControlBoardWrapper::getRefAcceleration(int j, double *acc) {
 */
 bool ControlBoardWrapper::getRefAccelerations(double *accs) 
 {
-    double *references = new double[device.maxNumOfJointsInDevices];
+    auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -2684,7 +2684,7 @@ bool ControlBoardWrapper::getEncoder(int j, double *v) {
 
 bool ControlBoardWrapper::getEncoders(double *encs) 
 {
-    double *encValues = new double[device.maxNumOfJointsInDevices];
+    auto* encValues = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -2717,8 +2717,8 @@ bool ControlBoardWrapper::getEncoders(double *encs)
 
 bool ControlBoardWrapper::getEncodersTimed(double *encs, double *t)
 {
-    double *encValues = new double[device.maxNumOfJointsInDevices];
-    double *tValues = new double[device.maxNumOfJointsInDevices];
+    auto* encValues = new double[device.maxNumOfJointsInDevices];
+    auto* tValues = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -2784,7 +2784,7 @@ bool ControlBoardWrapper::getEncoderSpeed(int j, double *sp) {
 
 bool ControlBoardWrapper::getEncoderSpeeds(double *spds)
 {
-    double *sValues = new double[device.maxNumOfJointsInDevices];
+    auto* sValues = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -2832,7 +2832,7 @@ bool ControlBoardWrapper::getEncoderAcceleration(int j, double *acc) {
 
 bool ControlBoardWrapper::getEncoderAccelerations(double *accs)
 {
-    double *aValues = new double[device.maxNumOfJointsInDevices];
+    auto* aValues = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -2886,7 +2886,7 @@ bool ControlBoardWrapper::getTemperature      (int m, double* val) {
 
 bool ControlBoardWrapper::getTemperatures     (double *vals) 
 {
-    double *temps = new double[device.maxNumOfJointsInDevices];
+    auto* temps = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -3169,7 +3169,7 @@ bool ControlBoardWrapper::getMotorEncoder(int m, double *v) {
 bool ControlBoardWrapper::getMotorEncoders(double *encs) 
 {
     
-    double *encValues = new double[device.maxNumOfJointsInDevices];
+    auto* encValues = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -3201,8 +3201,8 @@ bool ControlBoardWrapper::getMotorEncoders(double *encs)
 
 bool ControlBoardWrapper::getMotorEncodersTimed(double *encs, double *t)
 {
-    double *encValues = new double[device.maxNumOfJointsInDevices];
-    double *tValues = new double[device.maxNumOfJointsInDevices];
+    auto* encValues = new double[device.maxNumOfJointsInDevices];
+    auto* tValues = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -3268,7 +3268,7 @@ bool ControlBoardWrapper::getMotorEncoderSpeed(int m, double *sp) {
 
 bool ControlBoardWrapper::getMotorEncoderSpeeds(double *spds)
 {
-    double *sValues = new double[device.maxNumOfJointsInDevices];
+    auto* sValues = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -3316,7 +3316,7 @@ bool ControlBoardWrapper::getMotorEncoderAcceleration(int m, double *acc) {
 
 bool ControlBoardWrapper::getMotorEncoderAccelerations(double *accs)
 {
-    double *aValues = new double[device.maxNumOfJointsInDevices];
+    auto* aValues = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -3881,7 +3881,7 @@ bool ControlBoardWrapper::getJointType(int j, yarp::dev::JointTypeEnum& type)
 
 bool ControlBoardWrapper::getRefTorques(double *refs)
 {
-    double *references = new double[device.maxNumOfJointsInDevices];
+    auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -4087,7 +4087,7 @@ bool ControlBoardWrapper::getTorque(int j, double *t)
 
 bool ControlBoardWrapper::getTorques(double *t)
 {
-    double *trqs = new double[device.maxNumOfJointsInDevices];
+    auto* trqs = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -4137,8 +4137,8 @@ bool ControlBoardWrapper::getTorqueRange(int j, double *min, double *max)
 
 bool ControlBoardWrapper::getTorqueRanges(double *min, double *max)
 {
-    double *t_min = new double[device.maxNumOfJointsInDevices];
-    double *t_max = new double[device.maxNumOfJointsInDevices];
+    auto* t_min = new double[device.maxNumOfJointsInDevices];
+    auto* t_max = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -4491,7 +4491,7 @@ bool ControlBoardWrapper::getRefPosition(const int j, double* ref)
 
 bool ControlBoardWrapper::getRefPositions(double *spds) 
 {
-    double *references = new double[device.maxNumOfJointsInDevices];
+    auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -4650,7 +4650,7 @@ bool ControlBoardWrapper::getRefVelocity(const int j, double* vel)
 
 bool ControlBoardWrapper::getRefVelocities(double* vels)
 {
-    double *references = new double[device.maxNumOfJointsInDevices];
+    auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -4811,7 +4811,7 @@ bool ControlBoardWrapper::getInteractionModes(int n_joints, int *joints, yarp::d
 bool ControlBoardWrapper::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
     
-    yarp::dev::InteractionModeEnum *imodes = new yarp::dev::InteractionModeEnum[device.maxNumOfJointsInDevices];
+    auto* imodes = new yarp::dev::InteractionModeEnum[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -4974,7 +4974,7 @@ bool ControlBoardWrapper::getRefDutyCycle(int j, double *v)
 
 bool ControlBoardWrapper::getRefDutyCycles(double *v)
 {
-    double *references = new double[device.maxNumOfJointsInDevices];
+    auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -5024,7 +5024,7 @@ bool ControlBoardWrapper::getDutyCycle(int j, double *v)
 
 bool ControlBoardWrapper::getDutyCycles(double *v)
 {
-    double *dutyCicles = new double[device.maxNumOfJointsInDevices];
+    auto* dutyCicles = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -5064,7 +5064,7 @@ bool ControlBoardWrapper::getDutyCycles(double *v)
 
 bool ControlBoardWrapper::getCurrents(double *vals)
 {
-    double *currs = new double[device.maxNumOfJointsInDevices];
+    auto* currs = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -5142,8 +5142,8 @@ bool ControlBoardWrapper::getCurrentRange(int j, double *min, double *max)
 
 bool ControlBoardWrapper::getCurrentRanges(double *min, double *max)
 {
-    double *c_min = new double[device.maxNumOfJointsInDevices];
-    double *c_max = new double[device.maxNumOfJointsInDevices];
+    auto* c_min = new double[device.maxNumOfJointsInDevices];
+    auto* c_max = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -5253,7 +5253,7 @@ bool ControlBoardWrapper::setRefCurrents(const int n_joint, const int *joints, c
 
 bool ControlBoardWrapper::getRefCurrents(double *t)
 {
-    double *references = new double[device.maxNumOfJointsInDevices];
+    auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {

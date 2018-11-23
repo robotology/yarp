@@ -72,35 +72,35 @@ public:
         memset(&packet,0,sizeof(packet));
     }
 
-    virtual bool open(yarp::os::Searchable & config) override;
+    bool open(yarp::os::Searchable & config) override;
 
-    virtual bool close() override;
+    bool close() override;
 
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) override;
+    bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) override;
 
-    virtual bool getSound(yarp::sig::Sound& sound) override;
+    bool getSound(yarp::sig::Sound& sound) override;
 
-    virtual int height() const override { return m_h; }
+    int height() const override { return m_h; }
 
-    virtual int width() const override { return m_w; }
+    int width() const override { return m_w; }
 
     virtual bool getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                                 yarp::sig::Sound& sound) override;
 
 
-    virtual bool hasAudio() override {
+    bool hasAudio() override {
         return _hasAudio;
     }
 
-    virtual bool hasVideo() override {
+    bool hasVideo() override {
         return _hasVideo;
     }
 
-    virtual bool startRecording() override {
+    bool startRecording() override {
         return true;
     }
 
-    virtual bool stopRecording() override {
+    bool stopRecording() override {
         return true;
     }
 

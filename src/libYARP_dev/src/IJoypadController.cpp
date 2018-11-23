@@ -459,4 +459,4 @@ bool yarp::dev::IJoypadController::parseActions(const yarp::os::Searchable& cfg,
     return true;
 }
 
-yarp::dev::IJoypadEvent::~IJoypadEvent(){};
+yarp::dev::IJoypadEvent::~IJoypadEvent() = default;;

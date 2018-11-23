@@ -40,13 +40,13 @@ public:
      */
     virtual void check() const;
 
-    virtual InputStream& getInputStream() override;
-    virtual OutputStream& getOutputStream() override;
+    InputStream& getInputStream() override;
+    OutputStream& getOutputStream() override;
 
-    virtual const Contact& getLocalAddress() const override;
-    virtual const Contact& getRemoteAddress() const override;
+    const Contact& getLocalAddress() const override;
+    const Contact& getRemoteAddress() const override;
 
-    virtual void close() override;
+    void close() override;
 
     /**
      * Wrap the supplied stream.  If a stream is already wrapped,
@@ -74,13 +74,13 @@ public:
      */
     virtual bool isEmpty() const;
 
-    virtual bool isOk() const override;
+    bool isOk() const override;
 
-    virtual void reset() override;
+    void reset() override;
 
-    virtual void beginPacket() override;
+    void beginPacket() override;
 
-    virtual void endPacket() override;
+    void endPacket() override;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:

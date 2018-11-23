@@ -33,10 +33,10 @@ private:
     BufferedConnectionWriter writer;
     DummyConnectorReader reader;
     StringInputStream sis;
-    bool textMode;
+    bool textMode{false};
 public:
 
-    DummyConnectorHelper() : writer(false), textMode(false) {
+    DummyConnectorHelper() : writer(false) {
         reader.altWriter = &writer;
         reader.tmode = textMode;
     }

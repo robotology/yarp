@@ -20,11 +20,12 @@
 #include "ui_logtab.h"
 
 #include <QFontDatabase>
+#include <utility>
 
 LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _system_message, std::string _portName, QWidget *parent, int refreshRate) :
     QFrame(parent),
     ui(new Ui::LogTab),
-    portName(_portName),
+    portName(std::move(_portName)),
     theLogger(_theLogger),
     system_message(_system_message),
     displayYarprunTimestamp_enabled(true),
@@ -90,7 +91,7 @@ void LogTab::expandLines() {
 
 void LogTab::ctxMenu(const QPoint &pos)
 {
-    QMenu *menu = new QMenu;
+    auto* menu = new QMenu;
     menu->addAction(tr("Copy to clipboard"), this, SLOT(on_copy_to_clipboard_action()));
     menu->addAction(tr("Toggle line expansion"), this, SLOT(expandLines()));
     menu->exec(ui->listView->mapToGlobal(pos));

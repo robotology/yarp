@@ -19,7 +19,7 @@ using namespace yarp::os;
 
 /////////////// implement ImplemenPWMControl
 ImplementPWMControl::ImplementPWMControl(IPWMControlRaw *r) :
-    helper(0),
+    helper(nullptr),
     raw(r),
     doubleBuffManager(nullptr)
 {;}

@@ -26,7 +26,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LockGuard.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <fstream>
 #include <yarp/os/Publisher.h>
 #include <yarp/os/Subscriber.h>
@@ -57,10 +57,7 @@ Map2DServer::Map2DServer()
     m_rosNode = nullptr;
 }
 
-Map2DServer::~Map2DServer()
-{
-
-}
+Map2DServer::~Map2DServer() = default;
 
 void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& out)
 {

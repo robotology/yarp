@@ -24,8 +24,8 @@
 #include <yarp/os/LockGuard.h>
 #include <yarp/os/ResourceFinder.h>
 #include <iostream>
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdlib>
 #include <limits>
 
 #ifndef _USE_MATH_DEFINES
@@ -487,7 +487,7 @@ std::string RpLidar2::deviceinfo()
         if (result != RESULT_OK)
         {
             handleError(result);
-            return "";
+            return {};
         }
 
         for (unsigned char i : info.serialnum)
@@ -500,7 +500,7 @@ std::string RpLidar2::deviceinfo()
                "\nModel: "            + to_string(info.model) +
                "\nSerial Number:"     + serialNumber;
     }
-    return "";
+    return {};
 }
 
 bool RpLidar2::getDeviceInfo(std::string &device_info)

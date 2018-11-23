@@ -42,7 +42,7 @@ bool Node::removeSuc(Node* node)
 {
     __CHECK_NULLPTR(node);
 
-    LinkIterator it = findSuc(node);
+    auto it = findSuc(node);
     if(it != sucessors.end())
         sucessors.erase(it);
     return true;
@@ -58,7 +58,7 @@ void Node::removeAllSuc()
 
 bool Node::hasSuc(Node* node)
 {
-    LinkIterator it = findSuc(node);
+    auto it = findSuc(node);
     if(it == sucessors.end())
         return false;
     return true;

@@ -10,9 +10,7 @@
 #include <yarp/os/IConfig.h>
 
 
-yarp::os::IConfig::~IConfig()
-{
-}
+yarp::os::IConfig::~IConfig() = default;
 
 bool yarp::os::IConfig::open(yarp::os::Searchable& config)
 {

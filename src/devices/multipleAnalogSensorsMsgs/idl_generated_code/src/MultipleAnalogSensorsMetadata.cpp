@@ -18,8 +18,8 @@ class MultipleAnalogSensorsMetadata_getMetadata : public yarp::os::Portable {
 public:
   SensorRPCData _return;
   void init();
-  virtual bool write(yarp::os::ConnectionWriter& connection) const override;
-  virtual bool read(yarp::os::ConnectionReader& connection) override;
+  bool write(yarp::os::ConnectionWriter& connection) const override;
+  bool read(yarp::os::ConnectionReader& connection) override;
 };
 
 bool MultipleAnalogSensorsMetadata_getMetadata::write(yarp::os::ConnectionWriter& connection) const {

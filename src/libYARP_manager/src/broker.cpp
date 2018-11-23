@@ -19,9 +19,7 @@ Broker::Broker()
     bWithWatchDog = false;
 }
 
-Broker::~Broker()
-{
-}
+Broker::~Broker() = default;
 
 void Broker::setEventSink(BrokerEventSink* pEventSink)
 {

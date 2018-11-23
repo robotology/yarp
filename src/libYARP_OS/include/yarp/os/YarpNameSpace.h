@@ -23,20 +23,20 @@ public:
 
     virtual ~YarpNameSpace();
 
-    virtual Contact getNameServerContact() const override
+    Contact getNameServerContact() const override
     {
         return contact;
     }
 
-    virtual Contact queryName(const std::string& name) override;
+    Contact queryName(const std::string& name) override;
 
-    virtual Contact registerName(const std::string& name) override;
+    Contact registerName(const std::string& name) override;
 
-    virtual Contact registerContact(const Contact& contact) override;
+    Contact registerContact(const Contact& contact) override;
 
-    virtual Contact unregisterName(const std::string& name) override;
+    Contact unregisterName(const std::string& name) override;
 
-    virtual Contact unregisterContact(const Contact& contact) override;
+    Contact unregisterContact(const Contact& contact) override;
 
     virtual bool setProperty(const std::string& name,
                              const std::string& key,
@@ -136,22 +136,22 @@ public:
         return !fail;
     }
 
-    virtual bool localOnly() const override
+    bool localOnly() const override
     {
         return false;
     }
 
-    virtual bool usesCentralServer() const override
+    bool usesCentralServer() const override
     {
         return true;
     }
 
-    virtual bool serverAllocatesPortNumbers() const override
+    bool serverAllocatesPortNumbers() const override
     {
         return true;
     }
 
-    virtual bool connectionHasNameOfEndpoints() const override
+    bool connectionHasNameOfEndpoints() const override
     {
         return true;
     }
@@ -174,12 +174,12 @@ class YarpDummyNameSpace : public YarpNameSpace
 public:
     YarpDummyNameSpace() : YarpNameSpace(Contact()) {}
 
-    virtual bool localOnly() const override
+    bool localOnly() const override
     {
         return true;
     }
 
-    virtual Contact getNameServerContact() const override
+    Contact getNameServerContact() const override
     {
         return Contact("/root");
     }

@@ -40,7 +40,7 @@ namespace yarp {
 class YARP_OS_impl_API yarp::os::impl::NameServerStub
 {
 public:
-    virtual ~NameServerStub() {}
+    virtual ~NameServerStub() = default;
     virtual std::string apply(const std::string& txt, const Contact& remote) = 0;
 };
 
@@ -57,7 +57,7 @@ public:
         setup();
     }
 
-    virtual ~NameServer() {}
+    virtual ~NameServer() = default;
 
     // address may be partial - partial information gets filled in
     // (not YARP2 compliant yet, won't do fill-in)
@@ -80,7 +80,7 @@ public:
 
     Contact unregisterName(const std::string& name);
 
-    virtual std::string apply(const std::string& txt, const Contact& remote) override;
+    std::string apply(const std::string& txt, const Contact& remote) override;
 
     bool apply(const yarp::os::Bottle& cmd, yarp::os::Bottle& result,
                const Contact& remote);
@@ -153,7 +153,7 @@ private:
             return prefix + NetType::toString(getFree());
         }
 
-        virtual int fresh() override
+        int fresh() override
         {
             int result = base;
             base++;
@@ -198,7 +198,7 @@ private:
             return result;
         }
 
-        virtual int fresh() override
+        int fresh() override
         {
             int result = base++;
             return result;
@@ -227,7 +227,7 @@ private:
             this->basePort = basePort;
         }
 
-        virtual int fresh() override
+        int fresh() override
         {
             int result = base;
             base++;
@@ -409,7 +409,7 @@ private:
             if (rec!=nullptr) {
                 return rec->toString();
             }
-            return "";
+            return {};
         }
 
         bool checkProp(const std::string& key, const std::string& val)
@@ -427,7 +427,7 @@ private:
             if (rec!=nullptr) {
                 return rec->match(val);
             }
-            return "";
+            return {};
         }
 
     };

@@ -34,27 +34,27 @@ public:
     int open(const yarp::os::Contact& yarp_address, bool sender);
     int accept();
 
-    virtual void close() override;
-    virtual void interrupt() override;
+    void close() override;
+    void interrupt() override;
 
     using yarp::os::OutputStream::write;
-    virtual void write(const yarp::os::Bytes& b) override;
+    void write(const yarp::os::Bytes& b) override;
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
+    yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     // TwoWayStrem implementation
-    virtual yarp::os::InputStream& getInputStream() override;
-    virtual yarp::os::OutputStream& getOutputStream() override;
-    virtual bool isOk() const override;
+    yarp::os::InputStream& getInputStream() override;
+    yarp::os::OutputStream& getOutputStream() override;
+    bool isOk() const override;
 
-    virtual void reset() override;
+    void reset() override;
 
-    virtual void beginPacket() override;
-    virtual void endPacket() override;
+    void beginPacket() override;
+    void endPacket() override;
 
-    virtual const yarp::os::Contact& getLocalAddress() const override;
-    virtual const yarp::os::Contact& getRemoteAddress() const override;
+    const yarp::os::Contact& getLocalAddress() const override;
+    const yarp::os::Contact& getRemoteAddress() const override;
 
 private:
     enum

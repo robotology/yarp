@@ -81,10 +81,7 @@ MapGrid2D::MapGrid2D()
     }
 }
 
-MapGrid2D::~MapGrid2D()
-{
-
-}
+MapGrid2D::~MapGrid2D() = default;
 
 bool MapGrid2D::isNotFree(MapGrid2D::XYCell cell) const
 {
@@ -190,7 +187,7 @@ bool MapGrid2D::enlargeObstacles(double size)
         }
         return true;
     }
-    size_t repeat_num = (size_t)(std::ceil(size/m_resolution));
+    auto repeat_num = (size_t)(std::ceil(size/m_resolution));
     for (size_t repeat = 0; repeat < repeat_num; repeat++)
     {
         //contains the cells to be enlarged;
@@ -361,7 +358,7 @@ bool MapGrid2D::loadMapYarpAndRos(string yarp_filename, string ros_yaml_filename
                 else
                 {
                     int color_avg = (pix_occ.r + pix_occ.g + pix_occ.b) / 3;
-                    unsigned char occ = (unsigned char)((254 - color_avg) / 254.0);
+                    auto occ = (unsigned char)((254 - color_avg) / 254.0);
                     m_map_occupancy.safePixel(x, y) = occ * 100;
                 }
             }
@@ -421,7 +418,7 @@ bool MapGrid2D::loadMapROSOnly(string ros_yaml_filename)
             else
             {
                 int color_avg = (pix_occ.r + pix_occ.g + pix_occ.b) / 3;
-                unsigned char occ = (unsigned char)((254 - color_avg) / 254.0);
+                auto occ = (unsigned char)((254 - color_avg) / 254.0);
                 m_map_occupancy.safePixel(x, y) = occ * 100;
             }
         }
@@ -935,8 +932,8 @@ bool MapGrid2D::setSize_in_meters(double x, double y)
         yError() << "MapGrid2D::setSize() invalid map resolution.";
         return false;
     }
-    size_t w = (size_t)(x/m_resolution);
-    size_t h = (size_t)(y/m_resolution);
+    auto w = (size_t)(x/m_resolution);
+    auto h = (size_t)(y/m_resolution);
     setSize_in_cells(w,h);
     return true;
 }

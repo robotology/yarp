@@ -145,7 +145,7 @@ void ModuleItem::init()
 
 
     if(!nestedInApp){
-        QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect();
+        auto* effect = new QGraphicsDropShadowEffect();
         effect->setColor(QColor(80,80,80,80));
         effect->setBlurRadius(5);
         setGraphicsEffect(effect);
@@ -663,26 +663,26 @@ QPointF PortItem::connectionPoint()
 
         switch (inData->getPortType()) {
         case SERVICE_PORT:
-            return QPointF(-PORT_LINE_WIDTH/2,0);
+            return {-PORT_LINE_WIDTH/2,0};
             break;
         case EVENT_PORT:
-            return QPointF(0,0);
+            return {0,0};
             break;
         default:
-            return QPointF(-triangleH/2, - 0);
+            return {-triangleH/2, - 0};
         }
 
     case OUTPUT_PORT:
         switch (outData->getPortType()) {
         case SERVICE_PORT:
-            return QPointF(-PORT_LINE_WIDTH/2,0);
+            return {-PORT_LINE_WIDTH/2,0};
             break;
         default:
-            return QPointF(triangleH/2, - 0);
+            return {triangleH/2, - 0};
         }
 
     }
-    return QPointF(0,0);
+    return {0,0};
 }
 
 int PortItem::getPortType()

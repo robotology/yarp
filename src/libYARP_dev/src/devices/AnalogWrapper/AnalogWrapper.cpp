@@ -203,7 +203,7 @@ void AnalogWrapper::setHandlers()
     {
         std::string rpcPortName = analogPort.port_name;
         rpcPortName += "/rpc:i";
-        AnalogServerHandler* ash = new AnalogServerHandler(rpcPortName.c_str());
+        auto* ash = new AnalogServerHandler(rpcPortName.c_str());
         handlers.push_back(ash);
     }
 }

@@ -82,7 +82,7 @@ public:
         m_storage.resize(width);
     }
 
-    virtual const char* getRawData() const override
+    const char* getRawData() const override
     {
         return m_storage.getMemoryBlock();
     }
@@ -92,7 +92,7 @@ public:
      * number of bytes.
      * @return the size of the data sent through the network
      */
-    virtual size_t wireSizeBytes() const override
+    size_t wireSizeBytes() const override
     {
         return sizeof(header) + dataSizeBytes();
     }
@@ -102,12 +102,12 @@ public:
      * number of bytes.
      * @return the size of the data
      */
-    virtual size_t dataSizeBytes() const override
+    size_t dataSizeBytes() const override
     {
         return header.width * header.height * (sizeof(T));
     }
 
-    virtual size_t size() const override
+    size_t size() const override
     {
         return m_storage.size();
     }
@@ -265,7 +265,7 @@ public:
         }
     }
 
-    virtual bool read(yarp::os::ConnectionReader& connection) override
+    bool read(yarp::os::ConnectionReader& connection) override
     {
         connection.convertTextMode();
         yarp::sig::PointCloudNetworkHeader _header;
@@ -313,7 +313,7 @@ public:
         return true;
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& writer) const override
+    bool write(yarp::os::ConnectionWriter& writer) const override
     {
         writer.appendBlock((char*)&header, sizeof(PointCloudNetworkHeader));
         return m_storage.write(writer);
@@ -390,7 +390,7 @@ public:
         return true;
     }
 
-    virtual int getBottleTag() const override
+    int getBottleTag() const override
     {
         return BottleTagMap<T>();
     }

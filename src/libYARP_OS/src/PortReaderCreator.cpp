@@ -10,5 +10,4 @@
 #include <yarp/os/PortReaderCreator.h>
 
 
-yarp::os::PortReaderCreator::~PortReaderCreator() {
-}
+yarp::os::PortReaderCreator::~PortReaderCreator() = default;

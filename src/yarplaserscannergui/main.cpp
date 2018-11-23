@@ -198,7 +198,7 @@ void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las,
 
     static double old_time = 0;
 
-    if (las==NULL || comp==NULL)
+    if (las==nullptr || comp==nullptr)
     {
         return;
     }
@@ -316,7 +316,7 @@ int main(int argc, char *argv[])
     int width = 600;
     int height = 600;
 
-    yarp::dev::PolyDriver* drv = new yarp::dev::PolyDriver;
+    auto* drv = new yarp::dev::PolyDriver;
     Property   lasOptions;
     lasOptions.put("device", "Rangefinder2DClient");
     lasOptions.put("local", "/laserScannerGui/laser:i");
@@ -329,9 +329,9 @@ int main(int argc, char *argv[])
         delete drv;
         return 0;
     }
-    yarp::dev::IRangefinder2D* iLas = 0;
+    yarp::dev::IRangefinder2D* iLas = nullptr;
     drv->view(iLas);
-    if (iLas == 0)
+    if (iLas == nullptr)
     {
         yError() << "Unable to get IRangefinder2D interface";
         delete drv;
@@ -367,7 +367,7 @@ int main(int argc, char *argv[])
     while(!exit)
     {
         void *v = cvGetWindowHandle("Laser Scanner GUI");
-        if (v == 0)
+        if (v == nullptr)
         {
             exit = true;
             break;
@@ -414,7 +414,7 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    drawLaser(&compass_data, &laser_data, 0, img, angle_tot, scans, sens_position_x, sens_position_y, sens_position_t, scale, absolute, verbose, aspect);
+                    drawLaser(&compass_data, &laser_data, nullptr, img, angle_tot, scans, sens_position_x, sens_position_y, sens_position_t, scale, absolute, verbose, aspect);
                 }
 
             }

@@ -128,7 +128,7 @@ void ManagedBytes::clear() {
         if (get()!=nullptr) {
             delete[] get();
         }
-        owned = 0;
+        owned = false;
     }
     b = Bytes(nullptr, 0);
     use = 0;
@@ -144,7 +144,7 @@ Bytes& ManagedBytes::bytes() {
 }
 
 Bytes ManagedBytes::usedBytes() {
-    return Bytes(get(), used());
+    return {get(), used()};
 }
 
 size_t ManagedBytes::setUsed(size_t used) {

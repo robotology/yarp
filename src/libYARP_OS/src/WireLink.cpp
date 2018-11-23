@@ -23,13 +23,13 @@ class WireLink::Private
 public:
     Private();
 
-    yarp::os::UnbufferedContactable* port;
-    yarp::os::PortReader* reader;
-    yarp::os::PortReader* owner;
+    yarp::os::UnbufferedContactable* port{nullptr};
+    yarp::os::PortReader* reader{nullptr};
+    yarp::os::PortReader* owner{nullptr};
     yarp::os::MessageStack stack;
-    bool replies;
-    bool can_write;
-    bool can_read;
+    bool replies{true};
+    bool can_write{false};
+    bool can_read{false};
 
     bool attach(yarp::os::UnbufferedContactable& port,
                 const yarp::os::ContactStyle& style);
@@ -38,15 +38,7 @@ public:
 };
 
 
-WireLink::Private::Private() :
-        port(nullptr),
-        reader(nullptr),
-        owner(nullptr),
-        replies(true),
-        can_write(false),
-        can_read(false)
-{
-}
+WireLink::Private::Private() = default;
 
 bool WireLink::Private::attach(yarp::os::UnbufferedContactable& port,
                                const yarp::os::ContactStyle& style)

@@ -81,8 +81,8 @@ bool IControlCalibration::park(bool wait)
 ImplementControlCalibration::ImplementControlCalibration(yarp::dev::IControlCalibrationRaw *y)
 {
     iCalibrate = dynamic_cast<IControlCalibrationRaw *> (y);
-    helper = 0;
-    temp = 0;
+    helper = nullptr;
+    temp = nullptr;
 }
 
 ImplementControlCalibration::~ImplementControlCalibration()
@@ -92,13 +92,13 @@ ImplementControlCalibration::~ImplementControlCalibration()
 
 bool ImplementControlCalibration::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
-    if (helper != 0)
+    if (helper != nullptr)
         return false;
 
     helper = (void *)(new ControlBoardHelper(size, amap, enc, zos));
-    yAssert(helper != 0);
+    yAssert(helper != nullptr);
     temp = new double[size];
-    yAssert(temp != 0);
+    yAssert(temp != nullptr);
     return true;
 }
 
@@ -108,10 +108,10 @@ bool ImplementControlCalibration::initialize(int size, const int *amap, const do
 */
 bool ImplementControlCalibration::uninitialize()
 {
-    if (helper != 0)
+    if (helper != nullptr)
     {
         delete castToMapper(helper);
-        helper = 0;
+        helper = nullptr;
     }
 
     checkAndDestroy(temp);

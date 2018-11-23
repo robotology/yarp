@@ -155,7 +155,7 @@ private:
     FILE                *m_logFile;
 
     //public methods
-    virtual bool read(yarp::os::ConnectionReader& connection) override;
+    bool read(yarp::os::ConnectionReader& connection) override;
 
 private:
     //private methods

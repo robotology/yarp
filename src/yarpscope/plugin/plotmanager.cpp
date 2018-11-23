@@ -72,7 +72,7 @@ Plotter * PlotManager::addPlot(const QString &title,
                 const QString &bgcolor,
                 bool autorescale)
 {
-    Plotter *plotter = new Plotter(title,gridx,gridy,hspan,vspan,minval,maxval,size,bgcolor,autorescale,this);
+    auto* plotter = new Plotter(title,gridx,gridy,hspan,vspan,minval,maxval,size,bgcolor,autorescale,this);
     plotterList.append(plotter);
     emit plottersChanged();
     emit plotter->plotSampleSizeChanged();

@@ -41,10 +41,7 @@ SDLJoypad::SDLJoypad()
 
 }
 
-SDLJoypad::~SDLJoypad()
-{
-
-}
+SDLJoypad::~SDLJoypad() = default;
 
 bool SDLJoypad::open(yarp::os::Searchable& rf)
 {

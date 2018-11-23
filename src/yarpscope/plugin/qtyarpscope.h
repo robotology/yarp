@@ -58,11 +58,11 @@ protected:
     void routeMouseEvents( QMouseEvent* event);
     void routeMouseEvents( QWheelEvent* event);
 
-    virtual void mousePressEvent( QMouseEvent* event) override;
-    virtual void mouseReleaseEvent( QMouseEvent* event) override;
-    virtual void mouseMoveEvent( QMouseEvent* event) override;
-    virtual void mouseDoubleClickEvent( QMouseEvent* event) override;
-    virtual void wheelEvent(QWheelEvent* event) override;
+    void mousePressEvent( QMouseEvent* event) override;
+    void mouseReleaseEvent( QMouseEvent* event) override;
+    void mouseMoveEvent( QMouseEvent* event) override;
+    void mouseDoubleClickEvent( QMouseEvent* event) override;
+    void wheelEvent(QWheelEvent* event) override;
 
 private:
     //QCustomPlot m_CustomPlot;

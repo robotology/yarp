@@ -178,7 +178,7 @@ bool NetworkProfiler::creatNetworkGraph(ports_detail_set details, yarp::profiler
         process->property.put("policy", info.owner.policy);
         process->property.put("os", info.owner.os);
         process->property.put("hidden", false);
-        pvertex_iterator itrVert=graph.insert(*process);
+        auto itrVert=graph.insert(*process);
         // create connection between ports and its process
         if(dynamic_cast<ProcessVertex*> (*itrVert))
             port->setOwner((ProcessVertex*)(*itrVert));
@@ -253,7 +253,7 @@ bool NetworkProfiler::creatSimpleModuleGraph(yarp::profiler::graph::Graph& graph
                 continue;
         else
         {
-            MachineVertex* mv1 = dynamic_cast<MachineVertex*>(*itr);
+            auto* mv1 = dynamic_cast<MachineVertex*>(*itr);
             if (mv1)
             {
                 MachineVertex* mv2 = new MachineVertex(mv1->property.find("os").asString(),
@@ -267,7 +267,7 @@ bool NetworkProfiler::creatSimpleModuleGraph(yarp::profiler::graph::Graph& graph
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         if(!dynamic_cast<ProcessVertex*>(*itr))
             continue;
-        ProcessVertex* pv1 = dynamic_cast<ProcessVertex*>(*itr);
+        auto* pv1 = dynamic_cast<ProcessVertex*>(*itr);
         if (pv1)
         {
             ProcessVertex* pv2 = new ProcessVertex(pv1->property.find("pid").asInt32(),
@@ -348,8 +348,8 @@ bool NetworkProfiler::updateConnectionQosStatus(yarp::profiler::graph::Graph& gr
 
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         const Vertex &v1 = (**itr);
-        for(size_t i=0; i<v1.outEdges().size(); i++) {
-            Edge& edge = (Edge&) v1.outEdges()[i];
+        for(const auto& i : v1.outEdges()) {
+            Edge& edge = (Edge&) i;
             const Vertex &v2 = edge.second();
             if(!v1.property.check("hidden") && !v2.property.check("hidden")) {
                 if(edge.property.find("type").asString() == "connection") {

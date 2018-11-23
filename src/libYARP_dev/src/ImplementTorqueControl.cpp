@@ -157,7 +157,6 @@ bool ImplementTorqueControl::getTorques(double *t)
 
 bool ImplementTorqueControl::setRefTorques(const int n_joint, const int *joints, const double *t)
 {
-
     if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
         return false;
 

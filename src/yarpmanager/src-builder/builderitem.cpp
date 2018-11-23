@@ -82,7 +82,7 @@ QPointF BuilderItem::computeTopLeftGridPoint(const QPointF &pointP){
     int gridSize = 16;
     qreal xV = gridSize/2 + floor(pointP.x()/gridSize)*gridSize;
     qreal yV = gridSize/2 + floor(pointP.y()/gridSize)*gridSize;
-    return QPointF(xV, yV);
+    return {xV, yV};
 }
 
 QPointF BuilderItem::getStartingPoint()

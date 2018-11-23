@@ -81,7 +81,7 @@ void FreeAligned (T* ptr)
 IPLAPIIMPL(IplConvKernel*, iplCreateConvKernel,(int nCols, int nRows,
                                                 int anchorX, int anchorY, int* values, int nShiftR))
 {
-    IplConvKernel *ret = new IplConvKernel;
+    auto* ret = new IplConvKernel;
     yAssert(ret != nullptr);
 
     ret->anchorX = anchorX;
@@ -109,7 +109,7 @@ IPLAPIIMPL(IplConvKernel*, iplCreateConvKernel,(int nCols, int nRows,
 IPLAPIIMPL(IplConvKernelFP*, iplCreateConvKernelFP,(int nCols, int nRows,
                                                     int anchorX, int anchorY, float* values))
 {
-    IplConvKernelFP *ret = new IplConvKernelFP;
+    auto* ret = new IplConvKernelFP;
     yAssert(ret != nullptr);
 
     ret->anchorX = anchorX;
@@ -342,8 +342,8 @@ IPLAPIIMPL(void, iplConvolve2DFP,(IplImage* srcImage, IplImage* dstImage,
     if (srcImage != dstImage)
         {
             float tmp;
-            float *source = reinterpret_cast<float*>(srcImage->imageData);
-            float *dest = reinterpret_cast<float*>(dstImage->imageData);
+            auto* source = reinterpret_cast<float*>(srcImage->imageData);
+            auto* dest = reinterpret_cast<float*>(dstImage->imageData);
             for (int i = bordery; i <  h - bordery; i++)
                 {
                     for (int j = borderx; j < w - borderx; j++)
@@ -363,7 +363,7 @@ IPLAPIIMPL(void, iplConvolve2DFP,(IplImage* srcImage, IplImage* dstImage,
         {
             // inplace.
             float tmp;
-            float *source = reinterpret_cast<float*>(srcImage->imageData);
+            auto* source = reinterpret_cast<float*>(srcImage->imageData);
             //float *dest = reinterpret_cast<float*>(dstImage->imageData);
             for (int i = bordery; i <  h - bordery; i++)
                 {
@@ -443,8 +443,8 @@ IPLAPIIMPL(void, iplConvolveSep2DFP,(IplImage* srcImage,
         }
 
     // inplace.
-    float *src = reinterpret_cast<float*>(srcImage->imageData);
-    float *dst = reinterpret_cast<float*>(dstImage->imageData);
+    auto* src = reinterpret_cast<float*>(srcImage->imageData);
+    auto* dst = reinterpret_cast<float*>(dstImage->imageData);
     if (xKernel != nullptr)
         {
             // apply x kernel.
@@ -720,7 +720,7 @@ IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image, int doFill, float fillValu
                     yAssert(PAD_BYTES (image->widthStep, YARP_IMAGE_ALIGN) == 0);
 
                     // time consuming
-                    float *tmp = reinterpret_cast<float*>(image->imageData);
+                    auto* tmp = reinterpret_cast<float*>(image->imageData);
                     const int limit = image->imageSize / sizeof(float);
                     for (int i = 0; i < limit; i++)
                         {
@@ -945,7 +945,7 @@ IPLAPIIMPL(void, iplSetFP, (IplImage* image, float fillValue))
     yAssert(image->depth == IPL_DEPTH_32F);
 
     const int size = image->imageSize / sizeof(float);
-    float *tmp = reinterpret_cast<float*>(image->imageData);
+    auto* tmp = reinterpret_cast<float*>(image->imageData);
     for (int i = 0; i < size; i++)
         *tmp++ = fillValue;
 }
@@ -962,8 +962,8 @@ IPLAPIIMPL(void, iplAddS,(IplImage* srcImage, IplImage* dstImage, int value))
         case IPL_DEPTH_8U:
             {
                 const int size = srcImage->imageSize;
-                unsigned char * src = (unsigned char *)srcImage->imageData;
-                unsigned char * dst = (unsigned char *)dstImage->imageData;
+                auto* src = (unsigned char *)srcImage->imageData;
+                auto* dst = (unsigned char *)dstImage->imageData;
 
                 short tmp;
 
@@ -1023,9 +1023,9 @@ IPLAPIIMPL(void, iplAdd,(IplImage* srcImageA, IplImage* srcImageB,
         case IPL_DEPTH_8U:
             {
                 const int size = srcImageA->imageSize;
-                unsigned char * src1 = (unsigned char *)srcImageA->imageData;
-                unsigned char * src2 = (unsigned char *)srcImageB->imageData;
-                unsigned char * dst = (unsigned char *)dstImage->imageData;
+                auto* src1 = (unsigned char *)srcImageA->imageData;
+                auto* src2 = (unsigned char *)srcImageB->imageData;
+                auto* dst = (unsigned char *)dstImage->imageData;
 
                 short tmp;
 
@@ -1064,9 +1064,9 @@ IPLAPIIMPL(void, iplAdd,(IplImage* srcImageA, IplImage* srcImageB,
         case IPL_DEPTH_32F:
             {
                 const int size = srcImageA->imageSize / sizeof(float);
-                float * src1 = reinterpret_cast<float*>(srcImageA->imageData);
-                float * src2 = reinterpret_cast<float*>(srcImageB->imageData);
-                float * dst = reinterpret_cast<float*>(dstImage->imageData);
+                auto* src1 = reinterpret_cast<float*>(srcImageA->imageData);
+                auto* src2 = reinterpret_cast<float*>(srcImageB->imageData);
+                auto* dst = reinterpret_cast<float*>(dstImage->imageData);
 
                 for (int i = 0; i < size; i++)
                     {
@@ -1094,9 +1094,9 @@ IPLAPIIMPL(void, iplSubtract,(IplImage* srcImageA, IplImage* srcImageB,
         case IPL_DEPTH_8U:
             {
                 const int size = srcImageA->imageSize;
-                unsigned char * src1 = (unsigned char *)srcImageA->imageData;
-                unsigned char * src2 = (unsigned char *)srcImageB->imageData;
-                unsigned char * dst = (unsigned char *)dstImage->imageData;
+                auto* src1 = (unsigned char *)srcImageA->imageData;
+                auto* src2 = (unsigned char *)srcImageB->imageData;
+                auto* dst = (unsigned char *)dstImage->imageData;
 
                 short tmp;
 
@@ -1137,9 +1137,9 @@ IPLAPIIMPL(void, iplSubtract,(IplImage* srcImageA, IplImage* srcImageB,
         case IPL_DEPTH_32F:
             {
                 const int size = srcImageA->imageSize / sizeof(float);
-                float * src1 = reinterpret_cast<float*>(srcImageA->imageData);
-                float * src2 = reinterpret_cast<float*>(srcImageB->imageData);
-                float * dst = reinterpret_cast<float*>(dstImage->imageData);
+                auto* src1 = reinterpret_cast<float*>(srcImageA->imageData);
+                auto* src2 = reinterpret_cast<float*>(srcImageB->imageData);
+                auto* dst = reinterpret_cast<float*>(dstImage->imageData);
 
                 for (int i = 0; i < size; i++)
                     {
@@ -1164,8 +1164,8 @@ IPLAPIIMPL(void, iplSubtractS,(IplImage* srcImage, IplImage* dstImage, int value
         case IPL_DEPTH_8U:
             {
                 const int size = srcImage->imageSize;
-                unsigned char * src = (unsigned char *)srcImage->imageData;
-                unsigned char * dst = (unsigned char *)dstImage->imageData;
+                auto* src = (unsigned char *)srcImage->imageData;
+                auto* dst = (unsigned char *)dstImage->imageData;
 
                 short tmp;
 
@@ -1225,8 +1225,8 @@ IPLAPIIMPL(void, iplMultiplySFP,(IplImage* srcImage, IplImage* dstImage,
     yAssert(srcImage->depth == IPL_DEPTH_32F);
 
     const int size = srcImage->imageSize / sizeof(float);
-    float * src1 = reinterpret_cast<float*>(srcImage->imageData);
-    float * dst = reinterpret_cast<float*>(dstImage->imageData);
+    auto* src1 = reinterpret_cast<float*>(srcImage->imageData);
+    auto* dst = reinterpret_cast<float*>(dstImage->imageData);
 
     for (int i = 0; i < size; i++)
         {
@@ -1274,8 +1274,8 @@ IPLAPIIMPL(void, iplThreshold, (IplImage* srcImage, IplImage* dstImage, int thre
         case IPL_DEPTH_8U:
             {
                 const int size = srcImage->imageSize;
-                unsigned char * src = (unsigned char *)srcImage->imageData;
-                unsigned char * dst = (unsigned char *)dstImage->imageData;
+                auto* src = (unsigned char *)srcImage->imageData;
+                auto* dst = (unsigned char *)dstImage->imageData;
 
                 for (int i = 0; i < size; i++)
                     {
@@ -1356,8 +1356,8 @@ IPLAPIIMPL(void, iplRGB2HSV,(IplImage* rgbImage, IplImage* hsvImage))
 {
     // Image types should be checked.
     //const int planesize = rgbImage->widthStep * rgbImage->height;
-    unsigned char *sdata = (unsigned char *)rgbImage->imageData; // bgr
-    unsigned char *ddata0 = (unsigned char *)hsvImage->imageData; // Hue.
+    auto* sdata = (unsigned char *)rgbImage->imageData; // bgr
+    auto* ddata0 = (unsigned char *)hsvImage->imageData; // Hue.
     unsigned char *ddata1 = ddata0 + 1; // Saturation.
     unsigned char *ddata2 = ddata1 + 1; // Value.
 

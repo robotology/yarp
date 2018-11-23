@@ -192,7 +192,7 @@ public:
         }
         virtual ~PortVertex(){}
 
-        virtual bool operator == (const yarp::profiler::graph::Vertex &v1) const override {
+        bool operator == (const yarp::profiler::graph::Vertex &v1) const override {
             return property.find("name").asString() == v1.property.find("name").asString();
         }
 
@@ -207,7 +207,7 @@ public:
         }
         virtual ~ProcessVertex(){}
 
-        virtual bool operator == (const yarp::profiler::graph::Vertex &v1) const override {
+        bool operator == (const yarp::profiler::graph::Vertex &v1) const override {
             return property.find("hostname").asString() == v1.property.find("hostname").asString() &&
                    property.find("pid").asInt32() == v1.property.find("pid").asInt32();
         }
@@ -223,7 +223,7 @@ public:
         }
         virtual ~MachineVertex() {}
 
-        virtual bool operator == (const yarp::profiler::graph::Vertex &v1) const override {
+        bool operator == (const yarp::profiler::graph::Vertex &v1) const override {
             return property.find("hostname").asString() == v1.property.find("hostname").asString() &&
                    property.find("os").asString() == v1.property.find("os").asString() &&
                    property.find("type").asString() == v1.property.find("type").asString() ;

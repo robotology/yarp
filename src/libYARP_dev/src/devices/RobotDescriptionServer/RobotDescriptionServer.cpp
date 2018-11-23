@@ -96,7 +96,7 @@ bool yarp::dev::RobotDescriptionServer::add_device(DeviceDescription dev)
 bool yarp::dev::RobotDescriptionServer::remove_device(DeviceDescription dev)
 {
     LockGuard guard(m_internal_mutex);
-    for (std::vector<DeviceDescription>::iterator it = m_robot_devices.begin(); it != m_robot_devices.end(); it++)
+    for (auto it = m_robot_devices.begin(); it != m_robot_devices.end(); it++)
     {
         if (dev.device_name == it->device_name)
         {

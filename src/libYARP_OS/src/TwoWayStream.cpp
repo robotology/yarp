@@ -11,11 +11,9 @@
 
 using namespace yarp::os;
 
-TwoWayStream::~TwoWayStream() {
-}
+TwoWayStream::~TwoWayStream() = default;
 
-NullStream::~NullStream() {
-}
+NullStream::~NullStream() = default;
 
 InputStream& NullStream::getInputStream() {
     return *this;

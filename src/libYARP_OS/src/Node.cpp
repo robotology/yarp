@@ -34,10 +34,9 @@ public:
     std::multimap<std::string, std::string> outgoingURIs;
     std::multimap<std::string, std::string> incomingURIs;
 
-    ROSReport() {
-    }
+    ROSReport() = default;
 
-    virtual void report(const PortInfo& info) override {
+    void report(const PortInfo& info) override {
         if (info.tag == PortInfo::PORTINFO_CONNECTION) {
             NameClient& nic = NameClient::getNameClient();
             Contact c;
@@ -176,17 +175,14 @@ public:
     std::multimap<std::string, NodeItem> by_category;
     std::map<Contactable*, NodeItem> name_cache;
     Port port;
-    Node *owner;
+    Node *owner{nullptr};
 
     Mutex mutex;
     std::string name;
     std::string prev_name;
-    bool has_prev_name;
+    bool has_prev_name{false};
 
-    Helper() :
-            owner(nullptr),
-            prev_name(""),
-            has_prev_name(false)
+    Helper()
     {
         clear();
         port.includeNodeInName(false);
@@ -236,7 +232,7 @@ public:
         port.interrupt();
     }
 
-    virtual bool read(ConnectionReader& reader) override;
+    bool read(ConnectionReader& reader) override;
 
     void getBusStats(NodeArgs& na)
     {
@@ -455,14 +451,14 @@ void yarp::os::Node::Helper::remove(Contactable& contactable)
     NodeItem item = name_cache[&contactable];
     name_cache.erase(&contactable);
     std::string nestedName = item.nc.getNestedName();
-    for (std::multimap<std::string, NodeItem>::iterator it = by_part_name.begin(); it != by_part_name.end(); ++it) {
+    for (auto it = by_part_name.begin(); it != by_part_name.end(); ++it) {
         if (it->first == nestedName && it->second.contactable->where().toString() == contactable.where().toString()) {
             by_part_name.erase(it);
             break;
         }
     }
     std::string category = item.nc.getCategory();
-    for (std::multimap<std::string, NodeItem>::iterator it = by_category.begin(); it != by_category.end(); ++it) {
+    for (auto it = by_category.begin(); it != by_category.end(); ++it) {
         if (it->first == category && it->second.contactable->where().toString() == contactable.where().toString()) {
             by_category.erase(it);
             break;

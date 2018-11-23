@@ -45,7 +45,7 @@ public:
         this->service = service;
     }
 
-    virtual bool read(yarp::os::ConnectionReader& reader) override {
+    bool read(yarp::os::ConnectionReader& reader) override {
         return apply(reader,0/*NULL*/);
     }
 

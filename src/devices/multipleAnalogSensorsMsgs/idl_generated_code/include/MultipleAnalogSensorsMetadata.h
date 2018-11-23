@@ -26,7 +26,7 @@ public:
    * Read the sensor metadata necessary to configure the MultipleAnalogSensorsClient device.
    */
   virtual SensorRPCData getMetadata();
-  virtual bool read(yarp::os::ConnectionReader& connection) override;
+  bool read(yarp::os::ConnectionReader& connection) override;
   virtual std::vector<std::string> help(const std::string& functionName="--all");
 };
 

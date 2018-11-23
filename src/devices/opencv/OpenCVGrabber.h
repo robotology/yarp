@@ -84,27 +84,27 @@ public:
 
 
 
-    virtual bool open(yarp::os::Searchable & config) override;
+    bool open(yarp::os::Searchable & config) override;
 
-    virtual bool close() override;
+    bool close() override;
 
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) override;
+    bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) override;
     virtual bool sendImage(const cv::Mat & frame, yarp::sig::ImageOf<yarp::sig::PixelRgb> & image);
 
 
     /** Get the height of images a grabber produces.
      * @return The image height. */
-    inline virtual int height() const override { return m_h; }
+    inline int height() const override { return m_h; }
 
     /** Get the width of images a grabber produces.
      * @return The image width. */
-    inline virtual int width() const override { return m_w; }
+    inline int width() const override { return m_w; }
 
     /**
     * Implements the IPreciselyTimed interface.
     * @return the yarp::os::Stamp of the last image acquired
     */
-    inline virtual yarp::os::Stamp getLastInputStamp() override { return m_laststamp; }
+    inline yarp::os::Stamp getLastInputStamp() override { return m_laststamp; }
 
 protected:
 

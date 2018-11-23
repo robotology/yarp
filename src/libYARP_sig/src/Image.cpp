@@ -509,7 +509,7 @@ void Image::setQuantum(size_t imgQuantum) {
 
 
 void Image::synchronize() {
-    ImageStorage *impl = (ImageStorage*)implementation;
+    auto* impl = (ImageStorage*)implementation;
     yAssert(impl!=nullptr);
     if (impl->pImage!=nullptr) {
         imgWidth = impl->pImage->width;
@@ -525,7 +525,7 @@ void Image::synchronize() {
 
 
 unsigned char *Image::getRawImage() const {
-    ImageStorage *impl = (ImageStorage*)implementation;
+    auto* impl = (ImageStorage*)implementation;
     yAssert(impl!=nullptr);
     if (impl->pImage!=nullptr) {
         return (unsigned char *)impl->pImage->imageData;
@@ -534,7 +534,7 @@ unsigned char *Image::getRawImage() const {
 }
 
 size_t Image::getRawImageSize() const {
-    ImageStorage *impl = (ImageStorage*)implementation;
+    auto* impl = (ImageStorage*)implementation;
     yAssert(impl!=nullptr);
     if (impl->pImage!=nullptr) {
         return impl->pImage->imageSize;
@@ -552,7 +552,7 @@ const void *Image::getIplImage() const {
 
 void Image::wrapIplImage(void *iplImage) {
     yAssert(iplImage!=nullptr);
-    IplImage *p = (IplImage *)iplImage;
+    auto* p = (IplImage *)iplImage;
     std::string str = p->colorModel;
     int code = -1;
     int color_code = -1;
@@ -885,10 +885,10 @@ bool Image::copy(const Image& alt, size_t w, size_t h) {
 
     for (size_t i=0; i<nh; i++)
         {
-            size_t i0 = (size_t)(di*i);
+            auto i0 = (size_t)(di*i);
             for (size_t j=0; j<nw; j++)
                 {
-                    size_t j0 = (size_t)(dj*j);
+                    auto j0 = (size_t)(dj*j);
                     memcpy(getPixelAddress(j,i),
                            alt.getPixelAddress(j0,i0),
                            d);

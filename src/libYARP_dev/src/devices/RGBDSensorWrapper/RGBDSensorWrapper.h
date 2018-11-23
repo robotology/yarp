@@ -81,7 +81,7 @@ public:
     bool configure(IRGBDSensor *interface);
     bool configure(IRgbVisualParams *rgbInterface, IDepthVisualParams *depthInterface);
     bool configure(IFrameGrabberControls *_fgCtrl);
-    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
+    bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
 

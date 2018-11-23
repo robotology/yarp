@@ -153,32 +153,32 @@ public:
     ~RGBDSensorClient();
 
 
-    virtual int  getRgbHeight() override;
-    virtual int  getRgbWidth() override;
-    virtual bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) override;
-    virtual bool getRgbResolution(int &width, int &height) override;
-    virtual bool setRgbResolution(int width, int height) override;
-    virtual bool getRgbFOV(double &horizontalFov, double &verticalFov) override;
-    virtual bool setRgbFOV(double horizontalFov, double verticalFov) override;
-    virtual bool getRgbIntrinsicParam(yarp::os::Property &intrinsic) override;
-    virtual bool getRgbMirroring(bool& mirror) override;
-    virtual bool setRgbMirroring(bool mirror) override;
+    int  getRgbHeight() override;
+    int  getRgbWidth() override;
+    bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) override;
+    bool getRgbResolution(int &width, int &height) override;
+    bool setRgbResolution(int width, int height) override;
+    bool getRgbFOV(double &horizontalFov, double &verticalFov) override;
+    bool setRgbFOV(double horizontalFov, double verticalFov) override;
+    bool getRgbIntrinsicParam(yarp::os::Property &intrinsic) override;
+    bool getRgbMirroring(bool& mirror) override;
+    bool setRgbMirroring(bool mirror) override;
 
     /*
      * IDepthVisualParams interface. Look at IVisualParams.h for documentation
      */
-    virtual int    getDepthHeight() override;
-    virtual int    getDepthWidth() override;
-    virtual bool   setDepthResolution(int width, int height) override;
-    virtual bool   getDepthFOV(double &horizontalFov, double &verticalFov) override;
-    virtual bool   setDepthFOV(double horizontalFov, double verticalFov) override;
-    virtual double getDepthAccuracy() override;
-    virtual bool   setDepthAccuracy(double accuracy) override;
-    virtual bool   getDepthClipPlanes(double &near, double &far) override;
-    virtual bool   setDepthClipPlanes(double near, double far) override;
-    virtual bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic) override;
-    virtual bool   getDepthMirroring(bool& mirror) override;
-    virtual bool   setDepthMirroring(bool mirror) override;
+    int    getDepthHeight() override;
+    int    getDepthWidth() override;
+    bool   setDepthResolution(int width, int height) override;
+    bool   getDepthFOV(double &horizontalFov, double &verticalFov) override;
+    bool   setDepthFOV(double horizontalFov, double verticalFov) override;
+    double getDepthAccuracy() override;
+    bool   setDepthAccuracy(double accuracy) override;
+    bool   getDepthClipPlanes(double &near, double &far) override;
+    bool   setDepthClipPlanes(double near, double far) override;
+    bool   getDepthIntrinsicParam(yarp::os::Property &intrinsic) override;
+    bool   getDepthMirroring(bool& mirror) override;
+    bool   setDepthMirroring(bool mirror) override;
 
     // Device Driver interface //
     /**

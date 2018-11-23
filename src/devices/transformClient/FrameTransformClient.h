@@ -77,7 +77,7 @@ public:
 
     inline void resetStat();
     using yarp::os::BufferedPort<yarp::os::Bottle>::onRead;
-    virtual void onRead(yarp::os::Bottle &v) override;
+    void onRead(yarp::os::Bottle &v) override;
     inline int getLast(yarp::os::Bottle &data, yarp::os::Stamp &stmp);
     inline int getIterations();
     void getEstFrequency(int &ite, double &av, double &min, double &max);
@@ -131,7 +131,7 @@ public:
     /* DeviceDriver methods */
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
-    virtual bool read(yarp::os::ConnectionReader& connection) override;
+    bool read(yarp::os::ConnectionReader& connection) override;
 
     /* IPreciselyTimed methods */
     /**

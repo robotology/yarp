@@ -285,8 +285,8 @@ bool PortCoreOutputUnit::sendHelper()
             //         This may actually cause bugs when using the local carrier
             //         with something that is actually const (i.e. that is using
             //         some parts of memory that cannot be written.
-            yarp::os::PortWriter* pw = const_cast<yarp::os::PortWriter*>(cachedWriter);
-            yarp::os::Portable* p = dynamic_cast<yarp::os::Portable*>(pw);
+            auto* pw = const_cast<yarp::os::PortWriter*>(cachedWriter);
+            auto* p = dynamic_cast<yarp::os::Portable*>(pw);
             if(p == nullptr) {
                 YARP_ERROR(Logger::get(), "PortCoreOutputUnit: cast failed.");
                 return false;

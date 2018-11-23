@@ -107,7 +107,7 @@ public:
     Module(const char* szName);
     Module(const Module &mod);
     virtual ~Module();
-    virtual Node* clone(void) override;
+    Node* clone(void) override;
     Module& operator=(const Module& rhs);
 
     void setName(const char* szName) { if(szName) strName = szName; }

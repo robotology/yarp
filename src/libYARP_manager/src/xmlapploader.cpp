@@ -205,7 +205,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     }
 
     /* retrieving name */
-    TiXmlElement* name = (TiXmlElement*) root->FirstChild("name");
+    auto* name = (TiXmlElement*) root->FirstChild("name");
     if(!name || !name->GetText())
     {
         OSTRINGSTREAM err;
@@ -488,7 +488,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 if((prefix=(TiXmlElement*) embApp->FirstChild("prefix")))
                     IApp.setPrefix(parser->parseText(prefix->GetText()).c_str());
 #ifdef WITH_GEOMETRY
-                TiXmlElement* element = (TiXmlElement*) embApp->FirstChild("geometry");
+                auto* element = (TiXmlElement*) embApp->FirstChild("geometry");
                 if(element && element->GetText())
                 {
                     yarp::os::Property prop(parser->parseText(element->GetText()).c_str());
@@ -522,7 +522,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     {
         if(compareString(arb->Value(), "arbitrator"))
         {
-            TiXmlElement* port = (TiXmlElement*) arb->FirstChild("port");
+            auto* port = (TiXmlElement*) arb->FirstChild("port");
             if(port && port->GetText())
             {
                 Arbitrator arbitrator(parser->parseText(port->GetText()).c_str());
@@ -538,7 +538,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     }
                 }
 #ifdef WITH_GEOMETRY
-                TiXmlElement* geometry = (TiXmlElement*) arb->FirstChild("geometry");
+                auto* geometry = (TiXmlElement*) arb->FirstChild("geometry");
                 if(geometry && geometry->GetText())
                 {
                     yarp::os::Property prop(parser->parseText(geometry->GetText()).c_str());
@@ -575,8 +575,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     {
         if(compareString(cnn->Value(), "connection"))
         {
-            TiXmlElement* from = (TiXmlElement*) cnn->FirstChild("from");
-            TiXmlElement* to = (TiXmlElement*) cnn->FirstChild("to");
+            auto* from = (TiXmlElement*) cnn->FirstChild("from");
+            auto* to = (TiXmlElement*) cnn->FirstChild("to");
 
             if(!from)
                 from = (TiXmlElement*) cnn->FirstChild("output");
@@ -646,7 +646,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     connection.setPersistent(true);
 
 #ifdef WITH_GEOMETRY
-                TiXmlElement* geometry = (TiXmlElement*) cnn->FirstChild("geometry");
+                auto* geometry = (TiXmlElement*) cnn->FirstChild("geometry");
                 if(geometry && geometry->GetText())
                 {
                     yarp::os::Property prop(parser->parseText(geometry->GetText()).c_str());

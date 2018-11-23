@@ -38,32 +38,26 @@ public:
     Private();
     ~Private();
 
-    virtual bool read(ConnectionReader& reader) override;
+    bool read(ConnectionReader& reader) override;
 
     std::string clockName;
 
-    typedef std::list<std::pair<double, Semaphore*>> Waiters;
+    using Waiters = std::list<std::pair<double, Semaphore*>>;
     Waiters* waiters;
     Port port;
 
     Mutex listMutex;
     Mutex timeMutex;
 
-    std::int32_t sec;
-    std::int32_t nsec;
-    double _time;
-    bool closing;
-    bool initted;
+    std::int32_t sec{0};
+    std::int32_t nsec{0};
+    double _time{0};
+    bool closing{false};
+    bool initted{false};
 };
 
 NetworkClock::Private::Private() :
-        clockName(""),
-        waiters(new Waiters()),
-        sec(0),
-        nsec(0),
-        _time(0),
-        closing(false),
-        initted(false)
+        waiters(new Waiters())
 {
 }
 

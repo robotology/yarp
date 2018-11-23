@@ -64,10 +64,11 @@ public:
     yarp::os::Mutex         mutex;
     yarp::os::Stamp         stamp;
     yarp::sig::FlexImage    image;
-    openni::PixelFormat     pixF;
-    int                     w, h;
-    size_t                  dataSize;
-    bool                    isReady;
+    openni::PixelFormat     pixF{openni::PixelFormat::PIXEL_FORMAT_DEPTH_1_MM};
+    int                     w{0};
+    int                     h{0};
+    size_t                  dataSize{0};
+    bool                    isReady{false};
 
     //Method
     streamFrameListener();
@@ -86,16 +87,11 @@ public:
     }
 
 private:
-    virtual void onNewFrame(openni::VideoStream& stream) override;
+    void onNewFrame(openni::VideoStream& stream) override;
     openni::VideoFrameRef   frameRef;
 };
 
-streamFrameListener::streamFrameListener() :
-    pixF(openni::PixelFormat::PIXEL_FORMAT_DEPTH_1_MM),
-    w(0),
-    h(0),
-    dataSize(0),
-    isReady(false)
+streamFrameListener::streamFrameListener()
 {
     image.setPixelCode(VOCAB_PIXEL_RGB);
 }
@@ -935,7 +931,7 @@ bool depthCameraDriver::setFeature(int feature, double value)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     switch(f)
     {
     case YARP_FEATURE_EXPOSURE:
@@ -976,7 +972,7 @@ bool depthCameraDriver::getFeature(int feature, double *value)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     switch(f)
     {
     case YARP_FEATURE_EXPOSURE:
@@ -1018,7 +1014,7 @@ bool depthCameraDriver::hasOnOff(  int feature, bool *HasOnOff)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     if (f == YARP_FEATURE_WHITE_BALANCE || f == YARP_FEATURE_MIRROR)
     {
         *HasOnOff = true;
@@ -1088,7 +1084,7 @@ bool depthCameraDriver::hasAuto(int feature, bool *hasAuto)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     if (f == YARP_FEATURE_EXPOSURE || f == YARP_FEATURE_WHITE_BALANCE)
     {
         *hasAuto = true;
@@ -1107,7 +1103,7 @@ bool depthCameraDriver::hasManual( int feature, bool* hasManual)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     if (f == YARP_FEATURE_EXPOSURE || f == YARP_FEATURE_FRAME_RATE || f == YARP_FEATURE_GAIN)
     {
         *hasManual = true;
@@ -1138,7 +1134,7 @@ bool depthCameraDriver::setMode(int feature, FeatureMode mode)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     if (f == YARP_FEATURE_EXPOSURE)
     {
         switch(mode)
@@ -1170,7 +1166,7 @@ bool depthCameraDriver::getMode(int feature, FeatureMode* mode)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     if (f == YARP_FEATURE_EXPOSURE)
     {
         *mode = m_imageStream.getCameraSettings()->getAutoExposureEnabled() ? MODE_AUTO : MODE_MANUAL;

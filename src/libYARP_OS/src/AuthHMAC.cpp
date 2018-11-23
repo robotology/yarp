@@ -83,7 +83,7 @@ AuthHMAC::AuthHMAC() :
     }
 
     size_t key_len = key.length();
-    unsigned char * tmp = new unsigned char[key_len];
+    auto* tmp = new unsigned char[key_len];
     strcpy((char*) tmp, key.c_str());
     HMAC_INIT(&context, tmp, (unsigned int)key_len);
     delete[] tmp;

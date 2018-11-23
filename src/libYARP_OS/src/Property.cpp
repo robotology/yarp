@@ -90,7 +90,7 @@ public:
     }
 
     PropertyItem *getProp(const std::string& key, bool create = true) {
-        std::map<std::string, PropertyItem>::iterator entry = data.find(key);
+        auto entry = data.find(key);
         if (entry == data.end()) {
             if (!create) {
                 return nullptr;
@@ -790,7 +790,7 @@ public:
                 }
             }
         }
-        return output.c_str();
+        return output;
     }
 
     void fromArguments(const char *command, bool wipe=true) {
@@ -981,7 +981,7 @@ void Property::fromString(const std::string& txt, bool wipe) {
 
 
 std::string Property::toString() const {
-    if (!check()) return "";
+    if (!check()) return {};
     return HELPER(implementation).toString();
 }
 

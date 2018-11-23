@@ -98,19 +98,19 @@ public:
     virtual bool stopService();
 
     // yarp::dev::IJoypadController methods
-    virtual bool getAxisCount(unsigned int& axis_count) override;
-    virtual bool getButtonCount(unsigned int& button_count) override;
-    virtual bool getTrackballCount(unsigned int& Trackball_count) override;
-    virtual bool getHatCount(unsigned int& Hat_count) override;
-    virtual bool getTouchSurfaceCount(unsigned int& touch_count) override;
-    virtual bool getStickCount(unsigned int& stick_count) override;
-    virtual bool getStickDoF(unsigned int stick_id, unsigned int& DoF) override;
-    virtual bool getButton(unsigned int button_id, float& value) override;
-    virtual bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) override;
-    virtual bool getHat(unsigned int hat_id, unsigned char& value) override;
-    virtual bool getAxis(unsigned int axis_id, double& value) override;
-    virtual bool getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) override;
-    virtual bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) override;
+    bool getAxisCount(unsigned int& axis_count) override;
+    bool getButtonCount(unsigned int& button_count) override;
+    bool getTrackballCount(unsigned int& Trackball_count) override;
+    bool getHatCount(unsigned int& Hat_count) override;
+    bool getTouchSurfaceCount(unsigned int& touch_count) override;
+    bool getStickCount(unsigned int& stick_count) override;
+    bool getStickDoF(unsigned int stick_id, unsigned int& DoF) override;
+    bool getButton(unsigned int button_id, float& value) override;
+    bool getTrackball(unsigned int trackball_id, yarp::sig::Vector& value) override;
+    bool getHat(unsigned int hat_id, unsigned char& value) override;
+    bool getAxis(unsigned int axis_id, double& value) override;
+    bool getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) override;
+    bool getTouch(unsigned int touch_id, yarp::sig::Vector& value) override;
 
 private:
 

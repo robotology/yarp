@@ -26,8 +26,8 @@ public:
     GPU(const char* szName);
     GPU(const GPU &res);
     virtual ~GPU();
-    virtual Node* clone(void) override;
-    virtual bool satisfy(GenericResource* resource) override;
+    Node* clone(void) override;
+    bool satisfy(GenericResource* resource) override;
 
     void setCores(size_t n) { cores = n; }
     void setFrequency(double f) { frequency = f; }

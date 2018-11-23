@@ -86,4 +86,4 @@ bool GPU::satisfy(GenericResource* resource)
     return ret;
 }
 
-GPU::~GPU() {}
+GPU::~GPU() = default;

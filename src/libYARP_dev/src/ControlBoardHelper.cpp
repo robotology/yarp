@@ -164,19 +164,19 @@ public:
 ControlBoardHelper::ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *newtons, const double *amps, const double *volts, const double *dutycycles, const double *kbemf, const double *ktau)
 {
     yAssert(n>=0);         // if number of joints is negative complain!
-    yAssert(aMap!=0);      // at least the axisMap is required
+    yAssert(aMap!=nullptr);      // at least the axisMap is required
     mPriv = new PrivateUnitsHandler(n);
 
     memcpy(mPriv->axisMap, aMap, sizeof(int)*n);
 
-    if (zs!=0)           memcpy(mPriv->position_zeros, zs, sizeof(double)*n);
-    if (angToEncs!=0)    memcpy(mPriv->angleToEncoders, angToEncs, sizeof(double)*n);
-    if (newtons!=0)      memcpy(mPriv->newtonsToSensors, newtons, sizeof(double)*n);
-    if (amps!=0)         memcpy(mPriv->ampereToSensors, amps, sizeof(double)*n);
-    if (volts!=0)        memcpy(mPriv->voltToSensors, volts, sizeof(double)*n);
-    if (dutycycles != 0) memcpy(mPriv->dutycycleToPWMs, dutycycles, sizeof(double)*n);
-    if (kbemf != 0)      memcpy(mPriv->bemfToRaws, kbemf, sizeof(double)*n);
-    if (ktau != 0)       memcpy(mPriv->ktauToRaws, ktau, sizeof(double)*n);
+    if (zs!=nullptr)           memcpy(mPriv->position_zeros, zs, sizeof(double)*n);
+    if (angToEncs!=nullptr)    memcpy(mPriv->angleToEncoders, angToEncs, sizeof(double)*n);
+    if (newtons!=nullptr)      memcpy(mPriv->newtonsToSensors, newtons, sizeof(double)*n);
+    if (amps!=nullptr)         memcpy(mPriv->ampereToSensors, amps, sizeof(double)*n);
+    if (volts!=nullptr)        memcpy(mPriv->voltToSensors, volts, sizeof(double)*n);
+    if (dutycycles != nullptr) memcpy(mPriv->dutycycleToPWMs, dutycycles, sizeof(double)*n);
+    if (kbemf != nullptr)      memcpy(mPriv->bemfToRaws, kbemf, sizeof(double)*n);
+    if (ktau != nullptr)       memcpy(mPriv->ktauToRaws, ktau, sizeof(double)*n);
 
     // invert the axis map
     memset (mPriv->invAxisMap, 0, sizeof(int) * n);
@@ -197,7 +197,7 @@ ControlBoardHelper::ControlBoardHelper(int n, const int *aMap, const double *ang
 
 ControlBoardHelper::~ControlBoardHelper()
 {
-    if (mPriv) { delete mPriv; mPriv = 0; }
+    if (mPriv) { delete mPriv; mPriv = nullptr; }
 }
 
 yarp::dev::ControlBoardHelper::ControlBoardHelper(const ControlBoardHelper & other)

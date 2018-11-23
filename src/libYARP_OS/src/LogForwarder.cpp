@@ -15,15 +15,14 @@
 #include <yarp/os/impl/PlatformLimits.h>
 
 bool yarp::os::impl::LogForwarder::started{false};
+
 yarp::os::impl::LogForwarder& yarp::os::impl::LogForwarder::getInstance()
 {
     static LogForwarder instance;
     return instance;
 }
 
-yarp::os::impl::LogForwarder::~LogForwarder()
-{
-}
+yarp::os::impl::LogForwarder::~LogForwarder() = default;
 
 yarp::os::impl::LogForwarder::LogForwarder()
 {

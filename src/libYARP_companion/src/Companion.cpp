@@ -1123,7 +1123,7 @@ class CompanionCheckHelper : public PortReader {
 public:
     BottleImpl bot;
     bool got;
-    virtual bool read(yarp::os::ConnectionReader& reader) override {
+    bool read(yarp::os::ConnectionReader& reader) override {
         bot.read(reader);
         got = true;
         return true;
@@ -1139,7 +1139,7 @@ public:
 class TextReader : public PortReader {
 public:
     std::string str;
-    virtual bool read(yarp::os::ConnectionReader& reader) override {
+    bool read(yarp::os::ConnectionReader& reader) override {
         str = reader.expectText();
         return reader.isValid();
     }
@@ -1699,7 +1699,7 @@ public:
         }
     }
 
-    virtual bool read(ConnectionReader& reader) override {
+    bool read(ConnectionReader& reader) override {
         BottleImpl bot;
         if (!reader.isValid()) {
             done.post();
@@ -2249,17 +2249,14 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
 
 class CompanionMergeInput : public TypedReaderCallback<Bottle> {
 public:
-    Contactable *port;
-    Semaphore *sema;
+    Contactable *port{nullptr};
+    Semaphore *sema{nullptr};
     Mutex mutex;
 
     Bottle value;
     Stamp stamp;
 
-    CompanionMergeInput() : port(nullptr),
-                            sema(nullptr),
-                            mutex() {
-    }
+    CompanionMergeInput() = default;
 
     void init(Contactable& port, Semaphore& sema) {
         this->port = &port;
@@ -2267,7 +2264,7 @@ public:
     }
 
     using yarp::os::TypedReaderCallback<Bottle>::onRead;
-    virtual void onRead(Bottle& datum) override {
+    void onRead(Bottle& datum) override {
         mutex.lock();
         value = datum;
         port->getEnvelope(stamp);

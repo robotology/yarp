@@ -68,7 +68,7 @@ public:
         // no parent
     }
 
-    virtual std::string getName() const override
+    std::string getName() const override
     {
         return "root";
     }

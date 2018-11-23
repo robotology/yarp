@@ -198,18 +198,16 @@ class PingSampler : public PortReader
 {
 public:
     Mutex mutex;
-    int ct;
-    double lastTime;
+    int ct{0};
+    double lastTime{0};
     Stat period;
 
     PingSampler() :
-            mutex(),
-            ct(0),
-            lastTime(0)
+            mutex()
     {
     }
 
-    virtual bool read(ConnectionReader& connection) override
+    bool read(ConnectionReader& connection) override
     {
         double now = SystemClock::nowSystem();
         Bottle b;

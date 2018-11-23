@@ -49,15 +49,15 @@ public:
 
     virtual ~McastCarrier();
 
-    virtual Carrier *create() const override;
-    virtual std::string getName() const override;
+    Carrier *create() const override;
+    std::string getName() const override;
 
-    virtual int getSpecifierCode() const override;
+    int getSpecifierCode() const override;
 
-    virtual bool sendHeader(ConnectionState& proto) override;
-    virtual bool expectExtraHeader(ConnectionState& proto) override;
-    virtual bool respondToHeader(ConnectionState& proto) override;
-    virtual bool expectReplyToHeader(ConnectionState& proto) override;
+    bool sendHeader(ConnectionState& proto) override;
+    bool expectExtraHeader(ConnectionState& proto) override;
+    bool respondToHeader(ConnectionState& proto) override;
+    bool expectReplyToHeader(ConnectionState& proto) override;
 
     bool becomeMcast(ConnectionState& proto, bool sender);
     void addSender(const std::string& key);
@@ -70,8 +70,8 @@ public:
      */
     bool takeElection();
 
-    virtual bool isActive() const override;
-    virtual bool isBroadcast() const override;
+    bool isActive() const override;
+    bool isBroadcast() const override;
 };
 
 #endif // YARP_OS_IMPL_MCASTCARRIER_H

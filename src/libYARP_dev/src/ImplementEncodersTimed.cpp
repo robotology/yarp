@@ -94,7 +94,6 @@ bool ImplementEncodersTimed::setEncoder(int j, double val)
 
 bool ImplementEncodersTimed::setEncoders(const double *val)
 {
-
     yarp::dev::impl::Buffer<double> buffValues = buffManager->getBuffer();
     castToMapper(helper)->posA2E(val, buffValues.getData());
     bool ret = iEncoders->setEncodersRaw(buffValues.getData());

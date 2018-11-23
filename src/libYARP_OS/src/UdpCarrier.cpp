@@ -15,8 +15,7 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-yarp::os::impl::UdpCarrier::UdpCarrier() {
-}
+yarp::os::impl::UdpCarrier::UdpCarrier() = default;
 
 yarp::os::Carrier *yarp::os::impl::UdpCarrier::create() const {
     return new UdpCarrier();
@@ -55,7 +54,7 @@ bool yarp::os::impl::UdpCarrier::respondToHeader(ConnectionState& proto) {
     // I am the receiver
 
     // issue: need a fresh port number...
-    DgramTwoWayStream *stream = new DgramTwoWayStream();
+    auto* stream = new DgramTwoWayStream();
     yAssert(stream!=nullptr);
 
     Contact remote = proto.getStreams().getRemoteAddress();
@@ -84,7 +83,7 @@ bool yarp::os::impl::UdpCarrier::expectReplyToHeader(ConnectionState& proto) {
         return false;
     }
 
-    DgramTwoWayStream *stream = new DgramTwoWayStream();
+    auto* stream = new DgramTwoWayStream();
     yAssert(stream!=nullptr);
 
     proto.takeStreams(nullptr); // free up port from tcp

@@ -10,7 +10,7 @@
 #include <yarp/dev/ControlBoardHelper.h>
 #include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
-#include <stdio.h>
+#include <cstdio>
 using namespace yarp::dev;
 using namespace yarp::os;
 

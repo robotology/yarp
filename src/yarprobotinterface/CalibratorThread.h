@@ -44,8 +44,8 @@ public:
                      RobotInterface::CalibratorThread::Action action);
     virtual ~CalibratorThread();
 
-    virtual void run() override;
-    virtual void onStop() override;
+    void run() override;
+    void onStop() override;
 
 private:
     class Private;

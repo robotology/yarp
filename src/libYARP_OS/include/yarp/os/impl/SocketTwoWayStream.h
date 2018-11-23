@@ -60,27 +60,27 @@ public:
         close();
     }
 
-    virtual InputStream& getInputStream() override
+    InputStream& getInputStream() override
     {
         return *this;
     }
 
-    virtual OutputStream& getOutputStream() override
+    OutputStream& getOutputStream() override
     {
         return *this;
     }
 
-    virtual const Contact& getLocalAddress() const override
+    const Contact& getLocalAddress() const override
     {
         return localAddress;
     }
 
-    virtual const Contact& getRemoteAddress() const override
+    const Contact& getRemoteAddress() const override
     {
         return remoteAddress;
     }
 
-    virtual void interrupt() override
+    void interrupt() override
     {
         YARP_DEBUG(Logger::get(), "^^^^^^^^^^^ interrupting socket");
         if (happy) {
@@ -94,14 +94,14 @@ public:
         }
     }
 
-    virtual void close() override
+    void close() override
     {
         stream.close();
         happy = false;
     }
 
     using yarp::os::InputStream::read;
-    virtual yarp::conf::ssize_t read(Bytes& b) override
+    yarp::conf::ssize_t read(Bytes& b) override
     {
         if (!isOk()) { return -1; }
         yarp::conf::ssize_t result;
@@ -118,7 +118,7 @@ public:
         return result;
     }
 
-    virtual yarp::conf::ssize_t partialRead(Bytes& b) override
+    yarp::conf::ssize_t partialRead(Bytes& b) override
     {
         if (!isOk()) { return -1; }
         yarp::conf::ssize_t result;
@@ -136,7 +136,7 @@ public:
     }
 
     using yarp::os::OutputStream::write;
-    virtual void write(const Bytes& b) override
+    void write(const Bytes& b) override
     {
         if (!isOk()) { return; }
         yarp::conf::ssize_t result;
@@ -151,7 +151,7 @@ public:
         }
     }
 
-    virtual void flush() override
+    void flush() override
     {
 #ifdef TCP_CORK
         int status = 0;
@@ -169,16 +169,16 @@ public:
 #endif
     }
 
-    virtual bool isOk() const override
+    bool isOk() const override
     {
         return happy;
     }
 
-    virtual void reset() override
+    void reset() override
     {
     }
 
-    virtual void beginPacket() override
+    void beginPacket() override
     {
 #ifdef TCP_CORK
         // Set CORK
@@ -187,7 +187,7 @@ public:
 #endif
     }
 
-    virtual void endPacket() override
+    void endPacket() override
     {
 #ifdef TCP_CORK
         // Remove CORK
@@ -196,7 +196,7 @@ public:
 #endif
     }
 
-    virtual bool setWriteTimeout(double timeout) override
+    bool setWriteTimeout(double timeout) override
     {
         if (timeout<1e-12) {
             haveWriteTimeout = false;
@@ -207,7 +207,7 @@ public:
         return true;
     }
 
-    virtual bool setReadTimeout(double timeout) override
+    bool setReadTimeout(double timeout) override
     {
         if (timeout<1e-12) {
             haveReadTimeout = false;
@@ -218,8 +218,8 @@ public:
         return true;
     }
 
-    virtual bool setTypeOfService(int tos) override;
-    virtual int getTypeOfService() override;
+    bool setTypeOfService(int tos) override;
+    int getTypeOfService() override;
 
 private:
     yarp::os::impl::TcpStream stream;

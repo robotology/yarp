@@ -37,27 +37,27 @@ public:
     virtual ~MpiP2PCarrier() {
     }
 
-    virtual void close() override {
+    void close() override {
         #ifdef MPI_DEBUG
         printf("[MpiP2PCarrier @ %s] Closing carrier \n", name.c_str() );
         #endif
         delete comm;
     }
 
-    virtual Carrier *create() const override {
+    Carrier *create() const override {
         return new MpiP2PCarrier();
     }
 
-    virtual void createStream(bool sender) override {
+    void createStream(bool sender) override {
         comm = new MpiComm(route);
         stream = new MpiP2PStream(route, comm);
     }
 
-    virtual std::string getName() const override {
+    std::string getName() const override {
         return "mpi";
     }
 
-    virtual bool supportReply() const override {
+    bool supportReply() const override {
         return true;
     }
 };

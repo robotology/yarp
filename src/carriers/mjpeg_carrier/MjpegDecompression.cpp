@@ -61,7 +61,7 @@ boolean fill_net_input_buffer (j_decompress_ptr cinfo)
     // The whole JPEG data is expected to reside in the supplied memory
     // buffer, so any request for more data beyond the given buffer size
     // is treated as an error.
-    JOCTET *mybuffer = (JOCTET *) cinfo->client_data;
+    auto* mybuffer = (JOCTET *) cinfo->client_data;
     fprintf(stderr, "JPEG data unusually large\n");
     // Insert a fake EOI marker
     mybuffer[0] = (JOCTET) 0xFF;
@@ -72,14 +72,14 @@ boolean fill_net_input_buffer (j_decompress_ptr cinfo)
 }
 
 void net_error_exit (j_common_ptr cinfo) {
-    net_error_ptr myerr = (net_error_ptr) cinfo->err;
+    auto myerr = (net_error_ptr) cinfo->err;
     (*cinfo->err->output_message) (cinfo);
     longjmp(myerr->setjmp_buffer, 1);
 }
 
 void skip_net_input_data (j_decompress_ptr cinfo, long num_bytes)
 {
-    net_src_ptr src = (net_src_ptr) cinfo->src;
+    auto src = (net_src_ptr) cinfo->src;
 
     if (num_bytes > 0) {
         while (num_bytes > (long) src->bytes_in_buffer) {
@@ -115,17 +115,14 @@ void jpeg_net_src (j_decompress_ptr cinfo, char *buf, int buflen) {
 
 class MjpegDecompressionHelper {
 public:
-    bool active;
+    bool active{false};
     struct jpeg_decompress_struct cinfo;
     struct net_error_mgr jerr;
     JOCTET error_buffer[4];
-    yarp::os::InputStream::readEnvelopeCallbackType readEnvelopeCallback;
-    void* readEnvelopeCallbackData;
+    yarp::os::InputStream::readEnvelopeCallbackType readEnvelopeCallback{nullptr};
+    void* readEnvelopeCallbackData{nullptr};
 
-    MjpegDecompressionHelper() :
-            active(false),
-            readEnvelopeCallback(nullptr),
-            readEnvelopeCallbackData(nullptr)
+    MjpegDecompressionHelper()
     {
         memset(&cinfo, 0, sizeof(jpeg_decompress_struct));
         memset(&jerr, 0, sizeof(net_error_mgr));

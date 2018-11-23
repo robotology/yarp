@@ -27,9 +27,7 @@ TcpStream::TcpStream() {
     sd = -1;
 }
 
-TcpStream::~TcpStream() {
-
-}
+TcpStream::~TcpStream() = default;
 
 int TcpStream::open() {
     set_handle(socket(AF_INET, SOCK_STREAM, 0));

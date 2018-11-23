@@ -10,7 +10,7 @@
 
 using namespace yarp::manager;
 
-Graph::Graph() { }
+Graph::Graph() = default;
 
 Graph::~Graph()
 {
@@ -34,7 +34,7 @@ bool Graph::removeNode(Node* node)
 {
     __CHECK_NULLPTR(node);
 
-    NodePIterator itr = nodes.find(node->getLabel());
+    auto itr = nodes.find(node->getLabel());
     if(itr == nodes.end())
         return true;
     delete (*itr).second;
@@ -45,7 +45,7 @@ bool Graph::removeNode(Node* node)
 
 bool Graph::removeNode(const char* szLabel)
 {
-    NodePIterator itr = nodes.find(szLabel);
+    auto itr = nodes.find(szLabel);
     if(itr == nodes.end())
         return true;
     delete (*itr).second;
@@ -77,7 +77,7 @@ void Graph::setVisited(bool vis)
 
 Node* Graph::getNode( const char* szLabel)
 {
-    NodePIterator itr = nodes.find(szLabel);
+    auto itr = nodes.find(szLabel);
     if(itr != nodes.end())
         return (*itr).second;
     return nullptr;
@@ -131,7 +131,7 @@ bool Graph::hasNode(Node* node)
 {
     __CHECK_NULLPTR(node);
 
-    NodePIterator itr = nodes.find(node->getLabel());
+    auto itr = nodes.find(node->getLabel());
     if(itr == nodes.end())
         return false;
     return true;
@@ -147,7 +147,7 @@ bool Graph::hasNode(const char* szLabel)
 
 Node* Graph::getNodeAt(int index)
 {
-    NodePIterator itr = nodes.begin();
+    auto itr = nodes.begin();
     for(int i=0; i<index; i++)
         itr++;
     return (*itr).second;

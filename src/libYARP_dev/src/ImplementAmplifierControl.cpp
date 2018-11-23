@@ -21,9 +21,9 @@ using namespace yarp::dev;
 ImplementAmplifierControl::ImplementAmplifierControl(yarp::dev::IAmplifierControlRaw  *y)
 {
     iAmplifier= y;
-    helper = 0;
-    dTemp=0;
-    iTemp=0;
+    helper = nullptr;
+    dTemp=nullptr;
+    iTemp=nullptr;
 }
 
 ImplementAmplifierControl::~ImplementAmplifierControl()
@@ -33,15 +33,15 @@ ImplementAmplifierControl::~ImplementAmplifierControl()
 
 bool ImplementAmplifierControl:: initialize (int size, const int *amap, const double *enc, const double *zos, const double *ampereFactor, const double *voltFactor)
 {
-    if (helper!=0)
+    if (helper!=nullptr)
         return false;
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr, ampereFactor, voltFactor));
-    yAssert (helper != 0);
+    yAssert (helper != nullptr);
     dTemp=new double[size];
-    yAssert (dTemp != 0);
+    yAssert (dTemp != nullptr);
     iTemp=new int[size];
-    yAssert (iTemp != 0);
+    yAssert (iTemp != nullptr);
 
     return true;
 }
@@ -52,15 +52,15 @@ bool ImplementAmplifierControl:: initialize (int size, const int *amap, const do
 */
 bool ImplementAmplifierControl::uninitialize ()
 {
-    if (helper!=0)
+    if (helper!=nullptr)
         delete castToMapper(helper);
 
     delete [] dTemp;
     delete [] iTemp;
 
-    helper=0;
-    dTemp=0;
-    iTemp=0;
+    helper=nullptr;
+    dTemp=nullptr;
+    iTemp=nullptr;
     return true;
 }
 

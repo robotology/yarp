@@ -87,7 +87,7 @@ public:
     /**
      * Clear all cached data.
      */
-    virtual void clear() override;
+    void clear() override;
 
     /**
      * Add the specified bytes to the current pool buffer.
@@ -121,20 +121,20 @@ public:
     void push(const Bytes& data, bool copy);
 
     // defined by yarp::os::ConnectionWriter
-    virtual bool isTextMode() const override;
-    virtual bool isBareMode() const override;
-    virtual bool convertTextMode() override;
-    virtual void declareSizes(int argc, int* argv) override; // FIXME Remove?
-    virtual void setReplyHandler(PortReader& reader) override;
-    virtual void appendInt8(std::int8_t data) override;
-    virtual void appendInt16(std::int16_t data) override;
-    virtual void appendInt32(std::int32_t data) override;
-    virtual void appendInt64(std::int64_t data) override;
-    virtual void appendFloat32(yarp::conf::float32_t data) override;
-    virtual void appendFloat64(yarp::conf::float64_t data) override;
-    virtual void appendBlock(const char* data, size_t len) override;
-    virtual void appendString(const char* str, const char terminate = '\n') override;
-    virtual void appendExternalBlock(const char* data, size_t len) override;
+    bool isTextMode() const override;
+    bool isBareMode() const override;
+    bool convertTextMode() override;
+    void declareSizes(int argc, int* argv) override; // FIXME Remove?
+    void setReplyHandler(PortReader& reader) override;
+    void appendInt8(std::int8_t data) override;
+    void appendInt16(std::int16_t data) override;
+    void appendInt32(std::int32_t data) override;
+    void appendInt64(std::int64_t data) override;
+    void appendFloat32(yarp::conf::float32_t data) override;
+    void appendFloat64(yarp::conf::float64_t data) override;
+    void appendBlock(const char* data, size_t len) override;
+    void appendString(const char* str, const char terminate = '\n') override;
+    void appendExternalBlock(const char* data, size_t len) override;
 
     /**
      * Add a buffer by recording a reference to it, without copying it.
@@ -165,12 +165,12 @@ public:
 
 
     // defined by yarp::os::SizedWriter
-    virtual size_t length() const override;
-    virtual size_t headerLength() const override;
-    virtual size_t length(size_t index) const override;
-    virtual const char* data(size_t index) const override;
-    virtual bool write(ConnectionWriter& connection) const override;
-    virtual void write(OutputStream& os) override;
+    size_t length() const override;
+    size_t headerLength() const override;
+    size_t length(size_t index) const override;
+    const char* data(size_t index) const override;
+    bool write(ConnectionWriter& connection) const override;
+    void write(OutputStream& os) override;
 
     /**
      * Write message to a receiving object.  This is to simplify writing tests,
@@ -190,7 +190,7 @@ public:
 
 
     // defined by yarp::os::SizedWriter
-    virtual PortReader* getReplyHandler() override;
+    PortReader* getReplyHandler() override;
 
     /**
      * Switch to storing a header.  Buffers are tracked separately
@@ -200,23 +200,23 @@ public:
 
 
     // defined by yarp::os::SizedWriter
-    virtual yarp::os::Portable* getReference() override;
+    yarp::os::Portable* getReference() override;
 
 
     // defined by yarp::os::ConnectionWriter
-    virtual void setReference(yarp::os::Portable* obj) override;
-    virtual bool isValid() const override;
-    virtual bool isActive() const override;
-    virtual bool isError() const override;
-    virtual void requestDrop() override;
+    void setReference(yarp::os::Portable* obj) override;
+    bool isValid() const override;
+    bool isActive() const override;
+    bool isError() const override;
+    void requestDrop() override;
 
     // defined by yarp::os::SizedWriter
-    virtual bool dropRequested() override;
-    virtual void startWrite() const override;
-    virtual void stopWrite() const override;
+    bool dropRequested() override;
+    void startWrite() const override;
+    void stopWrite() const override;
 
     // defined by yarp::os::ConnectionWriter
-    virtual SizedWriter* getBuffer() const override;
+    SizedWriter* getBuffer() const override;
 
     /**
      * Set a custom initial pool size, which affects the size of buffers

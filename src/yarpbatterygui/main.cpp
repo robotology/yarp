@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    yarp::dev::IBattery*   ibat = 0;
-    yarp::dev::PolyDriver* drv = 0;
+    yarp::dev::IBattery*   ibat = nullptr;
+    yarp::dev::PolyDriver* drv = nullptr;
 
     if (rf.check("robot"))
     {
@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
     }
 
     drv->view(ibat);
-    if (ibat == 0)
+    if (ibat == nullptr)
     {
         yError("Problems viewing the battery interface");
         drv->close();
@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
         return 2;
     }
 
-    MainWindow w(rf, ibat, NULL, refresh_period);
+    MainWindow w(rf, ibat, nullptr, refresh_period);
     w.show();
     int ret = a.exec();
 

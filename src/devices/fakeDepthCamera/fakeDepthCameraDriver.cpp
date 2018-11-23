@@ -20,24 +20,19 @@ using namespace yarp::os;
 using namespace std;
 
 fakeDepthCameraDriver::fakeDepthCameraDriver() :
-
     rgb_h(480),
     rgb_w(640),
     dep_h(480),
     dep_w(640),
-    accuracy(0.001),
     rgb_Vfov(36),
     rgb_Hfov(50),
     dep_Vfov(36),
     dep_Hfov(50),
-    dep_near(0.4),
     dep_far(6),
     image(nullptr)
 {}
 
-fakeDepthCameraDriver::~fakeDepthCameraDriver()
-{
-}
+fakeDepthCameraDriver::~fakeDepthCameraDriver() = default;
 
 bool fakeDepthCameraDriver::open(Searchable& config)
 {

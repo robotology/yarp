@@ -151,7 +151,7 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
     int ip[] = { 0, 0, 0, 0 };
     int port = -1;
 
-    unsigned char *base = (unsigned char *)block.get();
+    auto* base = (unsigned char *)block.get();
     std::string add;
     for (int i=0; i<4; i++) {
         ip[i] = base[i];

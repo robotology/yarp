@@ -70,7 +70,7 @@ public:
     static bool checkForCarrier(const Bytes& header, Searchable& group);
     static bool scanForCarrier(const Bytes& header);
 
-    virtual bool select(Searchable& options) override;
+    bool select(Searchable& options) override;
 };
 
 yarp::os::Mutex Carriers::Private::mutex {};

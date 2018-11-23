@@ -93,9 +93,7 @@ RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::privateXMLReaderFileV1(
     verbose_output = false;
 }
 
-RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::~privateXMLReaderFileV1()
-{
-}
+RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::~privateXMLReaderFileV1() = default;
 
 RobotInterface::Robot& RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::readRobotFile(const std::string &fileName)
 {
@@ -112,7 +110,7 @@ RobotInterface::Robot& RobotInterface::XMLReaderFileV1::privateXMLReaderFileV1::
 #endif //WIN32
 
     yDebug() << "Reading file" << filename.c_str();
-    TiXmlDocument *doc = new TiXmlDocument(filename.c_str());
+    auto* doc = new TiXmlDocument(filename.c_str());
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
     }
@@ -336,7 +334,7 @@ RobotInterface::DeviceList RobotInterface::XMLReaderFileV1::privateXMLReaderFile
     curr_filename = fileName;
 
     yDebug() << "Reading file" << fileName.c_str();
-    TiXmlDocument *doc = new TiXmlDocument(fileName.c_str());
+    auto* doc = new TiXmlDocument(fileName.c_str());
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
     }
@@ -518,7 +516,7 @@ RobotInterface::ParamList RobotInterface::XMLReaderFileV1::privateXMLReaderFileV
     }
 
     // +1 skips the first element, that is the main param
-    for (ParamList::iterator it = params.begin() + 1; it != params.end(); ++it) {
+    for (auto it = params.begin() + 1; it != params.end(); ++it) {
         Param &param = *it;
         params.at(0).value() += (params.at(0).value().empty() ? "(" : " ") + param.name();
     }
@@ -629,7 +627,7 @@ RobotInterface::ParamList RobotInterface::XMLReaderFileV1::privateXMLReaderFileV
     curr_filename = fileName;
 
     yDebug() << "Reading file" << fileName.c_str();
-    TiXmlDocument *doc = new TiXmlDocument(fileName.c_str());
+    auto* doc = new TiXmlDocument(fileName.c_str());
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
     }
@@ -793,7 +791,7 @@ RobotInterface::ActionList RobotInterface::XMLReaderFileV1::privateXMLReaderFile
     curr_filename = fileName;
 
     yDebug() << "Reading file" << fileName.c_str();
-    TiXmlDocument *doc = new TiXmlDocument(fileName.c_str());
+    auto* doc = new TiXmlDocument(fileName.c_str());
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
     }

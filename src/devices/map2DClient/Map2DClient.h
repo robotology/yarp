@@ -70,17 +70,17 @@ public:
     bool close() override;
 
     /* The following methods belong to IMap2D interface */
-    virtual bool     clearAllMaps  () override;
-    virtual bool     remove_map (std::string map_name) override;
-    virtual bool     store_map  (const yarp::dev::MapGrid2D& map) override;
-    virtual bool     get_map    (std::string map_name, yarp::dev::MapGrid2D& map) override;
-    virtual bool     get_map_names(std::vector<std::string>& map_names) override;
+    bool     clearAllMaps  () override;
+    bool     remove_map (std::string map_name) override;
+    bool     store_map  (const yarp::dev::MapGrid2D& map) override;
+    bool     get_map    (std::string map_name, yarp::dev::MapGrid2D& map) override;
+    bool     get_map_names(std::vector<std::string>& map_names) override;
 
-    virtual bool     storeLocation(std::string location_name, Map2DLocation loc) override;
-    virtual bool     getLocation(std::string location_name, Map2DLocation& loc) override;
-    virtual bool     deleteLocation(std::string location_name) override;
-    virtual bool     getLocationsList(std::vector<std::string>& locations) override;
-    virtual bool     clearAllLocations() override;
+    bool     storeLocation(std::string location_name, Map2DLocation loc) override;
+    bool     getLocation(std::string location_name, Map2DLocation& loc) override;
+    bool     deleteLocation(std::string location_name) override;
+    bool     getLocationsList(std::vector<std::string>& locations) override;
+    bool     clearAllLocations() override;
 };
 
 #endif // YARP_DEV_MAP2DCLIENT_H

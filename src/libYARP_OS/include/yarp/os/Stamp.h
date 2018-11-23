@@ -84,10 +84,10 @@ public:
     void update(double time);
 
     // Documented in Portable
-    virtual bool read(ConnectionReader& connection) override;
+    bool read(ConnectionReader& connection) override;
 
     // Documented in Portable
-    virtual bool write(ConnectionWriter& connection) const override;
+    bool write(ConnectionWriter& connection) const override;
 };
 
 

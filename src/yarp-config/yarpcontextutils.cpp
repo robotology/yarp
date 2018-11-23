@@ -61,7 +61,7 @@ std::string getFolderStringName(folderType ftype)
     case 1:
         return std::string("robots");
     default:
-        return std::string("");
+        return {};
     }
 }
 
@@ -74,7 +74,7 @@ std::string getFolderStringNameHidden(folderType ftype)
     case 1:
         return std::string(".robots");
     default:
-        return std::string("");
+        return {};
     }
 }
 
@@ -314,7 +314,7 @@ std::vector<std::string> listContentFiles(const std::string &curPath)
             {
                 std::vector<std::string> nestedFiles = listContentFiles(path);
                 for (auto& nestedFile : nestedFiles)
-                    fileStack.push_back(path + PATH_SEPARATOR + nestedFile);
+                    fileStack.push_back(std::string{path}.append(PATH_SEPARATOR).append(nestedFile));
             }
         }
         fileStack.pop_front();
@@ -473,11 +473,11 @@ int recursiveDiff(std::string srcDirName, std::string destDirName, std::ostream 
     size_t nModifiedFiles = 0;
     for (const auto& srcIt : srcFileList)
     {
-        std::set<std::string>::iterator destPos = destFileList.find(srcIt);
+        auto destPos = destFileList.find(srcIt);
         if (destPos != destFileList.end())
         {
             diff_match_patch<std::string> dmp;
-            std::string srcFileName = srcDirName + PATH_SEPARATOR + srcIt;
+            std::string srcFileName = std::string{srcDirName}.append(PATH_SEPARATOR).append(srcIt);
             if (isHidden(srcFileName))
                 continue;
 
@@ -489,8 +489,8 @@ int recursiveDiff(std::string srcDirName, std::string destDirName, std::ostream 
             std::string patchString = dmp.patch_toText(dmp.patch_make(srcStr, destStr));
             if (patchString != "")
             {
-                output << "- " << srcDirName + PATH_SEPARATOR + srcIt << endl;
-                output << "+ " << destDirName + PATH_SEPARATOR + (*destPos) << endl;
+                output << "- " << srcDirName << PATH_SEPARATOR << srcIt << endl;
+                output << "+ " << destDirName << PATH_SEPARATOR << (*destPos) << endl;
                 output << dmp.patch_toText(dmp.patch_make(srcStr, destStr)) << std::endl;
                 nModifiedFiles++;
             }
@@ -555,15 +555,15 @@ int recursiveMerge(std::string srcDirName, std::string destDirName, std::string 
 
     for (const auto& srcIt : srcFileList)
     {
-        std::string srcFileName = srcDirName + PATH_SEPARATOR + srcIt;
+        std::string srcFileName = std::string{srcDirName}.append(PATH_SEPARATOR).append(srcIt);
         if (isHidden(srcFileName))
             continue;
 
-        std::set<std::string>::iterator destPos = destFileList.find(srcIt);
+        auto destPos = destFileList.find(srcIt);
         if (destPos != destFileList.end())
         {
             std::string destFileName = destDirName + PATH_SEPARATOR + (*destPos);
-            std::set<std::string>::iterator hiddenDestPos = hiddenFilesList.find(srcIt);
+            auto hiddenDestPos = hiddenFilesList.find(srcIt);
             if (hiddenDestPos != hiddenFilesList.end())
             {
                 std::string hiddenFileName = commonParentName + PATH_SEPARATOR + (*hiddenDestPos);

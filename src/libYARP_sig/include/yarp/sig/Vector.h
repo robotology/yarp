@@ -64,13 +64,13 @@ public:
     * Read vector from a connection.
     * return true iff a vector was read correctly
     */
-    virtual bool read(yarp::os::ConnectionReader& connection) override;
+    bool read(yarp::os::ConnectionReader& connection) override;
 
     /**
     * Write vector to a connection.
     * return true iff a vector was written correctly
     */
-    virtual bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool write(yarp::os::ConnectionWriter& connection) const override;
 
 protected:
     virtual std::string getFormatStr(int tag) const;
@@ -208,25 +208,25 @@ public:
         return *this;
     }
 
-    virtual size_t getElementSize() const override {
+    size_t getElementSize() const override {
         return sizeof(T);
     }
 
-    virtual int getBottleTag() const override {
+    int getBottleTag() const override {
         return BottleTagMap <T>();
     }
 
-    virtual size_t getListSize() const override
+    size_t getListSize() const override
     {
         return len;
     }
 
-    virtual const char* getMemoryBlock() const override
+    const char* getMemoryBlock() const override
     {
         return bytes.get();
     }
 
-    virtual char* getMemoryBlock() override
+    char* getMemoryBlock() override
     {
         return bytes.get();
     }
@@ -265,7 +265,7 @@ public:
     * Resize the vector.
     * @param s the new size
     */
-    virtual void resize(size_t size) override
+    void resize(size_t size) override
     {
         size_t prev_len = len;
         bytes.allocateOnNeed(size*sizeof(T),size*sizeof(T));
@@ -570,7 +570,7 @@ public:
         first = nullptr;
     }
 
-    virtual yarp::os::Type getType() const override {
+    yarp::os::Type getType() const override {
         return yarp::os::Type::byName("yarp/vector");
     }
 };

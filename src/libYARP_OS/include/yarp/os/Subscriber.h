@@ -76,33 +76,33 @@ public:
     }
 
     // documentation provided in Contactable
-    virtual bool open(const std::string& name) override
+    bool open(const std::string& name) override
     {
         clear();
         return port.open(name);
     }
 
     // documentation provided in Contactable
-    virtual bool open(const Contact& contact, bool registerName = true) override
+    bool open(const Contact& contact, bool registerName = true) override
     {
         clear();
         return port.open(contact, registerName);
     }
 
     // documentation provided in Contactable
-    virtual void close() override
+    void close() override
     {
         active().close();
     }
 
     // documentation provided in Contactable
-    virtual void interrupt() override
+    void interrupt() override
     {
         active().interrupt();
     }
 
     // documentation provided in Contactable
-    virtual void resume() override
+    void resume() override
     {
         active().resume();
     }
@@ -127,18 +127,18 @@ public:
         return buffer().read(shouldWait);
     }
 
-    virtual Port& asPort() override
+    Port& asPort() override
     {
         return port;
     }
 
-    virtual const Port& asPort() const override
+    const Port& asPort() const override
     {
         return port;
     }
 
     using TypedReaderCallback<T>::onRead;
-    virtual void onRead(T& datum) override
+    void onRead(T& datum) override
     {
         YARP_UNUSED(datum);
         // override this to do something

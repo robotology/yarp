@@ -20,6 +20,7 @@
 #include "yarp/os/Time.h"
 #include "yarp/os/Stamp.h"
 #include <QDebug>
+#include <utility>
 
 /*! \brief Constructor of the class.
  *
@@ -61,7 +62,7 @@ Plotter::Plotter(const QString &title, int gridx, int gridy, int hspan, int vspa
     customPlot.axisRect()->axis(QCPAxis::atBottom)->setRange(0,size);
     customPlot.axisRect()->axis(QCPAxis::atLeft)->setRange(minval, maxval);
     customPlot.setInteractions( QCP::iRangeDrag | QCP::iRangeZoom  );
-    QCPItemText *textLabel = new QCPItemText(&customPlot);
+    auto* textLabel = new QCPItemText(&customPlot);
     customPlot.addItem(textLabel);
     textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
     textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
@@ -84,7 +85,7 @@ void Plotter::onInteract()
 Plotter::~Plotter()
 {
     for (int i=0;i<graphList.count(); i++) {
-        Graph *idx = (Graph*)graphList.at(i);
+        auto* idx = (Graph*)graphList.at(i);
         if (idx) {
             delete idx;
             idx = nullptr;
@@ -123,7 +124,7 @@ Graph * Plotter::addGraph(QString remotePort,QString localPort,int index, QStrin
 
 
     for(int i=0;i<graphList.count();i++) {
-        Graph *g = (Graph *)graphList.at(i);
+        auto* g = (Graph *)graphList.at(i);
         Connection *con = g->getConnection();
         if(!con){
             continue;
@@ -177,7 +178,7 @@ void Plotter::onTimeout()
 
     int c = graphList.count();
     for (int j=0;j < c; j++) {
-        Graph *graph = (Graph*)graphList.at(j);
+        auto* graph = (Graph*)graphList.at(j);
         yarp::os::Bottle *b;
         if(graph->deleteConnection){
             b = graph->curr_connection->localPort->read(false);
@@ -220,7 +221,7 @@ void Plotter::onTimeout()
     // if the user did not interact with the plotter, it remains aligned to the right
     // else, there is no alignment and the user has the freedom to pan and zoom it
     if(!interact){
-        Graph *graph = (Graph*)graphList.at(0);
+        auto* graph = (Graph*)graphList.at(0);
         if(graph){
             customPlot.xAxis->setRange(graph->lastX+5, size, Qt::AlignRight);
         }
@@ -235,7 +236,7 @@ void Plotter::onTimeout()
 void Plotter::clear()
 {
     for (int j=0;j < graphList.count(); j++) {
-        Graph *graph = (Graph*)graphList.at(j);
+        auto* graph = (Graph*)graphList.at(j);
         graph->clearData();
     }
     customPlot.replot();
@@ -257,10 +258,10 @@ Graph::Graph(int index, QString title, QString color, QString type, int size, do
     buffer_size(buffer_size),
     numberAcquiredData(0),
     lastIndex(0),
-    type(type),
-    color(color),
+    type(std::move(type)),
+    color(std::move(color)),
     lineSize(size),
-    title(title)
+    title(std::move(title))
 {}
 
 

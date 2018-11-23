@@ -386,7 +386,7 @@ void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
     unsigned int cnt = 0;
     for(auto& itr : apps){
         cnt++;
-        yarp::manager::Application *app = dynamic_cast<yarp::manager::Application*>(itr);
+        auto* app = dynamic_cast<yarp::manager::Application*>(itr);
         if(app){
             ui->entitiesTree->addApplication(app);
             if(strcmp(selectNodeForEditing.toLatin1().data(),app->getName())==0){
@@ -400,7 +400,7 @@ void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
 
     yarp::manager::ResourcePContainer resources = kb->getResources();
     for(auto& resource : resources) {
-        yarp::manager::Computer* comp = dynamic_cast<yarp::manager::Computer*>(resource);
+        auto* comp = dynamic_cast<yarp::manager::Computer*>(resource);
         if(comp){
             ui->entitiesTree->addComputer(comp);
         }
@@ -408,7 +408,7 @@ void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
 
     yarp::manager::ModulePContainer modules = kb->getModules();
     for(auto& module : modules) {
-        yarp::manager::Module *mod = dynamic_cast<yarp::manager::Module*>(module);
+        auto* mod = dynamic_cast<yarp::manager::Module*>(module);
         if(mod){
             ui->entitiesTree->addModule(mod);
         }
@@ -547,7 +547,7 @@ QString MainWindow::getAppNameFromXml(QString fileName)
     yarp::manager::ApplicaitonPContainer apps =  kb->getApplications();
     for(auto& itr : apps)
     {
-        yarp::manager::Application *app = dynamic_cast<yarp::manager::Application*>(itr);
+        auto* app = dynamic_cast<yarp::manager::Application*>(itr);
         if(app)
         {
             if(app->getXmlFile() == fileName.toStdString())
@@ -571,7 +571,7 @@ void MainWindow::viewResource(yarp::manager::Computer *res)
         }
     }
 
-    ResourceViewWidget *w = new ResourceViewWidget(res,ui->mainTabs);
+    auto* w = new ResourceViewWidget(res,ui->mainTabs);
     int index = ui->mainTabs->addTab(w,res->getName());
     ui->mainTabs->setTabIcon(index,QIcon(":/computer22.svg"));
     ui->mainTabs->setCurrentIndex(index);
@@ -589,7 +589,7 @@ void MainWindow::viewModule(yarp::manager::Module *module)
         }
     }
 
-    ModuleViewWidget *w = new ModuleViewWidget(module,ui->mainTabs);
+    auto* w = new ModuleViewWidget(module,ui->mainTabs);
     int index = ui->mainTabs->addTab(w,module->getName());
     ui->mainTabs->setTabIcon(index,QIcon(":/module22.svg"));
     ui->mainTabs->setCurrentIndex(index);
@@ -618,7 +618,7 @@ void MainWindow::viewApplication(yarp::manager::Application *app,bool editingMod
     else
         config.unput("showManager");
 
-    ApplicationViewWidget *w = new ApplicationViewWidget(app,&lazyManager,&config,editingMode,ui->mainTabs);
+    auto* w = new ApplicationViewWidget(app,&lazyManager,&config,editingMode,ui->mainTabs);
     connect(w,SIGNAL(logError(QString)),this,SLOT(onLogError(QString)));
     connect(w,SIGNAL(logWarning(QString)),this,SLOT(onLogWarning(QString)));
     connect(w,SIGNAL(builderWindowFloating(bool)),this,SLOT(onBuilderWindowFloating(bool)));
@@ -668,7 +668,7 @@ void MainWindow::onExportGraph()
     }
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
-        ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
+        auto* ww = (ApplicationViewWidget*)w;
         ww->exportGraph();
     }
 }
@@ -683,7 +683,7 @@ void MainWindow::onRun(bool onlySelected)
     }
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
-        ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
+        auto* ww = (ApplicationViewWidget*)w;
         ww->runApplicationSet(onlySelected);
     }
 }
@@ -698,7 +698,7 @@ void MainWindow::onStop(bool onlySelected)
     }
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
-        ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
+        auto* ww = (ApplicationViewWidget*)w;
         ww->stopApplicationSet(onlySelected);
     }
 }
@@ -713,7 +713,7 @@ void MainWindow::onKill(bool onlySelected)
     }
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
-        ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
+        auto* ww = (ApplicationViewWidget*)w;
         ww->killApplicationSet(onlySelected);
     }
 }
@@ -728,7 +728,7 @@ void MainWindow::onConnect(bool onlySelected)
     }
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
-        ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
+        auto* ww = (ApplicationViewWidget*)w;
         ww->connectConnectionSet(onlySelected);
     }
 }
@@ -742,7 +742,7 @@ void MainWindow::onDisconnect(bool onlySelected)
     }
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
-        ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
+        auto* ww = (ApplicationViewWidget*)w;
         ww->disconnectConnectionSet(onlySelected);
     }
 }
@@ -777,12 +777,12 @@ void MainWindow::onRefresh()
     }
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
-        ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
+        auto* ww = (ApplicationViewWidget*)w;
         ww->refresh();
     }
 
     if(type == yarp::manager::RESOURCE){
-        ResourceViewWidget *ww = (ResourceViewWidget*)w;
+        auto* ww = (ResourceViewWidget*)w;
         ww->refresh();
     }
 }
@@ -797,7 +797,7 @@ void MainWindow::onSelectAll()
     }
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
-        ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
+        auto* ww = (ApplicationViewWidget*)w;
         ww->selectAll();
     }
 }
@@ -807,7 +807,7 @@ void MainWindow::onSelectAll()
  */
 bool MainWindow::onTabClose(int index)
 {
-    GenericViewWidget *w = (GenericViewWidget*)ui->mainTabs->widget(index);
+    auto* w = (GenericViewWidget*)ui->mainTabs->widget(index);
     if(!w){
         return false;
     }
@@ -935,9 +935,9 @@ void MainWindow::onBuilderWindowFloating(bool floating)
 void MainWindow::onTabChangeItem(int index)
 {
 
-    GenericViewWidget *w = (GenericViewWidget*)ui->mainTabs->widget(index);
+    auto* w = (GenericViewWidget*)ui->mainTabs->widget(index);
     if(w && w->getType() == yarp::manager::APPLICATION){
-        ApplicationViewWidget *aw = (ApplicationViewWidget*)w;
+        auto* aw = (ApplicationViewWidget*)w;
         if(aw->isEditingMode()){
             ui->actionSelect_All->setEnabled(false);
             ui->actionRefresh_Status->setEnabled(false);
@@ -990,7 +990,7 @@ void MainWindow::onTabChangeItem(int index)
     */
         if(prevWidget && prevWidget != w){
             if(prevWidget->getType() == yarp::manager::APPLICATION){
-                ApplicationViewWidget *aw = (ApplicationViewWidget*)prevWidget;
+                auto* aw = (ApplicationViewWidget*)prevWidget;
                 if(aw->isBuilderFloating()){
                     aw->showBuilder(false);
                 }
@@ -1040,7 +1040,7 @@ void MainWindow::onTabChangeItem(int index)
 /*! \brief Create a new Application */
 void MainWindow::onNewApplication()
 {
-    NewApplicationWizard *newApplicationWizard = new NewApplicationWizard(&config);
+    auto* newApplicationWizard = new NewApplicationWizard(&config);
     newApplicationWizard->setWindowTitle("Create New Application");
     if (newApplicationWizard->exec() == QDialog::Accepted){
 
@@ -1194,9 +1194,9 @@ void MainWindow::onModified(bool mod)
     ui->actionSave->setEnabled(mod);
     ui->actionSave_As->setEnabled(mod);
     int index = ui->mainTabs->currentIndex();
-    GenericViewWidget *gw = (GenericViewWidget*)ui->mainTabs->currentWidget();
+    auto* gw = (GenericViewWidget*)ui->mainTabs->currentWidget();
     if(gw->getType() == yarp::manager::APPLICATION){
-        ApplicationViewWidget *w = (ApplicationViewWidget*)gw;
+        auto* w = (ApplicationViewWidget*)gw;
         if(mod){
             ui->mainTabs->setTabText(index,w->getAppName() + "*");
             gw->setModified(mod);
@@ -1306,13 +1306,13 @@ void MainWindow::onYarpNameList()
 
 void MainWindow::onSave()
 {
-    GenericViewWidget *w = (GenericViewWidget *)ui->mainTabs->currentWidget();
+    auto* w = (GenericViewWidget *)ui->mainTabs->currentWidget();
     if(!w){
         return;
     }
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
-        ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
+        auto* ww = (ApplicationViewWidget*)w;
         bool ret = ww->save();
         if(ret){
             onReopenApplication(ww->getAppName(),ww->getFileName());
@@ -1324,7 +1324,7 @@ void MainWindow::onSave()
 
 void MainWindow::onSaveAs()
 {
-    NewApplicationWizard *newApplicationWizard = new NewApplicationWizard(&config,true);
+    auto* newApplicationWizard = new NewApplicationWizard(&config,true);
     newApplicationWizard->setWindowTitle("Save Application as");
     if(newApplicationWizard->exec() == QDialog::Accepted){
         fileName = newApplicationWizard->fileName;
@@ -1340,13 +1340,13 @@ void MainWindow::onSaveAs()
         return;
     }
 
-    GenericViewWidget *w = (GenericViewWidget *)ui->mainTabs->currentWidget();
+    auto* w = (GenericViewWidget *)ui->mainTabs->currentWidget();
     if(!w){
         return;
     }
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
-        ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
+        auto* ww = (ApplicationViewWidget*)w;
         QString oldAppName = ww->getAppName();
         QString oldFileName = ww->getFileName();
         ww->setFileName(fileName);
@@ -1481,7 +1481,7 @@ void MainWindow::onApplicationSelectionChanged()
     }
     yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
     if(type == yarp::manager::APPLICATION){
-        ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
+        auto* ww = (ApplicationViewWidget*)w;
         ui->actionRun->setEnabled(ww->anyModuleSelected());
         ui->actionStop->setEnabled(ww->anyModuleSelected());
         ui->actionKill->setEnabled(ww->anyModuleSelected());
@@ -1502,7 +1502,7 @@ void MainWindow::onViewBuilderWindows() {
         config.unput("showManager");
 
     for(int i=0;i<ui->mainTabs->count();i++){
-        GenericViewWidget *w = (GenericViewWidget*)ui->mainTabs->widget(i);
+        auto* w = (GenericViewWidget*)ui->mainTabs->widget(i);
         yAssert(w);
         if(w->getType() == yarp::manager::APPLICATION){
             ApplicationViewWidget *aw = ((ApplicationViewWidget*)w);

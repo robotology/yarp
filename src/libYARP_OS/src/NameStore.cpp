@@ -9,5 +9,4 @@
 
 #include <yarp/os/NameStore.h>
 
-yarp::os::NameStore::~NameStore() {
-}
+yarp::os::NameStore::~NameStore() = default;

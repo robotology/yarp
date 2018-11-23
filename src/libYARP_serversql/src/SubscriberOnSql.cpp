@@ -167,7 +167,7 @@ bool SubscriberOnSql::open(const std::string& filename, bool fresh) {
 
 bool SubscriberOnSql::close() {
     if (implementation != nullptr) {
-        sqlite3 *db = (sqlite3 *)implementation;
+        auto* db = (sqlite3 *)implementation;
         sqlite3_close(db);
         implementation = nullptr;
     }

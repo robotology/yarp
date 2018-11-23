@@ -189,7 +189,7 @@ Contact NameServer::queryName(const std::string& name) {
 
 NameServer::NameRecord *NameServer::getNameRecord(const std::string& name,
                                                   bool create) {
-    std::map<std::string, NameRecord>::iterator entry = nameMap.find(name);
+    auto entry = nameMap.find(name);
     if (entry == nameMap.end()) {
         if (!create) {
             return nullptr;
@@ -204,7 +204,7 @@ NameServer::NameRecord *NameServer::getNameRecord(const std::string& name,
 
 NameServer::HostRecord *NameServer::getHostRecord(const std::string& name,
                                                   bool create) {
-    std::map<std::string, HostRecord>::iterator entry = hostMap.find(name);
+    auto entry = hostMap.find(name);
     if (entry == hostMap.end()) {
         if (!create) {
             return nullptr;
@@ -739,7 +739,7 @@ public:
         this->server = server;
     }
 
-    virtual bool read(ConnectionReader& reader) override {
+    bool read(ConnectionReader& reader) override {
         YTRACE("NameServer::read start");
         std::string ref = "NAME_SERVER ";
         bool ok = true;
@@ -817,13 +817,13 @@ public:
         this->port = &port;
     }
 
-    virtual void onEvent(Bottle& event) override {
+    void onEvent(Bottle& event) override {
         if (port!=nullptr) {
             port->write(event);
         }
     }
 
-    virtual PortReader *create() const override {
+    PortReader *create() const override {
         return new MainNameServerWorker(const_cast<MainNameServer*>(this));
     }
 };

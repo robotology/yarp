@@ -21,9 +21,7 @@ SingleAppLoader::SingleAppLoader(const char* szModule, const char* szHost)
 }
 
 
-SingleAppLoader::~SingleAppLoader()
-{
-}
+SingleAppLoader::~SingleAppLoader() = default;
 
 
 bool SingleAppLoader::init()

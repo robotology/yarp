@@ -40,11 +40,11 @@ StartDlg::~StartDlg()
 void StartDlg::init(QStringList partsName)
 {
 
-    FlowLayout *layout = new FlowLayout(ui->groupBox);
+    auto* layout = new FlowLayout(ui->groupBox);
 
     for(int i=0;i<partsName.count();i++)
     {
-        QCheckBox *check = new QCheckBox(partsName.at(i),ui->groupBox);
+        auto* check = new QCheckBox(partsName.at(i),ui->groupBox);
         check->setChecked(true);
         check->setMinimumSize(QSize(100, check->height()));
         layout->addWidget(check);

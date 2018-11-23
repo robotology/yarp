@@ -106,7 +106,7 @@ bool StreamConnectionReader::expectBlock(Bytes &b)
 std::string StreamConnectionReader::expectString(int len)
 {
     if (!isGood()) {
-        return "";
+        return {};
     }
     char *buf = new char[len];
     yarp::os::Bytes b(buf, len);
@@ -115,7 +115,7 @@ std::string StreamConnectionReader::expectString(int len)
     if (r<0 || (size_t)r<b.length()) {
         err = true;
         delete[] buf;
-        return "";
+        return {};
     }
     messageLen -= b.length();
     std::string s = buf;
@@ -126,14 +126,14 @@ std::string StreamConnectionReader::expectString(int len)
 std::string StreamConnectionReader::expectLine()
 {
     if (!isGood()) {
-        return "";
+        return {};
     }
     yAssert(in!=nullptr);
     bool success = false;
     std::string result = in->readLine('\n', &success);
     if (!success) {
         err = true;
-        return "";
+        return {};
     }
     messageLen -= result.length()+1;
     return result;
@@ -260,7 +260,7 @@ bool StreamConnectionReader::expectBlock(char *data, size_t len)
 std::string StreamConnectionReader::expectText(const char terminatingChar)
 {
     if (!isGood()) {
-        return "";
+        return {};
     }
     yAssert(in!=nullptr);
     bool lsuccess = false;
@@ -375,12 +375,12 @@ Bytes StreamConnectionReader::readEnvelope()
 {
     if (protocol != nullptr) {
         const std::string& env = protocol->getEnvelope();
-        return Bytes((char*)env.c_str(), env.length());
+        return {(char*)env.c_str(), env.length()};
     }
     if (parentConnectionReader != nullptr) {
         return parentConnectionReader->readEnvelope();
     }
-    return Bytes(nullptr, 0);
+    return {nullptr, 0};
 }
 
 void StreamConnectionReader::requestDrop()

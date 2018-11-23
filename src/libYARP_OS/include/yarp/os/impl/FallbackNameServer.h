@@ -36,8 +36,8 @@ public:
     {
     }
 
-    virtual void run() override;
-    virtual void close() override;
+    void run() override;
+    void close() override;
 
     static Contact getAddress();
 

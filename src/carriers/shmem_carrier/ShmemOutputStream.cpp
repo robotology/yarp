@@ -152,7 +152,7 @@ bool ShmemOutputStreamImpl::Resize(int newsize)
         return false;
     }
 
-    ShmemHeader_t* pNewHeader = (ShmemHeader_t*)pNewMap->malloc();
+    auto* pNewHeader = (ShmemHeader_t*)pNewMap->malloc();
     char* pNewData = (char*)(pNewHeader + 1);
 
     pNewHeader->size = newsize;

@@ -57,62 +57,62 @@ public:
     {
     }
 
-    virtual Carrier *create() const override
+    Carrier *create() const override
     {
         return new XmlRpcCarrier();
     }
 
-    virtual std::string getName() const override
+    std::string getName() const override
     {
         return "xmlrpc";
     }
 
-    virtual bool isConnectionless() const override
+    bool isConnectionless() const override
     {
         return false;
     }
 
-    virtual bool canAccept() const override
+    bool canAccept() const override
     {
         return true;
     }
 
-    virtual bool canOffer() const override
+    bool canOffer() const override
     {
         return true;
     }
 
-    virtual bool isTextMode() const override
+    bool isTextMode() const override
     {
         return true;
     }
 
-    virtual bool canEscape() const override
+    bool canEscape() const override
     {
         return true;
     }
 
-    virtual bool requireAck() const override
+    bool requireAck() const override
     {
         return false;
     }
 
-    virtual bool supportReply() const override
+    bool supportReply() const override
     {
         return true;
     }
 
-    virtual bool isLocal() const override
+    bool isLocal() const override
     {
         return false;
     }
 
-    virtual std::string toString() const override
+    std::string toString() const override
     {
         return "xmlrpc_carrier";
     }
 
-    virtual void getHeader(Bytes& header) const override
+    void getHeader(Bytes& header) const override
     {
         const char *target = "POST /RP";
         for (size_t i=0; i<8 && i<header.length(); i++) {
@@ -120,7 +120,7 @@ public:
         }
     }
 
-    virtual bool checkHeader(const Bytes& header) override
+    bool checkHeader(const Bytes& header) override
     {
         if (header.length()!=8) {
             return false;
@@ -134,7 +134,7 @@ public:
         return true;
     }
 
-    virtual void setParameters(const Bytes& header) override
+    void setParameters(const Bytes& header) override
     {
         // no parameters - no carrier variants
     }
@@ -142,17 +142,17 @@ public:
 
     // Now, the initial hand-shaking
 
-    virtual bool prepareSend(ConnectionState& proto) override
+    bool prepareSend(ConnectionState& proto) override
     {
         // nothing special to do
         return true;
     }
 
-    virtual bool sendHeader(ConnectionState& proto) override;
+    bool sendHeader(ConnectionState& proto) override;
 
-    virtual bool expectSenderSpecifier(ConnectionState& proto) override;
+    bool expectSenderSpecifier(ConnectionState& proto) override;
 
-    virtual bool expectExtraHeader(ConnectionState& proto) override
+    bool expectExtraHeader(ConnectionState& proto) override
     {
         // interpret any extra header information sent - optional
         return true;
@@ -160,7 +160,7 @@ public:
 
     bool respondToHeader(ConnectionState& proto) override;
 
-    virtual bool expectReplyToHeader(ConnectionState& proto) override
+    bool expectReplyToHeader(ConnectionState& proto) override
     {
         sender = true;
         XmlRpcStream *stream = new XmlRpcStream(proto.giveStreams(),sender,
@@ -172,7 +172,7 @@ public:
         return true;
     }
 
-    virtual bool isActive() const override
+    bool isActive() const override
     {
         return true;
     }
@@ -180,33 +180,33 @@ public:
 
     // Payload time!
 
-    virtual bool write(ConnectionState& proto, SizedWriter& writer) override;
+    bool write(ConnectionState& proto, SizedWriter& writer) override;
 
-    virtual bool reply(ConnectionState& proto, SizedWriter& writer) override;
+    bool reply(ConnectionState& proto, SizedWriter& writer) override;
 
     virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer)
     {
         return true;
     }
 
-    virtual bool expectIndex(ConnectionState& proto) override
+    bool expectIndex(ConnectionState& proto) override
     {
         return true;
     }
 
-    virtual bool sendAck(ConnectionState& proto) override
+    bool sendAck(ConnectionState& proto) override
     {
         return true;
     }
 
-    virtual bool expectAck(ConnectionState& proto) override
+    bool expectAck(ConnectionState& proto) override
     {
         return true;
     }
 
-    virtual std::string getBootstrapCarrierName() const override
+    std::string getBootstrapCarrierName() const override
     {
-        return "";
+        return {};
     }
 
 private:

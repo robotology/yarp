@@ -33,8 +33,8 @@ public:
     virtual ~ThreadImpl();
 
     int join(double seconds = -1);
-    virtual void run() override;
-    virtual void close() override;
+    void run() override;
+    void close() override;
 
     // similar to close, but it does not call join (does not wait for thread termination)
     void askToClose();
@@ -45,11 +45,11 @@ public:
     bool isClosing();
     bool isRunning();
 
-    virtual void beforeStart() override;
-    virtual void afterStart(bool success) override;
+    void beforeStart() override;
+    void afterStart(bool success) override;
 
-    virtual bool threadInit() override;
-    virtual void threadRelease() override;
+    bool threadInit() override;
+    void threadRelease() override;
 
     static int getCount();
 

@@ -111,9 +111,9 @@ public:
                             const std::string& prefix,
                             bool nested = false);
 
-    virtual bool announce(const std::string& name, int activity) override;
+    bool announce(const std::string& name, int activity) override;
 
-    virtual yarp::os::Contact query(const std::string& portName) override;
+    yarp::os::Contact query(const std::string& portName) override;
 
     bool cmdQuery(NameTripleState& act, bool nested = false);
 
@@ -142,7 +142,7 @@ public:
                        yarp::os::Bottle& event,
                        const yarp::os::Contact& remote) override;
 
-    virtual void goPublic() override
+    void goPublic() override
     {
         gonePublic = true;
     }

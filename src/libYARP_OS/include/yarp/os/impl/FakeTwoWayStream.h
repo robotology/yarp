@@ -41,7 +41,7 @@ public:
         this->target = &target;
     }
 
-    virtual InputStream& getInputStream() override
+    InputStream& getInputStream() override
     {
         return in;
     }
@@ -51,22 +51,22 @@ public:
         return in;
     }
 
-    virtual OutputStream& getOutputStream() override
+    OutputStream& getOutputStream() override
     {
         return out;
     }
 
-    virtual const Contact& getLocalAddress() const override
+    const Contact& getLocalAddress() const override
     {
         return local;
     }
 
-    virtual const Contact& getRemoteAddress() const override
+    const Contact& getRemoteAddress() const override
     {
         return remote;
     }
 
-    virtual void close() override
+    void close() override
     {
         in.close();
         out.close();
@@ -94,18 +94,18 @@ public:
         return in.toString();
     }
 
-    virtual bool isOk() const override
+    bool isOk() const override
     {
         return true;
     }
 
-    virtual void reset() override
+    void reset() override
     {
     }
 
-    virtual void beginPacket() override { }
+    void beginPacket() override { }
 
-    virtual void endPacket() override { }
+    void endPacket() override { }
 
 private:
 
@@ -118,7 +118,7 @@ private:
         }
 
         using yarp::os::OutputStream::write;
-        virtual void write(const Bytes& b) override
+        void write(const Bytes& b) override
         {
             StringOutputStream::write(b);
             if (owner) {
