@@ -45,6 +45,9 @@ env:
     - ROBOT=sim
 # Force ccache to build the original cpp file instead of the pre-processed file
     - CCACHE_CPP2=yes
+# CMake/CTest variables
+    - CTEST_OUTPUT_ON_FAILURE=1
+    - CLICOLOR_FORCE=1
 
 addons:
   apt:
@@ -124,7 +127,7 @@ matrix:
       os: linux
       compiler: gcc
       before_install: skip
-      script: (cd build; make test ARGS="--output-on-failure -VV -R misc")
+      script: (cd build; ctest --build . -C ${TRAVIS_BUILD_TYPE} -R misc)
       after_success: skip
 
     # No ACE build (linux, gcc)
@@ -428,15 +431,13 @@ before_script:
   - if ! $TRAVIS_WITH_ACE; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=ON -DYARP_TEST_HEAP=ON"; fi
   - if ! $TRAVIS_WITH_MATH; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DCREATE_LIB_MATH:BOOL=OFF -DENABLE_yarpmod_fakeIMU:BOOL=OFF -DENABLE_yarpmod_fakeLaser:BOOL=OFF"; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpcar_h264:BOOL=ON"; fi
-  - if $TRAVIS_WITH_BINDINGS; then export YARP_BINDINGS_OPTIONS="-DYARP_COMPILE_BINDINGS=ON -DCREATE_LUA=ON -DCREATE_RUBY=ON -DCREATE_PYTHON=ON -DCREATE_TCL=ON -DCREATE_JAVA=ON -DCREATE_CSHARP=ON -DCREATE_PERL=ON"; fi
-  - if $TRAVIS_WITH_BINDINGS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} ${YARP_BINDINGS_OPTIONS}"; fi
   - if $TRAVIS_STATIC; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DBUILD_SHARED_LIBS=OFF"; fi
   - if $TRAVIS_CLEAN_API; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_CLEAN_API=ON -DYARP_COMPILE_TESTS=OFF"; fi
   - if ! $TRAVIS_WITH_EXECUTABLES; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_COMPILE_EXECUTABLES=OFF -DYARP_COMPILE_TESTS=OFF"; fi
   - if $TRAVIS_WITH_VALGRIND; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_VALGRIND_TESTS=ON -DYARP_VALGRIND_DRD_TESTS=OFF -DYARP_VALGRIND_HELGRIND_TESTS=OFF YARP_VALGRIND_MEMCHECK_TESTS=ON YARP_VALGRIND_SGCHECK_TESTS=OFF"; fi
   - if $TRAVIS_NO_DEPRECATED; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_NO_DEPRECATED=ON"; fi
   - if $TRAVIS_WITH_BROKEN_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_ENABLE_BROKEN_TESTS=ON"; fi
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_TEST_INTEGRATION=ON"; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_ENABLE_INTEGRATION_TESTS=ON"; fi
 
   # TinyXML on trusty is built with C++98 ABI and clang fails.
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_USE_SYSTEM_TINYXML=OFF"; fi; fi
@@ -478,7 +479,13 @@ script:
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then build/bin/yarp conf 0 0 local; fi
 
   # Run unit tests
-  - if $TRAVIS_RUN_UNIT_TESTS; then (cd build; travis_wait 50 ctest --output-on-failure --build . -C ${TRAVIS_BUILD_TYPE}); fi
+  - if $TRAVIS_RUN_UNIT_TESTS; then (cd build; ctest --build . -C ${TRAVIS_BUILD_TYPE}); fi
+
+  # Test bindings from build directory
+  - if $TRAVIS_WITH_BINDINGS; then export YARP_BINDINGS_OPTIONS="-DYARP_COMPILE_BINDINGS=ON -DCREATE_LUA=ON -DCREATE_RUBY=ON -DCREATE_PYTHON=ON -DCREATE_TCL=ON -DCREATE_JAVA=ON -DCREATE_CSHARP=ON -DCREATE_PERL=ON"; fi
+  - if $TRAVIS_WITH_BINDINGS; then (cd build; cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS} ${YARP_BINDINGS_OPTIONS} ..); fi
+  - if $TRAVIS_WITH_BINDINGS; then (cd build; cmake --build . --config ${TRAVIS_BUILD_TYPE}); fi
+  - if $TRAVIS_WITH_BINDINGS; then (cd build; ctest --build . -C ${TRAVIS_BUILD_TYPE} -R bindings); fi
 
   # Test installation
   - (cd build; cmake --build . --config ${TRAVIS_BUILD_TYPE} --target install)
