@@ -7,23 +7,21 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#if defined(USE_SYSTEM_CATCH)
-#include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
 #include <yarp/sig/Sound.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
 
+#include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::os;
 
-TEST_CASE("sig::SoundTest", "[yarp::sig]") {
-    SECTION("check set/get sample.") {
+TEST_CASE("sig::SoundTest", "[yarp::sig]")
+{
+    SECTION("check set/get sample.")
+    {
         Sound snd;
         snd.resize(100,2);
         CHECK((size_t) 100 == snd.getSamples()); // "sample count"
@@ -41,7 +39,8 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]") {
         CHECK(99 == snd2.get(50)); // copy works
     }
 
-    SECTION("check set/get sample.") {
+    SECTION("check set/get sample.")
+    {
         Sound snd1, snd2, sndSum;
         snd1.resize(5, 8);
         snd2.resize(3, 8);
@@ -85,7 +84,8 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]") {
         CHECK(ok); // "operator '+=' test performed "
     }
 
-    SECTION("check sound transmission.") {
+    SECTION("check sound transmission.")
+    {
 
         Sound snd1;
         snd1.resize(128);
@@ -123,6 +123,6 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]") {
         output.close();
         input.close();
     }
-    
+
 }
 

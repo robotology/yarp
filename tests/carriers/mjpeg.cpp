@@ -6,28 +6,24 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <MjpegDecompression.h>
-
-#include <yarp/dev/PolyDriver.h>
 #include <yarp/os/all.h>
 #include <yarp/os/Network.h>
 #include <yarp/sig/all.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
-using namespace yarp::mjpeg;
 
-TEST_CASE("carriers::MjpegTest", "[carriers::mjpeg]") {
-    Network yarp;
-    yarp.setLocalMode(true);
-    SECTION("test compression-decompression") {
+TEST_CASE("carriers::mjpeg", "[carriers]")
+{
+    YARP_REQUIRE_PLUGIN("mjpeg", "carrier");
 
+    Network::setLocalMode(true);
+
+    SECTION("test compression-decompression")
+    {
         std::string inName {"/mjpeg/in"};
         std::string outName {"/mjpeg/out"};
 
@@ -37,8 +33,6 @@ TEST_CASE("carriers::MjpegTest", "[carriers::mjpeg]") {
         REQUIRE(in.open(inName));
         REQUIRE(out.open(outName));
         REQUIRE(Network::connect(out.getName(), in.getName(), "mjpeg"));
-
-        MjpegDecompression decompression; // just for compile
 
         size_t width {320};
         size_t height {240};
@@ -58,5 +52,6 @@ TEST_CASE("carriers::MjpegTest", "[carriers::mjpeg]") {
         out.interrupt();
         out.close();
     }
-    yarp.setLocalMode(false);
+
+    Network::setLocalMode(false);
 }

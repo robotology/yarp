@@ -15,33 +15,34 @@
 
 #include <cmath>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 
-class SemaphoreTestHelper : public Thread {
+class SemaphoreTestHelper : public Thread
+{
 public:
     Semaphore x;
     int state;
 
-    SemaphoreTestHelper() : x(0) {
+    SemaphoreTestHelper() : x(0)
+    {
         state = 1;
     }
 
-    virtual void run() override {
+    virtual void run() override
+    {
         x.wait();
         state = 2;
         x.post();
     }
 };
 
-TEST_CASE("OS::SemaphoreTest", "[yarp::os]") {
-
-    SECTION("basic semaphore sanity check") {
+TEST_CASE("OS::SemaphoreTest", "[yarp::os]")
+{
+    SECTION("basic semaphore sanity check")
+    {
         Semaphore x(0);
         x.post();
         x.post();
@@ -50,7 +51,8 @@ TEST_CASE("OS::SemaphoreTest", "[yarp::os]") {
         CHECK_FALSE(x.check()); // pop one too many
     }
 
-    SECTION("check blocking behavior") {
+    SECTION("check blocking behavior")
+    {
         SemaphoreTestHelper helper;
         helper.start();
         Time::delay(0.5);
@@ -63,7 +65,8 @@ TEST_CASE("OS::SemaphoreTest", "[yarp::os]") {
         helper.stop();
     }
 
-    SECTION("check timed blocking behavior") {
+    SECTION("check timed blocking behavior")
+    {
         Semaphore x(0);
         bool result = x.waitWithTimeout(0.5);
         CHECK_FALSE(result); // wait timed out ok

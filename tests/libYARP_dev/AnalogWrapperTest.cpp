@@ -9,17 +9,16 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
 
 
-TEST_CASE("dev::AnalogWrapperTest", "[yarp::dev]") {
+TEST_CASE("dev::AnalogWrapperTest", "[yarp::dev]")
+{
+    YARP_REQUIRE_PLUGIN("fakeAnalogSensor", "device");
 
     Network::setLocalMode(true);
 

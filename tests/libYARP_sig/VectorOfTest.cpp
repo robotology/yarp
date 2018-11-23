@@ -19,20 +19,19 @@
 
 #include <yarp/gsl/impl/gsl_structs.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::sig;
 
 
-TEST_CASE("sig::VectorOfTest", "[yarp::sig]") {
+TEST_CASE("sig::VectorOfTest", "[yarp::sig]")
+{
 
-    SECTION("Check send and receive integers") {
+    SECTION("Check send and receive integers")
+    {
         INFO("check VectorO<int> send receive");
 
         {
@@ -130,7 +129,8 @@ TEST_CASE("sig::VectorOfTest", "[yarp::sig]") {
         }
     }
 
-    SECTION("check toString") {
+    SECTION("check toString")
+    {
         {
             INFO("testing toString int");
             bool ok = true;

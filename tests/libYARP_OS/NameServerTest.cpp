@@ -12,8 +12,8 @@
 
 #include <yarp/os/Network.h>
 
-// last include catch
 #include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -36,8 +36,10 @@ void checkCompanion(bool fake) {
     NetworkBase::setLocalMode(false);
 }
 
-TEST_CASE("OS::impl::NameServerTest", "[yarp::os][yarp::os::impl]") {
-    SECTION( "check register") {
+TEST_CASE("OS::impl::NameServerTest", "[yarp::os][yarp::os::impl]")
+{
+    SECTION( "check register")
+    {
         Contact address("tcp", "127.0.0.1", safePort());
         NameServer ns;
         ns.registerName("/foo",address);
@@ -48,7 +50,8 @@ TEST_CASE("OS::impl::NameServerTest", "[yarp::os][yarp::os::impl]") {
         CHECK(a2.isValid() == false); // non-existent address
     }
 
-    SECTION("checkClientInterface") {
+    SECTION("checkClientInterface")
+    {
         NetworkBase::setLocalMode(true);
         Contact address("/foo2", "tcp", "127.0.0.1", safePort());
         NetworkBase::registerContact(address);
@@ -60,7 +63,8 @@ TEST_CASE("OS::impl::NameServerTest", "[yarp::os][yarp::os::impl]") {
         NetworkBase::setLocalMode(false);
     }
 
-    SECTION("checkCompanion") {
+    SECTION("checkCompanion")
+    {
         checkCompanion(true);
         // checkCompanion(false);
     }

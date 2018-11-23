@@ -67,11 +67,13 @@ bool test_lists(T demo, std::string name) {
     return true;
 }
 
-TEST_CASE("RosMsg", "[yarp::idl::rosmsg]") {
+TEST_CASE("RosMsg", "[yarp::idl::rosmsg]")
+{
     Network yarp;
     yarp.setLocalMode(true);
 
-    SECTION("test signs") {
+    SECTION("test signs")
+    {
         INFO("*** test_signs()");
         yarp::rosmsg::Demo demo;
         demo.an_unsigned_byte = 254;
@@ -82,7 +84,8 @@ TEST_CASE("RosMsg", "[yarp::idl::rosmsg]") {
         INFO("*** ok!");
     }
 
-    SECTION("test serialization") {
+    SECTION("test serialization")
+    {
         INFO("*** test_serialization()");
         yarp::rosmsg::SharedData data;
         data.text = "hello";
@@ -99,17 +102,20 @@ TEST_CASE("RosMsg", "[yarp::idl::rosmsg]") {
         INFO("*** " << bot.toString() << " ok!");
     }
 
-    SECTION("test regular") {
+    SECTION("test regular")
+    {
         yarp::rosmsg::Demo demo1;
         CHECK(test_lists(demo1,"regular"));
     }
 
-    SECTION("test bottle") {
+    SECTION("test bottle")
+    {
         yarp::rosmsg::Demo::bottleStyle demo2;
         CHECK(test_lists(demo2,"bottle"));
     }
 
-    SECTION("test ros") {
+    SECTION("test ros")
+    {
         yarp::rosmsg::Demo::rosStyle demo3;
         CHECK(test_lists(demo3,"ros"));
     }

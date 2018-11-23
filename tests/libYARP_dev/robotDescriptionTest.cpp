@@ -16,17 +16,14 @@
 #include <algorithm>
 #include <vector>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
 
-TEST_CASE("dev::robotDescriptionTest", "[yarp::dev]") {
-
+TEST_CASE("dev::robotDescriptionTest", "[yarp::dev]")
+{
     Network::setLocalMode(true);
 
     SECTION("Test the RobotDescription client/server")

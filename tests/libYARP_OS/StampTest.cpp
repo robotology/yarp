@@ -15,11 +15,8 @@
 
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using yarp::os::impl::BufferedConnectionWriter;
@@ -48,7 +45,7 @@ static void checkEnvelope(const char *mode)
 
     do {
         Time::delay(0.1);
-    } while (in.getPendingReads()<2);
+    } while (in.getPendingReads() < 2);
 
     // Read the first object
     in.read();
@@ -63,13 +60,12 @@ static void checkEnvelope(const char *mode)
 }
 
 
-
-TEST_CASE("OS::StampTest", "[yarp::os]") {
-
+TEST_CASE("OS::StampTest", "[yarp::os]")
+{
     Network::setLocalMode(true);
 
-    SECTION("checking Stamp can serialize ok") {
-
+    SECTION("checking Stamp can serialize ok")
+    {
         for (int i=0; i<=1; i++) {
             DummyConnector con;
 
@@ -136,15 +132,18 @@ TEST_CASE("OS::StampTest", "[yarp::os]") {
         }
     }
 
-    SECTION("checking envelopes work...") {
+    SECTION("checking envelopes work...")
+    {
         checkEnvelope("tcp");
     }
 
-    SECTION("checking envelopes work (text mode)") {
+    SECTION("checking envelopes work (text mode)")
+    {
         checkEnvelope("text");
     }
 
-    SECTION("check string serialization") {
+    SECTION("check string serialization")
+    {
         Stamp env(42,3.0);
         BufferedConnectionWriter buf(true);
         env.write(buf);

@@ -12,11 +12,8 @@
 #include <cstdio>
 #include <string>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -119,7 +116,8 @@ public:
 };
 
 
-TEST_CASE("OS::impl::DgramTwoWayStreamTest", "[yarp::os][yarp::os::impl]") {
+TEST_CASE("OS::impl::DgramTwoWayStreamTest", "[yarp::os][yarp::os::impl]")
+{
 
     int sz = 100;
     DgramTest in;
@@ -128,7 +126,8 @@ TEST_CASE("OS::impl::DgramTwoWayStreamTest", "[yarp::os][yarp::os::impl]") {
     ManagedBytes msg(200);
     ManagedBytes recv(200);
 
-    SECTION("Test Dgram") {
+    SECTION("Test Dgram")
+    {
         INFO("checking that dgrams are output sensibly");
         out.openMonitor(sz,sz);
         for (size_t i=0; i<msg.length(); i++) {

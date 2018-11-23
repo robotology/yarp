@@ -14,13 +14,9 @@
 
 #include <string>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 
 class MyModule : public RFModule
@@ -50,14 +46,14 @@ public:
     {
         return true;
     }
-
 };
 
-TEST_CASE("OS::RFModuleTest", "[yarp::os]") {
-
+TEST_CASE("OS::RFModuleTest", "[yarp::os]")
+{
     Network::setLocalMode(true);
 
-    SECTION("Checking Port network responses") {
+    SECTION("Checking Port network responses")
+    {
 
         MyModule mm;
         Port p1, p2;
@@ -77,7 +73,8 @@ TEST_CASE("OS::RFModuleTest", "[yarp::os]") {
         CHECK(in.get(0).asInt32() == out.get(0).asInt32()); // Port response
     }
 
-    SECTION("Checking threaded RFModule...") {
+    SECTION("Checking threaded RFModule...")
+    {
 
         MyModule mm;
         ResourceFinder rf;

@@ -11,16 +11,15 @@
 #include <yarp/os/NetType.h>
 #include <string>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 
-TEST_CASE("OS::TimeTest", "[yarp::os]") {
-    SECTION("testing delay (there will be a short pause)...") {
+TEST_CASE("OS::TimeTest", "[yarp::os]")
+{
+    SECTION("testing delay (there will be a short pause)...")
+    {
         double target = 3.0;
         double t1 = Time::now();
         Time::delay(target);

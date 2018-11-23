@@ -17,18 +17,17 @@
 
 #include <string>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
 
-TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]") {
+TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]")
+{
+    YARP_REQUIRE_PLUGIN("test_grabber", "device");
 
     Network::setLocalMode(true);
 
@@ -113,7 +112,7 @@ TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]") {
         CHECK(rgbParams->getRgbHeight() == 240);
 
         // checking width
-        CHECK(rgbParams->getRgbWidth() == 320); 
+        CHECK(rgbParams->getRgbWidth() == 320);
 
         // checking mirroring
         bool rgbMirroring;
@@ -232,7 +231,7 @@ TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]") {
         CHECK(rgbParams->getRgbHeight() == 240);
 
         // checking width
-        CHECK(rgbParams->getRgbWidth() == 320); 
+        CHECK(rgbParams->getRgbWidth() == 320);
 
         // checking mirroring
         bool rgbMirroring;
@@ -317,7 +316,7 @@ TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]") {
         CHECK(rgbParams->getRgbHeight() == 240);
 
         // checking width
-        CHECK(rgbParams->getRgbWidth() == 320); 
+        CHECK(rgbParams->getRgbWidth() == 320);
 
         // checking mirroring
         rgbParams->getRgbMirroring(rgbMirroring);

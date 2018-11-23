@@ -13,11 +13,8 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 
@@ -63,16 +60,19 @@ public:
 
 
 
-TEST_CASE("OS::EventTest", "[yarp::os]") {
+TEST_CASE("OS::EventTest", "[yarp::os]")
+{
 
-    SECTION("basic event sanity check") {
+    SECTION("basic event sanity check")
+    {
         Event x;
         x.signal();
         x.wait();
         x.reset();
     }
 
-    SECTION("check blocking behavior") {
+    SECTION("check blocking behavior")
+    {
         EventTestHelper helper;
         helper.start();
         helper.done.wait();
@@ -82,7 +82,8 @@ TEST_CASE("OS::EventTest", "[yarp::os]") {
         CHECK(helper.state == 2); // helper unblocked
     }
 
-    SECTION("check single wakeup") {
+    SECTION("check single wakeup")
+    {
         Event x(true);
         EventTestHelper2 h1(x), h2(x);
         h1.start();
@@ -108,7 +109,8 @@ TEST_CASE("OS::EventTest", "[yarp::os]") {
         CHECK(ct == 2); // both awoke
     }
 
-    SECTION("check multiple wakeup") {
+    SECTION("check multiple wakeup")
+    {
         Event x(false);
         EventTestHelper2 h1(x), h2(x);
         h1.start();

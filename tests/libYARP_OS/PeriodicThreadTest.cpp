@@ -15,9 +15,8 @@
 #include <yarp/os/Clock.h>
 #include <yarp/os/SystemClock.h>
 
-
 #include <catch.hpp>
-
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -282,13 +281,13 @@ double test(double period, double delay)
 {
     double estPeriod=0;
     PeriodicThread1 *thread1=new PeriodicThread1(period);
-    
+
     thread1->start();
     Time::delay(delay);
     thread1->stop();
-    
+
     estPeriod=thread1->period;
-    
+
     delete thread1;
     return estPeriod;
 }
@@ -298,10 +297,14 @@ double test(double period, double delay)
 
 using namespace harness_OS::periodicThread;
 
-TEST_CASE("OS::PeriodicThreadTest", "[yarp::os]") {
-        
+TEST_CASE("OS::PeriodicThreadTest", "[yarp::os]")
+{
+#if defined(DISABLE_FAILING_TESTS)
+    YARP_SKIP_TEST("Skipping failing tests")
+#endif
 
-    SECTION("checking init failure/success notification") {
+    SECTION("checking init failure/success notification")
+    {
         PeriodicThread2 t(0.200);
         t.threadWillFail(false);
         t.start();
@@ -316,7 +319,8 @@ TEST_CASE("OS::PeriodicThreadTest", "[yarp::os]") {
         CHECK(-1); // t.state
     }
 
-    SECTION("Checking init/release synchronization") {
+    SECTION("Checking init/release synchronization")
+    {
         PeriodicThread3 t(0.200);
         t.threadWillFail(false);
         // if start does not wait for threadRelease/threadInit, a race condition
@@ -333,7 +337,8 @@ TEST_CASE("OS::PeriodicThreadTest", "[yarp::os]") {
         CHECK(-2); // t.state
     }
 
-    SECTION("testing rate thread precision") {
+    SECTION("testing rate thread precision")
+    {
         bool success = false;
         double acceptedThreshold = 0.10;
 
@@ -350,7 +355,8 @@ TEST_CASE("OS::PeriodicThreadTest", "[yarp::os]") {
         sprintf(message, "Thread1 estimated period: %f[s]", actualPeriod);
         INFO(message);
         sprintf(message, "Period NOT within range of %d%%", (int)(acceptedThreshold*100));
-        if(!success)  YARP_WARN(Logger::get(), message);
+        if(!success)
+            WARN(message);
 
         desiredPeriod = 0.010;
         sprintf(message, "Thread2 requested period: %f[s]", desiredPeriod);
@@ -361,7 +367,8 @@ TEST_CASE("OS::PeriodicThreadTest", "[yarp::os]") {
         sprintf(message, "Thread2 estimated period: %f[s]", actualPeriod);
         INFO(message);
         sprintf(message, "Period NOT within range of %d%%", (int)(acceptedThreshold*100));
-        if(!success)  YARP_WARN(Logger::get(), message);
+        if(!success)
+            WARN(message);
 
         desiredPeriod = 0.001;
         sprintf(message, "Thread3 requested period: %f[s]", desiredPeriod);
@@ -372,7 +379,8 @@ TEST_CASE("OS::PeriodicThreadTest", "[yarp::os]") {
         sprintf(message, "Thread3 estimated period: %f[s]", actualPeriod);
         INFO(message);
         sprintf(message, "Period NOT within range of %d%%", (int)(acceptedThreshold*100));
-        if(!success)  YARP_WARN(Logger::get(), message);
+        if(!success)
+            WARN(message);
 
         INFO("Testing askToStop() function");
         PeriodicThread4 thread(0.010);
@@ -402,7 +410,8 @@ TEST_CASE("OS::PeriodicThreadTest", "[yarp::os]") {
         CHECK(true); // Negative delay on reteThread is safe.
     }
 
-    SECTION("Testing runnable") {
+    SECTION("Testing runnable")
+    {
         Runnable1 foo;
         RateThreadWrapper t;
         t.setPeriod(0.1);
@@ -417,7 +426,8 @@ TEST_CASE("OS::PeriodicThreadTest", "[yarp::os]") {
     }
 
 
-    SECTION("Testing simulated time") {
+    SECTION("Testing simulated time")
+    {
         MyClock clock;
         Time::useCustomClock(&clock);
         CHECK(Time::isCustomClock()); // isCustomClock is true
@@ -443,7 +453,8 @@ TEST_CASE("OS::PeriodicThreadTest", "[yarp::os]") {
         CHECK(Time::getClockType() == YARP_CLOCK_SYSTEM); // getClockType is YARP_CLOCK_SYSTEM
     }
 
-    SECTION("testing start() askForStop() start() sequence...") {
+    SECTION("testing start() askForStop() start() sequence...")
+    {
         AskForStopThread test;
         int ct = 0;
         while (ct<10) {

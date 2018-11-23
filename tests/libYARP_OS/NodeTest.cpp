@@ -14,11 +14,8 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/impl/NameClient.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -62,9 +59,10 @@ static bool waitConnect(const std::string& n1,
     return false;
 }
 
-TEST_CASE("OS::NodeTest", "[yarp::os]") {
-
-    SECTION("check support for various experimental node/topic/service schemes") {
+TEST_CASE("OS::NodeTest", "[yarp::os]")
+{
+    SECTION("check support for various experimental node/topic/service schemes")
+    {
         parseName("/foo","/foo","","");
         parseName("/topic@/foo","/foo","/topic","");
         parseName("/topic-@/foo","/foo","/topic","-");
@@ -76,7 +74,8 @@ TEST_CASE("OS::NodeTest", "[yarp::os]") {
         parseName("/foo+#/topic","/foo","/topic","+");
     }
 
-    SECTION("most basic node test") {
+    SECTION("most basic node test")
+    {
         NameClient::getNameClient().getNodes().enable(false);
         Node n;
         Port p1;
@@ -94,7 +93,8 @@ TEST_CASE("OS::NodeTest", "[yarp::os]") {
         NameClient::getNameClient().getNodes().enable(true);
     }
 
-    SECTION("most basic nodes test") {
+    SECTION("most basic nodes test")
+    {
         NameClient::getNameClient().getNodes().enable(false);
         Nodes n;
         Port p1;
@@ -124,13 +124,15 @@ TEST_CASE("OS::NodeTest", "[yarp::os]") {
         NameClient::getNameClient().getNodes().enable(true);
     }
 
-    SECTION("ypes coevolving with nodes") {
+    SECTION("ypes coevolving with nodes")
+    {
         Bottle b;
         Type typ = b.getType();
         CHECK_FALSE(typ.hasName()); // Bottle type is not named yet
     }
 
-    SECTION("check that auto node works") {
+    SECTION("check that auto node works")
+    {
         NameClient::getNameClient().getNodes().clear();
         {
             CHECK_FALSE(NetworkBase::exists("/test")); // node does not exist yet
@@ -143,7 +145,8 @@ TEST_CASE("OS::NodeTest", "[yarp::os]") {
         NameClient::getNameClient().getNodes().clear();
     }
 
-    SECTION("check node api") {
+    SECTION("check node api")
+    {
         NameClient::getNameClient().getNodes().clear();
         Port p1;
         Port p2;
@@ -164,7 +167,8 @@ TEST_CASE("OS::NodeTest", "[yarp::os]") {
         NameClient::getNameClient().getNodes().clear();
     }
 
-    SECTION("check port node combo") {
+    SECTION("check port node combo")
+    {
         NameClient::getNameClient().getNodes().clear();
         Port p1;
         Port p2;
@@ -175,7 +179,8 @@ TEST_CASE("OS::NodeTest", "[yarp::os]") {
         NameClient::getNameClient().getNodes().clear();
     }
 
-    SECTION("direction test") {
+    SECTION("direction test")
+    {
         NameClient::getNameClient().getNodes().clear();
         Port p1;
         Port p2;
@@ -192,10 +197,11 @@ TEST_CASE("OS::NodeTest", "[yarp::os]") {
         CHECK(waitConnect(p1.getName(),p4.getName(),20)); // p1->p4 ok
         CHECK(waitConnect(p3.getName(),p4.getName(),20)); // p3->p4 ok
         CHECK(waitConnect(p3.getName(),p2.getName(),20)); // p3->p2 ok
-        NameClient::getNameClient().getNodes().clear();    
+        NameClient::getNameClient().getNodes().clear();
     }
 
-    SECTION("single name test") {
+    SECTION("single name test")
+    {
         Node n("/ntest");
         Port p1;
         p1.setWriteOnly();
@@ -216,7 +222,8 @@ TEST_CASE("OS::NodeTest", "[yarp::os]") {
         CHECK(reply.get(0).asInt32() == 1); // found /p1
     }
 
-    SECTION("type property test") {
+    SECTION("type property test")
+    {
         Type t;
         CHECK_FALSE(t.readProperties().check("test")); // property absent
         t.addProperty("test",Value("foo"));
@@ -228,12 +235,13 @@ TEST_CASE("OS::NodeTest", "[yarp::os]") {
         CHECK(t.readProperties().check("test")); // property present in double copy
     }
 
-    #ifdef BROKEN_TEST
-    SECTION("trying to open a port without '/' after Node creation") {
-        report(0, "trying to open a port without '/' after Node creation.");
+#if defined(ENABLE_BROKEN_TESTS)
+    SECTION("trying to open a port without '/' after Node creation")
+    {
+        INFO("trying to open a port without '/' after Node creation.");
         Node n("/mynode");
         BufferedPort<Bottle> p;
         CHECK_FALSE(p.open("nameWithoutSlash+")); // open port with wrong name should fail
     }
-    #endif
+#endif // ENABLE_BROKEN_TESTS
 }

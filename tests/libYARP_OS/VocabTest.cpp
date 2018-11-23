@@ -10,19 +10,16 @@
 #include <string>
 #include <yarp/os/Vocab.h>
 
+#include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os;
 
-#if defined(USE_SYSTEM_CATCH)
-#include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+TEST_CASE("OS::VocabTest", "[yarp::os]")
+{
 
-
-TEST_CASE("OS::VocabTest", "[yarp::os]") {
-
-    SECTION("checking vocabulary conversions") {
+    SECTION("checking vocabulary conversions")
+    {
         CHECK(yarp::os::createVocab('h','i') == Vocab::encode("hi")); //  encoding
         CHECK(Vocab::decode(Vocab::encode("hi")) == "hi"); // decoding
         CHECK(yarp::os::createVocab('h','i','g','h') == Vocab::encode("high")); // encoding

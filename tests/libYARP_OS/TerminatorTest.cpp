@@ -12,17 +12,15 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 
-TEST_CASE("OS::TerminatorTest", "[yarp::os]") {
-
-    SECTION("checking terminator connection") {
+TEST_CASE("OS::TerminatorTest", "[yarp::os]")
+{
+    SECTION("checking terminator connection")
+    {
         Network::setLocalMode(true);
         Terminee terminee("/tmp/quit");
         INFO("checking terminator socket");

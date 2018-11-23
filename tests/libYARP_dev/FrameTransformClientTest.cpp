@@ -20,11 +20,8 @@
 #include <cmath>
 #include <vector>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -84,7 +81,14 @@ static bool isEqual(const yarp::sig::Matrix& m1, const yarp::sig::Matrix& m2, do
 
 
 
-TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]") {
+TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
+{
+    YARP_REQUIRE_PLUGIN("transformServer", "device");
+    YARP_REQUIRE_PLUGIN("transformClient", "device");
+
+#if defined(DISABLE_FAILING_TESTS)
+    YARP_SKIP_TEST("Skipping failing tests")
+#endif
 
     Network::setLocalMode(true);
 

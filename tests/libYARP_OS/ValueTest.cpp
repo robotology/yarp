@@ -11,17 +11,14 @@
 
 #include <iostream>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
+#include <harness.h>
 
 using namespace yarp::os;
 
 
-TEST_CASE("OS::ValueTest", "[yarp::os]") {
+TEST_CASE("OS::ValueTest", "[yarp::os]")
+{
     SECTION("Check value copying")
     {
         Value v;

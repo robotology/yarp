@@ -13,9 +13,9 @@
 #include <yarp/os/Time.h>
 
 #include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 static bool waitForOutput(Contactable& c,double timeout) {
     double start = Time::now();
@@ -29,9 +29,10 @@ static bool waitForOutput(Contactable& c,double timeout) {
 }
 
 
-TEST_CASE("OS::PublisherTest", "[yarp::os]") {
-
-    SECTION("Publisher to BufferedPort test") {
+TEST_CASE("OS::PublisherTest", "[yarp::os]")
+{
+    SECTION("Publisher to BufferedPort test")
+    {
         Node n("/node");
         Publisher<Bottle> p("/very_interesting_topic");
 
@@ -57,7 +58,8 @@ TEST_CASE("OS::PublisherTest", "[yarp::os]") {
         }
     }
 
-    SECTION("BufferedPort to Subscriber test") {
+    SECTION("BufferedPort to Subscriber test")
+    {
         Node n("/node");
         BufferedPort<Bottle> pout;
         pout.setWriteOnly();
@@ -78,12 +80,13 @@ TEST_CASE("OS::PublisherTest", "[yarp::os]") {
 
             Bottle *bin = pin.read();
             REQUIRE(bin != nullptr);  // "message arrived"
-            
+
             CHECK(bin->get(0).asInt32() == 42);  // "message is correct"
         }
     }
 
-    SECTION("Publisher to Subscriber test") {
+    SECTION("Publisher to Subscriber test")
+    {
         Node n("/node");
         Publisher<Bottle> pout;
         pout.topic("/very_interesting_topic");
@@ -107,7 +110,8 @@ TEST_CASE("OS::PublisherTest", "[yarp::os]") {
         }
     }
 
-    SECTION("Unbuffered Publisher test") {
+    SECTION("Unbuffered Publisher test")
+    {
 
         Node n("/node");
         Publisher<Bottle> p("/very_interesting_topic");
@@ -127,12 +131,13 @@ TEST_CASE("OS::PublisherTest", "[yarp::os]") {
 
             Bottle *bin = pin.read();
             REQUIRE(bin != nullptr); // "message arrived"
-            
+
             CHECK(bin->get(0).asInt32() == 42);  // "message is correct"
         }
     }
 
-    SECTION("Unbuffereded Subscriber test") {
+    SECTION("Unbuffereded Subscriber test")
+    {
         Node n("/node");
         BufferedPort<Bottle> pout;
         pout.setWriteOnly();

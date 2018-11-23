@@ -11,18 +11,16 @@
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/StringOutputStream.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-TEST_CASE("OS::impl::StreamConnectionReaderTest", "[yarp::os][yarp::os::impl]") {
-
-    SECTION("testing reading") {
+TEST_CASE("OS::impl::StreamConnectionReaderTest", "[yarp::os][yarp::os::impl]")
+{
+    SECTION("testing reading")
+    {
         StringInputStream sis;
         StringOutputStream sos;
         sis.add("Hello\ngood evening and welcome");

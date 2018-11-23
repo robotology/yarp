@@ -7,19 +7,6 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-/**
- *
- * Tests for images
- *
- */
-
-#if defined(USE_SYSTEM_CATCH)
-#include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
-
 #include <yarp/os/NetType.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/sig/Image.h>
@@ -31,8 +18,10 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/PeriodicThread.h>
+
+#include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::sig;
@@ -44,7 +33,9 @@ class readWriteTest : public yarp::os::PeriodicThread
     yarp::os::Port p;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> image;
 public:
-    readWriteTest() : PeriodicThread(0.01) {}
+    readWriteTest() : PeriodicThread(0.01)
+    {
+    }
 
     yarp::sig::ImageOf<yarp::sig::PixelRgb> getImage()
     {
@@ -71,13 +62,18 @@ public:
     }
 };
 
-void passImage(ImageOf<PixelRgb> img) {
+void passImage(ImageOf<PixelRgb> img)
+{
     yInfo("passed a blank image ok");
 }
 
+TEST_CASE("sig::ImageTest", "[yarp::sig]")
+{
+    static const size_t EXT_WIDTH = 128;
+    static const size_t EXT_HEIGHT = 64;
 
-TEST_CASE("sig::ImageTest", "[yarp::sig]") {
-    SECTION("test image creation."){
+    SECTION("test image creation.")
+    {
         FlexImage image;
         image.setPixelCode(VOCAB_PIXEL_RGB);
         image.resize(256,128);
@@ -101,8 +97,8 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]") {
         CHECK(total == 0); // pixel assignment check
     }
 
-    SECTION("test image copying.") {
-
+    SECTION("test image copying.")
+    {
         ImageOf<PixelRgb> img1;
         img1.resize(128,64);
         for (size_t x=0; x<img1.width(); x++) {
@@ -137,7 +133,8 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]") {
         }
     }
 
-    SECTION("test image zeroing.") {
+    SECTION("test image zeroing.")
+    {
         ImageOf<PixelRgb> img1;
         img1.resize(128,64);
         img1.pixel(20,10).r = 42;
@@ -146,8 +143,8 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]") {
         CHECK(img1.pixel(20,10).r == 0); // pixel unset
     }
 
-    SECTION("testing image casting...") {
-
+    SECTION("testing image casting...")
+    {
         ImageOf<PixelRgb> img1;
         img1.resize(128,64);
         for (size_t x=0; x<img1.width(); x++) {
@@ -182,11 +179,8 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]") {
         }
     }
 
-
-static const size_t EXT_WIDTH = 128;
-static const size_t EXT_HEIGHT = 64;
-
-    SECTION("test external image.") {
+    SECTION("test external image.")
+    {
         unsigned char buf[EXT_HEIGHT][EXT_WIDTH];
 
         {
@@ -239,8 +233,8 @@ static const size_t EXT_HEIGHT = 64;
     }
 
 
-    SECTION("test image transmission.") {
-
+    SECTION("test image transmission.")
+    {
         ImageOf<PixelRgb> img1;
         img1.resize(128,64);
         for (size_t x=0; x<img1.width(); x++) {
@@ -299,7 +293,8 @@ static const size_t EXT_HEIGHT = 64;
     }
 
 
-    SECTION("check image padding.") {
+    SECTION("check image padding.")
+    {
         ImageOf<PixelMono> img1;
         img1.resize(13,5);
         CHECK(img1.getQuantum() == (size_t) 8); // ipl compatible quantum
@@ -332,7 +327,8 @@ static const size_t EXT_HEIGHT = 64;
         CHECK(img4.getRowSize() == (size_t) 10); // exact row size
     }
 
-    SECTION("check standard compliance of description.") {
+    SECTION("check standard compliance of description.")
+    {
         ImageOf<PixelRgb> img;
         img.resize(8,4);
         img.zero();
@@ -343,11 +339,11 @@ static const size_t EXT_HEIGHT = 64;
         bot.fromBinary(s.c_str(),s.length());
         CHECK(bot.size() == (size_t) 4); // plausible bottle out
         CHECK(bot.get(0).toString() == "mat"); // good tag
-        YARP_DEBUG(Logger::get(),"an example image:");
-        YARP_DEBUG(Logger::get(),bot.toString().c_str());
+        INFO("an example image: " << bot.toString().c_str());
     }
 
-    SECTION("check draw tools.") {
+    SECTION("check draw tools.")
+    {
         ImageOf<PixelRgb> img;
         img.resize(64,64);
         img.zero();
@@ -362,8 +358,8 @@ static const size_t EXT_HEIGHT = 64;
         CHECK(ok); // image is blue
     }
 
-
-    SECTION("check scaling.") {
+    SECTION("check scaling.")
+    {
         ImageOf<PixelRgb> img;
         ImageOf<PixelMono> img2;
         ImageOf<PixelRgb> img3;
@@ -392,7 +388,8 @@ static const size_t EXT_HEIGHT = 64;
 
     // test row pointer access (getRow())
     // this function only tests if getRow(r)[c] is consistent with the operator ()
-    SECTION("check row pointer.") {
+    SECTION("check row pointer.")
+    {
         ImageOf<PixelRgb> img1;
         ImageOf<PixelRgb> img2;
 
@@ -441,7 +438,8 @@ static const size_t EXT_HEIGHT = 64;
     }
 
     // test const methods, this is mostly a compile time check.
-    SECTION("check const methods.") {
+    SECTION("check const methods.")
+    {
         ImageOf<PixelMono> img1;
         img1.resize(15,10);
         img1.zero();
@@ -473,13 +471,14 @@ static const size_t EXT_HEIGHT = 64;
         CHECK(acc1 == 0); // const methods
     }
 
-
-    SECTION("checking blank images work (YARP bug 862810).") {
+    SECTION("checking blank images work (YARP bug 862810).")
+    {
         ImageOf<PixelRgb> img;
         passImage(img);
     }
 
-    SECTION("check rgba.") {
+    SECTION("check rgba.")
+    {
         ImageOf<PixelRgba> img;
         ImageOf<PixelRgb> img2;
         img.resize(50,50);
@@ -489,7 +488,8 @@ static const size_t EXT_HEIGHT = 64;
         CHECK(img2(4,2).r == 10); // "r level"
     }
 
-    SECTION("check rgbi.") {
+    SECTION("check rgbi.")
+    {
         ImageOf<PixelRgbInt> img;
         ImageOf<PixelRgb> img2;
         img.resize(50,50);
@@ -499,7 +499,8 @@ static const size_t EXT_HEIGHT = 64;
         CHECK(img2(4,2).r == 10); // r level copied
     }
 
-    SECTION("check origin.") {
+    SECTION("check origin.")
+    {
 
         INFO("check origin external image.");
         unsigned char buf[EXT_HEIGHT][EXT_WIDTH];
@@ -558,8 +559,8 @@ static const size_t EXT_HEIGHT = 64;
         CHECK(mismatch == 0); // delta check
     }
 
-
-    SECTION("check that setExternal can be called multiple times.") {
+    SECTION("check that setExternal can be called multiple times.")
+    {
 
         unsigned char buf[EXT_HEIGHT*EXT_WIDTH*3];
         unsigned char buf2[EXT_HEIGHT*2*EXT_WIDTH*2*3];
@@ -576,7 +577,8 @@ static const size_t EXT_HEIGHT = 64;
         CHECK(img.height() == EXT_HEIGHT*2); // height check
     }
 
-    SECTION("readWrite test") {
+    SECTION("readWrite test")
+    {
         yarp::os::Network net;
         net.setLocalMode(true);
         yarp::os::Port p;
@@ -594,10 +596,11 @@ static const size_t EXT_HEIGHT = 64;
         yarp::os::Network::disconnect("/readWriteTest_writer", "/readWriteTest_reader");
         writer.stop();
         p.close();
-        
+
     }
 
-    SECTION("Test split concatenation") {
+    SECTION("Test split concatenation")
+    {
         INFO("Horizontal concatenation");
         ImageOf<PixelRgb> imL, imR;
         imL.resize(8,4);
@@ -736,7 +739,5 @@ static const size_t EXT_HEIGHT = 64;
         }
 
         CHECK(ok); // Checking data consistency bottom split
-
     }
 }
-

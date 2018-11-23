@@ -10,27 +10,24 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <yarp/os/all.h>
+#include <yarp/os/Contact.h>
+#include <yarp/os/Port.h>
 #include <yarp/os/impl/NameClient.h>
 
-
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
 /**
- *
  * Name server regression tests.
- *
  */
-TEST_CASE("serversql::ServerTest", "[yarp::serversql]") {
+TEST_CASE("serversql::ServerTest", "[yarp::serversql]")
+{
 
-    SECTION("check register free") {
+    SECTION("check register free")
+    {
         INFO("checking free register command...");
         NameClient& nic = NameClient::getNameClient();
         nic.registerName("/check/register1");
@@ -53,7 +50,8 @@ TEST_CASE("serversql::ServerTest", "[yarp::serversql]") {
         CHECK(addr2.getPort() == addr4.getPort()); // same port number
     }
 
-    SECTION("check register forced") {
+    SECTION("check register forced")
+    {
         INFO("checking forced register command...");
         NameClient& nic = NameClient::getNameClient();
         Contact addr1("tcp", "localhost", 9999);
@@ -66,7 +64,8 @@ TEST_CASE("serversql::ServerTest", "[yarp::serversql]") {
         //CHECK(a2.isValid() == false); // non-existent address
     }
 
-    SECTION("check unregister") {
+    SECTION("check unregister")
+    {
         INFO("checking unregister command...");
         NameClient& nic = NameClient::getNameClient();
         nic.registerName("/check/unregister");
@@ -77,7 +76,8 @@ TEST_CASE("serversql::ServerTest", "[yarp::serversql]") {
         CHECK_FALSE(addr2.isValid()); // got no address
     }
 
-    SECTION("check port register") {
+    SECTION("check port register")
+    {
         INFO("checking port registration...");
         NameClient& nic = NameClient::getNameClient();
         Port p;
@@ -91,7 +91,8 @@ TEST_CASE("serversql::ServerTest", "[yarp::serversql]") {
         CHECK_FALSE(addr3.isValid()); // got an address
     }
 
-    SECTION("check list") {
+    SECTION("check list")
+    {
         INFO("checking list...");
         NameClient& nic = NameClient::getNameClient();
         Contact addr1("tcp", "192.168.1.100", 9998);
@@ -101,7 +102,8 @@ TEST_CASE("serversql::ServerTest", "[yarp::serversql]") {
         CHECK(result.find(target)!=std::string::npos); // listing found
     }
 
-    SECTION("check set get") {
+    SECTION("check set get")
+    {
         INFO("checking set/get...");
         NameClient& nic = NameClient::getNameClient();
         nic.registerName("/check/set");

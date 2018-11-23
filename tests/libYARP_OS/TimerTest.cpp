@@ -11,28 +11,23 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/LogStream.h>
 
 #include <cmath>
 #include <string>
+#include <vector>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
-using namespace std;
-
-
 
 static bool monoMultiThreadCallback(const YarpTimerEvent& timings)
 {
     return true;
 }
 
-#ifdef BROKEN_TEST
+#if defined(ENABLE_BROKEN_TESTS)
 static bool         timingTestResult{false};
 static double       startTime{0};
 static double       timingTolerance{0.1};
@@ -43,7 +38,7 @@ static bool timingCallback(const YarpTimerEvent& timings)
 {
     timingTestResult = true; //the callback has been called
     double now = yarp::os::Time::now();
-    vector<pair<std::function<bool()>, string>> checks //checks vector.. add new lines here to add new checks
+    std::vector<pair<std::function<bool()>, std::string>> checks //checks vector.. add new lines here to add new checks
     {
         {[&timings]       { return timings.currentExpected - startTime + spinDuration * runCount; }, "currentExpected error"},
         {[&timings, &now] { return fabs(now - timings.currentReal) < 0.0001; }, "currentReal error"},
@@ -73,14 +68,14 @@ static void timingTest(bool multiThread)
     yarp::os::Time::delay(5);
     timing.stop();
     CHECK(timingTestResult);
-    INFO(string((multiThread ? "MultiThread " : "MonoThread ")) + string("timing test").c_str());
+    INFO(std::string((multiThread ? "MultiThread " : "MonoThread ")) + std::string("timing test").c_str());
 }
-#endif // BROKEN_TEST
+#endif // ENABLE_BROKEN_TESTS
 
 static void monoMultiThreadTest(bool multiThread)
 {
     int threadCount = yarp::os::Thread::getCount();
-    vector<Timer*> timers
+    std::vector<Timer*> timers
     {
         new Timer({0.5},&monoMultiThreadCallback, multiThread),
         new Timer({0.4},&monoMultiThreadCallback, multiThread),
@@ -124,10 +119,11 @@ static void apiTest(bool multiThread)
 }
 
 
-TEST_CASE("OS::TimerTest", "[yarp::os]") {
+TEST_CASE("OS::TimerTest", "[yarp::os]")
+{
     //please note that the return values of the callbacks does not rappresent the result of the tests but simply keeps the timer alive..
 
-#ifdef BROKEN_TEST
+#if defined(ENABLE_BROKEN_TESTS)
     //fails with valgrind for valgrind slowing down the system
     SECTION("timing multithread")
     {
@@ -139,7 +135,7 @@ TEST_CASE("OS::TimerTest", "[yarp::os]") {
         runCount = 1;
         timingTest(false);
     }
-#endif // BROKEN_TEST
+#endif // ENABLE_BROKEN_TESTS
 
     SECTION("api test multithread")
     {

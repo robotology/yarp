@@ -18,22 +18,17 @@
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
-#include <yarp/os/impl/FakeTwoWayStream.h>
-#include <yarp/os/impl/Logger.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
-
+#include <harness.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-TEST_CASE("OS::BottleTest", "[yarp::os]") {
-    SECTION("testing sizes") {
+TEST_CASE("OS::BottleTest", "[yarp::os]")
+{
+    SECTION("testing sizes")
+    {
         BottleImpl bot;
         CHECK(bot.size() == (size_t) 0); // "empty bottle"
         bot.addInt32(1);
@@ -44,7 +39,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(bot.size() == (size_t) 0); // "clear");
     }
 
-    SECTION("testing string representation") {
+    SECTION("testing string representation")
+    {
         std::string target = "hello \"my\" \\friend";
         BottleImpl bot;
         bot.addInt32(5);
@@ -57,7 +53,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(bot2.size() == (size_t) 2); //"return from string rep"
     }
 
-    SECTION("testing binary representation") {
+    SECTION("testing binary representation")
+    {
         BottleImpl bot;
         bot.addInt32(5);
         bot.addString("hello");
@@ -86,7 +83,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(bot5.size() == (size_t) 4); // "player bug"
     }
 
-    SECTION("testing hexadecimal") {
+    SECTION("testing hexadecimal")
+    {
         Bottle b;
         b.fromString("0x0C");
         CHECK(b.get(0).isInt32()); // "0x0C is an integer"
@@ -102,7 +100,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(b.get(0).asInt32() == 255); // "0xff"
     }
 
-    SECTION("testing streaming (just text mode)") {
+    SECTION("testing streaming (just text mode)")
+    {
         BottleImpl bot;
         bot.addInt32(5);
         bot.addString("hello");
@@ -124,7 +123,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(bot2.toString() == bot.toString()); // "to/from stream"
     }
 
-    SECTION("testing types") {
+    SECTION("testing types")
+    {
         BottleImpl bot[3];
         bot[0].fromString("5 10.2 \"hello\" -0xF -15.0");
         CHECK(bot[0].get(3).asInt32() == -15); // "hex works"
@@ -155,10 +155,10 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
             CHECK(b.isFloat64(4));
             CHECK(b.get(4).asFloat64() == Approx(-15.0));
         }
-
     }
 
-    SECTION("testing clear") {
+    SECTION("testing clear")
+    {
         Bottle b;
         b.addString("hello");
         CHECK(b.size() == (size_t) 1); // "size ok"
@@ -168,7 +168,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(b.size() == (size_t) 1); // "size ok"
     }
 
-    SECTION("testing lists") {
+    SECTION("testing lists")
+    {
         BottleImpl bot, bot2, bot3;
         bot.fromString("(1 (2 3 7) 3) (0.0 \"b\" 1)");
         CHECK(bot.size() == (size_t) 2); // "list test 1"
@@ -201,7 +202,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(bot10.get(1).asList()->toString() == "4 5 6"); // "construction test 4"
     }
 
-    SECTION("testing Value interface") {
+    SECTION("testing Value interface")
+    {
         Bottle bot("1 \"hi\" (4 \"foo\") 6 7");
         CHECK(bot.get(0).isInt32());
         CHECK(bot.get(1).isString());
@@ -212,7 +214,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(bot.get(50).isNull()); // "null type check"
     }
 
-    SECTION("testing equality") {
+    SECTION("testing equality")
+    {
         Bottle bot1("1 2 3");
         Bottle bot2("1 2");
         Bottle bot3("1 2 3");
@@ -221,7 +224,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(bot1 == bot3);
     }
 
-    SECTION("testing range") {
+    SECTION("testing range")
+    {
         Bottle bot1("1 (2 3) (4 5 6) 7");
         Bottle bot2;
         bot2.copy(bot1,1,2);
@@ -231,7 +235,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(bot2.size() == (size_t) 1); // "self copy"
     }
 
-    SECTION("testing find") {
+    SECTION("testing find")
+    {
         Bottle bot("(hello friend) (say 12 13) green 255 blue 19");
         CHECK(bot.check("hello")); // "group check succeeds ok"
         CHECK_FALSE(bot.check("goodbye")); // "group check fails ok"
@@ -249,7 +254,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(bot.find("purple").isNull()); //"seek absent key"
     }
 
-    SECTION("testing vocab") {
+    SECTION("testing vocab")
+    {
         Bottle bot("[send] 10 20");
         CHECK(bot.size() == (size_t) 3); // "plausible parse"
         CHECK(bot.get(0).isVocab()); // "vocab present"
@@ -257,7 +263,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
     }
 
 
-    SECTION("testing blob") {
+    SECTION("testing blob")
+    {
         Bottle bot("{4 42 255} 10 20");
         CHECK(bot.size() == (size_t) 3); // "plausible parse"
         CHECK(bot.get(0).isBlob()); // "blob present"
@@ -277,8 +284,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
     }
 
 
-    SECTION("testing standard compliance") {
-
+    SECTION("testing standard compliance")
+    {
         // in theory, bottles should comply with a standard binary format
         // we check that here
 
@@ -305,8 +312,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
     }
 
 
-    SECTION("testing reread specialization"){
-
+    SECTION("testing reread specialization")
+    {
         Bottle bot("10 20 30");  // first a specialized list
         Bottle bot2;
         {
@@ -338,7 +345,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
     }
 
 
-    SECTION("testing white space behavior") {
+    SECTION("testing white space behavior")
+    {
         Bottle bot;
         bot.fromString("\t\thello\t10\n");
         CHECK(bot.size() == (size_t) 2); // ok with tab
@@ -351,13 +359,14 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(p.get(2).asList()->size() == (size_t) 5); // newline test checks out
     }
 
-    SECTION("testing nesting detection") {
+    SECTION("testing nesting detection")
+    {
         CHECK(!BottleImpl::isComplete("(1 2 3"));
         CHECK(BottleImpl::isComplete("(1 2 3)"));
     }
 
-
-    SECTION("testing special characters") {
+    SECTION("testing special characters")
+    {
         Bottle bot("file ../foo.txt");
         CHECK(bot.get(1).isString()); // paths starting with a decimal
         Bottle bot2;
@@ -368,14 +377,16 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(bot3.get(0).asString() == test); // roundtripping quotes newline etc
     }
 
-    SECTION("testing append") {
+    SECTION("testing append")
+    {
         Bottle bot1("1 2 3");
         Bottle bot2("4 5");
         bot1.append(bot2);
         CHECK(bot1.size() == 5); // add two bottles
     }
 
-    SECTION("testing stack functionality") {
+    SECTION("testing stack functionality")
+    {
         Bottle bot;
         bot.addInt32(10);
         bot.addInt32(11);
@@ -399,7 +410,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(bot.size() == 0); // bottle is empty after pop
     }
 
-    SECTION("test type detection") {
+    SECTION("test type detection")
+    {
         Bottle bot;
         bot.fromString("hello ip 10.0.0.10");
         CHECK(bot.size() == (size_t) 3); // right length
@@ -407,7 +419,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(bot.get(2).asString() == "10.0.0.10"); // multiple period test
     }
 
-    SECTION("test bottle modification...") {
+    SECTION("test bottle modification...")
+    {
         Bottle b;
         b.addInt32(3);
         b.get(0) = Value(5);
@@ -415,7 +428,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(b.get(0).asInt32() == 5); // assignment works
     }
 
-    SECTION("test scientific notation...") {
+    SECTION("test scientific notation...")
+    {
         Bottle b;
         b.fromString("10.0e5");
         CHECK(b.get(0).asFloat64() == Approx(10e5).epsilon(1)); // positive positive lower case
@@ -426,13 +440,15 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(b.get(0).asFloat64() == Approx(1e-8).epsilon(1e-9)); // positive negative upper case
     }
 
-    SECTION("test continuation") {
+    SECTION("test continuation")
+    {
         Bottle b("x (1 2\n3 4\n5 6)\ny (1 2)");
         CHECK(b.find("x").asList()->size() == (size_t) 6); // x has right length
         CHECK(b.find("y").asList()->size() == (size_t) 2); // y has right length
     }
 
-    SECTION("test assignment") {
+    SECTION("test assignment")
+    {
         Bottle b("x (1 2\n3 4\n5 6)\ny (1 2)");
         Bottle b2;
         b2 = b;
@@ -457,7 +473,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(b.isNull()); // isNull() preserved correctly
     }
 
-    SECTION("test empty list") {
+    SECTION("test empty list")
+    {
         // based on a case submitted by Stephane Lallee; doesn't appear to
         // fail here as he sees going from TCL to C++
         Bottle b;
@@ -483,7 +500,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         }
     }
 
-    SECTION("test null bottle") {
+    SECTION("test null bottle")
+    {
         Bottle bAll("(x 1) (y 2)");
         Bottle& b1 = bAll.findGroup("groupToFind");
         CHECK(b1.isNull()); // bottle null referenced correctly
@@ -491,7 +509,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(b2.isNull()); // bottle null copied correctly
     }
 
-    SECTION("test serialization by copy") {
+    SECTION("test serialization by copy")
+    {
         Value v(3.14);
         Bottle b;
         b.read(v);
@@ -501,7 +520,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(b2.get(0).asFloat64() == Approx(3.14)); // copy from bottle succeeded
     }
 
-    SECTION("test string with null") {
+    SECTION("test string with null")
+    {
         char buf1[] = "hello world";
         char buf2[] = "hello world";
         buf2[5] = '\0';
@@ -528,7 +548,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(bot4.get(0).asString().length() == len); // bottled, text-serialized string length ok
     }
 
-    SECTION("test boolean values") {
+    SECTION("test boolean values")
+    {
         Bottle bot("1 true \"true\" false \"false\" 0 [ok]");
         CHECK(bot.get(1).isBool()); // true is boolean
         CHECK(!bot.get(2).isBool()); // quoted true is not boolean
@@ -541,8 +562,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         CHECK(bot.get(3).asString() == "false"); // false can spell
     }
 
-
-    SECTION("test dictionary values") {
+    SECTION("test dictionary values")
+    {
         Bottle bot("1");
         Property& p = bot.addDict();
         p.put("test","me");
@@ -559,19 +580,22 @@ TEST_CASE("OS::BottleTest", "[yarp::os]") {
         // for backwards compatibility
     }
 
-    SECTION("test infinite loop tickled by yarpmanager + string type change") {
+    SECTION("test infinite loop tickled by yarpmanager + string type change")
+    {
         Bottle pos("Pos ((x 349.5) (y 122)) ((x 286) (y 122)) ((x 413) (y 122))");
         CHECK(pos.get(1).find("x").asFloat64() == Approx(349.5));
         CHECK(pos.get(2).find("x").asFloat64() == Approx(286.0));
         CHECK(pos.get(3).find("x").asFloat64() == Approx(413.0));
     }
 
-    SECTION("test a string with several minus characters") {
+    SECTION("test a string with several minus characters")
+    {
         Bottle bot("---");
         CHECK(bot.get(0).asString() == "---"); // "interpreted ok"
     }
 
-    SECTION("test copyPortable method") {
+    SECTION("test copyPortable method")
+    {
         Bottle b1("1 2 3"), b2;
         Portable::copyPortable(b1,b2);
         CHECK(b2.size() == b1.size()); // "length ok"

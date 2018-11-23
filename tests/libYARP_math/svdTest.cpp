@@ -11,12 +11,6 @@
  * \infile Tests for SVD.
  */
 
-#if defined(USE_SYSTEM_CATCH)
-#include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
 #include <cstdio>
 
 #include <yarp/math/Math.h>
@@ -25,6 +19,9 @@
 #include <yarp/math/Rand.h>
 #include <cmath>
 #include <string>
+
+#include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -74,9 +71,8 @@ void assertNotEqual(const Matrix &A, const Matrix &B, string testName, bool verb
     INFO(testName);
 }
 
-TEST_CASE("math::svdTest", "[yarp::math]") {
-
-
+TEST_CASE("math::svdTest", "[yarp::math]")
+{
     SECTION("checking SVD of skinny matrix")
     {
 

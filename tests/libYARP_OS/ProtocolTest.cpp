@@ -13,7 +13,9 @@
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 
 #include <cstdio>
+
 #include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -32,7 +34,7 @@ std::string simplify(std::string x) {
             result += ch;
         }
     }
-    return result;   
+    return result;
 }
 
 void show(FakeTwoWayStream *fake1, FakeTwoWayStream *fake2) {
@@ -44,9 +46,10 @@ void show(FakeTwoWayStream *fake1, FakeTwoWayStream *fake2) {
                     simplify(fake2->getOutputText()).c_str());
 }
 
-TEST_CASE("OS::impl::ProtocolTest", "[yarp::os][yarp::os::impl]") {
-    
-    SECTION("trying to send a bottle across a fake stream") {
+TEST_CASE("OS::impl::ProtocolTest", "[yarp::os][yarp::os::impl]")
+{
+    SECTION("trying to send a bottle across a fake stream")
+    {
         // set up a fake sender/receiver pair
         FakeTwoWayStream *fake1 = new FakeTwoWayStream();
         FakeTwoWayStream *fake2 = new FakeTwoWayStream();

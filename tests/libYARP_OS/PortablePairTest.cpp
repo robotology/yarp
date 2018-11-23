@@ -14,20 +14,19 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-TEST_CASE("OS::PortablePairTest", "[yarp::os]") {
+TEST_CASE("OS::PortablePairTest", "[yarp::os]")
+{
 
     Network::setLocalMode(true);
 
-    SECTION("Test standard PortablePair") {
+    SECTION("Test standard PortablePair")
+    {
         PortablePair<Bottle,Bottle> pp;
         pp.head.fromString("1 2 3");
         pp.body.fromString("yes no");
@@ -41,7 +40,8 @@ TEST_CASE("OS::PortablePairTest", "[yarp::os]") {
         CHECK(bot.get(1).asList()->size() == (size_t) 2); // body len is right
     }
 
-    SECTION("testing PortablePair transmission") {
+    SECTION("testing PortablePair transmission")
+    {
         PortablePair<Bottle,Bottle> pp;
         pp.head.fromString("1 2 3");
         pp.body.fromString("yes no");

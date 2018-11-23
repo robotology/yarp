@@ -18,12 +18,8 @@
 #include <cstring>
 #include <cstdio>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
+#include <harness.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -73,9 +69,15 @@ public:
 };
 
 
-TEST_CASE("run::RunTest", "[yarp::run]") {
+TEST_CASE("run::RunTest", "[yarp::run]")
+{
 
-    SECTION("testRun") {
+#if !defined(ENABLE_BROKEN_TESTS)
+    YARP_SKIP_TEST("Skipping YARP_run broken tests")
+#endif
+
+    SECTION("testRun")
+    {
         //this could be local or using an external nameserver, to be decided
         Network::setLocalMode(true);
         YarpRun runner;

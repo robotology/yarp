@@ -6,7 +6,6 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-
 #include <yarp/os/Time.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IControlMode2.h>
@@ -16,11 +15,8 @@
 
 #include <vector>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -152,7 +148,14 @@ static void checkRemapper(yarp::dev::PolyDriver & ddRemapper, int rand, size_t n
 }
 
 
-TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]") {
+TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
+{
+    YARP_REQUIRE_PLUGIN("fakeMotionControl", "device");
+
+#if defined(DISABLE_FAILING_TESTS)
+    YARP_SKIP_TEST("Skipping failing tests")
+#endif
+
     SECTION("Test the controlboard remapper")
     {
         // We first allocate three fakeMotionControl boards

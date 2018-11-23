@@ -17,14 +17,8 @@
 
 #include <iostream>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
-using namespace yarp::os;
-using namespace yarp::os::impl;
+#include <harness.h>
 
 template <typename T>
 void checkName(std::string expectedName)
@@ -55,7 +49,8 @@ void checkDefinition(std::string expectedDefinition)
     CHECK(t.readProperties().find("message_definition").asString() == expectedDefinition);
 }
 
-TEST_CASE("rosmsg::ROSPropertiesTest", "[yarp::rosmsg]") {
+TEST_CASE("rosmsg::ROSPropertiesTest", "[yarp::rosmsg]")
+{
 
 
     // The expected md5sums and definitions can be found in ROS headers

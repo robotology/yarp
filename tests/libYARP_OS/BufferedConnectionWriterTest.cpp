@@ -15,11 +15,8 @@
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/sig/Image.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -29,9 +26,11 @@ typedef PortablePair<PortablePair<PortablePair<Bottle, ImageOf<PixelRgb> >,
                                   PortablePair<ImageOf<PixelRgb>, Stamp> >,
                      Bottle> Monster;
 
-TEST_CASE("OS::impl::BufferedConnectionWriterTest", "[yarp::os][yarp::os::impl]") {
+TEST_CASE("OS::impl::BufferedConnectionWriterTest", "[yarp::os][yarp::os::impl]")
+{
 
-    SECTION("testing writing") {
+    SECTION("testing writing")
+    {
         StringOutputStream sos;
         BufferedConnectionWriter bbr;
         bbr.reset(true);
@@ -41,7 +40,8 @@ TEST_CASE("OS::impl::BufferedConnectionWriterTest", "[yarp::os][yarp::os::impl]"
         CHECK(sos.toString() == "Hello\r\nGreetings\r\n"); // "two line writes"
     }
 
-    SECTION("test restarting writer without reallocating memory...") {
+    SECTION("test restarting writer without reallocating memory...")
+    {
 
         size_t pool_sizes[] = {BUFFERED_CONNECTION_INITIAL_POOL_SIZE, 13, 7, 3, 1};
         for (size_t i=0; i<sizeof(pool_sizes)/sizeof(size_t); i++) {

@@ -15,6 +15,7 @@
 #include <yarp/os/Network.h>
 
 #include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -163,21 +164,25 @@ public:
     }
 };
 
-TEST_CASE("OS::impl::PortCoreTest", "[yarp::os][yarp::os::impl]") {
+TEST_CASE("OS::impl::PortCoreTest", "[yarp::os][yarp::os::impl]")
+{
     Network::setLocalMode(true);
     PortCoreTest thePortCoreTest;
 
-    SECTION("checking start/stop works") {
+    SECTION("checking start/stop works")
+    {
         thePortCoreTest.testStartStop();
     }
 
-    SECTION("simple bottle transmission check") {
+    SECTION("simple bottle transmission check")
+    {
         thePortCoreTest.testBottle();
     }
-    
-    SECTION("background transmission check") {
+
+    SECTION("background transmission check")
+    {
         thePortCoreTest.testBackground();
     }
-    
+
     Network::setLocalMode(false);
 }

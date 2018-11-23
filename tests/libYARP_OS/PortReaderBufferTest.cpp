@@ -13,35 +13,33 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
-class PortReaderBufferTestHelper : public BufferedPort<Bottle> {
+class PortReaderBufferTestHelper : public BufferedPort<Bottle>
+{
 public:
     int count;
 
-    PortReaderBufferTestHelper() {
+    PortReaderBufferTestHelper()
+    {
         count = 0;
     }
 
     using BufferedPort<Bottle>::onRead;
-    void onRead(Bottle& datum) override {
+    void onRead(Bottle& datum) override
+    {
         count += datum.size();
     }
 };
 
-TEST_CASE("OS::PortReaderBufferTest", "[yarp::os]") {
-
-
-    SECTION("checking direct object accept") {
-
+TEST_CASE("OS::PortReaderBufferTest", "[yarp::os]")
+{
+    SECTION("checking direct object accept")
+    {
         PortReaderBuffer<Bottle> buffer;
         Bottle dummy;
         Bottle data("hello");
@@ -66,9 +64,8 @@ TEST_CASE("OS::PortReaderBufferTest", "[yarp::os]") {
         buffer.read(false);
     }
 
-
-    SECTION("checking local carrier") {
-
+    SECTION("checking local carrier")
+    {
         Port p0;
         BufferedPort<Bottle> p1, p2;
         p0.open("/p0");
@@ -108,7 +105,8 @@ TEST_CASE("OS::PortReaderBufferTest", "[yarp::os]") {
         //p2.close();
     }
 
-    SECTION("checking callback") {
+    SECTION("checking callback")
+    {
         BufferedPort<Bottle> out;
         PortReaderBufferTestHelper in;
         out.open("/out");
@@ -143,7 +141,8 @@ TEST_CASE("OS::PortReaderBufferTest", "[yarp::os]") {
         CHECK(in.count == 5); // got message #3
     }
 
-    SECTION("checking callback part without open") {
+    SECTION("checking callback part without open")
+    {
         {
             INFO("test 1");
             PortReaderBufferTestHelper in;
@@ -168,5 +167,4 @@ TEST_CASE("OS::PortReaderBufferTest", "[yarp::os]") {
             in.close();
         }
     }
-
 }

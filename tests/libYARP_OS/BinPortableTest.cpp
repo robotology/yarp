@@ -14,16 +14,10 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/PortReaderBuffer.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
-
-using namespace yarp::os::impl;
 using namespace yarp::os;
-
 
 
 YARP_BEGIN_PACK
@@ -42,11 +36,13 @@ public:
 YARP_END_PACK
 
 
-TEST_CASE("OS::BinPortableTest", "[yarp::os]") {
+TEST_CASE("OS::BinPortableTest", "[yarp::os]")
+{
 
     NetworkBase::setLocalMode(true);
 
-    SECTION("checking binary read/write of native int") {
+    SECTION("checking binary read/write of native int")
+    {
         BinPortable<int> i;
         i.content() = 5;
 
@@ -69,7 +65,8 @@ TEST_CASE("OS::BinPortableTest", "[yarp::os]") {
         input.close();
     }
 
-    SECTION("checking text mode") {
+    SECTION("checking text mode")
+    {
         DummyConnector con;
 
         BinPortable<BinPortableTarget> t1, t2;

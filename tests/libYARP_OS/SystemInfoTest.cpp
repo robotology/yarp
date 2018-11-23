@@ -10,19 +10,17 @@
 
 #include <sstream>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 
-TEST_CASE("OS::SystemInfoTest", "[yarp::os]") {
-
+TEST_CASE("OS::SystemInfoTest", "[yarp::os]")
+{
     std::ostringstream str;
 
-    SECTION("Getting (system dependent) load info:") {
+    SECTION("Getting (system dependent) load info:")
+    {
         SystemInfo::LoadInfo ldinfo = SystemInfo::getLoadInfo();
         str << "Instant: " << ldinfo.cpuLoadInstant
             << ", CPU1: " << ldinfo.cpuLoad1
@@ -32,7 +30,8 @@ TEST_CASE("OS::SystemInfoTest", "[yarp::os]") {
         INFO(str.str());
     }
 
-    SECTION("Getting (system dependent) memory info:") {
+    SECTION("Getting (system dependent) memory info:")
+    {
         SystemInfo::MemoryInfo meminfo = SystemInfo::getMemoryInfo();
         str << "Free memory space: " << meminfo.freeSpace
             << ", total memory space: " << meminfo.totalSpace
@@ -40,7 +39,8 @@ TEST_CASE("OS::SystemInfoTest", "[yarp::os]") {
         INFO(str.str());
     }
 
-    SECTION("Getting (system dependent) platform info:") {
+    SECTION("Getting (system dependent) platform info:")
+    {
         SystemInfo::PlatformInfo pltinfo = SystemInfo::getPlatformInfo();
         str << "Codename: " << pltinfo.codename
             << ", distribution: " << pltinfo.distribution
@@ -52,7 +52,8 @@ TEST_CASE("OS::SystemInfoTest", "[yarp::os]") {
         INFO(str.str());
     }
 
-    SECTION("Getting (system dependent) process info for process 1:") {
+    SECTION("Getting (system dependent) process info for process 1:")
+    {
         SystemInfo::ProcessInfo prctinfo = SystemInfo::getProcessInfo(1);
         str << "Name: " << prctinfo.name
             << ", arguments: " << prctinfo.arguments
@@ -63,7 +64,8 @@ TEST_CASE("OS::SystemInfoTest", "[yarp::os]") {
         INFO(str.str());
     }
 
-    SECTION("Getting (system dependent) process info for current process:") {
+    SECTION("Getting (system dependent) process info for current process:")
+    {
         SystemInfo::ProcessInfo prctinfo = SystemInfo::getProcessInfo();
         str << "Name: " << prctinfo.name
             << ", arguments: " << prctinfo.arguments
@@ -74,7 +76,8 @@ TEST_CASE("OS::SystemInfoTest", "[yarp::os]") {
         INFO(str.str());
     }
 
-    SECTION("Getting (system dependent) processor info:") {
+    SECTION("Getting (system dependent) processor info:")
+    {
         SystemInfo::ProcessorInfo prcsinfo = SystemInfo::getProcessorInfo();
         str << "Arch: " << prcsinfo.architecture
             << ", cores: " << prcsinfo.cores
@@ -88,7 +91,8 @@ TEST_CASE("OS::SystemInfoTest", "[yarp::os]") {
         INFO(str.str());
     }
 
-    SECTION("Getting (system dependent) storage info:") {
+    SECTION("Getting (system dependent) storage info:")
+    {
         SystemInfo::StorageInfo strginfo = SystemInfo::getStorageInfo();
         str << "Free storage space: " << strginfo.freeSpace
             << ", total storage space: " << strginfo.totalSpace
@@ -96,7 +100,8 @@ TEST_CASE("OS::SystemInfoTest", "[yarp::os]") {
         INFO(str.str());
     }
 
-    SECTION("Getting (system dependent) user info:") {
+    SECTION("Getting (system dependent) user info:")
+    {
         SystemInfo::UserInfo usrinfo = SystemInfo::getUserInfo();
         str << "User ID: " << usrinfo.userID
             << ", username: " << usrinfo.userName

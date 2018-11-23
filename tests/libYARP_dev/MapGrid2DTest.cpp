@@ -11,11 +11,8 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::dev;
 using namespace yarp::sig;
@@ -37,7 +34,10 @@ static void ReadMapfromString(MapGrid2D& m, std::string s)
     }
 }
 
-TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]") {
+TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
+{
+    YARP_REQUIRE_PLUGIN("map2DServer", "device");
+    YARP_REQUIRE_PLUGIN("map2DClient", "device");
 
     Network::setLocalMode(true);
 

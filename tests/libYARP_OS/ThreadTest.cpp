@@ -13,11 +13,8 @@
 #include <yarp/os/Mutex.h>
 #include <yarp/os/Time.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -29,31 +26,32 @@ static int expectCount{0};
 static int gotCount{0};
 
 
-namespace harness_OS {
-namespace thread {
+namespace {
 
-class ThreadImmediateReturn: public Thread {
+class ThreadImmediateReturn : public Thread
+{
     public:
-        virtual void run() override {
+        virtual void run() override
+        {
         }
 };
 
-class ThreadDelay: public Thread {
+class ThreadDelay: public Thread
+{
 public:
     double delay;
     bool hold;
-    bool active;
+    bool active{true};
     Mutex mutex;
 
     ThreadDelay(double delay = 0.5, bool hold = false) :
             delay(delay),
-            hold(hold),
-            active(true),
-            mutex()
+            hold(hold)
     {
     }
 
-    virtual void run() override {
+    virtual void run() override
+    {
         bool h;
         do {
             Time::delay(delay);
@@ -65,19 +63,20 @@ public:
     }
 };
 
-class Thread0: public Thread {
+class Thread0: public Thread
+{
 public:
-    virtual void run() override {
+    virtual void run() override
+    {
         Time::delay(0.01);
     }
 };
 
-class Thread1 : public Runnable {
+class Thread1 : public Runnable
+{
 public:
-
-    Thread1(){}
-
-    virtual void run() override {
+    virtual void run() override
+    {
         for (int i=0; i<5; i++) {
             //printf("tick %d\n", i);
             state.wait();
@@ -89,13 +88,11 @@ public:
     }
 };
 
-
-class Thread2 : public ThreadImpl {
+class Thread2 : public ThreadImpl
+{
 public:
-
-    Thread2() : mutex(), finished(false) {}
-
-    virtual void run() override {
+    virtual void run() override
+    {
         bool done = false;
         while (!done) {
             sema.wait();
@@ -115,7 +112,8 @@ public:
         //printf("done\n");
     }
 
-    virtual void close() override {
+    virtual void close() override
+    {
         mutex.lock();
         finished = true;
         state.wait();
@@ -127,16 +125,15 @@ public:
 
 private:
     Mutex mutex;
-    bool finished;
+    bool finished{false};
 };
 
-
-class Thread3: public Thread {
+class Thread3 : public Thread
+{
 public:
-    Thread3():state(-1){}
+    bool onStopCalled{false};
+    int state{-1};
 
-    bool onStopCalled;
-    int state;
     virtual bool threadInit() override
     {
         onStopCalled=false;
@@ -144,24 +141,29 @@ public:
         return true;
     }
 
-    virtual void run() override {
+    virtual void run() override
+    {
         Time::delay(0.5);
         state++;
     }
 
     virtual void threadRelease() override
-    {state++;}
+    {
+        state++;
+    }
 
     virtual void onStop() override
-    { onStopCalled=true;}
+    {
+        onStopCalled=true;
+    }
 };
 
-class Thread4: public Thread {
+class Thread4 : public Thread
+{
 public:
-    Thread4():state(-1), fail(false){}
+    int state{-1};
+    bool fail{false};
 
-    int state;
-    bool fail;
     virtual bool threadInit() override
     {
         state=0;
@@ -179,20 +181,23 @@ public:
         {state=-1;}
     }
 
-    virtual void run() override {
+    virtual void run() override
+    {
         Time::delay(1);
         state++;
     }
 
     virtual void threadRelease() override
-    {state++;}
+    {
+        state++;
+    }
 };
 
-class Thread5: public Thread {
+class Thread5: public Thread
+{
 public:
-    Thread5() : state(0), fail(false), mutex() {}
-    int state;
-    bool fail;
+    int state{0};
+    bool fail{false};
     Mutex mutex;
 
     void threadWillFail(bool f)
@@ -221,7 +226,8 @@ public:
     }
 
     virtual void run() override
-    {}
+    {
+    }
 
     virtual void threadRelease() override
     {
@@ -232,35 +238,28 @@ public:
     }
 };
 
-
-class ThreadIdentity : public Thread {
+class ThreadIdentity : public Thread
+{
 public:
-    long int dynamicId;
-    long int staticId;
+    long int dynamicId{-1};
+    long int staticId{-1};
 
-    ThreadIdentity() : dynamicId(-1), staticId(-1) { }
-
-    virtual void run() override {
+    virtual void run() override
+    {
         dynamicId = getKey();
         staticId = Thread::getKeyOfCaller();
     }
 };
 
-class Runnable1: public Runnable {
+class Runnable1: public Runnable
+{
 public:
-    Runnable1():initCalled(false),
-        notified(false),
-        releaseCalled(false),
-        executed(false),
-        closeCalled(false)
-        {}
-
-    bool initCalled;
-    bool notified;
-    bool releaseCalled;
-    bool executed;
-    bool onStopCalled;
-    bool closeCalled;
+    bool initCalled{false};
+    bool notified{false};
+    bool releaseCalled{false};
+    bool executed{false};
+    bool onStopCalled{false};
+    bool closeCalled{false};
 
     virtual bool threadInit() override
     {
@@ -283,16 +282,14 @@ public:
     }
 
     virtual void threadRelease() override
-    {releaseCalled=true;}
+    {
+        releaseCalled=true;
+    }
 };
+} // namespace
 
-} // namespace thread
-} // namespace harness_OS
-
-using namespace harness_OS::thread;
-
-TEST_CASE("OS::ThreadTest", "[yarp::os]") {
-
+TEST_CASE("OS::ThreadTest", "[yarp::os]")
+{
     SECTION("testing isRunning function")
     {
         ThreadDelay foo;
@@ -303,8 +300,8 @@ TEST_CASE("OS::ThreadTest", "[yarp::os]") {
         INFO("done");
     }
 
-    SECTION("testing cross-thread synchronization...") {
-
+    SECTION("testing cross-thread synchronization...")
+    {
         int tct = ThreadImpl::getCount();
         Thread1    bozo;
         Thread1    bozo2;
@@ -328,8 +325,8 @@ TEST_CASE("OS::ThreadTest", "[yarp::os]") {
         INFO("done");
     }
 
-    SECTION("testing start/stop") {
-
+    SECTION("testing start/stop")
+    {
         Thread3 t;
         CHECK(!t.isRunning()); // not active
         CHECK(t.start()); // t started succefully
@@ -399,7 +396,7 @@ TEST_CASE("OS::ThreadTest", "[yarp::os]") {
         t.start();
         INFO("Stopping thread");
         t.close();
-        
+
         Time::delay(1.0);
 
         CHECK(foo.initCalled); // threadInit was called
@@ -410,7 +407,8 @@ TEST_CASE("OS::ThreadTest", "[yarp::os]") {
         INFO("done");
     }
 
-    SECTION("testing minimal thread functions to check for mem leakage...") {
+    SECTION("testing minimal thread functions to check for mem leakage...")
+    {
         for (int i=0; i<20; i++) {
             Thread0 t0, t1;
             t0.start();
@@ -422,7 +420,8 @@ TEST_CASE("OS::ThreadTest", "[yarp::os]") {
     }
 
 
-    SECTION("testing running flag (bug #1695724)...") {
+    SECTION("testing running flag (bug #1695724)...")
+    {
         ThreadDelay t1;
         CHECK_FALSE(t1.isRunning()); // not running before start
         t1.start();
@@ -440,7 +439,8 @@ TEST_CASE("OS::ThreadTest", "[yarp::os]") {
         CHECK_FALSE(t0.isRunning()); // not running after thread exits
     }
 
-    SECTION("testing IDs...") {
+    SECTION("testing IDs...")
+    {
         ThreadIdentity t[3];
         for (int i=0; i<3; i++) t[i].start();
         for (int i=0; i<3; i++) t[i].stop();
@@ -455,7 +455,8 @@ TEST_CASE("OS::ThreadTest", "[yarp::os]") {
         }
     }
 
-    SECTION("testing join timeout...") {
+    SECTION("testing join timeout...")
+    {
         ThreadDelay t(0.1,true);
         CHECK(t.active); // flag starts out ok
         t.start();

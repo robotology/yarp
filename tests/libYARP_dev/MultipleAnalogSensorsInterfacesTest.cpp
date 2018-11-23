@@ -17,17 +17,18 @@
 #include <chrono>
 #include <thread>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
 
 
-TEST_CASE("dev::MultipleAnalogSensorsInterfacesTest", "[yarp::dev]") {
+TEST_CASE("dev::MultipleAnalogSensorsInterfacesTest", "[yarp::dev]")
+{
+    YARP_REQUIRE_PLUGIN("fakeIMU", "device");
+    YARP_REQUIRE_PLUGIN("multipleanalogsensorsserver", "device");
+    YARP_REQUIRE_PLUGIN("multipleanalogsensorsclient", "device");
 
     Network::setLocalMode(true);
 

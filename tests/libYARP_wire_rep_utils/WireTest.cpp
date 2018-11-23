@@ -6,8 +6,6 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <cstdio>
-#include <cstdlib>
 
 #include "WireTwiddler.h"
 
@@ -16,15 +14,11 @@
 #include <yarp/os/InputStream.h>
 #include <yarp/os/ConnectionReader.h>
 
-#if defined(_MSC_VER)
-# define snprintf _snprintf
-#endif
+#include <cstdio>
+#include <cstdlib>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -47,7 +41,7 @@ void testSequence(char *seq,
     Bottle bot;
 
     CHECK(tt.read(bot, b1)); // Read failed
-    snprintf(err, 1024, "%s: read %s, expected %s", fmt, bot.toString().c_str(), ref.toString().c_str());
+    std::snprintf(err, 1024, "%s: read %s, expected %s", fmt, bot.toString().c_str(), ref.toString().c_str());
     CHECK(bot == ref);
     INFO(err);
     printf("[1] %s: read %s as expected\n", fmt, bot.toString().c_str());
@@ -61,7 +55,7 @@ void testSequence(char *seq,
     twiddled_input.reset();
     ConnectionReader::readFromStream(bot, twiddled_input);
 
-    snprintf(err, 1024, "%s: read %s, expected %s", fmt, bot.toString().c_str(), ref.toString().c_str());
+    std::snprintf(err, 1024, "%s: read %s, expected %s", fmt, bot.toString().c_str(), ref.toString().c_str());
     CHECK(bot == ref);
     INFO(err);
     printf("[2] %s: read %s as expected\n", fmt, bot.toString().c_str());
@@ -70,7 +64,7 @@ void testSequence(char *seq,
     twiddled_input.reset();
     ConnectionReader::readFromStream(bot, twiddled_input);
 
-    snprintf(err, 1024, "%s: read %s, expected %s", fmt, bot.toString().c_str(), ref.toString().c_str());
+    std::snprintf(err, 1024, "%s: read %s, expected %s", fmt, bot.toString().c_str(), ref.toString().c_str());
     CHECK(bot == ref);
     INFO(err);
     printf("[3] %s: read %s as expected\n", fmt, bot.toString().c_str());
@@ -82,12 +76,12 @@ void testSequence(char *seq,
         printf(" WRITE %s\n", fmt);
         ManagedBytes output;
         CHECK(tt.write(ref, output)); // WRITE FAILED
-        snprintf(err, 1024, "WRITE MISMATCH, length %zd, expected %zd", output.length(), len);
+        std::snprintf(err, 1024, "WRITE MISMATCH, length %zd, expected %zd", output.length(), len);
         CHECK(output.length() == len);
         INFO(err);
 
         for (size_t i = 0; i < output.length(); i++) {
-            snprintf(err, 1024, "WRITE MISMATCH, at %zd, have [%d:%c] expected [%d:%c]\n", i, output.get()[i], output.get()[i], seq[i], seq[i]);
+            std::snprintf(err, 1024, "WRITE MISMATCH, at %zd, have [%d:%c] expected [%d:%c]\n", i, output.get()[i], output.get()[i], seq[i], seq[i]);
             CHECK(output.get()[i] == seq[i]);
             INFO(err);
         }

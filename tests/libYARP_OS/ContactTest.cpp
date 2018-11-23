@@ -9,14 +9,12 @@
 
 #include <yarp/os/Contact.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
-TEST_CASE("OS::ContactTest", "[yarp::os]") {
+TEST_CASE("OS::ContactTest", "[yarp::os]")
+{
     SECTION("checking string representation")
     {
         Contact address("tcp", "127.0.0.1", 10000);

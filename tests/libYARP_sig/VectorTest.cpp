@@ -20,11 +20,8 @@
 #include <yarp/gsl/Gsl.h>
 #include <yarp/gsl/impl/gsl_structs.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -146,8 +143,10 @@ bool checkConsistency(Vector &a) {
     return ret;
 }
 
-TEST_CASE("sig::VectorTest", "[yarp::sig]") {
-    SECTION("check gsl") {
+TEST_CASE("sig::VectorTest", "[yarp::sig]")
+{
+    SECTION("check gsl")
+    {
         Vector a(5);
         Vector b;
         b=a;
@@ -165,7 +164,8 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]") {
         CHECK(checkConsistency(c)); // gsldata consistent after init
     }
 
-    SECTION("check format") {
+    SECTION("check format")
+    {
         Vector v(10);
 
         INFO("check vector format conforms to network standard...");
@@ -188,7 +188,8 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]") {
         }
     }
 
-    SECTION("check Vector send receive") {
+    SECTION("check Vector send receive")
+    {
 
         Port portIn;
         Port portOut;
@@ -217,7 +218,8 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]") {
         delete senderThread;
     }
 
-    SECTION("check creation from double*") {
+    SECTION("check creation from double*")
+    {
         double dV[5]={0,1,2,3,4};
         Vector v1(5,dV);
         CHECK((int)v1.size() == 5); // ok
@@ -246,7 +248,8 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]") {
     }
 
 
-    SECTION("check vectors copy works...") {
+    SECTION("check vectors copy works...")
+    {
         Vector v(4);
         v[0]=99;
         v[1]=99;
@@ -273,7 +276,8 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]") {
         empty2=empty1;
     }
 
-    SECTION("checking operator ==") {
+    SECTION("checking operator ==")
+    {
 
         Vector v1(5);
         Vector v2(5);
@@ -293,7 +297,8 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]") {
         CHECK(ok); // operator== for vectors works
     }
 
-    SECTION("check resize") {
+    SECTION("check resize")
+    {
         Vector ones;
         ones.resize(10, 1.1);
 
@@ -330,7 +335,8 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]") {
         CHECK(ok); // resize(int, double) works
     }
 
-    SECTION("check empty") {
+    SECTION("check empty")
+    {
         Vector v;
         v.resize(0);
         CHECK(v.data()==nullptr); // size 0 => null data()
@@ -340,7 +346,8 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]") {
         CHECK(v.data()!=nullptr); // size 2 => non-null data()
     }
 
-    SECTION("Checking the functionalities of the initializer list constructor") {
+    SECTION("Checking the functionalities of the initializer list constructor")
+    {
         Vector v{1.0, 2.0, 3.0};
         CHECK(v.size() == (size_t) 3); // Checking size
 
@@ -349,7 +356,8 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]") {
         CHECK(v[2] == 3.0); // Checking data consistency
     }
 
-    SECTION("Checking the the for range based") {
+    SECTION("Checking the the for range based")
+    {
         Vector v{0.0, 1.0, 2.0, 3.0, 4.0};
         double i = 0.0;
         for(const auto& el:v) {

@@ -18,7 +18,6 @@
 #include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/BinPortable.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
@@ -26,6 +25,7 @@
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/PortInfo.h>
+#include <yarp/os/Log.h>
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Drivers.h>
@@ -34,12 +34,8 @@
 
 #include <yarp/companion/impl/Companion.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -342,15 +338,16 @@ static int safePort()
     return Network::getDefaultPortRange() + 100;
 }
 
-TEST_CASE("OS::PortTest", "[yarp::os]") {
-
+TEST_CASE("OS::PortTest", "[yarp::os]")
+{
     NetworkBase::setLocalMode(true);
 
     yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<BrokenDevice>("brokenDevice",
                                                                                    "brokenDevice",
                                                                                    "BrokenDevice"));
 
-    SECTION("checking opening and closing ports") {
+    SECTION("checking opening and closing ports")
+    {
         Port out, in;
 
         in.open("/in");
@@ -394,8 +391,9 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         out.close();
     }
 
-#if 0
-    SECTION("checking read buffering") {
+#if defined(ENABLE_BROKEN_TESTS)
+    SECTION("checking read buffering")
+    {
         Bottle bot1;
         PortReaderBuffer<Bottle> buf;
         buf.setStrict(true);
@@ -434,10 +432,10 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         output.close();
         input.close();
     }
-#endif
+#endif // ENABLE_BROKEN_TESTS
 
-    SECTION("checking udp") {
-
+    SECTION("checking udp")
+    {
         Bottle bot1;
         PortReaderBuffer<Bottle> buf;
 
@@ -475,8 +473,9 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         input.close();
     }
 
-#if 0
-    SECTION("checking heavy udp") {
+#if defined(ENABLE_BROKEN_TESTS)
+    SECTION("checking heavy udp")
+    {
         Bottle bot1;
         PortReaderBuffer<Bottle> buf;
 
@@ -516,9 +515,10 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         output.close();
         input.close();
     }
-#endif
+#endif // ENABLE_BROKEN_TESTS
 
-    SECTION("checking paired send/receive") {
+    SECTION("checking paired send/receive")
+    {
         PortReaderBuffer<PortablePair<Bottle,Bottle> > buf;
 
         Port input, output;
@@ -550,7 +550,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         input.close();
     }
 
-    SECTION ("checking reply processing") {
+    SECTION ("checking reply processing")
+    {
         ServiceProvider provider;
 
         Port input, output;
@@ -570,8 +571,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         input.close();
     }
 
-    SECTION("test communication in background mode") {
-
+    SECTION("test communication in background mode")
+    {
         Port input, output;
         input.open("/in");
         output.open("/out");
@@ -608,8 +609,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         input.close();
     }
 
-    SECTION("testing write buffering") {
-
+    SECTION("testing write buffering")
+    {
         Port input, output, altInput;
         input.open("/in");
         altInput.open("/in2");
@@ -650,7 +651,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         INFO("shut down output buffering");
     }
 
-    SECTION("checking buffered port") {
+    SECTION("checking buffered port")
+    {
         BufferedPort<BinPortable<int> > output, input;
         output.open("/out");
         input.open("/in");
@@ -672,7 +674,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         CHECK(bin->content() == 999); // good send
     }
 
-    SECTION("check that port close order doesn't matter (test 1)") {
+    SECTION("check that port close order doesn't matter (test 1)")
+    {
         for (int i=0; i<4; i++) {
             // on OSX there is a problem only tickled upon repetition
             Port input, output;
@@ -688,7 +691,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         }
     }
 
-    SECTION("check that port close order doesn't matter (test 2)") {
+    SECTION("check that port close order doesn't matter (test 2)")
+    {
         for (int i=0; i<4; i++) {
             Port input, output;
             input.open("/in");
@@ -703,7 +707,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         }
     }
 
-    SECTION("check delegated read and reply") {
+    SECTION("check delegated read and reply")
+    {
         DelegatedReader reader;
         DelegatedWriter writer;
         reader.start();
@@ -713,7 +718,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         CHECK(writer.total == 6); // read/replies give right checksum
     }
 
-    SECTION("check reader handler") {
+    SECTION("check reader handler")
+    {
         Port in;
         Port out;
         DelegatedCallback callback;
@@ -733,7 +739,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         in.close();
     }
 
-    SECTION("check reader handler, bufferedport style") {
+    SECTION("check reader handler, bufferedport style")
+    {
         BufferedPort<Bottle> in;
         Port out;
         DelegatedCallback callback;
@@ -749,7 +756,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         in.disableCallback();
     }
 
-    SECTION("check reader handler without open (test 1)") {
+    SECTION("check reader handler without open (test 1)")
+    {
         Port in;
         DelegatedCallback callback;
         PortReaderBuffer<Bottle> reader;
@@ -760,7 +768,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         in.close();
     }
 
-    SECTION("check reader handler without open (test 2)") {
+    SECTION("check reader handler without open (test 2)")
+    {
         Port in;
         DelegatedCallback callback;
         PortReaderBuffer<Bottle> reader;
@@ -770,7 +779,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         reader.disableCallback();
     }
 
-    SECTION("check reader handler without open (test 3)") {
+    SECTION("check reader handler without open (test 3)")
+    {
         Port in;
         DelegatedCallback callback;
         PortReaderBuffer<Bottle> reader;
@@ -780,7 +790,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         in.close();
     }
 
-    SECTION("check reader handler without open (test 4)") {
+    SECTION("check reader handler without open (test 4)")
+    {
         INFO( "test 4");
         Port in;
         DelegatedCallback callback;
@@ -790,7 +801,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         reader.useCallback(callback);
     }
 
-    SECTION("check strict writer") {
+    SECTION("check strict writer")
+    {
         BufferedPort<Bottle> in;
         BufferedPort<Bottle> out;
         in.setStrict();
@@ -823,7 +835,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         }
     }
 
-    SECTION("check recent reader") {
+    SECTION("check recent reader")
+    {
         BufferedPort<Bottle> in;
         BufferedPort<Bottle> out;
         in.setStrict(false);
@@ -852,8 +865,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         }
     }
 
-
-    SECTION("check that ports that receive data and do not read it can close") {
+    SECTION("check that ports that receive data and do not read it can close")
+    {
         BufferedPort<Bottle> sender;
         Port receiver;
         sender.open("/sender");
@@ -870,7 +883,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         sender.close();
     }
 
-    SECTION("check that opening-closing-opening etc is ok") {
+    SECTION("check that opening-closing-opening etc is ok")
+    {
         INFO("non-buffered port");
         Port p;
         p.open("/test1");
@@ -924,8 +938,9 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         }
     }
 
-#if 0
-    SECTION("check that input/output counts are accurate...") {
+#if defined(ENABLE_BROKEN_TESTS)
+    SECTION("check that input/output counts are accurate...")
+    {
         int top = 3;
         Port p[3];
         p[0].open("/a");
@@ -963,9 +978,10 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         CHECK(p[2].getOutputCount() == 0); // output connections
 
     }
-#endif
+#endif // ENABLE_BROKEN_TESTS
 
-    SECTION("check that we survive if no reply() made when promised") {
+    SECTION("check that we survive if no reply() made when promised")
+    {
         Port p1;
         DelegatedReader reader(false);
         reader.start();
@@ -981,7 +997,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         reader.stop();
     }
 
-    SECTION("check port status report (test 1)") {
+    SECTION("check port status report (test 1)")
+    {
         Port p1;
         Port p2;
         p1.open("/foo");
@@ -997,7 +1014,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         p2.close();
     }
 
-    SECTION("check port status report (test 2)") {
+    SECTION("check port status report (test 2)")
+    {
         Port p1;
         Port p2;
         MyReport report1, report2;
@@ -1018,7 +1036,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         p2.close();
     }
 
-    SECTION("check port status report with rpc client (test 1)") {
+    SECTION("check port status report with rpc client (test 1)")
+    {
         RpcClient p1;
         RpcServer p2;
         p1.open("/foo");
@@ -1034,7 +1053,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         p2.close();
     }
 
-    SECTION("check port status report with rpc client (test 2)") {
+    SECTION("check port status report with rpc client (test 2)")
+    {
         RpcClient p1;
         RpcServer p2;
         MyReport report1, report2;
@@ -1055,7 +1075,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         p2.close();
     }
 
-    SECTION("check port admin interface") {
+    SECTION("check port admin interface")
+    {
         BufferedPort<Bottle> p1;
         Port p2;
         p1.open("/p1");
@@ -1074,7 +1095,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         p2.close();
     }
 
-    SECTION("checking acquire/release") {
+    SECTION("checking acquire/release")
+    {
         BufferedPort<Bottle> in;
         BufferedPort<Bottle> out;
         in.setStrict();
@@ -1122,7 +1144,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         in.release(key2);
     }
 
-    SECTION("check N second timeout") {
+    SECTION("check N second timeout")
+    {
         Port a;
         Port b;
         bool ok = a.setTimeout(0.5);
@@ -1136,7 +1159,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         CHECK_FALSE(ok); // send failed correctly
     }
 
-    SECTION("check yarp ... /write works") {
+    SECTION("check yarp ... /write works")
+    {
         WriteReader writer;
         writer.start();
         int argc = 2;
@@ -1145,14 +1169,16 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         writer.finish();
     }
 
-    SECTION("check behavior on missing slash") {
+    SECTION("check behavior on missing slash")
+    {
         Port p;
         const char *name = "something/without/slash";
         bool opened = p.open(name);
         CHECK_FALSE(opened); // correctly rejected port
     }
 
-    SECTION("checking interrupt") {
+    SECTION("checking interrupt")
+    {
         PortReaderBuffer<PortablePair<Bottle,Bottle> > buf;
 
         Port input, output;
@@ -1181,7 +1207,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         input.close();
     }
 
-    SECTION("checking interrupt for BufferedPort") {
+    SECTION("checking interrupt for BufferedPort")
+    {
         BufferedPort<Bottle> input, output;
         input.open("/in");
         output.open("/out");
@@ -1221,7 +1248,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         input.close();
     }
 
-    SECTION("checking interrupt on input side") {
+    SECTION("checking interrupt on input side")
+    {
         PortReaderBuffer<Bottle> buf;
         buf.setStrict(true);
 
@@ -1273,7 +1301,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         input.close();
     }
 
-    SECTION("checking interrupt on input side without buffering") {
+    SECTION("checking interrupt on input side without buffering")
+    {
         Port input, output;
         input.open("/in");
         output.enableBackgroundWrite(true);
@@ -1312,8 +1341,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         input.close();
     }
 
-
-    SECTION("checking interrupt for a port with pending reply") {
+    SECTION("checking interrupt for a port with pending reply")
+    {
         PortReaderBuffer<PortablePair<Bottle,Bottle> > buf;
 
         ServiceUser output("/out");
@@ -1333,8 +1362,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         INFO("successfully closed");
     }
 
-    SECTION("checking interrupt with bad reader") {
-
+    SECTION("checking interrupt with bad reader")
+    {
         StreamUser output("/out");
         Port input;
         input.open("/in");
@@ -1352,9 +1381,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         input.close();
     }
 
-
-    SECTION("checking opening/closing/reopening ports") {
-
+    SECTION("checking opening/closing/reopening ports")
+    {
         BufferedPort<Bottle> port2;
         port2.open("/test2");
 
@@ -1391,7 +1419,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         CHECK(bot->get(0).asInt32() == 2); // reader read correct message
     }
 
-    SECTION("checking BufferedPort callback") {
+    SECTION("checking BufferedPort callback")
+    {
         DataPort pin;
         pin.useCallback();
         BufferedPort<Bottle> pout;
@@ -1410,32 +1439,37 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         CHECK(pin.ct == 1); // callback happened
     }
 
-    SECTION("checking BufferedPort callback without open (test 1)") {
+    SECTION("checking BufferedPort callback without open (test 1)")
+    {
         INFO( "");
         DataPort pin;
         pin.useCallback();
         pin.disableCallback();
     }
 
-    SECTION("checking BufferedPort callback without open (test 2)") {
+    SECTION("checking BufferedPort callback without open (test 2)")
+    {
         DataPort pin;
         pin.useCallback();
         pin.disableCallback();
         pin.close();
     }
 
-    SECTION("checking BufferedPort callback without open (test 3)") {
+    SECTION("checking BufferedPort callback without open (test 3)")
+    {
         DataPort pin;
         pin.useCallback();
     }
 
-    SECTION("checking BufferedPort callback without open (test 4)") {
+    SECTION("checking BufferedPort callback without open (test 4)")
+    {
         DataPort pin;
         pin.useCallback();
         pin.close();
     }
 
-    SECTION("checking user-level admin message reads") {
+    SECTION("checking user-level admin message reads")
+    {
         Port pin;
         ServiceProvider admin_reader;
         pin.setAdminReader(admin_reader);
@@ -1452,7 +1486,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         CHECK(reply.size()>=4); // yarp commands still work
     }
 
-    SECTION("checking callback locking") {
+    SECTION("checking callback locking")
+    {
         Port pin, pout;
         Bottle data;
         pin.setCallbackLock();
@@ -1476,8 +1511,9 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         pout.close();
     }
 
-#ifdef BROKEN_TEST
-    SECTION("checking tcp") {
+#if defined(ENABLE_BROKEN_TESTS)
+    SECTION("checking tcp")
+    {
         for(int i = 0; i < 50; i++)
         {
             TcpTestServer server;
@@ -1490,9 +1526,10 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
             server.stop();
         }
     }
-#endif
+#endif // ENABLE_BROKEN_TESTS
 
-    SECTION("testing the deadlock when you close a device(PeriodicThread) after the prepare of a closed port") {
+    SECTION("testing the deadlock when you close a device(PeriodicThread) after the prepare of a closed port")
+    {
         yarp::dev::PolyDriver p;
         Property prop;
         prop.put("device","brokenDevice");
@@ -1500,7 +1537,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]") {
         CHECK(p.close()); // Closing the broken_device
     }
 
-    SECTION("testing lockup if resume is called when not interrupted") {
+    SECTION("testing lockup if resume is called when not interrupted")
+    {
         Port p;
         CHECK(p.open("/test")); // Checking the open of the port
         p.interrupt();

@@ -9,18 +9,16 @@
 
 #include <yarp/os/Election.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
-TEST_CASE("OS::ElectionTest", "[yarp::os]") {
+TEST_CASE("OS::ElectionTest", "[yarp::os]")
+{
 
-    SECTION("testing the basics of elections") {
+    SECTION("testing the basics of elections")
+    {
         std::string c1 = "Magnifico";
         std::string c2 = "Grasso";
         std::string c3 = "Bozo";

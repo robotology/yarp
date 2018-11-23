@@ -9,12 +9,6 @@
 
 #define _USE_MATH_DEFINES
 
-#if defined(USE_SYSTEM_CATCH)
-#include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
 #include <yarp/math/Math.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/math/Rand.h>
@@ -24,6 +18,9 @@
 #include <cmath>
 #include <string>
 #include <cstdio>
+
+#include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -97,9 +94,11 @@ void assertEqual(const double &a, const double &b){
         CHECK(true);
 }
 
-TEST_CASE("math::MathTest", "[yarp::math]") {
+TEST_CASE("math::MathTest", "[yarp::math]")
+{
 
-    SECTION("check matrix misc operations") {
+    SECTION("check matrix misc operations")
+    {
         Matrix mm(4,4);
         mm.zero();
         mm=eye(5,5);
@@ -128,7 +127,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
         assertEqual(Amn.transposed()*(Bmn+Cmn), Amn.transposed()*Bmn + Amn.transposed()*Cmn); // "A(B+C) = AB+AC";
     }
 
-    SECTION("check vector operators.") {
+    SECTION("check vector operators.")
+    {
         Vector a(3);
         Vector b(3);
         Vector c;
@@ -168,7 +168,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
         CHECK(acc==9); // element wise operator/
     }
 
-    SECTION("check matrix and vector operations.") {
+    SECTION("check matrix and vector operations.")
+    {
 
         Matrix m(3,2);
         m=eye(3,2);
@@ -193,7 +194,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
         CHECK(ret2==a2); // "Matrix by Vector multiplication"
     }
 
-    SECTION("check matrix operations.") {
+    SECTION("check matrix operations.")
+    {
         Matrix A(3,4);
         Matrix B(4,2);
         A=2;
@@ -233,7 +235,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
         CHECK(acc==expected); // "Matrix element wise multiplication"
     }
 
-    SECTION("check SVD.") {
+    SECTION("check SVD.")
+    {
 
         Matrix M(6,5);
         M=1;
@@ -257,7 +260,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
         printf("%s\n", T.toString().c_str());
     }
 
-    SECTION("checking matrix inversions.") {
+    SECTION("checking matrix inversions.")
+    {
         Vector v(0);
         Matrix A(4,4);
         int counter = 1;
@@ -299,7 +303,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
 
     }
 
-    SECTION("checking matrix determinant.") {
+    SECTION("checking matrix determinant.")
+    {
         Matrix A(4,4);
         A(0,0) = 2;
         A(0,1) = 3;
@@ -327,7 +332,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
         //printf("det: %g\n", val);
     }
 
-    SECTION("checking sum and subtraction operators.") {
+    SECTION("checking sum and subtraction operators.")
+    {
         int n = 3, m=2;
         Vector rangeMin(n, -100);
         Vector rangeMax(n, 100);
@@ -387,7 +393,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
         assertEqual(Amn, Bmn-Cmn);
     }
 
-    SECTION("checking product operator.") {
+    SECTION("checking product operator.")
+    {
         int n = 3, m=2;
         Vector rangeMin(n, -100);
         Vector rangeMax(n, 100);
@@ -443,7 +450,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
         Amn = Bmn; Amn *= Ann; assertEqual(Amn, Bmn*Ann);
     }
 
-    SECTION("check division operator.") {
+    SECTION("check division operator.")
+    {
         int n = 3, m=2;
         Vector rangeMin(n, -100);
         Vector rangeMax(n, 100);
@@ -471,7 +479,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
         Amn=Bmn; Amn/=s; assertEqual(Amn, Bmn/s);
     }
 
-    SECTION("check cross product.") {
+    SECTION("check cross product.")
+    {
         int n = 3;
         Vector rangeMin(n, -100);
         Vector rangeMax(n, 100);
@@ -493,7 +502,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
         assertEqual(cross(an, bn), -1.0*cross(bn, an));
     }
 
-    SECTION("check conversions from euler angles to matrix.") {
+    SECTION("check conversions from euler angles to matrix.")
+    {
         Vector euler;
         euler.resize(3,0.0);
         Matrix R;
@@ -530,7 +540,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
         assertEqual(m, R); // " axis2dcm"
     }
 
-    SECTION("check sign function.") {
+    SECTION("check sign function.")
+    {
         double a;
         a=-2.0;
         assertEqual(sign(a), -1.0); // " sign(double)= +/-1 "
@@ -547,7 +558,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
         assertEqual(sign(b), c, "  sign(vector)=vector cointaing signs of elements ");
     }
 
-    SECTION("check eigenValues function.") {
+    SECTION("check eigenValues function.")
+    {
         Matrix A;
         Vector real, img, real2, img2;
         real.resize(2,0.0);
@@ -568,7 +580,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
         assertEqual(img, img2, " eigenValues(matrix)=img part of eigenValues ");
     }
 
-    SECTION("check max and min element.") {
+    SECTION("check max and min element.")
+    {
         Vector a;
         a.resize(3,0.0);
         a[0]=2.5;
@@ -578,7 +591,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
         assertEqual(findMin(a), 2.5, " findMin(vector)=min-elem ");
     }
 
-    SECTION("check Quaternion class,") {
+    SECTION("check Quaternion class,")
+    {
         Quaternion q1;
         Quaternion q2;
         Quaternion q3;
@@ -668,7 +682,8 @@ TEST_CASE("math::MathTest", "[yarp::math]") {
         INFO( string("check toString() method: ") + q1.toString());
     }
 
-    SECTION("check Matrix concatenations") {
+    SECTION("check Matrix concatenations")
+    {
         Matrix a, b, c;
         b.resize(2,1);
         c.resize(3,1);

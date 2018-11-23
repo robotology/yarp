@@ -10,22 +10,16 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Value.h>
-
-#include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/PlatformSysStat.h>
+#include <yarp/os/Log.h>
 
 #include <cmath>
 #include <cstdlib>
 #include <cstdio>
 #include <cfloat>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 
 static void printStringToFile(const char * filename, const char * filecontent)
@@ -37,9 +31,10 @@ static void printStringToFile(const char * filename, const char * filecontent)
     fout = nullptr;
 }
 
-TEST_CASE("OS::PropertyTest", "[yarp::os]") {
-
-    SECTION("checking puts and gets") {
+TEST_CASE("OS::PropertyTest", "[yarp::os]")
+{
+    SECTION("checking puts and gets")
+    {
         Property p;
         p.put("hello","there");
         p.put("hello","friend");
@@ -55,8 +50,8 @@ TEST_CASE("OS::PropertyTest", "[yarp::os]") {
         CHECK_FALSE(p.check("hello",v)); // has no value
     }
 
-
-    SECTION("checking puts and gets of various types") {
+    SECTION("checking puts and gets of various types")
+    {
         Property p;
         p.put("ten",10);
         p.put("pi",(double)3.14);
@@ -66,6 +61,7 @@ TEST_CASE("OS::PropertyTest", "[yarp::os]") {
         p.unput("ten");
         CHECK(p.find("ten").isNull()); // unput
     }
+
     SECTION("checking that issue https://github.com/robotology/yarp/issues/1057 is properly solved")
     {
         Property p;
@@ -90,8 +86,8 @@ TEST_CASE("OS::PropertyTest", "[yarp::os]") {
         CHECK(std::fabs(p.find("dbl").asFloat64() - val) < DBL_EPSILON); // checking 1e-9
     }
 
-
-    SECTION("checking that issue https://github.com/robotology/yarp/issues/1057 is properly solved") {
+    SECTION("checking that issue https://github.com/robotology/yarp/issues/1057 is properly solved")
+    {
         Property p;
         p.put("ten",10);
         CHECK(p.check("ten")); // found
@@ -100,7 +96,8 @@ TEST_CASE("OS::PropertyTest", "[yarp::os]") {
         CHECK(bot.isNull()); // group not found
     }
 
-    SECTION("checking external forms") {
+    SECTION("checking external forms")
+    {
         Property p;
         p.fromString("(foo 12) (testing left right)");
         CHECK(p.find("foo").asInt32() == 12); // good key 1
@@ -157,7 +154,8 @@ TEST_CASE("OS::PropertyTest", "[yarp::os]") {
         Property p7;
     }
 
-    SECTION("checking command line parsing") {
+    SECTION("checking command line parsing")
+    {
         const char *argv[] = {
             "program",
             "--on",
@@ -177,14 +175,16 @@ TEST_CASE("OS::PropertyTest", "[yarp::os]") {
         CHECK(p2.findGroup("x").findGroup("y").find("r").asInt32() == 92); // x::y::r ok
     }
 
-    SECTION("checking line break") {
+    SECTION("checking line break")
+    {
         Property p;
         p.fromConfig("x to\\\ny 20\n");
         CHECK_FALSE(p.check("y")); // ran on ok
         CHECK(p.findGroup("x").get(1).asString() == "toy"); // splice ok
     }
 
-    SECTION("checking hex") {
+    SECTION("checking hex")
+    {
         Property p;
         p.fromString("(CanAddress 0x0C)");
         CHECK(p.find("CanAddress").asInt32() == 12); // 0x0C
@@ -217,7 +217,8 @@ CanAddress2 0x0E\n\
         CHECK(p.find("CanAddress2").asInt32() == 12); // config text 0x0C
     }
 
-    SECTION("checking copy") {
+    SECTION("checking copy")
+    {
         Property p0;
         p0.fromString("(foo 12) (testing left right)");
         {
@@ -237,8 +238,8 @@ CanAddress2 0x0E\n\
 
     }
 
-
-    SECTION("checking expansion") {
+    SECTION("checking expansion")
+    {
         Property p;
         p.fromConfig("\
 color red\n\
@@ -270,8 +271,8 @@ check $x $y\n\
         CHECK(p.findGroup("check").get(2).asInt32() == 20); // local y is ok
     }
 
-
-    SECTION("checking url parsing") {
+    SECTION("checking url parsing")
+    {
         Property p;
         p.fromQuery("prop1=val1&prop2=val2");
         CHECK(p.find("prop1").asString() == "val1"); // basic prop 1
@@ -284,8 +285,8 @@ check $x $y\n\
         CHECK(p.find("prop2").asString() == "val/two,"); // mix prop 2
     }
 
-
-    SECTION("checking nested forms") {
+    SECTION("checking nested forms")
+    {
         Property p;
         p.fromConfig("[sect a]\nhello there\n[sect b]\nx 10\n");
         std::string sects = p.findGroup("sect").tail().toString();
@@ -294,7 +295,8 @@ check $x $y\n\
         CHECK(hello == "there"); // individual sections present
     }
 
-    SECTION("checking comments") {
+    SECTION("checking comments")
+    {
         Property p;
         p.fromConfig("x 10\n// x 11\n");
         CHECK(p.find("x").asInt32() == 10); // comment ignored ok
@@ -334,7 +336,8 @@ check $x $y\n\
         CHECK(p_spaces.find("torso_yaw").asList()->size() == (size_t) 3); // list with spaces loaded with correct size
     }
 
-    SECTION("checking wipe suppression") {
+    SECTION("checking wipe suppression")
+    {
         Property p;
         p.put("x",12);
         p.fromConfig("y 20",false);
@@ -342,7 +345,8 @@ check $x $y\n\
         CHECK(p.find("y").asInt32() == 20); // y is ok
     }
 
-    SECTION("checking backslash path behavior") {
+    SECTION("checking backslash path behavior")
+    {
         // on windows, backslashes are used in paths
         // if passed on command-line, don't be shocked
         Property p;
@@ -357,8 +361,8 @@ check $x $y\n\
         CHECK(p.find("file").asString() == target); // string with slash
     }
 
-
-    SECTION("checking include behavior") {
+    SECTION("checking include behavior")
+    {
 
         const char *fname1 = "_yarp_regression_test1.txt";
         const char *fname2 = "_yarp_regression_test2.txt";
@@ -459,9 +463,8 @@ check $x $y\n\
         }
     }
 
-
-
-    SECTION("checking that issue https://github.com/robotology/yarp/issues/459 is properly solved") {
+    SECTION("checking that issue https://github.com/robotology/yarp/issues/459 is properly solved")
+    {
 
         // create test files
         const char *include_one_name = "_yarp_regression_include_one.ini";
@@ -521,8 +524,8 @@ check $x $y\n\
 
     }
 
-
-    SECTION("checking command line parsing") {
+    SECTION("checking command line parsing")
+    {
         const char *argv[] = {
             "program",
             "--on",
@@ -543,7 +546,8 @@ check $x $y\n\
         }
     }
 
-    SECTION("checking directory scanning") {
+    SECTION("checking directory scanning")
+    {
         // change directory name if test files removed
         std::string dirname = "__test_dir_1";
         if (yarp::os::stat(dirname.c_str())<0) {
@@ -572,14 +576,16 @@ check $x $y\n\
         CHECK(p.find("y").asInt32() == 4); // t2 read
     }
 
-    SECTION("checking long long hex") {
+    SECTION("checking long long hex")
+    {
         const char* parms[]={"foo","--longlonghex","0xFEDCBA9876543210"};
         yarp::os::Property config;
         config.fromCommand(3,parms);
         CHECK(config.find("longlonghex").asString() == "0xFEDCBA9876543210"); // hex that is too big remains a string
     }
 
-    SECTION("check add group") {
+    SECTION("check add group")
+    {
         Property p;
         p.put("x",1);
         Property& psub = p.addGroup("psub");
@@ -592,5 +598,4 @@ check $x $y\n\
         pCopy2 = p;
         CHECK(pCopy.toString() == p.toString()); // test if addGroup works fine with Property copy operator
     }
-
 }

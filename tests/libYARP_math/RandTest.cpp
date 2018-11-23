@@ -11,13 +11,6 @@
  * \infile Tests for Rand.h/Rand.cpp
  */
 
-#if defined(USE_SYSTEM_CATCH)
-#include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
-
 #include <cstdio>
 
 #include <yarp/math/Rand.h>
@@ -27,13 +20,16 @@
 
 #include <cmath>
 
+#include <catch.hpp>
+#include <harness.h>
+
 using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::math;
 
-TEST_CASE("math::RandTest", "[yarp::math]") {
-
+TEST_CASE("math::RandTest", "[yarp::math]")
+{
     SECTION("checking random generation with normal distribution...")
     {
 
@@ -85,7 +81,6 @@ TEST_CASE("math::RandTest", "[yarp::math]") {
         CHECK(stdOk); // normal distribution std ~as requested
     }
 
-
     SECTION("checking random  matrix generation...")
     {
         int R=100;
@@ -103,8 +98,8 @@ TEST_CASE("math::RandTest", "[yarp::math]") {
             mGood=true;
 
         CHECK(mGood); // random matrix
-
     }
+
     SECTION("checking random  number generation...")
     {
         //we check the impl class since all the others relay on that
@@ -182,5 +177,4 @@ TEST_CASE("math::RandTest", "[yarp::math]") {
         tmp=(v1==v3);
         CHECK(!tmp); // default seed initialization for two sequences
     }
-
 }

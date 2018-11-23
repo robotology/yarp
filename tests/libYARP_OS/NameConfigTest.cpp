@@ -9,18 +9,16 @@
 
 #include <yarp/os/impl/NameConfig.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
 TEST_CASE("OS::impl::NameConfig", "[yarp::os][yarp::os::impl]")
 {
-    SECTION("testing compilation") {
+    SECTION("testing compilation")
+    {
         NameConfig nc;
         std::string fname = nc.getConfigFileName();
         INFO(fname);

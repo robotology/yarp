@@ -11,18 +11,15 @@
 
 #include <cstring>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
+#include <harness.h>
 
 using namespace yarp::os;
 
-TEST_CASE("OS::StringOutputStreamTest", "[yarp::os]") {
-
-    SECTION("testing writing") {
+TEST_CASE("OS::StringOutputStreamTest", "[yarp::os]")
+{
+    SECTION("testing writing")
+    {
         StringOutputStream sos;
         char txt[] = "Hello my friend";
         Bytes b(txt, strlen(txt));

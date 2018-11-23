@@ -7,12 +7,6 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#if defined(USE_SYSTEM_CATCH)
-#include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
 #include <yarp/sig/Matrix.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/Bottle.h>
@@ -27,6 +21,9 @@
 
 #include <cmath>
 #include <vector>
+
+#include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -146,7 +143,8 @@ bool checkConsistency(Matrix &a)
     return ret;
 }
 
-void makeTestMatrix(Matrix& m, unsigned int rr, unsigned int cc) {
+void makeTestMatrix(Matrix& m, unsigned int rr, unsigned int cc)
+{
     m.resize((int)rr,(int)cc);
     for(unsigned int r=0; r<rr; r++) {
         for(unsigned int c=0; c<cc; c++) {
@@ -156,10 +154,10 @@ void makeTestMatrix(Matrix& m, unsigned int rr, unsigned int cc) {
 }
 
 
-TEST_CASE("sig::MatrixTest", "[yarp::sig]") {
-
-    SECTION("checking operator ==") {
-
+TEST_CASE("sig::MatrixTest", "[yarp::sig]")
+{
+    SECTION("checking operator ==")
+    {
         Matrix M1(3,3);
         Matrix M2(3,3);
 
@@ -178,7 +176,8 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]") {
         CHECK(ok); // operator== for matrix work
     }
 
-    SECTION("check matrix send/receive") {
+    SECTION("check matrix send/receive")
+    {
         Port portIn;
         Port portOut;
 
@@ -206,7 +205,8 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]") {
         delete senderThread;
     }
 
-    SECTION("check matrix copy constructor works.") {
+    SECTION("check matrix copy constructor works.")
+    {
         Matrix m(10,40);
         int r=0;
         int c=0;
@@ -232,7 +232,8 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]") {
         Matrix empty2(empty1);
     }
 
-    SECTION("check matrix copy operator works.") {
+    SECTION("check matrix copy operator works.")
+    {
         Matrix m(10,40);
         int r=0;
         int c=0;
@@ -252,7 +253,8 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]") {
         CHECK(ok); // elements match
     }
 
-    SECTION("check bottle.") {
+    SECTION("check bottle.")
+    {
         INFO("check bottle compatibility...");
         Bottle b("2 3 (0.0 1.1 2.2 3.3 4.4 5.5)");
         Matrix m(6,1);
@@ -264,7 +266,8 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]") {
         CHECK((m[1][2]>5 && m[1][2]<6)); // content is sane
     }
 
-    SECTION("check submatrix.") {
+    SECTION("check submatrix.")
+    {
         INFO("check function Matrix::submatrix works...");
         const size_t R=10;
         const size_t C=20;
@@ -322,7 +325,8 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]") {
         CHECK(ok); // elements match
     }
 
-    SECTION("check gsl.") {
+    SECTION("check gsl.")
+    {
         Matrix a(5, 5);
         Matrix b;
         b = a;
@@ -338,7 +342,8 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]") {
         CHECK(checkConsistency(c)); // gsldata consistent after init
     }
 
-    SECTION("check resize.") {
+    SECTION("check resize.")
+    {
         Matrix ones;
         Matrix eye;
         Matrix resized;
@@ -395,10 +400,8 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]") {
 
     }
 
-
-
-    SECTION("check matrix format conforms to network standard...") {
-
+    SECTION("check matrix format conforms to network standard...")
+    {
         Matrix m;
         size_t rr = 10;
         size_t cc = 5;
@@ -428,7 +431,8 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]") {
         CHECK(ok); // data matches
     }
 
-    SECTION("checking portable-pair serialization...") {
+    SECTION("checking portable-pair serialization...")
+    {
         // potential problem reported by Miguel Sarabia Del Castillo
 
         Matrix m;
@@ -465,7 +469,8 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]") {
         CHECK(bot2->get(0).asFloat64() == Approx(value)); // "value match"
     }
 
-    SECTION("check data() when matrix is empty...") {
+    SECTION("check data() when matrix is empty...")
+    {
         Matrix m;
         m.resize(0,0);
         CHECK(m.data()==nullptr); // size 0x0 => null data()

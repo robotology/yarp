@@ -19,11 +19,8 @@
 
 #include <yarp/os/impl/TcpFace.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -104,11 +101,13 @@ static bool waitConnect(const std::string& n1,
     return false;
 }
 
-TEST_CASE("OS::NetworkTest", "[yarp::os]") {
+TEST_CASE("OS::NetworkTest", "[yarp::os]")
+{
 
     Network::setLocalMode(true);
 
-    SECTION("checking return value of connect method") {
+    SECTION("checking return value of connect method")
+    {
         Port p1;
         Port p2;
         bool ok1 = p1.open("/p1");
@@ -130,7 +129,8 @@ TEST_CASE("OS::NetworkTest", "[yarp::os]") {
     }
 
 
-    SECTION("checking port synchronization") {
+    SECTION("checking port synchronization")
+    {
         Port p1;
         Port p2;
         p1.open("/p1");
@@ -146,7 +146,8 @@ TEST_CASE("OS::NetworkTest", "[yarp::os]") {
     }
 
 
-    SECTION("checking basic communications") {
+    SECTION("checking basic communications")
+    {
         Port server;
         NetworkServiceProvider provider;
         server.setReader(provider);
@@ -160,7 +161,8 @@ TEST_CASE("OS::NetworkTest", "[yarp::os]") {
         server.close();
     }
 
-    SECTION("checking property storage on name server") {
+    SECTION("checking property storage on name server")
+    {
         Network::registerName("/foo");
         Network::setProperty("/foo","my_prop",Value(15));
         Value *v = Network::getProperty("/foo","my_prop");
@@ -172,7 +174,8 @@ TEST_CASE("OS::NetworkTest", "[yarp::os]") {
         Network::unregisterName("/foo");
     }
 
-    SECTION("checking Network::write timeout") {
+    SECTION("checking Network::write timeout")
+    {
         SlowResponder sr("/slow");
         sr.start();
         Bottle cmd("hello"), reply;
@@ -187,7 +190,8 @@ TEST_CASE("OS::NetworkTest", "[yarp::os]") {
         sr.stop();
     }
 
-    SECTION("checking Network::exists timeout") {
+    SECTION("checking Network::exists timeout")
+    {
         ContactStyle style;
         style.timeout = 2.0;
         Port p;
@@ -207,7 +211,8 @@ TEST_CASE("OS::NetworkTest", "[yarp::os]") {
     }
 
 
-    SECTION("checking topics are effective") {
+    SECTION("checking topics are effective")
+    {
         Network::connect("/NetworkTest/checkTopic/p1","topic://NetworkTest/checkTopic");
         Network::connect("topic://NetworkTest/checkTopic","/NetworkTest/checkTopic/p2");
         Port p1;
@@ -219,7 +224,8 @@ TEST_CASE("OS::NetworkTest", "[yarp::os]") {
         Network::disconnect("topic://NetworkTest/checkTopic","/NetworkTest/checkTopic/p2");
     }
 
-    SECTION("checking non-topic persistence is effective") {
+    SECTION("checking non-topic persistence is effective")
+    {
         ContactStyle style;
         style.persistent = true;
         Network::connect("/NetworkTest/checkPersistence/p1","/NetworkTest/checkPersistence/p2",style);
@@ -231,7 +237,8 @@ TEST_CASE("OS::NetworkTest", "[yarp::os]") {
         Network::disconnect("/NetworkTest/checkPersistence/p1","NetworkTest/checkPersistence/p2",style);
     }
 
-    SECTION("checking connection qos") {
+    SECTION("checking connection qos")
+    {
         BufferedPort<Bottle> p1;
         BufferedPort<Bottle> p2;
         p1.open("/NetworkTest/checkConnectionQos/p1");

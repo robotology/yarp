@@ -8,13 +8,11 @@
 
 #include <yarp/os/LogStream.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
-TEST_CASE("OS::LogStreamTest", "[yarp::os]") {
+TEST_CASE("OS::LogStreamTest", "[yarp::os]")
+{
 
     int i = 13;
     std::vector<int> v(4);
@@ -23,7 +21,8 @@ TEST_CASE("OS::LogStreamTest", "[yarp::os]") {
     v[2] = 3;
     v[3] = 4;
 
-    SECTION("Test yTrace") {
+    SECTION("Test yTrace")
+    {
         yTrace("This is a trace");
         yTrace("This is %s (%d)", "a trace", i);
         yTrace();
@@ -31,7 +30,8 @@ TEST_CASE("OS::LogStreamTest", "[yarp::os]") {
         yTrace() << v;
     }
 
-    SECTION("Test yDebug") {
+    SECTION("Test yDebug")
+    {
         yDebug("This is a debug");
         yDebug("This is %s (%d)", "a debug", i);
         yDebug();
@@ -39,7 +39,8 @@ TEST_CASE("OS::LogStreamTest", "[yarp::os]") {
         yDebug() << v;
     }
 
-    SECTION("Test yInfo") {
+    SECTION("Test yInfo")
+    {
         yInfo("This is info");
         yInfo("This is %s (%d)", "info", i);
         yInfo();
@@ -47,14 +48,16 @@ TEST_CASE("OS::LogStreamTest", "[yarp::os]") {
         yInfo() << v;
     }
 
-    SECTION("Test yWarning") {
+    SECTION("Test yWarning")
+    {
         yWarning("This is a warning");
         yWarning("This is %s (%d)", "a warning", i);
         yWarning();
         yWarning() << "This is" << "another" << "warning" << i;
         yWarning() << v;
     }
-    SECTION("Test yError") {
+    SECTION("Test yError")
+    {
         yError("This is an error");
         yError("This is %s (%d)", "an error", i);
         yError();

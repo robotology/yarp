@@ -16,11 +16,8 @@
 
 #include <string>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -63,8 +60,8 @@ class DeprecatedDeviceDriverTest : public DeprecatedDeviceDriver
 
 
 
-TEST_CASE("dev::PolyDriverTest", "[yarp::dev]") {
-
+TEST_CASE("dev::PolyDriverTest", "[yarp::dev]")
+{
     Network::setLocalMode(true);
 
     Drivers::factory().add(new DriverCreatorOf<DeviceDriverTest>("devicedrivertest",

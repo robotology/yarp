@@ -12,17 +12,11 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/YarpPlugin.h>
 
-#include <yarp/os/impl/PlatformDirent.h>
-#include <yarp/os/impl/PlatformSysStat.h>
-
 #include <cstdlib>
 #include <cstdio>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -56,7 +50,8 @@ static void restoreEnvironment()
     env.clear();
 }
 
-static void mkdir(const std::string& dirname) {
+static void mkdir(const std::string& dirname)
+{
     if (yarp::os::stat(dirname.c_str())<0) {
         yarp::os::mkdir(dirname.c_str());
     }
@@ -64,7 +59,8 @@ static void mkdir(const std::string& dirname) {
     CHECK(r>=0); // test directory present}
 }
 
-static std::string pathify(const Bottle& dirs) {
+static std::string pathify(const Bottle& dirs)
+{
     char buf[1000];
     char *result = yarp::os::getcwd(buf,sizeof(buf));
     if (!result) {
@@ -79,7 +75,8 @@ static std::string pathify(const Bottle& dirs) {
     return dir;
 }
 
-static void mkdir(const Bottle& dirs) {
+static void mkdir(const Bottle& dirs)
+{
     std::string slash = Network::getDirectorySeparator();
     std::string dir = "";
     for (size_t i=0; i<dirs.size(); i++) {
@@ -89,7 +86,8 @@ static void mkdir(const Bottle& dirs) {
     }
 }
 
-static void setUpTestArea(bool etc_pathd) {
+static void setUpTestArea(bool etc_pathd)
+{
     std::string colon = Network::getPathSeparator();
     std::string slash = Network::getDirectorySeparator();
     FILE *fout;
@@ -310,13 +308,15 @@ static void setUpTestArea(bool etc_pathd) {
     fout = nullptr;
 }
 
-static void breakDownTestArea() {
+static void breakDownTestArea()
+{
     restoreEnvironment();
 }
 
-TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
-
-    SECTION("testing the basics of RF...") {
+TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
+{
+    SECTION("testing the basics of RF...")
+    {
         ResourceFinder rf;
 
         const char *fname0 = "_yarp_regression_test.ini";
@@ -375,7 +375,8 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
         }
     }
 
-    SECTION("make sure command line args take priority...") {
+    SECTION("make sure command line args take priority...")
+    {
 
         const char *fname0 = "_yarp_regression_test.ini";
         const char *fname1 = "_yarp_regression_test_rf1.txt";
@@ -421,11 +422,10 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
             CHECK(rf2.find("y").asInt32() == 30); // found y
             CHECK(rf2.find("x").asInt32() == 20); // override x
         }
-
     }
 
-
-    SECTION("test context setting") {
+    SECTION("test context setting")
+    {
         ResourceFinder rf;
         const char *argv[] = { "ignore",
                                "--_yarp_regression_test", ".",
@@ -437,7 +437,8 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
         CHECK(rf.getContext() == "zig"); // recovered context
     }
 
-    SECTION("test subgroup") {
+    SECTION("test subgroup")
+    {
         const char *fname0 = "_yarp_regression_subgroup_test.ini";
         const char *fname1 = "_yarp_regression_subgroup_test_rf1.txt";
         const char *fname2 = "_yarp_regression_subgroup_test_rf2.txt";
@@ -483,7 +484,8 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
         CHECK(rf3.isNull()); // section3 null ok
     }
 
-    SECTION("test default values of generic type") {
+    SECTION("test default values of generic type")
+    {
         int defInt=42;
         double defDouble=42.42;
         std::string defString="fortytwo";
@@ -506,7 +508,8 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
         CHECK(rf.find("list").asList()->get(0).asString() == "answers"); // default list set correctly
     }
 
-    SECTION("test getDataHome") {
+    SECTION("test getDataHome")
+    {
         saveEnvironment("YARP_DATA_HOME");
         saveEnvironment("XDG_DATA_HOME");
         saveEnvironment("HOME");
@@ -524,7 +527,8 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
         restoreEnvironment();
     }
 
-    SECTION("test getConfigHome") {
+    SECTION("test getConfigHome")
+    {
         saveEnvironment("YARP_CONFIG_HOME");
         saveEnvironment("XDG_CONFIG_HOME");
         saveEnvironment("HOME");
@@ -542,7 +546,8 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
         restoreEnvironment();
     }
 
-    SECTION("test getDataDirs") {
+    SECTION("test getDataDirs")
+    {
         saveEnvironment("YARP_DATA_DIRS");
         saveEnvironment("XDG_DATA_DIRS");
         std::string slash = Network::getDirectorySeparator();
@@ -579,7 +584,8 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
         restoreEnvironment();
     }
 
-    SECTION("test getConfigDirs") {
+    SECTION("test getConfigDirs")
+    {
         saveEnvironment("YARP_CONFIG_DIRS");
         saveEnvironment("XDG_CONFIG_DIRS");
         std::string slash = Network::getDirectorySeparator();
@@ -611,8 +617,8 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
         restoreEnvironment();
     }
 
-    SECTION("test readConfig") {
-
+    SECTION("test readConfig")
+    {
         for (int area=1; area<2; area++) {
             if (area==0) {
                 // currently ruled out in spec, but may come back
@@ -644,7 +650,8 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
         }
     }
 
-    SECTION("test context version 2") {
+    SECTION("test context version 2")
+    {
         setUpTestArea(false);
 
         {
@@ -714,7 +721,8 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
         breakDownTestArea();
     }
 
-    SECTION("test context version 2") {
+    SECTION("test context version 2")
+    {
         ResourceFinder rf1;
         rf1.setDefault("testNumber", "fortytwo");
         rf1.configure(0, nullptr);
@@ -763,7 +771,8 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
     }
 
 
-    SECTION("test get 'home' dirs for writing") {
+    SECTION("test get 'home' dirs for writing")
+    {
         setUpTestArea(false);
         YarpPluginSelector selector;
         selector.scan();
@@ -774,7 +783,8 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
         breakDownTestArea();
     }
 
-    SECTION("test fail behavior on --from / setDefaultConfigFile") {
+    SECTION("test fail behavior on --from / setDefaultConfigFile")
+    {
         setUpTestArea(false);
 
         {
@@ -794,6 +804,8 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
             int argc = 3;
             bool configures = rf.configure(argc,(char **)argv);
             CHECK(configures); // ok with from file that exists
+        }
+
         {
             ResourceFinder rf;
             rf.setDefaultContext("my_app");
@@ -811,8 +823,6 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]") {
             int argc = 3;
             bool configures = rf.configure(argc,(char **)argv);
             CHECK_FALSE(configures); // fails with from file that is missing
-        }
-
         }
     }
 }

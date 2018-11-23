@@ -12,11 +12,8 @@
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -40,9 +37,11 @@ static std::string humanize(const std::string& txt)
     return result;
 }
 
-TEST_CASE("OS::impl::PortCommandTest", "[yarp::os][yarp::os::impl]") {
+TEST_CASE("OS::impl::PortCommandTest", "[yarp::os][yarp::os::impl]")
+{
 
-    SECTION("testing text-mode writing...") {
+    SECTION("testing text-mode writing...")
+    {
 
         PortCommand cmd1('d',"");;
         BufferedConnectionWriter bw(true);
@@ -55,7 +54,8 @@ TEST_CASE("OS::impl::PortCommandTest", "[yarp::os][yarp::os::impl]") {
         CHECK(humanize(bw2.toString()) == "/bozo\\r\\n"); // connect command
     }
 
-    SECTION("testing text-mode reading...") {
+    SECTION("testing text-mode reading...")
+    {
 
         PortCommand cmd;
         StringInputStream sis;

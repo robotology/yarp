@@ -18,23 +18,20 @@
 #include <yarp/os/Time.h>
 #include <yarp/sig/Image.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
-
+#include <harness.h>
 
 using namespace yarp::sig;
 using namespace yarp::os;
 
 float acceptedDiff = 1e-6f;
 
-TEST_CASE("sig::PointCloudTest", "[yarp::sig]") {
-
+TEST_CASE("sig::PointCloudTest", "[yarp::sig]")
+{
     Network::setLocalMode(true);
 
-    SECTION("check read/write mismatch.") {
+    SECTION("check read/write mismatch.")
+    {
         INFO( "Checking DataXYZRGBA sending - Type match");
         BufferedPort< PointCloud<DataXYZRGBA> > outPort;
         Port inPort;
@@ -88,7 +85,8 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]") {
 
     }
 
-    SECTION("check read/write mismatch 1.") {
+    SECTION("check read/write mismatch 1.")
+    {
         INFO("Testing the case in which we receive a structure bigger than the one we expect");
         BufferedPort< PointCloud<DataXYZRGBA> > outPort;
         Port inPort;
@@ -136,7 +134,8 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]") {
 
     }
 
-    SECTION("check read/write mismatch 2.") {
+    SECTION("check read/write mismatch 2.")
+    {
         INFO("Testing the case in which we receive a structure smaller than the one we expect");
         BufferedPort< PointCloud<DataXYZNormal> > outPort;
         Port inPort;
@@ -191,7 +190,8 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]") {
 
     }
 
-    SECTION("check copy and assignment.") {
+    SECTION("check copy and assignment.")
+    {
         INFO("Testing the copy constructor with PC of the same type");
         PointCloud<DataXYZRGBA> testPC;
         int width  = 5;
@@ -379,7 +379,8 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]") {
 
     }
 
-    SECTION("Testing the fromExternalPC with PC of the same type") {
+    SECTION("Testing the fromExternalPC with PC of the same type")
+    {
         PointCloud<DataXYZRGBA> testPC;
         int width  = 32;
         int height = 25;
@@ -461,7 +462,8 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]") {
         CHECK(ok); // Checking data consistency
     }
 
-    SECTION("Testing the operator+ with PC of the same type") {
+    SECTION("Testing the operator+ with PC of the same type")
+    {
         PointCloud<DataXYZNormalRGBA> testPC;
         PointCloud<DataXYZNormalRGBA> testPC2;
         int width  = 35;
@@ -575,7 +577,8 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]") {
 
     }
 
-    SECTION("check to/from bottle") {
+    SECTION("check to/from bottle")
+    {
        {
             INFO("Testing fromBottle(toBottle) XYZ_NORMAL_RGBA");
             PointCloud<DataXYZNormalRGBA> testPC;
@@ -756,7 +759,8 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]") {
 
     }
 
-    SECTION("check read/write from bottle") {
+    SECTION("check read/write from bottle")
+    {
         {
             INFO("Testing readWriteFromBottle(toBottle) XYZ_NORMAL_RGBA");
             PointCloud<DataXYZNormalRGBA> testPC;

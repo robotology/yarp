@@ -24,6 +24,10 @@ using namespace yarp::dev;
 
 using namespace std;
 
+namespace {
+
+static yarp::os::Network* net = nullptr;
+static bool verbose = false;
 
 static std::string getFile(const char *fname)
 {
@@ -74,11 +78,84 @@ void usage(const char* name)
     fprintf(stderr, "\n");
 }
 
+static void init_Network()
+{
+    net = new yarp::os::Network;
+    if (verbose) {
+        yarp::os::NetworkBase::setVerbosity(1);
+    }
+}
+
+static void fini_Network()
+{
+    delete net;
+    net = nullptr;
+}
+
+static void setup_Environment()
+{
+    // To make sure that the dev test are able to find all and only the devices
+    // compiled by YARP, including the ones compiled as dynamic plugins,
+    // YARP_DATA_DIRS is set to the build directory + the TEST_DATA_DIR
+    // and YARP_DATA_HOME is set to a non existent directory
+    std::string yarp_data_dirs =
+            CMAKE_BINARY_DIR +
+            yarp::os::NetworkBase::getDirectorySeparator() +
+            "share" +
+            yarp::os::NetworkBase::getDirectorySeparator() +
+            "yarp" +
+            yarp::os::NetworkBase::getPathSeparator() +
+            TEST_DATA_DIR;
+    yarp::os::NetworkBase::setEnvironment("YARP_DATA_DIRS", yarp_data_dirs);
+
+    std::string yarp_data_home =
+            CMAKE_BINARY_DIR +
+            yarp::os::NetworkBase::getDirectorySeparator() +
+            "home" +
+            yarp::os::NetworkBase::getDirectorySeparator() +
+            "user" +
+            yarp::os::NetworkBase::getDirectorySeparator() +
+            ".local" +
+            yarp::os::NetworkBase::getDirectorySeparator() +
+            "yarp";
+    yarp::os::NetworkBase::setEnvironment("YARP_DATA_HOME", yarp_data_home);
+
+    // To ensure that this will behave in the same way if YARP is configured on
+    // the user's system and on the build machines, YARP_CONFIG_DIRS and
+    // YARP_CONFIG_HOME are set to a non existent directory
+    std::string yarp_config_dirs = CMAKE_BINARY_DIR +
+            yarp::os::NetworkBase::getDirectorySeparator() +
+            "etc" +
+            yarp::os::NetworkBase::getDirectorySeparator() +
+            "yarp";
+    yarp::os::NetworkBase::setEnvironment("YARP_CONFIG_DIRS", yarp_config_dirs);
+
+    std::string yarp_config_home = CMAKE_BINARY_DIR +
+            yarp::os::NetworkBase::getDirectorySeparator() +
+            "home" +
+            yarp::os::NetworkBase::getDirectorySeparator() +
+            "user" +
+            yarp::os::NetworkBase::getDirectorySeparator() +
+            ".config" +
+            yarp::os::NetworkBase::getDirectorySeparator() +
+            "yarp";
+    yarp::os::NetworkBase::setEnvironment("YARP_CONFIG_HOME", yarp_config_home);
+
+    if (verbose) {
+        printf("YARP_DATA_DIRS=\"%s\"\n", yarp::os::NetworkBase::getEnvironment("YARP_DATA_DIRS").c_str());
+        printf("YARP_DATA_HOME=\"%s\"\n", yarp::os::NetworkBase::getEnvironment("YARP_DATA_HOME").c_str());
+        printf("YARP_CONFIG_DIRS=\"%s\"\n", yarp::os::NetworkBase::getEnvironment("YARP_CONFIG_DIRS").c_str());
+        printf("YARP_CONFIG_HOME=\"%s\"\n", yarp::os::NetworkBase::getEnvironment("YARP_CONFIG_HOME").c_str());
+    }
+}
+
+} // namespace
 
 int main(int argc, char *argv[])
 {
     Property p;
     p.fromCommand(argc,argv);
+    verbose = p.check("verbose") && p.check("verbose", Value(true)).asBool();
 
     // Check where to put description of device
     std::string dest = p.check("doc", Value("")).toString();
@@ -102,62 +179,31 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // To make sure that the dev test are able to find all the devices
-    // compile by YARP, also the one compiled as dynamic plugins
-    // we add the build directory to the YARP_DATA_DIRS enviromental variable
-    // CMAKE_CURRENT_DIR is the define by the CMakeLists.txt tests file
-    std::string dirs = CMAKE_BINARY_DIR +
-                       yarp::os::Network::getDirectorySeparator() +
-                       "share" +
-                       yarp::os::Network::getDirectorySeparator() +
-                       "yarp";
-
-    // Add TEST_DATA_DIR to YARP_DATA_DIRS in order to find the contexts used
-    // by the tests
-    dirs += yarp::os::Network::getPathSeparator() +
-            TEST_DATA_DIR;
-
-    // If set, append user YARP_DATA_DIRS
-    // FIXME check if this can be removed
-    Network::getEnvironment("YARP_DATA_DIRS");
-    if (!Network::getEnvironment("YARP_DATA_DIRS").empty()) {
-        dirs += yarp::os::Network::getPathSeparator() +
-                Network::getEnvironment("YARP_DATA_DIRS");
+    auto start = fileName.rfind('/');
+    if (start == std::string::npos) {
+        start = fileName.rfind('\\');
     }
+    if (start == std::string::npos) {
+        start = 0;
+    } else {
+        ++start;
+    }
+    auto len = fileName.find('.', start);
+    if (len != std::string::npos) {
+        len -= start;
+    }
+    const std::string exampleName = fileName.substr(start, len);
+    const std::string shortFileName = fileName.substr(start);
 
-    Network::setEnvironment("YARP_DATA_DIRS", dirs);
-    yInfo("YARP_DATA_DIRS=\"%s\"\n", Network::getEnvironment("YARP_DATA_DIRS").c_str());
-
-
-    Network::init();
+    setup_Environment();
+    init_Network();
     Network::setLocalMode(true);
-
-    std::string seek = fileName.c_str();
-    std::string exampleName = "";
-    int pos = seek.rfind('/');
-    if (pos == -1) {
-        pos = seek.rfind('\\');
-    }
-    if (pos == -1) {
-        pos = 0;
-    } else {
-        pos++;
-    }
-    int len = seek.find('.', pos);
-    if (len == -1) {
-        len = seek.length();
-    } else {
-        len -= pos;
-    }
-    exampleName = seek.substr(pos, len).c_str();
-    std::string shortFileName = seek.substr(pos, seek.length()).c_str();
 
     PolyDriver dd;
     yDebug("Opening PolyDriver for device %s", deviceName.c_str());
     if (!dd.open(p)) {
         yDebug("PolyDriver failed to opened.");
-        usage(argv[0]);
-        return 1;
+        return 255;
     }
 
     yDebug("PolyDriver opened.");
@@ -167,10 +213,12 @@ int main(int argc, char *argv[])
 
     DriverCreator *creator = Drivers::factory().find(deviceName.c_str());
 
+
     if (creator!=nullptr) {
         wrapperName = creator->getWrapper();
         codeName = creator->getCode();
     }
+    yDebug("wrapperName = %s, codeName = %s", wrapperName.c_str(), codeName.c_str());
 
     FILE *fout = fopen(dest.c_str(), "w");
     if (fout == nullptr) {
@@ -220,6 +268,8 @@ int main(int argc, char *argv[])
     yDebug("Closing PolyDriver");
     dd.close();
     yDebug("PolyDriver closed.");
+
+    fini_Network();
 
     return 0;
 }

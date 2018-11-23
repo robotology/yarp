@@ -13,11 +13,8 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Mutex.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 

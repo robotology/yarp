@@ -15,17 +15,16 @@
 #include <cstdlib>
 #include <cstring>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 
-TEST_CASE("OS::NetTypeTest", "[yarp::os]") {
+TEST_CASE("OS::NetTypeTest", "[yarp::os]")
+{
 
-    SECTION("checking cyclic redundancy check is plausible") {
+    SECTION("checking cyclic redundancy check is plausible")
+    {
 
         char buf[] = { 1, 2, 3, 4, 5 };
         char buf2[] = { 1, 2, 3, 4, 5 };
@@ -44,7 +43,8 @@ TEST_CASE("OS::NetTypeTest", "[yarp::os]") {
         CHECK(ct1==ct2); // two identical sequences again
     }
 
-    SECTION("checking integer representation") {
+    SECTION("checking integer representation")
+    {
         union {
             std::int32_t i;
             unsigned char c[sizeof(std::int32_t)];
@@ -57,7 +57,8 @@ TEST_CASE("OS::NetTypeTest", "[yarp::os]") {
         CHECK(val.c[3] == 0); // fourth byte ok
     }
 
-    SECTION("checking 16-bit integer representation") {
+    SECTION("checking 16-bit integer representation")
+    {
         union {
             std::int16_t i;
             unsigned char c[sizeof(std::int16_t)];
@@ -68,7 +69,8 @@ TEST_CASE("OS::NetTypeTest", "[yarp::os]") {
         CHECK(val.c[1] == 1); // second byte ok
     }
 
-    SECTION("checking floating point representation") {
+    SECTION("checking floating point representation")
+    {
         NetFloat64 d = 99;
         unsigned char rpi[8] = {
             110, 134, 27, 240, 249, 33, 9, 64

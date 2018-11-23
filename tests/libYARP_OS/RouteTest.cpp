@@ -9,17 +9,15 @@
 #include <yarp/os/Route.h>
 #include <yarp/os/Contact.h>
 
-#if defined(USE_SYSTEM_CATCH)
 #include <catch.hpp>
-#else
-#include "catch.hpp"
-#endif
+#include <harness.h>
 
 using namespace yarp::os;
 
-TEST_CASE("OS::RouteTest", "[yarp::os]") {
-
-    SECTION("checking constructor with no parameters") {
+TEST_CASE("OS::RouteTest", "[yarp::os]")
+{
+    SECTION("checking constructor with no parameters")
+    {
         Route r;
         CHECK(r.getFromName() == ""); // empty from name
         CHECK(r.getToName() == ""); // empty to name
@@ -27,7 +25,8 @@ TEST_CASE("OS::RouteTest", "[yarp::os]") {
         CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
     }
 
-    SECTION("checking constructor") {
+    SECTION("checking constructor")
+    {
         Route r("/foo", "/bar", "baz");
         CHECK(r.getFromName() == "/foo"); // from name is set
         CHECK(r.getToName() == "/bar"); // to name is set
@@ -35,7 +34,8 @@ TEST_CASE("OS::RouteTest", "[yarp::os]") {
         CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
     }
 
-    SECTION("checking copy assignment operator with empty Route") {
+    SECTION("checking copy assignment operator with empty Route")
+    {
         Route r1;
         Route r2;
         r1 = r2;
@@ -45,7 +45,8 @@ TEST_CASE("OS::RouteTest", "[yarp::os]") {
         CHECK_FALSE(r1.getToContact().isValid()); // invalid to contact
     }
 
-    SECTION("checking copy assignment operator with non empty Route") {
+    SECTION("checking copy assignment operator with non empty Route")
+    {
         Route r1;
         Route r2("/foo", "/bar", "baz");
         r1 = r2;
@@ -55,7 +56,8 @@ TEST_CASE("OS::RouteTest", "[yarp::os]") {
         CHECK_FALSE(r1.getToContact().isValid()); // invalid to contact
     }
 
-    SECTION("checking copy constructor") {
+    SECTION("checking copy constructor")
+    {
         Route r1("/foo", "/bar", "baz");
         Route r2(r1);
         CHECK(r2.getFromName() == "/foo"); // from name is set
@@ -64,7 +66,8 @@ TEST_CASE("OS::RouteTest", "[yarp::os]") {
         CHECK_FALSE(r2.getToContact().isValid()); // invalid to contact
     }
 
-    SECTION("checking move constructor") {
+    SECTION("checking move constructor")
+    {
         Route r1("/foo", "/bar", "baz");
         Route r2 = std::move(r1);
         CHECK(r2.getFromName() == "/foo"); // from name is set
@@ -73,7 +76,8 @@ TEST_CASE("OS::RouteTest", "[yarp::os]") {
         CHECK_FALSE(r2.getToContact().isValid()); // invalid to contact
     }
 
-    SECTION("checking move assignment operator") {
+    SECTION("checking move assignment operator")
+    {
         Route r;
         r = Route("/foo", "/bar", "baz");
         CHECK(r.getFromName() == "/foo"); // from name is set
@@ -82,8 +86,8 @@ TEST_CASE("OS::RouteTest", "[yarp::os]") {
         CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
     }
 
-
-    SECTION("checking setFromName") {
+    SECTION("checking setFromName")
+    {
         Route r("/foo", "/bar", "baz");
         CHECK(r.getFromName() == "/foo"); // from name is set
         CHECK(r.getToName() == "/bar"); // to name is set
@@ -96,7 +100,8 @@ TEST_CASE("OS::RouteTest", "[yarp::os]") {
         CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
     }
 
-    SECTION("checking setToName") {
+    SECTION("checking setToName")
+    {
         Route r("/foo", "/bar", "baz");
         CHECK(r.getFromName() == "/foo"); // from name is set
         CHECK(r.getToName() == "/bar"); // from name is set
@@ -109,7 +114,8 @@ TEST_CASE("OS::RouteTest", "[yarp::os]") {
         CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
     }
 
-    SECTION("checking setCarrierName") {
+    SECTION("checking setCarrierName")
+    {
         Route r("/foo", "/bar", "baz");
         CHECK(r.getFromName() == "/foo"); // from name is set
         CHECK(r.getToName() == "/bar"); // from name is set
@@ -122,7 +128,8 @@ TEST_CASE("OS::RouteTest", "[yarp::os]") {
         CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
     }
 
-    SECTION("checking setToContact()") {
+    SECTION("checking setToContact()")
+    {
         Route r("/foo", "/bar", "baz");
         CHECK(r.getFromName() == "/foo"); // from name is set
         CHECK(r.getToName() == "/bar"); // from name is set
@@ -135,7 +142,8 @@ TEST_CASE("OS::RouteTest", "[yarp::os]") {
         CHECK(r.getToContact().toURI() == "tcp://127.0.0.1:10000/"); // to contact is updated
     }
 
-    SECTION("checking swapNames") {
+    SECTION("checking swapNames")
+    {
         Route r("/foo", "/bar", "baz");
         CHECK(r.getFromName() == "/foo"); // from name is set
         CHECK(r.getToName() == "/bar"); // to name is set
@@ -148,14 +156,15 @@ TEST_CASE("OS::RouteTest", "[yarp::os]") {
         CHECK_FALSE(r.getToContact().isValid()); // invalid to contact
     }
 
-    SECTION("checking toString no parameters") {
+    SECTION("checking toString no parameters")
+    {
         Route r;
         CHECK(r.toString() == "->->"); // toString() is correct
     }
 
-    SECTION("checking constructor") {
+    SECTION("checking constructor")
+    {
         Route r("/foo", "/bar", "baz");
         CHECK(r.toString() == "/foo->baz->/bar"); // toString() is correct
     }
-
 }
