@@ -152,11 +152,11 @@ class yarp::dev::BoschIMU:   public yarp::dev::DeviceDriver,
                              public yarp::dev::IThreeAxisGyroscopes,
                              public yarp::dev::IThreeAxisLinearAccelerometers,
                              public yarp::dev::IThreeAxisMagnetometers,
-                             public yarp::dev::IOrientationSensors    
+                             public yarp::dev::IOrientationSensors
 {
 protected:
 
-    bool                        verbose;              ///< Flag to get verbose output 
+    bool                        verbose;              ///< Flag to get verbose output
     short                       status;               ///< device status - UNUSED
     int                         nChannels;            ///< number of channels in the output port. Default 12. If 16, also includes quaternion data
     yarp::sig::Vector           data;                 ///< sensor data buffer
@@ -171,7 +171,7 @@ protected:
 
     bool                        checkError;           ///< flag to check read error of sensor data
 
-    int                         fd;                   ///< file descriptor to open device at system level 
+    int                         fd;                   ///< file descriptor to open device at system level
     size_t                      responseOffset;
     yarp::os::ResourceFinder    rf;                   ///< resource finder object to load config parameters
 
@@ -181,8 +181,8 @@ protected:
     unsigned char command[MAX_MSG_LENGTH];            ///< packet to be written to the device
     unsigned char response[MAX_MSG_LENGTH];           ///< packet to be read from the device
 
-    
-    bool checkWriteResponse(unsigned char *response); 
+
+    bool checkWriteResponse(unsigned char *response);
     bool checkReadResponse(unsigned char *response);
 
     void printBuffer(unsigned char *buffer, int length);
@@ -252,7 +252,7 @@ public:
     size_t getNrOfThreeAxisGyroscopes() const override;
 
     /**
-     * Get the status of three axis gyroscope 
+     * Get the status of three axis gyroscope
      * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
      * @return MAS_OK/MAS_ERROR if status ok/failure
      */
@@ -275,7 +275,7 @@ public:
     bool getThreeAxisGyroscopeFrameName(size_t sens_index, std::string &frameName) const override;
 
     /**
-     * Get three axis gyroscope measurements 
+     * Get three axis gyroscope measurements
      * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
      * @param[out] out 3D angular velocity measurement in deg/s
      * @param[out] timestamp timestamp of measurement
@@ -314,7 +314,7 @@ public:
     bool getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string &frameName) const override;
 
     /**
-     * Get three axis linear accelerometer measurements 
+     * Get three axis linear accelerometer measurements
      * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
      * @param[out] out 3D linear acceleration measurement in m/s^2
      * @param[out] timestamp timestamp of measurement
@@ -330,7 +330,7 @@ public:
     size_t getNrOfThreeAxisMagnetometers() const override;
 
     /**
-     * Get the status of three axis magnetometer 
+     * Get the status of three axis magnetometer
      * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
      * @return MAS_OK/MAS_ERROR if status ok/failure
      */
@@ -353,7 +353,7 @@ public:
     bool getThreeAxisMagnetometerFrameName(size_t sens_index, std::string &frameName) const override;
 
     /**
-     * Get three axis magnetometer measurements 
+     * Get three axis magnetometer measurements
      * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
      * @param[out] out 3D magnetometer measurement
      * @param[out] timestamp timestamp of measurement
@@ -392,7 +392,7 @@ public:
     bool getOrientationSensorFrameName(size_t sens_index, std::string &frameName) const override;
 
     /**
-     * Get orientation sensor measurements 
+     * Get orientation sensor measurements
      * @param[in] sens_index sensor index (must be 0 in the case BoschIMU)
      * @param[out] out RPY Euler angles in deg
      * @param[out] timestamp timestamp of measurement

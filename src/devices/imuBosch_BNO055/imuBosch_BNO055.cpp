@@ -182,7 +182,7 @@ bool BoschIMU::open(yarp::os::Searchable& config)
 
     double period = config.check("period",Value(10),"Thread period in ms").asInt32() / 1000.0;
     setPeriod(period);
-    
+
     if (config.check("sensor_name") && config.find("sensor_name").isString())
     {
         m_sensorName = config.find("sensor_name").asString();
@@ -192,7 +192,7 @@ bool BoschIMU::open(yarp::os::Searchable& config)
         m_sensorName = "sensor_imu_bosch_bno055";
         yWarning() << "Bosch BNO055 IMU -  Parameter \"sensor_name\" not set. Using default value  \"" << m_sensorName << "\" for this parameter.";
     }
-    
+
     if (config.check("frame_name") && config.find("frame_name").isString())
     {
         m_frameName = config.find("frame_name").asString();
@@ -202,7 +202,7 @@ bool BoschIMU::open(yarp::os::Searchable& config)
         m_frameName = m_sensorName;
         yWarning() << "Bosch BNO055 IMU -  Parameter \"frame_name\" not set. Using the same value as \"sensor_name\" for this parameter.";
     }
-    
+
     return PeriodicThread::start();
 }
 
@@ -705,12 +705,12 @@ bool BoschIMU::calibrate(int ch, double v)
 
 yarp::dev::MAS_status BoschIMU::genericGetStatus(size_t sens_index) const
 {
-    if (sens_index != 0)        
+    if (sens_index != 0)
     {
         yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
         return yarp::dev::MAS_status::MAS_ERROR;
     }
-    
+
     return yarp::dev::MAS_status::MAS_OK;
 }
 
@@ -721,7 +721,7 @@ bool BoschIMU::genericGetSensorName(size_t sens_index, string& name) const
         yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
         return false;
     }
-    
+
     name = m_sensorName;
     return true;
 }
@@ -733,7 +733,7 @@ bool BoschIMU::genericGetFrameName(size_t sens_index, string& frameName) const
         yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
         return false;
     }
-    
+
     frameName = m_frameName;
     return true;
 
@@ -767,13 +767,13 @@ bool BoschIMU::getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::s
         yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
         return false;
     }
-    
-    out.resize(3);    
+
+    out.resize(3);
     LockGuard guard(mutex);
     out[0] = data[3];
     out[1] = data[4];
     out[2] = data[5];
-    
+
     timestamp = timeLastReport;
     return true;
 }
@@ -807,13 +807,13 @@ bool BoschIMU::getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector
         yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
         return false;
     }
-    
-    out.resize(3);    
+
+    out.resize(3);
     LockGuard guard(mutex);
     out[0] = data[6];
     out[1] = data[7];
     out[2] = data[8];
-    
+
     timestamp = timeLastReport;
     return true;
 }
@@ -845,13 +845,13 @@ bool BoschIMU::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp
         yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
         return false;
     }
-    
-    rpy.resize(3);    
+
+    rpy.resize(3);
     LockGuard guard(mutex);
     rpy[0] = data[0];
     rpy[1] = data[1];
     rpy[2] = data[2];
-    
+
     timestamp = timeLastReport;
     return true;
 }
@@ -883,13 +883,13 @@ bool BoschIMU::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vec
         yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
         return false;
     }
-    
-    out.resize(3);    
+
+    out.resize(3);
     LockGuard guard(mutex);
     out[0] = data[9];
     out[1] = data[10];
     out[2] = data[11];
-    
+
     timestamp = timeLastReport;
     return true;
 }
