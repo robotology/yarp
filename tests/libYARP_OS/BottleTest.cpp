@@ -11,11 +11,9 @@
 #include <yarp/os/Bottle.h>
 
 #include <yarp/os/DummyConnector.h>
-#include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Vocab.h>
 
-#include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
@@ -27,60 +25,18 @@ using namespace yarp::os;
 
 TEST_CASE("OS::BottleTest", "[yarp::os]")
 {
-    SECTION("testing sizes")
-    {
-        BottleImpl bot;
-        CHECK(bot.size() == (size_t) 0); // "empty bottle"
-        bot.addInt32(1);
-        CHECK(bot.size() == (size_t) 1); // "add int"
-        bot.addString("hello");
-        CHECK(bot.size() == (size_t) 2); // "add string"
-        bot.clear();
-        CHECK(bot.size() == (size_t) 0); // "clear");
-    }
-
     SECTION("testing string representation")
     {
         std::string target = "hello \"my\" \\friend";
-        BottleImpl bot;
+        Bottle bot;
         bot.addInt32(5);
         bot.addString("hello \"my\" \\friend");
         std::string txt = bot.toString();
         const char *expect = "5 \"hello \\\"my\\\" \\\\friend\"";
         CHECK(txt == expect); // "string rep"
-        BottleImpl bot2;
+        Bottle bot2;
         bot2.fromString(txt);
         CHECK(bot2.size() == (size_t) 2); //"return from string rep"
-    }
-
-    SECTION("testing binary representation")
-    {
-        BottleImpl bot;
-        bot.addInt32(5);
-        bot.addString("hello");
-        CHECK(bot.isInt32(0)); // "type check"
-        CHECK(bot.isString(1)); // "type check"
-        ManagedBytes store(bot.byteCount());
-        bot.toBytes(store.bytes());
-        BottleImpl bot2;
-        bot2.fromBytes(store.bytes());
-        CHECK(bot2.size() == (size_t) 2); // "recovery binary, length"
-        CHECK(bot2.isInt32(0) == bot.isInt32(0)); //"recovery binary, integer"
-        CHECK(bot2.isString(1) == bot.isString(1)); //"recovery binary, integer"
-        BottleImpl bot3;
-        bot3.fromString("[go] (10 20 30 40)");
-        ManagedBytes store2(bot3.byteCount());
-        bot3.toBytes(store2.bytes());
-        bot.fromBytes(store2.bytes());
-        CHECK(bot.get(0).isVocab()); // "type check"
-        CHECK(bot.get(1).isList()); //"type check"
-
-        Bottle bot4("0 1 2.2 3");
-        size_t hsize;
-        const char *hbuf = bot4.toBinary(&hsize);
-        Bottle bot5;
-        bot5.fromBinary(hbuf,hsize);
-        CHECK(bot5.size() == (size_t) 4); // "player bug"
     }
 
     SECTION("testing hexadecimal")
@@ -102,7 +58,7 @@ TEST_CASE("OS::BottleTest", "[yarp::os]")
 
     SECTION("testing streaming (just text mode)")
     {
-        BottleImpl bot;
+        Bottle bot;
         bot.addInt32(5);
         bot.addString("hello");
 
@@ -118,43 +74,9 @@ TEST_CASE("OS::BottleTest", "[yarp::os]")
         Route route;
         sbr.reset(sis, nullptr, route, s.length(), true);
 
-        BottleImpl bot2;
+        Bottle bot2;
         bot2.read(sbr);
         CHECK(bot2.toString() == bot.toString()); // "to/from stream"
-    }
-
-    SECTION("testing types")
-    {
-        BottleImpl bot[3];
-        bot[0].fromString("5 10.2 \"hello\" -0xF -15.0");
-        CHECK(bot[0].get(3).asInt32() == -15); // "hex works"
-        bot[1].addInt32(5);
-        bot[1].addFloat64(10.2);
-        bot[1].addString("hello");
-        bot[1].addInt32(-15);
-        bot[1].addFloat64(-15.0);
-        ManagedBytes store(bot[0].byteCount());
-        bot[0].toBytes(store.bytes());
-        bot[2].fromBytes(store.bytes());
-
-        for (int i=0; i<3; i++) {
-            BottleImpl& b = bot[i];
-            INFO("check for bottle number " << i);
-            CHECK(b.isInt32(0));
-            CHECK(b.get(0).asInt32() == 5);
-
-            CHECK(b.isFloat64(1));
-            CHECK(b.get(1).asFloat64() == Approx(10.2));
-
-            CHECK(b.isString(2));
-            CHECK(b.get(2).asString() == "hello");
-
-            CHECK(b.isInt32(3));
-            CHECK(b.get(3).asInt32() == -15);
-
-            CHECK(b.isFloat64(4));
-            CHECK(b.get(4).asFloat64() == Approx(-15.0));
-        }
     }
 
     SECTION("testing clear")
@@ -170,18 +92,11 @@ TEST_CASE("OS::BottleTest", "[yarp::os]")
 
     SECTION("testing lists")
     {
-        BottleImpl bot, bot2, bot3;
+        Bottle bot, bot2;
         bot.fromString("(1 (2 3 7) 3) (0.0 \"b\" 1)");
         CHECK(bot.size() == (size_t) 2); // "list test 1"
         bot2.fromString(bot.toString());
         CHECK(bot2.size() == (size_t) 2); // "list test 2"
-
-        bot.fromString("(1 2) 4");
-        ManagedBytes store(bot.byteCount());
-        bot.toBytes(store.bytes());
-        bot3.fromBytes(store.bytes());
-        CHECK(bot3.size() == (size_t) 2); // "list test 3"
-        INFO("bot3 is " << bot3.toString());
 
         Bottle bot10;
         {
@@ -357,12 +272,6 @@ TEST_CASE("OS::BottleTest", "[yarp::os]")
         Bottle p;
         p.fromString(s2.c_str());
         CHECK(p.get(2).asList()->size() == (size_t) 5); // newline test checks out
-    }
-
-    SECTION("testing nesting detection")
-    {
-        CHECK(!BottleImpl::isComplete("(1 2 3"));
-        CHECK(BottleImpl::isComplete("(1 2 3)"));
     }
 
     SECTION("testing special characters")
