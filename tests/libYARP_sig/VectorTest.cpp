@@ -145,6 +145,8 @@ bool checkConsistency(Vector &a) {
 
 TEST_CASE("sig::VectorTest", "[yarp::sig]")
 {
+    NetworkBase::setLocalMode(true);
+
     SECTION("check gsl")
     {
         Vector a(5);
@@ -374,4 +376,6 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]")
         CHECK(v[3] == 6.0);
         CHECK(v[4] == 8.0);
     }
+
+    NetworkBase::setLocalMode(false);
 }

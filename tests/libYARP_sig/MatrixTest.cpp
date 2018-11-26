@@ -156,6 +156,8 @@ void makeTestMatrix(Matrix& m, unsigned int rr, unsigned int cc)
 
 TEST_CASE("sig::MatrixTest", "[yarp::sig]")
 {
+    NetworkBase::setLocalMode(true);
+
     SECTION("checking operator ==")
     {
         Matrix M1(3,3);
@@ -484,4 +486,6 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
         m.resize(0,0);
         CHECK(m.data()==nullptr); // size 0x0 => null data()
     }
+
+    NetworkBase::setLocalMode(false);
 }

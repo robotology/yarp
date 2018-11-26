@@ -156,6 +156,8 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
     YARP_SKIP_TEST("Skipping failing tests")
 #endif
 
+    Network::setLocalMode(true);
+
     SECTION("Test the controlboard remapper")
     {
         // We first allocate three fakeMotionControl boards
@@ -322,4 +324,6 @@ TEST_CASE("dev::ControlBoardRemapperTest", "[yarp::dev]")
             fmcbs[i] = nullptr;
         }
     }
+
+    Network::setLocalMode(false);
 }

@@ -29,6 +29,7 @@ using namespace yarp::sig;
 
 TEST_CASE("sig::VectorOfTest", "[yarp::sig]")
 {
+    NetworkBase::setLocalMode(true);
 
     SECTION("Check send and receive integers")
     {
@@ -218,4 +219,6 @@ TEST_CASE("sig::VectorOfTest", "[yarp::sig]")
         CHECK(v.size() == (size_t) 1); // Checking size() after push_back
         CHECK(v.capacity() == (size_t) 11); // Checking capacity() after push_back
     }
+
+    NetworkBase::setLocalMode(false);
 }

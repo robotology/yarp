@@ -38,6 +38,8 @@ public:
 
 TEST_CASE("OS::PortReaderBufferTest", "[yarp::os]")
 {
+    NetworkBase::setLocalMode(true);
+
     SECTION("checking direct object accept")
     {
         PortReaderBuffer<Bottle> buffer;
@@ -167,4 +169,6 @@ TEST_CASE("OS::PortReaderBufferTest", "[yarp::os]")
             in.close();
         }
     }
+
+    NetworkBase::setLocalMode(false);
 }

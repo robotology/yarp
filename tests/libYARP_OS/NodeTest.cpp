@@ -61,6 +61,8 @@ static bool waitConnect(const std::string& n1,
 
 TEST_CASE("OS::NodeTest", "[yarp::os]")
 {
+    NetworkBase::setLocalMode(true);
+
     SECTION("check support for various experimental node/topic/service schemes")
     {
         parseName("/foo","/foo","","");
@@ -244,4 +246,6 @@ TEST_CASE("OS::NodeTest", "[yarp::os]")
         CHECK_FALSE(p.open("nameWithoutSlash+")); // open port with wrong name should fail
     }
 #endif // ENABLE_BROKEN_TESTS
+
+    NetworkBase::setLocalMode(false);
 }

@@ -31,6 +31,8 @@ static bool waitForOutput(Contactable& c,double timeout) {
 
 TEST_CASE("OS::PublisherTest", "[yarp::os]")
 {
+    Network::setLocalMode(true);
+
     SECTION("Publisher to BufferedPort test")
     {
         Node n("/node");
@@ -161,5 +163,7 @@ TEST_CASE("OS::PublisherTest", "[yarp::os]")
             CHECK(bin.get(0).asInt32() == 42);  // "message is correct"
         }
     }
+
+    Network::setLocalMode(false);
 };
 

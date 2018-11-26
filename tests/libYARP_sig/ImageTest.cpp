@@ -69,6 +69,8 @@ void passImage(ImageOf<PixelRgb> img)
 
 TEST_CASE("sig::ImageTest", "[yarp::sig]")
 {
+    NetworkBase::setLocalMode(true);
+
     static const size_t EXT_WIDTH = 128;
     static const size_t EXT_HEIGHT = 64;
 
@@ -740,4 +742,6 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]")
 
         CHECK(ok); // Checking data consistency bottom split
     }
+
+    NetworkBase::setLocalMode(false);
 }

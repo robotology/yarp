@@ -19,9 +19,9 @@ using namespace yarp::os;
 
 TEST_CASE("OS::TerminatorTest", "[yarp::os]")
 {
+    Network::setLocalMode(true);
     SECTION("checking terminator connection")
     {
-        Network::setLocalMode(true);
         Terminee terminee("/tmp/quit");
         INFO("checking terminator socket");
         CHECK(terminee.isOk());
@@ -30,4 +30,5 @@ TEST_CASE("OS::TerminatorTest", "[yarp::os]")
         INFO("checking the receive of the quit message");
         CHECK(terminee.mustQuit());
     }
+    Network::setLocalMode(false);
 }

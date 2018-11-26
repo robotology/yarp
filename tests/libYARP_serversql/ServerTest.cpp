@@ -11,6 +11,7 @@
 #include <cstdlib>
 
 #include <yarp/os/Contact.h>
+#include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/impl/NameClient.h>
 
@@ -25,6 +26,7 @@ using namespace yarp::os::impl;
  */
 TEST_CASE("serversql::ServerTest", "[yarp::serversql]")
 {
+    Network::setLocalMode(true);
 
     SECTION("check register free")
     {
@@ -112,4 +114,6 @@ TEST_CASE("serversql::ServerTest", "[yarp::serversql]")
         std::string target = "port /check/set property prop = val";
         CHECK(result.find(target)!=std::string::npos); // answer found
     }
+
+    Network::setLocalMode(false);
 }

@@ -20,6 +20,8 @@ using namespace yarp::os;
 
 TEST_CASE("sig::SoundTest", "[yarp::sig]")
 {
+    NetworkBase::setLocalMode(true);
+
     SECTION("check set/get sample.")
     {
         Sound snd;
@@ -124,5 +126,6 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         input.close();
     }
 
+    NetworkBase::setLocalMode(false);
 }
 
