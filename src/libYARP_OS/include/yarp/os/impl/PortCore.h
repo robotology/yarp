@@ -503,8 +503,6 @@ public:
     void promiseType(const Type& typ);
 
 private:
-    yarp::os::OutputStream *os;
-
     // main internal PortCore state and operations
     std::vector<PortCoreUnit *> units;  ///< list of connections
     yarp::os::Semaphore stateSema;       ///< control access to essential port state
