@@ -212,17 +212,17 @@ private:
 
     // ROS state publisher
     ROSTopicUsageType                                        useROS;                     // decide if open ROS topic or not
-    std::string                                              frame_id;                   // name of the reference frame the measures are referred to
+    std::vector<std::string>                                 frame_idVec;                   // name of the reference frame the measures are referred to
     std::vector<std::string>                                 ros_joint_names;
     std::string                                              rosMsgType;                 // ros message type
     std::string                                              rosNodeName;                // name of the rosNode
-    std::string                                              rosTopicName;               // name of the rosTopic
+    std::vector<std::string>                                 rosTopicNamesVec;               // names of the rosTopics
     yarp::os::Node                                           *rosNode;                   // add a ROS node
-    yarp::os::NetUint32                                      rosMsgCounter;              // incremental counter in the ROS message
+    std::vector<yarp::os::NetUint32>                         rosMsgCounterVec;              // incremental counter in the ROS message
 
     // TODO: in the future, in order to support multiple ROS msgs this should be a pointer allocated dynamically depending on the msg maybe (??)
     //  yarp::os::PortWriterBuffer<yarp::rosmsg::geometry_msgs::WrenchStamped> rosOutputWrench_buffer; // Buffer associated to the ROS topic
-    yarp::os::Publisher<yarp::rosmsg::geometry_msgs::WrenchStamped> rosPublisherWrenchPort; // Dedicated ROS topic publisher
+    std::vector<yarp::os::Publisher<yarp::rosmsg::geometry_msgs::WrenchStamped>> rosPublisherWrenchPortVec; // Dedicated ROS topic publisher
 
     //yarp::os::PortWriterBuffer<yarp::rosmsg::sensor_msgs::JointState> rosOutputJoint_buffer; // Buffer associated to the ROS topic
     yarp::os::Publisher<yarp::rosmsg::sensor_msgs::JointState> rosPublisherJointPort; // Dedicated ROS topic publisher
