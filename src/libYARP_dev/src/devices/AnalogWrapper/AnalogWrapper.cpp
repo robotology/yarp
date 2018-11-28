@@ -745,7 +745,7 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
 
                 if(ports->size() != rosTopicNamesVec.size())
                 {
-                    yError("AnalogWrapper: mismatch between the number of ports and the numerb of ros topics in ROS_topicName list");
+                    yError("AnalogWrapper: mismatch between the number of ports and the number of ros topics in ROS_topicName list");
                     return false;
                 }
 
