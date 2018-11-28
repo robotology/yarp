@@ -17,7 +17,7 @@ if (NOT DEFINED _${_PYTHON_PREFIX}_REQUIRED_VERSION_MAJOR)
   message (FATAL_ERROR "FindPython: INTERNAL ERROR")
 endif()
 if (_${_PYTHON_PREFIX}_REQUIRED_VERSION_MAJOR EQUAL 3)
-  set(_${_PYTHON_PREFIX}_VERSIONS 3.7 3.6 3.5 3.4 3.3 3.2 3.1 3.0)
+  set(_${_PYTHON_PREFIX}_VERSIONS 3.8 3.7 3.6 3.5 3.4 3.3 3.2 3.1 3.0)
 elseif (_${_PYTHON_PREFIX}_REQUIRED_VERSION_MAJOR EQUAL 2)
   set(_${_PYTHON_PREFIX}_VERSIONS 2.7 2.6 2.5 2.4 2.3 2.2 2.1 2.0)
 else()
@@ -196,10 +196,6 @@ endif()
 set (CMAKE_FIND_FRAMEWORK LAST)
 
 
-unset (${_PYTHON_PREFIX}_VERSION_MAJOR)
-unset (${_PYTHON_PREFIX}_VERSION_MINOR)
-unset (${_PYTHON_PREFIX}_VERSION_PATCH)
-
 unset (_${_PYTHON_PREFIX}_REQUIRED_VARS)
 unset (_${_PYTHON_PREFIX}_CACHED_VARS)
 
@@ -259,7 +255,7 @@ if ("Interpreter" IN_LIST ${_PYTHON_PREFIX}_FIND_COMPONENTS)
   # try more generic names
   if (NOT ${_PYTHON_PREFIX}_EXECUTABLE)
     find_program (${_PYTHON_PREFIX}_EXECUTABLE
-                  NAMES python${${_PYTHON_PREFIX}_VERSION_MAJOR} python
+                  NAMES python${_${_PYTHON_PREFIX}_REQUIRED_VERSION_MAJOR} python
                         ${_${_PYTHON_PREFIX}_IRON_PYTHON_NAMES}
                   HINTS ${_${_PYTHON_PREFIX}_HINTS}
                   PATH_SUFFIXES bin)
@@ -290,7 +286,7 @@ if ("Interpreter" IN_LIST ${_PYTHON_PREFIX}_FIND_COMPONENTS)
   if (${_PYTHON_PREFIX}_EXECUTABLE
       AND ${_PYTHON_PREFIX}_VERSION_MAJOR VERSION_EQUAL _${_PYTHON_PREFIX}_REQUIRED_VERSION_MAJOR)
     set (${_PYTHON_PREFIX}_Interpreter_FOUND TRUE)
-    # Use interpreter version for future searchs to ensure consistency
+    # Use interpreter version for future searches to ensure consistency
     set (_${_PYTHON_PREFIX}_FIND_VERSIONS ${${_PYTHON_PREFIX}_VERSION_MAJOR}.${${_PYTHON_PREFIX}_VERSION_MINOR})
   endif()
 
@@ -418,7 +414,7 @@ if ("Compiler" IN_LIST ${_PYTHON_PREFIX}_FIND_COMPONENTS)
       endif()
     elseif (${_PYTHON_PREFIX}_VERSION_MAJOR VERSION_EQUAL _${_PYTHON_PREFIX}_REQUIRED_VERSION_MAJOR)
       set (${_PYTHON_PREFIX}_Compiler_FOUND TRUE)
-    # Use compiler version for future searchs to ensure consistency
+    # Use compiler version for future searches to ensure consistency
     set (_${_PYTHON_PREFIX}_FIND_VERSIONS ${${_PYTHON_PREFIX}_VERSION_MAJOR}.${${_PYTHON_PREFIX}_VERSION_MINOR})
     endif()
   endif()
@@ -774,7 +770,7 @@ if ("Development" IN_LIST ${_PYTHON_PREFIX}_FIND_COMPONENTS
   if ((${_PYTHON_PREFIX}_LIBRARY_RELEASE OR ${_PYTHON_PREFIX}_LIBRARY_DEBUG)
       AND ${_PYTHON_PREFIX}_INCLUDE_DIR)
     if (${_PYTHON_PREFIX}_Interpreter_FOUND OR ${_PYTHON_PREFIX}_Compiler_FOUND)
-      # devlopment environment must be compatible with interpreter/compiler
+      # development environment must be compatible with interpreter/compiler
       if (${_${_PYTHON_PREFIX}_VERSION_MAJOR}.${_${_PYTHON_PREFIX}_VERSION_MINOR} VERSION_EQUAL ${${_PYTHON_PREFIX}_VERSION_MAJOR}.${${_PYTHON_PREFIX}_VERSION_MINOR})
         set (${_PYTHON_PREFIX}_Development_FOUND TRUE)
       endif()

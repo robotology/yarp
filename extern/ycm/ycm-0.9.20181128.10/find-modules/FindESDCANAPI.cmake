@@ -40,18 +40,26 @@ if(NOT ESDCANAPI_FOUND)
 
     list(APPEND ESDCAN_INC_DIRS ${ESDCANAPI_DIR})
     list(APPEND ESDCAN_INC_DIRS ${CanSdkDir})
+    
+   if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+      # 64-bit    
+      set(ESDCANAPI_ARCH "amd64")
+    else()
+      # 32-bit 
+      set(ESDCANAPI_ARCH "i368")
+    endif()
 
     # Build directory names depending on system architecture
     if(DEFINED ENV{PROGRAMFILES})
       list(APPEND ESDCAN_LIB_DIRS "$ENV{PROGRAMFILES}/CAN/develop/vc")
-      list(APPEND ESDCAN_LIB_DIRS "$ENV{PROGRAMFILES}/ESD/CAN/SDK/lib/VC/i386")
+      list(APPEND ESDCAN_LIB_DIRS "$ENV{PROGRAMFILES}/ESD/CAN/SDK/lib/VC/${ESDCANAPI_ARCH}")
 
       list(APPEND ESDCAN_INC_DIRS "$ENV{PROGRAMFILES}/CAN")
       list(APPEND ESDCAN_INC_DIRS "$ENV{PROGRAMFILES}/ESD/CAN/SDK")
     endif()
     if(DEFINED ENV{ProgramW6432})
       list(APPEND ESDCAN_LIB_DIRS "$ENV{ProgramW6432}/CAN/develop/vc")
-      list(APPEND ESDCAN_LIB_DIRS "$ENV{ProgramW6432}/ESD/CAN/SDK/lib/VC/i386")
+      list(APPEND ESDCAN_LIB_DIRS "$ENV{ProgramW6432}/ESD/CAN/SDK/lib/VC/${ESDCANAPI_ARCH}")
 
       list(APPEND ESDCAN_INC_DIRS "$ENV{ProgramW6432}/CAN")
       list(APPEND ESDCAN_INC_DIRS "$ENV{ProgramW6432}/ESD/CAN/SDK")
