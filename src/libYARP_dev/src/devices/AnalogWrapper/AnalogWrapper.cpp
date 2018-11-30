@@ -190,6 +190,8 @@ AnalogWrapper::AnalogWrapper() :
     rosNode                = nullptr;
     rosMsgCounterVec.resize(1);
     rosMsgCounterVec.at(0) = 0;
+    rosOffset              = 0;
+    rosPadding             = 0;
 }
 
 AnalogWrapper::~AnalogWrapper()
@@ -503,6 +505,28 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
             {
                 frame_idVec.at(i) = frame_idBottle->get(i).asString();
             }
+        }
+
+        if(!rosGroup.check("rosOffset"))
+        {
+            yWarning() << sensorId << "cannot find rosOffset parameter, using the default offset 0 while reading analog sensor data";
+        }
+
+        if(rosGroup.find("rosOffset").isInt())
+        {
+            rosOffset = rosGroup.find("rosOffset").asInt();
+            yInfo() << sensorId << " rosOffset is " << rosOffset;
+        }
+
+        if(!rosGroup.check("rosPadding"))
+        {
+            yWarning() << sensorId << "cannot find rosPadding parameter, using the default padding 0 while reading analog sensor data";
+        }
+
+        if(rosGroup.find("rosPadding").isInt())
+        {
+            rosOffset = rosGroup.find("rosPadding").asInt();
+            yInfo() << sensorId << " rosPadding is " << rosOffset;
         }
     }
     else if (rosMsgType == "sensor_msgs/JointState")
@@ -872,13 +896,13 @@ void AnalogWrapper::run()
                         rosDataVec.at(i).header.stamp = yarp::os::Time::now();
                         rosDataVec.at(i).header.frame_id = frame_idVec.at(i);
 
-                        rosDataVec.at(i).wrench.force.x = lastDataRead[6 * i + 0];
-                        rosDataVec.at(i).wrench.force.y = lastDataRead[6 * i + 1];
-                        rosDataVec.at(i).wrench.force.z = lastDataRead[6 * i + 2];
+                        rosDataVec.at(i).wrench.force.x = lastDataRead[(rosOffset + 6 + rosPadding) * i + 0];
+                        rosDataVec.at(i).wrench.force.y = lastDataRead[(rosOffset + 6 + rosPadding) * i + 1];
+                        rosDataVec.at(i).wrench.force.z = lastDataRead[(rosOffset + 6 + rosPadding) * i + 2];
 
-                        rosDataVec.at(i).wrench.torque.x = lastDataRead[6 * i + 3];
-                        rosDataVec.at(i).wrench.torque.y = lastDataRead[6 * i + 4];
-                        rosDataVec.at(i).wrench.torque.z = lastDataRead[6 * i + 5];
+                        rosDataVec.at(i).wrench.torque.x = lastDataRead[(rosOffset + 6 + rosPadding) * i + 3];
+                        rosDataVec.at(i).wrench.torque.y = lastDataRead[(rosOffset + 6 + rosPadding) * i + 4];
+                        rosDataVec.at(i).wrench.torque.z = lastDataRead[(rosOffset + 6 + rosPadding) * i + 5];
 
                         rosPublisherWrenchPortVec.at(i).write(rosDataVec.at(i));
                     }
