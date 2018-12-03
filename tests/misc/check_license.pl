@@ -9,6 +9,10 @@
 my @files = `git ls-files src example tests scripts cmake bindings CMakeLists.txt`;
 s{^\s+|\s+$}{}g foreach @files;
 
+open my $handle, '<', "tests/misc/check_license_skip.txt";
+chomp(my @skip_files = <$handle>);
+close $handle;
+
 
 my $copyright_iit = "Copyright \\(C\\) 2006-2018 Istituto Italiano di Tecnologia \\(IIT\\)";
 my $copyright_robocub = "Copyright \\(C\\) 2006-2010 RobotCub Consortium";
@@ -355,8 +359,22 @@ my $errors = 0;
 my $known = 0;
 
 foreach my $filename (@files) {
-
     $files++;
+
+    # For now skip files known to have a broken license
+    my $match = 0;
+    for (@skip_files) {
+        if ("$filename" eq "$_") {
+            $match = 1;
+            last;
+        }
+    }
+
+    if( $match ) {
+        print "[SKIP (known)] $filename\n";
+        $known++;
+        next;
+    }
 
     # Skip images and binary files
     if ("$filename" =~ /\.(png|svg|jpg|ppm|bmp|ico|icns)$/) {
@@ -434,20 +452,6 @@ foreach my $filename (@files) {
             $skip++;
             next;
         }
-    }
-
-
-    # For now skip files known to have a broken license
-    if ("$filename" eq "bindings/allegro/examples/example.lisp" ||
-        "$filename" eq "bindings/java/examples/matlab/simulink/sfun_time.c" ||
-        "$filename" eq "bindings/lua/argcargv.i" ||
-        "$filename" eq "example/swig/allegro/yarp.asd" ||
-        "$filename" eq "src/devices/opencv/OpenCVGrabber.cpp" ||
-        "$filename" eq "src/devices/opencv/OpenCVGrabber.h" ||
-        "$filename" eq "cmake/FindI2C.cmake") {
-        print "[SKIP (known)] $filename\n";
-        $known++;
-        next;
     }
 
     # C++ style BSD-3-Clause
@@ -678,17 +682,22 @@ print "KNOWN:  $known\n";
 print "ERRORS: $errors\n";
 
 if ($ok + $skip + $known + $errors != $files) {
-    print "[ERROR: Some file was not counted]";
+    print "\n[ERROR: Some file was not counted]\n";
     exit 1;
 }
 
-if ($known != 7) {
-    print "[ERROR: Some known file was not found]";
+if ($known < scalar(@skip_files)) {
+    print "\n[ERROR: Some known file was not found and the skip file was not updated]\n";
+    exit 1;
+}
+
+if ($known > scalar(@skip_files)) {
+    print "\n[ERROR: Some new known file was added and the skip file was not updated]\n";
     exit 1;
 }
 
 if ($errors != 0) {
-    print "[ERROR: Some file has an invalid license]";
+    print "\n[ERROR: Some file has an invalid license]\n";
     exit 1;
 }
 
