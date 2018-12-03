@@ -6,12 +6,12 @@
 
 macro(add_python_unit_test pythonscript)
   if(PYTHON_EXECUTABLE)
-    add_test(NAME ${pythonscript} COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${pythonscript})
-    set_tests_properties(${pythonscript} PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${SWIG_MODULE_yarp_python_REAL_NAME}>")
+    string(REGEX REPLACE "^test_" "bindings::python::" name "${pythonscript}")
+    string(REGEX REPLACE "\.py$" "" name "${name}")
+    add_test(NAME "${name}" COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${pythonscript})
+    set_tests_properties("${name}" PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${SWIG_MODULE_yarp_python_REAL_NAME}>")
   endif()
 endmacro()
-
-file(GLOB yarp_python_test_files "${CMAKE_CURRENT_SOURCE_DIR}/*.py")
 
 add_python_unit_test(test_buffered_port.py)
 add_python_unit_test(test_image.py)
