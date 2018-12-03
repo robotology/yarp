@@ -62,13 +62,6 @@ swig_add_library(yarp_java
 
 swig_link_libraries(yarp_java ${SWIG_YARP_LIBRARIES})
 
-if(NOT MSVC)
-  check_cxx_compiler_flag("-Wno-strict-aliasing" CXX_HAS_WNO_STRICT_ALIASING)
-  if(CXX_HAS_WNO_STRICT_ALIASING)
-    target_compile_options(${SWIG_MODULE_yarp_java_REAL_NAME} PRIVATE "-Wno-strict-aliasing")
-  endif()
-endif()
-
 # issue on MINGW where C++ name-mangling prevents java finding methods
 if(MINGW)
   message(STATUS "untested MINGW patch - see CMakeLists.txt")

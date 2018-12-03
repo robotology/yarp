@@ -172,13 +172,7 @@ if(WIN32)
 
   ## check if we are using the MINGW compiler
   if(MINGW)
-    add_definitions(-D__MINGW__ -D__MINGW32__ "-mms-bitfields" "-mthreads" "-Wpointer-arith" "-pipe")
-    # "-fno-exceptions" can be useful too... unless you need exceptions :-)
-    if(MSYS)
-      add_definitions(-D__ACE_INLINE__ -DACE_HAS_ACE_TOKEN -DACE_HAS_ACE_SVCCONF -DACE_BUILD_DLL)
-    else()
-      add_definitions("-fvisibility=hidden" "-fvisibility-inlines-hidden" "-Wno-attributes")
-    endif()
+    add_definitions("-mms-bitfields" "-mthreads" "-pipe")
   endif()
 
   ## check if we are using the MSVC compiler
@@ -189,10 +183,6 @@ if(WIN32)
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
     # this gets rid of warning about deprecated POSIX names
     add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
-
-    # disable: warning C4355: 'this' : used ...
-    ## this never worked, giving up.
-    #add_definitions(/wd4355)
 
     # Traditionally, we add "d" postfix to debug libraries
     set(CMAKE_DEBUG_POSTFIX "d")

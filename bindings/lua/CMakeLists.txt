@@ -18,13 +18,6 @@ swig_add_library(yarp_lua
                  SOURCES ${SWIG_BINDINGS_SOURCE_FILE})
 swig_link_libraries(yarp_lua ${LUA_LIBRARY} ${SWIG_YARP_LIBRARIES})
 
-if(NOT MSVC)
-  check_cxx_compiler_flag("-Wno-maybe-uninitialized" CXX_HAS_WNO_MAYBE_UNINITIALIZED)
-  if(CXX_HAS_WNO_MAYBE_UNINITIALIZED)
-    target_compile_options(${SWIG_MODULE_yarp_lua_REAL_NAME} PRIVATE "-Wno-maybe-uninitialized")
-  endif()
-endif()
-
 set(_CMAKE_INSTALL_LUADIR "${CMAKE_INSTALL_LIBDIR}/lua/${LUA_VERSION_MAJOR}.${LUA_VERSION_MINOR}")
 set(CMAKE_INSTALL_LUADIR ${_CMAKE_INSTALL_LUADIR} CACHE PATH "lua bindings (${_CMAKE_INSTALL_LUADIR})")
 mark_as_advanced(CMAKE_INSTALL_LUADIR)

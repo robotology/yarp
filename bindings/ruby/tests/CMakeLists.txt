@@ -6,12 +6,12 @@
 
 macro(add_ruby_unit_test rubyscript)
   if(RUBY_EXECUTABLE)
-    add_test(NAME ${rubyscript} COMMAND ${RUBY_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${rubyscript})
-    set_tests_properties(${rubyscript} PROPERTIES ENVIRONMENT "RUBYLIB=$<TARGET_FILE_DIR:${SWIG_MODULE_yarp_ruby_REAL_NAME}>")
+    string(REGEX REPLACE "^test_" "bindings::ruby::" name "${rubyscript}")
+    string(REGEX REPLACE "\.rb$" "" name "${name}")
+    add_test(NAME "${name}" COMMAND ${RUBY_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${rubyscript})
+    set_tests_properties("${name}" PROPERTIES ENVIRONMENT "RUBYLIB=$<TARGET_FILE_DIR:${SWIG_MODULE_yarp_ruby_REAL_NAME}>")
   endif()
 endmacro()
-
-file(GLOB yarp_ruby_test_files "${CMAKE_CURRENT_SOURCE_DIR}/*.rb")
 
 add_ruby_unit_test(test_buffered_port.rb)
 add_ruby_unit_test(test_image.rb)

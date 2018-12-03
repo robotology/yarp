@@ -124,7 +124,7 @@ matrix:
       os: linux
       compiler: gcc
       before_install: skip
-      script: (cd build; make test ARGS="-VV -R misc")
+      script: (cd build; make test ARGS="--output-on-failure -VV -R misc")
       after_success: skip
 
     # No ACE build (linux, gcc)

@@ -58,7 +58,6 @@ using namespace yarp::os;
 using namespace yarp;
 
 PortCore::PortCore() :
-        os(nullptr),
         stateSema(1),
         packetMutex(),
         connectionChange(1),

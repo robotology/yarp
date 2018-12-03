@@ -27,15 +27,6 @@ set(xmlrpcpp_HDRS xmlrpcpp/src/base64.h
                   xmlrpcpp/src/XmlRpcUtil.h
                   xmlrpcpp/src/XmlRpcValue.h)
 
-if(NOT MSVC)
-  check_cxx_compiler_flag("-Wno-unused-parameter" CXX_HAS_WNO_UNUSED_PARAMETER)
-  if(CXX_HAS_WNO_UNUSED_PARAMETER)
-    set_property(SOURCE ${xmlrpcpp_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-unused-parameter")
-  endif()
-else()
-    set_property(SOURCE ${xmlrpcpp_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " /wd4267")
-endif()
-
 set(YARP_priv_xmlrpcpp_TYPE "STATIC" CACHE STRING "YARP_priv_xmlrpcpp (LGPL2.1+) library type (STATIC or SHARED)" )
 set_property(CACHE YARP_priv_xmlrpcpp_TYPE PROPERTY STRINGS "STATIC" "SHARED")
 mark_as_advanced(YARP_priv_xmlrpcpp_TYPE)

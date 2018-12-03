@@ -21,18 +21,6 @@ target_include_directories(${SWIG_MODULE_yarp_ruby_REAL_NAME} SYSTEM PRIVATE ${R
 set_target_properties(${SWIG_MODULE_yarp_ruby_REAL_NAME} PROPERTIES PREFIX ""
                                                                     OUTPUT_NAME "yarp")
 
-if(NOT MSVC)
-  check_cxx_compiler_flag("-Wno-sign-compare" CXX_HAS_WNO_SIGN_COMPARE)
-  if(CXX_HAS_WNO_SIGN_COMPARE)
-    target_compile_options(${SWIG_MODULE_yarp_ruby_REAL_NAME} PRIVATE "-Wno-sign-compare")
-  endif()
-
-  check_cxx_compiler_flag("-Wno-ignored-qualifiers" CXX_HAS_WNO_IGNORED_QUALIFIERS)
-  if(CXX_HAS_WNO_IGNORED_QUALIFIERS)
-    target_compile_options(${SWIG_MODULE_yarp_ruby_REAL_NAME} PRIVATE "-Wno-ignored-qualifiers")
-  endif()
-endif()
-
 # Define CMAKE_INSTALL_RUBYDIR for installing Ruby libraries
 function(_RUBY_CONFIG_VAR RBVAR OUTVAR)
   execute_process(COMMAND ${RUBY_EXECUTABLE} -r rbconfig -e "print RbConfig::CONFIG['${RBVAR}']"
