@@ -32,6 +32,8 @@
 #    -- enables debug messages                                                                     #
 #    PARSE_CATCH_TESTS_NO_HIDDEN_TESTS (Default OFF)                                               #
 #    -- excludes tests marked with [!hide], [.] or [.foo] tags                                     #
+#    PARSE_CATCH_TESTS_HIDDEN_TESTS_DISABLED (Default OFF)                                         #
+#    -- if not excluded, mark tests with [!hide], [.] or [.foo] tags as DISABLED                   #
 #    PARSE_CATCH_TESTS_ADD_FIXTURE_IN_TEST_NAME (Default ON)                                       #
 #    -- adds fixture class name to the test name                                                   #
 #    PARSE_CATCH_TESTS_ADD_TARGET_IN_TEST_NAME (Default ON)                                        #
@@ -39,12 +41,26 @@
 #    PARSE_CATCH_TESTS_ADD_TO_CONFIGURE_DEPENDS (Default OFF)                                      #
 #    -- causes CMake to rerun when file with tests changes so that new tests will be discovered    #
 #                                                                                                  #
+# One can also set (locally) the optional variable OptionalCatchTestLauncher to precise the way    #
+# a test should be run. For instance to use test MPI, one can write                                #
+#     set(OptionalCatchTestLauncher ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${NUMPROC})                 #
+# just before calling this ParseAndAddCatchTests function                                          #
+#                                                                                                  #
+# The AdditionalCatchParameters optional variable can be used to pass extra argument to the test   #
+# command. For example, to include successful tests in the output, one can write                   #
+#     set(AdditionalCatchParameters --success)                                                     #
+#                                                                                                  #
+# After the script, the ParseAndAddCatchTests_TESTS property for the target, and for each source   #
+# file in the target is set, and contains the list of the tests extracted from that target, or     #
+# from that file. This is useful, for example to add further labels or properties to the tests.    #
+#                                                                                                  #
 #==================================================================================================#
 
 cmake_minimum_required(VERSION 2.8.8)
 
 option(PARSE_CATCH_TESTS_VERBOSE "Print Catch to CTest parser debug messages" OFF)
 option(PARSE_CATCH_TESTS_NO_HIDDEN_TESTS "Exclude tests with [!hide], [.] or [.foo] tags" OFF)
+option(PARSE_CATCH_TESTS_HIDDEN_TESTS_DISABLED "If not excluded, mark tests with [!hide], [.] or [.foo] tags as DISABLED" OFF)
 option(PARSE_CATCH_TESTS_ADD_FIXTURE_IN_TEST_NAME "Add fixture class name to the test name" ON)
 option(PARSE_CATCH_TESTS_ADD_TARGET_IN_TEST_NAME "Add target name to the test name" ON)
 option(PARSE_CATCH_TESTS_ADD_TO_CONFIGURE_DEPENDS "Add test file to CMAKE_CONFIGURE_DEPENDS property" OFF)
@@ -168,9 +184,22 @@ function(ParseFile SourceFile TestTarget)
             endif()
 
             # Add the test and set its properties
-            add_test(NAME "\"${CTestName}\"" COMMAND ${TestTarget} ${Name} ${AdditionalCatchParameters})
-            set_tests_properties("\"${CTestName}\"" PROPERTIES FAIL_REGULAR_EXPRESSION "No tests ran"
-                                                    LABELS "${Labels}")
+            add_test(NAME "\"${CTestName}\"" COMMAND ${OptionalCatchTestLauncher} $<TARGET_FILE:${TestTarget}> ${Name} ${AdditionalCatchParameters})
+            if(PARSE_CATCH_TESTS_HIDDEN_TESTS_DISABLED AND ${HiddenTagFound})
+                PrintDebugMessage("Setting DISABLED test property")
+                set_tests_properties("\"${CTestName}\"" PROPERTIES DISABLED ON)
+            else()
+                set_tests_properties("\"${CTestName}\"" PROPERTIES FAIL_REGULAR_EXPRESSION "No tests ran"
+                                                        LABELS "${Labels}")
+            endif()
+            set_property(
+              TARGET ${TestTarget}
+              APPEND
+              PROPERTY ParseAndAddCatchTests_TESTS "\"${CTestName}\"")
+            set_property(
+              SOURCE ${SourceFile}
+              APPEND
+              PROPERTY ParseAndAddCatchTests_TESTS "\"${CTestName}\"")
         endif()
 
     endforeach()

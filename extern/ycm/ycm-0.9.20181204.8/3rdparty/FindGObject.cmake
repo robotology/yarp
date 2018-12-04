@@ -21,11 +21,15 @@ ELSE (GOBJECT_INCLUDE_DIR AND GOBJECT_LIBRARIES)
 ENDIF (GOBJECT_INCLUDE_DIR AND GOBJECT_LIBRARIES)
 
 IF (NOT WIN32)
-   FIND_PACKAGE(PkgConfig REQUIRED)
-   # use pkg-config to get the directories and then use these values
-   # in the FIND_PATH() and FIND_LIBRARY() calls
-   PKG_CHECK_MODULES(PKG_GOBJECT2 REQUIRED gobject-2.0)
-   SET(GOBJECT_DEFINITIONS ${PKG_GOBJECT2_CFLAGS})
+   FIND_PACKAGE(PkgConfig QUIET)
+   IF (PkgConfig_FOUND)
+      # use pkg-config to get the directories and then use these values
+      # in the FIND_PATH() and FIND_LIBRARY() calls
+      PKG_CHECK_MODULES(PKG_GOBJECT2 QUIET gobject-2.0)
+      IF (PKG_GOBJECT2_FOUND)
+         SET(GOBJECT_DEFINITIONS ${PKG_GOBJECT2_CFLAGS})
+      ENDIF (PKG_GOBJECT2_FOUND)
+   ENDIF (PkgConfig_FOUND)
 ENDIF (NOT WIN32)
 
 FIND_PATH(GOBJECT_INCLUDE_DIR gobject/gobject.h
