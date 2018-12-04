@@ -7,6 +7,11 @@
 
 cmake_minimum_required(VERSION 3.5)
 
+# UseSWIG generates now standard target names.
+if(NOT ${CMAKE_VERSION} VERSION_LESS 3.13)
+  cmake_policy(SET CMP0078 OLD)
+endif()
+
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
 include(GNUInstallDirs)

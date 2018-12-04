@@ -26,6 +26,12 @@ if(NOT ${CMAKE_VERSION} VERSION_LESS 3.11)
   cmake_policy(SET CMP0072 NEW)
 endif()
 
+# UseSWIG generates now standard target names.
+if(NOT ${CMAKE_VERSION} VERSION_LESS 3.13)
+  cmake_policy(SET CMP0078 OLD)
+endif()
+
+
 # Main project
 project(YARP
         VERSION 3.1.100
