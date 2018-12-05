@@ -7,78 +7,71 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+
+#include <yarp/os/Semaphore.h>
+
+#include <yarp/os/Thread.h>
+#include <yarp/os/Time.h>
+
 #include <cmath>
 
-#include <yarp/os/all.h>
+#include <catch.hpp>
+#include <harness.h>
 
-#include <yarp/os/impl/UnitTest.h>
-
-using namespace yarp::os::impl;
 using namespace yarp::os;
 
-class SemaphoreTestHelper : public Thread {
+class SemaphoreTestHelper : public Thread
+{
 public:
     Semaphore x;
     int state;
 
-    SemaphoreTestHelper() : x(0) {
+    SemaphoreTestHelper() : x(0)
+    {
         state = 1;
     }
 
-    virtual void run() override {
+    virtual void run() override
+    {
         x.wait();
         state = 2;
         x.post();
     }
 };
 
-class SemaphoreTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "SemaphoreTest"; }
-
-    void checkBasic() {
-        report(0, "basic semaphore sanity check...");
+TEST_CASE("OS::SemaphoreTest", "[yarp::os]")
+{
+    SECTION("basic semaphore sanity check")
+    {
         Semaphore x(0);
         x.post();
         x.post();
-        checkTrue(x.check(),"pop one");
-        checkTrue(x.check(),"pop two");
-        checkFalse(x.check(),"pop one too many");
+        CHECK(x.check()); // pop one
+        CHECK(x.check()); // pop two
+        CHECK_FALSE(x.check()); // pop one too many
     }
 
-    void checkBlock() {
-        report(0, "check blocking behavior...");
+    SECTION("check blocking behavior")
+    {
         SemaphoreTestHelper helper;
         helper.start();
         Time::delay(0.5);
-        checkEqual(helper.state,1,"helper blocked");
+        CHECK(helper.state == 1); // helper blocked
         helper.x.post();
         Time::delay(0.5);
         helper.x.wait();
-        checkEqual(helper.state,2,"helper unblocked");
+        CHECK(helper.state == 2); // helper unblocked
         helper.x.post();
         helper.stop();
     }
 
-    void checkTimed() {
-        report(0, "check timed blocking behavior...");
+    SECTION("check timed blocking behavior")
+    {
         Semaphore x(0);
         bool result = x.waitWithTimeout(0.5);
-        checkFalse(result, "wait timed out ok");
+        CHECK_FALSE(result); // wait timed out ok
         x.post();
         result = x.waitWithTimeout(1000);
-        checkTrue(result, "wait succeeded");
+        CHECK(result); // wait succeeded
     }
-
-    virtual void runTests() override {
-        checkBasic();
-        checkBlock();
-        checkTimed();
-    }
-};
-
-static SemaphoreTest theSemaphoreTest;
-
-UnitTest& getSemaphoreTest() {
-    return theSemaphoreTest;
 }

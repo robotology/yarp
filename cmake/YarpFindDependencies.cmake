@@ -564,4 +564,8 @@ yarp_print_feature(CREATE_YARPVIZ 2 "Compile yarpviz")
 
 yarp_print_feature(YARP_COMPILE_RTF_ADDONS 0 "Compile Robot Testing Framework addons")
 yarp_print_feature(YARP_COMPILE_UNMAINTAINED 0 "Compile Unmaintained components")
+
 yarp_print_feature(YARP_COMPILE_TESTS 0 "Compile and enable YARP tests")
+yarp_print_feature(YARP_DISABLE_FAILING_TESTS 1 "Disable tests that fail randomly due to race conditions")
+yarp_print_feature(YARP_ENABLE_BROKEN_TESTS 1 "Enable broken tests")
+yarp_print_feature(YARP_ENABLE_INTEGRATION_TESTS 1 "Run integration tests")

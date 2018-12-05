@@ -203,8 +203,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/Terminal.h
                       include/yarp/os/impl/TextCarrier.h
                       include/yarp/os/impl/ThreadImpl.h
-                      include/yarp/os/impl/UdpCarrier.h
-                      include/yarp/os/impl/UnitTest.h)
+                      include/yarp/os/impl/UdpCarrier.h)
 
 set(YARP_OS_IMPL_POSIX_HDRS include/yarp/os/impl/posix/TcpAcceptor.h
                             include/yarp/os/impl/posix/TcpConnector.h
@@ -330,7 +329,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/TwoWayStream.cpp
                  src/Type.cpp
                  src/UdpCarrier.cpp
-                 src/UnitTest.cpp
                  src/Value.cpp
                  src/Vocab.cpp
                  src/YarpNameSpace.cpp

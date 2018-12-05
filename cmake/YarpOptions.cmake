@@ -149,10 +149,31 @@ if(YARP_COMPILE_TESTS)
   enable_testing()
 endif()
 
+cmake_dependent_option(YARP_DISABLE_FAILING_TESTS OFF "Disable tests that fail randomly due to race conditions" YARP_COMPILE_TESTS OFF)
+mark_as_advanced(YARP_DISABLE_FAILING_TESTS)
+
+cmake_dependent_option(YARP_ENABLE_BROKEN_TESTS OFF "Enable broken tests" YARP_COMPILE_TESTS OFF)
+mark_as_advanced(YARP_ENABLE_BROKEN_TESTS)
+
+cmake_dependent_option(YARP_ENABLE_INTEGRATION_TESTS OFF "Run integration tests" "YARP_COMPILE_TESTS;UNIX" OFF)
+mark_as_advanced(YARP_ENABLE_INTEGRATION_TESTS)
+yarp_renamed_option(YARP_TEST_INTEGRATION YARP_ENABLE_INTEGRATION_TESTS) # since YARP 3.2.0
+
+
 #########################################################################
 # Run tests under Valgrind
 
-yarp_deprecated_option(VALGRIND_OPTIONS)
+yarp_deprecated_option(YARP_VALGRIND_MEMCHECK_TESTS) # since YARP 3.2.0
+yarp_deprecated_option(YARP_VALGRIND_HELGRIND_TESTS) # since YARP 3.2.0
+yarp_deprecated_option(YARP_VALGRIND_DRD_TESTS) # since YARP 3.2.0
+yarp_deprecated_option(YARP_VALGRIND_SGCHECK_TESTS) # since YARP 3.2.0
+yarp_deprecated_option(YARP_GDB_TESTS) # since YARP 3.2.0
+yarp_deprecated_option(VALGRIND_MEMCHECK_OPTIONS) # since YARP 3.2.0
+yarp_deprecated_option(VALGRIND_HELGRIND_OPTIONS) # since YARP 3.2.0
+yarp_deprecated_option(VALGRIND_DRD_OPTIONS) # since YARP 3.2.0
+yarp_deprecated_option(VALGRIND_SGCHECK_OPTIONS) # since YARP 3.2.0
+yarp_deprecated_option(YARP_GDB_OPTIONS) # since YARP 3.2.0
+
 cmake_dependent_option(YARP_VALGRIND_TESTS
                        "Run YARP tests under Valgrind" OFF
                        "YARP_COMPILE_TESTS" OFF)
@@ -162,65 +183,21 @@ if(YARP_VALGRIND_TESTS)
   find_program(VALGRIND_EXECUTABLE NAMES valgrind)
   mark_as_advanced(VALGRIND_EXECUTABLE)
 
-  set(YARP_VALGRIND_TOOLS MemCheck
-                          Helgrind
-                          DRD
-                          SGCheck)
-
-  set(YARP_VALGRIND_MEMCHECK_TESTS_DEFAULT ON)
-  set(YARP_VALGRIND_HELGRIND_TESTS_DEFAULT OFF)
-  set(YARP_VALGRIND_DRD_TESTS_DEFAULT OFF)
-  set(YARP_VALGRIND_SGCHECK_TESTS_DEFAULT OFF)
-
-  set(VALGRIND_MEMCHECK_OPTIONS_DEFAULT "--leak-check=full")
-  set(VALGRIND_HELGRIND_OPTIONS_DEFAULT "")
-  set(VALGRIND_DRD_OPTIONS_DEFAULT "")
-  set(VALGRIND_SGCHECK_OPTIONS_DEFAULT "")
-
-  foreach(_Tool ${YARP_VALGRIND_TOOLS})
-    string(TOUPPER "${_Tool}" _TOOL)
-    string(TOLOWER "${_Tool}" _tool)
-    if("${_tool}" MATCHES "sgcheck")
-      set(_tool "exp-${_tool}")
-    endif()
-
-    cmake_dependent_option(YARP_VALGRIND_${_TOOL}_TESTS
-                            "Run YARP tests under Valgrind ${_Tool} tool" ${YARP_VALGRIND_${_TOOL}_TESTS_DEFAULT}
-                            "YARP_VALGRIND_TESTS" OFF)
-
-    if(VALGRIND_EXECUTABLE)
-      set(VALGRIND_${_TOOL}_OPTIONS "${VALGRIND_${_TOOL}_OPTIONS_DEFAULT}"
-          CACHE STRING "Valgrind ${_Tool} tool options (--error-exitcode=1 will be appended)")
-      separate_arguments(VALGRIND_${_TOOL}_OPTIONS UNIX_COMMAND "${VALGRIND_${_TOOL}_OPTIONS}")
-      set(VALGRIND_${_TOOL}_COMMAND "${VALGRIND_EXECUTABLE}" --tool=${_tool} ${VALGRIND_${_TOOL}_OPTIONS} --error-exitcode=1 --fullpath-after=${CMAKE_SOURCE_DIR}/)
-      mark_as_advanced(VALGRIND_${_TOOL}_OPTIONS)
-    else()
-      message(WARNING "Valgrind not found. Cannot enable ${_Tool} tests.")
-      unset(VALGRIND_${_TOOL}_COMMAND)
-    endif()
-  endforeach()
-endif()
-
-#########################################################################
-# Run tests under gdb
-
-cmake_dependent_option(YARP_GDB_TESTS
-                       "Run YARP tests under gdb" OFF
-                       "YARP_COMPILE_TESTS" OFF)
-mark_as_advanced(YARP_GDB_TESTS)
-
-if(YARP_GDB_TESTS)
-  find_program(GDB_EXECUTABLE NAMES gdb)
-  mark_as_advanced(GDB_EXECUTABLE)
-  set(GDB_OPTIONS_DEFAULT "")
-  if(GDB_EXECUTABLE)
-    set(GDB_OPTIONS "${GDB_OPTIONS_DEFAULT}"
-        CACHE STRING "gdb options (--return-child-result will be appended)")
-    separate_arguments(GDB_OPTIONS UNIX_COMMAND "${GDB_OPTIONS}")
-    set(GDB_COMMAND "${GDB_EXECUTABLE}" -batch ${GDB_OPTIONS} -ex "run" -ex "bt" --return-child-result --args)
+  if(VALGRIND_EXECUTABLE)
+    set(VALGRIND_OPTIONS "--tool=memcheck --leak-check=full"
+      CACHE STRING "Valgrind options (--error-exitcode=1 will be appended)")
+    mark_as_advanced(VALGRIND_OPTIONS)
+    separate_arguments(VALGRIND_OPTIONS UNIX_COMMAND "${VALGRIND_OPTIONS}")
+    set(VALGRIND_COMMAND "${VALGRIND_EXECUTABLE}" ${VALGRIND_OPTIONS} --error-exitcode=1 --fullpath-after=${CMAKE_SOURCE_DIR}/)
+  else()
+    message(SEND_ERROR "Valgrind executable not found")
   endif()
 endif()
 
+unset(YARP_TEST_LAUNCHER)
+if(DEFINED VALGRIND_COMMAND)
+  set(YARP_TEST_LAUNCHER ${VALGRIND_COMMAND})
+endif()
 
 #########################################################################
 # Enable these messages for debugging flags

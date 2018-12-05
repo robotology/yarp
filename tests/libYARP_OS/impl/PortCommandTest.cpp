@@ -12,31 +12,50 @@
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
-#include <yarp/os/impl/UnitTest.h>
+#include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-class PortCommandTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "PortCommandTest"; }
 
-    void testTextWriting() {
-        report(0,"testing text-mode writing...");
+static std::string humanize(const std::string& txt)
+{
+    std::string result("");
+    for (unsigned int i=0; i<txt.length(); i++) {
+        char ch = txt[i];
+        if (ch == '\n') {
+            result += "\\n";
+        } else if (ch == '\r') {
+            result += "\\r";
+        } else if (ch == '\0') {
+            result += "\\0";
+        } else {
+            result += ch;
+        }
+    }
+    return result;
+}
+
+TEST_CASE("OS::impl::PortCommandTest", "[yarp::os][yarp::os::impl]")
+{
+
+    SECTION("testing text-mode writing...")
+    {
 
         PortCommand cmd1('d',"");;
         BufferedConnectionWriter bw(true);
         cmd1.write(bw);
-        checkEqual(humanize(bw.toString()),"d\\r\\n","basic data command");
+        CHECK(humanize(bw.toString()) == "d\\r\\n"); // basic data command
 
         PortCommand cmd2('\0',"/bozo");;
         BufferedConnectionWriter bw2(true);
         cmd2.write(bw2);
-        checkEqual(humanize(bw2.toString()),"/bozo\\r\\n","connect command");
+        CHECK(humanize(bw2.toString()) == "/bozo\\r\\n"); // connect command
     }
 
-    void testTextReading() {
-        report(0,"testing text-mode reading...");
+    SECTION("testing text-mode reading...")
+    {
 
         PortCommand cmd;
         StringInputStream sis;
@@ -45,17 +64,7 @@ public:
         Route route;
         br.reset(sis,nullptr,route,sis.toString().length(),true);
         cmd.read(br);
-        checkEqual('d',cmd.getKey(),"basic data command");
+        CHECK('d' == cmd.getKey()); // basic data command
     }
 
-    virtual void runTests() override {
-        testTextWriting();
-        testTextReading();
-    }
 };
-
-static PortCommandTest thePortCommandTest;
-
-UnitTest& getPortCommandTest() {
-    return thePortCommandTest;
-}

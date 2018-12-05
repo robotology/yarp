@@ -12,7 +12,6 @@
  */
 
 #include <cstdio>
-#include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/math/Rand.h>
 #include <yarp/math/NormRand.h>
@@ -21,18 +20,18 @@
 
 #include <cmath>
 
+#include <catch.hpp>
+#include <harness.h>
+
 using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::math;
 
-class RandTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "RandTest"; }
-
-    void normalRnd()
+TEST_CASE("math::RandTest", "[yarp::math]")
+{
+    SECTION("checking random generation with normal distribution...")
     {
-        report(0,"checking random generation with normal distribution...");
 
         const int N=10000;
         double u=1.0;
@@ -78,14 +77,12 @@ public:
         if (fabs(std-sigma)<0.075)
             stdOk=true;
 
-        checkTrue(avOk, "normal distribution average ~as requested");
-        checkTrue(stdOk, "normal distribution std ~as requested");
+        CHECK(avOk); // normal distribution average ~as requested
+        CHECK(stdOk); // normal distribution std ~as requested
     }
 
-
-    void randMatrix()
+    SECTION("checking random  matrix generation...")
     {
-        report(0,"checking random  matrix generation...");
         int R=100;
         int C=100;
         Matrix rndM=Rand::matrix(R,C);
@@ -100,12 +97,11 @@ public:
         if(fabs(average-0.5)<0.01)
             mGood=true;
 
-        checkTrue(mGood, "random matrix");
-
+        CHECK(mGood); // random matrix
     }
-    void rand()
+
+    SECTION("checking random  number generation...")
     {
-        report(0,"checking random  number generation...");
         //we check the impl class since all the others relay on that
         Rand::init(10);
 
@@ -146,8 +142,8 @@ public:
         printf("Minimum value was: %lf\n", min);
         printf("Average was: %lf, std was: %lf\n", average, std);
 
-        checkTrue(max<=1.0, "sequence is <= 1");
-        checkTrue(max>=0.0, "sequence is >= 0");
+        CHECK(max<=1.0); // sequence is <= 1
+        CHECK(max>=0.0); // sequence is >= 0
 
         bool avGood=false;
         bool stdGood=false;
@@ -158,8 +154,8 @@ public:
         if (fabs(std-0.28)<0.01)
             stdGood=true;
 
-        checkTrue(avGood, "average is ~0.5");
-        checkTrue(stdGood, "std is ~0.28");
+        CHECK(avGood); // average is ~0.5;
+        CHECK(stdGood); // std is ~0.28;
 
         Rand::init(123);
         Vector v1=Rand::vector(N);
@@ -167,32 +163,18 @@ public:
         Vector v2=Rand::vector(N);
 
         //check that v1 and v2 are equal
-        checkTrue(v1==v2, "same seed produces identical sequences");
+        CHECK(v1==v2); // same seed produces identical sequences
 
         Rand::init(456);
         Vector v3=Rand::vector(N);
         bool tmp=(v1==v3);
-        checkTrue(!tmp, "different seeds generate different sequences");
+        CHECK(!tmp); // different seeds generate different sequences
 
         Rand::init();
         Vector v4=Rand::vector(N);
         Rand::init();
         Vector v5=Rand::vector(N);
         tmp=(v1==v3);
-        checkTrue(!tmp, "default seed initialization for two sequences");
+        CHECK(!tmp); // default seed initialization for two sequences
     }
-
-    virtual void runTests() override
-    {
-        rand();
-        randMatrix();
-        normalRnd();
-    }
-};
-
-static RandTest theRandTest;
-
-UnitTest& getRandTest() {
-    return theRandTest;
 }
-

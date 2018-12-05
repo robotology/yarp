@@ -19,15 +19,15 @@ class MyModule:public RFModule
     int count;
 public:
 
-    double getPeriod()
+    double getPeriod() override
     {
         return 1; //module periodicity (seconds)
     }
 
     /*
-    * This is our main function. Will be called periodically every getPeriod() seconds.
-    */
-    bool updateModule()
+     * This is our main function. Will be called periodically every getPeriod() seconds.
+     */
+    bool updateModule() override
     {
         count++;
         printf("[%d] updateModule\n", count);
@@ -36,9 +36,9 @@ public:
     }
 
     /*
-    * Message handler. Just echo all received messages.
-    */
-    bool respond(const Bottle& command, Bottle& reply)
+     * Message handler. Just echo all received messages.
+     */
+    bool respond(const Bottle& command, Bottle& reply) override
     {
         printf("Got something, echo is on\n");
         if (command.get(0).asString()=="quit")
@@ -49,32 +49,32 @@ public:
     }
 
     /*
-    * Configure function. Receive a previously initialized
-    * resource finder object. Use it to configure your module.
-    * Open port and attach it to message handler.
-    */
-    bool configure(yarp::os::ResourceFinder &rf)
+     * Configure function. Receive a previously initialized
+     * resource finder object. Use it to configure your module.
+     * Open port and attach it to message handler.
+     */
+    bool configure(yarp::os::ResourceFinder &rf) override
     {
         count=0;
-      //  handlerPort.open("/regression-test-module");
-     //   attach(handlerPort);
-     //   attachTerminal();
+        // handlerPort.open("/regression-test-module");
+        // attach(handlerPort);
+        // attachTerminal();
         return true;
     }
 
     /*
-    * Interrupt function.
-    */
-    bool interruptModule()
+     * Interrupt function.
+     */
+    bool interruptModule() override
     {
         printf("Interrupting your module, for port cleanup\n");
         return true;
     }
 
     /*
-    * Close function, to perform cleanup.
-    */
-    bool close()
+     * Close function, to perform cleanup.
+     */
+    bool close() override
     {
         printf("Calling close function\n");
         handlerPort.close();
@@ -100,5 +100,3 @@ int main(int argc, char * argv[])
     printf("Main returning...\n");
     return 0;
 }
-
-

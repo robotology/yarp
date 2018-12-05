@@ -7,22 +7,30 @@
  */
 
 #include <yarp/os/MessageStack.h>
+
+#include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Mutex.h>
-#include <yarp/os/impl/UnitTest.h>
 
-using namespace yarp::os::impl;
+#include <catch.hpp>
+#include <harness.h>
+
 using namespace yarp::os;
 
-class MessageStackWorker : public PortReader {
+class MessageStackWorker : public PortReader
+{
 public:
     Semaphore go;
     Semaphore gone;
     Mutex mutex;
     Bottle last;
 
-    MessageStackWorker() : go(0), gone(0), mutex() {
+    MessageStackWorker() :
+            go(0),
+            gone(0),
+            mutex()
+    {
     }
 
     virtual bool read(ConnectionReader& reader) override {
@@ -35,11 +43,10 @@ public:
     }
 };
 
-class MessageStackTest : public UnitTest {
-public:
-
-    void checkBasic() {
-        report(0,"check basics of stack operation");
+TEST_CASE("OS::MessageStackTest", "[yarp::os]")
+{
+    SECTION("check basics of stack operation")
+    {
         MessageStack stack(2);
         MessageStackWorker worker;
         stack.attach(worker);
@@ -48,34 +55,20 @@ public:
         stack.stack(b);
         stack.stack(b);
         Time::delay(1);
-        checkEqual(worker.last.size(),(size_t) 0,"no read without permission");
+        CHECK(worker.last.size() == (size_t) 0); // no read without permission
         worker.go.post();
         worker.gone.wait();
-        checkEqual(worker.last.toString(),"hello","got a message");
+        CHECK(worker.last.toString() == "hello"); // got a message
         worker.last.clear();
         worker.go.post();
         worker.gone.wait();
-        checkEqual(worker.last.toString(),"hello","got another message");
+        CHECK(worker.last.toString() == "hello"); // got another message
 
         b.fromString("world");
         stack.stack(b,"the");
         worker.go.post();
         worker.gone.wait();
-        checkEqual(worker.last.toString(),"the world","got a prefixed message");
+        CHECK(worker.last.toString() == "the world"); // got a prefixed message
     }
-
-    virtual void runTests() override {
-        checkBasic();
-    }
-
-    virtual std::string getName() const override {
-        return "MessageStackTest";
-    }
-};
-
-static MessageStackTest theMessageStackTest;
-
-UnitTest& getMessageStackTest() {
-    return theMessageStackTest;
 }
 

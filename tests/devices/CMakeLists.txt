@@ -5,74 +5,40 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-set(_inis test_motor_basic.ini)
+add_executable(harness_devices harness_devices.cpp)
+target_link_libraries(harness_devices YARP::YARP_OS
+                                      YARP::YARP_init
+                                      YARP::YARP_dev)
 
-if(ENABLE_yarpmod_test_grabber)
-  list(APPEND _inis grabber_basic.ini
-                    test_grabber_basic.ini)
+set(_inis controlboardwrapper2_basic.ini
+          ffmpeg_grabber_basic.ini
+          ffmpeg_grabber_video4linux.ini
+          ffmpeg_writer_basic.ini
+          grabber_audio.ini
+          grabber_basic.ini
+          group_basic.ini
+          opencv_grabber_basic.ini
+          portaudio_basic.ini
+          remote_grabber_basic.ini
+          test_grabber_basic.ini
+          test_motor_basic.ini)
+
+if(YARP_ENABLE_BROKEN_TESTS)
+  # Randomly fails with a segmentation fault
+  list(APPEND _inis grabber_audiovisual.ini)
 endif()
 
-if(ENABLE_yarpmod_ffmpeg_grabber)
-  list(APPEND _inis ffmpeg_grabber_basic.ini
-                    remote_grabber_basic.ini)
-  if(EXISTS "/dev/video0")
-    list(APPEND _inis ffmpeg_grabber_video4linux.ini)
-  endif()
-  if(YARP_ENABLE_BROKEN_TESTS)
-    list(APPEND _inis grabber_audiovisual.ini) # Fails with a segmentation fault
-  endif()
-endif()
-
-if(ENABLE_yarpmod_ffmpeg_writer)
-  list(APPEND _inis ffmpeg_writer_basic.ini)
-endif()
-
-# FIXME: Check if this can be enabled on Windows
-if(ENABLE_yarpmod_opencv_grabber AND EXISTS "/dev/video0")
-  list(APPEND _inis opencv_grabber_basic.ini)
-endif()
-
-if(ENABLE_yarpmod_portaudio)
-  list(APPEND _inis grabber_audio.ini
-                    portaudio_basic.ini)
-endif()
-
-list(APPEND _inis controlboardwrapper2_basic.ini)
-if(ENABLE_yarpmod_test_grabber)
-  list(APPEND _inis group_basic.ini)
-endif()
-
-foreach(X ${_inis})
-  get_filename_component(XN ${X} NAME_WE)
-  get_filename_component(XINI ${X} ABSOLUTE)
+foreach(_ini_file ${_inis})
+  get_filename_component(_test ${_ini_file} NAME_WE)
+  get_filename_component(_ini_file ${_ini_file} ABSOLUTE)
 
   # need to cache examples for reference
-  set(DOC_DIR "${CMAKE_SOURCE_DIR}/doc/device_invocation")
-  set(XDOX ${DOC_DIR}/${XN}.dox)
-  set(_cmd $<TARGET_FILE:harness_dev> --file "${XINI}" --doc "${XDOX}" --verbose)
+  set(_out_dox "${CMAKE_SOURCE_DIR}/doc/device_invocation/${_test}.dox")
+  set(_cmd ${YARP_TEST_LAUNCHER} $<TARGET_FILE:harness_devices> --file "${_ini_file}" --doc "${_out_dox}" --verbose)
 
   # Add normal test
-  add_test(NAME "device::${XN}"
+  add_test(NAME "device::${_test}"
            COMMAND ${_cmd}
            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
-  # Valgrind tests for devices are currently reporting issues
-  if(YARP_ENABLE_BROKEN_TESTS)
-    # Add valgrind tests
-    foreach(_Tool ${YARP_VALGRIND_TOOLS})
-      string(TOUPPER "${_Tool}" _TOOL)
-      if(YARP_VALGRIND_${_TOOL}_TESTS)
-        add_test(NAME "device::${XN}::Valgrind::${_Tool}"
-                COMMAND ${VALGRIND_MEMCHECK_COMMAND} ${_cmd}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-      endif()
-    endforeach()
-  endif()
-
-  # Add gdb tests
-  if(YARP_GDB_TESTS)
-    add_test(NAME "device::${XN}::gdb"
-             COMMAND ${GDB_COMMAND} ${_cmd}
-             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  endif()
+  set_property(TEST "device::${_test}" PROPERTY SKIP_RETURN_CODE 255)
 endforeach()

@@ -4,4 +4,12 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-add_subdirectory(mjpeg)
+add_executable(harness_carriers mjpeg.cpp)
+
+target_link_libraries(harness_carriers PRIVATE YARP_harness
+                                               YARP::YARP_OS
+                                               YARP::YARP_sig)
+
+set_property(TARGET harness_carriers PROPERTY FOLDER "Test")
+
+yarp_parse_and_add_catch_tests(harness_carriers)

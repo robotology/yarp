@@ -7,264 +7,239 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/Contact.h>
 
-using namespace yarp::os::impl;
+#include <catch.hpp>
+#include <harness.h>
+
 using namespace yarp::os;
-
-class ContactTest : public UnitTest
+TEST_CASE("OS::ContactTest", "[yarp::os]")
 {
-public:
-    virtual std::string getName() const override
+    SECTION("checking string representation")
     {
-        return "ContactTest";
-    }
-
-    virtual void testString()
-    {
-        report(0, "checking string representation");
         Contact address("tcp", "127.0.0.1", 10000);
         std::string txt = address.toURI();
-        checkEqual(txt, "tcp://127.0.0.1:10000/", "string rep example");
+        CHECK(txt == "tcp://127.0.0.1:10000/"); // string rep example
     }
 
-    virtual void testCopy()
+    SECTION("checking address copy")
     {
-        report(0, "checking address copy");
         Contact address("tcp", "127.0.0.1", 10000);
         Contact address2;
         address2 = address;
         std::string txt = address2.toURI();
-        checkEqual(txt, "tcp://127.0.0.1:10000/", "string rep example");
-
+        CHECK(txt ==  "tcp://127.0.0.1:10000/"); // string rep example
         Contact inv1;
         address2 = inv1;
-        checkFalse(inv1.isValid(), "invalid source");
-        checkFalse(address2.isValid(), "invalid copy");
+        CHECK(!inv1.isValid()); // invalid source
+        CHECK(!address2.isValid()); // invalid copy
     }
 
-    virtual void testContact()
+    SECTION("checking constructor with no parameters")
     {
-        {
-            report(0, "checking constructor with no parameters");
-            Contact c;
-            checkFalse(c.isValid(), "invalid Contact");
-        }
-
-        {
-            report(0, "checking constructor with 1 parameter (name)");
-            Contact c("/foo");
-            checkFalse(c.isValid(), "not a valid Contact");
-            checkEqual(c.getHost().c_str(), "", "hostname not set");
-            checkEqual(c.getPort(), -1, "port number not set");
-            checkFalse(c.hasTimeout(), "timeout not set");
-            checkEqual(c.getCarrier().c_str(), "", "carrier not set");
-            checkEqual(c.getRegName().c_str(), "/foo", "reg name set");
-            checkEqual(c.getName().c_str(), "/foo", "port name set");
-        }
-
-        {
-            report(0, "checking constructor with 2 parameters (name, carrier)");
-            Contact c("/foo", "ziggy");
-            checkFalse(c.isValid(), "not a valid Contact");
-            checkEqual(c.getHost().c_str(), "", "hostname not set");
-            checkEqual(c.getPort(), -1, "port number not set");
-            checkFalse(c.hasTimeout(), "timeout not set");
-            checkEqual(c.getCarrier().c_str(), "ziggy", "carrier set");
-            checkEqual(c.getRegName().c_str(), "/foo", "reg name set");
-            checkEqual(c.getName().c_str(), "/foo", "port name set");
-        }
-
-        {
-            report(0, "checking constructor with 3 parameters (name, carrier, hostname)");
-            Contact c("/foo", "ziggy", "www.robotology.yarp");
-            checkFalse(c.isValid(), "not a valid Contact");
-            checkEqual(c.getHost().c_str(), "www.robotology.yarp", "hostname set");
-            checkEqual(c.getPort(), -1, "port number not set");
-            checkFalse(c.hasTimeout(), "timeout not set");
-            checkEqual(c.getCarrier().c_str(), "ziggy", "carrier set");
-            checkEqual(c.getRegName().c_str(), "/foo", "reg name set");
-            checkEqual(c.getName().c_str(), "/foo", "port name set");
-        }
-
-        {
-            report(0, "checking constructor with 4 parameters (name, carrier, hostname, port)");
-            Contact c("/foo", "ziggy", "www.robotology.yarp", 8080);
-            checkTrue(c.isValid(), "valid Contact");
-            checkEqual(c.getHost().c_str(), "www.robotology.yarp", "hostname set");
-            checkEqual(c.getPort(), 8080, "port number set");
-            checkFalse(c.hasTimeout(), "timeout not set");
-            checkEqual(c.getCarrier().c_str(), "ziggy", "carrier set");
-            checkEqual(c.getRegName().c_str(), "/foo", "reg name set");
-            checkEqual(c.getName().c_str(), "/foo", "port name set");
-        }
-
-        {
-            report(0, "checking hostname/port constructor");
-            Contact c("www.robotology.yarp", 8080);
-            checkTrue(c.isValid(), "valid Contact");
-            checkEqual(c.getHost().c_str(), "www.robotology.yarp", "hostname set");
-            checkEqual(c.getPort(), 8080, "port number set");
-            checkFalse(c.hasTimeout(), "timeout not set");
-            checkEqual(c.getCarrier().c_str(), "", "carrier not set");
-            checkEqual(c.getRegName().c_str(), "", "reg name not set");
-            checkEqual(c.getName().c_str(), "/www.robotology.yarp:8080", "port name generated");
-        }
-
-        {
-            report(0, "checking hostname/port constructor with portnumber = 0");
-            Contact c("www.robotology.yarp", 0);
-            checkTrue(c.isValid(), "valid Contact");
-            checkEqual(c.getHost().c_str(), "www.robotology.yarp", "hostname set");
-            checkEqual(c.getPort(), 0, "port number set");
-            checkFalse(c.hasTimeout(), "timeout not set");
-            checkEqual(c.getCarrier().c_str(), "", "carrier not set");
-            checkEqual(c.getRegName().c_str(), "", "reg name not set");
-            checkEqual(c.getName().c_str(), "/www.robotology.yarp:0", "port name generated");
-        }
-
-        {
-            report(0, "checking socket constructor");
-            Contact c("ziggy", "www.robotology.yarp", 8080);
-            checkTrue(c.isValid(), "valid Contact");
-            checkEqual(c.getHost().c_str(), "www.robotology.yarp", "hostname set");
-            checkEqual(c.getPort(), 8080, "port number set");
-            checkFalse(c.hasTimeout(), "timeout not set");
-            checkEqual(c.getCarrier().c_str(), "ziggy", "carrier set");
-            checkEqual(c.getRegName().c_str(), "", "reg name not set");
-            checkEqual(c.getName().c_str(), "/www.robotology.yarp:8080", "port name generated");
-        }
-
-        {
-            report(0, "checking socket constructor with portnumber = 0");
-            Contact c("ziggy", "www.robotology.yarp", 0);
-            checkTrue(c.isValid(), "valid Contact");
-            checkEqual(c.getHost().c_str(), "www.robotology.yarp", "hostname set");
-            checkEqual(c.getPort(), 0, "port number set");
-            checkFalse(c.hasTimeout(), "timeout not set");
-            checkEqual(c.getCarrier().c_str(), "ziggy", "carrier set");
-            checkEqual(c.getRegName().c_str(), "", "reg name not set");
-            checkEqual(c.getName().c_str(), "/www.robotology.yarp:0", "port name generated");
-        }
-
-        {
-            report(0, "checking copy assignment operator with invalid Contact");
-            Contact c1;
-            Contact c2;
-            c1 = c2;
-            checkFalse(c2.isValid(), "invalid copy");
-        }
-
-        {
-            Contact c1;
-            Contact c2("www.robotology.yarp", 8080);
-            report(0, "checking copy assignment operator with valid Contact");
-            c1 = c2;
-            checkTrue(c1.isValid(), "valid Contact");
-            checkEqual(c1.getHost().c_str(), "www.robotology.yarp", "hostname set");
-            checkEqual(c1.getPort(), 8080, "port number set");
-            checkFalse(c1.hasTimeout(), "timeout not set");
-            checkEqual(c1.getCarrier().c_str(), "", "carrier not set");
-            checkEqual(c1.getRegName().c_str(), "", "reg name not set");
-            checkEqual(c1.getName().c_str(), "/www.robotology.yarp:8080", "port name generated");
-        }
-
-        {
-            report(0, "checking copy constructor");
-            Contact c1("www.robotology.yarp", 8080);
-            Contact c2(c1);
-            checkTrue(c2.isValid(), "valid Contact");
-            checkEqual(c2.getHost().c_str(), "www.robotology.yarp", "hostname set");
-            checkEqual(c2.getPort(), 8080, "port number set");
-            checkFalse(c2.hasTimeout(), "timeout not set");
-            checkEqual(c2.getCarrier().c_str(), "", "carrier not set");
-            checkEqual(c2.getRegName().c_str(), "", "reg name not set");
-            checkEqual(c2.getName().c_str(), "/www.robotology.yarp:8080", "port name generated");
-        }
-
-        {
-            report(0, "checking move constructor");
-            Contact c1("www.robotology.yarp", 8080);
-            Contact c2 = std::move(c1);
-            checkTrue(c2.isValid(), "valid Contact");
-            checkEqual(c2.getHost().c_str(), "www.robotology.yarp", "hostname set");
-            checkEqual(c2.getPort(), 8080, "port number set");
-            checkFalse(c2.hasTimeout(), "timeout not set");
-            checkEqual(c2.getCarrier().c_str(), "", "carrier not set");
-            checkEqual(c2.getRegName().c_str(), "", "reg name not set");
-            checkEqual(c2.getName().c_str(), "/www.robotology.yarp:8080", "port name generated");
-        }
-
-        {
-            report(0, "checking move assignment operator");
-            Contact c;
-            c = Contact("www.robotology.yarp", 8080);
-            checkTrue(c.isValid(), "valid Contact");
-            checkEqual(c.getHost().c_str(), "www.robotology.yarp", "hostname set");
-            checkEqual(c.getPort(), 8080, "port number set");
-            checkFalse(c.hasTimeout(), "timeout not set");
-            checkEqual(c.getCarrier().c_str(), "", "carrier not set");
-            checkEqual(c.getRegName().c_str(), "", "reg name not set");
-            checkEqual(c.getName().c_str(), "/www.robotology.yarp:8080", "port name generated");
-        }
-
-        {
-            report(0, "checking Contact wrapper on regular url");
-            Contact c = Contact::fromString("http://www.robotology.yarp:8080/fuzz");
-            checkTrue(c.isValid(), "valid Contact");
-            checkEqual(c.getCarrier().c_str(), "http", "good carrier");
-            checkEqual(c.getHost().c_str(), "www.robotology.yarp", "hostname set");
-            checkEqual(c.getPort(), 8080, "port number set");
-            checkEqual(c.getName().c_str(), "/fuzz", "good port name");
-        }
-
-        {
-            report(0, "checking Contact wrapper on regular url without portnumber");
-            Contact c = Contact::fromString("ziggy://my/url");
-            checkFalse(c.isValid(), "valid Contact");
-            checkEqual(c.getCarrier().c_str(), "ziggy", "good carrier");
-//             checkEqual(c.getHost().c_str(), "my", "good host name");
-            checkEqual(c.getPort(), -1, "port number set");
-            checkEqual(c.getName().c_str(), "/my/url", "good port name");
-        }
-
-        {
-            report(0, "checking Contact wrapper on minimal url");
-            Contact c = Contact::fromString("/my/url2");
-            checkFalse(c.isValid(), "valid Contact");
-            checkEqual(c.getName().c_str(), "/my/url2", "good port name");
-        }
-
-        {
-            report(0, "checking Contact wrapper on url without host");
-            Contact c = Contact::fromString("ziggy:/my/url");
-            checkFalse(c.isValid(), "valid Contact");
-            checkEqual(c.getCarrier().c_str(), "ziggy", "good carrier");
-            checkEqual(c.getName().c_str(), "/my/url", "good port name");
-        }
-
-        {
-            report(0, "checking Contact wrapper on short url");
-            Contact c = Contact::fromString("tcp://192.168.1.3:43705");
-            checkTrue(c.isValid(), "valid Contact");
-            checkEqual(c.getCarrier().c_str(), "tcp", "good carrier");
-            checkEqual(c.getHost().c_str(), "192.168.1.3", "hostname set");
-            checkEqual(c.getPort(), 43705, "port number set");
-            checkEqual(c.getName().c_str(), "/192.168.1.3:43705", "good port name");
-        }
+        Contact c;
+        CHECK_FALSE(c.isValid()); // invalid Contact
     }
 
-    virtual void runTests() override {
-        testString();
-        testCopy();
-        testContact();
+    SECTION("checking constructor with 1 parameter (name)")
+    {
+        Contact c("/foo");
+        CHECK_FALSE(c.isValid()); // not a valid Contact
+        CHECK(c.getHost() == ""); // hostname not set
+        CHECK(c.getPort() == -1); // port number not set
+        CHECK_FALSE(c.hasTimeout()); // timeout not set
+        CHECK(c.getCarrier() == ""); // carrier not set
+        CHECK(c.getRegName() == "/foo"); // reg name set
+        CHECK(c.getName() == "/foo"); // port name set
     }
-};
 
-static ContactTest theContactTest;
+    SECTION("checking constructor with 2 parameters (name, carrier)")
+    {
+        Contact c("/foo", "ziggy");
+        CHECK_FALSE(c.isValid()); // not a valid Contact
+        CHECK(c.getHost() == ""); // hostname not set
+        CHECK(c.getPort() == -1); // port number not set
+        CHECK_FALSE(c.hasTimeout()); // timeout not set
+        CHECK(c.getCarrier() == "ziggy"); // carrier set
+        CHECK(c.getRegName() == "/foo"); // reg name set
+        CHECK(c.getName() == "/foo"); // port name set
+    }
 
-UnitTest& getContactTest() {
-    return theContactTest;
+    SECTION("checking constructor with 3 parameters (name, carrier, hostname)")
+    {
+        Contact c("/foo", "ziggy", "www.robotology.yarp");
+        CHECK_FALSE(c.isValid()); // not a valid Contact
+        CHECK(c.getHost() == "www.robotology.yarp"); // hostname set
+        CHECK(c.getPort() == -1); // port number not set
+        CHECK_FALSE(c.hasTimeout()); // timeout not set
+        CHECK(c.getCarrier() == "ziggy"); // carrier set
+        CHECK(c.getRegName() == "/foo"); // reg name set
+        CHECK(c.getName() == "/foo"); // port name set
+    }
+
+    SECTION("checking constructor with 4 parameters (name, carrier, hostname, port)")
+    {
+        Contact c("/foo", "ziggy", "www.robotology.yarp", 8080);
+        CHECK(c.isValid()); // valid Contact
+        CHECK(c.getHost() == "www.robotology.yarp"); // hostname set
+        CHECK(c.getPort() == 8080); // port number set
+        CHECK_FALSE(c.hasTimeout()); // timeout not set
+        CHECK(c.getCarrier() == "ziggy"); // carrier set
+        CHECK(c.getRegName() == "/foo"); // reg name set
+        CHECK(c.getName() == "/foo"); // port name set
+    }
+
+    SECTION("checking hostname/port constructor")
+    {
+        Contact c("www.robotology.yarp", 8080);
+        CHECK(c.isValid()); // valid Contact
+        CHECK(c.getHost() == "www.robotology.yarp"); //  hostname set
+        CHECK(c.getPort() == 8080); // port number set
+        CHECK_FALSE(c.hasTimeout()); // timeout not set
+        CHECK(c.getCarrier() == ""); // carrier not set
+        CHECK(c.getRegName() == ""); // reg name not set
+        CHECK(c.getName() == "/www.robotology.yarp:8080"); // port name generated
+    }
+
+    SECTION("checking hostname/port constructor with portnumber = 0")
+    {
+        Contact c("www.robotology.yarp", 0);
+        CHECK(c.isValid()); // valid Contact
+        CHECK(c.getHost() == "www.robotology.yarp"); // hostname set
+        CHECK(c.getPort() == 0); // port number set
+        CHECK_FALSE(c.hasTimeout()); // timeout not set
+        CHECK(c.getCarrier() == ""); //  carrier not set
+        CHECK(c.getRegName() == ""); // reg name not set
+        CHECK(c.getName() == "/www.robotology.yarp:0"); // port name generated
+    }
+
+    SECTION("checking socket constructor")
+    {
+        Contact c("ziggy", "www.robotology.yarp", 8080);
+        CHECK(c.isValid()); // valid Contact
+        CHECK(c.getHost() == "www.robotology.yarp"); // hostname set
+        CHECK(c.getPort() == 8080); //  port number set
+        CHECK_FALSE(c.hasTimeout()); //  timeout not set
+        CHECK(c.getCarrier() == "ziggy"); // carrier set
+        CHECK(c.getRegName() == ""); // reg name not set
+        CHECK(c.getName() == "/www.robotology.yarp:8080"); //  "port name generated");
+    }
+
+    SECTION("checking socket constructor with portnumber = 0")
+    {
+        Contact c("ziggy", "www.robotology.yarp", 0);
+        CHECK(c.isValid()); // valid Contact
+        CHECK(c.getHost() == "www.robotology.yarp"); //  hostname set
+        CHECK(c.getPort() == 0); // port number set
+        CHECK_FALSE(c.hasTimeout()); // timeout not set
+        CHECK(c.getCarrier() == "ziggy"); // carrier set
+        CHECK(c.getRegName() == ""); // reg name not set
+        CHECK(c.getName() == "/www.robotology.yarp:0"); // port name generated
+    }
+
+    SECTION("checking copy assignment operator with invalid Contact")
+    {
+        Contact c1;
+        Contact c2;
+        c1 = c2;
+        CHECK_FALSE(c2.isValid()); // invalid copy
+    }
+
+    SECTION("checking copy assignment operator with valid Contact")
+    {
+        Contact c1;
+        Contact c2("www.robotology.yarp", 8080);
+        c1 = c2;
+        CHECK(c1.isValid()); // valid Contact
+        CHECK(c1.getHost() == "www.robotology.yarp"); // hostname set
+        CHECK(c1.getPort() == 8080); // port number set
+        CHECK_FALSE(c1.hasTimeout()); // timeout not set
+        CHECK(c1.getCarrier() == ""); // carrier not set
+        CHECK(c1.getRegName() == ""); // reg name not set
+        CHECK(c1.getName() == "/www.robotology.yarp:8080"); // port name generated
+    }
+
+    SECTION("checking copy constructor")
+    {
+        Contact c1("www.robotology.yarp", 8080);
+        Contact c2(c1);
+        CHECK(c2.isValid()); // valid Contact
+        CHECK(c2.getHost() == "www.robotology.yarp"); // hostname set
+        CHECK(c2.getPort() == 8080); // port number set
+        CHECK_FALSE(c2.hasTimeout()); // timeout not set
+        CHECK(c2.getCarrier() == ""); // carrier not set
+        CHECK(c2.getRegName() == ""); // reg name not set
+        CHECK(c2.getName() == "/www.robotology.yarp:8080"); // port name generated
+    }
+
+    SECTION("checking move constructor")
+    {
+        Contact c1("www.robotology.yarp", 8080);
+        Contact c2 = std::move(c1);
+        CHECK(c2.isValid()); // valid Contact
+        CHECK(c2.getHost() == "www.robotology.yarp"); // hostname set
+        CHECK(c2.getPort() == 8080); // port number set
+        CHECK_FALSE(c2.hasTimeout()); // timeout not set
+        CHECK(c2.getCarrier() == ""); // carrier not set
+        CHECK(c2.getRegName() == ""); // reg name not set
+        CHECK(c2.getName() == "/www.robotology.yarp:8080"); // port name generated
+    }
+
+    SECTION("checking move assignment operator")
+    {
+        Contact c;
+        c = Contact("www.robotology.yarp", 8080);
+        CHECK(c.isValid()); // valid Contact
+        CHECK(c.getHost() == "www.robotology.yarp"); // hostname set
+        CHECK(c.getPort() == 8080); // port number set
+        CHECK_FALSE(c.hasTimeout()); // timeout not set
+        CHECK(c.getCarrier() == ""); // carrier not set
+        CHECK(c.getRegName() == ""); // reg name not set
+        CHECK(c.getName() == "/www.robotology.yarp:8080"); // port name generated
+    }
+
+    SECTION("checking Contact wrapper on regular url")
+    {
+        Contact c = Contact::fromString("http://www.robotology.yarp:8080/fuzz");
+        CHECK(c.isValid()); // valid Contact
+        CHECK(c.getCarrier() == "http"); // good carrier
+        CHECK(c.getHost() == "www.robotology.yarp"); // hostname set
+        CHECK(c.getPort() == 8080); // port number set
+        CHECK(c.getName() == "/fuzz"); // good port name
+    }
+
+    SECTION("checking Contact wrapper on regular url without portnumber")
+    {
+        Contact c = Contact::fromString("ziggy://my/url");
+        CHECK_FALSE(c.isValid()); // valid Contact
+        CHECK(c.getCarrier() == "ziggy"); // good carrier
+        CHECK(c.getPort() == -1); // port number set
+        CHECK(c.getName() == "/my/url"); // good port name
+    }
+
+    SECTION("checking Contact wrapper on minimal url")
+    {
+        Contact c = Contact::fromString("/my/url2");
+        CHECK_FALSE(c.isValid()); // valid Contact
+        CHECK(c.getName() == "/my/url2"); // good port name
+    }
+
+    SECTION("checking Contact wrapper on url without host")
+    {
+        Contact c = Contact::fromString("ziggy:/my/url");
+        CHECK_FALSE(c.isValid()); // valid Contact
+        CHECK(c.getCarrier() == "ziggy"); // good carrier
+        CHECK(c.getName() == "/my/url"); // good port name
+    }
+
+    SECTION("checking Contact wrapper on short url")
+    {
+        Contact c = Contact::fromString("tcp://192.168.1.3:43705");
+        CHECK(c.isValid()); // valid Contact
+        CHECK(c.getCarrier() == "tcp"); // good carrier
+        CHECK(c.getHost() == "192.168.1.3"); // hostname set
+        CHECK(c.getPort() == 43705); // port number set
+        CHECK(c.getName() == "/192.168.1.3:43705"); // good port name
+    }
 }
 
