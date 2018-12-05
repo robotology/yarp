@@ -57,6 +57,7 @@ public:
 };
 
 NetworkClock::Private::Private() :
+        clockName("/clock"),
         waiters(new Waiters())
 {
 }
@@ -138,8 +139,12 @@ bool NetworkClock::open(const std::string& clockSourcePortName, std::string loca
 {
     mPriv->port.setReadOnly();
     mPriv->port.setReader(*mPriv);
-    NestedContact nc(clockSourcePortName);
-    mPriv->clockName = clockSourcePortName;
+    if(!clockSourcePortName.empty())
+    {
+        mPriv->clockName = clockSourcePortName;
+    }
+    NestedContact nc(mPriv->clockName);
+
     yarp::os::ContactStyle style;
     style.persistent = true;
 
@@ -162,12 +167,12 @@ bool NetworkClock::open(const std::string& clockSourcePortName, std::string loca
     }
 
     if (nc.getNestedName() == "") {
-        Contact src = NetworkBase::queryName(clockSourcePortName);
+        Contact src = NetworkBase::queryName(mPriv->clockName);
 
-        ret = NetworkBase::connect(clockSourcePortName, mPriv->port.getName(), style);
+        ret = NetworkBase::connect(mPriv->clockName, mPriv->port.getName(), style);
 
         if (!src.isValid()) {
-            fprintf(stderr, "Cannot find time port \"%s\"; for a time topic specify \"%s@\"\n", clockSourcePortName.c_str(), clockSourcePortName.c_str());
+            fprintf(stderr, "Cannot find time port \"%s\" or a time topic \"%s@\"\n", mPriv->clockName.c_str(), mPriv->clockName.c_str());
         }
     }
 

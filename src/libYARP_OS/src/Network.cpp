@@ -899,6 +899,7 @@ void yarp::os::NetworkBase::yarpClockInit(yarp::os::yarpClockType clockType, Clo
 
         case YARP_CLOCK_NETWORK:
             YARP_DEBUG(Logger::get(), "Using NETWORK clock");
+            clock = yarp::os::Network::getEnvironment("YARP_CLOCK");
             // check of valid parameter is done inside the call, throws YARP_FAIL in case of error
             yarp::os::Time::useNetworkClock(clock);
         break;
