@@ -117,26 +117,6 @@ public:
 
     bool configure(int wbase, int wtop, int base, int top, int axes, const std::string &id, yarp::dev::ControlBoardWrapper *_parent);
 
-    inline void refreshJointEncoders()
-    {
-        for(int j=base, idx=0; j<(base+axes); j++, idx++)
-        {
-            if(iJntEnc)
-                iJntEnc->getEncoderTimed(j, &subDev_joint_encoders[idx], &jointEncodersTimes[idx]);
-        }
-    }
-
-    inline void refreshMotorEncoders()
-    {
-        for(int j=base, idx=0; j<(base+axes); j++, idx++)
-        {
-            if(iMotEnc)
-                iMotEnc->getMotorEncoderTimed(j, &subDev_motor_encoders[idx], &motorEncodersTimes[idx]);
-        }
-    }
-
-
-
     bool isAttached()
     { return attachedF; }
 
