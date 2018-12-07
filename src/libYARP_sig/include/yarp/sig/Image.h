@@ -267,12 +267,14 @@ public:
     */
     size_t getRawImageSize() const;
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.2.0
     /**
      * Returns IPL/OpenCV view of image, if possible.
      * Not possible if the image is the wrong size, with no padding.
      * This method is currently not well documented.
      * @return pointer to an IplImage structure or nullptr
      */
+    YARP_DEPRECATED_MSG("Use yarp::cv::toCvMat instead")
     void *getIplImage();
 
     /**
@@ -281,6 +283,7 @@ public:
      * This method is currently not well documented.
      * @return pointer to an IplImage structure or nullptr
      */
+    YARP_DEPRECATED_MSG("Use yarp::cv::toCvMat instead")
     const void *getIplImage() const;
 
     /**
@@ -294,7 +297,9 @@ public:
      *
      * @param iplImage pointer to an IplImage structure
      */
+    YARP_DEPRECATED_MSG("Use yarp::cv::fromCvMat instead")
     void wrapIplImage(void *iplImage);
+#endif // YARP_NO_DEPRECATED
 
     //void wrapRawImage(void *buf, int imgWidth, int imgHeight);
 
