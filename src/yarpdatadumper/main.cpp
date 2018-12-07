@@ -130,7 +130,7 @@ public:
         return (fName.str()+" ["+Vocab::decode(code)+"]");
     }
 
-    void *getPtr() override { return p->getIplImage(); }
+    void *getPtr() override { return p->getRawImage(); }
 };
 
 
