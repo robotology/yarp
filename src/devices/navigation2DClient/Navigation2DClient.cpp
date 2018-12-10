@@ -328,6 +328,31 @@ bool yarp::dev::Navigation2DClient::gotoTargetByRelativeLocation(double x, doubl
     return true;
 }
 
+bool  yarp::dev::Navigation2DClient::recomputeCurrentNavigationPath()
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_RECOMPUTE_PATH);
+
+    bool ret = m_rpc_port_navigation_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yError() << "Navigation2DClient::recomputeCurrentNavigationPath() received error from navigation server";
+            return false;
+        }
+    }
+    else
+    {
+        yError() << "Navigation2DClient::recomputeCurrentNavigationPath() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
 bool  yarp::dev::Navigation2DClient::setInitialPose(Map2DLocation& loc)
 {
     yarp::os::Bottle b;

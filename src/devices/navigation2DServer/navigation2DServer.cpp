@@ -181,7 +181,12 @@ bool navigation2DServer::read(yarp::os::ConnectionReader& connection)
                 loc.x = command.get(3).asFloat64();
                 loc.y = command.get(4).asFloat64();
                 loc.theta = command.get(5).asFloat64();
-                iNav_target->gotoTargetByAbsoluteLocation(loc);
+                bool ret = iNav_target->gotoTargetByAbsoluteLocation(loc);
+                reply.addVocab(VOCAB_OK);
+            }
+            else if (request == VOCAB_NAV_RECOMPUTE_PATH)
+            {
+                bool ret = iNav_ctrl->recomputeCurrentNavigationPath();
                 reply.addVocab(VOCAB_OK);
             }
             else if (request == VOCAB_NAV_GOTOREL)
@@ -191,14 +196,14 @@ bool navigation2DServer::read(yarp::os::ConnectionReader& connection)
                     double x = command.get(2).asFloat64();
                     double y = command.get(3).asFloat64();
                     double theta = command.get(4).asFloat64();
-                    iNav_target->gotoTargetByRelativeLocation(x,y,theta);
+                    bool ret = iNav_target->gotoTargetByRelativeLocation(x,y,theta);
                     reply.addVocab(VOCAB_OK);
                 }
                 else if (command.size() == 4)
                 {
                     double x = command.get(2).asFloat64();
                     double y = command.get(3).asFloat64();
-                    iNav_target->gotoTargetByRelativeLocation(x, y);
+                    bool ret = iNav_target->gotoTargetByRelativeLocation(x, y);
                     reply.addVocab(VOCAB_OK);
                 }
                 else
@@ -210,13 +215,13 @@ bool navigation2DServer::read(yarp::os::ConnectionReader& connection)
             else if (request == VOCAB_NAV_GET_NAVIGATION_STATUS)
             {
                 yarp::dev::NavigationStatusEnum nav_status = yarp::dev::navigation_status_error;
-                iNav_ctrl->getNavigationStatus(nav_status);
+                bool ret = iNav_ctrl->getNavigationStatus(nav_status);
                 reply.addVocab(VOCAB_OK);
                 reply.addInt32(nav_status);
             }
             else if (request == VOCAB_NAV_STOP)
             {
-                iNav_ctrl->stopNavigation();
+                bool ret = iNav_ctrl->stopNavigation();
                 reply.addVocab(VOCAB_OK);
             }
             else if (request == VOCAB_NAV_SUSPEND)
@@ -225,24 +230,24 @@ bool navigation2DServer::read(yarp::os::ConnectionReader& connection)
                 if (command.size() > 1)
                 {
                     time = command.get(1).asFloat64();
-                    iNav_ctrl->suspendNavigation(time);
+                    bool ret = iNav_ctrl->suspendNavigation(time);
                 }
                 else
                 {
-                    iNav_ctrl->suspendNavigation();
+                    bool ret = iNav_ctrl->suspendNavigation();
                 }
                 reply.addVocab(VOCAB_OK);
             }
             else if (request == VOCAB_NAV_RESUME)
             {
-                iNav_ctrl->resumeNavigation();
+                bool ret = iNav_ctrl->resumeNavigation();
                 reply.addVocab(VOCAB_OK);
             }
             else if (request == VOCAB_NAV_GET_NAVIGATION_WAYPOINTS)
             {
                 std::vector<yarp::dev::Map2DLocation> locs;
-                bool b = iNav_ctrl->getAllNavigationWaypoints(locs);
-                if (b)
+                bool ret = iNav_ctrl->getAllNavigationWaypoints(locs);
+                if (ret)
                 {
                     reply.addVocab(VOCAB_OK);
                     Bottle& waypoints = reply.addList();
@@ -265,8 +270,8 @@ bool navigation2DServer::read(yarp::os::ConnectionReader& connection)
             else if (request == VOCAB_NAV_GET_CURRENT_WAYPOINT)
             {
                 yarp::dev::Map2DLocation loc;
-                bool b = iNav_ctrl->getCurrentNavigationWaypoint(loc);
-                if (b)
+                bool ret = iNav_ctrl->getCurrentNavigationWaypoint(loc);
+                if (ret)
                 {
                     reply.addVocab(VOCAB_OK);
                     reply.addString(loc.map_id);
@@ -298,13 +303,14 @@ bool navigation2DServer::read(yarp::os::ConnectionReader& connection)
             else if (request == VOCAB_NAV_GET_ABS_TARGET || request == VOCAB_NAV_GET_REL_TARGET)
             {
                 yarp::dev::Map2DLocation loc;
+                bool ret;
                 if (request == VOCAB_NAV_GET_ABS_TARGET)
                 {
-                    iNav_target->getAbsoluteLocationOfCurrentTarget(loc);
+                    ret = iNav_target->getAbsoluteLocationOfCurrentTarget(loc);
                 }
                 else
                 {
-                    iNav_target->getRelativeLocationOfCurrentTarget(loc.x, loc.y, loc.theta);
+                    ret = iNav_target->getRelativeLocationOfCurrentTarget(loc.x, loc.y, loc.theta);
                 }
                 reply.addVocab(VOCAB_OK);
 
