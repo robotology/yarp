@@ -122,7 +122,7 @@ void ClusterWidget::onCheckAll()
     for (int i = 0; i<ui->nodestreeWidget->topLevelItemCount(); i++)
     {
         QTreeWidgetItem *it = ui->nodestreeWidget->topLevelItem(i);
-        int itr = it->text(5).toInt();
+        int itr = it->text(6).toInt();
         ClusterNode node = cluster.nodes[itr];
         if (checkNode(node.name))
         {
@@ -226,7 +226,7 @@ void ClusterWidget::onRunSelected()
     QList<QTreeWidgetItem*> selectedItems = ui->nodestreeWidget->selectedItems();
     foreach (QTreeWidgetItem *it, selectedItems)
     {
-        int itr = it->text(5).toInt();
+        int itr = it->text(6).toInt();
         ClusterNode node = cluster.nodes[itr];
         string portName = node.name;
 
@@ -281,7 +281,7 @@ void ClusterWidget::onStopSelected()
     QList<QTreeWidgetItem*> selectedItems = ui->nodestreeWidget->selectedItems();
     foreach (QTreeWidgetItem *it, selectedItems)
     {
-        int itr = it->text(5).toInt();
+        int itr = it->text(6).toInt();
         ClusterNode node = cluster.nodes[itr];
         if (!node.onOff)
         {
@@ -318,7 +318,7 @@ void ClusterWidget::onKillSelected()
     QList<QTreeWidgetItem*> selectedItems = ui->nodestreeWidget->selectedItems();
     foreach (QTreeWidgetItem *it, selectedItems)
     {
-        int itr = it->text(5).toInt();
+        int itr = it->text(6).toInt();
         ClusterNode node = cluster.nodes[itr];
         if (!node.onOff)
         {
@@ -354,7 +354,7 @@ void ClusterWidget::onExecute()
     QList<QTreeWidgetItem*> selectedItems = ui->nodestreeWidget->selectedItems();
     foreach (QTreeWidgetItem *it, selectedItems)
     {
-        int itr = it->text(5).toInt();
+        int itr = it->text(6).toInt();
         ClusterNode node = cluster.nodes[itr];
 
         string cmdExecute = getSSHCmd(node.user, node.address, node.ssh_options);
