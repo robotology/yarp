@@ -81,6 +81,7 @@ public:
     bool   gotoTargetByLocationName(std::string location_name) override;
     bool   gotoTargetByRelativeLocation(double x, double y, double theta) override;
     bool   gotoTargetByRelativeLocation(double x, double y) override;
+    bool   recomputeCurrentNavigationPath() override;
 
     bool   getAbsoluteLocationOfCurrentTarget(yarp::dev::Map2DLocation& loc) override;
     bool   getNameOfCurrentTarget(std::string& location_name);

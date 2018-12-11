@@ -71,6 +71,7 @@ constexpr yarp::conf::vocab32_t VOCAB_INAVIGATION            = yarp::os::createV
 
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GOTOABS            = yarp::os::createVocab('s','a','b','s');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GOTOREL            = yarp::os::createVocab('s','r','e','l');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_RECOMPUTE_PATH     = yarp::os::createVocab('r','c','m','p');
 
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCATION          = yarp::os::createVocab('g','l','o','c');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCATION_LIST     = yarp::os::createVocab('l','i','s','t');
