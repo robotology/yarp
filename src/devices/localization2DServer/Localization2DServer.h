@@ -46,9 +46,10 @@ class yarp::dev::Localization2DServer : public yarp::dev::DeviceDriver,
     public yarp::os::PortReader
 {
 protected:
-    yarp::os::Port                    m_rpcPort;
-    std::string                       m_rpcPortName;
-    std::string                       m_streamingPortName;
+    yarp::os::Port                            m_rpcPort;
+    std::string                               m_rpcPortName;
+    yarp::os::BufferedPort<yarp::os::Bottle>  m_streamingPort;
+    std::string                               m_streamingPortName;
 
     //drivers and interfaces
     yarp::dev::PolyDriver                   pLoc;
@@ -56,6 +57,9 @@ protected:
 
     double                                  m_stats_time_last;
     double                                  m_period;
+    bool                                    m_getdata_using_periodic_thread;
+    yarp::dev::Map2DLocation                m_current_position;
+    yarp::dev::LocalizationStatusEnum       m_current_status;
 
 public:
     Localization2DServer();
