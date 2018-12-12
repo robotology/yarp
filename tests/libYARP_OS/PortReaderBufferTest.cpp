@@ -38,6 +38,10 @@ public:
 
 TEST_CASE("OS::PortReaderBufferTest", "[yarp::os]")
 {
+#if defined(DISABLE_FAILING_TESTS)
+    YARP_SKIP_TEST("Skipping failing tests")
+#endif
+
     NetworkBase::setLocalMode(true);
 
     SECTION("checking direct object accept")
