@@ -5,36 +5,14 @@
 * This software may be modified and distributed under the terms of the
 * BSD-3-Clause license. See the accompanying LICENSE file for details.
 */
-
+#ifndef YARP_OS_RFPLUGINFACTORY_H
+#define YARP_OS_RFPLUGINFACTORY_H
 
 #include <yarp/os/RFModule.h>
 #include <string>
 
 namespace yarp {
 namespace os {
-
-class YARP_OS_API RFPlugin
-{
-    struct RFPlugin_Private;
-    RFPlugin_Private* impl{nullptr};
-
-public:
-    RFPlugin();
-
-    virtual ~RFPlugin();
-
-    virtual bool open(const std::string& command);
-
-    virtual void close();
-
-    virtual bool isRunning();
-
-    virtual std::string getCmd();
-
-    virtual std::string getAlias();
-
-    virtual int getThreadKey();
-};
 
 class YARP_OS_API RFModuleFactory
 {
@@ -52,4 +30,4 @@ public:
 }
 }
 
-#endif // YARP_OS_RFPLUGIN_H
+#endif // YARP_OS_RFPLUGINFACTORY_H

@@ -208,8 +208,8 @@ static RFModule *module = nullptr;
 
 int RFModule::getThreadKey()
 {
-    if (HELPER(x).threaded_handler)
-        return HELPER(x).threaded_handler->getKey();
+    if (HELPER(implementation).threaded_handler)
+        return HELPER(implementation).threaded_handler->getKey();
     else
         return yarp::os::Thread::getKeyOfCaller();
 }
