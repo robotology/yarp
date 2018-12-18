@@ -30,11 +30,12 @@ namespace yarp {
  *   register this port to yarp by yarp command "yarp name register" in this way: yarp name register /serverH264Stream h264 x.x.x.x p
  * - you need to connect your client port (for example /yarpview/img:i ) to /serverH264Stream port by h264 carrier to get the video stream:
  *   yarp connect /serverH264Stream /yarpview/img:i h264
- * You can comfigure the carrier to cro frames by passing parameters to the carrier with usual syntax: +pramName.paramValue:
+ * You can configure the carrier to crop frames by passing parameters to the carrier with usual syntax: +pramName.paramValue:
  *  - +cropLeft.100    ==> the carrier crops 100 pxel from left side
  *  - +cropRight.100   ==> the carrier crops 100 pxel from right side
  *  - +cropTop.100     ==> the carrier crops 100 pxel from top side
  *  - +cropBottom.100  ==> the carrier crops 100 pxel from bottom side
+ *  - +removeJitter.1  ==> the carrier removes the jitter. If you put 0, the jitter is not removed (default behaviour).
  *  - +verbose.1       ==> enables verbose mode (default is not verbose) (+verbose.0 disables it.)
  */
 
