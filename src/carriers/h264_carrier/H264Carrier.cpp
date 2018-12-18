@@ -124,7 +124,7 @@ bool H264Carrier::prepareSend(ConnectionState& proto)
      cfgParams.crop.bottom = getIntParam(n, "cropBottom");
      cfgParams.fps_max = getIntParam(n, "max_fps");
      cfgParams.verbose = (getIntParam(n, "verbose") >0) ? true: false;
-
+	 cfgParams.removeJitter = (getIntParam(n, "removeJitter") > 0) ? true : false;
     return true;
 }
 

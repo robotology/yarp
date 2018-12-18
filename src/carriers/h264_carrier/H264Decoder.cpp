@@ -84,7 +84,7 @@ static GstBusSyncReply bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 }
 */
 
-static gboolean link_videosrc2rtpdepay(GstElement *e1, GstElement *e2, bool verbose)
+static gboolean link_videosrc2nextWithCaps(GstElement *e1, GstElement *e2, bool verbose)
 {
     gboolean link_ok;
     GstCaps *caps;
@@ -301,7 +301,8 @@ public:
         pipeline(nullptr),
         source(nullptr),
         sink(nullptr),
-        rtpDepay(nullptr),
+		jitterBuff(nullptr),
+		rtpDepay(nullptr),
         parser(nullptr),
         convert(nullptr),
         decoder(nullptr),
@@ -316,12 +317,12 @@ public:
     }
     ~H264DecoderHelper(){;}
 
-    bool istantiateElements()
+
+    bool istantiateElements(h264Decoder_cfgParamters &cfgParams)
     {
         gst_init(nullptr, nullptr);
         pipeline = gst_pipeline_new ("video-player");
         source   = gst_element_factory_make ("udpsrc",       "video-source");
-        jitterBuff = gst_element_factory_make ("rtpjitterbuffer", "jitterBuffer");
         rtpDepay = gst_element_factory_make ("rtph264depay", "rtp-depay");
         parser   = gst_element_factory_make ("h264parse",    "parser");
         decoder  = gst_element_factory_make ("avdec_h264",   "decoder");
@@ -329,12 +330,21 @@ public:
         convert  = gst_element_factory_make ("videoconvert", "convert"); //because use RGB space
         sink     = gst_element_factory_make ("appsink",      "video-output");
 
-        if (!pipeline || !source || !rtpDepay || !parser || !decoder || !convert || !sink || !sizeChanger || !jitterBuff)
+        if (!pipeline || !source || !rtpDepay || !parser || !decoder || !convert || !sink || !sizeChanger)
         {
             g_printerr ("GSTREAMER: one element could not be created. Exiting.\n");
             return false;
         }
-        return true;
+		if (cfgParams.removeJitter)
+		{
+			jitterBuff = gst_element_factory_make("rtpjitterbuffer", "jitterBuffer");
+			if (!jitterBuff)
+			{
+				g_printerr("GSTREAMER: rtpjitterbuffer could not be created. Exiting.\n");
+				return false;
+			}
+		}
+		return true;
     }
 
     bool configureElements(h264Decoder_cfgParamters &cfgParams) //maybe i can make callbak configurable in the future.....
@@ -379,30 +389,46 @@ public:
 
         if(verbose) g_print("GSTREAMER: try to add elements to pipeline..... \n");
         /* we add all elements into the pipeline */
-        gst_bin_add_many (GST_BIN (pipeline),
-                        source, jitterBuff, rtpDepay, parser, decoder, sizeChanger, convert, sink, NULL);
+		gst_bin_add_many (GST_BIN (pipeline),
+                          source, rtpDepay, parser, decoder, sizeChanger, convert, sink, NULL);
+		
+		gboolean result;
+
+		if (jitterBuff != nullptr)
+		{
+			result = gst_bin_add(GST_BIN(pipeline), jitterBuff);
+			if (!result) { yError() << "H264Decoder: Error adding jitterBuff to the bin"; return false; }
+		}
 
         if(verbose) g_print("GSTREAMER: elements have been added in pipeline!\n");
 
+		if (verbose) g_print("GSTREAMER: try to link_convert2next..... \n");
+		result = link_convert2next(convert, sink, verbose);
+		if (!result) { yError() << "H264Decoder: Error linking converter to sink "; return false; }
 
         /* autovideosrc ! "video/x-raw, width=640, height=480, format=(string)I420" ! videoconvert ! 'video/x-raw, format=(string)RGB'  ! yarpdevice ! glimagesink */
-        if(verbose) g_print("GSTREAMER: try to link_videosrc2convert..... \n");
-        gboolean result = link_videosrc2rtpdepay(source, jitterBuff, verbose);
-        if(!result)
-        {
-            return false;
-        }
+        
+		if (jitterBuff)
+		{
+			if (verbose) g_print("GSTREAMER: try to link videosrc to rtpjitterBuffer..... \n");
+			result = link_videosrc2nextWithCaps(source, jitterBuff, verbose);
+			if (!result){ yError() << "H264Decoder: Error linking videosrc to rtpjitterBuffer "; return false;}
 
-        if(verbose) g_print("GSTREAMER: try to link_convert2next..... \n");
-        result = link_convert2next(convert, sink, verbose);
-        if(!result)
-        {
-            return false;
-        }
+			if (verbose)g_print("GSTREAMER: try to link jitterBuff to rtpDapay..... \n");
+			result = gst_element_link(jitterBuff, rtpDepay);
+			if (!result) { yError() << "H264Decoder: Error linking jitterBuff to rtpDapay "; return false; }
+			
+		}
+		else
+		{
+			if (verbose) g_print("GSTREAMER: try to videosrc to rtpDepay \n");
+			result = link_videosrc2nextWithCaps(source, rtpDepay, verbose);
+			if (!result) { yError() << "H264Decoder: Error linking videosrc to rtpDepay "; return false; }
 
-        if(verbose)g_print("GSTREAMER: try to link all other elements..... \n");
-        gst_element_link_many(jitterBuff, rtpDepay, parser, decoder, sizeChanger, convert, NULL);
+		}
 
+		if (verbose)g_print("GSTREAMER: try to link all other elements..... \n");
+		gst_element_link_many(rtpDepay, parser, decoder, sizeChanger, convert, NULL);
         return true;
     }
 
@@ -427,7 +453,7 @@ H264Decoder::H264Decoder(h264Decoder_cfgParamters &config) :
 bool H264Decoder::init()
 {
     H264DecoderHelper &helper = GET_HELPER(sysResource);
-    if(!helper.istantiateElements())
+    if(!helper.istantiateElements(cfg))
     {
         yError() << "H264Decoder: Error in istantiateElements";
         return false;

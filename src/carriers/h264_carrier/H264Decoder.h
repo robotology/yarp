@@ -39,6 +39,7 @@ struct h264Decoder_cfgParamters
     int fps_max;    //max value of fps. it is imposed by gstreamer
     int remotePort; // the port on which the server send data
     bool verbose;   //enables debug print of gstream plugin
+	bool removeJitter; //If true, the carrier reorders and removes duplicate RTP packets as they are received from a network source.
 };
 
 class yarp::os::H264Decoder
