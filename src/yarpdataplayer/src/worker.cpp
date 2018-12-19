@@ -23,10 +23,11 @@
 #endif
 
 #include <memory>
-#include "yarp/os/Stamp.h"
+#include <yarp/os/Stamp.h>
 #include "include/worker.h"
 #include "include/mainwindow.h"
 #include "include/log.h"
+
 
 using namespace yarp::sig;
 using namespace yarp::sig::file;
@@ -176,36 +177,38 @@ int WorkerClass::sendImages(int part, int frame)
     unique_ptr<Image> img_yarp = nullptr;
 
 #ifdef HAS_OPENCV
-    IplImage* img_ipl = nullptr;
+    cv::Mat cv_img;
     if (code==VOCAB_PIXEL_MONO_FLOAT) {
         img_yarp = unique_ptr<Image>(new ImageOf<PixelFloat>);
         fileValid = read(*static_cast<ImageOf<PixelFloat>*>(img_yarp.get()),tmpPath);
     }
     else {
-        img_ipl=cvLoadImage(tmpPath.c_str(),CV_LOAD_IMAGE_UNCHANGED);
-        if ( img_ipl!=nullptr ) {
+        cv_img = cv::imread(tmpPath, CV_LOAD_IMAGE_UNCHANGED);
+        if ( cv_img.data != nullptr ) {
             if (code==VOCAB_PIXEL_RGB)
             {
                 img_yarp = unique_ptr<Image>(new ImageOf<PixelRgb>);
-                cvCvtColor(img_ipl,img_ipl,CV_BGR2RGB);
+                *img_yarp = yarp::cv::fromCvMat<PixelRgb>(cv_img);
             }
             else if (code==VOCAB_PIXEL_BGR)
+            {
                 img_yarp = unique_ptr<Image>(new ImageOf<PixelBgr>);
+                *img_yarp = yarp::cv::fromCvMat<PixelBgr>(cv_img);
+            }
             else if (code==VOCAB_PIXEL_RGBA)
             {
                 img_yarp = unique_ptr<Image>(new ImageOf<PixelRgba>);
-                cvCvtColor(img_ipl,img_ipl,CV_BGRA2RGBA);
+                *img_yarp = yarp::cv::fromCvMat<PixelRgba>(cv_img);
             }
-            else if (code==VOCAB_PIXEL_MONO)
+            else if (code==VOCAB_PIXEL_MONO){
                 img_yarp = unique_ptr<Image>(new ImageOf<PixelMono>);
+                *img_yarp = yarp::cv::fromCvMat<PixelMono>(cv_img);
+            }
             else
             {
                 img_yarp = unique_ptr<Image>(new ImageOf<PixelRgb>);
-                cvCvtColor(img_ipl,img_ipl,CV_BGR2RGB);
+                *img_yarp = yarp::cv::fromCvMat<PixelRgb>(cv_img);
             }
-            img_yarp->resize(img_ipl->width, img_ipl->height);
-            cvCopy( img_ipl, (IplImage *) img_yarp->getIplImage());
-            cvReleaseImage(&img_ipl);
             fileValid = true;
         }
     }
