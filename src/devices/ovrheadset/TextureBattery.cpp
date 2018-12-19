@@ -145,7 +145,7 @@ void TextureBattery::run()
     }
     yAssert(ibat);
 
-    int status;
+    yarp::dev::IBattery::Battery_status status;
     double charge;
     bool ret = true;
     ret &= ibat->getBatteryCharge(charge);
