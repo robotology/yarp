@@ -542,6 +542,7 @@ size_t Image::getRawImageSize() const {
     return 0;
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.2.0
 void *Image::getIplImage() {
     return ((ImageStorage*)implementation)->pImage;
 }
@@ -651,6 +652,7 @@ void Image::wrapIplImage(void *iplImage) {
     }
 }
 
+#endif // YARP_NO_DEPRECATED
 
 
 bool Image::read(yarp::os::ConnectionReader& connection) {

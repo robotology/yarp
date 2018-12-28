@@ -94,7 +94,7 @@ if(CREATE_YARPDATAPLAYER)
                                        Qt5::Widgets)
 
   if(YARP_HAS_OPENCV)
-    target_link_libraries(yarpdataplayer ${OpenCV_LIBRARIES})
+    target_link_libraries(yarpdataplayer ${OpenCV_LIBRARIES} YARP_cv)
   endif()
 
   install(TARGETS yarpdataplayer COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
