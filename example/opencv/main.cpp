@@ -34,12 +34,13 @@ int main(int argc, char *argv[]) {
     std::cout<<"Saving YARP image to test-1.ppm"<<std::endl;
 
     std::cout<<"Showing OpenCV image"<<std::endl;
-    cv::Mat cvImage=yarp::cv::toCvMat(yarpImage);
+    cv::Mat cvImage1=yarp::cv::toCvMat(yarpImage);
     cv::namedWindow("test",1);
-    cv::imshow("test",cvImage);
+    cv::imshow("test",cvImage1);
 
     std::cout<<"Taking image back into YARP..."<<std::endl;
-    auto yarpReturnImage=yarp::cv::fromCvMat<yarp::sig::PixelRgb>(cvImage);
+    cv::Mat cvImage2=cvImage1.clone();
+    auto yarpReturnImage=yarp::cv::fromCvMat<yarp::sig::PixelRgb>(cvImage2);
     yarp::sig::file::write(yarpReturnImage,"test-2.ppm");
     std::cout<<"Saving YARP image to test-2.ppm"<<std::endl;
 
