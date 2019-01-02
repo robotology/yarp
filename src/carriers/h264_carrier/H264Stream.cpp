@@ -199,8 +199,8 @@ yarp::conf::ssize_t H264Stream::read(Bytes& b)
 
     if (remaining>0)
     {
-        int allow = remaining;
-        if ((int)b.length()<allow)
+        size_t allow = remaining;
+        if (b.length()<allow)
         {
             allow = b.length();
         }
@@ -212,7 +212,7 @@ yarp::conf::ssize_t H264Stream::read(Bytes& b)
             memcpy(b.get(),cursor,allow);
             cursor+=allow;
             remaining-=allow;
-            if (debug) printf("returning %d bytes\n", allow);
+            if (debug) printf("returning %d bytes\n", static_cast<int>(allow));
             #ifdef debug_time
                 end_time = Time::now();
                 sumOf_timeOfCopyPerPahse[phase] +=(end_time - start_timeCopy);
@@ -221,7 +221,7 @@ yarp::conf::ssize_t H264Stream::read(Bytes& b)
             return allow;
         } else
         {
-            int result = delegate->getInputStream().read(b);
+            yarp::conf::ssize_t result = delegate->getInputStream().read(b);
             if (debug) printf("Read %d bytes\n", result);
             if (result>0)
             {

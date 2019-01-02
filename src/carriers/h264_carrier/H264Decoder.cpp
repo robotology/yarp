@@ -84,7 +84,7 @@ static GstBusSyncReply bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 }
 */
 
-static gboolean link_videosrc2rtpdepay(GstElement *e1, GstElement *e2, bool verbose)
+static gboolean link_videosrc2nextWithCaps(GstElement *e1, GstElement *e2, bool verbose)
 {
     gboolean link_ok;
     GstCaps *caps;
@@ -111,11 +111,11 @@ static gboolean link_videosrc2rtpdepay(GstElement *e1, GstElement *e2, bool verb
     //print error anyway, while print ok message only is verbose
     if(!link_ok)
     {
-        g_print("GSTREAMER: failed link videosrc2convert with caps!!\n");
+         yError() << "H264Decoder-GSTREAMER: link_videosrc2nextWithCaps failed";
     }
     else if(verbose)
     {
-        g_print("GSTREAMER: link videosrc2convert with caps OK!!!!!!\n");
+        yDebug() << "H264Decoder-GSTREAMER: link_videosrc2nextWithCaps OK";
     }
 
     return (link_ok);
@@ -138,11 +138,11 @@ static gboolean link_convert2next(GstElement *e1, GstElement *e2, bool verbose)
     //print error anyway, while print ok message only is verbose
     if(!link_ok)
     {
-        g_print("GSTREAMER: failed link_convert2next with caps\n");
+        yError() << "H264Decoder-GSTREAMER: link_convert2next failed";
     }
     else if(verbose)
     {
-        g_print("GSTREAMER: link_convert2next with caps OK\n");
+        yDebug() << "H264Decoder-GSTREAMER: link_convert2next OK";
     }
 
     return (link_ok);
@@ -301,6 +301,7 @@ public:
         pipeline(nullptr),
         source(nullptr),
         sink(nullptr),
+        jitterBuff(nullptr),
         rtpDepay(nullptr),
         parser(nullptr),
         convert(nullptr),
@@ -316,12 +317,12 @@ public:
     }
     ~H264DecoderHelper(){;}
 
-    bool istantiateElements()
+
+    bool istantiateElements(h264Decoder_cfgParamters &cfgParams)
     {
         gst_init(nullptr, nullptr);
         pipeline = gst_pipeline_new ("video-player");
         source   = gst_element_factory_make ("udpsrc",       "video-source");
-        jitterBuff = gst_element_factory_make ("rtpjitterbuffer", "jitterBuffer");
         rtpDepay = gst_element_factory_make ("rtph264depay", "rtp-depay");
         parser   = gst_element_factory_make ("h264parse",    "parser");
         decoder  = gst_element_factory_make ("avdec_h264",   "decoder");
@@ -329,25 +330,37 @@ public:
         convert  = gst_element_factory_make ("videoconvert", "convert"); //because use RGB space
         sink     = gst_element_factory_make ("appsink",      "video-output");
 
-        if (!pipeline || !source || !rtpDepay || !parser || !decoder || !convert || !sink || !sizeChanger || !jitterBuff)
+        if (!pipeline || !source || !rtpDepay || !parser || !decoder || !convert || !sink || !sizeChanger)
         {
-            g_printerr ("GSTREAMER: one element could not be created. Exiting.\n");
+            yError() << "H264Decoder-GSTREAMER: one element could not be created. Exiting.";
             return false;
         }
+        if (cfgParams.removeJitter)
+        {
+            jitterBuff = gst_element_factory_make("rtpjitterbuffer", "jitterBuffer");
+            if (!jitterBuff)
+            {
+                yError() << "H264Decoder-GSTREAMER: rtpjitterbuffer could not be created. Exiting.";
+                return false;
+            }
+        }
+
+        if(verbose) yDebug() << "H264Decoder-GSTREAMER: istantiateElements OK";
+
         return true;
     }
 
     bool configureElements(h264Decoder_cfgParamters &cfgParams) //maybe i can make callbak configurable in the future.....
     {
         // 1) configure source port
-        if(verbose) g_print("GSTREAMER: try to configure source port with %d.... \n", cfgParams.remotePort);
+        if(verbose) yDebug() << "H264Decoder-GSTREAMER: try to configure source port with value" << cfgParams.remotePort;
         g_object_set(source, "port", cfgParams.remotePort, NULL);
-        g_print("GSTREAMER: configured source port with %d.... \n", cfgParams.remotePort);
+        yDebug() << "H264Decoder-GSTREAMER: configured source port with" << cfgParams.remotePort;
 
         // 2) configure callback on new frame
-        if(verbose) g_print("GSTREAMER: try to configure appsink.... \n");
-        //I decided to use callbaxk mechanism because it should have less overhead
-        if(verbose) g_object_set( sink, "emit-signals", false, NULL );
+        if(verbose) yDebug() << "H264Decoder-GSTREAMER: try to configure appsink.... ";
+        //I decided to use callback mechanism because it should have less overhead
+        g_object_set( sink, "emit-signals", false, NULL );
 
         GstAppSinkCallbacks cbs; // Does this need to be kept alive?
 
@@ -367,9 +380,11 @@ public:
     */
 
         //videocrop
-        if(verbose) g_print("try to set new size: left=%d right=%d \n", cfgParams.crop.left, cfgParams.crop.right);
+        if(verbose) yDebug() << "H264Decoder-GSTREAMER: try to set new size: left" << cfgParams.crop.left << "right=" << cfgParams.crop.right << "top=" << cfgParams.crop.top << "bottom" << cfgParams.crop.bottom;
         g_object_set(G_OBJECT(sizeChanger), "left", cfgParams.crop.left, "right", cfgParams.crop.right, "top", cfgParams.crop.top, "bottom", cfgParams.crop.bottom, NULL);
-        g_print("GSTREAMER: set crop parameters: left=%d, right=%d, top=%d, bottom=%d\n", cfgParams.crop.left, cfgParams.crop.right, cfgParams.crop.top, cfgParams.crop.bottom);
+        if(verbose) yDebug() << "H264Decoder-GSTREAMER: set new size: left" << cfgParams.crop.left << "right=" << cfgParams.crop.right << "top=" << cfgParams.crop.top << "bottom" << cfgParams.crop.bottom;
+
+        if(verbose) yDebug() << "H264Decoder-GSTREAMER: configureElements OK";
         return true;
 
     }
@@ -377,32 +392,50 @@ public:
     bool linkElements()
     {
 
-        if(verbose) g_print("GSTREAMER: try to add elements to pipeline..... \n");
+        if(verbose) yDebug() << "H264Decoder-GSTREAMER: try to add elements to pipeline..... ";
         /* we add all elements into the pipeline */
         gst_bin_add_many (GST_BIN (pipeline),
-                        source, jitterBuff, rtpDepay, parser, decoder, sizeChanger, convert, sink, NULL);
+                            source, rtpDepay, parser, decoder, sizeChanger, convert, sink, NULL);
 
-        if(verbose) g_print("GSTREAMER: elements have been added in pipeline!\n");
+        gboolean result;
 
+        if (jitterBuff != nullptr)
+        {
+            result = gst_bin_add(GST_BIN(pipeline), jitterBuff);
+            if (!result) { yError() << "H264Decoder: Error adding jitterBuff to the bin"; return false; }
+        }
+
+        if(verbose) yDebug() << "H264Decoder-GSTREAMER: elements have been added in pipeline!";
+
+        if (verbose) yDebug() << "H264Decoder-GSTREAMER: try to link_convert2next..... ";
+        result = link_convert2next(convert, sink, verbose);
+        if (!result) { yError() << "H264Decoder: Error linking converter to sink "; return false; }
 
         /* autovideosrc ! "video/x-raw, width=640, height=480, format=(string)I420" ! videoconvert ! 'video/x-raw, format=(string)RGB'  ! yarpdevice ! glimagesink */
-        if(verbose) g_print("GSTREAMER: try to link_videosrc2convert..... \n");
-        gboolean result = link_videosrc2rtpdepay(source, jitterBuff, verbose);
-        if(!result)
+
+        if (jitterBuff)
         {
-            return false;
+            if (verbose) yDebug() << "H264Decoder-GSTREAMER: try to link videosrc to rtpjitterBuffer.....";
+            result = link_videosrc2nextWithCaps(source, jitterBuff, verbose);
+            if (!result){ yError() << "H264Decoder: Error linking videosrc to rtpjitterBuffer "; return false;}
+
+            if (verbose)yDebug() << "H264Decoder-GSTREAMER: try to link jitterBuff to rtpDapay.....";
+            result = gst_element_link(jitterBuff, rtpDepay);
+            if (!result) { yError() << "H264Decoder: Error linking jitterBuff to rtpDapay "; return false; }
+
+        }
+        else
+        {
+            if (verbose) yDebug() << "H264Decoder-GSTREAMER: try to videosrc to rtpDepay";
+            result = link_videosrc2nextWithCaps(source, rtpDepay, verbose);
+            if (!result) { yError() << "H264Decoder: Error linking videosrc to rtpDepay "; return false; }
+
         }
 
-        if(verbose) g_print("GSTREAMER: try to link_convert2next..... \n");
-        result = link_convert2next(convert, sink, verbose);
-        if(!result)
-        {
-            return false;
-        }
+        if (verbose)yDebug() << "H264Decoder-GSTREAMER: try to link all other elements.....";
+        gst_element_link_many(rtpDepay, parser, decoder, sizeChanger, convert, NULL);
 
-        if(verbose)g_print("GSTREAMER: try to link all other elements..... \n");
-        gst_element_link_many(jitterBuff, rtpDepay, parser, decoder, sizeChanger, convert, NULL);
-
+        if(verbose) yDebug() << "H264Decoder-GSTREAMER: linkElements OK";
         return true;
     }
 
@@ -427,7 +460,7 @@ H264Decoder::H264Decoder(h264Decoder_cfgParamters &config) :
 bool H264Decoder::init()
 {
     H264DecoderHelper &helper = GET_HELPER(sysResource);
-    if(!helper.istantiateElements())
+    if(!helper.istantiateElements(cfg))
     {
         yError() << "H264Decoder: Error in istantiateElements";
         return false;
@@ -445,7 +478,7 @@ bool H264Decoder::init()
         return false;
     }
 
-    yDebug() << "gstreamer init ok";
+    yDebug() << "H264Decoder-GSTREAMER:  init ok";
     return true;
 
 }
