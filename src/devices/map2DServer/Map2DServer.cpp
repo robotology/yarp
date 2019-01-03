@@ -712,6 +712,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
 
 bool Map2DServer::close()
 {
+    yTrace("Map2DServer::Close");
     if (m_enable_publish_ros_map)
     {
         m_rosPublisherPort_map.interrupt();
@@ -726,7 +727,6 @@ bool Map2DServer::close()
         m_rosSubscriberPort_map.close();
         m_rosSubscriberPort_metamap.close();
     }
-    yTrace("Map2DServer::Close");
     return true;
 }
 

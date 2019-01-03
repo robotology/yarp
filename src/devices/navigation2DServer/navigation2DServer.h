@@ -75,6 +75,8 @@ public:
 
 private:
     std::string getStatusAsString(yarp::dev::NavigationStatusEnum status);
+    bool parse_respond_string(const yarp::os::Bottle& command, yarp::os::Bottle& reply);
+    bool parse_respond_vocab(const yarp::os::Bottle& command, yarp::os::Bottle& reply);
 };
 
 #endif

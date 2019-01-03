@@ -32,8 +32,18 @@
 #include <yarp/dev/ILocalization2D.h>
 #include <math.h>
 
-
-#define DEFAULT_THREAD_PERIOD 0.02 //s
+ /**
+ * \section Localization2DServer
+ * A localization server which can be wrap multiple algorithms and devices to provide robot in a 2D World.
+ *
+ *  Parameters required by this device are:
+ * | Parameter name | SubParameter   | Type    | Units          | Default Value       | Required     | Description                                                       | Notes |
+ * |:--------------:|:--------------:|:-------:|:--------------:|:-------------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
+ * | GENERAL        |  period        | double  | s              | 0.01                | No           | The period of the working thread                                  |       |
+ * | GENERAL        |  retrieve_position_periodically     | bool  | -  | true         | No           | If true, the subdevice is asked periodically to retrieve the current location. Otherwise the current location is obtained asynchronously when a getCurrentPosition() command is issued.     | -     |
+ * | GENERAL        |  name          | string  |  -             | /localizationServer | No           | The name of the server, used as a prefix for the opened ports     | By default ports opened are /localizationServer/rpc and /localizationServer/streaming:o     |
+ * | subdevice      |  -             | string  |  -             |  -                  | Yes          | The name of the of Localization device to be used                 | -     |
+ */
 
 namespace yarp {
     namespace dev {

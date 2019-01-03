@@ -30,6 +30,28 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 
+bool yarp::dev::Navigation2DClient::set_current_goal_name(const std::string& name)
+{
+    m_current_goal_name = name;
+    return true;
+}
+
+bool yarp::dev::Navigation2DClient::get_current_goal_name(std::string& name)
+{
+    if (m_current_goal_name == "")
+    {
+        return false;
+    }
+    name = m_current_goal_name;
+    return true;
+}
+
+bool yarp::dev::Navigation2DClient::reset_current_goal_name()
+{
+    m_current_goal_name = "";
+    return true;
+}
+
 //------------------------------------------------------------------------------------------------------------------------------
 
 bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
@@ -82,6 +104,7 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
             local_rpc_1,
             local_rpc_2,
             local_rpc_3,
+            local_rpc_4,
             remote_rpc_1,
             remote_rpc_2,
             remote_rpc_3,
@@ -91,6 +114,7 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
     local_rpc_1           = m_local_name           + "/navigation/rpc";
     local_rpc_2           = m_local_name           + "/locations/rpc";
     local_rpc_3           = m_local_name           + "/localization/rpc";
+    local_rpc_4           = m_local_name           + "/user_commands/rpc";
     remote_rpc_1          = m_navigation_server_name + "/rpc";
     remote_rpc_2          = m_map_locations_server_name + "/rpc";
     remote_rpc_3          = m_localization_server_name + "/rpc";
@@ -115,15 +139,6 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    /*
-    //currently unused
-    bool ok=Network::connect(remote_streaming_name.c_str(), local_streaming_name.c_str(), "tcp");
-    if (!ok)
-    {
-        yError("Navigation2DClient::open() error could not connect to %s", remote_streaming_name.c_str());
-        return false;
-    }*/
-
     bool ok = true;
 
     ok = Network::connect(local_rpc_1, remote_rpc_1);
@@ -147,6 +162,13 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
         return false;
     }
 
+    if (!m_rpc_port_user_commands.open(local_rpc_4.c_str()))
+    {
+        yError("Navigation2DServer: failed to open port %s", local_rpc_4.c_str());
+        return false;
+    }
+    m_rpc_port_user_commands.setReader(*this);
+
     return true;
 }
 
@@ -155,6 +177,260 @@ bool yarp::dev::Navigation2DClient::close()
     m_rpc_port_navigation_server.close();
     m_rpc_port_map_locations_server.close();
     m_rpc_port_localization_server.close();
+    m_rpc_port_user_commands.close();
+    return true;
+}
+
+bool yarp::dev::Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, yarp::os::Bottle& reply)
+{
+    if (command.get(0).isString() == false)
+    {
+        yError() << "General error in Navigation2DClient::parse_respond_string";
+        return false;
+    }
+
+    if (command.get(0).asString() == "help")
+    {
+        reply.addVocab(Vocab::encode("many"));
+        reply.addString("Available commands are:");
+        reply.addString("goto <locationName>");
+        //reply.addString("gotoAbs <x> <y> <angle in degrees>");
+        //reply.addString("gotoRel <x> <y> <angle in degrees>");
+        reply.addString("store_location <location_name> <map_id> <x> <y> <y>");
+        reply.addString("store_current_location <location_name>");
+        reply.addString("delete_location <location_name>");
+        reply.addString("clear_all_locations");
+        reply.addString("get_last_target");
+        reply.addString("get_location_list");
+        reply.addString("get_navigation_status");
+        reply.addString("stop");
+        reply.addString("pause");
+        reply.addString("resume");
+        reply.addString("get_current_loc");
+        reply.addString("initLoc <map_name> <x> <y> <angle in degrees>");
+    }
+    else if (command.get(0).asString() == "store_current_location")
+    {
+        bool ret = this->storeCurrentPosition(command.get(1).asString());
+        if (ret)
+        {
+            reply.addString("store_current_location done");
+        }
+        else
+        {
+            reply.addString("store_current_location failed");
+        }
+    }
+    else if (command.get(0).asString() == "gotoAbs")
+    {
+        yarp::dev::Map2DLocation loc;
+        loc.map_id = command.get(1).asString();
+        loc.x = command.get(2).asFloat64();
+        loc.y = command.get(3).asFloat64();
+        if (command.size() == 5)
+        {
+            loc.theta = command.get(4).asFloat64();
+        }
+        else
+        {
+            loc.theta = nan("");
+        }
+
+        bool ret = this->gotoTargetByAbsoluteLocation(loc);
+        reply.addString("new absolute target received");
+    }
+
+    else if (command.get(0).asString() == "gotoRel")
+    {
+        yarp::sig::Vector v;
+        double x = command.get(1).asFloat64();
+        double y = command.get(2).asFloat64();
+        bool ret;
+        if (command.size() == 4)
+        {
+            double t = command.get(3).asFloat64();
+            ret = this->gotoTargetByRelativeLocation(x, y, t);
+        }
+        else
+        {
+            ret = this->gotoTargetByRelativeLocation(x, y);
+        }
+        reply.addString("new relative target received");
+    }
+    else if (command.get(0).asString() == "get_location_list")
+    {
+        std::vector<std::string> locations;
+        bool ret = getLocationsList(locations);
+        if (ret)
+        {
+            for (size_t i=0; i < locations.size(); i++)
+            {
+                reply.addString(locations[i]);
+            }
+        }
+        else
+        {
+            reply.addString("get_location_list failed");
+        }
+    }
+    else if (command.get(0).asString() == "get_navigation_status")
+    {
+        yarp::dev::NavigationStatusEnum ss;
+        bool ret = this->getNavigationStatus(ss);
+        std::string s = yarp::dev::NavigationStatusEnumHelpers::statusToString(ss);
+        reply.addString(s.c_str());
+    }
+    else if (command.get(0).isString() && command.get(0).asString() == "get_current_loc")
+    {
+        yarp::dev::Map2DLocation curr_loc;
+        this->getCurrentPosition(curr_loc);
+        std::string s = std::string("Current Location is: ") + curr_loc.toString();
+        reply.addString(s);
+    }
+    else if (command.get(0).isString() && command.get(0).asString() == "initLoc")
+    {
+        yarp::dev::Map2DLocation init_loc;
+        init_loc.map_id = command.get(1).asString();
+        init_loc.x = command.get(2).asFloat64();
+        init_loc.y = command.get(3).asFloat64();
+        init_loc.theta = command.get(4).asFloat64();
+        this->setInitialPose(init_loc);
+        std::string s = std::string("Localization initialized to: ") + init_loc.toString();
+        reply.addString(s);
+    }
+    else if (command.get(0).asString() == "store_location")
+    {
+        if (command.size() != 6)
+        {
+            reply.addString("store_location failed (invalid params)");
+        }
+        else
+        {
+            Map2DLocation loc;
+            loc.map_id = command.get(2).asString();
+            loc.x = command.get(3).asFloat64();
+            loc.y = command.get(4).asFloat64();
+            loc.theta = command.get(5).asFloat64();
+            bool ret = this->storeLocation(command.get(1).asString(), loc);
+            if (ret)
+            {
+                reply.addString("store_location done");
+            }
+            else
+            {
+                reply.addString("store_location failed");
+            }
+        }
+    }
+    else if (command.get(0).asString() == "delete_location")
+    {
+        bool ret = this->deleteLocation(command.get(1).asString());
+        if (ret)
+        {
+            reply.addString("delete_location done");
+        }
+        else
+        {
+            reply.addString("delete_location failed");
+        }
+    }
+    else if (command.get(0).asString() == "clear_all_locations")
+    {
+        std::vector<std::string> locations;
+        bool ret = getLocationsList(locations);
+        if (ret)
+        {
+            for (size_t i = 0; i < locations.size(); i++)
+            {
+                bool ret = this->deleteLocation(locations[i]);
+                if (ret == false)
+                {
+                    reply.addString("clear_all_locations failed");
+                }
+            }
+            reply.addString("clear_all_locations done");
+        }
+        else
+        {
+            reply.addString("clear_all_locations failed");
+        }
+    }
+    else if (command.get(0).asString() == "goto")
+    {
+        bool ret = this->gotoTargetByLocationName(command.get(1).asString());
+        if (ret)
+        {
+            reply.addString("goto done");
+        }
+        else
+        {
+            reply.addString("goto failed");
+        }
+
+    }
+    else if (command.get(0).asString() == "get_last_target")
+    {
+        std::string last_target;
+        bool b = this->getNameOfCurrentTarget(last_target);
+        if (b)
+        {
+            reply.addString(last_target);
+        }
+        else
+        {
+            yError() << "get_last_target failed: goto <location_name> target not found.";
+            reply.addString("not found");
+        }
+    }
+    else if (command.get(0).asString() == "stop")
+    {
+        this->stopNavigation();
+        reply.addString("Stopping movement.");
+    }
+    else if (command.get(0).asString() == "pause")
+    {
+        double time = -1;
+        if (command.size() > 1)
+            time = command.get(1).asDouble();
+        this->suspendNavigation(time);
+        reply.addString("Pausing.");
+    }
+    else if (command.get(0).asString() == "resume")
+    {
+        this->resumeNavigation();
+        reply.addString("Resuming.");
+    }
+    else
+    {
+        yError() << "Unknown command";
+        reply.addVocab(VOCAB_ERR);
+    }
+    return true;
+}
+
+bool yarp::dev::Navigation2DClient::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::Bottle command;
+    yarp::os::Bottle reply;
+    bool ok = command.read(connection);
+    if (!ok) return false;
+    reply.clear();
+
+    if (command.get(0).isString())
+    {
+        parse_respond_string(command, reply);
+    }
+    else
+    {
+        yError() << "Invalid command type";
+        reply.addVocab(VOCAB_ERR);
+    }
+
+    yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
+    if (returnToSender != nullptr)
+    {
+        reply.write(*returnToSender);
+    }
     return true;
 }
 
@@ -213,6 +489,8 @@ bool yarp::dev::Navigation2DClient::gotoTargetByAbsoluteLocation(Map2DLocation l
         yError() << "Navigation2DClient::gotoTargetByAbsoluteLocation() error on writing on rpc port";
         return false;
     }
+
+    reset_current_goal_name();
     return true;
 }
 
@@ -270,6 +548,8 @@ bool yarp::dev::Navigation2DClient::gotoTargetByLocationName(std::string locatio
         yError() << "Navigation2DClient::gotoTargetByLocationName() error on writing on rpc port";
         return false;
     }
+    
+    set_current_goal_name(location_name);
     return true;
 }
 
@@ -297,6 +577,8 @@ bool yarp::dev::Navigation2DClient::gotoTargetByRelativeLocation(double x, doubl
         yError() << "Navigation2DClient::gotoTargetByRelativeLocation() error on writing on rpc port";
         return false;
     }
+
+    reset_current_goal_name();
     return true;
 }
 
@@ -325,6 +607,8 @@ bool yarp::dev::Navigation2DClient::gotoTargetByRelativeLocation(double x, doubl
         yError() << "Navigation2DClient::gotoTargetByRelativeLocation() error on writing on rpc port";
         return false;
     }
+
+    reset_current_goal_name();
     return true;
 }
 
@@ -476,31 +760,15 @@ bool yarp::dev::Navigation2DClient::getAbsoluteLocationOfCurrentTarget(Map2DLoca
 
 bool yarp::dev::Navigation2DClient::getNameOfCurrentTarget(std::string& location_name)
 {
-    yarp::os::Bottle b;
-    yarp::os::Bottle resp;
-
-    b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_GET_NAME_TARGET);
-
-    bool ret = m_rpc_port_navigation_server.write(b, resp);
-    if (ret)
+    std::string s;
+    if (get_current_goal_name(s))
     {
-        if (resp.get(0).asVocab() != VOCAB_OK)
-        {
-            yError() << "Navigation2DClient::getNameOfCurrentTarget() received error from server";
-            return false;
-        }
-        else
-        {
-            location_name = resp.get(1).asString();
-            return true;
-        }
+        location_name = s;
+        return true;
     }
-    else
-    {
-        yError() << "Navigation2DClient::getNameOfCurrentTarget() error on writing on rpc port";
-        return false;
-    }
+
+    location_name = "";
+    yError() << "No name for the current target, or no target set";
     return true;
 }
 
@@ -546,12 +814,12 @@ bool yarp::dev::Navigation2DClient::storeCurrentPosition(std::string location_na
 
     b_nav.addVocab(VOCAB_INAVIGATION);
     b_nav.addVocab(VOCAB_NAV_GET_CURRENT_POS);
-    bool ret_nav = m_rpc_port_navigation_server.write(b_nav, resp_nav);
+    bool ret_nav = m_rpc_port_localization_server.write(b_nav, resp_nav);
     if (ret_nav)
     {
         if (resp_nav.get(0).asVocab() != VOCAB_OK || resp_nav.size()!=5)
         {
-            yError() << "Navigation2DClient::storeCurrentPosition() received error from locations server";
+            yError() << "Navigation2DClient::storeCurrentPosition() received error from localization server";
             return false;
         }
         else
@@ -897,7 +1165,7 @@ bool yarp::dev::Navigation2DClient::getCurrentNavigationMap(yarp::dev::Navigatio
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_GET_NAV_MAP);
+    b.addVocab(VOCAB_NAV_GET_NAV_MAP);
     b.addVocab(map_type);
 
     bool ret = m_rpc_port_navigation_server.write(b, resp);

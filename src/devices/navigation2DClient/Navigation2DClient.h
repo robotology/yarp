@@ -53,7 +53,8 @@ namespace yarp {
  */
 
 class yarp::dev::Navigation2DClient: public DeviceDriver,
-                                       public INavigation2D
+                                     public INavigation2D,
+                                     public yarp::os::PortReader
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
@@ -62,11 +63,18 @@ protected:
     yarp::os::Port                m_rpc_port_navigation_server;
     yarp::os::Port                m_rpc_port_map_locations_server;
     yarp::os::Port                m_rpc_port_localization_server;
+    yarp::os::Port                m_rpc_port_user_commands;
     std::string                   m_local_name;
     std::string                   m_navigation_server_name;
     std::string                   m_map_locations_server_name;
     std::string                   m_localization_server_name;
     int                           m_period;
+
+private:
+    std::string                   m_current_goal_name;
+    bool                          reset_current_goal_name();
+    bool                          set_current_goal_name(const std::string& name);
+    bool                          get_current_goal_name(std::string& name);
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
@@ -76,6 +84,10 @@ public:
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
+    /* RPC responder */
+    bool parse_respond_string(const yarp::os::Bottle& command, yarp::os::Bottle& reply);
+    virtual bool read(yarp::os::ConnectionReader& connection) override;
+
     /* The following methods belong to INavigation2D interface */
     bool   gotoTargetByAbsoluteLocation(yarp::dev::Map2DLocation loc) override;
     bool   gotoTargetByLocationName(std::string location_name) override;
@@ -84,7 +96,7 @@ public:
     bool   recomputeCurrentNavigationPath() override;
 
     bool   getAbsoluteLocationOfCurrentTarget(yarp::dev::Map2DLocation& loc) override;
-    bool   getNameOfCurrentTarget(std::string& location_name);
+    bool   getNameOfCurrentTarget(std::string& location_name) override;
     bool   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;
 
     bool   getCurrentPosition(yarp::dev::Map2DLocation &loc) override;
