@@ -529,7 +529,7 @@ u_result RPlidarDriverSerialImpl::grabScanData(rplidar_response_measurement_node
     // because the return value of "wait(..)"
     // is unsigned but EVENT_TIMEOUT = -1. We will keep
     // it until they will fix the bug in the sdk.
-    case static_cast<ulong> (rp::hal::Event::EVENT_TIMEOUT):
+    case static_cast<unsigned long> (rp::hal::Event::EVENT_TIMEOUT):
         count = 0;
         return RESULT_OPERATION_TIMEOUT;
     case rp::hal::Event::EVENT_OK:
