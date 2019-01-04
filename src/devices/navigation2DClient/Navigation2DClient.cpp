@@ -237,7 +237,14 @@ bool yarp::dev::Navigation2DClient::parse_respond_string(const yarp::os::Bottle&
         }
 
         bool ret = this->gotoTargetByAbsoluteLocation(loc);
-        reply.addString("new absolute target received");
+        if (ret)
+        {
+            reply.addString("gotoTargetByAbsoluteLocation() executed successfully");
+        }
+        else
+        {
+            reply.addString("gotoTargetByAbsoluteLocation() returned an error");
+        }
     }
 
     else if (command.get(0).asString() == "gotoRel")
@@ -255,7 +262,15 @@ bool yarp::dev::Navigation2DClient::parse_respond_string(const yarp::os::Bottle&
         {
             ret = this->gotoTargetByRelativeLocation(x, y);
         }
-        reply.addString("new relative target received");
+
+        if (ret)
+        {
+            reply.addString("gotoTargetByRelativeLocation() executed successfully");
+        }
+        else
+        {
+            reply.addString("gotoTargetByRelativeLocation() returned an error");
+        }
     }
     else if (command.get(0).asString() == "get_location_list")
     {
@@ -277,15 +292,29 @@ bool yarp::dev::Navigation2DClient::parse_respond_string(const yarp::os::Bottle&
     {
         yarp::dev::NavigationStatusEnum ss;
         bool ret = this->getNavigationStatus(ss);
-        std::string s = yarp::dev::NavigationStatusEnumHelpers::statusToString(ss);
-        reply.addString(s.c_str());
+        if (ret)
+        {
+            std::string s = yarp::dev::NavigationStatusEnumHelpers::statusToString(ss);
+            reply.addString(s.c_str());
+        }
+        else
+        {
+            reply.addString("getNavigationStatus() failed");
+        }
     }
     else if (command.get(0).isString() && command.get(0).asString() == "get_current_loc")
     {
         yarp::dev::Map2DLocation curr_loc;
-        this->getCurrentPosition(curr_loc);
-        std::string s = std::string("Current Location is: ") + curr_loc.toString();
-        reply.addString(s);
+        bool ret = this->getCurrentPosition(curr_loc);
+        if (ret)
+        {
+            std::string s = std::string("Current Location is: ") + curr_loc.toString();
+            reply.addString(s);
+        }
+        else
+        {
+            reply.addString("getCurrentPosition() failed");
+        }
     }
     else if (command.get(0).isString() && command.get(0).asString() == "initLoc")
     {
@@ -294,9 +323,16 @@ bool yarp::dev::Navigation2DClient::parse_respond_string(const yarp::os::Bottle&
         init_loc.x = command.get(2).asFloat64();
         init_loc.y = command.get(3).asFloat64();
         init_loc.theta = command.get(4).asFloat64();
-        this->setInitialPose(init_loc);
-        std::string s = std::string("Localization initialized to: ") + init_loc.toString();
-        reply.addString(s);
+        bool ret = this->setInitialPose(init_loc);
+        if (ret)
+        {
+            std::string s = std::string("Localization initialized to: ") + init_loc.toString();
+            reply.addString(s);
+        }
+        else
+        {
+            reply.addString("setInitialPose() failed");
+        }
     }
     else if (command.get(0).asString() == "store_location")
     {
@@ -391,7 +427,7 @@ bool yarp::dev::Navigation2DClient::parse_respond_string(const yarp::os::Bottle&
     {
         double time = -1;
         if (command.size() > 1)
-            time = command.get(1).asDouble();
+            time = command.get(1).asFloat64();
         this->suspendNavigation(time);
         reply.addString("Pausing.");
     }

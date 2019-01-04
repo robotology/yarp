@@ -144,6 +144,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/ImplementVelocityControl.cpp
                   src/ImplementVirtualAnalogSensor.cpp
                   src/IRangefinder2D.cpp
+                  src/INavigation2D.cpp
                   src/IVisualParamsImpl.cpp
                   src/LaserMeasurementData.cpp
                   src/MultipleAnalogSensorsInterfaces.cpp
