@@ -1,41 +1,41 @@
-/**
- *
+Thrift IDL in YARP: editing structures remotely                 {#thrift_editor}
+===============================================
 
-
-@page thrift_editor Thrift IDL in YARP: editing structures remotely
-
-\author Paul Fitzpatrick
+[TOC]
 
 Thrift offers a convenient way to define structures and services.
 Structures are bundles of data, and services are bundles of methods.
-Structures fit nicely into streaming communication, while
-services are intended for RPC communication.
-But sometimes we want to offer a set of services around a particular 
-structure.  One recurring desire is a way to manipulate or
-read just part of a structure.  This is convenient if that structure
-represents configuration data for a program.
+Structures fit nicely into streaming communication, while services are intended
+for RPC communication.
+But sometimes we want to offer a set of services around a particular structure.
+One recurring desire is a way to manipulate or read just part of a structure.
+This is convenient if that structure represents configuration data for a
+program.
 
-With YARP, every Thrift structure has a corresponding `Editor`
-service that can be used to manipulate or read parts of it.
+With YARP, every Thrift structure has a corresponding `Editor` service that can
+be used to manipulate or read parts of it.
 For example, suppose we have the following structure in `settings.thrift`
 
-\code
-struct Settings {
+```{.cpp}
+struct Settings
+{
        1: i32 id;
        2: string name;
        3: list<i32> ints;
 }
-\endcode
+```
 
-When compiled, that will give is a `Settings` class that can read or
-write from a port.  That class will read the structure in full.
-For example, here's a test program that will read the structure from
-a port and show its value:
+When compiled, that will give is a `Settings` class that can read or write from
+a port.
+That class will read the structure in full.
+For example, here's a test program that will read the structure from a port and
+show its value:
 
-\code
+```{.cpp}
 #include <yarp/os/all.h>
 #include "Settings.h"
-int main() {
+int main()
+{
   yarp::os::Network yarp;   // bring up the yarp network
   yarp::os::Port port;      // we'll want a port
   Settings settings;        // here are the settings we'll be controlling
@@ -50,34 +50,36 @@ int main() {
   }
   return 0;
 }
-\endcode
+```
 
 (If you want to quickly compile this program, just put it in a file called
 `<something>.cpp` in an empty directory, then add `settings.thrift`, then run
-`yarp cmake && cmake . && make && ./yarpy`, specifying `-DYARP_DIR=<path_to_yarp>`
-to cmake if needed.)
+`yarp cmake && cmake . && make && ./yarpy`, specifying
+`-DYARP_DIR=<path_to_yarp>` to cmake if needed.)
 
 Once that is running, from another terminal we can write to the settings:
 
-\verbatim
+```
 echo "1 sam (1 2 3)" | yarp write /write /settings
-\endverbatim
+```
 
 And we see the resulting change of the entire structure:
 
-\verbatim
+```
 yarp: Port /settings active at tcp://192.168.1.2:10002
 Settings 0 "" ()
 Settings 0 "" ()
 Settings 1 sam (1 2 3)
 ...
-\endverbatim
+```
 
 Now, suppose we want to offer a way to change parts of the structure
-individually.  We can make the following two-line modification:
+individually.
+We can make the following two-line modification:
 
-\code
-int main() {
+```{.cpp}
+int main()
+{
   yarp::os::Network yarp;
   yarp::os::Port port;
   Settings settings;
@@ -93,43 +95,50 @@ int main() {
   }
   return 0;
 }
-\endcode
+```
 
 Now, we can send a new kind of message to the port:
 
-\verbatim
+```
 echo 'set name "sam"' | yarp write /write /settings
-\endverbatim
+```
 
-(It is now also possible to use `yarp rpc /settings` to send commands
-and get status feedback).
+(It is now also possible to use `yarp rpc /settings` to send commands and get
+status feedback).
 Now we can see that just the part of the structure we care about will change:
 
-\verbatim
+```
 yarp: Port /settings active at tcp://192.168.1.2:10002
 Settings 0 "" ()
 Settings 0 "" ()
 Settings 0 sam ()
 ...
-\endverbatim
+```
 
-The editor also lets us capture events generated just before and just
-after a field is changed.  For example, if we want to do something
-just before or just after the `name` field is changed, we could do this:
+The editor also lets us capture events generated just before and just after a
+field is changed.
+For example, if we want to do something just before or just after the `name`
+field is changed, we could do this:
 
-\code
-class MySettings : public Settings::Editor {
+```{.cpp}
+class MySettings : public Settings::Editor
+{
 public:
-  virtual bool will_set_name() {
-    printf("About to set the name, it is currently '%s'\n", state().name.c_str());
-  }
+    virtual bool will_set_name()
+    {
+        printf("About to set the name, it is currently '%s'\n", state().name.c_str());
+        return true;
+    }
 
-  virtual bool did_set_name() {
-    printf("Just set the name, it is now '%s'\n", state().name.c_str());
-  }
+    virtual bool did_set_name()
+    {
+        printf("Just set the name, it is now '%s'\n", state().name.c_str());
+        return true;
+    }
 };
 
-int main() {
+int main()
+{
   yarp::os::Network yarp;
   yarp::os::Port port;
   Settings settings;
@@ -137,11 +146,11 @@ int main() {
   editor.edit(settings); // connect it to our settings
   // ... everything else is the same ...
 }
-\endcode 
+```
 
 Now if we send a message to change the `name` field, we'll see:
 
-\verbatim
+```
 yarp: Port /settings active at tcp://192.168.1.2:10002
 Settings 0 "" ()
 Settings 0 "" ()
@@ -149,7 +158,4 @@ About to set the name, it is currently ''
 Just set the name, it is now 'sam'
 Settings 0 sam ()
 ...
-\endverbatim
-
- *
-**/
+```

@@ -2,24 +2,24 @@
 
 @page download Download YARP
 
-\tableofcontents
+@tableofcontents
 
 Latest YARP release is:
 
- + YARP 3.1.0 (2018-07-31)
+ + @ref v3_1_0
 
-\section download_source_code Source Code
+@section download_source_code Source Code
 
 Latest release can be downloaded from here:
 
  + https://github.com/robotology/yarp/archive/v3.1.0.tar.gz
  + https://github.com/robotology/yarp/archive/v3.1.0.zip
 
-\section download_binary Binary releases
+@section download_binary Binary releases
 
-\subsection download_windows Windows
+@subsection download_windows Windows
 
-\remark Important: to develop code using precompiled binaries packages have to
+@remark Important: to develop code using precompiled binaries packages have to
         match the compiler you use, make sure you download and install the
         correct version (i.e. MSVC 12 for Visual Studio 2013, etc..).
         If in doubt about the version number of your copy of Visual Studio, find
@@ -37,21 +37,21 @@ __Installers__:
 [yarp_3.1.0_v14_x86_amd64_1.exe]: https://github.com/robotology/yarp/releases/download/v3.1.0/yarp_3.1.0_v14_x86_amd64_1.exe
 
 
-\subsection download_linux Linux (Debian/Ubuntu)
+@subsection download_linux Linux (Debian/Ubuntu)
 
-The easiest way to install YARP from binaries is through aptitude as explained in \ref install_on_linux.
+The easiest way to install YARP from binaries is through aptitude as explained in @ref install_on_linux.
 
 Individual .deb packages can also be downloaded from [GitHub](https://github.com/robotology/yarp/releases)
 
 
-\subsection download_macOS macOS
+@subsection download_macOS macOS
 
-The easiest way to install YARP from binaries is through brew as explained in \ref install_yarp_mac.
+The easiest way to install YARP from binaries is through brew as explained in @ref install_yarp_mac.
 
 Brew bottles can also be downloaded from [GitHub](https://github.com/robotology/yarp/releases)
 
 
-\section download_previous_releases Previous releases
+@section download_previous_releases Previous releases
 
 Previous versions are hosted on
 
@@ -60,19 +60,19 @@ Previous versions are hosted on
 
 __Previous releases version and dates__:
 
- + YARP 3.0.1 (2018-07-25)
- + YARP 3.0.0 (2018-06-11)
- + YARP 2.3.72.1 (2018-06-11)
- + YARP 2.3.72 (2018-02-12)
- + YARP 2.3.70.2 (2017-12-11)
- + YARP 2.3.70.1 (2017-09-21)
- + YARP 2.3.70 (2017-06-15)
- + YARP 2.3.68.1 (2017-06-15)
- + YARP 2.3.68 (2016-11-28)
- + YARP 2.3.66.2 (2016-11-28)
- + YARP 2.3.66.1 (2016-10-20)
- + YARP 2.3.66 (2016-06-01)
- + YARP 2.3.65 (2016-05-13)
+ + @ref v3_0_1
+ + @ref v3_0_0
+ + @ref v2_3_72_1
+ + @ref v2_3_72
+ + @ref v2_3_70_2
+ + @ref v2_3_70_1
+ + @ref v2_3_70
+ + @ref v2_3_68_1
+ + @ref v2_3_68
+ + @ref v2_3_66_2
+ + @ref v2_3_66_1
+ + @ref v2_3_66
+ + @ref v2_3_65
  + YARP 2.3.64 (2015-06-15)
  + YARP 2.3.63 (2014-07-14)
  + YARP 2.3.62 (2014-02-19)
