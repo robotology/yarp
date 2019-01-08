@@ -58,7 +58,7 @@ endif()
 
 # Apache Thrift
 set(THRIFT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/thrift/thrift" PARENT_SCOPE)
-set(THRIFT_VERSION 0.11.0)
+set(THRIFT_VERSION 0.11.0 PARENT_SCOPE)
 
 # libdc1394_bayer
 set(libdc1394_bayer_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/libdc1394_bayer" PARENT_SCOPE)
