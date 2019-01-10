@@ -34,54 +34,52 @@
 
 #pragma once
 
-#include "hal/types.h"
-#define CLASS_THREAD(c , x ) \
-	rp::hal::Thread::create_member<c, &c::x>(this )
+namespace rp { namespace standalone{ namespace rplidar {
 
-namespace rp{ namespace hal{
-
-class Thread
+class TCPChannelDevice :public ChannelDevice
 {
 public:
-    enum priority_val_t
-	{
-		PRIORITY_REALTIME = 0,
-		PRIORITY_HIGH     = 1,
-		PRIORITY_NORMAL   = 2,
-		PRIORITY_LOW      = 3,
-		PRIORITY_IDLE     = 4,
-	};
+    rp::net::StreamSocket * _binded_socket;
+    TCPChannelDevice():_binded_socket(rp::net::StreamSocket::CreateSocket()){}
 
-    template <class T, u_result (T::*PROC)(void)>
-    static Thread create_member(T * pthis)
+    bool bind(const char * ipStr, uint32_t port)
     {
-		return create(_thread_thunk<T,PROC>, pthis);
-	}
-
-	template <class T, u_result (T::*PROC)(void) >
-	static _word_size_t THREAD_PROC _thread_thunk(void * data)
-	{
-		return (static_cast<T *>(data)->*PROC)();
-	}
-	static Thread create(thread_proc_t proc, void * data = NULL );
-
-public:
-    ~Thread() { }
-    Thread():  _data(NULL),_func(NULL),_handle(0)  {}
-    _word_size_t getHandle(){ return _handle;}
-    u_result terminate();
-    void *getData() { return _data;}
-    u_result join(unsigned long timeout = -1);
-	u_result setPriority( priority_val_t p);
-	priority_val_t getPriority();
-
-    bool operator== ( const Thread & right) { return this->_handle == right._handle; }
-protected:
-    Thread( thread_proc_t proc, void * data ): _data(data),_func(proc), _handle(0)  {}
-    void * _data;
-    thread_proc_t _func;
-    _word_size_t _handle;
+        rp::net::SocketAddress socket(ipStr, port);
+        return IS_OK(_binded_socket->connect(socket));
+    }
+    void close()
+    {
+        _binded_socket->dispose();
+        _binded_socket = NULL;
+    }
+    bool waitfordata(size_t data_count,_u32 timeout = -1, size_t * returned_size = NULL)
+    {
+        if(returned_size)
+            *returned_size = data_count;
+        return (_binded_socket->waitforData(timeout) == RESULT_OK);
+    }
+    int senddata(const _u8 * data, size_t size)
+    {
+        return _binded_socket->send(data, size) ;
+    }
+    int recvdata(unsigned char * data, size_t size)
+    {
+        size_t lenRec = 0;
+        _binded_socket->recv(data, size, lenRec);
+        return lenRec;
+    }
 };
 
-}}
 
+class RPlidarDriverTCP : public RPlidarDriverImplCommon
+{
+public:
+
+    RPlidarDriverTCP();
+    virtual ~RPlidarDriverTCP();
+    virtual u_result connect(const char * ipStr, _u32 port, _u32 flag = 0);
+    virtual void disconnect();
+};
+
+
+}}}
