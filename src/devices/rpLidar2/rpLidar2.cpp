@@ -72,7 +72,7 @@ bool RpLidar2::open(yarp::os::Searchable& config)
         if (general_config.check("sample_buffer_life") == false)  { yError()  << "Missing sample_buffer_life param in GENERAL group"; return false; }
 
         baudrate    = general_config.find("serial_baudrate").asInt32();
-        serial      = general_config.find("serial_port").asString();
+        m_serialPort  = general_config.find("serial_port").asString();
         m_max_angle   = general_config.find("max_angle").asFloat64();
         m_min_angle   = general_config.find("min_angle").asFloat64();
         m_resolution  = general_config.find("resolution").asFloat64();
@@ -133,16 +133,16 @@ bool RpLidar2::open(yarp::os::Searchable& config)
     m_sensorsNum = (int)(fov/m_resolution);
     m_laser_data.resize(m_sensorsNum, 0.0);
 
-    m_drv = RPlidarDriver::CreateDriver(RPlidarDriver::DRIVER_TYPE_SERIALPORT);
+    m_drv = RPlidarDriver::CreateDriver(rp::standalone::rplidar::DRIVER_TYPE_SERIALPORT);
     if (!m_drv)
     {
             yError() << "Create Driver fail, exit\n";
             return false;
     }
 
-    if (IS_FAIL(m_drv->connect(serial.c_str(), (_u32)baudrate)))
+    if (IS_FAIL(m_drv->connect(m_serialPort.c_str(), (_u32)baudrate)))
     {
-        yError() << "Error, cannot bind to the specified serial port:", serial.c_str();
+        yError() << "Error, cannot bind to the specified serial port:", m_serialPort.c_str();
         RPlidarDriver::DisposeDriver(m_drv);
         return false;
     }
@@ -334,7 +334,7 @@ void RpLidar2::run()
     op_result = m_drv->grabScanData(nodes, count);
     if (op_result != RESULT_OK)
     {
-        yError() << "grabbing scan data failed";
+        yError() << m_serialPort << ": grabbing scan data failed";
         handleError(op_result);
         return;
     }
