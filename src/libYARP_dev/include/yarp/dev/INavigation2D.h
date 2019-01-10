@@ -43,7 +43,7 @@ namespace yarp {
             local_map                               = yarp::os::createVocab('l', 'o', 'c', 'a')
         };
 
-        namespace NavigationStatusEnumHelpers
+        namespace INavigation2DHelpers
         {
             //converts a string to a NavigationStatusEnum.
             //navigation_status_error is returned if the string is not recognized.

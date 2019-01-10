@@ -8,7 +8,7 @@
 
 #include <yarp/dev/INavigation2D.h>
 
-std::string yarp::dev::NavigationStatusEnumHelpers::statusToString(yarp::dev::NavigationStatusEnum status)
+std::string yarp::dev::INavigation2DHelpers::statusToString(yarp::dev::NavigationStatusEnum status)
 {
     if (status == navigation_status_idle) return std::string("navigation_status_idle");
     else if (status == navigation_status_moving) return std::string("navigation_status_moving");
@@ -23,7 +23,7 @@ std::string yarp::dev::NavigationStatusEnumHelpers::statusToString(yarp::dev::Na
     return std::string("navigation_status_error");
 }
 
-yarp::dev::NavigationStatusEnum yarp::dev::NavigationStatusEnumHelpers::stringToStatus(std::string s)
+yarp::dev::NavigationStatusEnum yarp::dev::INavigation2DHelpers::stringToStatus(std::string s)
 {
     yarp::dev::NavigationStatusEnum status;
     if (s == "navigation_status_idle")     status = navigation_status_idle;

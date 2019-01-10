@@ -294,7 +294,7 @@ bool yarp::dev::Navigation2DClient::parse_respond_string(const yarp::os::Bottle&
         bool ret = this->getNavigationStatus(ss);
         if (ret)
         {
-            std::string s = yarp::dev::NavigationStatusEnumHelpers::statusToString(ss);
+            std::string s = yarp::dev::INavigation2DHelpers::statusToString(ss);
             reply.addString(s.c_str());
         }
         else
