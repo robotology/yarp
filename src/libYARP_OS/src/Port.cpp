@@ -533,6 +533,11 @@ void Port::enableBackgroundWrite(bool backgroundFlag)
     core.configWaitAfterSend(!backgroundFlag);
 }
 
+void Port::setReaderCallback(const ReaderDataProcessor::readCallback& callback)
+{
+    dataProcessor.setCallback(callback);
+    setReader(dataProcessor);
+}
 
 bool Port::isWriting()
 {

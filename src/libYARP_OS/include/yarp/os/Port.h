@@ -131,6 +131,13 @@ public:
     void setAdminReader(PortReader& reader) override;
 
     /**
+     * Subscribe to port reader new state with given callback.
+     *
+     * @param callback can be provided for example in lambda format [](ConnectionReader& conn){}
+     */
+    void setReaderCallback(const ReaderDataProcessor::readCallback& callback);
+
+    /**
      * Set a creator for readers for port data.
      *
      * Every port that input is received from will be automatically
@@ -258,6 +265,7 @@ public:
 private:
     void* implementation;
     bool owned;
+    ReaderDataProcessor dataProcessor;
 
     void* needImplementation() const;
 

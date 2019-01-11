@@ -11,6 +11,7 @@
 #define YARP_OS_PORTREADER_H
 
 #include <yarp/os/api.h>
+#include <functional>
 
 namespace yarp {
 namespace os {
@@ -44,6 +45,21 @@ public:
 
     virtual Type getReadType() const;
 };
+
+/**
+ * Port Reader wrapper providing user defined callback instead of inheritance of PortReader
+ *
+ * @see PortReader
+ */
+class ReaderDataProcessor : public PortReader {
+public:
+    typedef std::function<void(ConnectionReader&)> readCallback;
+    virtual void setCallback(const readCallback& callback);
+    virtual bool read(ConnectionReader& data) override;
+private:
+    readCallback _callback;
+};
+
 
 } // namespace os
 } // namespace yarp

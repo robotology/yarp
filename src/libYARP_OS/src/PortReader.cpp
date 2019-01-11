@@ -16,3 +16,11 @@ yarp::os::Type yarp::os::PortReader::getReadType() const
 {
     return Type::anon();
 }
+
+void yarp::os::ReaderDataProcessor::setCallback(const yarp::os::ReaderDataProcessor::readCallback& callback) {
+    _callback = callback;
+}
+bool yarp::os::ReaderDataProcessor::read(ConnectionReader& data) {
+    _callback(data);
+    return true;
+};
