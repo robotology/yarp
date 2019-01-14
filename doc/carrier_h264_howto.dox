@@ -2,7 +2,9 @@
  * @page carrier_h264_howto h264 carrier
 
 \author Valentina Gagggero
-
+\n
+\n
+\n
 If your robot has cameras with high resolution, you need to compress and to stream their images.
 In order to achieve this, we use Gstreamer, a free framework for media applications.
 
@@ -10,7 +12,9 @@ This document contains a brief introduction to Gstreamer tool and explains how t
 
 
 \note They are still work in progress and should be considered experimental. Please report any problems.
-
+\n
+\n
+\n
 \section gstreamer_introduction  Gstreamer: brief introduction
 Gstreamer is a free framework for media applications; it provides a set of plugins that let the user to build applications by connecting them as in a pipeline. It has been ported to a wide range of operating systems, processors and compilers. Also Nvidia developed plugins for its platforms and we employ its h264 encode in order to take advantage from its hardware codec.
 
@@ -20,41 +24,39 @@ The user can develop application in two way: the first consists in write an appl
 
 
 \verbatim
-gst-launch-1.0 -v videotestsrc ! ‘video/x-raw, format=(string)I420, width=(int)640, height=(int)480’ ! x264enc ! h264parse ! avdec_h264 ! autovideosink [NOTE-1] \ref notes
-\endverbatim
-
+gst-launch-1.0 -v videotestsrc ! ‘video/x-raw, format=(string)I420, width=(int)640, height=(int)480’ ! x264enc ! h264parse ! avdec_h264 ! autovideosink \endverbatim
 
 This command creates a source video test with the properties specified in this string <em> “video/x-raw, format=(string)I420, width=(int)640, height=(int)480”</em>; after it is encoded in h264, then decoded and shown. Each element of this pipeline, except the property element, is plugins dynamically loaded. The videotestsrc element lets the user to see a stream without using camera.
  
 The previous command works on Linux, but since Gstreamer is platform independent, we can launch the same command on Windows taking care to change only hardware dependent plugin. So the same command on Window is:
 
 \verbatim
-gst-launch-1.0 -v videotestsrc ! “video/x-raw, format=(string)I420, width=(int)640, height=(int)480” ! openh264enc ! h264parse ! avdec_h264 ! autovideosink[NOTE-1]
+gst-launch-1.0 -v videotestsrc ! “video/x-raw, format=(string)I420, width=(int)640, height=(int)480” !
+                openh264enc ! h264parse ! avdec_h264 ! autovideosink
 \endverbatim
 
-It’s important to notice that the changed element is the encoder (openh264enc), while the decoder is the same. This because the decoder belongs to the plugin that wraps libav library, a cross-platform library to convert stream in a wide range of multimedia formats. [see References chapter]
-
-<em> Moreover please note that on Windows the property element uses ‘ instead of “.</em>
+It’s important to notice that the changed element is the encoder (openh264enc), while the decoder is the same. This because the decoder belongs to the plugin that wraps libav library, a cross-platform library to convert stream in a wide range of multimedia formats. [see \ref references chapter]
 
 
-
+<em> Please see \ref notes section about commands in this tutorial. </em>
+\n
+\n
+\n
 \section how_to_stream_h264 How to stream in h264
-The server grabber images from cameras, so it needs to run on where cameras are connected.
-The server is not a yarp application but it is a Gstreamer application, while the client could be a yarp or a Gstreamer application connected to the robot’s network.
+The server grabs images from cameras, so it needs to run on where cameras are connected.
+The server is a Gstreamer command pipeline, while the client could be a yarp or a Gstreamer application connected to the robot’s network.
 
 Since Gstreamer is wide spread framework for media application, wrap it into yarp it is not interesting and is worthless.
 Instead is more intriguing that a yarp application can read “standard” streams using the h264 carrier.
-For these reasons, the server streamer is a native Gstreamer application, while the client side has been developed in yarp like a carrier.
+For these reasons, the server streamer is a native Gstreamer pipeline, while the client side has been developed in yarp like a carrier.
 
-
-
-
-
+\n
 \subsection server_side Server side:
 The server application consists in the following Gstreamer command:
 
 \verbatim
-gst-launch-1.0 -v v4l2src device="/dev/video1" ! ‘video/x-raw, width=1280, height=480, format=(string)I420’ ! omxh264enc ! h264parse ! rtph264pay pt=96 config-interval=5 ! udpsink host=224.0.0.1 auto-multicast=true  port=33000
+gst-launch-1.0 -v v4l2src device="/dev/video1" ! ‘video/x-raw, width=1280, height=480, format=(string)I420’ !
+                omxh264enc ! h264parse ! rtph264pay pt=96 config-interval=5 ! udpsink host=224.0.0.1 auto-multicast=true  port=33000
 \endverbatim
 
 
@@ -66,15 +68,16 @@ gst-launch-1.0 -v v4l2src device="/dev/video1" ! ‘video/x-raw, width=1280, hei
 \li <em>udpsink</em>: this is the last element and sends out the stream. In this case we use multicast, but it is possible to send the stream using unicast in this way: udpsink host=IP_ADDRESS_OF_CLIENT port=NOT_WELL_KNOWN_PORT_NUMBER
 
 
-Currently is not available a Gstreamer application that implement the pipeline. In the near future, it could be developed in order to make easier configure the server.
+Currently is not available a Gstreamer application that implements the pipeline. In the near future, it could be developed in order to make easier configure the server.
 
-
+\n
 \subsection client_side Client side
 The client can read the stream using Gstreamer native command or yarp.
 
 In the first case the Gstreamer command is:
 \verbatim
-gst-launch-1.0 -vvv udpsrc multicast-group=224.0.0.1 auto-multicast=true port=3000 caps="application/x-rtp, media=(string)video, encoding-name=(string)H264, payload=(int)96" ! rtph264depay ! h264parse ! avdec_h264! autovideosink[NOTE-1]
+gst-launch-1.0 -v udpsrc multicast-group=224.0.0.1 auto-multicast=true port=3000 caps="application/x-rtp, media=(string)video, encoding-name=(string)H264, payload=(int)96" !
+                rtph264depay ! h264parse ! avdec_h264! autovideosink
 \endverbatim
 
 If you want use a yarp application to read the stream you need to:
@@ -88,27 +91,32 @@ If you want use a yarp application to read the stream you need to:
 
 
 
-
+\n
 \subsection some_options Some options
 
-\li <b>set the frame rate<\b>: in server side exist the parameter framerate=30/1, that configures the framerate to which grab images. Insert in in property element: 'video/x-raw, format=(string)I420, width=(int)640, height=(int)480, framerate=30/1'
-\li In some cases could be useful that server streams video at <b>constant rate<\b>. You can achieve this adding this parameter to the encoder plugin: control-rate=2 bitrate=5000000
-\li <b>remove the jitter<b>: in the client it is possible adding the rtpjitterbuffer plugin in this way:
+\li <b>set the frame rate </b>: in server side exist the parameter framerate=30/1, that configures the framerate to which grab images. Insert in in property element: 'video/x-raw, format=(string)I420, width=(int)640, height=(int)480, framerate=30/1'
+\li In some cases could be useful that server streams video at <b>constant rate</b>. You can achieve this adding this parameter to the encoder plugin: control-rate=2 bitrate=5000000
+\li <b>remove the jitter</b>: in the client it is possible adding the rtpjitterbuffer plugin in this way:
     If you want to remove the jitter in h264 yarp carrier, please add parameter “+removeJitter.1” in connect command. (Note that the syntax is the usual used to specify parameters to yarp carriers). Therefore the connect command to your application could be:
     \verbatim
-    “yarp connect <SERVER_NAME_PORT> <CLIENT_PORT> h264+removeJitter.1”
+    yarp connect <SERVER_NAME_PORT> <CLIENT_PORT> h264+removeJitter.1
     \endverbatim
-\li The yarp carrier let you to crop each frame specifying the number of pixel to crop on each side of image in carrier parameter in connection command. For example if you want to crop 200 pixel on top the command appears like:
-    \verbatim“yarp connect <SERVER_NAME_PORT> <CLIENT_PORT> h264+cropTop.200”.\endverbatim
+\li The yarp carrier lets you to \b crop each frame specifying the number of pixel to crop on each side of image in carrier parameter in connection command. For example if you want to crop 200 pixel on top the command appears like:
+    \verbatimyarp connect <SERVER_NAME_PORT> <CLIENT_PORT> h264+cropTop.200.\endverbatim
     Instead, if you want to use native Gstreamer client the plugin “videocrop” performs this operation.
     \verbatim
-    gst-launch-1.0 -vvv udpsrc port=33000 caps="application/x-rtp, media=(string)video,  encoding-name=(string)H264, payload=(int)96" ! rtph264depay ! h264parse ! avdec_h264 ! videocrop left=10, right=30, top=50, bottom=50 ! autovideosink[NOTE-1]
+    gst-launch-1.0 -v udpsrc port=33000 caps="application/x-rtp, media=(string)video,  encoding-name=(string)H264, payload=(int)96" !
+                    rtph264depay ! h264parse ! avdec_h264 ! videocrop left=10, right=30, top=50, bottom=50 ! autovideosink
     \endverbatim
 
 
+\n
+\n
+\n
 \section hot_to_install_gstreamer How to install Gstreamer
 Currently we are using 1.8.3 version
 
+\n
 \subsection ubuntu On Ubuntu
 \li Packages required to build
     - libgstreamer1.0-dev
@@ -121,6 +129,7 @@ Currently we are using 1.8.3 version
 \li Useful packages but not required
     - gstreamer1.0-tools
 
+\n
 \subsection windows On windows
 You need to download both the main package and the devel package from here:
 https://gstreamer.freedesktop.org/data/pkg/windows/
@@ -136,22 +145,24 @@ Installation of grstreamer devel package:
 \li redo installation adding:
     - Gstreamer 1.0 devtools
     - Gstreamer 1.0  Libav wrapper
-Add in path environment variable the path to executable (C:\gstreamer\1.0\x86_64\bin)
+\li Add in path environment variable the path to executable (Usually is C:\\gstreamer\\1.0\\x86_64\\bin)
 
-
+\n
 \subsection check_installation Verify your installation
-First of all, you need to verify if gstreamer has been installed successfully by using these commands:
+First of all, you need to verify if Gstreamer has been installed successfully by using these commands:
 
 
-\subsubsection server Server side (example on Windows):
+\subsubsection server Server side (example on Windows)
 
 \verbatim
-gst-launch-1.0 -v videotestsrc ! "video/x-raw, format=(string)I420, width=(int)640, height=(int)480" ! openh264enc ! h264parse ! rtph264pay pt=96 config-interval=5 ! udpsink host=<YOUR_IP_ADDRESS> port=<A_PORT_NUMBER>
+gst-launch-1.0 -v videotestsrc ! "video/x-raw, format=(string)I420, width=(int)640, height=(int)480" !
+                openh264enc ! h264parse ! rtph264pay pt=96 config-interval=5 ! udpsink host=<YOUR_IP_ADDRESS> port=<A_PORT_NUMBER>
 \endverbatim
 
-\subsubsection client Client side:
+\subsubsection client Client side
 \verbatim
-gst-launch-1.0 -vvv udpsrc port=<A_PORT_NUMBER> caps="application/x-rtp, media=(string)video, encoding-name=(string)H264, payload=(int)96" ! rtph264depay ! h264parse ! avdec_h264! autovideosink[NOTE-1]
+gst-launch-1.0 -v udpsrc port=<A_PORT_NUMBER> caps="application/x-rtp, media=(string)video, encoding-name=(string)H264, payload=(int)96" !
+                rtph264depay ! h264parse ! avdec_h264! autovideosink
 \endverbatim
 
 After you can substitute the client side with a yarp application, for example yarpview.
@@ -163,12 +174,18 @@ So, after yarp server had been launched, please run:
 
 Now on yarp view you can see the following image, where in the bottom right box there is snow pattern.
 
-\image html h264GstVideoTestSrc.png
 
+\n
+\n
+\n
 \section notes Notes
-<b>Note-1<\b>: On Ubuntu 18.04 the plugin “autovideosink” has a bug, please use “xvimagesink”
+\subsection tricks Tricks
+\li On Ubuntu 18.04 the plugin “autovideosink” has a bug, please use “xvimagesink”
+\li On Windows the property element uses ‘ instead of “
 
-
+\n
+\n
+\n
 \section references References
 [1] Gstreamer documentation
 https://gstreamer.freedesktop.org/documentation/
@@ -185,3 +202,4 @@ https://gstreamer.freedesktop.org/modules/gst-libav.html
 [5] h264 yarp plugin
      http://www.yarp.it/classyarp_1_1os_1_1H264Carrier.html
 
+**/
