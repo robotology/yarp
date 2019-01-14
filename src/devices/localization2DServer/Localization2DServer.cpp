@@ -31,7 +31,7 @@
 #include <yarp/dev/IFrameTransform.h>
 #include "Localization2DServer.h"
 
-#include <math.h>
+#include <cmath>
 
 /*! \file Localization2DServer.cpp */
 
