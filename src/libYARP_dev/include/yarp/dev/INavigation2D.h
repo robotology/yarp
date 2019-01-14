@@ -34,7 +34,7 @@ namespace yarp {
             navigation_status_failing               = yarp::os::createVocab('f', 'a', 'i', 'l'),
             navigation_status_paused                = yarp::os::createVocab('p', 'a', 'u', 's'),
             navigation_status_thinking              = yarp::os::createVocab('t', 'h', 'n', 'k'),
-            navigation_status_error                 = yarp::os::createVocab('e', 'r', 'r'),
+            navigation_status_error                 = yarp::os::createVocab('e', 'r', 'r')
         };
 
         enum NavigationMapTypeEnum
@@ -42,7 +42,17 @@ namespace yarp {
             global_map                              = yarp::os::createVocab('g', 'l', 'o', 'b'),
             local_map                               = yarp::os::createVocab('l', 'o', 'c', 'a')
         };
-      }
+
+        namespace INavigation2DHelpers
+        {
+            //converts a string to a NavigationStatusEnum.
+            //navigation_status_error is returned if the string is not recognized.
+            YARP_dev_API NavigationStatusEnum stringToStatus(std::string s);
+
+            //converts a NavigationStatusEnum to a string.
+            YARP_dev_API std::string statusToString(NavigationStatusEnum status);
+        }
+    }
 }
 
 class yarp::dev::INavigation2DTargetActions
@@ -180,6 +190,13 @@ public:
     virtual bool gotoTargetByLocationName(std::string location_name) = 0;
 
     /**
+    * Gets the name of the current target, if available (set by gotoTargetByLocationName)
+    * @param location_name the name of the current target
+    * @return true/false
+    */
+    virtual bool getNameOfCurrentTarget(std::string& location_name) = 0;
+
+    /**
     * Store the current location of the robot
     * @param location_name the name of the location
     * @return true/false
@@ -228,6 +245,6 @@ constexpr yarp::conf::vocab32_t VOCAB_NAV_SUSPEND                  = yarp::os::c
 constexpr yarp::conf::vocab32_t VOCAB_NAV_RESUME                   = yarp::os::createVocab('r', 'e', 's', 'm');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_NAVIGATION_WAYPOINTS = yarp::os::createVocab('w', 'a', 'y', 's');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_CURRENT_WAYPOINT     = yarp::os::createVocab('w', 'a', 'y');
-constexpr yarp::conf::vocab32_t VOCAB_GET_NAV_MAP                  = yarp::os::createVocab('n', 'm', 'a', 'p');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_NAV_MAP              = yarp::os::createVocab('n', 'm', 'a', 'p');
 
 #endif // YARP_DEV_INAVIGATION2D_H

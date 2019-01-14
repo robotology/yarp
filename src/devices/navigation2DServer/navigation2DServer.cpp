@@ -160,188 +160,306 @@ bool navigation2DServer::close()
     return true;
 }
 
+bool navigation2DServer::parse_respond_string(const yarp::os::Bottle& command, yarp::os::Bottle& reply)
+{
+    if (command.get(0).isString() == false)
+    {
+        yError() << "General error in navigation2DServer::parse_respond_string()";
+        return false;
+    }
+
+    if (command.get(0).asString() == "help")
+    {
+        reply.addVocab(Vocab::encode("many"));
+        reply.addString("Navigation2DServer does not support rpc commands in plain text format, only vocabs.");
+        reply.addString("Please use the rpc port of Navigation2DClient.");
+    }
+    else
+    {
+        reply.addString("Unknown command. Type 'help'.");
+    }
+    return true;
+}
+
+bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, yarp::os::Bottle& reply)
+{
+    if (command.get(0).isVocab() == false)
+    {
+        yError() << "General error in navigation2DServer::parse_respond_vocab()";
+        return false;
+    }
+
+    if (command.get(0).asVocab() != VOCAB_INAVIGATION ||
+        command.get(1).isVocab() == false)
+    {
+        yError() << "Invalid vocab received";
+        reply.addVocab(VOCAB_ERR);
+        return true;
+    }
+
+    int request = command.get(1).asVocab();
+    if (request == VOCAB_NAV_GOTOABS)
+    {
+        yarp::dev::Map2DLocation loc;
+        loc.map_id = command.get(2).asString();
+        loc.x = command.get(3).asFloat64();
+        loc.y = command.get(4).asFloat64();
+        loc.theta = command.get(5).asFloat64();
+        bool ret = iNav_target->gotoTargetByAbsoluteLocation(loc);
+        if (ret)
+        {
+            reply.addVocab(VOCAB_OK);
+        }
+        else
+        {
+            yError() << "gotoTargetByAbsoluteLocation() failed";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    else if (request == VOCAB_NAV_RECOMPUTE_PATH)
+    {
+        bool ret = iNav_ctrl->recomputeCurrentNavigationPath();
+        if (ret)
+        {
+            reply.addVocab(VOCAB_OK);
+        }
+        else
+        {
+            yError() << "recomputeCurrentNavigationPath() failed";
+            reply.addVocab(VOCAB_ERR);
+        }
+        reply.addVocab(VOCAB_OK);
+    }
+    else if (request == VOCAB_NAV_GOTOREL)
+    {
+        if (command.size() == 5)
+        {
+            double x = command.get(2).asFloat64();
+            double y = command.get(3).asFloat64();
+            double theta = command.get(4).asFloat64();
+            bool ret = iNav_target->gotoTargetByRelativeLocation(x, y, theta);
+            if (ret)
+            {
+                reply.addVocab(VOCAB_OK);
+            }
+            else
+            {
+                yError() << "gotoTargetByRelativeLocation() failed";
+                reply.addVocab(VOCAB_ERR);
+            }
+        }
+        else if (command.size() == 4)
+        {
+            double x = command.get(2).asFloat64();
+            double y = command.get(3).asFloat64();
+            bool ret = iNav_target->gotoTargetByRelativeLocation(x, y);
+            if (ret)
+            {
+                reply.addVocab(VOCAB_OK);
+            }
+            else
+            {
+                yError() << "gotoTargetByRelativeLocation() failed";
+                reply.addVocab(VOCAB_ERR);
+            }
+        }
+        else
+        {
+            yError() << "Invalid number of params";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    else if (request == VOCAB_NAV_GET_NAVIGATION_STATUS)
+    {
+        yarp::dev::NavigationStatusEnum nav_status = yarp::dev::navigation_status_error;
+        bool ret = iNav_ctrl->getNavigationStatus(nav_status);
+        if (ret)
+        {
+            reply.addVocab(VOCAB_OK);
+            reply.addInt32(nav_status);
+        }
+        else
+        {
+            yError() << "getNavigationStatus() failed";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    else if (request == VOCAB_NAV_STOP)
+    {
+        bool ret = iNav_ctrl->stopNavigation();
+        if (ret)
+        {
+            reply.addVocab(VOCAB_OK);
+        }
+        else
+        {
+            yError() << "stopNavigation() failed";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    else if (request == VOCAB_NAV_SUSPEND)
+    {
+        double time = -1;
+        if (command.size() > 1)
+        {
+            time = command.get(1).asFloat64();
+            bool ret = iNav_ctrl->suspendNavigation(time);
+            if (ret)
+            {
+                reply.addVocab(VOCAB_OK);
+            }
+            else
+            {
+                yError() << "suspendNavigation() failed";
+                reply.addVocab(VOCAB_ERR);
+            }
+        }
+        else
+        {
+            bool ret = iNav_ctrl->suspendNavigation();
+            if (ret)
+            {
+                reply.addVocab(VOCAB_OK);
+            }
+            else
+            {
+                yError() << "suspendNavigation() failed";
+                reply.addVocab(VOCAB_ERR);
+            }
+        }
+    }
+    else if (request == VOCAB_NAV_RESUME)
+    {
+        bool ret = iNav_ctrl->resumeNavigation();
+        if (ret)
+        {
+            reply.addVocab(VOCAB_OK);
+        }
+        else
+        {
+            yError() << "resumeNavigation failed()";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    else if (request == VOCAB_NAV_GET_NAVIGATION_WAYPOINTS)
+    {
+        std::vector<yarp::dev::Map2DLocation> locs;
+        bool ret = iNav_ctrl->getAllNavigationWaypoints(locs);
+        if (ret)
+        {
+            reply.addVocab(VOCAB_OK);
+            Bottle& waypoints = reply.addList();
+            for (size_t i = 0; i < locs.size(); i++)
+            {
+                Bottle& the_waypoint = waypoints.addList();
+                the_waypoint.addString(locs[i].map_id);
+                the_waypoint.addFloat64(locs[i].x);
+                the_waypoint.addFloat64(locs[i].y);
+                the_waypoint.addFloat64(locs[i].theta);
+            }
+        }
+        else
+        {
+            yError() << "getAllNavigationWaypoints() failed";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    else if (request == VOCAB_NAV_GET_CURRENT_WAYPOINT)
+    {
+        yarp::dev::Map2DLocation loc;
+        bool ret = iNav_ctrl->getCurrentNavigationWaypoint(loc);
+        if (ret)
+        {
+            reply.addVocab(VOCAB_OK);
+            reply.addString(loc.map_id);
+            reply.addFloat64(loc.x);
+            reply.addFloat64(loc.y);
+            reply.addFloat64(loc.theta);
+        }
+        else
+        {
+            yError() << "getCurrentNavigationWaypoint() failed";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    else if (request == VOCAB_NAV_GET_NAV_MAP)
+    {
+        yarp::dev::MapGrid2D map;
+        if (iNav_ctrl->getCurrentNavigationMap((yarp::dev::NavigationMapTypeEnum)(command.get(2).asInt32()), map))
+        {
+            reply.addVocab(VOCAB_OK);
+            yarp::os::Bottle& mapbot = reply.addList();
+            Property::copyPortable(map, mapbot);
+        }
+        else
+        {
+            yError() << "getCurrentNavigationMap() failed";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    else if (request == VOCAB_NAV_GET_ABS_TARGET)
+    {
+        yarp::dev::Map2DLocation loc;
+        bool ret;
+        ret = iNav_target->getAbsoluteLocationOfCurrentTarget(loc);
+        if (ret)
+        {
+            reply.addVocab(VOCAB_OK);
+            reply.addString(loc.map_id);
+            reply.addFloat64(loc.x);
+            reply.addFloat64(loc.y);
+            reply.addFloat64(loc.theta);
+        }
+        else
+        {
+            yError() << "getAbsoluteLocationOfCurrentTarget() failed";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    else if (request == VOCAB_NAV_GET_REL_TARGET)
+    {
+        yarp::dev::Map2DLocation loc;
+        bool ret;
+        ret = iNav_target->getRelativeLocationOfCurrentTarget(loc.x, loc.y, loc.theta);
+        if (ret)
+        {
+            reply.addVocab(VOCAB_OK);
+            reply.addFloat64(loc.x);
+            reply.addFloat64(loc.y);
+            reply.addFloat64(loc.theta);
+        }
+        else
+        {
+            yError() << "getRelativeLocationOfCurrentTarget() failed";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    else
+    {
+        yError() << "Invalid vocab received";
+        reply.addVocab(VOCAB_ERR);
+    }
+
+    return true;
+}
+
 bool navigation2DServer::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::Bottle command;
     yarp::os::Bottle reply;
     bool ok = command.read(connection);
     if (!ok) return false;
-
     reply.clear();
 
-    if (command.get(0).isVocab())
+    //^^^^^^^^^^^^^^^^^ STRING SECTION
+    if (command.get(0).isString())
     {
-        if(command.get(0).asVocab() == VOCAB_INAVIGATION && command.get(1).isVocab())
-        {
-            int request = command.get(1).asVocab();
-            if (request == VOCAB_NAV_GOTOABS)
-            {
-                yarp::dev::Map2DLocation loc;
-                loc.map_id = command.get(2).asString();
-                loc.x = command.get(3).asFloat64();
-                loc.y = command.get(4).asFloat64();
-                loc.theta = command.get(5).asFloat64();
-                bool ret = iNav_target->gotoTargetByAbsoluteLocation(loc);
-                reply.addVocab(VOCAB_OK);
-            }
-            else if (request == VOCAB_NAV_RECOMPUTE_PATH)
-            {
-                bool ret = iNav_ctrl->recomputeCurrentNavigationPath();
-                reply.addVocab(VOCAB_OK);
-            }
-            else if (request == VOCAB_NAV_GOTOREL)
-            {
-                if (command.size() == 5)
-                {
-                    double x = command.get(2).asFloat64();
-                    double y = command.get(3).asFloat64();
-                    double theta = command.get(4).asFloat64();
-                    bool ret = iNav_target->gotoTargetByRelativeLocation(x,y,theta);
-                    reply.addVocab(VOCAB_OK);
-                }
-                else if (command.size() == 4)
-                {
-                    double x = command.get(2).asFloat64();
-                    double y = command.get(3).asFloat64();
-                    bool ret = iNav_target->gotoTargetByRelativeLocation(x, y);
-                    reply.addVocab(VOCAB_OK);
-                }
-                else
-                {
-                    yError() << "Invalid number of params";
-                    reply.addVocab(VOCAB_ERR);
-                }
-            }
-            else if (request == VOCAB_NAV_GET_NAVIGATION_STATUS)
-            {
-                yarp::dev::NavigationStatusEnum nav_status = yarp::dev::navigation_status_error;
-                bool ret = iNav_ctrl->getNavigationStatus(nav_status);
-                reply.addVocab(VOCAB_OK);
-                reply.addInt32(nav_status);
-            }
-            else if (request == VOCAB_NAV_STOP)
-            {
-                bool ret = iNav_ctrl->stopNavigation();
-                reply.addVocab(VOCAB_OK);
-            }
-            else if (request == VOCAB_NAV_SUSPEND)
-            {
-                double time = -1;
-                if (command.size() > 1)
-                {
-                    time = command.get(1).asFloat64();
-                    bool ret = iNav_ctrl->suspendNavigation(time);
-                }
-                else
-                {
-                    bool ret = iNav_ctrl->suspendNavigation();
-                }
-                reply.addVocab(VOCAB_OK);
-            }
-            else if (request == VOCAB_NAV_RESUME)
-            {
-                bool ret = iNav_ctrl->resumeNavigation();
-                reply.addVocab(VOCAB_OK);
-            }
-            else if (request == VOCAB_NAV_GET_NAVIGATION_WAYPOINTS)
-            {
-                std::vector<yarp::dev::Map2DLocation> locs;
-                bool ret = iNav_ctrl->getAllNavigationWaypoints(locs);
-                if (ret)
-                {
-                    reply.addVocab(VOCAB_OK);
-                    Bottle& waypoints = reply.addList();
-                    for (size_t i = 0; i < locs.size(); i++)
-                    {
-                        Bottle& the_waypoint = waypoints.addList();
-                        the_waypoint.addString(locs[i].map_id);
-                        the_waypoint.addFloat64(locs[i].x);
-                        the_waypoint.addFloat64(locs[i].y);
-                        the_waypoint.addFloat64(locs[i].theta);
-                    }
-                }
-                else
-                {
-                    //no waypoints available
-                    reply.addVocab(VOCAB_OK);
-                    reply.addString("invalid");
-                }
-            }
-            else if (request == VOCAB_NAV_GET_CURRENT_WAYPOINT)
-            {
-                yarp::dev::Map2DLocation loc;
-                bool ret = iNav_ctrl->getCurrentNavigationWaypoint(loc);
-                if (ret)
-                {
-                    reply.addVocab(VOCAB_OK);
-                    reply.addString(loc.map_id);
-                    reply.addFloat64(loc.x);
-                    reply.addFloat64(loc.y);
-                    reply.addFloat64(loc.theta);
-                }
-                else
-                {
-                    //no waypoint available
-                    reply.addVocab(VOCAB_OK);
-                    reply.addString("invalid");
-                }
-            }
-            else if (request == VOCAB_GET_NAV_MAP)
-            {
-                yarp::dev::MapGrid2D map;
-                if (iNav_ctrl->getCurrentNavigationMap((yarp::dev::NavigationMapTypeEnum)(command.get(2).asInt32()), map))
-                {
-                    reply.addVocab(VOCAB_OK);
-                    yarp::os::Bottle& mapbot = reply.addList();
-                    Property::copyPortable(map, mapbot);
-                }
-                else
-                {
-                    reply.addVocab(VOCAB_ERR);
-                }
-            }
-            else if (request == VOCAB_NAV_GET_ABS_TARGET || request == VOCAB_NAV_GET_REL_TARGET)
-            {
-                yarp::dev::Map2DLocation loc;
-                bool ret;
-                if (request == VOCAB_NAV_GET_ABS_TARGET)
-                {
-                    ret = iNav_target->getAbsoluteLocationOfCurrentTarget(loc);
-                }
-                else
-                {
-                    ret = iNav_target->getRelativeLocationOfCurrentTarget(loc.x, loc.y, loc.theta);
-                }
-                reply.addVocab(VOCAB_OK);
-
-                if(request == VOCAB_NAV_GET_ABS_TARGET) reply.addString(loc.map_id);
-
-                reply.addFloat64(loc.x);
-                reply.addFloat64(loc.y);
-                reply.addFloat64(loc.theta);
-            }
-            else
-            {
-                reply.addVocab(VOCAB_ERR);
-            }
-        }
-        else
-        {
-            yError() << "Invalid vocab received";
-            reply.addVocab(VOCAB_ERR);
-        }
+        parse_respond_string(command, reply);
     }
-    else if (command.get(0).asString() == "help")
+    //^^^^^^^^^^^^^^^^^ VOCAB SECTION
+    else if (command.get(0).isVocab())
     {
-        reply.addVocab(Vocab::encode("many"));
-        reply.addString("Available commands are:");
-        reply.addString("stop");
-        reply.addString("quit");
-    }
-    else if (command.get(0).asString() == "stop")
-    {
-        iNav_ctrl->stopNavigation();
-        reply.addVocab(VOCAB_OK);
+        parse_respond_vocab(command, reply);
     }
     else
     {
