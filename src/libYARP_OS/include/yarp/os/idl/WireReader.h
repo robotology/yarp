@@ -142,7 +142,7 @@ public:
 
     bool readBinary(std::string& str);
 
-    bool readEnum(std::int32_t& x, WireVocab& converter);
+    bool readEnum(std::int32_t& x, yarp::os::idl::WireVocab& converter);
 
     bool readListHeader();
 
@@ -163,11 +163,11 @@ public:
 
     std::string readTag();
 
-    void readListBegin(WireState& nstate, std::uint32_t& len);
+    void readListBegin(yarp::os::idl::WireState& nstate, std::uint32_t& len);
 
-    void readSetBegin(WireState& nstate, std::uint32_t& len);
+    void readSetBegin(yarp::os::idl::WireState& nstate, std::uint32_t& len);
 
-    void readMapBegin(WireState& nstate, WireState& nstate2, std::uint32_t& len);
+    void readMapBegin(yarp::os::idl::WireState& nstate, yarp::os::idl::WireState& nstate2, std::uint32_t& len);
 
     void readListEnd();
 

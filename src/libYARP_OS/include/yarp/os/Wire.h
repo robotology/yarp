@@ -21,7 +21,7 @@ namespace os {
 class Wire : public PortReader
 {
 private:
-    WireLink _yarp_link;
+    yarp::os::WireLink _yarp_link;
 
 public:
     /**
@@ -31,7 +31,7 @@ public:
      * @return state object.
      *
      */
-    WireLink& yarp()
+    yarp::os::WireLink& yarp()
     {
         return _yarp_link;
     }
