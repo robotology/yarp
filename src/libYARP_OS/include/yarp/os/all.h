@@ -71,6 +71,7 @@
 #include <yarp/os/Value.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Wire.h>
+#include <yarp/os/WireLink.h>
 
 #ifndef YARP_NO_DEPRECATED // since YARP 3.0.0
 #    include <yarp/os/ConstString.h>
