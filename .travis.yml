@@ -107,7 +107,7 @@ addons:
     - tinyxml
     - libedit
     - qt5
-    - opencv
+    - opencv@2
     - eigen
     - graphviz
     - ccache
