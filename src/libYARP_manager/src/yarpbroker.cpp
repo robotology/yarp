@@ -402,20 +402,6 @@ bool YarpBroker::connect(const char* from, const char* to,
 
     if(!persist)
     {
-        if(!exists(from))
-        {
-            strError = from;
-            strError += " does not exist.";
-            return false;
-        }
-
-        if(!exists(to))
-        {
-            strError = to;
-            strError += " does not exist.";
-            return false;
-        }
-
         /*
          * TODO: this check should be removed and
          *       the necessary modification should be done inside NetworkBase::isConnected!!!

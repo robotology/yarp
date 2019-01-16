@@ -699,9 +699,9 @@ bool Manager::existPortFrom(unsigned int id)
         return false;
     }
 
-    //YarpBroker connector;
-    //connector.init();
-    return connector.exists(connections[id].from());
+    bool exists = connector.exists(connections[id].from());
+    connections[id].setFromExists(exists);
+    return exists;
 }
 
 
@@ -713,9 +713,9 @@ bool Manager::existPortTo(unsigned int id)
         return false;
     }
 
-    //YarpBroker connector;
-    //connector.init();
-    return connector.exists(connections[id].to());
+    bool exists = connector.exists(connections[id].to());
+    connections[id].setToExists(exists);
+    return exists;
 }
 
 
@@ -1021,7 +1021,9 @@ bool Manager::connect()
     //connector.init();
     CnnIterator cnn;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++) {
-        if( !connector.connect((*cnn).from(), (*cnn).to(),
+        if( !(*cnn).getFromExists() ||
+            !(*cnn).getToExists() ||
+            !connector.connect((*cnn).from(), (*cnn).to(),
                                (*cnn).carrier(), (*cnn).isPersistent()) )
             {
                 logger->addError(connector.error());
@@ -1119,9 +1121,9 @@ bool Manager::connected(unsigned int id)
         return false;
     }
 
-    //YarpBroker connector;
-    //connector.init();
-    return connector.connected(connections[id].from(),
+    return connections[id].getFromExists() &&
+           connections[id].getToExists() &&
+           connector.connected(connections[id].from(),
                                connections[id].to(),
                                connections[id].carrier());
 }
@@ -1134,7 +1136,9 @@ bool Manager::connected()
     CnnIterator cnn;
     bool bConnected = true;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
-        if( !connector.connected((*cnn).from(), (*cnn).to(), (*cnn).carrier()) )
+        if( !(*cnn).getFromExists() ||
+            !(*cnn).getToExists() ||
+            !connector.connected((*cnn).from(), (*cnn).to(), (*cnn).carrier()) )
             bConnected = false;
     return bConnected;
 }

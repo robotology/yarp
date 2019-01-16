@@ -241,6 +241,7 @@ void SafeManager::run()
     case MCONNECT:{
             for(int local_conId : local_conIds)
             {
+                refreshPortStatus(local_conId);
                 if(Manager::connect(local_conId))
                 {
                     if(eventReceiver) eventReceiver->onConConnect(local_conId);
@@ -249,13 +250,13 @@ void SafeManager::run()
                 {
                     if(eventReceiver) eventReceiver->onConDisconnect(local_conId);
                 }
-                refreshPortStatus(local_conId);
             }
             break;
         }
     case MDISCONNECT:{
             for(int local_conId : local_conIds)
             {
+                refreshPortStatus(local_conId);
                 if(Manager::disconnect(local_conId))
                 {
                     if(eventReceiver) eventReceiver->onConDisconnect(local_conId);
@@ -264,7 +265,6 @@ void SafeManager::run()
                 {
                     if(eventReceiver) eventReceiver->onConConnect(local_conId);
                 }
-                refreshPortStatus(local_conId);
             }
             break;
         }
@@ -286,6 +286,7 @@ void SafeManager::run()
 
             for(int local_conId : local_conIds)
             {
+                refreshPortStatus(local_conId);
                 if(Manager::connected(local_conId))
                 {
                     if(eventReceiver) eventReceiver->onConConnect(local_conId);
@@ -294,7 +295,6 @@ void SafeManager::run()
                 {
                     if(eventReceiver) eventReceiver->onConDisconnect(local_conId);
                 }
-                refreshPortStatus(local_conId);
             }
 
             for(int local_resId : local_resIds)
@@ -315,6 +315,7 @@ void SafeManager::run()
     case MREFRESH_CNN:{
             for(int local_conId : local_conIds)
             {
+                refreshPortStatus(local_conId);
                 if(Manager::connected(local_conId))
                 {
                     if(eventReceiver) eventReceiver->onConConnect(local_conId);
@@ -323,7 +324,6 @@ void SafeManager::run()
                 {
                     if(eventReceiver) eventReceiver->onConDisconnect(local_conId);
                 }
-                refreshPortStatus(local_conId);
             }
             break;
         }
