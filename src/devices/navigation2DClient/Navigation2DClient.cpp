@@ -538,7 +538,8 @@ bool yarp::dev::Navigation2DClient::gotoTargetByLocationName(std::string locatio
     yarp::os::Bottle resp_nav;
 
     b_loc.addVocab(VOCAB_INAVIGATION);
-    b_loc.addVocab(VOCAB_NAV_GET_LOCATION);
+    b_loc.addVocab(VOCAB_NAV_GET_X);
+    b_loc.addVocab(VOCAB_NAV_LOCATION);
     b_loc.addString(location_name);
 
     bool ret = true;
@@ -873,7 +874,8 @@ bool yarp::dev::Navigation2DClient::storeCurrentPosition(std::string location_na
     }
 
     b_loc.addVocab(VOCAB_INAVIGATION);
-    b_loc.addVocab(VOCAB_NAV_STORE_ABS);
+    b_loc.addVocab(VOCAB_NAV_STORE_X);
+    b_loc.addVocab(VOCAB_NAV_LOCATION);
     b_loc.addString(location_name);
     b_loc.addString(loc.map_id);
     b_loc.addFloat64(loc.x);
@@ -903,7 +905,8 @@ bool yarp::dev::Navigation2DClient::storeLocation(std::string location_name, Map
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_STORE_ABS);
+    b.addVocab(VOCAB_NAV_STORE_X);
+    b.addVocab(VOCAB_NAV_LOCATION);
     b.addString(location_name);
     b.addString(loc.map_id);
     b.addFloat64(loc.x);
@@ -933,7 +936,8 @@ bool yarp::dev::Navigation2DClient::getLocationsList(std::vector<std::string>& l
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_GET_LOCATION_LIST);
+    b.addVocab(VOCAB_NAV_GET_LIST_X);
+    b.addVocab(VOCAB_NAV_LOCATION);
 
     bool ret = m_rpc_port_map_locations_server.write(b, resp);
     if (ret)
@@ -976,7 +980,8 @@ bool yarp::dev::Navigation2DClient::getLocation(std::string location_name, Map2D
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_GET_LOCATION);
+    b.addVocab(VOCAB_NAV_GET_X);
+    b.addVocab(VOCAB_NAV_LOCATION);
     b.addString(location_name);
 
     bool ret = m_rpc_port_map_locations_server.write(b, resp);
@@ -1009,7 +1014,8 @@ bool yarp::dev::Navigation2DClient::deleteLocation(std::string location_name)
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_DELETE);
+    b.addVocab(VOCAB_NAV_DELETE_X);
+    b.addVocab(VOCAB_NAV_LOCATION);
     b.addString(location_name);
 
     bool ret = m_rpc_port_map_locations_server.write(b, resp);
@@ -1035,7 +1041,8 @@ bool yarp::dev::Navigation2DClient::clearAllLocations()
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_CLEAR);
+    b.addVocab(VOCAB_NAV_CLEAR_X);
+    b.addVocab(VOCAB_NAV_LOCATION);
 
     bool ret = m_rpc_port_map_locations_server.write(b, resp);
     if (ret)

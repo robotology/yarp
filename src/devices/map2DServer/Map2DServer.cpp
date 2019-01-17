@@ -186,7 +186,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
     else if (code == VOCAB_INAVIGATION)
     {
         int cmd = in.get(1).asVocab();
-        if (cmd == VOCAB_NAV_GET_LOCATION_LIST)
+        if (cmd == VOCAB_NAV_GET_LIST_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
         {
             std::string info;
 
@@ -201,16 +201,38 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             yInfo() << "The following locations are currently stored in the server: "<<l.toString();
 //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_CLEAR)
+        if (cmd == VOCAB_NAV_GET_LIST_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
+        {
+            std::string info;
+
+            out.addVocab(VOCAB_OK);
+            Bottle& l = out.addList();
+
+            std::map<std::string, Map2DArea>::iterator it;
+            for (it = m_areas_storage.begin(); it != m_areas_storage.end(); ++it)
+            {
+                l.addString(it->first);
+            }
+            yInfo() << "The following areas are currently stored in the server: "<<l.toString();
+//             ret = true;
+        }
+        else if (cmd == VOCAB_NAV_CLEAR_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
         {
             m_locations_storage.clear();
             yInfo() << "All locations deleted ";
             out.addVocab(VOCAB_OK);
 //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_DELETE)
+        else if (cmd == VOCAB_NAV_CLEAR_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
         {
-            std::string name = in.get(2).asString();
+            m_areas_storage.clear();
+            yInfo() << "All areas deleted ";
+            out.addVocab(VOCAB_OK);
+            //             ret = true;
+        }
+        else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
+        {
+            std::string name = in.get(3).asString();
 
             std::map<std::string, Map2DLocation>::iterator it;
             it = m_locations_storage.find(name);
@@ -228,9 +250,29 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
 
 //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_GET_LOCATION)
+        else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
         {
-            std::string name = in.get(2).asString();
+            std::string name = in.get(3).asString();
+
+            std::map<std::string, Map2DArea>::iterator it;
+            it = m_areas_storage.find(name);
+            if (it != m_areas_storage.end())
+            {
+                yInfo() << "Deleted area " << name;
+                m_areas_storage.erase(it);
+                out.addVocab(VOCAB_OK);
+            }
+            else
+            {
+                yError("User requested an invalid area name");
+                out.addVocab(VOCAB_ERR);
+            }
+
+//             ret = true;
+        }
+        else if (cmd == VOCAB_NAV_GET_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
+        {
+            std::string name = in.get(3).asString();
 
             std::map<std::string, Map2DLocation>::iterator it;
             it = m_locations_storage.find(name);
@@ -252,19 +294,70 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
 
 //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_STORE_ABS)
+        else if (cmd == VOCAB_NAV_GET_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
+        {
+            std::string area_name = in.get(3).asString();
+
+            std::map<std::string, Map2DArea>::iterator it;
+            it = m_areas_storage.find(area_name);
+            if (it != m_areas_storage.end())
+            {
+                Map2DArea area = it->second;
+                yarp::os::Bottle& mapbot = out.addList();
+                Map2DArea maptemp = area;
+                if (Property::copyPortable(maptemp, mapbot) == false)
+                {
+                    yError() << "Map2DClient::store_map() failed copyPortable()";
+                    out.addVocab(VOCAB_ERR);
+                }
+                else
+                {
+                    yInfo() << "Retrieved area " << area_name << "at " << area.toString();
+                    out.addVocab(VOCAB_OK);
+                }
+            }
+            else
+            {
+                out.addVocab(VOCAB_ERR);
+                yError("User requested an invalid area name");
+            }
+
+//             ret = true;
+        }
+        else if (cmd == VOCAB_NAV_STORE_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
         {
             Map2DLocation         location;
-            std::string name = in.get(2).asString();
+            std::string name = in.get(3).asString();
 
-            location.map_id = in.get(3).asString();
-            location.x      = in.get(4).asFloat64();
-            location.y      = in.get(5).asFloat64();
-            location.theta  = in.get(6).asFloat64();
+            location.map_id = in.get(4).asString();
+            location.x      = in.get(5).asFloat64();
+            location.y      = in.get(6).asFloat64();
+            location.theta  = in.get(7).asFloat64();
 
             m_locations_storage.insert(std::pair<std::string, Map2DLocation>(name, location));
             yInfo() << "Added location " << name << "at " << location.toString();
             out.addVocab(VOCAB_OK);
+//             ret = true;
+        }
+        else if (cmd == VOCAB_NAV_STORE_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
+        {
+            Map2DArea         area;
+            std::string area_name = in.get(3).asString();
+
+            Value& b = in.get(4);
+            if (Property::copyPortable(b, area))
+            {
+                m_areas_storage.insert(std::pair<std::string, Map2DArea>(area_name, area));
+                yInfo() << "Added area " << area_name << "at " << area.toString();
+                out.addVocab(VOCAB_OK);
+            }
+            else
+            {
+                yError() << "Map2DClient::get_map() failed copyPortable()";
+                out.addVocab(VOCAB_ERR);
+            }
+
+
 //             ret = true;
         }
         else
@@ -284,7 +377,7 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
 {
     if (in.get(0).asString() == "save_locations" && in.get(1).isString())
     {
-        if(save_locations(in.get(1).asString()))
+        if(save_locations_and_areas(in.get(1).asString()))
         {
             out.addString(in.get(1).asString() + " successfully saved");
         }
@@ -295,7 +388,7 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
     }
     else if (in.get(0).asString() == "load_locations" && in.get(1).isString())
     {
-        if(load_locations(in.get(1).asString()))
+        if(load_locations_and_areas(in.get(1).asString()))
         {
             out.addString(in.get(1).asString() + " successfully loaded");
         }
@@ -561,7 +654,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
         }
         else
         {
-            bool ret  = load_locations(locations_file_with_path);
+            bool ret  = load_locations_and_areas(locations_file_with_path);
             if (ret) { yInfo() << "Location file" << locations_file_with_path << "successfully loaded."; }
             else { yError() << "Problems opening file" << locations_file_with_path; }
         }
@@ -730,7 +823,7 @@ bool Map2DServer::close()
     return true;
 }
 
-bool Map2DServer::load_locations(std::string locations_file)
+bool Map2DServer::load_locations_and_areas(std::string locations_file)
 {
     std::ifstream file;
     file.open (locations_file.c_str());
@@ -743,12 +836,22 @@ bool Map2DServer::load_locations(std::string locations_file)
 
     std::string     buffer, name, mapId, xpos, ypos, theta;
     Map2DLocation   location;
+    Map2DArea       area;
 
-    while(!file.eof())
+    std::getline(file, buffer);
+    if (buffer != "Locations:")
+    {
+        yError() << "Unable to parse Locations section!";
+        file.close();
+        return false;
+    }
+
+    while(1)
     {
         std::getline(file, buffer);
+        if (buffer == "Areas:") break;
+        if (file.eof()) break;
         std::istringstream iss(buffer);
-
         iss >> name >> mapId >> xpos >> ypos >> theta;
 
         location.map_id  = mapId;
@@ -758,12 +861,42 @@ bool Map2DServer::load_locations(std::string locations_file)
         m_locations_storage[name] = location;
     }
 
+    std::getline(file, buffer);
+    if (buffer != "Areas:")
+    {
+        yError() << "Unable to parse Areas section!";
+        file.close();
+        return false;
+    }
+
+    while (1)
+    {
+        std::getline(file, buffer);
+        if (file.eof()) break;
+        std::istringstream iss(buffer);
+        std::string s_area_size;
+        iss >> name >> mapId >> s_area_size;
+        size_t area_size = atoi(s_area_size.c_str());
+        if (area_size<=0)
+        {
+            yError() << "Unable to parse contents of Areas section!";
+            file.close();
+            return false;
+        }
+        for (size_t ai = 0; ai < area_size; ai++)
+        {
+            iss >> xpos;
+            iss >> ypos;
+            area.points.push_back(yarp::math::Vec2D<double>(std::atof(xpos.c_str()), std::atof(ypos.c_str())));
+        }
+    }
+
     file.close();
-    yDebug() << "Locations file" << locations_file << "loaded.";
+    yInfo() << "Locations file" << locations_file << "loaded.";
     return true;
 }
 
-bool Map2DServer::save_locations(std::string locations_file)
+bool Map2DServer::save_locations_and_areas(std::string locations_file)
 {
     std::ofstream file;
     file.open (locations_file.c_str());
@@ -775,14 +908,30 @@ bool Map2DServer::save_locations(std::string locations_file)
     }
 
     std::string     s;
-    Map2DLocation   l;
+    Map2DLocation   loc;
+    Map2DArea       area;
     s = " ";
 
+    file << "Locations: \n";
     std::map<std::string, Map2DLocation>::iterator it;
     for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it)
     {
-        l = it->second;
-        file << it->first << s << l.map_id << s << l.x << s << l.y << s << l.theta << "\n";
+        loc = it->second;
+        file << it->first << s << loc.map_id << s << loc.x << s << loc.y << s << loc.theta << "\n";
+    }
+
+    file << "Areas: \n";
+    std::map<std::string, Map2DArea>::iterator it2;
+    for (it2 = m_areas_storage.begin(); it2 != m_areas_storage.end(); ++it2)
+    {
+        area = it2->second;
+        file << it2->first << s << area.map_id << s << area.points.size() << s;
+        for (size_t i = 0; i < area.points.size(); i++)
+        {
+            file << area.points[i].x << s;
+            file << area.points[i].y << s;
+        }
+        file << "\n";
     }
 
     file.close();
