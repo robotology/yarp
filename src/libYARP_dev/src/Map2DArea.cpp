@@ -36,22 +36,23 @@ bool Map2DArea::read(yarp::os::ConnectionReader& connection)
 {
     // auto-convert text mode interaction
     connection.convertTextMode();
+    int32_t dummy;
 
-    connection.expectInt32();
-    connection.expectInt32();
+    dummy = connection.expectInt32();
+    dummy = connection.expectInt32();
 
-    connection.expectInt32();
-    this->map_id = connection.expectText();
+  //  dummy = connection.expectInt32();
+  //  this->map_id = connection.expectText();
 
-    connection.expectInt32();
+    dummy = connection.expectInt32();
     size_t siz = connection.expectInt32();
 
     this->points.clear();
     for (size_t i = 0; i < siz; i++)
     {
-        connection.expectInt32();
+        dummy = connection.expectInt32();
         double x = connection.expectFloat64();
-        connection.expectInt32();
+        dummy = connection.expectInt32();
         double y = connection.expectFloat64();
         this->points.push_back(yarp::math::Vec2D<double>(x, y));
     }
@@ -61,20 +62,22 @@ bool Map2DArea::read(yarp::os::ConnectionReader& connection)
 
 bool Map2DArea::write(yarp::os::ConnectionWriter& connection) const
 {
-    connection.appendInt32(BOTTLE_TAG_LIST);
-    connection.appendInt32(2);
+    size_t siz = this->points.size();
 
-    connection.appendInt32(BOTTLE_TAG_STRING);
-    connection.appendRawString(map_id);
-    
     connection.appendInt32(BOTTLE_TAG_LIST);
-    int siz = this->points.size();
+  //  connection.appendInt32(2+siz*2);
+    connection.appendInt32(1 + siz * 2);
+
+  //  connection.appendInt32(BOTTLE_TAG_STRING);
+  //  connection.appendRawString(map_id);
+    
+    connection.appendInt32(BOTTLE_TAG_INT32);
     connection.appendInt32(siz);
 
     for (size_t i = 0; i < siz; i++)
     {
         connection.appendInt32(BOTTLE_TAG_FLOAT64);
-        connection.appendInt32(this->points[i].x);
+        connection.appendFloat64(this->points[i].x);
         connection.appendInt32(BOTTLE_TAG_FLOAT64);
         connection.appendFloat64(this->points[i].y);
     }

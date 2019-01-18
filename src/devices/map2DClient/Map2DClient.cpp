@@ -124,8 +124,8 @@ bool yarp::dev::Map2DClient::get_map(std::string map_name, MapGrid2D& map)
         }
         else
         {
-            Value& b = resp.get(1);
-            if (Property::copyPortable(b, map))
+            Value& bt = resp.get(1);
+            if (Property::copyPortable(bt, map))
             {
                 return true;
             }
@@ -434,8 +434,8 @@ bool   yarp::dev::Map2DClient::getArea(std::string location_name, Map2DArea& are
         }
         else
         {
-            Value& b = resp.get(1);
-            if (Property::copyPortable(b, area))
+            Value& bt = resp.get(1);
+            if (Property::copyPortable(bt, area))
             {
                 return true;
             }

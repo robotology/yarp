@@ -12,7 +12,7 @@
 #include <yarp/os/Portable.h>
 #include <yarp/math/Vec2D.h>
 #include <yarp/dev/api.h>
-#include <yarp/dev/Map2Dlocation.h>
+#include <yarp/dev/Map2DLocation.h>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -82,7 +82,8 @@ namespace yarp
             private:
             int pnpoly(std::vector<yarp::math::Vec2D<double>> points, double testx, double testy)
             {
-                int i, j, c = 0;
+                size_t i, j;
+                int c = 0;
                 for (i = 0, j = points.size() - 1; i < points.size(); j = i++)
                 {
                     if (((points[i].y>testy) != (points[j].y>testy)) &&
