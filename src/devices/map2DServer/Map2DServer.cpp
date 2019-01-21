@@ -201,7 +201,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             yInfo() << "The following locations are currently stored in the server: "<<l.toString();
 //             ret = true;
         }
-        if (cmd == VOCAB_NAV_GET_LIST_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
+        else if (cmd == VOCAB_NAV_GET_LIST_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
         {
             std::string info;
 
@@ -307,15 +307,13 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
                 Map2DArea maptemp = area;
                 if (Property::copyPortable(maptemp, mapbot) == false)
                 {
-                    yError() << "Map2DClient::store_map() failed copyPortable()";
+                    yError() << "Map2DServer::VOCAB_NAV_GET_X VOCAB_NAV_AREA failed copyPortable()";
                     out.addVocab(VOCAB_ERR);
                 }
                 else
                 {
                     yInfo() << "Retrieved area " << area_name << "at " << area.toString();
                     out.addVocab(VOCAB_OK);
-                    yDebug() << mapbot.toString();
-                    //out..append(mapbot);
 
                     yarp::os::Bottle& mapbot = out.addList();
                     Property::copyPortable(maptemp, mapbot);
@@ -367,12 +365,14 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
         }
         else
         {
-            yError("Invalid vocab received in LocationsServer");
+            yError() << "Invalid vocab received in LocationsServer:" << in.toString();
+            out.clear();
+            out.addVocab(VOCAB_ERR);
         }
     }
     else
     {
-        yError("Invalid vocab received in Map2DServer");
+        yError() << "Invalid vocab received in Map2DServer" << in.toString();
         out.clear();
         out.addVocab(VOCAB_IMAP_ERROR);
     }

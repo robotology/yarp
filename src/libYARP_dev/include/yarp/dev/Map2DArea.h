@@ -30,11 +30,16 @@ namespace yarp
             /**
             * Constructor
             * @param map_name: the name of the map the location refers to.
-            * @param inX: location coordinates w.r.t. map reference frame (expressed in meters)
-            * @param inY: location coordinates w.r.t. map reference frame (expressed in meters)
-            * @param inT: location orientation w.r.t. map reference frame (expressed in degrees)
+            * @param area_points: a set of vertexes defining the area. At least three points are required to define a valid area.
             */
             Map2DArea(const std::string& map_name, const std::vector<yarp::math::Vec2D<double>> area_points);
+
+            /**
+            * Constructor
+            * @param map_name: the name of the map the location refers to.
+            * @param area_points: a set of Map2DLocations defining the area. At least three points are required to define a valid area.
+            */
+            Map2DArea(const std::string& map_name, const std::vector<yarp::dev::Map2DLocation> area_points);
 
             /**
             * Default constructor: the map name is empty, coordinates are set to zero.
@@ -42,8 +47,8 @@ namespace yarp
             Map2DArea();
 
             /**
-            * Returns text representation of the location.
-            * @return a human readable string containing the location infos.
+            * Returns text representation of the area.
+            * @return a human readable string containing the area infos.
             */
             std::string toString() const;
 
@@ -51,67 +56,45 @@ namespace yarp
             * Compares two Map2DAreas
             * @return true if the two areas are different.
             */
-            inline bool operator!=(const Map2DArea& r) const
-            {
-                if (
-                    map_id != r.map_id
-                    )
-                {
-                    return true;
-                }
-                return false;
-            }
+            bool operator!=(const Map2DArea& r) const;
 
             /**
             * Compares two Map2DArea
             * @return true if the two areas are identical.
             */
-            inline bool operator==(const Map2DArea& r) const
-            {
-                if (
-                    map_id == r.map_id
-                   )
-                {
-                    return true;
-                }
-                return false;
-            }
+            bool operator==(const Map2DArea& r) const;
 
+            /**
+            * Checks if the Map2DArea is valid
+            * return true if the Map2DArea is valid
+            */
+            bool isValid() const;
+
+            /**
+            * Check if a Map2DLocation is inside a Map2DArea
+            * @return loc the Map2DLocation
+            * @return true if Map2DLocation is inside the Map2DArea
+            */
             bool check_location_inside_area(yarp::dev::Map2DLocation loc);
-
-            private:
-            int pnpoly(std::vector<yarp::math::Vec2D<double>> points, double testx, double testy)
-            {
-                size_t i, j;
-                int c = 0;
-                for (i = 0, j = points.size() - 1; i < points.size(); j = i++)
-                {
-                    if (((points[i].y>testy) != (points[j].y>testy)) &&
-                        (testx < (points[j].x - points[i].x) * (testy - points[i].y) / (points[j].y - points[i].y) + points[i].x))
-                    {
-                        c = !c;
-                    }
-                }
-                return c;
-            }
 
             public:
             std::string map_id;
             std::vector<yarp::math::Vec2D<double>> points;
 
+            public:
             /*
-            * Read vector from a connection.
-            * return true iff a vector was read correctly
+            * Read a map2DArea from a connection.
+            * return true iff a map2DArea was read correctly
             */
             bool read(yarp::os::ConnectionReader& connection) override;
 
             /**
-            * Write vector to a connection.
-            * return true iff a vector was written correctly
+            * Write a map2DArea to a connection.
+            * return true iff a map2DArea was written correctly
             */
             bool write(yarp::os::ConnectionWriter& connection) const override;
         };
     }
 }
 
-#endif // YARP_DEV_MAP2DLOCATION_H
+#endif // YARP_DEV_MAP2DAREA_H
