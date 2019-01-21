@@ -13,6 +13,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/dev/ILocalization2D.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <yarp/dev/Map2DArea.h>
 #include <yarp/dev/MapGrid2D.h>
 #include <vector>
 #include <limits>
@@ -183,11 +184,11 @@ public:
     virtual ~INavigation2D() {}
 
     /**
-     * Ask the robot to reach a previously stored location
-     * @param location_name the name of a location previously saved
+     * Ask the robot to reach a previously stored location/area
+     * @param location_name the name of a location/area previously saved
      * @return true/false
      */
-    virtual bool gotoTargetByLocationName(std::string location_name) = 0;
+    virtual bool gotoTargetByLocationName(std::string location_or_area_name) = 0;
 
     /**
     * Gets the name of the current target, if available (set by gotoTargetByLocationName)

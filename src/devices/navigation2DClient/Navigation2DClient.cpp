@@ -536,20 +536,34 @@ bool yarp::dev::Navigation2DClient::gotoTargetByLocationName(std::string locatio
     yarp::os::Bottle resp_loc;
     yarp::os::Bottle b_nav;
     yarp::os::Bottle resp_nav;
+    bool location_found;
+    Map2DLocation loc;
+    Map2DArea area;
 
+    //first of all, ask to the location server if location_name exists as a location_name...
+    b_loc.clear();
     b_loc.addVocab(VOCAB_INAVIGATION);
     b_loc.addVocab(VOCAB_NAV_GET_X);
     b_loc.addVocab(VOCAB_NAV_LOCATION);
     b_loc.addString(location_name);
+    location_found = true;
+
 
     bool ret = true;
-    ret =  m_rpc_port_map_locations_server.write(b_loc, resp_loc);
+    ret = m_rpc_port_map_locations_server.write(b_loc, resp_loc);
     if (ret)
     {
-        if (resp_loc.get(0).asVocab() != VOCAB_OK || resp_loc.size() != 5)
+        if (resp_loc.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::gotoTargetByLocationName() received error from locations server";
-            return false;
+            location_found = false;
+        }
+        else
+        {
+            if (resp_loc.size() != 5)
+            {
+                yError() << "Navigation2DClient::gotoTargetByLocationName() received error from locations server";
+                return false;
+            }
         }
     }
     else
@@ -558,12 +572,61 @@ bool yarp::dev::Navigation2DClient::gotoTargetByLocationName(std::string locatio
         return false;
     }
 
-    Map2DLocation loc;
-    loc.map_id = resp_loc.get(1).asString();
-    loc.x = resp_loc.get(2).asFloat64();
-    loc.y = resp_loc.get(3).asFloat64();
-    loc.theta = resp_loc.get(4).asFloat64();
+    //...if found, ok...
+    if (location_found)
+    {
+        loc.map_id = resp_loc.get(1).asString();
+        loc.x = resp_loc.get(2).asFloat64();
+        loc.y = resp_loc.get(3).asFloat64();
+        loc.theta = resp_loc.get(4).asFloat64();
+    }
+    //...otherwise check if location_name is an area name instead...
+    else
+    {
+        b_loc.clear();
+        b_loc.addVocab(VOCAB_INAVIGATION);
+        b_loc.addVocab(VOCAB_NAV_GET_X);
+        b_loc.addVocab(VOCAB_NAV_AREA);
+        b_loc.addString(location_name);
+        location_found = true;
 
+        ret = m_rpc_port_map_locations_server.write(b_loc, resp_loc);
+        if (ret)
+        {
+            if (resp_loc.get(0).asVocab() != VOCAB_OK)
+            {
+                location_found = false;
+            }
+            else
+            {
+                Value& b = resp_loc.get(1);
+                if (Property::copyPortable(b, area)==false)
+                {
+                    yError() << "Navigation2DClient::gotoTargetByLocationName() received error from locations server";
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            yError() << "Navigation2DClient::gotoTargetByLocationName() error on writing on rpc port";
+            return false;
+        }
+    }
+
+    //...if it is neither a location, nor an area then quit...
+    if (location_found==false)
+    {
+        yError() << "Location not found";
+        return false;
+    }
+    else
+    //Here the found location is an area. Compute a location inside this area...
+    {
+        area.getRandomLocation(loc);
+    }
+
+    //...and go to the found/computed location!
     b_nav.addVocab(VOCAB_INAVIGATION);
     b_nav.addVocab(VOCAB_NAV_GOTOABS);
     b_nav.addString(loc.map_id);

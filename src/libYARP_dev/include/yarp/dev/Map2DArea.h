@@ -75,7 +75,22 @@ namespace yarp
             * @return loc the Map2DLocation
             * @return true if Map2DLocation is inside the Map2DArea
             */
-            bool check_location_inside_area(yarp::dev::Map2DLocation loc);
+            bool checkLocationInsideArea(yarp::dev::Map2DLocation loc);
+
+            /**
+            * retrieves two Map2DLocations representing the bounding box of the Map2DArea
+            * @lt the left-top vertex
+            * @rb the right-bottom vertex
+            * @return true if the two Locations were successfully generated (the Map2DArea must be valid)
+            */
+            bool findAreaBounds(yarp::dev::Map2DLocation& lt, yarp::dev::Map2DLocation& rb);
+
+            /**
+            * get a random Map2DLocation inside the Map2DArea
+            * @loc the computed Map2DLocation
+            * @return true if the Location was successfully generated (the Map2DArea must be valid)
+            */
+            bool getRandomLocation(yarp::dev::Map2DLocation& loc);
 
             public:
             std::string map_id;

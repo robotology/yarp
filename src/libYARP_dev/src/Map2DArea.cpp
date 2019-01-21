@@ -16,6 +16,8 @@
 #include <vector>
 #include <cassert>
 #include <yarp/os/LogStream.h>
+#include <random>
+#include <algorithm>
 
 using namespace yarp::dev;
 using namespace yarp::sig;
@@ -129,7 +131,7 @@ std::string Map2DArea::toString() const
     return stringStream.str();
 }
 
-bool Map2DArea::check_location_inside_area(yarp::dev::Map2DLocation loc)
+bool Map2DArea::checkLocationInsideArea(yarp::dev::Map2DLocation loc)
 {
     if (loc.map_id != this->map_id) return false;
     if (points.size() < 3) return false;
@@ -165,5 +167,56 @@ bool Map2DArea::isValid() const
 {
     if (points.size() < 3) return false;
     if (map_id == "") return false;
+    return true;
+}
+
+bool  Map2DArea::findAreaBounds(yarp::dev::Map2DLocation& lt, yarp::dev::Map2DLocation& rb)
+{
+    lt.map_id = rb.map_id = this->map_id;
+    lt.x = lt.y = std::numeric_limits<double>::max();
+    rb.x = rb.y = std::numeric_limits<double>::min();
+    if (isValid() == false) return false;
+    for (auto it = points.begin(); it != points.end(); it++)
+    {
+        if (it->x > rb.x) { rb.x = it->x; }
+        if (it->y > rb.y) { rb.y = it->y; }
+        if (it->x < lt.x) { lt.x = it->x; }
+        if (it->y < lt.y) { lt.y = it->y; }
+    }
+    return true;
+}
+
+bool  Map2DArea::getRandomLocation(yarp::dev::Map2DLocation& loc)
+{
+    yarp::dev::Map2DLocation lt;
+    yarp::dev::Map2DLocation rb;
+    if (findAreaBounds(lt, rb) == false)
+        return false;
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dis_x(lt.x, rb.x);
+    std::uniform_real_distribution<double> dis_y(lt.y, rb.y);
+
+    size_t count_trials = 0;
+    do
+    {
+        double rnd_x = dis_x(gen);
+        double rnd_y = dis_y(gen);
+
+        loc.map_id = this->map_id;
+        loc.x = rnd_x;
+        loc.y = rnd_y;
+        loc.theta = 0;
+        count_trials++;
+        if (this->checkLocationInsideArea(loc)) break;
+    } while (count_trials < 10);
+
+    if (count_trials == 10)
+    {
+        yError() << "Problem found in Map2DArea::getRandomLocation()";
+        return false;
+    }
+
     return true;
 }
