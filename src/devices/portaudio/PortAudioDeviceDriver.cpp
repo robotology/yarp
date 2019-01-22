@@ -22,7 +22,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <portaudio.h>
-
+#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/api.h>
 
 #include <yarp/os/Time.h>
 
@@ -493,4 +495,38 @@ bool PortAudioDeviceDriver::appendSound(yarp::sig::Sound& sound)
     return true;
 }
 
+bool PortAudioDeviceDriver::getPlaybackAudioBufferCurrentSize(int& size)
+{
+    size = this->dataBuffers.playData->size();
+    return true;
+}
 
+bool PortAudioDeviceDriver::getPlaybackAudioBufferMaxSize(int& size)
+{
+    size = this->dataBuffers.playData->getMaxSize();
+    return true;
+}
+
+bool PortAudioDeviceDriver::resetPlaybackAudioBuffer()
+{
+    this->dataBuffers.playData->clear();
+    return true;
+}
+
+bool PortAudioDeviceDriver::getRecordingAudioBufferCurrentSize(int& size)
+{
+    size = this->dataBuffers.recData->size();
+    return true;
+}
+
+bool PortAudioDeviceDriver::getRecordingAudioBufferMaxSize(int& size)
+{
+    size = this->dataBuffers.recData->getMaxSize();
+    return true;
+}
+
+bool PortAudioDeviceDriver::resetRecordingAudioBuffer()
+{
+    this->dataBuffers.recData->clear();
+    return true;
+}

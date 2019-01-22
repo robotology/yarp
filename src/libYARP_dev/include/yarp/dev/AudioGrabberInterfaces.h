@@ -55,6 +55,12 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool stopRecording() = 0;
+
+    virtual bool getRecordingAudioBufferMaxSize(int& size) = 0;
+
+    virtual bool getRecordingAudioBufferCurrentSize(int& size) = 0;
+
+    virtual bool resetRecordingAudioBuffer() = 0;
 };
 
 
@@ -73,6 +79,12 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool renderSound(yarp::sig::Sound& sound) = 0;
+
+    virtual bool getPlaybackAudioBufferMaxSize(int& size) = 0;
+
+    virtual bool getPlaybackAudioBufferCurrentSize(int& size) = 0;
+
+    virtual bool resetPlaybackAudioBuffer() = 0;
 };
 
 

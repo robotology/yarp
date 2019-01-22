@@ -165,8 +165,6 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelRgb> >(p,*this,canDrop,addStamp,fgTimed));
     } else if (fgImageRaw!=nullptr) {
         thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelMono> >(p,*this,canDrop,addStamp,fgTimed));
-    } else if (fgSound!=nullptr) {
-        thread.attach(new DataWriter<yarp::sig::Sound>(p,*this,canDrop));
     } else {
         yError("subdevice <%s> doesn't look like a framegrabber\n",
                name->toString().c_str());
@@ -446,10 +444,6 @@ bool ServerFrameGrabber::getDatum(yarp::sig::ImageOf<yarp::sig::PixelMono>& imag
     return getImage(image);
 }
 
-bool ServerFrameGrabber::getDatum(yarp::sig::Sound& sound) {
-    return getSound(sound);
-}
-
 bool ServerFrameGrabber::getDatum(ImageRgbSound& imageSound) {
     return getDatum(imageSound.head,imageSound.body);
 }
@@ -467,21 +461,6 @@ bool ServerFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image
 bool ServerFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
     if (fgImageRaw==nullptr) { return false; }
     return fgImageRaw->getImage(image);
-}
-
-bool ServerFrameGrabber::getSound(yarp::sig::Sound& sound) {
-    if (fgSound==nullptr) { return false; }
-    return fgSound->getSound(sound);
-}
-
-bool ServerFrameGrabber::startRecording() {
-    if (fgSound==nullptr) { return false; }
-    return fgSound->startRecording();
-}
-
-bool ServerFrameGrabber::stopRecording() {
-    if (fgSound==nullptr) { return false; }
-    return fgSound->stopRecording();
 }
 
 bool ServerFrameGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,

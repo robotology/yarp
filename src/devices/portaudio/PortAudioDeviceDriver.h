@@ -118,6 +118,14 @@ public:
     bool immediateSound(yarp::sig::Sound& sound);
     bool appendSound(yarp::sig::Sound& sound);
 
+    bool getPlaybackAudioBufferMaxSize(int& size) override;
+    bool getPlaybackAudioBufferCurrentSize(int& size) override;
+    bool resetPlaybackAudioBuffer() override;
+
+    bool getRecordingAudioBufferMaxSize(int& size) override;
+    bool getRecordingAudioBufferCurrentSize(int& size) override;
+    bool resetRecordingAudioBuffer() override;
+
 protected:
     void *system_resource;
     int  numChannels;
