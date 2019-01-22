@@ -191,6 +191,13 @@ public:
     virtual bool gotoTargetByLocationName(std::string location_or_area_name) = 0;
 
     /**
+    * Check if the robot is located inside the specified area
+    * @param area_name the name of an area previously saved
+    * @return true/false
+    */
+    virtual bool checkInsideArea (std::string area_name) = 0;
+
+    /**
     * Gets the name of the current target, if available (set by gotoTargetByLocationName)
     * @param location_name the name of the current target
     * @return true/false
@@ -213,12 +220,21 @@ public:
     virtual bool storeLocation(std::string location_name, Map2DLocation loc) = 0;
 
     /**
-    * Retrieves a location specified by the user in the world reference frame
+    * Retrieves a location previously stored by the user
     * @param location_name the name of the location
-    * @param loc the location of the robot
+    * @param loc the location on the map
     * @return true/false
     */
     virtual bool getLocation(std::string location_name, Map2DLocation& loc) = 0;
+
+
+    /**
+    * Retrieves an area previously stored by the user
+    * @param area_name the name of the area
+    * @param area the area on the map
+    * @return true/false
+    */
+    virtual bool getArea(std::string area_name, Map2DArea& area) = 0;
 
     /**
     * Get a list of all stored locations

@@ -530,126 +530,60 @@ bool yarp::dev::Navigation2DClient::gotoTargetByAbsoluteLocation(Map2DLocation l
     return true;
 }
 
+bool yarp::dev::Navigation2DClient::checkInsideArea(std::string area_name)
+{
+    Map2DLocation loc;
+    Map2DArea area;
+    if (this->getArea(area_name, area) == false)
+    {
+        yError() << "Area" << area_name << "not found";
+        return false;
+    }
+
+    if (getCurrentPosition(loc) == false)
+    {
+        yError() << "Navigation2DClient::checkInsideArea() unable to get robot position";
+        return false;
+    }
+
+    if (area.checkLocationInsideArea(loc) == false)
+    {
+        //yDebug() << "Not inside Area";
+        return false;
+    }
+
+    return true;
+}
+
 bool yarp::dev::Navigation2DClient::gotoTargetByLocationName(std::string location_name)
 {
-    yarp::os::Bottle b_loc;
-    yarp::os::Bottle resp_loc;
-    yarp::os::Bottle b_nav;
-    yarp::os::Bottle resp_nav;
-    bool location_found;
     Map2DLocation loc;
     Map2DArea area;
 
     //first of all, ask to the location server if location_name exists as a location_name...
-    b_loc.clear();
-    b_loc.addVocab(VOCAB_INAVIGATION);
-    b_loc.addVocab(VOCAB_NAV_GET_X);
-    b_loc.addVocab(VOCAB_NAV_LOCATION);
-    b_loc.addString(location_name);
-    location_found = true;
+    bool found = this->getLocation(location_name, loc);
 
-
-    bool ret = true;
-    ret = m_rpc_port_map_locations_server.write(b_loc, resp_loc);
-    if (ret)
+    //...if found, ok...otherwise check if location_name is an area name instead...
+    if (found == false)
     {
-        if (resp_loc.get(0).asVocab() != VOCAB_OK)
+        found = this->getArea(location_name, area);
+        if (found)
         {
-            location_found = false;
-        }
-        else
-        {
-            if (resp_loc.size() != 5)
-            {
-                yError() << "Navigation2DClient::gotoTargetByLocationName() received error from locations server";
-                return false;
-            }
-        }
-    }
-    else
-    {
-        yError() << "Navigation2DClient::gotoTargetByLocationName() error on writing on rpc port";
-        return false;
-    }
-
-    //...if found, ok...
-    if (location_found)
-    {
-        loc.map_id = resp_loc.get(1).asString();
-        loc.x = resp_loc.get(2).asFloat64();
-        loc.y = resp_loc.get(3).asFloat64();
-        loc.theta = resp_loc.get(4).asFloat64();
-    }
-    //...otherwise check if location_name is an area name instead...
-    else
-    {
-        b_loc.clear();
-        b_loc.addVocab(VOCAB_INAVIGATION);
-        b_loc.addVocab(VOCAB_NAV_GET_X);
-        b_loc.addVocab(VOCAB_NAV_AREA);
-        b_loc.addString(location_name);
-        location_found = true;
-
-        ret = m_rpc_port_map_locations_server.write(b_loc, resp_loc);
-        if (ret)
-        {
-            if (resp_loc.get(0).asVocab() != VOCAB_OK)
-            {
-                location_found = false;
-            }
-            else
-            {
-                Value& b = resp_loc.get(1);
-                if (Property::copyPortable(b, area)==false)
-                {
-                    yError() << "Navigation2DClient::gotoTargetByLocationName() received error from locations server";
-                    return false;
-                }
-            }
-        }
-        else
-        {
-            yError() << "Navigation2DClient::gotoTargetByLocationName() error on writing on rpc port";
-            return false;
+            area.getRandomLocation(loc);
         }
     }
 
     //...if it is neither a location, nor an area then quit...
-    if (location_found==false)
+    if (found == false)
     {
         yError() << "Location not found";
         return false;
     }
-    else
-    //Here the found location is an area. Compute a location inside this area...
-    {
-        area.getRandomLocation(loc);
-    }
 
-    //...and go to the found/computed location!
-    b_nav.addVocab(VOCAB_INAVIGATION);
-    b_nav.addVocab(VOCAB_NAV_GOTOABS);
-    b_nav.addString(loc.map_id);
-    b_nav.addFloat64(loc.x);
-    b_nav.addFloat64(loc.y);
-    b_nav.addFloat64(loc.theta);
-
-    ret = m_rpc_port_navigation_server.write(b_nav, resp_nav);
-    if (ret)
-    {
-        if (resp_nav.get(0).asVocab() != VOCAB_OK)
-        {
-            yError() << "Navigation2DClient::gotoTargetByLocationName() received error from navigation server";
-            return false;
-        }
-    }
-    else
-    {
-        yError() << "Navigation2DClient::gotoTargetByLocationName() error on writing on rpc port";
-        return false;
-    }
-    
+    //...otherwise we can go to the found/computed location!
+    this->gotoTargetByAbsoluteLocation(loc);
     set_current_goal_name(location_name);
+
     return true;
 }
 
@@ -1067,6 +1001,45 @@ bool yarp::dev::Navigation2DClient::getLocation(std::string location_name, Map2D
     {
         yError() << "Navigation2DClient::getLocation() error on writing on rpc port";
         return false;
+    }
+    return true;
+}
+
+bool yarp::dev::Navigation2DClient::getArea(std::string area_name, Map2DArea& area)
+{
+    yarp::os::Bottle b_loc;
+    yarp::os::Bottle resp_loc;
+
+    {
+        b_loc.clear();
+        b_loc.addVocab(VOCAB_INAVIGATION);
+        b_loc.addVocab(VOCAB_NAV_GET_X);
+        b_loc.addVocab(VOCAB_NAV_AREA);
+        b_loc.addString(area_name);
+
+        bool ret = m_rpc_port_map_locations_server.write(b_loc, resp_loc);
+        if (ret)
+        {
+            if (resp_loc.get(0).asVocab() != VOCAB_OK)
+            {
+                yError() << "Navigation2DClient::getArea() received error from locations server";
+                return false;
+            }
+            else
+            {
+                Value& b = resp_loc.get(1);
+                if (Property::copyPortable(b, area) == false)
+                {
+                    yError() << "Navigation2DClient::getArea() received error from locations server";
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            yError() << "Navigation2DClient::getArea() error on writing on rpc port";
+            return false;
+        }
     }
     return true;
 }

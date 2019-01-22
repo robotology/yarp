@@ -259,7 +259,7 @@ bool yarp::dev::Map2DClient::storeLocation(std::string location_name, Map2DLocat
     return true;
 }
 
-bool yarp::dev::Map2DClient::storeArea(std::string location_name, Map2DArea area)
+bool yarp::dev::Map2DClient::storeArea(std::string area_name, Map2DArea area)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -267,6 +267,7 @@ bool yarp::dev::Map2DClient::storeArea(std::string location_name, Map2DArea area
     b.addVocab(VOCAB_INAVIGATION);
     b.addVocab(VOCAB_NAV_STORE_X);
     b.addVocab(VOCAB_NAV_AREA);
+    b.addString(area_name);
     yarp::os::Bottle& areabot = b.addList();
     Map2DArea areatemp = area;
     if (Property::copyPortable(areatemp, areabot) == false)
@@ -280,13 +281,13 @@ bool yarp::dev::Map2DClient::storeArea(std::string location_name, Map2DArea area
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::storeArea() received error from locations server";
+            yError() << "Map2DClient::storeArea() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::storeArea() error on writing on rpc port";
+        yError() << "Map2DClient::storeArea() error on writing on rpc port";
         return false;
     }
     return true;

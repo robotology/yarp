@@ -356,7 +356,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             }
             else
             {
-                yError() << "Map2DClient::get_map() failed copyPortable()";
+                yError() << "Map2DServer::VOCAB_NAV_STORE_X VOCAB_NAV_AREA failed copyPortable()";
                 out.addVocab(VOCAB_ERR);
             }
 
