@@ -210,9 +210,9 @@ bool  Map2DArea::getRandomLocation(yarp::dev::Map2DLocation& loc)
         loc.theta = 0;
         count_trials++;
         if (this->checkLocationInsideArea(loc)) break;
-    } while (count_trials < 10);
+    } while (count_trials < 20);
 
-    if (count_trials == 10)
+    if (count_trials >= 20)
     {
         yError() << "Problem found in Map2DArea::getRandomLocation()";
         return false;
