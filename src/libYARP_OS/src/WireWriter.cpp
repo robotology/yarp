@@ -11,6 +11,13 @@
 using namespace yarp::os;
 using namespace yarp::os::idl;
 
+namespace {
+    static constexpr yarp::conf::vocab32_t VOCAB_OK = yarp::os::createVocab('o', 'k');
+    static constexpr yarp::conf::vocab32_t VOCAB_FAIL = yarp::os::createVocab('f', 'a', 'i', 'l');
+    static constexpr yarp::conf::vocab32_t VOCAB_IS = yarp::os::createVocab('i', 's');
+    static constexpr yarp::conf::vocab32_t VOCAB_DONE = yarp::os::createVocab('d', 'o', 'n', 'e');
+} // namespace
+
 
 WireWriter::WireWriter(ConnectionWriter& writer) : writer(writer) {
     get_mode = get_is_vocab = false;
@@ -57,7 +64,7 @@ bool WireWriter::writeNested(const yarp::os::PortWriter& obj) const {
 
 bool WireWriter::writeBool(bool x) const {
     writer.appendInt32(BOTTLE_TAG_VOCAB);
-    writer.appendInt32(x?yarp::os::createVocab('o', 'k'):yarp::os::createVocab('f', 'a', 'i', 'l'));
+    writer.appendInt32(x ? VOCAB_OK : VOCAB_FAIL);
     return !writer.isError();
 }
 
@@ -156,7 +163,7 @@ bool WireWriter::writeListHeader(int len) const {
     if (get_mode) {
         writer.appendInt32(len+3);
         writer.appendInt32(BOTTLE_TAG_VOCAB);
-        writer.appendInt32(yarp::os::createVocab('i', 's'));
+        writer.appendInt32(VOCAB_IS);
         if (get_is_vocab) {
             writer.appendInt32(BOTTLE_TAG_VOCAB);
             writer.appendInt32(Vocab::encode(get_string));
@@ -206,6 +213,6 @@ bool WireWriter::writeMapEnd() const {
 bool WireWriter::writeOnewayResponse() const {
     if (!writeListHeader(1)) return false;
     writer.appendInt32(BOTTLE_TAG_VOCAB);
-    writer.appendInt32(yarp::os::createVocab('d', 'o', 'n', 'e'));
+    writer.appendInt32(VOCAB_DONE);
     return true;
 }

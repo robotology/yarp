@@ -11,6 +11,11 @@
 using namespace yarp::os::idl;
 using namespace yarp::os;
 
+namespace {
+    static constexpr yarp::conf::vocab32_t VOCAB_FAIL = yarp::os::createVocab('f', 'a', 'i', 'l');
+    static constexpr yarp::conf::vocab32_t VOCAB_IS = yarp::os::createVocab('i', 's');
+} // namespace
+
 WireReader::WireReader(ConnectionReader& reader) : reader(reader)
 {
     reader.convertTextMode();
@@ -107,7 +112,7 @@ bool WireReader::readBool(bool& x)
         return false;
     }
     std::int32_t v = reader.expectInt32();
-    x = (v!=0) && (v!=yarp::os::createVocab('f', 'a', 'i', 'l'));
+    x = (v != 0) && (v != VOCAB_FAIL);
     state->len--;
     return !reader.isError();
 }
@@ -508,7 +513,7 @@ bool WireReader::readListReturn()
     if (!readVocab(v)) {
         return false;
     }
-    if (v!=yarp::os::createVocab('i', 's')) {
+    if (v != VOCAB_IS) {
         return false;
     }
     std::string dummy;
