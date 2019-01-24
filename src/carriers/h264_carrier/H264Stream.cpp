@@ -222,11 +222,11 @@ yarp::conf::ssize_t H264Stream::read(Bytes& b)
         } else
         {
             yarp::conf::ssize_t result = delegate->getInputStream().read(b);
-            if (debug) printf("Read %d bytes\n", result);
+            if (debug) printf("Read %zu bytes\n", result);
             if (result>0)
             {
                 remaining-=result;
-                if (debug) printf("%d bytes of meat\n", result);
+                if (debug) printf("%zu bytes of meat\n", result);
                 return result;
             }
         }
