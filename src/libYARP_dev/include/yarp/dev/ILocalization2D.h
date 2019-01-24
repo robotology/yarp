@@ -73,8 +73,8 @@ constexpr yarp::conf::vocab32_t VOCAB_NAV_GOTOABS            = yarp::os::createV
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GOTOREL            = yarp::os::createVocab('s','r','e','l');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_RECOMPUTE_PATH     = yarp::os::createVocab('r','c','m','p');
 
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCATION          = yarp::os::createVocab('g','l','o','c');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCATION_LIST     = yarp::os::createVocab('l','i','s','t');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_X                 = yarp::os::createVocab('g','e','t');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LIST_X            = yarp::os::createVocab('l','i','s','t');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_ABS_TARGET        = yarp::os::createVocab('g','a','b','s');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_REL_TARGET        = yarp::os::createVocab('g','r','e','l');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_NAME_TARGET       = yarp::os::createVocab('g','n','a','m');
@@ -83,8 +83,10 @@ constexpr yarp::conf::vocab32_t VOCAB_NAV_SET_INITIAL_POS       = yarp::os::crea
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_NAVIGATION_STATUS = yarp::os::createVocab('n','s','t','s');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCALIZER_STATUS  = yarp::os::createVocab('l','s','t','s');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LOCALIZER_POSES   = yarp::os::createVocab('l','p','s','s');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_CLEAR                 = yarp::os::createVocab('c','l','r','l');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_DELETE                = yarp::os::createVocab('d','e','l','l');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_STORE_ABS             = yarp::os::createVocab('s','t','o','a');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_CLEAR_X               = yarp::os::createVocab('c','l','r');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_DELETE_X              = yarp::os::createVocab('d','e','l');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_STORE_X               = yarp::os::createVocab('s','t','o','r');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_AREA                  = yarp::os::createVocab('a','r','e','a');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_LOCATION              = yarp::os::createVocab('l','o','c');
 
 #endif // YARP_DEV_ILOCALIZATION2D_H

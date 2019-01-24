@@ -108,6 +108,7 @@ if (CREATE_LIB_MATH)
                             include/yarp/dev/IMap2D.h
                             include/yarp/dev/INavigation2D.h
                             include/yarp/dev/Map2DLocation.h
+                            include/yarp/dev/Map2DArea.h
                             include/yarp/dev/MapGrid2D.h)
 endif()
 
@@ -157,7 +158,8 @@ if(CREATE_LIB_MATH)
   list(APPEND YARP_dev_SRCS src/IFrameTransform.cpp
                             src/IMap2D.cpp
                             src/INavigation2D.cpp
-                            src/MapGrid2D.cpp)
+                            src/MapGrid2D.cpp
+                            src/Map2DArea.cpp)
 endif()
 
 set(YARP_dev_devices_SRCS src/devices/AnalogSensorClient/AnalogSensorClient.cpp

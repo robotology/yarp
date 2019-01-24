@@ -27,6 +27,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/MapGrid2D.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <yarp/dev/Map2DArea.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
@@ -77,10 +78,15 @@ public:
     bool     get_map_names(std::vector<std::string>& map_names) override;
 
     bool     storeLocation(std::string location_name, Map2DLocation loc) override;
+    bool     storeArea(std::string location_name, Map2DArea area) override;
     bool     getLocation(std::string location_name, Map2DLocation& loc) override;
+    bool     getArea(std::string location_name, Map2DArea& area) override;
     bool     deleteLocation(std::string location_name) override;
+    bool     deleteArea(std::string location_name) override;
     bool     getLocationsList(std::vector<std::string>& locations) override;
+    bool     getAreasList(std::vector<std::string>& locations) override;
     bool     clearAllLocations() override;
+    bool     clearAllAreas() override;
 };
 
 #endif // YARP_DEV_MAP2DCLIENT_H

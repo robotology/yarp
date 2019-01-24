@@ -530,62 +530,60 @@ bool yarp::dev::Navigation2DClient::gotoTargetByAbsoluteLocation(Map2DLocation l
     return true;
 }
 
+bool yarp::dev::Navigation2DClient::checkInsideArea(std::string area_name)
+{
+    Map2DLocation loc;
+    Map2DArea area;
+    if (this->getArea(area_name, area) == false)
+    {
+        yError() << "Area" << area_name << "not found";
+        return false;
+    }
+
+    if (getCurrentPosition(loc) == false)
+    {
+        yError() << "Navigation2DClient::checkInsideArea() unable to get robot position";
+        return false;
+    }
+
+    if (area.checkLocationInsideArea(loc) == false)
+    {
+        //yDebug() << "Not inside Area";
+        return false;
+    }
+
+    return true;
+}
+
 bool yarp::dev::Navigation2DClient::gotoTargetByLocationName(std::string location_name)
 {
-    yarp::os::Bottle b_loc;
-    yarp::os::Bottle resp_loc;
-    yarp::os::Bottle b_nav;
-    yarp::os::Bottle resp_nav;
-
-    b_loc.addVocab(VOCAB_INAVIGATION);
-    b_loc.addVocab(VOCAB_NAV_GET_LOCATION);
-    b_loc.addString(location_name);
-
-    bool ret = true;
-    ret =  m_rpc_port_map_locations_server.write(b_loc, resp_loc);
-    if (ret)
-    {
-        if (resp_loc.get(0).asVocab() != VOCAB_OK || resp_loc.size() != 5)
-        {
-            yError() << "Navigation2DClient::gotoTargetByLocationName() received error from locations server";
-            return false;
-        }
-    }
-    else
-    {
-        yError() << "Navigation2DClient::gotoTargetByLocationName() error on writing on rpc port";
-        return false;
-    }
-
     Map2DLocation loc;
-    loc.map_id = resp_loc.get(1).asString();
-    loc.x = resp_loc.get(2).asFloat64();
-    loc.y = resp_loc.get(3).asFloat64();
-    loc.theta = resp_loc.get(4).asFloat64();
+    Map2DArea area;
 
-    b_nav.addVocab(VOCAB_INAVIGATION);
-    b_nav.addVocab(VOCAB_NAV_GOTOABS);
-    b_nav.addString(loc.map_id);
-    b_nav.addFloat64(loc.x);
-    b_nav.addFloat64(loc.y);
-    b_nav.addFloat64(loc.theta);
+    //first of all, ask to the location server if location_name exists as a location_name...
+    bool found = this->getLocation(location_name, loc);
 
-    ret = m_rpc_port_navigation_server.write(b_nav, resp_nav);
-    if (ret)
+    //...if found, ok...otherwise check if location_name is an area name instead...
+    if (found == false)
     {
-        if (resp_nav.get(0).asVocab() != VOCAB_OK)
+        found = this->getArea(location_name, area);
+        if (found)
         {
-            yError() << "Navigation2DClient::gotoTargetByLocationName() received error from navigation server";
-            return false;
+            area.getRandomLocation(loc);
         }
     }
-    else
+
+    //...if it is neither a location, nor an area then quit...
+    if (found == false)
     {
-        yError() << "Navigation2DClient::gotoTargetByLocationName() error on writing on rpc port";
+        yError() << "Location not found";
         return false;
     }
-    
+
+    //...otherwise we can go to the found/computed location!
+    this->gotoTargetByAbsoluteLocation(loc);
     set_current_goal_name(location_name);
+
     return true;
 }
 
@@ -873,7 +871,8 @@ bool yarp::dev::Navigation2DClient::storeCurrentPosition(std::string location_na
     }
 
     b_loc.addVocab(VOCAB_INAVIGATION);
-    b_loc.addVocab(VOCAB_NAV_STORE_ABS);
+    b_loc.addVocab(VOCAB_NAV_STORE_X);
+    b_loc.addVocab(VOCAB_NAV_LOCATION);
     b_loc.addString(location_name);
     b_loc.addString(loc.map_id);
     b_loc.addFloat64(loc.x);
@@ -903,7 +902,8 @@ bool yarp::dev::Navigation2DClient::storeLocation(std::string location_name, Map
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_STORE_ABS);
+    b.addVocab(VOCAB_NAV_STORE_X);
+    b.addVocab(VOCAB_NAV_LOCATION);
     b.addString(location_name);
     b.addString(loc.map_id);
     b.addFloat64(loc.x);
@@ -933,7 +933,8 @@ bool yarp::dev::Navigation2DClient::getLocationsList(std::vector<std::string>& l
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_GET_LOCATION_LIST);
+    b.addVocab(VOCAB_NAV_GET_LIST_X);
+    b.addVocab(VOCAB_NAV_LOCATION);
 
     bool ret = m_rpc_port_map_locations_server.write(b, resp);
     if (ret)
@@ -976,7 +977,8 @@ bool yarp::dev::Navigation2DClient::getLocation(std::string location_name, Map2D
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_GET_LOCATION);
+    b.addVocab(VOCAB_NAV_GET_X);
+    b.addVocab(VOCAB_NAV_LOCATION);
     b.addString(location_name);
 
     bool ret = m_rpc_port_map_locations_server.write(b, resp);
@@ -1003,13 +1005,53 @@ bool yarp::dev::Navigation2DClient::getLocation(std::string location_name, Map2D
     return true;
 }
 
+bool yarp::dev::Navigation2DClient::getArea(std::string area_name, Map2DArea& area)
+{
+    yarp::os::Bottle b_loc;
+    yarp::os::Bottle resp_loc;
+
+    {
+        b_loc.clear();
+        b_loc.addVocab(VOCAB_INAVIGATION);
+        b_loc.addVocab(VOCAB_NAV_GET_X);
+        b_loc.addVocab(VOCAB_NAV_AREA);
+        b_loc.addString(area_name);
+
+        bool ret = m_rpc_port_map_locations_server.write(b_loc, resp_loc);
+        if (ret)
+        {
+            if (resp_loc.get(0).asVocab() != VOCAB_OK)
+            {
+                yError() << "Navigation2DClient::getArea() received error from locations server";
+                return false;
+            }
+            else
+            {
+                Value& b = resp_loc.get(1);
+                if (Property::copyPortable(b, area) == false)
+                {
+                    yError() << "Navigation2DClient::getArea() received error from locations server";
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            yError() << "Navigation2DClient::getArea() error on writing on rpc port";
+            return false;
+        }
+    }
+    return true;
+}
+
 bool yarp::dev::Navigation2DClient::deleteLocation(std::string location_name)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_DELETE);
+    b.addVocab(VOCAB_NAV_DELETE_X);
+    b.addVocab(VOCAB_NAV_LOCATION);
     b.addString(location_name);
 
     bool ret = m_rpc_port_map_locations_server.write(b, resp);
@@ -1035,7 +1077,8 @@ bool yarp::dev::Navigation2DClient::clearAllLocations()
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_CLEAR);
+    b.addVocab(VOCAB_NAV_CLEAR_X);
+    b.addVocab(VOCAB_NAV_LOCATION);
 
     bool ret = m_rpc_port_map_locations_server.write(b, resp);
     if (ret)

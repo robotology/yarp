@@ -773,7 +773,6 @@ bool MapGrid2D::read(yarp::os::ConnectionReader& connection)
     if (!ok) return false;
 
     return !connection.isError();
-        return true;
 }
 
 bool MapGrid2D::write(yarp::os::ConnectionWriter& connection) const

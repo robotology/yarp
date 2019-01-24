@@ -13,6 +13,7 @@
 #include <yarp/sig/Image.h>
 #include <yarp/dev/MapGrid2D.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <yarp/dev/Map2DArea.h>
 #include <vector>
 #include <string>
 
@@ -76,12 +77,28 @@ public:
     virtual bool storeLocation(std::string location_name, Map2DLocation loc) = 0;
 
     /**
+    * Store an area
+    * @param area_name the name of the area
+    * @param area the area
+    * @return true/false
+    */
+    virtual bool storeArea(std::string area_name, Map2DArea area) = 0;
+
+    /**
     * Retrieves a location specified by the user in the world reference frame
     * @param location_name the name of the location
-    * @param loc the location of the robot
+    * @param loc the location
     * @return true/false
     */
     virtual bool getLocation(std::string location_name, Map2DLocation& loc) = 0;
+
+    /**
+    * Retrieves an area
+    * @param area_name the name of the area
+    * @param area the area
+    * @return true/false
+    */
+    virtual bool getArea(std::string area_name, Map2DArea& area) = 0;
 
     /**
     * Get a list of all stored locations
@@ -91,6 +108,13 @@ public:
     virtual bool getLocationsList(std::vector<std::string>& locations) = 0;
 
     /**
+    * Get a list of all stored areas
+    * @param the returned list of areas
+    * @return true/false
+    */
+    virtual bool getAreasList(std::vector<std::string>& areas) = 0;
+
+    /**
     * Delete a location
     * @param location_name the name of the location
     * @return true/false
@@ -98,10 +122,23 @@ public:
     virtual bool deleteLocation(std::string location_name) = 0;
 
     /**
+    * Delete an area
+    * @param area_name the name of the area
+    * @return true/false
+    */
+    virtual bool deleteArea(std::string area_name) = 0;
+
+    /**
     * Delete all stored locations
     * @return true/false
     */
     virtual bool clearAllLocations() = 0;
+
+    /**
+    * Delete all stored areas
+    * @return true/false
+    */
+    virtual bool clearAllAreas() = 0;
 };
 
 constexpr yarp::conf::vocab32_t VOCAB_IMAP                    = yarp::os::createVocab('i','m','a','p');

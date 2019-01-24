@@ -89,6 +89,7 @@ public:
     virtual bool read(yarp::os::ConnectionReader& connection) override;
 
     /* The following methods belong to INavigation2D interface */
+    bool   checkInsideArea(std::string area_name) override;
     bool   gotoTargetByAbsoluteLocation(yarp::dev::Map2DLocation loc) override;
     bool   gotoTargetByLocationName(std::string location_name) override;
     bool   gotoTargetByRelativeLocation(double x, double y, double theta) override;
@@ -107,6 +108,7 @@ public:
     bool   storeCurrentPosition(std::string location_name) override;
     bool   storeLocation(std::string location_name, Map2DLocation loc) override;
     bool   getLocation(std::string location_name, Map2DLocation& loc) override;
+    bool   getArea(std::string area_name, Map2DArea& area) override;
     bool   deleteLocation(std::string location_name) override;
     bool   getLocationsList(std::vector<std::string>& locations) override;
 

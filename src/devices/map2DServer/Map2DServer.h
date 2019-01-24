@@ -36,6 +36,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/MapGrid2D.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <yarp/dev/Map2DArea.h>
 #include <yarp/os/ResourceFinder.h>
 
 #include <yarp/dev/PolyDriver.h>
@@ -81,6 +82,7 @@ class yarp::dev::Map2DServer : public yarp::dev::DeviceDriver, public yarp::os::
 private:
     std::map<std::string, yarp::dev::MapGrid2D>     m_maps_storage;
     std::map<std::string, yarp::dev::Map2DLocation> m_locations_storage;
+    std::map<std::string, yarp::dev::Map2DArea>     m_areas_storage;
 
 public:
     Map2DServer();
@@ -88,8 +90,8 @@ public:
     
     bool saveMaps(std::string filename);
     bool loadMaps(std::string filename);
-    bool load_locations(std::string locations_file);
-    bool save_locations(std::string locations_file);
+    bool load_locations_and_areas(std::string locations_file);
+    bool save_locations_and_areas(std::string locations_file);
     bool open(yarp::os::Searchable &params) override;
     bool close() override;
     yarp::os::Bottle getOptions();
