@@ -946,9 +946,9 @@ void yarp::dev::OVRHeadset::run()
     yarp::os::Stamp stamp(distortionFrameIndex, ts.HeadPose.TimeInSeconds);
 
     //Get eye poses, feeding in correct IPD offset
-    ovrVector3f ViewOffset[2] = {EyeRenderDesc[0].HmdToEyeOffset,EyeRenderDesc[1].HmdToEyeOffset};
+    ovrPosef ViewPose[2] = {EyeRenderDesc[0].HmdToEyePose,EyeRenderDesc[1].HmdToEyePose};
     ovrPosef EyeRenderPose[2];
-    ovr_CalcEyePoses(headpose.ThePose, ViewOffset, EyeRenderPose);
+    ovr_CalcEyePoses(headpose.ThePose, ViewPose, EyeRenderPose);
 
     // Query the HMD for the predicted state
     ovrTrackingState predicted_ts = ovr_GetTrackingState(session, ovr_GetTimeInSeconds() + prediction, false);
