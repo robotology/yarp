@@ -228,6 +228,8 @@ inline void setHeadLockedLayer(ovrLayerQuad& layer, TextureStatic* tex,
     layer.QuadPoseCenter.Orientation.w = rw;
     layer.QuadSize.x                   = sizeX;
     layer.QuadSize.y                   = sizeY;
+
+    layer.Viewport = OVR::Recti(0, 0, tex->width, tex->height);
 }
 
 inline void setHeadLockedLayer(ovrLayerQuad& layer, TextureBuffer* tex,
