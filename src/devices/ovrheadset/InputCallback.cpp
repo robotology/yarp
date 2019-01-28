@@ -80,7 +80,7 @@ void InputCallback::onRead(ImageType &img)
                 break;
             }
         } else {
-            // Check if this is a GREEN pixel (255,0,0)
+            // Check if this is a GREEN pixel (0,255,0)
             if (pix[0] >= 250 && pix[1] <= 5 && pix[2] <= 5) {
                 found = i;
                 break;
@@ -139,14 +139,22 @@ void InputCallback::onRead(ImageType &img)
         float pitch = pitchOffset;
         float yaw = yawOffset;
 
+        int seqNum;
+        double ts, r, p, yy;
+
         yarp::os::Bottle b;
         yarp::os::BufferedPort<ImageType>::getEnvelope(b);
-        if (b.size() == 3) {
-            roll += OVR::DegreeToRad(static_cast<float>(b.get(0).asFloat64()));
-            pitch += OVR::DegreeToRad(static_cast<float>(b.get(1).asFloat64()));
-            yaw += OVR::DegreeToRad(static_cast<float>(b.get(2).asFloat64()));
+        int ret = std::sscanf(b.toString().c_str(), "%d %lg %lg %lg %lg\n", &seqNum, &ts, &r, &p, &yy);
+        if (ret == 5) {
+            roll += OVR::DegreeToRad(static_cast<float>(r));
+            pitch += OVR::DegreeToRad(static_cast<float>(p));
+            yaw += OVR::DegreeToRad(static_cast<float>(yy));
+//        if (b.size() == 3) {
+//            roll += OVR::DegreeToRad(static_cast<float>(b.get(0).asFloat64()));
+//            pitch += OVR::DegreeToRad(static_cast<float>(b.get(1).asFloat64()));
+//            yaw += OVR::DegreeToRad(static_cast<float>(b.get(2).asFloat64()));
         }
-        //yDebug() << b.toString() << roll << pitch << yaw;
+        yDebug() << b.size() << b.toString() << "-------------------" << roll << pitch << yaw;
 
         eyeRenderTexture->eyePose.Orientation.w = (float)(- cos(roll/2) * cos(pitch/2) * cos(yaw/2) - sin(roll/2) * sin(pitch/2) * sin(yaw/2));
         eyeRenderTexture->eyePose.Orientation.x = (float)(- cos(roll/2) * sin(pitch/2) * cos(yaw/2) - sin(roll/2) * cos(pitch/2) * sin(yaw/2));
