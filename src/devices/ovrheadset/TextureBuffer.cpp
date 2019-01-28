@@ -28,11 +28,11 @@
 
 inline void rgb2rgba(unsigned char* rgba, const yarp::sig::Image& img, unsigned char alpha)
 {
-    int wdt = img.width();
-    int hgt = img.height();
-    for (int h = 0; h < hgt; h++)
+    size_t wdt = img.width();
+    size_t hgt = img.height();
+    for (size_t h = 0; h < hgt; h++)
     {
-        for (int w = 0; w < wdt; w++)
+        for (size_t w = 0; w < wdt; w++)
         {
             rgba[(wdt * h + w) * 4]     = img.getPixelAddress(w, h)[0];
             rgba[(wdt * h + w) * 4 + 1] = img.getPixelAddress(w, h)[1];
@@ -128,7 +128,7 @@ TextureBuffer::~TextureBuffer()
     deleteTextureAndBuffers();
 }
 
-void TextureBuffer::resize(int w, int h)
+void TextureBuffer::resize(size_t w, size_t h)
 {
     yTrace();
     deleteTextureAndBuffers();

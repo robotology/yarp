@@ -96,9 +96,9 @@ void InputCallback::onRead(ImageType &img)
     eyeRenderTexture->mutex.lock();
 
     if(eyeRenderTexture->ptr) {
-        unsigned int w = img.width();
-        unsigned int h = img.height();
-        unsigned int rs = img.getRowSize();
+        size_t w = img.width();
+        size_t h = img.height();
+        size_t rs = img.getRowSize();
         unsigned char *data = img.getRawImage();
 
         // update data directly on the mapped buffer
@@ -109,7 +109,7 @@ void InputCallback::onRead(ImageType &img)
             // Texture is larger than image: image is centered in the texture
             int x = (eyeRenderTexture->width - w)/2;
             int y = (eyeRenderTexture->height - h)/2;
-            for (unsigned int i = 0; i < h; ++i) {
+            for (size_t i = 0; i < h; ++i) {
                 unsigned char* textureStart = eyeRenderTexture->ptr + (y+i)*eyeRenderTexture->rowSize + x*3;
                 unsigned char* dataStart = data + (i*rs);
                 memcpy(textureStart, dataStart, rs);
@@ -118,7 +118,7 @@ void InputCallback::onRead(ImageType &img)
             // Texture is smaller than image: image is cropped
             int x = (w - eyeRenderTexture->width)/2;
             int y = (h - eyeRenderTexture->height)/2;
-            for (unsigned int i = 0; i < eyeRenderTexture->width; ++i) {
+            for (size_t i = 0; i < eyeRenderTexture->width; ++i) {
                 unsigned char* textureStart = eyeRenderTexture->ptr + (y+i)*(i*eyeRenderTexture->rowSize) + x*3;
                 unsigned char* dataStart = data + (y+i)*rs + x*3;
                 memcpy(textureStart, dataStart, eyeRenderTexture->rowSize);

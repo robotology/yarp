@@ -188,8 +188,8 @@ private:
     unsigned int texWidth;
     unsigned int texHeight;
     double camHFOV[2];
-    unsigned int camWidth[2];
-    unsigned int camHeight[2];
+    size_t camWidth[2];
+    size_t camHeight[2];
     ovrFovPort fov[2];
 
     bool flipInputEnabled;

@@ -1151,17 +1151,17 @@ void yarp::dev::OVRHeadset::run()
         layerList.push_back(&eyeLayer.Header);
 
         if (logoEnabled) {
-            setHeadLockedLayer(logoLayer, textureLogo, 0.2, -0.2, -0.5, 0, 0, 0, 1, 0.05, 0.05);
+            setHeadLockedLayer(logoLayer, textureLogo, 0.2f, -0.2f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.05f, 0.05f);
             layerList.push_back(&logoLayer.Header);
         }
 
         if (crosshairsEnabled) {
-            setHeadLockedLayer(crosshairsLayer, textureCrosshairs, 0, 0, -5, 0, 0, 0, 1, 0.08, 0.08);
+            setHeadLockedLayer(crosshairsLayer, textureCrosshairs, 0.0f, 0.0f, -5.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.08f, 0.08f);
             layerList.push_back(&crosshairsLayer.Header);
         }
 
         if (batteryEnabled) {
-            setHeadLockedLayer(batteryLayer, textureBattery->currentTexture, 0.25, 0.25, -0.50, 0, 0, 0, 1, 0.05, 0.05);
+            setHeadLockedLayer(batteryLayer, textureBattery->currentTexture, 0.25f, 0.25f, -0.50f, 0.0f, 0.0f, 0.0f, 1.0f, 0.05f, 0.05f);
             layerList.push_back(&batteryLayer.Header);
         }
 
@@ -1184,7 +1184,7 @@ void yarp::dev::OVRHeadset::run()
                 }
 
                 hud.texture->fromImage(session, *image, hud.alpha);
-                setHeadLockedLayer(hud.layer, hud.texture, hud.x, hud.y, hud.z, 0, 0, 0, 1, hud.resizeW, hud.resizeH);
+                setHeadLockedLayer(hud.layer, hud.texture, hud.x, hud.y, hud.z, 0.0f, 0.0f, 0.0f, 1.0f, hud.resizeW, hud.resizeH);
                 layerList.push_back(&hud.layer.Header);
             }
         }
@@ -1555,7 +1555,7 @@ bool yarp::dev::OVRHeadset::getButton(unsigned int button_id, float& value)
         yError() << "OVRHeadset: button id out of bound";
         return false;
     }
-    value = inputState.Buttons & buttonIdToOvrButton[button_id] ? 1.0 : 0.0;
+    value = inputState.Buttons & buttonIdToOvrButton[button_id] ? 1.0f : 0.0f;
     return true;
 }
 
