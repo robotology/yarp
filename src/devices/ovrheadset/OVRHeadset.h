@@ -21,7 +21,7 @@
 
 #include "ImageType.h"
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ServiceInterfaces.h>
 #include <yarp/dev/IJoypadController.h>
@@ -75,7 +75,7 @@ namespace yarp {
 namespace dev {
 
 class OVRHeadset : public yarp::dev::DeviceDriver,
-                   public yarp::os::SystemRateThread,
+                   public yarp::os::PeriodicThread,
                    public yarp::dev::IService,
                    public yarp::dev::IJoypadController
 {

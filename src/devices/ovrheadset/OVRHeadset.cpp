@@ -257,7 +257,7 @@ inline void setHeadLockedLayer(ovrLayerQuad& layer, TextureBuffer* tex,
 
 yarp::dev::OVRHeadset::OVRHeadset() :
         yarp::dev::DeviceDriver(),
-        yarp::os::SystemRateThread(11), // ~90 fps
+        yarp::os::PeriodicThread(0.011, yarp::os::ShouldUseSystemClock::Yes), // ~90 fps
         orientationPort(nullptr),
         positionPort(nullptr),
         angularVelocityPort(nullptr),
