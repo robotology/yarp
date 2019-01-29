@@ -130,8 +130,7 @@ public:
     /**
      * Send a block of data to the network connection, without making a copy.
      * If you are not confident that the block of data will remain valid
-     * throughout transmission,
-     * then call ConnectionWriter::appendBlock instead.
+     * throughout transmission, call ConnectionWriter::appendBlock instead.
      * @param data the start of the data block
      * @param len  the length of the data block
      */

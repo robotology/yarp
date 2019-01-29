@@ -1,0 +1,14 @@
+- terms:
+  - wip
+  - work in progress
+  - :construction:
+  - ⛔
+  locations: title
+- terms:
+  - Not OK
+  locations: label_name
+- terms:
+  - Merge
+  - fixup!
+  - squash!
+  locations: commit_subject
