@@ -800,6 +800,21 @@ Image::Image(const Image& alt) : Portable() {
     copy(alt);
 }
 
+Image::Image(Image&& other) noexcept
+    : implementation(other.implementation)
+{
+    other.implementation = nullptr;
+    synchronize();
+}
+
+Image& Image::operator=(Image&& other) noexcept
+{
+    Image moved(std::move(other));
+    std::swap(moved.implementation, implementation);
+    synchronize();
+    return *this;
+}
+
 
 const Image& Image::operator=(const Image& alt) {
     copy(alt);

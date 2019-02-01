@@ -100,6 +100,21 @@ public:
     Image(const Image& alt);
 
     /**
+     * @brief Move constructor.
+     *
+     * @param other the Image to be moved
+     */
+    Image(Image&& other) noexcept;
+
+    /**
+     * @brief Move assignment operator.
+     *
+     * @param other the Image to be moved
+     * @return this object
+     */
+    Image& operator=(Image &&other) noexcept;
+
+    /**
      * Destructor.
      */
     virtual ~Image();
