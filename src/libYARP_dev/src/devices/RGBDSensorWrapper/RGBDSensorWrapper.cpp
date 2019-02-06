@@ -732,6 +732,7 @@ bool RGBDSensorWrapper::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& camera
     double t2 = 0.0;
     double k3 = 0.0;
     double stamp = 0.0;
+
     string                  distModel, currentSensor;
     UInt                    i;
     Property                camData;
@@ -764,6 +765,7 @@ bool RGBDSensorWrapper::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& camera
     //std::vector<param<string> >     rosStringParam;
     //rosStringParam.push_back(param<string>(nodeName, "asd"));
 
+    parVector.emplace_back(f,"physFocalLength");
     parVector.emplace_back(fx,"focalLengthX");
     parVector.emplace_back(fy,"focalLengthY");
     parVector.emplace_back(cx,"principalPointX");

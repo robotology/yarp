@@ -70,7 +70,8 @@ struct YARP_sig_API IntrinsicParams : public yarp::os::Portable
      * @param intrinsic, Property containing the value for filling the struct.
      * @param isOptional, flag to explicitate if it is optional if this struct
      * is used in parsing.
-     * @note It asserts if the Property is malformed. The distortion model is optional,
+     * @note It asserts if the Property is malformed. The physical focal length and
+     * the distortion model are optional,
      * fields principalPointX principalPointY focalLengthX focalLengthY are required.
      */
     IntrinsicParams(const yarp::os::Property &intrinsic, bool isOptional=false);
@@ -84,7 +85,8 @@ struct YARP_sig_API IntrinsicParams : public yarp::os::Portable
     /**
      * @brief fromProperty, fill the struct using the data stored in a Property.
      * @param intrinsic[in], input property.
-     * @note It asserts if the Property is malformed. The distortion model is optional,
+     * @note It asserts if the Property is malformed. The physical focal length and
+     * the distortion model are optional,
      * fields principalPointX principalPointY focalLengthX focalLengthY are required.
      */
     void fromProperty(const yarp::os::Property& intrinsic);
@@ -92,6 +94,7 @@ struct YARP_sig_API IntrinsicParams : public yarp::os::Portable
     bool read(yarp::os::ConnectionReader& reader) override;
     bool write(yarp::os::ConnectionWriter& writer) const override;
 
+    double   physFocalLength;        /**< Physical focal length of the lens (m) */
     double   principalPointX;        /**< Horizontal coordinate of the principal point of the image, as a pixel offset from the left edge */
     double   principalPointY;        /**< Vertical coordinate of the principal point of the image, as a pixel offset from the top edge */
     double   focalLengthX;           /**< Result of the product of the physical focal length(mm) and the size sx of the individual imager elements (pixels per mm) */

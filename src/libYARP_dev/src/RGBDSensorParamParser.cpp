@@ -91,6 +91,7 @@ static bool parseIntrinsic(const Searchable& config, const string& groupName, ya
     }
     Bottle& intrinsic = config.findGroup(groupName);
 
+    realparam.first = "physFocalLength";    realparam.second = &params.physFocalLength; realParams.push_back(realparam);
     realparam.first = "focalLengthX";       realparam.second = &params.focalLengthX;    realParams.push_back(realparam);
     realparam.first = "focalLengthY";       realparam.second = &params.focalLengthY;    realParams.push_back(realparam);
     realparam.first = "principalPointX";    realparam.second = &params.principalPointX; realParams.push_back(realparam);
