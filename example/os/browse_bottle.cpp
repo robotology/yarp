@@ -36,7 +36,7 @@ void showBottle(Bottle& anUnknownBottle, int indentation = 0) {
         default:
             if (element.isList()) {
                 Bottle *lst = element.asList();
-                printf("list of %d elements\n", lst->size());
+                printf("list of %zu elements\n", lst->size());
                 showBottle(*lst,indentation+2);
             } else {
                 printf("unrecognized type\n");
