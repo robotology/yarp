@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -290,7 +290,7 @@ void getNeededType(t_type* curType, std::set<string>& neededTypes)
 
   void auto_warn(ostream& f_srv_) {
     f_srv_ << "/*\n";
-    f_srv_ << " * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)\n";
+    f_srv_ << " * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)\n";
     f_srv_ << " * All rights reserved.\n";
     f_srv_ << " *\n";
     f_srv_ << " * This software may be modified and distributed under the terms of the\n";

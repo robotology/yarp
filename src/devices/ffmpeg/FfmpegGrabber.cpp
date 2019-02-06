@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
  * Copyright (C) 2006-2010 RobotCub Consortium
  * Copyright (C) 2006 Jonas Ruesch
  * Copyright (C) 2006 Arjan Gijsberts
