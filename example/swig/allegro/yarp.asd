@@ -1,4 +1,4 @@
-;; Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+;; Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
 ;; Copyright (C) 2008 Lorenz Mosenlechner
 ;;
 ;; This library is free software; you can redistribute it and/or
