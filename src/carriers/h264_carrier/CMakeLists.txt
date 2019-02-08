@@ -8,7 +8,6 @@ yarp_prepare_plugin(h264
                     CATEGORY carrier
                     TYPE yarp::os::H264Carrier
                     INCLUDE H264Carrier.h
-                    EXTRA_CONFIG CODE=""
                     DEPENDS "GOBJECT_FOUND;GLIB2_FOUND;GSTREAMER_FOUND;GSTREAMER_APP_LIBRARY_FOUND")
 
 if(NOT SKIP_h264)
