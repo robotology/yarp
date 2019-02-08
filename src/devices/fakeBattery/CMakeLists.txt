@@ -14,11 +14,9 @@ if(NOT SKIP_fakeBattery)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   yarp_add_plugin(yarp_fakeBattery fakeBattery.cpp
                                    fakeBattery.h)
-                                   
   target_link_libraries(yarp_fakeBattery PRIVATE YARP::YARP_OS
                                                  YARP::YARP_sig
                                                  YARP::YARP_dev)
-                                                 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
                                                       YARP_sig
                                                       YARP_dev)

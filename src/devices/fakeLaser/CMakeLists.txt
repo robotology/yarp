@@ -14,7 +14,7 @@ if(NOT SKIP_fakeLaser)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   yarp_add_plugin(yarp_fakeLaser fakeLaser.h
-                                fakeLaser.cpp)
+                                 fakeLaser.cpp)
   target_link_libraries(yarp_fakeLaser PRIVATE YARP::YARP_OS
                                                YARP::YARP_sig
                                                YARP::YARP_dev

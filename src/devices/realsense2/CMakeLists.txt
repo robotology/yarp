@@ -15,7 +15,7 @@ if(ENABLE_realsense2)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   yarp_add_plugin(yarp_realsense2 realsense2Driver.cpp
-                                 realsense2Driver.h)
+                                  realsense2Driver.h)
 
   target_link_libraries(yarp_realsense2 PRIVATE YARP::YARP_OS
                                                 YARP::YARP_sig

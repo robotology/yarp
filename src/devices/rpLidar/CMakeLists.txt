@@ -12,7 +12,7 @@ yarp_prepare_plugin(rpLidar
 if(NOT SKIP_rpLidar)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   yarp_add_plugin(yarp_rpLidar rpLidar.h
-                          rpLidar.cpp)
+                               rpLidar.cpp)
   target_link_libraries(yarp_rpLidar PRIVATE YARP::YARP_OS
                                              YARP::YARP_sig
                                              YARP::YARP_dev)
