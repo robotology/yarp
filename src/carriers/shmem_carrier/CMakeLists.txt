@@ -8,7 +8,7 @@ yarp_prepare_plugin(shmem
                     CATEGORY carrier
                     TYPE ShmemCarrier
                     INCLUDE ShmemCarrier.h
-                    EXTRA_CONFIG CODE="\"YA\" 0xE3 0x1E 0 0 \"RP\""
+                    EXTRA_CONFIG CODE=\\\"YA\\\"\ 0xE3\ 0x1E\ 0\ 0\ \\\"RP\\\"
                     DEPENDS "NOT SKIP_ACE"
                     DEFAULT ON)
 
