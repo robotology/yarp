@@ -90,11 +90,22 @@ template<typename T>
 template<typename T>
 yarp::sig::ImageOf<T> yarp::cv::fromCvMat(::cv::Mat& cvImage)
 {
+    constexpr size_t align_8_bytes = 8;
+    constexpr size_t align_4_bytes = 4;
+
     yarp::sig::ImageOf<T> outImg;
-    assert(yarp::cv::type_code<T>::value == cvImage.type()); // Checking cv::Mat::type() compatibility with the T PixelType
+    // Checking cv::Mat::type() compatibility with the T PixelType
+    assert(yarp::cv::type_code<T>::value == cvImage.type());
     if (convert_code_from_cv<T>::value >= 0)
     {
         ::cv::cvtColor(cvImage, cvImage, convert_code_from_cv<T>::value);
+    }
+    // Check the cv::Mat alignment
+    if (cvImage.step % align_8_bytes == 0) {
+        outImg.setQuantum(align_8_bytes);
+    }
+    else if (cvImage.step % align_4_bytes == 0) {
+        outImg.setQuantum(align_4_bytes);
     }
     outImg.setExternal(cvImage.data, cvImage.cols, cvImage.rows);
     return outImg;
