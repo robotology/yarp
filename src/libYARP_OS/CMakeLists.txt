@@ -94,6 +94,8 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/ResourceFinder.h
                  include/yarp/os/ResourceFinderOptions.h
                  include/yarp/os/RFModule.h
+                 include/yarp/os/RFPlugin.h
+                 
                  include/yarp/os/RosNameSpace.h
                  include/yarp/os/Route.h
                  include/yarp/os/RpcClient.h
@@ -190,6 +192,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/PortCorePackets.h
                       include/yarp/os/impl/PortCoreUnit.h
                       include/yarp/os/impl/Protocol.h
+                      include/yarp/os/impl/RFModuleFactory.h
                       include/yarp/os/impl/Runnable.h
                       include/yarp/os/impl/SocketTwoWayStream.h
                       include/yarp/os/impl/SplitString.h
@@ -297,6 +300,8 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/ResourceFinder.cpp
                  src/ResourceFinderOptions.cpp
                  src/RFModule.cpp
+                 src/RFModuleFactory.cpp
+                 src/RFPlugin.cpp
                  src/RosNameSpace.cpp
                  src/Route.cpp
                  src/RpcClient.cpp

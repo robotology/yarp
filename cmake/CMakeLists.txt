@@ -16,6 +16,7 @@ install(FILES ${YARP_CMAKE_FILES}
 
 # Templates used by modules
 set(YARP_TEMPLATE_FILES template/yarp_plugin_carrier.cpp.in
+                        template/yarp_plugin_RFModule.cpp.in
                         template/yarp_plugin_device.cpp.in
                         template/yarp_plugin_portmonitor.cpp.in
                         template/yarp_plugin_library.cpp.in
