@@ -26,6 +26,8 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(imuBosch_BNO055)
   add_subdirectory(DynamixelAX12Ftdi)
   add_subdirectory(fakeLaser)
+  add_subdirectory(fakeMicrophone)
+  add_subdirectory(fakeSpeaker)
   add_subdirectory(laserFromDepth)
   add_subdirectory(rpLidar)
   add_subdirectory(rpLidar2)
