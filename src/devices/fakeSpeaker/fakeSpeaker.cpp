@@ -25,11 +25,8 @@ using namespace yarp::sig;
 #define SLEEP_TIME          0.005
 #define SAMPLES_TO_BE_COPIED 64
 
-/**
- * This device implements a fake analog sensor
- * emulating an IMU
- * @author Alberto Cardellino
- */
+typedef unsigned short int audio_sample_16t;
+
 fakeSpeaker::fakeSpeaker() : PeriodicThread(DEFAULT_PERIOD)
 {
     m_bpnt = 0;
@@ -63,7 +60,7 @@ bool fakeSpeaker::open(yarp::os::Searchable &config)
     m_cfg_bytesPerSample = config.find("BytesPerSample").asInt8();
     
     AudioBufferSize buffer_size(m_cfg_numSamples, m_cfg_numChannels, m_cfg_bytesPerSample);
-    m_outputBuffer = new yarp::dev::CircularAudioBuffer("fake_speaker_buffer", buffer_size);
+    m_outputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_speaker_buffer", buffer_size);
     
     //start the capture thread
     start();
@@ -103,7 +100,7 @@ void fakeSpeaker::run()
     size_t buffer_size = siz_sam * siz_chn;
     for (size_t i = 0; i<buffer_size; i++)
     {
-        SAMPLE s = m_outputBuffer->read();
+        audio_sample_16t s = m_outputBuffer->read();
     }
     yDebug() << "Sound Playback complete";
     yDebug() << "Played " << siz_sam << " samples, " << siz_chn << " channels, " << siz_byt << " bytes";

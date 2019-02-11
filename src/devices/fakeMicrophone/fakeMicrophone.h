@@ -62,6 +62,6 @@ private:
     size_t      m_audioFilePointer;
     std::string m_audio_filename;
     size_t      m_bpnt;
-    CircularAudioBuffer  *m_inputBuffer;
+    CircularAudioBuffer_16t  *m_inputBuffer;
     bool        m_getSoundIsNotBlocking;
 };

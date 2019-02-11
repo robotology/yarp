@@ -56,6 +56,6 @@ private:
     size_t m_cfg_bytesPerSample;
 
     size_t      m_bpnt;
-    CircularAudioBuffer  *m_outputBuffer;
+    CircularAudioBuffer_16t  *m_outputBuffer;
     bool        m_renderSoundImmediate;
 };

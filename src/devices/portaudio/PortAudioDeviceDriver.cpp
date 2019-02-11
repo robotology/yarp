@@ -64,8 +64,8 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
                          void *userData )
 {
     auto* dataBuffers = static_cast<circularDataBuffers*>(userData);
-    CircularAudioBuffer *playdata = dataBuffers->playData;
-    CircularAudioBuffer *recdata  = dataBuffers->recData;
+    CircularAudioBuffer_16t *playdata = dataBuffers->playData;
+    CircularAudioBuffer_16t *recdata  = dataBuffers->recData;
     int num_rec_channels     = dataBuffers->numRecChannels;
     int num_play_channels    = dataBuffers->numPlayChannels;
     int finished = paComplete;
@@ -270,9 +270,9 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config)
     dataBuffers.numPlayChannels = m_numPlaybackChannels;
     dataBuffers.numRecChannels = m_numRecordChannels;
     if (dataBuffers.playData==nullptr)
-        dataBuffers.playData = new CircularAudioBuffer("portatudio_play", playback_buffer_size);
+        dataBuffers.playData = new CircularAudioBuffer_16t("portatudio_play", playback_buffer_size);
     if (dataBuffers.recData==nullptr)
-        dataBuffers.recData = new CircularAudioBuffer("portatudio_rec", rec_buffer_size);
+        dataBuffers.recData = new CircularAudioBuffer_16t("portatudio_rec", rec_buffer_size);
     if (wantRead) dataBuffers.canRec = true;
     if (wantWrite) dataBuffers.canPlay = true;
 

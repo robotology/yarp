@@ -13,12 +13,15 @@
 namespace yarp {
     namespace dev {
         class AudioBufferSize;
+
+        template <typename SAMPLE>
         class CircularAudioBuffer;
     }
 }
 
 class yarp::dev::AudioBufferSize
 {
+    template <typename SAMPLE>
     friend class CircularAudioBuffer;
 
     private:

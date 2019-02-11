@@ -126,8 +126,8 @@ class yarp::dev::circularBuffer
 
 struct circularDataBuffers
 {
-    yarp::dev::CircularAudioBuffer*     playData;
-    yarp::dev::CircularAudioBuffer*     recData;
+    yarp::dev::CircularAudioBuffer_16t*     playData;
+    yarp::dev::CircularAudioBuffer_16t*     recData;
     bool                canPlay;
     bool                canRec;
     int                 numPlayChannels;

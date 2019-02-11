@@ -22,18 +22,15 @@
 #include <string>
 #include <yarp/dev/AudioBufferSize.h>
 #include <cstdio>
-
-typedef short SAMPLE;
+#include <yarp/os/Log.h>
 
 //----------------------------------------------------------------------------------
 
 namespace yarp {
     namespace dev {
-        class CircularAudioBuffer;
-    }
-}
 
-class yarp::dev::CircularAudioBuffer
+template <typename SAMPLE>
+class CircularAudioBuffer
 {
     std::string  name;
     yarp::dev::AudioBufferSize  maxsize;
@@ -104,6 +101,13 @@ class yarp::dev::CircularAudioBuffer
 
     CircularAudioBuffer(std::string buffer_name, yarp::dev::AudioBufferSize bufferSize)
     {
+        static_assert (std::is_same<unsigned char, SAMPLE>::value ||
+                       std::is_same<unsigned short int, SAMPLE>::value ||
+                       std::is_same<unsigned int, SAMPLE>::value,
+                        "CircularAudioBuffer can be specialized only as <unsigned char>, <unsigned short int>, <unsigned int>");
+        
+        yAssert(bufferSize.m_depth == sizeof(SAMPLE));
+
         name = buffer_name;
         maxsize = bufferSize;
         maxsize.size += 1;
@@ -118,5 +122,12 @@ class yarp::dev::CircularAudioBuffer
     }
 
 };
+
+typedef yarp::dev::CircularAudioBuffer<unsigned char> CircularAudioBuffer_8t;
+typedef yarp::dev::CircularAudioBuffer<unsigned short int> CircularAudioBuffer_16t;
+typedef yarp::dev::CircularAudioBuffer<unsigned int> CircularAudioBuffer_32t;
+
+    }
+}
 
 #endif
