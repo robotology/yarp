@@ -44,7 +44,8 @@ class yarp::dev::PortAudioDeviceDriverSettings {
 public:
     int rate;
     int samples;
-    int channels;
+    int playChannels;
+    int recChannels;
     bool wantRead;
     bool wantWrite;
     int deviceNumber;
@@ -74,13 +75,11 @@ private:
     PaStream*           stream;
     PaError             err;
     circularDataBuffers dataBuffers;
-    int                 i;
-    int                 numSamples;
-    int                 numBytes;
+    size_t              numSamples;
+    size_t              numBytes;
     streamThread        pThread;
 
     PortAudioDeviceDriver(const PortAudioDeviceDriver&);
-    void operator=(const PortAudioDeviceDriver&);
 
 public:
     PortAudioDeviceDriver();
@@ -110,29 +109,31 @@ public:
 
     bool close(void) override;
     bool getSound(yarp::sig::Sound& sound) override;
-    bool renderSound(yarp::sig::Sound& sound) override;
+    bool renderSound(const yarp::sig::Sound& sound) override;
     bool startRecording() override;
     bool stopRecording() override;
     
     bool abortSound(void);
-    bool immediateSound(yarp::sig::Sound& sound);
-    bool appendSound(yarp::sig::Sound& sound);
+    bool immediateSound(const yarp::sig::Sound& sound);
+    bool appendSound(const yarp::sig::Sound& sound);
 
-    bool getPlaybackAudioBufferMaxSize(int& size) override;
-    bool getPlaybackAudioBufferCurrentSize(int& size) override;
+    bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
+    bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
     bool resetPlaybackAudioBuffer() override;
 
-    bool getRecordingAudioBufferMaxSize(int& size) override;
-    bool getRecordingAudioBufferCurrentSize(int& size) override;
+    bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
+    bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
     bool resetRecordingAudioBuffer() override;
 
 protected:
-    void *system_resource;
-    int  numChannels;
-    int  frequency;
-    bool loopBack;
+    void*   m_system_resource;
+    size_t  m_numPlaybackChannels;
+    size_t  m_numRecordChannels;
+    int     m_frequency;
+    bool    m_loopBack;
+    bool    m_getSoundIsNotBlocking;
 
-    PortAudioDeviceDriverSettings driverConfig;
+    PortAudioDeviceDriverSettings m_driverConfig;
     enum {RENDER_APPEND=0, RENDER_IMMEDIATE=1} renderMode;
     void handleError(void);
 };

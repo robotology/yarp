@@ -19,10 +19,13 @@
 #ifndef PortAudioBufferh
 #define PortAudioBufferh
 
+#include <string>
 #include <portaudio.h>
+#include <yarp/dev/AudioBufferSize.h>
+#include <yarp/dev/CircularAudioBuffer.h>
 #include <cstdio>
-
-/* Select sample format. */
+/*
+// Select sample format. 
 #if 0
 #define PA_SAMPLE_TYPE  paFloat32
 typedef float SAMPLE;
@@ -43,17 +46,20 @@ typedef unsigned char SAMPLE;
 #endif
 
 //----------------------------------------------------------------------------------
-class circularBuffer
+
+
+class yarp::dev::circularBuffer
 {
-    int         maxsize;
-    int         start;
-    int         end;
-    SAMPLE      *elems;
+    std::string  name;
+    yarp::dev::audio_buffer_size  maxsize;
+    int          start;
+    int          end;
+    SAMPLE       *elems;
 
     public:
     inline bool isFull()
     {
-        return (end + 1) % maxsize == start;
+        return (end + 1) % maxsize.size == start;
     }
 
     inline const SAMPLE* getRawData()
@@ -69,15 +75,15 @@ class circularBuffer
     inline void write(SAMPLE elem)
     {
         elems[end] = elem;
-        end = (end + 1) % maxsize;
+        end = (end + 1) % maxsize.size;
         if (end == start)
         {
-            printf ("ERROR: buffer ovverrun!\n");
-            start = (start + 1) % maxsize; // full, overwrite
+            printf ("ERROR: %s buffer ovverrun!\n", name.c_str());
+            start = (start + 1) % maxsize.size; // full, overwrite
         }
     }
 
-    inline int size()
+    inline audio_buffer_size size()
     {
         int i;
         if (end>start)
@@ -85,22 +91,22 @@ class circularBuffer
         else if (end==start)
             i = 0;
         else
-            i = maxsize - start + end;
-        return i;
+            i = maxsize.size - start + end;
+        return audio_buffer_size(i, maxsize.m_channels, sizeof(SAMPLE)); //not sure about this
     }
 
     inline SAMPLE read()
     {
         if (end == start)
         {
-            printf ("ERROR: buffer underrun!\n");
+            printf ("ERROR: %s buffer underrun!\n", name.c_str());
         }
         SAMPLE elem = elems[start];
-        start = (start + 1) % maxsize;
+        start = (start + 1) % maxsize.size;
         return elem;
     }
 
-    inline unsigned int getMaxSize()
+    inline yarp::dev::audio_buffer_size getMaxSize()
     {
         return maxsize;
     }
@@ -111,25 +117,27 @@ class circularBuffer
         end   = 0;
     }
 
-    circularBuffer(int bufferSize);
+    circularBuffer(std::string buffer_name, yarp::dev::audio_buffer_size bufferSize);
     ~circularBuffer();
 
 };
-
+*/
 //----------------------------------------------------------------------------------
 
 struct circularDataBuffers
 {
-    circularBuffer*     playData;
-    circularBuffer*     recData;
+    yarp::dev::CircularAudioBuffer*     playData;
+    yarp::dev::CircularAudioBuffer*     recData;
     bool                canPlay;
     bool                canRec;
-    int                 numChannels;
+    int                 numPlayChannels;
+    int                 numRecChannels;
     circularDataBuffers ()
     {
-        numChannels=1;
-        playData=0;
-        recData=0;
+        numPlayChannels = 1;
+        numRecChannels = 1;
+        playData = nullptr;
+        recData = nullptr;
         canPlay=false;
         canRec=false;
     }
