@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
  *
  * This software may be modified and distributed under the terms of the
@@ -9,8 +9,8 @@
 #include <yarp/os/api.h>
 #include <string>
 
-#ifndef YARP_OS_RFPLUGINo_H
-#define YARP_OS_RFPLUGINo_H
+#ifndef YARP_OS_RFPLUGIN_H
+#define YARP_OS_RFPLUGIN_H
 
 namespace yarp {
 namespace os {
@@ -24,7 +24,7 @@ public:
     RFPlugin();
 
     virtual ~RFPlugin();
-    
+
     /**
      * opens the plugin
      * @param command a string containing the equivalent command line
@@ -57,4 +57,4 @@ public:
 }
 }
 
-#endif // YARP_OS_RFPLUGINo_H
+#endif // YARP_OS_RFPLUGIN_H
