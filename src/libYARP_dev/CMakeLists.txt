@@ -9,10 +9,12 @@ project(YARP_dev)
 
 set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/api.h
+                  include/yarp/dev/AudioBufferSize.h
                   include/yarp/dev/AudioGrabberInterfaces.h
                   include/yarp/dev/AudioVisualInterfaces.h
                   include/yarp/dev/CalibratorInterfaces.h
                   include/yarp/dev/CanBusInterface.h
+                  include/yarp/dev/CircularAudioBuffer.h
                   include/yarp/dev/CartesianControl.h
                   include/yarp/dev/ControlBoardHelper.h
                   include/yarp/dev/ControlBoardHelpers.h
