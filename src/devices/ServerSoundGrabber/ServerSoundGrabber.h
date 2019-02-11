@@ -144,6 +144,12 @@ public:
         }
         rpcPort.setReader(*this);
 
+        //wait a little and then start
+        yarp::os::SystemClock::delaySystem(1);
+
+        //mic->startRecording();
+        this->start();
+    
         return true;
     }
 
@@ -171,7 +177,29 @@ public:
             if (mic!= nullptr)
             {
                 yarp::sig::Sound snd;
+#ifdef PRINT_DEBUG_MESSAGES
+                {
+                    audio_buffer_size buf_max;
+                    audio_buffer_size buf_cur;
+                    mic->getRecordingAudioBufferMaxSize(buf_max);
+                    mic->getRecordingAudioBufferCurrentSize(buf_cur);
+                    yDebug() << "BEFORE Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
+                }
+#endif
                 mic->getSound(snd);
+#ifdef PRINT_DEBUG_MESSAGES
+                {
+                    audio_buffer_size buf_max;
+                    audio_buffer_size buf_cur;
+                    mic->getRecordingAudioBufferMaxSize(buf_max);
+                    mic->getRecordingAudioBufferCurrentSize(buf_cur);
+                    yDebug() << "AFTER Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
+                }
+#endif
+#ifdef PRINT_DEBUG_MESSAGES
+                yDebug() << "Sound size:" << snd.getSamples()*snd.getChannels()*snd.getBytesPerSample() << " bytes";
+                yDebug();
+#endif
                 stamp.update();
                 streamingPort.setEnvelope(stamp);
                 streamingPort.write(snd);

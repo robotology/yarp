@@ -15,6 +15,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -55,6 +56,16 @@ int main(int argc, char *argv[]) {
         get->getSound(s);
         double t2=yarp::os::Time::now();
         printf("acquired %f seconds\n", t2-t1);
+
+#ifdef PRINT_DEBUG_MESSAGES
+        int buf_max;
+        int buf_cur;
+        get->getRecordingAudioBufferMaxSize(buf_max);
+        get->getRecordingAudioBufferCurrentSize(buf_cur);
+        yDebug() << " " << buf_max << " " << buf_cur << " bytes";
+        yDebug() << s.getSamples() * 2 << " bytes";
+#endif
+
         p.write(s);
     }
     get->stopRecording();  //stops recording.
