@@ -13,6 +13,7 @@
 #include <yarp/sig/Sound.h>
 
 #include <yarp/dev/api.h>
+#include <yarp/dev/AudioBufferSize.h>
 
 namespace yarp {
     namespace dev {
@@ -56,9 +57,9 @@ public:
      */
     virtual bool stopRecording() = 0;
 
-    virtual bool getRecordingAudioBufferMaxSize(int& size) = 0;
+    virtual bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) = 0;
 
-    virtual bool getRecordingAudioBufferCurrentSize(int& size) = 0;
+    virtual bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) = 0;
 
     virtual bool resetRecordingAudioBuffer() = 0;
 };
@@ -78,11 +79,11 @@ public:
      * @param sound the sound to be rendered
      * @return true/false upon success/failure
      */
-    virtual bool renderSound(yarp::sig::Sound& sound) = 0;
+    virtual bool renderSound(const yarp::sig::Sound& sound) = 0;
 
-    virtual bool getPlaybackAudioBufferMaxSize(int& size) = 0;
+    virtual bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) = 0;
 
-    virtual bool getPlaybackAudioBufferCurrentSize(int& size) = 0;
+    virtual bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) = 0;
 
     virtual bool resetPlaybackAudioBuffer() = 0;
 };
