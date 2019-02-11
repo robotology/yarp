@@ -62,8 +62,8 @@ bool fakeSpeaker::open(yarp::os::Searchable &config)
     m_cfg_frequency = config.find("Frequency").asInt32();
     m_cfg_bytesPerSample = config.find("BytesPerSample").asInt8();
     
-    audio_buffer_size buffer_size(m_cfg_numSamples, m_cfg_numChannels, m_cfg_bytesPerSample);
-    m_outputBuffer = new yarp::dev::circularAudioBuffer("fake_speaker_buffer", buffer_size);
+    AudioBufferSize buffer_size(m_cfg_numSamples, m_cfg_numChannels, m_cfg_bytesPerSample);
+    m_outputBuffer = new yarp::dev::CircularAudioBuffer("fake_speaker_buffer", buffer_size);
     
     //start the capture thread
     start();
@@ -114,14 +114,14 @@ void fakeSpeaker::run()
 #endif
 }
 
-bool fakeSpeaker::getPlaybackAudioBufferMaxSize(yarp::dev::audio_buffer_size& size)
+bool fakeSpeaker::getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
 {
     size = this->m_outputBuffer->getMaxSize();
     return true;
 }
 
 
-bool fakeSpeaker::getPlaybackAudioBufferCurrentSize(yarp::dev::audio_buffer_size& size)
+bool fakeSpeaker::getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
 {
     size = this->m_outputBuffer->size();
     return true;

@@ -83,8 +83,8 @@ bool fakeMicrophone::open(yarp::os::Searchable &config)
     m_cfg_frequency = m_audioFile.getFrequency();
     m_cfg_bytesPerSample = m_audioFile.getBytesPerSample();
     
-    audio_buffer_size buffer_size(m_cfg_numSamples, m_cfg_numChannels, m_cfg_bytesPerSample);
-    m_inputBuffer = new yarp::dev::circularAudioBuffer("fake_mic_buffer", buffer_size);
+    AudioBufferSize buffer_size(m_cfg_numSamples, m_cfg_numChannels, m_cfg_bytesPerSample);
+    m_inputBuffer = new yarp::dev::CircularAudioBuffer("fake_mic_buffer", buffer_size);
     
     //start the capture thread
     start();
@@ -154,14 +154,14 @@ bool fakeMicrophone::stopRecording()
 }
 
 
-bool fakeMicrophone::getRecordingAudioBufferMaxSize(yarp::dev::audio_buffer_size& size)
+bool fakeMicrophone::getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
 {
     size = this->m_inputBuffer->getMaxSize();
     return true;
 }
 
 
-bool fakeMicrophone::getRecordingAudioBufferCurrentSize(yarp::dev::audio_buffer_size& size)
+bool fakeMicrophone::getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
 {
     size = this->m_inputBuffer->size();
     return true;

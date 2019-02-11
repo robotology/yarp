@@ -40,8 +40,8 @@ public:
     bool close() override;
 
     virtual bool renderSound(const yarp::sig::Sound& sound)  override;
-    virtual bool getPlaybackAudioBufferMaxSize(yarp::dev::audio_buffer_size& size)  override;
-    virtual bool getPlaybackAudioBufferCurrentSize(yarp::dev::audio_buffer_size& size)  override;
+    virtual bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)  override;
+    virtual bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)  override;
     virtual bool resetPlaybackAudioBuffer() override;
 
 private:
@@ -56,6 +56,6 @@ private:
     size_t m_cfg_bytesPerSample;
 
     size_t      m_bpnt;
-    circularAudioBuffer  *m_outputBuffer;
+    CircularAudioBuffer  *m_outputBuffer;
     bool        m_renderSoundImmediate;
 };
