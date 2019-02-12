@@ -296,43 +296,6 @@ path \"@_path@\"
   if(YCEI_WITH_PLUGINS)
     # Call yarp_configure_plugins_installation with the proper parameters
     yarp_configure_plugins_installation(${_name} INSTALL_VARS_PREFIX ${_NAME})
-
-    # Temporary fix to remove the outdated path.ini file that will cause
-    # issues when looking for plugins.
-    # If the file is in the build tree, it is deleted immediately
-    # If the file is in the install tree, it is deleted with make
-    # install.
-    # FIXME Remove this when this hack has been around for enough time
-    #       to assert that there are no longer path.ini around.
-    string(TOLOWER ${_name} _lcname)
-    foreach(_f path.ini
-               path_${_name}.ini
-               path_${_name}mod.ini
-               path_${_lcname}.ini
-               path_${_lcname}mod.ini
-               path_${_NAME}.ini
-               path_${_NAME}mod.ini
-               path_for_install.ini)
-      if(EXISTS "${CMAKE_BINARY_DIR}/${_f}")
-        message(STATUS "Deleted: \"${CMAKE_BINARY_DIR}/${_f}\"")
-        file(REMOVE "${CMAKE_BINARY_DIR}/${_f}")
-      endif()
-      if(EXISTS "${CMAKE_BINARY_DIR}/${_destination}/${_f}")
-        message(STATUS "Deleted: \"${CMAKE_BINARY_DIR}/${_destination}/${_f}\"")
-        file(REMOVE "${CMAKE_BINARY_DIR}/${_destination}/${_f}")
-      endif()
-      install(CODE
- "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_f}\")
-    message(STATUS \"Deleted: \\\"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_f}\\\"\")
-    file(REMOVE \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_f}\")
-  endif()")
-      install(CODE
- "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_destination}/${_f}\")
-    message(STATUS \"Deleted: \\\"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_destination}/${_f}\\\"\")
-    file(REMOVE \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_destination}/${_f}\")
-  endif()")
-    endforeach()
-
   endif()
 
 endfunction()
