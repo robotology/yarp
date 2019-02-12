@@ -44,19 +44,8 @@ if(NOT SKIP_ffmpeg_grabber OR NOT SKIP_ffmpeg_writer)
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-
-  if(NOT SKIP_ffmpeg_grabber)
-    yarp_install(FILES ffmpeg_grabber.ini
-                 COMPONENT ${YARP_PLUGIN_MASTER}
-                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-  endif()
-
-  if(NOT SKIP_ffmpeg_writer)
-    yarp_install(FILES ffmpeg_writer.ini
-                 COMPONENT ${YARP_PLUGIN_MASTER}
-                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
-  endif()
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
+               YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
