@@ -545,12 +545,6 @@ macro(YARP_ADD_PLUGIN _library_name)
   get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
   add_library(${_library_name} ${_library_type} ${srcs} ${ARGN})
 
-  # If we are building YARP, add ALIAS targets.
-  # Only required for CMake 3.4 or earlier
-  if(TARGET YARP_OS AND CMAKE_VERSION VERSION_LESS 3.5)
-    add_library(YARP::${_library_name} ALIAS ${_library_name})
-  endif()
-
   if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
     # Do not add the "lib" prefix to dynamic plugin libraries.
     # This simplifies search on different platforms and makes it easier
