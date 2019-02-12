@@ -42,7 +42,10 @@ if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-  yarp_install(FILES ros.ini
+  yarp_install(FILES tcpros.ini
+               COMPONENT ${YARP_PLUGIN_MASTER}
+               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+  yarp_install(FILES rossrv.ini
                COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
@@ -65,3 +68,6 @@ if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
 
   set_property(TARGET yarpros PROPERTY FOLDER "Command Line Tools")
 endif()
+
+include(YarpRemoveFile)
+yarp_remove_file("${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}/ros.ini") # YARP_DEPRECATED since YARP 3.2
