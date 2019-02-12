@@ -112,7 +112,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
         }
         else
         {
-#if 1
+#if 0
             yDebug() << "Writing" << framesToCalc*2*2 << "bytes in the circular buffer";
 #endif 
             for( i=0; i<framesToCalc; i++ )
@@ -143,7 +143,8 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
             for( i=0; i<framesLeft/ num_play_channels; i++ )
             {
                 *wptr++ = playdata->read();  // left
-                if(num_play_channels == 2 ) *wptr++ = playdata->read();  // right
+                if( num_play_channels == 2 ) *wptr++ = playdata->read();  // right
+                for (size_t chs=2; chs<num_play_channels; chs++) playdata->read(); //remove all additional channels > 2
             }
             for( ; i<framesPerBuffer; i++ )
             {
@@ -167,7 +168,8 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
             for( i=0; i<framesPerBuffer; i++ )
             {
                 *wptr++ = playdata->read();  // left
-                if(num_play_channels == 2 ) *wptr++ = playdata->read();  // right
+                if( num_play_channels == 2 ) *wptr++ = playdata->read();  // right
+                for (size_t chs=2; chs<num_play_channels; chs++) playdata->read(); //remove all additional channels > 2
             }
             //if we return paContinue, then the callback will be invoked again later
             //method Pa_IsStreamActive() will return 0
@@ -558,14 +560,16 @@ bool PortAudioDeviceDriver::renderSound(const yarp::sig::Sound& sound)
         }
 
         //reset the driver
-        printf("***** driver configuration changed, resetting *****\n");
+        yInfo("***** audio driver configuration changed, resetting");
+        yInfo() << "changing from: " << this->m_numPlaybackChannels << "channels, " <<  this->m_frequency << " Hz, ->" <<
+                                                    chans << "channels, " <<  freq << " Hz";
         this->close();
         m_driverConfig.playChannels = (int)(chans);
         m_driverConfig.rate = (int)(freq);
         bool ok = open(m_driverConfig);
         if (ok == false)
         {
-            printf("error occurred during driver reconfiguration, aborting\n");
+            yError("error occurred during audio driver reconfiguration, aborting");
             return false;
         }
     }
