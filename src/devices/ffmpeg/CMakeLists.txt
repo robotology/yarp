@@ -45,11 +45,23 @@ if(NOT SKIP_ffmpeg_grabber OR NOT SKIP_ffmpeg_writer)
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-  yarp_install(FILES ffmpeg.ini
-               COMPONENT ${YARP_PLUGIN_MASTER}
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+
+  if(NOT SKIP_ffmpeg_grabber)
+    yarp_install(FILES ffmpeg_grabber.ini
+                 COMPONENT ${YARP_PLUGIN_MASTER}
+                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+  endif()
+
+  if(NOT SKIP_ffmpeg_writer)
+    yarp_install(FILES ffmpeg_writer.ini
+                 COMPONENT ${YARP_PLUGIN_MASTER}
+                 DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+  endif()
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
   set_property(TARGET yarp_ffmpeg PROPERTY FOLDER "Plugins/Device")
 endif()
+
+include(YarpRemoveFile)
+yarp_remove_file("${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}/ffmpeg.ini") # YARP_DEPRECATED since YARP 3.2
