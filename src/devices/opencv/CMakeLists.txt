@@ -33,7 +33,7 @@ if(NOT SKIP_opencv_grabber)
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
                ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-  yarp_install(FILES opencv.ini
+  yarp_install(FILES opencv_grabber.ini
                COMPONENT ${YARP_PLUGIN_MASTER}
                DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
   yarp_install(FILES opencv_grabber.xml
@@ -43,3 +43,6 @@ if(NOT SKIP_opencv_grabber)
 
   set_property(TARGET yarp_opencv PROPERTY FOLDER "Plugins/Device")
 endif()
+
+include(YarpRemoveFile)
+yarp_remove_file("${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}/opencv.ini") # YARP_DEPRECATED since YARP 3.2
