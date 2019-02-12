@@ -12,6 +12,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
 #include <functional>
@@ -261,6 +262,10 @@ void Sound::setSafe(audio_sample value, size_t sample, size_t channel)
     if (isSample(sample, channel))
     {
         set(value, sample, channel);
+    }
+    else
+    {
+        yError() << "Sample out of bound:" << sample << "," << channel;
     }
 }
 

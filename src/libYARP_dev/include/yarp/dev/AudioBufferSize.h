@@ -33,7 +33,9 @@ class yarp::dev::AudioBufferSize
     public:
     size_t getSamples() { return m_samples; }
     size_t getChannels() { return m_channels; }
+    size_t getBufferElements() { return size; }
     size_t getBytes() { return m_samples * m_channels * m_depth; }
+
     AudioBufferSize()
     {
         size = 0;

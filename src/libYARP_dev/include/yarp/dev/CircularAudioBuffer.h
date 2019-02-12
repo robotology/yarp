@@ -74,7 +74,7 @@ class CircularAudioBuffer
             i = 0;
         else
             i = maxsize.size - start + end;
-        return AudioBufferSize(i, maxsize.m_channels, sizeof(SAMPLE)); //not sure about this
+        return AudioBufferSize(i/maxsize.m_channels, maxsize.m_channels, sizeof(SAMPLE));
     }
 
     inline SAMPLE read()
