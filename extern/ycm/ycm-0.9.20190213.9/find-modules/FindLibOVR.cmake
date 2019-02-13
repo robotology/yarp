@@ -64,7 +64,7 @@ if(WIN32)
     elseif(MSVC12)
       set(_arch "VS2013")
     elseif(MSVC14)
-      set(_arch "VS2013")
+      set(_arch "VS2015")
     endif()
   endif()
 elseif(APPLE)
@@ -111,7 +111,7 @@ find_library(LibOVR_LibOVRKernel_LIBRARY_RELEASE
              NAMES OVRKernel LibOVRKernel
              PATHS ENV OculusSDK_ROOT
              NO_DEFAULT_PATH
-             PATH_SUFFIXES "LibOVRKernel/Lib/${_os}/Release/${_arch}")
+             PATH_SUFFIXES "LibOVRKernel/Lib/${_os}/Release (DLL CRT)/${_arch}")
 find_library(LibOVR_LibOVRKernel_LIBRARY_RELEASE
              NAMES OVRKernel LibOVRKernel
              PATHS ENV OculusSDK_ROOT
@@ -122,7 +122,7 @@ find_library(LibOVR_LibOVRKernel_LIBRARY_DEBUG
              NAMES OVRKernel LibOVRKernel
              PATHS ENV OculusSDK_ROOT
              NO_DEFAULT_PATH
-             PATH_SUFFIXES "LibOVRKernel/Lib/${_os}/Debug/${_arch}")
+             PATH_SUFFIXES "LibOVRKernel/Lib/${_os}/Debug (DLL CRT)/${_arch}")
 mark_as_advanced(LibOVR_LibOVRKernel_LIBRARY_DEBUG)
 
 find_library(LibOVR_LibOVR_LIBRARY_RELEASE
@@ -211,14 +211,6 @@ add_library(LibOVR::OVRKernel STATIC IMPORTED)
 set_target_properties(LibOVR::OVRKernel PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${LibOVR_LibOVRKernel_INCLUDE_DIR};${LibOVR_LibOVRKernel_INCLUDE_DIR}/Kernel"
 )
-# Import target "LibOVR::OVRKernel" for configuration "Debug"
-if(EXISTS "${LibOVR_LibOVRKernel_LIBRARY_DEBUG}")
-  set_property(TARGET LibOVR::OVRKernel APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
-  set_target_properties(LibOVR::OVRKernel PROPERTIES
-    IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
-    IMPORTED_LOCATION_DEBUG "${LibOVR_LibOVRKernel_LIBRARY_DEBUG}"
-    )
-endif()
 
 # Import target "LibOVR::OVRKernel" for configuration "Release"
 if(EXISTS "${LibOVR_LibOVRKernel_LIBRARY_RELEASE}")
@@ -226,6 +218,15 @@ if(EXISTS "${LibOVR_LibOVRKernel_LIBRARY_RELEASE}")
   set_target_properties(LibOVR::OVRKernel PROPERTIES
     IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
     IMPORTED_LOCATION_RELEASE "${LibOVR_LibOVRKernel_LIBRARY_RELEASE}"
+    )
+endif()
+
+# Import target "LibOVR::OVRKernel" for configuration "Debug"
+if(EXISTS "${LibOVR_LibOVRKernel_LIBRARY_DEBUG}")
+  set_property(TARGET LibOVR::OVRKernel APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+  set_target_properties(LibOVR::OVRKernel PROPERTIES
+    IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
+    IMPORTED_LOCATION_DEBUG "${LibOVR_LibOVRKernel_LIBRARY_DEBUG}"
     )
 endif()
 
@@ -266,3 +267,5 @@ if(FindLibOVR_DEBUG)
     endif()
   endforeach()
 endif()
+
+set_target_properties(LibOVR::OVRKernel LibOVR::OVR PROPERTIES MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE)

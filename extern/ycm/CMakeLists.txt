@@ -4,7 +4,7 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-set(YCM_REQUIRED_VERSION 0.9.20181204.8) # Used also by YarpFindDependencies
+set(YCM_REQUIRED_VERSION 0.9.20190213.9) # Used also by YarpFindDependencies
 find_package(YCM ${YCM_REQUIRED_VERSION} QUIET)
 
 if(NOT YCM_FOUND)
@@ -93,6 +93,7 @@ foreach(_d ycm-0.6.0   # since YARP 3.0.0
            ycm-0.8.20180720.3
            ycm-0.9.0   # since YARP 3.1.1
            ycm-0.9.0.8
-           ycm-0.9.20181128.10)
+           ycm-0.9.20181128.10
+           ycm-0.9.20181204.8)
   yarp_remove_directory("share/yarp/cmake/${_d}")
 endforeach()

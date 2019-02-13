@@ -1,0 +1,11 @@
+Files in this folder and its subfolder come from CMake git repository
+(ref 8c7367e3f0e5e104630857561b4730a0b32253f9):
+
+  git://cmake.org/cmake.git
+
+They were imported exactly as they are on the original repository, in
+order to supply the new features and bugfix available in newer releases
+to user with older cmake releases.
+
+These files are distributed under the OSI-approved BSD License;
+see accompanying file Copyright.txt for details.

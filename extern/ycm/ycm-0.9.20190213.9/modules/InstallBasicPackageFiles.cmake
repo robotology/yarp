@@ -14,6 +14,7 @@
 #  install_basic_package_files(<Name>
 #                              VERSION <version>
 #                              COMPATIBILITY <compatibility>
+#                              [ARCH_INDEPENDENT]
 #                              [EXPORT <export>] # (default = "<Name>")
 #                              [FIRST_TARGET <target1>] # (default = "<Name>")
 #                              [TARGETS <target1> <target2> ...]
@@ -72,11 +73,9 @@
 # one (``CMAKE_BINARY_DIR``).  If this is a relative path, it is considered
 # relative to the ``CMAKE_BINARY_DIR`` directory.
 #
-# The ``<Name>ConfigVersion.cmake`` is generated using
-# ``write_basic_package_version_file``.  The ``VERSION``,
-# ``COMPATIBILITY``, ``NO_SET_AND_CHECK_MACRO``, and
-# ``NO_CHECK_REQUIRED_COMPONENTS_MACRO`` are passed to this function
-# and are used internally by :module:`CMakePackageConfigHelpers` module.
+# The ``<Name>ConfigVersion.cmake`` file is generated using
+# ``write_basic_package_version_file``. The ``VERSION``, ``COMPATIBILITY``, and
+# ``ARCH_INDEPENDENT``arguments are passed to this function.
 #
 # ``VERSION`` shall be in the form ``<major>[.<minor>[.<patch>[.<tweak>]]]]``.
 # If no ``VERSION`` is given, the ``PROJECT_VERSION`` variable is used.
@@ -91,6 +90,15 @@
 # command documentation.
 # If your project has more elaborated version matching rules, you will need to
 # write your own custom ConfigVersion.cmake file instead of using this macro.
+#
+# If the ``ARCH_INDEPENDENT`` option is enabled, the installed package version
+# will be considered compatible even if it was built for a different
+# architecture than the requested architecture.
+#
+# The ``<Name>Config.cmake`` file is generated using
+# ``configure_package_config_file``. The  ``NO_SET_AND_CHECK_MACRO``, and
+# ``NO_CHECK_REQUIRED_COMPONENTS_MACRO``, and arguments are passed to this
+# function.
 #
 # By default ``install_basic_package_files`` also generates the two helper
 # macros ``set_and_check()`` and ``check_required_components()`` into the
@@ -118,10 +126,6 @@
 # See the documentation of :module:`CMakePackageConfigHelpers` module for
 # further information and references therein.
 #
-#
-# The ``<Name>Config.cmake`` is generated using
-# ``configure_package_config_file``.  See the documentation for the
-# :module:`CMakePackageConfigHelpers` module for further information.
 # If the ``CONFIG_TEMPLATE`` argument is passed, the specified file
 # is used as template for generating the configuration file, otherwise
 # this module expects to find a ``<Name>Config.cmake.in`` or
@@ -237,7 +241,8 @@ function(INSTALL_BASIC_PACKAGE_FILES _Name)
 
   # TODO check that _Name does not contain "-" characters
 
-  set(_options NO_SET_AND_CHECK_MACRO
+  set(_options ARCH_INDEPENDENT
+               NO_SET_AND_CHECK_MACRO
                NO_CHECK_REQUIRED_COMPONENTS_MACRO
                UPPERCASE_FILENAMES
                LOWERCASE_FILENAMES
@@ -273,6 +278,11 @@ function(INSTALL_BASIC_PACKAGE_FILES _Name)
 
   if(NOT DEFINED _IBPF_COMPATIBILITY)
     message(FATAL_ERROR "COMPATIBILITY argument is required")
+  endif()
+
+  unset(_arch_independent)
+  if(_IBPF_ARCH_INDEPENDENT)
+    set(_arch_independent ARCH_INDEPENDENT)
   endif()
 
   if(_IBPF_UPPERCASE_FILENAMES AND _IBPF_LOWERCASE_FILENAMES)
@@ -569,7 +579,8 @@ ${_compatibility_vars}
   # <Name>ConfigVersion.cmake file (same for build tree and intall)
   write_basic_package_version_file("${_IBPF_EXPORT_DESTINATION}/${_version_filename}"
                                    VERSION ${_IBPF_VERSION}
-                                   COMPATIBILITY ${_IBPF_COMPATIBILITY})
+                                   COMPATIBILITY ${_IBPF_COMPATIBILITY}
+                                   ${_arch_independent})
   install(FILES "${_IBPF_EXPORT_DESTINATION}/${_version_filename}"
           DESTINATION ${_IBPF_INSTALL_DESTINATION}
           COMPONENT ${_IBPF_COMPONENT})

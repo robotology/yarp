@@ -4,4 +4,3 @@ bindings/lua/argcargv.i
 example/swig/allegro/yarp.asd
 src/devices/opencv/OpenCVGrabber.cpp
 src/devices/opencv/OpenCVGrabber.h
-cmake/FindI2C.cmake
