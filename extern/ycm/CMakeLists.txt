@@ -83,6 +83,7 @@ set(YCM_REQUIRED_VERSION ${YCM_REQUIRED_VERSION} PARENT_SCOPE) # Used also by Ya
 set(YCM_FOUND ${YCM_FOUND} PARENT_SCOPE)
 
 # Remove no longer used directory from installation
+include(YarpRemoveFile)
 foreach(_d ycm-0.6.0   # since YARP 3.0.0
            ycm-0.7.0
            ycm-0.8.0
@@ -93,10 +94,5 @@ foreach(_d ycm-0.6.0   # since YARP 3.0.0
            ycm-0.9.0   # since YARP 3.1.1
            ycm-0.9.0.8
            ycm-0.9.20181128.10)
-  install(CODE
- "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\")
-    message(STATUS \"Deleted: \\\"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\\\"\")
-    file(REMOVE_RECURSE \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/yarp/cmake/${_d}\")
-  endif()"
-          COMPONENT scripts)
+  yarp_remove_directory("share/yarp/cmake/${_d}")
 endforeach()
