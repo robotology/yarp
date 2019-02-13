@@ -81,6 +81,20 @@ public:
      */
     virtual bool renderSound(const yarp::sig::Sound& sound) = 0;
 
+    /**
+    * Start the playback.
+    *
+    * @return true/false upon success/failure
+    */
+    virtual bool startPlayback() = 0;
+
+    /**
+    * Stop the playback.
+    *
+    * @return true/false upon success/failure
+    */
+    virtual bool stopPlayback() = 0;
+
     virtual bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) = 0;
 
     virtual bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) = 0;

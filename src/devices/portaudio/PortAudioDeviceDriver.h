@@ -112,6 +112,8 @@ public:
     bool renderSound(const yarp::sig::Sound& sound) override;
     bool startRecording() override;
     bool stopRecording() override;
+    bool startPlayback() override;
+    bool stopPlayback() override;
     
     bool abortSound(void);
     bool immediateSound(const yarp::sig::Sound& sound);

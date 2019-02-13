@@ -39,6 +39,8 @@ public:
     bool open(yarp::os::Searchable &config) override;
     bool close() override;
 
+    virtual bool startPlayback() override;
+    virtual bool stopPlayback() override;
     virtual bool renderSound(const yarp::sig::Sound& sound)  override;
     virtual bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)  override;
     virtual bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)  override;

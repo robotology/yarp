@@ -631,3 +631,15 @@ bool PortAudioDeviceDriver::resetRecordingAudioBuffer()
     this->dataBuffers.recData->clear();
     return true;
 }
+
+bool PortAudioDeviceDriver::startPlayback()
+{
+    pThread.something_to_play = true;
+    return true;
+}
+
+bool PortAudioDeviceDriver::stopPlayback()
+{
+    pThread.something_to_play = false;
+    return true;
+}

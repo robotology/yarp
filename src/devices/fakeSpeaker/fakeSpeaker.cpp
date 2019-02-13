@@ -84,6 +84,15 @@ bool fakeSpeaker::threadInit()
     return true;
 }
 
+bool fakeSpeaker::startPlayback()
+{
+    return true;
+}
+
+bool fakeSpeaker::stopPlayback()
+{
+    return true;
+}
 
 void fakeSpeaker::run()
 {
