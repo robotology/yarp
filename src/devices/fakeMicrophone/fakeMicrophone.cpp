@@ -23,7 +23,7 @@ using namespace yarp::sig;
 #define SAMPLING_RATE       44100
 #define CHUNK_SIZE          512
 #define SLEEP_TIME          0.005
-#define SAMPLES_TO_BE_COPIED 64
+#define SAMPLES_TO_BE_COPIED 512
 
 typedef unsigned short int audio_sample_16t;
 
@@ -79,8 +79,8 @@ bool fakeMicrophone::open(yarp::os::Searchable &config)
     m_cfg_numChannels = m_audioFile.getChannels();
     m_cfg_frequency = m_audioFile.getFrequency();
     m_cfg_bytesPerSample = m_audioFile.getBytesPerSample();
-    
-    AudioBufferSize buffer_size(m_cfg_numSamples, m_cfg_numChannels, m_cfg_bytesPerSample);
+    const size_t EXTRA_SPACE = 2;
+    AudioBufferSize buffer_size(m_cfg_numSamples*EXTRA_SPACE, m_cfg_numChannels, m_cfg_bytesPerSample);
     m_inputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_mic_buffer", buffer_size);
     
     //start the capture thread
@@ -127,7 +127,7 @@ void fakeMicrophone::run()
         {
             m_bpnt = 0;
         }
-        m_inputBuffer->write(p.at(i));
+        m_inputBuffer->write((unsigned short)(p.at(m_bpnt).get()));
         m_bpnt++;
     }
 #ifdef ADVANCED_DEBUG
@@ -187,12 +187,16 @@ bool fakeMicrophone::getSound(yarp::sig::Sound& sound)
         {
             if (buff_size_in_samples == 0)
             {
+#if DEBUG_MESSAGE
                 yError() << "fakeMicrophone::getSound() Buffer size is still zero after 100 iterations, returning";
+#endif
                 return false;
             }
             else
             {
+#if DEBUG_MESSAGE
                 yDebug() << "fakeMicrophone::getSound() Buffer size is " << buff_size_in_samples << "/" << this->m_cfg_numSamples << " samples, after 100 iterations";
+#endif
                 if (m_getSoundIsNotBlocking)
                 {
                     yError() << "fakeMicrophone::getSound() is in not-blocking mode, returning";
@@ -212,13 +216,18 @@ bool fakeMicrophone::getSound(yarp::sig::Sound& sound)
     sound.setFrequency(this->m_cfg_frequency);
 
     //fill the sound data struct, reading samples from the circular buffer
+    double ct1 = yarp::os::Time::now();
     for (size_t i = 0; i<this->m_cfg_numSamples; i++)
         for (size_t j = 0; j<this->m_cfg_numChannels; j++)
         {
-            audio_sample_16t s = m_inputBuffer->read();
+            int16_t s = (int16_t)(m_inputBuffer->read());
             sound.set(s, i, j);
         }
-    auto debug_p = sound.getInterleavedAudioRawData();
 
+    auto debug_p = sound.getInterleavedAudioRawData();
+    double ct2 = yarp::os::Time::now();
+#if DEBUG_TIME_SPENT
+    yDebug() << ct2 - ct1;
+#endif
     return true;
 }

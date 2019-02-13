@@ -56,6 +56,7 @@ private:
     IAudioGrabberSound *mic; //The microphone device
     yarp::os::Port rpcPort;
     yarp::os::Port streamingPort;
+    double last_time;
 public:
     /**
      * Constructor.
@@ -63,6 +64,7 @@ public:
     ServerSoundGrabber()
     {
         mic = nullptr;
+        last_time = yarp::os::Time::now();
     }
 
     virtual ~ServerSoundGrabber()
@@ -174,6 +176,12 @@ public:
     {
         while(!isStopping())
         {
+            double current_time = yarp::os::Time::now();
+#if DEBUG_TIME_SPENT
+            yDebug() << current_time - last_time;
+#endif
+            last_time = current_time;
+
             if (mic!= nullptr)
             {
                 yarp::sig::Sound snd;
@@ -186,7 +194,9 @@ public:
                     yDebug() << "BEFORE Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
                 }
 #endif
+                double ct1 = yarp::os::Time::now();
                 mic->getSound(snd);
+                double ct2 = yarp::os::Time::now();
 #ifdef PRINT_DEBUG_MESSAGES
                 {
                     audio_buffer_size buf_max;

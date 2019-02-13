@@ -11,6 +11,7 @@ include(YarpPrintFeature)
 yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
                                   DEFAULT ON
                                   DOC "devices plugins")
+  add_subdirectory(audioPlayerWrapper)
   add_subdirectory(depthCamera)
   add_subdirectory(fakeDepthCamera)
   add_subdirectory(fakebot)
@@ -23,6 +24,8 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(opencv)
   add_subdirectory(serialport)
   add_subdirectory(portaudio)
+  add_subdirectory(portaudioPlayer)
+  add_subdirectory(portaudioRecorder)
   add_subdirectory(imuBosch_BNO055)
   add_subdirectory(DynamixelAX12Ftdi)
   add_subdirectory(fakeLaser)
