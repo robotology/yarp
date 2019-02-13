@@ -145,30 +145,30 @@ private:
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearVelocityPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedAngularAccelerationPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearAccelerationPort;
-    FlexImagePort*                            gui_ports;
     
+    FlexImagePort* gui_ports{ nullptr };
     std::vector<guiParam> huds;
-    InputCallback* displayPorts[2];
+    InputCallback* displayPorts[2]{ nullptr, nullptr };
     ovrEyeRenderDesc EyeRenderDesc[2];
-    TextureStatic* textureLogo;
+    TextureStatic* textureLogo{ nullptr };
     ovrLayerQuad logoLayer;
-    TextureStatic* textureCrosshairs;
+    TextureStatic* textureCrosshairs{ nullptr };
     ovrLayerQuad crosshairsLayer;
-    TextureBattery* textureBattery;
+    TextureBattery* textureBattery{ nullptr };
     ovrLayerQuad batteryLayer;
-    ovrMirrorTexture mirrorTexture;
-    GLuint mirrorFBO;
+    ovrMirrorTexture mirrorTexture{ nullptr };
+    GLuint mirrorFBO{ 0 };
     ovrSession session;
     ovrHmdDesc hmdDesc;
-    GLFWwindow* window;
+    GLFWwindow* window{ nullptr };
     ovrTrackingState ts;
     ovrPoseStatef headpose;
+    ovrPoseStatef predicted_headpose;
     unsigned int guiCount;
-    bool         enableGui;
-
+    bool         enableGui{ true };
     yarp::os::Mutex                  inputStateMutex;
     ovrInputState                    inputState;
-    bool                             inputStateError;
+    bool                             inputStateError{ false };
     bool                             getStickAsAxis;
     std::vector<ovrButton>           buttonIdToOvrButton;
     std::vector<float*>              axisIdToValue;
@@ -182,8 +182,8 @@ private:
     std::string      root_frame;
     PolyDriver       driver;
 
-    bool closed;
-    long long distortionFrameIndex;
+    bool closed{ false };
+    long long distortionFrameIndex{ 0 };
 
     unsigned int texWidth;
     unsigned int texHeight;
@@ -192,14 +192,14 @@ private:
     size_t camHeight[2];
     ovrFovPort fov[2];
 
-    bool flipInputEnabled;
-    bool imagePoseEnabled;
-    bool userPoseEnabled;
+    bool flipInputEnabled{ false };
+    bool imagePoseEnabled{ true };
+    bool userPoseEnabled{ false };
 
     // Layers
-    bool logoEnabled;
-    bool crosshairsEnabled;
-    bool batteryEnabled;
+    bool logoEnabled{ true };
+    bool crosshairsEnabled{ true };
+    bool batteryEnabled{ true };
 
     double prediction;
 

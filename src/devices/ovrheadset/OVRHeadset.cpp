@@ -257,38 +257,7 @@ inline void setHeadLockedLayer(ovrLayerQuad& layer, TextureBuffer* tex,
 
 yarp::dev::OVRHeadset::OVRHeadset() :
         yarp::dev::DeviceDriver(),
-        yarp::os::PeriodicThread(0.011, yarp::os::ShouldUseSystemClock::Yes), // ~90 fps
-        orientationPort(nullptr),
-        positionPort(nullptr),
-        angularVelocityPort(nullptr),
-        linearVelocityPort(nullptr),
-        angularAccelerationPort(nullptr),
-        linearAccelerationPort(nullptr),
-        predictedOrientationPort(nullptr),
-        predictedPositionPort(nullptr),
-        predictedAngularVelocityPort(nullptr),
-        predictedLinearVelocityPort(nullptr),
-        predictedAngularAccelerationPort(nullptr),
-        predictedLinearAccelerationPort(nullptr),
-        displayPorts{ nullptr, nullptr },
-        textureLogo(nullptr),
-        textureCrosshairs(nullptr),
-        textureBattery(nullptr),
-        mirrorTexture(nullptr),
-        mirrorFBO(0),
-        window(nullptr),
-        closed(false),
-        distortionFrameIndex(0),
-        flipInputEnabled(false),
-        imagePoseEnabled(true),
-        userPoseEnabled(false),
-        logoEnabled(true),
-        crosshairsEnabled(true),
-        batteryEnabled(true),
-        inputStateError(false),
-        tfPublisher(nullptr),
-        relative(false),
-        enableGui(true)
+        yarp::os::PeriodicThread(0.011, yarp::os::ShouldUseSystemClock::Yes) // ~90 fps
 {
     yTrace();
 }
@@ -467,13 +436,13 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
                 std::string       groupName  = "GUI_" + std::to_string(i);
                 yarp::os::Bottle& guip       = cfg.findGroup(groupName);
                 guiParam          hud;
-                
+
                 if (guip.isNull())
                 {
                     yError() << "group:" << groupName << "not found in configuration file..";
                     return false;
                 }
-                
+
                 for (auto& p : paramParser)
                 {
                     if (!guip.check(p.first) || !(guip.find(p.first).*isFunctionMap[p.second])())
@@ -498,7 +467,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
                 huds.push_back(hud);
             }
         }
-        
+
     }
 
     getStickAsAxis = cfg.find("stick_as_axis").asBool();
@@ -532,18 +501,21 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     yInfo() << "TransformCLient successfully opened at port: " << cfg.find("tfLocal").asString();
 
     //opening ports
-    ports.push_back(std::make_pair(&orientationPort,                  "orientation"));
-    ports.push_back(std::make_pair(&positionPort,                     "position"));
-    ports.push_back(std::make_pair(&angularVelocityPort,              "angularVelocity"));
-    ports.push_back(std::make_pair(&linearVelocityPort,               "linearVelocity"));
-    ports.push_back(std::make_pair(&angularAccelerationPort,          "angularAcceleration"));
-    ports.push_back(std::make_pair(&linearAccelerationPort,           "linearAcceleration"));
-    ports.push_back(std::make_pair(&predictedOrientationPort,         "predictedOrientation"));
-    ports.push_back(std::make_pair(&predictedPositionPort,            "predictedPosition"));
-    ports.push_back(std::make_pair(&predictedAngularVelocityPort,     "predictedAngularVelocity"));
-    ports.push_back(std::make_pair(&predictedLinearVelocityPort,      "predictedLinearVelocity"));
-    ports.push_back(std::make_pair(&predictedAngularAccelerationPort, "predictedAngularAcceleration"));
-    ports.push_back(std::make_pair(&predictedLinearAccelerationPort,  "predictedLinearAcceleration"));
+    ports =
+    {
+        { &orientationPort,                  "orientation"                  },
+        { &positionPort,                     "position"                     },
+        { &angularVelocityPort,              "angularVelocity"              },
+        { &linearVelocityPort,               "linearVelocity"               },
+        { &angularAccelerationPort,          "angularAcceleration"          },
+        { &linearAccelerationPort,           "linearAcceleration"           },
+        { &predictedOrientationPort,         "predictedOrientation"         },
+        { &predictedPositionPort,            "predictedPosition"            },
+        { &predictedAngularVelocityPort,     "predictedAngularVelocity"     },
+        { &predictedLinearVelocityPort,      "predictedLinearVelocity"      },
+        { &predictedAngularAccelerationPort, "predictedAngularAcceleration" },
+        { &predictedLinearAccelerationPort,  "predictedLinearAcceleration"  }
+    };
 
     for (auto port : ports)
     {
@@ -585,12 +557,15 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     camHFOV[1] = hfov;
 
     //optional params
-    optionalParams.push_back(std::make_tuple("flipinput",     "[F] Enable input flipping",                &flipInputEnabled,  true));
-    optionalParams.push_back(std::make_tuple("no-imagepose",  "[I] Disable image pose",                   &imagePoseEnabled,  false));
-    optionalParams.push_back(std::make_tuple("userpose",      "[U] Use user pose instead of camera pose", &imagePoseEnabled,  true));
-    optionalParams.push_back(std::make_tuple("no-logo",       "[L] Disable logo",                         &imagePoseEnabled,  false));
-    optionalParams.push_back(std::make_tuple("no-crosshairs", "[C] Disable crosshairs",                   &crosshairsEnabled, false));
-    optionalParams.push_back(std::make_tuple("no-battery",    "[B] Disable battery",                      &batteryEnabled,    false));
+    optionalParams =
+    {
+        { "flipinput",     "[F] Enable input flipping",                &flipInputEnabled,  true },
+        { "no-imagepose",  "[I] Disable image pose",                   &imagePoseEnabled,  false },
+        { "userpose",      "[U] Use user pose instead of camera pose", &imagePoseEnabled,  true  },
+        { "no-logo",       "[L] Disable logo",                         &imagePoseEnabled,  false },
+        { "no-crosshairs", "[C] Disable crosshairs",                   &crosshairsEnabled, false },
+        { "no-battery",    "[B] Disable battery",                      &batteryEnabled,    false }
+    };
 
     for (auto p : optionalParams)
     {
@@ -810,7 +785,7 @@ void yarp::dev::OVRHeadset::threadRelease()
     ports.push_back(predictedLinearVelocityPort);
     ports.push_back(predictedAngularAccelerationPort);
     ports.push_back(predictedLinearAccelerationPort);
-    
+
     for (auto& hud : huds)
     {
         delete hud.texture;
@@ -941,7 +916,7 @@ void yarp::dev::OVRHeadset::run()
     YARP_UNUSED(frameTiming);
 
     // Query the HMD for the current tracking state.
-    ts       = ovr_GetTrackingState(session, ovr_GetTimeInSeconds(), false);
+    ts = ovr_GetTrackingState(session, ovr_GetTimeInSeconds(), false);
     headpose = ts.HeadPose;
     yarp::os::Stamp stamp(distortionFrameIndex, ts.HeadPose.TimeInSeconds);
 
@@ -962,7 +937,7 @@ void yarp::dev::OVRHeadset::run()
         yarp::sig::Vector rpyHead, rpyRobot;
 
         tfPublisher->getTransform("head_link", "mobile_base_body_link", T_robotHead);
-        ovrVector3f& leftH  = ts.HandPoses[ovrHand_Left].ThePose.Position;
+        ovrVector3f& leftH = ts.HandPoses[ovrHand_Left].ThePose.Position;
         ovrVector3f& rightH = ts.HandPoses[ovrHand_Right].ThePose.Position;
 
         T_RHand    = ovr2matrix(vecSubtract(rightH, headpose.ThePose.Position), OVR::Quatf(ts.HandPoses[ovrHand_Right].ThePose.Orientation) * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI_2));
