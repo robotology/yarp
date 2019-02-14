@@ -15,7 +15,6 @@ yarp_prepare_plugin(rossrv
                     CATEGORY carrier
                     TYPE yarp::os::RosSrvCarrier
                     INCLUDE TcpRosCarrier.h
-                    EXTRA_CONFIG CODE=\(any\)\ \(any\)\ \"\\\\0\\\\0\"\ \(any\)\ \(any\)\ \"\\\\0\\\\0\"
                     DEFAULT ON)
 
 if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
