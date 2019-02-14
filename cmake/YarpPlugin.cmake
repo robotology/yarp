@@ -515,7 +515,7 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
     set_property(DIRECTORY APPEND PROPERTY YARP_BUNDLE_CODE ${_fname})
   endif()
 
-  set_property(DIRECTORY PROPERTY YARP_BUNDLE_INI "${_plugin_name}.ini")
+  set_property(DIRECTORY APPEND PROPERTY YARP_BUNDLE_INI "${_plugin_name}.ini")
   string(MAKE_C_IDENTIFIER "${_plugin_name}.ini" _ini_id)
   set_property(DIRECTORY PROPERTY YARP_BUNDLE_INI_CONTENT_${_ini_id} ${_ini_file_content})
 
@@ -576,15 +576,17 @@ macro(YARP_ADD_PLUGIN _library_name)
 
   get_property(_ini_file_set DIRECTORY PROPERTY YARP_BUNDLE_INI SET)
   if(_ini_file_set)
-    get_property(_ini_file DIRECTORY PROPERTY YARP_BUNDLE_INI)
-    string(MAKE_C_IDENTIFIER "${_ini_file}" _ini_id)
-    get_property(_ini_file_content DIRECTORY PROPERTY YARP_BUNDLE_INI_CONTENT_${_ini_id})
-    string(REPLACE "\@YARPPLUG_LIBRARY\@" "${_library_name}" _ini_file_content "${_ini_file_content}")
-    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${_ini_file}" "${_ini_file_content}")
-
-    # Reset .ini file name and content
+    get_property(_ini_files DIRECTORY PROPERTY YARP_BUNDLE_INI)
+    foreach(_ini_file IN LISTS _ini_files)
+      string(MAKE_C_IDENTIFIER "${_ini_file}" _ini_id)
+      get_property(_ini_file_content DIRECTORY PROPERTY YARP_BUNDLE_INI_CONTENT_${_ini_id})
+      string(REPLACE "\@YARPPLUG_LIBRARY\@" "${_library_name}" _ini_file_content "${_ini_file_content}")
+      file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${_ini_file}" "${_ini_file_content}")
+      # Reset the .ini file content property
+      set_property(DIRECTORY PROPERTY YARP_BUNDLE_INI_CONTENT_${_ini_id})
+    endforeach()
+    # Reset .ini file name property
     set_property(DIRECTORY PROPERTY YARP_BUNDLE_INI)
-    set_property(DIRECTORY PROPERTY YARP_BUNDLE_INI_CONTENT_${_ini_id})
 
     set_property(TARGET ${_library_name} APPEND PROPERTY YARP_INI_FILES "${CMAKE_CURRENT_BINARY_DIR}/${_ini_file}")
   endif()
