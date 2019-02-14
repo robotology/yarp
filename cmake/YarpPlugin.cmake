@@ -584,11 +584,11 @@ macro(YARP_ADD_PLUGIN _library_name)
       file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${_ini_file}" "${_ini_file_content}")
       # Reset the .ini file content property
       set_property(DIRECTORY PROPERTY YARP_BUNDLE_INI_CONTENT_${_ini_id})
+      set_property(TARGET ${_library_name} APPEND PROPERTY YARP_INI_FILES "${CMAKE_CURRENT_BINARY_DIR}/${_ini_file}")
     endforeach()
     # Reset .ini file name property
     set_property(DIRECTORY PROPERTY YARP_BUNDLE_INI)
 
-    set_property(TARGET ${_library_name} APPEND PROPERTY YARP_INI_FILES "${CMAKE_CURRENT_BINARY_DIR}/${_ini_file}")
   endif()
 endmacro()
 

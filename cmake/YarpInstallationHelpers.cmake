@@ -443,7 +443,7 @@ macro(YARP_INSTALL _what)
         string(REGEX REPLACE "^${CMAKE_INSTALL_PREFIX}/" "" _YI_YARP_INI_DESTINATION_RELATIVE ${_YI_YARP_INI_DESTINATION})
         file(COPY ${_yarp_ini_files}
              DESTINATION "${CMAKE_BINARY_DIR}/${_YI_YARP_INI_DESTINATION_RELATIVE}")
-        install(FILES
+        install(FILES ${_yarp_ini_files}
                 ${_component}
                 DESTINATION ${_YI_YARP_INI_DESTINATION})
       endif()
