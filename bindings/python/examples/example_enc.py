@@ -38,7 +38,7 @@ def main():
         sys.exit()
      
     # wait a bit for the interface 
-    yarp.Time_delay(1.0)
+    yarp.Time.delay(1.0)
 
     encs = yarp.Vector(ipos.getAxes())
     for i in range(0,10):
@@ -48,7 +48,7 @@ def main():
 
         print "Current encoders value: "
         print encs.toString(-1, -1)
-        yarp.Time_delay(0.01)
+        yarp.Time.delay(0.01)
     
     # closing the driver
     driver.close()
