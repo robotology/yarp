@@ -21,7 +21,7 @@ for i in range(1,top):
     img.zero()
     img.pixel(160,120).r = 255
     p.write()
-    yarp.Time.delay(0.5)
+    yarp.delay(0.5)
 p.close();
 
 yarp.Network.fini();
