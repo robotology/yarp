@@ -10,6 +10,12 @@
 #ifndef YARP_DEV_AUDIOBUFFERSIZE_H
 #define YARP_DEV_AUDIOBUFFERSIZE_H
 
+#include <yarp/os/Portable.h>
+#include <yarp/os/PortReader.h>
+#include <yarp/os/PortWriter.h>
+#include <yarp/dev/api.h>
+#include <audioBufferSizeData.h>
+
 namespace yarp {
     namespace dev {
         class AudioBufferSize;
@@ -19,22 +25,20 @@ namespace yarp {
     }
 }
 
-class yarp::dev::AudioBufferSize
+class YARP_dev_API yarp::dev::AudioBufferSize: public yarp::os::Portable,
+                                               private audioBufferSizeData
 {
     template <typename SAMPLE>
     friend class CircularAudioBuffer;
-
-    private:
-    size_t m_samples;
-    size_t m_channels;
-    size_t m_depth;
-    size_t size;
 
     public:
     size_t getSamples() { return m_samples; }
     size_t getChannels() { return m_channels; }
     size_t getBufferElements() { return size; }
     size_t getBytes() { return m_samples * m_channels * m_depth; }
+
+    bool read(yarp::os::ConnectionReader& reader) override { return audioBufferSizeData::read(reader); }
+    bool write(yarp::os::ConnectionWriter& writer) const override { return audioBufferSizeData::write(writer); }
 
     AudioBufferSize()
     {

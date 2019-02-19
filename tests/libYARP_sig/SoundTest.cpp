@@ -226,7 +226,20 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
             ok = (vec_ni.at(i).get() == test_vec_ni.at(i));
             CHECK(ok);
         }
-        
+        auto s1 = std::vector<short>(vec_i.begin(), vec_i.end());
+        short* samples1 = s1.data();
+        for (size_t i = 0; i < vec_i.size(); i++)
+        {
+            ok = (samples1[i] == test_vec_i.at(i));
+            CHECK(ok);
+        }
+        auto s2 = std::vector<short>(vec_ni.begin(), vec_ni.end());
+        short* samples2 = s2.data();
+        for (size_t i = 0; i < vec_ni.size(); i++)
+        {
+            ok = (samples2[i] == test_vec_ni.at(i));
+            CHECK(ok);
+        }
 
         std::string str = snd1.toString();
         yDebug("sound snd1.toSring():");

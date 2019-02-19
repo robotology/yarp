@@ -228,6 +228,7 @@ set(YARP_dev_devices_HDRS src/devices/AnalogSensorClient/AnalogSensorClient.h
 # Handle the YARP thrift messages
 include(YarpIDL)
 yarp_idl_to_dir(INPUT_FILES stateExt.thrift
+                            audioBufferSizeData.thrift
                 OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/devices/msgs/yarp"
                 SOURCES_VAR YARP_dev_idl_SRCS
                 HEADERS_VAR YARP_dev_idl_HDRS
