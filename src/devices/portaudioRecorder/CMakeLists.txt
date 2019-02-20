@@ -8,7 +8,7 @@ yarp_prepare_plugin(portaudioRecorder
                     CATEGORY device
                     TYPE yarp::dev::PortAudioRecorderDeviceDriver
                     INCLUDE PortAudioRecorderDeviceDriver.h
-                    EXTRA_CONFIG WRAPPER=ServerSoundGrabber
+#                   EXTRA_CONFIG WRAPPER=audioRecorderWrapper
                     DEPENDS "YARP_HAS_PORTAUDIO")
 
 if(NOT SKIP_yarp_portaudioRecorder)
@@ -34,11 +34,9 @@ if(NOT SKIP_yarp_portaudioRecorder)
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-
-  yarp_install(FILES portaudioRecorder.ini
-               COMPONENT ${YARP_PLUGIN_MASTER}
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
+               YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+               
 #  yarp_install(FILES portaudioRecorder.xml
 #               DESTINATION ${YARP_MODULES_INSTALL_DIR})
 
