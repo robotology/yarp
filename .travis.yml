@@ -404,7 +404,7 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export Qt5_DIR="/usr/local/opt/qt5/lib/cmake/Qt5"; fi
   
   # Install opencv@3 (keg-only)
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew link --force opencv@3 fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew link --force opencv@3; fi
 
   # Fix issue in trusty version of Qt5
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo sed -i 's/COPY_ONLY/COPYONLY/g' /usr/lib/x86_64-linux-gnu/cmake/Qt5Core/Qt5CoreMacros.cmake; fi
