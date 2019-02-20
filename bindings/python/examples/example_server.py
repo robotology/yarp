@@ -39,7 +39,7 @@ r = DataProcessor()
 p.setReader(r)
 p.open("/python");
 
-yarp.Time.delay(100)
+yarp.delay(100)
 print("Test program timer finished")
 
 yarp.Network.fini();

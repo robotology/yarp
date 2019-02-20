@@ -29,7 +29,7 @@ for i in range(1,top):
     bottle.addInt32(top)
     print ("Sending", bottle.toString())
     p.write()
-    yarp.Time.delay(0.5)
+    yarp.delay(0.5)
 
 p.close();
 
