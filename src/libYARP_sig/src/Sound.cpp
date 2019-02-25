@@ -408,3 +408,8 @@ size_t Sound::getChannels() const
 { 
     return this->m_channels;
 }
+
+double Sound::getDuration() const
+{
+    return (double)(this->m_samples)*(double)(1 / this->m_frequency);
+}

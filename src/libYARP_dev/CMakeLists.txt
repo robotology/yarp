@@ -260,7 +260,9 @@ add_library(YARP::YARP_dev ALIAS YARP_dev)
 
 target_include_directories(YARP_dev PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_include_directories(YARP_dev PRIVATE ${YARP_dev_idl_INCLUDE_DIRS})
+foreach(_d IN LISTS YARP_dev_idl_INCLUDE_DIRS)
+  target_include_directories(YARP_dev PUBLIC $<BUILD_INTERFACE:${_d}>)
+endforeach()
 
 target_link_libraries(YARP_dev PUBLIC YARP::YARP_conf
                                       YARP::YARP_OS

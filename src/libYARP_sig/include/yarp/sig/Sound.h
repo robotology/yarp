@@ -135,6 +135,12 @@ public:
     size_t getSamples() const;
 
     /**
+    * Get the duration of sound in seconds
+    * @return the duration of the sound
+    */
+    double getDuration() const;
+
+    /**
     * Get the number of channels of the sound
     * @return the number of channels
     */
