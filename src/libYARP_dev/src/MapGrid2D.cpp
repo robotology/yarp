@@ -792,7 +792,7 @@ bool MapGrid2D::write(yarp::os::ConnectionWriter& connection) const
     connection.appendInt32(BOTTLE_TAG_FLOAT64);
     connection.appendFloat64(m_resolution);
     connection.appendInt32(BOTTLE_TAG_STRING);
-    connection.appendRawString(m_map_name);
+    connection.appendString(m_map_name);
 
     unsigned char *mem = nullptr;
     int            memsize = 0;

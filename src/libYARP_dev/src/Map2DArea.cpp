@@ -101,7 +101,7 @@ bool Map2DArea::write(yarp::os::ConnectionWriter& connection) const
     connection.appendInt32(2+siz*2);
 
     connection.appendInt32(BOTTLE_TAG_STRING);
-    connection.appendRawString(map_id);
+    connection.appendString(map_id);
 
     connection.appendInt32(BOTTLE_TAG_INT32);
     connection.appendInt32(siz);

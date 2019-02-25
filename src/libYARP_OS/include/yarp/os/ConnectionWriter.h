@@ -132,11 +132,35 @@ public:
 #endif
 
     /**
-     * Send a character sequence to the network connection.
+     * Send a terminated string to the network connection.
+     *
+     * The lenght of string is not specified in advance, therefore the
+     * reader should read until the terminating character is found.
+     *
      * @param str the string to send
      * @param terminate the terminating character to use
      */
     virtual void appendText(const std::string& str, const char terminate = '\n') = 0;
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.2
+    YARP_DEPRECATED_MSG("Use appendString() instead")
+    virtual void appendRawString(const std::string& str) final { appendString(str); }
+#endif
+
+    /**
+     * Send a string to the network connection.
+     *
+     * The lenght of string is not specified in advance, therefore the
+     * reader should read the number of bytes specified by the first integer.
+     * The string terminating character (normally '\0') is not transmitted.
+     *
+     * @param str the string to send
+     */
+    void appendString(const std::string& str)
+    {
+        appendInt32(static_cast<std::int32_t>(str.length()));
+        appendBlock((char*)str.c_str(), str.length());
+    }
 
     /**
      * Send a block of data to the network connection, without making a copy.
@@ -240,13 +264,6 @@ public:
      *
      */
     virtual SizedWriter* getBuffer() const = 0;
-
-
-    virtual void appendRawString(const std::string& str)
-    {
-        appendInt32(static_cast<std::int32_t>(str.length()));
-        appendBlock((char*)str.c_str(), str.length());
-    }
 
     /**
      *

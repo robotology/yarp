@@ -55,7 +55,10 @@ public:
     bool dropRequested();
 
     virtual bool expectBlock(yarp::os::Bytes& b);
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.2
+    using ConnectionReader::expectString;
     virtual std::string expectString(int len);
+#endif
     virtual std::string expectLine();
     virtual void flushWriter();
     virtual void setReference(yarp::os::Portable *obj);
