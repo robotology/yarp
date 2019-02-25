@@ -120,12 +120,23 @@ public:
      */
     virtual void appendFloat64(yarp::conf::float64_t data) = 0;
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.2
     /**
      * Send a character sequence to the network connection.
      * @param str the character sequence to send
      * @param terminate the terminating character to use
+     * @deprecated since YARP 3.2
      */
-    virtual void appendString(const char* str, const char terminate = '\n') = 0;
+    YARP_DEPRECATED_MSG("Use appendText() instead")
+    virtual void appendString(const char* str, const char terminate = '\n') final { appendText({str}, terminate); }
+#endif
+
+    /**
+     * Send a character sequence to the network connection.
+     * @param str the string to send
+     * @param terminate the terminating character to use
+     */
+    virtual void appendText(const std::string& str, const char terminate = '\n') = 0;
 
     /**
      * Send a block of data to the network connection, without making a copy.

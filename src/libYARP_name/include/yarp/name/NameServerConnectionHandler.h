@@ -81,11 +81,11 @@ public:
                         std::string si = v.asList()->toString();
                         si.erase(std::remove(si.begin(), si.end(), '\"'), si.end());
                         if (si.length()>0) {
-                            writer->appendString(si.c_str());
+                            writer->appendText(si.c_str());
                         }
                     } else {
                         if (v.isString()) {
-                            writer->appendString(v.asString().c_str());
+                            writer->appendText(v.asString().c_str());
                         } else {
                             yarp::os::Bottle b;
                             b.add(v);
@@ -93,7 +93,7 @@ public:
                         }
                     }
                 }
-                writer->appendString("*** end of message");
+                writer->appendText("*** end of message");
             } else {
                 reply.write(*writer);
             }

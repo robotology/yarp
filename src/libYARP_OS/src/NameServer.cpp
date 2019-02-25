@@ -783,7 +783,7 @@ public:
                         tmp += i;
                     }
                     tmp += '\r';
-                    os->appendString(tmp.c_str(), '\n');
+                    os->appendText(tmp.c_str());
 
                     YARP_DEBUG(Logger::get(),
                                std::string("name server reply is ") + result);

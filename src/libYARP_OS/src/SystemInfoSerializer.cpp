@@ -112,14 +112,14 @@ bool SystemInfoSerializer::write(yarp::os::ConnectionWriter& connection) const
     connection.appendInt32(storage.freeSpace);
 
     // serializing network
-    //connection.appendString(network.mac.c_str());
-    //connection.appendString(network.ip4.c_str());
-    //connection.appendString(network.ip6.c_str());
+    //connection.appendText(network.mac);
+    //connection.appendText(network.ip4);
+    //connection.appendText(network.ip6);
 
     // serializing processor
-    connection.appendString(processor.architecture.c_str());
-    connection.appendString(processor.model.c_str());
-    connection.appendString(processor.vendor.c_str());
+    connection.appendText(processor.architecture);
+    connection.appendText(processor.model);
+    connection.appendText(processor.vendor);
     connection.appendInt32(processor.family);
     connection.appendInt32(processor.modelNumber);
     connection.appendInt32(processor.cores);
@@ -133,17 +133,17 @@ bool SystemInfoSerializer::write(yarp::os::ConnectionWriter& connection) const
     connection.appendInt32(load.cpuLoadInstant);
 
     // serializing platform
-    connection.appendString(platform.name.c_str());
-    connection.appendString(platform.distribution.c_str());
-    connection.appendString(platform.release.c_str());
-    connection.appendString(platform.codename.c_str());
-    connection.appendString(platform.kernel.c_str());
-    connection.appendString(platform.environmentVars.toString().c_str());
+    connection.appendText(platform.name);
+    connection.appendText(platform.distribution);
+    connection.appendText(platform.release);
+    connection.appendText(platform.codename);
+    connection.appendText(platform.kernel);
+    connection.appendText(platform.environmentVars.toString());
 
     // serializing user
-    connection.appendString(user.userName.c_str());
-    connection.appendString(user.realName.c_str());
-    connection.appendString(user.homeDir.c_str());
+    connection.appendText(user.userName);
+    connection.appendText(user.realName);
+    connection.appendText(user.homeDir);
     connection.appendInt32(user.userID);
 
     return !connection.isError();

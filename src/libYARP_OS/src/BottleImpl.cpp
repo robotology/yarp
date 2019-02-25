@@ -422,8 +422,7 @@ bool BottleImpl::write(ConnectionWriter& writer) const
 {
     // could simplify this if knew lengths of blocks up front
     if (writer.isTextMode()) {
-        // writer.appendLine(toString());
-        writer.appendString(toString().c_str(), '\n');
+        writer.appendText(toString());
     } else {
         synch();
         /*

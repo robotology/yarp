@@ -69,9 +69,9 @@ bool PortCommand::write(ConnectionWriter& writer) const {
         if (ch!='\0') {
             char buf[] = "X";
             buf[0] = ch;
-            writer.appendString(std::string(buf).c_str(), '\n');
+            writer.appendText(buf);
         } else {
-            writer.appendString(str.c_str(), '\n');
+            writer.appendText(str);
         }
     }
     return !writer.isError();
