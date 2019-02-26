@@ -44,6 +44,21 @@ public:
     ManagedBytes(const Bytes& ext, bool owned = false);
 
     /**
+     * @brief Move constructor.
+     *
+     * @param other the ManagedBytes to be moved
+     */
+    ManagedBytes(ManagedBytes&& other) noexcept;
+
+    /**
+     * @brief Move assignment operator.
+     *
+     * @param other the MangedBytes to be moved
+     * @return this object
+     */
+    ManagedBytes& operator=(ManagedBytes&& other) noexcept;
+
+    /**
      * Copy constructor.
      * @param alt the data to copy.  If it is "owned" an independent copy
      * is made.
@@ -149,6 +164,8 @@ public:
     }
 
 private:
+    void moveOwnership(ManagedBytes& other);
+
     Bytes b;
     bool owned;
     size_t use;
