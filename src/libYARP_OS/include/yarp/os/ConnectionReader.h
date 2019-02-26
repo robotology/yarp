@@ -61,6 +61,22 @@ public:
     virtual std::string expectText(const char terminatingChar = '\n') = 0;
 
     /**
+     * Read a string from the network connection.
+     * The string should be serialized as "length" + "block".
+     * @return the string read from the connection
+     */
+    virtual std::string expectString()
+    {
+        std::string ret;
+        std::int32_t len = expectInt32();
+        if (!isError()) {
+            ret.resize(static_cast<size_t>(len));
+            expectBlock(const_cast<char*>(ret.data()), len);
+        }
+        return ret;
+    }
+
+    /**
      * Read an integer from the network connection.
      * @return the integer read from the connection
      * @warning Unsafe, sizeof(int) is platform dependent. Use expectInt32 instead.

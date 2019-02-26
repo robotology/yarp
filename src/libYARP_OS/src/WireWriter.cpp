@@ -145,8 +145,7 @@ bool WireWriter::writeTag(const char *tag, int split, int len) const {
 bool WireWriter::writeString(const std::string& tag) const {
     writer.appendInt32(BOTTLE_TAG_STRING);
     // WARNING tag.length() value is not checked here
-    writer.appendInt32((int)tag.length());
-    writer.appendBlock(tag.c_str(), tag.length());
+    writer.appendString(tag);
     return !writer.isError();
 }
 

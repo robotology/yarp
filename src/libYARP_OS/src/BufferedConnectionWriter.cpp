@@ -269,12 +269,13 @@ void BufferedConnectionWriter::appendBlock(const char* data, size_t len)
     appendBlockCopy(yarp::os::Bytes((char*)data, len));
 }
 
-void BufferedConnectionWriter::appendString(const char* str, const char terminate)
+void BufferedConnectionWriter::appendText(const std::string& str, const char terminate)
 {
     if (terminate == '\n') {
         appendLine(str);
     } else if (terminate == 0) {
-        appendStringBase(str);
+        yarp::os::Bytes b(const_cast<char*>(str.data()), str.length() + 1);
+        push(b, true);
     } else {
         std::string s = str;
         s += terminate;
@@ -296,12 +297,6 @@ void BufferedConnectionWriter::appendBlock(const yarp::os::Bytes& data)
 void BufferedConnectionWriter::appendBlockCopy(const Bytes& data)
 {
     push(data, true);
-}
-
-void BufferedConnectionWriter::appendStringBase(const std::string& data)
-{
-    yarp::os::Bytes b((char*)(data.c_str()), data.length() + 1);
-    push(b, true);
 }
 
 void BufferedConnectionWriter::appendLine(const std::string& data)

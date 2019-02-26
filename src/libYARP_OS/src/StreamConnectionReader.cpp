@@ -103,6 +103,7 @@ bool StreamConnectionReader::expectBlock(Bytes &b)
     return false;
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.2
 std::string StreamConnectionReader::expectString(int len)
 {
     if (!isGood()) {
@@ -122,6 +123,7 @@ std::string StreamConnectionReader::expectString(int len)
     delete[] buf;
     return s;
 }
+#endif // YARP_NO_DEPRECATED
 
 std::string StreamConnectionReader::expectLine()
 {

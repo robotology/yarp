@@ -95,10 +95,10 @@ public:
             encoding = "32FC1";
             break;
         }
-        buf.appendRawString(frame);
+        buf.appendString(frame);
         buf.appendInt32(image->height());
         buf.appendInt32(image->width());
-        buf.appendRawString(encoding);
+        buf.appendString(encoding);
         char is_bigendian = 0;
         buf.appendBlock(&is_bigendian,1);
         buf.appendInt32((image->width()*image->getPixelSize())+image->getPadding());
