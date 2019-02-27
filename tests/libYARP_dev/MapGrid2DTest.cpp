@@ -123,7 +123,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
         area2.points.push_back(yarp::math::Vec2D<double>(-1, -1));
         area2.points.push_back(yarp::math::Vec2D<double>(-1, 1));
         area2.points.push_back(yarp::math::Vec2D<double>( 1, -1));
-        b = area2.isValid(); //triangular area |\ 
+        b = area2.isValid(); //triangular area
         CHECK(b);
 
         yarp::dev::Map2DArea area3;
@@ -133,7 +133,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
         area3.points.push_back(yarp::math::Vec2D<double>(0, -0.5));
         area3.points.push_back(yarp::math::Vec2D<double>(1,  1));
         area3.points.push_back(yarp::math::Vec2D<double>(1, -1));
-        b = area3.isValid(); //concave polygon |\ 
+        b = area3.isValid(); //concave polygon
         CHECK(b);
 
         yarp::dev::Map2DLocation t1;
