@@ -75,7 +75,8 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
         const auto* rptr = (const SAMPLE*)inputBuffer;
         unsigned int framesToCalc;
         unsigned int i;
-        size_t framesLeft = recdata->size().getSamples()* recdata->size().getChannels();
+        size_t framesLeft = (recdata->getMaxSize().getSamples()* recdata->getMaxSize().getChannels()) -
+                            (recdata->size().getSamples()      * recdata->size().getChannels());
 
         (void) outputBuffer; // just to prevent unused variable warnings
         (void) timeInfo;
@@ -392,7 +393,7 @@ bool PortAudioDeviceDriver::stopRecording()
     return true;
 }
 
-bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound)
+bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s)
 {
     if (pThread.something_to_record == false)
     {
@@ -433,7 +434,7 @@ bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound)
     {
         sound.resize(this->numSamples,this->m_numRecordChannels);
     }
-    sound.setFrequency(this->m_driverConfig.rate);
+    sound.setFrequency(this->m_frequency);
 
     for (size_t i=0; i<this->numSamples; i++)
         for (size_t j=0; j<this->m_numRecordChannels; j++)

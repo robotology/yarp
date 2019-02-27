@@ -130,8 +130,8 @@ struct circularDataBuffers
     yarp::dev::CircularAudioBuffer_16t*     recData;
     bool                canPlay;
     bool                canRec;
-    int                 numPlayChannels;
-    int                 numRecChannels;
+    size_t              numPlayChannels;
+    size_t              numRecChannels;
     circularDataBuffers ()
     {
         numPlayChannels = 1;

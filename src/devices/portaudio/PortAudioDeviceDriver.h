@@ -67,7 +67,7 @@ class streamThread : public yarp::os::Thread
 };
 
 class yarp::dev::PortAudioDeviceDriver : public IAudioGrabberSound, 
-            public IAudioRender, public DeviceDriver
+            public IAudioRender, public DeprecatedDeviceDriver
 {
 private:
     PaStreamParameters  inputParameters;
@@ -108,7 +108,7 @@ public:
     bool open(PortAudioDeviceDriverSettings& config);
 
     bool close(void) override;
-    bool getSound(yarp::sig::Sound& sound) override;
+    bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;
     bool renderSound(const yarp::sig::Sound& sound) override;
     bool startRecording() override;
     bool stopRecording() override;

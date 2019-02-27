@@ -42,10 +42,17 @@ namespace yarp {
 
 class yarp::dev::PortAudioRecorderDeviceDriverSettings {
 public:
-    int rate;
-    int samples;
-    int recChannels;
-    int deviceNumber;
+    size_t cfg_rate;
+    size_t cfg_samples;
+    size_t cfg_recChannels;
+    int cfg_deviceNumber;
+    PortAudioRecorderDeviceDriverSettings()
+    {
+        cfg_rate = 0;
+        cfg_samples = 0;
+        cfg_recChannels = 0;
+        cfg_deviceNumber = 0;
+    }
 };
 
 class recStreamThread : public yarp::os::Thread
@@ -66,13 +73,12 @@ class yarp::dev::PortAudioRecorderDeviceDriver : public IAudioGrabberSound,
                                          public DeviceDriver
 {
 private:
-    PaStreamParameters  inputParameters;
-    PaStream*           stream;
-    PaError             err;
-    circularDataBuffers dataBuffers;
-    size_t              numSamples;
-    size_t              numBytes;
-    recStreamThread     pThread;
+    PaStreamParameters  m_inputParameters;
+    PaStream*           m_stream;
+    PaError             m_err;
+    circularDataBuffers m_dataBuffers;
+    PortAudioRecorderDeviceDriverSettings m_config;
+    recStreamThread     m_pThread;
 
     PortAudioRecorderDeviceDriver(const PortAudioRecorderDeviceDriver&);
 
@@ -94,16 +100,12 @@ public:
      * channels: Number of channels of input.  Specify
      * 0 to use a default.
      *
-     * read: Should allow reading
-     *
-     * write: Should allow writing
-     *
      * @return true on success
      */
     bool open(PortAudioRecorderDeviceDriverSettings& config);
 
     bool close(void) override;
-    bool getSound(yarp::sig::Sound& sound) override;
+    bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;
     bool startRecording() override;
     bool stopRecording() override;
     
@@ -113,11 +115,6 @@ public:
 
 protected:
     void*   m_system_resource;
-    size_t  m_numPlaybackChannels;
-    size_t  m_numRecordChannels;
-    int     m_frequency;
-    bool    m_loopBack;
-    bool    m_getSoundIsNotBlocking;
 
     PortAudioRecorderDeviceDriverSettings m_driverConfig;
     void handleError(void);

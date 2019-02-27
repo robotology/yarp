@@ -46,7 +46,7 @@ namespace yarp
  * \author (adapted) Júlio Gomes, VisLab ISR/IST - 2006
  *
  */
-class yarp::dev::ServerSoundGrabber : public yarp::dev::DeviceDriver,
+class yarp::dev::ServerSoundGrabber : public yarp::dev::DeprecatedDeviceDriver,
                                       private yarp::os::Thread,
                                       public yarp::os::PortReader
 {
@@ -177,7 +177,7 @@ public:
         while(!isStopping())
         {
             double current_time = yarp::os::Time::now();
-#if DEBUG_TIME_SPENT
+#ifdef DEBUG_TIME_SPENT
             yDebug() << current_time - last_time;
 #endif
             last_time = current_time;
@@ -195,7 +195,7 @@ public:
                 }
 #endif
                 double ct1 = yarp::os::Time::now();
-                mic->getSound(snd);
+                mic->getSound(snd, 44100, 44100, 0.0);
                 double ct2 = yarp::os::Time::now();
 #ifdef PRINT_DEBUG_MESSAGES
                 {

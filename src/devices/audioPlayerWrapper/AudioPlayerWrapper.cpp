@@ -18,7 +18,7 @@
 
 #define _USE_MATH_DEFINES
 
-#include "audioPlayerWrapper.h"
+#include "AudioPlayerWrapper.h"
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/LogStream.h>
 
@@ -30,14 +30,18 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
 
+#define DEFAULT_THREAD_PERIOD 0.02 //s
 
-audioPlayerWrapper::audioPlayerWrapper() : PeriodicThread(DEFAULT_THREAD_PERIOD),
+AudioPlayerWrapper::AudioPlayerWrapper() : PeriodicThread(DEFAULT_THREAD_PERIOD),
     m_irender(nullptr),
     m_period(DEFAULT_THREAD_PERIOD),
     m_isDeviceOwned(false)
-{}
+{
+    m_debug_enabled = false;
+    m_buffer_delay = 5.0; //seconds
+}
 
-audioPlayerWrapper::~audioPlayerWrapper()
+AudioPlayerWrapper::~AudioPlayerWrapper()
 {
     m_irender = nullptr;
 }
@@ -46,11 +50,11 @@ audioPlayerWrapper::~audioPlayerWrapper()
   * Specify which sensor this thread has to read from.
   */
 
-bool audioPlayerWrapper::attachAll(const PolyDriverList &device2attach)
+bool AudioPlayerWrapper::attachAll(const PolyDriverList &device2attach)
 {
     if (device2attach.size() != 1)
     {
-        yError("audioPlayerWrapper: cannot attach more than one device");
+        yError("AudioPlayerWrapper: cannot attach more than one device");
         return false;
     }
 
@@ -63,7 +67,7 @@ bool audioPlayerWrapper::attachAll(const PolyDriverList &device2attach)
 
     if (nullptr == m_irender)
     {
-        yError("audioPlayerWrapper: subdevice passed to attach method is invalid");
+        yError("AudioPlayerWrapper: subdevice passed to attach method is invalid");
         return false;
     }
     attach(m_irender);
@@ -72,7 +76,7 @@ bool audioPlayerWrapper::attachAll(const PolyDriverList &device2attach)
     return PeriodicThread::start();
 }
 
-bool audioPlayerWrapper::detachAll()
+bool AudioPlayerWrapper::detachAll()
 {
     if (PeriodicThread::isRunning())
     {
@@ -82,12 +86,12 @@ bool audioPlayerWrapper::detachAll()
     return true;
 }
 
-void audioPlayerWrapper::attach(yarp::dev::IAudioRender *irend)
+void AudioPlayerWrapper::attach(yarp::dev::IAudioRender *irend)
 {
     m_irender = irend;
 }
 
-void audioPlayerWrapper::detach()
+void AudioPlayerWrapper::detach()
 {
     if (PeriodicThread::isRunning())
     {
@@ -96,7 +100,7 @@ void audioPlayerWrapper::detach()
     m_irender = nullptr;
 }
 
-bool audioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
+bool AudioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::Bottle in;
     yarp::os::Bottle out;
@@ -108,7 +112,8 @@ bool audioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
     int inter  = in.get(1).asVocab();
     bool ret = false;
 
-/*    if (inter == VOCAB_ILASER2D)
+/*
+    if (inter == VOCAB_ILASER2D)
     {
         if (action == VOCAB_GET)
         {
@@ -120,14 +125,14 @@ bool audioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
         }
         else
         {
-            yError("Invalid action received in audioPlayerWrapper");
+            yError("Invalid action received in AudioPlayerWrapper");
         }
     }
     else
     {
-        yError("Invalid interface vocab received in audioPlayerWrapper");
+        yError("Invalid interface vocab received in AudioPlayerWrapper");
     }
-    */
+*/
 
     if (!ret)
     {
@@ -143,15 +148,20 @@ bool audioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
     return true;
 }
 
-bool audioPlayerWrapper::threadInit()
+bool AudioPlayerWrapper::threadInit()
 {
     return true;
 }
 
-bool audioPlayerWrapper::open(yarp::os::Searchable &config)
+bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
 {
     Property params;
     params.fromString(config.toString());
+
+    if (config.check("debug"))
+    {
+        m_debug_enabled = true;
+    }
 
     if (config.check("period"))
     {
@@ -169,9 +179,16 @@ bool audioPlayerWrapper::open(yarp::os::Searchable &config)
  
     if(!initialize_YARP(config) )
     {
-        yError() << "audioPlayerWrapper: Error initializing YARP ports";
+        yError() << "AudioPlayerWrapper: Error initializing YARP ports";
         return false;
     }
+
+    if (config.check("playback_network_buffer_lenght"))
+    {
+        m_buffer_delay = config.find("playback_network_buffer_lenght").asFloat64();
+    }
+    yInfo() << "Using a 'playback_network_buffer_lenght' of" << m_buffer_delay << "s";
+    yInfo() << "Increase this value to robustify the real-time audio stream (it will increase latency too)";
 
     if(config.check("subdevice"))
     {
@@ -212,28 +229,28 @@ bool audioPlayerWrapper::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool audioPlayerWrapper::initialize_YARP(yarp::os::Searchable &params)
+bool AudioPlayerWrapper::initialize_YARP(yarp::os::Searchable &params)
 {
     if (!m_audioInPort.open(m_audioInPortName))
     {
-        yError("audioPlayerWrapper: failed to open port %s", m_audioInPortName.c_str());
+        yError("AudioPlayerWrapper: failed to open port %s", m_audioInPortName.c_str());
         return false;
     }
     if (!m_statusPort.open(m_statusPortName))
     {
-        yError("audioPlayerWrapper: failed to open port %s", m_statusPortName.c_str());
+        yError("AudioPlayerWrapper: failed to open port %s", m_statusPortName.c_str());
         return false;
     }
     if (!m_rpcPort.open(m_rpcPortName))
     {
-        yError("audioPlayerWrapper: failed to open port %s", m_rpcPortName.c_str());
+        yError("AudioPlayerWrapper: failed to open port %s", m_rpcPortName.c_str());
         return false;
     }
     m_rpcPort.setReader(*this);
     return true;
 }
 
-void audioPlayerWrapper::threadRelease()
+void AudioPlayerWrapper::threadRelease()
 {
     m_audioInPort.interrupt();
     m_audioInPort.close();
@@ -243,32 +260,49 @@ void audioPlayerWrapper::threadRelease()
     m_statusPort.close();
 }
 
-void audioPlayerWrapper::run()
+void AudioPlayerWrapper::run()
 {
     Sound *s=nullptr;
+    double current_time = yarp::os::Time::now();
 
     s = m_audioInPort.read(false);
     if (s != NULL)
     {
-        m_irender->renderSound(*s);
+        scheduled_sound_type ss;
+#if 1
+        //This is simple, but we don't know how big the sound is...
+        ss.scheduled_time = current_time + m_buffer_delay;
+#elif 0
+        //This is ok, but it doesn't work if the sounds have different durations...
+        ss.scheduled_time = current_time + 5.0 * s.getDuration();
+#else 
+        ss.scheduled_time = current_time + m_buffer_delay > 5.0 * s.getDuration() ? (m_buffer_delay) : (5.0 * s.getDuration());
+#endif 
+        ss.sound_data = *s;
+        m_sound_buffer.push(ss);
+    }
+
+    if (!m_sound_buffer.empty() && current_time > m_sound_buffer.front().scheduled_time)
+    {
+        m_irender->renderSound(m_sound_buffer.front().sound_data);
+        m_sound_buffer.pop();
     }
 
     m_irender->getPlaybackAudioBufferCurrentSize(m_current_buffer_size);
-#if 1
-    static size_t count = 0;
-    if (count>100)
+    if (m_debug_enabled)
     {
-        yDebug() << m_current_buffer_size.getSamples() << "samples";
-        count= 0;
+        static double printer_wdt = yarp::os::Time::now();
+        if (yarp::os::Time::now() - printer_wdt > 1.0)
+        {
+            yDebug() << m_current_buffer_size.getSamples() << "/" << m_max_buffer_size.getSamples() << "samples";
+            printer_wdt = yarp::os::Time::now();
+        }
     }
-    count++;
-#endif
-
 }
 
-bool audioPlayerWrapper::close()
+bool AudioPlayerWrapper::close()
 {
-    yTrace("audioPlayerWrapper::Close");
+    yTrace("AudioPlayerWrapper::Close");
     if (PeriodicThread::isRunning())
     {
         PeriodicThread::stop();

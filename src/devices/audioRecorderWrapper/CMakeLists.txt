@@ -1,29 +1,29 @@
-# Copyright (C) 2019 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2018 Istituto Italiano di Tecnologia (IIT)
 # All rights reserved.
 #
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-yarp_prepare_plugin(AudioPlayerWrapper
+yarp_prepare_plugin(AudioRecorderWrapper
                     CATEGORY device
-                    TYPE yarp::dev::AudioPlayerWrapper
-                    INCLUDE AudioPlayerWrapper.h
-                    EXTRA_CONFIG WRAPPER=AudioPlayerWrapper
+                    TYPE yarp::dev::AudioRecorderWrapper
+                    INCLUDE AudioRecorderWrapper.h
+                    EXTRA_CONFIG WRAPPER=AudioRecorderWrapper
                     DEFAULT ON)
 
-if(NOT SKIP_audioPlayerWrapper)
+if(NOT SKIP_AudioRecorderWrapper)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_AudioPlayerWrapper AudioPlayerWrapper.cpp
-                                            AudioPlayerWrapper.h)
-  target_link_libraries(yarp_AudioPlayerWrapper PRIVATE YARP::YARP_OS
-                                                          YARP::YARP_sig
-                                                          YARP::YARP_dev)
+  yarp_add_plugin(yarp_AudioRecorderWrapper AudioRecorderWrapper.cpp
+                                            AudioRecorderWrapper.h)
+  target_link_libraries(yarp_AudioRecorderWrapper PRIVATE YARP::YARP_OS
+                                                        YARP::YARP_sig
+                                                        YARP::YARP_dev)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
                                                       YARP_sig
                                                       YARP_dev)
 
-  yarp_install(TARGETS yarp_AudioPlayerWrapper
+  yarp_install(TARGETS yarp_AudioRecorderWrapper
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -32,5 +32,5 @@ if(NOT SKIP_audioPlayerWrapper)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_AudioPlayerWrapper PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_AudioRecorderWrapper PROPERTY FOLDER "Plugins/Device")
 endif()

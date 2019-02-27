@@ -21,6 +21,7 @@
 
  //#include <list>
 #include <vector>
+#include <queue>
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -50,20 +51,25 @@ namespace yarp
 {
     namespace dev
     {
-        class audioPlayerWrapper;
+        class AudioPlayerWrapper;
     }
 }
 
-#define DEFAULT_THREAD_PERIOD 0.02 //s
-
-class yarp::dev::audioPlayerWrapper : public yarp::os::PeriodicThread,
+class yarp::dev::AudioPlayerWrapper : public yarp::os::PeriodicThread,
                                       public yarp::dev::DeviceDriver,
                                       public yarp::dev::IMultipleWrapper,
                                       public yarp::os::PortReader
 {
+
+    struct scheduled_sound_type
+    {
+        double scheduled_time;
+         yarp::sig::Sound sound_data;
+    };
+
 public:
-    audioPlayerWrapper();
-    ~audioPlayerWrapper();
+    AudioPlayerWrapper();
+    ~AudioPlayerWrapper();
 
     bool open(yarp::os::Searchable &params) override;
     bool close() override;
@@ -96,8 +102,11 @@ private:
     yarp::os::Stamp m_lastStateStamp;
     yarp::dev::AudioBufferSize m_current_buffer_size;
     yarp::dev::AudioBufferSize m_max_buffer_size;
+    std::queue<scheduled_sound_type> m_sound_buffer;
     double m_period;
+    double m_buffer_delay;
     bool   m_isDeviceOwned;
+    bool   m_debug_enabled;
 
     bool initialize_YARP(yarp::os::Searchable &config);
     bool read(yarp::os::ConnectionReader& connection) override;

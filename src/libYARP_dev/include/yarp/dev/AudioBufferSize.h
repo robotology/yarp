@@ -25,7 +25,7 @@ namespace yarp {
     }
 }
 
-class YARP_dev_API yarp::dev::AudioBufferSize: public yarp::os::Portable,
+class YARP_dev_API yarp::dev::AudioBufferSize: //public yarp::os::Portable,
                                                private audioBufferSizeData
 {
     template <typename SAMPLE>
@@ -37,8 +37,10 @@ class YARP_dev_API yarp::dev::AudioBufferSize: public yarp::os::Portable,
     size_t getBufferElements() { return size; }
     size_t getBytes() { return m_samples * m_channels * m_depth; }
 
-    bool read(yarp::os::ConnectionReader& reader) override { return audioBufferSizeData::read(reader); }
-    bool write(yarp::os::ConnectionWriter& writer) const override { return audioBufferSizeData::write(writer); }
+    virtual bool read(yarp::os::idl::WireReader& reader) override { return audioBufferSizeData::read(reader); }
+    virtual bool write(const yarp::os::idl::WireWriter& writer) const override { return audioBufferSizeData::write(writer); }
+    virtual bool read(yarp::os::ConnectionReader& reader) override { return audioBufferSizeData::read(reader); }
+    virtual bool write(yarp::os::ConnectionWriter& writer) const override { return audioBufferSizeData::write(writer); }
 
     AudioBufferSize()
     {
@@ -49,10 +51,11 @@ class YARP_dev_API yarp::dev::AudioBufferSize: public yarp::os::Portable,
     }
     AudioBufferSize(size_t samples, size_t channels, size_t depth_in_bytes)
     {
-        m_samples = samples;
-        m_channels = channels;
-        m_depth = depth_in_bytes;
-        size = samples * channels;
+        //this casts are due to the fact the it is not yet possibile to define an unsigned type in thrift
+        m_samples = (int32_t)(samples);
+        m_channels = (int32_t)(channels);
+        m_depth = (int32_t)(depth_in_bytes);
+        size = (int32_t)(samples * channels);
     }
 };
 

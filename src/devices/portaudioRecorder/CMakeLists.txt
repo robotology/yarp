@@ -8,14 +8,13 @@ yarp_prepare_plugin(portaudioRecorder
                     CATEGORY device
                     TYPE yarp::dev::PortAudioRecorderDeviceDriver
                     INCLUDE PortAudioRecorderDeviceDriver.h
-#                   EXTRA_CONFIG WRAPPER=audioRecorderWrapper
+                    EXTRA_CONFIG WRAPPER=AudioRecorderWrapper
                     DEPENDS "YARP_HAS_PORTAUDIO")
 
 if(NOT SKIP_yarp_portaudioRecorder)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_portaudioRecorder PortAudioRecorderBuffer.cpp
-                                 PortAudioRecorderBuffer.h
+  yarp_add_plugin(yarp_portaudioRecorder 
                                  PortAudioRecorderDeviceDriver.cpp
                                  PortAudioRecorderDeviceDriver.h)
   target_link_libraries(yarp_portaudioRecorder PRIVATE YARP::YARP_OS

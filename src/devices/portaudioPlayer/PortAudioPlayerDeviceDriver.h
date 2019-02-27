@@ -42,10 +42,17 @@ namespace yarp {
 
 class yarp::dev::PortAudioPlayerDeviceDriverSettings {
 public:
-    int rate;
-    int samples;
-    int playChannels;
-    int deviceNumber;
+    size_t cfg_rate;
+    size_t cfg_samples;
+    size_t cfg_playChannels;
+    int cfg_deviceNumber;
+    PortAudioPlayerDeviceDriverSettings()
+    {
+        cfg_rate = 0;
+        cfg_samples = 0;
+        cfg_playChannels = 0;
+        cfg_deviceNumber = 0;
+    }
 };
 
 class playStreamThread : public yarp::os::Thread
@@ -66,13 +73,12 @@ class yarp::dev::PortAudioPlayerDeviceDriver : public IAudioRender,
                                                public DeviceDriver
 {
 private:
-    PaStreamParameters  outputParameters;
-    PaStream*           stream;
-    PaError             err;
-    circularDataBuffers dataBuffers;
-    size_t              numSamples;
-    size_t              numBytes;
-    playStreamThread    pThread;
+    PaStreamParameters  m_outputParameters;
+    PaStream*           m_stream;
+    PaError             m_err;
+    circularDataBuffers m_dataBuffers;
+    PortAudioPlayerDeviceDriverSettings m_config;
+    playStreamThread    m_pThread;
 
     PortAudioPlayerDeviceDriver(const PortAudioPlayerDeviceDriver&);
 
@@ -94,10 +100,6 @@ public:
      * channels: Number of channels of input.  Specify
      * 0 to use a default.
      *
-     * read: Should allow reading
-     *
-     * write: Should allow writing
-     *
      * @return true on success
      */
     bool open(PortAudioPlayerDeviceDriverSettings& config);
@@ -117,9 +119,6 @@ public:
 
 protected:
     void*   m_system_resource;
-    size_t  m_numPlaybackChannels;
-    int     m_frequency;
-    bool    m_getSoundIsNotBlocking;
 
     PortAudioPlayerDeviceDriverSettings m_driverConfig;
     enum {RENDER_APPEND=0, RENDER_IMMEDIATE=1} renderMode;

@@ -8,14 +8,13 @@ yarp_prepare_plugin(portaudioPlayer
                     CATEGORY device
                     TYPE yarp::dev::PortAudioPlayerDeviceDriver
                     INCLUDE PortAudioPlayerDeviceDriver.h
-                    EXTRA_CONFIG WRAPPER=audioPlayerWrapper
+                    EXTRA_CONFIG WRAPPER=AudioPlayerWrapper
                     DEPENDS "YARP_HAS_PORTAUDIO")
 
 if(NOT SKIP_portaudioPlayer)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_portaudioPlayer PortAudioPlayerBuffer.cpp
-                                 PortAudioPlayerBuffer.h
+  yarp_add_plugin(yarp_portaudioPlayer 
                                  PortAudioPlayerDeviceDriver.cpp
                                  PortAudioPlayerDeviceDriver.h)
   target_link_libraries(yarp_portaudioPlayer PRIVATE YARP::YARP_OS
