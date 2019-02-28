@@ -24,8 +24,8 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
+#include <yarp/dev/CircularAudioBuffer.h>
 #include <portaudio.h>
-#include "PortAudioRecorderBuffer.h"
 
 #define DEFAULT_SAMPLE_RATE  (44100)
 #define DEFAULT_NUM_CHANNELS    (2)
@@ -76,7 +76,7 @@ private:
     PaStreamParameters  m_inputParameters;
     PaStream*           m_stream;
     PaError             m_err;
-    circularDataBuffers m_dataBuffers;
+    yarp::dev::CircularAudioBuffer_16t*  m_recDataBuffer;
     PortAudioRecorderDeviceDriverSettings m_config;
     recStreamThread     m_pThread;
 

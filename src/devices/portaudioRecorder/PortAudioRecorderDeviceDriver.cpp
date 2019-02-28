@@ -63,12 +63,11 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
                          PaStreamCallbackFlags statusFlags,
                          void *userData )
 {
-    auto* dataBuffers = static_cast<circularDataBuffers*>(userData);
-    CircularAudioBuffer_16t *recdata  = dataBuffers->recData;
-    int num_rec_channels     = dataBuffers->numRecChannels;
+    CircularAudioBuffer_16t *recdata = static_cast<CircularAudioBuffer_16t*>(userData);
+    int num_rec_channels     = recdata->getMaxSize().getChannels();
     int finished = paComplete;
 
-    if (dataBuffers->canRec)
+    if (1)
     {
         const auto* rptr = (const SAMPLE*)inputBuffer;
         unsigned int framesToCalc;
@@ -133,7 +132,7 @@ PortAudioRecorderDeviceDriver::PortAudioRecorderDeviceDriver() :
     m_system_resource(nullptr)
 {
     memset(&m_inputParameters, 0, sizeof(PaStreamParameters));
-    memset(&m_dataBuffers, 0, sizeof(circularDataBuffers));
+    m_recDataBuffer = nullptr;
     memset(&m_driverConfig, 0, sizeof(PortAudioRecorderDeviceDriverSettings));
 }
 
@@ -165,10 +164,8 @@ bool PortAudioRecorderDeviceDriver::open(PortAudioRecorderDeviceDriverSettings& 
 
     size_t debug_numRecBytes = m_config.cfg_samples * sizeof(SAMPLE) * m_config.cfg_recChannels;
     AudioBufferSize rec_buffer_size (m_config.cfg_samples, m_config.cfg_recChannels, sizeof(SAMPLE));
-    m_dataBuffers.numRecChannels = m_config.cfg_recChannels;
-    if (m_dataBuffers.recData==nullptr)
-        m_dataBuffers.recData = new CircularAudioBuffer_16t("portatudio_rec", rec_buffer_size);
-    m_dataBuffers.canRec = true;
+    if (m_recDataBuffer ==nullptr)
+        m_recDataBuffer = new CircularAudioBuffer_16t("portatudio_rec", rec_buffer_size);
 
     m_err = Pa_Initialize();
     if(m_err != paNoError )
@@ -194,7 +191,7 @@ bool PortAudioRecorderDeviceDriver::open(PortAudioRecorderDeviceDriverSettings& 
               DEFAULT_FRAMES_PER_BUFFER,
               paClipOff,
               bufferIOCallback,
-              &m_dataBuffers );
+              &m_recDataBuffer);
 
     if(m_err != paNoError )
     {
@@ -224,7 +221,7 @@ void recStreamThread::handleError()
 void PortAudioRecorderDeviceDriver::handleError()
 {
     //Pa_Terminate();
-    m_dataBuffers.recData->clear();
+    m_recDataBuffer->clear();
 
     if(m_err != paNoError )
     {
@@ -248,15 +245,10 @@ bool PortAudioRecorderDeviceDriver::close()
         }
     }
 
-    if (this->m_dataBuffers.playData != nullptr)
+    if (this->m_recDataBuffer != nullptr)
     {
-        delete this->m_dataBuffers.playData;
-        this->m_dataBuffers.playData = nullptr;
-    }
-    if (this->m_dataBuffers.recData != nullptr)
-    {
-        delete this->m_dataBuffers.recData;
-        this->m_dataBuffers.recData = nullptr;
+        delete this->m_recDataBuffer;
+        this->m_recDataBuffer = nullptr;
     }
 
     return (m_err==paNoError);
@@ -303,7 +295,7 @@ bool PortAudioRecorderDeviceDriver::getSound(yarp::sig::Sound& sound, size_t min
     double debug_time = yarp::os::Time::now();
     do
     {
-         buff_size = m_dataBuffers.recData->size().getSamples();
+         buff_size = m_recDataBuffer->size().getSamples();
          if (buff_size > max_number_of_samples) break;
          if (buff_size > min_number_of_samples && yarp::os::Time::now() - start_time > max_samples_timeout_s) break;
 
@@ -330,7 +322,7 @@ bool PortAudioRecorderDeviceDriver::getSound(yarp::sig::Sound& sound, size_t min
     for (size_t i=0; i< samples_to_be_copied; i++)
         for (size_t j=0; j<this->m_config.cfg_recChannels; j++)
             {
-                SAMPLE s = m_dataBuffers.recData->read();
+                SAMPLE s = m_recDataBuffer->read();
                 sound.set(s,i,j);
             }
     return true;
@@ -377,19 +369,19 @@ void recStreamThread::run()
 
 bool PortAudioRecorderDeviceDriver::getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
 {
-    size = this->m_dataBuffers.recData->size();
+    size = this->m_recDataBuffer->size();
     return true;
 }
 
 bool PortAudioRecorderDeviceDriver::getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
 {
-    size = this->m_dataBuffers.recData->getMaxSize();
+    size = this->m_recDataBuffer->getMaxSize();
     return true;
 }
 
 bool PortAudioRecorderDeviceDriver::resetRecordingAudioBuffer()
 {
-    this->m_dataBuffers.recData->clear();
+    this->m_recDataBuffer->clear();
     return true;
 }
 
