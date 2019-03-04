@@ -55,22 +55,9 @@ public:
     }
 };
 
-class recStreamThread : public yarp::os::Thread
-{
-   public:
-   bool         something_to_record;
-   PaStream*    stream;
-   void threadRelease() override;
-   bool threadInit() override;
-   void run() override;
-
-   private:
-   PaError      err;
-   void handleError(void);
-};
-
 class yarp::dev::PortAudioRecorderDeviceDriver : public IAudioGrabberSound, 
-                                         public DeviceDriver
+                                                 public DeviceDriver,
+                                                 public yarp::os::Thread
 {
 private:
     PaStreamParameters  m_inputParameters;
@@ -78,7 +65,8 @@ private:
     PaError             m_err;
     yarp::dev::CircularAudioBuffer_16t*  m_recDataBuffer;
     PortAudioRecorderDeviceDriverSettings m_config;
-    recStreamThread     m_pThread;
+    yarp::os::Mutex     m_mutex;
+    bool                m_isRecording;
 
     PortAudioRecorderDeviceDriver(const PortAudioRecorderDeviceDriver&);
 
@@ -112,6 +100,10 @@ public:
     bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
     bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
     bool resetRecordingAudioBuffer() override;
+
+    void threadRelease() override;
+    bool threadInit() override;
+    void run() override;
 
 protected:
     void*   m_system_resource;

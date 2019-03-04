@@ -12,6 +12,7 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/LockGuard.h>
 
 #include <fakeMicrophone.h>
 
@@ -137,22 +138,31 @@ void fakeMicrophone::run()
 
 bool fakeMicrophone::startRecording()
 {
+    LockGuard lock(m_mutex);
     m_isRecording = true;
-    resetRecordingAudioBuffer();
+#ifdef BUFFER_AUTOCLEAR
+    this->m_recDataBuffer->clear();
+#endif
+    yInfo() << "fakeMicrophone started recording";
     return true;
 }
 
 
 bool fakeMicrophone::stopRecording()
 {
+    LockGuard lock(m_mutex);
     m_isRecording = false;
-    resetRecordingAudioBuffer();
+#ifdef BUFFER_AUTOCLEAR
+    this->m_recDataBuffer->clear();
+#endif
+    yInfo() << "fakeMicrophone stopped recording";
     return true;
 }
 
 
 bool fakeMicrophone::getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
 {
+    //no lock guard is needed here
     size = this->m_inputBuffer->getMaxSize();
     return true;
 }
@@ -160,6 +170,7 @@ bool fakeMicrophone::getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& 
 
 bool fakeMicrophone::getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
 {
+    //no lock guard is needed here
     size = this->m_inputBuffer->size();
     return true;
 }
@@ -167,17 +178,39 @@ bool fakeMicrophone::getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSi
 
 bool fakeMicrophone::resetRecordingAudioBuffer()
 {
+    LockGuard lock(m_mutex);
     m_inputBuffer->clear();
+    yDebug() << "PortAudioRecorderDeviceDriver::resetRecordingAudioBuffer";
     return true;
 }
 
 bool fakeMicrophone::getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s)
 {
-    if (m_isRecording == false)
+    //check for something_to_record
     {
-        this->startRecording();
+#ifdef AUTOMATIC_REC_START
+        if (m_isRecording == false)
+        {
+            this->startRecording();
+        }
+#else
+        double debug_time = yarp::os::Time::now();
+        while (m_isRecording == false)
+        {
+            if (yarp::os::Time::now() - debug_time > 5.0)
+            {
+                yInfo() << "getSound() is currently waiting. Use ::startRecording() to start the audio stream";
+                debug_time = yarp::os::Time::now();
+            }
+            yarp::os::SystemClock::delaySystem(SLEEP_TIME);
+        }
+#endif
     }
 
+    //prevents simultaneous start/stop/reset etc.
+    //LockGuard lock(m_mutex); //This must be used carefully
+
+    //check on input parameters
     if (max_number_of_samples < min_number_of_samples)
     {
         yError() << "max_number_of_samples must be greater than min_number_of_samples!";
@@ -189,14 +222,16 @@ bool fakeMicrophone::getSound(yarp::sig::Sound& sound, size_t min_number_of_samp
         max_number_of_samples = this->m_cfg_numSamples;
     }
 
+    //wait until the desired number of samples are obtained
     size_t buff_size = 0;
     double start_time = yarp::os::Time::now();
     double debug_time = yarp::os::Time::now();
     do
     {
         buff_size = m_inputBuffer->size().getSamples();
-        if (buff_size > max_number_of_samples) break;
-        if (buff_size > min_number_of_samples && yarp::os::Time::now() - start_time > max_samples_timeout_s) break;
+        if (buff_size > max_number_of_samples) { break; }
+        if (buff_size > min_number_of_samples && yarp::os::Time::now() - start_time > max_samples_timeout_s) { break; }
+        if (m_isRecording == false) { break; }
 
         if (yarp::os::Time::now() - debug_time > 1.0)
         {

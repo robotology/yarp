@@ -22,6 +22,10 @@ namespace yarp {
     }
 }
 
+constexpr yarp::conf::vocab32_t VOCAB_AUDIO_INTERFACE = yarp::os::createVocab('s', 'n', 'd');
+constexpr yarp::conf::vocab32_t VOCAB_AUDIO_START     = yarp::os::createVocab('r', 'u', 'n');
+constexpr yarp::conf::vocab32_t VOCAB_AUDIO_STOP      = yarp::os::createVocab('s', 't', 'o', 'p');
+
 /**
  * @ingroup dev_iface_media
  *

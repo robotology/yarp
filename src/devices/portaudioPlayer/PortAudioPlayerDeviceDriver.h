@@ -79,6 +79,7 @@ private:
     yarp::dev::CircularAudioBuffer_16t* m_playDataBuffer;
     PortAudioPlayerDeviceDriverSettings m_config;
     playStreamThread    m_pThread;
+    yarp::os::Mutex     m_mutex;
 
     PortAudioPlayerDeviceDriver(const PortAudioPlayerDeviceDriver&);
 

@@ -97,7 +97,7 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
     yInfo() << "Wrapper configured with max_samples_timeout: " << m_getSound_timeout << "s";
 
     //set the streaming port
-    std::string portname = "/AudioRecorderWrapper";
+    std::string portname = "/audioRecorderWrapper";
     if (config.check("name"))
     {
         portname= config.find("name").asString();
@@ -235,11 +235,17 @@ bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
         m_mic->stopRecording();
         reply.addVocab(VOCAB_OK);
     }
+    else if (command.get(0).asString() == "clear")
+    {
+        m_mic->resetRecordingAudioBuffer();
+        reply.addVocab(VOCAB_OK);
+    }
     else if (command.get(0).asString() == "help")
     {
         reply.addVocab(yarp::os::Vocab::encode("many"));
         reply.addString("start");
         reply.addString("stop");
+        reply.addString("clear");
     }
     else
     {

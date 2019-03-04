@@ -28,6 +28,7 @@
 
 #include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/LockGuard.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -343,6 +344,9 @@ bool PortAudioPlayerDeviceDriver::immediateSound(const yarp::sig::Sound& sound)
 
 bool PortAudioPlayerDeviceDriver::renderSound(const yarp::sig::Sound& sound)
 {
+    //prevents simultaneous start/stop/reset etc.
+    LockGuard lock(m_mutex);
+
     int freq  = sound.getFrequency();
     size_t chans = sound.getChannels();
     if (freq == 0)
@@ -404,30 +408,35 @@ bool PortAudioPlayerDeviceDriver::appendSound(const yarp::sig::Sound& sound)
 
 bool PortAudioPlayerDeviceDriver::getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
 {
+    //no lock guard is needed here
     size = this->m_playDataBuffer->size();
     return true;
 }
 
 bool PortAudioPlayerDeviceDriver::getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
 {
+    //no lock guard is needed here
     size = this->m_playDataBuffer->getMaxSize();
     return true;
 }
 
 bool PortAudioPlayerDeviceDriver::resetPlaybackAudioBuffer()
 {
+    LockGuard lock(m_mutex);
     this->m_playDataBuffer->clear();
     return true;
 }
 
 bool PortAudioPlayerDeviceDriver::startPlayback()
 {
+    LockGuard lock(m_mutex);
     m_pThread.something_to_play = true;
     return true;
 }
 
 bool PortAudioPlayerDeviceDriver::stopPlayback()
 {
+    LockGuard lock(m_mutex);
     m_pThread.something_to_play = false;
     return true;
 }

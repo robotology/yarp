@@ -102,48 +102,44 @@ void AudioPlayerWrapper::detach()
 
 bool AudioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::Bottle in;
-    yarp::os::Bottle out;
-    bool ok = in.read(connection);
+    yarp::os::Bottle command;
+    yarp::os::Bottle reply;
+    bool ok = command.read(connection);
     if (!ok) return false;
+    reply.clear();
 
-    // parse in, prepare out
-    int action = in.get(0).asVocab();
-    int inter  = in.get(1).asVocab();
-    bool ret = false;
-
-/*
-    if (inter == VOCAB_ILASER2D)
+    if (command.get(0).asString() == "start")
     {
-        if (action == VOCAB_GET)
-        {
-
-        }
-        else if (action == VOCAB_SET)
-        {
-
-        }
-        else
-        {
-            yError("Invalid action received in AudioPlayerWrapper");
-        }
+        m_irender->startPlayback();
+        reply.addVocab(VOCAB_OK);
+    }
+    else if (command.get(0).asString() == "stop")
+    {
+        m_irender->stopPlayback();
+        reply.addVocab(VOCAB_OK);
+    }
+    else if (command.get(0).asString() == "clear")
+    {
+        m_irender->resetPlaybackAudioBuffer();
+        reply.addVocab(VOCAB_OK);
+    }
+    else if (command.get(0).asString() == "help")
+    {
+        reply.addVocab(yarp::os::Vocab::encode("many"));
+        reply.addString("start");
+        reply.addString("stop");
+        reply.addString("clear");
     }
     else
     {
-        yError("Invalid interface vocab received in AudioPlayerWrapper");
-    }
-*/
-
-    if (!ret)
-    {
-        out.clear();
-        out.addVocab(VOCAB_FAILED);
+        yError() << "Invalid command";
+        reply.addVocab(VOCAB_ERR);
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
     if (returnToSender != nullptr) 
     {
-        out.write(*returnToSender);
+        reply.write(*returnToSender);
     }
     return true;
 }
