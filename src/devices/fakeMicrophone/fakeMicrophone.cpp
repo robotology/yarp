@@ -229,8 +229,8 @@ bool fakeMicrophone::getSound(yarp::sig::Sound& sound, size_t min_number_of_samp
     do
     {
         buff_size = m_inputBuffer->size().getSamples();
-        if (buff_size > max_number_of_samples) { break; }
-        if (buff_size > min_number_of_samples && yarp::os::Time::now() - start_time > max_samples_timeout_s) { break; }
+        if (buff_size >= max_number_of_samples) { break; }
+        if (buff_size >= min_number_of_samples && yarp::os::Time::now() - start_time > max_samples_timeout_s) { break; }
         if (m_isRecording == false) { break; }
 
         if (yarp::os::Time::now() - debug_time > 1.0)

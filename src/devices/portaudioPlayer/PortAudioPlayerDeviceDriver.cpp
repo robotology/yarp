@@ -197,7 +197,7 @@ bool PortAudioPlayerDeviceDriver::open(PortAudioPlayerDeviceDriverSettings& conf
               DEFAULT_FRAMES_PER_BUFFER,
               paClipOff,
               bufferIOCallback,
-              &m_playDataBuffer);
+              m_playDataBuffer);
 
     if(m_err != paNoError )
     {

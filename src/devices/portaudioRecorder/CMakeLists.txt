@@ -11,7 +11,7 @@ yarp_prepare_plugin(portaudioRecorder
                     EXTRA_CONFIG WRAPPER=AudioRecorderWrapper
                     DEPENDS "YARP_HAS_PORTAUDIO")
 
-if(NOT SKIP_yarp_portaudioRecorder)
+if(NOT SKIP_portaudioRecorder)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   yarp_add_plugin(yarp_portaudioRecorder 

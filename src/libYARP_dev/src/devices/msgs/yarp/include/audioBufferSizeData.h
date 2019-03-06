@@ -12,6 +12,7 @@
 #ifndef YARP_THRIFT_GENERATOR_STRUCT_audioBufferSizeData
 #define YARP_THRIFT_GENERATOR_STRUCT_audioBufferSizeData
 
+#include <yarp/dev/api.h>
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
@@ -22,7 +23,7 @@ namespace yarp {
 }
 
 
-class yarp::dev::audioBufferSizeData : public yarp::os::idl::WirePortable {
+class YARP_dev_API yarp::dev::audioBufferSizeData : public yarp::os::idl::WirePortable {
 public:
   // Fields
   std::int32_t m_samples;
