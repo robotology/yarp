@@ -25,3 +25,5 @@ tags
 *.aps
 /CMakeSettings.json
 /.vs/
+/.idea/
+/cmake-build*/
