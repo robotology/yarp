@@ -21,8 +21,6 @@ WriteBasicConfigVersionFile
 
 #]=======================================================================]
 
-set(WRITE_BASIC_CONFIG_VERSION_FILE_LIST_DIR "${CMAKE_CURRENT_LIST_DIR}")
-
 function(WRITE_BASIC_CONFIG_VERSION_FILE _filename)
 
   set(options ARCH_INDEPENDENT )
@@ -35,11 +33,7 @@ function(WRITE_BASIC_CONFIG_VERSION_FILE _filename)
     message(FATAL_ERROR "Unknown keywords given to WRITE_BASIC_CONFIG_VERSION_FILE(): \"${CVF_UNPARSED_ARGUMENTS}\"")
   endif()
 
-  if(EXISTS "${WRITE_BASIC_CONFIG_VERSION_FILE_LIST_DIR}/BasicConfigVersion-${CVF_COMPATIBILITY}.cmake.in")
-    set(versionTemplateFile "${WRITE_BASIC_CONFIG_VERSION_FILE_LIST_DIR}/BasicConfigVersion-${CVF_COMPATIBILITY}.cmake.in")
-  else()
-    set(versionTemplateFile "${CMAKE_ROOT}/Modules/BasicConfigVersion-${CVF_COMPATIBILITY}.cmake.in")
-  endif()
+  set(versionTemplateFile "${CMAKE_ROOT}/Modules/BasicConfigVersion-${CVF_COMPATIBILITY}.cmake.in")
   if(NOT EXISTS "${versionTemplateFile}")
     message(FATAL_ERROR "Bad COMPATIBILITY value used for WRITE_BASIC_CONFIG_VERSION_FILE(): \"${CVF_COMPATIBILITY}\"")
   endif()

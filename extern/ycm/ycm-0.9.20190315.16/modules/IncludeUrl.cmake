@@ -235,11 +235,7 @@ macro(INCLUDE_URL _remoteFile)
 
   # Lock the file, in case 2 different processes are downloading the same file
   # at the time
-  # file(LOCK) was added in CMake 3.2, therefore calling it in older version
-  # will fail.
-  if(NOT CMAKE_VERSION VERSION_LESS 3.2)
-    file(LOCK "${_lockFile}")
-  endif()
+  file(LOCK "${_lockFile}")
 
   set(_shouldDownload 0)
   set(_shouldFail 0)
@@ -370,9 +366,7 @@ macro(INCLUDE_URL _remoteFile)
   endif()
 
   # Download is finished, we can now release the lock
-  if(NOT CMAKE_VERSION VERSION_LESS 3.2)
-    file(LOCK "${_lockFile}" RELEASE)
-  endif()
+  file(LOCK "${_lockFile}" RELEASE)
 
   if(NOT EXISTS "${_localFile}" AND NOT _IU_OPTIONAL)
     message(FATAL_ERROR "Downloaded file does not exist. Please report this as a bug")
