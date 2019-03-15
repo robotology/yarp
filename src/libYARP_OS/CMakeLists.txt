@@ -396,11 +396,26 @@ target_link_libraries(YARP_OS PRIVATE ${hmac_LIBRARIES})
 # list(APPEND YARP_OS_PUBLIC_DEPS hmac)
 
 if(YARP_HAS_ACE)
-  target_link_libraries(YARP_OS PRIVATE ${ACE_LIBRARIES})
-  target_include_directories(YARP_OS SYSTEM PRIVATE ${ACE_INCLUDE_DIRS})
+  target_link_libraries(YARP_OS PRIVATE ACE::ACE)
   list(APPEND YARP_OS_PRIVATE_DEPS ACE)
-else()
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  # Required for using std::thread on linux
+  target_link_libraries(YARP_OS PRIVATE pthread)
+
+  # Required by SharedLibrary.cpp (dlopen, dlsym, dlclose, dlerror)
   target_link_libraries(YARP_OS PRIVATE ${CMAKE_DL_LIBS})
+endif()
+
+if(APPLE)
+  # Required by MacOSAPI.mm
+  target_link_libraries(YARP_OS PRIVATE "-framework Foundation")
+endif()
+
+if(MSVC)
+  # Required by Time.cpp (timeBeginPeriod, timeEndPeriod functions)
+  target_link_libraries(YARP_OS PRIVATE "Winmm")
 endif()
 
 if(YARP_HAS_LIBEDIT)
@@ -408,14 +423,6 @@ if(YARP_HAS_LIBEDIT)
   target_include_directories(YARP_OS SYSTEM PRIVATE ${Libedit_INCLUDE_DIRS})
   target_link_libraries(YARP_OS PRIVATE ${Libedit_LIBRARIES})
   list(APPEND YARP_OS_PRIVATE_DEPS Libedit)
-endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  target_link_libraries(YARP_OS PRIVATE pthread)
-endif()
-
-if(APPLE)
-  target_link_libraries(YARP_OS PRIVATE "-framework Foundation")
 endif()
 
 target_compile_features(YARP_OS PUBLIC cxx_nullptr

@@ -52,11 +52,6 @@ add_subdirectory(extern/ycm)
 # See cmake/YarpVersion.cmake.
 include(YarpVersion)
 
-message(STATUS "Using:")
-message(STATUS "  CMake: ${CMAKE_VERSION} (${CMAKE_COMMAND})")
-message(STATUS "  C Compiler: ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION} (${CMAKE_C_COMPILER})")
-message(STATUS "  CXX Compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})")
-
 set_property(GLOBAL PROPERTY USE_FOLDERS 1)
 set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Autogen Targets")
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
@@ -68,6 +63,13 @@ include(YarpSystemCheck)
 # Set up some compilation options.
 # See cmake/YarpOptions.cmake.
 include(YarpOptions)
+
+message(STATUS "Using:")
+message(STATUS "  CMake: ${CMAKE_VERSION} (${CMAKE_COMMAND})")
+message(STATUS "  C Compiler: ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION} (${CMAKE_C_COMPILER})")
+message(STATUS "  CXX Compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})")
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
 
 # Check YARP dependencies, find necessary libraries.
 # See cmake/YarpFindDependencies.cmake.
