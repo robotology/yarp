@@ -82,10 +82,10 @@ set(__YCMEPHELPER_INCLUDED TRUE)
 
 # Files downloaded during YCM bootstrap
 set(_ycm_CMakeParseArguments_sha1sum 0c4d3f7ed248145cbeb67cbd6fd7190baf2e4517)
-set(_ycm_ExternalProject_sha1sum     198329b8d7128ba5feaf1280f178a2befde1506b)
+set(_ycm_ExternalProject_sha1sum     a20f25b7dca341674ee7dc3c06155c1c66c6b605)
 
 # Files in all projects that need to bootstrap YCM
-set(_ycm_IncludeUrl_sha1sum          ccb03a4975faccabc9032cada2624ccfda42d238)
+set(_ycm_IncludeUrl_sha1sum          921a037133255d01b644c16f19494cb08d98c462)
 set(_ycm_YCMBootstrap_sha1sum        dd95e1d38e045091e2e6c1ba2a96d540f1b8af0d)
 
 
@@ -192,10 +192,9 @@ macro(_YCM_SETUP)
   _ycm_include(CMakeParseArguments)
   _ycm_include(ExternalProject)
 
-  set_property(DIRECTORY PROPERTY EP_SOURCE_DIR_PERSISTENT 1)
   if(NOT NON_INTERACTIVE_BUILD)
     # Non interactive builds should always perform the update step
-    set_property(DIRECTORY PROPERTY EP_SCM_DISCONNECTED 1)
+    set_property(DIRECTORY PROPERTY EP_UPDATE_DISCONNECTED 1)
   endif()
   set_property(DIRECTORY PROPERTY CMAKE_PARSE_ARGUMENTS_DEFAULT_SKIP_EMPTY FALSE)
   set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -566,11 +565,11 @@ function(_YCM_EP_ADD_EDIT_CACHE_STEP _name)
   _ep_get_configure_command_id(${_name} _${_name}_configure_command_id)
   if(_${_name}_configure_command_id STREQUAL "cmake")
 
-    get_property(_configure_source_dir TARGET ${_name} PROPERTY _EP_CONFIGURE_SOURCE_DIR)
+    get_property(_source_subdir TARGET ${_name} PROPERTY _EP_SOURCE_SUBDIR)
     get_property(_binary_dir TARGET ${_name} PROPERTY _EP_BINARY_DIR)
 
     ExternalProject_Add_Step(${_name} edit_cache
-                             COMMAND ${CMAKE_EDIT_COMMAND} -H${_configure_source_dir} -B${_binary_dir}
+                             COMMAND ${CMAKE_EDIT_COMMAND} -H${_source_subdir} -B${_binary_dir}
                              WORKING_DIRECTORY ${_binary_dir}
                              DEPENDEES configure
                              EXCLUDE_FROM_MAIN 1
@@ -594,10 +593,10 @@ function(_YCM_EP_ADD_PRINT_DIRECTORIES_STEP _name)
   endif()
 
   get_property(_source_dir TARGET ${_name} PROPERTY _EP_SOURCE_DIR)
-  get_property(_configure_source_dir TARGET ${_name} PROPERTY _EP_CONFIGURE_SOURCE_DIR)
+  get_property(_source_subdir TARGET ${_name} PROPERTY _EP_SOURCE_SUBDIR)
   get_property(_binary_dir TARGET ${_name} PROPERTY _EP_BINARY_DIR)
 
-  if("${_source_dir}" STREQUAL "${_configure_source_dir}")
+  if("${_source_dir}" STREQUAL "${_source_subdir}")
     set(_source_cmd COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --switch=$(COLOR) --cyan "${_name} SOURCE directory: "
                     COMMAND ${CMAKE_COMMAND} -E echo "    ${_source_dir}")
   else()
@@ -605,7 +604,7 @@ function(_YCM_EP_ADD_PRINT_DIRECTORIES_STEP _name)
                     COMMAND ${CMAKE_COMMAND} -E echo "    ${_source_dir}"
                     COMMAND ${CMAKE_COMMAND} -E echo ""
                     COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --switch=$(COLOR) --cyan "${_name} SOURCE directory: "
-                    COMMAND ${CMAKE_COMMAND} -E echo "    ${_configure_source_dir}")
+                    COMMAND ${CMAKE_COMMAND} -E echo "    ${_source_subdir}")
   endif()
   set(_binary_cmd COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --switch=$(COLOR) --cyan "${_name} BINARY directory: "
                   COMMAND ${CMAKE_COMMAND} -E echo "    ${_binary_dir}")
@@ -681,7 +680,8 @@ function(YCM_EP_HELPER _name)
                     TEST_BEFORE_INSTALL
                     TEST_AFTER_INSTALL
                     TEST_EXCLUDE_FROM_MAIN
-                    CONFIGURE_SOURCE_DIR)
+                    CONFIGURE_SOURCE_DIR # DEPRECATED Since YCM 0.10
+                    SOURCE_SUBDIR)
   set(_multiValueArgs CMAKE_ARGS
                       CMAKE_CACHE_ARGS
                       CMAKE_CACHE_DEFAULT_ARGS
@@ -794,6 +794,10 @@ function(YCM_EP_HELPER _name)
   # Default CMAKE_CACHE_ARGS (Initial cache, forced)
   set(${_name}_YCM_CMAKE_CACHE_ARGS "-DCMAKE_INSTALL_PREFIX:PATH=${${_name}_INSTALL_DIR}") # Where to do the installation
 
+  if(DEFINED CMAKE_TOOLCHAIN_FILE)
+    list(APPEND ${_name}_YCM_CMAKE_CACHE_ARGS "-DCMAKE_TOOLCHAIN_FILE:PATH=${CMAKE_TOOLCHAIN_FILE}")
+  endif()
+
   # Default CMAKE_CACHE_DEFAULT_ARGS (Initial cache, default)
   unset(${_name}_YCM_CMAKE_CACHE_DEFAULT_ARGS)
   if(NOT CMAKE_BUILD_TYPE STREQUAL "") # CMAKE_BUILD_TYPE is always defined
@@ -822,11 +826,7 @@ function(YCM_EP_HELPER _name)
   endif()
 
   # CMAKE_CACHE_DEFAULT_ARGS (Initial cache, default)
-  if(DEFINED ${_name}_YCM_CMAKE_CACHE_DEFAULT_ARGS)
-    # FIXME Do not add the "CMAKE_CACHE_DEFAULT_ARGS" until the ExternalProject module
-    # is updated from CMake
-    set(${_name}_CMAKE_CACHE_DEFAULT_ARGS ${${_name}_YCM_CMAKE_CACHE_DEFAULT_ARGS})
-  endif()
+  set(${_name}_CMAKE_CACHE_DEFAULT_ARGS CMAKE_CACHE_DEFAULT_ARGS ${${_name}_YCM_CMAKE_CACHE_DEFAULT_ARGS})
   if(_YH_${_name}_CMAKE_CACHE_DEFAULT_ARGS)
     list(APPEND ${_name}_CMAKE_CACHE_DEFAULT_ARGS ${_YH_${_name}_CMAKE_CACHE_DEFAULT_ARGS})
   endif()
@@ -919,8 +919,17 @@ function(YCM_EP_HELPER _name)
   if(DEFINED _YH_${_name}_EXCLUDE_FROM_ALL)
     list(APPEND ${_name}_EXTRA_ARGS EXCLUDE_FROM_ALL ${_YH_${_name}_EXCLUDE_FROM_ALL})
   endif()
+  # BEGIN DEPRECATED Since YCM 0.10
   if(DEFINED _YH_${_name}_CONFIGURE_SOURCE_DIR)
-    list(APPEND ${_name}_EXTRA_ARGS CONFIGURE_SOURCE_DIR ${_YH_${_name}_CONFIGURE_SOURCE_DIR})
+    message(DEPRECATION "CONFIGURE_SOURCE_DIR is deprecated. Use SOURCE_SUBDIR instead")
+    if(DEFINED _YH_${_name}_SOURCE_SUBDIR)
+      message(FATAL_ERROR "CONFIGURE_SOURCE_DIR and SOURCE_SUBDIR cannot be used together")
+    endif()
+    set(_YH_${_name}_SOURCE_SUBDIR "${_YH_${_name}_CONFIGURE_SOURCE_DIR}")
+  endif()
+  # END DEPRECATED Since YCM 0.10
+  if(DEFINED _YH_${_name}_SOURCE_SUBDIR)
+    list(APPEND ${_name}_EXTRA_ARGS SOURCE_SUBDIR "${_YH_${_name}_SOURCE_SUBDIR}")
   endif()
 
   # Repository dependent variables
