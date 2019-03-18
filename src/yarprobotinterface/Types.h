@@ -22,6 +22,7 @@
 #include <vector>
 #include <iosfwd>
 #include <list>
+#include <string>
 
 namespace yarp { namespace os { class Thread; } }
 namespace yarp { namespace os { class LogStream; } }
