@@ -811,6 +811,7 @@ Image& Image::operator=(Image&& other) noexcept
 {
     Image moved(std::move(other));
     std::swap(moved.implementation, implementation);
+    moved.implementation = nullptr;
     synchronize();
     return *this;
 }
