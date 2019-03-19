@@ -23,8 +23,8 @@ if(NOT SKIP_serialport)
                                                       YARP_dev)
 
   include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
-  target_link_libraries(yarp_serialport PRIVATE ${ACE_LIBRARIES})
-#   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ACE) (not using targets)
+  target_link_libraries(yarp_serialport PRIVATE ACE::ACE)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ACE)
 
   yarp_install(TARGETS yarp_serialport
                EXPORT YARP_${YARP_PLUGIN_MASTER}
