@@ -112,9 +112,7 @@ public:
      *        false the timer will stop
      * @param mutex if not nullptr will be locked before calling callback and
      *        released just after
-     * @param type sets the timer type, if ONE_SHOT will be called only once.
-     *        PERIODIC will run periodically
-     * @param newThread whether the timer should be executed in a his own thread
+     * @param newThread whether the timer should be executed in a dedicated thread
      *        or with all the timers with newThread == false (in any case they
      *        will not run in the main thread)
      */
