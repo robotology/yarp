@@ -184,8 +184,8 @@ If the options above are not enough and you want to install YARP with additional
  configure it correctly by enabling the following flags (simple solution):
 
  \code
- CREATE_GUIS
- CREATE_LIB_MATH
+ YARP_COMPILE_GUIS
+ YARP_COMPILE_libYARP_math
  \endcode
 
  and, if you want to install YARP, by changing the path pointed by the CMake variable
@@ -218,8 +218,8 @@ After the installation, you will need to set your \subpage environment_configura
 
  As before, configure the project and the install directory:
  \code
- CREATE_GUIS=ON
- CREATE_LIB_MATH=ON
+ YARP_COMPILE_GUIS=ON
+ YARP_COMPILE_libYARP_math=ON
  CMAKE_INSTALL_PREFIX=/path/to/install/dir
  \endcode
 
