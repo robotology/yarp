@@ -419,7 +419,7 @@ if(MSVC)
   target_link_libraries(YARP_OS PRIVATE "Winmm")
 endif()
 
-if(YARP_HAS_LIBEDIT)
+if(YARP_HAS_Libedit)
   target_compile_definitions(YARP_OS PRIVATE YARP_HAS_Libedit)
   target_link_libraries(YARP_OS PRIVATE Libedit::libedit)
   list(APPEND YARP_OS_PRIVATE_DEPS Libedit)

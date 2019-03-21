@@ -11,7 +11,7 @@ if(CREATE_YARPDATAPLAYER)
 
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
-  if(YARP_HAS_OPENCV)
+  if(YARP_HAS_OpenCV)
     add_definitions(-DHAS_OPENCV)
     include_directories(${OpenCV_INCLUDE_DIRS})
   else()
@@ -93,7 +93,7 @@ if(CREATE_YARPDATAPLAYER)
                                        YARP_sig
                                        Qt5::Widgets)
 
-  if(YARP_HAS_OPENCV)
+  if(YARP_HAS_OpenCV)
     target_link_libraries(yarpdataplayer ${OpenCV_LIBRARIES} YARP_cv)
   endif()
 

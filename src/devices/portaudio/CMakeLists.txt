@@ -10,7 +10,7 @@ yarp_prepare_plugin(portaudio
                     TYPE yarp::dev::PortAudioDeviceDriver
                     INCLUDE PortAudioDeviceDriver.h
                     EXTRA_CONFIG WRAPPER=grabber
-                    DEPENDS "YARP_HAS_PORTAUDIO")
+                    DEPENDS "YARP_HAS_PortAudio")
 
 if(NOT SKIP_portaudio)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

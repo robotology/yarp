@@ -8,7 +8,7 @@ yarp_prepare_plugin(h264
                     CATEGORY carrier
                     TYPE yarp::os::H264Carrier
                     INCLUDE H264Carrier.h
-                    DEPENDS "GOBJECT_FOUND;GLIB2_FOUND;GSTREAMER_FOUND;GSTREAMER_APP_LIBRARY_FOUND")
+                    DEPENDS "YARP_HAS_GObject;YARP_HAS_GLIB2;YARP_HAS_GStreamer;YARP_HAS_GStreamerPluginsBase")
 
 if(NOT SKIP_h264)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

@@ -41,7 +41,7 @@ if(YARP_HAS_ACE)
   list(APPEND YARP_companion_PRIVATE_DEPS ACE)
 endif()
 
-if(YARP_HAS_LIBEDIT)
+if(YARP_HAS_Libedit)
   target_compile_definitions(YARP_companion PRIVATE YARP_HAS_Libedit)
   target_link_libraries(YARP_companion PRIVATE Libedit::libedit)
   list(APPEND YARP_companion_PRIVATE_DEPS Libedit)

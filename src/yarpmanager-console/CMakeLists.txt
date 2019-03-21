@@ -20,7 +20,7 @@ if(CREATE_YARPMANAGER_CONSOLE)
                                                     YARP::YARP_OS
                                                     YARP::YARP_manager)
 
-  if(YARP_HAS_LIBEDIT)
+  if(YARP_HAS_Libedit)
     target_compile_definitions(yarpmanager-console PRIVATE YARP_HAS_Libedit)
     target_link_libraries(yarpmanager-console PRIVATE Libedit::libedit)
   endif()

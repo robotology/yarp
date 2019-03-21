@@ -15,7 +15,7 @@ yarp_prepare_plugin(portmonitor
 if (NOT SKIP_portmonitor)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  if(LUA_FOUND)
+  if(YARP_HAS_Lua)
     set(portmonitor_LUA_SRCS lua/MonitorLua.cpp lua/MonitorLua.h)
   endif()
 
@@ -33,7 +33,7 @@ if (NOT SKIP_portmonitor)
   target_link_libraries(yarp_portmonitor PRIVATE YARP::YARP_OS)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS)
 
-  if(LUA_FOUND)
+  if(YARP_HAS_Lua)
     target_include_directories(yarp_portmonitor PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lua)
     target_include_directories(yarp_portmonitor SYSTEM PRIVATE ${LUA_INCLUDE_DIR})
     target_compile_definitions(yarp_portmonitor PRIVATE ENABLED_PORTMONITOR_LUA)

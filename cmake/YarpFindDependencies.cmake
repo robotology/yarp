@@ -6,21 +6,25 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 # This module checks if all the dependencies are installed and if the
-# dependencies to build some parts of Yarp are satisfied.
+# dependencies to build some parts of YARP are satisfied.
 # For every dependency, it creates the following variables:
 #
-# YARP_USE_${PACKAGE}: Can be disabled by the user if he doesn't want to use that
+# YARP_USE_${Package}: Can be disabled by the user if he doesn't want to use that
 #                      dependency.
-# YARP_HAS_${PACKAGE}: Internal flag. It should be used to check if a part of
-#                      Yarp should be built. It is on if YARP_USE_${PACKAGE} is
+# YARP_HAS_${Package}: Internal flag. It should be used to check if a part of
+#                      YARP should be built. It is on if YARP_USE_${Package} is
 #                      on and either the package was found or will be built.
-# YARP_BUILD_${PACKAGE}: Internal flag. Used to check if yarp has to build an
+# YARP_BUILD_${Package}: Internal flag. Used to check if YARP has to build an
 #                        external package.
-# YARP_USE_SYSTEM_${PACKAGE}: This flag is shown only for packages in the
+# YARP_BUILD_DEPS_${Package}: Internal flag. Used to check if dependencies
+#                             required to build the package are available.
+# YARP_HAS_SYSTEM_${Package}: Internal flag. Used to check if the package is
+#                             available on the system.
+# YARP_USE_SYSTEM_${Package}: This flag is shown only for packages in the
 #                             extern folder that were also found on the system
 #                             (TRUE by default). If this flag is enabled, the
 #                             system installed library will be used instead of
-#                             the version shipped with Yarp.
+#                             the version shipped with YARP.
 
 
 include(YarpRenamedOption)
@@ -34,29 +38,35 @@ macro(checkandset_dependency package)
 
   string(TOUPPER ${package} PKG)
 
-  # YARP_HAS_SYSTEM_${PKG}
+  # YARP_HAS_SYSTEM_${package}
   if(${package}_FOUND OR ${PKG}_FOUND)
-    set(YARP_HAS_SYSTEM_${PKG} TRUE)
+    set(YARP_HAS_SYSTEM_${package} TRUE)
   else()
-    set(YARP_HAS_SYSTEM_${PKG} FALSE)
+    set(YARP_HAS_SYSTEM_${package} FALSE)
   endif()
 
-  # YARP_USE_${PKG}
-  cmake_dependent_option(YARP_USE_${PKG} "Use package ${package}" TRUE
-                         YARP_HAS_SYSTEM_${PKG} FALSE)
-  mark_as_advanced(YARP_USE_${PKG})
+  # YARP_USE_${package}
+  cmake_dependent_option(YARP_USE_${package} "Use package ${package}" TRUE
+                         YARP_HAS_SYSTEM_${package} FALSE)
+  if(NOT "${package}" STREQUAL "${PKG}")
+    yarp_renamed_option(YARP_USE_${PKG} YARP_USE_${package}) # Deprecated since YARP 3.2
+  endif()
+  mark_as_advanced(YARP_USE_${package})
 
-  # YARP_USE_SYSTEM_${PKG}
-  set(YARP_USE_SYSTEM_${PKG} ${YARP_USE_${PKG}} CACHE INTERNAL "Use system-installed ${package}, rather than a private copy (recommended)" FORCE)
-
-  # YARP_HAS_${PKG}
-  if(${YARP_HAS_SYSTEM_${PKG}})
-    set(YARP_HAS_${PKG} ${YARP_USE_${PKG}})
-  else()
-    set(YARP_HAS_${PKG} FALSE)
+  # YARP_USE_SYSTEM_${package}
+  set(YARP_USE_SYSTEM_${package} ${YARP_USE_${package}} CACHE INTERNAL "Use system-installed ${package}, rather than a private copy (recommended)" FORCE)
+  if(NOT "${package}" STREQUAL "${PKG}")
+    unset(YARP_USE_SYSTEM_${PKG} CACHE) # Deprecated since YARP 3.2
   endif()
 
-endmacro ()
+  # YARP_HAS_${package}
+  if(${YARP_HAS_SYSTEM_${package}})
+    set(YARP_HAS_${package} ${YARP_USE_${package}})
+  else()
+    set(YARP_HAS_${package} FALSE)
+  endif()
+
+endmacro()
 
 
 # Check if a package is installed or if is going to be built and set some cmake variables
@@ -64,43 +74,47 @@ macro(checkbuildandset_dependency package)
 
   string(TOUPPER ${package} PKG)
 
-  # YARP_HAS_SYSTEM_${PKG}
+  # YARP_HAS_SYSTEM_${package}
   if (${package}_FOUND OR ${PKG}_FOUND)
-    set(YARP_HAS_SYSTEM_${PKG} TRUE)
+    set(YARP_HAS_SYSTEM_${package} TRUE)
   else()
-    set(YARP_HAS_SYSTEM_${PKG} FALSE)
+    set(YARP_HAS_SYSTEM_${package} FALSE)
   endif()
 
-  # YARP_USE_${PKG}
-  option(YARP_USE_${PKG} "Use package ${package}" TRUE)
-  mark_as_advanced(YARP_USE_${PKG})
-
-  # YARP_USE_SYSTEM_${PKG}
-  cmake_dependent_option(YARP_USE_SYSTEM_${PKG} "Use system-installed ${package}, rather than a private copy (recommended)" TRUE
-                         "YARP_HAS_SYSTEM_${PKG};YARP_USE_${PKG}" FALSE)
-  mark_as_advanced(YARP_USE_SYSTEM_${PKG})
-
-  # YARP_HAS_${PKG}
-  set(YARP_HAS_${PKG} ${YARP_USE_${PKG}})
-
-  # YARP_BUILD_${PKG}
-  if(YARP_USE_${PKG} AND NOT YARP_USE_SYSTEM_${PKG})
-    set(YARP_BUILD_${PKG} TRUE)
-  else()
-      set(YARP_BUILD_${PKG} FALSE)
+  # YARP_BUILD_DEPS_${package}
+  set(YARP_BUILD_DEPS_${package} 1)
+  if(${ARGC} GREATER 1)
+    foreach(_dep ${ARGN})
+      if(NOT YARP_HAS_${_dep})
+        set(YARP_BUILD_DEPS_${package} 0)
+      endif()
+    endforeach()
   endif()
 
-  if(YARP_USE_${PKG} AND NOT YARP_USE_SYSTEM_${PKG})
-    if(${ARGC} GREATER 1)
-      foreach(_dep ${ARGN})
-        string(TOUPPER ${_dep} _DEP)
-        if(NOT YARP_HAS_${_DEP})
-          message(WARNING "${_dep} (required to build ${package}) not found.")
-          set(YARP_HAS_${PKG} FALSE)
-          set(YARP_BUILD_${PKG} FALSE)
-        endif()
-      endforeach()
-    endif()
+  # YARP_USE_${package}
+  cmake_dependent_option(YARP_USE_${package} "Use package ${package}" TRUE
+                         "YARP_HAS_SYSTEM_${package} OR YARP_BUILD_DEPS_${package}" FALSE)
+  mark_as_advanced(YARP_USE_${package})
+  if(NOT "${package}" STREQUAL "${PKG}")
+    yarp_renamed_option(YARP_USE_${PKG} YARP_USE_${package}) # Deprecated since YARP 3.2
+  endif()
+
+  # YARP_USE_SYSTEM_${package}
+  cmake_dependent_option(YARP_USE_SYSTEM_${package} "Use system-installed ${package}, rather than a private copy (recommended)" TRUE
+                         "YARP_HAS_SYSTEM_${package};YARP_USE_${package}" FALSE)
+  mark_as_advanced(YARP_USE_SYSTEM_${package})
+  if(NOT "${package}" STREQUAL "${PKG}")
+    yarp_renamed_option(YARP_USE_SYSTEM_${PKG} YARP_USE_SYSTEM_${package}) # Deprecated since YARP 3.2
+  endif()
+
+  # YARP_HAS_${package}
+  set(YARP_HAS_${package} ${YARP_USE_${package}})
+
+  # YARP_BUILD_${package}
+  if(YARP_USE_${package} AND NOT YARP_USE_SYSTEM_${package} AND YARP_BUILD_DEPS_${package})
+    set(YARP_BUILD_${package} TRUE)
+  else()
+    set(YARP_BUILD_${package} FALSE)
   endif()
 
 endmacro()
@@ -108,28 +122,26 @@ endmacro()
 # Always build some package and set some cmake variables
 macro(buildandset_dependency package)
 
-  string(TOUPPER ${package} PKG)
+  set(YARP_HAS_SYSTEM_${package} FALSE)
 
-  set(YARP_HAS_SYSTEM_${PKG} FALSE)
+  # YARP_USE_${package}
+  option(YARP_USE_${package} "Use package ${package}" TRUE)
+  mark_as_advanced(YARP_USE_${package})
 
-  # YARP_USE_${PKG}
-  option(YARP_USE_${PKG} "Use package ${package}" TRUE)
-  mark_as_advanced(YARP_USE_${PKG})
+  # YARP_HAS_${package}
+  set(YARP_HAS_${package} ${YARP_USE_${package}})
 
-  # YARP_HAS_${PKG}
-  set(YARP_HAS_${PKG} ${YARP_USE_${PKG}})
+  # YARP_BUILD_${package}
+  set(YARP_BUILD_${package} TRUE)
 
-  # YARP_BUILD_${PKG}
-  set(YARP_BUILD_${PKG} TRUE)
-
-  if(YARP_USE_${PKG})
+  if(YARP_USE_${package})
     if(${ARGC} GREATER 1)
       foreach(_dep ${ARGN})
         string(TOUPPER ${_dep} _DEP)
         if(NOT YARP_HAS_${_DEP})
           message(WARNING "${_dep} (required to build ${package}) not found.")
-          set(YARP_HAS_${PKG} FALSE)
-          set(YARP_BUILD_${PKG} FALSE)
+          set(YARP_HAS_${package} FALSE)
+          set(YARP_BUILD_${package} FALSE)
         endif()
       endforeach()
     endif()
@@ -142,33 +154,19 @@ endmacro()
 
 # Check if a required package is installed.
 macro(check_required_dependency package)
-
-  string(TOUPPER ${package} PKG)
-
-  if(NOT YARP_HAS_${PKG})
-      message(FATAL_ERROR "Required package ${package} not found. Please install it to build yarp.")
-#  else()
-#      message(STATUS "${PKG} -> OK")
+  if(NOT YARP_HAS_${package})
+    message(FATAL_ERROR "Required package ${package} not found. Please install it to build yarp.")
   endif()
-
 endmacro()
 
 
 # Check if a dependency required to enable an option is installed.
 macro(check_optional_dependency optionname package)
-
-  string(TOUPPER ${package} PKG)
-
   if(${optionname})
-    if(NOT YARP_HAS_${PKG})
+    if(NOT YARP_HAS_${package})
       message(FATAL_ERROR "Optional package ${package} not found. Please install it or disable the option \"${optionname}\" to build yarp.")
-#     else()
-#       message(STATUS "${PKG} ${optionname} -> OK")
     endif()
-#   else()
-#     message(STATUS "${PKG} ${optionname} -> NOT REQUIRED")
   endif()
-
 endmacro()
 
 
@@ -176,8 +174,7 @@ endmacro()
 function(check_alternative_dependency optionname)
   if(${optionname})
     foreach(package "${ARGN}")
-      string(TOUPPER ${package} PKG)
-      if(YARP_HAS_${PKG})
+      if(YARP_HAS_${package})
         return()
       endif()
     endforeach()
@@ -188,10 +185,8 @@ endfunction()
 
 # Check if a dependency required to disable an option is installed.
 macro(check_skip_dependency optionname package)
-  string(TOUPPER ${package} PKG)
-
   if(NOT ${optionname})
-    if(NOT YARP_HAS_${PKG})
+    if(NOT YARP_HAS_${package})
       message(FATAL_ERROR "Optional package ${package} not found. Please install it or enable the option \"${optionname}\" to build yarp.")
     endif()
   endif()
@@ -203,12 +198,13 @@ macro(print_dependency package)
 
   string(TOUPPER ${package} PKG)
 
-#  message("YARP_HAS_SYSTEM_${PKG} = ${YARP_HAS_SYSTEM_${PKG}}")
-#  message("YARP_USE_${PKG} = ${YARP_USE_${PKG}}")
-#  message("YARP_USE_SYSTEM_${PKG} = ${YARP_USE_SYSTEM_${PKG}}")
-#  message("YARP_HAS_${PKG} = ${YARP_HAS_${PKG}}")
-#  if(NOT "${YARP_BUILD_${PKG}}" STREQUAL "")
-#    message("YARP_BUILD_${PKG} = ${YARP_BUILD_${PKG}}")
+#  message("YARP_HAS_SYSTEM_${package} = ${YARP_HAS_SYSTEM_${package}}")
+#  message("YARP_USE_${package} = ${YARP_USE_${package}}")
+#  message("YARP_USE_SYSTEM_${package} = ${YARP_USE_SYSTEM_${package}}")
+#  message("YARP_HAS_${package} = ${YARP_HAS_${package}}")
+#  if(NOT "${YARP_BUILD_${package}}" STREQUAL "")
+#    message("YARP_BUILD_${package} = ${YARP_BUILD_${package}}")
+#    message("YARP_BUILD_DEPS_${package} = ${YARP_BUILD_DEPS_${package}}")
 #  endif()
 
   if(DEFINED ${package}_REQUIRED_VERSION)
@@ -217,11 +213,13 @@ macro(print_dependency package)
   if(DEFINED ${package}_VERSION)
     set(_version " ${${package}_VERSION}")
   endif()
-  if(NOT DEFINED YARP_HAS_${PKG})
+  if(NOT DEFINED YARP_HAS_${package})
     set(_reason "disabled")
-  elseif(NOT YARP_HAS_${PKG})
+  elseif(NOT YARP_HAS_${package} AND DEFINED YARP_BUILD_DEPS_${package} AND NOT YARP_BUILD_DEPS_${package})
+    set(_reason "build dependencies missing")
+  elseif(NOT YARP_HAS_${package})
     set(_reason "not found")
-  elseif(YARP_HAS_SYSTEM_${PKG} AND YARP_USE_SYSTEM_${PKG})
+  elseif(YARP_HAS_SYSTEM_${package} AND YARP_USE_SYSTEM_${package})
     unset(_where)
     if(${package}_DIR)
       set(_where " (${${package}_DIR})")
@@ -244,13 +242,15 @@ macro(print_dependency package)
       set(_where " (${${PKG}_INCLUDE_DIR})")
     endif()
     set(_reason "found${_version}${_where}")
-  elseif(YARP_HAS_SYSTEM_${PKG})
+  elseif(YARP_HAS_SYSTEM_${package})
     set(_reason "compiling (system package disabled)")
+  elseif(DEFINED YARP_CUSTOM_REASON_${package})
+    set(_reason "compiling (${YARP_CUSTOM_REASON_${package}})")
   else()
     set(_reason "compiling (not found)")
   endif()
 
-  yarp_print_with_checkbox(YARP_HAS_${PKG} "${package}${_required_version}: ${_reason}")
+  yarp_print_with_checkbox(YARP_HAS_${package} "${package}${_required_version}: ${_reason}")
 
   unset(_lib)
   unset(_where)
@@ -260,8 +260,8 @@ macro(print_dependency package)
 endmacro()
 
 
-
-# FIND PACKAGES:
+################################################################################
+# Find all packages
 
 # YCM is already searched in the main extern/ycm, therefore there is no need to
 # look for it here.
@@ -288,8 +288,10 @@ set(TinyXML_REQUIRED_VERSION 2.6)
 find_package(TinyXML ${TinyXML_REQUIRED_VERSION} QUIET)
 checkbuildandset_dependency(TinyXML)
 
+set(YARP_CUSTOM_REASON_xmlrpcpp "customized version")
 buildandset_dependency(xmlrpcpp)
 
+set(YARP_CUSTOM_REASON_hmac "not searched")
 buildandset_dependency(hmac)
 
 find_package(Eigen3 QUIET)
@@ -303,6 +305,8 @@ checkbuildandset_dependency(QCustomPlot Qt5)
 
 find_package(Graphviz QUIET)
 checkandset_dependency(Graphviz)
+
+set(YARP_CUSTOM_REASON_QGVCore "customized version")
 find_package(QGVCore QUIET)
 checkbuildandset_dependency(QGVCore Qt5 Graphviz)
 
@@ -399,7 +403,9 @@ find_package(I2C QUIET)
 checkandset_dependency(I2C)
 
 
-# OPTIONS:
+################################################################################
+# Options
+
 option(SKIP_ACE "Compile YARP without ACE (Linux only, limited functionality)" OFF)
 mark_as_advanced(SKIP_ACE)
 if(SKIP_ACE)
@@ -435,21 +441,23 @@ else()
 endif()
 
 
-# PRINT DEPENDENCIES STATUS:
+################################################################################
+# Print dependencies status
 
 message(STATUS "Libraries found:")
+
 print_dependency(YCM)
 print_dependency(ACE)
 print_dependency(RTF)
 print_dependency(SQLite)
 print_dependency(Eigen3)
 print_dependency(TinyXML)
-#print_dependency(xmlrpcpp)
+print_dependency(xmlrpcpp)
 print_dependency(hmac)
 print_dependency(Qt5)
 print_dependency(QCustomPlot)
 print_dependency(Graphviz)
-#print_dependency(QGVCore)
+print_dependency(QGVCore)
 print_dependency(Libedit)
 print_dependency(SWIG)
 print_dependency(OpenCV)
@@ -478,9 +486,11 @@ print_dependency(FLEX)
 print_dependency(I2C)
 
 
-# CHECK DEPENDENCIES:
+################################################################################
+# Check options consistency
 
 check_skip_dependency(SKIP_ACE ACE)
+check_required_dependency(hmac)
 check_required_dependency(SQLite)
 check_optional_dependency(CREATE_LIB_MATH Eigen3)
 check_optional_dependency(CREATE_LIB_MANAGER TinyXML)
@@ -493,9 +503,7 @@ check_optional_dependency(YARP_COMPILE_BINDINGS SWIG)
 check_optional_dependency(YARP_COMPILE_RTF_ADDONS RTF)
 
 
-
-
-#########################################################################
+################################################################################
 # Print information for user
 
 message(STATUS "Enabled features:")
