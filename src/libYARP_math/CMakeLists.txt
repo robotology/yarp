@@ -5,7 +5,7 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-if (CREATE_LIB_MATH)
+if (YARP_COMPILE_libYARP_math)
 
   project(YARP_math)
 

@@ -413,33 +413,64 @@ if(SKIP_ACE)
   unset(YARP_HAS_ACE) # Not set = disabled
 endif()
 
-option(CREATE_LIB_MATH "Create math library libYARP_math?" ${YARP_HAS_EIGEN3})
-cmake_dependent_option(CREATE_YARPROBOTINTERFACE "Do you want to compile yarprobotinterface?" ON YARP_COMPILE_EXECUTABLES OFF)
-cmake_dependent_option(CREATE_YARPMANAGER_CONSOLE "Do you want to compile YARP Module Manager (console)?" ON YARP_COMPILE_EXECUTABLES OFF)
-cmake_dependent_option(CREATE_YARPDATADUMPER "Do you want to compile yarpdatadumper?" ON YARP_COMPILE_EXECUTABLES OFF)
-cmake_dependent_option(CREATE_GUIS "Do you want to compile GUIs" OFF YARP_COMPILE_EXECUTABLES OFF)
-cmake_dependent_option(CREATE_YARPVIEW "Do you want to compile yarpview?" ON CREATE_GUIS OFF)
-cmake_dependent_option(CREATE_YARPMANAGER "Do you want to compile yarpmanager?" ON CREATE_GUIS OFF)
-cmake_dependent_option(CREATE_YARPLOGGER "Do you want to create yarplogger?" ON CREATE_GUIS OFF)
-cmake_dependent_option(CREATE_YARPSCOPE "Do you want to create yarpscope?" ON CREATE_GUIS OFF)
-cmake_dependent_option(CREATE_YARPDATAPLAYER "Do you want to compile yarpdataplayer?" ON CREATE_GUIS OFF)
-cmake_dependent_option(CREATE_YARPMOTORGUI "Do you want to compile yarpmotorgui?" ON CREATE_GUIS OFF)
-cmake_dependent_option(CREATE_YARPLASERSCANNERGUI  "Do you want to compile yarplaserscannergui?" OFF CREATE_GUIS OFF)
-cmake_dependent_option(CREATE_YARPBATTERYGUI "Do you want to compile yarpbatterygui?" OFF CREATE_GUIS OFF)
-cmake_dependent_option(CREATE_YARPVIZ "Do you want to compile yarpviz?" OFF CREATE_GUIS OFF)
+option(YARP_COMPILE_libYARP_math "Create math library libYARP_math?" ${YARP_HAS_Eigen3})
+yarp_renamed_option(CREATE_LIB_MATH YARP_COMPILE_libYARP_math) # Deprecated since YARP 3.2
 
-if(CREATE_YARPMANAGER_CONSOLE OR CREATE_YARPMANAGER)
-  set(CREATE_LIB_MANAGER ON CACHE INTERNAL "Create manager library libYARP_manager?")
-else()
-  unset(CREATE_LIB_MANAGER CACHE)
+cmake_dependent_option(YARP_COMPILE_GUIS "Do you want to compile GUIs" ${YARP_HAS_Qt5} YARP_COMPILE_EXECUTABLES OFF)
+yarp_renamed_option(CREATE_GUIS YARP_COMPILE_GUIS) # Deprecated since YARP 3.2
+
+cmake_dependent_option(YARP_COMPILE_yarprobotinterface "Do you want to compile yarprobotinterface?" ON YARP_COMPILE_EXECUTABLES OFF)
+cmake_dependent_option(YARP_COMPILE_yarpmanager-console "Do you want to compile YARP Module Manager (console)?" ON YARP_COMPILE_EXECUTABLES OFF)
+cmake_dependent_option(YARP_COMPILE_yarpdatadumper "Do you want to compile yarpdatadumper?" ON YARP_COMPILE_EXECUTABLES OFF)
+cmake_dependent_option(YARP_COMPILE_yarpview "Do you want to compile yarpview?" ON YARP_COMPILE_GUIS OFF)
+cmake_dependent_option(YARP_COMPILE_yarpmanager "Do you want to compile yarpmanager?" ON YARP_COMPILE_GUIS OFF)
+cmake_dependent_option(YARP_COMPILE_yarplogger "Do you want to create yarplogger?" ON YARP_COMPILE_GUIS OFF)
+cmake_dependent_option(YARP_COMPILE_yarpscope "Do you want to create yarpscope?" ON YARP_COMPILE_GUIS OFF)
+cmake_dependent_option(YARP_COMPILE_yarpdataplayer "Do you want to compile yarpdataplayer?" ON YARP_COMPILE_GUIS OFF)
+cmake_dependent_option(YARP_COMPILE_yarpmotorgui "Do you want to compile yarpmotorgui?" ON YARP_COMPILE_GUIS OFF)
+cmake_dependent_option(YARP_COMPILE_yarplaserscannergui  "Do you want to compile yarplaserscannergui?" OFF YARP_COMPILE_GUIS OFF)
+cmake_dependent_option(YARP_COMPILE_yarpbatterygui "Do you want to compile yarpbatterygui?" OFF YARP_COMPILE_GUIS OFF)
+cmake_dependent_option(YARP_COMPILE_yarpviz "Do you want to compile yarpviz?" OFF YARP_COMPILE_GUIS OFF)
+
+yarp_renamed_option(CREATE_YARPROBOTINTERFACE YARP_COMPILE_yarprobotinterface) # Deprecated since YARP 3.2
+yarp_renamed_option(CREATE_YARPMANAGER_CONSOLE YARP_COMPILE_yarpmanager-console) # Deprecated since YARP 3.2
+yarp_renamed_option(CREATE_YARPDATADUMPER YARP_COMPILE_yarpdatadumper) # Deprecated since YARP 3.2
+yarp_renamed_option(CREATE_YARPVIEW YARP_COMPILE_yarpview) # Deprecated since YARP 3.2
+yarp_renamed_option(CREATE_YARPMANAGER YARP_COMPILE_yarpmanager) # Deprecated since YARP 3.2
+yarp_renamed_option(CREATE_YARPLOGGER YARP_COMPILE_yarplogger) # Deprecated since YARP 3.2
+yarp_renamed_option(CREATE_YARPSCOPE YARP_COMPILE_yarpscope) # Deprecated since YARP 3.2
+yarp_renamed_option(CREATE_YARPDATAPLAYER YARP_COMPILE_yarpdataplayer) # Deprecated since YARP 3.2
+yarp_renamed_option(CREATE_YARPMOTORGUI YARP_COMPILE_yarpmotorgui) # Deprecated since YARP 3.2
+yarp_renamed_option(CREATE_YARPLASERSCANNERGUI YARP_COMPILE_yarplaserscannergui) # Deprecated since YARP 3.2
+yarp_renamed_option(CREATE_YARPBATTERYGUI YARP_COMPILE_yarpbatterygui) # Deprecated since YARP 3.2
+yarp_renamed_option(CREATE_YARPVIZ YARP_COMPILE_yarpviz) # Deprecated since YARP 3.2
+
+
+################################################################################
+# Disable some parts if they are not required
+
+if(YARP_COMPILE_yarpmanager-console OR YARP_COMPILE_yarpmanager)
+  set(YARP_COMPILE_libYARP_manager ON)
 endif()
 
-if(CREATE_YARPVIZ OR CREATE_YARPMANAGER)
-  set(CREATE_LIB_PROFILER ON CACHE INTERNAL "Create profiler library libYARP_profiler?")
-else()
-  unset(CREATE_LIB_PROFILER CACHE)
+if(YARP_COMPILE_yarpviz OR YARP_COMPILE_yarpmanager)
+  set(YARP_COMPILE_libYARP_profiler ON)
 endif()
 
+if(NOT YARP_COMPILE_yarprobotinterface OR NOT YARP_COMPILE_yarpscope OR NOT YARP_COMPILE_libYARP_manager)
+  set(YARP_BUILD_TinyXML FALSE)
+  unset(YARP_HAS_TinyXML)
+endif()
+
+if(NOT YARP_COMPILE_yarpviz)
+  set(YARP_BUILD_QGVCore FALSE)
+  unset(YARP_HAS_QGVCore)
+endif()
+
+if(NOT YARP_COMPILE_yarpscope)
+  set(YARP_BUILD_QCustomPlot FALSE)
+  unset(YARP_HAS_QCustomPlot)
+endif()
 
 ################################################################################
 # Print dependencies status
@@ -492,13 +523,13 @@ print_dependency(I2C)
 check_skip_dependency(SKIP_ACE ACE)
 check_required_dependency(hmac)
 check_required_dependency(SQLite)
-check_optional_dependency(CREATE_LIB_MATH Eigen3)
-check_optional_dependency(CREATE_LIB_MANAGER TinyXML)
-check_optional_dependency(CREATE_YARPSCOPE TinyXML)
-check_optional_dependency(CREATE_GUIS Qt5)
-check_optional_dependency(CREATE_YARPSCOPE QCustomPlot)
-check_optional_dependency(CREATE_YARPLASERSCANNERGUI OpenCV)
-check_optional_dependency(CREATE_YARPVIZ Graphviz)
+check_optional_dependency(YARP_COMPILE_libYARP_math Eigen3)
+check_optional_dependency(YARP_COMPILE_libYARP_manager TinyXML)
+check_optional_dependency(YARP_COMPILE_yarpscope TinyXML)
+check_optional_dependency(YARP_COMPILE_GUIS Qt5)
+check_optional_dependency(YARP_COMPILE_yarpscope QCustomPlot)
+check_optional_dependency(YARP_COMPILE_yarplaserscannergui OpenCV)
+check_optional_dependency(YARP_COMPILE_yarpviz Graphviz)
 check_optional_dependency(YARP_COMPILE_BINDINGS SWIG)
 check_optional_dependency(YARP_COMPILE_RTF_ADDONS RTF)
 
@@ -513,22 +544,22 @@ yarp_print_feature(SKIP_ACE 0 "Disable ACE library")
 yarp_print_feature(YARP_NO_DEPRECATED 0 "Filter out deprecated declarations from YARP API")
 yarp_print_feature(YARP_NO_DEPRECATED_WARNINGS 1 "Do not warn when using YARP deprecated declarations")
 
-yarp_print_feature(CREATE_LIB_MATH 0 "Compile YARP_math library")
+yarp_print_feature(YARP_COMPILE_libYARP_math 0 "Compile YARP_math library")
 
 yarp_print_feature(YARP_COMPILE_EXECUTABLES 0 "Compile executables")
-yarp_print_feature(CREATE_YARPROBOTINTERFACE 1 "Compile yarprobotinterface")
-yarp_print_feature(CREATE_YARPMANAGER_CONSOLE 1 "Compile YARP Module Manager (console)")
-yarp_print_feature(CREATE_YARPDATADUMPER 1 "Compile yarpdatadumper")
-yarp_print_feature(CREATE_GUIS 1 "Compile GUIs")
-yarp_print_feature(CREATE_YARPVIEW 2 "Compile yarpview")
-yarp_print_feature(CREATE_YARPMANAGER 2 "Compile yarpmanager")
-yarp_print_feature(CREATE_YARPLOGGER 2 "Compile yarplogger")
-yarp_print_feature(CREATE_YARPSCOPE 2 "Compile yarpscope")
-yarp_print_feature(CREATE_YARPDATAPLAYER 2 "Compile yarpdataplayer")
-yarp_print_feature(CREATE_YARPMOTORGUI 2 "Compile yarpmotorgui")
-yarp_print_feature(CREATE_YARPLASERSCANNERGUI 2 "Compile yarplaserscannergui")
-yarp_print_feature(CREATE_YARPBATTERYGUI 2 "Compile yarpbatterygui")
-yarp_print_feature(CREATE_YARPVIZ 2 "Compile yarpviz")
+yarp_print_feature(YARP_COMPILE_yarprobotinterface 1 "Compile yarprobotinterface")
+yarp_print_feature(YARP_COMPILE_yarpmanager-console 1 "Compile YARP Module Manager (console)")
+yarp_print_feature(YARP_COMPILE_yarpdatadumper 1 "Compile yarpdatadumper")
+yarp_print_feature(YARP_COMPILE_GUIS 1 "Compile GUIs")
+yarp_print_feature(YARP_COMPILE_yarpview 2 "Compile yarpview")
+yarp_print_feature(YARP_COMPILE_yarpmanager 2 "Compile yarpmanager")
+yarp_print_feature(YARP_COMPILE_yarplogger 2 "Compile yarplogger")
+yarp_print_feature(YARP_COMPILE_yarpscope 2 "Compile yarpscope")
+yarp_print_feature(YARP_COMPILE_yarpdataplayer 2 "Compile yarpdataplayer")
+yarp_print_feature(YARP_COMPILE_yarpmotorgui 2 "Compile yarpmotorgui")
+yarp_print_feature(YARP_COMPILE_yarplaserscannergui 2 "Compile yarplaserscannergui")
+yarp_print_feature(YARP_COMPILE_yarpbatterygui 2 "Compile yarpbatterygui")
+yarp_print_feature(YARP_COMPILE_yarpviz 2 "Compile yarpviz")
 
 yarp_print_feature(YARP_COMPILE_RTF_ADDONS 0 "Compile Robot Testing Framework addons")
 yarp_print_feature(YARP_COMPILE_UNMAINTAINED 0 "Compile Unmaintained components")

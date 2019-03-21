@@ -4,7 +4,7 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-if(CREATE_YARPMANAGER_CONSOLE)
+if(YARP_COMPILE_yarpmanager-console)
   set(yarpmanager_console_SRCS yarpmanager.cpp
                                ymanager.cpp)
   set(yarpmanager_console_HDRS ymanager.h)
