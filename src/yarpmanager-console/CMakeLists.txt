@@ -9,7 +9,6 @@ if(CREATE_YARPMANAGER_CONSOLE)
                                ymanager.cpp)
   set(yarpmanager_console_HDRS ymanager.h)
 
-  include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
   if(MSVC)
     include_directories(SYSTEM ${dirent_INCLUDE_DIRS})
   endif()
@@ -22,10 +21,9 @@ if(CREATE_YARPMANAGER_CONSOLE)
   add_executable(yarpmanager-console ${yarpmanager_console_SRCS}
                                      ${yarpmanager_console_HDRS})
 
-  target_link_libraries(yarpmanager-console YARP::YARP_init
-                                            YARP::YARP_OS
-                                            YARP::YARP_manager
-                                            ${ACE_LIBRARIES})
+  target_link_libraries(yarpmanager-console PRIVATE YARP::YARP_init
+                                                    YARP::YARP_OS
+                                                    YARP::YARP_manager)
 
   if(YARP_HAS_LIBEDIT)
     target_link_libraries(yarpmanager-console Libedit::libedit)

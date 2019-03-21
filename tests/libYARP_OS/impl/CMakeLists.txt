@@ -14,12 +14,14 @@ add_executable(harness_os_impl BottleImplTest.cpp
                                ProtocolTest.cpp
                                StreamConnectionReaderTest.cpp)
 
-target_include_directories(harness_os_impl PRIVATE ${ACE_INCLUDE_DIRS})
-
 target_link_libraries(harness_os_impl PRIVATE YARP_harness
                                               YARP::YARP_OS
-                                              YARP::YARP_sig
-                                              ${ACE_LIBRARIES})
+                                              YARP::YARP_sig)
+
+if(YARP_HAS_ACE)
+  target_compile_definitions(harness_os_impl PRIVATE YARP_HAS_ACE)
+  target_link_libraries(harness_os_impl PRIVATE ACE::ACE)
+endif()
 
 set_property(TARGET harness_os_impl PROPERTY FOLDER "Test")
 

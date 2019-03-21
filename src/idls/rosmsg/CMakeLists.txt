@@ -25,6 +25,7 @@ target_include_directories(yarpidl_rosmsg SYSTEM PRIVATE "${md5_ROOT}")
 target_link_libraries(yarpidl_rosmsg PRIVATE YARP::YARP_init
                                              YARP::YARP_OS)
 if(YARP_HAS_ACE)
+  target_compile_definitions(yarpidl_rosmsg PRIVATE YARP_HAS_ACE)
   target_link_libraries(yarpidl_rosmsg PRIVATE ACE::ACE)
 endif()
 

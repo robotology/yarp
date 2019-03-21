@@ -400,10 +400,11 @@ checkandset_dependency(I2C)
 
 
 # OPTIONS:
-option(SKIP_ACE "Compile YARP without ACE (Linux only, TCP only, limited functionality)" OFF)
+option(SKIP_ACE "Compile YARP without ACE (Linux only, limited functionality)" OFF)
 mark_as_advanced(SKIP_ACE)
 if(SKIP_ACE)
   set_property(CACHE YARP_USE_ACE PROPERTY VALUE FALSE)
+  unset(YARP_HAS_ACE) # Not set = disabled
 endif()
 
 option(CREATE_LIB_MATH "Create math library libYARP_math?" ${YARP_HAS_EIGEN3})

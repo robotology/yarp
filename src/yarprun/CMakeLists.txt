@@ -5,8 +5,6 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
-
 add_executable(yarprun yarprun.cpp)
 target_link_libraries(yarprun YARP::YARP_OS
                               YARP::YARP_init

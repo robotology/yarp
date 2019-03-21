@@ -44,6 +44,7 @@ target_link_libraries(YARP_run PRIVATE YARP::YARP_OS)
 list(APPEND YARP_run_PRIVATE_DEPS YARP_OS)
 
 if(YARP_HAS_ACE)
+  target_compile_definitions(YARP_run PRIVATE YARP_HAS_ACE)
   target_link_libraries(YARP_run PRIVATE ACE::ACE_INLINE)
   list(APPEND YARP_run_PRIVATE_DEPS ACE)
 endif()

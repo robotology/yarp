@@ -22,7 +22,7 @@ if(NOT SKIP_serialport)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
                                                       YARP_dev)
 
-  include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
+  target_compile_definitions(yarp_serialport PRIVATE YARP_HAS_ACE)
   target_link_libraries(yarp_serialport PRIVATE ACE::ACE)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ACE)
 

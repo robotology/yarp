@@ -27,6 +27,7 @@ if(NOT SKIP_shmem)
   target_link_libraries(yarp_shmem PRIVATE YARP::YARP_OS)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS)
 
+  target_compile_definitions(yarp_shmem PRIVATE YARP_HAS_ACE)
   target_link_libraries(yarp_shmem PRIVATE ACE::ACE)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ACE)
 

@@ -396,6 +396,7 @@ target_link_libraries(YARP_OS PRIVATE ${hmac_LIBRARIES})
 # list(APPEND YARP_OS_PUBLIC_DEPS hmac)
 
 if(YARP_HAS_ACE)
+  target_compile_definitions(YARP_OS PRIVATE YARP_HAS_ACE)
   target_link_libraries(YARP_OS PRIVATE ACE::ACE)
   list(APPEND YARP_OS_PRIVATE_DEPS ACE)
 endif()

@@ -36,6 +36,7 @@ list(APPEND YARP_companion_PUBLIC_DEPS YARP_OS)
 target_compile_features(YARP_companion PUBLIC cxx_override)
 
 if(YARP_HAS_ACE)
+  target_compile_definitions(YARP_companion PRIVATE YARP_HAS_ACE)
   target_link_libraries(YARP_companion PRIVATE ACE::ACE_INLINE)
   list(APPEND YARP_companion_PRIVATE_DEPS ACE)
 endif()

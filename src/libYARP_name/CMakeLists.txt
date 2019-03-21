@@ -41,6 +41,7 @@ list(APPEND YARP_name_PUBLIC_DEPS YARP_conf
                                   YARP_OS)
 
 if(YARP_HAS_ACE)
+  target_compile_definitions(YARP_name PRIVATE YARP_HAS_ACE)
   target_link_libraries(YARP_name PRIVATE ACE::ACE)
   list(APPEND YARP_name_PRIVATE_DEPS ACE)
 endif()
