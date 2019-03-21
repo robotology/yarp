@@ -449,10 +449,12 @@ yarp_renamed_option(CREATE_YARPVIZ YARP_COMPILE_yarpviz) # Deprecated since YARP
 ################################################################################
 # Disable some parts if they are not required
 
+set(YARP_COMPILE_libYARP_manager OFF)
 if(YARP_COMPILE_yarpmanager-console OR YARP_COMPILE_yarpmanager)
   set(YARP_COMPILE_libYARP_manager ON)
 endif()
 
+set(YARP_COMPILE_libYARP_profiler OFF)
 if(YARP_COMPILE_yarpviz OR YARP_COMPILE_yarpmanager)
   set(YARP_COMPILE_libYARP_profiler ON)
 endif()
