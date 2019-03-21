@@ -8,7 +8,7 @@ yarp_prepare_plugin(map2DServer
                     CATEGORY device
                     TYPE yarp::dev::Map2DServer
                     INCLUDE Map2DServer.h
-                    DEPENDS "YARP_HAS_MATH_LIB"
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_map2DServer)

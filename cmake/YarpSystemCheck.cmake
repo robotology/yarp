@@ -340,9 +340,3 @@ check_include_files(sys/signal.h YARP_HAS_SYS_SIGNAL_H)
 check_include_files(netdb.h YARP_HAS_NETDB_H)
 check_include_files(dlfcn.h YARP_HAS_DLFCN_H)
 check_include_files(ifaddrs.h YARP_HAS_IFADDRS_H)
-
-
-#########################################################################
-# Translate the names of some YARP options, for yarp/conf/options.h
-# and YARPConfig.cmake.in
-set(YARP_HAS_MATH_LIB ${CREATE_LIB_MATH})

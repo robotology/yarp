@@ -8,7 +8,7 @@ yarp_prepare_plugin(map2DClient
                     CATEGORY device
                     TYPE yarp::dev::Map2DClient
                     INCLUDE Map2DClient.h
-                    DEPENDS "YARP_HAS_MATH_LIB"
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_map2DClient)

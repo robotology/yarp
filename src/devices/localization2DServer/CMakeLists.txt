@@ -8,7 +8,7 @@ yarp_prepare_plugin(localization2DServer
                     CATEGORY device
                     TYPE yarp::dev::Localization2DServer
                     INCLUDE Localization2DServer.h
-                    DEPENDS "YARP_HAS_MATH_LIB"
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_localization2DServer)

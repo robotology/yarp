@@ -10,7 +10,7 @@ yarp_prepare_plugin(priority
                     INCLUDE PriorityCarrier.h
                     EXTRA_CONFIG SUBTYPE=recv
                                  CODE="not applicable"
-                    DEPENDS "YARP_HAS_MATH_LIB"
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_priority)

@@ -8,7 +8,7 @@ yarp_prepare_plugin(ovrheadset
                     CATEGORY device
                     TYPE yarp::dev::OVRHeadset
                     INCLUDE OVRHeadset.h
-                    DEPENDS "YARP_HAS_MATH_LIB;YARP_HAS_LIBOVR;YARP_HAS_GLFW3;YARP_HAS_GLEW;YARP_HAS_OPENGL")
+                    DEPENDS "TARGET YARP::YARP_math;YARP_HAS_LIBOVR;YARP_HAS_GLFW3;YARP_HAS_GLEW;YARP_HAS_OPENGL")
 
 if(NOT SKIP_ovrheadset)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

@@ -8,7 +8,7 @@ yarp_prepare_plugin(fakeLaser
                     CATEGORY device
                     TYPE FakeLaser
                     INCLUDE fakeLaser.h
-                    DEPENDS "YARP_HAS_MATH_LIB")
+                    DEPENDS "TARGET YARP::YARP_math")
 
 if(NOT SKIP_fakeLaser)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
