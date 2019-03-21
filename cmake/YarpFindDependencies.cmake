@@ -459,7 +459,9 @@ if(YARP_COMPILE_yarpviz OR YARP_COMPILE_yarpmanager)
   set(YARP_COMPILE_libYARP_profiler ON)
 endif()
 
-if(NOT YARP_COMPILE_yarprobotinterface OR NOT YARP_COMPILE_yarpscope OR NOT YARP_COMPILE_libYARP_manager)
+if(NOT YARP_COMPILE_yarprobotinterface AND
+   NOT YARP_COMPILE_yarpscope AND
+   NOT YARP_COMPILE_libYARP_manager)
   set(YARP_BUILD_TinyXML FALSE)
   unset(YARP_HAS_TinyXML)
 endif()
