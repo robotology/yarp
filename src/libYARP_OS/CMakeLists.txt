@@ -420,9 +420,8 @@ if(MSVC)
 endif()
 
 if(YARP_HAS_LIBEDIT)
-  target_compile_definitions(YARP_OS PRIVATE WITH_LIBEDIT)
-  target_include_directories(YARP_OS SYSTEM PRIVATE ${Libedit_INCLUDE_DIRS})
-  target_link_libraries(YARP_OS PRIVATE ${Libedit_LIBRARIES})
+  target_compile_definitions(YARP_OS PRIVATE YARP_HAS_Libedit)
+  target_link_libraries(YARP_OS PRIVATE Libedit::libedit)
   list(APPEND YARP_OS_PRIVATE_DEPS Libedit)
 endif()
 

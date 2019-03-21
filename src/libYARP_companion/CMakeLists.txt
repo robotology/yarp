@@ -42,9 +42,8 @@ if(YARP_HAS_ACE)
 endif()
 
 if(YARP_HAS_LIBEDIT)
-  target_compile_definitions(YARP_companion PRIVATE WITH_LIBEDIT)
-  target_include_directories(YARP_companion SYSTEM PRIVATE ${Libedit_INCLUDE_DIRS})
-  target_link_libraries(YARP_companion PRIVATE ${Libedit_LIBRARIES})
+  target_compile_definitions(YARP_companion PRIVATE YARP_HAS_Libedit)
+  target_link_libraries(YARP_companion PRIVATE Libedit::libedit)
   list(APPEND YARP_companion_PRIVATE_DEPS Libedit)
 endif()
 
