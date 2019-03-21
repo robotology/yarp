@@ -39,9 +39,3 @@ To stop the application, in the yarpmanager's console type:
 >> exit
 
 You are also able to see the run-time stimulation levels using "yarpscope".
-
-
-(***) It is strongly recommended to compile "priority_carrier" with libYarpMath.
-      To do this, Before compiling the carrier, enable 'CREATE_LIB_MATH' flags
-      in the cmake.
-
