@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_MATH_SVD
-#define YARP_MATH_SVD
+#ifndef YARP_MATH_SVD_H
+#define YARP_MATH_SVD_H
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
@@ -173,4 +173,4 @@ namespace yarp
     }
 }
 
-#endif
+#endif // YARP_MATH_SVD_H

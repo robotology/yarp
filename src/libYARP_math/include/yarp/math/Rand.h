@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_MATH_RAND
-#define YARP_MATH_RAND
+#ifndef YARP_MATH_RAND_H
+#define YARP_MATH_RAND_H
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
@@ -165,5 +165,4 @@ public:
 };
 #endif
 
-#endif
-
+#endif // YARP_MATH_RAND_H

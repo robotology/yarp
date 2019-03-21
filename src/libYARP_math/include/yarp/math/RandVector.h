@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_MATH_RANDVECTOR
-#define YARP_MATH_RANDVECTOR
+#ifndef YARP_MATH_RANDVECTOR_H
+#define YARP_MATH_RANDVECTOR_H
 
 #include <yarp/sig/Vector.h>
 #include <yarp/math/RandScalar.h>
@@ -45,6 +45,4 @@ public:
     const yarp::sig::Vector &get(const yarp::sig::Vector &min, const yarp::sig::Vector &max);
 };
 
-#endif
-
-
+#endif // YARP_MATH_RANDVECTOR_H
