@@ -518,23 +518,6 @@ print_dependency(I2C)
 
 
 ################################################################################
-# Check options consistency
-
-check_skip_dependency(SKIP_ACE ACE)
-check_required_dependency(hmac)
-check_required_dependency(SQLite)
-check_optional_dependency(YARP_COMPILE_libYARP_math Eigen3)
-check_optional_dependency(YARP_COMPILE_libYARP_manager TinyXML)
-check_optional_dependency(YARP_COMPILE_yarpscope TinyXML)
-check_optional_dependency(YARP_COMPILE_GUIS Qt5)
-check_optional_dependency(YARP_COMPILE_yarpscope QCustomPlot)
-check_optional_dependency(YARP_COMPILE_yarplaserscannergui OpenCV)
-check_optional_dependency(YARP_COMPILE_yarpviz Graphviz)
-check_optional_dependency(YARP_COMPILE_BINDINGS SWIG)
-check_optional_dependency(YARP_COMPILE_RTF_ADDONS RTF)
-
-
-################################################################################
 # Print information for user
 
 message(STATUS "Enabled features:")
@@ -568,3 +551,20 @@ yarp_print_feature(YARP_COMPILE_TESTS 0 "Compile and enable YARP tests")
 yarp_print_feature(YARP_DISABLE_FAILING_TESTS 1 "Disable tests that fail randomly due to race conditions")
 yarp_print_feature(YARP_ENABLE_BROKEN_TESTS 1 "Enable broken tests")
 yarp_print_feature(YARP_ENABLE_INTEGRATION_TESTS 1 "Run integration tests")
+
+
+################################################################################
+# Check options consistency
+
+check_skip_dependency(SKIP_ACE ACE)
+check_required_dependency(hmac)
+check_required_dependency(SQLite)
+check_optional_dependency(YARP_COMPILE_libYARP_math Eigen3)
+check_optional_dependency(YARP_COMPILE_libYARP_manager TinyXML)
+check_optional_dependency(YARP_COMPILE_yarpscope TinyXML)
+check_optional_dependency(YARP_COMPILE_GUIS Qt5)
+check_optional_dependency(YARP_COMPILE_yarpscope QCustomPlot)
+check_optional_dependency(YARP_COMPILE_yarplaserscannergui OpenCV)
+check_optional_dependency(YARP_COMPILE_yarpviz Graphviz)
+check_optional_dependency(YARP_COMPILE_BINDINGS SWIG)
+check_optional_dependency(YARP_COMPILE_RTF_ADDONS RTF)
