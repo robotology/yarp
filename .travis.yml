@@ -448,8 +448,9 @@ before_script:
   # OpenCV on travis is built with C++98 ABI.
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_USE_OPENCV=OFF"; fi; fi
 
-    # Build rplidar2 on linux
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_rpLidar2=ON"; fi
+  # Build rplidar2 on linux
+  # FIXME gcc only, see https://github.com/robotology/yarp/issues/1984
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "gcc" ]; then YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_rpLidar2=ON"; fi; fi
 
   # Avoid building Qt5 guis twice on macOS.
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_DISABLE_OSX_BUNDLES=ON"; fi
