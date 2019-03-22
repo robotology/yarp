@@ -9,6 +9,7 @@ add_executable(harness_devices harness_devices.cpp)
 target_link_libraries(harness_devices YARP::YARP_OS
                                       YARP::YARP_init
                                       YARP::YARP_dev)
+set_property(TARGET harness_devices PROPERTY FOLDER "Test")
 
 set(_inis controlboardwrapper2_basic.ini
           ffmpeg_grabber_basic.ini

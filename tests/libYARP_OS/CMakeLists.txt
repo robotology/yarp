@@ -56,3 +56,4 @@ yarp_parse_and_add_catch_tests(harness_os)
 
 add_executable(print_value_table print_value_table.cpp)
 target_link_libraries(print_value_table PRIVATE YARP::YARP_OS)
+set_property(TARGET print_value_table PROPERTY FOLDER "Test")
