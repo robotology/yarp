@@ -8,7 +8,7 @@ yarp_prepare_plugin(rpLidar2
                     CATEGORY device
                     TYPE RpLidar2
                     INCLUDE rpLidar2.h
-                    DEPENDS "NOT APPLE")
+                    DEPENDS "NOT APPLE;TARGET YARP::YARP_math")
 
 if(NOT SKIP_rpLidar2)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
