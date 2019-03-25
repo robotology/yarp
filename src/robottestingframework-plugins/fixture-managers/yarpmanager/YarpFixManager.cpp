@@ -6,7 +6,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <rtf/dll/Plugin.h>
+#include <robottestingframework/dll/Plugin.h>
 #include <yarp/manager/utility.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
@@ -15,11 +15,11 @@
 
 #include "YarpFixManager.h"
 
-using namespace RTF;
+using namespace robottestingframework;
 using namespace yarp::os;
 using namespace yarp::manager;
 
-PREPARE_FIXTURE_PLUGIN(YarpFixManager)
+ROBOTTESTINGFRAMEWORK_PREPARE_FIXTURE_PLUGIN(YarpFixManager)
 
 YarpFixManager::YarpFixManager()
     : initialized(false) { }
@@ -31,12 +31,12 @@ YarpFixManager::~YarpFixManager()
 
 
 bool YarpFixManager::setup(int argc, char** argv) {
-    RTF_FIXTURE_REPORT("yarpmanager is setting up the fixture...");
+    ROBOTTESTINGFRAMEWORK_FIXTURE_REPORT("yarpmanager is setting up the fixture...");
     bool ret;
     if(!initialized) {
         // check yarp network
         yarp.setVerbosity(-1);
-        RTF_ASSERT_ERROR_IF_FALSE(yarp.checkNetwork(),
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(yarp.checkNetwork(),
                             "YARP network does not seem to be available, is the yarp server accessible?");
 
         // load the config file and update the environment if available
@@ -46,7 +46,7 @@ bool YarpFixManager::setup(int argc, char** argv) {
         rf.setDefaultContext("RobotTesting");
         rf.configure(argc, argv, false);
 
-        RTF_ASSERT_ERROR_IF_FALSE(rf.check("fixture"),
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(rf.check("fixture"),
                             "No application xml file is set (add --fixture yourfixture.xml)");
 
         manager = new YarpManagerPlugin(getDispatcher());
@@ -60,18 +60,18 @@ bool YarpFixManager::setup(int argc, char** argv) {
             appfile = rf.findFileByName(std::string(manager->fixtureName).c_str());
         }
 
-        RTF_ASSERT_ERROR_IF_FALSE(!appfile.empty(),
-                            RTF::Asserter::format("yarpmanager cannot find application file %s. Is it in the 'fixtures' folder?",
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(!appfile.empty(),
+                            robottestingframework::Asserter::format("yarpmanager cannot find application file %s. Is it in the 'fixtures' folder?",
                                                   manager->fixtureName.c_str()));
         // load the fixture (application xml)
         char* szAppName = nullptr;
         ret = manager->addApplication(appfile.c_str(), &szAppName, true);
-        RTF_ASSERT_ERROR_IF_FALSE(ret,
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ret,
                             "yarpmanager (addApplication) cannot setup the fixture because " +
                             std::string(manager->getLogger()->getFormatedErrorString()));
 
         ret = manager->loadApplication(szAppName);
-        RTF_ASSERT_ERROR_IF_FALSE(ret,
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ret,
                             "yarpmanager (loadApplication) cannot setup the fixture because " +
                             std::string(manager->getLogger()->getFormatedErrorString()));
         initialized = true;
@@ -84,38 +84,38 @@ bool YarpFixManager::setup(int argc, char** argv) {
 
     //run the modules and connect
     ret = manager->run();
-    RTF_ASSERT_ERROR_IF_FALSE(ret,
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ret,
                         "yarpmanager (run) cannot setup the fixture because " +
                         std::string(manager->getLogger()->getFormatedErrorString()));
     return true;
 }
 
 void YarpFixManager::tearDown() {
-    RTF_FIXTURE_REPORT("yarpmanager is tearing down the fixture...");
+    ROBOTTESTINGFRAMEWORK_FIXTURE_REPORT("yarpmanager is tearing down the fixture...");
     bool ret = manager->stop();
     if(!ret)
         ret = manager->kill();
     const char* szerror = manager->getLogger()->getLastError();
-    RTF_ASSERT_ERROR_IF_FALSE(ret,
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ret,
                         "yarpmanager cannot teardown the fixture because " +
                         std::string((szerror) ? szerror : ""));
 }
 
 void YarpManagerPlugin::onExecutableFailed(void* which) {
     Executable* exe = (Executable*) which;
-    RTF_ASSERT_ERROR_IF_FALSE(exe!=nullptr, "Executable is null!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(exe!=nullptr, "Executable is null!");
     TestMessage msg(Asserter::format("Fixture %s collapsed", fixtureName.c_str()),
                     Asserter::format("Module %s is failed!", exe->getCommand()),
-                    RTF_SOURCEFILE(), RTF_SOURCELINE());
+                    ROBOTTESTINGFRAMEWORK_SOURCEFILE(), ROBOTTESTINGFRAMEWORK_SOURCELINE());
     dispatcher->fixtureCollapsed(msg);
 }
 
 void YarpManagerPlugin::onCnnFailed(void* which) {
     Connection* cnn = (Connection*) which;
-    RTF_ASSERT_ERROR_IF_FALSE(cnn!=nullptr, "Connection is null!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(cnn!=nullptr, "Connection is null!");
     TestMessage msg(Asserter::format("Fixture %s collapsed", fixtureName.c_str()),
                     Asserter::format("Connection %s - %s is failed!",
                                      cnn->from(), cnn->to()),
-                    RTF_SOURCEFILE(), RTF_SOURCELINE());
+                    ROBOTTESTINGFRAMEWORK_SOURCEFILE(), ROBOTTESTINGFRAMEWORK_SOURCELINE());
     dispatcher->fixtureCollapsed(msg);
 }

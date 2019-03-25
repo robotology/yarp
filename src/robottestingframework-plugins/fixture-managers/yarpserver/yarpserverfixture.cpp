@@ -10,15 +10,15 @@
 #include <stdio.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Network.h>
-#include <rtf/FixtureManager.h>
-#include <rtf/dll/Plugin.h>
+#include <robottestingframework/FixtureManager.h>
+#include <robottestingframework/dll/Plugin.h>
 #include <yarp/serversql/yarpserversql.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/serversql/Server.h>
 #define YSERVFIXT_TIMEOUT 10
 using namespace yarp::os;
-using namespace RTF;
+using namespace robottestingframework;
 //using namespace yarp::name;
 
 class yarpServerThread : public yarp::os::Thread
@@ -79,4 +79,4 @@ public:
     }
 };
 
-PREPARE_FIXTURE_PLUGIN(YarpNameServer)
+ROBOTTESTINGFRAMEWORK_PREPARE_FIXTURE_PLUGIN(YarpNameServer)
