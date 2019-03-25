@@ -232,7 +232,7 @@ struct DataRGBA
         YARP_UNUSED(precision);
         YARP_UNUSED(width);
         std::string ret = "";
-        char tmp[10];
+        char tmp[128];
         snprintf(tmp, 128, "%c %c %c %c\t", r, g, b, a);
         ret += tmp;
         return ret;
