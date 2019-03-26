@@ -439,13 +439,13 @@ macro(YARP_DEPENDENT_OPTION _option _doc _default _deps _force)
     set(${_option}_disable_reason " (dependencies unsatisfied: \"${_missing_deps}\")")
     # Set a value that can be visualized on ccmake and on cmake-gui, but
     # still evaluates to false
-    set(${_option} "OFF - Dependencies unsatisfied: \"${_missing_deps}\" - ${_option}-NOTFOUND" CACHE STRING "${_option_doc}" FORCE)
+    set(${_option} "OFF - Dependencies unsatisfied: '${_missing_deps}' - ${_option}-NOTFOUND" CACHE STRING "${_option_doc}" FORCE)
     string(REPLACE ";" "\;" _missing_deps "${_missing_deps}")
     set_property(CACHE ${_option}
-                PROPERTY STRINGS "OFF - Dependencies unsatisfied: \"${_missing_deps}\" - ${_option}-NOTFOUND"
-                                 "OFF - You can try as much as you want, but \"${_missing_deps}\" is needed to enable ${_option} - ${_option}-NOTFOUND"
-                                 "OFF - Are you crazy or what? \"${_missing_deps}\" is needed to enable ${_option} - ${_option}-NOTFOUND"
-                                 "OFF - Didn't I already tell you that \"${_missing_deps}\" is needed to enable ${_option}? - ${_option}-NOTFOUND"
+                PROPERTY STRINGS "OFF - Dependencies unsatisfied: '${_missing_deps}' - ${_option}-NOTFOUND"
+                                 "OFF - You can try as much as you want, but '${_missing_deps}' is needed to enable ${_option} - ${_option}-NOTFOUND"
+                                 "OFF - Are you crazy or what? '${_missing_deps}' is needed to enable ${_option} - ${_option}-NOTFOUND"
+                                 "OFF - Didn't I already tell you that '${_missing_deps}' is needed to enable ${_option}? - ${_option}-NOTFOUND"
                                  "OFF - Stop it! - ${_option}-NOTFOUND"
                                  "OFF - This is insane! Leave me alone! - ${_option}-NOTFOUND"
                                  "ON - All right, you win. The option is enabled. Are you happy now? You just broke the build.")
