@@ -816,42 +816,47 @@ Image& Image::operator=(Image&& other) noexcept
 }
 
 
-const Image& Image::operator=(const Image& alt) {
-    copy(alt);
+const Image& Image::operator=(const Image& alt)
+{
+    if (&alt != this) {
+        copy(alt);
+    }
     return *this;
 }
 
 
-bool Image::copy(const Image& alt) {
-
-    int myCode = getPixelCode();
-    if (myCode==0) {
-        setPixelCode(alt.getPixelCode());
-        setQuantum(alt.getQuantum());
-    }
-    resize(alt.width(),alt.height());
-    int q1 = alt.getQuantum();
-    int q2 = getQuantum();
-    if (q1==0) { q1 = YARP_IMAGE_ALIGN; }
-    if (q2==0) { q2 = YARP_IMAGE_ALIGN; }
-
-    bool o1 = alt.topIsLowIndex();
-    bool o2 = topIsLowIndex();
-
-    yAssert(width()==alt.width());
-    yAssert(height()==alt.height());
-    if (getPixelCode()==alt.getPixelCode()) {
-        if (getQuantum()==alt.getQuantum()) {
-            yAssert(getRawImageSize()==alt.getRawImageSize());
-            yAssert(q1==q2);
+bool Image::copy(const Image& alt)
+{
+    if (&alt != this)
+    {
+        int myCode = getPixelCode();
+        if (myCode==0) {
+            setPixelCode(alt.getPixelCode());
+            setQuantum(alt.getQuantum());
         }
+        resize(alt.width(),alt.height());
+        int q1 = alt.getQuantum();
+        int q2 = getQuantum();
+        if (q1==0) { q1 = YARP_IMAGE_ALIGN; }
+        if (q2==0) { q2 = YARP_IMAGE_ALIGN; }
+
+        bool o1 = alt.topIsLowIndex();
+        bool o2 = topIsLowIndex();
+
+        yAssert(width()==alt.width());
+        yAssert(height()==alt.height());
+        if (getPixelCode()==alt.getPixelCode()) {
+            if (getQuantum()==alt.getQuantum()) {
+                yAssert(getRawImageSize()==alt.getRawImageSize());
+                yAssert(q1==q2);
+            }
+        }
+
+        copyPixels(alt.getRawImage(),alt.getPixelCode(),
+                   getRawImage(),getPixelCode(),
+                   width(),height(),
+                   getRawImageSize(),q1,q2,o1,o2);
     }
-
-    copyPixels(alt.getRawImage(),alt.getPixelCode(),
-               getRawImage(),getPixelCode(),
-               width(),height(),
-               getRawImageSize(),q1,q2,o1,o2);
-
     return true;
 }
 
