@@ -795,7 +795,8 @@ bool Image::write(yarp::os::ConnectionWriter& connection) const {
 }
 
 
-Image::Image(const Image& alt) : Portable() {
+Image::Image(const Image& alt) : Portable()
+{
     initialize();
     copy(alt);
 }

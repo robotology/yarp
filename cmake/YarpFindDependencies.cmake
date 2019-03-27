@@ -466,7 +466,7 @@ if(SKIP_ACE)
 endif()
 
 yarp_dependent_option(YARP_COMPILE_libYARP_math "Create math library libYARP_math?" ON
-                      YARP_HAS_Eigen3 ON)
+                      YARP_HAS_Eigen3 OFF)
 yarp_renamed_option(CREATE_LIB_MATH YARP_COMPILE_libYARP_math) # Deprecated since YARP 3.2
 
 yarp_dependent_option(YARP_COMPILE_GUIS "Do you want to compile GUIs" ON
