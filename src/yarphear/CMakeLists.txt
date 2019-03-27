@@ -10,7 +10,6 @@ target_link_libraries(yarphear PRIVATE YARP::YARP_OS
                                        YARP::YARP_sig
                                        YARP::YARP_dev
                                        YARP::YARP_init)
-target_link_libraries(yarphear PRIVATE ACE::ACE_INLINE)
 
 install(TARGETS yarphear
         COMPONENT utilities

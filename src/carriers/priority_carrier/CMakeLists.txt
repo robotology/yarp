@@ -10,7 +10,7 @@ yarp_prepare_plugin(priority
                     INCLUDE PriorityCarrier.h
                     EXTRA_CONFIG SUBTYPE=recv
                                  CODE="not applicable"
-                    DEPENDS "YARP_HAS_MATH_LIB"
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_priority)
@@ -19,14 +19,11 @@ if(NOT SKIP_priority)
   yarp_add_plugin(yarp_priority PriorityCarrier.h
                                 PriorityCarrier.cpp)
   target_link_libraries(yarp_priority PRIVATE YARP::YARP_OS
-                                              YARP::YARP_sig)
+                                              YARP::YARP_sig
+                                              YARP::YARP_math)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
-                                                      YARP_sig)
-  if(CREATE_LIB_MATH)
-    target_compile_definitions(yarp_priority PRIVATE WITH_YARPMATH)
-    target_link_libraries(yarp_priority PRIVATE YARP::YARP_math)
-    list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_math)
-  endif()
+                                                      YARP_sig
+                                                      YARP_math)
 
   yarp_install(TARGETS yarp_priority
                EXPORT YARP_${YARP_PLUGIN_MASTER}

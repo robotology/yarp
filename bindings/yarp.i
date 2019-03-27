@@ -24,7 +24,6 @@
 #include <yarp/conf/version.h>
 #include <yarp/conf/compiler.h>
 #include <yarp/conf/system.h>
-#include <yarp/conf/options.h>
 #include <yarp/conf/api.h>
 #include <yarp/conf/numeric.h>
 %}
@@ -32,7 +31,6 @@
 %include "yarp/conf/version.h"
 %import "yarp/conf/compiler.h"
 %import "yarp/conf/system.h"
-%import "yarp/conf/options.h"
 %import "yarp/conf/api.h"
 %import "yarp/conf/numeric.h"
 

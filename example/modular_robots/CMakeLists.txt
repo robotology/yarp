@@ -5,16 +5,12 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-# Make sure that YARP_DIR is set in your environment to wherever you
-# compiled YARP.
-
 cmake_minimum_required(VERSION 3.5)
 
-find_package(YARP REQUIRED)
-
-if(NOT YARP_HAS_MATH_LIB)
-  message(FATAL_ERROR "Please compile YARP with math library turned on")
-endif()
+find_package(YARP COMPONENTS OS name math REQUIRED)
 
 add_executable(yarpwide main.cpp)
-target_link_libraries(yarpwide ${YARP_LIBRARIES})
+target_link_libraries(yarpwide YARP::YARP_OS
+                               YARP::YARP_init
+                               YARP::YARP_name
+                               YARP::YARP_math)

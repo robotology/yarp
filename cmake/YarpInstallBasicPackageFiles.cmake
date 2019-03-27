@@ -21,9 +21,7 @@ macro(YARP_INSTALL_BASIC_PACKAGE_FILES _export)
     else()
       # Add either the private libraries built by YARP, or the ones on the
       # system
-      string(TOUPPER "${_dep}" _DEP)
-      string(REGEX REPLACE " +" "" _DEP ${_DEP})
-      if(YARP_BUILD_${_DEP})
+      if(YARP_BUILD_${_dep})
         list(APPEND _deps "YARP_priv_${_dep}")
       else()
         list(APPEND _deps "${_dep}")
@@ -38,9 +36,7 @@ macro(YARP_INSTALL_BASIC_PACKAGE_FILES _export)
     else()
       # Add either the private libraries built by YARP, or the ones on the
       # system
-      string(TOUPPER "${_dep}" _DEP)
-      string(REGEX REPLACE " +" "" _DEP ${_DEP})
-      if(YARP_BUILD_${_DEP})
+      if(YARP_BUILD_${_dep})
         list(APPEND _deps "YARP_priv_${_dep} HINTS \"\${CMAKE_CURRENT_LIST_DIR}/..\" NO_DEFAULT_PATH")
       else()
         list(APPEND _priv_deps "${_dep}")

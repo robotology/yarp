@@ -5,8 +5,8 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-if(CREATE_YARPDATADUMPER)
-  if(YARP_HAS_OPENCV)
+if(YARP_COMPILE_yarpdatadumper)
+  if(YARP_HAS_OpenCV)
     add_definitions(-DADD_VIDEO)
     include_directories(${OpenCV_INCLUDE_DIRS})
   else()
@@ -17,7 +17,7 @@ if(CREATE_YARPDATADUMPER)
 
   add_executable(yarpdatadumper ${yarpdatadumper_SRCS})
 
-  if(YARP_HAS_OPENCV)
+  if(YARP_HAS_OpenCV)
     target_link_libraries(yarpdatadumper ${OpenCV_LIBRARIES})
   endif()
 

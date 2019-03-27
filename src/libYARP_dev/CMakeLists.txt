@@ -102,7 +102,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ServiceInterfaces.h
                   include/yarp/dev/Wrapper.h)
 
-if (CREATE_LIB_MATH)
+if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_HDRS include/yarp/dev/IFrameTransform.h
                             include/yarp/dev/ILocalization2D.h
                             include/yarp/dev/IMap2D.h
@@ -154,7 +154,7 @@ set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/PopulateDrivers.cpp
                   src/RGBDSensorParamParser.cpp)
 
-if(CREATE_LIB_MATH)
+if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_SRCS src/IFrameTransform.cpp
                             src/IMap2D.cpp
                             src/INavigation2D.cpp
@@ -270,7 +270,6 @@ list(APPEND YARP_dev_PRIVATE_DEPS YARP_rosmsg)
 
 if(TARGET YARP::YARP_math)
   target_link_libraries(YARP_dev PRIVATE YARP::YARP_math)
-  target_compile_definitions(YARP_dev PRIVATE WITH_YARPMATH)
   list(APPEND YARP_dev_PRIVATE_DEPS YARP_math)
 endif()
 

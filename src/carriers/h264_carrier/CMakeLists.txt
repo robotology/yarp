@@ -8,7 +8,7 @@ yarp_prepare_plugin(h264
                     CATEGORY carrier
                     TYPE yarp::os::H264Carrier
                     INCLUDE H264Carrier.h
-                    DEPENDS "GOBJECT_FOUND;GLIB2_FOUND;GSTREAMER_FOUND;GSTREAMER_APP_LIBRARY_FOUND")
+                    DEPENDS "YARP_HAS_GObject;YARP_HAS_GLIB2;YARP_HAS_GStreamer;YARP_HAS_GStreamerPluginsBase")
 
 if(NOT SKIP_h264)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -26,7 +26,6 @@ if(NOT SKIP_h264)
                                           YARP::YARP_wire_rep_utils)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
                                                       YARP_sig)
-  target_link_libraries(yarp_h264 PRIVATE ACE::ACE_INLINE)
 
   # GObject is required by GStreamer
   target_link_libraries(yarp_h264 PRIVATE ${GOBJECT_LIBRARIES})

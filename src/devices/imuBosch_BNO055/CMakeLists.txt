@@ -9,7 +9,7 @@ yarp_prepare_plugin(imuBosch_BNO055
                     TYPE yarp::dev::BoschIMU
                     INCLUDE imuBosch_BNO055.h
                     EXTRA_CONFIG WRAPPER=inertial
-                    DEPENDS "NOT WIN32;YARP_HAS_MATH_LIB;YARP_HAS_I2C")
+                    DEPENDS "NOT WIN32;TARGET YARP::YARP_math;YARP_HAS_I2C")
 
 if(ENABLE_imuBosch_BNO055)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

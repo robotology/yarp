@@ -71,6 +71,7 @@ list(APPEND YARP_sig_PUBLIC_DEPS YARP_conf
 # YARP_sig library uses headers from YARP_OS impl, and therefore ACE headers
 # are also required.
 if(YARP_HAS_ACE)
+  target_compile_definitions(YARP_sig PRIVATE YARP_HAS_ACE)
   target_link_libraries(YARP_sig PRIVATE ACE::ACE_INLINE)
   list(APPEND YARP_sig_PRIVATE_DEPS ACE)
 endif()

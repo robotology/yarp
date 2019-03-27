@@ -394,13 +394,13 @@ library \@YARPPLUG_LIBRARY\@
       set(_disable_reason " (dependencies unsatisfied: \"${_missing_deps}\")")
       # Set a value that can be visualized on ccmake and on cmake-gui, but
       # still evaluates to false (
-      set(${_YPP_OPTION} "OFF - Dependencies unsatisfied: \"${_missing_deps}\" - ${_plugin_name}-NOTFOUND" CACHE STRING "${_option_doc}" FORCE)
+      set(${_YPP_OPTION} "OFF - Dependencies unsatisfied: '${_missing_deps}' - ${_plugin_name}-NOTFOUND" CACHE STRING "${_option_doc}" FORCE)
       string(REPLACE ";" "\;" _missing_deps "${_missing_deps}")
       set_property(CACHE ${_YPP_OPTION}
-                   PROPERTY STRINGS "OFF - Dependencies unsatisfied: \"${_missing_deps}\" - ${_plugin_name}-NOTFOUND"
-                                    "OFF - You can try as much as you want, but \"${_missing_deps}\" is needed to build ${_plugin_name} - ${_plugin_name}-NOTFOUND"
-                                    "OFF - Are you crazy or what? \"${_missing_deps}\" is needed to build ${_plugin_name} - ${_plugin_name}-NOTFOUND"
-                                    "OFF - Didn't I already tell you that \"${_missing_deps}\" is needed to build ${_plugin_name}? - ${_plugin_name}-NOTFOUND"
+                   PROPERTY STRINGS "OFF - Dependencies unsatisfied: '${_missing_deps}' - ${_plugin_name}-NOTFOUND"
+                                    "OFF - You can try as much as you want, but '${_missing_deps}' is needed to build ${_plugin_name} - ${_plugin_name}-NOTFOUND"
+                                    "OFF - Are you crazy or what? '${_missing_deps}' is needed to build ${_plugin_name} - ${_plugin_name}-NOTFOUND"
+                                    "OFF - Didn't I already tell you that '${_missing_deps}' is needed to build ${_plugin_name}? - ${_plugin_name}-NOTFOUND"
                                     "OFF - Stop it! - ${_plugin_name}-NOTFOUND"
                                     "OFF - This is insane! Leave me alone! - ${_plugin_name}-NOTFOUND"
                                     "ON - All right, you win. The plugin is enabled. Are you happy now? You just broke the build.")

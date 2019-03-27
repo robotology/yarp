@@ -15,7 +15,7 @@ yarp_prepare_plugin(bayer
 if(NOT SKIP_bayer)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  if(NOT YARP_HAS_LIBDC1394)
+  if(NOT YARP_HAS_Libdc1394)
     set(DC1394_SRC ${libdc1394_bayer_ROOT}/libdc1394_bayer.c
                    ${libdc1394_bayer_ROOT}/conversions.h)
     set(Libdc1394_LIBRARIES)

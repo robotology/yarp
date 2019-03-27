@@ -4,14 +4,14 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-if(CREATE_YARPDATAPLAYER)
+if(YARP_COMPILE_yarpdataplayer)
 
   include(YarpUseQt5)
   include(YarpOSXUtilities)
 
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
-  if(YARP_HAS_OPENCV)
+  if(YARP_HAS_OpenCV)
     add_definitions(-DHAS_OPENCV)
     include_directories(${OpenCV_INCLUDE_DIRS})
   else()
@@ -93,7 +93,7 @@ if(CREATE_YARPDATAPLAYER)
                                        YARP_sig
                                        Qt5::Widgets)
 
-  if(YARP_HAS_OPENCV)
+  if(YARP_HAS_OpenCV)
     target_link_libraries(yarpdataplayer ${OpenCV_LIBRARIES} YARP_cv)
   endif()
 

@@ -9,7 +9,7 @@ yarp_prepare_plugin(fakeIMU
                     TYPE yarp::dev::fakeIMU
                     INCLUDE fakeIMU.h
                     EXTRA_CONFIG WRAPPER=inertial
-                    DEPENDS "YARP_HAS_MATH_LIB")
+                    DEPENDS "TARGET YARP::YARP_math")
 
 if(NOT SKIP_fakeIMU)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
