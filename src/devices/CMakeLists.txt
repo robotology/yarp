@@ -97,7 +97,6 @@ if(NOT "${YARP_yarpmod_PRIVATE_DEPS}" STREQUAL "")
   list(REMOVE_DUPLICATES YARP_yarpmod_PRIVATE_DEPS)
 endif()
 yarp_install_basic_package_files(YARP_yarpmod
-                                 FIRST_TARGET yarpmod
                                  DEPENDENCIES ${YARP_yarpmod_PUBLIC_DEPS}
                                  PRIVATE_DEPENDENCIES ${YARP_yarpmod_PRIVATE_DEPS})
 
