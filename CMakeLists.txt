@@ -40,7 +40,7 @@ set(PROJECT_DESCRIPTION "YARP: A thin middleware for humanoid robots and more")
 
 
 # Pick up our CMake scripts - they are all in the cmake subdirectory.
-set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
+set(YARP_MODULE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_DIR})
 
 

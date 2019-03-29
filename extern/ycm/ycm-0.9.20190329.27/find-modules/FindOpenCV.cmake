@@ -120,13 +120,13 @@ if(EXISTS "${OpenCV_DIR}")
         set(CVLIB_SUFFIX "${OpenCV_VERSION_MAJOR}${OpenCV_VERSION_MINOR}${OpenCV_VERSION_PATCH}")
 
     #Otherwise it try to guess it.
-    else(EXISTS "${OpenCV_DIR}/OpenCVConfig.cmake")
+    else()
 
         set(OPENCV_LIB_COMPONENTS cxcore cv ml highgui cvaux)
         find_path(OpenCV_INCLUDE_DIR "cv.h" PATHS "${OpenCV_DIR}" PATH_SUFFIXES "include" "include/opencv" DOC "")
-        if(EXISTS  ${OpenCV_INCLUDE_DIR})
+        if(EXISTS "${OpenCV_INCLUDE_DIR}")
             include_directories(${OpenCV_INCLUDE_DIR})
-        endif(EXISTS  ${OpenCV_INCLUDE_DIR})
+        endif()
 
         #Find OpenCV version by looking at cvver.h
         file(STRINGS ${OpenCV_INCLUDE_DIR}/cvver.h OpenCV_VERSIONS_TMP REGEX "^#define CV_[A-Z]+_VERSION[ \t]+[0-9]+$")
@@ -136,7 +136,7 @@ if(EXISTS "${OpenCV_DIR}")
         set(OpenCV_VERSION ${OpenCV_VERSION_MAJOR}.${OpenCV_VERSION_MINOR}.${OpenCV_VERSION_PATCH} CACHE STRING "" FORCE)
         set(CVLIB_SUFFIX "${OpenCV_VERSION_MAJOR}${OpenCV_VERSION_MINOR}${OpenCV_VERSION_PATCH}")
 
-    endif(EXISTS "${OpenCV_DIR}/OpenCVConfig.cmake")
+    endif()
 
     ## Initiate the variable before the loop
     set(OpenCV_LIBS "")
@@ -167,17 +167,17 @@ if(EXISTS "${OpenCV_DIR}")
         #Add to the general list
         if(OpenCV_${__CVLIB}_LIBRARY)
             set(OpenCV_LIBS ${OpenCV_LIBS} ${OpenCV_${__CVLIB}_LIBRARY})
-        endif(OpenCV_${__CVLIB}_LIBRARY)
+        endif()
 
-    endforeach(__CVLIB)
+    endforeach()
 
 
     set(OpenCV_FOUND ${OpenCV_FOUND_TMP} CACHE BOOL "" FORCE)
 
 
-else(EXISTS "${OpenCV_DIR}")
+else()
     set(ERR_MSG "Please specify OpenCV directory using OpenCV_DIR env. variable")
-endif(EXISTS "${OpenCV_DIR}")
+endif()
 
 ##====================================================
 if(NOT OpenCV_FOUND)
@@ -221,7 +221,7 @@ if(NOT OpenCV_FOUND)
 
     if(LINK_LIB_HIGHGUI AND WIN32)
         set(LINK_LIB_CVCAM)
-    endif(LINK_LIB_HIGHGUI AND WIN32)
+    endif()
 
 
     set(IS_GNUCXX3 FALSE)
@@ -233,18 +233,18 @@ if(NOT OpenCV_FOUND)
         if(CXX_COMPILER_VERSION MATCHES ".*3\\.[0-9].*")
         #     message("DBG OpenCV for 3.x")
             set(IS_GNUCXX3 TRUE)
-        # else(CXX_COMPILER_VERSION MATCHES ".*3\\.[0-9].*")
+        # else()
         #     message("DBG not 3.x")
-        endif(CXX_COMPILER_VERSION MATCHES ".*3\\.[0-9].*")
+        endif()
 
         if(CXX_COMPILER_VERSION MATCHES ".*4\\.[0-9].*")
         #     message("DBG OpenCV for 4.x")
             set(IS_GNUCXX4 TRUE)
-        # else(CXX_COMPILER_VERSION MATCHES ".*4\\.[0-9].*")
+        # else()
         #     message("DBG not 4.x")
-        endif(CXX_COMPILER_VERSION MATCHES ".*4\\.[0-9].*")
+        endif()
 
-    endif(${CMAKE_COMPILER_IS_GNUCXX})
+    endif()
 
     # CHECK OPENCV_ROOT
     if(EXISTS "$ENV{OPENCV_ROOT}")
@@ -261,7 +261,7 @@ if(NOT OpenCV_FOUND)
 
         set(OPENCV_POSSIBLE_LIBRARY_PATHS "$ENV{OPENCV_ROOT}/lib"
                                           "$ENV{OPENCV_ROOT}")
-    endif(EXISTS "$ENV{OPENCV_ROOT}")
+    endif()
 
     # CHECK OPENCV_DIR
     if(EXISTS "$ENV{OPENCV_DIR}")
@@ -279,7 +279,7 @@ if(NOT OpenCV_FOUND)
         set(OPENCV_POSSIBLE_LIBRARY_PATHS "$ENV{OPENCV_DIR}"
                                           "$ENV{OPENCV_DIR}/lib")
 
-    endif(EXISTS "$ENV{OPENCV_DIR}")
+    endif()
 
     # CHECK OPENCV_HOME
     if(EXISTS "$ENV{OPENCV_HOME}")
@@ -287,7 +287,7 @@ if(NOT OpenCV_FOUND)
                                     "$ENV{OPENCV_HOME}/include"
                                     "$ENV{OPENCV_HOME}/include/cv"
                                     "$ENV{OPENCV_HOME}/include/opencv")
-    endif(EXISTS "$ENV{OPENCV_HOME}")
+    endif()
 
     if(NOT OPENCV_POSSIBLE_INCDIRS)
         set(OPENCV_POSSIBLE_INCDIRS "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Intel(R) Open Source Computer Vision Library_is1;Inno Setup: App Path]"  
@@ -302,27 +302,27 @@ if(NOT OpenCV_FOUND)
                                     "$ENV{ProgramFiles}/OpenCV/otherlibs/highgui"
                                     /usr/include/opencv
                                     /usr/local/include/opencv)
-    endif(NOT OPENCV_POSSIBLE_INCDIRS)
+    endif()
 
     if(NOT OPENCV_POSSIBLE_LIBRARY_PATHS)
         set(OPENCV_POSSIBLE_LIBRARY_PATHS "$ENV{ProgramFiles}/OpenCV/lib"
                                           "/usr/local/lib"
                                           "/usr/lib"
                                           "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Intel(R) Open Source Computer Vision Library_is1;Inno Setup: App Path]/lib")
-    endif(NOT OPENCV_POSSIBLE_LIBRARY_PATHS)
+    endif()
 
     if(IS_GNUCXX3)
         set(OPENCV_POSSIBLE_INCDIRS ${OPENCV_POSSIBLE_INCDIRS}
                                     /opt/net/gcc33/OpenCV/
                                     /opt/net/gcc33/OpenCV/include
                                     /opt/net/gcc33/OpenCV/include/opencv)
-    endif(IS_GNUCXX3)
+    endif()
     if(IS_GNUCXX4)
         set(OPENCV_POSSIBLE_INCDIRS ${OPENCV_POSSIBLE_INCDIRS}
                                     /opt/net/gcc41/OpenCV/
                                     /opt/net/gcc41/OpenCV/include
                                     /opt/net/gcc41/OpenCV/include/opencv)
-    endif(IS_GNUCXX4)
+    endif()
     #message("DBG (OPENCV_POSSIBLE_INCDIRS=${OPENCV_POSSIBLE_INCDIRS}")
 
     # candidates for OpenCV library directories:
@@ -330,13 +330,13 @@ if(NOT OpenCV_FOUND)
         set(OPENCV_POSSIBLE_LIBRARY_PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS}
                                           /opt/net/gcc33/OpenCV
                                           /opt/net/gcc33/OpenCV/lib)
-    endif(IS_GNUCXX3)
+    endif()
 
     if(IS_GNUCXX4)
         set(OPENCV_POSSIBLE_LIBRARY_PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS}
                                           /opt/net/gcc41/OpenCV
                                           /opt/net/gcc41/OpenCV/lib)
-    endif(IS_GNUCXX4)
+    endif()
     #message("DBG (OPENCV_POSSIBLE_LIBRARY_PATHS=${OPENCV_POSSIBLE_LIBRARY_PATHS}")
 
     # find (all) header files for include directories:
@@ -384,30 +384,30 @@ if(NOT OpenCV_FOUND)
     foreach(INCDIR OPENCV_INCLUDE_DIR_CV OPENCV_INCLUDE_DIR_CVAUX)
         if(${INCDIR})
             set(OPENCV_INCLUDE_DIR ${OPENCV_INCLUDE_DIR} ${${INCDIR}} )
-        else(${INCDIR})
+        else()
             message(STATUS "- DBG OPENCV_INCLUDE_DIR_CVCAM=${OPENCV_INCLUDE_DIR_CVCAM}")
             set(OPENCV_FOUND OFF)
-        endif(${INCDIR})
-    endforeach(INCDIR)
+        endif()
+    endforeach()
 
     # some people write opencv/foo.h, some write foo.h
     if(OPENCV_INCLUDE_DIR_CV)
         set(OPENCV_INCLUDE_DIR ${OPENCV_INCLUDE_DIR} "${OPENCV_INCLUDE_DIR_CV}/..")
-    endif(OPENCV_INCLUDE_DIR_CV)
+    endif()
 
 
     # CVCAM exists only on Windows (check this -- nat)
     if(LINK_LIB_CVCAM)
         if(OPENCV_INCLUDE_DIR_CVCAM)
             set(OPENCV_INCLUDE_DIR ${OPENCV_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR_CVCAM} )
-        else(OPENCV_INCLUDE_DIR_CVCAM)
+        else()
             # exists only on Windows, thus only there required
             if(WIN32)
                 set(OPENCV_FOUND OFF)
                 message(STATUS "- DBG OPENCV_INCLUDE_DIR_CVCAM=${OPENCV_INCLUDE_DIR_CVCAM} ")
-            endif(WIN32)
-        endif(OPENCV_INCLUDE_DIR_CVCAM)
-    endif(LINK_LIB_CVCAM)
+            endif()
+        endif()
+    endif()
 
     # message("DBG OPENCV_INCLUDE_DIR=${OPENCV_INCLUDE_DIR}")
 
@@ -415,23 +415,23 @@ if(NOT OpenCV_FOUND)
     # differently)
     if(OPENCV_INCLUDE_DIR_CXCORE)
         set(OPENCV_INCLUDE_DIR ${OPENCV_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR_CXCORE})
-    else(OPENCV_INCLUDE_DIR_CXCORE)
+    else()
         if(WIN32) #required in win
             set(OPENCV_FOUND OFF)
             message(STATUS "- DBG OPENCV_INCLUDE_DIR_CXCORE=${OPENCV_INCLUDE_DIR_CXCORE} ")
-        endif(WIN32)
-    endif(OPENCV_INCLUDE_DIR_CXCORE)
+        endif()
+    endif()
 
     if(LINK_LIB_HIGHGUI)
         if(OPENCV_INCLUDE_DIR_HIGHGUI)
             set(OPENCV_INCLUDE_DIR ${OPENCV_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR_HIGHGUI})
-        else(OPENCV_INCLUDE_DIR_HIGHGUI)
+        else()
             if(WIN32)
                 set(OPENCV_FOUND OFF)
                 message(STATUS "- DBG OPENCV_INCLUDE_DIR_HIGHGUI=${OPENCV_INCLUDE_DIR_HIGHGUI} ")
-            endif(WIN32)
-        endif(OPENCV_INCLUDE_DIR_HIGHGUI)
-    endif(LINK_LIB_HIGHGUI)
+            endif()
+        endif()
+    endif()
 
     #################################
     ## LIBRARIES
@@ -440,54 +440,54 @@ if(NOT OpenCV_FOUND)
     foreach(LIBNAME OPENCV_LIBRARY OPENCV_CVAUX_LIBRARY)
         if(${LIBNAME})
             set(OPENCV_LIBRARIES ${OPENCV_LIBRARIES} ${${LIBNAME}})
-        else(${LIBNAME})
+        else()
             message(STATUS "${LIBNAME} not found turning off OPENCV_FOUND")
             set(OPENCV_FOUND OFF)
-        endif(${LIBNAME})
-    endforeach(LIBNAME)
+        endif()
+    endforeach()
 
     if(OPENCV_CXCORE_LIBRARY)
         set(OPENCV_LIBRARIES ${OPENCV_LIBRARIES} ${OPENCV_CXCORE_LIBRARY})
-    else(OPENCV_CXCORE_LIBRARY)
+    else()
         if(WIN32) #this is required on windows
             set(OPENCV_FOUND OFF)
             message(STATUS "OPENCV_CXCORE_LIBRARY not found turning off OPENCV_FOUND")
-        endif(WIN32)
-    endif(OPENCV_CXCORE_LIBRARY)
+        endif()
+    endif()
 
     # CVCAM exists only on Windows (check this -- nat)
     if(LINK_LIB_CVCAM)
         if(OPENCV_CVCAM_LIBRARY)
             set(OPENCV_LIBRARIES ${OPENCV_LIBRARIES} ${OPENCV_CVCAM_LIBRARY} )
-        else(OPENCV_CVCAM_LIBRARY)
+        else()
             if(WIN32)
                 set(OPENCV_FOUND OFF)
                 message(STATUS "OPENCV_CVCAM_LIBRARY not found turning off OPENCV_FOUND")
-            endif(WIN32)
-        endif(OPENCV_CVCAM_LIBRARY)
-    endif(LINK_LIB_CVCAM)
+            endif()
+        endif()
+    endif()
     # message("DBG OPENCV_LIBRARIES=${OPENCV_LIBRARIES}")
 
     if(LINK_LIB_HIGHGUI)
         if(OPENCV_HIGHGUI_LIBRARY)
             set(OPENCV_LIBRARIES ${OPENCV_LIBRARIES} ${OPENCV_HIGHGUI_LIBRARY})
-        else(OPENCV_HIGHGUI_LIBRARY)
+        else()
             if(WIN32) #this is required on windows
                 set(OPENCV_FOUND OFF)
                 message(STATUS "OPENCV_HIGHGUI_LIBRARY not found turning off OPENCV_FOUND")
-            endif(WIN32)
-        endif(OPENCV_HIGHGUI_LIBRARY)
-    endif(LINK_LIB_HIGHGUI)
+            endif()
+        endif()
+    endif()
 
     # get the link directory for rpath to be used with LINK_DIRECTORIES:
     if(OPENCV_LIBRARY)
         get_filename_component(OPENCV_LINK_DIRECTORIES ${OPENCV_LIBRARY} DIRECTORY)
-    endif(OPENCV_LIBRARY)
+    endif()
 
     # display help message
     if(NOT OPENCV_FOUND)
         message(STATUS "OPENCV library or headers not found. Please search manually or set env. variable OPENCV_ROOT to guide search." )
-    endif(NOT OPENCV_FOUND)
+    endif()
 
     mark_as_advanced(OPENCV_INCLUDE_DIR
                      OPENCV_INCLUDE_DIR_CXCORE
@@ -506,7 +506,7 @@ if(NOT OpenCV_FOUND)
     set(OpenCV_FOUND ${OPENCV_FOUND})
     set(OpenCV_INCLUDE_DIR ${OPENCV_INCLUDE_DIR})
     set(OpenCV_LIBS ${OPENCV_LIBRARIES})
-endif(NOT OpenCV_FOUND)
+endif()
 
 
 ##====================================================
@@ -517,11 +517,11 @@ if(NOT OpenCV_FOUND)
     if(NOT OpenCV_FIND_QUIETLY)
         if(OpenCV_FIND_REQUIRED)
             message(FATAL_ERROR "OpenCV required but some headers or libs not found. ${ERR_MSG}")
-        else(OpenCV_FIND_REQUIRED)
+        else()
             message(STATUS "WARNING: OpenCV was not found. ${ERR_MSG}")
-        endif(OpenCV_FIND_REQUIRED)
-    endif(NOT OpenCV_FIND_QUIETLY)
-endif(NOT OpenCV_FOUND)
+        endif()
+    endif()
+endif()
 ##====================================================
 
 
@@ -534,8 +534,8 @@ if(OpenCV_FOUND)
         find_path(OpenCV_INCLUDE_DIRS "cv.h" PATHS "${OpenCV_DIR}" PATH_SUFFIXES "include" "include/opencv" DOC "Include directory") 
         find_path(OpenCV_INCLUDE_DIR "cv.h" PATHS "${OpenCV_DIR}" PATH_SUFFIXES "include" "include/opencv" DOC "Include directory")
         set(OpenCV_LIBRARIES "${OpenCV_LIBS}" CACHE STRING "" FORCE)
-    endif(OpenCV_BACKWARD_COMPA)
-endif(OpenCV_FOUND)
+    endif()
+endif()
 ##====================================================
 
 set(OpenCV_LIBRARIES ${OpenCV_LIBS})
@@ -549,7 +549,7 @@ set(OPENCV_INCLUDE_DIR ${OpenCV_INCLUDE_DIR})
 # find_package_handle_standard_args(OpenCV DEFAULT_MSG OpenCV_LIBRARIES OpenCV_INCLUDE_DIRS)
 find_package_handle_standard_args(OpenCV DEFAULT_MSG OpenCV_LIBRARIES)
 
-endif(NOT OpenCV_CONFIG_MODE)
+endif()
 
 # Set package properties if FeatureSummary was included
 if(COMMAND set_package_properties)
