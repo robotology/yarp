@@ -20,9 +20,7 @@ branches:
 stages:
   - check
   - test
-  - test-static
-  - test-valgrind
-  - test-osx
+  - test-long
 
 env:
   global:
@@ -212,19 +210,19 @@ matrix:
         - TRAVIS_RUN_UNIT_TESTS=false
 
     # Static build (linux, gcc)
-    - stage: test-static
+    - stage: test
       os: linux
       compiler: gcc
       env: TRAVIS_STATIC=true
 
     # Static build (linux, clang)
-    - stage: test-static
+    - stage: test
       os: linux
       compiler: clang
       env: TRAVIS_STATIC=true
 
     # Static build, no ACE (linux, gcc)
-    - stage: test-static
+    - stage: test
       os: linux
       compiler: gcc
       env:
@@ -233,7 +231,7 @@ matrix:
         - TRAVIS_WITH_BINDINGS=false
 
     # Static build, no ACE (linux, clang)
-    - stage: test-static
+    - stage: test
       os: linux
       compiler: clang
       env:
@@ -242,7 +240,7 @@ matrix:
         - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with valgrind (linux, gcc)
-    - stage: test-valgrind
+    - stage: test-long
       os: linux
       compiler: gcc
       env:
@@ -250,7 +248,7 @@ matrix:
         - TRAVIS_WITH_BINDINGS=false
 
     # No ACE build with valgrind (linux, gcc)
-    - stage: test-valgrind
+    - stage: test-long
       os: linux
       compiler: gcc
       env:
@@ -259,7 +257,7 @@ matrix:
         - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with valgrind and broken tests (linux, gcc)
-#    - stage: test-valgrind
+#    - stage: test-long
 #      os: linux
 #      compiler: gcc
 #      env:
@@ -268,7 +266,7 @@ matrix:
 #        - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with clang (osx, clang)
-    - stage: test-osx
+    - stage: test-long
       os: osx
       osx_image: xcode8.3
       compiler: clang
@@ -276,7 +274,7 @@ matrix:
         - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with Xcode 8.3 (osx, clang)
-    - stage: test-osx
+    - stage: test-long
       os: osx
       osx_image: xcode8.3
       compiler: clang
@@ -285,7 +283,7 @@ matrix:
         - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with Xcode 9.4 (osx, clang)
-    - stage: test-osx
+    - stage: test-long
       os: osx
       osx_image: xcode9.4
       compiler: clang
