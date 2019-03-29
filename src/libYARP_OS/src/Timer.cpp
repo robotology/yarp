@@ -212,7 +212,7 @@ public:
 
     void stopTimer() override
     {
-        return stop();
+        return askToStop();
     }
 
     bool timerIsRunning() override
