@@ -82,10 +82,10 @@ set(__YCMEPHELPER_INCLUDED TRUE)
 
 # Files downloaded during YCM bootstrap
 set(_ycm_CMakeParseArguments_sha1sum 0c4d3f7ed248145cbeb67cbd6fd7190baf2e4517)
-set(_ycm_ExternalProject_sha1sum     a20f25b7dca341674ee7dc3c06155c1c66c6b605)
+set(_ycm_ExternalProject_sha1sum     62ed9b37172e01fd13f356d8a4a6a599d7aed054)
 
 # Files in all projects that need to bootstrap YCM
-set(_ycm_IncludeUrl_sha1sum          921a037133255d01b644c16f19494cb08d98c462)
+set(_ycm_IncludeUrl_sha1sum          e31dffed0897729283ef4e945bbdeb1921b438b5)
 set(_ycm_YCMBootstrap_sha1sum        dd95e1d38e045091e2e6c1ba2a96d540f1b8af0d)
 
 
@@ -231,6 +231,32 @@ macro(_YCM_SETUP)
   # TODO Make this a cached variable for installation outside build
   #      directory
   set(_YCM_EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/install)
+
+  # Default CMAKE_ARGS (Passed to the command line)
+  set(_YCM_EP_CMAKE_ARGS "--no-warn-unused-cli"
+                              "-DCMAKE_PREFIX_PATH:PATH=${_CMAKE_PREFIX_PATH}") # Path used by cmake for finding stuff
+
+  # Default CMAKE_CACHE_ARGS (Initial cache, forced)
+  set(_YCM_EP_CMAKE_CACHE_ARGS "-DCMAKE_INSTALL_PREFIX:PATH=${_YCM_EP_INSTALL_DIR}") # Where to do the installation
+
+  if(DEFINED CMAKE_TOOLCHAIN_FILE)
+    list(APPEND _YCM_EP_CMAKE_CACHE_ARGS "-DCMAKE_TOOLCHAIN_FILE:PATH=${CMAKE_TOOLCHAIN_FILE}")
+  endif()
+
+  # Default CMAKE_CACHE_DEFAULT_ARGS (Initial cache, default)
+  unset(_YCM_EP_CMAKE_CACHE_DEFAULT_ARGS)
+  if(NOT CMAKE_BUILD_TYPE STREQUAL "") # CMAKE_BUILD_TYPE is always defined
+    list(APPEND _YCM_EP_CMAKE_CACHE_DEFAULT_ARGS "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}") # If there is a CMAKE_BUILD_TYPE it is important to ensure it is passed down.
+  endif()
+  if(DEFINED CMAKE_SKIP_RPATH)
+    list(APPEND _YCM_EP_CMAKE_CACHE_DEFAULT_ARGS "-DCMAKE_SKIP_RPATH:PATH=${CMAKE_SKIP_RPATH}")
+  endif()
+  if(DEFINED CMAKE_SKIP_INSTALL_RPATH)
+    list(APPEND _YCM_EP_CMAKE_CACHE_DEFAULT_ARGS "-DCMAKE_SKIP_INSTALL_RPATH:PATH=${CMAKE_SKIP_INSTALL_RPATH}")
+  endif()
+  if(DEFINED BUILD_SHARED_LIBS)
+    list(APPEND _YCM_EP_CMAKE_CACHE_DEFAULT_ARGS "-DBUILD_SHARED_LIBS:PATH=${BUILD_SHARED_LIBS}")
+  endif()
 endmacro()
 
 
@@ -360,8 +386,8 @@ function(_YCM_EP_ADD_TEST_STEP)
     # The test target does not exist, therefore add_dependencies
     # cannot be used. Instead we add a test.
     add_test(NAME ${_name}_test
-             COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --config ${CMAKE_CFG_INTDIR} --target ${_name}-test
-             WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+             COMMAND ${CMAKE_COMMAND} --build ${CMAKE_CURRENT_BINARY_DIR} --config ${CMAKE_CFG_INTDIR} --target ${_name}-test
+             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     set_property(TEST ${_name}_test APPEND PROPERTY LABELS ${_name})
     set_property(TEST ${_name}_test PROPERTY DEPENDS ${_name})
   endif()
@@ -654,6 +680,23 @@ function(_YCM_EP_ADD_OPEN_STEP _name)
 endfunction()
 
 ########################################################################
+# _YCM_EP_ADD_INSTALLATION
+#
+# Add the project to the "install" target in the main build.
+# This by default works only for CMake projects, but project using other
+# build systems can be enabled by just by creating a
+# `cmake_install.cmake` file in the build directory.
+
+function(_YCM_EP_ADD_INSTALLATION _name)
+  get_property(_binary_dir TARGET ${_name} PROPERTY _EP_BINARY_DIR)
+
+  install(CODE "if(NOT CMAKE_INSTALL_LOCAL_ONLY AND EXISTS \"${_binary_dir}/cmake_install.cmake\")
+    include(\"${_binary_dir}/cmake_install.cmake\")
+  endif()"
+          COMPONENT ${_name})
+endfunction()
+
+########################################################################
 # YCM_EP_HELPER
 #
 # Helper function to add a repository using ExternalProject
@@ -781,52 +824,25 @@ function(YCM_EP_HELPER _name)
   #
   # TODO FIXME check what happens when the "*_COMMAND" arguments are passed.
   file(TO_CMAKE_PATH "$ENV{CMAKE_PREFIX_PATH}" _CMAKE_PREFIX_PATH)
-  list(APPEND _CMAKE_PREFIX_PATH ${${_name}_INSTALL_DIR})
+  list(INSERT _CMAKE_PREFIX_PATH 0 ${${_name}_INSTALL_DIR})
   list(REMOVE_DUPLICATES _CMAKE_PREFIX_PATH)
   string(REPLACE ";" "|" _CMAKE_PREFIX_PATH "${_CMAKE_PREFIX_PATH}")
   set(${_name}_ALL_CMAKE_ARGS LIST_SEPARATOR "|")
 
-
-  # Default CMAKE_ARGS (Passed to the command line)
-  set(${_name}_YCM_CMAKE_ARGS "--no-warn-unused-cli"
-                              "-DCMAKE_PREFIX_PATH:PATH=${_CMAKE_PREFIX_PATH}") # Path used by cmake for finding stuff
-
-  # Default CMAKE_CACHE_ARGS (Initial cache, forced)
-  set(${_name}_YCM_CMAKE_CACHE_ARGS "-DCMAKE_INSTALL_PREFIX:PATH=${${_name}_INSTALL_DIR}") # Where to do the installation
-
-  if(DEFINED CMAKE_TOOLCHAIN_FILE)
-    list(APPEND ${_name}_YCM_CMAKE_CACHE_ARGS "-DCMAKE_TOOLCHAIN_FILE:PATH=${CMAKE_TOOLCHAIN_FILE}")
-  endif()
-
-  # Default CMAKE_CACHE_DEFAULT_ARGS (Initial cache, default)
-  unset(${_name}_YCM_CMAKE_CACHE_DEFAULT_ARGS)
-  if(NOT CMAKE_BUILD_TYPE STREQUAL "") # CMAKE_BUILD_TYPE is always defined
-    list(APPEND ${_name}_YCM_CMAKE_CACHE_DEFAULT_ARGS "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}") # If there is a CMAKE_BUILD_TYPE it is important to ensure it is passed down.
-  endif()
-  if(DEFINED CMAKE_SKIP_RPATH)
-    list(APPEND ${_name}_YCM_CMAKE_CACHE_DEFAULT_ARGS "-DCMAKE_SKIP_RPATH:PATH=${CMAKE_SKIP_RPATH}")
-  endif()
-  if(DEFINED CMAKE_SKIP_INSTALL_RPATH)
-    list(APPEND ${_name}_YCM_CMAKE_CACHE_DEFAULT_ARGS "-DCMAKE_SKIP_INSTALL_RPATH:PATH=${CMAKE_SKIP_INSTALL_RPATH}")
-  endif()
-  if(DEFINED BUILD_SHARED_LIBS)
-    list(APPEND ${_name}_YCM_CMAKE_CACHE_DEFAULT_ARGS "-DBUILD_SHARED_LIBS:PATH=${BUILD_SHARED_LIBS}")
-  endif()
-
   # CMAKE_ARGS (Passed to the command line)
-  set(${_name}_CMAKE_ARGS CMAKE_ARGS ${${_name}_YCM_CMAKE_ARGS})
+  set(${_name}_CMAKE_ARGS CMAKE_ARGS ${_YCM_EP_CMAKE_ARGS})
   if(_YH_${_name}_CMAKE_ARGS)
     list(APPEND ${_name}_CMAKE_ARGS ${_YH_${_name}_CMAKE_ARGS})
   endif()
 
   # CMAKE_CACHE_ARGS (Initial cache, forced)
-  set(${_name}_CMAKE_CACHE_ARGS CMAKE_CACHE_ARGS ${${_name}_YCM_CMAKE_CACHE_ARGS})
+  set(${_name}_CMAKE_CACHE_ARGS CMAKE_CACHE_ARGS ${_YCM_EP_CMAKE_CACHE_ARGS})
   if(_YH_${_name}_CMAKE_CACHE_ARGS)
     list(APPEND ${_name}_CMAKE_CACHE_ARGS ${_YH_${_name}_CMAKE_CACHE_ARGS})
   endif()
 
   # CMAKE_CACHE_DEFAULT_ARGS (Initial cache, default)
-  set(${_name}_CMAKE_CACHE_DEFAULT_ARGS CMAKE_CACHE_DEFAULT_ARGS ${${_name}_YCM_CMAKE_CACHE_DEFAULT_ARGS})
+  set(${_name}_CMAKE_CACHE_DEFAULT_ARGS CMAKE_CACHE_DEFAULT_ARGS ${_YCM_EP_CMAKE_CACHE_DEFAULT_ARGS})
   if(_YH_${_name}_CMAKE_CACHE_DEFAULT_ARGS)
     list(APPEND ${_name}_CMAKE_CACHE_DEFAULT_ARGS ${_YH_${_name}_CMAKE_CACHE_DEFAULT_ARGS})
   endif()
@@ -999,6 +1015,9 @@ function(YCM_EP_HELPER _name)
   if("${_YH_${_name}_COMPONENT}" STREQUAL "external")
     mark_as_advanced(YCM_EP_DEVEL_MODE_${_name})
   endif()
+  if(NON_INTERACTIVE_BUILD AND YCM_EP_DEVEL_MODE_${_name})
+    message(SEND_ERROR "NON_INTERACTIVE_BUILD AND YCM_EP_DEVEL_MODE_${_name} cannot be used at the same time")
+  endif()
 
   unset(${_name}_ARGS)
   foreach(_arg IN LISTS ${_name}_REPOSITORY_ARGS
@@ -1041,6 +1060,11 @@ function(YCM_EP_HELPER _name)
     _ycm_ep_add_update_step(${_name})
   endif()
   _ycm_ep_add_dependers_steps(${_name})
+
+
+  # Install project
+  _ycm_ep_add_installation(${_name})
+
 
   # Set some useful variables in parent scope
   foreach(_d PREFIX
@@ -1341,6 +1365,12 @@ macro(YCM_BOOTSTRAP)
   file(READ ${YCM_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/YCMTmp/YCM-cfgcmd.txt _cmd)
   string(STRIP "${_cmd}" _cmd)
   string(REGEX REPLACE "^cmd='(.+)'" "\\1" _cmd "${_cmd}")
+  # The cache file is generated with 'file(GENERATE)', therefore it is not yet
+  # available. Since we cannot use CMAKE_CACHE_ARGS or CMAKE_CACHE_DEFAULT_ARGS,
+  # We just remove it from the command line, and append the arguments instead.
+  string(REGEX REPLACE "-C.+\\.cmake;" "${_YCM_EP_CMAKE_CACHE_ARGS};${_YCM_EP_CMAKE_CACHE_DEFAULT_ARGS}" _cmd "${_cmd}")
+  # The command line contains location tags, therefore we need to expand it.
+  _ep_replace_location_tags(YCM _cmd)
   execute_process(COMMAND ${_cmd}
                   WORKING_DIRECTORY ${YCM_BINARY_DIR}
                   ${_quiet_args}
