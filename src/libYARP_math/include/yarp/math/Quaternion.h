@@ -25,22 +25,21 @@ namespace yarp {
 
 class YARP_math_API yarp::math::Quaternion : public yarp::os::Portable
 {
-    double internal_data[4]; // stored as [w x y z]
-
 public:
     Quaternion();
     Quaternion(const Quaternion &l);
     Quaternion(double x, double y, double z, double w);
-    double* data();
-    const double* data() const;
-    double x() const;
-    double y() const;
-    double z() const;
-    double w() const;
-    double& x() ;
-    double& y() ;
-    double& z() ;
-    double& w() ;
+    double data[4];
+    double& w{data[0]};
+    double& x{data[1]};
+    double& y{data[2]};
+    double& z{data[3]};
+
+    Quaternion& operator=(const Quaternion& other)
+    {
+        memcpy(data, other.data, 4 * sizeof(double));
+        return *this;
+    }
 
     std::string toString(int precision = -1, int width = -1) const;
 

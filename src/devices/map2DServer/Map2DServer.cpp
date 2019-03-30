@@ -1056,10 +1056,10 @@ bool Map2DServer::updateVizMarkers()
         marker.pose.position.x    = it->second.x;
         marker.pose.position.y    = it->second.y;
         marker.pose.position.z    = 0;
-        marker.pose.orientation.x = q.x();
-        marker.pose.orientation.y = q.y();
-        marker.pose.orientation.z = q.z();
-        marker.pose.orientation.w = q.w();
+        marker.pose.orientation.x = q.x;
+        marker.pose.orientation.y = q.y;
+        marker.pose.orientation.z = q.z;
+        marker.pose.orientation.w = q.w;
         marker.scale.x            = 1;
         marker.scale.y            = 0.1;
         marker.scale.z            = 0.1;

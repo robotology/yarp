@@ -28,86 +28,36 @@ YARP_END_PACK
 
 Quaternion::Quaternion()
 {
-    internal_data[0] = 1;
-    internal_data[1] = 0;
-    internal_data[2] = 0;
-    internal_data[3] = 0;
+    w = 1;
+    x = 0;
+    y = 0;
+    z = 0;
 }
 
 Quaternion::Quaternion(double x, double y, double z, double w)
 {
-    internal_data[0] = w;
-    internal_data[1] = x;
-    internal_data[2] = y;
-    internal_data[3] = z;
+    w = w;
+    x = x;
+    y = y;
+    z = z;
 }
 
 Quaternion::Quaternion(const Quaternion &l)
 {
-    internal_data[0] = l.w();
-    internal_data[1] = l.x();
-    internal_data[2] = l.y();
-    internal_data[3] = l.z();
-}
-
-const double* Quaternion::data() const
-{
-    return internal_data;
-}
-
-double* Quaternion::data()
-{
-    return internal_data;
+    w = l.w;
+    x = l.x;
+    y = l.y;
+    z = l.z;
 }
 
 yarp::sig::Vector Quaternion::toVector()  const
 {
     yarp::sig::Vector v(4);
-    v[0] = internal_data[0];
-    v[1] = internal_data[1];
-    v[2] = internal_data[2];
-    v[3] = internal_data[3];
+    v[0] = w;
+    v[1] = x;
+    v[2] = y;
+    v[3] = z;
     return v;
-}
-
-double Quaternion::w() const
-{
-    return internal_data[0];
-}
-
-double Quaternion::x() const
-{
-    return internal_data[1];
-}
-
-double Quaternion::y() const
-{
-    return internal_data[2];
-}
-
-double Quaternion::z() const
-{
-    return internal_data[3];
-}
-
-double& Quaternion::w()
-{
-    return internal_data[0];
-}
-
-double& Quaternion::x()
-{
-    return internal_data[1];
-}
-
-double& Quaternion::y()
-{
-    return internal_data[2];
-}
-
-double& Quaternion::z()
-{
-    return internal_data[3];
 }
 
 bool Quaternion::read(yarp::os::ConnectionReader& connection)
@@ -120,10 +70,10 @@ bool Quaternion::read(yarp::os::ConnectionReader& connection)
 
     if (header.listLen == 4 &&  header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_FLOAT64))
     {
-        this->internal_data[0] = connection.expectFloat64();
-        this->internal_data[1] = connection.expectFloat64();
-        this->internal_data[2] = connection.expectFloat64();
-        this->internal_data[3] = connection.expectFloat64();
+        this->w = connection.expectFloat64();
+        this->x = connection.expectFloat64();
+        this->y = connection.expectFloat64();
+        this->z = connection.expectFloat64();
     }
     else
     {
@@ -142,10 +92,10 @@ bool Quaternion::write(yarp::os::ConnectionWriter& connection) const
 
     connection.appendBlock((char*)&header, sizeof(header));
 
-    connection.appendFloat64(this->internal_data[0]);
-    connection.appendFloat64(this->internal_data[1]);
-    connection.appendFloat64(this->internal_data[2]);
-    connection.appendFloat64(this->internal_data[3]);
+    connection.appendFloat64(w);
+    connection.appendFloat64(x);
+    connection.appendFloat64(y);
+    connection.appendFloat64(z);
 
     // if someone is foolish enough to connect in text mode,
     // let them see something readable.
@@ -168,46 +118,46 @@ void Quaternion::fromRotationMatrix(const yarp::sig::Matrix &R)
     {
         double sqtrp1 = sqrt(tr + 1.0);
         double sqtrp12 = 2.0*sqtrp1;
-        internal_data[0] = 0.5*sqtrp1;
-        internal_data[1] = (R(2, 1) - R(1, 2)) / sqtrp12;
-        internal_data[2] = (R(0, 2) - R(2, 0)) / sqtrp12;
-        internal_data[3] = (R(1, 0) - R(0, 1)) / sqtrp12;
+        w = 0.5*sqtrp1;
+        x = (R(2, 1) - R(1, 2)) / sqtrp12;
+        y = (R(0, 2) - R(2, 0)) / sqtrp12;
+        z = (R(1, 0) - R(0, 1)) / sqtrp12;
     }
     else if ((R(1, 1)>R(0, 0)) && (R(1, 1)>R(2, 2)))
     {
         double sqdip1 = sqrt(R(1, 1) - R(0, 0) - R(2, 2) + 1.0);
-        internal_data[2] = 0.5*sqdip1;
+        y = 0.5*sqdip1;
 
         if (sqdip1>0.0)
             sqdip1 = 0.5 / sqdip1;
 
-        internal_data[0] = (R(0, 2) - R(2, 0))*sqdip1;
-        internal_data[1] = (R(1, 0) + R(0, 1))*sqdip1;
-        internal_data[3] = (R(2, 1) + R(1, 2))*sqdip1;
+        w = (R(0, 2) - R(2, 0))*sqdip1;
+        x = (R(1, 0) + R(0, 1))*sqdip1;
+        z = (R(2, 1) + R(1, 2))*sqdip1;
     }
     else if (R(2, 2)>R(0, 0))
     {
         double sqdip1 = sqrt(R(2, 2) - R(0, 0) - R(1, 1) + 1.0);
-        internal_data[3] = 0.5*sqdip1;
+        z = 0.5*sqdip1;
 
         if (sqdip1>0.0)
             sqdip1 = 0.5 / sqdip1;
 
-        internal_data[0] = (R(1, 0) - R(0, 1))*sqdip1;
-        internal_data[1] = (R(0, 2) + R(2, 0))*sqdip1;
-        internal_data[2] = (R(2, 1) + R(1, 2))*sqdip1;
+        w = (R(1, 0) - R(0, 1))*sqdip1;
+        x = (R(0, 2) + R(2, 0))*sqdip1;
+        y = (R(2, 1) + R(1, 2))*sqdip1;
     }
     else
     {
         double sqdip1 = sqrt(R(0, 0) - R(1, 1) - R(2, 2) + 1.0);
-        internal_data[1] = 0.5*sqdip1;
+        x = 0.5*sqdip1;
 
         if (sqdip1>0.0)
             sqdip1 = 0.5 / sqdip1;
 
-        internal_data[0] = (R(2, 1) - R(1, 2))*sqdip1;
-        internal_data[2] = (R(1, 0) + R(0, 1))*sqdip1;
-        internal_data[3] = (R(0, 2) + R(2, 0))*sqdip1;
+        w = (R(2, 1) - R(1, 2))*sqdip1;
+        y = (R(1, 0) + R(0, 1))*sqdip1;
+        z = (R(0, 2) + R(2, 0))*sqdip1;
     }
 }
 
@@ -255,17 +205,17 @@ std::string Quaternion::toString(int precision, int width) const
     char tmp[350];
     if (width<0)
     {
-        sprintf(tmp, "w=% .*lf\t", precision, internal_data[0]);   ret += tmp;
-        sprintf(tmp, "x=% .*lf\t", precision, internal_data[1]);   ret += tmp;
-        sprintf(tmp, "y=% .*lf\t", precision, internal_data[2]);   ret += tmp;
-        sprintf(tmp, "z=% .*lf\t", precision, internal_data[3]);   ret += tmp;
+        sprintf(tmp, "w=% .*lf\t", precision, w);   ret += tmp;
+        sprintf(tmp, "x=% .*lf\t", precision, x);   ret += tmp;
+        sprintf(tmp, "y=% .*lf\t", precision, y);   ret += tmp;
+        sprintf(tmp, "z=% .*lf\t", precision, z);   ret += tmp;
     }
     else
     {
-        sprintf(tmp, "w=% *.*lf ", width, precision, internal_data[0]);    ret += tmp;
-        sprintf(tmp, "x=% *.*lf ", width, precision, internal_data[1]);    ret += tmp;
-        sprintf(tmp, "y=% *.*lf ", width, precision, internal_data[2]);    ret += tmp;
-        sprintf(tmp, "z=% *.*lf ", width, precision, internal_data[3]);    ret += tmp;
+        sprintf(tmp, "w=% *.*lf ", width, precision, w);    ret += tmp;
+        sprintf(tmp, "x=% *.*lf ", width, precision, x);    ret += tmp;
+        sprintf(tmp, "y=% *.*lf ", width, precision, y);    ret += tmp;
+        sprintf(tmp, "z=% *.*lf ", width, precision, z);    ret += tmp;
     }
 
     return ret.substr(0, ret.length() - 1);
@@ -276,10 +226,10 @@ void Quaternion::fromAxisAngle(const yarp::sig::Vector &v)
     yarp::sig::Matrix m = axis2dcm(v);
     Quaternion q;
     q.fromRotationMatrix(m);
-    this->internal_data[0] = q.internal_data[0];
-    this->internal_data[1] = q.internal_data[1];
-    this->internal_data[2] = q.internal_data[2];
-    this->internal_data[3] = q.internal_data[3];
+    this->w = q.w;
+    this->x = q.x;
+    this->y = q.y;
+    this->z = q.z;
 }
 
 void Quaternion::fromAxisAngle(const yarp::sig::Vector& axis, const double& angle)
@@ -289,10 +239,10 @@ void Quaternion::fromAxisAngle(const yarp::sig::Vector& axis, const double& angl
     yarp::sig::Matrix m = axis2dcm(v);
     Quaternion q;
     q.fromRotationMatrix(m);
-    this->internal_data[0] = q.internal_data[0];
-    this->internal_data[1] = q.internal_data[1];
-    this->internal_data[2] = q.internal_data[2];
-    this->internal_data[3] = q.internal_data[3];
+    this->w = q.w;
+    this->x = q.x;
+    this->y = q.y;
+    this->z = q.z;
 }
 
 yarp::sig::Vector Quaternion::toAxisAngle()
@@ -304,32 +254,31 @@ yarp::sig::Vector Quaternion::toAxisAngle()
 
 double Quaternion::abs()
 {
-    return sqrt(internal_data[0] * internal_data[0] +
-                internal_data[1] * internal_data[1] +
-                internal_data[2] * internal_data[2] +
-                internal_data[3] * internal_data[3]);
+    return sqrt(w * w +
+                x * x +
+                y * y +
+                z * z);
 }
 
 void Quaternion::normalize()
 {
     double length = abs();
-    internal_data[0] /= length;
-    internal_data[1] /= length;
-    internal_data[2] /= length;
-    internal_data[3] /= length;
+    w /= length;
+    x /= length;
+    y /= length;
+    z /= length;
     return;
 }
 
 double Quaternion::arg()
 {
-    return atan2(sqrt(internal_data[1] * internal_data[1] +
-                      internal_data[2] * internal_data[2] +
-                      internal_data[3] * internal_data[3]),
-                 internal_data[0]);
+    return atan2(sqrt(x * x +
+                      y * y +
+                      z * z),
+                          w);
 }
 
 Quaternion Quaternion::inverse() const
 {
-    //                     w                  x                 y                  z
-    return Quaternion(internal_data[0], -internal_data[1], -internal_data[2], -internal_data[3]);
+    return Quaternion(w, -x, -y, -z);
 }

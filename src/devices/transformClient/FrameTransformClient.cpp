@@ -95,10 +95,10 @@ void Transforms_client_storage::onRead(yarp::os::Bottle &b)
                 t.translation.tX = bt->get(3).asFloat64();
                 t.translation.tY = bt->get(4).asFloat64();
                 t.translation.tZ = bt->get(5).asFloat64();
-                t.rotation.w() = bt->get(6).asFloat64();
-                t.rotation.x() = bt->get(7).asFloat64();
-                t.rotation.y() = bt->get(8).asFloat64();
-                t.rotation.z() = bt->get(9).asFloat64();
+                t.rotation.w = bt->get(6).asFloat64();
+                t.rotation.x = bt->get(7).asFloat64();
+                t.rotation.y = bt->get(8).asFloat64();
+                t.rotation.z = bt->get(9).asFloat64();
                 m_transforms.push_back(t);
             }
         }
@@ -696,10 +696,10 @@ bool yarp::dev::FrameTransformClient::setTransform(const std::string& target_fra
     b.addFloat64(tf.translation.tX);
     b.addFloat64(tf.translation.tY);
     b.addFloat64(tf.translation.tZ);
-    b.addFloat64(tf.rotation.w());
-    b.addFloat64(tf.rotation.x());
-    b.addFloat64(tf.rotation.y());
-    b.addFloat64(tf.rotation.z());
+    b.addFloat64(tf.rotation.w);
+    b.addFloat64(tf.rotation.x);
+    b.addFloat64(tf.rotation.y);
+    b.addFloat64(tf.rotation.z);
     bool ret = m_rpc_InterfaceToServer.write(b, resp);
     if (ret)
     {
@@ -750,10 +750,10 @@ bool yarp::dev::FrameTransformClient::setTransformStatic(const std::string &targ
     b.addFloat64(tf.translation.tX);
     b.addFloat64(tf.translation.tY);
     b.addFloat64(tf.translation.tZ);
-    b.addFloat64(tf.rotation.w());
-    b.addFloat64(tf.rotation.x());
-    b.addFloat64(tf.rotation.y());
-    b.addFloat64(tf.rotation.z());
+    b.addFloat64(tf.rotation.w);
+    b.addFloat64(tf.rotation.x);
+    b.addFloat64(tf.rotation.y);
+    b.addFloat64(tf.rotation.z);
     bool ret = m_rpc_InterfaceToServer.write(b, resp);
     if (ret)
     {

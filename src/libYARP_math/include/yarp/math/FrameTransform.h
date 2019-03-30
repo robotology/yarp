@@ -64,10 +64,10 @@ namespace yarp
                 src_frame_id = parent;
                 dst_frame_id = child;
                 translation.set(inTX, inTY, inTZ);
-                rotation.w() = inRW;
-                rotation.x() = inRX;
-                rotation.y() = inRY;
-                rotation.z() = inRZ;
+                rotation.w = inRW;
+                rotation.x = inRX;
+                rotation.y = inRY;
+                rotation.z = inRZ;
             }
 
             ~FrameTransform(){};

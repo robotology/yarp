@@ -19,9 +19,9 @@ std::string yarp::math::FrameTransform::toString() const
                   translation.tX,
                   translation.tY,
                   translation.tZ,
-                  rotation.x(),
-                  rotation.y(),
-                  rotation.z(),
-                  rotation.w());
+                  rotation.x,
+                  rotation.y,
+                  rotation.z,
+                  rotation.w);
     return std::string(buff);
 }
