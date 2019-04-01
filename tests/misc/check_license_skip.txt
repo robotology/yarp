@@ -1,4 +1,5 @@
 bindings/allegro/examples/example.lisp
+bindings/brainfuck/examples/example.bf
 bindings/java/examples/matlab/simulink/sfun_time.c
 bindings/lua/argcargv.i
 example/swig/allegro/yarp.asd

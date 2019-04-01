@@ -80,7 +80,8 @@ set(SUPPORTED_LANGUAGES "Java"
                         "TCL"
                         "Ruby"
                         "Lua"
-                        "Octave")
+                        "Octave"
+                        "Brainfuck")
 
 foreach(Lang ${SUPPORTED_LANGUAGES})
   string(TOUPPER "${Lang}" LANG)
