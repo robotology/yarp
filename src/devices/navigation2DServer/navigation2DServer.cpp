@@ -39,6 +39,8 @@ using namespace std;
 
 navigation2DServer::navigation2DServer() : PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
+    iNav_target = nullptr;
+    iNav_ctrl = nullptr;
     m_navigation_status=yarp::dev::navigation_status_idle;
 }
 
@@ -107,12 +109,6 @@ bool navigation2DServer::open(Searchable& config)
     m_rpcPortName = local_name + "/rpc";
     m_streamingPortName = local_name + "/streaming:o";
 
-    if (!initialize_YARP(config))
-    {
-        yError() << "navigation2DServer: Error initializing YARP ports";
-        return false;
-    }
-
     if (config.check("subdevice"))
     {
         Property       p;
@@ -134,6 +130,13 @@ bool navigation2DServer::open(Searchable& config)
         }
     }
     m_stats_time_last = yarp::os::Time::now();
+
+    if (!initialize_YARP(config))
+    {
+        yError() << "navigation2DServer: Error initializing YARP ports";
+        return false;
+    }
+
     return true;
 }
 

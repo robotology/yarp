@@ -154,12 +154,6 @@ bool Localization2DServer::open(Searchable& config)
     m_rpcPortName = local_name + "/rpc";
     m_streamingPortName = local_name + "/streaming:o";
 
-    if (!initialize_YARP(config))
-    {
-        yError() << "Localization2DServer: Error initializing YARP ports";
-        return false;
-    }
-
     if (config.check("subdevice"))
     {
         Property       p;
@@ -181,6 +175,13 @@ bool Localization2DServer::open(Searchable& config)
         }
     }
     m_stats_time_last = yarp::os::Time::now();
+
+    if (!initialize_YARP(config))
+    {
+        yError() << "Localization2DServer: Error initializing YARP ports";
+        return false;
+    }
+
     return true;
 }
 
