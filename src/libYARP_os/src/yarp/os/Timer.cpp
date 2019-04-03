@@ -301,6 +301,7 @@ YARP_WARNING_POP
 
     bool startTimer() override
     {
+        setPeriod(m_settings.period);
         m_startStamp = yarp::os::Time::now();
         return start();
     }
