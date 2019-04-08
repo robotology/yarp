@@ -512,9 +512,9 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
             yWarning() << sensorId << "cannot find rosOffset parameter, using the default offset 0 while reading analog sensor data";
         }
 
-        if(rosGroup.find("rosOffset").isInt())
+        if(rosGroup.find("rosOffset").isInt32())
         {
-            rosOffset = rosGroup.find("rosOffset").asInt();
+            rosOffset = rosGroup.find("rosOffset").asInt32();
             yInfo() << sensorId << " rosOffset is " << rosOffset;
         }
 
@@ -523,9 +523,9 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
             yWarning() << sensorId << "cannot find rosPadding parameter, using the default padding 0 while reading analog sensor data";
         }
 
-        if(rosGroup.find("rosPadding").isInt())
+        if(rosGroup.find("rosPadding").isInt32())
         {
-            rosOffset = rosGroup.find("rosPadding").asInt();
+            rosOffset = rosGroup.find("rosPadding").asInt32();
             yInfo() << sensorId << " rosPadding is " << rosOffset;
         }
     }
