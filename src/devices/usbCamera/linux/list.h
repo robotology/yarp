@@ -17,8 +17,8 @@
  */
 
 
-#ifndef _ICUB_V4L_LIST_HPP_
-#define _ICUB_V4L_LIST_HPP_
+#ifndef YARP_DEVICE_USBCAMERA_LINUX_LIST_H
+#define YARP_DEVICE_USBCAMERA_LINUX_LIST_H
 
 #include <errno.h>
 #include <stdio.h>
@@ -33,10 +33,10 @@ void query_capture_intf_v4l2(int fd);
 
 void query_frame_sizes_v4l2(int fd);
 
-void print_v4l2_control(struct v4l2_queryctrl *qc);
+void print_v4l2_control(struct v4l2_queryctrl* qc);
 
 void list_cap_v4l2(int fd);
 
 // void query_controls_v4l2(int fd);
 
-#endif  // _ICUB_V4L_LIST_HPP_
+#endif // YARP_DEVICE_USBCAMERA_LINUX_LIST_H

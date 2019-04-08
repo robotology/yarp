@@ -403,6 +403,14 @@ find_package(I2C QUIET)
 checkandset_dependency(I2C)
 
 
+find_package(Libv4l2 QUIET)
+checkandset_dependency(Libv4l2)
+
+find_package(Libv4lconvert QUIET)
+checkandset_dependency(Libv4lconvert)
+
+
+
 ################################################################################
 # Options
 
@@ -585,7 +593,8 @@ print_dependency(GStreamerPluginsBase)
 print_dependency(BISON)
 print_dependency(FLEX)
 print_dependency(I2C)
-
+print_dependency(Libv4l2)
+print_dependency(Libv4lconvert)
 
 ################################################################################
 # Print information for user

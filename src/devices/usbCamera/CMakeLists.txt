@@ -6,91 +6,58 @@
 
 yarp_prepare_plugin(usbCamera
                     CATEGORY device
-                    TYPE yarp::dev::USBCameraDriverRgb
-                    INCLUDE USBcamera.hpp
-                    EXTRA_CONFIG WRAPPER=grabberDual)
+                    TYPE USBCameraDriverRgb
+                    INCLUDE USBcamera.h
+                    EXTRA_CONFIG WRAPPER=grabberDual
+                    DEPENDS "UNIX;NOT APPLE;YARP_HAS_Libv4l2;YARP_HAS_Libv4lconvert;YARP_HAS_OpenCV")
 
-# usbCameraRaw is always enabled when USBcamera is enabled
-# This is a workaround to enable the creation of the additional source files and to hide the entry in ccmake
-set(ENABLE_icubmod_usbCameraRaw ${ENABLE_icubmod_usbCamera} CACHE INTERNAL "Enable/disable compilation of icubmod_USBcameraRaw")
 yarp_prepare_plugin(usbCameraRaw
                     CATEGORY device
-                    TYPE yarp::dev::USBCameraDriverRaw
-                    INCLUDE USBcamera.hpp
+                    TYPE USBCameraDriverRaw
+                    INCLUDE USBcamera.h
                     EXTRA_CONFIG WRAPPER=grabberDual)
 
-IF(ENABLE_icubmod_usbCamera)
-    set(CMAKE_INCLUDE_CURRENT_DIR ON)
+if(ENABLE_usbCamera OR ENABLE_usbCameraRaw)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-    if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-        MESSAGE(SEND_ERROR "USBcamera: device not available yet on OS X platform, please turn off the device")
-        return()
-    elseif(UNIX)
-        find_package(Libv4l2 REQUIRED)
-        find_package(Libv4lconvert REQUIRED)
+  yarp_add_plugin(yarp_usbCamera common/USBcamera.cpp
+                                 common/USBcamera.h
+                                 linux/V4L_camera.cpp
+                                 linux/V4L_camera.h
+                                 linux/list.cpp
+                                 linux/list.h)
 
-        if( NOT Libv4l2_FOUND )
-            MESSAGE(SEND_ERROR "USBcamera: library libv4l2 not found, please turn off device. You can install this dependency with 'sudo apt-get install libv4l-dev'")
-            return()
-        endif(NOT Libv4l2_FOUND )
+  target_include_directories(yarp_usbCamera PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/common")
+  target_include_directories(yarp_usbCamera PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/linux")
 
-        if( NOT Libv4lconvert_FOUND )
-            MESSAGE(SEND_ERROR "USBcamera: libv4lconvert not found, please turn off device. You can install this dependency with 'sudo apt-get install libv4l-dev'")
-            return()
-        endif(NOT Libv4lconvert_FOUND )
+  target_link_libraries(yarp_usbCamera PRIVATE YARP::YARP_OS
+                                               YARP::YARP_sig
+                                               YARP::YARP_dev)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+                                                      YARP_sig
+                                                      YARP_dev)
 
-        if(NOT ICUB_USE_OpenCV)
-            MESSAGE(SEND_ERROR "USBcamera: opencv not found, please turn off device. You can install this dependency with 'sudo apt-get install libopencv-dev'")
-            return()
-        endif(NOT ICUB_USE_OpenCV )
+  target_include_directories(yarp_usbCamera PRIVATE ${Libv4l2_INCLUDE_DIRS})
+  target_link_libraries(yarp_usbCamera PRIVATE ${Libv4l2_LIBRARIES})
+#   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS Libv4l2) (not using targets)
 
-    elseif(WIN32)
-        MESSAGE(SEND_ERROR "USBcamera: device not available yet on Windows platform, please turn off the device")
-        return()
-    else()
-        MESSAGE(SEND_ERROR "USBcamera: OS not supported, please turn off the device")
-        return()
-  endif()
+  target_include_directories(yarp_usbCamera PRIVATE ${Libv4lconvert_INCLUDE_DIRS})
+  target_link_libraries(yarp_usbCamera PRIVATE ${Libv4lconvert_LIBRARIES})
+#   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS Libv4lconvert) (not using targets)
 
-    set(USBcamera_common_SRCS  common/USBcamera.cpp)
-    set(USBcamera_common_HDRS  common/USBcamera.hpp)
+  target_include_directories(yarp_usbCamera SYSTEM PRIVATE ${OpenCV_INCLUDE_DIRS})
+  target_link_libraries(yarp_usbCamera PRIVATE ${OpenCV_LIBRARIES})
+#   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS OpenCV) (not using targets)
 
-    if(UNIX)
-        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/linux ${Libv4l2_INCLUDE_DIRS} ${Libv4lconvert_INCLUDE_DIRS})
+  yarp_install(TARGETS yarp_usbCamera
+               EXPORT YARP_${YARP_PLUGIN_MASTER}
+               COMPONENT ${YARP_PLUGIN_MASTER}
+               LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
+               YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
-        set(OS_SOURCES linux/V4L_camera.hpp linux/V4L_camera.cpp linux/list.hpp linux/list.cpp)
-        # Files from leopard sdk (not used right now)--> linux/Leopard_MT9M021C.cpp linux/raw2bmp.cpp
-    else()
-#        include_directories(${SOME_INCLUDE_DIRS})
-#        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/windows)
-#        set(OS_SOURCES windows/camera.hpp windows/camera.cpp)
-    endif()
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-    # includes valid for all platforms
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/common)
+  set_property(TARGET yarp_usbCamera PROPERTY FOLDER "Plugins/Device")
 
-    yarp_add_plugin(usbCamera ${USBcamera_common_SRCS} ${USBcamera_common_HDRS} ${OS_SOURCES})
-    target_link_libraries(usbCamera ${YARP_LIBRARIES})
-
-    if(UNIX)
-        target_link_libraries(usbCamera ${Libv4l2_LIBRARIES} ${Libv4lconvert_LIBRARIES} ${OpenCV_LIBRARIES})
-    elseif(WIN32)
-#       target_link_libraries(usbCamera ${SOME_WIN_LIBRARIES})
-    else()
-        MESSAGE(SEND_ERROR "USBcamera: OS not supported, please turn off the device")
-    endif()
-
-    icub_export_plugin(usbCamera)
-    yarp_install(FILES usbCamera.ini  DESTINATION ${ICUB_PLUGIN_MANIFESTS_INSTALL_DIR})
-    yarp_install(FILES usbCameraRaw.ini  DESTINATION ${ICUB_PLUGIN_MANIFESTS_INSTALL_DIR})
-
-ENDIF(ENABLE_icubmod_usbCamera)
-
-
-
-
-
-
-
-
-
+endif()
