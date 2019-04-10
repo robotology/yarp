@@ -52,13 +52,13 @@ addons:
     update: true
     sources:
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-trusty-5.0
+      - llvm-toolchain-trusty-8
     packages:
       # gcc
-      - gcc-7
-      - g++-7
+      - gcc-8
+      - g++-8
       # clang
-      - clang-5.0
+      - clang-8
       # build tools
       - ninja-build
       - lcov
@@ -361,19 +361,19 @@ before_install:
   # Use ccache also for clang and clang++ on linux
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang++; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang-5.0; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang++-5.0; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang-8; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang++-8; fi
 
   # These can be removed for ccache 3.2 (at the moment Ubunty trusty has 3.1.9)
   # see https://bugzilla.samba.org/show_bug.cgi?id=8118
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "clang" ]; then export CFLAGS="$CFLAGS -Qunused-arguments"; fi; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "clang" ]; then export CXXFLAGS="$CXXFLAGS -Qunused-arguments"; fi; fi
 
-  # Force gcc-7
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "gcc" ]; then export CC=gcc-7; export CXX=g++-7; fi; fi
+  # Force gcc-8
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "gcc" ]; then export CC=gcc-8; export CXX=g++-8; fi; fi
 
-  # Force clang-5.0
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "clang" ]; then export CC=clang-5.0; export CXX=clang++-5.0; fi; fi
+  # Force clang-8
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "clang" ]; then export CC=clang-8; export CXX=clang++-8; fi; fi
 
   # Remove default clang from path
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export PATH=`echo $PATH | sed -e 's/\/usr\/local\/clang-3.5.0\/bin://'`; fi
