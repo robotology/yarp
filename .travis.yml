@@ -80,6 +80,7 @@ addons:
       - libgstreamer1.0-dev
       - libgstreamer-plugins-base1.0-dev
       - libpng-dev
+      - libv4l-dev
       # Bindings
       - swig3.0
       # C# bindings
@@ -365,14 +366,14 @@ before_install:
 
   # These can be removed for ccache 3.2 (at the moment Ubunty trusty has 3.1.9)
   # see https://bugzilla.samba.org/show_bug.cgi?id=8118
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export CFLAGS="$CFLAGS -Qunused-arguments"; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CXX" == "clang++" ]; then export CXXFLAGS="$CXXFLAGS -Qunused-arguments"; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "clang" ]; then export CFLAGS="$CFLAGS -Qunused-arguments"; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "clang" ]; then export CXXFLAGS="$CXXFLAGS -Qunused-arguments"; fi; fi
 
   # Force gcc-7
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "gcc" ]; then export CC=gcc-7; export CXX=g++-7; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "gcc" ]; then export CC=gcc-7; export CXX=g++-7; fi; fi
 
   # Force clang-5.0
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export CC=clang-5.0; export CXX=clang++-5.0; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "clang" ]; then export CC=clang-5.0; export CXX=clang++-5.0; fi; fi
 
   # Remove default clang from path
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export PATH=`echo $PATH | sed -e 's/\/usr\/local\/clang-3.5.0\/bin://'`; fi
@@ -440,15 +441,11 @@ before_script:
   - if $TRAVIS_WITH_BROKEN_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_ENABLE_BROKEN_TESTS=ON"; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_ENABLE_INTEGRATION_TESTS=ON"; fi
 
-  # TinyXML on trusty is built with C++98 ABI and clang fails.
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_USE_SYSTEM_TINYXML=OFF"; fi; fi
-
-  # OpenCV on travis is built with C++98 ABI.
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "clang" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_USE_OPENCV=OFF"; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_usbCamera=ON -DENABLE_yarpmod_usbCameraRaw=ON"; fi
 
   # Build rplidar2 on linux
   # FIXME gcc only, see https://github.com/robotology/yarp/issues/1984
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$CC" == "gcc" ]; then YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_rpLidar2=ON"; fi; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "gcc" ]; then YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_rpLidar2=ON"; fi; fi
 
   # Avoid building Qt5 guis twice on macOS.
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_DISABLE_OSX_BUNDLES=ON"; fi
