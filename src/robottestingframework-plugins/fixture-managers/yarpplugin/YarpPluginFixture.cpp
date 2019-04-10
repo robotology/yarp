@@ -10,8 +10,8 @@
 
 #include <cstdio>
 #include <ctime>
-#include <rtf/dll/Plugin.h>
-#include <rtf/TestAssert.h>
+#include <robottestingframework/dll/Plugin.h>
+#include <robottestingframework/TestAssert.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/YarpPlugin.h>
@@ -19,11 +19,11 @@
 #include <yarp/dev/Drivers.h>
 
 using namespace std;
-using namespace RTF;
+using namespace robottestingframework;
 using namespace yarp::os;
 using namespace yarp::dev;
 
-PREPARE_FIXTURE_PLUGIN(YarpPluginFixture)
+ROBOTTESTINGFRAMEWORK_PREPARE_FIXTURE_PLUGIN(YarpPluginFixture)
 
 bool YarpPluginFixture::scanPlugins(std::string name, std::string type)
 {
@@ -52,12 +52,11 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
 
     if(argc<=1)
     {
-        //RTF::RTF_FIXTURE_REPORT();
-        RTF_ASSERT_ERROR("YarpPluginFixture: Please specify --devices and/or --plugins"
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("YarpPluginFixture: Please specify --devices and/or --plugins"
                          " and/or --portmonitors and/or --carriers parameters");
         return false;
     }
-    RTF_FIXTURE_REPORT("YarpPluginFixture: setupping fixture...");
+    ROBOTTESTINGFRAMEWORK_FIXTURE_REPORT("YarpPluginFixture: setupping fixture...");
     bool resDev=false, resPlug=false, resCarr=false, resPortMonitor=false;
     Property prop;
     prop.fromCommand(argc, argv, false);
@@ -66,20 +65,20 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
         devices = prop.findGroup("devices");
         if(devices.isNull())
         {
-            RTF_ASSERT_ERROR("YarpPluginFixture: not found devices parameter");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("YarpPluginFixture: not found devices parameter");
         }
         resDev=true;
         for(size_t i=1;i<devices.size();i++)
         {
             if(Drivers::factory().find(devices.get(i).asString().c_str())==nullptr)
             {
-                RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+ devices.get(i).asString() +" among the available devices");
+                ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("YarpPluginFixture: Unable to find "+ devices.get(i).asString() +" among the available devices");
             }
         }
     }
     else
     {
-        RTF_FIXTURE_REPORT("YarpPluginFixture: missing 'devices' param. Probably not required skipping this check. Trying with 'plugins' param...");
+        ROBOTTESTINGFRAMEWORK_FIXTURE_REPORT("YarpPluginFixture: missing 'devices' param. Probably not required skipping this check. Trying with 'plugins' param...");
     }
 
     if(prop.check("plugins"))
@@ -87,19 +86,19 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
         plugins = prop.findGroup("plugins");
         if(plugins.isNull())
         {
-            RTF_ASSERT_ERROR("YarpPluginFixture: not found plugins parameter");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("YarpPluginFixture: not found plugins parameter");
         }
         resPlug=true;
         for(size_t i=1;i<plugins.size();i++)
         {
             if(!scanPlugins(plugins.get(i).asString())){
-                RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+plugins.get(i).asString()+" among the available plugins");
+                ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("YarpPluginFixture: Unable to find "+plugins.get(i).asString()+" among the available plugins");
             }
         }
     }
     else
     {
-        RTF_FIXTURE_REPORT("YarpPluginFixture: missing 'plugins' param. Probably not required skipping this check. Trying with 'portmonitors' param...");
+        ROBOTTESTINGFRAMEWORK_FIXTURE_REPORT("YarpPluginFixture: missing 'plugins' param. Probably not required skipping this check. Trying with 'portmonitors' param...");
     }
 
     if(prop.check("portmonitors"))
@@ -107,19 +106,19 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
         portmonitors = prop.findGroup("portmonitors");
         if(portmonitors.isNull())
         {
-            RTF_ASSERT_ERROR("YarpPluginFixture: not found portmonitors parameter");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("YarpPluginFixture: not found portmonitors parameter");
         }
         resPortMonitor=true;
         for(size_t i=1;i<portmonitors.size();i++)
         {
             if(!scanPlugins(portmonitors.get(i).asString(),"portmonitor")){
-                RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+portmonitors.get(i).asString()+" among the available portmonitors");
+                ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("YarpPluginFixture: Unable to find "+portmonitors.get(i).asString()+" among the available portmonitors");
             }
         }
     }
     else
     {
-        RTF_FIXTURE_REPORT("YarpPluginFixture: missing 'portmonitors' param. Probably not required skipping this check. Trying with 'carriers' param...");
+        ROBOTTESTINGFRAMEWORK_FIXTURE_REPORT("YarpPluginFixture: missing 'portmonitors' param. Probably not required skipping this check. Trying with 'carriers' param...");
     }
 
     if(prop.check("carriers"))
@@ -127,20 +126,20 @@ bool YarpPluginFixture::setup(int argc, char** argv) {
         carriers = prop.findGroup("carriers");
         if(carriers.isNull())
         {
-            RTF_ASSERT_ERROR("YarpPluginFixture: not found carriers parameter");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("YarpPluginFixture: not found carriers parameter");
         }
         Bottle lst=Carriers::listCarriers();
         resCarr=true;
         for(size_t i=1;i<carriers.size();i++)
         {
             if(lst.find(carriers.get(i).asString()).isNull()){
-                RTF_ASSERT_ERROR("YarpPluginFixture: Unable to find "+carriers.get(i).asString()+" among the available carriers");
+                ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("YarpPluginFixture: Unable to find "+carriers.get(i).asString()+" among the available carriers");
             }
         }
     }
     else
     {
-        RTF_FIXTURE_REPORT("YarpPluginFixture: missing 'carriers' param. Probably not required skipping this check...");
+        ROBOTTESTINGFRAMEWORK_FIXTURE_REPORT("YarpPluginFixture: missing 'carriers' param. Probably not required skipping this check...");
     }
 
     return resDev || resPlug || resPortMonitor || resCarr;

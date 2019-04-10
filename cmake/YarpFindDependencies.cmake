@@ -274,9 +274,9 @@ checkandset_dependency(ACE)
 set_property(CACHE YARP_USE_ACE PROPERTY TYPE INTERNAL)
 set_property(CACHE YARP_USE_ACE PROPERTY VALUE TRUE)
 
-set(RTF_REQUIRED_VERSION 1.4.61)
-find_package(RTF ${RTF_REQUIRED_VERSION} QUIET)
-checkandset_dependency(RTF)
+set(RobotTestingFramework_REQUIRED_VERSION 1.6.51)
+find_package(RobotTestingFramework ${RobotTestingFramework_REQUIRED_VERSION} QUIET)
+checkandset_dependency(RobotTestingFramework)
 
 find_package(SQLite QUIET)
 checkbuildandset_dependency(SQLite)
@@ -506,6 +506,9 @@ yarp_dependent_option(YARP_COMPILE_yarplaserscannergui  "Do you want to compile 
 yarp_dependent_option(YARP_COMPILE_yarpviz "Do you want to compile yarpviz?" ON
                       "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;YARP_HAS_Graphviz;YARP_HAS_QGVCore" OFF)
 
+yarp_dependent_option(YARP_COMPILE_RobotTestingFramework_ADDONS "Compile Robot Testing Framework addons." ON
+                      "YARP_HAS_RobotTestingFramework" OFF)
+
 yarp_renamed_option(CREATE_YARPROBOTINTERFACE YARP_COMPILE_yarprobotinterface) # Deprecated since YARP 3.2
 yarp_renamed_option(CREATE_YARPMANAGER_CONSOLE YARP_COMPILE_yarpmanager-console) # Deprecated since YARP 3.2
 yarp_renamed_option(CREATE_YARPDATADUMPER YARP_COMPILE_yarpdatadumper) # Deprecated since YARP 3.2
@@ -518,6 +521,7 @@ yarp_renamed_option(CREATE_YARPMOTORGUI YARP_COMPILE_yarpmotorgui) # Deprecated 
 yarp_renamed_option(CREATE_YARPLASERSCANNERGUI YARP_COMPILE_yarplaserscannergui) # Deprecated since YARP 3.2
 yarp_renamed_option(CREATE_YARPBATTERYGUI YARP_COMPILE_yarpbatterygui) # Deprecated since YARP 3.2
 yarp_renamed_option(CREATE_YARPVIZ YARP_COMPILE_yarpviz) # Deprecated since YARP 3.2
+yarp_renamed_option(YARP_COMPILE_RTF_ADDONS YARP_COMPILE_RobotTestingFramework_ADDONS) # Deprecated since YARP 3.2
 
 
 ################################################################################
@@ -557,7 +561,7 @@ message(STATUS "Libraries found:")
 
 print_dependency(YCM)
 print_dependency(ACE)
-print_dependency(RTF)
+print_dependency(RobotTestingFramework)
 print_dependency(SQLite)
 print_dependency(Eigen3)
 print_dependency(TinyXML)
@@ -623,7 +627,7 @@ yarp_print_feature(YARP_COMPILE_yarplaserscannergui 2 "Compile yarplaserscannerg
 yarp_print_feature(YARP_COMPILE_yarpbatterygui 2 "Compile yarpbatterygui${YARP_COMPILE_yarpbatterygui_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarpviz 2 "Compile yarpviz${YARP_COMPILE_yarpviz_disable_reason}")
 
-yarp_print_feature(YARP_COMPILE_RTF_ADDONS 0 "Compile Robot Testing Framework addons")
+yarp_print_feature(YARP_COMPILE_RobotTestingFramework_ADDONS 0 "Compile Robot Testing Framework addons")
 yarp_print_feature(YARP_COMPILE_UNMAINTAINED 0 "Compile Unmaintained components")
 
 yarp_print_feature(YARP_COMPILE_TESTS 0 "Compile and enable YARP tests")
@@ -639,4 +643,4 @@ check_skip_dependency(SKIP_ACE ACE)
 check_required_dependency(hmac)
 check_required_dependency(SQLite)
 check_optional_dependency(YARP_COMPILE_BINDINGS SWIG)
-check_optional_dependency(YARP_COMPILE_RTF_ADDONS RTF)
+check_optional_dependency(YARP_COMPILE_RobotTestingFramework_ADDONS RobotTestingFramework)

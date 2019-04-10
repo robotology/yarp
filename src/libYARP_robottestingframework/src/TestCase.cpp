@@ -6,10 +6,10 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 
-#include <rtf/Arguments.h>
-#include <rtf/TestAssert.h>
+#include <robottestingframework/Arguments.h>
+#include <robottestingframework/TestAssert.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
@@ -18,31 +18,31 @@
 #include <cstring>
 
 
-class yarp::rtf::TestCase::Private
+class yarp::robottestingframework::TestCase::Private
 {
 public:
     yarp::os::Network yarp;
 };
 
 
-yarp::rtf::TestCase::TestCase(std::string name) :
-        RTF::TestCase(name),
+yarp::robottestingframework::TestCase::TestCase(std::string name) :
+        ::robottestingframework::TestCase(name),
         mPriv(new Private)
 {
 }
 
-yarp::rtf::TestCase::~TestCase()
+yarp::robottestingframework::TestCase::~TestCase()
 {
     delete mPriv;
 }
 
 
-bool yarp::rtf::TestCase::setup(int argc, char** argv)
+bool yarp::robottestingframework::TestCase::setup(int argc, char** argv)
 {
     // check yarp network
     mPriv->yarp.setVerbosity(-1);
-    RTF_ASSERT_ERROR_IF_FALSE(mPriv->yarp.checkNetwork(),
-                        "YARP network does not seem to be available, is the yarp server accessible?");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(mPriv->yarp.checkNetwork(),
+                                                "YARP network does not seem to be available, is the yarp server accessible?");
 
     // loading environment properties by parsing the string value
     // from getEnvironment().
@@ -66,7 +66,7 @@ bool yarp::rtf::TestCase::setup(int argc, char** argv)
     if(rf.check("from")) {
 
         std::string cfgname = rf.find("from").asString();
-        RTF_ASSERT_ERROR_IF_FALSE(cfgname.size(),
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(cfgname.size(),
                             "Empty value was set for the '--from' property");
 
         // loading configuration file indicated by --from
@@ -80,9 +80,9 @@ bool yarp::rtf::TestCase::setup(int argc, char** argv)
             rf.setDefaultContext(envprop.find("robotname").asString().c_str());
             cfgfile = rf.findFileByName(cfgname.c_str());
         }
-        RTF_ASSERT_ERROR_IF_FALSE(cfgfile.size(),
-                            RTF::Asserter::format("Cannot find configuration file %s", cfgfile.c_str()));
-        RTF_TEST_REPORT(RTF::Asserter::format("Loading configuration from %s", cfgfile.c_str()));
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(cfgfile.size(),
+                                                    ::robottestingframework::Asserter::format("Cannot find configuration file %s", cfgfile.c_str()));
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT(::robottestingframework::Asserter::format("Loading configuration from %s", cfgfile.c_str()));
         // update the properties with environment
         property.fromConfigFile(cfgfile.c_str(), envprop);
     } else {
@@ -92,7 +92,7 @@ bool yarp::rtf::TestCase::setup(int argc, char** argv)
     return setup(property);
 }
 
-bool yarp::rtf::TestCase::setup(yarp::os::Property& property)
+bool yarp::robottestingframework::TestCase::setup(yarp::os::Property& property)
 {
     return false;
 }

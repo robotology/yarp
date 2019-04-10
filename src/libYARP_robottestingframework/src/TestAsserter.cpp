@@ -6,27 +6,27 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/rtf/TestAsserter.h>
+#include <yarp/robottestingframework/TestAsserter.h>
 #include <yarp/sig/Vector.h>
-#include <rtf/TestAssert.h>
+#include <robottestingframework/TestAssert.h>
 #include <cmath>
 
 
-class yarp::rtf::TestAsserter::Private
+class yarp::robottestingframework::TestAsserter::Private
 {
 };
 
-yarp::rtf::TestAsserter::TestAsserter() :
+yarp::robottestingframework::TestAsserter::TestAsserter() :
         mPriv(new Private)
 {
 }
 
-yarp::rtf::TestAsserter::~TestAsserter()
+yarp::robottestingframework::TestAsserter::~TestAsserter()
 {
     delete mPriv;
 }
 
-bool yarp::rtf::TestAsserter::isApproxEqual(const double *left,
+bool yarp::robottestingframework::TestAsserter::isApproxEqual(const double *left,
                                             const double *right,
                                             const double *thresholds,
                                             int lenght)
@@ -34,7 +34,7 @@ bool yarp::rtf::TestAsserter::isApproxEqual(const double *left,
     return isApproxEqual(left, right, thresholds, thresholds, lenght);
 }
 
-bool yarp::rtf::TestAsserter::isApproxEqual(const double *left,
+bool yarp::robottestingframework::TestAsserter::isApproxEqual(const double *left,
                                             const double *right,
                                             const double *l_thresholds,
                                             const double *h_thresholds,
@@ -51,18 +51,18 @@ bool yarp::rtf::TestAsserter::isApproxEqual(const double *left,
 }
 
 
-bool yarp::rtf::TestAsserter::isApproxEqual(const yarp::sig::Vector &left,
+bool yarp::robottestingframework::TestAsserter::isApproxEqual(const yarp::sig::Vector &left,
                                             const yarp::sig::Vector &right,
                                             const yarp::sig::Vector &thresholds)
 {
     if (left.size() != right.size() && right.size() != thresholds.size()) {
-        RTF_ASSERT_ERROR("yarp::rtf::TestAsserter::isApproxEqual : vectors must have same size!");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("yarp::robottestingframework::TestAsserter::isApproxEqual : vectors must have same size!");
         return false;
     }
     return isApproxEqual(left.data(), right.data(), thresholds.data(), left.size());
 }
 
-bool yarp::rtf::TestAsserter::isApproxEqual(double left,
+bool yarp::robottestingframework::TestAsserter::isApproxEqual(double left,
                                             double right,
                                             double l_th,
                                             double h_th)

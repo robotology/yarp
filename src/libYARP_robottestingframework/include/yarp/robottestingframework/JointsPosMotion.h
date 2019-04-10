@@ -6,23 +6,23 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_RTF_JOINTSPOSMOVE_H
-#define YARP_RTF_JOINTSPOSMOVE_H
+#ifndef YARP_ROBOTTESTINGFRAMEWORK_JOINTSPOSMOVE_H
+#define YARP_ROBOTTESTINGFRAMEWORK_JOINTSPOSMOVE_H
 
-#include <yarp/rtf/api.h>
+#include <yarp/robottestingframework/api.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/PolyDriver.h>
 #include <string>
 
 namespace yarp {
-namespace rtf {
+namespace robottestingframework {
 
 /**
  * \brief The JointPosMotion class is used
  * has been created to simplify and speed up development of tests
  * that controls joints in position.
  */
-class YARP_rtf_API jointsPosMotion {
+class YARP_robottestingframework_API jointsPosMotion {
 public:
     //jointsPosMotion();
 
@@ -116,7 +116,7 @@ private:
     Private * const mPriv;
 };
 
-} // namespace rtf
+} // namespace robottestingframework
 } // namespace yarp
 
-#endif // YARP_RTF_JOINTSPOSMOVE_H
+#endif // YARP_ROBOTTESTINGFRAMEWORK_JOINTSPOSMOVE_H

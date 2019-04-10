@@ -6,16 +6,16 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_RTF_YARPTESTCASE_H
-#define YARP_RTF_YARPTESTCASE_H
+#ifndef YARP_ROBOTTESTINGFRAMEWORK_YARPTESTCASE_H
+#define YARP_ROBOTTESTINGFRAMEWORK_YARPTESTCASE_H
 
-#include <yarp/rtf/api.h>
+#include <yarp/robottestingframework/api.h>
 #include <yarp/os/Property.h>
-#include <rtf/TestCase.h>
+#include <robottestingframework/TestCase.h>
 #include <string>
 
 namespace yarp {
-namespace rtf {
+namespace robottestingframework {
 
 /**
  * @brief The YarpTestCase is a helper class to facilitate loading the tests
@@ -28,10 +28,10 @@ namespace rtf {
  * \<environment> \</environment> tag within suite XML file, that will be used
  * to updated the properties from the main config file.
  *
- * Please see RTF example folder for how to develop a simple test plugin for
- * YARP.
+ * Please see RobotTestingFramework example folder for how to develop a simple
+ * test plugin for YARP.
  */
-class YARP_rtf_API TestCase : public RTF::TestCase {
+class YARP_robottestingframework_API TestCase : public ::robottestingframework::TestCase {
 public:
     TestCase(std::string name);
     virtual ~TestCase();
@@ -44,7 +44,7 @@ private:
     Private * const mPriv;
 };
 
-} // namespace rtf
+} // namespace robottestingframework
 } // namespace yarp
 
-#endif // YARP_RTF_YARPTESTCASE_H
+#endif // YARP_ROBOTTESTINGFRAMEWORK_YARPTESTCASE_H

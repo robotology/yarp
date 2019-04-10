@@ -6,20 +6,20 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_RTF_YARPTESTASSERTER_H
-#define YARP_RTF_YARPTESTASSERTER_H
+#ifndef YARP_ROBOTTESTINGFRAMEWORK_YARPTESTASSERTER_H
+#define YARP_ROBOTTESTINGFRAMEWORK_YARPTESTASSERTER_H
 
-#include <yarp/rtf/api.h>
+#include <yarp/robottestingframework/api.h>
 #include <yarp/sig/Vector.h>
 
 namespace yarp {
-namespace rtf {
+namespace robottestingframework {
 
 /**
- * @brief The yarp::rtf::TestAsserter class is used to throw exception or to
- * report messages/failures to a TestResult.
+ * @brief The yarp::robottestingframework::TestAsserter class is used to throw
+ * exception or to report messages/failures to a TestResult.
  */
-class YARP_rtf_API TestAsserter
+class YARP_robottestingframework_API TestAsserter
 {
 public:
     explicit TestAsserter();
@@ -103,7 +103,7 @@ private:
 };
 
 
-} // namespace rtf
+} // namespace robottestingframework
 } // namespace yarp
 
-#endif // YARP_RTF_YARPTESTASSERTER_H
+#endif // YARP_ROBOTTESTINGFRAMEWORK_YARPTESTASSERTER_H

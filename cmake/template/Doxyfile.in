@@ -175,7 +175,7 @@ STRIP_FROM_INC_PATH    = @CMAKE_BINARY_DIR@/src/libYARP_conf/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_cv/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_rosmsg/idl_generated_code/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_run/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_rtf/include/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/include/ \
                          @CMAKE_SOURCE_DIR@/src/devices \
                          @CMAKE_SOURCE_DIR@/src/carriers \
                          @CMAKE_SOURCE_DIR@/doc \
@@ -819,8 +819,8 @@ INPUT                  = @CMAKE_BINARY_DIR@/src/libYARP_conf/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_rosmsg/idl_generated_code/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_run/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_run/src/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_rtf/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_rtf/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/include/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/src/ \
                          @CMAKE_SOURCE_DIR@/src/devices \
                          @CMAKE_SOURCE_DIR@/src/carriers \
                          @CMAKE_SOURCE_DIR@/doc \
@@ -2091,7 +2091,7 @@ INCLUDE_PATH           = @CMAKE_BINARY_DIR@/src/libYARP_conf/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_cv/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_rosmsg/idl_generated_code/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_run/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_rtf/include/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/include/ \
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard
 # patterns (like *.h and *.hpp) to filter out the header-files in the

@@ -6,20 +6,20 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/rtf/JointsPosMotion.h>
+#include <yarp/robottestingframework/JointsPosMotion.h>
 
 #include <yarp/os/Time.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
-#include <rtf/TestAssert.h>
+#include <robottestingframework/TestAssert.h>
 
 #include <cmath>
 
 using yarp::dev::VOCAB_IM_STIFF;
 
-class yarp::rtf::jointsPosMotion::Private
+class yarp::robottestingframework::jointsPosMotion::Private
 {
 public:
     void init(yarp::dev::PolyDriver *polydriver);
@@ -44,7 +44,7 @@ public:
 };
 
 
-void yarp::rtf::jointsPosMotion::Private::init(yarp::dev::PolyDriver *polydriver)
+void yarp::robottestingframework::jointsPosMotion::Private::init(yarp::dev::PolyDriver *polydriver)
 {
     jointsList = 0;
     n_joints = 0;
@@ -55,16 +55,16 @@ void yarp::rtf::jointsPosMotion::Private::init(yarp::dev::PolyDriver *polydriver
     timeout = 5.0;
 
     dd = polydriver;
-    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(), "Unable to open device driver");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ienc), "Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos), "Unable to open position interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd), "Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd), "Unable to open interaction mode interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ilim), "Unable to open limits interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->isValid(), "Unable to open device driver");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ienc), "Unable to open encoders interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ipos), "Unable to open position interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(icmd), "Unable to open control mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iimd), "Unable to open interaction mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ilim), "Unable to open limits interface");
 }
 
 
-size_t yarp::rtf::jointsPosMotion::Private::getIndexOfJoint(int j)
+size_t yarp::robottestingframework::jointsPosMotion::Private::getIndexOfJoint(int j)
 {
     for(size_t i = 0; i < n_joints; i++) {
         if(jointsList[i] == j) {
@@ -75,7 +75,7 @@ size_t yarp::rtf::jointsPosMotion::Private::getIndexOfJoint(int j)
 }
 
 
-void yarp::rtf::jointsPosMotion::Private::readJointsLimits()
+void yarp::robottestingframework::jointsPosMotion::Private::readJointsLimits()
 {
     max_lims.resize(n_joints);
     min_lims.resize(n_joints);
@@ -87,7 +87,7 @@ void yarp::rtf::jointsPosMotion::Private::readJointsLimits()
 
 
 
-yarp::rtf::jointsPosMotion::jointsPosMotion(yarp::dev::PolyDriver *polydriver, yarp::sig::Vector &jlist) :
+yarp::robottestingframework::jointsPosMotion::jointsPosMotion(yarp::dev::PolyDriver *polydriver, yarp::sig::Vector &jlist) :
         mPriv(new Private)
 {
     mPriv->init(polydriver);
@@ -108,19 +108,19 @@ yarp::rtf::jointsPosMotion::jointsPosMotion(yarp::dev::PolyDriver *polydriver, y
 
 
 
-yarp::rtf::jointsPosMotion::~jointsPosMotion()
+yarp::robottestingframework::jointsPosMotion::~jointsPosMotion()
 {
     delete mPriv;
 }
 
 
-void yarp::rtf::jointsPosMotion::setTolerance(double tolerance)
+void yarp::robottestingframework::jointsPosMotion::setTolerance(double tolerance)
 {
     mPriv->tolerance = tolerance;
 }
 
 
-bool yarp::rtf::jointsPosMotion::setAndCheckPosControlMode()
+bool yarp::robottestingframework::jointsPosMotion::setAndCheckPosControlMode()
 {
     for (size_t i = 0; i < mPriv->jointsList.size(); i++) {
         mPriv->icmd->setControlMode((int)mPriv->jointsList[i], VOCAB_CM_POSITION);
@@ -145,7 +145,7 @@ bool yarp::rtf::jointsPosMotion::setAndCheckPosControlMode()
             break;
         }
         if (yarp::os::Time::now() - time_started > mPriv->timeout) {
-            RTF_ASSERT_ERROR("Unable to set control mode/interaction mode");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Unable to set control mode/interaction mode");
         }
 
         yarp::os::Time::delay(0.2);
@@ -156,16 +156,16 @@ bool yarp::rtf::jointsPosMotion::setAndCheckPosControlMode()
 }
 
 
-void yarp::rtf::jointsPosMotion::setTimeout(double timeout)
+void yarp::robottestingframework::jointsPosMotion::setTimeout(double timeout)
 {
     mPriv->timeout = timeout;
 }
 
 
 
-void yarp::rtf::jointsPosMotion::setSpeed(yarp::sig::Vector &speedlist)
+void yarp::robottestingframework::jointsPosMotion::setSpeed(yarp::sig::Vector &speedlist)
 {
-    RTF_ASSERT_ERROR_IF_FALSE((speedlist.size() != mPriv->jointsList.size()), "Speed list has a different size of joint list");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE((speedlist.size() != mPriv->jointsList.size()), "Speed list has a different size of joint list");
     mPriv->speed = speedlist;
     for (size_t i = 0; i < mPriv->n_joints; i++) {
         mPriv->ipos->setRefSpeed((int)mPriv->jointsList[i], mPriv->speed[i]);
@@ -173,10 +173,10 @@ void yarp::rtf::jointsPosMotion::setSpeed(yarp::sig::Vector &speedlist)
 }
 
 
-bool yarp::rtf::jointsPosMotion::goToSingle(int j, double pos, double *reached_pos)
+bool yarp::robottestingframework::jointsPosMotion::goToSingle(int j, double pos, double *reached_pos)
 {
     size_t i = mPriv->getIndexOfJoint(j);
-    RTF_ASSERT_ERROR_IF_FALSE(i < mPriv->n_joints, "Cannot move a joint not in list.");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(i < mPriv->n_joints, "Cannot move a joint not in list.");
 
     mPriv->ipos->positionMove((int)mPriv->jointsList[i], pos);
     double tmp = 0;
@@ -204,7 +204,7 @@ bool yarp::rtf::jointsPosMotion::goToSingle(int j, double pos, double *reached_p
 }
 
 
-bool yarp::rtf::jointsPosMotion::goTo(yarp::sig::Vector positions, yarp::sig::Vector *reached_pos)
+bool yarp::robottestingframework::jointsPosMotion::goTo(yarp::sig::Vector positions, yarp::sig::Vector *reached_pos)
 {
     for (unsigned int i=0; i<mPriv->n_joints; i++) {
         mPriv->ipos->positionMove((int)mPriv->jointsList[i], positions[i]);
@@ -240,11 +240,11 @@ bool yarp::rtf::jointsPosMotion::goTo(yarp::sig::Vector positions, yarp::sig::Ve
 
 
 
-bool yarp::rtf::jointsPosMotion::checkJointLimitsReached(int j)
+bool yarp::robottestingframework::jointsPosMotion::checkJointLimitsReached(int j)
 {
     size_t i = mPriv->getIndexOfJoint(j);
 
-    RTF_ASSERT_ERROR_IF_FALSE(i < mPriv->n_joints, "Cannot move a joint not in list.");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(i < mPriv->n_joints, "Cannot move a joint not in list.");
 
     double enc=0;
     mPriv->ienc->getEncoder((int)mPriv->jointsList[i], &enc);

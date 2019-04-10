@@ -131,11 +131,6 @@ option(YARP_COMPILE_EXECUTABLES "Enable YARP executables." ON)
 
 
 #########################################################################
-# Add the option to build Robot Testing Framework addons
-option(YARP_COMPILE_RTF_ADDONS "Compile Robot Testing Framework addons." OFF)
-
-
-#########################################################################
 # Disable unmaintained stuff unless explicitly enabled by the user.
 
 option(YARP_COMPILE_UNMAINTAINED "Enable unmaintained components" OFF)
