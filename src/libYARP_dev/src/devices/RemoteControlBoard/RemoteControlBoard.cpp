@@ -49,7 +49,6 @@ namespace yarp{
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 const double DIAGNOSTIC_THREAD_PERIOD=1.000;
-const double TIMEOUT=0.5;
 
 inline bool getTimeStamp(Bottle &bot, Stamp &st)
 {
@@ -986,6 +985,10 @@ public:
         remote = config.find("remote").asString();
         local = config.find("local").asString();
 
+        if (config.check("timeout"))
+        {
+            extendedIntputStatePort.setTimeout(config.find("timeout").asFloat64());
+        }
         // check the Qos perefernces if available (local and remote)
         yarp::os::QosStyle localQos;
         if (config.check("local_qos")) {
@@ -1478,10 +1481,6 @@ public:
         extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_ENCODER, v, lastStamp, localArrivalTime);
         extendedPortMutex.unlock();
-
-        if (ret && ( (Time::now()-localArrivalTime) > TIMEOUT) )
-            ret = false;
-
         return ret;
     }
 
@@ -1499,10 +1498,6 @@ public:
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_ENCODER, v, lastStamp, localArrivalTime);
         *t=lastStamp.getTime();
         extendedPortMutex.unlock();
-
-        if (ret && ( (Time::now()-localArrivalTime) > TIMEOUT) )
-            ret = false;
-
         return ret;
     }
 
@@ -1538,10 +1533,6 @@ public:
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_ENCODERS, encs, lastStamp, localArrivalTime);
         std::fill_n(ts, nj, lastStamp.getTime());
         extendedPortMutex.unlock();
-
-        if ( (Time::now()-localArrivalTime) > TIMEOUT)
-            ret=false;
-
         return ret;
     }
     /**
@@ -1750,10 +1741,6 @@ public:
         extendedPortMutex.lock();
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_MOTOR_ENCODER, v, lastStamp, localArrivalTime);
         extendedPortMutex.unlock();
-
-        if(ret && ((Time::now()-localArrivalTime) > TIMEOUT) )
-            ret=false;
-
         return ret;
     }
 
@@ -1771,10 +1758,6 @@ public:
         bool ret = extendedIntputStatePort.getLastSingle(j, VOCAB_MOTOR_ENCODER, v, lastStamp, localArrivalTime);
         *t=lastStamp.getTime();
         extendedPortMutex.unlock();
-
-        if(ret && ((Time::now()-localArrivalTime) > TIMEOUT) )
-            ret=false;
-
         return ret;
     }
 
@@ -1812,10 +1795,6 @@ public:
         bool ret = extendedIntputStatePort.getLastVector(VOCAB_MOTOR_ENCODERS, encs, lastStamp, localArrivalTime);
         std::fill_n(ts, nj, lastStamp.getTime());
         extendedPortMutex.unlock();
-
-        if(ret && ((Time::now()-localArrivalTime) > TIMEOUT) )
-            ret=false;
-
         return ret;
     }
     /**
