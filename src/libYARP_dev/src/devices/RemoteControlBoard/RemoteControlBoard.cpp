@@ -985,6 +985,10 @@ public:
         remote = config.find("remote").asString();
         local = config.find("local").asString();
 
+        if (config.check("timeout"))
+        {
+            extendedIntputStatePort.setTimeout(config.find("timeout").asFloat64());
+        }
         // check the Qos perefernces if available (local and remote)
         yarp::os::QosStyle localQos;
         if (config.check("local_qos")) {

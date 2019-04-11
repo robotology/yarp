@@ -35,7 +35,6 @@
 
 // encoders should arrive at least every 0.5s to be considered valide
 // getEncoders will return false otherwise.
-const double TIMEOUT_EXT=0.5;
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -49,8 +48,9 @@ class StateExtendedInputPort:public yarp::os::BufferedPort<jointData>
     double deltaT;
     double deltaTMax;
     double deltaTMin;
-    double prev;
     double now;
+    double prev;
+    double timeout;
 
     bool valid;
     int count;
@@ -63,6 +63,12 @@ public:
 
     using yarp::os::BufferedPort<jointData>::onRead;
     void onRead(jointData &v) override;
+
+    /**
+     * @brief setTimeout, set the timeout for retrieving data
+     * @param timeout in seconds
+     */
+    void setTimeout(const double& timeout);
 
     // use vocab to identify the data to be read
     // get a value for a single joint
