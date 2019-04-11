@@ -22,7 +22,8 @@ set(_inis controlboardwrapper2_basic.ini
           portaudio_basic.ini
           remote_grabber_basic.ini
           test_grabber_basic.ini
-          test_motor_basic.ini)
+          test_motor_basic.ini
+          usbCamera.ini)
 
 if(YARP_ENABLE_BROKEN_TESTS)
   # Randomly fails with a segmentation fault
