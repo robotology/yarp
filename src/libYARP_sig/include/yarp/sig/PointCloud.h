@@ -448,6 +448,15 @@ private:
     }
 };
 
+using PointCloudXY               = PointCloud<DataXY>;
+using PointCloudXYZ              = PointCloud<DataXYZ>;
+using PointCloudNormal           = PointCloud<DataNormal>;
+using PointCloudXYZRGBA          = PointCloud<DataXYZRGBA>;
+using PointCloudXYZI             = PointCloud<DataXYZI>;
+using PointCloudInterestPointXYZ = PointCloud<DataInterestPointXYZ>;
+using PointCloudXYZNormal        = PointCloud<DataXYZNormal>;
+using PointCloudXYZNormalRGBA    = PointCloud<DataXYZNormalRGBA>;
+
 } // namespace sig
 } // namespace yarp
 
