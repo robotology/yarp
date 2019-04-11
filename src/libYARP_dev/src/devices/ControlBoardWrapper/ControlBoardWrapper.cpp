@@ -4559,7 +4559,7 @@ bool ControlBoardWrapper::getRefVelocities(const int n_joints, const int* joints
 
     for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
     {
-        if(rpcData.subdevices_p[subIndex]->posDir)
+        if(rpcData.subdevices_p[subIndex]->vel)
         {
             ret= ret && rpcData.subdevices_p[subIndex]->vel->getRefVelocities( rpcData.subdev_jointsVectorLen[subIndex],
                                                                                 rpcData.jointNumbers[subIndex],
@@ -4733,7 +4733,7 @@ bool ControlBoardWrapper::setInteractionModes(int n_joints, int *joints, yarp::d
 
     for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
     {
-        if(rpcData.subdevices_p[subIndex]->vel)
+        if(rpcData.subdevices_p[subIndex]->iInteract)
         {
             ret= ret && rpcData.subdevices_p[subIndex]->iInteract->setInteractionModes( rpcData.subdev_jointsVectorLen[subIndex],
                                                                                         rpcData.jointNumbers[subIndex],
