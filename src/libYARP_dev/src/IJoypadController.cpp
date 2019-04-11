@@ -406,8 +406,8 @@ bool yarp::dev::IJoypadController::executeAction(int action_id)
 
 bool yarp::dev::IJoypadController::parseActions(const yarp::os::Searchable& cfg, int* count)
 {
-    int  dummy;
-    size_t  i;
+    int dummy = 0;
+    size_t i;
     int& actCount = count ? *count : dummy;
     if(!cfg.check(buttActionGroupName))
     {
