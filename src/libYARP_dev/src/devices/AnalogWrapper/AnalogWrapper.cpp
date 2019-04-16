@@ -65,11 +65,10 @@ bool AnalogServerHandler::_handleIAnalog(yarp::os::Bottle &cmd, yarp::os::Bottle
         ret = is->calibrateSensor();
       else
       {
-        int length = msgsize - 2;
-        Vector v(length);
-        for (int i = 0; i < length; i++)
+        Vector v(msgsize - 2);
+        for (unsigned int i = 0; i < v.size(); i++)
         {
-          v[i] = cmd.get(i).asFloat64();
+          v[i] = cmd.get(i + 2).asFloat64();
         }
         ret = is->calibrateSensor(v);
       }
