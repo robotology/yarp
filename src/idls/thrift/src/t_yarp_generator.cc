@@ -367,13 +367,13 @@ std::string t_yarp_generator::type_to_enum(t_type* type)
         case t_base_type::TYPE_BOOL:
             return "BOTTLE_TAG_VOCAB";
         case t_base_type::TYPE_I8:
-            return "::apache::thrift::protocol::T_BYTE";
+            return "BOTTLE_TAG_INT8";
         case t_base_type::TYPE_I16:
-            return "::apache::thrift::protocol::T_I16";
+            return "BOTTLE_TAG_INT16";
         case t_base_type::TYPE_I32:
             return "BOTTLE_TAG_INT32";
         case t_base_type::TYPE_I64:
-            return "::apache::thrift::protocol::T_I64";
+            return "BOTTLE_TAG_INT64";
         case t_base_type::TYPE_DOUBLE:
             return "BOTTLE_TAG_FLOAT64";
         }
