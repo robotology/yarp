@@ -28,7 +28,11 @@
 #include <algorithm>
 #include <iostream>
 
-#ifdef HAVE_SYS_SELECT_H
+#ifdef HAVE_POLL_H
+#include <poll.h>
+#elif HAVE_SYS_POLL_H
+#include <sys/poll.h>
+#elif HAVE_SYS_SELECT_H
 #include <sys/select.h>
 #endif
 
@@ -472,6 +476,18 @@ void TNonblockingServer::TConnection::workSocket() {
     }
     // size known; now get the rest of the frame
     transition();
+
+    // If the socket has more data than the frame header, continue to work on it. This is not strictly necessary for
+    // regular sockets, because if there is more data, libevent will fire the event handler registered for read
+    // readiness, which will in turn call workSocket(). However, some socket types (such as TSSLSocket) may have the
+    // data sitting in their internal buffers and from libevent's perspective, there is no further data available. In
+    // that case, not having this workSocket() call here would result in a hang as we will never get to work the socket,
+    // despite having more data.
+    if (tSocket_->hasPendingDataToRead())
+    {
+        workSocket();
+    }
+
     return;
 
   case SOCKET_RECV:
@@ -647,6 +663,7 @@ void TNonblockingServer::TConnection::transition() {
         return;
       }
     }
+    // fallthrough
 
   // Intentionally fall through here, the call to process has written into
   // the writeBuffer_
@@ -677,9 +694,6 @@ void TNonblockingServer::TConnection::transition() {
       appState_ = APP_SEND_RESULT;
       setWrite();
 
-      // Try to work the socket immediately
-      // workSocket();
-
       return;
     }
 
@@ -698,6 +712,7 @@ void TNonblockingServer::TConnection::transition() {
                               server_->getIdleWriteBufferLimit());
       callsForResize_ = 0;
     }
+    // fallthrough
 
   // N.B.: We also intentionally fall through here into the INIT state!
 
@@ -717,9 +732,6 @@ void TNonblockingServer::TConnection::transition() {
 
     // Register read event
     setRead();
-
-    // Try to work the socket right away
-    // workSocket();
 
     return;
 
@@ -752,9 +764,6 @@ void TNonblockingServer::TConnection::transition() {
     // Move into read request state
     socketState_ = SOCKET_RECV;
     appState_ = APP_READ_REQUEST;
-
-    // Work the socket right away
-    workSocket();
 
     return;
 
@@ -1063,7 +1072,7 @@ void TNonblockingServer::expireClose(stdcxx::shared_ptr<Runnable> task) {
   connection->forceClose();
 }
 
-void TNonblockingServer::stop() { 
+void TNonblockingServer::stop() {
   // Breaks the event loop in all threads so that they end ASAP.
   for (uint32_t i = 0; i < ioThreads_.size(); ++i) {
     ioThreads_[i]->stop();
@@ -1286,10 +1295,44 @@ bool TNonblockingIOThread::notify(TNonblockingServer::TConnection* conn) {
     return false;
   }
 
-  fd_set wfds, efds;
-  long ret = -1;
+  int ret = -1;
   long kSize = sizeof(conn);
-  const char* pos = reinterpret_cast<const char*>(&conn);
+  const char * pos = (const char *)const_cast_sockopt(&conn);
+
+#if defined(HAVE_POLL_H) || defined(HAVE_SYS_POLL_H)
+  struct pollfd pfd = {fd, POLLOUT, 0};
+
+  while (kSize > 0) {
+    pfd.revents = 0;
+    ret = poll(&pfd, 1, -1);
+    if (ret < 0) {
+      return false;
+    } else if (ret == 0) {
+      continue;
+    }
+
+    if (pfd.revents & POLLHUP || pfd.revents & POLLERR) {
+      ::THRIFT_CLOSESOCKET(fd);
+      return false;
+    }
+
+    if (pfd.revents & POLLOUT) {
+      ret = send(fd, pos, kSize, 0);
+      if (ret < 0) {
+        if (errno == EAGAIN) {
+          continue;
+        }
+
+        ::THRIFT_CLOSESOCKET(fd);
+        return false;
+      }
+
+      kSize -= ret;
+      pos += ret;
+    }
+  }
+#else
+  fd_set wfds, efds;
 
   while (kSize > 0) {
     FD_ZERO(&wfds);
@@ -1323,6 +1366,7 @@ bool TNonblockingIOThread::notify(TNonblockingServer::TConnection* conn) {
       pos += ret;
     }
   }
+#endif
 
   return true;
 }

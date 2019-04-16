@@ -21,6 +21,7 @@ package main
 
 import (
 	"common"
+	"context"
 	"flag"
 	"gen/thrifttest"
 	t "log"
@@ -34,6 +35,7 @@ var domain_socket = flag.String("domain-socket", "", "Domain Socket (e.g. /tmp/t
 var transport = flag.String("transport", "buffered", "Transport: buffered, framed, http, zlib")
 var protocol = flag.String("protocol", "binary", "Protocol: binary, compact, json")
 var ssl = flag.Bool("ssl", false, "Encrypted Transport using SSL")
+var zlib = flag.Bool("zlib", false, "Wrapped Transport using Zlib")
 var testloops = flag.Int("testloops", 1, "Number of Tests")
 
 func main() {
@@ -60,6 +62,7 @@ var xxs = &thrifttest.Xtruct{
 }
 
 var xcept = &thrifttest.Xception{ErrorCode: 1001, Message: "Xception"}
+var defaultCtx = context.Background()
 
 func callEverything(client *thrifttest.ThriftTestClient) {
 	var err error

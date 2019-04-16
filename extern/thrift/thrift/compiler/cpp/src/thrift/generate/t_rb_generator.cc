@@ -113,6 +113,7 @@ public:
   void generate_enum(t_enum* tenum);
   void generate_const(t_const* tconst);
   void generate_struct(t_struct* tstruct);
+  void generate_forward_declaration(t_struct* tstruct);
   void generate_union(t_struct* tunion);
   void generate_xception(t_struct* txception);
   void generate_service(t_service* tservice);
@@ -123,6 +124,7 @@ public:
    * Struct generation code
    */
 
+  void generate_rb_struct_declaration(t_rb_ofstream& out, t_struct* tstruct, bool is_exception);
   void generate_rb_struct(t_rb_ofstream& out, t_struct* tstruct, bool is_exception);
   void generate_rb_struct_required_validator(t_rb_ofstream& out, t_struct* tstruct);
   void generate_rb_union(t_rb_ofstream& out, t_struct* tstruct, bool is_exception);
@@ -455,8 +457,8 @@ t_rb_ofstream& t_rb_generator::render_const_value(t_rb_ofstream& out,
     out.indent_up();
     const vector<t_field*>& fields = ((t_struct*)type)->get_members();
     vector<t_field*>::const_iterator f_iter;
-    const map<t_const_value*, t_const_value*>& val = value->get_map();
-    map<t_const_value*, t_const_value*>::const_iterator v_iter;
+    const map<t_const_value*, t_const_value*, t_const_value::value_compare>& val = value->get_map();
+    map<t_const_value*, t_const_value*, t_const_value::value_compare>::const_iterator v_iter;
     for (v_iter = val.begin(); v_iter != val.end(); ++v_iter) {
       t_type* field_type = NULL;
       for (f_iter = fields.begin(); f_iter != fields.end(); ++f_iter) {
@@ -478,8 +480,8 @@ t_rb_ofstream& t_rb_generator::render_const_value(t_rb_ofstream& out,
     t_type* vtype = ((t_map*)type)->get_val_type();
     out << "{" << endl;
     out.indent_up();
-    const map<t_const_value*, t_const_value*>& val = value->get_map();
-    map<t_const_value*, t_const_value*>::const_iterator v_iter;
+    const map<t_const_value*, t_const_value*, t_const_value::value_compare>& val = value->get_map();
+    map<t_const_value*, t_const_value*, t_const_value::value_compare>::const_iterator v_iter;
     for (v_iter = val.begin(); v_iter != val.end(); ++v_iter) {
       out.indent();
       render_const_value(out, ktype, v_iter->first) << " => ";
@@ -527,6 +529,29 @@ void t_rb_generator::generate_struct(t_struct* tstruct) {
   } else {
     generate_rb_struct(f_types_, tstruct, false);
   }
+}
+
+
+/**
+ * Generates the "forward declarations" for ruby structs.
+ * These are simply a declaration of each class with proper inheritance.
+ * The rest of the struct is still generated in generate_struct as has
+ * always been the case. These declarations allow thrift to generate valid
+ * ruby in cases where thrift structs rely on recursive definitions.
+ */
+void t_rb_generator::generate_forward_declaration(t_struct* tstruct) {
+  generate_rb_struct_declaration(f_types_, tstruct, tstruct->is_xception());
+}
+
+void t_rb_generator::generate_rb_struct_declaration(t_rb_ofstream& out, t_struct* tstruct, bool is_exception) {
+  out.indent() << "class " << type_name(tstruct);
+  if (tstruct->is_union()) {
+    out << " < ::Thrift::Union";
+  }
+  if (is_exception) {
+    out << " < ::Thrift::Exception";
+  }
+  out << "; end" << endl << endl;
 }
 
 /**

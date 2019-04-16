@@ -90,7 +90,7 @@ public:
   std::string escape_html(std::string const& str);
   std::string escape_html_tags(std::string const& str);
   void generate_css();
-  void generate_css_content(std::ofstream& f_target);
+  void generate_css_content(std::ostream& f_target);
   void generate_style_tag();
   std::string make_file_link(std::string name);
   bool is_utf8_sequence(std::string const& str, size_t firstpos);
@@ -114,7 +114,7 @@ public:
   void print_fn_args_doc(t_function* tfunction);
 
 private:
-  std::ofstream f_out_;
+  ofstream_with_content_based_conditional_update f_out_;
   std::string current_file_;
   input_type input_type_;
   std::map<std::string, int> allowed_markup;
@@ -359,7 +359,7 @@ void t_html_generator::generate_css() {
   }
 }
 
-void t_html_generator::generate_css_content(std::ofstream& f_target) {
+void t_html_generator::generate_css_content(std::ostream& f_target) {
   f_target << BOOTSTRAP_CSS() << endl;
   f_target << "/* Auto-generated CSS for generated Thrift docs */" << endl;
   f_target << "h3, h4 { margin-bottom: 6px; }" << endl;
@@ -777,8 +777,8 @@ void t_html_generator::print_const_value(t_type* type, t_const_value* tvalue) {
     f_out_ << "{ ";
     const vector<t_field*>& fields = ((t_struct*)truetype)->get_members();
     vector<t_field*>::const_iterator f_iter;
-    const map<t_const_value*, t_const_value*>& val = tvalue->get_map();
-    map<t_const_value*, t_const_value*>::const_iterator v_iter;
+    const map<t_const_value*, t_const_value*, t_const_value::value_compare>& val = tvalue->get_map();
+    map<t_const_value*, t_const_value*, t_const_value::value_compare>::const_iterator v_iter;
     for (v_iter = val.begin(); v_iter != val.end(); ++v_iter) {
       t_type* field_type = NULL;
       for (f_iter = fields.begin(); f_iter != fields.end(); ++f_iter) {
@@ -800,8 +800,8 @@ void t_html_generator::print_const_value(t_type* type, t_const_value* tvalue) {
     f_out_ << " }";
   } else if (truetype->is_map()) {
     f_out_ << "{ ";
-    map<t_const_value*, t_const_value*> map_elems = tvalue->get_map();
-    map<t_const_value*, t_const_value*>::iterator map_iter;
+    map<t_const_value*, t_const_value*, t_const_value::value_compare> map_elems = tvalue->get_map();
+    map<t_const_value*, t_const_value*, t_const_value::value_compare>::iterator map_iter;
     for (map_iter = map_elems.begin(); map_iter != map_elems.end(); map_iter++) {
       if (!first) {
         f_out_ << ", ";

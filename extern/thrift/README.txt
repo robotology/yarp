@@ -29,4 +29,8 @@ License: Apache-2.0
  specific language governing permissions and limitations
  under the License.
 
-Version: 0.11.0
+Version: 0.12.0
+
+Patches:
+
+* Removed compiler/cpp/src/thrift/version.h file

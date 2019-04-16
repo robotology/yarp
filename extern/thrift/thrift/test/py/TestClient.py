@@ -32,8 +32,18 @@ SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 class AbstractTest(unittest.TestCase):
     def setUp(self):
-        if options.http_path:
-            self.transport = THttpClient.THttpClient(options.host, port=options.port, path=options.http_path)
+        if options.trans == 'http':
+            uri = '{0}://{1}:{2}{3}'.format(('https' if options.ssl else 'http'),
+                                            options.host,
+                                            options.port,
+                                            (options.http_path if options.http_path else '/'))
+            if options.ssl:
+                __cafile = os.path.join(os.path.dirname(SCRIPT_DIR), "keys", "CA.pem")
+                __certfile = os.path.join(os.path.dirname(SCRIPT_DIR), "keys", "client.crt")
+                __keyfile = os.path.join(os.path.dirname(SCRIPT_DIR), "keys", "client.key")
+                self.transport = THttpClient.THttpClient(uri, cafile=__cafile, cert_file=__certfile, key_file=__keyfile)
+            else:
+                self.transport = THttpClient.THttpClient(uri)
         else:
             if options.ssl:
                 from thrift.transport import TSSLSocket
@@ -53,6 +63,9 @@ class AbstractTest(unittest.TestCase):
         self.transport.open()
         protocol = self.get_protocol(self.transport)
         self.client = ThriftTest.Client(protocol)
+        # for multiplexed services:
+        protocol2 = self.get_protocol2(self.transport)
+        self.client2 = SecondService.Client(protocol2) if protocol2 is not None else None
 
     def tearDown(self):
         self.transport.close()
@@ -96,6 +109,11 @@ class AbstractTest(unittest.TestCase):
             s2 = s2.encode('utf8')
         self.assertEqual(self.client.testString(s1), s1)
         self.assertEqual(self.client.testString(s2), s2)
+
+    def testMultiplexed(self):
+        if self.client2 is not None:
+            print('testMultiplexed')
+            self.assertEqual(self.client2.secondtestString('foobar'), 'testString("foobar")')
 
     def testBool(self):
         print('testBool')
@@ -250,44 +268,117 @@ class AbstractTest(unittest.TestCase):
         self.assertEqual(self.client.testString('Python'), 'Python')
 
 
-class NormalBinaryTest(AbstractTest):
+class MultiplexedOptionalTest(AbstractTest):
+    def get_protocol2(self, transport):
+        return None
+
+
+class BinaryTest(MultiplexedOptionalTest):
     def get_protocol(self, transport):
         return TBinaryProtocol.TBinaryProtocolFactory().getProtocol(transport)
 
 
-class CompactTest(AbstractTest):
+class MultiplexedBinaryTest(MultiplexedOptionalTest):
     def get_protocol(self, transport):
-        return TCompactProtocol.TCompactProtocolFactory().getProtocol(transport)
+        wrapped_proto = TBinaryProtocol.TBinaryProtocolFactory().getProtocol(transport)
+        return TMultiplexedProtocol.TMultiplexedProtocol(wrapped_proto, "ThriftTest")
+
+    def get_protocol2(self, transport):
+        wrapped_proto = TBinaryProtocol.TBinaryProtocolFactory().getProtocol(transport)
+        return TMultiplexedProtocol.TMultiplexedProtocol(wrapped_proto, "SecondService")
 
 
-class JSONTest(AbstractTest):
-    def get_protocol(self, transport):
-        return TJSONProtocol.TJSONProtocolFactory().getProtocol(transport)
-
-
-class AcceleratedBinaryTest(AbstractTest):
+class AcceleratedBinaryTest(MultiplexedOptionalTest):
     def get_protocol(self, transport):
         return TBinaryProtocol.TBinaryProtocolAcceleratedFactory(fallback=False).getProtocol(transport)
 
 
-class AcceleratedCompactTest(AbstractTest):
+class MultiplexedAcceleratedBinaryTest(MultiplexedOptionalTest):
+    def get_protocol(self, transport):
+        wrapped_proto = TBinaryProtocol.TBinaryProtocolAcceleratedFactory(fallback=False).getProtocol(transport)
+        return TMultiplexedProtocol.TMultiplexedProtocol(wrapped_proto, "ThriftTest")
+
+    def get_protocol2(self, transport):
+        wrapped_proto = TBinaryProtocol.TBinaryProtocolAcceleratedFactory(fallback=False).getProtocol(transport)
+        return TMultiplexedProtocol.TMultiplexedProtocol(wrapped_proto, "SecondService")
+
+
+class CompactTest(MultiplexedOptionalTest):
+    def get_protocol(self, transport):
+        return TCompactProtocol.TCompactProtocolFactory().getProtocol(transport)
+
+
+class MultiplexedCompactTest(MultiplexedOptionalTest):
+    def get_protocol(self, transport):
+        wrapped_proto = TCompactProtocol.TCompactProtocolFactory().getProtocol(transport)
+        return TMultiplexedProtocol.TMultiplexedProtocol(wrapped_proto, "ThriftTest")
+
+    def get_protocol2(self, transport):
+        wrapped_proto = TCompactProtocol.TCompactProtocolFactory().getProtocol(transport)
+        return TMultiplexedProtocol.TMultiplexedProtocol(wrapped_proto, "SecondService")
+
+
+class AcceleratedCompactTest(MultiplexedOptionalTest):
     def get_protocol(self, transport):
         return TCompactProtocol.TCompactProtocolAcceleratedFactory(fallback=False).getProtocol(transport)
+
+
+class MultiplexedAcceleratedCompactTest(MultiplexedOptionalTest):
+    def get_protocol(self, transport):
+        wrapped_proto = TCompactProtocol.TCompactProtocolAcceleratedFactory(fallback=False).getProtocol(transport)
+        return TMultiplexedProtocol.TMultiplexedProtocol(wrapped_proto, "ThriftTest")
+
+    def get_protocol2(self, transport):
+        wrapped_proto = TCompactProtocol.TCompactProtocolAcceleratedFactory(fallback=False).getProtocol(transport)
+        return TMultiplexedProtocol.TMultiplexedProtocol(wrapped_proto, "SecondService")
+
+
+class JSONTest(MultiplexedOptionalTest):
+    def get_protocol(self, transport):
+        return TJSONProtocol.TJSONProtocolFactory().getProtocol(transport)
+
+
+class MultiplexedJSONTest(MultiplexedOptionalTest):
+    def get_protocol(self, transport):
+        wrapped_proto = TJSONProtocol.TJSONProtocolFactory().getProtocol(transport)
+        return TMultiplexedProtocol.TMultiplexedProtocol(wrapped_proto, "ThriftTest")
+
+    def get_protocol2(self, transport):
+        wrapped_proto = TJSONProtocol.TJSONProtocolFactory().getProtocol(transport)
+        return TMultiplexedProtocol.TMultiplexedProtocol(wrapped_proto, "SecondService")
+
+
+class HeaderTest(MultiplexedOptionalTest):
+    def get_protocol(self, transport):
+        factory = THeaderProtocol.THeaderProtocolFactory()
+        return factory.getProtocol(transport)
 
 
 def suite():
     suite = unittest.TestSuite()
     loader = unittest.TestLoader()
     if options.proto == 'binary':  # look for --proto on cmdline
-        suite.addTest(loader.loadTestsFromTestCase(NormalBinaryTest))
+        suite.addTest(loader.loadTestsFromTestCase(BinaryTest))
     elif options.proto == 'accel':
         suite.addTest(loader.loadTestsFromTestCase(AcceleratedBinaryTest))
-    elif options.proto == 'compact':
-        suite.addTest(loader.loadTestsFromTestCase(CompactTest))
     elif options.proto == 'accelc':
         suite.addTest(loader.loadTestsFromTestCase(AcceleratedCompactTest))
+    elif options.proto == 'compact':
+        suite.addTest(loader.loadTestsFromTestCase(CompactTest))
+    elif options.proto == 'header':
+        suite.addTest(loader.loadTestsFromTestCase(HeaderTest))
     elif options.proto == 'json':
         suite.addTest(loader.loadTestsFromTestCase(JSONTest))
+    elif options.proto == 'multi':
+        suite.addTest(loader.loadTestsFromTestCase(MultiplexedBinaryTest))
+    elif options.proto == 'multia':
+        suite.addTest(loader.loadTestsFromTestCase(MultiplexedAcceleratedBinaryTest))
+    elif options.proto == 'multiac':
+        suite.addTest(loader.loadTestsFromTestCase(MultiplexedAcceleratedCompactTest))
+    elif options.proto == 'multic':
+        suite.addTest(loader.loadTestsFromTestCase(MultiplexedCompactTest))
+    elif options.proto == 'multij':
+        suite.addTest(loader.loadTestsFromTestCase(MultiplexedJSONTest))
     else:
         raise AssertionError('Unknown protocol given with --protocol: %s' % options.proto)
     return suite
@@ -325,9 +416,9 @@ if __name__ == "__main__":
                       dest="verbose", const=0,
                       help="minimal output")
     parser.add_option('--protocol', dest="proto", type="string",
-                      help="protocol to use, one of: accel, binary, compact, json")
+                      help="protocol to use, one of: accel, accelc, binary, compact, header, json, multi, multia, multiac, multic, multij")
     parser.add_option('--transport', dest="trans", type="string",
-                      help="transport to use, one of: buffered, framed")
+                      help="transport to use, one of: buffered, framed, http")
     parser.set_defaults(framed=False, http_path=None, verbose=1, host='localhost', port=9090, proto='binary')
     options, args = parser.parse_args()
 
@@ -335,6 +426,10 @@ if __name__ == "__main__":
         sys.path.insert(0, os.path.join(SCRIPT_DIR, options.genpydir))
     sys.path.insert(0, local_libpath())
 
+    if options.http_path:
+        options.trans = 'http'
+
+    from ThriftTest import SecondService
     from ThriftTest import ThriftTest
     from ThriftTest.ttypes import Xtruct, Xtruct2, Numberz, Xception, Xception2
     from thrift.Thrift import TException
@@ -344,6 +439,8 @@ if __name__ == "__main__":
     from thrift.transport import TZlibTransport
     from thrift.protocol import TBinaryProtocol
     from thrift.protocol import TCompactProtocol
+    from thrift.protocol import THeaderProtocol
     from thrift.protocol import TJSONProtocol
+    from thrift.protocol import TMultiplexedProtocol
 
     OwnArgsTestProgram(defaultTest="suite", testRunner=unittest.TextTestRunner(verbosity=1))

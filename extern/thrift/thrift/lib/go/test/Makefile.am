@@ -17,10 +17,6 @@
 # under the License.
 #
 
-if GOVERSION_LT_17
-COMPILER_EXTRAFLAG=",legacy_context"
-endif
-
 THRIFTARGS = -out gopath/src/ --gen go:thrift_import=thrift$(COMPILER_EXTRAFLAG)
 THRIFTTEST = $(top_srcdir)/test/ThriftTest.thrift
 
@@ -31,11 +27,13 @@ gopath: $(THRIFT) $(THRIFTTEST) \
 				MultiplexedProtocolTest.thrift \
 				OnewayTest.thrift \
 				OptionalFieldsTest.thrift \
+				RequiredFieldTest.thrift \
 				ServicesTest.thrift \
 				GoTagTest.thrift \
 				TypedefFieldTest.thrift \
 				RefAnnotationFieldsTest.thrift \
 				UnionDefaultValueTest.thrift \
+				UnionBinaryTest.thrift \
 				ErrorTest.thrift \
 				NamesTest.thrift \
 				InitialismsTest.thrift \
@@ -49,17 +47,18 @@ gopath: $(THRIFT) $(THRIFTTEST) \
 	$(THRIFT) $(THRIFTARGS) MultiplexedProtocolTest.thrift
 	$(THRIFT) $(THRIFTARGS) OnewayTest.thrift
 	$(THRIFT) $(THRIFTARGS) OptionalFieldsTest.thrift
+	$(THRIFT) $(THRIFTARGS) RequiredFieldTest.thrift
 	$(THRIFT) $(THRIFTARGS) ServicesTest.thrift
 	$(THRIFT) $(THRIFTARGS) GoTagTest.thrift
 	$(THRIFT) $(THRIFTARGS) TypedefFieldTest.thrift
 	$(THRIFT) $(THRIFTARGS) RefAnnotationFieldsTest.thrift
 	$(THRIFT) $(THRIFTARGS) UnionDefaultValueTest.thrift
+	$(THRIFT) $(THRIFTARGS) UnionBinaryTest.thrift
 	$(THRIFT) $(THRIFTARGS) ErrorTest.thrift
 	$(THRIFT) $(THRIFTARGS) NamesTest.thrift
 	$(THRIFT) $(THRIFTARGS) InitialismsTest.thrift
 	$(THRIFT) $(THRIFTARGS),read_write_private DontExportRWTest.thrift
 	$(THRIFT) $(THRIFTARGS),ignore_initialisms IgnoreInitialismsTest.thrift
-	GOPATH=`pwd`/gopath $(GO) get golang.org/x/net/context
 	GOPATH=`pwd`/gopath $(GO) get github.com/golang/mock/gomock || true
 	sed -i 's/\"context\"/\"golang.org\/x\/net\/context\"/g' gopath/src/github.com/golang/mock/gomock/controller.go || true
 	GOPATH=`pwd`/gopath $(GO) get github.com/golang/mock/gomock
@@ -79,7 +78,8 @@ check: gopath
 				namestest \
 				initialismstest \
 				dontexportrwtest \
-				ignoreinitialismstest
+				ignoreinitialismstest \
+				unionbinarytest
 	GOPATH=`pwd`/gopath $(GO) test thrift tests dontexportrwtest
 
 clean-local:
@@ -98,8 +98,10 @@ EXTRA_DIST = \
 	NamespacedTest.thrift \
 	OnewayTest.thrift \
 	OptionalFieldsTest.thrift \
+	RequiredFieldTest.thrift \
 	RefAnnotationFieldsTest.thrift \
 	UnionDefaultValueTest.thrift \
+	UnionBinaryTest.thrift \
 	ServicesTest.thrift \
 	TypedefFieldTest.thrift \
 	ErrorTest.thrift \

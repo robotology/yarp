@@ -51,7 +51,7 @@ sub new
 
     if (scalar @args == 2)
     {
-      $self = _init($args[0], $args[1],
+        $self = _init($args[0], $args[1],
                     Thrift::BufferedTransportFactory->new(),
                     Thrift::BufferedTransportFactory->new(),
                     Thrift::BinaryProtocolFactory->new(),
@@ -67,7 +67,7 @@ sub new
     }
     else
     {
-      die new Thrift::TException("Thrift::Server expects exactly 2, 4, or 6 args");
+      die Thrift::TException->new('Thrift::Server expects exactly 2, 4, or 6 args');
     }
 
     return bless($self,$classname);
@@ -94,7 +94,7 @@ sub _init
 
 sub serve
 {
-    die "abstract";
+    die 'abstract';
 }
 
 sub _clientBegin
@@ -115,7 +115,7 @@ sub _handleException
     my $self = shift;
     my $e    = shift;
 
-    if ($e->isa("Thrift::TException") and exists $e->{message}) {
+    if ($e->isa('Thrift::TException') and exists $e->{message}) {
         my $message = $e->{message};
         my $code    = $e->{code};
         my $out     = $code . ':' . $message;
@@ -123,10 +123,12 @@ sub _handleException
         $message =~ m/TTransportException/ and die $out;
         if ($message =~ m/Socket/) {
             # suppress Socket messages
-        } else {
+        }
+        else {
             warn $out;
         }
-    } else {
+    }
+    else {
         warn $e;
     }
 }
@@ -150,27 +152,31 @@ sub new
 sub serve
 {
     my $self = shift;
+    my $stop = 0;
 
     $self->{serverTransport}->listen();
-    while (1)
-    {
+    while (!$stop) {
         my $client = $self->{serverTransport}->accept();
-        my $itrans = $self->{inputTransportFactory}->getTransport($client);
-        my $otrans = $self->{outputTransportFactory}->getTransport($client);
-        my $iprot  = $self->{inputProtocolFactory}->getProtocol($itrans);
-        my $oprot  = $self->{outputProtocolFactory}->getProtocol($otrans);
-        eval {
-            $self->_clientBegin($iprot, $oprot);
-            while (1)
-            {
-                $self->{processor}->process($iprot, $oprot);
+        if (defined $client) {
+            my $itrans = $self->{inputTransportFactory}->getTransport($client);
+            my $otrans = $self->{outputTransportFactory}->getTransport($client);
+            my $iprot  = $self->{inputProtocolFactory}->getProtocol($itrans);
+            my $oprot  = $self->{outputProtocolFactory}->getProtocol($otrans);
+            eval {
+                $self->_clientBegin($iprot, $oprot);
+                while (1)
+                {
+                    $self->{processor}->process($iprot, $oprot);
+                }
+            };
+            if($@) {
+                $self->_handleException($@);
             }
-        }; if($@) {
-            $self->_handleException($@);
+            $itrans->close();
+            $otrans->close();
+        } else {
+            $stop = 1;
         }
-
-        $itrans->close();
-        $otrans->close();
     }
 }
 
@@ -180,7 +186,7 @@ sub serve
 #
 package Thrift::ForkingServer;
 use parent -norequire, 'Thrift::Server';
-use POSIX ":sys_wait_h";
+use POSIX ':sys_wait_h';
 use version 0.77; our $VERSION = version->declare("$Thrift::VERSION");
 
 sub new
@@ -227,10 +233,12 @@ sub _client
         if ($pid)
         {
             $self->_parent($pid, $itrans, $otrans);
-        } else {
+        }
+        else {
             $self->_child($itrans, $otrans, $iprot, $oprot);
         }
-    }; if($@) {
+    };
+    if($@) {
         $self->_handleException($@);
     }
 }
@@ -263,7 +271,8 @@ sub _child
         {
             $self->{processor}->process($iprot, $oprot);
         }
-    }; if($@) {
+    };
+    if($@) {
         $ecode = 1;
         $self->_handleException($@);
     }
@@ -284,14 +293,16 @@ sub tryClose
         {
           $file->close();
         }
-    }; if($@) {
-        if ($@->isa("Thrift::TException") and exists $@->{message}) {
+    };
+    if($@) {
+        if ($@->isa('Thrift::TException') and exists $@->{message}) {
             my $message = $@->{message};
             my $code    = $@->{code};
             my $out     = $code . ':' . $message;
 
             warn $out;
-        } else {
+        }
+        else {
             warn $@;
         }
     }

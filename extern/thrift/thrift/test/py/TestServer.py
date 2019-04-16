@@ -21,6 +21,7 @@
 from __future__ import division
 import logging
 import os
+import signal
 import sys
 import time
 from optparse import OptionParser
@@ -180,16 +181,22 @@ class TestHandler(object):
 def main(options):
     # set up the protocol factory form the --protocol option
     prot_factories = {
-        'binary': TBinaryProtocol.TBinaryProtocolFactory,
-        'accel': TBinaryProtocol.TBinaryProtocolAcceleratedFactory,
-        'compact': TCompactProtocol.TCompactProtocolFactory,
-        'accelc': TCompactProtocol.TCompactProtocolAcceleratedFactory,
-        'json': TJSONProtocol.TJSONProtocolFactory,
+        'accel': TBinaryProtocol.TBinaryProtocolAcceleratedFactory(),
+        'accelc': TCompactProtocol.TCompactProtocolAcceleratedFactory(),
+        'binary': TBinaryProtocol.TBinaryProtocolFactory(),
+        'compact': TCompactProtocol.TCompactProtocolFactory(),
+        'header': THeaderProtocol.THeaderProtocolFactory(allowed_client_types=[
+            THeaderTransport.THeaderClientType.HEADERS,
+            THeaderTransport.THeaderClientType.FRAMED_BINARY,
+            THeaderTransport.THeaderClientType.UNFRAMED_BINARY,
+            THeaderTransport.THeaderClientType.FRAMED_COMPACT,
+            THeaderTransport.THeaderClientType.UNFRAMED_COMPACT,
+        ]),
+        'json': TJSONProtocol.TJSONProtocolFactory(),
     }
-    pfactory_cls = prot_factories.get(options.proto, None)
-    if pfactory_cls is None:
+    pfactory = prot_factories.get(options.proto, None)
+    if pfactory is None:
         raise AssertionError('Unknown --protocol option: %s' % options.proto)
-    pfactory = pfactory_cls()
     try:
         pfactory.string_length_limit = options.string_limit
         pfactory.container_length_limit = options.container_limit
@@ -201,14 +208,23 @@ def main(options):
     if len(args) > 1:
         raise AssertionError('Only one server type may be specified, not multiple types.')
     server_type = args[0]
+    if options.trans == 'http':
+        server_type = 'THttpServer'
 
     # Set up the handler and processor objects
     handler = TestHandler()
     processor = ThriftTest.Processor(handler)
 
+    global server
+
     # Handle THttpServer as a special case
     if server_type == 'THttpServer':
-        server = THttpServer.THttpServer(processor, ('', options.port), pfactory)
+        if options.ssl:
+            __certfile = os.path.join(os.path.dirname(SCRIPT_DIR), "keys", "server.crt")
+            __keyfile = os.path.join(os.path.dirname(SCRIPT_DIR), "keys", "server.key")
+            server = THttpServer.THttpServer(processor, ('', options.port), pfactory, cert_file=__certfile, key_file=__keyfile)
+        else:
+            server = THttpServer.THttpServer(processor, ('', options.port), pfactory)
         server.serve()
         sys.exit(0)
 
@@ -268,7 +284,15 @@ def main(options):
     server.serve()
 
 
+def exit_gracefully(signum, frame):
+    print("SIGINT received\n")
+    server.shutdown()   # doesn't work properly, yet
+    sys.exit(0)
+
+
 if __name__ == '__main__':
+    signal.signal(signal.SIGINT, exit_gracefully)
+
     parser = OptionParser()
     parser.add_option('--libpydir', type='string', dest='libpydir',
                       help='include this directory to sys.path for locating library code')
@@ -288,12 +312,12 @@ if __name__ == '__main__':
                       dest="verbose", const=0,
                       help="minimal output")
     parser.add_option('--protocol', dest="proto", type="string",
-                      help="protocol to use, one of: accel, binary, compact, json")
+                      help="protocol to use, one of: accel, accelc, binary, compact, json")
     parser.add_option('--transport', dest="trans", type="string",
-                      help="transport to use, one of: buffered, framed")
+                      help="transport to use, one of: buffered, framed, http")
     parser.add_option('--container-limit', dest='container_limit', type='int', default=None)
     parser.add_option('--string-limit', dest='string_limit', type='int', default=None)
-    parser.set_defaults(port=9090, verbose=1, proto='binary')
+    parser.set_defaults(port=9090, verbose=1, proto='binary', transport='buffered')
     options, args = parser.parse_args()
 
     # Print TServer log to stdout so that the test-runner can redirect it to log files
@@ -305,11 +329,13 @@ if __name__ == '__main__':
     from ThriftTest import ThriftTest
     from ThriftTest.ttypes import Xtruct, Xception, Xception2, Insanity
     from thrift.Thrift import TException
+    from thrift.transport import THeaderTransport
     from thrift.transport import TTransport
     from thrift.transport import TSocket
     from thrift.transport import TZlibTransport
     from thrift.protocol import TBinaryProtocol
     from thrift.protocol import TCompactProtocol
+    from thrift.protocol import THeaderProtocol
     from thrift.protocol import TJSONProtocol
     from thrift.server import TServer, TNonblockingServer, THttpServer
 
