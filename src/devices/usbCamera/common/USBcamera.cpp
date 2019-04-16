@@ -76,6 +76,7 @@ bool USBCameraDriver::open(yarp::os::Searchable& config)
         }
     }
     if (!os_device->open(prop)) {
+        delete os_device;
         return false;
     }
 
