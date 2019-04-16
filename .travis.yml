@@ -252,6 +252,8 @@ matrix:
       env:
         - TRAVIS_WITH_VALGRIND=true
         - TRAVIS_WITH_BINDINGS=false
+        - TRAVIS_BUILD_TYPE=Debug
+
 
     # No ACE build with valgrind (linux, gcc)
     - stage: test-long
@@ -261,6 +263,7 @@ matrix:
         - TRAVIS_WITH_ACE=false
         - TRAVIS_WITH_VALGRIND=true
         - TRAVIS_WITH_BINDINGS=false
+        - TRAVIS_BUILD_TYPE=Debug
 
     # Normal build with valgrind and broken tests (linux, gcc)
 #    - stage: test-long
@@ -270,6 +273,7 @@ matrix:
 #        - TRAVIS_WITH_VALGRIND=true
 #        - TRAVIS_WITH_BROKEN_TESTS=true
 #        - TRAVIS_WITH_BINDINGS=false
+#        - TRAVIS_BUILD_TYPE=Debug
 
     # Normal build with clang (osx, clang)
     - stage: test-long
