@@ -124,13 +124,13 @@ field is changed, we could do this:
 class MySettings : public Settings::Editor
 {
 public:
-    virtual bool will_set_name()
+    bool will_set_name() override
     {
         printf("About to set the name, it is currently '%s'\n", state().name.c_str());
         return true;
     }
 
-    virtual bool did_set_name()
+    bool did_set_name() override
     {
         printf("Just set the name, it is now '%s'\n", state().name.c_str());
         return true;

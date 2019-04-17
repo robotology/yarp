@@ -809,13 +809,13 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         settings.set_name("hello");
         CHECK(receiver.state().name == "hello"); // string assignment
 
-        settings.begin();
+        settings.start_editing();
         settings.set_id(6);
         CHECK(receiver.state().id == 5); // not too early
 
         settings.set_name("world");
         CHECK(receiver.state().name == "hello"); // string not too early
-        settings.end();
+        settings.stop_editing();
         CHECK(receiver.state().id == 6); // int group
         CHECK(receiver.state().name == "world"); // string group
 

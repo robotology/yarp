@@ -17,29 +17,22 @@
 # under the License.
 #
 
-if GOVERSION_LT_17
-COMPILER_EXTRAFLAG=":legacy_context"
-endif
-
 gen-go/tutorial/calculator.go gen-go/shared/shared_service.go: $(top_srcdir)/tutorial/tutorial.thrift
 	$(THRIFT) --gen go$(COMPILER_EXTRAFLAG) -r $<
 
 all-local: gen-go/tutorial/calculator.go
 
-check: src/git.apache.org/thrift.git/lib/go/thrift thirdparty-dep
+check: src/github.com/apache/thrift/lib/go/thrift thirdparty-dep
 	$(THRIFT) -r --gen go$(COMPILER_EXTRAFLAG) $(top_srcdir)/tutorial/tutorial.thrift
 	cp -r gen-go/* src/
 	GOPATH=`pwd` $(GO) build -o go-tutorial ./src
 	GOPATH=`pwd` $(GO) build -o calculator-remote src/tutorial/calculator-remote/calculator-remote.go
 
-src/git.apache.org/thrift.git/lib/go/thrift:
-	mkdir -p src/git.apache.org/thrift.git/lib/go
-	ln -sf $(realpath $(top_srcdir)/lib/go/thrift) src/git.apache.org/thrift.git/lib/go/thrift
+src/github.com/apache/thrift/lib/go/thrift:
+	mkdir -p src/github.com/apache/thrift/lib/go
+	ln -sf $(realpath $(top_srcdir)/lib/go/thrift) src/github.com/apache/thrift/lib/go/thrift
 
 thirdparty-dep:
-	mkdir -p src/golang.org/x/net
-	GOPATH=`pwd`/gopath $(GO) get golang.org/x/net/context
-	ln -sf `pwd`/gopath/src/golang.org/x/net/context src/golang.org/x/net/context
 
 tutorialserver: all
 	GOPATH=`pwd` $(GO) run src/*.go -server=true
@@ -61,9 +54,6 @@ EXTRA_DIST = \
 	src/handler.go \
 	src/server.go \
 	src/main.go \
-	src/go17.go \
-	src/handler_go17.go \
-	src/pre_go17.go \
 	server.crt \
 	server.key
 

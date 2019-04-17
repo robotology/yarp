@@ -37,7 +37,7 @@ namespace delphi Thrift.Test
 namespace cocoa ThriftTest
 namespace lua ThriftTest
 namespace xsd test (uri = 'http://thrift.apache.org/ns/ThriftTest')
-namespace netcore ThriftAsync.Test
+namespace netcore ThriftTest
 
 // Presence of namespaces and sub-namespaces for which there is
 // no generator should compile with warnings only
@@ -196,7 +196,7 @@ service ThriftTest
    * @return binary  - returns the binary 'thing'
    */
   binary       testBinary(1: binary thing),
-  
+
   /**
    * Prints 'testStruct("{%s}")' where thing has been formatted into a string of comma separated values
    * @param Xtruct thing - the Xtruct to print

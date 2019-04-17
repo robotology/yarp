@@ -19,12 +19,17 @@
 
 #ifndef T_GENERATOR_H
 #define T_GENERATOR_H
+#define MSC_2015_VER 1900
 
+#include <cstring>
 #include <string>
+#include <iomanip>
 #include <iostream>
 #include <fstream>
+#include <limits>
 #include <sstream>
 #include "thrift/common.h"
+#include "thrift/logging.h"
 #include "thrift/version.h"
 #include "thrift/generate/t_generator_registry.h"
 #include "thrift/parse/t_program.h"
@@ -37,7 +42,8 @@
  */
 class t_generator {
 public:
-  t_generator(t_program* program) {
+  t_generator(t_program* program)
+    : keywords_(lang_keywords()){
     tmp_ = 0;
     indent_ = 0;
     program_ = program;
@@ -91,9 +97,35 @@ public:
     return escape_string(constval->get_string());
   }
 
-protected:
   /**
-   * Optional methods that may be imlemented by subclasses to take necessary
+   * Check if all identifiers are valid for the target language
+   */
+  virtual void validate_input() const;
+
+protected:
+  virtual std::set<std::string> lang_keywords() const;
+
+  /**
+   * A list of reserved words that cannot be used as identifiers.
+   */
+  const std::set<std::string> keywords_;
+
+  virtual void validate_id(const std::string& id) const;
+
+  virtual void validate(t_enum const* en) const;
+  virtual void validate(t_enum_value const* en_val) const;
+  virtual void validate(t_typedef const* td) const;
+  virtual void validate(t_const const* c) const;
+  virtual void validate(t_service const* s) const;
+  virtual void validate(t_struct const* c) const;
+  virtual void validate(t_field const* f) const;
+  virtual void validate(t_function const* f) const;
+
+  template <typename T>
+  void validate(const std::vector<T>& list) const;
+
+  /**
+   * Optional methods that may be implemented by subclasses to take necessary
    * steps at the beginning or end of code generation.
    */
 
@@ -183,7 +215,6 @@ protected:
     }
   }
 
-
   /**
    * Indentation print function
    */
@@ -224,6 +255,7 @@ protected:
     }
     return in;
   }
+
   /**
    * Transforms a camel case string to an equivalent one separated by underscores
    * e.g. aMultiWord -> a_multi_word
@@ -242,6 +274,7 @@ protected:
     }
     return in;
   }
+
   /**
     * Transforms a string with words separated by underscores to a camel case equivalent
     * e.g. a_multi_word -> aMultiWord
@@ -266,6 +299,30 @@ protected:
     }
 
     return out.str();
+  }
+
+  const std::string emit_double_as_string(const double value) {
+      std::stringstream double_output_stream;
+      // sets the maximum precision: http://en.cppreference.com/w/cpp/io/manip/setprecision
+      // sets the output format to fixed: http://en.cppreference.com/w/cpp/io/manip/fixed (not in scientific notation)
+      double_output_stream << std::setprecision(std::numeric_limits<double>::digits10 + 1);
+
+      #ifdef _MSC_VER
+          // strtod is broken in MSVC compilers older than 2015, so std::fixed fails to format a double literal.
+          // more details: https://blogs.msdn.microsoft.com/vcblog/2014/06/18/
+          //               c-runtime-crt-features-fixes-and-breaking-changes-in-visual-studio-14-ctp1/
+          //               and
+          //               http://www.exploringbinary.com/visual-c-plus-plus-strtod-still-broken/
+          #if _MSC_VER >= MSC_2015_VER
+              double_output_stream << std::fixed;
+          #endif
+      #else
+          double_output_stream << std::fixed;
+      #endif
+
+      double_output_stream << value;
+
+      return double_output_stream.str();
   }
 
 public:
@@ -318,5 +375,78 @@ private:
    */
   int tmp_;
 };
+
+template<typename _CharT, typename _Traits = std::char_traits<_CharT> >
+class template_ofstream_with_content_based_conditional_update : public std::ostringstream {
+public:
+  template_ofstream_with_content_based_conditional_update(): contents_written(false) {}
+
+  template_ofstream_with_content_based_conditional_update(std::string const& output_file_path_)
+  : output_file_path(output_file_path_), contents_written(false) {}
+
+  ~template_ofstream_with_content_based_conditional_update() {
+    if (!contents_written) {
+      close();
+    }
+  }
+
+  void open(std::string const& output_file_path_) {
+    output_file_path = output_file_path_;
+    clear_buf();
+    contents_written = false;
+  }
+
+  void close() {
+    if (contents_written || output_file_path == "")
+      return;
+
+    if (!is_readable(output_file_path)) {
+      dump();
+      return;
+    }
+
+    std::ifstream old_file;
+    old_file.exceptions(old_file.exceptions() | std::ifstream::badbit | std::ifstream::failbit);
+    old_file.open(output_file_path.c_str(), std::ios::in);
+
+    if (old_file) {
+      std::string const old_file_contents(static_cast<std::ostringstream const&>(std::ostringstream() << old_file.rdbuf()).str());
+      old_file.close();
+
+      if (old_file_contents != str()) {
+        dump();
+      }
+    }
+  }
+
+protected:
+  void dump() {
+    std::ofstream out_file;
+    out_file.exceptions(out_file.exceptions() | std::ofstream::badbit | std::ofstream::failbit);
+    try {
+      out_file.open(output_file_path.c_str(), std::ios::out);
+    }
+    catch (const std::ios_base::failure& e) {
+      ::failure("failed to write the output to the file '%s', details: '%s'", output_file_path.c_str(), e.what());
+    }
+    out_file << str();
+    out_file.close();
+    clear_buf();
+    contents_written = true;
+  }
+
+  void clear_buf() {
+    str(std::string());
+  }
+
+  static bool is_readable(std::string const& file_name) {
+    return static_cast<bool>(std::ifstream(file_name.c_str()));
+  }
+
+private:
+  std::string output_file_path;
+  bool contents_written;
+};
+typedef template_ofstream_with_content_based_conditional_update<char> ofstream_with_content_based_conditional_update;
 
 #endif
