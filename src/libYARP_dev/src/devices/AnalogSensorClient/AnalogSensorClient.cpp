@@ -20,7 +20,7 @@ using namespace yarp::sig;
 
 namespace
 {
-    inline int checkResponse(bool ok, yarp::os::Bottle& response)
+    inline int checkResponse(bool ok, const yarp::os::Bottle& response)
     {
         const yarp::os::Value & v = response.get(0);
         return ok && v.isInt32() ? v.asInt32() : IAnalogSensor::AS_ERROR;
