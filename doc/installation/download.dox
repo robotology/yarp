@@ -6,7 +6,7 @@
 
 Latest YARP release is:
 
- + @ref v3_1_0
+ + @ref v3_1_1
 
 @section download_source_code Source Code
 
@@ -60,6 +60,7 @@ Previous versions are hosted on
 
 __Previous releases version and dates__:
 
+ + @ref v3_1_0
  + @ref v3_0_1
  + @ref v3_0_0
  + @ref v2_3_72_1
