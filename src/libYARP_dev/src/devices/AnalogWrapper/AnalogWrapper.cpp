@@ -55,35 +55,36 @@ bool AnalogServerHandler::_handleIAnalog(yarp::os::Bottle &cmd, yarp::os::Bottle
       return false;
 
     const size_t msgsize=cmd.size();
-    int ret = IAnalogSensor::AS_ERROR;
+    int ret=IAnalogSensor::AS_ERROR;
 
     int code=cmd.get(1).asVocab();
     switch (code)
     {
     case VOCAB_CALIBRATE:
       if (msgsize==2)
-        ret = is->calibrateSensor();
+        ret=is->calibrateSensor();
       else if (msgsize>2)
       {
-        Vector v(msgsize - 2);
-        for (unsigned int i = 0; i < v.size(); i++)
+        size_t offset=2;
+        Vector v(msgsize-offset);
+        for (unsigned int i=0; i<v.size(); i++)
         {
-          v[i] = cmd.get(i + 2).asFloat64();
+          v[i]=cmd.get(i+offset).asFloat64();
         }
-        ret = is->calibrateSensor(v);
+        ret=is->calibrateSensor(v);
       }
       break;
     case VOCAB_CALIBRATE_CHANNEL:
       if (msgsize==3)
       {
         int ch=cmd.get(2).asInt32();
-        ret = is->calibrateChannel(ch);
+        ret=is->calibrateChannel(ch);
       }
       else if (msgsize==4)
       {
         int ch=cmd.get(2).asInt32();
         double v=cmd.get(3).asFloat64();
-        ret = is->calibrateChannel(ch, v);
+        ret=is->calibrateChannel(ch, v);
       }
       break;
     default:
