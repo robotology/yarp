@@ -23,6 +23,7 @@
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 
+#include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/IVisualParams.h>
 #include <yarp/dev/PreciselyTimed.h>

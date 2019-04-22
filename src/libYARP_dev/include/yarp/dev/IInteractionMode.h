@@ -9,8 +9,8 @@
 #ifndef YARP_DEV_IINTERACTIONMODE_H
 #define YARP_DEV_IINTERACTIONMODE_H
 
-#include <yarp/dev/ControlBoardInterfaces.h>
-
+#include <yarp/os/Vocab.h>
+#include <yarp/dev/api.h>
 
 namespace yarp {
     namespace dev {
@@ -118,7 +118,7 @@ public:
  * Interface settings the way the robot interacts with the environment: basic interaction types are Stiff and Compliant.
  * This setting is intended to work in conjunction with other settings like position or velocity control.
  */
-class yarp::dev::IInteractionModeRaw
+class YARP_dev_API yarp::dev::IInteractionModeRaw
 {
 public:
     /**

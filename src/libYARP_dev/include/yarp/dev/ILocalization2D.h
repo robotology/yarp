@@ -10,7 +10,7 @@
 #define YARP_DEV_ILOCALIZATION2D_H
 
 #include <yarp/os/Vocab.h>
-#include <yarp/os/Log.h>
+#include <yarp/dev/api.h>
 #include <yarp/dev/Map2DLocation.h>
 #include <vector>
 
@@ -32,7 +32,7 @@ namespace yarp {
  *
  * ILocalization2D interface. Provides methods to obtain the pose of the robot in a known map.
  */
-class yarp::dev::ILocalization2D
+class YARP_dev_API yarp::dev::ILocalization2D
 {
 public:
     /**

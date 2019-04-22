@@ -11,6 +11,7 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/sig/Image.h>
+#include <yarp/dev/api.h>
 #include <yarp/dev/MapGrid2D.h>
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DArea.h>

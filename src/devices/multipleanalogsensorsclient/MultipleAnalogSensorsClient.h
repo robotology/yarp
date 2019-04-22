@@ -14,7 +14,9 @@
 #include "MultipleAnalogSensorsMetadata.h"
 #include "SensorStreamingData.h"
 
+#include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
+#include <yarp/dev/DeviceDriver.h>
 
 #include <mutex>
 

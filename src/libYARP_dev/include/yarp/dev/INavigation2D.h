@@ -10,13 +10,14 @@
 #define YARP_DEV_INAVIGATION2D_H
 
 #include <yarp/os/Vocab.h>
-#include <yarp/os/Log.h>
+#include <yarp/dev/api.h>
 #include <yarp/dev/ILocalization2D.h>
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DArea.h>
 #include <yarp/dev/MapGrid2D.h>
 #include <vector>
 #include <limits>
+#include <string>
 
 namespace yarp {
     namespace dev {
@@ -56,7 +57,7 @@ namespace yarp {
     }
 }
 
-class yarp::dev::INavigation2DTargetActions
+class YARP_dev_API yarp::dev::INavigation2DTargetActions
 {
 public:
     /**
@@ -105,7 +106,7 @@ public:
     virtual bool getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) = 0;
 };
 
-class yarp::dev::INavigation2DControlActions
+class YARP_dev_API yarp::dev::INavigation2DControlActions
 {
 public:
     /**
@@ -173,9 +174,9 @@ public:
  *
  * An interface to control the navigation of a mobile robot in a 2D environment.
  */
-class yarp::dev::INavigation2D :  public yarp::dev::INavigation2DTargetActions,
-                                  public yarp::dev::INavigation2DControlActions,
-                                  public yarp::dev::ILocalization2D
+class YARP_dev_API yarp::dev::INavigation2D :  public yarp::dev::INavigation2DTargetActions,
+                                               public yarp::dev::INavigation2DControlActions,
+                                               public yarp::dev::ILocalization2D
 {
 public:
     /**

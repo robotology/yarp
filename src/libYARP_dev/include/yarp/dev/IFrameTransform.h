@@ -9,11 +9,14 @@
 #ifndef YARP_DEV_IFRAMETRANSFORM_H
 #define YARP_DEV_IFRAMETRANSFORM_H
 
+#include <string>
+#include <vector>
+
 #include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/sig/Matrix.h>
+#include <yarp/sig/Vector.h>
 #include <yarp/math/Quaternion.h>
-#include <vector>
 
 namespace yarp {
     namespace dev {

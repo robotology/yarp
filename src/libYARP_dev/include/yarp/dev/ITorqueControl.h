@@ -10,11 +10,7 @@
 #define YARP_DEV_ITORQUECONTROL_H
 
 #include <yarp/os/Vocab.h>
-#include <yarp/dev/ControlBoardPid.h>
-
-//TO PROVIDE BACKWARD COMPATIBILITY FOR DEPRECATED METHODS: TO BE REMOVED LATER!
-#include <yarp/dev/IPidControl.h>
-#include <yarp/os/LogStream.h>
+#include <yarp/dev/api.h>
 
 namespace yarp {
     namespace dev {
@@ -139,7 +135,7 @@ public:
  *
  * Interface for control boards implementing torque control.
  */
-class yarp::dev::ITorqueControlRaw
+class YARP_dev_API yarp::dev::ITorqueControlRaw
 {
 public:
     /**

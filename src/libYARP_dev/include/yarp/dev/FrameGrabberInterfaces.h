@@ -10,7 +10,10 @@
 #ifndef YARP_FRAMEGRABBERINTERFACES_H
 #define YARP_FRAMEGRABBERINTERFACES_H
 
-#include <yarp/dev/DeviceDriver.h>
+#include <string>
+
+#include <yarp/os/Vocab.h>
+#include <yarp/dev/api.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
 

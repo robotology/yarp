@@ -100,7 +100,7 @@ public:
  * Interface for setting control mode in control board. See IControlMode for
  * more documentation.
  */
-class yarp::dev::IControlModeRaw
+class YARP_dev_API yarp::dev::IControlModeRaw
 {
 public:
     virtual ~IControlModeRaw(){}
