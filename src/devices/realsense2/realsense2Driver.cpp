@@ -69,8 +69,10 @@ static void print_supported_options(const rs2::sensor& sensor)
 
     if (sensor.is<rs2::depth_sensor>())
         yInfo() << "Depth sensor supports the following options:\n";
-    else
+    else if (sensor.get_stream_profiles()[0].stream_type() == RS2_STREAM_COLOR)
         yInfo() << "RGB camera supports the following options:\n";
+    else
+        yInfo() << "Sensor supports the following options:\n";
 
     // The following loop shows how to iterate over all available options
     // Starting from 0 until RS2_OPTION_COUNT (exclusive)
@@ -523,7 +525,7 @@ bool realsense2Driver::initializeRealsenseDevice()
                 return false;
             }
         }
-        else
+        else if (m_sensors[i].get_stream_profiles()[0].stream_type() == RS2_STREAM_COLOR)
             m_color_sensor = &m_sensors[i];
     }
 
