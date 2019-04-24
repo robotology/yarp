@@ -598,4 +598,20 @@ check $x $y\n\
         pCopy2 = p;
         CHECK(pCopy.toString() == p.toString()); // test if addGroup works fine with Property copy operator
     }
+
+    SECTION("checking initializer_list constructor")
+    {
+        Property p {{"one", Value(1)},
+                    {"two", Value(2.0)},
+                    {"string", Value("foo")}
+                    };
+
+        CHECK(p.find("one").isInt32());
+        CHECK(p.find("two").isFloat64());
+        CHECK(p.find("string").isString());
+
+        CHECK(p.find("one").asInt32() == 1);
+        CHECK(p.find("two").asFloat64() == 2.0);
+        CHECK(p.find("string").asString() == "foo");
+    }
 }

@@ -59,6 +59,11 @@ public:
     Property(const Property& prop);
 
     /**
+     * @brief Initializer list constructor.
+     * @param[in] values, list of std::pair with which initialize the Property.
+     */
+    Property(std::initializer_list<std::pair<std::string, yarp::os::Value>> values);
+    /**
      * Destructor.
      */
     virtual ~Property();
