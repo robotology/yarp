@@ -517,4 +517,25 @@ TEST_CASE("OS::BottleTest", "[yarp::os]")
         Portable::copyPortable(b1,s3);
         CHECK(s3.getCount() == 42); // "bottle-to-stamp ok"
     }
+
+    SECTION("test initializer_list constructor")
+    {
+        Bottle b { Value(1),
+                   Value(2.0),
+                   Value("foo")
+                 };
+
+        REQUIRE(b.size() == 3);
+        CHECK(b.isNull() == false);
+
+        CHECK(b.get(0).isInt32());
+        CHECK(b.get(1).isFloat64());
+        CHECK(b.get(2).isString());
+
+        CHECK(b.get(0).asInt32() == 1);
+        CHECK(b.get(1).asFloat64() == 2.0);
+        CHECK(b.get(2).asString() == "foo");
+
+
+    }
 }
