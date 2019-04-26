@@ -13,6 +13,7 @@
 #include <cstdio>
 
 #include <yarp/sig/ImageFile.h>
+#include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/PreciselyTimed.h>

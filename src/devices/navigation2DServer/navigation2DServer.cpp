@@ -22,6 +22,7 @@
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/dev/MapGrid2D.h>

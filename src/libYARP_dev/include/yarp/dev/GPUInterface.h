@@ -10,7 +10,7 @@
 #ifndef YARPGPUINTERFACES
 #define YARPGPUINTERFACES
 
-#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/api.h>
 #include <yarp/sig/Image.h>
 
 /*! \file GPUInterface.h define interfaces for a generic GPU*/

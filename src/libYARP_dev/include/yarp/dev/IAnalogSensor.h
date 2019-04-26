@@ -11,7 +11,7 @@
 #define YARP_DEV_IANALOGSENSOR_H
 
 #include <yarp/os/Vocab.h>
-#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/api.h>
 #include <yarp/sig/Vector.h>
 
 constexpr yarp::conf::vocab32_t VOCAB_IANALOG           = yarp::os::createVocab('i','a','n','a');

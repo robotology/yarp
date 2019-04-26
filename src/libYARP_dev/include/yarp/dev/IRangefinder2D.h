@@ -10,10 +10,11 @@
 #define YARP_DEV_IRANGEFINDER2D_H
 
 #include <yarp/os/Vocab.h>
-#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/api.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/LaserMeasurementData.h>
 #include <vector>
+#include <string>
 
 constexpr yarp::conf::vocab32_t VOCAB_ILASER2D             = yarp::os::createVocab('i','l','a','s');
 constexpr yarp::conf::vocab32_t VOCAB_DEVICE_INFO          = yarp::os::createVocab('l','s','n','f');

@@ -9,9 +9,10 @@
 #ifndef YARP_DEV_IBATTERY_H
 #define YARP_DEV_IBATTERY_H
 
-#include <yarp/dev/DeviceDriver.h>
-#include <yarp/sig/Vector.h>
+#include <string>
+
 #include <yarp/os/Vocab.h>
+#include <yarp/dev/api.h>
 
 constexpr yarp::conf::vocab32_t VOCAB_IBATTERY     = yarp::os::createVocab('i','b','a','t');
 constexpr yarp::conf::vocab32_t VOCAB_BATTERY_INFO = yarp::os::createVocab('b','t','n','f');

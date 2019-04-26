@@ -24,7 +24,7 @@ namespace yarp{
  *
  * Interface for control boards implementing impedance control.
  */
-class yarp::dev::IImpedanceControlRaw
+class YARP_dev_API yarp::dev::IImpedanceControlRaw
 {
 public:
     /**

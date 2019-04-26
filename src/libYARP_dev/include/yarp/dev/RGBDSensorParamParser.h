@@ -6,13 +6,13 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/Searchable.h>
-#include <yarp/sig/Matrix.h>
-#include <yarp/dev/api.h>
-
-#include <yarp/sig/IntrinsicParams.h>
-
 #include <vector>
+
+#include <yarp/os/Searchable.h>
+#include <yarp/os/Value.h>
+#include <yarp/sig/Matrix.h>
+#include <yarp/sig/IntrinsicParams.h>
+#include <yarp/dev/api.h>
 
 #ifndef YARP_DEV_RGBDSENSORPARAMPARSER_H
 #define YARP_DEV_RGBDSENSORPARAMPARSER_H

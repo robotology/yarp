@@ -13,9 +13,11 @@
 #include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/PeriodicThread.h>
+#include <yarp/os/Searchable.h>
 #include <yarp/dev/GenericVocabs.h>
 #include <map>
 #include <vector>
+#include <string>
 
 #define HAT_ACTIONS_ID_SHIFT 100
 

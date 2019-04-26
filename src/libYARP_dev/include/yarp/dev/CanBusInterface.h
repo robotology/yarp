@@ -12,7 +12,7 @@
 
 #include <cstring> // for std::memset
 
-#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/api.h>
 #include <yarp/os/Log.h>
 
 /*! \file CanBusInterface.h define interface for can bus devices*/
@@ -29,7 +29,7 @@ namespace yarp {
     }
 }
 
-class yarp::dev::CanErrors
+class YARP_dev_API yarp::dev::CanErrors
 {
 public:
     CanErrors()
@@ -52,7 +52,7 @@ public:
     unsigned int rxBufferOvr;    // rx buffer overflow
 };
 
-class yarp::dev::CanMessage
+class YARP_dev_API yarp::dev::CanMessage
 {
  public:
     virtual ~CanMessage(){}
@@ -68,7 +68,7 @@ class yarp::dev::CanMessage
     virtual void setBuffer(unsigned char *)=0;
 };
 
-class yarp::dev::CanBuffer
+class YARP_dev_API yarp::dev::CanBuffer
 {
     yarp::dev::CanMessage **data;
     int size;
@@ -97,7 +97,7 @@ class yarp::dev::CanBuffer
         }
 };
 
-class yarp::dev::ICanBufferFactory
+class YARP_dev_API yarp::dev::ICanBufferFactory
 {
 public:
     virtual ~ICanBufferFactory(){}
@@ -111,7 +111,7 @@ public:
  * IMPL is the internal representation of the can message.
  */
 template<class M, class IMPL>
-class yarp::dev::ImplementCanBufferFactory: public ICanBufferFactory
+class YARP_dev_API yarp::dev::ImplementCanBufferFactory: public ICanBufferFactory
 {
 public:
     virtual ~ImplementCanBufferFactory(){}
@@ -165,7 +165,7 @@ public:
 /**
  * Interface for a can bus device
  */
-class yarp::dev::ICanBus
+class YARP_dev_API yarp::dev::ICanBus
 {
  public:
     virtual ~ICanBus(){}

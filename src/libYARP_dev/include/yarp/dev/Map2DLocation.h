@@ -9,11 +9,10 @@
 #ifndef YARP_DEV_MAP2DLOCATION_H
 #define YARP_DEV_MAP2DLOCATION_H
 
-#include <yarp/os/Portable.h>
-#include <yarp/math/Vec2D.h>
-#include <yarp/dev/api.h>
 #include <sstream>
 #include <string>
+
+#include <yarp/dev/api.h>
 
 /**
 * \file Map2DLocation.h contains the definition of a Map2DLocation type
@@ -22,7 +21,7 @@ namespace yarp
 {
     namespace dev
     {
-        struct Map2DLocation
+        struct YARP_dev_API Map2DLocation
         {
             /**
             * Constructor

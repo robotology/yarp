@@ -10,12 +10,9 @@
 #ifndef YARP_DEV_IVELOCITYCONTROL_H
 #define YARP_DEV_IVELOCITYCONTROL_H
 
+#include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
-#include <yarp/dev/ControlBoardPid.h>
 
-//TO PROVIDE BACKWARD COMPATIBILITY FOR DEPRECATED METHODS: TO BE REMOVED LATER!
-#include <yarp/dev/IPidControl.h>
-#include <yarp/os/LogStream.h>
 namespace yarp {
     namespace dev {
         class IVelocityControl;
@@ -28,7 +25,7 @@ namespace yarp {
  *
  * Interface for control boards implementig velocity control in encoder coordinates.
  */
-class yarp::dev::IVelocityControlRaw
+class YARP_dev_API yarp::dev::IVelocityControlRaw
 {
 public:
     /**
