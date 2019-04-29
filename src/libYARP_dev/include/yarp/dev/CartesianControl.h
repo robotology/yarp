@@ -131,7 +131,7 @@ public:
     /*!
      * Destructor.
      */
-    virtual ~ICartesianControl() {}
+    virtual ~ICartesianControl();
 
     /*!
      * Set the controller in tracking or non-tracking mode. [wait

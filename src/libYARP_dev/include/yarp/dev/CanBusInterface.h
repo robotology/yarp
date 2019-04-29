@@ -72,29 +72,29 @@ class YARP_dev_API yarp::dev::CanBuffer
 {
     yarp::dev::CanMessage **data;
     int size;
- public:
-    CanBuffer()
-        { data=0; }
 
-    inline void resize(CanMessage **d, int s)
-        {
-            size=s;
-            data=d;
-        }
+public:
+    CanBuffer();
 
-    inline CanMessage **getPointer()
-        {
-            return data;
-        }
+    void resize(CanMessage **d, int s)
+    {
+        size=s;
+        data=d;
+    }
 
-    inline CanMessage &operator[](int k)
-        {
-            return *data[k];
-        }
-    inline const CanMessage &operator[](int k) const
-        {
-            return *data[k];
-        }
+    CanMessage **getPointer()
+    {
+        return data;
+    }
+
+    CanMessage &operator[](int k)
+    {
+        return *data[k];
+    }
+    const CanMessage &operator[](int k) const
+    {
+        return *data[k];
+    }
 };
 
 class YARP_dev_API yarp::dev::ICanBufferFactory
