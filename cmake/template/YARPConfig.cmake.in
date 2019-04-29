@@ -94,9 +94,10 @@ set(YARP_IDL_BINARY_HINT "@PACKAGE_YARP_IDL_BINARY_HINT@")
 set_and_check(YARP_MODULE_DIR "@PACKAGE_YARP_MODULE_DIR@")
 
 
-# Save the variable, that it should not be modified by find_package(YARP), but
+# Save the variables, that it should not be modified by find_package(YARP), but
 # we need to modify it in order to find all the dependencies.
 set(_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH})
+set(_YCM_FOUND ${YCM_FOUND})
 
 # Find YCM if needed:
 # * If YARP is static therefore we need YCM (or YARP private version) for private
@@ -171,9 +172,11 @@ foreach(_yarp_module ${YARP_FIND_COMPONENTS})
   endif()
 endforeach()
 
-# Restore the original value of the variable
+# Restore the original value of the variables
 set(CMAKE_MODULE_PATH ${_CMAKE_MODULE_PATH})
+set(YCM_FOUND ${_YCM_FOUND})
 unset(_CMAKE_MODULE_PATH)
+unset(_YCM_FOUND)
 
 
 # Ensure that all requested modules are available
