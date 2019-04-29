@@ -123,6 +123,7 @@ set(YARP_dev_SRCS src/CanBusInterface.cpp
                   src/DeviceDriver.cpp
                   src/Drivers.cpp
                   src/FrameGrabberControlImpl.cpp
+                  src/GazeControl.cpp
                   src/IBattery.cpp
                   src/IJoypadController.cpp
                   src/ImplementAmplifierControl.cpp

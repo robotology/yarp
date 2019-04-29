@@ -140,7 +140,7 @@ public:
     /*!
      * Destructor.
      */
-    virtual ~IGazeControl() {}
+    virtual ~IGazeControl();
 
     /*!
      * Set the controller in tracking or non-tracking mode. [wait for
