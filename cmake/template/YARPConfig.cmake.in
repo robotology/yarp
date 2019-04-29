@@ -200,6 +200,14 @@ endif()
 
 
 ################################################################################
+# Print YARP information
+
+if(NOT YCM_FIND_QUIETLY)
+  message(STATUS "Found YARP: ${YARP_DIR} (found version \"${YARP_VERSION}\")")
+endif()
+
+
+################################################################################
 # Deprecated variables
 
 if(NOT YARP_NO_DEPRECATED AND NOT COMMAND _YARP_DEPRECATED_VARIABLE_WARNING)
