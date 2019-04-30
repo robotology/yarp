@@ -39,12 +39,6 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
 
-// needed for the driver factory.
-yarp::dev::DriverCreator *createMap2DServer() {
-    return new DriverCreatorOf<yarp::dev::Map2DServer>("map2DServer",
-        "map2DServer",
-        "yarp::dev::map2DServer");
-}
 
 /**
   * Map2DServer
@@ -603,7 +597,7 @@ bool Map2DServer::loadMaps(std::string mapsfile)
             yarp::dev::MapGrid2D map;
             bool r = map.loadFromFile(mapfilenameWithPath);
             if (r)
-            { 
+            {
                 string map_name= map.getMapName();
                 auto p = m_maps_storage.find(map_name);
                 if (p == m_maps_storage.end())
@@ -652,7 +646,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
         m_rf_mapCollection.setDefaultContext(collection_context_name.c_str());
         string collection_file_with_path = m_rf_mapCollection.findFile(collection_file_name);
         string locations_file_with_path = m_rf_mapCollection.findFile(locations_file_name);
-        
+
         if (collection_file_with_path=="")
         {
             yInfo() << "No locations loaded";
@@ -825,7 +819,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
                MapGrid2D::XYCell cell(x,map_ros->info.height-1-y);
                double occ = map_ros->data[x+y*map_ros->info.width];
                map.setOccupancyData(cell,occ);
-             
+
                if      (occ >= 0   && occ <= 70)  map.setMapFlag(cell, MapGrid2D::MAP_CELL_FREE);
                else if (occ >= 71 && occ <= 100)  map.setMapFlag(cell, MapGrid2D::MAP_CELL_WALL);
                else                               map.setMapFlag(cell, MapGrid2D::MAP_CELL_UNKNOWN);

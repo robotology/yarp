@@ -49,7 +49,7 @@ public:
      */
     virtual bool startRecording() = 0;
 
-     /**
+    /**
      * Stop the recording.
      *
      * @return true/false upon success/failure
