@@ -118,7 +118,6 @@ bool PolyDriver::open(yarp::os::Searchable& config) {
         removeMonitorAfterwards = true;
     }
 
-    //dd = Drivers::factory().open(config);
     coreOpen(config);
     HELPER(system_resource).info.fromString(config.toString());
     if (removeMonitorAfterwards) {
@@ -128,7 +127,7 @@ bool PolyDriver::open(yarp::os::Searchable& config) {
 }
 
 
-bool PolyDriver::closeMain() {
+bool PolyDriver::close() {
     bool result = false;
     if (system_resource!=nullptr) {
         int ct = HELPER(system_resource).removeRef();
@@ -172,7 +171,7 @@ bool PolyDriver::link(PolyDriver& alt) {
 
 
 PolyDriver::~PolyDriver() {
-    closeMain();
+    close();
     yAssert(dd==nullptr);
     yAssert(system_resource==nullptr);
 }
