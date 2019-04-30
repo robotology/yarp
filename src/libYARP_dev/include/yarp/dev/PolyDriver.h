@@ -109,9 +109,7 @@ public:
      */
     virtual ~PolyDriver();
 
-    bool close() override {
-        return closeMain();
-    }
+    bool close() override;
 
     /**
      * Check if device is valid.
@@ -161,8 +159,6 @@ public:
     }
 
 private:
-    bool closeMain();
-
     DeviceDriver *dd;
     void *system_resource;
 
