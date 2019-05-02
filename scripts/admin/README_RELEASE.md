@@ -85,7 +85,7 @@ git commit -m "Prepare for next stable release (3.1.3)"
 
 ```
   git checkout devel
-  git merge --no-ff -s ours master
+  git merge --no-ff -s recursive -X ours master
 ```
 
 * Open https://github.com/robotology/yarp/settings/branch_protection_rules/1548467,
