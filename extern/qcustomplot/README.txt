@@ -5,7 +5,7 @@ QCustomPlot is a Qt C++ widget for plotting and data visualization.
 
 Homepage: http://www.qcustomplot.com
 
-Copyright: Copyright (C) 2013-2015 Emanuel Eichhammer
+Copyright: Copyright (C) 2013-2018 Emanuel Eichhammer
 
 License: GPL-3
   This program is free software: you can redistribute it and/or modify it under
@@ -21,4 +21,4 @@ License: GPL-3
   You should have received a copy of the GNU General Public License along with
   this program.  If not, see http://www.gnu.org/licenses/.
 
-Version: 1.3.2
+Version: 2.0.1
