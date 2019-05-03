@@ -1861,6 +1861,20 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
         return;
     }
 
+    // Read annotations for defining the import/export macro (e.g. YARP_os_API)
+    //  * yarp.api.include = the header file that contains the definition of
+    //    the import/export keyword
+    //  * yarp.api.keyword = the name of the keyword
+    std::string yarp_api_include{};
+    if (annotations.find("yarp.api.include") != annotations.end()) {
+        yarp_api_include = annotations.at("yarp.api.include");
+    }
+
+    std::string yarp_api_keyword{};
+    if (annotations.find("yarp.api.keyword") != annotations.end()) {
+        yarp_api_keyword = annotations.at("yarp.api.keyword");
+    }
+
     // Open header file
     std::string f_header_name = get_out_dir() + name + ".h";
     std::ofstream f_h_;
@@ -1888,6 +1902,11 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
     f_h_ << '\n';
 
     // Add includes to .h file
+    if (!yarp_api_include.empty()) {
+        f_h_ << "#include <" << yarp_api_include << ">\n";
+        f_h_ << '\n';
+    }
+
     f_h_ << "#include <yarp/os/Wire.h>\n";
     f_h_ << "#include <yarp/os/idl/WireTypes.h>\n";
     if (need_common_) {
@@ -1918,7 +1937,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
     print_doc(f_h_, tstruct);
 
     // Begin class
-    f_h_ << indent_h() << "class " << name << " :\n";
+    f_h_ << indent_h() << "class " << yarp_api_keyword << (yarp_api_keyword.empty() ? "" : " ") << name << " :\n";
     f_h_ << indent_initializer_h() << "public yarp::os::idl::WirePortable\n";
     f_h_ << indent_h() << "{\n";
     indent_up_h();
