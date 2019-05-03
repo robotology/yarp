@@ -81,7 +81,9 @@ public:
     bool     storeArea(std::string location_name, Map2DArea area) override;
     bool     getLocation(std::string location_name, Map2DLocation& loc) override;
     bool     getArea(std::string location_name, Map2DArea& area) override;
+    bool     renameLocation(std::string original_name, std::string new_name) override;
     bool     deleteLocation(std::string location_name) override;
+    bool     renameArea(std::string original_name, std::string new_name) override;
     bool     deleteArea(std::string location_name) override;
     bool     getLocationsList(std::vector<std::string>& locations) override;
     bool     getAreasList(std::vector<std::string>& locations) override;

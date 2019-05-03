@@ -244,25 +244,77 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
 
 //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
+        else if (cmd == VOCAB_NAV_RENAME_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
         {
-            std::string name = in.get(3).asString();
+            std::string orig_name = in.get(3).asString();
+            std::string new_name = in.get(4).asString();
 
-            std::map<std::string, Map2DArea>::iterator it;
-            it = m_areas_storage.find(name);
-            if (it != m_areas_storage.end())
+            std::map<std::string, Map2DLocation>::iterator orig_it;
+            orig_it = m_locations_storage.find(orig_name);
+            std::map<std::string, Map2DLocation>::iterator new_it;
+            new_it = m_locations_storage.find(new_name);
+
+            if (orig_it != m_locations_storage.end() &&
+                new_it  == m_locations_storage.end())
             {
-                yInfo() << "Deleted area " << name;
-                m_areas_storage.erase(it);
+                yInfo() << "location: " << orig_name << " renamed to: " << new_name;
+                auto loc = orig_it->second;
+                m_locations_storage.erase(orig_it);
+                m_locations_storage.insert(std::pair<std::string, Map2DLocation>(new_name, loc));
                 out.addVocab(VOCAB_OK);
             }
             else
             {
-                yError("User requested an invalid area name");
+                yError("User requested an invalid rename operation");
                 out.addVocab(VOCAB_ERR);
             }
+            //             ret = true;
+        }
+        else if (cmd == VOCAB_NAV_RENAME_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
+        {
+            std::string orig_name = in.get(3).asString();
+            std::string new_name = in.get(4).asString();
 
+            std::map<std::string, Map2DArea>::iterator orig_it;
+            orig_it = m_areas_storage.find(orig_name);
+            std::map<std::string, Map2DArea>::iterator new_it;
+            new_it = m_areas_storage.find(new_name);
+
+            if (orig_it != m_areas_storage.end() &&
+                new_it == m_areas_storage.end())
+            {
+                yInfo() << "area: " << orig_name << " renamed to: " << new_name;
+                auto area = orig_it->second;
+                m_areas_storage.erase(orig_it);
+                m_areas_storage.insert(std::pair<std::string, Map2DArea>(new_name,area));
+                out.addVocab(VOCAB_OK);
+            }
+            else
+            {
+                yError("User requested an invalid rename operation");
+                out.addVocab(VOCAB_ERR);
+            }
 //             ret = true;
+        }
+        else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
+        {
+        std::string name = in.get(3).asString();
+
+        std::map<std::string, Map2DArea>::iterator it;
+        it = m_areas_storage.find(name);
+        if (it != m_areas_storage.end())
+        {
+            yInfo() << "Deleted area " << name;
+            m_areas_storage.erase(it);
+            out.addVocab(VOCAB_OK);
+        }
+        else
+        {
+            yError("User requested an invalid area name");
+            out.addVocab(VOCAB_ERR);
+        }
+
+        //             ret = true;
         }
         else if (cmd == VOCAB_NAV_GET_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
         {

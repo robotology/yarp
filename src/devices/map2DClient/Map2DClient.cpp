@@ -482,6 +482,34 @@ bool   yarp::dev::Map2DClient::deleteLocation(std::string location_name)
     return true;
 }
 
+bool   yarp::dev::Map2DClient::renameLocation(std::string original_name, std::string new_name)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_RENAME_X);
+    b.addVocab(VOCAB_NAV_LOCATION);
+    b.addString(original_name);
+    b.addString(new_name);
+
+    bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yError() << "Navigation2DClient::renameLocation() received error from locations server";
+            return false;
+        }
+    }
+    else
+    {
+        yError() << "Navigation2DClient::renameLocation() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
 bool   yarp::dev::Map2DClient::deleteArea(std::string location_name)
 {
     yarp::os::Bottle b;
@@ -504,6 +532,34 @@ bool   yarp::dev::Map2DClient::deleteArea(std::string location_name)
     else
     {
         yError() << "Navigation2DClient::deleteArea() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
+bool   yarp::dev::Map2DClient::renameArea(std::string original_name, std::string new_name)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_RENAME_X);
+    b.addVocab(VOCAB_NAV_AREA);
+    b.addString(original_name);
+    b.addString(new_name);
+
+    bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yError() << "Navigation2DClient::renameArea() received error from locations server";
+            return false;
+        }
+    }
+    else
+    {
+        yError() << "Navigation2DClient::renameArea() error on writing on rpc port";
         return false;
     }
     return true;

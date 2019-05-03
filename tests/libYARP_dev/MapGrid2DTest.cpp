@@ -305,6 +305,21 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
             imap->getLocationsList(loc_names);
             b1 = (loc_names.size() == 0);
             CHECK(b1);
+
+            ret = imap->storeArea("area", Map2DArea("map1", vec1));  CHECK(ret);
+            ret = imap->storeLocation("loc", Map2DLocation("map2", 4, 5, 6));  CHECK(ret);
+            ret = imap->renameArea("area_fail", "area_new");  CHECK(ret == false);
+            ret = imap->renameLocation("loc_fail", "loc_new");  CHECK(ret == false);
+            ret = imap->renameArea("area", "area_new");  CHECK(ret);
+            ret = imap->renameLocation("loc", "loc_new");  CHECK(ret);
+            ret = imap->getArea("area", area);         CHECK(ret==false);
+            ret = imap->getArea("area_new", area);      CHECK(ret); 
+            ret = imap->getLocation("loc", loc);       CHECK(ret==false);
+            ret = imap->getLocation("loc_new", loc);    CHECK(ret);
+            
+            //final cleanup, already tested        
+            ret = imap->clearAllLocations();  CHECK(ret);
+            ret = imap->clearAllAreas();  CHECK(ret);
         }
 
         //////////"Checking IMap2D methods which involve usage of classes MapGrid2D"
