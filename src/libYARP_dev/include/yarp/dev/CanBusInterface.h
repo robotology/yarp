@@ -87,6 +87,11 @@ public:
         return data;
     }
 
+    const CanMessage *const *getPointer() const
+    {
+        return data;
+    }
+
     CanMessage &operator[](int k)
     {
         return *data[k];
