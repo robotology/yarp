@@ -36,11 +36,15 @@ public:
      */
     virtual ~RpcServer();
 
-    // documented in UnbufferedContactable
+    /**
+     * Write cannot be called by RPCServer
+     */
     virtual bool write(const PortWriter& writer,
                        const PortWriter* callback = nullptr) const override;
 
-    // documented in UnbufferedContactable
+    /**
+     * Write cannot be called by RPCServer
+     */
     virtual bool write(const PortWriter& writer,
                        PortReader& reader,
                        const PortWriter* callback = nullptr) const override;
