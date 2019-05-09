@@ -191,6 +191,10 @@ bool PolyDriver::close()
     return result;
 }
 
+bool PolyDriver::isValid() const
+{
+    return dd != nullptr;
+}
 
 bool PolyDriver::link(PolyDriver& alt)
 {
