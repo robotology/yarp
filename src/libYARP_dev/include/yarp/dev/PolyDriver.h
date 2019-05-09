@@ -107,10 +107,7 @@ public:
      * Check if device is valid.
      * @return true iff the device was created and configured successfully
      */
-    bool isValid() const
-    {
-        return dd != nullptr;
-    }
+    bool isValid() const;
 
     /**
      * After a call to PolyDriver::open, you can
