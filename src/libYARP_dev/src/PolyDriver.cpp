@@ -7,27 +7,30 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/dev/PolyDriver.h>
+
 #include <yarp/os/Log.h>
 #include <yarp/os/Property.h>
-#include <yarp/dev/PolyDriver.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
 
-class YarpDevMonitor : public SearchMonitor {
+class PolyDriver::Private :
+        public SearchMonitor
+{
 private:
-    Property comment, fallback, present, actual;
+    Property comment;
+    Property fallback;
+    Property present;
+    Property actual;
     Bottle order;
-    int count;
+    int count = 1;
 
 public:
     Property info;
 
-    YarpDevMonitor() {
-        count = 1;
-    }
-
-    void report(const SearchReport& report, const char *context) override {
+    void report(const SearchReport& report, const char *context) override
+    {
         std::string ctx = context;
         std::string key = report.key;
         std::string prefix;
@@ -61,65 +64,103 @@ public:
         }
     }
 
-    Bottle getOptions() {
+    Bottle getOptions()
+    {
         return order;
     }
 
-    std::string getComment(const char *option) {
+    std::string getComment(const char *option)
+    {
         std::string desc = comment.find(option).toString();
         return desc;
     }
 
-    Value getDefaultValue(const char *option) {
+    Value getDefaultValue(const char *option)
+    {
         return fallback.find(option);
     }
 
-    Value getValue(const char *option) {
+    Value getValue(const char *option)
+    {
         return actual.find(option);
     }
 
-    void addRef() {
+    void addRef()
+    {
         count++;
     }
 
-    int removeRef() {
+    int removeRef()
+    {
         count--;
         return count;
     }
 
-    int getRef() {
+    int getRef()
+    {
         return count;
     }
 };
 
 
-#define HELPER(x) (*((YarpDevMonitor*)(x)))
+PolyDriver::PolyDriver() :
+    DeviceDriver(),
+    dd(nullptr),
+    mPriv(nullptr)
+{
+}
+
+PolyDriver::PolyDriver(const std::string& txt) :
+    DeviceDriver(),
+    dd(nullptr),
+    mPriv(nullptr)
+{
+    open(txt);
+}
+
+PolyDriver::PolyDriver(yarp::os::Searchable& config) :
+    DeviceDriver(),
+    dd(nullptr),
+    mPriv(nullptr)
+{
+    open(config);
+}
+
+PolyDriver::~PolyDriver()
+{
+    close();
+    yAssert(dd==nullptr);
+    yAssert(mPriv==nullptr);
+}
 
 
-bool PolyDriver::open(const std::string& txt) {
+
+bool PolyDriver::open(const std::string& txt)
+{
     Property p;
     p.put("device",txt);
     return open(p);
 }
 
 
-bool PolyDriver::open(yarp::os::Searchable& config) {
+bool PolyDriver::open(yarp::os::Searchable& config)
+{
     if (isValid()) {
         // already open - should close first
         return false;
     }
-    if (system_resource==nullptr) {
-        system_resource = new YarpDevMonitor;
+    if (mPriv==nullptr) {
+        mPriv = new PolyDriver::Private;
     }
-    yAssert(system_resource!=nullptr);
+    yAssert(mPriv!=nullptr);
     bool removeMonitorAfterwards = false;
     if (config.getMonitor()==nullptr) {
-        config.setMonitor(&HELPER(system_resource));
+        config.setMonitor(mPriv);
         removeMonitorAfterwards = true;
     }
 
     coreOpen(config);
-    HELPER(system_resource).info.fromString(config.toString());
+    mPriv->info.fromString(config.toString());
     if (removeMonitorAfterwards) {
         config.setMonitor(nullptr);
     }
@@ -127,14 +168,15 @@ bool PolyDriver::open(yarp::os::Searchable& config) {
 }
 
 
-bool PolyDriver::close() {
+bool PolyDriver::close()
+{
     bool result = false;
-    if (system_resource!=nullptr) {
-        int ct = HELPER(system_resource).removeRef();
+    if (mPriv!=nullptr) {
+        int ct = mPriv->removeRef();
         if (ct==0) {
-            yAssert(system_resource!=nullptr);
-            delete &HELPER(system_resource);
-            system_resource = nullptr;
+            yAssert(mPriv!=nullptr);
+            delete mPriv;
+            mPriv = nullptr;
             if (dd!=nullptr) {
                 result = dd->close();
                 delete dd;
@@ -144,71 +186,67 @@ bool PolyDriver::close() {
             }
         }
         dd = nullptr;
-        system_resource = nullptr;
+        mPriv = nullptr;
     }
     return result;
 }
 
 
-bool PolyDriver::link(PolyDriver& alt) {
+bool PolyDriver::link(PolyDriver& alt)
+{
     if (!alt.isValid()) return false;
     if (isValid()) return false;
     dd = alt.dd;
-    if (system_resource!=nullptr) {
-        int ct = HELPER(system_resource).removeRef();
+    if (mPriv!=nullptr) {
+        int ct = mPriv->removeRef();
         if (ct==0) {
-            yAssert(system_resource!=nullptr);
-            delete &HELPER(system_resource);
+            yAssert(mPriv!=nullptr);
+            delete mPriv;
         }
     }
-    system_resource = alt.system_resource;
+    mPriv = alt.mPriv;
     yAssert(dd!=nullptr);
-    yAssert(system_resource!=nullptr);
-    HELPER(system_resource).addRef();
+    yAssert(mPriv!=nullptr);
+    mPriv->addRef();
     return true;
 }
 
-
-
-PolyDriver::~PolyDriver() {
-    close();
-    yAssert(dd==nullptr);
-    yAssert(system_resource==nullptr);
-}
-
-
-
-Bottle PolyDriver::getOptions() {
-    if (system_resource==nullptr) {
+Bottle PolyDriver::getOptions()
+{
+    if (mPriv==nullptr) {
         return Bottle::getNullBottle();
     }
-    return HELPER(system_resource).getOptions();
+    return mPriv->getOptions();
 }
 
-std::string PolyDriver::getComment(const char *option) {
-    if (system_resource==nullptr) {
+std::string PolyDriver::getComment(const char *option)
+{
+    if (mPriv==nullptr) {
         return {};
     }
-    return HELPER(system_resource).getComment(option);
+    return mPriv->getComment(option);
 }
 
-Value PolyDriver::getDefaultValue(const char *option) {
-    if (system_resource==nullptr) {
+Value PolyDriver::getDefaultValue(const char *option)
+{
+    if (mPriv==nullptr) {
         return Value::getNullValue();
     }
-    return HELPER(system_resource).getDefaultValue(option);
+    return mPriv->getDefaultValue(option);
 }
 
-Value PolyDriver::getValue(const char *option) {
-    if (system_resource==nullptr) {
+Value PolyDriver::getValue(const char *option)
+{
+    if (mPriv==nullptr) {
         return Value::getNullValue();
     }
-    return HELPER(system_resource).getValue(option);
+    return mPriv->getValue(option);
 }
 
 
 
-bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
+bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
+{
     yarp::os::Searchable *config = &prop;
     Property p;
     std::string str = prop.toString();
@@ -295,24 +333,35 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
 }
 
 
-DeviceDriver *PolyDriver::take() {
+DeviceDriver *PolyDriver::take()
+{
     // this is not very careful
     DeviceDriver *result = dd;
     dd = nullptr;
     return result;
 }
 
-bool PolyDriver::give(DeviceDriver *dd, bool own) {
+bool PolyDriver::give(DeviceDriver *dd, bool own)
+{
     close();
     this->dd = dd;
     if (dd!=nullptr) {
-        if (system_resource==nullptr) {
-            system_resource = new YarpDevMonitor;
+        if (mPriv==nullptr) {
+            mPriv = new PolyDriver::Private;
         }
-        yAssert(system_resource!=nullptr);
+        yAssert(mPriv!=nullptr);
         if (!own) {
-            HELPER(system_resource).addRef();
+            mPriv->addRef();
         }
     }
     return true;
+}
+
+DeviceDriver* PolyDriver::getImplementation()
+{
+    if(isValid()) {
+        return dd->getImplementation();
+    } else {
+        return nullptr;
+    }
 }

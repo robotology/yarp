@@ -10,13 +10,11 @@
 #ifndef YARP_DEV_POLYDRIVER_H
 #define YARP_DEV_POLYDRIVER_H
 
+#include <yarp/dev/api.h>
 #include <yarp/dev/Drivers.h>
 
 namespace yarp {
-    namespace dev {
-        class PolyDriver;
-    }
-}
+namespace dev {
 
 
 /**
@@ -24,27 +22,22 @@ namespace yarp {
  *
  * A container for a device driver.
  */
-class YARP_dev_API yarp::dev::PolyDriver : public DeviceDriver {
+class YARP_dev_API PolyDriver :
+        public DeviceDriver
+{
 public:
     using DeviceDriver::open;
 
     /**
      * Constructor.
      */
-    PolyDriver() {
-        system_resource = 0 /*NULL*/;
-        dd = 0 /*NULL*/;
-    }
+    PolyDriver();
 
     /**
      * Construct and configure a device by its common name.
      * @param txt common name of the device
      */
-    PolyDriver(const std::string& txt) {
-        system_resource = 0 /*NULL*/;
-        dd = 0 /*NULL*/;
-        open(txt);
-    }
+    PolyDriver(const std::string& txt);
 
     /**
      * Create and configure a device, by name.  The config
@@ -54,11 +47,15 @@ public:
      * DeviceDriver::open method.
      * @param config configuration options for the device
      */
-    PolyDriver(yarp::os::Searchable& config) {
-        system_resource = 0 /*NULL*/;
-        dd = 0 /*NULL*/;
-        open(config);
-    }
+    PolyDriver(yarp::os::Searchable& config);
+
+    /**
+     * Destructor.
+     */
+    virtual ~PolyDriver();
+
+    PolyDriver(const PolyDriver& alt) = delete;
+    const PolyDriver& operator=(const PolyDriver& alt) = delete;
 
     /**
      * Construct and configure a device by its common name.
@@ -104,19 +101,15 @@ public:
      */
     bool give(DeviceDriver *dd, bool own);
 
-    /**
-     * Destructor.
-     */
-    virtual ~PolyDriver();
-
     bool close() override;
 
     /**
      * Check if device is valid.
      * @return true iff the device was created and configured successfully
      */
-    bool isValid() const {
-        return dd != 0 /*NULL*/;
+    bool isValid() const
+    {
+        return dd != nullptr;
     }
 
     /**
@@ -151,32 +144,20 @@ public:
      */
     yarp::os::Value getValue(const char *option);
 
-    DeviceDriver *getImplementation() override {
-      if(isValid())
-        return dd->getImplementation();
-      else
-        return nullptr;
-    }
+    DeviceDriver *getImplementation() override;
 
 private:
     DeviceDriver *dd;
-    void *system_resource;
 
     bool coreOpen(yarp::os::Searchable& config);
 
-    // private in order to disable copy
-    PolyDriver(const PolyDriver& alt) : DeviceDriver() {
-    }
-
-    // private in order to disable copy
-    const PolyDriver& operator = (const char *alt) {
-        return *this;
-    }
-
-    // private in order to disable copy
-    const PolyDriver& operator = (const PolyDriver& alt) {
-        return *this;
-    }
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    class Private;
+    Private* mPriv;
+#endif
 };
+
+} // namespace dev
+} // namespace yarp
 
 #endif // YARP_DEV_POLYDRIVER_H
