@@ -116,7 +116,7 @@ public:
  * IMPL is the internal representation of the can message.
  */
 template<class M, class IMPL>
-class YARP_dev_API yarp::dev::ImplementCanBufferFactory: public ICanBufferFactory
+class yarp::dev::ImplementCanBufferFactory: public ICanBufferFactory
 {
 public:
     virtual ~ImplementCanBufferFactory(){}
