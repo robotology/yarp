@@ -116,11 +116,27 @@ public:
     virtual bool getAreasList(std::vector<std::string>& areas) = 0;
 
     /**
+    * Searches for a location and renames it
+    * @param original_name the name of the area
+    * @param new_name the new name of the area
+    * @return true/false
+    */
+    virtual bool renameLocation(std::string original_name, std::string new_name) = 0;
+
+    /**
     * Delete a location
     * @param location_name the name of the location
     * @return true/false
     */
     virtual bool deleteLocation(std::string location_name) = 0;
+
+    /**
+    * Searches for an area and renames it
+    * @param original_name the name of the area
+    * @param new_name the new name of the area
+    * @return true/false
+    */
+    virtual bool renameArea(std::string original_name, std::string new_name) = 0;
 
     /**
     * Delete an area
