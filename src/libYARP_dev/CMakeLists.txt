@@ -149,6 +149,7 @@ set(YARP_dev_SRCS src/CanBusInterface.cpp
                   src/ImplementVirtualAnalogSensor.cpp
                   src/IRangefinder2D.cpp
                   src/IVisualParamsImpl.cpp
+                  src/IVisualServoing.cpp
                   src/LaserMeasurementData.cpp
                   src/MultipleAnalogSensorsInterfaces.cpp
                   src/PolyDriver.cpp

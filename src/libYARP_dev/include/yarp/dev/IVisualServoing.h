@@ -37,7 +37,7 @@ public:
     /*!
      * Destructor.
      */
-    virtual ~IVisualServoing() { }
+    virtual ~IVisualServoing();
 
     /*!
      * Initialize support classes, modules and connections to perform visual
