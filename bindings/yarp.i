@@ -78,10 +78,6 @@
 %include <stdint.i>
 %include <std_vector.i>
 
-#if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
-  %include "std_vector.i"
-#endif
-
 // Try to translate std::string to native equivalents
 %include "std_string.i"
 
@@ -189,13 +185,7 @@
     %rename(toString_c) *::toString() const;
 #endif
 
-#ifdef SWIGCHICKEN
-    // small warning on chicken
-    %rename(delay_c) *::delay();
-#endif
-
 #ifdef SWIGTCL
-    // small warning on chicken
     %rename(configure_c) *::configure();
 #endif
 
@@ -203,14 +193,10 @@
 // Clean up a few unimportant things that give warnings
 
 // abstract methods just confuse SWIG
-// We must not do this for allegro
-#if !defined(SWIGALLEGROCL)
-  #if !defined(SWIGCHICKEN)
-    %ignore yarp::os::BufferedPort::open; // let Contactable::open show
-    %ignore yarp::os::Port::open; // let Contactable::open show
-    %ignore yarp::os::RpcClient::open;
-  #endif
-#endif
+%ignore yarp::os::BufferedPort::open; // let Contactable::open show
+%ignore yarp::os::Port::open; // let Contactable::open show
+%ignore yarp::os::RpcClient::open;
+
 // operator= does not get translated well
 %ignore *::operator=;
 %ignore yarp::PortReaderBuffer;
@@ -302,10 +288,6 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 
 // Define macros for handling the multiple analog sensors interfaces
 %include macrosForMultipleAnalogSensors.i
-
-#if defined( SWIGALLEGROCL )
-  %include "allegro/compat.h"
-#endif
 
 // Define typemaps for Matrix before including it
 #ifdef SWIGPYTHON
@@ -444,22 +426,20 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IPositionDirect.h>
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
-#if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
-  %template(DVector) std::vector<double>;
-  %template(BVector) std::vector<bool>;
-  %template(SVector) std::vector<std::string>;
-  %template(IVector) std::vector<int>;
+%template(DVector) std::vector<double>;
+%template(BVector) std::vector<bool>;
+%template(SVector) std::vector<std::string>;
+%template(IVector) std::vector<int>;
 
-  #ifdef SWIGMATLAB
-    // Extend IVector for handling conversion of vectors from and to Matlab
-    %include "matlab/vectors_fromTo_matlab.i"
-  #endif
-
-  #if defined(SWIGCSHARP)
-      SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(Pid,yarp::dev::Pid)
-  #endif
-  %template(PidVector) std::vector<yarp::dev::Pid>;
+#ifdef SWIGMATLAB
+  // Extend IVector for handling conversion of vectors from and to Matlab
+  %include "matlab/vectors_fromTo_matlab.i"
 #endif
+
+#if defined(SWIGCSHARP)
+  SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(Pid,yarp::dev::Pid)
+#endif
+%template(PidVector) std::vector<yarp::dev::Pid>;
 
 //////////////////////////////////////////////////////////////////////////
 // Match Java toString behaviour

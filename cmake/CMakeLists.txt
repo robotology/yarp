@@ -9,7 +9,8 @@
 set(YARP_CMAKE_FILES YarpPlugin.cmake
                      YarpIDL.cmake
                      YarpInstallationHelpers.cmake
-                     YarpPrintFeature.cmake)
+                     YarpPrintFeature.cmake
+                     YarpDeprecatedOption.cmake)
 install(FILES ${YARP_CMAKE_FILES}
         COMPONENT scripts
         DESTINATION share/yarp/cmake)
@@ -31,7 +32,6 @@ install(FILES ${YARP_TEMPLATE_FILES}
 # Remove renamed files from installation
 include(YarpRemoveFile)
 foreach(_f YarpDeprecatedWarning.cmake   # since YARP 3.0.0
-           deprecated/YarpDeprecatedOption.cmake
            deprecated/YarpRenamedOption.cmake
            deprecated/YarpBackupVariable.cmake)
   yarp_remove_file("share/yarp/cmake/${_f}")
