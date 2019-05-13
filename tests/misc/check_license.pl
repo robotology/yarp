@@ -85,17 +85,6 @@ my $str_bsd3_lua = <<END;
 
 END
 
-my $str_bsd3_lisp = <<END;
-^;+ $copyright_iit(
-;+ $copyright_robocub)?(
-;+ $copyright_others)*
-;+ All rights reserved\\.
-;+
-;+ This software may be modified and distributed under the terms of the
-;+ BSD-3-Clause license\\. See the accompanying LICENSE file for details\\.
-
-END
-
 my $str_bsd3_swig = <<END;
 ^// $copyright_iit(
 // $copyright_robocub)?(
@@ -265,47 +254,6 @@ my $str_lgpl2_1_or_later_lua_other = <<END;
 -- You should have received a copy of the GNU Lesser General Public
 -- License along with this library; if not, write to the Free Software
 -- Foundation, Inc\\., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-
-END
-
-my $str_lgpl2_1_or_later_lisp = <<END;
-;+ $copyright_iit(
-;+ $copyright_robocub)?
-;+
-;+ This library is free software; you can redistribute it and/or
-;+ modify it under the terms of the GNU Lesser General Public
-;+ License as published by the Free Software Foundation; either
-;+ version 2\\.1 of the License, or \\(at your option\\) any later version\\.
-;+
-;+ This library is distributed in the hope that it will be useful,
-;+ but WITHOUT ANY WARRANTY; without even the implied warranty of
-;+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\\.  See the GNU
-;+ Lesser General Public License for more details\\.
-;+
-;+ You should have received a copy of the GNU Lesser General Public
-;+ License along with this library; if not, write to the Free Software
-;+ Foundation, Inc\\., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-
-END
-
-my $str_lgpl2_1_or_later_lisp_other = <<END;
-;+ $copyright_iit(
-;+ $copyright_robocub)?(
-;+ $copyright_others)*
-;+
-;+ This library is free software; you can redistribute it and/or
-;+ modify it under the terms of the GNU Lesser General Public
-;+ License as published by the Free Software Foundation; either
-;+ version 2\\.1 of the License, or \\(at your option\\) any later version\\.
-;+
-;+ This library is distributed in the hope that it will be useful,
-;+ but WITHOUT ANY WARRANTY; without even the implied warranty of
-;+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\\.  See the GNU
-;+ Lesser General Public License for more details\\.
-;+
-;+ You should have received a copy of the GNU Lesser General Public
-;+ License along with this library; if not, write to the Free Software
-;+ Foundation, Inc\\., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 END
 
@@ -531,18 +479,6 @@ foreach my $filename (@files) {
         next;
     }
 
-    # Lisp style BSD-3-Clause
-    if ("$txt" =~ /$str_bsd3_lisp/s) {
-        if ("$filename" =~ /\.(lisp|asd|scm)$/) {
-            print "[OK - BSD ($1)] $filename\n";
-            $ok++;
-        } else {
-            print "[NOT OK - BSD (lisp style)] $filename\n";
-            $errors++;
-        }
-        next;
-    }
-
     # Swig style BSD-3-Clause
     if ("$txt" =~ /$str_bsd3_swig/s) {
         if ("$filename" =~ /\.(i)$/) {
@@ -582,21 +518,6 @@ foreach my $filename (@files) {
         next;
     }
 
-    # C++ style LGPL2.1+ (other)
-    if ("$txt" =~ /$str_lgpl2_1_or_later_lisp/s) {
-        if ("$filename" =~ /src\/libYARP_([a-zA-Z]+)/) {
-            print "[NOT OK - LGPL2.1+ (library $1)] $filename\n";
-            $errors++;
-        } elsif ("$filename" =~ /\.(asd|lisp)$/) {
-            print "[OK - LGPL2.1+ ($1)] $filename\n";
-            $ok++;
-        } else {
-            print "[NOT OK - LGPL2.1+] $filename\n";
-            $errors++;
-        }
-        next;
-    }
-
     # Lua style LGPL2.1+ (other)
     if ("$txt" =~ /$str_lgpl2_1_or_later_lua/s) {
         if ("$filename" =~ /src\/libYARP_([a-zA-Z]+)/) {
@@ -614,7 +535,6 @@ foreach my $filename (@files) {
 
     # LGPL2.1+ (other)
     if ("$txt" =~ /$str_lgpl2_1_or_later_other/s ||
-        "$txt" =~ /$str_lgpl2_1_or_later_lisp_other/s ||
         "$txt" =~ /$str_lgpl2_1_or_later_lua_other/s) {
         print "[NOT OK - LGPL2.1+ (other)] $filename\n";
         $errors++;

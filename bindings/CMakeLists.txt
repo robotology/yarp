@@ -55,6 +55,7 @@ else()
 endif()
 
 include(${YARP_MODULE_DIR}/YarpPrintFeature.cmake)
+include(${YARP_MODULE_DIR}/YarpDeprecatedOption.cmake)
 
 set(YARP_COMPILE_BINDINGS_DEFAULT TRUE)
 set(YARP_BASE_DIR ${CMAKE_CURRENT_BINARY_DIR})
@@ -74,9 +75,7 @@ yarp_print_feature(YARP_COMPILE_BINDINGS 0 "Bindings")
 set(SUPPORTED_LANGUAGES "Java"
                         "Python"
                         "Perl"
-                        "Chicken Scheme"
                         "CSharp"
-                        "Allegro Common Lisp"
                         "TCL"
                         "Ruby"
                         "Lua"
@@ -89,6 +88,10 @@ foreach(Lang ${SUPPORTED_LANGUAGES})
                          YARP_COMPILE_BINDINGS OFF)
   yarp_print_feature(CREATE_${LANG} 1 "${Lang} bindings")
 endforeach()
+
+yarp_deprecated_option("CREATE_CHICKEN") # Since YARP 3.2
+yarp_deprecated_option("CREATE_ALLEGRO") # Since YARP 3.2
+
 
 #############################################################################
 
