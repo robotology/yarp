@@ -142,14 +142,18 @@ to call a method when data arrives rather than to sit around
 calling read().  With the Port class, you can do that with
 the yarp::os::Port::setReader() method:
 \code
-class DataProcessor : public PortReader {
-     virtual bool read(ConnectionReader& connection) {
-          Bottle b;
-          bool ok = b.read(connection);
-          if (!ok) return false;
-          // process data in b
-          return true;
-     }
+class DataProcessor : public PortReader
+{
+    bool read(ConnectionReader& connection) override
+    {
+        Bottle b;
+        bool ok = b.read(connection);
+        if (!ok) {
+            return false;
+        }
+        // process data in b
+        return true;
+    }
 };
 DataProcessor processor;
 ...
@@ -160,9 +164,11 @@ With BufferedPorts, things are a bit easier since these ports
 know what type of data they are dealing with.
 You can override the port's onRead method:
 \code
-class DataPort : public BufferedPort<Bottle> {
+class DataPort : public BufferedPort<Bottle>
+{
     using BufferedPort<Bottle>::onRead;
-    virtual void onRead(Bottle& b) {
+    void onRead(Bottle& b) override
+    {
         // process data in b
     }
 };
@@ -174,9 +180,11 @@ p.open("/in");
 Alternatively, you can leave the port unchanged and use
 an external callback as follows:
 \code
-class DataProcessor : public TypedReaderCallback<Bottle> {
+class DataProcessor : public TypedReaderCallback<Bottle>
+{
     using TypedReaderCallback<Bottle>::onRead;
-    virtual void onRead(Bottle& b) {
+    void onRead(Bottle& b) override
+    {
         // process data in b
     }
 };
@@ -231,23 +239,28 @@ rather than many-to-many -- otherwise it will get confusing.
 
 If we are using callbacks, our receiver should do something like this:
 \code
-class DataProcessor : public PortReader {
-     virtual bool read(ConnectionReader& connection) {
-          Bottle in, out;
-          bool ok = in.read(connection);
-          if (!ok) return false;
-          ...      // process data "in", prepare "out"
-          ConnectionWriter *returnToSender = connection.getWriter();
-          if (returnToSender!=NULL) {
-	     out.write(*returnToSender);
-          }
-          return true;
-     }
+class DataProcessor : public PortReader
+{
+    bool read(ConnectionReader& connection) override
+    {
+        Bottle in, out;
+        bool ok = in.read(connection);
+        if (!ok) {
+            return false;
+        }
+        ...      // process data "in", prepare "out"
+        ConnectionWriter *returnToSender = connection.getWriter();
+        if (returnToSender!=NULL) {
+            out.write(*returnToSender);
+        }
+        return true;
+    }
 };
 DataProcessor processor;
 ...
 p.setReader(processor);  // no need to call p.read() on port any more.
 \endcode
+
 (Technical note: beware that the requested reply does not happen until the
 end of the DataProcessor read() method, since only then is the full
 size of the reply known and some lower-level network protocols require
@@ -347,12 +360,14 @@ class Target : public Portable {
 public:
   int x;
   int y;
-  virtual bool write(ConnectionWriter& connection) {
+  bool write(ConnectionWriter& connection) override
+  {
     connection.appendInt32(x);
     connection.appendInt32(y);
     return true;
   }
-  virtual bool read(ConnectionReader& connection) {
+  bool read(ConnectionReader& connection) override
+  {
     x = connection.expectInt32();
     y = connection.expectInt32();
     return !connection.isError();
@@ -376,7 +391,8 @@ to the command line (with "yarp read", "yarp write", and "yarp
 rpc"), or a web-browser, etc.  For example, we could make Target's
 write method be:
 \code
-  virtual bool write(ConnectionWriter& connection) {
+  bool write(ConnectionWriter& connection) override
+  {
     connection.appendInt32(BOTTLE_TAG_LIST+BOTTLE_TAG_INT32);
     connection.appendInt32(2); // two elements
     connection.appendInt32(x);
@@ -396,7 +412,8 @@ expressing that Bottle in text form.
 
 The corresponding read method would be:
 \code
-  virtual bool read(ConnectionReader& connection) {
+  bool read(ConnectionReader& connection) override
+  {
     connection.convertTextMode(); // if connection is text-mode, convert!
     int tag = connection.expectInt32();
     if (tag!=BOTTLE_TAG_LIST+BOTTLE_TAG_INT32) return false;

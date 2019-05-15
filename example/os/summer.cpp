@@ -7,30 +7,31 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/all.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/BufferedPort.h>
+#include <yarp/os/LogStream.h>
+#include <yarp/os/Network.h>
 #include <iostream>
 
-using namespace std;
-using namespace yarp::os;
-
-int main(int argc, char *argv[]) {
-    Network yarp;
-    BufferedPort<Bottle> port;
+int main(int argc, char *argv[])
+{
+    yarp::os::Network yarp;
+    yarp::os::BufferedPort<yarp::os::Bottle> port;
     port.open("/summer");
     while (true) {
-        cout << "waiting for input" << endl;
-        Bottle *input = port.read();
-        if (input!=NULL) {
-            cout << "got " << input->toString().c_str() << endl;
+        yInfo() << "waiting for input";
+        yarp::os::Bottle *input = port.read();
+        if (input != nullptr) {
+            yInfo() << "got " << input->toString().c_str();
             double total = 0;
             for (int i=0; i<input->size(); i++) {
                 total += input->get(i).asFloat64();
             }
-            Bottle& output = port.prepare();
+            yarp::os::Bottle& output = port.prepare();
             output.clear();
             output.addString("total");
             output.addFloat64(total);
-            cout << "writing " << output.toString().c_str() << endl;
+            yInfo() << "writing " << output.toString().c_str();
             port.write();
         }
     }
