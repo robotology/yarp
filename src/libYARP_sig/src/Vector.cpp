@@ -34,12 +34,10 @@ using namespace yarp::os;
 ///////////////////
 
 YARP_BEGIN_PACK
-class VectorPortContentHeader
+struct VectorPortContentHeader
 {
-public:
     yarp::os::NetInt32 listTag{0};
     yarp::os::NetInt32 listLen{0};
-    VectorPortContentHeader() = default;
 };
 YARP_END_PACK
 
