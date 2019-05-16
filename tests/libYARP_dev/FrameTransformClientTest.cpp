@@ -11,7 +11,8 @@
 #include <yarp/sig/Matrix.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/math/Quaternion.h>
-#include <yarp/dev/IFrameTransform.h>
+#include <yarp/dev/IFrameSet.h>
+#include <yarp/dev/IFrameSource.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
@@ -26,7 +27,7 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::math;
-
+using namespace std::chrono_literals;
 
 static bool isEqual(const yarp::sig::Vector& v1, const yarp::sig::Vector& v2, double precision)
 {
@@ -83,42 +84,35 @@ static bool isEqual(const yarp::sig::Matrix& m1, const yarp::sig::Matrix& m2, do
 
 TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("transformServer", "device");
-    YARP_REQUIRE_PLUGIN("transformClient", "device");
+    YARP_REQUIRE_PLUGIN("FrameBroadcaster", "device");
+    YARP_REQUIRE_PLUGIN("FrameReceiver",    "device");
 
 #if defined(DISABLE_FAILING_TESTS)
     YARP_SKIP_TEST("Skipping failing tests")
 #endif
 
-    Network::setLocalMode(true);
-
+        Network::setLocalMode(true);
+        //Network yarp;
     SECTION("Test the transform client")
     {
         bool precision_verbose = false;
 
-        PolyDriver ddtransformserver;
-        Property pTransformserver_cfg;
-        pTransformserver_cfg.put("device", "transformServer");
-        Property& ros_prop = pTransformserver_cfg.addGroup("ROS");
-        ros_prop.put("enable_ros_publisher", "0");
-        ros_prop.put("enable_ros_subscriber", "0");
-        pTransformserver_cfg.put("transforms_lifetime", 0.500);
-        bool ok_server = ddtransformserver.open(pTransformserver_cfg);
-        CHECK(ok_server); // ddtransformserver open reported successful
+        PolyDriver framebroadcasterpd;
+        Property config{ {"device", Value("FrameBroadcaster")}, {"topic",Value("/testframetransform")} };
+        REQUIRE(framebroadcasterpd.open(config)); // ddtransformserver open reported successful
+        IFrameSet* itfB{ nullptr };
+        REQUIRE(framebroadcasterpd.view(itfB));
+        REQUIRE(itfB != nullptr);
+        
+        config.clear();
+        PolyDriver framereceiverpd;
+        config = { {"device", Value("FrameReceiver")}, {"topic", Value("/testframetransform")} };
+        REQUIRE(framereceiverpd.open(config)); // ddtransformclient open reported successful
+        IFrameSource* itfR{ nullptr };
+        REQUIRE(framereceiverpd.view(itfR));
+        REQUIRE(itfR != nullptr);
 
-        IFrameTransform* itf = nullptr;
-        PolyDriver ddtransformclient;
-        Property pTransformclient_cfg;
-        pTransformclient_cfg.put("device", "transformClient");
-        pTransformclient_cfg.put("local", "/transformClientTest");
-        pTransformclient_cfg.put("remote", "/transformServer");
-        bool ok_client = ddtransformclient.open(pTransformclient_cfg);
-        CHECK(ok_client); // ddtransformclient open reported successful
-
-        bool ok_view = ddtransformclient.view(itf);
-        REQUIRE(ok_view);
-        REQUIRE(itf != nullptr); // iTransform interface open reported successful
-
+        REQUIRE(yarp::os::Network::connect("/testframetransform+@/frameBroadcaster0", "/testframetransform-@/frameReceiver0"));
         yarp::sig::Matrix m1(4, 4);
         m1[0][0] = cos(M_PI / 4); m1[0][1] = -sin(M_PI / 4); m1[0][2] = 0; m1[0][3] = 3;
         m1[1][0] = sin(M_PI / 4); m1[1][1] = cos(M_PI /4);   m1[1][2] = 0; m1[1][3] = 1;
@@ -139,13 +133,14 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
 
         double precision;
         precision = 0.00000001;
-
-        itf->setTransformStatic("frame2", "frame1", m1);
-        itf->setTransformStatic("frame3", "frame2", m2);
-        itf->setTransformStatic("frame4", "frame3", m3);
-        itf->setTransformStatic("frame11", "frame10", m1);
-        itf->setTransformStatic("frame3b", "frame2", m2);
-        itf->setTransformStatic("sibiling_test_frame", "frame1", sibiling);
+        itfB->setTransforms({
+            {"frame1", "frame2",   m1, true},
+            {"frame2", "frame3",   m2, true},
+            {"frame3", "frame4",   m3, true},
+            {"frame10", "frame11", m1, true},
+            {"frame2", "frame3b",  m2, true},
+            {"frame1", "sibiling_test_frame", sibiling, true}
+            });
 
         yarp::sig::Matrix m4(4, 4);
         m4[0][0] = +0.9585267399;  m4[0][1] = -0.2305627908;  m4[0][2] = +0.1675329472;  m4[0][3] = 0.1;
@@ -156,57 +151,58 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
         yarp::os::Time::delay(1);
 
         //test 0
-        std::vector<std::string> ids;
-        itf->getAllFrameIds(ids);
+        auto ids = itfR->getAllFrameIds();
+        
         char buff[1024]; buff[0] = 0;
-        for (size_t i = 0; i < ids.size(); i++)
+        for (auto& frameId : ids)
         {
-            sprintf(buff +strlen(buff), "%s ", ids[i].c_str());
+            sprintf(buff +strlen(buff), "%s ", frameId.c_str());
         }
         INFO("Found frames: " << buff);
         bool b_ids = (ids.size() == 8);
         CHECK(b_ids); // getAllFrameIds ok
 
         //test 1
-        std::string parent;
-        itf->getParent("frame3", parent);
-        CHECK(parent == "frame2"); // getParent ok
+        auto parentRes = itfR->getParent("frame3");
+        CHECK(parentRes.valid);
+        CHECK(parentRes.value == "frame2"); // getParent ok
+
 
         //test 2
-        yarp::sig::Matrix mt(4, 4);
-        bool b_gt = itf->getTransform("frame3", "frame1", mt);
-        isEqual(mt, m3, precision);
-        CHECK(b_gt); // getTransform ok
-        if (precision_verbose || b_gt==false) {
+        auto b_gt = itfR->getTransform("frame1", "frame3");
+        auto mt   = b_gt.value.toMatrix();
+        CHECK(b_gt.valid); // getTransform ok
+        CHECK(isEqual(mt, m3, precision));
+        if (precision_verbose || b_gt.valid == false)
+        {
             INFO("Precision error:\n" + (mt - m3).toString());
         }
 
         //test3
-        CHECK(itf->frameExists("frame3"));
-        CHECK_FALSE(itf->frameExists("frame3_err")); // frameExists ok
+        CHECK(itfR->frameExists("frame3"));
+        CHECK_FALSE(itfR->frameExists("frame3_err")); // frameExists ok
 
         //test4
-        CHECK(itf->canTransform("frame2", "frame1"));
-        CHECK_FALSE(itf->canTransform("frame11", "frame1")); // canTransform ok
+        CHECK(itfR->canTransform("frame1", "frame2").value);
+        CHECK_FALSE(itfR->canTransform("frame1", "frame11").value); // canTransform ok
 
         //test4bis
         {
-            bool b_canb1;
-            b_canb1 = itf->canTransform("frame3b", "frame1");
-            CHECK(b_canb1); // canTransform Bis ok
+            
+            CHECK(itfR->canTransform("frame1", "frame3b").value); // canTransform Bis ok
         }
 
         //test4 tris (transform between sibilings)
         {
-            yarp::sig::Matrix sib;
-            CHECK(itf->canTransform("sibiling_test_frame", "frame3")); // canTransform between sibilings ok
-            CHECK(itf->getTransform("sibiling_test_frame", "frame3", sib)); // getTransform between sibilings ok
-            CHECK(isEqual(sib, SE3inv(m2) * SE3inv(m1) * sibiling, precision)); // transform between sibilings ok
+            CHECK(itfR->canTransform("sibiling_test_frame", "frame3").value); // canTransform between sibilings ok
+            auto t = itfR->getTransform("sibiling_test_frame", "frame3");
+            CHECK(t.valid); // getTransform between sibilings ok
+            CHECK(isEqual(t.value.toMatrix(), SE3inv(m2) * SE3inv(m1) * sibiling, precision)); // transform between sibilings ok
         }
 
         //test 5
-        yarp::sig::Matrix mti(4, 4);
-        itf->getTransform("frame1", "frame3b", mti);
+        auto t5 = itfR->getTransform("frame3b", "frame1");
+        auto mti = t5.value.toMatrix();
         bool b_gt_inv = isEqual(mti, yarp::math::SE3inv(m3), precision);
         CHECK(b_gt_inv); // inverted getTransform ok
         if (precision_verbose || b_gt_inv==false) {
@@ -243,9 +239,9 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
 
         verQuat.fromRotationMatrix(m1 * m2 * m4);
 
-        itf->transformPoint("frame3", "frame1", in_point1, out_point1);
-        itf->transformPose("frame3", "frame1", in_pose1, out_pose1);
-        itf->transformQuaternion("frame3", "frame1", in_quat1, out_quat1);
+        out_point1 = itfR->transformPoint("frame1", "frame3", in_point1).value;
+        out_pose1 = itfR->transformPose("frame1", "frame3", in_pose1).value;
+        out_quat1  = itfR->transformQuaternion("frame1", "frame3", in_quat1).value;
 
         bool b_tpoint = isEqual(verPoint1, out_point1, precision);
         CHECK(b_tpoint); // transformPoint ok
@@ -267,8 +263,9 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
 
         //test 7
         {
-            std::string all_frames;
-            CHECK(itf->allFramesAsString(all_frames));
+            
+            auto all_frames = itfR->allFramesAsString();
+            CHECK(!all_frames.empty());
             CHECK(all_frames.find("frame1") != std::string::npos);
             CHECK(all_frames.find("frame2") != std::string::npos);
             CHECK(all_frames.find("frame3") != std::string::npos);
@@ -281,46 +278,46 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
 
         //test 8
         {
-            itf->setTransformStatic("frame_test", "frame1", m1);
+            itfB->setTransform({"frame1", "frame_test", m1});
             yarp::os::Time::delay(1);
-            bool del_bool = itf->frameExists("frame_test");
-            itf->deleteTransform("frame_test", "frame1");
+            bool del_bool = itfR->frameExists("frame_test");
             yarp::os::Time::delay(1);
-            del_bool &= (!itf->frameExists("frame_test"));
+            itfR->clearOlderFrames(10ms);
+            del_bool &= (!itfR->frameExists("frame_test"));
             CHECK(del_bool); // deleteTransform ok
         }
 
         //test 9
         {
-            itf->clear();
-            std::vector<std::string> cids;
-            itf->getAllFrameIds(cids);
+            itfB->clear();
+            itfR->clearOlderFrames(0ms);
+            itfR->clearStaticFrames();
+            auto cids = itfR->getAllFrameIds();
             CHECK(cids.size() == 0); // clear ok
         }
 
         //test 10
         {
-            itf->setTransform("frame2", "frame10", m1);
+            itfB->setTransform({"frame10", "frame2", m1});
             yarp::os::Time::delay(0.050);
-            bool b_can;
-            b_can = itf->canTransform("frame2", "frame10");
-            CHECK(b_can); // itf->setTransform ok
-            yarp::os::Time::delay(0.6);
-            b_can = itf->canTransform("frame2", "frame10");
-            CHECK_FALSE(b_can); // itf->setTransform successfully expired after 0.6s
+            CHECK(itfR->canTransform("frame10", "frame2").value); // itf->setTransform ok
+            itfR->clearOlderFrames(40ms);
+            CHECK_FALSE(itfR->canTransform("frame10", "frame2").value); // itf->setTransform successfully expired after 0.6s
         }
 
         //test 11
         {
-            itf->clear();
-            bool set_b1 = itf->setTransform("frame2", "frame10", m1);
+            itfB->clear();
+            itfR->clearOlderFrames(0ms);
+            itfR->clearStaticFrames();
+            bool set_b1 = itfB->setTransform({ "frame10", "frame2", m1 });
             yarp::os::Time::delay(0.050);
-            yarp::sig::Matrix mt1;
-            itf->getTransform("frame2", "frame10", mt1);
-            bool set_b2 = itf->setTransform("frame2", "frame10", m2);
+            
+            auto mt1 = itfR->getTransform("frame10", "frame2").value.toMatrix();
+            bool set_b2 = itfB->setTransform({ "frame10", "frame2", m2 });
             yarp::os::Time::delay(0.050);
-            yarp::sig::Matrix mt2;
-            itf->getTransform("frame2", "frame10", mt2);
+            
+            auto mt2 = itfR->getTransform("frame10", "frame2").value.toMatrix();
             bool a, b;
             a = isEqual(m1, mt1, precision);
             b = isEqual(m2, mt2, precision);
@@ -331,38 +328,38 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
         }
 
         //test 11b
-        {
-            itf->clear();
-            bool set_b1 = itf->setTransformStatic("frame2", "frame10", m1);
+        /*{ update: the test is no more valid cause with the new event based infrastructure makes sense to update static transform without deleting them first
+            itfB->clear();
+            itfR->clearOlderFrames(0ms);
+            bool set_b1 = itfB->setTransform({"frame10", "frame2", m1, true});
             yarp::os::Time::delay(0.050);
-            yarp::sig::Matrix mt1;
-            itf->getTransform("frame2", "frame10", mt1);
-            bool set_b2 = itf->setTransformStatic("frame2", "frame10", m2);
+            
+            auto mt1 = itfR->getTransform("frame10", "frame2").value.toMatrix();
+            bool set_b2 = itfB->setTransform({ "frame10", "frame2", m2, true });
             yarp::os::Time::delay(0.050);
-            yarp::sig::Matrix mt2;
-            itf->getTransform("frame2", "frame10", mt2);
+            
+            auto mt2 = itfR->getTransform("frame10", "frame2").value.toMatrix();
             CHECK(set_b1);
             CHECK_FALSE(set_b2);
             CHECK(isEqual(m1, mt1, precision));
             CHECK_FALSE(isEqual(m2, mt2, precision)); // itf->setTransformStatic successfully not-updated
-        }
+        }*/
 
         //test 12
         {
-            itf->clear();
-            CHECK(itf->setTransform("frame2", "frame1", m1));
+            itfB->clear();
+            itfR->clearOlderFrames(0ms);
+            itfR->clearStaticFrames();
+            CHECK(itfB->setTransform({ "frame1", "frame2", m1 }));
             yarp::os::Time::delay(0.050);
-            CHECK(itf->setTransform("frame3", "frame2", m2));
+            CHECK(itfB->setTransform({ "frame2", "frame3", m2 }));
             yarp::os::Time::delay(0.050);
-            CHECK_FALSE(itf->setTransform("frame3", "frame1", m1));
+            CHECK_FALSE(itfB->setTransform({ "frame1", "frame3", m1 }));
             // itf->setTransform duplicate transform successfully skipped
 
-            yarp::sig::Matrix mt1;
-            yarp::sig::Matrix mt2;
-            yarp::sig::Matrix mt3;
-            itf->getTransform("frame2", "frame1", mt1);
-            itf->getTransform("frame3", "frame2", mt2);
-            itf->getTransform("frame3", "frame1", mt3);
+            auto mt1 = itfR->getTransform("frame1", "frame2").value.toMatrix();
+            auto mt2 = itfR->getTransform("frame2", "frame3").value.toMatrix();
+            auto mt3 = itfR->getTransform("frame1", "frame3").value.toMatrix();
             CHECK(isEqual(mt1, m1, precision));
             CHECK(isEqual(mt2, m2, precision));
             CHECK(isEqual(mt3, (m1*m2), precision));
@@ -371,20 +368,18 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
 
         //test 12b
         {
-            itf->clear();
-            CHECK(itf->setTransformStatic("frame2", "frame1", m1));
+            itfB->clear();
+            itfR->clearOlderFrames(std::chrono::seconds(0));
+            itfR->clearStaticFrames();
+            CHECK(itfB->setTransform({ "frame1", "frame2", m1, true }));
             yarp::os::Time::delay(0.050);
-            CHECK(itf->setTransformStatic("frame3", "frame2", m2));
+            CHECK(itfB->setTransform({ "frame2", "frame3", m2, true }));
             yarp::os::Time::delay(0.050);
-            CHECK_FALSE(itf->setTransformStatic("frame3", "frame1", m1));
+            //CHECK_FALSE(itfB->setTransform({ "frame1", "frame2", m1, true })); it is possible now to update also a static transform without deleting it first. maybe all the test 12b can be dismissed?
             // itf->setTransformStatic duplicate transform successfully skipped
-
-            yarp::sig::Matrix mt1;
-            yarp::sig::Matrix mt2;
-            yarp::sig::Matrix mt3;
-            itf->getTransform("frame2", "frame1", mt1);
-            itf->getTransform("frame3", "frame2", mt2);
-            itf->getTransform("frame3", "frame1", mt3);
+            auto mt1 = itfR->getTransform("frame1", "frame2").value.toMatrix();
+            auto mt2 = itfR->getTransform("frame2", "frame3").value.toMatrix();
+            auto mt3 = itfR->getTransform("frame1", "frame3").value.toMatrix();
             CHECK(isEqual(mt1, m1, precision));
             CHECK(isEqual(mt2, m2, precision));
             CHECK(isEqual(mt3, (m1*m2), precision));
@@ -392,8 +387,9 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
         }
 
         // Close devices
-        CHECK(ddtransformclient.close()); // ddtransformclient successfully closed
-        CHECK(ddtransformserver.close()); // ddtransformserver successfully closed
+        REQUIRE(yarp::os::Network::disconnect("/testframetransform+@/frameBroadcaster0", "/testframetransform-@/frameReceiver0"));
+        CHECK(framereceiverpd.close()); // ddtransformclient successfully closed
+        CHECK(framebroadcasterpd.close()); // ddtransformserver successfully closed
     }
 
     Network::setLocalMode(false);
