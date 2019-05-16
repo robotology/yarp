@@ -90,9 +90,21 @@ struct guiParam
     double         alpha;
     FlexImagePort* port;
     ovrLayerQuad   layer;
-    TextureBuffer*  texture;
+    TextureBuffer* texture;
 };
+
 //----------------[utilities]
+
+using namespace yarp::math;
+void ovrposeToTf(yarp::math::FrameTransform& r, const ovrPosef l)
+{
+    r.translation.set(l.Position.x, l.Position.y, l.Position.z);
+    r.rotation.w() = l.Orientation.w;
+    r.rotation.x() = l.Orientation.x;
+    r.rotation.y() = l.Orientation.y;
+    r.rotation.z() = l.Orientation.z;
+}
+
 //WARNING it makes a conversion of the coordinate system
 inline yarp::sig::Vector ovrVec3ToYarp(const ovrVector3f& v)
 {
@@ -145,6 +157,7 @@ static inline void debugTangent(std::string message, float tangent1, float tange
         atan(tangent2),
         OVR::RadToDegree(atan(tangent2)));
 }
+
 static void debugFov(const ovrFovPort fov[2]) {
     yDebug("             Left Eye                                           Right Eye\n");
     debugTangent("LeftTan",  fov[0].LeftTan , fov[0].LeftTan);
@@ -264,6 +277,45 @@ yarp::dev::OVRHeadset::OVRHeadset() :
 yarp::dev::OVRHeadset::~OVRHeadset()
 {
     yTrace();
+}
+
+bool yarp::dev::OVRHeadset::callbackPrepare()
+{
+    return true;
+}
+
+bool yarp::dev::OVRHeadset::callbackDismiss()
+{
+    return true;
+}
+
+void yarp::dev::OVRHeadset::updateFrameContainer(FrameEditor& frameContainer)
+{
+    frameMutex.lock();
+    auto timestamp = yarp::os::Time::now();
+    static bool inserted{ false };
+    if (!inserted)
+    {
+        FrameTransform f;
+        f.parentFrame = rootFrame;
+        for (auto& i : poses)
+        {
+            f.frameId = *i.first;
+            ovrposeToTf(f, i.second->ThePose);
+            f.timestamp = timestamp;
+            frameContainer.insertUpdate(f);
+        }
+        inserted = true;
+    }
+    else
+    {
+        for (auto& i : poses)
+        {
+            ovrposeToTf(frameContainer.get(*i.first).value, i.second->ThePose);
+        }
+    }
+    cacheValid = true;
+    frameMutex.unlock();
 }
 
 void yarp::dev::OVRHeadset::fillAxisStorage()
@@ -402,11 +454,10 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         isFunctionMap[DOUBLE] = &yarp::os::Value::isFloat64;
 
         //to add a parameter check, simply add a line below here and let the magic happens
-        paramParser.push_back(std::make_pair("tfDevice",            STRING));
-        paramParser.push_back(std::make_pair("tfLocal",             STRING));
-        paramParser.push_back(std::make_pair("tfRemote",            STRING));
+
         paramParser.push_back(std::make_pair("tf_left_hand_frame",  STRING));
         paramParser.push_back(std::make_pair("tf_right_hand_frame", STRING));
+        paramParser.push_back(std::make_pair("tf_head_frame",       STRING));
         paramParser.push_back(std::make_pair("tf_root_frame",       STRING));
         paramParser.push_back(std::make_pair("stick_as_axis",       BOOL));
         paramParser.push_back(std::make_pair("gui_elements",        INT));
@@ -471,9 +522,10 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     }
 
     getStickAsAxis = cfg.find("stick_as_axis").asBool();
-    left_frame     = cfg.find("tf_left_hand_frame").asString();
-    right_frame    = cfg.find("tf_right_hand_frame").asString();
-    root_frame     = cfg.find("tf_root_frame").asString();
+    leftFrame     = cfg.find("tf_left_hand_frame").asString();
+    rightFrame    = cfg.find("tf_right_hand_frame").asString();
+    rootFrame     = cfg.find("tf_root_frame").asString();
+    headFrame     = cfg.find("tf_head_frame").asString();
 
     //getting gui information from cfg
 
@@ -481,61 +533,6 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     fillButtonStorage();
     fillErrorStorage();
     fillHatStorage();
-
-    //opening tf client
-    tfClientCfg.put("device", cfg.find("tfDevice").asString());
-    tfClientCfg.put("local", cfg.find("tfLocal").asString());
-    tfClientCfg.put("remote", cfg.find("tfRemote").asString());
-
-    if (!driver.open(tfClientCfg))
-    {
-        yError() << "unable to open PolyDriver";
-        return false;
-    }
-
-    if (!driver.view(tfPublisher) || tfPublisher == nullptr)
-    {
-        yError() << "unable to dynamic cast device to IFrameTransform interface";
-        return false;
-    }
-    yInfo() << "TransformCLient successfully opened at port: " << cfg.find("tfLocal").asString();
-
-    //opening ports
-    ports =
-    {
-        { &orientationPort,                  "orientation"                  },
-        { &positionPort,                     "position"                     },
-        { &angularVelocityPort,              "angularVelocity"              },
-        { &linearVelocityPort,               "linearVelocity"               },
-        { &angularAccelerationPort,          "angularAcceleration"          },
-        { &linearAccelerationPort,           "linearAcceleration"           },
-        { &predictedOrientationPort,         "predictedOrientation"         },
-        { &predictedPositionPort,            "predictedPosition"            },
-        { &predictedAngularVelocityPort,     "predictedAngularVelocity"     },
-        { &predictedLinearVelocityPort,      "predictedLinearVelocity"      },
-        { &predictedAngularAccelerationPort, "predictedAngularAcceleration" },
-        { &predictedLinearAccelerationPort,  "predictedLinearAcceleration"  }
-    };
-
-    for (auto port : ports)
-    {
-        std::string name, prefix;
-        bool        predicted;
-
-        *port.first = new yarp::os::BufferedPort<yarp::os::Bottle>;
-        predicted   = port.second.find("predicted") != std::string::npos;
-        prefix      = predicted ? standardPortPrefix+"/predicted" : standardPortPrefix;
-        name        = prefix + "/headpose/" + port.second + ":o";
-
-        if (!(*port.first)->open(name))
-        {
-            yError() << "Cannot open" << port.second << "port";
-            this->close();
-            return false;
-        }
-
-        (*port.first)->setWriteOnly();
-    }
 
     //eyes set-up
     for (int eye = 0; eye < ovrEye_Count; ++eye) {
@@ -771,20 +768,8 @@ void yarp::dev::OVRHeadset::threadRelease()
         session = 0;
         ovr_Shutdown();
     }
-    std::vector<yarp::os::Contactable*> ports;
 
-    ports.push_back(orientationPort);
-    ports.push_back(positionPort);
-    ports.push_back(angularVelocityPort);
-    ports.push_back(linearVelocityPort);
-    ports.push_back(angularAccelerationPort);
-    ports.push_back(linearAccelerationPort);
-    ports.push_back(predictedOrientationPort);
-    ports.push_back(predictedPositionPort);
-    ports.push_back(predictedAngularVelocityPort);
-    ports.push_back(predictedLinearVelocityPort);
-    ports.push_back(predictedAngularAccelerationPort);
-    ports.push_back(predictedLinearAccelerationPort);
+    std::vector<yarp::os::Contactable*> ports;
 
     for (auto& hud : huds)
     {
@@ -915,6 +900,9 @@ void yarp::dev::OVRHeadset::run()
     double frameTiming = ovr_GetPredictedDisplayTime(session, distortionFrameIndex);
     YARP_UNUSED(frameTiming);
 
+    cacheValid = false;
+    frameMutex.lock();
+
     // Query the HMD for the current tracking state.
     ts = ovr_GetTrackingState(session, ovr_GetTimeInSeconds(), false);
     headpose = ts.HeadPose;
@@ -930,40 +918,7 @@ void yarp::dev::OVRHeadset::run()
     ovrPoseStatef predicted_headpose = predicted_ts.HeadPose;
     yarp::os::Stamp predicted_stamp(distortionFrameIndex, predicted_ts.HeadPose.TimeInSeconds);
 
-    //send hands frames
-    if (relative)
-    {
-        yarp::sig::Matrix T_Conv(4, 4), T_Head(4, 4), T_LHand(4, 4), T_RHand(4, 4), T_robotHead(4, 4);
-        yarp::sig::Vector rpyHead, rpyRobot;
-
-        tfPublisher->getTransform("head_link", "mobile_base_body_link", T_robotHead);
-        ovrVector3f& leftH = ts.HandPoses[ovrHand_Left].ThePose.Position;
-        ovrVector3f& rightH = ts.HandPoses[ovrHand_Right].ThePose.Position;
-
-        T_RHand    = ovr2matrix(vecSubtract(rightH, headpose.ThePose.Position), OVR::Quatf(ts.HandPoses[ovrHand_Right].ThePose.Orientation) * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI_2));
-        T_LHand    = ovr2matrix(vecSubtract(leftH, headpose.ThePose.Position), OVR::Quatf(ts.HandPoses[ovrHand_Left].ThePose.Orientation)   * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI_2));
-        T_Head     = ovr2matrix(headpose.ThePose.Position, headpose.ThePose.Orientation);
-        rpyHead    = yarp::math::dcm2rpy(T_Head);
-        rpyRobot   = yarp::math::dcm2rpy(T_robotHead);
-        rpyHead[0] = 0;
-        rpyHead[1] = rpyRobot[1];
-        rpyHead[2] = rpyRobot[2];
-        T_Head     = yarp::math::rpy2dcm(rpyHead);
-
-        tfPublisher->setTransform(left_frame,    root_frame, operator*(T_Head.transposed(), T_LHand));
-        tfPublisher->setTransform(right_frame,   root_frame, operator*(T_Head.transposed(), T_RHand));
-    }
-
-    else
-
-    {
-        OVR::Quatf lRot = OVR::Quatf(ts.HandPoses[ovrHand_Left].ThePose.Orientation)  * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI_2);
-        OVR::Quatf rRot = OVR::Quatf(ts.HandPoses[ovrHand_Right].ThePose.Orientation) * OVR::Quatf(OVR::Vector3f(0, 0, 1), M_PI_2);
-        tfPublisher->setTransform(left_frame, "mobile_base_body_link", ovr2matrix(ts.HandPoses[ovrHand_Left].ThePose.Position,   lRot));
-        tfPublisher->setTransform(right_frame, "mobile_base_body_link", ovr2matrix(ts.HandPoses[ovrHand_Right].ThePose.Position, rRot));
-    }
-
-    //tfPublisher->setTransform(right_frame,   root_frame, yarp::math::operator*(T_Head.transposed(), T_RHand));
+    frameMutex.unlock();
 
     // Get Input State
     inputStateMutex.lock();
@@ -974,98 +929,6 @@ void yarp::dev::OVRHeadset::run()
         errorManager(result);
         inputStateError = true;
     }
-
-    // Read orientation and write it on the port
-    if (ts.StatusFlags & ovrStatus_OrientationTracked) {
-
-        if (orientationPort->getOutputCount() > 0) {
-            OVR::Quatf orientation = headpose.ThePose.Orientation;
-            float yaw, pitch, roll;
-            orientation.GetEulerAngles<OVR::Axis_Y, OVR::Axis_X, OVR::Axis_Z>(&yaw, &pitch, &roll);
-            yarp::os::Bottle& output_orientation = orientationPort->prepare();
-            output_orientation.clear();
-            output_orientation.addFloat64(OVR::RadToDegree(pitch));
-            output_orientation.addFloat64(OVR::RadToDegree(-roll));
-            output_orientation.addFloat64(OVR::RadToDegree(yaw));
-            orientationPort->setEnvelope(stamp);
-            orientationPort->write();
-        }
-
-        writeVec3OnPort(angularVelocityPort,     radToDeg(headpose.AngularVelocity),     stamp);
-        writeVec3OnPort(angularAccelerationPort, radToDeg(headpose.AngularAcceleration), stamp);
-
-    } else {
-        // Do not warn more than once every 5 seconds
-        static double lastOrientWarnTime = 0;
-        double now = yarp::os::SystemClock::nowSystem();
-        if (now >= lastOrientWarnTime + 5) {
-            yDebug() << "Orientation not tracked";
-            lastOrientWarnTime = now;
-        }
-    }
-
-    // Read position and write it on the port
-    if (ts.StatusFlags & ovrStatus_PositionTracked) {
-        writeVec3OnPort(positionPort,           headpose.ThePose.Position,   stamp);
-        writeVec3OnPort(linearVelocityPort,     headpose.LinearVelocity,     stamp);
-        writeVec3OnPort(linearAccelerationPort, headpose.LinearAcceleration, stamp);
-
-    } else {
-        // Do not warn more than once every 5 seconds
-        static double lastPosWarnTime = 0;
-        double now = yarp::os::SystemClock::nowSystem();
-        if (now >= lastPosWarnTime + 5) {
-            yDebug() << "Position not tracked";
-            lastPosWarnTime = now;
-        }
-    }
-
-    // Read predicted orientation and write it on the port
-    if (predicted_ts.StatusFlags & ovrStatus_OrientationTracked) {
-
-        if (predictedOrientationPort->getOutputCount() > 0) {
-            OVR::Quatf orientation = predicted_headpose.ThePose.Orientation;
-            float yaw, pitch, roll;
-            orientation.GetEulerAngles<OVR::Axis_Y, OVR::Axis_X, OVR::Axis_Z>(&yaw, &pitch, &roll);
-            yarp::os::Bottle& output_orientation = predictedOrientationPort->prepare();
-            output_orientation.clear();
-            output_orientation.addFloat64(OVR::RadToDegree(pitch));
-            output_orientation.addFloat64(OVR::RadToDegree(-roll));
-            output_orientation.addFloat64(OVR::RadToDegree(yaw));
-            predictedOrientationPort->setEnvelope(predicted_stamp);
-            predictedOrientationPort->write();
-        }
-
-        writeVec3OnPort(predictedAngularVelocityPort,     radToDeg(predicted_headpose.AngularVelocity),     stamp);
-        writeVec3OnPort(predictedAngularAccelerationPort, radToDeg(predicted_headpose.AngularAcceleration), stamp);
-
-    } else {
-        // Do not warn more than once every 5 seconds
-        static double lastPredOrientWarnTime = 0;
-        double now = yarp::os::SystemClock::nowSystem();
-        if (now >= lastPredOrientWarnTime + 5) {
-            yDebug() << "Predicted orientation not tracked";
-            lastPredOrientWarnTime = now;
-        }
-    }
-
-    // Read predicted position and write it on the port
-    if (predicted_ts.StatusFlags & ovrStatus_PositionTracked) {
-
-        writeVec3OnPort(predictedPositionPort,           predicted_headpose.ThePose.Position,   stamp);
-        writeVec3OnPort(predictedLinearVelocityPort,     predicted_headpose.LinearVelocity,     stamp);
-        writeVec3OnPort(predictedLinearAccelerationPort, predicted_headpose.LinearAcceleration, stamp);
-
-    } else {
-        // Do not warn more than once every 5 seconds
-        static double lastPredPosWarnTime = 0;
-        double now = yarp::os::SystemClock::nowSystem();
-        if (now >= lastPredPosWarnTime + 5) {
-            yDebug() << "Position not tracked";
-            lastPredPosWarnTime = now;
-        }
-    }
-
 
     if (displayPorts[0]->eyeRenderTexture && displayPorts[1]->eyeRenderTexture) {
         // Do distortion rendering, Present and flush/sync
@@ -1193,6 +1056,8 @@ void yarp::dev::OVRHeadset::run()
             lastImgWarnTime = now;
         }
     }
+
+    callAllCallbacks();
 }
 
 bool yarp::dev::OVRHeadset::createWindow(int w, int h)

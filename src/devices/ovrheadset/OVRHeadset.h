@@ -25,6 +25,9 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ServiceInterfaces.h>
 #include <yarp/dev/IJoypadController.h>
+
+#include <yarp/dev/IFrameSource.h>
+#include <mutex>
 #include <yarp/dev/IFrameTransform.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Image.h>
@@ -34,6 +37,7 @@
 #include <OVR_CAPI_GL.h>
 #include <map>
 #include <vector>
+
 
 /**
 * @ingroup dev_impl_other
@@ -78,7 +82,13 @@ class OVRHeadset : public yarp::dev::DeviceDriver,
                    public yarp::os::PeriodicThread,
                    public yarp::dev::IService,
                    public yarp::dev::IJoypadController
+                  ,public yarp::dev::ImplementIFrameSource
 {
+protected:
+    void updateFrameContainer(FrameEditor& frameContainer) override;
+    bool callbackPrepare() override;
+    bool callbackDismiss() override;
+
 public:
     explicit OVRHeadset();
     virtual ~OVRHeadset();
@@ -132,20 +142,6 @@ private:
     void fillHatStorage();
     void resetInput();
 
-
-    yarp::os::BufferedPort<yarp::os::Bottle>* orientationPort;
-    yarp::os::BufferedPort<yarp::os::Bottle>* positionPort;
-    yarp::os::BufferedPort<yarp::os::Bottle>* angularVelocityPort;
-    yarp::os::BufferedPort<yarp::os::Bottle>* linearVelocityPort;
-    yarp::os::BufferedPort<yarp::os::Bottle>* angularAccelerationPort;
-    yarp::os::BufferedPort<yarp::os::Bottle>* linearAccelerationPort;
-    yarp::os::BufferedPort<yarp::os::Bottle>* predictedOrientationPort;
-    yarp::os::BufferedPort<yarp::os::Bottle>* predictedPositionPort;
-    yarp::os::BufferedPort<yarp::os::Bottle>* predictedAngularVelocityPort;
-    yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearVelocityPort;
-    yarp::os::BufferedPort<yarp::os::Bottle>* predictedAngularAccelerationPort;
-    yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearAccelerationPort;
-    
     FlexImagePort* gui_ports{ nullptr };
     std::vector<guiParam> huds;
     InputCallback* displayPorts[2]{ nullptr, nullptr };
@@ -166,6 +162,16 @@ private:
     ovrPoseStatef predicted_headpose;
     unsigned int guiCount;
     bool         enableGui{ true };
+    bool threadIdValid;
+    std::mutex frameMutex;
+    std::vector<std::pair<std::string*, ovrPoseStatef*>> poses
+    {
+        {&rightFrame, &ts.HandPoses[ovrHand_Right]},
+        {&leftFrame, &ts.HandPoses[ovrHand_Left]  },
+        {&headFrame, &headpose },
+        {&(headFrame + "_predicted"), &predicted_headpose }
+    };
+
     yarp::os::Mutex                  inputStateMutex;
     ovrInputState                    inputState;
     bool                             inputStateError{ false };
@@ -175,12 +181,10 @@ private:
     std::map<int, int>               DButtonToHat;
     std::map<ovrResult, std::string> error_messages;
 
-    IFrameTransform* tfPublisher;
-    bool             relative;
-    std::string      left_frame;
-    std::string      right_frame;
-    std::string      root_frame;
-    PolyDriver       driver;
+    std::string leftFrame;
+    std::string rightFrame;
+    std::string rootFrame;
+    std::string headFrame;
 
     bool closed{ false };
     long long distortionFrameIndex{ 0 };
