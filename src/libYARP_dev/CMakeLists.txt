@@ -105,7 +105,9 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/Wrapper.h)
 
 if(TARGET YARP::YARP_math)
-  list(APPEND YARP_dev_HDRS include/yarp/dev/IFrameTransform.h
+  list(APPEND YARP_dev_HDRS include/yarp/dev/IFrameSet.h
+                            include/yarp/dev/IFrameSource.h
+                            include/yarp/dev/IFrameTransform.h
                             include/yarp/dev/ILocalization2D.h
                             include/yarp/dev/IMap2D.h
                             include/yarp/dev/INavigation2D.h
@@ -163,6 +165,7 @@ set(YARP_dev_SRCS src/CanBusInterface.cpp
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_SRCS src/IFrameTransform.cpp
                             src/IMap2D.cpp
+                            src/ImplementIFrameSource.cpp
                             src/INavigation2D.cpp
                             src/MapGrid2D.cpp
                             src/Map2DArea.cpp)
