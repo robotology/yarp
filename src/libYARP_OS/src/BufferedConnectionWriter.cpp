@@ -173,8 +173,9 @@ void BufferedConnectionWriter::push(const Bytes& data, bool copy)
     }
     if (buf == nullptr) {
         buf = new yarp::os::ManagedBytes(data, false);
-        if (copy)
+        if (copy) {
             buf->copy();
+        }
         target->push_back(buf);
     } else {
         if (copy) {
@@ -294,7 +295,7 @@ void BufferedConnectionWriter::appendBlock(const yarp::os::Bytes& data)
     push(data, false);
 }
 
-void BufferedConnectionWriter::appendBlockCopy(const Bytes& data)
+void BufferedConnectionWriter::appendBlockCopy(const yarp::os::Bytes& data)
 {
     push(data, true);
 }

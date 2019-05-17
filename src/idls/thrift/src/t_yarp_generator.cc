@@ -188,8 +188,18 @@ public:
     void quote_doc(std::vector<std::string>& doxyPar, t_doc* tdoc);
     std::vector<std::string> print_help(t_function* tdoc);
     std::string print_const_value(t_const_value* tvalue, t_type* ttype = nullptr);
-    std::string function_prototype(t_function* tfn, bool include_defaults, const char* prefix = nullptr, const char* override_name = nullptr);
-    std::string declare_field(t_field* tfield, bool init = false, bool pointer = false, bool is_constant = false, bool reference = false, const char* force_type = nullptr);
+    std::string function_prototype(t_function* tfn,
+                                   bool include_defaults,
+                                   bool include_returntype = true,
+                                   const std::string& prefix = {},
+                                   const std::string& override_name = {});
+    std::string declare_field(t_field* tfield,
+                              bool init = false,
+                              bool pointer = false,
+                              bool is_constant = false,
+                              bool reference = false,
+                              const std::string& force_type = {},
+                              const std::string& prefix = {});
 
     std::string type_name(t_type* ttype, bool in_typedef = false, bool arg = false, bool ret = false);
     std::string base_type_name(t_base_type::t_base tbase);
@@ -333,9 +343,9 @@ public:
     void generate_service(t_service* tservice) override;
     void generate_service_helper_classes(t_service* tservice, std::ofstream& f_cpp_);
     void generate_service_helper_classes_decl(t_function* function, std::ofstream& f_cpp);
+    void generate_service_helper_classes_impl_ctor(t_function* function, std::ofstream& f_cpp_);
     void generate_service_helper_classes_impl_write(t_function* function, std::ofstream& f_cpp_);
     void generate_service_helper_classes_impl_read(t_function* function, std::ofstream& f_cpp_);
-    void generate_service_helper_classes_impl_init(t_function* function, std::ofstream& f_cpp_);
 
     void generate_service_constructor(t_service* tservice, std::ofstream& f_h_, std::ofstream& f_cpp_);
     void generate_service_function(t_service* tservice, t_function* function, std::ofstream&  f_h_, std::ofstream& f_cpp_);
@@ -629,19 +639,19 @@ bool t_yarp_generator::is_complex_type(t_type* ttype)
 void t_yarp_generator::generate_program()
 {
     std::string fname = get_out_dir() + program_->get_name() + "_index.h";
-    f_out_.open(fname.c_str());
+    f_out_.open(fname);
     f_out_ << "// Thrift module: " << program_->get_name() << '\n';
 
     std::string fname2 = get_out_dir() + program_->get_name() + "_index.txt";
-    std::ofstream f_out2_(fname2.c_str());
+    std::ofstream f_out2_(fname2);
 
     std::string fname3 = get_out_dir() + program_->get_name() + "_indexALL.txt";
-    std::ofstream f_out3_(fname3.c_str());
+    std::ofstream f_out3_(fname3);
 
     if (!program_->get_consts().empty()) {
         need_common_ = true;
         std::string fcommon_name = get_out_dir() + program_->get_name() + "_common.h";
-        f_out_common_.open(fcommon_name.c_str());
+        f_out_common_.open(fcommon_name);
 
         f_out_common_ << copyright_comment();
         f_out_common_ << autogen_comment();
@@ -683,7 +693,7 @@ void t_yarp_generator::generate_program()
         // Generate typedefs
         if (!f_out_common_.is_open()) {
             std::string fcommon_name = get_out_dir() + program_->get_name() + "_common.h";
-            f_out_common_.open(fcommon_name.c_str());
+            f_out_common_.open(fcommon_name);
             f_out_common_ << "#ifndef YARP_THRIFT_GENERATOR_COMMON_" << program_->get_name() << '\n';
             f_out_common_ << "#define YARP_THRIFT_GENERATOR_COMMON_" << program_->get_name() << '\n';
             f_out_common_ << '\n';
@@ -815,7 +825,7 @@ std::vector<std::string> t_yarp_generator::print_help(t_function* tdoc)
     std::vector<std::string> doxyPar;
     std::string quotes = "\"";
     std::string replacement = "\\\"";
-    doxyPar.push_back(replaceInString(function_prototype(tdoc, true, nullptr), quotes, replacement));
+    doxyPar.push_back(replaceInString(function_prototype(tdoc, true), quotes, replacement));
     quote_doc(doxyPar, tdoc);
     return doxyPar;
 }
@@ -969,22 +979,31 @@ void t_yarp_generator::get_needed_type(t_type* curType, std::set<std::string>& n
 
 std::string t_yarp_generator::function_prototype(t_function* tfn,
                                                  bool include_defaults,
-                                                 const char* prefix,
-                                                 const char* override_name)
+                                                 bool include_returntype,
+                                                 const std::string& prefix,
+                                                 const std::string& override_name)
 {
     std::string result = "";
-    std::string fn_name = tfn->get_name();
-    std::string return_type = type_name(tfn->get_returntype());
-    if (override_name != nullptr) {
-        fn_name = override_name;
-        return_type = "void";
+
+    if (include_returntype) {
+        std::string return_type = type_name(tfn->get_returntype());
+        if (!override_name.empty()) {
+            return_type = "void";
+        }
+        result += return_type;
+        result += std::string(" ");
     }
-    result += return_type;
-    result += std::string(" ");
-    if (prefix) {
+
+    if (!prefix.empty()) {
         result += prefix;
         result += "::";
     }
+
+    std::string fn_name = tfn->get_name();
+    if (!override_name.empty()) {
+        fn_name = override_name;
+    }
+
     result += fn_name + "(";
     bool first = true;
     for (const auto& arg : tfn->get_arglist()->get_members()) {
@@ -1143,7 +1162,7 @@ void t_yarp_generator::generate_serialize_map_element(std::ofstream& f_cpp_,
     f_cpp_ << indent_cpp() << "if (!writer.writeListBegin(0,2))" << inline_return_cpp("false");
 
     t_field kfield(tmap->get_key_type(), item_name + ".first");
-    generate_serialize_field(f_cpp_, &kfield, "");
+    generate_serialize_field(f_cpp_, &kfield);
 
     t_field vfield(tmap->get_val_type(), item_name + ".second");
     generate_serialize_field(f_cpp_, &vfield, "", "", true);
@@ -1368,7 +1387,7 @@ void t_yarp_generator::generate_deserialize_map_element(std::ofstream& f_cpp_,
     t_field fkey(tmap->get_key_type(), key);
     t_field fval(tmap->get_val_type(), val);
 
-    f_cpp_ << indent_cpp() << declare_field(&fkey) << '\n';
+    f_cpp_ << indent_cpp() << declare_field(&fkey) << ";\n";
 
     generate_deserialize_field(f_cpp_, &fkey);
     f_cpp_ << indent_cpp() << declare_field(&fval, false, false, false, true) << " = " << prefix << "[" << key << "];\n";
@@ -1387,7 +1406,7 @@ void t_yarp_generator::generate_deserialize_set_element(std::ofstream& f_cpp_,
     std::string elem = tmp("_elem");
     t_field felem(tset->get_elem_type(), elem);
 
-    f_cpp_ << indent_cpp() << declare_field(&felem) << '\n';
+    f_cpp_ << indent_cpp() << declare_field(&felem) << ";\n";
 
     generate_deserialize_field(f_cpp_, &felem, "", "", true);
 
@@ -1405,7 +1424,7 @@ void t_yarp_generator::generate_deserialize_list_element(std::ofstream& f_cpp_,
     if (use_push) {
         std::string elem = tmp("_elem");
         t_field felem(tlist->get_elem_type(), elem);
-        f_cpp_ << indent_cpp() << declare_field(&felem) << '\n';
+        f_cpp_ << indent_cpp() << declare_field(&felem) << ";\n";
         generate_deserialize_field(f_cpp_, &felem, "", "", true);
         f_cpp_ << indent_cpp() << prefix << ".push_back(" << elem << ");\n";
     } else {
@@ -1414,14 +1433,20 @@ void t_yarp_generator::generate_deserialize_list_element(std::ofstream& f_cpp_,
     }
 }
 
-std::string t_yarp_generator::declare_field(t_field* tfield, bool init, bool pointer, bool is_constant, bool reference, const char* force_type)
+std::string t_yarp_generator::declare_field(t_field* tfield,
+                                            bool init,
+                                            bool pointer,
+                                            bool is_constant,
+                                            bool reference,
+                                            const std::string& force_type,
+                                            const std::string& prefix)
 {
     // TODO: do we ever need to initialize the field?
     std::string result = "";
     if (is_constant) {
         result += "const ";
     }
-    if (!force_type) {
+    if (force_type.empty()) {
         result += type_name(tfield->get_type());
     } else {
         result += force_type;
@@ -1435,7 +1460,10 @@ std::string t_yarp_generator::declare_field(t_field* tfield, bool init, bool poi
     if (result.length() > 0) {
         result += " ";
     }
+
+    result += prefix;
     result += tfield->get_name();
+
     if (init) {
         t_type* type = get_true_type(tfield->get_type());
 
@@ -1464,11 +1492,11 @@ std::string t_yarp_generator::declare_field(t_field* tfield, bool init, bool poi
             }
         } else if (type->is_enum()) {
             result += " = (" + type_name(type) + ")0";
+        } else {
+            result += " = {}";
         }
     }
-    if (!reference) {
-        result += ";";
-    }
+
     return result;
 }
 
@@ -1653,13 +1681,13 @@ void t_yarp_generator::generate_enum(t_enum* tenum)
     // Open header files
     std::string f_header_name = get_out_dir() + name + ".h";
     std::ofstream f_h_;
-    f_h_.open(f_header_name.c_str());
+    f_h_.open(f_header_name);
     THRIFT_DEBUG_COMMENT(f_h_);
 
     // Open cpp files
     std::string f_cpp_name = get_out_dir() + name + ".cpp";
     std::ofstream f_cpp_;
-    f_cpp_.open(f_cpp_name.c_str());
+    f_cpp_.open(f_cpp_name);
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
     // Add copyright
@@ -1878,12 +1906,12 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
     // Open header file
     std::string f_header_name = get_out_dir() + name + ".h";
     std::ofstream f_h_;
-    f_h_.open(f_header_name.c_str());
+    f_h_.open(f_header_name);
 
     // Open cpp file
     std::string f_cpp_name = get_out_dir() + name + ".cpp";
     std::ofstream f_cpp_;
-    f_cpp_.open(f_cpp_name.c_str());
+    f_cpp_.open(f_cpp_name);
 
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3177,7 +3205,7 @@ void t_yarp_generator::generate_struct_field_write(t_struct* tstruct, t_field* m
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
     {
-        generate_serialize_field(f_cpp_, member, "");
+        generate_serialize_field(f_cpp_, member);
         f_cpp_ << indent_cpp() << "return true;\n";
     }
     indent_down_cpp();
@@ -3274,12 +3302,12 @@ void t_yarp_generator::generate_service(t_service* tservice)
     // Open header file
     std::string f_header_name = get_out_dir() + service_name + ".h";
     std::ofstream f_h_;
-    f_h_.open(f_header_name.c_str());
+    f_h_.open(f_header_name);
 
     // Open cpp files
     std::string f_cpp_name = get_out_dir() + service_name + ".cpp";
     std::ofstream f_cpp_;
-    f_cpp_.open(f_cpp_name.c_str());
+    f_cpp_.open(f_cpp_name);
 
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3310,7 +3338,7 @@ void t_yarp_generator::generate_service(t_service* tservice)
 
     std::set<std::string> neededTypes;
     for (const auto& function : tservice->get_functions()) {
-        t_type* returntype = function->get_returntype();
+        auto returntype = function->get_returntype();
         if (!returntype->is_void()) {
             get_needed_type(returntype, neededTypes);
         }
@@ -3384,9 +3412,9 @@ void t_yarp_generator::generate_service_helper_classes(t_service* tservice, std:
         generate_service_helper_classes_decl(function, f_cpp_);
 
         // Helper classes implementations
+        generate_service_helper_classes_impl_ctor(function, f_cpp_);
         generate_service_helper_classes_impl_write(function, f_cpp_);
         generate_service_helper_classes_impl_read(function, f_cpp_);
-        generate_service_helper_classes_impl_init(function, f_cpp_);
 
         assert(indent_count_h() == 1);
         assert(indent_count_cpp() == 0);
@@ -3400,27 +3428,78 @@ void t_yarp_generator::generate_service_helper_classes_decl(t_function* function
     const auto& fname = function->get_name();
     const auto& args = function->get_arglist()->get_members();
     const auto& returntype = function->get_returntype();
-    t_field returnfield(returntype, "_return");
+    const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
+    auto returnfield = t_field{returntype, "s_return_helper"};
 
-    f_cpp_ << "class " << service_name_ << "_" << fname << " :\n";
+    f_cpp_ << "class " << helper_class << " :\n";
     f_cpp_ << indent_initializer_cpp() << "public yarp::os::Portable\n";
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
     {
         f_cpp_ << indent_access_specifier_cpp() << "public:\n";
-        for (const auto& arg : args) {
-            f_cpp_ << indent_cpp() << declare_field(arg) << '\n';
-        }
-        if (!returntype->is_void()) {
-            f_cpp_ << indent_cpp() << declare_field(&returnfield) << '\n';
-        }
-
-        f_cpp_ << indent_cpp() << function_prototype(function, false, nullptr, "init") << ";\n";
+        f_cpp_ << indent_cpp() << "explicit " << function_prototype(function, false, false, "", helper_class) << ";\n";
         f_cpp_ << indent_cpp() << "bool write(yarp::os::ConnectionWriter& connection) const override;\n";
         f_cpp_ << indent_cpp() << "bool read(yarp::os::ConnectionReader& connection) override;\n";
+
+        bool first = true;
+        for (const auto& arg : args) {
+            if (first) {
+                f_cpp_ << '\n';
+                first = false;
+            }
+            f_cpp_ << indent_cpp() << declare_field(arg, false, false, false, false, {}, "m_") << ";\n";
+        }
+
+        if (!returntype->is_void()) {
+            f_cpp_ << '\n';
+            // This variable is declared thread_local because of #2021, see
+            // https://github.com/robotology/yarp/issues/2021 for details
+            f_cpp_ << indent_cpp() << "thread_local static " << declare_field(&returnfield) << ";\n";
+        }
     }
     indent_down_cpp();
     f_cpp_ << indent_cpp() << "};\n";
+    f_cpp_ << '\n';
+
+    if (!returntype->is_void()) {
+        f_cpp_ << indent_cpp() << "thread_local " << type_name(returntype) << " " << helper_class << "::" << returnfield.get_name() << " = {};\n";
+        f_cpp_ << '\n';
+    }
+}
+
+void t_yarp_generator::generate_service_helper_classes_impl_ctor(t_function* function, std::ofstream& f_cpp_)
+{
+    THRIFT_DEBUG_COMMENT(f_cpp_);
+
+    const auto& fname = function->get_name();
+    const auto& returntype = function->get_returntype();
+    const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
+    auto returnfield = t_field{returntype, "s_return_helper"};
+
+    f_cpp_ << indent_cpp() << function_prototype(function, false, false, helper_class, helper_class);
+    bool first = true;
+    for (const auto& arg : function->get_arglist()->get_members()) {
+        if (first) {
+            f_cpp_ << " :\n";
+            first = false;
+        } else {
+            f_cpp_ << ",\n";
+        }
+        f_cpp_ << indent_initializer_cpp() << "m_" << arg->get_name() << "{" << arg->get_name() << "}";
+    }
+
+    f_cpp_ << '\n';
+    f_cpp_ << indent_cpp() << "{\n";
+    indent_up_cpp();
+    {
+        if (!returntype->is_void()) {
+            if (returntype->is_base_type() || returntype->is_enum()) {
+                f_cpp_ << indent_cpp() << returnfield.get_name() << " = {};\n";
+            }
+        }
+    }
+    indent_down_cpp();
+    f_cpp_ << indent_cpp() << "}\n";
     f_cpp_ << '\n';
 }
 
@@ -3430,9 +3509,10 @@ void t_yarp_generator::generate_service_helper_classes_impl_write(t_function* fu
 
     const auto& fname = function->get_name();
     const auto& args = function->get_arglist()->get_members();
+    const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
     const size_t sz = std::count(fname.begin(), fname.end(), '_') + 1;
 
-    f_cpp_ << indent_cpp() << "bool " << service_name_ << "_" << fname << "::write(yarp::os::ConnectionWriter& connection) const\n";
+    f_cpp_ << indent_cpp() << "bool " << helper_class << "::write(yarp::os::ConnectionWriter& connection) const\n";
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
     {
@@ -3440,7 +3520,7 @@ void t_yarp_generator::generate_service_helper_classes_impl_write(t_function* fu
         f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << flat_element_count(function) + sz << "))" << inline_return_cpp("false");
         f_cpp_ << indent_cpp() << "if (!writer.writeTag(\"" << fname << "\", 1, " << sz << "))" << inline_return_cpp("false");
         for(const auto& arg : args) {
-            generate_serialize_field(f_cpp_, arg, "");
+            generate_serialize_field(f_cpp_, arg, "m_");
         }
         f_cpp_ << indent_cpp() << "return true;\n";
     }
@@ -3455,9 +3535,10 @@ void t_yarp_generator::generate_service_helper_classes_impl_read(t_function* fun
 
     const auto& fname = function->get_name();
     const auto& returntype = function->get_returntype();
-    t_field returnfield(returntype, "_return");
+    const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
+    auto returnfield = t_field{returntype, "s_return_helper"};
 
-    f_cpp_ << indent_cpp() << "bool " << service_name_ << "_" << fname << "::read(yarp::os::ConnectionReader& connection)\n";
+    f_cpp_ << indent_cpp() << "bool " << helper_class << "::read(yarp::os::ConnectionReader& connection)\n";
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
     {
@@ -3471,32 +3552,6 @@ void t_yarp_generator::generate_service_helper_classes_impl_read(t_function* fun
             f_cpp_ << indent_cpp() << "YARP_UNUSED(connection);\n";
         }
         f_cpp_ << indent_cpp() << "return true;\n";
-    }
-    indent_down_cpp();
-    f_cpp_ << indent_cpp() << "}\n";
-    f_cpp_ << '\n';
-}
-
-void t_yarp_generator::generate_service_helper_classes_impl_init(t_function* function, std::ofstream& f_cpp_)
-{
-    THRIFT_DEBUG_COMMENT(f_cpp_);
-
-    const auto& fname = function->get_name();
-    const auto& returntype = function->get_returntype();
-    t_field returnfield(returntype, "_return");
-
-    f_cpp_ << indent_cpp() << function_prototype(function, false, (service_name_ + "_" + fname).c_str(), "init") << '\n';
-    f_cpp_ << indent_cpp() << "{\n";
-    indent_up_cpp();
-    {
-        if (!returntype->is_void()) {
-            if (returntype->is_base_type() || returntype->is_enum()) {
-                f_cpp_ << indent_cpp() << declare_field(&returnfield, true, false, false, false, "") << '\n';
-            }
-        }
-        for (const auto& arg : function->get_arglist()->get_members()) {
-            f_cpp_ << indent_cpp() << "this->" << arg->get_name() << " = " << arg->get_name() << ";\n";
-        }
     }
     indent_down_cpp();
     f_cpp_ << indent_cpp() << "}\n";
@@ -3533,34 +3588,33 @@ void t_yarp_generator::generate_service_function(t_service* tservice, t_function
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
+    const auto& fname = function->get_name();
+    const auto& returntype = function->get_returntype();
+    const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
+    auto returnfield = t_field{returntype, "s_return_helper"};
+
     print_doc(f_h_, function);
     f_h_ << indent_h() << "virtual " << function_prototype(function, true) << ";\n";
     f_h_ << '\n';
 
-    f_cpp_ << indent_cpp() << function_prototype(function, false, service_name_.c_str()) << '\n';
+    f_cpp_ << indent_cpp() << function_prototype(function, false, true, service_name_) << '\n';
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
     {
-        t_type* returntype = function->get_returntype();
-        t_field returnfield(returntype, "_return");
-        if (!returntype->is_void()) {
-            f_cpp_ << indent_cpp() << declare_field(&returnfield, true) << '\n';
-        }
-        f_cpp_ << indent_cpp() << service_name_ << "_" << function->get_name() << " helper;\n";
-        f_cpp_ << indent_cpp() << "helper.init(";
+        f_cpp_ << indent_cpp() << helper_class << " helper{";
         bool first = true;
         for (const auto& arg : function->get_arglist()->get_members()) {
             if (!first)
-                f_cpp_ << ",";
+                f_cpp_ << ", ";
             first = false;
             f_cpp_ << arg->get_name();
         }
-        f_cpp_ << ");\n";
+        f_cpp_ << "};\n";
         f_cpp_ << indent_cpp() << "if (!yarp().canWrite()) {\n";
         indent_up_cpp();
         {
             f_cpp_ << indent_cpp() << "yError(\"Missing server method '%s'?\", \"";
-            f_cpp_ << function_prototype(function, false, service_name_.c_str());
+            f_cpp_ << function_prototype(function, false, true, service_name_);
             f_cpp_ << "\");\n";
         }
         indent_down_cpp();
@@ -3571,7 +3625,7 @@ void t_yarp_generator::generate_service_function(t_service* tservice, t_function
                     << (!function->is_oneway() ? "yarp().write(helper, helper);" : "yarp().write(helper);")
                     << '\n';
         if (!returntype->is_void()) {
-            f_cpp_ << indent_cpp() << "return ok ? helper._return : _return;\n";
+            f_cpp_ << indent_cpp() << "return ok ? " << helper_class << "::" << returnfield.get_name() << " : " << type_name(returntype) << "{};\n";
         }
     }
     indent_down_cpp();
@@ -3694,23 +3748,29 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ofstream&
         {
             // TODO: use quick lookup, this is just a test
             for (const auto& function : tservice->get_functions()) {
-                f_cpp_ << indent_cpp() << "if (tag == \"" << function->get_name() << "\") {\n";
+
+                const auto& fname = function->get_name();
+                const auto& args = function->get_arglist()->get_members();
+                const auto& returntype = function->get_returntype();
+                const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
+                auto returnfield = t_field{returntype, "s_return_helper"};
+
+                f_cpp_ << indent_cpp() << "if (tag == \"" << fname << "\") {\n";
                 indent_up_cpp();
                 {
-                    const auto& args = function->get_arglist()->get_members();
                     for (const auto& arg : args) {
-                        f_cpp_ << indent_cpp() << declare_field(arg, false) << '\n';
+                        f_cpp_ << indent_cpp() << declare_field(arg) << ";\n";
                     }
                     for (const auto& arg : args) {
                         generate_deserialize_field(f_cpp_, arg, "");
                     }
 
+
                     if (function->is_oneway()) {
                         f_cpp_ << indent_cpp() << "if (!direct) {\n";
                         indent_up_cpp();
                         {
-                            f_cpp_ << indent_cpp() << service_name_ << "_" << function->get_name() << " helper;\n";
-                            f_cpp_ << indent_cpp() << "helper.init(";
+                            f_cpp_ << indent_cpp() << helper_class << " helper{";
                             bool first = true;
                             for (const auto& arg : args) {
                                 if (!first) {
@@ -3719,23 +3779,20 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ofstream&
                                 first = false;
                                 f_cpp_ << arg->get_name();
                             }
-                            f_cpp_ << ");\n";
-                            f_cpp_ << indent_cpp() << "yarp().callback(helper,*this, \"__direct__\");\n";
+                            f_cpp_ << "};\n";
+                            f_cpp_ << indent_cpp() << "yarp().callback(helper, *this, \"__direct__\");\n";
                         }
                         indent_down_cpp();
                         f_cpp_ << indent_cpp() << "} else {\n";
                         indent_up_cpp();
                     }
 
-                    t_type* returntype = function->get_returntype();
-                    t_field returnfield(returntype, "_return");
                     if (!returntype->is_void()) {
-                        f_cpp_ << indent_cpp() << declare_field(&returnfield, false) << '\n';
-                        f_cpp_ << indent_cpp() << "_return = ";
+                        f_cpp_ << indent_cpp() << helper_class << "::" << returnfield.get_name() << " = ";
                     } else {
                         f_cpp_ << indent_cpp();
                     }
-                    f_cpp_ << function->get_name() << "(";
+                    f_cpp_ << fname << "(";
                     bool first = true;
                     for (const auto& arg : args) {
                         if (!first) {
@@ -3758,7 +3815,7 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ofstream&
                         if (!function->is_oneway()) {
                             f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << flat_element_count(returntype) << "))" << inline_return_cpp("false");
                             if (!returntype->is_void()) {
-                                generate_serialize_field(f_cpp_, &returnfield, "");
+                                generate_serialize_field(f_cpp_, &returnfield, helper_class + "::");
                             }
                         } else {
                             // we are a oneway function
@@ -3790,18 +3847,18 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ofstream&
                 }
                 indent_down_cpp();
                 f_cpp_ << indent_cpp() << "}\n";
-                f_cpp_ << indent_cpp() << "auto _return = help(functionName);" << '\n';
+                f_cpp_ << indent_cpp() << "auto help_strings = help(functionName);" << '\n';
                 f_cpp_ << indent_cpp() << "yarp::os::idl::WireWriter writer(reader);\n";
                 f_cpp_ << indent_cpp() << "if (!writer.isNull()) {\n";
                 indent_up_cpp();
                 {
                     f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(2))" << inline_return_cpp("false");
                     f_cpp_ << indent_cpp() << "if (!writer.writeTag(\"many\", 1, 0))" << inline_return_cpp("false");
-                    f_cpp_ << indent_cpp() << "if (!writer.writeListBegin(BOTTLE_TAG_INT32, static_cast<uint32_t>(_return.size())))" << inline_return_cpp("false");
-                    f_cpp_ << indent_cpp() << "for (const auto& _ret : _return) {\n";
+                    f_cpp_ << indent_cpp() << "if (!writer.writeListBegin(BOTTLE_TAG_INT32, static_cast<uint32_t>(help_strings.size())))" << inline_return_cpp("false");
+                    f_cpp_ << indent_cpp() << "for (const auto& help_string : help_strings) {\n";
                     indent_up_cpp();
                     {
-                        f_cpp_ << indent_cpp() << "if (!writer.writeString(_ret))" << inline_return_cpp("false");
+                        f_cpp_ << indent_cpp() << "if (!writer.writeString(help_string))" << inline_return_cpp("false");
                     }
                     indent_down_cpp();
                     f_cpp_ << indent_cpp() << "}\n";

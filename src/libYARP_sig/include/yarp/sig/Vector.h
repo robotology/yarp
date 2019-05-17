@@ -165,7 +165,7 @@ public:
     * @param s the size
     * @param def a default value used to fill the vector
     */
-    VectorOf(size_t s, const T&def)
+    VectorOf(size_t s, const T& def)
     {
         this->resize(s,def);
     }
@@ -184,7 +184,8 @@ public:
         memcpy(this->data(), p, sizeof(T)*s);
     }
 
-    VectorOf(const VectorOf &r) : VectorBase() {
+    VectorOf(const VectorOf& r) : VectorBase()
+    {
         bytes = r.bytes;
         _updatePointers();
     }
@@ -192,7 +193,8 @@ public:
     /**
     * Copy operator;
     */
-    const VectorOf<T> &operator=(const VectorOf<T> &r) {
+    const VectorOf<T> &operator=(const VectorOf<T>& r)
+    {
 
         if (this == &r) return *this;
 
