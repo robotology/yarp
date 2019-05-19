@@ -34,8 +34,13 @@ public:
     class Result
     {
     public:
-        bool        valid{ false };
+#if (defined _WIN32 && _MSC_VER < 1910) || (!defined _WIN32 && __cplusplus < 201402L)
+        bool        valid;
+#else
+        bool        valid{false};
+#endif
         int         error;
+
         T           value;
         //adding a operator bool(){return valid;} is a very bad idea as it can cause confusion between the result of bool functions and their success
     };
@@ -186,10 +191,15 @@ protected:
         yarp::math::FrameTransform nullframe;
 
     public:
+#if (defined _WIN32 && _MSC_VER < 1910) || (!defined _WIN32 && __cplusplus < 201402L)
+        const std::map<std::string, yarp::math::FrameTransform>::const_iterator begin() const { return storage.begin(); }
+        const std::map<std::string, yarp::math::FrameTransform>::const_iterator end() const { return storage.end(); }
+        const size_t erase(const std::string& k) { return storage.erase(k); }
+#else
         const auto begin() const { return storage.begin(); }
         const auto end() const { return storage.end(); }
         const auto erase(const std::string& k) { return storage.erase(k); }
-    
+#endif
         bool insertUpdate(const yarp::math::FrameTransform& frame)
         {
             storage[frame.frameId] = frame;
@@ -224,6 +234,7 @@ protected:
         for (auto callback : callbacks)
             if (callback.second)
                 callback.second((IFrameSource*)this);
+        return true;
     }
     
     /**
@@ -265,8 +276,8 @@ public:
     virtual bool unsetCallback(const int& id) override;
     virtual Result<int> setCallback(std::function<bool(IFrameSource*)> cb) override;
     virtual std::string allFramesAsString() override;
-    virtual bool clearOlderFrames(const std::chrono::milliseconds& lifeMax);
-    virtual bool clearStaticFrames();
+    virtual bool clearOlderFrames(const std::chrono::milliseconds& lifeMax) override;
+    virtual bool clearStaticFrames() override;
     virtual Result<bool> canTransform(const std::string &target_frame, const std::string &source_frame) override;
     virtual bool frameExists(const std::string &frame_id) override;
     virtual std::unordered_set<std::string> getAllFrameIds() override;

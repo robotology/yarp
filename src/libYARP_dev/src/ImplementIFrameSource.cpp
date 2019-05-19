@@ -8,7 +8,8 @@
 
 #include <yarp/dev/IFrameSource.h>
 #include <algorithm>
-#include<thread>
+#include <iterator>
+#include <thread>
 using namespace yarp::dev;
 using namespace yarp::math;
 using namespace yarp::sig;
@@ -201,7 +202,11 @@ std::vector<FrameTransform> ImplementIFrameSource::getAllFrames()
     if (!cacheValid)
         updateFrameContainer(frameContainer);
     std::vector<FrameTransform> v;
+#if (defined _WIN32 && _MSC_VER < 1910) || (!defined _WIN32 && __cplusplus < 201402L)
+    std::transform(frameContainer.begin(), frameContainer.end(), std::back_inserter(v), [](const pair<string, FrameTransform> &kv)->FrameTransform { return kv.second; });
+#else
     std::transform(frameContainer.begin(), frameContainer.end(), std::back_inserter(v), [](auto &kv) { return kv.second; });
+#endif
     return v;
 }
 
@@ -215,7 +220,11 @@ IFrameSource::Result<std::string> ImplementIFrameSource::getParent(const std::st
 
 IFrameSource::Result<std::string> ImplementIFrameSource::getParentRaw(const std::string& frame_id)
 {
+#if (defined _WIN32 && _MSC_VER < 1910) || (!defined _WIN32 && __cplusplus < 201402L)
+    auto it = std::find_if(FULL_RANGE(frameContainer), [&frame_id](const pair<string, FrameTransform>& frame)->bool { return frame.second.frameId == frame_id; });
+#else
     auto it = std::find_if(FULL_RANGE(frameContainer), [&frame_id](const auto& frame) { return frame.second.frameId == frame_id; });
+#endif
     if (it == frameContainer.end())
     {
         return { false, IFrameSource::FRAME_NOT_FOUND, ""};
@@ -226,9 +235,6 @@ IFrameSource::Result<std::string> ImplementIFrameSource::getParentRaw(const std:
 
 IFrameSource::Result<FrameTransform> ImplementIFrameSource::getChainedTransform(const std::string& target_frame_id, const std::string& source_frame_id)
 {
-    const auto& tfVec = frameContainer;
-    size_t i;
-
     for (const auto& i : frameContainer)
     {
         if (i.second.frameId == source_frame_id)

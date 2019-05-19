@@ -17,7 +17,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 #include <yarp/math/Math.h>
-
+#include <chrono>
 #include <cmath>
 #include <vector>
 
@@ -27,7 +27,9 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::math;
+#if (defined _WIN32 && _MSC_VER > 1910) || (!defined _WIN32 && __cplusplus > 201402L)
 using namespace std::chrono_literals;
+#endif
 
 static bool isEqual(const yarp::sig::Vector& v1, const yarp::sig::Vector& v2, double precision)
 {
@@ -282,7 +284,11 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
             yarp::os::Time::delay(1);
             bool del_bool = itfR->frameExists("frame_test");
             yarp::os::Time::delay(1);
+#if (defined _WIN32 && _MSC_VER < 1910) || (!defined _WIN32 && __cplusplus < 201402L)
+            itfR->clearOlderFrames(std::chrono::milliseconds(10));
+#else
             itfR->clearOlderFrames(10ms);
+#endif
             del_bool &= (!itfR->frameExists("frame_test"));
             CHECK(del_bool); // deleteTransform ok
         }
@@ -290,7 +296,11 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
         //test 9
         {
             itfB->clear();
+#if (defined _WIN32 && _MSC_VER < 1910) || (!defined _WIN32 && __cplusplus < 201402L)
+            itfR->clearOlderFrames(std::chrono::milliseconds(0));
+#else
             itfR->clearOlderFrames(0ms);
+#endif
             itfR->clearStaticFrames();
             auto cids = itfR->getAllFrameIds();
             CHECK(cids.size() == 0); // clear ok
@@ -301,14 +311,22 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
             itfB->setTransform({"frame10", "frame2", m1});
             yarp::os::Time::delay(0.050);
             CHECK(itfR->canTransform("frame10", "frame2").value); // itf->setTransform ok
+#if (defined _WIN32 && _MSC_VER < 1910) || (!defined _WIN32 && __cplusplus < 201402L)
+            itfR->clearOlderFrames(std::chrono::milliseconds(40));
+#else
             itfR->clearOlderFrames(40ms);
+#endif
             CHECK_FALSE(itfR->canTransform("frame10", "frame2").value); // itf->setTransform successfully expired after 0.6s
         }
 
         //test 11
         {
             itfB->clear();
+#if (defined _WIN32 && _MSC_VER < 1910) || (!defined _WIN32 && __cplusplus < 201402L)
+            itfR->clearOlderFrames(std::chrono::milliseconds(0));
+#else
             itfR->clearOlderFrames(0ms);
+#endif
             itfR->clearStaticFrames();
             bool set_b1 = itfB->setTransform({ "frame10", "frame2", m1 });
             yarp::os::Time::delay(0.050);
@@ -348,7 +366,11 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
         //test 12
         {
             itfB->clear();
+#if (defined _WIN32 && _MSC_VER < 1910) || (!defined _WIN32 && __cplusplus < 201402L)
+            itfR->clearOlderFrames(std::chrono::milliseconds(0));
+#else
             itfR->clearOlderFrames(0ms);
+#endif
             itfR->clearStaticFrames();
             CHECK(itfB->setTransform({ "frame1", "frame2", m1 }));
             yarp::os::Time::delay(0.050);

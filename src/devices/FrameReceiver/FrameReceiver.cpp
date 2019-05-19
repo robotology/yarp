@@ -20,7 +20,6 @@ using namespace yarp::rosmsg::tf2_msgs;
 void PortCallback::onRead(TFMessage& msg)
 {
     int i = 0;
-    Bottle* submsg{ nullptr };
 
     FrameTransform ft;
     owner->cacheValid = false;
@@ -36,7 +35,11 @@ void PortCallback::onRead(TFMessage& msg)
         ft.rotation.x()   = submsg.transform.rotation.x;
         ft.rotation.y()   = submsg.transform.rotation.y;
         ft.rotation.z()   = submsg.transform.rotation.z;
+#if (defined _WIN32 && _MSC_VER < 1910) || (!defined _WIN32 && __cplusplus < 201402L)
+        ft.timestamp      = submsg.header.stamp.sec + submsg.header.stamp.nsec/1000000000;
+#else
         ft.timestamp      = submsg.header.stamp.sec + submsg.header.stamp.nsec/1'000'000'000;
+#endif
         fvec[ft.frameId] = ft;
         i++;
     }
@@ -69,7 +72,11 @@ void FrameReceiver::updateFrameContainer(FrameEditor& fs)
 bool FrameReceiver::open(yarp::os::Searchable& params)
 {
     static int id = 0;
+#if (defined _WIN32 && _MSC_VER < 1910) || (!defined _WIN32 && __cplusplus < 201402L)
+    n = std::unique_ptr<yarp::os::Node>(new yarp::os::Node("/frameReceiver" + std::to_string(id)));
+#else
     n = std::make_unique<yarp::os::Node>("/frameReceiver" + std::to_string(id));
+#endif
     id++;
     if(params.check("help"))
     {

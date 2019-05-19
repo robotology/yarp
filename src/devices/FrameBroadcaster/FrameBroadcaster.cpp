@@ -23,7 +23,8 @@ using namespace yarp::rosmsg::tf2_msgs;
 inline void BottleaddFrame(TFMessage& b, const yarp::math::FrameTransform& frame)
 {
 
-    auto& submsg = yarp::rosmsg::  geometry_msgs::TransformStamped();
+    yarp::rosmsg::geometry_msgs::TransformStamped submsg;
+
     submsg.child_frame_id          = frame.frameId;
     submsg.header.frame_id         = frame.parentFrame;
     submsg.transform.rotation.w    = frame.rotation.w();
@@ -77,7 +78,11 @@ bool FrameBroadcaster::open(yarp::os::Searchable& params)
     };
 
     static int id = 0;
+#if (defined _WIN32 && _MSC_VER < 1910) || (!defined _WIN32 && __cplusplus < 201402L)
+    n = std::unique_ptr<yarp::os::Node>(new yarp::os::Node("/frameBroadcaster" + std::to_string(id)));
+#else
     n = std::make_unique<yarp::os::Node>("/frameBroadcaster" + std::to_string(id));
+#endif
     id++;
 
     if(params.check("help"))
@@ -155,8 +160,11 @@ bool FrameBroadcaster::open(yarp::os::Searchable& params)
 bool FrameBroadcaster::openAndAttachSubDevice(Searchable& prop)
 {
     Property p;
-
+#if (defined _WIN32 && _MSC_VER < 1910) || (!defined _WIN32 && __cplusplus < 201402L)
+    m_subDeviceOwned = unique_ptr<PolyDriver>(new PolyDriver);
+#else
     m_subDeviceOwned = std::make_unique<PolyDriver>();
+#endif
 
     p.fromString(prop.toString());
     p.setMonitor(prop.getMonitor(), "subdevice"); // pass on any monitoring
