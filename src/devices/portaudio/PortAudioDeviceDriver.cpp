@@ -145,7 +145,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
             {
                 *wptr++ = playdata->read();  // left
                 if( num_play_channels == 2 ) *wptr++ = playdata->read();  // right
-                for (size_t chs=2; chs<num_play_channels; chs++) playdata->read(); //remove all additional channels > 2
+                for (int chs=2; chs<num_play_channels; chs++) playdata->read(); //remove all additional channels > 2
             }
             for( ; i<framesPerBuffer; i++ )
             {
@@ -170,7 +170,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
             {
                 *wptr++ = playdata->read();  // left
                 if( num_play_channels == 2 ) *wptr++ = playdata->read();  // right
-                for (size_t chs=2; chs<num_play_channels; chs++) playdata->read(); //remove all additional channels > 2
+                for (int chs=2; chs<num_play_channels; chs++) playdata->read(); //remove all additional channels > 2
             }
             //if we return paContinue, then the callback will be invoked again later
             //method Pa_IsStreamActive() will return 0
@@ -199,7 +199,6 @@ PortAudioDeviceDriver::PortAudioDeviceDriver() :
 {
     memset(&inputParameters, 0, sizeof(PaStreamParameters));
     memset(&outputParameters, 0, sizeof(PaStreamParameters));
-    memset(&dataBuffers, 0, sizeof(circularDataBuffers));
     memset(&m_driverConfig, 0, sizeof(PortAudioDeviceDriverSettings));
 }
 
@@ -265,9 +264,9 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config)
     else
         numSamples = samples;
 
-    size_t numPlayBytes = numSamples * sizeof(SAMPLE) * m_numPlaybackChannels;
-    size_t numRecBytes = numSamples * sizeof(SAMPLE) * m_numRecordChannels;
-    int twiceTheBuffer = 2;
+//     size_t numPlayBytes = numSamples * sizeof(SAMPLE) * m_numPlaybackChannels;
+//     size_t numRecBytes = numSamples * sizeof(SAMPLE) * m_numRecordChannels;
+//     int twiceTheBuffer = 2;
     AudioBufferSize playback_buffer_size(numSamples, m_numPlaybackChannels, sizeof(SAMPLE));
     AudioBufferSize rec_buffer_size (numSamples, m_numRecordChannels, sizeof(SAMPLE));
     dataBuffers.numPlayChannels = m_numPlaybackChannels;
@@ -535,7 +534,7 @@ bool PortAudioDeviceDriver::immediateSound(const yarp::sig::Sound& sound)
 {
     dataBuffers.playData->clear();
 
-    size_t num_bytes = sound.getBytesPerSample();
+//     size_t num_bytes = sound.getBytesPerSample();
     size_t num_channels = sound.getChannels();
     size_t num_samples = sound.getSamples();
 
@@ -585,7 +584,7 @@ bool PortAudioDeviceDriver::renderSound(const yarp::sig::Sound& sound)
 
 bool PortAudioDeviceDriver::appendSound(const yarp::sig::Sound& sound)
 {
-    size_t num_bytes = sound.getBytesPerSample();
+//     size_t num_bytes = sound.getBytesPerSample();
     size_t num_channels = sound.getChannels();
     size_t num_samples = sound.getSamples();
 

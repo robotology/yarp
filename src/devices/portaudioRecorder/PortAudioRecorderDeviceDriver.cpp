@@ -134,7 +134,6 @@ PortAudioRecorderDeviceDriver::PortAudioRecorderDeviceDriver() :
 {
     memset(&m_inputParameters, 0, sizeof(PaStreamParameters));
     m_recDataBuffer = nullptr;
-    memset(&m_driverConfig, 0, sizeof(PortAudioRecorderDeviceDriverSettings));
 }
 
 PortAudioRecorderDeviceDriver::~PortAudioRecorderDeviceDriver()
@@ -163,7 +162,7 @@ bool PortAudioRecorderDeviceDriver::open(PortAudioRecorderDeviceDriverSettings& 
 
     if (m_config.cfg_samples == 0) m_config.cfg_samples = m_config.cfg_rate; //  by default let's use chunks of 1 second
 
-    size_t debug_numRecBytes = m_config.cfg_samples * sizeof(SAMPLE) * m_config.cfg_recChannels;
+//     size_t debug_numRecBytes = m_config.cfg_samples * sizeof(SAMPLE) * m_config.cfg_recChannels;
     AudioBufferSize rec_buffer_size (m_config.cfg_samples, m_config.cfg_recChannels, sizeof(SAMPLE));
     if (m_recDataBuffer ==nullptr)
         m_recDataBuffer = new CircularAudioBuffer_16t("portatudio_rec", rec_buffer_size);
@@ -203,6 +202,7 @@ bool PortAudioRecorderDeviceDriver::open(PortAudioRecorderDeviceDriverSettings& 
 
     //start the thread
     bool ret = this->start();
+    YARP_UNUSED(ret);
 
     return (m_err==paNoError);
 }

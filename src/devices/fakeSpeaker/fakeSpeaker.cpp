@@ -107,6 +107,7 @@ void fakeSpeaker::run()
     for (size_t i = 0; i<buffer_size; i++)
     {
         audio_sample_16t s = m_outputBuffer->read();
+        YARP_UNUSED(s);
     }
     yDebug() << "Sound Playback complete";
     yDebug() << "Played " << siz_sam << " samples, " << siz_chn << " channels, " << siz_byt << " bytes";
@@ -141,7 +142,7 @@ bool fakeSpeaker::renderSound(const yarp::sig::Sound& sound)
 {
     if (m_renderSoundImmediate) m_outputBuffer->clear();
 
-    size_t num_bytes = sound.getBytesPerSample();
+//     size_t num_bytes = sound.getBytesPerSample();
     size_t num_channels = sound.getChannels();
     size_t num_samples = sound.getSamples();
 

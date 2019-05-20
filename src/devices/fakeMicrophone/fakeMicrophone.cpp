@@ -118,7 +118,7 @@ void fakeMicrophone::run()
     // Just acquire raw data and put them in the buffer
     auto p = m_audioFile.getInterleavedAudioRawData();
     size_t fsize_in_samples = m_audioFile.getSamples();
-    size_t bps = m_audioFile.getBytesPerSample();
+//     size_t bps = m_audioFile.getBytesPerSample();
 
     //each iteration, which occurs every xxx ms, I copy a bunch of samples in the buffer.
     //When the pointer reaches the end of the sound (audioFile), just restart from the beginning in an endless loop

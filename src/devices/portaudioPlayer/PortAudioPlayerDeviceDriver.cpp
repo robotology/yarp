@@ -65,7 +65,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
                          void *userData )
 {
     CircularAudioBuffer_16t *playdata = static_cast<CircularAudioBuffer_16t*>(userData);
-    int num_play_channels = playdata->getMaxSize().getChannels();
+    size_t num_play_channels = playdata->getMaxSize().getChannels();
     int finished = paComplete;
 
     if (1)
@@ -133,7 +133,6 @@ PortAudioPlayerDeviceDriver::PortAudioPlayerDeviceDriver() :
 {
     memset(&m_outputParameters, 0, sizeof(PaStreamParameters));
     m_playDataBuffer = nullptr;
-    memset(&m_driverConfig, 0, sizeof(PortAudioPlayerDeviceDriverSettings));
 }
 
 PortAudioPlayerDeviceDriver::~PortAudioPlayerDeviceDriver()
@@ -171,7 +170,7 @@ bool PortAudioPlayerDeviceDriver::open(PortAudioPlayerDeviceDriverSettings& conf
 
     if (m_config.cfg_samples==0) m_config.cfg_samples = m_config.cfg_rate; //  by default let's use chunks of 1 second
 
-    size_t debug_numPlayBytes = (m_config.cfg_samples * sizeof(SAMPLE) * m_config.cfg_playChannels);
+//     size_t debug_numPlayBytes = (m_config.cfg_samples * sizeof(SAMPLE) * m_config.cfg_playChannels);
     AudioBufferSize playback_buffer_size(m_config.cfg_samples, m_config.cfg_playChannels, sizeof(SAMPLE));
     if (m_playDataBuffer ==nullptr)
         m_playDataBuffer = new CircularAudioBuffer_16t("portatudio_play", playback_buffer_size);
@@ -330,7 +329,7 @@ bool PortAudioPlayerDeviceDriver::immediateSound(const yarp::sig::Sound& sound)
 {
     m_playDataBuffer->clear();
 
-    size_t num_bytes = sound.getBytesPerSample();
+//     size_t num_bytes = sound.getBytesPerSample();
     size_t num_channels = sound.getChannels();
     size_t num_samples = sound.getSamples();
 
@@ -347,7 +346,7 @@ bool PortAudioPlayerDeviceDriver::renderSound(const yarp::sig::Sound& sound)
     //prevents simultaneous start/stop/reset etc.
     LockGuard lock(m_mutex);
 
-    int freq  = sound.getFrequency();
+    size_t freq  = sound.getFrequency();
     size_t chans = sound.getChannels();
     if (freq == 0)
     {
@@ -394,7 +393,7 @@ bool PortAudioPlayerDeviceDriver::renderSound(const yarp::sig::Sound& sound)
 
 bool PortAudioPlayerDeviceDriver::appendSound(const yarp::sig::Sound& sound)
 {
-    size_t num_bytes = sound.getBytesPerSample();
+//     size_t num_bytes = sound.getBytesPerSample();
     size_t num_channels = sound.getChannels();
     size_t num_samples = sound.getSamples();
 

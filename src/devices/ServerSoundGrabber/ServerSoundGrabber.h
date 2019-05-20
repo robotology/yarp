@@ -194,9 +194,7 @@ public:
                     yDebug() << "BEFORE Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
                 }
 #endif
-                double ct1 = yarp::os::Time::now();
                 mic->getSound(snd, 44100, 44100, 0.0);
-                double ct2 = yarp::os::Time::now();
 #ifdef PRINT_DEBUG_MESSAGES
                 {
                     audio_buffer_size buf_max;

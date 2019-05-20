@@ -166,9 +166,7 @@ void AudioRecorderWrapper::run()
 #endif
 
     yarp::sig::Sound snd;
-    double ct1 = yarp::os::Time::now();
     m_mic->getSound(snd, m_min_number_of_samples_over_network, m_max_number_of_samples_over_network, m_getSound_timeout);
-    double ct2 = yarp::os::Time::now();
 
     if (snd.getSamples() < m_min_number_of_samples_over_network ||
         snd.getSamples() < m_max_number_of_samples_over_network)
