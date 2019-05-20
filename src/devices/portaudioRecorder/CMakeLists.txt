@@ -26,7 +26,7 @@ if(NOT SKIP_portaudioRecorder)
 
   target_include_directories(yarp_portaudioRecorder SYSTEM PRIVATE ${PortAudio_INCLUDE_DIR})
   target_link_libraries(yarp_portaudioRecorder PRIVATE ${PortAudio_LIBRARIES})
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${PortAudio_LIBRARIES})
+#   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS PortAudio) (not using targets)
 
   
   yarp_install(TARGETS yarp_portaudioRecorder
