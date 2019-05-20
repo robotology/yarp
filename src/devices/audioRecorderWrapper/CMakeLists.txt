@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(AudioRecorderWrapper
                     CATEGORY device
-                    TYPE yarp::dev::AudioRecorderWrapper
+                    TYPE AudioRecorderWrapper
                     INCLUDE AudioRecorderWrapper.h
                     EXTRA_CONFIG WRAPPER=AudioRecorderWrapper
                     DEFAULT ON)

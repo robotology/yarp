@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(fakeSpeaker
                     CATEGORY device
-                    TYPE yarp::dev::fakeSpeaker
+                    TYPE fakeSpeaker
                     INCLUDE fakeSpeaker.h
                     EXTRA_CONFIG WRAPPER=AudioPlayerWrapper)
 

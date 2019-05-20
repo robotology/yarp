@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(AudioPlayerWrapper
                     CATEGORY device
-                    TYPE yarp::dev::AudioPlayerWrapper
+                    TYPE AudioPlayerWrapper
                     INCLUDE AudioPlayerWrapper.h
                     EXTRA_CONFIG WRAPPER=AudioPlayerWrapper
                     DEFAULT ON)

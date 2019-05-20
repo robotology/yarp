@@ -36,32 +36,24 @@
 #include <yarp/os/Log.h>
 
 
-namespace yarp
-{
-    namespace dev
-    {
-        class AudioRecorderWrapper;
-    }
-}
-
-class yarp::dev::AudioRecorderWrapper : public yarp::dev::DeviceDriver,
-                                        private yarp::os::PeriodicThread,
-                                        public yarp::dev::IMultipleWrapper,
-                                        public yarp::os::PortReader
+class AudioRecorderWrapper :
+        public yarp::dev::DeviceDriver,
+        private yarp::os::PeriodicThread,
+        public yarp::dev::IMultipleWrapper,
+        public yarp::os::PortReader
 {
 private:
-    PolyDriver          m_driver;
-    IAudioGrabberSound* m_mic; //The microphone device
-    double              m_period;
-    yarp::os::Port      m_rpcPort;
-    yarp::os::Port      m_streamingPort;
-    double              m_last_time;
-    yarp::os::Stamp     m_stamp;
-    size_t              m_min_number_of_samples_over_network;
-    size_t              m_max_number_of_samples_over_network;
-    double              m_getSound_timeout;
-    bool                m_isDeviceOwned;
-    bool                m_debug_enabled;
+    yarp::dev::PolyDriver          m_driver;
+    yarp::dev::IAudioGrabberSound* m_mic; //The microphone device
+    double                         m_period;
+    yarp::os::Port                 m_rpcPort;
+    yarp::os::Port                 m_streamingPort;
+    yarp::os::Stamp                m_stamp;
+    size_t                         m_min_number_of_samples_over_network;
+    size_t                         m_max_number_of_samples_over_network;
+    double                         m_getSound_timeout;
+    bool                           m_isDeviceOwned;
+    bool                           m_debug_enabled;
 public:
     /**
      * Constructor.
@@ -72,7 +64,7 @@ public:
 
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
-    bool attachAll(const PolyDriverList &p) override;
+    bool attachAll(const yarp::dev::PolyDriverList &p) override;
     bool detachAll() override;
 
     void attach(yarp::dev::IAudioGrabberSound *igrab);

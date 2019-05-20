@@ -33,14 +33,9 @@
 #define DEFAULT_FRAMES_PER_BUFFER (512)
 //#define DEFAULT_FRAMES_PER_BUFFER (1024)
 
-namespace yarp {
-    namespace dev {
-        class PortAudioPlayerDeviceDriverSettings;
-        class PortAudioPlayerDeviceDriver;
-    }
-}
 
-class yarp::dev::PortAudioPlayerDeviceDriverSettings {
+class PortAudioPlayerDeviceDriverSettings
+{
 public:
     size_t cfg_rate = 0;
     size_t cfg_samples = 0;
@@ -62,8 +57,9 @@ class PlayStreamThread : public yarp::os::Thread
    void handleError(void);
 };
 
-class yarp::dev::PortAudioPlayerDeviceDriver : public IAudioRender,
-                                               public DeviceDriver
+class PortAudioPlayerDeviceDriver :
+        public yarp::dev::IAudioRender,
+        public yarp::dev::DeviceDriver
 {
 private:
     PaStreamParameters  m_outputParameters;

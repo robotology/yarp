@@ -15,11 +15,6 @@
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
 
-namespace yarp{
-    namespace dev{
-        class fakeMicrophone;
-    }
-}
 
 #define DEFAULT_PERIOD 0.01   //s
 
@@ -27,9 +22,10 @@ namespace yarp{
 * \brief `fakeMicrophone` : fake device implementing the IAudioGrabberSound device interface to play sound
 *
 */
-class yarp::dev::fakeMicrophone :  public DeviceDriver,
-                            public yarp::dev::IAudioGrabberSound,
-                            public yarp::os::PeriodicThread
+class fakeMicrophone :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IAudioGrabberSound,
+        public yarp::os::PeriodicThread
 {
 public:
     fakeMicrophone();

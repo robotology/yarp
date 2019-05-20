@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(fakeMicrophone
                     CATEGORY device
-                    TYPE yarp::dev::fakeMicrophone
+                    TYPE fakeMicrophone
                     INCLUDE fakeMicrophone.h
                     EXTRA_CONFIG WRAPPER=AudioRecorderWrapper)
 

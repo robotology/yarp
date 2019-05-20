@@ -33,14 +33,9 @@
 #define DEFAULT_FRAMES_PER_BUFFER (512)
 //#define DEFAULT_FRAMES_PER_BUFFER (1024)
 
-namespace yarp {
-    namespace dev {
-        class PortAudioDeviceDriverSettings;
-        class PortAudioDeviceDriver;
-    }
-}
 
-class yarp::dev::PortAudioDeviceDriverSettings {
+class PortAudioDeviceDriverSettings
+{
 public:
     int rate;
     int samples;
@@ -67,8 +62,10 @@ class streamThread :
    void handleError(void);
 };
 
-class yarp::dev::PortAudioDeviceDriver : public IAudioGrabberSound, 
-            public IAudioRender, public DeprecatedDeviceDriver
+class PortAudioDeviceDriver :
+        public yarp::dev::IAudioGrabberSound,
+        public yarp::dev::IAudioRender,
+        public yarp::dev::DeprecatedDeviceDriver
 {
 private:
     PaStreamParameters  inputParameters;

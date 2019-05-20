@@ -15,11 +15,6 @@
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
 
-namespace yarp{
-    namespace dev{
-        class fakeSpeaker;
-    }
-}
 
 #define DEFAULT_PERIOD 0.01   //s
 
@@ -27,9 +22,10 @@ namespace yarp{
 * \brief `fakeSpeaker` : fake device implementing the IAudioRender device interface to play sound
 *
 */
-class yarp::dev::fakeSpeaker :  public DeviceDriver,
-                            public yarp::dev::IAudioRender,
-                            public yarp::os::PeriodicThread
+class fakeSpeaker :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IAudioRender,
+        public yarp::os::PeriodicThread
 {
 public:
     fakeSpeaker();

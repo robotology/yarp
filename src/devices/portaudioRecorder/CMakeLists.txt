@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(portaudioRecorder
                     CATEGORY device
-                    TYPE yarp::dev::PortAudioRecorderDeviceDriver
+                    TYPE PortAudioRecorderDeviceDriver
                     INCLUDE PortAudioRecorderDeviceDriver.h
                     EXTRA_CONFIG WRAPPER=AudioRecorderWrapper
                     DEPENDS "YARP_HAS_PortAudio")

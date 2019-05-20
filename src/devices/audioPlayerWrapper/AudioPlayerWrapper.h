@@ -47,18 +47,11 @@
 #include <yarp/dev/PreciselyTimed.h>
 
 
-namespace yarp
-{
-    namespace dev
-    {
-        class AudioPlayerWrapper;
-    }
-}
-
-class yarp::dev::AudioPlayerWrapper : public yarp::os::PeriodicThread,
-                                      public yarp::dev::DeviceDriver,
-                                      public yarp::dev::IMultipleWrapper,
-                                      public yarp::os::PortReader
+class AudioPlayerWrapper :
+        public yarp::os::PeriodicThread,
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IMultipleWrapper,
+        public yarp::os::PortReader
 {
 
     struct scheduled_sound_type
@@ -77,7 +70,7 @@ public:
     /**
      * Specify which sensor this thread has to read from.
      */
-    bool attachAll(const PolyDriverList &p) override;
+    bool attachAll(const yarp::dev::PolyDriverList &p) override;
     bool detachAll() override;
 
     void attach(yarp::dev::IAudioRender *irend);
