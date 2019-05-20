@@ -40,11 +40,12 @@ namespace yarp {
  * An image frame grabber device using ffmpeg to capture images from
  * AVI files.
  */
-class yarp::dev::FfmpegGrabber : public IFrameGrabberImage,
-            public IAudioGrabberSound,
-            public IAudioVisualGrabber,
-            public IAudioVisualStream,
-            public DeviceDriver
+class yarp::dev::FfmpegGrabber :
+        public IFrameGrabberImage,
+        public IAudioGrabberSound,
+        public IAudioVisualGrabber,
+        public IAudioVisualStream,
+        public DeviceDriver
 {
 public:
 
@@ -78,7 +79,7 @@ public:
 
     bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) override;
 
-    bool getSound(yarp::sig::Sound& sound) override;
+    bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;
 
     int height() const override { return m_h; }
 
@@ -102,6 +103,18 @@ public:
 
     bool stopRecording() override {
         return true;
+    }
+
+    bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize&) override {
+        return false;
+    }
+
+    bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize&) override {
+        return false;
+    }
+
+    bool resetRecordingAudioBuffer() override {
+        return false;
     }
 
 protected:
