@@ -17,6 +17,7 @@
  */
 
 #include <AudioRecorderWrapper.h>
+#include <yarp/os/LogStream.h>
 
 using namespace yarp::dev;
 

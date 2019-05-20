@@ -16,14 +16,14 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
-#include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/GenericVocabs.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 //#define NUM_SAMPLES 8192
 
