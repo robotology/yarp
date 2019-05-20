@@ -124,10 +124,12 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
     }
     m_rpcPort.setReader(*this);
 
-    //wait a little and then start
-    yarp::os::SystemClock::delaySystem(1);
+    // Wait a little and then start if requested
+    if (config.check("start")) {
+        yarp::os::SystemClock::delaySystem(1);
+        m_mic->startRecording();
+    }
 
-    //mic->startRecording();
     return true;
 }
 
