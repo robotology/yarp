@@ -337,6 +337,12 @@ foreach my $filename (@files) {
         next;
     }
 
+    if ("$filename" =~ /\.(wav)$/) {
+        print "[SKIP (audio - $1)] $filename\n";
+        $skip++;
+        next;
+    }
+
     if ("$filename" =~ /\.(rar)$/) {
         print "[SKIP (binary - $1)] $filename\n";
         $skip++;
