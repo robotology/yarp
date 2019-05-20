@@ -200,13 +200,13 @@ int main(int argc, char *argv[])
     Network::setLocalMode(true);
 
     PolyDriver dd;
-    yDebug("Opening PolyDriver for device %s", deviceName.c_str());
+    yInfo("Opening PolyDriver for device %s", deviceName.c_str());
     if (!dd.open(p)) {
-        yDebug("PolyDriver failed to opened.");
+        yError("PolyDriver failed to opened.");
         return 255;
     }
 
-    yDebug("PolyDriver opened.");
+    yInfo("PolyDriver opened.");
 
     std::string wrapperName = "";
     std::string codeName = "";
@@ -222,7 +222,7 @@ int main(int argc, char *argv[])
 
     FILE *fout = fopen(dest.c_str(), "w");
     if (fout == nullptr) {
-        printf("Problem writing to %s\n", dest.c_str());
+        yError("Problem writing to %s", dest.c_str());
         std::exit(1);
     }
 
@@ -265,9 +265,12 @@ int main(int argc, char *argv[])
     fclose(fout);
     fout = nullptr;
 
-    yDebug("Closing PolyDriver");
+    yInfo("Starting 1 second delay");
+    yarp::os::SystemClock::delaySystem(1);
+
+    yInfo("Closing PolyDriver");
     dd.close();
-    yDebug("PolyDriver closed.");
+    yInfo("PolyDriver closed.");
 
     fini_Network();
 

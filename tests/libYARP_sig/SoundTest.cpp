@@ -26,7 +26,7 @@ void generate_test_sound(Sound& snd, size_t samples, size_t size_channels)
     {
         for (size_t s = 0; s<snd.getSamples(); s++)
         {
-            snd.set((audio_sample)(ch * 10 + s), s, ch);
+            snd.set((Sound::audio_sample)(ch * 10 + s), s, ch);
         }
     }
 }
@@ -76,7 +76,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         Sound snd1, snd2;
         snd1.resize(10, 3);
         generate_test_sound(snd1, 10, 3);
-        
+
         for (auto i=0; i<10; i++)
             for (auto j = 0; j < 3; j++)
             {
@@ -95,7 +95,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         Sound snd1;
         snd1.resize(10, 3);
         generate_test_sound(snd1, 10, 3);
-    
+
         Sound snd_chan;
         snd_chan.resize (10, 1);
         generate_test_sound(snd_chan, 10, 1);
@@ -105,7 +105,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         generate_test_sound(snd3, 10, 3);
         for (size_t s = 0; s<snd3.getSamples(); s++)
         {
-            snd3.setSafe((audio_sample)(s), s, 2);
+            snd3.setSafe((Sound::audio_sample)(s), s, 2);
         }
 
         snd1.replaceChannel(2, snd_chan);
@@ -127,7 +127,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         {
             for (size_t s = 0; s<snd2.getSamples(); s++)
             {
-                snd2.set((audio_sample)(ch * 10 + s + 3), s, ch);
+                snd2.set((Sound::audio_sample)(ch * 10 + s + 3), s, ch);
             }
         }
         bool ok = (subsnd1 == snd2);
@@ -139,7 +139,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         Sound snd1;
         snd1.resize(10, 3);
         generate_test_sound(snd1, 10, 3);
-     
+
         for (size_t chan=0; chan<3; chan++)
         {
             bool ok = true;
@@ -148,7 +148,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
             snd3.resize(10, 1);
             for (size_t s = 0; s < snd3.getSamples(); s++)
             {
-                snd3.set((audio_sample)(chan * 10 + s), s, 0);
+                snd3.set((Sound::audio_sample)(chan * 10 + s), s, 0);
             }
             ok = (sndext == snd3);
             CHECK(ok);
@@ -165,7 +165,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         {
             for(size_t s=0; s<snd1.getSamples(); s++)
             {
-                snd1.set((audio_sample)(ch+s), s, ch);
+                snd1.set((Sound::audio_sample)(ch+s), s, ch);
             }
         }
 
@@ -173,7 +173,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         {
             for(size_t s=0; s<snd2.getSamples(); s++)
             {
-                snd2.set((audio_sample)(1000+ch+s), s, ch);
+                snd2.set((Sound::audio_sample)(1000+ch+s), s, ch);
             }
         }
 
@@ -211,7 +211,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         auto vec_i = snd1.getInterleavedAudioRawData();
         auto vec_ni = snd1.getNonInterleavedAudioRawData();
 
-        bool ok; 
+        bool ok;
         ok = (vec_i.size() == 5 * 2);
         CHECK(ok);
         ok = (vec_ni.size() == 5 * 2);
@@ -253,7 +253,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         snd1.resize(128);
         snd1.setFrequency(50);
         for (size_t i=0; i<snd1.getSamples(); i++) {
-            snd1.set((audio_sample)(i-snd1.getSamples()/2),i);
+            snd1.set((Sound::audio_sample)(i-snd1.getSamples()/2),i);
         }
 
         PortReaderBuffer<Sound> buf;

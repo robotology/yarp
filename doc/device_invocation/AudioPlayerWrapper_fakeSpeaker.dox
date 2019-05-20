@@ -1,25 +1,22 @@
 /**
  * \ingroup dev_examples
  *
- * \defgroup grabber_audio Example for AudioRecorderWrapper (grabber_audio)
+ * \defgroup AudioPlayerWrapper_fakeSpeaker Example for AudioPlayerWrapper (AudioPlayerWrapper_fakeSpeaker)
 
-Instantiates \ref cmd_device_AudioRecorderWrapper "AudioRecorderWrapper" device implemented by AudioRecorderWrapper.
+Instantiates \ref cmd_device_AudioPlayerWrapper "AudioPlayerWrapper" device implemented by AudioPlayerWrapper.
 \verbatim
-# start up a network wrapper around a microphone, read via portaudio
-device AudioRecorderWrapper
-subdevice portaudio
-read
-name /microphone
-allow-deprecated-devices
+device AudioPlayerWrapper
+subdevice fakeSpeaker
+name /speaker
 \endverbatim
-If this text is saved in a file called grabber_audio.ini then the device can be created by doing:
+If this text is saved in a file called AudioPlayerWrapper_fakeSpeaker.ini then the device can be created by doing:
 \verbatim
-yarpdev --file grabber_audio.ini
+yarpdev --file AudioPlayerWrapper_fakeSpeaker.ini
 \endverbatim
 Of course, the configuration could be passed just as command line options, or as a yarp::os::Property object in a program:
 \code
 Property p;
-p.fromConfigFile("grabber_audio.ini");
+p.fromConfigFile("AudioPlayerWrapper_fakeSpeaker.ini");
 // of course you could construct the Property object on-the-fly
 PolyDriver dev;
 dev.open(p);
@@ -33,15 +30,13 @@ So this is just an example
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
 <tr><td>device</td><td></td><td></td></tr>
+<tr><td>debug</td><td></td><td></td></tr>
 <tr><td>period</td><td></td><td></td></tr>
-<tr><td>subdevice</td><td></td><td></td></tr>
-<tr><td>min_samples_over_network</td><td></td><td></td></tr>
-<tr><td>max_samples_over_network</td><td></td><td></td></tr>
-<tr><td>max_samples_timeout</td><td></td><td></td></tr>
 <tr><td>name</td><td></td><td></td></tr>
-<tr><td>start</td><td></td><td></td></tr>
+<tr><td>playback_network_buffer_lenght</td><td></td><td></td></tr>
+<tr><td>subdevice</td><td></td><td></td></tr>
 </table>
 
-\sa AudioRecorderWrapper
+\sa AudioPlayerWrapper
 
  */

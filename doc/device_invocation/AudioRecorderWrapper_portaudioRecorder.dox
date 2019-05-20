@@ -1,25 +1,24 @@
 /**
  * \ingroup dev_examples
  *
- * \defgroup grabber_audio Example for AudioRecorderWrapper (grabber_audio)
+ * \defgroup AudioRecorderWrapper_portaudioRecorder Example for AudioRecorderWrapper (AudioRecorderWrapper_portaudioRecorder)
 
 Instantiates \ref cmd_device_AudioRecorderWrapper "AudioRecorderWrapper" device implemented by AudioRecorderWrapper.
 \verbatim
 # start up a network wrapper around a microphone, read via portaudio
 device AudioRecorderWrapper
-subdevice portaudio
-read
+subdevice portaudioRecorder
 name /microphone
-allow-deprecated-devices
+start
 \endverbatim
-If this text is saved in a file called grabber_audio.ini then the device can be created by doing:
+If this text is saved in a file called AudioRecorderWrapper_portaudioRecorder.ini then the device can be created by doing:
 \verbatim
-yarpdev --file grabber_audio.ini
+yarpdev --file AudioRecorderWrapper_portaudioRecorder.ini
 \endverbatim
 Of course, the configuration could be passed just as command line options, or as a yarp::os::Property object in a program:
 \code
 Property p;
-p.fromConfigFile("grabber_audio.ini");
+p.fromConfigFile("AudioRecorderWrapper_portaudioRecorder.ini");
 // of course you could construct the Property object on-the-fly
 PolyDriver dev;
 dev.open(p);
