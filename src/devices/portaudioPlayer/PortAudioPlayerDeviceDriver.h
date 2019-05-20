@@ -42,20 +42,13 @@ namespace yarp {
 
 class yarp::dev::PortAudioPlayerDeviceDriverSettings {
 public:
-    size_t cfg_rate;
-    size_t cfg_samples;
-    size_t cfg_playChannels;
-    int cfg_deviceNumber;
-    PortAudioPlayerDeviceDriverSettings()
-    {
-        cfg_rate = 0;
-        cfg_samples = 0;
-        cfg_playChannels = 0;
-        cfg_deviceNumber = 0;
-    }
+    size_t cfg_rate = 0;
+    size_t cfg_samples = 0;
+    size_t cfg_playChannels = 0;
+    int cfg_deviceNumber = 0;
 };
 
-class playStreamThread : public yarp::os::Thread
+class PlayStreamThread : public yarp::os::Thread
 {
    public:
    bool         something_to_play;
@@ -78,7 +71,7 @@ private:
     PaError             m_err;
     yarp::dev::CircularAudioBuffer_16t* m_playDataBuffer;
     PortAudioPlayerDeviceDriverSettings m_config;
-    playStreamThread    m_pThread;
+    PlayStreamThread    m_pThread;
     yarp::os::Mutex     m_mutex;
 
     PortAudioPlayerDeviceDriver(const PortAudioPlayerDeviceDriver&);
@@ -109,7 +102,7 @@ public:
     bool renderSound(const yarp::sig::Sound& sound) override;
     bool startPlayback() override;
     bool stopPlayback() override;
-    
+
     bool abortSound(void);
     bool immediateSound(const yarp::sig::Sound& sound);
     bool appendSound(const yarp::sig::Sound& sound);

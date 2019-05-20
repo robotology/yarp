@@ -23,11 +23,18 @@ using namespace yarp::dev;
 
 #define DEFAULT_THREAD_PERIOD 0.02 //s
 
+#ifdef DEBUG_TIME_SPENT
+double last_time;
+#endif
+
 AudioRecorderWrapper::AudioRecorderWrapper() : PeriodicThread(DEFAULT_THREAD_PERIOD),
 m_period(DEFAULT_THREAD_PERIOD)
 {
+#ifdef DEBUG_TIME_SPENT
+    last_time = yarp::os::Time::now();
+#endif
+
     m_mic = nullptr;
-    m_last_time = yarp::os::Time::now();
     m_min_number_of_samples_over_network = 11250;
     m_max_number_of_samples_over_network = 11250;
     m_stamp.update();
@@ -42,7 +49,7 @@ AudioRecorderWrapper::~AudioRecorderWrapper()
     }
 }
 
-bool AudioRecorderWrapper::open(yarp::os::Searchable& config) 
+bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
 {
     if (config.check("period"))
     {
@@ -77,7 +84,7 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
         return false;
     }
 
-    //get parameter samples_over_network
+    // Get parameter samples_over_network
     if (config.check("min_samples_over_network"))
     {
         m_min_number_of_samples_over_network = config.find("min_samples_over_network").asInt64();
@@ -90,14 +97,14 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
                 m_min_number_of_samples_over_network << " < samples < " << m_max_number_of_samples_over_network;
 
 
-    //get parameter samples_over_network
+    // Get parameter samples_over_network
     if (config.check("max_samples_timeout"))
     {
         m_getSound_timeout = config.find("max_samples_timeout").asFloat64();
     }
     yInfo() << "Wrapper configured with max_samples_timeout: " << m_getSound_timeout << "s";
 
-    //set the streaming port
+    // Set the streaming port
     std::string portname = "/audioRecorderWrapper";
     if (config.check("name"))
     {
@@ -109,7 +116,7 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
         return false;
     }
 
-    //set the RPC port
+    // Set the RPC port
     if (m_rpcPort.open(portname + "/rpc") == false)
     {
         yError() << "Unable to open port" << portname + "/rpc";
@@ -128,7 +135,7 @@ bool AudioRecorderWrapper::close()
 {
     if (m_mic != nullptr)
     {
-        stop();
+        PeriodicThread::stop();
         m_mic = nullptr;
 
         m_streamingPort.interrupt();
@@ -143,18 +150,18 @@ bool AudioRecorderWrapper::close()
 
 void AudioRecorderWrapper::run()
 {
-    double current_time = yarp::os::Time::now();
 #ifdef DEBUG_TIME_SPENT
-    yDebug() << current_time - last_time;
-#endif
+    double current_time = yarp::os::Time::now();
+    yDebug() << current_time - m_last_time;
     m_last_time = current_time;
+#endif
 
     if (m_mic == nullptr)
     {
         yError() << "The IAudioGrabberSound interface is not available yet!";
         return;
     }
- 
+
 #ifdef PRINT_DEBUG_MESSAGES
     {
         audio_buffer_size buf_max;

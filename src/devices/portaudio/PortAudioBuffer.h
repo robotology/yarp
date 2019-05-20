@@ -25,7 +25,7 @@
 #include <yarp/dev/CircularAudioBuffer.h>
 #include <cstdio>
 /*
-// Select sample format. 
+// Select sample format.
 #if 0
 #define PA_SAMPLE_TYPE  paFloat32
 typedef float SAMPLE;
@@ -126,21 +126,12 @@ class yarp::dev::circularBuffer
 
 struct circularDataBuffers
 {
-    yarp::dev::CircularAudioBuffer_16t*     playData;
-    yarp::dev::CircularAudioBuffer_16t*     recData;
-    bool                canPlay;
-    bool                canRec;
-    size_t              numPlayChannels;
-    size_t              numRecChannels;
-    circularDataBuffers ()
-    {
-        numPlayChannels = 1;
-        numRecChannels = 1;
-        playData = nullptr;
-        recData = nullptr;
-        canPlay=false;
-        canRec=false;
-    }
+    yarp::dev::CircularAudioBuffer_16t* playData = nullptr;
+    yarp::dev::CircularAudioBuffer_16t* recData = nullptr;
+    bool canPlay = false;
+    bool canRec = false;
+    size_t numPlayChannels = 1;
+    size_t numRecChannels = 1;
 };
 
 #endif

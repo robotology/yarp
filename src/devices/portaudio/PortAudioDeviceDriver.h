@@ -51,7 +51,8 @@ public:
     int deviceNumber;
 };
 
-class streamThread : public yarp::os::Thread
+class streamThread :
+        public yarp::os::Thread
 {
    public:
    bool         something_to_play;
@@ -114,7 +115,7 @@ public:
     bool stopRecording() override;
     bool startPlayback() override;
     bool stopPlayback() override;
-    
+
     bool abortSound(void);
     bool immediateSound(const yarp::sig::Sound& sound);
     bool appendSound(const yarp::sig::Sound& sound);

@@ -107,7 +107,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
         {
 #if 0
             yDebug() << "Reading" << framesPerBuffer*2 << "bytes from the circular buffer";
-#endif 
+#endif
             for( i=0; i<framesPerBuffer; i++ )
             {
                 *wptr++ = playdata->read();  // left
@@ -212,7 +212,7 @@ bool PortAudioPlayerDeviceDriver::open(PortAudioPlayerDeviceDriverSettings& conf
     return (m_err==paNoError);
 }
 
-void playStreamThread::handleError()
+void PlayStreamThread::handleError()
 {
     Pa_Terminate();
     if( err != paNoError )
@@ -275,18 +275,18 @@ bool PortAudioPlayerDeviceDriver::abortSound()
     return (m_err==paNoError);
 }
 
-void playStreamThread::threadRelease()
+void PlayStreamThread::threadRelease()
 {
 }
 
-bool playStreamThread::threadInit()
+bool PlayStreamThread::threadInit()
 {
     something_to_play=false;
     err = paNoError;
     return true;
 }
 
-void playStreamThread::run()
+void PlayStreamThread::run()
 {
     while(this->isStopping()==false)
     {

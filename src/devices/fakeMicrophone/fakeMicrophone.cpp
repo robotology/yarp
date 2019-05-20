@@ -83,7 +83,7 @@ bool fakeMicrophone::open(yarp::os::Searchable &config)
     const size_t EXTRA_SPACE = 2;
     AudioBufferSize buffer_size(m_cfg_numSamples*EXTRA_SPACE, m_cfg_numChannels, m_cfg_bytesPerSample);
     m_inputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_mic_buffer", buffer_size);
-    
+
     //start the capture thread
     start();
     return true;
@@ -253,7 +253,9 @@ bool fakeMicrophone::getSound(yarp::sig::Sound& sound, size_t min_number_of_samp
     sound.setFrequency(this->m_cfg_frequency);
 
     //fill the sound data struct, reading samples from the circular buffer
+#ifdef DEBUG_TIME_SPENT
     double ct1 = yarp::os::Time::now();
+#endif
     for (size_t i = 0; i< samples_to_be_copied; i++)
         for (size_t j = 0; j<this->m_cfg_numChannels; j++)
         {
@@ -262,8 +264,8 @@ bool fakeMicrophone::getSound(yarp::sig::Sound& sound, size_t min_number_of_samp
         }
 
     auto debug_p = sound.getInterleavedAudioRawData();
-    double ct2 = yarp::os::Time::now();
 #ifdef DEBUG_TIME_SPENT
+    double ct2 = yarp::os::Time::now();
     yDebug() << ct2 - ct1;
 #endif
     return true;

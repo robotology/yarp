@@ -64,7 +64,7 @@ class yarp::dev::AudioPlayerWrapper : public yarp::os::PeriodicThread,
     struct scheduled_sound_type
     {
         double scheduled_time;
-         yarp::sig::Sound sound_data;
+        yarp::sig::Sound sound_data;
     };
 
 public:
@@ -75,8 +75,8 @@ public:
     bool close() override;
 
     /**
-      * Specify which sensor this thread has to read from.
-      */
+     * Specify which sensor this thread has to read from.
+     */
     bool attachAll(const PolyDriverList &p) override;
     bool detachAll() override;
 

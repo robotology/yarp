@@ -47,7 +47,7 @@ public:
      * getSound(s, 100, 100000, 0.0); returns a sound with a minimum size of 0, while trying to transfer all the internal buffer. It may block forever (more specifically, until sound size is at least 100).
      * @param sound the sound to be filled
      * @param min_number_of_samples. The function will block until the driver is able to collect at least min_number_of_samples. If set to zero, the function may return empty sounds.
-     * @param max_number_of_samples. The function will block until the driver is either able to collect max_number_of_samples or the timeout expires. 
+     * @param max_number_of_samples. The function will block until the driver is either able to collect max_number_of_samples or the timeout expires.
      * @param max_samples_timeout_s. The timeout (in seconds) to retrieve max_number_of_samples.
      * @return true upon success, false for an invalid set of parameters, such as max_number_of_samples<min_number_of_samples, etc.
      */
@@ -92,17 +92,17 @@ public:
     virtual bool renderSound(const yarp::sig::Sound& sound) = 0;
 
     /**
-    * Start the playback.
-    *
-    * @return true/false upon success/failure
-    */
+     * Start the playback.
+     *
+     * @return true/false upon success/failure
+     */
     virtual bool startPlayback() = 0;
 
     /**
-    * Stop the playback.
-    *
-    * @return true/false upon success/failure
-    */
+     * Stop the playback.
+     *
+     * @return true/false upon success/failure
+     */
     virtual bool stopPlayback() = 0;
 
     virtual bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) = 0;

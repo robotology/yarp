@@ -39,18 +39,18 @@ public:
     bool open(yarp::os::Searchable &config) override;
     bool close() override;
 
-    virtual bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s)  override;
-    virtual bool startRecording()  override;
-    virtual bool stopRecording()  override;
-    virtual bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)  override;
-    virtual bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)  override;
+    virtual bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;
+    virtual bool startRecording() override;
+    virtual bool stopRecording() override;
+    virtual bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
+    virtual bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
     virtual bool resetRecordingAudioBuffer() override;
 
 private:
     bool threadInit() override;
     void run() override;
 
-    bool             m_isRecording;
+    bool m_isRecording;
     yarp::os::Mutex  m_mutex;
     yarp::sig::Sound m_audioFile;
 
@@ -59,9 +59,9 @@ private:
     size_t m_cfg_frequency;
     size_t m_cfg_bytesPerSample;
 
-    size_t      m_audioFilePointer;
+    size_t m_audioFilePointer;
     std::string m_audio_filename;
-    size_t      m_bpnt;
-    CircularAudioBuffer_16t  *m_inputBuffer;
-    bool        m_getSoundIsNotBlocking;
+    size_t m_bpnt;
+    yarp::dev::CircularAudioBuffer_16t* m_inputBuffer;
+    bool m_getSoundIsNotBlocking;
 };

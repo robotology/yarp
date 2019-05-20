@@ -17,8 +17,8 @@ if(NOT SKIP_AudioRecorderWrapper)
   yarp_add_plugin(yarp_AudioRecorderWrapper AudioRecorderWrapper.cpp
                                             AudioRecorderWrapper.h)
   target_link_libraries(yarp_AudioRecorderWrapper PRIVATE YARP::YARP_OS
-                                                        YARP::YARP_sig
-                                                        YARP::YARP_dev)
+                                                          YARP::YARP_sig
+                                                          YARP::YARP_dev)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
                                                       YARP_sig
                                                       YARP_dev)

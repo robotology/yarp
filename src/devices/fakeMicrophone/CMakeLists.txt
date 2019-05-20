@@ -15,8 +15,8 @@ if(NOT SKIP_fakeMicrophone)
   yarp_add_plugin(yarp_fakeMicrophone fakeMicrophone.cpp
                                       fakeMicrophone.h)
   target_link_libraries(yarp_fakeMicrophone PRIVATE YARP::YARP_OS
-                                             YARP::YARP_sig
-                                             YARP::YARP_dev)
+                                                    YARP::YARP_sig
+                                                    YARP::YARP_dev)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
                                                       YARP_sig
                                                       YARP_dev)

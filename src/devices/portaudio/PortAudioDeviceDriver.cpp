@@ -115,7 +115,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
         {
 #if 0
             yDebug() << "Writing" << framesToCalc*2*2 << "bytes in the circular buffer";
-#endif 
+#endif
             for( i=0; i<framesToCalc; i++ )
             {
                 recdata->write(*rptr++);  // left
@@ -165,7 +165,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
         {
 #if 1
             yDebug() << "Reading" << framesPerBuffer*2 << "bytes from the circular buffer";
-#endif 
+#endif
             for( i=0; i<framesPerBuffer; i++ )
             {
                 *wptr++ = playdata->read();  // left
@@ -403,27 +403,27 @@ bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound, size_t min_number_
     int buff_size_wdt = 0;
     do
     {
-         buff_size = dataBuffers.recData->size().getSamples();
+        buff_size = dataBuffers.recData->size().getSamples();
 
-         if (buff_size_wdt > 100)
-         {
-             if (buff_size == 0)
-             {
-                 yError() << "PortAudioDeviceDriver::getSound() Buffer size is still zero after 100 iterations, returning";
-                 return false;
-             }
-             else
-             {
-                 yDebug() << "PortAudioDeviceDriver::getSound() Buffer size is " << buff_size << "/" << this->numSamples <<" after 100 iterations";
-                 if (m_getSoundIsNotBlocking)
-                 {
-                     yError() << "PortAudioDeviceDriver::getSound() is in not-blocking mode, returning";
-                     return false;
-                 }
-             }
-         }
-         buff_size_wdt++;
-         yarp::os::SystemClock::delaySystem(SLEEP_TIME);
+        if (buff_size_wdt > 100)
+        {
+            if (buff_size == 0)
+            {
+                yError() << "PortAudioDeviceDriver::getSound() Buffer size is still zero after 100 iterations, returning";
+                return false;
+            }
+            else
+            {
+                yDebug() << "PortAudioDeviceDriver::getSound() Buffer size is " << buff_size << "/" << this->numSamples <<" after 100 iterations";
+                if (m_getSoundIsNotBlocking)
+                {
+                    yError() << "PortAudioDeviceDriver::getSound() is in not-blocking mode, returning";
+                    return false;
+                }
+            }
+        }
+        buff_size_wdt++;
+        yarp::os::SystemClock::delaySystem(SLEEP_TIME);
     }
     while (buff_size < this->numSamples);
 
@@ -437,10 +437,10 @@ bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound, size_t min_number_
 
     for (size_t i=0; i<this->numSamples; i++)
         for (size_t j=0; j<this->m_numRecordChannels; j++)
-            {
-                SAMPLE s = dataBuffers.recData->read();
-                sound.set(s,i,j);
-            }
+        {
+            SAMPLE s = dataBuffers.recData->read();
+            sound.set(s,i,j);
+        }
     return true;
 }
 
@@ -524,7 +524,7 @@ void streamThread::run()
                 return;
             }
         }
-        
+
         yarp::os::Time::delay(SLEEP_TIME);
     }
     return;

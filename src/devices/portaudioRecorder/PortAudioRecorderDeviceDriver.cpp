@@ -113,7 +113,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
         {
 #if 0
             yDebug() << "Writing" << framesToCalc*2*2 << "bytes in the circular buffer";
-#endif 
+#endif
             for( i=0; i<framesToCalc; i++ )
             {
                 recdata->write(*rptr++);  // left
@@ -395,7 +395,7 @@ void PortAudioRecorderDeviceDriver::run()
                 return;
             }
         }
-        
+
         yarp::os::Time::delay(SLEEP_TIME);
     }
     return;

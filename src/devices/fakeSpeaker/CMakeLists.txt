@@ -13,10 +13,10 @@ yarp_prepare_plugin(fakeSpeaker
 if(NOT SKIP_fakeMicrophone)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   yarp_add_plugin(yarp_fakeSpeaker fakeSpeaker.cpp
-                                      fakeSpeaker.h)
+                                   fakeSpeaker.h)
   target_link_libraries(yarp_fakeSpeaker PRIVATE YARP::YARP_OS
-                                             YARP::YARP_sig
-                                             YARP::YARP_dev)
+                                                 YARP::YARP_sig
+                                                 YARP::YARP_dev)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
                                                       YARP_sig
                                                       YARP_dev)

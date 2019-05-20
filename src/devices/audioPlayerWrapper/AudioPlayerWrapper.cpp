@@ -137,7 +137,7 @@ bool AudioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
-    if (returnToSender != nullptr) 
+    if (returnToSender != nullptr)
     {
         reply.write(*returnToSender);
     }
@@ -172,7 +172,7 @@ bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
     m_audioInPortName = name + "/audio:i";
     m_rpcPortName = name + "/rpc:i";
     m_statusPortName = name + "/status:o";
- 
+
     if(!initialize_YARP(config) )
     {
         yError() << "AudioPlayerWrapper: Error initializing YARP ports";
@@ -271,9 +271,9 @@ void AudioPlayerWrapper::run()
 #elif 0
         //This is ok, but it doesn't work if the sounds have different durations...
         ss.scheduled_time = current_time + 5.0 * s.getDuration();
-#else 
+#else
         ss.scheduled_time = current_time + m_buffer_delay > 5.0 * s.getDuration() ? (m_buffer_delay) : (5.0 * s.getDuration());
-#endif 
+#endif
         ss.sound_data = *s;
         m_sound_buffer.push(ss);
     }

@@ -6,45 +6,46 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef yarp_dev_circular_audioBufferh
-#define yarp_dev_circular_audioBufferh
+#ifndef YARP_DEV_CIRCULARAUDIOBUFFER_H
+#define YARP_DEV_CIRCULARAUDIOBUFFER_H
 
-#include <string>
+#include <yarp/os/Log.h>
 #include <yarp/dev/AudioBufferSize.h>
 #include <cstdio>
-#include <yarp/os/Log.h>
+#include <string>
 
-//----------------------------------------------------------------------------------
+#include <yarp/os/LogStream.h>
 
 namespace yarp {
-    namespace dev {
+namespace dev {
+
 
 template <typename SAMPLE>
 class CircularAudioBuffer
 {
-    std::string  name;
-    yarp::dev::AudioBufferSize  maxsize;
-    size_t       start;
-    size_t       end;
-    SAMPLE       *elems;
+    std::string name;
+    yarp::dev::AudioBufferSize maxsize;
+    size_t start;
+    size_t end;
+    SAMPLE *elems;
 
     public:
-    inline bool isFull()
+    bool isFull()
     {
         return (end + 1) % maxsize.size == start;
     }
 
-    inline const SAMPLE* getRawData()
+    const SAMPLE* getRawData()
     {
         return elems;
     }
 
-    inline bool isEmpty()
+    bool isEmpty()
     {
         return end == start;
     }
 
-    inline void write(SAMPLE elem)
+    void write(SAMPLE elem)
     {
         elems[end] = elem;
         end = (end + 1) % maxsize.size;
@@ -55,7 +56,7 @@ class CircularAudioBuffer
         }
     }
 
-    inline AudioBufferSize size()
+    AudioBufferSize size()
     {
         size_t i;
         if (end>start)
@@ -67,7 +68,7 @@ class CircularAudioBuffer
         return AudioBufferSize(i/maxsize.m_channels, maxsize.m_channels, sizeof(SAMPLE));
     }
 
-    inline SAMPLE read()
+    SAMPLE read()
     {
         if (end == start)
         {
@@ -78,32 +79,32 @@ class CircularAudioBuffer
         return elem;
     }
 
-    inline yarp::dev::AudioBufferSize getMaxSize()
+    yarp::dev::AudioBufferSize getMaxSize()
     {
         return maxsize;
     }
 
-    inline void clear()
+    void clear()
     {
         start = 0;
         end   = 0;
     }
 
-    CircularAudioBuffer(std::string buffer_name, yarp::dev::AudioBufferSize bufferSize)
+    CircularAudioBuffer(std::string buffer_name, yarp::dev::AudioBufferSize bufferSize) :
+            name{buffer_name},
+            maxsize{bufferSize},
+            start{0},
+            end{0},
+            elems{static_cast<SAMPLE*>(calloc(maxsize.size, sizeof(SAMPLE)))}
     {
         static_assert (std::is_same<unsigned char, SAMPLE>::value ||
                        std::is_same<unsigned short int, SAMPLE>::value ||
                        std::is_same<unsigned int, SAMPLE>::value,
                         "CircularAudioBuffer can be specialized only as <unsigned char>, <unsigned short int>, <unsigned int>");
-        
+
         yAssert(bufferSize.m_depth == sizeof(SAMPLE));
 
-        name = buffer_name;
-        maxsize = bufferSize;
         maxsize.size += 1;
-        start = 0;
-        end = 0;
-        elems = (SAMPLE *)calloc(maxsize.size, sizeof(SAMPLE));
     }
 
     ~CircularAudioBuffer()
@@ -117,7 +118,7 @@ typedef yarp::dev::CircularAudioBuffer<unsigned char> CircularAudioBuffer_8t;
 typedef yarp::dev::CircularAudioBuffer<unsigned short int> CircularAudioBuffer_16t;
 typedef yarp::dev::CircularAudioBuffer<unsigned int> CircularAudioBuffer_32t;
 
-    }
-}
+} // namespace dev
+} // namespace yarp
 
-#endif
+#endif // YARP_DEV_CIRCULARAUDIOBUFFER_H

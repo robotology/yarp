@@ -50,14 +50,14 @@ private:
     bool threadInit() override;
     void run() override;
 
-    bool             m_isPlaying;
+    bool m_isPlaying = false;
 
-    size_t m_cfg_numSamples;
-    size_t m_cfg_numChannels;
-    size_t m_cfg_frequency;
-    size_t m_cfg_bytesPerSample;
+    size_t m_cfg_numSamples = 0;
+    size_t m_cfg_numChannels = 0;
+    size_t m_cfg_frequency = 0;
+    size_t m_cfg_bytesPerSample = 0;
 
-    size_t      m_bpnt;
-    CircularAudioBuffer_16t  *m_outputBuffer;
-    bool        m_renderSoundImmediate;
+    size_t m_bpnt = 0;
+    yarp::dev::CircularAudioBuffer_16t* m_outputBuffer = nullptr;
+    bool m_renderSoundImmediate = false;
 };

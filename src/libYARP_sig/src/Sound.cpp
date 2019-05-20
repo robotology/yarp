@@ -167,7 +167,7 @@ void Sound::resize(size_t samples, size_t m_channels)
     synchronize();
 }
 
-audio_sample Sound::get(size_t location, size_t channel) const
+Sound::audio_sample Sound::get(size_t location, size_t channel) const
 {
     FlexImage& img = HELPER(implementation);
     unsigned char *addr = img.getPixelAddress(location,channel);
@@ -274,7 +274,7 @@ Sound Sound::extractChannelAsSound(size_t channel_id) const
     Sound news(this->m_bytesPerSample);
     news.setFrequency(this->m_frequency);
     news.resize(this->m_samples, 1);
-    
+
     unsigned char* p_src = this->getRawData();
     unsigned char* p_dst = news.getRawData();
     size_t j = 0;
@@ -306,7 +306,7 @@ bool Sound::operator==(const Sound& alt) const
             }
         }
     }
-    
+
     return true;
 }
 
@@ -321,7 +321,7 @@ bool Sound::replaceChannel(size_t id, Sound schannel)
     return true;
 }
 
-std::vector<std::reference_wrapper<audio_sample>> Sound::getChannel(size_t channel_id)
+std::vector<std::reference_wrapper<Sound::audio_sample>> Sound::getChannel(size_t channel_id)
 {
     FlexImage& img = HELPER(implementation);
 
@@ -336,13 +336,12 @@ std::vector<std::reference_wrapper<audio_sample>> Sound::getChannel(size_t chann
     return vec;
 }
 
-std::vector<std::reference_wrapper<audio_sample>> Sound::getInterleavedAudioRawData() const
+std::vector<std::reference_wrapper<Sound::audio_sample>> Sound::getInterleavedAudioRawData() const
 {
     FlexImage& img = HELPER(implementation);
 
     std::vector<std::reference_wrapper<audio_sample>> vec;
     vec.reserve(this->m_samples*this->m_channels);
-    size_t i = 0;
     for (size_t t = 0; t < this->m_samples; t++)
     {
         for (size_t c = 0; c < this->m_channels; c++)
@@ -355,13 +354,12 @@ std::vector<std::reference_wrapper<audio_sample>> Sound::getInterleavedAudioRawD
     return vec;
 }
 
-std::vector<std::reference_wrapper<audio_sample>> Sound::getNonInterleavedAudioRawData() const
+std::vector<std::reference_wrapper<Sound::audio_sample>> Sound::getNonInterleavedAudioRawData() const
 {
     FlexImage& img = HELPER(implementation);
 
     std::vector<std::reference_wrapper<audio_sample>> vec;
     vec.reserve(this->m_samples*this->m_channels);
-    size_t i = 0;
     for (size_t c = 0; c < this->m_channels; c++)
     {
         for (size_t t = 0; t < this->m_samples; t++)
@@ -405,7 +403,7 @@ size_t Sound::getSamples() const
 }
 
 size_t Sound::getChannels() const
-{ 
+{
     return this->m_channels;
 }
 

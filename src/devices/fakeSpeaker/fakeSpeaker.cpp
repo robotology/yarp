@@ -24,10 +24,9 @@ using namespace yarp::sig;
 
 typedef unsigned short int audio_sample_16t;
 
-fakeSpeaker::fakeSpeaker() : PeriodicThread(DEFAULT_PERIOD)
+fakeSpeaker::fakeSpeaker() :
+        PeriodicThread(DEFAULT_PERIOD)
 {
-    m_bpnt = 0;
-    m_renderSoundImmediate = false;
 }
 
 fakeSpeaker::~fakeSpeaker()
@@ -58,7 +57,7 @@ bool fakeSpeaker::open(yarp::os::Searchable &config)
 
     AudioBufferSize buffer_size(m_cfg_numSamples, m_cfg_numChannels, m_cfg_bytesPerSample);
     m_outputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_speaker_buffer", buffer_size);
-    
+
     //start the capture thread
     start();
     return true;
