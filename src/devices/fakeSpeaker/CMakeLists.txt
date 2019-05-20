@@ -8,7 +8,7 @@ yarp_prepare_plugin(fakeSpeaker
                     CATEGORY device
                     TYPE yarp::dev::fakeSpeaker
                     INCLUDE fakeSpeaker.h
-                    EXTRA_CONFIG WRAPPER=audioPlayerWrapper)
+                    EXTRA_CONFIG WRAPPER=AudioPlayerWrapper)
 
 if(NOT SKIP_fakeMicrophone)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

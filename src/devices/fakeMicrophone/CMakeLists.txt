@@ -8,8 +8,7 @@ yarp_prepare_plugin(fakeMicrophone
                     CATEGORY device
                     TYPE yarp::dev::fakeMicrophone
                     INCLUDE fakeMicrophone.h
-#                   EXTRA_CONFIG WRAPPER=audioRecorderWrapper
-                   )
+                    EXTRA_CONFIG WRAPPER=AudioRecorderWrapper)
 
 if(NOT SKIP_fakeMicrophone)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
