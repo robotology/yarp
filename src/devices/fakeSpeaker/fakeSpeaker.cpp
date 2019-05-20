@@ -21,9 +21,6 @@ using namespace yarp::sig;
 
 #define HW_CHANNELS         2
 #define SAMPLING_RATE       44100
-#define CHUNK_SIZE          512
-#define SLEEP_TIME          0.005
-#define SAMPLES_TO_BE_COPIED 64
 
 typedef unsigned short int audio_sample_16t;
 
