@@ -54,11 +54,11 @@ bool fakeSpeaker::open(yarp::os::Searchable &config)
     }
 
     //configuration of the simulated audio card
-    m_cfg_numSamples = config.find("samples").asInt32();
-    m_cfg_numChannels = config.find("getChannels").asInt32();
-    m_cfg_frequency = config.find("Frequency").asInt32();
-    m_cfg_bytesPerSample = config.find("BytesPerSample").asInt8();
-    
+    m_cfg_numSamples = config.check("samples",Value(SAMPLING_RATE),"Number of samples per network packet.").asInt32();
+    m_cfg_numChannels = config.check("channels",Value(HW_CHANNELS),"Number of audio channels.").asInt32();
+    m_cfg_frequency = config.check("frequency",Value(SAMPLING_RATE),"Sampling frequency.").asInt32();
+    m_cfg_bytesPerSample = config.check("channels",Value(2),"Bytes per sample.").asInt8();
+
     AudioBufferSize buffer_size(m_cfg_numSamples, m_cfg_numChannels, m_cfg_bytesPerSample);
     m_outputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_speaker_buffer", buffer_size);
     
