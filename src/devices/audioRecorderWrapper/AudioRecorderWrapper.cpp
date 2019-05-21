@@ -138,6 +138,7 @@ bool AudioRecorderWrapper::close()
     if (m_mic != nullptr)
     {
         PeriodicThread::stop();
+        m_mic->stopRecording();
         m_mic = nullptr;
 
         m_streamingPort.interrupt();
