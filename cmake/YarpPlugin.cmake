@@ -323,7 +323,7 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
   endif()
   cmake_dependent_option(${_YPP_OPTION} "${_option_doc}" ${_YPP_DEFAULT}
                          "${_bundle_enabled};${_YPP_DEPENDS}" OFF)
-  if(_YPP_INTERNAL)
+  if(${_YPP_OPTION} AND _YPP_INTERNAL)
     set_property(CACHE ${_YPP_OPTION} PROPERTY TYPE INTERNAL)
   else()
     if(_YPP_ADVANCED)
