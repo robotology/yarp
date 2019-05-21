@@ -581,7 +581,6 @@ macro(YARP_ADD_PLUGIN _library_name)
       string(MAKE_C_IDENTIFIER "${_ini_file}" _ini_id)
       get_property(_ini_file_content DIRECTORY PROPERTY YARP_BUNDLE_INI_CONTENT_${_ini_id})
       string(REPLACE "\@YARPPLUG_LIBRARY\@" "${_library_name}" _ini_file_content "${_ini_file_content}")
-      message("Writing \"${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${_ini_file}\"")
       file(WRITE "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${_ini_file}" "${_ini_file_content}")
       # Reset the .ini file content property
       set_property(DIRECTORY PROPERTY YARP_BUNDLE_INI_CONTENT_${_ini_id})
