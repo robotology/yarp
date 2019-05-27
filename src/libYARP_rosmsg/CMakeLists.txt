@@ -27,11 +27,11 @@ macro(_yarp_choose_idl _prefix)
       set(${_prefix}_BUILD_INTERFACE_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/include")
     else()
       foreach(_msg ${ARGN})
-        yarp_idl_to_dir(${_msg}
-                        "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
-                        ${_prefix}_GEN_SRCS
-                        ${_prefix}_GEN_HDRS
-                        ${_prefix}_BUILD_INTERFACE_INCLUDE_DIRS)
+        yarp_idl_to_dir(INPUT_FILES ${_msg}
+                        OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
+                        SOURCES_VAR ${_prefix}_GEN_SRCS
+                        HEADERS_VAR ${_prefix}_GEN_HDRS
+                        INCLUDE_DIRS_VAR ${_prefix}_BUILD_INTERFACE_INCLUDE_DIRS)
         set(${_prefix}_GEN_FILES ${${_prefix}_GEN_SRCS} ${${_prefix}_GEN_HDRS})
       endforeach()
     endif()
