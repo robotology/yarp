@@ -8,6 +8,7 @@ add_executable(harness_dev AnalogWrapperTest.cpp
                            ControlBoardRemapperTest.cpp
                            FrameTransformClientTest.cpp
                            MapGrid2DTest.cpp
+                           Navigation2DClientTest.cpp
                            MultipleAnalogSensorsInterfacesTest.cpp
                            PolyDriverTest.cpp
                            robotDescriptionTest.cpp
@@ -22,6 +23,7 @@ if(TARGET YARP::YARP_math)
   target_link_libraries(harness_dev PRIVATE YARP::YARP_math)
 else()
   set(_disabled_files FrameTransformClientTest.cpp
+                      Navigation2DClientTest.cpp
                       MapGrid2DTest.cpp)
 
   if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 3.9)
