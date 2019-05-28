@@ -89,7 +89,7 @@ bool yarp::dev::Localization2DClient::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool  yarp::dev::Localization2DClient::setInitialPose(Map2DLocation& loc)
+bool  yarp::dev::Localization2DClient::setInitialPose(const Map2DLocation& loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;

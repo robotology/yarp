@@ -85,7 +85,7 @@ bool   fakeLocalizer::getCurrentPosition(yarp::dev::Map2DLocation& loc)
     return true;
 }
 
-bool   fakeLocalizer::setInitialPose(yarp::dev::Map2DLocation& loc)
+bool   fakeLocalizer::setInitialPose(const yarp::dev::Map2DLocation& loc)
 {
     locThread->initializeLocalization(loc);
     return true;
@@ -144,7 +144,7 @@ void fakeLocalizerThread::run()
     }
 }
 
-bool fakeLocalizerThread::initializeLocalization(yarp::dev::Map2DLocation& loc)
+bool fakeLocalizerThread::initializeLocalization(const yarp::dev::Map2DLocation& loc)
 {
     yInfo() << "fakeLocalizer: Localization init request: (" << loc.map_id << ")";
     LockGuard lock(m_mutex);

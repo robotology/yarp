@@ -64,7 +64,7 @@ public:
     * @param loc the location of the robot
     * @return true/false
     */
-    virtual bool   setInitialPose(yarp::dev::Map2DLocation& loc) = 0;
+    virtual bool   setInitialPose(const yarp::dev::Map2DLocation& loc) = 0;
 };
 
 constexpr yarp::conf::vocab32_t VOCAB_INAVIGATION            = yarp::os::createVocab('i','n','a','v');

@@ -746,7 +746,7 @@ bool  yarp::dev::Navigation2DClient::recomputeCurrentNavigationPath()
     return true;
 }
 
-bool  yarp::dev::Navigation2DClient::setInitialPose(Map2DLocation& loc)
+bool  yarp::dev::Navigation2DClient::setInitialPose(const Map2DLocation& loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1410,6 +1410,7 @@ bool  yarp::dev::Navigation2DClient::applyVelocityCommand(double x_vel, double y
     }
 
     reset_current_goal_name();
+    return true;
 }
 
 bool  yarp::dev::Navigation2DClient::getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses)

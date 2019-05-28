@@ -110,7 +110,7 @@ public:
     bool   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;
 
     bool   getCurrentPosition(yarp::dev::Map2DLocation &loc) override;
-    bool   setInitialPose(yarp::dev::Map2DLocation& loc) override;
+    bool   setInitialPose(const yarp::dev::Map2DLocation& loc) override;
     bool   getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status) override;
     bool   getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses) override;
 
