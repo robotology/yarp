@@ -54,11 +54,11 @@ if(YARP_COMPILE_yarpdataplayer)
   qt5_wrap_ui(yarpdataplayer_UI_GEN_SRCS ${yarpdataplayer_UI_FILES})
 
   include(YarpIDL)
-  yarp_idl_to_dir(${yarpdataplayer_THRIFT_FILES}
-                  ${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code
-                  yarpdataplayer_THRIFT_GEN_SRCS
-                  yarpdataplayer_THRIFT_GEN_HDRS
-                  yarpdataplayer_THRIFT_INCLUDE_DIRS)
+  yarp_idl_to_dir(INPUT_FILES ${yarpdataplayer_THRIFT_FILES}
+                  OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
+                  SOURCES_VAR yarpdataplayer_THRIFT_GEN_SRCS
+                  HEADERS_VAR yarpdataplayer_THRIFT_GEN_HDRS
+                  INCLUDE_DIRS_VAR yarpdataplayer_THRIFT_INCLUDE_DIRS)
 
   include_directories(${yarpdataplayer_THRIFT_INCLUDE_DIRS})
 

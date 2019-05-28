@@ -15,7 +15,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS 1)
 set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Autogen Targets")
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
 
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS OS sig idl_tools REQUIRED)
 
 include(ParseAndAddCatchTests)
 set(PARSE_CATCH_TESTS_VERBOSE OFF CACHE INTERNAL "")
@@ -27,31 +27,37 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../extern/catch2)
 set(AdditionalCatchParameters "-s" "--use-colour" "yes")
 set(OptionalCatchTestLauncher ${YARP_TEST_LAUNCHER})
 
-# Test using yarp_idl_to_dir
-set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}")
-yarp_idl_to_dir(demo.thrift ${generated_libs_dir} S1 H1 I1)
-yarp_idl_to_dir(namespaced.thrift ${generated_libs_dir} S2 H2 I2)
-yarp_idl_to_dir(objects3D.thrift ${generated_libs_dir} S3 H3 I3)
-yarp_idl_to_dir(wrapping.thrift ${generated_libs_dir} S4 H4 I4)
-yarp_idl_to_dir(sub/directory/clock_rpc.thrift ${generated_libs_dir} S5 H5 I5)
-yarp_idl_to_dir(settings.thrift ${generated_libs_dir} S6 H6 I6)
-
-include_directories(${generated_libs_dir}/include)
-add_executable(demo_yarp_idl_to_dir main.cpp ${S1} ${S2} ${S3} ${S4} ${S5} ${S6} ${H1} ${H2} ${H3} ${H4} ${H5} ${H6})
-target_link_libraries(demo_yarp_idl_to_dir ${YARP_LIBRARIES})
-
-ParseAndAddCatchTests(demo_yarp_idl_to_dir)
-
-
-# Test using yarp_add_idl
 set(IDL_FILES demo.thrift
               namespaced.thrift
               objects3D.thrift
               wrapping.thrift
               sub/directory/clock_rpc.thrift
               settings.thrift)
+
+# Test using yarp_idl_to_dir
+set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}")
+yarp_idl_to_dir(INPUT_FILES ${IDL_FILES}
+                OUTPUT_DIR "${generated_libs_dir}"
+                SOURCES_VAR IDL_GEN_SRCS
+                HEADERS_VAR IDL_GEN_HDRS
+                INCLUDE_DIRS_VAR IDL_INCLUDE_DIRS
+                THRIFT_INCLUDE_PREFIX
+                THRIFT_NO_NAMESPACE_PREFIX)
+
+include_directories(${generated_libs_dir}/include)
+add_executable(demo_yarp_idl_to_dir main.cpp ${IDL_GEN_SRCS} ${IDL_GEN_HDRS})
+target_link_libraries(demo_yarp_idl_to_dir PRIVATE YARP::YARP_OS
+                                                   YARP::YARP_init
+                                                   YARP::YARP_sig)
+
+ParseAndAddCatchTests(demo_yarp_idl_to_dir)
+
+
+# Test using yarp_add_idl
 yarp_add_idl(IDL_GEN_FILES ${IDL_FILES})
 add_executable(demo_yarp_add_idl main.cpp ${IDL_GEN_FILES})
-target_link_libraries(demo_yarp_add_idl ${YARP_LIBRARIES})
+target_link_libraries(demo_yarp_add_idl PRIVATE YARP::YARP_OS
+                                                YARP::YARP_init
+                                                YARP::YARP_sig)
 
 ParseAndAddCatchTests(demo_yarp_add_idl)

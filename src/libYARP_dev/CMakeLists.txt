@@ -223,16 +223,17 @@ set(YARP_dev_devices_HDRS src/devices/AnalogSensorClient/AnalogSensorClient.h
                           src/devices/TestMotor/TestMotor.h
                           src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
 
-# handle the yarp thrift messages
+# Handle the YARP thrift messages
 include(YarpIDL)
-yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/stateExt.thrift"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/devices/msgs/yarp"
-                YARP_dev_idl_SRCS
-                YARP_dev_idl_HDRS
-                YARP_dev_idl_INCLUDE_DIRS)
-include("${CMAKE_CURRENT_SOURCE_DIR}/src/devices/msgs/yarp/stateExt_thrift.cmake")
-
-
+yarp_idl_to_dir(INPUT_FILES stateExt.thrift
+                OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/devices/msgs/yarp"
+                SOURCES_VAR YARP_dev_idl_SRCS
+                HEADERS_VAR YARP_dev_idl_HDRS
+                INCLUDE_DIRS_VAR YARP_dev_idl_INCLUDE_DIRS
+                CMAKE_SCRIPTS_VAR YARP_dev_idl_CMAKE_SCRIPTS)
+foreach(_script ${YARP_dev_idl_CMAKE_SCRIPTS})
+  include("${_script}")
+endforeach()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/AnalogSensorClient
                     ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/JoypadControlServer)

@@ -4,53 +4,57 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-set(headers)
-set(sources)
+# Configured with the following variables:
+#
+#  - family = @_family@
+#  - dir = @_dir@
+#  - name = @_name@
+#  - output_dir = @_output_dir@
+#  - target_name = @_target_name@
+#  - cmake_script = @_cmake_script@
 
-set(prefix)
-if ("@family@" STREQUAL "thrift")
-  string(REGEX REPLACE "^/*([^/].+[^/])/*$" "\\1/" prefix "@include_prefix@")
-endif()
+set(_headers)
+set(_sources)
 
-file(STRINGS "@dir@/@yarpidlName@_indexALL.txt" index)
-foreach(genFile ${index})
-  get_filename_component(type ${genFile} EXT)
-  get_filename_component(main ${genFile} NAME_WE)
-  if(${type} STREQUAL ".h")
-    if(EXISTS "@dir@/${genFile}")
-      configure_file("@dir@/${genFile}"
-                     "@output_dir@/include/${prefix}${genFile}"
+file(STRINGS "@_dir@/@_name@_indexALL.txt" _index)
+foreach(_gen_file ${_index})
+  get_filename_component(_type ${_gen_file} EXT)
+  get_filename_component(_main ${_gen_file} NAME_WE)
+  if(${_type} STREQUAL ".h")
+    if(EXISTS "@_dir@/${_gen_file}")
+      configure_file("@_dir@/${_gen_file}"
+                     "@_output_dir@/include/${_gen_file}"
                      COPYONLY)
-      list(APPEND headers "include/${prefix}${genFile}")
-      list(REMOVE_DUPLICATES headers)
+      list(APPEND _headers "include/${_gen_file}")
+      list(REMOVE_DUPLICATES _headers)
     else()
-      message(WARNING "${genFile} not found in @yarpidlName@ dir!")
+      message(WARNING "${_gen_file} not found in @_dir@ dir!")
     endif()
-    if(EXISTS "@dir@/${main}Reply${type}")
-      configure_file("@dir@/${main}Reply${type}"
-                     "@output_dir@/include/${prefix}${main}Reply${type}"
+    if(EXISTS "@_dir@/${_main}Reply${_type}")
+      configure_file("@_dir@/${_main}Reply${_type}"
+                     "@_output_dir@/include/${_prefix}${_main}Reply${_type}"
                      COPYONLY)
-      list(APPEND headers "include/${prefix}${main}Reply${type}")
-      list(REMOVE_DUPLICATES headers)
+      list(APPEND _headers "include/${_main}Reply${_type}")
+      list(REMOVE_DUPLICATES _headers)
     endif()
-  elseif(${type} STREQUAL ".cpp")
-    if(EXISTS "@dir@/${genFile}")
-      configure_file("@dir@/${genFile}"
-                     "@output_dir@/src/${genFile}"
+  elseif(${_type} STREQUAL ".cpp")
+    if(EXISTS "@_dir@/${_gen_file}")
+      configure_file("@_dir@/${_gen_file}"
+                     "@_output_dir@/src/${_gen_file}"
                      COPYONLY)
-      list(APPEND sources "src/${genFile}")
-      list(REMOVE_DUPLICATES sources)
+      list(APPEND _sources "src/${_gen_file}")
+      list(REMOVE_DUPLICATES _sources)
     else()
-      message(WARNING "${genFile} not found in @yarpidlName@ dir!")
+      message(WARNING "${_gen_file} not found in @_name@ dir!")
     endif()
 
   else()
-    message(WARNING "Filename extension of ${genFile} is neither .h nor .cpp")
+    message(WARNING "Filename extension of ${_gen_file} is neither .h nor .cpp")
   endif()
-endforeach(genFile)
+endforeach(_gen_file)
 
 
-file(WRITE "@output_dir@/@yarpidl_target_name@.cmake"
+file(WRITE "@_cmake_script@"
 "# Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
 # All rights reserved.
 #
@@ -60,6 +64,6 @@ file(WRITE "@output_dir@/@yarpidl_target_name@.cmake"
 ## This is an automatically-generated file.
 ## It could get re-generated if the ALLOW_IDL_GENERATION flag is on
 
-set(headers ${headers})
-set(sources ${sources})
+set(headers ${_headers})
+set(sources ${_sources})
 ")

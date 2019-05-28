@@ -53,6 +53,7 @@ class t_yarp_generator : public t_oop_generator
 {
     // Options
     bool use_include_prefix_{false};
+    bool no_namespace_prefix_{true};
     bool no_copyright_{false};
     bool no_editor_{false};
     bool no_doc_{false};
@@ -62,12 +63,19 @@ class t_yarp_generator : public t_oop_generator
     int indent_h_{0};
     int indent_cpp_{0};
 
+    // Files
+    ofstream_with_content_based_conditional_update f_out_common_;
+    ofstream_with_content_based_conditional_update f_out_index_;
+
+    std::map<std::string, std::string> structure_names_;
+
 public:
     t_yarp_generator(t_program* program,
                      const std::map<std::string, std::string>& parsed_options,
                      const std::string& option_string) :
             t_oop_generator{program},
             use_include_prefix_{parsed_options.find("include_prefix") != parsed_options.end()},
+            no_namespace_prefix_{parsed_options.find("no_namespace_prefix") != parsed_options.end()},
             no_copyright_{parsed_options.find("no_copyright") != parsed_options.end()},
             no_editor_{parsed_options.find("no_editor") != parsed_options.end()},
             no_doc_{parsed_options.find("no_doc") != parsed_options.end()}
@@ -181,10 +189,10 @@ public:
 // END Indentation methods
 /******************************************************************************/
 
-    std::string get_include_prefix(const t_program& program) const;
+    std::string get_include_prefix(const t_program* const program) const;
     void get_needed_type(t_type* curType, std::set<std::string>& neededTypes);
 
-    void print_doc(std::ofstream& out, t_doc* tdoc);
+    void print_doc(std::ostringstream& out, t_doc* tdoc);
     void quote_doc(std::vector<std::string>& doxyPar, t_doc* tdoc);
     std::vector<std::string> print_help(t_function* tdoc);
     std::string print_const_value(t_const_value* tvalue, t_type* ttype = nullptr);
@@ -210,30 +218,30 @@ public:
 
     bool is_complex_type(t_type* ttype);
 
-    void generate_serialize_field(std::ofstream& out,
+    void generate_serialize_field(std::ostringstream& out,
                                   t_field* tfield,
                                   const std::string& prefix = "",
                                   const std::string& suffix = "",
                                   bool force_nesting = false);
 
-    void generate_serialize_struct(std::ofstream& out,
+    void generate_serialize_struct(std::ostringstream& out,
                                    t_struct* tstruct,
                                    const std::string& prefix = "",
                                    bool force_nesting = false);
 
-    void generate_serialize_container(std::ofstream& out,
+    void generate_serialize_container(std::ostringstream& out,
                                       t_type* ttype,
                                       const std::string& prefix = "");
 
-    void generate_serialize_map_element(std::ofstream& out,
+    void generate_serialize_map_element(std::ostringstream& out,
                                         t_map* tmap,
                                         const std::string& item_name);
 
-    void generate_serialize_set_element(std::ofstream& out,
+    void generate_serialize_set_element(std::ostringstream& out,
                                         t_set* tmap,
                                         const std::string& item_name);
 
-    void generate_serialize_list_element(std::ofstream& out,
+    void generate_serialize_list_element(std::ostringstream& out,
                                          t_list* tlist,
                                          const std::string& item_name);
 
@@ -243,33 +251,33 @@ public:
                                 const std::string& iface,
                                 const std::string& arg_prefix);
 
-    void generate_deserialize_field_fallback(std::ofstream& out,
+    void generate_deserialize_field_fallback(std::ostringstream& out,
                                              t_field* tfield);
 
-    void generate_deserialize_field(std::ofstream& out,
+    void generate_deserialize_field(std::ostringstream& out,
                                     t_field* tfield,
                                     const std::string& prefix = "",
                                     const std::string& suffix = "",
                                     bool force_nested = false);
 
-    void generate_deserialize_struct(std::ofstream& out,
+    void generate_deserialize_struct(std::ostringstream& out,
                                      t_struct* tstruct,
                                      const std::string& prefix = "",
                                      bool force_nested = true);
 
-    void generate_deserialize_container(std::ofstream& out,
+    void generate_deserialize_container(std::ostringstream& out,
                                         t_type* ttype,
                                         const std::string& prefix = "");
 
-    void generate_deserialize_set_element(std::ofstream& out,
+    void generate_deserialize_set_element(std::ostringstream& out,
                                           t_set* tset,
                                           const std::string& prefix = "");
 
-    void generate_deserialize_map_element(std::ofstream& out,
+    void generate_deserialize_map_element(std::ostringstream& out,
                                           t_map* tmap,
                                           const std::string& prefix = "");
 
-    void generate_deserialize_list_element(std::ofstream& out,
+    void generate_deserialize_list_element(std::ostringstream& out,
                                            t_list* tlist,
                                            const std::string& prefix,
                                            bool push_back,
@@ -278,10 +286,9 @@ public:
     std::string type_to_enum(t_type* ttype);
 
     std::string get_struct_name(t_struct* tstruct);
-    std::string get_namespace(t_program* program);
 
-    void print_const_value(std::ofstream& out, const std::string& name, t_type* type, t_const_value* value);
-    std::string render_const_value(std::ofstream& out, const std::string& name, t_type* type, t_const_value* value);
+    void print_const_value(std::ostringstream& out, const std::string& name, t_type* type, t_const_value* value);
+    std::string render_const_value(std::ostringstream& out, const std::string& name, t_type* type, t_const_value* value);
 
     int flat_element_count(t_type* type);
     int flat_element_count(t_struct* type);
@@ -290,76 +297,70 @@ public:
     std::string copyright_comment();
     std::string autogen_comment() override;
 
-    void generate_program() override;
+    void init_generator() override;
+    void close_generator() override;
 
-    void generate_namespace_open(std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_namespace_close(std::ofstream& f_h_, std::ofstream& f_cpp_);
+    void generate_namespace_open(std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_namespace_close(std::ostringstream& f_h_, std::ostringstream& f_cpp_);
 
     void generate_typedef(t_typedef* ttypedef) override;
 
     void generate_enum(t_enum* tenum) override;
-    void generate_enum_constant_list(t_enum* tenum, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_enum_fromstring(t_enum* tenum, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_enum_tostring(t_enum* tenum, std::ofstream& f_h_, std::ofstream& f_cpp_);
+    void generate_enum_constant_list(t_enum* tenum, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_enum_fromstring(t_enum* tenum, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_enum_tostring(t_enum* tenum, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
 
     void generate_const(t_const* tconst) override;
 
     void generate_struct(t_struct* tstruct) override;
-    void generate_struct_fields(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_default_constructor(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_constructor(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_read_wirereader(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_read_connectionreader(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_write_wirereader(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_write_connectionreader(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_tostring(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_unwrapped_helper(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_default_constructor(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_baseclass_constructor(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_destructor(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_edit(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_isvalid(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_state(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_start_editing(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_stop_editing(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_field_setter(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_field_setter_list(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_field_getter(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_field_will_set(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_field_did_set(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_clean(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_read(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_write(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_communicate(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_mark_dirty(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_field_mark_dirty(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_editor_dirty_flags(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_field_read(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_field_write(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_field_nested_read(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_struct_field_nested_write(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_);
+    void generate_struct_fields(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_default_constructor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_constructor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_read_wirereader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_read_connectionreader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_write_wirereader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_write_connectionreader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_tostring(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_unwrapped_helper(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_default_constructor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_baseclass_constructor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_destructor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_edit(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_isvalid(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_state(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_start_editing(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_stop_editing(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_field_setter(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_field_setter_list(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_field_getter(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_field_will_set(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_field_did_set(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_clean(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_read(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_write(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_communicate(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_mark_dirty(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_field_mark_dirty(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_editor_dirty_flags(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_field_read(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_field_write(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_field_nested_read(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_field_nested_write(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
 
     void generate_service(t_service* tservice) override;
-    void generate_service_helper_classes(t_service* tservice, std::ofstream& f_cpp_);
-    void generate_service_helper_classes_decl(t_function* function, std::ofstream& f_cpp);
-    void generate_service_helper_classes_impl_ctor(t_function* function, std::ofstream& f_cpp_);
-    void generate_service_helper_classes_impl_write(t_function* function, std::ofstream& f_cpp_);
-    void generate_service_helper_classes_impl_read(t_function* function, std::ofstream& f_cpp_);
+    void generate_service_helper_classes(t_service* tservice, std::ostringstream& f_cpp_);
+    void generate_service_helper_classes_decl(t_function* function, std::ostringstream& f_cpp);
+    void generate_service_helper_classes_impl_ctor(t_function* function, std::ostringstream& f_cpp_);
+    void generate_service_helper_classes_impl_write(t_function* function, std::ostringstream& f_cpp_);
+    void generate_service_helper_classes_impl_read(t_function* function, std::ostringstream& f_cpp_);
 
-    void generate_service_constructor(t_service* tservice, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_service_function(t_service* tservice, t_function* function, std::ofstream&  f_h_, std::ofstream& f_cpp_);
-    void generate_service_help(t_service* tservice, std::ofstream& f_h_, std::ofstream& f_cpp_);
-    void generate_service_read(t_service* tservice, std::ofstream& f_h_, std::ofstream& f_cpp_);
+    void generate_service_constructor(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_service_function(t_service* tservice, t_function* function, std::ostringstream&  f_h_, std::ostringstream& f_cpp_);
+    void generate_service_help(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_service_read(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
 
     void generate_xception(t_struct* txception) override;
-
-    std::ofstream f_out_;
-    std::ofstream f_out_common_; //in addition to **_index.h - can they be the same file?
-
-    std::map<std::string, std::string> structure_names_;
-
-
 };
 
 
@@ -411,14 +412,6 @@ std::string t_yarp_generator::get_struct_name(t_struct* tstruct)
         return name;
     }
     return structure_names_[name];
-}
-
-std::string t_yarp_generator::get_namespace(t_program* program)
-{
-    std::string result = program->get_namespace("yarp");
-    if (result != "")
-        return result;
-    return program->get_namespace("cpp");
 }
 
 std::string t_yarp_generator::copyright_comment()
@@ -513,7 +506,7 @@ std::string t_yarp_generator::type_name(t_type* ttype, bool in_typedef, bool arg
     if (pname == "") {
         t_program* program = ttype->get_program();
         if (program != nullptr && program != program_) {
-            pname = class_prefix + namespace_prefix(get_namespace(program)) + ttype->get_name();
+            pname = class_prefix + namespace_prefix(program->get_namespace("yarp")) + ttype->get_name();
         } else {
             pname = class_prefix + ttype->get_name();
         }
@@ -636,21 +629,29 @@ bool t_yarp_generator::is_complex_type(t_type* ttype)
  * Prepares for file generation by opening up the necessary file output
  * stream.
  */
-void t_yarp_generator::generate_program()
+void t_yarp_generator::init_generator()
 {
-    std::string fname = get_out_dir() + program_->get_name() + "_index.h";
-    f_out_.open(fname);
-    f_out_ << "// Thrift module: " << program_->get_name() << '\n';
+    // Make output directory
+    MKDIR(get_out_dir().c_str());
+    std::string dir = get_include_prefix(program_);
+    std::string subdir = get_out_dir();
+    std::string::size_type loc;
+    while ((loc = dir.find("/")) != std::string::npos) {
+        subdir = subdir + "/" + dir.substr(0, loc);
+        MKDIR(subdir.c_str());
+        dir = dir.substr(loc + 1);
+    }
+    if (dir.size() > 0) {
+        subdir = subdir + "/" + dir;
+        MKDIR(subdir.c_str());
+    }
 
-    std::string fname2 = get_out_dir() + program_->get_name() + "_index.txt";
-    std::ofstream f_out2_(fname2);
+    std::string findex_name = get_out_dir() + program_->get_name() + "_indexALL.txt";
+    f_out_index_.open(findex_name);
 
-    std::string fname3 = get_out_dir() + program_->get_name() + "_indexALL.txt";
-    std::ofstream f_out3_(fname3);
-
-    if (!program_->get_consts().empty()) {
+    if (!program_->get_consts().empty() || !program_->get_enums().empty()) {
         need_common_ = true;
-        std::string fcommon_name = get_out_dir() + program_->get_name() + "_common.h";
+        std::string fcommon_name = get_out_dir() + get_include_prefix(program_) + program_->get_name() + "_common.h";
         f_out_common_.open(fcommon_name);
 
         f_out_common_ << copyright_comment();
@@ -659,6 +660,11 @@ void t_yarp_generator::generate_program()
         f_out_common_ << "#ifndef YARP_THRIFT_GENERATOR_COMMON_" << program_->get_name() << '\n';
         f_out_common_ << "#define YARP_THRIFT_GENERATOR_COMMON_" << program_->get_name() << '\n';
         f_out_common_ << '\n';
+
+        f_out_index_ << get_include_prefix(program_) << program_->get_name() + "_common.h\n";
+    }
+
+    if (!program_->get_consts().empty()) {
         f_out_common_ << '\n'
                       << "// Constants\n";
         const auto& consts = program_->get_consts();
@@ -677,27 +683,14 @@ void t_yarp_generator::generate_program()
 
     if (!program_->get_enums().empty()) {
         // Generate enums
-        f_out_ << '\n'
-               << "// Enums\n";
         for (const auto& enum_ : program_->get_enums()) {
             generate_enum(enum_);
-            f_out_ << "#include \"" << enum_->get_name() << ".h\"\n";
-            f_out2_ << enum_->get_name() << ".h\n";
-            f_out3_ << enum_->get_name() << ".h\n";
-            f_out3_ << enum_->get_name() << ".cpp\n";
+            f_out_index_ << get_include_prefix(program_) << enum_->get_name() << ".h\n";
+            f_out_index_ << enum_->get_name() << ".cpp\n";
         }
     }
 
     if (!program_->get_typedefs().empty()) {
-        need_common_ = true;
-        // Generate typedefs
-        if (!f_out_common_.is_open()) {
-            std::string fcommon_name = get_out_dir() + program_->get_name() + "_common.h";
-            f_out_common_.open(fcommon_name);
-            f_out_common_ << "#ifndef YARP_THRIFT_GENERATOR_COMMON_" << program_->get_name() << '\n';
-            f_out_common_ << "#define YARP_THRIFT_GENERATOR_COMMON_" << program_->get_name() << '\n';
-            f_out_common_ << '\n';
-        }
         f_out_common_ << '\n'
                       << "// Typedefs\n";
         const auto& typedefs = program_->get_typedefs();
@@ -717,19 +710,15 @@ void t_yarp_generator::generate_program()
 
     if (!program_->get_objects().empty()) {
         // Generate structs and exceptions in declared order
-        f_out_ << '\n'
-               << "// Structures\n";
         const auto& objects = program_->get_objects();
         for (const auto& obj : objects) {
             if (obj->is_xception()) {
                 generate_xception(obj);
             } else {
                 generate_struct(obj);
-                f_out_ << "#include \"" << (obj)->get_name() << ".h\"\n";
-                f_out2_ << (obj)->get_name() << ".h\n";
                 if (obj->annotations_.find("yarp.includefile") == obj->annotations_.end()) {
-                    f_out3_ << obj->get_name() << ".h\n";
-                    f_out3_ << obj->get_name() << ".cpp\n";
+                    f_out_index_ << get_include_prefix(program_) << obj->get_name() << ".h\n";
+                    f_out_index_ << obj->get_name() << ".cpp\n";
                 }
             }
         }
@@ -737,38 +726,32 @@ void t_yarp_generator::generate_program()
 
     if (!program_->get_services().empty()) {
         // Generate services
-        f_out_ << '\n'
-               << "// Services\n";
         const auto& services = program_->get_services();
         for (const auto& service : services) {
             service_name_ = get_service_name(service);
             generate_service(service);
-            f_out_ << "#include \"" << service->get_name() << ".h\"\n";
-            f_out2_ << service->get_name() << ".h\n";
-            f_out3_ << service->get_name() << ".h\n";
-            f_out3_ << service->get_name() << ".cpp\n";
+            f_out_index_ << get_include_prefix(program_) << service->get_name() << ".h\n";
+            f_out_index_ << service->get_name() << ".cpp\n";
         }
     }
 
-    if (need_common_) {
-        f_out2_ << program_->get_name() + "_common.h\n";
-        f_out3_ << program_->get_name() + "_common.h\n";
-    }
 
-    f_out_.close();
-    f_out2_.close();
-    f_out3_.close();
-    if (f_out_common_.is_open()) {
+}
+
+void t_yarp_generator::close_generator()
+{
+    f_out_index_.close();
+    if (need_common_) {
         f_out_common_ << "#endif\n";
-        f_out_common_.close();
     }
+    f_out_common_.close();
 }
 
 /**
  * If the provided documentable object has documentation attached, this
  * will emit it to the output stream in YARP format.
  */
-void t_yarp_generator::print_doc(std::ofstream& f_h_, t_doc* tdoc)
+void t_yarp_generator::print_doc(std::ostringstream& f_h_, t_doc* tdoc)
 {
     if (!no_doc_ && tdoc->has_doc()) {
         f_h_ << indent_h() << "/**" << '\n';
@@ -896,9 +879,9 @@ std::string t_yarp_generator::print_const_value(t_const_value* tvalue, t_type* t
 /******************************************************************************/
 // BEGIN generate helpers
 
-void t_yarp_generator::generate_namespace_open(std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_namespace_open(std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
-    const auto& ns = get_namespace(program_);
+    const auto& ns = program_->get_namespace("yarp");
     if (!ns.empty()) {
         namespace_open(f_h_, ns);
         namespace_open(f_cpp_, ns);
@@ -907,9 +890,9 @@ void t_yarp_generator::generate_namespace_open(std::ofstream& f_h_, std::ofstrea
     }
 }
 
-void t_yarp_generator::generate_namespace_close(std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_namespace_close(std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
-    const auto& ns = get_namespace(program_);
+    const auto& ns = program_->get_namespace("yarp");
     if (!ns.empty()) {
         f_h_ << '\n';
         f_cpp_ << '\n';
@@ -922,39 +905,45 @@ void t_yarp_generator::generate_namespace_close(std::ofstream& f_h_, std::ofstre
  * Returns the include prefix to use for a file generated by program, or the
  * empty string if no include prefix should be used.
  */
-std::string t_yarp_generator::get_include_prefix(const t_program& program) const
+std::string t_yarp_generator::get_include_prefix(const t_program* const program) const
 {
-    std::string include_prefix = program.get_include_prefix();
+    std::string include_prefix = program->get_include_prefix();
     if (!use_include_prefix_ || (include_prefix.size() > 0 && include_prefix[0] == '/')) {
-        // if flag is turned off or this is absolute path, return empty prefix
-        return {};
+        // if flag is turned off or this is absolute path, return the file path
+        // is not used.
+        include_prefix = "";
+    }
+    if (!no_namespace_prefix_) {
+        // Add namespace to the include path
+        std::string ns = program->get_namespace("yarp");
+        if (!ns.empty()) {
+            std::replace(ns.begin(), ns.end(), '.', '/');
+            include_prefix += ns;
+            include_prefix += "/";
+        }
     }
 
-    std::string::size_type last_slash = std::string::npos;
-    if ((last_slash = include_prefix.rfind("/")) != std::string::npos) {
-        // return include_prefix.substr(0, last_slash) + "/" + out_dir_base_ + "/";
-        return include_prefix.substr(0, last_slash) + "/";
-    }
-
-    return {};
+    return include_prefix;
 }
 
 void t_yarp_generator::get_needed_type(t_type* curType, std::set<std::string>& neededTypes)
 {
     std::string mtype;
+    const auto& program = curType->get_program();
+
     if (curType->is_struct()) {
-        if (((t_struct*)curType)->annotations_.find("yarp.includefile") != ((t_struct*)curType)->annotations_.end())
+        if (((t_struct*)curType)->annotations_.find("yarp.includefile") != ((t_struct*)curType)->annotations_.end()) {
             mtype = ((t_struct*)curType)->annotations_["yarp.includefile"];
-        else
-            mtype = get_include_prefix(*(curType->get_program())) + curType->get_name() + ".h";
+        } else {
+            mtype = get_include_prefix(program) + curType->get_name() + ".h";
+        }
 
         neededTypes.insert(mtype);
-        // cout << mtype << '\n';
         return;
     }
 
     if (curType->is_enum()) {
-        mtype = get_include_prefix(*(curType->get_program())) + curType->get_name() + ".h";
+        mtype = get_include_prefix(program) + curType->get_name() + ".h";
         neededTypes.insert(mtype);
         return;
     }
@@ -1022,7 +1011,7 @@ std::string t_yarp_generator::function_prototype(t_function* tfn,
     return result;
 }
 
-void t_yarp_generator::generate_serialize_field(std::ofstream& f_cpp_,
+void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
                                                 t_field* tfield,
                                                 const std::string& prefix,
                                                 const std::string& suffix,
@@ -1095,7 +1084,7 @@ void t_yarp_generator::generate_serialize_field(std::ofstream& f_cpp_,
     }
 }
 
-void t_yarp_generator::generate_serialize_struct(std::ofstream& f_cpp_,
+void t_yarp_generator::generate_serialize_struct(std::ostringstream& f_cpp_,
                                                  t_struct* tstruct,
                                                  const std::string& prefix,
                                                  bool force_nesting)
@@ -1109,7 +1098,7 @@ void t_yarp_generator::generate_serialize_struct(std::ofstream& f_cpp_,
     }
 }
 
-void t_yarp_generator::generate_serialize_container(std::ofstream& f_cpp_,
+void t_yarp_generator::generate_serialize_container(std::ostringstream& f_cpp_,
                                                     t_type* ttype,
                                                     const std::string& prefix)
 {
@@ -1153,7 +1142,7 @@ void t_yarp_generator::generate_serialize_container(std::ofstream& f_cpp_,
     }
 }
 
-void t_yarp_generator::generate_serialize_map_element(std::ofstream& f_cpp_,
+void t_yarp_generator::generate_serialize_map_element(std::ostringstream& f_cpp_,
                                                       t_map* tmap,
                                                       const std::string& item_name)
 {
@@ -1170,7 +1159,7 @@ void t_yarp_generator::generate_serialize_map_element(std::ofstream& f_cpp_,
     f_cpp_ << indent_cpp() << "if (!writer.writeListEnd())" << inline_return_cpp("false");
 }
 
-void t_yarp_generator::generate_serialize_set_element(std::ofstream& f_cpp_,
+void t_yarp_generator::generate_serialize_set_element(std::ostringstream& f_cpp_,
                                                       t_set* tset,
                                                       const std::string& item_name)
 {
@@ -1180,7 +1169,7 @@ void t_yarp_generator::generate_serialize_set_element(std::ofstream& f_cpp_,
     generate_serialize_field(f_cpp_, &efield, "", "", true);
 }
 
-void t_yarp_generator::generate_serialize_list_element(std::ofstream& f_cpp_,
+void t_yarp_generator::generate_serialize_list_element(std::ostringstream& f_cpp_,
                                                        t_list* tlist,
                                                        const std::string& item_name)
 {
@@ -1191,7 +1180,7 @@ void t_yarp_generator::generate_serialize_list_element(std::ofstream& f_cpp_,
 }
 
 
-void t_yarp_generator::generate_deserialize_field_fallback(std::ofstream& f_cpp_,
+void t_yarp_generator::generate_deserialize_field_fallback(std::ostringstream& f_cpp_,
                                                            t_field* tfield)
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -1204,7 +1193,7 @@ void t_yarp_generator::generate_deserialize_field_fallback(std::ofstream& f_cpp_
     }
 }
 
-void t_yarp_generator::generate_deserialize_field(std::ofstream& f_cpp_,
+void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
                                                   t_field* tfield,
                                                   const std::string &prefix,
                                                   const std::string &suffix,
@@ -1299,7 +1288,7 @@ void t_yarp_generator::generate_deserialize_field(std::ofstream& f_cpp_,
     }
 }
 
-void t_yarp_generator::generate_deserialize_struct(std::ofstream& f_cpp_,
+void t_yarp_generator::generate_deserialize_struct(std::ostringstream& f_cpp_,
                                                    t_struct* tstruct,
                                                    const std::string& prefix,
                                                    bool force_nested)
@@ -1310,7 +1299,7 @@ void t_yarp_generator::generate_deserialize_struct(std::ofstream& f_cpp_,
     f_cpp_ << "read" << (force_nested ? "Nested" : "") << "(" << prefix << ")";
 }
 
-void t_yarp_generator::generate_deserialize_container(std::ofstream& f_cpp_,
+void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_,
                                                       t_type* ttype,
                                                       const std::string& prefix)
 {
@@ -1370,7 +1359,7 @@ void t_yarp_generator::generate_deserialize_container(std::ofstream& f_cpp_,
     }
 }
 
-void t_yarp_generator::generate_deserialize_map_element(std::ofstream& f_cpp_,
+void t_yarp_generator::generate_deserialize_map_element(std::ostringstream& f_cpp_,
                                                         t_map* tmap,
                                                         const std::string& prefix)
 {
@@ -1397,7 +1386,7 @@ void t_yarp_generator::generate_deserialize_map_element(std::ofstream& f_cpp_,
     f_cpp_ << indent_cpp() << "reader.readListEnd();\n";
 }
 
-void t_yarp_generator::generate_deserialize_set_element(std::ofstream& f_cpp_,
+void t_yarp_generator::generate_deserialize_set_element(std::ostringstream& f_cpp_,
                                                         t_set* tset,
                                                         const std::string& prefix)
 {
@@ -1413,7 +1402,7 @@ void t_yarp_generator::generate_deserialize_set_element(std::ofstream& f_cpp_,
     f_cpp_ << indent_cpp() << prefix << ".insert(" << elem << ");\n";
 }
 
-void t_yarp_generator::generate_deserialize_list_element(std::ofstream& f_cpp_,
+void t_yarp_generator::generate_deserialize_list_element(std::ostringstream& f_cpp_,
                                                          t_list* tlist,
                                                          const std::string& prefix,
                                                          bool use_push,
@@ -1500,7 +1489,7 @@ std::string t_yarp_generator::declare_field(t_field* tfield,
     return result;
 }
 
-void t_yarp_generator::print_const_value(std::ofstream& f_cpp_,
+void t_yarp_generator::print_const_value(std::ostringstream& f_cpp_,
                                          const std::string& name,
                                          t_type* type,
                                          t_const_value* value)
@@ -1562,7 +1551,7 @@ void t_yarp_generator::print_const_value(std::ofstream& f_cpp_,
     }
 }
 
-std::string t_yarp_generator::render_const_value(std::ofstream& f_cpp_,
+std::string t_yarp_generator::render_const_value(std::ostringstream& f_cpp_,
                                                  const std::string&  /*name*/,
                                                  t_type* type,
                                                  t_const_value* value)
@@ -1679,14 +1668,14 @@ void t_yarp_generator::generate_enum(t_enum* tenum)
     const auto& name = tenum->get_name();
 
     // Open header files
-    std::string f_header_name = get_out_dir() + name + ".h";
-    std::ofstream f_h_;
+    std::string f_header_name = get_out_dir() + get_include_prefix(program_) + name + ".h";
+    ofstream_with_content_based_conditional_update f_h_;
     f_h_.open(f_header_name);
     THRIFT_DEBUG_COMMENT(f_h_);
 
     // Open cpp files
     std::string f_cpp_name = get_out_dir() + name + ".cpp";
-    std::ofstream f_cpp_;
+    ofstream_with_content_based_conditional_update f_cpp_;
     f_cpp_.open(f_cpp_name);
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
@@ -1711,7 +1700,7 @@ void t_yarp_generator::generate_enum(t_enum* tenum)
     // Add includes to .cpp file
     f_cpp_ << "#include <yarp/os/Wire.h>\n";
     f_cpp_ << "#include <yarp/os/idl/WireTypes.h>\n";
-    f_cpp_ << "#include <" << get_include_prefix(*program_) + name + ".h>" << '\n';
+    f_cpp_ << "#include <" << get_include_prefix(program_) << name << ".h>" << '\n';
     f_cpp_ << '\n';
 
     // Open namespace
@@ -1761,7 +1750,7 @@ void t_yarp_generator::generate_enum(t_enum* tenum)
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_enum_constant_list(t_enum* tenum, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_enum_constant_list(t_enum* tenum, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -1779,7 +1768,7 @@ void t_yarp_generator::generate_enum_constant_list(t_enum* tenum, std::ofstream&
     f_h_ << '\n';
 }
 
-void t_yarp_generator::generate_enum_fromstring(t_enum* tenum, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_enum_fromstring(t_enum* tenum, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -1806,7 +1795,7 @@ void t_yarp_generator::generate_enum_fromstring(t_enum* tenum, std::ofstream& f_
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_enum_tostring(t_enum* tenum, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_enum_tostring(t_enum* tenum, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -1904,13 +1893,13 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
     }
 
     // Open header file
-    std::string f_header_name = get_out_dir() + name + ".h";
-    std::ofstream f_h_;
+    std::string f_header_name = get_out_dir() + get_include_prefix(program_) + name + ".h";
+    ofstream_with_content_based_conditional_update f_h_;
     f_h_.open(f_header_name);
 
     // Open cpp file
     std::string f_cpp_name = get_out_dir() + name + ".cpp";
-    std::ofstream f_cpp_;
+    ofstream_with_content_based_conditional_update f_cpp_;
     f_cpp_.open(f_cpp_name);
 
     THRIFT_DEBUG_COMMENT(f_h_);
@@ -1939,7 +1928,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
     f_h_ << "#include <yarp/os/idl/WireTypes.h>\n";
     if (need_common_) {
         f_h_ << '\n';
-        f_h_ << "#include <" << get_include_prefix(*program_) << program_->get_name() << "_common.h>" << '\n';
+        f_h_ << "#include <" << get_include_prefix(program_) << program_->get_name() << "_common.h>" << '\n';
     }
     std::set<std::string> neededTypes;
     neededTypes.clear();
@@ -1952,7 +1941,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
     f_h_ << '\n';
 
     // Add includes to .cpp file
-    f_cpp_ << "#include <" << get_include_prefix(*program_) + name + ".h>\n";
+    f_cpp_ << "#include <" << get_include_prefix(program_) << name << ".h>\n";
     f_cpp_ << '\n';
 
     // Open namespace
@@ -2019,7 +2008,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_fields(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_fields(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2039,7 +2028,7 @@ void t_yarp_generator::generate_struct_fields(t_struct* tstruct, std::ofstream& 
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_default_constructor(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_default_constructor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2096,7 +2085,7 @@ void t_yarp_generator::generate_struct_default_constructor(t_struct* tstruct, st
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_constructor(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_constructor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2147,7 +2136,7 @@ void t_yarp_generator::generate_struct_constructor(t_struct* tstruct, std::ofstr
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_read_wirereader(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_read_wirereader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2178,7 +2167,7 @@ void t_yarp_generator::generate_struct_read_wirereader(t_struct* tstruct, std::o
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_read_connectionreader(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_read_connectionreader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2206,7 +2195,7 @@ void t_yarp_generator::generate_struct_read_connectionreader(t_struct* tstruct, 
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_write_wirereader(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_write_wirereader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2237,7 +2226,7 @@ void t_yarp_generator::generate_struct_write_wirereader(t_struct* tstruct, std::
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_write_connectionreader(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_write_connectionreader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2265,7 +2254,7 @@ void t_yarp_generator::generate_struct_write_connectionreader(t_struct* tstruct,
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_tostring(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_tostring(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2293,7 +2282,7 @@ void t_yarp_generator::generate_struct_tostring(t_struct* tstruct, std::ofstream
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_unwrapped_helper(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_unwrapped_helper(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2312,7 +2301,7 @@ void t_yarp_generator::generate_struct_unwrapped_helper(t_struct* tstruct, std::
 /******************************************************************************/
 // BEGIN generate_struct_editor
 
-void t_yarp_generator::generate_struct_editor(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2405,7 +2394,7 @@ void t_yarp_generator::generate_struct_editor(t_struct* tstruct, std::ofstream& 
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_default_constructor(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_default_constructor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2435,7 +2424,7 @@ void t_yarp_generator::generate_struct_editor_default_constructor(t_struct* tstr
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_baseclass_constructor(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_baseclass_constructor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2465,7 +2454,7 @@ void t_yarp_generator::generate_struct_editor_baseclass_constructor(t_struct* ts
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_destructor(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_destructor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2497,7 +2486,7 @@ void t_yarp_generator::generate_struct_editor_destructor(t_struct* tstruct, std:
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_edit(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_edit(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2533,7 +2522,7 @@ void t_yarp_generator::generate_struct_editor_edit(t_struct* tstruct, std::ofstr
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_isvalid(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_isvalid(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2558,7 +2547,7 @@ void t_yarp_generator::generate_struct_editor_isvalid(t_struct* tstruct, std::of
     assert(indent_count_h() == 2);
     assert(indent_count_cpp() == 0);}
 
-void t_yarp_generator::generate_struct_editor_state(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_state(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2584,7 +2573,7 @@ void t_yarp_generator::generate_struct_editor_state(t_struct* tstruct, std::ofst
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_start_editing(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_start_editing(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2626,7 +2615,7 @@ void t_yarp_generator::generate_struct_editor_start_editing(t_struct* tstruct, s
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_stop_editing(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_stop_editing(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2673,7 +2662,7 @@ void t_yarp_generator::generate_struct_editor_stop_editing(t_struct* tstruct, st
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_field_setter(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_field_setter(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2703,7 +2692,7 @@ void t_yarp_generator::generate_struct_editor_field_setter(t_struct* tstruct, t_
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_field_setter_list(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_field_setter_list(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     assert(get_true_type(member->get_type())->is_list());
 
@@ -2735,7 +2724,7 @@ void t_yarp_generator::generate_struct_editor_field_setter_list(t_struct* tstruc
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_field_getter(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_field_getter(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2761,7 +2750,7 @@ void t_yarp_generator::generate_struct_editor_field_getter(t_struct* tstruct, t_
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_field_will_set(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_field_will_set(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2786,7 +2775,7 @@ void t_yarp_generator::generate_struct_editor_field_will_set(t_struct* tstruct, 
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_field_did_set(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_field_did_set(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2812,7 +2801,7 @@ void t_yarp_generator::generate_struct_editor_field_did_set(t_struct* tstruct, t
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_clean(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_clean(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2838,7 +2827,7 @@ void t_yarp_generator::generate_struct_editor_clean(t_struct* tstruct, std::ofst
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_read(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_read(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2996,7 +2985,7 @@ void t_yarp_generator::generate_struct_editor_read(t_struct* tstruct, std::ofstr
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_write(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_write(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3040,7 +3029,7 @@ void t_yarp_generator::generate_struct_editor_write(t_struct* tstruct, std::ofst
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_communicate(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_communicate(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3075,7 +3064,7 @@ void t_yarp_generator::generate_struct_editor_communicate(t_struct* tstruct, std
 }
 
 
-void t_yarp_generator::generate_struct_editor_mark_dirty(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_mark_dirty(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3102,7 +3091,7 @@ void t_yarp_generator::generate_struct_editor_mark_dirty(t_struct* tstruct, std:
 
 }
 
-void t_yarp_generator::generate_struct_editor_field_mark_dirty(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_field_mark_dirty(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3130,7 +3119,7 @@ void t_yarp_generator::generate_struct_editor_field_mark_dirty(t_struct* tstruct
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_editor_dirty_flags(t_struct* tstruct, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_editor_dirty_flags(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3164,7 +3153,7 @@ void t_yarp_generator::generate_struct_editor_dirty_flags(t_struct* tstruct, std
 // END generate_struct_editor
 /******************************************************************************/
 
-void t_yarp_generator::generate_struct_field_read(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_field_read(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3190,7 +3179,7 @@ void t_yarp_generator::generate_struct_field_read(t_struct* tstruct, t_field* me
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_field_write(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_field_write(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3217,7 +3206,7 @@ void t_yarp_generator::generate_struct_field_write(t_struct* tstruct, t_field* m
 }
 
 
-void t_yarp_generator::generate_struct_field_nested_read(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_field_nested_read(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3243,7 +3232,7 @@ void t_yarp_generator::generate_struct_field_nested_read(t_struct* tstruct, t_fi
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_field_nested_write(t_struct* tstruct, t_field* member, std::ofstream& f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_struct_field_nested_write(t_struct* tstruct, t_field* member, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3300,13 +3289,13 @@ void t_yarp_generator::generate_service(t_service* tservice)
     const auto& extends_service = tservice->get_extends();
 
     // Open header file
-    std::string f_header_name = get_out_dir() + service_name + ".h";
-    std::ofstream f_h_;
+    std::string f_header_name = get_out_dir() + get_include_prefix(program_) + service_name + ".h";
+    ofstream_with_content_based_conditional_update f_h_;
     f_h_.open(f_header_name);
 
     // Open cpp files
     std::string f_cpp_name = get_out_dir() + service_name + ".cpp";
-    std::ofstream f_cpp_;
+    ofstream_with_content_based_conditional_update f_cpp_;
     f_cpp_.open(f_cpp_name);
 
     THRIFT_DEBUG_COMMENT(f_h_);
@@ -3329,11 +3318,12 @@ void t_yarp_generator::generate_service(t_service* tservice)
     f_h_ << "#include <yarp/os/Wire.h>\n";
     f_h_ << "#include <yarp/os/idl/WireTypes.h>\n";
 
-    if (need_common_)
-        f_h_ << "#include <" << get_include_prefix(*program_) << program_->get_name() << "_common.h>" << '\n';
+    if (need_common_) {
+        f_h_ << "#include <" << get_include_prefix(program_) << program_->get_name() << "_common.h>" << '\n';
+    }
 
     if (extends_service != nullptr) {
-        f_h_ << "#include <" << get_include_prefix(*(extends_service->get_program())) << extends_service->get_name() << ".h>\n";
+        f_h_ << "#include <" << get_include_prefix(extends_service->get_program()) << extends_service->get_name() << ".h>\n";
     }
 
     std::set<std::string> neededTypes;
@@ -3354,7 +3344,7 @@ void t_yarp_generator::generate_service(t_service* tservice)
     f_h_ << '\n';
 
     // Add includes to .cpp file
-    f_cpp_ << "#include <" << get_include_prefix(*(tservice->get_program())) + service_name + ".h>" << '\n';
+    f_cpp_ << "#include <" << get_include_prefix(tservice->get_program()) + service_name + ".h>" << '\n';
     f_cpp_ << '\n';
     f_cpp_ << "#include <yarp/os/idl/WireTypes.h>\n";
     f_cpp_ << '\n';
@@ -3403,7 +3393,7 @@ void t_yarp_generator::generate_service(t_service* tservice)
 }
 
 
-void t_yarp_generator::generate_service_helper_classes(t_service* tservice, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_service_helper_classes(t_service* tservice, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
@@ -3421,7 +3411,7 @@ void t_yarp_generator::generate_service_helper_classes(t_service* tservice, std:
     }
 }
 
-void t_yarp_generator::generate_service_helper_classes_decl(t_function* function, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_service_helper_classes_decl(t_function* function, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
@@ -3467,7 +3457,7 @@ void t_yarp_generator::generate_service_helper_classes_decl(t_function* function
     }
 }
 
-void t_yarp_generator::generate_service_helper_classes_impl_ctor(t_function* function, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_service_helper_classes_impl_ctor(t_function* function, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
@@ -3503,7 +3493,7 @@ void t_yarp_generator::generate_service_helper_classes_impl_ctor(t_function* fun
     f_cpp_ << '\n';
 }
 
-void t_yarp_generator::generate_service_helper_classes_impl_write(t_function* function, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_service_helper_classes_impl_write(t_function* function, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
@@ -3529,7 +3519,7 @@ void t_yarp_generator::generate_service_helper_classes_impl_write(t_function* fu
     f_cpp_ << '\n';
 }
 
-void t_yarp_generator::generate_service_helper_classes_impl_read(t_function* function, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_service_helper_classes_impl_read(t_function* function, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
@@ -3558,7 +3548,7 @@ void t_yarp_generator::generate_service_helper_classes_impl_read(t_function* fun
     f_cpp_ << '\n';
 }
 
-void t_yarp_generator::generate_service_constructor(t_service* tservice, std::ofstream&  f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_service_constructor(t_service* tservice, std::ostringstream&  f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3583,7 +3573,7 @@ void t_yarp_generator::generate_service_constructor(t_service* tservice, std::of
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_service_function(t_service* tservice, t_function* function, std::ofstream&  f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_service_function(t_service* tservice, t_function* function, std::ostringstream&  f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3636,7 +3626,7 @@ void t_yarp_generator::generate_service_function(t_service* tservice, t_function
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_service_help(t_service* tservice, std::ofstream&  f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_service_help(t_service* tservice, std::ostringstream&  f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3708,7 +3698,7 @@ void t_yarp_generator::generate_service_help(t_service* tservice, std::ofstream&
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_service_read(t_service* tservice, std::ofstream&  f_h_, std::ofstream& f_cpp_)
+void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringstream&  f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3909,7 +3899,8 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ofstream&
 THRIFT_REGISTER_GENERATOR(
     yarp,
     "YARP",
-    "    include_prefix:  The include prefix to use for the generated files\n"
-    "    no_copyright:    Omit the copyright header.\n"
-    "    no_editor:       Omit the generation of the Editor class for structs.\n"
-    "    no_doc:          Omit doxygen documentation.\n")
+    "    include_prefix:       The include prefix to use for the generated files\n"
+    "    no_namespace_prefix:  Omit the namespace from the include prefix\n"
+    "    no_copyright:         Omit the copyright header.\n"
+    "    no_editor:            Omit the generation of the Editor class for structs.\n"
+    "    no_doc:               Omit doxygen documentation.\n")
