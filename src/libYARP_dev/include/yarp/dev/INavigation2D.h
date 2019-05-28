@@ -104,6 +104,16 @@ public:
     * @return true/false
     */
     virtual bool getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) = 0;
+
+    /**
+    * Apply a velocity command. velocities are expressed in the robot reference frame
+    * @param x [m/s]
+    * @param y [m/s]
+    * @param theta [deg/s]
+    * @param timeout The velocity command expires after the specified amount of time (by default 0.1 seconds)
+    * @return true/false
+    */
+    virtual bool applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) = 0;
 };
 
 class YARP_dev_API yarp::dev::INavigation2DControlActions
@@ -192,11 +202,36 @@ public:
     virtual bool gotoTargetByLocationName(std::string location_or_area_name) = 0;
 
     /**
-    * Check if the robot is located inside the specified area
+    * Check if the robot is currently inside the specified area
     * @param area_name the name of an area previously saved
     * @return true/false
     */
-    virtual bool checkInsideArea (std::string area_name) = 0;
+    virtual bool checkInsideArea(std::string area_name) = 0;
+
+    /**
+    * Check if the robot is currently inside the specified area
+    * @param area the area to be checked
+    * @return true/false
+    */
+    virtual bool checkInsideArea (Map2DArea area) = 0;
+
+    /**
+    * Check if the robot is currently near to the specified area
+    * @param loc the location to be checked
+    * @param linear_tolerance linear tolerance [m]
+    * @param angular_tolerance [deg 0-360]
+    * @return true/false
+    */
+    virtual bool checkNearToLocation(Map2DLocation loc, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) = 0;
+
+    /**
+    * Check if the robot is currently near to the specified area
+    * @param location_name the name of the location: it will be searched in the server
+    * @param linear_tolerance linear tolerance [m]
+    * @param angular_tolerance [deg]
+    * @return true/false
+    */
+    virtual bool checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) = 0;
 
     /**
     * Gets the name of the current target, if available (set by gotoTargetByLocationName)

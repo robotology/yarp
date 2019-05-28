@@ -273,6 +273,24 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
             reply.addVocab(VOCAB_ERR);
         }
     }
+    else if (request == VOCAB_NAV_VELOCITY_CMD)
+    {
+        double x_vel   = command.get(2).asFloat64();
+        double y_vel   = command.get(3).asFloat64();
+        double t_vel   = command.get(4).asFloat64();
+        double timeout = command.get(5).asFloat64();
+        bool ret = iNav_target->applyVelocityCommand(x_vel,y_vel,t_vel,timeout);
+        if (ret)
+        {
+            reply.addVocab(VOCAB_OK);
+            reply.addInt32(VOCAB_OK);
+        }
+        else
+        {
+            yError() << "applyVelocityCommand() failed";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
     else if (request == VOCAB_NAV_GET_NAVIGATION_STATUS)
     {
         yarp::dev::NavigationStatusEnum nav_status = yarp::dev::navigation_status_error;
