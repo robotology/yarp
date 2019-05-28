@@ -49,10 +49,23 @@ Map2DArea::Map2DArea(const std::string& map_name, const std::vector<yarp::math::
 Map2DArea::Map2DArea(const std::string& map_name, const std::vector<yarp::dev::Map2DLocation> area_points)
 {
     map_id = map_name;
-    
-//    points = area_points;
-
+    for (auto it = area_points.begin(); it != area_points.end(); it++)
+    {
+#if 0
+        yAssert(it->map_id == map_name);
+#else
+        if (it->map_id != map_name)
+        {
+            map_id = "";
+            points.clear();
+            yError() << "all area_points must belong to the same map:" << map_name;
+            return;
+        }
+#endif
+        points.push_back(yarp::math::Vec2D<double>(it->x, it->y));
+    }
 }
+
 Map2DArea::Map2DArea()
 {
     map_id = "";
