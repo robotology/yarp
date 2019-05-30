@@ -1,0 +1,3 @@
+include/std_msgs_String.h
+include/std_msgs/String.h
+include/yarp/rosmsg/std_msgs/String.h
