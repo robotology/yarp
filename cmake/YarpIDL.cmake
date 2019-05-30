@@ -326,6 +326,13 @@ function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_h
   string(REGEX REPLACE "#[^\n]+" "" file_content ${file_content})
   string(REGEX REPLACE "//[^\n]+" "" file_content ${file_content})
 
+  # Match "namespace"
+  string(REGEX MATCH "namespace[ \t\n]+yarp[ \t\n]+([^ \t\n]+)" _unused ${file_content})
+  string(REPLACE "." "/" namespace_dir "${CMAKE_MATCH_1}")
+  # FIXME for now namespace_dir is not used, enable when yarp_add_idl will be
+  #       able to handle namespaces
+  unset(namespace_dir)
+
   # Match "enum"s, "struct"s and "service"s defined in the file
   string(REGEX MATCHALL "(enum|struct|service)[ \t\n]+([^ \t\n]+)[ \t\n]*{[^}]+}([ \t\n]*\\([^\\)]+\\))?" objects ${file_content})
 
@@ -336,7 +343,7 @@ function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_h
     if(NOT "${object}" MATCHES "{[^}]+}[ \t\n]*(\\([^\\)]*yarp.name[^\\)]+\\))")
       # No files are generated for YARP types.
       list(APPEND gen_srcs ${objectname}.cpp)
-      list(APPEND gen_hdrs ${objectname}.h)
+      list(APPEND gen_hdrs ${path}/${namespace_dir}/${objectname}.h)
     endif()
   endforeach()
 
@@ -345,7 +352,7 @@ function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_h
 
   # Find if at least one "const" or "typedef" is defined
   if("${file_content}" MATCHES "(const|typedef)[ \t]+([^ \t\n]+)[ \t]*([^ \t\n]+)")
-    list(APPEND gen_hdrs ${basename}_common.h)
+    list(APPEND gen_hdrs ${path}/${namespace_dir}/${basename}_common.h)
   endif()
 
   set(${gen_srcs_var} ${gen_srcs} PARENT_SCOPE)
@@ -469,7 +476,7 @@ function(YARP_ADD_IDL var)
 
     # Prepare main command
     if("${family}" STREQUAL "thrift")
-      set(cmd ${YARPIDL_thrift_COMMAND} --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${tmp_dir}" "${file}")
+      set(cmd ${YARPIDL_thrift_COMMAND} --gen yarp:include_prefix,no_namespace_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${tmp_dir}" "${file}")
     else()
       if(YARPIDL_rosmsg_VERBOSE)
         set(_verbose --verbose)
