@@ -25,18 +25,21 @@
 #include <yarp/os/PeriodicThread.h>
 #include <math.h>
 
-namespace yarp
-{
-    namespace dev
-    {
-        class fakeNavigationThread;
-        class fakeNavigation;
-    }
-}
 
-class yarp::dev::fakeNavigation : public yarp::dev::DeviceDriver,
-                                  public yarp::dev::INavigation2DTargetActions,
-                                  public yarp::dev::INavigation2DControlActions
+class fakeNavigationThread :
+        public yarp::os::PeriodicThread
+{
+public:
+    fakeNavigationThread(double _period, yarp::os::Searchable& _cfg);
+    virtual bool threadInit() override;
+    virtual void threadRelease() override;
+    virtual void run() override;
+};
+
+class fakeNavigation :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::INavigation2DTargetActions,
+        public yarp::dev::INavigation2DControlActions
 {
 public:
     fakeNavigationThread  *navThread;
@@ -147,13 +150,4 @@ public:
      * @return true/false
      */
     virtual bool applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
-};
-
-class yarp::dev::fakeNavigationThread : public yarp::os::PeriodicThread
-{
-public:
-    fakeNavigationThread(double _period, yarp::os::Searchable& _cfg);
-    virtual bool threadInit() override;
-    virtual void threadRelease() override;
-    virtual void run() override;
 };

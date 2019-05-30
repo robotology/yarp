@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(fakeNavigation
                     CATEGORY device
-                    TYPE yarp::dev::fakeNavigation
+                    TYPE fakeNavigation
                     INCLUDE fakeNavigationDev.h
                     DEPENDS "TARGET YARP::YARP_math")
 

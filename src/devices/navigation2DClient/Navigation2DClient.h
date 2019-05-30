@@ -28,11 +28,6 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/INavigation2D.h>
 
-namespace yarp {
-    namespace dev {
-        class Navigation2DClient;
-    }
-}
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 
@@ -52,9 +47,10 @@ namespace yarp {
  * | localization_server  |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Localization server, to which the Navigation2DClient connects to.           |  |
  */
 
-class yarp::dev::Navigation2DClient: public DeviceDriver,
-                                     public INavigation2D,
-                                     public yarp::os::PortReader
+class Navigation2DClient:
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::INavigation2D,
+        public yarp::os::PortReader
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
@@ -78,7 +74,10 @@ private:
 
 private: //math stuff
     double                        normalize_angle(double angle);
-    bool                          locations_are_similar(Map2DLocation loc1, Map2DLocation loc2, double lin_tol, double ang_tol);
+    bool                          locations_are_similar(yarp::dev::Map2DLocation loc1,
+                                                        yarp::dev::Map2DLocation loc2,
+                                                        double lin_tol,
+                                                        double ang_tol);
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
@@ -93,9 +92,9 @@ public:
     virtual bool read(yarp::os::ConnectionReader& connection) override;
 
     /* The following methods belong to INavigation2D interface */
-    virtual bool checkInsideArea(Map2DArea area) override;
+    virtual bool checkInsideArea(yarp::dev::Map2DArea area) override;
     virtual bool checkInsideArea(std::string area_name)  override;
-    virtual bool checkNearToLocation(Map2DLocation loc, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
+    virtual bool checkNearToLocation(yarp::dev::Map2DLocation loc, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
     virtual bool checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
 
     bool   gotoTargetByAbsoluteLocation(yarp::dev::Map2DLocation loc) override;
@@ -115,9 +114,9 @@ public:
     bool   getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses) override;
 
     bool   storeCurrentPosition(std::string location_name) override;
-    bool   storeLocation(std::string location_name, Map2DLocation loc) override;
-    bool   getLocation(std::string location_name, Map2DLocation& loc) override;
-    bool   getArea(std::string area_name, Map2DArea& area) override;
+    bool   storeLocation(std::string location_name, yarp::dev::Map2DLocation loc) override;
+    bool   getLocation(std::string location_name, yarp::dev::Map2DLocation& loc) override;
+    bool   getArea(std::string area_name, yarp::dev::Map2DArea& area) override;
     bool   deleteLocation(std::string location_name) override;
     bool   getLocationsList(std::vector<std::string>& locations) override;
 

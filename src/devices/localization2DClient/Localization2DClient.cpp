@@ -31,7 +31,7 @@ using namespace yarp::sig;
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-bool yarp::dev::Localization2DClient::open(yarp::os::Searchable &config)
+bool Localization2DClient::open(yarp::os::Searchable &config)
 {
     m_local_name.clear();
     m_remote_name.clear();
@@ -89,7 +89,7 @@ bool yarp::dev::Localization2DClient::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool  yarp::dev::Localization2DClient::setInitialPose(const Map2DLocation& loc)
+bool Localization2DClient::setInitialPose(const Map2DLocation& loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -118,7 +118,7 @@ bool  yarp::dev::Localization2DClient::setInitialPose(const Map2DLocation& loc)
     return true;
 }
 
-bool  yarp::dev::Localization2DClient::getCurrentPosition(Map2DLocation& loc)
+bool  Localization2DClient::getCurrentPosition(Map2DLocation& loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -151,7 +151,7 @@ bool  yarp::dev::Localization2DClient::getCurrentPosition(Map2DLocation& loc)
     return true;
 }
 
-bool  yarp::dev::Localization2DClient::getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses)
+bool  Localization2DClient::getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -201,7 +201,7 @@ bool  yarp::dev::Localization2DClient::getEstimatedPoses(std::vector<yarp::dev::
     return true;
 }
 
-bool  yarp::dev::Localization2DClient::getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status)
+bool  Localization2DClient::getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -231,7 +231,7 @@ bool  yarp::dev::Localization2DClient::getLocalizationStatus(yarp::dev::Localiza
     return true;
 }
 
-bool yarp::dev::Localization2DClient::close()
+bool Localization2DClient::close()
 {
     m_rpc_port_localization_server.close();
     return true;

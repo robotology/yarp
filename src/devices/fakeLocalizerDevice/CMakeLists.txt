@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(fakeLocalizer
                     CATEGORY device
-                    TYPE yarp::dev::fakeLocalizer
+                    TYPE fakeLocalizer
                     INCLUDE fakeLocalizerDev.h
                     DEPENDS "TARGET YARP::YARP_math")
 
