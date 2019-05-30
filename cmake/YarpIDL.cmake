@@ -268,31 +268,6 @@ function(YARP_IDL_TO_DIR)
       endforeach(generatedFile)
     endif()
 
-    if(ALLOW_IDL_GENERATION)
-      # Add a command/target to regenerate the files if the IDL file changes.
-      set(yarpidl_depends ${_file})
-      if(_yarpidl_native)
-        unset(yarpidl_depends)
-      endif()
-      add_custom_command(OUTPUT ${_YITD_OUTPUT_DIR}/${_target_name}.cmake ${DEST_FILES}
-                         COMMAND ${YARPIDL_${_family}_LOCATION} --out ${_temp_dir} --gen yarp:include_prefix --I ${CMAKE_CURRENT_SOURCE_DIR} ${_file}
-                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                         COMMAND ${CMAKE_COMMAND} -P ${_temp_dir}/place${_name}.cmake
-                         DEPENDS ${yarpidl_depends} ${YARPIDL_LOCATION})
-      add_custom_target(${_target_name} DEPENDS ${_YITD_OUTPUT_DIR}/${_target_name}.cmake)
-
-      # Put the target in the right folder if defined
-      get_property(autogen_source_group_set GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER SET)
-      if(autogen_source_group_set)
-        get_property(autogen_targets_folder GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER)
-        set_property(TARGET ${_target_name} PROPERTY FOLDER "${autogen_targets_folder}")
-      endif()
-    else()
-      if(files_missing)
-        message(FATAL_ERROR "Generated IDL files for ${_file} not found and cannot make them because ALLOW_IDL_GENERATION=${ALLOW_IDL_GENERATION} (maybe this should be turned on?)")
-      endif()
-    endif(ALLOW_IDL_GENERATION)
-
     list(APPEND _full_paths "${_YITD_OUTPUT_DIR}/include")
     list(REMOVE_DUPLICATES _full_paths)
   endforeach()
