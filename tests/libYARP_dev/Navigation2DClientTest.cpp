@@ -43,7 +43,7 @@ TEST_CASE("dev::Navigation2DClientTest", "[yarp::dev]")
         {
             Property pmapserver_cfg;
             pmapserver_cfg.put("device", "map2DServer");
-            REQUIRE(ddmapserver.open(pmapserver_cfg)); 
+            REQUIRE(ddmapserver.open(pmapserver_cfg));
 
             Property pmapclient_cfg;
             pmapclient_cfg.put("device", "map2DClient");

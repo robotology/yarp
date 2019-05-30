@@ -41,29 +41,29 @@ public:
     virtual ~ILocalization2D() {}
 
     /**
-    * Gets the current status of the localization task.
-    * @return true/false
-    */
+     * Gets the current status of the localization task.
+     * @return true/false
+     */
     virtual bool   getLocalizationStatus(LocalizationStatusEnum& status) = 0;
 
     /**
-    * Gets a set of pose estimates computed by the localization algorithm.
-    * @return true/false
-    */
+     * Gets a set of pose estimates computed by the localization algorithm.
+     * @return true/false
+     */
     virtual bool   getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses) = 0;
 
     /**
-    * Gets the current position of the robot w.r.t world reference frame
-    * @param loc the location of the robot
-    * @return true/false
-    */
+     * Gets the current position of the robot w.r.t world reference frame
+     * @param loc the location of the robot
+     * @return true/false
+     */
     virtual bool   getCurrentPosition(yarp::dev::Map2DLocation& loc) = 0;
 
     /**
-    * Sets the initial pose for the localization algorithm which estimates the current position of the robot w.r.t world reference frame.
-    * @param loc the location of the robot
-    * @return true/false
-    */
+     * Sets the initial pose for the localization algorithm which estimates the current position of the robot w.r.t world reference frame.
+     * @param loc the location of the robot
+     * @return true/false
+     */
     virtual bool   setInitialPose(const yarp::dev::Map2DLocation& loc) = 0;
 };
 

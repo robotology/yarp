@@ -10,16 +10,16 @@ yarp_prepare_plugin(fakeNavigation
                     INCLUDE fakeNavigationDev.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
-                    
+
 if(NOT SKIP_fakeNavigation)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   yarp_add_plugin(yarp_fakeNavigation fakeNavigationDev.h
-                                 fakeNavigationDev.cpp)
+                                      fakeNavigationDev.cpp)
   target_link_libraries(yarp_fakeNavigation PRIVATE YARP::YARP_OS
-                                               YARP::YARP_sig
-                                               YARP::YARP_dev
-                                               YARP::YARP_math)
+                                                    YARP::YARP_sig
+                                                    YARP::YARP_dev
+                                                    YARP::YARP_math)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
                                                       YARP_sig
                                                       YARP_dev

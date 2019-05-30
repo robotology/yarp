@@ -536,7 +536,7 @@ bool yarp::dev::Navigation2DClient::locations_are_similar(Map2DLocation loc1, Ma
     if (angular_tolerance < 0) return false;
     yAssert(linear_tolerance >= 0);
     yAssert(angular_tolerance >= 0);
-  
+
     if (loc1.map_id != loc2.map_id)
     {
         return false;

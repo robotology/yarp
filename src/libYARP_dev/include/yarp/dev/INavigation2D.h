@@ -61,58 +61,58 @@ class YARP_dev_API yarp::dev::INavigation2DTargetActions
 {
 public:
     /**
-    * Destructor.
-    */
+     * Destructor.
+     */
     virtual ~INavigation2DTargetActions() {}
 
     /**
-    * Ask the robot to reach a position defined in the world reference frame
-    * @param loc the location to be reached
-    * @return true/false
-    */
+     * Ask the robot to reach a position defined in the world reference frame
+     * @param loc the location to be reached
+     * @return true/false
+     */
     virtual bool gotoTargetByAbsoluteLocation(yarp::dev::Map2DLocation loc) = 0;
 
     /**
-    * Gets the last navigation target in the world reference frame
-    * @param loc the location of the robot
-    * @return true/false
-    */
+     * Gets the last navigation target in the world reference frame
+     * @param loc the location of the robot
+     * @return true/false
+     */
     virtual bool getAbsoluteLocationOfCurrentTarget(yarp::dev::Map2DLocation& loc) = 0;
 
     /**
-    * Ask the robot to reach a position defined in the robot reference frame. The final orientation of the goal is unspecified.
-    * @param x
-    * @param y
-    * @return true/false
-    */
+     * Ask the robot to reach a position defined in the robot reference frame. The final orientation of the goal is unspecified.
+     * @param x
+     * @param y
+     * @return true/false
+     */
     virtual bool gotoTargetByRelativeLocation(double x, double y) = 0;
 
     /**
-    * Ask the robot to reach a position defined in the robot reference frame
-    * @param x
-    * @param y
-    * @param theta
-    * @return true/false
-    */
+     * Ask the robot to reach a position defined in the robot reference frame
+     * @param x
+     * @param y
+     * @param theta
+     * @return true/false
+     */
     virtual bool gotoTargetByRelativeLocation(double x, double y, double theta) = 0;
 
     /**
-    * Gets the last navigation target in the robot reference frame
-    * @param x
-    * @param y
-    * @param theta
-    * @return true/false
-    */
+     * Gets the last navigation target in the robot reference frame
+     * @param x
+     * @param y
+     * @param theta
+     * @return true/false
+     */
     virtual bool getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) = 0;
 
     /**
-    * Apply a velocity command. velocities are expressed in the robot reference frame
-    * @param x [m/s]
-    * @param y [m/s]
-    * @param theta [deg/s]
-    * @param timeout The velocity command expires after the specified amount of time (by default 0.1 seconds)
-    * @return true/false
-    */
+     * Apply a velocity command. velocities are expressed in the robot reference frame
+     * @param x [m/s]
+     * @param y [m/s]
+     * @param theta [deg/s]
+     * @param timeout The velocity command expires after the specified amount of time (by default 0.1 seconds)
+     * @return true/false
+     */
     virtual bool applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) = 0;
 };
 
@@ -120,62 +120,62 @@ class YARP_dev_API yarp::dev::INavigation2DControlActions
 {
 public:
     /**
-    * Destructor.
-    */
+     * Destructor.
+     */
     virtual ~INavigation2DControlActions() {}
 
     /**
-    * Gets the current status of the navigation task.
-    * @return true/false
-    */
+     * Gets the current status of the navigation task.
+     * @return true/false
+     */
     virtual bool getNavigationStatus(NavigationStatusEnum& status) = 0;
 
     /**
-    * Terminates the current navigation task. Cannot be resumed.
-    * @return true/false
-    */
+     * Terminates the current navigation task. Cannot be resumed.
+     * @return true/false
+     */
     virtual bool stopNavigation() = 0;
 
     /**
-    * Ask to the robot to suspend the current navigation task for a defined amount of time. Can be resumed by resume().
-    * @param time_s
-    * @return true/false
-    */
+     * Ask to the robot to suspend the current navigation task for a defined amount of time. Can be resumed by resume().
+     * @param time_s
+     * @return true/false
+     */
     virtual bool suspendNavigation(const double time_s= std::numeric_limits<double>::infinity()) = 0;
 
     /**
-    * Resume a previously suspended navigation task.
-    * @return true/false
-    */
+     * Resume a previously suspended navigation task.
+     * @return true/false
+     */
     virtual bool resumeNavigation() = 0;
 
     /**
-    * Forces the navigation system to recompute the path from the current robot position to the current goal.
-    * If no goal has been set, the command has no effect.
-    * @return true/false
-    */
+     * Forces the navigation system to recompute the path from the current robot position to the current goal.
+     * If no goal has been set, the command has no effect.
+     * @return true/false
+     */
     virtual bool recomputeCurrentNavigationPath() = 0;
 
     /**
-    * Returns the list of waypoints generated by the navigation algorithm
-    * @param waypoints the list of waypoints generated by the navigation algorithm
-    * @return true/false
-    */
+     * Returns the list of waypoints generated by the navigation algorithm
+     * @param waypoints the list of waypoints generated by the navigation algorithm
+     * @return true/false
+     */
     virtual bool getAllNavigationWaypoints(std::vector<yarp::dev::Map2DLocation>& waypoints) = 0;
 
     /**
-    * Returns the current waypoint pursued by the navigation algorithm
-    * @param curr_waypoint the current waypoint pursued by the navigation algorithm
-    * @return true/false
-    */
+     * Returns the current waypoint pursued by the navigation algorithm
+     * @param curr_waypoint the current waypoint pursued by the navigation algorithm
+     * @return true/false
+     */
     virtual bool getCurrentNavigationWaypoint(yarp::dev::Map2DLocation& curr_waypoint) = 0;
 
     /**
-    * Returns the current navigation map processed by the navigation algorithm
-    * @param map_type the map to be requested (e.g. global, local, etc.)
-    * @param map the map, currently used by the navigation algorithm
-    * @return true/false
-    */
+     * Returns the current navigation map processed by the navigation algorithm
+     * @param map_type the map to be requested (e.g. global, local, etc.)
+     * @param map the map, currently used by the navigation algorithm
+     * @return true/false
+     */
     virtual bool getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type, yarp::dev::MapGrid2D& map) = 0;
 };
 
@@ -202,94 +202,94 @@ public:
     virtual bool gotoTargetByLocationName(std::string location_or_area_name) = 0;
 
     /**
-    * Check if the robot is currently inside the specified area
-    * @param area_name the name of an area previously saved
-    * @return true/false
-    */
+     * Check if the robot is currently inside the specified area
+     * @param area_name the name of an area previously saved
+     * @return true/false
+     */
     virtual bool checkInsideArea(std::string area_name) = 0;
 
     /**
-    * Check if the robot is currently inside the specified area
-    * @param area the area to be checked
-    * @return true/false
-    */
+     * Check if the robot is currently inside the specified area
+     * @param area the area to be checked
+     * @return true/false
+     */
     virtual bool checkInsideArea (Map2DArea area) = 0;
 
     /**
-    * Check if the robot is currently near to the specified area
-    * @param loc the location to be checked
-    * @param linear_tolerance linear tolerance [m]
-    * @param angular_tolerance [deg 0-360]
-    * @return true/false
-    */
+     * Check if the robot is currently near to the specified area
+     * @param loc the location to be checked
+     * @param linear_tolerance linear tolerance [m]
+     * @param angular_tolerance [deg 0-360]
+     * @return true/false
+     */
     virtual bool checkNearToLocation(Map2DLocation loc, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) = 0;
 
     /**
-    * Check if the robot is currently near to the specified area
-    * @param location_name the name of the location: it will be searched in the server
-    * @param linear_tolerance linear tolerance [m]
-    * @param angular_tolerance [deg]
-    * @return true/false
-    */
+     * Check if the robot is currently near to the specified area
+     * @param location_name the name of the location: it will be searched in the server
+     * @param linear_tolerance linear tolerance [m]
+     * @param angular_tolerance [deg]
+     * @return true/false
+     */
     virtual bool checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) = 0;
 
     /**
-    * Gets the name of the current target, if available (set by gotoTargetByLocationName)
-    * @param location_name the name of the current target
-    * @return true/false
-    */
+     * Gets the name of the current target, if available (set by gotoTargetByLocationName)
+     * @param location_name the name of the current target
+     * @return true/false
+     */
     virtual bool getNameOfCurrentTarget(std::string& location_name) = 0;
 
     /**
-    * Store the current location of the robot
-    * @param location_name the name of the location
-    * @return true/false
-    */
+     * Store the current location of the robot
+     * @param location_name the name of the location
+     * @return true/false
+     */
     virtual bool storeCurrentPosition(std::string location_name) = 0;
 
     /**
-    * Store a location specified by the user in the world reference frame
-    * @param location_name the name of the location
-    * @param loc the location of the robot
-    * @return true/false
-    */
+     * Store a location specified by the user in the world reference frame
+     * @param location_name the name of the location
+     * @param loc the location of the robot
+     * @return true/false
+     */
     virtual bool storeLocation(std::string location_name, Map2DLocation loc) = 0;
 
     /**
-    * Retrieves a location previously stored by the user
-    * @param location_name the name of the location
-    * @param loc the location on the map
-    * @return true/false
-    */
+     * Retrieves a location previously stored by the user
+     * @param location_name the name of the location
+     * @param loc the location on the map
+     * @return true/false
+     */
     virtual bool getLocation(std::string location_name, Map2DLocation& loc) = 0;
 
 
     /**
-    * Retrieves an area previously stored by the user
-    * @param area_name the name of the area
-    * @param area the area on the map
-    * @return true/false
-    */
+     * Retrieves an area previously stored by the user
+     * @param area_name the name of the area
+     * @param area the area on the map
+     * @return true/false
+     */
     virtual bool getArea(std::string area_name, Map2DArea& area) = 0;
 
     /**
-    * Get a list of all stored locations
-    * @param the returned list of locations
-    * @return true/false
-    */
+     * Get a list of all stored locations
+     * @param the returned list of locations
+     * @return true/false
+     */
     virtual bool getLocationsList(std::vector<std::string>& locations) = 0;
 
     /**
-    * Delete a location
-    * @param location_name the name of the location
-    * @return true/false
-    */
+     * Delete a location
+     * @param location_name the name of the location
+     * @return true/false
+     */
     virtual bool deleteLocation(std::string location_name) = 0;
 
     /**
-    * Delete all stored locations
-    * @return true/false
-    */
+     * Delete all stored locations
+     * @return true/false
+     */
     virtual bool clearAllLocations() = 0;
 };
 

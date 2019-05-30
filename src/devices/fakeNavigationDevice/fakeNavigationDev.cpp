@@ -36,7 +36,7 @@ bool fakeNavigation :: open(yarp::os::Searchable& config)
 
     std::string context_name = "robotGoto";
     std::string file_name = "robotGoto_cer.ini";
-    
+
     if (config.check("context"))   context_name = config.find("context").asString();
     if (config.check("from")) file_name    = config.find("from").asString();
 
@@ -55,7 +55,7 @@ bool fakeNavigation :: open(yarp::os::Searchable& config)
     p.fromString(config.toString());
 #endif
     navThread = new fakeNavigationThread(0.010, p);
-    
+
     if (!navThread->start())
     {
         delete navThread;
