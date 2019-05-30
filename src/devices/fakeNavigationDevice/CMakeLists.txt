@@ -8,8 +8,7 @@ yarp_prepare_plugin(fakeNavigation
                     CATEGORY device
                     TYPE yarp::dev::fakeNavigation
                     INCLUDE fakeNavigationDev.h
-                    DEPENDS "TARGET YARP::YARP_math"
-                    DEFAULT ON)
+                    DEPENDS "TARGET YARP::YARP_math")
 
 if(NOT SKIP_fakeNavigation)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

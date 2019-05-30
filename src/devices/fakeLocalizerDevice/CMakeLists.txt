@@ -8,8 +8,7 @@ yarp_prepare_plugin(fakeLocalizer
                     CATEGORY device
                     TYPE yarp::dev::fakeLocalizer
                     INCLUDE fakeLocalizerDev.h
-                    DEPENDS "TARGET YARP::YARP_math"
-                    DEFAULT ON)
+                    DEPENDS "TARGET YARP::YARP_math")
 
 if(NOT SKIP_fakeLocalizer)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
