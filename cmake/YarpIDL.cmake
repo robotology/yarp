@@ -472,7 +472,7 @@ function(YARP_ADD_IDL var)
 
     # Set intermediate output directory, remove extra '/' and ensure that
     # the directory exists.
-    set(tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/yarpidl_${family}")
+    set(tmp_dir "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/yarpidl_${family}")
     string(REGEX REPLACE "/(/|$)" "\\1" tmp_dir "${tmp_dir}")
     file(MAKE_DIRECTORY "${tmp_dir}")
 
