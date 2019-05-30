@@ -11,7 +11,9 @@
 # optionally storing the list of source/header files in the supplied
 # variables. Call as:
 #
-#   yarp_idl_to_dir([SOURCES_VAR <var>]
+#   yarp_idl_to_dir(INPUT_FILES <file> [file]
+#                   OUTPUT_DIR <dir>
+#                   [SOURCES_VAR <var>]
 #                   [HEADERS_VAR <var>]
 #                   [INCLUDE_DIRS_VAR <var>]
 #                   [CMAKE_SCRIPTS_VAR <var>]
@@ -94,6 +96,14 @@ function(YARP_IDL_TO_DIR)
         list(GET _YITD_UNPARSED_ARGUMENTS 4 _YITD_INCLUDE_DIRS_VAR)
       endif()
     endif()
+  endif()
+
+  if(NOT DEFINED _YITD_INPUT_FILES)
+    message(FATAL_ERROR "Missing INPUT_FILES argument")
+  endif()
+
+  if(NOT DEFINED _YITD_OUTPUT_DIR)
+    message(FATAL_ERROR "Missing OUTPUT_DIR argument")
   endif()
 
   unset(_full_headers)
