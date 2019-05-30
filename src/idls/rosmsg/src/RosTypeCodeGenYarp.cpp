@@ -960,9 +960,9 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field)
 
 bool RosTypeCodeGenYarp::writeIndex(RosTypeCodeGenState& state)
 {
-    // Generate _indexALL.txt file
+    // Generate _index.txt file
     string root = (target != "") ? (target + "/") : "";
-    string index_fname = className + "_indexALL.txt";
+    string index_fname = className + "_index.txt";
 
     yarp::os::mkdir_p((root + index_fname).c_str(), 1);
     out = fopen((root + index_fname).c_str(), "w");

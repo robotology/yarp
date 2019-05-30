@@ -16,7 +16,7 @@
 set(_headers)
 set(_sources)
 
-file(STRINGS "@_dir@/@_name@_indexALL.txt" _index)
+file(STRINGS "@_dir@/@_name@_index.txt" _index)
 foreach(_gen_file ${_index})
   get_filename_component(_type ${_gen_file} EXT)
   get_filename_component(_main ${_gen_file} NAME_WE)

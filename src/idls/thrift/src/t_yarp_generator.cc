@@ -646,7 +646,7 @@ void t_yarp_generator::init_generator()
         MKDIR(subdir.c_str());
     }
 
-    std::string findex_name = get_out_dir() + program_->get_name() + "_indexALL.txt";
+    std::string findex_name = get_out_dir() + program_->get_name() + "_index.txt";
     f_out_index_.open(findex_name);
 
     if (!program_->get_consts().empty() || !program_->get_enums().empty()) {
