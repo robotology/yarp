@@ -76,6 +76,10 @@ private:
     bool                          set_current_goal_name(const std::string& name);
     bool                          get_current_goal_name(std::string& name);
 
+private: //math stuff
+    double                        normalize_angle(double angle);
+    bool                          locations_are_similar(Map2DLocation loc1, Map2DLocation loc2, double lin_tol, double ang_tol);
+
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
@@ -89,11 +93,16 @@ public:
     virtual bool read(yarp::os::ConnectionReader& connection) override;
 
     /* The following methods belong to INavigation2D interface */
-    bool   checkInsideArea(std::string area_name) override;
+    virtual bool checkInsideArea(Map2DArea area) override;
+    virtual bool checkInsideArea(std::string area_name)  override;
+    virtual bool checkNearToLocation(Map2DLocation loc, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
+    virtual bool checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
+
     bool   gotoTargetByAbsoluteLocation(yarp::dev::Map2DLocation loc) override;
     bool   gotoTargetByLocationName(std::string location_name) override;
     bool   gotoTargetByRelativeLocation(double x, double y, double theta) override;
     bool   gotoTargetByRelativeLocation(double x, double y) override;
+    bool   applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
     bool   recomputeCurrentNavigationPath() override;
 
     bool   getAbsoluteLocationOfCurrentTarget(yarp::dev::Map2DLocation& loc) override;
@@ -101,7 +110,7 @@ public:
     bool   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;
 
     bool   getCurrentPosition(yarp::dev::Map2DLocation &loc) override;
-    bool   setInitialPose(yarp::dev::Map2DLocation& loc) override;
+    bool   setInitialPose(const yarp::dev::Map2DLocation& loc) override;
     bool   getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status) override;
     bool   getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses) override;
 

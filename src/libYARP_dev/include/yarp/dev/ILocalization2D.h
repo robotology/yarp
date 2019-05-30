@@ -64,13 +64,14 @@ public:
     * @param loc the location of the robot
     * @return true/false
     */
-    virtual bool   setInitialPose(yarp::dev::Map2DLocation& loc) = 0;
+    virtual bool   setInitialPose(const yarp::dev::Map2DLocation& loc) = 0;
 };
 
 constexpr yarp::conf::vocab32_t VOCAB_INAVIGATION            = yarp::os::createVocab('i','n','a','v');
 
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GOTOABS            = yarp::os::createVocab('s','a','b','s');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GOTOREL            = yarp::os::createVocab('s','r','e','l');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_VELOCITY_CMD       = yarp::os::createVocab('v', 'e', 'l', 'c');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_RECOMPUTE_PATH     = yarp::os::createVocab('r','c','m','p');
 
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_X                 = yarp::os::createVocab('g','e','t');

@@ -530,9 +530,84 @@ bool yarp::dev::Navigation2DClient::gotoTargetByAbsoluteLocation(Map2DLocation l
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::checkInsideArea(std::string area_name)
+bool yarp::dev::Navigation2DClient::locations_are_similar(Map2DLocation loc1, Map2DLocation loc2, double linear_tolerance, double angular_tolerance)
+{
+    if (linear_tolerance < 0) return false;
+    if (angular_tolerance < 0) return false;
+    yAssert(linear_tolerance >= 0);
+    yAssert(angular_tolerance >= 0);
+  
+    if (loc1.map_id != loc2.map_id)
+    {
+        return false;
+    }
+    if (sqrt(pow((loc1.x - loc2.x),2) + pow((loc1.y - loc2.y),2)) > linear_tolerance)
+    {
+        return false;
+    }
+
+    if (angular_tolerance != std::numeric_limits<double>::infinity() &&
+        fabs(normalize_angle(loc1.theta) - normalize_angle(loc2.theta)) > angular_tolerance)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool yarp::dev::Navigation2DClient::checkNearToLocation(Map2DLocation loc, double linear_tolerance, double angular_tolerance)
+{
+    Map2DLocation curr_loc;
+    if (getCurrentPosition(curr_loc) == false)
+    {
+        yError() << "Navigation2DClient::checkInsideArea() unable to get robot position";
+        return false;
+    }
+
+    return locations_are_similar(loc, curr_loc, linear_tolerance, angular_tolerance);
+
+    return true;
+}
+
+bool yarp::dev::Navigation2DClient::checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance)
 {
     Map2DLocation loc;
+    Map2DLocation curr_loc;
+    if (this->getLocation(location_name, loc) == false)
+    {
+        yError() << "Location" << location_name << "not found";
+        return false;
+    }
+
+    if (getCurrentPosition(curr_loc) == false)
+    {
+        yError() << "Navigation2DClient::checkInsideArea() unable to get robot position";
+        return false;
+    }
+
+    return locations_are_similar(loc, curr_loc, linear_tolerance, angular_tolerance);
+}
+
+bool  yarp::dev::Navigation2DClient::checkInsideArea(Map2DArea area)
+{
+    Map2DLocation curr_loc;
+    if (getCurrentPosition(curr_loc) == false)
+    {
+        yError() << "Navigation2DClient::checkInsideArea() unable to get robot position";
+        return false;
+    }
+
+    if (area.checkLocationInsideArea(curr_loc) == false)
+    {
+        //yDebug() << "Not inside Area";
+        return false;
+    }
+
+    return true;
+}
+
+bool yarp::dev::Navigation2DClient::checkInsideArea(std::string area_name)
+{
+    Map2DLocation curr_loc;
     Map2DArea area;
     if (this->getArea(area_name, area) == false)
     {
@@ -540,13 +615,13 @@ bool yarp::dev::Navigation2DClient::checkInsideArea(std::string area_name)
         return false;
     }
 
-    if (getCurrentPosition(loc) == false)
+    if (getCurrentPosition(curr_loc) == false)
     {
         yError() << "Navigation2DClient::checkInsideArea() unable to get robot position";
         return false;
     }
 
-    if (area.checkLocationInsideArea(loc) == false)
+    if (area.checkLocationInsideArea(curr_loc) == false)
     {
         //yDebug() << "Not inside Area";
         return false;
@@ -671,7 +746,7 @@ bool  yarp::dev::Navigation2DClient::recomputeCurrentNavigationPath()
     return true;
 }
 
-bool  yarp::dev::Navigation2DClient::setInitialPose(Map2DLocation& loc)
+bool  yarp::dev::Navigation2DClient::setInitialPose(const Map2DLocation& loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1307,6 +1382,37 @@ bool  yarp::dev::Navigation2DClient::getLocalizationStatus(yarp::dev::Localizati
     return true;
 }
 
+bool  yarp::dev::Navigation2DClient::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_VELOCITY_CMD);
+    b.addFloat64(x_vel);
+    b.addFloat64(y_vel);
+    b.addFloat64(theta_vel);
+    b.addFloat64(timeout);
+
+    bool ret = m_rpc_port_navigation_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yError() << "Navigation2DClient::applyVelocityCommand() received error from navigation server";
+            return false;
+        }
+    }
+    else
+    {
+        yError() << "Navigation2DClient::applyVelocityCommand() error on writing on rpc port";
+        return false;
+    }
+
+    reset_current_goal_name();
+    return true;
+}
+
 bool  yarp::dev::Navigation2DClient::getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses)
 {
     yarp::os::Bottle b;
@@ -1355,6 +1461,23 @@ bool  yarp::dev::Navigation2DClient::getEstimatedPoses(std::vector<yarp::dev::Ma
         return false;
     }
     return true;
+}
+
+//this function receives an angle from (-inf,+inf) and returns an angle in (0,180) or (-180,0)
+double yarp::dev::Navigation2DClient::normalize_angle(double angle)
+{
+    angle = std::remainder(angle, 360);
+
+    if (angle > 180 && angle < 360)
+    {
+        angle = angle - 360;
+    }
+
+    if (angle<-180 && angle>-360)
+    {
+        angle = angle + 360;
+    }
+    return angle;
 }
 
 yarp::dev::DriverCreator *createNavigation2DClient()
