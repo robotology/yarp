@@ -7,7 +7,7 @@
 # Configured with the following variables:
 #
 #  - family = @_family@
-#  - dir = @_dir@
+#  - temp_dir = @_temp_dir@
 #  - name = @_name@
 #  - output_dir = @_output_dir@
 #  - target_name = @_target_name@
@@ -16,30 +16,30 @@
 set(_headers)
 set(_sources)
 
-file(STRINGS "@_dir@/@_name@_index.txt" _index)
+file(STRINGS "@_temp_dir@/@_name@_index.txt" _index)
 foreach(_gen_file ${_index})
   get_filename_component(_type ${_gen_file} EXT)
   get_filename_component(_main ${_gen_file} NAME_WE)
   if(${_type} STREQUAL ".h")
-    if(EXISTS "@_dir@/${_gen_file}")
-      configure_file("@_dir@/${_gen_file}"
+    if(EXISTS "@_temp_dir@/${_gen_file}")
+      configure_file("@_temp_dir@/${_gen_file}"
                      "@_output_dir@/include/${_gen_file}"
                      COPYONLY)
       list(APPEND _headers "include/${_gen_file}")
       list(REMOVE_DUPLICATES _headers)
     else()
-      message(WARNING "${_gen_file} not found in @_dir@ dir!")
+      message(WARNING "${_gen_file} not found in @_temp_dir@ dir!")
     endif()
-    if(EXISTS "@_dir@/${_main}Reply${_type}")
-      configure_file("@_dir@/${_main}Reply${_type}"
+    if(EXISTS "@_temp_dir@/${_main}Reply${_type}")
+      configure_file("@_temp_dir@/${_main}Reply${_type}"
                      "@_output_dir@/include/${_prefix}${_main}Reply${_type}"
                      COPYONLY)
       list(APPEND _headers "include/${_main}Reply${_type}")
       list(REMOVE_DUPLICATES _headers)
     endif()
   elseif(${_type} STREQUAL ".cpp")
-    if(EXISTS "@_dir@/${_gen_file}")
-      configure_file("@_dir@/${_gen_file}"
+    if(EXISTS "@_temp_dir@/${_gen_file}")
+      configure_file("@_temp_dir@/${_gen_file}"
                      "@_output_dir@/src/${_gen_file}"
                      COPYONLY)
       list(APPEND _sources "src/${_gen_file}")

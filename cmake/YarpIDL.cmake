@@ -166,13 +166,13 @@ function(YARP_IDL_TO_DIR)
     endif()
 
     # Set intermediate output directory.
-    set(_dir ${CMAKE_CURRENT_BINARY_DIR}/_yarp_idl_${_include_prefix}${_dir_add})
+    set(_temp_dir ${CMAKE_CURRENT_BINARY_DIR}/_yarp_idl_${_include_prefix}${_dir_add})
 
     # Set cmake script file name
     set(_cmake_script "${_YITD_OUTPUT_DIR}/${_target_name}.cmake")
 
     # Ensure that the intermediate output directory is deleted on make clean
-    set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES ${_dir})
+    set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES ${_temp_dir})
 
     # Check if generation has never happened.
     set(files_missing TRUE)
@@ -194,12 +194,13 @@ function(YARP_IDL_TO_DIR)
                                                  # YARPConfig.cmake for dependencies
                    NO_DEFAULT_PATH)
       # Make sure intermediate output directory exists.
-      file(MAKE_DIRECTORY "${_dir}")
+      file(MAKE_DIRECTORY "${_temp_dir}")
       # Generate a script controlling final layout of files.
       # Make sure that variables are visible when expanding templates.
       set(_output_dir ${_YITD_OUTPUT_DIR})
+      set(_place_cmake_script "${_temp_dir}/place${_name}.cmake")
       configure_file("${YARP_MODULE_DIR}/template/placeGeneratedYarpIdlFiles.cmake.in"
-                     "${_dir}/place${_name}.cmake"
+                     "${_place_cmake_script}"
                      @ONLY)
       unset(_args)
       if("${_family}" STREQUAL "thrift")
@@ -227,7 +228,7 @@ function(YARP_IDL_TO_DIR)
           list(APPEND _args --verbose)
         endif()
       endif()
-      list(APPEND _args --out "${_dir}")
+      list(APPEND _args --out "${_temp_dir}")
 
       set(_output_quiet OUTPUT_QUIET)
       if(_YITD_VERBOSE)
@@ -252,7 +253,7 @@ function(YARP_IDL_TO_DIR)
         message(FATAL_ERROR "yarpidl_${_family} (${YARPIDL_${_family}_LOCATION}) failed, aborting.")
       endif()
       # Place the files in their final location.
-      execute_process(COMMAND ${CMAKE_COMMAND} -P "${_dir}/place${_name}.cmake")
+      execute_process(COMMAND ${CMAKE_COMMAND} -P "${_place_cmake_script}")
       set(files_missing FALSE)
     endif()
 
@@ -277,9 +278,9 @@ function(YARP_IDL_TO_DIR)
         unset(yarpidl_depends)
       endif()
       add_custom_command(OUTPUT ${_YITD_OUTPUT_DIR}/${_target_name}.cmake ${DEST_FILES}
-                         COMMAND ${YARPIDL_${_family}_LOCATION} --out ${_dir} --gen yarp:include_prefix --I ${CMAKE_CURRENT_SOURCE_DIR} ${_file}
+                         COMMAND ${YARPIDL_${_family}_LOCATION} --out ${_temp_dir} --gen yarp:include_prefix --I ${CMAKE_CURRENT_SOURCE_DIR} ${_file}
                          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                         COMMAND ${CMAKE_COMMAND} -P ${_dir}/place${_name}.cmake
+                         COMMAND ${CMAKE_COMMAND} -P ${_temp_dir}/place${_name}.cmake
                          DEPENDS ${yarpidl_depends} ${YARPIDL_LOCATION})
       add_custom_target(${_target_name} DEPENDS ${_YITD_OUTPUT_DIR}/${_target_name}.cmake)
 
