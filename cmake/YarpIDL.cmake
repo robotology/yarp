@@ -200,7 +200,7 @@ function(YARP_IDL_TO_DIR)
                                                  # YARPConfig.cmake for dependencies
                    NO_DEFAULT_PATH)
       # Make sure intermediate output directory exists.
-      make_directory(${_dir})
+      file(MAKE_DIRECTORY "${_dir}")
       # Generate a script controlling final layout of files.
       # Make sure that variables are visible when expanding templates.
       set(_output_dir ${_YITD_OUTPUT_DIR})
@@ -476,7 +476,7 @@ function(YARP_ADD_IDL var)
     # the directory exists.
     set(tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/yarpidl_${family}")
     string(REGEX REPLACE "/(/|$)" "\\1" tmp_dir "${tmp_dir}")
-    make_directory(${tmp_dir})
+    file(MAKE_DIRECTORY "${tmp_dir}")
 
     # Set output directories and remove extra "/"
     set(srcs_out_dir "${CMAKE_CURRENT_BINARY_DIR}/src")
