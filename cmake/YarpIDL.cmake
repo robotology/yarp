@@ -16,7 +16,6 @@
 #                   [SOURCES_VAR <var>]
 #                   [HEADERS_VAR <var>]
 #                   [INCLUDE_DIRS_VAR <var>]
-#                   [CMAKE_SCRIPTS_VAR <var>]
 #                   [THRIFT_INCLUDE_PREFIX]
 #                   [THRIFT_NO_NAMESPACE_PREFIX]
 #                   [THRIFT_NO_COPYRIGHT}
@@ -58,8 +57,7 @@ function(YARP_IDL_TO_DIR)
   set(_oneValueArgs OUTPUT_DIR
                     SOURCES_VAR
                     HEADERS_VAR
-                    INCLUDE_DIRS_VAR
-                    CMAKE_SCRIPTS_VAR)
+                    INCLUDE_DIRS_VAR)
   set(_multiValueArgs INPUT_FILES)
   cmake_parse_arguments(_YITD "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
 
@@ -109,7 +107,6 @@ function(YARP_IDL_TO_DIR)
   unset(_full_headers)
   unset(_full_sources)
   unset(_full_paths)
-  unset(_cmake_scripts)
 
   foreach(_file ${_YITD_INPUT_FILES})
 
@@ -173,7 +170,6 @@ function(YARP_IDL_TO_DIR)
 
     # Set cmake script file name
     set(_cmake_script "${_YITD_OUTPUT_DIR}/${_target_name}.cmake")
-    list(APPEND _cmake_scripts "${_cmake_script}")
 
     # Ensure that the intermediate output directory is deleted on make clean
     set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES ${_dir})
@@ -312,9 +308,6 @@ function(YARP_IDL_TO_DIR)
   endif()
   if(DEFINED _YITD_INCLUDE_DIRS_VAR)
     set(${_YITD_INCLUDE_DIRS_VAR} ${_full_paths} PARENT_SCOPE)
-  endif()
-  if(DEFINED _YITD_CMAKE_SCRIPTS_VAR)
-    set(${_YITD_CMAKE_SCRIPTS_VAR} "${_cmake_scripts}" PARENT_SCOPE)
   endif()
 
 endfunction()

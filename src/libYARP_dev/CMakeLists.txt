@@ -229,15 +229,10 @@ yarp_idl_to_dir(INPUT_FILES stateExt.thrift
                 OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/devices/msgs/yarp"
                 SOURCES_VAR YARP_dev_idl_SRCS
                 HEADERS_VAR YARP_dev_idl_HDRS
-                INCLUDE_DIRS_VAR YARP_dev_idl_INCLUDE_DIRS
-                CMAKE_SCRIPTS_VAR YARP_dev_idl_CMAKE_SCRIPTS)
-foreach(_script ${YARP_dev_idl_CMAKE_SCRIPTS})
-  include("${_script}")
-endforeach()
+                INCLUDE_DIRS_VAR YARP_dev_idl_INCLUDE_DIRS)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/AnalogSensorClient
                     ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/JoypadControlServer)
-
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Source Files"
