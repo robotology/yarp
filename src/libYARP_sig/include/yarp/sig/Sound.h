@@ -27,7 +27,7 @@ namespace sig {
 class YARP_sig_API Sound : public yarp::os::Portable
 {
 public:
-    using audio_sample = short int;
+    typedef short int audio_sample;
 
     Sound(size_t bytesPerSample = 2);
 
