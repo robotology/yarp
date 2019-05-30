@@ -178,11 +178,9 @@ function(YARP_IDL_TO_DIR)
     # Ensure that the intermediate output directory is deleted on make clean
     set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES ${_dir})
 
-    set(settings_file ${_YITD_OUTPUT_DIR}/${_target_name}.cmake)
-
     # Check if generation has never happened.
     set(files_missing TRUE)
-    if(EXISTS ${settings_file})
+    if(EXISTS ${_cmake_script})
       set(files_missing FALSE)
     endif()
 
@@ -264,7 +262,7 @@ function(YARP_IDL_TO_DIR)
 
     # Prepare list of generated files.
     if(NOT files_missing)
-      include(${settings_file})
+      include(${_cmake_script})
       set(DEST_FILES)
       foreach(generatedFile ${headers})
         list(APPEND DEST_FILES ${_YITD_OUTPUT_DIR}/${generatedFile})
