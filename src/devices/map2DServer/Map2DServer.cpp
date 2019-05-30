@@ -426,7 +426,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
 
 void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& out)
 {
-    if (in.get(0).asString() == "save_locations" && in.get(1).isString())
+    if (in.get(0).asString() == "save_locations&areas" && in.get(1).isString())
     {
         if(save_locations_and_areas(in.get(1).asString()))
         {
@@ -434,10 +434,10 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
         }
         else
         {
-            out.addString("save_locations failed");
+            out.addString("save_locations&areas failed");
         }
     }
-    else if (in.get(0).asString() == "load_locations" && in.get(1).isString())
+    else if (in.get(0).asString() == "load_locations&areas" && in.get(1).isString())
     {
         if(load_locations_and_areas(in.get(1).asString()))
         {
@@ -445,13 +445,21 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
         }
         else
         {
-            out.addString("load_locations failed");
+            out.addString("load_locations&areas failed");
         }
     }
     else if(in.get(0).asString() == "list_locations")
     {
         std::map<std::string, Map2DLocation>::iterator it;
         for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it)
+        {
+            out.addString(it->first);
+        }
+    }
+    else if (in.get(0).asString() == "list_areas")
+    {
+        std::map<std::string, Map2DArea>::iterator it;
+        for (it = m_areas_storage.begin(); it != m_areas_storage.end(); ++it)
         {
             out.addString(it->first);
         }
@@ -536,6 +544,11 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
         m_locations_storage.clear();
         out.addString("all locations cleared");
     }
+    else if (in.get(0).asString() == "clear_all_areas")
+    {
+        m_areas_storage.clear();
+        out.addString("all areas cleared");
+    }
     else if(in.get(0).asString() == "clear_all_maps")
     {
         m_maps_storage.clear();
@@ -544,10 +557,12 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
     else if(in.get(0).asString() == "help")
     {
         out.addVocab(Vocab::encode("many"));
-        out.addString("'save_locations <full path filename>' to save locations on a file");
-        out.addString("'load_locations <full path filename>' to load locations from a file");
+        out.addString("'save_locations&areas <full path filename>' to save locations and areas on a file");
+        out.addString("'load_locations&areas <full path filename>' to load locations and areas from a file");
         out.addString("'list_locations' to view a list of all stored locations");
+        out.addString("'list_areas' to view a list of all stored areas");
         out.addString("'clear_all_locations' to clear all stored locations");
+        out.addString("'clear_all_areas' to clear all stored areas");
         out.addString("'save_maps <full path>' to save a map collection to a folder");
         out.addString("'load_maps <full path>' to load a map collection from a folder");
         out.addString("'save_map <map_name> <full path>' to save a single map");
