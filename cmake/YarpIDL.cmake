@@ -48,6 +48,9 @@ endif()
 
 function(YARP_IDL_TO_DIR)
 
+  # Flag to control whether IDL generation is allowed.
+  option(ALLOW_IDL_GENERATION "Allow YARP to (re)build IDL files as needed" OFF)
+
   set(_options VERBOSE
                THRIFT_INCLUDE_PREFIX
                THRIFT_NO_NAMESPACE_PREFIX
@@ -176,9 +179,6 @@ function(YARP_IDL_TO_DIR)
     if(EXISTS ${_cmake_script})
       set(files_missing FALSE)
     endif()
-
-    # Flag to control whether IDL generation is allowed.
-    option(ALLOW_IDL_GENERATION "Allow YARP to (re)build IDL files as needed" ${files_missing})
 
     if(ALLOW_IDL_GENERATION)
       # Say what we are doing.
