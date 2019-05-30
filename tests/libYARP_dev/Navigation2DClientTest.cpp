@@ -24,7 +24,10 @@ TEST_CASE("dev::Navigation2DClientTest", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("map2DServer", "device");
     YARP_REQUIRE_PLUGIN("map2DClient", "device");
+    YARP_REQUIRE_PLUGIN("localization2DServer", "device");
+    YARP_REQUIRE_PLUGIN("fakeLocalizer", "device");
     YARP_REQUIRE_PLUGIN("navigation2DServer", "device");
+    YARP_REQUIRE_PLUGIN("fakeNavigation", "device");
     YARP_REQUIRE_PLUGIN("navigation2DClient", "device");
 
     Network::setLocalMode(true);
