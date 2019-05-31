@@ -21,9 +21,7 @@ set(YARP_TEMPLATE_FILES template/yarp_plugin_carrier.cpp.in
                         template/yarp_plugin_device.cpp.in
                         template/yarp_plugin_portmonitor.cpp.in
                         template/yarp_plugin_library.cpp.in
-                        template/yarp_plugin_yarpdev_main.cpp.in
-                        template/YarpTweakIDL.cmake.in
-                        template/placeGeneratedYarpIdlFiles.cmake.in)
+                        template/yarp_plugin_yarpdev_main.cpp.in)
 
 install(FILES ${YARP_TEMPLATE_FILES}
         COMPONENT scripts

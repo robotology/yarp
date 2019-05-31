@@ -6,15 +6,18 @@
 
 if(YARP_COMPILE_DEVICE_PLUGINS)
 
-  if(YARP_COMPILE_EXECUTABLES)
-    yarp_add_idl(MAS_THRIFT_GEN_FILES "${CMAKE_CURRENT_SOURCE_DIR}/multipleAnalogSensorsSerializations.thrift")
+  if(BUILD_SHARED_LIBS AND
+     NOT CMAKE_CROSSCOMPILING AND
+     NOT ALLOW_IDL_GENERATION AND
+     YARP_COMPILE_EXECUTABLES)
+    yarp_add_idl(MAS_THRIFT_GEN_FILES multipleAnalogSensorsSerializations.thrift)
     set(MAS_THRIFT_INTERFACE_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/include")
   else()
-    yarp_idl_to_dir("${CMAKE_CURRENT_SOURCE_DIR}/multipleAnalogSensorsSerializations.thrift"
-                    "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
-                    MAS_THRIFT_GEN_SRCS
-                    MAS_THRIFT_GEN_HDRS
-                    MAS_THRIFT_INTERFACE_INCLUDE_DIRS)
+    yarp_idl_to_dir(INPUT_FILES multipleAnalogSensorsSerializations.thrift
+                    OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
+                    SOURCES_VAR MAS_THRIFT_GEN_SRCS
+                    HEADERS_VAR MAS_THRIFT_GEN_HDRS
+                    INCLUDE_DIRS_VAR MAS_THRIFT_INTERFACE_INCLUDE_DIRS)
     set(MAS_THRIFT_GEN_FILES ${MAS_THRIFT_GEN_SRCS} ${MAS_THRIFT_GEN_HDRS})
   endif()
 

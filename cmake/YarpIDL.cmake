@@ -11,10 +11,11 @@
 # optionally storing the list of source/header files in the supplied
 # variables. Call as:
 #
-#   yarp_idl_to_dir([SOURCES_VAR <var>]
+#   yarp_idl_to_dir(INPUT_FILES <file> [file]
+#                   OUTPUT_DIR <dir>
+#                   [SOURCES_VAR <var>]
 #                   [HEADERS_VAR <var>]
 #                   [INCLUDE_DIRS_VAR <var>]
-#                   [CMAKE_SCRIPTS_VAR <var>]
 #                   [THRIFT_INCLUDE_PREFIX]
 #                   [THRIFT_NO_NAMESPACE_PREFIX]
 #                   [THRIFT_NO_COPYRIGHT}
@@ -45,7 +46,129 @@ if(COMMAND _yarp_idl_rosmsg_to_file_list)
   return()
 endif()
 
+# Internal function.
+function(_YARP_IDL_THRIFT_ARGS _prefix _out_dir _verbose _out_var)
+  unset(_args)
+  unset(_extra_args)
+  foreach(_ARG INCLUDE_PREFIX
+               NO_NAMESPACE_PREFIX
+               NO_COPYRIGHT
+               NO_EDITOR
+               NO_DOC)
+    if(${_prefix}_THRIFT_${_ARG})
+      string(TOLOWER "${_ARG}" _arg)
+      list(APPEND _extra_args ${_arg})
+    endif()
+  endforeach()
+  if (NOT "${_extra_args}" STREQUAL "")
+    string(REPLACE ";" "," _extra_args "${_extra_args}")
+    set(_extra_args ":${_extra_args}")
+  endif()
+  list(APPEND _args --gen yarp${_extra_args})
+  list(APPEND _args --I "${CMAKE_CURRENT_SOURCE_DIR}")
+  if(_verbose)
+    list(APPEND _args -v)
+  endif()
+  list(APPEND _args --out "${_out_dir}")
+
+  set(${_out_var} ${_args} PARENT_SCOPE)
+endfunction()
+
+# Internal function.
+function(_YARP_IDL_ROSMSG_ARGS _prefix _out_dir _verbose _out_var)
+  unset(_args)
+  list(APPEND _args --no-ros true)
+  list(APPEND _args --no-cache)
+  if(_verbose)
+    list(APPEND _args --verbose)
+  endif()
+  list(APPEND _args --out "${_out_dir}")
+
+  set(${_out_var} ${_args} PARENT_SCOPE)
+endfunction()
+
+
+# Internal function.
+# Perform the actual code generation
+function(_YARP_IDL_TO_DIR_GENERATE _family _file _name _output_dir _include_prefix _verbose)
+  # Say what we are doing.
+  message(STATUS "${_family} code for ${_file} => ${_output_dir}")
+
+  # Set intermediate output directory.
+  set(_temp_dir ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/yarp_idl_to_dir/${_include_prefix})
+
+  # Make sure intermediate output directory exists.
+  file(MAKE_DIRECTORY "${_temp_dir}")
+
+  # Ensure that the intermediate output directory is deleted on make clean
+  set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES ${_temp_dir})
+
+  # Generate code at configuration time, so we know filenames.
+  find_program(YARPIDL_${_family}_LOCATION
+                NAMES yarpidl_${_family}
+                HINTS ${YARP_IDL_BINARY_HINT} # This is a list of directories defined
+                                              # in YarpOptions.cmake (for YARP) or in
+                                              # YARPConfig.cmake for dependencies
+                NO_DEFAULT_PATH)
+
+  if("${_family}" STREQUAL "thrift")
+    _yarp_idl_thrift_args(_YITD "${_temp_dir}" ${_verbose} _args)
+  else()
+    _yarp_idl_rosmsg_args(_YITD "${_temp_dir}" ${_verbose} _args)
+  endif()
+
+  set(_output_quiet OUTPUT_QUIET)
+  if(_verbose)
+    set(_output_quiet)
+  endif()
+
+  set(_cmd "${YARPIDL_${_family}_LOCATION}" ${_args} "${_file}")
+
+  if(_verbose)
+    string(REPLACE ";" " " _cmd_str "${_cmd}")
+    message(STATUS "    WORKING_DIRECTORY = [${CMAKE_CURRENT_SOURCE_DIR}]")
+    message(STATUS "    COMMAND = [${_cmd_str}]")
+  endif()
+
+  # Go ahead and generate files.
+  execute_process(COMMAND ${_cmd}
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                  RESULT_VARIABLE res
+                  ${_output_quiet})
+  # Failure is bad news, let user know.
+  if(NOT "${res}" STREQUAL "0")
+    message(FATAL_ERROR "yarpidl_${_family} (${YARPIDL_${_family}_LOCATION}) failed, aborting.")
+  endif()
+
+  # Place the files in their final location.
+  file(STRINGS "${_temp_dir}/${_name}_index.txt" _index)
+  file(WRITE "${_output_dir}/${_name}_index.txt" "")
+  foreach(_gen_file ${_index})
+    if(NOT EXISTS "${_temp_dir}/${_gen_file}")
+      message(FATAL_ERROR "${_gen_file} not found in ${_temp_dir} dir!")
+    endif()
+    get_filename_component(_type ${_gen_file} EXT)
+    if(${_type} STREQUAL ".h")
+      file(APPEND "${_output_dir}/${_name}_index.txt" "include/${_gen_file}\n")
+      configure_file("${_temp_dir}/${_gen_file}"
+                     "${_output_dir}/include/${_gen_file}"
+                     COPYONLY)
+    elseif(${_type} STREQUAL ".cpp")
+      file(APPEND "${_output_dir}/${_name}_index.txt" "src/${_gen_file}\n")
+      configure_file("${_temp_dir}/${_gen_file}"
+                     "${_output_dir}/src/${_gen_file}"
+                     COPYONLY)
+    else()
+      message(WARNING "Filename extension of ${_gen_file} is neither .h nor .cpp")
+    endif()
+  endforeach()
+endfunction()
+
+
 function(YARP_IDL_TO_DIR)
+
+  # Flag to control whether IDL generation is allowed.
+  option(ALLOW_IDL_GENERATION "Allow YARP to (re)build IDL files as needed" OFF)
 
   set(_options VERBOSE
                THRIFT_INCLUDE_PREFIX
@@ -56,8 +179,7 @@ function(YARP_IDL_TO_DIR)
   set(_oneValueArgs OUTPUT_DIR
                     SOURCES_VAR
                     HEADERS_VAR
-                    INCLUDE_DIRS_VAR
-                    CMAKE_SCRIPTS_VAR)
+                    INCLUDE_DIRS_VAR)
   set(_multiValueArgs INPUT_FILES)
   cmake_parse_arguments(_YITD "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
 
@@ -96,10 +218,17 @@ function(YARP_IDL_TO_DIR)
     endif()
   endif()
 
+  if(NOT DEFINED _YITD_INPUT_FILES)
+    message(FATAL_ERROR "Missing INPUT_FILES argument")
+  endif()
+
+  if(NOT DEFINED _YITD_OUTPUT_DIR)
+    message(FATAL_ERROR "Missing OUTPUT_DIR argument")
+  endif()
+
   unset(_full_headers)
   unset(_full_sources)
   unset(_full_paths)
-  unset(_cmake_scripts)
 
   foreach(_file ${_YITD_INPUT_FILES})
 
@@ -118,7 +247,6 @@ function(YARP_IDL_TO_DIR)
     set(_dir_add "")
 
     # Figure out format we are working with.
-    set(_yarpidl_native 0)
     if(_ext STREQUAL ".thrift")
       set(_family thrift)
       set(_dir_add "/${_name_lower}")
@@ -127,10 +255,8 @@ function(YARP_IDL_TO_DIR)
       set(_family rosmsg)
       if("${_file}" STREQUAL "time")
         set(_name TickTime)
-        set(_yarpidl_native 1)
       elseif("${_file}" STREQUAL "duration")
         set(_name TickDuration)
-        set(_yarpidl_native 1)
       endif()
     else()
       message(FATAL_ERROR "yarp_idl_to_dir does not know what to do with \"${_file}\", unrecognized extension \"${_ext}\"")
@@ -158,138 +284,39 @@ function(YARP_IDL_TO_DIR)
       set(_include_prefix "/${_include_prefix}")
     endif()
 
-    # Set intermediate output directory.
-    set(_dir ${CMAKE_CURRENT_BINARY_DIR}/_yarp_idl_${_include_prefix}${_dir_add})
-
     # Set cmake script file name
-    set(_cmake_script "${_YITD_OUTPUT_DIR}/${_target_name}.cmake")
-    list(APPEND _cmake_scripts "${_cmake_script}")
+    set(_index_file "${_YITD_OUTPUT_DIR}/${_name}_index.txt")
 
-    # Ensure that the intermediate output directory is deleted on make clean
-    set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES ${_dir})
-
-    set(settings_file ${_YITD_OUTPUT_DIR}/${_target_name}.cmake)
-
-    # Check if generation has never happened.
-    set(files_missing TRUE)
-    if(EXISTS ${settings_file})
-      set(files_missing FALSE)
+    if(ALLOW_IDL_GENERATION OR NOT EXISTS "${_index_file}")
+      _yarp_idl_to_dir_generate(${_family}
+                                "${_file}"
+                                ${_name}
+                                "${_YITD_OUTPUT_DIR}"
+                                "${_include_prefix}${_dir_add}"
+                                ${_YITD_VERBOSE})
     endif()
 
-    # Flag to control whether IDL generation is allowed.
-    option(ALLOW_IDL_GENERATION "Allow YARP to (re)build IDL files as needed" ${files_missing})
+    # Sanity check, it should never happen
+    if(NOT EXISTS "${_index_file}")
+      message(FATAL_ERROR "Something went wrong in idl generation. Missing \"${_index_file}\" file")
+    endif()
 
-    if(ALLOW_IDL_GENERATION)
-      # Say what we are doing.
-      message(STATUS "${_family} code for ${_file} => ${_YITD_OUTPUT_DIR}")
-      # Generate code at configuration time, so we know filenames.
-      find_program(YARPIDL_${_family}_LOCATION
-                   NAMES yarpidl_${_family}
-                   HINTS ${YARP_IDL_BINARY_HINT} # This is a list of directories defined
-                                                 # in YarpOptions.cmake (for YARP) or in
-                                                 # YARPConfig.cmake for dependencies
-                   NO_DEFAULT_PATH)
-      # Make sure intermediate output directory exists.
-      make_directory(${_dir})
-      # Generate a script controlling final layout of files.
-      # Make sure that variables are visible when expanding templates.
-      set(_output_dir ${_YITD_OUTPUT_DIR})
-      configure_file("${YARP_MODULE_DIR}/template/placeGeneratedYarpIdlFiles.cmake.in"
-                     "${_dir}/place${_name}.cmake"
-                     @ONLY)
-      unset(_args)
-      if("${_family}" STREQUAL "thrift")
-        unset(_extra_args)
-        foreach(_ARG INCLUDE_PREFIX
-                     NO_NAMESPACE_PREFIX
-                     NO_COPYRIGHT
-                     NO_EDITOR
-                     NO_DOC)
-          if(_YITD_THRIFT_${_ARG})
-            string(TOLOWER "${_ARG}" _arg)
-            list(APPEND _extra_args ${_arg})
-          endif()
-        endforeach()
-        if (NOT "${_extra_args}" STREQUAL "")
-          string(REPLACE ";" "," _extra_args "${_extra_args}")
-          set(_extra_args ":${_extra_args}")
-        endif()
-        list(APPEND _args --gen yarp${_extra_args})
-        list(APPEND _args --I "${CMAKE_CURRENT_SOURCE_DIR}")
+    # Read index file
+    file(STRINGS "${_index_file}" _index)
+    foreach(_gen_file ${_index})
+      if(NOT EXISTS "${_YITD_OUTPUT_DIR}/${_gen_file}")
+        message(FATAL_ERROR "Something went wrong in idl generation. Missing \"${_YITD_OUTPUT_DIR}/${_hdr}\" file")
+      endif()
+      file(RELATIVE_PATH _rel_file ${CMAKE_CURRENT_LIST_DIR} "${_YITD_OUTPUT_DIR}/${_gen_file}")
+      get_filename_component(_type ${_gen_file} EXT)
+      if(${_type} STREQUAL ".h")
+        list(APPEND _full_headers "${_rel_file}")
+      elseif(${_type} STREQUAL ".cpp")
+        list(APPEND _full_sources "${_rel_file}")
       else()
-        list(APPEND _args --no-ros true)
-        list(APPEND _args --no-cache)
-        if(_YITD_VERBOSE)
-          list(APPEND _args --verbose)
-        endif()
+        message(WARNING "Filename extension of ${_gen_file} is neither .h nor .cpp")
       endif()
-      list(APPEND _args --out "${_dir}")
-
-      set(_output_quiet OUTPUT_QUIET)
-      if(_YITD_VERBOSE)
-        set(_output_quiet)
-      endif()
-
-      set(_cmd "${YARPIDL_${_family}_LOCATION}" ${_args} "${_file}")
-
-      if(_YITD_VERBOSE)
-        string(REPLACE ";" " " _cmd_str "${_cmd}")
-        message(STATUS "    WORKING_DIRECTORY = [${CMAKE_CURRENT_SOURCE_DIR}]")
-        message(STATUS "    COMMAND = [${_cmd_str}]")
-      endif()
-
-      # Go ahead and generate files.
-      execute_process(COMMAND ${_cmd}
-                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                      RESULT_VARIABLE res
-                      ${_output_quiet})
-      # Failure is bad news, let user know.
-      if(NOT "${res}" STREQUAL "0")
-        message(FATAL_ERROR "yarpidl_${_family} (${YARPIDL_${_family}_LOCATION}) failed, aborting.")
-      endif()
-      # Place the files in their final location.
-      execute_process(COMMAND ${CMAKE_COMMAND} -P "${_dir}/place${_name}.cmake")
-      set(files_missing FALSE)
-    endif()
-
-    # Prepare list of generated files.
-    if(NOT files_missing)
-      include(${settings_file})
-      set(DEST_FILES)
-      foreach(generatedFile ${headers})
-        list(APPEND DEST_FILES ${_YITD_OUTPUT_DIR}/${generatedFile})
-        list(APPEND _full_headers ${_YITD_OUTPUT_DIR}/${generatedFile})
-      endforeach(generatedFile)
-      foreach(generatedFile ${sources})
-        list(APPEND DEST_FILES ${_YITD_OUTPUT_DIR}/${generatedFile})
-        list(APPEND _full_sources ${_YITD_OUTPUT_DIR}/${generatedFile})
-      endforeach(generatedFile)
-    endif()
-
-    if(ALLOW_IDL_GENERATION)
-      # Add a command/target to regenerate the files if the IDL file changes.
-      set(yarpidl_depends ${_file})
-      if(_yarpidl_native)
-        unset(yarpidl_depends)
-      endif()
-      add_custom_command(OUTPUT ${_YITD_OUTPUT_DIR}/${_target_name}.cmake ${DEST_FILES}
-                         COMMAND ${YARPIDL_${_family}_LOCATION} --out ${_dir} --gen yarp:include_prefix --I ${CMAKE_CURRENT_SOURCE_DIR} ${_file}
-                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                         COMMAND ${CMAKE_COMMAND} -P ${_dir}/place${_name}.cmake
-                         DEPENDS ${yarpidl_depends} ${YARPIDL_LOCATION})
-      add_custom_target(${_target_name} DEPENDS ${_YITD_OUTPUT_DIR}/${_target_name}.cmake)
-
-      # Put the target in the right folder if defined
-      get_property(autogen_source_group_set GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER SET)
-      if(autogen_source_group_set)
-        get_property(autogen_targets_folder GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER)
-        set_property(TARGET ${_target_name} PROPERTY FOLDER "${autogen_targets_folder}")
-      endif()
-    else()
-      if(files_missing)
-        message(FATAL_ERROR "Generated IDL files for ${_file} not found and cannot make them because ALLOW_IDL_GENERATION=${ALLOW_IDL_GENERATION} (maybe this should be turned on?)")
-      endif()
-    endif(ALLOW_IDL_GENERATION)
+    endforeach()
 
     list(APPEND _full_paths "${_YITD_OUTPUT_DIR}/include")
     list(REMOVE_DUPLICATES _full_paths)
@@ -304,9 +331,6 @@ function(YARP_IDL_TO_DIR)
   endif()
   if(DEFINED _YITD_INCLUDE_DIRS_VAR)
     set(${_YITD_INCLUDE_DIRS_VAR} ${_full_paths} PARENT_SCOPE)
-  endif()
-  if(DEFINED _YITD_CMAKE_SCRIPTS_VAR)
-    set(${_YITD_CMAKE_SCRIPTS_VAR} "${_cmake_scripts}" PARENT_SCOPE)
   endif()
 
 endfunction()
@@ -326,6 +350,13 @@ function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_h
   string(REGEX REPLACE "#[^\n]+" "" file_content ${file_content})
   string(REGEX REPLACE "//[^\n]+" "" file_content ${file_content})
 
+  # Match "namespace"
+  string(REGEX MATCH "namespace[ \t\n]+yarp[ \t\n]+([^ \t\n]+)" _unused ${file_content})
+  string(REPLACE "." "/" namespace_dir "${CMAKE_MATCH_1}")
+  # FIXME for now namespace_dir is not used, enable when yarp_add_idl will be
+  #       able to handle namespaces
+  unset(namespace_dir)
+
   # Match "enum"s, "struct"s and "service"s defined in the file
   string(REGEX MATCHALL "(enum|struct|service)[ \t\n]+([^ \t\n]+)[ \t\n]*{[^}]+}([ \t\n]*\\([^\\)]+\\))?" objects ${file_content})
 
@@ -336,7 +367,7 @@ function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_h
     if(NOT "${object}" MATCHES "{[^}]+}[ \t\n]*(\\([^\\)]*yarp.name[^\\)]+\\))")
       # No files are generated for YARP types.
       list(APPEND gen_srcs ${objectname}.cpp)
-      list(APPEND gen_hdrs ${objectname}.h)
+      list(APPEND gen_hdrs ${path}/${namespace_dir}/${objectname}.h)
     endif()
   endforeach()
 
@@ -345,7 +376,7 @@ function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_h
 
   # Find if at least one "const" or "typedef" is defined
   if("${file_content}" MATCHES "(const|typedef)[ \t]+([^ \t\n]+)[ \t]*([^ \t\n]+)")
-    list(APPEND gen_hdrs ${basename}_common.h)
+    list(APPEND gen_hdrs ${path}/${namespace_dir}/${basename}_common.h)
   endif()
 
   set(${gen_srcs_var} ${gen_srcs} PARENT_SCOPE)
@@ -457,9 +488,9 @@ function(YARP_ADD_IDL var)
 
     # Set intermediate output directory, remove extra '/' and ensure that
     # the directory exists.
-    set(tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/yarpidl_${family}")
+    set(tmp_dir "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/yarpidl_${family}")
     string(REGEX REPLACE "/(/|$)" "\\1" tmp_dir "${tmp_dir}")
-    make_directory(${tmp_dir})
+    file(MAKE_DIRECTORY "${tmp_dir}")
 
     # Set output directories and remove extra "/"
     set(srcs_out_dir "${CMAKE_CURRENT_BINARY_DIR}/src")
@@ -469,7 +500,7 @@ function(YARP_ADD_IDL var)
 
     # Prepare main command
     if("${family}" STREQUAL "thrift")
-      set(cmd ${YARPIDL_thrift_COMMAND} --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${tmp_dir}" "${file}")
+      set(cmd ${YARPIDL_thrift_COMMAND} --gen yarp:include_prefix,no_namespace_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${tmp_dir}" "${file}")
     else()
       if(YARPIDL_rosmsg_VERBOSE)
         set(_verbose --verbose)
