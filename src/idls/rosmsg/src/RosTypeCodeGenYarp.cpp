@@ -957,12 +957,17 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field)
     return ry;
 }
 
-
+#include <iostream>
 bool RosTypeCodeGenYarp::writeIndex(RosTypeCodeGenState& state)
 {
     // Generate _index.txt file
     string root = (target != "") ? (target + "/") : "";
-    string index_fname = className + "_index.txt";
+    string index_fname;
+    if(!packageName.empty()) {
+        index_fname = packageName + "_" + className + "_index.txt";
+    } else {
+        index_fname = className + "_index.txt";
+    }
 
     yarp::os::mkdir_p((root + index_fname).c_str(), 1);
     out = fopen((root + index_fname).c_str(), "w");

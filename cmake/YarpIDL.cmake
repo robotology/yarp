@@ -90,7 +90,7 @@ endfunction()
 
 # Internal function.
 # Perform the actual code generation
-function(_YARP_IDL_TO_DIR_GENERATE _family _file _name _output_dir _include_prefix _verbose)
+function(_YARP_IDL_TO_DIR_GENERATE _family _file _name _index_file_name _output_dir _include_prefix _verbose)
   # Say what we are doing.
   message(STATUS "${_family} code for ${_file} => ${_output_dir}")
 
@@ -141,20 +141,20 @@ function(_YARP_IDL_TO_DIR_GENERATE _family _file _name _output_dir _include_pref
   endif()
 
   # Place the files in their final location.
-  file(STRINGS "${_temp_dir}/${_name}_index.txt" _index)
-  file(WRITE "${_output_dir}/${_name}_index.txt" "")
+  file(STRINGS "${_temp_dir}/${_index_file_name}" _index)
+  file(WRITE "${_output_dir}/${_index_file_name}" "")
   foreach(_gen_file ${_index})
     if(NOT EXISTS "${_temp_dir}/${_gen_file}")
       message(FATAL_ERROR "${_gen_file} not found in ${_temp_dir} dir!")
     endif()
     get_filename_component(_type ${_gen_file} EXT)
     if(${_type} STREQUAL ".h")
-      file(APPEND "${_output_dir}/${_name}_index.txt" "include/${_gen_file}\n")
+      file(APPEND "${_output_dir}/${_index_file_name}" "include/${_gen_file}\n")
       configure_file("${_temp_dir}/${_gen_file}"
                      "${_output_dir}/include/${_gen_file}"
                      COPYONLY)
     elseif(${_type} STREQUAL ".cpp")
-      file(APPEND "${_output_dir}/${_name}_index.txt" "src/${_gen_file}\n")
+      file(APPEND "${_output_dir}/${_index_file_name}" "src/${_gen_file}\n")
       configure_file("${_temp_dir}/${_gen_file}"
                      "${_output_dir}/src/${_gen_file}"
                      COPYONLY)
@@ -264,7 +264,8 @@ function(YARP_IDL_TO_DIR)
 
     if("${_family}" STREQUAL "thrift")
       set(_target_name "${_file}")
-    else()
+      set(_index_file_name "${_name}_index.txt")
+    elseif("${_family}" STREQUAL "rosmsg")
       get_filename_component(_rospkg_name "${_include_prefix}" NAME)
       get_filename_component(_include_prefix "${_include_prefix}" PATH)
       if(_rospkg_name MATCHES "(msg|srv)")
@@ -273,24 +274,25 @@ function(YARP_IDL_TO_DIR)
       endif()
       if(NOT "${_rospkg_name}" STREQUAL "")
         set(_target_name "${_rospkg_name}_${_name}${_ext}")
+        set(_index_file_name "${_rospkg_name}_${_name}_index.txt")
       else()
         set(_target_name "${_name}${_ext}")
+        set(_index_file_name "${_name}_index.txt")
       endif()
     endif()
     string(REGEX REPLACE "[^a-zA-Z0-9]" "_" _target_name ${_target_name})
+    set(_index_file "${_YITD_OUTPUT_DIR}/${_index_file_name}")
 
     string(LENGTH "${_include_prefix}" _include_prefix_len)
     if(_include_prefix_len GREATER 0)
       set(_include_prefix "/${_include_prefix}")
     endif()
 
-    # Set cmake script file name
-    set(_index_file "${_YITD_OUTPUT_DIR}/${_name}_index.txt")
-
     if(ALLOW_IDL_GENERATION OR NOT EXISTS "${_index_file}")
       _yarp_idl_to_dir_generate(${_family}
                                 "${_file}"
                                 ${_name}
+                                ${_index_file_name}
                                 "${_YITD_OUTPUT_DIR}"
                                 "${_include_prefix}${_dir_add}"
                                 ${_YITD_VERBOSE})
