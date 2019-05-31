@@ -17,12 +17,25 @@ namespace yarp {
     }
 }
 
+namespace yarp {
+namespace dev {
+namespace impl {
+
+template <typename T>
+class FixedSizeBuffersManager;
+
+} // namespace impl
+} // namespace dev
+} // namespace yarp
+
+
 class YARP_dev_API yarp::dev::ImplementMotor: public IMotor
 {
 protected:
     IMotorRaw *imotor;
     void *helper;
 
+    yarp::dev::impl::FixedSizeBuffersManager<double> *doubleBuffManager;
 
     /**
      * Initialize the internal data and alloc memory.
