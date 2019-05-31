@@ -589,7 +589,16 @@ bool BoschIMU::threadInit()
 
     // Do a first read procedure to verify everything is fine.
     // In case the device fails to read, stop it and quit
-    run();
+    for(int i=0; i<10; i++)
+    {
+        // read data from IMU
+        run();
+        if(dataIsValid)
+            break;
+        else
+            yarp::os::SystemClock::delaySystem(0.01);
+    }
+
     if(!dataIsValid)
     {
         yError() << "First read from the device failed, check everything is fine and retry";
@@ -619,8 +628,6 @@ void BoschIMU::run()
     }
     else
     {
-        dataIsValid = true;
-
         // Correctly construct int16 data
         for(int i=0; i<16; i++)
         {
@@ -636,6 +643,24 @@ void BoschIMU::run()
 
         // Convert to RPY angles
         RPY_angle.resize(3);
+
+        // Check quaternion values are meaningful. The aim of this check is simply
+        // to verify values are not garbage.
+        // Ideally the correct check is that quaternion.abs ~= 1, but to avoid 
+        // calling a sqrt every cicle only for a rough estimate, the check here
+        // is that the self product is nearly 1
+        double sum_squared = quaternion_tmp.w() * quaternion_tmp.w() + 
+                             quaternion_tmp.x() * quaternion_tmp.x() +
+                             quaternion_tmp.y() * quaternion_tmp.y() +
+                             quaternion_tmp.z() * quaternion_tmp.z();
+
+        if( (sum_squared < 0.9) || (sum_squared > 1.2) )
+        {
+            dataIsValid = false;
+            return;
+        }
+
+        dataIsValid = true;
         RPY_angle   = yarp::math::dcm2rpy(quaternion.toRotationMatrix4x4());
         data_tmp[0] = RPY_angle[0] * 180 / M_PI;
         data_tmp[1] = RPY_angle[1] * 180 / M_PI;
