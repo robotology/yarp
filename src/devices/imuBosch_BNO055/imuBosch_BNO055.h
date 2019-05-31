@@ -19,6 +19,7 @@
 #ifndef BOSCH_IMU_DEVICE
 #define BOSCH_IMU_DEVICE
 
+#include <atomic>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
@@ -203,6 +204,7 @@ protected:
     bool sendReadCommandI2c(unsigned char register_add, int len, unsigned char* buf, std::string comment = "");
 
     int errs;
+    std::atomic<bool> dataIsValid;
 
 public:
     BoschIMU();

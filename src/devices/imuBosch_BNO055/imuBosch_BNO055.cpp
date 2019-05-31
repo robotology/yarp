@@ -65,7 +65,8 @@ BoschIMU::BoschIMU() : PeriodicThread(0.02),
     responseOffset(0),
     readFunc(&BoschIMU::sendReadCommandSer),
     totMessagesRead(0),
-    errs(0)
+    errs(0),
+    dataIsValid(false)
 {
     data.resize(12);
     data.zero();
@@ -499,10 +500,6 @@ bool BoschIMU::threadInit()
         }
 
         yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
-        return true;
-
-
-
     }
     else
     {
@@ -588,10 +585,18 @@ bool BoschIMU::threadInit()
         }
 
         yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
-
-        return true;
     }
 
+    // Do a first read procedure to verify everything is fine.
+    // In case the device fails to read, stop it and quit
+    run();
+    if(!dataIsValid)
+    {
+        yError() << "First read from the device failed, check everything is fine and retry";
+        return false;
+    }
+
+    return true;
 }
 
 void BoschIMU::run()
@@ -609,9 +614,13 @@ void BoschIMU::run()
     {
         yError()<<"BoschImu: failed to read all the data";
         errs++;
+        dataIsValid = false;
+        return;
     }
     else
     {
+        dataIsValid = true;
+
         // Correctly construct int16 data
         for(int i=0; i<16; i++)
         {
@@ -684,7 +693,7 @@ bool BoschIMU::read(yarp::sig::Vector &out)
         out[15] = quaternion.z();
     }
 
-    return true;
+    return dataIsValid;
 }
 
 bool BoschIMU::getChannels(int *nc)
