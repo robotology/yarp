@@ -30,13 +30,13 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 
-bool yarp::dev::Navigation2DClient::set_current_goal_name(const std::string& name)
+bool Navigation2DClient::set_current_goal_name(const std::string& name)
 {
     m_current_goal_name = name;
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::get_current_goal_name(std::string& name)
+bool Navigation2DClient::get_current_goal_name(std::string& name)
 {
     if (m_current_goal_name == "")
     {
@@ -46,7 +46,7 @@ bool yarp::dev::Navigation2DClient::get_current_goal_name(std::string& name)
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::reset_current_goal_name()
+bool Navigation2DClient::reset_current_goal_name()
 {
     m_current_goal_name = "";
     return true;
@@ -54,7 +54,7 @@ bool yarp::dev::Navigation2DClient::reset_current_goal_name()
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
+bool Navigation2DClient::open(yarp::os::Searchable &config)
 {
     m_local_name.clear();
     m_navigation_server_name.clear();
@@ -172,7 +172,7 @@ bool yarp::dev::Navigation2DClient::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::close()
+bool Navigation2DClient::close()
 {
     m_rpc_port_navigation_server.close();
     m_rpc_port_map_locations_server.close();
@@ -181,7 +181,7 @@ bool yarp::dev::Navigation2DClient::close()
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, yarp::os::Bottle& reply)
+bool Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, yarp::os::Bottle& reply)
 {
     if (command.get(0).isString() == false)
     {
@@ -444,7 +444,7 @@ bool yarp::dev::Navigation2DClient::parse_respond_string(const yarp::os::Bottle&
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::read(yarp::os::ConnectionReader& connection)
+bool Navigation2DClient::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::Bottle command;
     yarp::os::Bottle reply;
@@ -470,7 +470,7 @@ bool yarp::dev::Navigation2DClient::read(yarp::os::ConnectionReader& connection)
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::getNavigationStatus(NavigationStatusEnum& status)
+bool Navigation2DClient::getNavigationStatus(NavigationStatusEnum& status)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -500,7 +500,7 @@ bool yarp::dev::Navigation2DClient::getNavigationStatus(NavigationStatusEnum& st
 }
 
 
-bool yarp::dev::Navigation2DClient::gotoTargetByAbsoluteLocation(Map2DLocation loc)
+bool Navigation2DClient::gotoTargetByAbsoluteLocation(Map2DLocation loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -530,13 +530,13 @@ bool yarp::dev::Navigation2DClient::gotoTargetByAbsoluteLocation(Map2DLocation l
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::locations_are_similar(Map2DLocation loc1, Map2DLocation loc2, double linear_tolerance, double angular_tolerance)
+bool Navigation2DClient::locations_are_similar(Map2DLocation loc1, Map2DLocation loc2, double linear_tolerance, double angular_tolerance)
 {
     if (linear_tolerance < 0) return false;
     if (angular_tolerance < 0) return false;
     yAssert(linear_tolerance >= 0);
     yAssert(angular_tolerance >= 0);
-  
+
     if (loc1.map_id != loc2.map_id)
     {
         return false;
@@ -554,7 +554,7 @@ bool yarp::dev::Navigation2DClient::locations_are_similar(Map2DLocation loc1, Ma
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::checkNearToLocation(Map2DLocation loc, double linear_tolerance, double angular_tolerance)
+bool Navigation2DClient::checkNearToLocation(Map2DLocation loc, double linear_tolerance, double angular_tolerance)
 {
     Map2DLocation curr_loc;
     if (getCurrentPosition(curr_loc) == false)
@@ -568,7 +568,7 @@ bool yarp::dev::Navigation2DClient::checkNearToLocation(Map2DLocation loc, doubl
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance)
+bool Navigation2DClient::checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance)
 {
     Map2DLocation loc;
     Map2DLocation curr_loc;
@@ -587,7 +587,7 @@ bool yarp::dev::Navigation2DClient::checkNearToLocation(std::string location_nam
     return locations_are_similar(loc, curr_loc, linear_tolerance, angular_tolerance);
 }
 
-bool  yarp::dev::Navigation2DClient::checkInsideArea(Map2DArea area)
+bool  Navigation2DClient::checkInsideArea(Map2DArea area)
 {
     Map2DLocation curr_loc;
     if (getCurrentPosition(curr_loc) == false)
@@ -605,7 +605,7 @@ bool  yarp::dev::Navigation2DClient::checkInsideArea(Map2DArea area)
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::checkInsideArea(std::string area_name)
+bool Navigation2DClient::checkInsideArea(std::string area_name)
 {
     Map2DLocation curr_loc;
     Map2DArea area;
@@ -630,7 +630,7 @@ bool yarp::dev::Navigation2DClient::checkInsideArea(std::string area_name)
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::gotoTargetByLocationName(std::string location_name)
+bool Navigation2DClient::gotoTargetByLocationName(std::string location_name)
 {
     Map2DLocation loc;
     Map2DArea area;
@@ -662,7 +662,7 @@ bool yarp::dev::Navigation2DClient::gotoTargetByLocationName(std::string locatio
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::gotoTargetByRelativeLocation(double x, double y)
+bool Navigation2DClient::gotoTargetByRelativeLocation(double x, double y)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -691,7 +691,7 @@ bool yarp::dev::Navigation2DClient::gotoTargetByRelativeLocation(double x, doubl
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::gotoTargetByRelativeLocation(double x, double y, double theta)
+bool Navigation2DClient::gotoTargetByRelativeLocation(double x, double y, double theta)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -721,7 +721,7 @@ bool yarp::dev::Navigation2DClient::gotoTargetByRelativeLocation(double x, doubl
     return true;
 }
 
-bool  yarp::dev::Navigation2DClient::recomputeCurrentNavigationPath()
+bool  Navigation2DClient::recomputeCurrentNavigationPath()
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -746,7 +746,7 @@ bool  yarp::dev::Navigation2DClient::recomputeCurrentNavigationPath()
     return true;
 }
 
-bool  yarp::dev::Navigation2DClient::setInitialPose(const Map2DLocation& loc)
+bool  Navigation2DClient::setInitialPose(const Map2DLocation& loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -775,7 +775,7 @@ bool  yarp::dev::Navigation2DClient::setInitialPose(const Map2DLocation& loc)
     return true;
 }
 
-bool  yarp::dev::Navigation2DClient::getCurrentPosition(Map2DLocation& loc)
+bool  Navigation2DClient::getCurrentPosition(Map2DLocation& loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -808,7 +808,7 @@ bool  yarp::dev::Navigation2DClient::getCurrentPosition(Map2DLocation& loc)
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::suspendNavigation(const double time_s)
+bool Navigation2DClient::suspendNavigation(const double time_s)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -834,7 +834,7 @@ bool yarp::dev::Navigation2DClient::suspendNavigation(const double time_s)
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::getAbsoluteLocationOfCurrentTarget(Map2DLocation &loc)
+bool Navigation2DClient::getAbsoluteLocationOfCurrentTarget(Map2DLocation &loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -867,7 +867,7 @@ bool yarp::dev::Navigation2DClient::getAbsoluteLocationOfCurrentTarget(Map2DLoca
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::getNameOfCurrentTarget(std::string& location_name)
+bool Navigation2DClient::getNameOfCurrentTarget(std::string& location_name)
 {
     std::string s;
     if (get_current_goal_name(s))
@@ -881,7 +881,7 @@ bool yarp::dev::Navigation2DClient::getNameOfCurrentTarget(std::string& location
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta)
+bool Navigation2DClient::getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -913,7 +913,7 @@ bool yarp::dev::Navigation2DClient::getRelativeLocationOfCurrentTarget(double& x
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::storeCurrentPosition(std::string location_name)
+bool Navigation2DClient::storeCurrentPosition(std::string location_name)
 {
     yarp::os::Bottle b_nav;
     yarp::os::Bottle resp_nav;
@@ -971,7 +971,7 @@ bool yarp::dev::Navigation2DClient::storeCurrentPosition(std::string location_na
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::storeLocation(std::string location_name, Map2DLocation loc)
+bool Navigation2DClient::storeLocation(std::string location_name, Map2DLocation loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1002,7 +1002,7 @@ bool yarp::dev::Navigation2DClient::storeLocation(std::string location_name, Map
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::getLocationsList(std::vector<std::string>& locations)
+bool Navigation2DClient::getLocationsList(std::vector<std::string>& locations)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1046,7 +1046,7 @@ bool yarp::dev::Navigation2DClient::getLocationsList(std::vector<std::string>& l
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::getLocation(std::string location_name, Map2DLocation& loc)
+bool Navigation2DClient::getLocation(std::string location_name, Map2DLocation& loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1080,7 +1080,7 @@ bool yarp::dev::Navigation2DClient::getLocation(std::string location_name, Map2D
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::getArea(std::string area_name, Map2DArea& area)
+bool Navigation2DClient::getArea(std::string area_name, Map2DArea& area)
 {
     yarp::os::Bottle b_loc;
     yarp::os::Bottle resp_loc;
@@ -1119,7 +1119,7 @@ bool yarp::dev::Navigation2DClient::getArea(std::string area_name, Map2DArea& ar
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::deleteLocation(std::string location_name)
+bool Navigation2DClient::deleteLocation(std::string location_name)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1146,7 +1146,7 @@ bool yarp::dev::Navigation2DClient::deleteLocation(std::string location_name)
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::clearAllLocations()
+bool Navigation2DClient::clearAllLocations()
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1172,7 +1172,7 @@ bool yarp::dev::Navigation2DClient::clearAllLocations()
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::stopNavigation()
+bool Navigation2DClient::stopNavigation()
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1197,7 +1197,7 @@ bool yarp::dev::Navigation2DClient::stopNavigation()
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::resumeNavigation()
+bool Navigation2DClient::resumeNavigation()
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1222,7 +1222,7 @@ bool yarp::dev::Navigation2DClient::resumeNavigation()
     return true;
 }
 
-bool   yarp::dev::Navigation2DClient::getAllNavigationWaypoints(std::vector<yarp::dev::Map2DLocation>& waypoints)
+bool   Navigation2DClient::getAllNavigationWaypoints(std::vector<yarp::dev::Map2DLocation>& waypoints)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1271,7 +1271,7 @@ bool   yarp::dev::Navigation2DClient::getAllNavigationWaypoints(std::vector<yarp
     return true;
 }
 
-bool   yarp::dev::Navigation2DClient::getCurrentNavigationWaypoint(yarp::dev::Map2DLocation& curr_waypoint)
+bool   Navigation2DClient::getCurrentNavigationWaypoint(yarp::dev::Map2DLocation& curr_waypoint)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1313,7 +1313,7 @@ bool   yarp::dev::Navigation2DClient::getCurrentNavigationWaypoint(yarp::dev::Ma
     return true;
 }
 
-bool yarp::dev::Navigation2DClient::getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type, yarp::dev::MapGrid2D& map)
+bool Navigation2DClient::getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type, yarp::dev::MapGrid2D& map)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1352,7 +1352,7 @@ bool yarp::dev::Navigation2DClient::getCurrentNavigationMap(yarp::dev::Navigatio
     return true;
 }
 
-bool  yarp::dev::Navigation2DClient::getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status)
+bool  Navigation2DClient::getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1382,7 +1382,7 @@ bool  yarp::dev::Navigation2DClient::getLocalizationStatus(yarp::dev::Localizati
     return true;
 }
 
-bool  yarp::dev::Navigation2DClient::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
+bool  Navigation2DClient::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1413,7 +1413,7 @@ bool  yarp::dev::Navigation2DClient::applyVelocityCommand(double x_vel, double y
     return true;
 }
 
-bool  yarp::dev::Navigation2DClient::getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses)
+bool  Navigation2DClient::getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1464,7 +1464,7 @@ bool  yarp::dev::Navigation2DClient::getEstimatedPoses(std::vector<yarp::dev::Ma
 }
 
 //this function receives an angle from (-inf,+inf) and returns an angle in (0,180) or (-180,0)
-double yarp::dev::Navigation2DClient::normalize_angle(double angle)
+double Navigation2DClient::normalize_angle(double angle)
 {
     angle = std::remainder(angle, 360);
 

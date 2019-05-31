@@ -34,17 +34,37 @@
 
 using namespace yarp::os;
 
-namespace yarp
-{
-    namespace dev
-    {
-        class fakeLocalizerThread;
-        class fakeLocalizer;
-    }
-}
 
-class yarp::dev::fakeLocalizer : public yarp::dev::DeviceDriver,
-                                 public yarp::dev::ILocalization2D
+class fakeLocalizerThread :
+        public yarp::os::PeriodicThread
+{
+protected:
+    //general
+    double                       m_last_statistics_printed;
+    double                       m_last_locdata_received;
+    yarp::dev::Map2DLocation     m_initial_loc;
+    yarp::dev::Map2DLocation     m_initial_odom;
+    yarp::dev::Map2DLocation     m_current_loc;
+    yarp::dev::Map2DLocation     m_current_odom;
+    yarp::os::Mutex              m_mutex;
+    yarp::os::Searchable&        m_cfg;
+    std::string                  m_local_name;
+
+public:
+    fakeLocalizerThread(double _period, yarp::os::Searchable& _cfg);
+    virtual bool threadInit() override;
+    virtual void threadRelease() override;
+    virtual void run() override;
+
+public:
+    bool initializeLocalization(const yarp::dev::Map2DLocation& loc);
+    bool getCurrentLoc(yarp::dev::Map2DLocation& loc);
+};
+
+
+class fakeLocalizer :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::ILocalization2D
 {
 public:
     fakeLocalizerThread         *locThread;
@@ -81,29 +101,4 @@ public:
     * @return true/false
     */
     bool   setInitialPose(const yarp::dev::Map2DLocation& loc) override;
-};
-
-class yarp::dev::fakeLocalizerThread : public yarp::os::PeriodicThread
-{
-protected:
-    //general
-    double                       m_last_statistics_printed;
-    double                       m_last_locdata_received;
-    yarp::dev::Map2DLocation     m_initial_loc;
-    yarp::dev::Map2DLocation     m_initial_odom;
-    yarp::dev::Map2DLocation     m_current_loc;
-    yarp::dev::Map2DLocation     m_current_odom;
-    yarp::os::Mutex              m_mutex;
-    yarp::os::Searchable&        m_cfg;
-    std::string                  m_local_name;
-
-public:
-    fakeLocalizerThread(double _period, yarp::os::Searchable& _cfg);
-    virtual bool threadInit() override;
-    virtual void threadRelease() override;
-    virtual void run() override;
-
-public:
-    bool initializeLocalization(const yarp::dev::Map2DLocation& loc);
-    bool getCurrentLoc(yarp::dev::Map2DLocation& loc);
 };

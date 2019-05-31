@@ -6,20 +6,19 @@
 
 yarp_prepare_plugin(fakeLocalizer
                     CATEGORY device
-                    TYPE yarp::dev::fakeLocalizer
+                    TYPE fakeLocalizer
                     INCLUDE fakeLocalizerDev.h
-                    DEPENDS "TARGET YARP::YARP_math"
-                    DEFAULT ON)
+                    DEPENDS "TARGET YARP::YARP_math")
 
 if(NOT SKIP_fakeLocalizer)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   yarp_add_plugin(yarp_fakeLocalizer fakeLocalizerDev.h
-                                 fakeLocalizerDev.cpp)
+                                     fakeLocalizerDev.cpp)
   target_link_libraries(yarp_fakeLocalizer PRIVATE YARP::YARP_OS
-                                               YARP::YARP_sig
-                                               YARP::YARP_dev
-                                               YARP::YARP_math)
+                                                   YARP::YARP_sig
+                                                   YARP::YARP_dev
+                                                   YARP::YARP_math)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
                                                       YARP_sig
                                                       YARP_dev

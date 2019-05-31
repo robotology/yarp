@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(navigation2DClient
                     CATEGORY device
-                    TYPE yarp::dev::Navigation2DClient
+                    TYPE Navigation2DClient
                     INCLUDE Navigation2DClient.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
