@@ -279,6 +279,17 @@ public:
     bool setRefTorque(int j, double t) override;
     bool getTorqueRange(int j, double* min, double* max) override;
     bool getTorqueRanges(double* min, double* max) override;
+
+    // multiple joint version
+    bool positionMove(const int n_joint, const int *joints, const double *refs) override;
+    bool relativeMove(const int n_joint, const int *joints, const double *deltas) override;
+    bool checkMotionDone(const int n_joint, const int *joints, bool *flag) override;
+    bool setRefSpeeds(const int n_joint, const int *joints, const double *spds) override;
+    bool setRefAccelerations(const int n_joint, const int *joints, const double *accs) override;
+    bool getRefSpeeds(const int n_joint, const int *joints, double *spds) override;
+    bool getRefAccelerations(const int n_joint, const int *joints, double *accs) override;
+    bool stop(const int n_joint, const int *joints) override;
+
 private:
 
     double *positions;
