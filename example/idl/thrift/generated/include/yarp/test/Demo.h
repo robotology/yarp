@@ -16,6 +16,11 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/test/demo_common.h>
+#include <yarp/test/PointD.h>
+
+namespace yarp {
+namespace test {
 
 class Demo :
         public yarp::os::Wire
@@ -26,15 +31,11 @@ public:
 
     virtual std::int32_t get_answer();
 
-    virtual bool set_answer(const std::int32_t rightAnswer);
+    virtual std::int32_t add_one(const std::int32_t x = 0);
 
-    virtual std::int32_t add_one(const std::int32_t x);
+    virtual std::int32_t double_down(const std::int32_t x);
 
-    virtual bool start();
-
-    virtual bool stop();
-
-    virtual bool is_running();
+    virtual yarp::test::PointD add_point(const yarp::test::PointD& x, const yarp::test::PointD& y);
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");
@@ -42,5 +43,8 @@ public:
     // read from ConnectionReader
     bool read(yarp::os::ConnectionReader& connection) override;
 };
+
+} // namespace yarp
+} // namespace test
 
 #endif // YARP_THRIFT_GENERATOR_SERVICE_DEMO_H

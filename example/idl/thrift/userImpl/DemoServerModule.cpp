@@ -6,93 +6,107 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <iostream>
 #include <yarp/os/all.h>
-#include <secondInterface/Demo.h>
+
+#include <yarp/test/Demo.h>
+
+#include <iostream>
 
 
-class DemoServerModule : public yarp::test::Demo, public yarp::os::RFModule {
+class DemoServerModule :
+        public yarp::test::Demo,
+        public yarp::os::RFModule
+{
 public:
     // Thrift Interface Implementation
-  virtual int32_t get_answer()
-  {
-      std::cout<<"Server:get_answer called" <<std::endl;
-      return ANSWER;
-  }
-  virtual int32_t add_one(const int32_t x = 0)
-  {
-     std::cout<<"Server::add_one called with "<< x <<std::endl;
-      return x+1;
-  }
-  virtual int32_t double_down(const int32_t x)
-  {
-      std::cout<<"Server::double_down called with "<< x <<std::endl;
-      return x*2;
-  }
-  virtual  ::yarp::test::PointD add_point(const  ::yarp::test::PointD& x, const  ::yarp::test::PointD& y)
-  {
-    std::cout<<"Server::add_point called"<<std::endl;
-    ::yarp::test::PointD z;
-    z.x = x.x + y.x;
-    z.y = x.y + y.y;
-    z.z = x.z + y.z;
-    return z;
-  }
-  
-  // RFModule implementation
-  yarp::os::Port cmdPort;
-  
-  bool attach(yarp::os::Port &source)
-  {
-      return this->yarp().attachAsServer(source);
-  }
-  bool configure( yarp::os::ResourceFinder &rf )
+    int32_t get_answer() override
     {
-        std::string moduleName = rf.check("name", 
-                yarp::os::Value("demoServerModule"), 
-                "module name (string)").asString().c_str();
+        std::cout << "Server:get_answer called\n";
+        return yarp::test::ANSWER;
+    }
+
+    int32_t add_one(const int32_t x = 0) override
+    {
+        std::cout << "Server::add_one called with " << x << '\n';
+        return x + 1;
+    }
+
+    int32_t double_down(const int32_t x) override
+    {
+        std::cout << "Server::double_down called with " << x << '\n';
+        return x * 2;
+    }
+
+    yarp::test::PointD add_point(const yarp::test::PointD& x, const yarp::test::PointD& y) override
+    {
+        std::cout << "Server::add_point called\n";
+        yarp::test::PointD z;
+        z.x = x.x + y.x;
+        z.y = x.y + y.y;
+        z.z = x.z + y.z;
+        return z;
+    }
+
+    // RFModule implementation
+    yarp::os::Port cmdPort;
+
+    bool attach(yarp::os::Port& source) override
+    {
+        return this->yarp().attachAsServer(source);
+    }
+
+    bool configure(yarp::os::ResourceFinder& rf) override
+    {
+        std::string moduleName = rf.check("name",
+                                          yarp::os::Value("demoServerModule"),
+                                          "module name (string)")
+                                     .asString()
+                                     .c_str();
         setName(moduleName.c_str());
-        
-        std::string slash="/";
-        
+
+        std::string slash = "/";
+
         attach(cmdPort);
-        
-        std::string cmdPortName= "/";
-        cmdPortName+= getName();
+
+        std::string cmdPortName = "/";
+        cmdPortName += getName();
         cmdPortName += "/cmd";
-        if (!cmdPort.open(cmdPortName.c_str())) {           
-            std::cout << getName() << ": Unable to open port " << cmdPortName << std::endl;  
+        if (!cmdPort.open(cmdPortName.c_str())) {
+            std::cout << getName() << ": Unable to open port " << cmdPortName << '\n';
             return false;
         }
         return true;
-    }   
-  bool updateModule()
-  {
-      return true;
-  }
-  bool close()
-  {
-      cmdPort.close(); 
-      return true;
-  }
+    }
+
+    bool updateModule() override
+    {
+        return true;
+    }
+
+    bool close() override
+    {
+        cmdPort.close();
+        return true;
+    }
 };
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[])
+{
     yarp::os::Network yarp;
-    if (!yarp.checkNetwork())
-    {
-        std::cout<<"Error: yarp server does not seem available"<<std::endl;
+    if (!yarp.checkNetwork()) {
+        std::cout << "Error: yarp server does not seem available" << '\n';
         return -1;
     }
-    
+
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
     rf.configure(argc, argv);
 
-    DemoServerModule demoMod; 
+    DemoServerModule demoMod;
 
-    if (!demoMod.configure(rf))
+    if (!demoMod.configure(rf)) {
         return -1;
+    }
 
     return demoMod.runModule();
 }
