@@ -125,14 +125,81 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
     return paAbort;
 }
 
+PlayStreamThread::PlayStreamThread() :
+        something_to_play(false),
+        stream(nullptr),
+        err(paNoError)
+{
+}
+
+void PlayStreamThread::threadRelease()
+{
+}
+
+bool PlayStreamThread::threadInit()
+{
+
+    return true;
+}
+
+void PlayStreamThread::run()
+{
+    while(this->isStopping()==false)
+    {
+        if( something_to_play )
+        {
+            something_to_play = false;
+            err = Pa_StartStream( stream );
+            if( err != paNoError ) {handleError(); return;}
+
+            while( ( err = Pa_IsStreamActive( stream ) ) == 1 )
+            {
+                yarp::os::SystemClock::delaySystem(SLEEP_TIME);
+            }
+            if (err == 0)
+            {
+                yDebug() << "The playback stream has been stopped";
+            }
+            if( err < 0 )
+            {
+                handleError();
+                return;
+            }
+
+            err = Pa_StopStream( stream );
+            //err = Pa_AbortStream( stream );
+            if( err < 0 )
+            {
+                handleError();
+                return;
+            }
+
+        }
+
+        yarp::os::Time::delay(SLEEP_TIME);
+    }
+    return;
+}
+
+void PlayStreamThread::handleError()
+{
+    Pa_Terminate();
+    if( err != paNoError )
+    {
+        yError( "An error occurred while using the portaudio stream\n" );
+        yError( "Error number: %d\n", err );
+        yError( "Error message: %s\n", Pa_GetErrorText( err ) );
+    }
+}
+
 PortAudioPlayerDeviceDriver::PortAudioPlayerDeviceDriver() :
     m_stream(nullptr),
     m_err(paNoError),
+    m_playDataBuffer(nullptr),
     m_system_resource(nullptr),
     renderMode(RENDER_APPEND)
 {
     memset(&m_outputParameters, 0, sizeof(PaStreamParameters));
-    m_playDataBuffer = nullptr;
 }
 
 PortAudioPlayerDeviceDriver::~PortAudioPlayerDeviceDriver()
@@ -212,17 +279,6 @@ bool PortAudioPlayerDeviceDriver::open(PortAudioPlayerDeviceDriverSettings& conf
     return (m_err==paNoError);
 }
 
-void PlayStreamThread::handleError()
-{
-    Pa_Terminate();
-    if( err != paNoError )
-    {
-        yError( "An error occurred while using the portaudio stream\n" );
-        yError( "Error number: %d\n", err );
-        yError( "Error message: %s\n", Pa_GetErrorText( err ) );
-    }
-}
-
 void PortAudioPlayerDeviceDriver::handleError()
 {
     //Pa_Terminate();
@@ -273,56 +329,6 @@ bool PortAudioPlayerDeviceDriver::abortSound()
     m_playDataBuffer->clear();
 
     return (m_err==paNoError);
-}
-
-void PlayStreamThread::threadRelease()
-{
-}
-
-bool PlayStreamThread::threadInit()
-{
-    something_to_play=false;
-    err = paNoError;
-    return true;
-}
-
-void PlayStreamThread::run()
-{
-    while(this->isStopping()==false)
-    {
-        if( something_to_play )
-        {
-            something_to_play = false;
-            err = Pa_StartStream( stream );
-            if( err != paNoError ) {handleError(); return;}
-
-            while( ( err = Pa_IsStreamActive( stream ) ) == 1 )
-            {
-                yarp::os::SystemClock::delaySystem(SLEEP_TIME);
-            }
-            if (err == 0)
-            {
-                yDebug() << "The playback stream has been stopped";
-            }
-            if( err < 0 )
-            {
-                handleError();
-                return;
-            }
-
-            err = Pa_StopStream( stream );
-            //err = Pa_AbortStream( stream );
-            if( err < 0 )
-            {
-                handleError();
-                return;
-            }
-
-        }
-
-        yarp::os::Time::delay(SLEEP_TIME);
-    }
-    return;
 }
 
 bool PortAudioPlayerDeviceDriver::immediateSound(const yarp::sig::Sound& sound)

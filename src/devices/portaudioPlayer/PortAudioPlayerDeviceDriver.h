@@ -45,16 +45,19 @@ public:
 
 class PlayStreamThread : public yarp::os::Thread
 {
-   public:
-   bool         something_to_play;
-   PaStream*    stream;
-   void threadRelease() override;
-   bool threadInit() override;
-   void run() override;
+public:
+    PlayStreamThread();
 
-   private:
-   PaError      err;
-   void handleError(void);
+    void threadRelease() override;
+    bool threadInit() override;
+    void run() override;
+
+    bool something_to_play;
+    PaStream* stream;
+
+private:
+    PaError err;
+    void handleError(void);
 };
 
 class PortAudioPlayerDeviceDriver :

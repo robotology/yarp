@@ -130,10 +130,11 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
 PortAudioRecorderDeviceDriver::PortAudioRecorderDeviceDriver() :
     m_stream(nullptr),
     m_err(paNoError),
+    m_recDataBuffer(nullptr),
+    m_isRecording(false),
     m_system_resource(nullptr)
 {
     memset(&m_inputParameters, 0, sizeof(PaStreamParameters));
-    m_recDataBuffer = nullptr;
 }
 
 PortAudioRecorderDeviceDriver::~PortAudioRecorderDeviceDriver()

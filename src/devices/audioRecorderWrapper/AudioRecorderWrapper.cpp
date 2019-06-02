@@ -27,18 +27,20 @@ using namespace yarp::dev;
 double last_time;
 #endif
 
-AudioRecorderWrapper::AudioRecorderWrapper() : PeriodicThread(DEFAULT_THREAD_PERIOD),
-m_period(DEFAULT_THREAD_PERIOD)
-{
+AudioRecorderWrapper::AudioRecorderWrapper() :
+        PeriodicThread(DEFAULT_THREAD_PERIOD),
+        m_mic(nullptr),
+        m_period(DEFAULT_THREAD_PERIOD),
+        m_min_number_of_samples_over_network(11250),
+        m_max_number_of_samples_over_network(11250),
+        m_getSound_timeout(1.0),
+        m_isDeviceOwned(false),
+        m_debug_enabled(false)
 #ifdef DEBUG_TIME_SPENT
-    last_time = yarp::os::Time::now();
+        , last_time(yarp::os::Time::now()),
 #endif
-
-    m_mic = nullptr;
-    m_min_number_of_samples_over_network = 11250;
-    m_max_number_of_samples_over_network = 11250;
+{
     m_stamp.update();
-    m_getSound_timeout = 1;
 }
 
 AudioRecorderWrapper::~AudioRecorderWrapper()

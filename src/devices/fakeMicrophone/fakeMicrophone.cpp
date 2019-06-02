@@ -28,13 +28,18 @@ using namespace yarp::sig;
 
 typedef unsigned short int audio_sample_16t;
 
-fakeMicrophone::fakeMicrophone() : PeriodicThread(DEFAULT_PERIOD)
+fakeMicrophone::fakeMicrophone() :
+        PeriodicThread(DEFAULT_PERIOD),
+        m_isRecording(false),
+        m_cfg_numSamples(0),
+        m_cfg_numChannels(0),
+        m_cfg_frequency(0),
+        m_cfg_bytesPerSample(0),
+        m_audio_filename("audio.wav"),
+        m_bpnt(0),
+        m_inputBuffer(nullptr),
+        m_getSoundIsNotBlocking(false)
 {
-    m_inputBuffer = 0;
-    m_audio_filename = "audio.wav";
-    m_bpnt = 0;
-    m_getSoundIsNotBlocking = false;
-    m_isRecording = false;
 }
 
 fakeMicrophone::~fakeMicrophone()

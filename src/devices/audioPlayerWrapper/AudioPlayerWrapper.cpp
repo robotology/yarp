@@ -32,13 +32,14 @@ using namespace std;
 
 #define DEFAULT_THREAD_PERIOD 0.02 //s
 
-AudioPlayerWrapper::AudioPlayerWrapper() : PeriodicThread(DEFAULT_THREAD_PERIOD),
-    m_irender(nullptr),
-    m_period(DEFAULT_THREAD_PERIOD),
-    m_isDeviceOwned(false)
+AudioPlayerWrapper::AudioPlayerWrapper() :
+        PeriodicThread(DEFAULT_THREAD_PERIOD),
+        m_irender(nullptr),
+        m_period(DEFAULT_THREAD_PERIOD),
+        m_buffer_delay(5.0), //seconds
+        m_isDeviceOwned(false),
+        m_debug_enabled(false)
 {
-    m_debug_enabled = false;
-    m_buffer_delay = 5.0; //seconds
 }
 
 AudioPlayerWrapper::~AudioPlayerWrapper()

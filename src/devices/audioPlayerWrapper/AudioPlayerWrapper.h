@@ -81,7 +81,6 @@ public:
     void run() override;
 
 private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     yarp::dev::PolyDriver m_driver;
 
     std::string m_rpcPortName;
@@ -104,8 +103,6 @@ private:
     bool initialize_YARP(yarp::os::Searchable &config);
     bool read(yarp::os::ConnectionReader& connection) override;
 
-
-#endif //DOXYGEN_SHOULD_SKIP_THIS
 };
 
 #endif // YARP_DEV_AUDIOPLAYERWRAPPER_H
