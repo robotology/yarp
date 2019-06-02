@@ -21,6 +21,7 @@
 #                   [THRIFT_NO_COPYRIGHT}
 #                   [THRIFT_NO_EDITOR]
 #                   [THRIFT_NO_DOC]
+#                   [THRIFT_DEBUG_GENERATOR]
 #                   [VERBOSE])
 #
 # yarp_add_idl
@@ -54,7 +55,8 @@ function(_YARP_IDL_THRIFT_ARGS _prefix _out_dir _verbose _out_var)
                NO_NAMESPACE_PREFIX
                NO_COPYRIGHT
                NO_EDITOR
-               NO_DOC)
+               NO_DOC
+               DEBUG_GENERATOR)
     if(${_prefix}_THRIFT_${_ARG})
       string(TOLOWER "${_ARG}" _arg)
       list(APPEND _extra_args ${_arg})
@@ -175,7 +177,8 @@ function(YARP_IDL_TO_DIR)
                THRIFT_NO_NAMESPACE_PREFIX
                THRIFT_NO_COPYRIGHT
                THRIFT_NO_EDITOR
-               THRIFT_NO_DOC)
+               THRIFT_NO_DOC
+               THRIFT_DEBUG_GENERATOR)
   set(_oneValueArgs OUTPUT_DIR
                     SOURCES_VAR
                     HEADERS_VAR

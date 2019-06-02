@@ -32,12 +32,7 @@
 
 #include <sys/stat.h>
 
-// #define THRIFT_DEBUG
-#if defined(THRIFT_DEBUG)
-# define THRIFT_DEBUG_COMMENT(out) out << "/* " << __FUNCTION__ << ":" << __LINE__ << " */\n"
-#else
-# define THRIFT_DEBUG_COMMENT(out)
-#endif
+# define THRIFT_DEBUG_COMMENT(out) if (debug_generator_) { out << "/* " << __FUNCTION__ << ":" << __LINE__ << " */\n"; }
 
 /**
  * YARP code generator
@@ -57,6 +52,7 @@ class t_yarp_generator : public t_oop_generator
     bool no_copyright_{false};
     bool no_editor_{false};
     bool no_doc_{false};
+    bool debug_generator_{false};
 
     // Other
     bool need_common_{false}; //are there consts and typedef that we need to keep in a common file?
@@ -78,7 +74,8 @@ public:
             no_namespace_prefix_{parsed_options.find("no_namespace_prefix") != parsed_options.end()},
             no_copyright_{parsed_options.find("no_copyright") != parsed_options.end()},
             no_editor_{parsed_options.find("no_editor") != parsed_options.end()},
-            no_doc_{parsed_options.find("no_doc") != parsed_options.end()}
+            no_doc_{parsed_options.find("no_doc") != parsed_options.end()},
+            debug_generator_{parsed_options.find("debug_generator") != parsed_options.end()}
     {
         out_dir_base_ = "gen-yarp";
     }
@@ -212,8 +209,7 @@ public:
     std::string type_name(t_type* ttype, bool in_typedef = false, bool arg = false, bool ret = false);
     std::string base_type_name(t_base_type::t_base tbase);
     std::string namespace_prefix(std::string ns);
-    std::string namespace_decorate(const std::string& ns, const std::string& str);
-    bool namespace_open(std::ostream& out, std::string ns);
+    void namespace_open(std::ostream& out, std::string ns);
     void namespace_close(std::ostream& out, std::string ns);
 
     bool is_complex_type(t_type* ttype);
@@ -549,31 +545,12 @@ std::string t_yarp_generator::base_type_name(t_base_type::t_base tbase)
     }
 }
 
-
-std::string t_yarp_generator::namespace_decorate(const std::string& ns, const std::string& str)
-{
-    if (ns == "")
-        return str;
-    std::string prefix = namespace_prefix(ns);
-    if (prefix.find(" ::") == 0) {
-        prefix = prefix.substr(3, prefix.length());
-    }
-    return prefix + str;
-}
-
 std::string t_yarp_generator::namespace_prefix(std::string ns)
 {
-    // Always start with "::", to avoid possible name collisions with
-    // other names in one of the current namespaces.
-    //
-    // We also need a leading space, in case the name is used inside of a
-    // template parameter.  "MyTemplate<::foo::Bar>" is not valid C++,
-    // since "<:" is an alternative token for "[".
-    std::string result = " ::";
-
-    if (ns.size() == 0) {
-        return result;
+    if (ns.empty()) {
+        return {};
     }
+    std::string result;
     std::string::size_type loc;
     while ((loc = ns.find(".")) != std::string::npos) {
         result += ns.substr(0, loc);
@@ -586,11 +563,12 @@ std::string t_yarp_generator::namespace_prefix(std::string ns)
     return result;
 }
 
-bool t_yarp_generator::namespace_open(std::ostream& out, std::string ns)
+void t_yarp_generator::namespace_open(std::ostream& out, std::string ns)
 {
-    if (ns.size() == 0) {
-        return false;
+    if (ns.empty()) {
+        return;
     }
+
     ns += ".";
     std::string separator = "";
     std::string::size_type loc;
@@ -600,15 +578,19 @@ bool t_yarp_generator::namespace_open(std::ostream& out, std::string ns)
         ns = ns.substr(loc + 1);
     }
     out << '\n';
-    return true;
+    out << '\n';
 }
 
 void t_yarp_generator::namespace_close(std::ostream& out, std::string ns)
 {
-    if (ns.size() == 0)
+    if (ns.empty()) {
         return;
+    }
+
     ns += ".";
     std::string::size_type loc;
+
+    out << '\n';
     while ((loc = ns.find(".")) != std::string::npos) {
         out << "} // namespace " << ns.substr(0, loc) << '\n';
         ns = ns.substr(loc + 1);
@@ -649,7 +631,8 @@ void t_yarp_generator::init_generator()
     std::string findex_name = get_out_dir() + program_->get_name() + "_index.txt";
     f_out_index_.open(findex_name);
 
-    if (!program_->get_consts().empty() || !program_->get_enums().empty()) {
+    // Typedefs and constants are defined in the _common.h file
+    if (!program_->get_typedefs().empty() || !program_->get_consts().empty()) {
         need_common_ = true;
         std::string fcommon_name = get_out_dir() + get_include_prefix(program_) + program_->get_name() + "_common.h";
         f_out_common_.open(fcommon_name);
@@ -657,92 +640,62 @@ void t_yarp_generator::init_generator()
         f_out_common_ << copyright_comment();
         f_out_common_ << autogen_comment();
 
-        f_out_common_ << "#ifndef YARP_THRIFT_GENERATOR_COMMON_" << program_->get_name() << '\n';
-        f_out_common_ << "#define YARP_THRIFT_GENERATOR_COMMON_" << program_->get_name() << '\n';
+        f_out_common_ << "#ifndef YARP_THRIFT_GENERATOR_COMMON_" << upcase_string(program_->get_name()) << "_H"<< '\n';
+        f_out_common_ << "#define YARP_THRIFT_GENERATOR_COMMON_" << upcase_string(program_->get_name()) << "_H"<< '\n';
         f_out_common_ << '\n';
 
         f_out_index_ << get_include_prefix(program_) << program_->get_name() + "_common.h\n";
-    }
 
-    if (!program_->get_consts().empty()) {
-        f_out_common_ << '\n'
-                      << "// Constants\n";
         const auto& consts = program_->get_consts();
-        //check needed inclusions
-        std::set<std::string> neededTypes;
-        neededTypes.clear();
-        for (const auto& const_ : consts) {
-            get_needed_type(const_->get_type(), neededTypes);
-        }
-        for (const auto& neededType : neededTypes) {
-            f_out_common_ << "#include <" << neededType << ">\n";
-        }
-
-        generate_consts(consts);
-    }
-
-    if (!program_->get_enums().empty()) {
-        // Generate enums
-        for (const auto& enum_ : program_->get_enums()) {
-            generate_enum(enum_);
-            f_out_index_ << get_include_prefix(program_) << enum_->get_name() << ".h\n";
-            f_out_index_ << enum_->get_name() << ".cpp\n";
-        }
-    }
-
-    if (!program_->get_typedefs().empty()) {
-        f_out_common_ << '\n'
-                      << "// Typedefs\n";
         const auto& typedefs = program_->get_typedefs();
 
         //check needed inclusions
         std::set<std::string> neededTypes;
+        for (const auto& const_ : consts) {
+            get_needed_type(const_->get_type(), neededTypes);
+        }
         for (const auto& tdef : typedefs) {
             get_needed_type(tdef->get_type(), neededTypes);
         }
+
         for (const auto& neededType : neededTypes) {
             f_out_common_ << "#include <" << neededType << ">\n";
         }
-        for (const auto& tdef : typedefs) {
-            generate_typedef(tdef);
+        f_out_common_ << '\n';
+
+        namespace_open(f_out_common_, program_->get_namespace("yarp"));
+    }
+
+    // Each enum produces a .cpp and a .h files
+    for (const auto& enum_ : program_->get_enums()) {
+        f_out_index_ << get_include_prefix(program_) << enum_->get_name() << ".h\n";
+        f_out_index_ << enum_->get_name() << ".cpp\n";
+    }
+
+    // Each struct and exception produces a .h and a .cpp files unless
+    // annotated with "yarp.includefile"
+    for (const auto& obj : program_->get_objects()) {
+        if (obj->annotations_.find("yarp.includefile") == obj->annotations_.end()) {
+            f_out_index_ << get_include_prefix(program_) << obj->get_name() << ".h\n";
+            f_out_index_ << obj->get_name() << ".cpp\n";
         }
     }
 
-    if (!program_->get_objects().empty()) {
-        // Generate structs and exceptions in declared order
-        const auto& objects = program_->get_objects();
-        for (const auto& obj : objects) {
-            if (obj->is_xception()) {
-                generate_xception(obj);
-            } else {
-                generate_struct(obj);
-                if (obj->annotations_.find("yarp.includefile") == obj->annotations_.end()) {
-                    f_out_index_ << get_include_prefix(program_) << obj->get_name() << ".h\n";
-                    f_out_index_ << obj->get_name() << ".cpp\n";
-                }
-            }
-        }
+    // Each service produces a .h and a .cpp files
+    for (const auto& service : program_->get_services()) {
+        f_out_index_ << get_include_prefix(program_) << service->get_name() << ".h\n";
+        f_out_index_ << service->get_name() << ".cpp\n";
     }
 
-    if (!program_->get_services().empty()) {
-        // Generate services
-        const auto& services = program_->get_services();
-        for (const auto& service : services) {
-            service_name_ = get_service_name(service);
-            generate_service(service);
-            f_out_index_ << get_include_prefix(program_) << service->get_name() << ".h\n";
-            f_out_index_ << service->get_name() << ".cpp\n";
-        }
-    }
-
-
+    f_out_index_.close();
 }
 
 void t_yarp_generator::close_generator()
 {
-    f_out_index_.close();
     if (need_common_) {
-        f_out_common_ << "#endif\n";
+        namespace_close(f_out_common_, program_->get_namespace("yarp"));
+        f_out_common_ << '\n';
+        f_out_common_ << "#endif // YARP_THRIFT_GENERATOR_COMMON_" << upcase_string(program_->get_name()) << "_H"<<  '\n';
     }
     f_out_common_.close();
 }
@@ -882,23 +835,15 @@ std::string t_yarp_generator::print_const_value(t_const_value* tvalue, t_type* t
 void t_yarp_generator::generate_namespace_open(std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     const auto& ns = program_->get_namespace("yarp");
-    if (!ns.empty()) {
-        namespace_open(f_h_, ns);
-        namespace_open(f_cpp_, ns);
-        f_h_ << '\n';
-        f_cpp_ << '\n';
-    }
+    namespace_open(f_h_, ns);
+    namespace_open(f_cpp_, ns);
 }
 
 void t_yarp_generator::generate_namespace_close(std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     const auto& ns = program_->get_namespace("yarp");
-    if (!ns.empty()) {
-        f_h_ << '\n';
-        f_cpp_ << '\n';
-        namespace_close(f_h_, ns);
-        namespace_close(f_cpp_, ns);
-    }
+    namespace_close(f_h_, ns);
+    namespace_close(f_cpp_, ns);
 }
 
 /**
@@ -1074,7 +1019,7 @@ void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
                 throw "compiler error: no C++ writer for base type " + t_base_type::t_base_name(tbase) + name;
             }
         } else if (type->is_enum()) {
-            f_cpp_ << "writeI32((int32_t)" << name << ")";
+            f_cpp_ << "writeI32(static_cast<int32_t>(" << name << "))";
         }
         f_cpp_ << ")" << inline_return_cpp("false");
     } else {
@@ -1268,7 +1213,7 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
         std::string t2 = tmp("cvrt");
         f_cpp_ << indent_cpp() << "int32_t " << t << ";\n";
         f_cpp_ << indent_cpp() << type_name(type) << "Vocab " << t2 << ";\n";
-        f_cpp_ << indent_cpp() << "if (!reader.readEnum(" << t << "," << t2 << ")) {";
+        f_cpp_ << indent_cpp() << "if (!reader.readEnum(" << t << ", " << t2 << ")) {\n";
         indent_up_cpp();
         {
             generate_deserialize_field_fallback(f_cpp_, tfield);
@@ -1277,7 +1222,7 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
         f_cpp_ << indent_cpp() << "} else {\n";
         indent_up_cpp();
         {
-            f_cpp_ << indent_cpp() << name << " = (" << type_name(type) << ")" << t << ";\n";
+            f_cpp_ << indent_cpp() << name << " = static_cast<" << type_name(type) << ">(" << t << ");\n";
         }
         indent_down_cpp();
         f_cpp_ << indent_cpp() << "}\n";
@@ -1474,13 +1419,13 @@ std::string t_yarp_generator::declare_field(t_field* tfield,
                 result += " = 0";
                 break;
             case t_base_type::TYPE_DOUBLE:
-                result += " = (double)0";
+                result += " = 0.0";
                 break;
             default:
                 throw "compiler error: no C++ initializer for base type " + t_base_type::t_base_name(tbase);
             }
         } else if (type->is_enum()) {
-            result += " = (" + type_name(type) + ")0";
+            result += " = static_cast<" + type_name(type) + ">(0)";
         } else {
             result += " = {}";
         }
@@ -1500,7 +1445,7 @@ void t_yarp_generator::print_const_value(std::ostringstream& f_cpp_,
         f_cpp_ << indent_cpp() << name << " = " << v2 << ";\n"
                     << '\n';
     } else if (type->is_enum()) {
-        f_cpp_ << indent_cpp() << name << " = (" << type_name(type) << ")" << value->get_integer() << ";\n"
+        f_cpp_ << indent_cpp() << name << " = static_cast<" << type_name(type) << ">(" << value->get_integer() << ");\n"
                     << '\n';
     } else if (type->is_struct() || type->is_xception()) {
         const auto& fields = ((t_struct*)type)->get_members();
@@ -1642,6 +1587,9 @@ int t_yarp_generator::flat_element_count(t_function* fn)
  */
 void t_yarp_generator::generate_typedef(t_typedef* ttypedef)
 {
+    assert(indent_count_h() == 0);
+    assert(indent_count_cpp() == 0);
+
     THRIFT_DEBUG_COMMENT(f_out_common_);
 
     std::string name = ttypedef->get_name();
@@ -2065,18 +2013,6 @@ void t_yarp_generator::generate_struct_default_constructor(t_struct* tstruct, st
     f_cpp_ << '\n';
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
-    {
-        for (const auto& member : members) {
-            t_type* t = get_true_type(member->get_type());
-
-            if (!t->is_base_type()) {
-                t_const_value* cv = member->get_value();
-                if (cv != nullptr) {
-                    print_const_value(f_cpp_, member->get_name(), t, cv);
-                }
-            }
-        }
-    }
     indent_down_cpp();
     f_cpp_ << indent_cpp() << "}\n";
     f_cpp_ << '\n';
@@ -2703,10 +2639,10 @@ void t_yarp_generator::generate_struct_editor_field_setter_list(t_struct* tstruc
     const auto& mname = member->get_name();
     const auto& mtype = type_name(static_cast<t_list*>(get_true_type(member->get_type()))->get_elem_type(), false, true);
 
-    f_h_ << indent_h() << "void set_" << mname << "(int index, " << mtype << " elem);\n";
+    f_h_ << indent_h() << "void set_" << mname << "(size_t index, " << mtype << " elem);\n";
 
     f_cpp_ << indent_cpp() << "// Editor: " << mname << " setter (list)\n";
-    f_cpp_ << indent_cpp() << "void " << name << "::Editor::set_" << mname << "(int index, " << mtype << " elem)\n";
+    f_cpp_ << indent_cpp() << "void " << name << "::Editor::set_" << mname << "(size_t index, " << mtype << " elem)\n";
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
     {
@@ -3632,7 +3568,12 @@ void t_yarp_generator::generate_service_help(t_service* tservice, std::ostringst
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
     f_h_ << indent_h() << "// help method\n";
-    f_h_ << indent_h() << "virtual std::vector<std::string> help(const std::string& functionName = \"--all\");\n";
+    if (tservice->get_extends() != nullptr) {
+        f_h_ << indent_h() << "std::vector<std::string> help(const std::string& functionName = \"--all\") override;\n";
+    } else {
+        f_h_ << indent_h() << "virtual std::vector<std::string> help(const std::string& functionName = \"--all\");\n";
+    }
+
     f_h_ << '\n';
 
     f_cpp_ << indent_cpp() << "// help method\n";
@@ -3786,7 +3727,7 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
                     bool first = true;
                     for (const auto& arg : args) {
                         if (!first) {
-                            f_cpp_ << ",";
+                            f_cpp_ << ", ";
                         }
                         first = false;
                         f_cpp_ << arg->get_name();
@@ -3903,4 +3844,5 @@ THRIFT_REGISTER_GENERATOR(
     "    no_namespace_prefix:  Omit the namespace from the include prefix\n"
     "    no_copyright:         Omit the copyright header.\n"
     "    no_editor:            Omit the generation of the Editor class for structs.\n"
-    "    no_doc:               Omit doxygen documentation.\n")
+    "    no_doc:               Omit doxygen documentation.\n"
+    "    debug_generator:      Add generator debug information in generated code.\n")

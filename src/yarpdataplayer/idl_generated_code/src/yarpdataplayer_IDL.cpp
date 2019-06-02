@@ -585,7 +585,7 @@ bool yarpdataplayer_IDL::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            yarpdataplayer_IDL_setFrame_helper::s_return_helper = setFrame(name,frameNum);
+            yarpdataplayer_IDL_setFrame_helper::s_return_helper = setFrame(name, frameNum);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {

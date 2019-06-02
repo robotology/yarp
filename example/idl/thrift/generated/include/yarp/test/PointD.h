@@ -11,25 +11,31 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_SENSORMEASUREMENTS_H
-#define YARP_THRIFT_GENERATOR_STRUCT_SENSORMEASUREMENTS_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_POINTD_H
+#define YARP_THRIFT_GENERATOR_STRUCT_POINTD_H
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <SensorMeasurement.h>
 
-class SensorMeasurements :
+namespace yarp {
+namespace test {
+
+class PointD :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    std::vector<SensorMeasurement> measurements;
+    std::int32_t x;
+    std::int32_t y;
+    std::int32_t z;
 
     // Default constructor
-    SensorMeasurements();
+    PointD();
 
     // Constructor with field values
-    SensorMeasurements(const std::vector<SensorMeasurement>& measurements);
+    PointD(const std::int32_t x,
+           const std::int32_t y,
+           const std::int32_t z);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -47,7 +53,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<SensorMeasurements> unwrapped;
+    typedef yarp::os::idl::Unwrapped<PointD> unwrapped;
 
     class Editor :
             public yarp::os::Wire,
@@ -58,7 +64,7 @@ public:
         Editor();
 
         // Editor: constructor with base class
-        Editor(SensorMeasurements& obj);
+        Editor(PointD& obj);
 
         // Editor: destructor
         ~Editor() override;
@@ -70,13 +76,13 @@ public:
         Editor& operator=(Editor&& rhs) = delete;
 
         // Editor: edit
-        bool edit(SensorMeasurements& obj, bool dirty = true);
+        bool edit(PointD& obj, bool dirty = true);
 
         // Editor: validity check
         bool isValid() const;
 
         // Editor: state
-        SensorMeasurements& state();
+        PointD& state();
 
         // Editor: start editing
         void start_editing();
@@ -100,12 +106,23 @@ public:
         }
 #endif // YARP_NO_DEPRECATED
 
-        // Editor: measurements field
-        void set_measurements(const std::vector<SensorMeasurement>& measurements);
-        void set_measurements(size_t index, const SensorMeasurement& elem);
-        const std::vector<SensorMeasurement>& get_measurements() const;
-        virtual bool will_set_measurements();
-        virtual bool did_set_measurements();
+        // Editor: x field
+        void set_x(const std::int32_t x);
+        std::int32_t get_x() const;
+        virtual bool will_set_x();
+        virtual bool did_set_x();
+
+        // Editor: y field
+        void set_y(const std::int32_t y);
+        std::int32_t get_y() const;
+        virtual bool will_set_y();
+        virtual bool did_set_y();
+
+        // Editor: z field
+        void set_z(const std::int32_t z);
+        std::int32_t get_z() const;
+        virtual bool will_set_z();
+        virtual bool did_set_z();
 
         // Editor: clean
         void clean();
@@ -118,13 +135,15 @@ public:
 
     private:
         // Editor: state
-        SensorMeasurements* obj;
+        PointD* obj;
         bool obj_owned;
         int group;
 
         // Editor: dirty variables
         bool is_dirty;
-        bool is_dirty_measurements;
+        bool is_dirty_x;
+        bool is_dirty_y;
+        bool is_dirty_z;
         int dirty_count;
 
         // Editor: send if possible
@@ -134,18 +153,35 @@ public:
         void mark_dirty();
 
         // Editor: mark dirty single fields
-        void mark_dirty_measurements();
+        void mark_dirty_x();
+        void mark_dirty_y();
+        void mark_dirty_z();
 
         // Editor: dirty_flags
         void dirty_flags(bool flag);
     };
 
 private:
-    // read/write measurements field
-    bool read_measurements(yarp::os::idl::WireReader& reader);
-    bool write_measurements(const yarp::os::idl::WireWriter& writer) const;
-    bool nested_read_measurements(yarp::os::idl::WireReader& reader);
-    bool nested_write_measurements(const yarp::os::idl::WireWriter& writer) const;
+    // read/write x field
+    bool read_x(yarp::os::idl::WireReader& reader);
+    bool write_x(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_x(yarp::os::idl::WireReader& reader);
+    bool nested_write_x(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write y field
+    bool read_y(yarp::os::idl::WireReader& reader);
+    bool write_y(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_y(yarp::os::idl::WireReader& reader);
+    bool nested_write_y(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write z field
+    bool read_z(yarp::os::idl::WireReader& reader);
+    bool write_z(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_z(yarp::os::idl::WireReader& reader);
+    bool nested_write_z(const yarp::os::idl::WireWriter& writer) const;
 };
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_SENSORMEASUREMENTS_H
+} // namespace yarp
+} // namespace test
+
+#endif // YARP_THRIFT_GENERATOR_STRUCT_POINTD_H

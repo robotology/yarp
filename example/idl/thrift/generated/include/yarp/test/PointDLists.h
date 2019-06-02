@@ -11,25 +11,32 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_SENSORMEASUREMENTS_H
-#define YARP_THRIFT_GENERATOR_STRUCT_SENSORMEASUREMENTS_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_POINTDLISTS_H
+#define YARP_THRIFT_GENERATOR_STRUCT_POINTDLISTS_H
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <SensorMeasurement.h>
+#include <yarp/test/PointD.h>
 
-class SensorMeasurements :
+namespace yarp {
+namespace test {
+
+class PointDLists :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
-    std::vector<SensorMeasurement> measurements;
+    std::string name;
+    std::vector<PointD> firstList;
+    std::vector<PointD> secondList;
 
     // Default constructor
-    SensorMeasurements();
+    PointDLists();
 
     // Constructor with field values
-    SensorMeasurements(const std::vector<SensorMeasurement>& measurements);
+    PointDLists(const std::string& name,
+                const std::vector<PointD>& firstList,
+                const std::vector<PointD>& secondList);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -47,7 +54,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<SensorMeasurements> unwrapped;
+    typedef yarp::os::idl::Unwrapped<PointDLists> unwrapped;
 
     class Editor :
             public yarp::os::Wire,
@@ -58,7 +65,7 @@ public:
         Editor();
 
         // Editor: constructor with base class
-        Editor(SensorMeasurements& obj);
+        Editor(PointDLists& obj);
 
         // Editor: destructor
         ~Editor() override;
@@ -70,13 +77,13 @@ public:
         Editor& operator=(Editor&& rhs) = delete;
 
         // Editor: edit
-        bool edit(SensorMeasurements& obj, bool dirty = true);
+        bool edit(PointDLists& obj, bool dirty = true);
 
         // Editor: validity check
         bool isValid() const;
 
         // Editor: state
-        SensorMeasurements& state();
+        PointDLists& state();
 
         // Editor: start editing
         void start_editing();
@@ -100,12 +107,25 @@ public:
         }
 #endif // YARP_NO_DEPRECATED
 
-        // Editor: measurements field
-        void set_measurements(const std::vector<SensorMeasurement>& measurements);
-        void set_measurements(size_t index, const SensorMeasurement& elem);
-        const std::vector<SensorMeasurement>& get_measurements() const;
-        virtual bool will_set_measurements();
-        virtual bool did_set_measurements();
+        // Editor: name field
+        void set_name(const std::string& name);
+        const std::string& get_name() const;
+        virtual bool will_set_name();
+        virtual bool did_set_name();
+
+        // Editor: firstList field
+        void set_firstList(const std::vector<PointD>& firstList);
+        void set_firstList(size_t index, const PointD& elem);
+        const std::vector<PointD>& get_firstList() const;
+        virtual bool will_set_firstList();
+        virtual bool did_set_firstList();
+
+        // Editor: secondList field
+        void set_secondList(const std::vector<PointD>& secondList);
+        void set_secondList(size_t index, const PointD& elem);
+        const std::vector<PointD>& get_secondList() const;
+        virtual bool will_set_secondList();
+        virtual bool did_set_secondList();
 
         // Editor: clean
         void clean();
@@ -118,13 +138,15 @@ public:
 
     private:
         // Editor: state
-        SensorMeasurements* obj;
+        PointDLists* obj;
         bool obj_owned;
         int group;
 
         // Editor: dirty variables
         bool is_dirty;
-        bool is_dirty_measurements;
+        bool is_dirty_name;
+        bool is_dirty_firstList;
+        bool is_dirty_secondList;
         int dirty_count;
 
         // Editor: send if possible
@@ -134,18 +156,35 @@ public:
         void mark_dirty();
 
         // Editor: mark dirty single fields
-        void mark_dirty_measurements();
+        void mark_dirty_name();
+        void mark_dirty_firstList();
+        void mark_dirty_secondList();
 
         // Editor: dirty_flags
         void dirty_flags(bool flag);
     };
 
 private:
-    // read/write measurements field
-    bool read_measurements(yarp::os::idl::WireReader& reader);
-    bool write_measurements(const yarp::os::idl::WireWriter& writer) const;
-    bool nested_read_measurements(yarp::os::idl::WireReader& reader);
-    bool nested_write_measurements(const yarp::os::idl::WireWriter& writer) const;
+    // read/write name field
+    bool read_name(yarp::os::idl::WireReader& reader);
+    bool write_name(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_name(yarp::os::idl::WireReader& reader);
+    bool nested_write_name(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write firstList field
+    bool read_firstList(yarp::os::idl::WireReader& reader);
+    bool write_firstList(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_firstList(yarp::os::idl::WireReader& reader);
+    bool nested_write_firstList(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write secondList field
+    bool read_secondList(yarp::os::idl::WireReader& reader);
+    bool write_secondList(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_secondList(yarp::os::idl::WireReader& reader);
+    bool nested_write_secondList(const yarp::os::idl::WireWriter& writer) const;
 };
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_SENSORMEASUREMENTS_H
+} // namespace yarp
+} // namespace test
+
+#endif // YARP_THRIFT_GENERATOR_STRUCT_POINTDLISTS_H
