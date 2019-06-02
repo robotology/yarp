@@ -60,7 +60,6 @@ private:
     size_t m_cfg_frequency;
     size_t m_cfg_bytesPerSample;
 
-    size_t m_audioFilePointer;
     std::string m_audio_filename;
     size_t m_bpnt;
     yarp::dev::CircularAudioBuffer_16t* m_inputBuffer;
