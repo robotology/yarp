@@ -148,7 +148,7 @@ void ImageStorage::resize(size_t x, size_t y, int pixel_type,
 
     if (need_recreation) {
         _free_complete();
-        DBGPF1 printf("HIT recreation for %p %p: %zu %zu %d\n", this, pImage, x, y, pixel_type);
+        DBGPF1 printf("HIT recreation for %p %p: %zu %zu %d\n", static_cast<void*>(this), static_cast<void*>(pImage), x, y, pixel_type);
         _alloc_complete (x, y, pixel_type, quantum, topIsLow);
     }
     extern_type_id = pixel_type;
