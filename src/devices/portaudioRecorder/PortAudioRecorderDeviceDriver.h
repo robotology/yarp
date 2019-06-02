@@ -57,12 +57,14 @@ private:
     yarp::os::Mutex     m_mutex;
     bool                m_isRecording;
 
-    PortAudioRecorderDeviceDriver(const PortAudioRecorderDeviceDriver&);
-
 public:
     PortAudioRecorderDeviceDriver();
+    PortAudioRecorderDeviceDriver(const PortAudioRecorderDeviceDriver&) = delete;
+    PortAudioRecorderDeviceDriver(PortAudioRecorderDeviceDriver&&) = delete;
+    PortAudioRecorderDeviceDriver& operator=(const PortAudioRecorderDeviceDriver&) = delete;
+    PortAudioRecorderDeviceDriver& operator=(PortAudioRecorderDeviceDriver&&) = delete;
 
-    virtual ~PortAudioRecorderDeviceDriver();
+    ~PortAudioRecorderDeviceDriver() override;
 
     bool open(yarp::os::Searchable& config) override;
 

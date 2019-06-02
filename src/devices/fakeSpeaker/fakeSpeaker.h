@@ -29,7 +29,12 @@ class fakeSpeaker :
 {
 public:
     fakeSpeaker();
-    ~fakeSpeaker();
+    fakeSpeaker(const fakeSpeaker&) = delete;
+    fakeSpeaker(fakeSpeaker&&) = delete;
+    fakeSpeaker& operator=(const fakeSpeaker&) = delete;
+    fakeSpeaker& operator=(fakeSpeaker&&) = delete;
+
+    ~fakeSpeaker() override;
 
     // Device Driver interface
     bool open(yarp::os::Searchable &config) override;

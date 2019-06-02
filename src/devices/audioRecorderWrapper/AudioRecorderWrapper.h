@@ -59,8 +59,12 @@ public:
      * Constructor.
      */
     AudioRecorderWrapper();
+    AudioRecorderWrapper(const AudioRecorderWrapper&) = delete;
+    AudioRecorderWrapper(AudioRecorderWrapper&&) = delete;
+    AudioRecorderWrapper& operator=(const AudioRecorderWrapper&) = delete;
+    AudioRecorderWrapper& operator=(AudioRecorderWrapper&&) = delete;
 
-    virtual ~AudioRecorderWrapper();
+    ~AudioRecorderWrapper() override;
 
     bool open(yarp::os::Searchable& config) override;
     bool close() override;

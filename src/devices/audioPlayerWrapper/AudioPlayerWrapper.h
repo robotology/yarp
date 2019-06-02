@@ -62,7 +62,12 @@ class AudioPlayerWrapper :
 
 public:
     AudioPlayerWrapper();
-    ~AudioPlayerWrapper();
+    AudioPlayerWrapper(const AudioPlayerWrapper&) = delete;
+    AudioPlayerWrapper(AudioPlayerWrapper&&) = delete;
+    AudioPlayerWrapper& operator=(const AudioPlayerWrapper&) = delete;
+    AudioPlayerWrapper& operator=(AudioPlayerWrapper&&) = delete;
+
+    ~AudioPlayerWrapper() override;
 
     bool open(yarp::os::Searchable &params) override;
     bool close() override;

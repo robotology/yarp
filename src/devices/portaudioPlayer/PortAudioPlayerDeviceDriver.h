@@ -73,12 +73,14 @@ private:
     PlayStreamThread    m_pThread;
     yarp::os::Mutex     m_mutex;
 
-    PortAudioPlayerDeviceDriver(const PortAudioPlayerDeviceDriver&);
-
 public:
     PortAudioPlayerDeviceDriver();
+    PortAudioPlayerDeviceDriver(const PortAudioPlayerDeviceDriver&) = delete;
+    PortAudioPlayerDeviceDriver(PortAudioPlayerDeviceDriver&&) = delete;
+    PortAudioPlayerDeviceDriver& operator=(const PortAudioPlayerDeviceDriver&) = delete;
+    PortAudioPlayerDeviceDriver& operator=(PortAudioPlayerDeviceDriver&&) = delete;
 
-    virtual ~PortAudioPlayerDeviceDriver();
+    ~PortAudioPlayerDeviceDriver() override;
 
     bool open(yarp::os::Searchable& config) override;
 
