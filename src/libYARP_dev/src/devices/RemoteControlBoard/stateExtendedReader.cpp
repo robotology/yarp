@@ -69,7 +69,7 @@ void StateExtendedInputPort::init(int numberOfJoints)
     last.interactionMode.resize(numberOfJoints);
 }
 
-void StateExtendedInputPort::onRead(jointData &v)
+void StateExtendedInputPort::onRead(yarp::dev::impl::jointData &v)
 {
     now=Time::now();
     mutex.lock();

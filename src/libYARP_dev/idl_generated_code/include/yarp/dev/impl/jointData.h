@@ -18,6 +18,10 @@
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/sig/Vector.h>
 
+namespace yarp {
+namespace dev {
+namespace impl {
+
 class jointData :
         public yarp::os::idl::WirePortable
 {
@@ -482,5 +486,9 @@ private:
     bool nested_read_interactionMode_isValid(yarp::os::idl::WireReader& reader);
     bool nested_write_interactionMode_isValid(const yarp::os::idl::WireWriter& writer) const;
 };
+
+} // namespace yarp
+} // namespace dev
+} // namespace impl
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_JOINTDATA_H

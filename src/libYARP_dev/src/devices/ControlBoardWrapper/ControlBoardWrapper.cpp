@@ -10,7 +10,7 @@
 #include "ControlBoardWrapper.h"
 #include "StreamingMessagesParser.h"
 #include "RPCMessagesParser.h"
-#include "../msgs/yarp/include/jointData.h"
+#include <yarp/dev/impl/jointData.h>
 #include <iostream>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>

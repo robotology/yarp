@@ -13,7 +13,7 @@
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortWriter.h>
 #include <yarp/dev/api.h>
-#include <audioBufferSizeData.h>
+#include <yarp/dev/audioBufferSizeData.h>
 
 namespace yarp {
 namespace dev {

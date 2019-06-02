@@ -172,9 +172,9 @@ protected:
 //  yarp::os::PortReaderBuffer<jointData>           extendedInputState_buffer;  // Buffer storing new data
     StateExtendedInputPort                          extendedIntputStatePort;  // Buffered port storing new data
     Mutex extendedPortMutex;
-    jointData last_singleJoint;     // tmp to store last received data for a particular joint
+    yarp::dev::impl::jointData last_singleJoint;     // tmp to store last received data for a particular joint
 //    yarp::os::Port extendedIntputStatePort;         // Port /stateExt:i reading the state of the joints
-    jointData last_wholePart;         // tmp to store last received data for whole part
+    yarp::dev::impl::jointData last_wholePart;         // tmp to store last received data for whole part
 
     std::string remote;
     std::string local;
