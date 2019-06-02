@@ -149,7 +149,7 @@ void SensorMeasurements::Editor::set_measurements(const std::vector<SensorMeasur
 }
 
 // Editor: measurements setter (list)
-void SensorMeasurements::Editor::set_measurements(int index, const SensorMeasurement& elem)
+void SensorMeasurements::Editor::set_measurements(size_t index, const SensorMeasurement& elem)
 {
     will_set_measurements();
     obj->measurements[index] = elem;
@@ -356,12 +356,12 @@ void SensorMeasurements::Editor::dirty_flags(bool flag)
 bool SensorMeasurements::read_measurements(yarp::os::idl::WireReader& reader)
 {
     measurements.clear();
-    uint32_t _size120;
-    yarp::os::idl::WireState _etype123;
-    reader.readListBegin(_etype123, _size120);
-    measurements.resize(_size120);
-    for (auto& _elem124 : measurements) {
-        if (!reader.readNested(_elem124)) {
+    uint32_t _size0;
+    yarp::os::idl::WireState _etype3;
+    reader.readListBegin(_etype3, _size0);
+    measurements.resize(_size0);
+    for (auto& _elem4 : measurements) {
+        if (!reader.readNested(_elem4)) {
             reader.fail();
             return false;
         }
@@ -376,8 +376,8 @@ bool SensorMeasurements::write_measurements(const yarp::os::idl::WireWriter& wri
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(measurements.size()))) {
         return false;
     }
-    for (const auto& _item125 : measurements) {
-        if (!writer.writeNested(_item125)) {
+    for (const auto& _item5 : measurements) {
+        if (!writer.writeNested(_item5)) {
             return false;
         }
     }
@@ -391,12 +391,12 @@ bool SensorMeasurements::write_measurements(const yarp::os::idl::WireWriter& wri
 bool SensorMeasurements::nested_read_measurements(yarp::os::idl::WireReader& reader)
 {
     measurements.clear();
-    uint32_t _size126;
-    yarp::os::idl::WireState _etype129;
-    reader.readListBegin(_etype129, _size126);
-    measurements.resize(_size126);
-    for (auto& _elem130 : measurements) {
-        if (!reader.readNested(_elem130)) {
+    uint32_t _size6;
+    yarp::os::idl::WireState _etype9;
+    reader.readListBegin(_etype9, _size6);
+    measurements.resize(_size6);
+    for (auto& _elem10 : measurements) {
+        if (!reader.readNested(_elem10)) {
             reader.fail();
             return false;
         }
@@ -411,8 +411,8 @@ bool SensorMeasurements::nested_write_measurements(const yarp::os::idl::WireWrit
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(measurements.size()))) {
         return false;
     }
-    for (const auto& _item131 : measurements) {
-        if (!writer.writeNested(_item131)) {
+    for (const auto& _item11 : measurements) {
+        if (!writer.writeNested(_item11)) {
             return false;
         }
     }

@@ -102,7 +102,7 @@ public:
 
         // Editor: measurements field
         void set_measurements(const std::vector<SensorMeasurement>& measurements);
-        void set_measurements(int index, const SensorMeasurement& elem);
+        void set_measurements(size_t index, const SensorMeasurement& elem);
         const std::vector<SensorMeasurement>& get_measurements() const;
         virtual bool will_set_measurements();
         virtual bool did_set_measurements();

@@ -118,63 +118,63 @@ public:
 
         // Editor: ThreeAxisGyroscopes field
         void set_ThreeAxisGyroscopes(const std::vector<SensorMetadata>& ThreeAxisGyroscopes);
-        void set_ThreeAxisGyroscopes(int index, const SensorMetadata& elem);
+        void set_ThreeAxisGyroscopes(size_t index, const SensorMetadata& elem);
         const std::vector<SensorMetadata>& get_ThreeAxisGyroscopes() const;
         virtual bool will_set_ThreeAxisGyroscopes();
         virtual bool did_set_ThreeAxisGyroscopes();
 
         // Editor: ThreeAxisLinearAccelerometers field
         void set_ThreeAxisLinearAccelerometers(const std::vector<SensorMetadata>& ThreeAxisLinearAccelerometers);
-        void set_ThreeAxisLinearAccelerometers(int index, const SensorMetadata& elem);
+        void set_ThreeAxisLinearAccelerometers(size_t index, const SensorMetadata& elem);
         const std::vector<SensorMetadata>& get_ThreeAxisLinearAccelerometers() const;
         virtual bool will_set_ThreeAxisLinearAccelerometers();
         virtual bool did_set_ThreeAxisLinearAccelerometers();
 
         // Editor: ThreeAxisMagnetometers field
         void set_ThreeAxisMagnetometers(const std::vector<SensorMetadata>& ThreeAxisMagnetometers);
-        void set_ThreeAxisMagnetometers(int index, const SensorMetadata& elem);
+        void set_ThreeAxisMagnetometers(size_t index, const SensorMetadata& elem);
         const std::vector<SensorMetadata>& get_ThreeAxisMagnetometers() const;
         virtual bool will_set_ThreeAxisMagnetometers();
         virtual bool did_set_ThreeAxisMagnetometers();
 
         // Editor: OrientationSensors field
         void set_OrientationSensors(const std::vector<SensorMetadata>& OrientationSensors);
-        void set_OrientationSensors(int index, const SensorMetadata& elem);
+        void set_OrientationSensors(size_t index, const SensorMetadata& elem);
         const std::vector<SensorMetadata>& get_OrientationSensors() const;
         virtual bool will_set_OrientationSensors();
         virtual bool did_set_OrientationSensors();
 
         // Editor: TemperatureSensors field
         void set_TemperatureSensors(const std::vector<SensorMetadata>& TemperatureSensors);
-        void set_TemperatureSensors(int index, const SensorMetadata& elem);
+        void set_TemperatureSensors(size_t index, const SensorMetadata& elem);
         const std::vector<SensorMetadata>& get_TemperatureSensors() const;
         virtual bool will_set_TemperatureSensors();
         virtual bool did_set_TemperatureSensors();
 
         // Editor: SixAxisForceTorqueSensors field
         void set_SixAxisForceTorqueSensors(const std::vector<SensorMetadata>& SixAxisForceTorqueSensors);
-        void set_SixAxisForceTorqueSensors(int index, const SensorMetadata& elem);
+        void set_SixAxisForceTorqueSensors(size_t index, const SensorMetadata& elem);
         const std::vector<SensorMetadata>& get_SixAxisForceTorqueSensors() const;
         virtual bool will_set_SixAxisForceTorqueSensors();
         virtual bool did_set_SixAxisForceTorqueSensors();
 
         // Editor: ContactLoadCellArrays field
         void set_ContactLoadCellArrays(const std::vector<SensorMetadata>& ContactLoadCellArrays);
-        void set_ContactLoadCellArrays(int index, const SensorMetadata& elem);
+        void set_ContactLoadCellArrays(size_t index, const SensorMetadata& elem);
         const std::vector<SensorMetadata>& get_ContactLoadCellArrays() const;
         virtual bool will_set_ContactLoadCellArrays();
         virtual bool did_set_ContactLoadCellArrays();
 
         // Editor: EncoderArrays field
         void set_EncoderArrays(const std::vector<SensorMetadata>& EncoderArrays);
-        void set_EncoderArrays(int index, const SensorMetadata& elem);
+        void set_EncoderArrays(size_t index, const SensorMetadata& elem);
         const std::vector<SensorMetadata>& get_EncoderArrays() const;
         virtual bool will_set_EncoderArrays();
         virtual bool did_set_EncoderArrays();
 
         // Editor: SkinPatches field
         void set_SkinPatches(const std::vector<SensorMetadata>& SkinPatches);
-        void set_SkinPatches(int index, const SensorMetadata& elem);
+        void set_SkinPatches(size_t index, const SensorMetadata& elem);
         const std::vector<SensorMetadata>& get_SkinPatches() const;
         virtual bool will_set_SkinPatches();
         virtual bool did_set_SkinPatches();
