@@ -259,11 +259,10 @@ void AudioPlayerWrapper::threadRelease()
 
 void AudioPlayerWrapper::run()
 {
-    Sound *s=nullptr;
     double current_time = yarp::os::Time::now();
 
-    s = m_audioInPort.read(false);
-    if (s != NULL)
+    Sound* s = m_audioInPort.read(false);
+    if (s != nullptr)
     {
         scheduled_sound_type ss;
 #if 1

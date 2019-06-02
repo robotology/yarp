@@ -37,10 +37,9 @@ fakeSpeaker::~fakeSpeaker()
 bool fakeSpeaker::open(yarp::os::Searchable &config)
 {
     //sets the thread period
-    double period;
     if( config.check("period"))
     {
-        period = config.find("period").asFloat64();
+        double period = config.find("period").asFloat64();
         setPeriod(period);
         yInfo() << "Using chosen period of " << period << " s";
     }
