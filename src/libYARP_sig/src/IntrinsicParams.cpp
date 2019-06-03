@@ -12,7 +12,7 @@
 using namespace yarp::sig;
 
 IntrinsicParams::IntrinsicParams(): principalPointX(0.0), principalPointY(0.0),
-                   focalLengthX(0.0), focalLengthY(0.0),
+                   physFocalLength(0.0), focalLengthX(0.0), focalLengthY(0.0),
                    distortionModel(), isOptional(false) {}
 
 IntrinsicParams::IntrinsicParams(const yarp::os::Property &intrinsic, bool isOptional): isOptional(isOptional)
@@ -22,6 +22,7 @@ IntrinsicParams::IntrinsicParams(const yarp::os::Property &intrinsic, bool isOpt
 
 void IntrinsicParams::toProperty(yarp::os::Property& intrinsic) const
 {
+    intrinsic.put("physFocalLength", physFocalLength);
     intrinsic.put("focalLengthX", focalLengthX);
     intrinsic.put("focalLengthY", focalLengthY);
     intrinsic.put("principalPointX", principalPointX);
@@ -50,6 +51,9 @@ void IntrinsicParams::fromProperty(const yarp::os::Property& intrinsic)
     focalLengthY    = intrinsic.find("focalLengthY").asFloat64();
     principalPointX = intrinsic.find("principalPointX").asFloat64();
     principalPointY = intrinsic.find("principalPointY").asFloat64();
+
+    // The physical focal length is optional
+    physFocalLength = intrinsic.check("physFocalLength", yarp::os::Value(0.0)).asFloat64();
 
     // The distortion parameters are optional
     if (intrinsic.find("distortionModel").asString() !=  "plumb_bob") {
