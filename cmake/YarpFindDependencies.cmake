@@ -274,7 +274,7 @@ checkandset_dependency(ACE)
 set_property(CACHE YARP_USE_ACE PROPERTY TYPE INTERNAL)
 set_property(CACHE YARP_USE_ACE PROPERTY VALUE TRUE)
 
-set(RobotTestingFramework_REQUIRED_VERSION 1.6.51)
+set(RobotTestingFramework_REQUIRED_VERSION 2)
 find_package(RobotTestingFramework ${RobotTestingFramework_REQUIRED_VERSION} QUIET)
 checkandset_dependency(RobotTestingFramework)
 
