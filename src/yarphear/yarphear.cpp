@@ -194,10 +194,9 @@ int main(int argc, char *argv[]) {
         p.fromCommand(argc,argv);
     }
 
-    // otherwise default device is "portaudio"
+    // otherwise default device is "portaudioPlayer"
     if (!p.check("device")) {
-        p.put("device","portaudio");
-        p.put("write",1);
+        p.put("device","portaudioPlayer");
         p.put("delay",1);
     }
 

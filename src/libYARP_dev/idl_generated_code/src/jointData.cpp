@@ -11,7 +11,11 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <jointData.h>
+#include <yarp/dev/impl/jointData.h>
+
+namespace yarp {
+namespace dev {
+namespace impl {
 
 // Default constructor
 jointData::jointData() :
@@ -2815,3 +2819,7 @@ bool jointData::nested_write_interactionMode_isValid(const yarp::os::idl::WireWr
     }
     return true;
 }
+
+} // namespace yarp
+} // namespace dev
+} // namespace impl

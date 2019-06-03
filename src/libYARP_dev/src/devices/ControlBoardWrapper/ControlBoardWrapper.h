@@ -36,7 +36,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <jointData.h>           // struct for YARP extended port
+#include <yarp/dev/impl/jointData.h>           // struct for YARP extended port
 
 #include "SubDevice.h"
 #include "StreamingMessagesParser.h"
@@ -295,7 +295,7 @@ private:
 
     // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated
     // from the YARP .thrift file
-    yarp::os::PortWriterBuffer<jointData>           extendedOutputState_buffer;
+    yarp::os::PortWriterBuffer<yarp::dev::impl::jointData>           extendedOutputState_buffer;
     yarp::os::Port extendedOutputStatePort;         // Port /stateExt:o streaming out the struct with the robot data
 
     // ROS state publisher

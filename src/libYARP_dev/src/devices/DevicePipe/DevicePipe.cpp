@@ -127,7 +127,9 @@ bool DevicePipe::updateService() {
         printf("piped %zux%zu image\n", tmp.width(), tmp.height());
     } else if (sndSource!=nullptr&&sndSink!=nullptr) {
         Sound tmp;
-        sndSource->getSound(tmp);
+        //the following values have been arbitrarily chosen and may be optimized.
+        //4410 samples correspond to 0.1s with a frequency of 44100hz.
+        sndSource->getSound(tmp,4410,4410,0);
         sndSink->renderSound(tmp);
         printf("piped %zux%zu sound\n", tmp.getSamples(), tmp.getChannels());
     } else {

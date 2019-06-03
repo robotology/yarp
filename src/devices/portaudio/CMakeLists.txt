@@ -7,7 +7,7 @@
 
 yarp_prepare_plugin(portaudio
                     CATEGORY device
-                    TYPE yarp::dev::PortAudioDeviceDriver
+                    TYPE PortAudioDeviceDriver
                     INCLUDE PortAudioDeviceDriver.h
                     EXTRA_CONFIG WRAPPER=grabber
                     DEPENDS "YARP_HAS_PortAudio")

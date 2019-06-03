@@ -11,12 +11,18 @@ target_link_libraries(harness_devices YARP::YARP_OS
                                       YARP::YARP_dev)
 set_property(TARGET harness_devices PROPERTY FOLDER "Test")
 
-set(_inis controlboardwrapper2_basic.ini
+set(_inis AudioPlayerWrapper_fakeSpeaker.ini
+          AudioPlayerWrapper_portaudio.ini
+          AudioPlayerWrapper_portaudioPlayer.ini
+          AudioRecorderWrapper_fakeMicrophone.ini
+          AudioRecorderWrapper_portaudio.ini
+          AudioRecorderWrapper_portaudioRecorder.ini
+          controlboardwrapper2_basic.ini
           ffmpeg_grabber_basic.ini
           ffmpeg_grabber_video4linux.ini
           ffmpeg_writer_basic.ini
-          grabber_audio.ini
           grabber_basic.ini
+          grabber_audio.ini
           group_basic.ini
           opencv_grabber_basic.ini
           portaudio_basic.ini
@@ -43,4 +49,5 @@ foreach(_ini_file ${_inis})
            COMMAND ${_cmd}
            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   set_property(TEST "device::${_test}" PROPERTY SKIP_RETURN_CODE 255)
+  set_property(TEST "device::${_test}" PROPERTY TIMEOUT 10)
 endforeach()

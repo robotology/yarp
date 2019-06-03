@@ -3,11 +3,12 @@
  *
  * \defgroup portaudio_basic Example for portaudio (portaudio_basic)
 
-Instantiates \ref cmd_device_portaudio "portaudio" device implemented by yarp::dev::PortAudioDeviceDriver.
+Instantiates \ref cmd_device_portaudio "portaudio" device implemented by PortAudioDeviceDriver.
 \verbatim
 # start up a device for listening from a microphone
 device portaudio
 read
+allow-deprecated-devices
 \endverbatim
 If this text is saved in a file called portaudio_basic.ini then the device can be created by doing:
 \verbatim
@@ -39,8 +40,9 @@ So this is just an example
 <tr><td>loopback</td><td>if present, send audio read from microphone immediately back to speaker</td><td></td></tr>
 <tr><td>render_mode_append</td><td></td><td></td></tr>
 <tr><td>render_mode_immediate</td><td></td><td></td></tr>
+<tr><td>allow-deprecated-devices</td><td></td><td></td></tr>
 </table>
 
-\sa yarp::dev::PortAudioDeviceDriver
+\sa PortAudioDeviceDriver
 
  */

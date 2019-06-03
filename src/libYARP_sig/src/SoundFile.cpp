@@ -201,10 +201,10 @@ bool yarp::sig::file::write(const Sound& src, const char *dest)
     ManagedBytes bytes(header.dataLength);
     auto* data = reinterpret_cast<NetInt16*>(bytes.get());
     int ct = 0;
-    int samples = src.getSamples();
-    int channels = src.getChannels();
-    for (int i=0; i<samples; i++) {
-        for (int j=0; j<channels; j++) {
+    size_t samples = src.getSamples();
+    size_t channels = src.getChannels();
+    for (size_t i=0; i<samples; i++) {
+        for (size_t j=0; j<channels; j++) {
             int v = src.get(i,j);
             data[ct] = v;
             ct++;

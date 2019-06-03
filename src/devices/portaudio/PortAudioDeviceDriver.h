@@ -33,24 +33,21 @@
 #define DEFAULT_FRAMES_PER_BUFFER (512)
 //#define DEFAULT_FRAMES_PER_BUFFER (1024)
 
-namespace yarp {
-    namespace dev {
-        class PortAudioDeviceDriverSettings;
-        class PortAudioDeviceDriver;
-    }
-}
 
-class yarp::dev::PortAudioDeviceDriverSettings {
+class PortAudioDeviceDriverSettings
+{
 public:
     int rate;
     int samples;
-    int channels;
+    int playChannels;
+    int recChannels;
     bool wantRead;
     bool wantWrite;
     int deviceNumber;
 };
 
-class streamThread : public yarp::os::Thread
+class streamThread :
+        public yarp::os::Thread
 {
    public:
    bool         something_to_play;
@@ -65,8 +62,10 @@ class streamThread : public yarp::os::Thread
    void handleError(void);
 };
 
-class yarp::dev::PortAudioDeviceDriver : public IAudioGrabberSound, 
-            public IAudioRender, public DeviceDriver
+class PortAudioDeviceDriver :
+        public yarp::dev::IAudioGrabberSound,
+        public yarp::dev::IAudioRender,
+        public yarp::dev::DeprecatedDeviceDriver
 {
 private:
     PaStreamParameters  inputParameters;
@@ -74,13 +73,11 @@ private:
     PaStream*           stream;
     PaError             err;
     circularDataBuffers dataBuffers;
-    int                 i;
-    int                 numSamples;
-    int                 numBytes;
+    size_t              numSamples;
+    size_t              numBytes;
     streamThread        pThread;
 
     PortAudioDeviceDriver(const PortAudioDeviceDriver&);
-    void operator=(const PortAudioDeviceDriver&);
 
 public:
     PortAudioDeviceDriver();
@@ -109,22 +106,34 @@ public:
     bool open(PortAudioDeviceDriverSettings& config);
 
     bool close(void) override;
-    bool getSound(yarp::sig::Sound& sound) override;
-    bool renderSound(yarp::sig::Sound& sound) override;
+    bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;
+    bool renderSound(const yarp::sig::Sound& sound) override;
     bool startRecording() override;
     bool stopRecording() override;
-    
+    bool startPlayback() override;
+    bool stopPlayback() override;
+
     bool abortSound(void);
-    bool immediateSound(yarp::sig::Sound& sound);
-    bool appendSound(yarp::sig::Sound& sound);
+    bool immediateSound(const yarp::sig::Sound& sound);
+    bool appendSound(const yarp::sig::Sound& sound);
+
+    bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
+    bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
+    bool resetPlaybackAudioBuffer() override;
+
+    bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
+    bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
+    bool resetRecordingAudioBuffer() override;
 
 protected:
-    void *system_resource;
-    int  numChannels;
-    int  frequency;
-    bool loopBack;
+    void*   m_system_resource;
+    size_t  m_numPlaybackChannels;
+    size_t  m_numRecordChannels;
+    int     m_frequency;
+    bool    m_loopBack;
+    bool    m_getSoundIsNotBlocking;
 
-    PortAudioDeviceDriverSettings driverConfig;
+    PortAudioDeviceDriverSettings m_driverConfig;
     enum {RENDER_APPEND=0, RENDER_IMMEDIATE=1} renderMode;
     void handleError(void);
 };

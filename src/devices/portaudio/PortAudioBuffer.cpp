@@ -22,18 +22,7 @@
 #include <cstdlib>
 #include <portaudio.h>
 
+using namespace yarp::dev;
 
-circularBuffer::circularBuffer(int bufferSize)
-{
-    maxsize  = bufferSize + 1;
-    start = 0;
-    end   = 0;
-    elems = (SAMPLE *) calloc(maxsize, sizeof(SAMPLE));
-}
-
-circularBuffer::~circularBuffer()
-{
-    free(elems);
-}
 
 

@@ -9,10 +9,12 @@ project(YARP_dev)
 
 set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/api.h
+                  include/yarp/dev/AudioBufferSize.h
                   include/yarp/dev/AudioGrabberInterfaces.h
                   include/yarp/dev/AudioVisualInterfaces.h
                   include/yarp/dev/CalibratorInterfaces.h
                   include/yarp/dev/CanBusInterface.h
+                  include/yarp/dev/CircularAudioBuffer.h
                   include/yarp/dev/CartesianControl.h
                   include/yarp/dev/ControlBoardHelper.h
                   include/yarp/dev/ControlBoardHelpers.h
@@ -225,14 +227,22 @@ set(YARP_dev_devices_HDRS src/devices/AnalogSensorClient/AnalogSensorClient.h
 
 # Handle the YARP thrift messages
 include(YarpIDL)
-yarp_idl_to_dir(INPUT_FILES stateExt.thrift
-                OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/devices/msgs/yarp"
+yarp_idl_to_dir(INPUT_FILES idl/stateExt.thrift
+                            idl/audioBufferSizeData.thrift
+                OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
                 SOURCES_VAR YARP_dev_idl_SRCS
-                HEADERS_VAR YARP_dev_idl_HDRS
+                HEADERS_VAR YARP_dev_idl_all_HDRS
                 INCLUDE_DIRS_VAR YARP_dev_idl_INCLUDE_DIRS)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/devices/AnalogSensorClient
-                    ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/JoypadControlServer)
+list(APPEND YARP_dev_SRCS ${YARP_dev_idl_SRCS})
+unset(YARP_dev_idl_HDRS)
+foreach(_hdr IN LISTS YARP_dev_idl_all_HDRS)
+  if("${_hdr}" MATCHES "yarp/dev" AND NOT "${_hdr}" MATCHES "yarp/dev/impl")
+    list(APPEND YARP_dev_idl_HDRS "${_hdr}")
+  else()
+    list(APPEND YARP_dev_idl_IMPL_HDRS ${_hdr})
+  endif()
+endforeach()
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Source Files"
@@ -241,6 +251,11 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Header Files"
              FILES ${YARP_dev_HDRS}
                    ${YARP_dev_IMPL_HDRS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
+             PREFIX "Generated Files"
+             FILES ${YARP_dev_idl_SRCS}
+                   ${YARP_dev_idl_HDRS}
+                   ${YARP_dev_idl_IMPL_HDRS})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Devices Files"
              FILES ${YARP_dev_devices_SRCS}
@@ -250,14 +265,15 @@ add_library(YARP_dev ${YARP_dev_SRCS}
                      ${YARP_dev_HDRS}
                      ${YARP_dev_IMPL_HDRS}
                      ${YARP_dev_devices_SRCS}
-                     ${YARP_dev_devices_HDRS}
-                     ${YARP_dev_idl_SRCS}
-                     ${YARP_dev_idl_HDRS})
+                     ${YARP_dev_devices_HDRS})
 add_library(YARP::YARP_dev ALIAS YARP_dev)
 
 target_include_directories(YARP_dev PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                                           $<BUILD_INTERFACE:${YARP_dev_idl_INCLUDE_DIRS}>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_include_directories(YARP_dev PRIVATE ${YARP_dev_idl_INCLUDE_DIRS})
+
+target_include_directories(YARP_dev PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/AnalogSensorClient
+                                            ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/JoypadControlServer)
 
 target_link_libraries(YARP_dev PUBLIC YARP::YARP_conf
                                       YARP::YARP_OS
@@ -277,8 +293,10 @@ target_compile_features(YARP_dev PUBLIC cxx_nullptr
                                         cxx_override
                                         cxx_final)
 
-set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS})
-set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS})
+set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS}
+                                                    ${YARP_dev_idl_HDRS})
+set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS}
+                                                     ${YARP_dev_idl_IMPL_HDRS})
 set_property(TARGET YARP_dev PROPERTY VERSION ${YARP_VERSION_SHORT})
 set_property(TARGET YARP_dev PROPERTY SOVERSION ${YARP_SOVERSION})
 

@@ -6,6 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+namespace yarp yarp.dev.impl
+
 struct VectorOfDouble {
   1: list<double> content;
 } (
