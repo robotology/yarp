@@ -222,8 +222,7 @@ bool ImplementPositionControl::setRefSpeeds(const int n_joint, const int *joints
     yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
     for(int idx=0; idx<n_joint; idx++)
     {
-        buffJoints[idx] = castToMapper(helper)->toHw(joints[idx]);
-        buffValues[idx] = castToMapper(helper)->velA2E(spds[idx], joints[idx]);
+        castToMapper(helper)->velA2E_abs(spds[idx], joints[idx], buffValues[idx], buffJoints[idx]);
     }
     bool ret = iPosition->setRefSpeedsRaw(n_joint, buffJoints.getData(), buffValues.getData());
     doubleBuffManager->releaseBuffer(buffValues);

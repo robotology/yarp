@@ -8,6 +8,7 @@
 
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
 #include <cstdio>
 using namespace yarp::dev;
@@ -16,11 +17,11 @@ using namespace yarp::dev;
 
 ////////////////////////
 // Encoder Interface Timed Implementation
-ImplementMotor::ImplementMotor(IMotorRaw *y)
-{
-    imotor=y;
-    helper = nullptr;
-}
+ImplementMotor::ImplementMotor(IMotorRaw *y) :
+    imotor(y),
+    helper(nullptr),
+    doubleBuffManager(nullptr)
+{ }
 
 ImplementMotor::~ImplementMotor()
 {
@@ -35,6 +36,9 @@ bool ImplementMotor:: initialize (int size, const int *amap)
     helper=(void *)(new ControlBoardHelper(size, amap));
     yAssert (helper != nullptr);
 
+    doubleBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
+    yAssert (doubleBuffManager != nullptr);
+
     return true;
 }
 
@@ -48,6 +52,12 @@ bool ImplementMotor::uninitialize ()
     {
         delete castToMapper(helper);
         helper=nullptr;
+    }
+
+    if(doubleBuffManager)
+    {
+        delete doubleBuffManager;
+        doubleBuffManager=nullptr;
     }
 
     return true;
@@ -116,5 +126,13 @@ bool ImplementMotor::setGearboxRatio(int m, const double value)
 
 bool ImplementMotor::getTemperatures(double *v)
 {
-    return imotor->getTemperaturesRaw(v);
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
+
+    bool ret = imotor->getTemperaturesRaw(buffValues.getData());
+    for (int i=0; i< buffValues.getSize(); i++)
+    {
+        int k = castToMapper(helper)->toHw(i);
+        v[i] = buffValues[k];
+    }
+    return ret;
 }
