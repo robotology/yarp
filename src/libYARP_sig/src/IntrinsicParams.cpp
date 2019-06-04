@@ -11,8 +11,8 @@
 
 using namespace yarp::sig;
 
-IntrinsicParams::IntrinsicParams(): principalPointX(0.0), principalPointY(0.0),
-                   physFocalLength(0.0), focalLengthX(0.0), focalLengthY(0.0),
+IntrinsicParams::IntrinsicParams(): physFocalLength(0.0),principalPointX(0.0),
+                   principalPointY(0.0), focalLengthX(0.0), focalLengthY(0.0),
                    distortionModel(), isOptional(false) {}
 
 IntrinsicParams::IntrinsicParams(const yarp::os::Property &intrinsic, bool isOptional): isOptional(isOptional)

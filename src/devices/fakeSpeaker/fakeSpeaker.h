@@ -58,7 +58,6 @@ private:
     size_t m_cfg_frequency = 0;
     size_t m_cfg_bytesPerSample = 0;
 
-    size_t m_bpnt = 0;
     yarp::dev::CircularAudioBuffer_16t* m_outputBuffer = nullptr;
     bool m_renderSoundImmediate = false;
 };

@@ -211,7 +211,7 @@ bool RGBDSensorWrapper::open(yarp::os::Searchable &config)
         return false;
     }
 
-     setId("RGBDSensorWrapper for " + depthFrame_StreamingPort_Name);
+    setId("RGBDSensorWrapper for " + depthFrame_StreamingPort_Name);
 
     if(use_YARP && !initialize_YARP(config))
     {

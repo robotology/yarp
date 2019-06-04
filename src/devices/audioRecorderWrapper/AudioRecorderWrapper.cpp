@@ -34,8 +34,7 @@ AudioRecorderWrapper::AudioRecorderWrapper() :
         m_min_number_of_samples_over_network(11250),
         m_max_number_of_samples_over_network(11250),
         m_getSound_timeout(1.0),
-        m_isDeviceOwned(false),
-        m_debug_enabled(false)
+        m_isDeviceOwned(false)
 #ifdef DEBUG_TIME_SPENT
         , last_time(yarp::os::Time::now()),
 #endif

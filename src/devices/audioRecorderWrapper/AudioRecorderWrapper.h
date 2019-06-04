@@ -53,7 +53,6 @@ private:
     size_t                         m_max_number_of_samples_over_network;
     double                         m_getSound_timeout;
     bool                           m_isDeviceOwned;
-    bool                           m_debug_enabled;
 public:
     /**
      * Constructor.

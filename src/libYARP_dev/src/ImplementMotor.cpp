@@ -129,7 +129,7 @@ bool ImplementMotor::getTemperatures(double *v)
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
 
     bool ret = imotor->getTemperaturesRaw(buffValues.getData());
-    for (int i=0; i< buffValues.getSize(); i++)
+    for (size_t i=0; i< buffValues.getSize(); i++)
     {
         int k = castToMapper(helper)->toHw(i);
         v[i] = buffValues[k];
