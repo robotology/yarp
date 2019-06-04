@@ -11,9 +11,13 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
  * Some components are released under the terms of the LGPL license, version 2.1
    or later.
    + devices:
+     - `audioPlayerWrapper`
+     - `audioRecorderWrapper`
      - `batteryClient`
      - `batteryWrapper`
      - `depthCamera`
+     - `fakeLocalizerDevice`
+     - `fakeNavigationDevice`
      - `imuBosch_BNO055`
      - `laserFromDepth`
      - `laserHokuyo`
@@ -24,6 +28,8 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
      - `opencv`
      - `ovrheadset`
      - `portaudio`
+     - `portaudioPlayer`
+     - `portaudioRecorder`
      - `Rangefinder2DClient`
      - `Rangefinder2DWrapper`
      - `rpLidar`
@@ -31,6 +37,7 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
      - `SDLJoypad`
      - `transformClient`
      - `transformServer`
+     - `usbCamera`
    + tools:
      - `yarplogger-console`
      - `yarpmanager-console`
