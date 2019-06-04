@@ -722,6 +722,7 @@ void RGBDSensorWrapper::deepCopyImages(const DepthImage&                 src,
 
 bool RGBDSensorWrapper::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo, const string& frame_id, const UInt& seq, const SensorType& sensorType)
 {
+    double phyF = 0.0;
     double fx = 0.0;
     double fy = 0.0;
     double cx = 0.0;
@@ -765,7 +766,7 @@ bool RGBDSensorWrapper::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& camera
     //std::vector<param<string> >     rosStringParam;
     //rosStringParam.push_back(param<string>(nodeName, "asd"));
 
-    parVector.emplace_back(f,"physFocalLength");
+    parVector.emplace_back(phyF,"physFocalLength");
     parVector.emplace_back(fx,"focalLengthX");
     parVector.emplace_back(fy,"focalLengthY");
     parVector.emplace_back(cx,"principalPointX");
