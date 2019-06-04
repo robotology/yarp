@@ -397,10 +397,10 @@ public:
 
     /** Check if the current trajectory is terminated. Non blocking.
      * @param joints pointer to the array of joint numbers
-     * @param flags  pointer to return value (logical "and" of all set of joints)
+     * @param flag  pointer to return value (logical "and" of all set of joints)
      * @return true/false if network communication went well.
      */
-    virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flags)=0;
+    virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flag)=0;
 
     /** Set reference speed on all joints. These values are used during the
      * interpolation of the trajectory.

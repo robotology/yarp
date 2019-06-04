@@ -192,17 +192,7 @@ bool ImplementPositionControl::checkMotionDone(const int n_joint, const int *joi
 
 bool ImplementPositionControl::checkMotionDone(bool *flag)
 {
-    yarp::dev::impl::Buffer<bool> flags_tmp = boolBuffManager->getBuffer();
-    bool ret = iPosition->checkMotionDoneRaw(flags_tmp.getData());
-    if(ret)
-    {
-        for(int i=0; i<castToMapper(helper)->axes(); i++)
-        {
-            flag[i] = flags_tmp[castToMapper(helper)->toHw(i)];
-        }
-    }
-    boolBuffManager->releaseBuffer(flags_tmp);
-    return ret;
+    return iPosition->checkMotionDoneRaw(flag);
 }
 
 bool ImplementPositionControl::setRefSpeed(int j, double sp)

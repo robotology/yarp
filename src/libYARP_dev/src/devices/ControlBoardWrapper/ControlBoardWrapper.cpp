@@ -1768,35 +1768,44 @@ bool ControlBoardWrapper::checkMotionDone(int j, bool *flag) {
 */
 bool ControlBoardWrapper::checkMotionDone(bool *flag) 
 {
-    bool *done = new bool[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for(unsigned int d=0; d<device.subdevices.size(); d++)
+
+    rpcDataMutex.lock();
+    //Reset subdev_jointsVectorLen vector
+    memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
+
+    // Create a map of joints for each subDevice
+    // In this case the "all joint version" of checkMotionDone(bool *flag) cannot be
+    // called because the return value is an 'and' of all joints.
+    // Therefore only the corret joints must be evaluated.
+
+    int subIndex = 0;
+    for(int j=0; j<controlledJoints; j++)
     {
-        yarp::dev::impl::SubDevice *p=device.getSubdevice(d);
-        if(!p)
+        subIndex = device.lut[j].deviceEntry;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[j].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.subdev_jointsVectorLen[subIndex]++;
+    }
+
+    bool tmp_subdeviceDone  = true;
+    bool tmp_deviceDone     = true;
+
+    // for each subdevice wrapped call checkmotiondone only on interested joints
+    for(subIndex=0; subIndex<rpcData.deviceNum; subIndex++)
+    {
+        if(rpcData.subdevices_p[subIndex]->pos)
         {
-            ret = false;
-            break;
-        }
-        
-        if( (p->pos) &&(ret = p->pos->checkMotionDone(done)))
-        {
-            for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
-            {
-                flag[juser] = done[jdevice];
-            }
-        }
-        else
-        {
-            printError("checkMotionDone", p->id, ret);
-            ret = false;
-            break;
+            ret= ret && rpcData.subdevices_p[subIndex]->pos->checkMotionDone( rpcData.subdev_jointsVectorLen[subIndex],
+                                                                              rpcData.jointNumbers[subIndex],
+                                                                              &tmp_subdeviceDone);
+            tmp_deviceDone &= tmp_subdeviceDone;
         }
     }
-    
-    delete [] done;
+    rpcDataMutex.unlock();
+
+    // return a single value to the caller
+    *flag = tmp_deviceDone;
     return ret;
-    
 }
 
 
