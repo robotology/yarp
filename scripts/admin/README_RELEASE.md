@@ -109,8 +109,8 @@ git commit -m "Prepare for next stable release (3.1.3)"
     * Rename `Target: master` to `Target: v3.1.2`
     * Create `Affects: YARP v3.1.2` using `#006b75` as color.
   * For the next stable release (if any):
-    * Create `Fixed in: master` using `#fbca04` as color.
-    * Create `Target: master` using `#d93f0b` as color.
+    * Create `Fixed in: YARP master` using `#fbca04` as color.
+    * Create `Target: YARP master` using `#d93f0b` as color.
 
 * Follow the steps in the "Actions after any YARP release" section
 
