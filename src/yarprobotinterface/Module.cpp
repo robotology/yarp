@@ -73,8 +73,10 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
     yTrace() << "Reading robot config file" << filename;
 
     bool verbosity = rf.check("verbose");
+    bool deprecated = rf.check("allow-deprecated-dtd");
     RobotInterface::XMLReader reader;
     reader.setVerbose(verbosity);
+    reader.setEnableDeprecated(deprecated);
     mPriv->robot = reader.getRobot(filename);
     // yDebug() << mPriv->robot;
 
