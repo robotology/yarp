@@ -8,7 +8,6 @@
 
 #ifndef YARP_DEV_JOYPADCONTROLSERVER_FRAMERECEIVER_H
 #define YARP_DEV_JOYPADCONTROLSERVER_FRAMERECEIVER_H
-#define DEFAULT_THREAD_PERIOD   0.010 //s
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IFrameSource.h>
@@ -56,7 +55,7 @@ class yarp::dev::FrameReceiver : public yarp::dev::DeviceDriver,
 
 #endif //DOXYGEN_SHOULD_SKIP_THIS
 protected:
-    virtual void updateFrameContainer(FrameEditor& frameContainer) override;
+    virtual void updateFrameContainer(FrameEditor& fs) override;
     virtual bool callbackPrepare() override;
     virtual bool callbackDismiss() override;
 public:

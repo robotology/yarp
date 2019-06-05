@@ -8,7 +8,7 @@
 
 #ifndef YARP_DEV_JOYPADCONTROLSERVER_FRAMEBROADCASTER_H
 #define YARP_DEV_JOYPADCONTROLSERVER_FRAMEBROADCASTER_H
-#define DEFAULT_THREAD_PERIOD   0.010 //s
+constexpr double defaultThreadPeriod = 0.010; //s
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IFrameSource.h>
@@ -39,7 +39,7 @@ class yarp::dev::FrameBroadcaster : public yarp::dev::IFrameSet,
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-    double                                  m_period{ DEFAULT_THREAD_PERIOD };
+    double                                  m_period{ defaultThreadPeriod };
     yarp::dev::IFrameSource*                m_device{nullptr};
     std::unique_ptr<yarp::dev::PolyDriver>  m_subDeviceOwned{nullptr};
     bool                                    m_isSubdeviceOwned{false};

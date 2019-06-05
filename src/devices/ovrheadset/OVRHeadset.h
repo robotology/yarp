@@ -94,18 +94,18 @@ public:
     virtual ~OVRHeadset();
 
     // yarp::dev::DeviceDriver methods
-    virtual bool open(yarp::os::Searchable& cfg);
-    virtual bool close();
+    bool open(yarp::os::Searchable& cfg) override;
+    bool close() override;
 
     // yarp::os::RateThread methods
-    virtual bool threadInit();
-    virtual void threadRelease();
-    virtual void run();
+    bool threadInit() override;
+    void threadRelease() override;
+    void run() override;
 
     //  yarp::dev::IService methods
-    virtual bool startService();
-    virtual bool updateService();
-    virtual bool stopService();
+    bool startService() override;
+    bool updateService() override;
+    bool stopService() override;
 
     // yarp::dev::IJoypadController methods
     bool getAxisCount(unsigned int& axis_count) override;
@@ -142,7 +142,6 @@ private:
     void fillHatStorage();
     void resetInput();
 
-    FlexImagePort* gui_ports{ nullptr };
     std::vector<guiParam> huds;
     InputCallback* displayPorts[2]{ nullptr, nullptr };
     ovrEyeRenderDesc EyeRenderDesc[2];
@@ -169,7 +168,7 @@ private:
         {&rightFrame, &ts.HandPoses[ovrHand_Right]},
         {&leftFrame, &ts.HandPoses[ovrHand_Left]  },
         {&headFrame, &headpose },
-        {&(headFrame + "_predicted"), &predicted_headpose }
+        {&headFramePredicted, &predicted_headpose }
     };
 
     yarp::os::Mutex                  inputStateMutex;
@@ -185,6 +184,7 @@ private:
     std::string rightFrame;
     std::string rootFrame;
     std::string headFrame;
+    std::string headFramePredicted;
 
     bool closed{ false };
     long long distortionFrameIndex{ 0 };

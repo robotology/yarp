@@ -220,18 +220,18 @@ protected:
      this should be set to true and false in the derived class to to flag the frames present in the container as obsolete and request a new update.
      tipically the implementer will set it to false when before getting/receiving new transforms and set it to true at the end of updateFrameContainer()
     */
-    std::atomic_bool cacheValid;
+    std::atomic_bool cacheValid{false};
     
     /**
      the method to be called from the derived classes to call the callbacks.
     */
     bool callAllCallbacks()
     {
-        if (!callbacks.size())
+        if (callbacks.empty())
             return false;
 
         updateFrameContainer(frameContainer);
-        for (auto callback : callbacks)
+        for (const auto& callback : callbacks)
             if (callback.second)
                 callback.second((IFrameSource*)this);
         return true;

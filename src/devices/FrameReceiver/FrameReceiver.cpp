@@ -19,8 +19,6 @@ using namespace yarp::math;
 using namespace yarp::rosmsg::tf2_msgs;
 void PortCallback::onRead(TFMessage& msg)
 {
-    int i = 0;
-
     FrameTransform ft;
     owner->cacheValid = false;
     fvecguard.lock();
@@ -38,10 +36,9 @@ void PortCallback::onRead(TFMessage& msg)
 #if (defined _WIN32 && _MSC_VER < 1910) || (!defined _WIN32 && __cplusplus < 201402L)
         ft.timestamp      = submsg.header.stamp.sec + submsg.header.stamp.nsec/1000000000;
 #else
-        ft.timestamp      = submsg.header.stamp.sec + submsg.header.stamp.nsec/1'000'000'000;
+        ft.timestamp      = submsg.header.stamp.sec + submsg.header.stamp.nsec/1'000'000'000.0;
 #endif
         fvec[ft.frameId] = ft;
-        i++;
     }
     fvecguard.unlock();
 

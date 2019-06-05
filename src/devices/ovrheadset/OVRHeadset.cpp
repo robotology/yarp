@@ -147,7 +147,7 @@ inline ovrVector3f vecSubtract(const ovrVector3f& a, const ovrVector3f& b)
     return ret;
 }
 
-static inline void debugTangent(std::string message, float tangent1, float tangent2)
+static inline void debugTangent(const std::string& message, float tangent1, float tangent2)
 {
     yDebug((message + "    %10f (%5f[rad] = %5f[deg])        %10f (%5f[rad] = %5f[deg])\n").c_str(),
         tangent1,
@@ -269,7 +269,7 @@ inline void setHeadLockedLayer(ovrLayerQuad& layer, TextureBuffer* tex,
 //----------------end [utilities]
 
 yarp::dev::OVRHeadset::OVRHeadset() :
-        yarp::dev::DeviceDriver(),
+        DeviceDriver(),
         yarp::os::PeriodicThread(0.011, yarp::os::ShouldUseSystemClock::Yes) // ~90 fps
 {
     yTrace();
@@ -455,12 +455,12 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 
         //to add a parameter check, simply add a line below here and let the magic happens
 
-        paramParser.push_back(std::make_pair("tf_left_hand_frame",  STRING));
-        paramParser.push_back(std::make_pair("tf_right_hand_frame", STRING));
-        paramParser.push_back(std::make_pair("tf_head_frame",       STRING));
-        paramParser.push_back(std::make_pair("tf_root_frame",       STRING));
-        paramParser.push_back(std::make_pair("stick_as_axis",       BOOL));
-        paramParser.push_back(std::make_pair("gui_elements",        INT));
+        paramParser.emplace_back("tf_left_hand_frame",  STRING);
+        paramParser.emplace_back("tf_right_hand_frame", STRING);
+        paramParser.emplace_back("tf_head_frame",       STRING);
+        paramParser.emplace_back("tf_root_frame",       STRING);
+        paramParser.emplace_back("stick_as_axis",       BOOL);
+        paramParser.emplace_back("gui_elements",        INT);
 
         for (auto& p : paramParser)
         {
@@ -475,18 +475,18 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         paramParser.clear();
         if (guiCount)
         {
-            paramParser.push_back(std::make_pair("width",  DOUBLE));
-            paramParser.push_back(std::make_pair("height", DOUBLE));
-            paramParser.push_back(std::make_pair("x",      DOUBLE));
-            paramParser.push_back(std::make_pair("y",      DOUBLE));
-            paramParser.push_back(std::make_pair("z",      DOUBLE));
-            paramParser.push_back(std::make_pair("alpha",  DOUBLE));
+            paramParser.emplace_back("width",  DOUBLE);
+            paramParser.emplace_back("height", DOUBLE);
+            paramParser.emplace_back("x",      DOUBLE);
+            paramParser.emplace_back("y",      DOUBLE);
+            paramParser.emplace_back("z",      DOUBLE);
+            paramParser.emplace_back("alpha",  DOUBLE);
 
             for (unsigned int i = 0; i < guiCount; ++i)
             {
                 std::string       groupName  = "GUI_" + std::to_string(i);
                 yarp::os::Bottle& guip       = cfg.findGroup(groupName);
-                guiParam          hud;
+                auto              hud        = guiParam();
 
                 if (guip.isNull())
                 {
@@ -526,6 +526,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     rightFrame    = cfg.find("tf_right_hand_frame").asString();
     rootFrame     = cfg.find("tf_root_frame").asString();
     headFrame     = cfg.find("tf_head_frame").asString();
+    headFramePredicted = headFrame + "_predicted";
 
     //getting gui information from cfg
 
@@ -589,8 +590,9 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     }
 
     // Enable display port callbacks
-    for (int eye = 0; eye < ovrEye_Count; ++eye) {
-        displayPorts[eye]->useCallback();
+    for (auto& displayPort : displayPorts)
+    {
+        displayPort->useCallback();
     }
 
     return true;
@@ -789,13 +791,14 @@ void yarp::dev::OVRHeadset::threadRelease()
     }
 
 
-    for (int eye = 0; eye < ovrEye_Count; ++eye) {
-        if (displayPorts[eye]) {
-            displayPorts[eye]->disableCallback();
-            displayPorts[eye]->interrupt();
-            displayPorts[eye]->close();
-            delete displayPorts[eye];
-            displayPorts[eye] = nullptr;
+    for (auto& displayPort : displayPorts)
+    {
+        if (displayPort) {
+            displayPort->disableCallback();
+            displayPort->interrupt();
+            displayPort->close();
+            delete displayPort;
+            displayPort = nullptr;
         }
     }
 }
@@ -934,8 +937,9 @@ void yarp::dev::OVRHeadset::run()
         // Do distortion rendering, Present and flush/sync
 
         // Update the textures
-        for (int eye = 0; eye < ovrEye_Count; ++eye) {
-            displayPorts[eye]->eyeRenderTexture->update();
+        for (auto& displayPort : displayPorts)
+        {
+            displayPort->eyeRenderTexture->update();
         }
 
 
@@ -1027,7 +1031,7 @@ void yarp::dev::OVRHeadset::run()
             }
         }
 
-        ovrLayerHeader** layers = new ovrLayerHeader*[layerList.size()];
+        auto layers = new ovrLayerHeader*[layerList.size()];
         std::copy(layerList.begin(), layerList.end(), layers);
         ovrResult result = ovr_SubmitFrame(session, distortionFrameIndex, nullptr, layers, layerList.size());
         delete[] layers;
@@ -1283,7 +1287,7 @@ void yarp::dev::OVRHeadset::reconfigureFOV()
 
 void yarp::dev::OVRHeadset::glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    OVRHeadset* instance = (OVRHeadset*)glfwGetWindowUserPointer(window);
+    auto instance = (OVRHeadset*)glfwGetWindowUserPointer(window);
     instance->onKey(key, scancode, action, mods);
 }
 
@@ -1294,7 +1298,7 @@ void yarp::dev::OVRHeadset::glfwErrorCallback(int error, const char* description
 
 void yarp::dev::OVRHeadset::ovrDebugCallback(uintptr_t userData, int level, const char* message)
 {
-    yarp::dev::OVRHeadset* ovr = reinterpret_cast<yarp::dev::OVRHeadset*>(userData);
+    auto ovr = reinterpret_cast<yarp::dev::OVRHeadset*>(userData);
     YARP_UNUSED(ovr);
 
     if (!message)

@@ -12,8 +12,6 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/rosmsg/geometry_msgs/TransformStamped.h>
 
-#define DEFAULT_THREAD_PERIOD   0.010 //s
-
 using namespace std;
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -50,7 +48,7 @@ inline void sendFrameContainer(yarp::os::Publisher<TFMessage>& port, const std::
     port.write();
 }
 
-FrameBroadcaster::FrameBroadcaster() : PeriodicThread(DEFAULT_THREAD_PERIOD)
+FrameBroadcaster::FrameBroadcaster() : PeriodicThread(defaultThreadPeriod)
 {
 }
 
@@ -88,7 +86,7 @@ bool FrameBroadcaster::open(yarp::os::Searchable& params)
     if(params.check("help"))
     {
         yInfo() << "parameters:\n\n" <<
-                   "period             - refresh period of the broadcasted values in ms.. default" << DEFAULT_THREAD_PERIOD * 1000<< "\n"
+                   "period             - refresh period of the broadcasted values in ms.. default" << defaultThreadPeriod * 1000<< "\n"
                    "topic              - topic to publish data to, e.g. /oculus\n" <<
                    "eventBased         - don't start a thread and sends frame from the caller thread" <<
                    "subdevice          - name of the subdevice to open\n";
@@ -97,7 +95,7 @@ bool FrameBroadcaster::open(yarp::os::Searchable& params)
     std::string rootName;
     if (!params.check("period", "refresh period of the broadcasted values in ms"))
     {
-        yInfo() << "FrameReceiver: using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
+        yInfo() << "FrameReceiver: using default 'period' parameter of " << defaultThreadPeriod << "s";
     }
     else
     {
@@ -180,10 +178,7 @@ bool FrameBroadcaster::openAndAttachSubDevice(Searchable& prop)
         return false;
     }
     m_isSubdeviceOwned = true;
-    if(!attach(m_subDeviceOwned.get()))
-        return false;
-
-    return true;
+    return attach(m_subDeviceOwned.get());
 }
 
 bool FrameBroadcaster::attach(PolyDriver* poly)
@@ -261,10 +256,7 @@ bool FrameBroadcaster::attachAll(const PolyDriverList& p)
     }
 
     Idevice2attach->view(m_device);
-    if(!attach(m_device))
-        return false;
-
-    return true;
+    return attach(m_device);
 }
 
 bool FrameBroadcaster::detachAll()

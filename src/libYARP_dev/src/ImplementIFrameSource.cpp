@@ -16,7 +16,6 @@ using namespace yarp::sig;
 using namespace std;
 
 #define FULL_RANGE(c) (c).begin(), (c).end()
-
 FrameTransform operator*(const FrameTransform& l, const FrameTransform& r)
 {
     FrameTransform ret;
@@ -35,9 +34,9 @@ ImplementIFrameSource::~ImplementIFrameSource() = default;
 
 IFrameSource::Result<int> ImplementIFrameSource::setCallback(function<bool(IFrameSource*)> cb)
 {
-    static int callbackId = 0;
     if (callbackPrepare())
     {
+        static int callbackId = 0;
         callbacks[callbackId] = cb;
         callbackId++;
         return {true, 0, callbackId -1};
@@ -131,7 +130,7 @@ bool ImplementIFrameSource::clearOlderFrames(const std::chrono::milliseconds& li
     for (const auto& f : toErase)
         frameContainer.erase(f);
 
-    return toErase.size();
+    return !toErase.empty();
 }
 
 bool yarp::dev::ImplementIFrameSource::clearStaticFrames()
@@ -145,7 +144,7 @@ bool yarp::dev::ImplementIFrameSource::clearStaticFrames()
     for (const auto& f : toErase)
         frameContainer.erase(f);
 
-    return toErase.size();
+    return !toErase.empty();
 }
 
 IFrameSource::Result<bool> ImplementIFrameSource::canTransform(const string &target_frame, const string &source_frame)
