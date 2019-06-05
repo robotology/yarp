@@ -920,9 +920,10 @@ bool BoschIMU::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vec
 
     out.resize(3);
     LockGuard guard(mutex);
-    out[0] = data[9];
-    out[1] = data[10];
-    out[2] = data[11];
+    // The unit measure of Bosch BNO055 is uT
+    out[0] = data[9] / 1'000'000;
+    out[1] = data[10]/ 1'000'000;
+    out[2] = data[11]/ 1'000'000;
 
     timestamp = timeLastReport;
     return true;
