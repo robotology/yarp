@@ -619,14 +619,14 @@ void BoschIMU::run()
 
 
         // Fill in Gyro values
-        data_tmp[6] = (double)raw_data[6] / 100.0;
-        data_tmp[7] = (double)raw_data[7] / 100.0;
-        data_tmp[8] = (double)raw_data[8] / 100.0;
+        data_tmp[6] = (double)raw_data[6] / 16.0;
+        data_tmp[7] = (double)raw_data[7] / 16.0;
+        data_tmp[8] = (double)raw_data[8] / 16.0;
 
         // Fill in Magnetometer values
-        data_tmp[9]  = (double)raw_data[3] / 100.0;
-        data_tmp[10] = (double)raw_data[4] / 100.0;
-        data_tmp[11] = (double)raw_data[5] / 100.0;
+        data_tmp[9]  = (double)raw_data[3] / 16.0;
+        data_tmp[10] = (double)raw_data[4] / 16.0;
+        data_tmp[11] = (double)raw_data[5] / 16.0;
     }
 
     // Protect only this section in order to avoid slow race conditions when gathering this data
