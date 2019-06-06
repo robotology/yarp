@@ -384,6 +384,9 @@ function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_h
     list(APPEND gen_hdrs ${path}/${namespace_dir}/${basename}_common.h)
   endif()
 
+  string(REGEX REPLACE "/(/|$)" "\\1" gen_srcs "${gen_srcs}")
+  string(REGEX REPLACE "/(/|$)" "\\1" gen_hdrs "${gen_hdrs}")
+
   set(${gen_srcs_var} ${gen_srcs} PARENT_SCOPE)
   set(${gen_hdrs_var} ${gen_hdrs} PARENT_SCOPE)
 endfunction()
@@ -429,6 +432,9 @@ function(_YARP_IDL_ROSMSG_TO_FILE_LIST file path pkg basename ext gen_srcs_var g
       endif()
     endif()
   endif()
+
+  string(REGEX REPLACE "/(/|$)" "\\1" gen_srcs "${gen_srcs}")
+  string(REGEX REPLACE "/(/|$)" "\\1" gen_hdrs "${gen_hdrs}")
 
   set(${gen_srcs_var} ${gen_srcs} PARENT_SCOPE)
   set(${gen_hdrs_var} ${gen_hdrs} PARENT_SCOPE)
@@ -527,11 +533,7 @@ function(YARP_ADD_IDL var)
       endif()
     endforeach()
     foreach(gen_file ${gen_hdrs})
-      if("${family}" STREQUAL "thrift")
-        set(out "${hdrs_out_dir}/${path}/${gen_file}")
-      else()
-        set(out "${hdrs_out_dir}/${gen_file}")
-      endif()
+      set(out "${hdrs_out_dir}/${gen_file}")
       list(FIND ${var} ${out} x)
       if(x EQUAL -1)
         list(APPEND output "${out}")
