@@ -240,11 +240,19 @@ public:
     // documented in Contactable
     bool isWriting() override;
 
+#ifndef YARP_NO_DEPRECATED
     // documented in Contactable
-    void getReport(PortReport& reporter) override;
+    YARP_DEPRECATED void getReport(PortReport& reporter) override;
 
     // documented in Contactable
-    void setReporter(PortReport& reporter) override;
+    YARP_DEPRECATED void setReporter(PortReport& reporter) override;
+#endif
+
+    // Documented in Contactable
+    void getReport(const std::function<void(const yarp::os::PortInfo&)>& reporter) override;
+
+    // Documented in Contactable
+    void setReporter(const std::function<void(const yarp::os::PortInfo&)>& reporter) override;
 
     // documented in Contactable
     void resetReporter() override;

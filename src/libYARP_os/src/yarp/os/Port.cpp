@@ -565,17 +565,32 @@ int Port::getOutputCount()
     return core.getOutputCount();
 }
 
-void Port::getReport(PortReport& reporter)
+#ifndef YARP_NO_DEPRECATED
+YARP_DEPRECATED void Port::getReport(PortReport& reporter)
 {
     PortCoreAdapter& core = IMPL();
     core.describe(reporter);
 }
 
 
-void Port::setReporter(PortReport& reporter)
+YARP_DEPRECATED void Port::setReporter(PortReport& reporter)
 {
     PortCoreAdapter& core = IMPL();
     core.setReportCallback(&reporter);
+}
+#endif
+
+void Port::getReport(const std::function<void(const yarp::os::PortInfo&)>& reporter)
+{
+    PortCoreAdapter& core = IMPL();
+    core.describe(reporter);
+}
+
+
+void Port::setReporter(const std::function<void(const yarp::os::PortInfo&)>& reporter)
+{
+    PortCoreAdapter& core = IMPL();
+    core.setReportCallback(reporter);
 }
 
 

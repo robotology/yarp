@@ -14,6 +14,7 @@
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortReport.h>
 #include <yarp/os/PortWriter.h>
+#include <functional>
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.3
 #define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
@@ -181,6 +182,7 @@ public:
      */
     virtual int getOutputCount() = 0;
 
+#ifndef YARP_NO_DEPRECATED
     /**
      * Get information on the state of the port - connections etc.
      * PortReport::report will be called once for each connection to
@@ -189,8 +191,9 @@ public:
      * method instead.
      *
      * @param reporter callback for port event/state information
+     * @deprecated since yarp 4
      */
-    virtual void getReport(PortReport& reporter) = 0;
+    YARP_DEPRECATED virtual void getReport(PortReport& reporter) = 0;
 
 
     /**
@@ -200,8 +203,31 @@ public:
      * instead.
      *
      * @param reporter callback for port event/state information
+     * @deprecated since yarp 4
      */
-    virtual void setReporter(PortReport& reporter) = 0;
+    YARP_DEPRECATED virtual void setReporter(PortReport& reporter) = 0;
+#endif
+
+    /**
+     * Get information on the state of the port - connections etc.
+     * PortReport::report will be called once for each connection to
+     * the port that exists right now.  To request callbacks for
+     * any future connections/disconnections, use the setReporter
+     * method instead.
+     *
+     * @param reporter callback for port event/state information
+     */
+    virtual void getReport(const std::function<void(const yarp::os::PortInfo&)>& reporter) = 0;
+
+    /**
+     * Set a callback to be called upon any future connections and
+     * disconnections to/from the port.  To get information on
+     * the current connections that exist, use the getReport method
+     * instead.
+     *
+     * @param reporter callback for port event/state information
+     */
+    virtual void setReporter(const std::function<void(const yarp::os::PortInfo&)>& reporter) = 0;
 
     /**
      * Remove the callback which is called upon any future connections and
