@@ -286,11 +286,13 @@ private:
 
     bool checkPortName(yarp::os::Searchable &params);
 
+    yarp::rosmsg::sensor_msgs::JointState ros_struct;
 
     yarp::os::BufferedPort<yarp::sig::Vector>  outputPositionStatePort;   // Port /state:o streaming out the encoder positions
     yarp::os::BufferedPort<CommandMessage>     inputStreamingPort;        // Input streaming port for high frequency commands
     yarp::os::Port inputRPCPort;                // Input RPC port for set/get remote calls
     yarp::os::Stamp time;                       // envelope to attach to the state port
+    yarp::sig::Vector times;                    // time for each joint
     yarp::os::Mutex timeMutex;
 
     // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated

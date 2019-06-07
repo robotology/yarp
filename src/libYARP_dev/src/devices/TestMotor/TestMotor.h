@@ -329,9 +329,11 @@ public:
 
     bool getEncodersTimed(double *encs, double *time) override
     {
-        bool ret = getEncoders(encs);
-        *time = yarp::os::Time::now();
-        return ret;
+        for (int i=0; i<njoints; i++)
+        {
+            getEncoderTimed(i, &encs[i], &time[i]);
+        }
+        return true;
     }
 
     bool getEncoderSpeed(int j, double *sp) override {
