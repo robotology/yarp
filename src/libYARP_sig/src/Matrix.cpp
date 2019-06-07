@@ -165,45 +165,32 @@ bool Matrix::write(yarp::os::ConnectionWriter& connection) const {
     return true;
 }
 
-/**
-* Quick implementation, space for improvement.
-*/
-std::string Matrix::toString(int precision, int width, const char* endRowStr) const
-{
-    std::string ret;
-    char tmp[350];
-    size_t c, r;
-    if(width>0) // if width is specified use a space as separator
-    {
-        for(r=0;r<nrows;r++)
-        {
-            for(c=0;c<ncols;c++)
-            {
-                sprintf(tmp, "% *.*lf ", width, precision, (*this)[r][c]);
-                ret+=tmp;
-            }
-            ret = ret.substr(0,ret.length()-1);     // remove the last character (space)
-            if(r<nrows-1)                          // if it is not the last row
-                ret+= endRowStr;
-        }
-    }
-    else    // if width is not specified use tab as separator
-    {
-        for(r=0;r<nrows;r++)
-        {
-            for(c=0;c<ncols;c++)
-            {
-                sprintf(tmp, "% .*lf\t", precision, (*this)[r][c]);
-                ret+=tmp;
-            }
-            ret = ret.substr(0,ret.length()-1);     // remove the last character (tab)
-            if(r<nrows-1)                          // if it is not the last row
-                ret+= endRowStr;
+
+std::string Matrix::toString(int precision, int width, const char* endRowStr) const {
+
+    // If the width is less than 1, use tabs, else use width number of spaces.
+    std::string spacer((width<0) ? 1 : width, (width<0) ? '\t' : ' ');
+
+    // Buffering.
+    std::string ret = "";
+    char buffer[350]; 
+    const double* src = (*this).data();
+
+    // Iterate through copying the contents from the matrix, into a string.
+    // Avoid unnecessary string resizes by only adding spacers at the beginning.
+    size_t r, c;
+    for (r = 0; r < nrows; r++) {
+        if (r) { ret += endRowStr; }
+        for (c = 0; c < ncols; c++) {
+            if (c) { ret += spacer; }
+            sprintf(buffer, " %.*lf", precision, *src); src++;
+            ret += buffer;
         }
     }
 
     return ret;
 }
+
 
 void Matrix::updatePointers()
 {
