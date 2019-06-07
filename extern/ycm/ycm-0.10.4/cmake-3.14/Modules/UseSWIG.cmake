@@ -234,17 +234,31 @@ as well as ``SWIG``:
     set(SWIG_SOURCE_FILE_EXTENSIONS ".i" ".swg")
 #]=======================================================================]
 
-cmake_policy(GET CMP0078 target_name_policy)
-cmake_policy(GET CMP0086 module_name_policy)
+if(NOT ${CMAKE_VERSION} VERSION_LESS 3.13)
+  cmake_policy(GET CMP0078 target_name_policy)
+else()
+  set(target_name_policy "OLD")
+endif()
+if(NOT ${CMAKE_VERSION} VERSION_LESS 3.14)
+  cmake_policy(GET CMP0086 module_name_policy)
+else()
+  set(module_name_policy "OLD")
+endif()
 
-cmake_policy (VERSION 3.12)
+if(NOT ${CMAKE_VERSION} VERSION_LESS 3.12)
+  cmake_policy (VERSION 3.12)
+endif()
 if (target_name_policy)
   # respect user choice regarding CMP0078 policy
-  cmake_policy(SET CMP0078 ${target_name_policy})
+  if(NOT ${CMAKE_VERSION} VERSION_LESS 3.13)
+    cmake_policy(SET CMP0078 ${target_name_policy})
+  endif()
 endif()
 if (module_name_policy)
   # respect user choice regarding CMP0086 policy
-  cmake_policy(SET CMP0086 ${module_name_policy})
+  if(NOT ${CMAKE_VERSION} VERSION_LESS 3.14)
+    cmake_policy(SET CMP0086 ${module_name_policy})
+  endif()
 endif()
 unset(target_name_policy)
 unset(module_name_policy)
@@ -382,25 +396,28 @@ function(SWIG_ADD_SOURCE_TO_MODULE name outfiles infile)
   if (include_directories)
     list (APPEND swig_source_file_flags "$<$<BOOL:${include_directories}>:-I$<JOIN:${include_directories},$<SEMICOLON>-I>>")
   endif()
-  set (property "$<TARGET_PROPERTY:${target_name},SWIG_INCLUDE_DIRECTORIES>")
-  list (APPEND swig_source_file_flags "$<$<BOOL:${property}>:-I$<JOIN:$<TARGET_GENEX_EVAL:${target_name},${property}>,$<SEMICOLON>-I>>")
-  set (property "$<TARGET_PROPERTY:${target_name},INCLUDE_DIRECTORIES>")
-  get_source_file_property(use_target_include_dirs "${infile}" USE_TARGET_INCLUDE_DIRECTORIES)
-  if (use_target_include_dirs)
-    list (APPEND swig_source_file_flags "$<$<BOOL:${property}>:-I$<JOIN:${property},$<SEMICOLON>-I>>")
-  elseif(use_target_include_dirs STREQUAL "NOTFOUND")
-    # not defined at source level, rely on target level
-    list (APPEND swig_source_file_flags "$<$<AND:$<BOOL:$<TARGET_PROPERTY:${target_name},SWIG_USE_TARGET_INCLUDE_DIRECTORIES>>,$<BOOL:${property}>>:-I$<JOIN:${property},$<SEMICOLON>-I>>")
-  endif()
+  if(NOT ${CMAKE_VERSION} VERSION_LESS 3.12)
+    set (property "$<TARGET_PROPERTY:${target_name},SWIG_INCLUDE_DIRECTORIES>")
+    list (APPEND swig_source_file_flags "$<$<BOOL:${property}>:-I$<JOIN:$<TARGET_GENEX_EVAL:${target_name},${property}>,$<SEMICOLON>-I>>")
 
-  set (property "$<TARGET_PROPERTY:${target_name},SWIG_COMPILE_DEFINITIONS>")
-  list (APPEND swig_source_file_flags "$<$<BOOL:${property}>:-D$<JOIN:$<TARGET_GENEX_EVAL:${target_name},${property}>,$<SEMICOLON>-D>>")
-  get_source_file_property (compile_definitions "${infile}" COMPILE_DEFINITIONS)
-  if (compile_definitions)
-    list (APPEND swig_source_file_flags "$<$<BOOL:${compile_definitions}>:-D$<JOIN:${compile_definitions},$<SEMICOLON>-D>>")
-  endif()
+    set (property "$<TARGET_PROPERTY:${target_name},INCLUDE_DIRECTORIES>")
+    get_source_file_property(use_target_include_dirs "${infile}" USE_TARGET_INCLUDE_DIRECTORIES)
+    if (use_target_include_dirs)
+      list (APPEND swig_source_file_flags "$<$<BOOL:${property}>:-I$<JOIN:${property},$<SEMICOLON>-I>>")
+    elseif(use_target_include_dirs STREQUAL "NOTFOUND")
+      # not defined at source level, rely on target level
+      list (APPEND swig_source_file_flags "$<$<AND:$<BOOL:$<TARGET_PROPERTY:${target_name},SWIG_USE_TARGET_INCLUDE_DIRECTORIES>>,$<BOOL:${property}>>:-I$<JOIN:${property},$<SEMICOLON>-I>>")
+    endif()
 
-  list (APPEND swig_source_file_flags "$<TARGET_GENEX_EVAL:${target_name},$<TARGET_PROPERTY:${target_name},SWIG_COMPILE_OPTIONS>>")
+    set (property "$<TARGET_PROPERTY:${target_name},SWIG_COMPILE_DEFINITIONS>")
+    list (APPEND swig_source_file_flags "$<$<BOOL:${property}>:-D$<JOIN:$<TARGET_GENEX_EVAL:${target_name},${property}>,$<SEMICOLON>-D>>")
+    get_source_file_property (compile_definitions "${infile}" COMPILE_DEFINITIONS)
+    if (compile_definitions)
+      list (APPEND swig_source_file_flags "$<$<BOOL:${compile_definitions}>:-D$<JOIN:${compile_definitions},$<SEMICOLON>-D>>")
+    endif()
+
+    list (APPEND swig_source_file_flags "$<TARGET_GENEX_EVAL:${target_name},$<TARGET_PROPERTY:${target_name},SWIG_COMPILE_OPTIONS>>")
+  endif()
   get_source_file_property (compile_options "${infile}" COMPILE_OPTIONS)
   if (compile_options)
     list (APPEND swig_source_file_flags ${compile_options})
@@ -439,7 +456,14 @@ function(SWIG_ADD_SOURCE_TO_MODULE name outfiles infile)
   list (REMOVE_DUPLICATES cmake_include_directories)
   set (swig_include_dirs)
   if (cmake_include_directories)
-    set (swig_include_dirs "$<$<BOOL:${cmake_include_directories}>:-I$<JOIN:${cmake_include_directories},$<SEMICOLON>-I>>")
+    if(NOT ${CMAKE_VERSION} VERSION_LESS 3.12)
+      set (swig_include_dirs "$<$<BOOL:${cmake_include_directories}>:-I$<JOIN:${cmake_include_directories},$<SEMICOLON>-I>>")
+    else()
+      unset(swig_include_dirs)
+      foreach(_d IN LISTS cmake_include_directories)
+        list(APPEND swig_include_dirs "-I${_d}")
+      endforeach()
+    endif()
   endif()
 
   set(swig_special_flags)
@@ -448,7 +472,11 @@ function(SWIG_ADD_SOURCE_TO_MODULE name outfiles infile)
     list (APPEND swig_special_flags "-c++")
   endif()
 
-  cmake_policy(GET CMP0086 module_name_policy)
+  if(NOT ${CMAKE_VERSION} VERSION_LESS 3.14)
+    cmake_policy(GET CMP0086 module_name_policy)
+  else()
+    set(module_name_policy "0LD")
+  endif()
   if (module_name_policy STREQUAL "NEW")
     get_source_file_property(module_name "${infile}" SWIG_MODULE_NAME)
     if (module_name)
@@ -456,8 +484,12 @@ function(SWIG_ADD_SOURCE_TO_MODULE name outfiles infile)
     endif()
   else()
     if (NOT module_name_policy)
-      cmake_policy(GET_WARNING CMP0086 _cmp0086_warning)
-      message(AUTHOR_WARNING "${_cmp0086_warning}\n")
+      if(NOT ${CMAKE_VERSION} VERSION_LESS 3.14)
+        cmake_policy(GET_WARNING CMP0086 _cmp0086_warning)
+        message(AUTHOR_WARNING "${_cmp0086_warning}\n")
+      else()
+        message(STATUS "CMP0086 Unsupported by this CMake version.")
+      endif()
     endif()
   endif()
 
@@ -507,40 +539,67 @@ function(SWIG_ADD_SOURCE_TO_MODULE name outfiles infile)
     set(swig_custom_products)
     set(swig_timestamp_command)
   endif()
-  add_custom_command(
-    OUTPUT ${swig_custom_output}
-    ${swig_custom_products}
-    ${swig_cleanup_command}
-    # Let's create the ${outdir} at execution time, in case dir contains $(OutDir)
-    COMMAND "${CMAKE_COMMAND}" -E make_directory ${outdir} ${outfiledir}
-    ${swig_timestamp_command}
-    COMMAND "${CMAKE_COMMAND}" -E env "SWIG_LIB=${SWIG_DIR}" "${SWIG_EXECUTABLE}"
-    "-${SWIG_MODULE_${name}_SWIG_LANGUAGE_FLAG}"
-    "${swig_source_file_flags}"
-    -outdir "${swig_file_outdir}"
-    ${swig_special_flags}
-    ${swig_extra_flags}
-    "${swig_include_dirs}"
-    -o "${swig_generated_file_fullname}"
-    "${swig_source_file_fullname}"
-    ${swig_copy_command}
-    MAIN_DEPENDENCY "${swig_source_file_fullname}"
-    DEPENDS ${swig_dependencies}
-    IMPLICIT_DEPENDS CXX "${swig_source_file_fullname}"
-    COMMENT "Swig compile ${infile} for ${SWIG_MODULE_${name}_SWIG_LANGUAGE_FLAG}"
-    COMMAND_EXPAND_LISTS)
+  if(NOT ${CMAKE_VERSION} VERSION_LESS 3.12)
+    add_custom_command(
+      OUTPUT ${swig_custom_output}
+      ${swig_custom_products}
+      ${swig_cleanup_command}
+      # Let's create the ${outdir} at execution time, in case dir contains $(OutDir)
+      COMMAND "${CMAKE_COMMAND}" -E make_directory ${outdir} ${outfiledir}
+      ${swig_timestamp_command}
+      COMMAND "${CMAKE_COMMAND}" -E env "SWIG_LIB=${SWIG_DIR}" "${SWIG_EXECUTABLE}"
+      "-${SWIG_MODULE_${name}_SWIG_LANGUAGE_FLAG}"
+      "${swig_source_file_flags}"
+      -outdir "${swig_file_outdir}"
+      ${swig_special_flags}
+      ${swig_extra_flags}
+      "${swig_include_dirs}"
+      -o "${swig_generated_file_fullname}"
+      "${swig_source_file_fullname}"
+      ${swig_copy_command}
+      MAIN_DEPENDENCY "${swig_source_file_fullname}"
+      DEPENDS ${swig_dependencies}
+      IMPLICIT_DEPENDS CXX "${swig_source_file_fullname}"
+      COMMENT "Swig compile ${infile} for ${SWIG_MODULE_${name}_SWIG_LANGUAGE_FLAG}"
+      COMMAND_EXPAND_LISTS)
+  else()
+    add_custom_command(
+      OUTPUT ${swig_custom_output}
+      ${swig_custom_products}
+      ${swig_cleanup_command}
+      # Let's create the ${outdir} at execution time, in case dir contains $(OutDir)
+      COMMAND "${CMAKE_COMMAND}" -E make_directory ${outdir} ${outfiledir}
+      ${swig_timestamp_command}
+      COMMAND "${CMAKE_COMMAND}" -E env "SWIG_LIB=${SWIG_DIR}" "${SWIG_EXECUTABLE}"
+      "-${SWIG_MODULE_${name}_SWIG_LANGUAGE_FLAG}"
+      ${swig_source_file_flags}
+      -outdir "${swig_file_outdir}"
+      ${swig_special_flags}
+      ${swig_extra_flags}
+      ${swig_include_dirs}
+      -o "${swig_generated_file_fullname}"
+      "${swig_source_file_fullname}"
+      ${swig_copy_command}
+      MAIN_DEPENDENCY "${swig_source_file_fullname}"
+      DEPENDS ${swig_dependencies}
+      IMPLICIT_DEPENDS CXX "${swig_source_file_fullname}"
+      COMMENT "Swig compile ${infile} for ${SWIG_MODULE_${name}_SWIG_LANGUAGE_FLAG}"
+      COMMAND_EXPAND_LISTS)
+  endif()
   set_source_files_properties("${swig_generated_file_fullname}" ${swig_extra_generated_files}
     PROPERTIES GENERATED 1)
 
   ## add all properties for generated file to various properties
-  get_property (include_directories SOURCE "${infile}" PROPERTY GENERATED_INCLUDE_DIRECTORIES)
-  set_property (SOURCE "${swig_generated_file_fullname}" PROPERTY INCLUDE_DIRECTORIES ${include_directories} $<TARGET_GENEX_EVAL:${target_name},$<TARGET_PROPERTY:${target_name},SWIG_GENERATED_INCLUDE_DIRECTORIES>>)
+  if(NOT ${CMAKE_VERSION} VERSION_LESS 3.12)
+    get_property (include_directories SOURCE "${infile}" PROPERTY GENERATED_INCLUDE_DIRECTORIES)
+    set_property (SOURCE "${swig_generated_file_fullname}" PROPERTY INCLUDE_DIRECTORIES ${include_directories} $<TARGET_GENEX_EVAL:${target_name},$<TARGET_PROPERTY:${target_name},SWIG_GENERATED_INCLUDE_DIRECTORIES>>)
 
-  get_property (compile_definitions SOURCE "${infile}" PROPERTY GENERATED_COMPILE_DEFINITIONS)
-  set_property (SOURCE "${swig_generated_file_fullname}" PROPERTY COMPILE_DEFINITIONS $<TARGET_GENEX_EVAL:${target_name},$<TARGET_PROPERTY:${target_name},SWIG_GENERATED_COMPILE_DEFINITIONS>> ${compile_definitions})
+    get_property (compile_definitions SOURCE "${infile}" PROPERTY GENERATED_COMPILE_DEFINITIONS)
+    set_property (SOURCE "${swig_generated_file_fullname}" PROPERTY COMPILE_DEFINITIONS $<TARGET_GENEX_EVAL:${target_name},$<TARGET_PROPERTY:${target_name},SWIG_GENERATED_COMPILE_DEFINITIONS>> ${compile_definitions})
 
-  get_property (compile_options SOURCE "${infile}" PROPERTY GENERATED_COMPILE_OPTIONS)
-  set_property (SOURCE "${swig_generated_file_fullname}" PROPERTY COMPILE_OPTIONS $<TARGET_GENEX_EVAL:${target_name},$<TARGET_PROPERTY:${target_name},SWIG_GENERATED_COMPILE_OPTIONS>> ${compile_options})
+    get_property (compile_options SOURCE "${infile}" PROPERTY GENERATED_COMPILE_OPTIONS)
+    set_property (SOURCE "${swig_generated_file_fullname}" PROPERTY COMPILE_OPTIONS $<TARGET_GENEX_EVAL:${target_name},$<TARGET_PROPERTY:${target_name},SWIG_GENERATED_COMPILE_OPTIONS>> ${compile_options})
+  endif()
 
   if (SWIG_MODULE_${name}_SWIG_LANGUAGE_FLAG MATCHES "php")
     set_property (SOURCE "${swig_generated_file_fullname}" APPEND PROPERTY INCLUDE_DIRECTORIES "${outdir}")
@@ -591,13 +650,21 @@ function(SWIG_ADD_LIBRARY name)
     unset(_SAM_TYPE)
   endif()
 
-  cmake_policy(GET CMP0078 target_name_policy)
+  if(NOT ${CMAKE_VERSION} VERSION_LESS 3.13)
+    cmake_policy(GET CMP0078 target_name_policy)
+  else()
+    set(target_name_policy "OLD")
+  endif()
   if (target_name_policy STREQUAL "NEW")
     set (UseSWIG_TARGET_NAME_PREFERENCE STANDARD)
   else()
     if (NOT target_name_policy)
-      cmake_policy(GET_WARNING CMP0078 _cmp0078_warning)
-      message(AUTHOR_WARNING "${_cmp0078_warning}\n")
+      if(NOT ${CMAKE_VERSION} VERSION_LESS 3.14)
+        cmake_policy(GET_WARNING CMP0078 _cmp0078_warning)
+        message(AUTHOR_WARNING "${_cmp0078_warning}\n")
+      else()
+        message(STATUS "CMP0078 Unsupported by this CMake version.")
+      endif()
     endif()
     if (NOT DEFINED UseSWIG_TARGET_NAME_PREFERENCE)
       set (UseSWIG_TARGET_NAME_PREFERENCE LEGACY)
@@ -677,12 +744,30 @@ function(SWIG_ADD_LIBRARY name)
 
   # Generate a regex out of file extensions.
   string(REGEX REPLACE "([$^.*+?|()-])" "\\\\\\1" swig_source_ext_regex "${SWIG_SOURCE_FILE_EXTENSIONS}")
-  list (JOIN swig_source_ext_regex "|" swig_source_ext_regex)
-  string (PREPEND swig_source_ext_regex "(")
+  if(NOT ${CMAKE_VERSION} VERSION_LESS 3.12)
+    list (JOIN swig_source_ext_regex "|" swig_source_ext_regex)
+  else()
+    string(REPLACE ";" "|" swig_source_ext_regex "${swig_source_ext_regex}")
+  endif()
+  if(NOT ${CMAKE_VERSION} VERSION_LESS 3.12)
+    string (PREPEND swig_source_ext_regex "(")
+  else()
+    set(swig_source_ext_regex "(${swig_source_ext_regex}")
+  endif()
   string (APPEND swig_source_ext_regex ")$")
 
   set(swig_dot_i_sources ${_SAM_SOURCES})
-  list(FILTER swig_dot_i_sources INCLUDE REGEX ${swig_source_ext_regex})
+  if(NOT ${CMAKE_VERSION} VERSION_LESS 3.6)
+    list(FILTER swig_dot_i_sources INCLUDE REGEX ${swig_source_ext_regex})
+  else()
+    unset(_out)
+    foreach(_s IN LISTS swig_dot_i_sources)
+      if("${_s}" MATCHES "${swig_source_ext_regex}")
+        list(APPEND _out ${_s})
+      endif()
+    endforeach()
+    set(swig_dot_i_sources ${_out})
+  endif()
   if (NOT swig_dot_i_sources)
     message(FATAL_ERROR "SWIG_ADD_LIBRARY: no SWIG interface files specified")
   endif()
@@ -793,7 +878,17 @@ function(SWIG_ADD_LIBRARY name)
     set(swig_all_support_files)
     foreach (swig_it IN LISTS SWIG_${swig_uppercase_language}_EXTRA_FILE_EXTENSIONS)
       set (swig_support_files ${swig_generated_sources})
-      list (FILTER swig_support_files INCLUDE REGEX ".*${swig_it}$")
+      if(NOT ${CMAKE_VERSION} VERSION_LESS 3.6)
+        list (FILTER swig_support_files INCLUDE REGEX ".*${swig_it}$")
+      else()
+        unset(_out)
+        foreach(_s IN LISTS swig_support_files)
+          if("${_s}" MATCHES ".*${swig_it}$")
+            list(APPEND _out ${_s})
+          endif()
+        endforeach()
+        set(swig_support_files ${_out})
+      endif()
       list(APPEND swig_all_support_files ${swig_support_files})
     endforeach()
     if (swig_all_support_files)
