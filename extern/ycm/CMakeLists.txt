@@ -12,8 +12,8 @@ if(NOT YCM_FOUND)
   set(YCM_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/ycm-${YCM_REQUIRED_VERSION}/find-modules"
                       "${CMAKE_CURRENT_LIST_DIR}/ycm-${YCM_REQUIRED_VERSION}/modules"
                       "${CMAKE_CURRENT_LIST_DIR}/ycm-${YCM_REQUIRED_VERSION}/3rdparty")
-  if(${CMAKE_VERSION} VERSION_LESS 3.8)
-    list(APPEND YCM_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules")
+  if(${CMAKE_VERSION} VERSION_LESS 3.14)
+    list(APPEND YCM_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/ycm-${YCM_REQUIRED_VERSION}/cmake-3.14/Modules")
   endif()
 
 
@@ -48,11 +48,11 @@ if(NOT YCM_FOUND)
                                    ycm-${YCM_REQUIRED_VERSION}/3rdparty/FindFFMPEG.cmake
                                    ycm-${YCM_REQUIRED_VERSION}/3rdparty/FindOctave.cmake
                                    ycm-${YCM_REQUIRED_VERSION}/3rdparty/FindQCustomPlot.cmake)
-      set(YCM_CMAKE_cmake_3.8_FILES ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules/CMakeParseArguments.cmake
-                                    ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules/FindPackageHandleStandardArgs.cmake
-                                    ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules/FindPackageMessage.cmake
-                                    ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules/FindSWIG.cmake
-                                    ycm-${YCM_REQUIRED_VERSION}/cmake-3.8/Modules/UseSWIG.cmake)
+      set(YCM_CMAKE_cmake_3.14_FILES ycm-${YCM_REQUIRED_VERSION}/cmake-3.14/Modules/CMakeParseArguments.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/cmake-3.14/Modules/FindPackageHandleStandardArgs.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/cmake-3.14/Modules/FindPackageMessage.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/cmake-3.14/Modules/FindSWIG.cmake
+                                     ycm-${YCM_REQUIRED_VERSION}/cmake-3.14/Modules/UseSWIG.cmake)
 
       install(FILES ${YCM_CMAKE_find_modules_FILES}
               COMPONENT scripts
@@ -63,7 +63,7 @@ if(NOT YCM_FOUND)
       install(FILES ${YCM_CMAKE_3rdparty_FILES}
               COMPONENT scripts
               DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/3rdparty)
-      if(${CMAKE_VERSION} VERSION_LESS 3.8)
+      if(${CMAKE_VERSION} VERSION_LESS 3.14)
         # Files from CMake 3.8, available only if CMake on the system is older
         install(FILES ${YCM_CMAKE_cmake_3.8_FILES}
                 COMPONENT scripts
