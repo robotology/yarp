@@ -33,11 +33,6 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/RecursiveMutex.h>
 
-namespace yarp {
-    namespace dev {
-        class Map2DClient;
-    }
-}
 
 /**
  * @ingroup dev_impl_network_clients
@@ -52,17 +47,14 @@ namespace yarp {
  * | remote         |     -          | string  | -   |   -           | Yes          | Full port name of the port remotely opened by the Map2DServer, to which the Map2DClient connects to.           |  |
  */
 
-class yarp::dev::Map2DClient : public DeviceDriver,
-                               public IMap2D
+class Map2DClient :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IMap2D
 {
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
-
     yarp::os::Port                m_rpcPort_to_Map2DServer;
     std::string         m_local_name;
     std::string         m_map_server;
-
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
 
@@ -77,10 +69,10 @@ public:
     bool     get_map    (std::string map_name, yarp::dev::MapGrid2D& map) override;
     bool     get_map_names(std::vector<std::string>& map_names) override;
 
-    bool     storeLocation(std::string location_name, Map2DLocation loc) override;
-    bool     storeArea(std::string location_name, Map2DArea area) override;
-    bool     getLocation(std::string location_name, Map2DLocation& loc) override;
-    bool     getArea(std::string location_name, Map2DArea& area) override;
+    bool     storeLocation(std::string location_name, yarp::dev::Map2DLocation loc) override;
+    bool     storeArea(std::string location_name, yarp::dev::Map2DArea area) override;
+    bool     getLocation(std::string location_name, yarp::dev::Map2DLocation& loc) override;
+    bool     getArea(std::string location_name, yarp::dev::Map2DArea& area) override;
     bool     renameLocation(std::string original_name, std::string new_name) override;
     bool     deleteLocation(std::string location_name) override;
     bool     renameArea(std::string original_name, std::string new_name) override;

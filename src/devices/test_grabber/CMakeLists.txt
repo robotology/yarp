@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(test_grabber
                     CATEGORY device
-                    TYPE yarp::dev::TestFrameGrabber
+                    TYPE TestFrameGrabber
                     INCLUDE TestFrameGrabber.h
                     EXTRA_CONFIG WRAPPER=grabber
                     DEFAULT ON)

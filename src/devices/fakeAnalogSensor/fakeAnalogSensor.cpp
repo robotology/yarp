@@ -99,7 +99,7 @@ int FakeAnalogSensor::getChannels()
     return channelsNum;
 }
 
-int yarp::dev::FakeAnalogSensor::calibrateSensor()
+int FakeAnalogSensor::calibrateSensor()
 {
     yTrace();
     //NOT YET IMPLEMENTED

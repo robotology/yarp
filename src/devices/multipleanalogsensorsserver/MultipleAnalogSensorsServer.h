@@ -19,18 +19,12 @@
 #include "SensorStreamingData.h"
 #include "MultipleAnalogSensorsMetadata.h"
 
-namespace yarp {
-    namespace dev {
-        class MultipleAnalogSensorsServer;
-    }
-}
-
 
 /**
  * @ingroup dev_impl_wrapper
  *
- * \brief The server side of the MultipleAnalogSensorsClient, useful to expose device implementing MultipleAnalogSensors interfaces over the YARP network. 
- * 
+ * \brief The server side of the MultipleAnalogSensorsClient, useful to expose device implementing MultipleAnalogSensors interfaces over the YARP network.
+ *
  * | YARP device name |
  * |:-----------------:|
  * | `multipleanalogsensorsserver` |
@@ -41,10 +35,11 @@ namespace yarp {
  * | name           |      -         | string  | -              |   -           | Yes                         | Prefix of the port opened by this device                          | MUST start with a '/' character |
  * | period         |      -         | int     | ms             |   -           | Yes                          | Refresh period of the broadcasted values in ms                    |  |
  */
-class yarp::dev::MultipleAnalogSensorsServer : public yarp::os::PeriodicThread,
-                                               public yarp::dev::DeviceDriver,
-                                               public yarp::dev::IMultipleWrapper,
-                                               public MultipleAnalogSensorsMetadata
+class MultipleAnalogSensorsServer :
+        public yarp::os::PeriodicThread,
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IMultipleWrapper,
+        public MultipleAnalogSensorsMetadata
 {
     double m_periodInS{0.01};
     std::string m_streamingPortName;
@@ -84,7 +79,7 @@ class yarp::dev::MultipleAnalogSensorsServer : public yarp::os::PeriodicThread,
     bool genericStreamData(Interface* wrappedDeviceInterface,
                            const std::vector< SensorMetadata >& metadataVector,
                            std::vector< SensorMeasurement >& streamingDataVector,
-                           MAS_status (Interface::*getStatusMethodPtr)(size_t) const,
+                           yarp::dev::MAS_status (Interface::*getStatusMethodPtr)(size_t) const,
                            bool (Interface::*getMeasureMethodPtr)(size_t, yarp::sig::Vector&, double&) const);
 
 public:
@@ -96,7 +91,7 @@ public:
     bool close() override;
 
     /* IMultipleWrapper methods */
-    bool attachAll(const PolyDriverList &p) override;
+    bool attachAll(const yarp::dev::PolyDriverList &p) override;
     bool detachAll() override;
 
     /* RateThread methods */

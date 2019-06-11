@@ -31,7 +31,7 @@ using namespace yarp::sig;
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-bool yarp::dev::Map2DClient::open(yarp::os::Searchable &config)
+bool Map2DClient::open(yarp::os::Searchable &config)
 {
     m_local_name.clear();
     m_map_server.clear();
@@ -73,7 +73,7 @@ bool yarp::dev::Map2DClient::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool yarp::dev::Map2DClient::store_map(const MapGrid2D& map)
+bool Map2DClient::store_map(const MapGrid2D& map)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -105,7 +105,7 @@ bool yarp::dev::Map2DClient::store_map(const MapGrid2D& map)
     return true;
 }
 
-bool yarp::dev::Map2DClient::get_map(std::string map_name, MapGrid2D& map)
+bool Map2DClient::get_map(std::string map_name, MapGrid2D& map)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -144,7 +144,7 @@ bool yarp::dev::Map2DClient::get_map(std::string map_name, MapGrid2D& map)
     return true;
 }
 
-bool yarp::dev::Map2DClient::clearAllMaps()
+bool Map2DClient::clearAllMaps()
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -169,7 +169,7 @@ bool yarp::dev::Map2DClient::clearAllMaps()
     return true;
 }
 
-bool yarp::dev::Map2DClient::get_map_names(std::vector<std::string>& map_names)
+bool Map2DClient::get_map_names(std::vector<std::string>& map_names)
 {
     map_names.clear();
     yarp::os::Bottle b;
@@ -202,7 +202,7 @@ bool yarp::dev::Map2DClient::get_map_names(std::vector<std::string>& map_names)
     return true;
 }
 
-bool yarp::dev::Map2DClient::remove_map(std::string map_name)
+bool Map2DClient::remove_map(std::string map_name)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -228,7 +228,7 @@ bool yarp::dev::Map2DClient::remove_map(std::string map_name)
     return true;
 }
 
-bool yarp::dev::Map2DClient::storeLocation(std::string location_name, Map2DLocation loc)
+bool Map2DClient::storeLocation(std::string location_name, Map2DLocation loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -259,7 +259,7 @@ bool yarp::dev::Map2DClient::storeLocation(std::string location_name, Map2DLocat
     return true;
 }
 
-bool yarp::dev::Map2DClient::storeArea(std::string area_name, Map2DArea area)
+bool Map2DClient::storeArea(std::string area_name, Map2DArea area)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -293,7 +293,7 @@ bool yarp::dev::Map2DClient::storeArea(std::string area_name, Map2DArea area)
     return true;
 }
 
-bool   yarp::dev::Map2DClient::getLocationsList(std::vector<std::string>& locations)
+bool   Map2DClient::getLocationsList(std::vector<std::string>& locations)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -337,7 +337,7 @@ bool   yarp::dev::Map2DClient::getLocationsList(std::vector<std::string>& locati
     return true;
 }
 
-bool   yarp::dev::Map2DClient::getAreasList(std::vector<std::string>& areas)
+bool   Map2DClient::getAreasList(std::vector<std::string>& areas)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -381,7 +381,7 @@ bool   yarp::dev::Map2DClient::getAreasList(std::vector<std::string>& areas)
     return true;
 }
 
-bool   yarp::dev::Map2DClient::getLocation(std::string location_name, Map2DLocation& loc)
+bool   Map2DClient::getLocation(std::string location_name, Map2DLocation& loc)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -415,7 +415,7 @@ bool   yarp::dev::Map2DClient::getLocation(std::string location_name, Map2DLocat
     return true;
 }
 
-bool   yarp::dev::Map2DClient::getArea(std::string location_name, Map2DArea& area)
+bool   Map2DClient::getArea(std::string location_name, Map2DArea& area)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -455,7 +455,7 @@ bool   yarp::dev::Map2DClient::getArea(std::string location_name, Map2DArea& are
     return true;
 }
 
-bool   yarp::dev::Map2DClient::deleteLocation(std::string location_name)
+bool   Map2DClient::deleteLocation(std::string location_name)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -482,7 +482,7 @@ bool   yarp::dev::Map2DClient::deleteLocation(std::string location_name)
     return true;
 }
 
-bool   yarp::dev::Map2DClient::renameLocation(std::string original_name, std::string new_name)
+bool   Map2DClient::renameLocation(std::string original_name, std::string new_name)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -510,7 +510,7 @@ bool   yarp::dev::Map2DClient::renameLocation(std::string original_name, std::st
     return true;
 }
 
-bool   yarp::dev::Map2DClient::deleteArea(std::string location_name)
+bool   Map2DClient::deleteArea(std::string location_name)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -537,7 +537,7 @@ bool   yarp::dev::Map2DClient::deleteArea(std::string location_name)
     return true;
 }
 
-bool   yarp::dev::Map2DClient::renameArea(std::string original_name, std::string new_name)
+bool   Map2DClient::renameArea(std::string original_name, std::string new_name)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -565,7 +565,7 @@ bool   yarp::dev::Map2DClient::renameArea(std::string original_name, std::string
     return true;
 }
 
-bool   yarp::dev::Map2DClient::clearAllLocations()
+bool   Map2DClient::clearAllLocations()
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -591,7 +591,7 @@ bool   yarp::dev::Map2DClient::clearAllLocations()
     return true;
 }
 
-bool   yarp::dev::Map2DClient::clearAllAreas()
+bool   Map2DClient::clearAllAreas()
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -617,17 +617,7 @@ bool   yarp::dev::Map2DClient::clearAllAreas()
     return true;
 }
 
-bool yarp::dev::Map2DClient::close()
+bool Map2DClient::close()
 {
     return true;
-}
-
-yarp::dev::DriverCreator *createMap2DClient()
-{
-    return new DriverCreatorOf<Map2DClient>
-               (
-                   "map2DClient",
-                   "",
-                   "yarp::dev::Map2DClient"
-               );
 }

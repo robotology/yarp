@@ -14,17 +14,15 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 
-namespace yarp {
-namespace dev {
 
-
-MultipleAnalogSensorsServer::MultipleAnalogSensorsServer(): PeriodicThread(0.02)
+MultipleAnalogSensorsServer::MultipleAnalogSensorsServer() :
+        PeriodicThread(0.02)
 {
 }
 
 MultipleAnalogSensorsServer::~MultipleAnalogSensorsServer() = default;
 
-bool MultipleAnalogSensorsServer::open(os::Searchable& config)
+bool MultipleAnalogSensorsServer::open(yarp::os::Searchable& config)
 {
     if (!config.check("name"))
     {
@@ -159,43 +157,43 @@ bool MultipleAnalogSensorsServer::populateAllSensorsMetadata()
 {
     bool ok = true;
     ok = ok && populateSensorsMetadata(m_iThreeAxisGyroscopes, m_sensorMetadata.ThreeAxisGyroscopes, "ThreeAxisGyroscopes",
-                                       &IThreeAxisGyroscopes::getNrOfThreeAxisGyroscopes,
-                                       &IThreeAxisGyroscopes::getThreeAxisGyroscopeName,
-                                       &IThreeAxisGyroscopes::getThreeAxisGyroscopeFrameName);
+                                       &yarp::dev::IThreeAxisGyroscopes::getNrOfThreeAxisGyroscopes,
+                                       &yarp::dev::IThreeAxisGyroscopes::getThreeAxisGyroscopeName,
+                                       &yarp::dev::IThreeAxisGyroscopes::getThreeAxisGyroscopeFrameName);
     ok = ok && populateSensorsMetadata(m_iThreeAxisLinearAccelerometers, m_sensorMetadata.ThreeAxisLinearAccelerometers, "ThreeAxisLinearAccelerometers",
-                                       &IThreeAxisLinearAccelerometers::getNrOfThreeAxisLinearAccelerometers,
-                                       &IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerName,
-                                       &IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerFrameName);
+                                       &yarp::dev::IThreeAxisLinearAccelerometers::getNrOfThreeAxisLinearAccelerometers,
+                                       &yarp::dev::IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerName,
+                                       &yarp::dev::IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerFrameName);
     ok = ok && populateSensorsMetadata(m_iThreeAxisMagnetometers, m_sensorMetadata.ThreeAxisMagnetometers, "ThreeAxisMagnetometers",
-                                       &IThreeAxisMagnetometers::getNrOfThreeAxisMagnetometers,
-                                       &IThreeAxisMagnetometers::getThreeAxisMagnetometerName,
-                                       &IThreeAxisMagnetometers::getThreeAxisMagnetometerFrameName);
+                                       &yarp::dev::IThreeAxisMagnetometers::getNrOfThreeAxisMagnetometers,
+                                       &yarp::dev::IThreeAxisMagnetometers::getThreeAxisMagnetometerName,
+                                       &yarp::dev::IThreeAxisMagnetometers::getThreeAxisMagnetometerFrameName);
     ok = ok && populateSensorsMetadata(m_iOrientationSensors, m_sensorMetadata.OrientationSensors, "OrientationSensors",
-                                       &IOrientationSensors::getNrOfOrientationSensors,
-                                       &IOrientationSensors::getOrientationSensorName,
-                                       &IOrientationSensors::getOrientationSensorFrameName);
+                                       &yarp::dev::IOrientationSensors::getNrOfOrientationSensors,
+                                       &yarp::dev::IOrientationSensors::getOrientationSensorName,
+                                       &yarp::dev::IOrientationSensors::getOrientationSensorFrameName);
     ok = ok && populateSensorsMetadata(m_iTemperatureSensors, m_sensorMetadata.TemperatureSensors, "TemperatureSensors",
-                                       &ITemperatureSensors::getNrOfTemperatureSensors,
-                                       &ITemperatureSensors::getTemperatureSensorName,
-                                       &ITemperatureSensors::getTemperatureSensorFrameName);
+                                       &yarp::dev::ITemperatureSensors::getNrOfTemperatureSensors,
+                                       &yarp::dev::ITemperatureSensors::getTemperatureSensorName,
+                                       &yarp::dev::ITemperatureSensors::getTemperatureSensorFrameName);
     ok = ok && populateSensorsMetadata(m_iSixAxisForceTorqueSensors, m_sensorMetadata.SixAxisForceTorqueSensors, "SixAxisForceTorqueSensors",
-                                       &ISixAxisForceTorqueSensors::getNrOfSixAxisForceTorqueSensors,
-                                       &ISixAxisForceTorqueSensors::getSixAxisForceTorqueSensorName,
-                                       &ISixAxisForceTorqueSensors::getSixAxisForceTorqueSensorFrameName);
+                                       &yarp::dev::ISixAxisForceTorqueSensors::getNrOfSixAxisForceTorqueSensors,
+                                       &yarp::dev::ISixAxisForceTorqueSensors::getSixAxisForceTorqueSensorName,
+                                       &yarp::dev::ISixAxisForceTorqueSensors::getSixAxisForceTorqueSensorFrameName);
     ok = ok && populateSensorsMetadataNoFrameName(m_iContactLoadCellArrays, m_sensorMetadata.ContactLoadCellArrays, "ContactLoadCellArrays",
-                                       &IContactLoadCellArrays::getNrOfContactLoadCellArrays,
-                                       &IContactLoadCellArrays::getContactLoadCellArrayName);
+                                       &yarp::dev::IContactLoadCellArrays::getNrOfContactLoadCellArrays,
+                                       &yarp::dev::IContactLoadCellArrays::getContactLoadCellArrayName);
     ok = ok && populateSensorsMetadataNoFrameName(m_iEncoderArrays, m_sensorMetadata.EncoderArrays, "EncoderArrays",
-                                       &IEncoderArrays::getNrOfEncoderArrays,
-                                       &IEncoderArrays::getEncoderArrayName);
+                                       &yarp::dev::IEncoderArrays::getNrOfEncoderArrays,
+                                       &yarp::dev::IEncoderArrays::getEncoderArrayName);
     ok = ok && populateSensorsMetadataNoFrameName(m_iSkinPatches, m_sensorMetadata.SkinPatches, "ISkinPatches",
-                                       &ISkinPatches::getNrOfSkinPatches,
-                                       &ISkinPatches::getSkinPatchName);
+                                       &yarp::dev::ISkinPatches::getNrOfSkinPatches,
+                                       &yarp::dev::ISkinPatches::getSkinPatchName);
 
     return ok;
 }
 
-bool MultipleAnalogSensorsServer::attachAll(const PolyDriverList& p)
+bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
 {
     // Attach the device
     if (p.size() > 1)
@@ -213,7 +211,7 @@ bool MultipleAnalogSensorsServer::attachAll(const PolyDriverList& p)
         return false;
     }
 
-    PolyDriver* poly = p[0]->poly;
+    yarp::dev::PolyDriver* poly = p[0]->poly;
 
     if (!poly)
     {
@@ -297,7 +295,7 @@ template<typename Interface>
 bool MultipleAnalogSensorsServer::genericStreamData(Interface* wrappedDeviceInterface,
                                                     const std::vector< SensorMetadata >& metadataVector,
                                                     std::vector< SensorMeasurement >& streamingDataVector,
-                                                    MAS_status (Interface::*getStatusMethodPtr)(size_t) const,
+                                                    yarp::dev::MAS_status (Interface::*getStatusMethodPtr)(size_t) const,
                                                     bool (Interface::*getMeasureMethodPtr)(size_t, yarp::sig::Vector&, double&) const)
 {
     if (wrappedDeviceInterface)
@@ -310,8 +308,8 @@ bool MultipleAnalogSensorsServer::genericStreamData(Interface* wrappedDeviceInte
             double& outputTimestamp = streamingDataVector[i].timestamp;
             // TODO(traversaro): resize the buffer to the correct size
             MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getMeasureMethodPtr)(i, outputBuffer, outputTimestamp);
-            MAS_status status = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getStatusMethodPtr)(i);
-            if (status != MAS_OK)
+            yarp::dev::MAS_status status = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getStatusMethodPtr)(i);
+            if (status != yarp::dev::MAS_OK)
             {
                 yError("MultipleAnalogSensorsServer: failure in reading data from sensor %s, no data will be sent on the port.",
                     m_sensorMetadata.ThreeAxisGyroscopes[i].name.c_str());
@@ -332,48 +330,48 @@ void MultipleAnalogSensorsServer::run()
 
     ok = ok && genericStreamData(m_iThreeAxisGyroscopes, m_sensorMetadata.ThreeAxisGyroscopes,
                                  streamingData.ThreeAxisGyroscopes.measurements,
-                                 &IThreeAxisGyroscopes::getThreeAxisGyroscopeStatus,
-                                 &IThreeAxisGyroscopes::getThreeAxisGyroscopeMeasure);
+                                 &yarp::dev::IThreeAxisGyroscopes::getThreeAxisGyroscopeStatus,
+                                 &yarp::dev::IThreeAxisGyroscopes::getThreeAxisGyroscopeMeasure);
 
     ok = ok && genericStreamData(m_iThreeAxisLinearAccelerometers, m_sensorMetadata.ThreeAxisLinearAccelerometers,
                                  streamingData.ThreeAxisLinearAccelerometers.measurements,
-                                 &IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerStatus,
-                                 &IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerMeasure);
+                                 &yarp::dev::IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerStatus,
+                                 &yarp::dev::IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerMeasure);
 
     ok = ok && genericStreamData(m_iThreeAxisMagnetometers, m_sensorMetadata.ThreeAxisMagnetometers,
                                  streamingData.ThreeAxisMagnetometers.measurements,
-                                 &IThreeAxisMagnetometers::getThreeAxisMagnetometerStatus,
-                                 &IThreeAxisMagnetometers::getThreeAxisMagnetometerMeasure);
+                                 &yarp::dev::IThreeAxisMagnetometers::getThreeAxisMagnetometerStatus,
+                                 &yarp::dev::IThreeAxisMagnetometers::getThreeAxisMagnetometerMeasure);
 
     ok = ok && genericStreamData(m_iOrientationSensors, m_sensorMetadata.OrientationSensors,
                                  streamingData.OrientationSensors.measurements,
-                                 &IOrientationSensors::getOrientationSensorStatus,
-                                 &IOrientationSensors::getOrientationSensorMeasureAsRollPitchYaw);
+                                 &yarp::dev::IOrientationSensors::getOrientationSensorStatus,
+                                 &yarp::dev::IOrientationSensors::getOrientationSensorMeasureAsRollPitchYaw);
 
     ok = ok && genericStreamData(m_iTemperatureSensors, m_sensorMetadata.TemperatureSensors,
                                  streamingData.TemperatureSensors.measurements,
-                                 &ITemperatureSensors::getTemperatureSensorStatus,
-                                 &ITemperatureSensors::getTemperatureSensorMeasure);
+                                 &yarp::dev::ITemperatureSensors::getTemperatureSensorStatus,
+                                 &yarp::dev::ITemperatureSensors::getTemperatureSensorMeasure);
 
     ok = ok && genericStreamData(m_iSixAxisForceTorqueSensors, m_sensorMetadata.SixAxisForceTorqueSensors,
                                  streamingData.SixAxisForceTorqueSensors.measurements,
-                                 &ISixAxisForceTorqueSensors::getSixAxisForceTorqueSensorStatus,
-                                 &ISixAxisForceTorqueSensors::getSixAxisForceTorqueSensorMeasure);
+                                 &yarp::dev::ISixAxisForceTorqueSensors::getSixAxisForceTorqueSensorStatus,
+                                 &yarp::dev::ISixAxisForceTorqueSensors::getSixAxisForceTorqueSensorMeasure);
 
     ok = ok && genericStreamData(m_iContactLoadCellArrays, m_sensorMetadata.ContactLoadCellArrays,
                                  streamingData.ContactLoadCellArrays.measurements,
-                                 &IContactLoadCellArrays::getContactLoadCellArrayStatus,
-                                 &IContactLoadCellArrays::getContactLoadCellArrayMeasure);
+                                 &yarp::dev::IContactLoadCellArrays::getContactLoadCellArrayStatus,
+                                 &yarp::dev::IContactLoadCellArrays::getContactLoadCellArrayMeasure);
 
     ok = ok && genericStreamData(m_iEncoderArrays, m_sensorMetadata.EncoderArrays,
                                  streamingData.EncoderArrays.measurements,
-                                 &IEncoderArrays::getEncoderArrayStatus,
-                                 &IEncoderArrays::getEncoderArrayMeasure);
+                                 &yarp::dev::IEncoderArrays::getEncoderArrayStatus,
+                                 &yarp::dev::IEncoderArrays::getEncoderArrayMeasure);
 
     ok = ok && genericStreamData(m_iSkinPatches, m_sensorMetadata.SkinPatches,
                                  streamingData.SkinPatches.measurements,
-                                 &ISkinPatches::getSkinPatchStatus,
-                                 &ISkinPatches::getSkinPatchMeasure);
+                                 &yarp::dev::ISkinPatches::getSkinPatchStatus,
+                                 &yarp::dev::ISkinPatches::getSkinPatchMeasure);
 
     if (ok)
     {
@@ -388,12 +386,4 @@ void MultipleAnalogSensorsServer::run()
 void MultipleAnalogSensorsServer::threadRelease()
 {
     return;
-}
-
-
-
-
-
-
-}
 }

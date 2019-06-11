@@ -30,12 +30,6 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
 
-// needed for the driver factory.
-yarp::dev::DriverCreator *createBatteryWrapper() {
-    return new DriverCreatorOf<yarp::dev::BatteryWrapper>("batteryWrapper",
-        "batteryWrapper",
-        "yarp::dev::BatteryWrapper");
-}
 
 BatteryWrapper::BatteryWrapper() : PeriodicThread(DEFAULT_THREAD_PERIOD)
 {

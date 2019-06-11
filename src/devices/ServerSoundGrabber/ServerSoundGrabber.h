@@ -27,14 +27,6 @@
 
 //#define NUM_SAMPLES 8192
 
-namespace yarp
-{
-    namespace dev
-    {
-        class ServerSoundGrabber;
-    }
-}
-
 
 /**
  * @ingroup dev_impl_wrapper
@@ -46,14 +38,15 @@ namespace yarp
  * \author (adapted) Júlio Gomes, VisLab ISR/IST - 2006
  *
  */
-class yarp::dev::ServerSoundGrabber : public yarp::dev::DeprecatedDeviceDriver,
-                                      private yarp::os::Thread,
-                                      public yarp::os::PortReader
+class ServerSoundGrabber :
+        public yarp::dev::DeprecatedDeviceDriver,
+        private yarp::os::Thread,
+        public yarp::os::PortReader
 {
 private:
     yarp::os::Stamp stamp;
-    PolyDriver poly;
-    IAudioGrabberSound *mic; //The microphone device
+    yarp::dev::PolyDriver poly;
+    yarp::dev::IAudioGrabberSound *mic; //The microphone device
     yarp::os::Port rpcPort;
     yarp::os::Port streamingPort;
 #ifdef DEBUG_TIME_SPENT

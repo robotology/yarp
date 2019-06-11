@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(ServerSoundGrabber
                     CATEGORY device
-                    TYPE yarp::dev::ServerSoundGrabber
+                    TYPE ServerSoundGrabber
                     INCLUDE ServerSoundGrabber.h
                     DEFAULT ON)
 

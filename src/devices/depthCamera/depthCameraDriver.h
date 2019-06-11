@@ -42,18 +42,7 @@
 #define DEG2RAD (3.14159265359/180.0)
 #endif
 
-namespace yarp
-{
-    namespace dev
-    {
-        class depthCameraDriver;
-        namespace impl
-        {
-            class  streamFrameListener;
-        }
-    }
-}
-
+class  streamFrameListener;
 
 /**
  *  @ingroup dev_impl_media
@@ -202,18 +191,17 @@ transformation          (1.0 0.0 0.0 0.0   0.0 1.0 0.0 0.0   0.0 0.0 1.0 0.0  0.
  * \endcode
  */
 
-class yarp::dev::depthCameraDriver : public yarp::dev::DeviceDriver,
-                                     public yarp::dev::IRGBDSensor,
-                                     public yarp::dev::IFrameGrabberControls
+class depthCameraDriver :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IRGBDSensor,
+        public yarp::dev::IFrameGrabberControls
 {
 private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     typedef yarp::os::Stamp                           Stamp;
     typedef yarp::os::Property                        Property;
     typedef yarp::sig::FlexImage                      FlexImage;
 
-#endif
 public:
     depthCameraDriver();
     ~depthCameraDriver();
@@ -226,8 +214,8 @@ public:
     // IRGBDSensor
     int    getRgbHeight() override;
     int    getRgbWidth() override;
-    bool   getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) override;
-    bool   getRgbResolution(int &width, int &height) override;
+    bool   getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& configurations) override;
+    bool   getRgbResolution(int& width, int& height) override;
     bool   setRgbResolution(int width, int height) override;
     bool   getRgbFOV(double& horizontalFov, double& verticalFov) override;
     bool   setRgbFOV(double horizontalFov, double verticalFov) override;
@@ -249,7 +237,7 @@ public:
     bool   setDepthMirroring(bool mirror) override;
 
 
-    bool   getExtrinsicParam(sig::Matrix &extrinsic) override;
+    bool   getExtrinsicParam(yarp::sig::Matrix& extrinsic) override;
     bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = NULL) override;
     bool   getDepthImage(depthImage& depthImage, Stamp* timeStamp = NULL) override;
     bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL) override;
@@ -275,14 +263,13 @@ public:
     bool   setOnePush(int feature) override;
 
 private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     //method
     inline bool initializeOpeNIDevice();
     inline bool setParams();
-    bool        getImage(FlexImage& Frame, Stamp* Stamp, impl::streamFrameListener *sourceFrame);
-    bool        getImage(depthImage& Frame, Stamp* Stamp, impl::streamFrameListener *sourceFrame);
-    bool        setResolution(int w, int h, openni::VideoStream &stream);
-    bool        setFOV(double horizontalFov, double verticalFov, openni::VideoStream &stream);
+    bool        getImage(FlexImage& Frame, Stamp* Stamp, streamFrameListener *sourceFrame);
+    bool        getImage(depthImage& Frame, Stamp* Stamp, streamFrameListener *sourceFrame);
+    bool        setResolution(int w, int h, openni::VideoStream& stream);
+    bool        setFOV(double horizontalFov, double verticalFov, openni::VideoStream& stream);
     bool        setIntrinsic(yarp::os::Property& intrinsic, const yarp::sig::IntrinsicParams& values);
     void        settingErrorMsg(const std::string& error, bool& ret);
 
@@ -290,13 +277,11 @@ private:
     openni::VideoStream             m_depthStream;
     openni::VideoStream             m_imageStream;
     openni::Device                  m_device;
-    impl::streamFrameListener*      m_depthFrame;
-    impl::streamFrameListener*      m_imageFrame;
+    streamFrameListener*      m_depthFrame;
+    streamFrameListener*      m_imageFrame;
     std::string           m_lastError;
     yarp::dev::RGBDSensorParamParser* m_paramParser;
     bool                            m_depthRegistration;
     std::vector<cameraFeature_id_t> m_supportedFeatures;
-
-#endif
 };
 #endif

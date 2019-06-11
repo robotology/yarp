@@ -646,10 +646,10 @@ void BoschIMU::run()
 
         // Check quaternion values are meaningful. The aim of this check is simply
         // to verify values are not garbage.
-        // Ideally the correct check is that quaternion.abs ~= 1, but to avoid 
+        // Ideally the correct check is that quaternion.abs ~= 1, but to avoid
         // calling a sqrt every cicle only for a rough estimate, the check here
         // is that the self product is nearly 1
-        double sum_squared = quaternion_tmp.w() * quaternion_tmp.w() + 
+        double sum_squared = quaternion_tmp.w() * quaternion_tmp.w() +
                              quaternion_tmp.x() * quaternion_tmp.x() +
                              quaternion_tmp.y() * quaternion_tmp.y() +
                              quaternion_tmp.z() * quaternion_tmp.z();

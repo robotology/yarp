@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(fakeDepthCamera
                     CATEGORY device
-                    TYPE yarp::dev::fakeDepthCameraDriver
+                    TYPE fakeDepthCameraDriver
                     INCLUDE fakeDepthCameraDriver.h
                     EXTRA_CONFIG WRAPPER=RGBDSensorWrapper)
 

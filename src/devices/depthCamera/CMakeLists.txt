@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(depthCamera
                     CATEGORY device
-                    TYPE yarp::dev::depthCameraDriver
+                    TYPE depthCameraDriver
                     INCLUDE depthCameraDriver.h
                     EXTRA_CONFIG WRAPPER=RGBDSensorWrapper
                     DEPENDS "YARP_HAS_OpenNI2")

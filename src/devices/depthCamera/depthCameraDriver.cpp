@@ -24,7 +24,6 @@
 #include <algorithm>
 #include <cmath>
 
-using namespace yarp::dev::impl;
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
@@ -56,7 +55,7 @@ static std::map<std::string, RGBDSensorParamParser::RGBDParam> params_map =
     {depthMirroring, RGBDSensorParamParser::RGBDParam(depthMirroring,  1)}
 };
 
-class yarp::dev::impl::streamFrameListener : public openni::VideoStream::NewFrameListener
+class streamFrameListener : public openni::VideoStream::NewFrameListener
 {
 public:
 

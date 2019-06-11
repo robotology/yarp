@@ -7,7 +7,7 @@
 
 yarp_prepare_plugin(serialport
                     CATEGORY device
-                    TYPE yarp::dev::SerialDeviceDriver
+                    TYPE SerialDeviceDriver
                     INCLUDE SerialDeviceDriver.h
                     EXTRA_CONFIG WRAPPER=serial
                     DEPENDS "YARP_HAS_ACE")

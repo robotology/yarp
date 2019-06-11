@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(localization2DServer
                     CATEGORY device
-                    TYPE yarp::dev::Localization2DServer
+                    TYPE Localization2DServer
                     INCLUDE Localization2DServer.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)

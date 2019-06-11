@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(fakeBattery
                     CATEGORY device
-                    TYPE yarp::dev::FakeBattery
+                    TYPE FakeBattery
                     INCLUDE fakeBattery.h
                     EXTRA_CONFIG WRAPPER=batteryWrapper)
 

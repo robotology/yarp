@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(multipleanalogsensorsremapper
                     CATEGORY device
-                    TYPE yarp::dev::MultipleAnalogSensorsRemapper
+                    TYPE MultipleAnalogSensorsRemapper
                     INCLUDE MultipleAnalogSensorsRemapper.h
                     DEFAULT ON)
 

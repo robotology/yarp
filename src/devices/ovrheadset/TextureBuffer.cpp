@@ -39,7 +39,7 @@ inline void rgb2rgba(unsigned char* rgba, const yarp::sig::Image& img, unsigned 
             rgba[(wdt * h + w) * 4 + 2] = img.getPixelAddress(w, h)[2];
             rgba[(wdt * h + w) * 4 + 3] = alpha;
         }
-        
+
     }
 }
 
@@ -321,7 +321,7 @@ void TextureBuffer::deleteTextureAndBuffers()
         glDeleteBuffers(textureSwapChainSize, pboIds);
         delete pboIds;
     }
-    
+
 
     ovr_DestroyTextureSwapChain(session, textureSwapChain);
     unlock();

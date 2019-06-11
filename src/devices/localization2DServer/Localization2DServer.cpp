@@ -123,7 +123,7 @@ bool Localization2DServer::open(Searchable& config)
         m_period = general_group.find("period").asFloat64();
         yInfo() << "Localization2DServer: period requested: " << m_period;
     }
-    
+
     if (!general_group.check("retrieve_position_periodically"))
     {
         yInfo() << "Localization2DServer: missing 'retrieve_position_periodically' parameter. Using default value: true. Period:" << m_period ;
@@ -134,7 +134,7 @@ bool Localization2DServer::open(Searchable& config)
         m_getdata_using_periodic_thread = general_group.find("retrieve_position_periodically").asBool();
         if (m_getdata_using_periodic_thread)
             { yInfo() << "Localization2DServer: retrieve_position_periodically requested, Period:" << m_period; }
-        else 
+        else
             { yInfo() << "Localization2DServer: retrieve_position_periodically NOT requested. Localization data obtained asynchronously."; }
     }
 
@@ -405,14 +405,4 @@ void Localization2DServer::run()
         }
         m_streamingPort.write();
     }
-}
-
-yarp::dev::DriverCreator *createLocalization2DServer()
-{
-    return new DriverCreatorOf<Localization2DServer>
-        (
-            "localization2DServer",
-            "",
-            "localization2DServer"
-            );
 }

@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(map2DServer
                     CATEGORY device
-                    TYPE yarp::dev::Map2DServer
+                    TYPE Map2DServer
                     INCLUDE Map2DServer.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)

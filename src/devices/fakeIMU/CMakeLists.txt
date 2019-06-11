@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(fakeIMU
                     CATEGORY device
-                    TYPE yarp::dev::fakeIMU
+                    TYPE fakeIMU
                     INCLUDE fakeIMU.h
                     EXTRA_CONFIG WRAPPER=inertial
                     DEPENDS "TARGET YARP::YARP_math")

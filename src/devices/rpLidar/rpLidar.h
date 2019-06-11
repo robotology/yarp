@@ -65,7 +65,7 @@ public:
         if (end == start)
         {
             yError("rpLidar buffer overrun!");
-            start = (start + 1) % maxsize; // full, overwrite 
+            start = (start + 1) % maxsize; // full, overwrite
             return false;
         }
         return true;

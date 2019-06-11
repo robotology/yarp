@@ -15,22 +15,18 @@
 #include <yarp/sig/Image.h>
 #include <yarp/os/Time.h>
 
-namespace yarp {
-    namespace dev {
-      class FakeBot;
-    }
-}
 
-class yarp::dev::FakeBot : public DeviceDriver,
-            public IPositionControl,
-            public IVelocityControl,
-            public IAmplifierControl,
-            public IEncodersTimed,
-            public IFrameGrabberImage,
-            public IControlCalibration,
-            public IControlLimits,
-            public DeviceResponder,
-            public yarp::os::Thread
+class FakeBot :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IPositionControl,
+        public yarp::dev::IVelocityControl,
+        public yarp::dev::IAmplifierControl,
+        public yarp::dev::IEncodersTimed,
+        public yarp::dev::IFrameGrabberImage,
+        public yarp::dev::IControlCalibration,
+        public yarp::dev::IControlLimits,
+        public yarp::dev::DeviceResponder,
+        public yarp::os::Thread
 {
 private:
     int njoints;
@@ -376,7 +372,7 @@ public:
         *v = 0;
         return true;
     }
-    
+
     bool setMaxCurrent(int j, double v) override {
         return true;
     }

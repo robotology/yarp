@@ -107,13 +107,6 @@ enum ErrorCode {
     OK
 };
 
-namespace yarp {
-    namespace dev {
-        class DynamixelAX12FtdiDriver;
-        class FtdiDeviceSettings;
-    }
-}
-
 using namespace yarp::os;
 using namespace yarp::dev;
 
@@ -122,7 +115,8 @@ using namespace yarp::dev;
  * Such a device can contain information:
  * such as: Manufacturer: FTDI, Description: FT232R USB UART, Serial A7003MhG
  */
-class yarp::dev::FtdiDeviceSettings {
+class FtdiDeviceSettings
+{
 public:
     int vendor; //0x0403 normally. Can be found by lsusb on linux
     int product; //0x6001   Can be found by lsusb on linux
@@ -140,7 +134,12 @@ public:
     unsigned int read_chunksize; // ftdi_read_data_set_chunksize(&ftdic, 256);
 };
 
-class yarp::dev::DynamixelAX12FtdiDriver : public DeviceDriver, public IPositionControl, public ITorqueControl, public IEncoders {
+class DynamixelAX12FtdiDriver :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IPositionControl,
+        public yarp::dev::ITorqueControl,
+        public yarp::dev::IEncoders
+{
 private:
     /** Handle to FTDI device */
     struct ftdi_context ftdic;

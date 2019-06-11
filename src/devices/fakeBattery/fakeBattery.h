@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef __FAKEBATTERY_H__
-#define __FAKEBATTERY_H__
+#ifndef YARP_FAKEBATTERY_H
+#define YARP_FAKEBATTERY_H
 
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
@@ -16,13 +16,11 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/sig/Vector.h>
 
-namespace yarp {
-    namespace dev {
-        class FakeBattery;
-    }
-}
 
-class yarp::dev::FakeBattery : public yarp::os::PeriodicThread, public yarp::dev::IBattery, public yarp::dev::DeviceDriver
+class FakeBattery :
+        public yarp::os::PeriodicThread,
+        public yarp::dev::IBattery,
+        public yarp::dev::DeviceDriver
 {
 protected:
     yarp::os::Semaphore mutex;
@@ -61,6 +59,5 @@ public:
     virtual void threadRelease() override;
     virtual void run() override;
 };
-
 
 #endif

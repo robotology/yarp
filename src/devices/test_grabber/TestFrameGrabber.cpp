@@ -407,7 +407,7 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
             image.resize(300, 50);
             count = 0;
         }
-        
+
         size_t ww = w = image.width();
         size_t hh = h = image.height();
         if (ww>1 && hh>1) {

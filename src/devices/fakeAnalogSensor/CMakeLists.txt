@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(fakeAnalogSensor
                     CATEGORY device
-                    TYPE yarp::dev::FakeAnalogSensor
+                    TYPE FakeAnalogSensor
                     INCLUDE fakeAnalogSensor.h
                     EXTRA_CONFIG WRAPPER=analogServer)
 

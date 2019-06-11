@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(fakeMotionControl
                     CATEGORY device
-                    TYPE yarp::dev::FakeMotionControl
+                    TYPE FakeMotionControl
                     INCLUDE fakeMotionControl.h
                     EXTRA_CONFIG WRAPPER=controlboardwrapper2
                     DEPENDS "TARGET YARP::YARP_math")

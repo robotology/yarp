@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(map2DClient
                     CATEGORY device
-                    TYPE yarp::dev::Map2DClient
+                    TYPE Map2DClient
                     INCLUDE Map2DClient.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)

@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(multipleanalogsensorsserver
                     CATEGORY device
-                    TYPE yarp::dev::MultipleAnalogSensorsServer
+                    TYPE MultipleAnalogSensorsServer
                     INCLUDE MultipleAnalogSensorsServer.h
                     DEFAULT ON)
 

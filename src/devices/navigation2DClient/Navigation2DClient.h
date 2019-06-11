@@ -52,9 +52,7 @@ class Navigation2DClient:
         public yarp::dev::INavigation2D,
         public yarp::os::PortReader
 {
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
-
     yarp::os::Mutex               m_mutex;
     yarp::os::Port                m_rpc_port_navigation_server;
     yarp::os::Port                m_rpc_port_map_locations_server;
@@ -79,7 +77,6 @@ private: //math stuff
                                                         double lin_tol,
                                                         double ang_tol);
 
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
 

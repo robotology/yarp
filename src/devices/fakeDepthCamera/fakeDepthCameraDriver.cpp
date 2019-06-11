@@ -65,9 +65,9 @@ bool fakeDepthCameraDriver::open(Searchable& config)
         {
             *get<0>(p) = get<2>(p);
         }
-        
+
     }
-    
+
     return true;
 }
 
@@ -97,7 +97,7 @@ bool fakeDepthCameraDriver::getRgbResolution(int &width, int &height)
     return true;
 }
 
-bool yarp::dev::fakeDepthCameraDriver::setRgbResolution(int width, int height)
+bool fakeDepthCameraDriver::setRgbResolution(int width, int height)
 {
     return false;
 }

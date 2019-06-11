@@ -15,12 +15,6 @@
 #include <yarp/dev/all.h>
 #include <yarp/dev/IAnalogSensor.h>
 
-namespace yarp{
-    namespace dev{
-        class FakeAnalogSensor;
-    }
-}
-
 /**
 *
 *
@@ -32,9 +26,10 @@ namespace yarp{
 * |
 */
 
-class yarp::dev::FakeAnalogSensor : public yarp::dev::DeviceDriver,
-                                    public yarp::os::PeriodicThread,
-                                    public yarp::dev::IAnalogSensor
+class FakeAnalogSensor :
+        public yarp::dev::DeviceDriver,
+        public yarp::os::PeriodicThread,
+        public yarp::dev::IAnalogSensor
 {
 private:
 

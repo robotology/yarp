@@ -1479,13 +1479,3 @@ double Navigation2DClient::normalize_angle(double angle)
     }
     return angle;
 }
-
-yarp::dev::DriverCreator *createNavigation2DClient()
-{
-    return new DriverCreatorOf<Navigation2DClient>
-               (
-                   "navigation2DClient",
-                   "",
-                   "navigation2DClient"
-               );
-}

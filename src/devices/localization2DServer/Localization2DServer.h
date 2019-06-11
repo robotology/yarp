@@ -45,15 +45,12 @@
  * | subdevice      |  -             | string  |  -             |  -                  | Yes          | The name of the of Localization device to be used                 | -     |
  */
 
-namespace yarp {
-    namespace dev {
-        class Localization2DServer;
-    }
-}
-class yarp::dev::Localization2DServer : public yarp::dev::DeviceDriver,
-    public yarp::os::PeriodicThread,
-    public yarp::dev::IMultipleWrapper,
-    public yarp::os::PortReader
+
+class Localization2DServer :
+        public yarp::dev::DeviceDriver,
+        public yarp::os::PeriodicThread,
+        public yarp::dev::IMultipleWrapper,
+        public yarp::os::PortReader
 {
 protected:
     yarp::os::Port                            m_rpcPort;

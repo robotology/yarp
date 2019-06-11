@@ -19,7 +19,6 @@
 #ifndef YARP_DEV_BATTERYWRAPPER_H
 #define YARP_DEV_BATTERYWRAPPER_H
 
- //#include <list>
 #include <vector>
 #include <iostream>
 #include <string>
@@ -97,20 +96,14 @@
  * \endcode
  * */
 
-namespace yarp
-{
-    namespace dev
-    {
-        class BatteryWrapper;
-    }
-}
 
 #define DEFAULT_THREAD_PERIOD 0.02 //s
 
-class yarp::dev::BatteryWrapper: public yarp::os::PeriodicThread,
-                                public yarp::dev::DeviceDriver,
-                                public yarp::dev::IMultipleWrapper,
-                                public yarp::os::PortReader
+class BatteryWrapper :
+        public yarp::os::PeriodicThread,
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IMultipleWrapper,
+        public yarp::os::PortReader
 {
 public:
     BatteryWrapper();
@@ -119,7 +112,7 @@ public:
     bool open(yarp::os::Searchable &params) override;
     bool close() override;
 
-    bool attachAll(const PolyDriverList &p) override;
+    bool attachAll(const yarp::dev::PolyDriverList &p) override;
     bool detachAll() override;
 
     bool threadInit() override;
@@ -127,7 +120,6 @@ public:
     void run() override;
 
 private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
     //driver stuff
     yarp::dev::PolyDriver m_driver;
@@ -168,8 +160,6 @@ private:
     void emergency_shutdown(std::string msg);
     void check_battery_status(double battery_charge);
     void stop_robot(std::string quit_port);
-
-#endif //DOXYGEN_SHOULD_SKIP_THIS
 };
 
 #endif // YARP_DEV_BATTERYWRAPPER_H

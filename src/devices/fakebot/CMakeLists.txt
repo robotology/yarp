@@ -7,7 +7,7 @@
 
 yarp_prepare_plugin(fakebot
                     CATEGORY device
-                    TYPE yarp::dev::FakeBot
+                    TYPE FakeBot
                     INCLUDE FakeBot.h)
 
 if(NOT SKIP_fakebot)

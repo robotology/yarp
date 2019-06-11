@@ -131,12 +131,10 @@ class yarp::dev::realsense2Driver :  public yarp::dev::DeviceDriver,
 {
 private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     typedef yarp::os::Stamp                           Stamp;
     typedef yarp::os::Property                        Property;
     typedef yarp::sig::FlexImage                      FlexImage;
 
-#endif
 public:
     realsense2Driver();
     ~realsense2Driver();

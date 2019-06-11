@@ -53,14 +53,11 @@ class Localization2DClient :
         public yarp::dev::DeviceDriver,
         public yarp::dev::ILocalization2D
 {
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
     yarp::os::Mutex               m_mutex;
     yarp::os::Port                m_rpc_port_localization_server;
     std::string         m_local_name;
     std::string         m_remote_name;
-
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
     /* DeviceDriver methods */

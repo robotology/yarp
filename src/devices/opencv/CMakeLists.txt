@@ -7,7 +7,7 @@
 
 yarp_prepare_plugin(opencv_grabber
                     CATEGORY device
-                    TYPE yarp::dev::OpenCVGrabber
+                    TYPE OpenCVGrabber
                     INCLUDE OpenCVGrabber.h
                     EXTRA_CONFIG WRAPPER=grabber
                     DEPENDS "YARP_HAS_OpenCV")

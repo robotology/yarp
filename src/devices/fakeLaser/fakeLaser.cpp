@@ -156,7 +156,7 @@ bool FakeLaser::close()
     PeriodicThread::stop();
 
     driver.close();
-    
+
     if (m_loc_port)
     {
         m_loc_port->interrupt();

@@ -566,7 +566,7 @@ void laserHokuyo::run()
     yDebug ("time: %.3f %.3f\n",t2-t1, t2-old);
     old = t2;
     #endif
-    
+
     mutex.lock();
 
     if (rx_completed)

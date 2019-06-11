@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(dynamixelAX12Ftdi
                     CATEGORY device
-                    TYPE yarp::dev::DynamixelAX12FtdiDriver
+                    TYPE DynamixelAX12FtdiDriver
                     INCLUDE "DynamixelAX12FtdiDriver.h"
                     EXTRA_CONFIG WRAPPER=controlboard
                     DEPENDS "YARP_HAS_FTDI")

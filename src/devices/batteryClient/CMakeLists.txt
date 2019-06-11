@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(batteryClient
                     CATEGORY device
-                    TYPE yarp::dev::BatteryClient
+                    TYPE BatteryClient
                     INCLUDE BatteryClient.h
                     DEFAULT ON)
 

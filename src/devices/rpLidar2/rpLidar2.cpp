@@ -149,7 +149,7 @@ bool RpLidar2::open(yarp::os::Searchable& config)
 
     m_info = deviceinfo();
     yInfo("max_dist %f, min_dist %f",   m_max_distance, m_min_distance);
- 
+
     bool m_inExpressMode=false;
     result = m_drv->checkExpressScanSupported(m_inExpressMode);
     if (result == RESULT_OK && m_inExpressMode==true)
@@ -393,7 +393,7 @@ void RpLidar2::run()
             if (distance < m_min_distance)
             {
                 //laser angular measurements not read by the device are now set to infinity and not to zero
-                distance = std::numeric_limits<double>::infinity(); 
+                distance = std::numeric_limits<double>::infinity();
             }
         }
         if (m_clip_max_enable)

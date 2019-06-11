@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(Rangefinder2DClient
                     CATEGORY device
-                    TYPE yarp::dev::Rangefinder2DClient
+                    TYPE Rangefinder2DClient
                     INCLUDE Rangefinder2DClient.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)

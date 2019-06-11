@@ -53,19 +53,6 @@
 #include <yarp/rosmsg/tf2_msgs/TFMessage.h>
 
 
-
-/* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
- * name conflicts
- */
-
-namespace yarp
-{
-    namespace dev
-    {
-        class FrameTransformServer;
-    }
-}
-
 #define ROSNODENAME "/tfNode"
 #define ROSTOPICNAME_TF "/tf"
 #define ROSTOPICNAME_TF_STATIC "/tf_static"
@@ -88,9 +75,10 @@ public:
      void clear                       ();
 };
 
-class yarp::dev::FrameTransformServer : public yarp::os::PeriodicThread,
-                                   public yarp::dev::DeviceDriver,
-                                   public yarp::os::PortReader
+class FrameTransformServer :
+        public yarp::os::PeriodicThread,
+        public yarp::dev::DeviceDriver,
+        public yarp::os::PortReader
 {
 public:
     FrameTransformServer();
@@ -105,7 +93,6 @@ public:
     void run() override;
 
 private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     yarp::os::Mutex              m_mutex;
     std::string        m_streamingPortName;
     std::string        m_rpcPortName;
@@ -130,8 +117,6 @@ private:
     bool read(yarp::os::ConnectionReader& connection) override;
     inline  void list_response(yarp::os::Bottle& out);
     bool         parseStartingTf(yarp::os::Searchable &config);
-
-#endif //DOXYGEN_SHOULD_SKIP_THIS
 };
 
 #endif // YARP_DEV_FRAMETRANSFORMSERVER_FRAMETRANSFORMSERVER_H

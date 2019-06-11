@@ -145,7 +145,7 @@ private:
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearVelocityPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedAngularAccelerationPort;
     yarp::os::BufferedPort<yarp::os::Bottle>* predictedLinearAccelerationPort;
-    
+
     FlexImagePort* gui_ports{ nullptr };
     std::vector<guiParam> huds;
     InputCallback* displayPorts[2]{ nullptr, nullptr };

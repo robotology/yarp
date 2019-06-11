@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(Rangefinder2DWrapper
                     CATEGORY device
-                    TYPE yarp::dev::Rangefinder2DWrapper
+                    TYPE Rangefinder2DWrapper
                     INCLUDE Rangefinder2DWrapper.h
                     DEFAULT ON)
 

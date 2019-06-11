@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(imuBosch_BNO055
                     CATEGORY device
-                    TYPE yarp::dev::BoschIMU
+                    TYPE BoschIMU
                     INCLUDE imuBosch_BNO055.h
                     EXTRA_CONFIG WRAPPER=inertial
                     DEPENDS "NOT WIN32;TARGET YARP::YARP_math;YARP_HAS_I2C")

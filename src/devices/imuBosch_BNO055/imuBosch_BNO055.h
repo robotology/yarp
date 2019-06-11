@@ -30,11 +30,6 @@
 #include <yarp/math/Quaternion.h>
 #include <yarp/os/Mutex.h>
 
-namespace yarp {
-    namespace dev {
-        class BoschIMU;
-    }
-}
 
 /* Serial protocol description
  *
@@ -147,16 +142,16 @@ constexpr int MAX_MSG_LENGTH = 128;
 * | frame_name     | string |       | set same as `sensor_name` | No | full name of the sensor frame in which the measurements are expressed | |
 **/
 
-class yarp::dev::BoschIMU:   public yarp::dev::DeviceDriver,
-                             public yarp::os::PeriodicThread,
-                             public yarp::dev::IGenericSensor,
-                             public yarp::dev::IThreeAxisGyroscopes,
-                             public yarp::dev::IThreeAxisLinearAccelerometers,
-                             public yarp::dev::IThreeAxisMagnetometers,
-                             public yarp::dev::IOrientationSensors
+class BoschIMU:
+        public yarp::dev::DeviceDriver,
+        public yarp::os::PeriodicThread,
+        public yarp::dev::IGenericSensor,
+        public yarp::dev::IThreeAxisGyroscopes,
+        public yarp::dev::IThreeAxisLinearAccelerometers,
+        public yarp::dev::IThreeAxisMagnetometers,
+        public yarp::dev::IOrientationSensors
 {
 protected:
-
     bool                        verbose;              ///< Flag to get verbose output
     short                       status;               ///< device status - UNUSED
     int                         nChannels;            ///< number of channels in the output port. Default 12. If 16, also includes quaternion data

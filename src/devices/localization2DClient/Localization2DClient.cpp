@@ -236,13 +236,3 @@ bool Localization2DClient::close()
     m_rpc_port_localization_server.close();
     return true;
 }
-
-yarp::dev::DriverCreator *createLocalization2DClient()
-{
-    return new DriverCreatorOf<Localization2DClient>
-               (
-                   "localization2DClient",
-                   "",
-                   "localization2DClient"
-               );
-}

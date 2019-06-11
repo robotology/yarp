@@ -7,13 +7,13 @@
 
 yarp_prepare_plugin(ffmpeg_grabber
                     CATEGORY device
-                    TYPE yarp::dev::FfmpegGrabber
+                    TYPE FfmpegGrabber
                     INCLUDE FfmpegGrabber.h
                     EXTRA_CONFIG WRAPPER=grabber
                     DEPENDS "YARP_HAS_FFMPEG")
 yarp_prepare_plugin(ffmpeg_writer
                     CATEGORY device
-                    TYPE yarp::dev::FfmpegWriter
+                    TYPE FfmpegWriter
                     INCLUDE FfmpegWriter.h
                     DEPENDS "YARP_HAS_FFMPEG")
 

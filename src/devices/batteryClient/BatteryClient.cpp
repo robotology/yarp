@@ -178,7 +178,7 @@ void BatteryInputPortProcessor::getEstFrequency(int &ite, double &av, double &mi
     mutex.unlock();
 }
 
-bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
+bool BatteryClient::open(yarp::os::Searchable &config)
 {
     local.clear();
     remote.clear();
@@ -236,44 +236,44 @@ bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool yarp::dev::BatteryClient::close()
+bool BatteryClient::close()
 {
     rpcPort.close();
     inputPort.close();
     return true;
 }
 
-bool yarp::dev::BatteryClient::getBatteryVoltage(double &voltage)
+bool BatteryClient::getBatteryVoltage(double &voltage)
 {
     voltage = inputPort.getVoltage();
     return true;
 }
 
-bool yarp::dev::BatteryClient::getBatteryCurrent(double &current)
+bool BatteryClient::getBatteryCurrent(double &current)
 {
     current = inputPort.getCurrent();
     return true;
 }
 
-bool yarp::dev::BatteryClient::getBatteryCharge(double &charge)
+bool BatteryClient::getBatteryCharge(double &charge)
 {
     charge = inputPort.getCharge();
     return true;
 }
 
-bool yarp::dev::BatteryClient::getBatteryStatus(Battery_status &status)
+bool BatteryClient::getBatteryStatus(Battery_status &status)
 {
     status = (Battery_status)inputPort.getStatus();
     return true;
 }
 
-bool yarp::dev::BatteryClient::getBatteryTemperature(double &temperature)
+bool BatteryClient::getBatteryTemperature(double &temperature)
 {
     temperature = inputPort.getTemperature();
     return true;
 }
 
-bool yarp::dev::BatteryClient::getBatteryInfo(std::string &battery_info)
+bool BatteryClient::getBatteryInfo(std::string &battery_info)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_IBATTERY);
@@ -287,13 +287,7 @@ bool yarp::dev::BatteryClient::getBatteryInfo(std::string &battery_info)
     return false;
 }
 
-Stamp yarp::dev::BatteryClient::getLastInputStamp()
+Stamp BatteryClient::getLastInputStamp()
 {
     return lastTs;
-}
-
-yarp::dev::DriverCreator *createBatteryClient() {
-    return new DriverCreatorOf<BatteryClient>("batteryClient",
-        "",
-        "batteryClient");
 }

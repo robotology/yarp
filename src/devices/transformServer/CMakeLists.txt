@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(transformServer
                     CATEGORY device
-                    TYPE yarp::dev::FrameTransformServer
+                    TYPE FrameTransformServer
                     INCLUDE FrameTransformServer.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
