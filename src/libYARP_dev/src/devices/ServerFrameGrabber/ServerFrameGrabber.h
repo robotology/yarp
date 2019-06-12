@@ -81,12 +81,10 @@ namespace yarp {
 class YARP_dev_API yarp::dev::ServerFrameGrabber : public DeviceDriver,
             public DeviceResponder,
             public IFrameGrabberImage,
-            public IAudioGrabberSound,
             public IAudioVisualGrabber,
             public IService,
             public DataSource<yarp::sig::ImageOf<yarp::sig::PixelRgb> >,
             public DataSource<yarp::sig::ImageOf<yarp::sig::PixelMono> >,
-            public DataSource<yarp::sig::Sound>,
             public DataSource<ImageRgbSound>,
             public DataSource2<yarp::sig::ImageOf<yarp::sig::PixelRgb>,yarp::sig::Sound>
 {
@@ -139,8 +137,6 @@ public:
 
     bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
 
-    bool getDatum(yarp::sig::Sound& sound) override;
-
     bool getDatum(ImageRgbSound& imageSound) override;
 
     virtual bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
@@ -149,12 +145,6 @@ public:
     bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
 
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image);
-
-    bool getSound(yarp::sig::Sound& sound) override;
-
-    bool startRecording() override;
-
-    bool stopRecording() override;
 
     virtual bool getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                                 yarp::sig::Sound& sound) override;

@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(SDLJoypad
                     CATEGORY device
-                    TYPE yarp::dev::SDLJoypad
+                    TYPE SDLJoypad
                     INCLUDE SDLJoypad.h
                     EXTRA_CONFIG WRAPPER=JoypadControlServer
                     DEPENDS "YARP_HAS_SDL")
@@ -33,11 +33,8 @@ if(ENABLE_SDLJoypad)
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-
-  yarp_install(FILES SDLJoypad.ini
-               COMPONENT ${YARP_PLUGIN_MASTER}
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
+               YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 

@@ -4,7 +4,7 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-if(CREATE_YARPROBOTINTERFACE)
+if(YARP_COMPILE_yarprobotinterface)
 
   include_directories(${TinyXML_INCLUDE_DIRS})
 
@@ -37,12 +37,12 @@ if(CREATE_YARPROBOTINTERFACE)
       yarprobotinterface.thrift)
 
   include(YarpIDL)
-  yarp_idl_to_dir(${yarprobotinterface_IDLS}
-                  "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
-                  yarprobotinterface_IDLS_SRCS
-                  yarprobotinterface_IDLS_HDRS
-                  yarprobotinterface_IDLS_INCLUDE_DIRS)
-  include_directories("${yarprobotinterface_IDLS_INCLUDE_DIRS}")
+  yarp_idl_to_dir(INPUT_FILES ${yarprobotinterface_IDLS}
+                  OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
+                  SOURCES_VAR yarprobotinterface_IDLS_SRCS
+                  HEADERS_VAR yarprobotinterface_IDLS_HDRS
+                  INCLUDE_DIRS_VAR yarprobotinterface_IDLS_INCLUDE_DIRS)
+  include_directories(${yarprobotinterface_IDLS_INCLUDE_DIRS})
 
   add_executable(yarprobotinterface ${yarprobotinterface_SRCS}
                                     ${yarprobotinterface_HDRS}

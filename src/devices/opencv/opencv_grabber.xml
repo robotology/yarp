@@ -10,16 +10,16 @@
 	<name>opencv_grabber</name>
 	<description> An opencv-based frame grabber</description>
 	<version>1.0</version>
-	
+
 	<arguments>
 		<!-- <param default="/yarpview/img:i" required="no" desc="input port name">name</param> -->
 	</arguments>
-			
+
 	<authors>
 		<author email="paulfitz@alum.mit.edu"> Paul Fitzpatrick </author>
 	</authors>
-	
-	<data>     
+
+	<data>
         <input port_type="service">
             <type>Rpc</type>
             <port>/opencv_grabber/quit</port>
@@ -32,10 +32,10 @@
 			<type>ImageOfPixelRgb</type>
 			<port carrier="udp">/grabber</port>
 			<description>output image port</description>
-		</output>	
-	</data>	
+		</output>
+	</data>
 
-    <deployer>yarpdev</deployer> 
+    <deployer>yarpdev</deployer>
 
     <dependencies>
         <computer>
@@ -46,6 +46,6 @@
 		<include></include>
 		<library>YARP</library>
 	</development>
-	
+
 </module>
 

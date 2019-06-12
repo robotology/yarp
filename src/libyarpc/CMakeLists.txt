@@ -19,7 +19,6 @@ if(CREATE_YARPC)
 
   unset(YARP_COPY_SRC)
   if(CREATE_YARPC_STANDALONE)
-    include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
     # in some cases, want to be fully stand-alone to not depend on C++ ABI.
     foreach(_comp OS sig dev init)
       get_property(${_comp}_src TARGET YARP_${_comp} PROPERTY SOURCES)
@@ -57,7 +56,8 @@ if(CREATE_YARPC)
                     ${YARP_COPY_SRC})
   add_library(YARP::yarpc ALIAS yarpc)
 
-  target_link_libraries(yarpc PRIVATE ${ACE_LIBRARIES})
+  target_compile_definitions(yarpc PRIVATE YARP_HAS_ACE)
+  target_link_libraries(yarpc PRIVATE ACE::ACE)
 
   if(NOT CREATE_YARPC_STANDALONE)
     target_link_libraries(yarpc PRIVATE YARP::YARP_OS

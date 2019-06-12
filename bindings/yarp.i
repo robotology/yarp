@@ -24,7 +24,6 @@
 #include <yarp/conf/version.h>
 #include <yarp/conf/compiler.h>
 #include <yarp/conf/system.h>
-#include <yarp/conf/options.h>
 #include <yarp/conf/api.h>
 #include <yarp/conf/numeric.h>
 %}
@@ -32,7 +31,6 @@
 %include "yarp/conf/version.h"
 %import "yarp/conf/compiler.h"
 %import "yarp/conf/system.h"
-%import "yarp/conf/options.h"
 %import "yarp/conf/api.h"
 %import "yarp/conf/numeric.h"
 
@@ -79,10 +77,6 @@
 
 %include <stdint.i>
 %include <std_vector.i>
-
-#if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
-  %include "std_vector.i"
-#endif
 
 // Try to translate std::string to native equivalents
 %include "std_string.i"
@@ -191,13 +185,7 @@
     %rename(toString_c) *::toString() const;
 #endif
 
-#ifdef SWIGCHICKEN
-    // small warning on chicken
-    %rename(delay_c) *::delay();
-#endif
-
 #ifdef SWIGTCL
-    // small warning on chicken
     %rename(configure_c) *::configure();
 #endif
 
@@ -205,14 +193,10 @@
 // Clean up a few unimportant things that give warnings
 
 // abstract methods just confuse SWIG
-// We must not do this for allegro
-#if !defined(SWIGALLEGROCL)
-  #if !defined(SWIGCHICKEN)
-    %ignore yarp::os::BufferedPort::open; // let Contactable::open show
-    %ignore yarp::os::Port::open; // let Contactable::open show
-    %ignore yarp::os::RpcClient::open;
-  #endif
-#endif
+%ignore yarp::os::BufferedPort::open; // let Contactable::open show
+%ignore yarp::os::Port::open; // let Contactable::open show
+%ignore yarp::os::RpcClient::open;
+
 // operator= does not get translated well
 %ignore *::operator=;
 %ignore yarp::PortReaderBuffer;
@@ -222,6 +206,7 @@
 %ignore yarp::sig::Image::getIplImage() const;
 %ignore yarp::sig::Image::getReadType() const;
 %ignore yarp::sig::VectorOf<double>::getType() const;
+%ignore yarp::sig::VectorOf<double>::VectorOf(std::initializer_list<double>);
 %ignore yarp::os::Property::put(const char *,Value *);
 %ignore yarp::os::Bottle::add(Value *);
 %rename(toString) std::string::operator const char *() const;
@@ -303,10 +288,6 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 
 // Define macros for handling the multiple analog sensors interfaces
 %include macrosForMultipleAnalogSensors.i
-
-#if defined( SWIGALLEGROCL )
-  %include "allegro/compat.h"
-#endif
 
 // Define typemaps for Matrix before including it
 #ifdef SWIGPYTHON
@@ -445,22 +426,20 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IPositionDirect.h>
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
-#if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
-  %template(DVector) std::vector<double>;
-  %template(BVector) std::vector<bool>;
-  %template(SVector) std::vector<std::string>;
-  %template(IVector) std::vector<int>;
+%template(DVector) std::vector<double>;
+%template(BVector) std::vector<bool>;
+%template(SVector) std::vector<std::string>;
+%template(IVector) std::vector<int>;
 
-  #ifdef SWIGMATLAB
-    // Extend IVector for handling conversion of vectors from and to Matlab
-    %include "matlab/vectors_fromTo_matlab.i"
-  #endif
-
-  #if defined(SWIGCSHARP)
-      SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(Pid,yarp::dev::Pid)
-  #endif
-  %template(PidVector) std::vector<yarp::dev::Pid>;
+#ifdef SWIGMATLAB
+  // Extend IVector for handling conversion of vectors from and to Matlab
+  %include "matlab/vectors_fromTo_matlab.i"
 #endif
+
+#if defined(SWIGCSHARP)
+  SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(Pid,yarp::dev::Pid)
+#endif
+%template(PidVector) std::vector<yarp::dev::Pid>;
 
 //////////////////////////////////////////////////////////////////////////
 // Match Java toString behaviour
@@ -609,6 +588,10 @@ typedef yarp::os::BufferedPort<Vector> BufferedPortVector;
 %template(BufferedPortSound) yarp::os::BufferedPort<yarp::sig::Sound >;
 
 %template(Vector) yarp::sig::VectorOf<double>;
+#if SWIG_VERSION < 0x030012
+%rename(VectorIterator) yarp::sig::VectorOf<double>::iterator;
+%rename(VectorConstIterator) yarp::sig::VectorOf<double>::const_iterator;
+#endif
 %template(TypedReaderVector) yarp::os::TypedReader<yarp::sig::VectorOf<double> >;
 %template(TypedReaderCallbackVector) yarp::os::TypedReaderCallback<yarp::sig::VectorOf<double> >;
 %template(BufferedPortVector) yarp::os::BufferedPort<yarp::sig::VectorOf<double> >;
@@ -1090,6 +1073,18 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 #endif
 
 %extend yarp::sig::VectorOf<double> {
+
+    // This in not a real constructor actually, it is converted by swig to a function returning a pointer.
+    // See: http://www.swig.org/Doc3.0/CPlusPlus11.html#CPlusPlus11_initializer_lists
+    VectorOf<double>(const std::vector<double>& values)
+    {
+        VectorOf<double>* newVec = new VectorOf<double>(0);
+        newVec->reserve(values.size());
+        for (const auto& element : values) {
+            newVec->push_back(element);
+        }
+        return newVec;
+    }
 
     double get(int j)
     {

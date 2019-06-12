@@ -10,13 +10,6 @@
 #ifndef YARP_CONFIG_SYSTEM_H
 #define YARP_CONFIG_SYSTEM_H
 
-#cmakedefine YARP_HAS_ACE
-
-// ACE information
-#if defined(YARP_HAS_ACE)
-#cmakedefine ACE_ADDR_HAS_LOOPBACK_METHOD
-#endif
-
 // System headers
 #cmakedefine YARP_HAS_EXECINFO_H
 #cmakedefine YARP_HAS_SYS_WAIT_H

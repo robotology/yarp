@@ -63,6 +63,19 @@ Bottle::Bottle(const Bottle& bottle)
     copy(bottle);
 }
 
+Bottle::Bottle(std::initializer_list<Value> values)
+        : Portable(), Searchable(), implementation(new BottleImpl(this))
+{
+    yAssert(implementation != nullptr);
+    implementation->invalid = false;
+    implementation->ro = false;
+
+    for (const auto& val:values)
+    {
+        add(val);
+    }
+}
+
 Bottle& Bottle::operator=(const Bottle& bottle)
 {
     implementation->edit();

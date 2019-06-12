@@ -9,9 +9,10 @@
 #ifndef YARP_DEV_IBATTERY_H
 #define YARP_DEV_IBATTERY_H
 
-#include <yarp/dev/DeviceDriver.h>
-#include <yarp/sig/Vector.h>
+#include <string>
+
 #include <yarp/os/Vocab.h>
+#include <yarp/dev/api.h>
 
 constexpr yarp::conf::vocab32_t VOCAB_IBATTERY     = yarp::os::createVocab('i','b','a','t');
 constexpr yarp::conf::vocab32_t VOCAB_BATTERY_INFO = yarp::os::createVocab('b','t','n','f');
@@ -31,7 +32,7 @@ namespace yarp {
 class YARP_dev_API yarp::dev::IBattery
 {
 public:
-    enum
+    enum Battery_status
     {
         BATTERY_OK_STANBY        = 0,
         BATTERY_OK_IN_CHARGE     = 1,
@@ -70,17 +71,17 @@ public:
     * @param status the battery status
     * @return true/false.
     */
-    virtual bool getBatteryStatus(int &status) = 0;
+    virtual bool getBatteryStatus(Battery_status &status) = 0;
 
     /**
     * get the battery temperature
-    * @param temprature the battery temperature
+    * @param temperature the battery temperature
     * @return true/false.
     */
     virtual bool getBatteryTemperature(double &temperature) = 0;
 
     /**
-    * get the battery hardware charactestics (e.g. max voltage etc)
+    * get the battery hardware characteristics (e.g. max voltage etc)
     * @param a string containing the battery infos
     * @return true/false.
     */

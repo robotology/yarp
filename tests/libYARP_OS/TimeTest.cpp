@@ -11,18 +11,15 @@
 #include <yarp/os/NetType.h>
 #include <string>
 
-#include <yarp/os/impl/UnitTest.h>
-//#include "TestList.h"
+#include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
-class TimeTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "TimeTest"; }
-
-    void testDelay() {
-        report(0,"testing delay (there will be a short pause)...");
+TEST_CASE("OS::TimeTest", "[yarp::os]")
+{
+    SECTION("testing delay (there will be a short pause)...")
+    {
         double target = 3.0;
         double t1 = Time::now();
         Time::delay(target);
@@ -30,20 +27,9 @@ public:
         double dt = t2-t1-target;
         double limit = 2.0; // don't be too picky, there is a lot of undefined slop
         bool inLimits = (-limit<dt)&&(dt<limit);
-        report(0,std::string("delay was late(+) or early(-) by ") +
+        INFO(std::string("delay was late(+) or early(-) by ") +
                NetType::toString((int)(dt*1000)) +
                " ms");
-        checkEqual(true,inLimits,"delay for 3.0 seconds");
+        CHECK(inLimits); // delay for 3.0 seconds
     }
-
-    virtual void runTests() override {
-        testDelay();
-    }
-};
-
-static TimeTest theTimeTest;
-
-UnitTest& getTimeTest() {
-    return theTimeTest;
 }
-

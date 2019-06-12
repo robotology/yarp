@@ -31,7 +31,7 @@ public:
     void appendInt64(std::int64_t data) override;
     void appendFloat32(yarp::conf::float32_t data) override;
     void appendFloat64(yarp::conf::float64_t data) override;
-    void appendString(const char* str, int terminate = '\n') override;
+    void appendText(const std::string& str, const char terminate = '\n') override;
     void appendExternalBlock(const char* data, size_t len) override;
     bool isTextMode() const override;
     bool isBareMode() const override;

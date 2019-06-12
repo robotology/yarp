@@ -18,11 +18,23 @@ namespace yarp {
     }
 }
 
+namespace yarp {
+namespace dev {
+namespace impl {
+
+template <typename T>
+class FixedSizeBuffersManager;
+
+} // namespace impl
+} // namespace dev
+} // namespace yarp
+
 class YARP_dev_API yarp::dev::ImplementControlMode: public IControlMode
 {
     void *helper;
-    int nj;
     yarp::dev::IControlModeRaw *raw;
+    yarp::dev::impl::FixedSizeBuffersManager<int> *buffManager;
+
 public:
     bool initialize(int k, const int *amap);
     bool uninitialize();

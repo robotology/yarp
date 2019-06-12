@@ -249,6 +249,17 @@ TSSLSocket::~TSSLSocket() {
   close();
 }
 
+bool TSSLSocket::hasPendingDataToRead() {
+  if (!isOpen()) {
+    return false;
+  }
+  initializeHandshake();
+  if (!checkHandshake())
+    throw TSSLException("TSSLSocket::hasPendingDataToRead: Handshake is not completed");
+  // data may be available in SSL buffers (note: SSL_pending does not have a failure mode)
+  return SSL_pending(ssl_) > 0 || TSocket::hasPendingDataToRead();
+}
+
 void TSSLSocket::init() {
   handshakeCompleted_ = false;
   readRetryCount_ = 0;
@@ -293,6 +304,7 @@ bool TSSLSocket::peek() {
               && (errno_copy != THRIFT_EAGAIN)) {
             break;
           }
+        // fallthrough
         case SSL_ERROR_WANT_READ:
         case SSL_ERROR_WANT_WRITE:
           // in the case of SSL_ERROR_SYSCALL we want to wait for an read event again
@@ -339,6 +351,7 @@ void TSSLSocket::close() {
                   && (errno_copy != THRIFT_EAGAIN)) {
                 break;
               }
+            // fallthrough
             case SSL_ERROR_WANT_READ:
             case SSL_ERROR_WANT_WRITE:
               // in the case of SSL_ERROR_SYSCALL we want to wait for an write/read event again
@@ -390,11 +403,16 @@ uint32_t TSSLSocket::read(uint8_t* buf, uint32_t len) {
       break;
     }
     unsigned int waitEventReturn;
+    bool breakout = false;
     switch (error) {
       case SSL_ERROR_ZERO_RETURN:
         throw TTransportException(TTransportException::END_OF_FILE, "client disconnected");
 
       case SSL_ERROR_SYSCALL:
+        if (errno_copy == 0 && ERR_peek_error() == 0) {
+          breakout = true;
+          break;
+        }
         if ((errno_copy != THRIFT_EINTR)
             && (errno_copy != THRIFT_EAGAIN)) {
               break;
@@ -404,6 +422,8 @@ uint32_t TSSLSocket::read(uint8_t* buf, uint32_t len) {
           // a certain number
           break;
         }
+      // fallthrough
+
       case SSL_ERROR_WANT_READ:
       case SSL_ERROR_WANT_WRITE:
         if (isLibeventSafe()) {
@@ -435,6 +455,9 @@ uint32_t TSSLSocket::read(uint8_t* buf, uint32_t len) {
         throw TTransportException(TTransportException::INTERNAL_ERROR, "unkown waitForEvent return value");
       default:;// do nothing
     }
+    if (breakout) {
+      break;
+    }
     string errors;
     buildErrors(errors, errno_copy, error);
     throw TSSLException("SSL_read: " + errors);
@@ -460,6 +483,7 @@ void TSSLSocket::write(const uint8_t* buf, uint32_t len) {
               && (errno_copy != THRIFT_EAGAIN)) {
             break;
           }
+        // fallthrough        
         case SSL_ERROR_WANT_READ:
         case SSL_ERROR_WANT_WRITE:
           if (isLibeventSafe()) {
@@ -504,6 +528,7 @@ uint32_t TSSLSocket::write_partial(const uint8_t* buf, uint32_t len) {
               && (errno_copy != THRIFT_EAGAIN)) {
             break;
           }
+        // fallthrough
         case SSL_ERROR_WANT_READ:
         case SSL_ERROR_WANT_WRITE:
           if (isLibeventSafe()) {
@@ -591,6 +616,7 @@ void TSSLSocket::initializeHandshake() {
                 && (errno_copy != THRIFT_EAGAIN)) {
               break;
             }
+          // fallthrough
           case SSL_ERROR_WANT_READ:
           case SSL_ERROR_WANT_WRITE:
             if (isLibeventSafe()) {
@@ -623,6 +649,7 @@ void TSSLSocket::initializeHandshake() {
                 && (errno_copy != THRIFT_EAGAIN)) {
               break;
             }
+          // fallthrough
           case SSL_ERROR_WANT_READ:
           case SSL_ERROR_WANT_WRITE:
             if (isLibeventSafe()) {
@@ -1005,6 +1032,14 @@ void buildErrors(string& errors, int errno_copy, int sslerrno) {
   }
   if (sslerrno) {
     errors += " (SSL_error_code = " + to_string(sslerrno) + ")";
+    if (sslerrno == SSL_ERROR_SYSCALL) {
+      char buf[4096];
+      int err;
+      while ((err = ERR_get_error()) != 0) {
+        errors += " ";
+        errors += ERR_error_string(err, buf);
+      }
+    }
   }
 }
 

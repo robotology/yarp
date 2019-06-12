@@ -24,8 +24,8 @@ list(APPEND YARP_wire_rep_utils_PUBLIC_DEPS YARP_conf
                                             YARP_sig)
 
 if(YARP_HAS_ACE)
-  target_include_directories(YARP_wire_rep_utils SYSTEM PRIVATE ${ACE_INCLUDE_DIRS})
-  target_link_libraries(YARP_wire_rep_utils PRIVATE ${ACE_LIBRARIES})
+  target_compile_definitions(YARP_wire_rep_utils PRIVATE YARP_HAS_ACE)
+  target_link_libraries(YARP_wire_rep_utils PRIVATE ACE::ACE_INLINE)
   list(APPEND YARP_wire_rep_utils_PRIVATE_DEPS ACE)
 endif()
 

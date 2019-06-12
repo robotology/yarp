@@ -11,6 +11,7 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Log.h>
+#include <yarp/dev/api.h>
 
 namespace yarp {
     namespace dev {
@@ -24,7 +25,7 @@ namespace yarp {
  *
  * Control board, encoder interface.
  */
-class yarp::dev::IMotorRaw
+class YARP_dev_API yarp::dev::IMotorRaw
 {
 public:
     /**

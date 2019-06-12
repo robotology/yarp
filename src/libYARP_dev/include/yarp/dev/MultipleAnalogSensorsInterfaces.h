@@ -10,9 +10,9 @@
 #define YARP_DEV_MULTIPLEANALOGSENSORSINTERFACES_H
 
 #include <cassert>
+#include <string>
 
-#include <yarp/dev/DeviceDriver.h>
-#include <yarp/sig/Matrix.h>
+#include <yarp/dev/api.h>
 #include <yarp/sig/Vector.h>
 
 namespace yarp

@@ -10,7 +10,7 @@
 #ifndef YARP_DEV_GENERICSENSORINTERFACES_H
 #define YARP_DEV_GENERICSENSORINTERFACES_H
 
-#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/api.h>
 #include <yarp/sig/Vector.h>
 
 /*! \file GenericSensorInterfaces.h define interfaces for a generic sensor*/

@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_MATH_RANDSCALAR
-#define YARP_MATH_RANDSCALAR
+#ifndef YARP_MATH_RANDSCALAR_H
+#define YARP_MATH_RANDSCALAR_H
 
 #include <yarp/math/api.h>
 
@@ -72,4 +72,4 @@ public:
     double get(double min, double max);
 };
 
-#endif
+#endif // YARP_MATH_RANDSCALAR_H

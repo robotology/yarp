@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(fakeDepthCamera
                     CATEGORY device
-                    TYPE yarp::dev::fakeDepthCameraDriver
+                    TYPE fakeDepthCameraDriver
                     INCLUDE fakeDepthCameraDriver.h
                     EXTRA_CONFIG WRAPPER=RGBDSensorWrapper)
 
@@ -28,11 +28,8 @@ if(ENABLE_fakeDepthCamera)
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-
-  yarp_install(FILES fakeDepthCamera.ini
-               COMPONENT ${YARP_PLUGIN_MASTER}
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
+               YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 

@@ -6,10 +6,10 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/dev/api.h>
-
 #ifndef YARP_DEV_LASERMEASURMENTDATA_H
 #define YARP_DEV_LASERMEASURMENTDATA_H
+
+#include <yarp/dev/api.h>
 
 /*!
  * \file LaserMeasurementData.h

@@ -41,6 +41,13 @@ if(YARP_LINK_PLUGINS)
         target_link_libraries(YARP_init PRIVATE YARP::yarpmod)
 #         list(APPEND YARP_init_PRIVATE_DEPS YARP_yarpmod) (This will cause circular inclusion)
     endif()
+
+    if(YARP_COMPILE_RFMODULE_PLUGINS)
+        set_property(SOURCE src/CustomInit.cpp
+                     APPEND PROPERTY COMPILE_DEFINITIONS
+                     PLUGIN_INIT_FUNCTION3=add_yarprfmod_plugins)
+        target_link_libraries(YARP_init PRIVATE YARP::yarprfmod)
+    endif()
 endif()
 
 set_property(TARGET YARP_init PROPERTY VERSION ${YARP_VERSION_SHORT})

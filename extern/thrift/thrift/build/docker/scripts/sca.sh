@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -ev
 
 #
@@ -39,15 +39,19 @@ cppcheck --force --quiet --inline-suppr --error-exitcode=1 -j2 lib/cpp/src lib/c
 cppcheck --force --quiet --inline-suppr --error-exitcode=1 -j2 lib/c_glib/src lib/c_glib/test test/c_glib/src tutorial/c_glib
 
 # Python code style
-flake8 --ignore=E501 lib/py
-flake8 tutorial/py
+flake8 --ignore=W504,E501 lib/py
+flake8 --exclude=tutorial/py/build tutorial/py
 # THRIFT-4371 : generated files are excluded because they haven't been scrubbed yet
-flake8 --ignore=E501 --exclude="*/gen-py*/*" test/py
+flake8 --ignore=E501 --exclude="*/gen-py*/*",test/py/build test/py
 flake8 test/py.twisted
 flake8 test/py.tornado
 flake8 --ignore=E501 test/test.py
 flake8 --ignore=E501,E722 test/crossrunner
 flake8 test/features
+
+# PHP code style
+composer install --quiet
+./vendor/bin/phpcs
 
 # TODO etc
 echo FIXMEs: `grep -r FIXME * | wc -l`

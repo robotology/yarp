@@ -100,6 +100,12 @@ public:
     Bottle(const Bottle& bottle);
 
     /**
+     * @brief Initializer list constructor.
+     * @param[in] values, list of Value with which initialize the Bottle.
+     */
+    Bottle(std::initializer_list<yarp::os::Value> values);
+
+    /**
      * Assignment operator.
      *
      * @param bottle The object to copy.

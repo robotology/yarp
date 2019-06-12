@@ -170,7 +170,7 @@ void Rangefinder2DInputPortProcessor::getEstFrequency(int &ite, double &av, doub
     mutex.unlock();
 }
 
-bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
+bool Rangefinder2DClient::open(yarp::os::Searchable &config)
 {
     local.clear();
     remote.clear();
@@ -292,20 +292,20 @@ bool yarp::dev::Rangefinder2DClient::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool yarp::dev::Rangefinder2DClient::close()
+bool Rangefinder2DClient::close()
 {
     rpcPort.close();
     inputPort.close();
     return true;
 }
 
-bool yarp::dev::Rangefinder2DClient::getRawData(yarp::sig::Vector &data)
+bool Rangefinder2DClient::getRawData(yarp::sig::Vector &data)
 {
     inputPort.getData(data);
     return true;
 }
 
-bool yarp::dev::Rangefinder2DClient::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
+bool Rangefinder2DClient::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 {
     yarp::sig::Vector ranges;
     inputPort.getData(ranges);
@@ -326,7 +326,7 @@ bool yarp::dev::Rangefinder2DClient::getLaserMeasurement(std::vector<LaserMeasur
     return true;
 }
 
-bool yarp::dev::Rangefinder2DClient::getDistanceRange(double& min, double& max)
+bool Rangefinder2DClient::getDistanceRange(double& min, double& max)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_GET);
@@ -342,7 +342,7 @@ bool yarp::dev::Rangefinder2DClient::getDistanceRange(double& min, double& max)
     return false;
 }
 
-bool yarp::dev::Rangefinder2DClient::setDistanceRange(double min, double max)
+bool Rangefinder2DClient::setDistanceRange(double min, double max)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_SET);
@@ -359,7 +359,7 @@ bool yarp::dev::Rangefinder2DClient::setDistanceRange(double min, double max)
     return (CHECK_FAIL(ok, response));
 }
 
-bool yarp::dev::Rangefinder2DClient::getScanLimits(double& min, double& max)
+bool Rangefinder2DClient::getScanLimits(double& min, double& max)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_GET);
@@ -375,7 +375,7 @@ bool yarp::dev::Rangefinder2DClient::getScanLimits(double& min, double& max)
     return false;
 }
 
-bool yarp::dev::Rangefinder2DClient::setScanLimits(double min, double max)
+bool Rangefinder2DClient::setScanLimits(double min, double max)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_SET);
@@ -387,7 +387,7 @@ bool yarp::dev::Rangefinder2DClient::setScanLimits(double min, double max)
     return (CHECK_FAIL(ok, response));
 }
 
-bool yarp::dev::Rangefinder2DClient::getHorizontalResolution(double& step)
+bool Rangefinder2DClient::getHorizontalResolution(double& step)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_GET);
@@ -402,7 +402,7 @@ bool yarp::dev::Rangefinder2DClient::getHorizontalResolution(double& step)
     return false;
 }
 
-bool yarp::dev::Rangefinder2DClient::setHorizontalResolution(double step)
+bool Rangefinder2DClient::setHorizontalResolution(double step)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_SET);
@@ -413,7 +413,7 @@ bool yarp::dev::Rangefinder2DClient::setHorizontalResolution(double step)
     return (CHECK_FAIL(ok, response));
 }
 
-bool yarp::dev::Rangefinder2DClient::getScanRate(double& rate)
+bool Rangefinder2DClient::getScanRate(double& rate)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_GET);
@@ -428,7 +428,7 @@ bool yarp::dev::Rangefinder2DClient::getScanRate(double& rate)
     return false;
 }
 
-bool yarp::dev::Rangefinder2DClient::setScanRate(double rate)
+bool Rangefinder2DClient::setScanRate(double rate)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_SET);
@@ -439,13 +439,13 @@ bool yarp::dev::Rangefinder2DClient::setScanRate(double rate)
     return (CHECK_FAIL(ok, response));
 }
 
-bool yarp::dev::Rangefinder2DClient::getDeviceStatus(Device_status &status)
+bool Rangefinder2DClient::getDeviceStatus(Device_status &status)
 {
     status = inputPort.getStatus();
     return true;
 }
 
-bool yarp::dev::Rangefinder2DClient::getDeviceInfo(std::string &device_info)
+bool Rangefinder2DClient::getDeviceInfo(std::string &device_info)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_GET);
@@ -460,13 +460,7 @@ bool yarp::dev::Rangefinder2DClient::getDeviceInfo(std::string &device_info)
     return false;
 }
 
-Stamp yarp::dev::Rangefinder2DClient::getLastInputStamp()
+Stamp Rangefinder2DClient::getLastInputStamp()
 {
     return lastTs;
-}
-
-yarp::dev::DriverCreator *createRangefinder2DClient() {
-    return new DriverCreatorOf<Rangefinder2DClient>("Rangefinder2DClient",
-        "",
-        "Rangefinder2DClient");
 }

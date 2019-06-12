@@ -10,8 +10,7 @@
 #ifndef YARP_DEV_SERVICEINTERFACES_H
 #define YARP_DEV_SERVICEINTERFACES_H
 
-#include <yarp/dev/DeviceDriver.h>
-
+#include <yarp/dev/api.h>
 
 namespace yarp {
     namespace dev {

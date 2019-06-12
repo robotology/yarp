@@ -40,7 +40,7 @@ namespace Thrift
         }
 
         public TApplicationException(ExceptionType type, string message)
-            : base(message)
+            : base(message, null) // TApplicationException is serializable, but we never serialize InnerException
         {
             this.type = type;
         }
@@ -103,7 +103,7 @@ namespace Thrift
 
             oprot.WriteStructBegin(struc);
 
-            if (!String.IsNullOrEmpty(Message))
+            if (!string.IsNullOrEmpty(Message))
             {
                 field.Name = "message";
                 field.Type = TType.String;
@@ -136,6 +136,11 @@ namespace Thrift
             InvalidTransform,
             InvalidProtocol,
             UnsupportedClientType
+        }
+
+        public ExceptionType Type
+        {
+            get { return type; }
         }
     }
 }

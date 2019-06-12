@@ -9,19 +9,20 @@
 #include "yarp/dev/ImplementPWMControl.h"
 #include <yarp/dev/ControlBoardHelper.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/dev/impl/FixedSizeBuffersManager.h>
 #include <iostream>
 
 using namespace yarp::dev;
+using namespace yarp::os;
+
 #define JOINTIDCHECK if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
-#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
-#define PJOINTIDCHECK(j) if (j >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 /////////////// implement ImplemenPWMControl
 ImplementPWMControl::ImplementPWMControl(IPWMControlRaw *r) :
     helper(nullptr),
     raw(r),
-    dummy(nullptr)
-{}
+    doubleBuffManager(nullptr)
+{;}
 
 bool ImplementPWMControl::initialize(int size, const int *amap, const double* dutyToPWM)
 {
@@ -30,6 +31,9 @@ bool ImplementPWMControl::initialize(int size, const int *amap, const double* du
 
     helper = (void *)(new ControlBoardHelper(size, amap, nullptr, nullptr, nullptr, nullptr, nullptr, dutyToPWM));
     yAssert(helper != nullptr);
+
+    doubleBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
+    yAssert (doubleBuffManager != nullptr);
 
     return true;
 }
@@ -46,11 +50,11 @@ bool ImplementPWMControl::uninitialize()
         delete castToMapper(helper);
         helper = nullptr;
     }
-    
-    if(dummy != nullptr)
+
+    if(doubleBuffManager)
     {
-        delete[] dummy;
-        dummy = nullptr;
+        delete doubleBuffManager;
+        doubleBuffManager=nullptr;
     }
 
     return true;
@@ -72,10 +76,10 @@ bool ImplementPWMControl::setRefDutyCycle(int j, double duty)
 
 bool ImplementPWMControl::setRefDutyCycles(const double *duty)
 {
-    auto* aux = new double[castToMapper(helper)->axes()];
-    castToMapper(helper)->dutycycle2PWM(duty, aux);
-    bool ret = raw->setRefDutyCyclesRaw(aux);
-    delete [] aux;
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    castToMapper(helper)->dutycycle2PWM(duty, buffValues.getData());
+    bool ret = raw->setRefDutyCyclesRaw( buffValues.getData());
+    doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
@@ -91,10 +95,10 @@ bool ImplementPWMControl::getRefDutyCycle(int j, double *v)
 
 bool ImplementPWMControl::getRefDutyCycles(double *duty)
 {
-    auto* aux = new double[castToMapper(helper)->axes()];
-    bool ret = raw->getRefDutyCyclesRaw(aux);
-    castToMapper(helper)->PWM2dutycycle(aux, duty);
-    delete [] aux;
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    bool ret = raw->getRefDutyCyclesRaw(buffValues.getData());
+    castToMapper(helper)->PWM2dutycycle(buffValues.getData(), duty);
+    doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }
 
@@ -110,9 +114,9 @@ bool ImplementPWMControl::getDutyCycle(int j, double *duty)
 
 bool ImplementPWMControl::getDutyCycles(double *duty)
 {
-    auto* aux = new double[castToMapper(helper)->axes()];
-    bool ret = raw->getDutyCyclesRaw(aux);
-    castToMapper(helper)->PWM2dutycycle(aux, duty);
-    delete [] aux;
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
+    bool ret = raw->getDutyCyclesRaw(buffValues.getData());
+    castToMapper(helper)->PWM2dutycycle(buffValues.getData(), duty);
+    doubleBuffManager->releaseBuffer(buffValues);
     return ret;
 }

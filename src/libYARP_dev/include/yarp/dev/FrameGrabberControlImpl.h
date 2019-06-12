@@ -10,6 +10,8 @@
 #define YARP_DEV_FRAMEGRABBERCONTROLIMPL_H
 
 #include <string>
+#include <yarp/os/Port.h>
+#include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>        // to include VOCAB definitions
 
 /*! \file FrameGrabberInterfaces.h define common interfaces to discover

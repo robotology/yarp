@@ -130,6 +130,11 @@ public:
     virtual int runModuleThreaded(yarp::os::ResourceFinder& rf);
 
     /**
+     * return the Thread unique identifier
+     */
+    virtual int getThreadKey();
+
+    /**
      * Configure the module, pass a ResourceFinder object to the module.
      * This function can perform initialization including object creation and
      * memory allocation; returns false to notify that initialization was not

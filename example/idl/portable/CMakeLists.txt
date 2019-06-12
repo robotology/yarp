@@ -5,14 +5,19 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 cmake_minimum_required(VERSION 3.5)
+project(portable_example)
+set(CMAKE_CXX_FLAGS "-Weverything -Wno-c++98-compat -Wno-padded -Wno-shadow")
 
-#find YARP
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS OS idl_tools REQUIRED)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+yarp_add_idl(IDL_GEN_FILES SharedData.thrift)
 
-add_executable(sender sender.cpp SharedData.cpp)
-target_link_libraries(sender ${YARP_LIBRARIES})
+add_executable(sender sender.cpp
+                      ${IDL_GEN_FILES})
+target_link_libraries(sender PRIVATE YARP::YARP_OS
+                                     YARP::YARP_init)
 
-add_executable(receiver receiver.cpp SharedData.cpp)
-target_link_libraries(receiver ${YARP_LIBRARIES})
+add_executable(receiver receiver.cpp
+                        ${IDL_GEN_FILES})
+target_link_libraries(receiver PRIVATE YARP::YARP_OS
+                                       YARP::YARP_init)

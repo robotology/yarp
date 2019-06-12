@@ -10,6 +10,7 @@
 #ifndef YARP_DEV_WRAPPER_H
 #define YARP_DEV_WRAPPER_H
 
+#include <yarp/dev/api.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>
 

@@ -6,8 +6,6 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/impl/UnitTest.h>
-
 #include <yarp/rosmsg/std_msgs/Int32.h>
 #include <yarp/rosmsg/std_msgs/String.h>
 #include <yarp/rosmsg/std_msgs/Header.h>
@@ -19,70 +17,63 @@
 
 #include <iostream>
 
-using namespace yarp::os;
-using namespace yarp::os::impl;
+#include <catch.hpp>
+#include <harness.h>
 
-class ROSPropertiesTest : public yarp::os::impl::UnitTest
+template <typename T>
+void checkName(std::string expectedName)
 {
-public:
-    virtual std::string getName() const override { return "ROSPropertiesTest"; }
+    T msg;
+    yarp::os::Type t = msg.getType();
+    INFO("Checking name for " << t.getName());
+    CHECK(t.getName() == expectedName);
+    INFO("Checking name on wire for " << t.getName());
+    CHECK(t.getNameOnWire() == expectedName);
+}
 
-    template <typename T>
-    void checkName(std::string expectedName)
+template <typename T>
+void checkMd5sum(std::string expectedMd5sum)
+{
+    T msg;
+    yarp::os::Type t = msg.getType();
+    INFO("Checking md5 for " << t.getName());
+    CHECK(t.readProperties().find("md5sum").asString() == expectedMd5sum);
+}
+
+template <typename T>
+void checkDefinition(std::string expectedDefinition)
+{
+    T msg;
+    yarp::os::Type t = msg.getType();
+    INFO("Checking message definition for " << t.getName());
+    CHECK(t.readProperties().find("message_definition").asString() == expectedDefinition);
+}
+
+TEST_CASE("rosmsg::ROSPropertiesTest", "[yarp::rosmsg]")
+{
+
+
+    // The expected md5sums and definitions can be found in ROS headers
+    SECTION("std_msgs/Int32")
     {
-        T msg;
-        yarp::os::Type t = msg.getType();
-        report(0, std::string("Checking name for ") + t.getName());
-        checkEqual(t.getName(),
-                   expectedName,
-                   std::string("name for ") + t.getName() + " is correct");
-        report(0, std::string("Checking name on wire for ") + t.getName());
-        checkEqual(t.getNameOnWire(),
-                   expectedName,
-                   std::string("name on wire for ") + t.getName() + " is correct");
-    }
-
-    template <typename T>
-    void checkMd5sum(std::string expectedMd5sum)
-    {
-        T msg;
-        yarp::os::Type t = msg.getType();
-        report(0, std::string("Checking md5 for ") + t.getName());
-        checkEqual(t.readProperties().find("md5sum").asString(),
-                   expectedMd5sum,
-                   std::string("md5sum for ") + t.getName() + " is correct");
-    }
-
-    template <typename T>
-    void checkDefinition(std::string expectedDefinition)
-    {
-        T msg;
-        yarp::os::Type t = msg.getType();
-        report(0, std::string("Checking message definition for ") + t.getName());
-        checkEqual(t.readProperties().find("message_definition").asString(),
-                   expectedDefinition,
-                   std::string("message definition for ") + t.getName() + " is correct");
-    }
-
-
-    virtual void runTests() override
-    {
-        // The expected md5sums and definitions can be found in ROS headers
-        // std_msgs/Int32
         checkName<yarp::rosmsg::std_msgs::Int32>("std_msgs/Int32");
         checkMd5sum<yarp::rosmsg::std_msgs::Int32>("da5909fbe378aeaf85e547e830cc1bb7");
         checkDefinition<yarp::rosmsg::std_msgs::Int32>(
 "int32 data\n\
 ");
+    }
 
-        // std_msgs/String
+    SECTION("std_msgs/String")
+    {
         checkName<yarp::rosmsg::std_msgs::String>("std_msgs/String");
         checkMd5sum<yarp::rosmsg::std_msgs::String>("992ce8a1687cec8c8bd883ec73ca41d1");
         checkDefinition<yarp::rosmsg::std_msgs::String>(
 "string data\n\
 ");
+    }
 
-        // std_msgs/Header
+    SECTION("std_msgs/Header")
+    {
         checkName<yarp::rosmsg::std_msgs::Header>("std_msgs/Header");
         checkMd5sum<yarp::rosmsg::std_msgs::Header>("2176decaecbce78abc3b96ef049fabed");
         checkDefinition<yarp::rosmsg::std_msgs::Header>(
@@ -102,8 +93,10 @@ time stamp\n\
 # 1: global frame\n\
 string frame_id\n\
 ");
+    }
 
-        // std_msgs/Header
+    SECTION("std_msgs/UInt8MultiArray")
+    {
         checkName<yarp::rosmsg::std_msgs::UInt8MultiArray>("std_msgs/UInt8MultiArray");
         checkMd5sum<yarp::rosmsg::std_msgs::UInt8MultiArray>("82373f1612381bb6ee473b5cd6f5d89c");
         checkDefinition<yarp::rosmsg::std_msgs::UInt8MultiArray>(
@@ -149,15 +142,19 @@ string label   # label of given dimension\n\
 uint32 size    # size of given dimension (in type units)\n\
 uint32 stride  # stride of given dimension\n\
 ");
+    }
 
-        // std_msgs/Time
+    SECTION("std_msgs/Time")
+    {
         checkName<yarp::rosmsg::std_msgs::Time>("std_msgs/Time");
         checkMd5sum<yarp::rosmsg::std_msgs::Time>("cd7166c74c552c311fbcc2fe5a7bc289");
         checkDefinition<yarp::rosmsg::std_msgs::Time>(
 "time data\n\
 ");
+    }
 
-        // visualization_msgs/Marker
+    SECTION("visualization_msgs/Marker")
+    {
         checkName<yarp::rosmsg::visualization_msgs::Marker>("visualization_msgs/Marker");
         checkMd5sum<yarp::rosmsg::visualization_msgs::Marker>("4048c9de2a16f4ae8e0538085ebf1b97");
         checkDefinition<yarp::rosmsg::visualization_msgs::Marker>(
@@ -265,8 +262,10 @@ float32 g\n\
 float32 b\n\
 float32 a\n\
 ");
+    }
 
-        // visualization_msgs/InteractiveMarker
+    SECTION("visualization_msgs/InteractiveMarker")
+    {
         checkName<yarp::rosmsg::visualization_msgs::InteractiveMarker>("visualization_msgs/InteractiveMarker");
         checkMd5sum<yarp::rosmsg::visualization_msgs::InteractiveMarker>("dd86d22909d5a3364b384492e35c10af");
         checkDefinition<yarp::rosmsg::visualization_msgs::InteractiveMarker>(
@@ -540,8 +539,10 @@ float32 g\n\
 float32 b\n\
 float32 a\n\
 ");
+    }
 
-        // visualization_msgs/InteractiveMarkerFeedback
+    SECTION("visualization_msgs/InteractiveMarkerFeedback")
+    {
         checkName<yarp::rosmsg::visualization_msgs::InteractiveMarkerFeedback>("visualization_msgs/InteractiveMarkerFeedback");
         checkMd5sum<yarp::rosmsg::visualization_msgs::InteractiveMarkerFeedback>("ab0f1eee058667e28c19ff3ffc3f4b78");
         checkDefinition<yarp::rosmsg::visualization_msgs::InteractiveMarkerFeedback>(
@@ -629,11 +630,4 @@ float64 z\n\
 float64 w\n\
 ");
     }
-};
-
-static ROSPropertiesTest theROSPropertiesTest;
-
-yarp::os::impl::UnitTest& getROSPropertiesTest()
-{
-    return theROSPropertiesTest;
 }

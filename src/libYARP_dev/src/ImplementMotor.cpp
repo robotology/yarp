@@ -8,19 +8,20 @@
 
 #include "yarp/dev/ControlBoardInterfacesImpl.h"
 #include <yarp/dev/ControlBoardHelper.h>
+#include <yarp/dev/impl/FixedSizeBuffersManager.h>
 
 #include <cstdio>
 using namespace yarp::dev;
+
 #define JOINTIDCHECK if (m >= castToMapper(helper)->axes()){yError("motor id out of bound"); return false;}
-#define MJOINTIDCHECK(i) if (joints[i] >= castToMapper(helper)->axes()){yError("joint id out of bound"); return false;}
 
 ////////////////////////
 // Encoder Interface Timed Implementation
-ImplementMotor::ImplementMotor(IMotorRaw *y):nj(0)
-{
-    imotor=y;
-    helper = nullptr;
-}
+ImplementMotor::ImplementMotor(IMotorRaw *y) :
+    imotor(y),
+    helper(nullptr),
+    doubleBuffManager(nullptr)
+{ }
 
 ImplementMotor::~ImplementMotor()
 {
@@ -35,7 +36,9 @@ bool ImplementMotor:: initialize (int size, const int *amap)
     helper=(void *)(new ControlBoardHelper(size, amap));
     yAssert (helper != nullptr);
 
-    nj=size;
+    doubleBuffManager = new yarp::dev::impl::FixedSizeBuffersManager<double> (size);
+    yAssert (doubleBuffManager != nullptr);
+
     return true;
 }
 
@@ -49,6 +52,12 @@ bool ImplementMotor::uninitialize ()
     {
         delete castToMapper(helper);
         helper=nullptr;
+    }
+
+    if(doubleBuffManager)
+    {
+        delete doubleBuffManager;
+        doubleBuffManager=nullptr;
     }
 
     return true;
@@ -117,5 +126,13 @@ bool ImplementMotor::setGearboxRatio(int m, const double value)
 
 bool ImplementMotor::getTemperatures(double *v)
 {
-    return imotor->getTemperaturesRaw(v);
+    yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
+
+    bool ret = imotor->getTemperaturesRaw(buffValues.getData());
+    for (size_t i=0; i< buffValues.getSize(); i++)
+    {
+        int k = castToMapper(helper)->toHw(i);
+        v[i] = buffValues[k];
+    }
+    return ret;
 }

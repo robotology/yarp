@@ -4,14 +4,14 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-if(CREATE_YARPDATAPLAYER)
+if(YARP_COMPILE_yarpdataplayer)
 
   include(YarpUseQt5)
   include(YarpOSXUtilities)
 
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
-  if(YARP_HAS_OPENCV)
+  if(YARP_HAS_OpenCV)
     add_definitions(-DHAS_OPENCV)
     include_directories(${OpenCV_INCLUDE_DIRS})
   else()
@@ -54,11 +54,11 @@ if(CREATE_YARPDATAPLAYER)
   qt5_wrap_ui(yarpdataplayer_UI_GEN_SRCS ${yarpdataplayer_UI_FILES})
 
   include(YarpIDL)
-  yarp_idl_to_dir(${yarpdataplayer_THRIFT_FILES}
-                  ${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code
-                  yarpdataplayer_THRIFT_GEN_SRCS
-                  yarpdataplayer_THRIFT_GEN_HDRS
-                  yarpdataplayer_THRIFT_INCLUDE_DIRS)
+  yarp_idl_to_dir(INPUT_FILES ${yarpdataplayer_THRIFT_FILES}
+                  OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
+                  SOURCES_VAR yarpdataplayer_THRIFT_GEN_SRCS
+                  HEADERS_VAR yarpdataplayer_THRIFT_GEN_HDRS
+                  INCLUDE_DIRS_VAR yarpdataplayer_THRIFT_INCLUDE_DIRS)
 
   include_directories(${yarpdataplayer_THRIFT_INCLUDE_DIRS})
 
@@ -93,8 +93,8 @@ if(CREATE_YARPDATAPLAYER)
                                        YARP_sig
                                        Qt5::Widgets)
 
-  if(YARP_HAS_OPENCV)
-    target_link_libraries(yarpdataplayer ${OpenCV_LIBRARIES})
+  if(YARP_HAS_OpenCV)
+    target_link_libraries(yarpdataplayer ${OpenCV_LIBRARIES} YARP_cv)
   endif()
 
   install(TARGETS yarpdataplayer COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})

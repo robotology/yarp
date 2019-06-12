@@ -7,36 +7,73 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <cmath>
-#include <cfloat>
-#include <iostream>
-
 #include <yarp/os/Stamp.h>
-#include <yarp/os/all.h>
+
+#include <yarp/os/BufferedPort.h>
+#include <yarp/os/DummyConnector.h>
+#include <yarp/os/Network.h>
 
 #include <yarp/os/impl/BufferedConnectionWriter.h>
-#include <yarp/os/impl/StreamConnectionReader.h>
 
-#include <yarp/os/impl/UnitTest.h>
+#include <catch.hpp>
+#include <harness.h>
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
+using yarp::os::impl::BufferedConnectionWriter;
 
-class StampTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "StampTest"; }
+static void checkEnvelope(const char *mode)
+{
+    BufferedPort<Bottle> in;
+    BufferedPort<Bottle> out;
 
-    void checkFormat() {
-        report(0, "checking Stamp can serialize ok...");
+    in.setStrict();
+    in.open("/in");
+    out.open("/out");
+    Network::connect("/out","/in",mode);
 
+    Bottle& outBot1 = out.prepare();   // Get the object
+    outBot1.fromString("hello world"); // Set it up the way we want
+    Stamp stamp(55,1.0);
+    out.setEnvelope(stamp);
+    out.write();                       // Now send it on its way
+
+    Bottle& outBot2 = out.prepare();
+    outBot2.fromString("2 3 5 7 11");
+    Stamp stamp2(55,4.0);
+    out.setEnvelope(stamp2);
+    out.writeStrict();                 // writeStrict() will wait for any
+
+    do {
+        Time::delay(0.1);
+    } while (in.getPendingReads() < 2);
+
+    // Read the first object
+    in.read();
+    Stamp inStamp;
+    in.getEnvelope(inStamp);
+    CHECK(inStamp.getTime() == Approx(1)); // time stamp 1 read
+
+    // Read the second object
+    in.read();
+    in.getEnvelope(inStamp);
+    CHECK(inStamp.getTime() == Approx(4)); // time stamp 2 read
+}
+
+
+TEST_CASE("OS::StampTest", "[yarp::os]")
+{
+    Network::setLocalMode(true);
+
+    SECTION("checking Stamp can serialize ok")
+    {
         for (int i=0; i<=1; i++) {
             DummyConnector con;
 
             bool textMode = (i==0);
             if (textMode) {
-                report(0, "checking in text mode");
+                INFO("checking in text mode");
             } else {
-                report(0, "checking in binary mode");
+                INFO("checking in binary mode");
             }
             con.setTextMode(textMode);
 
@@ -47,25 +84,25 @@ public:
             Bottle bot;
             bot.read(con.getReader());
 
-            checkEqual(bot.get(0).asInt32(), 55, "sequence number write");
-            checkTrue (fabs(bot.get(1).asFloat64()-1)<0.0001, "time stamp write");
+            CHECK(bot.get(0).asInt32() == 55); // sequence number write
+            CHECK(bot.get(1).asFloat64() == Approx(1).epsilon(0.0001)); // time stamp write
 
 
             stampToWrite.write(con.getCleanWriter());
             stampRead.read(con.getReader());
 
-            checkEqual(stampRead.getCount(),55,"sequence number read");
-            checkTrue(fabs(stampRead.getTime()-1)<0.0001,"time stamp read");
+            CHECK(stampRead.getCount() == 55); // sequence number read
+            CHECK(stampRead.getTime() == Approx(1).epsilon(0.0001)); // time stamp read
 
             // Test extreme numbers as timestamp
             double exp = -DBL_DIG;
-            double smallest = pow( 10.0, exp);
+            double smallest = pow(10.0, exp);
 
             // Create a number like 0.123456789012345... using the maximum number of digits
             // the platform can support.
 
             double timeValue = smallest;
-            std::cout << timeValue << std::endl;
+            INFO(timeValue);
             for(int i=2; i<DBL_DIG+1; i++)
             {
                 timeValue = timeValue*10 + (i%10)*smallest;
@@ -76,9 +113,9 @@ public:
             stampRead.read(con.getReader());
 
             // Check sequence number is updated automatically
-            checkEqual(stampRead.getCount(),56, "sequence number read");
+            CHECK(stampRead.getCount() == 56); // sequence number read
             // Check the number is read back with error smaller than machine epsilon
-            checkTrue(fabs(stampRead.getTime() - timeValue) <= DBL_EPSILON, "time stamp read");
+            CHECK(stampRead.getTime() == Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
 
             // Create a realistic timestamp with tenth of millisecond as granularity,
             // like 1234567890.12345
@@ -89,78 +126,32 @@ public:
             stampRead.read(con.getReader());
 
             // Check sequence number is updated automatically
-            checkEqual(stampRead.getCount(), 57, "sequence number read");
+            CHECK(stampRead.getCount() == 57); // sequence number read
             // Check the number is read back with error smaller than machine epsilon
-            checkTrue(fabs(stampRead.getTime() - timeValue) <= DBL_EPSILON, "time stamp read");
+            CHECK(stampRead.getTime() == Approx(timeValue).epsilon(DBL_EPSILON)); // time stamp read
         }
     }
 
-    void checkEnvelope(const char *mode) {
-
-        BufferedPort<Bottle> in;
-        BufferedPort<Bottle> out;
-
-        in.setStrict();
-        in.open("/in");
-        out.open("/out");
-        Network::connect("/out","/in",mode);
-
-        Bottle& outBot1 = out.prepare();   // Get the object
-        outBot1.fromString("hello world"); // Set it up the way we want
-        Stamp stamp(55,1.0);
-        out.setEnvelope(stamp);
-        out.write();                       // Now send it on its way
-
-        Bottle& outBot2 = out.prepare();
-        outBot2.fromString("2 3 5 7 11");
-        Stamp stamp2(55,4.0);
-        out.setEnvelope(stamp2);
-        out.writeStrict();                 // writeStrict() will wait for any
-
-        do {
-            Time::delay(0.1);
-        } while (in.getPendingReads()<2);
-
-        // Read the first object
-        in.read();
-        Stamp inStamp;
-        in.getEnvelope(inStamp);
-        checkEqualish(inStamp.getTime(),1,"time stamp 1 read");
-
-        // Read the second object
-        in.read();
-        in.getEnvelope(inStamp);
-        checkEqualish(inStamp.getTime(),4,"time stamp 2 read");
-    }
-
-    void checkString() {
-        report(0,"check string serialization");
-        {
-            Stamp env(42,3.0);
-            BufferedConnectionWriter buf(true);
-            env.write(buf);
-            std::string str = buf.toString();
-            Bottle bot(str.c_str());
-            checkEqual(bot.get(0).asInt32(),42,"sequence ok");
-            checkEqualish(bot.get(1).asFloat64(),3,"time ok");
-        }
-    }
-
-    virtual void runTests() override {
-        // add tests here
-        Network::setLocalMode(true);
-        checkFormat();
-        report(0, "checking envelopes work...");
+    SECTION("checking envelopes work...")
+    {
         checkEnvelope("tcp");
-        report(0, "checking envelopes work (text mode)...");
-        checkEnvelope("text");
-        checkString();
-        Network::setLocalMode(false);
     }
-};
 
-static StampTest theStampTest;
+    SECTION("checking envelopes work (text mode)")
+    {
+        checkEnvelope("text");
+    }
 
-UnitTest& getStampTest() {
-    return theStampTest;
+    SECTION("check string serialization")
+    {
+        Stamp env(42,3.0);
+        BufferedConnectionWriter buf(true);
+        env.write(buf);
+        std::string str = buf.toString();
+        Bottle bot(str.c_str());
+        CHECK(bot.get(0).asInt32() == 42); // sequence ok
+        CHECK(bot.get(1).asFloat64() == Approx(3)); // time ok
+    }
+
+    Network::setLocalMode(false);
 }

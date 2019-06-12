@@ -79,6 +79,7 @@ bool TestFrameGrabber::open(yarp::os::Searchable& config) {
                                "desired vertical fov of test image").asFloat64();
     mirror=config.check("mirror",Value(false),
                         "mirroring disabled by default").asBool();
+    intrinsic.put("physFocalLength",config.check("physFocalLength",Value(3.0),"Physical focal length of the test_grabber").asFloat64());
     intrinsic.put("focalLengthX",config.check("focalLengthX",Value(4.0),"Horizontal component of the focal length of the test_grabber").asFloat64());
     intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"Vertical component of the focal length of the test_grabber").asFloat64());
     intrinsic.put("principalPointX",config.check("principalPointX",Value(6.0),"X coordinate of the principal point of the test_grabber").asFloat64());
@@ -406,7 +407,7 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
             image.resize(300, 50);
             count = 0;
         }
-        
+
         size_t ww = w = image.width();
         size_t hh = h = image.height();
         if (ww>1 && hh>1) {

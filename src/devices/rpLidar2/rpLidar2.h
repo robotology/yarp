@@ -66,7 +66,8 @@ protected:
     bool                  m_inExpressMode;
     int                   m_pwm_val;
     std::vector <Range_t> m_range_skip_vector;
-    std::string m_info;
+    std::string           m_info;
+    std::string           m_serialPort;
     Device_status         m_device_status;
     yarp::sig::Vector     m_laser_data;
     rplidardrv*           m_drv;

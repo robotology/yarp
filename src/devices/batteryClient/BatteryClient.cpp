@@ -77,7 +77,7 @@ void BatteryInputPortProcessor::onRead(yarp::os::Bottle &b)
     Stamp newStamp;
     getEnvelope(newStamp);
 
-    //initialialization (first received data)
+    //initialization (first received data)
     if (lastStamp.isValid()==false)
     {
         lastStamp = newStamp;
@@ -138,7 +138,7 @@ double BatteryInputPortProcessor::getCharge()
 int    BatteryInputPortProcessor::getStatus()
 {
     mutex.lock();
-    int status = lastBottle.get(3).asInt32();
+    int status = lastBottle.get(4).asInt32();
     mutex.unlock();
     return status;
 }
@@ -146,7 +146,7 @@ int    BatteryInputPortProcessor::getStatus()
 double BatteryInputPortProcessor::getTemperature()
 {
     mutex.lock();
-    double temperature = lastBottle.get(4).asInt32();
+    double temperature = lastBottle.get(3).asInt32();
     mutex.unlock();
     return temperature;
 }
@@ -178,43 +178,37 @@ void BatteryInputPortProcessor::getEstFrequency(int &ite, double &av, double &mi
     mutex.unlock();
 }
 
-bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
+bool BatteryClient::open(yarp::os::Searchable &config)
 {
     local.clear();
     remote.clear();
-
+    yDebug() << config.toString();
     local  = config.find("local").asString();
     remote = config.find("remote").asString();
 
     if (local=="")
     {
-        yError("BatteryClient::open() error you have to provide valid local name");
+        yError("BatteryClient::open() error you have to provide valid local name. --local parameter missing.");
         return false;
     }
     if (remote=="")
     {
-        yError("BatteryClient::open() error you have to provide valid remote name");
+        yError("BatteryClient::open() error you have to provide valid remote name. --remote parameter missing.");
         return false;
     }
 
-    if (config.check("period"))
-    {
-        _rate = config.find("period").asInt32();
-    }
-    else
-    {
-        yError("BatteryClient::open() missing period parameter");
-        return false;
-    }
-
+    std::string local_stream = local;
+    local_stream += "/data:i";
     std::string local_rpc = local;
     local_rpc += "/rpc:o";
+    std::string remote_stream = remote;
+    remote_stream += "/data:o";
     std::string remote_rpc = remote;
     remote_rpc += "/rpc:i";
 
-    if (!inputPort.open(local))
+    if (!inputPort.open(local_stream))
     {
-        yError("BatteryClient::open() error could not open port %s, check network",local.c_str());
+        yError("BatteryClient::open() error could not open port %s, check network", local_stream.c_str());
         return false;
     }
     inputPort.useCallback();
@@ -225,61 +219,61 @@ bool yarp::dev::BatteryClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    bool ok=Network::connect(remote.c_str(), local.c_str(), "udp");
+    bool ok=Network::connect(remote_stream.c_str(), local_stream.c_str(), "udp");
     if (!ok)
     {
-        yError("BatteryClient::open() error could not connect to %s", remote.c_str());
+        yError("BatteryClient::open() error could not connect %s -> %s", remote_stream.c_str(), local_stream.c_str());
         return false;
     }
 
     ok=Network::connect(local_rpc, remote_rpc);
     if (!ok)
     {
-       yError("BatteryClient::open() error could not connect to %s", remote_rpc.c_str());
+       yError("BatteryClient::open() error could not connect %s -> %s", remote_rpc.c_str(), local_rpc.c_str());
        return false;
     }
 
     return true;
 }
 
-bool yarp::dev::BatteryClient::close()
+bool BatteryClient::close()
 {
     rpcPort.close();
     inputPort.close();
     return true;
 }
 
-bool yarp::dev::BatteryClient::getBatteryVoltage(double &voltage)
+bool BatteryClient::getBatteryVoltage(double &voltage)
 {
     voltage = inputPort.getVoltage();
     return true;
 }
 
-bool yarp::dev::BatteryClient::getBatteryCurrent(double &current)
+bool BatteryClient::getBatteryCurrent(double &current)
 {
     current = inputPort.getCurrent();
     return true;
 }
 
-bool yarp::dev::BatteryClient::getBatteryCharge(double &charge)
+bool BatteryClient::getBatteryCharge(double &charge)
 {
     charge = inputPort.getCharge();
     return true;
 }
 
-bool yarp::dev::BatteryClient::getBatteryStatus(int &status)
+bool BatteryClient::getBatteryStatus(Battery_status &status)
 {
-    status = inputPort.getStatus();
+    status = (Battery_status)inputPort.getStatus();
     return true;
 }
 
-bool yarp::dev::BatteryClient::getBatteryTemperature(double &temperature)
+bool BatteryClient::getBatteryTemperature(double &temperature)
 {
     temperature = inputPort.getTemperature();
     return true;
 }
 
-bool yarp::dev::BatteryClient::getBatteryInfo(std::string &battery_info)
+bool BatteryClient::getBatteryInfo(std::string &battery_info)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_IBATTERY);
@@ -293,13 +287,7 @@ bool yarp::dev::BatteryClient::getBatteryInfo(std::string &battery_info)
     return false;
 }
 
-Stamp yarp::dev::BatteryClient::getLastInputStamp()
+Stamp BatteryClient::getLastInputStamp()
 {
     return lastTs;
-}
-
-yarp::dev::DriverCreator *createBatteryClient() {
-    return new DriverCreatorOf<BatteryClient>("batteryClient",
-        "",
-        "batteryClient");
 }

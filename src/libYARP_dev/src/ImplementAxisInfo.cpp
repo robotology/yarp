@@ -18,8 +18,6 @@ ImplementAxisInfo::ImplementAxisInfo(yarp::dev::IAxisInfoRaw *y)
 {
     iinfo=y;
     helper = nullptr;
-    temp1=nullptr;
-    temp2=nullptr;
 }
 
 ImplementAxisInfo::~ImplementAxisInfo()
@@ -34,10 +32,7 @@ bool ImplementAxisInfo::initialize(int size, const int *amap)
 
     helper=(void *)(new ControlBoardHelper(size, amap));
     yAssert (helper != nullptr);
-    temp1=new double [size];
-    yAssert (temp1 != nullptr);
-    temp2=new double [size];
-    yAssert (temp2 != nullptr);
+
     return true;
 }
 
@@ -53,8 +48,7 @@ bool ImplementAxisInfo::uninitialize()
         helper=nullptr;
     }
 
-    checkAndDestroy(temp1);
-    checkAndDestroy(temp2);
+
 
     return true;
 }

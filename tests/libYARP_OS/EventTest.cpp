@@ -7,15 +7,15 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <cmath>
+#include <yarp/os/Event.h>
 
-#include <yarp/conf/system.h>
-#include <yarp/os/all.h>
+#include <yarp/os/Thread.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/Time.h>
 
-#include <yarp/os/impl/UnitTest.h>
-#include <yarp/os/impl/Logger.h>
+#include <catch.hpp>
+#include <harness.h>
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 
 class EventTestHelper : public Thread {
@@ -58,38 +58,39 @@ public:
     }
 };
 
-class EventTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "EventTest"; }
 
-    void checkBasic() {
-        report(0, "basic event sanity check...");
+
+TEST_CASE("OS::EventTest", "[yarp::os]")
+{
+
+    SECTION("basic event sanity check")
+    {
         Event x;
         x.signal();
         x.wait();
         x.reset();
     }
 
-    void checkBlock() {
-        report(0, "check blocking behavior...");
+    SECTION("check blocking behavior")
+    {
         EventTestHelper helper;
         helper.start();
         helper.done.wait();
-        checkEqual(helper.state, 1, "helper blocked");
+        CHECK(helper.state == 1); // helper blocked
         helper.x.signal();
         helper.done.wait();
-        checkEqual(helper.state, 2, "helper unblocked");
+        CHECK(helper.state == 2); // helper unblocked
     }
 
-    void checkSingleWakeup() {
-        report(0, "check single wakeup...");
+    SECTION("check single wakeup")
+    {
         Event x(true);
         EventTestHelper2 h1(x), h2(x);
         h1.start();
         h2.start();
         Time::delay(0.2);
-        checkFalse(h1.done.check(), "first not woken too early");
-        checkFalse(h2.done.check(), "second not woken too early");
+        CHECK_FALSE(h1.done.check()); // first not woken too early
+        CHECK_FALSE(h2.done.check()); // second not woken too early
 
         x.signal();
         Time::delay(0.2);
@@ -97,7 +98,7 @@ public:
         int ct = 0;
         if (h1.done.check()) { h1.done.post(); ct++; }
         if (h2.done.check()) { h2.done.post(); ct++; }
-        checkEqual(ct, 1, "just one awoke");
+        CHECK(ct == 1); // just one awoke
 
         x.signal();
         Time::delay(0.2);
@@ -105,18 +106,18 @@ public:
         ct = 0;
         if (h1.done.check()) { h1.done.post(); ct++; }
         if (h2.done.check()) { h1.done.post(); ct++; }
-        checkEqual(ct, 2, "both awoke");
+        CHECK(ct == 2); // both awoke
     }
 
-    void checkMultipleWakeup() {
-        report(0, "check multiple wakeup...");
+    SECTION("check multiple wakeup")
+    {
         Event x(false);
         EventTestHelper2 h1(x), h2(x);
         h1.start();
         h2.start();
         Time::delay(0.2);
-        checkFalse(h1.done.check(), "first not woken too early");
-        checkFalse(h2.done.check(), "second not woken too early");
+        CHECK_FALSE(h1.done.check()); // first not woken too early
+        CHECK_FALSE(h2.done.check()); // second not woken too early
 
         x.signal();
         Time::delay(0.2);
@@ -126,19 +127,6 @@ public:
         ct++;
         h2.done.wait();
         ct++;
-        checkEqual(ct, 2, "both awoke");
+        CHECK(ct == 2); // both awoke
     }
-
-    virtual void runTests() override {
-        checkBasic();
-        checkBlock();
-        checkSingleWakeup();
-        checkMultipleWakeup();
-    }
-};
-
-static EventTest theEventTest;
-
-UnitTest& getEventTest() {
-    return theEventTest;
 }

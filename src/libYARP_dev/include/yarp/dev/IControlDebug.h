@@ -10,7 +10,7 @@
 #ifndef YARP_DEV_ICONTROLDEBUG_H
 #define YARP_DEV_ICONTROLDEBUG_H
 
-#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/api.h>
 
 /*! \file ControlDebug.h define control board standard interfaces*/
 

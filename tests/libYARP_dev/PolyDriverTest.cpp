@@ -7,17 +7,19 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <string>
-#include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
+
+#include <yarp/os/Network.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/Wrapper.h>
 
-#include "TestList.h"
+#include <string>
+
+#include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
@@ -55,52 +57,63 @@ class DeprecatedDeviceDriverTest : public DeprecatedDeviceDriver
 {
 };
 
-class PolyDriverTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "PolyDriverTest"; }
 
-    void testDeprecated() {
-        report(0,"deprecated device test");
-        {
-            PolyDriver dd;
-            Property p;
-            p.put("device", "devicedrivertest");
-            bool result;
-            result = dd.open(p);
-            checkTrue(result,"open reported successful");
-        }
-        {
-            PolyDriver dd;
-            Property p;
-            p.put("device", "deprecateddevicedrivertest");
-            bool result;
-            result = dd.open(p);
-            checkFalse(result,"open failed as expected");
-            p.put("allow-deprecated-devices", "1");
-            result = dd.open(p);
-            checkTrue(result,"open reported successful");
-       }
+
+
+TEST_CASE("dev::PolyDriverTest", "[yarp::dev]")
+{
+    Network::setLocalMode(true);
+
+    Drivers::factory().add(new DriverCreatorOf<DeviceDriverTest>("devicedrivertest",
+                                                                 "devicedrivertest",
+                                                                 "DeviceDriverTest"));
+    Drivers::factory().add(new DriverCreatorOf<DeprecatedDeviceDriverTest>("deprecateddevicedrivertest",
+                                                                           "deprecateddevicedrivertest",
+                                                                           "DeprecatedDeviceDriverTest"));
+
+    SECTION("deprecated device test (test 1)")
+    {
+        PolyDriver dd;
+        Property p;
+        p.put("device", "devicedrivertest");
+        bool result;
+        result = dd.open(p);
+        REQUIRE(result); // open reported successful
     }
-    void testBasic() {
-        report(0,"a very basic driver instantiation test");
+
+    SECTION("deprecated device test (test 1)")
+    {
+        PolyDriver dd;
+        Property p;
+        p.put("device", "deprecateddevicedrivertest");
+        bool result;
+        result = dd.open(p);
+        CHECK_FALSE(result); // open failed as expected
+        p.put("allow-deprecated-devices", "1");
+        result = dd.open(p);
+        CHECK(result); // open reported successful
+    }
+
+    SECTION("a very basic driver instantiation test")
+    {
         PolyDriver dd;
         Property p;
         p.put("device","devicedrivertest");
         bool result;
         result = dd.open(p);
-        checkTrue(result,"open reported successful");
+        REQUIRE(result); // open reported successful
         IFrameGrabberImage *grabber = nullptr;
         result = dd.view(grabber);
-        checkTrue(result,"interface reported");
+        REQUIRE(result); // interface reported
         ImageOf<PixelRgb> img;
         grabber->getImage(img);
-        checkTrue(img.width()>0,"interface seems functional");
+        CHECK(img.width() > 0); // interface seems functional
         result = dd.close();
-        checkTrue(result,"close reported successful");
+        CHECK(result); // close reported successful
     }
 
-    void testMonitor() {
-        report(0,"test monitoring");
+    SECTION("test monitoring")
+    {
         Property p;
         p.put("device","grabber");
         p.put("subdevice","devicedrivertest");
@@ -108,14 +121,13 @@ public:
         p.put("wrapped",1);
         PolyDriver dd(p);
         Bottle opts = dd.getOptions();
-        checkTrue(opts.size()>0,"some options reported");
+        CHECK(opts.size() > 0); // some options reported
         //printf("Opts: %s\n", opts.toString().c_str());
         dd.close();
     }
 
-    void testPropertyBug() {
-        // guard against a bug reported by Martin Peniak
-        report(0,"test Property bug reported by Martin Peniak");
+    SECTION("test Property bug")
+    {
         Property p;
         p.put("device","grabber");
         p.put("subdevice","devicedrivertest");
@@ -129,9 +141,8 @@ public:
         }
     }
 
-
-    void testGroup() {
-        report(0,"make sure groups of devices can be instantiated correctly");
+    SECTION("make sure groups of devices can be instantiated correctly")
+    {
         Property p;
         p.fromConfig("\
 device group\n\
@@ -149,11 +160,11 @@ name /mymotor\n\
         PolyDriver dd(p);
         Bottle cmd("get axes"), reply;
         Network::write(Contact("/mymotor/rpc:i"), cmd, reply);
-        checkEqual(reply.get(2).asInt32(),10,"axis count is correct");
+        CHECK(reply.get(2).asInt32() == 10); // axis count is correct
     }
 
-    void testControlBoard2() {
-        report(0,"\ntest the controlboard wrapper 2");
+    SECTION("test the controlboard wrapper 2")
+    {
         PolyDriver dd;
         Property p;
         p.put("device","controlboardwrapper2");
@@ -162,13 +173,13 @@ name /mymotor\n\
         p.put("axes",16);
         bool result;
         result = dd.open(p);
-        checkTrue(result,"controlboardwrapper open reported successful");
+        REQUIRE(result); // controlboardwrapper open reported successful
 
         // Check if IMultipleWrapper interface is correctly found
         yarp::dev::IMultipleWrapper * i_mwrapper=nullptr;
         result = dd.view(i_mwrapper);
-        checkTrue(result,"IMultipleWrapper view reported successful");
-        checkTrue(i_mwrapper!=nullptr,"IMultipleWrapper pointer not null");
+        REQUIRE(result); // IMultipleWrapper view reported successful
+        REQUIRE(i_mwrapper != nullptr); // IMultipleWrapper pointer not null
 
         PolyDriver dd2;
         Property p2;
@@ -178,41 +189,17 @@ name /mymotor\n\
         p2.put("carrier","tcp");
         p2.put("ignoreProtocolCheck","true");
         result = dd2.open(p2);
-        checkTrue(result,"remote_controlboard open reported successful");
-
-        if(!result)   return;  // cannot go on if the device was not opened
+        REQUIRE(result); // remote_controlboard open reported successful
 
         IPositionControl *pos = nullptr;
         result = dd2.view(pos);
-        checkTrue(result,"interface reported");
+        REQUIRE(result); // interface reported
         int axes = 0;
         pos->getAxes(&axes);
-        checkEqual(axes,16,"interface seems functional");
-        result = dd.close() && dd2.close();
-        checkTrue(result,"close reported successful");
+        CHECK(axes == 16); // interface seems functional
+        CHECK(dd.close()); // close dd reported successful
+        CHECK(dd2.close()); // close dd2 reported successful
     }
 
-    virtual void runTests() override {
-        Network::setLocalMode(true);
-        Drivers::factory().add(new DriverCreatorOf<DeviceDriverTest>("devicedrivertest",
-                                                                     "devicedrivertest",
-                                                                     "DeviceDriverTest"));
-        Drivers::factory().add(new DriverCreatorOf<DeprecatedDeviceDriverTest>("deprecateddevicedrivertest",
-                                                                               "deprecateddevicedrivertest",
-                                                                               "DeprecatedDeviceDriverTest"));
-        testDeprecated();
-        testBasic();
-        testMonitor();
-        testPropertyBug();
-        testGroup();
-        testControlBoard2();
-        Network::setLocalMode(false);
-    }
-};
-
-static PolyDriverTest thePolyDriverTest;
-
-UnitTest& getPolyDriverTest() {
-    return thePolyDriverTest;
+    Network::setLocalMode(false);
 }
-

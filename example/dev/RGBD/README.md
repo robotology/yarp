@@ -8,7 +8,7 @@ A user can interact with a YARP device driver directly inside the local applicat
 A quick test can be performed by running the YARP devices with few simple commands. First we need to compile YARP repository, setting the following CMake flags to `true` in order to compile all required modules:
 
 ```
-cmake .. -DCREATE_GUIS=true -DENABLE_yarpcar_depthimage=true -DENABLE_yarpmod_fakeDepthCamera=true
+cmake .. -DYARP_COMPILE_GUIS=true -DENABLE_yarpcar_depthimage=true -DENABLE_yarpmod_fakeDepthCamera=true
 ```
 
 To fully run the test, we need to open 5 terminals for command line input.

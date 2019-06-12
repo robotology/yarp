@@ -12,6 +12,7 @@
 #include <cstdint>
 
 #include <yarp/os/Value.h>
+#include <yarp/sig/ImageUtils.h>
 
 #include <librealsense2/rsutil.h>
 #include "realsense2Driver.h"
@@ -341,6 +342,16 @@ static size_t bytesPerPixel(const rs2_format format)
     return bytes_per_pixel;
 }
 
+static YarpDistortion rsDistToYarpDist(const rs2_distortion dist)
+{
+    switch (dist) {
+    case RS2_DISTORTION_BROWN_CONRADY:
+        return YarpDistortion::YARP_PLUM_BOB;
+    default:
+        return YarpDistortion::YARP_UNSUPPORTED;
+    }
+
+}
 
 realsense2Driver::realsense2Driver() : m_depth_sensor(nullptr), m_color_sensor(nullptr),
                                        m_paramParser(nullptr), m_verbose(false),
@@ -836,19 +847,19 @@ bool realsense2Driver::setRgbMirroring(bool mirror)
 
 bool realsense2Driver::setIntrinsic(Property& intrinsic, const rs2_intrinsics &values)
 {
-    intrinsic.put("focalLengthX",       values.fx);
-    intrinsic.put("focalLengthY",       values.fy);
-    intrinsic.put("principalPointX",    values.ppx);
-    intrinsic.put("principalPointY",    values.ppy);
-
-    intrinsic.put("distortionModel", "plumb_bob");
-    intrinsic.put("k1", values.coeffs[0]);
-    intrinsic.put("k2", values.coeffs[1]);
-    intrinsic.put("t1", values.coeffs[2]);
-    intrinsic.put("t2", values.coeffs[3]);
-    intrinsic.put("k3", values.coeffs[4]);
-
-    intrinsic.put("stamp", yarp::os::Time::now());
+    yarp::sig::IntrinsicParams params;
+    params.focalLengthX       = values.fx;
+    params.focalLengthY       = values.fy;
+    params.principalPointX    = values.ppx;
+    params.principalPointY    = values.ppy;
+    // distortion model
+    params.distortionModel.type = rsDistToYarpDist(values.model);
+    params.distortionModel.k1 = values.coeffs[0];
+    params.distortionModel.k2 = values.coeffs[1];
+    params.distortionModel.t1 = values.coeffs[2];
+    params.distortionModel.t2 = values.coeffs[3];
+    params.distortionModel.k3 = values.coeffs[4];
+    params.toProperty(intrinsic);
     return true;
 }
 
@@ -1493,29 +1504,17 @@ bool realsense2Driver::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 
     int pixCode = pixFormatToCode(frm1.get_profile().format());
 
-    if (pixCode != VOCAB_PIXEL_MONO && pixCode != VOCAB_PIXEL_MONO16)
+    if (pixCode != VOCAB_PIXEL_MONO)
     {
-        yError() << "realsense2Driver: expecting Pixel Format MONO or MONO16";
+        yError() << "realsense2Driver: expecting Pixel Format MONO";
         return false;
     }
 
-    size_t singleImage_rowSizeByte   =  image.getRowSize()/2;
-    unsigned char * pixelLeft     =  (unsigned char*) (frm1.get_data());
-    unsigned char * pixelRight    =  (unsigned char*) (frm2.get_data());
-    unsigned char * pixelOutLeft  =  image.getRawImage();
-    unsigned char * pixelOutRight =  image.getRawImage() + singleImage_rowSizeByte;
-
-    for (size_t h=0; h< image.height(); h++)
-    {
-        memcpy(pixelOutLeft, pixelLeft, singleImage_rowSizeByte);
-        memcpy(pixelOutRight, pixelRight, singleImage_rowSizeByte);
-        pixelOutLeft  += 2*singleImage_rowSizeByte;
-        pixelOutRight += 2*singleImage_rowSizeByte;
-        pixelLeft     += singleImage_rowSizeByte;
-        pixelRight    += singleImage_rowSizeByte;
-    }
-    return true;
-
+    // Wrap rs images with yarp ones.
+    ImageOf<PixelMono> imgL, imgR;
+    imgL.setExternal((unsigned char*) (frm1.get_data()), frm1.get_width(), frm1.get_height());
+    imgR.setExternal((unsigned char*) (frm2.get_data()), frm2.get_width(), frm2.get_height());
+    return utils::horzConcat(imgL, imgR, image);
 }
 
 int  realsense2Driver::height() const

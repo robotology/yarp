@@ -10,11 +10,13 @@
 #include "ControlBoardWrapper.h"
 #include "StreamingMessagesParser.h"
 #include "RPCMessagesParser.h"
-#include "../msgs/yarp/include/jointData.h"
+#include <yarp/dev/impl/jointData.h>
 #include <iostream>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <sstream>
+#include <numeric>
+#include <algorithm>
 
 #include <cstring>         // for memset function
 
@@ -477,6 +479,12 @@ bool ControlBoardWrapper::open(Searchable& config)
         return false;
     }
 
+    times.resize(controlledJoints);
+    ros_struct.name.resize(controlledJoints);
+    ros_struct.position.resize(controlledJoints);
+    ros_struct.velocity.resize(controlledJoints);
+    ros_struct.effort.resize(controlledJoints);
+
     // In case attach is not deferred and the controlboard already owns a valid device
     // we can start the thread. Otherwise this will happen when attachAll is called
     if (ownDevices)
@@ -875,47 +883,24 @@ void ControlBoardWrapper::run()
         yWarning() << "number of streaming intput messages to be read is " << inputStreamingPort.getPendingReads() << " and can overflow";
     }
 
-    // Update the time by averaging all timestamps
-    double joint_timeStamp = 0.0;
+    // Small optimization: Avoid to call getEncoders twice, one for YARP port
+    // and again for ROS topic.
+    //
+    // Calling getStuff here on ros_struct because it is a class member, hence
+    // always available. In the other side, to have the yarp struct to write into
+    // it will be rewuired to call port.prepare, that it is something I should
+    // not do if the wrapper is in ROS_only configuration.
 
-    for (auto& subdevice : device.subdevices)
-    {
-        int axes = subdevice.axes;
+    bool positionsOk = getEncodersTimed(ros_struct.position.data(), times.data());
+    bool speedsOk    = getEncoderSpeeds(ros_struct.velocity.data());
+    bool torqueOk    = getTorques(ros_struct.effort.data());
 
-        subdevice.refreshJointEncoders();
-        subdevice.refreshMotorEncoders();
-
-        for (int l = 0; l < axes; l++)
-        {
-            joint_timeStamp+=subdevice.jointEncodersTimes[l];
-        }
-    }
-
-    timeMutex.lock();
-    time.update(joint_timeStamp/controlledJoints);
-    timeMutex.unlock();
+    // Update the port envelope time by averaging all timestamps
+    time.update(std::accumulate(times.begin(), times.end(), 0.0) / controlledJoints);
 
     if(useROS != ROS_only)
     {
-        yarp::sig::Vector& v = outputPositionStatePort.prepare();
-        v.resize(controlledJoints);
-
-        double *joint_encoders=v.data();
-
-        for (auto& subdevice : device.subdevices)
-        {
-            int axes=subdevice.axes;
-
-            for(int l = 0; l < axes; l++)
-            {
-                joint_encoders[l]=subdevice.subDev_joint_encoders[l];
-            }
-            joint_encoders+=subdevice.axes; //jump to next group
-        }
-
-        outputPositionStatePort.setEnvelope(time);
-        outputPositionStatePort.write();
-
+        // handle stateExt first
         jointData &yarp_struct = extendedOutputState_buffer.get();
 
         yarp_struct.jointPosition.resize(controlledJoints);
@@ -930,35 +915,43 @@ void ControlBoardWrapper::run()
         yarp_struct.controlMode.resize(controlledJoints);
         yarp_struct.interactionMode.resize(controlledJoints);
 
-        yarp_struct.jointPosition_isValid       = getEncoders(yarp_struct.jointPosition.getFirst());
-        yarp_struct.jointVelocity_isValid       = getEncoderSpeeds(yarp_struct.jointVelocity.getFirst());
-        yarp_struct.jointAcceleration_isValid   = getEncoderAccelerations(yarp_struct.jointAcceleration.getFirst());
-        yarp_struct.motorPosition_isValid       = getMotorEncoders(yarp_struct.motorPosition.getFirst());
-        yarp_struct.motorVelocity_isValid       = getMotorEncoderSpeeds(yarp_struct.motorVelocity.getFirst());
-        yarp_struct.motorAcceleration_isValid   = getMotorEncoderAccelerations(yarp_struct.motorAcceleration.getFirst());
-        yarp_struct.torque_isValid              = getTorques(yarp_struct.torque.getFirst());
-        yarp_struct.pwmDutycycle_isValid        = getDutyCycles(yarp_struct.pwmDutycycle.getFirst());
-        yarp_struct.current_isValid             = getCurrents(yarp_struct.current.getFirst());
-        yarp_struct.controlMode_isValid         = getControlModes(yarp_struct.controlMode.getFirst());
-        yarp_struct.interactionMode_isValid     = getInteractionModes((yarp::dev::InteractionModeEnum* ) yarp_struct.interactionMode.getFirst());
+        // Get already stored data from before. This is to avoid a double call to HW device,
+        // which may require more time.        //
+        yarp_struct.jointPosition_isValid       = positionsOk;
+        std::copy(ros_struct.position.begin(), ros_struct.position.end(),  yarp_struct.jointPosition.begin());
+
+        yarp_struct.jointVelocity_isValid       = speedsOk;
+        std::copy(ros_struct.velocity.begin(), ros_struct.velocity.end(),  yarp_struct.jointVelocity.begin());
+
+        yarp_struct.torque_isValid              = torqueOk;
+        std::copy(ros_struct.effort.begin(), ros_struct.effort.end(),  yarp_struct.torque.begin());
+
+        // Get remaining data from HW
+        yarp_struct.jointAcceleration_isValid   = getEncoderAccelerations(yarp_struct.jointAcceleration.data());
+        yarp_struct.motorPosition_isValid       = getMotorEncoders(yarp_struct.motorPosition.data());
+        yarp_struct.motorVelocity_isValid       = getMotorEncoderSpeeds(yarp_struct.motorVelocity.data());
+        yarp_struct.motorAcceleration_isValid   = getMotorEncoderAccelerations(yarp_struct.motorAcceleration.data());
+        yarp_struct.torque_isValid              = getTorques(yarp_struct.torque.data());
+        yarp_struct.pwmDutycycle_isValid        = getDutyCycles(yarp_struct.pwmDutycycle.data());
+        yarp_struct.current_isValid             = getCurrents(yarp_struct.current.data());
+        yarp_struct.controlMode_isValid         = getControlModes(yarp_struct.controlMode.data());
+        yarp_struct.interactionMode_isValid     = getInteractionModes((yarp::dev::InteractionModeEnum* ) yarp_struct.interactionMode.data());
 
         extendedOutputStatePort.setEnvelope(time);
         extendedOutputState_buffer.write();
+
+        // handle state:o
+        yarp::sig::Vector& v = outputPositionStatePort.prepare();
+        v.resize(controlledJoints);
+        std::copy(yarp_struct.jointPosition.begin(), yarp_struct.jointPosition.end(), v.begin());
+
+        outputPositionStatePort.setEnvelope(time);
+        outputPositionStatePort.write();
     }
 
     if(useROS != ROS_disabled)
     {
-        yarp::rosmsg::sensor_msgs::JointState ros_struct;
-
-        ros_struct.name.resize(controlledJoints);
-        ros_struct.position.resize(controlledJoints);
-        ros_struct.velocity.resize(controlledJoints);
-        ros_struct.effort.resize(controlledJoints);
-
-        getEncoders(ros_struct.position.data());
-        getEncoderSpeeds(ros_struct.velocity.data());
-        getTorques(ros_struct.effort.data());
-
+        // Data from HW have been gathered few lines before
         JointTypeEnum jType;
         for(int i=0; i< controlledJoints; i++)
         {

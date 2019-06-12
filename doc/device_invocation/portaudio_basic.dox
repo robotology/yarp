@@ -3,11 +3,12 @@
  *
  * \defgroup portaudio_basic Example for portaudio (portaudio_basic)
 
-Instantiates \ref cmd_device_portaudio "portaudio" device implemented by yarp::dev::PortAudioDeviceDriver.
+Instantiates \ref cmd_device_portaudio "portaudio" device implemented by PortAudioDeviceDriver.
 \verbatim
 # start up a device for listening from a microphone
 device portaudio
 read
+allow-deprecated-devices
 \endverbatim
 If this text is saved in a file called portaudio_basic.ini then the device can be created by doing:
 \verbatim
@@ -22,7 +23,10 @@ PolyDriver dev;
 dev.open(p);
 if (dev.isValid()) { /* use the device via view method */ }
 \endcode
-Here is a list of properties checked when starting up a device based on this configuration file.  Note that which properties are checked can depend on whether other properties are present.  In some cases properties can also vary between operating systems.  So this is just an example
+Here is a list of properties checked when starting up a device based on this configuration file.
+Note that which properties are checked can depend on whether other properties are present.
+In some cases properties can also vary between operating systems.
+So this is just an example
 
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
@@ -36,8 +40,9 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>loopback</td><td>if present, send audio read from microphone immediately back to speaker</td><td></td></tr>
 <tr><td>render_mode_append</td><td></td><td></td></tr>
 <tr><td>render_mode_immediate</td><td></td><td></td></tr>
+<tr><td>allow-deprecated-devices</td><td></td><td></td></tr>
 </table>
 
-\sa yarp::dev::PortAudioDeviceDriver
+\sa PortAudioDeviceDriver
 
  */

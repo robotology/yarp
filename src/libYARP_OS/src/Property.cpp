@@ -896,6 +896,15 @@ Property::Property(const Property& prop) : Searchable(), Portable() {
     fromString(prop.toString());
 }
 
+Property::Property(std::initializer_list<std::pair<std::string, yarp::os::Value>> values) {
+    hash_size = 0;
+    implementation = new PropertyHelper(*this, 0);
+    yAssert(implementation!=nullptr);
+    for (const auto& val:values) {
+        put(val.first, val.second);
+    }
+}
+
 
 void Property::summon() {
     if (check()) return;

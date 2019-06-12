@@ -31,18 +31,12 @@
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 
-namespace yarp {
-    namespace dev {
-        class Rangefinder2DClient;
-    }
-}
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 const int LASER_TIMEOUT=100; //ms
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-class Rangefinder2DInputPortProcessor : public yarp::os::BufferedPort<yarp::os::Bottle>
+class Rangefinder2DInputPortProcessor :
+        public yarp::os::BufferedPort<yarp::os::Bottle>
 {
     yarp::os::Bottle lastBottle;
     yarp::os::Mutex mutex;
@@ -76,7 +70,6 @@ public:
     yarp::dev::IRangefinder2D::Device_status getStatus();
 
 };
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 /**
 * @ingroup dev_impl_network_clients
@@ -84,11 +77,11 @@ public:
 * The client side of any ILaserRangefinder2D capable device.
 * Still single thread! concurrent access is unsafe.
 */
-class yarp::dev::Rangefinder2DClient: public DeviceDriver,
-                          public IPreciselyTimed,
-                          public IRangefinder2D
+class Rangefinder2DClient:
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IPreciselyTimed,
+        public yarp::dev::IRangefinder2D
 {
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
     Rangefinder2DInputPortProcessor inputPort;
     yarp::os::Port rpcPort;
@@ -104,8 +97,6 @@ protected:
     double device_position_theta;
     std::string laser_frame_name;
     std::string robot_frame_name;
-
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
 
@@ -126,7 +117,7 @@ public:
     * @param data a vector containing the measurement data, expressed in cartesian/polar format
     * @return true/false..
     */
-    bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) override;
+    bool getLaserMeasurement(std::vector<yarp::dev::LaserMeasurementData> &data) override;
 
     /**
     * Get the device measurements

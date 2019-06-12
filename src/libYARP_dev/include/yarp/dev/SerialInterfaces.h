@@ -11,7 +11,8 @@
 #ifndef YARP_DEV_SERIALINTERFACES_H
 #define YARP_DEV_SERIALINTERFACES_H
 
-#include <yarp/dev/DeviceDriver.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/dev/api.h>
 #include <yarp/sig/Vector.h>
 
 /*! \file SerialInterfaces.h define interfaces for a generic serial device (I/O)*/

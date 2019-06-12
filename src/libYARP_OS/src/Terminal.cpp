@@ -18,26 +18,26 @@
 #include <cstdio>
 #include <cstring>
 
-#ifdef WITH_LIBEDIT
+#ifdef YARP_HAS_Libedit
 #include <editline/readline.h>
 char* szLine = (char*)nullptr;
 bool readlineEOF=false;
-#endif // WITH_LIBEDIT
+#endif // YARP_HAS_Libedit
 
 bool yarp::os::impl::Terminal::EOFreached()
 {
-#ifdef WITH_LIBEDIT
+#ifdef YARP_HAS_Libedit
     if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin))) {
         return readlineEOF;
     }
-#endif // WITH_LIBEDIT
+#endif // YARP_HAS_Libedit
     return feof(stdin);
 }
 
 std::string yarp::os::impl::Terminal::getStdin() {
     std::string txt;
 
-#ifdef WITH_LIBEDIT
+#ifdef YARP_HAS_Libedit
     if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin))) {
         if (szLine) {
             free(szLine);
@@ -53,7 +53,7 @@ std::string yarp::os::impl::Terminal::getStdin() {
         }
         return txt;
     }
-#endif // WITH_LIBEDIT
+#endif // YARP_HAS_Libedit
 
     bool done = false;
     char buf[2048];

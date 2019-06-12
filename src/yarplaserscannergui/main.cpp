@@ -214,9 +214,12 @@ void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las,
         double x = 0;
         double y = 0;
         (*las)[i].get_cartesian(x, y);
+ #if 0
         if (x == std::numeric_limits<double>::infinity() ||
-            y == std::numeric_limits<double>::infinity()) continue;
-
+            y == std::numeric_limits<double>::infinity()) continue; //this is not working
+ #endif
+        if (std::isinf(x) || std::isinf(y)) continue;
+            
         //if (length<0)     length = 0;
         //else if (length>15)    length = 15; //15m maximum
 
@@ -316,7 +319,7 @@ int main(int argc, char *argv[])
     int width = 600;
     int height = 600;
 
-    auto* drv = new yarp::dev::PolyDriver;
+    yarp::dev::PolyDriver* drv = new yarp::dev::PolyDriver;
     Property   lasOptions;
     lasOptions.put("device", "Rangefinder2DClient");
     lasOptions.put("local", "/laserScannerGui/laser:i");

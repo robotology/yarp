@@ -39,7 +39,7 @@ public:
 
     ~TextureBuffer();
 
-    void resize(int w = 0, int h = 0);
+    void resize(size_t w = 0, size_t h = 0);
     void update(const yarp::sig::Image& img);
     void update();
     void lock();
@@ -49,13 +49,13 @@ public:
     ovrTextureSwapChain textureSwapChain;
     int textureSwapChainSize;
 
-    unsigned int width;
-    unsigned int height;
+    size_t width;
+    size_t height;
     unsigned int components;
     unsigned int padding;
-    unsigned int rowSize;
-    unsigned int bufferSize;
-    double       alpha;
+    size_t rowSize;
+    size_t bufferSize;
+    double alpha;
 
     ovrPosef eyePose;
 
@@ -67,8 +67,8 @@ public:
 
     unsigned int missingFrames;
 
-    unsigned int imageWidth;
-    unsigned int imageHeight;
+    size_t imageWidth;
+    size_t imageHeight;
 
 private:
 

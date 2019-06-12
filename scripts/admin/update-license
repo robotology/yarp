@@ -95,9 +95,13 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
  * Some components are released under the terms of the LGPL license, version 2.1
    or later.
    + devices:
+     - \`audioPlayerWrapper\`
+     - \`audioRecorderWrapper\`
      - \`batteryClient\`
      - \`batteryWrapper\`
      - \`depthCamera\`
+     - \`fakeLocalizerDevice\`
+     - \`fakeNavigationDevice\`
      - \`imuBosch_BNO055\`
      - \`laserFromDepth\`
      - \`laserHokuyo\`
@@ -108,6 +112,8 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
      - \`opencv\`
      - \`ovrheadset\`
      - \`portaudio\`
+     - \`portaudioPlayer\`
+     - \`portaudioRecorder\`
      - \`Rangefinder2DClient\`
      - \`Rangefinder2DWrapper\`
      - \`rpLidar\`
@@ -115,6 +121,7 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
      - \`SDLJoypad\`
      - \`transformClient\`
      - \`transformServer\`
+     - \`usbCamera\`
    + tools:
      - \`yarplogger-console\`
      - \`yarpmanager-console\`
@@ -129,8 +136,8 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
      - \`QtYARPView\` and \`yarpview\`
  * Some optional components use 3rd party libraries that may have some extra
    requirements.
-   + \`libYARP_rtf\` and the RTF plugins use
-     [RTF](https://github.com/robotology/robot-testing/blob/master/LICENSE).
+   + \`libYARP_robottestingframework\` and the Robot Testing ramework plugins use
+     [Robot Testing Framework](https://github.com/robotology/robot-testing/blob/master/LICENSE).
    + The \`xmlrpc\` carrier uses a custom version of the
      [xmlrpcpp](https://sourceforge.net/projects/xmlrpcpp/) library.
    + The \`bayer\` carrier uses alternatively

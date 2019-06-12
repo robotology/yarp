@@ -86,8 +86,8 @@ bool RobotInterfaceDTD::valid()
 void RobotInterfaceDTD::setDefault()
 {
     type = RobotInterfaceDTD::DocTypeUnknown;
-    identifier = "-//YARP//DTD yarprobotinterface 1.0//EN";
-    uri = "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd";
+    identifier = "-//YARP//DTD yarprobotinterface 3.0//EN";
+    uri = "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd";
     majorVersion = 1;
     minorVersion = 0;
 }

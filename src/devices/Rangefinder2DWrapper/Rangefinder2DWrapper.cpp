@@ -30,13 +30,6 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
 
-// needed for the driver factory.
-yarp::dev::DriverCreator *createRangefinder2DWrapper() {
-    return new DriverCreatorOf<yarp::dev::Rangefinder2DWrapper>("Rangefinder2DWrapper",
-        "Rangefinder2DWrapper",
-        "yarp::dev::Rangefinder2Dwrapper");
-}
-
 
 /**
   * It reads the data from a rangefinder sensor and sends them on one port.

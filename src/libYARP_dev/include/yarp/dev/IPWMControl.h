@@ -84,7 +84,7 @@ public:
 *
 * Interface for controlling an axis, by sending directly a PWM reference signal to a motor.
 */
-class yarp::dev::IPWMControlRaw
+class YARP_dev_API yarp::dev::IPWMControlRaw
 {
 public:
     virtual ~IPWMControlRaw(){}

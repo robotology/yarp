@@ -120,8 +120,10 @@ static int noteDud(const Contact& src)
 
 //#define DEBUG_CONNECT_CARRIER
 #ifdef DEBUG_CONNECT_CARRIER
+# define CARRIER_DEBUG_0(fmt)       fprintf(stderr, fmt)
 # define CARRIER_DEBUG(fmt, ...)    fprintf(stderr, fmt, ##__VA_ARGS__)
 #else
+# define CARRIER_DEBUG_0(fmt)
 # define CARRIER_DEBUG(fmt, ...)
 #endif
 
@@ -487,13 +489,13 @@ static int metaConnect(const std::string& src,
         return 0;
     }
 
-    CARRIER_DEBUG("---------\n");
+    CARRIER_DEBUG_0("---------\n");
     CARRIER_DEBUG("dynamicSrc.getCarrier() = %s\n ", dynamicSrc.getCarrier().c_str());
     CARRIER_DEBUG("dynamicDest.getCarrier() = %s\n ", dynamicDest.getCarrier().c_str());
     CARRIER_DEBUG("staticSrc.getCarrier() = %s\n ", staticSrc.getCarrier().c_str());
     CARRIER_DEBUG("staticDest.getCarrier() = %s\n ", staticDest.getCarrier().c_str());
     CARRIER_DEBUG("carrierConstraint is %s\n ", carrierConstraint.c_str());
-    CARRIER_DEBUG("---------\n");
+    CARRIER_DEBUG_0("---------\n");
 
     CARRIER_DEBUG("style.carrier (1) is %s\n ", style.carrier.c_str());
 
@@ -534,7 +536,7 @@ static int metaConnect(const std::string& src,
         style.carrier = carrierConstraint;
         //if I'm here means that sorce or dest is not competent.
         //so we need to get parameters of carrier given in connect command.
-        CARRIER_DEBUG("if I'm here means that sorce or dest is not competent\n");
+        CARRIER_DEBUG_0("if I'm here means that source or dest is not competent\n");
         std::string c = dynamicSrc.getCarrier();
         if(extractCarrierNameOnly(c) == extractCarrierNameOnly(style.carrier))
             style.carrier+=collectParams(dynamicSrc);
@@ -545,7 +547,7 @@ static int metaConnect(const std::string& src,
     if (style.carrier=="") {
         style.carrier = staticDest.getCarrier();
         //if I'm here means that both src and dest are copentent and the user didn't specified a carrier in the connect command
-        CARRIER_DEBUG("if I'm here means that both src and dest are copentent and the user didn't specified a carrier in the connect command\n");
+        CARRIER_DEBUG_0("if I'm here means that both src and dest are compentent and the user didn't specified a carrier in the connect command\n");
         std::string c = dynamicSrc.getCarrier();
         if(extractCarrierNameOnly(c) == extractCarrierNameOnly(style.carrier))
             style.carrier+=collectParams(staticSrc);
@@ -553,7 +555,7 @@ static int metaConnect(const std::string& src,
 
     if (style.carrier=="") {
         style.carrier = staticSrc.getCarrier();
-        CARRIER_DEBUG("the chosen style carrier is static src\n ");
+        CARRIER_DEBUG_0("the chosen style carrier is static src\n ");
     }
 
     //now stylecarrier contains the carrier chosen for this connection

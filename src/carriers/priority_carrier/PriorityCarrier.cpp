@@ -12,17 +12,14 @@
 #include <yarp/os/ConnectionState.h>
 #include <yarp/os/ConnectionState.h>
 #include <yarp/os/Route.h>
-#include <string>
 
-#ifdef WITH_YARPMATH
 #include <yarp/math/Math.h>
 #include <yarp/math/SVD.h>
-using namespace yarp::math;
-#endif
-
+#include <string>
 
 
 using namespace yarp::os;
+using namespace yarp::math;
 
 /**
  * Class PriorityCarrier
@@ -229,7 +226,6 @@ double PriorityCarrier::getActualInput(double t)
 
 bool PriorityGroup::recalculate(double t)
 {
-#ifdef WITH_YARPMATH
     //TODO: find the correct way to get the size of peerSet
     int nConnections = 0;
     for(auto it=peerSet.begin(); it!=peerSet.end(); it++)
@@ -291,10 +287,6 @@ bool PriorityGroup::recalculate(double t)
     //fprintf(stdout, "Y:\n %s\n", Y.toString(1).c_str());
 
     return true;
-#else
-    return false;
-#endif
-
 }
 
 // Decide whether data should be accepted, for real.
@@ -306,7 +298,6 @@ bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
     double tNow = yarp::os::Time::now();
     source->stimulate(tNow);
 
-#ifdef WITH_YARPMATH
     if(!recalculate(tNow))
         return false;
 
@@ -330,27 +321,6 @@ bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
         row++;
     }
     accept = (maxPeer == source);
-
-#else
-    // first checks whether actual input signal is positive or not
-    double actualInput = source->getActualInput(tNow);
-    accept = (actualInput > 0);
-    if(accept)
-    {
-        for (auto& it : peerSet)
-        {
-            PriorityCarrier *peer = it.first;
-            if(peer != source)
-            {
-                if(actualInput < peer->getActualInput(tNow))
-                {
-                    accept = false;
-                    break;
-                }
-            }
-        }
-    }
-#endif
 
     // a virtual message will never be delivered. It will be only
     // used for the coordination
@@ -385,11 +355,7 @@ void PriorityDebugThread::run()
     double t = yarp::os::Time::now();
     v[0] = t;
     v[1] = pcarrier->getActualStimulation(t);
-#ifdef WITH_YARPMATH
     v[2] = pcarrier->yi;
-#else
-    v[2] = pcarrier->getActualInput(t);
-#endif
     debugPort.write();
 }
 
@@ -405,6 +371,3 @@ void PriorityDebugThread::threadRelease()
 }
 
 #endif //WITH_PRIORITY_DEBUG
-
-
-

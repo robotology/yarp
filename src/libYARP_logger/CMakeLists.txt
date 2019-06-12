@@ -36,12 +36,6 @@ target_link_libraries(YARP_logger PUBLIC YARP::YARP_OS
 list(APPEND YARP_logger_PUBLIC_DEPS YARP_OS)
 list(APPEND YARP_logger_PRIVATE_DEPS YARP_sig)
 
-if(TARGET YARP::YARP_math)
-  target_link_libraries(YARP_logger PRIVATE YARP::YARP_math)
-  target_compile_definitions(YARP_logger PRIVATE WITH_YARPMATH)
-  list(APPEND YARP_logger_PRIVATE_DEPS YARP_math)
-endif()
-
 target_compile_features(YARP_logger PUBLIC cxx_override)
 
 set_property(TARGET YARP_logger PROPERTY PUBLIC_HEADER ${YARP_logger_HDRS})

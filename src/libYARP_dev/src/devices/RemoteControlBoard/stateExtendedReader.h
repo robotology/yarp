@@ -30,7 +30,7 @@
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/dev/PreciselyTimed.h>
 
-#include "jointData.h"
+#include <yarp/dev/impl/jointData.h>
 
 
 // encoders should arrive at least every 0.5s to be considered valide
@@ -40,9 +40,9 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
-class StateExtendedInputPort:public yarp::os::BufferedPort<jointData>
+class StateExtendedInputPort:public yarp::os::BufferedPort<yarp::dev::impl::jointData>
 {
-    jointData last;
+    yarp::dev::impl::jointData last;
     Mutex mutex;
     Stamp lastStamp;
     double deltaT;
@@ -61,8 +61,8 @@ public:
     void resetStat();
     void init(int numberOfJoints);
 
-    using yarp::os::BufferedPort<jointData>::onRead;
-    void onRead(jointData &v) override;
+    using yarp::os::BufferedPort<yarp::dev::impl::jointData>::onRead;
+    void onRead(yarp::dev::impl::jointData &v) override;
 
     /**
      * @brief setTimeout, set the timeout for retrieving data

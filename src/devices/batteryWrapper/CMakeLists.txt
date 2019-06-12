@@ -6,8 +6,9 @@
 
 yarp_prepare_plugin(batteryWrapper
                     CATEGORY device
-                    TYPE yarp::dev::BatteryWrapper
+                    TYPE BatteryWrapper
                     INCLUDE BatteryWrapper.h
+                    EXTRA_CONFIG WRAPPER=batteryWrapper
                     DEFAULT ON)
 
 if(NOT SKIP_batteryWrapper)
@@ -26,10 +27,8 @@ if(NOT SKIP_batteryWrapper)
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-  yarp_install(FILES batteryWrapper.ini
-               COMPONENT ${YARP_PLUGIN_MASTER}
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
+               YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 

@@ -55,7 +55,10 @@ public:
     bool dropRequested();
 
     virtual bool expectBlock(yarp::os::Bytes& b);
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.2
+    using ConnectionReader::expectString;
     virtual std::string expectString(int len);
+#endif
     virtual std::string expectLine();
     virtual void flushWriter();
     virtual void setReference(yarp::os::Portable *obj);
@@ -71,7 +74,7 @@ public:
     yarp::conf::float32_t expectFloat32() override;
     yarp::conf::float64_t expectFloat64() override;
     bool expectBlock(char *data, size_t len) override;
-    std::string expectText(int terminatingChar) override;
+    std::string expectText(const char terminatingChar) override;
     bool isTextMode() const override;
     bool isBareMode() const override;
     bool convertTextMode() override;

@@ -20,11 +20,22 @@ namespace yarp {
     }
 }
 
+namespace yarp {
+namespace dev {
+namespace impl {
+
+template <typename T>
+class FixedSizeBuffersManager;
+
+} // namespace impl
+} // namespace dev
+} // namespace yarp
+
 class YARP_dev_API yarp::dev::ImplementPWMControl: public IPWMControl
 {
     void *helper;
     yarp::dev::IPWMControlRaw *raw;
-    double *dummy;
+    yarp::dev::impl::FixedSizeBuffersManager<double> *doubleBuffManager;
 public:
     bool initialize(int k, const int *amap, const double* dutyToPWM);
     bool uninitialize();

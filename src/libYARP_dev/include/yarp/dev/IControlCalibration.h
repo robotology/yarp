@@ -10,9 +10,9 @@
 #ifndef YARP_DEV_ICONTROLCALIBRATION_H
 #define YARP_DEV_ICONTROLCALIBRATION_H
 
-#include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/ControlBoardPid.h>
-#include <yarp/dev/CalibratorInterfaces.h>
+#include <yarp/os/Vocab.h>
+#include <yarp/dev/api.h>
+#include <yarp/dev/CalibratorInterfaces.h> // ICalibrator
 
 namespace yarp {
     namespace dev {

@@ -10,6 +10,7 @@
 #include "AnalogSensorClient.h"
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Value.h>
 
 /*! \file AnalogSensorClient.cpp implementation of an analog sensor client class*/
 
@@ -17,6 +18,14 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
 
+namespace
+{
+    inline int checkResponse(bool ok, const yarp::os::Bottle& response)
+    {
+        const yarp::os::Value & v = response.get(0);
+        return ok && v.isInt32() ? v.asInt32() : IAnalogSensor::AS_ERROR;
+    }
+}
 
 inline void InputPortProcessor::resetStat()
 {
@@ -258,7 +267,7 @@ int yarp::dev::AnalogSensorClient::calibrateSensor()
     cmd.addVocab(VOCAB_IANALOG);
     cmd.addVocab(VOCAB_CALIBRATE);
     bool ok = rpcPort.write(cmd, response);
-    return CHECK_FAIL(ok, response);
+    return checkResponse(ok, response);
 }
 
 int yarp::dev::AnalogSensorClient::calibrateSensor(const yarp::sig::Vector& value)
@@ -270,7 +279,7 @@ int yarp::dev::AnalogSensorClient::calibrateSensor(const yarp::sig::Vector& valu
     for (int i = 0; i < this->getChannels(); i++)
          l.addFloat64(value[i]);
     bool ok = rpcPort.write(cmd, response);
-    return CHECK_FAIL(ok, response);
+    return checkResponse(ok, response);
 }
 
 int yarp::dev::AnalogSensorClient::calibrateChannel(int ch)
@@ -280,7 +289,7 @@ int yarp::dev::AnalogSensorClient::calibrateChannel(int ch)
     cmd.addVocab(VOCAB_CALIBRATE_CHANNEL);
     cmd.addInt32(ch);
     bool ok = rpcPort.write(cmd, response);
-    return CHECK_FAIL(ok, response);
+    return checkResponse(ok, response);
 }
 
 int yarp::dev::AnalogSensorClient::calibrateChannel(int ch, double value)
@@ -291,7 +300,7 @@ int yarp::dev::AnalogSensorClient::calibrateChannel(int ch, double value)
     cmd.addInt32(ch);
     cmd.addFloat64(value);
     bool ok = rpcPort.write(cmd, response);
-    return CHECK_FAIL(ok, response);
+    return checkResponse(ok, response);
 }
 
 Stamp yarp::dev::AnalogSensorClient::getLastInputStamp()

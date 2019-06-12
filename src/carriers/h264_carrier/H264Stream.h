@@ -34,7 +34,7 @@ private:
     BlobNetworkHeader blobHeader;
     int phase;
     char *cursor;
-    int remaining;
+    size_t remaining;
     H264Decoder *decoder;
     h264Decoder_cfgParamters cfg;
 public:

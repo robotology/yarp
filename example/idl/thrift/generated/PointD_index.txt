@@ -1,0 +1,8 @@
+include/yarp/test/PointQuality.h
+src/PointQuality.cpp
+include/yarp/test/PointD.h
+src/PointD.cpp
+include/yarp/test/PointDLists.h
+src/PointDLists.cpp
+include/yarp/test/PointWithQuality.h
+src/PointWithQuality.cpp

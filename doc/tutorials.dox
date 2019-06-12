@@ -53,6 +53,7 @@ More software tutorials:
 \li \subpage yarp_code_examples
 \li \subpage gpu_tutorial
 \li \subpage using_cmake
+\li \subpage carrier_h264_howto
 
 Communication protocol details:
 \li \subpage yarp_protocol

@@ -16,11 +16,15 @@ set(yarp_config_HDRS yarpcontext.h
 
 add_executable(yarp-config ${yarp_config_SRCS}
                            ${yarp_config_HDRS})
-target_include_directories(yarp-config SYSTEM PRIVATE ${ACE_INCLUDE_DIRS}
-                                                      ${diff_match_patch_INCLUDE_DIRS})
-target_link_libraries(yarp-config YARP::YARP_OS
-                                  YARP::YARP_init
-                                  ${ACE_LIBRARIES})
+target_include_directories(yarp-config SYSTEM PRIVATE ${diff_match_patch_INCLUDE_DIRS})
+target_link_libraries(yarp-config PRIVATE YARP::YARP_OS
+                                          YARP::YARP_init)
+
+if(YARP_HAS_ACE)
+  target_compile_definitions(yarp-config PRIVATE YARP_HAS_ACE)
+  target_link_libraries(yarp-config PRIVATE ACE::ACE)
+endif()
+
 install(TARGETS yarp-config
         COMPONENT utilities
         DESTINATION ${CMAKE_INSTALL_BINDIR})

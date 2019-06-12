@@ -1,15 +1,16 @@
 /**
  * \ingroup dev_examples
  *
- * \defgroup grabber_audio Example for grabber (grabber_audio)
+ * \defgroup grabber_audio Example for AudioRecorderWrapper (grabber_audio)
 
-Instantiates \ref cmd_device_grabber "grabber" device implemented by yarp::dev::ServerFrameGrabber.
+Instantiates \ref cmd_device_AudioRecorderWrapper "AudioRecorderWrapper" device implemented by AudioRecorderWrapper.
 \verbatim
 # start up a network wrapper around a microphone, read via portaudio
-device grabber
+device AudioRecorderWrapper
 subdevice portaudio
 read
 name /microphone
+allow-deprecated-devices
 \endverbatim
 If this text is saved in a file called grabber_audio.ini then the device can be created by doing:
 \verbatim
@@ -24,30 +25,23 @@ PolyDriver dev;
 dev.open(p);
 if (dev.isValid()) { /* use the device via view method */ }
 \endcode
-Here is a list of properties checked when starting up a device based on this configuration file.  Note that which properties are checked can depend on whether other properties are present.  In some cases properties can also vary between operating systems.  So this is just an example
+Here is a list of properties checked when starting up a device based on this configuration file.
+Note that which properties are checked can depend on whether other properties are present.
+In some cases properties can also vary between operating systems.
+So this is just an example
 
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
 <tr><td>device</td><td></td><td></td></tr>
-<tr><td>subdevice</td><td>name (or nested configuration) of device to wrap</td><td></td></tr>
-<tr><td>portaudio.device</td><td></td><td></td></tr>
-<tr><td>portaudio.wrapped</td><td></td><td></td></tr>
-<tr><td>portaudio.rate</td><td>audio sample rate (0=automatic)</td><td>0</td></tr>
-<tr><td>portaudio.samples</td><td>number of samples per network packet (0=automatic). For chunks of 1 second of recording set samples=rate. Channels number is handled internally.</td><td>0</td></tr>
-<tr><td>portaudio.channels</td><td>number of audio channels (0=automatic, max is 2)</td><td>0</td></tr>
-<tr><td>portaudio.read</td><td>if present, just deal with reading audio (microphone)</td><td></td></tr>
-<tr><td>portaudio.write</td><td>if present, just deal with writing audio (speaker)</td><td></td></tr>
-<tr><td>portaudio.id</td><td>which portaudio index to use (-1=automatic)</td><td>-1</td></tr>
-<tr><td>portaudio.loopback</td><td>if present, send audio read from microphone immediately back to speaker</td><td></td></tr>
-<tr><td>portaudio.render_mode_append</td><td></td><td></td></tr>
-<tr><td>portaudio.render_mode_immediate</td><td></td><td></td></tr>
-<tr><td>no_drop</td><td>if present, use strict policy for sending data</td><td></td></tr>
-<tr><td>stamp</td><td>if present, add timestamps to data</td><td></td></tr>
-<tr><td>name</td><td>name of port to send data on</td><td>/grabber</td></tr>
-<tr><td>single_threaded</td><td>if present, operate in single threaded mode</td><td></td></tr>
-<tr><td>framerate</td><td>maximum rate in Hz to read from subdevice</td><td>0</td></tr>
+<tr><td>period</td><td></td><td></td></tr>
+<tr><td>subdevice</td><td></td><td></td></tr>
+<tr><td>min_samples_over_network</td><td></td><td></td></tr>
+<tr><td>max_samples_over_network</td><td></td><td></td></tr>
+<tr><td>max_samples_timeout</td><td></td><td></td></tr>
+<tr><td>name</td><td></td><td></td></tr>
+<tr><td>start</td><td></td><td></td></tr>
 </table>
 
-\sa yarp::dev::ServerFrameGrabber
+\sa AudioRecorderWrapper
 
  */

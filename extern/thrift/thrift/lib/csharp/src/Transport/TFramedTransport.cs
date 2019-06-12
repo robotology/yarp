@@ -108,7 +108,7 @@ namespace Thrift.Transport
             writeBuffer.Write(buf, off, len);
         }
 
-        public override void Flush()
+        private void InternalFlush()
         {
             CheckNotDisposed();
             if (!IsOpen)
@@ -116,8 +116,8 @@ namespace Thrift.Transport
             byte[] buf = writeBuffer.GetBuffer();
             int len = (int)writeBuffer.Length;
             int data_len = len - HeaderSize;
-            if ( data_len < 0 )
-                throw new System.InvalidOperationException (); // logic error actually
+            if (data_len < 0)
+                throw new System.InvalidOperationException(); // logic error actually
 
             // Inject message header into the reserved buffer space
             EncodeFrameSize(data_len, buf);
@@ -126,11 +126,30 @@ namespace Thrift.Transport
             transport.Write(buf, 0, len);
 
             InitWriteBuffer();
+        }
+
+        public override void Flush()
+        {
+            CheckNotDisposed();
+            InternalFlush();
 
             transport.Flush();
         }
 
-        private void InitWriteBuffer ()
+        public override IAsyncResult BeginFlush(AsyncCallback callback, object state)
+        {
+            CheckNotDisposed();
+            InternalFlush();
+
+            return transport.BeginFlush( callback, state);
+        }
+
+        public override void EndFlush(IAsyncResult asyncResult)
+        {
+            transport.EndFlush( asyncResult);
+        }
+
+        private void InitWriteBuffer()
         {
             // Reserve space for message header to be put right before sending it out
             writeBuffer.SetLength(HeaderSize);
@@ -150,7 +169,7 @@ namespace Thrift.Transport
             return
                 ((buf[0] & 0xff) << 24) |
                 ((buf[1] & 0xff) << 16) |
-                ((buf[2] & 0xff) <<  8) |
+                ((buf[2] & 0xff) << 8) |
                 ((buf[3] & 0xff));
         }
 
@@ -171,11 +190,11 @@ namespace Thrift.Transport
             {
                 if (disposing)
                 {
-                    if(readBuffer != null)
+                    if (readBuffer != null)
                         readBuffer.Dispose();
-                    if(writeBuffer != null)
+                    if (writeBuffer != null)
                         writeBuffer.Dispose();
-                    if(transport != null)
+                    if (transport != null)
                         transport.Dispose();
                 }
             }

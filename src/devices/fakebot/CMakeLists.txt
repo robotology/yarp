@@ -7,7 +7,7 @@
 
 yarp_prepare_plugin(fakebot
                     CATEGORY device
-                    TYPE yarp::dev::FakeBot
+                    TYPE FakeBot
                     INCLUDE FakeBot.h)
 
 if(NOT SKIP_fakebot)
@@ -25,10 +25,8 @@ if(NOT SKIP_fakebot)
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-  yarp_install(FILES fakebot.ini
-               COMPONENT ${YARP_PLUGIN_MASTER}
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
+               YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 

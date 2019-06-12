@@ -57,7 +57,7 @@ public:
     bool hasReply() const;
 
     bool expectBlock(char* data, size_t len) override;
-    std::string expectText(int terminatingChar) override;
+    std::string expectText(const char terminatingChar) override;
     std::int8_t expectInt8() override;
     std::int16_t expectInt16() override;
     std::int32_t expectInt32() override;
@@ -83,7 +83,7 @@ public:
     void appendInt64(std::int64_t data) override;
     void appendFloat32(yarp::conf::float32_t data) override;
     void appendFloat64(yarp::conf::float64_t data) override;
-    void appendString(const char* str, int terminate) override;
+    void appendText(const std::string& str, const char terminate) override;
     void appendExternalBlock(const char* data, size_t len) override;
     void declareSizes(int argc, int* argv) override;
     void setReplyHandler(yarp::os::PortReader& reader) override;

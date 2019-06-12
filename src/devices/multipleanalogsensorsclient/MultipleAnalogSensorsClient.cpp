@@ -13,8 +13,6 @@
 
 #include <yarp/os/LockGuard.h>
 
-namespace yarp {
-namespace dev {
 
 void SensorStreamingDataInputPort::onRead(SensorStreamingData& v)
 {
@@ -32,7 +30,7 @@ void SensorStreamingDataInputPort::updateTimeoutStatus() const
         if ((now-lastTimeStampReadInSeconds) > this->timeoutInSeconds)
         {
             yError("MultipleAnalogSensorsClient: no data received in the last %lf seconds, timeout enabled.", (now-lastTimeStampReadInSeconds));
-            status = MAS_TIMEOUT;
+            status = yarp::dev::MAS_TIMEOUT;
         }
     }
 }
@@ -149,7 +147,7 @@ size_t MultipleAnalogSensorsClient::genericGetNrOfSensors(const std::vector<Sens
     return metadataVector.size();
 }
 
-MAS_status MultipleAnalogSensorsClient::genericGetStatus() const
+yarp::dev::MAS_status MultipleAnalogSensorsClient::genericGetStatus() const
 {
     std::lock_guard<std::mutex>  guard(m_streamingPort.dataMutex);
     m_streamingPort.updateTimeoutStatus();
@@ -186,7 +184,7 @@ bool MultipleAnalogSensorsClient::genericGetFrameName(const  std::vector<SensorM
 
 bool MultipleAnalogSensorsClient::genericGetMeasure(const std::vector<SensorMetadata>& metadataVector, const std::string& tag,
                                                     const SensorMeasurements& measurementsVector,
-                                                    size_t sens_index, sig::Vector& out, double& timestamp) const
+                                                    size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     if (sens_index >= metadataVector.size())
     {
@@ -197,7 +195,7 @@ bool MultipleAnalogSensorsClient::genericGetMeasure(const std::vector<SensorMeta
 
     std::lock_guard<std::mutex> guard(m_streamingPort.dataMutex);
     m_streamingPort.updateTimeoutStatus();
-    if (m_streamingPort.status != MAS_OK)
+    if (m_streamingPort.status != yarp::dev::MAS_OK)
     {
         yError("MultipleAnalogSensorsClient: Sensor of type %s with index %lu has non-MAS_OK status.",
                tag.c_str(), sens_index);
@@ -223,7 +221,7 @@ size_t MultipleAnalogSensorsClient::genericGetSize(const std::vector<SensorMetad
     }
 
     std::lock_guard<std::mutex> guard(m_streamingPort.dataMutex);
-    if (m_streamingPort.status != MAS_OK)
+    if (m_streamingPort.status != yarp::dev::MAS_OK)
     {
         yError("MultipleAnalogSensorsClient: No data received, no information on the size of the specified sensor.");
         return 0;
@@ -254,7 +252,7 @@ bool MultipleAnalogSensorsClient::get{{SensorSingular}}Name(size_t sens_index, s
     return genericGetName(m_sensorsMetadata.{{SensorTag}}, "{{SensorTag}}", sens_index, name);
 }
 
-bool MultipleAnalogSensorsClient::get{{SensorSingular}}Measure(size_t sens_index, sig::Vector& out, double& timestamp) const
+bool MultipleAnalogSensorsClient::get{{SensorSingular}}Measure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     return genericGetMeasure(m_sensorsMetadata.{{SensorTag}}, "{{SensorTag}}",
                              m_streamingPort.receivedData.{{SensorTag}}, sens_index, out, timestamp);
@@ -325,7 +323,7 @@ size_t MultipleAnalogSensorsClient::getNrOfThreeAxisMagnetometers() const
     return genericGetNrOfSensors(m_sensorsMetadata.ThreeAxisMagnetometers);
 }
 
-MAS_status MultipleAnalogSensorsClient::getThreeAxisMagnetometerStatus(size_t sens_index) const
+yarp::dev::MAS_status MultipleAnalogSensorsClient::getThreeAxisMagnetometerStatus(size_t sens_index) const
 {
     return genericGetStatus();
 }
@@ -340,7 +338,7 @@ bool MultipleAnalogSensorsClient::getThreeAxisMagnetometerFrameName(size_t sens_
     return genericGetFrameName(m_sensorsMetadata.ThreeAxisMagnetometers, "ThreeAxisMagnetometers", sens_index, frameName);
 }
 
-bool MultipleAnalogSensorsClient::getThreeAxisMagnetometerMeasure(size_t sens_index, sig::Vector& out, double& timestamp) const
+bool MultipleAnalogSensorsClient::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     return genericGetMeasure(m_sensorsMetadata.ThreeAxisMagnetometers, "ThreeAxisMagnetometers",
                              m_streamingPort.receivedData.ThreeAxisMagnetometers, sens_index, out, timestamp);
@@ -351,7 +349,7 @@ size_t MultipleAnalogSensorsClient::getNrOfOrientationSensors() const
     return genericGetNrOfSensors(m_sensorsMetadata.OrientationSensors);
 }
 
-MAS_status MultipleAnalogSensorsClient::getOrientationSensorStatus(size_t sens_index) const
+yarp::dev::MAS_status MultipleAnalogSensorsClient::getOrientationSensorStatus(size_t sens_index) const
 {
     return genericGetStatus();
 }
@@ -366,7 +364,7 @@ bool MultipleAnalogSensorsClient::getOrientationSensorFrameName(size_t sens_inde
     return genericGetFrameName(m_sensorsMetadata.OrientationSensors, "OrientationSensors", sens_index, frameName);
 }
 
-bool MultipleAnalogSensorsClient::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, sig::Vector& out, double& timestamp) const
+bool MultipleAnalogSensorsClient::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     return genericGetMeasure(m_sensorsMetadata.OrientationSensors, "OrientationSensors",
                              m_streamingPort.receivedData.OrientationSensors, sens_index, out, timestamp);
@@ -377,7 +375,7 @@ size_t MultipleAnalogSensorsClient::getNrOfTemperatureSensors() const
     return genericGetNrOfSensors(m_sensorsMetadata.TemperatureSensors);
 }
 
-MAS_status MultipleAnalogSensorsClient::getTemperatureSensorStatus(size_t sens_index) const
+yarp::dev::MAS_status MultipleAnalogSensorsClient::getTemperatureSensorStatus(size_t sens_index) const
 {
     return genericGetStatus();
 }
@@ -392,7 +390,7 @@ bool MultipleAnalogSensorsClient::getTemperatureSensorFrameName(size_t sens_inde
     return genericGetFrameName(m_sensorsMetadata.TemperatureSensors, "TemperatureSensors", sens_index, frameName);
 }
 
-bool MultipleAnalogSensorsClient::getTemperatureSensorMeasure(size_t sens_index, sig::Vector& out, double& timestamp) const
+bool MultipleAnalogSensorsClient::getTemperatureSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     return genericGetMeasure(m_sensorsMetadata.TemperatureSensors, "TemperatureSensors",
                              m_streamingPort.receivedData.TemperatureSensors, sens_index, out, timestamp);
@@ -411,7 +409,7 @@ size_t MultipleAnalogSensorsClient::getNrOfSixAxisForceTorqueSensors() const
     return genericGetNrOfSensors(m_sensorsMetadata.SixAxisForceTorqueSensors);
 }
 
-MAS_status MultipleAnalogSensorsClient::getSixAxisForceTorqueSensorStatus(size_t sens_index) const
+yarp::dev::MAS_status MultipleAnalogSensorsClient::getSixAxisForceTorqueSensorStatus(size_t sens_index) const
 {
     return genericGetStatus();
 }
@@ -426,7 +424,7 @@ bool MultipleAnalogSensorsClient::getSixAxisForceTorqueSensorFrameName(size_t se
     return genericGetFrameName(m_sensorsMetadata.SixAxisForceTorqueSensors, "SixAxisForceTorqueSensors", sens_index, frameName);
 }
 
-bool MultipleAnalogSensorsClient::getSixAxisForceTorqueSensorMeasure(size_t sens_index, sig::Vector& out, double& timestamp) const
+bool MultipleAnalogSensorsClient::getSixAxisForceTorqueSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     return genericGetMeasure(m_sensorsMetadata.SixAxisForceTorqueSensors, "SixAxisForceTorqueSensors",
                              m_streamingPort.receivedData.SixAxisForceTorqueSensors, sens_index, out, timestamp);
@@ -437,7 +435,7 @@ size_t MultipleAnalogSensorsClient::getNrOfContactLoadCellArrays() const
     return genericGetNrOfSensors(m_sensorsMetadata.ContactLoadCellArrays);
 }
 
-MAS_status MultipleAnalogSensorsClient::getContactLoadCellArrayStatus(size_t sens_index) const
+yarp::dev::MAS_status MultipleAnalogSensorsClient::getContactLoadCellArrayStatus(size_t sens_index) const
 {
     return genericGetStatus();
 }
@@ -447,7 +445,7 @@ bool MultipleAnalogSensorsClient::getContactLoadCellArrayName(size_t sens_index,
     return genericGetName(m_sensorsMetadata.ContactLoadCellArrays, "ContactLoadCellArrays", sens_index, name);
 }
 
-bool MultipleAnalogSensorsClient::getContactLoadCellArrayMeasure(size_t sens_index, sig::Vector& out, double& timestamp) const
+bool MultipleAnalogSensorsClient::getContactLoadCellArrayMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     return genericGetMeasure(m_sensorsMetadata.ContactLoadCellArrays, "ContactLoadCellArrays",
                              m_streamingPort.receivedData.ContactLoadCellArrays, sens_index, out, timestamp);
@@ -464,7 +462,7 @@ size_t MultipleAnalogSensorsClient::getNrOfEncoderArrays() const
     return genericGetNrOfSensors(m_sensorsMetadata.EncoderArrays);
 }
 
-MAS_status MultipleAnalogSensorsClient::getEncoderArrayStatus(size_t sens_index) const
+yarp::dev::MAS_status MultipleAnalogSensorsClient::getEncoderArrayStatus(size_t sens_index) const
 {
     return genericGetStatus();
 }
@@ -474,7 +472,7 @@ bool MultipleAnalogSensorsClient::getEncoderArrayName(size_t sens_index, std::st
     return genericGetName(m_sensorsMetadata.EncoderArrays, "EncoderArrays", sens_index, name);
 }
 
-bool MultipleAnalogSensorsClient::getEncoderArrayMeasure(size_t sens_index, sig::Vector& out, double& timestamp) const
+bool MultipleAnalogSensorsClient::getEncoderArrayMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     return genericGetMeasure(m_sensorsMetadata.EncoderArrays, "EncoderArrays",
                              m_streamingPort.receivedData.EncoderArrays, sens_index, out, timestamp);
@@ -491,7 +489,7 @@ size_t MultipleAnalogSensorsClient::getNrOfSkinPatches() const
     return genericGetNrOfSensors(m_sensorsMetadata.SkinPatches);
 }
 
-MAS_status MultipleAnalogSensorsClient::getSkinPatchStatus(size_t sens_index) const
+yarp::dev::MAS_status MultipleAnalogSensorsClient::getSkinPatchStatus(size_t sens_index) const
 {
     return genericGetStatus();
 }
@@ -501,7 +499,7 @@ bool MultipleAnalogSensorsClient::getSkinPatchName(size_t sens_index, std::strin
     return genericGetName(m_sensorsMetadata.SkinPatches, "SkinPatches", sens_index, name);
 }
 
-bool MultipleAnalogSensorsClient::getSkinPatchMeasure(size_t sens_index, sig::Vector& out, double& timestamp) const
+bool MultipleAnalogSensorsClient::getSkinPatchMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
     return genericGetMeasure(m_sensorsMetadata.SkinPatches, "SkinPatches",
                              m_streamingPort.receivedData.SkinPatches, sens_index, out, timestamp);
@@ -511,8 +509,4 @@ size_t MultipleAnalogSensorsClient::getSkinPatchSize(size_t sens_index) const
 {
     return genericGetSize(m_sensorsMetadata.SkinPatches, "SkinPatches",
                           m_streamingPort.receivedData.SkinPatches, sens_index);
-}
-
-
-}
 }

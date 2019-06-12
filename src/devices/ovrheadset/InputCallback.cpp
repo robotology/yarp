@@ -80,7 +80,7 @@ void InputCallback::onRead(ImageType &img)
                 break;
             }
         } else {
-            // Check if this is a GREEN pixel (255,0,0)
+            // Check if this is a GREEN pixel (0,255,0)
             if (pix[0] >= 250 && pix[1] <= 5 && pix[2] <= 5) {
                 found = i;
                 break;
@@ -96,9 +96,9 @@ void InputCallback::onRead(ImageType &img)
     eyeRenderTexture->mutex.lock();
 
     if(eyeRenderTexture->ptr) {
-        unsigned int w = img.width();
-        unsigned int h = img.height();
-        unsigned int rs = img.getRowSize();
+        size_t w = img.width();
+        size_t h = img.height();
+        size_t rs = img.getRowSize();
         unsigned char *data = img.getRawImage();
 
         // update data directly on the mapped buffer
@@ -109,7 +109,7 @@ void InputCallback::onRead(ImageType &img)
             // Texture is larger than image: image is centered in the texture
             int x = (eyeRenderTexture->width - w)/2;
             int y = (eyeRenderTexture->height - h)/2;
-            for (unsigned int i = 0; i < h; ++i) {
+            for (size_t i = 0; i < h; ++i) {
                 unsigned char* textureStart = eyeRenderTexture->ptr + (y+i)*eyeRenderTexture->rowSize + x*3;
                 unsigned char* dataStart = data + (i*rs);
                 memcpy(textureStart, dataStart, rs);
@@ -118,7 +118,7 @@ void InputCallback::onRead(ImageType &img)
             // Texture is smaller than image: image is cropped
             int x = (w - eyeRenderTexture->width)/2;
             int y = (h - eyeRenderTexture->height)/2;
-            for (unsigned int i = 0; i < eyeRenderTexture->width; ++i) {
+            for (size_t i = 0; i < eyeRenderTexture->width; ++i) {
                 unsigned char* textureStart = eyeRenderTexture->ptr + (y+i)*(i*eyeRenderTexture->rowSize) + x*3;
                 unsigned char* dataStart = data + (y+i)*rs + x*3;
                 memcpy(textureStart, dataStart, eyeRenderTexture->rowSize);
@@ -139,14 +139,22 @@ void InputCallback::onRead(ImageType &img)
         float pitch = pitchOffset;
         float yaw = yawOffset;
 
+        int seqNum;
+        double ts, r, p, yy;
+
         yarp::os::Bottle b;
         yarp::os::BufferedPort<ImageType>::getEnvelope(b);
-        if (b.size() == 3) {
-            roll += OVR::DegreeToRad(static_cast<float>(b.get(0).asFloat64()));
-            pitch += OVR::DegreeToRad(static_cast<float>(b.get(1).asFloat64()));
-            yaw += OVR::DegreeToRad(static_cast<float>(b.get(2).asFloat64()));
+        int ret = std::sscanf(b.toString().c_str(), "%d %lg %lg %lg %lg\n", &seqNum, &ts, &r, &p, &yy);
+        if (ret == 5) {
+            roll += OVR::DegreeToRad(static_cast<float>(r));
+            pitch += OVR::DegreeToRad(static_cast<float>(p));
+            yaw += OVR::DegreeToRad(static_cast<float>(yy));
+//        if (b.size() == 3) {
+//            roll += OVR::DegreeToRad(static_cast<float>(b.get(0).asFloat64()));
+//            pitch += OVR::DegreeToRad(static_cast<float>(b.get(1).asFloat64()));
+//            yaw += OVR::DegreeToRad(static_cast<float>(b.get(2).asFloat64()));
         }
-        //yDebug() << b.toString() << roll << pitch << yaw;
+        yDebug() << b.size() << b.toString() << "-------------------" << roll << pitch << yaw;
 
         eyeRenderTexture->eyePose.Orientation.w = (float)(- cos(roll/2) * cos(pitch/2) * cos(yaw/2) - sin(roll/2) * sin(pitch/2) * sin(yaw/2));
         eyeRenderTexture->eyePose.Orientation.x = (float)(- cos(roll/2) * sin(pitch/2) * cos(yaw/2) - sin(roll/2) * cos(pitch/2) * sin(yaw/2));

@@ -22,7 +22,8 @@
 #include <cmath>
 #include <vector>
 
-#include "TestList.h"
+#include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -116,41 +117,49 @@ public:
     bool success;
 };
 
-class MatrixTest : public UnitTest {
+bool checkConsistency(Matrix &a)
+{
+    gsl_matrix *tmp;
 
-    bool checkConsistency(Matrix &a)
-    {
-        gsl_matrix *tmp;
+    yarp::gsl::GslMatrix tmpGSL(a);
+    tmp=(gsl_matrix *)(tmpGSL.getGslMatrix());
 
-        yarp::gsl::GslMatrix tmpGSL(a);
-        tmp=(gsl_matrix *)(tmpGSL.getGslMatrix());
+    bool ret=true;
+    if (tmp->size1!=a.rows())
+        ret=false;
 
-        bool ret=true;
-        if (tmp->size1!=a.rows())
-            ret=false;
+    if (tmp->size2!=a.cols())
+        ret=false;
 
-        if (tmp->size2!=a.cols())
-            ret=false;
+    if (tmp->block->size!=a.cols()*a.rows())
+        ret=false;
 
-        if (tmp->block->size!=a.cols()*a.rows())
-            ret=false;
+    if (tmp->data!=a.data())
+        ret=false;
 
-        if (tmp->data!=a.data())
-            ret=false;
+    if (tmp->block->data!=a.data())
+        ret=false;
 
-        if (tmp->block->data!=a.data())
-            ret=false;
+    return ret;
+}
 
-        return ret;
+void makeTestMatrix(Matrix& m, unsigned int rr, unsigned int cc)
+{
+    m.resize((int)rr,(int)cc);
+    for(unsigned int r=0; r<rr; r++) {
+        for(unsigned int c=0; c<cc; c++) {
+            m[r][c] = r*cc+c;
+        }
     }
+}
 
-public:
-    virtual std::string getName() const override { return "MatrixTest"; }
 
-    void checkOperators()
+TEST_CASE("sig::MatrixTest", "[yarp::sig]")
+{
+    NetworkBase::setLocalMode(true);
+
+    SECTION("checking operator ==")
     {
-        report(0,"checking operator ==");
-
         Matrix M1(3,3);
         Matrix M2(3,3);
 
@@ -166,12 +175,11 @@ public:
         if (M1==M2)
             ok=false;
 
-        checkTrue(ok, "operator== for matrix work");
+        CHECK(ok); // operator== for matrix work
     }
 
-    void checkSendReceive()
+    SECTION("check matrix send/receive")
     {
-        report(0,"check matrix send/receive");
         Port portIn;
         Port portOut;
 
@@ -192,16 +200,15 @@ public:
         portOut.close();
         portIn.close();
 
-        checkTrue(senderThread->success, "Send matrix test");
-        checkTrue(receiverThread->success, "Receive matrix test");
+        CHECK(senderThread->success); // Send matrix test
+        CHECK(receiverThread->success); // Receive matrix test
 
         delete receiverThread;
         delete senderThread;
     }
 
-    void checkCopyCtor()
+    SECTION("check matrix copy constructor works.")
     {
-        report(0,"check matrix copy constructor works...");
         Matrix m(10,40);
         int r=0;
         int c=0;
@@ -212,23 +219,23 @@ public:
         }
 
         Matrix m2(m);
-        checkEqual(m.rows(),m2.rows(),"rows matches");
-        checkEqual(m.cols(),m2.cols(),"cols matches");
+        CHECK(m.rows() == m2.rows()); // rows matches
+        CHECK(m.cols() == m2.cols()); // cols matches
 
         bool ok=true;
         for(r=0; r<10; r++)
             for (c=0; c<40; c++)
                 ok=ok && ((m[r])[c]==(m2[r])[c]);
 
-        checkTrue(ok,"elements match");
+        CHECK(ok); // elements match
 
-        report(0,"check matrix construction from empty matrix");
+        INFO("check matrix construction from empty matrix");
         Matrix empty1;
         Matrix empty2(empty1);
     }
 
-    void checkCopy() {
-        report(0,"check matrix copy operator works...");
+    SECTION("check matrix copy operator works.")
+    {
         Matrix m(10,40);
         int r=0;
         int c=0;
@@ -238,31 +245,32 @@ public:
 
         Matrix m2;
         m2=m;
-        checkEqual(m.rows(),m2.rows(),"rows matches");
-        checkEqual(m.cols(),m2.cols(),"cols matches");
+        CHECK(m.rows() == m2.rows()); // rows matches
+        CHECK(m.cols() == m2.cols()); // cols matches
 
         bool ok=true;
         for(r=0; r<10; r++)
             for (c=0; c<40; c++)
                 ok=ok && (m[r][c]==m2[r][c]);
-        checkTrue(ok,"elements match");
+        CHECK(ok); // elements match
     }
 
-    void checkBottle() {
-        report(0,"check bottle compatibility...");
+    SECTION("check bottle.")
+    {
+        INFO("check bottle compatibility...");
         Bottle b("2 3 (0.0 1.1 2.2 3.3 4.4 5.5)");
         Matrix m(6,1);
         DummyConnector con;
         b.write(con.getWriter());
         m.read(con.getReader());
-        checkEqual(m.rows(),(size_t) 2,"row size correct");
-        checkEqual(m.cols(),(size_t) 3,"col size correct");
-        checkTrue(m[1][2]>5 && m[1][2]<6, "content is sane");
+        CHECK(m.rows() == (size_t) 2); // row size correct
+        CHECK(m.cols() == (size_t) 3); // col size correct
+        CHECK((m[1][2]>5 && m[1][2]<6)); // content is sane
     }
 
-    void checkSubmatrix()
+    SECTION("check submatrix.")
     {
-        report(0,"check function Matrix::submatrix works...");
+        INFO("check function Matrix::submatrix works...");
         const size_t R=10;
         const size_t C=20;
         Matrix m(R,C);
@@ -274,15 +282,15 @@ public:
             for (c=0; c<C; c++)
                 m[r][c]=kk++;
 
-        report(0,"extracting submatrix...");
+        INFO("extracting submatrix...");
         size_t r1=5;
         size_t r2=8;
         size_t c1=4;
         size_t c2=8;
         Matrix m2=m.submatrix(r1, r2, c1, c2);
 
-        checkEqual(r2-r1+1,m2.rows(),"rows matches");
-        checkEqual(c2-c1+1,m2.cols(),"cols matches");
+        CHECK(r2-r1+1 == m2.rows()); // rows matches
+        CHECK(c2-c1+1 == m2.cols()); // cols matches
 
         kk=r1*C+c1;
         bool ok=true;
@@ -297,12 +305,12 @@ public:
             kk+=C;
         }
 
-        checkTrue(ok,"elements match");
+        CHECK(ok); // elements match
 
-        report(0,"extracting full size matrix...");
+        INFO("extracting full size matrix...");
         Matrix m3=m.submatrix(0, R-1, 0, C-1);
-        checkEqual(R,m3.rows(),"rows matches");
-        checkEqual(C,m3.cols(),"cols matches");
+        CHECK(R == m3.rows()); // rows matches
+        CHECK(C == m3.cols()); // cols matches
 
         kk=0;
         ok=true;
@@ -316,27 +324,27 @@ public:
             }
             kk+=C;
         }
-        checkTrue(ok,"elements match");
+        CHECK(ok); // elements match
     }
 
-    void checkGsl()
+    SECTION("check gsl.")
     {
         Matrix a(5, 5);
         Matrix b;
         b = a;
-        checkTrue(checkConsistency(a), "gsldata consistent after creation");
-        checkTrue(checkConsistency(b), "gsldata consistent after copy");
+        CHECK(checkConsistency(a)); // gsldata consistent after creation
+        CHECK(checkConsistency(b)); // gsldata consistent after copy
         b.resize(100, 100);
-        checkTrue(checkConsistency(b), "gsldata consistent after resize");
+        CHECK(checkConsistency(b)); // gsldata consistent after resize
 
         Matrix s = a.submatrix(1, 1, 2, 2);
         checkConsistency(s);
-        checkTrue(checkConsistency(s), "gsldata consistent for submatrix");
+        CHECK(checkConsistency(s)); // gsldata consistent for submatrix
         Matrix c = a;
-        checkTrue(checkConsistency(c), "gsldata consistent after init");
+        CHECK(checkConsistency(c)); // gsldata consistent after init
     }
 
-    void checkResize()
+    SECTION("check resize.")
     {
         Matrix ones;
         Matrix eye;
@@ -352,7 +360,7 @@ public:
             for(unsigned int c=0; c<10; c++)
                 ok=ok&&(resized[r][c]==1.1);
 
-        checkTrue(ok,"resize(int r, int c) keeps old values [1]");
+        CHECK(ok); // resize(int r, int c) keeps old values [1]
 
         eye.resize(5, 5);
         eye=0.0;
@@ -371,7 +379,7 @@ public:
             for(unsigned int c=0; c<5; c++)
                 ok=ok&&(resized[r][c]==eye[r][c]);
 
-        checkTrue(ok,"resize(int r, int c) keeps old values [2]");
+        CHECK(ok); // resize(int r, int c) keeps old values [2]
 
         resized=ones;
         resized.resize(3, 5);
@@ -380,7 +388,7 @@ public:
             for(unsigned int c=0; c<5; c++)
                 ok=ok&&(resized[r][c]==ones[r][c]);
 
-        checkTrue(ok,"resizing to smaller size keeps old values [1]");
+        CHECK(ok); // resizing to smaller size keeps old values [1]
 
         resized=eye;
         resized.resize(3,5);
@@ -390,22 +398,12 @@ public:
             for(unsigned int c=0; c<5; c++)
                 ok=ok&&(resized[r][c]==eye[r][c]);
 
-        checkTrue(ok,"resizing to smaller size keeps old values [2]");
+        CHECK(ok); // resizing to smaller size keeps old values [2]
 
     }
 
-    void makeTestMatrix(Matrix& m, unsigned int rr, unsigned int cc) {
-        m.resize((int)rr,(int)cc);
-        for(unsigned int r=0; r<rr; r++) {
-            for(unsigned int c=0; c<cc; c++) {
-                m[r][c] = r*cc+c;
-            }
-        }
-    }
-
-    void checkFormat() {
-        report(0,"check matrix format conforms to network standard...");
-
+    SECTION("check matrix format conforms to network standard...")
+    {
         Matrix m;
         size_t rr = 10;
         size_t cc = 5;
@@ -416,27 +414,27 @@ public:
         std::string s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),s.length());
-        checkEqual((size_t) bot.get(0).asInt32(),rr,"row count matches");
-        checkEqual((size_t) bot.get(1).asInt32(),cc,"column count matches");
+        CHECK((size_t) bot.get(0).asInt32() == rr); // row count matches
+        CHECK((size_t) bot.get(1).asInt32() == cc); // column count matches
         Bottle *lst = bot.get(2).asList();
-        checkTrue(lst!=nullptr,"have data");
+        CHECK(lst!=nullptr); // have data
         if (!lst) return;
-        checkEqual(lst->size(),(rr*cc),"data length matches");
+        CHECK(lst->size() == (rr*cc)); // data length matches
         if (lst->size()!=(rr*cc)) return;
         bool ok = true;
         for (int i=0; i<(int)(rr*cc); i++) {
             double v = lst->get(i).asFloat64();
             if (fabs(v-i)>0.01) {
                 ok = false;
-                checkEqualish(v,i,"cell matches");
+                CHECK(v == Approx(i)); // "cell matches")
                 break;
             }
         }
-        checkTrue(ok,"data matches");
+        CHECK(ok); // data matches
     }
 
-    void checkPair() {
-        report(0,"checking portable-pair serialization...");
+    SECTION("checking portable-pair serialization...")
+    {
         // potential problem reported by Miguel Sarabia Del Castillo
 
         Matrix m;
@@ -454,63 +452,120 @@ public:
         msg.write(con.getWriter());
         ConnectionReader& reader = con.getReader();
         msg2.read(reader);
-        checkEqual(msg.head.rows(),msg2.head.rows(),"matrix row match");
-        checkEqual(msg.head.cols(),msg2.head.cols(),"matrix col match");
-        checkEqualish(msg.body.asFloat64(),msg2.body.asFloat64(),"value match");
+        CHECK(msg.head.rows() == msg2.head.rows()); // matrix row match
+        CHECK(msg.head.cols() == msg2.head.cols()); // matrix col match
+        CHECK(msg.body.asFloat64()== Approx(msg2.body.asFloat64())); // "value match"
 
         Bottle bot;
         bot.read(msg);
         Bottle *bot1 = bot.get(0).asList();
         Bottle *bot2 = bot.get(1).asList();
-        checkTrue(bot1!=nullptr&&bot2!=nullptr,"got head/body");
+        CHECK((bot1!=nullptr&&bot2!=nullptr)); // got head/body
         if (bot1==nullptr || bot2==nullptr) return;
-        checkEqual((size_t) bot1->get(0).asInt32(),rr,"row count matches");
-        checkEqual((size_t) bot1->get(1).asInt32(),cc,"column count matches");
+        CHECK((size_t) bot1->get(0).asInt32() == rr); // row count matches
+        CHECK((size_t) bot1->get(1).asInt32() == cc); // column count matches
         Bottle *lst = bot1->get(2).asList();
-        checkTrue(lst!=nullptr,"have data");
+        CHECK(lst!=nullptr); // have data
         if (!lst) return;
-        checkEqual(lst->size(),(rr*cc),"data length matches");
-        checkEqualish(bot2->get(0).asFloat64(),value,"value match");
+        CHECK(lst->size() == (rr*cc)); // data length matches
+        CHECK(bot2->get(0).asFloat64() == Approx(value)); // "value match"
     }
 
-    void checkEmpty() {
-        report(0,"check data() when matrix is empty...");
+    SECTION("check data() when matrix is empty...")
+    {
         Matrix m;
         m.resize(0,0);
-        checkTrue(m.data()==nullptr, "size 0x0 => null data()");
+        CHECK(m.data()==nullptr); // size 0x0 => null data()
         m.resize(0,5);
-        checkTrue(m.data()==nullptr, "size 0x5 => null data()");
+        CHECK(m.data()==nullptr); // size 0x5 => null data()
         m.resize(5,0);
-        checkTrue(m.data()==nullptr, "size 5x0 => null data()");
+        CHECK(m.data()==nullptr); // size 5x0 => null data()
         m.resize(5,5);
-        checkTrue(m.data()!=nullptr, "size 5x5 => non-null data()");
+        CHECK(m.data()!=nullptr); // size 5x5 => non-null data()
         // This is *not* redundant with earlier test
         m.resize(0,0);
-        checkTrue(m.data()==nullptr, "size 0x0 => null data()");
+        CHECK(m.data()==nullptr); // size 0x0 => null data()
     }
 
-    virtual void runTests() override {
-            Network::setLocalMode(true);
-            checkCopyCtor();
-            checkCopy();
-            checkResize();
-            checkSubmatrix();
-            checkGsl();
+    SECTION("check toString")
+    {
+        {
+            INFO("testing toString");
+            Matrix m;
+            m.resize(10,10);
+            std::string strToCheck = "\
+ 0.000000\t 0.100000\t 0.200000\t 0.300000\t 0.400000\t 0.500000\t 0.600000\t 0.700000\t 0.800000\t 0.900000\n\
+ 1.000000\t 1.100000\t 1.200000\t 1.300000\t 1.400000\t 1.500000\t 1.600000\t 1.700000\t 1.800000\t 1.900000\n\
+ 2.000000\t 2.100000\t 2.200000\t 2.300000\t 2.400000\t 2.500000\t 2.600000\t 2.700000\t 2.800000\t 2.900000\n\
+ 3.000000\t 3.100000\t 3.200000\t 3.300000\t 3.400000\t 3.500000\t 3.600000\t 3.700000\t 3.800000\t 3.900000\n\
+ 4.000000\t 4.100000\t 4.200000\t 4.300000\t 4.400000\t 4.500000\t 4.600000\t 4.700000\t 4.800000\t 4.900000\n\
+ 5.000000\t 5.100000\t 5.200000\t 5.300000\t 5.400000\t 5.500000\t 5.600000\t 5.700000\t 5.800000\t 5.900000\n\
+ 6.000000\t 6.100000\t 6.200000\t 6.300000\t 6.400000\t 6.500000\t 6.600000\t 6.700000\t 6.800000\t 6.900000\n\
+ 7.000000\t 7.100000\t 7.200000\t 7.300000\t 7.400000\t 7.500000\t 7.600000\t 7.700000\t 7.800000\t 7.900000\n\
+ 8.000000\t 8.100000\t 8.200000\t 8.300000\t 8.400000\t 8.500000\t 8.600000\t 8.700000\t 8.800000\t 8.900000\n\
+ 9.000000\t 9.100000\t 9.200000\t 9.300000\t 9.400000\t 9.500000\t 9.600000\t 9.700000\t 9.800000\t 9.900000\
+";
 
-            checkBottle();
-            checkSendReceive();
-
-            checkFormat();
-            checkPair();
-
-            checkEmpty();
-
-            Network::setLocalMode(false);
+            for (size_t i=0; i<10; i++) {
+                for (size_t j=0; j<10; j++) {
+                    m(i, j) = (i + static_cast<double>(j)/10);
+                }
+            }
+            CHECK(m.toString() == strToCheck); // string correctly formatted
         }
-};
 
-static MatrixTest theMatrixTest;
+        {
+            INFO("testing toString with custom end of row");
+            Matrix m;
+            m.resize(10,10);
+            std::string strToCheck = "\
+ 0.000000\t 0.100000\t 0.200000\t 0.300000\t 0.400000\t 0.500000\t 0.600000\t 0.700000\t 0.800000\t 0.900000\t\
+ 1.000000\t 1.100000\t 1.200000\t 1.300000\t 1.400000\t 1.500000\t 1.600000\t 1.700000\t 1.800000\t 1.900000\t\
+ 2.000000\t 2.100000\t 2.200000\t 2.300000\t 2.400000\t 2.500000\t 2.600000\t 2.700000\t 2.800000\t 2.900000\t\
+ 3.000000\t 3.100000\t 3.200000\t 3.300000\t 3.400000\t 3.500000\t 3.600000\t 3.700000\t 3.800000\t 3.900000\t\
+ 4.000000\t 4.100000\t 4.200000\t 4.300000\t 4.400000\t 4.500000\t 4.600000\t 4.700000\t 4.800000\t 4.900000\t\
+ 5.000000\t 5.100000\t 5.200000\t 5.300000\t 5.400000\t 5.500000\t 5.600000\t 5.700000\t 5.800000\t 5.900000\t\
+ 6.000000\t 6.100000\t 6.200000\t 6.300000\t 6.400000\t 6.500000\t 6.600000\t 6.700000\t 6.800000\t 6.900000\t\
+ 7.000000\t 7.100000\t 7.200000\t 7.300000\t 7.400000\t 7.500000\t 7.600000\t 7.700000\t 7.800000\t 7.900000\t\
+ 8.000000\t 8.100000\t 8.200000\t 8.300000\t 8.400000\t 8.500000\t 8.600000\t 8.700000\t 8.800000\t 8.900000\t\
+ 9.000000\t 9.100000\t 9.200000\t 9.300000\t 9.400000\t 9.500000\t 9.600000\t 9.700000\t 9.800000\t 9.900000\
+";
 
-UnitTest& getMatrixTest() {
-    return theMatrixTest;
+            for (size_t i=0; i<10; i++) {
+                for (size_t j=0; j<10; j++) {
+                    m(i, j) = (i + static_cast<double>(j)/10);
+                }
+            }
+            CHECK(m.toString(-1, -1, "\t") == strToCheck); // string correctly formatted
+        }
+
+
+        {
+            INFO("testing toString with custom end of row");
+            Matrix m;
+            m.resize(10,10);
+            std::string strToCheck = "\
+ 0.0  0.1  0.2  0.3  0.4  0.5  0.6  0.7  0.8  0.9\n\
+ 1.0  1.1  1.2  1.3  1.4  1.5  1.6  1.7  1.8  1.9\n\
+ 2.0  2.1  2.2  2.3  2.4  2.5  2.6  2.7  2.8  2.9\n\
+ 3.0  3.1  3.2  3.3  3.4  3.5  3.6  3.7  3.8  3.9\n\
+ 4.0  4.1  4.2  4.3  4.4  4.5  4.6  4.7  4.8  4.9\n\
+ 5.0  5.1  5.2  5.3  5.4  5.5  5.6  5.7  5.8  5.9\n\
+ 6.0  6.1  6.2  6.3  6.4  6.5  6.6  6.7  6.8  6.9\n\
+ 7.0  7.1  7.2  7.3  7.4  7.5  7.6  7.7  7.8  7.9\n\
+ 8.0  8.1  8.2  8.3  8.4  8.5  8.6  8.7  8.8  8.9\n\
+ 9.0  9.1  9.2  9.3  9.4  9.5  9.6  9.7  9.8  9.9\
+";
+
+            for (size_t i=0; i<10; i++) {
+                for (size_t j=0; j<10; j++) {
+                    m(i, j) = (i + static_cast<double>(j)/10);
+                }
+            }
+            CHECK(m.toString(1, 3) == strToCheck); // string correctly formatted
+        }
+
+    }
+
+    NetworkBase::setLocalMode(false);
 }

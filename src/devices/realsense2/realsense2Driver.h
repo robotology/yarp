@@ -43,7 +43,7 @@ namespace yarp
  *
  * This device is paired with its server called RGBDSensorWrapper to stream the images and perform remote operations.
  *
- * The config file is subdivided into 2 major sections called "SETTINGS" and "HW_DESCRIPTION".
+ * The configuration file is subdivided into 2 major sections called "SETTINGS" and "HW_DESCRIPTION".
  *
  * The "SETTINGS" section is meant for read/write parameters, meaning parameters which can be get and set by the device.
  * A common case of setting is the image resolution in pixel. This setting will be read by the device and it'll be applied
@@ -62,7 +62,7 @@ namespace yarp
  * \note For parameters which are neither in SETTINGS nor in HW_DESCRIPTION groups, read / write functionality is assumed
  *  but not initial setting will be performed. Device will start with manufacturer default values.
  * \warning A single parameter cannot be present into both SETTINGS and HW_DESCRIPTION groups.
- * \warning whenever more then one value is required by the setting, the values must be in parenthesys!
+ * \warning whenever more then one value is required by the setting, the values must be in parentheses!
  *
  * | YARP device name |
  * |:-----------------:|
@@ -92,7 +92,7 @@ subdevice    realsense2
 name         /depthCamera
 
 [SETTINGS]
-depthResolution (640 480)    #Note the parentesys
+depthResolution (640 480)    #Note the parentheses
 rgbResolution   (640 480)
 framerate       30
 enableEmitter   true
@@ -131,12 +131,10 @@ class yarp::dev::realsense2Driver :  public yarp::dev::DeviceDriver,
 {
 private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     typedef yarp::os::Stamp                           Stamp;
     typedef yarp::os::Property                        Property;
     typedef yarp::sig::FlexImage                      FlexImage;
 
-#endif
 public:
     realsense2Driver();
     ~realsense2Driver();

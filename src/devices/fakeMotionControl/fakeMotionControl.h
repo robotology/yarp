@@ -30,11 +30,6 @@
 #include <yarp/dev/IVirtualAnalogSensor.h>
 #include <yarp/dev/ImplementVirtualAnalogSensor.h>
 
-namespace yarp {
-    namespace dev {
-      class FakeMotionControl;
-    }
-}
 
 struct ImpedanceLimits
 {
@@ -84,45 +79,46 @@ struct ImpedanceParameters
     ImpedanceParameters() {stiffness=0; damping=0;}
 };
 
-class yarp::dev::FakeMotionControl :    public DeviceDriver,
-//                                         public DeviceResponder,
-                                        public yarp::os::PeriodicThread,
-                                        public IPidControlRaw,
-                                        public IControlCalibrationRaw,
-                                        public IAmplifierControlRaw,
-                                        public IEncodersTimedRaw,
-                                        public IMotorEncodersRaw,
-                                        public IMotorRaw,
-                                        public IPositionControlRaw,
-                                        public IVelocityControlRaw,
-                                        public IControlModeRaw,
-                                        public IControlLimitsRaw,
-                                        public IPositionDirectRaw,
-                                        public ITorqueControlRaw,
-                                        public ICurrentControlRaw,
-                                        public IPWMControlRaw,
-                                        public IImpedanceControlRaw,
-                                        public IInteractionModeRaw,
-                                        public IAxisInfoRaw,
-                                        public IVirtualAnalogSensorRaw, //*
-                                        public ImplementControlCalibration,
-                                        public ImplementAmplifierControl,
-                                        public ImplementPidControl,
-                                        public ImplementEncodersTimed,
-                                        public ImplementPositionControl,
-                                        public ImplementVelocityControl,
-                                        public ImplementControlMode,
-                                        public ImplementImpedanceControl,
-                                        public ImplementMotorEncoders,
-                                        public ImplementTorqueControl,
-                                        public ImplementControlLimits,
-                                        public ImplementPositionDirect,
-                                        public ImplementInteractionMode,
-                                        public ImplementCurrentControl,
-                                        public ImplementPWMControl,
-                                        public ImplementMotor,
-                                        public ImplementAxisInfo,
-                                        public ImplementVirtualAnalogSensor //*
+class FakeMotionControl :
+        public yarp::dev::DeviceDriver,
+//        public yarp::dev::DeviceResponder,
+        public yarp::os::PeriodicThread,
+        public yarp::dev::IPidControlRaw,
+        public yarp::dev::IControlCalibrationRaw,
+        public yarp::dev::IAmplifierControlRaw,
+        public yarp::dev::IEncodersTimedRaw,
+        public yarp::dev::IMotorEncodersRaw,
+        public yarp::dev::IMotorRaw,
+        public yarp::dev::IPositionControlRaw,
+        public yarp::dev::IVelocityControlRaw,
+        public yarp::dev::IControlModeRaw,
+        public yarp::dev::IControlLimitsRaw,
+        public yarp::dev::IPositionDirectRaw,
+        public yarp::dev::ITorqueControlRaw,
+        public yarp::dev::ICurrentControlRaw,
+        public yarp::dev::IPWMControlRaw,
+        public yarp::dev::IImpedanceControlRaw,
+        public yarp::dev::IInteractionModeRaw,
+        public yarp::dev::IAxisInfoRaw,
+        public yarp::dev::IVirtualAnalogSensorRaw, //*
+        public yarp::dev::ImplementControlCalibration,
+        public yarp::dev::ImplementAmplifierControl,
+        public yarp::dev::ImplementPidControl,
+        public yarp::dev::ImplementEncodersTimed,
+        public yarp::dev::ImplementPositionControl,
+        public yarp::dev::ImplementVelocityControl,
+        public yarp::dev::ImplementControlMode,
+        public yarp::dev::ImplementImpedanceControl,
+        public yarp::dev::ImplementMotorEncoders,
+        public yarp::dev::ImplementTorqueControl,
+        public yarp::dev::ImplementControlLimits,
+        public yarp::dev::ImplementPositionDirect,
+        public yarp::dev::ImplementInteractionMode,
+        public yarp::dev::ImplementCurrentControl,
+        public yarp::dev::ImplementPWMControl,
+        public yarp::dev::ImplementMotor,
+        public yarp::dev::ImplementAxisInfo,
+        public yarp::dev::ImplementVirtualAnalogSensor //*
 {
 private:
     enum VerboseLevel
@@ -158,25 +154,25 @@ private:
     int    *_motorPoles;                        /** */
     double *_rotorlimits_max;                   /** */
     double *_rotorlimits_min;                   /** */
-    Pid *_ppids;                                /** initial position gains */
-    Pid *_tpids;                                /** initial torque gains */
-    Pid *_cpids;                                /** initial current gains */
-    Pid *_vpids;                                /** initial velocity gains */
-    bool *_ppids_ena;                           
-    bool *_tpids_ena;                           
-    bool *_cpids_ena;                           
-    bool *_vpids_ena;                           
-    double *_ppids_lim;                         
-    double *_tpids_lim;                         
-    double *_cpids_lim;                         
-    double *_vpids_lim;                         
-    double *_ppids_ref;                         
-    double *_tpids_ref;                         
-    double *_cpids_ref;                         
-    double *_vpids_ref;                         
+    yarp::dev::Pid *_ppids;                                /** initial position gains */
+    yarp::dev::Pid *_tpids;                                /** initial torque gains */
+    yarp::dev::Pid *_cpids;                                /** initial current gains */
+    yarp::dev::Pid *_vpids;                                /** initial velocity gains */
+    bool *_ppids_ena;
+    bool *_tpids_ena;
+    bool *_cpids_ena;
+    bool *_vpids_ena;
+    double *_ppids_lim;
+    double *_tpids_lim;
+    double *_cpids_lim;
+    double *_vpids_lim;
+    double *_ppids_ref;
+    double *_tpids_ref;
+    double *_cpids_ref;
+    double *_vpids_ref;
 
     std::string *_axisName;                          /** axis name */
-    JointTypeEnum *_jointType;                          /** axis type */
+    yarp::dev::JointTypeEnum *_jointType;                          /** axis type */
 //     ImpedanceLimits     *_impedance_limits;     /** impedance limits */
     double *_limitsMin;                         /** joint limits, max*/
     double *_limitsMax;                         /** joint limits, min*/
@@ -261,27 +257,27 @@ public:
     void threadRelease() override;
 
     /////////   PID INTERFACE   /////////
-    bool setPidRaw(const PidControlTypeEnum& pidtype,int j, const Pid &pid) override;
-    bool setPidsRaw(const PidControlTypeEnum& pidtype,const Pid *pids) override;
-    bool setPidReferenceRaw(const PidControlTypeEnum& pidtype,int j, double ref) override;
-    bool setPidReferencesRaw(const PidControlTypeEnum& pidtype,const double *refs) override;
-    bool setPidErrorLimitRaw(const PidControlTypeEnum& pidtype,int j, double limit) override;
-    bool setPidErrorLimitsRaw(const PidControlTypeEnum& pidtype,const double *limits) override;
-    bool getPidErrorRaw(const PidControlTypeEnum& pidtype,int j, double *err) override;
-    bool getPidErrorsRaw(const PidControlTypeEnum& pidtype, double *errs) override;
-    bool getPidOutputRaw(const PidControlTypeEnum& pidtype,int j, double *out) override;
-    bool getPidOutputsRaw(const PidControlTypeEnum& pidtype,double *outs) override;
-    bool getPidRaw(const PidControlTypeEnum& pidtype,int j, Pid *pid) override;
-    bool getPidsRaw(const PidControlTypeEnum& pidtype,Pid *pids) override;
-    bool getPidReferenceRaw(const PidControlTypeEnum& pidtype,int j, double *ref) override;
-    bool getPidReferencesRaw(const PidControlTypeEnum& pidtype,double *refs) override;
-    bool getPidErrorLimitRaw(const PidControlTypeEnum& pidtype,int j, double *limit) override;
-    bool getPidErrorLimitsRaw(const PidControlTypeEnum& pidtype,double *limits) override;
-    bool resetPidRaw(const PidControlTypeEnum& pidtype,int j) override;
-    bool disablePidRaw(const PidControlTypeEnum& pidtype,int j) override;
-    bool enablePidRaw(const PidControlTypeEnum& pidtype,int j) override;
-    bool setPidOffsetRaw(const PidControlTypeEnum& pidtype,int j, double v) override;
-    bool isPidEnabledRaw(const PidControlTypeEnum& pidtype, int j, bool* enabled) override;
+    bool setPidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, const yarp::dev::Pid &pid) override;
+    bool setPidsRaw(const yarp::dev::PidControlTypeEnum& pidtype,const yarp::dev::Pid *pids) override;
+    bool setPidReferenceRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double ref) override;
+    bool setPidReferencesRaw(const yarp::dev::PidControlTypeEnum& pidtype,const double *refs) override;
+    bool setPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double limit) override;
+    bool setPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum& pidtype,const double *limits) override;
+    bool getPidErrorRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *err) override;
+    bool getPidErrorsRaw(const yarp::dev::PidControlTypeEnum& pidtype, double *errs) override;
+    bool getPidOutputRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *out) override;
+    bool getPidOutputsRaw(const yarp::dev::PidControlTypeEnum& pidtype,double *outs) override;
+    bool getPidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, yarp::dev::Pid *pid) override;
+    bool getPidsRaw(const yarp::dev::PidControlTypeEnum& pidtype, yarp::dev::Pid *pids) override;
+    bool getPidReferenceRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *ref) override;
+    bool getPidReferencesRaw(const yarp::dev::PidControlTypeEnum& pidtype,double *refs) override;
+    bool getPidErrorLimitRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *limit) override;
+    bool getPidErrorLimitsRaw(const yarp::dev::PidControlTypeEnum& pidtype,double *limits) override;
+    bool resetPidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
+    bool disablePidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
+    bool enablePidRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
+    bool setPidOffsetRaw(const yarp::dev::PidControlTypeEnum& pidtype,int j, double v) override;
+    bool isPidEnabledRaw(const yarp::dev::PidControlTypeEnum& pidtype, int j, bool* enabled) override;
 
     // POSITION CONTROL INTERFACE RAW
     bool getAxes(int *ax) override;
@@ -321,7 +317,7 @@ public:
 
 
     // calibration2raw
-    bool setCalibrationParametersRaw(int axis, const CalibrationParameters& params) override;
+    bool setCalibrationParametersRaw(int axis, const yarp::dev::CalibrationParameters& params) override;
     bool calibrateAxisWithParamsRaw(int axis, unsigned int type, double p1, double p2, double p3) override;
     bool calibrationDoneRaw(int j) override;
 
@@ -428,8 +424,8 @@ public:
     bool setRefTorquesRaw(const int n_joint, const int *joints, const double *t) override;
     bool getRefTorquesRaw(double *t) override;
     bool getRefTorqueRaw(int j, double *t) override;
-    bool getMotorTorqueParamsRaw(int j, MotorTorqueParameters *params) override;
-    bool setMotorTorqueParamsRaw(int j, const MotorTorqueParameters params) override;
+    bool getMotorTorqueParamsRaw(int j, yarp::dev::MotorTorqueParameters *params) override;
+    bool setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params) override;
 //     int32_t getRefSpeedInTbl(uint8_t boardNum, int j, eOmeas_position_t pos) override;
 
     // IVelocityControl2
@@ -497,8 +493,8 @@ public:
 private:
     void cleanup(void);
     bool dealloc();
-    bool parsePositionPidsGroup(yarp::os::Bottle& pidsGroup, Pid myPid[]);
-    bool parseTorquePidsGroup(yarp::os::Bottle& pidsGroup, Pid myPid[], double kbemf[], double ktau[], int filterType[]);
+    bool parsePositionPidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[]);
+    bool parseTorquePidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[], double kbemf[], double ktau[], int filterType[]);
     bool parseImpedanceGroup_NewFormat(yarp::os::Bottle& pidsGroup, ImpedanceParameters vals[]);
 
     bool extractGroup(yarp::os::Bottle &input, yarp::os::Bottle &out, const std::string &key1, const std::string &txt, int size);

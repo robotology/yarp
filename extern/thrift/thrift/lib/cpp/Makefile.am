@@ -70,6 +70,7 @@ libthrift_la_SOURCES = src/thrift/TApplicationException.cpp \
                        src/thrift/TOutput.cpp \
                        src/thrift/VirtualProfiling.cpp \
                        src/thrift/async/TAsyncChannel.cpp \
+                       src/thrift/async/TAsyncProtocolProcessor.cpp \
                        src/thrift/async/TConcurrentClientSyncInfo.cpp \
                        src/thrift/concurrency/ThreadManager.cpp \
                        src/thrift/concurrency/TimerManager.cpp \
@@ -116,7 +117,6 @@ libthrift_la_SOURCES += src/thrift/concurrency/Mutex.cpp \
 endif
 
 libthriftnb_la_SOURCES = src/thrift/server/TNonblockingServer.cpp \
-                         src/thrift/async/TAsyncProtocolProcessor.cpp \
                          src/thrift/async/TEvhttpServer.cpp \
                          src/thrift/async/TEvhttpClientChannel.cpp
 
@@ -150,7 +150,7 @@ libthriftz_la_CXXFLAGS  = $(AM_CXXFLAGS)
 libthriftqt_la_CXXFLAGS  = $(AM_CXXFLAGS)
 libthriftqt5_la_CXXFLAGS  = $(AM_CXXFLAGS)
 libthriftnb_la_LDFLAGS  = -release $(VERSION) $(BOOST_LDFLAGS)
-libthriftz_la_LDFLAGS   = -release $(VERSION) $(BOOST_LDFLAGS)
+libthriftz_la_LDFLAGS   = -release $(VERSION) $(BOOST_LDFLAGS) $(ZLIB_LIBS)
 libthriftqt_la_LDFLAGS   = -release $(VERSION) $(BOOST_LDFLAGS) $(QT_LIBS)
 libthriftqt5_la_LDFLAGS   = -release $(VERSION) $(BOOST_LDFLAGS) $(QT5_LIBS)
 

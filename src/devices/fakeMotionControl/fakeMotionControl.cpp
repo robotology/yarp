@@ -117,12 +117,6 @@ std::string toString(const T& value)
     return oss.str();
 }
 
-yarp::dev::DriverCreator *createFakeMotionControl()
-{
-    return new yarp::dev::DriverCreatorOf<yarp::dev::FakeMotionControl>
-            ("fakeMotionControl", "controlboardwrapper2", "yarp::dev::FakeMotionControl");
-}
-
 //generic function that check is key1 is present in input bottle and that the result has size elements
 // return true/false
 bool FakeMotionControl::extractGroup(Bottle &input, Bottle &out, const std::string &key1, const std::string &txt, int size)
@@ -2967,7 +2961,7 @@ bool FakeMotionControl::getInteractionModeRaw(int j, yarp::dev::InteractionModeE
 {
     if(verbose > VERY_VERY_VERBOSE)
         yTrace() << "j: " << j;
-    
+
     *_mode = (yarp::dev::InteractionModeEnum)_interactMode[j];
     return true;}
 
@@ -2979,7 +2973,7 @@ bool FakeMotionControl::getInteractionModesRaw(int n_joints, int *joints, yarp::
         ret = ret && getInteractionModeRaw(joints[j], &modes[j]);
     }
     return ret;
-    
+
 }
 
 bool FakeMotionControl::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
@@ -2997,9 +2991,9 @@ bool FakeMotionControl::setInteractionModeRaw(int j, yarp::dev::InteractionModeE
 {
     if(verbose >= VERY_VERBOSE)
         yTrace() << "j: " << j << " interaction mode: " << yarp::os::Vocab::decode(_mode);
-    
+
     _interactMode[j] = _mode;
-   
+
     return true;
 }
 
@@ -3022,7 +3016,7 @@ bool FakeMotionControl::setInteractionModesRaw(yarp::dev::InteractionModeEnum* m
         ret &= setInteractionModeRaw(i, modes[i]);
     }
     return ret;
-    
+
 }
 
 bool FakeMotionControl::getNumberOfMotorsRaw(int* num)

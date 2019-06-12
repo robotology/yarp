@@ -133,7 +133,7 @@ public:
     void appendFloat32(yarp::conf::float32_t data) override;
     void appendFloat64(yarp::conf::float64_t data) override;
     void appendBlock(const char* data, size_t len) override;
-    void appendString(const char* str, int terminate = '\n') override;
+    void appendText(const std::string& str, const char terminate = '\n') override;
     void appendExternalBlock(const char* data, size_t len) override;
 
     /**
@@ -151,8 +151,6 @@ public:
      * @param data the buffer to add
      */
     virtual void appendBlockCopy(const Bytes& data);
-
-    virtual void appendStringBase(const std::string& data);
 
     /**
      * Send a string along with a carriage-return-line-feed sequence.

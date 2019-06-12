@@ -9,15 +9,19 @@ project(YARP_sig)
 
 set(YARP_sig_HDRS include/yarp/sig/all.h
                   include/yarp/sig/api.h
+                  include/yarp/sig/Image.h
                   include/yarp/sig/ImageDraw.h
                   include/yarp/sig/ImageFile.h
-                  include/yarp/sig/Image.h
                   include/yarp/sig/ImageNetworkHeader.h
+                  include/yarp/sig/ImageUtils.h
+                  include/yarp/sig/IntrinsicParams.h
                   include/yarp/sig/Matrix.h
                   include/yarp/sig/PointCloud.h
                   include/yarp/sig/PointCloudBase.h
                   include/yarp/sig/PointCloudNetworkHeader.h
                   include/yarp/sig/PointCloudTypes.h
+                  include/yarp/sig/PointCloudUtils.h
+                  include/yarp/sig/PointCloudUtils-inl.h
                   include/yarp/sig/SoundFile.h
                   include/yarp/sig/Sound.h
                   include/yarp/sig/Vector.h)
@@ -32,9 +36,12 @@ set(YARP_sig_IMPL_HDRS include/yarp/sig/impl/DeBayer.h
 set(YARP_sig_SRCS src/ImageCopy.cpp
                   src/Image.cpp
                   src/ImageFile.cpp
+                  src/ImageUtils.cpp
+                  src/IntrinsicParams.cpp
                   src/IplImage.cpp
                   src/Matrix.cpp
                   src/PointCloudBase.cpp
+                  src/PointCloudUtils.cpp
                   src/Sound.cpp
                   src/SoundFile.cpp
                   src/Vector.cpp
@@ -64,8 +71,8 @@ list(APPEND YARP_sig_PUBLIC_DEPS YARP_conf
 # YARP_sig library uses headers from YARP_OS impl, and therefore ACE headers
 # are also required.
 if(YARP_HAS_ACE)
-  target_link_libraries(YARP_sig PRIVATE ${ACE_LIBRARIES})
-  target_include_directories(YARP_sig SYSTEM PRIVATE ${ACE_INCLUDE_DIRS})
+  target_compile_definitions(YARP_sig PRIVATE YARP_HAS_ACE)
+  target_link_libraries(YARP_sig PRIVATE ACE::ACE_INLINE)
   list(APPEND YARP_sig_PRIVATE_DEPS ACE)
 endif()
 
@@ -74,6 +81,13 @@ if(YARP_HAS_JPEG)
   target_compile_definitions(YARP_sig PRIVATE YARP_HAS_JPEG_C=1)
   target_link_libraries(YARP_sig PRIVATE ${JPEG_LIBRARY})
   list(APPEND YARP_sig_PRIVATE_DEPS JPEG)
+endif()
+
+if(YARP_HAS_PNG)
+  target_include_directories(YARP_sig SYSTEM PRIVATE ${PNG_INCLUDE_DIR})
+  target_compile_definitions(YARP_sig PRIVATE YARP_HAS_PNG)
+  target_link_libraries(YARP_sig PRIVATE ${PNG_LIBRARY})
+  list(APPEND YARP_sig_PRIVATE_DEPS PNG)
 endif()
 
 target_compile_features(YARP_sig PUBLIC cxx_override)

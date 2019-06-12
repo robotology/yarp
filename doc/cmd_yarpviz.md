@@ -6,7 +6,7 @@ The `yarpviz` is a graphical tool for profiling and visualizing Yarp network!
 ![yarpviz](/images/yarpviz.png)
 
 
-To be compiled, `YARP` has to be configured with `CREATE_GUIS=ON` and `CREATE_YARPVIZ=ON`
+To be compiled, `YARP` has to be configured with `YARP_COMPILE_GUIS=ON` and `YARP_COMPILE_yarpviz=ON`
 
 Dependencies
 ------------

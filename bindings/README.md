@@ -11,12 +11,11 @@ BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 This directory is for producing SWIG interfaces to YARP.
 
-This lets you run YARP from Java, Python, Perl, Tcl, Chicken, C#, Ruby,
-Matlab.
+This lets you run YARP from Java, Python, Perl, Tcl, C#, Ruby, Matlab.
 
 Note that while we try to preserve YARP as close to its original form
 as possible, some classes and methods had to be changed because
-of issues with templates and pointers.  So the API is slightly 
+of issues with templates and pointers.  So the API is slightly
 different from the original.  The two ways to find out about the API
 are:
 
@@ -50,7 +49,7 @@ If you install, you end up with a shared library called `yarp_java` in
 and a `yarp.jar` file (actually it is a symbolic link to a versioned `.jar` in the same folder)
 in `${CMAKE_INSTALL_PREFIX}/share/yarp/java`
 where `${CMAKE_INSTALL_PREFIX}` is the path to your YARP installation.
-An additional library, called `yarp_matlab_java.jar` is created, containing utilities to load YARP 
+An additional library, called `yarp_matlab_java.jar` is created, containing utilities to load YARP
 classes inside MATLAB.
 
 You should add `${CMAKE_INSTALL_PREFIX}/share/yarp/java` to your Java ClassPath and
@@ -68,7 +67,7 @@ static {
         se.printStackTrace();
     } catch (NullPointerException npe) {
         npe.printStackTrace();
-    } 
+    }
 }
 ```
 
@@ -83,7 +82,7 @@ Cross compilation works differently in JAVA 9 with respect to previous versions
 
 #### JAVA 9
 Starting with JAVA 9, cross compilation is easier, and we cross-compile to JAVA 7 by default.
-If you want to change the target version, change the CMake variable (in the advanced options) 
+If you want to change the target version, change the CMake variable (in the advanced options)
 `JAVA_RELEASE_VERSION` to your desired version. Note that not all the versions are supported.
 See `javac --help` (`--release` option) for more information.
 
@@ -109,7 +108,7 @@ Currently we are supporting MATLAB through Java, but in the future, expect a nat
 MATLAB support.
 Experimental support of native MATLAB is implemented in https://github.com/robotology-playground/yarp-matlab-bindings.
 
-Matlab can run java code, so we access YARP via Java.  See the 
+Matlab can run java code, so we access YARP via Java.  See the
 "Java interface" section above.
 
 See also:
@@ -117,7 +116,7 @@ See also:
 for latest tips.
 
 Additionally to the instructions to generate Java bindings, see the following:
-Configure your MATLAB classpath and jni loader to find the generated libraries. 
+Configure your MATLAB classpath and jni loader to find the generated libraries.
 See [MATLAB documentation](https://it.mathworks.com/help/matlab/matlab_external/java-class-path.html)
 
 The JAVA package for the MATLAB utility classes is `yarp.matlab`.
@@ -130,7 +129,7 @@ Run:
 ```
 ccmake .
 ```
-  
+
 And set `CREATE_PERL` and/or `CREATE_PYTHON` and/or `CREATE_TCL` to true.
 Run:
 
@@ -138,10 +137,10 @@ Run:
 make
 ```
 
-You should now have libraries called 
+You should now have libraries called
 
-- libyarp.so 
-- and/or _yarp.so 
+- libyarp.so
+- and/or _yarp.so
 - and/or cyarp.so
 - and/or yarp.so
 
@@ -154,36 +153,6 @@ to a .dll, and comment the line referring to a .so
 
 Make sure all DLLs or SOs needed for YARP are available (for example, by
 copying them to the current directory).
-
-## CHICKEN INTERFACE
-
-```
-At the time of writing (2010), you need to comment out the line mentioning
-include "std_vector.i" in yarp.i -- a mapping for the std::vector class
-doesn't seem to be implemented yet for Chicken.
-```
-
-Run:
-
-```
-ccmake .
-```
-  
-And set `CREATE_CHICKEN` to true.
-Run:
-
-```
-make
-```
-
-You should now have `cyarp.so` and `cyarp.scm`
-
-Now try:
-```bash
-chicken cyarp.scm
-chicken example.scm && gcc example.c cyarp.c libcyarp.so -lchicken -o example
-./example
-```
 
 
 ## CSHARP INTERFACE
@@ -224,7 +193,7 @@ OLD> step.  Alternatively, manually fix the problems (there are cases
 OLD> where "override" is specified rather than "virtual").
 OLD>
 OLD> At the time of writing, there are also a few errors related to the
-OLD> PidVector class.  One solution is to just remove that and all 
+OLD> PidVector class.  One solution is to just remove that and all
 OLD> references to it.
 ```
 
@@ -247,9 +216,3 @@ NOTE:
 Different compilers need the library to be called different things.
 If you have yarp.so, try copying it to libyarp.so, or vice versa,
 if you run into trouble.
-
-
-## ALLEGRO INTERFACE
-
-Should taste just like Chicken (see above).  Thanks to Lorenz Moselechner
-for adding this.

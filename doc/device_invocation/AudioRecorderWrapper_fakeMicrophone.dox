@@ -1,0 +1,46 @@
+/**
+ * \ingroup dev_examples
+ *
+ * \defgroup AudioRecorderWrapper_fakeMicrophone Example for AudioRecorderWrapper (AudioRecorderWrapper_fakeMicrophone)
+
+Instantiates \ref cmd_device_AudioRecorderWrapper "AudioRecorderWrapper" device implemented by AudioRecorderWrapper.
+\verbatim
+device AudioRecorderWrapper
+subdevice fakeMicrophone
+name /microphone
+audio_file 440.wav
+start
+\endverbatim
+If this text is saved in a file called AudioRecorderWrapper_fakeMicrophone.ini then the device can be created by doing:
+\verbatim
+yarpdev --file AudioRecorderWrapper_fakeMicrophone.ini
+\endverbatim
+Of course, the configuration could be passed just as command line options, or as a yarp::os::Property object in a program:
+\code
+Property p;
+p.fromConfigFile("AudioRecorderWrapper_fakeMicrophone.ini");
+// of course you could construct the Property object on-the-fly
+PolyDriver dev;
+dev.open(p);
+if (dev.isValid()) { /* use the device via view method */ }
+\endcode
+Here is a list of properties checked when starting up a device based on this configuration file.
+Note that which properties are checked can depend on whether other properties are present.
+In some cases properties can also vary between operating systems.
+So this is just an example
+
+<table>
+<tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
+<tr><td>device</td><td></td><td></td></tr>
+<tr><td>period</td><td></td><td></td></tr>
+<tr><td>subdevice</td><td></td><td></td></tr>
+<tr><td>min_samples_over_network</td><td></td><td></td></tr>
+<tr><td>max_samples_over_network</td><td></td><td></td></tr>
+<tr><td>max_samples_timeout</td><td></td><td></td></tr>
+<tr><td>name</td><td></td><td></td></tr>
+<tr><td>start</td><td></td><td></td></tr>
+</table>
+
+\sa AudioRecorderWrapper
+
+ */

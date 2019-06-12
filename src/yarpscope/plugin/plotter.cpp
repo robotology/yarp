@@ -56,14 +56,25 @@ Plotter::Plotter(const QString &title, int gridx, int gridy, int hspan, int vspa
 
     customPlot.axisRect()->setBackground(QBrush(QColor(bgcolor)));
     customPlot.axisRect()->setupFullAxesBox(true);
+#if !defined(QCUSTOMPLOT_VERSION) || (QCUSTOMPLOT_VERSION < 0x020000)
     customPlot.axisRect()->axis(QCPAxis::atBottom)->setTickLabelType(QCPAxis::ltNumber);
     customPlot.axisRect()->axis(QCPAxis::atBottom)->setAutoTickStep(false);
     customPlot.axisRect()->axis(QCPAxis::atBottom)->setTickStep(25);
+#else
+    QSharedPointer<QCPAxisTickerFixed> fixedTicker(new QCPAxisTickerFixed);
+    customPlot.axisRect()->axis(QCPAxis::atBottom)->setTicker(fixedTicker);
+    fixedTicker->setTickStep(25);
+    fixedTicker->setScaleStrategy(QCPAxisTickerFixed::ssNone);
+#endif
     customPlot.axisRect()->axis(QCPAxis::atBottom)->setRange(0,size);
     customPlot.axisRect()->axis(QCPAxis::atLeft)->setRange(minval, maxval);
     customPlot.setInteractions( QCP::iRangeDrag | QCP::iRangeZoom  );
     auto* textLabel = new QCPItemText(&customPlot);
+#if !defined(QCUSTOMPLOT_VERSION) || (QCUSTOMPLOT_VERSION < 0x020000)
     customPlot.addItem(textLabel);
+#else
+    // Nothing to do
+#endif
     textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
     textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
     textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
@@ -349,9 +360,17 @@ void Graph::appendValues(float y, float t)
 
     if(customGraph && customGraphPoint){
         customGraph->addData(lastX,lastY);
+#if !defined(QCUSTOMPLOT_VERSION) || (QCUSTOMPLOT_VERSION < 0x020000)
         customGraphPoint->clearData();
+#else
+        customGraphPoint->data()->clear();
+#endif
         customGraphPoint->addData(lastX,lastY);
+#if !defined(QCUSTOMPLOT_VERSION) || (QCUSTOMPLOT_VERSION < 0x020000)
         customGraph->removeDataBefore(lastX - 4*buffer_size);
+#else
+        customGraph->data()->removeBefore(lastX - 4*buffer_size);
+#endif
         numberAcquiredData++;
     }
 
@@ -378,10 +397,18 @@ void Graph::setCustomGraphPoint(QCPGraph *g)
 void Graph::clearData()
 {
     if(customGraph){
+#if !defined(QCUSTOMPLOT_VERSION) || (QCUSTOMPLOT_VERSION < 0x020000)
         customGraph->clearData();
+#else
+        customGraph->data()->clear();
+#endif
     }
     if(customGraphPoint){
+#if !defined(QCUSTOMPLOT_VERSION) || (QCUSTOMPLOT_VERSION < 0x020000)
         customGraphPoint->clearData();
+#else
+        customGraphPoint->data()->clear();
+#endif
     }
 
 }

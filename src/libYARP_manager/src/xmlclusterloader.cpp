@@ -130,6 +130,15 @@ bool XmlClusterLoader::parseXmlFile(Cluster &_cluster)
         {
             c_node.ssh_options = node->Attribute("ssh-options");
         }
+
+        if (node->Attribute("address"))
+        {
+            c_node.address = node->Attribute("address");
+        }
+        else
+        {
+            c_node.address = c_node.name;
+        }
         cluster.nodes.push_back(c_node);
 
 

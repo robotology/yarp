@@ -53,7 +53,7 @@ bool InputStream::setReadTimeout(double timeout)
 
 // slow implementation - only relevant for textmode operation
 
-std::string InputStream::readLine(int terminal, bool* success)
+std::string InputStream::readLine(const char terminal, bool* success)
 {
     std::string buf;
     bool done = false;

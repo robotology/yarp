@@ -1,0 +1,5 @@
+include/yarp/test/demo_common.h
+include/yarp/test/Demo.h
+src/Demo.cpp
+include/yarp/test/DemoExtended.h
+src/DemoExtended.cpp

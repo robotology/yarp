@@ -109,7 +109,7 @@ public:
         return local->expectBlock(data,len);
     }
 
-    std::string expectText(int terminatingChar = '\n') override {
+    std::string expectText(const char terminatingChar = '\n') override {
         return local->expectText(terminatingChar);
     }
 

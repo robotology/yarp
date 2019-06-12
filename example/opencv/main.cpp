@@ -7,57 +7,46 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <stdio.h>
-
-#include <cv.h>
-#include <cvaux.h>
-#include <highgui.h>
-
-#include <yarp/sig/all.h>
-
-using namespace yarp::sig;
-using namespace yarp::sig::draw;
-using namespace yarp::sig::file;
+#include <iostream>
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <yarp/sig/Image.h>
+#include <yarp/sig/ImageDraw.h>
+#include <yarp/sig/ImageFile.h>
+#include <yarp/cv/Cv.h>
 
 
 int main(int argc, char *argv[]) {
-    printf("Show a circle for 3 seconds...\n");
-    ImageOf<PixelRgb> yarpImage;
+    std::cout<<"Show a circle for 3 seconds..."<<std::endl;
+    yarp::sig::ImageOf<yarp::sig::PixelRgb> yarpImage;
 
-
-    printf("Creating a YARP image of a nice circle\n");
+    std::cout<<"Creating a YARP image of a nice circle"<<std::endl;
     yarpImage.resize(300,200);
-    addCircle(yarpImage,PixelRgb(255,0,0),
-              yarpImage.width()/2,yarpImage.height()/2,
-              yarpImage.height()/4);
-    addCircle(yarpImage,PixelRgb(255,50,50),
-              yarpImage.width()/2,yarpImage.height()/2,
-              yarpImage.height()/5);
+    yarpImage.zero();
+    yarp::sig::draw::addCircle(yarpImage,yarp::sig::PixelRgb(255,0,0),
+                               yarpImage.width()/2,yarpImage.height()/2,
+                               yarpImage.height()/4);
+    yarp::sig::draw::addCircle(yarpImage,yarp::sig::PixelRgb(255,50,50),
+                               yarpImage.width()/2,yarpImage.height()/2,
+                               yarpImage.height()/5);
 
+    yarp::sig::file::write(yarpImage,"test-1.ppm");
+    std::cout<<"Saving YARP image to test-1.ppm"<<std::endl;
 
-    printf("Copying YARP image to an OpenCV/IPL image\n");
-    IplImage *cvImage = cvCreateImage(cvSize(yarpImage.width(),  
-                                             yarpImage.height()), 
-                                      IPL_DEPTH_8U, 3 );
-    cvCvtColor((IplImage*)yarpImage.getIplImage(), cvImage, CV_RGB2BGR);
+    std::cout<<"Showing OpenCV image"<<std::endl;
+    cv::Mat cvImage1=yarp::cv::toCvMat(yarpImage);
+    cv::namedWindow("test",1);
+    cv::imshow("test",cvImage1);
 
-    printf("Showing OpenCV/IPL image\n");
-    cvNamedWindow("test",1);
-    cvShowImage("test",cvImage);
+    std::cout<<"Taking image back into YARP..."<<std::endl;
+    cv::Mat cvImage2=cvImage1.clone();
+    auto yarpReturnImage=yarp::cv::fromCvMat<yarp::sig::PixelRgb>(cvImage2);
+    yarp::sig::file::write(yarpReturnImage,"test-2.ppm");
+    std::cout<<"Saving YARP image to test-2.ppm"<<std::endl;
 
-    printf("Taking image back into YARP...\n");
-    ImageOf<PixelBgr> yarpReturnImage;
-    yarpReturnImage.wrapIplImage(cvImage);
-    yarp::sig::file::write(yarpReturnImage,"test.ppm");
-    printf("Saving YARP image to test.ppm\n");
+    cv::waitKey(3000);
+    cv::destroyWindow("test");
 
-
-    cvWaitKey(3000);
-
-    cvDestroyWindow("test");
-
-    cvReleaseImage(&cvImage);
-
-    printf("...done\n");
+    std::cout<<"...done"<<std::endl;
     return 0;
 }

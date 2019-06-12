@@ -6,35 +6,32 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Network.h>
+
 #include <SharedData.h>
 #include <iostream>
-#include <yarp/os/Network.h>
-#include <yarp/os/BufferedPort.h>
 
 using namespace std;
 
 int main()
 {
-   yarp::os::Network network;
+    yarp::os::Network network;
 
-   cout<<"Starting receiver\n";
+    cout << "Starting receiver\n";
 
-   yarp::os::Port port;
-   if (!port.open("/receiver"))
-   {
-       cerr<<"Error opening port, check your yarp network\n";
-       return -1;
-   }
+    yarp::os::Port port;
+    if (!port.open("/receiver")) {
+        cerr << "Error opening port, check your yarp network\n";
+        return -1;
+    }
 
-   while(true)
-   {
-       SharedData d;
-       port.read(d);
+    while (true) {
+        SharedData d;
+        port.read(d);
 
-       //access d
-       
-   }
-   
-   return 0;
+        //access d
+    }
+
+    return 0;
 }
-

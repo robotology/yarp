@@ -12,7 +12,7 @@
 
 #include <cstring> // for std::memset
 
-#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/api.h>
 #include <yarp/os/Log.h>
 
 /*! \file CanBusInterface.h define interface for can bus devices*/
@@ -29,7 +29,7 @@ namespace yarp {
     }
 }
 
-class yarp::dev::CanErrors
+class YARP_dev_API yarp::dev::CanErrors
 {
 public:
     CanErrors()
@@ -52,7 +52,7 @@ public:
     unsigned int rxBufferOvr;    // rx buffer overflow
 };
 
-class yarp::dev::CanMessage
+class YARP_dev_API yarp::dev::CanMessage
 {
  public:
     virtual ~CanMessage(){}
@@ -68,36 +68,41 @@ class yarp::dev::CanMessage
     virtual void setBuffer(unsigned char *)=0;
 };
 
-class yarp::dev::CanBuffer
+class YARP_dev_API yarp::dev::CanBuffer
 {
     yarp::dev::CanMessage **data;
     int size;
- public:
-    CanBuffer()
-        { data=0; }
 
-    inline void resize(CanMessage **d, int s)
-        {
-            size=s;
-            data=d;
-        }
+public:
+    CanBuffer();
 
-    inline CanMessage **getPointer()
-        {
-            return data;
-        }
+    void resize(CanMessage **d, int s)
+    {
+        size=s;
+        data=d;
+    }
 
-    inline CanMessage &operator[](int k)
-        {
-            return *data[k];
-        }
-    inline const CanMessage &operator[](int k) const
-        {
-            return *data[k];
-        }
+    CanMessage **getPointer()
+    {
+        return data;
+    }
+
+    const CanMessage *const *getPointer() const
+    {
+        return data;
+    }
+
+    CanMessage &operator[](int k)
+    {
+        return *data[k];
+    }
+    const CanMessage &operator[](int k) const
+    {
+        return *data[k];
+    }
 };
 
-class yarp::dev::ICanBufferFactory
+class YARP_dev_API yarp::dev::ICanBufferFactory
 {
 public:
     virtual ~ICanBufferFactory(){}
@@ -165,7 +170,7 @@ public:
 /**
  * Interface for a can bus device
  */
-class yarp::dev::ICanBus
+class YARP_dev_API yarp::dev::ICanBus
 {
  public:
     virtual ~ICanBus(){}
