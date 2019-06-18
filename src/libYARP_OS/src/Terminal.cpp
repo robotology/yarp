@@ -8,20 +8,20 @@
  */
 
 #include <yarp/os/impl/Terminal.h>
-#include <yarp/os/impl/PlatformUnistd.h>
-#include <yarp/os/impl/PlatformStdio.h>
 
-#include <yarp/os/Port.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Port.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/PlatformUnistd.h>
 
 #include <cstdio>
 #include <cstring>
 
 #ifdef YARP_HAS_Libedit
-#include <editline/readline.h>
+#    include <editline/readline.h>
 char* szLine = (char*)nullptr;
-bool readlineEOF=false;
+bool readlineEOF = false;
 #endif // YARP_HAS_Libedit
 
 bool yarp::os::impl::Terminal::EOFreached()
@@ -34,7 +34,8 @@ bool yarp::os::impl::Terminal::EOFreached()
     return feof(stdin);
 }
 
-std::string yarp::os::impl::Terminal::getStdin() {
+std::string yarp::os::impl::Terminal::getStdin()
+{
     std::string txt;
 
 #ifdef YARP_HAS_Libedit
@@ -49,7 +50,7 @@ std::string yarp::os::impl::Terminal::getStdin() {
             txt = szLine;
             add_history(szLine);
         } else if (!szLine) {
-            readlineEOF=true;
+            readlineEOF = true;
         }
         return txt;
     }
@@ -58,10 +59,10 @@ std::string yarp::os::impl::Terminal::getStdin() {
     bool done = false;
     char buf[2048];
     while (!done) {
-        char *result = fgets(buf, sizeof(buf), stdin);
+        char* result = fgets(buf, sizeof(buf), stdin);
         if (result != nullptr) {
-            for (unsigned int i=0; i<strlen(buf); i++) {
-                if (buf[i]=='\n') {
+            for (unsigned int i = 0; i < strlen(buf); i++) {
+                if (buf[i] == '\n') {
                     buf[i] = '\0';
                     done = true;
                     break;
@@ -75,7 +76,8 @@ std::string yarp::os::impl::Terminal::getStdin() {
     return txt;
 }
 
-std::string yarp::os::impl::Terminal::readString(bool *eof) {
+std::string yarp::os::impl::Terminal::readString(bool* eof)
+{
     bool end = false;
 
     std::string txt;
@@ -86,8 +88,7 @@ std::string yarp::os::impl::Terminal::readString(bool *eof) {
 
     if (EOFreached()) {
         end = true;
-    } else if (txt.length()>0 && txt[0]<32 && txt[0]!='\n' &&
-               txt[0]!='\r') {
+    } else if (txt.length() > 0 && txt[0] < 32 && txt[0] != '\n' && txt[0] != '\r') {
         end = true;
     }
     if (end) {

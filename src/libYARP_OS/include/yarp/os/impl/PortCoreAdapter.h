@@ -10,29 +10,25 @@
 #ifndef YARP_OS_IMPL_PORTCOREADAPTER_H
 #define YARP_OS_IMPL_PORTCOREADAPTER_H
 
-#include <yarp/os/impl/PortCore.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/Mutex.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/impl/PortCore.h>
 
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class PortCoreAdapter;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
-
-class yarp::os::impl::PortCoreAdapter : public PortCore
+class PortCoreAdapter :
+        public PortCore
 {
 private:
     yarp::os::Mutex stateMutex;
-    PortReader *readDelegate;
-    PortReader *permanentReadDelegate;
-    PortReader *adminReadDelegate;
-    PortWriter *writeDelegate;
+    PortReader* readDelegate;
+    PortReader* permanentReadDelegate;
+    PortReader* adminReadDelegate;
+    PortWriter* writeDelegate;
     //PortReaderCreator *readCreatorDelegate;
     bool readResult;
     bool readActive;
@@ -45,7 +41,7 @@ private:
     yarp::os::Semaphore produce;
     yarp::os::Semaphore consume;
     yarp::os::Semaphore readBlock;
-    PortReaderCreator *recReadCreator;
+    PortReaderCreator* recReadCreator;
     int recWaitAfterSend;
     bool usedForRead;
     bool usedForWrite;
@@ -57,7 +53,7 @@ public:
     bool commitToWrite;
     bool commitToRpc;
     bool active;
-    Mutex *recCallbackLock;
+    Mutex* recCallbackLock;
     bool haveCallbackLock;
 
     PortCoreAdapter(Port& owner);
@@ -78,15 +74,19 @@ public:
     void configAdminReader(PortReader& reader);
     void configReadCreator(PortReaderCreator& creator);
     void configWaitAfterSend(bool waitAfterSend);
-    bool configCallbackLock(Mutex *lock);
+    bool configCallbackLock(Mutex* lock);
     bool unconfigCallbackLock();
-    PortReader *checkPortReader();
-    PortReader *checkAdminPortReader();
-    PortReaderCreator *checkReadCreator();
+    PortReader* checkPortReader();
+    PortReader* checkAdminPortReader();
+    PortReaderCreator* checkReadCreator();
     int checkWaitAfterSend();
     bool isOpened();
     void setOpen(bool opened);
     void includeNodeInName(bool flag);
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_PORTCOREADAPTER_H

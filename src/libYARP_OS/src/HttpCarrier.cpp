@@ -8,22 +8,24 @@
  */
 
 #include <yarp/os/impl/HttpCarrier.h>
-#include <yarp/os/impl/NameClient.h>
+
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Property.h>
+#include <yarp/os/ConnectionState.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/ManagedBytes.h>
-#include <yarp/os/ConnectionState.h>
+#include <yarp/os/Property.h>
 #include <yarp/os/Route.h>
 #include <yarp/os/SizedWriter.h>
+#include <yarp/os/impl/NameClient.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-static std::string quoteFree(const std::string &src) {
+static std::string quoteFree(const std::string& src)
+{
     std::string result;
     for (char ch : src) {
-        if (ch=='"') {
+        if (ch == '"') {
             result += "&quot;";
         } else {
             result += ch;
@@ -32,31 +34,32 @@ static std::string quoteFree(const std::string &src) {
     return result;
 }
 
-static bool asJson(std::string  &accum,
-                   yarp::os::Bottle *bot,
-                   std::string *hint = nullptr);
+static bool asJson(std::string& accum,
+                   yarp::os::Bottle* bot,
+                   std::string* hint = nullptr);
 
-static bool asJson(std::string &accum,
-                   yarp::os::Value &v) {
-    if (v.isInt32()||v.isFloat64()) {
+static bool asJson(std::string& accum,
+                   yarp::os::Value& v)
+{
+    if (v.isInt32() || v.isFloat64()) {
         accum += v.toString();
         return true;
     }
-    if (v.isString()||v.isVocab()) {
+    if (v.isString() || v.isVocab()) {
         std::string x = v.toString();
         accum += "\"";
         for (char ch : x) {
-            if (ch=='\n') {
+            if (ch == '\n') {
                 accum += '\\';
                 accum += 'n';
-            } else if (ch=='\r') {
+            } else if (ch == '\r') {
                 accum += '\\';
                 accum += 'r';
-            } else if (ch=='\0') {
+            } else if (ch == '\0') {
                 accum += '\\';
                 accum += '0';
             } else {
-                if (ch=='\\'||ch=='\"') {
+                if (ch == '\\' || ch == '\"') {
                     accum += '\\';
                 }
                 accum += ch;
@@ -65,54 +68,57 @@ static bool asJson(std::string &accum,
         accum += "\"";
     }
     if (v.isList()) {
-        yarp::os::Bottle *bot = v.asList();
+        yarp::os::Bottle* bot = v.asList();
         return asJson(accum, bot);
     }
     return false;
 }
 
 static bool asJson(std::string& accum,
-                   yarp::os::Bottle *bot,
-                   std::string *hint) {
-    if (bot == nullptr) return false;
+                   yarp::os::Bottle* bot,
+                   std::string* hint)
+{
+    if (bot == nullptr) {
+        return false;
+    }
     bool struc = false;
     bool struc_set = false;
     int offset = 0;
     int offset2 = 0;
     std::string tag = bot->get(0).asString();
     if (hint) {
-        if ((*hint)=="list") {
+        if ((*hint) == "list") {
             struc = false;
             struc_set = true;
-        } else if ((*hint)=="dict") {
+        } else if ((*hint) == "dict") {
             struc = true;
             struc_set = true;
         }
     }
     if (!struc_set) {
-        if (tag=="list") {
+        if (tag == "list") {
             struc = false;
             offset = 1;
-        } else if (tag=="dict") {
+        } else if (tag == "dict") {
             struc = true;
             offset = 1;
         } else {
             // auto-detect
-            struc = (bot->size()>1);
-            if (bot->size()>0) {
+            struc = (bot->size() > 1);
+            if (bot->size() > 0) {
                 yarp::os::Value& v0 = bot->get(0);
                 if (!v0.isList()) {
                     offset2 = 1;
                     offset = 1;
                 }
             }
-            for (size_t i=offset2; i<bot->size(); i++) {
+            for (size_t i = offset2; i < bot->size(); i++) {
                 yarp::os::Value& vi = bot->get(i);
                 if (!vi.isList()) {
                     struc = false;
                     break;
                 }
-                if (vi.asList()->size()!=2) {
+                if (vi.asList()->size() != 2) {
                     struc = false;
                     break;
                 }
@@ -128,9 +134,11 @@ static bool asJson(std::string& accum,
             asJson(accum, bot->get(0));
             need_comma = true;
         }
-        for (size_t i=offset; i<bot->size(); i++) {
-            yarp::os::Bottle *boti = bot->get(i).asList();
-            if (boti == nullptr) continue;
+        for (size_t i = offset; i < bot->size(); i++) {
+            yarp::os::Bottle* boti = bot->get(i).asList();
+            if (boti == nullptr) {
+                continue;
+            }
             if (need_comma) {
                 accum += ", ";
             }
@@ -145,9 +153,11 @@ static bool asJson(std::string& accum,
 
     // [ ... ]
     accum += "[";
-    if (offset2) offset--;
-    for (int i=offset; (size_t)i<bot->size(); i++) {
-        if (i>offset) {
+    if (offset2) {
+        offset--;
+    }
+    for (int i = offset; (size_t)i < bot->size(); i++) {
+        if (i > offset) {
             accum += ", ";
         }
         asJson(accum, bot->get(i));
@@ -157,11 +167,9 @@ static bool asJson(std::string& accum,
 }
 
 
-yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
-                                                   const char *prefix,
-                                                   yarp::os::Property& prop,
-                                                   bool writer) :
-        delegate(delegate) {
+yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream* delegate, const char* txt, const char* prefix, yarp::os::Property& prop, bool writer) :
+        delegate(delegate)
+{
     this->isWriter = writer;
     data = false;
     filterData = false;
@@ -183,7 +191,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
     bool req = p.check("req");
     if (p.check("cmd")) {
         s = p.check("cmd", Value("")).asString();
-    } else if (p.check("data")||req) {
+    } else if (p.check("data") || req) {
         if (req) {
             s = p.check("req", Value("")).asString();
             if (!p.check("format")) {
@@ -197,27 +205,24 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
         std::string sFixed;
         std::string var;
         bool arg = false;
-        for (unsigned int i=0; i<s.length(); i++) {
+        for (unsigned int i = 0; i < s.length(); i++) {
             char ch = s[i];
             if (arg) {
-                if ((ch>='A'&&ch<='Z')||
-                    (ch>='a'&&ch<='z')||
-                    (ch>='0'&&ch<='9')||
-                    (ch=='_')) {
+                if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') || (ch == '_')) {
                     var += ch;
                 } else {
                     arg = false;
-                    sFixed+=p.check(var, Value("")).toString();
-                    if (i!=s.length()-1) {
+                    sFixed += p.check(var, Value("")).toString();
+                    if (i != s.length() - 1) {
                         sFixed += ch; // omit padding
                     }
                     var = "";
                 }
             } else {
-                if (ch=='$') {
+                if (ch == '$') {
                     arg = true;
                 } else {
-                    if (i!=s.length()-1) {
+                    if (i != s.length() - 1) {
                         sFixed += ch; // omit padding
                     }
                 }
@@ -242,42 +247,46 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
 
     bool classic = false;
     // support old-style messages
-    if (s.length()<=1) classic = true;
-    if (s.length()>1) {
-        if (s[0]=='?' || s[1]=='?') {
+    if (s.length() <= 1) {
+        classic = true;
+    }
+    if (s.length() > 1) {
+        if (s[0] == '?' || s[1] == '?') {
             classic = true;
         }
-        if (s[0]=='d' && s[1]=='\n') {
+        if (s[0] == 'd' && s[1] == '\n') {
             classic = true;
         }
     }
-    if (s.length()>=4) {
-        if (s[0]=='f'&&s[1]=='o'&&s[2]=='r'&&s[3]=='m') {
+    if (s.length() >= 4) {
+        if (s[0] == 'f' && s[1] == 'o' && s[2] == 'r' && s[3] == 'm') {
             classic = true;
         }
-        if (s[0]=='d'&&s[1]=='a'&&s[2]=='t'&&s[3]=='a') {
+        if (s[0] == 'd' && s[1] == 'a' && s[2] == 't' && s[3] == 'a') {
             classic = true;
         }
-        if (s[0]=='f'&&s[1]=='a'&&s[2]=='v'&&s[3]=='i') {
+        if (s[0] == 'f' && s[1] == 'a' && s[2] == 'v' && s[3] == 'i') {
             // kill favicon.ico, sorry
             classic = true;
         }
     }
-    if (req) classic = false;
+    if (req) {
+        classic = false;
+    }
 
     if (classic) {
         std::string header = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n";
         chunked = false;
-        if (s[0]=='r') {
+        if (s[0] == 'r') {
             header += "Transfer-Encoding: chunked\r\n";
             chunked = true;
         }
         header += "\r\n";
-        int N = 2*1024;
+        int N = 2 * 1024;
         std::string body = from;
         if (chunked) {
             body += "Reading data from port...\n";
-            header += NetType::toHexString((int)(body.length()+N));
+            header += NetType::toHexString((int)(body.length() + N));
             header += "\r\n";
         }
 
@@ -286,7 +295,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
 
         if (chunked) {
             // chrome etc won't render until enough chars are received.
-            for (int i=0; i<N; i++) {
+            for (int i = 0; i < N; i++) {
                 delegate->getOutputStream().write(' ');
             }
         }
@@ -297,7 +306,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
         delegate->getOutputStream().write('\n');
         delegate->getOutputStream().flush();
 
-        if (s=="") {
+        if (s == "") {
             s = "*";
         }
         if (chunked) {
@@ -326,11 +335,11 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
             } else {
                 sis.add("d\n");
             }
-            for (int i=0; i<(int)s.length(); i++) {
-                if (s[i]=='/') {
+            for (int i = 0; i < (int)s.length(); i++) {
+                if (s[i] == '/') {
                     s[i] = ' ';
                 }
-                if (s[i]=='?') {
+                if (s[i] == '?') {
                     s = s.substr(0, i);
                     break;
                 }
@@ -343,55 +352,65 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
     }
 }
 
-yarp::os::impl::HttpTwoWayStream::~HttpTwoWayStream() {
+yarp::os::impl::HttpTwoWayStream::~HttpTwoWayStream()
+{
     if (delegate != nullptr) {
         delete delegate;
         delegate = nullptr;
     }
 }
 
-yarp::os::InputStream& yarp::os::impl::HttpTwoWayStream::getInputStream() {
+yarp::os::InputStream& yarp::os::impl::HttpTwoWayStream::getInputStream()
+{
     return sis;
 }
 
-yarp::os::OutputStream& yarp::os::impl::HttpTwoWayStream::getOutputStream() {
+yarp::os::OutputStream& yarp::os::impl::HttpTwoWayStream::getOutputStream()
+{
     return *this;
 }
 
-const Contact& yarp::os::impl::HttpTwoWayStream::getLocalAddress() const {
+const Contact& yarp::os::impl::HttpTwoWayStream::getLocalAddress() const
+{
     return delegate->getLocalAddress();
 }
 
-const Contact& yarp::os::impl::HttpTwoWayStream::getRemoteAddress() const {
+const Contact& yarp::os::impl::HttpTwoWayStream::getRemoteAddress() const
+{
     return delegate->getRemoteAddress();
 }
 
-bool yarp::os::impl::HttpTwoWayStream::isOk() const {
+bool yarp::os::impl::HttpTwoWayStream::isOk() const
+{
     return true; //delegate->isOk();
 }
 
-void yarp::os::impl::HttpTwoWayStream::reset() {
+void yarp::os::impl::HttpTwoWayStream::reset()
+{
     delegate->reset();
 }
 
-void yarp::os::impl::HttpTwoWayStream::write(const yarp::os::Bytes& b) { // throws
-    if (chunked||isWriter) {
+void yarp::os::impl::HttpTwoWayStream::write(const yarp::os::Bytes& b)
+{ // throws
+    if (chunked || isWriter) {
         delegate->getOutputStream().write(b);
     } else {
-        for (size_t i=0; i<b.length(); i++) {
+        for (size_t i = 0; i < b.length(); i++) {
             apply(b.get()[i]);
         }
     }
 }
 
-void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
-    if (ch=='\r') { return; }
+void yarp::os::impl::HttpTwoWayStream::apply(char ch)
+{
+    if (ch == '\r') {
+        return;
+    }
     if (ch == '\n') {
         proc = "";
         Contact addr = yarp::os::impl::NameClient::extractAddress(part);
         if (addr.isValid()) {
-            if (addr.getCarrier()=="tcp"&&
-                (addr.getRegName().find("/quit")==std::string::npos)) {
+            if (addr.getCarrier() == "tcp" && (addr.getRegName().find("/quit") == std::string::npos)) {
                 proc += "<a href=\"http://";
                 proc += addr.getHost();
                 proc += ":";
@@ -401,8 +420,8 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
                 proc += "</A> ";
                 size_t len = addr.getRegName().length();
                 size_t target = 30;
-                if (len<target) {
-                    for (size_t i=0; i<target-len; i++) {
+                if (len < target) {
+                    for (size_t i = 0; i < target - len; i++) {
                         proc += " ";
                     }
                 }
@@ -416,14 +435,16 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
                 //proc += "\n";
             }
         } else {
-            if ((part[0]=='\"'&&part[1]=='[')||(part[0]=='+')) {
+            if ((part[0] == '\"' && part[1] == '[') || (part[0] == '+')) {
                 // translate this to a form
-                if (part[0]=='+') { part[0] = ' '; }
+                if (part[0] == '+') {
+                    part[0] = ' ';
+                }
                 std::string org = part;
                 part = "<p><form method=post action='/form'>";
-                size_t i=0;
-                for (i=0; i<org.length(); i++) {
-                    if (org[i]=='"') {
+                size_t i = 0;
+                for (i = 0; i < org.length(); i++) {
+                    if (org[i] == '"') {
                         org[i] = ' ';
                     }
                 }
@@ -434,13 +455,10 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
                 org += " ";
                 bool arg = false;
                 std::string var;
-                for (i=0; i<org.length(); i++) {
+                for (i = 0; i < org.length(); i++) {
                     char ch = org[i];
                     if (arg) {
-                        if ((ch>='A'&&ch<='Z')||
-                            (ch>='a'&&ch<='z')||
-                            (ch>='0'&&ch<='9')||
-                            (ch=='_')) {
+                        if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') || (ch == '_')) {
                             var += ch;
                         } else {
                             arg = false;
@@ -453,7 +471,7 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
                             var = "";
                         }
                     }
-                    if (ch=='$') {
+                    if (ch == '$') {
                         arg = true;
                     }
                 }
@@ -463,7 +481,7 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
             proc += part;
             proc += "\n";
         }
-        if (data||!filterData) {
+        if (data || !filterData) {
             Bytes tmp((char*)proc.c_str(), proc.length());
             delegate->getOutputStream().write(tmp);
             delegate->getOutputStream().flush();
@@ -478,43 +496,42 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
     }
 }
 
-void yarp::os::impl::HttpTwoWayStream::close() {
+void yarp::os::impl::HttpTwoWayStream::close()
+{
     apply('\n');
     apply('\n');
     delegate->close();
 }
 
-void yarp::os::impl::HttpTwoWayStream::beginPacket() {
+void yarp::os::impl::HttpTwoWayStream::beginPacket()
+{
     delegate->beginPacket();
 }
 
-void yarp::os::impl::HttpTwoWayStream::endPacket() {
+void yarp::os::impl::HttpTwoWayStream::endPacket()
+{
     delegate->endPacket();
 }
 
-void yarp::os::impl::HttpTwoWayStream::flip() {
+void yarp::os::impl::HttpTwoWayStream::flip()
+{
     sis.add("r\n");
 }
 
-void yarp::os::impl::HttpTwoWayStream::finish() {
+void yarp::os::impl::HttpTwoWayStream::finish()
+{
     sis.add("q\n");
 }
 
-bool yarp::os::impl::HttpTwoWayStream::useJson() {
-    return format=="json";
+bool yarp::os::impl::HttpTwoWayStream::useJson()
+{
+    return format == "json";
 }
 
-std::string *yarp::os::impl::HttpTwoWayStream::typeHint() {
+std::string* yarp::os::impl::HttpTwoWayStream::typeHint()
+{
     return &outer;
 }
-
-
-
-
-
-
-
-
 
 
 yarp::os::impl::HttpCarrier::HttpCarrier() :
@@ -523,22 +540,26 @@ yarp::os::impl::HttpCarrier::HttpCarrier() :
         urlDone(false),
         expectPost(false),
         contentLength(0),
-        stream(nullptr) {
+        stream(nullptr)
+{
 }
 
-yarp::os::Carrier *yarp::os::impl::HttpCarrier::create() const {
+yarp::os::Carrier* yarp::os::impl::HttpCarrier::create() const
+{
     return new HttpCarrier();
 }
 
-std::string yarp::os::impl::HttpCarrier::getName() const {
+std::string yarp::os::impl::HttpCarrier::getName() const
+{
     return "http";
 }
 
-bool yarp::os::impl::HttpCarrier::checkHeader(const Bytes& header, const char *prefix) {
-    if (header.length()==8) {
+bool yarp::os::impl::HttpCarrier::checkHeader(const Bytes& header, const char* prefix)
+{
+    if (header.length() == 8) {
         std::string target = prefix;
-        for (unsigned int i=0; i<target.length(); i++) {
-            if (!(target[i]==header.get()[i])) {
+        for (unsigned int i = 0; i < target.length(); i++) {
+            if (!(target[i] == header.get()[i])) {
                 return false;
             }
         }
@@ -547,7 +568,8 @@ bool yarp::os::impl::HttpCarrier::checkHeader(const Bytes& header, const char *p
     return false;
 }
 
-bool yarp::os::impl::HttpCarrier::checkHeader(const Bytes& header) {
+bool yarp::os::impl::HttpCarrier::checkHeader(const Bytes& header)
+{
     bool ok = checkHeader(header, "GET /");
     if (!ok) {
         // http carrier accepts POST /form but not general posts
@@ -560,56 +582,62 @@ bool yarp::os::impl::HttpCarrier::checkHeader(const Bytes& header) {
     return ok;
 }
 
-void yarp::os::impl::HttpCarrier::setParameters(const Bytes& header) {
-    if (header.length()==8) {
+void yarp::os::impl::HttpCarrier::setParameters(const Bytes& header)
+{
+    if (header.length() == 8) {
         bool adding = false;
-        for (unsigned int j=0; j<8; j++) {
+        for (unsigned int j = 0; j < 8; j++) {
             char ch = header.get()[j];
             if (adding) {
-                if (ch!=' ') {
+                if (ch != ' ') {
                     url += ch;
                 } else {
                     urlDone = true;
                     break;
                 }
             }
-            if (ch=='/') {
+            if (ch == '/') {
                 adding = true;
             }
         }
     }
 }
 
-void yarp::os::impl::HttpCarrier::getHeader(Bytes& header) const {
-    if (header.length()==8) {
+void yarp::os::impl::HttpCarrier::getHeader(Bytes& header) const
+{
+    if (header.length() == 8) {
         std::string target = "GET / HT";
-        for (int i=0; i<8; i++) {
+        for (int i = 0; i < 8; i++) {
             header.get()[i] = target[i];
         }
     }
 }
 
-bool yarp::os::impl::HttpCarrier::requireAck() const {
+bool yarp::os::impl::HttpCarrier::requireAck() const
+{
     return false;
 }
 
-bool yarp::os::impl::HttpCarrier::isTextMode() const {
+bool yarp::os::impl::HttpCarrier::isTextMode() const
+{
     return true;
 }
 
 
-bool yarp::os::impl::HttpCarrier::supportReply() const {
+bool yarp::os::impl::HttpCarrier::supportReply() const
+{
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::sendHeader(ConnectionState& proto) {
+bool yarp::os::impl::HttpCarrier::sendHeader(ConnectionState& proto)
+{
     std::string target = "GET / HTTP/1.0\r\n";
     std::string path = proto.getRoute().getToName();
-    if (path.size()>=2) {
+    if (path.size() >= 2) {
         target = "GET " + path + " HTTP/1.0\r\n";
     }
     Contact host = proto.getRoute().getToContact();
-    if (host.getHost()!="") {
+    if (host.getHost() != "") {
         target += "Host: ";
         target += host.getHost();
         target += "\r\n";
@@ -618,10 +646,10 @@ bool yarp::os::impl::HttpCarrier::sendHeader(ConnectionState& proto) {
     Bytes b((char*)target.c_str(), target.length());
     proto.os().write(b);
     return true;
-
 }
 
-bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) {
+bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto)
+{
     Route route = proto.getRoute();
     route.setFromName("web");
     proto.setRoute(route);
@@ -647,13 +675,13 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
             //printf(">>> %s\n", result.c_str());
             Bottle b;
             b.fromString(result);
-            if (b.get(0).asString()=="Content-Length:") {
+            if (b.get(0).asString() == "Content-Length:") {
                 //printf("]]] got length %d\n", b.get(1).asInt32());
                 contentLength = b.get(1).asInt32();
             }
-            if (b.get(0).asString()=="Content-Type:") {
+            if (b.get(0).asString() == "Content-Type:") {
                 //printf("]]] got type %s\n", b.get(1).asString());
-                if (b.get(1).asString()=="application/x-www-form-urlencoded") {
+                if (b.get(1).asString() == "application/x-www-form-urlencoded") {
                     expectPost = true;
                 }
             }
@@ -662,7 +690,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
 
     if (expectPost) {
         //printf("[[[this is a post message of length %d]]]\n", contentLength);
-        ManagedBytes blk(contentLength+1);
+        ManagedBytes blk(contentLength + 1);
         Bytes start(blk.get(), contentLength);
         proto.is().readFull(start);
         blk.get()[contentLength] = '\0';
@@ -730,14 +758,15 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
     return proto.os().isOk();
 }
 
-bool yarp::os::impl::HttpCarrier::expectReplyToHeader(ConnectionState& proto) {
+bool yarp::os::impl::HttpCarrier::expectReplyToHeader(ConnectionState& proto)
+{
     input = "";
     yarp::conf::ssize_t len = 1;
-    while (len>0) {
+    while (len > 0) {
         char buf[2];
-        Bytes b((char *)&buf[0], 1);
+        Bytes b((char*)&buf[0], 1);
         len = proto.is().read(b);
-        if (len>0) {
+        if (len > 0) {
             buf[len] = '\0';
             input += std::string(buf, len);
         }
@@ -752,32 +781,37 @@ bool yarp::os::impl::HttpCarrier::expectReplyToHeader(ConnectionState& proto) {
 }
 
 
-bool yarp::os::impl::HttpCarrier::sendIndex(ConnectionState& proto, SizedWriter& writer) {
+bool yarp::os::impl::HttpCarrier::sendIndex(ConnectionState& proto, SizedWriter& writer)
+{
     YARP_UNUSED(proto);
     YARP_UNUSED(writer);
     // no index
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::expectIndex(ConnectionState& proto) {
+bool yarp::os::impl::HttpCarrier::expectIndex(ConnectionState& proto)
+{
     YARP_UNUSED(proto);
     // no index
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::sendAck(ConnectionState& proto) {
+bool yarp::os::impl::HttpCarrier::sendAck(ConnectionState& proto)
+{
     YARP_UNUSED(proto);
     // no acknowledgement
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::expectAck(ConnectionState& proto) {
+bool yarp::os::impl::HttpCarrier::expectAck(ConnectionState& proto)
+{
     YARP_UNUSED(proto);
     // no acknowledgement
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::respondToHeader(ConnectionState& proto) {
+bool yarp::os::impl::HttpCarrier::respondToHeader(ConnectionState& proto)
+{
     stream = new HttpTwoWayStream(proto.giveStreams(),
                                   input.c_str(),
                                   prefix.c_str(),
@@ -787,17 +821,18 @@ bool yarp::os::impl::HttpCarrier::respondToHeader(ConnectionState& proto) {
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& writer) {
+bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& writer)
+{
     DummyConnector con;
     con.setTextMode(true);
-    for (size_t i=writer.headerLength(); i<writer.length(); i++) {
+    for (size_t i = writer.headerLength(); i < writer.length(); i++) {
         con.getWriter().appendBlock(writer.data(i), writer.length(i));
     }
     Bottle b;
     b.read(con.getReader());
 
     std::string body = b.find("web").toString();
-    if (body.length()!=0) {
+    if (body.length() != 0) {
         std::string header;
         header += NetType::toHexString((int)body.length());
         header += "\r\n";
@@ -827,10 +862,11 @@ bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& wri
     return proto.os().isOk();
 }
 
-bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& writer) {
+bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& writer)
+{
     DummyConnector con;
     con.setTextMode(true);
-    for (size_t i=writer.headerLength(); i<writer.length(); i++) {
+    for (size_t i = writer.headerLength(); i < writer.length(); i++) {
         con.getWriter().appendBlock(writer.data(i), writer.length(i));
     }
     Bottle b;
@@ -849,25 +885,25 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
         }
     }
 
-    if (b.check("web")&&!using_json) {
+    if (b.check("web") && !using_json) {
         body = b.find("web").toString();
     }
 
-    if (b.check("stream")&&!using_json) {
+    if (b.check("stream") && !using_json) {
         std::string header("HTTP/1.1 200 OK\r\nContent-Type: ");
         header += mime;
         header += "\r\n";
         header += "Transfer-Encoding: chunked\r\n";
         header += "\r\n";
-        int N = 2*1024;
-        header += NetType::toHexString((int)body.length()+N);
+        int N = 2 * 1024;
+        header += NetType::toHexString((int)body.length() + N);
         header += "\r\n";
 
         Bytes b2((char*)header.c_str(), header.length());
         proto.os().write(b2);
 
         // chrome etc won't render until enough chars are received.
-        for (int i=0; i<N; i++) {
+        for (int i = 0; i < N; i++) {
             proto.os().write(' ');
         }
 
@@ -890,8 +926,8 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
 
     // Could check response codes, mime types here.
 
-    if (body.length()!=0 || using_json) {
-        std::string mime = b.check("mime", Value(using_json?"application/json":"text/html")).asString();
+    if (body.length() != 0 || using_json) {
+        std::string mime = b.check("mime", Value(using_json ? "application/json" : "text/html")).asString();
         std::string header("HTTP/1.1 200 OK\nContent-Type: ");
         header += mime;
         header += "\n";

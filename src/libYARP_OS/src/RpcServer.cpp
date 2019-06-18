@@ -25,7 +25,7 @@ RpcServer::~RpcServer()
     port.close();
 }
 
-bool RpcServer::write(const PortWriter& writer, const PortWriter *callback) const
+bool RpcServer::write(const PortWriter& writer, const PortWriter* callback) const
 {
     YARP_UNUSED(writer);
     YARP_UNUSED(callback);
@@ -35,7 +35,7 @@ bool RpcServer::write(const PortWriter& writer, const PortWriter *callback) cons
 
 bool RpcServer::write(const PortWriter& writer,
                       PortReader& reader,
-                      const PortWriter *callback) const
+                      const PortWriter* callback) const
 {
     YARP_UNUSED(writer);
     YARP_UNUSED(reader);
@@ -46,8 +46,7 @@ bool RpcServer::write(const PortWriter& writer,
 
 bool RpcServer::read(PortReader& reader, bool willReply)
 {
-    if (!willReply)
-    {
+    if (!willReply) {
         YARP_SPRINTF1(Logger::get(), error, "RpcServer %s must reply, please use a regular Port if you do not want to", port.getName().c_str());
         // this is an error for RpcServer
         return false;
@@ -71,4 +70,3 @@ void RpcServer::setRpcMode(bool expectRpc)
 {
     yAssert(expectRpc);
 }
-

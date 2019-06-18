@@ -7,26 +7,30 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/conf/system.h>
 #include <yarp/os/impl/McastCarrier.h>
-#include <cstdlib>
-#include <yarp/os/impl/Logger.h>
-#include <yarp/os/Network.h>
+
+#include <yarp/conf/system.h>
+
 #include <yarp/os/ConnectionState.h>
+#include <yarp/os/Network.h>
 #include <yarp/os/Route.h>
+#include <yarp/os/impl/Logger.h>
+
+#include <cstdlib>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
-ElectionOf<PeerRecord<McastCarrier> > *McastCarrier::caster = nullptr;
+ElectionOf<PeerRecord<McastCarrier>>* McastCarrier::caster = nullptr;
 
-ElectionOf<PeerRecord<McastCarrier> >& McastCarrier::getCaster() {
+ElectionOf<PeerRecord<McastCarrier>>& McastCarrier::getCaster()
+{
     NetworkBase::lock();
-    if (caster==nullptr) {
-        caster = new ElectionOf<PeerRecord<McastCarrier> >;
+    if (caster == nullptr) {
+        caster = new ElectionOf<PeerRecord<McastCarrier>>;
         NetworkBase::unlock();
-        if (caster==nullptr) {
+        if (caster == nullptr) {
             YARP_ERROR(Logger::get(), "No memory for McastCarrier::caster");
             std::exit(1);
         }
@@ -37,59 +41,63 @@ ElectionOf<PeerRecord<McastCarrier> >& McastCarrier::getCaster() {
 }
 
 
-yarp::os::impl::McastCarrier::McastCarrier() {
+yarp::os::impl::McastCarrier::McastCarrier()
+{
     stream = nullptr;
     key = "";
 }
 
-yarp::os::impl::McastCarrier::~McastCarrier() {
+yarp::os::impl::McastCarrier::~McastCarrier()
+{
     if (key != "") {
         bool elect = isElect();
         removeSender(key);
         if (elect) {
-            McastCarrier *peer = getCaster().getElect(key);
-            if (peer==nullptr) {
+            McastCarrier* peer = getCaster().getElect(key);
+            if (peer == nullptr) {
                 // time to remove registration
                 NetworkBase::unregisterName(mcastName);
-            }
-            else
-            {
-                if(!peer->takeElection())
+            } else {
+                if (!peer->takeElection()) {
                     YARP_ERROR(Logger::get(), "Something went wrong during the shift of the election...");
+                }
             }
-
         }
     }
 }
 
-Carrier *yarp::os::impl::McastCarrier::create() const {
+Carrier* yarp::os::impl::McastCarrier::create() const
+{
     return new McastCarrier();
 }
 
-std::string yarp::os::impl::McastCarrier::getName() const {
+std::string yarp::os::impl::McastCarrier::getName() const
+{
     return "mcast";
 }
 
-int yarp::os::impl::McastCarrier::getSpecifierCode() const {
+int yarp::os::impl::McastCarrier::getSpecifierCode() const
+{
     return 1;
 }
 
 
-bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto) {
+bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto)
+{
     // need to do more than the default
     bool ok = defaultSendHeader(proto);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     YARP_DEBUG(Logger::get(), "Adding extra mcast header");
 
     Contact addr;
 
     Contact alt = proto.getStreams().getLocalAddress();
-    std::string altKey =
-        proto.getRoute().getFromName() +
-        "/net=" + alt.getHost();
-    McastCarrier *elect = getCaster().getElect(altKey);
-    if (elect!=nullptr) {
+    std::string altKey = proto.getRoute().getFromName() + "/net=" + alt.getHost();
+    McastCarrier* elect = getCaster().getElect(altKey);
+    if (elect != nullptr) {
         YARP_DEBUG(Logger::get(), "picking up peer mcast name");
         addr = elect->mcastAddress;
         mcastName = elect->mcastName;
@@ -107,15 +115,15 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto) {
         }
     }
 
-    int ip[] = { 224, 3, 1, 1 };
+    int ip[] = {224, 3, 1, 1};
     int port = 11000;
     if (addr.isValid()) {
         SplitString ss(addr.getHost().c_str(), '.');
-        if (ss.size()!=4) {
+        if (ss.size() != 4) {
             addr = Contact();
         } else {
-            yAssert(ss.size()==4);
-            for (int i=0; i<4; i++) {
+            yAssert(ss.size() == 4);
+            for (int i = 0; i < 4; i++) {
                 ip[i] = NetType::toInt(ss.get(i));
             }
             port = addr.getPort();
@@ -129,38 +137,41 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto) {
     }
 
     ManagedBytes block(6);
-    for (int i=0; i<4; i++) {
+    for (int i = 0; i < 4; i++) {
         ((unsigned char*)block.get())[i] = (unsigned char)ip[i];
     }
-    block.get()[5] = (char)(port%256);
-    block.get()[4] = (char)(port/256);
+    block.get()[5] = (char)(port % 256);
+    block.get()[4] = (char)(port / 256);
     proto.os().write(block.bytes());
     mcastAddress = addr;
     return true;
 }
 
-bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
+bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto)
+{
     YARP_DEBUG(Logger::get(), "Expecting extra mcast header");
     ManagedBytes block(6);
     yarp::conf::ssize_t len = proto.is().readFull(block.bytes());
-    if ((size_t)len!=block.length()) {
+    if ((size_t)len != block.length()) {
         YARP_ERROR(Logger::get(), "problem with MCAST header");
         return false;
     }
 
-    int ip[] = { 0, 0, 0, 0 };
+    int ip[] = {0, 0, 0, 0};
     int port = -1;
 
-    auto* base = (unsigned char *)block.get();
+    auto* base = (unsigned char*)block.get();
     std::string add;
-    for (int i=0; i<4; i++) {
+    for (int i = 0; i < 4; i++) {
         ip[i] = base[i];
-        if (i!=0) { add += "."; }
+        if (i != 0) {
+            add += ".";
+        }
         char buf[100];
         sprintf(buf, "%d", ip[i]);
         add += buf;
     }
-    port = 256*base[4]+base[5];
+    port = 256 * base[4] + base[5];
     Contact addr("mcast", add, port);
     YARP_DEBUG(Logger::get(), std::string("got mcast header ") + addr.toURI());
     mcastAddress = addr;
@@ -169,9 +180,10 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
 }
 
 
-bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool sender) {
+bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool sender)
+{
     stream = new DgramTwoWayStream();
-    yAssert(stream!=nullptr);
+    yAssert(stream != nullptr);
     Contact remote = proto.getStreams().getRemoteAddress();
     local = proto.getStreams().getLocalAddress();
     //(yarp::NameConfig::getEnv("YARP_MCAST_TEST")!="");
@@ -191,13 +203,12 @@ bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool send
         key += local.getHost();
 
         YARP_DEBUG(Logger::get(),
-                    std::string("multicast key: ") + key);
+                   std::string("multicast key: ") + key);
         addSender(key);
     }
 
     bool ok = true;
-    if (isElect()||!sender)
-    {
+    if (isElect() || !sender) {
         ok = stream->join(mcastAddress, sender, local);
     }
 
@@ -209,41 +220,49 @@ bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool send
     return true;
 }
 
-bool yarp::os::impl::McastCarrier::respondToHeader(ConnectionState& proto) {
+bool yarp::os::impl::McastCarrier::respondToHeader(ConnectionState& proto)
+{
     return becomeMcast(proto, false);
 }
 
 
-bool yarp::os::impl::McastCarrier::expectReplyToHeader(ConnectionState& proto) {
+bool yarp::os::impl::McastCarrier::expectReplyToHeader(ConnectionState& proto)
+{
     return becomeMcast(proto, true);
 }
 
-void yarp::os::impl::McastCarrier::addSender(const std::string& key) {
+void yarp::os::impl::McastCarrier::addSender(const std::string& key)
+{
     getCaster().add(key, this);
 }
 
-void yarp::os::impl::McastCarrier::removeSender(const std::string& key) {
+void yarp::os::impl::McastCarrier::removeSender(const std::string& key)
+{
     getCaster().remove(key, this);
 }
 
-bool yarp::os::impl::McastCarrier::isElect() const {
-    void *elect = getCaster().getElect(key);
+bool yarp::os::impl::McastCarrier::isElect() const
+{
+    void* elect = getCaster().getElect(key);
     //void *elect = caster.getElect(mcastAddress.toString());
-    return elect==this || elect==nullptr;
+    return elect == this || elect == nullptr;
 }
 
 bool yarp::os::impl::McastCarrier::takeElection()
 {
-    if(stream)
+    if (stream) {
         return stream->join(mcastAddress, true, local);
+    }
     return false;
 }
 
 
-bool yarp::os::impl::McastCarrier::isActive() const {
+bool yarp::os::impl::McastCarrier::isActive() const
+{
     return isElect();
 }
 
-bool yarp::os::impl::McastCarrier::isBroadcast() const {
+bool yarp::os::impl::McastCarrier::isBroadcast() const
+{
     return true;
 }

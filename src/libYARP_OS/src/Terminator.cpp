@@ -22,8 +22,9 @@ using namespace yarp::os;
 
 bool Terminator::terminateByName(const char* name)
 {
-    if (name == nullptr)
+    if (name == nullptr) {
         return false;
+    }
 
     std::string s(name);
 

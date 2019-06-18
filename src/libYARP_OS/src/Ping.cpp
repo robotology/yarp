@@ -78,8 +78,9 @@ void Stat::compute()
         // ct must be > 0
         mu = tot / ct;
         sigma = tot2 / ct - mu * mu;
-        if (sigma < 0)
+        if (sigma < 0) {
             sigma = 0; // round-off error
+        }
         sigma = sqrt(sigma);
         at = ct;
     }

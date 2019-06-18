@@ -418,17 +418,21 @@ private:
     // this might be useful, but is not in spec
     bool clearContext();
 
-    void* implementation;
     bool owned;
     bool nullConfig;
     bool isConfiguredFlag;
     yarp::os::Property config;
 
-    ResourceFinder(Searchable& data, void* implementation);
-
     static std::string getDataHomeWithPossibleCreation(bool mayCreate);
     static std::string getConfigHomeWithPossibleCreation(bool mayCreate);
     static std::string createIfAbsent(bool mayCreate, const std::string& path);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+    class Private;
+    Private* mPriv;
+    ResourceFinder(Searchable& data, Private* altPriv);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
 } // namespace os

@@ -59,7 +59,6 @@ void WireLink::Private::reset()
 }
 
 
-
 WireLink::WireLink() :
         mPriv(new Private)
 {
@@ -122,8 +121,9 @@ bool WireLink::write(yarp::os::PortWriter& writer)
         writer.write(con.getWriter());
         return mPriv->reader->read(con.getReader());
     }
-    if (!isValid())
+    if (!isValid()) {
         return false;
+    }
     return mPriv->port->write(writer);
 }
 
@@ -136,8 +136,9 @@ bool WireLink::write(yarp::os::PortWriter& writer, yarp::os::PortReader& reader)
         reader.read(con.getReader());
         return ok;
     }
-    if (!isValid())
+    if (!isValid()) {
         return false;
+    }
     if (!mPriv->replies) {
         mPriv->port->write(writer);
         return false;
@@ -161,4 +162,3 @@ bool WireLink::canRead() const
 {
     return mPriv->can_read;
 }
-

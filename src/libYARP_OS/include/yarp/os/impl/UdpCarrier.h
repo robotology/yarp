@@ -14,22 +14,19 @@
 #include <yarp/os/impl/DgramTwoWayStream.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class UdpCarrier;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * Communicating between two ports via UDP.
  */
-class yarp::os::impl::UdpCarrier : public AbstractCarrier
+class UdpCarrier :
+        public AbstractCarrier
 {
 public:
     UdpCarrier();
 
-    Carrier *create() const override;
+    Carrier* create() const override;
 
     std::string getName() const override;
 
@@ -43,5 +40,9 @@ public:
     bool respondToHeader(ConnectionState& proto) override;
     bool expectReplyToHeader(ConnectionState& proto) override;
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_UDPCARRIER_H

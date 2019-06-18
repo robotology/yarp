@@ -12,7 +12,7 @@
 
 #include <yarp/conf/system.h>
 #if defined(YARP_HAS_IFADDRS_H)
-# include <ifaddrs.h>
+#    include <ifaddrs.h>
 #endif
 
 namespace yarp {
@@ -22,8 +22,8 @@ namespace impl {
 // ACE_OS::getifaddrs, etc are not implemented, anyway ACE implementation
 // is different, therefore they are not needed.
 #if !defined(YARP_HAS_ACE)
-    using ::getifaddrs;
-    using ::freeifaddrs;
+using ::freeifaddrs;
+using ::getifaddrs;
 #endif
 
 } // namespace impl

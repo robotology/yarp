@@ -8,11 +8,11 @@
  */
 
 #include <yarp/os/PeriodicThread.h>
-#include <yarp/os/SystemClock.h>
 
-#include <yarp/os/impl/ThreadImpl.h>
+#include <yarp/os/SystemClock.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformTime.h>
+#include <yarp/os/impl/ThreadImpl.h>
 
 #include <cmath>
 #include <mutex>
@@ -27,18 +27,18 @@ private:
     PeriodicThread* owner;
     mutable std::mutex mutex;
 
-    double  elapsed;
-    double  sleepPeriod;
+    double elapsed;
+    double sleepPeriod;
 
     bool suspended;
-    double totalUsed;      //total time taken iterations
-    unsigned int count;    //number of iterations from last reset
-    unsigned int estPIt;   //number of useful iterations for period estimation
-    double totalT;         //time bw run, accumulated
-    double sumTSq;         //cumulative sum sq of estimated period dT
-    double sumUsedSq;      //cumulative sum sq of estimated thread tun
-    double previousRun;    //time when last iteration started
-    double currentRun;     //time when this iteration started
+    double totalUsed;    //total time taken iterations
+    unsigned int count;  //number of iterations from last reset
+    unsigned int estPIt; //number of useful iterations for period estimation
+    double totalT;       //time bw run, accumulated
+    double sumTSq;       //cumulative sum sq of estimated period dT
+    double sumUsedSq;    //cumulative sum sq of estimated thread tun
+    double previousRun;  //time when last iteration started
+    double currentRun;   //time when this iteration started
     bool scheduleReset;
 
     using NowFuncPtr = double (*)();
@@ -48,18 +48,17 @@ private:
 
     void _resetStat()
     {
-        totalUsed=0;
-        count=0;
-        estPIt=0;
-        totalT=0;
-        sumUsedSq=0;
-        sumTSq=0;
-        elapsed=0;
-        scheduleReset=false;
+        totalUsed = 0;
+        count = 0;
+        estPIt = 0;
+        totalT = 0;
+        sumUsedSq = 0;
+        sumTSq = 0;
+        elapsed = 0;
+        scheduleReset = false;
     }
 
 public:
-
     Private(PeriodicThread* owner, double p, ShouldUseSystemClock useSystemClock) :
             adaptedPeriod(p),
             owner(owner),
@@ -76,39 +75,40 @@ public:
             currentRun(0),
             scheduleReset(false),
             nowFunc(useSystemClock == ShouldUseSystemClock::Yes ? SystemClock::nowSystem : yarp::os::Time::now),
-            delayFunc(useSystemClock == ShouldUseSystemClock::Yes ? SystemClock::delaySystem: yarp::os::Time::delay)
+            delayFunc(useSystemClock == ShouldUseSystemClock::Yes ? SystemClock::delaySystem : yarp::os::Time::delay)
     {
     }
 
     void resetStat()
     {
-        scheduleReset=true;
+        scheduleReset = true;
     }
 
     double getEstimatedPeriod() const
     {
         double ret;
         lock();
-        if (estPIt==0)
-            ret=0;
-        else
-            ret=(totalT/estPIt);
+        if (estPIt == 0) {
+            ret = 0;
+        } else {
+            ret = (totalT / estPIt);
+        }
         unlock();
         return ret;
     }
 
-    void getEstimatedPeriod(double &av, double &std) const
+    void getEstimatedPeriod(double& av, double& std) const
     {
         lock();
-        if (estPIt==0) {
-            av=0;
-            std=0;
+        if (estPIt == 0) {
+            av = 0;
+            std = 0;
         } else {
-            av=totalT/estPIt;
-            if (estPIt>1) {
-                std=sqrt(((1.0/(estPIt-1))*(sumTSq-estPIt*av*av)));
+            av = totalT / estPIt;
+            if (estPIt > 1) {
+                std = sqrt(((1.0 / (estPIt - 1)) * (sumTSq - estPIt * av * av)));
             } else {
-                std=0;
+                std = 0;
             }
         }
         unlock();
@@ -117,7 +117,7 @@ public:
     unsigned int getIterations() const
     {
         lock();
-        unsigned int ret=count;
+        unsigned int ret = count;
         unlock();
         return ret;
     }
@@ -126,31 +126,31 @@ public:
     {
         double ret;
         lock();
-        if (count<1)
-            ret=0.0;
-        else
-            ret=totalUsed/count;
+        if (count < 1) {
+            ret = 0.0;
+        } else {
+            ret = totalUsed / count;
+        }
         unlock();
         return ret;
     }
 
-    void getEstimatedUsed(double &av, double &std) const
+    void getEstimatedUsed(double& av, double& std) const
     {
         lock();
-        if (count<1) {
-            av=0;
-            std=0;
+        if (count < 1) {
+            av = 0;
+            std = 0;
         } else {
-            av=totalUsed/count;
-            if (count>1) {
-                std=sqrt((1.0/(count-1))*(sumUsedSq-count*av*av));
+            av = totalUsed / count;
+            if (count > 1) {
+                std = sqrt((1.0 / (count - 1)) * (sumUsedSq - count * av * av));
             } else {
-                std=0;
+                std = 0;
             }
         }
         unlock();
     }
-
 
 
     void step()
@@ -158,24 +158,25 @@ public:
         lock();
         currentRun = nowFunc();
 
-        if (scheduleReset)
+        if (scheduleReset) {
             _resetStat();
+        }
 
-        if (count>0)
-        {
-            double dT=(currentRun-previousRun);
+        if (count > 0) {
+            double dT = (currentRun - previousRun);
 
-            sumTSq+=dT*dT;
-            totalT+=dT;
+            sumTSq += dT * dT;
+            totalT += dT;
 
-            if (adaptedPeriod<0)
-                adaptedPeriod=0;
+            if (adaptedPeriod < 0) {
+                adaptedPeriod = 0;
+            }
 
             //fprintf(stderr, "dT:%lf, error %lf, adaptedPeriod: %lf, new:%lf\n", dT, error, saved, adaptedPeriod);
             estPIt++;
         }
 
-        previousRun=currentRun;
+        previousRun = currentRun;
         unlock();
 
         if (!suspended) {
@@ -194,19 +195,18 @@ public:
         count++;
         double elapsed = nowFunc() - currentRun;
         //save last
-        totalUsed+=elapsed;
-        sumUsedSq+=elapsed*elapsed;
+        totalUsed += elapsed;
+        sumUsedSq += elapsed * elapsed;
         unlock();
 
-        sleepPeriod= adaptedPeriod - elapsed; // everything is in [seconds] except period, for it is used in the interface as [ms]
+        sleepPeriod = adaptedPeriod - elapsed; // everything is in [seconds] except period, for it is used in the interface as [ms]
 
         delayFunc(sleepPeriod);
     }
 
     void run() override
     {
-        while(!isClosing())
-        {
+        while (!isClosing()) {
             step();
         }
     }
@@ -239,12 +239,12 @@ public:
 
     void suspend()
     {
-        suspended=true;
+        suspended = true;
     }
 
     void resume()
     {
-        suspended=false;
+        suspended = false;
     }
 
     void afterStart(bool s) override
@@ -267,7 +267,6 @@ public:
         mutex.unlock();
     }
 };
-
 
 
 PeriodicThread::PeriodicThread(double period, ShouldUseSystemClock useSystemClock) :
@@ -345,12 +344,12 @@ double PeriodicThread::getEstimatedUsed() const
     return mPriv->getEstimatedUsed();
 }
 
-void PeriodicThread::getEstimatedPeriod(double &av, double &std) const
+void PeriodicThread::getEstimatedPeriod(double& av, double& std) const
 {
     mPriv->getEstimatedPeriod(av, std);
 }
 
-void PeriodicThread::getEstimatedUsed(double &av, double &std) const
+void PeriodicThread::getEstimatedUsed(double& av, double& std) const
 {
     mPriv->getEstimatedUsed(av, std);
 }

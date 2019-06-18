@@ -35,7 +35,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~OutputProtocol() {}
+    virtual ~OutputProtocol() = default;
 
     /**
      * Start negotiating a carrier, using the given route (this

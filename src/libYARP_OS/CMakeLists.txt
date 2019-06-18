@@ -85,6 +85,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/PortReader.h
                  include/yarp/os/PortReport.h
                  include/yarp/os/PortWriterBuffer.h
+                 include/yarp/os/PortWriterBufferBase.h
                  include/yarp/os/PortWriter.h
                  include/yarp/os/Property.h
                  include/yarp/os/Publisher.h
@@ -95,7 +96,6 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/ResourceFinderOptions.h
                  include/yarp/os/RFModule.h
                  include/yarp/os/RFPlugin.h
-                 
                  include/yarp/os/RosNameSpace.h
                  include/yarp/os/Route.h
                  include/yarp/os/RpcClient.h
@@ -193,7 +193,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/PortCoreUnit.h
                       include/yarp/os/impl/Protocol.h
                       include/yarp/os/impl/RFModuleFactory.h
-                      include/yarp/os/impl/Runnable.h
                       include/yarp/os/impl/SocketTwoWayStream.h
                       include/yarp/os/impl/SplitString.h
                       include/yarp/os/impl/Storable.h
@@ -231,7 +230,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/DgramTwoWayStream.cpp
                  src/Dispatcher.cpp
                  src/DummyConnector.cpp
-                 src/Election.cpp
                  src/Event.cpp
                  src/FakeFace.cpp
                  src/FallbackNameClient.cpp
@@ -288,10 +286,11 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Port.cpp
                  src/PortInfo.cpp
                  src/PortReaderBufferBase.cpp
+                 src/PortReaderBufferBaseCreator.cpp
                  src/PortReader.cpp
                  src/PortReaderCreator.cpp
                  src/PortReport.cpp
-                 src/PortWriterBuffer.cpp
+                 src/PortWriterBufferBase.cpp
                  src/PortWriter.cpp
                  src/Property.cpp
                  src/Protocol.cpp

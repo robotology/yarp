@@ -11,36 +11,32 @@
 #define YARP_OS_IMPL_LOCALCARRIER_H
 
 #include <yarp/os/AbstractCarrier.h>
-#include <yarp/os/Semaphore.h>
-#include <yarp/os/Mutex.h>
-#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/InputStream.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/Portable.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/TwoWayStream.h>
 
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class LocalCarrier;
-            class LocalCarrierManager;
-            class LocalCarrierStream;
-        }
-    }
-}
+namespace os {
+namespace impl {
+
+class LocalCarrier;
 
 /**
  * Coordinate ports communicating locally within a process.
  */
-class yarp::os::impl::LocalCarrierManager
+class LocalCarrierManager
 {
 public:
     LocalCarrierManager();
 
-    void setSender(LocalCarrier *sender);
-    LocalCarrier *getReceiver();
-    LocalCarrier *getSender(LocalCarrier *receiver);
-    void revoke(LocalCarrier *carrier);
+    void setSender(LocalCarrier* sender);
+    LocalCarrier* getReceiver();
+    LocalCarrier* getSender(LocalCarrier* receiver);
+    void revoke(LocalCarrier* carrier);
 
 private:
     yarp::os::Mutex senderMutex;
@@ -53,12 +49,13 @@ private:
 /**
  * A stream for communicating locally within a process.
  */
-class yarp::os::impl::LocalCarrierStream : public TwoWayStream,
-                                           public InputStream,
-                                           public OutputStream
+class LocalCarrierStream :
+        public TwoWayStream,
+        public InputStream,
+        public OutputStream
 {
 public:
-    void attach(LocalCarrier *owner, bool sender);
+    void attach(LocalCarrier* owner, bool sender);
 
     InputStream& getInputStream() override;
     OutputStream& getOutputStream() override;
@@ -81,7 +78,7 @@ public:
 
 private:
     Contact localAddress, remoteAddress;
-    LocalCarrier *owner;
+    LocalCarrier* owner;
     bool sender;
     bool done;
 };
@@ -89,14 +86,15 @@ private:
 /**
  * A carrier for communicating locally within a process.
  */
-class yarp::os::impl::LocalCarrier : public AbstractCarrier
+class LocalCarrier :
+        public AbstractCarrier
 {
 public:
     LocalCarrier();
 
     virtual ~LocalCarrier();
 
-    Carrier *create() const override;
+    Carrier* create() const override;
 
     std::string getName() const override;
 
@@ -118,12 +116,12 @@ public:
 
     void removePeer();
     void shutdown();
-    void accept(yarp::os::Portable *ref);
+    void accept(yarp::os::Portable* ref);
 
 protected:
     bool doomed;
-    yarp::os::Portable *ref;
-    LocalCarrier *peer;
+    yarp::os::Portable* ref;
+    LocalCarrier* peer;
     yarp::os::Mutex peerMutex;
     yarp::os::Semaphore sent;
     yarp::os::Semaphore received;
@@ -131,5 +129,9 @@ protected:
 
     static LocalCarrierManager manager;
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_LOCALCARRIER_H

@@ -7,18 +7,18 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/RFModule.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
-#include <yarp/os/RFModule.h>
-#include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
-
-#include <yarp/os/impl/PlatformTime.h>
 #include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/PlatformTime.h>
 #include <yarp/os/impl/Terminal.h>
 
 #include <cstdio>
@@ -29,8 +29,9 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 
 
-class RFModuleRespondHandler : public yarp::os::PortReader,
-                               public yarp::os::Thread
+class RFModuleRespondHandler :
+        public yarp::os::PortReader,
+        public yarp::os::Thread
 {
 private:
     RFModule& owner;
@@ -38,7 +39,7 @@ private:
     bool attachedTerminal;
 
 public:
-     /**
+    /**
      * Handler for reading messages from the network, and passing
      * them on to the respond() method.
      * @param connection a network connection to a port
@@ -47,10 +48,16 @@ public:
     bool read(yarp::os::ConnectionReader& connection) override;
 
 
-    RFModuleRespondHandler(RFModule& owner) : owner(owner), attachedToPort(false), attachedTerminal(false) {}
+    RFModuleRespondHandler(RFModule& owner) :
+            owner(owner),
+            attachedToPort(false),
+            attachedTerminal(false)
+    {
+    }
 
 
-    void run() override {
+    void run() override
+    {
         yInfo("Listening to terminal (type \"quit\" to stop module).");
         bool isEof = false;
         while (!(isEof || isStopping() || owner.isStopping())) {
@@ -79,34 +86,39 @@ public:
     }
 
 
-    bool attach(yarp::os::Port& source) {
-        attachedToPort=true;
+    bool attach(yarp::os::Port& source)
+    {
+        attachedToPort = true;
         source.setReader(*this);
         return true;
     }
 
 
-    bool attach(yarp::os::RpcServer& source) {
-        attachedToPort=true;
+    bool attach(yarp::os::RpcServer& source)
+    {
+        attachedToPort = true;
         source.setReader(*this);
         return true;
     }
 
 
-    bool attachTerminal() {
-        attachedTerminal=true;
+    bool attachTerminal()
+    {
+        attachedTerminal = true;
 
         Thread::start();
         return true;
     }
 
 
-    bool isTerminalAttached() {
+    bool isTerminalAttached()
+    {
         return attachedTerminal;
     }
 
 
-    bool detachTerminal() {
+    bool detachTerminal()
+    {
         yWarning("Critical: stopping thread, this might hang.");
         Thread::stop();
         yWarning("done!");
@@ -114,17 +126,20 @@ public:
     }
 };
 
-bool RFModuleRespondHandler::read(ConnectionReader& connection) {
+bool RFModuleRespondHandler::read(ConnectionReader& connection)
+{
     Bottle cmd, response;
-    if (!cmd.read(connection)) { return false; }
+    if (!cmd.read(connection)) {
+        return false;
+    }
     //printf("command received: %s\n", cmd.toString().c_str());
 
     bool result = owner.safeRespond(cmd, response);
     if (response.size() >= 1) {
-        ConnectionWriter *writer = connection.getWriter();
-        if (writer!=nullptr) {
+        ConnectionWriter* writer = connection.getWriter();
+        if (writer != nullptr) {
             if (response.get(0).toString() == "many" && writer->isTextMode()) {
-                for (size_t i=1; i<response.size(); i++) {
+                for (size_t i = 1; i < response.size(); i++) {
                     Value& v = response.get(i);
                     if (v.isList()) {
                         v.asList()->write(*writer);
@@ -144,77 +159,91 @@ bool RFModuleRespondHandler::read(ConnectionReader& connection) {
 }
 
 
-class RFModuleThreadedHandler : public Thread {
+class RFModuleThreadedHandler : public Thread
+{
 private:
     RFModule& owner;
 
 public:
-    RFModuleThreadedHandler(RFModule& owner) : owner(owner) {}
+    RFModuleThreadedHandler(RFModule& owner) :
+            owner(owner)
+    {
+    }
 
-    void run() override { owner.runModule(); }
+    void run() override
+    {
+        owner.runModule();
+    }
 };
 
 
-class RFModuleHelper {
+class RFModule::Private
+{
 private:
     RFModule& owner;
-    bool      singleton_run_module;
+    bool singleton_run_module;
 
 public:
-    RFModuleRespondHandler  *respond_handler;
-    RFModuleThreadedHandler *threaded_handler;
+    RFModuleRespondHandler* respond_handler;
+    RFModuleThreadedHandler* threaded_handler;
 
-
-    RFModuleHelper(RFModule& owner) : owner(owner), singleton_run_module(false), respond_handler(nullptr), threaded_handler(nullptr) {
-        respond_handler  = new RFModuleRespondHandler(owner);
+    Private(RFModule& owner) :
+            owner(owner),
+            singleton_run_module(false),
+            respond_handler(nullptr),
+            threaded_handler(nullptr)
+    {
+        respond_handler = new RFModuleRespondHandler(owner);
     }
 
-    ~RFModuleHelper() {
-        if (respond_handler != nullptr) {
-            delete respond_handler;
-            respond_handler = nullptr;
-        }
-        if (threaded_handler != nullptr) {
-            delete threaded_handler;
-            threaded_handler = nullptr;
-        }
+    ~Private()
+    {
+        delete respond_handler;
+        delete threaded_handler;
     }
 
-
-    bool newThreadHandler() {
+    bool newThreadHandler()
+    {
         threaded_handler = new RFModuleThreadedHandler(owner);
 
-        if (threaded_handler != nullptr) return true;
-        else                                  return false;
+        if (threaded_handler != nullptr) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    void deleteThreadHandler() {
+    void deleteThreadHandler()
+    {
         delete threaded_handler;
         threaded_handler = nullptr;
     }
 
 
-    bool getSingletonRunModule() { return singleton_run_module; }
-    void setSingletonRunModule() { singleton_run_module = true; }
+    bool getSingletonRunModule()
+    {
+        return singleton_run_module;
+    }
+    void setSingletonRunModule()
+    {
+        singleton_run_module = true;
+    }
 };
 
 
-#define HELPER(x)           (*((RFModuleHelper*)(x)))
-#define RESPOND_HANDLER(x)  (*(HELPER(x).respond_handler))
-#define THREADED_HANDLER(x) (*(HELPER(x).threaded_handler))
-
-
-static RFModule *module = nullptr;
+static RFModule* module = nullptr;
 
 int RFModule::getThreadKey()
 {
-    if (HELPER(implementation).threaded_handler)
-        return HELPER(implementation).threaded_handler->getKey();
-    else
+    if (mPriv->threaded_handler) {
+        return mPriv->threaded_handler->getKey();
+    } else {
         return yarp::os::Thread::getKeyOfCaller();
+    }
 }
 
-static void handler (int sig) {
+static void handler(int sig)
+{
     YARP_UNUSED(sig);
     static int ct = 0;
     ct++;
@@ -228,14 +257,6 @@ static void handler (int sig) {
     if (module != nullptr) {
         module->stopModule(false);
     }
-
-//    if (module!=nullptr) {
-//        Bottle cmd, reply;
-//        cmd.fromString("quit");
-//        module->safeRespond(cmd, reply);
-//        printf("sent %s, got %s\n", cmd.toString().c_str(),
-//             reply.toString().c_str());
-//    }
 
 #if defined(_WIN32)
     // on windows we need to reset the handler after being called, otherwise it
@@ -259,22 +280,25 @@ static void handler (int sig) {
 // after we return from the signal handler.  We could not find better way to
 // handle clean remote shutdown of processes in windows.
 #if defined(_WIN32)
-static void handler_sigbreak(int sig) {
+static void handler_sigbreak(int sig)
+{
     yarp::os::impl::raise(SIGINT);
 }
 #endif
 
 
-RFModule::RFModule() {
+RFModule::RFModule() :
+        stopFlag(false),
+        mPriv(nullptr)
+{
     yarp::os::Network::initMinimum();
-    implementation = new RFModuleHelper(*this);
-    stopFlag = false;
+
+    mPriv = new Private(*this);
 
     //set up signal handlers for catching ctrl-c
     if (module == nullptr) {
         module = this;
-    }
-    else {
+    } else {
         yInfo("RFModule::RFModule() signal handling currently only good for one module.");
     }
 
@@ -287,24 +311,25 @@ RFModule::RFModule() {
 }
 
 
-RFModule::~RFModule() {
-    if (implementation != nullptr) {
-        //HELPER(implementation).stop();
-        delete &HELPER(implementation);
-        implementation = nullptr;
-    }
+RFModule::~RFModule()
+{
+    delete mPriv;
     yarp::os::Network::finiMinimum();
 }
 
 
-double RFModule::getPeriod() {
+double RFModule::getPeriod()
+{
     return 1.0;
 }
 
 
-int RFModule::runModule() {
-    if (HELPER(implementation).getSingletonRunModule()) return 1;
-    HELPER(implementation).setSingletonRunModule();
+int RFModule::runModule()
+{
+    if (mPriv->getSingletonRunModule()) {
+        return 1;
+    }
+    mPriv->setSingletonRunModule();
 
     // Setting up main loop
     // Use yarp::os::Time
@@ -312,8 +337,7 @@ int RFModule::runModule() {
     double elapsed;
     double sleepPeriod;
 
-    while (!isStopping())
-    {
+    while (!isStopping()) {
         currentRun = yarp::os::Time::now();
         // If updateModule() returns false we exit the main loop.
         if (!updateModule()) {
@@ -330,16 +354,12 @@ int RFModule::runModule() {
         // The module is stopped for getPeriod() seconds.
         // If getPeriod() returns a time > 1 second, we check every second if
         // the module stopping, and eventually we exit the main loop.
-        do
-        {
+        do {
             elapsed = yarp::os::Time::now() - currentRun;
             sleepPeriod = getPeriod() - elapsed;
-            if(sleepPeriod > 1)
-            {
+            if (sleepPeriod > 1) {
                 Time::delay(1.0);
-            }
-            else
-            {
+            } else {
                 Time::delay(sleepPeriod);
                 break;
             }
@@ -347,11 +367,9 @@ int RFModule::runModule() {
     }
 
     yInfo("RFModule closing.");
-    if (RESPOND_HANDLER(implementation).isTerminalAttached())
-    {
+    if (mPriv->respond_handler->isTerminalAttached()) {
         yWarning("Module attached to terminal calling exit() to quit.");
         yWarning("You should be aware that this is not a good way to stop a module. Effects will be:");
-//        yWarning("- the module close() function will NOT be called");
         yWarning("- class destructors will NOT be called");
         yWarning("- code in the main after runModule() will NOT be executed");
         yWarning("This happens because in your module you called attachTerminal() and we don't have a portable way to quit a module that is listening to the terminal.");
@@ -372,8 +390,11 @@ int RFModule::runModule() {
 }
 
 
-int RFModule::runModule(yarp::os::ResourceFinder &rf) {
-    if (HELPER(implementation).getSingletonRunModule()) return 1;
+int RFModule::runModule(yarp::os::ResourceFinder& rf)
+{
+    if (mPriv->getSingletonRunModule()) {
+        return 1;
+    }
 
     if (!configure(rf)) {
         yInfo("RFModule failed to open.");
@@ -383,15 +404,18 @@ int RFModule::runModule(yarp::os::ResourceFinder &rf) {
 }
 
 
-int RFModule::runModuleThreaded() {
-    if (HELPER(implementation).getSingletonRunModule()) return 1;
+int RFModule::runModuleThreaded()
+{
+    if (mPriv->getSingletonRunModule()) {
+        return 1;
+    }
 
-    if (!HELPER(implementation).newThreadHandler()) {
+    if (!mPriv->newThreadHandler()) {
         yError("RFModule handling thread failed to allocate.");
         return 1;
     }
 
-    if (!THREADED_HANDLER(implementation).start()) {
+    if (!mPriv->threaded_handler->start()) {
         yError("RFModule handling thread failed to start.");
         return 1;
     }
@@ -400,8 +424,11 @@ int RFModule::runModuleThreaded() {
 }
 
 
-int RFModule::runModuleThreaded(ResourceFinder &rf) {
-    if (HELPER(implementation).getSingletonRunModule()) return 1;
+int RFModule::runModuleThreaded(ResourceFinder& rf)
+{
+    if (mPriv->getSingletonRunModule()) {
+        return 1;
+    }
 
     if (!configure(rf)) {
         yError("RFModule failed to open.");
@@ -412,13 +439,15 @@ int RFModule::runModuleThreaded(ResourceFinder &rf) {
 }
 
 
-bool RFModule::configure(yarp::os::ResourceFinder &rf) {
+bool RFModule::configure(yarp::os::ResourceFinder& rf)
+{
     YARP_UNUSED(rf);
     return true;
 }
 
 
-bool RFModule::respond(const Bottle& command, Bottle& reply) {
+bool RFModule::respond(const Bottle& command, Bottle& reply)
+{
     return basicRespond(command, reply);
 }
 
@@ -428,61 +457,71 @@ bool RFModule::respond(const Bottle& command, Bottle& reply) {
 * @param source a BufferedPort or PortReaderBuffer that
 * receives data.
 */
-bool RFModule::attach(yarp::os::Port &source) {
-    RESPOND_HANDLER(implementation).attach(source);
+bool RFModule::attach(yarp::os::Port& source)
+{
+    mPriv->respond_handler->attach(source);
     return true;
 }
 
 
-bool RFModule::attach(yarp::os::RpcServer &source) {
-    RESPOND_HANDLER(implementation).attach(source);
+bool RFModule::attach(yarp::os::RpcServer& source)
+{
+    mPriv->respond_handler->attach(source);
     return true;
 }
 
 
-bool RFModule::attachTerminal() {
-    RESPOND_HANDLER(implementation).attachTerminal();
+bool RFModule::attachTerminal()
+{
+    mPriv->respond_handler->attachTerminal();
     return true;
 }
 
 
 bool RFModule::detachTerminal()
 {
-    RESPOND_HANDLER(implementation).detachTerminal();
+    mPriv->respond_handler->detachTerminal();
     return true;
 }
 
 
-bool RFModule::interruptModule() {
+bool RFModule::interruptModule()
+{
     return true;
 }
 
 
-bool RFModule::close() {
+bool RFModule::close()
+{
     return true;
 }
 
 
-void RFModule::stopModule(bool wait) {
+void RFModule::stopModule(bool wait)
+{
     stopFlag = true;
 
     if (!interruptModule()) {
         yError("interruptModule() returned an error there could be problems shutting down the module.");
     }
 
-    if (wait) joinModule();
+    if (wait) {
+        joinModule();
+    }
 }
 
 
-bool RFModule::isStopping() {
+bool RFModule::isStopping()
+{
     return stopFlag;
 }
 
 
-bool RFModule::joinModule(double seconds) {
-    if (&THREADED_HANDLER(implementation) != nullptr) {
-        if (THREADED_HANDLER(implementation).join(seconds)) {
-            HELPER(implementation).deleteThreadHandler();
+bool RFModule::joinModule(double seconds)
+{
+    if (mPriv->threaded_handler != nullptr) {
+        if (mPriv->threaded_handler->join(seconds)) {
+            mPriv->deleteThreadHandler();
             return true;
         } else {
             yWarning("RFModule joinModule() timed out.");
@@ -495,7 +534,8 @@ bool RFModule::joinModule(double seconds) {
 }
 
 
-std::string RFModule::getName(const std::string& subName) {
+std::string RFModule::getName(const std::string& subName)
+{
     if (subName == "") {
         return name;
     }
@@ -516,12 +556,14 @@ std::string RFModule::getName(const std::string& subName) {
 }
 
 
-void RFModule::setName(const char *name) {
+void RFModule::setName(const char* name)
+{
     this->name = name;
 }
 
 
-bool RFModule::safeRespond(const Bottle& command, Bottle& reply) {
+bool RFModule::safeRespond(const Bottle& command, Bottle& reply)
+{
     bool ok = respond(command, reply);
     if (!ok) {
         // just in case derived classes don't correctly pass on messages
@@ -531,14 +573,14 @@ bool RFModule::safeRespond(const Bottle& command, Bottle& reply) {
 }
 
 
-bool RFModule::basicRespond(const Bottle& command, Bottle& reply) {
+bool RFModule::basicRespond(const Bottle& command, Bottle& reply)
+{
     switch (command.get(0).asVocab()) {
     case yarp::os::createVocab('q', 'u', 'i', 't'):
     case yarp::os::createVocab('e', 'x', 'i', 't'):
     case yarp::os::createVocab('b', 'y', 'e'):
         reply.addVocab(Vocab::encode("bye"));
         stopModule(false); //calls interruptModule()
-   //     interruptModule();
         return true;
     default:
         reply.addString("command not recognized");

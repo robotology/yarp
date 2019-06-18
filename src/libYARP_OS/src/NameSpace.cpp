@@ -7,8 +7,9 @@
  */
 
 #include <yarp/os/NameSpace.h>
-#include <yarp/os/OutputProtocol.h>
+
 #include <yarp/os/Carriers.h>
+#include <yarp/os/OutputProtocol.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -16,14 +17,19 @@ using namespace yarp::os::impl;
 
 NameSpace::~NameSpace() = default;
 
-bool NameSpace::checkNetwork() {
-    if (localOnly()) return true;
+bool NameSpace::checkNetwork()
+{
+    if (localOnly()) {
+        return true;
+    }
 
     Contact c = queryName(getNameServerName());
-    if (!c.isValid()) return false;
+    if (!c.isValid()) {
+        return false;
+    }
 
-    OutputProtocol *out = Carriers::connect(c);
-    if (out==nullptr) {
+    OutputProtocol* out = Carriers::connect(c);
+    if (out == nullptr) {
         return false;
     }
 
@@ -34,13 +40,16 @@ bool NameSpace::checkNetwork() {
     return true;
 }
 
-bool NameSpace::checkNetwork(double timeout) {
+bool NameSpace::checkNetwork(double timeout)
+{
     Contact c = queryName(getNameServerName());
-    if (!c.isValid()) return false;
+    if (!c.isValid()) {
+        return false;
+    }
 
     c.setTimeout((float)timeout);
-    OutputProtocol *out = Carriers::connect(c);
-    if (out==nullptr) {
+    OutputProtocol* out = Carriers::connect(c);
+    if (out == nullptr) {
         return false;
     }
 
@@ -51,6 +60,7 @@ bool NameSpace::checkNetwork(double timeout) {
     return true;
 }
 
-std::string NameSpace::getNameServerName() const {
+std::string NameSpace::getNameServerName() const
+{
     return getNameServerContact().getName();
 }

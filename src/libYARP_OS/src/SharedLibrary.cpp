@@ -9,18 +9,20 @@
 #include <yarp/os/SharedLibrary.h>
 
 #include <yarp/conf/system.h>
-#include <string>
+
 #include <yarp/os/Log.h>
 
+#include <string>
+
 #ifdef YARP_HAS_ACE
-#  include <ace/ACE.h>
-#  include <ace/DLL.h>
+#    include <ace/ACE.h>
+#    include <ace/DLL.h>
 // In one the ACE headers there is a definition of "main" for WIN32
-# ifdef main
-#  undef main
-# endif
+#    ifdef main
+#        undef main
+#    endif
 #else
-#  include <yarp/os/impl/PlatformDlfcn.h>
+#    include <yarp/os/impl/PlatformDlfcn.h>
 #endif
 
 
@@ -36,10 +38,11 @@ public:
     inline char* getError()
     {
 #ifdef YARP_HAS_ACE
-        if(dll != nullptr)
+        if (dll != nullptr) {
             return dll->error();
-        else
+        } else {
             return const_cast<char*>("Unknown error");
+        }
 #else
         return yarp::os::impl::dlerror();
 #endif
@@ -55,13 +58,13 @@ public:
 
 
 SharedLibrary::SharedLibrary() :
-    implementation(new SharedLibraryImpl())
+        implementation(new SharedLibraryImpl())
 {
     yAssert(implementation != nullptr);
 }
 
-SharedLibrary::SharedLibrary(const char *filename) :
-    implementation(new SharedLibraryImpl())
+SharedLibrary::SharedLibrary(const char* filename) :
+        implementation(new SharedLibraryImpl())
 {
     yAssert(implementation != nullptr);
     open(filename);
@@ -74,7 +77,7 @@ SharedLibrary::~SharedLibrary()
     delete implementation;
 }
 
-bool SharedLibrary::open(const char *filename)
+bool SharedLibrary::open(const char* filename)
 {
     close();
 #ifdef YARP_HAS_ACE
@@ -124,7 +127,7 @@ std::string SharedLibrary::error()
     return SharedLibrary::implementation->error;
 }
 
-void *SharedLibrary::getSymbol(const char *symbolName)
+void* SharedLibrary::getSymbol(const char* symbolName)
 {
     if (!implementation->dll) {
         implementation->error = "Library is not open";

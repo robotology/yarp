@@ -7,15 +7,16 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/Time.h>
-#include <yarp/os/Portable.h>
-#include <yarp/os/PortReport.h>
-#include <yarp/os/PortInfo.h>
 #include <yarp/os/impl/PortCoreOutputUnit.h>
-#include <yarp/os/impl/PortCommand.h>
-#include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/BufferedConnectionWriter.h>
+
 #include <yarp/os/Name.h>
+#include <yarp/os/PortInfo.h>
+#include <yarp/os/PortReport.h>
+#include <yarp/os/Portable.h>
+#include <yarp/os/Time.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/PortCommand.h>
 
 
 #define YMSG(x) printf x;
@@ -25,23 +26,23 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-PortCoreOutputUnit::PortCoreOutputUnit(PortCore& owner, int index, OutputProtocol *op) :
-            PortCoreUnit(owner, index),
-            op(op),
-            closing(false),
-            finished(false),
-            running(false),
-            threaded(false),
-            sending(false),
-            phase(1),
-            activate(0),
-            trackerMutex(),
-            cachedWriter(nullptr),
-            cachedReader(nullptr),
-            cachedCallback(nullptr),
-            cachedTracker(nullptr)
+PortCoreOutputUnit::PortCoreOutputUnit(PortCore& owner, int index, OutputProtocol* op) :
+        PortCoreUnit(owner, index),
+        op(op),
+        closing(false),
+        finished(false),
+        running(false),
+        threaded(false),
+        sending(false),
+        phase(1),
+        activate(0),
+        trackerMutex(),
+        cachedWriter(nullptr),
+        cachedReader(nullptr),
+        cachedCallback(nullptr),
+        cachedTracker(nullptr)
 {
-    yAssert(op!=nullptr);
+    yAssert(op != nullptr);
 }
 
 PortCoreOutputUnit::~PortCoreOutputUnit()
@@ -99,7 +100,7 @@ void PortCoreOutputUnit::run()
                     YARP_DEBUG(log, "wrote something in background");
                     trackerMutex.lock();
                     if (cachedTracker != nullptr) {
-                        void *t = cachedTracker;
+                        void* t = cachedTracker;
                         cachedTracker = nullptr;
                         sending = false;
                         getOwner().notifyCompletion(t);
@@ -118,7 +119,6 @@ void PortCoreOutputUnit::run()
 }
 
 
-
 void PortCoreOutputUnit::runSingleThreaded()
 {
     if (op != nullptr) {
@@ -126,9 +126,7 @@ void PortCoreOutputUnit::runSingleThreaded()
         setMode();
         getOwner().reportUnit(this, true);
 
-        std::string msg = std::string("Sending output from ") +
-            route.getFromName() + " to " + route.getToName() + " using " +
-            route.getCarrierName();
+        std::string msg = std::string("Sending output from ") + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
         if (Name(route.getToName()).isRooted()) {
             if (Name(route.getFromName()).isRooted()) {
                 YARP_INFO(Logger::get(), msg);
@@ -160,14 +158,14 @@ void PortCoreOutputUnit::closeBasic()
     if (op != nullptr) {
         op->getConnection().prepareDisconnect();
         Route route = op->getRoute();
-        if (op->getConnection().isConnectionless()||
-            op->getConnection().isBroadcast()) {
+        if (op->getConnection().isConnectionless() || op->getConnection().isBroadcast()) {
             YARP_SPRINTF1(Logger::get(),
-                         debug,
-                         "output for route %s asking other side to close by out-of-band means",
-                         route.toString().c_str());
+                          debug,
+                          "output for route %s asking other side to close by out-of-band means",
+                          route.toString().c_str());
             NetworkBase::disconnectInput(route.getToName(),
-                                         route.getFromName(), true);
+                                         route.getFromName(),
+                                         true);
         } else {
             if (op->getConnection().canEscape()) {
                 BufferedConnectionWriter buf(op->getConnection().isTextMode(),
@@ -180,8 +178,7 @@ void PortCoreOutputUnit::closeBasic()
             }
         }
 
-        std::string msg = std::string("Removing output from ") +
-            route.getFromName() + " to " + route.getToName();
+        std::string msg = std::string("Removing output from ") + route.getFromName() + " to " + route.getToName();
 
         if (Name(route.getToName()).isRooted()) {
             if (Name(route.getFromName()).isRooted()) {
@@ -208,8 +205,7 @@ void PortCoreOutputUnit::closeBasic()
     if (op != nullptr) {
         if (waitForOther) {
             // quit is only acknowledged in certain conditions
-            if (op->getConnection().isTextMode()&&
-                op->getConnection().supportReply()) {
+            if (op->getConnection().isTextMode() && op->getConnection().supportReply()) {
                 InputStream& is = op->getInputStream();
                 ManagedBytes dummy(1);
                 is.read(dummy.bytes());
@@ -223,7 +219,9 @@ void PortCoreOutputUnit::closeBasic()
 
 void PortCoreOutputUnit::closeMain()
 {
-    if (finished) return;
+    if (finished) {
+        return;
+    }
 
     YARP_DEBUG(Logger::get(), "PortCoreOutputUnit closing");
 
@@ -272,12 +270,12 @@ bool PortCoreOutputUnit::sendHelper()
             buf.setReplyHandler(*cachedReader);
         }
 
-        if (op->getSender().modifiesOutgoingData())
-        {
-            if (op->getSender().acceptOutgoingData(*cachedWriter))
+        if (op->getSender().modifiesOutgoingData()) {
+            if (op->getSender().acceptOutgoingData(*cachedWriter)) {
                 cachedWriter = &op->getSender().modifyOutgoingData(*cachedWriter);
-            else
-               return (done = true);
+            } else {
+                return (done = true);
+            }
         }
 
         if (op->getConnection().isLocal()) {
@@ -287,7 +285,7 @@ bool PortCoreOutputUnit::sendHelper()
             //         some parts of memory that cannot be written.
             auto* pw = const_cast<yarp::os::PortWriter*>(cachedWriter);
             auto* p = dynamic_cast<yarp::os::Portable*>(pw);
-            if(p == nullptr) {
+            if (p == nullptr) {
                 YARP_ERROR(Logger::get(), "PortCoreOutputUnit: cast failed.");
                 return false;
             }
@@ -303,14 +301,14 @@ bool PortCoreOutputUnit::sendHelper()
 
             if (!done) {
                 if (!op->getConnection().canEscape()) {
-                    if (cachedEnvelope!="") {
+                    if (cachedEnvelope != "") {
                         op->getConnection().handleEnvelope(cachedEnvelope);
                     }
                 } else {
                     buf.addToHeader();
 
-                    if (cachedEnvelope!="") {
-                        if (cachedEnvelope=="__ADMIN") {
+                    if (cachedEnvelope != "") {
+                        if (cachedEnvelope == "__ADMIN") {
                             PortCommand pc('a', "");
                             pc.write(buf);
                         } else {
@@ -352,14 +350,14 @@ bool PortCoreOutputUnit::sendHelper()
     return replied;
 }
 
-void *PortCoreOutputUnit::send(const yarp::os::PortWriter& writer,
-                               yarp::os::PortReader *reader,
-                               const yarp::os::PortWriter *callback,
-                               void *tracker,
+void* PortCoreOutputUnit::send(const yarp::os::PortWriter& writer,
+                               yarp::os::PortReader* reader,
+                               const yarp::os::PortWriter* callback,
+                               void* tracker,
                                const std::string& envelopeString,
                                bool waitAfter,
                                bool waitBefore,
-                               bool *gotReply)
+                               bool* gotReply)
 {
     bool replied = false;
 
@@ -379,7 +377,7 @@ void *PortCoreOutputUnit::send(const yarp::os::PortWriter& writer,
         }
     }
 
-    if ((!waitBefore)&&waitAfter) {
+    if ((!waitBefore) && waitAfter) {
         YARP_ERROR(Logger::get(), "chosen port wait combination not yet implemented");
     }
     if (!sending) {
@@ -389,12 +387,12 @@ void *PortCoreOutputUnit::send(const yarp::os::PortWriter& writer,
         cachedEnvelope = envelopeString;
 
         sending = true;
-        if (waitAfter==true) {
+        if (waitAfter == true) {
             replied = sendHelper();
             sending = false;
         } else {
             trackerMutex.lock();
-            void *nextTracker = tracker;
+            void* nextTracker = tracker;
             tracker = cachedTracker;
             cachedTracker = nextTracker;
             activate.post();
@@ -416,9 +414,9 @@ void *PortCoreOutputUnit::send(const yarp::os::PortWriter& writer,
 }
 
 
-void *PortCoreOutputUnit::takeTracker()
+void* PortCoreOutputUnit::takeTracker()
 {
-    void *tracker = nullptr;
+    void* tracker = nullptr;
     trackerMutex.lock();
     if (!sending) {
         tracker = cachedTracker;
@@ -435,14 +433,16 @@ bool PortCoreOutputUnit::isBusy()
 
 void PortCoreOutputUnit::setCarrierParams(const yarp::os::Property& params)
 {
-    if (op)
+    if (op) {
         op->getConnection().setCarrierParams(params);
+    }
 }
 
 void PortCoreOutputUnit::getCarrierParams(yarp::os::Property& params)
 {
-    if (op)
+    if (op) {
         op->getConnection().getCarrierParams(params);
+    }
 }
 
 OutputProtocol* PortCoreOutputUnit::getOutPutProtocol()

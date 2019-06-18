@@ -8,8 +8,9 @@
  */
 
 #include <yarp/os/Thread.h>
-#include <yarp/os/impl/ThreadImpl.h>
+
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/ThreadImpl.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -18,8 +19,8 @@ class yarp::os::Thread::Private : public ThreadImpl
 {
 private:
     Thread& owner;
-public:
 
+public:
     explicit Private(Thread& owner) :
             owner(owner),
             stopping(false)

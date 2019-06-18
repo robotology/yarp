@@ -7,6 +7,7 @@
  */
 
 #include <yarp/os/Portable.h>
+
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Type.h>
 

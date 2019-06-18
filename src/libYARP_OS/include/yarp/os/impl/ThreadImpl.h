@@ -10,11 +10,11 @@
 #ifndef YARP_OS_IMPL_THREADIMPL_H
 #define YARP_OS_IMPL_THREADIMPL_H
 
-#include <yarp/os/impl/Runnable.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Runnable.h>
 
-#include <thread>
 #include <atomic>
+#include <thread>
 
 namespace yarp {
 namespace os {
@@ -26,9 +26,8 @@ namespace impl {
 class YARP_OS_impl_API ThreadImpl : public Runnable
 {
 public:
-
     ThreadImpl();
-    ThreadImpl(Runnable *target);
+    ThreadImpl(Runnable* target);
 
     virtual ~ThreadImpl();
 
@@ -59,7 +58,10 @@ public:
 
     //should become private, when the thread is friend
     void notify(bool s);
-    void notifyOpened(bool s) { opened = s; }
+    void notifyOpened(bool s)
+    {
+        opened = s;
+    }
     void synchroWait();
     void synchroPost();
 
@@ -81,7 +83,7 @@ private:
     bool opened;
     bool closing;
     bool needJoin;
-    Runnable *delegate;
+    Runnable* delegate;
 
     yarp::os::Semaphore synchro;
 

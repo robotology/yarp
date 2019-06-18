@@ -15,43 +15,54 @@ TwoWayStream::~TwoWayStream() = default;
 
 NullStream::~NullStream() = default;
 
-InputStream& NullStream::getInputStream() {
+InputStream& NullStream::getInputStream()
+{
     return *this;
 }
 
-OutputStream& NullStream::getOutputStream() {
-    return * this;
+OutputStream& NullStream::getOutputStream()
+{
+    return *this;
 }
 
-const Contact& NullStream::getLocalAddress() const {
+const Contact& NullStream::getLocalAddress() const
+{
     return address;
 }
 
-const Contact& NullStream::getRemoteAddress() const {
+const Contact& NullStream::getRemoteAddress() const
+{
     return address;
 }
 
-bool NullStream::isOk() const {
+bool NullStream::isOk() const
+{
     return false;
 }
 
-void NullStream::reset() {
+void NullStream::reset()
+{
 }
 
-void NullStream::close() {
+void NullStream::close()
+{
 }
 
-void NullStream::beginPacket() {
+void NullStream::beginPacket()
+{
 }
 
-void NullStream::endPacket()   {
+void NullStream::endPacket()
+{
 }
 
-yarp::conf::ssize_t NullStream::read(Bytes& b) {
+yarp::conf::ssize_t NullStream::read(Bytes& b)
+{
     YARP_UNUSED(b);
     return -1;
 }
 
-void NullStream::write(const Bytes& b) {
+void NullStream::write(const Bytes& b)
+{
     YARP_UNUSED(b);
 }

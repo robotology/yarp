@@ -8,6 +8,7 @@
  */
 
 #include <yarp/os/Contactable.h>
+
 #include <yarp/os/AbstractContactable.h>
 
 

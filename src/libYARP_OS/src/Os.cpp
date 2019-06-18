@@ -8,48 +8,47 @@
  */
 
 #include <yarp/os/Os.h>
-
 #include <yarp/os/impl/NameConfig.h>
-#include <yarp/os/impl/PlatformUnistd.h>
-#include <yarp/os/impl/PlatformSysStat.h>
-#include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/PlatformSysStat.h>
+#include <yarp/os/impl/PlatformUnistd.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
 #ifdef YARP_HAS_ACE
-# include <ace/ACE.h>
+#    include <ace/ACE.h>
 // In one the ACE headers there is a definition of "main" for WIN32
-# ifdef main
-#  undef main
-# endif
+#    ifdef main
+#        undef main
+#    endif
 #endif
 
 #if defined(__APPLE__)
-#include <yarp/os/impl/MacOSAPI.h>
+#    include <yarp/os/impl/MacOSAPI.h>
 #endif
 
-const char *yarp::os::getenv(const char *var)
+const char* yarp::os::getenv(const char* var)
 {
     return yarp::os::impl::getenv(var);
 }
 
-int yarp::os::mkdir(const char *p)
+int yarp::os::mkdir(const char* p)
 {
     return yarp::os::impl::mkdir(p, 0755);
 }
 
-int yarp::os::mkdir_p(const char *p, int ignoreLevels)
+int yarp::os::mkdir_p(const char* p, int ignoreLevels)
 {
     std::string fileName(p);
 
     size_t index = fileName.rfind('/');
-    if (index==std::string::npos) {
+    if (index == std::string::npos) {
 #if defined(_WIN32)
         index = fileName.rfind('\\');
-        if (index==std::string::npos) {
+        if (index == std::string::npos) {
             return 1;
         }
 #else
@@ -57,15 +56,15 @@ int yarp::os::mkdir_p(const char *p, int ignoreLevels)
 #endif
     }
     std::string base = fileName.substr(0, index);
-    if (yarp::os::stat((char*)base.c_str())<0) {
-        int result = yarp::os::mkdir_p(base.c_str(), ignoreLevels-1);
+    if (yarp::os::stat((char*)base.c_str()) < 0) {
+        int result = yarp::os::mkdir_p(base.c_str(), ignoreLevels - 1);
         if (result != 0) {
             return 1;
         }
     }
-    if (ignoreLevels<=0) {
-        if (yarp::os::stat(fileName.c_str())<0) {
-            if (yarp::os::mkdir(fileName.c_str())>=0) {
+    if (ignoreLevels <= 0) {
+        if (yarp::os::stat(fileName.c_str()) < 0) {
+            if (yarp::os::mkdir(fileName.c_str()) >= 0) {
                 return 0;
             }
             return 1;
@@ -74,17 +73,17 @@ int yarp::os::mkdir_p(const char *p, int ignoreLevels)
     return 0;
 }
 
-int yarp::os::rmdir(const char *p)
+int yarp::os::rmdir(const char* p)
 {
     return yarp::os::impl::rmdir(p);
 }
 
-int yarp::os::rename(const char *oldname, const char *newname)
+int yarp::os::rename(const char* oldname, const char* newname)
 {
     return std::rename(oldname, newname);
 }
 
-int yarp::os::stat(const char *path)
+int yarp::os::stat(const char* path)
 {
     yarp::os::impl::YARP_stat dummy;
     return yarp::os::impl::stat(path, &dummy);
@@ -99,12 +98,12 @@ int yarp::os::getpid()
 void yarp::os::gethostname(char* hostname, size_t size)
 {
     yarp::os::impl::gethostname(hostname, size);
-    if (std::strlen(hostname)==0) {
+    if (std::strlen(hostname) == 0) {
         std::strncpy(hostname, "no_hostname", size);
     }
 }
 
-char* yarp::os::getcwd(char *buf, size_t size)
+char* yarp::os::getcwd(char* buf, size_t size)
 {
     return yarp::os::impl::getcwd(buf, size);
 }
@@ -125,41 +124,41 @@ void yarp::os::setEnergySavingModeState(bool enabled)
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 
-void yarp::os::setprogname(const char *progname)
+void yarp::os::setprogname(const char* progname)
 {
-#ifdef YARP_HAS_ACE
+#    ifdef YARP_HAS_ACE
     ACE_OS::setprogname(ACE::basename(progname));
-#else
+#    else
     // not available
     YARP_UNUSED(progname);
-#endif
+#    endif
 }
 
 void yarp::os::getprogname(char* progname, size_t size)
 {
-#ifdef YARP_HAS_ACE
+#    ifdef YARP_HAS_ACE
     const char* tmp = ACE_OS::getprogname();
-    if (std::strlen(tmp)==0) {
+    if (std::strlen(tmp) == 0) {
         std::strncpy(progname, "no_progname", size);
     } else {
         std::strncpy(progname, tmp, size);
     }
-#else
+#    else
     // not available
     *progname = '\0';
     YARP_UNUSED(size);
-#endif
+#    endif
 }
 
 int yarp::os::fork()
 {
-#if defined(YARP_HAS_ACE)
+#    if defined(YARP_HAS_ACE)
     pid_t pid = ACE_OS::fork();
-#elif defined(__unix__)
+#    elif defined(__unix__)
     pid_t pid = ::fork();
-#else
-YARP_COMPILER_ERROR(Cannot implement fork on this platform)
-#endif
+#    else
+    YARP_COMPILER_ERROR(Cannot implement fork on this platform)
+#    endif
     return pid;
 }
 

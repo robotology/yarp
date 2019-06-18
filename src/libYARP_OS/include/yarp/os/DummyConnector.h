@@ -83,8 +83,11 @@ public:
      */
     void reset();
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
-    void* implementation;
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
 } // namespace os

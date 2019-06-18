@@ -8,8 +8,9 @@
  */
 
 #include <yarp/os/NetType.h>
-#include <yarp/os/impl/Logger.h>
+
 #include <yarp/os/ManagedBytes.h>
+#include <yarp/os/impl/Logger.h>
 
 #include <cstdlib>
 #include <cstring>
@@ -17,17 +18,19 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-int NetType::netInt(const yarp::os::Bytes& code) {
-    yAssert(code.length()==sizeof(NetInt32));
+int NetType::netInt(const yarp::os::Bytes& code)
+{
+    yAssert(code.length() == sizeof(NetInt32));
     NetInt32 tmp;
     memcpy((char*)(&tmp), code.get(), code.length());
     return tmp;
 }
 
-bool NetType::netInt(int data, yarp::os::Bytes& code) {
+bool NetType::netInt(int data, yarp::os::Bytes& code)
+{
     NetInt32 i = data;
     yarp::os::Bytes b((char*)(&i), sizeof(i));
-    if (code.length()!=sizeof(i)) {
+    if (code.length() != sizeof(i)) {
         YARP_ERROR(Logger::get(), "not enough room for integer");
         return false;
     }
@@ -35,32 +38,37 @@ bool NetType::netInt(int data, yarp::os::Bytes& code) {
     return true;
 }
 
-std::string NetType::toHexString(int x) {
+std::string NetType::toHexString(int x)
+{
     char buf[256];
     sprintf(buf, "%x", x);
     return buf;
 }
 
-std::string NetType::toString(int x) {
+std::string NetType::toString(int x)
+{
     char buf[256];
     sprintf(buf, "%d", x);
     return buf;
 }
 
-std::string NetType::toString(long x) {
+std::string NetType::toString(long x)
+{
     char buf[256];
     sprintf(buf, "%ld", x);
     return buf;
 }
 
-std::string NetType::toString(unsigned int x) {
+std::string NetType::toString(unsigned int x)
+{
     char buf[256];
     sprintf(buf, "%u", x);
     return buf;
 }
 
 
-int NetType::toInt(const std::string& x) {
+int NetType::toInt(const std::string& x)
+{
     return atoi(x.c_str());
 }
 
@@ -77,17 +85,19 @@ static unsigned long crc_table[256];
 static int crc_table_computed = 0;
 
 /* Make the table for a fast CRC. */
-static void make_crc_table() {
+static void make_crc_table()
+{
     unsigned long c;
     int n, k;
 
     for (n = 0; n < 256; n++) {
-        c = (unsigned long) n;
+        c = (unsigned long)n;
         for (k = 0; k < 8; k++) {
-            if (c & 1)
+            if (c & 1) {
                 c = 0xedb88320L ^ (c >> 1);
-            else
+            } else {
                 c = c >> 1;
+            }
         }
         crc_table[n] = c;
     }
@@ -99,14 +109,15 @@ static void make_crc_table() {
    is the 1's complement of the final running CRC (see the
    crc() routine below)). */
 
-static unsigned long update_crc(unsigned long crc, unsigned char *buf,
-                                size_t len) {
+static unsigned long update_crc(unsigned long crc, unsigned char* buf, size_t len)
+{
 
     unsigned long c = crc;
     size_t n;
 
-    if (!crc_table_computed)
+    if (!crc_table_computed) {
         make_crc_table();
+    }
     for (n = 0; n < len; n++) {
         c = crc_table[(c ^ buf[n]) & 0xff] ^ (c >> 8);
     }
@@ -114,6 +125,7 @@ static unsigned long update_crc(unsigned long crc, unsigned char *buf,
 }
 
 /* Return the CRC of the bytes buf[0..len-1]. */
-unsigned long NetType::getCrc(char *buf, size_t len) {
-    return update_crc(0xffffffffL, (unsigned char *)buf, len) ^ 0xffffffffL;
+unsigned long NetType::getCrc(char* buf, size_t len)
+{
+    return update_crc(0xffffffffL, (unsigned char*)buf, len) ^ 0xffffffffL;
 }

@@ -6,19 +6,23 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/impl/RFModuleFactory.h>
+
 #include <yarp/os/YarpPluginSettings.h>
 
-#include <yarp/os/impl/RFModuleFactory.h>
 #include <map>
+
 using namespace std;
 using namespace yarp::os;
 
-struct RFModuleFactory::Private
+class RFModuleFactory::Private
 {
-    map<string, RFModule*(*)(void)> delegates;
+public:
+    map<string, RFModule* (*)(void)> delegates;
 };
 
-RFModuleFactory::RFModuleFactory() : impl(new Private)
+RFModuleFactory::RFModuleFactory() :
+        mPriv(new Private)
 {
     //add embedded rfmodule here
 }
@@ -29,16 +33,15 @@ RFModuleFactory& RFModuleFactory::GetInstance()
     return instance;
 }
 
-void RFModuleFactory::AddModule(const string &name, RFModule*(*module)(void))
+void RFModuleFactory::AddModule(const string& name, RFModule* (*module)(void))
 {
-    GetInstance().impl->delegates[name] = module;
+    GetInstance().mPriv->delegates[name] = module;
 }
 
 RFModule* RFModuleFactory::GetModule(const string name)
 {
-    if(impl->delegates.find(name) != impl->delegates.end())
-    {
-        return impl->delegates[name]();
+    if (mPriv->delegates.find(name) != mPriv->delegates.end()) {
+        return mPriv->delegates[name]();
     }
 
     return nullptr;

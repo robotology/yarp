@@ -11,20 +11,21 @@
 #include <yarp/os/impl/BottleImpl.h>
 
 #include <yarp/conf/numeric.h>
+
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/MemoryOutputStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
-using yarp::os::impl::BottleImpl;
-using yarp::os::impl::Storable;
 using yarp::os::Bottle;
 using yarp::os::Bytes;
 using yarp::os::ConnectionReader;
 using yarp::os::ConnectionWriter;
 using yarp::os::Searchable;
 using yarp::os::Value;
+using yarp::os::impl::BottleImpl;
+using yarp::os::impl::Storable;
 
 //#define YMSG(x) printf x;
 //#define YTRACE(x) YMSG(("at %s\n", x))
@@ -328,9 +329,7 @@ bool BottleImpl::fromBytes(ConnectionReader& reader)
     }
     Storable* storable = Storable::createByCode(id);
     if (storable == nullptr) {
-        YARP_SPRINTF1(Logger::get(), error,
-                      "BottleImpl reader failed, unrecognized object code %" PRId32,
-                      id);
+        YARP_SPRINTF1(Logger::get(), error, "BottleImpl reader failed, unrecognized object code %" PRId32, id);
         return false;
     }
     storable->readRaw(reader);

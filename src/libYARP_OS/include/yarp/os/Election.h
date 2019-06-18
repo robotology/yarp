@@ -29,9 +29,8 @@ public:
     typedef typename map_type::iterator iterator;
     typedef typename map_type::const_iterator const_iterator;
 
-    PeerRecord() {}
-
-    PeerRecord(const PeerRecord& alt) {}
+    PeerRecord() = default;
+    PeerRecord(const PeerRecord& alt) = default;
 
     void add(T* entity)
     {
@@ -70,7 +69,7 @@ private:
 
     typedef typename std::map<std::string, PR> map_type;
     map_type nameMap;
-    long ct;
+    long ct{0};
 
     PR* getRecordRaw(const std::string& key, bool create = false)
     {
@@ -86,12 +85,8 @@ private:
     }
 
 public:
-    ElectionOf() :
-            mutex()
-    {
-        ct = 0;
-    }
-    virtual ~ElectionOf() {}
+    ElectionOf() = default;
+    virtual ~ElectionOf() = default;
 
     PR* add(const std::string& key, typename PR::peer_type* entity)
     {
@@ -103,6 +98,7 @@ public:
         mutex.unlock();
         return rec;
     }
+
     void remove(const std::string& key, typename PR::peer_type* entity)
     {
         mutex.lock();
@@ -141,6 +137,7 @@ public:
     {
         mutex.lock();
     }
+
     void unlock()
     {
         mutex.unlock();

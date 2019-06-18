@@ -172,7 +172,10 @@ private:
 class YarpDummyNameSpace : public YarpNameSpace
 {
 public:
-    YarpDummyNameSpace() : YarpNameSpace(Contact()) {}
+    YarpDummyNameSpace() :
+            YarpNameSpace(Contact())
+    {
+    }
 
     bool localOnly() const override
     {

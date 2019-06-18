@@ -13,6 +13,7 @@
 
 #include <yarp/os/Bytes.h>
 #include <yarp/os/impl/Storable.h>
+
 #include <vector>
 
 namespace yarp {
@@ -53,14 +54,45 @@ public:
 
     Storable& get(size_t index) const;
 
-    void addInt8(std::int8_t x) { add(new StoreInt8(x)); }
-    void addInt16(std::int16_t x) { add(new StoreInt16(x)); }
-    void addInt32(std::int32_t x) { add(new StoreInt32(x)); }
-    void addInt64(std::int64_t x) { add(new StoreInt64(x)); }
-    void addFloat32(yarp::conf::float32_t x) { add(new StoreFloat32(x)); }
-    void addFloat64(yarp::conf::float64_t x) { add(new StoreFloat64(x)); }
-    void addVocab(std::int32_t x) { add(new StoreVocab(x)); }
-    void addString(const std::string& text) { add(new StoreString(text)); }
+    void addInt8(std::int8_t x)
+    {
+        add(new StoreInt8(x));
+    }
+
+    void addInt16(std::int16_t x)
+    {
+        add(new StoreInt16(x));
+    }
+
+    void addInt32(std::int32_t x)
+    {
+        add(new StoreInt32(x));
+    }
+
+    void addInt64(std::int64_t x)
+    {
+        add(new StoreInt64(x));
+    }
+
+    void addFloat32(yarp::conf::float32_t x)
+    {
+        add(new StoreFloat32(x));
+    }
+
+    void addFloat64(yarp::conf::float64_t x)
+    {
+        add(new StoreFloat64(x));
+    }
+
+    void addVocab(std::int32_t x)
+    {
+        add(new StoreVocab(x));
+    }
+
+    void addString(const std::string& text)
+    {
+        add(new StoreString(text));
+    }
 
     yarp::os::Bottle& addList();
 
@@ -129,7 +161,10 @@ public:
     // check if a piece of text is a completed bottle
     static bool isComplete(const char* txt);
 
-    void hasChanged() { dirty = true; }
+    void hasChanged()
+    {
+        dirty = true;
+    }
 
     bool checkIndex(size_t index) const;
 

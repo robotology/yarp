@@ -16,7 +16,6 @@
 #include <yarp/os/Portable.h>
 #include <yarp/os/ShiftStream.h>
 #include <yarp/os/TwoWayStream.h>
-
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
@@ -220,8 +219,9 @@ bool Protocol::open(const std::string& name)
     // We are not the initiator of the connection, so we
     // expect to receive a header (carrier-dependent).
     bool ok = expectHeader();
-    if (!ok)
+    if (!ok) {
         return false;
+    }
     // Respond to header (carrier-dependent).
     return respondToHeader();
 }
@@ -231,13 +231,15 @@ bool Protocol::open(const Route& route)
 {
     setRoute(route);
     setCarrier(route.getCarrierName());
-    if (delegate == nullptr)
+    if (delegate == nullptr) {
         return false;
+    }
     // We are the initiator of the connection, so we
     // send a header (carrier-dependent).
     bool ok = sendHeader();
-    if (!ok)
+    if (!ok) {
         return false;
+    }
     // Expect a resonse to the header (carrier-dependent).
     return expectReplyToHeader();
 }
@@ -251,8 +253,9 @@ void Protocol::close()
 
 void Protocol::interrupt()
 {
-    if (!active)
+    if (!active) {
         return;
+    }
     if (pendingAck) {
         // Don't neglect to send one last acknowledgement if needed.
         sendAck();
@@ -296,8 +299,9 @@ bool Protocol::write(SizedWriter& writer)
     writer.stopWrite();
     // Skip if this connection is not active (e.g. when there are several
     // logical mcast connections but only one write is actually needed).
-    if (!getConnection().isActive())
+    if (!getConnection().isActive()) {
         return false;
+    }
     this->writer = &writer;
     bool replied = false;
     yAssert(delegate != nullptr);
@@ -382,8 +386,9 @@ void Protocol::suppressReply()
 bool Protocol::setTimeout(double timeout)
 {
     bool ok = os().setWriteTimeout(timeout);
-    if (!ok)
+    if (!ok) {
         return false;
+    }
     return is().setReadTimeout(timeout);
 }
 
@@ -433,12 +438,15 @@ Connection& Protocol::getSender()
 bool Protocol::getRecvDelegate()
 {
     // If we've already checked for a receiver modifier, return.
-    if (recv_delegate)
+    if (recv_delegate) {
         return true;
-    if (!need_recv_delegate)
+    }
+    if (!need_recv_delegate) {
         return true;
-    if (recv_delegate_fail)
+    }
+    if (recv_delegate_fail) {
         return false;
+    }
     Bottle b(getSenderSpecifier());
     // Check for a "recv" qualifier.
     std::string tag = b.find("recv").asString();
@@ -469,12 +477,15 @@ bool Protocol::getRecvDelegate()
 bool Protocol::getSendDelegate()
 {
     // If we've already checked for a sender modifier, return.
-    if (send_delegate)
+    if (send_delegate) {
         return true;
-    if (!need_send_delegate)
+    }
+    if (!need_send_delegate) {
         return true;
-    if (send_delegate_fail)
+    }
+    if (send_delegate_fail) {
         return false;
+    }
     Bottle b(getSenderSpecifier());
     // Check for a "send" qualifier.
     std::string tag = b.find("send").asString();
@@ -506,8 +517,9 @@ bool Protocol::respondToHeader()
 {
     yAssert(delegate != nullptr);
     bool ok = delegate->respondToHeader(*this);
-    if (!ok)
+    if (!ok) {
         return false;
+    }
     os().flush();
     return os().isOk();
 }
@@ -552,8 +564,9 @@ bool Protocol::sendAck()
 {
     bool ok = true;
     pendingAck = false;
-    if (delegate == nullptr)
+    if (delegate == nullptr) {
         return false;
+    }
     if (delegate->requireAck()) {
         ok = delegate->sendAck(*this);
         os().flush();
@@ -601,8 +614,9 @@ void Protocol::setCarrier(const std::string& carrierNameBase)
     // Set up the carrier for this connection.  The carrier
     // has all the protocol-specific behavior.
     std::string carrierName = carrierNameBase;
-    if (carrierNameBase == "")
+    if (carrierNameBase == "") {
         carrierName = "tcp";
+    }
     Route route = getRoute();
     route.setCarrierName(carrierName);
     setRoute(route);
@@ -638,11 +652,13 @@ bool Protocol::expectHeader()
     // on what the get used for.
     messageLen = 0;
     bool ok = expectProtocolSpecifier();
-    if (!ok)
+    if (!ok) {
         return false;
+    }
     ok = expectSenderSpecifier();
-    if (!ok)
+    if (!ok) {
         return false;
+    }
     yAssert(delegate != nullptr);
     ok = delegate->expectExtraHeader(*this);
     return ok;

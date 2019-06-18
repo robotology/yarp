@@ -7,11 +7,12 @@
  */
 
 #include <yarp/os/impl/LogForwarder.h>
+
+#include <yarp/os/Log.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
-#include <yarp/os/Time.h>
-#include <yarp/os/Log.h>
 #include <yarp/os/SystemInfo.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/impl/PlatformLimits.h>
 
 bool yarp::os::impl::LogForwarder::started{false};

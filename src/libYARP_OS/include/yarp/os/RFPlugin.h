@@ -6,20 +6,18 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/api.h>
-#include <string>
-
 #ifndef YARP_OS_RFPLUGIN_H
 #define YARP_OS_RFPLUGIN_H
+
+#include <yarp/os/api.h>
+
+#include <string>
 
 namespace yarp {
 namespace os {
 
 class YARP_OS_API RFPlugin
 {
-    struct RFPlugin_Private;
-    RFPlugin_Private* impl{ nullptr };
-
 public:
     RFPlugin();
 
@@ -51,6 +49,12 @@ public:
      * get the thread id
      */
     virtual int getThreadKey();
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
 

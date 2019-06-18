@@ -7,14 +7,15 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/PortReaderBufferBase.h>
+
 #include <yarp/os/Os.h>
-#include <yarp/os/Portable.h>
 #include <yarp/os/PortReaderBuffer.h>
-#include <yarp/os/Thread.h>
-#include <yarp/os/Time.h>
+#include <yarp/os/Portable.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/StringInputStream.h>
-
+#include <yarp/os/Thread.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PortCorePacket.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
@@ -25,22 +26,21 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 class PortReaderPacket
 {
 public:
     PortReaderPacket *prev_, *next_;
 
     // if non-null, contains a buffer that the packet owns
-    PortReader *reader;
+    PortReader* reader;
 
     std::string envelope;
 
     // if nun-null, refers to an external buffer
     // by convention, overrides reader
-    PortReader *external;
-    PortWriter *writer; // if a callback is needed
+    PortReader* external;
+    PortWriter* writer; // if a callback is needed
 
     PortReaderPacket()
     {
@@ -59,7 +59,7 @@ public:
 
     void reset()
     {
-        if (reader!=nullptr) {
+        if (reader != nullptr) {
             delete reader;
             reader = nullptr;
         }
@@ -67,24 +67,24 @@ public:
         envelope = "";
     }
 
-    PortReader *getReader()
+    PortReader* getReader()
     {
         return reader;
     }
 
-    void setReader(PortReader *reader)
+    void setReader(PortReader* reader)
     {
         resetExternal();
         reset();
         this->reader = reader;
     }
 
-    PortReader *getExternal()
+    PortReader* getExternal()
     {
         return external;
     }
 
-    void setExternal(PortReader *reader, PortWriter *writer)
+    void setExternal(PortReader* reader, PortWriter* writer)
     {
         resetExternal();
         this->external = reader;
@@ -99,7 +99,7 @@ public:
 
     void resetExternal()
     {
-        if (writer!=nullptr) {
+        if (writer != nullptr) {
             writer->onCompletion();
             writer = nullptr;
         }
@@ -115,7 +115,6 @@ private:
     std::list<PortReaderPacket*> active;
 
 public:
-
     size_t getCount()
     {
         return active.size();
@@ -126,40 +125,40 @@ public:
         return inactive.size();
     }
 
-    PortReaderPacket *getInactivePacket()
+    PortReaderPacket* getInactivePacket()
     {
         if (inactive.empty()) {
-            PortReaderPacket *obj = nullptr;
+            PortReaderPacket* obj = nullptr;
             obj = new PortReaderPacket();
             inactive.push_back(obj);
         }
-        PortReaderPacket *next = inactive.front();
-        yAssert(next!=nullptr);
+        PortReaderPacket* next = inactive.front();
+        yAssert(next != nullptr);
         inactive.remove(next);
         return next;
     }
 
-    PortReaderPacket *getActivePacket()
+    PortReaderPacket* getActivePacket()
     {
-        PortReaderPacket *next = nullptr;
-        if (getCount()>=1) {
+        PortReaderPacket* next = nullptr;
+        if (getCount() >= 1) {
             next = active.front();
-            yAssert(next!=nullptr);
+            yAssert(next != nullptr);
             active.remove(next);
         }
         return next;
     }
 
-    void addActivePacket(PortReaderPacket *packet)
+    void addActivePacket(PortReaderPacket* packet)
     {
-        if (packet!=nullptr) {
+        if (packet != nullptr) {
             active.push_back(packet);
         }
     }
 
-    void addInactivePacket(PortReaderPacket *packet)
+    void addInactivePacket(PortReaderPacket* packet)
     {
-        if (packet!=nullptr) {
+        if (packet != nullptr) {
             inactive.push_back(packet);
         }
     }
@@ -178,11 +177,9 @@ public:
 };
 
 
-
 class PortReaderBufferBase::Private
 {
 private:
-
     PortReaderBufferBase& owner;
     PortReaderPacket* prev;
 
@@ -197,7 +194,7 @@ public:
     PortReaderPool pool;
 
     int ct;
-    Port *port;
+    Port* port;
     yarp::os::Semaphore contentSema;
     yarp::os::Semaphore consumeSema;
     std::mutex stateMutex;
@@ -221,13 +218,13 @@ public:
 
     virtual ~Private()
     {
-        Port *closePort = nullptr;
+        Port* closePort = nullptr;
         stateMutex.lock();
-        if (port!=nullptr) {
+        if (port != nullptr) {
             closePort = port;
         }
         stateMutex.unlock();
-        if (closePort!=nullptr) {
+        if (closePort != nullptr) {
             closePort->close();
         }
         stateMutex.lock();
@@ -237,7 +234,7 @@ public:
 
     void clear()
     {
-        if (prev!=nullptr) {
+        if (prev != nullptr) {
             pool.addInactivePacket(prev);
             prev = nullptr;
         }
@@ -248,15 +245,15 @@ public:
 
     std::string getName()
     {
-        if (port!=nullptr) {
+        if (port != nullptr) {
             return port->getName();
         }
         return {};
     }
 
-    PortReaderPacket *get()
+    PortReaderPacket* get()
     {
-        PortReaderPacket *result = nullptr;
+        PortReaderPacket* result = nullptr;
         bool grab = true;
         if (pool.getFree() == 0) {
             grab = false;
@@ -279,13 +276,13 @@ public:
         return (int)pool.getCount();
     }
 
-    PortReaderPacket *getContent()
+    PortReaderPacket* getContent()
     {
-        if (prev!=nullptr) {
+        if (prev != nullptr) {
             pool.addInactivePacket(prev);
             prev = nullptr;
         }
-        if (pool.getCount()>=1) {
+        if (pool.getCount() >= 1) {
             prev = pool.getActivePacket();
             ct--;
         }
@@ -295,7 +292,7 @@ public:
 
     bool getEnvelope(PortReader& envelope)
     {
-        if (prev==nullptr) {
+        if (prev == nullptr) {
             return false;
         }
         StringInputStream sis;
@@ -307,14 +304,14 @@ public:
         return envelope.read(sbr);
     }
 
-    PortReaderPacket *dropContent()
+    PortReaderPacket* dropContent()
     {
         // don't affect "prev"
-        PortReaderPacket *drop = nullptr;
+        PortReaderPacket* drop = nullptr;
 
-        if (pool.getCount()>=1) {
+        if (pool.getCount() >= 1) {
             drop = pool.getActivePacket();
-            if (drop!=nullptr) {
+            if (drop != nullptr) {
                 pool.addInactivePacket(drop);
             }
             ct--;
@@ -328,27 +325,26 @@ public:
         port.setReader(owner);
     }
 
-    void *acquire()
+    void* acquire()
     {
-        if (prev!=nullptr) {
-            void *result = prev;
+        if (prev != nullptr) {
+            void* result = prev;
             prev = nullptr;
             return result;
         }
         return nullptr;
     }
 
-    void release(void *key)
+    void release(void* key)
     {
-        if (key!=nullptr) {
+        if (key != nullptr) {
             pool.addInactivePacket((PortReaderPacket*)key);
         }
     }
 };
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 
-
-PortReaderBufferBaseCreator::~PortReaderBufferBaseCreator() = default;
 
 PortReaderBufferBase::PortReaderBufferBase(unsigned int maxBuffer) :
         mPriv(new Private(*this, maxBuffer))
@@ -360,9 +356,9 @@ PortReaderBufferBase::~PortReaderBufferBase()
     delete mPriv;
 }
 
-yarp::os::PortReader *PortReaderBufferBase::create()
+yarp::os::PortReader* PortReaderBufferBase::create()
 {
-    if (mPriv->creator!=nullptr) {
+    if (mPriv->creator != nullptr) {
         return mPriv->creator->create();
     }
     return nullptr;
@@ -383,7 +379,7 @@ void PortReaderBufferBase::interrupt()
     mPriv->contentSema.post();
 }
 
-PortReader *PortReaderBufferBase::readBase(bool& missed, bool cleanup)
+PortReader* PortReaderBufferBase::readBase(bool& missed, bool cleanup)
 {
     missed = false;
     if (mPriv->period < 0 || cleanup) {
@@ -395,12 +391,14 @@ PortReader *PortReaderBufferBase::readBase(bool& missed, bool cleanup)
         if (mPriv->last_recv > 0) {
             target = mPriv->last_recv + mPriv->period;
         }
-        double diff = target-now;
-        if (diff>0) {
+        double diff = target - now;
+        if (diff > 0) {
             ok = mPriv->contentSema.waitWithTimeout(diff);
         } else {
             ok = mPriv->contentSema.check();
-            if (ok) mPriv->contentSema.wait();
+            if (ok) {
+                mPriv->contentSema.wait();
+            }
         }
         if (!ok) {
             missed = true;
@@ -414,25 +412,25 @@ PortReader *PortReaderBufferBase::readBase(bool& missed, bool cleanup)
             mPriv->last_recv = now;
         } else {
             diff = target - now;
-            if (diff>0) {
+            if (diff > 0) {
                 SystemClock::delaySystem(diff);
             }
             mPriv->last_recv = target;
         }
     }
     mPriv->stateMutex.lock();
-    PortReaderPacket *readerPacket = mPriv->getContent();
-    PortReader *reader = nullptr;
-    if (readerPacket!=nullptr) {
-        PortReader *external = readerPacket->getExternal();
-        if (external==nullptr) {
+    PortReaderPacket* readerPacket = mPriv->getContent();
+    PortReader* reader = nullptr;
+    if (readerPacket != nullptr) {
+        PortReader* external = readerPacket->getExternal();
+        if (external == nullptr) {
             reader = readerPacket->getReader();
         } else {
             reader = external;
         }
     }
     mPriv->stateMutex.unlock();
-    if (reader!=nullptr) {
+    if (reader != nullptr) {
         mPriv->consumeSema.post();
     }
     return reader;
@@ -441,7 +439,7 @@ PortReader *PortReaderBufferBase::readBase(bool& missed, bool cleanup)
 
 bool PortReaderBufferBase::read(ConnectionReader& connection)
 {
-    if (connection.getReference()!=nullptr) {
+    if (connection.getReference() != nullptr) {
         //printf("REF %ld %d\n", (long int)connection.getReference(),
         //     connection.isValid());
         return acceptObjectBase(connection.getReference(), nullptr);
@@ -452,24 +450,24 @@ bool PortReaderBufferBase::read(ConnectionReader& connection)
             return mPriv->replier->read(connection);
         }
     }
-    PortReaderPacket *reader = nullptr;
-    while (reader==nullptr) {
+    PortReaderPacket* reader = nullptr;
+    while (reader == nullptr) {
         mPriv->stateMutex.lock();
         reader = mPriv->get();
         if (reader && reader->getReader() == nullptr) {
-            PortReader *next = create();
+            PortReader* next = create();
             yAssert(next != nullptr);
             reader->setReader(next);
         }
 
         mPriv->stateMutex.unlock();
-        if (reader==nullptr) {
+        if (reader == nullptr) {
             mPriv->consumeSema.wait();
         }
     }
     bool ok = false;
     if (connection.isValid()) {
-        yAssert(reader->getReader()!=nullptr);
+        yAssert(reader->getReader() != nullptr);
         ok = reader->getReader()->read(connection);
         reader->setEnvelope(connection.readEnvelope());
     } else {
@@ -480,10 +478,9 @@ bool PortReaderBufferBase::read(ConnectionReader& connection)
     if (ok) {
         mPriv->stateMutex.lock();
         bool pruned = false;
-        if (mPriv->ct>0 && mPriv->prune) {
-            PortReaderPacket *readerPacket =
-                mPriv->dropContent();
-            pruned = (readerPacket!=nullptr);
+        if (mPriv->ct > 0 && mPriv->prune) {
+            PortReaderPacket* readerPacket = mPriv->dropContent();
+            pruned = (readerPacket != nullptr);
         }
         //mPriv->configure(reader, false, true);
         mPriv->pool.addActivePacket(reader);
@@ -507,8 +504,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection)
 }
 
 
-
-void PortReaderBufferBase::setCreator(PortReaderBufferBaseCreator *creator)
+void PortReaderBufferBase::setCreator(PortReaderBufferBaseCreator* creator)
 {
     mPriv->creator = creator;
 }
@@ -540,7 +536,7 @@ unsigned int PortReaderBufferBase::getMaxBuffer()
 
 bool PortReaderBufferBase::isClosed()
 {
-    return mPriv->port==nullptr;
+    return mPriv->port == nullptr;
 }
 
 void PortReaderBufferBase::attachBase(Port& port)
@@ -554,19 +550,19 @@ void PortReaderBufferBase::attachBase(Port& port)
 /// Careful!  merge with ::read -- very similar code
 /// Until merge, don't change one without looking at other :-(
 
-bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
-                                            yarp::os::PortWriter *wrapper)
+bool PortReaderBufferBase::acceptObjectBase(PortReader* obj,
+                                            yarp::os::PortWriter* wrapper)
 {
     // getting an object here should be basically the same as
     // receiving from a Port -- except no need to create/read
     // the object
 
-    PortReaderPacket *reader = nullptr;
-    while (reader==nullptr) {
+    PortReaderPacket* reader = nullptr;
+    while (reader == nullptr) {
         mPriv->stateMutex.lock();
         reader = mPriv->get();
         mPriv->stateMutex.unlock();
-        if (reader==nullptr) {
+        if (reader == nullptr) {
             mPriv->consumeSema.wait();
         }
     }
@@ -575,10 +571,9 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
 
     mPriv->stateMutex.lock();
     bool pruned = false;
-    if (mPriv->ct>0 && mPriv->prune) {
-        PortReaderPacket *readerPacket =
-            mPriv->dropContent();
-        pruned = (readerPacket!=nullptr);
+    if (mPriv->ct > 0 && mPriv->prune) {
+        PortReaderPacket* readerPacket = mPriv->dropContent();
+        pruned = (readerPacket != nullptr);
     }
     //mPriv->configure(reader, false, true);
     mPriv->pool.addActivePacket(reader);
@@ -593,9 +588,8 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
 }
 
 
-
-bool PortReaderBufferBase::forgetObjectBase(PortReader *obj,
-                                            yarp::os::PortWriter *wrapper)
+bool PortReaderBufferBase::forgetObjectBase(PortReader* obj,
+                                            yarp::os::PortWriter* wrapper)
 {
     YARP_UNUSED(obj);
     YARP_UNUSED(wrapper);
@@ -604,13 +598,12 @@ bool PortReaderBufferBase::forgetObjectBase(PortReader *obj,
 }
 
 
-
-void *PortReaderBufferBase::acquire()
+void* PortReaderBufferBase::acquire()
 {
     return mPriv->acquire();
 }
 
-void PortReaderBufferBase::release(void *key)
+void PortReaderBufferBase::release(void* key)
 {
     mPriv->stateMutex.lock();
     mPriv->release(key);

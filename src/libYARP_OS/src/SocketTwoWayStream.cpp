@@ -9,27 +9,29 @@
  */
 
 #include <yarp/os/impl/SocketTwoWayStream.h>
+
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/TcpAcceptor.h>
-#include <yarp/os/impl/TcpStream.h>
 #include <yarp/os/impl/TcpConnector.h>
+#include <yarp/os/impl/TcpStream.h>
 
 #ifdef YARP_HAS_ACE
-#  include <ace/INET_Addr.h>
-#  include <ace/os_include/netinet/os_tcp.h>
+#    include <ace/INET_Addr.h>
+#    include <ace/os_include/netinet/os_tcp.h>
 // In one the ACE headers there is a definition of "main" for WIN32
-# ifdef main
-#  undef main
-# endif
-#elif(__unix__)
-#  include <netinet/tcp.h>
+#    ifdef main
+#        undef main
+#    endif
+#elif (__unix__)
+#    include <netinet/tcp.h>
 #endif
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-int SocketTwoWayStream::open(const Contact& address) {
-    if (address.getPort()==-1) {
+int SocketTwoWayStream::open(const Contact& address)
+{
+    if (address.getPort() == -1) {
         return -1;
     }
     std::string host = address.getHost();
@@ -42,7 +44,7 @@ int SocketTwoWayStream::open(const Contact& address) {
     }
     ACE_INET_Addr addr(address.getPort(), host.c_str());
     YARP_timeval openTimeout;
-    YARP_timeval *timeout = nullptr;
+    YARP_timeval* timeout = nullptr;
     if (address.hasTimeout()) {
         openTimeout.set(address.getTimeout());
         timeout = &openTimeout;
@@ -51,22 +53,19 @@ int SocketTwoWayStream::open(const Contact& address) {
 #else
     int result;
 
-    if (address.hasTimeout())
-    {
+    if (address.hasTimeout()) {
         YARP_timeval timeout;
         /* set timeout seconds and microseconds */
-        timeout.tv_sec = (int) address.getTimeout();
-        timeout.tv_usec = (address.getTimeout() - (int) address.getTimeout()) * 1000000;
+        timeout.tv_sec = (int)address.getTimeout();
+        timeout.tv_usec = (address.getTimeout() - (int)address.getTimeout()) * 1000000;
         result = connector.connect(stream, address, &timeout);
-    }
-    else
-    {
+    } else {
         result = connector.connect(stream, address, nullptr);
     }
 
 
 #endif
-    if (result>=0) {
+    if (result >= 0) {
         happy = true;
     } else {
         YARP_SPRINTF2(Logger::get(),
@@ -79,16 +78,18 @@ int SocketTwoWayStream::open(const Contact& address) {
     return result;
 }
 
-int SocketTwoWayStream::open(yarp::os::impl::TcpAcceptor& acceptor) {
+int SocketTwoWayStream::open(yarp::os::impl::TcpAcceptor& acceptor)
+{
     int result = acceptor.accept(stream);
-    if (result>=0) {
+    if (result >= 0) {
         happy = true;
     }
     updateAddresses();
     return result;
 }
 
-void SocketTwoWayStream::updateAddresses() {
+void SocketTwoWayStream::updateAddresses()
+{
     int one = 1;
     stream.set_option(IPPROTO_TCP, TCP_NODELAY, &one, sizeof(int));
 #ifdef YARP_HAS_ACE
@@ -113,22 +114,18 @@ void SocketTwoWayStream::updateAddresses() {
         char* remoteHostAddress = new char[remote.sa_family == AF_INET ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN];
         const char* ret = nullptr;
         ret = inet_ntop(local.sa_family,
-                        (local.sa_family == AF_INET ? reinterpret_cast<void*>(&reinterpret_cast<struct sockaddr_in*>(&local)->sin_addr):
-                                                      reinterpret_cast<void*>(&reinterpret_cast<struct sockaddr_in6*>(&local)->sin6_addr)),
+                        (local.sa_family == AF_INET ? reinterpret_cast<void*>(&reinterpret_cast<struct sockaddr_in*>(&local)->sin_addr) : reinterpret_cast<void*>(&reinterpret_cast<struct sockaddr_in6*>(&local)->sin6_addr)),
                         localHostAddress,
-                        (local.sa_family == AF_INET ? INET_ADDRSTRLEN:
-                                                      INET6_ADDRSTRLEN));
+                        (local.sa_family == AF_INET ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN));
         if (ret) {
             localAddress = Contact(localHostAddress, ntohs(reinterpret_cast<struct sockaddr_in*>(&local)->sin_port));
         } else {
             YARP_ERROR(Logger::get(), "SocketTwoWayStream::updateAddresses failed getting local address");
         }
         ret = inet_ntop(remote.sa_family,
-                       (remote.sa_family == AF_INET ? reinterpret_cast<void*>(&reinterpret_cast<struct sockaddr_in*>(&remote)->sin_addr):
-                                                      reinterpret_cast<void*>(&reinterpret_cast<struct sockaddr_in6*>(&remote)->sin6_addr)),
-                       remoteHostAddress,
-                       (remote.sa_family == AF_INET ? INET_ADDRSTRLEN:
-                                                      INET6_ADDRSTRLEN));
+                        (remote.sa_family == AF_INET ? reinterpret_cast<void*>(&reinterpret_cast<struct sockaddr_in*>(&remote)->sin_addr) : reinterpret_cast<void*>(&reinterpret_cast<struct sockaddr_in6*>(&remote)->sin6_addr)),
+                        remoteHostAddress,
+                        (remote.sa_family == AF_INET ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN));
         if (ret) {
             remoteAddress = Contact(remoteHostAddress, ntohs(reinterpret_cast<struct sockaddr_in*>(&remote)->sin_port));
         } else {
@@ -142,15 +139,15 @@ void SocketTwoWayStream::updateAddresses() {
 #endif
 }
 
-bool SocketTwoWayStream::setTypeOfService(int tos) {
-    return (stream.set_option(IPPROTO_IP, IP_TOS,
-                              (int *)&tos, (int)sizeof(tos) ) == 0);
+bool SocketTwoWayStream::setTypeOfService(int tos)
+{
+    return (stream.set_option(IPPROTO_IP, IP_TOS, (int*)&tos, (int)sizeof(tos)) == 0);
 }
 
-int SocketTwoWayStream::getTypeOfService() {
+int SocketTwoWayStream::getTypeOfService()
+{
     int tos = -1;
     int optlen;
-    stream.get_option(IPPROTO_IP, IP_TOS,
-                      (int *)&tos, &optlen);
+    stream.get_option(IPPROTO_IP, IP_TOS, (int*)&tos, &optlen);
     return tos;
 }

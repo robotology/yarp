@@ -9,34 +9,41 @@
  */
 
 #include <yarp/os/DummyConnector.h>
+#include <yarp/os/StringInputStream.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
-#include <yarp/os/StringInputStream.h>
 
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-class DummyConnectorReader : public StreamConnectionReader {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+class DummyConnectorReader :
+        public StreamConnectionReader
+{
 public:
-    BufferedConnectionWriter *altWriter;
+    BufferedConnectionWriter* altWriter;
     bool tmode;
 
-    BufferedConnectionWriter *getWriter() override {
+    BufferedConnectionWriter* getWriter() override
+    {
         altWriter->reset(tmode);
         return altWriter;
     }
 };
 
-class DummyConnectorHelper {
+class DummyConnector::Private
+{
 private:
     BufferedConnectionWriter writer;
     DummyConnectorReader reader;
     StringInputStream sis;
     bool textMode{false};
-public:
 
-    DummyConnectorHelper() : writer(false) {
+public:
+    Private() :
+            writer(false)
+    {
         reader.altWriter = &writer;
         reader.tmode = textMode;
     }
@@ -76,40 +83,39 @@ public:
         writer.reset(textMode);
     }
 };
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
-
-#define HELPER(implementation) (*((DummyConnectorHelper*)implementation))
-
-
-DummyConnector::DummyConnector() {
-    implementation = new DummyConnectorHelper();
+DummyConnector::DummyConnector() :
+        mPriv(new Private())
+{
 }
 
-
-DummyConnector::~DummyConnector() {
-    if (implementation != nullptr) {
-        delete &HELPER(implementation);
-        implementation = nullptr;
-    }
+DummyConnector::~DummyConnector()
+{
+    delete mPriv;
 }
 
-void DummyConnector::setTextMode(bool textmode) {
-    HELPER(implementation).setTextMode(textmode);
+void DummyConnector::setTextMode(bool textmode)
+{
+    mPriv->setTextMode(textmode);
 }
 
-
-ConnectionWriter& DummyConnector::getCleanWriter() {
-    return HELPER(implementation).getCleanWriter();
+ConnectionWriter& DummyConnector::getCleanWriter()
+{
+    return mPriv->getCleanWriter();
 }
 
-ConnectionWriter& DummyConnector::getWriter() {
-    return HELPER(implementation).getWriter();
+ConnectionWriter& DummyConnector::getWriter()
+{
+    return mPriv->getWriter();
 }
 
-ConnectionReader& DummyConnector::getReader() {
-    return HELPER(implementation).getReader();
+ConnectionReader& DummyConnector::getReader()
+{
+    return mPriv->getReader();
 }
 
-void DummyConnector::reset() {
-    HELPER(implementation).reset();
+void DummyConnector::reset()
+{
+    mPriv->reset();
 }

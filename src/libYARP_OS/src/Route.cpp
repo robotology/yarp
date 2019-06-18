@@ -8,13 +8,15 @@
  */
 
 #include <yarp/os/Route.h>
-#include <string>
-#include <utility>
+
 #include <yarp/os/Contact.h>
 
+#include <string>
+#include <utility>
 
-using yarp::os::Route;
+
 using yarp::os::Contact;
+using yarp::os::Route;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -25,10 +27,10 @@ public:
             std::string toName,
             Contact toContact,
             std::string carrierName) :
-        fromName(std::move(fromName)),
-        toName(std::move(toName)),
-        toContact(std::move(toContact)),
-        carrierName(std::move(carrierName))
+            fromName(std::move(fromName)),
+            toName(std::move(toName)),
+            toContact(std::move(toContact)),
+            carrierName(std::move(carrierName))
     {
     }
 
@@ -36,14 +38,9 @@ public:
     std::string toName;
     Contact toContact;
     std::string carrierName;
-
 };
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
-
-
-
-
 
 
 Route::Route() :

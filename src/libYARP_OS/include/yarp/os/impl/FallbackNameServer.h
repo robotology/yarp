@@ -10,24 +10,21 @@
 #ifndef YARP_OS_IMPL_FALLBACKNAMESERVER_H
 #define YARP_OS_IMPL_FALLBACKNAMESERVER_H
 
-#include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
+#include <yarp/os/impl/ThreadImpl.h>
+#include <yarp/os/impl/NameServer.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class FallbackNameServer;
-            class NameServerStub;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * Multi-cast server, for last resort information sharing about
  * name information -- when config files are missing or wrong
  */
-class YARP_OS_impl_API yarp::os::impl::FallbackNameServer : public ThreadImpl
+class YARP_OS_impl_API FallbackNameServer :
+        public ThreadImpl
 {
 public:
     FallbackNameServer(NameServerStub& owner) :
@@ -46,5 +43,9 @@ private:
     DgramTwoWayStream listen;
     bool closed;
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_FALLBACKNAMESERVER_H

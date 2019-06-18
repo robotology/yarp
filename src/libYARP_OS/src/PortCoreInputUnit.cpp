@@ -10,10 +10,9 @@
 #include <yarp/os/impl/PortCoreInputUnit.h>
 
 #include <yarp/os/Name.h>
-#include <yarp/os/PortReport.h>
 #include <yarp/os/PortInfo.h>
+#include <yarp/os/PortReport.h>
 #include <yarp/os/Time.h>
-
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformSignal.h>
@@ -30,7 +29,7 @@ using namespace yarp::os;
 
 PortCoreInputUnit::PortCoreInputUnit(PortCore& owner,
                                      int index,
-                                     InputProtocol *ip,
+                                     InputProtocol* ip,
                                      bool reversed) :
         PortCoreUnit(owner, index),
         ip(ip),
@@ -43,9 +42,9 @@ PortCoreInputUnit::PortCoreInputUnit(PortCore& owner,
         localReader(nullptr),
         reversed(reversed)
 {
-    yAssert(ip!=nullptr);
+    yAssert(ip != nullptr);
 
-    yarp::os::PortReaderCreator *creator = owner.getReadCreator();
+    yarp::os::PortReaderCreator* creator = owner.getReadCreator();
     if (creator != nullptr) {
         localReader = creator->create();
     }
@@ -54,18 +53,18 @@ PortCoreInputUnit::PortCoreInputUnit(PortCore& owner,
 PortCoreInputUnit::~PortCoreInputUnit()
 {
     closeMain();
-    if (localReader!=nullptr) {
+    if (localReader != nullptr) {
         delete localReader;
         localReader = nullptr;
     }
 }
 
 
-bool PortCoreInputUnit::start() {
+bool PortCoreInputUnit::start()
+{
 
 
-    YARP_DEBUG(Logger::get(), std::string("new input connection to ")+
-               getOwner().getName()+ " starting");
+    YARP_DEBUG(Logger::get(), std::string("new input connection to ") + getOwner().getName() + " starting");
 
     /*
     if (ip!=nullptr) {
@@ -79,13 +78,11 @@ bool PortCoreInputUnit::start() {
 
     bool result = PortCoreUnit::start();
     if (result) {
-        YARP_DEBUG(Logger::get(), std::string("new input connection to ")+
-                   getOwner().getName()+ " started ok");
+        YARP_DEBUG(Logger::get(), std::string("new input connection to ") + getOwner().getName() + " started ok");
         phase.wait();
         phase.post();
     } else {
-        YARP_DEBUG(Logger::get(), std::string("new input connection to ")+
-                   getOwner().getName()+ " failed to start");
+        YARP_DEBUG(Logger::get(), std::string("new input connection to ") + getOwner().getName() + " failed to start");
 
         phase.post();
     }
@@ -94,7 +91,8 @@ bool PortCoreInputUnit::start() {
 }
 
 
-void PortCoreInputUnit::run() {
+void PortCoreInputUnit::run()
+{
     running = true;
     phase.post();
 
@@ -104,7 +102,7 @@ void PortCoreInputUnit::run() {
 
     bool done = false;
 
-    yAssert(ip!=nullptr);
+    yAssert(ip != nullptr);
 
     PortCommand cmd;
 
@@ -113,8 +111,7 @@ void PortCoreInputUnit::run() {
         ip->open(getName());
     }
     if (!ok) {
-            YARP_DEBUG(Logger::get(), std::string("new input connection to ")+
-                    getOwner().getName()+ " is broken");
+        YARP_DEBUG(Logger::get(), std::string("new input connection to ") + getOwner().getName() + " is broken");
         done = true;
     } else {
         route = ip->getRoute();
@@ -123,24 +120,23 @@ void PortCoreInputUnit::run() {
         // the same source as undesired
         if (Name(route.getFromName()).isRooted()) {
             YARP_SPRINTF3(Logger::get(),
-                            debug,
-                            "Port %s starting up, flushing routes %s->*->%s",
-                            getOwner().getName().c_str(),
-                            route.getFromName().c_str(),
-                            route.getToName().c_str());
+                          debug,
+                          "Port %s starting up, flushing routes %s->*->%s",
+                          getOwner().getName().c_str(),
+                          route.getFromName().c_str(),
+                          route.getToName().c_str());
             getOwner().removeIO(Route(route.getFromName(),
-                                        route.getToName(), "*"), true);
+                                      route.getToName(),
+                                      "*"),
+                                true);
         }
         officialRoute = route;
         setMode();
         getOwner().reportUnit(this, true);
 
-        std::string msg = std::string("Receiving input from ") +
-            route.getFromName() + " to " + route.getToName() +
-            " using " +
-            route.getCarrierName();
+        std::string msg = std::string("Receiving input from ") + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
         if (Name(route.getFromName()).isRooted()) {
-            if (reversed||ip->getConnection().isPush()) {
+            if (reversed || ip->getConnection().isPush()) {
                 YARP_INFO(Logger::get(), msg);
                 posted = true;
             } else {
@@ -161,7 +157,7 @@ void PortCoreInputUnit::run() {
         info.portName = info.targetName;
         info.carrierName = route.getCarrierName();
 
-        if (info.sourceName!="admin"&&info.sourceName!="null") {
+        if (info.sourceName != "admin" && info.sourceName != "null") {
             getOwner().report(info);
             wasNoticed = true;
         }
@@ -170,7 +166,7 @@ void PortCoreInputUnit::run() {
     if (!reversed) {
         if (!ip->getConnection().isPush()) {
             /* IP=OP */
-            OutputProtocol *op = &(ip->getOutput());
+            OutputProtocol* op = &(ip->getOutput());
             Route r = op->getRoute();
             // reverse route
             r.swapNames();
@@ -186,31 +182,41 @@ void PortCoreInputUnit::run() {
         done = true;
     }
 
-    void *id = (void *)this;
+    void* id = (void*)this;
 
-    if (ip!=nullptr && !ip->getConnection().canEscape()) {
-        InputStream *is = &ip->getInputStream();
+    if (ip != nullptr && !ip->getConnection().canEscape()) {
+        InputStream* is = &ip->getInputStream();
         is->setReadEnvelopeCallback(envelopeReadCallback, this);
     }
 
     while (!done) {
-        if(!ip) break;
+        if (!ip) {
+            break;
+        }
         ConnectionReader& br = ip->beginRead();
 
-        if (br.getReference()!=nullptr) {
+        if (br.getReference() != nullptr) {
             //printf("HAVE A REFERENCE\n");
-            if (localReader!=nullptr) {
+            if (localReader != nullptr) {
                 bool ok = localReader->read(br);
-                if (!br.isActive()) { break; }
-                if (!ok) continue;
+                if (!br.isActive()) {
+                    break;
+                }
+                if (!ok) {
+                    continue;
+                }
             } else {
                 PortCore& man = getOwner();
                 bool ok = man.readBlock(br, id, nullptr);
-                if (!br.isActive()) { break; }
-                if (!ok) continue;
+                if (!br.isActive()) {
+                    break;
+                }
+                if (!ok) {
+                    continue;
+                }
             }
             //printf("DONE WITH A REFERENCE\n");
-            if (ip!=nullptr) {
+            if (ip != nullptr) {
                 ip->endRead();
             }
             continue;
@@ -218,14 +224,20 @@ void PortCoreInputUnit::run() {
 
         if (ip->getConnection().canEscape()) {
             bool ok = cmd.read(br);
-            if (!br.isActive()) { break; }
-            if (!ok) continue;
+            if (!br.isActive()) {
+                break;
+            }
+            if (!ok) {
+                continue;
+            }
         } else {
             cmd = PortCommand('d', "");
-            if (!ip->isOk()) { break; }
+            if (!ip->isOk()) {
+                break;
+            }
         }
 
-        if (closing||isDoomed()) {
+        if (closing || isDoomed()) {
             break;
         }
         char key = cmd.getKey();
@@ -233,7 +245,7 @@ void PortCoreInputUnit::run() {
         //         (key>=32)?key:'?', key, cmd.getText().c_str());
 
         PortCore& man = getOwner();
-        OutputStream *os = nullptr;
+        OutputStream* os = nullptr;
         if (br.isTextMode()) {
             os = &(ip->getOutputStream());
         }
@@ -270,55 +282,55 @@ void PortCoreInputUnit::run() {
             man.describe(id, os);
             break;
         case 'D':
-        case 'd':
-            {
-                if (key=='D') {
-                    ip->suppressReply();
-                }
+        case 'd': {
+            if (key == 'D') {
+                ip->suppressReply();
+            }
 
-                std::string env = cmd.getText();
-                if (env.length()>2) {
-                    //YARP_ERROR(Logger::get(),
-                    //"***** received an envelope! [%s]", env.c_str());
-                    std::string env2 = env.substr(2, env.length());
-                    man.setEnvelope(env2);
-                    ip->setEnvelope(env2);
+            std::string env = cmd.getText();
+            if (env.length() > 2) {
+                //YARP_ERROR(Logger::get(),
+                //"***** received an envelope! [%s]", env.c_str());
+                std::string env2 = env.substr(2, env.length());
+                man.setEnvelope(env2);
+                ip->setEnvelope(env2);
+            }
+            if (localReader) {
+                localReader->read(br);
+                if (!br.isActive()) {
+                    done = true;
+                    break;
                 }
-                if (localReader) {
-                    localReader->read(br);
-                    if (!br.isActive()) { done = true; break; }
-                } else {
-                    if (ip->getReceiver().acceptIncomingData(br)) {
-                        ConnectionReader* cr = &(ip->getReceiver().modifyIncomingData(br));
-                        yarp::os::impl::PortDataModifier& modifier = getOwner().getPortModifier();
-                        modifier.inputMutex.lock();
-                        if (modifier.inputModifier) {
-                            if (modifier.inputModifier->acceptIncomingData(*cr)) {
-                                cr = &(modifier.inputModifier->modifyIncomingData(*cr));
-                                modifier.inputMutex.unlock();
-                                man.readBlock(*cr, id, os);
-                            }
-                            else {
-                                modifier.inputMutex.unlock();
-                                skipIncomingData(*cr);
-                            }
-                        }
-                        else {
+            } else {
+                if (ip->getReceiver().acceptIncomingData(br)) {
+                    ConnectionReader* cr = &(ip->getReceiver().modifyIncomingData(br));
+                    yarp::os::impl::PortDataModifier& modifier = getOwner().getPortModifier();
+                    modifier.inputMutex.lock();
+                    if (modifier.inputModifier) {
+                        if (modifier.inputModifier->acceptIncomingData(*cr)) {
+                            cr = &(modifier.inputModifier->modifyIncomingData(*cr));
                             modifier.inputMutex.unlock();
                             man.readBlock(*cr, id, os);
+                        } else {
+                            modifier.inputMutex.unlock();
+                            skipIncomingData(*cr);
                         }
+                    } else {
+                        modifier.inputMutex.unlock();
+                        man.readBlock(*cr, id, os);
                     }
-                    else
-                        skipIncomingData(br);
-                    if (!br.isActive()) { done = true; break; }
+                } else {
+                    skipIncomingData(br);
+                }
+                if (!br.isActive()) {
+                    done = true;
+                    break;
                 }
             }
-            break;
-        case 'a':
-            {
-                man.adminBlock(br, id, os);
-            }
-            break;
+        } break;
+        case 'a': {
+            man.adminBlock(br, id, os);
+        } break;
         case 'r':
             /*
               In YARP implementation, OP=IP.
@@ -328,7 +340,7 @@ void PortCoreInputUnit::run() {
               reorganized here
             */
             {
-                OutputProtocol *op = &(ip->getOutput());
+                OutputProtocol* op = &(ip->getOutput());
                 ip->endRead();
                 Route r = op->getRoute();
                 // reverse route
@@ -353,7 +365,7 @@ void PortCoreInputUnit::run() {
 #endif
         case '?':
         case 'h':
-            if (os!=nullptr) {
+            if (os != nullptr) {
                 BufferedConnectionWriter bw(true);
                 bw.appendLine("This is a YARP port.  Here are the commands it responds to:");
                 bw.appendLine("*       Gives a description of this port");
@@ -373,7 +385,7 @@ void PortCoreInputUnit::run() {
             }
             break;
         default:
-            if (os!=nullptr) {
+            if (os != nullptr) {
                 BufferedConnectionWriter bw(true);
                 bw.appendLine("Port command not understood.");
                 bw.appendLine("Type d to send data to the port's owner.");
@@ -382,13 +394,13 @@ void PortCoreInputUnit::run() {
             }
             break;
         }
-        if (ip!=nullptr) {
+        if (ip != nullptr) {
             ip->endRead();
         }
-        if (ip==nullptr) {
+        if (ip == nullptr) {
             break;
         }
-        if (closing||isDoomed()||(!ip->isOk())) {
+        if (closing || isDoomed() || (!ip->isOk())) {
             break;
         }
     }
@@ -397,14 +409,13 @@ void PortCoreInputUnit::run() {
 
     YARP_DEBUG(Logger::get(), "PortCoreInputUnit closing ip");
     access.wait();
-    if (ip!=nullptr) {
+    if (ip != nullptr) {
         ip->close();
     }
     access.post();
     YARP_DEBUG(Logger::get(), "PortCoreInputUnit closed ip");
 
-    std::string msg = std::string("Removing input from ") +
-        route.getFromName() + " to " + route.getToName();
+    std::string msg = std::string("Removing input from ") + route.getFromName() + " to " + route.getToName();
 
     if (Name(route.getFromName()).isRooted()) {
         if (posted) {
@@ -428,12 +439,12 @@ void PortCoreInputUnit::run() {
         info.portName = info.targetName;
         info.carrierName = route.getCarrierName();
 
-        if (info.sourceName!="admin") {
+        if (info.sourceName != "admin") {
             getOwner().report(info);
         }
     }
 
-    if (localReader!=nullptr) {
+    if (localReader != nullptr) {
         delete localReader;
         localReader = nullptr;
     }
@@ -466,11 +477,12 @@ const std::string& PortCoreInputUnit::getName()
     return name;
 }
 
-bool PortCoreInputUnit::interrupt() {
+bool PortCoreInputUnit::interrupt()
+{
     // give a kick (unfortunately unavoidable)
     access.wait();
     if (!closing) {
-        if (ip!=nullptr) {
+        if (ip != nullptr) {
             ip->interrupt();
         }
         closing = true;
@@ -499,7 +511,8 @@ InputProtocol* PortCoreInputUnit::getInPutProtocol()
     return ip;
 }
 
-void PortCoreInputUnit::closeMain() {
+void PortCoreInputUnit::closeMain()
+{
     access.wait();
     Route r = getRoute();
     access.post();
@@ -515,7 +528,7 @@ void PortCoreInputUnit::closeMain() {
         YARP_DEBUG(log, "PortCoreInputUnit joined");
     }
 
-    if (ip!=nullptr) {
+    if (ip != nullptr) {
         ip->close();
         delete ip;
         ip = nullptr;
@@ -525,17 +538,19 @@ void PortCoreInputUnit::closeMain() {
 }
 
 
-Route PortCoreInputUnit::getRoute() {
+Route PortCoreInputUnit::getRoute()
+{
     return officialRoute;
 }
 
 
-bool PortCoreInputUnit::skipIncomingData(yarp::os::ConnectionReader& reader) {
+bool PortCoreInputUnit::skipIncomingData(yarp::os::ConnectionReader& reader)
+{
     size_t pending = reader.getSize();
-    if (pending>0) {
-        while (pending>0) {
+    if (pending > 0) {
+        while (pending > 0) {
             char buf[10000];
-            size_t next = (pending<sizeof(buf))?pending:sizeof(buf);
+            size_t next = (pending < sizeof(buf)) ? pending : sizeof(buf);
             reader.expectBlock(&buf[0], next);
             pending -= next;
         }
@@ -545,10 +560,11 @@ bool PortCoreInputUnit::skipIncomingData(yarp::os::ConnectionReader& reader) {
 }
 
 
-bool PortCoreInputUnit::isBusy() {
+bool PortCoreInputUnit::isBusy()
+{
     bool busy = false;
     access.wait();
-    if (ip!=nullptr) {
+    if (ip != nullptr) {
         busy = ip->isReplying();
     }
     access.post();

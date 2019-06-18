@@ -39,8 +39,8 @@ constexpr std::int32_t BOTTLE_TAG_INT = BOTTLE_TAG_INT32;
 namespace yarp {
 namespace os {
 
-// Forward declarations
 class NetworkBase;
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace impl {
 class BottleImpl;

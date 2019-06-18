@@ -7,49 +7,56 @@
  */
 
 #include <yarp/os/YarpNameSpace.h>
+
 #include <yarp/os/DummyConnector.h>
-#include <yarp/os/impl/NameClient.h>
-#include <cstdio>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
+
+#include <cstdio>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
 #define HELPER(x) (*((NameClient*)((x)->system_resource)))
 
-YarpNameSpace::YarpNameSpace(const Contact& contact) {
+YarpNameSpace::YarpNameSpace(const Contact& contact)
+{
     system_resource = NameClient::create();
-    yAssert(system_resource!=nullptr);
+    yAssert(system_resource != nullptr);
     HELPER(this).setContact(contact);
     this->contact = contact;
 }
 
-YarpNameSpace::~YarpNameSpace() {
-    if (system_resource!=nullptr) {
+YarpNameSpace::~YarpNameSpace()
+{
+    if (system_resource != nullptr) {
         delete &HELPER(this);
         system_resource = nullptr;
     }
 }
 
-Contact YarpNameSpace::queryName(const std::string& name) {
+Contact YarpNameSpace::queryName(const std::string& name)
+{
     NameClient& nic = HELPER(this);
     return nic.queryName(name);
 }
 
 
-Contact YarpNameSpace::registerName(const std::string& name) {
+Contact YarpNameSpace::registerName(const std::string& name)
+{
     return registerContact(Contact(name));
 }
 
-Contact YarpNameSpace::registerContact(const Contact& contact) {
+Contact YarpNameSpace::registerContact(const Contact& contact)
+{
     NameClient& nic = HELPER(this);
     Contact address = nic.registerName(contact.getName(), contact);
     if (address.isValid()) {
         NestedContact nc;
         nc.fromString(address.getRegName());
         std::string cat = nc.getCategory();
-        if (nc.getNestedName()!="") {
+        if (nc.getNestedName() != "") {
             //bool service = (cat.find("1") != std::string::npos);
             bool publish = (cat.find('+') != std::string::npos);
             bool subscribe = (cat.find('-') != std::string::npos);
@@ -69,11 +76,12 @@ Contact YarpNameSpace::registerContact(const Contact& contact) {
     return address;
 }
 
-Contact YarpNameSpace::unregisterName(const std::string& name) {
+Contact YarpNameSpace::unregisterName(const std::string& name)
+{
     NestedContact nc;
     nc.fromString(name);
     std::string cat = nc.getCategory();
-    if (nc.getNestedName()!="") {
+    if (nc.getNestedName() != "") {
         //bool service = (cat.find("1") != std::string::npos);
         bool publish = (cat.find('+') != std::string::npos);
         bool subscribe = (cat.find('-') != std::string::npos);
@@ -91,14 +99,15 @@ Contact YarpNameSpace::unregisterName(const std::string& name) {
     return nic.unregisterName(name);
 }
 
-Contact YarpNameSpace::unregisterContact(const Contact& contact) {
+Contact YarpNameSpace::unregisterContact(const Contact& contact)
+{
     NameClient& nic = HELPER(this);
     return nic.unregisterName(contact.getName());
 }
 
 
-bool YarpNameSpace::setProperty(const std::string& name, const std::string& key,
-                                const Value& value) {
+bool YarpNameSpace::setProperty(const std::string& name, const std::string& key, const Value& value)
+{
     Bottle command;
     command.addString("bot");
     command.addString("set");
@@ -108,10 +117,11 @@ bool YarpNameSpace::setProperty(const std::string& name, const std::string& key,
     Bottle reply;
     NameClient& nic = HELPER(this);
     nic.send(command, reply);
-    return reply.size()>0;
+    return reply.size() > 0;
 }
 
-Value *YarpNameSpace::getProperty(const std::string& name, const std::string& key) {
+Value* YarpNameSpace::getProperty(const std::string& name, const std::string& key)
+{
     Bottle command;
     command.addString("bot");
     command.addString("get");
@@ -125,7 +135,8 @@ Value *YarpNameSpace::getProperty(const std::string& name, const std::string& ke
 
 Contact YarpNameSpace::detectNameServer(bool useDetectedServer,
                                         bool& scanNeeded,
-                                        bool& serverUsed) {
+                                        bool& serverUsed)
+{
     NameConfig nc;
     NameClient& nic = HELPER(this);
     nic.setFakeMode(false);
@@ -152,7 +163,8 @@ Contact YarpNameSpace::detectNameServer(bool useDetectedServer,
 
 bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
                                       PortReader& reply,
-                                      const ContactStyle& style) {
+                                      const ContactStyle& style)
+{
     Contact srv = getNameServerContact();
     std::string cmd0 = "NAME_SERVER";
 
@@ -160,7 +172,7 @@ bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
     cmd.write(con0.getWriter());
     Bottle in;
     in.read(con0.getReader());
-    for (size_t i=0; i<in.size(); i++) {
+    for (size_t i = 0; i < in.size(); i++) {
         cmd0 += " ";
         cmd0 += in.get(i).toString();
     }
@@ -171,5 +183,5 @@ bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
     DummyConnector con;
     reply2.write(con.getWriter());
     reply.read(con.getReader());
-    return result!="";
+    return result != "";
 }

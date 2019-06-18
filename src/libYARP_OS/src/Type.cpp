@@ -87,7 +87,6 @@ public:
 };
 
 
-
 Type::Type() :
         mPriv(new Private())
 {
@@ -170,7 +169,6 @@ std::string Type::toString() const
     }
     return "null";
 }
-
 
 
 Type Type::byName(const char* name)

@@ -8,6 +8,7 @@
  */
 
 #include <yarp/os/PortablePair.h>
+
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
 
@@ -21,9 +22,13 @@ bool yarp::os::PortablePairBase::readPair(ConnectionReader& connection,
     connection.convertTextMode();
 
     std::int32_t header = connection.expectInt32();
-    if (header!=BOTTLE_TAG_LIST) { return false; }
+    if (header != BOTTLE_TAG_LIST) {
+        return false;
+    }
     std::int32_t len = connection.expectInt32();
-    if (len!=2) { return false; }
+    if (len != 2) {
+        return false;
+    }
 
     bool ok = head.read(connection);
     if (ok) {

@@ -10,26 +10,22 @@
 #ifndef YARP_OS_IMPL_FAKETWOWAYSTREAM_H
 #define YARP_OS_IMPL_FAKETWOWAYSTREAM_H
 
-#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/StringOutputStream.h>
+#include <yarp/os/TwoWayStream.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class FakeTwoWayStream;
-        }
-    }
-}
-
+namespace os {
+namespace impl {
 
 /**
  * A dummy two way stream for testing purposes.
  */
-class yarp::os::impl::FakeTwoWayStream : public TwoWayStream
+class FakeTwoWayStream :
+        public TwoWayStream
 {
 public:
-    FakeTwoWayStream(StringInputStream *target = nullptr) :
+    FakeTwoWayStream(StringInputStream* target = nullptr) :
             TwoWayStream()
     {
         this->out.owner = this;
@@ -74,7 +70,7 @@ public:
 
     virtual void apply(const Bytes& b)
     {
-        if (target!=nullptr) {
+        if (target != nullptr) {
             target->add(b);
         }
     }
@@ -103,12 +99,15 @@ public:
     {
     }
 
-    void beginPacket() override { }
+    void beginPacket() override
+    {
+    }
 
-    void endPacket() override { }
+    void endPacket() override
+    {
+    }
 
 private:
-
     class ActiveStringOutputStream : public StringOutputStream
     {
     public:
@@ -126,14 +125,18 @@ private:
             }
         }
 
-        FakeTwoWayStream *owner;
+        FakeTwoWayStream* owner;
     };
 
     StringInputStream in;
     ActiveStringOutputStream out;
     Contact local;
     Contact remote;
-    StringInputStream *target;
+    StringInputStream* target;
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_FAKETWOWAYSTREAM_H

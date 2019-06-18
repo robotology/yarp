@@ -8,6 +8,7 @@
  */
 
 #include <yarp/os/OutputStream.h>
+
 #include <yarp/os/Bytes.h>
 
 

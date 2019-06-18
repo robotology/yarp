@@ -11,7 +11,6 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/NetType.h>
-
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/Logger.h>
 
@@ -27,7 +26,8 @@ using yarp::os::impl::Storable;
 class NullBottle : public Bottle
 {
 public:
-    NullBottle() : Bottle()
+    NullBottle() :
+            Bottle()
     {
         setReadOnly(true);
     }
@@ -37,16 +37,20 @@ public:
     }
 };
 
-Bottle::Bottle()
-        : Portable(), Searchable(), implementation(new BottleImpl(this))
+Bottle::Bottle() :
+        Portable(),
+        Searchable(),
+        implementation(new BottleImpl(this))
 {
     yAssert(implementation != nullptr);
     implementation->invalid = false;
     implementation->ro = false;
 }
 
-Bottle::Bottle(const std::string& text)
-        : Portable(), Searchable(), implementation(new BottleImpl(this))
+Bottle::Bottle(const std::string& text) :
+        Portable(),
+        Searchable(),
+        implementation(new BottleImpl(this))
 {
     yAssert(implementation != nullptr);
     implementation->invalid = false;
@@ -54,8 +58,10 @@ Bottle::Bottle(const std::string& text)
     fromString(text);
 }
 
-Bottle::Bottle(const Bottle& bottle)
-        : Portable(), Searchable(), implementation(new BottleImpl(this))
+Bottle::Bottle(const Bottle& bottle) :
+        Portable(),
+        Searchable(),
+        implementation(new BottleImpl(this))
 {
     yAssert(implementation != nullptr);
     implementation->invalid = false;
@@ -63,15 +69,16 @@ Bottle::Bottle(const Bottle& bottle)
     copy(bottle);
 }
 
-Bottle::Bottle(std::initializer_list<Value> values)
-        : Portable(), Searchable(), implementation(new BottleImpl(this))
+Bottle::Bottle(std::initializer_list<Value> values) :
+        Portable(),
+        Searchable(),
+        implementation(new BottleImpl(this))
 {
     yAssert(implementation != nullptr);
     implementation->invalid = false;
     implementation->ro = false;
 
-    for (const auto& val:values)
-    {
+    for (const auto& val : values) {
         add(val);
     }
 }

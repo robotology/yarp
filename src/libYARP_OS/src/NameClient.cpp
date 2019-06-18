@@ -8,19 +8,18 @@
  */
 
 #include <yarp/os/impl/NameClient.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Carriers.h>
 #include <yarp/os/NameStore.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
+#include <yarp/os/impl/FallbackNameClient.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/TcpFace.h>
-#ifdef YARP_HAS_ACE
-#  include <yarp/os/impl/FallbackNameClient.h>
-#endif
 #include <cstdio>
 
 using namespace yarp::os::impl;
@@ -48,7 +47,7 @@ public:
     Params()
     {
         argc = 0;
-        for (auto & i : argv) {
+        for (auto& i : argv) {
             i = nullptr;
         }
     }
@@ -299,7 +298,8 @@ Contact NameClient::extractAddress(const Bottle& bot)
     return Contact();
 }
 
-std::string NameClient::send(const std::string& cmd, bool multi, const ContactStyle& style) {
+std::string NameClient::send(const std::string& cmd, bool multi, const ContactStyle& style)
+{
     //printf("*** OLD YARP command %s\n", cmd.c_str());
     setup();
 
@@ -320,8 +320,7 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
     std::string result;
     Contact server = getAddress();
     float timeout = 10;
-    if (style.timeout > 0)
-    {
+    if (style.timeout > 0) {
         timeout = style.timeout;
     }
     server.setTimeout(timeout);
@@ -353,11 +352,7 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
                 if (allowScan) {
                     YARP_INFO(Logger::get(), "no connection to nameserver, scanning mcast");
                     reportScan = true;
-#ifdef YARP_HAS_ACE
                     alt = FallbackNameClient::seek();
-#else
-                    return {}; // nothing to do, nowhere to turn
-#endif
                 }
             }
             if (alt.isValid()) {

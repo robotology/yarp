@@ -16,15 +16,10 @@
 
 #include <string>
 
-// Forward declarations:
 namespace yarp {
 namespace os {
-class Contact;
-} // namespace os
-} // namespace yarp
 
-namespace yarp {
-namespace os {
+class Contact;
 
 /**
  * @ingroup comm_class

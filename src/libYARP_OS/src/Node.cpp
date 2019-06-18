@@ -6,37 +6,41 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/conf/compiler.h>
 #include <yarp/os/Node.h>
+
+#include <yarp/conf/compiler.h>
+
 #include <yarp/os/Mutex.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/NestedContact.h>
-#include <yarp/os/Port.h>
-#include <yarp/os/PortReport.h>
-#include <yarp/os/PortInfo.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/PortInfo.h>
+#include <yarp/os/PortReport.h>
 #include <yarp/os/RosNameSpace.h>
 #include <yarp/os/Type.h>
-#include <cstdlib>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameClient.h>
 
 #include <algorithm>
-#include <vector>
+#include <cstdlib>
 #include <list>
 #include <map>
+#include <vector>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-class ROSReport : public PortReport {
+class ROSReport : public PortReport
+{
 public:
     std::multimap<std::string, std::string> outgoingURIs;
     std::multimap<std::string, std::string> incomingURIs;
 
     ROSReport() = default;
 
-    void report(const PortInfo& info) override {
+    void report(const PortInfo& info) override
+    {
         if (info.tag == PortInfo::PORTINFO_CONNECTION) {
             NameClient& nic = NameClient::getNameClient();
             Contact c;
@@ -51,7 +55,8 @@ public:
     }
 };
 
-static std::string toRosName(const std::string& str) {
+static std::string toRosName(const std::string& str)
+{
     return RosNameSpace::toRosName(str);
 }
 
@@ -64,11 +69,11 @@ class NodeItem
 {
 public:
     NestedContact nc;
-    Contactable *contactable;
+    Contactable* contactable;
 
     void update()
     {
-        if (nc.getTypeName()=="") {
+        if (nc.getTypeName() == "") {
             if (!contactable) {
                 return;
             }
@@ -82,37 +87,37 @@ public:
     bool isSubscriber()
     {
         std::string cat = nc.getCategory();
-        return (cat=="" || cat=="-");
+        return (cat == "" || cat == "-");
     }
 
     bool isPublisher()
     {
         std::string cat = nc.getCategory();
-        return (cat=="" || cat=="+");
+        return (cat == "" || cat == "+");
     }
 
     bool isTopic()
     {
         std::string cat = nc.getCategory();
-        return (cat=="" || cat=="+" || cat=="-");
+        return (cat == "" || cat == "+" || cat == "-");
     }
 
     bool isServiceServer()
     {
         std::string cat = nc.getCategory();
-        return (cat=="" || cat=="-1");
+        return (cat == "" || cat == "-1");
     }
 
     bool isServiceClient()
     {
         std::string cat = nc.getCategory();
-        return (cat=="" || cat=="+1");
+        return (cat == "" || cat == "+1");
     }
 
     bool isService()
     {
         std::string cat = nc.getCategory();
-        return (cat=="" || cat=="+1" || cat=="-1");
+        return (cat == "" || cat == "+1" || cat == "-1");
     }
 };
 
@@ -132,13 +137,13 @@ public:
         should_drop = true;
     }
 
-    void error(const char *txt)
+    void error(const char* txt)
     {
         msg = txt;
         code = -1;
     }
 
-    void fail(const char *txt)
+    void fail(const char* txt)
     {
         msg = txt;
         code = 0;
@@ -175,7 +180,7 @@ public:
     std::multimap<std::string, NodeItem> by_category;
     std::map<Contactable*, NodeItem> name_cache;
     Port port;
-    Node *owner{nullptr};
+    Node* owner{nullptr};
 
     Mutex mutex;
     std::string name;
@@ -200,7 +205,7 @@ public:
             return;
         }
         while (name_cache.begin() != name_cache.end()) {
-            Contactable *c = name_cache.begin()->first;
+            Contactable* c = name_cache.begin()->first;
             if (c) {
                 mutex.unlock();
                 c->interrupt();
@@ -405,9 +410,9 @@ public:
 void yarp::os::Node::Helper::prepare(const std::string& name)
 {
     mutex.lock();
-    if (port.getName()=="") {
+    if (port.getName() == "") {
         port.setReader(*this);
-        Property *prop = port.acquireProperties(false);
+        Property* prop = port.acquireProperties(false);
         if (prop) {
             prop->put("node_like", 1);
         }
@@ -422,10 +427,11 @@ void yarp::os::Node::Helper::add(Contactable& contactable)
 {
     NodeItem item;
     item.nc.fromString(contactable.getName());
-    if (name=="") name = item.nc.getNodeName();
-    if (name!=item.nc.getNodeName()) {
-        fprintf(stderr, "Node name mismatch, expected [%s] but got [%s]\n",
-                name.c_str(), item.nc.getNodeName().c_str());
+    if (name == "") {
+        name = item.nc.getNodeName();
+    }
+    if (name != item.nc.getNodeName()) {
+        fprintf(stderr, "Node name mismatch, expected [%s] but got [%s]\n", name.c_str(), item.nc.getNodeName().c_str());
         return;
     }
     prepare(name);
@@ -493,25 +499,25 @@ bool yarp::os::Node::Helper::read(ConnectionReader& reader)
     //na.request.toString().c_str());
     std::string key = na.request.get(0).asString();
     na.args = na.request.tail().tail();
-    if (key=="getBusStats") {
+    if (key == "getBusStats") {
         getBusStats(na);
-    } else if (key=="getBusInfo") {
+    } else if (key == "getBusInfo") {
         getBusInfo(na);
-    } else if (key=="getMasterUri") {
+    } else if (key == "getMasterUri") {
         getMasterUri(na);
-    } else if (key=="shutdown") {
+    } else if (key == "shutdown") {
         shutdown(na);
-    } else if (key=="getPid") {
+    } else if (key == "getPid") {
         getPid(na);
-    } else if (key=="getSubscriptions") {
+    } else if (key == "getSubscriptions") {
         getSubscriptions(na);
-    } else if (key=="getPublications") {
+    } else if (key == "getPublications") {
         getPublications(na);
-    } else if (key=="paramUpdate") {
+    } else if (key == "paramUpdate") {
         paramUpdate(na);
-    } else if (key=="publisherUpdate") {
+    } else if (key == "publisherUpdate") {
         publisherUpdate(na);
-    } else if (key=="requestTopic") {
+    } else if (key == "requestTopic") {
         requestTopic(na);
     } else {
         na.error("I have no idea what you are talking about");
@@ -531,7 +537,6 @@ bool yarp::os::Node::Helper::read(ConnectionReader& reader)
     }
     return true;
 }
-
 
 
 Node::Node() :

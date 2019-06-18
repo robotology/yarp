@@ -7,8 +7,10 @@
  */
 
 #include <yarp/os/Timer.h>
+
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Time.h>
+
 #include <cmath>
 #include <map>
 #include <mutex>
@@ -47,10 +49,10 @@ public:
     virtual bool timerIsRunning() = 0;
 
 
-    TimerSettings    m_settings;
-    TimerCallback    m_callback{nullptr};
-    double           m_startStamp{0.0},
-                     m_lastReal{0.0};
+    TimerSettings m_settings;
+    TimerCallback m_callback{nullptr};
+    double m_startStamp{0.0};
+    double m_lastReal{0.0};
     yarp::os::Mutex* m_mutex;
 };
 
@@ -59,9 +61,9 @@ class MonoThreadTimer : public yarp::os::Timer::PrivateImpl
 public:
     MonoThreadTimer(TimerSettings sett, TimerCallback call, yarp::os::Mutex* mutex = nullptr);
     ~MonoThreadTimer();
-    bool         m_active{ false };
+    bool m_active{false};
     unsigned int m_runTimes{1};
-    size_t       m_id{(size_t)-1};
+    size_t m_id{(size_t)-1};
 
     virtual yarp::os::YarpTimerEvent getEventNow()
     {
@@ -71,7 +73,7 @@ public:
     bool startTimer() override
     {
         m_startStamp = yarp::os::Time::now();
-        m_active     = true;
+        m_active = true;
         return true;
     }
 
@@ -178,17 +180,21 @@ void TimerSingleton::run()
     mu.unlock();
 }
 
-class ThreadedTimer : public yarp::os::Timer::PrivateImpl,
-                      public yarp::os::PeriodicThread
+class ThreadedTimer :
+        public yarp::os::Timer::PrivateImpl,
+        public yarp::os::PeriodicThread
 {
     using TimerCallback = yarp::os::Timer::TimerCallback;
     void run() override;
     bool threadInit() override;
-    bool singleStep{ false };
+    bool singleStep{false};
 
 public:
-    ThreadedTimer(TimerSettings sett, TimerCallback call, yarp::os::Mutex* mutex = nullptr) :
-            PrivateImpl(sett, call, mutex), PeriodicThread(sett.period)
+    ThreadedTimer(TimerSettings sett,
+                  TimerCallback call,
+                  yarp::os::Mutex* mutex = nullptr) :
+            PrivateImpl(sett, call, mutex),
+            PeriodicThread(sett.period)
     {
     }
 

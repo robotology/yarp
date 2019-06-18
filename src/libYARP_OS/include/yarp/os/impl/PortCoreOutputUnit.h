@@ -10,25 +10,22 @@
 #ifndef YARP_OS_IMPL_PORTCOREOUTPUTUNIT_H
 #define YARP_OS_IMPL_PORTCOREOUTPUTUNIT_H
 
+#include <yarp/os/Mutex.h>
+#include <yarp/os/OutputProtocol.h>
+#include <yarp/os/Semaphore.h>
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/PortCoreUnit.h>
-#include <yarp/os/OutputProtocol.h>
-#include <yarp/os/Mutex.h>
-#include <yarp/os/Semaphore.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class PortCoreOutputUnit;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * Manager for a single output from a port.  Associated
  * with a PortCore object.
  */
-class yarp::os::impl::PortCoreOutputUnit : public PortCoreUnit
+class PortCoreOutputUnit :
+        public PortCoreUnit
 {
 public:
     /**
@@ -39,7 +36,7 @@ public:
      * @param op the protocol object used to read/write to connection
      *
      */
-    PortCoreOutputUnit(PortCore& owner, int index, OutputProtocol *op);
+    PortCoreOutputUnit(PortCore& owner, int index, OutputProtocol* op);
 
     /**
      * Destructor.
@@ -84,17 +81,17 @@ public:
     Route getRoute() override;
 
     // documented in PortCoreUnit
-    virtual void *send(const yarp::os::PortWriter& writer,
-                       yarp::os::PortReader *reader,
-                       const yarp::os::PortWriter *callback,
-                       void *tracker,
+    virtual void* send(const yarp::os::PortWriter& writer,
+                       yarp::os::PortReader* reader,
+                       const yarp::os::PortWriter* callback,
+                       void* tracker,
                        const std::string& envelopeString,
                        bool waitAfter,
                        bool waitBefore,
-                       bool *gotReply) override;
+                       bool* gotReply) override;
 
     // documented in PortCoreUnit
-    void *takeTracker() override;
+    void* takeTracker() override;
 
     // documented in PortCoreUnit
     bool isBusy() override;
@@ -140,5 +137,9 @@ private:
      */
     void closeMain();
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_PORTCOREOUTPUTUNIT_H

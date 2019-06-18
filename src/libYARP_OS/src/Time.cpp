@@ -8,20 +8,21 @@
  */
 
 #include <yarp/os/Time.h>
-#include <yarp/os/impl/PlatformTime.h>
-#include <yarp/os/SystemClock.h>
-#include <yarp/os/NetworkClock.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/impl/Logger.h>
+
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/NetworkClock.h>
+#include <yarp/os/SystemClock.h>
 #include <yarp/os/Thread.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/PlatformTime.h>
 #include <yarp/os/impl/TimeImpl.h>
 
 #include <mutex>
 
 #if defined(_WIN32)
 // for WIN32 MM functions
-# include <mmsystem.h>
+#    include <mmsystem.h>
 #endif
 
 using namespace yarp::os;
@@ -31,8 +32,8 @@ namespace {
 
 static bool clock_owned = false;
 static bool network_clock_ok = false;
-static Clock *pclock = nullptr;
-static yarpClockType yarp_clock_type  = YARP_CLOCK_UNINITIALIZED;
+static Clock* pclock = nullptr;
+static yarpClockType yarp_clock_type = YARP_CLOCK_UNINITIALIZED;
 
 static std::mutex& getTimeMutex()
 {
@@ -50,10 +51,9 @@ static void printNoClock_ErrorMessage()
     otherwise use yarp::os::SystemClock::nowSystem() and yarp::os::SystemClock::delaySystem() instead of Time::now() and Time::delay()\n");
 }
 
-static Clock *getClock()
+static Clock* getClock()
 {
-    if(pclock == nullptr)
-    {
+    if (pclock == nullptr) {
         /*
          * Assuming this should never happen, if we do get here, what shall be done??
          *
@@ -81,7 +81,7 @@ static Clock *getClock()
 
 void yarp::os::impl::Time::removeClock()
 {
-    if(pclock) {
+    if (pclock) {
         delete pclock;
         pclock = nullptr;
     }
@@ -108,19 +108,23 @@ void yarp::os::impl::Time::endTurboBoost()
 #endif
 }
 
-void Time::delay(double seconds) {
-    if(isSystemClock())
+void Time::delay(double seconds)
+{
+    if (isSystemClock()) {
         return SystemClock::delaySystem(seconds);
+    }
 
-    Clock *clk = getClock();
+    Clock* clk = getClock();
     clk->delay(seconds);
 }
 
-double Time::now() {
-    if(isSystemClock())
+double Time::now()
+{
+    if (isSystemClock()) {
         return SystemClock::nowSystem();
+    }
 
-    Clock *clk = getClock();
+    Clock* clk = getClock();
     return clk->now();
 }
 
@@ -131,18 +135,18 @@ void Time::turboBoost()
 }
 #endif // YARP_NO_DEPRECATED
 
-void Time::yield() {
+void Time::yield()
+{
     return yarp::os::Thread::yield();
 }
 
 
 void Time::useSystemClock()
 {
-    if(!isSystemClock())
-    {
+    if (!isSystemClock()) {
         getTimeMutex().lock();
 
-        Clock *old_pclock = pclock;
+        Clock* old_pclock = pclock;
         bool old_clock_owned = clock_owned;
 
         pclock = new SystemClock();
@@ -150,8 +154,9 @@ void Time::useSystemClock()
         yarp_clock_type = YARP_CLOCK_SYSTEM;
         clock_owned = true;
 
-        if(old_clock_owned && old_pclock)
+        if (old_clock_owned && old_pclock) {
             delete old_pclock;
+        }
 
         getTimeMutex().unlock();
     }
@@ -183,58 +188,51 @@ void Time::useNetworkClock(const std::string& clock, std::string localPortName)
     // clock source publishing on the same port/topic), so we may need to reconnect.
     getTimeMutex().lock();
 
-    Clock *old_pclock = pclock;   // store current clock pointer to delete it afterward
+    Clock* old_pclock = pclock; // store current clock pointer to delete it afterward
     bool old_clock_owned = clock_owned;
     auto* _networkClock = new NetworkClock();
-    if(_networkClock == nullptr)
-    {
+    if (_networkClock == nullptr) {
         YARP_FAIL(Logger::get(), "failed creating NetworkClock client");
         return;
-    }
-    else
-    {
-        if (_networkClock->open(clock, localPortName))
-        {
-            network_clock_ok = true;    // see if it is really needed
+    } else {
+        if (_networkClock->open(clock, localPortName)) {
+            network_clock_ok = true; // see if it is really needed
             // updating clock pointer with the new one already initialized.
 
             pclock = _networkClock;
             clock_owned = true;
             yarp_clock_type = YARP_CLOCK_NETWORK;
-        }
-        else
-        {
+        } else {
             YARP_FAIL(Logger::get(), "failed creating NetworkClock client, cannot open input port");
             return;
         }
     }
 
-    if(old_clock_owned && old_pclock) {
+    if (old_clock_owned && old_pclock) {
         delete old_pclock;
     }
 
     getTimeMutex().unlock();
 
-    int i=-1;
-    while(pclock && !pclock->isValid() )
-    {
+    int i = -1;
+    while (pclock && !pclock->isValid()) {
         i++;
-        if((i%50) == 0)
-        {
+        if ((i % 50) == 0) {
             YARP_INFO(Logger::get(), "Waiting for clock server to start broadcasting data ...");
-            i=0;
+            i = 0;
         }
         SystemClock::delaySystem(0.1);
     }
 }
 
-void Time::useCustomClock(Clock *clock) {
-    if(clock == nullptr) {
+void Time::useCustomClock(Clock* clock)
+{
+    if (clock == nullptr) {
         YARP_FAIL(Logger::get(), "failed configuring CustomClock client");
         return;
     }
 
-    if(!clock->isValid()) {
+    if (!clock->isValid()) {
         YARP_FAIL(Logger::get(), "Error: CustomClock is not valid");
         return;
     }
@@ -242,7 +240,7 @@ void Time::useCustomClock(Clock *clock) {
     getTimeMutex().lock();
 
     // store current clock pointer to delete it afterward
-    Clock *old_pclock = pclock;
+    Clock* old_pclock = pclock;
     bool old_clock_owned = clock_owned;
 
     pclock = clock;
@@ -250,22 +248,26 @@ void Time::useCustomClock(Clock *clock) {
     clock_owned = false;
 
     // delete old clock
-    if(old_clock_owned && old_pclock)
+    if (old_clock_owned && old_pclock) {
         delete old_pclock;
+    }
 
     getTimeMutex().unlock();
 }
 
-bool Time::isSystemClock() {
-    return (yarp_clock_type==YARP_CLOCK_SYSTEM);
+bool Time::isSystemClock()
+{
+    return (yarp_clock_type == YARP_CLOCK_SYSTEM);
 }
 
-bool Time::isNetworkClock() {
-    return (yarp_clock_type==YARP_CLOCK_NETWORK);
+bool Time::isNetworkClock()
+{
+    return (yarp_clock_type == YARP_CLOCK_NETWORK);
 }
 
-bool Time::isCustomClock() {
-    return (yarp_clock_type==YARP_CLOCK_CUSTOM);
+bool Time::isCustomClock()
+{
+    return (yarp_clock_type == YARP_CLOCK_CUSTOM);
 }
 
 yarpClockType Time::getClockType()
@@ -276,30 +278,30 @@ yarpClockType Time::getClockType()
 std::string Time::clockTypeToString(yarpClockType type)
 {
     std::string clockTypeString;
-    if(type == -1)
+    if (type == -1) {
         type = yarp_clock_type;
+    }
 
-    switch(type)
-    {
-        case YARP_CLOCK_SYSTEM:
-            clockTypeString = "System clock";
-            break;
+    switch (type) {
+    case YARP_CLOCK_SYSTEM:
+        clockTypeString = "System clock";
+        break;
 
-        case YARP_CLOCK_NETWORK:
-            clockTypeString = "Network clock";
-            break;
+    case YARP_CLOCK_NETWORK:
+        clockTypeString = "Network clock";
+        break;
 
-        case YARP_CLOCK_CUSTOM:
-            clockTypeString = "Custom clock";
-            break;
+    case YARP_CLOCK_CUSTOM:
+        clockTypeString = "Custom clock";
+        break;
 
-        case YARP_CLOCK_UNINITIALIZED:
-            clockTypeString = "Clock has not been initialized yet: This should never happen. Is the object yarp::os::Network been initialized?";
-            break;
+    case YARP_CLOCK_UNINITIALIZED:
+        clockTypeString = "Clock has not been initialized yet: This should never happen. Is the object yarp::os::Network been initialized?";
+        break;
 
-        default:
-            clockTypeString = "Unknown clock: This should never happen. Is the object yarp::os::Network been initialized?";
-            break;
+    default:
+        clockTypeString = "Unknown clock: This should never happen. Is the object yarp::os::Network been initialized?";
+        break;
     }
     return clockTypeString;
 }

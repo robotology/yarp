@@ -7,6 +7,7 @@
  */
 
 #include <yarp/os/InputStream.h>
+
 #include <yarp/os/Bytes.h>
 #include <yarp/os/ManagedBytes.h>
 

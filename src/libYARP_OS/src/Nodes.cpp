@@ -7,10 +7,11 @@
  */
 
 #include <yarp/os/Nodes.h>
+
+#include <yarp/os/Log.h>
 #include <yarp/os/Mutex.h>
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/Node.h>
-#include <yarp/os/Log.h>
 
 #include <map>
 

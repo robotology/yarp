@@ -9,6 +9,7 @@
  */
 
 #include <yarp/os/Searchable.h>
+
 #include <yarp/os/Value.h>
 
 using namespace yarp::os;
@@ -20,7 +21,8 @@ yarp::os::SearchReport::SearchReport() :
         isFound(false),
         isGroup(false),
         isComment(false),
-        isDefault(false) {
+        isDefault(false)
+{
 }
 
 yarp::os::SearchMonitor::~SearchMonitor() = default;
@@ -28,15 +30,17 @@ yarp::os::SearchMonitor::~SearchMonitor() = default;
 
 
 yarp::os::Searchable::Searchable() :
-        monitor(nullptr) {
+        monitor(nullptr)
+{
 }
 
 yarp::os::Searchable::~Searchable() = default;
 
 bool yarp::os::Searchable::check(const std::string& key,
-                                 yarp::os::Value *& result,
-                                 const std::string& comment) const {
-    if (getMonitor()!=nullptr && comment!="") {
+                                 yarp::os::Value*& result,
+                                 const std::string& comment) const
+{
+    if (getMonitor() != nullptr && comment != "") {
         SearchReport report;
         report.key = key;
         report.value = comment;
@@ -53,15 +57,16 @@ bool yarp::os::Searchable::check(const std::string& key,
 
 yarp::os::Value yarp::os::Searchable::check(const std::string& key,
                                             const yarp::os::Value& fallback,
-                                            const std::string& comment) const {
-    if (getMonitor()!=nullptr && comment!="") {
+                                            const std::string& comment) const
+{
+    if (getMonitor() != nullptr && comment != "") {
         yarp::os::SearchReport report;
         report.key = key;
         report.value = comment;
         report.isComment = true;
         reportToMonitor(report);
     }
-    if (getMonitor()!=nullptr) {
+    if (getMonitor() != nullptr) {
         yarp::os::SearchReport report;
         report.key = key;
         report.value = fallback.toString();
@@ -77,8 +82,9 @@ yarp::os::Value yarp::os::Searchable::check(const std::string& key,
 }
 
 bool yarp::os::Searchable::check(const std::string& key,
-                                 const std::string& comment) const {
-    if (getMonitor()!=nullptr && comment!="") {
+                                 const std::string& comment) const
+{
+    if (getMonitor() != nullptr && comment != "") {
         yarp::os::SearchReport report;
         report.key = key;
         report.value = comment;
@@ -89,8 +95,9 @@ bool yarp::os::Searchable::check(const std::string& key,
 }
 
 yarp::os::Bottle& yarp::os::Searchable::findGroup(const std::string& key,
-                                                  const std::string& comment) const {
-    if (getMonitor()!=nullptr && comment!="") {
+                                                  const std::string& comment) const
+{
+    if (getMonitor() != nullptr && comment != "") {
         yarp::os::SearchReport report;
         report.key = key;
         report.value = comment;
@@ -100,27 +107,32 @@ yarp::os::Bottle& yarp::os::Searchable::findGroup(const std::string& key,
     return findGroup(key);
 }
 
-bool yarp::os::Searchable::isNull() const {
+bool yarp::os::Searchable::isNull() const
+{
     return false;
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-void yarp::os::Searchable::setMonitor(yarp::os::SearchMonitor *monitor, const char *context) {
+void yarp::os::Searchable::setMonitor(yarp::os::SearchMonitor* monitor, const char* context)
+{
     this->monitor = monitor;
     this->monitorContext = context;
 }
 
-yarp::os::SearchMonitor *yarp::os::Searchable::getMonitor() const {
+yarp::os::SearchMonitor* yarp::os::Searchable::getMonitor() const
+{
     return monitor;
 }
 
-std::string yarp::os::Searchable::getMonitorContext() const {
+std::string yarp::os::Searchable::getMonitorContext() const
+{
     return monitorContext;
 }
 
-void yarp::os::Searchable::reportToMonitor(const yarp::os::SearchReport& report) const {
-    if (monitor!=nullptr) {
+void yarp::os::Searchable::reportToMonitor(const yarp::os::SearchReport& report) const
+{
+    if (monitor != nullptr) {
         monitor->report(report, monitorContext.c_str());
     }
 }

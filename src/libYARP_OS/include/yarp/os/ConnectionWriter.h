@@ -128,7 +128,10 @@ public:
      * @deprecated since YARP 3.2
      */
     YARP_DEPRECATED_MSG("Use appendText() instead")
-    virtual void appendString(const char* str, const char terminate = '\n') final { appendText({str}, terminate); }
+    virtual void appendString(const char* str, const char terminate = '\n') final
+    {
+        appendText({str}, terminate);
+    }
 #endif
 
     /**
@@ -144,7 +147,10 @@ public:
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.2
     YARP_DEPRECATED_MSG("Use appendString() instead")
-    virtual void appendRawString(const std::string& str) final { appendString(str); }
+    virtual void appendRawString(const std::string& str) final
+    {
+        appendString(str);
+    }
 #endif
 
     /**

@@ -25,7 +25,7 @@ void ConnectionReader::setParentConnectionReader(ConnectionReader* parentConnect
     YARP_UNUSED(parentConnectionReader);
 }
 
-ConnectionReader *ConnectionReader::createConnectionReader(InputStream& is)
+ConnectionReader* ConnectionReader::createConnectionReader(InputStream& is)
 {
     auto* reader = new StreamConnectionReader();
     Route r;

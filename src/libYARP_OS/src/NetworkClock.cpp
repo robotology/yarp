@@ -139,8 +139,7 @@ bool NetworkClock::open(const std::string& clockSourcePortName, std::string loca
 {
     mPriv->port.setReadOnly();
     mPriv->port.setReader(*mPriv);
-    if(!clockSourcePortName.empty())
-    {
+    if (!clockSourcePortName.empty()) {
         mPriv->clockName = clockSourcePortName;
     }
     NestedContact nc(mPriv->clockName);

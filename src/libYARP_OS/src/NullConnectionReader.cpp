@@ -9,7 +9,7 @@
 #include <yarp/os/NullConnectionReader.h>
 
 
-bool yarp::os::NullConnectionReader::expectBlock(char *data, size_t len)
+bool yarp::os::NullConnectionReader::expectBlock(char* data, size_t len)
 {
     YARP_UNUSED(data);
     YARP_UNUSED(len);
@@ -72,7 +72,7 @@ size_t yarp::os::NullConnectionReader::getSize() const
     return 0;
 }
 
-yarp::os::ConnectionWriter *yarp::os::NullConnectionReader::getWriter()
+yarp::os::ConnectionWriter* yarp::os::NullConnectionReader::getWriter()
 {
     return nullptr;
 }
@@ -82,7 +82,7 @@ yarp::os::Bytes yarp::os::NullConnectionReader::readEnvelope()
     return {nullptr, 0};
 }
 
-yarp::os::Portable *yarp::os::NullConnectionReader::getReference() const
+yarp::os::Portable* yarp::os::NullConnectionReader::getReference() const
 {
     return nullptr;
 }
