@@ -1377,7 +1377,7 @@ std::string NetworkBase::getPathSeparator()
 }
 
 namespace {
-static std::mutex& getNetworkMutex()
+std::mutex& getNetworkMutex()
 {
     static std::mutex mutex;
     return mutex;

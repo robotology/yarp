@@ -12,8 +12,8 @@ using namespace yarp::os::idl;
 using namespace yarp::os;
 
 namespace {
-static constexpr yarp::conf::vocab32_t VOCAB_FAIL = yarp::os::createVocab('f', 'a', 'i', 'l');
-static constexpr yarp::conf::vocab32_t VOCAB_IS = yarp::os::createVocab('i', 's');
+constexpr yarp::conf::vocab32_t VOCAB_FAIL = yarp::os::createVocab('f', 'a', 'i', 'l');
+constexpr yarp::conf::vocab32_t VOCAB_IS = yarp::os::createVocab('i', 's');
 } // namespace
 
 WireReader::WireReader(ConnectionReader& reader) :

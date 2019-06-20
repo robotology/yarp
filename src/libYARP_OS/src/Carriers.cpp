@@ -30,7 +30,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 namespace {
-static std::string bytes_to_string(const Bytes& header)
+std::string bytes_to_string(const Bytes& header)
 {
     std::string ret;
     for (size_t i = 0; i < header.length(); i++) {

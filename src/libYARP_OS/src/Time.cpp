@@ -30,18 +30,18 @@ using yarp::os::impl::Logger;
 
 namespace {
 
-static bool clock_owned = false;
-static bool network_clock_ok = false;
-static Clock* pclock = nullptr;
-static yarpClockType yarp_clock_type = YARP_CLOCK_UNINITIALIZED;
+bool clock_owned = false;
+bool network_clock_ok = false;
+Clock* pclock = nullptr;
+yarpClockType yarp_clock_type = YARP_CLOCK_UNINITIALIZED;
 
-static std::mutex& getTimeMutex()
+std::mutex& getTimeMutex()
 {
     static std::mutex mutex;
     return mutex;
 }
 
-static void printNoClock_ErrorMessage()
+void printNoClock_ErrorMessage()
 {
     YARP_ERROR(Logger::get(), "\n Warning an issue has been found, please update the code.\n \
     Clock is not initialized: This means YARP framework has not been properly initialized. \n \
@@ -51,7 +51,7 @@ static void printNoClock_ErrorMessage()
     otherwise use yarp::os::SystemClock::nowSystem() and yarp::os::SystemClock::delaySystem() instead of Time::now() and Time::delay()\n");
 }
 
-static Clock* getClock()
+Clock* getClock()
 {
     if (pclock == nullptr) {
         /*

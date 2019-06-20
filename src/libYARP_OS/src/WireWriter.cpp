@@ -12,10 +12,10 @@ using namespace yarp::os;
 using namespace yarp::os::idl;
 
 namespace {
-static constexpr yarp::conf::vocab32_t VOCAB_OK = yarp::os::createVocab('o', 'k');
-static constexpr yarp::conf::vocab32_t VOCAB_FAIL = yarp::os::createVocab('f', 'a', 'i', 'l');
-static constexpr yarp::conf::vocab32_t VOCAB_IS = yarp::os::createVocab('i', 's');
-static constexpr yarp::conf::vocab32_t VOCAB_DONE = yarp::os::createVocab('d', 'o', 'n', 'e');
+constexpr yarp::conf::vocab32_t VOCAB_OK = yarp::os::createVocab('o', 'k');
+constexpr yarp::conf::vocab32_t VOCAB_FAIL = yarp::os::createVocab('f', 'a', 'i', 'l');
+constexpr yarp::conf::vocab32_t VOCAB_IS = yarp::os::createVocab('i', 's');
+constexpr yarp::conf::vocab32_t VOCAB_DONE = yarp::os::createVocab('d', 'o', 'n', 'e');
 } // namespace
 
 
