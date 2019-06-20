@@ -93,9 +93,9 @@ std::pair<int, char**> str2ArgcArgv(char* str)
     char* p2 = strtok(str, " ");
     while ((p2 != nullptr) && argc < kMaxArgs - 1) {
         argv[argc++] = p2;
-        p2 = strtok(0, " ");
+        p2 = strtok(nullptr, " ");
     }
-    argv[argc] = 0;
+    argv[argc] = nullptr;
     return make_pair(argc, argv);
 }
 
