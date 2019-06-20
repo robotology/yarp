@@ -1086,15 +1086,15 @@ void PortCore::removeOutput(const std::string& dest, void* id, OutputStream* os)
     cleanUnits();
 }
 
-void PortCore::removeInput(const std::string& dest, void* id, OutputStream* os)
+void PortCore::removeInput(const std::string& src, void* id, OutputStream* os)
 {
     YARP_UNUSED(id);
     // All the real work done by removeUnit().
     BufferedConnectionWriter bw(true);
-    if (removeUnit(Route(dest, "*", "*"), true)) {
-        bw.appendLine(std::string("Removing connection from ") + dest + " to " + getName());
+    if (removeUnit(Route(src, "*", "*"), true)) {
+        bw.appendLine(std::string("Removing connection from ") + src + " to " + getName());
     } else {
-        bw.appendLine(std::string("Could not find an incoming connection from ") + dest);
+        bw.appendLine(std::string("Could not find an incoming connection from ") + src);
     }
     if (os != nullptr) {
         bw.write(*os);
