@@ -436,23 +436,13 @@ void PortCore::closeMain()
         std::string removeName;
         stateSema.wait();
         for (auto unit : units) {
-            if (unit != nullptr) {
-                if (unit->isInput()) {
-                    if (!unit->isDoomed()) {
-                        Route r = unit->getRoute();
-                        std::string s = r.getFromName();
-                        if (s.length() >= 1) {
-                            if (s[0] == '/') {
-                                if (s != getName()) {
-                                    if (s != prevName) {
-                                        removeName = s;
-                                        done = false;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
+            if ((unit != nullptr) && unit->isInput() &&!unit->isDoomed()) {
+                Route r = unit->getRoute();
+                std::string s = r.getFromName();
+                if (s.length() >= 1 && s[0] == '/' && s != getName() && s != prevName) {
+                    removeName = s;
+                    done = false;
+                    break;
                 }
             }
         }
@@ -479,13 +469,11 @@ void PortCore::closeMain()
         Route removeRoute;
         stateSema.wait();
         for (auto unit : units) {
-            if (unit != nullptr) {
-                if (unit->isOutput() && !unit->isFinished()) {
-                    removeRoute = unit->getRoute();
-                    if (removeRoute.getFromName() == getName()) {
-                        done = false;
-                        break;
-                    }
+            if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
+                removeRoute = unit->getRoute();
+                if (removeRoute.getFromName() == getName()) {
+                    done = false;
+                    break;
                 }
             }
         }
@@ -622,15 +610,13 @@ void PortCore::reapUnits()
     stateSema.wait();
     if (!finished) {
         for (auto unit : units) {
-            if (unit != nullptr) {
-                if (unit->isDoomed() && !unit->isFinished()) {
-                    std::string s = unit->getRoute().toString();
-                    YARP_DEBUG(log, std::string("Informing connection ") + s + " that it is doomed");
-                    unit->close();
-                    YARP_DEBUG(log, std::string("Closed connection ") + s);
-                    unit->join();
-                    YARP_DEBUG(log, std::string("Joined thread of connection ") + s);
-                }
+            if ((unit != nullptr) && unit->isDoomed() && !unit->isFinished()) {
+                std::string s = unit->getRoute().toString();
+                YARP_DEBUG(log, std::string("Informing connection ") + s + " that it is doomed");
+                unit->close();
+                YARP_DEBUG(log, std::string("Closed connection ") + s);
+                unit->join();
+                YARP_DEBUG(log, std::string("Joined thread of connection ") + s);
             }
         }
     }
@@ -1119,13 +1105,11 @@ void PortCore::describe(void* id, OutputStream* os)
     // Report outgoing connections.
     int oct = 0;
     for (auto unit : units) {
-        if (unit != nullptr) {
-            if (unit->isOutput() && !unit->isFinished()) {
-                Route route = unit->getRoute();
-                std::string msg = "There is an output connection from " + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
-                bw.appendLine(msg);
-                oct++;
-            }
+        if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
+            Route route = unit->getRoute();
+            std::string msg = "There is an output connection from " + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
+            bw.appendLine(msg);
+            oct++;
         }
     }
     if (oct < 1) {
@@ -1135,14 +1119,12 @@ void PortCore::describe(void* id, OutputStream* os)
     // Report incoming connections.
     int ict = 0;
     for (auto unit : units) {
-        if (unit != nullptr) {
-            if (unit->isInput() && !unit->isFinished()) {
-                Route route = unit->getRoute();
-                if (!route.getCarrierName().empty()) {
-                    std::string msg = "There is an input connection from " + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
-                    bw.appendLine(msg);
-                    ict++;
-                }
+        if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
+            Route route = unit->getRoute();
+            if (!route.getCarrierName().empty()) {
+                std::string msg = "There is an input connection from " + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
+                bw.appendLine(msg);
+                ict++;
             }
         }
     }
@@ -1179,21 +1161,19 @@ void PortCore::describe(PortReport& reporter)
     // Report outgoing connections.
     int oct = 0;
     for (auto unit : units) {
-        if (unit != nullptr) {
-            if (unit->isOutput() && !unit->isFinished()) {
-                Route route = unit->getRoute();
-                std::string msg = "There is an output connection from " + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
-                PortInfo info;
-                info.message = msg;
-                info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
-                info.incoming = false;
-                info.portName = portName;
-                info.sourceName = route.getFromName();
-                info.targetName = route.getToName();
-                info.carrierName = route.getCarrierName();
-                reporter.report(info);
-                oct++;
-            }
+        if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
+            Route route = unit->getRoute();
+            std::string msg = "There is an output connection from " + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
+            PortInfo info;
+            info.message = msg;
+            info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
+            info.incoming = false;
+            info.portName = portName;
+            info.sourceName = route.getFromName();
+            info.targetName = route.getToName();
+            info.carrierName = route.getCarrierName();
+            reporter.report(info);
+            oct++;
         }
     }
     if (oct < 1) {
@@ -1206,21 +1186,19 @@ void PortCore::describe(PortReport& reporter)
     // Report incoming connections.
     int ict = 0;
     for (auto unit : units) {
-        if (unit != nullptr) {
-            if (unit->isInput() && !unit->isFinished()) {
-                Route route = unit->getRoute();
-                std::string msg = "There is an input connection from " + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
-                PortInfo info;
-                info.message = msg;
-                info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
-                info.incoming = true;
-                info.portName = portName;
-                info.sourceName = route.getFromName();
-                info.targetName = route.getToName();
-                info.carrierName = route.getCarrierName();
-                reporter.report(info);
-                ict++;
-            }
+        if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
+            Route route = unit->getRoute();
+            std::string msg = "There is an input connection from " + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
+            PortInfo info;
+            info.message = msg;
+            info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
+            info.incoming = true;
+            info.portName = portName;
+            info.sourceName = route.getFromName();
+            info.targetName = route.getToName();
+            info.carrierName = route.getCarrierName();
+            reporter.report(info);
+            ict++;
         }
     }
     if (ict < 1) {
@@ -1390,10 +1368,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
 
     // Scan connections, placing message everyhere we can.
     for (auto unit : units) {
-        if (unit == nullptr) {
-            continue;
-        }
-        if (unit->isOutput() && !unit->isFinished()) {
+        if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
             bool log = (!unit->getMode().empty());
             if (log) {
                 // Some connections are for logging only.
@@ -1456,10 +1431,8 @@ bool PortCore::sendHelper(const PortWriter& writer,
     stateSema.post();
     YMSG(("------- send out real\n"));
 
-    if (waitAfterSend) {
-        if (reader != nullptr) {
-            all_ok = all_ok && gotReply;
-        }
+    if (waitAfterSend && reader != nullptr) {
+        all_ok = all_ok && gotReply;
     }
 
     return all_ok;
@@ -1476,12 +1449,8 @@ bool PortCore::isWriting()
     // this query by counting down with notifyCompletion().
     if (!finished) {
         for (auto unit : units) {
-            if (unit != nullptr) {
-                if (!unit->isFinished()) {
-                    if (unit->isBusy()) {
-                        writing = true;
-                    }
-                }
+            if ((unit != nullptr) && !unit->isFinished() && unit->isBusy()) {
+                writing = true;
             }
         }
     }
@@ -1779,32 +1748,30 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             std::string target = cmd.get(2).asString();
             stateSema.wait();
             for (auto unit : units) {
-                if (unit != nullptr) {
-                    if (unit->isInput() && !unit->isFinished()) {
-                        Route route = unit->getRoute();
-                        if (target.empty()) {
-                            const std::string& name = route.getFromName();
-                            if (!name.empty()) {
-                                result.addString(name);
-                            }
-                        } else if (route.getFromName() == target) {
-                            STANZA(bfrom, "from", route.getFromName());
-                            STANZA(bto, "to", route.getToName());
-                            STANZA(bcarrier, "carrier", route.getCarrierName());
-                            result.addList() = bfrom;
-                            result.addList() = bto;
-                            result.addList() = bcarrier;
-                            Carrier* carrier = Carriers::chooseCarrier(route.getCarrierName());
-                            if (carrier->isConnectionless()) {
-                                STANZA_INT(bconnectionless, "connectionless", 1);
-                                result.addList() = bconnectionless;
-                            }
-                            if (!carrier->isPush()) {
-                                STANZA_INT(breverse, "push", 0);
-                                result.addList() = breverse;
-                            }
-                            delete carrier;
+                if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
+                    Route route = unit->getRoute();
+                    if (target.empty()) {
+                        const std::string& name = route.getFromName();
+                        if (!name.empty()) {
+                            result.addString(name);
                         }
+                    } else if (route.getFromName() == target) {
+                        STANZA(bfrom, "from", route.getFromName());
+                        STANZA(bto, "to", route.getToName());
+                        STANZA(bcarrier, "carrier", route.getCarrierName());
+                        result.addList() = bfrom;
+                        result.addList() = bto;
+                        result.addList() = bcarrier;
+                        Carrier* carrier = Carriers::chooseCarrier(route.getCarrierName());
+                        if (carrier->isConnectionless()) {
+                            STANZA_INT(bconnectionless, "connectionless", 1);
+                            result.addList() = bconnectionless;
+                        }
+                        if (!carrier->isPush()) {
+                            STANZA_INT(breverse, "push", 0);
+                            result.addList() = breverse;
+                        }
+                        delete carrier;
                     }
                 }
             }
@@ -1817,29 +1784,27 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             std::string target = cmd.get(2).asString();
             stateSema.wait();
             for (auto unit : units) {
-                if (unit != nullptr) {
-                    if (unit->isOutput() && !unit->isFinished()) {
-                        Route route = unit->getRoute();
-                        if (target.empty()) {
-                            result.addString(route.getToName());
-                        } else if (route.getToName() == target) {
-                            STANZA(bfrom, "from", route.getFromName());
-                            STANZA(bto, "to", route.getToName());
-                            STANZA(bcarrier, "carrier", route.getCarrierName());
-                            result.addList() = bfrom;
-                            result.addList() = bto;
-                            result.addList() = bcarrier;
-                            Carrier* carrier = Carriers::chooseCarrier(route.getCarrierName());
-                            if (carrier->isConnectionless()) {
-                                STANZA_INT(bconnectionless, "connectionless", 1);
-                                result.addList() = bconnectionless;
-                            }
-                            if (!carrier->isPush()) {
-                                STANZA_INT(breverse, "push", 0);
-                                result.addList() = breverse;
-                            }
-                            delete carrier;
+                if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
+                    Route route = unit->getRoute();
+                    if (target.empty()) {
+                        result.addString(route.getToName());
+                    } else if (route.getToName() == target) {
+                        STANZA(bfrom, "from", route.getFromName());
+                        STANZA(bto, "to", route.getToName());
+                        STANZA(bcarrier, "carrier", route.getCarrierName());
+                        result.addList() = bfrom;
+                        result.addList() = bto;
+                        result.addList() = bcarrier;
+                        Carrier* carrier = Carriers::chooseCarrier(route.getCarrierName());
+                        if (carrier->isConnectionless()) {
+                            STANZA_INT(bconnectionless, "connectionless", 1);
+                            result.addList() = bconnectionless;
                         }
+                        if (!carrier->isPush()) {
+                            STANZA_INT(breverse, "push", 0);
+                            result.addList() = breverse;
+                        }
+                        delete carrier;
                     }
                 }
             }
@@ -1960,37 +1925,35 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             if (target.empty()) {
                 result.addInt32(-1);
                 result.addString("target port is not specified.\r\n");
-            } else {
-                if (target == getName()) {
-                    yarp::os::Property property;
-                    std::string errMsg;
-                    if (!getParamPortMonitor(property, false, errMsg)) {
-                        result.clear();
-                        result.addVocab(Vocab::encode("fail"));
-                        result.addString(errMsg);
-                    } else {
-                        result.clear();
-                        result.addDict() = property;
-                    }
+            } else if (target == getName()) {
+                yarp::os::Property property;
+                std::string errMsg;
+                if (!getParamPortMonitor(property, false, errMsg)) {
+                    result.clear();
+                    result.addVocab(Vocab::encode("fail"));
+                    result.addString(errMsg);
                 } else {
-                    for (auto unit : units) {
-                        if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
-                            Route route = unit->getRoute();
-                            if (route.getFromName() == target) {
-                                yarp::os::Property property;
-                                unit->getCarrierParams(property);
-                                result.addDict() = property;
-                                break;
-                            }
+                    result.clear();
+                    result.addDict() = property;
+                }
+            } else {
+                for (auto unit : units) {
+                    if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
+                        Route route = unit->getRoute();
+                        if (route.getFromName() == target) {
+                            yarp::os::Property property;
+                            unit->getCarrierParams(property);
+                            result.addDict() = property;
+                            break;
                         }
                     }
-                    if (result.size() == 0) {
-                        result.addInt32(-1);
-                        std::string msg = "Could not find an incoming connection from ";
-                        msg += target;
-                        msg += "\r\n";
-                        result.addString(msg);
-                    }
+                }
+                if (result.size() == 0) {
+                    result.addInt32(-1);
+                    std::string msg = "Could not find an incoming connection from ";
+                    msg += target;
+                    msg += "\r\n";
+                    result.addString(msg);
                 }
             }
             stateSema.post();
@@ -2004,38 +1967,36 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             if (target.empty()) {
                 result.addInt32(-1);
                 result.addString("target port is not specified.\r\n");
-            } else {
-                if (target == getName()) {
-                    yarp::os::Property property;
-                    std::string errMsg;
-                    if (!getParamPortMonitor(property, true, errMsg)) {
-                        result.clear();
-                        result.addVocab(Vocab::encode("fail"));
-                        result.addString(errMsg);
-                    } else {
-                        result.clear();
-                        result.addDict() = property;
-                    }
+            } else if (target == getName()) {
+                yarp::os::Property property;
+                std::string errMsg;
+                if (!getParamPortMonitor(property, true, errMsg)) {
+                    result.clear();
+                    result.addVocab(Vocab::encode("fail"));
+                    result.addString(errMsg);
                 } else {
-                    for (auto unit : units) {
-                        if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
-                            Route route = unit->getRoute();
-                            if (route.getToName() == target) {
-                                yarp::os::Property property;
-                                property.fromString(cmd.toString());
-                                unit->getCarrierParams(property);
-                                result.addDict() = property;
-                                break;
-                            }
+                    result.clear();
+                    result.addDict() = property;
+                }
+            } else {
+                for (auto unit : units) {
+                    if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
+                        Route route = unit->getRoute();
+                        if (route.getToName() == target) {
+                            yarp::os::Property property;
+                            property.fromString(cmd.toString());
+                            unit->getCarrierParams(property);
+                            result.addDict() = property;
+                            break;
                         }
                     }
-                    if (result.size() == 0) {
-                        result.addInt32(-1);
-                        std::string msg = "Could not find an incoming connection to ";
-                        msg += target;
-                        msg += "\r\n";
-                        result.addString(msg);
-                    }
+                }
+                if (result.size() == 0) {
+                    result.addInt32(-1);
+                    std::string msg = "Could not find an incoming connection to ";
+                    msg += target;
+                    msg += "\r\n";
+                    result.addString(msg);
                 }
             }
             stateSema.post();
@@ -2063,13 +2024,11 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             Property present;
             stateSema.wait();
             for (auto unit : units) {
-                if (unit != nullptr) {
-                    if (unit->isPupped()) {
-                        std::string me = unit->getPupString();
-                        present.put(me, 1);
-                        if (!listed.check(me)) {
-                            unit->setDoomed();
-                        }
+                if ((unit != nullptr) && unit->isPupped()) {
+                    std::string me = unit->getPupString();
+                    present.put(me, 1);
+                    if (!listed.check(me)) {
+                        unit->setDoomed();
                     }
                 }
             }
