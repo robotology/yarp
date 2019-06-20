@@ -75,11 +75,11 @@ SystemInfo::capacity_t getMemEntry(const char* tag, const char* bufptr)
     char* tail;
     SystemInfo::capacity_t retval;
     size_t len = strlen(tag);
-    while (bufptr) {
+    while (bufptr != nullptr) {
         if (*bufptr == '\n') {
             bufptr++;
         }
-        if (!strncmp(tag, bufptr, len)) {
+        if (strncmp(tag, bufptr, len) == 0) {
             retval = strtol(bufptr + len, &tail, 10);
             if (tail == bufptr + len) {
                 return -1;
@@ -103,7 +103,7 @@ bool getCpuEntry(const char* tag, const char* buff, std::string& value)
     }
 
     const char* pos1 = strchr(buff, ':');
-    if (!pos1) {
+    if (pos1 == nullptr) {
         return false;
     }
 
@@ -264,8 +264,8 @@ SystemInfo::MemoryInfo SystemInfo::getMemoryInfo()
 #if defined(__linux__)
     char buffer[128];
     FILE* procmem = fopen("/proc/meminfo", "r");
-    if (procmem) {
-        while (fgets(buffer, 128, procmem)) {
+    if (procmem != nullptr) {
+        while (fgets(buffer, 128, procmem) != nullptr) {
             capacity_t ret;
             if ((ret = getMemEntry("MemTotal:", buffer)) > 0) {
                 memory.totalSpace = ret / 1024;
@@ -514,8 +514,8 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
 #if defined(__linux__)
     char buffer[128];
     FILE* proccpu = fopen("/proc/cpuinfo", "r");
-    if (proccpu) {
-        while (fgets(buffer, 128, proccpu)) {
+    if (proccpu != nullptr) {
+        while (fgets(buffer, 128, proccpu) != nullptr) {
             std::string value;
             if (getCpuEntry("model", buffer, value) && !getCpuEntry("model name", buffer, value)) {
                 processor.modelNumber = atoi(value.c_str());
@@ -666,8 +666,8 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
 
     char buffer[128];
     FILE* release = popen("lsb_release -ric", "r");
-    if (release) {
-        while (fgets(buffer, 128, release)) {
+    if (release != nullptr) {
+        while (fgets(buffer, 128, release) != nullptr) {
             std::string value;
             if (getCpuEntry("Distributor ID", buffer, value)) {
                 platform.distribution = value;
@@ -684,7 +684,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
 
     char* varChar = *environ;
 
-    for (int i = 0; varChar; i++) {
+    for (int i = 0; varChar != nullptr; i++) {
         std::string tmpVariable(varChar);
         size_t equalsSign = tmpVariable.find('=');
         if (equalsSign != std::string::npos) {
@@ -732,7 +732,7 @@ SystemInfo::UserInfo SystemInfo::getUserInfo()
 #if defined(__linux__) || defined(__APPLE__)
     struct passwd* pwd = getpwuid(getuid());
     user.userID = getuid();
-    if (pwd) {
+    if (pwd != nullptr) {
         user.userName = pwd->pw_name;
         user.realName = pwd->pw_gecos;
         user.homeDir = pwd->pw_dir;
@@ -764,12 +764,12 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
 
 #if defined(__linux__)
     FILE* procload = fopen("/proc/loadavg", "r");
-    if (procload) {
+    if (procload != nullptr) {
         char buff[128];
         int ret = fscanf(procload, "%lf %lf %lf %s", &(load.cpuLoad1), &(load.cpuLoad5), &(load.cpuLoad15), buff);
         if (ret > 0) {
             char* tail = strchr(buff, '/');
-            if (tail && (tail != buff)) {
+            if ((tail != nullptr) && (tail != buff)) {
                 load.cpuLoadInstant = (int)(strtol(buff, &tail, 0) - 1);
             }
         }
@@ -813,13 +813,13 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid)
     char filename[256];
     sprintf(filename, "/proc/%d/cmdline", pid);
     file = fopen(filename, "r");
-    if (file) {
+    if (file != nullptr) {
         char* p = fgets(cmdline, sizeof(cmdline) / sizeof(*cmdline), file);
         fclose(file);
         if (p != nullptr) {
-            while (*p) {
+            while (*p != 0) {
                 p += strlen(p);
-                if (*(p + 1)) {
+                if (*(p + 1) != 0) {
                     *p = ' ';
                 }
                 p++;

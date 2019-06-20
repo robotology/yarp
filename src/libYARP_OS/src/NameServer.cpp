@@ -130,7 +130,7 @@ Contact NameServer::registerName(const std::string& name,
 
     int port = suggestion.getPort();
     if (port == 0) {
-        if (overridePort) {
+        if (overridePort != 0) {
             port = overridePort;
         } else {
             port = getHostRecord(machine).get();

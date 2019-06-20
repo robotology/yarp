@@ -24,7 +24,7 @@ public:
             name(rhs.name),
             name_on_wire(rhs.name_on_wire)
     {
-        if (rhs.prop) {
+        if (rhs.prop != nullptr) {
             writeProperties();
             *prop = *(rhs.prop);
         }
@@ -48,10 +48,10 @@ public:
         if (&rhs != this) {
             name = rhs.name;
             name_on_wire = rhs.name_on_wire;
-            if (rhs.prop) {
+            if (rhs.prop != nullptr) {
                 writeProperties();
                 *prop = *(rhs.prop);
-            } else if (prop) {
+            } else if (prop != nullptr) {
                 delete prop;
                 prop = nullptr;
             }
@@ -61,7 +61,7 @@ public:
 
     Property& writeProperties()
     {
-        if (!prop) {
+        if (prop == nullptr) {
             prop = new Property();
         }
         return *prop;
@@ -69,7 +69,7 @@ public:
 
     const Searchable& readProperties() const
     {
-        if (!prop) {
+        if (prop == nullptr) {
             return Bottle::getNullBottle();
         }
         return *prop;

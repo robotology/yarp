@@ -141,7 +141,7 @@ bool WireWriter::isError() const
 bool WireWriter::writeTag(const char* tag, int split, int len) const
 {
     YARP_UNUSED(len);
-    if (!split) {
+    if (split == 0) {
         return writeString(tag);
     }
     std::string bit;

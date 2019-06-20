@@ -234,7 +234,7 @@ class YARP_OS_API RateThreadWrapper : public PeriodicThread
 {
 private:
     yarp::os::Runnable* helper;
-    int owned;
+    bool owned;
 
 public:
     /**

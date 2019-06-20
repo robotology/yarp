@@ -86,7 +86,7 @@ static bool asJson(std::string& accum,
     int offset = 0;
     int offset2 = 0;
     std::string tag = bot->get(0).asString();
-    if (hint) {
+    if (hint != nullptr) {
         if ((*hint) == "list") {
             struc = false;
             struc_set = true;
@@ -129,7 +129,7 @@ static bool asJson(std::string& accum,
         // { ... }
         accum += "{";
         bool need_comma = false;
-        if (offset2) {
+        if (offset2 != 0) {
             accum += "\"type\": ";
             asJson(accum, bot->get(0));
             need_comma = true;
@@ -153,7 +153,7 @@ static bool asJson(std::string& accum,
 
     // [ ... ]
     accum += "[";
-    if (offset2) {
+    if (offset2 != 0) {
         offset--;
     }
     for (int i = offset; (size_t)i < bot->size(); i++) {

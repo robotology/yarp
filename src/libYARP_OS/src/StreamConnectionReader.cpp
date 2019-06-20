@@ -392,7 +392,7 @@ void StreamConnectionReader::requestDrop()
 const Searchable& StreamConnectionReader::getConnectionModifiers() const
 {
     if (config.size() == 0) {
-        if (protocol) {
+        if (protocol != nullptr) {
             const_cast<Bottle&>(config).fromString(protocol->getSenderSpecifier());
         }
     }

@@ -350,7 +350,7 @@ bool WireReader::readString(std::string& str, bool* is_vocab)
     }
     state->len--;
     if (tag == BOTTLE_TAG_VOCAB) {
-        if (is_vocab) {
+        if (is_vocab != nullptr) {
             *is_vocab = true;
         }
         if (noMore()) {
@@ -363,7 +363,7 @@ bool WireReader::readString(std::string& str, bool* is_vocab)
         str = Vocab::decode(v);
         return true;
     }
-    if (is_vocab) {
+    if (is_vocab != nullptr) {
         *is_vocab = false;
     }
     if (noMore()) {
@@ -472,7 +472,7 @@ bool WireReader::readListHeader()
         return false;
     }
     x1 = reader.expectInt32();
-    if (!(x1 & BOTTLE_TAG_LIST)) {
+    if ((x1 & BOTTLE_TAG_LIST) == 0) {
         return false;
     }
     if (noMore()) {
@@ -530,7 +530,7 @@ ConnectionWriter& WireReader::getWriter()
 {
     flush_if_needed = false;
     ConnectionWriter* writer = reader.getWriter();
-    if (writer) {
+    if (writer != nullptr) {
         return *writer;
     }
     return null_writer;

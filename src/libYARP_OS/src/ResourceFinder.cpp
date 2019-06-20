@@ -39,11 +39,11 @@ static std::string getPwd()
     while (true) {
         delete[] buf;
         buf = new char[len];
-        if (!buf) {
+        if (buf == nullptr) {
             break;
         }
         char* dir = yarp::os::getcwd(buf, len);
-        if (dir) {
+        if (dir != nullptr) {
             result = dir;
             break;
         }
@@ -186,7 +186,7 @@ public:
         bool user_specified_from = p.check("from");
 
         if (p.check("verbose")) {
-            setVerbose(p.check("verbose", Value(1)).asInt32());
+            setVerbose(p.check("verbose", Value(1)).asBool());
         }
 
         if (isVerbose()) {
@@ -320,7 +320,7 @@ public:
             double t = prev->get(0).asFloat64();
             int flag = prev->get(1).asInt32();
             if (SystemClock::nowSystem() - t < RESOURCE_FINDER_CACHE_TIME) {
-                if (flag) {
+                if (flag != 0) {
                     return s;
                 }
                 return {};
@@ -357,14 +357,14 @@ public:
     {
         std::string fname = config.check(name, Value(name)).asString();
         Bottle paths;
-        if (externalOptions) {
+        if (externalOptions != nullptr) {
             if (externalOptions->duplicateFilesPolicy == ResourceFinderOptions::All) {
                 findFileBase(config, fname, true, paths, *externalOptions);
                 return paths;
             }
         }
         ResourceFinderOptions opts;
-        if (externalOptions) {
+        if (externalOptions != nullptr) {
             opts = *externalOptions;
         }
         if (enforcePlural) {
@@ -409,7 +409,7 @@ public:
 
     bool canShowErrors(const ResourceFinderOptions& opts) const
     {
-        if (opts.messageFilter & ResourceFinderOptions::ShowErrors) {
+        if ((opts.messageFilter & ResourceFinderOptions::ShowErrors) != 0) {
             return true;
         }
         if (opts.messageFilter == ResourceFinderOptions::ShowNone) {
@@ -449,7 +449,7 @@ public:
         Bottle doc;
         if (verbose) {
             doc = predoc;
-            if (reason) {
+            if (reason != nullptr) {
                 doc.addString(reason);
             }
         }
@@ -460,7 +460,7 @@ public:
         bool justTop = (opts.duplicateFilesPolicy == ResourceFinderOptions::First);
 
         // check current directory
-        if (locs & ResourceFinderOptions::Directory) {
+        if ((locs & ResourceFinderOptions::Directory) != 0) {
             if (name.empty() && isDir) {
                 addString(output, getPwd());
                 if (justTop) {
@@ -479,7 +479,7 @@ public:
             }
         }
 
-        if ((locs & ResourceFinderOptions::NearMainConfig) && useNearMain) {
+        if (((locs & ResourceFinderOptions::NearMainConfig) != 0) && useNearMain) {
             if (!configFilePath.empty()) {
                 std::string str = check(configFilePath, resourceType, "", name, isDir, doc, "defaultConfigFile path");
                 if (!str.empty()) {
@@ -491,7 +491,7 @@ public:
             }
         }
 
-        if (locs & ResourceFinderOptions::Robot) {
+        if ((locs & ResourceFinderOptions::Robot) != 0) {
             std::string slash = NetworkBase::getDirectorySeparator();
             bool found = false;
             std::string robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME", &found);
@@ -524,7 +524,7 @@ public:
             }
         }
 
-        if ((locs & ResourceFinderOptions::Context) && !useNearMain) {
+        if (((locs & ResourceFinderOptions::Context) != 0) && !useNearMain) {
             for (size_t i = 0; i < apps.size(); i++) {
                 std::string app = apps.get(i).asString();
 
@@ -553,7 +553,7 @@ public:
         }
 
         // check YARP_CONFIG_HOME
-        if ((locs & ResourceFinderOptions::User) && (flavor & ResourceFinderOptions::ConfigLike)) {
+        if (((locs & ResourceFinderOptions::User) != 0) && ((flavor & ResourceFinderOptions::ConfigLike) != 0)) {
             std::string home = ResourceFinder::getConfigHomeNoCreate();
             if (!home.empty()) {
                 appendResourceType(home, resourceType);
@@ -568,7 +568,7 @@ public:
         }
 
         // check YARP_DATA_HOME
-        if ((locs & ResourceFinderOptions::User) && (flavor & ResourceFinderOptions::DataLike)) {
+        if (((locs & ResourceFinderOptions::User) != 0) && ((flavor & ResourceFinderOptions::DataLike) != 0)) {
             std::string home = ResourceFinder::getDataHomeNoCreate();
             if (!home.empty()) {
                 appendResourceType(home, resourceType);
@@ -583,7 +583,7 @@ public:
         }
 
         // check YARP_CONFIG_DIRS
-        if (locs & ResourceFinderOptions::Sysadmin) {
+        if ((locs & ResourceFinderOptions::Sysadmin) != 0) {
             Bottle dirs = ResourceFinder::getConfigDirs();
             appendResourceType(dirs, resourceType);
             for (size_t i = 0; i < dirs.size(); i++) {
@@ -604,7 +604,7 @@ public:
         }
 
         // check YARP_DATA_DIRS
-        if (locs & ResourceFinderOptions::Installed) {
+        if ((locs & ResourceFinderOptions::Installed) != 0) {
             Bottle dirs = ResourceFinder::getDataDirs();
             appendResourceType(dirs, resourceType);
             for (size_t i = 0; i < dirs.size(); i++) {
@@ -624,7 +624,7 @@ public:
             }
         }
 
-        if (allowPathd && (locs & ResourceFinderOptions::Installed)) {
+        if (allowPathd && ((locs & ResourceFinderOptions::Installed) != 0)) {
             // Nested search to locate path.d directories
             Bottle pathds;
             ResourceFinderOptions opts2;
@@ -730,7 +730,7 @@ public:
         }
 
         std::string parentPath = getPath(ResourceFinder::getDataHome(), "contexts", "", "");
-        if (yarp::os::stat(parentPath.c_str())) {
+        if (yarp::os::stat(parentPath.c_str()) != 0) {
             yarp::os::mkdir(parentPath.c_str());
         }
 
@@ -760,7 +760,7 @@ public:
         }
 
         std::string parentPath = getPath(ResourceFinder::getDataHome(), "robots", "", "");
-        if (yarp::os::stat(parentPath.c_str())) {
+        if (yarp::os::stat(parentPath.c_str()) != 0) {
             yarp::os::mkdir(parentPath.c_str());
         }
 

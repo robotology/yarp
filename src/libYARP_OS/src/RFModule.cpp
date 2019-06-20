@@ -232,7 +232,7 @@ static RFModule* module = nullptr;
 
 int RFModule::getThreadKey()
 {
-    if (mPriv->threaded_handler) {
+    if (mPriv->threaded_handler != nullptr) {
         return mPriv->threaded_handler->getKey();
     }
     return yarp::os::Thread::getKeyOfCaller();

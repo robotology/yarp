@@ -433,14 +433,14 @@ bool PortCoreOutputUnit::isBusy()
 
 void PortCoreOutputUnit::setCarrierParams(const yarp::os::Property& params)
 {
-    if (op) {
+    if (op != nullptr) {
         op->getConnection().setCarrierParams(params);
     }
 }
 
 void PortCoreOutputUnit::getCarrierParams(yarp::os::Property& params)
 {
-    if (op) {
+    if (op != nullptr) {
         op->getConnection().getCarrierParams(params);
     }
 }

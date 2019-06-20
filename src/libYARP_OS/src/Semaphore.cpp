@@ -60,7 +60,7 @@ public:
     bool check()
     {
         std::unique_lock<std::mutex> lock(mutex);
-        if (count) {
+        if (count != 0) {
             count--;
             return true;
         }

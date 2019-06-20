@@ -65,7 +65,7 @@ void yarp::os::Nodes::Private::clear()
 {
     mutex.lock();
     for (auto& n : nodes_map) {
-        if (n.second.first) {
+        if (n.second.first != nullptr) {
             if (!n.second.second) {
                 delete n.second.first;
                 n.second.first = nullptr;
@@ -121,7 +121,7 @@ void yarp::os::Nodes::Private::add(Contactable& contactable)
         return;
     }
     Node* node = getNode(contactable.getName(), true);
-    if (node) {
+    if (node != nullptr) {
         node->add(contactable);
     }
 }
@@ -136,7 +136,7 @@ void yarp::os::Nodes::Private::update(Contactable& contactable)
         return;
     }
     Node* node = getNode(contactable.getName(), true);
-    if (node) {
+    if (node != nullptr) {
         node->update(contactable);
     }
 }
@@ -159,7 +159,7 @@ void yarp::os::Nodes::Private::remove(Contactable& contactable)
         return;
     }
     Node* node = getNode(contactable.getName(), false);
-    if (node) {
+    if (node != nullptr) {
         node->remove(contactable);
     }
 }

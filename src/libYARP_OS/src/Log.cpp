@@ -65,11 +65,11 @@
 
 #endif
 
-bool yarp::os::impl::LogImpl::colored_output(getenv("YARP_COLORED_OUTPUT")     &&  (strcmp(yarp::os::getenv("YARP_COLORED_OUTPUT"), "1") == 0));
-bool yarp::os::impl::LogImpl::verbose_output(getenv("YARP_VERBOSE_OUTPUT")     &&  (strcmp(yarp::os::getenv("YARP_VERBOSE_OUTPUT"), "1") == 0));
-bool yarp::os::impl::LogImpl::trace_output(getenv("YARP_TRACE_ENABLE")         &&  (strcmp(yarp::os::getenv("YARP_TRACE_ENABLE"), "1") == 0));
-bool yarp::os::impl::LogImpl::debug_output(!getenv("YARP_DEBUG_ENABLE")        || !(strcmp(yarp::os::getenv("YARP_DEBUG_ENABLE"), "0") == 0));
-bool yarp::os::impl::LogImpl::forward_output(getenv("YARP_FORWARD_LOG_ENABLE") &&  (strcmp(yarp::os::getenv("YARP_FORWARD_LOG_ENABLE"), "1") == 0));
+bool yarp::os::impl::LogImpl::colored_output((getenv("YARP_COLORED_OUTPUT") != nullptr)     &&  (strcmp(yarp::os::getenv("YARP_COLORED_OUTPUT"), "1") == 0));
+bool yarp::os::impl::LogImpl::verbose_output((getenv("YARP_VERBOSE_OUTPUT") != nullptr)     &&  (strcmp(yarp::os::getenv("YARP_VERBOSE_OUTPUT"), "1") == 0));
+bool yarp::os::impl::LogImpl::trace_output((getenv("YARP_TRACE_ENABLE") != nullptr)         &&  (strcmp(yarp::os::getenv("YARP_TRACE_ENABLE"), "1") == 0));
+bool yarp::os::impl::LogImpl::debug_output((getenv("YARP_DEBUG_ENABLE") == nullptr)         || !(strcmp(yarp::os::getenv("YARP_DEBUG_ENABLE"), "0") == 0));
+bool yarp::os::impl::LogImpl::forward_output((getenv("YARP_FORWARD_LOG_ENABLE") != nullptr) &&  (strcmp(yarp::os::getenv("YARP_FORWARD_LOG_ENABLE"), "1") == 0));
 
 yarp::os::Log::LogCallback yarp::os::Log::print_callback = yarp::os::impl::LogImpl::print_callback;
 yarp::os::Log::LogCallback yarp::os::Log::forward_callback = yarp::os::impl::LogImpl::forward_callback;
@@ -236,17 +236,17 @@ void yarp::os::Log::trace(const char* msg, ...) const
 {
     va_list args;
     va_start(args, msg);
-    if (msg) {
+    if (msg != nullptr) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
         buf[YARP_MAX_LOG_MSG_SIZE - 1] = 0;
         if (w > 0 && buf[w - 1] == '\n') {
             buf[w - 1] = 0;
         }
-        if (print_callback) {
+        if (print_callback != nullptr) {
             print_callback(yarp::os::Log::TraceType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
-        if (forward_callback) {
+        if (forward_callback != nullptr) {
             forward_callback(yarp::os::Log::TraceType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
         if (w > YARP_MAX_LOG_MSG_SIZE - 1) {
@@ -266,17 +266,17 @@ void yarp::os::Log::debug(const char* msg, ...) const
 {
     va_list args;
     va_start(args, msg);
-    if (msg) {
+    if (msg != nullptr) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
         buf[YARP_MAX_LOG_MSG_SIZE - 1] = 0;
         if (w > 0 && buf[w - 1] == '\n') {
             buf[w - 1] = 0;
         }
-        if (print_callback) {
+        if (print_callback != nullptr) {
             print_callback(yarp::os::Log::DebugType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
-        if (forward_callback) {
+        if (forward_callback != nullptr) {
             forward_callback(yarp::os::Log::DebugType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
         if (w > YARP_MAX_LOG_MSG_SIZE - 1) {
@@ -296,17 +296,17 @@ void yarp::os::Log::info(const char* msg, ...) const
 {
     va_list args;
     va_start(args, msg);
-    if (msg) {
+    if (msg != nullptr) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
         buf[YARP_MAX_LOG_MSG_SIZE - 1] = 0;
         if (w > 0 && buf[w - 1] == '\n') {
             buf[w - 1] = 0;
         }
-        if (print_callback) {
+        if (print_callback != nullptr) {
             print_callback(yarp::os::Log::InfoType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
-        if (forward_callback) {
+        if (forward_callback != nullptr) {
             forward_callback(yarp::os::Log::InfoType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
         if (w > YARP_MAX_LOG_MSG_SIZE - 1) {
@@ -326,17 +326,17 @@ void yarp::os::Log::warning(const char* msg, ...) const
 {
     va_list args;
     va_start(args, msg);
-    if (msg) {
+    if (msg != nullptr) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
         buf[YARP_MAX_LOG_MSG_SIZE - 1] = 0;
         if (w > 0 && buf[w - 1] == '\n') {
             buf[w - 1] = 0;
         }
-        if (print_callback) {
+        if (print_callback != nullptr) {
             print_callback(yarp::os::Log::WarningType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
-        if (forward_callback) {
+        if (forward_callback != nullptr) {
             forward_callback(yarp::os::Log::WarningType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
         if (w > YARP_MAX_LOG_MSG_SIZE - 1) {
@@ -356,17 +356,17 @@ void yarp::os::Log::error(const char* msg, ...) const
 {
     va_list args;
     va_start(args, msg);
-    if (msg) {
+    if (msg != nullptr) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
         buf[YARP_MAX_LOG_MSG_SIZE - 1] = 0;
         if (w > 0 && buf[w - 1] == '\n') {
             buf[w - 1] = 0;
         }
-        if (print_callback) {
+        if (print_callback != nullptr) {
             print_callback(yarp::os::Log::ErrorType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
-        if (forward_callback) {
+        if (forward_callback != nullptr) {
             forward_callback(yarp::os::Log::ErrorType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
         if (w > YARP_MAX_LOG_MSG_SIZE - 1) {
@@ -386,17 +386,17 @@ void yarp::os::Log::fatal(const char* msg, ...) const
 {
     va_list args;
     va_start(args, msg);
-    if (msg) {
+    if (msg != nullptr) {
         char buf[YARP_MAX_LOG_MSG_SIZE];
         int w = vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args);
         buf[YARP_MAX_LOG_MSG_SIZE - 1] = 0;
         if (w > 0 && buf[w - 1] == '\n') {
             buf[w - 1] = 0;
         }
-        if (print_callback) {
+        if (print_callback != nullptr) {
             print_callback(yarp::os::Log::FatalType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
-        if (forward_callback) {
+        if (forward_callback != nullptr) {
             forward_callback(yarp::os::Log::FatalType, buf, mPriv->file, mPriv->line, mPriv->func);
         }
         if (w > YARP_MAX_LOG_MSG_SIZE - 1) {

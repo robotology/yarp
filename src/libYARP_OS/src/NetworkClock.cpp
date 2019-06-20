@@ -72,7 +72,7 @@ NetworkClock::Private::~Private()
     while (waiter_it != waiters->end()) {
         Semaphore* waiterSemaphore = waiter_it->second;
         waiter_it = waiters->erase(waiter_it);
-        if (waiterSemaphore) {
+        if (waiterSemaphore != nullptr) {
             waiterSemaphore->post();
         }
     }
@@ -112,7 +112,7 @@ bool NetworkClock::Private::read(ConnectionReader& reader)
         if (waiter_it->first - _time < 1E-12) {
             Semaphore* waiterSemaphore = waiter_it->second;
             waiter_it = waiters->erase(waiter_it);
-            if (waiterSemaphore) {
+            if (waiterSemaphore != nullptr) {
                 waiterSemaphore->post();
             }
         } else {

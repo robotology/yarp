@@ -47,7 +47,7 @@ public:
 
     void clear()
     {
-        if (backing) {
+        if (backing != nullptr) {
             delete backing;
             backing = nullptr;
         }
@@ -66,7 +66,7 @@ public:
 
     void flush()
     {
-        if (backing) {
+        if (backing != nullptr) {
             Bottle flatten(backing->toString());
             bot.append(flatten);
             clear();
@@ -312,7 +312,7 @@ public:
         for (size_t i = 0; i < total.size(); i++) {
             cursor = nullptr;
             Bottle* term = total.get(i).asList();
-            if (!term) {
+            if (term == nullptr) {
                 continue;
             }
             std::string key = term->get(0).asString();
@@ -328,7 +328,7 @@ public:
                 }
                 Bottle& result = (cursor != nullptr) ? (cursor->findGroup(base)) : owner.findGroup(base);
                 if (result.isNull()) {
-                    if (!cursor) {
+                    if (cursor == nullptr) {
                         cursor = &putBottle((base).c_str());
                     } else {
                         cursor = &cursor->addList();
@@ -338,7 +338,7 @@ public:
                     cursor = &result;
                 }
             }
-            if (cursor) {
+            if (cursor != nullptr) {
                 cursor->copy(*term);
                 cursor->get(0) = Value(base);
             }
@@ -385,14 +385,14 @@ public:
     {
         if (allowDir) {
             yarp::os::impl::DIR* dir = yarp::os::impl::opendir(fname.c_str());
-            if (dir) {
+            if (dir != nullptr) {
                 return readDir(fname, dir, result);
             }
         }
         YARP_DEBUG(Logger::get(),
                    std::string("reading file ") + fname);
         FILE* fin = fopen(fname.c_str(), "r");
-        if (!fin) {
+        if (fin == nullptr) {
             return false;
         }
         char buf[25600];
@@ -478,7 +478,7 @@ public:
         YARP_DEBUG(Logger::get(), std::string("looking for ") + dirname);
 
         yarp::os::impl::DIR* dir = yarp::os::impl::opendir(dirname.c_str());
-        if (!dir) {
+        if (dir == nullptr) {
             YARP_ERROR(Logger::get(), std::string("cannot read from ") + dirname);
             return false;
         }
@@ -773,7 +773,7 @@ public:
             }
 
             if (inVar) {
-                if (isalnum(ch) || (ch == '_')) {
+                if ((isalnum(ch) != 0) || (ch == '_')) {
                     var += ch;
                     continue;
                 }
@@ -859,13 +859,13 @@ public:
 
         // Protect spaces inside quotes, but lose the quotes
         for (i = 0; i < len; i++) {
-            if ((!quoted) && ('"' == azParam[i])) {
+            if ((quoted == 0) && ('"' == azParam[i])) {
                 quoted = 1;
                 azParam[i] = ' ';
-            } else if ((quoted) && ('"' == azParam[i])) {
+            } else if (((quoted) != 0) && ('"' == azParam[i])) {
                 quoted = 0;
                 azParam[i] = ' ';
-            } else if ((quoted) && (' ' == azParam[i])) {
+            } else if (((quoted) != 0) && (' ' == azParam[i])) {
                 azParam[i] = '\1';
             }
         }
@@ -897,10 +897,10 @@ public:
     void splitArguments(char* line, char** args)
     {
         char* pTmp = strchr(line, ' ');
-        if (pTmp) {
+        if (pTmp != nullptr) {
             *pTmp = '\0';
             pTmp++;
-            while ((*pTmp) && (*pTmp == ' ')) {
+            while (((*pTmp) != 0) && (*pTmp == ' ')) {
                 pTmp++;
             }
             if (*pTmp == '\0') {
@@ -1201,7 +1201,7 @@ void Property::fromQuery(const char* url, bool wipe)
             } else if (ch == '%') {
                 coding = 2;
             } else {
-                if (coding) {
+                if (coding != 0) {
                     int hex = 0;
                     if (ch >= '0' && ch <= '9') {
                         hex = ch - '0';

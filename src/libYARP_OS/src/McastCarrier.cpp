@@ -250,7 +250,7 @@ bool yarp::os::impl::McastCarrier::isElect() const
 
 bool yarp::os::impl::McastCarrier::takeElection()
 {
-    if (stream) {
+    if (stream != nullptr) {
         return stream->join(mcastAddress, true, local);
     }
     return false;

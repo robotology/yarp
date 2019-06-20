@@ -303,7 +303,7 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
     //printf("*** OLD YARP command %s\n", cmd.c_str());
     setup();
 
-    if (NetworkBase::getQueryBypass()) {
+    if (NetworkBase::getQueryBypass() != nullptr) {
         ContactStyle style;
         Bottle bcmd(cmd);
         Bottle reply;
@@ -411,7 +411,7 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
 bool NameClient::send(Bottle& cmd, Bottle& reply)
 {
     setup();
-    if (NetworkBase::getQueryBypass()) {
+    if (NetworkBase::getQueryBypass() != nullptr) {
         ContactStyle style;
         NetworkBase::writeToNameServer(cmd, reply, style);
         return true;

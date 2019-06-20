@@ -405,9 +405,9 @@ std::string Bottle::describeBottleCode(int code)
         break;
     }
     std::string result = unitName;
-    if (code & BOTTLE_TAG_LIST) {
+    if ((code & BOTTLE_TAG_LIST) != 0) {
         result = "list of " + unitName;
-    } else if (code & BOTTLE_TAG_DICT) {
+    } else if ((code & BOTTLE_TAG_DICT) != 0) {
         result = "dict of " + unitName;
     }
     return result;

@@ -116,7 +116,7 @@ std::string NameConfig::getConfigFileName(const char* stem, const char* ns)
     std::string fname = (stem != nullptr) ? stem : CONF_FILENAME;
     if (stem == nullptr) {
         std::string space;
-        if (ns) {
+        if (ns != nullptr) {
             space = ns;
         } else {
             space = getNamespace();
@@ -135,7 +135,7 @@ std::string NameConfig::readConfig(const std::string& fileName)
 {
     char buf[25600];
     FILE* fin = fopen(fileName.c_str(), "r");
-    if (!fin) {
+    if (fin == nullptr) {
         return {};
     }
     std::string result;
@@ -188,7 +188,7 @@ bool NameConfig::writeConfig(const std::string& fileName, const std::string& tex
         return false;
     }
     FILE* fout = fopen(fileName.c_str(), "w");
-    if (!fout) {
+    if (fout == nullptr) {
         return false;
     }
     fprintf(fout, "%s", text.c_str());

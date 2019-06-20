@@ -81,7 +81,7 @@ Clock* getClock()
 
 void yarp::os::impl::Time::removeClock()
 {
-    if (pclock) {
+    if (pclock != nullptr) {
         delete pclock;
         pclock = nullptr;
     }
@@ -154,7 +154,7 @@ void Time::useSystemClock()
         yarp_clock_type = YARP_CLOCK_SYSTEM;
         clock_owned = true;
 
-        if (old_clock_owned && old_pclock) {
+        if (old_clock_owned && (old_pclock != nullptr)) {
             delete old_pclock;
         }
 
@@ -207,14 +207,14 @@ void Time::useNetworkClock(const std::string& clock, std::string localPortName)
         return;
     }
 
-    if (old_clock_owned && old_pclock) {
+    if (old_clock_owned && (old_pclock != nullptr)) {
         delete old_pclock;
     }
 
     getTimeMutex().unlock();
 
     int i = -1;
-    while (pclock && !pclock->isValid()) {
+    while ((pclock != nullptr) && !pclock->isValid()) {
         i++;
         if ((i % 50) == 0) {
             YARP_INFO(Logger::get(), "Waiting for clock server to start broadcasting data ...");
@@ -247,7 +247,7 @@ void Time::useCustomClock(Clock* clock)
     clock_owned = false;
 
     // delete old clock
-    if (old_clock_owned && old_pclock) {
+    if (old_clock_owned && (old_pclock != nullptr)) {
         delete old_pclock;
     }
 

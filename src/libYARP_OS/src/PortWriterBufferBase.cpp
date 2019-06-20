@@ -57,7 +57,7 @@ public:
         bool done = false;
         while (!done) {
             stateSema.wait();
-            if (port) {
+            if (port != nullptr) {
                 if (!port->isOpen()) {
                     outCt = 0;
                 }

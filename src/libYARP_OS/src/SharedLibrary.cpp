@@ -128,7 +128,7 @@ std::string SharedLibrary::error()
 
 void* SharedLibrary::getSymbol(const char* symbolName)
 {
-    if (!implementation->dll) {
+    if (implementation->dll == nullptr) {
         implementation->error = "Library is not open";
         return nullptr;
     }
@@ -138,7 +138,7 @@ void* SharedLibrary::getSymbol(const char* symbolName)
 #else
     void* result = yarp::os::impl::dlsym(implementation->dll, symbolName);
 #endif
-    if (!result) {
+    if (result == nullptr) {
         implementation->error = implementation->getError();
     }
 

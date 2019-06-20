@@ -732,14 +732,14 @@ Value& BottleImpl::findBit(const std::string& key) const
             if (nested) {
                 return org->asList()->get(1);
             }
-            if (parent && parent->getMonitor() != nullptr) {
+            if ((parent != nullptr) && (parent->getMonitor() != nullptr)) {
                 SearchReport report;
                 report.key = key;
                 report.isFound = true;
                 if (size() == 2) {
                     report.value = get((int)(i + 1)).toString();
                 }
-                if (parent) {
+                if (parent != nullptr) {
                     parent->reportToMonitor(report);
                 }
             }
@@ -747,7 +747,7 @@ Value& BottleImpl::findBit(const std::string& key) const
         }
     }
     // return invalid object
-    if (parent && parent->getMonitor() != nullptr) {
+    if ((parent != nullptr) && (parent->getMonitor() != nullptr)) {
         SearchReport report;
         report.key = key;
         parent->reportToMonitor(report);

@@ -124,7 +124,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
             rosrpc.setCarrier("rosrpc");
             cmd.addString(rosrpc.toURI());
             Contact c;
-            if (store) {
+            if (store != nullptr) {
                 c = rosify(store->query(nc.getNodeName()));
             } else {
                 Nodes& nodes = NameClient::getNameClient().getNodes();
@@ -156,7 +156,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
             }
             cmd.addString(typ);
             Contact c;
-            if (store) {
+            if (store != nullptr) {
                 c = rosify(store->query(nc.getNodeName()));
             } else {
                 Nodes& nodes = NameClient::getNameClient().getNodes();
@@ -173,7 +173,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
             }
             if (cat == "-") {
                 Bottle* publishers = reply.get(2).asList();
-                if (publishers && publishers->size() >= 1) {
+                if ((publishers != nullptr) && publishers->size() >= 1) {
                     cmd.clear();
                     cmd.addString(contact.toURI());
                     cmd.addString("publisherUpdate");
@@ -295,7 +295,7 @@ Contact RosNameSpace::unregisterAdvanced(const std::string& name, NameStore* sto
             cmd.addString(toRosNodeName(nc.getNodeName()));
             cmd.addString(nc.getNestedName());
             Contact c;
-            if (store) {
+            if (store != nullptr) {
                 c = rosify(store->query(nc.getNodeName()));
             } else {
                 Nodes& nodes = NameClient::getNameClient().getNodes();
@@ -607,20 +607,20 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
         Property nodes;
         Property topics;
         Property services;
-        if (parts) {
+        if (parts != nullptr) {
             for (int i = 0; i < 3; i++) {
                 Bottle* part = parts->get(i).asList();
-                if (!part) {
+                if (part == nullptr) {
                     continue;
                 }
                 for (size_t j = 0; j < part->size(); j++) {
                     Bottle* unit = part->get(j).asList();
-                    if (!unit) {
+                    if (unit == nullptr) {
                         continue;
                     }
                     std::string stem = unit->get(0).asString();
                     Bottle* links = unit->get(1).asList();
-                    if (!links) {
+                    if (links == nullptr) {
                         continue;
                     }
                     if (i < 2) {
@@ -680,7 +680,7 @@ std::string RosNameSpace::fromRosName(const std::string& name)
     int ct = 0;
     for (char i : name) {
         if (i != '_') {
-            if (ct) {
+            if (ct != 0) {
                 result += '_';
             }
             result += i;
@@ -693,7 +693,7 @@ std::string RosNameSpace::fromRosName(const std::string& name)
             }
         }
     }
-    if (ct) {
+    if (ct != 0) {
         result += '_';
     }
     return result;

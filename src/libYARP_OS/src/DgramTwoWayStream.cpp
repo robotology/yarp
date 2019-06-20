@@ -218,7 +218,7 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize)
     if (_read_size < 0) {
 #if defined(YARP_HAS_ACE)
         //Defaults to socket size
-        if (dgram) {
+        if (dgram != nullptr) {
             int len = sizeof(_read_size);
             int result = dgram->get_option(SOL_SOCKET, SO_RCVBUF, &_read_size, &len);
             if (result < 0) {
@@ -610,7 +610,7 @@ void DgramTwoWayStream::interrupt()
             while (happy && ct > 0) {
                 ct--;
                 DgramTwoWayStream tmp;
-                if (mgram) {
+                if (mgram != nullptr) {
                     YARP_DEBUG(Logger::get(),
                                std::string("* mcast interrupt, interface ") + restrictInterfaceIp.toString());
                     tmp.join(localAddress, true, restrictInterfaceIp);
@@ -708,7 +708,7 @@ yarp::conf::ssize_t DgramTwoWayStream::read(Bytes& b)
             //YARP_DEBUG(Logger::get(), "DGRAM Waiting for something!");
             yarp::conf::ssize_t result = -1;
 #if defined(YARP_HAS_ACE)
-            if (dgram && restrictInterfaceIp.isValid()) {
+            if ((dgram != nullptr) && restrictInterfaceIp.isValid()) {
                 /*
                 printf("Consider remote mcast\n");
                 printf("What we know:\n");
@@ -980,7 +980,7 @@ void DgramTwoWayStream::removeMonitor()
 
 bool DgramTwoWayStream::setTypeOfService(int tos)
 {
-    if (!dgram) {
+    if (dgram == nullptr) {
         return false;
     }
 #if defined(YARP_HAS_ACE)
@@ -993,7 +993,7 @@ bool DgramTwoWayStream::setTypeOfService(int tos)
 int DgramTwoWayStream::getTypeOfService()
 {
     int tos = -1;
-    if (!dgram) {
+    if (dgram == nullptr) {
         return tos;
     }
 #if defined(YARP_HAS_ACE)

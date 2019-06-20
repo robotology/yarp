@@ -74,7 +74,7 @@ public:
     void update()
     {
         if (nc.getTypeName().empty()) {
-            if (!contactable) {
+            if (contactable == nullptr) {
                 return;
             }
             Type typ = contactable->getType();
@@ -206,7 +206,7 @@ public:
         }
         while (name_cache.begin() != name_cache.end()) {
             Contactable* c = name_cache.begin()->first;
-            if (c) {
+            if (c != nullptr) {
                 mutex.unlock();
                 c->interrupt();
                 c->close();
@@ -413,7 +413,7 @@ void yarp::os::Node::Helper::prepare(const std::string& name)
     if (port.getName().empty()) {
         port.setReader(*this);
         Property* prop = port.acquireProperties(false);
-        if (prop) {
+        if (prop != nullptr) {
             prop->put("node_like", 1);
         }
         port.releaseProperties(prop);
@@ -525,7 +525,7 @@ bool yarp::os::Node::Helper::read(ConnectionReader& reader)
     if (na.should_drop) {
         reader.requestDrop(); // ROS likes to close down.
     }
-    if (reader.getWriter()) {
+    if (reader.getWriter() != nullptr) {
         Bottle full;
         full.addInt32(na.code);
         full.addString(na.msg);

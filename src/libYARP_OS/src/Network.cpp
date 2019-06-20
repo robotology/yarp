@@ -775,7 +775,7 @@ void NetworkBase::autoInitMinimum()
 void NetworkBase::autoInitMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock* custom)
 {
     YARP_UNUSED(custom);
-    if (!(__yarp_auto_init_active || __yarp_is_initialized)) {
+    if (!(__yarp_auto_init_active || (__yarp_is_initialized != 0))) {
         __yarp_auto_init_active = true;
         initMinimum(clockType);
     }
@@ -1338,7 +1338,7 @@ std::string NetworkBase::getEnvironment(const char* key,
     if (found != nullptr) {
         *found = (result != nullptr);
     }
-    if (!result) {
+    if (result == nullptr) {
         return {};
     }
     return std::string(result);
@@ -1511,7 +1511,7 @@ public:
     virtual ~ForwardingCarrier()
     {
         car.close();
-        if (!factory) {
+        if (factory == nullptr) {
             return;
         }
         factory->removeRef();
@@ -1854,7 +1854,7 @@ bool NetworkBase::registerCarrier(const char* name, const char* dll)
     StubCarrier* factory = nullptr;
     if (dll == nullptr) {
         factory = new StubCarrier(name);
-        if (!factory) {
+        if (factory == nullptr) {
             return false;
         }
     } else {
@@ -1914,7 +1914,7 @@ bool NetworkBase::writeToNameServer(PortWriter& cmd,
                                     const ContactStyle& style)
 {
     NameStore* store = getNameSpace().getQueryBypass();
-    if (store) {
+    if (store != nullptr) {
         Contact contact;
         return store->process(cmd, reply, contact);
     }

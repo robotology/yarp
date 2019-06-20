@@ -56,10 +56,10 @@ bool Things::setConnectionReader(yarp::os::ConnectionReader& reader)
 
 bool Things::write(yarp::os::ConnectionWriter& connection)
 {
-    if (writer) {
+    if (writer != nullptr) {
         return writer->write(connection);
     }
-    if (portable) {
+    if (portable != nullptr) {
         return portable->write(connection);
     }
     return false;

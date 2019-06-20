@@ -28,7 +28,7 @@ using namespace yarp::os;
 
 void* Port::needImplementation() const
 {
-    if (implementation) {
+    if (implementation != nullptr) {
         return implementation;
     }
     Port* self = const_cast<Port*>(this);
@@ -184,7 +184,7 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
     }
 
     // Allow for open() to be called safely many times on the same Port
-    if (currentCore && currentCore->isOpened()) {
+    if ((currentCore != nullptr) && currentCore->isOpened()) {
         auto* newCore = new PortCoreAdapter(*this);
         yAssert(newCore != nullptr);
         // copy state that should survive in a new open()
@@ -198,7 +198,7 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
             newCore->configReadCreator(*(currentCore->checkReadCreator()));
         }
         if (currentCore->checkWaitAfterSend() >= 0) {
-            newCore->configWaitAfterSend(currentCore->checkWaitAfterSend());
+            newCore->configWaitAfterSend(currentCore->checkWaitAfterSend() != 0);
         }
         if (currentCore->haveCallbackLock) {
             newCore->configCallbackLock(currentCore->recCallbackLock);
@@ -662,7 +662,7 @@ void Port::includeNodeInName(bool flag)
 
 bool Port::isOpen() const
 {
-    if (!implementation) {
+    if (implementation == nullptr) {
         return false;
     }
     return IMPL().active;

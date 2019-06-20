@@ -161,7 +161,7 @@ MonoThreadTimer::~MonoThreadTimer()
 {
     TimerSingleton& singlInstance = TimerSingleton::self();
     singlInstance.removeTimer(m_id);
-    if (!singlInstance.getTimerCount()) {
+    if (singlInstance.getTimerCount() == 0) {
         singlInstance.stop();
     }
 }
@@ -272,13 +272,13 @@ YarpTimerEvent yarp::os::Timer::PrivateImpl::getEventNow(unsigned int iteration)
 
 bool yarp::os::Timer::PrivateImpl::runTimer(unsigned int iteration, YarpTimerEvent event)
 {
-    if (m_mutex) {
+    if (m_mutex != nullptr) {
         m_mutex->lock();
     }
 
     bool ret = m_callback(event);
 
-    if (m_mutex) {
+    if (m_mutex != nullptr) {
         m_mutex->unlock();
     }
 

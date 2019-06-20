@@ -90,7 +90,7 @@ void Protocol::setRoute(const Route& route)
     this->route = r;
 
     // Check if we have a receiver modifier.
-    if (!recv_delegate) {
+    if (recv_delegate == nullptr) {
         Bottle b(getSenderSpecifier());
         if (b.check("recv")) {
             need_recv_delegate = true;
@@ -98,7 +98,7 @@ void Protocol::setRoute(const Route& route)
     }
 
     // Check if we have a sender modifier.
-    if (!send_delegate) {
+    if (send_delegate == nullptr) {
         Bottle b(getSenderSpecifier());
         if (b.check("send")) {
             need_send_delegate = true;
@@ -435,7 +435,7 @@ Connection& Protocol::getSender()
 bool Protocol::getRecvDelegate()
 {
     // If we've already checked for a receiver modifier, return.
-    if (recv_delegate) {
+    if (recv_delegate != nullptr) {
         return true;
     }
     if (!need_recv_delegate) {
@@ -448,7 +448,7 @@ bool Protocol::getRecvDelegate()
     // Check for a "recv" qualifier.
     std::string tag = b.find("recv").asString();
     recv_delegate = Carriers::chooseCarrier(tag);
-    if (!recv_delegate) {
+    if (recv_delegate == nullptr) {
         fprintf(stderr, "Need carrier \"%s\", but cannot find it.\n", tag.c_str());
         recv_delegate_fail = true;
         close();
@@ -474,7 +474,7 @@ bool Protocol::getRecvDelegate()
 bool Protocol::getSendDelegate()
 {
     // If we've already checked for a sender modifier, return.
-    if (send_delegate) {
+    if (send_delegate != nullptr) {
         return true;
     }
     if (!need_send_delegate) {
@@ -487,7 +487,7 @@ bool Protocol::getSendDelegate()
     // Check for a "send" qualifier.
     std::string tag = b.find("send").asString();
     send_delegate = Carriers::chooseCarrier(tag);
-    if (!send_delegate) {
+    if (send_delegate == nullptr) {
         fprintf(stderr, "Need carrier \"%s\", but cannot find it.\n", tag.c_str());
         send_delegate_fail = true;
         close();

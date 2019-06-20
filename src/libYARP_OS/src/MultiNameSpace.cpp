@@ -47,7 +47,7 @@ public:
     {
         // remove all namespaces and reset flags
         for (auto ns : spaces) {
-            if (ns) {
+            if (ns != nullptr) {
                 delete ns;
                 ns = nullptr;
             }
@@ -67,7 +67,7 @@ public:
         _serverAllocatesPortNumbers = true;
         // now scan each namespace
         for (auto ns : spaces) {
-            if (!ns) {
+            if (ns == nullptr) {
                 continue;
             }
             // if any namespace is nonlocal, combination is nonlocal
@@ -177,7 +177,7 @@ public:
         activate();
         // try query against each namespace in order
         for (auto ns : spaces) {
-            if (!ns) {
+            if (ns == nullptr) {
                 continue;
             }
             if (ns->getNameServerName() == name) {
@@ -289,7 +289,7 @@ bool MultiNameSpace::connectPortToTopic(const Contact& src,
                                         ContactStyle style)
 {
     NameSpace* ns = HELPER(this).getOne();
-    if (!ns) {
+    if (ns == nullptr) {
         return false;
     }
     return ns->connectPortToTopic(src, dest, style);
@@ -300,7 +300,7 @@ bool MultiNameSpace::connectTopicToPort(const Contact& src,
                                         ContactStyle style)
 {
     NameSpace* ns = HELPER(this).getOne();
-    if (!ns) {
+    if (ns == nullptr) {
         return false;
     }
     return ns->connectTopicToPort(src, dest, style);
@@ -311,7 +311,7 @@ bool MultiNameSpace::disconnectPortFromTopic(const Contact& src,
                                              ContactStyle style)
 {
     NameSpace* ns = HELPER(this).getOne();
-    if (!ns) {
+    if (ns == nullptr) {
         return false;
     }
     return ns->disconnectPortFromTopic(src, dest, style);
@@ -322,7 +322,7 @@ bool MultiNameSpace::disconnectTopicFromPort(const Contact& src,
                                              ContactStyle style)
 {
     NameSpace* ns = HELPER(this).getOne();
-    if (!ns) {
+    if (ns == nullptr) {
         return false;
     }
     return ns->disconnectTopicFromPort(src, dest, style);
@@ -333,7 +333,7 @@ bool MultiNameSpace::connectPortToPortPersistently(const Contact& src,
                                                    ContactStyle style)
 {
     NameSpace* ns = HELPER(this).getOne();
-    if (!ns) {
+    if (ns == nullptr) {
         return false;
     }
     return ns->connectPortToPortPersistently(src, dest, style);
@@ -344,7 +344,7 @@ bool MultiNameSpace::disconnectPortToPortPersistently(const Contact& src,
                                                       ContactStyle style)
 {
     NameSpace* ns = HELPER(this).getOne();
-    if (!ns) {
+    if (ns == nullptr) {
         return false;
     }
     return ns->disconnectPortToPortPersistently(src, dest, style);
@@ -417,7 +417,7 @@ Contact MultiNameSpace::unregisterContact(const Contact& contact)
 bool MultiNameSpace::setProperty(const std::string& name, const std::string& key, const Value& value)
 {
     NameSpace* ns = HELPER(this).getOne();
-    if (!ns) {
+    if (ns == nullptr) {
         return false;
     }
     return ns->setProperty(name, key, value);
@@ -426,7 +426,7 @@ bool MultiNameSpace::setProperty(const std::string& name, const std::string& key
 Value* MultiNameSpace::getProperty(const std::string& name, const std::string& key)
 {
     NameSpace* ns = HELPER(this).getOne();
-    if (!ns) {
+    if (ns == nullptr) {
         return nullptr;
     }
     return ns->getProperty(name, key);
@@ -466,7 +466,7 @@ bool MultiNameSpace::writeToNameServer(PortWriter& cmd,
                                        const ContactStyle& style)
 {
     NameSpace* ns = HELPER(this).getOne();
-    if (!ns) {
+    if (ns == nullptr) {
         return false;
     }
     return ns->writeToNameServer(cmd, reply, style);
