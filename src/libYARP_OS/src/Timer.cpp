@@ -32,10 +32,10 @@ public:
     using TimerCallback = yarp::os::Timer::TimerCallback;
 
     PrivateImpl(const TimerSettings& sett,
-                const TimerCallback& call,
+                TimerCallback call,
                 yarp::os::Mutex* mutex = nullptr) :
             m_settings(sett),
-            m_callback(call),
+            m_callback(std::move(call)),
             m_mutex(mutex)
     {
     }
@@ -52,7 +52,7 @@ public:
 
 
     TimerSettings m_settings;
-    TimerCallback m_callback{nullptr};
+    TimerCallback m_callback;
     double m_startStamp{0.0};
     double m_lastReal{0.0};
     yarp::os::Mutex* m_mutex;
