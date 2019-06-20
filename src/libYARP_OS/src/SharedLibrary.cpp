@@ -40,9 +40,8 @@ public:
 #ifdef YARP_HAS_ACE
         if (dll != nullptr) {
             return dll->error();
-        } else {
-            return const_cast<char*>("Unknown error");
         }
+        return const_cast<char*>("Unknown error");
 #else
         return yarp::os::impl::dlerror();
 #endif

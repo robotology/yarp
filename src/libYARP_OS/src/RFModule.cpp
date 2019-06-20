@@ -209,9 +209,8 @@ public:
 
         if (threaded_handler != nullptr) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     void deleteThreadHandler()
@@ -238,9 +237,8 @@ int RFModule::getThreadKey()
 {
     if (mPriv->threaded_handler) {
         return mPriv->threaded_handler->getKey();
-    } else {
-        return yarp::os::Thread::getKeyOfCaller();
     }
+    return yarp::os::Thread::getKeyOfCaller();
 }
 
 static void handler(int sig)
@@ -524,14 +522,12 @@ bool RFModule::joinModule(double seconds)
         if (mPriv->threaded_handler->join(seconds)) {
             mPriv->deleteThreadHandler();
             return true;
-        } else {
-            yWarning("RFModule joinModule() timed out.");
-            return false;
         }
-    } else {
-        yWarning("Cannot call join: RFModule runModule() is not currently threaded.");
-        return true;
+        yWarning("RFModule joinModule() timed out.");
+        return false;
     }
+    yWarning("Cannot call join: RFModule runModule() is not currently threaded.");
+    return true;
 }
 
 

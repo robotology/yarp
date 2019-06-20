@@ -342,9 +342,8 @@ static int metaConnect(const std::string& src,
                     fprintf(stderr, "Failure: could not find source port %s\n", src.c_str());
                 }
                 return 1;
-            } else {
-                staticSrc = dynamicSrc;
             }
+            staticSrc = dynamicSrc;
         }
     } else {
         staticSrc = dynamicSrc;
@@ -364,9 +363,8 @@ static int metaConnect(const std::string& src,
                     fprintf(stderr, "Failure: could not find destination port %s\n", dest.c_str());
                 }
                 return 1;
-            } else {
-                staticDest = dynamicDest;
             }
+            staticDest = dynamicDest;
         }
     } else {
         staticDest = dynamicDest;
@@ -691,9 +689,8 @@ bool NetworkBase::exists(const std::string& port, const ContactStyle& style, boo
             printf("Cannot connect to port %s\n", port.c_str());
         }
         return false;
-    } else {
-        out->close();
     }
+    out->close();
     delete out;
     out = nullptr;
 

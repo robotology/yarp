@@ -483,10 +483,9 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender, const Contact& i
     if (sender) {
         if (ipLocal.isValid()) {
             return openMcast(group, ipLocal);
-        } else {
-            // just use udp as normal
-            return open(group);
         }
+        // just use udp as normal
+        return open(group);
     }
 
 #if defined(YARP_HAS_ACE)
@@ -798,10 +797,9 @@ yarp::conf::ssize_t DgramTwoWayStream::read(Bytes& b)
                     }
                     reset();
                     return -1;
-                } else {
-                    readAt += CRC_SIZE;
-                    readAvail -= CRC_SIZE;
                 }
+                readAt += CRC_SIZE;
+                readAvail -= CRC_SIZE;
                 done = true;
             } else {
                 readAvail = 0;

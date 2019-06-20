@@ -250,9 +250,8 @@ bool RateThreadWrapper::threadInit()
 {
     if (helper != nullptr) {
         return helper->threadInit();
-    } else {
-        return true;
     }
+    return true;
 }
 
 void RateThreadWrapper::threadRelease()

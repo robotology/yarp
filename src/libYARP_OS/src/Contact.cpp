@@ -165,10 +165,9 @@ Contact Contact::fromString(const std::string& txt)
                     colon = i;
                     mode = 1;
                     continue;
-                } else {
-                    mode = -1;
-                    break;
                 }
+                mode = -1;
+                break;
             }
             if (ch == '/') {
                 break;
@@ -177,10 +176,9 @@ Contact Contact::fromString(const std::string& txt)
                 if (ch >= '0' && ch <= '9') {
                     nums++;
                     continue;
-                } else {
-                    mode = -1;
-                    break;
                 }
+                mode = -1;
+                break;
             }
         }
         if (mode == 1 && nums >= 1) {

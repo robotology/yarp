@@ -83,9 +83,8 @@ SystemInfo::capacity_t getMemEntry(const char* tag, const char* bufptr)
             retval = strtol(bufptr + len, &tail, 10);
             if (tail == bufptr + len) {
                 return -1;
-            } else {
-                return retval;
             }
+            return retval;
         }
         bufptr = strchr(bufptr, '\n');
     }

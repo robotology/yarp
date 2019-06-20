@@ -579,6 +579,7 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
 
     Bottle cmd2;
     Bottle cache;
+
     if (key == "query") {
         Contact c = queryName(arg1);
         c.setName("");
@@ -589,7 +590,9 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
         reply2.write(con.getWriter());
         reply.read(con.getReader());
         return true;
-    } else if (key == "list") {
+    }
+
+    if (key == "list") {
         cmd2.addString("getSystemState");
         cmd2.addString("dummy_id");
 
@@ -645,9 +648,9 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
         }
         out.write(reply);
         return true;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 

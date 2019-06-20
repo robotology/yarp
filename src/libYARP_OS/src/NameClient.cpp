@@ -419,12 +419,11 @@ bool NameClient::send(Bottle& cmd, Bottle& reply)
     if (isFakeMode()) {
         YARP_DEBUG(Logger::get(), "fake mode nameserver");
         return getServer().apply(cmd, reply, Contact("tcp", "127.0.0.1", NetworkBase::getDefaultPortRange()));
-    } else {
-        Contact server = getAddress();
-        ContactStyle style;
-        style.carrier = "name_ser";
-        return NetworkBase::write(server, cmd, reply, style);
     }
+    Contact server = getAddress();
+    ContactStyle style;
+    style.carrier = "name_ser";
+    return NetworkBase::write(server, cmd, reply, style);
 }
 
 void NameClient::setFakeMode(bool fake)

@@ -766,58 +766,56 @@ public:
                 }
                 quoted = false;
                 continue;
-            } else {
-                if (ch == '\\') {
-                    quoted = true;
-                    continue;
-                }
+            }
+            if (ch == '\\') {
+                quoted = true;
+                continue;
             }
 
             if (inVar) {
                 if (isalnum(ch) || (ch == '_')) {
                     var += ch;
                     continue;
-                } else {
-                    if (ch == '(' || ch == '{') {
-                        if (var.length() == 0) {
-                            // ok, just ignore
-                            varHasParen = true;
-                            continue;
-                        }
-                    }
-                    inVar = false;
-                    //printf("VARIABLE %s\n", var.c_str());
-                    std::string add = NetworkBase::getEnvironment(var.c_str());
-                    if (add.empty()) {
-                        add = env.find(var).toString();
-                    }
-                    if (add.empty()) {
-                        add = env2.find(var).toString();
-                    }
-                    if (add.empty()) {
-                        if (var == "__YARP__") {
-                            add = "1";
-                        }
-                    }
-                    if (add.find('\\') != std::string::npos) {
-                        // Specifically when reading from the command
-                        // line, we will allow windows-style paths.
-                        // Hence we have to break the "\" character
-                        std::string buf;
-                        for (char i : add) {
-                            buf += i;
-                            if (i == '\\') {
-                                buf += i;
-                            }
-                        }
-                        add = buf;
-                    }
-                    output += add;
-                    var = "";
-                    if (varHasParen && (ch == '}' || ch == ')')) {
+                }
+                if (ch == '(' || ch == '{') {
+                    if (var.length() == 0) {
+                        // ok, just ignore
+                        varHasParen = true;
                         continue;
-                        // don't need current char
                     }
+                }
+                inVar = false;
+                //printf("VARIABLE %s\n", var.c_str());
+                std::string add = NetworkBase::getEnvironment(var.c_str());
+                if (add.empty()) {
+                    add = env.find(var).toString();
+                }
+                if (add.empty()) {
+                    add = env2.find(var).toString();
+                }
+                if (add.empty()) {
+                    if (var == "__YARP__") {
+                        add = "1";
+                    }
+                }
+                if (add.find('\\') != std::string::npos) {
+                    // Specifically when reading from the command
+                    // line, we will allow windows-style paths.
+                    // Hence we have to break the "\" character
+                    std::string buf;
+                    for (char i : add) {
+                        buf += i;
+                        if (i == '\\') {
+                            buf += i;
+                        }
+                    }
+                    add = buf;
+                }
+                output += add;
+                var = "";
+                if (varHasParen && (ch == '}' || ch == ')')) {
+                    continue;
+                    // don't need current char
                 }
             }
 
@@ -826,10 +824,9 @@ public:
                     inVar = true;
                     varHasParen = false;
                     continue;
-                } else {
-                    if (ch != 0) {
-                        output += ch;
-                    }
+                }
+                if (ch != 0) {
+                    output += ch;
                 }
             }
         }

@@ -274,9 +274,8 @@ bool yarp::os::impl::ConnectionRecorder::write(yarp::os::ConnectionWriter& conne
             writerStore.write(connection);
         }
         return ok;
-    } else {
-        return readerStore.write(connection);
     }
+    return readerStore.write(connection);
 }
 
 void yarp::os::impl::ConnectionRecorder::requestDrop()

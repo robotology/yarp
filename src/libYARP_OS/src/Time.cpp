@@ -194,18 +194,17 @@ void Time::useNetworkClock(const std::string& clock, std::string localPortName)
     if (_networkClock == nullptr) {
         YARP_FAIL(Logger::get(), "failed creating NetworkClock client");
         return;
-    } else {
-        if (_networkClock->open(clock, localPortName)) {
-            network_clock_ok = true; // see if it is really needed
-            // updating clock pointer with the new one already initialized.
+    }
+    if (_networkClock->open(clock, localPortName)) {
+        network_clock_ok = true; // see if it is really needed
+        // updating clock pointer with the new one already initialized.
 
-            pclock = _networkClock;
-            clock_owned = true;
-            yarp_clock_type = YARP_CLOCK_NETWORK;
-        } else {
-            YARP_FAIL(Logger::get(), "failed creating NetworkClock client, cannot open input port");
-            return;
-        }
+        pclock = _networkClock;
+        clock_owned = true;
+        yarp_clock_type = YARP_CLOCK_NETWORK;
+    } else {
+        YARP_FAIL(Logger::get(), "failed creating NetworkClock client, cannot open input port");
+        return;
     }
 
     if (old_clock_owned && old_pclock) {

@@ -723,26 +723,25 @@ public:
         YARP_UNUSED(config);
         if (useNearMain) {
             return configFilePath;
-        } else {
-            std::string path = getPath(ResourceFinder::getDataHome(), "contexts", context, "");
-
-            std::string slash = NetworkBase::getDirectorySeparator();
-            if (path.length() > 1) {
-                if (path[path.length() - 1] == slash[0]) {
-                    path = path.substr(0, path.length() - slash.size());
-                }
-            }
-
-            std::string parentPath = getPath(ResourceFinder::getDataHome(), "contexts", "", "");
-            if (yarp::os::stat(parentPath.c_str())) {
-                yarp::os::mkdir(parentPath.c_str());
-            }
-
-            if (yarp::os::mkdir(path.c_str()) < 0 && errno != EEXIST) {
-                fprintf(RTARGET, "||| WARNING  Could not create %s directory\n", path.c_str());
-            }
-            return path;
         }
+        std::string path = getPath(ResourceFinder::getDataHome(), "contexts", context, "");
+
+        std::string slash = NetworkBase::getDirectorySeparator();
+        if (path.length() > 1) {
+            if (path[path.length() - 1] == slash[0]) {
+                path = path.substr(0, path.length() - slash.size());
+            }
+        }
+
+        std::string parentPath = getPath(ResourceFinder::getDataHome(), "contexts", "", "");
+        if (yarp::os::stat(parentPath.c_str())) {
+            yarp::os::mkdir(parentPath.c_str());
+        }
+
+        if (yarp::os::mkdir(path.c_str()) < 0 && errno != EEXIST) {
+            fprintf(RTARGET, "||| WARNING  Could not create %s directory\n", path.c_str());
+        }
+        return path;
     }
 
     std::string getHomeRobotPath()
