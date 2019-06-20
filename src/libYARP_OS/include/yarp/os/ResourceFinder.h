@@ -84,24 +84,6 @@ public:
     /**
      * Sets the context for the current ResourceFinder object.
      *
-     * A context is a folder collecting configuration files and data that may be
-     * used to configure modules at runtime.
-     * When the resource finder is configured with a specific contextName,
-     * contexts/<context-name> is added to the search path in which the
-     * initial configuration file and any additional files are sought.
-     *
-     * @param contextName The name of the context
-     * @return true on success, false otherwise
-     */
-    bool setDefaultContext(const char* contextName)
-    {
-        clearContext();
-        return addContext(contextName);
-    }
-
-    /**
-     * Sets the context for the current ResourceFinder object.
-     *
      * @param contextName The name of the context
      * @return true on success, false otherwise
      *
@@ -109,7 +91,8 @@ public:
      */
     bool setDefaultContext(const std::string& contextName)
     {
-        return setDefaultContext(contextName.c_str());
+        clearContext();
+        return addContext(contextName);
     }
 
     /**
@@ -118,7 +101,7 @@ public:
      * The provided \c val will be converted to a yarp::os::Value, so also
      * string representations for lists and numerical values are accepted.
      */
-    bool setDefault(const char* key, const std::string& val);
+    bool setDefault(const std::string& key, const std::string& val);
 
     /**
      * Provide a default value for a given key.
@@ -126,7 +109,7 @@ public:
      * The provided \c val will be converted to a 32-bit integer
      * yarp::os::Value.
      */
-    bool setDefault(const char* key, std::int32_t val);
+    bool setDefault(const std::string& key, std::int32_t val);
 
     /**
      * Provide a default value for a given key.
@@ -134,14 +117,14 @@ public:
      * The provided \c val will be converted to a 64-bit floating point
      * yarp::os::Value.
      */
-    bool setDefault(const char* key, yarp::conf::float64_t val);
+    bool setDefault(const std::string& key, yarp::conf::float64_t val);
 
     /**
      *
      * Provide a default value for a given key
      *
      */
-    bool setDefault(const char* key, const yarp::os::Value& val);
+    bool setDefault(const std::string& key, const yarp::os::Value& val);
 
     /**
      *
@@ -149,7 +132,7 @@ public:
      * (can be overridden from command line with the --from argument)
      *
      */
-    bool setDefaultConfigFile(const char* fname)
+    bool setDefaultConfigFile(const std::string& fname)
     {
         return setDefault("from", fname);
     }
@@ -255,7 +238,7 @@ public:
      * @return A ResourceFinder corresponding to the named section
      *
      */
-    virtual ResourceFinder findNestedResourceFinder(const char* key);
+    virtual ResourceFinder findNestedResourceFinder(const std::string& key);
 
 
     bool isConfigured() const
@@ -413,7 +396,7 @@ public:
 
 private:
     // this might be useful, but is not in spec
-    bool addContext(const char* appName);
+    bool addContext(const std::string& appName);
 
     // this might be useful, but is not in spec
     bool clearContext();

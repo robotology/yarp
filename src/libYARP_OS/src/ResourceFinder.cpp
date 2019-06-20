@@ -138,7 +138,7 @@ private:
     bool useNearMain{false};
 
 public:
-    bool addAppName(const char* appName)
+    bool addAppName(const std::string& appName)
     {
         apps.addString(appName);
         return true;
@@ -155,7 +155,7 @@ public:
         return verbose;
     }
 
-    static std::string extractPath(const char* fname)
+    static std::string extractPath(const std::string& fname)
     {
         std::string s{fname};
         auto n = s.rfind('/');
@@ -220,7 +220,7 @@ public:
         return configured_normally;
     }
 
-    bool setDefault(Property& config, const char* key, const yarp::os::Value& val)
+    bool setDefault(Property& config, const std::string& key, const yarp::os::Value& val)
     {
         if (!config.check(key)) {
             config.put(key, val);
@@ -302,7 +302,7 @@ public:
                       const std::string& name,
                       bool isDir,
                       const Bottle& doc,
-                      const char* doc2)
+                      const std::string& doc2)
     {
         std::string s = getPath(base1, base2, base3, name);
 
@@ -321,7 +321,7 @@ public:
 
         if (verbose) {
             std::string base = doc.toString();
-            fprintf(RTARGET, "||| checking [%s] (%s%s%s)\n", s.c_str(), base.c_str(), (base.length() == 0) ? "" : " ", doc2);
+            fprintf(RTARGET, "||| checking [%s] (%s%s%s)\n", s.c_str(), base.c_str(), (base.length() == 0) ? "" : " ", doc2.c_str());
         }
         bool ok = exists(s.c_str(), isDir);
         Value status;
@@ -414,7 +414,7 @@ public:
     {
         Bottle doc;
         size_t prelen = output.size();
-        findFileBaseInner(config, name, isDir, true, output, opts, doc, nullptr);
+        findFileBaseInner(config, name, isDir, true, output, opts, doc, {});
         if (output.size() != prelen) {
             return;
         }
@@ -436,12 +436,12 @@ public:
         output.addString(txt);
     }
 
-    void findFileBaseInner(Property& config, const std::string& name, bool isDir, bool allowPathd, Bottle& output, const ResourceFinderOptions& opts, const Bottle& predoc, const char* reason)
+    void findFileBaseInner(Property& config, const std::string& name, bool isDir, bool allowPathd, Bottle& output, const ResourceFinderOptions& opts, const Bottle& predoc, const std::string& reason)
     {
         Bottle doc;
         if (verbose) {
             doc = predoc;
-            if (reason != nullptr) {
+            if (!reason.empty()) {
                 doc.addString(reason);
             }
         }
@@ -666,9 +666,9 @@ public:
         return this->quiet;
     }
 
-    bool exists(const char* fname, bool isDir)
+    bool exists(const std::string& fname, bool isDir)
     {
-        int result = yarp::os::stat(fname);
+        int result = yarp::os::stat(fname.c_str());
         if (result != 0) {
             return false;
         }
@@ -827,13 +827,13 @@ bool ResourceFinder::configure(int argc, char* argv[], bool skipFirstArgument)
 }
 
 
-bool ResourceFinder::addContext(const char* appName)
+bool ResourceFinder::addContext(const std::string& appName)
 {
     if (appName[0] == '\0') {
         return true;
     }
     if (mPriv->isVerbose()) {
-        fprintf(RTARGET, "||| adding context [%s]\n", appName);
+        fprintf(RTARGET, "||| adding context [%s]\n", appName.c_str());
     }
     return mPriv->addAppName(appName);
 }
@@ -846,24 +846,24 @@ bool ResourceFinder::clearContext()
     return mPriv->clearAppNames();
 }
 
-bool ResourceFinder::setDefault(const char* key, const std::string& val)
+bool ResourceFinder::setDefault(const std::string& key, const std::string& val)
 {
     Value val2;
     val2.fromString(val.c_str());
     return mPriv->setDefault(config, key, val2);
 }
 
-bool ResourceFinder::setDefault(const char* key, std::int32_t val)
+bool ResourceFinder::setDefault(const std::string& key, std::int32_t val)
 {
     return mPriv->setDefault(config, key, Value(val));
 }
 
-bool ResourceFinder::setDefault(const char* key, yarp::conf::float64_t val)
+bool ResourceFinder::setDefault(const std::string& key, yarp::conf::float64_t val)
 {
     return mPriv->setDefault(config, key, Value(val));
 }
 
-bool ResourceFinder::setDefault(const char* key, const yarp::os::Value& val)
+bool ResourceFinder::setDefault(const std::string& key, const yarp::os::Value& val)
 {
     return mPriv->setDefault(config, key, val);
 }
@@ -1007,7 +1007,7 @@ Bottle ResourceFinder::getContexts()
 }
 
 
-ResourceFinder ResourceFinder::findNestedResourceFinder(const char* key)
+ResourceFinder ResourceFinder::findNestedResourceFinder(const std::string& key)
 {
     return ResourceFinder(findGroup(key), mPriv);
 }
