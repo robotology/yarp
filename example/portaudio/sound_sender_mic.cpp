@@ -23,8 +23,8 @@ using namespace yarp::dev;
 
 const int rec_seconds = 1;
 
-int main(int argc, char *argv[]) {
-
+int main(int argc, char *argv[])
+{
     // Open the network
     Network yarp;
     Port p;
@@ -34,14 +34,14 @@ int main(int argc, char *argv[]) {
     Property conf;
     conf.put("device","portaudio");
     conf.put("read", "");
-    conf.put("samples", 44100*rec_seconds);
+    conf.put("samples", 44100 * rec_seconds);
     //conf.put("rate", 16000);
     PolyDriver poly(conf);
-    IAudioGrabberSound *get;
+    IAudioGrabberSound* get;
 
     // Make sure we can read sound
     poly.view(get);
-    if (get==NULL) {
+    if (get == nullptr) {
         printf("cannot open interface\n");
         return 1;
     }
@@ -72,4 +72,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-

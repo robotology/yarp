@@ -18,8 +18,8 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
-int main(int argc, char *argv[]) {
-
+int main(int argc, char *argv[])
+{
     // Open the network
     Network yarp;
     BufferedPort<Sound> p;
@@ -32,23 +32,22 @@ int main(int argc, char *argv[]) {
     conf.put("samples", "4096");
     conf.put("write", "1");
     PolyDriver poly(conf);
-    IAudioRender *put;
+    IAudioRender* put;
 
     // Make sure we can write sound
     poly.view(put);
-    if (put==NULL) {
+    if (put == nullptr) {
         printf("cannot open interface\n");
         return 1;
     }
 
     //Receive and render
-    Sound *s;
-    while (true)
-      {
-	s = p.read(false);
-	if (s!=NULL)
-	    put->renderSound(*s);
-      }
+    Sound* s;
+    while (true) {
+        s = p.read(false);
+        if (s != nullptr) {
+            put->renderSound(*s);
+        }
+    }
     return 0;
 }
-

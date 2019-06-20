@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 #ifdef USE_PORTS
     Port p;                //use port
 #else
-    BufferedPort<Sound> p; // use buffered port 
+    BufferedPort<Sound> p; // use buffered port
 #endif
 
     p.open("/sender");
@@ -44,54 +44,45 @@ int main(int argc, char *argv[])
     char filename  [255];
     char filename2 [255];
 
-    if (argc==3)
-    {
-        if (strcmp(argv[1],"--file")==0)
-        {
+    if (argc==3) {
+        if (strcmp(argv[1], "--file") == 0){
             strcpy (filename,  argv[2]);
             strcpy (filename2, argv[2]); //using the same file, result will be a sund repeated twice
-        }
-        else
-        {
+        } else {
             printf ("usage: sound_sender_file --file <filename.wav>\n");
             return -1;
         }
-    }
-    else
-    {
+    } else {
         printf ("usage: sound_sender_file --file <filename.wav>\n");
         return -1;
     }
 
     //read sound from file and put data in yarp::sig::Sound
     Sound a;
-    printf("opening first file %s\n",filename);
-    if (yarp::sig::file::read(a,filename)==false)
-    {
+    printf("opening first file %s\n", filename);
+    if (yarp::sig::file::read(a,filename)==false) {
         printf("cannot open file\n");
         return -1;
     }
     Sound b;
-    printf("opening second file %s\n",filename2);
-    if (yarp::sig::file::read(b,filename)==false)
-    {
+    printf("opening second file %s\n", filename2);
+    if (yarp::sig::file::read(b,filename)==false) {
         printf("cannot open file\n");
         return -1;
     }
 
     //concatenate sound a with sound b
-    Sound c=a;
-    c+=b;
-    printf ("sound a has %d samples\n",a.getSamples());
-    printf ("sound b has %d samples\n",b.getSamples());
-    printf ("sound c=a+b has %d samples\n",c.getSamples());
+    Sound c = a;
+    c += b;
+    printf ("sound a has %d samples\n", a.getSamples());
+    printf ("sound b has %d samples\n", b.getSamples());
+    printf ("sound c=a+b has %d samples\n", c.getSamples());
 
-    yarp::os::Network::connect("/sender","/yarphear");
+    yarp::os::Network::connect("/sender", "/yarphear");
     //yarp::os::Time::delay (0.1);
 
     //send data on the network
-    while (true)
-    {
+    while (true) {
         printf("sending data...");
 #ifdef  USE_PORTS
         p.write(c); //use ports
@@ -108,4 +99,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-

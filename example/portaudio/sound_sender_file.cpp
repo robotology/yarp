@@ -35,25 +35,21 @@ int main(int argc, char *argv[])
 #ifdef USE_PORTS
     Port p;                //use port
 #else
-    BufferedPort<Sound> p; // use buffered port 
+    BufferedPort<Sound> p; // use buffered port
 #endif
 
     p.open("/sender");
 
     //get the filename
     char filename [255];
-    if (argc==3)
-    {
-        if (strcmp(argv[1],"--file")==0)
+    if (argc==3) {
+        if (strcmp(argv[1], "--file") == 0) {
             strcpy (filename, argv[2]);
-        else
-        {
+        } else {
             printf ("usage: sound_sender_file --file <filename.wav>\n");
             return -1;
         }
-    }
-    else
-    {
+    } else {
         printf ("usage: sound_sender_file --file <filename.wav>\n");
         return -1;
     }
@@ -61,8 +57,7 @@ int main(int argc, char *argv[])
     //read sound from file and put data in yarp::sig::Sound
     Sound s;
     printf("opening file %s\n",filename);
-    if (yarp::sig::file::read(s,filename)==false)
-    {
+    if (yarp::sig::file::read(s, filename) == false) {
         printf("cannot open file\n");
         return -1;
     }
@@ -71,8 +66,7 @@ int main(int argc, char *argv[])
     //yarp::os::Time::delay (0.1);
 
     //send data on the network
-    while (true)
-    {
+    while (true) {
         printf("sending data...");
 #ifdef  USE_PORTS
         p.write(s); //use ports
@@ -89,4 +83,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
