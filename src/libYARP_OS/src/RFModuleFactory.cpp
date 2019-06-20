@@ -33,7 +33,7 @@ RFModuleFactory& RFModuleFactory::GetInstance()
     return instance;
 }
 
-void RFModuleFactory::AddModule(const string& name, RFModule* (*module)(void))
+void RFModuleFactory::AddModule(const string& name, RFModule* (*module)())
 {
     GetInstance().mPriv->delegates[name] = module;
 }
