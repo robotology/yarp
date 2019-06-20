@@ -210,7 +210,7 @@ Contactable* Protocol::getContactable() const
 
 bool Protocol::open(const std::string& name)
 {
-    if (name == "") {
+    if (name.empty()) {
         return false;
     }
     Route r = getRoute();
@@ -614,7 +614,7 @@ void Protocol::setCarrier(const std::string& carrierNameBase)
     // Set up the carrier for this connection.  The carrier
     // has all the protocol-specific behavior.
     std::string carrierName = carrierNameBase;
-    if (carrierNameBase == "") {
+    if (carrierNameBase.empty()) {
         carrierName = "tcp";
     }
     Route route = getRoute();

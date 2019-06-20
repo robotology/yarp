@@ -80,7 +80,7 @@ Contact RosNameSpace::queryName(const std::string& name)
     }
     contact.setName(name);
 
-    if (srv == "" || !is_service) {
+    if (srv.empty() || !is_service) {
         return contact;
     }
 
@@ -108,11 +108,11 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
                contact.toString().c_str(),
                contact.toURI().c_str());
     NestedContact nc = contact.getNested();
-    if (nc.getNestedName() == "") {
+    if (nc.getNestedName().empty()) {
         nc.fromString(contact.getName());
     }
     std::string cat = nc.getCategory();
-    if (nc.getNestedName() != "") {
+    if (!nc.getNestedName().empty()) {
         if (cat == "-1") {
             Bottle cmd;
             Bottle reply;
@@ -145,7 +145,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
             cmd.addString(toRosNodeName(nc.getNodeName()));
             cmd.addString(toRosName(nc.getNestedName()));
             std::string typ = nc.getTypeNameStar();
-            if (typ != "*" && typ != "") {
+            if (typ != "*" && !typ.empty()) {
                 // remap some basic native YARP types
                 if (typ == "yarp/image") {
                     typ = "sensor_msgs/Image";
@@ -219,7 +219,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
         sub = name.substr(sub_idx + 2, name.length());
         YARP_SPRINTF1(Logger::get(), debug, "Subscribe to %s", sub.c_str());
     }
-    if (node == "") {
+    if (node.empty()) {
         node = name;
     }
     YARP_SPRINTF4(Logger::get(), debug, "Name [%s] Node [%s] sub [%s] pub [%s]", name.c_str(), node.c_str(), sub.c_str(), pub.c_str());
@@ -245,10 +245,10 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
         }
     }
 
-    if (pub != "") {
+    if (!pub.empty()) {
         NetworkBase::connect(node, std::string("topic:/") + pub);
     }
-    if (sub != "") {
+    if (!sub.empty()) {
         NetworkBase::connect(std::string("topic:/") + sub, node);
     }
 
@@ -268,7 +268,7 @@ Contact RosNameSpace::unregisterAdvanced(const std::string& name, NameStore* sto
     nc.fromString(name);
     std::string cat = nc.getCategory();
 
-    if (nc.getNestedName() != "") {
+    if (!nc.getNestedName().empty()) {
         if (cat == "-1") {
             Nodes& nodes = NameClient::getNameClient().getNodes();
             Contact c = nodes.getURI(name);
@@ -328,15 +328,15 @@ Contact RosNameSpace::unregisterAdvanced(const std::string& name, NameStore* sto
         node = name.substr(0, sub_idx);
         sub = name.substr(sub_idx + 2, name.length());
     }
-    if (node == "") {
+    if (node.empty()) {
         node = name;
     }
     YARP_SPRINTF3(Logger::get(), debug, "Name [%s] sub [%s] pub [%s]\n", name.c_str(), sub.c_str(), pub.c_str());
 
-    if (pub != "") {
+    if (!pub.empty()) {
         NetworkBase::disconnect(name, std::string("topic:/") + pub);
     }
-    if (sub != "") {
+    if (!sub.empty()) {
         NetworkBase::disconnect(std::string("topic:/") + sub, name);
     }
 
@@ -478,7 +478,7 @@ bool RosNameSpace::connectTopic(Bottle& cmd,
     Bottle reply;
     Contact dynamicSrc = src;
     Contact dynamicDest = dest;
-    if (style.carrier != "") {
+    if (!style.carrier.empty()) {
         if (srcIsTopic) {
             dynamicDest.setCarrier(style.carrier);
         } else {

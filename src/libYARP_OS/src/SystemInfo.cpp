@@ -318,7 +318,7 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
     DWORD dwSectorsPerCluster = 0, dwBytesPerSector = 0;
     DWORD dwFreeClusters = 0, dwTotalClusters = 0;
     std::string strHome = getUserInfo().homeDir;
-    if (!strHome.length())
+    if (strHome.empty())
         strHome = "C:\\";
     if (GetDiskFreeSpaceA(strHome.c_str(), &dwSectorsPerCluster, &dwBytesPerSector, &dwFreeClusters, &dwTotalClusters)) {
         storage.freeSpace = (capacity_t)((dwFreeClusters / 1048576.0) * dwSectorsPerCluster * dwBytesPerSector);
@@ -328,7 +328,7 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
 
 #if defined(__linux__)
     std::string strHome = getUserInfo().homeDir;
-    if (!strHome.length()) {
+    if (strHome.empty()) {
         strHome = "/home";
     }
 
@@ -342,7 +342,7 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
 
 #if defined(__APPLE__)
     std::string strHome = getUserInfo().homeDir;
-    if (!strHome.length())
+    if (strHome.empty())
         strHome = "/";
 
     struct statfs vfs;

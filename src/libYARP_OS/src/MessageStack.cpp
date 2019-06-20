@@ -77,7 +77,7 @@ public:
     {
         mutex.lock();
         msgs.emplace_back();
-        if (tag != "") {
+        if (!tag.empty()) {
             Bottle b;
             b.read(msg);
             Bottle& back = msgs.back();

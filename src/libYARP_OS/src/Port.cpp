@@ -99,25 +99,25 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
     NameConfig conf;
     std::string nenv = std::string("YARP_RENAME") + conf.getSafeString(n);
     std::string rename = NetworkBase::getEnvironment(nenv.c_str());
-    if (rename != "") {
+    if (!rename.empty()) {
         n = rename;
         contact2.setName(n);
     }
 
     bool local = false;
-    if (n == "" && contact2.getPort() <= 0) {
+    if (n.empty() && contact2.getPort() <= 0) {
         local = true;
         registerName = false;
         n = "...";
     }
 
     NestedContact nc(n);
-    if (nc.getNestedName() != "") {
-        if (nc.getNodeName() == "") {
+    if (!nc.getNestedName().empty()) {
+        if (nc.getNodeName().empty()) {
             Nodes& nodes = NameClient::getNameClient().getNodes();
             nodes.requireActiveName();
             std::string node_name = nodes.getActiveName();
-            if (node_name != "") {
+            if (!node_name.empty()) {
                 n = n + node_name;
             }
         }
@@ -126,26 +126,26 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
     PortCoreAdapter* currentCore = &(IMPL());
     if (currentCore != nullptr) {
         currentCore->active = false;
-        if (n != "" && (n[0] != '/' || currentCore->includeNode) && n[0] != '=' && n != "..." && n.substr(0, 3) != "...") {
+        if (!n.empty() && (n[0] != '/' || currentCore->includeNode) && n[0] != '=' && n != "..." && n.substr(0, 3) != "...") {
             if (fakeName == nullptr) {
                 Nodes& nodes = NameClient::getNameClient().getNodes();
                 std::string node_name = nodes.getActiveName();
-                if (node_name != "") {
+                if (!node_name.empty()) {
                     n = (n[0] == '/' ? "" : "/") + n + "@" + node_name;
                 }
             }
         }
     }
-    if (n != "" && n[0] != '/' && n[0] != '=' && n != "..." && n.substr(0, 3) != "...") {
+    if (!n.empty() && n[0] != '/' && n[0] != '=' && n != "..." && n.substr(0, 3) != "...") {
         if (fakeName == nullptr) {
             YARP_SPRINTF1(Logger::get(), error, "Port name '%s' needs to start with a '/' character", n.c_str());
             return false;
         }
     }
-    if (n != "" && n != "..." && n[0] != '=' && n.substr(0, 3) != "...") {
+    if (!n.empty() && n != "..." && n[0] != '=' && n.substr(0, 3) != "...") {
         if (fakeName == nullptr) {
             std::string prefix = NetworkBase::getEnvironment("YARP_PORT_PREFIX");
-            if (prefix != "") {
+            if (!prefix.empty()) {
                 n = prefix + n;
                 contact2.setName(n);
             }
@@ -154,8 +154,8 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
     if (currentCore != nullptr) {
         NestedContact nc;
         nc.fromString(n);
-        if (nc.getNestedName() != "") {
-            if (nc.getCategory() == "") {
+        if (!nc.getNestedName().empty()) {
+            if (nc.getCategory().empty()) {
                 // we need to add in a category
                 std::string cat;
                 if (currentCore->commitToRead) {
@@ -163,7 +163,7 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
                 } else if (currentCore->commitToWrite) {
                     cat = "+";
                 }
-                if (cat != "") {
+                if (!cat.empty()) {
                     if (currentCore->commitToRpc) {
                         cat += "1";
                     }
@@ -230,22 +230,22 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
     address.setNestedContact(contact2.getNested());
 
     core.setReadHandler(core);
-    if (contact2.getPort() > 0 && contact2.getHost() != "") {
+    if (contact2.getPort() > 0 && !contact2.getHost().empty()) {
         registerName = false;
     }
 
     std::string ntyp = getType().getNameOnWire();
-    if (ntyp == "") {
+    if (ntyp.empty()) {
         NestedContact nc;
         nc.fromString(n);
-        if (nc.getTypeName() != "") {
+        if (!nc.getTypeName().empty()) {
             ntyp = nc.getTypeName();
         }
     }
-    if (ntyp == "") {
+    if (ntyp.empty()) {
         ntyp = getType().getName();
     }
-    if (ntyp != "") {
+    if (!ntyp.empty()) {
         NestedContact nc;
         nc.fromString(contact2.getName());
         nc.setTypeName(ntyp);
@@ -272,7 +272,7 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
     if (success) {
         NestedContact nc;
         nc.fromString(address.getName());
-        if (nc.getNestedName() != "") {
+        if (!nc.getNestedName().empty()) {
             if (nc.getCategory() == "+1") {
                 addOutput(nc.getNestedName());
             }
@@ -298,13 +298,13 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
             Contact newName = NetworkBase::registerContact(contact2);
             core.resetPortName(newName.getName());
             address = core.getAddress();
-        } else if (core.getAddress().getRegName() == "" && !registerName) {
+        } else if (core.getAddress().getRegName().empty() && !registerName) {
             core.resetPortName(core.getAddress().toURI(false));
             core.setName(core.getAddress().getRegName());
         }
 
         if (core.getVerbosity() >= 1) {
-            if (address.getRegName() == "") {
+            if (address.getRegName().empty()) {
                 YARP_INFO(Logger::get(),
                           std::string("Anonymous port active at ") + address.toURI());
             } else {

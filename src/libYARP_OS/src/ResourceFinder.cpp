@@ -94,7 +94,7 @@ static Bottle parsePaths(const std::string& txt)
 static void appendResourceType(std::string& path,
                                const std::string& resourceType)
 {
-    if (resourceType == "") {
+    if (resourceType.empty()) {
         return;
     }
     std::string slash = NetworkBase::getDirectorySeparator();
@@ -109,7 +109,7 @@ static void appendResourceType(std::string& path,
 static void prependResourceType(std::string& path,
                                 const std::string& resourceType)
 {
-    if (resourceType == "") {
+    if (resourceType.empty()) {
         return;
     }
     std::string slash = NetworkBase::getDirectorySeparator();
@@ -119,7 +119,7 @@ static void prependResourceType(std::string& path,
 static void appendResourceType(Bottle& paths,
                                const std::string& resourceType)
 {
-    if (resourceType == "") {
+    if (resourceType.empty()) {
         return;
     }
     for (size_t i = 0; i < paths.size(); i++) {
@@ -219,7 +219,7 @@ public:
             mainActive = true;
             std::string corrected = findFile(config, from, nullptr);
             mainActive = false;
-            if (corrected != "") {
+            if (!corrected.empty()) {
                 from = corrected;
             }
             std::string fromPath = extractPath(from.c_str());
@@ -280,7 +280,7 @@ public:
         std::string s;
         std::string slash = NetworkBase::getDirectorySeparator();
 
-        if (base1 != "") {
+        if (!base1.empty()) {
             s = base1;
             s = s + slash;
         }
@@ -290,7 +290,7 @@ public:
         } else {
             s = s + base2;
         }
-        if (base2 != "") {
+        if (!base2.empty()) {
             s = s + slash;
         }
 
@@ -299,7 +299,7 @@ public:
         } else {
             s = s + base3;
         }
-        if (base3 != "") {
+        if (!base3.empty()) {
             s = s + slash;
         }
 
@@ -381,7 +381,7 @@ public:
     std::string findPath(Property& config)
     {
         std::string result = findFileBase(config, "", true, nullptr);
-        if (result == "") {
+        if (result.empty()) {
             result = getPwd();
         }
         return result;
@@ -465,14 +465,14 @@ public:
 
         // check current directory
         if (locs & ResourceFinderOptions::Directory) {
-            if (name == "" && isDir) {
+            if (name.empty() && isDir) {
                 addString(output, getPwd());
                 if (justTop) {
                     return;
                 }
             }
             std::string str = check(getPwd(), resourceType, "", name, isDir, doc, "pwd");
-            if (str != "") {
+            if (!str.empty()) {
                 if (mainActive) {
                     useNearMain = true;
                 }
@@ -484,9 +484,9 @@ public:
         }
 
         if ((locs & ResourceFinderOptions::NearMainConfig) && useNearMain) {
-            if (configFilePath != "") {
+            if (!configFilePath.empty()) {
                 std::string str = check(configFilePath, resourceType, "", name, isDir, doc, "defaultConfigFile path");
-                if (str != "") {
+                if (!str.empty()) {
                     addString(output, str);
                     if (justTop) {
                         return;
@@ -519,7 +519,7 @@ public:
                                         isDir,
                                         doc,
                                         "robot");
-                if (str != "") {
+                if (!str.empty()) {
                     addString(output, str);
                     if (justTop) {
                         return;
@@ -546,7 +546,7 @@ public:
                 appendResourceType(paths, resourceType);
                 for (size_t j = 0; j < paths.size(); j++) {
                     std::string str = check(paths.get(j).asString(), "", "", name, isDir, doc, "context");
-                    if (str != "") {
+                    if (!str.empty()) {
                         addString(output, str);
                         if (justTop) {
                             return;
@@ -559,10 +559,10 @@ public:
         // check YARP_CONFIG_HOME
         if ((locs & ResourceFinderOptions::User) && (flavor & ResourceFinderOptions::ConfigLike)) {
             std::string home = ResourceFinder::getConfigHomeNoCreate();
-            if (home != "") {
+            if (!home.empty()) {
                 appendResourceType(home, resourceType);
                 std::string str = check(home, "", "", name, isDir, doc, "YARP_CONFIG_HOME");
-                if (str != "") {
+                if (!str.empty()) {
                     addString(output, str);
                     if (justTop) {
                         return;
@@ -574,10 +574,10 @@ public:
         // check YARP_DATA_HOME
         if ((locs & ResourceFinderOptions::User) && (flavor & ResourceFinderOptions::DataLike)) {
             std::string home = ResourceFinder::getDataHomeNoCreate();
-            if (home != "") {
+            if (!home.empty()) {
                 appendResourceType(home, resourceType);
                 std::string str = check(home, "", "", name, isDir, doc, "YARP_DATA_HOME");
-                if (str != "") {
+                if (!str.empty()) {
                     addString(output, str);
                     if (justTop) {
                         return;
@@ -598,7 +598,7 @@ public:
                                         isDir,
                                         doc,
                                         "YARP_CONFIG_DIRS");
-                if (str != "") {
+                if (!str.empty()) {
                     addString(output, str);
                     if (justTop) {
                         return;
@@ -619,7 +619,7 @@ public:
                                         isDir,
                                         doc,
                                         "YARP_DATA_DIRS");
-                if (str != "") {
+                if (!str.empty()) {
                     addString(output, str);
                     if (justTop) {
                         return;
@@ -654,7 +654,7 @@ public:
                     appendResourceType(paths, resourceType);
                     for (size_t j = 0; j < paths.size(); j++) {
                         std::string str = check(paths.get(j).asString(), "", "", name, isDir, doc, "yarp.d");
-                        if (str != "") {
+                        if (!str.empty()) {
                             addString(output, str);
                             if (justTop) {
                                 return;
@@ -1038,7 +1038,7 @@ std::string ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
     bool found = false;
     std::string yarp_version = NetworkBase::getEnvironment("YARP_DATA_HOME",
                                                            &found);
-    if (yarp_version != "") {
+    if (!yarp_version.empty()) {
         return yarp_version;
     }
     std::string xdg_version = NetworkBase::getEnvironment("XDG_DATA_HOME",
@@ -1062,7 +1062,7 @@ std::string ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
                                   + slash + "yarp");
     }
 #endif
-    if (home_version != "") {
+    if (!home_version.empty()) {
         return createIfAbsent(mayCreate,
                               home_version
                                   + slash + ".local"
@@ -1104,7 +1104,7 @@ std::string ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
     }
 #endif
     std::string home_version = NetworkBase::getEnvironment("HOME");
-    if (home_version != "") {
+    if (!home_version.empty()) {
         return createIfAbsent(mayCreate,
                               home_version
                                   + slash + ".config"

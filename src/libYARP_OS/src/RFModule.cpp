@@ -537,7 +537,7 @@ bool RFModule::joinModule(double seconds)
 
 std::string RFModule::getName(const std::string& subName)
 {
-    if (subName == "") {
+    if (subName.empty()) {
         return name;
     }
 

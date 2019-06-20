@@ -92,7 +92,7 @@ static MultiNameSpace& getNameSpace()
 
 static bool needsLookup(const Contact& contact)
 {
-    if (contact.getHost() != "") {
+    if (!contact.getHost().empty()) {
         return false;
     }
     if (contact.getCarrier() == "topic") {
@@ -220,7 +220,7 @@ static int enactConnection(const Contact& src,
     reply.clear();
     cmd.addVocab(act);
     Contact c = dest;
-    if (style.carrier != "") {
+    if (!style.carrier.empty()) {
         c.setCarrier(style.carrier);
     }
     if (mode != YARP_ENACT_DISCONNECT) {
@@ -349,10 +349,10 @@ static int metaConnect(const std::string& src,
     } else {
         staticSrc = dynamicSrc;
     }
-    if (staticSrc.getCarrier() == "") {
+    if (staticSrc.getCarrier().empty()) {
         staticSrc.setCarrier("tcp");
     }
-    if (staticDest.getCarrier() == "") {
+    if (staticDest.getCarrier().empty()) {
         staticDest.setCarrier("tcp");
     }
 
@@ -394,13 +394,13 @@ static int metaConnect(const std::string& src,
         if (!topical) {
             Carrier* srcCarrier = nullptr;
             CARRIER_DEBUG("staticSrc.getCarrier= %s  ", staticSrc.getCarrier().c_str());
-            if (staticSrc.getCarrier() != "") {
+            if (!staticSrc.getCarrier().empty()) {
                 srcCarrier = Carriers::chooseCarrier(staticSrc.getCarrier());
             }
             if (srcCarrier != nullptr) {
                 CARRIER_DEBUG("srcCarrier is NOT null; its name is %s;  ", srcCarrier->getName().c_str());
                 std::string srcBootstrap = srcCarrier->getBootstrapCarrierName();
-                if (srcBootstrap != "") {
+                if (!srcBootstrap.empty()) {
 
                     CARRIER_DEBUG(" it is competent(bootstrapname is %s), while its name is %s )\n\n", srcBootstrap.c_str(), srcCarrier->getName().c_str());
                     srcIsCompetent = true;
@@ -425,13 +425,13 @@ static int metaConnect(const std::string& src,
         if (!topical) {
             Carrier* destCarrier = nullptr;
             CARRIER_DEBUG("staticDest.getCarrier= %s  ", staticDest.getCarrier().c_str());
-            if (staticDest.getCarrier() != "") {
+            if (!staticDest.getCarrier().empty()) {
                 destCarrier = Carriers::chooseCarrier(staticDest.getCarrier());
             }
             if (destCarrier != nullptr) {
                 CARRIER_DEBUG("destCarrier is NOT null; its name is %s;  ", destCarrier->getName().c_str());
                 std::string destBootstrap = destCarrier->getBootstrapCarrierName();
-                if (destBootstrap != "") {
+                if (!destBootstrap.empty()) {
                     CARRIER_DEBUG(" it is competent(bootstrapname is %s), while its name is %s )\n\n\n\n", destBootstrap.c_str(), destCarrier->getName().c_str());
                     destIsCompetent = true;
                 } else {
@@ -495,12 +495,12 @@ static int metaConnect(const std::string& src,
     CARRIER_DEBUG("style.carrier (1) is %s\n ", style.carrier.c_str());
 
 
-    if (dynamicSrc.getCarrier() != "") { //if in connect command the user specified the carrier of src port
+    if (!dynamicSrc.getCarrier().empty()) { //if in connect command the user specified the carrier of src port
         style.carrier = dynamicSrc.getCarrier();
         CARRIER_DEBUG("style.carrier is %s ==> in connect command the user specified the carrier of src port\n ", style.carrier.c_str());
     }
 
-    if (dynamicDest.getCarrier() != "") { //if in connect command the user specified the carrier of dest port or the carrier of the connection
+    if (!dynamicDest.getCarrier().empty()) { //if in connect command the user specified the carrier of dest port or the carrier of the connection
         style.carrier = dynamicDest.getCarrier();
         CARRIER_DEBUG("style.carrier is %s ==> in connect command the user specified the carrier of dest port or the carrier of the connection\n ", style.carrier.c_str());
     }
@@ -509,7 +509,7 @@ static int metaConnect(const std::string& src,
 
     //here we'll check if the style carrier and the constraint carrier are equal.
     //note that in both string may contain params of carrier, so we need to comapare only the name of carrier.
-    if (style.carrier != "" && carrierConstraint != "") {
+    if (!style.carrier.empty() && !carrierConstraint.empty()) {
         //get only carrier name of style.
         std::string style_carrier_name = extractCarrierNameOnly(style.carrier);
 
@@ -524,7 +524,7 @@ static int metaConnect(const std::string& src,
     }
     //we are going to choose the carrier of this connection, and we collect parameters specified by user
     //in order to pass them to the carrier, so it can configure itself.
-    if (carrierConstraint != "") {
+    if (!carrierConstraint.empty()) {
         style.carrier = carrierConstraint;
         //if I'm here means that sorce or dest is not competent.
         //so we need to get parameters of carrier given in connect command.
@@ -538,7 +538,7 @@ static int metaConnect(const std::string& src,
             style.carrier += collectParams(dynamicDest);
         }
     }
-    if (style.carrier == "") {
+    if (style.carrier.empty()) {
         style.carrier = staticDest.getCarrier();
         //if I'm here means that both src and dest are copentent and the user didn't specified a carrier in the connect command
         CARRIER_DEBUG_0("if I'm here means that both src and dest are compentent and the user didn't specified a carrier in the connect command\n");
@@ -548,7 +548,7 @@ static int metaConnect(const std::string& src,
         }
     }
 
-    if (style.carrier == "") {
+    if (style.carrier.empty()) {
         style.carrier = staticSrc.getCarrier();
         CARRIER_DEBUG_0("the chosen style carrier is static src\n ");
     }
@@ -622,7 +622,7 @@ bool NetworkBase::connect(const std::string& src, const std::string& dest, const
 {
     ContactStyle style;
     style.quiet = quiet;
-    if (carrier != "") {
+    if (!carrier.empty()) {
         style.carrier = carrier;
     }
     return connect(src, dest, style);
@@ -1180,7 +1180,7 @@ bool NetworkBase::write(const Contact& contact,
         port.setAdminMode(style.admin);
         port.openFake("network_write");
         Contact ec = contact;
-        if (style.carrier != "") {
+        if (!style.carrier.empty()) {
             ec.setCarrier(style.carrier);
         }
         if (!port.addOutput(ec)) {
@@ -1222,7 +1222,7 @@ bool NetworkBase::write(const Contact& contact,
         out->setTimeout(style.timeout);
     }
 
-    Route r(connectionName, targetName, (style.carrier != "") ? style.carrier.c_str() : "text_ack");
+    Route r(connectionName, targetName, (!style.carrier.empty()) ? style.carrier.c_str() : "text_ack");
     out->open(r);
 
     PortCommand pc(0, style.admin ? "a" : "d");
@@ -1915,7 +1915,7 @@ Contact NetworkBase::detectNameServer(bool useDetectedServer,
 bool NetworkBase::setNameServerContact(Contact& nameServerContact)
 {
     NameConfig nameConfig;
-    if (nameServerContact.getName() != "") {
+    if (!nameServerContact.getName().empty()) {
         setNameServerName(nameServerContact.getName());
     }
     nameConfig.fromFile();
@@ -1948,7 +1948,7 @@ std::string NetworkBase::getConfigFile(const char* fname)
 int NetworkBase::getDefaultPortRange()
 {
     std::string range = NetworkBase::getEnvironment("YARP_PORT_RANGE");
-    if (range != "") {
+    if (!range.empty()) {
         int irange = NetType::toInt(range);
         if (irange != 0) {
             return irange;

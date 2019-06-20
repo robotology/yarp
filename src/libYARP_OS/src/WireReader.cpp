@@ -636,8 +636,8 @@ void WireReader::scanString(std::string& str, bool is_vocab)
     if (!support_get_mode) {
         return;
     }
-    if (get_string == "") {
-        if (get_mode && get_string == "") {
+    if (get_string.empty()) {
+        if (get_mode && get_string.empty()) {
             get_string = str;
             get_is_vocab = is_vocab;
         } else if (str == "get") {

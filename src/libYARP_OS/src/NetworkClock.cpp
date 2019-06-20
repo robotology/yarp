@@ -147,7 +147,7 @@ bool NetworkClock::open(const std::string& clockSourcePortName, std::string loca
     yarp::os::ContactStyle style;
     style.persistent = true;
 
-    if (localPortName == "") {
+    if (localPortName.empty()) {
         const int MAX_STRING_SIZE = 255;
         char hostName[MAX_STRING_SIZE];
         yarp::os::gethostname(hostName, MAX_STRING_SIZE);
@@ -165,7 +165,7 @@ bool NetworkClock::open(const std::string& clockSourcePortName, std::string loca
         return false;
     }
 
-    if (nc.getNestedName() == "") {
+    if (nc.getNestedName().empty()) {
         Contact src = NetworkBase::queryName(mPriv->clockName);
 
         ret = NetworkBase::connect(mPriv->clockName, mPriv->port.getName(), style);

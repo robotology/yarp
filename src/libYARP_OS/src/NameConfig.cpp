@@ -151,9 +151,9 @@ std::string NameConfig::readConfig(const std::string& fileName)
 bool NameConfig::fromFile(const char* ns)
 {
     std::string fname = getConfigFileName(nullptr, ns);
-    if (fname != "") {
+    if (!fname.empty()) {
         std::string txt = readConfig(fname);
-        if (txt != "") {
+        if (!txt.empty()) {
             return fromString(txt);
         }
     }
@@ -164,10 +164,10 @@ bool NameConfig::fromFile(const char* ns)
 bool NameConfig::toFile(bool clean)
 {
     std::string fname = getConfigFileName();
-    if (fname != "") {
+    if (!fname.empty()) {
         std::string txt;
         if (!clean) {
-            std::string m = (mode != "") ? mode : "yarp";
+            std::string m = (!mode.empty()) ? mode : "yarp";
             txt += address.getHost() + " " + NetType::toString(address.getPort()) + " " + m + "\n";
         }
         return writeConfig(fname, txt);
@@ -429,16 +429,16 @@ void NameConfig::setNamespace(const std::string& ns)
 
 std::string NameConfig::getNamespace(bool refresh)
 {
-    if (space == "" || refresh) {
+    if (space.empty() || refresh) {
         std::string senv = NetworkBase::getEnvironment("YARP_NAMESPACE");
-        if (senv != "") {
+        if (!senv.empty()) {
             spaces.fromString(senv);
         } else {
             std::string fname = getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
             spaces.fromString(readConfig(fname));
         }
         space = spaces.get(0).asString();
-        if (space == "") {
+        if (space.empty()) {
             space = "/root";
         }
         if (spaces.size() == 0) {

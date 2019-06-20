@@ -220,7 +220,7 @@ void BottleImpl::fromString(const std::string& line)
                     if ((!quoted) && (ch == ',' || ch == ' ' || ch == '\t' ||
                                       ch == '\n' || ch == '\r') &&
                         (nestedAlt == 0) && (nested == 0)) {
-                        if (arg != "") {
+                        if (!arg.empty()) {
                             if (arg == "null") {
                                 add(new StoreVocab(yarp::os::createVocab('n', 'u', 'l', 'l')));
                             } else {

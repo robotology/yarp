@@ -276,7 +276,7 @@ public:
                 }
             }
             if (isTag) {
-                if (tag != "") {
+                if (!tag.empty()) {
                     total.addList().copy(accum);
                 }
                 tag = work;
@@ -298,7 +298,7 @@ public:
             }
             accum.add(Value::makeValue(work));
         }
-        if (tag != "") {
+        if (!tag.empty()) {
             total.addList().copy(accum);
         }
         if (!qualified) {
@@ -455,7 +455,7 @@ public:
 
         Property envExtended;
         envExtended.fromString(env.toString());
-        if (path != "") {
+        if (!path.empty()) {
             if (searchPath.length() > 0) {
                 searchPath += ";";
             }
@@ -570,7 +570,7 @@ public:
                                     including = true;
                                     // close an open group if an [include something] tag is found
                                     if (bot.size() > 1) {
-                                        if (tag != "") {
+                                        if (!tag.empty()) {
                                             if (accum.size() >= 1) {
                                                 putBottleCompat(tag.c_str(),
                                                                 accum);
@@ -622,7 +622,7 @@ public:
                                         //printf(">>> tag %s accum %s\n",
                                         //     tag.c_str(),
                                         //     accum.toString().c_str());
-                                        if (tag != "") {
+                                        if (!tag.empty()) {
                                             if (accum.size() >= 1) {
                                                 Bottle b;
                                                 b.addString(tag.c_str());
@@ -669,7 +669,7 @@ public:
                 Bottle bot;
                 bot.fromString(buf);
                 if (bot.size() >= 1) {
-                    if (tag == "") {
+                    if (tag.empty()) {
                         putBottleCompat(bot.get(0).toString().c_str(), bot);
                     } else {
                         if (bot.get(1).asString() == "=") {
@@ -686,7 +686,7 @@ public:
                 }
             }
             if (isTag || done) {
-                if (tag != "") {
+                if (!tag.empty()) {
                     if (accum.size() >= 1) {
                         putBottleCompat(tag.c_str(), accum);
                     }
@@ -695,7 +695,7 @@ public:
                 tag = buf;
                 accum.clear();
                 accum.addString(tag);
-                if (tag != "") {
+                if (!tag.empty()) {
                     if (getBottle(tag) != nullptr) {
                         // merge data
                         accum.append(getBottle(tag)->tail());
@@ -788,13 +788,13 @@ public:
                     inVar = false;
                     //printf("VARIABLE %s\n", var.c_str());
                     std::string add = NetworkBase::getEnvironment(var.c_str());
-                    if (add == "") {
+                    if (add.empty()) {
                         add = env.find(var).toString();
                     }
-                    if (add == "") {
+                    if (add.empty()) {
                         add = env2.find(var).toString();
                     }
-                    if (add == "") {
+                    if (add.empty()) {
                         if (var == "__YARP__") {
                             add = "1";
                         }
@@ -1192,7 +1192,7 @@ void Property::fromQuery(const char* url, bool wipe)
             //printf("adding val %s\n", val.c_str());
             val = buf;
             buf = "";
-            if (key != "" && val != "") {
+            if (!key.empty() && !val.empty()) {
                 put(key, val);
             }
             key = "";

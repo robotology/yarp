@@ -191,10 +191,10 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize)
     } else {
         _env_mode = NetworkBase::getEnvironment("YARP_UDP_SIZE");
     }
-    if (_env_mode != "") {
+    if (!_env_mode.empty()) {
         _env_dgram = _env_mode;
     }
-    if (_env_dgram != "") {
+    if (!_env_dgram.empty()) {
         int sz = NetType::toInt(_env_dgram);
         if (sz != 0) {
             _read_size = _write_size = sz;
@@ -259,16 +259,16 @@ void DgramTwoWayStream::configureSystemBuffers()
     std::string socketSendBufferSize = NetworkBase::getEnvironment("YARP_DGRAM_SND_BUFFER_SIZE");
 
     int readBufferSize = -1;
-    if (socketReadBufferSize != "") {
+    if (!socketReadBufferSize.empty()) {
         readBufferSize = NetType::toInt(socketReadBufferSize);
-    } else if (socketBufferSize != "") {
+    } else if (!socketBufferSize.empty()) {
         readBufferSize = NetType::toInt(socketBufferSize);
     }
 
     int writeBufferSize = -1;
-    if (socketSendBufferSize != "") {
+    if (!socketSendBufferSize.empty()) {
         writeBufferSize = NetType::toInt(socketSendBufferSize);
-    } else if (socketBufferSize != "") {
+    } else if (!socketBufferSize.empty()) {
         writeBufferSize = NetType::toInt(socketBufferSize);
     }
     // The writeBufferSize can't be set greater than udp datagram

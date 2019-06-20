@@ -206,7 +206,7 @@ std::string Contact::getName() const
     if (!mPriv->regName.empty()) {
         return mPriv->regName;
     }
-    if (mPriv->hostname != "" && mPriv->port >= 0) {
+    if (!mPriv->hostname.empty() && mPriv->port >= 0) {
         std::string name = std::string("/") + mPriv->hostname + ":" + NetType::toString(mPriv->port);
         return name;
     }
@@ -302,7 +302,7 @@ bool Contact::isValid() const
 std::string Contact::toString() const
 {
     std::string name = getName();
-    if (mPriv->carrier != "") {
+    if (!mPriv->carrier.empty()) {
         return mPriv->carrier + ":/" + name;
     }
     return name;
@@ -312,11 +312,11 @@ std::string Contact::toString() const
 std::string Contact::toURI(bool includeCarrier) const
 {
     std::string result;
-    if (includeCarrier && mPriv->carrier != "") {
+    if (includeCarrier && !mPriv->carrier.empty()) {
         result += mPriv->carrier;
         result += ":/";
     }
-    if (mPriv->hostname != "" && mPriv->port >= 0) {
+    if (!mPriv->hostname.empty() && mPriv->port >= 0) {
         result += "/";
         result += mPriv->hostname;
         result += ":";

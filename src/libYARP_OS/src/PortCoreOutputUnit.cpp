@@ -301,13 +301,13 @@ bool PortCoreOutputUnit::sendHelper()
 
             if (!done) {
                 if (!op->getConnection().canEscape()) {
-                    if (cachedEnvelope != "") {
+                    if (!cachedEnvelope.empty()) {
                         op->getConnection().handleEnvelope(cachedEnvelope);
                     }
                 } else {
                     buf.addToHeader();
 
-                    if (cachedEnvelope != "") {
+                    if (!cachedEnvelope.empty()) {
                         if (cachedEnvelope == "__ADMIN") {
                             PortCommand pc('a', "");
                             pc.write(buf);

@@ -306,7 +306,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream* delegate, const
         delegate->getOutputStream().write('\n');
         delegate->getOutputStream().flush();
 
-        if (s == "") {
+        if (s.empty()) {
             s = "*";
         }
         if (chunked) {
@@ -637,7 +637,7 @@ bool yarp::os::impl::HttpCarrier::sendHeader(ConnectionState& proto)
         target = "GET " + path + " HTTP/1.0\r\n";
     }
     Contact host = proto.getRoute().getToContact();
-    if (host.getHost() != "") {
+    if (!host.getHost().empty()) {
         target += "Host: ";
         target += host.getHost();
         target += "\r\n";
@@ -669,7 +669,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto)
     contentLength = 0;
     while (!done) {
         std::string result = proto.is().readLine();
-        if (result == "") {
+        if (result.empty()) {
             done = true;
         } else {
             //printf(">>> %s\n", result.c_str());

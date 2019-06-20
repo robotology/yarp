@@ -112,7 +112,7 @@ public:
             clear();
         }
         // return if namespaces already present
-        if (spaces.size() != 0) {
+        if (!spaces.empty()) {
             return true;
         }
         // read namespace list from config file
@@ -165,7 +165,7 @@ public:
     Contact getNameServerContact()
     {
         activate(); // make sure we've loaded namespace(s)
-        if (spaces.size() > 0) {
+        if (!spaces.empty()) {
             // return first name server
             return spaces[0]->getNameServerContact();
         }
@@ -199,7 +199,7 @@ public:
     NameSpace* getOne()
     {
         activate();
-        if (spaces.size() == 0) {
+        if (spaces.empty()) {
             return nullptr;
         }
         return spaces[0];

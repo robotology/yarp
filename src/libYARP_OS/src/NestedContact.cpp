@@ -186,12 +186,12 @@ std::string NestedContact::getTypeName() const
 
 std::string NestedContact::getTypeNameStar() const
 {
-    return (mPriv->wireType != "") ? mPriv->wireType : "*";
+    return (!mPriv->wireType.empty()) ? mPriv->wireType : "*";
 }
 
 bool NestedContact::isNested() const
 {
-    return mPriv->nestedName != "";
+    return !mPriv->nestedName.empty();
 }
 
 std::string NestedContact::toString() const

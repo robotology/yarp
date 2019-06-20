@@ -151,7 +151,7 @@ std::string Type::getNameOnWire() const
 
 bool Type::hasName() const
 {
-    return mPriv->name != "";
+    return !mPriv->name.empty();
 }
 
 bool Type::isValid() const
@@ -161,10 +161,10 @@ bool Type::isValid() const
 
 std::string Type::toString() const
 {
-    if (mPriv->name_on_wire != "") {
+    if (!mPriv->name_on_wire.empty()) {
         return mPriv->name + ":" + mPriv->name_on_wire;
     }
-    if (mPriv->name != "") {
+    if (!mPriv->name.empty()) {
         return mPriv->name;
     }
     return "null";

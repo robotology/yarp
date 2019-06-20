@@ -238,7 +238,7 @@ std::string yarp::os::Nodes::Private::getActiveName()
 
 bool yarp::os::Nodes::Private::requireActiveName()
 {
-    if (active_name == "") {
+    if (active_name.empty()) {
         dummy = new Node("...");
     }
     return true;

@@ -49,7 +49,7 @@ yarp::os::impl::McastCarrier::McastCarrier()
 
 yarp::os::impl::McastCarrier::~McastCarrier()
 {
-    if (key != "") {
+    if (!key.empty()) {
         bool elect = isElect();
         removeSender(key);
         if (elect) {

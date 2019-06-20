@@ -56,7 +56,7 @@ Contact YarpNameSpace::registerContact(const Contact& contact)
         NestedContact nc;
         nc.fromString(address.getRegName());
         std::string cat = nc.getCategory();
-        if (nc.getNestedName() != "") {
+        if (!nc.getNestedName().empty()) {
             //bool service = (cat.find("1") != std::string::npos);
             bool publish = (cat.find('+') != std::string::npos);
             bool subscribe = (cat.find('-') != std::string::npos);
@@ -81,7 +81,7 @@ Contact YarpNameSpace::unregisterName(const std::string& name)
     NestedContact nc;
     nc.fromString(name);
     std::string cat = nc.getCategory();
-    if (nc.getNestedName() != "") {
+    if (!nc.getNestedName().empty()) {
         //bool service = (cat.find("1") != std::string::npos);
         bool publish = (cat.find('+') != std::string::npos);
         bool subscribe = (cat.find('-') != std::string::npos);
@@ -183,5 +183,5 @@ bool YarpNameSpace::writeToNameServer(PortWriter& cmd,
     DummyConnector con;
     reply2.write(con.getWriter());
     reply.read(con.getReader());
-    return result != "";
+    return !result.empty();
 }

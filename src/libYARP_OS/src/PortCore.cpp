@@ -679,7 +679,7 @@ void PortCore::cleanUnits(bool blocking)
                     if (!unit->isDoomed()) {
                         if (unit->isOutput()) {
                             updatedOutputCount++;
-                            if (unit->getMode() == "") {
+                            if (unit->getMode().empty()) {
                                 updatedDataOutputCount++;
                             }
                         }
@@ -949,12 +949,12 @@ bool PortCore::addOutput(const std::string& dest,
 
     // Set up a named route for this connection.
     std::string aname = address.getRegName();
-    if (aname == "") {
+    if (aname.empty()) {
         aname = address.toURI(false);
     }
     Route r(getName(),
             aname,
-            ((parts.getCarrier() != "") ? parts.getCarrier() : address.getCarrier()));
+            ((!parts.getCarrier().empty()) ? parts.getCarrier() : address.getCarrier()));
     r.setToContact(contact);
 
     // Check for any restrictions on the port.  Perhaps it can only
@@ -967,7 +967,7 @@ bool PortCore::addOutput(const std::string& dest,
     bool rpc = (f & PORTCORE_IS_RPC);
     Name name(r.getCarrierName() + std::string("://test"));
     std::string mode = name.getCarrierModifier("log");
-    bool is_log = (mode != "");
+    bool is_log = (!mode.empty());
     if (is_log) {
         if (mode != "in") {
             err = "Logger configured as log." + mode + ", but only log.in is supported";
@@ -1138,7 +1138,7 @@ void PortCore::describe(void* id, OutputStream* os)
         if (unit != nullptr) {
             if (unit->isInput() && !unit->isFinished()) {
                 Route route = unit->getRoute();
-                if (route.getCarrierName() != "") {
+                if (!route.getCarrierName().empty()) {
                     std::string msg = "There is an input connection from " + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
                     bw.appendLine(msg);
                     ict++;
@@ -1394,7 +1394,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
             continue;
         }
         if (unit->isOutput() && !unit->isFinished()) {
-            bool log = (unit->getMode() != "");
+            bool log = (!unit->getMode().empty());
             if (log) {
                 // Some connections are for logging only.
                 logCount++;
@@ -1690,7 +1690,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         // Add an output to the port.
         std::string output = cmd.get(1).asString();
         std::string carrier = cmd.get(2).asString();
-        if (carrier != "") {
+        if (!carrier.empty()) {
             output = carrier + ":/" + output;
         }
         addOutput(output, id, &cache, false);
@@ -1782,9 +1782,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 if (unit != nullptr) {
                     if (unit->isInput() && !unit->isFinished()) {
                         Route route = unit->getRoute();
-                        if (target == "") {
+                        if (target.empty()) {
                             const std::string& name = route.getFromName();
-                            if (name != "") {
+                            if (!name.empty()) {
                                 result.addString(name);
                             }
                         } else if (route.getFromName() == target) {
@@ -1820,7 +1820,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 if (unit != nullptr) {
                     if (unit->isOutput() && !unit->isFinished()) {
                         Route route = unit->getRoute();
-                        if (target == "") {
+                        if (target.empty()) {
                             result.addString(route.getToName());
                         } else if (route.getToName() == target) {
                             STANZA(bfrom, "from", route.getFromName());
@@ -1854,7 +1854,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             // Set carrier parameters on a given input connection.
             std::string target = cmd.get(2).asString();
             stateSema.wait();
-            if (target == "") {
+            if (target.empty()) {
                 result.addInt32(-1);
                 result.addString("target port is not specified.\r\n");
             } else {
@@ -1904,7 +1904,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             // Set carrier parameters on a given output connection.
             std::string target = cmd.get(2).asString();
             stateSema.wait();
-            if (target == "") {
+            if (target.empty()) {
                 result.addInt32(-1);
                 result.addString("target port is not specified.\r\n");
             } else {
@@ -1957,7 +1957,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             // Get carrier parameters for a given input connection.
             std::string target = cmd.get(2).asString();
             stateSema.wait();
-            if (target == "") {
+            if (target.empty()) {
                 result.addInt32(-1);
                 result.addString("target port is not specified.\r\n");
             } else {
@@ -2001,7 +2001,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             // Get carrier parameters for a given output connection.
             std::string target = cmd.get(2).asString();
             stateSema.wait();
-            if (target == "") {
+            if (target.empty()) {
                 result.addInt32(-1);
                 result.addString("target port is not specified.\r\n");
             } else {
@@ -2187,7 +2187,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     // request: "prop get /portname"
                     std::string portName = cmd.get(2).asString();
                     bool bFound = false;
-                    if ((portName.size() > 0) && (portName[0] == '/')) {
+                    if ((!portName.empty()) && (portName[0] == '/')) {
                         // check for their own name
                         if (portName == getName()) {
                             bFound = true;
@@ -2282,7 +2282,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 Bottle& process = cmd.findGroup("process");
                 if (!process.isNull()) {
                     std::string portName = cmd.get(2).asString();
-                    if ((portName.size() > 0) && (portName[0] == '/')) {
+                    if ((!portName.empty()) && (portName[0] == '/')) {
                         // check for their own name
                         if (portName == getName()) {
                             bOk = false;
@@ -2309,7 +2309,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 // SCHED_RR    : policy=2, priority=[1 .. 99]
                 Bottle& sched = cmd.findGroup("sched");
                 if (!sched.isNull()) {
-                    if ((cmd.get(2).asString().size() > 0) && (cmd.get(2).asString()[0] == '/')) {
+                    if ((!cmd.get(2).asString().empty()) && (cmd.get(2).asString()[0] == '/')) {
                         bOk = false;
                         for (auto unit : units) {
                             if (unit && !unit->isFinished()) {
@@ -2344,7 +2344,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 // e.g., "prop set /portname (qos ((tos 12)))"
                 Bottle& qos = cmd.findGroup("qos");
                 if (!qos.isNull()) {
-                    if ((cmd.get(2).asString().size() > 0) && (cmd.get(2).asString()[0] == '/')) {
+                    if ((!cmd.get(2).asString().empty()) && (cmd.get(2).asString()[0] == '/')) {
                         bOk = false;
                         for (auto unit : units) {
                             if (unit && !unit->isFinished()) {
@@ -2443,7 +2443,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
      * The delay is applied if the "NONSENSE_ADMIN_DELAY" environment variable is set.
      */
     std::string nonsense_delay = NetworkBase::getEnvironment("NONSENSE_ADMIN_DELAY");
-    if (nonsense_delay.size()) {
+    if (!nonsense_delay.empty()) {
         yarp::os::SystemClock::delaySystem(atof(nonsense_delay.c_str()));
     }
 
@@ -2635,7 +2635,7 @@ void PortCore::reportUnit(PortCoreUnit* unit, bool active)
 {
     YARP_UNUSED(active);
     if (unit != nullptr) {
-        bool isLog = (unit->getMode() != "");
+        bool isLog = (!unit->getMode().empty());
         if (isLog) {
             logNeeded = true;
         }
