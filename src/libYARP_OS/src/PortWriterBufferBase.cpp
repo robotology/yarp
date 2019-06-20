@@ -36,7 +36,7 @@ public:
     {
     }
 
-    virtual ~Private()
+    ~Private() override
     {
         release();
         finishWrites();

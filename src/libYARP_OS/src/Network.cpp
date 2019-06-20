@@ -1508,7 +1508,7 @@ public:
         car.open(*factory);
     }
 
-    virtual ~ForwardingCarrier()
+    ~ForwardingCarrier() override
     {
         car.close();
         if (factory == nullptr) {

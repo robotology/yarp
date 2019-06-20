@@ -36,7 +36,7 @@ class NetworkClock::Private : public yarp::os::PortReader
 {
 public:
     Private();
-    ~Private();
+    ~Private() override;
 
     bool read(ConnectionReader& reader) override;
 

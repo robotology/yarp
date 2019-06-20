@@ -19,7 +19,7 @@ using namespace yarp::os;
 class RFModuleSelector :
         public YarpPluginSelector
 {
-    virtual bool select(Searchable& options) override
+    bool select(Searchable& options) override
     {
         return options.check("type", Value("none")).asString() == "RFModule";
     }

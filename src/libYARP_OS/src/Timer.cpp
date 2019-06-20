@@ -64,7 +64,7 @@ public:
     MonoThreadTimer(const TimerSettings& sett,
                     const TimerCallback& call,
                     yarp::os::Mutex* mutex = nullptr);
-    ~MonoThreadTimer();
+    ~MonoThreadTimer() override;
     bool m_active{false};
     unsigned int m_runTimes{1};
     size_t m_id{(size_t)-1};
@@ -204,7 +204,7 @@ public:
     {
     }
 
-    virtual ~ThreadedTimer()
+    ~ThreadedTimer() override
     {
         stop();
     }
