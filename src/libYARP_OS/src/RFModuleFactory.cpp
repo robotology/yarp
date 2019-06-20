@@ -38,7 +38,7 @@ void RFModuleFactory::AddModule(const string& name, RFModule* (*module)(void))
     GetInstance().mPriv->delegates[name] = module;
 }
 
-RFModule* RFModuleFactory::GetModule(const string name)
+RFModule* RFModuleFactory::GetModule(const string& name)
 {
     if (mPriv->delegates.find(name) != mPriv->delegates.end()) {
         return mPriv->delegates[name]();

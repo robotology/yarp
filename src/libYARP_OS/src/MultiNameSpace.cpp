@@ -286,7 +286,7 @@ Contact MultiNameSpace::queryName(const std::string& name)
 
 bool MultiNameSpace::connectPortToTopic(const Contact& src,
                                         const Contact& dest,
-                                        ContactStyle style)
+                                        const ContactStyle& style)
 {
     NameSpace* ns = HELPER(this).getOne();
     if (ns == nullptr) {
@@ -297,7 +297,7 @@ bool MultiNameSpace::connectPortToTopic(const Contact& src,
 
 bool MultiNameSpace::connectTopicToPort(const Contact& src,
                                         const Contact& dest,
-                                        ContactStyle style)
+                                        const ContactStyle& style)
 {
     NameSpace* ns = HELPER(this).getOne();
     if (ns == nullptr) {
@@ -308,7 +308,7 @@ bool MultiNameSpace::connectTopicToPort(const Contact& src,
 
 bool MultiNameSpace::disconnectPortFromTopic(const Contact& src,
                                              const Contact& dest,
-                                             ContactStyle style)
+                                             const ContactStyle& style)
 {
     NameSpace* ns = HELPER(this).getOne();
     if (ns == nullptr) {
@@ -319,7 +319,7 @@ bool MultiNameSpace::disconnectPortFromTopic(const Contact& src,
 
 bool MultiNameSpace::disconnectTopicFromPort(const Contact& src,
                                              const Contact& dest,
-                                             ContactStyle style)
+                                             const ContactStyle& style)
 {
     NameSpace* ns = HELPER(this).getOne();
     if (ns == nullptr) {
@@ -330,7 +330,7 @@ bool MultiNameSpace::disconnectTopicFromPort(const Contact& src,
 
 bool MultiNameSpace::connectPortToPortPersistently(const Contact& src,
                                                    const Contact& dest,
-                                                   ContactStyle style)
+                                                   const ContactStyle& style)
 {
     NameSpace* ns = HELPER(this).getOne();
     if (ns == nullptr) {
@@ -341,7 +341,7 @@ bool MultiNameSpace::connectPortToPortPersistently(const Contact& src,
 
 bool MultiNameSpace::disconnectPortToPortPersistently(const Contact& src,
                                                       const Contact& dest,
-                                                      ContactStyle style)
+                                                      const ContactStyle& style)
 {
     NameSpace* ns = HELPER(this).getOne();
     if (ns == nullptr) {

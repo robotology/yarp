@@ -117,7 +117,7 @@ public:
      *        will not run in the main thread)
      */
     Timer(const yarp::os::TimerSettings& settings,
-          TimerCallback callback,
+          const TimerCallback& callback,
           bool newThread,
           yarp::os::Mutex* mutex = nullptr);
 

@@ -48,27 +48,27 @@ public:
 
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style) override;
+                                    const ContactStyle& style) override;
     virtual bool connectTopicToPort(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style) override;
+                                    const ContactStyle& style) override;
     virtual bool disconnectPortFromTopic(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) override;
+                                         const ContactStyle& style) override;
     virtual bool disconnectTopicFromPort(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) override;
+                                         const ContactStyle& style) override;
     virtual bool connectPortToPortPersistently(const Contact& src,
                                                const Contact& dest,
-                                               ContactStyle style) override;
+                                               const ContactStyle& style) override;
     virtual bool disconnectPortToPortPersistently(const Contact& src,
                                                   const Contact& dest,
-                                                  ContactStyle style) override;
+                                                  const ContactStyle& style) override;
     virtual bool connectTopic(Bottle& cmd,
                               bool srcIsTopic,
                               const Contact& src,
                               const Contact& dest,
-                              ContactStyle style,
+                              const ContactStyle& style,
                               bool activeRegistration);
 
     bool localOnly() const override;

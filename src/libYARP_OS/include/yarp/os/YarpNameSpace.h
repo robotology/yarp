@@ -47,42 +47,42 @@ public:
 
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style) override
+                                    const ContactStyle& style) override
     {
         return connectTopic("subscribe", false, true, src, dest, style);
     }
 
     virtual bool connectTopicToPort(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style) override
+                                    const ContactStyle& style) override
     {
         return connectTopic("subscribe", true, false, src, dest, style);
     }
 
     virtual bool disconnectPortFromTopic(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) override
+                                         const ContactStyle& style) override
     {
         return connectTopic("unsubscribe", false, true, src, dest, style);
     }
 
     virtual bool disconnectTopicFromPort(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) override
+                                         const ContactStyle& style) override
     {
         return connectTopic("unsubscribe", true, false, src, dest, style);
     }
 
     virtual bool connectPortToPortPersistently(const Contact& src,
                                                const Contact& dest,
-                                               ContactStyle style) override
+                                               const ContactStyle& style) override
     {
         return connectTopic("subscribe", false, false, src, dest, style);
     }
 
     virtual bool disconnectPortToPortPersistently(const Contact& src,
                                                   const Contact& dest,
-                                                  ContactStyle style) override
+                                                  const ContactStyle& style) override
     {
         return connectTopic("unsubscribe", false, false, src, dest, style);
     }
@@ -92,7 +92,7 @@ public:
                               bool destIsTopic,
                               const Contact& src,
                               const Contact& dest,
-                              ContactStyle style)
+                              const ContactStyle& style)
     {
         YARP_UNUSED(srcIsTopic);
         Contact dynamicSrc = src;

@@ -398,7 +398,7 @@ Value* RosNameSpace::getProperty(const std::string& name,
 
 bool RosNameSpace::connectPortToTopic(const Contact& src,
                                       const Contact& dest,
-                                      ContactStyle style)
+                                      const ContactStyle& style)
 {
     Bottle cmd;
     cmd.addString("registerPublisher");
@@ -412,7 +412,7 @@ bool RosNameSpace::connectPortToTopic(const Contact& src,
 
 bool RosNameSpace::connectTopicToPort(const Contact& src,
                                       const Contact& dest,
-                                      ContactStyle style)
+                                      const ContactStyle& style)
 {
     Bottle cmd;
     cmd.addString("registerSubscriber");
@@ -426,7 +426,7 @@ bool RosNameSpace::connectTopicToPort(const Contact& src,
 
 bool RosNameSpace::disconnectPortFromTopic(const Contact& src,
                                            const Contact& dest,
-                                           ContactStyle style)
+                                           const ContactStyle& style)
 {
     Bottle cmd;
     cmd.addString("unregisterPublisher");
@@ -438,7 +438,7 @@ bool RosNameSpace::disconnectPortFromTopic(const Contact& src,
 
 bool RosNameSpace::disconnectTopicFromPort(const Contact& src,
                                            const Contact& dest,
-                                           ContactStyle style)
+                                           const ContactStyle& style)
 {
     Bottle cmd;
     cmd.addString("unregisterSubscriber");
@@ -450,7 +450,7 @@ bool RosNameSpace::disconnectTopicFromPort(const Contact& src,
 
 bool RosNameSpace::connectPortToPortPersistently(const Contact& src,
                                                  const Contact& dest,
-                                                 ContactStyle style)
+                                                 const ContactStyle& style)
 {
     YARP_UNUSED(src);
     YARP_UNUSED(dest);
@@ -460,7 +460,7 @@ bool RosNameSpace::connectPortToPortPersistently(const Contact& src,
 
 bool RosNameSpace::disconnectPortToPortPersistently(const Contact& src,
                                                     const Contact& dest,
-                                                    ContactStyle style)
+                                                    const ContactStyle& style)
 {
     YARP_UNUSED(src);
     YARP_UNUSED(dest);
@@ -472,7 +472,7 @@ bool RosNameSpace::connectTopic(Bottle& cmd,
                                 bool srcIsTopic,
                                 const Contact& src,
                                 const Contact& dest,
-                                ContactStyle style,
+                                const ContactStyle& style,
                                 bool activeRegistration)
 {
     Bottle reply;
