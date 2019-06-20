@@ -43,6 +43,7 @@ private slots:
     void onKillSelected();
     void onExecute();
     void onNodeSelectionChanged();
+    void onExecuteTextChanged();
 signals:
     void logError(QString);
     void logMessage(QString);

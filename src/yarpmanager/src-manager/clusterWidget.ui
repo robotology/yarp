@@ -516,6 +516,9 @@
             <widget class="QLineEdit" name="lineEditExecute"/>
            </item>
            <item>
+            <widget class="QComboBox" name="executeComboBox"/>
+           </item>
+           <item>
             <widget class="QPushButton" name="executeBtn">
              <property name="text">
               <string>Execute</string>

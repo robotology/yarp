@@ -54,6 +54,7 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
     ui->checkNs->setFocusPolicy(Qt::NoFocus);
 
     ui->checkNs->setStyleSheet("QCheckBox { color: green }");
+    ui->executeBtn->setDisabled(true);
 
     //Connections to slots
 
@@ -70,6 +71,7 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
     connect(ui->executeBtn, SIGNAL(clicked(bool)), this, SLOT(onExecute()));
 
     connect(ui->nodestreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(onNodeSelectionChanged()));
+    connect(ui->lineEditExecute, SIGNAL(textChanged(QString)), SLOT(onExecuteTextChanged()));
 
 }
 
@@ -99,13 +101,19 @@ void ClusterWidget::init()
 
     onCheckServer();
 
+    QStringList l;
     //Adding nodes
 
     for (size_t i = 0; i<cluster.nodes.size(); i++)
     {
         ClusterNode node = cluster.nodes[i];
         addRow(node.name, node.displayValue, node.user, node.address, node.onOff, node.log, i);
+        l.push_back(QString(node.name.c_str()));
     }
+
+    // populate the execute combo box
+    ui->executeComboBox->addItems(l);
+    ui->executeComboBox->setEditable(true);
 
     //check if all the nodes are up
     if (ui->checkNs->isChecked())
@@ -368,27 +376,40 @@ void ClusterWidget::onExecute()
         return;
     }
 
-    QList<QTreeWidgetItem*> selectedItems = ui->nodestreeWidget->selectedItems();
-    foreach (QTreeWidgetItem *it, selectedItems)
+    auto nodeName = ui->executeComboBox->currentText();
+
+    if (nodeName.trimmed().size() == 0)
     {
-        int itr = it->text(6).toInt();
-        ClusterNode node = cluster.nodes[itr];
-
-        string cmdExecute = getSSHCmd(node.user, node.address, node.ssh_options);
-
-        cmdExecute.append(" ").append(ui->lineEditExecute->text().toStdString());
-
-        if (system(cmdExecute.c_str()) != 0)
-        {
-            std::string err = "ClusterWidget: failed to run "+ ui->lineEditExecute->text().toStdString() + " on " + node.name;
-            logError(QString(err.c_str()));
-        }
-        else
-        {
-            std::string info = "ClusterWidget: command "+ ui->lineEditExecute->text().toStdString() + " successfully executed on " + node.name;
-            logMessage(QString(info.c_str()));
-        }
+        return;
     }
+
+    auto nodeItr = std::find_if(cluster.nodes.begin(), cluster.nodes.end(),
+                               [&nodeName](const ClusterNode& n){ return n.name == nodeName.toStdString(); });
+
+
+    if (nodeItr == cluster.nodes.end())
+    {
+        return;
+    }
+
+    auto node = *nodeItr;
+    auto command = ui->lineEditExecute->text().toStdString();
+
+    string cmdExecute = getSSHCmd(node.user, node.address, node.ssh_options);
+
+    cmdExecute.append(" ").append(command);
+
+    if (system(cmdExecute.c_str()) != 0)
+    {
+        std::string err = "ClusterWidget: failed to run "+ command + " on " + node.name;
+        logError(QString(err.c_str()));
+    }
+    else
+    {
+        std::string info = "ClusterWidget: command "+ command + " successfully executed on " + node.name;
+        logMessage(QString(info.c_str()));
+    }
+
     ui->lineEditExecute->clear();
 }
 
@@ -399,15 +420,22 @@ void ClusterWidget::onNodeSelectionChanged()
         ui->runSelBtn->setDisabled(true);
         ui->stopSelBtn->setDisabled(true);
         ui->killSelBtn->setDisabled(true);
-        ui->executeBtn->setDisabled(true);
     }
     else
     {
         ui->runSelBtn->setDisabled(false);
         ui->stopSelBtn->setDisabled(false);
         ui->killSelBtn->setDisabled(false);
-        ui->executeBtn->setDisabled(false);
     }
+}
+
+
+void ClusterWidget::onExecuteTextChanged()
+{
+    if (ui->lineEditExecute->text().trimmed().size() > 0)
+        ui->executeBtn->setDisabled(false);
+    else
+        ui->executeBtn->setDisabled(true);
 }
 
 
