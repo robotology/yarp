@@ -570,16 +570,12 @@ static int metaConnect(const std::string& src,
     if ((srcIsCompetent && connectionIsPush) || topical) {
         // Classic case.
         Contact c = Contact::fromString(dest);
-        if (connectionCarrier != nullptr) {
-            delete connectionCarrier;
-        }
+        delete connectionCarrier;
         return enactConnection(staticSrc, c, style, mode, false);
     }
     if (destIsCompetent && connectionIsPull) {
         Contact c = Contact::fromString(src);
-        if (connectionCarrier != nullptr) {
-            delete connectionCarrier;
-        }
+        delete connectionCarrier;
         return enactConnection(staticDest, c, style, mode, true);
     }
 
@@ -1233,9 +1229,7 @@ bool NetworkBase::write(const Contact& contact,
         if (!style.quiet) {
             YARP_ERROR(Logger::get(), "could not write to connection");
         }
-        if (out != nullptr) {
-            delete out;
-        }
+        delete out;
         return false;
     }
     ok = cmd.write(bw);
@@ -1243,9 +1237,7 @@ bool NetworkBase::write(const Contact& contact,
         if (!style.quiet) {
             YARP_ERROR(Logger::get(), "could not write to connection");
         }
-        if (out != nullptr) {
-            delete out;
-        }
+        delete out;
         return false;
     }
     if (style.expectReply) {
@@ -1439,9 +1431,7 @@ int NetworkBase::sendMessage(const std::string& port,
         if (!quiet) {
             fprintf(stderr, "Cannot make connection\n");
         }
-        if (out != nullptr) {
-            delete out;
-        }
+        delete out;
         return 1;
     }
 
@@ -1452,18 +1442,14 @@ int NetworkBase::sendMessage(const std::string& port,
         if (!quiet) {
             fprintf(stderr, "Cannot write on connection\n");
         }
-        if (out != nullptr) {
-            delete out;
-        }
+        delete out;
         return 1;
     }
     if (!disconnect.write(bw)) {
         if (!quiet) {
             fprintf(stderr, "Cannot write on connection\n");
         }
-        if (out != nullptr) {
-            delete out;
-        }
+        delete out;
         return 1;
     }
 

@@ -92,9 +92,7 @@ Bottle& Bottle::operator=(const Bottle& bottle)
 
 Bottle::~Bottle()
 {
-    if (implementation) {
-        delete implementation;
-    }
+    delete implementation;
 }
 
 void Bottle::clear()

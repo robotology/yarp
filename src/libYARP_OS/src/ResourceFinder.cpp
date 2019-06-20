@@ -37,9 +37,7 @@ static std::string getPwd()
     int len = 5;
     char* buf = nullptr;
     while (true) {
-        if (buf != nullptr) {
-            delete[] buf;
-        }
+        delete[] buf;
         buf = new char[len];
         if (!buf) {
             break;
@@ -54,9 +52,7 @@ static std::string getPwd()
         }
         len *= 2;
     }
-    if (buf != nullptr) {
-        delete[] buf;
-    }
+    delete[] buf;
     buf = nullptr;
     return result;
 }

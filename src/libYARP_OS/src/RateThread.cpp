@@ -188,9 +188,7 @@ RateThreadWrapper::~RateThreadWrapper()
 void RateThreadWrapper::detach()
 {
     if (owned) {
-        if (helper != nullptr) {
-            delete helper;
-        }
+        delete helper;
     }
     helper = nullptr;
     owned = false;
