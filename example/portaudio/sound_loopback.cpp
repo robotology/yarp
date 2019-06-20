@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
     // Get an audio device.
     Property conf;
     conf.put("device", "portaudio");
+    conf.put("allow-deprecated-devices", "1");
     PolyDriver poly(conf);
     IAudioGrabberSound* get;
     IAudioRender* put;
@@ -43,7 +44,7 @@ int main(int argc, char *argv[])
     //Grab and render
     Sound s;
     while (true) {
-        get->getSound(s);
+        get->getSound(s, 100, 100000, 0.0);
         put->renderSound(s);
     }
     return 0;

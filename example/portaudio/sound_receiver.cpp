@@ -28,7 +28,8 @@ int main(int argc, char *argv[])
 
     // Get an audio write device.
     Property conf;
-    conf.put("device","portaudio");
+    conf.put("device", "portaudio");
+    conf.put("allow-deprecated-devices", "1");
     conf.put("samples", "4096");
     conf.put("write", "1");
     PolyDriver poly(conf);

@@ -32,7 +32,8 @@ int main(int argc, char *argv[])
 
     // Get a portaudio read device.
     Property conf;
-    conf.put("device","portaudio");
+    conf.put("device", "portaudio");
+    conf.put("allow-deprecated-devices", "1");
     conf.put("read", "");
     conf.put("samples", 44100 * rec_seconds);
     //conf.put("rate", 16000);
@@ -53,7 +54,7 @@ int main(int argc, char *argv[])
     while (true)
     {
         double t1=yarp::os::Time::now();
-        get->getSound(s);
+        get->getSound(s, 100, 100000, 0.0);
         double t2=yarp::os::Time::now();
         printf("acquired %f seconds\n", t2-t1);
 
