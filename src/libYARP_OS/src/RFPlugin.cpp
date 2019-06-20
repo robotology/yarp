@@ -102,7 +102,7 @@ std::pair<int, char**> str2ArgcArgv(char* str)
 bool RFPlugin::open(const string& inCommand)
 {
     ResourceFinder rf;
-    string name = inCommand.substr(0, inCommand.find(" "));
+    string name = inCommand.substr(0, inCommand.find(' '));
 
     char* str = new char[inCommand.size() + 1];
     memcpy(str, inCommand.c_str(), inCommand.size());
