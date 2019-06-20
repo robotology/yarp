@@ -92,7 +92,7 @@ static MultiNameSpace& getNameSpace()
 
 static bool needsLookup(const Contact& contact)
 {
-    if (contact.getHost() != "") {
+    if (!contact.getHost().empty()) {
         return false;
     }
     if (contact.getCarrier() == "topic") {
@@ -107,7 +107,8 @@ static int noteDud(const Contact& src)
     if (store != nullptr) {
         return store->announce(src.getName(), 0);
     }
-    Bottle cmd, reply;
+    Bottle cmd;
+    Bottle reply;
     cmd.addString("announce");
     cmd.addString(src.getName().c_str());
     cmd.addInt32(0);
@@ -167,7 +168,8 @@ static int enactConnection(const Contact& src,
         return 0;
     }
 
-    Bottle cmd, reply;
+    Bottle cmd;
+    Bottle reply;
     cmd.addVocab(Vocab::encode("list"));
     cmd.addVocab(Vocab::encode(reversed ? "in" : "out"));
     cmd.addString(dest.getName().c_str());
@@ -218,7 +220,7 @@ static int enactConnection(const Contact& src,
     reply.clear();
     cmd.addVocab(act);
     Contact c = dest;
-    if (style.carrier != "") {
+    if (!style.carrier.empty()) {
         c.setCarrier(style.carrier);
     }
     if (mode != YARP_ENACT_DISCONNECT) {
@@ -340,17 +342,16 @@ static int metaConnect(const std::string& src,
                     fprintf(stderr, "Failure: could not find source port %s\n", src.c_str());
                 }
                 return 1;
-            } else {
-                staticSrc = dynamicSrc;
             }
+            staticSrc = dynamicSrc;
         }
     } else {
         staticSrc = dynamicSrc;
     }
-    if (staticSrc.getCarrier() == "") {
+    if (staticSrc.getCarrier().empty()) {
         staticSrc.setCarrier("tcp");
     }
-    if (staticDest.getCarrier() == "") {
+    if (staticDest.getCarrier().empty()) {
         staticDest.setCarrier("tcp");
     }
 
@@ -362,9 +363,8 @@ static int metaConnect(const std::string& src,
                     fprintf(stderr, "Failure: could not find destination port %s\n", dest.c_str());
                 }
                 return 1;
-            } else {
-                staticDest = dynamicDest;
             }
+            staticDest = dynamicDest;
         }
     } else {
         staticDest = dynamicDest;
@@ -392,13 +392,13 @@ static int metaConnect(const std::string& src,
         if (!topical) {
             Carrier* srcCarrier = nullptr;
             CARRIER_DEBUG("staticSrc.getCarrier= %s  ", staticSrc.getCarrier().c_str());
-            if (staticSrc.getCarrier() != "") {
+            if (!staticSrc.getCarrier().empty()) {
                 srcCarrier = Carriers::chooseCarrier(staticSrc.getCarrier());
             }
             if (srcCarrier != nullptr) {
                 CARRIER_DEBUG("srcCarrier is NOT null; its name is %s;  ", srcCarrier->getName().c_str());
                 std::string srcBootstrap = srcCarrier->getBootstrapCarrierName();
-                if (srcBootstrap != "") {
+                if (!srcBootstrap.empty()) {
 
                     CARRIER_DEBUG(" it is competent(bootstrapname is %s), while its name is %s )\n\n", srcBootstrap.c_str(), srcCarrier->getName().c_str());
                     srcIsCompetent = true;
@@ -423,13 +423,13 @@ static int metaConnect(const std::string& src,
         if (!topical) {
             Carrier* destCarrier = nullptr;
             CARRIER_DEBUG("staticDest.getCarrier= %s  ", staticDest.getCarrier().c_str());
-            if (staticDest.getCarrier() != "") {
+            if (!staticDest.getCarrier().empty()) {
                 destCarrier = Carriers::chooseCarrier(staticDest.getCarrier());
             }
             if (destCarrier != nullptr) {
                 CARRIER_DEBUG("destCarrier is NOT null; its name is %s;  ", destCarrier->getName().c_str());
                 std::string destBootstrap = destCarrier->getBootstrapCarrierName();
-                if (destBootstrap != "") {
+                if (!destBootstrap.empty()) {
                     CARRIER_DEBUG(" it is competent(bootstrapname is %s), while its name is %s )\n\n\n\n", destBootstrap.c_str(), destCarrier->getName().c_str());
                     destIsCompetent = true;
                 } else {
@@ -447,7 +447,8 @@ static int metaConnect(const std::string& src,
     }
 
     if (srcIsTopic || destIsTopic) {
-        Bottle cmd, reply;
+        Bottle cmd;
+        Bottle reply;
         NameSpace& ns = getNameSpace();
 
         bool ok = false;
@@ -492,12 +493,12 @@ static int metaConnect(const std::string& src,
     CARRIER_DEBUG("style.carrier (1) is %s\n ", style.carrier.c_str());
 
 
-    if (dynamicSrc.getCarrier() != "") { //if in connect command the user specified the carrier of src port
+    if (!dynamicSrc.getCarrier().empty()) { //if in connect command the user specified the carrier of src port
         style.carrier = dynamicSrc.getCarrier();
         CARRIER_DEBUG("style.carrier is %s ==> in connect command the user specified the carrier of src port\n ", style.carrier.c_str());
     }
 
-    if (dynamicDest.getCarrier() != "") { //if in connect command the user specified the carrier of dest port or the carrier of the connection
+    if (!dynamicDest.getCarrier().empty()) { //if in connect command the user specified the carrier of dest port or the carrier of the connection
         style.carrier = dynamicDest.getCarrier();
         CARRIER_DEBUG("style.carrier is %s ==> in connect command the user specified the carrier of dest port or the carrier of the connection\n ", style.carrier.c_str());
     }
@@ -506,7 +507,7 @@ static int metaConnect(const std::string& src,
 
     //here we'll check if the style carrier and the constraint carrier are equal.
     //note that in both string may contain params of carrier, so we need to comapare only the name of carrier.
-    if (style.carrier != "" && carrierConstraint != "") {
+    if (!style.carrier.empty() && !carrierConstraint.empty()) {
         //get only carrier name of style.
         std::string style_carrier_name = extractCarrierNameOnly(style.carrier);
 
@@ -521,7 +522,7 @@ static int metaConnect(const std::string& src,
     }
     //we are going to choose the carrier of this connection, and we collect parameters specified by user
     //in order to pass them to the carrier, so it can configure itself.
-    if (carrierConstraint != "") {
+    if (!carrierConstraint.empty()) {
         style.carrier = carrierConstraint;
         //if I'm here means that sorce or dest is not competent.
         //so we need to get parameters of carrier given in connect command.
@@ -535,7 +536,7 @@ static int metaConnect(const std::string& src,
             style.carrier += collectParams(dynamicDest);
         }
     }
-    if (style.carrier == "") {
+    if (style.carrier.empty()) {
         style.carrier = staticDest.getCarrier();
         //if I'm here means that both src and dest are copentent and the user didn't specified a carrier in the connect command
         CARRIER_DEBUG_0("if I'm here means that both src and dest are compentent and the user didn't specified a carrier in the connect command\n");
@@ -545,7 +546,7 @@ static int metaConnect(const std::string& src,
         }
     }
 
-    if (style.carrier == "") {
+    if (style.carrier.empty()) {
         style.carrier = staticSrc.getCarrier();
         CARRIER_DEBUG_0("the chosen style carrier is static src\n ");
     }
@@ -569,16 +570,12 @@ static int metaConnect(const std::string& src,
     if ((srcIsCompetent && connectionIsPush) || topical) {
         // Classic case.
         Contact c = Contact::fromString(dest);
-        if (connectionCarrier != nullptr) {
-            delete connectionCarrier;
-        }
+        delete connectionCarrier;
         return enactConnection(staticSrc, c, style, mode, false);
     }
     if (destIsCompetent && connectionIsPull) {
         Contact c = Contact::fromString(src);
-        if (connectionCarrier != nullptr) {
-            delete connectionCarrier;
-        }
+        delete connectionCarrier;
         return enactConnection(staticDest, c, style, mode, true);
     }
 
@@ -619,7 +616,7 @@ bool NetworkBase::connect(const std::string& src, const std::string& dest, const
 {
     ContactStyle style;
     style.quiet = quiet;
-    if (carrier != "") {
+    if (!carrier.empty()) {
         style.carrier = carrier;
     }
     return connect(src, dest, style);
@@ -688,9 +685,8 @@ bool NetworkBase::exists(const std::string& port, const ContactStyle& style, boo
             printf("Cannot connect to port %s\n", port.c_str());
         }
         return false;
-    } else {
-        out->close();
     }
+    out->close();
     delete out;
     out = nullptr;
 
@@ -700,7 +696,8 @@ bool NetworkBase::exists(const std::string& port, const ContactStyle& style, boo
 
     ContactStyle style2 = style;
     style2.admin = true;
-    Bottle cmd("[ver]"), resp;
+    Bottle cmd("[ver]");
+    Bottle resp;
     bool ok = NetworkBase::write(Contact(port), cmd, resp, style2);
     if (!ok) {
         return false;
@@ -778,7 +775,7 @@ void NetworkBase::autoInitMinimum()
 void NetworkBase::autoInitMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock* custom)
 {
     YARP_UNUSED(custom);
-    if (!(__yarp_auto_init_active || __yarp_is_initialized)) {
+    if (!(__yarp_auto_init_active || (__yarp_is_initialized != 0))) {
         __yarp_auto_init_active = true;
         initMinimum(clockType);
     }
@@ -1006,7 +1003,8 @@ bool NetworkBase::setConnectionQos(const std::string& src, const std::string& de
 {
 
     //e.g.,  prop set /portname (sched ((priority 30) (policy 1))) (qos ((tos 0)))
-    yarp::os::Bottle cmd, reply;
+    yarp::os::Bottle cmd;
+    yarp::os::Bottle reply;
 
     // ignore if everything left as default
     if (srcStyle.getPacketPriorityAsTOS() != -1 || srcStyle.getThreadPolicy() != -1) {
@@ -1078,7 +1076,8 @@ static bool getPortQos(const std::string& port, const std::string& unit, QosStyl
 {
     // request: "prop get /portname"
     // reply  : "(sched ((priority 30) (policy 1))) (qos ((priority HIGH)))"
-    yarp::os::Bottle cmd, reply;
+    yarp::os::Bottle cmd;
+    yarp::os::Bottle reply;
 
     // set the source Qos
     cmd.addString("prop");
@@ -1174,7 +1173,7 @@ bool NetworkBase::write(const Contact& contact,
         port.setAdminMode(style.admin);
         port.openFake("network_write");
         Contact ec = contact;
-        if (style.carrier != "") {
+        if (!style.carrier.empty()) {
             ec.setCarrier(style.carrier);
         }
         if (!port.addOutput(ec)) {
@@ -1216,7 +1215,7 @@ bool NetworkBase::write(const Contact& contact,
         out->setTimeout(style.timeout);
     }
 
-    Route r(connectionName, targetName, (style.carrier != "") ? style.carrier.c_str() : "text_ack");
+    Route r(connectionName, targetName, (!style.carrier.empty()) ? style.carrier.c_str() : "text_ack");
     out->open(r);
 
     PortCommand pc(0, style.admin ? "a" : "d");
@@ -1230,9 +1229,7 @@ bool NetworkBase::write(const Contact& contact,
         if (!style.quiet) {
             YARP_ERROR(Logger::get(), "could not write to connection");
         }
-        if (out != nullptr) {
-            delete out;
-        }
+        delete out;
         return false;
     }
     ok = cmd.write(bw);
@@ -1240,9 +1237,7 @@ bool NetworkBase::write(const Contact& contact,
         if (!style.quiet) {
             YARP_ERROR(Logger::get(), "could not write to connection");
         }
-        if (out != nullptr) {
-            delete out;
-        }
+        delete out;
         return false;
     }
     if (style.expectReply) {
@@ -1343,7 +1338,7 @@ std::string NetworkBase::getEnvironment(const char* key,
     if (found != nullptr) {
         *found = (result != nullptr);
     }
-    if (!result) {
+    if (result == nullptr) {
         return {};
     }
     return std::string(result);
@@ -1382,7 +1377,7 @@ std::string NetworkBase::getPathSeparator()
 }
 
 namespace {
-static std::mutex& getNetworkMutex()
+std::mutex& getNetworkMutex()
 {
     static std::mutex mutex;
     return mutex;
@@ -1436,9 +1431,7 @@ int NetworkBase::sendMessage(const std::string& port,
         if (!quiet) {
             fprintf(stderr, "Cannot make connection\n");
         }
-        if (out != nullptr) {
-            delete out;
-        }
+        delete out;
         return 1;
     }
 
@@ -1449,18 +1442,14 @@ int NetworkBase::sendMessage(const std::string& port,
         if (!quiet) {
             fprintf(stderr, "Cannot write on connection\n");
         }
-        if (out != nullptr) {
-            delete out;
-        }
+        delete out;
         return 1;
     }
     if (!disconnect.write(bw)) {
         if (!quiet) {
             fprintf(stderr, "Cannot write on connection\n");
         }
-        if (out != nullptr) {
-            delete out;
-        }
+        delete out;
         return 1;
     }
 
@@ -1522,7 +1511,7 @@ public:
     virtual ~ForwardingCarrier()
     {
         car.close();
-        if (!factory) {
+        if (factory == nullptr) {
             return;
         }
         factory->removeRef();
@@ -1865,7 +1854,7 @@ bool NetworkBase::registerCarrier(const char* name, const char* dll)
     StubCarrier* factory = nullptr;
     if (dll == nullptr) {
         factory = new StubCarrier(name);
-        if (!factory) {
+        if (factory == nullptr) {
             return false;
         }
     } else {
@@ -1909,7 +1898,7 @@ Contact NetworkBase::detectNameServer(bool useDetectedServer,
 bool NetworkBase::setNameServerContact(Contact& nameServerContact)
 {
     NameConfig nameConfig;
-    if (nameServerContact.getName() != "") {
+    if (!nameServerContact.getName().empty()) {
         setNameServerName(nameServerContact.getName());
     }
     nameConfig.fromFile();
@@ -1925,7 +1914,7 @@ bool NetworkBase::writeToNameServer(PortWriter& cmd,
                                     const ContactStyle& style)
 {
     NameStore* store = getNameSpace().getQueryBypass();
-    if (store) {
+    if (store != nullptr) {
         Contact contact;
         return store->process(cmd, reply, contact);
     }
@@ -1942,7 +1931,7 @@ std::string NetworkBase::getConfigFile(const char* fname)
 int NetworkBase::getDefaultPortRange()
 {
     std::string range = NetworkBase::getEnvironment("YARP_PORT_RANGE");
-    if (range != "") {
+    if (!range.empty()) {
         int irange = NetType::toInt(range);
         if (irange != 0) {
             return irange;

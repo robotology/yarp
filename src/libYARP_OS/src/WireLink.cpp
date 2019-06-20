@@ -116,7 +116,7 @@ bool WireLink::setStreamingMode(bool streaming)
 
 bool WireLink::write(yarp::os::PortWriter& writer)
 {
-    if (mPriv->reader) {
+    if (mPriv->reader != nullptr) {
         DummyConnector con;
         writer.write(con.getWriter());
         return mPriv->reader->read(con.getReader());
@@ -129,7 +129,7 @@ bool WireLink::write(yarp::os::PortWriter& writer)
 
 bool WireLink::write(yarp::os::PortWriter& writer, yarp::os::PortReader& reader)
 {
-    if (mPriv->reader) {
+    if (mPriv->reader != nullptr) {
         DummyConnector con;
         writer.write(con.getWriter());
         bool ok = mPriv->reader->read(con.getReader());

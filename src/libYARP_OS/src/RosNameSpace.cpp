@@ -49,7 +49,8 @@ Contact RosNameSpace::queryName(const std::string& name)
     std::string cat = nc.getCategory();
     bool is_service = false;
 
-    Bottle cmd, reply;
+    Bottle cmd;
+    Bottle reply;
     if (cat.find("-1") == std::string::npos) {
         cmd.addString("lookupNode");
         cmd.addString("dummy_id");
@@ -79,7 +80,7 @@ Contact RosNameSpace::queryName(const std::string& name)
     }
     contact.setName(name);
 
-    if (srv == "" || !is_service) {
+    if (srv.empty() || !is_service) {
         return contact;
     }
 
@@ -107,13 +108,14 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
                contact.toString().c_str(),
                contact.toURI().c_str());
     NestedContact nc = contact.getNested();
-    if (nc.getNestedName() == "") {
+    if (nc.getNestedName().empty()) {
         nc.fromString(contact.getName());
     }
     std::string cat = nc.getCategory();
-    if (nc.getNestedName() != "") {
+    if (!nc.getNestedName().empty()) {
         if (cat == "-1") {
-            Bottle cmd, reply;
+            Bottle cmd;
+            Bottle reply;
             cmd.clear();
             cmd.addString("registerService");
             cmd.addString(toRosNodeName(nc.getNodeName()));
@@ -122,7 +124,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
             rosrpc.setCarrier("rosrpc");
             cmd.addString(rosrpc.toURI());
             Contact c;
-            if (store) {
+            if (store != nullptr) {
                 c = rosify(store->query(nc.getNodeName()));
             } else {
                 Nodes& nodes = NameClient::getNameClient().getNodes();
@@ -136,13 +138,14 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
                 return Contact();
             }
         } else if (cat == "+" || cat == "-") {
-            Bottle cmd, reply;
+            Bottle cmd;
+            Bottle reply;
             cmd.clear();
             cmd.addString((cat == "+") ? "registerPublisher" : "registerSubscriber");
             cmd.addString(toRosNodeName(nc.getNodeName()));
             cmd.addString(toRosName(nc.getNestedName()));
             std::string typ = nc.getTypeNameStar();
-            if (typ != "*" && typ != "") {
+            if (typ != "*" && !typ.empty()) {
                 // remap some basic native YARP types
                 if (typ == "yarp/image") {
                     typ = "sensor_msgs/Image";
@@ -153,7 +156,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
             }
             cmd.addString(typ);
             Contact c;
-            if (store) {
+            if (store != nullptr) {
                 c = rosify(store->query(nc.getNodeName()));
             } else {
                 Nodes& nodes = NameClient::getNameClient().getNodes();
@@ -170,7 +173,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
             }
             if (cat == "-") {
                 Bottle* publishers = reply.get(2).asList();
-                if (publishers && publishers->size() >= 1) {
+                if ((publishers != nullptr) && publishers->size() >= 1) {
                     cmd.clear();
                     cmd.addString(contact.toURI());
                     cmd.addString("publisherUpdate");
@@ -216,13 +219,14 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
         sub = name.substr(sub_idx + 2, name.length());
         YARP_SPRINTF1(Logger::get(), debug, "Subscribe to %s", sub.c_str());
     }
-    if (node == "") {
+    if (node.empty()) {
         node = name;
     }
     YARP_SPRINTF4(Logger::get(), debug, "Name [%s] Node [%s] sub [%s] pub [%s]", name.c_str(), node.c_str(), sub.c_str(), pub.c_str());
 
     {
-        Bottle cmd, reply;
+        Bottle cmd;
+        Bottle reply;
         // for ROS, we fake port name registrations by
         // registering them as nodes that publish to an arbitrary
         // topic
@@ -241,10 +245,10 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
         }
     }
 
-    if (pub != "") {
+    if (!pub.empty()) {
         NetworkBase::connect(node, std::string("topic:/") + pub);
     }
-    if (sub != "") {
+    if (!sub.empty()) {
         NetworkBase::connect(std::string("topic:/") + sub, node);
     }
 
@@ -264,13 +268,14 @@ Contact RosNameSpace::unregisterAdvanced(const std::string& name, NameStore* sto
     nc.fromString(name);
     std::string cat = nc.getCategory();
 
-    if (nc.getNestedName() != "") {
+    if (!nc.getNestedName().empty()) {
         if (cat == "-1") {
             Nodes& nodes = NameClient::getNameClient().getNodes();
             Contact c = nodes.getURI(name);
             c.setCarrier("rosrpc");
             c = rosify(c);
-            Bottle cmd, reply;
+            Bottle cmd;
+            Bottle reply;
             cmd.clear();
             cmd.addString("unregisterService");
             cmd.addString(toRosNodeName(nc.getNodeName()));
@@ -283,13 +288,14 @@ Contact RosNameSpace::unregisterAdvanced(const std::string& name, NameStore* sto
                 return Contact();
             }
         } else if (cat == "+" || cat == "-") {
-            Bottle cmd, reply;
+            Bottle cmd;
+            Bottle reply;
             cmd.clear();
             cmd.addString((cat == "+") ? "unregisterPublisher" : "unregisterSubscriber");
             cmd.addString(toRosNodeName(nc.getNodeName()));
             cmd.addString(nc.getNestedName());
             Contact c;
-            if (store) {
+            if (store != nullptr) {
                 c = rosify(store->query(nc.getNodeName()));
             } else {
                 Nodes& nodes = NameClient::getNameClient().getNodes();
@@ -322,20 +328,21 @@ Contact RosNameSpace::unregisterAdvanced(const std::string& name, NameStore* sto
         node = name.substr(0, sub_idx);
         sub = name.substr(sub_idx + 2, name.length());
     }
-    if (node == "") {
+    if (node.empty()) {
         node = name;
     }
     YARP_SPRINTF3(Logger::get(), debug, "Name [%s] sub [%s] pub [%s]\n", name.c_str(), sub.c_str(), pub.c_str());
 
-    if (pub != "") {
+    if (!pub.empty()) {
         NetworkBase::disconnect(name, std::string("topic:/") + pub);
     }
-    if (sub != "") {
+    if (!sub.empty()) {
         NetworkBase::disconnect(std::string("topic:/") + sub, name);
     }
 
     Contact contact = NetworkBase::queryName(name);
-    Bottle cmd, reply;
+    Bottle cmd;
+    Bottle reply;
     cmd.addString("unregisterPublisher");
     cmd.addString(name);
     cmd.addString("/yarp/registration");
@@ -355,7 +362,8 @@ Contact RosNameSpace::unregisterContact(const Contact& contact)
 {
     // Remainder of method is supporting older /name+#/foo syntax
 
-    Bottle cmd, reply;
+    Bottle cmd;
+    Bottle reply;
     cmd.addString("unregisterSubscriber");
     cmd.addString(contact.getName());
     cmd.addString("/yarp/registration");
@@ -470,7 +478,7 @@ bool RosNameSpace::connectTopic(Bottle& cmd,
     Bottle reply;
     Contact dynamicSrc = src;
     Contact dynamicDest = dest;
-    if (style.carrier != "") {
+    if (!style.carrier.empty()) {
         if (srcIsTopic) {
             dynamicDest.setCarrier(style.carrier);
         } else {
@@ -569,7 +577,9 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
     std::string key = in.get(0).asString();
     std::string arg1 = in.get(1).asString();
 
-    Bottle cmd2, cache;
+    Bottle cmd2;
+    Bottle cache;
+
     if (key == "query") {
         Contact c = queryName(arg1);
         c.setName("");
@@ -580,7 +590,9 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
         reply2.write(con.getWriter());
         reply.read(con.getReader());
         return true;
-    } else if (key == "list") {
+    }
+
+    if (key == "list") {
         cmd2.addString("getSystemState");
         cmd2.addString("dummy_id");
 
@@ -595,20 +607,20 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
         Property nodes;
         Property topics;
         Property services;
-        if (parts) {
+        if (parts != nullptr) {
             for (int i = 0; i < 3; i++) {
                 Bottle* part = parts->get(i).asList();
-                if (!part) {
+                if (part == nullptr) {
                     continue;
                 }
                 for (size_t j = 0; j < part->size(); j++) {
                     Bottle* unit = part->get(j).asList();
-                    if (!unit) {
+                    if (unit == nullptr) {
                         continue;
                     }
                     std::string stem = unit->get(0).asString();
                     Bottle* links = unit->get(1).asList();
-                    if (!links) {
+                    if (links == nullptr) {
                         continue;
                     }
                     if (i < 2) {
@@ -636,9 +648,9 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
         }
         out.write(reply);
         return true;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 
@@ -668,7 +680,7 @@ std::string RosNameSpace::fromRosName(const std::string& name)
     int ct = 0;
     for (char i : name) {
         if (i != '_') {
-            if (ct) {
+            if (ct != 0) {
                 result += '_';
             }
             result += i;
@@ -681,7 +693,7 @@ std::string RosNameSpace::fromRosName(const std::string& name)
             }
         }
     }
-    if (ct) {
+    if (ct != 0) {
         result += '_';
     }
     return result;

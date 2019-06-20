@@ -78,14 +78,14 @@ const Value& Value::operator=(const Value& alt)
 {
     if (&alt != this) {
         if (proxy == nullptr) {
-            if (isLeaf() && alt.proxy) {
+            if (isLeaf() && (alt.proxy != nullptr)) {
                 // we are guaranteed to be a Storable
                 ((Storable*)this)->copy(*((Storable*)alt.proxy));
             } else {
                 setProxy(static_cast<Storable*>(alt.clone()));
             }
         } else {
-            if (alt.proxy) {
+            if (alt.proxy != nullptr) {
                 if (getCode() == alt.getCode()) {
                     // proxies are guaranteed to be Storable
                     ((Storable*)proxy)->copy(*((Storable*)alt.proxy));
@@ -93,7 +93,7 @@ const Value& Value::operator=(const Value& alt)
                     setProxy(static_cast<Storable*>(alt.clone()));
                 }
             } else {
-                if (proxy) {
+                if (proxy != nullptr) {
                     delete proxy;
                     proxy = nullptr;
                 }
@@ -275,7 +275,7 @@ size_t Value::asBlobLength() const
 
 bool Value::read(ConnectionReader& connection)
 {
-    if (proxy) {
+    if (proxy != nullptr) {
         delete proxy;
         proxy = nullptr;
     }
@@ -283,7 +283,7 @@ bool Value::read(ConnectionReader& connection)
     if ((x & 0xffff) != x) {
         return false;
     }
-    if (!(x & BOTTLE_TAG_LIST)) {
+    if ((x & BOTTLE_TAG_LIST) == 0) {
         return false;
     }
     std::int32_t len = connection.expectInt32();
@@ -303,7 +303,7 @@ bool Value::read(ConnectionReader& connection)
     }
     Storable* s = Storable::createByCode(x);
     setProxy(s);
-    if (!proxy) {
+    if (proxy == nullptr) {
         return false;
     }
     return s->readRaw(connection);
@@ -311,7 +311,7 @@ bool Value::read(ConnectionReader& connection)
 
 bool Value::write(ConnectionWriter& connection) const
 {
-    if (!proxy) {
+    if (proxy == nullptr) {
         connection.appendInt32(BOTTLE_TAG_LIST);
         connection.appendInt32(0);
         return !connection.isError();

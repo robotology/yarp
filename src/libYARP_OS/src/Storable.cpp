@@ -162,7 +162,7 @@ Storable* Storable::createByCode(std::int32_t id)
         if ((id & GROUP_MASK) != 0) {
             // typed list
             subCode = (id & UNIT_MASK);
-            if (id & BOTTLE_TAG_DICT) {
+            if ((id & BOTTLE_TAG_DICT) != 0) {
                 storable = new StoreDict();
                 yAssert(storable != nullptr);
             } else {

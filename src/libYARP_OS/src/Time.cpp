@@ -30,18 +30,18 @@ using yarp::os::impl::Logger;
 
 namespace {
 
-static bool clock_owned = false;
-static bool network_clock_ok = false;
-static Clock* pclock = nullptr;
-static yarpClockType yarp_clock_type = YARP_CLOCK_UNINITIALIZED;
+bool clock_owned = false;
+bool network_clock_ok = false;
+Clock* pclock = nullptr;
+yarpClockType yarp_clock_type = YARP_CLOCK_UNINITIALIZED;
 
-static std::mutex& getTimeMutex()
+std::mutex& getTimeMutex()
 {
     static std::mutex mutex;
     return mutex;
 }
 
-static void printNoClock_ErrorMessage()
+void printNoClock_ErrorMessage()
 {
     YARP_ERROR(Logger::get(), "\n Warning an issue has been found, please update the code.\n \
     Clock is not initialized: This means YARP framework has not been properly initialized. \n \
@@ -51,7 +51,7 @@ static void printNoClock_ErrorMessage()
     otherwise use yarp::os::SystemClock::nowSystem() and yarp::os::SystemClock::delaySystem() instead of Time::now() and Time::delay()\n");
 }
 
-static Clock* getClock()
+Clock* getClock()
 {
     if (pclock == nullptr) {
         /*
@@ -81,7 +81,7 @@ static Clock* getClock()
 
 void yarp::os::impl::Time::removeClock()
 {
-    if (pclock) {
+    if (pclock != nullptr) {
         delete pclock;
         pclock = nullptr;
     }
@@ -154,7 +154,7 @@ void Time::useSystemClock()
         yarp_clock_type = YARP_CLOCK_SYSTEM;
         clock_owned = true;
 
-        if (old_clock_owned && old_pclock) {
+        if (old_clock_owned && (old_pclock != nullptr)) {
             delete old_pclock;
         }
 
@@ -194,28 +194,27 @@ void Time::useNetworkClock(const std::string& clock, std::string localPortName)
     if (_networkClock == nullptr) {
         YARP_FAIL(Logger::get(), "failed creating NetworkClock client");
         return;
-    } else {
-        if (_networkClock->open(clock, localPortName)) {
-            network_clock_ok = true; // see if it is really needed
-            // updating clock pointer with the new one already initialized.
+    }
+    if (_networkClock->open(clock, localPortName)) {
+        network_clock_ok = true; // see if it is really needed
+        // updating clock pointer with the new one already initialized.
 
-            pclock = _networkClock;
-            clock_owned = true;
-            yarp_clock_type = YARP_CLOCK_NETWORK;
-        } else {
-            YARP_FAIL(Logger::get(), "failed creating NetworkClock client, cannot open input port");
-            return;
-        }
+        pclock = _networkClock;
+        clock_owned = true;
+        yarp_clock_type = YARP_CLOCK_NETWORK;
+    } else {
+        YARP_FAIL(Logger::get(), "failed creating NetworkClock client, cannot open input port");
+        return;
     }
 
-    if (old_clock_owned && old_pclock) {
+    if (old_clock_owned && (old_pclock != nullptr)) {
         delete old_pclock;
     }
 
     getTimeMutex().unlock();
 
     int i = -1;
-    while (pclock && !pclock->isValid()) {
+    while ((pclock != nullptr) && !pclock->isValid()) {
         i++;
         if ((i % 50) == 0) {
             YARP_INFO(Logger::get(), "Waiting for clock server to start broadcasting data ...");
@@ -248,7 +247,7 @@ void Time::useCustomClock(Clock* clock)
     clock_owned = false;
 
     // delete old clock
-    if (old_clock_owned && old_pclock) {
+    if (old_clock_owned && (old_pclock != nullptr)) {
         delete old_pclock;
     }
 

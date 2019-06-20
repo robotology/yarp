@@ -220,7 +220,7 @@ void BottleImpl::fromString(const std::string& line)
                     if ((!quoted) && (ch == ',' || ch == ' ' || ch == '\t' ||
                                       ch == '\n' || ch == '\r') &&
                         (nestedAlt == 0) && (nested == 0)) {
-                        if (arg != "") {
+                        if (!arg.empty()) {
                             if (arg == "null") {
                                 add(new StoreVocab(yarp::os::createVocab('n', 'u', 'l', 'l')));
                             } else {
@@ -291,7 +291,7 @@ bool BottleImpl::isComplete(const char* txt)
             }
         }
     }
-    return nested == 0 && nestedAlt == 0 && quoted == false;
+    return nested == 0 && nestedAlt == 0 && !quoted;
 }
 
 
@@ -575,10 +575,7 @@ std::int32_t BottleImpl::subCode()
 
 bool BottleImpl::checkIndex(size_t index) const
 {
-    if (index < size()) {
-        return true;
-    }
-    return false;
+    return index < size();
 }
 
 bool BottleImpl::isInt8(int index)
@@ -735,14 +732,14 @@ Value& BottleImpl::findBit(const std::string& key) const
             if (nested) {
                 return org->asList()->get(1);
             }
-            if (parent && parent->getMonitor() != nullptr) {
+            if ((parent != nullptr) && (parent->getMonitor() != nullptr)) {
                 SearchReport report;
                 report.key = key;
                 report.isFound = true;
                 if (size() == 2) {
                     report.value = get((int)(i + 1)).toString();
                 }
-                if (parent) {
+                if (parent != nullptr) {
                     parent->reportToMonitor(report);
                 }
             }
@@ -750,7 +747,7 @@ Value& BottleImpl::findBit(const std::string& key) const
         }
     }
     // return invalid object
-    if (parent && parent->getMonitor() != nullptr) {
+    if ((parent != nullptr) && (parent->getMonitor() != nullptr)) {
         SearchReport report;
         report.key = key;
         parent->reportToMonitor(report);

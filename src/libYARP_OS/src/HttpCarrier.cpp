@@ -86,7 +86,7 @@ static bool asJson(std::string& accum,
     int offset = 0;
     int offset2 = 0;
     std::string tag = bot->get(0).asString();
-    if (hint) {
+    if (hint != nullptr) {
         if ((*hint) == "list") {
             struc = false;
             struc_set = true;
@@ -129,7 +129,7 @@ static bool asJson(std::string& accum,
         // { ... }
         accum += "{";
         bool need_comma = false;
-        if (offset2) {
+        if (offset2 != 0) {
             accum += "\"type\": ";
             asJson(accum, bot->get(0));
             need_comma = true;
@@ -153,7 +153,7 @@ static bool asJson(std::string& accum,
 
     // [ ... ]
     accum += "[";
-    if (offset2) {
+    if (offset2 != 0) {
         offset--;
     }
     for (int i = offset; (size_t)i < bot->size(); i++) {
@@ -306,7 +306,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream* delegate, const
         delegate->getOutputStream().write('\n');
         delegate->getOutputStream().flush();
 
-        if (s == "") {
+        if (s.empty()) {
             s = "*";
         }
         if (chunked) {
@@ -637,7 +637,7 @@ bool yarp::os::impl::HttpCarrier::sendHeader(ConnectionState& proto)
         target = "GET " + path + " HTTP/1.0\r\n";
     }
     Contact host = proto.getRoute().getToContact();
-    if (host.getHost() != "") {
+    if (!host.getHost().empty()) {
         target += "Host: ";
         target += host.getHost();
         target += "\r\n";
@@ -669,7 +669,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto)
     contentLength = 0;
     while (!done) {
         std::string result = proto.is().readLine();
-        if (result == "") {
+        if (result.empty()) {
             done = true;
         } else {
             //printf(">>> %s\n", result.c_str());

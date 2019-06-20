@@ -73,8 +73,8 @@ public:
 
     void update()
     {
-        if (nc.getTypeName() == "") {
-            if (!contactable) {
+        if (nc.getTypeName().empty()) {
+            if (contactable == nullptr) {
                 return;
             }
             Type typ = contactable->getType();
@@ -87,37 +87,37 @@ public:
     bool isSubscriber()
     {
         std::string cat = nc.getCategory();
-        return (cat == "" || cat == "-");
+        return (cat.empty() || cat == "-");
     }
 
     bool isPublisher()
     {
         std::string cat = nc.getCategory();
-        return (cat == "" || cat == "+");
+        return (cat.empty() || cat == "+");
     }
 
     bool isTopic()
     {
         std::string cat = nc.getCategory();
-        return (cat == "" || cat == "+" || cat == "-");
+        return (cat.empty() || cat == "+" || cat == "-");
     }
 
     bool isServiceServer()
     {
         std::string cat = nc.getCategory();
-        return (cat == "" || cat == "-1");
+        return (cat.empty() || cat == "-1");
     }
 
     bool isServiceClient()
     {
         std::string cat = nc.getCategory();
-        return (cat == "" || cat == "+1");
+        return (cat.empty() || cat == "+1");
     }
 
     bool isService()
     {
         std::string cat = nc.getCategory();
-        return (cat == "" || cat == "+1" || cat == "-1");
+        return (cat.empty() || cat == "+1" || cat == "-1");
     }
 };
 
@@ -206,7 +206,7 @@ public:
         }
         while (name_cache.begin() != name_cache.end()) {
             Contactable* c = name_cache.begin()->first;
-            if (c) {
+            if (c != nullptr) {
                 mutex.unlock();
                 c->interrupt();
                 c->close();
@@ -359,7 +359,7 @@ public:
     {
         std::string topic = fromRosName(na.args.get(0).asString());
         std::vector<Contact> contacts = query(topic, "-");
-        if (contacts.size() < 1) {
+        if (contacts.empty()) {
             na.fail("Cannot find topic");
             return;
         }
@@ -386,7 +386,7 @@ public:
         std::string topic = na.args.get(0).asString();
         topic = fromRosName(topic);
         std::vector<Contact> contacts = query(topic, "+");
-        if (contacts.size() < 1) {
+        if (contacts.empty()) {
             na.fail("Cannot find topic");
             return;
         }
@@ -410,10 +410,10 @@ public:
 void yarp::os::Node::Helper::prepare(const std::string& name)
 {
     mutex.lock();
-    if (port.getName() == "") {
+    if (port.getName().empty()) {
         port.setReader(*this);
         Property* prop = port.acquireProperties(false);
-        if (prop) {
+        if (prop != nullptr) {
             prop->put("node_like", 1);
         }
         port.releaseProperties(prop);
@@ -427,7 +427,7 @@ void yarp::os::Node::Helper::add(Contactable& contactable)
 {
     NodeItem item;
     item.nc.fromString(contactable.getName());
-    if (name == "") {
+    if (name.empty()) {
         name = item.nc.getNodeName();
     }
     if (name != item.nc.getNodeName()) {
@@ -525,7 +525,7 @@ bool yarp::os::Node::Helper::read(ConnectionReader& reader)
     if (na.should_drop) {
         reader.requestDrop(); // ROS likes to close down.
     }
-    if (reader.getWriter()) {
+    if (reader.getWriter() != nullptr) {
         Bottle full;
         full.addInt32(na.code);
         full.addString(na.msg);
@@ -589,7 +589,7 @@ void Node::remove(Contactable& contactable)
 Contact Node::query(const std::string& name, const std::string& category)
 {
     std::vector<Contact> contacts = mPriv->query(name, category);
-    if (contacts.size() >= 1) {
+    if (!contacts.empty()) {
         return contacts.at(0);
     }
     return Contact();

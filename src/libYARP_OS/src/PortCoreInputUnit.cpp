@@ -190,7 +190,7 @@ void PortCoreInputUnit::run()
     }
 
     while (!done) {
-        if (!ip) {
+        if (ip == nullptr) {
             break;
         }
         ConnectionReader& br = ip->beginRead();
@@ -295,7 +295,7 @@ void PortCoreInputUnit::run()
                 man.setEnvelope(env2);
                 ip->setEnvelope(env2);
             }
-            if (localReader) {
+            if (localReader != nullptr) {
                 localReader->read(br);
                 if (!br.isActive()) {
                     done = true;
@@ -306,7 +306,7 @@ void PortCoreInputUnit::run()
                     ConnectionReader* cr = &(ip->getReceiver().modifyIncomingData(br));
                     yarp::os::impl::PortDataModifier& modifier = getOwner().getPortModifier();
                     modifier.inputMutex.lock();
-                    if (modifier.inputModifier) {
+                    if (modifier.inputModifier != nullptr) {
                         if (modifier.inputModifier->acceptIncomingData(*cr)) {
                             cr = &(modifier.inputModifier->modifyIncomingData(*cr));
                             modifier.inputMutex.unlock();
@@ -493,14 +493,14 @@ bool PortCoreInputUnit::interrupt()
 
 void PortCoreInputUnit::setCarrierParams(const yarp::os::Property& params)
 {
-    if (ip) {
+    if (ip != nullptr) {
         ip->getReceiver().setCarrierParams(params);
     }
 }
 
 void PortCoreInputUnit::getCarrierParams(yarp::os::Property& params)
 {
-    if (ip) {
+    if (ip != nullptr) {
         ip->getReceiver().getCarrierParams(params);
     }
 }
@@ -575,7 +575,7 @@ bool PortCoreInputUnit::isBusy()
 void PortCoreInputUnit::envelopeReadCallback(void* data, const Bytes& envelope)
 {
     auto* p = reinterpret_cast<PortCoreInputUnit*>(data);
-    if (!p) {
+    if (p == nullptr) {
         return;
     }
     p->getOwner().setEnvelope(envelope.get());

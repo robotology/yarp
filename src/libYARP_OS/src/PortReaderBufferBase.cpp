@@ -446,7 +446,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection)
     }
 
     if (mPriv->replier != nullptr) {
-        if (connection.getWriter()) {
+        if (connection.getWriter() != nullptr) {
             return mPriv->replier->read(connection);
         }
     }
@@ -454,7 +454,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection)
     while (reader == nullptr) {
         mPriv->stateMutex.lock();
         reader = mPriv->get();
-        if (reader && reader->getReader() == nullptr) {
+        if ((reader != nullptr) && reader->getReader() == nullptr) {
             PortReader* next = create();
             yAssert(next != nullptr);
             reader->setReader(next);

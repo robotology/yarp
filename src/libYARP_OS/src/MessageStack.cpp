@@ -77,7 +77,7 @@ public:
     {
         mutex.lock();
         msgs.emplace_back();
-        if (tag != "") {
+        if (!tag.empty()) {
             Bottle b;
             b.read(msg);
             Bottle& back = msgs.back();
@@ -141,7 +141,7 @@ MessageStack::MessageStack(int max_threads)
 
 MessageStack::~MessageStack()
 {
-    if (!implementation) {
+    if (implementation == nullptr) {
         return;
     }
     HELPER(implementation).clear();
@@ -151,7 +151,7 @@ MessageStack::~MessageStack()
 
 void MessageStack::attach(PortReader& owner)
 {
-    if (implementation) {
+    if (implementation != nullptr) {
         if (HELPER(implementation).isOwner(owner)) {
             return;
         }
@@ -164,7 +164,7 @@ void MessageStack::attach(PortReader& owner)
 
 void MessageStack::stack(PortWriter& msg, const std::string& tag)
 {
-    if (!implementation) {
+    if (implementation == nullptr) {
         return;
     }
     HELPER(implementation).stack(msg, tag);

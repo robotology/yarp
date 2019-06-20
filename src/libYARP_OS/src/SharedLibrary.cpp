@@ -40,9 +40,8 @@ public:
 #ifdef YARP_HAS_ACE
         if (dll != nullptr) {
             return dll->error();
-        } else {
-            return const_cast<char*>("Unknown error");
         }
+        return const_cast<char*>("Unknown error");
 #else
         return yarp::os::impl::dlerror();
 #endif
@@ -129,7 +128,7 @@ std::string SharedLibrary::error()
 
 void* SharedLibrary::getSymbol(const char* symbolName)
 {
-    if (!implementation->dll) {
+    if (implementation->dll == nullptr) {
         implementation->error = "Library is not open";
         return nullptr;
     }
@@ -139,7 +138,7 @@ void* SharedLibrary::getSymbol(const char* symbolName)
 #else
     void* result = yarp::os::impl::dlsym(implementation->dll, symbolName);
 #endif
-    if (!result) {
+    if (result == nullptr) {
         implementation->error = implementation->getError();
     }
 

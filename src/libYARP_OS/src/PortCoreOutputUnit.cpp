@@ -301,13 +301,13 @@ bool PortCoreOutputUnit::sendHelper()
 
             if (!done) {
                 if (!op->getConnection().canEscape()) {
-                    if (cachedEnvelope != "") {
+                    if (!cachedEnvelope.empty()) {
                         op->getConnection().handleEnvelope(cachedEnvelope);
                     }
                 } else {
                     buf.addToHeader();
 
-                    if (cachedEnvelope != "") {
+                    if (!cachedEnvelope.empty()) {
                         if (cachedEnvelope == "__ADMIN") {
                             PortCommand pc('a', "");
                             pc.write(buf);
@@ -368,7 +368,7 @@ void* PortCoreOutputUnit::send(const yarp::os::PortWriter& writer,
     }
 
     if (!waitBefore || !waitAfter) {
-        if (running == false) {
+        if (!running) {
             // we must have a thread if we're going to be skipping waits
             threaded = true;
             YARP_DEBUG(Logger::get(), "starting a thread for output");
@@ -387,7 +387,7 @@ void* PortCoreOutputUnit::send(const yarp::os::PortWriter& writer,
         cachedEnvelope = envelopeString;
 
         sending = true;
-        if (waitAfter == true) {
+        if (waitAfter) {
             replied = sendHelper();
             sending = false;
         } else {
@@ -433,14 +433,14 @@ bool PortCoreOutputUnit::isBusy()
 
 void PortCoreOutputUnit::setCarrierParams(const yarp::os::Property& params)
 {
-    if (op) {
+    if (op != nullptr) {
         op->getConnection().setCarrierParams(params);
     }
 }
 
 void PortCoreOutputUnit::getCarrierParams(yarp::os::Property& params)
 {
-    if (op) {
+    if (op != nullptr) {
         op->getConnection().getCarrierParams(params);
     }
 }

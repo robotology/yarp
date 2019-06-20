@@ -128,7 +128,8 @@ public:
 
 bool RFModuleRespondHandler::read(ConnectionReader& connection)
 {
-    Bottle cmd, response;
+    Bottle cmd;
+    Bottle response;
     if (!cmd.read(connection)) {
         return false;
     }
@@ -206,11 +207,7 @@ public:
     {
         threaded_handler = new RFModuleThreadedHandler(owner);
 
-        if (threaded_handler != nullptr) {
-            return true;
-        } else {
-            return false;
-        }
+        return threaded_handler != nullptr;
     }
 
     void deleteThreadHandler()
@@ -235,11 +232,10 @@ static RFModule* module = nullptr;
 
 int RFModule::getThreadKey()
 {
-    if (mPriv->threaded_handler) {
+    if (mPriv->threaded_handler != nullptr) {
         return mPriv->threaded_handler->getKey();
-    } else {
-        return yarp::os::Thread::getKeyOfCaller();
     }
+    return yarp::os::Thread::getKeyOfCaller();
 }
 
 static void handler(int sig)
@@ -523,20 +519,18 @@ bool RFModule::joinModule(double seconds)
         if (mPriv->threaded_handler->join(seconds)) {
             mPriv->deleteThreadHandler();
             return true;
-        } else {
-            yWarning("RFModule joinModule() timed out.");
-            return false;
         }
-    } else {
-        yWarning("Cannot call join: RFModule runModule() is not currently threaded.");
-        return true;
+        yWarning("RFModule joinModule() timed out.");
+        return false;
     }
+    yWarning("Cannot call join: RFModule runModule() is not currently threaded.");
+    return true;
 }
 
 
 std::string RFModule::getName(const std::string& subName)
 {
-    if (subName == "") {
+    if (subName.empty()) {
         return name;
     }
 

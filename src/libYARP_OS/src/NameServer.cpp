@@ -130,7 +130,7 @@ Contact NameServer::registerName(const std::string& name,
 
     int port = suggestion.getPort();
     if (port == 0) {
-        if (overridePort) {
+        if (overridePort != 0) {
             port = overridePort;
         } else {
             port = getHostRecord(machine).get();
@@ -170,9 +170,9 @@ Contact NameServer::queryName(const std::string& name)
 
     NameRecord* rec = getNameRecord(base, false);
     if (rec != nullptr) {
-        if (pat != "") {
+        if (!pat.empty()) {
             std::string ip = rec->matchProp("ips", pat);
-            if (ip != "") {
+            if (!ip.empty()) {
                 SplitString sip(ip.c_str());
                 Contact c = rec->getAddress();
                 c.setHost(sip.get(0));
@@ -385,7 +385,7 @@ std::string NameServer::cmdRoute(int argc, char* argv[])
             }
         }
     }
-    if (pref != "") {
+    if (!pref.empty()) {
         pref = pref + ":/" + dest;
     } else {
         pref = dest;
@@ -705,10 +705,10 @@ std::string NameServer::apply(const std::string& txt, const Contact& remote)
         //YARP_DEBUG(Logger::get(), std::string("dispatching to ") + key);
         ss.set(1, remote.getHost().c_str());
         result = dispatcher.dispatch(this, key.c_str(), ss.size() - 1, (char**)(ss.get() + 1));
-        if (result == "") {
+        if (result.empty()) {
             Bottle b = ndispatcher.dispatch(this, key.c_str(), ss.size() - 1, (char**)(ss.get() + 1));
             result = b.toString();
-            if (result != "") {
+            if (!result.empty()) {
                 result = result + "\n";
                 result = terminate(result);
             }
@@ -763,7 +763,7 @@ public:
                 b.read(reader);
                 msg = b.toString();
             }
-            haveMessage = (msg != "");
+            haveMessage = (!msg.empty());
             msg = ref + msg;
         }
         if (reader.isActive() && haveMessage) {
@@ -778,7 +778,7 @@ public:
                 std::string result = server->apply(msg, remote);
                 ConnectionWriter* os = reader.getWriter();
                 if (os != nullptr) {
-                    if (result == "") {
+                    if (result.empty()) {
                         result = ns_terminate(std::string("unknown command ") + msg + "\n");
                     }
                     // This change is just to make Microsoft Telnet happy
@@ -790,7 +790,7 @@ public:
                         tmp += i;
                     }
                     tmp += '\r';
-                    os->appendText(tmp.c_str());
+                    os->appendText(tmp);
 
                     YARP_DEBUG(Logger::get(),
                                std::string("name server reply is ") + result);

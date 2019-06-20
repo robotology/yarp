@@ -191,10 +191,10 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize)
     } else {
         _env_mode = NetworkBase::getEnvironment("YARP_UDP_SIZE");
     }
-    if (_env_mode != "") {
+    if (!_env_mode.empty()) {
         _env_dgram = _env_mode;
     }
-    if (_env_dgram != "") {
+    if (!_env_dgram.empty()) {
         int sz = NetType::toInt(_env_dgram);
         if (sz != 0) {
             _read_size = _write_size = sz;
@@ -218,7 +218,7 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize)
     if (_read_size < 0) {
 #if defined(YARP_HAS_ACE)
         //Defaults to socket size
-        if (dgram) {
+        if (dgram != nullptr) {
             int len = sizeof(_read_size);
             int result = dgram->get_option(SOL_SOCKET, SO_RCVBUF, &_read_size, &len);
             if (result < 0) {
@@ -259,16 +259,16 @@ void DgramTwoWayStream::configureSystemBuffers()
     std::string socketSendBufferSize = NetworkBase::getEnvironment("YARP_DGRAM_SND_BUFFER_SIZE");
 
     int readBufferSize = -1;
-    if (socketReadBufferSize != "") {
+    if (!socketReadBufferSize.empty()) {
         readBufferSize = NetType::toInt(socketReadBufferSize);
-    } else if (socketBufferSize != "") {
+    } else if (!socketBufferSize.empty()) {
         readBufferSize = NetType::toInt(socketBufferSize);
     }
 
     int writeBufferSize = -1;
-    if (socketSendBufferSize != "") {
+    if (!socketSendBufferSize.empty()) {
         writeBufferSize = NetType::toInt(socketSendBufferSize);
-    } else if (socketBufferSize != "") {
+    } else if (!socketBufferSize.empty()) {
         writeBufferSize = NetType::toInt(socketBufferSize);
     }
     // The writeBufferSize can't be set greater than udp datagram
@@ -483,10 +483,9 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender, const Contact& i
     if (sender) {
         if (ipLocal.isValid()) {
             return openMcast(group, ipLocal);
-        } else {
-            // just use udp as normal
-            return open(group);
         }
+        // just use udp as normal
+        return open(group);
     }
 
 #if defined(YARP_HAS_ACE)
@@ -611,7 +610,7 @@ void DgramTwoWayStream::interrupt()
             while (happy && ct > 0) {
                 ct--;
                 DgramTwoWayStream tmp;
-                if (mgram) {
+                if (mgram != nullptr) {
                     YARP_DEBUG(Logger::get(),
                                std::string("* mcast interrupt, interface ") + restrictInterfaceIp.toString());
                     tmp.join(localAddress, true, restrictInterfaceIp);
@@ -709,7 +708,7 @@ yarp::conf::ssize_t DgramTwoWayStream::read(Bytes& b)
             //YARP_DEBUG(Logger::get(), "DGRAM Waiting for something!");
             yarp::conf::ssize_t result = -1;
 #if defined(YARP_HAS_ACE)
-            if (dgram && restrictInterfaceIp.isValid()) {
+            if ((dgram != nullptr) && restrictInterfaceIp.isValid()) {
                 /*
                 printf("Consider remote mcast\n");
                 printf("What we know:\n");
@@ -798,10 +797,9 @@ yarp::conf::ssize_t DgramTwoWayStream::read(Bytes& b)
                     }
                     reset();
                     return -1;
-                } else {
-                    readAt += CRC_SIZE;
-                    readAvail -= CRC_SIZE;
                 }
+                readAt += CRC_SIZE;
+                readAvail -= CRC_SIZE;
                 done = true;
             } else {
                 readAvail = 0;
@@ -982,7 +980,7 @@ void DgramTwoWayStream::removeMonitor()
 
 bool DgramTwoWayStream::setTypeOfService(int tos)
 {
-    if (!dgram) {
+    if (dgram == nullptr) {
         return false;
     }
 #if defined(YARP_HAS_ACE)
@@ -995,7 +993,7 @@ bool DgramTwoWayStream::setTypeOfService(int tos)
 int DgramTwoWayStream::getTypeOfService()
 {
     int tos = -1;
-    if (!dgram) {
+    if (dgram == nullptr) {
         return tos;
     }
 #if defined(YARP_HAS_ACE)

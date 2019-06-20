@@ -93,7 +93,8 @@ void SocketTwoWayStream::updateAddresses()
     int one = 1;
     stream.set_option(IPPROTO_TCP, TCP_NODELAY, &one, sizeof(int));
 #ifdef YARP_HAS_ACE
-    ACE_INET_Addr local, remote;
+    ACE_INET_Addr local;
+    ACE_INET_Addr remote;
     stream.get_local_addr(local);
     stream.get_remote_addr(remote);
     char localHostAddress[256];

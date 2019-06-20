@@ -27,11 +27,11 @@ bool readlineEOF = false;
 bool yarp::os::impl::Terminal::EOFreached()
 {
 #ifdef YARP_HAS_Libedit
-    if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin))) {
+    if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin)) != 0) {
         return readlineEOF;
     }
 #endif // YARP_HAS_Libedit
-    return feof(stdin);
+    return feof(stdin) != 0;
 }
 
 std::string yarp::os::impl::Terminal::getStdin()
@@ -39,17 +39,17 @@ std::string yarp::os::impl::Terminal::getStdin()
     std::string txt;
 
 #ifdef YARP_HAS_Libedit
-    if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin))) {
-        if (szLine) {
+    if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin)) != 0) {
+        if (szLine != nullptr) {
             free(szLine);
             szLine = (char*)nullptr;
         }
 
         szLine = readline(">>");
-        if (szLine && *szLine) {
+        if ((szLine != nullptr) && (*szLine != 0)) {
             txt = szLine;
             add_history(szLine);
-        } else if (!szLine) {
+        } else if (szLine == nullptr) {
             readlineEOF = true;
         }
         return txt;

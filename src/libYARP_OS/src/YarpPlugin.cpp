@@ -49,7 +49,7 @@ bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
 bool YarpPluginSettings::open(SharedLibraryFactory& factory)
 {
     YARP_SPRINTF3(impl::Logger::get(), debug, "Plugin [name: %s] [dll: %s] [fn: %s]", name.c_str(), dll_name.c_str(), fn_name.c_str());
-    if (selector != nullptr && name != "") {
+    if (selector != nullptr && !name.empty()) {
         // we may have a YARP-specific search path available,
         // and a proper name for the DLL
         Bottle paths = selector->getSearchPath();
@@ -58,7 +58,7 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory)
             std::string path = options.find("path").asString();
             std::string ext = options.find("extension").asString();
             std::string basename = (dll_name.find('.') != std::string::npos) ? name : dll_name;
-            std::string fn = (fn_name == "") ? name : fn_name;
+            std::string fn = (fn_name.empty()) ? name : fn_name;
 
             std::string fullpath;
 
@@ -109,11 +109,11 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory)
 #endif // CMAKE_INTDIR
         }
     }
-    if (dll_name != "" || fn_name != "") {
+    if (!dll_name.empty() || !fn_name.empty()) {
         return open(factory, dll_name, fn_name);
     }
     return factory.open((std::string("yarp_") + name).c_str(),
-                        (fn_name == "") ? name.c_str() : fn_name.c_str());
+                        (fn_name.empty()) ? name.c_str() : fn_name.c_str());
 }
 
 void YarpPluginSettings::reportStatus(SharedLibraryFactory& factory) const

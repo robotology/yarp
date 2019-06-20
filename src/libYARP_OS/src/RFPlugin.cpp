@@ -91,7 +91,7 @@ std::pair<int, char**> str2ArgcArgv(char* str)
     char* argv[kMaxArgs];
 
     char* p2 = strtok(str, " ");
-    while (p2 && argc < kMaxArgs - 1) {
+    while ((p2 != nullptr) && argc < kMaxArgs - 1) {
         argv[argc++] = p2;
         p2 = strtok(0, " ");
     }
@@ -115,7 +115,7 @@ bool RFPlugin::open(const string& inCommand)
 
     RFModule* staticmodule{nullptr};
     staticmodule = RFModuleFactory::GetInstance().GetModule(name);
-    if (staticmodule) {
+    if (staticmodule != nullptr) {
         try {
             if (!staticmodule->configure(rf)) {
                 return false;

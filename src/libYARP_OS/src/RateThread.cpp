@@ -188,9 +188,7 @@ RateThreadWrapper::~RateThreadWrapper()
 void RateThreadWrapper::detach()
 {
     if (owned) {
-        if (helper != nullptr) {
-            delete helper;
-        }
+        delete helper;
     }
     helper = nullptr;
     owned = false;
@@ -250,9 +248,8 @@ bool RateThreadWrapper::threadInit()
 {
     if (helper != nullptr) {
         return helper->threadInit();
-    } else {
-        return true;
     }
+    return true;
 }
 
 void RateThreadWrapper::threadRelease()

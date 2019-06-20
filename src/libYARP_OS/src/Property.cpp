@@ -47,7 +47,7 @@ public:
 
     void clear()
     {
-        if (backing) {
+        if (backing != nullptr) {
             delete backing;
             backing = nullptr;
         }
@@ -66,7 +66,7 @@ public:
 
     void flush()
     {
-        if (backing) {
+        if (backing != nullptr) {
             Bottle flatten(backing->toString());
             bot.append(flatten);
             clear();
@@ -276,7 +276,7 @@ public:
                 }
             }
             if (isTag) {
-                if (tag != "") {
+                if (!tag.empty()) {
                     total.addList().copy(accum);
                 }
                 tag = work;
@@ -298,7 +298,7 @@ public:
             }
             accum.add(Value::makeValue(work));
         }
-        if (tag != "") {
+        if (!tag.empty()) {
             total.addList().copy(accum);
         }
         if (!qualified) {
@@ -312,7 +312,7 @@ public:
         for (size_t i = 0; i < total.size(); i++) {
             cursor = nullptr;
             Bottle* term = total.get(i).asList();
-            if (!term) {
+            if (term == nullptr) {
                 continue;
             }
             std::string key = term->get(0).asString();
@@ -328,7 +328,7 @@ public:
                 }
                 Bottle& result = (cursor != nullptr) ? (cursor->findGroup(base)) : owner.findGroup(base);
                 if (result.isNull()) {
-                    if (!cursor) {
+                    if (cursor == nullptr) {
                         cursor = &putBottle((base).c_str());
                     } else {
                         cursor = &cursor->addList();
@@ -338,7 +338,7 @@ public:
                     cursor = &result;
                 }
             }
-            if (cursor) {
+            if (cursor != nullptr) {
                 cursor->copy(*term);
                 cursor->get(0) = Value(base);
             }
@@ -385,14 +385,14 @@ public:
     {
         if (allowDir) {
             yarp::os::impl::DIR* dir = yarp::os::impl::opendir(fname.c_str());
-            if (dir) {
+            if (dir != nullptr) {
                 return readDir(fname, dir, result);
             }
         }
         YARP_DEBUG(Logger::get(),
                    std::string("reading file ") + fname);
         FILE* fin = fopen(fname.c_str(), "r");
-        if (!fin) {
+        if (fin == nullptr) {
             return false;
         }
         char buf[25600];
@@ -455,7 +455,7 @@ public:
 
         Property envExtended;
         envExtended.fromString(env.toString());
-        if (path != "") {
+        if (!path.empty()) {
             if (searchPath.length() > 0) {
                 searchPath += ";";
             }
@@ -478,7 +478,7 @@ public:
         YARP_DEBUG(Logger::get(), std::string("looking for ") + dirname);
 
         yarp::os::impl::DIR* dir = yarp::os::impl::opendir(dirname.c_str());
-        if (!dir) {
+        if (dir == nullptr) {
             YARP_ERROR(Logger::get(), std::string("cannot read from ") + dirname);
             return false;
         }
@@ -570,7 +570,7 @@ public:
                                     including = true;
                                     // close an open group if an [include something] tag is found
                                     if (bot.size() > 1) {
-                                        if (tag != "") {
+                                        if (!tag.empty()) {
                                             if (accum.size() >= 1) {
                                                 putBottleCompat(tag.c_str(),
                                                                 accum);
@@ -579,7 +579,8 @@ public:
                                         }
                                     }
                                     if (bot.size() > 2) {
-                                        std::string subName, fname;
+                                        std::string subName;
+                                        std::string fname;
                                         if (bot.size() == 3) {
                                             // [include section "filename"]
                                             subName = bot.get(1).toString();
@@ -621,7 +622,7 @@ public:
                                         //printf(">>> tag %s accum %s\n",
                                         //     tag.c_str(),
                                         //     accum.toString().c_str());
-                                        if (tag != "") {
+                                        if (!tag.empty()) {
                                             if (accum.size() >= 1) {
                                                 Bottle b;
                                                 b.addString(tag.c_str());
@@ -668,7 +669,7 @@ public:
                 Bottle bot;
                 bot.fromString(buf);
                 if (bot.size() >= 1) {
-                    if (tag == "") {
+                    if (tag.empty()) {
                         putBottleCompat(bot.get(0).toString().c_str(), bot);
                     } else {
                         if (bot.get(1).asString() == "=") {
@@ -685,7 +686,7 @@ public:
                 }
             }
             if (isTag || done) {
-                if (tag != "") {
+                if (!tag.empty()) {
                     if (accum.size() >= 1) {
                         putBottleCompat(tag.c_str(), accum);
                     }
@@ -694,7 +695,7 @@ public:
                 tag = buf;
                 accum.clear();
                 accum.addString(tag);
-                if (tag != "") {
+                if (!tag.empty()) {
                     if (getBottle(tag) != nullptr) {
                         // merge data
                         accum.append(getBottle(tag)->tail());
@@ -765,58 +766,56 @@ public:
                 }
                 quoted = false;
                 continue;
-            } else {
-                if (ch == '\\') {
-                    quoted = true;
-                    continue;
-                }
+            }
+            if (ch == '\\') {
+                quoted = true;
+                continue;
             }
 
             if (inVar) {
-                if (isalnum(ch) || (ch == '_')) {
+                if ((isalnum(ch) != 0) || (ch == '_')) {
                     var += ch;
                     continue;
-                } else {
-                    if (ch == '(' || ch == '{') {
-                        if (var.length() == 0) {
-                            // ok, just ignore
-                            varHasParen = true;
-                            continue;
-                        }
-                    }
-                    inVar = false;
-                    //printf("VARIABLE %s\n", var.c_str());
-                    std::string add = NetworkBase::getEnvironment(var.c_str());
-                    if (add == "") {
-                        add = env.find(var).toString();
-                    }
-                    if (add == "") {
-                        add = env2.find(var).toString();
-                    }
-                    if (add == "") {
-                        if (var == "__YARP__") {
-                            add = "1";
-                        }
-                    }
-                    if (add.find('\\') != std::string::npos) {
-                        // Specifically when reading from the command
-                        // line, we will allow windows-style paths.
-                        // Hence we have to break the "\" character
-                        std::string buf;
-                        for (char i : add) {
-                            buf += i;
-                            if (i == '\\') {
-                                buf += i;
-                            }
-                        }
-                        add = buf;
-                    }
-                    output += add;
-                    var = "";
-                    if (varHasParen && (ch == '}' || ch == ')')) {
+                }
+                if (ch == '(' || ch == '{') {
+                    if (var.length() == 0) {
+                        // ok, just ignore
+                        varHasParen = true;
                         continue;
-                        // don't need current char
                     }
+                }
+                inVar = false;
+                //printf("VARIABLE %s\n", var.c_str());
+                std::string add = NetworkBase::getEnvironment(var.c_str());
+                if (add.empty()) {
+                    add = env.find(var).toString();
+                }
+                if (add.empty()) {
+                    add = env2.find(var).toString();
+                }
+                if (add.empty()) {
+                    if (var == "__YARP__") {
+                        add = "1";
+                    }
+                }
+                if (add.find('\\') != std::string::npos) {
+                    // Specifically when reading from the command
+                    // line, we will allow windows-style paths.
+                    // Hence we have to break the "\" character
+                    std::string buf;
+                    for (char i : add) {
+                        buf += i;
+                        if (i == '\\') {
+                            buf += i;
+                        }
+                    }
+                    add = buf;
+                }
+                output += add;
+                var = "";
+                if (varHasParen && (ch == '}' || ch == ')')) {
+                    continue;
+                    // don't need current char
                 }
             }
 
@@ -825,10 +824,9 @@ public:
                     inVar = true;
                     varHasParen = false;
                     continue;
-                } else {
-                    if (ch != 0) {
-                        output += ch;
-                    }
+                }
+                if (ch != 0) {
+                    output += ch;
                 }
             }
         }
@@ -861,13 +859,13 @@ public:
 
         // Protect spaces inside quotes, but lose the quotes
         for (i = 0; i < len; i++) {
-            if ((!quoted) && ('"' == azParam[i])) {
+            if ((quoted == 0) && ('"' == azParam[i])) {
                 quoted = 1;
                 azParam[i] = ' ';
-            } else if ((quoted) && ('"' == azParam[i])) {
+            } else if (((quoted) != 0) && ('"' == azParam[i])) {
                 quoted = 0;
                 azParam[i] = ' ';
-            } else if ((quoted) && (' ' == azParam[i])) {
+            } else if (((quoted) != 0) && (' ' == azParam[i])) {
                 azParam[i] = '\1';
             }
         }
@@ -899,10 +897,10 @@ public:
     void splitArguments(char* line, char** args)
     {
         char* pTmp = strchr(line, ' ');
-        if (pTmp) {
+        if (pTmp != nullptr) {
             *pTmp = '\0';
             pTmp++;
-            while ((*pTmp) && (*pTmp == ' ')) {
+            while (((*pTmp) != 0) && (*pTmp == ' ')) {
                 pTmp++;
             }
             if (*pTmp == '\0') {
@@ -1191,7 +1189,7 @@ void Property::fromQuery(const char* url, bool wipe)
             //printf("adding val %s\n", val.c_str());
             val = buf;
             buf = "";
-            if (key != "" && val != "") {
+            if (!key.empty() && !val.empty()) {
                 put(key, val);
             }
             key = "";
@@ -1203,7 +1201,7 @@ void Property::fromQuery(const char* url, bool wipe)
             } else if (ch == '%') {
                 coding = 2;
             } else {
-                if (coding) {
+                if (coding != 0) {
                     int hex = 0;
                     if (ch >= '0' && ch <= '9') {
                         hex = ch - '0';

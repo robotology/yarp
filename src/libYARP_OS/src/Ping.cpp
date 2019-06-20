@@ -137,7 +137,8 @@ void Ping::connect()
     ContactStyle rpc;
     rpc.admin = true;
     rpc.quiet = true;
-    Bottle cmd, reply;
+    Bottle cmd;
+    Bottle reply;
     cmd.addVocab(Vocab::encode("ver"));
     bool ok = NetworkBase::write(c, cmd, reply, rpc);
     if (!ok) {

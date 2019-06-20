@@ -173,7 +173,7 @@ Contact NameClient::registerName(const std::string& name, const Contact& suggest
     std::string np = name;
     Bottle cmd;
     cmd.addString("register");
-    if (np != "") {
+    if (!np.empty()) {
         cmd.addString(np.c_str());
     } else {
         cmd.addString("...");
@@ -181,16 +181,16 @@ Contact NameClient::registerName(const std::string& name, const Contact& suggest
     std::string prefix = NetworkBase::getEnvironment("YARP_IP");
     const NestedContact& nc = suggest.getNested();
     std::string typ = nc.getTypeNameStar();
-    if (suggest.isValid() || prefix != "" || typ != "*") {
-        if (suggest.getCarrier() != "") {
+    if (suggest.isValid() || !prefix.empty() || typ != "*") {
+        if (!suggest.getCarrier().empty()) {
             cmd.addString(suggest.getCarrier().c_str());
         } else {
             cmd.addString("...");
         }
-        if (suggest.getHost() != "") {
+        if (!suggest.getHost().empty()) {
             cmd.addString(suggest.getHost().c_str());
         } else {
-            if (prefix != "") {
+            if (!prefix.empty()) {
                 Bottle ips = NameConfig::getIpsAsBottle();
                 for (size_t i = 0; i < ips.size(); i++) {
                     std::string ip = ips.get(i).asString();
@@ -200,7 +200,7 @@ Contact NameClient::registerName(const std::string& name, const Contact& suggest
                     }
                 }
             }
-            cmd.addString((prefix != "") ? prefix : "...");
+            cmd.addString((!prefix.empty()) ? prefix : "...");
         }
         if (suggest.getPort() != 0) {
             cmd.addInt32(suggest.getPort());
@@ -211,7 +211,7 @@ Contact NameClient::registerName(const std::string& name, const Contact& suggest
             cmd.addString(typ);
         }
     } else {
-        if (suggest.getCarrier() != "") {
+        if (!suggest.getCarrier().empty()) {
             cmd.addString(suggest.getCarrier().c_str());
         }
     }
@@ -303,11 +303,13 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
     //printf("*** OLD YARP command %s\n", cmd.c_str());
     setup();
 
-    if (NetworkBase::getQueryBypass()) {
+    if (NetworkBase::getQueryBypass() != nullptr) {
         ContactStyle style;
-        Bottle bcmd(cmd), reply;
+        Bottle bcmd(cmd);
+        Bottle reply;
         NetworkBase::writeToNameServer(bcmd, reply, style);
-        std::string si = reply.toString(), so;
+        std::string si = reply.toString();
+        std::string so;
         for (char i : si) {
             if (i != '\"') {
                 so += i;
@@ -409,7 +411,7 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
 bool NameClient::send(Bottle& cmd, Bottle& reply)
 {
     setup();
-    if (NetworkBase::getQueryBypass()) {
+    if (NetworkBase::getQueryBypass() != nullptr) {
         ContactStyle style;
         NetworkBase::writeToNameServer(cmd, reply, style);
         return true;
@@ -417,12 +419,11 @@ bool NameClient::send(Bottle& cmd, Bottle& reply)
     if (isFakeMode()) {
         YARP_DEBUG(Logger::get(), "fake mode nameserver");
         return getServer().apply(cmd, reply, Contact("tcp", "127.0.0.1", NetworkBase::getDefaultPortRange()));
-    } else {
-        Contact server = getAddress();
-        ContactStyle style;
-        style.carrier = "name_ser";
-        return NetworkBase::write(server, cmd, reply, style);
     }
+    Contact server = getAddress();
+    ContactStyle style;
+    style.carrier = "name_ser";
+    return NetworkBase::write(server, cmd, reply, style);
 }
 
 void NameClient::setFakeMode(bool fake)

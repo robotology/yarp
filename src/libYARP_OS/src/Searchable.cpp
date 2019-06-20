@@ -40,7 +40,7 @@ bool yarp::os::Searchable::check(const std::string& key,
                                  yarp::os::Value*& result,
                                  const std::string& comment) const
 {
-    if (getMonitor() != nullptr && comment != "") {
+    if (getMonitor() != nullptr && !comment.empty()) {
         SearchReport report;
         report.key = key;
         report.value = comment;
@@ -59,7 +59,7 @@ yarp::os::Value yarp::os::Searchable::check(const std::string& key,
                                             const yarp::os::Value& fallback,
                                             const std::string& comment) const
 {
-    if (getMonitor() != nullptr && comment != "") {
+    if (getMonitor() != nullptr && !comment.empty()) {
         yarp::os::SearchReport report;
         report.key = key;
         report.value = comment;
@@ -84,7 +84,7 @@ yarp::os::Value yarp::os::Searchable::check(const std::string& key,
 bool yarp::os::Searchable::check(const std::string& key,
                                  const std::string& comment) const
 {
-    if (getMonitor() != nullptr && comment != "") {
+    if (getMonitor() != nullptr && !comment.empty()) {
         yarp::os::SearchReport report;
         report.key = key;
         report.value = comment;
@@ -97,7 +97,7 @@ bool yarp::os::Searchable::check(const std::string& key,
 yarp::os::Bottle& yarp::os::Searchable::findGroup(const std::string& key,
                                                   const std::string& comment) const
 {
-    if (getMonitor() != nullptr && comment != "") {
+    if (getMonitor() != nullptr && !comment.empty()) {
         yarp::os::SearchReport report;
         report.key = key;
         report.value = comment;

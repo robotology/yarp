@@ -49,7 +49,7 @@ yarp::os::impl::McastCarrier::McastCarrier()
 
 yarp::os::impl::McastCarrier::~McastCarrier()
 {
-    if (key != "") {
+    if (!key.empty()) {
         bool elect = isElect();
         removeSender(key);
         if (elect) {
@@ -250,7 +250,7 @@ bool yarp::os::impl::McastCarrier::isElect() const
 
 bool yarp::os::impl::McastCarrier::takeElection()
 {
-    if (stream) {
+    if (stream != nullptr) {
         return stream->join(mcastAddress, true, local);
     }
     return false;

@@ -155,11 +155,7 @@ bool AuthHMAC::authSource(InputStream* streamIn, OutputStream* streamOut)
     HMAC_UPDATE(&context, nonce2, NONCE_LEN);
     HMAC_UPDATE(&context, nonce3, NONCE_LEN);
     HMAC_FINAL(&context, mac, DIGEST_SIZE);
-    if (!send_hmac(streamOut, nonce3, mac)) {
-        return false;
-    }
-
-    return true;
+    return send_hmac(streamOut, nonce3, mac);
 }
 bool AuthHMAC::authDest(InputStream* streamIn, OutputStream* streamOut)
 {

@@ -34,7 +34,7 @@ yarp::os::impl::LogForwarder::LogForwarder()
 
     outputPort.setWriteOnly();
     std::string logPortName = "/log/" + std::string(hostname) + "/" + processInfo.name + "/" + std::to_string(processInfo.pid);
-    if (outputPort.open(logPortName) == false) {
+    if (!outputPort.open(logPortName)) {
         printf("LogForwarder error while opening port %s\n", logPortName.c_str());
     }
     outputPort.enableBackgroundWrite(true);

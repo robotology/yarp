@@ -228,9 +228,8 @@ bool ThreadImpl::threadInit()
 {
     if (delegate != nullptr) {
         return delegate->threadInit();
-    } else {
-        return true;
     }
+    return true;
 }
 
 void ThreadImpl::threadRelease()
@@ -261,11 +260,10 @@ bool ThreadImpl::start()
             YARP_DEBUG(Logger::get(), "Child thread initialized ok");
             afterStart(true);
             return true;
-        } else {
-            YARP_DEBUG(Logger::get(), "Child thread did not initialize ok");
-            //wait for the thread to really exit
-            ThreadImpl::join(-1);
         }
+        YARP_DEBUG(Logger::get(), "Child thread did not initialize ok");
+        //wait for the thread to really exit
+        ThreadImpl::join(-1);
     }
     //the thread did not start, call afterStart() to warn the user
     char tmp[80];
@@ -318,9 +316,8 @@ int ThreadImpl::setPriority(int priority, int policy)
 #if defined(YARP_HAS_ACE)
         if (std::is_same<std::thread::native_handle_type, ACE_hthread_t>::value) {
             return ACE_Thread::setprio(thread.native_handle(), priority, policy);
-        } else {
-            YARP_ERROR(Logger::get(), "Cannot set priority without ACE");
         }
+        YARP_ERROR(Logger::get(), "Cannot set priority without ACE");
 #elif defined(__unix__)
         if (std::is_same<std::thread::native_handle_type, pthread_t>::value) {
             struct sched_param thread_param;
