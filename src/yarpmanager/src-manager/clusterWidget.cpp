@@ -31,6 +31,8 @@
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/profiler/NetworkProfiler.h>
 
+#include <algorithm>
+
 #include <mainwindow.h>
 
 using namespace std;
@@ -171,6 +173,21 @@ void ClusterWidget::onRunServer()
 void ClusterWidget::onStopServer()
 {
     updateServerEntries();
+
+    auto count = std::count_if(cluster.nodes.begin(), cluster.nodes.end(),
+                               [](const ClusterNode& e){ return e.onOff; });
+
+    if (count > 0) {
+
+        auto reply = QMessageBox::warning(this, "Shutting down yarpserver",
+                                           "You have some yarprun on execution."
+                                           " After shutting down yarpserver you might not be able to recover them."
+                                           " Are you sure?",
+                                           QMessageBox::Yes|QMessageBox::No);
+        if (reply== QMessageBox::No) {
+            return;
+        }
+    }
 
     string cmdStopServer = getSSHCmd(cluster.user, cluster.nsNode, cluster.ssh_options);
 
