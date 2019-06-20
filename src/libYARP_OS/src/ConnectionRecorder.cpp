@@ -66,7 +66,7 @@ bool yarp::os::impl::ConnectionRecorder::expectBlock(char* data, size_t len)
 std::string yarp::os::impl::ConnectionRecorder::expectText(const char terminatingChar)
 {
     std::string str = reader->expectText(terminatingChar);
-    readerStore.appendText(str.c_str(), terminatingChar);
+    readerStore.appendText(str, terminatingChar);
     return str;
 }
 
