@@ -88,7 +88,8 @@ static int crc_table_computed = 0;
 static void make_crc_table()
 {
     unsigned long c;
-    int n, k;
+    int n;
+    int k;
 
     for (n = 0; n < 256; n++) {
         c = (unsigned long)n;

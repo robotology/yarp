@@ -107,7 +107,8 @@ static int noteDud(const Contact& src)
     if (store != nullptr) {
         return store->announce(src.getName(), 0);
     }
-    Bottle cmd, reply;
+    Bottle cmd;
+    Bottle reply;
     cmd.addString("announce");
     cmd.addString(src.getName().c_str());
     cmd.addInt32(0);
@@ -167,7 +168,8 @@ static int enactConnection(const Contact& src,
         return 0;
     }
 
-    Bottle cmd, reply;
+    Bottle cmd;
+    Bottle reply;
     cmd.addVocab(Vocab::encode("list"));
     cmd.addVocab(Vocab::encode(reversed ? "in" : "out"));
     cmd.addString(dest.getName().c_str());
@@ -447,7 +449,8 @@ static int metaConnect(const std::string& src,
     }
 
     if (srcIsTopic || destIsTopic) {
-        Bottle cmd, reply;
+        Bottle cmd;
+        Bottle reply;
         NameSpace& ns = getNameSpace();
 
         bool ok = false;
@@ -700,7 +703,8 @@ bool NetworkBase::exists(const std::string& port, const ContactStyle& style, boo
 
     ContactStyle style2 = style;
     style2.admin = true;
-    Bottle cmd("[ver]"), resp;
+    Bottle cmd("[ver]");
+    Bottle resp;
     bool ok = NetworkBase::write(Contact(port), cmd, resp, style2);
     if (!ok) {
         return false;
@@ -1006,7 +1010,8 @@ bool NetworkBase::setConnectionQos(const std::string& src, const std::string& de
 {
 
     //e.g.,  prop set /portname (sched ((priority 30) (policy 1))) (qos ((tos 0)))
-    yarp::os::Bottle cmd, reply;
+    yarp::os::Bottle cmd;
+    yarp::os::Bottle reply;
 
     // ignore if everything left as default
     if (srcStyle.getPacketPriorityAsTOS() != -1 || srcStyle.getThreadPolicy() != -1) {
@@ -1078,7 +1083,8 @@ static bool getPortQos(const std::string& port, const std::string& unit, QosStyl
 {
     // request: "prop get /portname"
     // reply  : "(sched ((priority 30) (policy 1))) (qos ((priority HIGH)))"
-    yarp::os::Bottle cmd, reply;
+    yarp::os::Bottle cmd;
+    yarp::os::Bottle reply;
 
     // set the source Qos
     cmd.addString("prop");

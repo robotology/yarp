@@ -305,9 +305,11 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
 
     if (NetworkBase::getQueryBypass()) {
         ContactStyle style;
-        Bottle bcmd(cmd), reply;
+        Bottle bcmd(cmd);
+        Bottle reply;
         NetworkBase::writeToNameServer(bcmd, reply, style);
-        std::string si = reply.toString(), so;
+        std::string si = reply.toString();
+        std::string so;
         for (char i : si) {
             if (i != '\"') {
                 so += i;

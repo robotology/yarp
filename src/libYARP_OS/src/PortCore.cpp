@@ -162,7 +162,8 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     if (shouldAnnounce) {
         if (!(NetworkBase::getLocalMode() && NetworkBase::getQueryBypass() == nullptr)) {
             std::string portName = address.getRegName();
-            Bottle cmd, reply;
+            Bottle cmd;
+            Bottle reply;
             cmd.addString("announce");
             cmd.addString(portName);
             ContactStyle style;
@@ -1619,7 +1620,8 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                           OutputStream* os)
 {
     YARP_UNUSED(os);
-    Bottle cmd, result;
+    Bottle cmd;
+    Bottle result;
 
     // We've received a message to the port that is marked as administrative.
     // That means that instead of passing it along as data to the user of the
@@ -2076,7 +2078,8 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 std::string pub = pubs->get(i).asString();
                 if (!present.check(pub)) {
                     YARP_SPRINTF1(log, debug, "ROS ADD %s", pub.c_str());
-                    Bottle req, reply;
+                    Bottle req;
+                    Bottle reply;
                     req.addString("requestTopic");
                     NestedContact nc(getName());
                     req.addString(nc.getNodeName());

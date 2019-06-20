@@ -128,7 +128,8 @@ public:
 
 bool RFModuleRespondHandler::read(ConnectionReader& connection)
 {
-    Bottle cmd, response;
+    Bottle cmd;
+    Bottle response;
     if (!cmd.read(connection)) {
         return false;
     }

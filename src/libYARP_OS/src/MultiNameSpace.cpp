@@ -442,7 +442,8 @@ Contact MultiNameSpace::detectNameServer(bool useDetectedServer,
     // that anymore.  Also, code duplication.  Should spin this
     // off into a proper plugin mechanism for namespaces.
     std::string name = NetworkBase::getNameServerName();
-    Contact fake, r;
+    Contact fake;
+    Contact r;
     if (name.find("/ros") != std::string::npos) {
         RosNameSpace ns(fake);
         r = ns.detectNameServer(useDetectedServer, scanNeeded, serverUsed);

@@ -579,7 +579,8 @@ public:
                                         }
                                     }
                                     if (bot.size() > 2) {
-                                        std::string subName, fname;
+                                        std::string subName;
+                                        std::string fname;
                                         if (bot.size() == 3) {
                                             // [include section "filename"]
                                             subName = bot.get(1).toString();

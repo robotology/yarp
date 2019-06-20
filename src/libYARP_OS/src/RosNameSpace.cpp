@@ -49,7 +49,8 @@ Contact RosNameSpace::queryName(const std::string& name)
     std::string cat = nc.getCategory();
     bool is_service = false;
 
-    Bottle cmd, reply;
+    Bottle cmd;
+    Bottle reply;
     if (cat.find("-1") == std::string::npos) {
         cmd.addString("lookupNode");
         cmd.addString("dummy_id");
@@ -113,7 +114,8 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
     std::string cat = nc.getCategory();
     if (nc.getNestedName() != "") {
         if (cat == "-1") {
-            Bottle cmd, reply;
+            Bottle cmd;
+            Bottle reply;
             cmd.clear();
             cmd.addString("registerService");
             cmd.addString(toRosNodeName(nc.getNodeName()));
@@ -136,7 +138,8 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
                 return Contact();
             }
         } else if (cat == "+" || cat == "-") {
-            Bottle cmd, reply;
+            Bottle cmd;
+            Bottle reply;
             cmd.clear();
             cmd.addString((cat == "+") ? "registerPublisher" : "registerSubscriber");
             cmd.addString(toRosNodeName(nc.getNodeName()));
@@ -222,7 +225,8 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
     YARP_SPRINTF4(Logger::get(), debug, "Name [%s] Node [%s] sub [%s] pub [%s]", name.c_str(), node.c_str(), sub.c_str(), pub.c_str());
 
     {
-        Bottle cmd, reply;
+        Bottle cmd;
+        Bottle reply;
         // for ROS, we fake port name registrations by
         // registering them as nodes that publish to an arbitrary
         // topic
@@ -270,7 +274,8 @@ Contact RosNameSpace::unregisterAdvanced(const std::string& name, NameStore* sto
             Contact c = nodes.getURI(name);
             c.setCarrier("rosrpc");
             c = rosify(c);
-            Bottle cmd, reply;
+            Bottle cmd;
+            Bottle reply;
             cmd.clear();
             cmd.addString("unregisterService");
             cmd.addString(toRosNodeName(nc.getNodeName()));
@@ -283,7 +288,8 @@ Contact RosNameSpace::unregisterAdvanced(const std::string& name, NameStore* sto
                 return Contact();
             }
         } else if (cat == "+" || cat == "-") {
-            Bottle cmd, reply;
+            Bottle cmd;
+            Bottle reply;
             cmd.clear();
             cmd.addString((cat == "+") ? "unregisterPublisher" : "unregisterSubscriber");
             cmd.addString(toRosNodeName(nc.getNodeName()));
@@ -335,7 +341,8 @@ Contact RosNameSpace::unregisterAdvanced(const std::string& name, NameStore* sto
     }
 
     Contact contact = NetworkBase::queryName(name);
-    Bottle cmd, reply;
+    Bottle cmd;
+    Bottle reply;
     cmd.addString("unregisterPublisher");
     cmd.addString(name);
     cmd.addString("/yarp/registration");
@@ -355,7 +362,8 @@ Contact RosNameSpace::unregisterContact(const Contact& contact)
 {
     // Remainder of method is supporting older /name+#/foo syntax
 
-    Bottle cmd, reply;
+    Bottle cmd;
+    Bottle reply;
     cmd.addString("unregisterSubscriber");
     cmd.addString(contact.getName());
     cmd.addString("/yarp/registration");
@@ -569,7 +577,8 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
     std::string key = in.get(0).asString();
     std::string arg1 = in.get(1).asString();
 
-    Bottle cmd2, cache;
+    Bottle cmd2;
+    Bottle cache;
     if (key == "query") {
         Contact c = queryName(arg1);
         c.setName("");
