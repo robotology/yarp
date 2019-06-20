@@ -368,7 +368,7 @@ void* PortCoreOutputUnit::send(const yarp::os::PortWriter& writer,
     }
 
     if (!waitBefore || !waitAfter) {
-        if (running == false) {
+        if (!running) {
             // we must have a thread if we're going to be skipping waits
             threaded = true;
             YARP_DEBUG(Logger::get(), "starting a thread for output");
@@ -387,7 +387,7 @@ void* PortCoreOutputUnit::send(const yarp::os::PortWriter& writer,
         cachedEnvelope = envelopeString;
 
         sending = true;
-        if (waitAfter == true) {
+        if (waitAfter) {
             replied = sendHelper();
             sending = false;
         } else {

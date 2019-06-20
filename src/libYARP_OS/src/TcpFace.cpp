@@ -54,11 +54,7 @@ bool TcpFace::open(const Contact& address)
                                 peerAcceptor.get_port_number());
     }
 #endif
-    if (result == -1) {
-        return false;
-    }
-
-    return true;
+    return result != -1;
 }
 
 void TcpFace::close()

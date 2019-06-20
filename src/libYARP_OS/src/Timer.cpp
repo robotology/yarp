@@ -296,11 +296,7 @@ bool yarp::os::Timer::PrivateImpl::runTimer(unsigned int iteration, YarpTimerEve
     //totalTime == 0 ----> infinite time. follows the age check for the timer
     stop |= m_settings.totalTime > 0.00001 && (m_settings.totalTime - timerAge) < m_settings.tolerance;
 
-    if (stop) {
-        return false;
-    }
-
-    return true;
+    return !stop;
 }
 
 void ThreadedTimer::run()

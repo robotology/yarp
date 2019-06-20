@@ -207,10 +207,7 @@ public:
     {
         threaded_handler = new RFModuleThreadedHandler(owner);
 
-        if (threaded_handler != nullptr) {
-            return true;
-        }
-        return false;
+        return threaded_handler != nullptr;
     }
 
     void deleteThreadHandler()

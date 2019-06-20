@@ -597,7 +597,7 @@ void Port::setAdminMode(bool adminMode)
 
 void Port::setInputMode(bool expectInput)
 {
-    if (expectInput == false) {
+    if (!expectInput) {
         IMPL().setWriteOnly();
     }
     SET_FLAG(implementation, PORTCORE_IS_INPUT, expectInput);
@@ -605,7 +605,7 @@ void Port::setInputMode(bool expectInput)
 
 void Port::setOutputMode(bool expectOutput)
 {
-    if (expectOutput == false) {
+    if (!expectOutput) {
         IMPL().setReadOnly();
     }
     SET_FLAG(implementation, PORTCORE_IS_OUTPUT, expectOutput);
@@ -613,7 +613,7 @@ void Port::setOutputMode(bool expectOutput)
 
 void Port::setRpcMode(bool expectRpc)
 {
-    if (expectRpc == true) {
+    if (expectRpc) {
         IMPL().setRpc();
     }
     SET_FLAG(implementation, PORTCORE_IS_RPC, expectRpc);

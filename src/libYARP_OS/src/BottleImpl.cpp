@@ -291,7 +291,7 @@ bool BottleImpl::isComplete(const char* txt)
             }
         }
     }
-    return nested == 0 && nestedAlt == 0 && quoted == false;
+    return nested == 0 && nestedAlt == 0 && !quoted;
 }
 
 
@@ -575,10 +575,7 @@ std::int32_t BottleImpl::subCode()
 
 bool BottleImpl::checkIndex(size_t index) const
 {
-    if (index < size()) {
-        return true;
-    }
-    return false;
+    return index < size();
 }
 
 bool BottleImpl::isInt8(int index)
