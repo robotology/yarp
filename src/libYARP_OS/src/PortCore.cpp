@@ -1537,12 +1537,12 @@ bool PortCore::getEnvelope(PortReader& envelope)
 // Shorthand to create a nested (tag, val) pair to add to a message.
 #define STANZA(name, tag, val) \
     Bottle name;               \
-    name.addString(tag);       \
-    name.addString(val);
+    (name).addString(tag);     \
+    (name).addString(val);
 #define STANZA_INT(name, tag, val) \
     Bottle name;                   \
-    name.addString(tag);           \
-    name.addInt32(val);
+    (name).addString(tag);         \
+    (name).addInt32(val);
 
 // Make an RPC connection to talk to a ROS API, send a message, get reply.
 // NOTE: ROS support can now be moved out of here, once all documentation

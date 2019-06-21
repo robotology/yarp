@@ -131,7 +131,7 @@ void MessageStackThread::run()
     }
 }
 
-#define HELPER(x) (*((MessageStackHelper*)x))
+#define HELPER(x) (*((MessageStackHelper*)(x)))
 
 MessageStack::MessageStack(int max_threads)
 {

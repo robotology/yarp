@@ -67,7 +67,7 @@ const int StoreDict::code = BOTTLE_TAG_LIST | BOTTLE_TAG_DICT;
  * -----------------------------------------------------
  * TOTAL is                                 16 + DBL_DIG + YARP_DBL_EXP_DIG
  */
-#define YARP_DOUBLE_TO_STRING_MAX_LENGTH 16 + DBL_DIG + YARP_DBL_EXP_DIG
+#define YARP_DOUBLE_TO_STRING_MAX_LENGTH (16 + DBL_DIG + YARP_DBL_EXP_DIG)
 
 namespace {
 // FIXME These methods should probably be in NetType

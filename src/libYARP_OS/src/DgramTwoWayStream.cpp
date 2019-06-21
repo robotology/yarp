@@ -44,7 +44,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 #define CRC_SIZE 8
-#define UDP_MAX_DATAGRAM_SIZE 65507 - CRC_SIZE
+#define UDP_MAX_DATAGRAM_SIZE (65507 - CRC_SIZE)
 
 
 static bool checkCrc(char* buf, yarp::conf::ssize_t length, yarp::conf::ssize_t crcLength, int pct, int* store_altPct = nullptr)
