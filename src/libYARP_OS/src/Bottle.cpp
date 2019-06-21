@@ -60,7 +60,7 @@ Bottle::Bottle(const std::string& text) :
 
 Bottle::Bottle(const Bottle& bottle) :
         Portable(),
-        Searchable(),
+        Searchable(bottle),
         implementation(new BottleImpl(this))
 {
     yAssert(implementation != nullptr);

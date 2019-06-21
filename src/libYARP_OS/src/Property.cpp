@@ -932,7 +932,7 @@ Property::Property(const char* str) :
 
 
 Property::Property(const Property& prop) :
-        Searchable(),
+        Searchable(prop),
         Portable(),
         hash_size(0),
         mPriv(new Private(*this, 0))
