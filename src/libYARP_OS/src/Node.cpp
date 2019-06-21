@@ -193,7 +193,7 @@ public:
         port.includeNodeInName(false);
     }
 
-    ~Helper()
+    ~Helper() override
     {
         clear();
         port.close();

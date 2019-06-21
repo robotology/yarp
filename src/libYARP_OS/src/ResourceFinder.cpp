@@ -132,20 +132,12 @@ private:
     yarp::os::Bottle apps;
     std::string configFilePath;
     yarp::os::Property cache;
-    bool verbose;
-    bool quiet;
-    bool mainActive;
-    bool useNearMain;
+    bool verbose{false};
+    bool quiet{false};
+    bool mainActive{false};
+    bool useNearMain{false};
 
 public:
-    Private() :
-            verbose(false),
-            quiet(false),
-            mainActive(false),
-            useNearMain(false)
-    {
-    }
-
     bool addAppName(const char* appName)
     {
         apps.addString(appName);

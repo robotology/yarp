@@ -88,9 +88,7 @@ void Carrier::close()
 {
 }
 
-Carrier::~Carrier()
-{
-}
+Carrier::~Carrier() = default;
 
 PortReader& Carrier::modifyReply(PortReader& reader)
 {

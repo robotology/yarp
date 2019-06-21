@@ -24,7 +24,7 @@ private:
 public:
     static RFModuleFactory& GetInstance();
     static void AddModule(const std::string& name, RFModule* (*moduleCreate)(void));
-    RFModule* GetModule(const std::string name);
+    RFModule* GetModule(const std::string& name);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:

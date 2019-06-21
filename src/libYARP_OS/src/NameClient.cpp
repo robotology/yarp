@@ -144,22 +144,21 @@ Contact NameClient::getAddress()
 
 Contact NameClient::queryName(const std::string& name)
 {
-    std::string np = name;
-    size_t i1 = np.find(':');
+    size_t i1 = name.find(':');
     if (i1 != std::string::npos) {
-        Contact c = c.fromString(np);
+        Contact c = c.fromString(name);
         if (c.isValid() && c.getPort() > 0) {
             return c;
         }
     }
 
     if (altStore != nullptr) {
-        Contact c = altStore->query(np);
+        Contact c = altStore->query(name);
         return c;
     }
 
     std::string q("NAME_SERVER query ");
-    q += np;
+    q += name;
     return probe(q);
 }
 
@@ -170,11 +169,10 @@ Contact NameClient::registerName(const std::string& name)
 
 Contact NameClient::registerName(const std::string& name, const Contact& suggest)
 {
-    std::string np = name;
     Bottle cmd;
     cmd.addString("register");
-    if (!np.empty()) {
-        cmd.addString(np.c_str());
+    if (!name.empty()) {
+        cmd.addString(name);
     } else {
         cmd.addString("...");
     }
@@ -257,9 +255,8 @@ Contact NameClient::registerName(const std::string& name, const Contact& suggest
 
 Contact NameClient::unregisterName(const std::string& name)
 {
-    std::string np = name;
     std::string q("NAME_SERVER unregister ");
-    q += np;
+    q += name;
     return probe(q);
 }
 

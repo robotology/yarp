@@ -19,7 +19,7 @@ using namespace yarp::os;
 class RFModuleSelector :
         public YarpPluginSelector
 {
-    virtual bool select(Searchable& options) override
+    bool select(Searchable& options) override
     {
         return options.check("type", Value("none")).asString() == "RFModule";
     }
@@ -93,16 +93,16 @@ std::pair<int, char**> str2ArgcArgv(char* str)
     char* p2 = strtok(str, " ");
     while ((p2 != nullptr) && argc < kMaxArgs - 1) {
         argv[argc++] = p2;
-        p2 = strtok(0, " ");
+        p2 = strtok(nullptr, " ");
     }
-    argv[argc] = 0;
+    argv[argc] = nullptr;
     return make_pair(argc, argv);
 }
 
 bool RFPlugin::open(const string& inCommand)
 {
     ResourceFinder rf;
-    string name = inCommand.substr(0, inCommand.find(" "));
+    string name = inCommand.substr(0, inCommand.find(' '));
 
     char* str = new char[inCommand.size() + 1];
     memcpy(str, inCommand.c_str(), inCommand.size());

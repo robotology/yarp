@@ -181,7 +181,7 @@ void Time::useSystemClock()
  * As soon as the clock starts being published, the networkClock has to acknowledge it and 'attach' to it. Clock will
  * then be valid.
  */
-void Time::useNetworkClock(const std::string& clock, std::string localPortName)
+void Time::useNetworkClock(const std::string& clock, const std::string& localPortName)
 {
     // re-create the clock also in case we already use a network clock, because
     // the input clock port may be different or the clock producer may be changed (different
