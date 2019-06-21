@@ -18,22 +18,17 @@
 #include "XmlRpcClient.h"
 #include "XmlRpcServerConnection.h"
 
-namespace yarp {
-    namespace os {
-        class XmlRpcStream;
-    }
-}
-
-class yarp::os::XmlRpcStream : public TwoWayStream,
-                               public InputStream,
-                               public OutputStream
+class XmlRpcStream :
+        public yarp::os::TwoWayStream,
+        public yarp::os::InputStream,
+        public yarp::os::OutputStream
 {
 private:
     TwoWayStream *delegate;
     YarpXmlRpc::XmlRpcClient client;
     YarpXmlRpc::XmlRpcServerConnection server;
-    StringInputStream sis;
-    StringOutputStream sos;
+    yarp::os::StringInputStream sis;
+    yarp::os::StringOutputStream sos;
     bool sender;
     bool firstRound;
     bool interpretRos;
@@ -105,10 +100,10 @@ public:
     }
 
     using yarp::os::OutputStream::write;
-    void write(const Bytes& b) override;
+    void write(const yarp::os::Bytes& b) override;
 
     using yarp::os::InputStream::read;
-    yarp::conf::ssize_t read(Bytes& b) override;
+    yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     void interrupt() override
     {

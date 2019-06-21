@@ -12,9 +12,14 @@
 
 #include <yarp/os/SizedWriter.h>
 
-#include <wire_rep_utils_api.h>
+#include <yarp/wire_rep_utils/api.h>
 
-class SizedWriterTail : public yarp::os::SizedWriter {
+namespace yarp {
+namespace wire_rep_utils {
+
+class YARP_wire_rep_utils_API SizedWriterTail :
+        public yarp::os::SizedWriter
+{
 private:
     yarp::os::SizedWriter *delegate;
     size_t payload_index, payload_offset;
@@ -64,11 +69,15 @@ public:
     }
 };
 
-class YARP_wire_rep_utils_API WireBottle {
+class YARP_wire_rep_utils_API WireBottle
+{
 public:
     static bool checkBottle(void *cursor, int len);
     static bool extractBlobFromBottle(yarp::os::SizedWriter& src,
                                       SizedWriterTail& dest);
 };
+
+} // namespace wire_rep_utils
+} // namespace yarp
 
 #endif

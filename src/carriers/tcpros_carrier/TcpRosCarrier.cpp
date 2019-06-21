@@ -8,7 +8,6 @@
 
 #include "TcpRosCarrier.h"
 #include "RosSlave.h"
-#include "WireImage.h"
 
 #include <string>
 #include <map>
@@ -18,9 +17,11 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/Name.h>
 #include <yarp/os/Route.h>
+#include <yarp/wire_rep_utils/WireImage.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
+using namespace yarp::wire_rep_utils;
 using namespace std;
 
 #define dbg_printf if (0) printf

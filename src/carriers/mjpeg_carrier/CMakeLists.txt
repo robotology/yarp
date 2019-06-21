@@ -7,7 +7,7 @@
 
 yarp_prepare_plugin(mjpeg
                     CATEGORY carrier
-                    TYPE yarp::os::MjpegCarrier
+                    TYPE MjpegCarrier
                     INCLUDE MjpegCarrier.h
                     EXTRA_CONFIG CODE="GET /?ac"
                     DEPENDS "YARP_HAS_JPEG")

@@ -50,10 +50,11 @@ extern "C" {
 #include <yarp/os/Bytes.h>
 #include <yarp/os/Route.h>
 
-#include "WireImage.h"
+#include <yarp/wire_rep_utils/WireImage.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
+using namespace yarp::wire_rep_utils;
 
 #define dbg_printf if (0) printf
 

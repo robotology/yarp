@@ -7,30 +7,25 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_MPIP2PSTREAM
-#define YARP_MPIP2PSTREAM
+#ifndef YARP_MPIP2PSTREAM_H
+#define YARP_MPIP2PSTREAM_H
 
-#include <yarp/os/MpiStream.h>
-
-namespace yarp {
-    namespace os {
-        class MpiP2PStream;
-    }
-}
+#include "MpiStream.h"
 
 /**
  * Implements communication via MPI point-to-point send/receive.
- *
  */
-class yarp::os::MpiP2PStream : public MpiStream {
+class MpiP2PStream :
+        public MpiStream
+{
 public:
     MpiP2PStream(std::string name, MpiComm* comm) : MpiStream(name,comm) {};
 
     using MpiStream::write;
     using MpiStream::read;
 
-    ssize_t read(Bytes& b) override;
-    void write(const Bytes& b) override;
+    ssize_t read(yarp::os::Bytes& b) override;
+    void write(const yarp::os::Bytes& b) override;
     void close() override {
         #ifdef MPI_DEBUG
         printf("[MpiP2PStream @ %s] Closing stream\n", name.c_str());
@@ -40,4 +35,4 @@ public:
 };
 
 
-#endif // YARP_MPIP2PSTREAM
+#endif // YARP_MPIP2PSTREAM_H

@@ -12,9 +12,8 @@
 #include <string>
 #include <map>
 
-#include <tcpros_carrier_api.h>
-
-class YARP_tcpros_carrier_API RosHeader {
+class RosHeader
+{
 public:
     std::map<std::string,std::string> data;
 

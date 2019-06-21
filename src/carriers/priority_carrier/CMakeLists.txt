@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(priority
                     CATEGORY carrier
-                    TYPE yarp::os::PriorityCarrier
+                    TYPE PriorityCarrier
                     INCLUDE PriorityCarrier.h
                     EXTRA_CONFIG SUBTYPE=recv
                                  CODE="not applicable"

@@ -7,7 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/MpiComm.h>
+#include "MpiComm.h"
+
 #include <yarp/os/Log.h>
 #include <yarp/os/NetType.h>
 #include <mpi.h>
@@ -21,7 +22,7 @@ using namespace yarp::os;
 /* --------------------------------------- */
 /* MpiControlThread */
 
-yarp::os::MpiControlThread *MpiControl = nullptr;
+MpiControlThread *MpiControl = nullptr;
 
 void finalizeMPI() {
     if (MpiControl) {
@@ -81,9 +82,11 @@ bool MpiControlThread::threadInit() {
 /* --------------------------------------- */
 /* MpiComm */
 
-MpiComm::MpiComm(std::string name) : name(std::move(name)) {
+MpiComm::MpiComm(std::string name) :
+        name(std::move(name))
+{
     if (MpiControl == nullptr) {
-        MpiControl = new yarp::os::MpiControlThread;
+        MpiControl = new MpiControlThread;
     }
     if (! MpiControl->isRunning()) {
         MpiControl->start();
