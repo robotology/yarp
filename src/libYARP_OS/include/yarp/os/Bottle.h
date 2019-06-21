@@ -72,6 +72,13 @@ class StoreList;
 class YARP_OS_API Bottle : public Portable, public Searchable
 {
 public:
+#if defined(SWIG) && (SWIG_VERSION < 0x300011)
+    typedef size_t size_type;
+#else
+    using size_type = size_t;
+#endif
+    static constexpr size_type npos = static_cast<size_type>(-1);
+
     using Searchable::check;
     using Searchable::findGroup;
 
@@ -269,14 +276,14 @@ public:
      * @return the Value v; if the index lies outside the range of
      *         elements present, then v.isNull() will be true.
      */
-    Value& get(size_t index) const;
+    Value& get(size_type index) const;
 
     /**
      * Gets the number of elements in the bottle.
      *
      * @return number of elements in the bottle.
      */
-    size_t size() const;
+    size_type size() const;
 
     /**
      * Initializes bottle from a string.
@@ -376,7 +383,7 @@ public:
      * @param first The index of the first element to copy.
      * @param len The number of elements to copy (-1 for all).
      */
-    void copy(const Bottle& alt, int first = 0, int len = -1);
+    void copy(const Bottle& alt, size_type first = 0, size_type len = npos);
 
     /**
      * A special Bottle with no content.

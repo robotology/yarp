@@ -86,11 +86,11 @@ void BottleImpl::smartAdd(const std::string& str)
         bool numberLike = true;
         bool preamble = true;
         bool hexActive = false;
-        int hexStart = 0;
+        size_t hexStart = 0;
         int periodCount = 0;
         int signCount = 0;
         bool hasPeriodOrE = false;
-        for (unsigned int i = 0; i < str.length(); i++) {
+        for (size_t i = 0; i < str.length(); i++) {
             char ch2 = str[i];
             if (ch2 == '.') {
                 hasPeriodOrE = true;
@@ -308,7 +308,7 @@ std::string BottleImpl::toString() const
     return result;
 }
 
-size_t BottleImpl::size() const
+BottleImpl::size_type BottleImpl::size() const
 {
     return content.size();
 }
@@ -573,7 +573,7 @@ std::int32_t BottleImpl::subCode()
     return subCoder(*this);
 }
 
-bool BottleImpl::checkIndex(size_t index) const
+bool BottleImpl::checkIndex(size_type index) const
 {
     return index < size();
 }
@@ -632,7 +632,7 @@ Storable* BottleImpl::pop()
     return stb;
 }
 
-Storable& BottleImpl::get(size_t index) const
+Storable& BottleImpl::get(size_type index) const
 {
     return (checkIndex(index) ? *(content[index]) : getNull());
 }
@@ -651,13 +651,15 @@ yarp::os::Property& BottleImpl::addDict()
     return lst->internal();
 }
 
-void BottleImpl::copyRange(const BottleImpl* alt, int first, int len)
+void BottleImpl::copyRange(const BottleImpl* alt, size_type first, size_type len)
 {
-    if (len == 0) {
+
+    if (len == 0 || alt->size() == 0) {
         clear();
         return;
     }
 
+    // Handle copying to the same object just a subset of the bottle
     const BottleImpl* src = alt;
     BottleImpl tmp(nullptr);
     if (alt == this) {
@@ -666,28 +668,10 @@ void BottleImpl::copyRange(const BottleImpl* alt, int first, int len)
     }
 
     clear();
-    if (len == -1) {
-        len = static_cast<int>(src->size());
-    }
-    int last = first + len - 1;
-    int top = static_cast<int>(src->size()) - 1;
-    if (first < 0) {
-        first = 0;
-    }
-    if (last < 0) {
-        last = 0;
-    }
-    if (first > top) {
-        first = top;
-    }
-    if (last > top) {
-        last = top;
-    }
 
-    if (last >= 0) {
-        for (int i = first; i <= last; i++) {
-            add(src->get(i).cloneStorable());
-        }
+    const size_t last = src->size() - 1;
+    for (size_t i = 0; (i < len) && (first + i <= last); ++i) {
+        add(src->get(first + i).cloneStorable());
     }
 }
 

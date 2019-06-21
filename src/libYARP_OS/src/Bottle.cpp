@@ -242,7 +242,7 @@ int Bottle::getSpecialization()
     return implementation->getSpecialization();
 }
 
-void Bottle::copy(const Bottle& alt, int first, int len)
+void Bottle::copy(const Bottle& alt, size_t first, size_t len)
 {
     implementation->edit();
     if (alt.isNull()) {
