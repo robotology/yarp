@@ -91,7 +91,6 @@ void ClusterWidget::init()
 
     ui->lineEditUser->setText(cluster.user.c_str());
     ui->lineEditNs->setText(cluster.nameSpace.c_str());
-    ui->lineEditNsNode->setText(cluster.nsNode.c_str());
 
     //check if yarpserver is running
 
@@ -100,16 +99,23 @@ void ClusterWidget::init()
     QStringList l;
     //Adding nodes
 
-    for (size_t i = 0; i<cluster.nodes.size(); i++)
+    l.push_back(cluster.nsNode.c_str());
+    int i{0};
+    for (auto& node:cluster.nodes)
     {
-        ClusterNode node = cluster.nodes[i];
         addRow(node.name, node.displayValue, node.user, node.address, node.onOff, node.log, i);
-        l.push_back(QString(node.name.c_str()));
+        if (cluster.nsNode == node.name)
+            continue;
+        l.push_back(node.name.c_str());
+        i++;
     }
 
     // populate the execute combo box
     ui->executeComboBox->addItems(l);
     ui->executeComboBox->setEditable(true);
+
+    ui->nsNodeComboBox->addItems(l);
+    ui->nsNodeComboBox->setEditable(true);
 
     //check if all the nodes are up
     if (checkNs)
@@ -595,8 +601,8 @@ bool ClusterWidget::checkNode(const string &name)
 void ClusterWidget::updateServerEntries()
 {
     // remove all the whitespaces
-    cluster.user   = ui->lineEditUser->text().simplified().replace( " ", "" ).toStdString();
-    cluster.nsNode = ui->lineEditNsNode->text().simplified().replace( " ", "" ).toStdString();
+    cluster.user   = ui->lineEditUser->text().simplified().trimmed().toStdString();
+    cluster.nsNode = ui->nsNodeComboBox->currentText().simplified().trimmed().toStdString();
 }
 
 ClusterWidget::~ClusterWidget()

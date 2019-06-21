@@ -241,9 +241,12 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <item>
-              <widget class="QLineEdit" name="lineEditNsNode">
-               <property name="enabled">
-                <bool>true</bool>
+              <widget class="QComboBox" name="nsNodeComboBox">
+               <property name="minimumSize">
+                <size>
+                 <width>180</width>
+                 <height>35</height>
+                </size>
                </property>
               </widget>
              </item>
