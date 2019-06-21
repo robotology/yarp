@@ -41,7 +41,7 @@ using namespace yarp::manager;
 
 ClusterWidget::ClusterWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ClusterWidget), confFile(""), clusLoader(nullptr)
+    ui(new Ui::ClusterWidget), confFile(""), clusLoader(nullptr), checkNs(false)
 {
 
 #ifdef WIN32
@@ -49,12 +49,8 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
     return;
 #endif
     ui->setupUi(this);
-
-    ui->checkNs->setAttribute(Qt::WA_TransparentForMouseEvents);
-    ui->checkNs->setFocusPolicy(Qt::NoFocus);
-
-    ui->checkNs->setStyleSheet("QCheckBox { color: green }");
     ui->executeBtn->setDisabled(true);
+    ui->labelNs->setPixmap(QPixmap(":/close.svg").scaledToHeight(ui->checkRos->height()));
 
     //Connections to slots
 
@@ -116,7 +112,7 @@ void ClusterWidget::init()
     ui->executeComboBox->setEditable(true);
 
     //check if all the nodes are up
-    if (ui->checkNs->isChecked())
+    if (checkNs)
     {
         onCheckAll();
     }
@@ -150,7 +146,17 @@ void ClusterWidget::onCheckAll()
 
 void ClusterWidget::onCheckServer()
 {
-    ui->checkNs->setChecked(checkNameserver());
+    checkNs = checkNameserver();
+    if (checkNs) {
+        ui->labelNs->setPixmap(QPixmap(":/apply.svg").scaledToHeight(ui->checkRos->height()));
+    }
+    else {
+        ui->labelNs->setPixmap(QPixmap(":/close.svg").scaledToHeight(ui->checkRos->height()));
+    }
+
+    ui->checkRos->setDisabled(checkNs);
+    ui->runServerBtn->setDisabled(checkNs);
+    ui->stopServerBtn->setDisabled(!checkNs);
 }
 
 void ClusterWidget::onRunServer()
@@ -213,7 +219,7 @@ void ClusterWidget::onStopServer()
     }
 
     // if it fails to stop, kill it
-    if (ui->checkNs->isChecked())
+    if (checkNs)
     {
         onKillServer();
     }

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1185</width>
-    <height>971</height>
+    <width>600</width>
+    <height>781</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -39,8 +39,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1169</width>
-        <height>955</height>
+        <width>584</width>
+        <height>765</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -248,10 +248,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="checkNs">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
+              <widget class="QLabel" name="labelNs">
                <property name="text">
                 <string/>
                </property>
