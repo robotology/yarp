@@ -162,6 +162,7 @@ void ClusterWidget::onCheckServer()
 
     ui->checkRos->setDisabled(checkNs);
     ui->runServerBtn->setDisabled(checkNs);
+    ui->nsNodeComboBox->setDisabled(checkNs);
     ui->stopServerBtn->setDisabled(!checkNs);
 }
 
@@ -435,9 +436,9 @@ void ClusterWidget::onNodeSelectionChanged()
     }
     else
     {
-        ui->runSelBtn->setDisabled(false);
-        ui->stopSelBtn->setDisabled(false);
-        ui->killSelBtn->setDisabled(false);
+        ui->runSelBtn->setDisabled(!checkNs);
+        ui->stopSelBtn->setDisabled(!checkNs);
+        ui->killSelBtn->setDisabled(!checkNs);
     }
 }
 
