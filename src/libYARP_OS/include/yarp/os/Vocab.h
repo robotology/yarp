@@ -14,6 +14,18 @@
 
 #include <string>
 
+namespace yarp {
+namespace os {
+
+// We need a constexpr for efficient switching.
+// Use as, for example, createVocab('s','e','t')
+constexpr yarp::conf::vocab32_t createVocab(char a, char b = 0, char c = 0, char d = 0)
+{
+    return ((yarp::conf::vocab32_t)a)       +
+           ((yarp::conf::vocab32_t)b << 8)  +
+           ((yarp::conf::vocab32_t)c << 16) +
+           ((yarp::conf::vocab32_t)d << 24);
+}
 
 /**
  * Short readable codes.  They are integers, for efficient switching,
@@ -35,20 +47,7 @@
  * \endcode
  * Your program will be efficient, and the codes used if they
  * traverse the network will be human readable/writable.
- *
  */
-namespace yarp {
-namespace os {
-// We need a constexpr for efficient switching.
-// Use as, for example, createVocab('s','e','t')
-constexpr yarp::conf::vocab32_t createVocab(char a, char b = 0, char c = 0, char d = 0)
-{
-    return ((yarp::conf::vocab32_t)a)       +
-           ((yarp::conf::vocab32_t)b << 8)  +
-           ((yarp::conf::vocab32_t)c << 16) +
-           ((yarp::conf::vocab32_t)d << 24);
-}
-
 namespace Vocab {
 
 /**
