@@ -972,10 +972,12 @@ Property::~Property()
 }
 
 
-const Property& Property::operator=(const Property& prop)
+const Property& Property::operator=(const Property& rhs)
 {
-    summon();
-    fromString(prop.toString());
+    if (&rhs != this) {
+        summon();
+        fromString(rhs.toString());
+    }
     return *this;
 }
 

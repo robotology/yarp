@@ -83,10 +83,12 @@ Bottle::Bottle(std::initializer_list<Value> values) :
     }
 }
 
-Bottle& Bottle::operator=(const Bottle& bottle)
+Bottle& Bottle::operator=(const Bottle& rhs)
 {
-    implementation->edit();
-    copy(bottle);
+    if (&rhs != this) {
+        implementation->edit();
+        copy(rhs);
+    }
     return *this;
 }
 

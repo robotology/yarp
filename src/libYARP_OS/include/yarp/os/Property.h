@@ -58,7 +58,7 @@ public:
     /**
      * Copy constructor
      */
-    Property(const Property& prop);
+    Property(const Property& rhs);
 
     /**
      * @brief Initializer list constructor.
