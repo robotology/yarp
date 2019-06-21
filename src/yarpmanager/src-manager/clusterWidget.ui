@@ -270,6 +270,9 @@
             <layout class="QHBoxLayout" name="horizontalLayout_5">
              <item>
               <widget class="QPushButton" name="checkServerBtn">
+               <property name="toolTip">
+                <string>Check yarpserver</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -287,6 +290,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="runServerBtn">
+               <property name="toolTip">
+                <string>Run yarpserver</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -304,6 +310,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="stopServerBtn">
+               <property name="toolTip">
+                <string>Stop yarpserver</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -372,6 +381,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="checkAllBtn">
+           <property name="toolTip">
+            <string>Refresh</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -389,6 +401,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="runSelBtn">
+           <property name="toolTip">
+            <string>Run selected nodes</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -406,6 +421,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="stopSelBtn">
+           <property name="toolTip">
+            <string>Stop selected nodes</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -423,6 +441,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="killSelBtn">
+           <property name="toolTip">
+            <string>Kill selected nodes</string>
+           </property>
            <property name="text">
             <string/>
            </property>
