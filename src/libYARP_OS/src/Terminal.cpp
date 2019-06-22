@@ -81,19 +81,18 @@ std::string yarp::os::impl::Terminal::readString(bool* eof)
     bool end = false;
 
     std::string txt;
-
     if (!EOFreached()) {
         txt = getStdin();
     }
 
-    if (EOFreached()) {
-        end = true;
-    } else if (txt.length() > 0 && txt[0] < 32 && txt[0] != '\n' && txt[0] != '\r') {
+    if (EOFreached() || (!txt.empty() && txt[0] < 32 && txt[0] != '\n' && txt[0] != '\r')) {
         end = true;
     }
+
     if (end) {
         txt = "";
     }
+
     if (eof != nullptr) {
         *eof = end;
     }

@@ -97,7 +97,7 @@ public:
      *
      * @param bottle The object to copy.
      */
-    Bottle(const Bottle& bottle);
+    Bottle(const Bottle& rhs);
 
     /**
      * @brief Initializer list constructor.

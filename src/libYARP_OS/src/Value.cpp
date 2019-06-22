@@ -67,7 +67,7 @@ Value::Value(void* data, int length) :
 
 Value::Value(const Value& alt) :
         Portable(),
-        Searchable(),
+        Searchable(alt),
         proxy(nullptr)
 {
     setProxy(static_cast<Storable*>(alt.clone()));

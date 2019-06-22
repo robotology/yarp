@@ -60,7 +60,7 @@ Bottle::Bottle(const std::string& text) :
 
 Bottle::Bottle(const Bottle& bottle) :
         Portable(),
-        Searchable(),
+        Searchable(bottle),
         implementation(new BottleImpl(this))
 {
     yAssert(implementation != nullptr);
@@ -83,10 +83,12 @@ Bottle::Bottle(std::initializer_list<Value> values) :
     }
 }
 
-Bottle& Bottle::operator=(const Bottle& bottle)
+Bottle& Bottle::operator=(const Bottle& rhs)
 {
-    implementation->edit();
-    copy(bottle);
+    if (&rhs != this) {
+        implementation->edit();
+        copy(rhs);
+    }
     return *this;
 }
 

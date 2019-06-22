@@ -932,7 +932,7 @@ Property::Property(const char* str) :
 
 
 Property::Property(const Property& prop) :
-        Searchable(),
+        Searchable(prop),
         Portable(),
         hash_size(0),
         mPriv(new Private(*this, 0))
@@ -972,10 +972,12 @@ Property::~Property()
 }
 
 
-const Property& Property::operator=(const Property& prop)
+const Property& Property::operator=(const Property& rhs)
 {
-    summon();
-    fromString(prop.toString());
+    if (&rhs != this) {
+        summon();
+        fromString(rhs.toString());
+    }
     return *this;
 }
 

@@ -17,6 +17,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
 
+#include <cmath>
 #include <cstdio>
 
 using namespace yarp::os;
@@ -152,9 +153,9 @@ void Ping::connect()
 
 void Ping::report()
 {
-    int ping = (int)(accumConnect.targetTime.count() + 0.5);
+    long int ping = lround(accumConnect.targetTime.count() + 0.5);
     if (ping > 0) {
-        printf("Ping #%d:\n", (int)(accumConnect.targetTime.count() + 0.5));
+        printf("Ping #%ld:\n", lround(accumConnect.targetTime.count() + 0.5));
         int space = 14;
         int decimal = 5;
         printf("  %s connection time (%s with name lookup)\n",

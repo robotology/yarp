@@ -11,6 +11,7 @@
 
 #include <yarp/os/Time.h>
 #include <chrono>
+#include <cmath>
 #include <thread>
 
 //time helper functions
@@ -27,8 +28,8 @@ void yarp::os::impl::getTime(YARP_timeval& now) {
         now.set(Time::now());
 #else
         double t = Time::now();
-        now.tv_sec = static_cast<int>(t);
-        now.tv_usec = static_cast<int>((t-now.tv_sec)*1e6);
+        now.tv_sec = lround(t);
+        now.tv_usec = lround((t-now.tv_sec)*1e6);
 #endif
     }
 }
@@ -86,9 +87,9 @@ double yarp::os::impl::toDouble(const YARP_timeval &v) {
 
 void yarp::os::impl::fromDouble(YARP_timeval &v, double x, int unit) {
 #ifdef YARP_HAS_ACE
-        v.msec(static_cast<int>(x*1000/unit+0.5));
+        v.msec(lround(x*1000/unit+0.5));
 #else
-        v.tv_usec = static_cast<int>(x*1000000/unit+0.5) % 1000000;
-        v.tv_sec = static_cast<int>(x/unit);
+        v.tv_usec = lround(x*1000000/unit+0.5) % 1000000;
+        v.tv_sec = lround(x/unit);
 #endif
 }

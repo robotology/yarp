@@ -593,7 +593,7 @@ void Port::setAdminMode(bool adminMode)
 
 
 #define SET_FLAG(implementation, mask, val) \
-    IMPL().setFlags((IMPL().getFlags() & (~mask)) + (val ? mask : 0))
+    IMPL().setFlags((IMPL().getFlags() & (~(mask))) + ((val) ? (mask) : 0))
 
 void Port::setInputMode(bool expectInput)
 {
