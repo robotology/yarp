@@ -18,29 +18,24 @@
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
 
-#include "BlobNetworkHeader.h"
+#include <yarp/wire_rep_utils/BlobNetworkHeader.h>
 
 #include "MjpegDecompression.h"
 
-namespace yarp {
-    namespace os {
-        class MjpegStream;
-    }
-}
-
-class yarp::os::MjpegStream : public TwoWayStream,
-                              public InputStream,
-                              public OutputStream
+class MjpegStream :
+        public yarp::os::TwoWayStream,
+        public yarp::os::InputStream,
+        public yarp::os::OutputStream
 {
 private:
-    TwoWayStream *delegate;
-    StringInputStream sis;
-    StringOutputStream sos;
+    yarp::os::TwoWayStream *delegate;
+    yarp::os::StringInputStream sis;
+    yarp::os::StringOutputStream sos;
     yarp::sig::FlexImage img;
     yarp::sig::ImageNetworkHeader imgHeader;
-    BlobNetworkHeader blobHeader;
-    ManagedBytes cimg;
-    yarp::mjpeg::MjpegDecompression decompression;
+    yarp::wire_rep_utils::BlobNetworkHeader blobHeader;
+    yarp::os::ManagedBytes cimg;
+    MjpegDecompression decompression;
     int phase;
     char *cursor;
     int remaining;
@@ -49,7 +44,7 @@ private:
 public:
     MjpegStream(TwoWayStream *delegate, bool autocompress) :
             delegate(delegate),
-            blobHeader(BlobNetworkHeader{0,0,0}),
+            blobHeader(yarp::wire_rep_utils::BlobNetworkHeader{0,0,0}),
             phase(0),
             cursor(NULL),
             remaining(0),
@@ -57,21 +52,18 @@ public:
     {}
 
     virtual ~MjpegStream() {
-        if (delegate!=NULL) {
-            delete delegate;
-            delegate = NULL;
-        }
+        delete delegate;
     }
 
-    InputStream& getInputStream() override { return *this; }
-    OutputStream& getOutputStream() override { return *this; }
+    yarp::os::InputStream& getInputStream() override { return *this; }
+    yarp::os::OutputStream& getOutputStream() override { return *this; }
 
 
-    const Contact& getLocalAddress() const override {
+    const yarp::os::Contact& getLocalAddress() const override {
         return delegate->getLocalAddress();
     }
 
-    const Contact& getRemoteAddress() const override {
+    const yarp::os::Contact& getRemoteAddress() const override {
         return delegate->getRemoteAddress();
     }
 
@@ -96,16 +88,16 @@ public:
     }
 
     using yarp::os::OutputStream::write;
-    void write(const Bytes& b) override;
+    void write(const yarp::os::Bytes& b) override;
 
     using yarp::os::InputStream::read;
-    yarp::conf::ssize_t read(Bytes& b) override;
+    yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     void interrupt() override {
         delegate->getInputStream().interrupt();
     }
 
-    bool setReadEnvelopeCallback(InputStream::readEnvelopeCallbackType callback, void* data) override {
+    bool setReadEnvelopeCallback(yarp::os::InputStream::readEnvelopeCallbackType callback, void* data) override {
         if (!autocompress) {
             return false;
         }

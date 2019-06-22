@@ -106,6 +106,4 @@ private:
 
 };
 
-#endif //MONITOREVENT_INC
-
-
+#endif // MONITOREVENT_INC

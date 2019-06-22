@@ -7,7 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/MpiP2PStream.h>
+#include "MpiP2PStream.h"
 
 using namespace yarp::os;
 

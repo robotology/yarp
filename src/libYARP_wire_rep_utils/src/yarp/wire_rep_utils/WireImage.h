@@ -19,7 +19,10 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <wire_rep_utils_api.h>
+#include <yarp/wire_rep_utils/api.h>
+
+namespace yarp {
+namespace wire_rep_utils {
 
     /*
     // layout for ROS:
@@ -175,5 +178,8 @@ private:
 public:
     yarp::sig::FlexImage *checkForImage(yarp::os::SizedWriter& writer);
 };
+
+} // namespace wire_rep_utils
+} // namespace yarp
 
 #endif

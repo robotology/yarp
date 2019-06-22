@@ -7,7 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/MpiStream.h>
+#include "MpiStream.h"
+
 #include <yarp/os/Log.h>
 
 #include <utility>

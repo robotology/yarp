@@ -19,12 +19,16 @@
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/Bytes.h>
 
-#include <wire_rep_utils_api.h>
+#include <yarp/wire_rep_utils/api.h>
 
 #include <vector>
 #include <string>
 
-class WireTwiddlerGap {
+namespace yarp {
+namespace wire_rep_utils {
+
+class WireTwiddlerGap
+{
 public:
     int buffer_start;
     int buffer_length;
@@ -64,7 +68,8 @@ public:
 };
 
 
-class YARP_wire_rep_utils_API WireTwiddler {
+class YARP_wire_rep_utils_API WireTwiddler
+{
 public:
     WireTwiddler() {
         buffer_start = 0;
@@ -133,7 +138,9 @@ public:
 
  */
 
-class YARP_wire_rep_utils_API WireTwiddlerReader : public yarp::os::InputStream {
+class YARP_wire_rep_utils_API WireTwiddlerReader :
+        public yarp::os::InputStream
+{
 private:
     yarp::os::InputStream& is;
     WireTwiddler& twiddler;
@@ -188,7 +195,8 @@ public:
 };
 
 
-class YARP_wire_rep_utils_API WireTwiddlerSrc {
+class YARP_wire_rep_utils_API WireTwiddlerSrc
+{
 public:
     char *src;
     int len;
@@ -201,7 +209,9 @@ public:
     }
 };
 
-class YARP_wire_rep_utils_API WireTwiddlerWriter : public yarp::os::SizedWriter {
+class YARP_wire_rep_utils_API WireTwiddlerWriter :
+        public yarp::os::SizedWriter
+{
 private:
     yarp::os::SizedWriter *parent;
     WireTwiddler *twiddler;
@@ -349,6 +359,9 @@ public:
         parent->stopWrite();
     }
 };
+
+} // namespace wire_rep_utils
+} // namespace yarp
 
 #endif
 

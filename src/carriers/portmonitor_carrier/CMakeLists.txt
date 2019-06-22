@@ -5,7 +5,7 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 yarp_prepare_plugin(portmonitor
-                    TYPE yarp::os::PortMonitor
+                    TYPE PortMonitor
                     INCLUDE PortMonitor.h
                     CATEGORY carrier
                     EXTRA_CONFIG SUBTYPE=recv

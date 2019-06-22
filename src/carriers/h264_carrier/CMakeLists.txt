@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(h264
                     CATEGORY carrier
-                    TYPE yarp::os::H264Carrier
+                    TYPE H264Carrier
                     INCLUDE H264Carrier.h
                     DEPENDS "YARP_HAS_GObject;YARP_HAS_GLIB2;YARP_HAS_GStreamer;YARP_HAS_GStreamerPluginsBase")
 

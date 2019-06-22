@@ -18,7 +18,6 @@
 
 using namespace yarp::os;
 using namespace yarp::sig;
-using namespace yarp::mjpeg;
 using namespace std;
 
 yarp::conf::ssize_t MjpegStream::read(Bytes& b) {

@@ -24,24 +24,14 @@
 #define STIMUL_THRESHOLD        1.0
 #define WITH_PRIORITY_DEBUG
 
-namespace yarp {
-    namespace os {
-        class PriorityGroup;
-        class PriorityCarrier;
-#ifdef WITH_PRIORITY_DEBUG
-        class PriorityDebugThread;
-#endif //WITH_PRIORITY_DEBUG
-    }
-}
-
-
+class PriorityCarrier;
 
 /**
- *
  * Manager for priority-aware inputs to a given port.
- *
  */
-class yarp::os::PriorityGroup : public PeerRecord<PriorityCarrier> {
+class PriorityGroup :
+        public yarp::os::PeerRecord<PriorityCarrier>
+{
 public:
     virtual ~PriorityGroup() {}
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader,
@@ -60,10 +50,12 @@ public:
 
 
 #ifdef WITH_PRIORITY_DEBUG
-class yarp::os::PriorityDebugThread : public yarp::os::PeriodicThread {
+class PriorityDebugThread :
+        public yarp::os::PeriodicThread
+{
 public:
     PriorityDebugThread(PriorityCarrier* carrier);
-    virtual ~PriorityDebugThread();
+    ~PriorityDebugThread() override;
     void run() override;
     bool threadInit() override;
     void threadRelease() override;
@@ -72,19 +64,19 @@ public:
     int count;
     PriorityCarrier* pcarrier;
     std::string debugPortName;
-    BufferedPort<yarp::sig::Vector> debugPort;
+    yarp::os::BufferedPort<yarp::sig::Vector> debugPort;
 };
 #endif //WITH_PRIORITY_DEBUG
 
 
 /**
- *
  * Allow priority-based message selection.  Under development.
  * Affected by carrier modifiers.  Examples:
  *   tcp+recv.priority+level.15
- *
  */
-class yarp::os::PriorityCarrier : public yarp::os::ModifyingCarrier {
+class PriorityCarrier :
+        public yarp::os::ModifyingCarrier
+{
 
 #ifdef WITH_PRIORITY_DEBUG
     friend class PriorityDebugThread;
@@ -103,7 +95,7 @@ public:
         temporalStimulation = 0;
         isVirtual = false;
         isActive = false;
-        baias = 0;
+        bias = 0;
         yi = 0;     // used in debug
     }
 
@@ -160,20 +152,21 @@ public:
 
     void setCarrierParams(const yarp::os::Property& params) override {
         yarp::os::Property property = params;
-        timeConstant = property.check("tc", Value(timeConstant)).asFloat64();
-        timeResting = property.check("tr", Value(timeResting)).asFloat64();
-        stimulation = property.check("st", Value(stimulation)).asFloat64();
-        baias = property.check("bs", Value(baias)).asFloat64();
-        isVirtual = property.check("virtual", Value(isVirtual)).asBool();
-        if(property.check("ex"))
+        timeConstant = property.check("tc", yarp::os::Value(timeConstant)).asFloat64();
+        timeResting = property.check("tr", yarp::os::Value(timeResting)).asFloat64();
+        stimulation = property.check("st", yarp::os::Value(stimulation)).asFloat64();
+        bias = property.check("bs", yarp::os::Value(bias)).asFloat64();
+        isVirtual = property.check("virtual", yarp::os::Value(isVirtual)).asBool();
+        if(property.check("ex")) {
             excitation = property.findGroup("ex");
+        }
     }
 
     void getCarrierParams(yarp::os::Property& params) const override {
         params.put("tc", timeConstant);
         params.put("tr", timeResting);
         params.put("st", stimulation);
-        params.put("bs", baias);
+        params.put("bs", bias);
         params.put("virtual", (int)isVirtual);
         params.put("ex", excitation.toString());
     }
@@ -188,8 +181,8 @@ public:
     double timeArrival;             // arrival time of the message
     bool isVirtual;                 // a virtual link does not carry any data
     bool isActive;                  // true if port is in active state X(t)
-    double baias;                   // baias value for excitation
-    Bottle excitation;              // a list of exitatory signals as (name, value)
+    double bias;                    // bias value for excitation
+    yarp::os::Bottle excitation;    // a list of exitatory signals as (name, value)
     std::string sourceName;
 
     double yi;                      // this is set in the recalculate() for the debug purpose
@@ -198,9 +191,9 @@ private:
     std::string portName;
     PriorityGroup *group;
 
-    static ElectionOf<PriorityGroup> *peers;
+    static yarp::os::ElectionOf<PriorityGroup> *peers;
 
-    static ElectionOf<PriorityGroup>& getPeers();
+    static yarp::os::ElectionOf<PriorityGroup>& getPeers();
 
 #ifdef WITH_PRIORITY_DEBUG
 private:
@@ -208,8 +201,4 @@ private:
 #endif //WITH_PRIORITY_DEBUG
 };
 
-
-
-#endif
-
-
+#endif // PRIORITYCARRIER_INC

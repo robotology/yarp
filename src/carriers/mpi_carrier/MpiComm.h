@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_MPICOMM
-#define YARP_MPICOMM
+#ifndef YARP_MPICOMM_H
+#define YARP_MPICOMM_H
 
 #include <string>
 #include <yarp/os/Semaphore.h>
@@ -18,17 +18,11 @@
 #include <string>
 #include <iostream>
 
-#include "mpi.h"
+#include <mpi.h>
 
-
-namespace yarp {
-    namespace os {
-        class MpiComm;
-        class MpiControlThread;
-    }
-}
-
-class yarp::os::MpiControlThread : public yarp::os::Thread {
+class MpiControlThread :
+        public yarp::os::Thread
+{
     bool terminate;
 public:
     MpiControlThread() : terminate(false) {}
@@ -36,12 +30,12 @@ public:
         terminate = true;}
     bool threadInit() override;
     void run() override {
-        while (!terminate) {SystemClock::delaySystem(1);}
+        while (!terminate) {yarp::os::SystemClock::delaySystem(1);}
     }
     void threadRelease() override;
 };
 
-extern yarp::os::MpiControlThread *MpiControl;
+extern MpiControlThread *MpiControl;
 
 
 
@@ -53,7 +47,8 @@ extern yarp::os::MpiControlThread *MpiControl;
  *
  * @note Needs an MPI implementation with THREAD_MULTIPLE support.
  */
-class yarp::os::MpiComm {
+class MpiComm
+{
     std::string name;
 
 public:
@@ -89,4 +84,4 @@ public:
 };
 
 
-#endif // YARP_MPICOMM
+#endif // YARP_MPICOMM_H

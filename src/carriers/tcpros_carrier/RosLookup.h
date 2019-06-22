@@ -6,14 +6,13 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <tcpros_carrier_api.h>
-
 #include <yarp/os/Contact.h>
 
 #include <cstdio>
 #include <string>
 
-class YARP_tcpros_carrier_API RosLookup {
+class RosLookup
+{
 public:
     bool valid;
     std::string hostname;

@@ -14,12 +14,6 @@
 #include "H264Decoder.h"
 
 
-namespace yarp {
-    namespace os {
-        class H264Carrier;
-    }
-}
-
 /**
  *
  * A carrier for receiving frames compressed in h264 over rtp.
@@ -39,7 +33,8 @@ namespace yarp {
  *  - +verbose.1       ==> enables verbose mode (default is not verbose) (+verbose.0 disables it.)
  */
 
-class yarp::os::H264Carrier : public Carrier
+class H264Carrier :
+        public yarp::os::Carrier
 {
 private:
     std::string envelope;
@@ -78,43 +73,43 @@ public:
 
     std::string toString() const override;
 
-    void getHeader(Bytes& header) const override;
+    void getHeader(yarp::os::Bytes& header) const override;
 
-    bool checkHeader(const Bytes& header) override;
+    bool checkHeader(const yarp::os::Bytes& header) override;
 
-    void setParameters(const Bytes& header) override;
+    void setParameters(const yarp::os::Bytes& header) override;
 
 
     // Now, the initial hand-shaking
 
-    bool prepareSend(ConnectionState& proto) override;
+    bool prepareSend(yarp::os::ConnectionState& proto) override;
 
-    bool sendHeader(ConnectionState& proto) override;
+    bool sendHeader(yarp::os::ConnectionState& proto) override;
 
-    bool expectSenderSpecifier(ConnectionState& proto) override;
+    bool expectSenderSpecifier(yarp::os::ConnectionState& proto) override;
 
-    bool expectExtraHeader(ConnectionState& proto) override;
+    bool expectExtraHeader(yarp::os::ConnectionState& proto) override;
 
-    bool respondToHeader(ConnectionState& proto) override;
+    bool respondToHeader(yarp::os::ConnectionState& proto) override;
 
-    bool expectReplyToHeader(ConnectionState& proto) override;
+    bool expectReplyToHeader(yarp::os::ConnectionState& proto) override;
 
     bool isActive() const override;
 
 
     // Payload time!
 
-    bool write(ConnectionState& proto, SizedWriter& writer) override;
+    bool write(yarp::os::ConnectionState& proto, yarp::os::SizedWriter& writer) override;
 
-    bool reply(ConnectionState& proto, SizedWriter& writer) override;
+    bool reply(yarp::os::ConnectionState& proto, yarp::os::SizedWriter& writer) override;
 
-    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer);
+    virtual bool sendIndex(yarp::os::ConnectionState& proto, yarp::os::SizedWriter& writer);
 
-    bool expectIndex(ConnectionState& proto) override;
+    bool expectIndex(yarp::os::ConnectionState& proto) override;
 
-    bool sendAck(ConnectionState& proto) override;
+    bool sendAck(yarp::os::ConnectionState& proto) override;
 
-    bool expectAck(ConnectionState& proto) override;
+    bool expectAck(yarp::os::ConnectionState& proto) override;
 
     std::string getBootstrapCarrierName() const override;
 

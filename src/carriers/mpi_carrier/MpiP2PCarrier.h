@@ -7,17 +7,11 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_MPIP2PCARRIER
-#define YARP_MPIP2PCARRIER
+#ifndef YARP_MPIP2PCARRIER_H
+#define YARP_MPIP2PCARRIER_H
 
-#include <yarp/os/MpiCarrier.h>
-#include <yarp/os/MpiP2PStream.h>
-
-namespace yarp {
-    namespace os {
-        class MpiP2PCarrier;
-    }
-}
+#include "MpiCarrier.h"
+#include "MpiP2PStream.h"
 
 /**
  * Carrier for port communicating via MPI point-to-point send/receive.
@@ -28,9 +22,13 @@ namespace yarp {
  * if one terminates without proper disconnect.
  * @warning Seems to work, but still experimental.
  */
-class yarp::os::MpiP2PCarrier : public MpiCarrier {
+class MpiP2PCarrier :
+        public MpiCarrier
+{
 public:
-    MpiP2PCarrier() : MpiCarrier() {
+    MpiP2PCarrier() :
+            MpiCarrier()
+    {
         target = "MPI_____";
     }
 
@@ -62,4 +60,4 @@ public:
     }
 };
 
-#endif // YARP_MPIP2PCARRIER
+#endif // YARP_MPIP2PCARRIER_H

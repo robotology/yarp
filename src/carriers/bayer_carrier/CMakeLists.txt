@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(bayer
                     CATEGORY carrier
-                    TYPE yarp::os::BayerCarrier
+                    TYPE BayerCarrier
                     INCLUDE BayerCarrier.h
                     EXTRA_CONFIG SUBTYPE=recv
                                  CODE="not applicable"

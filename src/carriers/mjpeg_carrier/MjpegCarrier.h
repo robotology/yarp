@@ -17,12 +17,6 @@
 
 #include <cstring>
 
-namespace yarp {
-    namespace os {
-        class MjpegCarrier;
-    }
-}
-
 /**
  *
  * A carrier for sending/receiving images via mjpeg over http.
@@ -41,7 +35,9 @@ namespace yarp {
  *   http://localhost:NNN/?output=stream
  *
  */
-class yarp::os::MjpegCarrier : public Carrier {
+class MjpegCarrier :
+        public yarp::os::Carrier
+{
 private:
     bool firstRound;
     bool sender;
@@ -105,7 +101,7 @@ public:
         return "mjpeg_carrier";
     }
 
-    void getHeader(Bytes& header) const override {
+    void getHeader(yarp::os::Bytes& header) const override {
         // GET /?action=stream HTTP/1.1
         const char *target = "GET /?ac";
         for (size_t i=0; i<8 && i<header.length(); i++) {
@@ -113,7 +109,7 @@ public:
         }
     }
 
-    bool checkHeader(const Bytes& header) override {
+    bool checkHeader(const yarp::os::Bytes& header) override {
         if (header.length()!=8) {
             return false;
         }
@@ -127,25 +123,25 @@ public:
         return true;
     }
 
-    void setParameters(const Bytes& header) override {
+    void setParameters(const yarp::os::Bytes& header) override {
         // no parameters - no carrier variants
     }
 
 
     // Now, the initial hand-shaking
 
-    bool prepareSend(ConnectionState& proto) override {
+    bool prepareSend(yarp::os::ConnectionState& proto) override {
         // nothing special to do
         return true;
     }
 
-    bool sendHeader(ConnectionState& proto) override;
+    bool sendHeader(yarp::os::ConnectionState& proto) override;
 
-    bool expectSenderSpecifier(ConnectionState& proto) override {
+    bool expectSenderSpecifier(yarp::os::ConnectionState& proto) override {
         return true;
     }
 
-    bool expectExtraHeader(ConnectionState& proto) override {
+    bool expectExtraHeader(yarp::os::ConnectionState& proto) override {
         std::string txt;
         do {
             txt = proto.is().readLine();
@@ -153,7 +149,7 @@ public:
         return true;
     }
 
-    bool respondToHeader(ConnectionState& proto) override {
+    bool respondToHeader(yarp::os::ConnectionState& proto) override {
         std::string target = "HTTP/1.0 200 OK\r\n\
 Connection: close\r\n\
 Server: yarp/mjpeg_carrier/0.1\r\n\
@@ -163,7 +159,7 @@ Expires: Mon, 3 Jan 2000 12:34:56 GMT\r\n\
 Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
 \r\n\
 --boundarydonotcross\r\n";
-        Bytes b((char*)target.c_str(),strlen(target.c_str()));
+        yarp::os::Bytes b((char*)target.c_str(),strlen(target.c_str()));
         proto.os().write(b);
         sender = true; // this is a pull connection, not a push
         //MjpegStream *stream = new MjpegStream(proto.giveStreams(),sender);
@@ -172,7 +168,7 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
         return true;
     }
 
-    bool expectReplyToHeader(ConnectionState& proto) override {
+    bool expectReplyToHeader(yarp::os::ConnectionState& proto) override {
         std::string txt;
         do {
             txt = proto.is().readLine();
@@ -193,23 +189,23 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
 
     // Payload time!
 
-    bool write(ConnectionState& proto, SizedWriter& writer) override;
+    bool write(yarp::os::ConnectionState& proto, yarp::os::SizedWriter& writer) override;
 
-    bool reply(ConnectionState& proto, SizedWriter& writer) override;
+    bool reply(yarp::os::ConnectionState& proto, yarp::os::SizedWriter& writer) override;
 
-    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer) {
+    virtual bool sendIndex(yarp::os::ConnectionState& proto, yarp::os::SizedWriter& writer) {
         return true;
     }
 
-    bool expectIndex(ConnectionState& proto) override {
+    bool expectIndex(yarp::os::ConnectionState& proto) override {
         return true;
     }
 
-    bool sendAck(ConnectionState& proto) override {
+    bool sendAck(yarp::os::ConnectionState& proto) override {
         return true;
     }
 
-    bool expectAck(ConnectionState& proto) override {
+    bool expectAck(yarp::os::ConnectionState& proto) override {
         return true;
     }
 

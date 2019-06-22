@@ -13,13 +13,9 @@
 #include <yarp/os/InputStream.h>
 #include <yarp/sig/Image.h>
 
-namespace yarp {
-    namespace mjpeg {
-        class MjpegDecompression;
-    }
-}
 
-class yarp::mjpeg::MjpegDecompression {
+class MjpegDecompression
+{
 private:
     void *system_resource;
 public:

@@ -29,6 +29,7 @@
 
 using namespace std;
 using namespace yarp::os;
+using namespace yarp::wire_rep_utils;
 
 #define dbg_flag 0
 #define dbg_printf if (dbg_flag) printf

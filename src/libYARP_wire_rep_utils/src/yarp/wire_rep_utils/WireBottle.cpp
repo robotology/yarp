@@ -15,6 +15,7 @@
 #include <yarp/os/NetType.h>
 
 using namespace yarp::os;
+using namespace yarp::wire_rep_utils;
 
 static NetInt32 getInt(char *cursor) {
     auto* icursor = reinterpret_cast<NetInt32 *> (cursor);

@@ -7,7 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/MpiBcastStream.h>
+#include "MpiBcastStream.h"
 
 using namespace yarp::os;
 

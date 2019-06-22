@@ -67,8 +67,8 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
         stimulation = STIMUL_THRESHOLD*10;
     stimulation /= 10.0;
 
-    baias = options.check("bs",Value(STIMUL_THRESHOLD*10)).asFloat64();
-    baias /= 10.0;
+    bias = options.check("bs",Value(STIMUL_THRESHOLD*10)).asFloat64();
+    bias /= 10.0;
 
     excitation = options.findGroup("ex");
     isVirtual = options.check("virtual");
@@ -82,7 +82,7 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
         msg+= dummy;
         std::snprintf(dummy, 1024, "   stimulation: %.2f\n", stimulation);
         msg+= dummy;
-        std::snprintf(dummy, 1024, "   bias: %.2f\n", baias);
+        std::snprintf(dummy, 1024, "   bias: %.2f\n", bias);
         msg+= dummy;
         std::snprintf(dummy, 1024, "   tc: %.2fs\n", timeConstant);
         msg+= dummy;
@@ -214,7 +214,7 @@ double PriorityCarrier::getActualInput(double t)
 
         }
     }
-    E += baias;
+    E += bias;
     double I = E * getActualStimulation(t);
     return ((I<0) ? 0 : I);     //I'(t)
 }
@@ -245,7 +245,7 @@ bool PriorityGroup::recalculate(double t)
         // call 'getActualStimulation' to update 'isActive'
         peer->getActualStimulation(t);
         double xi = (peer->isActive) ? STIMUL_THRESHOLD : 0.0;
-        B(row,0) = peer->baias * xi;
+        B(row,0) = peer->bias * xi;
         X(row,0) = xi;
 
         int col = 0;

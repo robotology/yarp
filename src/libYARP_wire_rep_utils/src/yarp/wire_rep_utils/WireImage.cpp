@@ -13,6 +13,7 @@
 
 using namespace yarp::os;
 using namespace yarp::sig;
+using namespace yarp::wire_rep_utils;
 
 FlexImage *WireImage::checkForImage(SizedWriter& writer) {
     ImageNetworkHeader hdr;
