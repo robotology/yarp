@@ -53,6 +53,7 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
       - llvm-toolchain-xenial-8
+      - sourceline: 'ppa:robotology/ppa'
     packages:
       # gcc
       - gcc-8
@@ -64,6 +65,9 @@ addons:
       - lcov
       - valgrind
       - ccache
+      # Robotology dependencies
+      - ycm
+      - librobottestingframework-dev
       # libraries
       - libace-dev
       - libsqlite3-dev
@@ -415,7 +419,6 @@ install:
 
   # Init ROS
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/lunar/setup.bash; fi
-
 
 before_script:
   # Prepare build directory
