@@ -35,6 +35,9 @@ namespace impl {
 class YARP_OS_impl_API BottleImpl
 {
 public:
+    using size_type = size_t;
+    static constexpr size_type npos = static_cast<size_type>(-1);
+
     BottleImpl();
     BottleImpl(Searchable* parent);
     virtual ~BottleImpl();
@@ -52,7 +55,7 @@ public:
 
     Storable* pop();
 
-    Storable& get(size_t index) const;
+    Storable& get(size_type index) const;
 
     void addInt8(std::int8_t x)
     {
@@ -102,7 +105,7 @@ public:
 
     void fromString(const std::string& line);
     std::string toString() const;
-    size_t size() const;
+    size_type size() const;
 
     bool read(ConnectionReader& reader);
     bool write(ConnectionWriter& writer) const;
@@ -112,7 +115,7 @@ public:
     const char* getBytes() const;
     size_t byteCount() const;
 
-    void copyRange(const BottleImpl* alt, int first = 0, int len = -1);
+    void copyRange(const BottleImpl* alt, size_type first = 0, size_type len = npos);
 
     bool fromBytes(const yarp::os::Bytes& data);
     void toBytes(yarp::os::Bytes& data);
@@ -143,7 +146,7 @@ public:
 
     yarp::os::Value& addBit(const char* str)
     {
-        size_t len = size();
+        size_type len = size();
         std::string x(str);
         smartAdd(x);
         if (size() > len) {
@@ -166,7 +169,7 @@ public:
         dirty = true;
     }
 
-    bool checkIndex(size_t index) const;
+    bool checkIndex(size_type index) const;
 
     bool invalid;
     bool ro;
