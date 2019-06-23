@@ -23,6 +23,9 @@ using yarp::os::Value;
 using yarp::os::impl::BottleImpl;
 using yarp::os::impl::Storable;
 
+// FIXME this can be constexpr, but swig 3.0.8 is not happy
+const Bottle::size_type Bottle::npos = static_cast<Bottle::size_type>(-1);
+
 class NullBottle : public Bottle
 {
 public:

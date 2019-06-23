@@ -77,7 +77,8 @@ public:
 #else
     using size_type = size_t;
 #endif
-    static constexpr size_type npos = static_cast<size_type>(-1);
+    // FIXME this can be constexpr, but swig 3.0.8 is not happy
+    static const size_type npos;
 
     using Searchable::check;
     using Searchable::findGroup;
