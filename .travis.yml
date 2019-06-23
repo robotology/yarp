@@ -402,6 +402,7 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then swig3.0 -version; fi
   - which javac
   - javac -version
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo netstat -tulpn; fi
   - echo "--------------------  END SYSTEM INFORMATION  --------------------"
 
 
