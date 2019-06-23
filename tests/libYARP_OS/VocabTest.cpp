@@ -20,14 +20,14 @@ TEST_CASE("OS::VocabTest", "[yarp::os]")
 
     SECTION("checking vocabulary conversions")
     {
-        CHECK(yarp::os::createVocab('h','i') == Vocab::encode("hi")); //  encoding
+        CHECK(yarp::os::createVocab('h', 'i') == Vocab::encode("hi")); //  encoding
         CHECK(Vocab::decode(Vocab::encode("hi")) == "hi"); // decoding
-        CHECK(yarp::os::createVocab('h','i','g','h') == Vocab::encode("high")); // encoding
+        CHECK(yarp::os::createVocab('h', 'i', 'g', 'h') == Vocab::encode("high")); // encoding
         CHECK(Vocab::decode(Vocab::encode("high")) == "high"); // decoding
         INFO("checking compile-time functions");
         NetInt32 code = Vocab::encode("stop");
-        CHECK_FALSE(code == yarp::os::createVocab('s','e','t')); // very strange error switching
-        CHECK(code == yarp::os::createVocab('s','t','o','p')); // good switch
+        CHECK_FALSE(code == yarp::os::createVocab('s', 'e', 't')); // very strange error switching
+        CHECK(code == yarp::os::createVocab('s', 't', 'o', 'p')); // good switch
     }
 
 }

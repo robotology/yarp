@@ -144,7 +144,7 @@ public:
         Bottle bot;
         bot.addInt32(0);
         bot.addString("Hello world");
-        // report(0,"sending bottle, should received nothing");
+        // report(0, "sending bottle, should received nothing");
         expectation = "";
         sender.send(bot);
         Time::delay(0.3);

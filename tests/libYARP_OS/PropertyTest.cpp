@@ -24,9 +24,9 @@ using namespace yarp::os;
 
 static void printStringToFile(const char * filename, const char * filecontent)
 {
-    FILE *fout = fopen(filename,"w");
+    FILE *fout = fopen(filename, "w");
     yAssert(fout!=nullptr);
-    fprintf(fout,"%s",filecontent);
+    fprintf(fout, "%s", filecontent);
     fclose(fout);
     fout = nullptr;
 }
@@ -36,9 +36,9 @@ TEST_CASE("OS::PropertyTest", "[yarp::os]")
     SECTION("checking puts and gets")
     {
         Property p;
-        p.put("hello","there");
-        p.put("hello","friend");
-        p.put("x","y");
+        p.put("hello", "there");
+        p.put("hello", "friend");
+        p.put("x", "y");
         CHECK(p.check("hello")); // key 1 exists
         CHECK(p.check("x")); // key 2 exists
         CHECK(!(p.check("y"))); // other key should not exist
@@ -47,14 +47,14 @@ TEST_CASE("OS::PropertyTest", "[yarp::os]")
         p.fromString("(hello)");
         CHECK(p.check("hello")); // key exists
         Value *v;
-        CHECK_FALSE(p.check("hello",v)); // has no value
+        CHECK_FALSE(p.check("hello", v)); // has no value
     }
 
     SECTION("checking puts and gets of various types")
     {
         Property p;
-        p.put("ten",10);
-        p.put("pi",(double)3.14);
+        p.put("ten", 10);
+        p.put("pi", (double)3.14);
         CHECK(p.find("ten").asInt32() == 10); // ten
         CHECK(p.find("pi").asFloat64()>3); // pi>3
         CHECK(p.find("pi").asFloat64()<4); // pi<4
@@ -89,7 +89,7 @@ TEST_CASE("OS::PropertyTest", "[yarp::os]")
     SECTION("checking that issue https://github.com/robotology/yarp/issues/1057 is properly solved")
     {
         Property p;
-        p.put("ten",10);
+        p.put("ten", 10);
         CHECK(p.check("ten")); // found
         CHECK_FALSE(p.check("eleven")); // not found
         Bottle& bot = p.findGroup("twelve");
@@ -109,8 +109,8 @@ TEST_CASE("OS::PropertyTest", "[yarp::os]")
         CHECK(p.find("testing").asString() == "left"); // good key after copy
 
         Property p3;
-        const char *args[] = {"CMD","--size","10","20","--mono","on"};
-        p3.fromCommand(5,args);
+        const char *args[] = {"CMD", "--size", "10", "20", "--mono", "on"};
+        p3.fromCommand(5, args);
         Bottle bot(p3.toString());
         CHECK(bot.size() == (size_t) 2); // right number of terms
         CHECK(p3.findGroup("size").get(1).toString() == "10"); // width
@@ -139,16 +139,16 @@ TEST_CASE("OS::PropertyTest", "[yarp::os]")
         INFO("command line style string");
         Property p6;
         const char *strs[] = { "program", "--name", "/foo" };
-        p6.fromCommand(3,strs);
+        p6.fromCommand(3, strs);
         CHECK(p6.find("name").asString() == "/foo"); // command line name
         Value *v = nullptr;
-        p6.check("name",v);
+        p6.check("name", v);
         CHECK(v!=nullptr); // check method
 
         Searchable *network = &p6.findGroup("NETWORK");
         if (network->isNull()) { network = &p6; }
         v = nullptr;
-        network->check("name",v);
+        network->check("name", v);
         CHECK(v!=nullptr); // check method 2
 
         Property p7;
@@ -167,10 +167,10 @@ TEST_CASE("OS::PropertyTest", "[yarp::os]")
         };
         int argc = 7;
         Property p;
-        p.fromCommand(argc,argv);
+        p.fromCommand(argc, argv);
         CHECK(p.findGroup("x").findGroup("y").find("z").asInt32() == 10); // x::y::z ok
         Property p2("(x (y (z 45) (r 92))) (winding roads)");
-        p2.fromCommand(argc,argv,true,false);
+        p2.fromCommand(argc, argv, true, false);
         CHECK(p2.findGroup("x").findGroup("y").find("z").asInt32() == 10); // x::y::z #2 ok
         CHECK(p2.findGroup("x").findGroup("y").find("r").asInt32() == 92); // x::y::r ok
     }
@@ -205,10 +205,10 @@ CanAddress2 0x0E\n\
 
         const char *fname1 = "_yarp_regression_test1.txt";
 
-        FILE *fout = fopen(fname1,"w");
+        FILE *fout = fopen(fname1, "w");
         REQUIRE(fout!=nullptr);
-        fprintf(fout,"CanAddress1 0x0E\n");
-        fprintf(fout,"CanAddress2 0x0C\n");
+        fprintf(fout, "CanAddress1 0x0E\n");
+        fprintf(fout, "CanAddress2 0x0C\n");
         fclose(fout);
         fout = nullptr;
 
@@ -253,12 +253,12 @@ yarp3 pre_${__YARP__}_post\n\
         CHECK(p.find("yarp3").asString() == "pre_1_post"); // expansion with neighbor
 
         Property env;
-        env.put("TARGET","Earth");
-        env.put("WIN_PATH","c:\\foo");
+        env.put("TARGET", "Earth");
+        env.put("WIN_PATH", "c:\\foo");
         p.fromConfig("\
 targ $TARGET\n\
 path $WIN_PATH\n\
-",env);
+", env);
         CHECK(p.find("targ").asString() == "Earth"); // environment addition
         CHECK(p.find("path").asString() == "c:\\foo"); // path interpretation
 
@@ -277,7 +277,7 @@ check $x $y\n\
         p.fromQuery("prop1=val1&prop2=val2");
         CHECK(p.find("prop1").asString() == "val1"); // basic prop 1
         CHECK(p.find("prop2").asString() == "val2"); // basic prop 2
-        p.fromQuery("http://foo.bar.org/link?prop3=val3&prop4=val4",true);
+        p.fromQuery("http://foo.bar.org/link?prop3=val3&prop4=val4", true);
         CHECK(p.find("prop3").asString() == "val3"); // full prop 3
         CHECK(p.find("prop4").asString() == "val4"); // full prop 4
         p.fromQuery("prop1=val+one&prop2=val%2Ftwo%2C");
@@ -314,11 +314,11 @@ check $x $y\n\
         p.fromConfig("robotName icub \n urdf_file model.urdf \n # this is trash \n");
         CHECK(p.check("#") == false); // presence of comment line properly ignored in fromConfig
         const char *fname1 = "_yarp_regression_test_ini_comments.txt";
-        FILE *fout = fopen(fname1,"w");
+        FILE *fout = fopen(fname1, "w");
         REQUIRE(fout!=nullptr);
-        fprintf(fout,"robotName icub\n");
-        fprintf(fout,"urdf_file model.urdf\n");
-        fprintf(fout,"# this is trash\n");
+        fprintf(fout, "robotName icub\n");
+        fprintf(fout, "urdf_file model.urdf\n");
+        fprintf(fout, "# this is trash\n");
         fclose(fout);
         fout = nullptr;
         CHECK(p.fromConfigFile(fname1) == true); // test file correctly loaded
@@ -339,8 +339,8 @@ check $x $y\n\
     SECTION("checking wipe suppression")
     {
         Property p;
-        p.put("x",12);
-        p.fromConfig("y 20",false);
+        p.put("x", 12);
+        p.fromConfig("y 20", false);
         CHECK(p.find("x").asInt32() == 12); // x is ok
         CHECK(p.find("y").asInt32() == 20); // y is ok
     }
@@ -357,7 +357,7 @@ check $x $y\n\
             (char*)target.c_str()
         };
         int argc = 3;
-        p.fromCommand(argc,argv);
+        p.fromCommand(argc, argv);
         CHECK(p.find("file").asString() == target); // string with slash
     }
 
@@ -370,16 +370,16 @@ check $x $y\n\
         // create some test files
 
         {
-            FILE *fout = fopen(fname1,"w");
+            FILE *fout = fopen(fname1, "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"x 1\n");
+            fprintf(fout, "x 1\n");
             fclose(fout);
             fout = nullptr;
 
-            fout = fopen(fname2,"w");
+            fout = fopen(fname2, "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"[include %s]\n",fname1);
-            fprintf(fout,"y 2\n");
+            fprintf(fout, "[include %s]\n", fname1);
+            fprintf(fout, "y 2\n");
             fclose(fout);
             fout = nullptr;
 
@@ -391,16 +391,16 @@ check $x $y\n\
 
 
         {
-            FILE *fout = fopen(fname1,"w");
+            FILE *fout = fopen(fname1, "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"x 1\n");
+            fprintf(fout, "x 1\n");
             fclose(fout);
             fout = nullptr;
 
-            fout = fopen(fname2,"w");
+            fout = fopen(fname2, "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"[include base %s]\n",fname1);
-            fprintf(fout,"y 2\n");
+            fprintf(fout, "[include base %s]\n", fname1);
+            fprintf(fout, "y 2\n");
             fclose(fout);
             fout = nullptr;
 
@@ -412,20 +412,20 @@ check $x $y\n\
         }
 
         {
-            FILE *fout = fopen(fname1,"w");
+            FILE *fout = fopen(fname1, "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"x 1\n");
+            fprintf(fout, "x 1\n");
             fclose(fout);
             fout = nullptr;
 
-            fout = fopen(fname2,"w");
+            fout = fopen(fname2, "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"[base]\n");
-            fprintf(fout,"w 4\n");
-            fprintf(fout,"[base]\n");
-            fprintf(fout,"z 3\n");
-            fprintf(fout,"[include base %s]\n",fname1);
-            fprintf(fout,"y 2\n");
+            fprintf(fout, "[base]\n");
+            fprintf(fout, "w 4\n");
+            fprintf(fout, "[base]\n");
+            fprintf(fout, "z 3\n");
+            fprintf(fout, "[include base %s]\n", fname1);
+            fprintf(fout, "y 2\n");
             fclose(fout);
             fout = nullptr;
 
@@ -438,19 +438,19 @@ check $x $y\n\
         }
 
         {
-            FILE *fout = fopen(fname1,"w");
+            FILE *fout = fopen(fname1, "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"x 1\n");
+            fprintf(fout, "x 1\n");
             fclose(fout);
             fout = nullptr;
 
-            fout = fopen(fname2,"w");
+            fout = fopen(fname2, "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"[b1]\n");
-            fprintf(fout,"z 3\n");
-            fprintf(fout,"[include base b1 %s]\n",fname1);
-            fprintf(fout,"[include base b2 %s]\n",fname1);
-            fprintf(fout,"y 2\n");
+            fprintf(fout, "[b1]\n");
+            fprintf(fout, "z 3\n");
+            fprintf(fout, "[include base b1 %s]\n", fname1);
+            fprintf(fout, "[include base b2 %s]\n", fname1);
+            fprintf(fout, "y 2\n");
             fclose(fout);
             fout = nullptr;
 
@@ -506,15 +506,15 @@ check $x $y\n\
                                            "lili  lolo                   \n"
                                            "cici  bubu                   \n";
 
-        printStringToFile(include_one_name,include_one_content);
-        printStringToFile(include_two_name,include_two_content);
-        printStringToFile(root_file_name,root_file_content);
-        printStringToFile(root_file_check_name,root_file_check_content);
+        printStringToFile(include_one_name, include_one_content);
+        printStringToFile(include_two_name, include_two_content);
+        printStringToFile(root_file_name, root_file_content);
+        printStringToFile(root_file_check_name, root_file_check_content);
 
         // load the property and check that root_group is actually present
         // in all groups
 
-        Property propRoot,propRootCheck;
+        Property propRoot, propRootCheck;
         INFO("Parsing root_file ");
         propRoot.fromConfigFile(root_file_name);
         INFO("Parsing root_file_check ");
@@ -535,7 +535,7 @@ check $x $y\n\
         };
         int argc = 5;
         Property p;
-        p.fromCommand(argc,argv);
+        p.fromCommand(argc, argv);
         std::string target1 = "(cmd \"ls foo\") (on \"/server\")";
         std::string target2 = "(on \"/server\") (cmd \"ls foo\")";
         std::string actual = p.toString();
@@ -555,18 +555,18 @@ check $x $y\n\
         }
         CHECK(yarp::os::stat(dirname.c_str())>=0); // test directory present
         {
-            FILE *fout = fopen((dirname + "/t1.ini").c_str(),"w");
+            FILE *fout = fopen((dirname + "/t1.ini").c_str(), "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"x 3\n");
-            fprintf(fout,"[nesttest]\n");
-            fprintf(fout,"z 14\n");
+            fprintf(fout, "x 3\n");
+            fprintf(fout, "[nesttest]\n");
+            fprintf(fout, "z 14\n");
             fclose(fout);
             fout = nullptr;
         }
         {
-            FILE *fout = fopen((dirname + "/t2.ini").c_str(),"w");
+            FILE *fout = fopen((dirname + "/t2.ini").c_str(), "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"y 4\n");
+            fprintf(fout, "y 4\n");
             fclose(fout);
             fout = nullptr;
         }
@@ -578,18 +578,18 @@ check $x $y\n\
 
     SECTION("checking long long hex")
     {
-        const char* parms[]={"foo","--longlonghex","0xFEDCBA9876543210"};
+        const char* parms[]={"foo", "--longlonghex", "0xFEDCBA9876543210"};
         yarp::os::Property config;
-        config.fromCommand(3,parms);
+        config.fromCommand(3, parms);
         CHECK(config.find("longlonghex").asString() == "0xFEDCBA9876543210"); // hex that is too big remains a string
     }
 
     SECTION("check add group")
     {
         Property p;
-        p.put("x",1);
+        p.put("x", 1);
         Property& psub = p.addGroup("psub");
-        psub.put("y",2);
+        psub.put("y", 2);
         CHECK(p.find("x").asInt32() == 1); // basic int
         CHECK(p.findGroup("psub").find("y").asInt32() == 2); // nested int
         Property pCopy = p;

@@ -22,14 +22,14 @@ TEST_CASE("OS::StringInputStreamTest", "[yarp::os]")
         sis.add("Hello my friend");
         char buf[256];
         sis.check();
-        Bytes b(buf,sizeof(buf));
-        int len = sis.read(b,0,5);
+        Bytes b(buf, sizeof(buf));
+        int len = sis.read(b, 0, 5);
         CHECK(len == 5); // len of first read
         buf[len] = '\0';
         CHECK(std::string(buf) == "Hello"); // first read
         char ch = sis.read();
         CHECK(ch == ' '); // the space
-        len = sis.read(b,0,2);
+        len = sis.read(b, 0, 2);
         CHECK(len == 2); // len of second read
         buf[len] = '\0';
         CHECK(std::string(buf) == "my"); // second read

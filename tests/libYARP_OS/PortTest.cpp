@@ -121,7 +121,7 @@ public:
     TcpTestClient()
     {
         tcpPort.open("/TcpTestClien");
-        yarp::os::Network::connect("/TcpTestServer", "/TcpTestClien","tcp");
+        yarp::os::Network::connect("/TcpTestServer", "/TcpTestClien", "tcp");
     }
 
     ~TcpTestClient()
@@ -185,8 +185,8 @@ public:
 
     virtual void run() override {
         for (int i=0; i<3; i++) {
-            Bottle b,b2;
-            p.read(b,true);
+            Bottle b, b2;
+            p.read(b, true);
             b2.addInt32(b.get(0).asInt32()+1);
             if ((!faithful)&&i==1) {
                 // no reply
@@ -205,7 +205,7 @@ public:
 
     DelegatedWriter() {
         p.open("/writer");
-        Network::connect("/writer","/reader");
+        Network::connect("/writer", "/reader");
     }
 
     virtual void run() override {
@@ -213,7 +213,7 @@ public:
         for (int i=0; i<3; i++) {
             Bottle b, b2;
             b.addInt32(i);
-            p.write(b,b2);
+            p.write(b, b2);
             total += b2.get(0).asInt32(); // should be i+1
         }
         // total should be 1+2+3 = 6
@@ -297,7 +297,7 @@ public:
     virtual void run() override {
         Bottle cmd, reply;
         cmd.fromString("[add] 1 2");
-        p.write(cmd,reply);
+        p.write(cmd, reply);
     }
 };
 
@@ -519,7 +519,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
 
     SECTION("checking paired send/receive")
     {
-        PortReaderBuffer<PortablePair<Bottle,Bottle> > buf;
+        PortReaderBuffer<PortablePair<Bottle, Bottle> > buf;
 
         Port input, output;
         input.open("/in");
@@ -531,7 +531,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         output.addOutput(Contact("/in", "tcp"));
         //Time::delay(0.2);
 
-        PortablePair<Bottle,Bottle> bot1;
+        PortablePair<Bottle, Bottle> bot1;
         bot1.head.fromString("1 2 3");
         bot1.body.fromString("4 5 6 7");
 
@@ -540,7 +540,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         bool ok = output.write(bot1);
         CHECK(ok); // output proceeding
         INFO("reading...");
-        PortablePair<Bottle,Bottle> *result = buf.read();
+        PortablePair<Bottle, Bottle> *result = buf.read();
 
         REQUIRE(result!=nullptr); // got something check
         CHECK(bot1.head.size() == result->head.size()); // head size check
@@ -725,7 +725,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         DelegatedCallback callback;
         out.open("/out");
         in.open("/in");
-        Network::connect("/out","/in");
+        Network::connect("/out", "/in");
         PortReaderBuffer<Bottle> reader;
         reader.setStrict();
         reader.attach(in);
@@ -747,7 +747,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         in.setStrict();
         out.open("/out");
         in.open("/in");
-        Network::connect("/out","/in");
+        Network::connect("/out", "/in");
         in.useCallback(callback);
         Bottle src("10 10 20");
         out.write(src);
@@ -809,7 +809,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         in.open("/in");
         out.open("/out");
 
-        Network::connect("/out","/in");
+        Network::connect("/out", "/in");
 
         Bottle& outBot1 = out.prepare();
         outBot1.fromString("hello world");
@@ -843,7 +843,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         in.open("/in");
         out.open("/out");
 
-        Network::connect("/out","/in");
+        Network::connect("/out", "/in");
 
         Bottle& outBot1 = out.prepare();
         outBot1.fromString("hello world");
@@ -871,7 +871,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         Port receiver;
         sender.open("/sender");
         receiver.open("/receiver");
-        Network::connect("/sender","/receiver");
+        Network::connect("/sender", "/receiver");
         Time::delay(0.25);
         Bottle& bot = sender.prepare();
         bot.clear();
@@ -899,7 +899,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         p2.open("/test2");
         p2.open("/in");
         p3.open("/out");
-        Network::connect("/out","/in");
+        Network::connect("/out", "/in");
         p3.prepare().fromString("10 20 30");
         p3.write();
         INFO("wait for input...");
@@ -909,7 +909,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         p3.write();
         p2.open("/test1");
         p3.open("/test2");
-        Network::connect("/test2","/test1");
+        Network::connect("/test2", "/test1");
         p3.prepare().fromString("10 20 30");
         p3.write();
         INFO("wait for input...");
@@ -930,7 +930,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
             Port p;
             p.enableBackgroundWrite(true);
             p.open("...");
-            NetworkBase::connect(p.getName(),pa.getName());
+            NetworkBase::connect(p.getName(), pa.getName());
             Bottle b("10 20 30");
             p.write(b);
             pa.read(b);
@@ -950,8 +950,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
             CHECK(p[i].getInputCount() == 0); // no input connections
             CHECK(p[i].getOutputCount() == 0); // no output connections
         }
-        Network::connect("/a","/b");
-        Network::connect("/a","/c");
+        Network::connect("/a", "/b");
+        Network::connect("/a", "/c");
 
         Network::sync("/a");
         Network::sync("/b");
@@ -964,7 +964,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         CHECK(p[2].getInputCount() == 1); // input connections
         CHECK(p[2].getOutputCount() == 0); // output connections
 
-        Network::disconnect("/a","/c");
+        Network::disconnect("/a", "/c");
 
         Network::sync("/a");
         Network::sync("/b");
@@ -986,7 +986,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         DelegatedReader reader(false);
         reader.start();
         p1.open("/writer");
-        Network::connect("/writer","/reader");
+        Network::connect("/writer", "/reader");
         Network::sync("/writer");
         Network::sync("/reader");
         Bottle bsend, breply;
@@ -1003,7 +1003,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         Port p2;
         p1.open("/foo");
         p2.open("/bar");
-        Network::connect("/foo","/bar");
+        Network::connect("/foo", "/bar");
         Network::sync("/foo");
         Network::sync("/bar");
         MyReport report;
@@ -1023,7 +1023,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         p2.setReporter(report2);
         p1.open("/foo");
         p2.open("/bar");
-        Network::connect("/foo","/bar");
+        Network::connect("/foo", "/bar");
         Network::sync("/foo");
         Network::sync("/bar");
         CHECK(report1.ct>0); // sender got report callback
@@ -1042,7 +1042,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         RpcServer p2;
         p1.open("/foo");
         p2.open("/bar");
-        Network::connect("/foo","/bar");
+        Network::connect("/foo", "/bar");
         Network::sync("/foo");
         Network::sync("/bar");
         MyReport report;
@@ -1062,7 +1062,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         p2.setReporter(report2);
         p1.open("/foo");
         p2.open("/bar");
-        Network::connect("/foo","/bar");
+        Network::connect("/foo", "/bar");
         Network::sync("/foo");
         Network::sync("/bar");
         CHECK(report1.ct>0); // sender got report callback
@@ -1081,13 +1081,13 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         Port p2;
         p1.open("/p1");
         p2.open("/p2");
-        Network::connect("/p2","/p1");
+        Network::connect("/p2", "/p1");
         Network::sync("/p1");
         Network::sync("/p2");
 
         Bottle cmd("[help]"), reply;
         p2.setAdminMode();
-        p2.write(cmd,reply);
+        p2.write(cmd, reply);
 
         CHECK(reply.size()>=1); // got a reply
 
@@ -1103,7 +1103,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         out.setStrict();
         in.open("/in");
         out.open("/out");
-        Network::connect("/out","/in");
+        Network::connect("/out", "/in");
 
         out.prepare().fromString("1");
         out.write(true);
@@ -1153,9 +1153,9 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         if (!ok) return;
         a.open("/a");
         b.open("/b");
-        NetworkBase::connect("/a","/b");
+        NetworkBase::connect("/a", "/b");
         Bottle msg("hello"), reply;
-        ok = a.write(msg,reply);
+        ok = a.write(msg, reply);
         CHECK_FALSE(ok); // send failed correctly
     }
 
@@ -1164,8 +1164,8 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         WriteReader writer;
         writer.start();
         int argc = 2;
-        const char *argv[] = {"...","/write"};
-        yarp::companion::impl::Companion::getInstance().cmdRead(argc,(char**)argv);
+        const char *argv[] = {"...", "/write"};
+        yarp::companion::impl::Companion::getInstance().cmdRead(argc, (char**)argv);
         writer.finish();
     }
 
@@ -1179,7 +1179,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
 
     SECTION("checking interrupt")
     {
-        PortReaderBuffer<PortablePair<Bottle,Bottle> > buf;
+        PortReaderBuffer<PortablePair<Bottle, Bottle> > buf;
 
         Port input, output;
         input.open("/in");
@@ -1190,7 +1190,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
 
         output.addOutput(Contact("/in", "tcp"));
 
-        PortablePair<Bottle,Bottle> bot1;
+        PortablePair<Bottle, Bottle> bot1;
         bot1.head.fromString("1 2 3");
         bot1.body.fromString("4 5 6 7");
 
@@ -1212,7 +1212,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         BufferedPort<Bottle> input, output;
         input.open("/in");
         output.open("/out");
-        CHECK(yarp::os::Network::connect("/out","/in")); // checking connection
+        CHECK(yarp::os::Network::connect("/out", "/in")); // checking connection
 
         Bottle& botOut1 = output.prepare();
         botOut1.clear();
@@ -1343,15 +1343,15 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
 
     SECTION("checking interrupt for a port with pending reply")
     {
-        PortReaderBuffer<PortablePair<Bottle,Bottle> > buf;
+        PortReaderBuffer<PortablePair<Bottle, Bottle> > buf;
 
         ServiceUser output("/out");
         Port input;
         input.open("/in");
-        Network::connect(output.p.getName(),input.getName());
+        Network::connect(output.p.getName(), input.getName());
         output.start();
         Bottle cmd, reply;
-        input.read(cmd,true);
+        input.read(cmd, true);
         reply.addInt32(cmd.get(1).asInt32()+cmd.get(2).asInt32());
         CHECK(cmd.toString() == "[add] 1 2"); // cmd received ok
         input.interrupt();
@@ -1368,7 +1368,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         Port input;
         input.open("/in");
 
-        Network::connect("/out","/in");
+        Network::connect("/out", "/in");
 
         output.start();
         Time::delay(2);
@@ -1426,7 +1426,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         BufferedPort<Bottle> pout;
         pout.open("/out");
         pin.open("/in");
-        Network::connect("/out","/in");
+        Network::connect("/out", "/in");
         Network::sync("/out");
         Network::sync("/in");
         Bottle& msg = pout.prepare();
@@ -1477,12 +1477,12 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         Port pout;
         pout.setAdminMode();
         pout.open("/out");
-        Network::connect("/out","/in");
+        Network::connect("/out", "/in");
         Bottle cmd("hello"), reply;
-        pout.write(cmd,reply);
+        pout.write(cmd, reply);
         CHECK(reply.get(1).asInt32() == 5); // admin_reader was called
         cmd.fromString("[ver]");
-        pout.write(cmd,reply);
+        pout.write(cmd, reply);
         CHECK(reply.size()>=4); // yarp commands still work
     }
 
@@ -1495,7 +1495,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
         pout.enableBackgroundWrite(true);
         pin.open("/in");
         pout.open("/out");
-        Network::connect("/out","/in");
+        Network::connect("/out", "/in");
         Bottle cmd("hello");
         pin.lockCallback();
         pout.write(cmd);
@@ -1532,7 +1532,7 @@ TEST_CASE("OS::PortTest", "[yarp::os]")
     {
         yarp::dev::PolyDriver p;
         Property prop;
-        prop.put("device","brokenDevice");
+        prop.put("device", "brokenDevice");
         CHECK(p.open(prop)); // Opening the broken_device
         CHECK(p.close()); // Closing the broken_device
     }

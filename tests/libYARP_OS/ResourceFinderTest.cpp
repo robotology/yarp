@@ -62,7 +62,7 @@ static void mkdir(const std::string& dirname)
 static std::string pathify(const Bottle& dirs)
 {
     char buf[1000];
-    char *result = yarp::os::getcwd(buf,sizeof(buf));
+    char *result = yarp::os::getcwd(buf, sizeof(buf));
     if (!result) {
         REQUIRE(result!=nullptr); // cwd/pwd not too long
     }
@@ -209,17 +209,17 @@ static void setUpTestArea(bool etc_pathd)
     path_project2.addString("path");
     path_project2.addString(pathify(project2));
 
-    fout = fopen((pathify(pathd)+slash+"project1.ini").c_str(),"w");
+    fout = fopen((pathify(pathd)+slash+"project1.ini").c_str(), "w");
     REQUIRE(fout!=nullptr);
-    fprintf(fout,"[search project1]\n");
-    fprintf(fout,"%s\n", path_project1.toString().c_str());
+    fprintf(fout, "[search project1]\n");
+    fprintf(fout, "%s\n", path_project1.toString().c_str());
     fclose(fout);
     fout = nullptr;
 
-    fout = fopen((pathify(pathd)+slash+"project2.ini").c_str(),"w");
+    fout = fopen((pathify(pathd)+slash+"project2.ini").c_str(), "w");
     REQUIRE(fout!=nullptr);
-    fprintf(fout,"[search project2]\n");
-    fprintf(fout,"%s\n", path_project2.toString().c_str());
+    fprintf(fout, "[search project2]\n");
+    fprintf(fout, "%s\n", path_project2.toString().c_str());
     fclose(fout);
     fout = nullptr;
 
@@ -229,81 +229,81 @@ static void setUpTestArea(bool etc_pathd)
     saveEnvironment("YARP_CONFIG_DIRS");
     saveEnvironment("YARP_ROBOT_NAME");
 
-    Network::setEnvironment("YARP_DATA_HOME",pathify(yarp_data_home));
-    Network::setEnvironment("YARP_CONFIG_HOME",pathify(yarp_config_home));
+    Network::setEnvironment("YARP_DATA_HOME", pathify(yarp_data_home));
+    Network::setEnvironment("YARP_CONFIG_HOME", pathify(yarp_config_home));
     Network::setEnvironment("YARP_DATA_DIRS",
                             pathify(yarp_data_dir0) +
                             colon +
                             pathify(yarp_data_dir1));
-    Network::setEnvironment("YARP_CONFIG_DIRS",pathify(yarp_config_dir0));
+    Network::setEnvironment("YARP_CONFIG_DIRS", pathify(yarp_config_dir0));
     Network::setEnvironment("YARP_ROBOT_NAME", "dummyRobot");
 
 
-    fout = fopen((pathify(yarp_data_home)+slash+"data.ini").c_str(),"w");
+    fout = fopen((pathify(yarp_data_home)+slash+"data.ini").c_str(), "w");
     REQUIRE(fout!=nullptr);
-    fprintf(fout,"magic_number = 42\n");
-    fprintf(fout,"[data_home]\n");
-    fprintf(fout,"x = 2\n");
+    fprintf(fout, "magic_number = 42\n");
+    fprintf(fout, "[data_home]\n");
+    fprintf(fout, "x = 2\n");
     fclose(fout);
     fout = nullptr;
 
-    fout = fopen((pathify(yarp_data_dir0)+slash+"data.ini").c_str(),"w");
+    fout = fopen((pathify(yarp_data_dir0)+slash+"data.ini").c_str(), "w");
     REQUIRE(fout!=nullptr);
-    fprintf(fout,"magic_number = 22\n");
-    fprintf(fout,"[data_dir0]\n");
-    fprintf(fout,"x = 3\n");
+    fprintf(fout, "magic_number = 22\n");
+    fprintf(fout, "[data_dir0]\n");
+    fprintf(fout, "x = 3\n");
     fclose(fout);
     fout = nullptr;
 
-    fout = fopen((pathify(project1)+slash+"data.ini").c_str(),"w");
+    fout = fopen((pathify(project1)+slash+"data.ini").c_str(), "w");
     REQUIRE(fout!=nullptr);
-    fprintf(fout,"magic_number = 101\n");
-    fprintf(fout,"[project1]\n");
-    fprintf(fout,"x = 3\n");
+    fprintf(fout, "magic_number = 101\n");
+    fprintf(fout, "[project1]\n");
+    fprintf(fout, "x = 3\n");
     fclose(fout);
     fout = nullptr;
 
-    fout = fopen((pathify(yarp_context_dir)+slash+"my_app.ini").c_str(),"w");
+    fout = fopen((pathify(yarp_context_dir)+slash+"my_app.ini").c_str(), "w");
     REQUIRE(fout!=nullptr);
-    fprintf(fout,"magic_number = 1000\n");
+    fprintf(fout, "magic_number = 1000\n");
     fclose(fout);
     fout = nullptr;
 
-    fout = fopen((pathify(yarp_context_dir2)+slash+"shadow.ini").c_str(),"w");
+    fout = fopen((pathify(yarp_context_dir2)+slash+"shadow.ini").c_str(), "w");
     REQUIRE(fout!=nullptr);
-    fprintf(fout,"magic_number = 5000\n");
+    fprintf(fout, "magic_number = 5000\n");
     fclose(fout);
     fout = nullptr;
 
-    fout = fopen((pathify(yarp_data_home_shadow)+slash+"shadow.ini").c_str(),"w");
+    fout = fopen((pathify(yarp_data_home_shadow)+slash+"shadow.ini").c_str(), "w");
     REQUIRE(fout!=nullptr);
-    fprintf(fout,"magic_number = 5001\n");
+    fprintf(fout, "magic_number = 5001\n");
     fclose(fout);
     fout = nullptr;
 
-    fout = fopen((pathify(yarp_context_dir2)+slash+"noshadow.ini").c_str(),"w");
+    fout = fopen((pathify(yarp_context_dir2)+slash+"noshadow.ini").c_str(), "w");
     REQUIRE(fout!=nullptr);
-    fprintf(fout,"magic_number = 5002\n");
+    fprintf(fout, "magic_number = 5002\n");
     fclose(fout);
     fout = nullptr;
 
-    fout = fopen((pathify(yarp_config_home_plugins)+slash+"fakedev1.ini").c_str(),"w");
+    fout = fopen((pathify(yarp_config_home_plugins)+slash+"fakedev1.ini").c_str(), "w");
     REQUIRE(fout!=nullptr);
-    fprintf(fout,"[plugin fakedev1]\n");
-    fprintf(fout,"type device\n");
-    fprintf(fout,"name fakedev1\n");
-    fprintf(fout,"library yarp_fakedev1\n");
-    fprintf(fout,"part fakedev1\n");
+    fprintf(fout, "[plugin fakedev1]\n");
+    fprintf(fout, "type device\n");
+    fprintf(fout, "name fakedev1\n");
+    fprintf(fout, "library yarp_fakedev1\n");
+    fprintf(fout, "part fakedev1\n");
     fclose(fout);
     fout = nullptr;
 
-    fout = fopen((pathify(yarp_data_dir0_plugins)+slash+"fakedev2.ini").c_str(),"w");
+    fout = fopen((pathify(yarp_data_dir0_plugins)+slash+"fakedev2.ini").c_str(), "w");
     REQUIRE(fout!=nullptr);
-    fprintf(fout,"[plugin fakedev2]\n");
-    fprintf(fout,"type device\n");
-    fprintf(fout,"name fakedev2\n");
-    fprintf(fout,"library yarp_fakedev2\n");
-    fprintf(fout,"part fakedev2\n");
+    fprintf(fout, "[plugin fakedev2]\n");
+    fprintf(fout, "type device\n");
+    fprintf(fout, "name fakedev2\n");
+    fprintf(fout, "library yarp_fakedev2\n");
+    fprintf(fout, "part fakedev2\n");
     fclose(fout);
     fout = nullptr;
 }
@@ -326,22 +326,22 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
         // create some test files
 
         {
-            FILE *fout = fopen(fname0,"w");
+            FILE *fout = fopen(fname0, "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"style capability\n");
-            fprintf(fout,"capability_directory \".\"\n");
-            fprintf(fout,"default_capability \".\"\n");
+            fprintf(fout, "style capability\n");
+            fprintf(fout, "capability_directory \".\"\n");
+            fprintf(fout, "default_capability \".\"\n");
             fclose(fout);
             fout = nullptr;
 
-            fout = fopen(fname1,"w");
+            fout = fopen(fname1, "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"alt %s\n", fname2);
+            fprintf(fout, "alt %s\n", fname2);
             fclose(fout);
             fout = nullptr;
 
-            fout = fopen(fname2,"w");
-            fprintf(fout,"x 14\n");
+            fout = fopen(fname2, "w");
+            fprintf(fout, "x 14\n");
             fclose(fout);
             fout = nullptr;
 
@@ -352,19 +352,19 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
                                    nullptr };
             int argc = 7;
 
-            rf.configure(argc,(char **)argv);
+            rf.configure(argc, (char **)argv);
             std::string alt = rf.findFile("alt");
             CHECK(alt!=""); // found ini file
 
-            rf.setDefault("alt2",fname2);
+            rf.setDefault("alt2", fname2);
             alt = rf.findFile("alt2");
             CHECK(alt!=""); // default setting worked
 
-            rf.setDefault("alt3","_yarp_nonexistent.txt");
+            rf.setDefault("alt3", "_yarp_nonexistent.txt");
             alt = rf.findFile("alt3");
             CHECK(alt==""); // cannot find nonexistent files
 
-            rf.setDefault("alt","_yarp_nonexistent.txt");
+            rf.setDefault("alt", "_yarp_nonexistent.txt");
             alt = rf.findFile("alt");
             CHECK(alt!=""); // default setting is safe
 
@@ -384,16 +384,16 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
         // create some test files
 
         {
-            FILE *fout = fopen(fname0,"w");
+            FILE *fout = fopen(fname0, "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"style capability\n");
-            fprintf(fout,"capability_directory \".\"\n");
-            fprintf(fout,"default_capability \".\"\n");
+            fprintf(fout, "style capability\n");
+            fprintf(fout, "capability_directory \".\"\n");
+            fprintf(fout, "default_capability \".\"\n");
             fclose(fout);
             fout = nullptr;
 
-            fout = fopen(fname1,"w");
-            fprintf(fout,"x 14\n");
+            fout = fopen(fname1, "w");
+            fprintf(fout, "x 14\n");
             fclose(fout);
             fout = nullptr;
 
@@ -405,7 +405,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
             int argc = 7;
 
             ResourceFinder rf1;
-            rf1.configure(argc,(char **)argv);
+            rf1.configure(argc, (char **)argv);
             CHECK(rf1.find("x").asInt32() == 14); // found x
 
             const char *argv2[] = { "ignore",
@@ -418,7 +418,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
             int argc2 = 11;
 
             ResourceFinder rf2;
-            rf2.configure(argc2,(char **)argv2);
+            rf2.configure(argc2, (char **)argv2);
             CHECK(rf2.find("y").asInt32() == 30); // found y
             CHECK(rf2.find("x").asInt32() == 20); // override x
         }
@@ -433,7 +433,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
                                "--verbose", "0",
                                nullptr };
         int argc = 7;
-        rf.configure(argc,(char **)argv);
+        rf.configure(argc, (char **)argv);
         CHECK(rf.getContext() == "zig"); // recovered context
     }
 
@@ -443,26 +443,26 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
         const char *fname1 = "_yarp_regression_subgroup_test_rf1.txt";
         const char *fname2 = "_yarp_regression_subgroup_test_rf2.txt";
         {
-            FILE *fout = fopen(fname0,"w");
+            FILE *fout = fopen(fname0, "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"[section1]\n");
-            fprintf(fout,"fname \"_yarp_regression_subgroup_test_rf1.txt\"\n");
-            fprintf(fout,"[section2]\n");
-            fprintf(fout,"fname \"_yarp_regression_subgroup_test_rf2.txt\"\n");
+            fprintf(fout, "[section1]\n");
+            fprintf(fout, "fname \"_yarp_regression_subgroup_test_rf1.txt\"\n");
+            fprintf(fout, "[section2]\n");
+            fprintf(fout, "fname \"_yarp_regression_subgroup_test_rf2.txt\"\n");
             fclose(fout);
             fout = nullptr;
         }
         {
-            FILE *fout = fopen(fname1,"w");
+            FILE *fout = fopen(fname1, "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"x 1\n");
+            fprintf(fout, "x 1\n");
             fclose(fout);
             fout = nullptr;
         }
         {
-            FILE *fout = fopen(fname2,"w");
+            FILE *fout = fopen(fname2, "w");
             REQUIRE(fout!=nullptr);
-            fprintf(fout,"x 2\n");
+            fprintf(fout, "x 2\n");
             fclose(fout);
             fout = nullptr;
         }
@@ -473,7 +473,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
                                "--verbose", "0",
                                nullptr };
         int argc = 7;
-        rf.configure(argc,(char **)argv);
+        rf.configure(argc, (char **)argv);
         ResourceFinder rf1 = rf.findNestedResourceFinder("section1");
         //CHECK(rf1.findFile("fname").c_str() == fname1); // section1 ok
         CHECK_FALSE(rf1.isNull()); // section1 not null ok
@@ -498,7 +498,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
         rf.setDefault("string", defString);
         rf.setDefault("constchar", defString.c_str());
         rf.setDefault("list", defList.toString());
-        rf.configure(argc,(char **)argv);
+        rf.configure(argc, (char **)argv);
         CHECK(rf.find("int").asInt32() == defInt); // default integer set correctly
         CHECK(rf.find("double").asFloat64() == Approx(defDouble)); // default double set correctly
         CHECK(rf.find("string").asString() == defString); // default string set correctly
@@ -513,15 +513,15 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
         saveEnvironment("YARP_DATA_HOME");
         saveEnvironment("XDG_DATA_HOME");
         saveEnvironment("HOME");
-        Network::setEnvironment("YARP_DATA_HOME","/foo");
+        Network::setEnvironment("YARP_DATA_HOME", "/foo");
         CHECK(ResourceFinder::getDataHome() == "/foo"); // YARP_DATA_HOME noticed
         Network::unsetEnvironment("YARP_DATA_HOME");
-        Network::setEnvironment("XDG_DATA_HOME","/foo");
+        Network::setEnvironment("XDG_DATA_HOME", "/foo");
         std::string slash = Network::getDirectorySeparator();
         CHECK(ResourceFinder::getDataHome() == (std::string("/foo") + slash + "yarp")); // XDG_DATA_HOME noticed
         Network::unsetEnvironment("XDG_DATA_HOME");
 #ifdef __linux__
-        Network::setEnvironment("HOME","/foo");
+        Network::setEnvironment("HOME", "/foo");
         CHECK(ResourceFinder::getDataHome() == "/foo/.local/share/yarp"); // HOME noticed
 #endif
         restoreEnvironment();
@@ -532,15 +532,15 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
         saveEnvironment("YARP_CONFIG_HOME");
         saveEnvironment("XDG_CONFIG_HOME");
         saveEnvironment("HOME");
-        Network::setEnvironment("YARP_CONFIG_HOME","/foo");
+        Network::setEnvironment("YARP_CONFIG_HOME", "/foo");
         CHECK(ResourceFinder::getConfigHome() == "/foo"); // YARP_CONFIG_HOME noticed
         Network::unsetEnvironment("YARP_CONFIG_HOME");
-        Network::setEnvironment("XDG_CONFIG_HOME","/foo");
+        Network::setEnvironment("XDG_CONFIG_HOME", "/foo");
         std::string slash = Network::getDirectorySeparator();
         CHECK(ResourceFinder::getConfigHome() == (std::string("/foo") + slash + "yarp")); // XDG_CONFIG_HOME noticed
         Network::unsetEnvironment("XDG_CONFIG_HOME");
 #ifdef __linux__
-        Network::setEnvironment("HOME","/foo");
+        Network::setEnvironment("HOME", "/foo");
         CHECK(ResourceFinder::getConfigHome() == "/foo/.config/yarp"); // HOME noticed
 #endif
         restoreEnvironment();
@@ -555,19 +555,19 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
         std::string foobar = std::string("/foo") + colon + "/bar";
         std::string yfoo = std::string("/foo") + slash + "yarp";
         std::string ybar = std::string("/bar") + slash + "yarp";
-        Network::setEnvironment("YARP_DATA_DIRS",foobar);
+        Network::setEnvironment("YARP_DATA_DIRS", foobar);
         Bottle dirs;
         dirs = ResourceFinder::getDataDirs();
         CHECK(dirs.size() == (size_t) 2); // YARP_DATA_DIRS parsed as two directories
         CHECK(dirs.get(0).asString() == "/foo"); // YARP_DATA_DIRS first dir ok
         CHECK(dirs.get(1).asString() == "/bar"); // YARP_DATA_DIRS second dir ok
 
-        Network::setEnvironment("YARP_DATA_DIRS","/foo");
+        Network::setEnvironment("YARP_DATA_DIRS", "/foo");
         dirs = ResourceFinder::getDataDirs();
         CHECK(dirs.size() == (size_t) 1); // YARP_DATA_DIRS parsed as one directory
 
         Network::unsetEnvironment("YARP_DATA_DIRS");
-        Network::setEnvironment("XDG_DATA_DIRS",foobar);
+        Network::setEnvironment("XDG_DATA_DIRS", foobar);
         dirs = ResourceFinder::getDataDirs();
         CHECK(dirs.size() == (size_t) 2); // XDG_DATA_DIRS gives two directories
         CHECK(dirs.get(0).asString() == yfoo); // XDG_DATA_DIRS first dir ok
@@ -593,7 +593,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
         std::string foobar = std::string("/foo") + colon + "/bar";
         std::string yfoo = std::string("/foo") + slash + "yarp";
         std::string ybar = std::string("/bar") + slash + "yarp";
-        Network::setEnvironment("YARP_CONFIG_DIRS",foobar);
+        Network::setEnvironment("YARP_CONFIG_DIRS", foobar);
         Bottle dirs;
         dirs = ResourceFinder::getConfigDirs();
         CHECK(dirs.size() == (size_t) 2); // YARP_CONFIG_DIRS parsed as two directories
@@ -601,7 +601,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
         CHECK(dirs.get(1).asString() == "/bar"); // YARP_CONFIG_DIRS second dir ok
 
         Network::unsetEnvironment("YARP_CONFIG_DIRS");
-        Network::setEnvironment("XDG_CONFIG_DIRS",foobar);
+        Network::setEnvironment("XDG_CONFIG_DIRS", foobar);
         dirs = ResourceFinder::getConfigDirs();
         CHECK(dirs.size() == (size_t) 2); // XDG_CONFIG_DIRS gives two directories
         CHECK(dirs.get(0).asString() == yfoo); // XDG_CONFIG_DIRS first dir ok
@@ -630,7 +630,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
 
             ResourceFinder rf;
             Property p;
-            bool ok = rf.readConfig(p,"data.ini",
+            bool ok = rf.readConfig(p, "data.ini",
                                     ResourceFinderOptions::findFirstMatch());
             CHECK(ok); // read a data.ini
             CHECK(p.find("magic_number").asInt32() == 42); // right version found
@@ -639,7 +639,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
             CHECK_FALSE(p.check("project1")); // project1 not found
             p.clear();
             //rf.setVerbose(true);
-            rf.readConfig(p,"data.ini",
+            rf.readConfig(p, "data.ini",
                           ResourceFinderOptions::findAllMatch());
             CHECK(p.find("magic_number").asInt32() == 42); // right priority
             CHECK(p.check("data_home")); // data_home found
@@ -658,7 +658,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
             ResourceFinder rf;
             rf.setDefaultContext("my_app");
             Property p;
-            bool ok = rf.readConfig(p,"my_app.ini",
+            bool ok = rf.readConfig(p, "my_app.ini",
                                     ResourceFinderOptions::findFirstMatch());
             CHECK(ok); // read a my_app.ini
             CHECK(p.find("magic_number").asInt32() == 1000); // right version found
@@ -668,7 +668,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
             ResourceFinder rf;
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app.ini");
-            rf.configure(0,nullptr);
+            rf.configure(0, nullptr);
             CHECK(rf.find("magic_number").asInt32() == 1000); // my_app.ini found as default config file
         }
 
@@ -677,7 +677,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
             std::string contextName = "my_app";
             rf.setDefaultContext(contextName);
             rf.setDefaultConfigFile("my_app.ini");
-            rf.configure(0,nullptr);
+            rf.configure(0, nullptr);
             CHECK(rf.find("magic_number").asInt32() == 1000); // my_app.ini found as default config file
         }
 
@@ -686,7 +686,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
             std::string contextName = "my_app";
             rf.setDefaultContext(contextName.c_str());
             rf.setDefaultConfigFile("my_app.ini");
-            rf.configure(0,nullptr);
+            rf.configure(0, nullptr);
             CHECK(rf.find("magic_number").asInt32() == 1000); // my_app.ini found as default config file
         }
 
@@ -694,7 +694,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
             ResourceFinder rf;
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("shadow.ini");
-            rf.configure(0,nullptr);
+            rf.configure(0, nullptr);
             CHECK(rf.find("magic_number").asInt32() == 5001); // shadow.ini found as correct location
         }
 
@@ -702,7 +702,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
             ResourceFinder rf;
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("noshadow.ini");
-            rf.configure(0,nullptr);
+            rf.configure(0, nullptr);
             CHECK(rf.find("magic_number").asInt32() == 5002); // noshadow.ini found as correct location
         }
 
@@ -710,11 +710,11 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
             ResourceFinder rf;
             rf.setDefaultContext("shadowtest");
             rf.setDefaultConfigFile("noshadow.ini");
-            rf.configure(0,nullptr);
+            rf.configure(0, nullptr);
             CHECK(rf.find("magic_number").asInt32() == 5002); // noshadow.ini found as correct location
             Property p;
             ResourceFinderOptions opts;
-            CHECK(rf.readConfig(p,"shadow.ini",opts)); // found shadow.ini
+            CHECK(rf.readConfig(p, "shadow.ini", opts)); // found shadow.ini
             CHECK(p.find("magic_number").asInt32() == 5001); // shadow.ini found as correct location
         }
 
@@ -745,10 +745,10 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
             const char *fname1 = "_yarp_regression_test_rf1.txt";
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile(fname1); // should be in pwd
-            rf.configure(0,nullptr);
+            rf.configure(0, nullptr);
 
             char buf[1000];
-            char *result = yarp::os::getcwd(buf,sizeof(buf));
+            char *result = yarp::os::getcwd(buf, sizeof(buf));
             CHECK(rf.getHomeContextPath() == result); // cwd found as context directory for writing
             CHECK(rf.getHomeRobotPath() == result); // cwd found as robot directory for writing
         }
@@ -757,7 +757,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
             ResourceFinder rf;
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app.ini");
-            rf.configure(0,nullptr);
+            rf.configure(0, nullptr);
 
             bool found;
             std::string robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
@@ -791,7 +791,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
             ResourceFinder rf;
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app.ini");
-            bool configures = rf.configure(0,nullptr);
+            bool configures = rf.configure(0, nullptr);
             CHECK(configures); // ok with default file that exists
         }
 
@@ -802,7 +802,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
                                    "--from", "my_app.ini",
                                    nullptr };
             int argc = 3;
-            bool configures = rf.configure(argc,(char **)argv);
+            bool configures = rf.configure(argc, (char **)argv);
             CHECK(configures); // ok with from file that exists
         }
 
@@ -810,7 +810,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
             ResourceFinder rf;
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app_not_there.ini");
-            bool configures = rf.configure(0,nullptr);
+            bool configures = rf.configure(0, nullptr);
             CHECK(configures); // ok with default file that does not exist
         }
 
@@ -821,7 +821,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
                                    "--from", "my_app_not_there.ini",
                                    nullptr };
             int argc = 3;
-            bool configures = rf.configure(argc,(char **)argv);
+            bool configures = rf.configure(argc, (char **)argv);
             CHECK_FALSE(configures); // fails with from file that is missing
         }
     }

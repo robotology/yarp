@@ -26,12 +26,12 @@ void checkCompanion(bool fake) {
     NetworkBase::setLocalMode(fake);
     Contact address("/foo2", "tcp", "127.0.0.1", safePort());
     NetworkBase::registerContact(address);
-    NetworkBase::connect("/junk","/junk2",nullptr,true);
-    NetworkBase::connect("/foo2","/junk2",nullptr,true);
+    NetworkBase::connect("/junk", "/junk2", nullptr, true);
+    NetworkBase::connect("/foo2", "/junk2", nullptr, true);
     for (int i=0; i<5; i++) {
         char buf[100];
-        sprintf(buf,"/many/foo/%d", i);
-        NetworkBase::connect(buf,"/junk2",nullptr,true);
+        sprintf(buf, "/many/foo/%d", i);
+        NetworkBase::connect(buf, "/junk2", nullptr, true);
     }
     NetworkBase::setLocalMode(false);
 }
@@ -42,7 +42,7 @@ TEST_CASE("OS::impl::NameServerTest", "[yarp::os][yarp::os::impl]")
     {
         Contact address("tcp", "127.0.0.1", safePort());
         NameServer ns;
-        ns.registerName("/foo",address);
+        ns.registerName("/foo", address);
         Contact a1 = ns.queryName("/foo");
         CHECK(a1.isValid() == true); // recover address
         CHECK(a1.getHost() == "127.0.0.1"); // machine name matches

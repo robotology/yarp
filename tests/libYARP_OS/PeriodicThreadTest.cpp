@@ -142,7 +142,7 @@ public:
     bool fail;
     int state;
 
-    PeriodicThread3(double r): PeriodicThread(r),fail(false),state(-1){}
+    PeriodicThread3(double r): PeriodicThread(r), fail(false), state(-1){}
 
     void threadWillFail(bool f)
     {
@@ -181,7 +181,7 @@ class PeriodicThread4: public PeriodicThread
 public:
     int count;
 
-    PeriodicThread4(double r): PeriodicThread(r),count(10){}
+    PeriodicThread4(double r): PeriodicThread(r), count(10){}
 
     virtual void run() override
     {
@@ -199,7 +199,7 @@ class PeriodicThread5: public PeriodicThread
 public:
     int count;
 
-    PeriodicThread5(double r): PeriodicThread(r),count(0){}
+    PeriodicThread5(double r): PeriodicThread(r), count(0){}
 
     virtual void run() override {
         count++;
@@ -217,7 +217,7 @@ class BusyThread: public PeriodicThread
 public:
     int count;
 
-    BusyThread(double r): PeriodicThread(r),count(0){}
+    BusyThread(double r): PeriodicThread(r), count(0){}
 
     virtual void run() override {
         printf("BusyThread running ...\n");

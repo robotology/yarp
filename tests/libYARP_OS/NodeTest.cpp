@@ -51,7 +51,7 @@ static bool waitConnect(const std::string& n1,
                         double timeout) {
     double start = Time::now();
     while (Time::now()-start<timeout) {
-        if (NetworkBase::isConnected(n1,n2)) {
+        if (NetworkBase::isConnected(n1, n2)) {
             return true;
         }
         Time::delay(0.1);
@@ -65,15 +65,15 @@ TEST_CASE("OS::NodeTest", "[yarp::os]")
 
     SECTION("check support for various experimental node/topic/service schemes")
     {
-        parseName("/foo","/foo","","");
-        parseName("/topic@/foo","/foo","/topic","");
-        parseName("/topic-@/foo","/foo","/topic","-");
-        parseName("/topic-1@/foo","/foo","/topic","-1");
-        parseName("/foo=/topic","/foo","/topic","");
-        parseName("/foo=+/topic","/foo","/topic","+");
-        parseName("/foo=+1/topic","/foo","/topic","+1");
-        parseName("/foo-#/topic","/foo","/topic","-");
-        parseName("/foo+#/topic","/foo","/topic","+");
+        parseName("/foo", "/foo", "", "");
+        parseName("/topic@/foo", "/foo", "/topic", "");
+        parseName("/topic-@/foo", "/foo", "/topic", "-");
+        parseName("/topic-1@/foo", "/foo", "/topic", "-1");
+        parseName("/foo=/topic", "/foo", "/topic", "");
+        parseName("/foo=+/topic", "/foo", "/topic", "+");
+        parseName("/foo=+1/topic", "/foo", "/topic", "+1");
+        parseName("/foo-#/topic", "/foo", "/topic", "-");
+        parseName("/foo+#/topic", "/foo", "/topic", "+");
     }
 
     SECTION("most basic node test")
@@ -115,10 +115,10 @@ TEST_CASE("OS::NodeTest", "[yarp::os]")
         c = n.query("/p3");
         CHECK(c.isValid()); // found /p3
 
-        Network::connect(n.query("/p1").getName(),n.query("/p3").getName());
+        Network::connect(n.query("/p1").getName(), n.query("/p3").getName());
         Network::sync(n.query("/p1").getName());
         Network::sync(n.query("/p3").getName());
-        CHECK(Network::isConnected("/test=-/p1","/test2=+/p3")); // good contacts
+        CHECK(Network::isConnected("/test=-/p1", "/test2=+/p3")); // good contacts
 
         n.remove(p3);
         n.remove(p2);
@@ -177,7 +177,7 @@ TEST_CASE("OS::NodeTest", "[yarp::os]")
         // Node names were identical, but changed for ROS compatibility
         p1.open("/test1=+/p1");
         p2.open("/test2=-/p1");
-        CHECK(waitConnect(p1.getName(),p2.getName(),20)); // auto connect working
+        CHECK(waitConnect(p1.getName(), p2.getName(), 20)); // auto connect working
         NameClient::getNameClient().getNodes().clear();
     }
 
@@ -190,15 +190,15 @@ TEST_CASE("OS::NodeTest", "[yarp::os]")
         p2.setReadOnly();
         p1.open("/node1=/a/topic");
         p2.open("/node2=/a/topic");
-        CHECK(waitConnect(p1.getName(),p2.getName(),20)); // direction working
+        CHECK(waitConnect(p1.getName(), p2.getName(), 20)); // direction working
         Port p3, p4;
         p3.setWriteOnly();
         p4.setReadOnly();
         p3.open("/node3=/a/topic");
         p4.open("/node4=/a/topic");
-        CHECK(waitConnect(p1.getName(),p4.getName(),20)); // p1->p4 ok
-        CHECK(waitConnect(p3.getName(),p4.getName(),20)); // p3->p4 ok
-        CHECK(waitConnect(p3.getName(),p2.getName(),20)); // p3->p2 ok
+        CHECK(waitConnect(p1.getName(), p4.getName(), 20)); // p1->p4 ok
+        CHECK(waitConnect(p3.getName(), p4.getName(), 20)); // p3->p4 ok
+        CHECK(waitConnect(p3.getName(), p2.getName(), 20)); // p3->p2 ok
         NameClient::getNameClient().getNodes().clear();
     }
 
@@ -228,7 +228,7 @@ TEST_CASE("OS::NodeTest", "[yarp::os]")
     {
         Type t;
         CHECK_FALSE(t.readProperties().check("test")); // property absent
-        t.addProperty("test",Value("foo"));
+        t.addProperty("test", Value("foo"));
         CHECK(t.readProperties().check("test")); // property present
 
         Type t1(t);

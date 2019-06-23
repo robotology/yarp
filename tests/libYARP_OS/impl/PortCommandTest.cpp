@@ -43,12 +43,12 @@ TEST_CASE("OS::impl::PortCommandTest", "[yarp::os][yarp::os::impl]")
     SECTION("testing text-mode writing...")
     {
 
-        PortCommand cmd1('d',"");;
+        PortCommand cmd1('d', "");;
         BufferedConnectionWriter bw(true);
         cmd1.write(bw);
         CHECK(humanize(bw.toString()) == "d\\r\\n"); // basic data command
 
-        PortCommand cmd2('\0',"/bozo");;
+        PortCommand cmd2('\0', "/bozo");;
         BufferedConnectionWriter bw2(true);
         cmd2.write(bw2);
         CHECK(humanize(bw2.toString()) == "/bozo\\r\\n"); // connect command
@@ -62,7 +62,7 @@ TEST_CASE("OS::impl::PortCommandTest", "[yarp::os][yarp::os::impl]")
         StreamConnectionReader br;
         sis.add("d\r\n");
         Route route;
-        br.reset(sis,nullptr,route,sis.toString().length(),true);
+        br.reset(sis, nullptr, route, sis.toString().length(), true);
         cmd.read(br);
         CHECK('d' == cmd.getKey()); // basic data command
     }

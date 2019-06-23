@@ -78,8 +78,8 @@ TEST_CASE("OS::PortReaderBufferTest", "[yarp::os]")
         p1.open("/p1");
         p2.open("/p2");
 
-        Network::connect("/p0","/p2","local");
-        Network::connect("/p1","/p2","local");
+        Network::connect("/p0", "/p2", "local");
+        Network::connect("/p1", "/p2", "local");
         Network::sync("/p0");
         Network::sync("/p1");
         Network::sync("/p2");
@@ -106,7 +106,7 @@ TEST_CASE("OS::PortReaderBufferTest", "[yarp::os]")
         }
 
         //p0.close();
-        //Network::disconnect("/p1","/p2","local");
+        //Network::disconnect("/p1", "/p2", "local");
         //p1.close();
         //p2.close();
     }
@@ -118,7 +118,7 @@ TEST_CASE("OS::PortReaderBufferTest", "[yarp::os]")
         out.open("/out");
         in.open("/in");
         in.useCallback();
-        Network::connect("/out","/in");
+        Network::connect("/out", "/in");
         Network::sync("/out");
         Network::sync("/in");
         out.prepare().fromString("1 2 3");

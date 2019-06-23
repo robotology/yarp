@@ -77,9 +77,9 @@ static void monoMultiThreadTest(bool multiThread)
     int threadCount = yarp::os::Thread::getCount();
     std::vector<Timer*> timers
     {
-        new Timer({0.5},&monoMultiThreadCallback, multiThread),
-        new Timer({0.4},&monoMultiThreadCallback, multiThread),
-        new Timer({0.3},&monoMultiThreadCallback, multiThread)
+        new Timer({0.5}, &monoMultiThreadCallback, multiThread),
+        new Timer({0.4}, &monoMultiThreadCallback, multiThread),
+        new Timer({0.3}, &monoMultiThreadCallback, multiThread)
     };
 
     for (auto& t : timers)

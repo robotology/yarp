@@ -29,7 +29,7 @@ public:
             reply = command;
             return true;
         }
-        return RFModule::respond(command,reply);
+        return RFModule::respond(command, reply);
     }
 
     virtual bool configure(yarp::os::ResourceFinder &rf) override
@@ -64,12 +64,12 @@ TEST_CASE("OS::RFModuleTest", "[yarp::os]")
         REQUIRE(ok2); // /p2 opened ok
         Network::sync("/p1");
         Network::sync("/p2");
-        Network::connect("/p1","/p2");
+        Network::connect("/p1", "/p2");
 
         Bottle out;
         Bottle in;
         out.addInt32(42);
-        p1.write(out,in);
+        p1.write(out, in);
         CHECK(in.get(0).asInt32() == out.get(0).asInt32()); // Port response
     }
 

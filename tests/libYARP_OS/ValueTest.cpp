@@ -37,8 +37,8 @@ TEST_CASE("OS::ValueTest", "[yarp::os]")
         CHECK(v4.asList()->get(1).asInt32() == 2); // right integer present
 
         Bottle b("(x 10) (y 42)");
-        CHECK(b.check("x",Value(5)).asInt32() == 10); // default not used
-        CHECK(b.check("xx",Value(5)).asInt32() == 5); // default used
+        CHECK(b.check("x", Value(5)).asInt32() == 10); // default not used
+        CHECK(b.check("xx", Value(5)).asInt32() == 5); // default used
 
         Value& vnull = Value::getNullValue();
         Value vnull2(vnull);

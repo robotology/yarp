@@ -17,7 +17,7 @@
 
 using namespace yarp::os;
 
-static bool waitForOutput(Contactable& c,double timeout) {
+static bool waitForOutput(Contactable& c, double timeout) {
     double start = Time::now();
     while (Time::now()-start<timeout) {
         if (c.getOutputCount()>0) {
@@ -45,7 +45,7 @@ TEST_CASE("OS::PublisherTest", "[yarp::os]")
             pin.setStrict();
             pin.open("very_interesting_topic");
 
-            waitForOutput(p,10);
+            waitForOutput(p, 10);
 
             Bottle& b = p.prepare();
             b.clear();
@@ -72,7 +72,7 @@ TEST_CASE("OS::PublisherTest", "[yarp::os]")
             Subscriber<Bottle> pin("/very_interesting_topic");
             pin.read(false); // make sure we are in buffered mode
 
-            waitForOutput(pout,10);
+            waitForOutput(pout, 10);
 
             Bottle& b = pout.prepare();
             b.clear();
@@ -97,7 +97,7 @@ TEST_CASE("OS::PublisherTest", "[yarp::os]")
             Subscriber<Bottle> pin("/very_interesting_topic");
             pin.read(false); // make sure we are in buffered mode
 
-            waitForOutput(pout,10);
+            waitForOutput(pout, 10);
 
             Bottle& b = pout.prepare();
             b.clear();
@@ -125,7 +125,7 @@ TEST_CASE("OS::PublisherTest", "[yarp::os]")
             pin.setStrict();
             pin.open("very_interesting_topic");
 
-            waitForOutput(p,10);
+            waitForOutput(p, 10);
 
             Bottle b;
             b.addInt32(42);
@@ -149,7 +149,7 @@ TEST_CASE("OS::PublisherTest", "[yarp::os]")
             Node n2("/node2");
             Subscriber<Bottle> pin("/very_interesting_topic");
 
-            waitForOutput(pout,10);
+            waitForOutput(pout, 10);
 
             Bottle& b = pout.prepare();
             b.clear();
