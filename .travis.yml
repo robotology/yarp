@@ -453,7 +453,7 @@ before_script:
 
   # Print cmake flags
   - echo "--------------------     BEGIN CMAKE FLAGS    --------------------"
-  - echo -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS}
+  - echo "-G\"${TRAVIS_CMAKE_GENERATOR}\" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS}"
   - echo "--------------------      END CMAKE FLAGS     --------------------"
 
   # Run CMake
