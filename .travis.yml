@@ -365,6 +365,9 @@ notifications:
 
 
 before_install:
+  # Stop docker service
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo service docker stop; fi
+
   # Enable ccache on osx
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH="/usr/local/opt/ccache/libexec:$PATH"; fi
 
