@@ -45,6 +45,9 @@ env:
 # CMake/CTest variables
     - CTEST_OUTPUT_ON_FAILURE=1
     - CLICOLOR_FORCE=1
+# Port 10010 is used by docker-containerd on travis-xenial
+# See also https://travis-ci.community/t/port-10010-is-used-by-docker-containerd/3865
+    - YARP_PORT_RANGE=20000
 
 addons:
   apt:
