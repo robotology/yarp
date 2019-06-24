@@ -10,12 +10,13 @@
 #ifndef YARP_OS_IMPL_PROTOCOL_H
 #define YARP_OS_IMPL_PROTOCOL_H
 
-#include <yarp/os/OutputProtocol.h>
-#include <yarp/os/InputProtocol.h>
-#include <yarp/os/ConnectionState.h>
-#include <yarp/os/NullConnection.h>
 #include <yarp/os/Carrier.h>
+#include <yarp/os/ConnectionState.h>
+#include <yarp/os/InputProtocol.h>
+#include <yarp/os/NullConnection.h>
+#include <yarp/os/OutputProtocol.h>
 #include <yarp/os/ShiftStream.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
 namespace yarp {
@@ -27,9 +28,10 @@ namespace impl {
  * The Protocol object for a connection holds its streams (which may
  * change over time) and its carriers (which may be chained).
  */
-class YARP_OS_impl_API Protocol : public yarp::os::OutputProtocol,
-                                  public yarp::os::InputProtocol,
-                                  public yarp::os::ConnectionState
+class YARP_OS_impl_API Protocol :
+        public yarp::os::OutputProtocol,
+        public yarp::os::InputProtocol,
+        public yarp::os::ConnectionState
 {
 public:
     /**
@@ -183,27 +185,26 @@ private:
      */
     void closeHelper();
 
-    int messageLen; ///< length remaining in current message (if known)
-    bool pendingAck; ///< is an acknowledgement due
-    Logger& log; ///< connection-specific logger
-    ShiftStream shift; ///< input and output streams
-    bool active; ///< is the connection up and running
-    Carrier* delegate; ///< main carrier specifying behavior of connection
-    Carrier* recv_delegate; ///< modifier for incoming messages
-    Carrier* send_delegate; ///< modifier for outgoing messages
-    bool need_recv_delegate; ///< turns false once we've cached recv modifier
-    bool need_send_delegate; ///< turns false once we've cached send modifier
-    bool recv_delegate_fail; ///< turns true if recv modifier could not be cached
-    bool send_delegate_fail; ///< turns true if send modifier could not be cached
-    Route route; ///< names of (sender, carrier, receiver) triplet
-    SizedWriter* writer; ///< writer for current message
+    int messageLen;                ///< length remaining in current message (if known)
+    bool pendingAck;               ///< is an acknowledgement due
+    Logger& log;                   ///< connection-specific logger
+    ShiftStream shift;             ///< input and output streams
+    bool active;                   ///< is the connection up and running
+    Carrier* delegate;             ///< main carrier specifying behavior of connection
+    Carrier* recv_delegate;        ///< modifier for incoming messages
+    Carrier* send_delegate;        ///< modifier for outgoing messages
+    bool need_recv_delegate;       ///< turns false once we've cached recv modifier
+    bool need_send_delegate;       ///< turns false once we've cached send modifier
+    bool recv_delegate_fail;       ///< turns true if recv modifier could not be cached
+    bool send_delegate_fail;       ///< turns true if send modifier could not be cached
+    Route route;                   ///< names of (sender, carrier, receiver) triplet
+    SizedWriter* writer;           ///< writer for current message
     StreamConnectionReader reader; ///< reader for incoming messages
-    yarp::os::Portable* ref; ///< source for current message, so we can
-        ///< bypass serialization on local connections
-    std::string envelope; ///< envelope for current message
+    yarp::os::Portable* ref;       ///< source for current message, so we can bypass serialization on local connections
+    std::string envelope;          ///< envelope for current message
     NullConnection nullConnection; ///< dummy connection
-    yarp::os::Contactable* port; ///< port associated with this connection
-    bool pendingReply; ///< will we be making a reply
+    yarp::os::Contactable* port;   ///< port associated with this connection
+    bool pendingReply;             ///< will we be making a reply
 };
 
 } // namespace impl

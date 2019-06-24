@@ -8,11 +8,11 @@
  */
 
 #include <yarp/os/impl/Logger.h>
+
+#include <yarp/os/Network.h>
+#include <yarp/os/Os.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/ThreadImpl.h>
-#include <yarp/os/impl/PlatformStdio.h>
-#include <yarp/os/Os.h>
-#include <yarp/os/Network.h>
 
 #include <cstdio>
 
@@ -20,7 +20,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
-Logger::Logger(const char *prefix, Logger *parent) :
+Logger::Logger(const char* prefix, Logger* parent) :
         prefix(prefix),
         parent(parent),
         verbose(0),
@@ -31,7 +31,7 @@ Logger::Logger(const char *prefix, Logger *parent) :
 }
 
 
-Logger::Logger(const char *prefix, Logger& parent) :
+Logger::Logger(const char* prefix, Logger& parent) :
         prefix(prefix),
         parent(&parent),
         verbose(0),
@@ -85,35 +85,35 @@ void Logger::internal_fail(const std::string& txt)
 }
 
 
-void Logger::internal_debug(const char *txt)
+void Logger::internal_debug(const char* txt)
 {
     std::string stxt(txt);
     show(YARP_LM_DEBUG, stxt);
 }
 
 
-void Logger::internal_info(const char *txt)
+void Logger::internal_info(const char* txt)
 {
     std::string stxt(txt);
     show(YARP_LM_INFO, stxt);
 }
 
 
-void Logger::internal_warning(const char *txt)
+void Logger::internal_warning(const char* txt)
 {
     std::string stxt(txt);
     show(YARP_LM_WARNING, stxt);
 }
 
 
-void Logger::internal_error(const char *txt)
+void Logger::internal_error(const char* txt)
 {
     std::string stxt(txt);
     show(YARP_LM_ERROR, stxt);
 }
 
 
-void Logger::internal_fail(const char *txt)
+void Logger::internal_fail(const char* txt)
 {
     std::string stxt(txt);
     show(YARP_LM_ERROR, stxt);
@@ -135,7 +135,7 @@ void Logger::setVerbosity(int verbose)
 }
 
 
-void Logger::setPrefix(const char *prefix)
+void Logger::setPrefix(const char* prefix)
 {
     this->prefix = prefix;
 }
@@ -155,7 +155,7 @@ long int Logger::getPid()
 
 bool Logger::shouldShowInfo()
 {
-    return (verbose>=0);
+    return (verbose >= 0);
 }
 
 
@@ -167,7 +167,7 @@ bool Logger::shouldShowError()
 
 bool Logger::shouldShowDebug()
 {
-    return (verbose>0);
+    return (verbose > 0);
 }
 
 
@@ -175,10 +175,10 @@ void Logger::show(std::uint32_t level, const std::string& txt)
 {
     std::uint32_t inLevel = level;
     //fprintf(stderr, "level %d txt %s\n", level, txt.c_str());
-    if (verbose>0) {
+    if (verbose > 0) {
         level = 10000;
     }
-    if (verbose<0) {
+    if (verbose < 0) {
         level = 0;
     }
     if (stream == nullptr) {
@@ -188,12 +188,9 @@ void Logger::show(std::uint32_t level, const std::string& txt)
         }
     }
     if (parent == nullptr) {
-        if (level>=low) {
-            if (inLevel<=YARP_LM_DEBUG) {
-                fprintf(stream, "%s(%04lx): %s\n",
-                                prefix.c_str(),
-                                ThreadImpl::getKeyOfCaller(),
-                                txt.c_str());
+        if (level >= low) {
+            if (inLevel <= YARP_LM_DEBUG) {
+                fprintf(stream, "%s(%04lx): %s\n", prefix.c_str(), ThreadImpl::getKeyOfCaller(), txt.c_str());
             } else {
                 fprintf(stream, "%s: %s\n", prefix.c_str(), txt.c_str());
             }

@@ -26,16 +26,9 @@
 # endif
 
 
-namespace yarp {
-    namespace dev {
-        class SerialDeviceDriverSettings;
-        class SerialDeviceDriver;
-    }
-}
-
 using namespace yarp::os;
 
-class yarp::dev::SerialDeviceDriverSettings
+class SerialDeviceDriverSettings
 {
 public:
     char CommChannel[100]; // Contains the name of the com port "COM1", "COM2" (windows) or "/etc/stty0", "/dev/stty1" (linux), etc...
@@ -83,7 +76,9 @@ public:
  * A basic Serial Communications Link (RS232, USB).
  *
  */
-class yarp::dev::SerialDeviceDriver : public DeviceDriver, public ISerialDevice
+class SerialDeviceDriver :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::ISerialDevice
 {
 private:
     SerialDeviceDriver(const SerialDeviceDriver&);

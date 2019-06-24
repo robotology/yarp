@@ -34,23 +34,16 @@
 #include <yarp/os/RecursiveMutex.h>
 #include <yarp/os/PeriodicThread.h>
 
-namespace yarp {
-    namespace dev {
-        class FrameTransformClient;
-    }
-}
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 const int TRANSFORM_TIMEOUT_MS = 100; //ms
 const int MAX_PORTS = 5;
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-class Transforms_client_storage : public yarp::os::BufferedPort<yarp::os::Bottle>
+class Transforms_client_storage :
+        public yarp::os::BufferedPort<yarp::os::Bottle>
 {
 private:
-
-
     yarp::os::Bottle m_lastBottle;
     yarp::os::Stamp  m_lastStamp;
     double           m_deltaT;
@@ -83,7 +76,6 @@ public:
     void getEstFrequency(int &ite, double &av, double &min, double &max);
 };
 
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 /**
 * @ingroup dev_impl_network_clients
@@ -92,17 +84,17 @@ public:
 * The client side of any IBattery capable device.
 * Still single thread! concurrent access is unsafe.
 */
-class yarp::dev::FrameTransformClient: public DeviceDriver,
-                                  public IFrameTransform,
-                                  public yarp::os::PortReader,
-                                  public yarp::os::PeriodicThread
+class FrameTransformClient :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IFrameTransform,
+        public yarp::os::PortReader,
+        public yarp::os::PeriodicThread
 {
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
     enum ConnectionType {DISCONNECTED = 0, DIRECT, INVERSE, UNDIRECT};
 
-    yarp::dev::FrameTransformClient::ConnectionType getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor);
-    
+    FrameTransformClient::ConnectionType getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor);
+
     bool canExplicitTransform(const std::string& target_frame_id, const std::string& source_frame_id) const;
     bool getChainedTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform) const;
 
@@ -123,8 +115,6 @@ protected:
         std::string transform_dst;
     };
     std::vector<broadcast_port_t*>  m_array_of_ports;
-
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
 

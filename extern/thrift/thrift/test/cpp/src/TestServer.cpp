@@ -33,11 +33,13 @@
 #include <thrift/server/TThreadedServer.h>
 #include <thrift/transport/THttpServer.h>
 #include <thrift/transport/THttpTransport.h>
+#include <thrift/transport/TNonblockingSSLServerSocket.h>
 #include <thrift/transport/TNonblockingServerSocket.h>
 #include <thrift/transport/TSSLServerSocket.h>
 #include <thrift/transport/TSSLSocket.h>
 #include <thrift/transport/TServerSocket.h>
 #include <thrift/transport/TTransportUtils.h>
+#include <thrift/transport/TZlibTransport.h>
 
 #include "SecondService.h"
 #include "ThriftTest.h"
@@ -47,6 +49,9 @@
 #endif
 #ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
+#endif
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
 #endif
 
 #include <iostream>
@@ -58,7 +63,6 @@
 #include <boost/filesystem.hpp>
 #include <thrift/stdcxx.h>
 
-#include <signal.h>
 #if _WIN32
 #include <thrift/windows/TWinsockSingleton.h>
 #endif
@@ -73,6 +77,17 @@ using namespace apache::thrift::transport;
 using namespace apache::thrift::server;
 
 using namespace thrift::test;
+
+// to handle a controlled shutdown, signal handling is mandatory
+#ifdef HAVE_SIGNAL_H
+apache::thrift::concurrency::Monitor gMonitor;
+void signal_handler(int signum)
+{
+  if (signum == SIGINT) {
+    gMonitor.notifyAll();
+  }
+}
+#endif
 
 class TestHandler : public ThriftTestIf {
 public:
@@ -113,7 +128,7 @@ public:
   void testBinary(std::string& _return, const std::string& thing) {
     std::ostringstream hexstr;
     hexstr << std::hex << thing;
-    printf("testBinary(%lu: %s)\n", thing.size(), hexstr.str().c_str());
+    printf("testBinary(%lu: %s)\n", safe_numeric_cast<unsigned long>(thing.size()), hexstr.str().c_str());
     _return = thing;
   }
 
@@ -557,6 +572,7 @@ int main(int argc, char** argv) {
 #endif
   int port = 9090;
   bool ssl = false;
+  bool zlib = false;
   string transport_type = "buffered";
   string protocol_type = "binary";
   string server_type = "simple";
@@ -573,9 +589,10 @@ int main(int argc, char** argv) {
     ("domain-socket", po::value<string>(&domain_socket) ->default_value(domain_socket), "Unix Domain Socket (e.g. /tmp/ThriftTest.thrift)")
     ("abstract-namespace", "Create the domain socket in the Abstract Namespace (no connection with filesystem pathnames)")
     ("server-type", po::value<string>(&server_type)->default_value(server_type), "type of server, \"simple\", \"thread-pool\", \"threaded\", or \"nonblocking\"")
-    ("transport", po::value<string>(&transport_type)->default_value(transport_type), "transport: buffered, framed, http")
+    ("transport", po::value<string>(&transport_type)->default_value(transport_type), "transport: buffered, framed, http, zlib")
     ("protocol", po::value<string>(&protocol_type)->default_value(protocol_type), "protocol: binary, compact, header, json, multi, multic, multih, multij")
     ("ssl", "Encrypted Transport using SSL")
+    ("zlib", "Wrapped Transport using Zlib")
     ("processor-events", "processor-events")
     ("workers,n", po::value<size_t>(&workers)->default_value(workers), "Number of thread pools workers. Only valid for thread-pool server type")
     ("string-limit", po::value<int>(&string_limit))
@@ -619,6 +636,8 @@ int main(int argc, char** argv) {
       if (transport_type == "buffered") {
       } else if (transport_type == "framed") {
       } else if (transport_type == "http") {
+      } else if (transport_type == "zlib") {
+        // crosstester will pass zlib as a flag and a transport right now...
       } else {
         throw invalid_argument("Unknown transport type " + transport_type);
       }
@@ -633,6 +652,16 @@ int main(int argc, char** argv) {
   if (vm.count("ssl")) {
     ssl = true;
   }
+
+  if (vm.count("zlib")) {
+    zlib = true;
+  }
+
+#if defined(HAVE_SIGNAL_H) && defined(SIGPIPE)
+  if (ssl) {
+    signal(SIGPIPE, SIG_IGN); // for OpenSSL, otherwise we end abruptly
+  }
+#endif
 
   if (vm.count("abstract-namespace")) {
     abstract_namespace = true;
@@ -676,7 +705,9 @@ int main(int argc, char** argv) {
     sslSocketFactory->loadCertificate(certPath.c_str());
     sslSocketFactory->loadPrivateKey(keyPath.c_str());
     sslSocketFactory->ciphers("ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
-    serverSocket = stdcxx::shared_ptr<TServerSocket>(new TSSLServerSocket(port, sslSocketFactory));
+    if (server_type != "nonblocking") {
+      serverSocket = stdcxx::shared_ptr<TServerSocket>(new TSSLServerSocket(port, sslSocketFactory));
+    }
   } else {
     if (domain_socket != "") {
       if (abstract_namespace) {
@@ -697,14 +728,16 @@ int main(int argc, char** argv) {
   stdcxx::shared_ptr<TTransportFactory> transportFactory;
 
   if (transport_type == "http" && server_type != "nonblocking") {
-    stdcxx::shared_ptr<TTransportFactory> httpTransportFactory(new THttpServerTransportFactory());
-    transportFactory = httpTransportFactory;
+    transportFactory = stdcxx::make_shared<THttpServerTransportFactory>();
   } else if (transport_type == "framed") {
-    stdcxx::shared_ptr<TTransportFactory> framedTransportFactory(new TFramedTransportFactory());
-    transportFactory = framedTransportFactory;
+    transportFactory = stdcxx::make_shared<TFramedTransportFactory>();
   } else {
-    stdcxx::shared_ptr<TTransportFactory> bufferedTransportFactory(new TBufferedTransportFactory());
-    transportFactory = bufferedTransportFactory;
+    transportFactory = stdcxx::make_shared<TBufferedTransportFactory>();
+  }
+
+  if (zlib) {
+    // hmm.. doesn't seem to be a way to make it wrap the others...
+    transportFactory = stdcxx::make_shared<TZlibTransportFactory>();
   }
 
   // Server Info
@@ -738,13 +771,11 @@ int main(int argc, char** argv) {
     server.reset(new TSimpleServer(testProcessor, serverSocket, transportFactory, protocolFactory));
   } else if (server_type == "thread-pool") {
 
-    stdcxx::shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(workers);
-
     stdcxx::shared_ptr<PlatformThreadFactory> threadFactory
         = stdcxx::shared_ptr<PlatformThreadFactory>(new PlatformThreadFactory());
 
+    stdcxx::shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(workers);
     threadManager->threadFactory(threadFactory);
-
     threadManager->start();
 
     server.reset(new TThreadPoolServer(testProcessor,
@@ -753,7 +784,6 @@ int main(int argc, char** argv) {
                                        protocolFactory,
                                        threadManager));
   } else if (server_type == "threaded") {
-
     server.reset(
         new TThreadedServer(testProcessor, serverSocket, transportFactory, protocolFactory));
   } else if (server_type == "nonblocking") {
@@ -769,10 +799,15 @@ int main(int argc, char** argv) {
       // provide a stop method.
       TEvhttpServer nonblockingServer(testBufferProcessor, port);
       nonblockingServer.serve();
-    } else {
-      stdcxx::shared_ptr<transport::TNonblockingServerSocket> nbSocket;
-      nbSocket.reset(new transport::TNonblockingServerSocket(port));
+    } else if (transport_type == "framed") {
+      stdcxx::shared_ptr<transport::TNonblockingServerTransport> nbSocket;
+      nbSocket.reset(
+          ssl ? new transport::TNonblockingSSLServerSocket(port, sslSocketFactory)
+              : new transport::TNonblockingServerSocket(port));
       server.reset(new TNonblockingServer(testProcessor, protocolFactory, nbSocket));
+    } else {
+      cerr << "server-type nonblocking requires transport of http or framed" << endl;
+      exit(1);
     }
   }
 
@@ -782,20 +817,23 @@ int main(int argc, char** argv) {
       // if using header
       server->setOutputProtocolFactory(stdcxx::shared_ptr<TProtocolFactory>());
     }
+    
     apache::thrift::concurrency::PlatformThreadFactory factory;
     factory.setDetached(false);
     stdcxx::shared_ptr<apache::thrift::concurrency::Runnable> serverThreadRunner(server);
     stdcxx::shared_ptr<apache::thrift::concurrency::Thread> thread
         = factory.newThread(serverThreadRunner);
-    thread->start();
 
-    // HACK: cross language test suite is unable to handle cin properly
-    //       that's why we stay in a endless loop here
-    while (1) {
-    }
-    // FIXME: find another way to stop the server (e.g. a signal)
-    // cout<<"Press enter to stop the server."<<endl;
-    // cin.ignore(); //wait until a key is pressed
+#ifdef HAVE_SIGNAL_H
+    signal(SIGINT, signal_handler);
+#endif
+
+    thread->start();
+    gMonitor.waitForever();         // wait for a shutdown signal
+    
+#ifdef HAVE_SIGNAL_H
+    signal(SIGINT, SIG_DFL);
+#endif
 
     server->stop();
     thread->join();
@@ -805,3 +843,4 @@ int main(int argc, char** argv) {
   cout << "done." << endl;
   return 0;
 }
+

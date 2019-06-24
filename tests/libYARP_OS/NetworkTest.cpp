@@ -17,9 +17,10 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/QosStyle.h>
 
-#include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/TcpFace.h>
-//#include "TestList.h"
+
+#include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -69,9 +70,9 @@ public:
     }
 
     virtual void run() override {
-        Bottle b1,b2;
+        Bottle b1, b2;
         while (!isStopping()) {
-            p.read(b1,true);
+            p.read(b1, true);
             //printf("READ %s\n", b1.toString().c_str());
             for (int i=0; i<10 && !isStopping(); i++) {
                 Time::delay(1);
@@ -87,37 +88,49 @@ public:
     }
 };
 
-class NetworkTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "NetworkTest"; }
+static bool waitConnect(const std::string& n1,
+                        const std::string& n2,
+                        double timeout) {
+    double start = Time::now();
+    while (Time::now()-start<timeout) {
+        if (NetworkBase::isConnected(n1, n2)) {
+            return true;
+        }
+        Time::delay(0.1);
+    }
+    return false;
+}
 
-    void checkConnect() {
-        report(0,"checking return value of connect method");
+TEST_CASE("OS::NetworkTest", "[yarp::os]")
+{
+
+    Network::setLocalMode(true);
+
+    SECTION("checking return value of connect method")
+    {
         Port p1;
         Port p2;
         bool ok1 = p1.open("/p1");
         bool ok2 = p2.open("/p2");
-        checkTrue(ok1&&ok2,"ports opened ok");
-        if (!(ok1&&ok2)) {
-            return;
-        }
+        REQUIRE(ok1); // port /p1 opened ok
+        REQUIRE(ok2); // port /p2 opened ok
         Network::sync("/p1");
         Network::sync("/p2");
-        checkTrue(Network::connect("/p1","/p2"),"good connect");
-        checkFalse(Network::connect("/p1","/p3"),"bad connect, not existing destination");
-        checkFalse(Network::connect("/p1","/p2 /p3"),"bad connect, invalid destination");
-        checkFalse(Network::connect("/p1 /p2","/p2"),"bad connect, invalid source");
-        checkFalse(Network::connect("/p1/", "/p2"),"bad connect, source with ending '/'");
-        checkFalse(Network::connect("/p1", "/p2/"),"bad connect, destination with ending '/'");
-        checkFalse(Network::connect("p1", "/p2"),"bad connect, source without starting '/'");
-        checkFalse(Network::connect("/p1", "p2"),"bad connect, destination without starting '/'");
+        CHECK(Network::connect("/p1", "/p2")); // good connect
+        CHECK_FALSE(Network::connect("/p1", "/p3")); // bad connect, not existing destination
+        CHECK_FALSE(Network::connect("/p1", "/p2 /p3")); // bad connect, invalid destination
+        CHECK_FALSE(Network::connect("/p1 /p2", "/p2")); // bad connect, invalid source
+        CHECK_FALSE(Network::connect("/p1/", "/p2")); // bad connect, source with ending '/'
+        CHECK_FALSE(Network::connect("/p1", "/p2/")); // bad connect, destination with ending '/'
+        CHECK_FALSE(Network::connect("p1", "/p2")); // bad connect, source without starting '/'
+        CHECK_FALSE(Network::connect("/p1", "p2")); // bad connect, destination without starting '/'
         p2.close();
         p1.close();
     }
 
 
-    void checkSync() {
-        report(0,"checking port synchronization");
+    SECTION("checking port synchronization")
+    {
         Port p1;
         Port p2;
         p1.open("/p1");
@@ -125,7 +138,7 @@ public:
         worker.name = "/p2";
         worker.start();
         Network::sync("/p2");
-        checkTrue(Network::connect("/p1","/p2"),"good connect");
+        CHECK(Network::connect("/p1", "/p2")); // good connect
         worker.fini.post();
         worker.stop();
         //p2.close();
@@ -133,8 +146,8 @@ public:
     }
 
 
-    void checkComms() {
-        report(0,"checking basic communications");
+    SECTION("checking basic communications")
+    {
         Port server;
         NetworkServiceProvider provider;
         server.setReader(provider);
@@ -142,28 +155,27 @@ public:
 
         Network::sync("/server");
         Bottle cmd("10"), reply;
-        Network::write("/server",cmd,reply);
-        checkEqual(reply.size(),(size_t) 2,"got append");
-        checkEqual(reply.get(1).asInt32(),5,"append is correct");
+        Network::write("/server", cmd, reply);
+        CHECK(reply.size() == (size_t) 2); // got append
+        CHECK(reply.get(1).asInt32() == 5); // append is correct
         server.close();
     }
 
-
-    void checkPropertySetGet() {
-        report(0,"checking property storage on name server");
+    SECTION("checking property storage on name server")
+    {
         Network::registerName("/foo");
-        Network::setProperty("/foo","my_prop",Value(15));
-        Value *v = Network::getProperty("/foo","my_prop");
-        checkTrue(v!=nullptr,"got property");
+        Network::setProperty("/foo", "my_prop", Value(15));
+        Value *v = Network::getProperty("/foo", "my_prop");
+        CHECK(v!=nullptr); // got property
         if (v!=nullptr) {
-            checkEqual(v->asInt32(),15,"recover property");
+            CHECK(v->asInt32() == 15); // recover property
             delete v;
         }
         Network::unregisterName("/foo");
     }
 
-    void checkTimeoutNetworkWrite() {
-        report(0,"checking Network::write timeout");
+    SECTION("checking Network::write timeout")
+    {
         SlowResponder sr("/slow");
         sr.start();
         Bottle cmd("hello"), reply;
@@ -173,74 +185,60 @@ public:
         Network::write(Contact("/slow"), cmd, reply, style);
         double duration = Time::now()-start;
         bool goodTime = duration<9;
-        checkEqual(reply.get(0).asString().c_str(),"","check timeout happened");
-        checkTrue(goodTime,"timing looks ok");
+        CHECK(reply.get(0).asString() == ""); // check timeout happened
+        CHECK(goodTime); // timing looks ok
         sr.stop();
     }
 
-    void checkTimeoutNetworkExists() {
+    SECTION("checking Network::exists timeout")
+    {
         ContactStyle style;
         style.timeout = 2.0;
-        report(0,"checking Network::exists timeout");
         Port p;
         p.open("/tcp");
         Contact c = p.where();
-        bool ok = Network::exists("/tcp",style);
-        checkTrue(ok,"a yarp port");
+        bool ok = Network::exists("/tcp", style);
+        CHECK(ok); // a yarp port
         p.close();
         TcpFace face;
-        Contact address(c.getHost(),c.getPort());
-        checkTrue(face.open(address),"open server socket, timeout check proceeds");
+        Contact address(c.getHost(), c.getPort());
+        CHECK(face.open(address)); // open server socket, timeout check proceeds
         Network::registerContact(c);
-        ok = Network::exists("/tcp",style);
+        ok = Network::exists("/tcp", style);
         Network::unregisterContact(c);
-        checkFalse(ok,"not a yarp port");
+        CHECK_FALSE(ok); // not a yarp port
         face.close();
     }
 
-    static bool waitConnect(const std::string& n1,
-                            const std::string& n2,
-                            double timeout) {
-        double start = Time::now();
-        while (Time::now()-start<timeout) {
-            if (NetworkBase::isConnected(n1,n2)) {
-                return true;
-            }
-            Time::delay(0.1);
-        }
-        return false;
-    }
 
-    void checkTopics() {
-        report(0,"checking topics are effective");
-        Network::connect("/NetworkTest/checkTopic/p1","topic://NetworkTest/checkTopic");
-        Network::connect("topic://NetworkTest/checkTopic","/NetworkTest/checkTopic/p2");
+    SECTION("checking topics are effective")
+    {
+        Network::connect("/NetworkTest/checkTopic/p1", "topic://NetworkTest/checkTopic");
+        Network::connect("topic://NetworkTest/checkTopic", "/NetworkTest/checkTopic/p2");
         Port p1;
         Port p2;
         p1.open("/NetworkTest/checkTopic/p1");
         p2.open("/NetworkTest/checkTopic/p2");
-        checkTrue(waitConnect(p1.getName(),p2.getName(),20), 
-                  "auto connect working");
-        Network::disconnect("/NetworkTest/checkTopic/p1","topic://NetworkTest/checkTopic");
-        Network::disconnect("topic://NetworkTest/checkTopic","/NetworkTest/checkTopic/p2");
+        CHECK(waitConnect(p1.getName(), p2.getName(), 20)); // auto connect working
+        Network::disconnect("/NetworkTest/checkTopic/p1", "topic://NetworkTest/checkTopic");
+        Network::disconnect("topic://NetworkTest/checkTopic", "/NetworkTest/checkTopic/p2");
     }
 
-    void checkPersistence() {
-        report(0,"checking non-topic persistence is effective");
+    SECTION("checking non-topic persistence is effective")
+    {
         ContactStyle style;
         style.persistent = true;
-        Network::connect("/NetworkTest/checkPersistence/p1","/NetworkTest/checkPersistence/p2",style);
+        Network::connect("/NetworkTest/checkPersistence/p1", "/NetworkTest/checkPersistence/p2", style);
         Port p1;
         Port p2;
         p1.open("/NetworkTest/checkPersistence/p1");
         p2.open("/NetworkTest/checkPersistence/p2");
-        checkTrue(waitConnect(p1.getName(),p2.getName(),20), 
-                  "auto connect working");
-        Network::disconnect("/NetworkTest/checkPersistence/p1","NetworkTest/checkPersistence/p2",style);
+        CHECK(waitConnect(p1.getName(), p2.getName(), 20)); // auto connect working
+        Network::disconnect("/NetworkTest/checkPersistence/p1", "NetworkTest/checkPersistence/p2", style);
     }
 
-    void checkConnectionQos() {
-        report(0,"checking connection qos");
+    SECTION("checking connection qos")
+    {
         BufferedPort<Bottle> p1;
         BufferedPort<Bottle> p2;
         p1.open("/NetworkTest/checkConnectionQos/p1");
@@ -253,30 +251,11 @@ public:
         style.setThreadPriority(0);
         style.setThreadPolicy(0);
         style.setPacketPriorityByLevel(yarp::os::QosStyle::PacketPriorityNormal);
-        checkTrue(Network::setConnectionQos(p1.getName(), p2.getName(), style, style, false),
-                  "connection Qos working");
+        CHECK(Network::setConnectionQos(p1.getName(), p2.getName(), style, style, false)); // connection Qos working
         Network::disconnect(p1.getName(), p2.getName());
         p1.close();
         p2.close();
     }
 
-    virtual void runTests() override {
-        Network::setLocalMode(true);
-        checkConnect();
-        checkSync();
-        checkComms();
-        checkPropertySetGet();
-        checkTimeoutNetworkWrite();
-        checkTimeoutNetworkExists();
-        checkTopics();
-        checkPersistence();
-        checkConnectionQos();
-        Network::setLocalMode(false);
-    }
-};
-
-static NetworkTest theNetworkTest;
-
-UnitTest& getNetworkTest() {
-    return theNetworkTest;
+    Network::setLocalMode(false);
 }

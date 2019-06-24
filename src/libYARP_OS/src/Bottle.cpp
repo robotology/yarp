@@ -11,7 +11,6 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/NetType.h>
-
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/Logger.h>
 
@@ -24,10 +23,14 @@ using yarp::os::Value;
 using yarp::os::impl::BottleImpl;
 using yarp::os::impl::Storable;
 
+// FIXME this can be constexpr, but swig 3.0.8 is not happy
+const Bottle::size_type Bottle::npos = static_cast<Bottle::size_type>(-1);
+
 class NullBottle : public Bottle
 {
 public:
-    NullBottle() : Bottle()
+    NullBottle() :
+            Bottle()
     {
         setReadOnly(true);
     }
@@ -37,16 +40,20 @@ public:
     }
 };
 
-Bottle::Bottle()
-        : Portable(), Searchable(), implementation(new BottleImpl(this))
+Bottle::Bottle() :
+        Portable(),
+        Searchable(),
+        implementation(new BottleImpl(this))
 {
     yAssert(implementation != nullptr);
     implementation->invalid = false;
     implementation->ro = false;
 }
 
-Bottle::Bottle(const std::string& text)
-        : Portable(), Searchable(), implementation(new BottleImpl(this))
+Bottle::Bottle(const std::string& text) :
+        Portable(),
+        Searchable(),
+        implementation(new BottleImpl(this))
 {
     yAssert(implementation != nullptr);
     implementation->invalid = false;
@@ -54,8 +61,10 @@ Bottle::Bottle(const std::string& text)
     fromString(text);
 }
 
-Bottle::Bottle(const Bottle& bottle)
-        : Portable(), Searchable(), implementation(new BottleImpl(this))
+Bottle::Bottle(const Bottle& bottle) :
+        Portable(),
+        Searchable(bottle),
+        implementation(new BottleImpl(this))
 {
     yAssert(implementation != nullptr);
     implementation->invalid = false;
@@ -63,18 +72,32 @@ Bottle::Bottle(const Bottle& bottle)
     copy(bottle);
 }
 
-Bottle& Bottle::operator=(const Bottle& bottle)
+Bottle::Bottle(std::initializer_list<Value> values) :
+        Portable(),
+        Searchable(),
+        implementation(new BottleImpl(this))
 {
-    implementation->edit();
-    copy(bottle);
+    yAssert(implementation != nullptr);
+    implementation->invalid = false;
+    implementation->ro = false;
+
+    for (const auto& val : values) {
+        add(val);
+    }
+}
+
+Bottle& Bottle::operator=(const Bottle& rhs)
+{
+    if (&rhs != this) {
+        implementation->edit();
+        copy(rhs);
+    }
     return *this;
 }
 
 Bottle::~Bottle()
 {
-    if (implementation) {
-        delete implementation;
-    }
+    delete implementation;
 }
 
 void Bottle::clear()
@@ -222,7 +245,7 @@ int Bottle::getSpecialization()
     return implementation->getSpecialization();
 }
 
-void Bottle::copy(const Bottle& alt, int first, int len)
+void Bottle::copy(const Bottle& alt, size_t first, size_t len)
 {
     implementation->edit();
     if (alt.isNull()) {
@@ -387,9 +410,9 @@ std::string Bottle::describeBottleCode(int code)
         break;
     }
     std::string result = unitName;
-    if (code & BOTTLE_TAG_LIST) {
+    if ((code & BOTTLE_TAG_LIST) != 0) {
         result = "list of " + unitName;
-    } else if (code & BOTTLE_TAG_DICT) {
+    } else if ((code & BOTTLE_TAG_DICT) != 0) {
         result = "dict of " + unitName;
     }
     return result;

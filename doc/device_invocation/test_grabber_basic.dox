@@ -3,7 +3,7 @@
  *
  * \defgroup test_grabber_basic Example for test_grabber (test_grabber_basic)
 
-Instantiates \ref cmd_device_test_grabber "test_grabber" device implemented by yarp::dev::TestFrameGrabber.
+Instantiates \ref cmd_device_test_grabber "test_grabber" device implemented by TestFrameGrabber.
 \verbatim
 # start up a fake image source of size 640x480, with 4 images per second
 device test_grabber
@@ -24,7 +24,10 @@ PolyDriver dev;
 dev.open(p);
 if (dev.isValid()) { /* use the device via view method */ }
 \endcode
-Here is a list of properties checked when starting up a device based on this configuration file.  Note that which properties are checked can depend on whether other properties are present.  In some cases properties can also vary between operating systems.  So this is just an example
+Here is a list of properties checked when starting up a device based on this configuration file.
+Note that which properties are checked can depend on whether other properties are present.
+In some cases properties can also vary between operating systems.
+So this is just an example
 
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
@@ -34,6 +37,7 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>horizontalFov</td><td>desired horizontal fov of test image</td><td>1.0</td></tr>
 <tr><td>verticalFov</td><td>desired vertical fov of test image</td><td>2.0</td></tr>
 <tr><td>mirror</td><td>mirroring disabled by default</td><td>0</td></tr>
+<tr><td>physFocalLength</td><td>Physical focal length of the test_grabber</td><td>3.0</td></tr>
 <tr><td>focalLengthX</td><td>Horizontal component of the focal length of the test_grabber</td><td>4.0</td></tr>
 <tr><td>focalLengthY</td><td>Vertical component of the focal length of the test_grabber</td><td>5.0</td></tr>
 <tr><td>principalPointX</td><td>X coordinate of the principal point of the test_grabber</td><td>6.0</td></tr>
@@ -53,6 +57,6 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>mono</td><td>should emit a monochrome image?</td><td></td></tr>
 </table>
 
-\sa yarp::dev::TestFrameGrabber
+\sa TestFrameGrabber
 
  */

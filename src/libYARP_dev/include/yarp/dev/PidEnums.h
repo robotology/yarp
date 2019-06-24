@@ -11,6 +11,7 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/conf/system.h>
+#include <yarp/dev/api.h>
 
 namespace yarp
 {

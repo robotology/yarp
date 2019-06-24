@@ -29,7 +29,7 @@ private:
 
 public:
     bool expectBlock(char* data, size_t len) override;
-    std::string expectText(int terminatingChar = '\n') override;
+    std::string expectText(const char terminatingChar = '\n') override;
     std::int8_t expectInt8() override;
     std::int16_t expectInt16() override;
     std::int32_t expectInt32() override;

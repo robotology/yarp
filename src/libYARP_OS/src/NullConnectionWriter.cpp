@@ -9,7 +9,7 @@
 #include <yarp/os/NullConnectionWriter.h>
 #include <yarp/os/PortReader.h>
 
-void yarp::os::NullConnectionWriter::appendBlock(const char *data, size_t len)
+void yarp::os::NullConnectionWriter::appendBlock(const char* data, size_t len)
 {
     YARP_UNUSED(data);
     YARP_UNUSED(len);
@@ -45,13 +45,13 @@ void yarp::os::NullConnectionWriter::appendFloat64(yarp::conf::float64_t data)
     YARP_UNUSED(data);
 }
 
-void yarp::os::NullConnectionWriter::appendString(const char *str, int terminate)
+void yarp::os::NullConnectionWriter::appendText(const std::string& str, const char terminate)
 {
     YARP_UNUSED(str);
     YARP_UNUSED(terminate);
 }
 
-void yarp::os::NullConnectionWriter::appendExternalBlock(const char *data, size_t len)
+void yarp::os::NullConnectionWriter::appendExternalBlock(const char* data, size_t len)
 {
     YARP_UNUSED(data);
     YARP_UNUSED(len);
@@ -67,7 +67,7 @@ bool yarp::os::NullConnectionWriter::isBareMode() const
     return false;
 }
 
-void yarp::os::NullConnectionWriter::declareSizes(int argc, int *argv)
+void yarp::os::NullConnectionWriter::declareSizes(int argc, int* argv)
 {
     YARP_UNUSED(argc);
     YARP_UNUSED(argv);
@@ -78,7 +78,7 @@ void yarp::os::NullConnectionWriter::setReplyHandler(PortReader& reader)
     YARP_UNUSED(reader);
 }
 
-void yarp::os::NullConnectionWriter::setReference(Portable *obj)
+void yarp::os::NullConnectionWriter::setReference(Portable* obj)
 {
     YARP_UNUSED(obj);
 }
@@ -112,7 +112,7 @@ bool yarp::os::NullConnectionWriter::isNull() const
     return true;
 }
 
-yarp::os::SizedWriter *yarp::os::NullConnectionWriter::getBuffer() const
+yarp::os::SizedWriter* yarp::os::NullConnectionWriter::getBuffer() const
 {
     return nullptr;
 }

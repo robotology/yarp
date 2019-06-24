@@ -33,13 +33,6 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
 
-// needed for the driver factory.
-yarp::dev::DriverCreator *createFrameTransformServer() {
-    return new DriverCreatorOf<yarp::dev::FrameTransformServer>("transformServer",
-        "transformServer",
-        "yarp::dev::FrameTransformServer");
-}
-
 
 /**
   * Transforms storage
@@ -666,7 +659,7 @@ void FrameTransformServer::run()
                         t.rotation.w() = tfs[i].transform.rotation.w;
                         t.src_frame_id = tfs[i].header.frame_id;
                         t.dst_frame_id = tfs[i].child_frame_id;
-                        //@@@ should we use yarp or ROS timestamps? 
+                        //@@@ should we use yarp or ROS timestamps?
                         t.timestamp = yarp::os::Time::now();
                         //t.timestamp = tfs[i].header.stamp.sec; //@@@this needs some revising
                         (*m_ros_timed_transform_storage).set_transform(t);

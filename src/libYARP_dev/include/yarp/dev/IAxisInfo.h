@@ -10,7 +10,11 @@
 #ifndef YARP_DEV_IAXISINFO_H
 #define YARP_DEV_IAXISINFO_H
 
-#include <yarp/dev/DeviceDriver.h>
+#include <string>
+
+#include <yarp/os/Log.h>
+#include <yarp/os/Vocab.h>
+#include <yarp/dev/api.h>
 
 /*! \file IAxisInfo.h define control board standard interfaces*/
 

@@ -148,7 +148,7 @@ void ImageStorage::resize(size_t x, size_t y, int pixel_type,
 
     if (need_recreation) {
         _free_complete();
-        DBGPF1 printf("HIT recreation for %p %p: %zu %zu %d\n", this, pImage, x, y, pixel_type);
+        DBGPF1 printf("HIT recreation for %p %p: %zu %zu %d\n", static_cast<void*>(this), static_cast<void*>(pImage), x, y, pixel_type);
         _alloc_complete (x, y, pixel_type, quantum, topIsLow);
     }
     extern_type_id = pixel_type;
@@ -542,6 +542,7 @@ size_t Image::getRawImageSize() const {
     return 0;
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.2.0
 void *Image::getIplImage() {
     return ((ImageStorage*)implementation)->pImage;
 }
@@ -651,6 +652,7 @@ void Image::wrapIplImage(void *iplImage) {
     }
 }
 
+#endif // YARP_NO_DEPRECATED
 
 
 bool Image::read(yarp::os::ConnectionReader& connection) {
@@ -793,48 +795,69 @@ bool Image::write(yarp::os::ConnectionWriter& connection) const {
 }
 
 
-Image::Image(const Image& alt) : Portable() {
+Image::Image(const Image& alt) : Portable()
+{
     initialize();
     copy(alt);
 }
 
+Image::Image(Image&& other) noexcept
+    : implementation(other.implementation)
+{
+    other.implementation = nullptr;
+    synchronize();
+}
 
-const Image& Image::operator=(const Image& alt) {
-    copy(alt);
+Image& Image::operator=(Image&& other) noexcept
+{
+    Image moved(std::move(other));
+    std::swap(moved.implementation, implementation);
+    synchronize();
     return *this;
 }
 
 
-bool Image::copy(const Image& alt) {
-
-    int myCode = getPixelCode();
-    if (myCode==0) {
-        setPixelCode(alt.getPixelCode());
-        setQuantum(alt.getQuantum());
+const Image& Image::operator=(const Image& alt)
+{
+    if (&alt != this) {
+        copy(alt);
     }
-    resize(alt.width(),alt.height());
-    int q1 = alt.getQuantum();
-    int q2 = getQuantum();
-    if (q1==0) { q1 = YARP_IMAGE_ALIGN; }
-    if (q2==0) { q2 = YARP_IMAGE_ALIGN; }
+    return *this;
+}
 
-    bool o1 = alt.topIsLowIndex();
-    bool o2 = topIsLowIndex();
 
-    yAssert(width()==alt.width());
-    yAssert(height()==alt.height());
-    if (getPixelCode()==alt.getPixelCode()) {
-        if (getQuantum()==alt.getQuantum()) {
-            yAssert(getRawImageSize()==alt.getRawImageSize());
-            yAssert(q1==q2);
+bool Image::copy(const Image& alt)
+{
+    if (&alt != this)
+    {
+        int myCode = getPixelCode();
+        if (myCode==0) {
+            setPixelCode(alt.getPixelCode());
+            setQuantum(alt.getQuantum());
         }
+        resize(alt.width(),alt.height());
+        int q1 = alt.getQuantum();
+        int q2 = getQuantum();
+        if (q1==0) { q1 = YARP_IMAGE_ALIGN; }
+        if (q2==0) { q2 = YARP_IMAGE_ALIGN; }
+
+        bool o1 = alt.topIsLowIndex();
+        bool o2 = topIsLowIndex();
+
+        yAssert(width()==alt.width());
+        yAssert(height()==alt.height());
+        if (getPixelCode()==alt.getPixelCode()) {
+            if (getQuantum()==alt.getQuantum()) {
+                yAssert(getRawImageSize()==alt.getRawImageSize());
+                yAssert(q1==q2);
+            }
+        }
+
+        copyPixels(alt.getRawImage(),alt.getPixelCode(),
+                   getRawImage(),getPixelCode(),
+                   width(),height(),
+                   getRawImageSize(),q1,q2,o1,o2);
     }
-
-    copyPixels(alt.getRawImage(),alt.getPixelCode(),
-               getRawImage(),getPixelCode(),
-               width(),height(),
-               getRawImageSize(),q1,q2,o1,o2);
-
     return true;
 }
 

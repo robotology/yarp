@@ -13,6 +13,7 @@
 #include <cstdio>
 
 #include <yarp/sig/ImageFile.h>
+#include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/PreciselyTimed.h>
@@ -25,12 +26,6 @@
 
 constexpr yarp::conf::vocab32_t VOCAB_LINE = yarp::os::createVocab('l','i','n','e');
 
-namespace yarp {
-    namespace dev {
-        class TestFrameGrabber;
-    }
-}
-
 /**
  * @ingroup dev_impl_media
  *
@@ -38,13 +33,14 @@ namespace yarp {
  * Implements the IFrameGrabberImage and IFrameGrabberControls
  * interfaces.
  */
-class yarp::dev::TestFrameGrabber : public DeviceDriver,
-                                    public IFrameGrabberImage,
-                                    public IFrameGrabberImageRaw,
-                                    public IFrameGrabberControls,
-                                    public IPreciselyTimed,
-                                    public IAudioVisualStream,
-                                    public IRgbVisualParams
+class TestFrameGrabber :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IFrameGrabberImage,
+        public yarp::dev::IFrameGrabberImageRaw,
+        public yarp::dev::IFrameGrabberControls,
+        public yarp::dev::IPreciselyTimed,
+        public yarp::dev::IAudioVisualStream,
+        public yarp::dev::IRgbVisualParams
 {
 private:
     size_t ct;
@@ -61,7 +57,7 @@ private:
     bool use_mono;
     bool mirror;
     yarp::os::Property intrinsic;
-    yarp::sig::VectorOf<CameraConfig> configurations;
+    yarp::sig::VectorOf<yarp::dev::CameraConfig> configurations;
 
 public:
     /**
@@ -99,19 +95,19 @@ public:
 
     int getRgbWidth() override;
 
-    bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) override;
+    bool getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& configurations) override;
 
-    bool getRgbResolution(int &width, int &height) override;
+    bool getRgbResolution(int& width, int& height) override;
 
     bool setRgbResolution(int width, int height) override;
 
-    bool getRgbFOV(double &horizontalFov, double &verticalFov) override;
+    bool getRgbFOV(double& horizontalFov, double& verticalFov) override;
 
     bool setRgbFOV(double horizontalFov, double verticalFov) override;
 
-    bool getRgbIntrinsicParam(yarp::os::Property &intrinsic) override;
+    bool getRgbIntrinsicParam(yarp::os::Property& intrinsic) override;
 
-    bool getRgbMirroring(bool &mirror) override;
+    bool getRgbMirroring(bool& mirror) override;
 
     bool setRgbMirroring(bool mirror) override;
     //

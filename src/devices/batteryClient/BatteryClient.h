@@ -31,16 +31,10 @@
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 
-namespace yarp {
-    namespace dev {
-        class BatteryClient;
-    }
-}
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 const int BATTERY_TIMEOUT=100; //ms
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 class BatteryInputPortProcessor : public yarp::os::BufferedPort<yarp::os::Bottle>
 {
@@ -79,7 +73,6 @@ public:
     int getStatus();
 
 };
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 /**
 * @ingroup dev_impl_network_clients
@@ -87,11 +80,11 @@ public:
 * The client side of any IBattery capable device.
 * Still single thread! concurrent access is unsafe.
 */
-class yarp::dev::BatteryClient: public DeviceDriver,
-                          public IPreciselyTimed,
-                          public IBattery
+class BatteryClient :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IPreciselyTimed,
+        public yarp::dev::IBattery
 {
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
     BatteryInputPortProcessor inputPort;
     yarp::os::Port rpcPort;
@@ -99,8 +92,6 @@ protected:
     std::string remote;
     yarp::os::Stamp lastTs; //used by IPreciselyTimed
     std::string deviceId;
-    int _rate;
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
 
@@ -142,7 +133,7 @@ public:
     * @param status the battery status
     * @return true/false.
     */
-    bool getBatteryStatus(int &status) override;
+    bool getBatteryStatus(Battery_status &status) override;
 
     /**
     * get the battery hardware charactestics (e.g. max voltage etc)

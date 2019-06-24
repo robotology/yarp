@@ -13,35 +13,39 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 
-#include <yarp/os/impl/UnitTest.h>
-//#include "TestList.h"
+#include <catch.hpp>
+#include <harness.h>
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
-class PortReaderBufferTestHelper : public BufferedPort<Bottle> {
+class PortReaderBufferTestHelper : public BufferedPort<Bottle>
+{
 public:
     int count;
 
-    PortReaderBufferTestHelper() {
+    PortReaderBufferTestHelper()
+    {
         count = 0;
     }
 
     using BufferedPort<Bottle>::onRead;
-    void onRead(Bottle& datum) override {
+    void onRead(Bottle& datum) override
+    {
         count += datum.size();
     }
 };
 
-class PortReaderBufferTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "PortReaderBufferTest"; }
+TEST_CASE("OS::PortReaderBufferTest", "[yarp::os]")
+{
+#if defined(DISABLE_FAILING_TESTS)
+    YARP_SKIP_TEST("Skipping failing tests")
+#endif
 
+    NetworkBase::setLocalMode(true);
 
-    void checkAccept() {
-        report(0, "checking direct object accept...");
-
+    SECTION("checking direct object accept")
+    {
         PortReaderBuffer<Bottle> buffer;
         Bottle dummy;
         Bottle data("hello");
@@ -50,34 +54,32 @@ public:
         buffer.acceptObject(&data, &dummy);
 
         Bottle *bot = buffer.read();
-        checkTrue(bot!=nullptr,"Inserted message received");
+        REQUIRE(bot!=nullptr); // Inserted message received
         if (bot!=nullptr) {
-            checkEqual(bot->toString().c_str(),"hello","value ok");
+            CHECK(bot->toString() == "hello"); // value ok
         }
 
         buffer.acceptObject(&data2, nullptr);
 
         bot = buffer.read();
-        checkTrue(bot!=nullptr,"Inserted message received");
+        REQUIRE(bot!=nullptr); // Inserted message received
         if (bot!=nullptr) {
-            checkEqual(bot->toString().c_str(),"there","value ok");
+            CHECK(bot->toString() == "there"); // value ok
         }
 
         buffer.read(false);
     }
 
-
-    void checkLocal() {
-        report(0, "checking local carrier...");
-
+    SECTION("checking local carrier")
+    {
         Port p0;
         BufferedPort<Bottle> p1, p2;
         p0.open("/p0");
         p1.open("/p1");
         p2.open("/p2");
 
-        Network::connect("/p0","/p2","local");
-        Network::connect("/p1","/p2","local");
+        Network::connect("/p0", "/p2", "local");
+        Network::connect("/p1", "/p2", "local");
         Network::sync("/p0");
         Network::sync("/p1");
         Network::sync("/p2");
@@ -87,9 +89,9 @@ public:
         p0.write(data);
 
         Bottle *bot = p2.read();
-        checkTrue(bot!=nullptr,"Port message received");
+        REQUIRE(bot!=nullptr); // Port message received
         if (bot!=nullptr) {
-            checkEqual(bot->toString().c_str(),"hello","value ok");
+            CHECK(bot->toString() == "hello"); // value ok
         }
 
         Bottle& data2 = p1.prepare();
@@ -98,25 +100,25 @@ public:
 
 
         bot = p2.read();
-        checkTrue(bot!=nullptr,"BufferedPort message received");
+        REQUIRE(bot!=nullptr); // BufferedPort message received
         if (bot!=nullptr) {
-            checkEqual(bot->toString().c_str(),"hello2","value ok");
+            CHECK(bot->toString() == "hello2"); // value ok
         }
 
         //p0.close();
-        //Network::disconnect("/p1","/p2","local");
+        //Network::disconnect("/p1", "/p2", "local");
         //p1.close();
         //p2.close();
     }
 
-    void checkCallback() {
-        report(0, "checking callback...");
+    SECTION("checking callback")
+    {
         BufferedPort<Bottle> out;
         PortReaderBufferTestHelper in;
         out.open("/out");
         in.open("/in");
         in.useCallback();
-        Network::connect("/out","/in");
+        Network::connect("/out", "/in");
         Network::sync("/out");
         Network::sync("/in");
         out.prepare().fromString("1 2 3");
@@ -126,18 +128,13 @@ public:
             Time::delay(0.1);
             rep++;
         }
-        checkEqual(in.count,3,"got message #1");
+        CHECK(in.count == 3); // got message #1
         in.disableCallback();
         out.prepare().fromString("1 2 3 4");
         out.write(true);
         Bottle *datum = in.read();
-        checkTrue(datum!=nullptr, "got message #2");
-        if(datum == nullptr)
-        {
-            report(1, "Message #2 is null..");
-            return;
-        }
-        checkEqual(datum->size(),(size_t) 4,"message is ok");
+        REQUIRE(datum!=nullptr); // got message #2
+        CHECK(datum->size() == (size_t) 4); // message is ok
         in.useCallback();
         in.count = 0;
         out.prepare().fromString("1 2 3 4 5");
@@ -147,51 +144,35 @@ public:
             Time::delay(0.1);
             rep++;
         }
-        checkEqual(in.count,5,"got message #3");
+        CHECK(in.count == 5); // got message #3
     }
 
-    void checkCallbackNoOpen() {
-        report(0, "checking callback part without open...");
+    SECTION("checking callback part without open")
+    {
         {
-            report(0, "test 1");
+            INFO("test 1");
             PortReaderBufferTestHelper in;
             in.useCallback();
             in.disableCallback();
         }
         {
-            report(0, "test 2");
+            INFO("test 2");
             PortReaderBufferTestHelper in;
             in.useCallback();
             in.disableCallback();
         }
         {
-            report(0, "test 3");
+            INFO("test 3");
             PortReaderBufferTestHelper in;
             in.useCallback();
         }
         {
-            report(0, "test 4");
+            INFO("test 4");
             PortReaderBufferTestHelper in;
             in.useCallback();
             in.close();
         }
     }
 
-    virtual void runTests() override {
-        Network::setLocalMode(true);
-
-        //checkLocal(); // still rather experimental
-        // in fact too experimental, omit from general builds
-
-        checkAccept();
-        checkCallback();
-        checkCallbackNoOpen();
-        Network::setLocalMode(false);
-    }
-};
-
-static PortReaderBufferTest thePortReaderBufferTest;
-
-UnitTest& getPortReaderBufferTest() {
-    return thePortReaderBufferTest;
+    NetworkBase::setLocalMode(false);
 }

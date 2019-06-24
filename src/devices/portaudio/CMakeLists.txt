@@ -7,10 +7,10 @@
 
 yarp_prepare_plugin(portaudio
                     CATEGORY device
-                    TYPE yarp::dev::PortAudioDeviceDriver
+                    TYPE PortAudioDeviceDriver
                     INCLUDE PortAudioDeviceDriver.h
                     EXTRA_CONFIG WRAPPER=grabber
-                    DEPENDS "YARP_HAS_PORTAUDIO")
+                    DEPENDS "YARP_HAS_PortAudio")
 
 if(NOT SKIP_portaudio)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -34,10 +34,8 @@ if(NOT SKIP_portaudio)
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-  yarp_install(FILES portaudio.ini
-               COMPONENT ${YARP_PLUGIN_MASTER}
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
+               YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
   yarp_install(FILES portaudio.xml
                DESTINATION ${YARP_MODULES_INSTALL_DIR})
 

@@ -14,6 +14,7 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/sig/ImageUtils.h>
 #include <yarp/os/PortablePair.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/GenericVocabs.h>
@@ -970,48 +971,11 @@ void ServerGrabber::stopThread()
     fgCtrl2_DC1394 = nullptr;
 }
 
-void ServerGrabber::split(const yarp::sig::Image& inputImage, yarp::sig::Image& _img, yarp::sig::Image& _img2)
-{
-
-    int dualImage_rowSizeByte = inputImage.getRowSize();
-    int inHeight = inputImage.height();
-    int singleImage_rowSizeByte = _img.getRowSize();
-    unsigned char *pixelLeft    = _img.getRawImage();
-    unsigned char *pixelRight   = _img2.getRawImage();
-    unsigned char *pixelInput   = inputImage.getRawImage();
-
-    for(int h=0; h<inHeight; h++)
-    {
-        memcpy(pixelLeft  + h*singleImage_rowSizeByte, pixelInput,                          singleImage_rowSizeByte);
-        memcpy(pixelRight + h*singleImage_rowSizeByte, pixelInput+=singleImage_rowSizeByte, singleImage_rowSizeByte);
-        pixelInput+= dualImage_rowSizeByte/2;
-    }
-}
-
 void ServerGrabber::setupFlexImage(const Image &_img, FlexImage &flex_i)
 {
     flex_i.setPixelCode(_img.getPixelCode());
     flex_i.setQuantum(_img.getQuantum());
     flex_i.setExternal(_img.getRawImage(), _img.width(),_img.height());
-
-}
-
-void ServerGrabber::stitch(FlexImage &flex_i, const Image &_img, const Image &_img2){
-
-    int singleImage_rowSizeByte  = _img.getRowSize();
-    unsigned char * pixelLeft    = _img.getRawImage();
-    unsigned char * pixelRight   = _img2.getRawImage();
-    unsigned char * pixelOutLeft = flex_i.getRawImage();
-    unsigned char * pixelOutRight=flex_i.getRawImage()+ singleImage_rowSizeByte;
-    for(size_t h=0; h<_img.height(); h++)
-    {
-        memcpy(pixelOutLeft, pixelLeft,singleImage_rowSizeByte);
-        memcpy(pixelOutRight, pixelRight, singleImage_rowSizeByte);
-        pixelOutLeft+=2*singleImage_rowSizeByte;
-        pixelOutRight+=2*singleImage_rowSizeByte;
-        pixelLeft+= singleImage_rowSizeByte;
-        pixelRight+= singleImage_rowSizeByte;
-    }
 
 }
 
@@ -1262,7 +1226,13 @@ void ServerGrabber::run()
                     flex_i.resize(fgImage->width()*2,fgImage->height());
                     fgImage->getImage(*img);
                     fgImage2->getImage(*img2);
-                    stitch(flex_i, *img, *img2);
+
+                    bool ok = utils::horzConcat(*img, *img2, flex_i);
+                    if (!ok)
+                    {
+                        yError()<<"ServerGrabber: failed to concatenate images";
+                        return;
+                    }
                 }
                 else
                     yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
@@ -1276,7 +1246,12 @@ void ServerGrabber::run()
                     flex_i.resize(fgImageRaw->width()*2,fgImageRaw->height());
                     fgImageRaw->getImage(*img_Raw);
                     fgImageRaw2->getImage(*img2_Raw);
-                    stitch(flex_i, *img_Raw, *img2_Raw);
+                    bool ok = utils::horzConcat(*img_Raw, *img2_Raw, flex_i);
+                    if (!ok)
+                    {
+                        yError()<<"ServerGrabber: failed to concatenate images";
+                        return;
+                    }
                 }
                 else
                     yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
@@ -1304,7 +1279,12 @@ void ServerGrabber::run()
                     yarp::sig::ImageOf<yarp::sig::PixelRgb> inputImage;
                     fgImage->getImage(inputImage);
 
-                    split(inputImage,*img,*img2);
+                    bool ok = utils::vertSplit(inputImage,*img,*img2);
+                    if (!ok)
+                    {
+                        yError()<<"ServerGrabber: failed to split the image";
+                        return;
+                    }
 
                     setupFlexImage(*img,flex_i);
                     setupFlexImage(*img2,flex_i2);
@@ -1319,7 +1299,12 @@ void ServerGrabber::run()
                     yarp::sig::ImageOf<yarp::sig::PixelMono> inputImage;
                     fgImageRaw->getImage(inputImage);
 
-                    split(inputImage,*img_Raw,*img2_Raw);
+                    bool ok = utils::vertSplit(inputImage,*img_Raw,*img2_Raw);
+                    if (!ok)
+                    {
+                        yError()<<"ServerGrabber: failed to split the image";
+                        return;
+                    }
 
                     setupFlexImage(*img_Raw,flex_i);
                     setupFlexImage(*img2_Raw,flex_i2);

@@ -29,17 +29,18 @@ namespace yarp {
                     FORMAT_PGM,
                     FORMAT_PPM,
                     FORMAT_JPG,
-                    FORMAT_NUMERIC
+                    FORMAT_NUMERIC,
+                    FORMAT_PNG
                 };
 
-            // PPM/PGM format
+            // read methods
             bool YARP_sig_API read(ImageOf<PixelRgb>& dest,   const std::string& src, image_fileformat format = FORMAT_ANY);
             bool YARP_sig_API read(ImageOf<PixelBgr>& dest,   const std::string& src, image_fileformat format = FORMAT_ANY);
             bool YARP_sig_API read(ImageOf<PixelRgba>& dest,  const std::string& src, image_fileformat format = FORMAT_ANY);
             bool YARP_sig_API read(ImageOf<PixelMono>& dest,  const std::string& src, image_fileformat format = FORMAT_ANY);
             bool YARP_sig_API read(ImageOf<PixelFloat>& dest, const std::string& src, image_fileformat format = FORMAT_ANY);
 
-            // PPM/PGM format
+            // write methods
             bool YARP_sig_API write(const ImageOf<PixelRgb>& src,   const std::string& dest, image_fileformat format = FORMAT_PPM);
             bool YARP_sig_API write(const ImageOf<PixelBgr>& src,   const std::string& dest, image_fileformat format = FORMAT_PPM);
             bool YARP_sig_API write(const ImageOf<PixelRgba>& src,  const std::string& dest, image_fileformat format = FORMAT_PPM);

@@ -20,6 +20,7 @@ add_subdirectory(libYARP_math)
 add_subdirectory(libYARP_rosmsg)
 add_subdirectory(libYARP_dev)
 add_subdirectory(libYARP_pcl)
+add_subdirectory(libYARP_cv)
 
 # private libraries
 add_subdirectory(libYARP_companion)
@@ -69,9 +70,9 @@ if(YARP_COMPILE_EXECUTABLES)
 endif()
 
 # Robot Testing Framework addons
-if(YARP_COMPILE_RTF_ADDONS)
-  add_subdirectory(libYARP_rtf)
-  add_subdirectory(rtf-plugins)
+if(YARP_COMPILE_RobotTestingFramework_ADDONS)
+  add_subdirectory(libYARP_robottestingframework)
+  add_subdirectory(robottestingframework-plugins)
 endif()
 
 # unmaintained stuff

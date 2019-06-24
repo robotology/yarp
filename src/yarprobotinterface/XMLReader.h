@@ -68,8 +68,10 @@ public:
 
     Robot& getRobot(const std::string &filename);
     void setVerbose(bool verbose);
+    void setEnableDeprecated(bool enab);
 private:
     bool verbose;
+    bool enable_deprecated;
     XMLReaderFileVx * mReader;
 }; // class XMLReader
 

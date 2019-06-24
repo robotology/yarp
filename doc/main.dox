@@ -108,8 +108,9 @@ periodically check it.
 \li \subpage yarp_swig
 \li \subpage portmonitor
 \li \subpage yarp_env_variables
-\li \subpage rtf_plugins
+\li \subpage robottestingframework_plugins
 \li \subpage yarp_pointcloud
+\li \subpage carrier_h264_howto
 
 \section yarp_more_info More information
 \li \subpage what_is_yarp

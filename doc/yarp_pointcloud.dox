@@ -95,6 +95,86 @@ In this case `pc3` will have only the `XYZ` and `Normal` values of `pc1` because
 the `RGBA` values have been lost in the construction of `pc2` that not contains
 the `RGBA` field.
 
+\section depth_to_PC Compute PointClouds from depth images
+
+YARP provides two functions that allow to compute `yarp::sig::PointCloud`s given depth image
+and intrinsic parameters of the camera.
+
+They are included in `yarp/sig/PointCloudUtils.h` and they are:
+- `yarp::sig::utils::depthToPC`
+- `yarp::sig::utils::depthRgbToPC`
+
+Both functions assume that the images are already **undistorted**, no undistortion is
+performed.
+
+`yarp::sig::utilsdepthRgbToPC` needs also the colored frame in order to generate
+a colored PointCloud. It assumes that the the two frames are **aligned**.
+
+You have to use intrinsics parameters of the depth sensor if the depth frame IS NOT aligned with the
+colored one. On the other hand use the intrinsic parameters of the RGB camera if the frames are aligned.
+
+Here an example of usage:
+
+\code {.cpp}
+yarp::sig::ImageOf<yarp::sig::PixelFloat> depth;
+yarp::sig::ImageOf<yarp::sig::PixelRgb> color;
+yarp::os::Property propIntrinsic;
+yarp::sig::IntrinsicParams intrinsic;
+bool aligned{false};
+// check if the frames that are coming are aligned.
+...
+// get the intrinsic parameters from the RGBDClient
+yarp::os::Property conf;
+conf.put("device","RGBDSensorClient");
+conf.put("localImagePort","/clientRgbPort:i");
+conf.put("localDepthPort","/clientDepthPort:i");
+conf.put("localRpcPort","/clientRpcPort");
+conf.put("remoteImagePort","/depthCamera/rgbImage:o");
+conf.put("remoteDepthPort","/depthCamera/depthImage:o");
+conf.put("remoteRpcPort","/depthCamera/rpc:i");
+
+if (!poly.open(conf))
+{
+    yError()<<"Unable to open RGBDClient polydriver";
+    return false;
+}
+
+yarp::dev::IRGBDSensor* iRgbd{nullptr};
+if (!poly.view(iRgbd))
+{
+    yError()<<"Unable to view IRGBD interface";
+    return false;
+}
+
+bool ok{false};
+if (aligned)
+{
+    ok = iRgbd->getRgbIntrinsicParam(propIntrinsics);
+}
+else
+{
+    ok = iRgbd->getDepthIntrinsicParam(propIntrinsics);
+}
+
+yarp::sig::IntrinsicParams intrinsics(propIntrinsics);
+
+// read the images from ports
+
+...
+
+// Compute the PointCloud
+
+yarp::sig::PointCloud<yarp::sig::DataXYZRGBA> pc = yarp::sig::utils::depthRGBToPC<yarp::sig::DataXYZRGBA, yarp::sig::PixelRgb>(depth, color, intrinsics);
+
+\endcode
+
+Or:
+
+\code {.cpp}
+yarp::sig::PointCloud<yarp::sig::DataXYZ> pc = yarp::sig::utils::depthToPC(depth, intrinsics);
+\endcode
+
+
 \section pcl_compatibility PCL compatibility
 
 The yarp::sig::PointCloud class has been implemented to be compatible with 

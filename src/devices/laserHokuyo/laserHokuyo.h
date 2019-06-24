@@ -52,7 +52,7 @@ protected:
     int internal_status;
     std::string info;
     Device_status device_status;
-    
+
     enum Laser_mode_type {FAKE_MODE=2, GD_MODE=1, MD_MODE=0};
     enum Error_code
     {

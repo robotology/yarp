@@ -14,18 +14,15 @@
 #include "MultipleAnalogSensorsMetadata.h"
 #include "SensorStreamingData.h"
 
+#include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
+#include <yarp/dev/DeviceDriver.h>
 
 #include <mutex>
 
-namespace yarp {
-    namespace dev {
-        class SensorStreamingDataInputPort;
-        class MultipleAnalogSensorsClient;
-    }
-}
 
-class yarp::dev::SensorStreamingDataInputPort: public yarp::os::BufferedPort<SensorStreamingData>
+class SensorStreamingDataInputPort :
+        public yarp::os::BufferedPort<SensorStreamingData>
 {
 public:
     SensorStreamingData receivedData;
@@ -43,7 +40,7 @@ public:
 * @ingroup dev_impl_network_clients
 *
 * \brief `multipleanalogsensorsclient`: The client side of a device exposing MultipleAnalogSensors interfaces.
-* 
+*
 * | YARP device name |
 * |:-----------------:|
 * | `multipleanalogsensorsclient` |
@@ -56,16 +53,17 @@ public:
 * | timeout        |       -        | double  | seconds        | 0.01          | No           | Timeout after which the device reports an error if no measurement was received.        |       |
 *
 */
-class yarp::dev::MultipleAnalogSensorsClient: public DeviceDriver,
-                                              public IThreeAxisGyroscopes,
-                                              public IThreeAxisLinearAccelerometers,
-                                              public IThreeAxisMagnetometers,
-                                              public IOrientationSensors,
-                                              public ITemperatureSensors,
-                                              public ISixAxisForceTorqueSensors, 
-                                              public IContactLoadCellArrays,
-                                              public IEncoderArrays,
-                                              public ISkinPatches
+class MultipleAnalogSensorsClient :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IThreeAxisGyroscopes,
+        public yarp::dev::IThreeAxisLinearAccelerometers,
+        public yarp::dev::IThreeAxisMagnetometers,
+        public yarp::dev::IOrientationSensors,
+        public yarp::dev::ITemperatureSensors,
+        public yarp::dev::ISixAxisForceTorqueSensors,
+        public yarp::dev::IContactLoadCellArrays,
+        public yarp::dev::IEncoderArrays,
+        public yarp::dev::ISkinPatches
 {
     SensorStreamingDataInputPort m_streamingPort;
     yarp::os::Port m_rpcPort;
@@ -80,7 +78,7 @@ class yarp::dev::MultipleAnalogSensorsClient: public DeviceDriver,
     SensorRPCData m_sensorsMetadata;
 
     size_t genericGetNrOfSensors(const std::vector<SensorMetadata>& metadataVector) const;
-    MAS_status genericGetStatus() const;
+    yarp::dev::MAS_status genericGetStatus() const;
     bool genericGetName(const std::vector<SensorMetadata>& metadataVector, const std::string& tag,
                           size_t sens_index, std::string &name) const;
     bool genericGetFrameName(const std::vector<SensorMetadata>& metadataVector, const std::string& tag,
@@ -162,4 +160,4 @@ public:
     size_t getSkinPatchSize(size_t sens_index) const override;
 };
 
-#endif 
+#endif

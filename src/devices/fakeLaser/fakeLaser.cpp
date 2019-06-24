@@ -69,6 +69,15 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     max_angle = 360;     //degrees
     resolution = 1.0;    //degrees
 
+    if (config.check("clip_max")) { max_distance = config.find("clip_max").asFloat64(); }
+    if (config.check("clip_min")) { min_distance = config.find("clip_min").asFloat64(); }
+    if (config.check("max_angle")) { max_angle = config.find("max_angle").asFloat64(); }
+    if (config.check("min_angle")) { min_angle = config.find("min_angle").asFloat64(); }
+    if (config.check("resolution")) { resolution = config.find("resolution").asFloat64(); }
+    if (max_angle - min_angle <= 0) { yError() << "invalid parameters max_angle/min_angle"; return false; }
+    if (max_distance - min_distance <= 0) { yError() << "invalid parameters max_distance/min_distance"; return false; }
+    if (resolution <= 0) { yError() << "invalid parameters resolution"; return false; }
+
     sensorsNum = (int)((max_angle-min_angle)/resolution);
     laser_data.resize(sensorsNum);
     if (m_test_mode == USE_MAPFILE)
@@ -147,7 +156,7 @@ bool FakeLaser::close()
     PeriodicThread::stop();
 
     driver.close();
-    
+
     if (m_loc_port)
     {
         m_loc_port->interrupt();

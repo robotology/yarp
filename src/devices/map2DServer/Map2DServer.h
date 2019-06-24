@@ -36,6 +36,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/MapGrid2D.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <yarp/dev/Map2DArea.h>
 #include <yarp/os/ResourceFinder.h>
 
 #include <yarp/dev/PolyDriver.h>
@@ -50,13 +51,6 @@
 #include <yarp/rosmsg/nav_msgs/MapMetaData.h>
 #include <yarp/rosmsg/nav_msgs/OccupancyGrid.h>
 
-namespace yarp
-{
-    namespace dev
-    {
-        class Map2DServer;
-    }
-}
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 
@@ -76,26 +70,28 @@ namespace yarp
  * Integration with ROS map server is currently under development.
  */
 
-class yarp::dev::Map2DServer : public yarp::dev::DeviceDriver, public yarp::os::PortReader
+class Map2DServer :
+        public yarp::dev::DeviceDriver,
+        public yarp::os::PortReader
 {
 private:
     std::map<std::string, yarp::dev::MapGrid2D>     m_maps_storage;
     std::map<std::string, yarp::dev::Map2DLocation> m_locations_storage;
+    std::map<std::string, yarp::dev::Map2DArea>     m_areas_storage;
 
 public:
     Map2DServer();
     ~Map2DServer();
-    
+
     bool saveMaps(std::string filename);
     bool loadMaps(std::string filename);
-    bool load_locations(std::string locations_file);
-    bool save_locations(std::string locations_file);
+    bool load_locations_and_areas(std::string locations_file);
+    bool save_locations_and_areas(std::string locations_file);
     bool open(yarp::os::Searchable &params) override;
     bool close() override;
     yarp::os::Bottle getOptions();
 
 private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     yarp::os::ResourceFinder     m_rf_mapCollection;
     yarp::os::Mutex              m_mutex;
     std::string        m_rpcPortName;
@@ -120,8 +116,6 @@ private:
     void parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
     void parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
     bool updateVizMarkers();
-
-#endif //DOXYGEN_SHOULD_SKIP_THIS
 };
 
 #endif // YARP_DEV_MAP2DSERVER_H

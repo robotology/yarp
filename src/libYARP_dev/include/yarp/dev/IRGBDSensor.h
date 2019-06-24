@@ -9,10 +9,12 @@
 #ifndef YARP_DEV_IRGBDSENSOR_H
 #define YARP_DEV_IRGBDSENSOR_H
 
+#include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
+#include <yarp/os/Property.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Matrix.h>
-#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/api.h>
 #include <yarp/dev/IVisualParams.h>
 
 namespace yarp {

@@ -1,0 +1,29 @@
+/*
+ * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+#include <yarp/conf/api.h>
+#include <yarp/os/RFModuleFactory.h>
+#include <yarp/os/SharedLibraryClass.h>
+#include <@YARPPLUG_INCLUDE@>
+
+#ifdef YARP_STATIC_PLUGIN
+#  define YARP_PLUGIN_IMPORT
+#  define YARP_PLUGIN_EXPORT
+#else
+#  define YARP_PLUGIN_IMPORT YARP_HELPER_DLL_IMPORT
+#  define YARP_PLUGIN_EXPORT YARP_HELPER_DLL_EXPORT
+#endif
+
+
+#ifdef YARP_STATIC_PLUGIN
+YARP_PLUGIN_EXPORT void add_owned_@YARPPLUG_NAME@(const char *owner) {
+    yarp::os::RFModuleFactory::AddModule("@YARPPLUG_NAME@", [](){return (yarp::os::RFModule*)new @YARPPLUG_TYPE@;});
+}
+#endif
+
+YARP_DEFINE_SHARED_SUBCLASS(@YARPPLUG_NAME@, @YARPPLUG_TYPE@, yarp::os::RFModule)

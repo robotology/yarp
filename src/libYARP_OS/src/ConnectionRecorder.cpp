@@ -63,10 +63,10 @@ bool yarp::os::impl::ConnectionRecorder::expectBlock(char* data, size_t len)
     return ok;
 }
 
-std::string yarp::os::impl::ConnectionRecorder::expectText(int terminatingChar)
+std::string yarp::os::impl::ConnectionRecorder::expectText(const char terminatingChar)
 {
     std::string str = reader->expectText(terminatingChar);
-    readerStore.appendString(str.c_str(), terminatingChar);
+    readerStore.appendText(str, terminatingChar);
     return str;
 }
 
@@ -235,10 +235,10 @@ void yarp::os::impl::ConnectionRecorder::appendFloat64(yarp::conf::float64_t dat
     writerStore.appendFloat64(data);
 }
 
-void yarp::os::impl::ConnectionRecorder::appendString(const char* str, int terminate)
+void yarp::os::impl::ConnectionRecorder::appendText(const std::string& str, const char terminate)
 {
-    writer->appendString(str, terminate);
-    writerStore.appendString(str, terminate);
+    writer->appendText(str, terminate);
+    writerStore.appendText(str, terminate);
 }
 
 void yarp::os::impl::ConnectionRecorder::appendExternalBlock(const char* data, size_t len)
@@ -274,9 +274,8 @@ bool yarp::os::impl::ConnectionRecorder::write(yarp::os::ConnectionWriter& conne
             writerStore.write(connection);
         }
         return ok;
-    } else {
-        return readerStore.write(connection);
     }
+    return readerStore.write(connection);
 }
 
 void yarp::os::impl::ConnectionRecorder::requestDrop()

@@ -34,13 +34,13 @@ endif()
 
 # Main project
 project(YARP
-        VERSION 3.1.2
+        VERSION 3.2.0
         LANGUAGES C CXX)
 set(PROJECT_DESCRIPTION "YARP: A thin middleware for humanoid robots and more")
 
 
 # Pick up our CMake scripts - they are all in the cmake subdirectory.
-set(YARP_MODULE_DIR "${CMAKE_SOURCE_DIR}/cmake")
+set(YARP_MODULE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_DIR})
 
 
@@ -51,11 +51,6 @@ add_subdirectory(extern/ycm)
 # Get the current YARP version.
 # See cmake/YarpVersion.cmake.
 include(YarpVersion)
-
-message(STATUS "Using:")
-message(STATUS "  CMake: ${CMAKE_VERSION} (${CMAKE_COMMAND})")
-message(STATUS "  C Compiler: ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION} (${CMAKE_C_COMPILER})")
-message(STATUS "  CXX Compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS 1)
 set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Autogen Targets")
@@ -68,6 +63,13 @@ include(YarpSystemCheck)
 # Set up some compilation options.
 # See cmake/YarpOptions.cmake.
 include(YarpOptions)
+
+message(STATUS "Using:")
+message(STATUS "  CMake: ${CMAKE_VERSION} (${CMAKE_COMMAND})")
+message(STATUS "  C Compiler: ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION} (${CMAKE_C_COMPILER})")
+message(STATUS "  CXX Compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})")
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
 
 # Check YARP dependencies, find necessary libraries.
 # See cmake/YarpFindDependencies.cmake.

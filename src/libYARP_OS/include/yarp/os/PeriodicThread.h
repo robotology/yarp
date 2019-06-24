@@ -12,14 +12,14 @@
 
 #include <yarp/os/Runnable.h>
 #include <yarp/os/Time.h>
+namespace yarp {
+namespace os {
+
 /**
  * \ingroup key_class
  *
  * An abstraction for a periodic thread.
  */
-namespace yarp {
-namespace os {
-
 class YARP_OS_API PeriodicThread
 {
 public:

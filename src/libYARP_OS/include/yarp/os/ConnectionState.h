@@ -11,10 +11,11 @@
 
 #include <yarp/os/api.h>
 
+#include <string>
+
 namespace yarp {
 namespace os {
 
-// Forward declarations
 class Connection;
 class InputStream;
 class OutputStream;
@@ -25,9 +26,7 @@ class Log;
 class Contactable;
 
 /**
- *
  * The basic state of a connection - route, streams in use, etc.
- *
  */
 class YARP_OS_API ConnectionState
 {
@@ -35,7 +34,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~ConnectionState() {}
+    virtual ~ConnectionState() = default;
 
     /**
      * Get the route associated with this connection. A route is
@@ -118,7 +117,6 @@ public:
      */
     virtual Contactable* getContactable() const = 0;
 
-
     /**
      * Shorthand for getOutputStream()
      */
@@ -134,7 +132,6 @@ public:
     {
         return getInputStream();
     }
-
 
     /**
      * Read the envelope associated with the current message.

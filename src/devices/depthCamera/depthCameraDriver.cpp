@@ -24,7 +24,6 @@
 #include <algorithm>
 #include <cmath>
 
-using namespace yarp::dev::impl;
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
@@ -56,7 +55,7 @@ static std::map<std::string, RGBDSensorParamParser::RGBDParam> params_map =
     {depthMirroring, RGBDSensorParamParser::RGBDParam(depthMirroring,  1)}
 };
 
-class yarp::dev::impl::streamFrameListener : public openni::VideoStream::NewFrameListener
+class streamFrameListener : public openni::VideoStream::NewFrameListener
 {
 public:
 
@@ -638,21 +637,9 @@ bool depthCameraDriver::setRgbMirroring(bool mirror)
     return (ret == mirror);
 }
 
-bool depthCameraDriver::setIntrinsic(Property& intrinsic, const RGBDSensorParamParser::IntrinsicParams& values)
+bool depthCameraDriver::setIntrinsic(Property& intrinsic, const yarp::sig::IntrinsicParams& values)
 {
-    intrinsic.put("focalLengthX",       values.focalLengthX);
-    intrinsic.put("focalLengthY",       values.focalLengthY);
-    intrinsic.put("principalPointX",    values.principalPointX);
-    intrinsic.put("principalPointY",    values.principalPointY);
-
-    intrinsic.put("distortionModel", "plumb_bob");
-    intrinsic.put("k1", values.distortionModel.k1);
-    intrinsic.put("k2", values.distortionModel.k2);
-    intrinsic.put("t1", values.distortionModel.t1);
-    intrinsic.put("t2", values.distortionModel.t2);
-    intrinsic.put("k3", values.distortionModel.k3);
-
-    intrinsic.put("stamp", yarp::os::Time::now());
+    values.toProperty(intrinsic);
     return true;
 }
 

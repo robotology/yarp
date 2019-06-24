@@ -50,7 +50,7 @@ public:
         DummyConnector con, con2;
         con.setTextMode(true);
         ConnectionWriter& writer = con.getWriter();
-        writer.appendString(txt.c_str());
+        writer.appendText(txt.c_str());
         bool ok = handler.apply(con.getReader(),&(con2.getWriter()));
         std::string result;
         if (ok) {

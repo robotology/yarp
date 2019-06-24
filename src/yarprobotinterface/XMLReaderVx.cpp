@@ -47,6 +47,7 @@
 RobotInterface::XMLReader::XMLReader() :
     mReader(nullptr)
 {
+    enable_deprecated = false;
     verbose = false;
 }
 
@@ -62,6 +63,11 @@ RobotInterface::XMLReader::~XMLReader()
 void RobotInterface::XMLReader::setVerbose(bool verb)
 {
     verbose = verb;
+}
+
+void RobotInterface::XMLReader::setEnableDeprecated(bool enab)
+{
+    enable_deprecated = enab;
 }
 
 RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fileName)
@@ -94,7 +100,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fi
     }
 
     if (!dtd.valid()) {
-        SYNTAX_WARNING(doc->Row()) << "No DTD found. Assuming version yarprobotinterfaceV1.0";
+        SYNTAX_WARNING(doc->Row()) << "No DTD found. Assuming version yarprobotinterfaceV3.0";
         dtd.setDefault();
         dtd.type = RobotInterfaceDTD::DocTypeRobot;
     }
@@ -106,9 +112,17 @@ RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fi
 
     if (dtd.majorVersion == 1)
     {
-        yDebug() << "yarprobotinterface: using xml parser for DTD v1.x";
-        mReader = new RobotInterface::XMLReaderFileV1;
-        return mReader->getRobotFile(filename,verbose);
+        yError() << "DTD V1.x has been deprecated. Please update your configuration files to DTD v3.x";
+        if (enable_deprecated)
+        {
+            yWarning() << "yarprobotinterface: using DEPRECATED xml parser for DTD v1.x";
+            mReader = new RobotInterface::XMLReaderFileV1;
+            return mReader->getRobotFile(filename, verbose);
+        }
+        else
+        {
+            yFatal("Invalid DTD version, execution stopped.");
+        }
     }
     else if (dtd.majorVersion == 3)
     {

@@ -31,7 +31,7 @@ int padding = 0;
 class Echo : public TypedReaderCallback<Sound> {
 private:
     PolyDriver poly;
-    IAudioRender *put;
+    IAudioRender *iAudioplay;
     BufferedPort<Sound> port;
     Mutex mutex;
     bool muted;
@@ -42,14 +42,13 @@ private:
 
 public:
     Echo() : mutex() {
-        put = nullptr;
+        iAudioplay = nullptr;
         port.useCallback(*this);
         port.setStrict();
         muted = false;
         saving = false;
         samples = 0;
         channels = 0;
-        put = nullptr;
     }
 
     bool open(Searchable& p) {
@@ -66,8 +65,8 @@ public:
 
             if (!p.check("mute")) {
                 // Make sure we can write sound
-                poly.view(put);
-                if (put==nullptr) {
+                poly.view(iAudioplay);
+                if (iAudioplay == nullptr) {
                     yError("cannot open interface\n");
                     return false;
                 }
@@ -118,8 +117,8 @@ public:
           }
         */
         if (!muted) {
-            if (put!=nullptr) {
-                put->renderSound(sound);
+            if (iAudioplay != nullptr) {
+                iAudioplay->renderSound(sound);
             }
         }
         if (saving) {
@@ -195,10 +194,9 @@ int main(int argc, char *argv[]) {
         p.fromCommand(argc,argv);
     }
 
-    // otherwise default device is "portaudio"
+    // otherwise default device is "portaudioPlayer"
     if (!p.check("device")) {
-        p.put("device","portaudio");
-        p.put("write",1);
+        p.put("device","portaudioPlayer");
         p.put("delay",1);
     }
 

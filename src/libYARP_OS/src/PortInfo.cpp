@@ -11,8 +11,9 @@
 
 
 yarp::os::PortInfo::PortInfo() :
-    tag(PORTINFO_NULL),
-    incoming(false),
-    created(true),
-    message("no information") {
+        tag(PORTINFO_NULL),
+        incoming(false),
+        created(true),
+        message("no information")
+{
 }

@@ -15,11 +15,6 @@
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/math/Math.h>
 
-namespace yarp{
-    namespace dev{
-        class fakeIMU;
-    }
-}
 
 #define DEFAULT_PERIOD 0.01   //s
 
@@ -38,14 +33,15 @@ namespace yarp{
 * | constantValue  |       -        |  -      | -              |   -           | No          | If the parameter is present, the fake sensor values never changes (useful for testing server/client coherence).  |       |
 *
 */
-class yarp::dev::fakeIMU :  public DeviceDriver,
-                            public IGenericSensor,
-                            public yarp::os::PeriodicThread,
-                            public yarp::dev::IPreciselyTimed,
-                            public yarp::dev::IThreeAxisGyroscopes,
-                            public yarp::dev::IThreeAxisLinearAccelerometers,
-                            public yarp::dev::IThreeAxisMagnetometers,
-                            public yarp::dev::IOrientationSensors
+class fakeIMU :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IGenericSensor,
+        public yarp::os::PeriodicThread,
+        public yarp::dev::IPreciselyTimed,
+        public yarp::dev::IThreeAxisGyroscopes,
+        public yarp::dev::IThreeAxisLinearAccelerometers,
+        public yarp::dev::IThreeAxisMagnetometers,
+        public yarp::dev::IOrientationSensors
 {
 public:
     fakeIMU();

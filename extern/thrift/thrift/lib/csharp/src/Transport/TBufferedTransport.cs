@@ -76,19 +76,23 @@ namespace Thrift.Transport
             ValidateBufferArgs(buf, off, len);
             if (!IsOpen)
                 throw new TTransportException(TTransportException.ExceptionType.NotOpen);
+
             if (inputBuffer.Capacity < bufSize)
                 inputBuffer.Capacity = bufSize;
-            int got = inputBuffer.Read(buf, off, len);
-            if (got > 0)
-                return got;
 
-            inputBuffer.Seek(0, SeekOrigin.Begin);
-            inputBuffer.SetLength(inputBuffer.Capacity);
-            int filled = transport.Read(inputBuffer.GetBuffer(), 0, (int)inputBuffer.Length);
-            inputBuffer.SetLength(filled);
-            if (filled == 0)
-                return 0;
-            return Read(buf, off, len);
+            while (true)
+            {
+                int got = inputBuffer.Read(buf, off, len);
+                if (got > 0)
+                    return got;
+
+                inputBuffer.Seek(0, SeekOrigin.Begin);
+                inputBuffer.SetLength(inputBuffer.Capacity);
+                int filled = transport.Read(inputBuffer.GetBuffer(), 0, (int)inputBuffer.Length);
+                inputBuffer.SetLength(filled);
+                if (filled == 0)
+                    return 0;
+            }
         }
 
         public override void Write(byte[] buf, int off, int len)
@@ -125,9 +129,8 @@ namespace Thrift.Transport
             }
         }
 
-        public override void Flush()
+        private void InternalFlush()
         {
-            CheckNotDisposed();
             if (!IsOpen)
                 throw new TTransportException(TTransportException.ExceptionType.NotOpen);
             if (outputBuffer.Length > 0)
@@ -135,17 +138,39 @@ namespace Thrift.Transport
                 transport.Write(outputBuffer.GetBuffer(), 0, (int)outputBuffer.Length);
                 outputBuffer.SetLength(0);
             }
+        }
+
+        public override void Flush()
+        {
+            CheckNotDisposed();
+            InternalFlush();
+
             transport.Flush();
         }
 
-        private void CheckNotDisposed()
+        public override IAsyncResult BeginFlush(AsyncCallback callback, object state)
+        {
+            CheckNotDisposed();
+            InternalFlush();
+
+            return transport.BeginFlush( callback, state);
+        }
+
+        public override void EndFlush(IAsyncResult asyncResult)
+        {
+            transport.EndFlush( asyncResult);
+        }
+
+
+
+        protected void CheckNotDisposed()
         {
             if (_IsDisposed)
                 throw new ObjectDisposedException("TBufferedTransport");
         }
 
         #region " IDisposable Support "
-        private bool _IsDisposed;
+        protected bool _IsDisposed { get; private set; }
 
         // IDisposable
         protected override void Dispose(bool disposing)
@@ -154,11 +179,11 @@ namespace Thrift.Transport
             {
                 if (disposing)
                 {
-                    if(inputBuffer != null)
+                    if (inputBuffer != null)
                         inputBuffer.Dispose();
-                    if(outputBuffer != null)
+                    if (outputBuffer != null)
                         outputBuffer.Dispose();
-                    if(transport != null)
+                    if (transport != null)
                         transport.Dispose();
                 }
             }

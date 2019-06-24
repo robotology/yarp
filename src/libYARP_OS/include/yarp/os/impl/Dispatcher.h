@@ -10,43 +10,38 @@
 #ifndef YARP_OS_IMPL_DISPATCHER_H
 #define YARP_OS_IMPL_DISPATCHER_H
 
-#include <string>
-
 #include <yarp/os/impl/Logger.h>
 
-#include <map>
-#include <vector>
 #include <cstdio>
+#include <map>
+#include <string>
+#include <vector>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            template <class T, class RET> class Dispatcher;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * Dispatch to named methods based on string input.
  */
 template <class T, class RET>
-class yarp::os::impl::Dispatcher
+class Dispatcher
 {
 private:
     class Entry
     {
     public:
         std::string name;
-        RET (T::*fn)(int argc, char *argv[]);
+        RET (T::*fn)(int argc, char* argv[]);
 
-        Entry(const char *name, RET (T::*fn)(int argc, char *argv[])) :
-            name(name),
-            fn(fn)
+        Entry(const char* name, RET (T::*fn)(int argc, char* argv[])) :
+                name(name),
+                fn(fn)
         {
         }
 
         Entry() :
-            fn(nullptr)
+                fn(nullptr)
         {
         }
     };
@@ -55,7 +50,7 @@ private:
     std::vector<std::string> names;
 
 public:
-    void add(const char *name, RET (T::*fn)(int argc, char *argv[]))
+    void add(const char* name, RET (T::*fn)(int argc, char* argv[]))
     {
         Entry e(name, fn);
         action[std::string(name)] = e;
@@ -63,7 +58,7 @@ public:
         names.push_back(std::string(name));
     }
 
-    RET dispatch(T *owner, const char *name, int argc, char *argv[])
+    RET dispatch(T* owner, const char* name, int argc, char* argv[])
     {
         std::string sname(name);
         typename std::map<std::string, Entry>::const_iterator it = action.find(sname);
@@ -80,5 +75,10 @@ public:
         return names;
     }
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
+
 
 #endif // YARP_OS_IMPL_DISPATCHER_H

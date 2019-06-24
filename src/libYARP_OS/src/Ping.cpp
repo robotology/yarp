@@ -17,6 +17,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
 
+#include <cmath>
 #include <cstdio>
 
 using namespace yarp::os;
@@ -78,8 +79,9 @@ void Stat::compute()
         // ct must be > 0
         mu = tot / ct;
         sigma = tot2 / ct - mu * mu;
-        if (sigma < 0)
+        if (sigma < 0) {
             sigma = 0; // round-off error
+        }
         sigma = sqrt(sigma);
         at = ct;
     }
@@ -136,7 +138,8 @@ void Ping::connect()
     ContactStyle rpc;
     rpc.admin = true;
     rpc.quiet = true;
-    Bottle cmd, reply;
+    Bottle cmd;
+    Bottle reply;
     cmd.addVocab(Vocab::encode("ver"));
     bool ok = NetworkBase::write(c, cmd, reply, rpc);
     if (!ok) {
@@ -150,9 +153,9 @@ void Ping::connect()
 
 void Ping::report()
 {
-    int ping = (int)(accumConnect.targetTime.count() + 0.5);
+    long int ping = lround(accumConnect.targetTime.count() + 0.5);
     if (ping > 0) {
-        printf("Ping #%d:\n", (int)(accumConnect.targetTime.count() + 0.5));
+        printf("Ping #%ld:\n", lround(accumConnect.targetTime.count() + 0.5));
         int space = 14;
         int decimal = 5;
         printf("  %s connection time (%s with name lookup)\n",

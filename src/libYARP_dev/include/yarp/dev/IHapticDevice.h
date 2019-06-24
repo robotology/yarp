@@ -26,7 +26,7 @@ namespace yarp {
 /**
  * A generic interface for an haptic device.
  */
-class yarp::dev::IHapticDevice
+class YARP_dev_API yarp::dev::IHapticDevice
 {
 public:
     virtual ~IHapticDevice() { }

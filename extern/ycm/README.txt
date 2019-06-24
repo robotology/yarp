@@ -5,7 +5,7 @@ Extra CMake Modules for YARP and friends
 
 Homepage: https://github.com/robotology/ycm/
 
-Copyright: 2013-2018 Istituto Italiano di Tecnologia (IIT)
+Copyright: 2013-2019 Istituto Italiano di Tecnologia (IIT)
 
 License: 3-Clause-BSD
  Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@ License: 3-Clause-BSD
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-Version: dev (0.9.0.8)
+Version: 0.10.4
 
 Notes:
  YCM downloads several modules at build time. We don't want to add a network

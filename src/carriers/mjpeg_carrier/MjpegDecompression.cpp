@@ -41,7 +41,6 @@ extern "C" {
 
 using namespace yarp::os;
 using namespace yarp::sig;
-using namespace yarp::mjpeg;
 
 struct net_error_mgr {
     struct jpeg_error_mgr pub;

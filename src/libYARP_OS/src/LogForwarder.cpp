@@ -7,11 +7,12 @@
  */
 
 #include <yarp/os/impl/LogForwarder.h>
+
+#include <yarp/os/Log.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
-#include <yarp/os/Time.h>
-#include <yarp/os/Log.h>
 #include <yarp/os/SystemInfo.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/impl/PlatformLimits.h>
 
 bool yarp::os::impl::LogForwarder::started{false};
@@ -33,7 +34,7 @@ yarp::os::impl::LogForwarder::LogForwarder()
 
     outputPort.setWriteOnly();
     std::string logPortName = "/log/" + std::string(hostname) + "/" + processInfo.name + "/" + std::to_string(processInfo.pid);
-    if (outputPort.open(logPortName) == false) {
+    if (!outputPort.open(logPortName)) {
         printf("LogForwarder error while opening port %s\n", logPortName.c_str());
     }
     outputPort.enableBackgroundWrite(true);

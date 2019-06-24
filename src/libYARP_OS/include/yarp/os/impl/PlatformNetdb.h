@@ -11,13 +11,13 @@
 
 #include <yarp/conf/system.h>
 #ifdef YARP_HAS_ACE
-# include <ace/OS_NS_netdb.h>
+#    include <ace/OS_NS_netdb.h>
 // In one the ACE headers there is a definition of "main" for WIN32
-# ifdef main
-#  undef main
-# endif
+#    ifdef main
+#        undef main
+#    endif
 #elif defined(YARP_HAS_NETDB_H)
-# include <netdb.h>
+#    include <netdb.h>
 #endif
 
 
@@ -26,17 +26,17 @@ namespace os {
 namespace impl {
 
 #ifdef YARP_HAS_ACE
-    using ACE_OS::gethostbyaddr;
-    using ACE_OS::gethostbyname;
-    // ACE_OS::getaddrinfo, etc are not implemented, anyway ACE implementation
-    // is different, therefore they are not needed.
+using ACE_OS::gethostbyaddr;
+using ACE_OS::gethostbyname;
+// ACE_OS::getaddrinfo, etc are not implemented, anyway ACE implementation
+// is different, therefore they are not needed.
 #else
-    using ::gethostbyaddr;
-    using ::gethostbyname;
-    using ::getaddrinfo;
-    using ::freeaddrinfo;
-    using ::gai_strerror;
-    using ::getnameinfo;
+using ::freeaddrinfo;
+using ::gai_strerror;
+using ::getaddrinfo;
+using ::gethostbyaddr;
+using ::gethostbyname;
+using ::getnameinfo;
 #endif
 
 } // namespace impl

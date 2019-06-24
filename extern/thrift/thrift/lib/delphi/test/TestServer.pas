@@ -29,7 +29,6 @@ interface
 uses
   Windows, SysUtils,
   Generics.Collections,
-  Thrift.Console,
   Thrift.Server,
   Thrift.Transport,
   Thrift.Transport.Pipes,
@@ -42,6 +41,7 @@ uses
   Thrift,
   TestConstants,
   TestServerEvents,
+  ConsoleHelper,
   Contnrs;
 
 type
@@ -164,7 +164,7 @@ begin
 
   if (arg = 'TException') then
   begin
-    raise TException.Create('');
+    raise TException.Create('TException');
   end;
 
   // else do not throw anything

@@ -9,7 +9,7 @@ set(CMAKE_C_FLAGS -w)
 set(CMAKE_CXX_FLAGS -w)
 
 # TinyXML
-if(YARP_BUILD_TINYXML)
+if(YARP_BUILD_TinyXML)
   add_subdirectory(tinyxml)
   set(TinyXML_INCLUDE_DIRS ${TinyXML_INCLUDE_DIRS} PARENT_SCOPE)
   set(TinyXML_LIBRARIES ${TinyXML_LIBRARIES} PARENT_SCOPE)
@@ -17,7 +17,7 @@ if(YARP_BUILD_TINYXML)
 endif()
 
 # SQLite
-if(YARP_BUILD_SQLITE)
+if(YARP_BUILD_SQLite)
   add_subdirectory(sqlite)
   set(SQLite_INCLUDE_DIRS ${SQLite_INCLUDE_DIRS} PARENT_SCOPE)
   set(SQLite_LIBRARIES ${SQLite_LIBRARIES} PARENT_SCOPE)
@@ -25,7 +25,7 @@ if(YARP_BUILD_SQLITE)
 endif()
 
 # QCustomPlot
-if(YARP_BUILD_QCUSTOMPLOT)
+if(YARP_BUILD_QCustomPlot)
   add_subdirectory(qcustomplot)
   set(QCustomPlot_INCLUDE_DIRS ${QCustomPlot_INCLUDE_DIRS} PARENT_SCOPE)
   set(QCustomPlot_LIBRARIES ${QCustomPlot_LIBRARIES} PARENT_SCOPE)
@@ -33,7 +33,7 @@ if(YARP_BUILD_QCUSTOMPLOT)
 endif()
 
 # XmlRpc++
-if(YARP_BUILD_XMLRPCPP)
+if(YARP_BUILD_xmlrpcpp)
   add_subdirectory(xmlrpcpp)
   set(xmlrpcpp_INCLUDE_DIRS ${xmlrpcpp_INCLUDE_DIRS} PARENT_SCOPE)
   set(xmlrpcpp_LIBRARIES ${xmlrpcpp_LIBRARIES} PARENT_SCOPE)
@@ -41,7 +41,7 @@ if(YARP_BUILD_XMLRPCPP)
 endif()
 
 # Qgv
-if(YARP_BUILD_QGVCORE)
+if(YARP_BUILD_QGVCore)
   add_subdirectory(qgv)
   set(QGVCore_INCLUDE_DIRS ${QGVCore_INCLUDE_DIRS} PARENT_SCOPE)
   set(QGVCore_LIBRARIES ${QGVCore_LIBRARIES} PARENT_SCOPE)
@@ -49,7 +49,7 @@ if(YARP_BUILD_QGVCORE)
 endif()
 
 # hmac
-if(YARP_BUILD_HMAC)
+if(YARP_BUILD_hmac)
   add_subdirectory(hmac)
   set(hmac_INCLUDE_DIRS ${hmac_INCLUDE_DIRS} PARENT_SCOPE)
   set(hmac_LIBRARIES ${hmac_LIBRARIES} PARENT_SCOPE)
@@ -58,7 +58,7 @@ endif()
 
 # Apache Thrift
 set(THRIFT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/thrift/thrift" PARENT_SCOPE)
-set(THRIFT_VERSION 0.11.0)
+set(THRIFT_VERSION 0.12.0 PARENT_SCOPE)
 
 # libdc1394_bayer
 set(libdc1394_bayer_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/libdc1394_bayer" PARENT_SCOPE)

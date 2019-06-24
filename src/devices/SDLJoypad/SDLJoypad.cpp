@@ -24,10 +24,10 @@
 #include <iostream>
 
 using namespace yarp::dev;
-using namespace yarp::dev::SDLJoypadImpl;
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace std;
+using namespace SDLJoypadImpl;
 
 #define actionsExecutionTime 1.0
 SDLJoypad::SDLJoypad()

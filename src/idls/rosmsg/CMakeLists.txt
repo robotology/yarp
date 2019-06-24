@@ -6,10 +6,6 @@
 
 include_directories(src)
 
-if(NOT SKIP_ACE)
-  include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
-endif()
-
 set(md5_SRCS "${md5_ROOT}/md5.c")
 set(md5_HDRS "${md5_ROOT}/md5.h")
 
@@ -27,8 +23,12 @@ add_executable(YARP::yarpidl_rosmsg ALIAS yarpidl_rosmsg)
 
 target_include_directories(yarpidl_rosmsg SYSTEM PRIVATE "${md5_ROOT}")
 target_link_libraries(yarpidl_rosmsg PRIVATE YARP::YARP_init
-                                             YARP::YARP_OS
-                                             ${ACE_LIBRARIES})
+                                             YARP::YARP_OS)
+if(YARP_HAS_ACE)
+  target_compile_definitions(yarpidl_rosmsg PRIVATE YARP_HAS_ACE)
+  target_link_libraries(yarpidl_rosmsg PRIVATE ACE::ACE)
+endif()
+
 install(TARGETS yarpidl_rosmsg
         EXPORT YARP_idl_tools
         COMPONENT YARP_idl_tools

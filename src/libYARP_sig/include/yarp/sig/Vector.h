@@ -12,8 +12,10 @@
 
 #include <cstring>
 #include <cstddef> //defines size_t
-#include <yarp/os/Portable.h>
+#include <memory>
 #include <string>
+
+#include <yarp/os/Portable.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Type.h>
 
@@ -131,6 +133,9 @@ private:
     }
 
 public:
+    typedef T* iterator;
+    typedef const T* const_iterator;
+
     VectorOf() {
         bytes.allocate(16*sizeof(T)); // preallocate space for 16 elements
         bytes.setUsed(0);
@@ -144,11 +149,23 @@ public:
     }
 
     /**
+     * @brief Initializer list constructor.
+     * @param[in] values, list of values with which initialize the Vector.
+     */
+    VectorOf(std::initializer_list<T> values) : bytes(values.size()*sizeof(T))
+    {
+        bytes.setUsed(values.size()*sizeof(T));
+        len = values.size();
+        _updatePointers();
+        std::uninitialized_copy(values.begin(), values.end(), first);
+    }
+
+    /**
     * Build a vector and initialize it with def.
     * @param s the size
     * @param def a default value used to fill the vector
     */
-    VectorOf(size_t s, const T&def)
+    VectorOf(size_t s, const T& def)
     {
         this->resize(s,def);
     }
@@ -167,7 +184,8 @@ public:
         memcpy(this->data(), p, sizeof(T)*s);
     }
 
-    VectorOf(const VectorOf &r) : VectorBase() {
+    VectorOf(const VectorOf& r) : VectorBase()
+    {
         bytes = r.bytes;
         _updatePointers();
     }
@@ -175,7 +193,8 @@ public:
     /**
     * Copy operator;
     */
-    const VectorOf<T> &operator=(const VectorOf<T> &r) {
+    const VectorOf<T> &operator=(const VectorOf<T>& r)
+    {
 
         if (this == &r) return *this;
 
@@ -213,16 +232,21 @@ public:
     {
         return bytes.get();
     }
-
+#ifndef YARP_NO_DEPRECATED // since YARP 3.2.0
+    YARP_DEPRECATED_MSG("Use either data() if you need the pointer to the first element,"
+                        " or cbegin() if you need the iterator")
     inline const T *getFirst() const
     {
         return first;
     }
 
+    YARP_DEPRECATED_MSG("Use either data() if you need the pointer to the first element,"
+                        " or begin() if you need the iterator")
     inline T *getFirst()
     {
         return first;
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
     * Return a pointer to the first element of the vector.
@@ -270,6 +294,16 @@ public:
     }
 
     /**
+     * @brief reserve, increase the capacity of the vector to a value that's greater or equal to size.
+     * If size is greater than the current capacity(), new storage is allocated, otherwise the method does nothing.
+     * @param size, new size of the vector.
+     */
+    void reserve(size_t size) {
+        bytes.allocateOnNeed(size*sizeof(T),size*sizeof(T));
+        _updatePointers();
+    }
+
+    /**
     * Push a new element in the vector: size is changed
     */
     inline void push_back (const T &elem)
@@ -278,6 +312,30 @@ public:
         bytes.setUsed(bytes.used()+sizeof(T));
         _updatePointers();
         new (&((*this)[len-1])) T(elem); // non-allocating placement operator new
+    }
+
+    /**
+     * @brief Move a new element in the vector: size is changed
+     * @param elem, element to be moved.
+     */
+    inline void push_back (T&& elem)
+    {
+        this->emplace_back(std::move(elem));
+    }
+
+    /**
+     * @brief Construct a new element in the vector: size is changed
+     * @param args, arguments to be forwarded for constructing the new element.
+     * @return the reference to the new element contructed.
+     */
+    template<typename... _Args>
+    inline T& emplace_back(_Args&&... args)
+    {
+        bytes.allocateOnNeed(bytes.used()+sizeof(T),bytes.length()*2+sizeof(T));
+        bytes.setUsed(bytes.used()+sizeof(T));
+        _updatePointers();
+        new (&((*this)[len-1])) T(std::forward<_Args>(args)...); // non-allocating placement operator new
+        return (*this)[len-1];
     }
 
     /**
@@ -342,6 +400,14 @@ public:
     */
     inline size_t length() const
     { return this->size();}
+
+    /**
+     * @brief capacity
+     * @return the number of elements that the container has currently allocated space for.
+     */
+    inline size_t capacity() const {
+        return bytes.length()/sizeof(T);
+    }
 
     /**
     * Zero the elements of the vector.
@@ -468,6 +534,37 @@ public:
 
     }
 
+    /**
+     * @brief Returns an iterator to the beginning of the VectorOf
+     * @note At the moment iterator is implemented as a pointer, it may change in the future.
+     * For this reason it should not be used as a pointer to the data, use data() instead.
+     */
+    iterator begin() noexcept {
+        return first;
+    }
+
+    /**
+     * @brief Returns an iterator to the end of the VectorOf
+     */
+    iterator end() noexcept {
+        return first + len;
+    }
+
+    /**
+     * @brief Returns a const iterator to the beginning of the VectorOf
+     * @note At the moment iterator is implemented as a pointer, it may change in the future.
+     * For this reason it should not be used as a pointer to the data, use data() instead.
+     */
+    const_iterator cbegin() const noexcept {
+        return first;
+    }
+
+    /**
+     * @brief Returns a const iterator to the end of the VectorOf.
+     */
+    const_iterator cend() const noexcept {
+        return first + len;
+    }
     void clear() {
         bytes.clear();
         bytes.setUsed(0);

@@ -6,40 +6,38 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/YarpPlugin.h>
-
-#include <yarp/os/impl/Logger.h>
-#include <cstdlib>
-#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/SystemClock.h>
-#include <yarp/os/Network.h>
+#include <yarp/os/YarpPlugin.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NameClient.h>
 
 #include <cstdio>
+#include <cstdlib>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
 bool YarpPluginSettings::open(SharedLibraryFactory& factory,
                               const std::string& dll_name,
-                              const std::string& fn_name) {
+                              const std::string& fn_name)
+{
     return subopen(factory, dll_name, fn_name);
 }
 
 bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
                                  const std::string& dll_name,
-                                 const std::string& fn_name) {
-    YARP_SPRINTF2(impl::Logger::get(), debug, "Trying plugin [dll: %s] [fn: %s]",
-                  dll_name.c_str(), fn_name.c_str());
+                                 const std::string& fn_name)
+{
+    YARP_SPRINTF2(impl::Logger::get(), debug, "Trying plugin [dll: %s] [fn: %s]", dll_name.c_str(), fn_name.c_str());
     bool ok = factory.open(dll_name.c_str(), fn_name.c_str());
     if (verbose) {
-        fprintf(stderr, "Trying to find library '%s' containing function '%s' -- %s\n", dll_name.c_str(), fn_name.c_str(), ok ? "found" :"fail");
+        fprintf(stderr, "Trying to find library '%s' containing function '%s' -- %s\n", dll_name.c_str(), fn_name.c_str(), ok ? "found" : "fail");
     }
     if (ok) {
-        YARP_SPRINTF2(impl::Logger::get(), debug,
-                      "Found plugin [dll: %s] [fn: %s]",
-                      dll_name.c_str(), fn_name.c_str());
+        YARP_SPRINTF2(impl::Logger::get(), debug, "Found plugin [dll: %s] [fn: %s]", dll_name.c_str(), fn_name.c_str());
         this->dll_name = dll_name;
         this->fn_name = fn_name;
     } else if (verbose || (factory.getStatus() != SharedLibraryFactory::STATUS_LIBRARY_NOT_FOUND)) {
@@ -48,19 +46,19 @@ bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
     return ok;
 }
 
-bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
-    YARP_SPRINTF3(impl::Logger::get(), debug, "Plugin [name: %s] [dll: %s] [fn: %s]",
-                  name.c_str(), dll_name.c_str(), fn_name.c_str());
-    if (selector!=nullptr && name != "") {
+bool YarpPluginSettings::open(SharedLibraryFactory& factory)
+{
+    YARP_SPRINTF3(impl::Logger::get(), debug, "Plugin [name: %s] [dll: %s] [fn: %s]", name.c_str(), dll_name.c_str(), fn_name.c_str());
+    if (selector != nullptr && !name.empty()) {
         // we may have a YARP-specific search path available,
         // and a proper name for the DLL
         Bottle paths = selector->getSearchPath();
-        for (size_t i=0; i<paths.size(); i++) {
+        for (size_t i = 0; i < paths.size(); i++) {
             Searchable& options = paths.get(i);
             std::string path = options.find("path").asString();
             std::string ext = options.find("extension").asString();
-            std::string basename = (dll_name.find('.')!=std::string::npos) ? name : dll_name;
-            std::string fn = (fn_name=="")?name:fn_name;
+            std::string basename = (dll_name.find('.') != std::string::npos) ? name : dll_name;
+            std::string fn = (fn_name.empty()) ? name : fn_name;
 
             std::string fullpath;
 
@@ -73,8 +71,9 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
 
             // Basic name
             fullpath = std::string(path).append("/").append(basename).append(ext);
-            if (subopen(factory, fullpath, fn))
+            if (subopen(factory, fullpath, fn)) {
                 return true;
+            }
 
 #if defined(_MSC_VER) && defined(NDEBUG)
             // MSVC RELEASE build: try debug name after basic name
@@ -85,42 +84,42 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
 
 
 #ifdef CMAKE_INTDIR
-            // On multi-config system, try to find the plugin in the
-            // current config subdirectory
+                // On multi-config system, try to find the plugin in the
+                // current config subdirectory
 
-#if defined(_MSC_VER) && !defined(NDEBUG)
+#    if defined(_MSC_VER) && !defined(NDEBUG)
             // MSVC DEBUG build: try debug name before basic name
             fullpath = std::string(path).append("/" CMAKE_INTDIR "/").append(dll_name).append("d").append(ext);
             if (subopen(factory, fullpath, fn))
                 return true;
-#endif // defined(_MSC_VER) && !defined(NDEBUG)
+#    endif // defined(_MSC_VER) && !defined(NDEBUG)
 
             // Basic name
             fullpath = std::string(path).append("/" CMAKE_INTDIR "/").append(dll_name).append(ext);
             if (subopen(factory, fullpath, fn))
                 return true;
 
-#if defined(_MSC_VER) && defined(NDEBUG)
+#    if defined(_MSC_VER) && defined(NDEBUG)
             // MSVC RELEASE build: try debug name after basic name
             fullpath = std::string(path).append("/" CMAKE_INTDIR "/").append(dll_name).append("d").append(ext);
             if (subopen(factory, fullpath, fn))
                 return true;
-#endif // defined(_MSC_VER) && defined(NDEBUG)
+#    endif // defined(_MSC_VER) && defined(NDEBUG)
 
 #endif // CMAKE_INTDIR
-
         }
     }
-    if (dll_name!=""||fn_name!="") {
+    if (!dll_name.empty() || !fn_name.empty()) {
         return open(factory, dll_name, fn_name);
     }
     return factory.open((std::string("yarp_") + name).c_str(),
-                        (fn_name=="")?name.c_str():fn_name.c_str());
+                        (fn_name.empty()) ? name.c_str() : fn_name.c_str());
 }
 
-void YarpPluginSettings::reportStatus(SharedLibraryFactory& factory) const {
+void YarpPluginSettings::reportStatus(SharedLibraryFactory& factory) const
+{
     int problem = factory.getStatus();
-    if (problem==0) {
+    if (problem == 0) {
         return;
     }
     switch (problem) {
@@ -150,24 +149,25 @@ void YarpPluginSettings::reportStatus(SharedLibraryFactory& factory) const {
     }
 }
 
-void YarpPluginSettings::reportFailure() const {
-    fprintf(stderr, "Failed to create %s from shared library %s\n",
-            fn_name.c_str(), dll_name.c_str());
+void YarpPluginSettings::reportFailure() const
+{
+    fprintf(stderr, "Failed to create %s from shared library %s\n", fn_name.c_str(), dll_name.c_str());
 }
 
 
-void YarpPluginSelector::scan() {
+void YarpPluginSelector::scan()
+{
     // This method needs to be accessed by one thread only
     LockGuard guard(mutex);
 
     // If it was scanned in the last 5 seconds, there is no need to scan again
     bool need_scan = true;
     if (config.check("last_update_time")) {
-        if (SystemClock::nowSystem()-config.find("last_update_time").asFloat64() < 5) {
+        if (SystemClock::nowSystem() - config.find("last_update_time").asFloat64() < 5) {
             need_scan = false;
         }
     }
-    if(!need_scan) {
+    if (!need_scan) {
         return;
     }
 
@@ -182,18 +182,19 @@ void YarpPluginSelector::scan() {
     }
     rf.setQuiet(true);
     Bottle plugin_paths = rf.findPaths("plugins");
-    if (plugin_paths.size()==0) {
+    if (plugin_paths.size() == 0) {
         plugin_paths = rf.findPaths("share/yarp/plugins");
     }
 
     // Search .ini files in plugins directories
     config.clear();
-    if (plugin_paths.size()>0) {
-        for (size_t i=0; i<plugin_paths.size(); i++) {
+    if (plugin_paths.size() > 0) {
+        for (size_t i = 0; i < plugin_paths.size(); i++) {
             std::string target = plugin_paths.get(i).asString();
             YARP_SPRINTF1(Logger::get(),
                           debug,
-                          "Loading configuration files related to plugins from %s.", target.c_str());
+                          "Loading configuration files related to plugins from %s.",
+                          target.c_str());
             config.fromConfigDir(target, "inifile", false);
         }
     } else {
@@ -206,11 +207,11 @@ void YarpPluginSelector::scan() {
     plugins.clear();
     search_path.clear();
     Bottle inilst = config.findGroup("inifile").tail();
-    for (size_t i=0; i<inilst.size(); i++) {
+    for (size_t i = 0; i < inilst.size(); i++) {
         std::string inifile = inilst.get(i).asString();
         Bottle inigroup = config.findGroup(inifile);
         Bottle lst = inigroup.findGroup("plugin").tail();
-        for (size_t i=0; i<lst.size(); i++) {
+        for (size_t i = 0; i < lst.size(); i++) {
             std::string plugin_name = lst.get(i).asString();
             Bottle group = inigroup.findGroup(plugin_name);
             group.add(Value::makeValue(std::string("(inifile \"") + inifile + "\")"));
@@ -219,7 +220,7 @@ void YarpPluginSelector::scan() {
             }
         }
         lst = inigroup.findGroup("search").tail();
-        for (size_t i=0; i<lst.size(); i++) {
+        for (size_t i = 0; i < lst.size(); i++) {
             std::string search_name = lst.get(i).asString();
             Bottle group = inigroup.findGroup(search_name);
             search_path.addList() = group;

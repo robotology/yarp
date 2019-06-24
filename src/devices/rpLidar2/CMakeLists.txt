@@ -19,32 +19,26 @@ if(NOT SKIP_rpLidar2)
     set(RPLIDAR_ARCH_DIR macOS)
   elseif(UNIX)
     set(RPLIDAR_ARCH_DIR linux)
+  else()
+    message(SEND_ERROR "rpLidar2: Unknown architecture")
   endif()
 
   set(RPLIDAR_SDK_SRCS ${RPLIDAR_SDK_ROOT}/src/rplidar_driver.cpp
                        ${RPLIDAR_SDK_ROOT}/src/arch/${RPLIDAR_ARCH_DIR}/net_serial.cpp
+                       ${RPLIDAR_SDK_ROOT}/src/arch/${RPLIDAR_ARCH_DIR}/net_socket.cpp
                        ${RPLIDAR_SDK_ROOT}/src/arch/${RPLIDAR_ARCH_DIR}/timer.cpp
                        ${RPLIDAR_SDK_ROOT}/src/hal/thread.cpp)
 
-  if(NOT MSVC)
-    check_cxx_compiler_flag("-Wno-suggest-override" CXX_HAS_WNO_SUGGEST_OVERRIDE)
-    if(CXX_HAS_WNO_SUGGEST_OVERRIDE)
-      set_property(SOURCE ${RPLIDAR_SDK_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-suggest-override")
-    endif()
-    check_cxx_compiler_flag("-Wno-type-limits" CXX_HAS_WNO_TYPE_LIMITS)
-    if(CXX_HAS_WNO_TYPE_LIMITS)
-      set_property(SOURCE ${RPLIDAR_SDK_SRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-type-limits")
-    endif()
-  endif()
-
+  add_library(rpLidar2_sdk OBJECT ${RPLIDAR_SDK_SRCS})
+  target_compile_options(rpLidar2_sdk PRIVATE -w)
+  target_include_directories(rpLidar2_sdk SYSTEM PUBLIC ${RPLIDAR_SDK_ROOT}/include
+                                                        ${RPLIDAR_SDK_ROOT}/src)
 
   yarp_add_plugin(yarp_rpLidar2 rpLidar2.h
                                 rpLidar2.cpp
-                                ${RPLIDAR_SDK_SRCS})
+                                $<TARGET_OBJECTS:rpLidar2_sdk>)
   target_compile_definitions(yarp_rpLidar2 PRIVATE _USE_MATH_DEFINES)
-
-  target_include_directories(yarp_rpLidar2 SYSTEM PRIVATE ${RPLIDAR_SDK_ROOT}/include
-                                                          ${RPLIDAR_SDK_ROOT}/src)
+  target_include_directories(yarp_rpLidar2 SYSTEM PRIVATE $<TARGET_PROPERTY:rpLidar2_sdk,INTERFACE_INCLUDE_DIRECTORIES>)
   target_link_libraries(yarp_rpLidar2 PRIVATE YARP::YARP_OS
                                               YARP::YARP_sig
                                               YARP::YARP_dev
@@ -57,10 +51,8 @@ if(NOT SKIP_rpLidar2)
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-  yarp_install(FILES rpLidar2.ini
-               COMPONENT ${YARP_PLUGIN_MASTER}
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
+               YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 

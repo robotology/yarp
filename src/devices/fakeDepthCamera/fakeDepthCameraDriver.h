@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef DEPTHCAMERA_DRIVER_H
-#define DEPTHCAMERA_DRIVER_H
+#ifndef YARP_FAKEDEPTHCAMERADRIVER_H
+#define YARP_FAKEDEPTHCAMERADRIVER_H
 
 #include <iostream>
 #include <string>
@@ -20,25 +20,17 @@
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
-namespace yarp
-{
-    namespace dev
-    {
-        class fakeDepthCameraDriver;
-    }
-}
 
-class yarp::dev::fakeDepthCameraDriver : public yarp::dev::DeviceDriver,
-                                         public yarp::dev::IRGBDSensor
+class fakeDepthCameraDriver :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IRGBDSensor
 {
 private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     typedef yarp::os::Stamp                           Stamp;
     typedef yarp::os::Property                        Property;
     typedef yarp::sig::FlexImage                      FlexImage;
 
-#endif
 public:
     fakeDepthCameraDriver();
     ~fakeDepthCameraDriver();
@@ -50,8 +42,8 @@ public:
     // IRGBDSensor
     int    getRgbHeight() override;
     int    getRgbWidth() override;
-    bool   getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) override;
-    bool   getRgbResolution(int &width, int &height) override;
+    bool   getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& configurations) override;
+    bool   getRgbResolution(int& width, int& height) override;
     bool   setRgbResolution(int width, int height) override;
     bool   getRgbFOV(double& horizontalFov, double& verticalFov) override;
     bool   setRgbFOV(double horizontalFov, double verticalFov) override;
@@ -73,7 +65,7 @@ public:
     bool   setDepthMirroring(bool mirror) override;
 
 
-    bool   getExtrinsicParam(sig::Matrix &extrinsic) override;
+    bool   getExtrinsicParam(yarp::sig::Matrix& extrinsic) override;
     bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = NULL) override;
     bool   getDepthImage(depthImage& depthImage, Stamp* timeStamp = NULL) override;
     bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL) override;
@@ -96,8 +88,6 @@ private:
 
     yarp::sig::ImageOf<yarp::sig::PixelRgb> imageof;
     yarp::dev::PolyDriver                   testgrabber;
-    IFrameGrabberImage*                     image;
-
-
+    yarp::dev::IFrameGrabberImage*                     image;
 };
-#endif
+#endif // YARP_FAKEDEPTHCAMERADRIVER_H

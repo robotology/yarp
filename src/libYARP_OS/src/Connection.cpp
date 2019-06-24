@@ -17,4 +17,7 @@ bool Connection::isValid() const
     return true;
 }
 
-bool Connection::isBareMode() const { return false; }
+bool Connection::isBareMode() const
+{
+    return false;
+}

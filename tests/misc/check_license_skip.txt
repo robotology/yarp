@@ -1,7 +1,4 @@
-bindings/allegro/examples/example.lisp
 bindings/java/examples/matlab/simulink/sfun_time.c
 bindings/lua/argcargv.i
-example/swig/allegro/yarp.asd
 src/devices/opencv/OpenCVGrabber.cpp
 src/devices/opencv/OpenCVGrabber.h
-cmake/FindI2C.cmake

@@ -10,28 +10,26 @@
 #ifndef YARP_OS_IMPL_PORTCOMMAND_H
 #define YARP_OS_IMPL_PORTCOMMAND_H
 
-#include <yarp/os/Portable.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ManagedBytes.h>
+#include <yarp/os/Portable.h>
+
 #include <string>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class PortCommand;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * Simple Readable and Writable object representing a command to a YARP port.
  */
-class YARP_OS_impl_API yarp::os::impl::PortCommand : public yarp::os::Portable
+class YARP_OS_impl_API PortCommand :
+        public yarp::os::Portable
 {
 public:
-
-    PortCommand() : header(8)
+    PortCommand() :
+            header(8)
     {
         ch = '\0';
         str = "";
@@ -62,5 +60,9 @@ public:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) str;
     mutable yarp::os::ManagedBytes header;
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_PORTCOMMAND_H

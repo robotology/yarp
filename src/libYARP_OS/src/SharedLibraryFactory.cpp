@@ -7,8 +7,10 @@
  */
 
 #include <yarp/os/SharedLibraryFactory.h>
-#include <string>
+
 #include <yarp/os/Os.h>
+
+#include <string>
 
 yarp::os::SharedLibraryFactory::SharedLibraryFactory() :
         status(STATUS_NONE),
@@ -18,8 +20,8 @@ yarp::os::SharedLibraryFactory::SharedLibraryFactory() :
     memset(&api, 0, sizeof(SharedLibraryClassApi));
 }
 
-yarp::os::SharedLibraryFactory::SharedLibraryFactory(const char *dll_name,
-                                                     const char *fn_name) :
+yarp::os::SharedLibraryFactory::SharedLibraryFactory(const char* dll_name,
+                                                     const char* fn_name) :
         status(STATUS_NONE),
         returnValue(0),
         rct(1)
@@ -29,7 +31,7 @@ yarp::os::SharedLibraryFactory::SharedLibraryFactory(const char *dll_name,
 
 yarp::os::SharedLibraryFactory::~SharedLibraryFactory() = default;
 
-bool yarp::os::SharedLibraryFactory::open(const char *dll_name, const char *fn_name)
+bool yarp::os::SharedLibraryFactory::open(const char* dll_name, const char* fn_name)
 {
     returnValue = 0;
     name = "";
@@ -47,7 +49,7 @@ bool yarp::os::SharedLibraryFactory::open(const char *dll_name, const char *fn_n
         error = lib.error();
         return false;
     }
-    void *fn = lib.getSymbol((fn_name != nullptr) ? fn_name : YARP_DEFAULT_FACTORY_NAME);
+    void* fn = lib.getSymbol((fn_name != nullptr) ? fn_name : YARP_DEFAULT_FACTORY_NAME);
     if (fn == nullptr) {
         status = STATUS_FACTORY_NOT_FOUND;
         error = lib.error();
@@ -139,13 +141,12 @@ std::string yarp::os::SharedLibraryFactory::getBaseClassName() const
     return baseClassName;
 }
 
-bool yarp::os::SharedLibraryFactory::useFactoryFunction(void *factory)
+bool yarp::os::SharedLibraryFactory::useFactoryFunction(void* factory)
 {
     api.startCheck = 0;
     if (factory == nullptr) {
         return false;
     }
-    returnValue =
-        ((int (*)(void *ptr, int len)) factory)(&api, sizeof(SharedLibraryClassApi));
+    returnValue = ((int (*)(void* ptr, int len))factory)(&api, sizeof(SharedLibraryClassApi));
     return isValid();
 }

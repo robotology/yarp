@@ -13,6 +13,8 @@
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/os/PortablePair.h>
+#include <yarp/sig/Image.h>
+#include <yarp/sig/Sound.h>
 
 namespace yarp{
     namespace dev {

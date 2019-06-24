@@ -84,10 +84,18 @@ namespace yarp{
  * | ROS            |      -         | group   |  -             |   -           | No                          | Group containing parameter for ROS topic initialization           | if missing, it is assumed to not use ROS topics |
  * |   -            |  useROS        | string  | true/false/only|   -           |  if ROS group is present    | set 'true' to have both yarp ports and ROS topic, set 'only' to have only ROS topic and no yarp port|  - |
  * |   -            |  ROS_topicName | string  |  -             |   -           |  if ROS group is present    | set the name for ROS topic                                        | must start with a leading '/' |
+ * |   -            |                | list    |  -             |   -           |                             | set the names for ROS topics as a List                            | all names must start with a leading '/' |
  * |   -            |  ROS_nodeName  | string  |  -             |   -           |  if ROS group is present    | set the name for ROS node                                         | must start with a leading '/' |
  * |   -            |  channelNames  | string  |  -             |   -           |  deprecated                 | channels names are now got from attached motionControl device     | names order must match with the channel order, from 0 to N |
  *
  * ROS message type used for force/torque is geometry_msgs/WrenchedStamped.msg (http://docs.ros.org/indigo/api/geometry_msgs/html/msg/WrenchStamped.html)
+ * ROS Offset and padding are optional parameters to be used to ignore the data surrounding force/torque data present in the analog sensor output.
+ *
+ * for example:
+ *              3forces + 3torques + temperature + 3forces + 3torques + temperature ... -> offset 0, padding 1 (the temperature entry is one sample to skip)
+ *              3forces + 3torques + temperature + gravity + 3forces + 3torques + temperature + gravity ... -> offset 0, padding is 4 (1 temperature + 3 for gravity)
+ *              temperature + 3forces + 3torques + temperature + 3forces + 3torques ... -> offset 1, padding is 0 (the F/T are the last ones)
+ *              temperature + 3forces + 3torques + gravity + temperature + 3forces + 3torques + gravity ... -> offset 1, padding is 3 (skip 1 sample, get F/T and skip remaining 3)
  *
  * Some example of configuration files:
  *
@@ -149,7 +157,7 @@ namespace yarp{
  * ROS_topicName /left_arm/forceTorque
  * ROS_nodeName  /torquePublisher
  * ROS_msgType   geometry_msgs/WrenchedStamped
- * frame_id      r_shoulder
+ * frame_id      l_shoulder
  * \endcode
  *
  * Configuration for ROS topic using .xml format.
@@ -161,7 +169,30 @@ namespace yarp{
  *     <param name="ROS_topicName">  /left_arm/forceTorque          </param>
  *     <param name="ROS_nodeName">   /torquePublisher               </param>
  *     <param name="ROS_msgType">    geometry_msgs/WrenchedStamped  </param>
- *     <param name="frame_id">       r_shoulder                     </param>
+ *     <param name="frame_id">       l_shoulder                     </param>
+ * </group>
+ *
+ * In case of an analog sensor streaming multiple force/torque streams, Configuration for ROS topic using .ini format.
+ *
+ * \code{.unparsed}
+ * [ROS]
+ * useROS        true
+ * ROS_topicName (/left_arm/forceTorque /right_arm/forceTorque /left_leg/forceTorque /left_leg/forceTorque)
+ * ROS_nodeName  /torquePublisher
+ * ROS_msgType   geometry_msgs/WrenchedStamped
+ * frame_id      (l_shoulder r_shoulder l_leg r_leg)
+ * \endcode
+ *
+ * Configuration for ROS topic using .xml format.
+ *
+ * \code{.unparsed}
+ *
+ * <group name="ROS">
+ *     <param name="useROS">         true                                                                                        </param>    // use 'only' if you want only ROS topic and NOT yarp ports
+ *     <param name="ROS_topicName">  (/left_arm/forceTorque /right_arm/forceTorque /left_leg/forceTorque /left_leg/forceTorque)  </param>
+ *     <param name="ROS_nodeName">   /torquePublisher                                                                            </param>
+ *     <param name="ROS_msgType">    geometry_msgs/WrenchedStamped                                                               </param>
+ *     <param name="frame_id">       (l_shoulder r_shoulder l_leg r_leg)                                                         </param>
  * </group>
  * \endcode
  * */
@@ -212,17 +243,19 @@ private:
 
     // ROS state publisher
     ROSTopicUsageType                                        useROS;                     // decide if open ROS topic or not
-    std::string                                              frame_id;                   // name of the reference frame the measures are referred to
+    std::vector<std::string>                                 frame_idVec;                   // name of the reference frame the measures are referred to
     std::vector<std::string>                                 ros_joint_names;
     std::string                                              rosMsgType;                 // ros message type
     std::string                                              rosNodeName;                // name of the rosNode
-    std::string                                              rosTopicName;               // name of the rosTopic
+    std::vector<std::string>                                 rosTopicNamesVec;               // names of the rosTopics
     yarp::os::Node                                           *rosNode;                   // add a ROS node
-    yarp::os::NetUint32                                      rosMsgCounter;              // incremental counter in the ROS message
+    std::vector<yarp::os::NetUint32>                         rosMsgCounterVec;              // incremental counter in the ROS message
+    int                                                      rosOffset;                  // offset to be ignored from the analog sensor data
+    int                                                      rosPadding;                 // padding to be ignored from the analog sensor data
 
     // TODO: in the future, in order to support multiple ROS msgs this should be a pointer allocated dynamically depending on the msg maybe (??)
     //  yarp::os::PortWriterBuffer<yarp::rosmsg::geometry_msgs::WrenchStamped> rosOutputWrench_buffer; // Buffer associated to the ROS topic
-    yarp::os::Publisher<yarp::rosmsg::geometry_msgs::WrenchStamped> rosPublisherWrenchPort; // Dedicated ROS topic publisher
+    std::vector<yarp::os::Publisher<yarp::rosmsg::geometry_msgs::WrenchStamped>> rosPublisherWrenchPortVec; // Dedicated ROS topic publisher
 
     //yarp::os::PortWriterBuffer<yarp::rosmsg::sensor_msgs::JointState> rosOutputJoint_buffer; // Buffer associated to the ROS topic
     yarp::os::Publisher<yarp::rosmsg::sensor_msgs::JointState> rosPublisherJointPort; // Dedicated ROS topic publisher

@@ -35,11 +35,6 @@
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/ILocalization2D.h>
 
-namespace yarp {
-    namespace dev {
-        class Localization2DClient;
-    }
-}
 
 /**
  *  @ingroup dev_impl_network_clients
@@ -54,17 +49,15 @@ namespace yarp {
  * | remote         |      -         | string  | -   |   -           | Yes          | Full port name of the port opened on the server side, to which the Localization2DClient connects to.                           | E.g.(https://github.com/robotology/navigation/src/localizationServer)    |
  */
 
-class yarp::dev::Localization2DClient : public DeviceDriver,
-                                       public ILocalization2D
+class Localization2DClient :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::ILocalization2D
 {
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
     yarp::os::Mutex               m_mutex;
     yarp::os::Port                m_rpc_port_localization_server;
     std::string         m_local_name;
     std::string         m_remote_name;
-
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
     /* DeviceDriver methods */
@@ -73,7 +66,9 @@ public:
 
     /* The following methods belong to ILocalization2D interface */
     bool   getCurrentPosition(yarp::dev::Map2DLocation &loc) override;
-    bool   setInitialPose(yarp::dev::Map2DLocation& loc) override;
+    bool   setInitialPose(const yarp::dev::Map2DLocation& loc) override;
+    bool   getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status) override;
+    bool   getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses) override;
 };
 
 #endif // YARP_DEV_LOCALIZATION2DCLIENT_H

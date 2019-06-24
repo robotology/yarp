@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(dynamixelAX12Ftdi
                     CATEGORY device
-                    TYPE yarp::dev::DynamixelAX12FtdiDriver
+                    TYPE DynamixelAX12FtdiDriver
                     INCLUDE "DynamixelAX12FtdiDriver.h"
                     EXTRA_CONFIG WRAPPER=controlboard
                     DEPENDS "YARP_HAS_FTDI")
@@ -28,10 +28,8 @@ if(NOT SKIP_dynamixelAX12Ftdi)
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-  yarp_install(FILES dynamixelAX12Ftdi.ini
-               COMPONENT ${YARP_PLUGIN_MASTER}
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
+               YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 

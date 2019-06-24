@@ -13,23 +13,19 @@
 #include <yarp/os/AbstractCarrier.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class TcpCarrier;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * Communicating between two ports via TCP.
  */
-class yarp::os::impl::TcpCarrier : public AbstractCarrier
+class TcpCarrier :
+        public AbstractCarrier
 {
 public:
-
     TcpCarrier(bool requireAckFlag = true);
 
-    Carrier *create() const override;
+    Carrier* create() const override;
 
     std::string getName() const override;
 
@@ -46,5 +42,9 @@ public:
 private:
     bool requireAckFlag;
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_TCPCARRIER_H

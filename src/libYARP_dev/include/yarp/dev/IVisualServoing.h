@@ -13,8 +13,8 @@
 #include <vector>
 
 #include <yarp/os/Bottle.h>
-#include <string>
 #include <yarp/sig/Vector.h>
+#include <yarp/dev/api.h>
 
 namespace yarp{
     namespace dev {
@@ -26,7 +26,7 @@ namespace yarp{
 /*!
  * \brief Interface for visual servoing controllers.
  */
-class yarp::dev::IVisualServoing
+class YARP_dev_API yarp::dev::IVisualServoing
 {
 public:
     /*!
@@ -37,7 +37,7 @@ public:
     /*!
      * Destructor.
      */
-    virtual ~IVisualServoing() { }
+    virtual ~IVisualServoing();
 
     /*!
      * Initialize support classes, modules and connections to perform visual

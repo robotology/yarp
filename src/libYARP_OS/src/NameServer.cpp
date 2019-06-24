@@ -7,24 +7,21 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/impl/NameServer.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/ConnectionWriter.h>
-#include <yarp/os/impl/SplitString.h>
-#include <yarp/os/NetType.h>
-#include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/ManagedBytes.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameConfig.h>
-#ifdef YARP_HAS_ACE
-#  include <yarp/os/impl/FallbackNameServer.h>
-#endif
+#include <yarp/os/impl/NameServer.h>
+#include <yarp/os/impl/SplitString.h>
+#include <yarp/conf/version.h>
+
+#include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/Property.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
-#include <yarp/os/Port.h>
 #include <yarp/os/Vocab.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/Property.h>
-#include <yarp/conf/version.h>
 
 #include <map>
 #include <set>
@@ -39,7 +36,8 @@ using namespace yarp::os;
 #define YTRACE(x)
 
 // produce a correctly parsed string in presence of quoting
-static std::string STR_HELP(const char *txt) {
+static std::string STR_HELP(const char* txt)
+{
     Value v;
     v.fromString(txt);
     return v.asString();
@@ -55,17 +53,18 @@ static std::string STR_HELP(const char *txt) {
 ////////////////////////////////////////////////////////////////////////
 
 
-Contact NameServer::unregisterName(const std::string& name) {
+Contact NameServer::unregisterName(const std::string& name)
+{
     Contact prev = queryName(name);
     if (prev.isValid()) {
-        if (prev.getPort()!=-1) {
+        if (prev.getPort() != -1) {
             NameRecord& rec = getNameRecord(prev.getRegName());
             if (rec.isReusablePort()) {
                 HostRecord& host = getHostRecord(prev.getHost());
                 host.release(prev.getPort());
             }
             if (rec.isReusableIp()) {
-                if (rec.getAddress().getCarrier()=="mcast") {
+                if (rec.getAddress().getCarrier() == "mcast") {
                     mcastRecord.releaseAddress(rec.getAddress().getHost().c_str());
                 }
             }
@@ -83,16 +82,16 @@ Contact NameServer::unregisterName(const std::string& name) {
 }
 
 
-
 Contact NameServer::registerName(const std::string& name,
                                  const Contact& address,
-                                 const std::string& remote) {
+                                 const std::string& remote)
+{
     bool reusablePort = false;
     bool reusableIp = false;
 
     //YARP_DEBUG(Logger::get(), "in registerName...");
 
-    if (name!="...") {
+    if (name != "...") {
         unregisterName(name);
     }
 
@@ -115,8 +114,8 @@ Contact NameServer::registerName(const std::string& name,
     std::string machine = suggestion.getHost();
     int overridePort = 0;
     if (machine == "...") {
-        if (carrier!="mcast") {
-            if (remote=="...") {
+        if (carrier != "mcast") {
+            if (remote == "...") {
                 YARP_ERROR(Logger::get(), "remote machine name was not found!  can only guess it is local...");
                 machine = "127.0.0.1";
             } else {
@@ -131,7 +130,7 @@ Contact NameServer::registerName(const std::string& name,
 
     int port = suggestion.getPort();
     if (port == 0) {
-        if (overridePort) {
+        if (overridePort != 0) {
             port = overridePort;
         } else {
             port = getHostRecord(machine).get();
@@ -141,8 +140,7 @@ Contact NameServer::registerName(const std::string& name,
 
     suggestion = Contact(portName, carrier, machine, port);
 
-    YARP_DEBUG(Logger::get(), std::string("Registering ") +
-               suggestion.toURI() + " for " + suggestion.getRegName());
+    YARP_DEBUG(Logger::get(), std::string("Registering ") + suggestion.toURI() + " for " + suggestion.getRegName());
 
     NameRecord& nameRecord = getNameRecord(suggestion.getRegName());
     nameRecord.setAddress(suggestion, reusablePort, reusableIp);
@@ -156,25 +154,25 @@ Contact NameServer::registerName(const std::string& name,
 }
 
 
-Contact NameServer::queryName(const std::string& name) {
+Contact NameServer::queryName(const std::string& name)
+{
     std::string base = name;
     std::string pat;
     if (name.find("/net=") == 0) {
         size_t patStart = 5;
         size_t patEnd = name.find('/', patStart);
-        if (patEnd>=patStart && patEnd!=std::string::npos) {
-            pat = name.substr(patStart, patEnd-patStart);
+        if (patEnd >= patStart && patEnd != std::string::npos) {
+            pat = name.substr(patStart, patEnd - patStart);
             base = name.substr(patEnd);
-            YARP_DEBUG(Logger::get(), std::string("Special query form ") +
-                       name + " (" + pat + "/" + base + ")");
+            YARP_DEBUG(Logger::get(), std::string("Special query form ") + name + " (" + pat + "/" + base + ")");
         }
     }
 
-    NameRecord *rec = getNameRecord(base, false);
-    if (rec!=nullptr) {
-        if (pat!="") {
+    NameRecord* rec = getNameRecord(base, false);
+    if (rec != nullptr) {
+        if (!pat.empty()) {
             std::string ip = rec->matchProp("ips", pat);
-            if (ip!="") {
+            if (!ip.empty()) {
                 SplitString sip(ip.c_str());
                 Contact c = rec->getAddress();
                 c.setHost(sip.get(0));
@@ -187,8 +185,9 @@ Contact NameServer::queryName(const std::string& name) {
 }
 
 
-NameServer::NameRecord *NameServer::getNameRecord(const std::string& name,
-                                                  bool create) {
+NameServer::NameRecord* NameServer::getNameRecord(const std::string& name,
+                                                  bool create)
+{
     auto entry = nameMap.find(name);
     if (entry == nameMap.end()) {
         if (!create) {
@@ -202,8 +201,9 @@ NameServer::NameRecord *NameServer::getNameRecord(const std::string& name,
 }
 
 
-NameServer::HostRecord *NameServer::getHostRecord(const std::string& name,
-                                                  bool create) {
+NameServer::HostRecord* NameServer::getHostRecord(const std::string& name,
+                                                  bool create)
+{
     auto entry = hostMap.find(name);
     if (entry == hostMap.end()) {
         if (!create) {
@@ -218,13 +218,6 @@ NameServer::HostRecord *NameServer::getHostRecord(const std::string& name,
 }
 
 
-
-
-
-
-
-
-
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 //
@@ -234,10 +227,10 @@ NameServer::HostRecord *NameServer::getHostRecord(const std::string& name,
 ////////////////////////////////////////////////////////////////////////
 
 
+void NameServer::setup()
+{
 
-void NameServer::setup() {
-
-    basePort = NetworkBase::getDefaultPortRange()+2;
+    basePort = NetworkBase::getDefaultPortRange() + 2;
 
     dispatcher.add("register", &NameServer::cmdRegister);
     dispatcher.add("unregister", &NameServer::cmdUnregister);
@@ -260,13 +253,14 @@ void NameServer::setup() {
     ndispatcher.add("get", &NameServer::ncmdGet);
 }
 
-std::string NameServer::cmdRegister(int argc, char *argv[]) {
+std::string NameServer::cmdRegister(int argc, char* argv[])
+{
 
     std::string remote = argv[0];
     argc--;
     argv++;
 
-    if (argc<1) {
+    if (argc < 1) {
         return "need at least one argument";
     }
     std::string portName = STR(argv[0]);
@@ -274,13 +268,13 @@ std::string NameServer::cmdRegister(int argc, char *argv[]) {
     std::string machine = "...";
     std::string carrier = "...";
     int port = 0;
-    if (argc>=2) {
+    if (argc >= 2) {
         carrier = argv[1];
     }
-    if (argc>=3) {
+    if (argc >= 3) {
         machine = argv[2];
     }
-    if (argc>=4) {
+    if (argc >= 4) {
         if (std::string("...") == argv[3]) {
             port = 0;
         } else {
@@ -298,12 +292,13 @@ std::string NameServer::cmdRegister(int argc, char *argv[]) {
 }
 
 
-std::string NameServer::cmdQuery(int argc, char *argv[]) {
+std::string NameServer::cmdQuery(int argc, char* argv[])
+{
     // ignore source
     argc--;
     argv++;
 
-    if (argc<1) {
+    if (argc < 1) {
         return "need at least one argument";
     }
     std::string portName = STR(argv[0]);
@@ -311,12 +306,13 @@ std::string NameServer::cmdQuery(int argc, char *argv[]) {
     return terminate(textify(address));
 }
 
-std::string NameServer::cmdUnregister(int argc, char *argv[]) {
+std::string NameServer::cmdUnregister(int argc, char* argv[])
+{
     // ignore source
     argc--;
     argv++;
 
-    if (argc<1) {
+    if (argc < 1) {
         return "need at least one argument";
     }
     std::string portName = STR(argv[0]);
@@ -325,7 +321,8 @@ std::string NameServer::cmdUnregister(int argc, char *argv[]) {
 }
 
 
-std::string NameServer::cmdAnnounce(int argc, char *argv[]) {
+std::string NameServer::cmdAnnounce(int argc, char* argv[])
+{
     // ignore source
     argc--;
     argv++;
@@ -333,26 +330,31 @@ std::string NameServer::cmdAnnounce(int argc, char *argv[]) {
     return terminate("ok\n");
 }
 
-std::string NameServer::cmdRoute(int argc, char *argv[]) {
+std::string NameServer::cmdRoute(int argc, char* argv[])
+{
     // ignore source
     argc--;
     argv++;
 
-    if (argc<2) {
+    if (argc < 2) {
         return terminate("need at least two arguments: the source port and the target port\n(followed by an optional list of carriers in decreasing order of desirability)");
     }
     std::string src = STR(argv[0]);
     std::string dest = STR(argv[1]);
 
-    argc-=2;
-    argv+=2;
+    argc -= 2;
+    argv += 2;
 
-    const char *altArgv[] = {
-        "local", "shmem", "mcast", "udp", "tcp", "text"
-    };
+    const char* altArgv[] = {
+        "local",
+        "shmem",
+        "mcast",
+        "udp",
+        "tcp",
+        "text"};
     int altArgc = 6;
 
-    if (argc==0) {
+    if (argc == 0) {
         argc = altArgc;
         argv = (char**)altArgv;
     }
@@ -362,14 +364,13 @@ std::string NameServer::cmdRoute(int argc, char *argv[]) {
     NameRecord& destRec = getNameRecord(dest);
     std::string pref;
 
-    for (int i=0; i<argc; i++) {
+    for (int i = 0; i < argc; i++) {
         std::string carrier = argv[i];
-        if (srcRec.checkProp("offers", carrier) &&
-            destRec.checkProp("accepts", carrier)) {
+        if (srcRec.checkProp("offers", carrier) && destRec.checkProp("accepts", carrier)) {
             bool ok = true;
-            if (carrier=="local"||carrier=="shmem") {
+            if (carrier == "local" || carrier == "shmem") {
                 if (srcRec.getProp("ips") == destRec.getProp("ips")) {
-                    if (carrier=="local") {
+                    if (carrier == "local") {
                         if (srcRec.getProp("process") != destRec.getProp("process")) {
                             ok = false;
                         }
@@ -384,7 +385,7 @@ std::string NameServer::cmdRoute(int argc, char *argv[]) {
             }
         }
     }
-    if (pref!="") {
+    if (!pref.empty()) {
         pref = pref + ":/" + dest;
     } else {
         pref = dest;
@@ -396,7 +397,8 @@ std::string NameServer::cmdRoute(int argc, char *argv[]) {
 }
 
 
-std::string NameServer::cmdHelp(int argc, char *argv[]) {
+std::string NameServer::cmdHelp(int argc, char* argv[])
+{
     // ignore source
     argc--;
     argv++;
@@ -424,85 +426,86 @@ std::string NameServer::cmdHelp(int argc, char *argv[]) {
 }
 
 
-std::string NameServer::cmdSet(int argc, char *argv[]) {
+std::string NameServer::cmdSet(int argc, char* argv[])
+{
     // ignore source
     argc--;
     argv++;
 
-    if (argc<2) {
+    if (argc < 2) {
         return "need at least two arguments: the port name, and a key";
     }
     std::string target = STR(argv[0]);
     std::string key = argv[1];
     NameRecord& nameRecord = getNameRecord(target);
     nameRecord.clearProp(key);
-    for (int i=2; i<argc; i++) {
+    for (int i = 2; i < argc; i++) {
         nameRecord.addProp(key, argv[i]);
     }
-    return terminate(std::string("port ") + target + " property " + key + " = " +
-                     nameRecord.getProp(key) + "\n");
+    return terminate(std::string("port ") + target + " property " + key + " = " + nameRecord.getProp(key) + "\n");
 }
 
-std::string NameServer::cmdGet(int argc, char *argv[]) {
+std::string NameServer::cmdGet(int argc, char* argv[])
+{
     // ignore source
     argc--;
     argv++;
 
-    if (argc<2) {
+    if (argc < 2) {
         return "need exactly two arguments: the port name, and a key";
     }
     std::string target = STR(argv[0]);
     std::string key = argv[1];
     NameRecord& nameRecord = getNameRecord(target);
-    return terminate(std::string("port ") + target + " property " + key + " = " +
-                     nameRecord.getProp(key) + "\n");
+    return terminate(std::string("port ") + target + " property " + key + " = " + nameRecord.getProp(key) + "\n");
 }
 
-std::string NameServer::cmdMatch(int argc, char *argv[]) {
+std::string NameServer::cmdMatch(int argc, char* argv[])
+{
     // ignore source
     argc--;
     argv++;
 
-    if (argc<3) {
+    if (argc < 3) {
         return "need exactly three arguments: the port name, a key, and a prefix";
     }
     std::string target = STR(argv[0]);
     std::string key = argv[1];
     std::string prefix = argv[2];
     NameRecord& nameRecord = getNameRecord(target);
-    return terminate(std::string("port ") + target + " property " + key + " = " +
-                     nameRecord.matchProp(key, prefix) + "\n");
+    return terminate(std::string("port ") + target + " property " + key + " = " + nameRecord.matchProp(key, prefix) + "\n");
 }
 
-std::string NameServer::cmdCheck(int argc, char *argv[]) {
+std::string NameServer::cmdCheck(int argc, char* argv[])
+{
     // ignore source
     argc--;
     argv++;
 
-    if (argc<2) {
+    if (argc < 2) {
         return "need at least two arguments: the port name, and a key";
     }
     std::string response;
     std::string target = STR(argv[0]);
     std::string key = argv[1];
     NameRecord& nameRecord = getNameRecord(target);
-    for (int i=2; i<argc; i++) {
+    for (int i = 2; i < argc; i++) {
         std::string val = "false";
         if (nameRecord.checkProp(key, argv[i])) {
             val = "true";
         }
-        if (i>2) {
+        if (i > 2) {
             response += "\n";
         }
-        response.append("port ").append(target).append(" property ")
-            .append(key).append(" value ").append(argv[i]).append(" present ").append(val);
+        response.append("port ").append(target).append(" property ").append(key).append(" value ").append(argv[i]).append(" present ").append(val);
     }
     response += "\n";
     return terminate(response);
 }
 
 
-std::string NameServer::cmdList(int argc, char *argv[]) {
+std::string NameServer::cmdList(int argc, char* argv[])
+{
     YARP_UNUSED(argc);
     YARP_UNUSED(argv);
     std::string response;
@@ -522,11 +525,12 @@ std::string NameServer::cmdList(int argc, char *argv[]) {
 }
 
 
-std::string NameServer::cmdBot(int argc, char *argv[]) {
+std::string NameServer::cmdBot(int argc, char* argv[])
+{
     std::string txt;
     argc--;
     argv++;
-    if (argc>=1) {
+    if (argc >= 1) {
         std::string key = argv[0];
         argc--;
         argv++;
@@ -537,12 +541,13 @@ std::string NameServer::cmdBot(int argc, char *argv[]) {
 }
 
 
-Bottle NameServer::ncmdList(int argc, char *argv[]) {
+Bottle NameServer::ncmdList(int argc, char* argv[])
+{
     Bottle response;
 
     std::string prefix;
 
-    if (argc==1) {
+    if (argc == 1) {
         prefix = STR(argv[0]);
     }
 
@@ -550,9 +555,8 @@ Bottle NameServer::ncmdList(int argc, char *argv[]) {
     for (auto& it : nameMap) {
         NameRecord& rec = it.second;
         std::string iname = rec.getAddress().getRegName();
-        if (iname.find(prefix)==0) {
-            if (iname==prefix || iname[prefix.length()]=='/' ||
-                prefix[prefix.length()-1]=='/') {
+        if (iname.find(prefix) == 0) {
+            if (iname == prefix || iname[prefix.length()] == '/' || prefix[prefix.length() - 1] == '/') {
                 if (rec.getAddress().isValid()) {
                     response.addList() = botify(rec.getAddress());
                 }
@@ -564,9 +568,10 @@ Bottle NameServer::ncmdList(int argc, char *argv[]) {
 }
 
 
-yarp::os::Bottle NameServer::ncmdQuery(int argc, char *argv[]) {
+yarp::os::Bottle NameServer::ncmdQuery(int argc, char* argv[])
+{
     Bottle response;
-    if (argc==1) {
+    if (argc == 1) {
         std::string portName = STR(argv[0]);
         Contact address = queryName(portName);
         response = botify(address);
@@ -575,7 +580,8 @@ yarp::os::Bottle NameServer::ncmdQuery(int argc, char *argv[]) {
 }
 
 
-yarp::os::Bottle NameServer::ncmdVersion(int argc, char *argv[]) {
+yarp::os::Bottle NameServer::ncmdVersion(int argc, char* argv[])
+{
     YARP_UNUSED(argc);
     YARP_UNUSED(argv);
     Bottle response;
@@ -585,7 +591,8 @@ yarp::os::Bottle NameServer::ncmdVersion(int argc, char *argv[]) {
 }
 
 
-yarp::os::Bottle NameServer::ncmdSet(int argc, char *argv[]) {
+yarp::os::Bottle NameServer::ncmdSet(int argc, char* argv[])
+{
 
     Bottle response;
     if (argc >= 2) {
@@ -593,7 +600,7 @@ yarp::os::Bottle NameServer::ncmdSet(int argc, char *argv[]) {
         std::string key = STR(argv[1]);
         NameRecord& nameRecord = getNameRecord(target);
         nameRecord.clearProp(key);
-        for (int i=2; i<argc; i++) {
+        for (int i = 2; i < argc; i++) {
             nameRecord.addProp(key, argv[i]);
         }
         response.addString("ok");
@@ -601,9 +608,10 @@ yarp::os::Bottle NameServer::ncmdSet(int argc, char *argv[]) {
     return response;
 }
 
-yarp::os::Bottle NameServer::ncmdGet(int argc, char *argv[]) {
+yarp::os::Bottle NameServer::ncmdGet(int argc, char* argv[])
+{
     Bottle response;
-    if (argc==2) {
+    if (argc == 2) {
         std::string target = STR(argv[0]);
         std::string key = argv[1];
         NameRecord& nameRecord = getNameRecord(target);
@@ -613,8 +621,8 @@ yarp::os::Bottle NameServer::ncmdGet(int argc, char *argv[]) {
 }
 
 
-
-std::string NameServer::cmdGarbageCollect(int argc, char *argv[]) {
+std::string NameServer::cmdGarbageCollect(int argc, char* argv[])
+{
     YARP_UNUSED(argc);
     YARP_UNUSED(argv);
     std::string response;
@@ -625,28 +633,24 @@ std::string NameServer::cmdGarbageCollect(int argc, char *argv[]) {
 }
 
 
-std::string NameServer::textify(const Contact& address) {
+std::string NameServer::textify(const Contact& address)
+{
     std::string result;
     if (address.isValid()) {
-        if (address.getPort()>=0) {
+        if (address.getPort() >= 0) {
             result = "registration name ";
-            result = result + address.getRegName() +
-                " ip " + address.getHost() + " port " +
-                NetType::toString(address.getPort()) + " type " +
-                address.getCarrier() + "\n";
+            result = result + address.getRegName() + " ip " + address.getHost() + " port " + NetType::toString(address.getPort()) + " type " + address.getCarrier() + "\n";
         } else {
             result = "registration name ";
-            result = result + address.getRegName() +
-                " ip " + "none" + " port " +
-                "none" + " type " +
-                address.getCarrier() + "\n";
+            result = result + address.getRegName() + " ip " + "none" + " port " + "none" + " type " + address.getCarrier() + "\n";
         }
     }
     return result;
 }
 
 
-Bottle NameServer::botify(const Contact& address) {
+Bottle NameServer::botify(const Contact& address)
+{
     Bottle result;
     if (address.isValid()) {
         Bottle bname;
@@ -679,31 +683,32 @@ Bottle NameServer::botify(const Contact& address) {
 }
 
 
-static std::string ns_terminate(const std::string& str) {
+static std::string ns_terminate(const std::string& str)
+{
     return str + "*** end of message";
 }
 
-std::string NameServer::terminate(const std::string& str) {
+std::string NameServer::terminate(const std::string& str)
+{
     return ns_terminate(str);
 }
 
 
-std::string NameServer::apply(const std::string& txt, const Contact& remote) {
+std::string NameServer::apply(const std::string& txt, const Contact& remote)
+{
     std::string result = "no command given";
     mutex.lock();
 
     SplitString ss(txt.c_str());
-    if (ss.size()>=2) {
+    if (ss.size() >= 2) {
         std::string key = ss.get(1);
         //YARP_DEBUG(Logger::get(), std::string("dispatching to ") + key);
         ss.set(1, remote.getHost().c_str());
-        result = dispatcher.dispatch(this, key.c_str(), ss.size()-1,
-                                     (char **)(ss.get()+1));
-        if (result == "") {
-            Bottle b = ndispatcher.dispatch(this, key.c_str(), ss.size()-1,
-                                            (char **)(ss.get()+1));
+        result = dispatcher.dispatch(this, key.c_str(), ss.size() - 1, (char**)(ss.get() + 1));
+        if (result.empty()) {
+            Bottle b = ndispatcher.dispatch(this, key.c_str(), ss.size() - 1, (char**)(ss.get() + 1));
             result = b.toString();
-            if (result!="") {
+            if (!result.empty()) {
                 result = result + "\n";
                 result = terminate(result);
             }
@@ -716,8 +721,8 @@ std::string NameServer::apply(const std::string& txt, const Contact& remote) {
 }
 
 
-bool NameServer::apply(const Bottle& cmd, Bottle& result,
-                       const Contact& remote) {
+bool NameServer::apply(const Bottle& cmd, Bottle& result, const Contact& remote)
+{
     Bottle rcmd;
     rcmd.addString("ignored_legacy");
     rcmd.append(cmd);
@@ -728,18 +733,22 @@ bool NameServer::apply(const Bottle& cmd, Bottle& result,
 }
 
 
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-class MainNameServerWorker : public PortReader {
+class MainNameServerWorker :
+        public PortReader
+{
 private:
-    NameServer *server;
+    NameServer* server;
+
 public:
-    MainNameServerWorker(NameServer *server) {
+    MainNameServerWorker(NameServer* server)
+    {
         this->server = server;
     }
 
-    bool read(ConnectionReader& reader) override {
+    bool read(ConnectionReader& reader) override
+    {
         YTRACE("NameServer::read start");
         std::string ref = "NAME_SERVER ";
         bool ok = true;
@@ -754,49 +763,47 @@ public:
                 b.read(reader);
                 msg = b.toString();
             }
-            haveMessage = (msg!="");
+            haveMessage = (!msg.empty());
             msg = ref + msg;
         }
-        if (reader.isActive()&&haveMessage) {
+        if (reader.isActive() && haveMessage) {
             YARP_DEBUG(Logger::get(), std::string("name server got message ") + msg);
             size_t index = msg.find("NAME_SERVER");
-            if (index==0) {
+            if (index == 0) {
                 Contact remote = reader.getRemoteContact();
                 YARP_DEBUG(Logger::get(),
-                           std::string("name server receiving from ") +
-                           remote.toURI());
+                           std::string("name server receiving from ") + remote.toURI());
                 YARP_DEBUG(Logger::get(),
                            std::string("name server request is ") + msg);
                 std::string result = server->apply(msg, remote);
-                ConnectionWriter *os = reader.getWriter();
-                if (os!=nullptr) {
-                    if (result=="") {
-                        result = ns_terminate(std::string("unknown command ") +
-                                              msg + "\n");
+                ConnectionWriter* os = reader.getWriter();
+                if (os != nullptr) {
+                    if (result.empty()) {
+                        result = ns_terminate(std::string("unknown command ") + msg + "\n");
                     }
                     // This change is just to make Microsoft Telnet happy
                     std::string tmp;
                     for (char i : result) {
-                        if (i=='\n') {
+                        if (i == '\n') {
                             tmp += '\r';
                         }
                         tmp += i;
                     }
                     tmp += '\r';
-                    os->appendString(tmp.c_str(), '\n');
+                    os->appendText(tmp);
 
                     YARP_DEBUG(Logger::get(),
                                std::string("name server reply is ") + result);
                     std::string resultSparse = result;
                     size_t end = resultSparse.find("\n*** end of message");
-                    if (end!=std::string::npos) {
+                    if (end != std::string::npos) {
                         resultSparse[end] = '\0';
                     }
                     YARP_INFO(Logger::get(), resultSparse);
                 }
             } else {
                 YARP_INFO(Logger::get(),
-                          std::string("Name server ignoring unknown command: ")+msg);
+                          std::string("Name server ignoring unknown command: ") + msg);
             }
         }
         YTRACE("NameServer::read stop");
@@ -805,28 +812,37 @@ public:
 };
 
 
-class MainNameServer : public NameServer, public PortReaderCreator {
+class MainNameServer :
+        public NameServer,
+        public PortReaderCreator
+{
 private:
-    Port *port;
+    Port* port;
+
 public:
-    MainNameServer(int basePort, Port *port = nullptr) : port(port) {
+    MainNameServer(int basePort, Port* port = nullptr) :
+            port(port)
+    {
         setBasePort(basePort);
     }
 
-    void setPort(Port& port) {
+    void setPort(Port& port)
+    {
         this->port = &port;
     }
 
-    void onEvent(Bottle& event) override {
-        if (port!=nullptr) {
+    void onEvent(Bottle& event) override
+    {
+        if (port != nullptr) {
             port->write(event);
         }
     }
 
-    PortReader *create() const override {
+    PortReader* create() const override
+    {
         return new MainNameServerWorker(const_cast<MainNameServer*>(this));
     }
 };
 
 
-#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+#endif // DOXYGEN_SHOULD_SKIP_THIS

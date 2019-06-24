@@ -9,7 +9,7 @@
 #ifndef YARP_DEV_ICONTROLLIMITS2_H
 #define YARP_DEV_ICONTROLLIMITS2_H
 
-#include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/IControlLimits.h>
 
 namespace yarp {
     namespace dev {

@@ -12,18 +12,17 @@
 
 #include <yarp/os/PortReader.h>
 
-// Forward declarations:
+#include <string>
+
 namespace yarp {
 namespace os {
+
+class Port;
 class PortReaderBufferBaseCreator;
-} // namespace os
-} // namespace yarp
+class PortWriter;
 
-
-namespace yarp {
-namespace os {
-
-class YARP_OS_API PortReaderBufferBase : public yarp::os::PortReader
+class YARP_OS_API PortReaderBufferBase :
+        public yarp::os::PortReader
 {
 public:
     PortReaderBufferBase(unsigned int maxBuffer);

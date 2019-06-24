@@ -22,8 +22,9 @@ using namespace yarp::os;
 
 bool Terminator::terminateByName(const char* name)
 {
-    if (name == nullptr)
+    if (name == nullptr) {
         return false;
+    }
 
     std::string s(name);
 
@@ -41,7 +42,8 @@ bool Terminator::terminateByName(const char* name)
         s += name;
     }
 
-    Bottle cmd("quit"), reply;
+    Bottle cmd("quit");
+    Bottle reply;
     Contact c = NetworkBase::queryName(s);
     if (!c.isValid()) {
         fprintf(stderr, "Terminator port not found\n");
@@ -115,7 +117,8 @@ void Terminee::run()
 {
     TermineeHelper& helper = HELPER(implementation);
     while (!isStopping() && !quit) {
-        Bottle cmd, reply;
+        Bottle cmd;
+        Bottle reply;
         bool ok = helper.read(cmd, true);
         if (!ok) {
             continue;

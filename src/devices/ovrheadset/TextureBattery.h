@@ -22,7 +22,7 @@
 #include <GL/glew.h>
 #include <OVR_CAPI.h>
 
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 
 #include <array>
 
@@ -30,7 +30,7 @@ class TextureStatic;
 namespace yarp { namespace dev { class PolyDriver; } }
 namespace yarp { namespace dev { class IBattery; } }
 
-class TextureBattery : public yarp::os::SystemRateThread
+class TextureBattery : public yarp::os::PeriodicThread
 {
 public:
     enum BatteryStatus {

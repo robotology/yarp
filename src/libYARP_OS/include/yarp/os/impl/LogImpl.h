@@ -14,25 +14,25 @@
 class yarp::os::impl::LogImpl
 {
 public:
-    LogImpl(const char *file,
+    LogImpl(const char* file,
             const unsigned int line,
-            const char *func);
+            const char* func);
 
     static void print_callback(yarp::os::Log::LogType t,
-                               const char *msg,
-                               const char *file,
+                               const char* msg,
+                               const char* file,
                                const unsigned int line,
-                               const char *func);
+                               const char* func);
 
     static void forward_callback(yarp::os::Log::LogType t,
-                                 const char *msg,
-                                 const char *file,
+                                 const char* msg,
+                                 const char* file,
                                  const unsigned int line,
-                                 const char *func);
+                                 const char* func);
 
-    const char *file;
+    const char* file;
     const unsigned int line;
-    const char *func;
+    const char* func;
 
     static std::ofstream ftrc; /// Used by yTrace()
     static std::ofstream fout; /// Used by yDebug() and yInfo()

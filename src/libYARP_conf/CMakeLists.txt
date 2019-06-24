@@ -83,11 +83,18 @@ write_compiler_detection_header(
 #########################################################################
 # Generate the other headers
 
-foreach(conf version system options api numeric)
-  set(outconf "${PROJECT_BINARY_DIR}/include/yarp/conf/${conf}.h")
-  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/yarp/conf/${conf}.h.in"
-                 "${outconf}")
-endforeach(conf)
+set(_headers version
+             system
+             api
+             numeric)
+if(NOT YARP_NO_DEPRECATED) # Since YARP 3.2
+  list(APPEND _headers options)
+endif()
+foreach(_header ${_headers})
+  set(_out "${PROJECT_BINARY_DIR}/include/yarp/conf/${_header}.h")
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/yarp/conf/${_header}.h.in"
+                 "${_out}")
+endforeach()
 
 
 #########################################################################

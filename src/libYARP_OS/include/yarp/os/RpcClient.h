@@ -60,7 +60,6 @@ private:
     class Private;
     Private* mPriv;
 #endif // DOXYGEN_SHOULD_SKIP_THIS
-
 };
 
 } // namespace os

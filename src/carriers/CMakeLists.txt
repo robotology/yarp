@@ -41,7 +41,6 @@ if(NOT "${YARP_yarpcar_PRIVATE_DEPS}" STREQUAL "")
   list(REMOVE_DUPLICATES YARP_yarpcar_PRIVATE_DEPS)
 endif()
 yarp_install_basic_package_files(YARP_yarpcar
-                                 FIRST_TARGET yarpcar
                                  DEPENDENCIES ${YARP_yarpcar_PUBLIC_DEPS}
                                  PRIVATE_DEPENDENCIES ${YARP_yarpcar_PRIVATE_DEPS})
 

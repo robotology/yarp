@@ -10,7 +10,7 @@
 #define YARP_OS_IMPL_MACOSAPI_H
 
 void* disableAppNap();
-void restoreAppNap(void *activityInfo);
+void restoreAppNap(void* activityInfo);
 
 
 #endif // YARP_OS_IMPL_MACOSAPI_H

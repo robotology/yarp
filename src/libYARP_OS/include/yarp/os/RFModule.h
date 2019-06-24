@@ -130,6 +130,11 @@ public:
     virtual int runModuleThreaded(yarp::os::ResourceFinder& rf);
 
     /**
+     * return the Thread unique identifier
+     */
+    virtual int getThreadKey();
+
+    /**
      * Configure the module, pass a ResourceFinder object to the module.
      * This function can perform initialization including object creation and
      * memory allocation; returns false to notify that initialization was not
@@ -272,20 +277,23 @@ public:
      */
     void setName(const char* name);
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /**
      * Wrapper around respond() that is guaranteed to process system messages.
      */
     bool safeRespond(const Bottle& command, Bottle& reply);
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 private:
     ResourceFinder resourceFinder;
-    void* implementation;
     bool stopFlag;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
 
     virtual bool basicRespond(const Bottle& command, Bottle& reply);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
 } // namespace os

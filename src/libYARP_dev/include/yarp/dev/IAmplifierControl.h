@@ -10,7 +10,8 @@
 #ifndef YARP_DEV_IAMPLIFIERCONTROL_H
 #define YARP_DEV_IAMPLIFIERCONTROL_H
 
-#include <yarp/dev/DeviceDriver.h>
+#include <yarp/os/Vocab.h>
+#include <yarp/dev/api.h>
 
 /*! \file IAmplifierControl.h define control board standard interfaces*/
 

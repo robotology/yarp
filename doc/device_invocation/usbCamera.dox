@@ -1,0 +1,36 @@
+/**
+ * \ingroup dev_examples
+ *
+ * \defgroup usbCamera Example for usbCamera (usbCamera)
+
+Instantiates \ref cmd_device_usbCamera "usbCamera" device implemented by USBCameraDriverRgb.
+\verbatim
+device usbCamera
+d /dev/video0
+\endverbatim
+If this text is saved in a file called usbCamera.ini then the device can be created by doing:
+\verbatim
+yarpdev --file usbCamera.ini
+\endverbatim
+Of course, the configuration could be passed just as command line options, or as a yarp::os::Property object in a program:
+\code
+Property p;
+p.fromConfigFile("usbCamera.ini");
+// of course you could construct the Property object on-the-fly
+PolyDriver dev;
+dev.open(p);
+if (dev.isValid()) { /* use the device via view method */ }
+\endcode
+Here is a list of properties checked when starting up a device based on this configuration file.
+Note that which properties are checked can depend on whether other properties are present.
+In some cases properties can also vary between operating systems.
+So this is just an example
+
+<table>
+<tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
+<tr><td>device</td><td></td><td></td></tr>
+</table>
+
+\sa USBCameraDriverRgb
+
+ */

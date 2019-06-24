@@ -8,9 +8,10 @@
  */
 
 #include <yarp/os/impl/FakeFace.h>
+
+#include <yarp/os/impl/FakeTwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/Protocol.h>
-#include <yarp/os/impl/FakeTwoWayStream.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -26,13 +27,13 @@ void FakeFace::close()
 {
 }
 
-InputProtocol *FakeFace::read()
+InputProtocol* FakeFace::read()
 {
     fprintf(stderr, "not implemented\n");
     return nullptr;
 }
 
-OutputProtocol *FakeFace::write(const Contact& address)
+OutputProtocol* FakeFace::write(const Contact& address)
 {
     YARP_UNUSED(address);
     auto* prot = new Protocol(new FakeTwoWayStream());

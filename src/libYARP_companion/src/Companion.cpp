@@ -55,7 +55,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp;
 
-#ifdef WITH_LIBEDIT
+#ifdef YARP_HAS_Libedit
 
 #include <editline/readline.h>
 #include <vector>
@@ -148,7 +148,7 @@ static char ** my_completion (const char* text, int start, int end)
     return (matches);
 }
 
-#endif // WITH_LIBEDIT
+#endif // YARP_HAS_Libedit
 
 Companion& Companion::getInstance()
 {
@@ -1821,7 +1821,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     Port port;
     applyArgs(port);
     port.setWriteOnly();
-#ifdef WITH_LIBEDIT
+#ifdef YARP_HAS_Libedit
     std::string hist_file;
     bool disable_file_history=false;
     if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin))) //if interactive mode
@@ -1904,7 +1904,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
                 }
             }
             port.write(bot);
-#ifdef WITH_LIBEDIT
+#ifdef YARP_HAS_Libedit
             if (!disable_file_history)
                 write_history(hist_file.c_str());
 #endif
@@ -1960,7 +1960,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
     int resendCount = 0;
 
     bool firstTimeRound = true;
-#ifdef WITH_LIBEDIT
+#ifdef YARP_HAS_Libedit
     rl_attempted_completion_function = my_completion;
 #endif
 
@@ -1988,7 +1988,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
             }
         }
 
-#ifdef WITH_LIBEDIT
+#ifdef YARP_HAS_Libedit
     rpcHelpPort = &port;
 #endif
         while (port.getOutputCount()==1&&!yarp::os::impl::Terminal::EOFreached()) {

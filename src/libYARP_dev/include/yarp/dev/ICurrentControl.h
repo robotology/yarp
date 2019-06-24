@@ -10,7 +10,7 @@
 #define YARP_DEV_ICURRENTCONTROL_H
 
 #include <yarp/os/Vocab.h>
-#include <yarp/dev/ControlBoardPid.h>
+#include <yarp/dev/api.h>
 
 namespace yarp {
     namespace dev {
@@ -110,7 +110,7 @@ public:
  *
  * Interface for control boards implementing current control.
  */
-class yarp::dev::ICurrentControlRaw
+class YARP_dev_API yarp::dev::ICurrentControlRaw
 {
 public:
     /**

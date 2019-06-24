@@ -15,13 +15,6 @@
 #include <yarp/sig/ImageNetworkHeader.h>
 #include <yarp/os/DummyConnector.h>
 
-namespace yarp {
-    namespace os {
-        class BayerCarrier;
-    }
-}
-
-
 /**
  *
  * Decode bayer images and serve them as regular rgb.
@@ -31,9 +24,11 @@ namespace yarp {
  *   tcp+recv.bayer+size.half+order.bggr
  *
  */
-class yarp::os::BayerCarrier : public yarp::os::ModifyingCarrier,
-                               public yarp::os::ConnectionReader,
-                               public yarp::os::InputStream {
+class BayerCarrier :
+        public yarp::os::ModifyingCarrier,
+        public yarp::os::ConnectionReader,
+        public yarp::os::InputStream
+{
 private:
     yarp::sig::ImageOf<yarp::sig::PixelMono> in;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> out;
@@ -109,7 +104,7 @@ public:
         return local->expectBlock(data,len);
     }
 
-    std::string expectText(int terminatingChar = '\n') override {
+    std::string expectText(const char terminatingChar = '\n') override {
         return local->expectText(terminatingChar);
     }
 
@@ -160,23 +155,23 @@ public:
         return sizeof(header)+image_data_len;
     }
 
-    ConnectionWriter *getWriter() override {
+    yarp::os::ConnectionWriter *getWriter() override {
         return parent->getWriter();
     }
 
-    Bytes readEnvelope() override {
+    yarp::os::Bytes readEnvelope() override {
         return parent->readEnvelope();
     }
 
-    Portable *getReference() const override {
+    yarp::os::Portable* getReference() const override {
         return parent->getReference();
     }
 
-    Contact getRemoteContact() const override {
+    yarp::os::Contact getRemoteContact() const override {
         return parent->getRemoteContact();
     }
 
-    Contact getLocalContact() const override {
+    yarp::os::Contact getLocalContact() const override {
         return parent->getLocalContact();
     }
 

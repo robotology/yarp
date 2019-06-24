@@ -10,6 +10,8 @@
 #ifndef YARP_DEV_CONTROLBOARDINTERFACES_H
 #define YARP_DEV_CONTROLBOARDINTERFACES_H
 
+#include <yarp/os/Vocab.h>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardPid.h>
 #include <yarp/dev/CalibratorInterfaces.h>

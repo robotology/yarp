@@ -1,0 +1,3 @@
+include/diagnostic_msgs_KeyValue.h
+include/diagnostic_msgs/KeyValue.h
+include/yarp/rosmsg/diagnostic_msgs/KeyValue.h

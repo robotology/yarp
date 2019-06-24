@@ -10,9 +10,11 @@
 #ifndef YARP_DEV_GAZECONTROL_H
 #define YARP_DEV_GAZECONTROL_H
 
+#include <string>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/api.h>
 #include <yarp/sig/Vector.h>
 
 /*!
@@ -34,7 +36,7 @@ namespace yarp {
  *
  * \brief Structure for configuring a gaze event.
  */
-struct yarp::dev::GazeEventParameters
+struct YARP_dev_API yarp::dev::GazeEventParameters
 {
     /*!
      * The signature of the event as specified by the user.
@@ -70,7 +72,7 @@ struct yarp::dev::GazeEventParameters
  *
  * \brief Structure for retrieving information from a gaze event.
  */
-struct yarp::dev::GazeEventVariables
+struct YARP_dev_API yarp::dev::GazeEventVariables
 {
     /*!
      * The signature of the received event as filled by the event
@@ -97,7 +99,7 @@ struct yarp::dev::GazeEventVariables
  *
  * \brief Interface for a event notified by the gaze controller.
  */
-class yarp::dev::GazeEvent
+class YARP_dev_API yarp::dev::GazeEvent
 {
 public:
     /*!
@@ -132,13 +134,13 @@ public:
  * Please read carefully the
  * <a href="http://wiki.icub.org/iCub/main/dox/html/icub_gaze_interface.html">documentation</a>.
  */
-class yarp::dev::IGazeControl
+class YARP_dev_API yarp::dev::IGazeControl
 {
 public:
     /*!
      * Destructor.
      */
-    virtual ~IGazeControl() {}
+    virtual ~IGazeControl();
 
     /*!
      * Set the controller in tracking or non-tracking mode. [wait for

@@ -42,7 +42,7 @@ public:
      * Destructor.
      *
      */
-    virtual ~InputProtocol() {}
+    virtual ~InputProtocol() = default;
 
     /**
      *

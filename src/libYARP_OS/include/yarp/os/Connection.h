@@ -16,7 +16,6 @@
 namespace yarp {
 namespace os {
 
-// Forward declarations
 class Bytes;
 class ConnectionReader;
 class PortWriter;

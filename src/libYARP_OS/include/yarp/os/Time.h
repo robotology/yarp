@@ -78,7 +78,7 @@ YARP_OS_API void useSystemClock();
  *
  * Throws assert in case of failure
  */
-YARP_OS_API void useNetworkClock(const std::string& clock, std::string localPortName = "");
+YARP_OS_API void useNetworkClock(const std::string& clock, const std::string& localPortName = "");
 
 /**
  * Configure YARP clients to use a custom clock source provided by the

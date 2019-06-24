@@ -13,6 +13,7 @@
 
 #include <yarp/os/Bytes.h>
 #include <yarp/os/impl/Storable.h>
+
 #include <vector>
 
 namespace yarp {
@@ -34,6 +35,9 @@ namespace impl {
 class YARP_OS_impl_API BottleImpl
 {
 public:
+    using size_type = size_t;
+    static constexpr size_type npos = static_cast<size_type>(-1);
+
     BottleImpl();
     BottleImpl(Searchable* parent);
     virtual ~BottleImpl();
@@ -51,16 +55,47 @@ public:
 
     Storable* pop();
 
-    Storable& get(size_t index) const;
+    Storable& get(size_type index) const;
 
-    void addInt8(std::int8_t x) { add(new StoreInt8(x)); }
-    void addInt16(std::int16_t x) { add(new StoreInt16(x)); }
-    void addInt32(std::int32_t x) { add(new StoreInt32(x)); }
-    void addInt64(std::int64_t x) { add(new StoreInt64(x)); }
-    void addFloat32(yarp::conf::float32_t x) { add(new StoreFloat32(x)); }
-    void addFloat64(yarp::conf::float64_t x) { add(new StoreFloat64(x)); }
-    void addVocab(std::int32_t x) { add(new StoreVocab(x)); }
-    void addString(const std::string& text) { add(new StoreString(text)); }
+    void addInt8(std::int8_t x)
+    {
+        add(new StoreInt8(x));
+    }
+
+    void addInt16(std::int16_t x)
+    {
+        add(new StoreInt16(x));
+    }
+
+    void addInt32(std::int32_t x)
+    {
+        add(new StoreInt32(x));
+    }
+
+    void addInt64(std::int64_t x)
+    {
+        add(new StoreInt64(x));
+    }
+
+    void addFloat32(yarp::conf::float32_t x)
+    {
+        add(new StoreFloat32(x));
+    }
+
+    void addFloat64(yarp::conf::float64_t x)
+    {
+        add(new StoreFloat64(x));
+    }
+
+    void addVocab(std::int32_t x)
+    {
+        add(new StoreVocab(x));
+    }
+
+    void addString(const std::string& text)
+    {
+        add(new StoreString(text));
+    }
 
     yarp::os::Bottle& addList();
 
@@ -70,7 +105,7 @@ public:
 
     void fromString(const std::string& line);
     std::string toString() const;
-    size_t size() const;
+    size_type size() const;
 
     bool read(ConnectionReader& reader);
     bool write(ConnectionWriter& writer) const;
@@ -80,7 +115,7 @@ public:
     const char* getBytes() const;
     size_t byteCount() const;
 
-    void copyRange(const BottleImpl* alt, int first = 0, int len = -1);
+    void copyRange(const BottleImpl* alt, size_type first = 0, size_type len = npos);
 
     bool fromBytes(const yarp::os::Bytes& data);
     void toBytes(yarp::os::Bytes& data);
@@ -111,7 +146,7 @@ public:
 
     yarp::os::Value& addBit(const char* str)
     {
-        size_t len = size();
+        size_type len = size();
         std::string x(str);
         smartAdd(x);
         if (size() > len) {
@@ -129,9 +164,12 @@ public:
     // check if a piece of text is a completed bottle
     static bool isComplete(const char* txt);
 
-    void hasChanged() { dirty = true; }
+    void hasChanged()
+    {
+        dirty = true;
+    }
 
-    bool checkIndex(size_t index) const;
+    bool checkIndex(size_type index) const;
 
     bool invalid;
     bool ro;

@@ -19,40 +19,40 @@ application:
       edge [fontname=Helvetica, fontsize=10, arrowhead="open", style="solid"];
 
       subgraph cluster_machine1 {
-	      style = "invis";
+          style = "invis";
 
-	      subgraph cluster_camera {
-		      style = "invis";
-		      camera [ label="/camera", shape=ellipse];
-	      }
-	      subgraph cluster_tracker {
-		      style = "invis";
-		      tracker_position [ label="/tracker/position",
-					shape=ellipse];
-		      tracker_image [ label="/tracker/image", shape=ellipse];
-	      }
-	}
+          subgraph cluster_camera {
+              style = "invis";
+              camera [ label="/camera", shape=ellipse];
+          }
+          subgraph cluster_tracker {
+              style = "invis";
+              tracker_position [ label="/tracker/position",
+                    shape=ellipse];
+              tracker_image [ label="/tracker/image", shape=ellipse];
+          }
+    }
 
       subgraph cluster_machine2 {
-	      style = "invis";
+          style = "invis";
 
-	      subgraph cluster_motor {
-		      style = "invis";
-		      motor_position [ label="/motor/position", shape=ellipse];
-	      }
-	}
+          subgraph cluster_motor {
+              style = "invis";
+              motor_position [ label="/motor/position", shape=ellipse];
+          }
+    }
 
       subgraph cluster_machine3 {
-	      style = "invis";
-	      subgraph cluster_viewer1 {
-		      style = "invis";
-		      viewer1 [ label="/viewer1", shape=ellipse];
-	      }
-	      subgraph cluster_viewer2 {
-		      style = "invis";
-		      viewer2 [ label="/viewer2", shape=ellipse];
-	      }
-	}
+          style = "invis";
+          subgraph cluster_viewer1 {
+              style = "invis";
+              viewer1 [ label="/viewer1", shape=ellipse];
+          }
+          subgraph cluster_viewer2 {
+              style = "invis";
+              viewer2 [ label="/viewer2", shape=ellipse];
+          }
+    }
 
       //connections
       camera -> viewer1;
@@ -78,12 +78,12 @@ a process.  They do not need to belong to the same process.  Every
 connection can take place using a different protocol and/or physical
 network.  The use of several different protocol allows us to exploit
 their best characteristics:
-	\li TCP: reliable, it can be used to guarantee the reception
+    \li TCP: reliable, it can be used to guarantee the reception
             of a message;
-	\li UDP: faster than TCP, but without guarantees;
-	\li multicast: efficient for distributing
-   	    the same information to large numbers of targets;
-	\li shared memory: employed for local connections (selected
+    \li UDP: faster than TCP, but without guarantees;
+    \li multicast: efficient for distributing
+           the same information to large numbers of targets;
+    \li shared memory: employed for local connections (selected
             automatically whenever possible, without the need for
             programmer intervention);
 If messages follow follow YARP guidelines, then they can be
@@ -99,45 +99,45 @@ for easy human monitoring and intervention in the system.
       edge [fontname=Helvetica, fontsize=10, arrowhead="open", style="solid"];
 
       subgraph cluster_machine1 {
-	      style = "invis";
+          style = "invis";
 
-	      subgraph cluster_camera {
-		      label = "yarpdev";
-		      color = "black"; style = "solid";
-		      camera [ label="/camera", shape=ellipse];
-	      }
-	      subgraph cluster_tracker {
-		      label="tracker";
-		      color = "black"; style = "solid";
-		      tracker_position [ label="/tracker/position",
-					shape=ellipse];
-		      tracker_image [ label="/tracker/image", shape=ellipse];
-	      }
-	}
+          subgraph cluster_camera {
+              label = "yarpdev";
+              color = "black"; style = "solid";
+              camera [ label="/camera", shape=ellipse];
+          }
+          subgraph cluster_tracker {
+              label="tracker";
+              color = "black"; style = "solid";
+              tracker_position [ label="/tracker/position",
+                    shape=ellipse];
+              tracker_image [ label="/tracker/image", shape=ellipse];
+          }
+    }
 
       subgraph cluster_machine2 {
-	      style = "invis";
+          style = "invis";
 
-	      subgraph cluster_motor {
-		      color = "black"; style = "solid";
-		      label = "motor_control";
-		      motor_position [ label="/motor/position", shape=ellipse];
-	      }
-	}
+          subgraph cluster_motor {
+              color = "black"; style = "solid";
+              label = "motor_control";
+              motor_position [ label="/motor/position", shape=ellipse];
+          }
+    }
 
       subgraph cluster_machine3 {
-	      style = "invis";
-	      subgraph cluster_viewer1 {
-		      color = "black"; style = "solid";
-		      label="yarpview";
-		      viewer1 [ label="/viewer1", shape=ellipse];
-	      }
-	      subgraph cluster_viewer2 {
-		      color = "black"; style = "solid";
-		      label="yarpview";
-		      viewer2 [ label="/viewer2", shape=ellipse];
-	      }
-	}
+          style = "invis";
+          subgraph cluster_viewer1 {
+              color = "black"; style = "solid";
+              label="yarpview";
+              viewer1 [ label="/viewer1", shape=ellipse];
+          }
+          subgraph cluster_viewer2 {
+              color = "black"; style = "solid";
+              label="yarpview";
+              viewer2 [ label="/viewer2", shape=ellipse];
+          }
+    }
 
       //connections
       camera -> viewer1 [ label="mcast" ];
@@ -165,48 +165,48 @@ guidelines, then communication will not be a problem:
       edge [fontname=Helvetica, fontsize=10, arrowhead="open", style="solid"];
 
       subgraph cluster_machine1 {
-	      label = "machine 1 (Linux)";
-	      color = "blue"; style = "dashed";
+          label = "machine 1 (Linux)";
+          color = "blue"; style = "dashed";
 
-	      subgraph cluster_camera {
-		      label = "yarpdev";
-		      color = "black"; style = "solid";
-		      camera [ label="/camera", shape=ellipse];
-	      }
-	      subgraph cluster_tracker {
-		      label="tracker";
-		      color = "black"; style = "solid";
-		      tracker_position [ label="/tracker/position",
-					shape=ellipse];
-		      tracker_image [ label="/tracker/image", shape=ellipse];
-	      }
-	}
+          subgraph cluster_camera {
+              label = "yarpdev";
+              color = "black"; style = "solid";
+              camera [ label="/camera", shape=ellipse];
+          }
+          subgraph cluster_tracker {
+              label="tracker";
+              color = "black"; style = "solid";
+              tracker_position [ label="/tracker/position",
+                    shape=ellipse];
+              tracker_image [ label="/tracker/image", shape=ellipse];
+          }
+    }
 
       subgraph cluster_machine2 {
-	      label = "machine 2 (Linux)";
-	      color = "blue"; style = "dashed";
+          label = "machine 2 (Linux)";
+          color = "blue"; style = "dashed";
 
-	      subgraph cluster_motor {
-		      color = "black"; style = "solid";
-		      label = "motor_control";
-		      motor_position [ label="/motor/position", shape=ellipse];
-	      }
-	}
+          subgraph cluster_motor {
+              color = "black"; style = "solid";
+              label = "motor_control";
+              motor_position [ label="/motor/position", shape=ellipse];
+          }
+    }
 
       subgraph cluster_machine3 {
-	      label = "machine 3 (Windows)";
-	      color = "blue"; style = "dashed";
-	      subgraph cluster_viewer1 {
-		      color = "black"; style = "solid";
-		      label="yarpview";
-		      viewer1 [ label="/viewer1", shape=ellipse];
-	      }
-	      subgraph cluster_viewer2 {
-		      color = "black"; style = "solid";
-		      label="yarpview";
-		      viewer2 [ label="/viewer2", shape=ellipse];
-	      }
-	}
+          label = "machine 3 (Windows)";
+          color = "blue"; style = "dashed";
+          subgraph cluster_viewer1 {
+              color = "black"; style = "solid";
+              label="yarpview";
+              viewer1 [ label="/viewer1", shape=ellipse];
+          }
+          subgraph cluster_viewer2 {
+              color = "black"; style = "solid";
+              label="yarpview";
+              viewer2 [ label="/viewer2", shape=ellipse];
+          }
+    }
 
       //connections
       camera -> viewer1 [ label="mcast" ];
@@ -256,14 +256,14 @@ Our network so far is very simple:
       edge [fontname=Helvetica, fontsize=10, arrowhead="open", style="solid"];
 
       subgraph cluster_read {
-	      label = "yarp read";
-	      color = "black"; style = "solid";
-	      read [ label="/read", shape=ellipse];
+          label = "yarp read";
+          color = "black"; style = "solid";
+          read [ label="/read", shape=ellipse];
       }
       subgraph cluster_write {
-	      label="yarp write";
-	      color = "black"; style = "solid";
-	      write [ label="/write", shape=ellipse];
+          label="yarp write";
+          color = "black"; style = "solid";
+          write [ label="/write", shape=ellipse];
       }
 
       //connections
@@ -300,19 +300,19 @@ The network is now as follows:
       edge [fontname=Helvetica, fontsize=10, arrowhead="open", style="solid"];
 
       subgraph cluster_read {
-	      label = "yarp read";
-	      color = "black"; style = "solid";
-	      read [ label="/read", shape=ellipse];
+          label = "yarp read";
+          color = "black"; style = "solid";
+          read [ label="/read", shape=ellipse];
       }
       subgraph cluster_summer {
-	      label="summer";
-	      color = "black"; style = "solid";
-	      summer [ label="/summer", shape=ellipse];
+          label="summer";
+          color = "black"; style = "solid";
+          summer [ label="/summer", shape=ellipse];
       }
       subgraph cluster_write {
-	      label="yarp write";
-	      color = "black"; style = "solid";
-	      write [ label="/write", shape=ellipse];
+          label="yarp write";
+          color = "black"; style = "solid";
+          write [ label="/write", shape=ellipse];
       }
 
       //connections
@@ -373,19 +373,19 @@ The network is now as follows:
       edge [fontname=Helvetica, fontsize=10, arrowhead="open", style="solid"];
 
       subgraph cluster_read {
-	      label = "yarp read";
-	      color = "black"; style = "solid";
-	      read [ label="/read", shape=ellipse];
+          label = "yarp read";
+          color = "black"; style = "solid";
+          read [ label="/read", shape=ellipse];
       }
       subgraph cluster_summer {
-	      label="summer";
-	      color = "black"; style = "solid";
-	      summer [ label="/summer", shape=ellipse];
+          label="summer";
+          color = "black"; style = "solid";
+          summer [ label="/summer", shape=ellipse];
       }
       subgraph cluster_write {
-	      label="yarp write";
-	      color = "black"; style = "solid";
-	      write [ label="/write", shape=ellipse];
+          label="yarp write";
+          color = "black"; style = "solid";
+          write [ label="/write", shape=ellipse];
       }
 
       //connections

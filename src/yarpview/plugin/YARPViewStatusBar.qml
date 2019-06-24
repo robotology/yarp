@@ -25,10 +25,14 @@ StatusBar {
     property string avgFps: "0.0"
     property string minFps: "0.0"
     property string maxFps: "0.0"
+    property string portSizeX: "0"
+    property string portSizeY: "0"
 
     property string displayAvgFps: "0.0"
     property string displayMinFps: "0.0"
     property string displayMaxFps: "0.0"
+    property string displaySizeX: "0"
+    property string displaySizeY: "0"
 
     property string name: "/name"
 
@@ -47,7 +51,8 @@ StatusBar {
 
             text: "Port: " + bar.avgFps +
                   " (min:" + bar.minFps +
-                  " max:" + bar.maxFps +") fps"
+                  " max:" + bar.maxFps +") fps; " +
+                  "(size: " + bar.portSizeX + "x" + bar.portSizeY + ")"
             fontSizeMode: Text.VerticalFit
             height: parent.height/3 - 2
         }
@@ -60,7 +65,8 @@ StatusBar {
 
             text: "Display: " + bar.displayAvgFps +
                   " (min:" + bar.displayMinFps +
-                  " max:" + bar.displayMaxFps +") fps"
+                  " max:" + bar.displayMaxFps +") fps; "+
+                  "(size: " + bar.displaySizeX + "x" + bar.displaySizeY + ")"
             fontSizeMode: Text.VerticalFit
             height: parent.height/3 - 2
 

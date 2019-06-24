@@ -296,43 +296,6 @@ path \"@_path@\"
   if(YCEI_WITH_PLUGINS)
     # Call yarp_configure_plugins_installation with the proper parameters
     yarp_configure_plugins_installation(${_name} INSTALL_VARS_PREFIX ${_NAME})
-
-    # Temporary fix to remove the outdated path.ini file that will cause
-    # issues when looking for plugins.
-    # If the file is in the build tree, it is deleted immediately
-    # If the file is in the install tree, it is deleted with make
-    # install.
-    # FIXME Remove this when this hack has been around for enough time
-    #       to assert that there are no longer path.ini around.
-    string(TOLOWER ${_name} _lcname)
-    foreach(_f path.ini
-               path_${_name}.ini
-               path_${_name}mod.ini
-               path_${_lcname}.ini
-               path_${_lcname}mod.ini
-               path_${_NAME}.ini
-               path_${_NAME}mod.ini
-               path_for_install.ini)
-      if(EXISTS "${CMAKE_BINARY_DIR}/${_f}")
-        message(STATUS "Deleted: \"${CMAKE_BINARY_DIR}/${_f}\"")
-        file(REMOVE "${CMAKE_BINARY_DIR}/${_f}")
-      endif()
-      if(EXISTS "${CMAKE_BINARY_DIR}/${_destination}/${_f}")
-        message(STATUS "Deleted: \"${CMAKE_BINARY_DIR}/${_destination}/${_f}\"")
-        file(REMOVE "${CMAKE_BINARY_DIR}/${_destination}/${_f}")
-      endif()
-      install(CODE
- "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_f}\")
-    message(STATUS \"Deleted: \\\"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_f}\\\"\")
-    file(REMOVE \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_f}\")
-  endif()")
-      install(CODE
- "if(EXISTS \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_destination}/${_f}\")
-    message(STATUS \"Deleted: \\\"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_destination}/${_f}\\\"\")
-    file(REMOVE \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_destination}/${_f}\")
-  endif()")
-    endforeach()
-
   endif()
 
 endfunction()
@@ -354,18 +317,24 @@ macro(YARP_INSTALL _what)
     message(FATAL_ERROR "Unknown option \"${_what}\"")
   endif()
 
+  if(NOT "${_what}" MATCHES "^(TARGETS)$" AND "${ARGN}" MATCHES "YARP_INI")
+    message("YARP_INI is allowed only for TARGETS")
+  endif()
+
   # Keep a copy of the arguments for later
   set(_installARGN ${ARGN})
 
   # Small hack to accept specific destination
-  string(REGEX REPLACE ";(RUNTIME|ARCHIVE|LIBRARY|PUBLIC_HEADER|PRIVATE_HEADER|FRAMEWORK|RESOURCE);DESTINATION;"
+  string(REGEX REPLACE ";(RUNTIME|ARCHIVE|LIBRARY|PUBLIC_HEADER|PRIVATE_HEADER|FRAMEWORK|RESOURCE|YARP_INI);DESTINATION;"
                        ";\\1_DESTINATION;" _fixedARGN "${ARGN}")
 
   set(_options )
   set(_oneValueArgs DESTINATION
                     COMPONENT
                     EXPORT
-                    LIBRARY_DESTINATION)
+                    LIBRARY_DESTINATION
+                    YARP_INI_DESTINATION
+                    YARP_INI_COMPONENT)
   set(_multiValueArgs PERMISSIONS
                       FILES
                       DIRECTORY
@@ -376,6 +345,11 @@ macro(YARP_INSTALL _what)
   # Remove targets from arguments
   if(NOT "${_YI_${_what}}" STREQUAL "")
     string(REPLACE "${_YI_${_what}};" "" _installARGN "${_installARGN}")
+  endif()
+
+  # Remove YARP_INI DESTINATION from arguments
+  if(DEFINED _YI_YARP_INI_DESTINATION)
+    string(REGEX REPLACE "YARP_INI;DESTINATION;${_YI_YARP_INI_DESTINATION};?" "" _installARGN "${_installARGN}")
   endif()
 
   if("${_what}" STREQUAL "FILES" OR
@@ -421,11 +395,15 @@ macro(YARP_INSTALL _what)
   elseif("${_what}" STREQUAL "TARGETS")
 
     unset(_targets)
+    unset(_yarp_ini_files)
     foreach(_target ${_YI_TARGETS})
       get_target_property(_type ${_target} TYPE)
       if(NOT "${_type}" STREQUAL "MODULE_LIBRARY")
         list(REMOVE_ITEM _YI_TARGETS ${_target})
         list(APPEND _targets ${_target})
+      else()
+        get_target_property(_target_yarp_ini_files ${_target} YARP_INI_FILES)
+        list(APPEND _yarp_ini_files ${_target_yarp_ini_files})
       endif()
     endforeach()
 
@@ -453,6 +431,22 @@ macro(YARP_INSTALL _what)
 
       # Perform the real installation
       install(${_what} ${_YI_TARGETS} ${_installARGN})
+
+      # Install YARP_INI_FILES
+      if(DEFINED _YI_YARP_INI_DESTINATION AND NOT "${_yarp_ini_files}" STREQUAL "")
+        unset(_component)
+        if(DEFINED _YI_YARP_INI_COMPONENT)
+          set(_component COMPONENT "${_YI_YARP_INI_COMPONENT}")
+        elseif(DEFINED _YI_COMPONENT)
+          set(_component COMPONENT "${_YI_COMPONENT}")
+        endif()
+        string(REGEX REPLACE "^${CMAKE_INSTALL_PREFIX}/" "" _YI_YARP_INI_DESTINATION_RELATIVE ${_YI_YARP_INI_DESTINATION})
+        file(COPY ${_yarp_ini_files}
+             DESTINATION "${CMAKE_BINARY_DIR}/${_YI_YARP_INI_DESTINATION_RELATIVE}")
+        install(FILES ${_yarp_ini_files}
+                ${_component}
+                DESTINATION ${_YI_YARP_INI_DESTINATION})
+      endif()
     endif()
   endif()
 

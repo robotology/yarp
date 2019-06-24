@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_MATH_NORMRAND
-#define YARP_MATH_NORMRAND
+#ifndef YARP_MATH_NORMRAND_H
+#define YARP_MATH_NORMRAND_H
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
@@ -58,5 +58,4 @@ public:
     static void init(int seed);
 };
 
-#endif
-
+#endif // YARP_MATH_NORMRAND_H

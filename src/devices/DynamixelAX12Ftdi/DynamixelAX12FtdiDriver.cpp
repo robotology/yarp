@@ -299,7 +299,7 @@ int DynamixelAX12FtdiDriver::sendCommand(unsigned char id, unsigned char inst[],
                         for (i = 0; i < retCode - 1; i++) {
                             ret[i] = body[i];
                         }
-                        // retSize = retCode;    	// Sven's original code. 
+                        // retSize = retCode;    	// Sven's original code.
                         retSize = retCode - 1; // retSize should be retCode - 1, as checksum is not included
                         return 1;
                     }
@@ -976,5 +976,3 @@ bool DynamixelAX12FtdiDriver::stop(const int n_joint, const int *joints)
     }
     return ret;
 }
-
-

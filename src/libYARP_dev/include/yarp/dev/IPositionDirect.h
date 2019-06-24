@@ -10,6 +10,7 @@
 #ifndef YARP_IPOSITIONDIRECT_H
 #define YARP_IPOSITIONDIRECT_H
 
+#include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
 
 namespace yarp {
@@ -113,7 +114,7 @@ public:
  * This interface is used to send high frequency streaming commands to the boards, the aim
  * is to reach low level control in firmware bypassing the trajetory generator, raw functions.
  */
-class yarp::dev::IPositionDirectRaw
+class YARP_dev_API yarp::dev::IPositionDirectRaw
 {
 public:
     /**

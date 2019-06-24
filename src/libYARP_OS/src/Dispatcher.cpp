@@ -12,6 +12,7 @@
 using namespace yarp::os::impl;
 
 // just to keep linkers from complaining about empty archive
-bool dummyDispatcherMethod() {
+bool dummyDispatcherMethod()
+{
     return false;
 }

@@ -98,7 +98,7 @@ public:
         if (result.length()>0 && loggedOn) {
             //if (reply.size()>0) {
             if (writer->isTextMode()) {
-                writer->appendString(result.c_str());
+                writer->appendText(result.c_str());
             } else {
                 Bottle reply;
                 reply.fromString(result.c_str());

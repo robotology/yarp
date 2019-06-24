@@ -6,9 +6,8 @@
 YARP is written in C++.  If you wish to use all the features of YARP in
 a program written in a different language, we recommend you use
 <a href="http://www.swig.org">SWIG</a>.  This will create an interface to YARP
-for you in the language of your choice.  At the time of writing, languages
-that have been tested with YARP and SWIG are: Java, Python, Perl,
-Chicken Scheme, C#, Allegro Common Lisp, TCL, and Ruby.
+for you in the language of your choice.  At the time of writing, languages that
+have been tested with YARP and SWIG are: Java, Python, Perl, C#, TCL, and Ruby.
 If you are interested in a different language, check if it is in the list of
 <a href="http://www.swig.org/compat.html#SupportedLanguages">languages supported
 by SWIG</a>.
@@ -31,8 +30,8 @@ Then, install any language-specific packages needed.
  - \ref yarp_swig_lua
  - \ref yarp_swig_octave
  - \ref yarp_swig_perl
- - \ref Other tested languages are: Chicken Scheme, C#, Allegro Common Lisp,
-   TCL, Ruby and Lua.  Procedure is same as for Java/Python.
+ - \ref Other tested languages are: C#, TCL, Ruby and Lua.
+   Procedure is same as for Java/Python.
    You may need to install a development package for your desired language.
    To find out:
    - On Linux: Check http://www.dabeaz.com/cgi-bin/wiki.pl?DeveloperInfo/GettingStarted

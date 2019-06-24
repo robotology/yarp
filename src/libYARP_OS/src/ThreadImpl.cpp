@@ -8,27 +8,27 @@
  */
 
 #include <yarp/os/impl/ThreadImpl.h>
+
 #include <yarp/os/NetType.h>
 #include <yarp/os/Semaphore.h>
-
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformSignal.h>
 
 #include <cstdlib>
-#include <thread>
 #include <sstream>
+#include <thread>
 
 #if defined(YARP_HAS_ACE)
-#  include <ace/Thread.h> // For using ACE_hthread_t as native_handle
+#    include <ace/Thread.h> // For using ACE_hthread_t as native_handle
 // In one the ACE headers there is a definition of "main" for WIN32
-# ifdef main
-#  undef main
-# endif
+#    ifdef main
+#        undef main
+#    endif
 #endif
 
 #if defined(__linux__) // Use the POSIX syscalls for the gettid()
-#  include <sys/syscall.h>
-#  include <unistd.h>
+#    include <sys/syscall.h>
+#    include <unistd.h>
 #endif
 
 
@@ -36,7 +36,7 @@ using namespace yarp::os::impl;
 
 static std::atomic<int> threadCount{0};
 
-void theExecutiveBranch(void *args)
+void theExecutiveBranch(void* args)
 {
     // just for now -- rather deal with broken pipes through normal procedures
     yarp::os::impl::signal(SIGPIPE, SIG_IGN);
@@ -55,11 +55,11 @@ void theExecutiveBranch(void *args)
     fprintf(stderr, "Blocking signals\n");
     */
 
-    auto* thread = (ThreadImpl *)args;
+    auto* thread = (ThreadImpl*)args;
 
     YARP_DEBUG(Logger::get(), "Thread starting up");
 
-    bool success=thread->threadInit();
+    bool success = thread->threadInit();
     thread->notify(success);
     thread->notifyOpened(success);
     thread->synchroPost();
@@ -112,7 +112,7 @@ ThreadImpl::ThreadImpl() :
 }
 
 
-ThreadImpl::ThreadImpl(Runnable *target) :
+ThreadImpl::ThreadImpl(Runnable* target) :
         tid(-1),
         id(std::thread::id()),
         defaultPriority(-1),
@@ -158,7 +158,7 @@ int ThreadImpl::join(double seconds)
 {
     closing = true;
     if (needJoin) {
-        if (seconds>0) {
+        if (seconds > 0) {
             if (!initWasSuccessful) {
                 // join called before start completed
                 YARP_ERROR(Logger::get(), std::string("Tried to join a thread before starting it"));
@@ -178,7 +178,8 @@ int ThreadImpl::join(double seconds)
 
         needJoin = false;
         active = false;
-        while (synchro.check()) {}
+        while (synchro.check()) {
+        }
         return result;
     }
     return 0;
@@ -186,7 +187,7 @@ int ThreadImpl::join(double seconds)
 
 void ThreadImpl::run()
 {
-    if (delegate!=nullptr) {
+    if (delegate != nullptr) {
         delegate->run();
     }
 }
@@ -194,7 +195,7 @@ void ThreadImpl::run()
 void ThreadImpl::close()
 {
     closing = true;
-    if (delegate!=nullptr) {
+    if (delegate != nullptr) {
         delegate->close();
     }
     join(-1);
@@ -204,37 +205,36 @@ void ThreadImpl::close()
 void ThreadImpl::askToClose()
 {
     closing = true;
-    if (delegate!=nullptr) {
+    if (delegate != nullptr) {
         delegate->close();
     }
 }
 
 void ThreadImpl::beforeStart()
 {
-    if (delegate!=nullptr) {
+    if (delegate != nullptr) {
         delegate->beforeStart();
     }
 }
 
 void ThreadImpl::afterStart(bool success)
 {
-    if (delegate!=nullptr) {
+    if (delegate != nullptr) {
         delegate->afterStart(success);
     }
 }
 
 bool ThreadImpl::threadInit()
 {
-    if (delegate!=nullptr) {
+    if (delegate != nullptr) {
         return delegate->threadInit();
     }
-    else
-        return true;
+    return true;
 }
 
 void ThreadImpl::threadRelease()
 {
-    if (delegate!=nullptr){
+    if (delegate != nullptr) {
         delegate->threadRelease();
     }
 }
@@ -247,7 +247,7 @@ bool ThreadImpl::start()
     beforeStart();
     thread = std::thread(theExecutiveBranch, (void*)this);
     int result = thread.joinable() ? 0 : 1;
-    if (result==0) {
+    if (result == 0) {
         // we must, at some point in the future, join the thread
         needJoin = true;
 
@@ -260,16 +260,15 @@ bool ThreadImpl::start()
             YARP_DEBUG(Logger::get(), "Child thread initialized ok");
             afterStart(true);
             return true;
-        } else {
-            YARP_DEBUG(Logger::get(), "Child thread did not initialize ok");
-            //wait for the thread to really exit
-            ThreadImpl::join(-1);
         }
+        YARP_DEBUG(Logger::get(), "Child thread did not initialize ok");
+        //wait for the thread to really exit
+        ThreadImpl::join(-1);
     }
     //the thread did not start, call afterStart() to warn the user
     char tmp[80];
     sprintf(tmp, "%d", result);
-    YARP_ERROR(Logger::get(), std::string("A thread failed to start with error code: ")+std::string(tmp));
+    YARP_ERROR(Logger::get(), std::string("A thread failed to start with error code: ") + std::string(tmp));
     afterStart(false);
     return false;
 }
@@ -306,20 +305,19 @@ int ThreadImpl::getCount()
 
 int ThreadImpl::setPriority(int priority, int policy)
 {
-    if (priority==-1) {
+    if (priority == -1) {
         priority = defaultPriority;
         policy = defaultPolicy;
     } else {
         defaultPriority = priority;
         defaultPolicy = policy;
     }
-    if (active && priority!=-1) {
+    if (active && priority != -1) {
 #if defined(YARP_HAS_ACE)
         if (std::is_same<std::thread::native_handle_type, ACE_hthread_t>::value) {
             return ACE_Thread::setprio(thread.native_handle(), priority, policy);
-        } else {
-            YARP_ERROR(Logger::get(), "Cannot set priority without ACE");
         }
+        YARP_ERROR(Logger::get(), "Cannot set priority without ACE");
 #elif defined(__unix__)
         if (std::is_same<std::thread::native_handle_type, pthread_t>::value) {
             struct sched_param thread_param;

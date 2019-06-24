@@ -85,6 +85,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/PortReader.h
                  include/yarp/os/PortReport.h
                  include/yarp/os/PortWriterBuffer.h
+                 include/yarp/os/PortWriterBufferBase.h
                  include/yarp/os/PortWriter.h
                  include/yarp/os/Property.h
                  include/yarp/os/Publisher.h
@@ -94,6 +95,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/ResourceFinder.h
                  include/yarp/os/ResourceFinderOptions.h
                  include/yarp/os/RFModule.h
+                 include/yarp/os/RFPlugin.h
                  include/yarp/os/RosNameSpace.h
                  include/yarp/os/Route.h
                  include/yarp/os/RpcClient.h
@@ -190,7 +192,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/PortCorePackets.h
                       include/yarp/os/impl/PortCoreUnit.h
                       include/yarp/os/impl/Protocol.h
-                      include/yarp/os/impl/Runnable.h
+                      include/yarp/os/impl/RFModuleFactory.h
                       include/yarp/os/impl/SocketTwoWayStream.h
                       include/yarp/os/impl/SplitString.h
                       include/yarp/os/impl/Storable.h
@@ -203,8 +205,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/Terminal.h
                       include/yarp/os/impl/TextCarrier.h
                       include/yarp/os/impl/ThreadImpl.h
-                      include/yarp/os/impl/UdpCarrier.h
-                      include/yarp/os/impl/UnitTest.h)
+                      include/yarp/os/impl/UdpCarrier.h)
 
 set(YARP_OS_IMPL_POSIX_HDRS include/yarp/os/impl/posix/TcpAcceptor.h
                             include/yarp/os/impl/posix/TcpConnector.h
@@ -229,7 +230,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/DgramTwoWayStream.cpp
                  src/Dispatcher.cpp
                  src/DummyConnector.cpp
-                 src/Election.cpp
                  src/Event.cpp
                  src/FakeFace.cpp
                  src/FallbackNameClient.cpp
@@ -286,10 +286,11 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Port.cpp
                  src/PortInfo.cpp
                  src/PortReaderBufferBase.cpp
+                 src/PortReaderBufferBaseCreator.cpp
                  src/PortReader.cpp
                  src/PortReaderCreator.cpp
                  src/PortReport.cpp
-                 src/PortWriterBuffer.cpp
+                 src/PortWriterBufferBase.cpp
                  src/PortWriter.cpp
                  src/Property.cpp
                  src/Protocol.cpp
@@ -298,6 +299,8 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/ResourceFinder.cpp
                  src/ResourceFinderOptions.cpp
                  src/RFModule.cpp
+                 src/RFModuleFactory.cpp
+                 src/RFPlugin.cpp
                  src/RosNameSpace.cpp
                  src/Route.cpp
                  src/RpcClient.cpp
@@ -330,7 +333,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/TwoWayStream.cpp
                  src/Type.cpp
                  src/UdpCarrier.cpp
-                 src/UnitTest.cpp
                  src/Value.cpp
                  src/Vocab.cpp
                  src/YarpNameSpace.cpp
@@ -393,26 +395,33 @@ target_link_libraries(YARP_OS PRIVATE ${hmac_LIBRARIES})
 # list(APPEND YARP_OS_PUBLIC_DEPS hmac)
 
 if(YARP_HAS_ACE)
-  target_link_libraries(YARP_OS PRIVATE ${ACE_LIBRARIES})
-  target_include_directories(YARP_OS SYSTEM PRIVATE ${ACE_INCLUDE_DIRS})
+  target_compile_definitions(YARP_OS PRIVATE YARP_HAS_ACE)
+  target_link_libraries(YARP_OS PRIVATE ACE::ACE)
   list(APPEND YARP_OS_PRIVATE_DEPS ACE)
-else()
-  target_link_libraries(YARP_OS PRIVATE ${CMAKE_DL_LIBS})
-endif()
-
-if(YARP_HAS_LIBEDIT)
-  target_compile_definitions(YARP_OS PRIVATE WITH_LIBEDIT)
-  target_include_directories(YARP_OS SYSTEM PRIVATE ${Libedit_INCLUDE_DIRS})
-  target_link_libraries(YARP_OS PRIVATE ${Libedit_LIBRARIES})
-  list(APPEND YARP_OS_PRIVATE_DEPS Libedit)
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  # Required for using std::thread on linux
   target_link_libraries(YARP_OS PRIVATE pthread)
+
+  # Required by SharedLibrary.cpp (dlopen, dlsym, dlclose, dlerror)
+  target_link_libraries(YARP_OS PRIVATE ${CMAKE_DL_LIBS})
 endif()
 
 if(APPLE)
+  # Required by MacOSAPI.mm
   target_link_libraries(YARP_OS PRIVATE "-framework Foundation")
+endif()
+
+if(MSVC)
+  # Required by Time.cpp (timeBeginPeriod, timeEndPeriod functions)
+  target_link_libraries(YARP_OS PRIVATE "Winmm")
+endif()
+
+if(YARP_HAS_Libedit)
+  target_compile_definitions(YARP_OS PRIVATE YARP_HAS_Libedit)
+  target_link_libraries(YARP_OS PRIVATE Libedit::libedit)
+  list(APPEND YARP_OS_PRIVATE_DEPS Libedit)
 endif()
 
 target_compile_features(YARP_OS PUBLIC cxx_nullptr

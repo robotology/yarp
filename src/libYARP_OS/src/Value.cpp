@@ -8,10 +8,10 @@
  */
 
 #include <yarp/os/Value.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
-
 #include <yarp/os/impl/BottleImpl.h>
 
 using namespace yarp::os;
@@ -21,7 +21,8 @@ using namespace yarp::os::impl;
 Value::Value() :
         Portable(),
         Searchable(),
-        proxy(nullptr) {
+        proxy(nullptr)
+{
 }
 
 Value::Value(std::int32_t x, bool isVocab) :
@@ -56,7 +57,7 @@ Value::Value(const std::string& str, bool isVocab) :
     }
 }
 
-Value::Value(void *data, int length) :
+Value::Value(void* data, int length) :
         Portable(),
         Searchable(),
         proxy(nullptr)
@@ -66,7 +67,7 @@ Value::Value(void *data, int length) :
 
 Value::Value(const Value& alt) :
         Portable(),
-        Searchable(),
+        Searchable(alt),
         proxy(nullptr)
 {
     setProxy(static_cast<Storable*>(alt.clone()));
@@ -77,14 +78,14 @@ const Value& Value::operator=(const Value& alt)
 {
     if (&alt != this) {
         if (proxy == nullptr) {
-            if (isLeaf() && alt.proxy) {
+            if (isLeaf() && (alt.proxy != nullptr)) {
                 // we are guaranteed to be a Storable
                 ((Storable*)this)->copy(*((Storable*)alt.proxy));
             } else {
                 setProxy(static_cast<Storable*>(alt.clone()));
             }
         } else {
-            if (alt.proxy) {
+            if (alt.proxy != nullptr) {
                 if (getCode() == alt.getCode()) {
                     // proxies are guaranteed to be Storable
                     ((Storable*)proxy)->copy(*((Storable*)alt.proxy));
@@ -92,7 +93,7 @@ const Value& Value::operator=(const Value& alt)
                     setProxy(static_cast<Storable*>(alt.clone()));
                 }
             } else {
-                if (proxy) {
+                if (proxy != nullptr) {
                     delete proxy;
                     proxy = nullptr;
                 }
@@ -239,26 +240,28 @@ std::string Value::asString() const
     return proxy->asString();
 }
 
-Bottle *Value::asList() const
+Bottle* Value::asList() const
 {
     ok();
     return proxy->asList();
 }
 
-Property *Value::asDict() const
+Property* Value::asDict() const
 {
     ok();
     return proxy->asDict();
 }
 
-Searchable *Value::asSearchable() const
+Searchable* Value::asSearchable() const
 {
     ok();
-    if (proxy->isDict()) return proxy->asDict();
+    if (proxy->isDict()) {
+        return proxy->asDict();
+    }
     return proxy->asList();
 }
 
-const char *Value::asBlob() const
+const char* Value::asBlob() const
 {
     ok();
     return proxy->asBlob();
@@ -272,31 +275,43 @@ size_t Value::asBlobLength() const
 
 bool Value::read(ConnectionReader& connection)
 {
-    if (proxy) {
+    if (proxy != nullptr) {
         delete proxy;
         proxy = nullptr;
     }
     std::int32_t x = connection.expectInt32();
-    if ((x&0xffff) != x) return false;
-    if (!(x&BOTTLE_TAG_LIST)) return false;
+    if ((x & 0xffff) != x) {
+        return false;
+    }
+    if ((x & BOTTLE_TAG_LIST) == 0) {
+        return false;
+    }
     std::int32_t len = connection.expectInt32();
-    if (len==0) return true;
-    if (len!=1) return false;
-    if (x==BOTTLE_TAG_LIST) {
+    if (len == 0) {
+        return true;
+    }
+    if (len != 1) {
+        return false;
+    }
+    if (x == BOTTLE_TAG_LIST) {
         x = connection.expectInt32();
     } else {
         x &= ~BOTTLE_TAG_LIST;
     }
-    if (connection.isError()) return false;
-    Storable *s = Storable::createByCode(x);
+    if (connection.isError()) {
+        return false;
+    }
+    Storable* s = Storable::createByCode(x);
     setProxy(s);
-    if (!proxy) return false;
+    if (proxy == nullptr) {
+        return false;
+    }
     return s->readRaw(connection);
 }
 
 bool Value::write(ConnectionWriter& connection) const
 {
-    if (!proxy) {
+    if (proxy == nullptr) {
         connection.appendInt32(BOTTLE_TAG_LIST);
         connection.appendInt32(0);
         return !connection.isError();
@@ -327,16 +342,17 @@ Bottle& Value::findGroup(const std::string& key) const
 bool Value::operator==(const Value& alt) const
 {
     ok();
-    return (*proxy)==alt;
+    return (*proxy) == alt;
 }
 
 
 bool Value::operator!=(const Value& alt) const
 {
-    return !((*this)==alt);
+    return !((*this) == alt);
 }
 
-void Value::fromString(const char *str) {
+void Value::fromString(const char* str)
+{
     setProxy(static_cast<Storable*>(makeValue(str)));
 }
 
@@ -346,13 +362,13 @@ std::string Value::toString() const
     return proxy->toString();
 }
 
-Value *Value::create() const
+Value* Value::create() const
 {
     ok();
     return proxy->create();
 }
 
-Value *Value::clone() const
+Value* Value::clone() const
 {
     ok();
     return proxy->clone();
@@ -375,81 +391,81 @@ bool Value::isLeaf() const
     return false;
 }
 
-Value *Value::makeInt8(std::int8_t x)
+Value* Value::makeInt8(std::int8_t x)
 {
     return new StoreInt8(x);
 }
 
-Value *Value::makeInt16(std::int16_t x)
+Value* Value::makeInt16(std::int16_t x)
 {
     return new StoreInt16(x);
 }
 
-Value *Value::makeInt32(std::int32_t x)
+Value* Value::makeInt32(std::int32_t x)
 {
     return new StoreInt32(x);
 }
 
-Value *Value::makeInt64(std::int64_t x)
+Value* Value::makeInt64(std::int64_t x)
 {
     return new StoreInt64(x);
 }
 
-Value *Value::makeFloat32(yarp::conf::float32_t x)
+Value* Value::makeFloat32(yarp::conf::float32_t x)
 {
     return new StoreFloat32(x);
 }
 
-Value *Value::makeFloat64(yarp::conf::float64_t x)
+Value* Value::makeFloat64(yarp::conf::float64_t x)
 {
     return new StoreFloat64(x);
 }
 
-Value *Value::makeString(const std::string& str)
+Value* Value::makeString(const std::string& str)
 {
     return new StoreString(str);
 }
 
 
-Value *Value::makeVocab(int v)
+Value* Value::makeVocab(int v)
 {
     return new StoreVocab(v);
 }
 
 
-Value *Value::makeVocab(const std::string& str)
+Value* Value::makeVocab(const std::string& str)
 {
     return new StoreVocab(Vocab::encode(str));
 }
 
 
-Value *Value::makeBlob(void *data, int length)
+Value* Value::makeBlob(void* data, int length)
 {
     std::string s((char*)data, length);
     return new StoreBlob(s);
 }
 
 
-Value *Value::makeList()
+Value* Value::makeList()
 {
     return new StoreList();
 }
 
 
-Value *Value::makeList(const char *txt)
+Value* Value::makeList(const char* txt)
 {
-    Value *v = makeList();
-    if (v!=nullptr) {
+    Value* v = makeList();
+    if (v != nullptr) {
         v->asList()->fromString(txt);
     }
     return v;
 }
 
 
-Value *Value::makeValue(const std::string& txt)
+Value* Value::makeValue(const std::string& txt)
 {
     Bottle bot(txt);
-    if (bot.size()>1) {
+    if (bot.size() > 1) {
         return makeString(txt);
     }
     return bot.get(0).clone();
@@ -462,9 +478,9 @@ Value& Value::getNullValue()
 }
 
 
-void Value::setProxy(Storable *proxy)
+void Value::setProxy(Storable* proxy)
 {
-    if (this->proxy!=nullptr) {
+    if (this->proxy != nullptr) {
         delete this->proxy;
         this->proxy = nullptr;
     }
@@ -474,8 +490,8 @@ void Value::setProxy(Storable *proxy)
 
 void Value::ok() const
 {
-    const Value *op = this;
-    if (proxy==nullptr) {
+    const Value* op = this;
+    if (proxy == nullptr) {
         ((Value*)op)->setProxy(static_cast<Storable*>(makeList()));
     }
 }

@@ -7,11 +7,12 @@
  */
 
 #include <yarp/os/MultiNameSpace.h>
-#include <yarp/os/YarpNameSpace.h>
+
 #include <yarp/os/RosNameSpace.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/impl/NameConfig.h>
+#include <yarp/os/YarpNameSpace.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NameConfig.h>
 
 #include <vector>
 
@@ -21,7 +22,8 @@ using namespace yarp::os::impl;
 using SpaceList = std::vector<NameSpace*>;
 
 // private implementation of a namespace container
-class MultiNameSpaceHelper {
+class MultiNameSpaceHelper
+{
 public:
     SpaceList spaces; // list of all namespaces
 
@@ -31,18 +33,21 @@ public:
     bool _serverAllocatesPortNumbers;
     bool _connectionHasNameOfEndpoints;
 
-    MultiNameSpaceHelper() {
+    MultiNameSpaceHelper()
+    {
         clear();
     }
 
-    ~MultiNameSpaceHelper() {
+    ~MultiNameSpaceHelper()
+    {
         clear();
     }
 
-    void clear() {
+    void clear()
+    {
         // remove all namespaces and reset flags
         for (auto ns : spaces) {
-            if (ns) {
+            if (ns != nullptr) {
                 delete ns;
                 ns = nullptr;
             }
@@ -54,18 +59,25 @@ public:
         _connectionHasNameOfEndpoints = true;
     }
 
-    void scan() {
+    void scan()
+    {
         // reset flags
         _localOnly = true;
         _usesCentralServer = false;
         _serverAllocatesPortNumbers = true;
         // now scan each namespace
         for (auto ns : spaces) {
-            if (!ns) continue;
+            if (ns == nullptr) {
+                continue;
+            }
             // if any namespace is nonlocal, combination is nonlocal
-            if (!ns->localOnly()) _localOnly = false;
+            if (!ns->localOnly()) {
+                _localOnly = false;
+            }
             // if any namespace uses a central server, combination also does
-            if (ns->usesCentralServer()) _usesCentralServer = true;
+            if (ns->usesCentralServer()) {
+                _usesCentralServer = true;
+            }
             // if any namespace doesn't allocate port numbers, combination
             // cannot be relied on to do so either
             if (!ns->serverAllocatesPortNumbers()) {
@@ -79,12 +91,13 @@ public:
         }
     }
 
-    bool setLocalMode(bool flag) {
+    bool setLocalMode(bool flag)
+    {
         // remove any existing namespaces
         clear();
         if (flag) {
             // add a dummy local namespace
-            NameSpace *ns = new YarpDummyNameSpace;
+            NameSpace* ns = new YarpDummyNameSpace;
             spaces.push_back(ns);
         }
         // cache flags
@@ -92,19 +105,22 @@ public:
         return true;
     }
 
-    bool activate(bool force = false) {
+    bool activate(bool force = false)
+    {
         if (force) {
             // wipe if forced
             clear();
         }
         // return if namespaces already present
-        if (spaces.size()!=0) return true;
+        if (!spaces.empty()) {
+            return true;
+        }
         // read namespace list from config file
         NameConfig conf;
         if (!conf.fromFile()) {
             double now = SystemClock::nowSystem();
-            static double last_shown = now-10;
-            if (now-last_shown>3) {
+            static double last_shown = now - 10;
+            if (now - last_shown > 3) {
                 last_shown = now;
                 fprintf(stderr, "warning: YARP name server(s) not configured, ports will be anonymous\n");
                 fprintf(stderr, "warning: check your namespace and settings with 'yarp detect'\n");
@@ -113,34 +129,31 @@ public:
         }
         Bottle ns = conf.getNamespaces();
         // loop through namespaces
-        for (size_t i=0; i<ns.size(); i++) {
+        for (size_t i = 0; i < ns.size(); i++) {
             std::string n = ns.get(i).asString();
             NameConfig conf2;
             // read configuration of individual namespace
             if (!conf2.fromFile(n.c_str())) {
-                fprintf(stderr, "Could not find namespace %s\n",
-                        n.c_str());
+                fprintf(stderr, "Could not find namespace %s\n", n.c_str());
                 continue;
             }
             std::string mode = conf2.getMode();
             Contact address = conf2.getAddress();
             address.setName(n);
-            if (mode=="yarp"||mode=="//") {
+            if (mode == "yarp" || mode == "//") {
                 // add a yarp namespace
-                NameSpace *ns = new YarpNameSpace(address);
+                NameSpace* ns = new YarpNameSpace(address);
                 spaces.push_back(ns);
-            } else if (mode=="ros") {
+            } else if (mode == "ros") {
                 // add a ros namespace
-                NameSpace *ns = new RosNameSpace(address);
+                NameSpace* ns = new RosNameSpace(address);
                 spaces.push_back(ns);
-            } else if (mode=="local") {
-                NameSpace *ns = new YarpDummyNameSpace;
+            } else if (mode == "local") {
+                NameSpace* ns = new YarpDummyNameSpace;
                 spaces.push_back(ns);
             } else {
                 // shrug
-                YARP_SPRINTF1(Logger::get(), error,
-                              "cannot deal with namespace of type %s",
-                              mode.c_str());
+                YARP_SPRINTF1(Logger::get(), error, "cannot deal with namespace of type %s", mode.c_str());
                 return false;
             }
         }
@@ -149,21 +162,25 @@ public:
         return true;
     }
 
-    Contact getNameServerContact() {
+    Contact getNameServerContact()
+    {
         activate(); // make sure we've loaded namespace(s)
-        if (spaces.size()>0) {
+        if (!spaces.empty()) {
             // return first name server
             return spaces[0]->getNameServerContact();
         }
         return Contact();
     }
 
-    Contact queryName(const std::string& name) {
+    Contact queryName(const std::string& name)
+    {
         activate();
         // try query against each namespace in order
         for (auto ns : spaces) {
-            if (!ns) continue;
-            if (ns->getNameServerName()==name) {
+            if (ns == nullptr) {
+                continue;
+            }
+            if (ns->getNameServerName() == name) {
                 // optimization: return cached server address for
                 // port names that match name of namespace
                 return ns->getNameServerContact();
@@ -171,22 +188,26 @@ public:
             Contact result = ns->queryName(name);
             // return a result once we get one, skipping any remaining
             // namespaces
-            if (result.isValid()) return result;
+            if (result.isValid()) {
+                return result;
+            }
         }
         return Contact();
     }
 
     // return one namespace, any namespace (in fact always first)
-    NameSpace *getOne() {
+    NameSpace* getOne()
+    {
         activate();
-        if (spaces.size()==0) {
+        if (spaces.empty()) {
             return nullptr;
         }
         return spaces[0];
     }
 
     // return full list of namespaces
-    SpaceList& getAll() {
+    SpaceList& getAll()
+    {
         activate();
         return spaces;
     }
@@ -194,198 +215,245 @@ public:
 
 #define HELPER(x) (*((MultiNameSpaceHelper*)((x)->system_resource)))
 
-MultiNameSpace::MultiNameSpace() {
+MultiNameSpace::MultiNameSpace()
+{
     altStore = nullptr;
     system_resource = new MultiNameSpaceHelper;
-    yAssert(system_resource!=nullptr);
+    yAssert(system_resource != nullptr);
 }
 
-MultiNameSpace::~MultiNameSpace() {
-    if (system_resource!=nullptr) {
+MultiNameSpace::~MultiNameSpace()
+{
+    if (system_resource != nullptr) {
         delete &HELPER(this);
         system_resource = nullptr;
     }
 }
 
-bool MultiNameSpace::setLocalMode(bool flag) {
+bool MultiNameSpace::setLocalMode(bool flag)
+{
     return HELPER(this).setLocalMode(flag);
 }
 
-bool MultiNameSpace::localOnly() const {
+bool MultiNameSpace::localOnly() const
+{
     HELPER(this).activate();
     return HELPER(this)._localOnly;
 }
 
-bool MultiNameSpace::usesCentralServer() const {
+bool MultiNameSpace::usesCentralServer() const
+{
     HELPER(this).activate();
     return HELPER(this)._usesCentralServer;
 }
 
-bool MultiNameSpace::connectionHasNameOfEndpoints() const {
+bool MultiNameSpace::connectionHasNameOfEndpoints() const
+{
     HELPER(this).activate();
     return HELPER(this)._connectionHasNameOfEndpoints;
 }
 
-void MultiNameSpace::queryBypass(NameStore *store) {
+void MultiNameSpace::queryBypass(NameStore* store)
+{
     altStore = store;
 }
 
-NameStore *MultiNameSpace::getQueryBypass() {
+NameStore* MultiNameSpace::getQueryBypass()
+{
     return altStore;
 }
 
-bool MultiNameSpace::serverAllocatesPortNumbers() const {
+bool MultiNameSpace::serverAllocatesPortNumbers() const
+{
     HELPER(this).activate();
     return HELPER(this)._serverAllocatesPortNumbers;
 }
 
-bool MultiNameSpace::activate(bool force) {
+bool MultiNameSpace::activate(bool force)
+{
     return HELPER(this).activate(force);
 }
 
-Contact MultiNameSpace::getNameServerContact() const {
+Contact MultiNameSpace::getNameServerContact() const
+{
     return ((MultiNameSpaceHelper*)system_resource)->getNameServerContact();
 }
 
-Contact MultiNameSpace::queryName(const std::string& name) {
+Contact MultiNameSpace::queryName(const std::string& name)
+{
     return HELPER(this).queryName(name);
 }
 
 bool MultiNameSpace::connectPortToTopic(const Contact& src,
                                         const Contact& dest,
-                                        ContactStyle style) {
-    NameSpace *ns = HELPER(this).getOne();
-    if (!ns) return false;
+                                        const ContactStyle& style)
+{
+    NameSpace* ns = HELPER(this).getOne();
+    if (ns == nullptr) {
+        return false;
+    }
     return ns->connectPortToTopic(src, dest, style);
 }
 
 bool MultiNameSpace::connectTopicToPort(const Contact& src,
                                         const Contact& dest,
-                                        ContactStyle style) {
-    NameSpace *ns = HELPER(this).getOne();
-    if (!ns) return false;
+                                        const ContactStyle& style)
+{
+    NameSpace* ns = HELPER(this).getOne();
+    if (ns == nullptr) {
+        return false;
+    }
     return ns->connectTopicToPort(src, dest, style);
 }
 
 bool MultiNameSpace::disconnectPortFromTopic(const Contact& src,
                                              const Contact& dest,
-                                             ContactStyle style) {
-    NameSpace *ns = HELPER(this).getOne();
-    if (!ns) return false;
+                                             const ContactStyle& style)
+{
+    NameSpace* ns = HELPER(this).getOne();
+    if (ns == nullptr) {
+        return false;
+    }
     return ns->disconnectPortFromTopic(src, dest, style);
 }
 
 bool MultiNameSpace::disconnectTopicFromPort(const Contact& src,
                                              const Contact& dest,
-                                             ContactStyle style) {
-    NameSpace *ns = HELPER(this).getOne();
-    if (!ns) return false;
+                                             const ContactStyle& style)
+{
+    NameSpace* ns = HELPER(this).getOne();
+    if (ns == nullptr) {
+        return false;
+    }
     return ns->disconnectTopicFromPort(src, dest, style);
 }
 
 bool MultiNameSpace::connectPortToPortPersistently(const Contact& src,
                                                    const Contact& dest,
-                                                   ContactStyle style) {
-    NameSpace *ns = HELPER(this).getOne();
-    if (!ns) return false;
+                                                   const ContactStyle& style)
+{
+    NameSpace* ns = HELPER(this).getOne();
+    if (ns == nullptr) {
+        return false;
+    }
     return ns->connectPortToPortPersistently(src, dest, style);
 }
 
 bool MultiNameSpace::disconnectPortToPortPersistently(const Contact& src,
                                                       const Contact& dest,
-                                                      ContactStyle style) {
-    NameSpace *ns = HELPER(this).getOne();
-    if (!ns) return false;
+                                                      const ContactStyle& style)
+{
+    NameSpace* ns = HELPER(this).getOne();
+    if (ns == nullptr) {
+        return false;
+    }
     return ns->disconnectPortToPortPersistently(src, dest, style);
 }
 
-Contact MultiNameSpace::registerName(const std::string& name) {
+Contact MultiNameSpace::registerName(const std::string& name)
+{
     SpaceList lst = HELPER(this).getAll();
     Contact result;
     // loop through namespaces
-    for (int i=0; i<(int)lst.size(); i++) {
+    for (int i = 0; i < (int)lst.size(); i++) {
         Contact iresult;
         // Register name with namespace. If contact information is
         // fleshed out while registering, we carry that along for
         // registration with the next namespace.
-        if (result.getPort()<=0) {
+        if (result.getPort() <= 0) {
             iresult = lst[i]->registerName(name);
         } else {
             iresult = lst[i]->registerContact(result);
         }
-        if (i==0 || result.getPort()<=0) {
+        if (i == 0 || result.getPort() <= 0) {
             result = iresult;
         }
     }
     return result;
 }
 
-Contact MultiNameSpace::registerContact(const Contact& contact) {
+Contact MultiNameSpace::registerContact(const Contact& contact)
+{
     SpaceList lst = HELPER(this).getAll();
     Contact result;
-    for (int i=0; i<(int)lst.size(); i++) {
+    for (int i = 0; i < (int)lst.size(); i++) {
         // we register in *all* namespaces (and query in *any*)
         Contact iresult = lst[i]->registerContact(contact);
-        if (i==0) result = iresult;
+        if (i == 0) {
+            result = iresult;
+        }
     }
     return result;
 }
 
-Contact MultiNameSpace::unregisterName(const std::string& name) {
+Contact MultiNameSpace::unregisterName(const std::string& name)
+{
     SpaceList lst = HELPER(this).getAll();
     Contact result;
-    for (int i=0; i<(int)lst.size(); i++) {
+    for (int i = 0; i < (int)lst.size(); i++) {
         // we unregister in *all* namespaces
         Contact iresult = lst[i]->unregisterName(name);
-        if (i==0) result = iresult;
+        if (i == 0) {
+            result = iresult;
+        }
     }
     return result;
 }
 
-Contact MultiNameSpace::unregisterContact(const Contact& contact) {
+Contact MultiNameSpace::unregisterContact(const Contact& contact)
+{
     SpaceList lst = HELPER(this).getAll();
     Contact result;
-    for (int i=0; i<(int)lst.size(); i++) {
+    for (int i = 0; i < (int)lst.size(); i++) {
         // we unregister in *all* namespaces
         Contact iresult = lst[i]->unregisterContact(contact);
-        if (i==0) result = iresult;
+        if (i == 0) {
+            result = iresult;
+        }
     }
     return result;
 }
 
-bool MultiNameSpace::setProperty(const std::string& name, const std::string& key,
-                                const Value& value) {
-    NameSpace *ns = HELPER(this).getOne();
-    if (!ns) return false;
+bool MultiNameSpace::setProperty(const std::string& name, const std::string& key, const Value& value)
+{
+    NameSpace* ns = HELPER(this).getOne();
+    if (ns == nullptr) {
+        return false;
+    }
     return ns->setProperty(name, key, value);
 }
 
-Value *MultiNameSpace::getProperty(const std::string& name, const std::string& key) {
-    NameSpace *ns = HELPER(this).getOne();
-    if (!ns) return nullptr;
+Value* MultiNameSpace::getProperty(const std::string& name, const std::string& key)
+{
+    NameSpace* ns = HELPER(this).getOne();
+    if (ns == nullptr) {
+        return nullptr;
+    }
     return ns->getProperty(name, key);
 }
 
 Contact MultiNameSpace::detectNameServer(bool useDetectedServer,
-                                        bool& scanNeeded,
-                                        bool& serverUsed) {
+                                         bool& scanNeeded,
+                                         bool& serverUsed)
+{
     // This code looks like a placeholder that never got replaced.
     // It is using a heuristic that namespaces with "/ros" in the
     // name are ros namespaces.  There's no need for guesswork like
     // that anymore.  Also, code duplication.  Should spin this
     // off into a proper plugin mechanism for namespaces.
     std::string name = NetworkBase::getNameServerName();
-    Contact fake, r;
-    if (name.find("/ros")!=std::string::npos) {
+    Contact fake;
+    Contact r;
+    if (name.find("/ros") != std::string::npos) {
         RosNameSpace ns(fake);
         r = ns.detectNameServer(useDetectedServer, scanNeeded, serverUsed);
-        if (r.isValid()&&useDetectedServer&&scanNeeded) {
+        if (r.isValid() && useDetectedServer && scanNeeded) {
             HELPER(this).activate(true);
         }
     } else {
         YarpNameSpace ns(fake);
         r = ns.detectNameServer(useDetectedServer, scanNeeded, serverUsed);
-        if (r.isValid()&&useDetectedServer&&scanNeeded) {
+        if (r.isValid() && useDetectedServer && scanNeeded) {
             HELPER(this).activate(true);
         }
     }
@@ -395,8 +463,11 @@ Contact MultiNameSpace::detectNameServer(bool useDetectedServer,
 
 bool MultiNameSpace::writeToNameServer(PortWriter& cmd,
                                        PortReader& reply,
-                                       const ContactStyle& style) {
-    NameSpace *ns = HELPER(this).getOne();
-    if (!ns) return false;
+                                       const ContactStyle& style)
+{
+    NameSpace* ns = HELPER(this).getOne();
+    if (ns == nullptr) {
+        return false;
+    }
     return ns->writeToNameServer(cmd, reply, style);
 }

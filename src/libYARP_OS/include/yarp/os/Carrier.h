@@ -20,7 +20,6 @@
 namespace yarp {
 namespace os {
 
-// Forward declarations
 class SizedWriter;
 class Bytes;
 class Contact;

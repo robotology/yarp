@@ -449,13 +449,13 @@ private:
   // Common initialization done by all constructors.
   void initCommon(uint8_t* buf, uint32_t size, bool owner, uint32_t wPos) {
 
-    maxBufferSize_ = std::numeric_limits<uint32_t>::max();
+    maxBufferSize_ = (std::numeric_limits<uint32_t>::max)();
 
     if (buf == NULL && size != 0) {
       assert(owner);
       buf = (uint8_t*)std::malloc(size);
       if (buf == NULL) {
-        throw std::bad_alloc();
+	throw std::bad_alloc();
       }
     }
 

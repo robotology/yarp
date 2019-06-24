@@ -145,22 +145,40 @@ public class TThreadPoolServer extends TServer {
                                   executorQueue);
   }
 
-
-  public void serve() {
-    try {
+  protected ExecutorService getExecutorService() {
+    return executorService_;
+  }
+  
+  protected boolean preServe() {
+  	try {
       serverTransport_.listen();
     } catch (TTransportException ttx) {
       LOGGER.error("Error occurred during listening.", ttx);
-      return;
+      return false;
     }
 
     // Run the preServe event
     if (eventHandler_ != null) {
       eventHandler_.preServe();
     }
-
     stopped_ = false;
     setServing(true);
+    
+    return true;
+  }
+
+  public void serve() {
+  	if (!preServe()) {
+  		return;
+  	}
+
+  	execute();
+  	waitForShutdown();
+    
+    setServing(false);
+  }
+  
+  protected void execute() {
     int failureCount = 0;
     while (!stopped_) {
       try {
@@ -213,8 +231,10 @@ public class TThreadPoolServer extends TServer {
         }
       }
     }
-
-    executorService_.shutdown();
+  }
+  
+  protected void waitForShutdown() {
+  	executorService_.shutdown();
 
     // Loop until awaitTermination finally does return without a interrupted
     // exception. If we don't do this, then we'll shut down prematurely. We want
@@ -232,7 +252,6 @@ public class TThreadPoolServer extends TServer {
         now = newnow;
       }
     }
-    setServing(false);
   }
 
   public void stop() {
@@ -292,14 +311,24 @@ public class TThreadPoolServer extends TServer {
               break;
             }
         }
-      } catch (TSaslTransportException ttx) {
-        // Something thats not SASL was in the stream, continue silently
-      } catch (TTransportException ttx) {
-        // Assume the client died and continue silently
       } catch (TException tx) {
         LOGGER.error("Thrift error occurred during processing of message.", tx);
       } catch (Exception x) {
-        LOGGER.error("Error occurred during processing of message.", x);
+        // We'll usually receive RuntimeException types here
+        // Need to unwrap to ascertain real causing exception before we choose to ignore
+        Throwable realCause = x.getCause();
+        // Ignore err-logging all transport-level/type exceptions
+        if ((realCause != null && realCause instanceof TTransportException)
+            || (x instanceof TTransportException)) {
+          if (LOGGER.isDebugEnabled()) {
+            // Write to debug, just in case the exception gets required
+            LOGGER
+                .debug("Received TTransportException during processing of message, ignoring: ", x);
+          }
+        } else {
+          // Log the exception at error level and continue
+          LOGGER.error("Error occurred during processing of message.", x);
+        }
       } finally {
         if (eventHandler != null) {
           eventHandler.deleteContext(connectionContext, inputProtocol, outputProtocol);

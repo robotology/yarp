@@ -73,8 +73,9 @@ bool NestedContact::Private::fromString(const std::string& nFullName)
         nestedName = fullName.substr(idx + 1, fullName.length());
         idx = nestedName.find('/');
         if (idx != std::string::npos) {
-            if (idx == 0)
+            if (idx == 0) {
                 return true;
+            }
             category = nestedName.substr(0, idx);
             nestedName = nestedName.substr(idx, nestedName.length());
             return true;
@@ -185,12 +186,12 @@ std::string NestedContact::getTypeName() const
 
 std::string NestedContact::getTypeNameStar() const
 {
-    return (mPriv->wireType != "") ? mPriv->wireType : "*";
+    return (!mPriv->wireType.empty()) ? mPriv->wireType : "*";
 }
 
 bool NestedContact::isNested() const
 {
-    return mPriv->nestedName != "";
+    return !mPriv->nestedName.empty();
 }
 
 std::string NestedContact::toString() const

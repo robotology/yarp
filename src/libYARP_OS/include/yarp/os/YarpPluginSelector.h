@@ -38,7 +38,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~YarpPluginSelector() {}
+    virtual ~YarpPluginSelector() = default;
 
     /**
      * Determine whether a plugin is of interest.
@@ -76,6 +76,28 @@ public:
     {
         yarp::os::LockGuard lock(mutex);
         return search_path;
+    }
+
+    /**
+     * Checks if a pluigin of the given type is available.
+     */
+    static bool checkPlugin(const std::string& name, const std::string& type = {})
+    {
+        yarp::os::YarpPluginSelector selector;
+        selector.scan();
+        const yarp::os::Bottle lst = selector.getSelectedPlugins();
+        for (size_t i = 0; i < lst.size(); i++) {
+            const yarp::os::Value& options = lst.get(i);
+            if (name == options.check("name", yarp::os::Value("untitled")).asString()) {
+                if (!type.empty()) {
+                    return true;
+                }
+                if (type == options.check("type", yarp::os::Value("untitled")).asString()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 };
 

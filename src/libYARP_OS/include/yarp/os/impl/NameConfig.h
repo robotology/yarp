@@ -10,16 +10,12 @@
 #ifndef YARP_OS_IMPL_NAMECONFIG_H
 #define YARP_OS_IMPL_NAMECONFIG_H
 
-#include <yarp/os/Contact.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Contact.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class NameConfig;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 #define YARP_CONFIG_FILENAME "yarp.conf"
 #define YARP_CONFIG_NAMESPACE_FILENAME "yarp_namespace.conf"
@@ -28,22 +24,21 @@ namespace yarp {
  * Small helper class to help deal with legacy YARP configuration files.
  *
  */
-class YARP_OS_impl_API yarp::os::impl::NameConfig
+class YARP_OS_impl_API NameConfig
 {
 public:
-
-    static std::string expandFilename(const char *fname);
+    static std::string expandFilename(const char* fname);
 
     std::string getSafeString(const std::string& txt);
 
-    std::string getConfigFileName(const char *stem = nullptr,
-                                  const char *ns = nullptr);
+    std::string getConfigFileName(const char* stem = nullptr,
+                                  const char* ns = nullptr);
 
     std::string readConfig(const std::string& fileName);
 
     bool writeConfig(const std::string& fileName, const std::string& text);
 
-    bool fromFile(const char *ns = nullptr);
+    bool fromFile(const char* ns = nullptr);
 
     bool toFile(bool clean = false);
 
@@ -84,5 +79,9 @@ private:
 
     bool fromString(const std::string& txt);
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_NAMECONFIG_H

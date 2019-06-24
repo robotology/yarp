@@ -190,7 +190,7 @@ yarp::math::FrameTransform& Transforms_client_storage::operator[]   (std::size_t
 };
 
 //------------------------------------------------------------------------------------------------------------------------------
-bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connection)
+bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
 {
     LockGuard lock (m_rpc_mutex);
     yarp::os::Bottle in;
@@ -363,7 +363,7 @@ bool yarp::dev::FrameTransformClient::read(yarp::os::ConnectionReader& connectio
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
+bool FrameTransformClient::open(yarp::os::Searchable &config)
 {
     m_local_name.clear();
     m_remote_name.clear();
@@ -435,7 +435,7 @@ bool yarp::dev::FrameTransformClient::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::close()
+bool FrameTransformClient::close()
 {
     m_rpc_InterfaceToServer.close();
     m_rpc_InterfaceToUser.close();
@@ -447,7 +447,7 @@ bool yarp::dev::FrameTransformClient::close()
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::allFramesAsString(std::string &all_frames)
+bool FrameTransformClient::allFramesAsString(std::string &all_frames)
 {
     for (size_t i = 0; i < m_transform_storage->size(); i++)
     {
@@ -456,7 +456,7 @@ bool yarp::dev::FrameTransformClient::allFramesAsString(std::string &all_frames)
     return true;
 }
 
-yarp::dev::FrameTransformClient::ConnectionType yarp::dev::FrameTransformClient::getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor = nullptr)
+FrameTransformClient::ConnectionType FrameTransformClient::getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor = nullptr)
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t                     i, j;
@@ -501,18 +501,18 @@ yarp::dev::FrameTransformClient::ConnectionType yarp::dev::FrameTransformClient:
                 }
                 return UNDIRECT;
             }
-        }    
+        }
     }
 
     return DISCONNECTED;
 }
 
-bool yarp::dev::FrameTransformClient::canTransform(const std::string &target_frame, const std::string &source_frame)
+bool FrameTransformClient::canTransform(const std::string &target_frame, const std::string &source_frame)
 {
     return getConnectionType(target_frame, source_frame) != DISCONNECTED;
 }
 
-bool yarp::dev::FrameTransformClient::clear()
+bool FrameTransformClient::clear()
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -537,7 +537,7 @@ bool yarp::dev::FrameTransformClient::clear()
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::frameExists(const std::string &frame_id)
+bool FrameTransformClient::frameExists(const std::string &frame_id)
 {
     for (size_t i = 0; i < m_transform_storage->size(); i++)
     {
@@ -547,7 +547,7 @@ bool yarp::dev::FrameTransformClient::frameExists(const std::string &frame_id)
     return false;
 }
 
-bool yarp::dev::FrameTransformClient::getAllFrameIds(std::vector< std::string > &ids)
+bool FrameTransformClient::getAllFrameIds(std::vector< std::string > &ids)
 {
     for (size_t i = 0; i < m_transform_storage->size(); i++)
     {
@@ -572,7 +572,7 @@ bool yarp::dev::FrameTransformClient::getAllFrameIds(std::vector< std::string > 
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::getParent(const std::string &frame_id, std::string &parent_frame_id)
+bool FrameTransformClient::getParent(const std::string &frame_id, std::string &parent_frame_id)
 {
     for (size_t i = 0; i < m_transform_storage->size(); i++)
     {
@@ -587,7 +587,7 @@ bool yarp::dev::FrameTransformClient::getParent(const std::string &frame_id, std
     return false;
 }
 
-bool yarp::dev::FrameTransformClient::canExplicitTransform(const std::string& target_frame_id, const std::string& source_frame_id) const
+bool FrameTransformClient::canExplicitTransform(const std::string& target_frame_id, const std::string& source_frame_id) const
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t                     i, tfVec_size;
@@ -604,7 +604,7 @@ bool yarp::dev::FrameTransformClient::canExplicitTransform(const std::string& ta
     return false;
 }
 
-bool yarp::dev::FrameTransformClient::getChainedTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform) const
+bool FrameTransformClient::getChainedTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform) const
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t                     i, tfVec_size;
@@ -634,7 +634,7 @@ bool yarp::dev::FrameTransformClient::getChainedTransform(const std::string& tar
     return false;
 }
 
-bool yarp::dev::FrameTransformClient::getTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform)
+bool FrameTransformClient::getTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform)
 {
     ConnectionType ct;
     std::string    ancestor;
@@ -663,7 +663,7 @@ bool yarp::dev::FrameTransformClient::getTransform(const std::string& target_fra
     return false;
 }
 
-bool yarp::dev::FrameTransformClient::setTransform(const std::string& target_frame_id, const std::string& source_frame_id, const yarp::sig::Matrix& transform)
+bool FrameTransformClient::setTransform(const std::string& target_frame_id, const std::string& source_frame_id, const yarp::sig::Matrix& transform)
 {
     if(target_frame_id == source_frame_id)
     {
@@ -717,7 +717,7 @@ bool yarp::dev::FrameTransformClient::setTransform(const std::string& target_fra
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::setTransformStatic(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform)
+bool FrameTransformClient::setTransformStatic(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform)
 {
     if(target_frame_id == source_frame_id)
     {
@@ -771,7 +771,7 @@ bool yarp::dev::FrameTransformClient::setTransformStatic(const std::string &targ
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id)
+bool FrameTransformClient::deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -796,7 +796,7 @@ bool yarp::dev::FrameTransformClient::deleteTransform(const std::string &target_
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point)
+bool FrameTransformClient::transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point)
 {
     if (input_point.size() != 3)
     {
@@ -816,7 +816,7 @@ bool yarp::dev::FrameTransformClient::transformPoint(const std::string &target_f
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose)
+bool FrameTransformClient::transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose)
 {
     if (input_pose.size() != 6)
     {
@@ -850,7 +850,7 @@ bool yarp::dev::FrameTransformClient::transformPose(const std::string &target_fr
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion)
+bool FrameTransformClient::transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion)
 {
     yarp::sig::Matrix m(4, 4);
     if (!getTransform(target_frame_id, source_frame_id, m))
@@ -864,7 +864,7 @@ bool yarp::dev::FrameTransformClient::transformQuaternion(const std::string &tar
     return true;
 }
 
-bool yarp::dev::FrameTransformClient::waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout)
+bool FrameTransformClient::waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout)
 {
     //loop until canTransform == true or timeout expires
     double start = yarp::os::SystemClock::nowSystem();
@@ -888,18 +888,18 @@ FrameTransformClient::FrameTransformClient() : PeriodicThread(0.01),
 
 FrameTransformClient::~FrameTransformClient() = default;
 
-bool     yarp::dev::FrameTransformClient::threadInit()
+bool     FrameTransformClient::threadInit()
 {
     yInfo("Thread started");
     return true;
 }
 
-void     yarp::dev::FrameTransformClient::threadRelease()
+void     FrameTransformClient::threadRelease()
 {
     yInfo("Thread stopped");
 }
 
-void     yarp::dev::FrameTransformClient::run()
+void     FrameTransformClient::run()
 {
     LockGuard lock (m_rpc_mutex);
     if (m_array_of_ports.size()==0)
@@ -925,14 +925,4 @@ void     yarp::dev::FrameTransformClient::run()
             }
         }
     }
-}
-
-yarp::dev::DriverCreator *createFrameTransformClient()
-{
-    return new DriverCreatorOf<FrameTransformClient>
-               (
-                   "transformClient",
-                   "",
-                   "transformClient"
-               );
 }

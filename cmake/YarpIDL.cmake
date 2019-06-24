@@ -11,9 +11,18 @@
 # optionally storing the list of source/header files in the supplied
 # variables. Call as:
 #
-#   yarp_idl_to_dir(foo.thrift foo)
-#   yarp_idl_to_dir(foo.thrift foo SOURCES HEADERS)
-#   yarp_idl_to_dir(foo.thrift foo SOURCES HEADERS INCLUDE_PATHS)
+#   yarp_idl_to_dir(INPUT_FILES <file> [file]
+#                   OUTPUT_DIR <dir>
+#                   [SOURCES_VAR <var>]
+#                   [HEADERS_VAR <var>]
+#                   [INCLUDE_DIRS_VAR <var>]
+#                   [THRIFT_INCLUDE_PREFIX]
+#                   [THRIFT_NO_NAMESPACE_PREFIX]
+#                   [THRIFT_NO_COPYRIGHT}
+#                   [THRIFT_NO_EDITOR]
+#                   [THRIFT_NO_DOC]
+#                   [THRIFT_DEBUG_GENERATOR]
+#                   [VERBOSE])
 #
 # yarp_add_idl
 # ------------
@@ -38,181 +47,297 @@ if(COMMAND _yarp_idl_rosmsg_to_file_list)
   return()
 endif()
 
-function(YARP_IDL_TO_DIR yarpidl_file_base output_dir)
-  # Store optional output variable(s).
-  set(out_vars ${ARGN})
-
-  # Make sure output_dir variable is visible when expanding templates.
-  set(output_dir ${output_dir})
-
-  # Extract a name and extension.
-  if(IS_ABSOLUTE ${yarpidl_file_base})
-    file(RELATIVE_PATH yarpidl_file ${CMAKE_CURRENT_SOURCE_DIR} ${yarpidl_file_base})
-  else()
-    set(yarpidl_file ${yarpidl_file_base})
-  endif()
-  get_filename_component(include_prefix ${yarpidl_file} PATH)
-  get_filename_component(yarpidlName ${yarpidl_file} NAME_WE)
-  get_filename_component(yarpidlExt ${yarpidl_file} EXT)
-  string(TOLOWER "${yarpidlExt}" yarpidlExt)
-  string(TOLOWER "${yarpidlName}" yarpidlNameLower)
-  set(dir_add "")
-
-  # Figure out format we are working with.
-  set(yarpidl_native 0)
-  if(yarpidlExt STREQUAL ".thrift")
-    set(family thrift)
-    set(dir_add "/${yarpidlNameLower}")
-  elseif("${yarpidlExt}" MATCHES "\\.(msg|srv)" OR
-         "${yarpidl_file}" MATCHES "^(time|duration)$")
-    set(family rosmsg)
-    if("${yarpidl_file}" STREQUAL "time")
-      set(yarpidlName TickTime)
-      set(yarpidl_native 1)
-    elseif("${yarpidl_file}" STREQUAL "duration")
-      set(yarpidlName TickDuration)
-      set(yarpidl_native 1)
+# Internal function.
+function(_YARP_IDL_THRIFT_ARGS _prefix _out_dir _verbose _out_var)
+  unset(_args)
+  unset(_extra_args)
+  foreach(_ARG INCLUDE_PREFIX
+               NO_NAMESPACE_PREFIX
+               NO_COPYRIGHT
+               NO_EDITOR
+               NO_DOC
+               DEBUG_GENERATOR)
+    if(${_prefix}_THRIFT_${_ARG})
+      string(TOLOWER "${_ARG}" _arg)
+      list(APPEND _extra_args ${_arg})
     endif()
-  else()
-    message(FATAL_ERROR "yarp_idl_to_dir does not know what to do with \"${yarpidl_file}\", unrecognized extension \"${yarpidlExt}\"")
+  endforeach()
+  if (NOT "${_extra_args}" STREQUAL "")
+    string(REPLACE ";" "," _extra_args "${_extra_args}")
+    set(_extra_args ":${_extra_args}")
   endif()
+  list(APPEND _args --gen yarp${_extra_args})
+  list(APPEND _args --I "${CMAKE_CURRENT_SOURCE_DIR}")
+  if(_verbose)
+    list(APPEND _args -v)
+  endif()
+  list(APPEND _args --out "${_out_dir}")
 
-  if("${family}" STREQUAL "thrift")
-    set(yarpidl_target_name "${yarpidl_file}")
-  else()
-    get_filename_component(rospkg_name "${include_prefix}" NAME)
-    get_filename_component(include_prefix "${include_prefix}" PATH)
-    if(rospkg_name MATCHES "(msg|srv)")
-      get_filename_component(rospkg_name "${include_prefix}" NAME)
-      get_filename_component(include_prefix "${include_prefix}" PATH)
-    endif()
-    if(NOT "${rospkg_name}" STREQUAL "")
-      set(yarpidl_target_name "${rospkg_name}_${yarpidlName}${yarpidlExt}")
-    else()
-      set(yarpidl_target_name "${yarpidlName}${yarpidlExt}")
-    endif()
-  endif()
-  string(REGEX REPLACE "[^a-zA-Z0-9]" "_" yarpidl_target_name ${yarpidl_target_name})
+  set(${_out_var} ${_args} PARENT_SCOPE)
+endfunction()
 
-  string(LENGTH "${include_prefix}" include_prefix_len)
-  if(include_prefix_len GREATER 0)
-    set(include_prefix "/${include_prefix}")
+# Internal function.
+function(_YARP_IDL_ROSMSG_ARGS _prefix _out_dir _verbose _out_var)
+  unset(_args)
+  list(APPEND _args --no-ros true)
+  list(APPEND _args --no-cache)
+  if(_verbose)
+    list(APPEND _args --verbose)
   endif()
+  list(APPEND _args --out "${_out_dir}")
+
+  set(${_out_var} ${_args} PARENT_SCOPE)
+endfunction()
+
+
+# Internal function.
+# Perform the actual code generation
+function(_YARP_IDL_TO_DIR_GENERATE _family _file _name _index_file_name _output_dir _include_prefix _verbose)
+  # Say what we are doing.
+  message(STATUS "${_family} code for ${_file} => ${_output_dir}")
 
   # Set intermediate output directory.
-  set(dir ${CMAKE_CURRENT_BINARY_DIR}/_yarp_idl_${include_prefix}${dir_add})
+  set(_temp_dir ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/yarp_idl_to_dir/${_include_prefix})
+
+  # Make sure intermediate output directory exists.
+  file(MAKE_DIRECTORY "${_temp_dir}")
 
   # Ensure that the intermediate output directory is deleted on make clean
-  set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES ${dir})
+  set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES ${_temp_dir})
 
-  set(settings_file ${output_dir}/${yarpidl_target_name}.cmake)
+  # Generate code at configuration time, so we know filenames.
+  find_program(YARPIDL_${_family}_LOCATION
+                NAMES yarpidl_${_family}
+                HINTS ${YARP_IDL_BINARY_HINT} # This is a list of directories defined
+                                              # in YarpOptions.cmake (for YARP) or in
+                                              # YARPConfig.cmake for dependencies
+                NO_DEFAULT_PATH)
 
-  # Check if generation has never happened.
-  set(files_missing TRUE)
-  if(EXISTS ${settings_file})
-    set(files_missing FALSE)
+  if("${_family}" STREQUAL "thrift")
+    _yarp_idl_thrift_args(_YITD "${_temp_dir}" ${_verbose} _args)
+  else()
+    _yarp_idl_rosmsg_args(_YITD "${_temp_dir}" ${_verbose} _args)
   endif()
+
+  set(_output_quiet OUTPUT_QUIET)
+  if(_verbose)
+    set(_output_quiet)
+  endif()
+
+  set(_cmd "${YARPIDL_${_family}_LOCATION}" ${_args} "${_file}")
+
+  if(_verbose)
+    string(REPLACE ";" " " _cmd_str "${_cmd}")
+    message(STATUS "    WORKING_DIRECTORY = [${CMAKE_CURRENT_SOURCE_DIR}]")
+    message(STATUS "    COMMAND = [${_cmd_str}]")
+  endif()
+
+  # Go ahead and generate files.
+  execute_process(COMMAND ${_cmd}
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                  RESULT_VARIABLE res
+                  ${_output_quiet})
+  # Failure is bad news, let user know.
+  if(NOT "${res}" STREQUAL "0")
+    message(FATAL_ERROR "yarpidl_${_family} (${YARPIDL_${_family}_LOCATION}) failed, aborting.")
+  endif()
+
+  # Place the files in their final location.
+  file(STRINGS "${_temp_dir}/${_index_file_name}" _index)
+  file(WRITE "${_output_dir}/${_index_file_name}" "")
+  foreach(_gen_file ${_index})
+    if(NOT EXISTS "${_temp_dir}/${_gen_file}")
+      message(FATAL_ERROR "${_gen_file} not found in ${_temp_dir} dir!")
+    endif()
+    get_filename_component(_type ${_gen_file} EXT)
+    if(${_type} STREQUAL ".h")
+      file(APPEND "${_output_dir}/${_index_file_name}" "include/${_gen_file}\n")
+      configure_file("${_temp_dir}/${_gen_file}"
+                     "${_output_dir}/include/${_gen_file}"
+                     COPYONLY)
+    elseif(${_type} STREQUAL ".cpp")
+      file(APPEND "${_output_dir}/${_index_file_name}" "src/${_gen_file}\n")
+      configure_file("${_temp_dir}/${_gen_file}"
+                     "${_output_dir}/src/${_gen_file}"
+                     COPYONLY)
+    else()
+      message(WARNING "Filename extension of ${_gen_file} is neither .h nor .cpp")
+    endif()
+  endforeach()
+endfunction()
+
+
+function(YARP_IDL_TO_DIR)
 
   # Flag to control whether IDL generation is allowed.
-  option(ALLOW_IDL_GENERATION "Allow YARP to (re)build IDL files as needed" ${files_missing})
+  option(ALLOW_IDL_GENERATION "Allow YARP to (re)build IDL files as needed" OFF)
 
-  set(full_headers)
-  set(full_sources)
-  if(ALLOW_IDL_GENERATION)
-    # Say what we are doing.
-    message(STATUS "${family} code for ${yarpidl_file} => ${output_dir}")
-    # Generate code at configuration time, so we know filenames.
-    find_program(YARPIDL_${family}_LOCATION
-                 NAMES yarpidl_${family}
-                 HINTS ${YARP_IDL_BINARY_HINT} # This is a list of directories defined
-                                               # in YarpOptions.cmake (for YARP) or in
-                                               # YARPConfig.cmake for dependencies
-                 NO_DEFAULT_PATH)
-    # Make sure intermediate output directory exists.
-    make_directory(${dir})
-    # Generate a script controlling final layout of files.
-    configure_file(${YARP_MODULE_DIR}/template/placeGeneratedYarpIdlFiles.cmake.in ${dir}/place${yarpidlName}.cmake @ONLY)
+  set(_options VERBOSE
+               THRIFT_INCLUDE_PREFIX
+               THRIFT_NO_NAMESPACE_PREFIX
+               THRIFT_NO_COPYRIGHT
+               THRIFT_NO_EDITOR
+               THRIFT_NO_DOC
+               THRIFT_DEBUG_GENERATOR)
+  set(_oneValueArgs OUTPUT_DIR
+                    SOURCES_VAR
+                    HEADERS_VAR
+                    INCLUDE_DIRS_VAR)
+  set(_multiValueArgs INPUT_FILES)
+  cmake_parse_arguments(_YITD "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
 
-    if("${family}" STREQUAL "thrift")
-      set(cmd "${YARPIDL_thrift_LOCATION}" --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${dir}" "${yarpidl_file}")
-    else()
-      set(_verbose )
-      set(_output_quiet OUTPUT_QUIET)
-      if(YARPIDL_rosmsg_VERBOSE)
-        set(_verbose --verbose)
-        set(_output_quiet )
+  if(NOT YARP_NO_DEPRECATED) # Since YARP 3.2
+    # Support old way to pass SOURCES_VAR, HEADERS_VAR and INCLUDE_DIRS_VAR
+    # (i.e. using ARGN)
+    list(LENGTH _YITD_UNPARSED_ARGUMENTS _len)
+    if(_len GREATER 0)
+      message(DEPRECATION "Passing variables without name argument to YARP_IDL_TO_DIR is deprecated. Use SOURCES_VAR, HEADERS_VAR and INCLUDE_DIRS_VAR")
+      if(NOT _YITD_INPUT_FILES)
+        list(GET _YITD_UNPARSED_ARGUMENTS 0 _YITD_INPUT_FILES)
       endif()
-      set(cmd "${YARPIDL_rosmsg_LOCATION}" --no-ros true --no-cache ${_verbose} --out "${dir}" "${yarpidl_file}")
+      if(NOT _YITD_OUTPUT_DIR)
+        list(GET _YITD_UNPARSED_ARGUMENTS 1 _YITD_OUTPUT_DIR)
+      endif()
+      # include_prefix was always enabled in the old version
+      if(NOT _YITD_THRIFT_INCLUDE_PREFIX)
+        set(_YITD_THRIFT_INCLUDE_PREFIX 1)
+      endif()
+      if(NOT _YITD_THRIFT_NO_NAMESPACE_PREFIX)
+        set(_YITD_THRIFT_NO_NAMESPACE_PREFIX 1)
+      endif()
     endif()
-
-    # Go ahead and generate files.
-    execute_process(COMMAND ${cmd}
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                    RESULT_VARIABLE res
-                    ${_output_quiet})
-    # Failure is bad news, let user know.
-    if(NOT "${res}" STREQUAL "0")
-      message(FATAL_ERROR "yarpidl_${family} (${YARPIDL_${family}_LOCATION}) failed, aborting.")
+    if(_len GREATER 3)
+      if(NOT DEFINED _YITD_SOURCES_VAR)
+        list(GET _YITD_UNPARSED_ARGUMENTS 2 _YITD_SOURCES_VAR)
+      endif()
+      if(NOT DEFINED _YITD_HEADERS_VAR)
+        list(GET _YITD_UNPARSED_ARGUMENTS 3 _YITD_HEADERS_VAR)
+      endif()
     endif()
-    # Place the files in their final location.
-    execute_process(COMMAND ${CMAKE_COMMAND} -P ${dir}/place${yarpidlName}.cmake)
-    set(files_missing FALSE)
+    if(_len GREATER 4)
+      if(NOT DEFINED _YITD_INCLUDE_DIRS_VAR)
+        list(GET _YITD_UNPARSED_ARGUMENTS 4 _YITD_INCLUDE_DIRS_VAR)
+      endif()
+    endif()
   endif()
 
-  # Prepare list of generated files.
-  if(NOT files_missing)
-    include(${settings_file})
-    set(DEST_FILES)
-    foreach(generatedFile ${headers})
-      list(APPEND DEST_FILES ${output_dir}/${generatedFile})
-      list(APPEND full_headers ${output_dir}/${generatedFile})
-    endforeach(generatedFile)
-    foreach(generatedFile ${sources})
-      list(APPEND DEST_FILES ${output_dir}/${generatedFile})
-      list(APPEND full_sources ${output_dir}/${generatedFile})
-    endforeach(generatedFile)
+  if(NOT DEFINED _YITD_INPUT_FILES)
+    message(FATAL_ERROR "Missing INPUT_FILES argument")
   endif()
 
-  if(ALLOW_IDL_GENERATION)
-    # Add a command/target to regenerate the files if the IDL file changes.
-    set(yarpidl_depends ${yarpidl_file})
-    if(yarpidl_native)
-      unset(yarpidl_depends)
-    endif()
-    add_custom_command(OUTPUT ${output_dir}/${yarpidl_target_name}.cmake ${DEST_FILES}
-                       COMMAND ${YARPIDL_${family}_LOCATION} --out ${dir} --gen yarp:include_prefix --I ${CMAKE_CURRENT_SOURCE_DIR} ${yarpidl_file}
-                       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                       COMMAND ${CMAKE_COMMAND} -P ${dir}/place${yarpidlName}.cmake
-                       DEPENDS ${yarpidl_depends} ${YARPIDL_LOCATION})
-    add_custom_target(${yarpidl_target_name} DEPENDS ${output_dir}/${yarpidl_target_name}.cmake)
-
-    # Put the target in the right folder if defined
-    get_property(autogen_source_group_set GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER SET)
-    if(autogen_source_group_set)
-      get_property(autogen_targets_folder GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER)
-      set_property(TARGET ${yarpidl_target_name} PROPERTY FOLDER "${autogen_targets_folder}")
-    endif()
-  else()
-    if(files_missing)
-      message(FATAL_ERROR "Generated IDL files for ${yarpidl_file} not found and cannot make them because ALLOW_IDL_GENERATION=${ALLOW_IDL_GENERATION} (maybe this should be turned on?)")
-    endif()
-  endif(ALLOW_IDL_GENERATION)
-
-  list(LENGTH out_vars len)
-  if(len GREATER 1)
-    list(GET out_vars 0 target_src)
-    list(GET out_vars 1 target_hdr)
-    set(${target_src} ${full_sources} PARENT_SCOPE)
-    set(${target_hdr} ${full_headers} PARENT_SCOPE)
+  if(NOT DEFINED _YITD_OUTPUT_DIR)
+    message(FATAL_ERROR "Missing OUTPUT_DIR argument")
   endif()
-  if(len GREATER 2)
-    list(GET out_vars 2 target_paths)
-    if("${family}" STREQUAL "thrift")
-      set(${target_paths} ${output_dir} ${output_dir}/include PARENT_SCOPE)
+
+  unset(_full_headers)
+  unset(_full_sources)
+  unset(_full_paths)
+
+  foreach(_file ${_YITD_INPUT_FILES})
+
+    # Extract a name and extension.
+    if(IS_ABSOLUTE ${_file})
+      file(RELATIVE_PATH _file ${CMAKE_CURRENT_SOURCE_DIR} ${_file})
     else()
-      set(${target_paths} ${output_dir}/include PARENT_SCOPE)
+      set(_file ${_file})
     endif()
+    get_filename_component(_include_prefix ${_file} PATH)
+    string(REPLACE "../" "" _include_prefix "${_include_prefix}")
+    get_filename_component(_name ${_file} NAME_WE)
+    get_filename_component(_ext ${_file} EXT)
+    string(TOLOWER "${_ext}" _ext)
+    string(TOLOWER "${_name}" _name_lower)
+    set(_dir_add "")
+
+    # Figure out format we are working with.
+    if(_ext STREQUAL ".thrift")
+      set(_family thrift)
+      set(_dir_add "/${_name_lower}")
+    elseif("${_ext}" MATCHES "\\.(msg|srv)" OR
+           "${_file}" MATCHES "^(time|duration)$")
+      set(_family rosmsg)
+      if("${_file}" STREQUAL "time")
+        set(_name TickTime)
+      elseif("${_file}" STREQUAL "duration")
+        set(_name TickDuration)
+      endif()
+    else()
+      message(FATAL_ERROR "yarp_idl_to_dir does not know what to do with \"${_file}\", unrecognized extension \"${_ext}\"")
+    endif()
+
+    if("${_family}" STREQUAL "thrift")
+      set(_target_name "${_file}")
+      set(_index_file_name "${_name}_index.txt")
+    elseif("${_family}" STREQUAL "rosmsg")
+      get_filename_component(_rospkg_name "${_include_prefix}" NAME)
+      get_filename_component(_include_prefix "${_include_prefix}" PATH)
+      if(_rospkg_name MATCHES "(msg|srv)")
+        get_filename_component(_rospkg_name "${_include_prefix}" NAME)
+        get_filename_component(_include_prefix "${_include_prefix}" PATH)
+      endif()
+      if(NOT "${_rospkg_name}" STREQUAL "")
+        set(_target_name "${_rospkg_name}_${_name}${_ext}")
+        set(_index_file_name "${_rospkg_name}_${_name}_index.txt")
+      else()
+        set(_target_name "${_name}${_ext}")
+        set(_index_file_name "${_name}_index.txt")
+      endif()
+    endif()
+    string(REGEX REPLACE "[^a-zA-Z0-9]" "_" _target_name ${_target_name})
+    set(_index_file "${_YITD_OUTPUT_DIR}/${_index_file_name}")
+
+    string(LENGTH "${_include_prefix}" _include_prefix_len)
+    if(_include_prefix_len GREATER 0)
+      set(_include_prefix "/${_include_prefix}")
+    endif()
+
+    if(ALLOW_IDL_GENERATION OR NOT EXISTS "${_index_file}")
+      _yarp_idl_to_dir_generate(${_family}
+                                "${_file}"
+                                ${_name}
+                                ${_index_file_name}
+                                "${_YITD_OUTPUT_DIR}"
+                                "${_include_prefix}${_dir_add}"
+                                ${_YITD_VERBOSE})
+    endif()
+
+    # Sanity check, it should never happen
+    if(NOT EXISTS "${_index_file}")
+      message(FATAL_ERROR "Something went wrong in idl generation. Missing \"${_index_file}\" file")
+    endif()
+
+    # Read index file
+    file(STRINGS "${_index_file}" _index)
+    foreach(_gen_file ${_index})
+      if(NOT EXISTS "${_YITD_OUTPUT_DIR}/${_gen_file}")
+        message(FATAL_ERROR "Something went wrong in idl generation. Missing \"${_YITD_OUTPUT_DIR}/${_hdr}\" file")
+      endif()
+      file(RELATIVE_PATH _rel_file ${CMAKE_CURRENT_LIST_DIR} "${_YITD_OUTPUT_DIR}/${_gen_file}")
+      get_filename_component(_type ${_gen_file} EXT)
+      if(${_type} STREQUAL ".h")
+        list(APPEND _full_headers "${_rel_file}")
+      elseif(${_type} STREQUAL ".cpp")
+        list(APPEND _full_sources "${_rel_file}")
+      else()
+        message(WARNING "Filename extension of ${_gen_file} is neither .h nor .cpp")
+      endif()
+    endforeach()
+
+    list(APPEND _full_paths "${_YITD_OUTPUT_DIR}/include")
+    list(REMOVE_DUPLICATES _full_paths)
+  endforeach()
+
+  # Set requested variables in parent scope
+  if(DEFINED _YITD_SOURCES_VAR)
+    set(${_YITD_SOURCES_VAR} ${_full_sources} PARENT_SCOPE)
   endif()
+  if(DEFINED _YITD_HEADERS_VAR)
+    set(${_YITD_HEADERS_VAR} ${_full_headers} PARENT_SCOPE)
+  endif()
+  if(DEFINED _YITD_INCLUDE_DIRS_VAR)
+    set(${_YITD_INCLUDE_DIRS_VAR} ${_full_paths} PARENT_SCOPE)
+  endif()
+
 endfunction()
 
 
@@ -230,6 +355,13 @@ function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_h
   string(REGEX REPLACE "#[^\n]+" "" file_content ${file_content})
   string(REGEX REPLACE "//[^\n]+" "" file_content ${file_content})
 
+  # Match "namespace"
+  string(REGEX MATCH "namespace[ \t\n]+yarp[ \t\n]+([^ \t\n]+)" _unused ${file_content})
+  string(REPLACE "." "/" namespace_dir "${CMAKE_MATCH_1}")
+  # FIXME for now namespace_dir is not used, enable when yarp_add_idl will be
+  #       able to handle namespaces
+  unset(namespace_dir)
+
   # Match "enum"s, "struct"s and "service"s defined in the file
   string(REGEX MATCHALL "(enum|struct|service)[ \t\n]+([^ \t\n]+)[ \t\n]*{[^}]+}([ \t\n]*\\([^\\)]+\\))?" objects ${file_content})
 
@@ -240,7 +372,7 @@ function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_h
     if(NOT "${object}" MATCHES "{[^}]+}[ \t\n]*(\\([^\\)]*yarp.name[^\\)]+\\))")
       # No files are generated for YARP types.
       list(APPEND gen_srcs ${objectname}.cpp)
-      list(APPEND gen_hdrs ${objectname}.h)
+      list(APPEND gen_hdrs ${path}/${namespace_dir}/${objectname}.h)
     endif()
   endforeach()
 
@@ -249,8 +381,11 @@ function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_h
 
   # Find if at least one "const" or "typedef" is defined
   if("${file_content}" MATCHES "(const|typedef)[ \t]+([^ \t\n]+)[ \t]*([^ \t\n]+)")
-    list(APPEND gen_hdrs ${basename}_common.h)
+    list(APPEND gen_hdrs ${path}/${namespace_dir}/${basename}_common.h)
   endif()
+
+  string(REGEX REPLACE "/(/|$)" "\\1" gen_srcs "${gen_srcs}")
+  string(REGEX REPLACE "/(/|$)" "\\1" gen_hdrs "${gen_hdrs}")
 
   set(${gen_srcs_var} ${gen_srcs} PARENT_SCOPE)
   set(${gen_hdrs_var} ${gen_hdrs} PARENT_SCOPE)
@@ -297,6 +432,9 @@ function(_YARP_IDL_ROSMSG_TO_FILE_LIST file path pkg basename ext gen_srcs_var g
       endif()
     endif()
   endif()
+
+  string(REGEX REPLACE "/(/|$)" "\\1" gen_srcs "${gen_srcs}")
+  string(REGEX REPLACE "/(/|$)" "\\1" gen_hdrs "${gen_hdrs}")
 
   set(${gen_srcs_var} ${gen_srcs} PARENT_SCOPE)
   set(${gen_hdrs_var} ${gen_hdrs} PARENT_SCOPE)
@@ -361,9 +499,9 @@ function(YARP_ADD_IDL var)
 
     # Set intermediate output directory, remove extra '/' and ensure that
     # the directory exists.
-    set(tmp_dir "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/yarpidl_${family}")
+    set(tmp_dir "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/yarpidl_${family}")
     string(REGEX REPLACE "/(/|$)" "\\1" tmp_dir "${tmp_dir}")
-    make_directory(${tmp_dir})
+    file(MAKE_DIRECTORY "${tmp_dir}")
 
     # Set output directories and remove extra "/"
     set(srcs_out_dir "${CMAKE_CURRENT_BINARY_DIR}/src")
@@ -373,7 +511,7 @@ function(YARP_ADD_IDL var)
 
     # Prepare main command
     if("${family}" STREQUAL "thrift")
-      set(cmd ${YARPIDL_thrift_COMMAND} --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${tmp_dir}" "${file}")
+      set(cmd ${YARPIDL_thrift_COMMAND} --gen yarp:include_prefix,no_namespace_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${tmp_dir}" "${file}")
     else()
       if(YARPIDL_rosmsg_VERBOSE)
         set(_verbose --verbose)
@@ -395,11 +533,7 @@ function(YARP_ADD_IDL var)
       endif()
     endforeach()
     foreach(gen_file ${gen_hdrs})
-      if("${family}" STREQUAL "thrift")
-        set(out "${hdrs_out_dir}/${path}/${gen_file}")
-      else()
-        set(out "${hdrs_out_dir}/${gen_file}")
-      endif()
+      set(out "${hdrs_out_dir}/${gen_file}")
       list(FIND ${var} ${out} x)
       if(x EQUAL -1)
         list(APPEND output "${out}")

@@ -9,9 +9,11 @@
 #ifndef YARP_DEV_MAPGRID2D_H
 #define YARP_DEV_MAPGRID2D_H
 
+#include <string>
+
 #include <yarp/os/Portable.h>
+#include <yarp/os/ConnectionReader.h>
 #include <yarp/sig/Image.h>
-#include <yarp/sig/Vector.h>
 #include <yarp/math/Vec2D.h>
 #include <yarp/dev/api.h>
 

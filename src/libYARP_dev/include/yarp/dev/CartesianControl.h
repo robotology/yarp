@@ -12,7 +12,7 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/api.h>
 #include <yarp/sig/Vector.h>
 
 /*!
@@ -34,7 +34,7 @@ namespace yarp {
  *
  * \brief Structure for configuring a cartesian event.
  */
-struct yarp::dev::CartesianEventParameters
+struct YARP_dev_API yarp::dev::CartesianEventParameters
 {
     /*!
      * The signature of the event as specified by the user.
@@ -62,7 +62,7 @@ struct yarp::dev::CartesianEventParameters
  *
  * \brief Structure for configuring a cartesian event.
  */
-struct yarp::dev::CartesianEventVariables
+struct YARP_dev_API yarp::dev::CartesianEventVariables
 {
     /*!
      * The signature of the received event as filled by the event
@@ -90,7 +90,7 @@ struct yarp::dev::CartesianEventVariables
  * \brief Interface for a event notified by the cartesian
  *              controller.
  */
-class yarp::dev::CartesianEvent
+class YARP_dev_API yarp::dev::CartesianEvent
 {
 public:
     /*!
@@ -125,13 +125,13 @@ public:
  * Please read carefully the <a
  * href="http://wiki.icub.org/iCub/main/dox/html/icub_cartesian_interface.html">documentation</a>.
  */
-class yarp::dev::ICartesianControl
+class YARP_dev_API yarp::dev::ICartesianControl
 {
 public:
     /*!
      * Destructor.
      */
-    virtual ~ICartesianControl() {}
+    virtual ~ICartesianControl();
 
     /*!
      * Set the controller in tracking or non-tracking mode. [wait

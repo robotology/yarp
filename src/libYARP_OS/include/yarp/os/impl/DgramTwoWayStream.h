@@ -10,51 +10,60 @@
 #ifndef YARP_OS_IMPL_DGRAMTWOWAYSTREAM_H
 #define YARP_OS_IMPL_DGRAMTWOWAYSTREAM_H
 
-#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Mutex.h>
+#include <yarp/os/TwoWayStream.h>
 
 #include <cstdlib>
 
 #ifdef YARP_HAS_ACE
-#include <ace/SOCK_Dgram.h>
-#include <ace/SOCK_Dgram_Mcast.h>
+#    include <ace/SOCK_Dgram.h>
+#    include <ace/SOCK_Dgram_Mcast.h>
 // In one the ACE headers there is a definition of "main" for WIN32
-# ifdef main
-#  undef main
-# endif
+#    ifdef main
+#        undef main
+#    endif
 #endif
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class DgramTwoWayStream;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * A stream abstraction for datagram communication.  It supports UDP and
  * MCAST.  This class is not concerned with making the stream reliable.
  */
-class YARP_OS_impl_API yarp::os::impl::DgramTwoWayStream : public TwoWayStream, public InputStream, public OutputStream
+class YARP_OS_impl_API DgramTwoWayStream :
+        public TwoWayStream,
+        public InputStream,
+        public OutputStream
 {
 
 public:
     DgramTwoWayStream() :
-                          closed(false), interrupting(false), reader(false),
+            closed(false),
+            interrupting(false),
+            reader(false),
 #ifndef YARP_HAS_ACE
-                          dgram_sockfd(-1),
+            dgram_sockfd(-1),
 #endif
-                          dgram(nullptr), mgram(nullptr),
-                          mutex(), readAt(0), readAvail(0),
-                          writeAvail(0), pct(0), happy(true),
-                          bufferAlertNeeded(false), bufferAlerted(false),
-                          multiMode(false), errCount(0), lastReportTime(0)
+            dgram(nullptr),
+            mgram(nullptr),
+            mutex(),
+            readAt(0),
+            readAvail(0),
+            writeAvail(0),
+            pct(0),
+            happy(true),
+            bufferAlertNeeded(false),
+            bufferAlerted(false),
+            multiMode(false),
+            errCount(0),
+            lastReportTime(0)
     {
     }
 
-    virtual bool openMonitor(int readSize=0, int writeSize=0)
+    virtual bool openMonitor(int readSize = 0, int writeSize = 0)
     {
         allocate(readSize, writeSize);
         return true;
@@ -68,14 +77,13 @@ public:
                            const Contact& ipLocal);
 
 #ifdef YARP_HAS_ACE
-    virtual int restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
+    virtual int restrictMcast(ACE_SOCK_Dgram_Mcast* dmcast,
                               const Contact& group,
                               const Contact& ipLocal,
                               bool add);
 #endif
 
-    virtual bool join(const Contact& group, bool sender,
-                      const Contact& ipLocal);
+    virtual bool join(const Contact& group, bool sender, const Contact& ipLocal);
 
     virtual bool join(const Contact& group, bool sender)
     {
@@ -143,21 +151,25 @@ public:
 
     void removeMonitor();
 
-    virtual void onMonitorInput() {}
+    virtual void onMonitorInput()
+    {
+    }
 
-    virtual void onMonitorOutput() {}
+    virtual void onMonitorOutput()
+    {
+    }
 
 private:
     yarp::os::ManagedBytes monitor;
     bool closed, interrupting, reader;
 #ifdef YARP_HAS_ACE
-    ACE_SOCK_Dgram *dgram;
-    ACE_SOCK_Dgram_Mcast *mgram;
+    ACE_SOCK_Dgram* dgram;
+    ACE_SOCK_Dgram_Mcast* mgram;
     ACE_INET_Addr localHandle, remoteHandle;
 #else
     int dgram_sockfd;
-    void *dgram;
-    void *mgram;
+    void* dgram;
+    void* mgram;
     int localHandle, remoteHandle;
 #endif
     Contact localAddress, remoteAddress, restrictInterfaceIp;
@@ -172,9 +184,13 @@ private:
     int errCount;
     double lastReportTime;
 
-    void allocate(int readSize=0, int writeSize=0);
+    void allocate(int readSize = 0, int writeSize = 0);
 
     void configureSystemBuffers();
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_DGRAMTWOWAYSTREAM_H

@@ -7,6 +7,7 @@
  */
 
 #include <yarp/os/NullConnection.h>
+
 #include <yarp/os/Bytes.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortWriter.h>

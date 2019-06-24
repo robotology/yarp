@@ -18,5 +18,6 @@ yarp::os::ContactStyle::ContactStyle() :
         carrier(""),
         expectReply(true),
         persistent(false),
-        persistenceType(yarp::os::ContactStyle::OPENENDED) {
+        persistenceType(yarp::os::ContactStyle::OPENENDED)
+{
 }

@@ -42,18 +42,7 @@
 #define DEG2RAD (3.14159265359/180.0)
 #endif
 
-namespace yarp
-{
-    namespace dev
-    {
-        class depthCameraDriver;
-        namespace impl
-        {
-            class  streamFrameListener;
-        }
-    }
-}
-
+class  streamFrameListener;
 
 /**
  *  @ingroup dev_impl_media
@@ -115,10 +104,11 @@ namespace yarp
  * |  HW_DESCRIPTION              |      -              |  group              |                 | -              |   -           |   Yes                            | Hardware description of device property.                                               |  Read only property. Setting will be disabled                         |
  * |                              | same as 'SETTINGS' group | -              |    Read only    | -              |   -           |   Alternative to SETTING group   | Parameters here are alternative to the SETTING group                                   |                                                                       |
  * |  RGB_INTRINSIC_PARAMETERS    |      -              | group               |                 | -              |   -           |   Yes                            | Description of rgb camera visual parameters                                            |                                                                       |
- * |                              |   focalLengthX      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |   focalLengthY      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |  principalPointX    | double              |                 | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |  principalPointY    | double              |                 | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
+ * |                              |  physFocalLength    | double              |                 | m              |   -           |   Yes                            | Physical focal length of the lens in meters                                            |                                                                       |
+ * |                              |   focalLengthX      | double              |                 | pixel          |   -           |   Yes                            | Horizontal component of the focal length as a multiple of pixel width                  |                                                                       |
+ * |                              |   focalLengthY      | double              |                 | pixel          |   -           |   Yes                            | Vertical component of the focal length as a multiple of pixel height                   |                                                                       |
+ * |                              |  principalPointX    | double              |                 | pixel          |   -           |   Yes                            | X coordinate of the principal point                                                    |                                                                       |
+ * |                              |  principalPointY    | double              |                 | pixel          |   -           |   Yes                            | Y coordinate of the principal point                                                    |                                                                       |
  * |                              |  distortionModel    | string              |                 | -              |   -           |   Yes                            |  Reference to group of parameters describing the distortion model of the camera, example 'rgbDistortionModelGroup'       | This is only another group's name to be searched for in the config file   |
  * |  rgbDistortionModelGroup     |                     |                     |                 |                |               |                                  |                                                                                        |                                                                       |
  * |                              |   name              | string              |                 | -              |   -           |   Yes                            |  Name of the distortion model, see notes                                               | right now only 'plumb_bob' is supported                               |
@@ -128,10 +118,11 @@ namespace yarp
  * |                              |   t1                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
  * |                              |   t2                | double              |                 | -              |   -           |   Yes                            |                                                                                        |                                                                       |
  * |  DEPTH_INTRINSIC_PARAMETERS  |      -              | group               |                 | -              |   -           |   Yes                            | Description of depth camera visual parameters                                          |                                                                       |
- * |                              |   focalLengthX      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |   focalLengthY      | double              |                 | mm             |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |  principalPointX    | double              |                 | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
- * |                              |  principalPointY    | double              |                 | pixel          |   -           |   Yes                            |                                                                                        |                                                                       |
+ * |                              |  physFocalLength    | double              |                 | m              |   -           |   Yes                            | Physical focal length of the lens in meters                                            |                                                                       |
+ * |                              |   focalLengthX      | double              |                 | pixel          |   -           |   Yes                            | Horizontal component of the focal length as a multiple of pixel width                  |                                                                       |
+ * |                              |   focalLengthY      | double              |                 | pixel          |   -           |   Yes                            | Vertical component of the focal length as a multiple of pixel height                   |                                                                       |
+ * |                              |  principalPointX    | double              |                 | pixel          |   -           |   Yes                            | X coordinate of the principal point                                                    |                                                                       |
+ * |                              |  principalPointY    | double              |                 | pixel          |   -           |   Yes                            | Y coordinate of the principal point                                                    |                                                                       |
  * |                              |  distortionModel    | string              |                 | -              |   -           |   Yes                            |  Reference to group of parameters describing the distortion model of the camera, example 'depthDistortionModelGroup' | This is another group's name to be searched for in the config file    |
  * |  depthDistortionModelGroup   |                     |                     |                 |                |               |                                  |                                                                                        |                                                                       |
  * |                              |   name              | string              |                 | -              |   -           |   Yes                            |  Name of the distortion model, see notes                                               | right now only 'plumb_bob' is supported                               |
@@ -163,6 +154,7 @@ depthMirroring  false
 clipPlanes (0.4 4.5)
 
 [RGB_INTRINSIC_PARAMETERS]
+physFocalLength         0.5
 focalLengthX            1.0
 focalLengthY            2.0
 principalPointX         256.0
@@ -178,6 +170,7 @@ t2                      4.0
 k3                      5.0
 
 [DEPTH_INTRINSIC_PARAMETERS]
+physFocalLength         0.5
 focalLengthX            1.0
 focalLengthY            2.0
 principalPointX         256.0
@@ -198,18 +191,17 @@ transformation          (1.0 0.0 0.0 0.0   0.0 1.0 0.0 0.0   0.0 0.0 1.0 0.0  0.
  * \endcode
  */
 
-class yarp::dev::depthCameraDriver : public yarp::dev::DeviceDriver,
-                                     public yarp::dev::IRGBDSensor,
-                                     public yarp::dev::IFrameGrabberControls
+class depthCameraDriver :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IRGBDSensor,
+        public yarp::dev::IFrameGrabberControls
 {
 private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     typedef yarp::os::Stamp                           Stamp;
     typedef yarp::os::Property                        Property;
     typedef yarp::sig::FlexImage                      FlexImage;
 
-#endif
 public:
     depthCameraDriver();
     ~depthCameraDriver();
@@ -222,8 +214,8 @@ public:
     // IRGBDSensor
     int    getRgbHeight() override;
     int    getRgbWidth() override;
-    bool   getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) override;
-    bool   getRgbResolution(int &width, int &height) override;
+    bool   getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& configurations) override;
+    bool   getRgbResolution(int& width, int& height) override;
     bool   setRgbResolution(int width, int height) override;
     bool   getRgbFOV(double& horizontalFov, double& verticalFov) override;
     bool   setRgbFOV(double horizontalFov, double verticalFov) override;
@@ -245,7 +237,7 @@ public:
     bool   setDepthMirroring(bool mirror) override;
 
 
-    bool   getExtrinsicParam(sig::Matrix &extrinsic) override;
+    bool   getExtrinsicParam(yarp::sig::Matrix& extrinsic) override;
     bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = NULL) override;
     bool   getDepthImage(depthImage& depthImage, Stamp* timeStamp = NULL) override;
     bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL) override;
@@ -271,28 +263,25 @@ public:
     bool   setOnePush(int feature) override;
 
 private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     //method
     inline bool initializeOpeNIDevice();
     inline bool setParams();
-    bool        getImage(FlexImage& Frame, Stamp* Stamp, impl::streamFrameListener *sourceFrame);
-    bool        getImage(depthImage& Frame, Stamp* Stamp, impl::streamFrameListener *sourceFrame);
-    bool        setResolution(int w, int h, openni::VideoStream &stream);
-    bool        setFOV(double horizontalFov, double verticalFov, openni::VideoStream &stream);
-    bool        setIntrinsic(yarp::os::Property& intrinsic, const RGBDSensorParamParser::IntrinsicParams& values);
+    bool        getImage(FlexImage& Frame, Stamp* Stamp, streamFrameListener *sourceFrame);
+    bool        getImage(depthImage& Frame, Stamp* Stamp, streamFrameListener *sourceFrame);
+    bool        setResolution(int w, int h, openni::VideoStream& stream);
+    bool        setFOV(double horizontalFov, double verticalFov, openni::VideoStream& stream);
+    bool        setIntrinsic(yarp::os::Property& intrinsic, const yarp::sig::IntrinsicParams& values);
     void        settingErrorMsg(const std::string& error, bool& ret);
 
     //properties
     openni::VideoStream             m_depthStream;
     openni::VideoStream             m_imageStream;
     openni::Device                  m_device;
-    impl::streamFrameListener*      m_depthFrame;
-    impl::streamFrameListener*      m_imageFrame;
+    streamFrameListener*      m_depthFrame;
+    streamFrameListener*      m_imageFrame;
     std::string           m_lastError;
     yarp::dev::RGBDSensorParamParser* m_paramParser;
     bool                            m_depthRegistration;
     std::vector<cameraFeature_id_t> m_supportedFeatures;
-
-#endif
 };
 #endif

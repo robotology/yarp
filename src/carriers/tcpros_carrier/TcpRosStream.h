@@ -13,38 +13,30 @@
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/ManagedBytes.h>
-#include <string>
-#include "BlobNetworkHeader.h"
-#include "WireTwiddler.h"
+
+#include <yarp/wire_rep_utils/BlobNetworkHeader.h>
+#include <yarp/wire_rep_utils/WireTwiddler.h>
 
 #include <string>
 #include <map>
 
-#include <tcpros_carrier_api.h>
-
-namespace yarp {
-    namespace os {
-        class TcpRosStream;
-    }
-}
-
-
-class YARP_tcpros_carrier_API yarp::os::TcpRosStream : public TwoWayStream, 
-                                                       public InputStream,
-                                                       public OutputStream
+class TcpRosStream :
+        public yarp::os::TwoWayStream,
+        public yarp::os::InputStream,
+        public yarp::os::OutputStream
 {
 private:
-    TwoWayStream *delegate;
+    yarp::os::TwoWayStream *delegate;
     int raw;
-    BlobNetworkHeader header;
-    ManagedBytes scan;
+    yarp::wire_rep_utils::BlobNetworkHeader header;
+    yarp::os::ManagedBytes scan;
     char *cursor;
     int remaining;
     int phase;
     bool expectTwiddle;
-    WireTwiddler twiddler;
+    yarp::wire_rep_utils::WireTwiddler twiddler;
     std::string kind;
-    WireTwiddlerReader twiddlerReader;
+    yarp::wire_rep_utils::WireTwiddlerReader twiddlerReader;
     bool initiative;
     bool setInitiative;
 public:
@@ -56,7 +48,7 @@ public:
                  const char *kind) :
             delegate(delegate),
             raw(raw),
-            header(BlobNetworkHeader{0,0,0}),
+            header(yarp::wire_rep_utils::BlobNetworkHeader{0,0,0}),
             cursor(nullptr),
             remaining(0),
             phase(0),
@@ -110,10 +102,10 @@ public:
     }
 
     using yarp::os::OutputStream::write;
-    void write(const Bytes& b) override;
+    void write(const yarp::os::Bytes& b) override;
 
     using yarp::os::InputStream::read;
-    yarp::conf::ssize_t read(Bytes& b) override;
+    yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     void interrupt() override {
         delegate->getInputStream().interrupt();
@@ -123,7 +115,7 @@ public:
 
     static std::map<std::string, std::string> rosToKind();
     static std::string rosToKind(const char *rosname);
-    static bool configureTwiddler(WireTwiddler& twiddler, const char *txt, const char *prompt, bool sender, bool reply);
+    static bool configureTwiddler(yarp::wire_rep_utils::WireTwiddler& twiddler, const char *txt, const char *prompt, bool sender, bool reply);
 };
 
 #endif

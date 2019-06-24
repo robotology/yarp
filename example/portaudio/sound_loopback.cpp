@@ -19,34 +19,32 @@
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
-  
-int main(int argc, char *argv[]) {
 
+int main(int argc, char *argv[])
+{
     // Open the network
     Network yarp;
 
     // Get an audio device.
     Property conf;
-    conf.put("device","portaudio");
+    conf.put("device", "portaudio");
     PolyDriver poly(conf);
-    IAudioGrabberSound *get;
-    IAudioRender *put;
+    IAudioGrabberSound* get;
+    IAudioRender* put;
 
     // Make sure we can both read and write sound
     poly.view(get);
     poly.view(put);
-    if (get==NULL&&put==NULL) {
+    if (get == nullptr && put == nullptr) {
         printf("cannot open interface\n");
         return 1;
     }
 
-    //Grab and render 
+    //Grab and render
     Sound s;
-    while (true)
-      {
-	get->getSound(s);
-	put->renderSound(s);
-      }
+    while (true) {
+        get->getSound(s);
+        put->renderSound(s);
+    }
     return 0;
 }
-

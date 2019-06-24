@@ -7,10 +7,10 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/Bottle.h>
-#include <yarp/os/DummyConnector.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 
+#include <yarp/os/Bottle.h>
+#include <yarp/os/DummyConnector.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetFloat32.h>
 #include <yarp/os/NetFloat64.h>
@@ -23,9 +23,8 @@
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/os/Vocab.h>
 
-
-#include <cstring>
 #include <cstdlib>
+#include <cstring>
 
 
 using namespace yarp::os::impl;
@@ -128,8 +127,9 @@ bool BufferedConnectionWriter::addPool(const yarp::os::Bytes& data)
             poolLength *= 2;
         }
         pool->setUsed(0);
-        if (add)
+        if (add) {
             target->push_back(pool);
+        }
     }
     if (pool != nullptr) {
         memcpy(pool->get() + poolIndex, data.get(), data.length());
@@ -153,8 +153,9 @@ void BufferedConnectionWriter::stopPool()
 void BufferedConnectionWriter::push(const Bytes& data, bool copy)
 {
     if (copy) {
-        if (addPool(data))
+        if (addPool(data)) {
             return;
+        }
     }
     yarp::os::ManagedBytes* buf = nullptr;
     if (*target_used < target->size()) {
@@ -173,8 +174,9 @@ void BufferedConnectionWriter::push(const Bytes& data, bool copy)
     }
     if (buf == nullptr) {
         buf = new yarp::os::ManagedBytes(data, false);
-        if (copy)
+        if (copy) {
             buf->copy();
+        }
         target->push_back(buf);
     } else {
         if (copy) {
@@ -269,12 +271,13 @@ void BufferedConnectionWriter::appendBlock(const char* data, size_t len)
     appendBlockCopy(yarp::os::Bytes((char*)data, len));
 }
 
-void BufferedConnectionWriter::appendString(const char* str, int terminate)
+void BufferedConnectionWriter::appendText(const std::string& str, const char terminate)
 {
     if (terminate == '\n') {
         appendLine(str);
     } else if (terminate == 0) {
-        appendStringBase(str);
+        yarp::os::Bytes b(const_cast<char*>(str.data()), str.length() + 1);
+        push(b, true);
     } else {
         std::string s = str;
         s += terminate;
@@ -293,15 +296,9 @@ void BufferedConnectionWriter::appendBlock(const yarp::os::Bytes& data)
     push(data, false);
 }
 
-void BufferedConnectionWriter::appendBlockCopy(const Bytes& data)
+void BufferedConnectionWriter::appendBlockCopy(const yarp::os::Bytes& data)
 {
     push(data, true);
-}
-
-void BufferedConnectionWriter::appendStringBase(const std::string& data)
-{
-    yarp::os::Bytes b((char*)(data.c_str()), data.length() + 1);
-    push(b, true);
 }
 
 void BufferedConnectionWriter::appendLine(const std::string& data)
@@ -377,8 +374,9 @@ bool BufferedConnectionWriter::write(PortReader& obj)
 {
     DummyConnector con;
     con.setTextMode(isTextMode());
-    if (!write(con.getWriter()))
+    if (!write(con.getWriter())) {
         return false;
+    }
     return obj.read(con.getReader());
 }
 

@@ -91,7 +91,7 @@ bool yarp::os::Stamp::write(ConnectionWriter& connection) const
     if (connection.isTextMode()) {
         char buf[512];
         std::snprintf(buf, 512, "%d %.*g", sequenceNumber, DBL_DIG, timeStamp);
-        connection.appendString(buf);
+        connection.appendText(buf);
     } else {
         connection.appendInt32(BOTTLE_TAG_LIST); // nested structure
         connection.appendInt32(2);               // with two elements

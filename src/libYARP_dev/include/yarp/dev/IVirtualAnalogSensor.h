@@ -10,7 +10,7 @@
 #define YARP_DEV_IVIRTUALANALOGSENSOR_H
 
 #include <yarp/os/Vocab.h>
-#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/api.h>
 #include <yarp/sig/Vector.h>
 
 constexpr yarp::conf::vocab32_t VOCAB_IVIRTUAL_ANALOG   = yarp::os::createVocab('i','v','a','n');

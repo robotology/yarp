@@ -12,18 +12,14 @@
 
 #include <yarp/os/Thread.h>
 
-// Forward declarations
 namespace yarp {
 namespace os {
+
 template <typename T>
 class TypedReader;
+
 template <typename T>
 class TypedReaderCallback;
-} // namespace os
-} // namespace yarp
-
-namespace yarp {
-namespace os {
 
 template <typename T>
 class TypedReaderThread : public Thread

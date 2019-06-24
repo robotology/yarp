@@ -8,31 +8,29 @@
  */
 
 #include <yarp/os/Carriers.h>
-#include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/TcpFace.h>
-#include <yarp/os/impl/FakeFace.h>
-#include <yarp/os/impl/TcpCarrier.h>
-#include <yarp/os/impl/TextCarrier.h>
-#include <yarp/os/impl/McastCarrier.h>
-#include <yarp/os/impl/UdpCarrier.h>
-#include <yarp/os/impl/LocalCarrier.h>
-#include <yarp/os/impl/NameserCarrier.h>
-#include <yarp/os/impl/HttpCarrier.h>
-#include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/Protocol.h>
-#include <yarp/os/YarpPlugin.h>
 
 #include <yarp/os/LockGuard.h>
 #include <yarp/os/Mutex.h>
+#include <yarp/os/YarpPlugin.h>
+#include <yarp/os/impl/FakeFace.h>
+#include <yarp/os/impl/HttpCarrier.h>
+#include <yarp/os/impl/LocalCarrier.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/McastCarrier.h>
+#include <yarp/os/impl/NameserCarrier.h>
+#include <yarp/os/impl/Protocol.h>
+#include <yarp/os/impl/TcpCarrier.h>
+#include <yarp/os/impl/TcpFace.h>
+#include <yarp/os/impl/TextCarrier.h>
+#include <yarp/os/impl/UdpCarrier.h>
 
 #include <vector>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-namespace
-{
-static std::string bytes_to_string(const Bytes& header)
+namespace {
+std::string bytes_to_string(const Bytes& header)
 {
     std::string ret;
     for (size_t i = 0; i < header.length(); i++) {
@@ -42,7 +40,7 @@ static std::string bytes_to_string(const Bytes& header)
     ret += "[";
     for (size_t i = 0; i < header.length(); i++) {
         char ch = header.get()[i];
-        if (ch>=32) {
+        if (ch >= 32) {
             ret += ch;
         } else {
             ret += '.';
@@ -60,7 +58,7 @@ public:
 
     std::vector<Carrier*> delegates;
 
-    Carrier* chooseCarrier(const std::string &name,
+    Carrier* chooseCarrier(const std::string& name,
                            bool load_if_needed = true,
                            bool return_template = false);
     Carrier* chooseCarrier(const Bytes& header,
@@ -73,7 +71,7 @@ public:
     bool select(Searchable& options) override;
 };
 
-yarp::os::Mutex Carriers::Private::mutex {};
+yarp::os::Mutex Carriers::Private::mutex{};
 
 Carrier* Carriers::Private::chooseCarrier(const std::string& name,
                                           bool load_if_needed,
@@ -106,7 +104,7 @@ Carrier* Carriers::Private::chooseCarrier(const std::string& name,
     YARP_SPRINTF1(Logger::get(),
                   error,
                   "Could not find carrier \"%s\"",
-                  (!name.empty()) ? name.c_str() : "[bytes]");;
+                  (!name.empty()) ? name.c_str() : "[bytes]");
 
     return nullptr;
 }
@@ -137,13 +135,12 @@ Carrier* Carriers::Private::chooseCarrier(const Bytes& header,
 }
 
 
-
 bool Carriers::Private::matchCarrier(const Bytes& header, Bottle& code)
 {
     size_t at = 0;
     bool success = true;
     bool done = false;
-    for (size_t i=0; i<code.size() && !done; i++) {
+    for (size_t i = 0; i < code.size() && !done; i++) {
         Value& v = code.get(i);
         if (v.isString()) {
             std::string str = v.asString();
@@ -170,7 +167,9 @@ bool Carriers::Private::matchCarrier(const Bytes& header, Bottle& code)
 bool Carriers::Private::checkForCarrier(const Bytes& header, Searchable& group)
 {
     Bottle code = group.findGroup("code").tail();
-    if (code.size()==0) return false;
+    if (code.size() == 0) {
+        return false;
+    }
     if (matchCarrier(header, code)) {
         std::string name = group.find("name").asString();
         if (NetworkBase::registerCarrier(name.c_str(), nullptr)) {
@@ -188,7 +187,7 @@ bool Carriers::Private::scanForCarrier(const Bytes& header)
     YarpPluginSelector selector;
     selector.scan();
     Bottle lst = selector.getSelectedPlugins();
-    for (size_t i=0; i<lst.size(); i++) {
+    for (size_t i = 0; i < lst.size(); i++) {
         if (checkForCarrier(header, lst.get(i))) {
             return true;
         }
@@ -231,54 +230,48 @@ void Carriers::clear()
     mPriv->delegates.clear();
 }
 
-Carrier *Carriers::chooseCarrier(const std::string& name)
+Carrier* Carriers::chooseCarrier(const std::string& name)
 {
     return getInstance().mPriv->chooseCarrier(name);
 }
 
-Carrier *Carriers::getCarrierTemplate(const std::string& name)
+Carrier* Carriers::getCarrierTemplate(const std::string& name)
 {
     return getInstance().mPriv->chooseCarrier(name, true, true);
 }
 
 
-Carrier *Carriers::chooseCarrier(const Bytes& bytes)
+Carrier* Carriers::chooseCarrier(const Bytes& bytes)
 {
     return getInstance().mPriv->chooseCarrier(bytes);
 }
 
 
-Face *Carriers::listen(const Contact& address)
+Face* Carriers::listen(const Contact& address)
 {
-    Face *face = nullptr;
-    Carrier  *c = nullptr;
+    Face* face = nullptr;
+    Carrier* c = nullptr;
 
-    if (address.getCarrier() == "fake")//for backward compatibility
+    if (address.getCarrier() == "fake") //for backward compatibility
     {
         face = new FakeFace();
     }
 
-    else
-    {
-        if(!address.getCarrier().empty())
-        {
+    else {
+        if (!address.getCarrier().empty()) {
             c = getCarrierTemplate(address.getCarrier());
         }
 
-        if(c != nullptr)
-        {
+        if (c != nullptr) {
             face = c->createFace();
-        }
-        else
-        {
+        } else {
             //if address hasn't carrier then use the default one (tcpFace)
-             face = new TcpFace();
+            face = new TcpFace();
         }
     }
 
     bool ok = face->open(address);
-    if (!ok)
-    {
+    if (!ok) {
         delete face;
         face = nullptr;
     }
@@ -286,32 +279,28 @@ Face *Carriers::listen(const Contact& address)
 }
 
 
-OutputProtocol *Carriers::connect(const Contact& address)
+OutputProtocol* Carriers::connect(const Contact& address)
 {
-    yarp::os::Face * face = nullptr;
-    Carrier  *c = nullptr;
+    yarp::os::Face* face = nullptr;
+    Carrier* c = nullptr;
 
-    if(!address.getCarrier().empty())
-    {
+    if (!address.getCarrier().empty()) {
         c = getCarrierTemplate(address.getCarrier());
     }
-    if(c != nullptr)
-    {
+    if (c != nullptr) {
         face = c->createFace();
-    }
-    else
-    {
+    } else {
         //if address hasn't carrier than use the default one (tcpFace)
-         face = new TcpFace();
+        face = new TcpFace();
     }
 
-    OutputProtocol *proto = face->write(address);
+    OutputProtocol* proto = face->write(address);
     delete face;
     return proto;
 }
 
 
-bool Carriers::addCarrierPrototype(Carrier *carrier)
+bool Carriers::addCarrierPrototype(Carrier* carrier)
 {
     getInstance().mPriv->delegates.emplace_back(carrier);
     return true;

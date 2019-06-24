@@ -3,7 +3,7 @@
  *
  * \defgroup opencv_grabber_basic Example for opencv_grabber (opencv_grabber_basic)
 
-Instantiates \ref cmd_device_opencv_grabber "opencv_grabber" device implemented by yarp::dev::OpenCVGrabber.
+Instantiates \ref cmd_device_opencv_grabber "opencv_grabber" device implemented by OpenCVGrabber.
 \verbatim
 # read a camera using opencv
 device opencv_grabber
@@ -21,7 +21,10 @@ PolyDriver dev;
 dev.open(p);
 if (dev.isValid()) { /* use the device via view method */ }
 \endcode
-Here is a list of properties checked when starting up a device based on this configuration file.  Note that which properties are checked can depend on whether other properties are present.  In some cases properties can also vary between operating systems.  So this is just an example
+Here is a list of properties checked when starting up a device based on this configuration file.
+Note that which properties are checked can depend on whether other properties are present.
+In some cases properties can also vary between operating systems.
+So this is just an example
 
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
@@ -36,6 +39,6 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>height</td><td>if present, specifies desired image height</td><td></td></tr>
 </table>
 
-\sa yarp::dev::OpenCVGrabber
+\sa OpenCVGrabber
 
  */

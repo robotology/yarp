@@ -32,6 +32,7 @@ public:
     int     nj;
     int    *axisMap;
     int    *invAxisMap;
+    bool    verbose;
 
     double *position_zeros;
     double *helper_ones;
@@ -52,6 +53,7 @@ public:
     explicit PrivateUnitsHandler(int size) :
         axisMap(nullptr),
         invAxisMap(nullptr),
+        verbose(true),
         position_zeros(nullptr),
         helper_ones(nullptr),
         angleToEncoders(nullptr),
@@ -211,9 +213,31 @@ ControlBoardHelper& ControlBoardHelper::operator = (const ControlBoardHelper & o
 
 bool ControlBoardHelper::checkAxisId(int id)
 {
-    if (id >= mPriv->nj)
+    if( (id >= mPriv->nj) || (id< 0))
     {
         return false;
+    }
+    return true;
+}
+
+
+bool ControlBoardHelper::checkAxesIds(const int n_axes, const int* axesList)
+{
+    if(n_axes > mPriv->nj)
+    {
+        if(mPriv->verbose)
+            yError("checkAxesIds: num of axes is too big");
+        return false;
+    }
+    for(int idx = 0; idx<n_axes; idx++)
+    {
+        if( (axesList[idx]<0) || (axesList[idx]>= mPriv->nj) )
+        {
+            if(mPriv->verbose)
+                yError("checkAxesIds: joint id out of bound");
+
+            return false;
+        }
     }
     return true;
 }

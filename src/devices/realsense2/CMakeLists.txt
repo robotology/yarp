@@ -6,16 +6,16 @@
 
 yarp_prepare_plugin(realsense2
                     CATEGORY device
-                    TYPE yarp::dev::realsense2Driver
+                    TYPE realsense2Driver
                     INCLUDE realsense2Driver.h
                     EXTRA_CONFIG WRAPPER=RGBDSensorWrapper
-                    DEPENDS "YARP_HAS_REALSENSE2")
+                    DEPENDS "YARP_HAS_realsense2")
 
 if(ENABLE_realsense2)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   yarp_add_plugin(yarp_realsense2 realsense2Driver.cpp
-                                 realsense2Driver.h)
+                                  realsense2Driver.h)
 
   target_link_libraries(yarp_realsense2 PRIVATE YARP::YARP_OS
                                                 YARP::YARP_sig
@@ -31,11 +31,8 @@ if(ENABLE_realsense2)
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-
-  yarp_install(FILES realsense2.ini
-               COMPONENT ${YARP_PLUGIN_MASTER}
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
+               YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 

@@ -3,7 +3,7 @@
  *
  *  Copyright (c) 2009 - 2014 RoboPeak Team
  *  http://www.robopeak.com
- *  Copyright (c) 2014 - 2016 Shanghai Slamtec Co., Ltd.
+ *  Copyright (c) 2014 - 2018 Shanghai Slamtec Co., Ltd.
  *  http://www.slamtec.com
  *
  */
@@ -41,6 +41,9 @@
 #else
 #error "unsupported target"
 #endif
+
+#include "hal/types.h"
+#include "hal/assert.h"
 
 #include "rplidar.h"
 

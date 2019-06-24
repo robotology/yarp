@@ -44,8 +44,9 @@ constexpr size_t BUFFERED_CONNECTION_INITIAL_POOL_SIZE = 1024;
  * or when they may change in value). If you use external blocks, be
  * sure to pay attention to onCompletion() events on your object.
  */
-class YARP_OS_impl_API BufferedConnectionWriter : public yarp::os::ConnectionWriter,
-                                                  public yarp::os::SizedWriter
+class YARP_OS_impl_API BufferedConnectionWriter :
+        public yarp::os::ConnectionWriter,
+        public yarp::os::SizedWriter
 {
 public:
     /**
@@ -133,7 +134,7 @@ public:
     void appendFloat32(yarp::conf::float32_t data) override;
     void appendFloat64(yarp::conf::float64_t data) override;
     void appendBlock(const char* data, size_t len) override;
-    void appendString(const char* str, int terminate = '\n') override;
+    void appendText(const std::string& str, const char terminate = '\n') override;
     void appendExternalBlock(const char* data, size_t len) override;
 
     /**
@@ -151,8 +152,6 @@ public:
      * @param data the buffer to add
      */
     virtual void appendBlockCopy(const Bytes& data);
-
-    virtual void appendStringBase(const std::string& data);
 
     /**
      * Send a string along with a carriage-return-line-feed sequence.
@@ -251,23 +250,23 @@ private:
     bool applyConvertTextMode() const;
 
 
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>) lst; ///< buffers in payload
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>) header; ///< buffers in header
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>) lst;     ///< buffers in payload
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>) header;  ///< buffers in header
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::vector<yarp::os::ManagedBytes*>*) target; ///< points to header or payload
     yarp::os::ManagedBytes* pool; ///< the pool buffer (in lst or header)
-    size_t poolIndex; ///< current offset into pool buffer
-    size_t poolCount; ///< number of pool buffers allocated
-    size_t poolLength; ///< length of current pool buffer
+    size_t poolIndex;             ///< current offset into pool buffer
+    size_t poolCount;             ///< number of pool buffers allocated
+    size_t poolLength;            ///< length of current pool buffer
     yarp::os::PortReader* reader; ///< reply handler, if any
-    bool textMode; ///< should we be writing in text mode
-    bool bareMode; ///< should we be writing without including type info
-    bool convertTextModePending; ///< will we need to do an automatic textmode conversion
-    yarp::os::Portable* ref; ///< object reference for when serialization can be skipped
-    bool shouldDrop; ///< should the connection drop after writes
-    size_t lst_used; ///< how many payload buffers are in use for the current message
-    size_t header_used; ///< how many header buffers are in use for the current message
-    size_t* target_used; ///< points to lst_used of header_used
-    size_t initialPoolSize; ///< size of new pool buffers
+    bool textMode;                ///< should we be writing in text mode
+    bool bareMode;                ///< should we be writing without including type info
+    bool convertTextModePending;  ///< will we need to do an automatic textmode conversion
+    yarp::os::Portable* ref;      ///< object reference for when serialization can be skipped
+    bool shouldDrop;              ///< should the connection drop after writes
+    size_t lst_used;              ///< how many payload buffers are in use for the current message
+    size_t header_used;           ///< how many header buffers are in use for the current message
+    size_t* target_used;          ///< points to lst_used of header_used
+    size_t initialPoolSize;       ///< size of new pool buffers
 };
 
 

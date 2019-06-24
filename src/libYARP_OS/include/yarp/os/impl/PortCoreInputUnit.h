@@ -10,25 +10,22 @@
 #ifndef YARP_OS_IMPL_PORTCOREINPUTUNIT_H
 #define YARP_OS_IMPL_PORTCOREINPUTUNIT_H
 
-#include <yarp/os/impl/PortCore.h>
-#include <yarp/os/impl/PortCoreUnit.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/InputProtocol.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/PortCore.h>
+#include <yarp/os/impl/PortCoreUnit.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class PortCoreInputUnit;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * Manager for a single input to a port.  Associated
  * with a PortCore object.
  */
-class yarp::os::impl::PortCoreInputUnit : public PortCoreUnit
+class PortCoreInputUnit :
+        public PortCoreUnit
 {
 public:
     /**
@@ -43,7 +40,7 @@ public:
      */
     PortCoreInputUnit(PortCore& owner,
                       int index,
-                      InputProtocol *ip,
+                      InputProtocol* ip,
                       bool reversed);
 
     /**
@@ -89,11 +86,11 @@ public:
     bool isBusy() override;
 
 private:
-    InputProtocol *ip;
+    InputProtocol* ip;
     yarp::os::Semaphore phase, access;
     bool closing, finished, running;
     std::string name;
-    yarp::os::PortReader *localReader;
+    yarp::os::PortReader* localReader;
     Route officialRoute;
     bool reversed;
 
@@ -103,5 +100,9 @@ private:
 
     static void envelopeReadCallback(void* data, const Bytes& envelope);
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_PORTCOREINPUTUNIT_H

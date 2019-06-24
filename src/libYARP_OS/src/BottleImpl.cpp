@@ -11,20 +11,21 @@
 #include <yarp/os/impl/BottleImpl.h>
 
 #include <yarp/conf/numeric.h>
+
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/MemoryOutputStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
-using yarp::os::impl::BottleImpl;
-using yarp::os::impl::Storable;
 using yarp::os::Bottle;
 using yarp::os::Bytes;
 using yarp::os::ConnectionReader;
 using yarp::os::ConnectionWriter;
 using yarp::os::Searchable;
 using yarp::os::Value;
+using yarp::os::impl::BottleImpl;
+using yarp::os::impl::Storable;
 
 //#define YMSG(x) printf x;
 //#define YTRACE(x) YMSG(("at %s\n", x))
@@ -85,11 +86,11 @@ void BottleImpl::smartAdd(const std::string& str)
         bool numberLike = true;
         bool preamble = true;
         bool hexActive = false;
-        int hexStart = 0;
+        size_t hexStart = 0;
         int periodCount = 0;
         int signCount = 0;
         bool hasPeriodOrE = false;
-        for (unsigned int i = 0; i < str.length(); i++) {
+        for (size_t i = 0; i < str.length(); i++) {
             char ch2 = str[i];
             if (ch2 == '.') {
                 hasPeriodOrE = true;
@@ -219,7 +220,7 @@ void BottleImpl::fromString(const std::string& line)
                     if ((!quoted) && (ch == ',' || ch == ' ' || ch == '\t' ||
                                       ch == '\n' || ch == '\r') &&
                         (nestedAlt == 0) && (nested == 0)) {
-                        if (arg != "") {
+                        if (!arg.empty()) {
                             if (arg == "null") {
                                 add(new StoreVocab(yarp::os::createVocab('n', 'u', 'l', 'l')));
                             } else {
@@ -290,7 +291,7 @@ bool BottleImpl::isComplete(const char* txt)
             }
         }
     }
-    return nested == 0 && nestedAlt == 0 && quoted == false;
+    return nested == 0 && nestedAlt == 0 && !quoted;
 }
 
 
@@ -307,7 +308,7 @@ std::string BottleImpl::toString() const
     return result;
 }
 
-size_t BottleImpl::size() const
+BottleImpl::size_type BottleImpl::size() const
 {
     return content.size();
 }
@@ -328,9 +329,7 @@ bool BottleImpl::fromBytes(ConnectionReader& reader)
     }
     Storable* storable = Storable::createByCode(id);
     if (storable == nullptr) {
-        YARP_SPRINTF1(Logger::get(), error,
-                      "BottleImpl reader failed, unrecognized object code %" PRId32,
-                      id);
+        YARP_SPRINTF1(Logger::get(), error, "BottleImpl reader failed, unrecognized object code %" PRId32, id);
         return false;
     }
     storable->readRaw(reader);
@@ -422,8 +421,7 @@ bool BottleImpl::write(ConnectionWriter& writer) const
 {
     // could simplify this if knew lengths of blocks up front
     if (writer.isTextMode()) {
-        // writer.appendLine(toString());
-        writer.appendString(toString().c_str(), '\n');
+        writer.appendText(toString());
     } else {
         synch();
         /*
@@ -575,12 +573,9 @@ std::int32_t BottleImpl::subCode()
     return subCoder(*this);
 }
 
-bool BottleImpl::checkIndex(size_t index) const
+bool BottleImpl::checkIndex(size_type index) const
 {
-    if (index < size()) {
-        return true;
-    }
-    return false;
+    return index < size();
 }
 
 bool BottleImpl::isInt8(int index)
@@ -637,7 +632,7 @@ Storable* BottleImpl::pop()
     return stb;
 }
 
-Storable& BottleImpl::get(size_t index) const
+Storable& BottleImpl::get(size_type index) const
 {
     return (checkIndex(index) ? *(content[index]) : getNull());
 }
@@ -656,13 +651,15 @@ yarp::os::Property& BottleImpl::addDict()
     return lst->internal();
 }
 
-void BottleImpl::copyRange(const BottleImpl* alt, int first, int len)
+void BottleImpl::copyRange(const BottleImpl* alt, size_type first, size_type len)
 {
-    if (len == 0) {
+
+    if (len == 0 || alt->size() == 0) {
         clear();
         return;
     }
 
+    // Handle copying to the same object just a subset of the bottle
     const BottleImpl* src = alt;
     BottleImpl tmp(nullptr);
     if (alt == this) {
@@ -671,28 +668,10 @@ void BottleImpl::copyRange(const BottleImpl* alt, int first, int len)
     }
 
     clear();
-    if (len == -1) {
-        len = static_cast<int>(src->size());
-    }
-    int last = first + len - 1;
-    int top = static_cast<int>(src->size()) - 1;
-    if (first < 0) {
-        first = 0;
-    }
-    if (last < 0) {
-        last = 0;
-    }
-    if (first > top) {
-        first = top;
-    }
-    if (last > top) {
-        last = top;
-    }
 
-    if (last >= 0) {
-        for (int i = first; i <= last; i++) {
-            add(src->get(i).cloneStorable());
-        }
+    const size_t last = src->size() - 1;
+    for (size_t i = 0; (i < len) && (first + i <= last); ++i) {
+        add(src->get(first + i).cloneStorable());
     }
 }
 
@@ -737,14 +716,14 @@ Value& BottleImpl::findBit(const std::string& key) const
             if (nested) {
                 return org->asList()->get(1);
             }
-            if (parent && parent->getMonitor() != nullptr) {
+            if ((parent != nullptr) && (parent->getMonitor() != nullptr)) {
                 SearchReport report;
                 report.key = key;
                 report.isFound = true;
                 if (size() == 2) {
                     report.value = get((int)(i + 1)).toString();
                 }
-                if (parent) {
+                if (parent != nullptr) {
                     parent->reportToMonitor(report);
                 }
             }
@@ -752,7 +731,7 @@ Value& BottleImpl::findBit(const std::string& key) const
         }
     }
     // return invalid object
-    if (parent && parent->getMonitor() != nullptr) {
+    if ((parent != nullptr) && (parent->getMonitor() != nullptr)) {
         SearchReport report;
         report.key = key;
         parent->reportToMonitor(report);

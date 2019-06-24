@@ -8,7 +8,7 @@
 
 namespace yarp yarp.test
 
-include "firstInterface/PointD.thrift"
+include "thrift/firstInterface/PointD.thrift"
 
 typedef PointD.PointD Point3D
 

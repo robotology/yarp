@@ -20,14 +20,7 @@ extern "C" {
 /*
  * A Yarp 2 frame grabber device driver using ffmpeg to implement
  * image capture from AVI files.
- *
  */
-
-namespace yarp {
-    namespace dev {
-        class FfmpegGrabber;
-    }
-}
 
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/DeviceDriver.h>
@@ -40,11 +33,12 @@ namespace yarp {
  * An image frame grabber device using ffmpeg to capture images from
  * AVI files.
  */
-class yarp::dev::FfmpegGrabber : public IFrameGrabberImage,
-            public IAudioGrabberSound,
-            public IAudioVisualGrabber,
-            public IAudioVisualStream,
-            public DeviceDriver
+class FfmpegGrabber :
+        public yarp::dev::IFrameGrabberImage,
+        public yarp::dev::IAudioGrabberSound,
+        public yarp::dev::IAudioVisualGrabber,
+        public yarp::dev::IAudioVisualStream,
+        public yarp::dev::DeviceDriver
 {
 public:
 
@@ -78,7 +72,7 @@ public:
 
     bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) override;
 
-    bool getSound(yarp::sig::Sound& sound) override;
+    bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;
 
     int height() const override { return m_h; }
 
@@ -102,6 +96,18 @@ public:
 
     bool stopRecording() override {
         return true;
+    }
+
+    bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize&) override {
+        return false;
+    }
+
+    bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize&) override {
+        return false;
+    }
+
+    bool resetRecordingAudioBuffer() override {
+        return false;
     }
 
 protected:
@@ -151,7 +157,7 @@ protected:
  * @ingroup dev_runtime
  * \defgroup cmd_device_ffmpeg_grabber ffmpeg_grabber
 
- A wrapper for the ffmpeg library's image sources, see yarp::dev::FfmpegGrabber.
+ A wrapper for the ffmpeg library's image sources, see FfmpegGrabber.
 
 */
 

@@ -11,6 +11,7 @@
 #define YARP_OS_IMPL_TCPFACE_H
 
 #include <yarp/conf/system.h>
+
 #include <yarp/os/Face.h>
 #include <yarp/os/impl/AuthHMAC.h>
 #include <yarp/os/impl/TcpAcceptor.h>
@@ -31,8 +32,8 @@ public:
 
     bool open(const Contact& address) override;
     void close() override;
-    InputProtocol *read() override;
-    OutputProtocol *write(const Contact& address) override;
+    InputProtocol* read() override;
+    OutputProtocol* write(const Contact& address) override;
 
     Contact getLocalAddress() const override;
 
@@ -42,7 +43,6 @@ public:
      */
 
 protected:
-
     yarp::os::impl::AuthHMAC auth;
 
 private:

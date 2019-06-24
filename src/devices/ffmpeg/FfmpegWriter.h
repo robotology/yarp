@@ -19,14 +19,8 @@ extern "C" {
 
 /*
  * Uses ffmpeg to write images to movie files.
- *
  */
 
-namespace yarp {
-    namespace dev {
-        class FfmpegWriter;
-    }
-}
 
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/DeviceDriver.h>
@@ -37,10 +31,11 @@ namespace yarp {
  * Uses ffmpeg to write images/sounds to movie files (AVI, MOV, ...).
  *
  */
-class yarp::dev::FfmpegWriter : public IFrameWriterImage,
-            public IFrameWriterAudioVisual,
-            public DeviceDriver,
-            public IAudioVisualStream
+class FfmpegWriter :
+        public yarp::dev::IFrameWriterImage,
+        public yarp::dev::IFrameWriterAudioVisual,
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IAudioVisualStream
 {
 public:
 
@@ -115,7 +110,7 @@ private:
  * @ingroup dev_runtime
  * \defgroup cmd_device_ffmpeg_writer ffmpeg_writer
 
- A wrapper for the ffmpeg library's media writing, see yarp::dev::FfmpegWriter.
+ A wrapper for the ffmpeg library's media writing, see FfmpegWriter.
 
 */
 

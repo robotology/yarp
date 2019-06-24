@@ -12,7 +12,6 @@
  */
 
 #include <cstdio>
-#include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/math/Math.h>
 #include <yarp/sig/Vector.h>
@@ -20,6 +19,9 @@
 #include <yarp/math/Rand.h>
 #include <cmath>
 #include <string>
+
+#include <catch.hpp>
+#include <harness.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -29,47 +31,50 @@ using namespace std;
 
 const double TOL = 1e-8;
 
-class SVDTest : public UnitTest {
-public:
-    virtual std::string getName() const override { return "svdTest"; }
-
-    // Assert that 2 matrices are equal
-    void assertEqual(const Matrix &A, const Matrix &B, string testName, bool verbose=false)
-    {
-        if(A.cols() != B.cols() || A.rows()!=B.rows()){
-            if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
-            checkTrue(false, testName.c_str());
-        }
-        for(size_t r=0; r<A.rows(); r++){
-            for(size_t c=0; c<A.cols(); c++){
-                if(fabs(A(r,c)-B(r,c))>TOL){
-                    if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
-                    checkTrue(false, testName.c_str());
-                }
+// Assert that 2 matrices are equal
+void assertEqual(const Matrix &A, const Matrix &B, string testName, bool verbose=false)
+{
+    if(A.cols() != B.cols() || A.rows()!=B.rows()){
+        if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
+        CHECK(false);
+        INFO(testName);
+    }
+    for(size_t r=0; r<A.rows(); r++){
+        for(size_t c=0; c<A.cols(); c++){
+            if(fabs(A(r,c)-B(r,c))>TOL){
+                if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
+                CHECK(false);
+                INFO(testName);
             }
         }
-        checkTrue(true, testName.c_str());
     }
+    CHECK(true);
+    INFO(testName);
+}
 
-    // Assert that 2 matrices are not equal
-    void assertNotEqual(const Matrix &A, const Matrix &B, string testName, bool verbose=false)
-    {
-        if(A.cols() != B.cols() || A.rows()!=B.rows()){
-            checkTrue(true, testName.c_str());
-            return;
-        }
-        for(size_t r=0; r<A.rows(); r++)
-            for(size_t c=0; c<A.cols(); c++)
-                if(fabs(A(r,c)-B(r,c))>TOL){
-                    checkTrue(true, testName.c_str());
-                    return;
-                }
-        checkTrue(false, testName.c_str());
+// Assert that 2 matrices are not equal
+void assertNotEqual(const Matrix &A, const Matrix &B, string testName, bool verbose=false)
+{
+    if(A.cols() != B.cols() || A.rows()!=B.rows()){
+        CHECK(true);
+        INFO(testName);
+        return;
     }
+    for(size_t r=0; r<A.rows(); r++)
+        for(size_t c=0; c<A.cols(); c++)
+            if(fabs(A(r,c)-B(r,c))>TOL){
+                CHECK(true);
+                INFO(testName);
+                return;
+            }
+    CHECK(false);
+    INFO(testName);
+}
 
-    void svd()
+TEST_CASE("math::svdTest", "[yarp::math]")
+{
+    SECTION("checking SVD of skinny matrix")
     {
-        report(0,"checking SVD of skinny matrix");
 
         int m=6, n=5, nTest=1;
         Matrix U(m,n), V(n,n);
@@ -85,9 +90,8 @@ public:
         }
     }
 
-    void svdCheckResizeOfOutputMatrices()
+    SECTION("checking that SVD resizes the output matrices")
     {
-        report(0,"checking that SVD resizes the output matrices");
 
         size_t m=6, n=5;
         Matrix U, V;
@@ -97,16 +101,15 @@ public:
 
         SVD(M, U, s, V);
 
-        checkEqual(U.rows(), m, "Number of Rows of U matrix is correct");
-        checkEqual(U.cols(), n, "Number of Cols of U matrix is correct");
-        checkEqual(s.size(), (size_t) n, "Size of s vector is correct");
-        checkEqual(V.rows(), n, "Number of Rows of V matrix is correct");
-        checkEqual(V.cols(), n, "Number of Cols of V matrix is correct");
+        CHECK(U.rows() == m); // Number of Rows of U matrix is correct
+        CHECK(U.cols() == n); // Number of Cols of U matrix is correct
+        CHECK(s.size() == (size_t) n); // Size of s vector is correct
+        CHECK(V.rows() == n); // Number of Rows of V matrix is correct
+        CHECK(V.cols() == n); // Number of Cols of V matrix is correct
     }
 
-    void svdFat()
+    SECTION("checking SVD of fat matrix")
     {
-        report(0,"checking SVD of fat matrix");
 
         int m=5, n=6, nTest=1;
         Matrix U(m,m), V(n,m);
@@ -122,9 +125,8 @@ public:
         }
     }
 
-    void pInv()
+    SECTION("checking pInv of skinny/square matrix")
     {
-        report(0, "checking pInv of skinny/square matrix");
 
         int m=6, n=5, nTest=1;
         Matrix M, Minv;
@@ -151,9 +153,8 @@ public:
         }
     }
 
-    void pInvFat()
+    SECTION("checking pInv of fat matrix")
     {
-        report(0, "checking pInv of fat matrix");
         int m=4, n=5, nTest=1;
         Matrix M, Minv;
         Matrix U(m,m), V(m,n);
@@ -170,9 +171,8 @@ public:
         }
     }
 
-    void pInvDamp()
+    SECTION("checking Damped Pseudo-Inverse")
     {
-        report(0, "checking Damped Pseudo-Inverse");
 
         int m=6, n=5, nTest=1;
         Matrix M, Minv;
@@ -215,9 +215,8 @@ public:
         }
     }
 
-    void projMat()
+    SECTION("checking projection matrix")
     {
-        report(0, "checking projection matrix");
         int m=7;
         int n=3;
         int nTest=1;
@@ -245,9 +244,8 @@ public:
         }
     }
 
-    void nullspaceMat()
+    SECTION("checking nullspace projection matrix")
     {
-        report(0, "checking nullspace projection matrix");
         int m=7;
         int n=3;
         int nTest=1;
@@ -275,23 +273,4 @@ public:
             assertEqual(M * N, zeros(n, m), "nullspace projection matrix of full-rank fat matrix");
         }
     }
-
-    virtual void runTests() override
-    {
-        svd();
-        svdCheckResizeOfOutputMatrices();
-        svdFat();
-        pInv();
-        pInvFat();
-        pInvDamp();
-        projMat();
-        nullspaceMat();
-    }
-};
-
-static SVDTest theSVDTest;
-
-UnitTest& getSVDTest() {
-    return theSVDTest;
 }
-

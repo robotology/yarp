@@ -3,7 +3,7 @@
  *
  * \defgroup ffmpeg_grabber_video4linux Example for ffmpeg_grabber (ffmpeg_grabber_video4linux)
 
-Instantiates \ref cmd_device_ffmpeg_grabber "ffmpeg_grabber" device implemented by yarp::dev::FfmpegGrabber.
+Instantiates \ref cmd_device_ffmpeg_grabber "ffmpeg_grabber" device implemented by FfmpegGrabber.
 \verbatim
 # read from a video4linux source
 device ffmpeg_grabber
@@ -25,7 +25,10 @@ PolyDriver dev;
 dev.open(p);
 if (dev.isValid()) { /* use the device via view method */ }
 \endcode
-Here is a list of properties checked when starting up a device based on this configuration file.  Note that which properties are checked can depend on whether other properties are present.  In some cases properties can also vary between operating systems.  So this is just an example
+Here is a list of properties checked when starting up a device based on this configuration file.
+Note that which properties are checked can depend on whether other properties are present.
+In some cases properties can also vary between operating systems.
+So this is just an example
 
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
@@ -48,6 +51,6 @@ Here is a list of properties checked when starting up a device based on this con
 <tr><td>audio</td><td>optional audio device</td><td></td></tr>
 </table>
 
-\sa yarp::dev::FfmpegGrabber
+\sa FfmpegGrabber
 
  */

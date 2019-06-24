@@ -22,6 +22,9 @@ extern "C" YARP_IMPORT void PLUGIN_INIT_FUNCTION();
 #ifdef PLUGIN_INIT_FUNCTION2
 extern "C" YARP_IMPORT void PLUGIN_INIT_FUNCTION2();
 #endif
+#ifdef PLUGIN_INIT_FUNCTION3
+extern "C" YARP_IMPORT void PLUGIN_INIT_FUNCTION3();
+#endif
 
 extern "C" void yarpCustomInit() {
 #ifdef PLUGIN_INIT_FUNCTION
@@ -29,6 +32,9 @@ extern "C" void yarpCustomInit() {
 #endif
 #ifdef PLUGIN_INIT_FUNCTION2
   PLUGIN_INIT_FUNCTION2();
+#endif
+#ifdef PLUGIN_INIT_FUNCTION3
+  PLUGIN_INIT_FUNCTION3();
 #endif
 }
 

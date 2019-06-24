@@ -7,10 +7,11 @@
  */
 
 #include <yarp/os/Nodes.h>
+
+#include <yarp/os/Log.h>
 #include <yarp/os/Mutex.h>
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/Node.h>
-#include <yarp/os/Log.h>
 
 #include <map>
 
@@ -64,7 +65,7 @@ void yarp::os::Nodes::Private::clear()
 {
     mutex.lock();
     for (auto& n : nodes_map) {
-        if (n.second.first) {
+        if (n.second.first != nullptr) {
             if (!n.second.second) {
                 delete n.second.first;
                 n.second.first = nullptr;
@@ -120,7 +121,7 @@ void yarp::os::Nodes::Private::add(Contactable& contactable)
         return;
     }
     Node* node = getNode(contactable.getName(), true);
-    if (node) {
+    if (node != nullptr) {
         node->add(contactable);
     }
 }
@@ -135,7 +136,7 @@ void yarp::os::Nodes::Private::update(Contactable& contactable)
         return;
     }
     Node* node = getNode(contactable.getName(), true);
-    if (node) {
+    if (node != nullptr) {
         node->update(contactable);
     }
 }
@@ -158,7 +159,7 @@ void yarp::os::Nodes::Private::remove(Contactable& contactable)
         return;
     }
     Node* node = getNode(contactable.getName(), false);
-    if (node) {
+    if (node != nullptr) {
         node->remove(contactable);
     }
 }
@@ -237,7 +238,7 @@ std::string yarp::os::Nodes::Private::getActiveName()
 
 bool yarp::os::Nodes::Private::requireActiveName()
 {
-    if (active_name == "") {
+    if (active_name.empty()) {
         dummy = new Node("...");
     }
     return true;

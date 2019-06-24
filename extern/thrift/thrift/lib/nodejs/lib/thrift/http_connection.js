@@ -59,8 +59,6 @@ var createClient = require('./create_client');
  * Initializes a Thrift HttpConnection instance (use createHttpConnection() rather than
  *    instantiating directly).
  * @constructor
- * @param {string} host - The host name or IP to connect to.
- * @param {number} port - The TCP port to connect to.
  * @param {ConnectOptions} options - The configuration options to use.
  * @throws {error} Exceptions other than InputBufferUnderrunError are rethrown
  * @event {error} The "error" event is fired when a Node.js error event occurs during
@@ -71,15 +69,16 @@ var createClient = require('./create_client');
  *     semantics implemented over the Node.js http.request() method.
  * @see {@link createHttpConnection}
  */
-var HttpConnection = exports.HttpConnection = function(host, port, options) {
+var HttpConnection = exports.HttpConnection = function(options) {
   //Initialize the emitter base object
   EventEmitter.call(this);
 
   //Set configuration
   var self = this;
   this.options = options || {};
-  this.host = host;
-  this.port = port;
+  this.host = this.options.host;
+  this.port = this.options.port;
+  this.socketPath = this.options.socketPath;
   this.https = this.options.https || false;
   this.transport = this.options.transport || TBufferedTransport;
   this.protocol = this.options.protocol || TBinaryProtocol;
@@ -87,7 +86,8 @@ var HttpConnection = exports.HttpConnection = function(host, port, options) {
   //Prepare Node.js options
   this.nodeOptions = {
     host: this.host,
-    port: this.port || 80,
+    port: this.port,
+    socketPath: this.socketPath,
     path: this.options.path || '/',
     method: 'POST',
     headers: this.options.headers || {},
@@ -170,7 +170,7 @@ var HttpConnection = exports.HttpConnection = function(host, port, options) {
     var dataLen = 0;
 
     if (response.statusCode !== 200) {
-      this.emit("error", new THTTPException(statusCode, response));
+      this.emit("error", new THTTPException(response));
     }
 
     response.on('error', function (e) {
@@ -238,17 +238,24 @@ HttpConnection.prototype.write = function(data) {
  * @see {@link ConnectOptions}
  */
 exports.createHttpConnection = function(host, port, options) {
-  return new HttpConnection(host, port, options);
+  options.host = host;
+  options.port = port || 80;
+  return new HttpConnection(options);
+};
+
+exports.createHttpUDSConnection = function(path, options) {
+  options.socketPath = path;
+  return new HttpConnection(options);
 };
 
 exports.createHttpClient = createClient
 
 
-function THTTPException(statusCode, response) {
+function THTTPException(response) {
   thrift.TApplicationException.call(this);
   Error.captureStackTrace(this, this.constructor);
   this.name = this.constructor.name;
-  this.statusCode = statusCode;
+  this.statusCode = response.statusCode;
   this.response = response;
   this.type = thrift.TApplicationExceptionType.PROTOCOL_ERROR;
   this.message = "Received a response with a bad HTTP status code: " + response.statusCode;

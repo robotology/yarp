@@ -9,7 +9,11 @@
 #ifndef YARP_DEV_IREMOTEVARIABLES_H
 #define YARP_DEV_IREMOTEVARIABLES_H
 
+#include <string>
+
+#include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/dev/api.h>
 
 namespace yarp {
     namespace dev {
@@ -21,9 +25,9 @@ namespace yarp {
 /**
  * @ingroup dev_iface_motor
  *
- * IRemoteVariables interface.
+ * IRemoteVariablesRaw interface.
  */
-class yarp::dev::IRemoteVariablesRaw
+class YARP_dev_API yarp::dev::IRemoteVariablesRaw
 {
 public:
     /**

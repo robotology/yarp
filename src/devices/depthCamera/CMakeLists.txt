@@ -6,10 +6,10 @@
 
 yarp_prepare_plugin(depthCamera
                     CATEGORY device
-                    TYPE yarp::dev::depthCameraDriver
+                    TYPE depthCameraDriver
                     INCLUDE depthCameraDriver.h
                     EXTRA_CONFIG WRAPPER=RGBDSensorWrapper
-                    DEPENDS "YARP_HAS_OPENNI2")
+                    DEPENDS "YARP_HAS_OpenNI2")
 
 if(ENABLE_depthCamera)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -33,11 +33,8 @@ if(ENABLE_depthCamera)
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
-               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR})
-
-  yarp_install(FILES depthCamera.ini
-               COMPONENT ${YARP_PLUGIN_MASTER}
-               DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
+               ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
+               YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR})
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 

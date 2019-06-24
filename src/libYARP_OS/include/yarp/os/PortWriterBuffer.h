@@ -11,32 +11,14 @@
 #define YARP_OS_PORTWRITERBUFFER_H
 
 #include <yarp/os/Portable.h>
+#include <yarp/os/PortWriterBufferBase.h>
 
 namespace yarp {
 namespace os {
+
 class Port;
-} // namespace os
-} // namespace yarp
-
-
-namespace yarp {
-namespace os {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-class PortWriterBufferManager
-{
-public:
-    virtual ~PortWriterBufferManager();
-
-    virtual void onCompletion(void* tracker) = 0;
-};
-
-class PortWriterWrapper : public PortWriter
-{
-public:
-    virtual PortWriter* getInternal() = 0;
-};
 
 template <class T>
 class PortWriterBufferAdaptor : public PortWriterWrapper
@@ -75,38 +57,7 @@ public:
     }
 };
 
-class YARP_OS_API PortWriterBufferBase
-{
-public:
-    PortWriterBufferBase();
-
-    virtual ~PortWriterBufferBase();
-
-    virtual PortWriterWrapper *create(PortWriterBufferManager& man,
-                                      void *tracker) = 0;
-
-    const void* getContent() const;
-
-    bool releaseContent();
-
-    int getCount();
-
-    void attach(Port& port);
-
-    void detach();
-
-    void write(bool strict);
-
-    void waitForWrite();
-
-protected:
-    void init();
-
-private:
-    void* implementation;
-};
-
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 
 /**
@@ -118,16 +69,6 @@ template <class T>
 class PortWriterBuffer : public PortWriterBufferBase
 {
 public:
-    //typedef T Type;
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    virtual PortWriterWrapper* create(PortWriterBufferManager& man,
-                                      void* tracker) override
-    {
-        return new PortWriterBufferAdaptor<T>(man, tracker);
-    }
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
-
     /**
      * Access the object which will be transmitted by the next call to
      * PortWriterBuffer::write.
@@ -200,6 +141,12 @@ public:
     void waitForWrite()
     {
         PortWriterBufferBase::waitForWrite();
+    }
+
+    virtual PortWriterWrapper* create(PortWriterBufferManager& man,
+                                      void* tracker) override
+    {
+        return new PortWriterBufferAdaptor<T>(man, tracker);
     }
 };
 

@@ -7,11 +7,12 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/TextCarrier.h>
+
 #include <yarp/os/ConnectionState.h>
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/Route.h>
+#include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
