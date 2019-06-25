@@ -169,7 +169,7 @@ bool Matrix::write(yarp::os::ConnectionWriter& connection) const {
 std::string Matrix::toString(int precision, int width, const char* endRowStr) const {
 
     // If the width is less than 1, use tabs, else use width number of spaces.
-    std::string spacer((width<0) ? 1 : width, (width<0) ? '\t' : ' ');
+    std::string spacer((width<0) ? "\t" : " ");
 
     // Buffering.
     std::string ret = "";
@@ -183,7 +183,7 @@ std::string Matrix::toString(int precision, int width, const char* endRowStr) co
         if (r) { ret += endRowStr; }
         for (c = 0; c < ncols; c++) {
             if (c) { ret += spacer; }
-            sprintf(buffer, " %.*lf", precision, *src); src++;
+            sprintf(buffer, " %*.*lf", width, precision, *src); src++;
             ret += buffer;
         }
     }
