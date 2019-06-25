@@ -68,6 +68,8 @@ public:
         appOwner = NULL;
         bExternalFrom = false;
         bExternalTo = false;
+        existsFrom = false;
+        existsTo = false;
         bPersist = false;
         input = NULL;
         output = NULL;
@@ -84,6 +86,10 @@ public:
     void setCarrier(const char* szCr) { if(szCr) strCarrier = szCr; }
     void setFromExternal(bool ext) { bExternalFrom = ext;}
     void setToExternal(bool ext) { bExternalTo = ext; }
+    void setFromExists(bool exists) { existsFrom = exists;}
+    void setToExists(bool exists) { existsTo = exists; }
+    bool getFromExists() const { return existsFrom; }
+    bool getToExists() const { return existsTo; }
     void setPersistent(bool per) { bPersist = per; }
     void setQosFrom(const char* szQos) { if(szQos) strQosFrom = szQos; }
     void setQosTo(const char* szQos) { if(szQos) strQosTo = szQos; }
@@ -107,13 +113,13 @@ public:
     bool withPriority(void) { return bWithPriority; }
 
     GraphicModel* getModel(void) { return model;}
-    void setModel(GraphicModel* mdl) { model = mdl; };
+    void setModel(GraphicModel* mdl) { model = mdl; }
 
     // modelBased is used to keep the graphic and geometric
     // information which is directly loaded from application
     // description file.
     GraphicModel& getModelBase(void) { return modelBase;}
-    void setModelBase(GraphicModel& mdl) { modelBase = mdl; };
+    void setModelBase(GraphicModel& mdl) { modelBase = mdl; }
 
 
     bool operator==(const Connection& alt) const {
@@ -128,6 +134,8 @@ private:
     std::string strId;
     bool bExternalTo;
     bool bExternalFrom;
+    bool existsFrom;
+    bool existsTo;
     std::string strCarrier;
     std::string strQosFrom;
     std::string strQosTo;

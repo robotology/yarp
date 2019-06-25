@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>598</width>
-    <height>555</height>
+    <width>600</width>
+    <height>781</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -39,8 +39,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>578</width>
-        <height>535</height>
+        <width>584</width>
+        <height>765</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -241,17 +241,17 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <item>
-              <widget class="QLineEdit" name="lineEditNsNode">
-               <property name="enabled">
-                <bool>true</bool>
+              <widget class="QComboBox" name="nsNodeComboBox">
+               <property name="minimumSize">
+                <size>
+                 <width>180</width>
+                 <height>35</height>
+                </size>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="checkNs">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
+              <widget class="QLabel" name="labelNs">
                <property name="text">
                 <string/>
                </property>
@@ -270,22 +270,61 @@
             <layout class="QHBoxLayout" name="horizontalLayout_5">
              <item>
               <widget class="QPushButton" name="checkServerBtn">
+               <property name="toolTip">
+                <string>Check yarpserver</string>
+               </property>
                <property name="text">
-                <string>Check</string>
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../res.qrc">
+                 <normaloff>:/refresh.svg</normaloff>:/refresh.svg</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>22</width>
+                 <height>22</height>
+                </size>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QPushButton" name="runServerBtn">
+               <property name="toolTip">
+                <string>Run yarpserver</string>
+               </property>
                <property name="text">
-                <string>Run</string>
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../res.qrc">
+                 <normaloff>:/play.svg</normaloff>:/play.svg</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>22</width>
+                 <height>22</height>
+                </size>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QPushButton" name="stopServerBtn">
+               <property name="toolTip">
+                <string>Stop yarpserver</string>
+               </property>
                <property name="text">
-                <string>Stop</string>
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../res.qrc">
+                 <normaloff>:/stop.svg</normaloff>:/stop.svg</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>22</width>
+                 <height>22</height>
+                </size>
                </property>
               </widget>
              </item>
@@ -326,6 +365,116 @@
         </widget>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="checkAllBtn">
+           <property name="toolTip">
+            <string>Refresh</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../res.qrc">
+             <normaloff>:/refresh.svg</normaloff>:/refresh.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="runSelBtn">
+           <property name="toolTip">
+            <string>Run selected nodes</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../res.qrc">
+             <normaloff>:/play.svg</normaloff>:/play.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="stopSelBtn">
+           <property name="toolTip">
+            <string>Stop selected nodes</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../res.qrc">
+             <normaloff>:/stop.svg</normaloff>:/stop.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="killSelBtn">
+           <property name="toolTip">
+            <string>Kill selected nodes</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../res.qrc">
+             <normaloff>:/kill22.svg</normaloff>:/kill22.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_12">
          <item>
           <widget class="CustomTreeWidget" name="nodestreeWidget">
@@ -364,38 +513,6 @@
            </column>
           </widget>
          </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QPushButton" name="checkAllBtn">
-             <property name="text">
-              <string>Check All</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="stopSelBtn">
-             <property name="text">
-              <string>Stop Selected</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="runSelBtn">
-             <property name="text">
-              <string>Run Selected</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="killSelBtn">
-             <property name="text">
-              <string>Kill Selected</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
         </layout>
        </item>
        <item>
@@ -418,6 +535,9 @@
           <layout class="QHBoxLayout" name="horizontalLayout_7">
            <item>
             <widget class="QLineEdit" name="lineEditExecute"/>
+           </item>
+           <item>
+            <widget class="QComboBox" name="executeComboBox"/>
            </item>
            <item>
             <widget class="QPushButton" name="executeBtn">
@@ -456,6 +576,8 @@
    <header>customtreewidget.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../res.qrc"/>
+ </resources>
  <connections/>
 </ui>

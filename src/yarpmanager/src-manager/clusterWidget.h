@@ -20,6 +20,7 @@
 #define CLUSTERWIDGET_H
 
 #include <QWidget>
+#include <QMessageBox>
 #include <vector>
 #include <yarp/manager/xmlclusterloader.h>
 #include <customtreewidget.h>
@@ -42,6 +43,7 @@ private slots:
     void onKillSelected();
     void onExecute();
     void onNodeSelectionChanged();
+    void onExecuteTextChanged();
 signals:
     void logError(QString);
     void logMessage(QString);
@@ -58,11 +60,13 @@ private:
     bool checkNameserver();
     bool checkNode(const std::string& name);
     void updateServerEntries();
-private:
+
+
     Ui::ClusterWidget *ui;
     std::string confFile;
     yarp::manager::Cluster cluster;
     yarp::manager::XmlClusterLoader* clusLoader;
+    bool checkNs;
 };
 
 #endif // CLUSTERWIDGET_H
