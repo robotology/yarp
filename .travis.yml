@@ -55,6 +55,7 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
       - llvm-toolchain-xenial-8
+      - sourceline: 'ppa:robotology/travis'
       - sourceline: 'ppa:robotology/ppa'
     packages:
       # gcc
