@@ -39,17 +39,8 @@ H264Stream::H264Stream(h264Decoder_cfgParamters &config) :
 
 H264Stream::~H264Stream()
 {
-    if (decoder!=nullptr)
-    {
-        delete decoder;
-        decoder = nullptr;
-    }
-
-    if (delegate!=nullptr)
-    {
-        delete delegate;
-        delegate = nullptr;
-    }
+    delete decoder;
+    delete delegate;
 }
 
 
@@ -239,4 +230,3 @@ void H264Stream::write(const Bytes& b)
 {
     delegate->getOutputStream().write(b);
 }
-
