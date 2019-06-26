@@ -92,7 +92,7 @@ addons:
       #- libavdevice-dev
       #- libavformat-dev
       #- libavutil-dev
-      - portaudio19-dev
+      #- portaudio19-dev
       # Bindings
       - swig3.0
       # C# bindings
@@ -456,7 +456,7 @@ before_script:
   - if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_usbCamera=ON -DENABLE_yarpmod_usbCameraRaw=ON"; fi; fi
   #- if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_ffmpeg_grabber=ON -DENABLE_yarpmod_ffmpeg_writer=ON"; fi; fi
   - if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_portaudio=ON -DENABLE_yarpmod_portaudioPlayer=ON -DENABLE_yarpmod_portaudioRecorder=ON"; fi; fi
-  - if ! $TRAVIS_WITH_VALGRIND; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_opencv_grabber=ON"; fi
+  #- if ! $TRAVIS_WITH_VALGRIND; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_opencv_grabber=ON"; fi
 
   # Build rplidar2 on linux
   # FIXME gcc only, see https://github.com/robotology/yarp/issues/1984
