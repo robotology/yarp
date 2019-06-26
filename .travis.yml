@@ -88,6 +88,11 @@ addons:
       - libgstreamer-plugins-base1.0-dev
       - libpng-dev
       - libv4l-dev
+      - libavcodec-dev
+      - libavdevice-dev
+      - libavformat-dev
+      - libavutil-dev
+      - portaudio19-dev
       # Bindings
       - swig3.0
       # C# bindings
@@ -438,7 +443,6 @@ before_script:
   - export YARP_CMAKE_OPTIONS="${CMAKE_OPTIONS} -DCMAKE_INSTALL_PREFIX=${YARP_INSTALL_PREFIX}"
   - if ! $TRAVIS_WITH_ACE; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=ON -DYARP_TEST_HEAP=ON"; fi
   - if ! $TRAVIS_WITH_MATH; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_COMPILE_libYARP_math:BOOL=OFF -DENABLE_yarpmod_fakeIMU:BOOL=OFF -DENABLE_yarpmod_fakeLaser:BOOL=OFF"; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpcar_h264:BOOL=ON"; fi
   - if $TRAVIS_STATIC; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DBUILD_SHARED_LIBS=OFF"; fi
   - if $TRAVIS_CLEAN_API; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_CLEAN_API=ON -DYARP_COMPILE_TESTS=OFF"; fi
   - if ! $TRAVIS_WITH_EXECUTABLES; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_COMPILE_EXECUTABLES=OFF -DYARP_COMPILE_TESTS=OFF"; fi
@@ -447,7 +451,12 @@ before_script:
   - if $TRAVIS_WITH_BROKEN_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_ENABLE_BROKEN_TESTS=ON"; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_ENABLE_INTEGRATION_TESTS=ON"; fi
 
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_usbCamera=ON -DENABLE_yarpmod_usbCameraRaw=ON"; fi
+  # These devices link to glib/gobject causing some memory leak on valgrind, therefore they are not enabled on valgrind builds
+  - if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpcar_h264:BOOL=ON"; fi; fi
+  - if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_usbCamera=ON -DENABLE_yarpmod_usbCameraRaw=ON"; fi; fi
+  - if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_ffmpeg_grabber=ON -DENABLE_yarpmod_ffmpeg_writer=ON"; fi; fi
+  - if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_portaudio=ON -DENABLE_yarpmod_portaudioPlayer=ON -DENABLE_yarpmod_portaudioRecorder=ON"; fi; fi
+  - if ! $TRAVIS_WITH_VALGRIND; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_opencv_grabber=ON"; fi
 
   # Build rplidar2 on linux
   # FIXME gcc only, see https://github.com/robotology/yarp/issues/1984
