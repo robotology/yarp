@@ -1,0 +1,11 @@
+/**
+\page idls Using IDLs
+
+\tableofcontents
+
+\section idls_list List of IDL (Interface Description Languages) used in YARP
+
+\li \subpage idl_thrift
+\li \subpage idl_rosmsg
+
+*/

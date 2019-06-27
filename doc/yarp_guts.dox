@@ -1,7 +1,7 @@
 /**
- * @page yarp_guts A trip through the guts of YARP
+\page yarp_guts A trip through the guts of YARP
 
-@author Paul Fitzpatrick
+\tableofcontents
 
 The goal of the tutorial is to help people find their way
 around the internals of the YARP implementation.
@@ -13,7 +13,7 @@ Beware: classes that are deemed to be "internal" (basically, anything in
 namespace yarp::os::impl, yarp::sig::impl, etc) are more likely to
 change as time goes by than other classes.
 
-@section yarp_guts_facade Behind the facade
+\section yarp_guts_facade Behind the facade
 
 Many YARP user-facing classes have private implementations, that is they
 follow this pattern:
@@ -38,7 +38,7 @@ don't want to deal with the confused emails they will send
 us).  So we use ACE in the YARP implementation, but do not
 reference it in user-facing header files.
 
-@section yarp_guts_summary Summary of important implementation classes
+\section yarp_guts_summary Summary of important implementation classes
 
 For every port, there is a yarp::os::impl::PortCore object.
 The user-facing yarp::os::Port class is a superficial wrapper around this.
@@ -70,50 +70,50 @@ multicast to ports 2 and 3, and by tcp to port 4.
       edge [fontname=Helvetica, fontsize=10, arrowhead="open", style="solid"];
 
       subgraph cluster_guts_port1 {
-		label = "Port 1";
-		color = "blue"; style = "dashed";
+        label = "Port 1";
+        color = "blue"; style = "dashed";
 
-		portcore1 [ label="PortCore", shape=ellipse ];
-		portcoreoutputunit11 [ label="PortCoreOutputUnit", shape=ellipse ];
-		portcoreoutputunit12 [ label="PortCoreOutputUnit", shape=ellipse ];
-		portcoreoutputunit13 [ label="PortCoreOutputUnit", shape=ellipse ];
-		outputprotocol11 [ label="OutputProtocol", shape=ellipse ];
-		outputprotocol12 [ label="OutputProtocol", shape=ellipse ];
-		outputprotocol13 [ label="OutputProtocol", shape=ellipse ];
-		mcastcarrier11 [ label="McastCarrier", shape=ellipse ];
-		mcastcarrier12 [ label="McastCarrier", shape=ellipse ];
-		tcpcarrier13 [ label="TcpCarrier", shape=ellipse ];
-	}
+        portcore1 [ label="PortCore", shape=ellipse ];
+        portcoreoutputunit11 [ label="PortCoreOutputUnit", shape=ellipse ];
+        portcoreoutputunit12 [ label="PortCoreOutputUnit", shape=ellipse ];
+        portcoreoutputunit13 [ label="PortCoreOutputUnit", shape=ellipse ];
+        outputprotocol11 [ label="OutputProtocol", shape=ellipse ];
+        outputprotocol12 [ label="OutputProtocol", shape=ellipse ];
+        outputprotocol13 [ label="OutputProtocol", shape=ellipse ];
+        mcastcarrier11 [ label="McastCarrier", shape=ellipse ];
+        mcastcarrier12 [ label="McastCarrier", shape=ellipse ];
+        tcpcarrier13 [ label="TcpCarrier", shape=ellipse ];
+    }
 
       subgraph cluster_guts_port2 {
-		label = "Port 2";
-		color = "blue"; style = "dashed";
+        label = "Port 2";
+        color = "blue"; style = "dashed";
 
-		portcore2 [ label="PortCore", shape=ellipse ];
-		inputprotocol2 [ label="InputProtocol", shape=ellipse ];
-		mcastcarrier2 [ label="McastCarrier", shape=ellipse ];
-		portcoreinputunit2 [ label="PortCoreInputUnit", shape=ellipse ];
-	}
+        portcore2 [ label="PortCore", shape=ellipse ];
+        inputprotocol2 [ label="InputProtocol", shape=ellipse ];
+        mcastcarrier2 [ label="McastCarrier", shape=ellipse ];
+        portcoreinputunit2 [ label="PortCoreInputUnit", shape=ellipse ];
+    }
 
       subgraph cluster_guts_port3 {
-		label = "Port 3";
-		color = "blue"; style = "dashed";
+        label = "Port 3";
+        color = "blue"; style = "dashed";
 
-		portcore3 [ label="PortCore", shape=ellipse ];
-		inputprotocol3 [ label="InputProtocol", shape=ellipse ];
-		mcastcarrier3 [ label="McastCarrier", shape=ellipse ];
-		portcoreinputunit3 [ label="PortCoreInputUnit", shape=ellipse ];
-	}
+        portcore3 [ label="PortCore", shape=ellipse ];
+        inputprotocol3 [ label="InputProtocol", shape=ellipse ];
+        mcastcarrier3 [ label="McastCarrier", shape=ellipse ];
+        portcoreinputunit3 [ label="PortCoreInputUnit", shape=ellipse ];
+    }
 
       subgraph cluster_guts_port4 {
-		label = "Port 4";
-		color = "blue"; style = "dashed";
+        label = "Port 4";
+        color = "blue"; style = "dashed";
 
-		portcore4 [ label="PortCore", shape=ellipse ];
-		inputprotocol4 [ label="InputProtocol", shape=ellipse ];
-		tcpcarrier4 [ label="TcpCarrier", shape=ellipse ];
-		portcoreinputunit4 [ label="PortCoreInputUnit", shape=ellipse ];
-	}
+        portcore4 [ label="PortCore", shape=ellipse ];
+        inputprotocol4 [ label="InputProtocol", shape=ellipse ];
+        tcpcarrier4 [ label="TcpCarrier", shape=ellipse ];
+        portcoreinputunit4 [ label="PortCoreInputUnit", shape=ellipse ];
+    }
 
       portcore1 -> portcoreoutputunit11;
       portcore1 -> portcoreoutputunit12;
@@ -144,7 +144,7 @@ multicast to ports 2 and 3, and by tcp to port 4.
       fontname=Helvetica;
       fontsize=10;
       label = "A four-port example, arrows show data flow";
-		color = "blue"; style = "dashed";
+        color = "blue"; style = "dashed";
   }
   \enddot
 
@@ -154,7 +154,7 @@ same PortCore work together so that data only gets sent once on
 a shared logical bus.  See \ref yarp_guts_mcast.
 
 
-@section yarp_guts_create Port creation
+\section yarp_guts_create Port creation
 
 Every yarp::os::Port or yarp::os::BufferedPort contains exactly one
 yarp::os::impl::PortCore object. This is the main coordinator for
@@ -175,7 +175,7 @@ to service that unit.  Inputs always get a new thread.  Outputs get
 a new thread only if requested (see yarp::os::Port::enableBackgroundWrite;
 this is called for BufferedPorts by default).
 
-@section yarp_guts_connect Connection creation
+\section yarp_guts_connect Connection creation
 
 When the Face object receives a communication from the outside world,
 it wraps it in a Protocol object.  Concretely, this means that the TcpFace
@@ -195,7 +195,7 @@ The Protocol object deals with switching to a particular carrier
 (implemented by sub-types of yarp::os::Carrier), and
 the details of the YARP network protocol.
 
-@section yarp_guts_mcast Multicast elections
+\section yarp_guts_mcast Multicast elections
 
 The two McastCarrier objects owned by Port 1
 in the figure above "conspire" behind the
@@ -204,5 +204,4 @@ rest of YARP is concerned there's nothing special about them.
 This conspiracy is implemented via a global yarp::os::Election
 object.
 
-*
 */

@@ -95,6 +95,9 @@ add_subdirectory(tests)
 # Platform independent data
 add_subdirectory(data)
 
+# Documentation
+add_subdirectory(doc)
+
 # Output configuration files describing how YARP was built, and how
 # its libraries may be linked against and used.  This uses
 # information accumulated in the global property variables set up earlier.
@@ -105,9 +108,6 @@ include(YarpDescribe)
 # See cmake/YarpPackage.cmake
 include(YarpPackage)
 
-# Make documentation target, documentation goes in doc subdirectory
-# of build.  See cmake/YarpDoc.cmake
-include(YarpDoc)
 
 # add rule for uninstalling YARP
 include(AddUninstallTarget)

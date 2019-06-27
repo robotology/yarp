@@ -1,5 +1,7 @@
 /**
- * @page name_server The name server protocol
+\page name_server The name server protocol
+
+\tableofcontents
 
 The name server is a YARP program that maintains a list of
 all YARP Ports and how to connect to them.  The name server
@@ -486,7 +488,5 @@ The server will respond with something of the form:
 registration name /write ip 5.255.112.227 port 10001 type tcp
 *** end of message
 \endverbatim
-
-
 
 */

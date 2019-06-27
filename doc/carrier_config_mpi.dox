@@ -1,7 +1,7 @@
 /**
- * @page carrier_config_mpi mpi carriers
+\page carrier_config_mpi mpi carriers
 
-\author Daniel Krieg
+\tableofcontents
 
 The MPI carriers are supposed be a high-performance equivalent to YARPs standard carriers  (Shared memory, TCP, Mcast) while also adding the possibility for using
 Infiniband (Highspeed node interconnect). But they do not allow for process-local connections.
@@ -115,6 +115,4 @@ When running an application which should use MPI connections, you need to enable
 export MV2_SUPPORT_DPM=1
 \endcode
 
- *
- */
-
+*/

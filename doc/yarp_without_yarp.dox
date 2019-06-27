@@ -1,35 +1,35 @@
 /**
- * @page yarp_without_yarp YARP without YARP
+\page yarp_without_yarp YARP without YARP
 
-\author Paul Fitzpatrick
+\tableofcontents
 
-This tutorial
-covers how to communicate with a YARP Port without using
-the YARP library.  You might want to do this when trying
-to hook up some on your non-YARP-using code with a YARP
-robot.  Or you may just want to know that users of your
-robot will have this option in future.
+This tutorial covers how to communicate with a YARP Port without using the YARP
+library.
+You might want to do this when trying to hook up some on your non-YARP-using
+code with a YARP robot.
+Or you may just want to know that users of your robot will have this option in
+future.
 
 YARP Ports can be communicated with in a choice of protocols.
-Some of those protocols are very simple, simple enough
-to use without any code or to implement yourself in your own code.
+Some of those protocols are very simple, simple enough to use without any code
+or to implement yourself in your own code.
 
 The tutorial has two parts.
-For the first part,
-you will need the "telnet" program or an equivalent for this tutorial.
-It is used just as a way to create a socket from the command-line; we don't
-rely on any special parts of the telnet protocol.
-For the second part, we use a few lines of python to repeat the steps
-done manually with telnet.  There are examples of
-interoperating with YARP from other languages in the example/external
-subdirectory of the YARP source code (YARP can also be used directly
-from many languages via SWIG, but that is a different topic).
+For the first part, you will need the "telnet" program or an equivalent for this
+tutorial.
+It is used just as a way to create a socket from the command-line;
+we don't rely on any special parts of the telnet protocol.
+For the second part, we use a few lines of python to repeat the steps done
+manually with telnet.
+There are examples of interoperating with YARP from other languages in the
+`example/external` subdirectory of the YARP source code (YARP can also be used
+directly from many languages via SWIG, but that is a different topic).
 
 
 \section yarp_without_yarp_test Test scenario
 
-For concreteness, let's set up a very simple YARP system to
-interact with.  In separate terminals, run:
+For concreteness, let's set up a very simple YARP system to interact with.
+In separate terminals, run:
 
 \verbatim
 yarp server
@@ -38,20 +38,24 @@ yarp write /write
 yarpdev --device controlboard --subdevice test_motor --name /motor --axes 5
 \endverbatim
 
-The "yarp server" command is the yarp name server, which creates a
-Port called "/root".  We can communicate with that Port in order to
-find out how to communicate with all other Ports.  The "yarp read
-/read" command creates a Port called "/read", and prints anything sent
-to it onto standard output.  The "yarp write /write" command creates a
-Port called "/write", and sends anything typed on standard input to
-that Port.  The "yarpdev" command creates a fake motor controlboard
-with 5 controllable axes.
+The `yarp server` command is the yarp name server, which creates a Port called
+`/root`.
+We can communicate with that Port in order to find out how to communicate with
+all other Ports.
+The `yarp read /read` command creates a Port called `/read`, and prints anything
+sent to it onto standard output.
+The `yarp write /write` command creates a Port called `/write`, and sends
+anything typed on standard input to that Port.
+The `yarpdev` command creates a fake motor controlboard with 5 controllable
+axes.
 
-As a reference, if we type "yarp name list" we can see a list of all
-ports created here:
+As a reference, if we type `yarp name list` we can see a list of all ports
+created here:
 
+~~~{.sh}
+yarp name list
+~~~
 \verbatim
-$ yarp name list
 registration name /motor/command:i ip 127.0.0.1 port 10032 type tcp
 registration name /motor/quit ip 127.0.0.1 port 10052 type quit
 registration name /motor/rpc:i ip 127.0.0.1 port 10022 type tcp
@@ -63,43 +67,47 @@ registration name fallback ip 224.2.1.1 port 10001 type mcast
 *** end of message
 \endverbatim
 
-We can see "/root", the name server, "/read" and "/write", and four
-ports related to the controlboard.
-We're not concerned here with the details of what you can do with
-motors, you can find out about that elsewhere.
+We can see `/root`, the name server, `/read` and `/write`, and four ports
+related to the controlboard.
+We're not concerned here with the details of what you can do with motors, you
+can find out about that elsewhere.
 
 \section yarp_without_yarp_begin Talking to a Port
 
-The "yarp read /read" program is waiting for data to be sent to the
-port "/read", which it will then print out.  Let's make it happy.
+The `yarp read /read` program is waiting for data to be sent to the port
+`/read`, which it will then print out.
+Let's make it happy.
 
-From the output of "yarp name list", we see that "/read" is at
-address 127.0.0.1 with port number 10002.  Let's do:
+From the output of `yarp name list`", we see that `/read` is at address
+`127.0.0.1` with port number `10002`.  Let's do:
 
-\verbatim
+~~~{.sh}
 telnet 127.0.0.1 10002
-\endverbatim
+~~~
 
 (Replace these numbers for whatever they are on your system).
 
 We do this, and nothing happens, telnet just sits there doing nothing.
-That's normal.  YARP ports don't respond immediately, they are
-waiting for a header that tells them what protocol you want to use
-(there are several).
+That's normal.
+YARP ports don't respond immediately, they are waiting for a header that tells
+them what protocol you want to use (there are several).
 
-Type carefully into telnet (on Windows you'll have to get this right
-first time without any visual feedback):
+Type carefully into telnet (on Windows you'll have to get this right first time
+without any visual feedback):
 \verbatim
 CONNECT foo
 \endverbatim
 
-(you can substitute "foo" with anything you like).  Hit return after
-you type this.  Finally, we get a response:
+(you can substitute "foo" with anything you like).
+Hit return after you type this.
+Finally, we get a response:
+
 \verbatim
 Welcome foo
 \endverbatim
 
 Hit return again.  You should see something like:
+
 \verbatim
 Port command not understood.
 Type d to send data to the port's owner.
@@ -107,6 +115,7 @@ Type ? for help.
 \endverbatim
 
 Type:
+
 \verbatim
 ?
 \endverbatim
@@ -127,42 +136,45 @@ a       Signals the beginning of an administrative message
 ?       Gives this help
 \endverbatim
 
-Good, we are clearly talking to a YARP port (it says so).  Let's
-use the first command listed to get some information about the port.
+Good, we are clearly talking to a YARP port (it says so).
+Let's use the first command listed to get some information about the port.
 Type:
+
 \verbatim
 *
 \endverbatim
 
 and hit return.  You should see something like:
+
 \verbatim
 This is /read at tcp://127.0.0.1:10002
 There are no outgoing connections
 There is an input connection from foo to /read using text
 \endverbatim
 
-Ah-hah!  We are indeed connected to the "/read" port, and our
-connection is listed.  The "using text" part means we are using
-a text-mode protocol, chosen by starting the communication with
-"CONNECT " (other choices include more efficient binary protocols,
-protocols that switch to using udp, multi-cast, shared memory, etc).
+We are indeed connected to the `/read` port, and our connection is listed.
+The `using text` part means we are using a text-mode protocol, chosen by
+starting the communication with `CONNECT ` (other choices include more efficient
+binary protocols, protocols that switch to using udp, multi-cast, shared memory,
+etc).
 
 Every single YARP port responds to the kinds of commands we've
-used so far.  We could connect to "/write" or "/root" or "/motor/..."
+used so far.  We could connect to `/write` or `/root` or `/motor/...`
 and do the same thing.
 
 \section yarp_without_yarp_owner Talking to a Port's owner
 
-So far we have chatted with the "/read" Port and found out
-some information about it that we already knew (its name
-is "/read" and we are connected to it).
+So far we have chatted with the `/read` Port and found out some information
+about it that we already knew (its name is `/read` and we are connected to it).
 
-Now let's send some data to the owner of the "/read" Port,
-which is the "yarp read /read" program.  We expect that this
-data will get printed out on the terminal where that program
+Now let's send some data to the owner of the `/read` Port, which is the
+`yarp read /read` program.
+We expect that this data will get printed out on the terminal where that program
 is running.
 
-Hit return without a command.  You should see something like:
+Hit return without a command.
+You should see something like:
+
 \verbatim
 Port command not understood.
 Type d to send data to the port's owner.
@@ -170,48 +182,58 @@ Type ? for help.
 \endverbatim
 
 Okay, so "d" sends data to the port's owner.  Let's do it.  Type:
+
 \verbatim
 d
 \endverbatim
-and hit return.  Nothing happens, but now you are talking to
-the owner of the Port, rather than the Port itself.  What you
-can type now depends on what the owner is expecting.
-There are several possible data-types in YARP, and users can
-easily define their own.  All well-behaved
-data-types should follow the YARP \ref data_rep, which is
-particularly easy to enter in text-mode - it is just a
-list of space-separated numbers, strings, and nested structures.
+
+and hit return.
+Nothing happens, but now you are talking to the owner of the Port, rather than
+the Port itself.
+What you can type now depends on what the owner is expecting.
+There are several possible data-types in YARP, and users can easily define their
+own.
+All well-behaved data-types should follow the YARP \ref data_rep, which is
+particularly easy to enter in text-mode - it is just a list of space-separated
+numbers, strings, and nested structures.
 
 Let's see what happens - type:
+
 \verbatim
 hello yarp
 \endverbatim
-(And hit return as always).
-Nothing happens in telnet, but if you look on the terminal
-running "yarp read /read", you should see your text appear.
 
-(If you find it disconcerting that you got no acknowledgement
-in telnet, next time you connect to a port, start with
-"CONNACK foo" rather than "CONNECT foo" - this is a small
-variant of the protocol that always supplies acknowledgements).
+(And hit return as always).
+
+Nothing happens in telnet, but if you look on the terminal running
+`yarp read /read`, you should see your text appear.
+
+(If you find it disconcerting that you got no acknowledgement in telnet, next
+time you connect to a port, start with `CONNACK foo` rather than `CONNECT foo`,
+this is a small variant of the protocol that always supplies acknowledgements).
 
 Okay, we're done for now - type:
+
 \verbatim
 q
 \endverbatim
+
 (and hit return) and the connection will close.
 
-Let's try talking to another Port.  For the controlboard,
-"/motor/rpc:i" is a useful Port for sending commands and
-getting responses.  Refer back to the "yarp name list"
-output we got earlier, or type on the command line:
+Let's try talking to another Port.
+For the controlboard, `/motor/rpc:i` is a useful Port for sending commands and
+getting responses.
+Refer back to the `yarp name list` output we got earlier, or type on the command
+line:
+
 \verbatim
 yarp name query /motor/rpc:i
 \endverbatim
 
-This gives us the machine and socket port number we need to contact this
-Port, in my case machine "127.0.0.1" and socket port number "10042".  So
-do:
+This gives us the machine and socket port number we need to contact this Port,
+in my case machine `127.0.0.1` and socket port number `10042`.
+So do:
+
 \verbatim
 telnet 127.0.0.1 10042
 \endverbatim
@@ -219,25 +241,30 @@ telnet 127.0.0.1 10042
 (Replace these numbers for whatever they are on your system).
 
 Then type:
+
 \verbatim
 CONNECT bar
 \endverbatim
 
-(you can substitute "bar" with anything you like).  Hit return after
-you type this.  We get a response:
+(you can substitute `bar` with anything you like).
+Hit return after you type this.
+We get a response:
+
 \verbatim
 Welcome bar
 \endverbatim
 
 Let's send some data.  Type:
+
 \verbatim
 d
 help
 \endverbatim
 
-Some helpful YARP Port owners respond to "help" with
-a brief list of the kinds of data the expect.  In this case,
-you should see something like:
+Some helpful YARP Port owners respond to `help` with a brief list of the kinds
+of data the expect.
+In this case, you should see something like:
+
 \verbatim
 "[help]"
 "[help] [more]"
@@ -258,17 +285,19 @@ you should see something like:
 \endverbatim
 
 You'd need to consult with other tutorials to see what these do.
-Let's send a simple command to get the number of axes in the
-controlboard.  Type:
+Let's send a simple command to get the number of axes in the controlboard.
+Type:
+
 \verbatim
 d
 [get] [axes]
 \endverbatim
 
-(As a shorthand, you can omit the "[" and "]" characters and everything
-will still work).
+(As a shorthand, you can omit the "[" and "]" characters and everything will
+still work).
 
 You should see a response like:
+
 \verbatim
 [is] [axes] 5 [ok]
 \endverbatim
@@ -276,8 +305,11 @@ You should see a response like:
 Checking back, 5 is indeed the number of axes we specified that our test
 controlboard should have.
 
-If this were a real robot, we could go on to turn on power and control
-the motors.  As it is, we can do it in simulation.  Type:
+If this were a real robot, we could go on to turn on power and control the
+motors.
+As it is, we can do it in simulation.
+Type:
+
 \verbatim
 d
 [set] [poss] (10 10 -10 -10 5)
@@ -286,7 +318,8 @@ d
 \endverbatim
 
 This sets the position of the 5 motors, and then checks the position of
-the third one (index 2).  The responses are something like:
+the third one (index 2).
+The responses are something like:
 
 \verbatim
 [ok]
@@ -296,25 +329,26 @@ the third one (index 2).  The responses are something like:
 
 \section yarp_without_yarp_python_rpc Writing commands from code
 
-Here is a python program for sending a command to a YARP port and
-receiving a response.  The program does not use the YARP library (of
-course it is perfectly possible to use YARP from
-python/perl/ruby/tcl/... directly, this is just to show that you don't
-have to). First it sends a query to the name server to find the
-address of the port whose name is passed as the first argument to the
-program.  Then it sends the string specified as the second argument to
-the program to that address, and prints the response.
+Here is a python program for sending a command to a YARP port and receiving a
+response.
+The program does not use the YARP library (of course it is perfectly possible to
+use YARP from python/perl/ruby/tcl/... directly, this is just to show that you
+don't have to).
+First it sends a query to the name server to find the address of the port whose
+name is passed as the first argument to the program.
+Then it sends the string specified as the second argument to the program to that
+address, and prints the response.
 
 \include example/external/python/yarprpc.py
 
-The program assumes that the name server is running on the local
-machine, at socket port number 10000.  If not, it is best to
-add the following "find_name_server.py" module for reading the
-address of the server from YARP configuration files:
+The program assumes that the name server is running on the local machine, at
+socket port number `10000`.
+If not, it is best to add the following `find_name_server.py` module for reading
+the address of the server from YARP configuration files:
 
 \include example/external/python/find_name_server.py
 
-Here's an example of using the program assuming it is called "yarprpc.py":
+Here's an example of using the program assuming it is called `yarprpc.py`:
 
 \verbatim
 # check number of axes on simulated motor controlboard
@@ -329,31 +363,34 @@ python yarprpc.py /motor/rpc:i "[set] [pos] 0 45.0"
 \section yarp_without_yarp_listening Listening to a Port's owner
 
 So far, we have been the ones to initiate all communication.
-We send data to a Port's owner, and possibly get a reply back,
-but we are in charge.
+We send data to a Port's owner, and possibly get a reply back, but we are in
+charge.
 
-Often, the initiative should be in the other direction.  For
-example, the "yarp write /write" program takes data typed on
-the terminal and sends it out to anyone listening.  How can
-we listen to it?
+Often, the initiative should be in the other direction.
+For example, the `yarp write /write` program takes data typed on the terminal
+and sends it out to anyone listening.
+How can we listen to it?
 
-The usual answer within YARP is just to connect the "/write" Port
-to another Port /foo with the "yarp connect /write /foo".  But
-in this tutorial, we are trying to read from YARP without using
-the YARP libraries.  It would take some work to create a full Port,
-and we certainly couldn't do it with just telnet.
+The usual answer within YARP is just to connect the `/write` Port to another
+Port /foo with the `yarp connect /write /foo`.
+But in this tutorial, we are trying to read from YARP without using the YARP
+libraries.
+It would take some work to create a full Port, and we certainly couldn't do it
+with just telnet.
 
-There's an easier way.  The first step is to connect just as we
-did before.  We check where /write is with "yarp name query /write",
-for my system it is:
+There's an easier way.
+The first step is to connect just as we did before.
+We check where `/write` is with `yarp name query /write`, for my system it is:
+
 \verbatim
 registration name /write ip 127.0.0.1 port 10012 type tcp
 *** end of message
 \endverbatim
 
 This gives us the machine and socket port number we need to contact this
-Port, in my case machine "127.0.0.1" and socket port number "10012".  So
-do:
+Port, in my case machine `127.0.0.1` and socket port number `10012`.
+So do:
+
 \verbatim
 telnet 127.0.0.1 10012
 \endverbatim
@@ -361,27 +398,33 @@ telnet 127.0.0.1 10012
 (Replace these numbers for whatever they are on your system).
 
 Then type:
+
 \verbatim
 CONNECT foo
 \endverbatim
 
-(you can substitute "foo" with anything you like).  Hit return after
-you type this.  We get a response:
+(you can substitute "foo" with anything you like).
+Hit return after you type this.
+We get a response:
+
 \verbatim
 Welcome foo
 \endverbatim
 
-So far things are just the same.  Now, we don't want to send data
-to this Port's owner, we want to read it.  Just as a check, type
-something on the "yarp write /write" terminal and hit return - it
-will NOT show up on the telnet terminal.  You never receive data
-in YARP unless you are expecting it.  So let's tell the "/write"
-Port that we are expecting data.  Type:
+So far things are just the same.
+Now, we don't want to send data to this Port's owner, we want to read it.
+Just as a check, type something on the `yarp write /write` terminal and hit
+return - it will NOT show up on the telnet terminal.
+You never receive data in YARP unless you are expecting it.
+So let's tell the `/write` Port that we are expecting data.
+Type:
+
 \verbatim
 ?
 \endverbatim
 
 and hit return.  You should see something like:
+
 \verbatim
 This is a YARP port.  Here are the commands it responds to:
 *       Gives a description of this port
@@ -397,38 +440,43 @@ a       Signals the beginning of an administrative message
 ?       Gives this help
 \endverbatim
 
-Look at the listing for "r" - "Reverse connection type to be a reader".
+Look at the listing for `r` - "Reverse connection type to be a reader".
 This is what we want.  Type:
+
 \verbatim
 r
 \endverbatim
 
-and hit return.  Nothing happens.  But if you go to the "yarp write /write"
+and hit return.  Nothing happens.  But if you go to the `yarp write /write`
 terminal and type something, such as:
+
 \verbatim
 hello yarp
 \endverbatim
+
 Then on the telnet terminal you will see:
 \verbatim
 do
 hello yarp
 \endverbatim
-So we got the message.  What is "do"?  It is a variant
-of "d" that tells the listener that a reply is not expected.
+So we got the message.  What is `do`?  It is a variant
+of `d` that tells the listener that a reply is not expected.
 
 Once we convert to being a reader, there is no going back.  The only
-safe way to take control again is to cut the connection ("<control>-]
-q <return>" in telnet) and connect again.
+safe way to take control again is to cut the connection
+(`<control>-] q <return>` in telnet) and connect again.
 
-Let's try another Port, the "/motor/state:o" Port.  Make the appropriate
-telnet connection based on "yarp name query /motor/state:o", then
-type:
+Let's try another Port, the `/motor/state:o` Port.
+Make the appropriate telnet connection based on
+`yarp name query /motor/state:o`, then type:
+
 \verbatim
 CONNECT foo
 r
 \endverbatim
 
 You should see a stream of data, something like:
+
 \verbatim
 ...
 do 2654 1215723086.182938
@@ -447,30 +495,31 @@ do 2660 1215723086.307388
 10.0 10.0 -10.0 -10.0 5.0
 ....
 \endverbatim
-The line starting with "d" signals data; "do" means we're not expected
-to reply.  The "do" is followed by some numbers - this is a message
-index and timestamp, an optional part of the protocol (important for
-motor information though).  Then the actual positions of the
-motors are listed, exactly as we set them earlier.
+
+The line starting with `d` signals data; `do` means we're not expected to reply.
+The `do` is followed by some numbers - this is a message index and timestamp, an
+optional part of the protocol (important for motor information though).
+Then the actual positions of the motors are listed, exactly as we set them
+earlier.
 
 \section yarp_without_yarp_name Talking to the name server
 
-We've been using "yarp name list" or "yarp name query /PORT" to
-find out where ports are.  What if we wanted to do this step too
-from telnet or our own program?
+We've been using `yarp name list` or `yarp name query /PORT` to find out where
+ports are.
+What if we wanted to do this step too from telnet or our own program?
 
-No problem.  All we need is the address of the name server Port (which
-is just like any other Port), and then we can get all other addresses
-from it.
+No problem.
+All we need is the address of the name server Port (which is just like any other
+Port), and then we can get all other addresses from it.
 
-By default, the YARP name server runs on socket port number 10000,
-so then you just need to find what machine it is running on.  You
-could choose to always run it on a standard machine at your lab.
+By default, the YARP name server runs on socket port number `10000`, so then you
+just need to find what machine it is running on.
+You could choose to always run it on a standard machine at your lab.
 
-Suppose we know the server is on "127.0.0.1" with socket port number
-10000.  Now if we want to find out the address of the "/read" Port,
-here is how we do it.  Connect to the name server with telnet, and
-type:
+Suppose we know the server is on `127.0.0.1` with socket port number `10000`.
+Now if we want to find out the address of the `/read` Port, here is how we do
+it.
+Connect to the name server with telnet, and type:
 
 \verbatim
 CONNECT foo
@@ -499,7 +548,7 @@ Here are some ways to use the name server:
 *** end of message
 \endverbatim
 
-In the list above, we can see "query $portname".  Sounds good, let's try it.
+In the list above, we can see `query $portname`.  Sounds good, let's try it.
 Type:
 
 \verbatim
@@ -508,24 +557,25 @@ query /read
 \endverbatim
 
 and the response should be something like:
+
 \verbatim
 registration name /read ip 127.0.0.1 port 10002 type tcp
 *** end of message
 \endverbatim
 
-So we have our replacement for the "yarp name query /PORT" command.
+So we have our replacement for the `yarp name query /PORT` command.
+
 
 \section yarp_without_yarp_binary Binary messages
 
-Text-mode communication is fine for small messages.  It isn't very
-useful for transmitting images or sound.  For that, we need a binary
-protocol; at this point there's no avoiding reading hairy documentation
-like \ref yarp_protocol and writing some code.
+Text-mode communication is fine for small messages.
+It isn't very useful for transmitting images or sound.
+For that, we need a binary protocol;
+at this point there's no avoiding reading hairy documentation like
+\ref yarp_protocol and writing some code.
 
-There is sample C code for reading binary data (images
-in particular) in the directory example/external/c - there are also
-examples in C that translate the python examples above.
+There is sample C code for reading binary data (images in particular) in the
+directory `example/external/c` - there are also examples in C that translate the
+python examples above.
 
- *
- */
-
+*/

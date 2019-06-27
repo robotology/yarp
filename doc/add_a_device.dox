@@ -1,7 +1,7 @@
 /**
- * @page add_a_device How to add a device to YARP
+\page add_a_device How to add a device to YARP
 
-\author Paul Fitzpatrick
+\tableofcontents
 
 In YARP, a device driver is a class that implements one or more
 \ref dev_iface "interfaces".
@@ -118,4 +118,4 @@ So you want to add a device to YARP?
 \li Now rebuild the YARP library.
     You should now be able to configure it to link your device.
 
-**/
+*/

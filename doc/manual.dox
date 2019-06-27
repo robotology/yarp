@@ -1,5 +1,9 @@
 /**
-@page manual User Manual
+\page manual User Manual
+
+\tableofcontents
+
+\section manual_intro YARP User Manual
 
 This page mirrors the order and content of material in
 our printable user manual.
@@ -25,4 +29,4 @@ our printable user manual.
 \li \ref dev_examples
 \li \ref yarpdev
 
- */
+*/

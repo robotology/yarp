@@ -1,7 +1,7 @@
 /**
- * @page carrier_expert Creating carriers for new kinds of connections
+\page carrier_expert Creating carriers for new kinds of connections
 
-\author Paul Fitzpatrick
+\tableofcontents
 
 In YARP, ports talk to each other via connections.  Connection data is
 carried by TCP by default, but this can be switched very easily to other
@@ -521,25 +521,25 @@ typing it on another (see example/carrier/carrier_human.cpp).
       edge [fontname=Helvetica, fontsize=10, arrowhead="open", style="solid"];
 
       subgraph cluster_carrier_expert_figure1_app1 {
-		label = "Test Server";
-		color = "blue"; style = "dashed";
+        label = "Test Server";
+        color = "blue"; style = "dashed";
 
-		port1 [ label="Server Port", shape=ellipse ];
-	}
+        port1 [ label="Server Port", shape=ellipse ];
+    }
 
       subgraph cluster_carrier_expert_figure1_app2 {
-		label = "Test Client";
-		color = "blue"; style = "dashed";
+        label = "Test Client";
+        color = "blue"; style = "dashed";
 
-		port2 [ label="Client Port", shape=ellipse ];
-	}
+        port2 [ label="Client Port", shape=ellipse ];
+    }
 
       port1 -> port2 [label = "Human Carrier"];
 
       fontname=Helvetica;
       fontsize=10;
       label = "Human-carrier connection";
-		color = "blue"; style = "dashed";
+        color = "blue"; style = "dashed";
   }
   \enddot
 
@@ -588,6 +588,4 @@ instructions to the console for a human to follow.  If we follow
 those instructions exactly, and in order, the program will
 successfully complete just as for any other carrier.
 
-
 */
-

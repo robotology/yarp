@@ -1,5 +1,5 @@
 /**
- * @page yarp_with_ros_parameters Talking to the ROS parameter server
+\page yarp_with_ros_parameters Talking to the ROS parameter server
 
 
 YARP has no special support for the ROS parameter server, but can

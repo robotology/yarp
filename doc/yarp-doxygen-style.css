@@ -174,14 +174,61 @@ p.definition {
 
 /* "<code>" elements (usually the "#include <...>" in the documentation */
 code {
-    border: 1px solid #C4CFE5;
-    background-color: #FBFCFD;
+    border: 1px solid #23749c;
+    color: #f6fbfd;
+    background-color: #19526e;
     padding: 1px 3px;
-    line-height: 160%;
-    font-size: 85%;
+    line-height: 1.0;
+    font-size: 90%;
+    border-radius: 4px;
+}
+code a.el {
+    color: #d6dbdd;
+}
+
+code a.el:visited {
+    color: #d6dbdd;
+}
+
+/* /verbatim elements */
+pre.fragment {
+    border: 1px solid #23749c;
+    color: #f6fbfd;
+    background-color: #19526e;
+    line-height: 1.0;
+    font-size: 90%;
     border-radius: 4px;
 }
 
-pre.fragment {
+/* /code elements */
+div.fragment {
+    padding: 4px 6px;
+    margin: 4px 8px 4px 2px;
+    border: 1px solid #23749c;
+/*    color: #f6fbfd;*/
+/*    background-color: #19526e;*/
+    line-height: 1.0;
+    font-size: 90%;
     border-radius: 4px;
+}
+
+/* Tweak syntax highlighting in code elements */
+span.stringliteral {
+    color: #ff2080;
+}
+span.charliteral {
+    color: #ff8080
+}
+
+/* Line numbers in /code{lineno} blocks */
+span.lineno {
+    color: #1d6082;
+    background-color: #f6fbfd;
+    border-right-width: 1px;
+    border-right-color: #23749c;
+}
+
+span.lineno a {
+    color: #0d5072;
+    background-color: #e6ebed;
 }

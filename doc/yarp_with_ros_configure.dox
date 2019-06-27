@@ -1,12 +1,12 @@
 /**
- * @page yarp_with_ros_configure Configure YARP to use ROS
+\page yarp_with_ros_configure Configure YARP to use ROS
 
 Ros support is enabled by default, but it can be turned off by disabling the
 following options:
 
-\li ENABLE_yarpcar_tcpros_carrier (the usual protocol for topics)
-\li ENABLE_yarpcar_rossrv_carrier (tcpros with minor tweaks for services)
-\li ENABLE_yarpcar_xmlrpc_carrier (used by ros nameserver and node interfaces)
+\li `ENABLE_yarpcar_tcpros_carrier` (the usual protocol for topics)
+\li `ENABLE_yarpcar_rossrv_carrier` (tcpros with minor tweaks for services)
+\li `ENABLE_yarpcar_xmlrpc_carrier` (used by ros nameserver and node interfaces)
 
 YARP does not link to any parts of the ROS codebase, so don't
 worry about how to tell YARP where to find the ROS libraries,

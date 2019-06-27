@@ -1,7 +1,7 @@
 /**
-  @page yarp_pointcloud YARP PointCloud
-  
-  \author Nicolo' Genesio
+\page yarp_pointcloud YARP PointCloud
+
+\tableofcontents
 
 This tutorial covers how to use the template class yarp::sig::PointCloud with pcl::PointCloud and stand alone.
 
@@ -26,7 +26,7 @@ In YARP we support these point types:
 - yarp::sig::DataXYZNormal
 - yarp::sig::DataXYZNormalRGBA
 
-These structures have been created  to be compatible with the 
+These structures have been created  to be compatible with the
 PCL's ones.
 
 \section read_and_write_point_cloud Write and read PointCloud to/from ports
@@ -34,7 +34,7 @@ PCL's ones.
 This code snippet shows how to send and then receive a yarp::sig::PointCloud
 through the YARP ports.
 
-\code {.cpp}
+~~~{.cpp}
         yarp::os::BufferedPort< yarp::sig::PointCloud<yarp::sig::DataXYZRGBA> > outPort;
         yarp::os::Port inPort;
         // Open the ports
@@ -65,7 +65,7 @@ through the YARP ports.
         // read the point cloud
         yarp::sig::PointCloud<yarp::sig::DataXYZRGBA> inCloud;
         inPort.read(inCloud);
-\endcode
+~~~
 **Note:** in this example, the type of the `testPC` and `inCloud` is the same
 but it is **NOT** mandatory.
 
@@ -81,15 +81,15 @@ want to read through a `yarp::sig::PointCloud<yarp::sig::DataXYZNormal>`:
 
 \section general_usage_point_cloud PointCloud initialization
 
-The flexibility on types has been implemented also for what concerns the 
+The flexibility on types has been implemented also for what concerns the
 initialization of the point cloud (**copy constructor**
 and **assignment operator**):
 
-\code {.cpp}
+~~~{.cpp}
         yarp::sig::PointCloud<yarp::sig::DataXYZNormalRGBA> pc1;
         yarp::sig::PointCloud<yarp::sig::DataXYZNormal> pc2(pc1);
         yarp::sig::PointCloud<yarp::sig::DataXYZNormalRGBA> pc3 = pc2;
-\endcode
+~~~
 
 In this case `pc3` will have only the `XYZ` and `Normal` values of `pc1` because
 the `RGBA` values have been lost in the construction of `pc2` that not contains
@@ -115,7 +115,7 @@ colored one. On the other hand use the intrinsic parameters of the RGB camera if
 
 Here an example of usage:
 
-\code {.cpp}
+~~~{.cpp}
 yarp::sig::ImageOf<yarp::sig::PixelFloat> depth;
 yarp::sig::ImageOf<yarp::sig::PixelRgb> color;
 yarp::os::Property propIntrinsic;
@@ -166,18 +166,18 @@ yarp::sig::IntrinsicParams intrinsics(propIntrinsics);
 
 yarp::sig::PointCloud<yarp::sig::DataXYZRGBA> pc = yarp::sig::utils::depthRGBToPC<yarp::sig::DataXYZRGBA, yarp::sig::PixelRgb>(depth, color, intrinsics);
 
-\endcode
+~~~
 
 Or:
 
-\code {.cpp}
+~~~{.cpp}
 yarp::sig::PointCloud<yarp::sig::DataXYZ> pc = yarp::sig::utils::depthToPC(depth, intrinsics);
-\endcode
+~~~
 
 
 \section pcl_compatibility PCL compatibility
 
-The yarp::sig::PointCloud class has been implemented to be compatible with 
+The yarp::sig::PointCloud class has been implemented to be compatible with
 Point Cloud Library (PCL).
 
 `libYARP_pcl` makes yarp::sig::PointCloud compatible with PCL, and it is
@@ -186,7 +186,7 @@ compiled if PCL is found during the `YARP` configuration.
 This library has two methods to transform between the two point clouds `toPcl<T,T1>(...)` and `fromPcl<T,T1>(...)`
 that can be used as follow
 
-\code {.cpp}
+~~~{.cpp}
     // Include the compatibility library
     #include <yarp/pcl/Pcl.h>
 
@@ -207,7 +207,7 @@ that can be used as follow
     // YARP -> PCL
     pcl::PointCloud<pcl::PointXYZRGBA> cloud2;
     yarp::pcl::toPCL<yarp::sig::DataXYZRGBA, pcl::PointXYZRGBA>(yarpCloud, cloud2);
-\endcode
+~~~
 
 Note that these conversions (PCL -> YARP, YARP -> PCL) are made through a **copy**.
 
@@ -216,7 +216,7 @@ Note that these conversions (PCL -> YARP, YARP -> PCL) are made through a **copy
 The `YARP_pcl` library has also methods to save/load yarp point clouds to PCD files. These functions
 `savePCD<T,T1>(...)` and `loadPCD<T,T1>(...)` can be used as follows:
 
-\code {.cpp}
+~~~{.cpp}
     yarp::sig::PointCloud<yarp::sig::DataXYZRGBA> cloud1;
     ...
     // save point cloud to file
@@ -226,7 +226,7 @@ The `YARP_pcl` library has also methods to save/load yarp point clouds to PCD fi
     // load from file
     yarp::sig::PointCloud<yarp::sig::XYZRGBADat> cloud2;
     result = yarp::pcl::loadPCD< pcl::PointXYZRGBA, yarp::sig::DataXYZRGBA >(filename, cloud2);
-\endcode
+~~~
 
 Note that these functions implicitly convert to and from PCL types.
 

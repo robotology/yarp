@@ -1,7 +1,7 @@
 /**
- * @page port_expert Port Power, Going Further with Ports
+\page port_expert Port Power, Going Further with Ports
 
-\author Paul Fitzpatrick
+\tableofcontents
 
 This tutorial builds on the material in \ref note_ports, and takes
 a deeper look at what ports can do for you.
@@ -478,7 +478,4 @@ format to be sent as plain text.
 There is experimental support for http, as a way to browse
 port information from a browser.
 
-
-
- *
- */
+*/

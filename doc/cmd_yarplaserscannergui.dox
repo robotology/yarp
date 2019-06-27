@@ -4,35 +4,33 @@
 \ingroup yarp_guis
 \ingroup yarp_tools
 
+\tableofcontents
+
 A simple GUI to display the distance measurements of a 2D laser scanner.
 
-\section intro_sec Description
+\section yarplaserscannergui_intro Description
 A simple GUI to display the distance measurements of a 2D laser scanner.
 
-\section lib_sec Libraries
+\section yarplaserscannergui_lib Libraries
 - YARP libraries.
 - OpenCV libraries.
 
-\section parameters_sec Parameters
+\section yarplaserscannergui_parameters Parameters
 None.
 
-\section portsa_sec Ports Accessed
+\section yarplaserscannergui_portsa Ports Accessed
 None.
 
-\section portsc_sec Ports Created
+\section yarplaserscannergui_portsc Ports Created
 The module creates the port /laserScannerGui:i used to receive the laser data.
 
-\section in_files_sec Input Data Files
+\section yarplaserscannergui_in_files Input Data Files
 None.
 
-\section out_data_sec Output Data Files
+\section yarplaserscannergui_out_data Output Data Files
 None.
 
-\section conf_file_sec Configuration Files
+\section yarplaserscannergui_conf_file Configuration Files
 None.
 
-\section tested_os_sec Tested OS
-Windows, Linux
-
-\author Marco Randazzo
 */

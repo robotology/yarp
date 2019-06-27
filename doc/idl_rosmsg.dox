@@ -1,9 +1,11 @@
 /**
- * @page idl_rosmsg ROS message types
- *
+\page idl_rosmsg ROS message types
+
+\tableofcontents
+
+\section idl_rosmsg_tutorials `yarpidl_rosmsg` tutorials
 
 \li \subpage rostypes_tutorial_portable
 \li \subpage rostypes_tutorial_continued
 
- *
- */
+*/

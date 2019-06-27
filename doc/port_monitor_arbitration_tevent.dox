@@ -1,0 +1,134 @@
+/**
+\page arbitration_tevent An example of using port arbitrator with time events
+
+\tableofcontents
+
+\section arbitration_tevent_desc Description
+This example demonstrates how to use port monitor to coordinate different modules by arbitrating their connections in the input port.  Each port monitor can be set with a selection rule (constraint). The rule is simply written in first order logic (boolean expression) based on some symbolic name. We call these symbols as events. Port monitors from peer connections (the connections to the same input port) can set (add) or unset (remove) events in a shared event record. If an event is set, it has a true value in the corresponding boolean expression; otherwise it is false. When data arrives to the port from a connection, the corresponding port monitor evaluate the boolean expression and if it is true (the constraint is satisfied), the data can be delivered to the port; otherwise it is discarded.
+
+A port monitor can set the selection rule (for its own connection) using `PortMonitor.setConstraint()'.
+For example:
+
+\verbatim
+    PortMonitor.setConstraint("not e_ball")
+\endverbatim
+
+Normally events have infinite life time. This means that they remain valid in the container until they are explicitly removed by the monitor object. An event can also have a specific life time. A time event will be automatically removed from the container when its life time is over. For example, the following time event will be expired after 500ms:
+
+\verbatim
+    PortMonitor.setEvent("e_ball", 0.5)
+\endverbatim
+
+\Note The following keywords are reserved and cannot be used for event's name:
+\verbatim
+    { true, false, not, and, or }
+\endverbatim
+
+
+This simple example shows the arbitration of two different connections to the same port of "yarpview" using Port Monitor objects and time events.
+
+\image html arbitration_tevent.png ""
+
+In this example we want to prioritize the connection "/Ball/grabber" over '/Line/grabber' so when it is activated, it can inhibits the connection '/Line/grabber'. A port monitor is attached to the "/Ball/grabber" which alternatively activates and deactivates it every 5 seconds. When "/Ball/grabber" is active, its data can be delivered to the "yarpview". To resolve conflicting with the image data coming from '/Line/grabber', it also continuously sets a time events (i.e., 'e_ball') which is used as the constraint for not selecting '/Line/grabber'. When "/Ball/grabber" is not active, the time events will be expired and '/Line/grabber' gets the chance to deliver its data to the "yarpview". As the result, "yarpview" switches between different images coming from "/Ball/grabber" and "/Line/grabber" periodically.
+
+
+\section arbitration_tevent_req Requirements
+\li Enable and compile portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON in YARP cmake).
+
+\li Compile Yarp with Lua binding support (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages").
+
+\li Set LUA_CPATH to include Yarp-Lua binding library  (e.g., export LUA_CPATH=";;;$YARP_ROOT/build/lib/lua/?.so")
+
+
+\section arbitration_tevent_running Running the example
+
+\li Open a terminal and run yarpserver
+\verbatim
+   $ yarpserver
+\endverbatim
+
+\li Open another terminal (lets call this the receiver terminal) )and change to the 'image_modification' directory and run the application using yarpmanager:
+\verbatim
+   $ cd $YARP_ROOT/example/portmonitor/arbitration_tevent
+   $ yarpmanager-console --application TestArbitratorImage.xml
+\endverbatim
+
+
+\li run the modules and connect the ports
+\verbatim
+   >> run
+   >> connect
+\endverbatim
+
+\li To stop the application, in the yarpmanager's console, type:
+\verbatim
+    >> stop
+    >> exit
+\endverbatim
+
+\section arbitration_tevent_scripts Scripts
+
+\subsection arbitration_tevent_ball_monitor ball_monitor.lua
+
+~~~{.lua}
+-- loading lua-yarp binding library
+require("yarp")
+
+shouldAccept = true
+prevTime = yarp.Time_now()
+
+--
+-- create is called when the port monitor is created
+-- @return Boolean
+--
+PortMonitor.create = function()
+    -- set the constraint here
+    PortMonitor.setConstraint("true")
+    return true;
+end
+
+--
+-- accept is called when the port receives new data
+-- @param thing The Things abstract data type
+-- @return Boolean
+-- if false is returned, the data will be ignored
+-- and update() will never be called
+PortMonitor.accept = function(thing)
+
+    if (yarp.Time_now() - prevTime) > 5.0 then
+        if shouldAccept == true then
+            print('Ball monitor: switching off!')
+            shouldAccept = false
+        else
+            print('Ball monitor: switching on!')
+            shouldAccept = true;
+        end
+        prevTime = yarp.Time_now()
+    end
+
+    if shouldAccept == true then
+        PortMonitor.setEvent("e_ball", 0.5)     -- the event will be expired after 500ms
+        return true
+    end
+    return false
+end
+~~~
+
+\subsection arbitration_tevent_line_monitor line_monitor.lua
+
+~~~{.lua}
+-- loading lua-yarp binding library
+require("yarp")
+
+--
+-- create is called when the port monitor is created
+-- @return Boolean
+--
+PortMonitor.create = function()
+    -- set the constraint here
+    PortMonitor.setConstraint("not e_ball")
+    return true;
+end
+~~~
+
+*/

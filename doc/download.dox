@@ -1,0 +1,105 @@
+/**
+\page download Download YARP
+
+\tableofcontents
+
+Latest YARP release is:
+
+ + \ref v3_2_0
+
+\section download_source_code Source Code
+
+Latest release can be downloaded from here:
+
+ + https://github.com/robotology/yarp/releases/latest
+
+\section download_binary Binary releases
+
+\subsection download_windows Windows
+
+\remark Important: to develop code using precompiled binaries packages have to
+        match the compiler you use, make sure you download and install the
+        correct version (i.e. MSVC 12 for Visual Studio 2013, etc..).
+        If in doubt about the version number of your copy of Visual Studio, find
+        the internal version number shown for it in this
+        [version history table](http://en.wikipedia.org/wiki/Microsoft_Visual_Studio#History).
+
+__Installers__:
+
+|       |             MSVC 2015/2017        |
+|-------|:---------------------------------:|
+| Win32 | [yarp_3.1.0_v14_x86_1.exe]        |
+| x64   | [yarp_3.1.0_v14_x86_amd64_1.exe]  |
+
+[yarp_3.1.0_v14_x86_1.exe]: https://github.com/robotology/yarp/releases/download/v3.1.0/yarp_3.1.0_v14_x86_1.exe
+[yarp_3.1.0_v14_x86_amd64_1.exe]: https://github.com/robotology/yarp/releases/download/v3.1.0/yarp_3.1.0_v14_x86_amd64_1.exe
+
+
+\subsection download_linux Linux (Debian/Ubuntu)
+
+The easiest way to install YARP from binaries is through aptitude as explained in \ref install_on_linux.
+
+Individual .deb packages can also be downloaded from [GitHub](https://github.com/robotology/yarp/releases)
+
+
+\subsection download_macOS macOS
+
+The easiest way to install YARP from binaries is through brew as explained in \ref install_yarp_mac.
+
+Brew bottles can also be downloaded from [GitHub](https://github.com/robotology/yarp/releases)
+
+
+\section download_previous_releases Previous releases
+
+Previous versions are hosted on
+
+ + [GitHub](https://github.com/robotology/yarp/releases)
+ + [SourceForge](https://sourceforge.net/projects/yarp0/files/yarp2/) (2.3.63 and older)
+
+__Previous releases version and dates__:
+
+ + \ref v3_1_2
+ + \ref v3_1_1
+ + \ref v3_1_0
+ + \ref v3_0_1
+ + \ref v3_0_0
+ + \ref v2_3_72_1
+ + \ref v2_3_72
+ + \ref v2_3_70_2
+ + \ref v2_3_70_1
+ + \ref v2_3_70
+ + \ref v2_3_68_1
+ + \ref v2_3_68
+ + \ref v2_3_66_2
+ + \ref v2_3_66_1
+ + \ref v2_3_66
+ + \ref v2_3_65
+ + \ref v2_3_64
+ + \ref v2_3_63
+ + \ref v2_3_62
+ + \ref v2_3_61
+ + \ref v2_3_60
+ + \ref v2_3_22
+ + \ref v2_3_21
+ + \ref v2_3_20_1
+ + \ref v2_3_20
+ + \ref v2_3_19
+ + \ref v2_3_15
+ + \ref v2_3_14
+ + \ref v2_3_12
+ + \ref v2_3_10
+ + \ref v2_3_9
+ + \ref v2_3_8
+ + \ref v2_3_7
+ + \ref v2_3_6
+ + \ref v2_3_5
+ + \ref v2_3_4
+ + \ref v2_3_3
+ + \ref v2_3_2
+ + \ref v2_3_1
+ + \ref v2_3_0
+ + \ref v2_2_7
+ + \ref v2_2_6
+ + \ref v2_2_5
+ + \ref v2_2_2
+*/

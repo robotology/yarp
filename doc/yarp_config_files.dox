@@ -1,30 +1,16 @@
 /**
- * @page yarp_config_files YARP config files
+\page yarp_config_files YARP config files
 
-\author Paul Fitzpatrick
+\tableofcontents
 
-This tutorial covers how to write and read configuration files
-in YARP's native format.  In brief, YARP config files look
-a lot like
+This tutorial covers how to write and read configuration files in YARP's native
+format.
+In brief, YARP config files look a lot like
 <a href="http://en.wikipedia.org/wiki/INI_file">INI files</a>
 but are actually closer in spirit to
 <a href="http://en.wikipedia.org/wiki/S-expression">S-expressions</a>.
-YARP config files translate into yarp::os::Property objects
-(see e.g. the yarp::os::Property::fromConfigFile command).
-
- - \ref yarp_config_file_basics
- - \ref yarp_config_file_reading
- - \ref yarp_config_file_add_section
- - \ref yarp_config_file_nesting
- - \ref yarp_config_file_lists
- - \ref yarp_config_file_includes
- - \ref yarp_config_file_comments
- - \ref yarp_config_file_quoting
- - \ref yarp_config_file_continue
- - \ref yarp_config_list_syntax
- - \ref yarp_config_file_environment
- - \ref yarp_config_file_equals
- - \ref yarp_config_command
+YARP config files translate into `yarp::os::Property` objects
+(see e.g. the `yarp::os::Property::fromConfigFile` command).
 
 \section yarp_config_file_basics A minimal config file
 
@@ -81,7 +67,7 @@ prop.find("width").asInt32()  // gives the int 10
 prop.find("height").asInt32() // gives the int 15
 \endcode
 
-\section yarp_config_file_add_section A config file with sections
+\section yarp_config_file_add A config file with sections
 
 Configuration files often need to have nesting, with
 values organized into sections.
@@ -379,6 +365,4 @@ use a nested notation in the command line, and call the program as:
 --from config.ini --SIZE::width 200
 \endverbatim
 
- *
- */
-
+*/

@@ -4,10 +4,9 @@
 \ingroup yarp_guis
 \ingroup yarp_tools
 
-\author Daniele E. Domenichelli
-\author The original Qt version of portScope was written by Francesco Nori.
+\tableofcontents
 
-\section intro_sec Description
+\section yarpscope_intro Description
 This simple graphical user interface allows one to visualize on a plot the
 content of a YARP port. The input port is assumed to contain a vector of
 numbers.
@@ -16,7 +15,7 @@ numbers.
  - Each plot can contain one or more graphs.
  - Each graph displays one pair [remote port, index].
 
-\section usage_sec How to initialize the yarpscope
+\section yarpscope_usage How to initialize the yarpscope
 
 yarpscope supports two different modes: simple mode (one remote, one graph) and
 XML mode (multiple remotes, multiple graph).
@@ -257,4 +256,5 @@ currently unused].
 [optional, default "lines"]
 - \a size depending on \a type, is the thickness of each point, of the line or
 of the bar [optional, default 1].
+
 */

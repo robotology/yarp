@@ -1,60 +1,75 @@
 /**
-*
-@page thrift_tutorial_portable Thrift IDL in YARP: writing a portable
+\page thrift_tutorial_portable Thrift IDL in YARP: writing a portable
 
-\author Lorenzo Natale
+\tableofcontents
 
-YARP built-in types can be sent through Ports. Sometimes you need to send custom datatypes, in YARP objects that can be sent through ports are called \em portable objects. \ref port_expert shows how you can manually implement a portable object. This tutorial shows how you can automate this process using the Thrift compiler.
+YARP built-in types can be sent through Ports. Sometimes you need to send custom
+datatypes, in YARP objects that can be sent through ports are called `Portable`
+objects.
+\ref port_expert shows how you can manually implement a portable object.
+This tutorial shows how you can automate this process using the Thrift compiler.
 
-<b>This tutorial requires the yarpidl_thrift utility. If it is missing, please upgrade YARP.</b>
+\section thrift_tutorial_portable_intro Introduction
 
-\section sec_intro Introduction
-
-Suppose we have two modules that wish to share a \em SharedData \m struct that contains a string and a vector. Normally you would define the data in a C++ header file and write serialization/deserialization methods to allow it to be sent and received to/from a port (this process is called marshalling/demarshalling). This process requires some YARP specific expertise, is error-prone and tedious. The idea here is that instead of manually writing the class you define the structure using an intermediate language (the Thrift IDL language), then you ask a compiler (the yarpidl_thrift compiler) to generate the class for you, including all the required code.
+Suppose we have two modules that wish to share a `SharedData` struct that
+contains a string and a vector.
+Normally you would define the data in a C++ header file and write
+serialization/deserialization methods to allow it to be sent and received
+to/from a port (this process is called marshalling/demarshalling).
+This process requires some YARP specific expertise, is error-prone and tedious.
+The idea here is that instead of manually writing the class you define the
+structure using an intermediate language (the Thrift IDL language), then you ask
+a compiler (the yarpidl_thrift compiler) to generate the class for you,
+including all the required code.
 
 Let's see how to do it.
 
-\section sec_thirft Thrift definition for SharedData
+\section thrift_tutorial_portable_thirft Thrift definition for `SharedData`
 
-We start by defining our \em ShareData structure. Open a text editor and type the following:
+We start by defining our `ShareData` structure. Open a text editor and type
+the following:
 
-\code
-
+~~~{.thrift}
 struct SharedData {
   1: string text;
   2: list<double> content;
 }
+~~~
 
-\endcode
+name this file `SharedData.thrift` save and close it.
 
-name this file \em SharedData.thrift save and close it.
+In thrift's syntax this specifies that `SharedData` is a struct that contains a
+\em text field of type \em string and a \em content field which type is a
+\em vector of floats.
+Thrift in fact supports much more options, see \ref thrift_tutorial.
 
-In thrift's syntax this specifies that SharedData is a struct that contains a \em text field of type \em string and a \em content field which type is a \em vector of floats. Thrift in fact supports much more options, see \ref thrift_tutorial.
-
-Now the \em yarpidl_thrift compiler can be invoked to generate both SharedData.h and SharedData.cpp.
+Now the `yarpidl_thrift` compiler can be invoked to generate both `SharedData.h`
+and `SharedData.cpp`.
 
 Type:
 
-\code
-
+~~~{.sh}
 yarpidl_thrift --gen yarp --out ./ SharedData.thrift
+~~~
 
-\endcode
+This will generate two files: `SharedData.h` and `SharedData.cpp`.
 
-This will generate two files: \em SharedData.h \em and \em SharedData.cpp \em.
-
-In case you are interested you can inspect them to see that they define a C++ class with some extra code. The good thing is that you don't actually need to bother about the details, but you can readily use the class in your code.
+In case you are interested you can inspect them to see that they define a C++
+class with some extra code.
+The good thing is that you don't actually need to bother about the details, but
+you can readily use the class in your code.
 
 Now we can use these files in a YARP program.
 
-\section sec-code Code
 
-This code is straightforward. We define a simple sender executable that open a port and periodically write a SharedData object.
+\section thrift_tutorial_portable_code Code
 
-As usual we start with the CMake code, write your CMakeLists.txt:
+This code is straightforward. We define a simple sender executable that open a
+port and periodically write a `SharedData` object.
 
-\code
+As usual we start with the CMake code, write your `CMakeLists.txt`:
 
+~~~{.cmake}
 cmake_minimum_required(VERSION 3.5)
 
 find_package(YARP REQUIRED)
@@ -63,14 +78,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(sender sender.cpp SharedData.cpp)
 target_link_libraries(sender ${YARP_LIBRARIES})
+~~~
 
-\endcode
+Now we write the code for the sender in `sender.cpp`:
 
-Now we write the code for the sender in \em sender.cpp:
-
-\code
-
-
+~~~{.cpp}
 #include "SharedData.h"
 #include <iostream>
 #include <yarp/os/Network.h>
@@ -111,41 +123,44 @@ int main()
 
    return 0;
 }
-
-\endcode
+~~~
 
 Now compile the code
-\code
+
+~~~{.sh}
 mkdir build
 cd build
 cmake ../
 make
 
 ./sender
-\endcode
+~~~
 
-Now you can run yarp read on a separate console to inspect the content that is being transmitted on the port, the output should be something like this:
-\code
-~$ yarp read ... /sender
+Now you can run yarp read on a separate console to inspect the content that is
+being transmitted on the port, the output should be something like this:
+
+~~~{.sh}
+yarp read ... /sender
+~~~
+\verbatim
 yarp: Port /tmp/port/1 active at tcp://127.0.0.1:10003
 yarp: Receiving input from /sender to /tmp/port/1 using tcp
 "Hello from sender" (0.0 0.0)
 "Hello from sender" (0.0 0.0)
-\endcode
+\endverbatim
 
 It is simple to write a receiver:
 
-Append the following to the CMakeLists.txt
+Append the following to the `CMakeLists.txt`
 
-\code
+~~~{.cmake}
 add_executable(receiver receiver.cpp SharedData.cpp)
 target_link_libraries(receiver ${YARP_LIBRARIES})
-\endcode
+~~~
 
-This is the receiver code in \em receiver.cpp:
+This is the receiver code in `receiver.cpp`:
 
-\code
-
+~~~{.cpp}
 #include <SharedData.h>
 #include <iostream>
 #include <yarp/os/Network.h>
@@ -177,51 +192,68 @@ int main()
 
    return 0;
 }
+~~~
 
-\endcode
 
-\section sec_using-cmake Using CMake
+\section thrift_tutorial_portable_using_cmake Using CMake
 
-YARP provides CMake supports to automate the invocation of yarpidl_thrift. This is convenient in large projects when we generate several files and we do not want to keep track of all of them individually.
+YARP provides CMake supports to automate the invocation of `yarpidl_thrift`.
+This is convenient in large projects when we generate several files and we do
+not want to keep track of all of them individually.
 
-We can use `yarp_idl_to_dir` to tell CMake to parse SharedData.thrift with the thrift compiler. All generated files will be placed in separate \em include and \em src directories.
+We can use `yarp_idl_to_dir` to tell CMake to parse `SharedData.thrift` with the
+thrift compiler.
+All generated files will be placed in separate `include` and `src` directories.
 
-\code
-
+~~~{.cmake}
 # compile definition file to generate source code into the desired directory
 set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")
-yarp_idl_to_dir(SharedData.thrift ${generated_libs_dir} sources headers include_dirs)
+yarp_idl_to_dir(INPUT_FILES SharedData.thrift
+                OUTPUT_DIR ${generated_libs_dir}
+                SOURCES_VAR sources
+                HEADERS_VAR headers
+                INCLUDE_DIRS_VAR include_dirs)
 
 include_directories(${include_dirs})
 
 # create the sender
 add_executable(sender sender.cpp ${headers} ${sources})
-TARGET_LINK_LIBRARIES(sender ${YARP_LIBRARIES})
+target_link_libraries(sender ${YARP_LIBRARIES})
 
 # create the receiver
 add_executable(receiver receiver.cpp ${headers} ${sources})
-TARGET_LINK_LIBRARIES(receiver ${YARP_LIBRARIES})
+target_link_libraries(receiver ${YARP_LIBRARIES})
+~~~
 
-\endcode
+Now you just have to execute CMake.
+The variable `ALLOW_IDL_GENERATION` controls if the thrift compiler is executed
+to generate `SharedData.h/cpp` or not.
+It will be off by default if there is already generated code in the desired
+directory, you'll need to turn it on to overwrite that.
 
-Now you just have to execute CMake. The variable ALLOW_IDL_GENERATION controls if the thrift compiler is executed to generate SharedData.h/cpp or not. It will be off by default if there is already generated code in the desired directory, you'll need to turn it on to overwrite that.
-
-\code
+~~~{.sh}
 cd build
 cmake ../ -DALLOW_IDL_GENERATION=TRUE
-\endcode
+~~~
 
-The code generation step is required only when \em SharedData.thrift is modified.
+The code generation step is required only when `SharedData.thrift` is modified.
 
-\section sec-realted-tutorials Related Tutorials
+
+\section thrift_tutorial_portable_related_tutorials Related Tutorials
 
 The Thrift IDL also allows defining modules interfaces, this is explained here:
 \li \ref thrift_tutorial_simple
 \li \ref thrift_tutorial
 
-YARP supports ROS types. An alternative method to define portable objects in YARP is to use the ROS syntax (i.e. through a .msg file). The disadvantage of this approach is that you cannot use native YARP types, but the advantage is that your messages will be compatible with ROS and readable from a topic. This tutorial shows how you do this:
+YARP supports ROS types.
+An alternative method to define portable objects in YARP is to use the ROS
+syntax (i.e. through a .msg file).
+The disadvantage of this approach is that you cannot use native YARP types, but
+the advantage is that your messages will be compatible with ROS and readable
+from a topic. This tutorial shows how you do this:
+
 \li \ref rostypes_tutorial_portable
 
-Code for this tutorial can be found here: example/idl/portable
-*
-**/
+Code for this tutorial can be found here: `example/idl/portable`
+
+*/

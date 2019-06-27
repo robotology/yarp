@@ -4,7 +4,7 @@
 \ingroup yarp_guis
 \ingroup yarp_tools
 
-\author Ali Paikan
+\tableofcontents
 
 The command-line utility "yarpmanager-console" and its graphical
 companions "yarpmanager"  are tools for running and managing multiple
@@ -12,19 +12,7 @@ programs on a set of machines.
 
 \image html ymgui.png "yarpmanager-console and yarpmanager"
 
-\section Contents
-\li \ref features
-\li \ref concepts
-\li \ref configuration
-\li \ref examples
-\li \ref application
-\li \ref resource
-\li \ref module
-\li \ref create
-\li \ref export
-\li \ref faq
-
-\section features Features
+\section yarpmanager_features Features
 - Running, stopping, killing and monitoring multiple programs on localhost or remote machines.
 - Establishing port's connections manually and automatically.
 - Managing multiple programs which are grouped as different applications.
@@ -41,15 +29,15 @@ programs on a set of machines.
 - Modifying program's parameters from GUI.
 - Modifying and reloading XML description files from GUI.
 
-\section concepts Some Concepts
+\section yarpmanager_concepts Some Concepts
 - <b>Module</b>, is an executable binary file (program) which is developed using YARP or any other libraries.
 - <b>Application</b>, refers to a collection of modules, connections and other applications.
 - <b>Resource</b> refers to any physical or logical resources which are needed by module. (e.g Computer, Memory, GPU, Platform)
 
 See \ref application, \ref module and \ref resource for more information on how to use XML model to describe each of these concepts.
 
-\section configuration Configuration
-Default configuration file known as "ymanager.ini" can be automatically loaded by yarpmanager from the same folder running the manager; or it can be indicated by parameter "--from" and "--context", following Yarp Resource Finder policies (see \ref yarp_resource_finder_basic). Using the configuration files, one can explicitly indicates the paths where yarpmanager should search for applications, resources or modules. If the configuration file is not provided, then yarpmanager will search for the corresponding XML files in the Yarp data directories (see \ref yarp_data_dirs).
+\section yarpmanager_configuration Configuration
+Default configuration file known as "ymanager.ini" can be automatically loaded by yarpmanager from the same folder running the manager; or it can be indicated by parameter "--from" and "--context", following YARP Resource Finder policies (see \ref yarp_resource_finder_basic). Using the configuration files, one can explicitly indicates the paths where yarpmanager should search for applications, resources or modules. If the configuration file is not provided, then yarpmanager will search for the corresponding XML files in the YARP data directories (see \ref yarp_data_dirs).
 
 \verbatim
 $ yarpmanager --from <path to my_config_file>
@@ -96,16 +84,16 @@ Items 'apppath', 'modpath' and 'respath' respectively point to the folder where 
 Set 'external_editor' to your preferable text editor. It will be used by yarpmanager for editing XML file.
 
 
-\section examples Running examples
+\section yarpmanager_examples Running examples
 First make sure you have a name server running. Open a terminal and type:
 \verbatim
 $ yarpserver
 \endverbatim
 
-\subsection example_y Using yarpmanager
+\subsection yarpmanager_example_y Using yarpmanager
 Open another terminal and try this:
 \verbatim
-$ cd <path to yarp local repository>/data/yarpmanager/tests
+$ cd <path to YARP local repository>/data/yarpmanager/tests
 $ yarpmanager-console
 >> help
      # a list of yarpmanager-console keywords
@@ -120,10 +108,10 @@ $ yarpmanager-console
 >> exit
 \endverbatim
 
-\subsection example_g Using yarpmanager
+\subsection yarpmanager_example_g Using yarpmanager
 Open another terminal and try this:
 \verbatim
-$ cd <path to yarp local repository>/data/yarpmanager/tests
+$ cd <path to YARP local repository>/data/yarpmanager/tests
 $ yarpmanager
 \endverbatim
 
@@ -145,7 +133,7 @@ $ yarprun --server /node2
 
 Then try this:
 \verbatim
-$ cd <path to yarp local repository>/data/yarpmanager/tests
+$ cd <path to YARP local repository>/data/yarpmanager/tests
 $ yarpmanager
 \endverbatim
 
@@ -157,7 +145,7 @@ $ yarpmanager
 
 \note You can use "Assign hosts" whenever all modules are stopped and connections are disconnected.
 
-\section application Application description file
+\section yarpmanager_application Application description file
 Application description file is a collection of modules (programs) or other applications and connections.
 
 Here is an example of application description file in XML format:
@@ -182,7 +170,7 @@ Here is an example of application description file in XML format:
       <node></node>                     <!-- hostname to lunch the module  e.g. localhost, /node1 -->
       <workdir></workdir>               <!-- work directory -->
       <environment></environment>       <!-- set some environment variables for the module. e.g. 'VAR1=val; VAR2=val' -->
-      <deployer> </deployer>            <!-- use a third-party program to run the module. e.g. 'yarpdev' for yarp devices/plugins -->
+      <deployer> </deployer>            <!-- use a third-party program to run the module. e.g. 'yarpdev' for YARP devices/plugins -->
       <display></display>
       <stdio></stdio>                   <!-- redirect the stdio to another host. (Obsolete!) -->
       <prefix></prefix>                 <!-- prefix name will be added to all the ports open by module. e.g. /my-prefix -->
@@ -209,7 +197,7 @@ Here is an example of application description file in XML format:
   <connection persist="true">
       <from qos="level:high; priority:10; policy:1"></from>   <!-- setting the channel Quality of Service -->
       <to></to>
-      <protocol></protocol>                                   <!-- Yarp carrier e.g. tcp/udp -->
+      <protocol></protocol>                                   <!-- YARP carrier e.g. tcp/udp -->
   </connection>
 
   <connection>
@@ -222,7 +210,7 @@ Here is an example of application description file in XML format:
 </application>
 \endcode
 
-\subsection app_notes Notes
+\subsection yarpmanager_app_notes Notes
  - In application description file, if you set \<node\>\</node\> to "localhost", the manager will use an internal module launcher to run the module on localhost.
  - Leaving \<node\>\</node\> empty, later you can use the load balancer to automatically assign module to a node for better performance.
  - \<prefix\> refers to port name's prefix. It will be added to the names of all ports that the module opens. For example, if a module open "/Port1" and \<prefix\>/MyPrefix\</prefix\>, after launching the module, the real port name will be "/Myprefix/Port1".
@@ -237,7 +225,7 @@ Here is an example of application description file in XML format:
   - \--hidden: the process is invisible. This option is useful for console/terminal applications. Notice that on the graphical yarpmanager you can see the standard output using the ''attach to stdout'' functionality (right click on the application and select it from the menu).
  - It is also possible to configure the Qos properties of a connection directly from the manager. This can be done using the "qos" attribute of \<connection\> tag or independently using \<from\> and \<to\> tags. The Qos properties provided within the \<connection\> tag will be applied to both side of the connection. The attribute accepts a string in form of multiple pairs of "property:value" which are separated using ";". For example, qos="level:high; priority:10; policy:1" configure the connection packet priority level to 'HIGH' and the scheduling policy/priority of the connection-dedicated thread respectively to 1 (i.e. SCHED_FIFO in Linux) and 10. Alternatively the packet priority level can be configured using "dscp:<value>" or "tos:<value>". Please refer to yarp::os::QosStyle and yarp::os::NetworkBase::setConnectionQos APIs for further information.
 
-\section resource Resource description file
+\section yarpmanager_resource Resource description file
 The resource description file can be used to provide a general information of the machines that are part of the cluster. In very simple form, the resource description file is a list of the names of machines in the cluster.
 
 Here is an example of resource description file in XML format:
@@ -280,11 +268,11 @@ Here is an example of resource description file in XML format:
 </resources>
 \endcode
 
-\subsection res_notes Notes
+\subsection yarpmanager_res_notes Notes
  - Platform, Memory, Storage and Processor specification will be discovered automatically by yarpmanager; but, peripherals such as GPU should to be specifically introduced.
 
 
-\section module Module description file
+\section yarpmanager_module Module description file
 Module description file can be used to provide general information of module and its dependencies. It is mainly used by load balancer to automatically assign machines to module which satisfy the dependencies. By default, if there is no module description, load balancer assumes that the module can be executed on every available machines. Despite it is \b not \b mandatory, it is always useful to have XML description of each module which shows how it should be used for application building (e.g parameters, inputs, outputs).
 
 Here is an example of module description file in XML format:
@@ -347,7 +335,7 @@ Here is an example of module description file in XML format:
 </module>
 \endcode
 
-\subsection mode_notes Notes
+\subsection yarpmanager_mode_notes Notes
 
  - \<name\> should match its executable file name.
  - \<type> refers to nominal type of data (e.g. ImageFrame, String).
@@ -365,7 +353,7 @@ Here is an example of module description file in XML format:
 </platform>
 
 <yarp_port>
-    <name></name>   <!-- yarp port name -->
+    <name></name>   <!-- YARP port name -->
 <yarp_port>
 
 <memory>
@@ -403,18 +391,18 @@ Here is an example of module description file in XML format:
 \endcode
 
 
-\section create Create new XML description file
+\section yarpmanager_create Create new XML description file
 yarpmanager allows for creating new application, module and resource description file using predefined templates. To create a new XML file, first make sure you set 'external_editor' to your preferable editor (e.g. gedit, notepad) then
 - From "File>New" menu chose "New Application". ("New Module" for module and "New Resource" for resource)
 - Chose your application folder and enter proper name (e.g "my-test-app.xml") to save it. The template file will be open using 'external_editor'.
 - Modify and save it.
 - Open it using yarpmanager.
 
-\subsection create_notes Notes
+\subsection yarpmanager_create_notes Notes
 - yarpmanager allows for identical application names (they will be listed as MyApp(1), MyApp(2), ...). But it is strongly recommended to have unique proper name for each application. Notice that, duplicate names for modules and resources are not allowed and will be ignored by yarpmanager.
 - If you modify the XML description file, you need to "reopen" it. Identically, you can "remove" and "open" it from GUI.
 
-\section export Generate application dependency graph
+\section yarpmanager_export Generate application dependency graph
 The arrangement of modules and resources within an application can be visualized as dependency graph. For Instance, dependency graph of application "EyesViewer-Localhost" used in above example is shown below.
 \image html app-graph.jpg "EyesViewer-Localhost"
 
@@ -443,11 +431,11 @@ Windows users can download Graphviz tools from http://www.graphviz.org/Download_
 
 
 
-\section faq Frequently asked questions
-\subsection wait_launch How to postpone launching a module?
+\section yarpmanager_faq Frequently asked questions
+\subsection yarpmanager_wait_launch How to postpone launching a module?
 It can very often happen that you need to launch a module after some other modules already launched and are running. This is usually the case where a module needs to access some ports which should be open by other modules. To achieve this behavior, you simply needs to indicate which ports your module needs to be available using \<dependencies\> tag of the corresponding module in the application description file (see \ref app_notes).
 
-\subsection quick_launch How to quickly launch a single application in command line?
+\subsection yarpmanager_quick_launch How to quickly launch a single application in command line?
 Imagine you need to run a single application (e.g., eyesviewer-localhost.xml) without using Guis. All you need is to use 'yarpmanager-console', give your application description file as its parameter and ask it to run the modules and connect them:
 
 \verbatim

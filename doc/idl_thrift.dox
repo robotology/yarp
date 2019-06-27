@@ -1,11 +1,13 @@
 /**
- * @page idl_thrift Thrift
- *
+\page idl_thrift Thrift
+
+\tableofcontents
+
+\section idl_thrift_tutorials `yarpidl_thrift` tutorials
 
 \li \subpage thrift_tutorial_portable
 \li \subpage thrift_tutorial_simple
 \li \subpage thrift_tutorial
 \li \subpage thrift_editor
 
- *
- */
+*/

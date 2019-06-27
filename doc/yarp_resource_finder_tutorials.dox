@@ -1,17 +1,18 @@
 /**
-*
-@page yarp_resource_finder_tutorials ResourceFinder Tutorials and Specification
+\page yarp_resource_finder_tutorials ResourceFinder Tutorials and Specification
 
-\author Lorenzo Natale and Elena Ceseracciu
+YARP defines certain rules that specifies where configuration and data files are
+installed and searched.
+It also provides CMake variables and a C++ helper class
+(`yarp::os::ResourceFinder`) to simplify, installing, finding and parsing these
+files.
 
-YARP defines certain rules that specifies where configuration and data files are installed and searched. It also provides CMake variables and a C++ helper class (the ResourceFinder) to simplify, installing, finding and parsing these files.
-
-Specifications for the ResourceFinder are reported in \subpage yarp_data_dirs and \subpage resource_finder_spec. If you are now interested in the details you can follow these tutorials:
+Specifications for the ResourceFinder are reported in \subpage yarp_data_dirs
+and \subpage resource_finder_spec.
+If you are now interested in the details you can follow these tutorials:
 
 \li \subpage yarp_resource_finder_basic
 \li \subpage yarp_resource_finder_advanced
 \li \subpage yarp_resource_finder_installation
 
-**/
-
-
+*/

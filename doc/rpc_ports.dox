@@ -1,7 +1,7 @@
 /**
- * @page rpc_ports Specialized RPC ports
+\page rpc_ports Specialized RPC ports
 
-\author Paul Fitzpatrick
+\tableofcontents
 
 RPC stands for "Remote Procedure Call", and in YARP is used to
 refer to communication that consists of a message and a reply to

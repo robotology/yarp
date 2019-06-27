@@ -1,7 +1,7 @@
 /**
- * @page carrier_config Configuring YARP Connections
+\page carrier_config Configuring YARP Connections
 
-@author Paul Fitzpatrick
+\tableofcontents
 
 Every YARP connection has a specific type of carrier associated
 with it.  This corresponds roughly to the "transport" used to
@@ -343,5 +343,4 @@ specified using the "method" carrier modifier:
 Available methods: bilinear, hqlinear, downsample, vng, ahd, nearest,
 simple.
 
-*
 */

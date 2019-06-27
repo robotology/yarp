@@ -1,0 +1,128 @@
+/**
+\page coder_decoder An example of using the portmonitor object at the both sides of a connection to encode and decode data
+
+\tableofcontents
+
+\section coder_decoder_desc Description
+This example demonstrates how to use the port the portmonitor object at both side of a connection to encode and decode the data. The port '/write' from 'yarp write' module is connected to the '/read' port of 'yarp read' using two portmonitors plugged into the sender and receiver side. Both portmonitors load the same Lua script (\c 'codec.lua') which can act as data coder or decoder depending on the which side of the connection it is attached.
+
+
+
+\image html coder_decoder.png ""
+
+
+\section coder_decoder_req Requirements
+\li Enable and compile portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON in YARP cmake).
+
+\li Compile Yarp with Lua binding support (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages").
+
+\li Set LUA_CPATH to include Yarp-Lua binding library  (e.g., export LUA_CPATH=";;;$YARP_ROOT/build/lib/lua/?.so")
+
+
+\section coder_decoder_running Running the example
+
+\li Open a terminal and run yarpserver
+\verbatim
+   $ yarpserver
+\endverbatim
+
+\li Open another terminal (lets call this the sender terminal) )and change to the 'coder_decoder' directory:
+\verbatim
+   $ cd $YARP_ROOT/example/portmonitor/coder_decoder
+   $ yarp write /write
+\endverbatim
+
+\li Open another terminal (lets call this the receiver terminal) )and change to the 'coder_decoder' directory:
+\verbatim
+   $ cd $YARP_ROOT/example/portmonitor/coder_decoder
+   $ yarp read /read
+\endverbatim
+
+\li In another terminal connect the port as follow:
+\verbatim
+   $ yarp connect /write /read tcp+send.portmonitor+type.lua+file.codec
+\endverbatim
+
+Now if you write something in the 'sender' terminal, you will see the original text is encoded with a simple base64 encoder and transmitted to the receiver. For example:
+\verbatim
+[sender terminal]
+ Hello
+
+[receiver terminal]
+ "SGVsbG8="
+\endverbatim
+
+Now try to plug the `codec.lua' to the receiver side too.
+\verbatim
+   $ yarp connect /write /read tcp+send.portmonitor+file.codec+recv.portmonitor+file.codec
+\endverbatim
+
+You will see the data gets decoded and the original text will be shown in the receiver terminal:
+
+\verbatim
+[sender terminal]
+ Hello
+
+[receiver terminal]
+ "Hello"
+\endverbatim
+
+Notice that codec.lua acts as coder or decoder depending to which side of the connection it is attached. This is checked in the \c 'PortMonitor.create(options)' callback.
+
+
+\section coder_decoder_scripts Scripts
+
+\subsection coder_decoder_codec codec.lua
+
+~~~{.lua}
+-- loading lua-yarp binding library
+require("yarp")
+
+--
+-- create is called when the port monitor is created
+-- @return Boolean
+--
+PortMonitor.create = function(options)
+    isCoder = (options:find("sender_side"):asInt32() == 1)
+    if isCoder == true then
+        print("codec.lua: I will encode whatever i get!")
+    else
+        print("codec.lua: I will decode whatever i get!")
+    end
+    return true;
+end
+
+
+--
+-- accept is called when the port receives new data
+-- @param thing The Things abstract data type
+-- @return Boolean
+-- if false is returned, the data will be ignored
+-- and update() will never be called
+PortMonitor.accept = function(thing)
+    if thing:asBottle() == nil then
+        print("codec.lua: got wrong data type (expected type Bottle)")
+        return false
+    end
+    return true
+end
+
+
+--
+-- update is called when the port receives new data
+-- @param thing The Things abstract data type
+-- @return Things
+PortMonitor.update = function(thing)
+    bt = thing:asBottle()
+    data = bt:toString()
+    bt:clear()
+    if isCoder == true then
+        bt:fromString(enc(data))
+    else
+        bt:fromString(dec(data))
+    end
+    return thing
+end
+~~~
+
+*/

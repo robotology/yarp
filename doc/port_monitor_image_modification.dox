@@ -1,0 +1,184 @@
+/**
+\page image_modification An example which shows how to use a Lua script to modify image data
+
+\tableofcontents
+
+\section image_modification_desc Description
+This example demonstrates how to access the YARP image data using port monitor and modify it. It also shows how to use YARP administrative port to pass some parameters to the Lua script in the port monitor.
+
+\image html image_modification.png ""
+
+
+\section image_modification_req Requirements
+\li Enable and compile portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON in YARP cmake).
+
+\li Compile Yarp with Lua binding support (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages").
+
+\li Set LUA_CPATH to include Yarp-Lua binding library  (e.g., export LUA_CPATH=";;;$YARP_ROOT/build/lib/lua/?.so")
+
+
+\section image_modification_running Running the example
+
+\li Open a terminal and run yarpserver
+\verbatim
+   $ yarpserver
+\endverbatim
+
+\li Open another terminal (lets call this the receiver terminal) )and change to the 'image_modification' directory and run the application using yarpmanager:
+\verbatim
+   $ cd $YARP_ROOT/example/portmonitor/image_modification
+   $ yarpmanager-console --application TestMonitorImage.xml
+\endverbatim
+
+
+\li run the modues and connect the ports
+\verbatim
+   >> run
+   >> connect
+\endverbatim
+
+You should see two instances of yarpview showing the original image from fake test grabber and the modified one using Lua script (i.e. the Lua script draws moving circular points over the original image)
+
+\li You can also change the foreground and background point's color using YARP port administrator. To do this, open another terminal and try the following commands:
+\verbatim
+    $ yarp admin rpc /modified/yarpview/img:i
+    $ set in /grabber (fg 0 255 0)      // this set the foreground color to Green (0 G 0)
+    $ set in /grabber (bg 0 0 255)      // this set the foreground color to Blue (0 0 B)
+    $ get in /grabber                   // will show the parameter's value
+\endverbatim
+
+
+\li To stop the application, in the yarpmanager's console, type:
+\verbatim
+    >> stop
+    >> exit
+\endverbatim
+
+
+\section image_modification_scripts Scripts
+
+\subsection image_modification_img_modifier img_modifier.lua
+
+~~~{.lua}
+-- loading lua-yarp binding library
+require("yarp")
+
+--
+-- create is called when the port monitor is created
+-- @return Boolean
+--
+PortMonitor.create = function(options)
+    print("on create")
+    PortMonitor.index = 0;
+    PortMonitor.bdraw = true
+    PortMonitor.bg = {r=255, g=255, b=255}
+    PortMonitor.fg = {r=255, g=0, b=0}
+    PortMonitor.time = yarp.Time_now()
+    return true;
+end
+
+--
+-- update is called when the port receives new data
+-- @param thing The Things abstract data type
+-- @return Things
+PortMonitor.update = function(thing)
+    img_out = thing:asImageOfPixelRgb()
+    w = img_out:width()
+    h = img_out:height()
+    r = math.min(w,h) / 2
+    r = r - r/4
+    for i=0,2*math.pi,math.pi/32 do
+        x = math.floor(w/2 + r * math.cos(i))
+        y = math.floor(h/2 + r * math.sin(i))
+        if PortMonitor.bdraw == true then
+            img_out:pixel(x, y).r = PortMonitor.bg.r
+            img_out:pixel(x, y).g = PortMonitor.bg.g
+            img_out:pixel(x, y).b = PortMonitor.bg.b
+        else
+            img_out:pixel(x, y).r = PortMonitor.fg.r
+            img_out:pixel(x, y).g = PortMonitor.fg.g
+            img_out:pixel(x, y).b = PortMonitor.fg.b
+        end
+    end
+
+    for i=0,PortMonitor.index,math.pi/32 do
+        x = math.floor(w/2 + r * math.cos(i))
+        y = math.floor(h/2 + r * math.sin(i))
+        if PortMonitor.bdraw == true then
+            img_out:pixel(x, y).r = PortMonitor.fg.r
+            img_out:pixel(x, y).g = PortMonitor.fg.g
+            img_out:pixel(x, y).b = PortMonitor.fg.b
+        else
+            img_out:pixel(x, y).r = PortMonitor.bg.r
+            img_out:pixel(x, y).g = PortMonitor.bg.g
+            img_out:pixel(x, y).b = PortMonitor.bg.b
+        end
+    end
+
+    t = yarp.Time_now()
+    if (t-PortMonitor.time) >= 0.1 then
+        if PortMonitor.index >= 2*math.pi then
+            PortMonitor.index = 0
+            if PortMonitor.bdraw == true then
+                PortMonitor.bdraw = false
+            else
+                PortMonitor.bdraw = true
+            end
+        else
+            PortMonitor.index = PortMonitor.index + math.pi/32
+        end
+        PortMonitor.time = t
+    end
+
+    return thing
+end
+
+
+--
+-- setparam is called on setCarrierParams by the port administrator
+-- @param property The Property
+--
+PortMonitor.setparam = function(property)
+    bt = property:findGroup("bg", "background color")
+    if bt:isNull() ~= true then
+        if bt:size() >=4  then
+            PortMonitor.bg.r = bt:get(1):asInt32()
+            PortMonitor.bg.g = bt:get(2):asInt32()
+            PortMonitor.bg.b = bt:get(3):asInt32()
+        end
+    end
+    bt = property:findGroup("fg", "foreground color")
+    if bt:isNull() ~= true then
+        if bt:size() >=4  then
+            PortMonitor.fg.r = bt:get(1):asInt32()
+            PortMonitor.fg.g = bt:get(2):asInt32()
+            PortMonitor.fg.b = bt:get(3):asInt32()
+        end
+    end
+end
+
+
+--
+-- getparan is called on getCarrierParams by the port administrator
+-- @return property The Property
+--
+PortMonitor.getparam = function()
+
+    property = yarp.Property()
+    bt = yarp.Bottle()
+    bg = bt:addList()
+    bg:addString("bg")
+    bg:addInt32(PortMonitor.bg.r)
+    bg:addInt32(PortMonitor.bg.g)
+    bg:addInt32(PortMonitor.bg.b)
+    fg = bt:addList()
+    fg:addString("fg")
+    fg:addInt32(PortMonitor.fg.r)
+    fg:addInt32(PortMonitor.fg.g)
+    fg:addInt32(PortMonitor.fg.b)
+    property:fromString(bt:toString())
+    return property
+end
+~~~
+
+*/

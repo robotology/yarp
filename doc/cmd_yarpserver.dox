@@ -3,6 +3,10 @@
 
 \ingroup yarp_tools
 
+\tableofcontents
+
+\section yarpserver_intro Description
+
 \verbatim
   yarpserver [OPTIONS]
 

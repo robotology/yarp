@@ -4,10 +4,12 @@
 \ingroup yarp_guis
 \ingroup yarp_tools
 
+\tableofcontents
+
 A module that reproduces in a synchronized way, previously acquired data
 (using \ref yarpdatadumper) from a source of input.
 
-\section intro_sec Description
+\section yarpdataplayer_intro Description
 
 This module provides the user a simple but informative
 user-interface in order to manipulate the previously acquired data.
@@ -17,21 +19,24 @@ to synchronize the sending of the data as if the robot was present.
 \image html datasetplayer.jpg
 \image latex datasetplayer.jpg "The yarpdataplayer GUI running on Windows" width=6cm
 
-\section lib_sec Libraries
+\section yarpdataplayer_lib Libraries
+
 - OpenCV libraries.
 - GTKMM or Qt5 libraries.
 
-\section running_sec Running
+\section yarpdataplayer_running Running
+
 yarpdataplayer can run with or without the GUI (for server use and
 commands are sent via the rpc port)
-For gui run normally \e yarpdataplayer .
+For gui run normally `yarpdataplayer`.
 Without GUI run with the extra parameter \e hidden:
 
 \verbatim
   yarpdataplayer --hidden
 \endverbatim
 
-\section file-sec yarpdatadumper file example
+\section yarpdataplayer_file yarpdatadumper file example
+
 yarpdatadumper data.log file example:
 
 \verbatim
@@ -54,13 +59,12 @@ yarpdatadumper info.log file example:
    set up based on the content of info.log file. This can be
    then changed using the GUI.
 
-\section parameters_sec Parameters
+\section yarpdataplayer_parameters Parameters
 
 \verbatim
 --hidden
 \endverbatim
 - run with or without gui
-
 
 \verbatim
 --withExtraTimeCol index
@@ -75,22 +79,25 @@ yarpdatadumper info.log file example:
 - The parameter \e modName identifies the stem-name of the open
   ports.
 
- \section portsif_sec Ports Interface
- The interface to this module is implemented through
- \ref dataSetPlayer_IDL . \n
+\section yarpdataplayer_portsif Ports Interface
+
+The interface to this module is implemented through
+\ref dataSetPlayer_IDL.
 
 - The ports belonging to each of the parts are dynamically created and
   can be changed using the GUI.
 
-\section in_files_sec Input Data Files
+\section yarpdataplayer_in_files Input Data Files
+
 The player will look, in a recursive way, into directories in order to
 create the parts needed and retrieve the data.
 
-The data name is the default \ref yarpdatadumper names: data.log and
+The data name is the default \ref yarpdatadumper "yarpdatadumper" names: data.log and
 info.log.
 
 An example directory tree containing data (data.log+info.log)
 can be:
+
 \code
 /experiment1/
              /head/data.log;info.log
@@ -101,10 +108,10 @@ can be:
              /right_leg/data.log;info.log
 \endcode
 
-If the directory indicated is either "experiment1" or within experiment,
+If the directory indicated is either `experiment1` or within experiment,
 the player will successfully load all required data.
 
-The parts name will be taken from each subdirectory of the /experiment1
+The parts name will be taken from each subdirectory of the `/experiment1`
 forder.
 
 \note Currently, if the directory selected is (in this example) head,
@@ -117,11 +124,8 @@ find subdirs.
  - when the search for a directory has not provided anything (user
    selected directory containing only *.log files)
 
-\section tested_os_sec Tested OS
-Windows, Linux
+\sa \ref yarpdatadumper
+\sa \ref yarpdataplayer_example
+\sa \ref yarpdataplayer_rec_example
 
-\sa yarpdatadumper
-\sa yarpdataplayerExample
-
-\author Vadim Tikhanoff and Ali Paikan
 */

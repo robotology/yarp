@@ -3,9 +3,12 @@
 
 \ingroup yarp_tools
 
+\tableofcontents
+
+\section yarphear_intro Description
+
 The command-line utility "yarphear" opens a port and connects it to the
 speakers.  If data is sent to the port, it is rendered to the speakers.
 Type "help" for commands for saving, muting, etc.
-
 
 */

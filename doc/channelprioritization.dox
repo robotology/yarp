@@ -1,0 +1,88 @@
+/**
+\page channelprioritization Channel Prioritization
+
+\section content Contents
+\li \ref why
+\li \ref how
+\li \ref example
+\li \ref reading
+
+<br>
+\section why Why channel prioritization?
+
+When developing applications performances are affected by the available
+resources.
+This sounds like an obvious statement but it is often overlooked by users.
+In robotics developers should be concerned with communication latency and,
+perhaps more importantly, its jitter.
+
+In a distributed system there are potential sources of bottlenecks.
+First of all, communication suffers if there is insufficient CPU time to
+delivery or retrieve messages. When using network protocols messages are queued
+on the network card and network switch. The situation is depicted in the figure
+below.
+Individual connections in YARP compete to get CPU time and network resources.
+When many components begin loading the available CPUs and using bandwidth
+performance may suffer.
+
+\image html priority1.png "Bottlenecks in a switched network. Connections packets are queued in outgoing and incoming buffers at the level of the network card and network switch."
+
+\section how How does prioritization work?
+
+YARP allows users to assign priorities to connections. Connections with higher
+priority receive more CPU time and travel faster on the network, resulting in
+lower latency and more deterministic behavior.
+
+Prioritization works by increasing the priority of threads that are serving a
+given connection and by assigning QoS parameters to the packets so that they
+receive higher priority when they traverse the network (the network card and
+network switch).
+
+\image html priority2.png "Individual connections in YARP can be prioritized in two ways: 1) by increasing scheduling priority of the thread that is serving the connection and 2) by assigning higher priority to the packets that travel on the network."
+
+Channel prioritization has been experimentally validated in
+[\ref Paikan2015a "5"] and [\ref Paikan2015b "6"] showing how it allows reducing
+latency and improving determinism for selected communication channels.
+
+\section example An example
+
+Suppose you want to modify the priority of the connection between /sender and
+/receiver.
+
+Firstly you can select the scheduling policy and priority for the thread that
+manages the communication.
+
+\verbatim
+ $ yarp admin rpc /sender
+   >> prop set /receiver (sched
+                            ((policy SCHED_FIFO)
+                            (priority 30)))
+\endverbatim
+
+The first line "yarp admin rpc" opens an administrative session with the port
+object of /sender.
+The second line is the real command to the administrative port.
+It adjusts the scheduling policy and priority of the thread in /sender which
+handles the connection to /receiver respectively to SCHED_FIFO and 30 on Linux
+machines (scheduling parameters are OS specific).
+
+Analogously, data packet priority can be configured via administrative commands
+by setting one of the predefined priority classes:
+
+\verbatim
+ $ yarp admin rpc /sender
+  >> prop set /receiver (qos ((priority HIGH)))
+\endverbatim
+
+This simply sets the outbound packets priority to HIGH for the connection from
+/sender to /receiver.
+The priority band affects the TOS/DSCP in the IP packets and the queuing policy
+used by the OS.
+Possible values are LOW, NORMAL, HIGH and CRITICAL.
+
+These two set of parameters can be set for every channel in the same way and
+jointly define the actual priority of a communication channel in a YARP network.
+
+Implementation details can be found in [\ref Paikan2015a "5"] and [\ref Paikan2015b "6"].
+
+*/

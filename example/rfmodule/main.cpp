@@ -6,79 +6,66 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <iostream>
-#include <yarp/os/RFModule.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/RFModule.h>
 
-using namespace std;
-using namespace yarp::os;
+#include <iostream>
 
-class MyModule:public RFModule
+class MyModule : public yarp::os::RFModule
 {
-    RpcServer handlerPort; //a port to handle messages
+    yarp::os::Port handlerPort; // a port to handle messages
     int count;
 public:
-
     double getPeriod()
     {
-        return 1; //module periodicity (seconds)
+        // module periodicity (seconds), called implicitly by the module.
+        return 1.0;
     }
-
-    /*
-    * This is our main function. Will be called periodically every getPeriod() seconds.
-    */
+    // This is our main function. Will be called periodically every getPeriod() seconds
     bool updateModule()
     {
         count++;
-        //printf("[%d] updateModule\n", count);
-        cout<<"["<<count<<"]"<< " updateModule... "<<endl;
-
+        std::cout << "[" << count << "]" << " updateModule..." << '\n';
         return true;
     }
-
-    /*
-    * Message handler. Just echo all received messages.
-    */
-    bool respond(const Bottle& command, Bottle& reply) 
+    // Message handler. Just echo all received messages.
+    bool respond(const yarp::os::Bottle& command, yarp::os::Bottle& reply)
     {
-        cout<<"Got something, echo is on"<<endl;
-        if (command.get(0).asString()=="quit")
-            return false;     
+        std::cout << "Got something, echo is on" << '\n';
+        if (command.get(0).asString() == "quit")
+            return false;
         else
-            reply=command;
+            reply = command;
         return true;
     }
-
-    /* 
-    * Configure function. Receive a previously initialized
-    * resource finder object. Use it to configure your module.
-    * Open port and attach it to message handler.
-    */
+    // Configure function. Receive a previously initialized
+    // resource finder object. Use it to configure your module.
+    // If you are migrating from the old module, this is the function
+    // equivalent to the "open" method.
     bool configure(yarp::os::ResourceFinder &rf)
     {
         count=0;
         if (!handlerPort.open("/myModule"))
             return false;
 
+        // optional, attach a port to the module
+        // so that messages received from the port are redirected
+        // to the respond method
         attach(handlerPort);
+
         return true;
     }
-
-    /*
-    * Interrupt function.
-    */
+    // Interrupt function.
     bool interruptModule()
     {
-        cout<<"Interrupting your module, for port cleanup"<<endl;
+        std::cout << "Interrupting your module, for port cleanup" << '\n';
         return true;
     }
-
-    /*
-    * Close function, to perform cleanup.
-    */
+    // Close function, to perform cleanup.
     bool close()
     {
-        cout<<"Calling close function\n";
+        // optional, close port explicitly
+        std::cout << "Calling close function\n";
         handlerPort.close();
         return true;
     }
@@ -86,22 +73,23 @@ public:
 
 int main(int argc, char * argv[])
 {
-    Network yarp;
+    // initialize yarp network
+    yarp::os::Network yarp;
 
+    // create your module
     MyModule module;
-    ResourceFinder rf;
-    rf.configure(argc, argv);
-    // rf.setVerbose(true);
 
-    cout<<"Configure module & start module..."<<endl;
-    if (!module.runModule(rf))
-    {
-        cerr<<"Error module did not start"<<endl;
-        return 1;
+    // prepare and configure the resource finder
+    yarp::os::ResourceFinder rf;
+    rf.configure(argc, argv);
+    rf.setVerbose(true);
+
+    std::cout << "Configuring and starting module.\n";
+    // This calls configure(rf) and, upon success, the module execution begins with a call to updateModule()
+    if (!module.runModule(rf)) {
+        std::cerr << "Error module did not start\n";
     }
 
-    cout<<"Main returning..."<<endl;
+    std::cout << "Main returning..." << '\n';
     return 0;
 }
-
-

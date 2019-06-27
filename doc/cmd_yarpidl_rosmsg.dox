@@ -2,4 +2,9 @@
 \page yarpidl_rosmsg yarpidl_rosmsg
 
 \ingroup yarp_tools
+
+\tableofcontents
+
+\section yarpidl_rosmsg_intro Description
+
 */

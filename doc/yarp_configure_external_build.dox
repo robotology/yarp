@@ -1,7 +1,7 @@
 /**
- * @page yarp_external_build Configuring your external build
+\page yarp_external_build Configuring your external build
 
-\author Elena Ceseracciu and Lorenzo Natale
+\tableofcontents
 
 These simple instructions show how to configure your build to install data files
 (xml and config files for applications and modules) so that they can be easily
@@ -102,7 +102,4 @@ An extra \e COMPONENT argument can be passed to this function to set the
 component for the installed files. If not set, "configuration" will
 be used.
 
-
- *
- */
-
+*/

@@ -2,4 +2,9 @@
 \page yarpmanager-console yarpmanager-console: run and manage multiple programs on a set of machines
 
 \ingroup yarp_tools
+
+\tableofcontents
+
+\section yarpmanager-console_intro Description
+
 */

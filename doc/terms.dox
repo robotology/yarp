@@ -1,5 +1,7 @@
 /**
-  * @page terms Definition of terms
+\page terms Definition of terms
+
+\tableofcontents
 
 The YARP library supports transmission of a stream of
 user data across
@@ -57,7 +59,7 @@ for communicating with them.
 
 
 
-@section term_prop Properties of a YARP network
+\section term_prop Properties of a YARP network
 
 A YARP network consists of the following entities: a set of
 ports, a set of connections, a set of names, a name server, and a set
@@ -116,4 +118,3 @@ modifying the YARP network.
 - \ref data_rep
 
 */
-

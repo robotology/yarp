@@ -1,8 +1,7 @@
 /**
- * @page add_a_plugin Add a plugin to YARP
- *
+\page add_a_plugin Add a plugin to YARP
 
-\author Paul Fitzpatrick
+\tableofcontents
 
 In YARP, a "plugin" is an implementation of some service for which
 there are many choices and alternatives.  There are two basic types of
@@ -95,5 +94,4 @@ insert fake_grabber.  There is no requirement that the fake_grabber
 subdirectory be in any particular location.  Similarly, carriers
 can be added in $YARP_ROOT/src/carriers/CMakeLists.txt.
 
- *
- */
+*/

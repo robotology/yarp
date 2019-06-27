@@ -1,7 +1,7 @@
 /**
- * @page port_admin The administrative interface to YARP ports
+\page port_admin The administrative interface to YARP ports
 
-\author Paul Fitzpatrick
+\tableofcontents
 
 Most of the time, YARP ports are conduits for messages.
 Users write messages to ports, and read messages from ports,
@@ -36,7 +36,7 @@ interface:
 - \ref port_admin_list
 - \ref port_admin_ver
 
-@section port_admin_help help
+\section port_admin_help help
 
 \verbatim
 [help]
@@ -45,7 +45,7 @@ interface:
 Lists all the available administration commands.
 
 
-@section port_admin_add add
+\section port_admin_add add
 
 \verbatim
 [add] /port/name
@@ -55,7 +55,7 @@ Lists all the available administration commands.
 Add an output to the specified port, using a given carrier (tcp, udp, etc.)
 
 
-@section port_admin_del del
+\section port_admin_del del
 
 \verbatim
 [del] /port/name
@@ -64,7 +64,7 @@ Add an output to the specified port, using a given carrier (tcp, udp, etc.)
 Remove an output to the specified port.
 
 
-@section port_admin_list list
+\section port_admin_list list
 
 \verbatim
 [list] [in]
@@ -74,7 +74,7 @@ Remove an output to the specified port.
 List input or output connections.
 
 
-@section port_admin_ver ver
+\section port_admin_ver ver
 
 \verbatim
 [ver]
@@ -82,6 +82,4 @@ List input or output connections.
 
 Report the version of the port protocol in operation.
 
-
-*
 */

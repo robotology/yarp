@@ -1,5 +1,7 @@
 /**
- * @page dev-how-to Device Drivers How-To
+\page dev-how-to Device Drivers How-To
+
+\tableofcontents
 
 For a more up-to-date method of dealing with devices see:
 
@@ -252,4 +254,4 @@ True, we should do more automation than we do now.  For now,
 we're just happy to have a mechanism that works solidly on
 both UNIX and Windows.
 
-**/
+*/
