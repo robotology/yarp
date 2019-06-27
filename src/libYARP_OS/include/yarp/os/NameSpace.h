@@ -131,42 +131,42 @@ public:
      */
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style) = 0;
+                                    const ContactStyle& style) = 0;
 
     /**
      * Subscribe a port to a topic.
      */
     virtual bool connectTopicToPort(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style) = 0;
+                                    const ContactStyle& style) = 0;
 
     /**
      * Stop publishing a port to a topic.
      */
     virtual bool disconnectPortFromTopic(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) = 0;
+                                         const ContactStyle& style) = 0;
 
     /**
      * Stop subscribing a port to a topic.
      */
     virtual bool disconnectTopicFromPort(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) = 0;
+                                         const ContactStyle& style) = 0;
 
     /**
      * Connect two ports with persistence.
      */
     virtual bool connectPortToPortPersistently(const Contact& src,
                                                const Contact& dest,
-                                               ContactStyle style) = 0;
+                                               const ContactStyle& style) = 0;
 
     /**
      * Disconnect two ports, removing any persistence.
      */
     virtual bool disconnectPortToPortPersistently(const Contact& src,
                                                   const Contact& dest,
-                                                  ContactStyle style) = 0;
+                                                  const ContactStyle& style) = 0;
 
     /**
      * Check if the NameSpace is only valid for the current process

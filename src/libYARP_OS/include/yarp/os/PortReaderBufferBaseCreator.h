@@ -15,6 +15,8 @@
 namespace yarp {
 namespace os {
 
+class PortReader;
+
 class YARP_OS_API PortReaderBufferBaseCreator
 {
 public:

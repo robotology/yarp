@@ -65,7 +65,7 @@ TEST_CASE("OS::MessageStackTest", "[yarp::os]")
         CHECK(worker.last.toString() == "hello"); // got another message
 
         b.fromString("world");
-        stack.stack(b,"the");
+        stack.stack(b, "the");
         worker.go.post();
         worker.gone.wait();
         CHECK(worker.last.toString() == "the world"); // got a prefixed message

@@ -6,8 +6,9 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/idl/Unwrapped.h>
 #include <yarp/os/idl/WireState.h>
+
+#include <yarp/os/idl/Unwrapped.h>
 
 using namespace yarp::os::idl;
 
@@ -19,6 +20,7 @@ WireState::WireState() :
 {
 }
 
-bool WireState::isValid() const {
-    return len>=0;
+bool WireState::isValid() const
+{
+    return len >= 0;
 }

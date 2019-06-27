@@ -7,6 +7,7 @@
  */
 
 #include <yarp/os/RecursiveMutex.h>
+
 #include <mutex>
 
 using yarp::os::RecursiveMutex;

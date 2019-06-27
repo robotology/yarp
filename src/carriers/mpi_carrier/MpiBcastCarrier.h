@@ -7,20 +7,14 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_MPIBCASTCARRIER
-#define YARP_MPIBCASTCARRIER
+#ifndef YARP_MPIBCASTCARRIER_H
+#define YARP_MPIBCASTCARRIER_H
 
-#include <yarp/os/MpiCarrier.h>
-#include <yarp/os/MpiBcastStream.h>
+#include "MpiCarrier.h"
+#include "MpiBcastStream.h"
 
 #include <yarp/os/Election.h>
 
-
-namespace yarp {
-    namespace os {
-        class MpiBcastCarrier;
-    }
-}
 
 /**
  * Carrier for port communicating via MPI broadcast.
@@ -32,7 +26,9 @@ namespace yarp {
  * if one terminates without proper disconnect.
  * @warning Seems to work, but still experimental.
  */
-class yarp::os::MpiBcastCarrier : public MpiCarrier {
+class MpiBcastCarrier :
+        public MpiCarrier
+{
 private:
     static yarp::os::ElectionOf<yarp::os::PeerRecord<MpiBcastCarrier> >* caster;
     static yarp::os::ElectionOf<yarp::os::PeerRecord<MpiBcastCarrier> >& getCaster();
@@ -68,7 +64,7 @@ public:
 
     void prepareDisconnect() override;
 
-    bool expectReplyToHeader(ConnectionState&  proto) override {
+    bool expectReplyToHeader(yarp::os::ConnectionState&  proto) override {
         bool ok = MpiCarrier::expectReplyToHeader(proto);
         MpiBcastStream *mpiStream = dynamic_cast<MpiBcastStream*> (stream);
         if(mpiStream)
@@ -81,4 +77,4 @@ public:
     virtual bool isElect() const;
 };
 
-#endif //_YARP_MPIBCASTCARRIER_
+#endif // YARP_MPIBCASTCARRIER_H

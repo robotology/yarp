@@ -23,9 +23,9 @@ TEST_CASE("OS::ElectionTest", "[yarp::os]")
         std::string c2 = "Grasso";
         std::string c3 = "Bozo";
         ElectionOf<PeerRecord<std::string> > elector;
-        elector.add("italy",&c1);
-        elector.add("italy",&c2);
-        elector.add("france",&c3);
+        elector.add("italy", &c1);
+        elector.add("italy", &c2);
+        elector.add("france", &c3);
         std::string *e1 = elector.getElect("italy");
         std::string *e2 = elector.getElect("france");
         REQUIRE(e1 != nullptr); // elected entity exists (1)
@@ -33,8 +33,8 @@ TEST_CASE("OS::ElectionTest", "[yarp::os]")
         CHECK((*e1==c1 || *e1==c2)); // elected entity is accurate (1)
         CHECK(*e2==c3); // elected entity is accurate (2)
 
-        elector.remove("italy",&c2);
-        elector.remove("france",&c3);
+        elector.remove("italy", &c2);
+        elector.remove("france", &c3);
         e1 = elector.getElect("italy");
         e2 = elector.getElect("france");
         REQUIRE(e1!=nullptr); // elected entity exists (1)

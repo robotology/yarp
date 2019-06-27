@@ -24,7 +24,7 @@ template <class T>
 class SharedLibraryClassFactory : public SharedLibraryFactory
 {
 public:
-    SharedLibraryClassFactory() {}
+    SharedLibraryClassFactory() = default;
 
     SharedLibraryClassFactory(const char* dll_name, const char* fn_name = nullptr) :
             SharedLibraryFactory(dll_name, fn_name)

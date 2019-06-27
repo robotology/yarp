@@ -7,6 +7,7 @@
  */
 
 #include <yarp/os/Mutex.h>
+
 #include <mutex>
 
 using yarp::os::Mutex;

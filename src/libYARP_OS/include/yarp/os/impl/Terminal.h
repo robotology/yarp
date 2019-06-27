@@ -10,8 +10,9 @@
 #ifndef YARP_OS_IMPL_TERMINAL_H
 #define YARP_OS_IMPL_TERMINAL_H
 
-#include <string>
 #include <yarp/os/api.h>
+
+#include <string>
 
 namespace yarp {
 namespace os {
@@ -25,7 +26,7 @@ YARP_OS_impl_API
 std::string getStdin();
 
 YARP_OS_impl_API
-std::string readString(bool *eof);
+std::string readString(bool* eof);
 
 } // namespace Terminal
 } // namespace impl

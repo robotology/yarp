@@ -143,10 +143,10 @@ TEST_CASE("OS::BottleTest", "[yarp::os]")
     {
         Bottle bot1("1 (2 3) (4 5 6) 7");
         Bottle bot2;
-        bot2.copy(bot1,1,2);
+        bot2.copy(bot1, 1, 2);
         CHECK(bot2.size() == (size_t) 2); // "subrange"
         CHECK(bot2.get(0).toString() == "2 3"); // "subrange"
-        bot2.copy(bot2,0,1);
+        bot2.copy(bot2, 0, 1);
         CHECK(bot2.size() == (size_t) 1); // "self copy"
     }
 
@@ -174,7 +174,7 @@ TEST_CASE("OS::BottleTest", "[yarp::os]")
         Bottle bot("[send] 10 20");
         CHECK(bot.size() == (size_t) 3); // "plausible parse"
         CHECK(bot.get(0).isVocab()); // "vocab present"
-        CHECK(bot.get(0).asInt32() == yarp::os::createVocab('s','e','n','d')); // "vocab match"
+        CHECK(bot.get(0).asInt32() == yarp::os::createVocab('s', 'e', 'n', 'd')); // "vocab match"
     }
 
 
@@ -237,7 +237,7 @@ TEST_CASE("OS::BottleTest", "[yarp::os]")
             StringInputStream sis;
             sis.add(writer.toString());
             StreamConnectionReader br;
-            br.reset(sis,nullptr,Route(),sis.toString().length(),false);
+            br.reset(sis, nullptr, Route(), sis.toString().length(), false);
             bot2.read(br);
             CHECK(bot.size() == bot2.size()); // length check
             CHECK(bot2.get(2).isInt32()); // type check
@@ -250,7 +250,7 @@ TEST_CASE("OS::BottleTest", "[yarp::os]")
             StringInputStream sis;
             sis.add(writer.toString());
             StreamConnectionReader br;
-            br.reset(sis,nullptr,Route(),sis.toString().length(),false);
+            br.reset(sis, nullptr, Route(), sis.toString().length(), false);
             bot2.read(br);
             CHECK(bot.size() == bot2.size()); // length check
             CHECK(bot2.get(2).isFloat64()); // type check
@@ -378,7 +378,7 @@ TEST_CASE("OS::BottleTest", "[yarp::os]")
         b = nullBot;
 
         // The expected result has flipped, due to popular demand [Massera :-)]
-        //checkFalse(b.isNull(),"failed, as expected");
+        //checkFalse(b.isNull(), "failed, as expected");
         CHECK(b.isNull()); // isNull() preserved correctly
     }
 
@@ -435,8 +435,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]")
         char buf2[] = "hello world";
         buf2[5] = '\0';
         size_t len = 11;
-        std::string str1(buf1,len);
-        std::string str2(buf2,len);
+        std::string str1(buf1, len);
+        std::string str2(buf2, len);
         CHECK(str1.length() == len); // unmodified string length ok
         CHECK(str2.length() == len); // modified string length ok
         std::string str3(str2);
@@ -475,8 +475,8 @@ TEST_CASE("OS::BottleTest", "[yarp::os]")
     {
         Bottle bot("1");
         Property& p = bot.addDict();
-        p.put("test","me");
-        p.put("hi","there");
+        p.put("test", "me");
+        p.put("hi", "there");
         Bottle bot2;
         bot2 = bot;
         CHECK(bot2.get(1).isDict()); // "dict copies ok"
@@ -506,15 +506,15 @@ TEST_CASE("OS::BottleTest", "[yarp::os]")
     SECTION("test copyPortable method")
     {
         Bottle b1("1 2 3"), b2;
-        Portable::copyPortable(b1,b2);
+        Portable::copyPortable(b1, b2);
         CHECK(b2.size() == b1.size()); // "length ok"
         CHECK(b2.get(2).asInt32() == 3); // "content ok"
-        Stamp s1(42,10.0),s2,s3;
-        Portable::copyPortable(s1,s2);
+        Stamp s1(42, 10.0), s2, s3;
+        Portable::copyPortable(s1, s2);
         CHECK(s1.getCount() == 42); // "stamp-to-stamp ok"
-        Portable::copyPortable(s1,b1);
+        Portable::copyPortable(s1, b1);
         CHECK(b1.get(0).asInt32() == 42); // "stamp-to-bottle ok"
-        Portable::copyPortable(b1,s3);
+        Portable::copyPortable(b1, s3);
         CHECK(s3.getCount() == 42); // "bottle-to-stamp ok"
     }
 

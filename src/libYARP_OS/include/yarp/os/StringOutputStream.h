@@ -26,7 +26,9 @@ class StringOutputStream : public OutputStream
 public:
     using OutputStream::write;
 
-    StringOutputStream() {}
+    StringOutputStream()
+    {
+    }
 
     std::string toString() const
     {
@@ -44,7 +46,9 @@ public:
         data += tmp;
     }
 
-    void close() override {}
+    void close() override
+    {
+    }
 
     bool isOk() const override
     {

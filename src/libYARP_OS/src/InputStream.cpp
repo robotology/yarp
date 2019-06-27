@@ -7,6 +7,7 @@
  */
 
 #include <yarp/os/InputStream.h>
+
 #include <yarp/os/Bytes.h>
 #include <yarp/os/ManagedBytes.h>
 
@@ -75,7 +76,7 @@ std::string InputStream::readLine(const char terminal, bool* success)
         }
         if (v != 0 && v != '\r' && v != '\n') {
             if (v != '\\' || esc >= 2) {
-                while (esc) {
+                while (esc != 0) {
                     buf += '\\';
                     esc--;
                 }
@@ -85,7 +86,7 @@ std::string InputStream::readLine(const char terminal, bool* success)
             }
         }
         if (ch == terminal) {
-            if (!esc) {
+            if (esc == 0) {
                 done = true;
             } else {
                 esc = 0;

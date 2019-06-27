@@ -10,23 +10,21 @@
 #ifndef YARP_OS_IMPL_PORTCORE_H
 #define YARP_OS_IMPL_PORTCORE_H
 
-#include <yarp/os/impl/ThreadImpl.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/Carriers.h>
-#include <yarp/os/Contactable.h>
 #include <yarp/os/Contact.h>
-#include <yarp/os/Type.h>
+#include <yarp/os/Contactable.h>
+#include <yarp/os/ModifyingCarrier.h>
+#include <yarp/os/Mutex.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortReaderCreator.h>
-#include <yarp/os/PortWriter.h>
-#include <yarp/os/impl/PortCorePackets.h>
-
 #include <yarp/os/PortReport.h>
+#include <yarp/os/PortWriter.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/Mutex.h>
-
-#include <yarp/os/ModifyingCarrier.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/Type.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/PortCorePackets.h>
+#include <yarp/os/impl/ThreadImpl.h>
 
 #include <vector>
 
@@ -139,12 +137,13 @@ public:
 public:
     yarp::os::Carrier* outputModifier;
     yarp::os::Carrier* inputModifier;
-    yarp::os::Mutex    outputMutex;
-    yarp::os::Mutex    inputMutex;
+    yarp::os::Mutex outputMutex;
+    yarp::os::Mutex inputMutex;
 };
 
-class YARP_OS_impl_API PortCore : public ThreadImpl,
-                                  public yarp::os::PortReader
+class YARP_OS_impl_API PortCore :
+        public ThreadImpl,
+        public yarp::os::PortReader
 {
 public:
     /**
@@ -167,14 +166,14 @@ public:
      * @return true on success
      */
     bool addOutput(const std::string& dest,
-                   void *id,
-                   yarp::os::OutputStream *os,
+                   void* id,
+                   yarp::os::OutputStream* os,
                    bool onlyIfNeeded = false);
 
     /**
      * Add another output to the port.
      */
-    void addOutput(OutputProtocol *op);
+    void addOutput(OutputProtocol* op);
 
     /**
      * Remove an input connection.
@@ -183,8 +182,8 @@ public:
      * @param os the output stream for messages about this operation
      */
     void removeInput(const std::string& src,
-                     void *id,
-                     yarp::os::OutputStream *os);
+                     void* id,
+                     yarp::os::OutputStream* os);
 
     /**
      * Remove an output connection.
@@ -193,8 +192,8 @@ public:
      * @param os the output stream for messages about this operation
      */
     void removeOutput(const std::string& dest,
-                      void *id,
-                      yarp::os::OutputStream *os);
+                      void* id,
+                      yarp::os::OutputStream* os);
 
     /**
      * Remove any connection matching the supplied route.
@@ -209,7 +208,7 @@ public:
      * @param id opaque identifier of connection that needs the description
      * @param os stream to write on
      */
-    void describe(void *id, yarp::os::OutputStream *os);
+    void describe(void* id, yarp::os::OutputStream* os);
 
     /**
      * Generate a description of the connections associated with the
@@ -224,8 +223,8 @@ public:
      * @param os stream to write error messages on
      */
     bool readBlock(ConnectionReader& reader,
-                   void *id,
-                   yarp::os::OutputStream *os);
+                   void* id,
+                   yarp::os::OutputStream* os);
 
     /**
      * Read a block of administrative data.
@@ -235,8 +234,8 @@ public:
      * @param os stream to write error messages on
      */
     bool adminBlock(ConnectionReader& reader,
-                    void *id,
-                    yarp::os::OutputStream *os);
+                    void* id,
+                    yarp::os::OutputStream* os);
 
     /**
      * Set the name of this port.
@@ -283,7 +282,7 @@ public:
      * @param unit the connection handler starting up / shutting down
      * @param active true if the handler is starting up, false if shutting down
      */
-    void reportUnit(PortCoreUnit *unit, bool active);
+    void reportUnit(PortCoreUnit* unit, bool active);
 
     /**
      * Configure the port to meet certain restrictions in behavior.
@@ -293,7 +292,7 @@ public:
         this->flags = flags;
     }
 
-    void setContactable(Contactable *contactable)
+    void setContactable(Contactable* contactable)
     {
         this->contactable = contactable;
     }
@@ -377,7 +376,7 @@ public:
     /**
      * Start up the port, but without a main thread.
      */
-    bool manualStart(const char *sourceName);
+    bool manualStart(const char* sourceName);
 
     /**
      * Send a normal message.
@@ -386,8 +385,8 @@ public:
      * @param callback who to call onCompletion() on when message sent.
      */
     bool send(const yarp::os::PortWriter& writer,
-              yarp::os::PortReader *reader = nullptr,
-              const yarp::os::PortWriter *callback = nullptr);
+              yarp::os::PortReader* reader = nullptr,
+              const yarp::os::PortWriter* callback = nullptr);
 
     /**
      * Send a message with a specific mode (normal or log).
@@ -397,8 +396,8 @@ public:
      */
     bool sendHelper(const yarp::os::PortWriter& writer,
                     int mode,
-                    yarp::os::PortReader *reader = nullptr,
-                    const yarp::os::PortWriter *callback = nullptr);
+                    yarp::os::PortReader* reader = nullptr,
+                    const yarp::os::PortWriter* callback = nullptr);
 
     /**
      * Shut down port.
@@ -425,12 +424,12 @@ public:
     /**
      * Get the creator of callbacks.
      */
-    yarp::os::PortReaderCreator *getReadCreator();
+    yarp::os::PortReaderCreator* getReadCreator();
 
     /**
      * Call the right onCompletion() after sending message
      */
-    void notifyCompletion(void *tracker);
+    void notifyCompletion(void* tracker);
 
     /**
      * Normally the port will unregister its name with the name server
@@ -451,7 +450,7 @@ public:
     /**
      * Set a callback to be notified of changes in port status.
      */
-    void setReportCallback(yarp::os::PortReport *reporter);
+    void setReportCallback(yarp::os::PortReport* reporter);
 
     /**
      * Reset the callback to be notified of changes in port status.
@@ -481,10 +480,10 @@ public:
 
     int getVerbosity();
 
-    Property *acquireProperties(bool readOnly);
-    void releaseProperties(Property *prop);
+    Property* acquireProperties(bool readOnly);
+    void releaseProperties(Property* prop);
 
-    bool setCallbackLock(yarp::os::Mutex *mutex = nullptr);
+    bool setCallbackLock(yarp::os::Mutex* mutex = nullptr);
 
     bool removeCallbackLock();
 
@@ -554,26 +553,26 @@ private:
     yarp::os::impl::PortDataModifier modifier;
 
     // set IP packet TOS
-    bool setTypeOfService(PortCoreUnit *unit, int tos);
+    bool setTypeOfService(PortCoreUnit* unit, int tos);
 
     // get IP packet TOS
-    int  getTypeOfService(PortCoreUnit *unit);
+    int getTypeOfService(PortCoreUnit* unit);
 
     // set the scheduling properties of all threads
     // within the process scope.
-    bool setProcessSchedulingParam(int priority=-1, int policy=-1);
+    bool setProcessSchedulingParam(int priority = -1, int policy = -1);
 
     // attach a portmonitor plugin to the port or to a specific connection
-    bool attachPortMonitor(yarp::os::Property& prop, bool isOutput, std::string &errMsg);
+    bool attachPortMonitor(yarp::os::Property& prop, bool isOutput, std::string& errMsg);
 
     // detach the portmonitor from the port or specific connection
     bool dettachPortMonitor(bool isOutput);
 
     // set the parameter for the portmonitor of the port (if any)
-    bool setParamPortMonitor(yarp::os::Property& param, bool isOutput, std::string &errMsg);
+    bool setParamPortMonitor(yarp::os::Property& param, bool isOutput, std::string& errMsg);
 
     // get the parameters from the portmonitor of the port (if any)
-    bool getParamPortMonitor(yarp::os::Property& param, bool isOutput, std::string &errMsg);
+    bool getParamPortMonitor(yarp::os::Property& param, bool isOutput, std::string& errMsg);
 
     void closeMain();
 
@@ -589,10 +588,9 @@ private:
     void reapUnits();
 
     // only called in "running" phase
-    void addInput(InputProtocol *ip);
+    void addInput(InputProtocol* ip);
 
-    bool removeUnit(const Route& route, bool synch = false,
-                    bool *except = nullptr);
+    bool removeUnit(const Route& route, bool synch = false, bool* except = nullptr);
 
     int getNextIndex();
 };

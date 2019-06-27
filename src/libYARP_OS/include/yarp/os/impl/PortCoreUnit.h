@@ -10,25 +10,23 @@
 #ifndef YARP_OS_IMPL_PORTCOREUNIT_H
 #define YARP_OS_IMPL_PORTCOREUNIT_H
 
+#include <yarp/os/Name.h>
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/ThreadImpl.h>
+
 #include <string>
-#include <yarp/os/Name.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class PortCoreUnit;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * This manages a single threaded resource related to a single
  * input or output connection.
  */
 
-class yarp::os::impl::PortCoreUnit : public ThreadImpl
+class PortCoreUnit :
+        public ThreadImpl
 {
 public:
     /**
@@ -129,14 +127,14 @@ public:
      * the caller's responsibility to manage any memory associated
      * with the message.
      */
-    virtual void *send(const yarp::os::PortWriter& writer,
-                       yarp::os::PortReader *reader,
-                       const yarp::os::PortWriter *callback,
-                       void *tracker,
+    virtual void* send(const yarp::os::PortWriter& writer,
+                       yarp::os::PortReader* reader,
+                       const yarp::os::PortWriter* callback,
+                       void* tracker,
                        const std::string& envelope,
                        bool waitAfter = true,
                        bool waitBefore = true,
-                       bool *gotReply = nullptr)
+                       bool* gotReply = nullptr)
     {
         // do nothing
         YARP_UNUSED(writer);
@@ -158,7 +156,7 @@ public:
      * send(), or nullptr if there is no such tracker.  Once the tracker
      * has been returned, calling this method again will return nullptr.
      */
-    virtual void *takeTracker()
+    virtual void* takeTracker()
     {
         return nullptr;
     }
@@ -210,12 +208,12 @@ public:
      *
      * @return the connection mode, or the empty string if there is none
      */
-    std::string getMode(bool *hasMode = nullptr)
+    std::string getMode(bool* hasMode = nullptr)
     {
-        if (hasMode!=nullptr) {
+        if (hasMode != nullptr) {
             *hasMode = this->hasMode;
         }
-        return (this->hasMode)?mode:"";
+        return (this->hasMode) ? mode : "";
     }
 
     /**
@@ -275,7 +273,6 @@ public:
 
 
 protected:
-
     /**
      * @return the port to which this connection belongs
      */
@@ -285,13 +282,17 @@ protected:
     }
 
 private:
-    PortCore& owner; ///< the port to which this connection belongs
-    bool doomed;     ///< whether the connection should shut down ASAP
-    std::string mode;     ///< the logging mode of the connection
-    bool hasMode;    ///< whether the logging mode has been set
-    bool pupped;     ///< whether the connection was made by `publisherUpdate`
-    int index;       ///< an ID assigned to the connection
-    std::string pupString;  ///< the target of the connection if created by `publisherUpdate`
+    PortCore& owner;       ///< the port to which this connection belongs
+    bool doomed;           ///< whether the connection should shut down ASAP
+    std::string mode;      ///< the logging mode of the connection
+    bool hasMode;          ///< whether the logging mode has been set
+    bool pupped;           ///< whether the connection was made by `publisherUpdate`
+    int index;             ///< an ID assigned to the connection
+    std::string pupString; ///< the target of the connection if created by `publisherUpdate`
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_PORTCOREUNIT_H

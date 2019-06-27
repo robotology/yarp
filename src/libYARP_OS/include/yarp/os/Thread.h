@@ -116,7 +116,9 @@ public:
      * resources that were initialized in threadInit() (release memory,
      * and device driver resources).
      */
-    virtual void threadRelease() {}
+    virtual void threadRelease()
+    {
+    }
 
 
     /**
@@ -204,7 +206,9 @@ public:
      * @deprecated since YARP 3.0.0
      */
     YARP_DEPRECATED
-    void setOptions(int stackSize = 0) {};
+    void setOptions(int stackSize = 0)
+    {
+    }
 
     /**
      * Set the default stack size for all threads created after this
@@ -212,7 +216,9 @@ public:
      * @param stackSize the desired stack size in bytes.
      */
     YARP_DEPRECATED
-    static void setDefaultStackSize(int stackSize) {};
+    static void setDefaultStackSize(int stackSize)
+    {
+    }
 #endif // YARP_NO_DEPRECATED
 
 

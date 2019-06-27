@@ -13,12 +13,6 @@
 #include <yarp/os/ConnectionState.h>
 #include "XmlRpcStream.h"
 
-namespace yarp {
-    namespace os {
-        class XmlRpcCarrier;
-    }
-}
-
 /**
  *
  * This carrier enables XML/RPC message transmission.
@@ -41,12 +35,13 @@ namespace yarp {
  * will produce the output "30" if the server still exists.
  *
  */
-class yarp::os::XmlRpcCarrier : public Carrier
+class XmlRpcCarrier :
+        public yarp::os::Carrier
 {
 private:
     bool firstRound;
     bool sender;
-    Contact host;
+    yarp::os::Contact host;
     std::string http;
     bool interpretRos;
 public:
@@ -112,7 +107,7 @@ public:
         return "xmlrpc_carrier";
     }
 
-    void getHeader(Bytes& header) const override
+    void getHeader(yarp::os::Bytes& header) const override
     {
         const char *target = "POST /RP";
         for (size_t i=0; i<8 && i<header.length(); i++) {
@@ -120,7 +115,7 @@ public:
         }
     }
 
-    bool checkHeader(const Bytes& header) override
+    bool checkHeader(const yarp::os::Bytes& header) override
     {
         if (header.length()!=8) {
             return false;
@@ -134,7 +129,7 @@ public:
         return true;
     }
 
-    void setParameters(const Bytes& header) override
+    void setParameters(const yarp::os::Bytes& header) override
     {
         // no parameters - no carrier variants
     }
@@ -142,25 +137,25 @@ public:
 
     // Now, the initial hand-shaking
 
-    bool prepareSend(ConnectionState& proto) override
+    bool prepareSend(yarp::os::ConnectionState& proto) override
     {
         // nothing special to do
         return true;
     }
 
-    bool sendHeader(ConnectionState& proto) override;
+    bool sendHeader(yarp::os::ConnectionState& proto) override;
 
-    bool expectSenderSpecifier(ConnectionState& proto) override;
+    bool expectSenderSpecifier(yarp::os::ConnectionState& proto) override;
 
-    bool expectExtraHeader(ConnectionState& proto) override
+    bool expectExtraHeader(yarp::os::ConnectionState& proto) override
     {
         // interpret any extra header information sent - optional
         return true;
     }
 
-    bool respondToHeader(ConnectionState& proto) override;
+    bool respondToHeader(yarp::os::ConnectionState& proto) override;
 
-    bool expectReplyToHeader(ConnectionState& proto) override
+    bool expectReplyToHeader(yarp::os::ConnectionState& proto) override
     {
         sender = true;
         XmlRpcStream *stream = new XmlRpcStream(proto.giveStreams(),sender,
@@ -180,26 +175,26 @@ public:
 
     // Payload time!
 
-    bool write(ConnectionState& proto, SizedWriter& writer) override;
+    bool write(yarp::os::ConnectionState& proto, yarp::os::SizedWriter& writer) override;
 
-    bool reply(ConnectionState& proto, SizedWriter& writer) override;
+    bool reply(yarp::os::ConnectionState& proto, yarp::os::SizedWriter& writer) override;
 
-    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer)
+    virtual bool sendIndex(yarp::os::ConnectionState& proto, yarp::os::SizedWriter& writer)
     {
         return true;
     }
 
-    bool expectIndex(ConnectionState& proto) override
+    bool expectIndex(yarp::os::ConnectionState& proto) override
     {
         return true;
     }
 
-    bool sendAck(ConnectionState& proto) override
+    bool sendAck(yarp::os::ConnectionState& proto) override
     {
         return true;
     }
 
-    bool expectAck(ConnectionState& proto) override
+    bool expectAck(yarp::os::ConnectionState& proto) override
     {
         return true;
     }
@@ -210,7 +205,7 @@ public:
     }
 
 private:
-    bool shouldInterpretRosMessages(ConnectionState& proto);
+    bool shouldInterpretRosMessages(yarp::os::ConnectionState& proto);
 };
 
 #endif // YARP_XMLRPC_CARRIER_XMLRPCCARRIER_H

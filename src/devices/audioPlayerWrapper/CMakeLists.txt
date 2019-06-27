@@ -11,7 +11,7 @@ yarp_prepare_plugin(AudioPlayerWrapper
                     EXTRA_CONFIG WRAPPER=AudioPlayerWrapper
                     DEFAULT ON)
 
-if(NOT SKIP_audioPlayerWrapper)
+if(NOT SKIP_AudioPlayerWrapper)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   yarp_add_plugin(yarp_AudioPlayerWrapper AudioPlayerWrapper.cpp

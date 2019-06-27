@@ -9,8 +9,8 @@
 
 #include <yarp/os/impl/PortCoreAdapter.h>
 
-#include <yarp/os/Time.h>
 #include <yarp/os/PortReader.h>
+#include <yarp/os/Time.h>
 
 yarp::os::impl::PortCoreAdapter::PortCoreAdapter(Port& owner) :
         stateMutex(),
@@ -100,7 +100,7 @@ void yarp::os::impl::PortCoreAdapter::finishWriting()
         do {
             SystemClock::delaySystem(pause);
             pause *= 2;
-        } while (isWriting() && (SystemClock::nowSystem()-start<3));
+        } while (isWriting() && (SystemClock::nowSystem() - start < 3));
         if (isWriting()) {
             YARP_ERROR(Logger::get(), "Closing port that was sending data (slowly)");
         }
@@ -110,15 +110,17 @@ void yarp::os::impl::PortCoreAdapter::finishWriting()
 
 void yarp::os::impl::PortCoreAdapter::resumeFull()
 {
-    while (produce.check()) {}
-    while (readBlock.check()) {}
+    while (produce.check()) {
+    }
+    while (readBlock.check()) {
+    }
     resume();
     readBlock.post();
 }
 
 bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
 {
-    if (permanentReadDelegate!=nullptr) {
+    if (permanentReadDelegate != nullptr) {
         bool result = permanentReadDelegate->read(reader);
         return result;
     }
@@ -129,7 +131,7 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
     if (!reader.isValid()) {
         // interrupt
         stateMutex.lock();
-        if (readDelegate!=nullptr) {
+        if (readDelegate != nullptr) {
             readResult = readDelegate->read(reader);
         }
         stateMutex.unlock();
@@ -151,7 +153,7 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
 
     stateMutex.lock();
     readResult = false;
-    if (readDelegate!=nullptr) {
+    if (readDelegate != nullptr) {
         readResult = readDelegate->read(reader);
     } else {
         // read and ignore
@@ -168,17 +170,17 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
     if (!readBackground) {
         produce.post();
     }
-    if (result&&willReply) {
+    if (result && willReply) {
         consume.wait();
         if (closed) {
             YARP_DEBUG(Logger::get(), "Port::read shutting down");
             readBlock.post();
             return false;
         }
-        if (writeDelegate!=nullptr) {
+        if (writeDelegate != nullptr) {
             stateMutex.lock();
-            ConnectionWriter *writer = reader.getWriter();
-            if (writer!=nullptr) {
+            ConnectionWriter* writer = reader.getWriter();
+            if (writer != nullptr) {
                 result = readResult = writeDelegate->write(*writer);
             }
             stateMutex.unlock();
@@ -223,7 +225,9 @@ bool yarp::os::impl::PortCoreAdapter::read(PortReader& reader, bool willReply)
         readDelegate = nullptr;
     }
     bool result = readResult;
-    if (!result) replyDue = false;
+    if (!result) {
+        replyDue = false;
+    }
     stateMutex.unlock();
     return result;
 }
@@ -231,7 +235,9 @@ bool yarp::os::impl::PortCoreAdapter::read(PortReader& reader, bool willReply)
 bool yarp::os::impl::PortCoreAdapter::reply(PortWriter& writer, bool drop, bool /*interrupted*/)
 {
     // send reply even if interrupt has happened in interim
-    if (!replyDue) return false;
+    if (!replyDue) {
+        return false;
+    }
 
     replyDue = false;
     dropDue = drop;
@@ -275,15 +281,14 @@ void yarp::os::impl::PortCoreAdapter::configReadCreator(PortReaderCreator& creat
 
 void yarp::os::impl::PortCoreAdapter::configWaitAfterSend(bool waitAfterSend)
 {
-    if (waitAfterSend&&isManual()) {
-        YARP_ERROR(Logger::get(),
-                    "Cannot use background-mode writes on a fake port");
+    if (waitAfterSend && isManual()) {
+        YARP_ERROR(Logger::get(), "Cannot use background-mode writes on a fake port");
     }
-    recWaitAfterSend = waitAfterSend?1:0;
+    recWaitAfterSend = waitAfterSend ? 1 : 0;
     setWaitAfterSend(waitAfterSend);
 }
 
-bool yarp::os::impl::PortCoreAdapter::configCallbackLock(Mutex *lock)
+bool yarp::os::impl::PortCoreAdapter::configCallbackLock(Mutex* lock)
 {
     recCallbackLock = lock;
     haveCallbackLock = true;
@@ -297,17 +302,17 @@ bool yarp::os::impl::PortCoreAdapter::unconfigCallbackLock()
     return removeCallbackLock();
 }
 
-yarp::os::PortReader *yarp::os::impl::PortCoreAdapter::checkPortReader()
+yarp::os::PortReader* yarp::os::impl::PortCoreAdapter::checkPortReader()
 {
     return readDelegate;
 }
 
-yarp::os::PortReader *yarp::os::impl::PortCoreAdapter::checkAdminPortReader()
+yarp::os::PortReader* yarp::os::impl::PortCoreAdapter::checkAdminPortReader()
 {
     return adminReadDelegate;
 }
 
-yarp::os::PortReaderCreator *yarp::os::impl::PortCoreAdapter::checkReadCreator()
+yarp::os::PortReaderCreator* yarp::os::impl::PortCoreAdapter::checkReadCreator()
 {
     return recReadCreator;
 }

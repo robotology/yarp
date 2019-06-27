@@ -10,11 +10,10 @@
 #ifndef YARP_OS_IMPL_CONNECTIONRECORDER_H
 #define YARP_OS_IMPL_CONNECTIONRECORDER_H
 
+#include <yarp/os/Bottle.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/PortWriter.h>
-#include <yarp/os/Bottle.h>
-
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 
 namespace yarp {
@@ -25,9 +24,10 @@ namespace impl {
 /**
  * A helper for recording entire message/reply transactions
  */
-class ConnectionRecorder : public yarp::os::ConnectionReader,
-                           public yarp::os::ConnectionWriter,
-                           public yarp::os::PortWriter
+class ConnectionRecorder :
+        public yarp::os::ConnectionReader,
+        public yarp::os::ConnectionWriter,
+        public yarp::os::PortWriter
 {
 private:
     yarp::os::ConnectionReader* reader;

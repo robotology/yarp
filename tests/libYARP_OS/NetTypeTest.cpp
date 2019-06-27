@@ -30,16 +30,16 @@ TEST_CASE("OS::NetTypeTest", "[yarp::os]")
         char buf2[] = { 1, 2, 3, 4, 5 };
         int len = 5;
 
-        unsigned long ct1 = NetType::getCrc(buf,len);
-        unsigned long ct2 = NetType::getCrc(buf2,len);
+        unsigned long ct1 = NetType::getCrc(buf, len);
+        unsigned long ct2 = NetType::getCrc(buf2, len);
         CHECK(ct1 == ct2); // two identical sequences
 
         buf[0] = 4;
-        ct1 = NetType::getCrc(buf,len);
+        ct1 = NetType::getCrc(buf, len);
         CHECK(ct1!=ct2); // two different sequences
 
         buf2[0] = 4;
-        ct2 = NetType::getCrc(buf2,len);
+        ct2 = NetType::getCrc(buf2, len);
         CHECK(ct1==ct2); // two identical sequences again
     }
 
@@ -50,7 +50,7 @@ TEST_CASE("OS::NetTypeTest", "[yarp::os]")
             unsigned char c[sizeof(std::int32_t)];
         } val;
         NetInt32 i = 258;
-        memcpy((char*)(&val.i),(char*)&i,sizeof(std::int32_t));
+        memcpy((char*)(&val.i), (char*)&i, sizeof(std::int32_t));
         CHECK(val.c[0] == 2); // first byte ok
         CHECK(val.c[1] == 1); // second byte ok
         CHECK(val.c[2] == 0); // third byte ok
@@ -64,7 +64,7 @@ TEST_CASE("OS::NetTypeTest", "[yarp::os]")
             unsigned char c[sizeof(std::int16_t)];
         } val;
         NetInt16 i = 258;
-        memcpy((char*)(&val.i),(char*)&i,sizeof(std::int16_t));
+        memcpy((char*)(&val.i), (char*)&i, sizeof(std::int16_t));
         CHECK(val.c[0] == 2); // first byte ok
         CHECK(val.c[1] == 1); // second byte ok
     }

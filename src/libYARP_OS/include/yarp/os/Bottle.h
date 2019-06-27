@@ -39,8 +39,8 @@ constexpr std::int32_t BOTTLE_TAG_INT = BOTTLE_TAG_INT32;
 namespace yarp {
 namespace os {
 
-// Forward declarations
 class NetworkBase;
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace impl {
 class BottleImpl;
@@ -72,6 +72,14 @@ class StoreList;
 class YARP_OS_API Bottle : public Portable, public Searchable
 {
 public:
+#if defined(SWIG) && (SWIG_VERSION < 0x300011)
+    typedef size_t size_type;
+#else
+    using size_type = size_t;
+#endif
+    // FIXME this can be constexpr, but swig 3.0.8 is not happy
+    static const size_type npos;
+
     using Searchable::check;
     using Searchable::findGroup;
 
@@ -97,7 +105,7 @@ public:
      *
      * @param bottle The object to copy.
      */
-    Bottle(const Bottle& bottle);
+    Bottle(const Bottle& rhs);
 
     /**
      * @brief Initializer list constructor.
@@ -269,14 +277,14 @@ public:
      * @return the Value v; if the index lies outside the range of
      *         elements present, then v.isNull() will be true.
      */
-    Value& get(size_t index) const;
+    Value& get(size_type index) const;
 
     /**
      * Gets the number of elements in the bottle.
      *
      * @return number of elements in the bottle.
      */
-    size_t size() const;
+    size_type size() const;
 
     /**
      * Initializes bottle from a string.
@@ -376,7 +384,7 @@ public:
      * @param first The index of the first element to copy.
      * @param len The number of elements to copy (-1 for all).
      */
-    void copy(const Bottle& alt, int first = 0, int len = -1);
+    void copy(const Bottle& alt, size_type first = 0, size_type len = npos);
 
     /**
      * A special Bottle with no content.

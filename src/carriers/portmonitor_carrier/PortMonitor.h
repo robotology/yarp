@@ -20,20 +20,14 @@
 
 #include <mutex>
 
-namespace yarp {
-    namespace os {
-        class PortMonitor;
-        class PortMonitorGroup;
-    }
-}
+
+class PortMonitor;
 
 /**
- *
  * Manager for arbitration-aware inputs to a given port.
- *
  */
-
-class yarp::os::PortMonitorGroup : public PeerRecord<PortMonitor> {
+class PortMonitorGroup :
+        public yarp::os::PeerRecord<PortMonitor> {
 public:
     virtual ~PortMonitorGroup() {}
     virtual bool acceptIncomingData(PortMonitor *source);
@@ -42,12 +36,10 @@ public:
 
 
 /**
- *
  * Allow to monitor and modify port data from Lua script  Under development.
  * Affected by carrier modifiers.
  *
  * Examples: tcp+recv.portmonitor+type.lua+file.my_lua_script_file
- *
  */
 
 /**
@@ -55,13 +47,14 @@ public:
  *      - how to pass the filename with prefix via connection parameter?
  *        e.g. ...+file.'my_lua_script_file.lua'
  *      - using resource finder to find the script file
- *
  */
-class yarp::os::PortMonitor : public yarp::os::ModifyingCarrier
+class PortMonitor :
+        public yarp::os::ModifyingCarrier
 {
 
 public:
-    PortMonitor(){
+    PortMonitor()
+    {
         bReady = false;
         binder = NULL;
         group = NULL;
@@ -120,8 +113,8 @@ public:
     std::string sourceName;
 
 private:
-    static ElectionOf<PortMonitorGroup> *peers;
-    static ElectionOf<PortMonitorGroup>& getPeers();
+    static yarp::os::ElectionOf<PortMonitorGroup> *peers;
+    static yarp::os::ElectionOf<PortMonitorGroup>& getPeers();
 
 
 private:

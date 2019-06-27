@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(xmlrpc
                     CATEGORY carrier
-                    TYPE yarp::os::XmlRpcCarrier
+                    TYPE XmlRpcCarrier
                     INCLUDE XmlRpcCarrier.h
                     EXTRA_CONFIG CODE="POST /"
                     DEFAULT ON)

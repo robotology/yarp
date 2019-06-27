@@ -528,7 +528,7 @@ yarp_renamed_option(YARP_COMPILE_RTF_ADDONS YARP_COMPILE_RobotTestingFramework_A
 # Disable some parts if they are not required
 
 set(YARP_COMPILE_libYARP_manager OFF)
-if(YARP_COMPILE_yarpmanager-console OR YARP_COMPILE_yarpmanager)
+if(YARP_COMPILE_yarpmanager-console OR YARP_COMPILE_yarpmanager OR YARP_COMPILE_RobotTestingFramework_ADDONS)
   set(YARP_COMPILE_libYARP_manager ON)
 endif()
 

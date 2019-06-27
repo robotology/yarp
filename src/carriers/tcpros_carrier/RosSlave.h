@@ -6,8 +6,6 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <tcpros_carrier_api.h>
-
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/Port.h>
@@ -17,7 +15,9 @@
 #include <string>
 
 // temporary slave
-class RosSlave : public yarp::os::PortReader {
+class RosSlave :
+        public yarp::os::PortReader
+{
 private:
     yarp::os::Port slave;
     std::string hostname;

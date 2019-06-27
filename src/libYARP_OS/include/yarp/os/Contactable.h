@@ -19,13 +19,8 @@
 // Forward declarations:
 namespace yarp {
 namespace os {
+
 class Property;
-} // namespace os
-} // namespace yarp
-
-
-namespace yarp {
-namespace os {
 
 /**
  * @brief An abstract port.

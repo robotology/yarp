@@ -10,6 +10,7 @@
 #define YARP_OS_RFPLUGINFACTORY_H
 
 #include <yarp/os/RFModule.h>
+
 #include <string>
 
 namespace yarp {
@@ -18,14 +19,19 @@ namespace os {
 class YARP_OS_API RFModuleFactory
 {
 private:
-    struct Private;
-    Private* impl;
     RFModuleFactory();
-public:
 
+public:
     static RFModuleFactory& GetInstance();
-    static void AddModule(const std::string& name, RFModule*(*moduleCreate)(void));
-    RFModule* GetModule(const std::string name);
+    static void AddModule(const std::string& name, RFModule* (*moduleCreate)(void));
+    RFModule* GetModule(const std::string& name);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+
 };
 
 }

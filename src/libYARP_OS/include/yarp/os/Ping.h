@@ -48,7 +48,7 @@ private:
 class ConnectResult
 {
 public:
-    Stat totalTime; // total includes name server lookups
+    Stat totalTime;  // total includes name server lookups
     Stat targetTime; // all time involving the target port
 
     void clear();

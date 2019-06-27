@@ -21,7 +21,7 @@ template <class T>
 class LocalReader
 {
 public:
-    virtual ~LocalReader() {}
+    virtual ~LocalReader() = default;
 
     /**
      * Send object obj; expect callback to wrapper

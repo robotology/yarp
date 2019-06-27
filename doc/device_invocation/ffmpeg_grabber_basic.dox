@@ -3,7 +3,7 @@
  *
  * \defgroup ffmpeg_grabber_basic Example for ffmpeg_grabber (ffmpeg_grabber_basic)
 
-Instantiates \ref cmd_device_ffmpeg_grabber "ffmpeg_grabber" device implemented by yarp::dev::FfmpegGrabber.
+Instantiates \ref cmd_device_ffmpeg_grabber "ffmpeg_grabber" device implemented by FfmpegGrabber.
 \verbatim
 # read from an avi file
 device ffmpeg_grabber
@@ -42,6 +42,6 @@ So this is just an example
 <tr><td>ieee1394</td><td>if present, read from firewire</td><td></td></tr>
 </table>
 
-\sa yarp::dev::FfmpegGrabber
+\sa FfmpegGrabber
 
  */

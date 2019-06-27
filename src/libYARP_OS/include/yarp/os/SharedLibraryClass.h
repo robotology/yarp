@@ -24,14 +24,14 @@ template <class T>
 class SharedLibraryClass
 {
 private:
-    T* content;
-    SharedLibraryClassFactory<T>* pfactory;
+    T* content{nullptr};
+    SharedLibraryClassFactory<T>* pfactory{nullptr};
 
 public:
     /**
      * Constructor for empty instance.
      */
-    SharedLibraryClass() : content(nullptr), pfactory(nullptr) {}
+    SharedLibraryClass() = default;
 
     /**
      * Constructor for valid instance of a class from a shared library.
@@ -39,9 +39,7 @@ public:
      * @param factory the factory to use to construct (and eventually
      * destroy) the instance.
      */
-    SharedLibraryClass(SharedLibraryClassFactory<T>& factory) :
-            content(nullptr),
-            pfactory(nullptr)
+    SharedLibraryClass(SharedLibraryClassFactory<T>& factory)
     {
         open(factory);
     }

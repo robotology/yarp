@@ -11,13 +11,13 @@
 
 #include <yarp/conf/system.h>
 #if defined(YARP_HAS_ACE)
-# include <ace/OS_NS_sys_wait.h>
+#    include <ace/OS_NS_sys_wait.h>
 // In one the ACE headers there is a definition of "main" for WIN32
-# ifdef main
-#  undef main
-# endif
+#    ifdef main
+#        undef main
+#    endif
 #elif defined(YARP_HAS_SYS_WAIT_H)
-# include <sys/wait.h>
+#    include <sys/wait.h>
 #endif
 
 namespace yarp {
@@ -25,11 +25,11 @@ namespace os {
 namespace impl {
 
 #if defined(YARP_HAS_ACE)
-    using ACE_OS::wait;
-    using ACE_OS::waitpid;
+using ACE_OS::wait;
+using ACE_OS::waitpid;
 #else
-    using ::wait;
-    using ::waitpid;
+using ::wait;
+using ::waitpid;
 #endif
 
 } // namespace impl

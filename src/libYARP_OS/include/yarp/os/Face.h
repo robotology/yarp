@@ -26,12 +26,12 @@ public:
     /**
      * Constructor.
      */
-    Face() {};
+    Face() = default;
 
     /**
      * Destructor.
      */
-    virtual ~Face() {}
+    virtual ~Face() = default;
 
     /**
      *

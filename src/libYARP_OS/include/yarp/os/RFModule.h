@@ -277,20 +277,23 @@ public:
      */
     void setName(const char* name);
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /**
      * Wrapper around respond() that is guaranteed to process system messages.
      */
     bool safeRespond(const Bottle& command, Bottle& reply);
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 private:
     ResourceFinder resourceFinder;
-    void* implementation;
     bool stopFlag;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
 
     virtual bool basicRespond(const Bottle& command, Bottle& reply);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
 } // namespace os

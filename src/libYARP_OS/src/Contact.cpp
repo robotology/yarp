@@ -9,35 +9,33 @@
  */
 
 #include <yarp/os/Contact.h>
-
 #include <yarp/os/NetType.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
-
-#include <yarp/os/impl/PlatformNetdb.h>
 #include <yarp/os/impl/NameConfig.h>
+#include <yarp/os/impl/PlatformNetdb.h>
 
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <utility>
 
 #if defined(YARP_HAS_ACE)
-# include <ace/INET_Addr.h>
+#    include <ace/INET_Addr.h>
 // In one the ACE headers there is a definition of "main" for WIN32
-# ifdef main
-#  undef main
-# endif
+#    ifdef main
+#        undef main
+#    endif
 #else
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <arpa/inet.h>
+#    include <arpa/inet.h>
+#    include <sys/socket.h>
+#    include <sys/types.h>
 #endif
 
 
 using yarp::os::Contact;
-using yarp::os::NetType;
 using yarp::os::NestedContact;
+using yarp::os::NetType;
 using yarp::os::Searchable;
 using yarp::os::Value;
 using yarp::os::impl::NameConfig;
@@ -52,11 +50,11 @@ public:
             std::string carrier,
             std::string hostname,
             int port) :
-        regName(std::move(regName)),
-        carrier(std::move(carrier)),
-        hostname(std::move(hostname)),
-        port(port),
-        timeout(-1)
+            regName(std::move(regName)),
+            carrier(std::move(carrier)),
+            hostname(std::move(hostname)),
+            port(port),
+            timeout(-1)
     {
     }
 
@@ -142,66 +140,63 @@ Contact Contact::fromString(const std::string& txt)
     std::string::size_type start = 0;
     std::string::size_type base = str.find("://");
     std::string::size_type offset = 2;
-    if (base==std::string::npos) {
+    if (base == std::string::npos) {
         base = str.find(":/");
         offset = 1;
     }
-    if (base==std::string::npos) {
-        if (str.length()>0 && str[0] == '/') {
+    if (base == std::string::npos) {
+        if (str.length() > 0 && str[0] == '/') {
             base = 0;
             offset = 0;
         }
     }
-    if (base!=std::string::npos) {
+    if (base != std::string::npos) {
         c.mPriv->carrier = str.substr(0, base);
-        start = base+offset;
+        start = base + offset;
         // check if we have a direct machine:NNN syntax
         std::string::size_type colon = std::string::npos;
         int mode = 0;
         int nums = 0;
         std::string::size_type i;
-        for (i=start+1; i<str.length(); i++) {
+        for (i = start + 1; i < str.length(); i++) {
             char ch = str[i];
-            if (ch==':') {
+            if (ch == ':') {
                 if (mode == 0) {
                     colon = i;
                     mode = 1;
                     continue;
-                } else {
-                    mode = -1;
-                    break;
                 }
-            }
-            if (ch=='/') {
+                mode = -1;
                 break;
             }
-            if (mode==1) {
-                if (ch>='0'&&ch<='9') {
+            if (ch == '/') {
+                break;
+            }
+            if (mode == 1) {
+                if (ch >= '0' && ch <= '9') {
                     nums++;
                     continue;
-                } else {
-                    mode = -1;
-                    break;
                 }
+                mode = -1;
+                break;
             }
         }
-        if (mode==1 && nums>=1) {
+        if (mode == 1 && nums >= 1) {
             // yes, machine:nnn
             if (c.mPriv->carrier.empty()) {
                 c.mPriv->carrier = "tcp";
             }
-            c.mPriv->hostname = str.substr(start+1, colon-start-1);
-            c.mPriv->port = atoi(str.substr(colon+1, nums).c_str());
+            c.mPriv->hostname = str.substr(start + 1, colon - start - 1);
+            c.mPriv->port = atoi(str.substr(colon + 1, nums).c_str());
             start = i;
         }
     }
     std::string rname = str.substr(start);
-    if (rname!="/") {
+    if (rname != "/") {
         c.mPriv->regName = rname;
     }
     return c;
 }
-
 
 
 std::string Contact::getName() const
@@ -209,9 +204,8 @@ std::string Contact::getName() const
     if (!mPriv->regName.empty()) {
         return mPriv->regName;
     }
-    if (mPriv->hostname!="" && mPriv->port>=0) {
-        std::string name = std::string("/") + mPriv->hostname + ":" +
-            NetType::toString(mPriv->port);
+    if (!mPriv->hostname.empty() && mPriv->port >= 0) {
+        std::string name = std::string("/") + mPriv->hostname + ":" + NetType::toString(mPriv->port);
         return name;
     }
     return {};
@@ -228,7 +222,6 @@ void Contact::setName(const std::string& name)
 }
 
 
-
 std::string Contact::getHost() const
 {
     return mPriv->hostname;
@@ -238,7 +231,6 @@ void Contact::setHost(const std::string& hostname)
 {
     this->mPriv->hostname = hostname;
 }
-
 
 
 int Contact::getPort() const
@@ -252,7 +244,6 @@ void Contact::setPort(int port)
 }
 
 
-
 std::string Contact::getCarrier() const
 {
     return mPriv->carrier;
@@ -264,7 +255,6 @@ void Contact::setCarrier(const std::string& carrier)
 }
 
 
-
 const NestedContact& Contact::getNested() const
 {
     return mPriv->nestedContact;
@@ -274,7 +264,6 @@ void Contact::setNestedContact(const yarp::os::NestedContact& nestedContact)
 {
     this->mPriv->nestedContact = nestedContact;
 }
-
 
 
 bool Contact::hasTimeout() const
@@ -293,7 +282,6 @@ void Contact::setTimeout(float timeout)
 }
 
 
-
 void Contact::setSocket(const std::string& carrier,
                         const std::string& hostname,
                         int port)
@@ -304,16 +292,15 @@ void Contact::setSocket(const std::string& carrier,
 }
 
 
-
 bool Contact::isValid() const
 {
-    return mPriv->port>=0;
+    return mPriv->port >= 0;
 }
 
 std::string Contact::toString() const
 {
     std::string name = getName();
-    if (mPriv->carrier!="") {
+    if (!mPriv->carrier.empty()) {
         return mPriv->carrier + ":/" + name;
     }
     return name;
@@ -323,11 +310,11 @@ std::string Contact::toString() const
 std::string Contact::toURI(bool includeCarrier) const
 {
     std::string result;
-    if (includeCarrier && mPriv->carrier!="") {
+    if (includeCarrier && !mPriv->carrier.empty()) {
         result += mPriv->carrier;
         result += ":/";
     }
-    if (mPriv->hostname!="" && mPriv->port>=0) {
+    if (!mPriv->hostname.empty() && mPriv->port >= 0) {
         result += "/";
         result += mPriv->hostname;
         result += ":";
@@ -338,7 +325,7 @@ std::string Contact::toURI(bool includeCarrier) const
 }
 
 
-std::string Contact::convertHostToIp(const char *name)
+std::string Contact::convertHostToIp(const char* name)
 {
 #if defined(YARP_HAS_ACE)
     ACE_INET_Addr addr((u_short)0, name);
@@ -360,14 +347,14 @@ std::string Contact::convertHostToIp(const char *name)
         std::exit(1);
     }
 
-    for(p = res; p != nullptr; p = p->ai_next) {
-        void *addr;
+    for (p = res; p != nullptr; p = p->ai_next) {
+        void* addr;
 
         if (p->ai_family == AF_INET) { // IPv4
-            auto *ipv4 = (struct sockaddr_in *)p->ai_addr;
+            auto* ipv4 = (struct sockaddr_in*)p->ai_addr;
             addr = &(ipv4->sin_addr);
         } else { // IPv6
-            auto *ipv6 = (struct sockaddr_in6 *)p->ai_addr;
+            auto* ipv6 = (struct sockaddr_in6*)p->ai_addr;
             addr = &(ipv6->sin6_addr);
         }
 

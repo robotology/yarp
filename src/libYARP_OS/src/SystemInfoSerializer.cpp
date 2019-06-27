@@ -7,10 +7,11 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/SystemInfo.h>
 #include <yarp/os/SystemInfoSerializer.h>
+
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/SystemInfo.h>
 
 using namespace yarp::os;
 
@@ -39,9 +40,9 @@ public:
 };
 
 SystemInfoSerializer::SystemInfoSerializer() :
-        memory(SystemInfo::MemoryInfo{0,0}),
-        storage(SystemInfo::StorageInfo{0,0}),
-        load(SystemInfo::LoadInfo{.0,.0,.0,0}),
+        memory(SystemInfo::MemoryInfo{0, 0}),
+        storage(SystemInfo::StorageInfo{0, 0}),
+        load(SystemInfo::LoadInfo{.0, .0, .0, 0}),
         mPriv(new Private(this))
 {
 }

@@ -26,7 +26,7 @@ TEST_CASE("OS::impl::StreamConnectionReaderTest", "[yarp::os][yarp::os::impl]")
         sis.add("Hello\ngood evening and welcome");
         StreamConnectionReader sbr;
         Route route;
-        sbr.reset(sis,nullptr,route,10,true);
+        sbr.reset(sis, nullptr, route, 10, true);
         std::string line = sbr.expectLine();
         CHECK(line == "Hello"); // one line
     }

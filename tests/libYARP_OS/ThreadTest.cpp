@@ -457,7 +457,7 @@ TEST_CASE("OS::ThreadTest", "[yarp::os]")
 
     SECTION("testing join timeout...")
     {
-        ThreadDelay t(0.1,true);
+        ThreadDelay t(0.1, true);
         CHECK(t.active); // flag starts out ok
         t.start();
         CHECK(t.join(1) == 0); // thread t joined succesfully before 1 second timeout

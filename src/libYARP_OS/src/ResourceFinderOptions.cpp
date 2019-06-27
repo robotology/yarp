@@ -14,7 +14,8 @@ ResourceFinderOptions::ResourceFinderOptions(SearchLocations searchLocations,
                                              DuplicateFilesPolicy duplicateFilesPolicy,
                                              SearchFlavor searchFlavor,
                                              const std::string& resourceType,
-                                             MessageFilter messageFilter) {
+                                             MessageFilter messageFilter)
+{
     this->searchLocations = searchLocations;
     this->duplicateFilesPolicy = duplicateFilesPolicy;
     this->searchFlavor = searchFlavor;

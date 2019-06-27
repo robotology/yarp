@@ -11,37 +11,35 @@
 #define YARP_OS_IMPL_SOCKETTWOWAYSTREAM_H
 
 #include <yarp/conf/system.h>
+
 #include <yarp/os/Bytes.h>
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformTime.h>
-#include <yarp/os/impl/TcpStream.h>
 #include <yarp/os/impl/TcpAcceptor.h>
+#include <yarp/os/impl/TcpStream.h>
 
 #ifdef YARP_HAS_ACE // For TCP_CORK definition
-# include <ace/os_include/netinet/os_tcp.h>
+#    include <ace/os_include/netinet/os_tcp.h>
 // In one the ACE headers there is a definition of "main" for WIN32
-# ifdef main
-#  undef main
-# endif
+#    ifdef main
+#        undef main
+#    endif
 #else
-# include <netinet/tcp.h>
+#    include <netinet/tcp.h>
 #endif
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class SocketTwoWayStream;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * A stream abstraction for socket communication.  It supports TCP.
  */
-class YARP_OS_impl_API yarp::os::impl::SocketTwoWayStream : public TwoWayStream,
-                                           public InputStream,
-                                           public OutputStream
+class YARP_OS_impl_API SocketTwoWayStream :
+        public TwoWayStream,
+        public InputStream,
+        public OutputStream
 {
 public:
     SocketTwoWayStream() :
@@ -103,15 +101,19 @@ public:
     using yarp::os::InputStream::read;
     yarp::conf::ssize_t read(Bytes& b) override
     {
-        if (!isOk()) { return -1; }
+        if (!isOk()) {
+            return -1;
+        }
         yarp::conf::ssize_t result;
         if (haveReadTimeout) {
             result = stream.recv_n(b.get(), b.length(), &readTimeout);
         } else {
             result = stream.recv_n(b.get(), b.length());
         }
-        if (!happy) { return -1; }
-        if (result<=0) {
+        if (!happy) {
+            return -1;
+        }
+        if (result <= 0) {
             happy = false;
             YARP_DEBUG(Logger::get(), "bad socket read");
         }
@@ -120,15 +122,19 @@ public:
 
     yarp::conf::ssize_t partialRead(Bytes& b) override
     {
-        if (!isOk()) { return -1; }
+        if (!isOk()) {
+            return -1;
+        }
         yarp::conf::ssize_t result;
         if (haveReadTimeout) {
             result = stream.recv(b.get(), b.length(), &readTimeout);
         } else {
             result = stream.recv(b.get(), b.length());
         }
-        if (!happy) { return -1; }
-        if (result<=0) {
+        if (!happy) {
+            return -1;
+        }
+        if (result <= 0) {
             happy = false;
             YARP_DEBUG(Logger::get(), "bad socket read");
         }
@@ -138,14 +144,16 @@ public:
     using yarp::os::OutputStream::write;
     void write(const Bytes& b) override
     {
-        if (!isOk()) { return; }
+        if (!isOk()) {
+            return;
+        }
         yarp::conf::ssize_t result;
         if (haveWriteTimeout) {
             result = stream.send_n(b.get(), b.length(), &writeTimeout);
         } else {
             result = stream.send_n(b.get(), b.length());
         }
-        if (result<0) {
+        if (result < 0) {
             happy = false;
             YARP_DEBUG(Logger::get(), "bad socket write");
         }
@@ -157,8 +165,7 @@ public:
         int status = 0;
         int sizeInt = sizeof(int);
         stream.get_option(IPPROTO_TCP, TCP_CORK, &status, &sizeInt);
-        if (status == 1)
-        {
+        if (status == 1) {
             // Remove CORK
             int zero = 0;
             stream.set_option(IPPROTO_TCP, TCP_CORK, &zero, sizeof(int));
@@ -198,7 +205,7 @@ public:
 
     bool setWriteTimeout(double timeout) override
     {
-        if (timeout<1e-12) {
+        if (timeout < 1e-12) {
             haveWriteTimeout = false;
         } else {
             PLATFORM_TIME_SET(writeTimeout, timeout);
@@ -209,7 +216,7 @@ public:
 
     bool setReadTimeout(double timeout) override
     {
-        if (timeout<1e-12) {
+        if (timeout < 1e-12) {
             haveReadTimeout = false;
         } else {
             PLATFORM_TIME_SET(readTimeout, timeout);
@@ -231,5 +238,9 @@ private:
     bool happy;
     void updateAddresses();
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_SOCKETTWOWAYSTREAM_H

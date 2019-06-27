@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_MPICARRIER
-#define YARP_MPICARRIER
+#ifndef YARP_MPICARRIER_H
+#define YARP_MPICARRIER_H
 
 #include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/Bytes.h>
@@ -18,19 +18,15 @@
 #include <string>
 #include <iostream>
 
-#include <yarp/os/MpiStream.h>
+#include "MpiStream.h"
 
-namespace yarp {
-    namespace os {
-        class MpiCarrier;
-    }
-}
 
 /**
  * Abstract base carrier for managing port communication via MPI.
- *
  */
-class yarp::os::MpiCarrier : public AbstractCarrier {
+class MpiCarrier :
+        public yarp::os::AbstractCarrier
+{
 protected:
     MpiStream* stream;
     MpiComm* comm;
@@ -57,44 +53,44 @@ public:
     bool supportReply() const override = 0;
 
 
-    void getHeader(Bytes& header) const override;
-    bool checkHeader(const Bytes& header) override;
+    void getHeader(yarp::os::Bytes& header) const override;
+    bool checkHeader(const yarp::os::Bytes& header) override;
 
 
-    bool sendHeader(ConnectionState& proto) override;
-    bool expectSenderSpecifier(ConnectionState& proto) override;
+    bool sendHeader(yarp::os::ConnectionState& proto) override;
+    bool expectSenderSpecifier(yarp::os::ConnectionState& proto) override;
 
-    bool respondToHeader(ConnectionState& proto) override;
-    bool expectReplyToHeader(ConnectionState& proto) override;
+    bool respondToHeader(yarp::os::ConnectionState& proto) override;
+    bool expectReplyToHeader(yarp::os::ConnectionState& proto) override;
 
 
     /////////////////////////////////////////////////
     // Payload time!
 
-    bool write(ConnectionState& proto, SizedWriter& writer) override {
+    bool write(yarp::os::ConnectionState& proto, yarp::os::SizedWriter& writer) override {
         writer.write(proto.os());
         return proto.os().isOk();
     }
 
-    bool sendIndex(ConnectionState& proto, SizedWriter& writer) override {
+    bool sendIndex(yarp::os::ConnectionState& proto, yarp::os::SizedWriter& writer) override {
         return true;
     }
 
-    bool expectIndex(ConnectionState& proto) override {
+    bool expectIndex(yarp::os::ConnectionState& proto) override {
         return true;
     }
 
     /////////////////////////////////////////////////
     // Acknowledgements, we don't do them
 
-    bool sendAck(ConnectionState& proto) override {
+    bool sendAck(yarp::os::ConnectionState& proto) override {
         return true;
     }
 
-    bool expectAck(ConnectionState& proto) override {
+    bool expectAck(yarp::os::ConnectionState& proto) override {
         return true;
     }
 
 };
 
-#endif // YARP_MPICARRIER
+#endif // YARP_MPICARRIER_H

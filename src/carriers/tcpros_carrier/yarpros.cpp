@@ -6,7 +6,6 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <cstdio>
 
 #include "RosSlave.h"
 #include "RosLookup.h"
@@ -14,6 +13,7 @@
 
 #include <yarp/os/Vocab.h>
 
+#include <cstdio>
 #include <string>
 
 

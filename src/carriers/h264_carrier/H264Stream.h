@@ -12,26 +12,20 @@
 #include <yarp/os/impl/DgramTwoWayStream.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
-#include "BlobNetworkHeader.h"
+#include <yarp/wire_rep_utils/BlobNetworkHeader.h>
 #include "H264Decoder.h"
 #include <yarp/os/InputStream.h>
 
 
-namespace yarp {
-    namespace os {
-        class H264Stream;
-    }
-}
-
-
-class yarp::os::H264Stream : public yarp::os::impl::DgramTwoWayStream
+class H264Stream :
+        public yarp::os::impl::DgramTwoWayStream
 {
 private:
 
     DgramTwoWayStream *delegate;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> img;
     yarp::sig::ImageNetworkHeader imgHeader;
-    BlobNetworkHeader blobHeader;
+    yarp::wire_rep_utils::BlobNetworkHeader blobHeader;
     int phase;
     char *cursor;
     size_t remaining;
@@ -50,10 +44,10 @@ public:
     OutputStream& getOutputStream() override;
 
     using yarp::os::OutputStream::write;
-    void write(const Bytes& b) override;
+    void write(const yarp::os::Bytes& b) override;
 
     using yarp::os::InputStream::read;
-    yarp::conf::ssize_t read(Bytes& b) override;
+    yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
 
     bool setReadEnvelopeCallback(InputStream::readEnvelopeCallbackType callback, void* data) override;
 

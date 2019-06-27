@@ -10,29 +10,23 @@
 #ifndef YARP_OS_IMPL_FALLBACKNAMECLIENT_H
 #define YARP_OS_IMPL_FALLBACKNAMECLIENT_H
 
-#include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
+#include <yarp/os/impl/ThreadImpl.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class FallbackNameClient;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * A client for the FallbackNameServer class.  Provides a last-resort
  * means of searching for the name server.
  */
-class YARP_OS_impl_API yarp::os::impl::FallbackNameClient : public ThreadImpl
+class YARP_OS_impl_API FallbackNameClient :
+        public ThreadImpl
 {
 public:
-    FallbackNameClient() :
-            closed(false)
-    {
-    }
+    FallbackNameClient() = default;
 
     void run() override;
     void close() override;
@@ -44,7 +38,12 @@ public:
 private:
     Contact address;
     DgramTwoWayStream listen;
-    bool closed;
+    bool closed{false};
 };
+
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_FALLBACKNAMECLIENT_H

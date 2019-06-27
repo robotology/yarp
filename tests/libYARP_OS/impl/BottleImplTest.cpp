@@ -47,7 +47,7 @@ TEST_CASE("OS::BottleImplTest", "[yarp::os::impl]")
         size_t hsize;
         const char *hbuf = bot4.toBinary(&hsize);
         Bottle bot5;
-        bot5.fromBinary(hbuf,hsize);
+        bot5.fromBinary(hbuf, hsize);
         CHECK(bot5.size() == (size_t) 4); // "player bug"
     }
 

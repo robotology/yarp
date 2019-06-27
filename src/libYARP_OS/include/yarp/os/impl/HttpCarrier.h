@@ -10,21 +10,16 @@
 #ifndef YARP_OS_IMPL_HTTPCARRIER
 #define YARP_OS_IMPL_HTTPCARRIER
 
-#include <yarp/os/impl/TcpCarrier.h>
 #include <yarp/os/NetType.h>
+#include <yarp/os/Property.h>
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/os/TwoWayStream.h>
-#include <yarp/os/Property.h>
+#include <yarp/os/impl/TcpCarrier.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class HttpCarrier;
-            class HttpTwoWayStream;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * Minimal http connection support.
@@ -50,7 +45,9 @@ namespace yarp {
  *
  * For "POST /" ... not done yet.
  */
-class yarp::os::impl::HttpTwoWayStream : public TwoWayStream, public OutputStream
+class HttpTwoWayStream :
+        public TwoWayStream,
+        public OutputStream
 {
 private:
     std::string proc;
@@ -58,16 +55,17 @@ private:
     bool data;
     bool filterData;
     bool chunked;
-    TwoWayStream *delegate;
+    TwoWayStream* delegate;
     StringInputStream sis;
     StringOutputStream sos;
     std::string format;
     std::string outer;
     bool isWriter;
+
 public:
-    HttpTwoWayStream(TwoWayStream *delegate,
-                     const char *txt,
-                     const char *prefix,
+    HttpTwoWayStream(TwoWayStream* delegate,
+                     const char* txt,
+                     const char* prefix,
                      yarp::os::Property& prop,
                      bool writer);
 
@@ -90,15 +88,15 @@ public:
     void flip();
     void finish();
     bool useJson();
-    std::string *typeHint();
+    std::string* typeHint();
 };
-
 
 
 /**
  * Communicating via http.
  */
-class yarp::os::impl::HttpCarrier : public TcpCarrier
+class HttpCarrier :
+        public TcpCarrier
 {
 private:
     std::string url, input, prefix;
@@ -106,15 +104,16 @@ private:
     bool expectPost;
     int contentLength;
     yarp::os::Property prop;
-    HttpTwoWayStream *stream;
+    HttpTwoWayStream* stream;
+
 public:
     HttpCarrier();
 
-    Carrier *create() const override;
+    Carrier* create() const override;
 
     std::string getName() const override;
 
-    bool checkHeader(const Bytes& header, const char *prefix);
+    bool checkHeader(const Bytes& header, const char* prefix);
 
     bool checkHeader(const Bytes& header) override;
     void setParameters(const Bytes& header) override;
@@ -134,5 +133,9 @@ public:
     bool reply(ConnectionState& proto, SizedWriter& writer) override;
     bool write(ConnectionState& proto, SizedWriter& writer) override;
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_HTTPCARRIER

@@ -92,6 +92,13 @@ MainWindow::MainWindow(QWidget *parent) :
     qRegisterMetaType< QVector<int> >("QVector<int>");
     ui->mainToolBar->setContextMenuPolicy(Qt::PreventContextMenu);
     ui->menuBar->setContextMenuPolicy(Qt::PreventContextMenu);
+    auto label = new QLabel("", ui->statusBar);
+    auto yarpino = new QLabel("", ui->statusBar);
+    QPixmap pixmap(QPixmap(":/yarp-robot-22.png").scaledToHeight(ui->statusBar->height()));
+    yarpino->setPixmap(pixmap);
+    label->setText("Powered by");
+    ui->statusBar->insertPermanentWidget(0,label);
+    ui->statusBar->insertPermanentWidget(1,yarpino);
     builderToolBar = nullptr;
     prevWidget = nullptr;
 

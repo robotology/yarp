@@ -7,61 +7,62 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/SystemInfo.h>
+
+#include <yarp/os/Os.h>
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <yarp/os/SystemInfo.h>
-#include <yarp/os/SystemInfoSerializer.h>
-#include <yarp/os/Os.h>
 
 using namespace yarp::os;
 
 #if defined(__linux__)
-#include <unistd.h>
-#include <sys/utsname.h>
-#include <sys/types.h>
-#include <ifaddrs.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <linux/if.h>
-#include <sys/statvfs.h>
-#include <pwd.h>
+#    include <arpa/inet.h>
+#    include <ifaddrs.h>
+#    include <linux/if.h>
+#    include <netinet/in.h>
+#    include <pwd.h>
+#    include <sys/ioctl.h>
+#    include <sys/socket.h>
+#    include <sys/statvfs.h>
+#    include <sys/types.h>
+#    include <sys/utsname.h>
+#    include <unistd.h>
 
-extern char **environ;
+extern char** environ;
 
 #elif defined(__APPLE__)
-#include <sys/types.h>
-#include <sys/sysctl.h>
-#include <mach/mach.h>
-#include <unistd.h>
-#include <sstream>
-#include <pwd.h>
-#include <sys/param.h>
-#include <sys/mount.h>
+#    include <mach/mach.h>
+#    include <pwd.h>
+#    include <sstream>
+#    include <sys/mount.h>
+#    include <sys/param.h>
+#    include <sys/sysctl.h>
+#    include <sys/types.h>
+#    include <unistd.h>
 #endif
 
 #if defined(_WIN32)
-#include <windows.h>
-#include <shlobj.h>
-#include <Lmcons.h>
-#include <comdef.h>     // for using bstr_t class
-#include <psapi.h>
+#    include <Lmcons.h>
+#    include <comdef.h> // for using bstr_t class
+#    include <psapi.h>
+#    include <shlobj.h>
+#    include <windows.h>
 //#define _WIN32_DCOM
-#include <wbemidl.h>
-#if (defined(WINVER)) && (WINVER>=0x0502)
-#include <pdh.h>
-#include <pdhmsg.h>
-#pragma comment(lib, "pdh.lib")
-#pragma comment(lib, "psapi.lib")      // for get proocess name for pid
-# pragma comment(lib, "wbemuuid.lib")  // for get process arguments from pid
-#endif
+#    include <wbemidl.h>
+#    if (defined(WINVER)) && (WINVER >= 0x0502)
+#        include <pdh.h>
+#        include <pdhmsg.h>
+#        pragma comment(lib, "pdh.lib")
+#        pragma comment(lib, "psapi.lib")    // for get proocess name for pid
+#        pragma comment(lib, "wbemuuid.lib") // for get process arguments from pid
+#    endif
 
-#include <yarp/os/PeriodicThread.h>
-#include <yarp/os/Semaphore.h>
+#    include <yarp/os/PeriodicThread.h>
+#    include <yarp/os/Semaphore.h>
 
-#include <vector>
+#    include <vector>
 
 static void enableCpuLoadCollector(void);
 static void disableCpuLoadCollector(void);
@@ -69,62 +70,71 @@ static void disableCpuLoadCollector(void);
 #endif
 
 #if defined(__linux__)
-SystemInfo::capacity_t getMemEntry(const char *tag, const char *bufptr)
+SystemInfo::capacity_t getMemEntry(const char* tag, const char* bufptr)
 {
-    char *tail;
+    char* tail;
     SystemInfo::capacity_t retval;
     size_t len = strlen(tag);
-    while (bufptr)
-    {
-        if (*bufptr == '\n') bufptr++;
-        if (!strncmp(tag, bufptr, len))
-        {
-            retval = strtol(bufptr + len, &tail, 10);
-            if (tail == bufptr + len)
-                return -1;
-            else
-                return retval;
+    while (bufptr != nullptr) {
+        if (*bufptr == '\n') {
+            bufptr++;
         }
-        bufptr = strchr( bufptr, '\n' );
+        if (strncmp(tag, bufptr, len) == 0) {
+            retval = strtol(bufptr + len, &tail, 10);
+            if (tail == bufptr + len) {
+                return -1;
+            }
+            return retval;
+        }
+        bufptr = strchr(bufptr, '\n');
     }
     return -1;
 }
 
 
-bool getCpuEntry(const char* tag, const char *buff, std::string& value)
+bool getCpuEntry(const char* tag, const char* buff, std::string& value)
 {
-    if (strlen(buff) <= strlen(tag))
+    if (strlen(buff) <= strlen(tag)) {
         return false;
+    }
 
-    if (strncmp(buff, tag, strlen(tag)) != 0)
+    if (strncmp(buff, tag, strlen(tag)) != 0) {
         return false;
+    }
 
-    const char *pos1 = strchr(buff, ':');
-    if (!pos1)
+    const char* pos1 = strchr(buff, ':');
+    if (pos1 == nullptr) {
         return false;
+    }
 
-    while((*pos1 != '\0') && ((*pos1 == ' ')||(*pos1 == ':')||(*pos1 == '\t'))) pos1++;
-    const char* pos2 = buff + strlen(buff)-1;
-    while((*pos2 != ':') && ((*pos2 == ' ')||(*pos2 == '\n'))) pos2--;
-    if (pos2 < pos1)
+    while ((*pos1 != '\0') && ((*pos1 == ' ') || (*pos1 == ':') || (*pos1 == '\t'))) {
+        pos1++;
+    }
+    const char* pos2 = buff + strlen(buff) - 1;
+    while ((*pos2 != ':') && ((*pos2 == ' ') || (*pos2 == '\n'))) {
+        pos2--;
+    }
+    if (pos2 < pos1) {
         return false;
-    value = std::string(pos1, pos2-pos1+1);
+    }
+    value = std::string(pos1, pos2 - pos1 + 1);
     return true;
 }
 #endif
 
 
-#if  defined(_WIN32)
-class CpuLoadCollector: public yarp::os::PeriodicThread
+#if defined(_WIN32)
+class CpuLoadCollector : public yarp::os::PeriodicThread
 {
 public:
-    CpuLoadCollector():PeriodicThread(5.000, ShouldUseSystemClock::Yes)
+    CpuLoadCollector() :
+            PeriodicThread(5.000, ShouldUseSystemClock::Yes)
     {
-       firstRun = true;
-       load.cpuLoad1 = 0.0;
-       load.cpuLoad5 = 0.0;
-       load.cpuLoad15 = 0.0;
-       load.cpuLoadInstant = (int)0;
+        firstRun = true;
+        load.cpuLoad1 = 0.0;
+        load.cpuLoad5 = 0.0;
+        load.cpuLoad15 = 0.0;
+        load.cpuLoadInstant = (int)0;
     }
 
     ~CpuLoadCollector()
@@ -134,7 +144,7 @@ public:
     void run()
     {
         sem.wait();
-        load.cpuLoadInstant = (int) phdCpuLoad();
+        load.cpuLoadInstant = (int)phdCpuLoad();
         samples.push_back(load.cpuLoadInstant);
         if (samples.size() > 180)
             samples.erase(samples.begin());
@@ -142,21 +152,19 @@ public:
         std::vector<int>::reverse_iterator rti;
         int sum = 0;
         int n = 0;
-        for(rti=samples.rbegin(); rti<samples.rend(); ++rti)
-        {
+        for (rti = samples.rbegin(); rti < samples.rend(); ++rti) {
             sum += (*rti);
             n++;
             // every 1min
-            if (n<12)
-                load.cpuLoad1 = (double)(sum/n)/100.0;
+            if (n < 12)
+                load.cpuLoad1 = (double)(sum / n) / 100.0;
             // every 5min
-            if (n<60)
-                load.cpuLoad5 = (double)(sum/n)/100.0;
+            if (n < 60)
+                load.cpuLoad5 = (double)(sum / n) / 100.0;
             // every 15min
-            load.cpuLoad15 = (double)(sum/n)/100.0;
+            load.cpuLoad15 = (double)(sum / n) / 100.0;
         }
         sem.post();
-
     }
 
     SystemInfo::LoadInfo getCpuLoad(void)
@@ -170,12 +178,11 @@ public:
     //bool threadInit()
     //void threadRelease()
 private:
-#if (defined(WINVER)) && (WINVER>=0x0502)
+#    if (defined(WINVER)) && (WINVER >= 0x0502)
     double phdCpuLoad()
     {
         DWORD ret;
-        if (firstRun)
-        {
+        if (firstRun) {
             phdStatus = PdhOpenQuery(nullptr, 0, &hPhdQuery);
             if (phdStatus != ERROR_SUCCESS)
                 return 0;
@@ -190,23 +197,27 @@ private:
         if (phdStatus != ERROR_SUCCESS)
             return 0;
         phdStatus = PdhGetFormattedCounterValue(phdCounter,
-                                                PDH_FMT_DOUBLE|PDH_FMT_NOCAP100,
-                                                &ret, &phdFmtValue);
+                                                PDH_FMT_DOUBLE | PDH_FMT_NOCAP100,
+                                                &ret,
+                                                &phdFmtValue);
         if (phdStatus != ERROR_SUCCESS)
             return 0;
         return phdFmtValue.doubleValue;
     }
-#else
-    double phdCpuLoad() { return 0.0; }
-#endif
+#    else
+    double phdCpuLoad()
+    {
+        return 0.0;
+    }
+#    endif
 
 private:
-#if (defined(WINVER)) && (WINVER>=0x0502)
-    PDH_STATUS            phdStatus;
-    HQUERY                hPhdQuery;
-    PDH_FMT_COUNTERVALUE  phdFmtValue;
-    HCOUNTER              phdCounter;
-#endif
+#    if (defined(WINVER)) && (WINVER >= 0x0502)
+    PDH_STATUS phdStatus;
+    HQUERY hPhdQuery;
+    PDH_FMT_COUNTERVALUE phdFmtValue;
+    HCOUNTER phdCounter;
+#    endif
     bool firstRun;
     SystemInfo::LoadInfo load;
     std::vector<int> samples;
@@ -217,8 +228,7 @@ static CpuLoadCollector* globalLoadCollector = nullptr;
 
 void enableCpuLoadCollector(void)
 {
-    if (globalLoadCollector == nullptr)
-    {
+    if (globalLoadCollector == nullptr) {
         globalLoadCollector = new CpuLoadCollector();
         globalLoadCollector->start();
     }
@@ -226,8 +236,7 @@ void enableCpuLoadCollector(void)
 
 void disableCpuLoadCollector(void)
 {
-    if (globalLoadCollector)
-    {
+    if (globalLoadCollector) {
         globalLoadCollector->stop();
         delete globalLoadCollector;
         globalLoadCollector = nullptr;
@@ -235,7 +244,6 @@ void disableCpuLoadCollector(void)
 }
 
 #endif
-
 
 
 SystemInfo::MemoryInfo SystemInfo::getMemoryInfo()
@@ -246,27 +254,26 @@ SystemInfo::MemoryInfo SystemInfo::getMemoryInfo()
 
 #if defined(_WIN32)
     MEMORYSTATUSEX statex;
-    statex.dwLength = sizeof (statex);
-    if (GlobalMemoryStatusEx (&statex))
-    {
-        memory.totalSpace = (capacity_t)(statex.ullTotalPhys/1048576);  //in Mb
-        memory.freeSpace = (capacity_t)(statex.ullAvailPhys/1048576);   //in Mb
+    statex.dwLength = sizeof(statex);
+    if (GlobalMemoryStatusEx(&statex)) {
+        memory.totalSpace = (capacity_t)(statex.ullTotalPhys / 1048576); //in Mb
+        memory.freeSpace = (capacity_t)(statex.ullAvailPhys / 1048576);  //in Mb
     }
 #endif
 
 #if defined(__linux__)
     char buffer[128];
     FILE* procmem = fopen("/proc/meminfo", "r");
-    if (procmem)
-    {
-        while(fgets(buffer, 128, procmem))
-        {
+    if (procmem != nullptr) {
+        while (fgets(buffer, 128, procmem) != nullptr) {
             capacity_t ret;
-            if ((ret=getMemEntry("MemTotal:", buffer)) > 0)
-                memory.totalSpace = ret/1024;
+            if ((ret = getMemEntry("MemTotal:", buffer)) > 0) {
+                memory.totalSpace = ret / 1024;
+            }
 
-            if ((ret=getMemEntry("MemFree:", buffer)) > 0)
-                memory.freeSpace = ret/1024;
+            if ((ret = getMemEntry("MemFree:", buffer)) > 0) {
+                memory.freeSpace = ret / 1024;
+            }
         }
         fclose(procmem);
     }
@@ -279,10 +286,7 @@ SystemInfo::MemoryInfo SystemInfo::getMemoryInfo()
 
     mach_port = mach_host_self();
     count = HOST_VM_INFO64_COUNT;
-    if (KERN_SUCCESS == host_page_size(mach_port, &page_size) &&
-        KERN_SUCCESS == host_statistics64(mach_port, HOST_VM_INFO,
-                                          (host_info64_t)&vm_stats, &count))
-    {
+    if (KERN_SUCCESS == host_page_size(mach_port, &page_size) && KERN_SUCCESS == host_statistics64(mach_port, HOST_VM_INFO, (host_info64_t)&vm_stats, &count)) {
         //These seem to return the # of pages
         natural_t activePages = vm_stats.active_count + vm_stats.wire_count;
         natural_t inactivePages = vm_stats.inactive_count + vm_stats.free_count;
@@ -310,43 +314,40 @@ SystemInfo::StorageInfo SystemInfo::getStorageInfo()
 
 #if defined(_WIN32)
 
-        DWORD dwSectorsPerCluster=0, dwBytesPerSector=0;
-        DWORD dwFreeClusters=0, dwTotalClusters=0;
-        std::string strHome = getUserInfo().homeDir;
-        if (!strHome.length())
-            strHome = "C:\\";
-        if (GetDiskFreeSpaceA(strHome.c_str(), &dwSectorsPerCluster,
-            &dwBytesPerSector, &dwFreeClusters, &dwTotalClusters))
-        {
-            storage.freeSpace = (capacity_t)((dwFreeClusters/1048576.0)* dwSectorsPerCluster * dwBytesPerSector);
-            storage.totalSpace = (capacity_t)((dwTotalClusters)/1048576.0 * dwSectorsPerCluster * dwBytesPerSector);
-        }
+    DWORD dwSectorsPerCluster = 0, dwBytesPerSector = 0;
+    DWORD dwFreeClusters = 0, dwTotalClusters = 0;
+    std::string strHome = getUserInfo().homeDir;
+    if (strHome.empty())
+        strHome = "C:\\";
+    if (GetDiskFreeSpaceA(strHome.c_str(), &dwSectorsPerCluster, &dwBytesPerSector, &dwFreeClusters, &dwTotalClusters)) {
+        storage.freeSpace = (capacity_t)((dwFreeClusters / 1048576.0) * dwSectorsPerCluster * dwBytesPerSector);
+        storage.totalSpace = (capacity_t)((dwTotalClusters) / 1048576.0 * dwSectorsPerCluster * dwBytesPerSector);
+    }
 #endif
 
 #if defined(__linux__)
     std::string strHome = getUserInfo().homeDir;
-    if (!strHome.length())
+    if (strHome.empty()) {
         strHome = "/home";
+    }
 
     struct statvfs vfs;
-    if (statvfs(strHome.c_str(), &vfs) == 0)
-    {
-        storage.totalSpace = (int)(vfs.f_blocks*vfs.f_bsize/(1048576)); // in MB
-        storage.freeSpace = (int)(vfs.f_bavail*vfs.f_bsize/(1048576));  // in MB
+    if (statvfs(strHome.c_str(), &vfs) == 0) {
+        storage.totalSpace = (int)(vfs.f_blocks * vfs.f_bsize / (1048576)); // in MB
+        storage.freeSpace = (int)(vfs.f_bavail * vfs.f_bsize / (1048576));  // in MB
     }
 
 #endif
 
 #if defined(__APPLE__)
     std::string strHome = getUserInfo().homeDir;
-    if (!strHome.length())
+    if (strHome.empty())
         strHome = "/";
 
     struct statfs vfs;
-    if (statfs(strHome.c_str(), &vfs) == 0)
-    {
-        storage.totalSpace = (int)(vfs.f_blocks*vfs.f_bsize/(1048576)); // in MB
-        storage.freeSpace = (int)(vfs.f_bavail*vfs.f_bsize/(1048576));  // in MB
+    if (statfs(strHome.c_str(), &vfs) == 0) {
+        storage.totalSpace = (int)(vfs.f_blocks * vfs.f_bsize / (1048576)); // in MB
+        storage.freeSpace = (int)(vfs.f_bavail * vfs.f_bsize / (1048576));  // in MB
     }
 #endif
 
@@ -451,30 +452,57 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
     SYSTEM_INFO sysinf;
     GetSystemInfo(&sysinf);
     switch (sysinf.wProcessorArchitecture) {
-        case PROCESSOR_ARCHITECTURE_AMD64: { processor.architecture = "X64"; break; }
-        case PROCESSOR_ARCHITECTURE_IA64: { processor.architecture = "Intel Itanium-based"; break; }
-        case PROCESSOR_ARCHITECTURE_INTEL: { processor.architecture = "X86"; break; }
-        default: processor.architecture = "Unknown";
+    case PROCESSOR_ARCHITECTURE_AMD64: {
+        processor.architecture = "X64";
+        break;
+    }
+    case PROCESSOR_ARCHITECTURE_IA64: {
+        processor.architecture = "Intel Itanium-based";
+        break;
+    }
+    case PROCESSOR_ARCHITECTURE_INTEL: {
+        processor.architecture = "X86";
+        break;
+    }
+    default:
+        processor.architecture = "Unknown";
     };
     processor.siblings = sysinf.dwNumberOfProcessors;
     processor.modelNumber = sysinf.dwProcessorType;
-    switch(sysinf.dwProcessorType) {
-        case PROCESSOR_INTEL_386: { processor.model = "PROCESSOR_INTEL_386"; break; }
-        case PROCESSOR_INTEL_486: { processor.model = "PROCESSOR_INTEL_486"; break; }
-        case PROCESSOR_INTEL_PENTIUM: { processor.model = "PROCESSOR_INTEL_PENTIUM"; break; }
-        case PROCESSOR_INTEL_IA64: { processor.model = "PROCESSOR_INTEL_IA64"; break; }
-        case PROCESSOR_AMD_X8664: { processor.model = "PROCESSOR_AMD_X8664"; break; }
+    switch (sysinf.dwProcessorType) {
+    case PROCESSOR_INTEL_386: {
+        processor.model = "PROCESSOR_INTEL_386";
+        break;
+    }
+    case PROCESSOR_INTEL_486: {
+        processor.model = "PROCESSOR_INTEL_486";
+        break;
+    }
+    case PROCESSOR_INTEL_PENTIUM: {
+        processor.model = "PROCESSOR_INTEL_PENTIUM";
+        break;
+    }
+    case PROCESSOR_INTEL_IA64: {
+        processor.model = "PROCESSOR_INTEL_IA64";
+        break;
+    }
+    case PROCESSOR_AMD_X8664: {
+        processor.model = "PROCESSOR_AMD_X8664";
+        break;
+    }
     };
 
     DWORD dwMHz;
     DWORD BufSize = sizeof(DWORD);
     HKEY hKey;
     if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-                        "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0",
-                        0, KEY_READ, &hKey) == ERROR_SUCCESS)
-    {
-        RegQueryValueEx(hKey, "~MHz", nullptr, nullptr, (LPBYTE) &dwMHz, &BufSize);
-        processor.frequency = (double) dwMHz;
+                     "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0",
+                     0,
+                     KEY_READ,
+                     &hKey)
+        == ERROR_SUCCESS) {
+        RegQueryValueEx(hKey, "~MHz", nullptr, nullptr, (LPBYTE)&dwMHz, &BufSize);
+        processor.frequency = (double)dwMHz;
         RegCloseKey(hKey);
     }
 
@@ -486,39 +514,42 @@ SystemInfo::ProcessorInfo SystemInfo::getProcessorInfo()
 #if defined(__linux__)
     char buffer[128];
     FILE* proccpu = fopen("/proc/cpuinfo", "r");
-    if (proccpu)
-    {
-        while(fgets(buffer, 128, proccpu))
-        {
+    if (proccpu != nullptr) {
+        while (fgets(buffer, 128, proccpu) != nullptr) {
             std::string value;
-            if (getCpuEntry("model", buffer, value) &&
-               !getCpuEntry("model name", buffer, value))
+            if (getCpuEntry("model", buffer, value) && !getCpuEntry("model name", buffer, value)) {
                 processor.modelNumber = atoi(value.c_str());
-            if (getCpuEntry("model name", buffer, value))
+            }
+            if (getCpuEntry("model name", buffer, value)) {
                 processor.model = value;
-            if (getCpuEntry("vendor_id", buffer, value))
+            }
+            if (getCpuEntry("vendor_id", buffer, value)) {
                 processor.vendor = value;
-            if (getCpuEntry("cpu family", buffer, value))
+            }
+            if (getCpuEntry("cpu family", buffer, value)) {
                 processor.family = atoi(value.c_str());
-            if (getCpuEntry("cpu cores", buffer, value))
+            }
+            if (getCpuEntry("cpu cores", buffer, value)) {
                 processor.cores = atoi(value.c_str());
-            if (getCpuEntry("siblings", buffer, value))
+            }
+            if (getCpuEntry("siblings", buffer, value)) {
                 processor.siblings = atoi(value.c_str());
-            if (getCpuEntry("cpu MHz", buffer, value))
+            }
+            if (getCpuEntry("cpu MHz", buffer, value)) {
                 processor.frequency = atof(value.c_str());
+            }
         }
         fclose(proccpu);
     }
 
     struct utsname uts;
-    if (uname(&uts) == 0)
-    {
-      processor.architecture = uts.machine;
+    if (uname(&uts) == 0) {
+        processor.architecture = uts.machine;
     }
 #elif defined(__APPLE__)
-//    std::string architecture;
+    //    std::string architecture;
 
-    int mib [] = { CTL_HW, HW_CPU_FREQ };
+    int mib[] = {CTL_HW, HW_CPU_FREQ};
     int64_t value = 0;
     size_t length = sizeof(value);
 
@@ -565,8 +596,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
     platform.name = "Windows";
     OSVERSIONINFOEX osver;
     osver.dwOSVersionInfoSize = sizeof(osver);
-    if (GetVersionEx((LPOSVERSIONINFO)&osver))
-    {
+    if (GetVersionEx((LPOSVERSIONINFO)&osver)) {
         char buff[64];
         sprintf(buff, "%d.%d", osver.dwMajorVersion, osver.dwMinorVersion);
         platform.release = buff;
@@ -584,23 +614,23 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
         } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 2) && (osver.wProductType != VER_NT_WORKSTATION)) {
             platform.distribution = "Server 2012";
         } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) && (osver.wProductType == VER_NT_WORKSTATION)) {
-           platform.distribution = "7";
+            platform.distribution = "7";
         } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 1) && (osver.wProductType != VER_NT_WORKSTATION)) {
-           platform.distribution = "Server 2008 R2";
+            platform.distribution = "Server 2008 R2";
         } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) && (osver.wProductType == VER_NT_WORKSTATION)) {
-           platform.distribution = "Vista";
+            platform.distribution = "Vista";
         } else if ((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) && (osver.wProductType != VER_NT_WORKSTATION)) {
-           platform.distribution = "Server 2008";
+            platform.distribution = "Server 2008";
         } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2)) {
-           platform.distribution = "Server 2003";
-    //    } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) && (osver.wSuiteMask & VER_SUITE_WH_SERVER)) {
-    //       platform.distribution = "Home Server";
-    //    } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) && (GetSystemMetrics(SM_SERVERR2) != 0)) {
-    //       platform.distribution = "Server 2003 R2";
+            platform.distribution = "Server 2003";
+            //    } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) && (osver.wSuiteMask & VER_SUITE_WH_SERVER)) {
+            //       platform.distribution = "Home Server";
+            //    } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) && (GetSystemMetrics(SM_SERVERR2) != 0)) {
+            //       platform.distribution = "Server 2003 R2";
         } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) && (osver.wProductType == VER_NT_WORKSTATION)) /* &&(osver.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)*/ {
-           platform.distribution = "XP Professional x64 Edition";
+            platform.distribution = "XP Professional x64 Edition";
         } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 1)) {
-           platform.distribution = "XP";
+            platform.distribution = "XP";
         } else if ((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 0)) {
             platform.distribution = "2000";
         }
@@ -608,61 +638,59 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
 
     const char* a = GetEnvironmentStrings();
     size_t prev = 0;
-    for(size_t i = 0; ; i++) {
-    if (a[i] == '\0') {
-        std::string tmpVariable(a + prev, a + i);
-        size_t equalsSign=tmpVariable.find("=");
-        if (equalsSign!=std::string::npos && equalsSign!=0) // among environment variables there are DOS-related ones that start with a =
-        {
-            platform.environmentVars.put(tmpVariable.substr(0, equalsSign), tmpVariable.substr(equalsSign+1));
-        }
-        prev = i+1;
-        if (a[i + 1] == '\0') {
-            break;
+    for (size_t i = 0;; i++) {
+        if (a[i] == '\0') {
+            std::string tmpVariable(a + prev, a + i);
+            size_t equalsSign = tmpVariable.find("=");
+            if (equalsSign != std::string::npos && equalsSign != 0) // among environment variables there are DOS-related ones that start with a =
+            {
+                platform.environmentVars.put(tmpVariable.substr(0, equalsSign), tmpVariable.substr(equalsSign + 1));
+            }
+            prev = i + 1;
+            if (a[i + 1] == '\0') {
+                break;
+            }
         }
     }
-}
 
 #endif
 
 #if defined(__linux__)
     struct utsname uts;
-    if (uname(&uts) == 0)
-    {
-      platform.name = uts.sysname;
-      platform.kernel = uts.release;
-    }
-    else
+    if (uname(&uts) == 0) {
+        platform.name = uts.sysname;
+        platform.kernel = uts.release;
+    } else {
         platform.name = "Linux";
+    }
 
     char buffer[128];
     FILE* release = popen("lsb_release -ric", "r");
-    if (release)
-    {
-        while(fgets(buffer, 128, release))
-        {
+    if (release != nullptr) {
+        while (fgets(buffer, 128, release) != nullptr) {
             std::string value;
-            if (getCpuEntry("Distributor ID", buffer, value))
+            if (getCpuEntry("Distributor ID", buffer, value)) {
                 platform.distribution = value;
-            if (getCpuEntry("Release", buffer, value))
+            }
+            if (getCpuEntry("Release", buffer, value)) {
                 platform.release = value;
-            if (getCpuEntry("Codename", buffer, value))
+            }
+            if (getCpuEntry("Codename", buffer, value)) {
                 platform.codename = value;
+            }
         }
         pclose(release);
     }
 
-    char *varChar = *environ;
+    char* varChar = *environ;
 
-    for (int i = 0; varChar; i++) {
+    for (int i = 0; varChar != nullptr; i++) {
         std::string tmpVariable(varChar);
-        size_t equalsSign=tmpVariable.find('=');
-        if (equalsSign!=std::string::npos)
-        {
-            platform.environmentVars.put(tmpVariable.substr(0, equalsSign), tmpVariable.substr(equalsSign+1));
+        size_t equalsSign = tmpVariable.find('=');
+        if (equalsSign != std::string::npos) {
+            platform.environmentVars.put(tmpVariable.substr(0, equalsSign), tmpVariable.substr(equalsSign + 1));
         }
-        varChar = *(environ+i);
-
+        varChar = *(environ + i);
     }
 #endif
 
@@ -679,7 +707,7 @@ SystemInfo::PlatformInfo SystemInfo::getPlatformInfo()
     }
 
 #endif
-        return platform;
+    return platform;
 }
 
 
@@ -689,14 +717,13 @@ SystemInfo::UserInfo SystemInfo::getUserInfo()
     user.userID = 0;
 
 #if defined(_WIN32)
-    char path[MAX_PATH+1];
-    if (SHGetFolderPathA(nullptr, CSIDL_PROFILE, nullptr, 0, path ) == S_OK)
+    char path[MAX_PATH + 1];
+    if (SHGetFolderPathA(nullptr, CSIDL_PROFILE, nullptr, 0, path) == S_OK)
         user.homeDir = path;
 
-    char username[UNLEN+1];
-    DWORD nsize = UNLEN+1;
-    if (GetUserName(username, &nsize))
-    {
+    char username[UNLEN + 1];
+    DWORD nsize = UNLEN + 1;
+    if (GetUserName(username, &nsize)) {
         user.userName = username;
         user.realName = username;
     }
@@ -705,14 +732,13 @@ SystemInfo::UserInfo SystemInfo::getUserInfo()
 #if defined(__linux__) || defined(__APPLE__)
     struct passwd* pwd = getpwuid(getuid());
     user.userID = getuid();
-    if (pwd)
-    {
+    if (pwd != nullptr) {
         user.userName = pwd->pw_name;
         user.realName = pwd->pw_gecos;
         user.homeDir = pwd->pw_dir;
     }
 #endif
-        return user;
+    return user;
 }
 
 
@@ -725,12 +751,10 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
     load.cpuLoadInstant = 0;
 
 #if defined(_WIN32)
-    if (globalLoadCollector)
-    {
+    if (globalLoadCollector) {
         load = globalLoadCollector->getCpuLoad();
         int siblings = getProcessorInfo().siblings;
-        if ( siblings > 1)
-        {
+        if (siblings > 1) {
             load.cpuLoad1 *= siblings;
             load.cpuLoad5 *= siblings;
             load.cpuLoad15 *= siblings;
@@ -740,17 +764,14 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
 
 #if defined(__linux__)
     FILE* procload = fopen("/proc/loadavg", "r");
-    if (procload)
-    {
+    if (procload != nullptr) {
         char buff[128];
-        int ret = fscanf(procload, "%lf %lf %lf %s",
-                         &(load.cpuLoad1), &(load.cpuLoad5),
-                         &(load.cpuLoad15), buff);
-        if (ret>0)
-        {
-            char* tail  = strchr(buff, '/');
-            if (tail && (tail != buff))
+        int ret = fscanf(procload, "%lf %lf %lf %s", &(load.cpuLoad1), &(load.cpuLoad5), &(load.cpuLoad15), buff);
+        if (ret > 0) {
+            char* tail = strchr(buff, '/');
+            if ((tail != nullptr) && (tail != buff)) {
                 load.cpuLoadInstant = (int)(strtol(buff, &tail, 0) - 1);
+            }
         }
         fclose(procload);
     }
@@ -761,9 +782,7 @@ SystemInfo::LoadInfo SystemInfo::getLoadInfo()
     mach_msg_type_number_t count = HOST_CPU_LOAD_INFO_COUNT;
     host_cpu_load_info_data_t cpu_load;
 
-    if (KERN_SUCCESS == host_statistics(mach_host_self(), HOST_CPU_LOAD_INFO,
-                                        (host_info64_t)&cpu_load, &count))
-    {
+    if (KERN_SUCCESS == host_statistics(mach_host_self(), HOST_CPU_LOAD_INFO, (host_info64_t)&cpu_load, &count)) {
         //How to map this information into yarp structure?
         natural_t total = 0;
         for (int i = 0; i < CPU_STATE_MAX; ++i) {
@@ -789,19 +808,20 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid)
     info.schedPolicy = -1;
     info.schedPriority = -1;
 #if defined(__linux__)
-    FILE *file;
+    FILE* file;
     char cmdline[256] = {0};
     char filename[256];
     sprintf(filename, "/proc/%d/cmdline", pid);
     file = fopen(filename, "r");
-    if (file) {
-        char *p = fgets(cmdline, sizeof(cmdline) / sizeof(*cmdline), file);
+    if (file != nullptr) {
+        char* p = fgets(cmdline, sizeof(cmdline) / sizeof(*cmdline), file);
         fclose(file);
         if (p != nullptr) {
-            while (*p) {
+            while (*p != 0) {
                 p += strlen(p);
-                if (*(p + 1))
+                if (*(p + 1) != 0) {
                     *p = ' ';
+                }
                 p++;
             }
             info.pid = pid;
@@ -811,15 +831,16 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid)
             if (index != std::string::npos) {
                 info.name = info.name.substr(0, index);
                 info.arguments = cmdline;
-                info.arguments = info.arguments.substr(index+1);
+                info.arguments = info.arguments.substr(index + 1);
             }
         }
     }
 
     // scheduling params
     struct sched_param param;
-    if ( sched_getparam(pid, &param) == 0 )
+    if (sched_getparam(pid, &param) == 0) {
         info.schedPriority = param.__sched_priority;
+    }
     info.schedPolicy = sched_getscheduler(pid);
 
 #elif defined(_WIN32)
@@ -827,21 +848,21 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid)
     if (hnd) {
         TCHAR filename[MAX_PATH];
         if (GetModuleBaseName(hnd, 0, filename, MAX_PATH)) {
-        info.name = filename;
+            info.name = filename;
             info.pid = pid;
         }
         CloseHandle(hnd);
     }
     // reterieving arguments
     HRESULT hr = 0;
-    IWbemLocator *WbemLocator  = nullptr;
-    IWbemServices *WbemServices = nullptr;
-    IEnumWbemClassObject *EnumWbem  = nullptr;
+    IWbemLocator* WbemLocator = nullptr;
+    IWbemServices* WbemServices = nullptr;
+    IEnumWbemClassObject* EnumWbem = nullptr;
 
     //initializate the Windows security
     hr = CoInitializeEx(0, COINIT_MULTITHREADED);
     hr = CoInitializeSecurity(nullptr, -1, nullptr, nullptr, RPC_C_AUTHN_LEVEL_DEFAULT, RPC_C_IMP_LEVEL_IMPERSONATE, nullptr, EOAC_NONE, nullptr);
-    hr = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *) &WbemLocator);
+    hr = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID*)&WbemLocator);
     if (WbemLocator != nullptr) {
         //connect to the WMI
         hr = WbemLocator->ConnectServer(L"ROOT\\CIMV2", nullptr, nullptr, 0, 0, 0, 0, &WbemServices);
@@ -850,17 +871,17 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid)
             hr = WbemServices->ExecQuery(L"WQL", L"SELECT ProcessId, CommandLine FROM Win32_Process", WBEM_FLAG_FORWARD_ONLY, nullptr, &EnumWbem);
             // Iterate over the enumerator
             if (EnumWbem != nullptr) {
-                IWbemClassObject *result = nullptr;
+                IWbemClassObject* result = nullptr;
                 ULONG returnedCount = 0;
 
-                while((hr = EnumWbem->Next(WBEM_INFINITE, 1, &result, &returnedCount)) == S_OK) {
+                while ((hr = EnumWbem->Next(WBEM_INFINITE, 1, &result, &returnedCount)) == S_OK) {
                     VARIANT ProcessId;
                     VARIANT CommandLine;
 
                     // access the properties
                     hr = result->Get(L"ProcessId", 0, &ProcessId, 0, 0);
                     hr = result->Get(L"CommandLine", 0, &CommandLine, 0, 0);
-                    if (!(CommandLine.vt==VT_NULL) && ProcessId.uintVal == (unsigned int) pid) {
+                    if (!(CommandLine.vt == VT_NULL) && ProcessId.uintVal == (unsigned int)pid) {
                         // covert BSTR to std::string
                         int res = WideCharToMultiByte(CP_UTF8, 0, CommandLine.bstrVal, -1, nullptr, 0, nullptr, nullptr);
                         info.arguments.resize(res);
@@ -869,7 +890,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid)
                         if (idx == info.arguments.npos) {
                             info.arguments.clear();
                         } else {
-                            info.arguments = info.arguments.substr(idx+2); // it seems windows adds two spaces after the program name
+                            info.arguments = info.arguments.substr(idx + 2); // it seems windows adds two spaces after the program name
                         }
                         info.pid = pid;
                         VariantClear(&ProcessId);
@@ -902,7 +923,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid)
         //Some info here: https://gist.github.com/nonowarn/770696
         mib[1] = KERN_PROCARGS;
         mib[2] = pid;
-        char *proc_argv;
+        char* proc_argv;
         size_t argv_len;
         //getting length of execute string
         int result = sysctl(mib, 3, nullptr, &argv_len, nullptr, 0);

@@ -7,8 +7,10 @@
  */
 
 #include <yarp/os/Timer.h>
+
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Time.h>
+
 #include <cmath>
 #include <map>
 #include <mutex>
@@ -29,7 +31,9 @@ protected:
 public:
     using TimerCallback = yarp::os::Timer::TimerCallback;
 
-    PrivateImpl(TimerSettings sett, TimerCallback call, yarp::os::Mutex* mutex = nullptr) :
+    PrivateImpl(const TimerSettings& sett,
+                TimerCallback call,
+                yarp::os::Mutex* mutex = nullptr) :
             m_settings(sett),
             m_callback(std::move(call)),
             m_mutex(mutex)
@@ -47,21 +51,23 @@ public:
     virtual bool timerIsRunning() = 0;
 
 
-    TimerSettings    m_settings;
-    TimerCallback    m_callback{nullptr};
-    double           m_startStamp{0.0},
-                     m_lastReal{0.0};
+    TimerSettings m_settings;
+    TimerCallback m_callback;
+    double m_startStamp{0.0};
+    double m_lastReal{0.0};
     yarp::os::Mutex* m_mutex;
 };
 
 class MonoThreadTimer : public yarp::os::Timer::PrivateImpl
 {
 public:
-    MonoThreadTimer(TimerSettings sett, TimerCallback call, yarp::os::Mutex* mutex = nullptr);
-    ~MonoThreadTimer();
-    bool         m_active{ false };
+    MonoThreadTimer(const TimerSettings& sett,
+                    const TimerCallback& call,
+                    yarp::os::Mutex* mutex = nullptr);
+    ~MonoThreadTimer() override;
+    bool m_active{false};
     unsigned int m_runTimes{1};
-    size_t       m_id{(size_t)-1};
+    size_t m_id{(size_t)-1};
 
     virtual yarp::os::YarpTimerEvent getEventNow()
     {
@@ -71,7 +77,7 @@ public:
     bool startTimer() override
     {
         m_startStamp = yarp::os::Time::now();
-        m_active     = true;
+        m_active = true;
         return true;
     }
 
@@ -145,7 +151,9 @@ public:
     }
 };
 
-MonoThreadTimer::MonoThreadTimer(TimerSettings sett, TimerCallback call, yarp::os::Mutex* mutex) :
+MonoThreadTimer::MonoThreadTimer(const TimerSettings& sett,
+                                 const TimerCallback& call,
+                                 yarp::os::Mutex* mutex) :
         PrivateImpl(sett, call, mutex)
 {
     TimerSingleton& singlInstance = TimerSingleton::self();
@@ -159,7 +167,7 @@ MonoThreadTimer::~MonoThreadTimer()
 {
     TimerSingleton& singlInstance = TimerSingleton::self();
     singlInstance.removeTimer(m_id);
-    if (!singlInstance.getTimerCount()) {
+    if (singlInstance.getTimerCount() == 0) {
         singlInstance.stop();
     }
 }
@@ -178,21 +186,25 @@ void TimerSingleton::run()
     mu.unlock();
 }
 
-class ThreadedTimer : public yarp::os::Timer::PrivateImpl,
-                      public yarp::os::PeriodicThread
+class ThreadedTimer :
+        public yarp::os::Timer::PrivateImpl,
+        public yarp::os::PeriodicThread
 {
     using TimerCallback = yarp::os::Timer::TimerCallback;
     void run() override;
     bool threadInit() override;
-    bool singleStep{ false };
+    bool singleStep{false};
 
 public:
-    ThreadedTimer(TimerSettings sett, TimerCallback call, yarp::os::Mutex* mutex = nullptr) :
-            PrivateImpl(sett, call, mutex), PeriodicThread(sett.period)
+    ThreadedTimer(const TimerSettings& sett,
+                  const TimerCallback& call,
+                  yarp::os::Mutex* mutex = nullptr) :
+            PrivateImpl(sett, call, mutex),
+            PeriodicThread(sett.period)
     {
     }
 
-    virtual ~ThreadedTimer()
+    ~ThreadedTimer() override
     {
         stop();
     }
@@ -228,7 +240,7 @@ bool ThreadedTimer::threadInit()
 }
 
 //the newThread parameter is not in the settings for it to be unmutable and only checked by the constructor
-Timer::Timer(const TimerSettings& settings, TimerCallback callback, bool newThread, Mutex* mutex) :
+Timer::Timer(const TimerSettings& settings, const TimerCallback& callback, bool newThread, Mutex* mutex) :
         //added cast for incompatible operand error
         impl(newThread ? dynamic_cast<PrivateImpl*>(new ThreadedTimer(settings, callback, mutex))
                        : dynamic_cast<PrivateImpl*>(new MonoThreadTimer(settings, callback, mutex)))
@@ -266,13 +278,13 @@ YarpTimerEvent yarp::os::Timer::PrivateImpl::getEventNow(unsigned int iteration)
 
 bool yarp::os::Timer::PrivateImpl::runTimer(unsigned int iteration, YarpTimerEvent event)
 {
-    if (m_mutex) {
+    if (m_mutex != nullptr) {
         m_mutex->lock();
     }
 
     bool ret = m_callback(event);
 
-    if (m_mutex) {
+    if (m_mutex != nullptr) {
         m_mutex->unlock();
     }
 
@@ -290,11 +302,7 @@ bool yarp::os::Timer::PrivateImpl::runTimer(unsigned int iteration, YarpTimerEve
     //totalTime == 0 ----> infinite time. follows the age check for the timer
     stop |= m_settings.totalTime > 0.00001 && (m_settings.totalTime - timerAge) < m_settings.tolerance;
 
-    if (stop) {
-        return false;
-    }
-
-    return true;
+    return !stop;
 }
 
 void ThreadedTimer::run()

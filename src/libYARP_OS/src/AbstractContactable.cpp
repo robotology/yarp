@@ -141,7 +141,7 @@ yarp::os::Property* yarp::os::AbstractContactable::acquireProperties(bool readOn
     return asPort().acquireProperties(readOnly);
 }
 
-void yarp::os::AbstractContactable::releaseProperties(Property *prop)
+void yarp::os::AbstractContactable::releaseProperties(Property* prop)
 {
     asPort().releaseProperties(prop);
 }
@@ -154,7 +154,7 @@ bool yarp::os::AbstractContactable::write(const PortWriter& writer,
 
 bool yarp::os::AbstractContactable::write(const PortWriter& writer,
                                           PortReader& reader,
-                                          const PortWriter *callback) const
+                                          const PortWriter* callback) const
 {
     return asPort().write(writer, reader, callback);
 }
@@ -180,7 +180,7 @@ void yarp::os::AbstractContactable::includeNodeInName(bool flag)
     asPort().includeNodeInName(flag);
 }
 
-bool yarp::os::AbstractContactable::setCallbackLock(yarp::os::Mutex *mutex)
+bool yarp::os::AbstractContactable::setCallbackLock(yarp::os::Mutex* mutex)
 {
     return asPort().setCallbackLock(mutex);
 }

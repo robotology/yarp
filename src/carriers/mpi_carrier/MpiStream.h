@@ -7,39 +7,38 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_MPISTREAM
-#define YARP_MPISTREAM
+#ifndef YARP_MPISTREAM_H
+#define YARP_MPISTREAM_H
 
 #include <yarp/os/TwoWayStream.h>
 #include <string>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetType.h>
-#include <yarp/os/MpiComm.h>
+
+#include "MpiComm.h"
 
 #include <string>
 #include <iostream>
 
 
-namespace yarp {
-    namespace os {
-        class MpiStream;
-    }
-}
-
-
 /**
  * Abstract base class for port communication via MPI.
  */
-class yarp::os::MpiStream : public TwoWayStream, public InputStream, public OutputStream {
+class MpiStream :
+        public yarp::os::TwoWayStream,
+        public yarp::os::InputStream,
+        public yarp::os::OutputStream
+{
 protected:
     int readAvail, readAt;
     char* readBuffer;
     bool terminate;
     std::string name;
-    yarp::os::MpiComm* comm;
+    MpiComm* comm;
 
-    yarp::os::Contact local, remote;
+    yarp::os::Contact local;
+    yarp::os::Contact remote;
 public:
     MpiStream(std::string name, MpiComm* comm);
     virtual ~MpiStream();
@@ -50,8 +49,8 @@ public:
     void close() override = 0;
     bool isOk() const override;
     void interrupt() override;
-    ssize_t read(Bytes& b) override = 0;
-    void write(const Bytes& b) override = 0;
+    ssize_t read(yarp::os::Bytes& b) override = 0;
+    void write(const yarp::os::Bytes& b) override = 0;
     InputStream& getInputStream() override;
     OutputStream& getOutputStream() override;
     const yarp::os::Contact& getLocalAddress() const override;
@@ -60,9 +59,7 @@ public:
     void reset() override { resetBuffer();}
     void beginPacket() override;
     void endPacket() override;
-
-
 };
 
 
-#endif // YARP_MPISTREAM
+#endif // YARP_MPISTREAM_H

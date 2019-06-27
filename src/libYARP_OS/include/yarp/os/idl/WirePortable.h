@@ -11,20 +11,12 @@
 
 #include <yarp/os/Portable.h>
 
-// Forward declarations
 namespace yarp {
 namespace os {
 namespace idl {
+
 class WireReader;
 class WireWriter;
-} // namespace idl
-} // namespace os
-} // namespace yarp
-
-
-namespace yarp {
-namespace os {
-namespace idl {
 
 /**
  * A "tamed" Portable, that promises to serialize itself in an IDL-friendly

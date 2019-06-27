@@ -7,17 +7,19 @@
  */
 
 #include <yarp/os/RFPlugin.h>
-#include <yarp/os/YarpPluginSelector.h>
-#include <yarp/os/YarpPlugin.h>
+
 #include <yarp/os/RFModule.h>
+#include <yarp/os/YarpPlugin.h>
+#include <yarp/os/YarpPluginSelector.h>
 #include <yarp/os/impl/RFModuleFactory.h>
 
 using namespace std;
 using namespace yarp::os;
 
-class RFModuleSelector : public YarpPluginSelector
+class RFModuleSelector :
+        public YarpPluginSelector
 {
-    virtual bool select(Searchable& options) override
+    bool select(Searchable& options) override
     {
         return options.check("type", Value("none")).asString() == "RFModule";
     }
@@ -25,135 +27,141 @@ class RFModuleSelector : public YarpPluginSelector
 
 struct SharedRFPlugin
 {
-    YarpPlugin<RFModule>         yarpPlugin;
+    YarpPlugin<RFModule> yarpPlugin;
     SharedLibraryClass<RFModule> sharedLibClass;
-    RFModuleSelector             selector;
+    RFModuleSelector selector;
 };
 
 
-struct RFPlugin::RFPlugin_Private
+struct RFPlugin::Private
 {
-    RFPlugin_Private() = default;
+    Private() = default;
 
-    string          alias;
-    string          name;
-    string          command;
-    int             threadID{ 0 };
-    SharedRFPlugin* shared{ nullptr };
+    string alias;
+    string name;
+    string command;
+    int threadID{0};
+    SharedRFPlugin* shared{nullptr};
 
-    RFModule*       module{ nullptr };
-    ~RFPlugin_Private()
+    RFModule* module{nullptr};
+    ~Private()
     {
         delete shared;
     }
 };
 
-RFPlugin::RFPlugin() : impl(new RFPlugin_Private)
+RFPlugin::RFPlugin() :
+        mPriv(new Private)
 {
 }
 
 RFPlugin::~RFPlugin()
 {
-    delete impl;
+    delete mPriv;
 }
 
 string RFPlugin::getCmd()
 {
-    return impl->command;
+    return mPriv->command;
 }
 
 int RFPlugin::getThreadKey()
 {
-    return impl->module->getThreadKey();
+    return mPriv->module->getThreadKey();
 }
 
 void RFPlugin::close()
 {
-    impl->module->stopModule();
+    mPriv->module->stopModule();
 }
 
 bool RFPlugin::isRunning()
 {
-    return !impl->module->isStopping();
+    return !mPriv->module->isStopping();
 }
 
 
-std::pair<int, char**> str2ArgcArgv(char* str )
+std::pair<int, char**> str2ArgcArgv(char* str)
 {
-    enum { kMaxArgs = 64 };
+    enum
+    {
+        kMaxArgs = 64
+    };
     int argc = 0;
     char* argv[kMaxArgs];
 
     char* p2 = strtok(str, " ");
-    while (p2 && argc < kMaxArgs - 1)
-    {
+    while ((p2 != nullptr) && argc < kMaxArgs - 1) {
         argv[argc++] = p2;
-        p2 = strtok(0, " ");
+        p2 = strtok(nullptr, " ");
     }
-    argv[argc] = 0;
+    argv[argc] = nullptr;
     return make_pair(argc, argv);
 }
 
 bool RFPlugin::open(const string& inCommand)
 {
-    ResourceFinder     rf;
-    string name = inCommand.substr(0, inCommand.find(" "));
+    ResourceFinder rf;
+    string name = inCommand.substr(0, inCommand.find(' '));
 
     char* str = new char[inCommand.size() + 1];
     memcpy(str, inCommand.c_str(), inCommand.size());
     str[inCommand.size()] = '\0';
 
-    impl->command = inCommand;
+    mPriv->command = inCommand;
     auto argcv = str2ArgcArgv(str);
     rf.configure(argcv.first, argcv.second);
     delete[] str;
 
-    RFModule* staticmodule{ nullptr };
+    RFModule* staticmodule{nullptr};
     staticmodule = RFModuleFactory::GetInstance().GetModule(name);
-    if (staticmodule)
-    {
-        try
-        {
-            if (!staticmodule->configure(rf)) return false;
+    if (staticmodule != nullptr) {
+        try {
+            if (!staticmodule->configure(rf)) {
+                return false;
+            }
             staticmodule->runModuleThreaded();
-            impl->module = staticmodule;
+            mPriv->module = staticmodule;
             return true;
-        }
-        catch (...)
-        {
+        } catch (...) {
             return false;
         }
     }
 
     YarpPluginSettings settings;
-    impl->shared = new SharedRFPlugin;
-    impl->name = name;
-    impl->shared->selector.scan();
+    mPriv->shared = new SharedRFPlugin;
+    mPriv->name = name;
+    mPriv->shared->selector.scan();
 
-    settings.setPluginName(impl->name);
+    settings.setPluginName(mPriv->name);
     settings.setVerboseMode(true);
 
-    if (!settings.setSelector(impl->shared->selector)) return false;
-    if (!impl->shared->yarpPlugin.open(settings)) return false;
-
-    impl->shared->sharedLibClass.open(*impl->shared->yarpPlugin.getFactory());
-
-    if (!impl->shared->sharedLibClass.isValid()) return false;
-
-    settings.setLibraryMethodName(impl->shared->yarpPlugin.getFactory()->getName(), settings.getMethodName());
-    settings.setClassInfo(impl->shared->yarpPlugin.getFactory()->getClassName(), impl->shared->yarpPlugin.getFactory()->getBaseClassName());
-
-    bool ret{ false };
-    try
-    {
-        ret = impl->shared->sharedLibClass.getContent().configure(rf);
+    if (!settings.setSelector(mPriv->shared->selector)) {
+        return false;
     }
-    catch (...)
-    {
+    if (!mPriv->shared->yarpPlugin.open(settings)) {
         return false;
     }
 
-    if (ret) impl->shared->sharedLibClass->runModuleThreaded();
-    impl->module = &(impl->shared->sharedLibClass.getContent());
+    mPriv->shared->sharedLibClass.open(*mPriv->shared->yarpPlugin.getFactory());
+
+    if (!mPriv->shared->sharedLibClass.isValid()) {
+        return false;
+    }
+
+    settings.setLibraryMethodName(mPriv->shared->yarpPlugin.getFactory()->getName(), settings.getMethodName());
+    settings.setClassInfo(mPriv->shared->yarpPlugin.getFactory()->getClassName(), mPriv->shared->yarpPlugin.getFactory()->getBaseClassName());
+
+    bool ret{false};
+    try {
+        ret = mPriv->shared->sharedLibClass.getContent().configure(rf);
+    } catch (...) {
+        return false;
+    }
+
+    if (ret) {
+        mPriv->shared->sharedLibClass->runModuleThreaded();
+    }
+    mPriv->module = &(mPriv->shared->sharedLibClass.getContent());
     return ret;
 }

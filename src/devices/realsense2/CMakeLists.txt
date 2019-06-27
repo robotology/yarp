@@ -6,7 +6,7 @@
 
 yarp_prepare_plugin(realsense2
                     CATEGORY device
-                    TYPE yarp::dev::realsense2Driver
+                    TYPE realsense2Driver
                     INCLUDE realsense2Driver.h
                     EXTRA_CONFIG WRAPPER=RGBDSensorWrapper
                     DEPENDS "YARP_HAS_realsense2")

@@ -55,7 +55,6 @@ Device "inertiacube2", C++ class InertiaCube2, has no network wrapper
 Device "jamesarmcalibrator", C++ class JamesArmCalibrator, has no network wrapper
 Device "jameshead", C++ class JamesHead, has no network wrapper
 Device "XSensMTx", C++ class XSensMTx, wrapped by "inertial"
-Device "portaudio", C++ class PortAudioDeviceDriver, wrapped by "grabber"
 Device "opencv_grabber", C++ class OpenCVGrabber, wrapped by "grabber"
 Device "ffmpeg_grabber", C++ class FfmpegGrabber, wrapped by "grabber"
 Device "test_grabber", C++ class TestFrameGrabber, wrapped by "grabber"
@@ -65,6 +64,8 @@ Device "inertial", C++ class ServerInertial, is a network wrapper.
 Device "sound_grabber", C++ class ServerSoundGrabber, is a network wrapper.
 Device "remote_controlboard", C++ class RemoteControlBoard, wrapped by "controlboard"
 Device "controlboard", C++ class ServerControlBoard, is a network wrapper.
+Device "portaudioPlayer", available on request (found in <prefix>/lib/yarp/yarp_portaudioPlayer.so library), wrapped by "AudioPlayerWrapper".
+Device "portaudioRecorder", available on request (found in <prefix>/lib/yarp/yarp_portaudioRecorder.so library), wrapped by "AudioRecorderWrapper".
 \endverbatim
 
 where the first keyword like "test_grabber" is the device name used to instantiate it, class is

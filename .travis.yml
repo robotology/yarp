@@ -1,5 +1,4 @@
-sudo: required
-dist: trusty
+dist: xenial
 language: cpp
 
 cache:
@@ -46,13 +45,18 @@ env:
 # CMake/CTest variables
     - CTEST_OUTPUT_ON_FAILURE=1
     - CLICOLOR_FORCE=1
+# Port 10010 is used by docker-containerd on travis-xenial
+# See also https://travis-ci.community/t/port-10010-is-used-by-docker-containerd/3865
+    - YARP_PORT_RANGE=20000
 
 addons:
   apt:
     update: true
     sources:
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-trusty-8
+      - llvm-toolchain-xenial-8
+      - sourceline: 'ppa:robotology/travis'
+      - sourceline: 'ppa:robotology/ppa'
     packages:
       # gcc
       - gcc-8
@@ -64,6 +68,9 @@ addons:
       - lcov
       - valgrind
       - ccache
+      # Robotology dependencies
+      - ycm
+      - librobottestingframework-dev
       # libraries
       - libace-dev
       - libsqlite3-dev
@@ -81,6 +88,11 @@ addons:
       - libgstreamer-plugins-base1.0-dev
       - libpng-dev
       - libv4l-dev
+      #- libavcodec-dev
+      #- libavdevice-dev
+      #- libavformat-dev
+      #- libavutil-dev
+      #- portaudio19-dev
       # Bindings
       - swig3.0
       # C# bindings
@@ -278,24 +290,24 @@ matrix:
     # Normal build with clang (osx, clang)
     - stage: test-long
       os: osx
-      osx_image: xcode8.3
+      osx_image: xcode9.4
       compiler: clang
       env:
-        - TRAVIS_WITH_BINDINGS=false
-
-    # Normal build with Xcode 8.3 (osx, clang)
-    - stage: test-long
-      os: osx
-      osx_image: xcode8.3
-      compiler: clang
-      env:
-        - TRAVIS_CMAKE_GENERATOR="Xcode"
         - TRAVIS_WITH_BINDINGS=false
 
     # Normal build with Xcode 9.4 (osx, clang)
     - stage: test-long
       os: osx
       osx_image: xcode9.4
+      compiler: clang
+      env:
+        - TRAVIS_CMAKE_GENERATOR="Xcode"
+        - TRAVIS_WITH_BINDINGS=false
+
+    # Normal build with Xcode 10.2 (osx, clang)
+    - stage: test-long
+      os: osx
+      osx_image: xcode10.2
       compiler: clang
       env:
         - TRAVIS_CMAKE_GENERATOR="Xcode"
@@ -319,10 +331,10 @@ matrix:
 #      addons:
 #         apt:
 #           sources:
-#             - sourceline: 'deb http://packages.ros.org/ros/ubuntu trusty main'
+#             - sourceline: 'deb http://packages.ros.org/ros/ubuntu xenial main'
 #               key_url: 'http://packages.ros.org/ros.key'
 #           packages:
-#             - ros-jade-desktop-full
+#             - ros-lunar-desktop-full
 
     # Normal build with integration tests (linux, clang)
 #    - stage: test
@@ -334,10 +346,10 @@ matrix:
 #      addons:
 #         apt:
 #           sources:
-#             - sourceline: 'deb http://packages.ros.org/ros/ubuntu trusty main'
+#             - sourceline: 'deb http://packages.ros.org/ros/ubuntu xenial main'
 #               key_url: 'http://packages.ros.org/ros.key'
 #           packages:
-#             - ros-jade-desktop-full
+#             - ros-lunar-desktop-full
 
 #  allow_failures:
 #    # Broken tests are supposed to fail
@@ -359,6 +371,9 @@ notifications:
 
 
 before_install:
+  # Stop docker service
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo service docker stop; fi
+
   # Enable ccache on osx
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH="/usr/local/opt/ccache/libexec:$PATH"; fi
 
@@ -368,19 +383,14 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang-8; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang++-8; fi
 
-  # These can be removed for ccache 3.2 (at the moment Ubunty trusty has 3.1.9)
-  # see https://bugzilla.samba.org/show_bug.cgi?id=8118
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "clang" ]; then export CFLAGS="$CFLAGS -Qunused-arguments"; fi; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "clang" ]; then export CXXFLAGS="$CXXFLAGS -Qunused-arguments"; fi; fi
-
   # Force gcc-8
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "gcc" ]; then export CC=gcc-8; export CXX=g++-8; fi; fi
 
   # Force clang-8
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "clang" ]; then export CC=clang-8; export CXX=clang++-8; fi; fi
 
-  # Remove default clang from path
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export PATH=`echo $PATH | sed -e 's/\/usr\/local\/clang-3.5.0\/bin://'`; fi
+  ## Remove default clang from path
+  #- if [ "$TRAVIS_OS_NAME" == "linux" ]; then export PATH=`echo $PATH | sed -e 's/\/usr\/local\/clang-3.5.0\/bin://'`; fi
 
   # Print some more system information after installing all build tools
   - echo "-------------------- BEGIN SYSTEM INFORMATION --------------------"
@@ -404,26 +414,23 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then swig3.0 -version; fi
   - which javac
   - javac -version
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo netstat -tulpn; fi
   - echo "--------------------  END SYSTEM INFORMATION  --------------------"
 
 
 install:
   # Install Qt5 GUIs dependencies
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export Qt5_DIR="/usr/local/opt/qt5/lib/cmake/Qt5"; fi
-  
+
   # Install opencv@3 (keg-only)
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew link --force opencv@3; fi
 
-  # Fix issue in trusty version of Qt5
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo sed -i 's/COPY_ONLY/COPYONLY/g' /usr/lib/x86_64-linux-gnu/cmake/Qt5Core/Qt5CoreMacros.cmake; fi
-
   # Install swig stuff
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then wget https://github.com/robotology-dependencies/swigs/releases/download/v0.0.5/swigs.zip; fi
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then wget https://github.com/robotology-dependencies/swigs/releases/download/v0.0.7/swigs.zip; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then unzip -q swigs.zip; mkdir -p cache; mv swigs cache/swig; fi
 
   # Init ROS
-  - if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/jade/setup.bash; fi
-
+  - if $TRAVIS_WITH_INTEGRATION_TESTS; then source /opt/ros/lunar/setup.bash; fi
 
 before_script:
   # Prepare build directory
@@ -435,8 +442,7 @@ before_script:
   - export YARP_INSTALL_PREFIX="${PWD}/install"
   - export YARP_CMAKE_OPTIONS="${CMAKE_OPTIONS} -DCMAKE_INSTALL_PREFIX=${YARP_INSTALL_PREFIX}"
   - if ! $TRAVIS_WITH_ACE; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE=ON -DYARP_TEST_HEAP=ON"; fi
-  - if ! $TRAVIS_WITH_MATH; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_COMPILE_libYARP_math:BOOL=OFF -DENABLE_yarpmod_fakeIMU:BOOL=OFF -DENABLE_yarpmod_fakeLaser:BOOL=OFF"; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpcar_h264:BOOL=ON"; fi
+  - if ! $TRAVIS_WITH_MATH; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_COMPILE_libYARP_math:BOOL=OFF"; fi
   - if $TRAVIS_STATIC; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DBUILD_SHARED_LIBS=OFF"; fi
   - if $TRAVIS_CLEAN_API; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_CLEAN_API=ON -DYARP_COMPILE_TESTS=OFF"; fi
   - if ! $TRAVIS_WITH_EXECUTABLES; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_COMPILE_EXECUTABLES=OFF -DYARP_COMPILE_TESTS=OFF"; fi
@@ -445,7 +451,12 @@ before_script:
   - if $TRAVIS_WITH_BROKEN_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_ENABLE_BROKEN_TESTS=ON"; fi
   - if $TRAVIS_WITH_INTEGRATION_TESTS; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_ENABLE_INTEGRATION_TESTS=ON"; fi
 
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_usbCamera=ON -DENABLE_yarpmod_usbCameraRaw=ON"; fi
+  # These devices link to glib/gobject causing some memory leak on valgrind, therefore they are not enabled on valgrind builds
+  - if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpcar_h264:BOOL=ON"; fi; fi
+  - if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_usbCamera=ON -DENABLE_yarpmod_usbCameraRaw=ON"; fi; fi
+  #- if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_ffmpeg_grabber=ON -DENABLE_yarpmod_ffmpeg_writer=ON"; fi; fi
+  - if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_portaudio=ON -DENABLE_yarpmod_portaudioPlayer=ON -DENABLE_yarpmod_portaudioRecorder=ON"; fi; fi
+  #- if ! $TRAVIS_WITH_VALGRIND; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_opencv_grabber=ON"; fi
 
   # Build rplidar2 on linux
   # FIXME gcc only, see https://github.com/robotology/yarp/issues/1984
@@ -459,7 +470,7 @@ before_script:
 
   # Print cmake flags
   - echo "--------------------     BEGIN CMAKE FLAGS    --------------------"
-  - echo -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS}
+  - echo "-G\"${TRAVIS_CMAKE_GENERATOR}\" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ${YARP_CMAKE_OPTIONS}"
   - echo "--------------------      END CMAKE FLAGS     --------------------"
 
   # Run CMake

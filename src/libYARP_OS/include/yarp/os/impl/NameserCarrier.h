@@ -15,27 +15,25 @@
 
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class NameserCarrier;
-            class NameserTwoWayStream;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * Communicating between two ports via a variant plain-text protocol
  * originally designed for the yarp name server.  For backwards
  * compatibility
  */
-class yarp::os::impl::NameserTwoWayStream : public TwoWayStream, InputStream
+class NameserTwoWayStream :
+        public TwoWayStream,
+        InputStream
 {
 private:
-    TwoWayStream *delegate;
+    TwoWayStream* delegate;
     std::string pendingRead;
     std::string swallowRead;
+
 public:
-    NameserTwoWayStream(TwoWayStream *delegate);
+    NameserTwoWayStream(TwoWayStream* delegate);
 
     virtual ~NameserTwoWayStream();
 
@@ -60,17 +58,19 @@ public:
  * originally designed for the yarp name server.  For backwards
  * compatibility
  */
-class yarp::os::impl::NameserCarrier : public TcpCarrier
+class NameserCarrier :
+        public TcpCarrier
 {
 private:
     bool firstSend;
+
 public:
     NameserCarrier();
 
     std::string getName() const override;
     std::string getSpecifierName() const;
 
-    Carrier *create() const override;
+    Carrier* create() const override;
 
     bool checkHeader(const Bytes& header) override;
     void getHeader(Bytes& header) const override;
@@ -87,5 +87,9 @@ public:
     bool expectReplyToHeader(ConnectionState& proto) override;
     bool write(ConnectionState& proto, SizedWriter& writer) override;
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_NAMESERCARRIER_H

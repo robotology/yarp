@@ -94,18 +94,18 @@ TEST_CASE("OS::impl::BufferedConnectionWriterTest", "[yarp::os][yarp::os::impl]"
 
             // Try the image class
             ImageOf<PixelRgb> img1, img2;
-            img1.resize(320,240);
+            img1.resize(320, 240);
             img1.zero();
-            img1.pixel(10,5).r = 41;
+            img1.pixel(10, 5).r = 41;
             bbr.restart();
             img1.write(bbr);
-            img1.pixel(10,5).r = 42; // sneak change to external buffer to make sure it was not copied
+            img1.pixel(10, 5).r = 42; // sneak change to external buffer to make sure it was not copied
             bbr.write(img2);
-            img1.pixel(10,5).r = 43; // now modify original
+            img1.pixel(10, 5).r = 43; // now modify original
             CHECK(img2.width() == img1.width()); // image width matches
             CHECK(img2.height() == img1.height()); // image width matches
-            CHECK(img2.pixel(10,5).r == 42); // pixel behavior is correct
-            img2.resize(1,1);
+            CHECK(img2.pixel(10, 5).r == 42); // pixel behavior is correct
+            img2.resize(1, 1);
             // Now resend, checking that no memory is allocated
             bbr.restart();
             img1.write(bbr);
@@ -116,8 +116,8 @@ TEST_CASE("OS::impl::BufferedConnectionWriterTest", "[yarp::os][yarp::os::impl]"
             // Now send something completely different
             Monster m1, m2;
             m1.body.fromString("hello (1 (2 (3))) {1 2 3} [done]");
-            m1.head.head.body.resize(41,12);
-            m1.head.body.head.resize(17,63);
+            m1.head.head.body.resize(41, 12);
+            m1.head.body.head.resize(17, 63);
             bbr.restart();
             m1.write(bbr);
             bbr.write(m2);

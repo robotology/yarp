@@ -193,16 +193,16 @@ Steps for building a YARP feature release
   commit is something like `*   xxxxxxx Merge branch 'devel'`)
 
 * Prepare for the next stable release by adding the relative file in
-  `doc/release/` (in this example `v3_2_0_1.md`) and add the releative file in
+  `doc/release/` (in this example `v3_2_1.md`) and add the releative file in
   `doc/releases.dox` in the same "Series" above the one for the file just
   released.
 
 * Commit
 
 ```
-git add doc/release/v3_2_0_1.md
+git add doc/release/v3_2_1.md
 git add doc/releases.dox
-git commit -m "Prepare for next stable release (3.2.0.1)"
+git commit -m "Prepare for next stable release (3.2.1)"
 ```
 
 * Merge the changes into the `devel` branch
@@ -216,16 +216,16 @@ git commit -m "Prepare for next stable release (3.2.0.1)"
   one (it should be an odd number, in this example `71`).
 
 * Prepare for the next feature release by adding the relative file in
- `doc/release/` (in this example `v2_3_74.md`)
+ `doc/release/` (in this example `v3_3_0.md`)
   and add the releative file in `doc/releases.dox` in a new same "Series" on top.
 
 * Commit
 
 ```
 git add CMakeLists.txt
-git add doc/release/v2_3_74.md
+git add doc/release/v3_3_0.md
 git add doc/releases.dox
-git commit -m "Prepare for next feature release (2.3.74)"
+git commit -m "Prepare for next feature release (3.3.0)"
 ```
 
 * Open https://github.com/robotology/yarp/settings/branches/master, remove tick
@@ -247,11 +247,11 @@ git commit -m "Prepare for next feature release (2.3.74)"
   * For the current release:
     * `Affects: YARP v3.2.0` using `#006b75` as color.
   * For the next stable release:
-    * `Fixed in: YARP 3.2.0.1` using `#fbca04` as color.
-    * `Target: YARP v3.2.0.1` using `#d93f0b` as color.
+    * `Fixed in: YARP 3.2.1` using `#fbca04` as color.
+    * `Target: YARP v3.2.1` using `#d93f0b` as color.
   * For the next feature release:
-    * `Fixed in: YARP 2.3.74` using `#fbca04` as color.
-    * `Target: YARP v2.3.74` using `#d93f0b` as color.
+    * `Fixed in: YARP 3.3.0` using `#fbca04` as color.
+    * `Target: YARP v3.3.0` using `#d93f0b` as color.
 
 
 

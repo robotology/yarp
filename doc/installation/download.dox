@@ -6,14 +6,14 @@
 
 Latest YARP release is:
 
- + @ref v3_1_2
+ + @ref v3_2_0
 
 @section download_source_code Source Code
 
 Latest release can be downloaded from here:
 
- + https://github.com/robotology/yarp/archive/v3.1.0.tar.gz
- + https://github.com/robotology/yarp/archive/v3.1.0.zip
+ + https://github.com/robotology/yarp/archive/v3.2.0.tar.gz
+ + https://github.com/robotology/yarp/archive/v3.2.0.zip
 
 @section download_binary Binary releases
 
@@ -60,6 +60,7 @@ Previous versions are hosted on
 
 __Previous releases version and dates__:
 
+ + @ref v3_1_2
  + @ref v3_1_1
  + @ref v3_1_0
  + @ref v3_0_1

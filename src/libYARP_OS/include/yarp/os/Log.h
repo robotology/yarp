@@ -37,18 +37,14 @@
 // Forward declarations
 namespace yarp {
 namespace os {
+
 class LogStream;
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace impl {
 class LogImpl;
 } // namespace impl
 #endif // DOXYGEN_SHOULD_SKIP_THIS
-} // namespace os
-} // namespace yarp
-
-
-namespace yarp {
-namespace os {
 
 class YARP_OS_API Log
 {

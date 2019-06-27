@@ -7,7 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/MpiBcastCarrier.h>
+#include "MpiBcastCarrier.h"
+
 #include <yarp/os/Network.h>
 #include <yarp/os/Log.h>
 

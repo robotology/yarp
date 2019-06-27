@@ -7,10 +7,11 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/ManagedBytes.h>
+
+#include <yarp/os/Bottle.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
-#include <yarp/os/ManagedBytes.h>
-#include <yarp/os/Bottle.h>
 
 #include <cstdlib>
 #include <cstring>
@@ -22,7 +23,8 @@ ManagedBytes::ManagedBytes() :
         b(Bytes(nullptr, 0)),
         owned(false),
         use(0),
-        use_set(false) {
+        use_set(false)
+{
 }
 
 ManagedBytes::ManagedBytes(size_t len) :
@@ -30,7 +32,8 @@ ManagedBytes::ManagedBytes(size_t len) :
         b(Bytes(new char[len], len)),
         owned(true),
         use(0),
-        use_set(false) {
+        use_set(false)
+{
 }
 
 ManagedBytes::ManagedBytes(const Bytes& ext, bool owned) :
@@ -38,7 +41,8 @@ ManagedBytes::ManagedBytes(const Bytes& ext, bool owned) :
         b(ext),
         owned(owned),
         use(0),
-        use_set(false) {
+        use_set(false)
+{
 }
 
 ManagedBytes::ManagedBytes(const ManagedBytes& alt) :
@@ -46,13 +50,15 @@ ManagedBytes::ManagedBytes(const ManagedBytes& alt) :
         b(alt.b),
         owned(false),
         use(0),
-        use_set(false) {
+        use_set(false)
+{
     if (alt.owned) {
         copy();
     }
 }
 
-const ManagedBytes &ManagedBytes::operator=(const ManagedBytes& alt) {
+const ManagedBytes& ManagedBytes::operator=(const ManagedBytes& alt)
+{
     if (&alt != this) {
         clear();
         b = alt.b;
@@ -66,24 +72,27 @@ const ManagedBytes &ManagedBytes::operator=(const ManagedBytes& alt) {
     return *this;
 }
 
-ManagedBytes::~ManagedBytes() {
+ManagedBytes::~ManagedBytes()
+{
     clear();
 }
 
 
-void ManagedBytes::allocate(size_t len) {
+void ManagedBytes::allocate(size_t len)
+{
     clear();
-    char *buf = new char[len];
+    char* buf = new char[len];
     b = Bytes(buf, len);
     owned = true;
     use = 0;
     use_set = false;
 }
 
-bool ManagedBytes::allocateOnNeed(size_t neededLen, size_t allocateLen) {
-    if (length()<neededLen && allocateLen>=neededLen) {
-        char *buf = new char[allocateLen];
-        yarp::os::NetworkBase::assertion(buf!=nullptr);
+bool ManagedBytes::allocateOnNeed(size_t neededLen, size_t allocateLen)
+{
+    if (length() < neededLen && allocateLen >= neededLen) {
+        char* buf = new char[allocateLen];
+        yarp::os::NetworkBase::assertion(buf != nullptr);
         memcpy(buf, get(), length());
         if (owned) {
             delete[] get();
@@ -96,36 +105,42 @@ bool ManagedBytes::allocateOnNeed(size_t neededLen, size_t allocateLen) {
     return false;
 }
 
-void ManagedBytes::copy() {
+void ManagedBytes::copy()
+{
     if (!owned) {
         yarp::conf::ssize_t len = length();
-        char *buf = new char[len];
-        yarp::os::NetworkBase::assertion(buf!=nullptr);
+        char* buf = new char[len];
+        yarp::os::NetworkBase::assertion(buf != nullptr);
         memcpy(buf, get(), len);
         b = Bytes(buf, len);
         owned = true;
     }
 }
 
-size_t ManagedBytes::length() const {
+size_t ManagedBytes::length() const
+{
     return b.length();
 }
 
-size_t ManagedBytes::used() const {
+size_t ManagedBytes::used() const
+{
     return use_set ? use : length();
 }
 
-const char* ManagedBytes::get() const {
+const char* ManagedBytes::get() const
+{
     return b.get();
 }
 
-char* ManagedBytes::get() {
+char* ManagedBytes::get()
+{
     return b.get();
 }
 
-void ManagedBytes::clear() {
+void ManagedBytes::clear()
+{
     if (owned) {
-        if (get()!=nullptr) {
+        if (get() != nullptr) {
             delete[] get();
         }
         owned = false;
@@ -135,32 +150,38 @@ void ManagedBytes::clear() {
     use_set = false;
 }
 
-const Bytes& ManagedBytes::bytes() const {
+const Bytes& ManagedBytes::bytes() const
+{
     return b;
 }
 
-Bytes& ManagedBytes::bytes() {
+Bytes& ManagedBytes::bytes()
+{
     return b;
 }
 
-Bytes ManagedBytes::usedBytes() {
+Bytes ManagedBytes::usedBytes()
+{
     return {get(), used()};
 }
 
-size_t ManagedBytes::setUsed(size_t used) {
+size_t ManagedBytes::setUsed(size_t used)
+{
     use_set = true;
     use = used;
     return this->used();
 }
 
-size_t ManagedBytes::resetUsed() {
+size_t ManagedBytes::resetUsed()
+{
     use = 0;
     use_set = false;
     return this->used();
 }
 
 
-bool ManagedBytes::read(ConnectionReader& reader) {
+bool ManagedBytes::read(ConnectionReader& reader)
+{
     reader.convertTextMode();
     std::int32_t listTag;
     std::int32_t listLen;
@@ -168,21 +189,22 @@ bool ManagedBytes::read(ConnectionReader& reader) {
     listTag = reader.expectInt32();
     listLen = reader.expectInt32();
     blobLen = reader.expectInt32();
-    if (listTag!=BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB) {
+    if (listTag != BOTTLE_TAG_LIST + BOTTLE_TAG_BLOB) {
         return false;
     }
-    if (listLen!=1) {
+    if (listLen != 1) {
         return false;
     }
     allocate(blobLen);
-    if (get()==nullptr) {
+    if (get() == nullptr) {
         return false;
     }
     return reader.expectBlock(get(), length());
 }
 
-bool ManagedBytes::write(ConnectionWriter& writer) const {
-    writer.appendInt32(BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB);
+bool ManagedBytes::write(ConnectionWriter& writer) const
+{
+    writer.appendInt32(BOTTLE_TAG_LIST + BOTTLE_TAG_BLOB);
     writer.appendInt32(1);
     writer.appendInt32(static_cast<std::int32_t>(length()));
     writer.appendExternalBlock(get(), length());

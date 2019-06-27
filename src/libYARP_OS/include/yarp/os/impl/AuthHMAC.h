@@ -24,17 +24,13 @@
 #define NONCE_LEN 8
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class AuthHMAC;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * 3-way authentication via HMAC
  */
-class YARP_OS_impl_API yarp::os::impl::AuthHMAC
+class YARP_OS_impl_API AuthHMAC
 {
 public:
     /**
@@ -45,20 +41,23 @@ public:
     /**
      * Destructor.
      */
-    virtual ~AuthHMAC() {}
+    virtual ~AuthHMAC() = default;
 
-    bool authSource(yarp::os::InputStream *streamIn, yarp::os::OutputStream *streamOut);
-    bool authDest(yarp::os::InputStream *streamIn, yarp::os::OutputStream *streamOut);
+    bool authSource(yarp::os::InputStream* streamIn, yarp::os::OutputStream* streamOut);
+    bool authDest(yarp::os::InputStream* streamIn, yarp::os::OutputStream* streamOut);
 
 private:
-
-    bool send_hmac(yarp::os::OutputStream * stream, unsigned char* nonce, unsigned char* mac);
-    bool receive_hmac(yarp::os::InputStream * stream, unsigned char * nonce, unsigned char * mac);
-    bool check_hmac(unsigned char * mac, unsigned char * mac_check);
+    bool send_hmac(yarp::os::OutputStream* stream, unsigned char* nonce, unsigned char* mac);
+    bool receive_hmac(yarp::os::InputStream* stream, unsigned char* nonce, unsigned char* mac);
+    bool check_hmac(unsigned char* mac, unsigned char* mac_check);
     void fill_nonce(unsigned char* nonce);
 
     bool authentication_enabled;
     HMAC_CONTEXT context;
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_AUTHHMAC_H

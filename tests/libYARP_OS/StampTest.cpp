@@ -29,17 +29,17 @@ static void checkEnvelope(const char *mode)
     in.setStrict();
     in.open("/in");
     out.open("/out");
-    Network::connect("/out","/in",mode);
+    Network::connect("/out", "/in", mode);
 
     Bottle& outBot1 = out.prepare();   // Get the object
     outBot1.fromString("hello world"); // Set it up the way we want
-    Stamp stamp(55,1.0);
+    Stamp stamp(55, 1.0);
     out.setEnvelope(stamp);
     out.write();                       // Now send it on its way
 
     Bottle& outBot2 = out.prepare();
     outBot2.fromString("2 3 5 7 11");
-    Stamp stamp2(55,4.0);
+    Stamp stamp2(55, 4.0);
     out.setEnvelope(stamp2);
     out.writeStrict();                 // writeStrict() will wait for any
 
@@ -144,7 +144,7 @@ TEST_CASE("OS::StampTest", "[yarp::os]")
 
     SECTION("check string serialization")
     {
-        Stamp env(42,3.0);
+        Stamp env(42, 3.0);
         BufferedConnectionWriter buf(true);
         env.write(buf);
         std::string str = buf.toString();

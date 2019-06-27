@@ -46,27 +46,27 @@ public:
 
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style) override;
+                                    const ContactStyle& style) override;
 
     virtual bool connectTopicToPort(const Contact& src,
                                     const Contact& dest,
-                                    ContactStyle style) override;
+                                    const ContactStyle& style) override;
 
     virtual bool disconnectPortFromTopic(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) override;
+                                         const ContactStyle& style) override;
 
     virtual bool disconnectTopicFromPort(const Contact& src,
                                          const Contact& dest,
-                                         ContactStyle style) override;
+                                         const ContactStyle& style) override;
 
     virtual bool connectPortToPortPersistently(const Contact& src,
                                                const Contact& dest,
-                                               ContactStyle style) override;
+                                               const ContactStyle& style) override;
 
     virtual bool disconnectPortToPortPersistently(const Contact& src,
                                                   const Contact& dest,
-                                                  ContactStyle style) override;
+                                                  const ContactStyle& style) override;
 
     bool localOnly() const override;
 

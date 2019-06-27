@@ -7,7 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/MpiCarrier.h>
+#include "MpiCarrier.h"
+
 #include <yarp/os/Route.h>
 #include <sys/types.h>
 

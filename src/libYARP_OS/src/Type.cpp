@@ -24,7 +24,7 @@ public:
             name(rhs.name),
             name_on_wire(rhs.name_on_wire)
     {
-        if (rhs.prop) {
+        if (rhs.prop != nullptr) {
             writeProperties();
             *prop = *(rhs.prop);
         }
@@ -48,10 +48,10 @@ public:
         if (&rhs != this) {
             name = rhs.name;
             name_on_wire = rhs.name_on_wire;
-            if (rhs.prop) {
+            if (rhs.prop != nullptr) {
                 writeProperties();
                 *prop = *(rhs.prop);
-            } else if (prop) {
+            } else if (prop != nullptr) {
                 delete prop;
                 prop = nullptr;
             }
@@ -61,7 +61,7 @@ public:
 
     Property& writeProperties()
     {
-        if (!prop) {
+        if (prop == nullptr) {
             prop = new Property();
         }
         return *prop;
@@ -69,7 +69,7 @@ public:
 
     const Searchable& readProperties() const
     {
-        if (!prop) {
+        if (prop == nullptr) {
             return Bottle::getNullBottle();
         }
         return *prop;
@@ -85,7 +85,6 @@ public:
     std::string name;
     std::string name_on_wire;
 };
-
 
 
 Type::Type() :
@@ -152,7 +151,7 @@ std::string Type::getNameOnWire() const
 
 bool Type::hasName() const
 {
-    return mPriv->name != "";
+    return !mPriv->name.empty();
 }
 
 bool Type::isValid() const
@@ -162,15 +161,14 @@ bool Type::isValid() const
 
 std::string Type::toString() const
 {
-    if (mPriv->name_on_wire != "") {
+    if (!mPriv->name_on_wire.empty()) {
         return mPriv->name + ":" + mPriv->name_on_wire;
     }
-    if (mPriv->name != "") {
+    if (!mPriv->name.empty()) {
         return mPriv->name;
     }
     return "null";
 }
-
 
 
 Type Type::byName(const char* name)

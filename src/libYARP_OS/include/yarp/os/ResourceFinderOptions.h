@@ -45,8 +45,8 @@ public:
 
     enum DuplicateFilesPolicy
     {
-        First,      // Keep only the first file found
-        All         // Keep all the files
+        First, // Keep only the first file found
+        All    // Keep all the files
     };
 
     enum SearchFlavor

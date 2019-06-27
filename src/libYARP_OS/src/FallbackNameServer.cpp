@@ -7,18 +7,20 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/impl/FallbackNameServer.h>
+
 #include <yarp/conf/system.h>
 
-#include <yarp/os/impl/FallbackNameServer.h>
-#include <yarp/os/impl/DgramTwoWayStream.h>
-#include <yarp/os/NetType.h>
-#include <yarp/os/impl/NameServer.h>
 #include <yarp/os/Bytes.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/impl/DgramTwoWayStream.h>
+#include <yarp/os/impl/NameServer.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-Contact FallbackNameServer::getAddress() {
+Contact FallbackNameServer::getAddress()
+{
     return Contact("fallback",
                    "mcast",
                    "224.2.1.1",
@@ -26,20 +28,21 @@ Contact FallbackNameServer::getAddress() {
 }
 
 
-void FallbackNameServer::run() {
+void FallbackNameServer::run()
+{
     DgramTwoWayStream send;
     send.join(getAddress(), true);
     listen.join(getAddress(), false);
 
     YARP_DEBUG(Logger::get(), "Fallback server running");
-    while (listen.isOk()&&send.isOk()&&!closed) {
+    while (listen.isOk() && send.isOk() && !closed) {
         YARP_DEBUG(Logger::get(), "Fallback server waiting");
         std::string msg;
         listen.beginPacket();
         msg = listen.readLine();
         listen.endPacket();
         YARP_DEBUG(Logger::get(), "Fallback server got something");
-        if (listen.isOk()&&!closed) {
+        if (listen.isOk() && !closed) {
             YARP_DEBUG(Logger::get(), std::string("Fallback server got ") + msg);
             if (msg.find("NAME_SERVER ") == 0) {
                 Contact addr;
@@ -54,9 +57,8 @@ void FallbackNameServer::run() {
 }
 
 
-void FallbackNameServer::close() {
+void FallbackNameServer::close()
+{
     closed = true;
     listen.interrupt();
 }
-
-

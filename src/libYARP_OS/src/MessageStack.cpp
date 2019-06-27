@@ -6,34 +6,40 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/conf/numeric.h>
 #include <yarp/os/MessageStack.h>
-#include <yarp/os/Thread.h>
-#include <yarp/os/Semaphore.h>
-#include <yarp/os/Mutex.h>
-#include <yarp/os/Log.h>
+
+#include <yarp/conf/numeric.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/DummyConnector.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/Mutex.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/Thread.h>
 
-#include <list>
 #include <deque>
+#include <list>
 
 using namespace yarp::os;
 
 class MessageStackHelper;
-class MessageStackThread : public Thread {
+class MessageStackThread : public Thread
+{
 public:
     MessageStackHelper& helper;
 
-    MessageStackThread(MessageStackHelper& helper) : helper(helper) {
+    MessageStackThread(MessageStackHelper& helper) :
+            helper(helper)
+    {
     }
 
     void run() override;
 };
 
-class MessageStackHelper {
+class MessageStackHelper
+{
 private:
-    std::list<MessageStackThread *> threads;
+    std::list<MessageStackThread*> threads;
     std::deque<Bottle> msgs;
     Mutex mutex;
     Semaphore produce;
@@ -43,15 +49,18 @@ private:
     bool active;
 
 public:
-    MessageStackHelper(int max_threads, PortReader& owner) : mutex(), produce(0), owner(owner) {
+    MessageStackHelper(int max_threads, PortReader& owner) :
+            mutex(), produce(0), owner(owner)
+    {
         this->max_threads = (size_t)max_threads;
         available_threads = 0;
         active = true;
     }
 
-    void clear() {
+    void clear()
+    {
         active = false;
-        for (size_t i=0; i<threads.size(); i++) {
+        for (size_t i = 0; i < threads.size(); i++) {
             produce.post();
         }
         for (auto& thread : threads) {
@@ -64,10 +73,11 @@ public:
         active = true;
     }
 
-    void stack(PortWriter& msg, const std::string& tag) {
+    void stack(PortWriter& msg, const std::string& tag)
+    {
         mutex.lock();
         msgs.emplace_back();
-        if (tag!="") {
+        if (!tag.empty()) {
             Bottle b;
             b.read(msg);
             Bottle& back = msgs.back();
@@ -77,8 +87,8 @@ public:
         } else {
             msgs.back().read(msg);
         }
-        if (available_threads==0) {
-            if (threads.size()<max_threads || max_threads == 0) {
+        if (available_threads == 0) {
+            if (threads.size() < max_threads || max_threads == 0) {
                 available_threads++;
                 threads.push_back(new MessageStackThread(*this));
                 threads.back()->start();
@@ -89,9 +99,12 @@ public:
         produce.post();
     }
 
-    bool process() {
+    bool process()
+    {
         produce.wait();
-        if (!active) return false;
+        if (!active) {
+            return false;
+        }
         mutex.lock();
         Bottle b = msgs.front();
         msgs.pop_front();
@@ -105,34 +118,43 @@ public:
         return active;
     }
 
-    bool isOwner(PortReader& owner) {
+    bool isOwner(PortReader& owner)
+    {
         return &(this->owner) == &owner;
     }
 };
 
-void MessageStackThread::run() {
+void MessageStackThread::run()
+{
     while (helper.process()) {
         // forever
     }
 }
 
-#define HELPER(x) (*((MessageStackHelper *) x))
+#define HELPER(x) (*((MessageStackHelper*)(x)))
 
-MessageStack::MessageStack(int max_threads) {
+MessageStack::MessageStack(int max_threads)
+{
     this->max_threads = max_threads;
     implementation = nullptr;
 }
 
-MessageStack::~MessageStack() {
-    if (!implementation) return;
+MessageStack::~MessageStack()
+{
+    if (implementation == nullptr) {
+        return;
+    }
     HELPER(implementation).clear();
     delete &HELPER(implementation);
     implementation = nullptr;
 }
 
-void MessageStack::attach(PortReader& owner) {
-    if (implementation) {
-        if (HELPER(implementation).isOwner(owner)) return;
+void MessageStack::attach(PortReader& owner)
+{
+    if (implementation != nullptr) {
+        if (HELPER(implementation).isOwner(owner)) {
+            return;
+        }
         delete &HELPER(implementation);
         implementation = nullptr;
     }
@@ -140,7 +162,10 @@ void MessageStack::attach(PortReader& owner) {
     yAssert(implementation);
 }
 
-void MessageStack::stack(PortWriter& msg, const std::string& tag) {
-    if (!implementation) return;
+void MessageStack::stack(PortWriter& msg, const std::string& tag)
+{
+    if (implementation == nullptr) {
+        return;
+    }
     HELPER(implementation).stack(msg, tag);
 }

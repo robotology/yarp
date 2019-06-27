@@ -17,30 +17,29 @@
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/Value.h>
-
 #include <yarp/os/impl/BottleImpl.h>
 
 #include <clocale>
 #include <cstdio>
 #include <cstdlib>
 
-using yarp::os::impl::StoreInt8;
-using yarp::os::impl::StoreInt16;
-using yarp::os::impl::StoreInt32;
-using yarp::os::impl::StoreInt64;
-using yarp::os::impl::StoreFloat32;
-using yarp::os::impl::StoreFloat64;
-using yarp::os::impl::StoreVocab;
-using yarp::os::impl::StoreString;
-using yarp::os::impl::StoreList;
-using yarp::os::impl::StoreBlob;
-using yarp::os::impl::StoreDict;
-using yarp::os::impl::BottleImpl;
-using yarp::os::impl::Storable;
 using yarp::os::Bottle;
 using yarp::os::ConnectionReader;
 using yarp::os::ConnectionWriter;
 using yarp::os::Value;
+using yarp::os::impl::BottleImpl;
+using yarp::os::impl::Storable;
+using yarp::os::impl::StoreBlob;
+using yarp::os::impl::StoreDict;
+using yarp::os::impl::StoreFloat32;
+using yarp::os::impl::StoreFloat64;
+using yarp::os::impl::StoreInt16;
+using yarp::os::impl::StoreInt32;
+using yarp::os::impl::StoreInt64;
+using yarp::os::impl::StoreInt8;
+using yarp::os::impl::StoreList;
+using yarp::os::impl::StoreString;
+using yarp::os::impl::StoreVocab;
 
 const int StoreInt8::code = BOTTLE_TAG_INT8;
 const int StoreInt16::code = BOTTLE_TAG_INT16;
@@ -53,7 +52,6 @@ const int StoreString::code = BOTTLE_TAG_STRING;
 const int StoreBlob::code = BOTTLE_TAG_BLOB;
 const int StoreList::code = BOTTLE_TAG_LIST;
 const int StoreDict::code = BOTTLE_TAG_LIST | BOTTLE_TAG_DICT;
-
 
 
 /*
@@ -69,7 +67,7 @@ const int StoreDict::code = BOTTLE_TAG_LIST | BOTTLE_TAG_DICT;
  * -----------------------------------------------------
  * TOTAL is                                 16 + DBL_DIG + YARP_DBL_EXP_DIG
  */
-#define YARP_DOUBLE_TO_STRING_MAX_LENGTH    16 + DBL_DIG + YARP_DBL_EXP_DIG
+#define YARP_DOUBLE_TO_STRING_MAX_LENGTH (16 + DBL_DIG + YARP_DBL_EXP_DIG)
 
 namespace {
 // FIXME These methods should probably be in NetType
@@ -79,7 +77,7 @@ namespace {
 template <typename T>
 inline std::string fp_to_string(T x)
 {
-    char buf[YARP_DOUBLE_TO_STRING_MAX_LENGTH];    // -> see comment at the top of the file
+    char buf[YARP_DOUBLE_TO_STRING_MAX_LENGTH]; // -> see comment at the top of the file
     std::snprintf(buf, YARP_DOUBLE_TO_STRING_MAX_LENGTH, "%.*g", DBL_DIG, x);
     std::string str(buf);
 
@@ -116,7 +114,6 @@ inline T fp_from_string(std::string src)
     return static_cast<T>(strtod(src.c_str(), nullptr));
 }
 }
-
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -165,7 +162,7 @@ Storable* Storable::createByCode(std::int32_t id)
         if ((id & GROUP_MASK) != 0) {
             // typed list
             subCode = (id & UNIT_MASK);
-            if (id & BOTTLE_TAG_DICT) {
+            if ((id & BOTTLE_TAG_DICT) != 0) {
                 storable = new StoreDict();
                 yAssert(storable != nullptr);
             } else {
@@ -601,8 +598,7 @@ void StoreBlob::fromString(const std::string& src)
     Bottle bot(src);
     std::string buf(bot.size(), 0);
     for (size_t i = 0; i < bot.size(); i++) {
-        buf[i] =
-            static_cast<char>(static_cast<unsigned char>(bot.get(i).asInt32()));
+        buf[i] = static_cast<char>(static_cast<unsigned char>(bot.get(i).asInt32()));
     }
     x = buf;
 }

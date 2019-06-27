@@ -31,7 +31,9 @@ namespace os {
  * Searchable object (include Bottle objects) using the fromString() method.
  * Property objects can be searched efficiently.
  */
-class YARP_OS_API Property : public Searchable, public Portable
+class YARP_OS_API Property :
+        public Searchable,
+        public Portable
 {
 public:
     using Searchable::check;
@@ -56,7 +58,7 @@ public:
     /**
      * Copy constructor
      */
-    Property(const Property& prop);
+    Property(const Property& rhs);
 
     /**
      * @brief Initializer list constructor.
@@ -432,11 +434,16 @@ public:
     bool write(ConnectionWriter& writer) const override;
 
 private:
-    void* implementation;
     int hash_size;
 
     void summon();
     bool check() const;
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
 } // namespace os

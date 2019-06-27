@@ -9,7 +9,6 @@
 
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/OutputStream.h>
-
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 
 using namespace yarp::os;
@@ -17,19 +16,23 @@ using namespace yarp::os::impl;
 
 ConnectionWriter::~ConnectionWriter() = default;
 
-bool ConnectionWriter::isNull() const {
+bool ConnectionWriter::isNull() const
+{
     return false;
 }
 
 
-ConnectionWriter *ConnectionWriter::createBufferedConnectionWriter() {
+ConnectionWriter* ConnectionWriter::createBufferedConnectionWriter()
+{
     return new BufferedConnectionWriter;
 }
 
-bool ConnectionWriter::writeToStream(PortWriter& portable, OutputStream& os) {
+bool ConnectionWriter::writeToStream(PortWriter& portable, OutputStream& os)
+{
     BufferedConnectionWriter writer;
-    if (!portable.write(writer)) return false;
+    if (!portable.write(writer)) {
+        return false;
+    }
     writer.write(os);
     return os.isOk();
 }
-

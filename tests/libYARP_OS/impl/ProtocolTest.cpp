@@ -60,7 +60,7 @@ TEST_CASE("OS::impl::ProtocolTest", "[yarp::os][yarp::os::impl]")
         Protocol p1(fake1);
         Protocol p2(fake2);
 
-        p1.open(Route("/out","/in","text"));
+        p1.open(Route("/out", "/in", "text"));
 
         CHECK(fake1->getOutputText() == "CONNECT /out\r\n");    // "text carrier header");
 

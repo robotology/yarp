@@ -13,18 +13,12 @@
 
 #include <string>
 
-// Forward declarations
 namespace yarp {
 namespace os {
+
 class PortReader;
 class PortWriter;
 class UnbufferedContactable;
-
-} // namespace os
-} // namespace yarp
-
-namespace yarp {
-namespace os {
 
 /**
  * IDL-friendly object state, used in YARP to set up a port association.

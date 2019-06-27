@@ -10,8 +10,10 @@
 #define YARP_OS_IMPL_LOGFORWARDER_H
 
 #include <yarp/os/api.h>
-#include <yarp/os/Port.h>
+
 #include <yarp/os/Mutex.h>
+#include <yarp/os/Port.h>
+
 #include <string>
 
 namespace yarp {
@@ -20,21 +22,21 @@ namespace impl {
 
 class YARP_OS_impl_API LogForwarder
 {
-    public:
-        ~LogForwarder();
-        static LogForwarder& getInstance();
+public:
+    ~LogForwarder();
+    static LogForwarder& getInstance();
 
-        void forward (const std::string& message);
-        static void shutdown();
+    void forward(const std::string& message);
+    static void shutdown();
 
-    private:
-        LogForwarder();
-        LogForwarder(LogForwarder const&) = delete;
-        LogForwarder& operator=(LogForwarder const&) = delete;
+private:
+    LogForwarder();
+    LogForwarder(LogForwarder const&) = delete;
+    LogForwarder& operator=(LogForwarder const&) = delete;
 
-        yarp::os::Mutex mutex;
-        yarp::os::Port outputPort;
-        static bool started;
+    yarp::os::Mutex mutex;
+    yarp::os::Port outputPort;
+    static bool started;
 };
 
 } // namespace impl

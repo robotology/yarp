@@ -44,7 +44,7 @@ public:
 
     virtual void onMonitorOutput() override {
         if (cursor<MAX_PACKET) {
-            store[cursor] = ManagedBytes(getMonitor(),false);
+            store[cursor] = ManagedBytes(getMonitor(), false);
             store[cursor].copy();
         } else {
             printf("message too big\n");
@@ -70,7 +70,7 @@ public:
     void copyMonitor(DgramTest& alt) {
         readCursor = 0;
         for (int i=0; i<alt.cursor; i++) {
-            store[cursor] = ManagedBytes(alt.get(i),false);
+            store[cursor] = ManagedBytes(alt.get(i), false);
             store[cursor].copy();
             cursor++;
         }
@@ -91,11 +91,11 @@ public:
 
     void corruptSwap(int index, int altIndex) {
         if (index<MAX_PACKET && altIndex<MAX_PACKET) {
-            ManagedBytes tmp(store[index].bytes(),false);
+            ManagedBytes tmp(store[index].bytes(), false);
             tmp.copy();
-            store[index] = ManagedBytes(store[altIndex].bytes(),false);
+            store[index] = ManagedBytes(store[altIndex].bytes(), false);
             store[index].copy();
-            store[altIndex] = ManagedBytes(tmp.bytes(),false);
+            store[altIndex] = ManagedBytes(tmp.bytes(), false);
             store[altIndex].copy();
         } else {
             printf("cannot corrupt nonexistent dgram\n");
@@ -105,7 +105,7 @@ public:
     void corruptDrop(int index) {
         if (index<MAX_PACKET) {
             for (int i=index; i<cursor-1; i++) {
-                store[i] = ManagedBytes(store[i+1].bytes(),false);
+                store[i] = ManagedBytes(store[i+1].bytes(), false);
                 store[i].copy();
             }
             cursor--;
@@ -129,7 +129,7 @@ TEST_CASE("OS::impl::DgramTwoWayStreamTest", "[yarp::os][yarp::os::impl]")
     SECTION("Test Dgram")
     {
         INFO("checking that dgrams are output sensibly");
-        out.openMonitor(sz,sz);
+        out.openMonitor(sz, sz);
         for (size_t i=0; i<msg.length(); i++) {
             msg.get()[i] = i%128;
         }
@@ -143,7 +143,7 @@ TEST_CASE("OS::impl::DgramTwoWayStreamTest", "[yarp::os][yarp::os::impl]")
         ////////////////////////////////////////////////////////////////////
         // Send a multi-dgram message, see if it gets through
         INFO( "checking that dgrams can be reassembled into messages");
-        in.openMonitor(sz,sz);
+        in.openMonitor(sz, sz);
         for (size_t i=0; i<recv.length(); i++) {
             recv.get()[i] = 0;
         }
@@ -200,12 +200,12 @@ TEST_CASE("OS::impl::DgramTwoWayStreamTest", "[yarp::os][yarp::os::impl]")
                 case 0: {
                     INFO("reassembly for 3 messages, middle one corrupted");
                     // corrupt 10th byte of 4th dgram
-                    in.corrupt(4,10);
+                    in.corrupt(4, 10);
                 }  break;
                 case 1: {
                     INFO("order switched in middle message");
                     // swap 4th and 5th dgram
-                    in.corruptSwap(4,5);
+                    in.corruptSwap(4, 5);
                 }   break;
                 case 2: {
                     INFO("drop dgram in middle message");

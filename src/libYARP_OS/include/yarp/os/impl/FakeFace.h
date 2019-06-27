@@ -13,24 +13,26 @@
 #include <yarp/os/Face.h>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class FakeFace;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  * A dummy Face for testing purposes.
  */
-class YARP_OS_impl_API yarp::os::impl::FakeFace : public yarp::os::Face
+class YARP_OS_impl_API FakeFace :
+        public yarp::os::Face
 {
 public:
     bool open(const Contact& address) override;
     void close() override;
-    InputProtocol *read() override;
-    OutputProtocol *write(const Contact& address) override;
+    InputProtocol* read() override;
+    OutputProtocol* write(const Contact& address) override;
+
 private:
 };
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_FAKEFACE_H

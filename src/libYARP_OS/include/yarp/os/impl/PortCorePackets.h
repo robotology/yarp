@@ -10,26 +10,22 @@
 #ifndef YARP_OS_IMPL_PORTCOREPACKETS_H
 #define YARP_OS_IMPL_PORTCOREPACKETS_H
 
-#include <yarp/os/impl/PortCorePacket.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/PortCorePacket.h>
 #ifdef YARP_HAS_ACE
-# include <ace/config.h>
-# include <ace/String_Base.h>
+#    include <ace/String_Base.h>
+#    include <ace/config.h>
 // In one the ACE headers there is a definition of "main" for WIN32
-# ifdef main
-#  undef main
-# endif
+#    ifdef main
+#        undef main
+#    endif
 #endif
-#include <list>
 #include <cstdio>
+#include <list>
 
 namespace yarp {
-    namespace os {
-        namespace impl {
-            class PortCorePackets;
-        }
-    }
-}
+namespace os {
+namespace impl {
 
 /**
  *
@@ -38,13 +34,12 @@ namespace yarp {
  * We call messages "packets" for no particular reason.
  *
  */
-class yarp::os::impl::PortCorePackets
+class PortCorePackets
 {
 private:
     std::list<PortCorePacket*> inactive; // unused packets we may reuse
     std::list<PortCorePacket*> active;   // a list of packets being sent
 public:
-
     virtual ~PortCorePackets()
     {
         while (!inactive.empty()) {
@@ -72,23 +67,23 @@ public:
      *
      * @return an unused or freshly created packet
      */
-    PortCorePacket *getFreePacket()
+    PortCorePacket* getFreePacket()
     {
         if (inactive.empty()) {
-            PortCorePacket *obj = nullptr;
+            PortCorePacket* obj = nullptr;
             obj = new PortCorePacket();
-            yAssert(obj!=nullptr);
+            yAssert(obj != nullptr);
             inactive.push_back(obj);
         }
-        PortCorePacket *next = inactive.front();
+        PortCorePacket* next = inactive.front();
         if (next == nullptr) {
             fprintf(stderr, "*** YARP consistency check failed.\n");
             fprintf(stderr, "*** There has been a low-level failure in \"PortCorePackets\".\n");
             fprintf(stderr, "*** This typically occurs when ports are accessed in a non-threadsafe way.\n");
             fprintf(stderr, "*** For help: https://github.com/robotology/yarp/issues/new\n");
-            yAssert(1==0);
+            yAssert(1 == 0);
         }
-        yAssert(next!=nullptr);
+        yAssert(next != nullptr);
         inactive.remove(next);
         active.push_back(next);
         return next;
@@ -100,9 +95,9 @@ public:
      * @param packet the packet to work on
      * @param clear whether to reset the contents of the packet
      */
-    void freePacket(PortCorePacket *packet, bool clear=true)
+    void freePacket(PortCorePacket* packet, bool clear = true)
     {
-        if (packet!=nullptr) {
+        if (packet != nullptr) {
             if (clear) {
                 packet->reset();
             }
@@ -118,10 +113,10 @@ public:
      * @param packet the packet to work on
      * @return true if the packet has finished being sent
      */
-    bool completePacket(PortCorePacket *packet)
+    bool completePacket(PortCorePacket* packet)
     {
-        if (packet!=nullptr) {
-            if (packet->getCount()<=0) {
+        if (packet != nullptr) {
+            if (packet->getCount() <= 0) {
                 packet->complete();
                 return true;
             }
@@ -135,10 +130,10 @@ public:
      * @param packet the packet to work on
      * @return true if the packet was made inactive
      */
-    bool checkPacket(PortCorePacket *packet)
+    bool checkPacket(PortCorePacket* packet)
     {
-        if (packet!=nullptr) {
-            if (packet->getCount()<=0) {
+        if (packet != nullptr) {
+            if (packet->getCount() <= 0) {
                 packet->complete();
                 freePacket(packet);
                 return true;
@@ -146,7 +141,11 @@ public:
         }
         return false;
     }
-
 };
+
+
+} // namespace impl
+} // namespace os
+} // namespace yarp
 
 #endif // YARP_OS_IMPL_PORTCOREPACKETS_H

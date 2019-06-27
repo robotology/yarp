@@ -24,13 +24,6 @@
 #include <yarp/dev/RGBDSensorParamParser.h>
 #include <librealsense2/rs.hpp>
 
-namespace yarp
-{
-    namespace dev
-    {
-        class realsense2Driver;
-    }
-}
 
 /**
  *  @ingroup dev_impl_media
@@ -124,10 +117,11 @@ clipPlanes (0.2 10.0)
 
 
 
-class yarp::dev::realsense2Driver :  public yarp::dev::DeviceDriver,
-                                     public yarp::dev::IFrameGrabberControls,
-                                     public yarp::dev::IFrameGrabberImageRaw,
-                                     public yarp::dev::IRGBDSensor
+class realsense2Driver :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IFrameGrabberControls,
+        public yarp::dev::IFrameGrabberImageRaw,
+        public yarp::dev::IRGBDSensor
 {
 private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
@@ -146,7 +140,7 @@ public:
     // IRGBDSensor
     int    getRgbHeight() override;
     int    getRgbWidth() override;
-    bool   getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) override;
+    bool   getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig> &configurations) override;
     bool   getRgbResolution(int &width, int &height) override;
     bool   setRgbResolution(int width, int height) override;
     bool   getRgbFOV(double& horizontalFov, double& verticalFov) override;
@@ -169,7 +163,7 @@ public:
     bool   setDepthMirroring(bool mirror) override;
 
 
-    bool   getExtrinsicParam(sig::Matrix &extrinsic) override;
+    bool   getExtrinsicParam(yarp::sig::Matrix &extrinsic) override;
     bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = nullptr) override;
     bool   getDepthImage(depthImage& depthImage, Stamp* timeStamp = nullptr) override;
     bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL) override;

@@ -89,7 +89,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~TypedReader() {}
+    virtual ~TypedReader() = default;
 
     /**
      * Get name of port being read from
@@ -109,7 +109,6 @@ public:
 
 
     /**
-     *
      * Take control of the last object read.
      * YARP will not reuse that object until it is explicitly released
      * by the user.  Be careful - if you acquire objects without
@@ -119,32 +118,27 @@ public:
      *
      * @return the handle to call release() with in order to give YARP
      * back control of the last object read.
-     *
      */
     virtual void* acquire() = 0;
 
 
     /**
-     *
      * Return control to YARP of an object previously taken control of
      * with the acquire() method.
      *
      * @param handle the pointer returned by acquire() when control of
      * the object was taken by the user.
-     *
      */
     virtual void release(void* handle) = 0;
 
 
     /**
-     *
      * Try to provide data periodically.  If no new data arrives
      * in a given period, repeat the last data received (if any).
      * Similarly, the port should not pass on data more frequently
      * than the given period.
      *
      * @param period target period in (fractional) seconds.
-     *
      */
     virtual void setTargetPeriod(double period) = 0;
 };

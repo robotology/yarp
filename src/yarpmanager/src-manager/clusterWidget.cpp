@@ -31,6 +31,8 @@
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/profiler/NetworkProfiler.h>
 
+#include <algorithm>
+
 #include <mainwindow.h>
 
 using namespace std;
@@ -39,7 +41,7 @@ using namespace yarp::manager;
 
 ClusterWidget::ClusterWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ClusterWidget), confFile(""), clusLoader(nullptr)
+    ui(new Ui::ClusterWidget), confFile(""), clusLoader(nullptr), checkNs(false)
 {
 
 #ifdef WIN32
@@ -47,11 +49,8 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
     return;
 #endif
     ui->setupUi(this);
-
-    ui->checkNs->setAttribute(Qt::WA_TransparentForMouseEvents);
-    ui->checkNs->setFocusPolicy(Qt::NoFocus);
-
-    ui->checkNs->setStyleSheet("QCheckBox { color: green }");
+    ui->executeBtn->setDisabled(true);
+    ui->labelNs->setPixmap(QPixmap(":/close.svg").scaledToHeight(ui->checkRos->height()));
 
     //Connections to slots
 
@@ -68,6 +67,7 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
     connect(ui->executeBtn, SIGNAL(clicked(bool)), this, SLOT(onExecute()));
 
     connect(ui->nodestreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(onNodeSelectionChanged()));
+    connect(ui->lineEditExecute, SIGNAL(textChanged(QString)), SLOT(onExecuteTextChanged()));
 
 }
 
@@ -91,22 +91,34 @@ void ClusterWidget::init()
 
     ui->lineEditUser->setText(cluster.user.c_str());
     ui->lineEditNs->setText(cluster.nameSpace.c_str());
-    ui->lineEditNsNode->setText(cluster.nsNode.c_str());
 
     //check if yarpserver is running
 
     onCheckServer();
 
+    QStringList l;
     //Adding nodes
 
-    for (size_t i = 0; i<cluster.nodes.size(); i++)
+    l.push_back(cluster.nsNode.c_str());
+    int i{0};
+    for (auto& node:cluster.nodes)
     {
-        ClusterNode node = cluster.nodes[i];
         addRow(node.name, node.displayValue, node.user, node.address, node.onOff, node.log, i);
+        if (cluster.nsNode == node.name)
+            continue;
+        l.push_back(node.name.c_str());
+        i++;
     }
 
+    // populate the execute combo box
+    ui->executeComboBox->addItems(l);
+    ui->executeComboBox->setEditable(true);
+
+    ui->nsNodeComboBox->addItems(l);
+    ui->nsNodeComboBox->setEditable(true);
+
     //check if all the nodes are up
-    if (ui->checkNs->isChecked())
+    if (checkNs)
     {
         onCheckAll();
     }
@@ -140,7 +152,18 @@ void ClusterWidget::onCheckAll()
 
 void ClusterWidget::onCheckServer()
 {
-    ui->checkNs->setChecked(checkNameserver());
+    checkNs = checkNameserver();
+    if (checkNs) {
+        ui->labelNs->setPixmap(QPixmap(":/apply.svg").scaledToHeight(ui->checkRos->height()));
+    }
+    else {
+        ui->labelNs->setPixmap(QPixmap(":/close.svg").scaledToHeight(ui->checkRos->height()));
+    }
+
+    ui->checkRos->setDisabled(checkNs);
+    ui->runServerBtn->setDisabled(checkNs);
+    ui->nsNodeComboBox->setDisabled(checkNs);
+    ui->stopServerBtn->setDisabled(!checkNs);
 }
 
 void ClusterWidget::onRunServer()
@@ -172,6 +195,21 @@ void ClusterWidget::onStopServer()
 {
     updateServerEntries();
 
+    auto count = std::count_if(cluster.nodes.begin(), cluster.nodes.end(),
+                               [](const ClusterNode& e){ return e.onOff; });
+
+    if (count > 0) {
+
+        auto reply = QMessageBox::warning(this, "Shutting down yarpserver",
+                                           "You have some yarprun on execution."
+                                           " After shutting down yarpserver you might not be able to recover them."
+                                           " Are you sure?",
+                                           QMessageBox::Yes|QMessageBox::No);
+        if (reply== QMessageBox::No) {
+            return;
+        }
+    }
+
     string cmdStopServer = getSSHCmd(cluster.user, cluster.nsNode, cluster.ssh_options);
 
     cmdStopServer = cmdStopServer + " killall yarpserver &";
@@ -188,7 +226,7 @@ void ClusterWidget::onStopServer()
     }
 
     // if it fails to stop, kill it
-    if (ui->checkNs->isChecked())
+    if (checkNs)
     {
         onKillServer();
     }
@@ -351,27 +389,40 @@ void ClusterWidget::onExecute()
         return;
     }
 
-    QList<QTreeWidgetItem*> selectedItems = ui->nodestreeWidget->selectedItems();
-    foreach (QTreeWidgetItem *it, selectedItems)
+    auto nodeName = ui->executeComboBox->currentText();
+
+    if (nodeName.trimmed().size() == 0)
     {
-        int itr = it->text(6).toInt();
-        ClusterNode node = cluster.nodes[itr];
-
-        string cmdExecute = getSSHCmd(node.user, node.address, node.ssh_options);
-
-        cmdExecute.append(" ").append(ui->lineEditExecute->text().toStdString());
-
-        if (system(cmdExecute.c_str()) != 0)
-        {
-            std::string err = "ClusterWidget: failed to run "+ ui->lineEditExecute->text().toStdString() + " on " + node.name;
-            logError(QString(err.c_str()));
-        }
-        else
-        {
-            std::string info = "ClusterWidget: command "+ ui->lineEditExecute->text().toStdString() + " successfully executed on " + node.name;
-            logMessage(QString(info.c_str()));
-        }
+        return;
     }
+
+    auto nodeItr = std::find_if(cluster.nodes.begin(), cluster.nodes.end(),
+                               [&nodeName](const ClusterNode& n){ return n.name == nodeName.toStdString(); });
+
+
+    if (nodeItr == cluster.nodes.end())
+    {
+        return;
+    }
+
+    auto node = *nodeItr;
+    auto command = ui->lineEditExecute->text().toStdString();
+
+    string cmdExecute = getSSHCmd(node.user, node.address, node.ssh_options);
+
+    cmdExecute.append(" ").append(command);
+
+    if (system(cmdExecute.c_str()) != 0)
+    {
+        std::string err = "ClusterWidget: failed to run "+ command + " on " + node.name;
+        logError(QString(err.c_str()));
+    }
+    else
+    {
+        std::string info = "ClusterWidget: command "+ command + " successfully executed on " + node.name;
+        logMessage(QString(info.c_str()));
+    }
+
     ui->lineEditExecute->clear();
 }
 
@@ -382,15 +433,22 @@ void ClusterWidget::onNodeSelectionChanged()
         ui->runSelBtn->setDisabled(true);
         ui->stopSelBtn->setDisabled(true);
         ui->killSelBtn->setDisabled(true);
-        ui->executeBtn->setDisabled(true);
     }
     else
     {
-        ui->runSelBtn->setDisabled(false);
-        ui->stopSelBtn->setDisabled(false);
-        ui->killSelBtn->setDisabled(false);
-        ui->executeBtn->setDisabled(false);
+        ui->runSelBtn->setDisabled(!checkNs);
+        ui->stopSelBtn->setDisabled(!checkNs);
+        ui->killSelBtn->setDisabled(!checkNs);
     }
+}
+
+
+void ClusterWidget::onExecuteTextChanged()
+{
+    if (ui->lineEditExecute->text().trimmed().size() > 0)
+        ui->executeBtn->setDisabled(false);
+    else
+        ui->executeBtn->setDisabled(true);
 }
 
 
@@ -544,8 +602,8 @@ bool ClusterWidget::checkNode(const string &name)
 void ClusterWidget::updateServerEntries()
 {
     // remove all the whitespaces
-    cluster.user   = ui->lineEditUser->text().simplified().replace( " ", "" ).toStdString();
-    cluster.nsNode = ui->lineEditNsNode->text().simplified().replace( " ", "" ).toStdString();
+    cluster.user   = ui->lineEditUser->text().simplified().trimmed().toStdString();
+    cluster.nsNode = ui->nsNodeComboBox->currentText().simplified().trimmed().toStdString();
 }
 
 ClusterWidget::~ClusterWidget()

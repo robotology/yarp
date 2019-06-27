@@ -7,7 +7,7 @@
  */
 
 
-#include "WireTwiddler.h"
+#include <yarp/wire_rep_utils/WireTwiddler.h>
 
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/Route.h>
@@ -22,6 +22,7 @@
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
+using namespace yarp::wire_rep_utils;
 
 
 void testSequence(char *seq,

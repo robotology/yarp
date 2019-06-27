@@ -32,11 +32,11 @@ std::string Carrier::getBootstrapCarrierName() const
     return "tcp";
 }
 
-int  Carrier::connect(const Contact& src,
-                              const Contact& dest,
-                              const ContactStyle& style,
-                              int mode,
-                             bool reversed)
+int Carrier::connect(const Contact& src,
+                     const Contact& dest,
+                     const ContactStyle& style,
+                     int mode,
+                     bool reversed)
 {
     YARP_UNUSED(src);
     YARP_UNUSED(dest);
@@ -81,13 +81,14 @@ bool Carrier::modifiesReply() const
 }
 
 void Carrier::prepareDisconnect()
-{;}
+{
+}
 
 void Carrier::close()
-{;}
+{
+}
 
-Carrier::~Carrier()
-{;}
+Carrier::~Carrier() = default;
 
 PortReader& Carrier::modifyReply(PortReader& reader)
 {

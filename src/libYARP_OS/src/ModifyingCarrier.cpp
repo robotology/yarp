@@ -10,24 +10,24 @@
 
 using namespace yarp::os;
 
-bool yarp::os::ModifyingCarrier::checkHeader(const yarp::os::Bytes &header)
+bool yarp::os::ModifyingCarrier::checkHeader(const yarp::os::Bytes& header)
 {
     YARP_UNUSED(header);
     return false;
 }
 
 
-void yarp::os::ModifyingCarrier::getHeader(yarp::os::Bytes &header) const
+void yarp::os::ModifyingCarrier::getHeader(yarp::os::Bytes& header) const
 {
-    if (header.length()==8) {
+    if (header.length() == 8) {
         std::string target = "ohbehave";
-        for (int i=0; i<8; i++) {
+        for (int i = 0; i < 8; i++) {
             header.get()[i] = target[i];
         }
     }
 }
 
-bool yarp::os::ModifyingCarrier::respondToHeader(yarp::os::ConnectionState &proto)
+bool yarp::os::ModifyingCarrier::respondToHeader(yarp::os::ConnectionState& proto)
 {
     YARP_UNUSED(proto);
     return false;
@@ -49,12 +49,12 @@ bool yarp::os::ModifyingCarrier::modifiesReply() const
 }
 
 
-void yarp::os::ModifyingCarrier::setCarrierParams(const yarp::os::Property &params)
+void yarp::os::ModifyingCarrier::setCarrierParams(const yarp::os::Property& params)
 {
     YARP_UNUSED(params);
 }
 
-void yarp::os::ModifyingCarrier::getCarrierParams(yarp::os::Property &params) const
+void yarp::os::ModifyingCarrier::getCarrierParams(yarp::os::Property& params) const
 {
     YARP_UNUSED(params);
 }

@@ -71,7 +71,9 @@ public:
         return ct;
     }
 
-    void close() override {}
+    void close() override
+    {
+    }
 
     virtual std::string toString() const
     {

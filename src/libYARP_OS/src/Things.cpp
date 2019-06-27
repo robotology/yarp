@@ -49,19 +49,17 @@ yarp::os::PortReader* Things::getPortReader()
 bool Things::setConnectionReader(yarp::os::ConnectionReader& reader)
 {
     conReader = &reader;
-    if (portable) {
-        delete portable;
-    }
+    delete portable;
     portable = nullptr;
     return true;
 }
 
 bool Things::write(yarp::os::ConnectionWriter& connection)
 {
-    if (writer) {
+    if (writer != nullptr) {
         return writer->write(connection);
     }
-    if (portable) {
+    if (portable != nullptr) {
         return portable->write(connection);
     }
     return false;
@@ -69,9 +67,7 @@ bool Things::write(yarp::os::ConnectionWriter& connection)
 
 void Things::reset()
 {
-    if (portable) {
-        delete portable;
-    }
+    delete portable;
     conReader = nullptr;
     writer = nullptr;
     reader = nullptr;

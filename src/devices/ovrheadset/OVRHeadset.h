@@ -35,11 +35,23 @@
 #include <map>
 #include <vector>
 
+
+namespace yarp { namespace os { template <typename T> class BufferedPort; }}
+namespace yarp { namespace os { class Bottle; }}
+struct GLFWwindow;
+class InputCallback;
+class TextureStatic;
+class TextureBattery;
+struct guiParam;
+
+namespace yarp {
+namespace dev {
+
 /**
 * @ingroup dev_impl_other
 *
-* \section SDLJoypad Description of input parameters
-* \brief Device that reads inputs of Joypads compatible with the SDL library.
+* \section OVRHeadset Description of input parameters
+* \brief Device that manages the Oculus Rift Headset.
 *
 * Parameters accepted in the config argument of the open method:
 * |   Parameter name      | Type   | Units | Default Value | Required  | Description                               | Notes |
@@ -61,19 +73,6 @@ Gui Groups parameters
 * | z                     | double | pixel |               | yes       | z position of the widget  |       |
 * | alpha                 | double |       |               | yes       | alpha value of the widget |       |
 **/
-
-
-namespace yarp { namespace os { template <typename T> class BufferedPort; }}
-namespace yarp { namespace os { class Bottle; }}
-struct GLFWwindow;
-class InputCallback;
-class TextureStatic;
-class TextureBattery;
-struct guiParam;
-
-namespace yarp {
-namespace dev {
-
 class OVRHeadset : public yarp::dev::DeviceDriver,
                    public yarp::os::PeriodicThread,
                    public yarp::dev::IService,

@@ -10,7 +10,7 @@ yarp_prepare_plugin(fakeSpeaker
                     INCLUDE fakeSpeaker.h
                     EXTRA_CONFIG WRAPPER=AudioPlayerWrapper)
 
-if(NOT SKIP_fakeMicrophone)
+if(NOT SKIP_fakeSpeaker)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   yarp_add_plugin(yarp_fakeSpeaker fakeSpeaker.cpp
                                    fakeSpeaker.h)

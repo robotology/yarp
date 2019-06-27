@@ -8,18 +8,8 @@
  */
 
 #include <yarp/os/RateThread.h>
-
-#include <yarp/os/Semaphore.h>
-#include <yarp/os/Time.h>
-#include <yarp/os/SystemClock.h>
-
-#include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/PlatformTime.h>
 
-#include <cmath>
-
-using namespace yarp::os::impl;
 using namespace yarp::os;
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
@@ -97,18 +87,18 @@ double RateThread::getEstUsed()
     return PeriodicThread::getEstimatedUsed() * 1000;
 }
 
-void RateThread::getEstPeriod(double &av, double &std)
+void RateThread::getEstPeriod(double& av, double& std)
 {
     PeriodicThread::getEstimatedPeriod(av, std);
-    av*=1000;
-    std*=1000;
+    av *= 1000;
+    std *= 1000;
 }
 
-void RateThread::getEstUsed(double &av, double &std)
+void RateThread::getEstUsed(double& av, double& std)
 {
     PeriodicThread::getEstimatedUsed(av, std);
-    av*=1000;
-    std*=1000;
+    av *= 1000;
+    std *= 1000;
 }
 
 void RateThread::resetStat()
@@ -122,10 +112,12 @@ bool RateThread::threadInit()
 }
 
 void RateThread::threadRelease()
-{}
+{
+}
 
 void RateThread::beforeStart()
-{}
+{
+}
 
 void RateThread::afterStart(bool success)
 {
@@ -151,7 +143,8 @@ int RateThread::getPolicy()
 //  System Rate Thread
 //
 
-SystemRateThread::SystemRateThread(int period) : PeriodicThread(period/1000.0, ShouldUseSystemClock::Yes)
+SystemRateThread::SystemRateThread(int period) :
+        PeriodicThread(period / 1000.0, ShouldUseSystemClock::Yes)
 {
 }
 
@@ -165,20 +158,23 @@ bool SystemRateThread::stepSystem()
 
 #endif
 
-RateThreadWrapper::RateThreadWrapper(): PeriodicThread(0)
+RateThreadWrapper::RateThreadWrapper() :
+        PeriodicThread(0)
 {
     helper = nullptr;
     owned = false;
 }
 
 
-RateThreadWrapper::RateThreadWrapper(Runnable *helper): PeriodicThread(0)
+RateThreadWrapper::RateThreadWrapper(Runnable* helper) :
+        PeriodicThread(0)
 {
     this->helper = helper;
     owned = true;
 }
 
-RateThreadWrapper::RateThreadWrapper(Runnable& helper): PeriodicThread(0)
+RateThreadWrapper::RateThreadWrapper(Runnable& helper) :
+        PeriodicThread(0)
 {
     this->helper = &helper;
     owned = false;
@@ -192,9 +188,7 @@ RateThreadWrapper::~RateThreadWrapper()
 void RateThreadWrapper::detach()
 {
     if (owned) {
-        if (helper!=nullptr) {
-            delete helper;
-        }
+        delete helper;
     }
     helper = nullptr;
     owned = false;
@@ -208,7 +202,7 @@ bool RateThreadWrapper::attach(Runnable& helper)
     return true;
 }
 
-bool RateThreadWrapper::attach(Runnable *helper)
+bool RateThreadWrapper::attach(Runnable* helper)
 {
     detach();
     this->helper = helper;
@@ -219,15 +213,12 @@ bool RateThreadWrapper::attach(Runnable *helper)
 bool RateThreadWrapper::open(double framerate, bool polling)
 {
     double period = 0.0;
-    if (framerate>0) {
-        period=(1.0/framerate);
-        YARP_SPRINTF2(Logger::get(), info,
-                      "Setting framerate to: %.0lf[Hz] (thread period %f[s])\n",
-                      framerate, period);
+    if (framerate > 0) {
+        period = (1.0 / framerate);
+        YARP_SPRINTF2(yarp::os::impl::Logger::get(), info, "Setting framerate to: %.0lf[Hz] (thread period %f[s])\n", framerate, period);
     } else {
-        YARP_SPRINTF0(Logger::get(), info,
-                      "No framerate specified, polling the device");
-        period=0.0; //continuous
+        YARP_SPRINTF0(yarp::os::impl::Logger::get(), info, "No framerate specified, polling the device");
+        period = 0.0; //continuous
     }
     PeriodicThread::setPeriod(period);
     if (!polling) {
@@ -248,42 +239,41 @@ void RateThreadWrapper::stop()
 
 void RateThreadWrapper::run()
 {
-    if (helper!=nullptr) {
+    if (helper != nullptr) {
         helper->run();
     }
 }
 
 bool RateThreadWrapper::threadInit()
 {
-    if (helper!=nullptr) {
+    if (helper != nullptr) {
         return helper->threadInit();
     }
-    else
-        return true;
+    return true;
 }
 
 void RateThreadWrapper::threadRelease()
 {
-    if (helper!=nullptr) {
+    if (helper != nullptr) {
         helper->threadRelease();
     }
 }
 
 void RateThreadWrapper::afterStart(bool success)
 {
-    if (helper!=nullptr) {
+    if (helper != nullptr) {
         helper->afterStart(success);
     }
 }
 
 void RateThreadWrapper::beforeStart()
 {
-    if (helper!=nullptr) {
+    if (helper != nullptr) {
         helper->beforeStart();
     }
 }
 
-Runnable *RateThreadWrapper::getAttachment() const
+Runnable* RateThreadWrapper::getAttachment() const
 {
     return helper;
 }

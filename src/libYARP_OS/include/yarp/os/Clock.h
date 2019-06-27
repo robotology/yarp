@@ -18,12 +18,9 @@ class YARP_OS_API Clock
 {
 public:
     /**
-     *
      * Destructor.
-     *
      */
-    virtual ~Clock() {}
-
+    virtual ~Clock() = default;
 
     /**
      * Return the current time in seconds, relative to an arbitrary
@@ -32,7 +29,6 @@ public:
      */
     virtual double now() = 0;
 
-
     /**
      * Wait for a certain number of seconds.  This may be fractional.
      * @param seconds the duration of the delay, in seconds
@@ -40,11 +36,9 @@ public:
     virtual void delay(double seconds) = 0;
 
     /**
-     *
      * Check if time is valid (non-zero).  For example, for
      * a network clock, if no timestamp has yet been received,
      * this method will return false.
-     *
      */
     virtual bool isValid() const = 0;
 };
