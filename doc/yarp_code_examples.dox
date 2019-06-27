@@ -558,17 +558,3 @@ Example showing how to use the SerialServoBoard driver AND how to configure and 
 Example showing how to add a new carrier to YARP.
 
 */
-
-/**
- \example portaudio/sound_receiver.cpp
-
-Example showing how to receive portaudio sound  with YARP.
-
-*/
-
-/**
- \example portaudio/sound_sender_mic.cpp
-
-Example showing how to send portaudio sound  with YARP.
-
-*/
