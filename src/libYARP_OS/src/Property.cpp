@@ -746,9 +746,9 @@ public:
         bool inVar = false;
         bool varHasParen = false;
         bool quoted = false;
-        for (int i = 0; i <= (int)input.length(); i++) {
+        for (size_t i = 0; i <= input.length(); i++) {
             char ch = 0;
-            if (i < (int)input.length()) {
+            if (i < input.length()) {
                 ch = input[i];
             }
             if (quoted) {
