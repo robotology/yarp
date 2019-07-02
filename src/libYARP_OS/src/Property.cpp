@@ -47,10 +47,8 @@ public:
 
     void clear()
     {
-        if (backing != nullptr) {
-            delete backing;
-            backing = nullptr;
-        }
+        delete backing;
+        backing = nullptr;
     }
 
     /*
