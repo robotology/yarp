@@ -109,10 +109,14 @@ private:
 #define yError   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).error
 #define yFatal   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).fatal
 
-#define yAssert(x)                                                         \
+#ifndef NDEBUG
+#  define yAssert(x)                                                       \
     if (!(x)) {                                                            \
         yFatal("Assertion failure at %s:%d (%s)", __FILE__, __LINE__, #x); \
     }
+#else
+#  define yAssert(x)
+#endif
 
 #define YARP_FIXME_NOTIMPLEMENTED(what) yWarning("FIXME: %s not yet implemented", what);
 
