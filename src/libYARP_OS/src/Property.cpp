@@ -801,10 +801,10 @@ public:
                     // line, we will allow windows-style paths.
                     // Hence we have to break the "\" character
                     std::string buf;
-                    for (char i : add) {
-                        buf += i;
-                        if (i == '\\') {
-                            buf += i;
+                    for (char c : add) {
+                        buf += c;
+                        if (c == '\\') {
+                            buf += c;
                         }
                     }
                     add = buf;
