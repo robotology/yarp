@@ -23,7 +23,8 @@ if(YARP_COMPILE_yarpdatadumper)
 
   target_link_libraries(yarpdatadumper YARP::YARP_OS
                                        YARP::YARP_init
-                                       YARP::YARP_sig)
+                                       YARP::YARP_sig
+                                       YARP::YARP_cv)
 
   install(TARGETS yarpdatadumper
           COMPONENT utilities
