@@ -506,7 +506,7 @@ bool MultipleAnalogSensorsRemapper::getTemperatureSensorMeasure(size_t sens_inde
 {
     yarp::sig::Vector dummy(1);
     bool ok = genericGetMeasure(TemperatureSensors, sens_index, dummy, timestamp, m_iTemperatureSensors, &ITemperatureSensors::getTemperatureSensorMeasure);
-    out = dummy[1];
+    out = dummy[0];
     return ok;
 }
 
