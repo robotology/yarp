@@ -15,7 +15,6 @@
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/sig/all.h>
-#include <yarp/cv/Cv.h>
 
 #include <iostream>
 #include <iomanip>
@@ -27,13 +26,17 @@
 
 #ifdef ADD_VIDEO
     #include <opencv2/opencv.hpp>
+    #include <yarp/cv/Cv.h>
 #endif
 
 
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::sig;
-using namespace yarp::cv;
+
+#ifdef ADD_VIDEO
+    using namespace yarp::cv;
+#endif
 
 /**************************************************************************/
 enum class DumpType { bottle, image };
@@ -138,6 +141,7 @@ public:
         return (fName.str()+" ["+Vocab::decode(code)+"]");
     }
 
+#ifdef ADD_VIDEO
     const cv::Mat &getImage()
     {
         int code=p->getPixelCode();
@@ -155,6 +159,7 @@ public:
         }
         return img;
     }
+#endif
 };
 
 
