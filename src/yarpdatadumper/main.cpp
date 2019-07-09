@@ -93,7 +93,9 @@ class DumpImage : public DumpObj
 {
 private:
     Image *p;
+#ifdef ADD_VIDEO
     cv::Mat img;
+#endif
 
 public:
     DumpImage() { p=new Image(); }
