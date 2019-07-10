@@ -8,7 +8,6 @@
 if(YARP_COMPILE_yarpdatadumper)
   if(YARP_HAS_OpenCV)
     add_definitions(-DADD_VIDEO)
-    include_directories(${OpenCV_INCLUDE_DIRS})
   else()
     message(STATUS "yarpdatadumper: OpenCV not selected, keep on building...")
   endif()
@@ -21,9 +20,10 @@ if(YARP_COMPILE_yarpdatadumper)
     target_link_libraries(yarpdatadumper ${OpenCV_LIBRARIES})
   endif()
 
-  target_link_libraries(yarpdatadumper YARP::YARP_OS
-                                       YARP::YARP_init
-                                       YARP::YARP_sig)
+  target_link_libraries(yarpdatadumper YARP::YARP_OS YARP::YARP_init YARP::YARP_sig)
+  if(YARP_HAS_OpenCV)
+    target_link_libraries(yarpdatadumper YARP::YARP_cv)
+  endif()
 
   install(TARGETS yarpdatadumper
           COMPONENT utilities
