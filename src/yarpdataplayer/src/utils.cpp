@@ -257,15 +257,19 @@ bool Utilities::setupDataFromParts(partsData &part)
     if (str.is_open()){
         string line;
         int itr = 0;
-        while( getline( str, line ) && (itr <= 2) ){
+        while( getline( str, line ) && (itr < 3) ){
             Bottle b( line );
             if (itr == 0){
                 part.type = b.get(1).toString();
-                part.type.erase(part.type.size() -1 );      // remove the ";" character
+                part.type.erase(part.type.size() -1 );          // remove the ";" character
             }
-            if (itr == 2){
-                part.portName = b.get(1).toString();
-                LOG( "the name of the port is %s\n",part.portName.c_str());
+            else{
+                string stamp_tag = b.get(0).toString();
+                if (stamp_tag.find("Stamp") == string::npos){   // skip stamp information
+                    part.portName = b.get(1).toString();
+                    LOG( "the name of the port is %s\n",part.portName.c_str());
+                    break;
+                }
             }
             itr++;
         }
