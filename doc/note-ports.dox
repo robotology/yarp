@@ -1,6 +1,7 @@
 /**
-  * \page note_ports Getting Started with YARP Ports
+\page note_ports Getting Started with YARP Ports
 
+\tableofcontents
 
 \section note_ports_network A network of ports
 
@@ -464,6 +465,5 @@ particularly flexible -- it is a (potentially nested) list of
 some primitive types like integers, doubles, and strings, with
 a well defined representation in binary and text form.
 But any kind of data can be send across a YARP network.
-
 
 */

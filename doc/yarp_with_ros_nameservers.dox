@@ -1,6 +1,7 @@
 /**
- * @page yarp_with_ros_nameservers Decide on what name server to use
+\page yarp_with_ros_nameservers Decide on what name server to use
 
+\tableofcontents
 
 Both YARP and ROS usually operate with a name server to help
 track what ports/topics/nodes are where (but see also \ref yarp_without_nameserver).

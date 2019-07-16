@@ -1,6 +1,5 @@
 /**
- * @page tutorials YARP Tutorials
- *
+\page tutorials YARP Tutorials
 
 Here are a collection of tutorials on various topics in YARP.
 
@@ -51,7 +50,6 @@ Using YARP devices:
 More software tutorials:
 \li \subpage yarp_pointcloud
 \li \subpage yarp_code_examples
-\li \subpage gpu_tutorial
 \li \subpage using_cmake
 \li \subpage carrier_h264_howto
 
@@ -65,5 +63,8 @@ YARP implementation:
 \li \subpage yarp_guts
 \li \subpage yarp_plugins
 
- *
- */
+GUI tutorials:
+\li \subpage yarpdataplayer_example
+\li \subpage yarpdataplayer_rec_example
+
+*/

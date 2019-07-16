@@ -1,7 +1,7 @@
 /**
- * @page yarp_plugins Ways to compile YARP plugins
+\page yarp_plugins Ways to compile YARP plugins
 
-\author Paul Fitzpatrick
+\tableofcontents
 
 This documents an area of YARP that is in flux: runtime plugins.
 Subject to change during early 2013.
@@ -71,7 +71,7 @@ ENABLE_yarpcar_human_carrier turned OFF, these plugins
 are no longer compiled into YARP.  But unless we have actually
 removed the library files we already built (libyarp_fakebot.so and
 libyarp_human.so), YARP will still be able to find them and load
-them at runtime.  Running <tt>./bin/yarp plugin</tt> should give the same
+them at runtime.  Running `./bin/yarp plugin` should give the same
 results as before.
 
 
@@ -85,7 +85,7 @@ To load a plugin, YARP needs to know three things:
 
 However, at the point where a plugin is needed, YARP will know just one of the following:
   \li the name of the device that the plugin corresponds to, which should
-  match whatever was given in a CMake <tt>YARP_PREPARE_DEVICE(devicename ...)</tt> call, OR
+  match whatever was given in a CMake `YARP_PREPARE_DEVICE(devicename ...)` call, OR
   \li the name of the carrier that the plugin corresponds to, as determined in the carrier's implementation of Carrier::getName, OR
   \li the first 8 bytes sniffed on an incoming TCP connection.
 
@@ -101,12 +101,12 @@ part human_carrier  # function name: match yarp_prepare_carrier(THIS_NAME ...)
 code "HUMANITY"     # the first 8 bytes on this kind of connection
 \endcode
 
-The <tt>code</tt> line can have single byte wildcards with the following
+The `code` line can have single byte wildcards with the following
 slightly odd syntax (subject to revision):
 \code
 code (any) (any) "\0\0" (any) (any) "\0\0"
 \endcode
-That would represent <tt>/..\0\0..\0\0/</tt> in regular expression syntax.
+That would represent `/..\0\0..\0\0/` in regular expression syntax.
 
 For a device, the fingerprint files are similar, but don't need the code
 line:
@@ -121,32 +121,32 @@ part fakebot         # function name: match yarp_prepare_device(THIS_NAME ...)
 
 It is fine for a fingerprint file to contain more than one plugin
 section.  The name of the fingerprint is arbitrary, but the extension
-should be <tt>.ini</tt>.  Examples can be found in the YARP source
-code, in subdirectories of the <tt>src/devices</tt> and
-<tt>src/carriers</tt> directories.
+should be `.ini`.  Examples can be found in the YARP source
+code, in subdirectories of the `src/devices` and
+`src/carriers` directories.
 
-YARP is configured to aggregate <tt>plugin.ini</tt> files in a directory
-called <tt>etc/yarp/plugins</tt>.  The <tt>ini</tt> files are collected
+YARP is configured to aggregate `plugin.ini` files in a directory
+called `etc/yarp/plugins`.  The `ini` files are collected
 in this directory irrespective of whether the corresponding plugins
-are compiled or not.  To add plugins not included with YARP, an <tt>ini</tt>
-file may be placed in <tt>etc/yarp/plugins</tt>.
+are compiled or not.  To add plugins not included with YARP, an `ini`
+file may be placed in `etc/yarp/plugins`.
 
-YARP looks for <tt>etc/yarp/plugins</tt> using
+YARP looks for `etc/yarp/plugins` using
 a yarp::os::ResourceFinder.  If you don't already use configuration
 files with YARP, one way to get going would be to create a file
-in your home directory called <tt>.yarp/plugins.ini</tt> (or <tt>yarp\plugins.ini</tt> on Windows) containing:
+in your home directory called `.yarp/plugins.ini` (or `yarp\plugins.ini` on Windows) containing:
 \code
 style capability
 default_capability /path/to/your/yarp/build
 \endcode
-and then set a <tt>YARP_POLICY</tt> environment variable to
-<tt>plugins</tt> (matching the name of the ini file you placed in the <tt>.yarp</tt>/<tt>yarp</tt> directory).
+and then set a `YARP_POLICY` environment variable to
+`plugins` (matching the name of the ini file you placed in the `.yarp`/`yarp` directory).
 
 \section yarp_plugins_library Finding library files
 
 Each operating system has a convention for finding library files which
-YARP will also use (<tt>LD_LIBRARY_PATH</tt> etc), with one addition.
-Once the configuration files in <tt>etc/yarp/plugins</tt> can be
+YARP will also use (`LD_LIBRARY_PATH` etc), with one addition.
+Once the configuration files in `etc/yarp/plugins` can be
 found, YARP will also use any "search" blocks it finds there.
 They look like this:
 \code
@@ -157,9 +157,8 @@ prefix "lib"     # prefix the libraries use
 type "shared"    # type of library (should always be "shared")
 \endcode
 
-By default, YARP will add a search block in a file called <tt>path.ini</tt>
+By default, YARP will add a search block in a file called `path.ini`
 which gives the path to where YARP libraries have been placed
 after compilation (or installation).
 
-*
 */

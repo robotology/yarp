@@ -36,5 +36,5 @@ void yarp::os::SystemClock::delaySystem(double seconds)
 
 double yarp::os::SystemClock::nowSystem()
 {
-    return std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+    return std::chrono::time_point_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
 }

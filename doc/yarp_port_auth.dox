@@ -1,7 +1,7 @@
 /**
- * @page yarp_port_auth YARP port authentication
+\page yarp_port_auth YARP port authentication
 
-\author Daniel Krieg
+\tableofcontents
 
 A new connection to a YARP port is established via handshaking on a TCP port,
 (see yarp::os::impl::TcpFace). So everyone who can access this TCP port
@@ -49,6 +49,4 @@ I consider this mechanism to be secure for handshaking,
 but it comes without any warranty. Every user should
 still feel responsible for the security of their system.
 
-
- *
- */
+*/

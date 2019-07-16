@@ -1,0 +1,89 @@
+/**
+\page simple_modification An example which shows how to use a Lua script to modify incoming data in an input port
+
+\tableofcontents
+
+\section simple_modification_desc Description
+This example demonstrates how to simply use the port monitor carrier to modify data going through a connection. The port '/write' from 'yarp write' module is connected to the '/read' port of 'yarp read' using a portmonitor plugged into the receiver side. The portmoniotr loads a Lua script (\c 'bot_modifier.lua') in which we access and modify the data going through through the port.
+
+
+\image html simple_modification.png ""
+
+\section simple_modification_req Requirements
+\li Enable and compile portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON in YARP cmake).
+
+\li Compile Yarp with Lua binding support (see \ref yarp_swig "Using YARP from python, java, ruby, C#, and other languages").
+
+\li Set LUA_CPATH to include Yarp-Lua binding library  (e.g., export LUA_CPATH=";;;$YARP_ROOT/build/lib/lua/?.so")
+
+
+\section simple_modification_running Running the example
+
+\li Open a terminal and run yarpserver
+\verbatim
+   $ yarpserver
+\endverbatim
+
+\li Open another terminal (lets call this the sender terminal) and type
+\verbatim
+   $ yarp write /write
+\endverbatim
+
+\li Open another terminal (lets call this the receiver terminal) )and change to the 'simple_modification' directory:
+\verbatim
+   $ cd $YARP_ROOT/example/portmonitor/simple_modification
+   $ yarp read /read
+\endverbatim
+
+\li In another terminal connect the port as follow
+\verbatim
+   $ yarp connect /write /read tcp+recv.portmonitor+type.lua+file.bot_modifier
+\endverbatim
+
+Now if you write something  in the 'sender' terminal, you will see the text "modified from Lua" will be added to the original message. For example:
+\verbatim
+[sender terminal]
+ Hello
+\endverbatim
+
+\verbatim
+[receiver terminal]
+ Hello "modified from Lua"
+\endverbatim
+
+As it is constrained in this PortMonitor.accept() method, If you type "ignore", the word will never be delivered to the input port.
+
+
+\section simple_modification_scripts Scripts
+
+\subsection simple_modification_bot_modifier bot_modifier.lua
+
+~~~{.lua}
+-- loading lua-yarp binding library
+require("yarp")
+
+--
+-- accept is called when the port receives new data
+-- @param thing The Things abstract data type
+-- @return Boolean
+-- if false is returned, the data will be ignored
+-- and update() will never be called
+PortMonitor.accept = function(thing)
+    if thing:asBottle():toString() == "ignore" then
+        return false
+    end
+    return true
+end
+
+--
+-- update is called when the port receives new data
+-- @param thing The Things abstract data type
+-- @return Things
+PortMonitor.update = function(thing)
+    bt = thing:asBottle()
+    bt:addString("modified from Lua :)")
+    return thing
+end
+~~~
+
+*/

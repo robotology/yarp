@@ -1,0 +1,60 @@
+/**
+\page check_your_installation Check your installation
+
+\section check_basic_functionalities Check basic YARP functionalities
+
+The first step is to have the \c yarpserver running.
+
+At a terminal type:
+\code
+ yarpserver
+\endcode
+
+Depending on your system the console will look something like this:
+
+\image html check-your-installation-yarpserver.png
+
+If you type on a web browser http://127.0.0.1:10000 you get information about
+the name server (registered ports, info, etc.).
+
+We can just check functionality by running a simple example. On another terminal
+type:
+
+\code
+  yarp read /portread
+\endcode
+
+on a third terminal:
+
+\code
+  yarp write /portwrite
+\endcode
+
+and on yet another terminal:
+
+\code
+  yarp connect /portwrite /portread
+\endcode
+
+you'll see the effect on the name server:
+
+\code
+  yarp: registration name /portwrite ip 127.0.0.1 port 10012 type tcp
+  yarp: registration name /portread ip 127.0.0.1 port 10002 type tcp
+\endcode
+
+Now, anything typed on the YARP write will be sent and printed on the read side.
+
+\section sec-play-recorded-sequence Play a recorded sequence
+
+You can also use the yarpdataplayer to replay a recorded sequence. This will
+reproduce all the sensory information available on the real robot during a
+simple experiment. Follow the instructions here:
+
+\ref yarpdataplayer_example
+
+\image html check-your-installation-yarpdataplayer-example.jpg
+
+You are now ready to learn more, proceed to the \ref tutorials.
+
+*/

@@ -1,0 +1,204 @@
+/**
+\page install_yarp_linux Installing YARP on Linux
+
+\tableofcontents
+
+\section install_on_linux Installation on Linux
+
+
+\subsection install_linux_from_binaries Install from binaries
+
+Add www.icub.org to your sources.list. Determine the Linux distribution you use.
+
+E.g. for Ubuntu 14.04 Trusty (Note: you need to adapt these instructions
+according to your distribution).
+
+\code
+  sudo sh -c 'echo "deb http://www.icub.org/ubuntu trusty contrib/science" > /etc/apt/sources.list.d/icub.list'
+\endcode
+
+(replace trusty with the name of the distribution).
+
+For Debian 7.0 Wheezy (Note: you need to adapt these instructions according to
+your distribution).
+
+\code
+  sudo sh -c 'echo "deb http://www.icub.org/debian wheezy contrib/science" > /etc/apt/sources.list.d/icub.list'
+\endcode
+
+(replace wheezy with the name of the distribution).
+
+Import the repository public key:
+\code
+  sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 57A5ACB6110576A6
+\endcode
+
+Update the list of packages and install YARP.
+\code
+  sudo apt-get update
+  sudo apt-get install yarp
+\endcode
+
+You are now ready to check you installation, see \ref check_your_installation.
+
+\subsection install_linux_from_sources Install from sources
+
+Install the following packages to prepare your development environment and get
+basic dependencies:
+
+\code
+  sudo apt-get install git cmake cmake-curses-gui libeigen3-dev libace-dev libedit-dev
+\endcode
+
+For Qt5 different packages are needed for different systems.
+
+\subsubsection install_qt5_debian_stretch Qt5 for Debian (stretch)
+
+On Debian testing you need to install the following packages:
+
+\code
+sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
+  qml-module-qtquick2 qml-module-qtquick-window2 \
+  qml-module-qtmultimedia qml-module-qtquick-dialogs \
+  qml-module-qtquick-controls qml-module-qt-labs-folderlistmodel \
+  qml-module-qt-labs-settings
+\endcode
+
+\subsubsection install_qt5_debian_jessie Qt5 for Debian (jessie)
+
+On Debian jessie you need to install the following packages:
+
+\code
+sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
+  qml-module-qtquick2 qml-module-qtquick-window2 \
+  qml-module-qtmultimedia qml-module-qtquick-dialogs \
+  qml-module-qtquick-controls
+\endcode
+
+\subsubsection install_qt5_debian_wheezy Qt5 for Debian (wheezy)
+On Debian wheezy, Qt5 packages are available in the backports
+repository.
+
+You can enable the backports repository you have to add
+
+\verbatim
+deb http://backports.debian.org/debian-backports/ wheezy-backports main
+\endverbatim
+
+to your \c /etc/apt/sources.list file, and then install the same
+packages required from Debian jessie from the backports repository:
+
+\code
+sudo apt-get update
+sudo apt-get install -t wheezy-backports qtbase5-dev \
+  qtdeclarative5-dev qtmultimedia5-dev qml-module-qtquick2 \
+  qml-module-qtquick-window2 qml-module-qtmultimedia \
+  qml-module-qtquick-dialogs qml-module-qtquick-controls libqt5svg5
+\endcode
+
+\subsubsection install_qt5_ubuntu Qt5 for Ubuntu
+Qt5 is available from the main repository. See
+\ref dependencies_qt5_debian_jessie for instructions.
+
+\subsubsection install_qt5_ubuntu_trusty Qt5 on Ubuntu (trusty)
+Qt5 packages are available from the main repository, but the package
+names are slightly different:
+
+\code
+sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
+  qtdeclarative5-qtquick2-plugin qtdeclarative5-window-plugin \
+  qtdeclarative5-qtmultimedia-plugin qtdeclarative5-controls-plugin \
+  qtdeclarative5-dialogs-plugin libqt5svg5
+\endcode
+
+\subsubsection install_qt5_linux_others Qt5 for other systems
+If your distribution does not supply binary packages for Qt5, you can
+download a binary release from the
+<a href="http://qt-project.org/downloads">Qt Project website</a>, or
+download the source code, and build it yourself.
+
+Alternatively you can compile all dependencies yourself following the procedure
+here: \ref dependencies (notice however that this can be tedious, time consuming
+and error prone).
+
+\subsubsection compiling_yarp Compiling YARP
+
+To get the source choose one of these addresses:
+
+\li(git read-only) git://github.com/robotology/yarp.git
+\li(ssh read+write) git@github.com:robotology/yarp.git
+\li(https read+write) https://github.com/robotology/yarp.git
+
+For example:
+
+\code
+  cd /home/user
+  git clone https://github.com/robotology/yarp.git
+\endcode
+
+Generate makefiles using CMake:
+
+\code
+  cd yarp
+  mkdir build
+  cd build
+  ccmake ../
+\endcode
+
+Set the following variables to true:
+
+\code
+  YARP_COMPILE_GUIS, set to ON
+  YARP_COMPILE_libYARP_math, set to ON
+\endcode
+
+(leave default values as they are unless you know better)
+
+\remark YARP_COMPILE_GUIS and YARP_COMPILE_libYARP_math require you have installed the libraries
+qt5 and eigen3 (you have, if you have followed the instructions above).
+
+Makefiles generation is an iterative process, hit "c" until the option
+"Generate" becomes available. Then hit "g" and quit.
+
+Compile:
+
+\code
+ make
+ sudo make install
+ sudo ldconfig
+\endcode
+
+You are now ready to check you installation, see \ref check_your_installation.
+
+\remark YARP is installed with the RPATH enabled. This allows to install YARP in
+another location by changing the \c CMAKE_INSTALL_PREFIX option (default is
+\c /usr/local). If you install YARP in a system directories, or if you use the
+\c LD_LIBRARY_PATH environment variable, you might want to disable the RPATH.
+In order to do this, you have to enable the \c CMAKE_SKIP_INSTALL_RPATH option
+in cmake.
+
+\remark If YARP is not installed in a system location, you you will have to set
+the \c YARP_DIR and \c YARP_DATA_DIRS environment variables to point to the
+installation directory, see \ref set_up_your_environment_linux.
+
+\remark Do not select other options unless you know what you are doing.
+
+\subsubsection set_up_your_environment_linux Setup your environment
+
+If you have installed YARP in default location you can skip to
+\ref check_your_installation.
+
+If you are using YARP without installing it or you have installed it in a custom
+location, or you have disabled RPATH, you have to tweak your environment (edit
+your \c .bashrc or similar) to:
+
+ + Set environment variables \c YARP_DIR to the location
+   where you installed YARP (or CMake's build directory if you did not perform
+   the installation step) to allow cmake to find YARP easily for your own
+   projects. Set \c YARP_DATA_DIRS to $YARP_DIR/share/yarp.
+ + Add \c YARP_DIR/bin to \c PATH to allow your shell to find YARP programs.
+ + Add \c YARP_DIR/lib to \c LD_LIBRARY_PATH to allow YARP programs to find YARP
+   libraries, if you enabled \c CMAKE_SKIP_INSTALL_RPATH and did not install in
+   a system directory.
+
+*/

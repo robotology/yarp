@@ -1,42 +1,44 @@
 /**
-@page yarp_os The YARP OS library
- *
-@section intro_sec Introduction
- *
-Welcome to the YARP OS library.  This library interfaces
-with your operating system and provides some basic services.
+\page yarp_os The YARP OS library
+
+\tableofcontents
+
+\section yarp_os_intro Introduction
+
+Welcome to the YARP OS library.
+This library interfaces with your operating system and provides some basic
+services.
 We give you
+
 \link yarp::os::Thread Thread\endlink,
 \link yarp::os::Semaphore Semaphore\endlink, and
 \link yarp::os::Time Time\endlink
-services just in case
-you don't have them, but our main goal is to give you easy network
-communication using the YARP
-\link yarp::os::Port Port\endlink
+
+services just in case you don't have them, but our main goal is to give you easy
+network communication using the YARP \link yarp::os::Port Port\endlink
 Network.
 
-@section what_is_a_port What is a Port?
- *
-A \link yarp::os::Port Port\endlink is an object that can read and
-write values to peer objects spread throughout a network of
-computers.  You can create them in your program, and then add and
-remove connections either from that program, from the command line,
-or from another program.
-Ports are specialized for streaming communication, such as camera
-images or motor commands.  You can switch network protocols for any
-or all your connections without changing a line of code.
-For more details, see
-\subpage terms "specification of YARP terms and protocols".
+\section what_is_a_port What is a Port?
 
- *
-For examples, see @subpage yarp_code_examples.
- *
-@section important_yarp_os_classes Important classes
- *
+A \link yarp::os::Port Port\endlink is an object that can read and write values
+to peer objects spread throughout a network of computers.
+You can create them in your program, and then add and remove connections either
+from that program, from the command line, or from another program.
+Ports are specialized for streaming communication, such as camera images or
+motor commands.
+You can switch network protocols for any or all your connections without
+changing a line of code.
+For more details, see \subpage terms "specification of YARP terms and
+protocols".
+
+For examples, see \subpage yarp_code_examples.
+
+\section important_yarp_os_classes Important classes
+
 If you are online, this list will link to API information.
 If you're offline, it is just a list of classes you may
 want to check.
- *
+
 \li \link yarp::os::Thread Thread\endlink
 \li \link yarp::os::Semaphore Semaphore\endlink
 \li \link yarp::os::Time Time\endlink
@@ -45,6 +47,5 @@ want to check.
 \li \link yarp::os::BufferedPort BufferedPort\endlink
 \li \link yarp::os::Bottle Bottle\endlink
 \li \link yarp::os::Property Property\endlink
- *
- */
 
+*/

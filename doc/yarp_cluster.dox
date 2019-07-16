@@ -1,5 +1,7 @@
 /**
- * @page yarp_cluster Setting up your network for YARP
+\page yarp_cluster Setting up your network for YARP
+
+\tableofcontents
 
 Along with TCP, YARP supports UDP and multicast communication on a
 local network. These are unreliable network protocols, but can be
@@ -14,7 +16,7 @@ are working with a cluster of computers using unreliable protocols,
 or run into bandwidth problems.  But it is important to remember that
 this page is here for when you need it.
 
-@section yarp_cluster_iperf iperf is your friend
+\section yarp_cluster_iperf iperf is your friend
 
 If you are doing any non-trivial networking, you need to learn how
 to test your network and debug throughput issues.  A key resource
@@ -27,7 +29,7 @@ in this battle is the "iperf" program.
 Please make sure you have iperf available on all your machines
 before going any further.
 
-@section yarp_cluster_tcp Checking TCP communication
+\section yarp_cluster_tcp Checking TCP communication
 
 TCP is the simplest protocol to work with, so let's start with it.
 Let's check the throughput between two of your machines.
@@ -52,7 +54,7 @@ This will run for a while and then describe your TCP throughput, for example:
  ...
 \endverbatim
 
-@section yarp_cluster_udp Checking UDP communication
+\section yarp_cluster_udp Checking UDP communication
 
 UDP is an unreliable protocol, and there are lots of possible pitfalls
 in using it.  YARP will try to send messages broken into rather large
@@ -186,7 +188,7 @@ UDP buffer size:   122 KByte (default)
 [  3]  8.0- 9.0 sec    112 MBytes    936 Mbits/sec  0.319 ms   41/ 1946 (2.1%)
 \endverbatim
 
-@section yarp_cluster_suggest YARP's suggestion
+\section yarp_cluster_suggest YARP's suggestion
 
 If MCAST/UDP packets drop when using YARP, YARP may suggest this:
 
@@ -226,6 +228,4 @@ In case you need to fix something, the relevant source code in YARP is:
 We appreciate patches to these files. We only have a few networks to test
 on, and this topic can be quite network-dependent and subtle.
 
-
 */
-

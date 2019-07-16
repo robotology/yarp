@@ -3,7 +3,7 @@
 
 \ingroup yarp_tools
 
-\author Elena Ceseracciu and Lorenzo Natale
+\tableofcontents
 
 The utility yarp-config inspects the system and reports information about installed configuration and data files. In addition, it supports the process of customizing data files by copying them from installation to the user private directories (we call this \e importing).
 
@@ -120,7 +120,4 @@ To undo you can remove the context:
   yarp-config context --remove randomMotion
 \endverbatim
 
-
- *
- */
-
+*/

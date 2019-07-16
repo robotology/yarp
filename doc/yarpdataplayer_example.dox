@@ -1,0 +1,92 @@
+/**
+\page yarpdataplayer_example yarpdataplayer example application
+
+\ingroup  yarp_applications
+
+\tableofcontents
+
+Re-play a recorded sequence from the robot
+
+\section yarpdataplayer_example_intro Description
+
+This application demonstrates how to re-play a recorded sequence from
+the robot using the module \ref yarpdataplayer "yarpdataplayer". To visualize the state
+of the robot we will use two viewers (yarpview) and the \ref iCubGui.
+
+\section yarpdataplayer_example_dep Dependencies
+
+No special dependencies are required, all the required modules will be
+executed by the application.
+Since \ref yarpdataplayer "yarpdataplayer" will open ports with the same name as the real
+robot/simulator make sure they are not running
+(or that you start an instance of the nameserver with your own
+namespace).
+
+\section yarpdataplayer_example_int Instantiated Modules
+
+- \ref yarpdataplayer "yarpdataplayer"
+- \ref yarpview "yarpdataplayer"
+- <a href="http://www.icub.org/software_documentation/group__icub__gui.html">iCubGui</a>
+
+\section yarpdataplayer_example_howto How to run the Application
+
+This example uses the
+<a href="http://www.icub.org/software_documentation/group__icub__gui.html">iCubGui</a>
+from the
+<a href="https://github.com/robotology/icub-main">iCub Software Repository</a>
+Make sure you compiled \ref yarpview "yarpview" and
+\ref yarpdataplayer "yarpdataplayer" (in YARP) and the
+<a href="http://www.icub.org/software_documentation/group__icub__gui.html">iCubGui</a>
+in iCub) if you want to execute this tutorial on your computer.
+
+Download example sequence. This sequence was recorded while the iCub was
+tracking and grasping a red ball:
+
+Use this link if you **have opencv** installed (images are jpg compressed 46MB zipped).
+ - <a href="http://www.icub.org/download/software/datasetplayer-demo/testData_20120803_095402.zip">`testData_20120803_095402.zip`</a>
+
+Use this link if you **do not have opencv** installed (images are ppm 642MB zipped).
+ - <a href="http://www.icub.org/download/software/datasetplayer-demo/testData_20151023_100400.zip">`testData_20151023_100400.zip`</a>
+
+Unpack the content of the archive in a directory of your choice, e.g.
+`/home/\<user\>`. You should now have a directory called
+`testData_20120803_095402` in `/home/\<user\>`.
+
+On a console run `yarpserver` (if not already running).
+
+You can run yarpmanager:
+
+\code
+  yarpmanager
+\endcode
+
+Inside the `application` folder in the `yarpmanager` gui you should
+see an entry called `yarpdataplayer_example`, double click and open it.
+
+Now you are ready to run the application. Hit the *run* button.
+For windows should open like this:
+
+\image html datasetplayer-app1.jpg
+\image latex datasetplayer-app1.jpg "Running the yarpdataplayer" width=6cm
+
+In the \ref yarpdataplayer "yarpdataplayer" window
+select *File->Open Directory*.
+
+And browse to the directory where you unpacked the example sequence,
+select the directory `testData_20120803_095402`.
+
+Now you can connect the modules (notice that this cannot be done before
+the sequence is loaded in the \ref yarpdataplayer "yarpdataplayer"),
+hit *connect* on the `yarpmanager` gui.
+
+You can now use the \ref yarpdataplayer "yarpdataplayer" to play the sequence
+(all commands should be pretty intuitive).
+The output will be something like this:
+
+\image html datasetplayer-app2.jpg
+\image latex datasetplayer-app2.jpg "Playing a recorded sequence with the yarpdataplayer" width=6cm
+
+\sa \ref yarpdataplayer_rec_example
+\sa \ref yarpdataplayer
+\sa \ref yarpdatadumper
+*/

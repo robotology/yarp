@@ -39,15 +39,15 @@ YARP is free and open, under the BSD-3-Clause license [\ref bsd_note "*"].
 
 The general philosophy that has guided the development of YARP is described in
 [\ref Fitzpatrick2014 "1"], [\ref Fitzpatrick2008 "2"] and [\ref Metta2006 "3"],
-while [\ref Paikan2014 "4"] describes some recent development
-(\subpage portmonitor "Port Monitor").
+while [\ref Paikan2014a "4"] and [\ref Paikan2014b "5"] describe some recent
+development (\subpage portmonitor "Port Monitor").
 
 Performances are fundamental in robotics. YARP provides features that allow
 developers to assign priorities to individual connections. We call this channel
 \subpage channelprioritization. Experimental validation demonstrated that these
 features allow reducing communication latency and improves determinism for
-selected channels in a YARP network [\ref Paikan2015a "5"] and
-[\ref Paikan2015b "6"].
+selected channels in a YARP network [\ref Paikan2015a "6"] and
+[\ref Paikan2015b "7"].
 
 \anchor bsd_note [*] Certain optional devices, carriers, tools or
 libraries are not licensed under the BSD-3-Clause.
@@ -70,7 +70,7 @@ pages that are reported in the page \subpage tutorials.
 Do not forget to checkout the command line tools and guis sections below.
 Advanced topics for interoperability and technical papers are reported at the
 end of this page.
-The page \supage tutorials is continuously updated so it is a good idea to
+The page \subpage tutorials is continuously updated so it is a good idea to
 periodically check it.
 
 
@@ -134,21 +134,26 @@ periodically check it.
 
 \anchor Fitzpatrick2014 \li [1] A middle way for robotics middleware, Fitzpatrick, P., Ceseracciu, E.,
 Domenichelli, D., Paikan, A., Metta, G., and Natale, L., Journal of Software Engineering for Robotics, 5(2): 42-49, 2014.
-[<a href="https://joser.unibg.it/index.php?journal=joser&page=article&op=view&path%5B%5D=69">pdf</a>]
+[url: <a href="http://joser.unibg.it/index.php/joser/article/view/69">http://joser.unibg.it/index.php/joser/article/view/69</a>]
 
 \anchor Fitzpatrick2008 \li [2] Towards Long-Lived Robot Genes, Paul Fitzpatrick, Giorgio Metta, and Lorenzo Natale,  Robotics and Autonomous Systems, 56(1):29-45, 2008.
-[<a href="http://lornat75.github.io/papers/2008/fitzpatrick-ras.pdf">pdf</a>]
+[doi: <a href="http://doi.org/10.1016/j.robot.2007.09.014">10.1016/j.robot.2007.09.014</a>]
 
 \anchor Metta2006 \li [3] YARP: Yet Another Robot Platform, Giorgio Metta, Paul Fitzpatrick, and Lorenzo Natale, International Journal of Advanced Robotic Systems, 3(1):43-48, 2006.
-[<a href="http://www.intechopen.com/journals/international_journal_of_advanced_robotic_systems/yarp__yet_another_robot_platform">pdf</a>]
+[doi: <a href="https://doi.org/10.5772/5761">10.5772/5761</a>]
 
-\anchor Paikan2014 \li [4] Data Flow Port's Monitoring and Arbitration, Paikan, A., Fitzpatrick, P., Metta, G., and Natale, L., Journal of Software Engineering for Robotics, 5(1), pp. 80-88, 2014.
-[<a href="http://joser.unibg.it/index.php?journal=joser&page=article&op=view&path%5B%5D=72">pdf</a>]
+\anchor Paikan2014a \li [4] Data Flow Port's Monitoring and Arbitration, Paikan, A., Fitzpatrick, P., Metta, G., and Natale, L., Journal of Software Engineering for Robotics, 5(1), pp. 80-88, 2014.
+[url: <a href="http://joser.unibg.it/index.php/joser/article/view/72">http://joser.unibg.it/index.php/joser/article/view/72</a>]
 
-\anchor Paikan2015a \li [5] Paikan, A., Domenichelli, D., and Natale, L., Communication channel prioritization in a publish-subscribe architecture, in Proc. Software Engineering and Architectures for Realtime Interactive Systems Workshop, Arles, France, 2015.
-[<a href="http://arxiv.org/abs/1504.02128">pdf</a>]
+\anchor Paikan2014b \li [5] Enhancing software module reusability using port plug-ins: an experiment with the iCub robot, Paikan, A., Tikhanoff, V., Metta, G., and Natale, L., International Conference on Intelligent Robots and Systems (IROS 2014).
+[doi: <a href="https://doi.org/10.1109/IROS.2014.6942762">10.1109/IROS.2014.6942762</a>]
 
-\anchor Paikan2015b \li [6] Paikan, A., Pattacini, U., Domenichelli, D., Randazzo, M., Metta, G., and Natale, L.,A Best-Effort Approach for Run-Time Channel Prioritization in Real-Time Robotic Application, in Proc. IEEE/RSJ International Conference on Intelligent Robots and Systems, Hamburg, Germany, 2015, pp. 498-503.
-[<a href="http://lornat75.github.io/papers/2015/paikan-iros.pdf">pdf</a>]
+\anchor Paikan2015a \li [6] Paikan, A., Domenichelli, D., and Natale, L., Communication channel prioritization in a publish-subscribe architecture, in Proc. Software Engineering and Architectures for Realtime Interactive Systems Workshop, Arles, France, 2015.
+[doi: <a href="https://doi.org/10.1109/SEARIS.2015.7854100">10.1109/SEARIS.2015.7854100</a>]
 
- */
+\anchor Paikan2015b \li [7] Paikan, A., Pattacini, U., Domenichelli, D., Randazzo, M., Metta, G., and Natale, L.,A Best-Effort Approach for Run-Time Channel Prioritization in Real-Time Robotic Application, in Proc. IEEE/RSJ International Conference on Intelligent Robots and Systems, Hamburg, Germany, 2015, pp. 498-503.
+[doi: <a href="https://doi.org/10.1109/IROS.2015.7353611">10.1109/IROS.2015.7353611</a>]
+
+
+
+*/

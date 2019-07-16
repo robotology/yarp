@@ -1,11 +1,10 @@
 /**
-*
-@page thrift_tutorial_simple Thrift IDL in YARP: simple tutorial
+\page thrift_tutorial_simple Thrift IDL in YARP: simple tutorial
 
 This tutorial shows how to use the Apache Thrift Interface Definition Language
 (and relative compiler) to easily define RPC-based interfaces for YARP Modules.
 
-\section thrift_tutorial_simple_sec_intro Introduction
+\section thrift_tutorial_simple_intro Introduction
 
 Apache Thrift allows to define service interfaces in a simple definition file.
 Taking that file as input, a compiler generates source code which handles the
@@ -14,11 +13,11 @@ This source code can therefore be used by a server that executes the commands
 and by clients that send requests to the server by means of simple function
 calls.
 
-\section thrift_tutorial_simple_sec_thriftfile Step One: Interface Definition
+\section thrift_tutorial_simple_thriftfile Step One: Interface Definition
 
 Let's assume that we want to create a new module that can receive commands on a
 RPC port to start/stop execution, and get/set some value. We can create a
-\c .thrift text file that defines a  \em Thrift \em service interface for our
+`.thrift` text file that defines a  \em Thrift \em service interface for our
 module like this:
 
 \code
@@ -33,8 +32,8 @@ service Demo {
 }
 \endcode
 
-where \c i32 is defined by the Thrift type system as a 32-bit signed integer,
-and \c bool is a boolean value (true or false), one byte. Note that each
+where `i32` is defined by the Thrift type system as a 32-bit signed integer,
+and `bool` is a boolean value (true or false), one byte. Note that each
 argument of a function is associated to a unique, positive integer identifier.
 For a complete explanation of the Thrift IDL, please see \ref thrift_tutorial.
 
@@ -46,8 +45,8 @@ RPC communication process that occurs between a client that invokes a function
 call and the server that exectutes it.
 
 Using CMake, generation of code for our demo.thrift file can be performed
-automatically during the configuration process. We create a \c CMakeLists.txt
-configuration file in which we call the \c yarp_idl_to_dir macro:
+automatically during the configuration process. We create a `CMakeLists.txt`
+configuration file in which we call the `yarp_idl_to_dir` macro:
 
 \code
 #CMakeList.txt
@@ -58,7 +57,11 @@ find_package(YARP REQUIRED)
 
 #compile definition file to generate source code into the desired directory
 set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")
-yarp_idl_to_dir(demo.thrift ${generated_libs_dir} sources headers include_dirs)
+yarp_idl_to_dir(INPUT_FILES demo.thrift
+                OUTPUT_DIR ${generated_libs_dir}
+                SOURCES_VAR sources
+                HEADERS_VAR headers
+                INCLUDE_DIRS_VAR include_dirs)
 # generated source files now listed in ${sources}
 # generated header files now listed in ${headers}
 # paths to include now listed in ${include_dirs}
@@ -77,7 +80,7 @@ directory; we enable it with the -D ALLOW_IDL_GENERATION=ON option.
 We should now see two folders, "include" and "src", appear in the source tree,
 together with a demo_thrift.cmake file that helps CMake keep track of the
 generated files.
-Inside \em include, we find a Demo.h header file, which provides the interface:
+Inside `include`, we find a `Demo.h` header file, which provides the interface:
 \code
 class Demo : public yarp::os::Wire {
 public:
@@ -91,14 +94,14 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection);
 };
 \endcode
-\em Src instead contains a Demo.cpp file that provides implementation for the
+`src` instead contains a `Demo.cpp` file that provides implementation for the
 RPC communication, but there's no need to bother with it: all we need to care
 about is the interface!
 
-\section thrift_tutorial_simple_sec_server Step Three: Interface Implementation
+\section thrift_tutorial_simple_server Step Three: Interface Implementation
 
 It is now time to provide an implementation for the functions we defined in the
-service interface. Let's create a \c DemoServer.cpp file in which:
+service interface. Let's create a `DemoServer.cpp` file in which:
 \li we include the interface definition
 \code
 #include <yarp/os/all.h>
@@ -108,20 +111,19 @@ service interface. Let's create a \c DemoServer.cpp file in which:
 \code
 class DemoServer : public Demo
 {
-  /* Class members declaration */
+  // Class members declaration
   int32_t answer;
   bool isRunning;
 
 public:
   DemoServer();
-  /* function declarations, copied from Demo.h */
-  virtual int32_t get_answer();
-  virtual bool set_answer(int32_t rightAnswer);
-  virtual int32_t add_one(const int32_t x);
-  virtual bool start();
-  virtual bool stop();
-  virtual bool is_running();
-
+  // function declarations, copied from Demo.h
+  int32_t get_answer() override;
+  bool set_answer(int32_t rightAnswer) override;
+  int32_t add_one(const int32_t x) override;
+  bool start() override;
+  bool stop() override;
+  bool is_running() override;
 };
 \endcode
 
@@ -137,14 +139,16 @@ int32_t DemoServer::get_answer()
 \li finally, we need to create an istance of the DemoServer class and attach it
 to a YARP port; a simple test can consist in this main() function:
 \code
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     yarp::os::Network yarp;
 
     DemoServer demoServer;
     yarp::os::Port port;
     demoServer.yarp().attachAsServer(port);
-    if (!port.open("/demoServer")) { return 1; }
-
+    if (!port.open("/demoServer")) {
+        return 1;
+    }
     while (true) {
         printf("Server running happily\n");
         yarp::os::Time::delay(10);
@@ -154,7 +158,7 @@ int main(int argc, char *argv[]) {
 }
 \endcode
 
-\section thrift_tutorial_simple_sec_client Client use
+\section thrift_tutorial_simple_client Client use
 
 The thirft engine generates all the required code for the client. Clients can
 directly invoke remote procedures on the server using a proxy object (generated
@@ -169,31 +173,32 @@ Simple example:
 
 using namespace yarp::os;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   Property config;
   config.fromCommand(argc,argv);
 
   Network yarp;
 
-  /* This port will be used to talk to the remote server*/
+  // This port will be used to talk to the remote server
   Port client_port;
 
   std::string servername= config.find("server").asString().c_str();
   client_port.open("/demo/client");
 
-  /* connect to server */
+  // connect to server
   if (!yarp.connect("/demo/client",servername.c_str()))
   {
      std::cout << "Error! Could not connect to server " << servername << std::endl;
      return -1;
   }
 
-  /* Instatate proxy object and attach it to the port -- the proxy will use this port to talk to the server*/
+  // Instatate proxy object and attach it to the port -- the proxy will use this port to talk to the server
   Demo demo;
   demo.yarp().attachAsClient(client_port);
 
-  /* Now we are ready to chat with the server! */
-  /* Notice that from now on we will invoke only the server methods declared in demo.thrift/Demo.h */
+  // Now we are ready to chat with the server!
+  // Notice that from now on we will invoke only the server methods declared in demo.thrift/Demo.h
   std::cout << "Hey are you up and running?" << std::endl;
   while(!demo.is_running())
   {
@@ -215,7 +220,7 @@ int main(int argc, char *argv[]) {
 }
 \endcode
 
-\section thrift_tutorial_simple_sec-module Implementing the server as a RFModule
+\section thrift_tutorial_simple_module Implementing the server as a RFModule
 
 A nicer altenative is to create a YARP RFModule that also implements the service
 interface:
@@ -224,14 +229,11 @@ interface:
 class DemoServerModule : public Demo, public yarp::os::RFModule
 {
 
-  /* Members declaration and service functions implementation */
+  // Members declaration and service functions implementation
 
-  /* <snip> see above */
+  // <snip> see above
 
-  /* ******************************************
-  /* RFModule functions declaration
-  /* ******************************************/
-
+  // RFModule functions declaration
   bool attach(yarp::os::Port &source);
   bool configure( yarp::os::ResourceFinder &rf );
   bool updateModule();
@@ -271,7 +273,7 @@ bool DemoServerModule::configure( yarp::os::ResourceFinder &rf )
 
 bool DemoServerModule::updateModule()
 {
-    /* do something very useful */
+    // do something very useful
 
     return true;
 }
@@ -286,11 +288,9 @@ And the main function:
 
 \code
 
-/* *************************************
-/* Check YARP and run the module
-/* **************************************/
-
-int main(int argc, char *argv[]) {
+// Check YARP and run the module
+int main(int argc, char *argv[])
+{
     yarp::os::Network yarp;
     if (!yarp.checkNetwork())
     {
@@ -304,21 +304,19 @@ int main(int argc, char *argv[]) {
 
     DemoServerModule demoMod;
 
-    if (!demoMod.configure(rf))
+    if (!demoMod.configure(rf)) {
         return -1;
+    }
 
     return demoMod.runModule();
 }
 \endcode
 
 
-\section thrift_tutorial_simple_sec_completex Complete example
+\section thrift_tutorial_simple_completex Complete example
 
 A complete example of Thrift code generation and server/client creation with
-CMake is available in
-\code
- [YARP_SOURCE]/example/idl/thriftSimple
-\endcode
+CMake is available in `example/idl/thriftSimple`
 
 This is what we get when we launch server and client from command line (assuming
 a \em yarpserver is running, and we are in the "build" directory):
@@ -439,8 +437,4 @@ is_running
 Response: [fail]
 \endverbatim
 
-
-\author Elena Ceseracciu
-
-
-**/
+*/

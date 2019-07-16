@@ -1,218 +1,231 @@
 /**
- * \defgroup dev_all Devices
- *
- * Dealing with devices. What do you need to know to use devices in
- * YARP?  First, we try to write our devices so that they implement a
- * set of \link dev_iface interfaces\endlink.  Your program ideally would use
- * the minimal set of interfaces needed for the particular task you
- * have in mind.  Then you'll be later able to switch to any
- * \link dev_impl implementation \endlink that meets your interface.  This
- * is something you often have to do in robotics.
- *
- * Of course, pretty much every device has some special magic numbers
- * you need to set up at the beginning.  This process of
- * \link dev_class configuration \endlink process is separated out in YARP
- * to make it easy to control it via external command line switches
- * or configuration files.
- *
- * Under normal use, YARP devices are started from the
- * \link dev_runtime commandline\endlink.
- *
- */
+\defgroup dev_all Devices
 
-/**
- * @ingroup dev_all
- *
- * \defgroup dev_class Device Creation/Configuration
- *
- * Basic classes and methods related to creating and configuring
- * devices, and network communication to and from devices.
- *
- */
+Dealing with devices. What do you need to know to use devices in
+YARP?  First, we try to write our devices so that they implement a
+set of \link dev_iface interfaces\endlink.  Your program ideally would use
+the minimal set of interfaces needed for the particular task you
+have in mind.  Then you'll be later able to switch to any
+\link dev_impl implementation \endlink that meets your interface.  This
+is something you often have to do in robotics.
 
-/**
- * @ingroup dev_all
- *
- * \defgroup dev_iface Device Interfaces
- *
- * Device interfaces, specified independently of specific implementations.
- *
- */
+Of course, pretty much every device has some special magic numbers
+you need to set up at the beginning.  This process of
+\link dev_class configuration \endlink process is separated out in YARP
+to make it easy to control it via external command line switches
+or configuration files.
+
+Under normal use, YARP devices are started from the
+\link dev_runtime commandline\endlink.
+
+*/
 
 
 /**
- * @ingroup dev_iface
- *
- * \defgroup dev_iface_motor Motor Interfaces
- *
- * Motor control and monitoring.
- *
- */
+\ingroup dev_all
 
+\defgroup dev_class Device Creation/Configuration
 
- /**
- * @ingroup dev_iface
- *
- * \defgroup dev_iface_navigation Navigation Interfaces
- *
- * Interfaces for navigation, localization and mapping.
- *
- */
- 
- 
-/**
- * @ingroup dev_iface
- *
- * \defgroup dev_iface_media Media Interfaces
- *
- * Images and sounds.
- *
- */
+Basic classes and methods related to creating and configuring
+devices, and network communication to and from devices.
 
-/**
- * @ingroup dev_iface
- * @defgroup dev_iface_multiple_analog Multiple Analog Sensor Interfaces
- *
- * The interfaces present in this group are meant to be implemented by
- * devices that expose sensor that can be efficiently expressed as vector of
- * real numbers, so-called "analog" sensors.
- *
- * For more information see the documentation of server, client and remapper devices that operate on these interfaces:
- *
- * * yarp::dev::MultipleAnalogSensorsServer
- * * yarp::dev::MultipleAnalogSensorsClient
- * * yarp::dev::MultipleAnalogSensorsRemapper
- *
- */
-
-/**
- * @ingroup dev_iface
- *
- * \defgroup dev_iface_other Other Device Interfaces
- *
- * Sundry, miscellaneous.
- *
- */
-
-/**
- * @ingroup dev_all
- *
- * \defgroup dev_impl Device Implementations
- *
- * Concrete device drivers that implement sets of interfaces.
- *
- */
+*/
 
 
 /**
- * @ingroup dev_impl
- *
- * \defgroup dev_impl_wrapper Network Servers (Wrappers)
- *
- * These devices take implementations of existing interfaces and wrap them
- * up to work across the network.
- *
- */
+\ingroup dev_all
+
+\defgroup dev_iface Device Interfaces
+
+Device interfaces, specified independently of specific implementations.
+
+*/
+
 
 /**
- * @ingroup dev_impl
- *
- * \defgroup dev_impl_network_clients Network Clients
- *
- * These devices are meant to communicate to YARP ports opened by \ref dev_impl_wrapper
- * to provide device interfaces in a transparent way over a YARP network.
- */
+\ingroup dev_iface
+
+\defgroup dev_iface_motor Motor Interfaces
+
+Motor control and monitoring.
+
+*/
+
 
 /**
- * @ingroup dev_impl
- *
- * \defgroup dev_impl_remappers Remappers
- *
- * These devices are meant expose a group of existing devices as a unique device,
- * or to expose a subset of the resourses exposed by a device as an independent device.
- */
+\ingroup dev_iface
+
+\defgroup dev_iface_navigation Navigation Interfaces
+
+Interfaces for navigation, localization and mapping.
+
+*/
+
 
 /**
- * @ingroup dev_impl
- *
- * \defgroup dev_impl_motor Motor Devices
- *
- * These are devices useful for controlling motors.  They
- * implement interfaces like yarp::dev::IPositionControl
- * etc.
- *
- */
+\ingroup dev_iface
+
+\defgroup dev_iface_media Media Interfaces
+
+Images and sounds.
+
+*/
+
 
 /**
- * @ingroup dev_impl
- *
- * \defgroup dev_impl_media Media Devices
- *
- * These are devices useful for getting images and sound.  They
- * implement interfaces like yarp::dev::IFrameGrabberImage,
- * yarp::dev::IAudioGrabberSound, etc.
- *
- */
+\ingroup dev_iface
+\defgroup dev_iface_multiple_analog Multiple Analog Sensor Interfaces
+
+The interfaces present in this group are meant to be implemented by
+devices that expose sensor that can be efficiently expressed as vector of
+real numbers, so-called "analog" sensors.
+
+For more information see the documentation of server, client and remapper devices that operate on these interfaces:
+
+* yarp::dev::MultipleAnalogSensorsServer
+* yarp::dev::MultipleAnalogSensorsClient
+* yarp::dev::MultipleAnalogSensorsRemapper
+
+*/
+
 
 /**
- * @ingroup dev_impl
- *
- * \defgroup dev_impl_analog_sensors Analog Sensors
- *
- * These are devices that expose sensor that can be efficiently expressed as vector of
- * real numbers, so-called "analog" sensors, such as gyroscope, accelerometers, force-torque sensors.
- */
+\ingroup dev_iface
+
+\defgroup dev_iface_other Other Device Interfaces
+
+Sundry, miscellaneous.
+
+*/
+
 
 /**
- * @ingroup dev_impl
- *
- * \defgroup dev_impl_other Other Device Implementations
- *
- * Miscellaneous device implementations.
- */
+\ingroup dev_all
+
+\defgroup dev_impl Device Implementations
+
+Concrete device drivers that implement sets of interfaces.
+
+*/
+
 
 /**
- * @ingroup dev_all
- *
- * \defgroup dev_runtime Command-line Accessible Devices
- *
- * Devices that can be created and configured from the command-line.
- * Generally you can create them with the yarpdev command by
- * specifying a "--device" option followed by their name, for example:
- *
- @verbatim
- yarpdev --device test_grabber
- @endverbatim
- *
- * This creates a test_grabber device with default options.  You will
- * generally need to specify additional options, for example:
- *
- @verbatim
- yarpdev --device test_grabber --width 640 --height 480 --name /test
- @endverbatim
- *
- * How do you know what options are available?
- * You can check our list of \ref dev_examples "device invocation examples".
- * Or When you try to run
- * "yarpdev --device yourdevice"
- * and add the "--verbose" flag, it will tell you what options it is
- * checking, and any documentation present for those options.
- *
- * For example, try running:
-@verbatim
+\ingroup dev_impl
+
+\defgroup dev_impl_wrapper Network Servers (Wrappers)
+
+These devices take implementations of existing interfaces and wrap them
+up to work across the network.
+
+*/
+
+
+/**
+\ingroup dev_impl
+
+\defgroup dev_impl_network_clients Network Clients
+
+These devices are meant to communicate to YARP ports opened by \ref dev_impl_wrapper
+to provide device interfaces in a transparent way over a YARP network.
+
+*/
+
+
+/**
+\ingroup dev_impl
+
+\defgroup dev_impl_remappers Remappers
+
+These devices are meant expose a group of existing devices as a unique device,
+or to expose a subset of the resourses exposed by a device as an independent device.
+
+*/
+
+
+/**
+\ingroup dev_impl
+
+\defgroup dev_impl_motor Motor Devices
+
+These are devices useful for controlling motors.  They
+implement interfaces like yarp::dev::IPositionControl
+etc.
+
+*/
+
+
+/**
+\ingroup dev_impl
+
+\defgroup dev_impl_media Media Devices
+
+These are devices useful for getting images and sound.  They
+implement interfaces like yarp::dev::IFrameGrabberImage,
+yarp::dev::IAudioGrabberSound, etc.
+
+*/
+
+
+/**
+\ingroup dev_impl
+
+\defgroup dev_impl_analog_sensors Analog Sensors
+
+These are devices that expose sensor that can be efficiently expressed as vector of
+real numbers, so-called "analog" sensors, such as gyroscope, accelerometers, force-torque sensors.
+
+*/
+
+
+/**
+\ingroup dev_impl
+
+\defgroup dev_impl_other Other Device Implementations
+
+Miscellaneous device implementations.
+*/
+
+
+/**
+\ingroup dev_all
+
+\defgroup dev_runtime Command-line Accessible Devices
+
+Devices that can be created and configured from the command-line.
+Generally you can create them with the yarpdev command by
+specifying a "--device" option followed by their name, for example:
+
+\verbatim
+yarpdev --device test_grabber
+\endverbatim
+
+This creates a test_grabber device with default options.  You will
+generally need to specify additional options, for example:
+
+\verbatim
+yarpdev --device test_grabber --width 640 --height 480 --name /test
+\endverbatim
+
+How do you know what options are available?
+You can check our list of \ref dev_examples "device invocation examples".
+Or When you try to run
+"yarpdev --device yourdevice"
+and add the "--verbose" flag, it will tell you what options it is
+checking, and any documentation present for those options.
+
+For example, try running:
+\verbatim
 yarpdev --device test_grabber --verbose
-@endverbatim
- *
- */
+\endverbatim
+
+*/
 
 
 /**
- * @ingroup dev_all
- *
- * \defgroup dev_examples Device invocation examples
- *
- * Example configuration files.
- *
- */
+\ingroup dev_all
 
+\defgroup dev_examples Device invocation examples
 
+Example configuration files.
+
+*/

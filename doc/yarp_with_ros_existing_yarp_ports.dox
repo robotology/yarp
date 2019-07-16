@@ -1,5 +1,5 @@
 /**
- * @page yarp_with_ros_existing_yarp_ports Use ROS with existing YARP programs
+\page yarp_with_ros_existing_yarp_ports Use ROS with existing YARP programs
 
 \tableofcontents
 
@@ -304,4 +304,4 @@ if it crashes, YARP will not yet unregister your ports with ROS.  If
 this bothers you, either add a signal handler to close the
 Port, or run "rosnode cleanup" from time to time.  Will fix this soon.
 
- */
+*/

@@ -47,10 +47,8 @@ public:
 
     void clear()
     {
-        if (backing != nullptr) {
-            delete backing;
-            backing = nullptr;
-        }
+        delete backing;
+        backing = nullptr;
     }
 
     /*
@@ -748,9 +746,9 @@ public:
         bool inVar = false;
         bool varHasParen = false;
         bool quoted = false;
-        for (int i = 0; i <= (int)input.length(); i++) {
+        for (size_t i = 0; i <= input.length(); i++) {
             char ch = 0;
-            if (i < (int)input.length()) {
+            if (i < input.length()) {
                 ch = input[i];
             }
             if (quoted) {
@@ -803,10 +801,10 @@ public:
                     // line, we will allow windows-style paths.
                     // Hence we have to break the "\" character
                     std::string buf;
-                    for (char i : add) {
-                        buf += i;
-                        if (i == '\\') {
-                            buf += i;
+                    for (char c : add) {
+                        buf += c;
+                        if (c == '\\') {
+                            buf += c;
                         }
                     }
                     add = buf;

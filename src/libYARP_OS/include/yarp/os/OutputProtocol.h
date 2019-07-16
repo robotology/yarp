@@ -52,57 +52,45 @@ public:
     virtual void rename(const Route& route) = 0;
 
     /**
-     *
      * Negotiate an end to operations.
-     *
      */
     virtual void close() = 0;
 
     virtual const Route& getRoute() const = 0;
 
     /**
-     *
      * Check if the connection is valid and can be used.
-     *
      */
     virtual bool isOk() const = 0;
 
     /**
-     *
      * Get the connection whose protocol operations we are managing.
-     *
      */
     virtual Connection& getConnection() = 0;
 
     /**
-     *
      * It is possible to chain a basic connection with a modifier.
      * If there is a receiver modifier, this call returns it, otherwise it
      * will return a connection for which yarp::os::Connection::isValid()
      * returns false.
-     *
      */
     virtual Connection& getReceiver() = 0;
 
     /**
-     *
      * It is possible to chain a basic connection with a modifier.
      * If there is a sender modifier, this call returns it, otherwise it
      * will return a connection for which yarp::os::Connection::isValid()
      * returns false.
-     *
      */
     virtual Connection& getSender() = 0;
 
     /**
-     *
      * Write a message on the connection.  If a reply is expected,
      * we wait for one.  If an acknowledgement is expected, we wait for
      * one.  Replies and acknowledgements are similar, except:
      * replies are at the client payload level, acknowledgements
      * are low-level protocol elements that the client doesn't need
      * to know about.
-     *
      */
     virtual bool write(SizedWriter& writer) = 0;
 
@@ -110,47 +98,35 @@ public:
 
 
     /**
-     *
      * Get an interface for doing read operations on the connection.
      * Not all types of connections will support this, check
      * yarp::os::InputProtocol::isOk() on the result.
-     *
      */
     virtual InputProtocol& getInput() = 0;
 
     /**
-     *
      * Access the output stream associated with the connection.
-     *
      */
     virtual OutputStream& getOutputStream() = 0;
 
     /**
-     *
      * Access the input stream associated with the connection.
-     *
      */
     virtual InputStream& getInputStream() = 0;
 
     /**
-     *
      * Set the timeout to be used for network operations.
-     *
      */
     virtual bool setTimeout(double timeout) = 0;
 
     /**
-     *
      * Set the port to be associated with the connection.
-     *
      */
     virtual void attachPort(Contactable* port) = 0;
 
     /**
-     *
      * Notify connection that we intend to write to it.
      * This only needs to get called once. There is no endWrite().
-     *
      */
     virtual void beginWrite() = 0;
 };

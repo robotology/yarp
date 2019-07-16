@@ -1,7 +1,7 @@
 /**
- * @page yarp_http YARP ports from your browser
+\page yarp_http YARP ports from your browser
 
-\author Paul Fitzpatrick
+\tableofcontents
 
 YARP ports process HTTP requests with a default interface suitable
 for viewing their status, receiving bottle-compatible messages, and
@@ -11,7 +11,7 @@ expose to the general public on the internet.
 HTTP service comes is implemented by the http carrier; for other carriers,
 see \ref carrier_config.
 
-@section yarp_http_index Index page
+\section yarp_http_index Index page
 
 To form the URL for a yarp port /PORT, we need to know the IP address
 of the machine it lives on, and the (socket) port number it listens to.
@@ -42,7 +42,7 @@ This is the index page for that port, and it reports
 information analogous to that given by \ref yarp_ping.
 You can view this page for any YARP port.
 
-@section yarp_http_data Sending data
+\section yarp_http_data Sending data
 
 You can send data to a port by appending w?data=... to its base URL.
 For example:
@@ -62,7 +62,7 @@ http://.../w?data=10.0+30.0+40.0
 
 The format of the data parameter is regular \ref data_rep "Bottle text format" (the "+" symbol is URL encoding for the space character).
 
-@section yarp_http_recv Receiving (low-bandwidth) data
+\section yarp_http_recv Receiving (low-bandwidth) data
 
 Viewing data sent by a port is done by visiting:
 
@@ -93,7 +93,7 @@ Buffering behavior varies from browser to browser - YARP does its best
 to flush data in a timely fashion but you may have to try different
 browsers or browser settings to get good results.
 
-@section yarp_http_recv_images Viewing images in a browser
+\section yarp_http_recv_images Viewing images in a browser
 
 Image streams can be viewed in the browser if the mjpeg carrier has
 been enabled.
@@ -125,7 +125,7 @@ and not very helpful...
 For the record, the mjpeg carrier currently intercepts any URLs of the
 form "http://.../?ac".  Other URLs are handled by the default http carrier.
 
-@section yarp_http_custom Custom content
+\section yarp_http_custom Custom content
 
 If you do succumb to the temptation to make a mini-webserver, YARP >=
 2.3.15 will help you a little.  Requests that don't match the patterns
@@ -137,5 +137,4 @@ the next version of YARP.
 
 \include example/web/web_test.cpp
 
- *
- */
+*/

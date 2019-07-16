@@ -172,7 +172,6 @@ signals:
     void minValueChanged();
     void internalAppendGraph(int index, QString title, QString color, QString type, int size, int buffer_size);
     void plotSampleSizeChanged();
-    void newGraphValue(int graphIndex, double x, double y, double t);
     void duplicateLastGraphValue(int graphIndex);
 public slots:
     void onInteract();

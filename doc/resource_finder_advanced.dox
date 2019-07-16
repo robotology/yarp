@@ -1,8 +1,7 @@
 /**
-*
-@page yarp_resource_finder_advanced The ResourceFinder Class (advanced)
+\page yarp_resource_finder_advanced The ResourceFinder Class (advanced)
 
-\author Lorenzo Natale and Elena Ceseracciu
+\tableofcontents
 
 In this tutorial we show more details of how to use the yarp::os::ResourceFinder to locate files.
 
@@ -115,5 +114,5 @@ See also the yarp::os::ResourceFinder class documentation.
 \section sec_code Code
 
 See code in: example/resourceFinder/tutorial_rf_advanced.cpp
-*
-**/
+
+*/

@@ -3,4 +3,9 @@
 
 \ingroup yarp_guis
 \ingroup yarp_tools
+
+\tableofcontents
+
+\section yarpbatterygui_intro Description
+
 */

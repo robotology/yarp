@@ -1,0 +1,157 @@
+/**
+\page simple_dll An example which shows how to use C++ and DLLS to modify incoming data in an input port
+
+\tableofcontents
+
+\section simple_dll_desc Description
+This example demonstrates how to simply use the port monitor carrier to modify data going through a connection. The port '/write' from 'yarp write' module is connected to the '/read' port of 'yarp read' using a portmonitor plugged into the receiver side. The portmoniotr loads a dll (\c 'libsimple_monitor.so') in which we access and modify the data going through the port.
+
+<br>
+
+\image html simple_dll.png ""
+
+\section simple_dll_req Requirements
+\li Enable and compile portmonitor carrier (ENABLE_yarpcar_portmonitor_carrier=ON in YARP cmake).
+
+
+\section simple_dll_running Running the example
+
+\li Open a terminal and follow the below instruction to compile and build the dll
+\verbatim
+   $ mkdir $YARP_ROOT/example/portmonitor/simple_dll/build
+   $ cd $YARP_ROOT/example/portmonitor/simple_dll/build
+   $ cmake ../; make;
+\endverbatim
+
+   you should see the \c 'libsimple_monitor.so' after the compilation (the generated dll can have
+   different names on windows or mac os).
+
+\li Open a terminal and run yarpserver
+\verbatim
+   $ yarpserver
+\endverbatim
+
+\li Open another terminal (lets call this the sender terminal) and type
+\verbatim
+   $ yarp write /write
+\endverbatim
+
+\li In the directory where you you built the dll (lets call this the receiver terminal), type
+\verbatim
+   $ yarp read /read
+\endverbatim
+
+\li In another terminal connect the port as follow:
+\verbatim
+   $ yarp connect /write /read tcp+recv.portmonitor+type.dll+file.simple_monitor
+\endverbatim
+
+
+Now if you write something  in the 'sender' terminal, you will see the text "Modified in DLL" will be added to the original message. For example:
+\verbatim
+[sender terminal]
+ Hello
+\endverbatim
+
+\verbatim
+[receiver terminal]
+ Hello "Modified in DLL"
+\endverbatim
+
+As it is constrained in `SimpleMonitorObject::accept()' method from `Simple.cpp', if you type "ignore",
+the message will be ignored by the portmonitor and it never be delivered to the input port.
+
+\section simple_dll_sample Code Samples
+
+\subsection simple_dll_sample_h SimpleMonitorObject.h
+
+~~~{.cpp}
+#include <yarp/os/MonitorObject.h>
+
+class SimpleMonitorObject : public yarp::os::MonitorObject
+{
+public:
+    bool create(const yarp::os::Property& options) override;
+    void destroy(void) override;
+
+    bool setparam(const yarp::os::Property& params) override;
+    bool getparam(yarp::os::Property& params) override;
+
+    void trig(void) override;
+
+    bool accept(yarp::os::Things& thing) override;
+    yarp::os::Things& update(yarp::os::Things& thing) override;
+};
+~~~
+
+\subsection simple_dll_sample_cpp SimpleMonitorObject.cpp
+
+~~~{.cpp}
+#include <stdio.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/SharedLibraryClass.h>
+
+#include "Simple.h"
+
+using namespace yarp::os;
+
+
+YARP_DEFINE_SHARED_SUBCLASS(MonitorObject_there, SimpleMonitorObject, MonitorObject);
+
+
+bool SimpleMonitorObject::create(const yarp::os::Property& options)
+{
+   printf("created!\n");
+   printf("I am attached to the %s\n",
+          (options.find("sender_side").asBool()) ? "sender side" : "receiver side");
+   return true;
+}
+
+void SimpleMonitorObject::destroy(void)
+{
+    printf("destroyed!\n");
+}
+
+bool SimpleMonitorObject::setparam(const yarp::os::Property& params)
+{
+    return false;
+}
+
+bool SimpleMonitorObject::getparam(yarp::os::Property& params)
+{
+    return false;
+}
+
+bool SimpleMonitorObject::accept(yarp::os::Things& thing)
+{
+    Bottle* bt = thing.cast_as<Bottle>();
+    if(bt == NULL) {
+        printf("SimpleMonitorObject: expected type Bottle but got wrong data type!\n");
+        return false;
+    }
+
+    if(bt->toString() == "ignore")
+        return false;
+    return true;
+}
+
+yarp::os::Things& SimpleMonitorObject::update(yarp::os::Things& thing)
+{
+    Bottle* bt = thing.cast_as<Bottle>();
+    if(bt == NULL) {
+        printf("SimpleMonitorObject: expected type Bottle but got wrong data type!\n");
+        return thing;
+    }
+
+    bt->addString("Modified in DLL");
+    return thing;
+}
+
+void SimpleMonitorObject::trig(void)
+{
+}
+~~~
+
+*/
+
+

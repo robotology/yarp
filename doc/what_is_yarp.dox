@@ -1,7 +1,5 @@
 /**
- * @page what_is_yarp What exactly is YARP?
- *
-
+\page what_is_yarp What exactly is YARP?
 
 YARP is plumbing for robot software.  It is a set of libraries,
 protocols, and tools to keep modules and devices cleanly decoupled.
@@ -106,10 +104,4 @@ new robotic platform.
 doesn't seem to depend on the time of writing.  The software expands
 to fill the cycles available, and then some.
 
- *
- *
- *
- */
-
-
-
+*/

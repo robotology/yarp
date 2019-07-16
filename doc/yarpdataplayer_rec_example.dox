@@ -1,0 +1,54 @@
+/**
+\page yarpdataplayer_rec_example yarpdataplayer recording example
+
+\ingroup  yarp_applications
+
+\tableofcontents
+
+Record a sequence of data from all sensors of the robot.
+
+\section yarpdataplayer_rec_example_intro Description
+
+This application demonstrates how to record a sequence from the robot
+using the module \ref yarpdatadumper "yarpdatadumper".
+This sequence can be later re-played using the
+\ref yarpdataplayer "yarpdataplayer"
+(see \ref yarpdataplayer_example "example application").
+
+\section yarpdataplayer_rec_example_dep Dependencies
+
+The robot or simulator should be running.
+
+\section yarpdataplayer_rec_example_int Instantiated Modules
+
+- \ref yarpdatadumper "yarpdatadumper"
+
+Make sure you compiled \ref yarpdatadumper "yarpdatadumper" if you want to
+execute this tutorial on your computer.
+
+\section yarpdataplayer_rec_example_howto How to run the Application
+
+On a console run `yarpserver` (if not already running) and an instance
+of `yarprun`:
+
+~~~{.sh}
+yarprun --server /computer1
+~~~
+
+`/computer1` is the name that YARP will use to execute commands on your machine.
+
+Run `yarpmanager`:
+
+~~~{.sh}
+yarpmanager
+~~~
+
+Inside the `application` folder in the `yarpmanager` gui you should see an entry
+called `yarpdataplayer_recording_example_`, double click and open it.
+
+Now you are ready to run the application. Hit the *run* button. After
+connecting the ports, the recording should automatically start.
+
+\sa \ref yarpdatadumper
+\sa \ref yarpdataplayer
+*/

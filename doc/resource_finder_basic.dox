@@ -1,8 +1,7 @@
 /**
-*
-@page yarp_resource_finder_basic The ResourceFinder Class (basic)
+\page yarp_resource_finder_basic The ResourceFinder Class (basic)
 
-\author Lorenzo Natale and Elena Ceseracciu
+\tableofcontents
 
 This tutorial shows how to use the yarp::os::ResourceFinder class to organize parameters passed to
 modules. The ResourceFinder is a helper class that allows to find and read configuration files from YARP's installation directories or from directories that are user specific (see \ref yarp_data_dirs).
@@ -14,73 +13,73 @@ The module is generic, so it can control any of the available joints of one of t
 
 The module should receive the following parameters:
 
-\code
---robot name (the name of the robot)
---part  robotpart (the limb of the robot)
---joint j (the joint we want to control)
-\endcode
+\li `--robot <name>` (the name of the robot)
+\li `--part  <robotpart>` (the limb of the robot)
+\li `--joint <jointnumber>` (the joint we want to control)
 
 In the module \e main function we add:
 
-\code
+~~~{.cpp}
 ResourceFinder rf;
 rf.configure(argc, argv);
-\endcode
+~~~
 
 This creates an instance of the ResourceFinder, and configures it using data from the command line. We can query the value of the parameters:
 
-\code
+~~~{.cpp}
 std::string robotName=rf.find("robot").asString();
 std::string partName=rf.find("part").asString();
 int joint=rf.find("joint").asInt32();
 
-cout<<"Running with:"<<endl;
-cout<<"robot: "<<robotName.c_str()<<endl;
-cout<<"part: "<<partName.c_str()<<endl;
-cout<<"joint: "<<joint<<endl;
+std::cout << "Running with:\n";
+std::cout << " robot: " << robotName.c_str() << '\n';
+std::cout << " part: " << partName.c_str() << '\n';
+std::cout << " joint: " << joint << '\n';
+~~~
 
-\endcode
+This achieves what we want. The program \e rf_basic can parse the parameters from the command line as desired. We here assume you are in the source directory of rf_basic and that you wrote a valid CMakeLists.txt. Compile with:
 
-This achieves what we want. The program \e rf_basic can parse the parameters from the command line as desired. For example (we here assume you are in the source directory of rf_basic and that you wrote a valid CMakeLists.txt):
-
-\code
+~~~{.sh}
 mkdir build
 cd build
 cmake ../
 make
+~~~
 
+Finally run the newly created executable:
+
+~~~{.sh}
 ./rf_basic --robot robby --part head --joint 3
-
+~~~
+\verbatim
 Running with:
-robot:robby
-part:head
-joint:3
-\endcode
+ robot: robby
+ part: head
+ joint: 3
+\endverbatim
 
 Now suppose we wish to place these configuration parameters in a file called \e config.ini. We can put this file together with the sources in a specific folder called \e randomMotion.
 
-Create the file:
-\code
-./randomMotion/config.ini
-\endcode
+Create the file `./randomMotion/config.ini`
 
 Open it with your preferred editor and type:
-\code
+~~~{.ini}
 robot icub
 part head
 joint 0
-\endcode
+~~~
 
 The code above already achieves what we wanted. The ResourceFinder automatically checks for a parameter `--from` that specifies from which file to read configuration parameters:
 
-\code
-
+~~~{.sh}
 ./rf_basic --from ../randomMotion/config.ini
-
-robot icub
-part head
-joint 0
-\endcode
+~~~
+\verbatim
+Running with:
+ robot: icub
+ part: head
+ joint: 0
+\endverbatim
 
 Notice that we here assume you are in the \e build directory.
 
@@ -88,34 +87,37 @@ In many cases you don't want to bother about the exact path of the ini file. Thi
 
 But first let's provide the ResourceFinder with a default configuration file so that the user does not have to specify it in the command line (notice that the parameter \e --from overwrites this setting):
 
-\code
+~~~{.cpp}
 ResourceFinder rf;
 rf.setVerbose(); //logs searched directories
 rf.setDefaultConfigFile("config.ini"); //specifies a default configuration file
 rf.configure(argc, argv);
-\endcode
+~~~
 
 Now we can put \e config.ini in one of the data directories defined by YARP. A possible option is the directory .local/share/yarp/contexts inside the home of the user (in windows this is \%APPDATA\%/yarp/contexts, see \ref yarp_data_dirs for more details). By default this is the first place in which the ResourceFinder searches for files if not instructed with a precise path (like in this case).
 
 To avoid confusions and clashes with other similar files we keep the file inside the directory \e randomMotion; we call this directory a \e context for the module rf_basic.
 
-\code
+~~~{.sh}
 cp -r ../randomMotion/ $HOME/.local/share/yarp/contexts
-\endcode
+~~~
 
 Now from any working directory in the computer you can run your module and it will read parameters from $HOME/.local/share/yarp/contexts/randomMotion/config.ini and do its job.
 
 To do this we can run rf_basic with the parameter `--context`:
 
-\code
+~~~{.sh}
 ./rf_basic --context randomMotion
+~~~
+
+\verbatim
 [...]
-|| found /home/nat/.local/share/yarp/contexts/randomMotion/config.ini
+|| found <home>/.local/share/yarp/contexts/randomMotion/config.ini
 Running with:
-robot: robby
-part: head
-joint: 0
-\endcode
+ robot: robby
+ part: head
+ joint: 0
+\endverbatim
 
 This is useful because:
 
@@ -126,58 +128,62 @@ In fact we can now create another directory to store a different configuration f
 
 We create a new directory and add there a new file:
 
-\code
+~~~{.sh}
 mkdir $HOME/.local/share/yarp/contexts/randomMotionSim
-\endcode
+~~~
 
 Create with your preferred editor a file called \e config.ini that contains the following lines:
 
-\code
+~~~{.ini}
 robot robbySim
 part right_arm
 joint 2
-\endcode
+~~~
 
 Put the file in the directory \e randomMotionSim you just created.
 
 We run:
 
-\code
+~~~{.sh}
 ./rf_basic --context randomMotionSim
+~~~
+\verbatim
 [...]
-|| found /home/nat/.local/share/yarp/contexts/randomMotionSim/config.ini
+|| found <home>/.local/share/yarp/contexts/randomMotionSim/config.ini
 Running with:
-robot: robbySim
-part: right_arm
-joint: 2
-\endcode
+ robot: robbySim
+ part: right_arm
+ joint: 2
+\endverbatim
 
 If you wish, you can specify a 'defaultContext' to be used when no parameters are given to the module.
 
 Just add the following line after the call to setDefaultConfigFile():
 
-\code
+~~~{.cpp}
 rf.setDefaultContext("randomMotion");
-\endcode
+~~~
 
 Now running:
 
-\code
+~~~{.sh}
 ./rf_basic
+~~~
+\verbatim
 [...]
-|| found /home/nat/.local/share/yarp/contexts/randomMotion/config.ini
+|| found <home>/.local/share/yarp/contexts/randomMotion/config.ini
 Running with:
-robot: robby
-part: head
-joint: 0
-\endcode
+ robot: robby
+ part: head
+ joint: 0
+\endverbatim
 
 Before you move to the next tutorials it is better to cleanup your $HOME directory:
 
-\code
+~~~{.sh}
 rm -rf $HOME/.local/share/yarp/contexts/randomMotion
 rm -rf $HOME/.local/share/yarp/contexts/randomMotionSim
-\endcode
+~~~
 
 \section rf_basic_discussion Discussion
 We have seen how the ResourceFinder facilitates passing parameters to a module from a file. The ResourceFinder follows particular
@@ -192,5 +198,5 @@ More insights on the ResourceFinder are given in a more advanced tutorial \ref y
 \section rf_basic_code Code
 
 See code in: example/resourceFinder/tutorial_rf_basic.cpp
-*
-**/
+
+*/

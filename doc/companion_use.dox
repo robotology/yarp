@@ -1,5 +1,9 @@
 /**
-  * @page companion_use Using the YARP companion utility
+\page companion_use Using the YARP companion utility
+
+\tableofcontents
+
+\section companion_basics YARP companion basics
 
 This is informal, tutorial-style section meant to give the flavor
 of using YARP.
@@ -108,5 +112,9 @@ yarp connect /port2 /port3
 \endverbatim
 Now any line you enter in terminal C should appear in both terminal B and E.
 
-*/
 
+\section companion_advanced YARP companion advanced
+
+For more advanced uses see \ref yarp
+
+*/

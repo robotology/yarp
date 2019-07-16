@@ -1,5 +1,5 @@
 /**
-  @page yarp_code_examples Some examples
+\page yarp_code_examples Some examples
 
 There are many code examples available in the "example/"
 subdirectory of YARP. If you're reading
@@ -70,7 +70,7 @@ yarp: Removing input from /sender to /receiver
 You can run the receiver many times to connect and reconnect.
 
 
- @section yarp_code_example_buffer Buffered port example
+ \section yarp_code_example_buffer Buffered port example
 
 \include example/os/buffered_port.cpp
 

@@ -1,5 +1,5 @@
 /**
- * @page yarp_with_ros Using YARP with ROS
+\page yarp_with_ros Using YARP with ROS
 
 Programs that use YARP ports may interoperate with the ROS
 "Robot Operating System" in several ways.  While basic
@@ -20,9 +20,8 @@ You can then see how to write code that talks to ROS topics and services:
 You may also want to check out how to talk to the ROS parameter server:
 \li \subpage yarp_with_ros_parameters
 
-In some cases you may need to connect an existing YARP port to a ROS topic, without recompiling code. YARP allows to do this using a special Port name syntaxt and dynamic type conversion. This page also shows useful information on different ways that allow to make ROS types visible to YARP, with and without a ROS installation: 
+In some cases you may need to connect an existing YARP port to a ROS topic, without recompiling code. YARP allows to do this using a special Port name syntaxt and dynamic type conversion. This page also shows useful information on different ways that allow to make ROS types visible to YARP, with and without a ROS installation:
 
 \li \subpage yarp_with_ros_existing_yarp_ports
 
- *
- */
+*/

@@ -3,6 +3,8 @@
 
 \ingroup yarp_tools
 
+\tableofcontents
+
 The command-line utility "yarpdev" can create devices and wrap
 them for network visibility.  This is useful in cases where you
 wish to control devices on remote machines.
@@ -18,7 +20,7 @@ Often this will require that you install
 particular libraries or operating system device drivers.
 
 
-@section yarpdev_base yarpdev
+\section yarpdev_base yarpdev
 
 The utility gives a message if called with no arguments to confirm
 that it exists, and to give tips on where to get started using it.
@@ -39,7 +41,7 @@ If you have problems, you can add the "verbose" flag to get more information
    yarpdev --verbose --device ffmpeg_grabber
 \endverbatim
 
-@section yarpdev_list yarpdev --list
+\section yarpdev_list yarpdev --list
 
 With the --list option present, the devices available on your system
 are listed.  For example:
@@ -72,7 +74,7 @@ where the first keyword like "test_grabber" is the device name used to instantia
 the name of the class that implements it and the latter explains if the device is a network wrapper
 or it has a default network wrapper to be used or it does not have a default wrapper.
 
-@section yarpdev_normal yarpdev --device DEVICENAME --OPTION1 VALUE1 ...
+\section yarpdev_normal yarpdev --device DEVICENAME --OPTION1 VALUE1 ...
 
 This is the normal way to start up a device.  For example:
 \verbatim
@@ -108,7 +110,7 @@ was automatically expanded to:
 $ yarpdev --device grabber --subdevice test_grabber --period 0.5 --width 640 --height 480
 \endverbatim
 
-@section yarpdev_verbose yarpdev --verbose --device DEVICENAME  ...
+\section yarpdev_verbose yarpdev --verbose --device DEVICENAME  ...
 
 If we add the "--verbose" flag, yarpdev will report information
 about device configuration.  This can help a lot to work out

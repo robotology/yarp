@@ -1,6 +1,7 @@
 /**
-  * \page note_devices Getting Started with YARP Devices
+\page note_devices Getting Started with YARP Devices
 
+\tableofcontents
 
 For robotics, we need access to all sorts of strange devices.
 This section contains a tutorial on the YARP view of what devices are.

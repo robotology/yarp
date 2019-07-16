@@ -1,8 +1,7 @@
 /**
-*
-@page rostypes_tutorial_continued ROS Types in YARP: sending data to ROS
+\page rostypes_tutorial_continued ROS Types in YARP: sending data to ROS
 
-\author Paul Fitzpatrick
+\tableofcontents
 
 This tutorial assumes that you have completed the
 steps in \ref rostypes_tutorial_portable.
@@ -15,7 +14,7 @@ server running, without any special configuration.  During
 the tutorial, we will reconfigure the name server to communicate
 with ROS.
 
-@section rostypes_tutorial_continued_sender Making the sender program ROS-compatible
+\section rostypes_tutorial_continued_sender Making the sender program ROS-compatible
 
 The <tt>sender</tt> program from
 \ref rostypes_tutorial_portable looks like this:
@@ -92,7 +91,7 @@ the yarp::os::Subscriber helper class:
 
 \include example/idl/rosPortable/receiver2.cpp
 
-@section rostypes_tutorial_continued_visible Registering with ROS
+\section rostypes_tutorial_continued_visible Registering with ROS
 
 Now let's make our programs visible with ROS.  Stop running them,
 and then also stop the yarp name server.  Make sure you have
@@ -160,7 +159,7 @@ To get full interoperation, we now need to add our `SharedData`
 type in ROS (not just YARP), and as part of that process we'll
 end up making a real ROS package.
 
-@section rostypes_tutorial_continued_msg Making the .msg file available to ROS
+\section rostypes_tutorial_continued_msg Making the .msg file available to ROS
 
 In \ref rostypes_tutorial_portable we defined a <tt>SharedData</tt>
 structure in a <tt>SharedData.msg</tt> file
@@ -223,7 +222,7 @@ There are many ways to do that.  In a bash shell, the simplest
 is to do (from the `yarpros_tutorial` directory):
 
 \verbatim
-$  source devel/setup.bash
+$ source devel/setup.bash
 \endverbatim
 
 At this point, the <tt>rosmsg</tt> command should be able to find
@@ -268,6 +267,4 @@ hello from ROS
 1.1 2.2 3.3
 \endverbatim
 
-
-*
 */

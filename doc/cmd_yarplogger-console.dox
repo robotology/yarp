@@ -2,4 +2,9 @@
 \page yarplogger-console yarplogger-console: visualize log from YARP programs
 
 \ingroup yarp_tools
+
+\tableofcontents
+
+\section yarplogger-console_intro Description
+
 */

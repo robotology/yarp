@@ -1,9 +1,8 @@
 /**
- * \defgroup sig_class Signal Processing
- *
- * Basic classes and methods related to signal processing.
- * YARP sticks with very basic data types here, with
- * an emphasis on easy interoperability with external libraries.
- *
- */
+\defgroup sig_class Signal Processing
 
+Basic classes and methods related to signal processing.
+YARP sticks with very basic data types here, with
+an emphasis on easy interoperability with external libraries.
+
+*/

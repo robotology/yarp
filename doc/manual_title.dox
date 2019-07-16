@@ -1,5 +1,5 @@
 /**
- * @page manual_title User Manual Title
+\page manual_title User Manual Title
 
 \image html yarp-logo.png ""
 \image latex yarp-logo.png ""
@@ -11,14 +11,6 @@ YARP User Manual
 }
 \endlatexonly
 
-
-Paul Fitzpatrick
-
-Giorgio Metta
-
-Lorenzo Natale
-
 online at http://www.yarp.it
 
-*
 */

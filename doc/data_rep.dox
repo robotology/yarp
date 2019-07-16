@@ -1,5 +1,7 @@
 /**
-  * @page data_rep Standard data representation format
+\page data_rep Standard data representation format
+
+\tableofcontents
 
 The policy for representing data externally in YARP is chosen
 carefully to encourage both efficiency and the ability to
@@ -12,7 +14,7 @@ We define the following:
 \li A standard mapping between the two formats
 
 
-@section data_rep_base The NetType data-types
+\section data_rep_base The NetType data-types
 
 We limit our basic data-types to ones which can be easily
 read, written, and distinguished from each other in text form.
@@ -32,7 +34,7 @@ is that they can all be represented easily in both text
 and binary form.
 
 
-@section data_rep_bin Binary format
+\section data_rep_bin Binary format
 
 \li NetInt: Represented as a 32-bit little-endian signed integer.
 \li NetFloat: Represented as a 64-bit C "double" floating-point number (IEEE 754 double-precision).
@@ -66,7 +68,7 @@ in turn, then the list is represented as:
 preceded by a NetInt containing their type code.
 
 
-@section data_rep_text Text format
+\section data_rep_text Text format
 
 \li NetInt: Represented in the text forms supported by C99 strtol, e.g. -15, 9991, 0xfa, ...
 \li NetFloat: Represented in text forms supported by ANSI C strtod, except that a period must be present in order distinguish this type from NetInts, e.g. 10.57, .0
@@ -76,7 +78,7 @@ preceded by a NetInt containing their type code.
 \li NetBlob: Represented as a series of numbers between curly braces, e.g. {1 10 255 6 3}.  Each number represents a byte.
 
 
-@section data_rep_mapping Examples
+\section data_rep_mapping Examples
 
 The list of primes less than 20 would be represented as:
 \verbatim
@@ -94,7 +96,7 @@ binary: [4:256] [4:2] [4:257] [4:3] [4:91] [4:92] [4:93] [4:260] [4:4]
 
 
 
-@section data_rep_code In practice
+\section data_rep_code In practice
 
 The \link yarp::os::Bottle \endlink class in YARP is a useful helper class for
 reading/writing the standard data format in binary and text mode.
@@ -102,7 +104,7 @@ reading/writing the standard data format in binary and text mode.
 We also use mappings from common non-network external data such
 as command line-options and configuration files.
 
-@subsection data_rep_code_cmd Command-line mapping
+\subsection data_rep_code_cmd Command-line mapping
 
 Command-line options of the form:
 \verbatim
@@ -124,7 +126,7 @@ std::string result = p.toString();
 // result will be a permutation of (size 10 20) (name "mr frog")
 \endcode
 
-@subsection data_rep_code_config Configuration-file mapping
+\subsection data_rep_code_config Configuration-file mapping
 
 Configuration files of the form:
 \verbatim
@@ -144,7 +146,5 @@ are interpreted to correspond to a list with the following elements
 \endverbatim
 This mapping is implemented by
  \link yarp::os::Property::fromConfigFile() \endlink.
-
-
 
 */

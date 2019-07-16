@@ -1,0 +1,106 @@
+/**
+\page install_yarp_windows Installing YARP on Windows
+
+\section install_on_windows Installation on Windows
+
+\tableofcontents
+
+\subsection install_windows_from_binaries Install from binaries
+
+We provide precompiled binaries for Visual Studio compilers. Download and execute the installer from this page \ref download.
+
+You are now ready to check you installation, see \ref check_your_installation.
+
+\subsection install_windows_from_sources Install from sources
+
+Instructions in this page allows you to build YARP from sources. This allows getting the most recent version of the code from the repository or a specific snapshot. The following sections will guide you step by step in the compilation process.
+
+\subsubsection getting_dependencies_windows Getting dependencies
+
+We recommend you follow the procedure described below, which will install precompiled binaries for almost all the required dependencies. Download the YARP installer according to the compiler you use from this page (\ref download). Execute the YARP installer. Disable the YARP tick and proceed with the installation.
+
+\image html install-binaries-no-yarp.png
+
+Pick installation directory, all dependencies will be installed in separate folders in this directory:
+
+\image html install-binaries-no-yarp2.png
+
+Alternatively you can compile all dependencies yourself following the procedure here: \ref dependencies (notice however that this can be tedious, time consuming and error prone).
+
+\subsubsection windows_development_environment Setting up development environment
+
+To compile YARP from sources, you need a C++ compiler.
+
+On Windows, you can download Visual Studio 2017 Community Edition
+from the [Microsoft website](https://visualstudio.microsoft.com/downloads/).
+
+Besides the C++ compiler you also need the following tools.
+
+\paragraph CMake
+
+Get the latest release from: http://cmake.org/cmake/resources/software.html.
+Execute the installer and follow the instructions, no special actions are required.
+
+\paragraph GIT
+
+There are some competing git solutions for Windows. Among them we recommend
+
+\li msysgit (http://msysgit.github.io/)
+\li GitHub for Windows (https://windows.github.com/)
+
+\remark Learning git: to get sources you don't need to understand git in detail (just follow our instructions). If you are willing to learn more there are many useful guides available on the internet. Checkout this page to learn more (http://wiki.icub.org/wiki/Learning_more_about_git).
+
+\subsubsection getting_the_sources_windows Getting the sources
+
+To get the source choose one of these addresses:
+
+\li(git read-only) git://github.com/robotology/yarp.git
+\li(ssh read+write) git@github.com:robotology/yarp.git
+\li(https read+write) https://github.com/robotology/yarp.git
+
+For example:
+
+\code
+  cd /home/user
+  git clone https://github.com/robotology/yarp.git
+\endcode
+
+\subsubsection create_project_files_windows Create YARP project files
+
+\li Run the CMake GUI.
+\li Point the entry "Where is the source code" of the GUI to the root directory where you have downloaded YARP (i.e. \c /home/user/yarp).
+\li Choose a directory that will store the binaries and the project files. Usually this directory is \c /home/user/yarp/build. This is YARP's build directory.
+\li Click on the button "Configure". Select the compiler you would like to use. CMake will normally select the correct compiler (WIN64 is not supported yet). Make sure the compiler matches the precompiled binaries you have installed.
+
+Choose the following options:
+
+\code
+ YARP_COMPILE_GUIS, set to ON
+ YARP_COMPILE_libYARP_math, set to ON
+\endcode
+
+(leave default values as they are unless you know better)
+
+\remark the availability of \c YARP_COMPILE_GUIS and \c YARP_COMPILE_libYARP_math require you have installed the libraries qt5 and eigen3 (you have, if you have followed the instructions above).
+
+Project files generation is an iterative process, hit "Configure" until the option "Generate" becomes available. Then hit "Generate" and quit. Note: CMake uses red bars to highlight new options, these are not necessarily errors and can be ignored.
+
+\remark You can optionally change \c CMAKE_INSTALL_PREFIX, this is the directory where you would like to install YARP (default is \c C:/Program Files/YARP).
+
+\remark Do not select other options unless you know what you are doing.
+
+\subsubsection compile_windows Compile
+
+Now we are ready to compile. Go to the build directory (i.e. \c /home/usr/yarp/build) and open the visual studio solution file (\c YARP.sln). In this order:
+
+\li Select \c Debug configuration and build the target \c ALL_BUILD.
+\li Select \c Release configuration and build the target \c INSTALL.
+
+\subsubsection set_up_your_environment_windows Setup your environment
+
+ + Set the environment variable \c YARP_DIR so that it points to the installation directory you have chosen (e.g. \c C:/Program Files/YARP). Set \c YARP_DATA_DIRS to %YARP_DIR%/share/yarp.
+ + Add to the \c PATH environment variable the paths of the directories bin and lib within the installation directory you have chose (i.e. \c C:/Program Files/YARP/bin and \c C:/Program Files/YARP/lib).
+
+You are now ready to check you installation, see \ref check_your_installation.
+
+*/

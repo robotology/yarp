@@ -1,5 +1,7 @@
 /**
-  * \page note_yarp_philosophy Software for Humanoid Robots: The YARP Approach
+\page note_yarp_philosophy Software for Humanoid Robots: The YARP Approach
+
+\tableofcontents
 
 Researchers in humanoid robotics find themselves with a complicated
 pile of hardware to control with an equally complicated pile of
@@ -168,7 +170,4 @@ etc. This meant it could be easily added without disturbing existing
 code, and communication could be moved across to the new protocol
 piece by piece.
 
-
-
 */
-

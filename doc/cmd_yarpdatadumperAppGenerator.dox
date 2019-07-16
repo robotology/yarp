@@ -3,7 +3,9 @@
 
 \ingroup yarp_tools
 
-\section intro_sec Description
+\tableofcontents
+
+\section yarpdatadumperAppGenerator_intro Description
 
 To dump data from several yarp ports, it may be convenient
 to launch several yarpdatadumper instances using the yarpmanager.
@@ -55,7 +57,7 @@ This will generate the following yarpmanager application in the leftLegDumper.xm
 \endcode
 
 
-\section usage Usage
+\section yarpdatadumperAppGenerator_usage Usage
 
 
 ```

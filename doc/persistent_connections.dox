@@ -1,7 +1,7 @@
 /**
- * @page persistent_connections Persistent connections
+\page persistent_connections Persistent connections
 
-\author Paul Fitzpatrick
+\tableofcontents
 
 When a connection is made between two YARP ports, that connection
 lasts until it is explicitly disconnected by user action, or until one
@@ -185,6 +185,4 @@ style.persistent = true;
 Network::connect("/foo","/bar",style);
 \endcode
 
- *
- */
-
+*/

@@ -1,7 +1,7 @@
 /**
- * @page yarp_data_dirs YARP data directories
+\page yarp_data_dirs YARP data directories
 
-\author Elena Ceseracciu and Lorenzo Natale
+\tableofcontents
 
 YARP utilities and modules written by users need to find and access data and configuration files at run-time. The former use generic configuration files and manifest files for modules and plugins. The latter often require configuration and data files. YARP has an OS-dependent set of default locations where to look for files, and a set of rules that define the search priorities. The default locations can be overridden or extended by modifying the environment variables that YARP relies on. To simplify finding and accessing these files YARP provides a helper class called ResourceFinder.
 
@@ -198,6 +198,4 @@ The content of the file iCub.ini tells YARP where to look for additional resourc
   path "/usr/local/share/iCub"
 \endverbatim
 
- *
- */
-
+*/

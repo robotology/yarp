@@ -1,77 +1,128 @@
 /**
- * @page yarp_buffering Buffering Policies in YARP
- *
+\page yarp_buffering Buffering Policies in YARP
 
-This page assumes you are familiar with the use of YARP yarp::os::Port and yarp::os::BufferedPort objects. If this is not the case, you may want to go back and have a look at the following pages before you continue:
+\tableofcontents
+
+This page assumes you are familiar with the use of YARP `yarp::os::Port` and
+`yarp::os::BufferedPort` objects.
+If this is not the case, you may want to go back and have a look at the
+following pages before you continue:
 
 \li \subpage note_ports
 \li \subpage port_expert
 
 
-Read and write operations with YARP Port are blocking, this means that readers and senders wait for each other ensuring that all messages are transmitted on the network. Notice that this means that YARP itself will not drop messages, if you use a non reliable protocol (like UDP) messages may still be dropped on by the network layer (this may happen frequently on a busy network). 
+Read and write operations with YARP Port are blocking, this means that readers
+and senders wait for each other ensuring that all messages are transmitted on
+the network.
+Notice that this means that YARP itself will not drop messages, if you use a non
+reliable protocol (like UDP) messages may still be dropped on by the network
+layer (this may happen frequently on a busy network).
 
-In robotic applications it is often wise to decouple timing before senders and receivers. This is useful, because you want to avoid interference between readers that go at different speeds. At this aim YARP provides a specific type of port called BufferedPort.
+In robotic applications it is often wise to decouple timing before senders and
+receivers.
+This is useful, because you want to avoid interference between readers that go
+at different speeds.
+At this aim YARP provides a specific type of port called `BufferedPort`.
 
-In a BufferedPort messages are sent and received in the background without having to stop your processing. This requires a little care to understand the life-cycle of objects written to and read from the network (see yarp::os::BufferedPort::read() and yarp::os::BufferedPort::write()).
+In a `BufferedPort` messages are sent and received in the background without
+having to stop your processing.
+This requires a little care to understand the life-cycle of objects written to
+and read from the network (see `yarp::os::BufferedPort::read()` and
+`yarp::os::BufferedPort::write()`).
 
-By default a BufferedPort attempts to reduce latency between senders and receivers. To do so messages may be dropped by the writer if BufferedPort::write() is called too quickly. The reader may also drop messages that arrive between subsequent calls to BufferedPort::read(), this ensures that in slow readers new messages travel with high priority. This policy is sometimes called Oldest Packet Drop (ODP).
+By default a `BufferedPort` attempts to reduce latency between senders and
+receivers.
+To do so messages may be dropped by the writer if `BufferedPort::write()` is
+called too quickly.
+The reader may also drop messages that arrive between subsequent calls to
+`BufferedPort::read()`, this ensures that in slow readers new messages travel
+with high priority.
+This policy is sometimes called Oldest Packet Drop (ODP).
 
-If your application cannot afford dropping messages you can change the buffering policy. Use yarp::os::BufferedPort::writeStrict() when writing to a port, this waits for pending transmissions to be finished before writing new data. Call yarp::os::BufferedPort::setStrict() to change the buffering policy to FIFO at the receiver side. In this way all messages will be stored inside the BufferedPort and delivered to the reader. Pay attention that in this case a slow reader may experience increasing latency and that the BufferedPort may allocate memory in the background.
+If your application cannot afford dropping messages you can change the buffering
+policy.
+Use `yarp::os::BufferedPort::writeStrict()` when writing to a port, this waits
+for pending transmissions to be finished before writing new data.
+Call `yarp::os::BufferedPort::setStrict()` to change the buffering policy to
+FIFO at the receiver side.
+In this way all messages will be stored inside the `BufferedPort` and delivered
+to the reader.
+Pay attention that in this case a slow reader may experience increasing latency
+and that the `BufferedPort` may allocate memory in the background.
 
-Methods that can be useful to monitor the status of read and write operations are: yarp::os::BufferedPort::getPendingReads() and yarp::os::BufferedPort::isWriting().
+Methods that can be useful to monitor the status of read and write operations
+are: `yarp::os::BufferedPort::getPendingReads()` and
+`yarp::os::BufferedPort::isWriting()`.
 
-It is also important to understand that a BufferedPort is managing the life-cycle of the messages transmitted on the network. This means that the BufferedPort will allocate and re-cycle objects in its internal buffers.
+It is also important to understand that a `BufferedPort` is managing the
+life-cycle of the messages transmitted on the network.
+This means that the `BufferedPort` will allocate and re-cycle objects in its
+internal buffers.
 
 \section s_buffering_writing Life-cycle: writing to a port
 
-When you call yarp::os::BufferedPort::prepare() you get a slot from the internal buffer. This slot is reserved for you, until the next call to BufferedPort::write(). This means that you are free to write inside the object returned by BufferedPort::prepare(), until the next call to BufferedPort::write(). At this point the YARP infrastructure will begin transmitting the message and you are no longer allowed to modify it (well, actually nobody forbids doing so, but in this case you may have unexpected effects, i.e. probably the message will be corrupted).
+When you call `yarp::os::BufferedPort::prepare()` you get a slot from the
+internal buffer.
+This slot is reserved for you, until the next call to `BufferedPort::write()`.
+This means that you are free to write inside the object returned by
+`BufferedPort::prepare()`, until the next call to `BufferedPort::write()`.
+At this point the YARP infrastructure will begin transmitting the message and
+you are no longer allowed to modify it (well, actually nobody forbids doing so,
+but in this case you may have unexpected effects, i.e. probably the message will
+be corrupted).
 
-Objects are recycled within the BufferedPort to save CPU cycles, so the next time you call yarp::os::BufferedPort::prepare() you will not get an empty object. Make sure you clean the object before you write to it (for example do not append data to a Bottle), otherwise you will get unexpected behavior (likely the object will contain past data). This code example illustrates this concept:
+Objects are recycled within the `BufferedPort` to save CPU cycles, so the next
+time you call `yarp::os::BufferedPort::prepare()` you will not get an empty
+object.
+Make sure you clean the object before you write to it (for example do not append
+data to a `yarp::os::Bottle`), otherwise you will get unexpected behavior
+(likely the object will contain past data).
+This code example illustrates this concept:
 
-\code 
- BufferedPort<Bottle> port;
- ...
- 
- Bottle &b=port.prepare();
- //write to b
- port.write();
- // don't touch b!
-\endcode
+~~~{.cpp}
+yarp::os::BufferedPort<yarp::os::Bottle> port;
+// ...
+yarp::os::Bottle& b = port.prepare();
+// write to b
+port.write();
+// don't touch b!
+~~~
 
 \section  s_buffering_reading Life-cycle: reading from a port
-To read from a BufferedPort you call yarp::os::BufferedPort::read(), this returns a pointer to the message which arrived most recently (or the oldest message in the queue, if you changed the buffering policy to FIFO using yarp::os::BufferedPort::setStrict()). This object is reserved and not touched by YARP, until the next call to yarp::os::BufferedPort::read(). This code example clarify this issue:
 
-\code 
- BufferedPort<Bottle> port;
- ...
- 
- Bottle *b1=port.read();
- // read b1, YARP will not touch it until the next call to read().
- 
- Bottle *b2=port.read();
- // now read b2, YARP will not touch it until the next call to read().
- // The object pointed to by b1 can be re-cycled by YARP to store new data. 
- // If you access b1 you may get garbage. 
-\endcode
+To read from a `BufferedPort` you call `yarp::os::BufferedPort::read()`, this
+returns a pointer to the message which arrived most recently (or the oldest
+message in the queue, if you changed the buffering policy to FIFO using
+`yarp::os::BufferedPort::setStrict()`).
+This object is reserved and not touched by YARP, until the next call to
+`yarp::os::BufferedPort::read()`.
+This code example clarify this issue:
 
-Notice, however, that you never run in troubles if you follow the best practice and access messages in a loop, i.e.:
+~~~{.cpp}
+yarp::os::BufferedPort<yarp::os::Bottle> port;
+// ...
+yarp::os::Bottle* b1 = port.read();
+// read b1, YARP will not touch it until the next call to read().
+Bottle* b2 = port.read();
+// now read b2, YARP will not touch it until the next call to read().
+// The object pointed to by b1 can be re-cycled by YARP to store new data.
+// If you access b1 you may get garbage.
+~~~
 
+Notice, however, that you never run in troubles if you follow the best practice
+and access messages in a loop, i.e.:
 
-
-\code 
- BufferedPort<Bottle> port;
- ...
- while (true) {
+~~~{.cpp}
+yarp::os::BufferedPort<yarp::os::Bottle> port;
+// ...
+while (true) {
     Bottle *b1=port.read();
     // It is safe to read b1, YARP will not touch it.
- 
- }
-\endcode
+}
+~~~
 
-In the code above the scope of b1 automatically enforces safe access to the messages.
-
+In the code above the scope of `b1` automatically enforces safe access to the
+messages.
 
 */
-
-
-

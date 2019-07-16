@@ -311,7 +311,7 @@ void DgramTwoWayStream::configureSystemBuffers()
         int setResult = dgram->set_option(SOL_SOCKET, SO_SNDBUF, (void*)&writeBufferSize, intSize);
         int getResult = dgram->get_option(SOL_SOCKET, SO_SNDBUF, (void*)&actualWriteSize, &intSize);
 #else
-        socklen_t intSize = sizeof(readBufferSize);
+        socklen_t intSize = sizeof(writeBufferSize);
         int setResult = setsockopt(dgram_sockfd, SOL_SOCKET, SO_SNDBUF, (void*)&writeBufferSize, intSize);
         int getResult = getsockopt(dgram_sockfd, SOL_SOCKET, SO_SNDBUF, (void*)&actualWriteSize, &intSize);
 #endif

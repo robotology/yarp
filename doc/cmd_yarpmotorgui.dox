@@ -4,6 +4,8 @@
 \ingroup yarp_guis
 \ingroup yarp_tools
 
+\tableofcontents
+
 A simple graphical interface for moving all the joints of a robot with
 sliders.
 Uses remote control boards.
@@ -11,7 +13,7 @@ Uses remote control boards.
 \image html yarpmotorgui.jpg
 \image latex yarpmotorgui.jpg "A window of yarpmotorgui running on Linux" width=15cm
 
-\section intro_sec Description
+\section yarpmotorgui_intro Description
 
 This GUI can be used for the following pouposes:
 
@@ -24,7 +26,7 @@ This GUI can be used for the following pouposes:
 - calibrating single joints
 - checking if the robot is in position ("@")
 
-\section parameters_sec Parameters
+\section yarpmotorgui_parameters Parameters
 
 \code
 --robot:    name of the robot (used to form port names)
@@ -50,16 +52,16 @@ yarpmotorgui --from yarpmotorgui.ini
 \endcode
 
 By default yarpmotorgui starts using the file yarpmotorgui.ini
-in $ICUB_ROOT/app/default.
+in \c $ICUB_ROOT/app/default.
 
-Home positions are obtained directly by the robot as specified in the Calibrator 
+Home positions are obtained directly by the robot as specified in the Calibrator
 settings of the robot.
 It is nevertheless possible to specify custom configurations which can be executed by the corresponding menu action in the "Custom positions" submenu (present in both the Global Joints commands menu and in the single part Commands menu).
 A (multiple) custom position can be defined in the yarpmotorgui configuration file with the following syntax:
 \code
 [customPosition_{CUSTOM_POSITION_NAME}]
-{FULL_ROBOT_PART_NAME}_Position   0             0             0                  0             0             0            
-{FULL_ROBOT_PART_NAME}_Velocity                10            10            10                10            10            10            
+{FULL_ROBOT_PART_NAME}_Position   0             0             0                  0             0             0
+{FULL_ROBOT_PART_NAME}_Velocity                10            10            10                10            10            10
 \endcode
 
 where {CUSTOM_POSITION_NAME} is the unique name associated to the custom configuration and
@@ -69,18 +71,18 @@ The following is an example of custom configuration
 
 \code
 [customPosition_OnChair]
-/icub/head_Position            0             0             0   	      0	            0  	       0      
+/icub/head_Position            0             0             0   	      0	            0  	       0
 /icub/head_Velocity            10            10            10            10            10         10
-/icub/torso_Position           0             0             0                
-/icub/torso_Velocity           10            10            10             
-/icub/left_arm_Position      -90.00         11.0000       80.00         15.00         0.00          0.00          0.00            
-/icub/left_arm_Velocity       10            10            10            10            10            10            10         
-/icub/right_arm_Position      -90.00         11.0000       80.00         15.00        -0.00          0.00         -0.00            
-/icub/right_arm_Velocity       10            10            10            10            10            10            10         
-/icub/right_leg_Position      84.00         12            0            -87.00         0.00          0         
-/icub/right_leg_Velocity      10            10            10            10            10            10         
-/icub/left_leg_Position            84.00         12            0            -87.00         0.00          0 
-/icub/left_leg_Velocity            10            10            10            10            10            10         
+/icub/torso_Position           0             0             0
+/icub/torso_Velocity           10            10            10
+/icub/left_arm_Position      -90.00         11.0000       80.00         15.00         0.00          0.00          0.00
+/icub/left_arm_Velocity       10            10            10            10            10            10            10
+/icub/right_arm_Position      -90.00         11.0000       80.00         15.00        -0.00          0.00         -0.00
+/icub/right_arm_Velocity       10            10            10            10            10            10            10
+/icub/right_leg_Position      84.00         12            0            -87.00         0.00          0
+/icub/right_leg_Velocity      10            10            10            10            10            10
+/icub/left_leg_Position            84.00         12            0            -87.00         0.00          0
+/icub/left_leg_Velocity            10            10            10            10            10            10
 \endcode
 
 
@@ -124,19 +126,19 @@ zmax zM
 In order to make the cartesian tabs working you need to be sure that
 that the \ref iKinCartesianSolver "Cartesian Solvers" are running and working.
 
-\section portsa_sec Ports Accessed
+\section yarpmotorgui_portsa Ports Accessed
 For each part initialized (e.g. right_leg):
 - /icub/right_leg/rpc:i
 - /icub/right_leg/command:i
 - /icub/gui/right_leg/state:i
 
-\section portsc_sec Ports Created
+\section yarpmotorgui_portsc Ports Created
 For each part initialized (e.g. right_leg):
 - /icub/gui/right_leg/rpc:o
 - /icub/gui/right_leg/command:o
 - /icub/right_leg/state:o
 
-\section conf_file_sec Configuration Files
+\section yarpmotorgui_conf_file Configuration Files
 
 Passed with the parameter --from, configure the layout of the gui.
 \code
@@ -153,8 +155,4 @@ Creates a gui. Connects automatically to:
 ...
 \endcode
 
-\section tested_os_sec Tested OS
-Linux and Windows.
-
-\author Francesco Nori
 */

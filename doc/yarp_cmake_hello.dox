@@ -1,22 +1,21 @@
 /**
- * @page yarp_cmake_hello Compiling a YARP hello world program
+\page yarp_cmake_hello Compiling a YARP hello world program
 
 The easiest way to write your first program using YARP is with CMake.
 
-Make a directory called "hello", and within it put a "CMakeLists.txt"
-file like this:
+Make a directory called `hello`, and within it put a `CMakeLists.txt` file like
+this:
 
 \include example/cmake/hello/CMakeLists.txt
 
-And here's a simple test program, call it "hello.cpp"
+And here's a simple test program, call it `hello.cpp`
 
 \include example/cmake/hello/hello.cpp
 
-Now make a "build" directory inside the "hello" folder, then from the build directory 
-run CMake (see \ref using_cmake), and compile!
-This example is available in the example/cmake/hello directory
-of the YARP source code.  See example/cmake/with_opencv for an
-example of compiling YARP with OpenCV.
+Now make a `build` directory inside the `hello` folder, then from the build
+directory run CMake (see \ref using_cmake), and compile!
 
-*
+This example is available in the `example/cmake/hello` directory of the YARP
+source code.
+
 */

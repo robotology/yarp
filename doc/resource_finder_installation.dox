@@ -1,8 +1,8 @@
 /**
-*
-@page yarp_resource_finder_installation How to install files for the ResourceFinder
 
-\author Lorenzo Natale and Elena Ceseracciu
+\page yarp_resource_finder_installation How to install files for the ResourceFinder
+
+\tableofcontents
 
 \section rf_install_intro Introduction
 
@@ -10,26 +10,25 @@ In previous tutorials (\ref yarp_resource_finder_basic and \ref yarp_resource_fi
 
 \section rf_install_files Files to be installed
 
-The module from \ref yarp_resource_finder_basic required the "robot","part", and "joint" initialization parameters. Default values were provided in a file:
+The module from \ref yarp_resource_finder_basic required the "robot","part", and "joint" initialization parameters. Default values were provided in a file `config.ini`:
 
-\c config.ini
 \verbatim
 robot icub
 part head
 joint 0
 \endverbatim
 
-We saved this file into a subdirectory of our source tree; we chose the "randomMotion" subdirectory, in our <EM> <YARP_SOURCE_CODE>/examples/resourceFinder </EM> directory.
+We saved this file into a subdirectory of our source tree; we chose the "randomMotion" subdirectory, in our `<YARP_SOURCE_CODE>/examples/resourceFinder` directory.
 
 We defined a default initialization context, i.e., "randomMotion", for the module to locate files; this means that in the source code, the ResourceFinder was configured like this:
 
-\code
+~~~{.cpp}
 ResourceFinder rf;
 rf.setVerbose();
 rf.setDefaultConfigFile("config.ini");
 rf.setDefaultContext("randomMotion");
 rf.configure(argc, argv);
-\endcode
+~~~
 
 We'll see now how to setup installation rules so that after compilation the configuration files for the module will be available without manual copies.
 
@@ -37,45 +36,45 @@ We'll see now how to setup installation rules so that after compilation the conf
 
 The minimal CMake file that allows to build our tutorial modules is this (this CMake file actually builds the two Resource Finder tutorials):
 
-\verbatim
+~~~{.cmake}
 cmake_minimum_required(VERSION 3.5)
 project(resourceFinder)
 
-find_package(YARP REQUIRED)
+find_package(YARP REQUIRED COMPONENTS OS)
 
 add_executable(rf_basic tutorial_rf_basic.cpp)
-target_link_libraries(rf_basic ${YARP_LIBRARIES})
+target_link_libraries(rf_basic PRIVATE YARP::YARP_OS YARP::YARP_init)
 
 add_executable(rf_advanced tutorial_rf_advanced.cpp)
-target_link_libraries(rf_advanced ${YARP_LIBRARIES})
-\endverbatim
+target_link_libraries(rf_advanced PRIVATE YARP::YARP_OS YARP::YARP_init)
+~~~
 
 The \c yarp_install macro is loaded automatically with \c find_package(YARP):
 
 Now, we add:
-\verbatim
+
+~~~{.cmake}
 set(conf randomMotion/config.ini)
-\endverbatim
+~~~
 
 to tell CMake which files to install, and
-\verbatim
+
+~~~{.cmake}
 yarp_install(FILES ${conf} DESTINATION ${YARP_CONTEXTS_INSTALL_DIR}/randomMotion)
-\endverbatim
+~~~
+
 to tell CMake where to install those files.
-\note
-Instead of creating the \e conf variable by listing all configuration files explicitly as in <tt>set(conf randomMotion/configure.ini)</tt>, one can have CMake figure out the list or all configuration files like this:
-\verbatim
-file(GLOB conf randomMotion/*.ini)
-\endverbatim
-but <em>GLOBBING is EVIL</em>, so we do not recommend it.
-\endnote
+
+
 \section rf_install_finalnotes Notes
-Keep in mind that the \c ${YARP_CONTEXTS_INSTALL_DIR} variable expands to a relative path that will be appended to the installation prefix chosen by the user; the user should be warned to use the same installation directory as YARP, or to configure their system as explained \ref datafiles_3rdparty here.
+
+Keep in mind that the `${YARP_CONTEXTS_INSTALL_DIR}` variable expands to a relative path that will be appended to the installation prefix chosen by the user; the user should be warned to use the same installation directory as YARP, or to configure their system as explained \ref datafiles_3rdparty here.
 
 Remember that you can always inspect the state of contexts on your machine, and customize installed configuration files, using the \ref yarp-config utility.
 
+
 \section rf_code Code
 
-See code in: example/resourceFinder/CMakeLists.txt
-*
-**/
+See code in: `example/resourceFinder/CMakeLists.txt`
+
+*/

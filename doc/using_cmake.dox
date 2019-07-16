@@ -1,7 +1,7 @@
 /**
- * @page using_cmake Using CMake
+\page using_cmake Using CMake
 
-\author Paul Fitzpatrick
+\tableofcontents
 
 CMake lets you express the structure of your software in a
 portable way, that can then let you or others compile it
@@ -343,6 +343,4 @@ pointing to where the files are on our hard drive - but better, in the
 CMake GUI on windows or by running "ccmake ." on Linux, we can just
 fill in the directories there.
 
-
- *
- */
+*/
