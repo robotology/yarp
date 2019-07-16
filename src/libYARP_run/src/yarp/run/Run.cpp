@@ -14,6 +14,7 @@
 #include <yarp/run/impl/PlatformUnistd.h>
 #include <yarp/run/impl/PlatformSysPrctl.h>
 
+#include <yarp/conf/filesystem.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/LogStream.h>
@@ -77,6 +78,8 @@ bool yarp::run::Run::mStresstest=false;
 bool yarp::run::Run::mLogged=false;
 std::string yarp::run::Run::mLoggerPort("/yarplogger");
 
+namespace fs = yarp::conf::filesystem;
+
 ////////////////////////////////////
 
 static RunTerminator *pTerminator = nullptr;
@@ -93,11 +96,10 @@ void sigstdio_handler(int sig)
 
 ////////////////////////////////////
 
-static char slash = yarp::os::NetworkBase::getDirectorySeparator()[0];
-////// adapted from YARP_os: ResourceFinder.cpp
+constexpr fs::value_type slash = fs::preferred_separator;
+constexpr fs::value_type sep   = fs::path_separator;
+////// adapted from libYARP_OS: ResourceFinder.cpp
 static yarp::os::Bottle parsePaths(const std::string& txt) {
-    char slash = yarp::os::NetworkBase::getDirectorySeparator()[0];
-    char sep = yarp::os::NetworkBase::getPathSeparator()[0];
     yarp::os::Bottle result;
     const char *at = txt.c_str();
     int slash_tweak = 0;
@@ -721,7 +723,8 @@ int yarp::run::Run::server()
                 yarp::os::Bottle possiblePaths = parsePaths(yarp::os::NetworkBase::getEnvironment("PATH"));
                 for (int i=0; i<possiblePaths.size(); ++i)
                 {
-                    std::string guessString=possiblePaths.get(i).asString() + slash + fileName;
+                    std::string guessString=possiblePaths.get(i).asString() +
+                    std::string{slash} + fileName;
                     const char* guess=guessString.c_str();
                     if (fileExists (guess))
                     {
