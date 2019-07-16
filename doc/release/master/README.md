@@ -9,5 +9,5 @@ Each file should have this format
 branch_name {#target_branch}
 -----------
 
-- Branch changes
+* Branch changes
 ```

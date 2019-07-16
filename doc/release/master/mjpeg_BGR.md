@@ -1,4 +1,4 @@
 mjpeg_BGR {#master}
 ---------
 
-- Fixed `mjpeg` carrier using BGR images (#2060).
+* Fixed `mjpeg` carrier using BGR images (#2060).
