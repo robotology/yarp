@@ -20,6 +20,7 @@
 #include "ui_mainwindow.h"
 
 #include <yarp/conf/version.h>
+#include <yarp/conf/filesystem.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/ResourceFinder.h>
 #include <dirent.h>
@@ -223,7 +224,7 @@ void MainWindow::onWizardError(QString err)
 void MainWindow::init(yarp::os::Property config)
 {
     this->config = config;
-    const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+    const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
 
     string basepath=config.check("ymanagerini_dir", yarp::os::Value("")).asString();
 
@@ -437,7 +438,7 @@ void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
  */
 bool MainWindow::loadRecursiveTemplates(const char* szPath)
 {
-    const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+    const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
     string strPath = szPath;
     if((strPath.rfind(directorySeparator)==string::npos) ||
             (strPath.rfind(directorySeparator)!=strPath.size()-1)) {
@@ -479,7 +480,7 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
  */
 bool MainWindow::loadRecursiveApplications(const char* szPath)
 {
-    const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+    const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
     string strPath = szPath;
     if((strPath.rfind(directorySeparator)==string::npos) ||
             (strPath.rfind(directorySeparator)!=strPath.size()-1))

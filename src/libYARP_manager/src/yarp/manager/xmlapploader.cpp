@@ -8,6 +8,7 @@
 
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/utility.h>
+#include <yarp/conf/filesystem.h>
 #include <dirent.h>
 #include <tinyxml.h>
 #include <yarp/os/Value.h>
@@ -19,7 +20,6 @@
 #include <cctype>
 #include <string>
 #include <fstream>
-#include <yarp/os/Network.h>
 #include <yarp/manager/impl/textparser.h>
 
 
@@ -42,7 +42,7 @@ XmlAppLoader::XmlAppLoader(const char* szPath, const char* szAppName)
 
     if(strlen(szPath))
     {
-        const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+        const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
         strPath = szPath;
         if((strPath.rfind(directorySeparator)==string::npos) ||
             (strPath.rfind(directorySeparator)!=strPath.size()-1))

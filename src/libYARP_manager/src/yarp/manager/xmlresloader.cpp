@@ -7,6 +7,7 @@
  */
 
 #include <yarp/manager/xmlresloader.h>
+#include <yarp/conf/filesystem.h>
 #include <yarp/manager/utility.h>
 #include <dirent.h>
 #include <yarp/manager/physicresource.h>
@@ -29,7 +30,7 @@ XmlResLoader::XmlResLoader(const char* szPath, const char* szName)
     parser = new(TextParser);
     if(strlen(szPath))
     {
-        const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+        const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
         strPath = szPath;
         if((strPath.rfind(directorySeparator)==string::npos) ||
             (strPath.rfind(directorySeparator)!=strPath.size()-1))
