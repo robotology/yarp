@@ -3,6 +3,9 @@
 
 This page lists the main changes introduced in YARP at each release.
 
+\section yarp_devel Next YARP Release
+\li \subpage devel
+
 \section yarp_3_2_series YARP 3.2 Series
 \li \subpage master
 \li \subpage v3_2_0
