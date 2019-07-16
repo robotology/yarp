@@ -9,6 +9,7 @@
 
 #include <yarp/os/Network.h>
 
+#include <yarp/conf/filesystem.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Carriers.h>
 #include <yarp/os/Face.h>
@@ -1374,27 +1375,19 @@ void NetworkBase::unsetEnvironment(const std::string& key)
     yarp::os::impl::unsetenv(key.c_str());
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3.0
+
 std::string NetworkBase::getDirectorySeparator()
 {
-#if defined(_WIN32)
-    // note this may be wrong under cygwin
-    // should be ok for mingw
-    return "\\";
-#else
-    return "/";
-#endif
+    return std::string{yarp::conf::filesystem::preferred_separator};
 }
 
 std::string NetworkBase::getPathSeparator()
 {
-#if defined(_WIN32)
-    // note this may be wrong under cygwin
-    // should be ok for mingw
-    return ";";
-#else
-    return ":";
-#endif
+    return std::string{yarp::conf::filesystem::path_separator};
 }
+
+#endif // YARP_NO_DEPRECATED
 
 namespace {
 std::mutex& getNetworkMutex()
