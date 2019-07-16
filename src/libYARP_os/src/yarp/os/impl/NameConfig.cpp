@@ -11,6 +11,7 @@
 #include <yarp/os/impl/NameConfig.h>
 
 #include <yarp/conf/system.h>
+#include <yarp/conf/filesystem.h>
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/NetType.h>
@@ -90,7 +91,7 @@ std::string NameConfig::expandFilename(const char* fname)
     std::string root = ResourceFinder::getConfigHome();
     std::string conf;
     if (!root.empty()) {
-        conf = root + NetworkBase::getDirectorySeparator() + fname;
+        conf = root + std::string{yarp::conf::filesystem::preferred_separator} + fname;
     } else {
         conf = fname;
     }
