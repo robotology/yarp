@@ -52,11 +52,28 @@ extern "C" {
 
 #include <yarp/wire_rep_utils/WireImage.h>
 
+#include <map>
+
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::wire_rep_utils;
 
 #define dbg_printf if (0) printf
+
+static const std::map<int, J_COLOR_SPACE> yarpCode2Mjpeg { {VOCAB_PIXEL_MONO, JCS_GRAYSCALE},
+                                                           {VOCAB_PIXEL_MONO16, JCS_GRAYSCALE},
+                                                           {VOCAB_PIXEL_RGB , JCS_RGB},
+                                                           {VOCAB_PIXEL_RGBA , JCS_EXT_RGBA},
+                                                           {VOCAB_PIXEL_BGRA , JCS_EXT_BGRA},
+                                                           {VOCAB_PIXEL_BGR , JCS_EXT_BGR} };
+
+static const std::map<int, int> yarpCode2Channels { {VOCAB_PIXEL_MONO, 1},
+                                                    {VOCAB_PIXEL_MONO16, 2},
+                                                    {VOCAB_PIXEL_RGB , 3},
+                                                    {VOCAB_PIXEL_RGBA , 4},
+                                                    {VOCAB_PIXEL_BGRA , 4},
+                                                    {VOCAB_PIXEL_BGR , 3} };
+
 
 struct net_destination_mgr
 {
@@ -167,16 +184,8 @@ bool MjpegCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     jpeg_net_dest(&cinfo);
     cinfo.image_width = w;
     cinfo.image_height = h;
-
-    if (img->getPixelCode() != VOCAB_PIXEL_MONO) {
-        cinfo.in_color_space = JCS_RGB;
-        cinfo.input_components = 3;
-    }
-    else {
-        cinfo.in_color_space = JCS_GRAYSCALE;
-        cinfo.input_components = 1;
-    }
-
+    cinfo.in_color_space = yarpCode2Mjpeg.at(img->getPixelCode());
+    cinfo.input_components = yarpCode2Channels.at(img->getPixelCode());
     jpeg_set_defaults(&cinfo);
     //jpeg_set_quality(&cinfo, 85, TRUE);
     dbg_printf("Starting to compress...\n");
