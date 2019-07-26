@@ -30,6 +30,22 @@ namespace yarp
             typedef yarp::sig::PixelMono CellData;
             typedef yarp::math::Vec2D<int> XYCell;
             typedef yarp::math::Vec2D<double> XYWorld;
+
+            struct MapOrigin
+            {
+                double x;     ///< in meters
+                double y;     ///< in meters
+                double theta; ///< in radians
+            }; 
+
+            struct MapInfo
+            {
+                double    m_resolution;   ///< meters/pixel
+                MapOrigin m_origin;       ///< pose of the map frame w.r.t. the bottom left corner of the map image
+                size_t    m_width;        ///< cells
+                size_t    m_height;       ///< cells
+            };
+
             enum map_flags
             {
                 MAP_CELL_FREE=0,
@@ -39,24 +55,16 @@ namespace yarp
                 MAP_CELL_WALL = 4,
                 MAP_CELL_UNKNOWN =5
             };
+
             private:
                 //those two always have the same size
                 yarp::sig::ImageOf<CellData> m_map_occupancy;
                 yarp::sig::ImageOf<CellData> m_map_flags;
 
-                double m_resolution;    //m/pixel
+                MapInfo m_map_info;
                 double m_occupied_thresh;
                 double m_free_thresh;
-                size_t m_width;
-                size_t m_height;
                 YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) m_map_name;
-
-                struct
-                {
-                    double x;     //in meters
-                    double y;     //in meters
-                    double theta; //radians
-                } m_origin; //pose of the map frame w.r.t. the bottom left corner of the map image
 
                 //std::vector<map_link> links_to_other_maps;
 
