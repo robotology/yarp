@@ -1,8 +1,11 @@
-dist: xenial
+dist: bionic
 language: cpp
 
 cache:
   ccache: true
+  directories:
+    - $HOME/.ccache
+    - $HOME/Library/Caches/Homebrew
 
 os:
   - linux
@@ -45,17 +48,13 @@ env:
 # CMake/CTest variables
     - CTEST_OUTPUT_ON_FAILURE=1
     - CLICOLOR_FORCE=1
-# Port 10010 is used by docker-containerd on travis-xenial
-# See also https://travis-ci.community/t/port-10010-is-used-by-docker-containerd/3865
-    - YARP_PORT_RANGE=20000
 
 addons:
   apt:
     update: true
     sources:
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-xenial-8
-      - sourceline: 'ppa:robotology/travis'
+      #- ubuntu-toolchain-r-test
+      #- llvm-toolchain-bionic-8
       - sourceline: 'ppa:robotology/ppa'
     packages:
       # gcc
@@ -88,18 +87,18 @@ addons:
       - libgstreamer-plugins-base1.0-dev
       - libpng-dev
       - libv4l-dev
-      #- libavcodec-dev
-      #- libavdevice-dev
-      #- libavformat-dev
-      #- libavutil-dev
-      #- portaudio19-dev
+      - libavcodec-dev
+      - libavdevice-dev
+      - libavformat-dev
+      - libavutil-dev
+      - portaudio19-dev
       # Bindings
       - swig3.0
       # C# bindings
       - mono-mcs
       # Lua bindings
-      - liblua5.1-0-dev
-      - lua5.1
+      - liblua5.3-dev
+      - lua5.3
       # TCL/TK bindings
       - tcl-dev
       - tk-dev
@@ -116,17 +115,21 @@ addons:
       - perl
   homebrew:
     update: true
+    taps:
+      - robotology/homebrew-formulae
     packages:
-    - ace
-    - sqlite
-    - tinyxml
-    - libedit
-    - qt5
-    - opencv@3
-    - eigen
-    - graphviz
-    - ccache
-    - libpng
+      - ace
+      - sqlite
+      - tinyxml
+      - libedit
+      - qt5
+      - opencv@3
+      - eigen
+      - graphviz
+      - ccache
+      - libpng
+      # Robotology dependencies
+      - ycm
 
 matrix:
   exclude:
@@ -135,10 +138,15 @@ matrix:
   include:
     # Static check only.
     - stage: check
+      language: generic
       os: linux
-      compiler: gcc
+      addons:
+        apt:
+          packages:
+            - perl
       before_install: skip
-      script: (cd build; ctest --build . -C ${TRAVIS_BUILD_TYPE} -R misc)
+      before_script: skip
+      script: tests/misc/check_license.pl
       after_success: skip
 
     # No ACE build (linux, gcc)
@@ -331,7 +339,7 @@ matrix:
 #      addons:
 #         apt:
 #           sources:
-#             - sourceline: 'deb http://packages.ros.org/ros/ubuntu xenial main'
+#             - sourceline: 'deb http://packages.ros.org/ros/ubuntu bionic main'
 #               key_url: 'http://packages.ros.org/ros.key'
 #           packages:
 #             - ros-lunar-desktop-full
@@ -346,7 +354,7 @@ matrix:
 #      addons:
 #         apt:
 #           sources:
-#             - sourceline: 'deb http://packages.ros.org/ros/ubuntu xenial main'
+#             - sourceline: 'deb http://packages.ros.org/ros/ubuntu bionic main'
 #               key_url: 'http://packages.ros.org/ros.key'
 #           packages:
 #             - ros-lunar-desktop-full
@@ -371,17 +379,14 @@ notifications:
 
 
 before_install:
-  # Stop docker service
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo service docker stop; fi
-
   # Enable ccache on osx
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export PATH="/usr/local/opt/ccache/libexec:$PATH"; fi
 
   # Use ccache also for clang and clang++ on linux
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang++; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang-8; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo ln -s ../../bin/ccache /usr/lib/ccache/clang++-8; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ln -s /usr/bin/ccache ${HOME}/bin/clang; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ln -s /usr/bin/ccache ${HOME}/bin/clang++; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ln -s /usr/bin/ccache ${HOME}/bin/clang-8; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ln -s /usr/bin/ccache ${HOME}/bin/clang++-8; fi
 
   # Force gcc-8
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "gcc" ]; then export CC=gcc-8; export CXX=g++-8; fi; fi
@@ -390,7 +395,7 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then if [ "$TRAVIS_COMPILER" == "clang" ]; then export CC=clang-8; export CXX=clang++-8; fi; fi
 
   ## Remove default clang from path
-  #- if [ "$TRAVIS_OS_NAME" == "linux" ]; then export PATH=`echo $PATH | sed -e 's/\/usr\/local\/clang-3.5.0\/bin://'`; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then export PATH=$(echo $PATH | sed -e 's/\/usr\/local\/clang[^:]\+://'); fi
 
   # Print some more system information after installing all build tools
   - echo "-------------------- BEGIN SYSTEM INFORMATION --------------------"
@@ -399,7 +404,7 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then system_profiler SPSoftwareDataType; fi
   - env
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then cat /etc/apt/sources.list; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ls /etc/apt/sources.list.d; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ls -la --color=always /etc/apt/sources.list.d; fi
   - which cmake
   - cmake --version
   - which $CC
@@ -409,7 +414,8 @@ before_install:
   - which ccache
   - ccache --version
   - ccache -s
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ls -la /usr/lib/ccache; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ls -la --color=always /usr/lib/ccache; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ls -la --color=always ${HOME}/bin; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then which swig3.0; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then swig3.0 -version; fi
   - which javac
@@ -454,9 +460,9 @@ before_script:
   # These devices link to glib/gobject causing some memory leak on valgrind, therefore they are not enabled on valgrind builds
   - if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpcar_h264:BOOL=ON"; fi; fi
   - if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_usbCamera=ON -DENABLE_yarpmod_usbCameraRaw=ON"; fi; fi
-  #- if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_ffmpeg_grabber=ON -DENABLE_yarpmod_ffmpeg_writer=ON"; fi; fi
-  - if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_portaudio=ON -DENABLE_yarpmod_portaudioPlayer=ON -DENABLE_yarpmod_portaudioRecorder=ON"; fi; fi
-  #- if ! $TRAVIS_WITH_VALGRIND; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_opencv_grabber=ON"; fi
+  - if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_ffmpeg_grabber=ON -DENABLE_yarpmod_ffmpeg_writer=ON"; fi; fi
+  #- if ! $TRAVIS_WITH_VALGRIND; then if [ "$TRAVIS_OS_NAME" == "linux" ]; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_portaudio=ON -DENABLE_yarpmod_portaudioPlayer=ON -DENABLE_yarpmod_portaudioRecorder=ON"; fi; fi
+  - if ! $TRAVIS_WITH_VALGRIND; then export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_opencv_grabber=ON"; fi
 
   # Build rplidar2 on linux
   # FIXME gcc only, see https://github.com/robotology/yarp/issues/1984
