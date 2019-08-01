@@ -104,10 +104,10 @@ void ClusterWidget::init()
     for (auto& node:cluster.nodes)
     {
         addRow(node.name, node.displayValue, node.user, node.address, node.onOff, node.log, i);
+        i++;
         if (cluster.nsNode == node.name)
             continue;
         l.push_back(node.name.c_str());
-        i++;
     }
 
     // populate the execute combo box
