@@ -1,23 +1,37 @@
-/scripts/debian/                export-ignore
-/src/devices/dimax_u2c/blob/    export-ignore
+.appveyor.yml                   export-ignore
+.clang-format                   export-ignore
+.coveralls.yml                  export-ignore
 .gitattributes                  export-ignore
+.github/                        export-ignore
 .gitignore                      export-ignore
 .mailmap                        export-ignore
-.appveyor.yml                   export-ignore
-.coveralls.yml                  export-ignore
 .travis.yml                     export-ignore
 
-*.c                             whitespace=tab-in-indent
-*.h                             whitespace=tab-in-indent
-*.cpp                           whitespace=tab-in-indent
-*.hpp                           whitespace=tab-in-indent
-*.cc                            whitespace=tab-in-indent
-*.txt                           whitespace=tab-in-indent
-*.cmake                         whitespace=tab-in-indent
-*.qml                           whitespace=tab-in-indent
-*.inl                           whitespace=tab-in-indent
-*.dox                           whitespace=tab-in-indent
-*.xml                           whitespace=tab-in-indent
-*.inl                           whitespace=tab-in-indent
-*.thrift                        whitespace=tab-in-indent
-*.msg                           whitespace=tab-in-indent
+*.txt                           whitespace=trailing-space,space-before-tab,tab-in-indent
+*.md                            whitespace=trailing-space,space-before-tab,tab-in-indent
+*.dox                           whitespace=trailing-space,space-before-tab,tab-in-indent
+*.qml                           whitespace=trailing-space,space-before-tab,tab-in-indent
+*.msg                           whitespace=trailing-space,space-before-tab,tab-in-indent
+
+*.c                             whitespace=trailing-space,space-before-tab,tab-in-indent,tabwidth=4
+*.h                             whitespace=trailing-space,space-before-tab,tab-in-indent,tabwidth=4
+*.cpp                           whitespace=trailing-space,space-before-tab,tab-in-indent,tabwidth=4
+*.hpp                           whitespace=trailing-space,space-before-tab,tab-in-indent,tabwidth=4
+*.cc                            whitespace=trailing-space,space-before-tab,tab-in-indent,tabwidth=4
+*.thrift                        whitespace=trailing-space,space-before-tab,tab-in-indent,tabwidth=4
+*.xml                           whitespace=trailing-space,space-before-tab,tab-in-indent,tabwidth=4
+*.qrc                           whitespace=trailing-space,space-before-tab,tab-in-indent,tabwidth=4
+
+
+CMakeLists.txt                  whitespace=trailing-space,space-before-tab,tab-in-indent,tabwidth=2
+*.cmake                         whitespace=trailing-space,space-before-tab,tab-in-indent,tabwidth=2
+
+*.vcproj                        text eol=crlf
+*.dsp                           text eol=crlf
+*.dsw                           text eol=crlf
+
+*.png                           binary
+*.jpg                           binary
+*.gif                           binary
+*.tiff                          binary
+*.ico                           binary
