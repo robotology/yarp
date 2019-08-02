@@ -69,7 +69,7 @@ PortCore::PortCore() :
         m_listening(false),
         m_running(false),
         m_starting(false),
-        closing(false),
+        m_closing(false),
         finished(false),
         finishing(false),
         waitBeforeSend(true),
@@ -124,7 +124,7 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     // calling close().
     yAssert(m_listening == false);
     yAssert(m_running == false);
-    yAssert(closing == false);
+    yAssert(m_closing == false);
     yAssert(finished == false);
     yAssert(m_face == nullptr);
 
@@ -216,7 +216,7 @@ void PortCore::run()
     // start() has been called.
     yAssert(m_listening == true);
     yAssert(m_running == false);
-    yAssert(closing == false);
+    yAssert(m_closing == false);
     yAssert(finished == false);
     yAssert(m_starting == true);
 
@@ -252,7 +252,7 @@ void PortCore::run()
         }
 
         // Check whether we should shut down
-        shouldStop |= closing;
+        shouldStop |= m_closing;
 
         // Increment a global count of connection events
         events++;
@@ -329,7 +329,7 @@ bool PortCore::start()
     yAssert(m_running == false);
     yAssert(m_starting == false);
     yAssert(finished == false);
-    yAssert(closing == false);
+    yAssert(m_closing == false);
     m_starting = true;
 
     // Start the server thread.
@@ -491,7 +491,7 @@ void PortCore::closeMain()
     if (stopRunning) {
         // Let the server thread know we no longer need its services.
         m_stateSemaphore.wait();
-        closing = true;
+        m_closing = true;
         m_stateSemaphore.post();
 
         // Wake up the server thread the only way we can, by sending
@@ -517,7 +517,7 @@ void PortCore::closeMain()
         // Reset some state flags.
         m_stateSemaphore.wait();
         finished = false;
-        closing = false;
+        m_closing = false;
         m_running = false;
         m_stateSemaphore.post();
     }
@@ -559,7 +559,7 @@ void PortCore::closeMain()
     yAssert(m_listening == false);
     yAssert(m_running == false);
     yAssert(m_starting == false);
-    yAssert(closing == false);
+    yAssert(m_closing == false);
     yAssert(finished == false);
     yAssert(finishing == false);
     yAssert(m_face == nullptr);

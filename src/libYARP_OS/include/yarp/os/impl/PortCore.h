@@ -518,7 +518,7 @@ private:
     bool m_listening; ///< is the port server listening on the network?
     bool m_running;   ///< is the port server thread running?
     bool m_starting;  ///< is the port in its startup phase?
-    bool closing;   ///< is the port in its closing phase?
+    bool m_closing;   ///< is the port in its closing phase?
     bool finished;  ///< is the port server thread finished running?
     bool finishing; ///< is the port server thread trying to finish?
     bool waitBeforeSend; ///< should we wait for all current writes to complete before writing more?
