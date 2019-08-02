@@ -528,7 +528,7 @@ private:
     bool m_interrupted;    ///< is the port interrupted?
     bool m_manual;    ///< is the port operating without a server?
     int m_events;     ///< count of events that have occurred on the port
-    int connectionListeners;  ///< how many threads need notification of connection changes
+    int m_connectionListeners;  ///< how many threads need notification of connection changes
     int inputCount; ///< how many input connections do we have
     int outputCount;///< how many output connections do we have
     int dataOutputCount; ///< how many regular data output connections do we have

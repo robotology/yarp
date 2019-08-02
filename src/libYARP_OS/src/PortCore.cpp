@@ -79,7 +79,7 @@ PortCore::PortCore() :
         m_interrupted(false),
         m_manual(false),
         m_events(0),
-        connectionListeners(0),
+        m_connectionListeners(0),
         inputCount(0),
         outputCount(0),
         dataOutputCount(0),
@@ -284,10 +284,10 @@ void PortCore::run()
         // This should be using a condition variable once we have them,
         // this is not solid TODO
         m_stateSemaphore.wait();
-        for (int i = 0; i < connectionListeners; i++) {
+        for (int i = 0; i < m_connectionListeners; i++) {
             m_connectionChangeSemaphore.post();
         }
-        connectionListeners = 0;
+        m_connectionListeners = 0;
         m_stateSemaphore.post();
     }
 
@@ -295,10 +295,10 @@ void PortCore::run()
 
     // The server thread is shutting down.
     m_stateSemaphore.wait();
-    for (int i = 0; i < connectionListeners; i++) {
+    for (int i = 0; i < m_connectionListeners; i++) {
         m_connectionChangeSemaphore.post();
     }
-    connectionListeners = 0;
+    m_connectionListeners = 0;
     m_finished = true;
     m_stateSemaphore.post();
 }
@@ -871,7 +871,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool* except)
                         }
                     }
                     if (cont) {
-                        connectionListeners++;
+                        m_connectionListeners++;
                     }
                     m_stateSemaphore.post();
                     if (cont) {
