@@ -72,7 +72,7 @@ PortCore::PortCore() :
         m_closing(false),
         m_finished(false),
         m_finishing(false),
-        waitBeforeSend(true),
+        m_waitBeforeSend(true),
         waitAfterSend(true),
         controlRegistration(true),
         interruptible(true),
@@ -1392,7 +1392,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
                                    (void*)packet,
                                    envelopeString,
                                    waiter,
-                                   waitBeforeSend,
+                                   m_waitBeforeSend,
                                    &gotReplyOne);
             gotReply = gotReply || gotReplyOne;
             YMSG(("------- -- send\n"));
