@@ -537,7 +537,7 @@ private:
     bool m_logNeeded; ///< port needs to monitor message content
     PortCorePackets m_packets; ///< a pool for tracking messages currently being sent
     std::string m_envelope;///< user-defined wrapping data
-    float timeout;  ///< a timeout to apply to all network operations
+    float m_timeout;  ///< a timeout to apply to all network operations
     int counter;    ///< port-unique ids for connections
     yarp::os::Property *prop;  ///< optional unstructured properties associated with port
     yarp::os::Contactable *contactable;  ///< user-facing object that contains this PortCore

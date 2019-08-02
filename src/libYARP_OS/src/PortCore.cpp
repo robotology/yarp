@@ -86,7 +86,7 @@ PortCore::PortCore() :
         m_flags(PORTCORE_IS_INPUT | PORTCORE_IS_OUTPUT),
         m_verbosity(1),
         m_logNeeded(false),
-        timeout(-1),
+        m_timeout(-1),
         counter(1),
         prop(nullptr),
         contactable(nullptr),
@@ -133,8 +133,8 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     // this as getting a server socket.
     this->m_address = address;
     setName(address.getRegName());
-    if (timeout > 0) {
-        this->m_address.setTimeout(timeout);
+    if (m_timeout > 0) {
+        this->m_address.setTimeout(m_timeout);
     }
     m_face = Carriers::listen(this->m_address);
 
@@ -246,8 +246,8 @@ void PortCore::run()
         if (ip != nullptr) {
             ip->attachPort(contactable);
             YARP_DEBUG(m_log, "PortCore received something");
-            if (timeout > 0) {
-                ip->setTimeout(timeout);
+            if (m_timeout > 0) {
+                ip->setTimeout(m_timeout);
             }
         }
 
@@ -992,14 +992,14 @@ bool PortCore::addOutput(const std::string& dest,
 
     // Ok! We can go ahead and make a connection.
     OutputProtocol* op = nullptr;
-    if (timeout > 0) {
-        address.setTimeout(timeout);
+    if (m_timeout > 0) {
+        address.setTimeout(m_timeout);
     }
     op = Carriers::connect(address);
     if (op != nullptr) {
         op->attachPort(contactable);
-        if (timeout > 0) {
-            op->setTimeout(timeout);
+        if (m_timeout > 0) {
+            op->setTimeout(m_timeout);
         }
 
         bool ok = op->open(r);
@@ -2724,7 +2724,7 @@ bool PortCore::isInterrupted() const
 
 void PortCore::setTimeout(float timeout)
 {
-    this->timeout = timeout;
+    this->m_timeout = timeout;
 }
 
 void PortCore::setVerbosity(int level)
