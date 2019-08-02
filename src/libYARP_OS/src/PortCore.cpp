@@ -2240,9 +2240,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         reader.requestDrop(); // ROS likes to close down.
     } break;
     case PortCoreCommand::Prop: {
+        PortCorePropertyAction action = parsePropertyAction(cmd.get(1).asVocab());
         // Set/get arbitrary properties on a port.
-        switch (cmd.get(1).asVocab()) {
-        case yarp::os::createVocab('g', 'e', 't'): {
+        switch (action) {
+        case PortCorePropertyAction::Get: {
             Property* p = acquireProperties(false);
             if (p != nullptr) {
                 if (!cmd.get(2).isNull()) {
@@ -2333,7 +2334,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             }
             releaseProperties(p);
         } break;
-        case yarp::os::createVocab('s', 'e', 't'): {
+        case PortCorePropertyAction::Set: {
             Property* p = acquireProperties(false);
             bool bOk = true;
             if (p != nullptr) {
@@ -2468,7 +2469,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             releaseProperties(p);
             result.addVocab((bOk) ? Vocab::encode("ok") : Vocab::encode("fail"));
         } break;
-        default:
+        case PortCorePropertyAction::Error:
             result.addVocab(Vocab::encode("fail"));
             result.addString("property action not known");
             break;
