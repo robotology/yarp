@@ -526,7 +526,7 @@ private:
     bool m_controlRegistration;  ///< should the port unregister its name when shutting down?
     bool m_interruptible;  ///< is the port in an interruptible state?
     bool m_interrupted;    ///< is the port interrupted?
-    bool manual;    ///< is the port operating without a server?
+    bool m_manual;    ///< is the port operating without a server?
     int events;     ///< count of events that have occurred on the port
     int connectionListeners;  ///< how many threads need notification of connection changes
     int inputCount; ///< how many input connections do we have

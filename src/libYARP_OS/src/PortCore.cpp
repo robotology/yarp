@@ -77,7 +77,7 @@ PortCore::PortCore() :
         m_controlRegistration(true),
         m_interruptible(true),
         m_interrupted(false),
-        manual(false),
+        m_manual(false),
         events(0),
         connectionListeners(0),
         inputCount(0),
@@ -358,7 +358,7 @@ bool PortCore::manualStart(const char* sourceName)
     // nothing.  We set the port's name to something fake, and
     // act like nothing is wrong.
     m_interruptible = false;
-    manual = true;
+    m_manual = true;
     setName(sourceName);
     return true;
 }
@@ -410,7 +410,7 @@ void PortCore::closeMain()
     m_stateSemaphore.wait();
 
     // We may not have anything to do.
-    if (m_finishing || !(m_running || manual)) {
+    if (m_finishing || !(m_running || m_manual)) {
         YTRACE("PortCore::closeMainNothingToDo");
         m_stateSemaphore.post();
         return;
@@ -496,7 +496,7 @@ void PortCore::closeMain()
 
         // Wake up the server thread the only way we can, by sending
         // a message to it.  Then join it, it is done.
-        if (!manual) {
+        if (!m_manual) {
             OutputProtocol* op = m_face->write(m_address);
             if (op != nullptr) {
                 op->close();
@@ -846,7 +846,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool* except)
     if (needReap) {
         YARP_DEBUG(m_log, "one or more connections need prodding to die");
 
-        if (manual) {
+        if (m_manual) {
             // No server thread, no problems.
             reapUnits();
         } else {
@@ -2714,7 +2714,7 @@ bool PortCore::isListening() const
 
 bool PortCore::isManual() const
 {
-    return manual;
+    return m_manual;
 }
 
 bool PortCore::isInterrupted() const
