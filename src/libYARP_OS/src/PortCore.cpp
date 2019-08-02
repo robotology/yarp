@@ -76,7 +76,7 @@ PortCore::PortCore() :
         m_waitAfterSend(true),
         m_controlRegistration(true),
         m_interruptible(true),
-        interrupted(false),
+        m_interrupted(false),
         manual(false),
         events(0),
         connectionListeners(0),
@@ -367,7 +367,7 @@ bool PortCore::manualStart(const char* sourceName)
 void PortCore::resume()
 {
     // We are no longer interrupted.
-    interrupted = false;
+    m_interrupted = false;
 }
 
 void PortCore::interrupt()
@@ -378,7 +378,7 @@ void PortCore::interrupt()
     }
 
     // Ignore any future incoming data
-    interrupted = true;
+    m_interrupted = true;
 
     // What about data that is already coming in?
     // If interruptible is not currently set, no worries, the user
@@ -1254,7 +1254,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void* id, OutputStream* os)
     // It is safe to pick up the address of the reader since this is
     // constant over the lifetime of the input threads.
 
-    if (this->m_reader != nullptr && !interrupted) {
+    if (this->m_reader != nullptr && !m_interrupted) {
         m_interruptible = false; // No mutexing; user of interrupt() has to be careful.
 
         bool haveOutputs = (outputCount != 0); // No mutexing, but failure modes are benign.
@@ -1320,7 +1320,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
                           PortReader* reader,
                           const PortWriter* callback)
 {
-    if (interrupted || m_finishing) {
+    if (m_interrupted || m_finishing) {
         return false;
     }
 
@@ -2719,7 +2719,7 @@ bool PortCore::isManual() const
 
 bool PortCore::isInterrupted() const
 {
-    return interrupted;
+    return m_interrupted;
 }
 
 void PortCore::setTimeout(float timeout)
