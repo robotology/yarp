@@ -87,7 +87,7 @@ PortCore::PortCore() :
         m_verbosity(1),
         m_logNeeded(false),
         m_timeout(-1),
-        counter(1),
+        m_counter(1),
         prop(nullptr),
         contactable(nullptr),
         mutex(nullptr),
@@ -2679,10 +2679,10 @@ std::string PortCore::getName()
 
 int PortCore::getNextIndex()
 {
-    int result = counter;
-    counter++;
-    if (counter < 0) {
-        counter = 1;
+    int result = m_counter;
+    m_counter++;
+    if (m_counter < 0) {
+        m_counter = 1;
     }
     return result;
 }
