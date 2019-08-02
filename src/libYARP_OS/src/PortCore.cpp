@@ -70,7 +70,7 @@ PortCore::PortCore() :
         m_running(false),
         m_starting(false),
         m_closing(false),
-        finished(false),
+        m_finished(false),
         finishing(false),
         waitBeforeSend(true),
         waitAfterSend(true),
@@ -125,7 +125,7 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     yAssert(m_listening == false);
     yAssert(m_running == false);
     yAssert(m_closing == false);
-    yAssert(finished == false);
+    yAssert(m_finished == false);
     yAssert(m_face == nullptr);
 
     // Try to put the port on the network, using the user-supplied
@@ -217,7 +217,7 @@ void PortCore::run()
     yAssert(m_listening == true);
     yAssert(m_running == false);
     yAssert(m_closing == false);
-    yAssert(finished == false);
+    yAssert(m_finished == false);
     yAssert(m_starting == true);
 
     // Enter running phase
@@ -299,7 +299,7 @@ void PortCore::run()
         m_connectionChangeSemaphore.post();
     }
     connectionListeners = 0;
-    finished = true;
+    m_finished = true;
     m_stateSemaphore.post();
 }
 
@@ -328,7 +328,7 @@ bool PortCore::start()
     yAssert(m_listening == true);
     yAssert(m_running == false);
     yAssert(m_starting == false);
-    yAssert(finished == false);
+    yAssert(m_finished == false);
     yAssert(m_closing == false);
     m_starting = true;
 
@@ -507,7 +507,7 @@ void PortCore::closeMain()
 
         // We should be finished now.
         m_stateSemaphore.wait();
-        yAssert(finished == true);
+        yAssert(m_finished == true);
         m_stateSemaphore.post();
 
         // Clean up our connection list. We couldn't do this earlier,
@@ -516,7 +516,7 @@ void PortCore::closeMain()
 
         // Reset some state flags.
         m_stateSemaphore.wait();
-        finished = false;
+        m_finished = false;
         m_closing = false;
         m_running = false;
         m_stateSemaphore.post();
@@ -560,7 +560,7 @@ void PortCore::closeMain()
     yAssert(m_running == false);
     yAssert(m_starting == false);
     yAssert(m_closing == false);
-    yAssert(finished == false);
+    yAssert(m_finished == false);
     yAssert(finishing == false);
     yAssert(m_face == nullptr);
 }
@@ -581,7 +581,7 @@ void PortCore::closeUnits()
     // Empty the PortCore#units list. This is only possible when
     // the server thread is finished.
     m_stateSemaphore.wait();
-    yAssert(finished == true);
+    yAssert(m_finished == true);
     m_stateSemaphore.post();
 
     // In the "finished" phase, nobody else touches the units,
@@ -608,7 +608,7 @@ void PortCore::reapUnits()
     // Connections that should be shut down get tagged as "doomed"
     // but aren't otherwise touched until it is safe to do so.
     m_stateSemaphore.wait();
-    if (!finished) {
+    if (!m_finished) {
         for (auto unit : m_units) {
             if ((unit != nullptr) && unit->isDoomed() && !unit->isFinished()) {
                 std::string s = unit->getRoute().toString();
@@ -645,7 +645,7 @@ void PortCore::cleanUnits(bool blocking)
     int updatedOutputCount = 0;
     int updatedDataOutputCount = 0;
     YARP_DEBUG(m_log, "/ routine check of connections to this port begins");
-    if (!finished) {
+    if (!m_finished) {
 
         // First, we delete and null out any defunct entries in the list.
         for (auto& i : m_units) {
@@ -742,7 +742,7 @@ void PortCore::addOutput(OutputProtocol* op)
 
     yAssert(op != nullptr);
     m_stateSemaphore.wait();
-    if (!finished) {
+    if (!m_finished) {
         PortCoreUnit* unit = new PortCoreOutputUnit(*this, getNextIndex(), op);
         yAssert(unit != nullptr);
         unit->start();
@@ -756,7 +756,7 @@ bool PortCore::isUnit(const Route& route, int index)
 {
     // Check if a connection with a specified route (and optional ID) is present
     bool needReap = false;
-    if (!finished) {
+    if (!m_finished) {
         for (auto unit : m_units) {
             if (unit != nullptr) {
                 Route alt = unit->getRoute();
@@ -804,7 +804,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool* except)
     std::vector<int> removals;
     m_stateSemaphore.wait();
     bool needReap = false;
-    if (!finished) {
+    if (!m_finished) {
         for (auto unit : m_units) {
             if (unit != nullptr) {
                 Route alt = unit->getRoute();
@@ -1034,7 +1034,7 @@ bool PortCore::addOutput(const std::string& dest,
         op->rename(r);
         InputProtocol* ip = &(op->getInput());
         m_stateSemaphore.wait();
-        if (!finished) {
+        if (!m_finished) {
             PortCoreUnit* unit = new PortCoreInputUnit(*this,
                                                        getNextIndex(),
                                                        ip,
@@ -1352,7 +1352,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
     m_stateSemaphore.wait();
 
     // If the port is shutting down, abort.
-    if (finished) {
+    if (m_finished) {
         m_stateSemaphore.post();
         return false;
     }
@@ -1447,7 +1447,7 @@ bool PortCore::isWriting()
 
     // Check if any port is currently writing.  TODO optimize
     // this query by counting down with notifyCompletion().
-    if (!finished) {
+    if (!m_finished) {
         for (auto unit : m_units) {
             if ((unit != nullptr) && !unit->isFinished() && unit->isBusy()) {
                 writing = true;
