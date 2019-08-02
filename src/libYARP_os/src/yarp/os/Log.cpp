@@ -38,34 +38,25 @@
 
 #define YARP_MAX_LOG_MSG_SIZE 1024
 
-#if !defined(_WIN32)
+#define RED     (colored_output ? "\033[01;31m" : "")
+#define GREEN   (colored_output ? "\033[01;32m" : "")
+#define YELLOW  (colored_output ? "\033[01;33m" : "")
+#define BLUE    (colored_output ? "\033[01;34m" : "")
+#define MAGENTA (colored_output ? "\033[01;35m" : "")
+#define CYAN    (colored_output ? "\033[01;36m" : "")
+#define WHITE   (colored_output ? "\033[01;37m" : "")
+#define RED_BG  (colored_output ? "\033[01;41m" : "")
+#define CLEAR   (colored_output ? "\033[00m" : "")
 
-#    define RED     (colored_output ? "\033[01;31m" : "")
-#    define GREEN   (colored_output ? "\033[01;32m" : "")
-#    define YELLOW  (colored_output ? "\033[01;33m" : "")
-#    define BLUE    (colored_output ? "\033[01;34m" : "")
-#    define MAGENTA (colored_output ? "\033[01;35m" : "")
-#    define CYAN    (colored_output ? "\033[01;36m" : "")
-#    define WHITE   (colored_output ? "\033[01;37m" : "")
-#    define RED_BG  (colored_output ? "\033[01;41m" : "")
-#    define CLEAR   (colored_output ? "\033[00m" : "")
-
-#else
-
-// TODO colored and verbose_output for WIN32
-#    define RED     ""
-#    define GREEN   ""
-#    define YELLOW  ""
-#    define BLUE    ""
-#    define MAGENTA ""
-#    define CYAN    ""
-#    define WHITE   ""
-#    define RED_BG  ""
-#    define CLEAR   ""
-
+#ifdef YARP_HAS_WIN_VT_SUPPORT
+extern "C" void yarp_logger_enable_vt_colors(void);
 #endif
 
+#if defined(_WIN32) && !defined(YARP_HAS_WIN_VT_SUPPORT)
+bool yarp::os::impl::LogImpl::colored_output(false);
+#else
 bool yarp::os::impl::LogImpl::colored_output((getenv("YARP_COLORED_OUTPUT") != nullptr)     &&  (strcmp(yarp::os::getenv("YARP_COLORED_OUTPUT"), "1") == 0));
+#endif
 bool yarp::os::impl::LogImpl::verbose_output((getenv("YARP_VERBOSE_OUTPUT") != nullptr)     &&  (strcmp(yarp::os::getenv("YARP_VERBOSE_OUTPUT"), "1") == 0));
 bool yarp::os::impl::LogImpl::trace_output((getenv("YARP_TRACE_ENABLE") != nullptr)         &&  (strcmp(yarp::os::getenv("YARP_TRACE_ENABLE"), "1") == 0));
 bool yarp::os::impl::LogImpl::debug_output((getenv("YARP_DEBUG_ENABLE") == nullptr)         || !(strcmp(yarp::os::getenv("YARP_DEBUG_ENABLE"), "0") == 0));
@@ -219,11 +210,17 @@ yarp::os::Log::Log(const char* file,
                    const char* func) :
         mPriv(new yarp::os::impl::LogImpl(file, line, func))
 {
+#ifdef YARP_HAS_WIN_VT_SUPPORT
+    yarp_logger_enable_vt_colors();
+#endif
 }
 
 yarp::os::Log::Log() :
         mPriv(new yarp::os::impl::LogImpl(nullptr, 0, nullptr))
 {
+#ifdef YARP_HAS_WIN_VT_SUPPORT
+    yarp_logger_enable_vt_colors();
+#endif
 }
 
 yarp::os::Log::~Log()
