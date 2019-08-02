@@ -288,7 +288,7 @@ public:
     /**
      * Configure the port to meet certain restrictions in behavior.
      */
-    void setFlags(int flags)
+    void setFlags(unsigned int flags)
     {
         this->m_flags = flags;
     }
@@ -301,7 +301,7 @@ public:
     /**
      * Check current configuration of port.
      */
-    int getFlags()
+    unsigned int getFlags()
     {
         return m_flags;
     }
@@ -533,7 +533,7 @@ private:
     int m_inputCount; ///< how many input connections do we have
     int m_outputCount;///< how many output connections do we have
     int m_dataOutputCount; ///< how many regular data output connections do we have
-    int m_flags;      ///< binary flags encoding restrictions on port
+    unsigned int m_flags;      ///< binary flags encoding restrictions on port
     int m_verbosity;  ///< threshold on what warnings or debug messages are shown
     bool m_logNeeded; ///< port needs to monitor message content
     PortCorePackets m_packets; ///< a pool for tracking messages currently being sent

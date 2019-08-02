@@ -948,7 +948,7 @@ bool PortCore::addOutput(const std::string& dest,
     bool allowed = true;
     std::string err;
     std::string append;
-    int f = getFlags();
+    unsigned int f = getFlags();
     bool allow_output = (f & PORTCORE_IS_OUTPUT) != 0;
     bool rpc = (f & PORTCORE_IS_RPC) != 0;
     Name name(r.getCarrierName() + std::string("://test"));
@@ -2175,7 +2175,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             platform_prop.put("os", pinfo.name);
                             platform_prop.put("hostname", m_address.getHost());
 
-                            int f = getFlags();
+                            unsigned int f = getFlags();
                             bool is_input = (f & PORTCORE_IS_INPUT) != 0;
                             bool is_output = (f & PORTCORE_IS_OUTPUT) != 0;
                             bool is_rpc = (f & PORTCORE_IS_RPC) != 0;
