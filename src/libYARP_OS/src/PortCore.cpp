@@ -58,7 +58,7 @@ using namespace yarp;
 
 PortCore::PortCore() :
         m_stateSemaphore(1),
-        packetMutex(),
+        m_packetMutex(),
         connectionChange(1),
         log("port", Logger::get()),
         face(nullptr),
@@ -702,10 +702,10 @@ void PortCore::cleanUnits(bool blocking)
     // Finalize the connection counts.
     dataOutputCount = updatedDataOutputCount;
     m_stateSemaphore.post();
-    packetMutex.lock();
+    m_packetMutex.lock();
     inputCount = updatedInputCount;
     outputCount = updatedOutputCount;
-    packetMutex.unlock();
+    m_packetMutex.unlock();
     YARP_DEBUG(log, "\\ routine check of connections to this port ends");
 }
 
@@ -1360,11 +1360,11 @@ bool PortCore::sendHelper(const PortWriter& writer,
     YMSG(("------- send in\n"));
     // Prepare a "packet" for tracking a single message which
     // may travel by multiple outputs.
-    packetMutex.lock();
+    m_packetMutex.lock();
     PortCorePacket* packet = packets.getFreePacket();
     yAssert(packet != nullptr);
     packet->setContent(&writer, false, callback);
-    packetMutex.unlock();
+    m_packetMutex.unlock();
 
     // Scan connections, placing message everyhere we can.
     for (auto unit : m_units) {
@@ -1380,9 +1380,9 @@ bool PortCore::sendHelper(const PortWriter& writer,
             }
             bool waiter = waitAfterSend || (mode == PORTCORE_SEND_LOG);
             YMSG(("------- -- inc\n"));
-            packetMutex.lock();
+            m_packetMutex.lock();
             packet->inc(); // One more connection carrying message.
-            packetMutex.unlock();
+            m_packetMutex.unlock();
             YMSG(("------- -- presend\n"));
             bool gotReplyOne = false;
             // Send the message off on this connection.
@@ -1398,10 +1398,10 @@ bool PortCore::sendHelper(const PortWriter& writer,
             YMSG(("------- -- send\n"));
             if (out != nullptr) {
                 // We got back a report of a message already sent.
-                packetMutex.lock();
+                m_packetMutex.lock();
                 ((PortCorePacket*)out)->dec(); // Message on one fewer connections.
                 packets.checkPacket((PortCorePacket*)out);
-                packetMutex.unlock();
+                m_packetMutex.unlock();
             }
             if (waiter) {
                 if (unit->isFinished()) {
@@ -1412,7 +1412,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
         }
     }
     YMSG(("------- pack check\n"));
-    packetMutex.lock();
+    m_packetMutex.lock();
 
     // We no longer concern ourselves with the message.
     // It may or may not be traveling on some connections.
@@ -1420,7 +1420,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
     packet->dec();
 
     packets.checkPacket(packet);
-    packetMutex.unlock();
+    m_packetMutex.unlock();
     YMSG(("------- packed\n"));
     YMSG(("------- send out\n"));
     if (mode == PORTCORE_SEND_LOG) {
@@ -1464,18 +1464,18 @@ bool PortCore::isWriting()
 int PortCore::getInputCount()
 {
     cleanUnits(false);
-    packetMutex.lock();
+    m_packetMutex.lock();
     int result = inputCount;
-    packetMutex.unlock();
+    m_packetMutex.unlock();
     return result;
 }
 
 int PortCore::getOutputCount()
 {
     cleanUnits(false);
-    packetMutex.lock();
+    m_packetMutex.lock();
     int result = outputCount;
-    packetMutex.unlock();
+    m_packetMutex.unlock();
     return result;
 }
 
@@ -1483,12 +1483,12 @@ int PortCore::getOutputCount()
 void PortCore::notifyCompletion(void* tracker)
 {
     YMSG(("starting notifyCompletion\n"));
-    packetMutex.lock();
+    m_packetMutex.lock();
     if (tracker != nullptr) {
         ((PortCorePacket*)tracker)->dec();
         packets.checkPacket((PortCorePacket*)tracker);
     }
-    packetMutex.unlock();
+    m_packetMutex.unlock();
     YMSG(("stopping notifyCompletion\n"));
 }
 
