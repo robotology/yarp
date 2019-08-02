@@ -75,7 +75,7 @@ PortCore::PortCore() :
         m_waitBeforeSend(true),
         m_waitAfterSend(true),
         m_controlRegistration(true),
-        interruptible(true),
+        m_interruptible(true),
         interrupted(false),
         manual(false),
         events(0),
@@ -357,7 +357,7 @@ bool PortCore::manualStart(const char* sourceName)
     // for state information, no requests to change connections,
     // nothing.  We set the port's name to something fake, and
     // act like nothing is wrong.
-    interruptible = false;
+    m_interruptible = false;
     manual = true;
     setName(sourceName);
     return true;
@@ -383,7 +383,7 @@ void PortCore::interrupt()
     // What about data that is already coming in?
     // If interruptible is not currently set, no worries, the user
     // did not or will not end up blocked on a read.
-    if (!interruptible) {
+    if (!m_interruptible) {
         return;
     }
 
@@ -1255,7 +1255,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void* id, OutputStream* os)
     // constant over the lifetime of the input threads.
 
     if (this->m_reader != nullptr && !interrupted) {
-        interruptible = false; // No mutexing; user of interrupt() has to be careful.
+        m_interruptible = false; // No mutexing; user of interrupt() has to be careful.
 
         bool haveOutputs = (outputCount != 0); // No mutexing, but failure modes are benign.
 
@@ -1280,7 +1280,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void* id, OutputStream* os)
             unlockCallback();
         }
 
-        interruptible = true;
+        m_interruptible = true;
     } else {
         // Read and ignore message, there is no where to send it.
         YARP_DEBUG(Logger::get(), "data received in PortCore, no reader for it");

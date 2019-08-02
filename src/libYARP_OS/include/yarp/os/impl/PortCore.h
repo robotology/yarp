@@ -524,7 +524,7 @@ private:
     bool m_waitBeforeSend; ///< should we wait for all current writes to complete before writing more?
     bool m_waitAfterSend;  ///< should we wait for writes to complete immediately after we start them?
     bool m_controlRegistration;  ///< should the port unregister its name when shutting down?
-    bool interruptible;  ///< is the port in an interruptible state?
+    bool m_interruptible;  ///< is the port in an interruptible state?
     bool interrupted;    ///< is the port interrupted?
     bool manual;    ///< is the port operating without a server?
     int events;     ///< count of events that have occurred on the port
