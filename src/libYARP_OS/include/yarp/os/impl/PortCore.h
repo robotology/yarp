@@ -513,7 +513,7 @@ private:
     yarp::os::Contact m_address;    ///< network address of port
     yarp::os::PortReader *m_reader; ///< where to send read events
     yarp::os::PortReader *m_adminReader; ///< where to send admin read events
-    yarp::os::PortReaderCreator *readableCreator; ///< factory for readers
+    yarp::os::PortReaderCreator *m_readableCreator; ///< factory for readers
     yarp::os::PortReport *eventReporter; ///< where to send general events
     bool listening; ///< is the port server listening on the network?
     bool running;   ///< is the port server thread running?

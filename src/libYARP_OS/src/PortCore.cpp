@@ -64,7 +64,7 @@ PortCore::PortCore() :
         m_face(nullptr),
         m_reader(nullptr),
         m_adminReader(nullptr),
-        readableCreator(nullptr),
+        m_readableCreator(nullptr),
         eventReporter(nullptr),
         listening(false),
         running(false),
@@ -196,8 +196,8 @@ void PortCore::setReadCreator(PortReaderCreator& creator)
 {
     // Don't even try to do this when the port is hot, it'll burn you
     yAssert(running == false);
-    yAssert(this->readableCreator == nullptr);
-    this->readableCreator = &creator;
+    yAssert(this->m_readableCreator == nullptr);
+    this->m_readableCreator = &creator;
 }
 
 
@@ -2699,7 +2699,7 @@ void PortCore::resetPortName(const std::string& str)
 
 yarp::os::PortReaderCreator* PortCore::getReadCreator()
 {
-    return readableCreator;
+    return m_readableCreator;
 }
 
 void PortCore::setControlRegistration(bool flag)
