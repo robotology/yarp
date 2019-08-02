@@ -508,7 +508,7 @@ private:
     yarp::os::Mutex m_packetMutex;      ///< control access to message cache
     yarp::os::Semaphore m_connectionChangeSemaphore; ///< signal changes in connections
     Logger m_log;  ///< message logger
-    Face *face;  ///< network server
+    Face *m_face;  ///< network server
     std::string name; ///< name of port
     yarp::os::Contact address;    ///< network address of port
     yarp::os::PortReader *reader; ///< where to send read events

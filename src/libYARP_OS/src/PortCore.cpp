@@ -61,7 +61,7 @@ PortCore::PortCore() :
         m_packetMutex(),
         m_connectionChangeSemaphore(1),
         m_log("port", Logger::get()),
-        face(nullptr),
+        m_face(nullptr),
         reader(nullptr),
         adminReader(nullptr),
         readableCreator(nullptr),
@@ -126,7 +126,7 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     yAssert(running == false);
     yAssert(closing == false);
     yAssert(finished == false);
-    yAssert(face == nullptr);
+    yAssert(m_face == nullptr);
 
     // Try to put the port on the network, using the user-supplied
     // address (which may be incomplete).  You can think of
@@ -136,17 +136,17 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     if (timeout > 0) {
         this->address.setTimeout(timeout);
     }
-    face = Carriers::listen(this->address);
+    m_face = Carriers::listen(this->address);
 
     // We failed, abort.
-    if (face == nullptr) {
+    if (m_face == nullptr) {
         m_stateSemaphore.post();
         return false;
     }
 
     // Update our address if it was incomplete.
     if (this->address.getPort() <= 0) {
-        this->address = face->getLocalAddress();
+        this->address = m_face->getLocalAddress();
         if (this->address.getRegName() == "...") {
             this->address.setName(std::string("/") + this->address.getHost() + "_" + NetType::toString(this->address.getPort()));
             setName(this->address.getRegName());
@@ -238,7 +238,7 @@ void PortCore::run()
 
         // Block and wait for a connection
         InputProtocol* ip = nullptr;
-        ip = face->read();
+        ip = m_face->read();
 
         m_stateSemaphore.wait();
 
@@ -497,7 +497,7 @@ void PortCore::closeMain()
         // Wake up the server thread the only way we can, by sending
         // a message to it.  Then join it, it is done.
         if (!manual) {
-            OutputProtocol* op = face->write(address);
+            OutputProtocol* op = m_face->write(address);
             if (op != nullptr) {
                 op->close();
                 delete op;
@@ -525,10 +525,10 @@ void PortCore::closeMain()
     // There should be no other threads at this point and we
     // can stop listening on the network.
     if (listening) {
-        yAssert(face != nullptr);
-        face->close();
-        delete face;
-        face = nullptr;
+        yAssert(m_face != nullptr);
+        m_face->close();
+        delete m_face;
+        m_face = nullptr;
         listening = false;
     }
 
@@ -562,7 +562,7 @@ void PortCore::closeMain()
     yAssert(closing == false);
     yAssert(finished == false);
     yAssert(finishing == false);
-    yAssert(face == nullptr);
+    yAssert(m_face == nullptr);
 }
 
 
@@ -851,7 +851,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool* except)
             reapUnits();
         } else {
             // Send a blank message to make up server thread.
-            OutputProtocol* op = face->write(address);
+            OutputProtocol* op = m_face->write(address);
             if (op != nullptr) {
                 op->close();
                 delete op;
