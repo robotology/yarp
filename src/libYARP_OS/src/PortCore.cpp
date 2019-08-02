@@ -84,7 +84,7 @@ PortCore::PortCore() :
         m_outputCount(0),
         m_dataOutputCount(0),
         m_flags(PORTCORE_IS_INPUT | PORTCORE_IS_OUTPUT),
-        verbosity(1),
+        m_verbosity(1),
         logNeeded(false),
         timeout(-1),
         counter(1),
@@ -2729,12 +2729,12 @@ void PortCore::setTimeout(float timeout)
 
 void PortCore::setVerbosity(int level)
 {
-    verbosity = level;
+    m_verbosity = level;
 }
 
 int PortCore::getVerbosity()
 {
-    return verbosity;
+    return m_verbosity;
 }
 
 bool PortCore::setCallbackLock(yarp::os::Mutex* mutex)

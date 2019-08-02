@@ -533,7 +533,7 @@ private:
     int m_outputCount;///< how many output connections do we have
     int m_dataOutputCount; ///< how many regular data output connections do we have
     int m_flags;      ///< binary flags encoding restrictions on port
-    int verbosity;  ///< threshold on what warnings or debug messages are shown
+    int m_verbosity;  ///< threshold on what warnings or debug messages are shown
     bool logNeeded; ///< port needs to monitor message content
     PortCorePackets packets; ///< a pool for tracking messages currently being sent
     std::string envelope;///< user-defined wrapping data
