@@ -531,7 +531,7 @@ private:
     int m_connectionListeners;  ///< how many threads need notification of connection changes
     int m_inputCount; ///< how many input connections do we have
     int m_outputCount;///< how many output connections do we have
-    int dataOutputCount; ///< how many regular data output connections do we have
+    int m_dataOutputCount; ///< how many regular data output connections do we have
     int flags;      ///< binary flags encoding restrictions on port
     int verbosity;  ///< threshold on what warnings or debug messages are shown
     bool logNeeded; ///< port needs to monitor message content

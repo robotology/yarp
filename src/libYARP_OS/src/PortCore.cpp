@@ -82,7 +82,7 @@ PortCore::PortCore() :
         m_connectionListeners(0),
         m_inputCount(0),
         m_outputCount(0),
-        dataOutputCount(0),
+        m_dataOutputCount(0),
         flags(PORTCORE_IS_INPUT | PORTCORE_IS_OUTPUT),
         verbosity(1),
         logNeeded(false),
@@ -700,7 +700,7 @@ void PortCore::cleanUnits(bool blocking)
     }
 
     // Finalize the connection counts.
-    dataOutputCount = updatedDataOutputCount;
+    m_dataOutputCount = updatedDataOutputCount;
     m_stateSemaphore.post();
     m_packetMutex.lock();
     m_inputCount = updatedInputCount;
@@ -975,7 +975,7 @@ bool PortCore::addOutput(const std::string& dest,
             }
         }
     } else if (rpc) {
-        if (dataOutputCount >= 1 && !is_log) {
+        if (m_dataOutputCount >= 1 && !is_log) {
             err = "RPC output already connected";
             allowed = false;
         }
