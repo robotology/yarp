@@ -520,7 +520,7 @@ private:
     bool m_starting;  ///< is the port in its startup phase?
     bool m_closing;   ///< is the port in its closing phase?
     bool m_finished;  ///< is the port server thread finished running?
-    bool finishing; ///< is the port server thread trying to finish?
+    bool m_finishing; ///< is the port server thread trying to finish?
     bool waitBeforeSend; ///< should we wait for all current writes to complete before writing more?
     bool waitAfterSend;  ///< should we wait for writes to complete immediately after we start them?
     bool controlRegistration;  ///< should the port unregister its name when shutting down?

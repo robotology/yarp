@@ -71,7 +71,7 @@ PortCore::PortCore() :
         m_starting(false),
         m_closing(false),
         m_finished(false),
-        finishing(false),
+        m_finishing(false),
         waitBeforeSend(true),
         waitAfterSend(true),
         controlRegistration(true),
@@ -410,7 +410,7 @@ void PortCore::closeMain()
     m_stateSemaphore.wait();
 
     // We may not have anything to do.
-    if (finishing || !(m_running || manual)) {
+    if (m_finishing || !(m_running || manual)) {
         YTRACE("PortCore::closeMainNothingToDo");
         m_stateSemaphore.post();
         return;
@@ -419,7 +419,7 @@ void PortCore::closeMain()
     YTRACE("PortCore::closeMainCentral");
 
     // Move into official "finishing" phase.
-    finishing = true;
+    m_finishing = true;
     YARP_DEBUG(m_log, "now preparing to shut down port");
     m_stateSemaphore.post();
 
@@ -553,7 +553,7 @@ void PortCore::closeMain()
     }
 
     // We are done with the finishing process.
-    finishing = false;
+    m_finishing = false;
 
     // We are fresh as a daisy.
     yAssert(m_listening == false);
@@ -561,7 +561,7 @@ void PortCore::closeMain()
     yAssert(m_starting == false);
     yAssert(m_closing == false);
     yAssert(m_finished == false);
-    yAssert(finishing == false);
+    yAssert(m_finishing == false);
     yAssert(m_face == nullptr);
 }
 
@@ -1320,7 +1320,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
                           PortReader* reader,
                           const PortWriter* callback)
 {
-    if (interrupted || finishing) {
+    if (interrupted || m_finishing) {
         return false;
     }
 
