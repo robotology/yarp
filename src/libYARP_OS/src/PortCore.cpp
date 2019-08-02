@@ -131,12 +131,12 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     // Try to put the port on the network, using the user-supplied
     // address (which may be incomplete).  You can think of
     // this as getting a server socket.
-    this->m_address = address;
+    m_address = address;
     setName(address.getRegName());
     if (m_timeout > 0) {
-        this->m_address.setTimeout(m_timeout);
+        m_address.setTimeout(m_timeout);
     }
-    m_face = Carriers::listen(this->m_address);
+    m_face = Carriers::listen(m_address);
 
     // We failed, abort.
     if (m_face == nullptr) {
@@ -145,11 +145,11 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     }
 
     // Update our address if it was incomplete.
-    if (this->m_address.getPort() <= 0) {
-        this->m_address = m_face->getLocalAddress();
-        if (this->m_address.getRegName() == "...") {
-            this->m_address.setName(std::string("/") + this->m_address.getHost() + "_" + NetType::toString(this->m_address.getPort()));
-            setName(this->m_address.getRegName());
+    if (m_address.getPort() <= 0) {
+        m_address = m_face->getLocalAddress();
+        if (m_address.getRegName() == "...") {
+            m_address.setName(std::string("/") + m_address.getHost() + "_" + NetType::toString(m_address.getPort()));
+            setName(m_address.getRegName());
         }
     }
 
@@ -180,24 +180,24 @@ void PortCore::setReadHandler(PortReader& reader)
 {
     // Don't even try to do this when the port is hot, it'll burn you
     yAssert(!m_running);
-    yAssert(this->m_reader == nullptr);
-    this->m_reader = &reader;
+    yAssert(m_reader == nullptr);
+    m_reader = &reader;
 }
 
 void PortCore::setAdminReadHandler(PortReader& reader)
 {
     // Don't even try to do this when the port is hot, it'll burn you
     yAssert(!m_running);
-    yAssert(this->m_adminReader == nullptr);
-    this->m_adminReader = &reader;
+    yAssert(m_adminReader == nullptr);
+    m_adminReader = &reader;
 }
 
 void PortCore::setReadCreator(PortReaderCreator& creator)
 {
     // Don't even try to do this when the port is hot, it'll burn you
     yAssert(!m_running);
-    yAssert(this->m_readableCreator == nullptr);
-    this->m_readableCreator = &creator;
+    yAssert(m_readableCreator == nullptr);
+    m_readableCreator = &creator;
 }
 
 
@@ -1254,7 +1254,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void* id, OutputStream* os)
     // It is safe to pick up the address of the reader since this is
     // constant over the lifetime of the input threads.
 
-    if (this->m_reader != nullptr && !m_interrupted) {
+    if (m_reader != nullptr && !m_interrupted) {
         m_interruptible = false; // No mutexing; user of interrupt() has to be careful.
 
         bool haveOutputs = (m_outputCount != 0); // No mutexing, but failure modes are benign.
@@ -1268,7 +1268,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void* id, OutputStream* os)
             ConnectionRecorder recorder;
             recorder.init(&reader);
             lockCallback();
-            result = this->m_reader->read(recorder);
+            result = m_reader->read(recorder);
             unlockCallback();
             recorder.fini();
             // send off a log of this transaction to whoever wants it
@@ -1276,7 +1276,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void* id, OutputStream* os)
         } else {
             // YARP is not needed as a middleman
             lockCallback();
-            result = this->m_reader->read(reader);
+            result = m_reader->read(reader);
             unlockCallback();
         }
 
@@ -1506,16 +1506,16 @@ bool PortCore::setEnvelope(PortWriter& envelope)
 
 void PortCore::setEnvelope(const std::string& envelope)
 {
-    this->m_envelope = envelope;
-    for (unsigned int i = 0; i < this->m_envelope.length(); i++) {
+    m_envelope = envelope;
+    for (unsigned int i = 0; i < m_envelope.length(); i++) {
         // It looks like envelopes are constrained to be printable ASCII?
         // I'm not sure why this would be.  TODO check.
-        if (this->m_envelope[i] < 32) {
-            this->m_envelope = this->m_envelope.substr(0, i);
+        if (m_envelope[i] < 32) {
+            m_envelope = m_envelope.substr(0, i);
             break;
         }
     }
-    YARP_DEBUG(m_log, std::string("set envelope to ") + this->m_envelope);
+    YARP_DEBUG(m_log, std::string("set envelope to ") + m_envelope);
 }
 
 std::string PortCore::getEnvelope()
@@ -1526,7 +1526,7 @@ std::string PortCore::getEnvelope()
 bool PortCore::getEnvelope(PortReader& envelope)
 {
     StringInputStream sis;
-    sis.add(this->m_envelope);
+    sis.add(m_envelope);
     sis.add("\r\n");
     StreamConnectionReader sbr;
     Route route;
@@ -2669,7 +2669,7 @@ bool PortCore::removeIO(const Route& route, bool synch)
 
 void PortCore::setName(const std::string& name)
 {
-    this->m_name = name;
+    m_name = name;
 }
 
 std::string PortCore::getName()
@@ -2724,7 +2724,7 @@ bool PortCore::isInterrupted() const
 
 void PortCore::setTimeout(float timeout)
 {
-    this->m_timeout = timeout;
+    m_timeout = timeout;
 }
 
 void PortCore::setVerbosity(int level)
@@ -2741,10 +2741,10 @@ bool PortCore::setCallbackLock(yarp::os::Mutex* mutex)
 {
     removeCallbackLock();
     if (mutex != nullptr) {
-        this->m_mutex = mutex;
+        m_mutex = mutex;
         m_mutexOwned = false;
     } else {
-        this->m_mutex = new yarp::os::Mutex();
+        m_mutex = new yarp::os::Mutex();
         m_mutexOwned = true;
     }
     return true;
@@ -2814,6 +2814,6 @@ yarp::os::Type PortCore::getType()
 void PortCore::promiseType(const Type& typ)
 {
     m_typeMutex.lock();
-    this->m_type = typ;
+    m_type = typ;
     m_typeMutex.unlock();
 }
