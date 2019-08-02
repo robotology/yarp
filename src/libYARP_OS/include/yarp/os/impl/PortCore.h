@@ -504,7 +504,7 @@ public:
 private:
     // main internal PortCore state and operations
     std::vector<PortCoreUnit *> m_units;  ///< list of connections
-    yarp::os::Semaphore stateSema;       ///< control access to essential port state
+    yarp::os::Semaphore m_stateSemaphore;       ///< control access to essential port state
     yarp::os::Mutex packetMutex;      ///< control access to message cache
     yarp::os::Semaphore connectionChange; ///< signal changes in connections
     Logger log;  ///< message logger
