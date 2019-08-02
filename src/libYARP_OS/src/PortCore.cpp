@@ -78,7 +78,7 @@ PortCore::PortCore() :
         m_interruptible(true),
         m_interrupted(false),
         m_manual(false),
-        events(0),
+        m_events(0),
         connectionListeners(0),
         inputCount(0),
         outputCount(0),
@@ -255,7 +255,7 @@ void PortCore::run()
         shouldStop |= m_closing;
 
         // Increment a global count of connection events
-        events++;
+        m_events++;
 
         m_stateSemaphore.post();
 
@@ -570,7 +570,7 @@ int PortCore::getEventCount()
 {
     // How many times has the server thread spun off a connection.
     m_stateSemaphore.wait();
-    int ct = events;
+    int ct = m_events;
     m_stateSemaphore.post();
     return ct;
 }
