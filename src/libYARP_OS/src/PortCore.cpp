@@ -59,7 +59,7 @@ using namespace yarp;
 PortCore::PortCore() :
         m_stateSemaphore(1),
         m_packetMutex(),
-        connectionChange(1),
+        m_connectionChangeSemaphore(1),
         log("port", Logger::get()),
         face(nullptr),
         reader(nullptr),
@@ -285,7 +285,7 @@ void PortCore::run()
         // this is not solid TODO
         m_stateSemaphore.wait();
         for (int i = 0; i < connectionListeners; i++) {
-            connectionChange.post();
+            m_connectionChangeSemaphore.post();
         }
         connectionListeners = 0;
         m_stateSemaphore.post();
@@ -296,7 +296,7 @@ void PortCore::run()
     // The server thread is shutting down.
     m_stateSemaphore.wait();
     for (int i = 0; i < connectionListeners; i++) {
-        connectionChange.post();
+        m_connectionChangeSemaphore.post();
     }
     connectionListeners = 0;
     finished = true;
@@ -875,7 +875,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool* except)
                     }
                     m_stateSemaphore.post();
                     if (cont) {
-                        connectionChange.wait();
+                        m_connectionChangeSemaphore.wait();
                     }
                 } while (cont);
             }

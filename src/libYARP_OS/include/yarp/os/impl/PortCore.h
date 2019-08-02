@@ -506,7 +506,7 @@ private:
     std::vector<PortCoreUnit *> m_units;  ///< list of connections
     yarp::os::Semaphore m_stateSemaphore;       ///< control access to essential port state
     yarp::os::Mutex m_packetMutex;      ///< control access to message cache
-    yarp::os::Semaphore connectionChange; ///< signal changes in connections
+    yarp::os::Semaphore m_connectionChangeSemaphore; ///< signal changes in connections
     Logger log;  ///< message logger
     Face *face;  ///< network server
     std::string name; ///< name of port
