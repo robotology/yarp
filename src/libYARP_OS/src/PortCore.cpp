@@ -1764,8 +1764,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addString(r);
     } break;
     case PortCoreCommand::Atch: {
-        switch (cmd.get(1).asVocab()) {
-        case yarp::os::createVocab('o', 'u', 't'): {
+        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
+        switch (direction) {
+        case PortCoreConnectionDirection::Out: {
             std::string propString = cmd.get(2).asString();
             Property prop(propString.c_str());
             std::string errMsg;
@@ -1778,7 +1779,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 result.addVocab(Vocab::encode("ok"));
             }
         } break;
-        case yarp::os::createVocab('i', 'n'): {
+        case PortCoreConnectionDirection::In: {
             std::string propString = cmd.get(2).asString();
             Property prop(propString.c_str());
             std::string errMsg;
@@ -1791,29 +1792,30 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 result.addVocab(Vocab::encode("ok"));
             }
         } break;
-        default:
+        case PortCoreConnectionDirection::Error:
             result.clear();
             result.addVocab(Vocab::encode("fail"));
             result.addString("attach command must be followd by [out] or [in]");
         };
     } break;
     case PortCoreCommand::Dtch: {
-        switch (cmd.get(1).asVocab()) {
-        case yarp::os::createVocab('o', 'u', 't'): {
+        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
+        switch (direction) {
+        case PortCoreConnectionDirection::Out: {
             if (dettachPortMonitor(true)) {
                 result.addVocab(Vocab::encode("ok"));
             } else {
                 result.addVocab(Vocab::encode("fail"));
             }
         } break;
-        case yarp::os::createVocab('i', 'n'): {
+        case PortCoreConnectionDirection::In: {
             if (dettachPortMonitor(false)) {
                 result.addVocab(Vocab::encode("ok"));
             } else {
                 result.addVocab(Vocab::encode("fail"));
             }
         } break;
-        default:
+        case PortCoreConnectionDirection::Error:
             result.clear();
             result.addVocab(Vocab::encode("fail"));
             result.addString("detach command must be followd by [out] or [in]");
@@ -1836,9 +1838,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             result.addString(r1 + r2);
         }
     } break;
-    case PortCoreCommand::List:
-        switch (cmd.get(1).asVocab()) {
-        case yarp::os::createVocab('i', 'n'): {
+    case PortCoreCommand::List: {
+        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
+        switch (direction) {
+        case PortCoreConnectionDirection::In: {
             // Return a list of all input connections.
             std::string target = cmd.get(2).asString();
             m_stateSemaphore.wait();
@@ -1872,9 +1875,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             }
             m_stateSemaphore.post();
         } break;
-        case yarp::os::createVocab('o', 'u', 't'):
-        default:
-        {
+        case PortCoreConnectionDirection::Out: {
             // Return a list of all output connections.
             std::string target = cmd.get(2).asString();
             m_stateSemaphore.wait();
@@ -1904,13 +1905,17 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 }
             }
             m_stateSemaphore.post();
+        } break;
+        case PortCoreConnectionDirection::Error:
+            // Should never happen
+            yAssert(false);
+            break;
         }
-        }
-        break;
-
-    case PortCoreCommand::Set:
-        switch (cmd.get(1).asVocab()) {
-        case yarp::os::createVocab('i', 'n'): {
+    } break;
+    case PortCoreCommand::Set: {
+        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
+        switch (direction) {
+        case PortCoreConnectionDirection::In: {
             // Set carrier parameters on a given input connection.
             std::string target = cmd.get(2).asString();
             m_stateSemaphore.wait();
@@ -1958,9 +1963,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             }
             m_stateSemaphore.post();
         } break;
-        case yarp::os::createVocab('o', 'u', 't'):
-        default:
-        {
+        case PortCoreConnectionDirection::Out: {
             // Set carrier parameters on a given output connection.
             std::string target = cmd.get(2).asString();
             m_stateSemaphore.wait();
@@ -2007,13 +2010,17 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 }
             }
             m_stateSemaphore.post();
+        } break;
+        case PortCoreConnectionDirection::Error:
+            // Should never happen
+            yAssert(false);
+            break;
         }
-        }
-        break;
-
-    case PortCoreCommand::Get:
-        switch (cmd.get(1).asVocab()) {
-        case yarp::os::createVocab('i', 'n'): {
+    } break;
+    case PortCoreCommand::Get: {
+        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
+        switch (direction) {
+        case PortCoreConnectionDirection::In: {
             // Get carrier parameters for a given input connection.
             std::string target = cmd.get(2).asString();
             m_stateSemaphore.wait();
@@ -2053,9 +2060,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             }
             m_stateSemaphore.post();
         } break;
-        case yarp::os::createVocab('o', 'u', 't'):
-        default:
-        {
+        case PortCoreConnectionDirection::Out: {
             // Get carrier parameters for a given output connection.
             std::string target = cmd.get(2).asString();
             m_stateSemaphore.wait();
@@ -2095,9 +2100,13 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 }
             }
             m_stateSemaphore.post();
+        } break;
+        case PortCoreConnectionDirection::Error:
+            // Should never happen
+            yAssert(false);
+            break;
         }
-        }
-        break;
+    } break;
 
     case PortCoreCommand::RosPublisherUpdate: {
         // When running against a ROS name server, we need to
