@@ -89,7 +89,7 @@ PortCore::PortCore() :
         m_timeout(-1),
         m_counter(1),
         m_prop(nullptr),
-        contactable(nullptr),
+        m_contactable(nullptr),
         mutex(nullptr),
         mutexOwned(false),
         envelopeWriter(true),
@@ -244,7 +244,7 @@ void PortCore::run()
 
         // Attach the connection to this port and update its timeout setting
         if (ip != nullptr) {
-            ip->attachPort(contactable);
+            ip->attachPort(m_contactable);
             YARP_DEBUG(m_log, "PortCore received something");
             if (m_timeout > 0) {
                 ip->setTimeout(m_timeout);
@@ -997,7 +997,7 @@ bool PortCore::addOutput(const std::string& dest,
     }
     op = Carriers::connect(address);
     if (op != nullptr) {
-        op->attachPort(contactable);
+        op->attachPort(m_contactable);
         if (m_timeout > 0) {
             op->setTimeout(m_timeout);
         }
@@ -2082,7 +2082,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                 fprintf(stderr, "NO CONNECTION\n");
                                 std::exit(1);
                             } else {
-                                op->attachPort(contactable);
+                                op->attachPort(m_contactable);
                                 op->open(r);
                             }
                             Route route = op->getRoute();
