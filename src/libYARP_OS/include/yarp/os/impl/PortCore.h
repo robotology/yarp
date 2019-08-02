@@ -543,7 +543,7 @@ private:
     yarp::os::Contactable *m_contactable;  ///< user-facing object that contains this PortCore
     yarp::os::Mutex *m_mutex; ///< callback optional access control lock
     bool m_mutexOwned;        ///< do we own the optional callback lock
-    BufferedConnectionWriter envelopeWriter; ///< storage area for envelope, if present
+    BufferedConnectionWriter m_envelopeWriter; ///< storage area for envelope, if present
 
     yarp::os::Mutex typeMutex;        ///< control access to type
     bool checkedType;

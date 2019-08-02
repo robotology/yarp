@@ -92,7 +92,7 @@ PortCore::PortCore() :
         m_contactable(nullptr),
         m_mutex(nullptr),
         m_mutexOwned(false),
-        envelopeWriter(true),
+        m_envelopeWriter(true),
         typeMutex(),
         checkedType(false)
 {
@@ -1495,10 +1495,10 @@ void PortCore::notifyCompletion(void* tracker)
 
 bool PortCore::setEnvelope(PortWriter& envelope)
 {
-    envelopeWriter.restart();
-    bool ok = envelope.write(envelopeWriter);
+    m_envelopeWriter.restart();
+    bool ok = envelope.write(m_envelopeWriter);
     if (ok) {
-        setEnvelope(envelopeWriter.toString());
+        setEnvelope(m_envelopeWriter.toString());
     }
     return ok;
 }
