@@ -80,7 +80,7 @@ PortCore::PortCore() :
         m_manual(false),
         m_events(0),
         m_connectionListeners(0),
-        inputCount(0),
+        m_inputCount(0),
         outputCount(0),
         dataOutputCount(0),
         flags(PORTCORE_IS_INPUT | PORTCORE_IS_OUTPUT),
@@ -703,7 +703,7 @@ void PortCore::cleanUnits(bool blocking)
     dataOutputCount = updatedDataOutputCount;
     m_stateSemaphore.post();
     m_packetMutex.lock();
-    inputCount = updatedInputCount;
+    m_inputCount = updatedInputCount;
     outputCount = updatedOutputCount;
     m_packetMutex.unlock();
     YARP_DEBUG(m_log, "\\ routine check of connections to this port ends");
@@ -1465,7 +1465,7 @@ int PortCore::getInputCount()
 {
     cleanUnits(false);
     m_packetMutex.lock();
-    int result = inputCount;
+    int result = m_inputCount;
     m_packetMutex.unlock();
     return result;
 }
