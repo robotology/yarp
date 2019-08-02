@@ -682,8 +682,8 @@ void PortCore::cleanUnits(bool blocking)
         // Now we do some awkward shuffling (list class may be from ACE
         // or STL, if ACE it is quite limited).  We move the nulls to
         // the end of the list ...
-        unsigned int rem = 0;
-        for (unsigned int i2 = 0; i2 < m_units.size(); i2++) {
+        size_t rem = 0;
+        for (size_t i2 = 0; i2 < m_units.size(); i2++) {
             if (m_units[i2] != nullptr) {
                 if (rem < i2) {
                     m_units[rem] = m_units[i2];
@@ -694,7 +694,7 @@ void PortCore::cleanUnits(bool blocking)
         }
 
         // ... Now we get rid of the null entries
-        for (unsigned int i3 = 0; i3 < m_units.size() - rem; i3++) {
+        for (size_t i3 = 0; i3 < m_units.size() - rem; i3++) {
             m_units.pop_back();
         }
     }
@@ -1507,7 +1507,7 @@ bool PortCore::setEnvelope(PortWriter& envelope)
 void PortCore::setEnvelope(const std::string& envelope)
 {
     m_envelope = envelope;
-    for (unsigned int i = 0; i < m_envelope.length(); i++) {
+    for (size_t i = 0; i < m_envelope.length(); i++) {
         // It looks like envelopes are constrained to be printable ASCII?
         // I'm not sure why this would be.  TODO check.
         if (m_envelope[i] < 32) {
