@@ -2396,16 +2396,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.write(*writer);
     }
 
-    /**
-     * @brief We introduce a nonsense arbitrary delay in the calls to the port administrator
-     * for debugging purpose. This is indeed a temporary feature and will be removed soon.
-     * The delay is applied if the "NONSENSE_ADMIN_DELAY" environment variable is set.
-     */
-    std::string nonsense_delay = NetworkBase::getEnvironment("NONSENSE_ADMIN_DELAY");
-    if (!nonsense_delay.empty()) {
-        yarp::os::SystemClock::delaySystem(atof(nonsense_delay.c_str()));
-    }
-
     return true;
 }
 
