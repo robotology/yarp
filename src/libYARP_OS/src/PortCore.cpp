@@ -67,7 +67,7 @@ PortCore::PortCore() :
         m_readableCreator(nullptr),
         m_eventReporter(nullptr),
         m_listening(false),
-        running(false),
+        m_running(false),
         starting(false),
         closing(false),
         finished(false),
@@ -123,7 +123,7 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     // and we carefully never call this method again without
     // calling close().
     yAssert(m_listening == false);
-    yAssert(running == false);
+    yAssert(m_running == false);
     yAssert(closing == false);
     yAssert(finished == false);
     yAssert(m_face == nullptr);
@@ -179,7 +179,7 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
 void PortCore::setReadHandler(PortReader& reader)
 {
     // Don't even try to do this when the port is hot, it'll burn you
-    yAssert(running == false);
+    yAssert(m_running == false);
     yAssert(this->m_reader == nullptr);
     this->m_reader = &reader;
 }
@@ -187,7 +187,7 @@ void PortCore::setReadHandler(PortReader& reader)
 void PortCore::setAdminReadHandler(PortReader& reader)
 {
     // Don't even try to do this when the port is hot, it'll burn you
-    yAssert(running == false);
+    yAssert(m_running == false);
     yAssert(this->m_adminReader == nullptr);
     this->m_adminReader = &reader;
 }
@@ -195,7 +195,7 @@ void PortCore::setAdminReadHandler(PortReader& reader)
 void PortCore::setReadCreator(PortReaderCreator& creator)
 {
     // Don't even try to do this when the port is hot, it'll burn you
-    yAssert(running == false);
+    yAssert(m_running == false);
     yAssert(this->m_readableCreator == nullptr);
     this->m_readableCreator = &creator;
 }
@@ -215,13 +215,13 @@ void PortCore::run()
     // We assume that listen() has succeeded and that
     // start() has been called.
     yAssert(m_listening == true);
-    yAssert(running == false);
+    yAssert(m_running == false);
     yAssert(closing == false);
     yAssert(finished == false);
     yAssert(starting == true);
 
     // Enter running phase
-    running = true;
+    m_running = true;
     starting = false;
 
     // This post is matched with a wait in start()
@@ -326,7 +326,7 @@ bool PortCore::start()
 
     // We assume that listen() has been called.
     yAssert(m_listening == true);
-    yAssert(running == false);
+    yAssert(m_running == false);
     yAssert(starting == false);
     yAssert(finished == false);
     yAssert(closing == false);
@@ -340,7 +340,7 @@ bool PortCore::start()
     } else {
         // run() will signal stateSema once it is active
         m_stateSemaphore.wait();
-        yAssert(running == true);
+        yAssert(m_running == true);
 
         // release stateSema for its normal task of controlling access to state
         m_stateSemaphore.post();
@@ -410,7 +410,7 @@ void PortCore::closeMain()
     m_stateSemaphore.wait();
 
     // We may not have anything to do.
-    if (finishing || !(running || manual)) {
+    if (finishing || !(m_running || manual)) {
         YTRACE("PortCore::closeMainNothingToDo");
         m_stateSemaphore.post();
         return;
@@ -484,7 +484,7 @@ void PortCore::closeMain()
     }
 
     m_stateSemaphore.wait();
-    bool stopRunning = running;
+    bool stopRunning = m_running;
     m_stateSemaphore.post();
 
     // If the server thread is still running, we need to bring it down.
@@ -518,7 +518,7 @@ void PortCore::closeMain()
         m_stateSemaphore.wait();
         finished = false;
         closing = false;
-        running = false;
+        m_running = false;
         m_stateSemaphore.post();
     }
 
@@ -557,7 +557,7 @@ void PortCore::closeMain()
 
     // We are fresh as a daisy.
     yAssert(m_listening == false);
-    yAssert(running == false);
+    yAssert(m_running == false);
     yAssert(starting == false);
     yAssert(closing == false);
     yAssert(finished == false);
