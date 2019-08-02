@@ -2154,7 +2154,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             Bottle& sched = result.addList();
                             sched.addString("sched");
                             Property& sched_prop = sched.addDict();
-                            sched_prop.put("tid", (int)this->getTid());
+                            sched_prop.put("tid", static_cast<int>(this->getTid()));
                             sched_prop.put("priority", this->getPriority());
                             sched_prop.put("policy", this->getPolicy());
 
@@ -2196,7 +2196,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                         int priority = unit->getPriority();
                                         int policy = unit->getPolicy();
                                         int tos = getTypeOfService(unit);
-                                        int tid = (int)unit->getTid();
+                                        int tid = static_cast<int>(unit->getTid());
                                         result.clear();
                                         Bottle& sched = result.addList();
                                         sched.addString("sched");
@@ -2619,19 +2619,19 @@ bool PortCore::setProcessSchedulingParam(int priority, int policy)
 
     struct dirent* d;
     char* end;
-    int tid = 0;
+    long tid = 0;
     bool ret = true;
     while ((d = readdir(dir)) != nullptr) {
         if (isdigit((unsigned char)*d->d_name) == 0) {
             continue;
         }
 
-        tid = (pid_t)strtol(d->d_name, &end, 10);
+        tid = strtol(d->d_name, &end, 10);
         if (d->d_name == end || ((end != nullptr) && (*end != 0))) {
             closedir(dir);
             return false;
         }
-        ret &= (sched_setscheduler(tid, policy, &sch_param) == 0);
+        ret &= (sched_setscheduler(static_cast<pid_t>(tid), policy, &sch_param) == 0);
     }
     closedir(dir);
     return ret;
