@@ -63,7 +63,7 @@ PortCore::PortCore() :
         m_log("port", Logger::get()),
         m_face(nullptr),
         m_reader(nullptr),
-        adminReader(nullptr),
+        m_adminReader(nullptr),
         readableCreator(nullptr),
         eventReporter(nullptr),
         listening(false),
@@ -188,8 +188,8 @@ void PortCore::setAdminReadHandler(PortReader& reader)
 {
     // Don't even try to do this when the port is hot, it'll burn you
     yAssert(running == false);
-    yAssert(this->adminReader == nullptr);
-    this->adminReader = &reader;
+    yAssert(this->m_adminReader == nullptr);
+    this->m_adminReader = &reader;
 }
 
 void PortCore::setReadCreator(PortReaderCreator& creator)
@@ -2374,11 +2374,11 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     default:
     {
         bool ok = false;
-        if (adminReader != nullptr) {
+        if (m_adminReader != nullptr) {
             DummyConnector con;
             cmd.write(con.getWriter());
             lockCallback();
-            ok = adminReader->read(con.getReader());
+            ok = m_adminReader->read(con.getReader());
             unlockCallback();
             if (ok) {
                 result.read(con.getReader());
