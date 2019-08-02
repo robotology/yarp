@@ -66,7 +66,7 @@ PortCore::PortCore() :
         m_adminReader(nullptr),
         m_readableCreator(nullptr),
         m_eventReporter(nullptr),
-        listening(false),
+        m_listening(false),
         running(false),
         starting(false),
         closing(false),
@@ -122,7 +122,7 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     // We can assume this because it is not a user-facing class,
     // and we carefully never call this method again without
     // calling close().
-    yAssert(listening == false);
+    yAssert(m_listening == false);
     yAssert(running == false);
     yAssert(closing == false);
     yAssert(finished == false);
@@ -154,7 +154,7 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     }
 
     // Move into listening phase
-    listening = true;
+    m_listening = true;
     m_log.setPrefix(address.getRegName().c_str());
     m_stateSemaphore.post();
 
@@ -214,7 +214,7 @@ void PortCore::run()
 
     // We assume that listen() has succeeded and that
     // start() has been called.
-    yAssert(listening == true);
+    yAssert(m_listening == true);
     yAssert(running == false);
     yAssert(closing == false);
     yAssert(finished == false);
@@ -325,7 +325,7 @@ bool PortCore::start()
     m_stateSemaphore.wait();
 
     // We assume that listen() has been called.
-    yAssert(listening == true);
+    yAssert(m_listening == true);
     yAssert(running == false);
     yAssert(starting == false);
     yAssert(finished == false);
@@ -373,7 +373,7 @@ void PortCore::resume()
 void PortCore::interrupt()
 {
     // This is a no-op if there is no server thread.
-    if (!listening) {
+    if (!m_listening) {
         return;
     }
 
@@ -524,12 +524,12 @@ void PortCore::closeMain()
 
     // There should be no other threads at this point and we
     // can stop listening on the network.
-    if (listening) {
+    if (m_listening) {
         yAssert(m_face != nullptr);
         m_face->close();
         delete m_face;
         m_face = nullptr;
-        listening = false;
+        m_listening = false;
     }
 
     // Check if the client is waiting for input.  If so, wake them up
@@ -556,7 +556,7 @@ void PortCore::closeMain()
     finishing = false;
 
     // We are fresh as a daisy.
-    yAssert(listening == false);
+    yAssert(m_listening == false);
     yAssert(running == false);
     yAssert(starting == false);
     yAssert(closing == false);
@@ -2709,7 +2709,7 @@ void PortCore::setControlRegistration(bool flag)
 
 bool PortCore::isListening() const
 {
-    return listening;
+    return m_listening;
 }
 
 bool PortCore::isManual() const

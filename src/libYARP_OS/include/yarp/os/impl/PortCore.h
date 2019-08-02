@@ -515,7 +515,7 @@ private:
     yarp::os::PortReader *m_adminReader; ///< where to send admin read events
     yarp::os::PortReaderCreator *m_readableCreator; ///< factory for readers
     yarp::os::PortReport *m_eventReporter; ///< where to send general events
-    bool listening; ///< is the port server listening on the network?
+    bool m_listening; ///< is the port server listening on the network?
     bool running;   ///< is the port server thread running?
     bool starting;  ///< is the port in its startup phase?
     bool closing;   ///< is the port in its closing phase?
