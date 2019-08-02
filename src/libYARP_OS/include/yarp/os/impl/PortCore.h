@@ -509,7 +509,7 @@ private:
     yarp::os::Semaphore m_connectionChangeSemaphore; ///< signal changes in connections
     Logger m_log;  ///< message logger
     Face *m_face;  ///< network server
-    std::string name; ///< name of port
+    std::string m_name; ///< name of port
     yarp::os::Contact address;    ///< network address of port
     yarp::os::PortReader *reader; ///< where to send read events
     yarp::os::PortReader *adminReader; ///< where to send admin read events

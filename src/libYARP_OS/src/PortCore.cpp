@@ -2669,12 +2669,12 @@ bool PortCore::removeIO(const Route& route, bool synch)
 
 void PortCore::setName(const std::string& name)
 {
-    this->name = name;
+    this->m_name = name;
 }
 
 std::string PortCore::getName()
 {
-    return name;
+    return m_name;
 }
 
 int PortCore::getNextIndex()
