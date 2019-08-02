@@ -62,7 +62,7 @@ PortCore::PortCore() :
         m_connectionChangeSemaphore(1),
         m_log("port", Logger::get()),
         m_face(nullptr),
-        reader(nullptr),
+        m_reader(nullptr),
         adminReader(nullptr),
         readableCreator(nullptr),
         eventReporter(nullptr),
@@ -180,8 +180,8 @@ void PortCore::setReadHandler(PortReader& reader)
 {
     // Don't even try to do this when the port is hot, it'll burn you
     yAssert(running == false);
-    yAssert(this->reader == nullptr);
-    this->reader = &reader;
+    yAssert(this->m_reader == nullptr);
+    this->m_reader = &reader;
 }
 
 void PortCore::setAdminReadHandler(PortReader& reader)
@@ -392,11 +392,11 @@ void PortCore::interrupt()
     // which is reserved for giving blocking readers a chance to
     // update their state.
     m_stateSemaphore.wait();
-    if (reader != nullptr) {
+    if (m_reader != nullptr) {
         YARP_DEBUG(m_log, "sending update-state message to listener");
         StreamConnectionReader sbr;
         lockCallback();
-        reader->read(sbr);
+        m_reader->read(sbr);
         unlockCallback();
     }
     m_stateSemaphore.post();
@@ -535,11 +535,11 @@ void PortCore::closeMain()
     // Check if the client is waiting for input.  If so, wake them up
     // with the bad news.  An empty message signifies a request to
     // check the port state.
-    if (reader != nullptr) {
+    if (m_reader != nullptr) {
         YARP_DEBUG(m_log, "sending end-of-port message to listener");
         StreamConnectionReader sbr;
-        reader->read(sbr);
-        reader = nullptr;
+        m_reader->read(sbr);
+        m_reader = nullptr;
     }
 
     // We may need to unregister the port with the name server.
@@ -1254,7 +1254,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void* id, OutputStream* os)
     // It is safe to pick up the address of the reader since this is
     // constant over the lifetime of the input threads.
 
-    if (this->reader != nullptr && !interrupted) {
+    if (this->m_reader != nullptr && !interrupted) {
         interruptible = false; // No mutexing; user of interrupt() has to be careful.
 
         bool haveOutputs = (outputCount != 0); // No mutexing, but failure modes are benign.
@@ -1268,7 +1268,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void* id, OutputStream* os)
             ConnectionRecorder recorder;
             recorder.init(&reader);
             lockCallback();
-            result = this->reader->read(recorder);
+            result = this->m_reader->read(recorder);
             unlockCallback();
             recorder.fini();
             // send off a log of this transaction to whoever wants it
@@ -1276,7 +1276,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void* id, OutputStream* os)
         } else {
             // YARP is not needed as a middleman
             lockCallback();
-            result = this->reader->read(reader);
+            result = this->m_reader->read(reader);
             unlockCallback();
         }
 
