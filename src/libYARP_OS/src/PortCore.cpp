@@ -65,7 +65,7 @@ PortCore::PortCore() :
         m_reader(nullptr),
         m_adminReader(nullptr),
         m_readableCreator(nullptr),
-        eventReporter(nullptr),
+        m_eventReporter(nullptr),
         listening(false),
         running(false),
         starting(false),
@@ -1216,7 +1216,7 @@ void PortCore::setReportCallback(yarp::os::PortReport* reporter)
 {
     m_stateSemaphore.wait();
     if (reporter != nullptr) {
-        eventReporter = reporter;
+        m_eventReporter = reporter;
     }
     m_stateSemaphore.post();
 }
@@ -1224,7 +1224,7 @@ void PortCore::setReportCallback(yarp::os::PortReport* reporter)
 void PortCore::resetReportCallback()
 {
     m_stateSemaphore.wait();
-    eventReporter = nullptr;
+    m_eventReporter = nullptr;
     m_stateSemaphore.post();
 }
 
@@ -1236,8 +1236,8 @@ void PortCore::report(const PortInfo& info)
     // It is safe to pick up the address of the reporter if this is
     // kept constant over the lifetime of the input/output threads.
 
-    if (eventReporter != nullptr) {
-        eventReporter->report(info);
+    if (m_eventReporter != nullptr) {
+        m_eventReporter->report(info);
     }
 }
 
