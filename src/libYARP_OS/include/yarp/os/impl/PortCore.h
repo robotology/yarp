@@ -546,7 +546,7 @@ private:
     BufferedConnectionWriter m_envelopeWriter; ///< storage area for envelope, if present
 
     yarp::os::Mutex m_typeMutex;        ///< control access to type
-    bool checkedType;
+    bool m_checkedType;
     Type typ;
 
     // port data modifier

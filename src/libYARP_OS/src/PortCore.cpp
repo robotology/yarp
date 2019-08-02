@@ -94,7 +94,7 @@ PortCore::PortCore() :
         m_mutexOwned(false),
         m_envelopeWriter(true),
         m_typeMutex(),
-        checkedType(false)
+        m_checkedType(false)
 {
 }
 
@@ -2794,11 +2794,11 @@ yarp::os::impl::PortDataModifier& PortCore::getPortModifier()
 void PortCore::checkType(PortReader& reader)
 {
     m_typeMutex.lock();
-    if (!checkedType) {
+    if (!m_checkedType) {
         if (!typ.isValid()) {
             typ = reader.getReadType();
         }
-        checkedType = true;
+        m_checkedType = true;
     }
     m_typeMutex.unlock();
 }
