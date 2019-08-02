@@ -542,7 +542,7 @@ private:
     yarp::os::Property *m_prop;  ///< optional unstructured properties associated with port
     yarp::os::Contactable *m_contactable;  ///< user-facing object that contains this PortCore
     yarp::os::Mutex *m_mutex; ///< callback optional access control lock
-    bool mutexOwned;        ///< do we own the optional callback lock
+    bool m_mutexOwned;        ///< do we own the optional callback lock
     BufferedConnectionWriter envelopeWriter; ///< storage area for envelope, if present
 
     yarp::os::Mutex typeMutex;        ///< control access to type

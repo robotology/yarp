@@ -91,7 +91,7 @@ PortCore::PortCore() :
         m_prop(nullptr),
         m_contactable(nullptr),
         m_mutex(nullptr),
-        mutexOwned(false),
+        m_mutexOwned(false),
         envelopeWriter(true),
         typeMutex(),
         checkedType(false)
@@ -2742,21 +2742,21 @@ bool PortCore::setCallbackLock(yarp::os::Mutex* mutex)
     removeCallbackLock();
     if (mutex != nullptr) {
         this->m_mutex = mutex;
-        mutexOwned = false;
+        m_mutexOwned = false;
     } else {
         this->m_mutex = new yarp::os::Mutex();
-        mutexOwned = true;
+        m_mutexOwned = true;
     }
     return true;
 }
 
 bool PortCore::removeCallbackLock()
 {
-    if (mutexOwned && (m_mutex != nullptr)) {
+    if (m_mutexOwned && (m_mutex != nullptr)) {
         delete m_mutex;
     }
     m_mutex = nullptr;
-    mutexOwned = false;
+    m_mutexOwned = false;
     return true;
 }
 
