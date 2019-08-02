@@ -83,7 +83,7 @@ PortCore::PortCore() :
         m_inputCount(0),
         m_outputCount(0),
         m_dataOutputCount(0),
-        flags(PORTCORE_IS_INPUT | PORTCORE_IS_OUTPUT),
+        m_flags(PORTCORE_IS_INPUT | PORTCORE_IS_OUTPUT),
         verbosity(1),
         logNeeded(false),
         timeout(-1),

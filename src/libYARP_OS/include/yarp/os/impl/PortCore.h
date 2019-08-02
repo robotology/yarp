@@ -289,7 +289,7 @@ public:
      */
     void setFlags(int flags)
     {
-        this->flags = flags;
+        this->m_flags = flags;
     }
 
     void setContactable(Contactable* contactable)
@@ -302,7 +302,7 @@ public:
      */
     int getFlags()
     {
-        return flags;
+        return m_flags;
     }
 
     /**
@@ -532,7 +532,7 @@ private:
     int m_inputCount; ///< how many input connections do we have
     int m_outputCount;///< how many output connections do we have
     int m_dataOutputCount; ///< how many regular data output connections do we have
-    int flags;      ///< binary flags encoding restrictions on port
+    int m_flags;      ///< binary flags encoding restrictions on port
     int verbosity;  ///< threshold on what warnings or debug messages are shown
     bool logNeeded; ///< port needs to monitor message content
     PortCorePackets packets; ///< a pool for tracking messages currently being sent
