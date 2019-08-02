@@ -1750,9 +1750,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addInt32(3);
         break;
     case PortCoreCommand::Add: {
-        // Add an output to the port.
         std::string output = cmd.get(1).asString();
         std::string carrier = cmd.get(2).asString();
+        // Add an output to the port.
         if (!carrier.empty()) {
             output = carrier + ":/" + output;
         }
@@ -1764,10 +1764,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     } break;
     case PortCoreCommand::Atch: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
+        Property prop(cmd.get(2).asString().c_str());
         switch (direction) {
         case PortCoreConnectionDirection::Out: {
-            std::string propString = cmd.get(2).asString();
-            Property prop(propString.c_str());
             std::string errMsg;
             if (!attachPortMonitor(prop, true, errMsg)) {
                 result.clear();
@@ -1779,8 +1778,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             }
         } break;
         case PortCoreConnectionDirection::In: {
-            std::string propString = cmd.get(2).asString();
-            Property prop(propString.c_str());
             std::string errMsg;
             if (!attachPortMonitor(prop, false, errMsg)) {
                 result.clear();
@@ -1821,11 +1818,12 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         };
     } break;
     case PortCoreCommand::Del: {
+        const std::string dest = cmd.get(1).asString();
         // Delete any inputs or outputs involving the named port.
-        removeOutput(cmd.get(1).asString(), id, &cache);
+        removeOutput(dest, id, &cache);
         std::string r1 = cache.toString();
         cache.reset();
-        removeInput(cmd.get(1).asString(), id, &cache);
+        removeInput(dest, id, &cache);
         std::string r2 = cache.toString();
         int v = (r1[0] == 'R' || r2[0] == 'R') ? 0 : -1;
         result.addInt32(v);
@@ -1839,10 +1837,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     } break;
     case PortCoreCommand::List: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
+        const std::string target = cmd.get(2).asString();
         switch (direction) {
         case PortCoreConnectionDirection::In: {
             // Return a list of all input connections.
-            std::string target = cmd.get(2).asString();
             m_stateSemaphore.wait();
             for (auto unit : m_units) {
                 if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
@@ -1876,7 +1874,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         } break;
         case PortCoreConnectionDirection::Out: {
             // Return a list of all output connections.
-            std::string target = cmd.get(2).asString();
             m_stateSemaphore.wait();
             for (auto unit : m_units) {
                 if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
@@ -1913,10 +1910,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     } break;
     case PortCoreCommand::Set: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
+        const std::string target = cmd.get(2).asString();
         switch (direction) {
         case PortCoreConnectionDirection::In: {
             // Set carrier parameters on a given input connection.
-            std::string target = cmd.get(2).asString();
             m_stateSemaphore.wait();
             if (target.empty()) {
                 result.addInt32(-1);
@@ -1964,7 +1961,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         } break;
         case PortCoreConnectionDirection::Out: {
             // Set carrier parameters on a given output connection.
-            std::string target = cmd.get(2).asString();
             m_stateSemaphore.wait();
             if (target.empty()) {
                 result.addInt32(-1);
@@ -2018,10 +2014,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     } break;
     case PortCoreCommand::Get: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
+        const std::string target = cmd.get(2).asString();
         switch (direction) {
         case PortCoreConnectionDirection::In: {
             // Get carrier parameters for a given input connection.
-            std::string target = cmd.get(2).asString();
             m_stateSemaphore.wait();
             if (target.empty()) {
                 result.addInt32(-1);
@@ -2061,7 +2057,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         } break;
         case PortCoreConnectionDirection::Out: {
             // Get carrier parameters for a given output connection.
-            std::string target = cmd.get(2).asString();
             m_stateSemaphore.wait();
             if (target.empty()) {
                 result.addInt32(-1);
@@ -2244,15 +2239,17 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         // Set/get arbitrary properties on a port.
         switch (action) {
         case PortCorePropertyAction::Get: {
+            const std::string key = cmd.get(2).asString();
             Property* p = acquireProperties(false);
             if (p != nullptr) {
-                if (!cmd.get(2).isNull()) {
+                if (key.empty()) {
+                    result.fromString(p->toString());
+                } else {
                     // request: "prop get /portname"
-                    std::string portName = cmd.get(2).asString();
                     bool bFound = false;
-                    if ((!portName.empty()) && (portName[0] == '/')) {
+                    if (key[0] == '/') {
                         // check for their own name
-                        if (portName == getName()) {
+                        if (key == getName()) {
                             bFound = true;
                             result.clear();
                             Bottle& sched = result.addList();
@@ -2295,7 +2292,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                 if ((unit != nullptr) && !unit->isFinished()) {
                                     Route route = unit->getRoute();
                                     std::string coreName = (unit->isOutput()) ? route.getToName() : route.getFromName();
-                                    if (portName == coreName) {
+                                    if (key == coreName) {
                                         bFound = true;
                                         int priority = unit->getPriority();
                                         int policy = unit->getPolicy();
@@ -2321,30 +2318,30 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             result.clear();
                             result.addVocab(Vocab::encode("fail"));
                             std::string msg = "cannot find any connection to/from ";
-                            msg = msg + portName;
+                            msg = msg + key;
                             result.addString(msg);
                         }
-                    } // end of (portName[0] == '/')
-                    else {
-                        result.add(p->find(cmd.get(2).asString()));
+                        // end of (portName[0] == '/')
+                    } else {
+                        result.add(p->find(key));
                     }
-                } else {
-                    result.fromString(p->toString());
                 }
             }
             releaseProperties(p);
         } break;
         case PortCorePropertyAction::Set: {
+            const std::string key = cmd.get(2).asString();
+            const Value& value = cmd.get(3);
             Property* p = acquireProperties(false);
             bool bOk = true;
             if (p != nullptr) {
-                p->put(cmd.get(2).asString(), cmd.get(3));
+                p->put(key, value);
                 // setting scheduling properties of all threads within the process
                 // scope through the admin port
                 // e.g. prop set /current_port (process ((priority 30) (policy 1)))
                 Bottle& process = cmd.findGroup("process");
                 if (!process.isNull()) {
-                    std::string portName = cmd.get(2).asString();
+                    std::string portName = key;
                     if ((!portName.empty()) && (portName[0] == '/')) {
                         // check for their own name
                         if (portName == getName()) {
@@ -2372,14 +2369,14 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 // SCHED_RR    : policy=2, priority=[1 .. 99]
                 Bottle& sched = cmd.findGroup("sched");
                 if (!sched.isNull()) {
-                    if ((!cmd.get(2).asString().empty()) && (cmd.get(2).asString()[0] == '/')) {
+                    if ((!key.empty()) && (key[0] == '/')) {
                         bOk = false;
                         for (auto unit : m_units) {
                             if ((unit != nullptr) && !unit->isFinished()) {
                                 Route route = unit->getRoute();
                                 std::string portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
 
-                                if (portName == cmd.get(2).asString()) {
+                                if (portName == key) {
                                     Bottle* sched_prop = sched.find("sched").asList();
                                     if (sched_prop != nullptr) {
                                         int prio = -1;
@@ -2407,13 +2404,13 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 // e.g., "prop set /portname (qos ((tos 12)))"
                 Bottle& qos = cmd.findGroup("qos");
                 if (!qos.isNull()) {
-                    if ((!cmd.get(2).asString().empty()) && (cmd.get(2).asString()[0] == '/')) {
+                    if ((!key.empty()) && (key[0] == '/')) {
                         bOk = false;
                         for (auto unit : m_units) {
                             if ((unit != nullptr) && !unit->isFinished()) {
                                 Route route = unit->getRoute();
                                 std::string portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
-                                if (portName == cmd.get(2).asString()) {
+                                if (portName == key) {
                                     Bottle* qos_prop = qos.find("qos").asList();
                                     if (qos_prop != nullptr) {
                                         if (qos_prop->check("priority")) {
