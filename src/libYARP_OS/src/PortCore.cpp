@@ -88,7 +88,7 @@ PortCore::PortCore() :
         m_logNeeded(false),
         m_timeout(-1),
         m_counter(1),
-        prop(nullptr),
+        m_prop(nullptr),
         contactable(nullptr),
         mutex(nullptr),
         mutexOwned(false),
@@ -308,9 +308,9 @@ void PortCore::close()
 {
     closeMain();
 
-    if (prop != nullptr) {
-        delete prop;
-        prop = nullptr;
+    if (m_prop != nullptr) {
+        delete m_prop;
+        m_prop = nullptr;
     }
     modifier.releaseOutModifier();
     modifier.releaseInModifier();
@@ -2649,11 +2649,11 @@ Property* PortCore::acquireProperties(bool readOnly)
 {
     m_stateSemaphore.wait();
     if (!readOnly) {
-        if (prop == nullptr) {
-            prop = new Property();
+        if (m_prop == nullptr) {
+            m_prop = new Property();
         }
     }
-    return prop;
+    return m_prop;
 }
 
 void PortCore::releaseProperties(Property* prop)
