@@ -547,7 +547,7 @@ private:
 
     yarp::os::Mutex m_typeMutex;        ///< control access to type
     bool m_checkedType;
-    Type typ;
+    Type m_type;
 
     // port data modifier
     yarp::os::impl::PortDataModifier modifier;

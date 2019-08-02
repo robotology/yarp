@@ -2795,8 +2795,8 @@ void PortCore::checkType(PortReader& reader)
 {
     m_typeMutex.lock();
     if (!m_checkedType) {
-        if (!typ.isValid()) {
-            typ = reader.getReadType();
+        if (!m_type.isValid()) {
+            m_type = reader.getReadType();
         }
         m_checkedType = true;
     }
@@ -2806,7 +2806,7 @@ void PortCore::checkType(PortReader& reader)
 yarp::os::Type PortCore::getType()
 {
     m_typeMutex.lock();
-    Type t = typ;
+    Type t = m_type;
     m_typeMutex.unlock();
     return t;
 }
@@ -2814,6 +2814,6 @@ yarp::os::Type PortCore::getType()
 void PortCore::promiseType(const Type& typ)
 {
     m_typeMutex.lock();
-    this->typ = typ;
+    this->m_type = typ;
     m_typeMutex.unlock();
 }
