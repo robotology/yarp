@@ -1584,6 +1584,117 @@ static bool __tcp_check(const Contact& c)
     return true;
 }
 
+namespace {
+enum class PortCoreCommand : yarp::conf::vocab32_t
+{
+    Unknown = 0,
+    Help = yarp::os::createVocab('h', 'e', 'l', 'p'),
+    Ver = yarp::os::createVocab('v', 'e', 'r'),
+    Add = yarp::os::createVocab('a', 'd', 'd'),
+    Del = yarp::os::createVocab('d', 'e', 'l'),
+    Atch = yarp::os::createVocab('a', 't', 'c', 'h'),
+    Dtch = yarp::os::createVocab('d', 't', 'c', 'h'),
+    List = yarp::os::createVocab('l', 'i', 's', 't'),
+    Set = yarp::os::createVocab('s', 'e', 't'),
+    Get = yarp::os::createVocab('g', 'e', 't'),
+    Prop = yarp::os::createVocab('p', 'r', 'o', 'p'),
+    RosPublisherUpdate = yarp::os::createVocab('r', 'p', 'u', 'p'),
+    RosRequestTopic = yarp::os::createVocab('r', 't', 'o', 'p'),
+    RosGetPid = yarp::os::createVocab('p', 'i', 'd'),
+    RosGetBusInfo = yarp::os::createVocab('b', 'u', 's'),
+};
+
+enum class PortCoreConnectionDirection : yarp::conf::vocab32_t
+{
+    Error = 0,
+    Out = yarp::os::createVocab('o', 'u', 't'),
+    In = yarp::os::createVocab('i', 'n'),
+};
+
+enum class PortCorePropertyAction : yarp::conf::vocab32_t
+{
+    Error = 0,
+    Get = yarp::os::createVocab('g', 'e', 't'),
+    Set = yarp::os::createVocab('s', 'e', 't')
+};
+
+PortCoreCommand parseCommand(const yarp::os::Value& v)
+{
+    yarp::conf::vocab32_t vocab = v.asVocab();
+    if (v.isString()) {
+        // We support ROS client API these days.  Here we recode some long ROS
+        // command names, just for convenience.
+        std::string cmd = v.asString();
+        if (cmd == "publisherUpdate") {
+            vocab = yarp::os::createVocab('p', 'r', 'o', 'p');
+        } else if (cmd == "requestTopic") {
+            vocab = yarp::os::createVocab('r', 't', 'o', 'p');
+        } else if (cmd == "getPid") {
+            vocab = yarp::os::createVocab('p', 'i', 'd');
+        } else if (cmd == "getBusInfo") {
+            vocab = yarp::os::createVocab('b', 'u', 's');
+        }
+    }
+    switch (vocab) {
+    case yarp::os::createVocab('h', 'e', 'l', 'p'):
+        return PortCoreCommand::Help;
+    case yarp::os::createVocab('v', 'e', 'r'):
+        return PortCoreCommand::Ver;
+    case yarp::os::createVocab('a', 'd', 'd'):
+        return PortCoreCommand::Add;
+    case yarp::os::createVocab('d', 'e', 'l'):
+        return PortCoreCommand::Del;
+    case yarp::os::createVocab('a', 't', 'c', 'h'):
+        return PortCoreCommand::Atch;
+    case yarp::os::createVocab('d', 't', 'c', 'h'):
+        return PortCoreCommand::Dtch;
+    case yarp::os::createVocab('l', 'i', 's', 't'):
+        return PortCoreCommand::List;
+    case yarp::os::createVocab('s', 'e', 't'):
+        return PortCoreCommand::Set;
+    case yarp::os::createVocab('g', 'e', 't'):
+        return PortCoreCommand::Get;
+    case yarp::os::createVocab('p', 'r', 'o', 'p'):
+        return PortCoreCommand::Prop;
+    case yarp::os::createVocab('r', 'p', 'u', 'p'):
+        return PortCoreCommand::RosPublisherUpdate;
+    case yarp::os::createVocab('r', 't', 'o', 'p'):
+        return PortCoreCommand::RosRequestTopic;
+    case yarp::os::createVocab('p', 'i', 'd'):
+        return PortCoreCommand::RosGetPid;
+    case yarp::os::createVocab('b', 'u', 's'):
+        return PortCoreCommand::RosGetBusInfo;
+    }
+
+    return PortCoreCommand::Unknown;
+}
+
+PortCoreConnectionDirection parseConnectionDirection(yarp::conf::vocab32_t v, bool errorIsOut = false)
+{
+    switch (v) {
+    case yarp::os::createVocab('i', 'n'):
+        return PortCoreConnectionDirection::In;
+    case yarp::os::createVocab('o', 'u', 't'):
+        return PortCoreConnectionDirection::Out;
+    default:
+        return errorIsOut ? PortCoreConnectionDirection::Out : PortCoreConnectionDirection::Error;
+    }
+}
+
+PortCorePropertyAction parsePropertyAction(yarp::conf::vocab32_t v)
+{
+    switch (v) {
+    case yarp::os::createVocab('g', 'e', 't'):
+        return PortCorePropertyAction::Get;
+    case yarp::os::createVocab('s', 'e', 't'):
+        return PortCorePropertyAction::Set;
+    default:
+        return PortCorePropertyAction::Error;
+    }
+}
+
+} // namespace
+
 bool PortCore::adminBlock(ConnectionReader& reader,
                           void* id,
                           OutputStream* os)

@@ -22,6 +22,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Type.h>
+#include <yarp/os/Vocab.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/PortCorePackets.h>
 #include <yarp/os/impl/ThreadImpl.h>
