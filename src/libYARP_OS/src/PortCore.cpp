@@ -90,7 +90,7 @@ PortCore::PortCore() :
         m_counter(1),
         m_prop(nullptr),
         m_contactable(nullptr),
-        mutex(nullptr),
+        m_mutex(nullptr),
         mutexOwned(false),
         envelopeWriter(true),
         typeMutex(),
@@ -2741,10 +2741,10 @@ bool PortCore::setCallbackLock(yarp::os::Mutex* mutex)
 {
     removeCallbackLock();
     if (mutex != nullptr) {
-        this->mutex = mutex;
+        this->m_mutex = mutex;
         mutexOwned = false;
     } else {
-        this->mutex = new yarp::os::Mutex();
+        this->m_mutex = new yarp::os::Mutex();
         mutexOwned = true;
     }
     return true;
@@ -2752,37 +2752,37 @@ bool PortCore::setCallbackLock(yarp::os::Mutex* mutex)
 
 bool PortCore::removeCallbackLock()
 {
-    if (mutexOwned && (mutex != nullptr)) {
-        delete mutex;
+    if (mutexOwned && (m_mutex != nullptr)) {
+        delete m_mutex;
     }
-    mutex = nullptr;
+    m_mutex = nullptr;
     mutexOwned = false;
     return true;
 }
 
 bool PortCore::lockCallback()
 {
-    if (mutex == nullptr) {
+    if (m_mutex == nullptr) {
         return false;
     }
-    mutex->lock();
+    m_mutex->lock();
     return true;
 }
 
 bool PortCore::tryLockCallback()
 {
-    if (mutex == nullptr) {
+    if (m_mutex == nullptr) {
         return true;
     }
-    return mutex->try_lock();
+    return m_mutex->try_lock();
 }
 
 void PortCore::unlockCallback()
 {
-    if (mutex == nullptr) {
+    if (m_mutex == nullptr) {
         return;
     }
-    mutex->unlock();
+    m_mutex->unlock();
 }
 
 
