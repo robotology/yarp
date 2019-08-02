@@ -122,10 +122,10 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     // We can assume this because it is not a user-facing class,
     // and we carefully never call this method again without
     // calling close().
-    yAssert(m_listening == false);
-    yAssert(m_running == false);
-    yAssert(m_closing == false);
-    yAssert(m_finished == false);
+    yAssert(!m_listening);
+    yAssert(!m_running);
+    yAssert(!m_closing);
+    yAssert(!m_finished);
     yAssert(m_face == nullptr);
 
     // Try to put the port on the network, using the user-supplied
@@ -179,7 +179,7 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
 void PortCore::setReadHandler(PortReader& reader)
 {
     // Don't even try to do this when the port is hot, it'll burn you
-    yAssert(m_running == false);
+    yAssert(!m_running);
     yAssert(this->m_reader == nullptr);
     this->m_reader = &reader;
 }
@@ -187,7 +187,7 @@ void PortCore::setReadHandler(PortReader& reader)
 void PortCore::setAdminReadHandler(PortReader& reader)
 {
     // Don't even try to do this when the port is hot, it'll burn you
-    yAssert(m_running == false);
+    yAssert(!m_running);
     yAssert(this->m_adminReader == nullptr);
     this->m_adminReader = &reader;
 }
@@ -195,7 +195,7 @@ void PortCore::setAdminReadHandler(PortReader& reader)
 void PortCore::setReadCreator(PortReaderCreator& creator)
 {
     // Don't even try to do this when the port is hot, it'll burn you
-    yAssert(m_running == false);
+    yAssert(!m_running);
     yAssert(this->m_readableCreator == nullptr);
     this->m_readableCreator = &creator;
 }
@@ -214,11 +214,11 @@ void PortCore::run()
 
     // We assume that listen() has succeeded and that
     // start() has been called.
-    yAssert(m_listening == true);
-    yAssert(m_running == false);
-    yAssert(m_closing == false);
-    yAssert(m_finished == false);
-    yAssert(m_starting == true);
+    yAssert(m_listening);
+    yAssert(!m_running);
+    yAssert(!m_closing);
+    yAssert(!m_finished);
+    yAssert(m_starting);
 
     // Enter running phase
     m_running = true;
@@ -325,11 +325,11 @@ bool PortCore::start()
     m_stateSemaphore.wait();
 
     // We assume that listen() has been called.
-    yAssert(m_listening == true);
-    yAssert(m_running == false);
-    yAssert(m_starting == false);
-    yAssert(m_finished == false);
-    yAssert(m_closing == false);
+    yAssert(m_listening);
+    yAssert(!m_running);
+    yAssert(!m_starting);
+    yAssert(!m_finished);
+    yAssert(!m_closing);
     m_starting = true;
 
     // Start the server thread.
@@ -340,7 +340,7 @@ bool PortCore::start()
     } else {
         // run() will signal stateSema once it is active
         m_stateSemaphore.wait();
-        yAssert(m_running == true);
+        yAssert(m_running);
 
         // release stateSema for its normal task of controlling access to state
         m_stateSemaphore.post();
@@ -507,7 +507,7 @@ void PortCore::closeMain()
 
         // We should be finished now.
         m_stateSemaphore.wait();
-        yAssert(m_finished == true);
+        yAssert(m_finished);
         m_stateSemaphore.post();
 
         // Clean up our connection list. We couldn't do this earlier,
@@ -556,12 +556,12 @@ void PortCore::closeMain()
     m_finishing = false;
 
     // We are fresh as a daisy.
-    yAssert(m_listening == false);
-    yAssert(m_running == false);
-    yAssert(m_starting == false);
-    yAssert(m_closing == false);
-    yAssert(m_finished == false);
-    yAssert(m_finishing == false);
+    yAssert(!m_listening);
+    yAssert(!m_running);
+    yAssert(!m_starting);
+    yAssert(!m_closing);
+    yAssert(!m_finished);
+    yAssert(!m_finishing);
     yAssert(m_face == nullptr);
 }
 
@@ -581,7 +581,7 @@ void PortCore::closeUnits()
     // Empty the PortCore#units list. This is only possible when
     // the server thread is finished.
     m_stateSemaphore.wait();
-    yAssert(m_finished == true);
+    yAssert(m_finished);
     m_stateSemaphore.post();
 
     // In the "finished" phase, nobody else touches the units,
