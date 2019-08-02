@@ -545,7 +545,7 @@ private:
     bool m_mutexOwned;        ///< do we own the optional callback lock
     BufferedConnectionWriter m_envelopeWriter; ///< storage area for envelope, if present
 
-    yarp::os::Mutex typeMutex;        ///< control access to type
+    yarp::os::Mutex m_typeMutex;        ///< control access to type
     bool checkedType;
     Type typ;
 
