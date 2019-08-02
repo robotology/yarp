@@ -510,7 +510,7 @@ private:
     Logger m_log;  ///< message logger
     Face *m_face;  ///< network server
     std::string m_name; ///< name of port
-    yarp::os::Contact address;    ///< network address of port
+    yarp::os::Contact m_address;    ///< network address of port
     yarp::os::PortReader *reader; ///< where to send read events
     yarp::os::PortReader *adminReader; ///< where to send admin read events
     yarp::os::PortReaderCreator *readableCreator; ///< factory for readers

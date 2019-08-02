@@ -131,12 +131,12 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     // Try to put the port on the network, using the user-supplied
     // address (which may be incomplete).  You can think of
     // this as getting a server socket.
-    this->address = address;
+    this->m_address = address;
     setName(address.getRegName());
     if (timeout > 0) {
-        this->address.setTimeout(timeout);
+        this->m_address.setTimeout(timeout);
     }
-    m_face = Carriers::listen(this->address);
+    m_face = Carriers::listen(this->m_address);
 
     // We failed, abort.
     if (m_face == nullptr) {
@@ -145,11 +145,11 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     }
 
     // Update our address if it was incomplete.
-    if (this->address.getPort() <= 0) {
-        this->address = m_face->getLocalAddress();
-        if (this->address.getRegName() == "...") {
-            this->address.setName(std::string("/") + this->address.getHost() + "_" + NetType::toString(this->address.getPort()));
-            setName(this->address.getRegName());
+    if (this->m_address.getPort() <= 0) {
+        this->m_address = m_face->getLocalAddress();
+        if (this->m_address.getRegName() == "...") {
+            this->m_address.setName(std::string("/") + this->m_address.getHost() + "_" + NetType::toString(this->m_address.getPort()));
+            setName(this->m_address.getRegName());
         }
     }
 
@@ -497,7 +497,7 @@ void PortCore::closeMain()
         // Wake up the server thread the only way we can, by sending
         // a message to it.  Then join it, it is done.
         if (!manual) {
-            OutputProtocol* op = m_face->write(address);
+            OutputProtocol* op = m_face->write(m_address);
             if (op != nullptr) {
                 op->close();
                 delete op;
@@ -851,7 +851,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool* except)
             reapUnits();
         } else {
             // Send a blank message to make up server thread.
-            OutputProtocol* op = m_face->write(address);
+            OutputProtocol* op = m_face->write(m_address);
             if (op != nullptr) {
                 op->close();
                 delete op;
@@ -1100,7 +1100,7 @@ void PortCore::describe(void* id, OutputStream* os)
     m_stateSemaphore.wait();
 
     // Report name and address.
-    bw.appendLine(std::string("This is ") + address.getRegName() + " at " + address.toURI());
+    bw.appendLine(std::string("This is ") + m_address.getRegName() + " at " + m_address.toURI());
 
     // Report outgoing connections.
     int oct = 0;
@@ -1154,8 +1154,8 @@ void PortCore::describe(PortReport& reporter)
     // Report name and address of port.
     PortInfo baseInfo;
     baseInfo.tag = yarp::os::PortInfo::PORTINFO_MISC;
-    std::string portName = address.getRegName();
-    baseInfo.message = std::string("This is ") + portName + " at " + address.toURI();
+    std::string portName = m_address.getRegName();
+    baseInfo.message = std::string("This is ") + portName + " at " + m_address.toURI();
     reporter.report(baseInfo);
 
     // Report outgoing connections.
@@ -2173,7 +2173,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             platform.addString("platform");
                             Property& platform_prop = platform.addDict();
                             platform_prop.put("os", pinfo.name);
-                            platform_prop.put("hostname", address.getHost());
+                            platform_prop.put("hostname", m_address.getHost());
 
                             int f = getFlags();
                             bool is_input = (f & PORTCORE_IS_INPUT) != 0;
@@ -2689,12 +2689,12 @@ int PortCore::getNextIndex()
 
 const Contact& PortCore::getAddress() const
 {
-    return address;
+    return m_address;
 }
 
 void PortCore::resetPortName(const std::string& str)
 {
-    address.setName(str);
+    m_address.setName(str);
 }
 
 yarp::os::PortReaderCreator* PortCore::getReadCreator()
