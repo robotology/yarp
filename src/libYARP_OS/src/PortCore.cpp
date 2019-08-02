@@ -74,7 +74,7 @@ PortCore::PortCore() :
         m_finishing(false),
         m_waitBeforeSend(true),
         m_waitAfterSend(true),
-        controlRegistration(true),
+        m_controlRegistration(true),
         interruptible(true),
         interrupted(false),
         manual(false),
@@ -546,7 +546,7 @@ void PortCore::closeMain()
     if (stopRunning) {
         std::string name = getName();
         if (name != std::string("")) {
-            if (controlRegistration) {
+            if (m_controlRegistration) {
                 NetworkBase::unregisterName(name);
             }
         }
@@ -2704,7 +2704,7 @@ yarp::os::PortReaderCreator* PortCore::getReadCreator()
 
 void PortCore::setControlRegistration(bool flag)
 {
-    controlRegistration = flag;
+    m_controlRegistration = flag;
 }
 
 bool PortCore::isListening() const
