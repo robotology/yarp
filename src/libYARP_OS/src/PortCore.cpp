@@ -435,7 +435,7 @@ void PortCore::closeMain()
         done = true;
         std::string removeName;
         stateSema.wait();
-        for (auto unit : units) {
+        for (auto unit : m_units) {
             if ((unit != nullptr) && unit->isInput() &&!unit->isDoomed()) {
                 Route r = unit->getRoute();
                 std::string s = r.getFromName();
@@ -468,7 +468,7 @@ void PortCore::closeMain()
         done = true;
         Route removeRoute;
         stateSema.wait();
-        for (auto unit : units) {
+        for (auto unit : m_units) {
             if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
                 removeRoute = unit->getRoute();
                 if (removeRoute.getFromName() == getName()) {
@@ -586,7 +586,7 @@ void PortCore::closeUnits()
 
     // In the "finished" phase, nobody else touches the units,
     // so we can go ahead and shut them down and delete them.
-    for (auto& i : units) {
+    for (auto& i : m_units) {
         PortCoreUnit* unit = i;
         if (unit != nullptr) {
             YARP_DEBUG(log, "closing a unit");
@@ -600,7 +600,7 @@ void PortCore::closeUnits()
     }
 
     // Get rid of all our nulls.  Done!
-    units.clear();
+    m_units.clear();
 }
 
 void PortCore::reapUnits()
@@ -609,7 +609,7 @@ void PortCore::reapUnits()
     // but aren't otherwise touched until it is safe to do so.
     stateSema.wait();
     if (!finished) {
-        for (auto unit : units) {
+        for (auto unit : m_units) {
             if ((unit != nullptr) && unit->isDoomed() && !unit->isFinished()) {
                 std::string s = unit->getRoute().toString();
                 YARP_DEBUG(log, std::string("Informing connection ") + s + " that it is doomed");
@@ -648,7 +648,7 @@ void PortCore::cleanUnits(bool blocking)
     if (!finished) {
 
         // First, we delete and null out any defunct entries in the list.
-        for (auto& i : units) {
+        for (auto& i : m_units) {
             PortCoreUnit* unit = i;
             if (unit != nullptr) {
                 YARP_DEBUG(log, std::string("| checking connection ") + unit->getRoute().toString() + " " + unit->getMode());
@@ -683,19 +683,19 @@ void PortCore::cleanUnits(bool blocking)
         // or STL, if ACE it is quite limited).  We move the nulls to
         // the end of the list ...
         unsigned int rem = 0;
-        for (unsigned int i2 = 0; i2 < units.size(); i2++) {
-            if (units[i2] != nullptr) {
+        for (unsigned int i2 = 0; i2 < m_units.size(); i2++) {
+            if (m_units[i2] != nullptr) {
                 if (rem < i2) {
-                    units[rem] = units[i2];
-                    units[i2] = nullptr;
+                    m_units[rem] = m_units[i2];
+                    m_units[i2] = nullptr;
                 }
                 rem++;
             }
         }
 
         // ... Now we get rid of the null entries
-        for (unsigned int i3 = 0; i3 < units.size() - rem; i3++) {
-            units.pop_back();
+        for (unsigned int i3 = 0; i3 < m_units.size() - rem; i3++) {
+            m_units.pop_back();
         }
     }
 
@@ -725,8 +725,8 @@ void PortCore::addInput(InputProtocol* ip)
                                                false);
     yAssert(unit != nullptr);
     unit->start();
-    units.push_back(unit);
-    YMSG(("there are now %d units\n", (int)units.size()));
+    m_units.push_back(unit);
+    YMSG(("there are now %d units\n", (int)m_units.size()));
     stateSema.post();
 }
 
@@ -746,7 +746,7 @@ void PortCore::addOutput(OutputProtocol* op)
         PortCoreUnit* unit = new PortCoreOutputUnit(*this, getNextIndex(), op);
         yAssert(unit != nullptr);
         unit->start();
-        units.push_back(unit);
+        m_units.push_back(unit);
     }
     stateSema.post();
 }
@@ -757,7 +757,7 @@ bool PortCore::isUnit(const Route& route, int index)
     // Check if a connection with a specified route (and optional ID) is present
     bool needReap = false;
     if (!finished) {
-        for (auto unit : units) {
+        for (auto unit : m_units) {
             if (unit != nullptr) {
                 Route alt = unit->getRoute();
                 std::string wild = "*";
@@ -805,7 +805,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool* except)
     stateSema.wait();
     bool needReap = false;
     if (!finished) {
-        for (auto unit : units) {
+        for (auto unit : m_units) {
             if (unit != nullptr) {
                 Route alt = unit->getRoute();
                 std::string wild = "*";
@@ -1041,7 +1041,7 @@ bool PortCore::addOutput(const std::string& dest,
                                                        true);
             yAssert(unit != nullptr);
             unit->start();
-            units.push_back(unit);
+            m_units.push_back(unit);
         }
         stateSema.post();
     }
@@ -1104,7 +1104,7 @@ void PortCore::describe(void* id, OutputStream* os)
 
     // Report outgoing connections.
     int oct = 0;
-    for (auto unit : units) {
+    for (auto unit : m_units) {
         if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
             Route route = unit->getRoute();
             std::string msg = "There is an output connection from " + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
@@ -1118,7 +1118,7 @@ void PortCore::describe(void* id, OutputStream* os)
 
     // Report incoming connections.
     int ict = 0;
-    for (auto unit : units) {
+    for (auto unit : m_units) {
         if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
             Route route = unit->getRoute();
             if (!route.getCarrierName().empty()) {
@@ -1160,7 +1160,7 @@ void PortCore::describe(PortReport& reporter)
 
     // Report outgoing connections.
     int oct = 0;
-    for (auto unit : units) {
+    for (auto unit : m_units) {
         if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
             Route route = unit->getRoute();
             std::string msg = "There is an output connection from " + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
@@ -1185,7 +1185,7 @@ void PortCore::describe(PortReport& reporter)
 
     // Report incoming connections.
     int ict = 0;
-    for (auto unit : units) {
+    for (auto unit : m_units) {
         if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
             Route route = unit->getRoute();
             std::string msg = "There is an input connection from " + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
@@ -1367,7 +1367,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
     packetMutex.unlock();
 
     // Scan connections, placing message everyhere we can.
-    for (auto unit : units) {
+    for (auto unit : m_units) {
         if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
             bool log = (!unit->getMode().empty());
             if (log) {
@@ -1448,7 +1448,7 @@ bool PortCore::isWriting()
     // Check if any port is currently writing.  TODO optimize
     // this query by counting down with notifyCompletion().
     if (!finished) {
-        for (auto unit : units) {
+        for (auto unit : m_units) {
             if ((unit != nullptr) && !unit->isFinished() && unit->isBusy()) {
                 writing = true;
             }
@@ -1747,7 +1747,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             // Return a list of all input connections.
             std::string target = cmd.get(2).asString();
             stateSema.wait();
-            for (auto unit : units) {
+            for (auto unit : m_units) {
                 if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
                     Route route = unit->getRoute();
                     if (target.empty()) {
@@ -1783,7 +1783,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             // Return a list of all output connections.
             std::string target = cmd.get(2).asString();
             stateSema.wait();
-            for (auto unit : units) {
+            for (auto unit : m_units) {
                 if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
                     Route route = unit->getRoute();
                     if (target.empty()) {
@@ -1836,7 +1836,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                         result.addVocab(Vocab::encode("ok"));
                     }
                 } else {
-                    for (auto unit : units) {
+                    for (auto unit : m_units) {
                         if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
                             Route route = unit->getRoute();
                             if (route.getFromName() == target) {
@@ -1886,7 +1886,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                         result.addVocab(Vocab::encode("ok"));
                     }
                 } else {
-                    for (auto unit : units) {
+                    for (auto unit : m_units) {
                         if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
                             Route route = unit->getRoute();
                             if (route.getToName() == target) {
@@ -1937,7 +1937,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     result.addDict() = property;
                 }
             } else {
-                for (auto unit : units) {
+                for (auto unit : m_units) {
                     if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
                         Route route = unit->getRoute();
                         if (route.getFromName() == target) {
@@ -1979,7 +1979,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     result.addDict() = property;
                 }
             } else {
-                for (auto unit : units) {
+                for (auto unit : m_units) {
                     if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
                         Route route = unit->getRoute();
                         if (route.getToName() == target) {
@@ -2023,7 +2023,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             }
             Property present;
             stateSema.wait();
-            for (auto unit : units) {
+            for (auto unit : m_units) {
                 if ((unit != nullptr) && unit->isPupped()) {
                     std::string me = unit->getPupString();
                     present.put(me, 1);
@@ -2097,7 +2097,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             yAssert(unit != nullptr);
                             unit->setPupped(pub);
                             unit->start();
-                            units.push_back(unit);
+                            m_units.push_back(unit);
                             stateSema.post();
                         }
                     }
@@ -2187,7 +2187,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             port_prop.put("is_rpc", is_rpc);
                             port_prop.put("type", getType().getName());
                         } else {
-                            for (auto unit : units) {
+                            for (auto unit : m_units) {
                                 if ((unit != nullptr) && !unit->isFinished()) {
                                     Route route = unit->getRoute();
                                     std::string coreName = (unit->isOutput()) ? route.getToName() : route.getFromName();
@@ -2270,7 +2270,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 if (!sched.isNull()) {
                     if ((!cmd.get(2).asString().empty()) && (cmd.get(2).asString()[0] == '/')) {
                         bOk = false;
-                        for (auto unit : units) {
+                        for (auto unit : m_units) {
                             if ((unit != nullptr) && !unit->isFinished()) {
                                 Route route = unit->getRoute();
                                 std::string portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
@@ -2305,7 +2305,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 if (!qos.isNull()) {
                     if ((!cmd.get(2).asString().empty()) && (cmd.get(2).asString()[0] == '/')) {
                         bOk = false;
-                        for (auto unit : units) {
+                        for (auto unit : m_units) {
                             if ((unit != nullptr) && !unit->isFinished()) {
                                 Route route = unit->getRoute();
                                 std::string portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
