@@ -81,7 +81,7 @@ PortCore::PortCore() :
         m_events(0),
         m_connectionListeners(0),
         m_inputCount(0),
-        outputCount(0),
+        m_outputCount(0),
         dataOutputCount(0),
         flags(PORTCORE_IS_INPUT | PORTCORE_IS_OUTPUT),
         verbosity(1),
@@ -704,7 +704,7 @@ void PortCore::cleanUnits(bool blocking)
     m_stateSemaphore.post();
     m_packetMutex.lock();
     m_inputCount = updatedInputCount;
-    outputCount = updatedOutputCount;
+    m_outputCount = updatedOutputCount;
     m_packetMutex.unlock();
     YARP_DEBUG(m_log, "\\ routine check of connections to this port ends");
 }
@@ -1257,7 +1257,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void* id, OutputStream* os)
     if (this->m_reader != nullptr && !m_interrupted) {
         m_interruptible = false; // No mutexing; user of interrupt() has to be careful.
 
-        bool haveOutputs = (outputCount != 0); // No mutexing, but failure modes are benign.
+        bool haveOutputs = (m_outputCount != 0); // No mutexing, but failure modes are benign.
 
         if (logNeeded && haveOutputs) {
             // Normally, yarp doesn't pay attention to the content of
@@ -1474,7 +1474,7 @@ int PortCore::getOutputCount()
 {
     cleanUnits(false);
     m_packetMutex.lock();
-    int result = outputCount;
+    int result = m_outputCount;
     m_packetMutex.unlock();
     return result;
 }
