@@ -355,7 +355,7 @@ public:
      */
     void setWaitAfterSend(bool waitAfterSend)
     {
-        this->waitAfterSend = waitAfterSend;
+        this->m_waitAfterSend = waitAfterSend;
     }
 
     /**
@@ -522,7 +522,7 @@ private:
     bool m_finished;  ///< is the port server thread finished running?
     bool m_finishing; ///< is the port server thread trying to finish?
     bool m_waitBeforeSend; ///< should we wait for all current writes to complete before writing more?
-    bool waitAfterSend;  ///< should we wait for writes to complete immediately after we start them?
+    bool m_waitAfterSend;  ///< should we wait for writes to complete immediately after we start them?
     bool controlRegistration;  ///< should the port unregister its name when shutting down?
     bool interruptible;  ///< is the port in an interruptible state?
     bool interrupted;    ///< is the port interrupted?

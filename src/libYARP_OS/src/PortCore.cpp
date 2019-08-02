@@ -73,7 +73,7 @@ PortCore::PortCore() :
         m_finished(false),
         m_finishing(false),
         m_waitBeforeSend(true),
-        waitAfterSend(true),
+        m_waitAfterSend(true),
         controlRegistration(true),
         interruptible(true),
         interrupted(false),
@@ -1378,7 +1378,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
             if (!ok) {
                 continue;
             }
-            bool waiter = waitAfterSend || (mode == PORTCORE_SEND_LOG);
+            bool waiter = m_waitAfterSend || (mode == PORTCORE_SEND_LOG);
             YMSG(("------- -- inc\n"));
             m_packetMutex.lock();
             packet->inc(); // One more connection carrying message.
@@ -1431,7 +1431,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
     m_stateSemaphore.post();
     YMSG(("------- send out real\n"));
 
-    if (waitAfterSend && reader != nullptr) {
+    if (m_waitAfterSend && reader != nullptr) {
         all_ok = all_ok && gotReply;
     }
 
