@@ -535,7 +535,7 @@ private:
     int m_flags;      ///< binary flags encoding restrictions on port
     int m_verbosity;  ///< threshold on what warnings or debug messages are shown
     bool m_logNeeded; ///< port needs to monitor message content
-    PortCorePackets packets; ///< a pool for tracking messages currently being sent
+    PortCorePackets m_packets; ///< a pool for tracking messages currently being sent
     std::string envelope;///< user-defined wrapping data
     float timeout;  ///< a timeout to apply to all network operations
     int counter;    ///< port-unique ids for connections

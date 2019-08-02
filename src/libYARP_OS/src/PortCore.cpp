@@ -1361,7 +1361,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
     // Prepare a "packet" for tracking a single message which
     // may travel by multiple outputs.
     m_packetMutex.lock();
-    PortCorePacket* packet = packets.getFreePacket();
+    PortCorePacket* packet = m_packets.getFreePacket();
     yAssert(packet != nullptr);
     packet->setContent(&writer, false, callback);
     m_packetMutex.unlock();
@@ -1400,7 +1400,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
                 // We got back a report of a message already sent.
                 m_packetMutex.lock();
                 ((PortCorePacket*)out)->dec(); // Message on one fewer connections.
-                packets.checkPacket((PortCorePacket*)out);
+                m_packets.checkPacket((PortCorePacket*)out);
                 m_packetMutex.unlock();
             }
             if (waiter) {
@@ -1419,7 +1419,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
     // But that is not our problem anymore.
     packet->dec();
 
-    packets.checkPacket(packet);
+    m_packets.checkPacket(packet);
     m_packetMutex.unlock();
     YMSG(("------- packed\n"));
     YMSG(("------- send out\n"));
@@ -1486,7 +1486,7 @@ void PortCore::notifyCompletion(void* tracker)
     m_packetMutex.lock();
     if (tracker != nullptr) {
         ((PortCorePacket*)tracker)->dec();
-        packets.checkPacket((PortCorePacket*)tracker);
+        m_packets.checkPacket((PortCorePacket*)tracker);
     }
     m_packetMutex.unlock();
     YMSG(("stopping notifyCompletion\n"));
