@@ -1712,27 +1712,11 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     YARP_SPRINTF2(m_log, debug, "Port %s received command %s", getName().c_str(), cmd.toString().c_str());
 
     StringOutputStream cache;
-
-    int vocab = cmd.get(0).asVocab();
-
-    // We support ROS client API these days.  Here we recode some long ROS
-    // command names, just for convenience.
-    if (cmd.get(0).asString() == "publisherUpdate") {
-        vocab = yarp::os::createVocab('r', 'p', 'u', 'p');
-    }
-    if (cmd.get(0).asString() == "requestTopic") {
-        vocab = yarp::os::createVocab('r', 't', 'o', 'p');
-    }
-    if (cmd.get(0).asString() == "getPid") {
-        vocab = yarp::os::createVocab('p', 'i', 'd');
-    }
-    if (cmd.get(0).asString() == "getBusInfo") {
-        vocab = yarp::os::createVocab('b', 'u', 's');
-    }
-
     std::string infoMsg;
-    switch (vocab) {
-    case yarp::os::createVocab('h', 'e', 'l', 'p'):
+
+    const PortCoreCommand command = parseCommand(cmd.get(0));
+    switch (command) {
+    case PortCoreCommand::Help:
         // We give a list of the most useful administrative commands.
         result.addVocab(yarp::os::createVocab('m', 'a', 'n', 'y'));
         result.addString("[help]                  # give this help");
@@ -1758,7 +1742,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         //result.addString("[atch] $portname $prop  # attach a portmonitor plug-in to the connection to/from $portname");
         //result.addString("[dtch] $portname        # detach any portmonitor plug-in from the connection to/from $portname");
         break;
-    case yarp::os::createVocab('v', 'e', 'r'):
+    case PortCoreCommand::Ver:
         // Gives a version number for the administrative commands.
         // It is distinct from YARP library versioning.
         result.addVocab(Vocab::encode("ver"));
@@ -1766,7 +1750,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addInt32(2);
         result.addInt32(3);
         break;
-    case yarp::os::createVocab('a', 'd', 'd'): {
+    case PortCoreCommand::Add: {
         // Add an output to the port.
         std::string output = cmd.get(1).asString();
         std::string carrier = cmd.get(2).asString();
@@ -1779,7 +1763,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addInt32(v);
         result.addString(r);
     } break;
-    case yarp::os::createVocab('a', 't', 'c', 'h'): {
+    case PortCoreCommand::Atch: {
         switch (cmd.get(1).asVocab()) {
         case yarp::os::createVocab('o', 'u', 't'): {
             std::string propString = cmd.get(2).asString();
@@ -1813,7 +1797,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             result.addString("attach command must be followd by [out] or [in]");
         };
     } break;
-    case yarp::os::createVocab('d', 't', 'c', 'h'): {
+    case PortCoreCommand::Dtch: {
         switch (cmd.get(1).asVocab()) {
         case yarp::os::createVocab('o', 'u', 't'): {
             if (dettachPortMonitor(true)) {
@@ -1835,7 +1819,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             result.addString("detach command must be followd by [out] or [in]");
         };
     } break;
-    case yarp::os::createVocab('d', 'e', 'l'): {
+    case PortCoreCommand::Del: {
         // Delete any inputs or outputs involving the named port.
         removeOutput(cmd.get(1).asString(), id, &cache);
         std::string r1 = cache.toString();
@@ -1852,7 +1836,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             result.addString(r1 + r2);
         }
     } break;
-    case yarp::os::createVocab('l', 'i', 's', 't'):
+    case PortCoreCommand::List:
         switch (cmd.get(1).asVocab()) {
         case yarp::os::createVocab('i', 'n'): {
             // Return a list of all input connections.
@@ -1924,7 +1908,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
         break;
 
-    case yarp::os::createVocab('s', 'e', 't'):
+    case PortCoreCommand::Set:
         switch (cmd.get(1).asVocab()) {
         case yarp::os::createVocab('i', 'n'): {
             // Set carrier parameters on a given input connection.
@@ -2027,7 +2011,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
         break;
 
-    case yarp::os::createVocab('g', 'e', 't'):
+    case PortCoreCommand::Get:
         switch (cmd.get(1).asVocab()) {
         case yarp::os::createVocab('i', 'n'): {
             // Get carrier parameters for a given input connection.
@@ -2115,7 +2099,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
         break;
 
-    case yarp::os::createVocab('r', 'p', 'u', 'p'): {
+    case PortCoreCommand::RosPublisherUpdate: {
         // When running against a ROS name server, we need to
         // support ROS-style callbacks for connecting publishers
         // with subscribers.  Note: this should not be necessary
@@ -2219,7 +2203,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addString("ok");
         reader.requestDrop(); // ROS needs us to close down.
     } break;
-    case yarp::os::createVocab('r', 't', 'o', 'p'): {
+    case PortCoreCommand::RosRequestTopic: {
         // ROS-style query for topics.
         YARP_SPRINTF1(m_log, debug, "requestTopic! --> %s", cmd.toString().c_str());
         result.addInt32(1);
@@ -2232,14 +2216,14 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         lst.addInt32(addr.getPort());
         reader.requestDrop(); // ROS likes to close down.
     } break;
-    case yarp::os::createVocab('p', 'i', 'd'): {
+    case PortCoreCommand::RosGetPid: {
         // ROS-style query for PID.
         result.addInt32(1);
         result.addString("");
         result.addInt32(yarp::os::impl::getpid());
         reader.requestDrop(); // ROS likes to close down.
     } break;
-    case yarp::os::createVocab('b', 'u', 's'): {
+    case PortCoreCommand::RosGetBusInfo: {
         // ROS-style query for bus information - we support this
         // in yarp::os::Node but not otherwise.
         result.addInt32(1);
@@ -2247,7 +2231,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addList().addList();
         reader.requestDrop(); // ROS likes to close down.
     } break;
-    case yarp::os::createVocab('p', 'r', 'o', 'p'): {
+    case PortCoreCommand::Prop: {
         // Set/get arbitrary properties on a port.
         switch (cmd.get(1).asVocab()) {
         case yarp::os::createVocab('g', 'e', 't'): {
@@ -2482,8 +2466,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             break;
         }
     } break;
-    default:
-    {
+    case PortCoreCommand::Unknown: {
         bool ok = false;
         if (m_adminReader != nullptr) {
             DummyConnector con;
