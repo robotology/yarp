@@ -85,7 +85,7 @@ PortCore::PortCore() :
         m_dataOutputCount(0),
         m_flags(PORTCORE_IS_INPUT | PORTCORE_IS_OUTPUT),
         m_verbosity(1),
-        logNeeded(false),
+        m_logNeeded(false),
         timeout(-1),
         counter(1),
         prop(nullptr),
@@ -1259,7 +1259,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void* id, OutputStream* os)
 
         bool haveOutputs = (m_outputCount != 0); // No mutexing, but failure modes are benign.
 
-        if (logNeeded && haveOutputs) {
+        if (m_logNeeded && haveOutputs) {
             // Normally, yarp doesn't pay attention to the content of
             // messages received by the client.  Likewise, the content
             // of replies are not monitored.  However it may sometimes
@@ -1307,7 +1307,7 @@ bool PortCore::send(const PortWriter& writer,
         modifier.outputModifier->modifyOutgoingData(writer);
     }
     modifier.outputMutex.unlock();
-    if (!logNeeded) {
+    if (!m_logNeeded) {
         return sendHelper(writer, PORTCORE_SEND_NORMAL, reader, callback);
     }
     // logging is desired, so we need to wrap up and log this send
@@ -1425,7 +1425,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
     YMSG(("------- send out\n"));
     if (mode == PORTCORE_SEND_LOG) {
         if (logCount == 0) {
-            logNeeded = false;
+            m_logNeeded = false;
         }
     }
     m_stateSemaphore.post();
@@ -2596,7 +2596,7 @@ void PortCore::reportUnit(PortCoreUnit* unit, bool active)
     if (unit != nullptr) {
         bool isLog = (!unit->getMode().empty());
         if (isLog) {
-            logNeeded = true;
+            m_logNeeded = true;
         }
     }
 }
