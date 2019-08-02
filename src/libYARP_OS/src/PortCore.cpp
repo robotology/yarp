@@ -68,7 +68,7 @@ PortCore::PortCore() :
         m_eventReporter(nullptr),
         m_listening(false),
         m_running(false),
-        starting(false),
+        m_starting(false),
         closing(false),
         finished(false),
         finishing(false),
@@ -218,11 +218,11 @@ void PortCore::run()
     yAssert(m_running == false);
     yAssert(closing == false);
     yAssert(finished == false);
-    yAssert(starting == true);
+    yAssert(m_starting == true);
 
     // Enter running phase
     m_running = true;
-    starting = false;
+    m_starting = false;
 
     // This post is matched with a wait in start()
     m_stateSemaphore.post();
@@ -327,10 +327,10 @@ bool PortCore::start()
     // We assume that listen() has been called.
     yAssert(m_listening == true);
     yAssert(m_running == false);
-    yAssert(starting == false);
+    yAssert(m_starting == false);
     yAssert(finished == false);
     yAssert(closing == false);
-    starting = true;
+    m_starting = true;
 
     // Start the server thread.
     bool started = ThreadImpl::start();
@@ -558,7 +558,7 @@ void PortCore::closeMain()
     // We are fresh as a daisy.
     yAssert(m_listening == false);
     yAssert(m_running == false);
-    yAssert(starting == false);
+    yAssert(m_starting == false);
     yAssert(closing == false);
     yAssert(finished == false);
     yAssert(finishing == false);
