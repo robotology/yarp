@@ -1327,7 +1327,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
     bool all_ok = true;
     bool gotReply = false;
     int logCount = 0;
-    std::string envelopeString = envelope;
+    std::string envelopeString = m_envelope;
 
     // Pass a message to all output units for sending on.  We could
     // be doing more here to cache the serialization of the message
@@ -1506,27 +1506,27 @@ bool PortCore::setEnvelope(PortWriter& envelope)
 
 void PortCore::setEnvelope(const std::string& envelope)
 {
-    this->envelope = envelope;
-    for (unsigned int i = 0; i < this->envelope.length(); i++) {
+    this->m_envelope = envelope;
+    for (unsigned int i = 0; i < this->m_envelope.length(); i++) {
         // It looks like envelopes are constrained to be printable ASCII?
         // I'm not sure why this would be.  TODO check.
-        if (this->envelope[i] < 32) {
-            this->envelope = this->envelope.substr(0, i);
+        if (this->m_envelope[i] < 32) {
+            this->m_envelope = this->m_envelope.substr(0, i);
             break;
         }
     }
-    YARP_DEBUG(m_log, std::string("set envelope to ") + this->envelope);
+    YARP_DEBUG(m_log, std::string("set envelope to ") + this->m_envelope);
 }
 
 std::string PortCore::getEnvelope()
 {
-    return envelope;
+    return m_envelope;
 }
 
 bool PortCore::getEnvelope(PortReader& envelope)
 {
     StringInputStream sis;
-    sis.add(this->envelope);
+    sis.add(this->m_envelope);
     sis.add("\r\n");
     StreamConnectionReader sbr;
     Route route;
