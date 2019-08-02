@@ -550,7 +550,7 @@ private:
     Type m_type;
 
     // port data modifier
-    yarp::os::impl::PortDataModifier modifier;
+    yarp::os::impl::PortDataModifier m_modifier;
 
     // set IP packet TOS
     bool setTypeOfService(PortCoreUnit* unit, int tos);

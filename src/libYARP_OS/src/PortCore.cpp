@@ -312,8 +312,8 @@ void PortCore::close()
         delete m_prop;
         m_prop = nullptr;
     }
-    modifier.releaseOutModifier();
-    modifier.releaseInModifier();
+    m_modifier.releaseOutModifier();
+    m_modifier.releaseInModifier();
 }
 
 
@@ -1298,15 +1298,15 @@ bool PortCore::send(const PortWriter& writer,
     // check if there is any modifier
     // we need to protect this part while the modifier
     // plugin is loading or unloading!
-    modifier.outputMutex.lock();
-    if (modifier.outputModifier != nullptr) {
-        if (!modifier.outputModifier->acceptOutgoingData(writer)) {
-            modifier.outputMutex.unlock();
+    m_modifier.outputMutex.lock();
+    if (m_modifier.outputModifier != nullptr) {
+        if (!m_modifier.outputModifier->acceptOutgoingData(writer)) {
+            m_modifier.outputMutex.unlock();
             return false;
         }
-        modifier.outputModifier->modifyOutgoingData(writer);
+        m_modifier.outputModifier->modifyOutgoingData(writer);
     }
-    modifier.outputMutex.unlock();
+    m_modifier.outputMutex.unlock();
     if (!m_logNeeded) {
         return sendHelper(writer, PORTCORE_SEND_NORMAL, reader, callback);
     }
@@ -2494,15 +2494,15 @@ bool PortCore::attachPortMonitor(yarp::os::Property& prop, bool isOutput, std::s
         prop.put("sender_side", 1);
         prop.put("receiver_side", 0);
         prop.put("carrier", "");
-        modifier.outputMutex.lock();
-        modifier.outputModifier = portmonitor;
-        if (!modifier.outputModifier->configureFromProperty(prop)) {
-            modifier.releaseOutModifier();
+        m_modifier.outputMutex.lock();
+        m_modifier.outputModifier = portmonitor;
+        if (!m_modifier.outputModifier->configureFromProperty(prop)) {
+            m_modifier.releaseOutModifier();
             errMsg = "Failed to configure the portmonitor plug-in";
-            modifier.outputMutex.unlock();
+            m_modifier.outputMutex.unlock();
             return false;
         }
-        modifier.outputMutex.unlock();
+        m_modifier.outputMutex.unlock();
     } else {
         dettachPortMonitor(false);
         prop.put("source", "");
@@ -2510,15 +2510,15 @@ bool PortCore::attachPortMonitor(yarp::os::Property& prop, bool isOutput, std::s
         prop.put("sender_side", 0);
         prop.put("receiver_side", 1);
         prop.put("carrier", "");
-        modifier.inputMutex.lock();
-        modifier.inputModifier = portmonitor;
-        if (!modifier.inputModifier->configureFromProperty(prop)) {
-            modifier.releaseInModifier();
+        m_modifier.inputMutex.lock();
+        m_modifier.inputModifier = portmonitor;
+        if (!m_modifier.inputModifier->configureFromProperty(prop)) {
+            m_modifier.releaseInModifier();
             errMsg = "Failed to configure the portmonitor plug-in";
-            modifier.inputMutex.unlock();
+            m_modifier.inputMutex.unlock();
             return false;
         }
-        modifier.inputMutex.unlock();
+        m_modifier.inputMutex.unlock();
     }
     return true;
 }
@@ -2527,13 +2527,13 @@ bool PortCore::attachPortMonitor(yarp::os::Property& prop, bool isOutput, std::s
 bool PortCore::dettachPortMonitor(bool isOutput)
 {
     if (isOutput) {
-        modifier.outputMutex.lock();
-        modifier.releaseOutModifier();
-        modifier.outputMutex.unlock();
+        m_modifier.outputMutex.lock();
+        m_modifier.releaseOutModifier();
+        m_modifier.outputMutex.unlock();
     } else {
-        modifier.inputMutex.lock();
-        modifier.releaseInModifier();
-        modifier.inputMutex.unlock();
+        m_modifier.inputMutex.lock();
+        m_modifier.releaseInModifier();
+        m_modifier.inputMutex.unlock();
     }
     return true;
 }
@@ -2543,23 +2543,23 @@ bool PortCore::setParamPortMonitor(yarp::os::Property& param,
                                    std::string& errMsg)
 {
     if (isOutput) {
-        modifier.outputMutex.lock();
-        if (modifier.outputModifier == nullptr) {
+        m_modifier.outputMutex.lock();
+        if (m_modifier.outputModifier == nullptr) {
             errMsg = "No port modifer is attached to the output";
-            modifier.outputMutex.unlock();
+            m_modifier.outputMutex.unlock();
             return false;
         }
-        modifier.outputModifier->setCarrierParams(param);
-        modifier.outputMutex.unlock();
+        m_modifier.outputModifier->setCarrierParams(param);
+        m_modifier.outputMutex.unlock();
     } else {
-        modifier.inputMutex.lock();
-        if (modifier.inputModifier == nullptr) {
+        m_modifier.inputMutex.lock();
+        if (m_modifier.inputModifier == nullptr) {
             errMsg = "No port modifer is attached to the input";
-            modifier.inputMutex.unlock();
+            m_modifier.inputMutex.unlock();
             return false;
         }
-        modifier.inputModifier->setCarrierParams(param);
-        modifier.inputMutex.unlock();
+        m_modifier.inputModifier->setCarrierParams(param);
+        m_modifier.inputMutex.unlock();
     }
     return true;
 }
@@ -2569,23 +2569,23 @@ bool PortCore::getParamPortMonitor(yarp::os::Property& param,
                                    std::string& errMsg)
 {
     if (isOutput) {
-        modifier.outputMutex.lock();
-        if (modifier.outputModifier == nullptr) {
+        m_modifier.outputMutex.lock();
+        if (m_modifier.outputModifier == nullptr) {
             errMsg = "No port modifer is attached to the output";
-            modifier.outputMutex.unlock();
+            m_modifier.outputMutex.unlock();
             return false;
         }
-        modifier.outputModifier->getCarrierParams(param);
-        modifier.outputMutex.unlock();
+        m_modifier.outputModifier->getCarrierParams(param);
+        m_modifier.outputMutex.unlock();
     } else {
-        modifier.inputMutex.lock();
-        if (modifier.inputModifier == nullptr) {
+        m_modifier.inputMutex.lock();
+        if (m_modifier.inputModifier == nullptr) {
             errMsg = "No port modifer is attached to the input";
-            modifier.inputMutex.unlock();
+            m_modifier.inputMutex.unlock();
             return false;
         }
-        modifier.inputModifier->getCarrierParams(param);
-        modifier.inputMutex.unlock();
+        m_modifier.inputModifier->getCarrierParams(param);
+        m_modifier.inputMutex.unlock();
     }
     return true;
 }
@@ -2788,7 +2788,7 @@ void PortCore::unlockCallback()
 
 yarp::os::impl::PortDataModifier& PortCore::getPortModifier()
 {
-    return modifier;
+    return m_modifier;
 }
 
 void PortCore::checkType(PortReader& reader)
