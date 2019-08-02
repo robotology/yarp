@@ -1712,7 +1712,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     YARP_SPRINTF2(m_log, debug, "Port %s received command %s", getName().c_str(), cmd.toString().c_str());
 
     StringOutputStream cache;
-    std::string infoMsg;
 
     const PortCoreCommand command = parseCommand(cmd.get(0));
     switch (command) {
