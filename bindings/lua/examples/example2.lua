@@ -42,7 +42,7 @@ for i=1,10 do
     print("Received: ", rb:toString())
 
     -- wait for a second
-    yarp.Time_delay(1.0)
+    yarp.delay(1.0)
 end
 
 -- disconnect sender from receiver

@@ -58,7 +58,7 @@ for i=1,100 do
     icm:setControlMode(0, VOCAB_CM_POSITION)
     ipos:setRefSpeed(0, 30)
     ipos:positionMove(0, position)
-    yarp.Time_delay(0.5)
+    yarp.delay(0.5)
 end
 
 
