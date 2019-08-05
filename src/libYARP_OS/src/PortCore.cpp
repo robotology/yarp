@@ -1815,6 +1815,30 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
+    auto handleAdminDtchCmd = [this](PortCoreConnectionDirection direction) {
+        Bottle result;
+        switch (direction) {
+        case PortCoreConnectionDirection::Out: {
+            if (dettachPortMonitor(true)) {
+                result.addVocab(Vocab::encode("ok"));
+            } else {
+                result.addVocab(Vocab::encode("fail"));
+            }
+        } break;
+        case PortCoreConnectionDirection::In: {
+            if (dettachPortMonitor(false)) {
+                result.addVocab(Vocab::encode("ok"));
+            } else {
+                result.addVocab(Vocab::encode("fail"));
+            }
+        } break;
+        case PortCoreConnectionDirection::Error:
+            result.addVocab(Vocab::encode("fail"));
+            result.addString("detach command must be followd by [out] or [in]");
+        };
+        return result;
+    };
+
     const PortCoreCommand command = parseCommand(cmd.get(0));
     switch (command) {
     case PortCoreCommand::Help:
@@ -1839,27 +1863,8 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         } break;
     case PortCoreCommand::Dtch: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
-        switch (direction) {
-        case PortCoreConnectionDirection::Out: {
-            if (dettachPortMonitor(true)) {
-                result.addVocab(Vocab::encode("ok"));
-            } else {
-                result.addVocab(Vocab::encode("fail"));
-            }
+        result = handleAdminDtchCmd(direction);
         } break;
-        case PortCoreConnectionDirection::In: {
-            if (dettachPortMonitor(false)) {
-                result.addVocab(Vocab::encode("ok"));
-            } else {
-                result.addVocab(Vocab::encode("fail"));
-            }
-        } break;
-        case PortCoreConnectionDirection::Error:
-            result.clear();
-            result.addVocab(Vocab::encode("fail"));
-            result.addString("detach command must be followd by [out] or [in]");
-        };
-    } break;
     case PortCoreCommand::List: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
         const std::string target = cmd.get(2).asString();
