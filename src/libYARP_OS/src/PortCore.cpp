@@ -1693,6 +1693,26 @@ PortCorePropertyAction parsePropertyAction(yarp::conf::vocab32_t v)
     }
 }
 
+void describeRoute(const Route& route, Bottle& result)
+{
+    STANZA(bfrom, "from", route.getFromName());
+    STANZA(bto, "to", route.getToName());
+    STANZA(bcarrier, "carrier", route.getCarrierName());
+    result.addList() = bfrom;
+    result.addList() = bto;
+    result.addList() = bcarrier;
+    Carrier* carrier = Carriers::chooseCarrier(route.getCarrierName());
+    if (carrier->isConnectionless()) {
+        STANZA_INT(bconnectionless, "connectionless", 1);
+        result.addList() = bconnectionless;
+    }
+    if (!carrier->isPush()) {
+        STANZA_INT(breverse, "push", 0);
+        result.addList() = breverse;
+    }
+    delete carrier;
+}
+
 } // namespace
 
 bool PortCore::adminBlock(ConnectionReader& reader,
@@ -1839,6 +1859,52 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
+    auto handleAdminListCmd = [this](const PortCoreConnectionDirection direction,
+                                     const std::string& target) {
+        Bottle result;
+        switch (direction) {
+        case PortCoreConnectionDirection::In: {
+            // Return a list of all input connections.
+            m_stateSemaphore.wait();
+            for (auto unit : m_units) {
+                if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
+                    Route route = unit->getRoute();
+                    if (target.empty()) {
+                        const std::string& name = route.getFromName();
+                        if (!name.empty()) {
+                            result.addString(name);
+                        }
+                    } else if (route.getFromName() == target) {
+                        describeRoute(route, result);
+                    }
+                }
+            }
+            m_stateSemaphore.post();
+            } break;
+        case PortCoreConnectionDirection::Out: {
+            // Return a list of all output connections.
+            m_stateSemaphore.wait();
+            for (auto unit : m_units) {
+                if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
+                    Route route = unit->getRoute();
+                    if (target.empty()) {
+                        result.addString(route.getToName());
+                    } else if (route.getToName() == target) {
+                        describeRoute(route, result);
+                    }
+                }
+            }
+            m_stateSemaphore.post();
+            } break;
+        case PortCoreConnectionDirection::Error:
+            // Should never happen
+            yAssert(false);
+            break;
+        }
+        return result;
+    };
+
+
     const PortCoreCommand command = parseCommand(cmd.get(0));
     switch (command) {
     case PortCoreCommand::Help:
@@ -1868,76 +1934,8 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     case PortCoreCommand::List: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
         const std::string target = cmd.get(2).asString();
-        switch (direction) {
-        case PortCoreConnectionDirection::In: {
-            // Return a list of all input connections.
-            m_stateSemaphore.wait();
-            for (auto unit : m_units) {
-                if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
-                    Route route = unit->getRoute();
-                    if (target.empty()) {
-                        const std::string& name = route.getFromName();
-                        if (!name.empty()) {
-                            result.addString(name);
-                        }
-                    } else if (route.getFromName() == target) {
-                        STANZA(bfrom, "from", route.getFromName());
-                        STANZA(bto, "to", route.getToName());
-                        STANZA(bcarrier, "carrier", route.getCarrierName());
-                        result.addList() = bfrom;
-                        result.addList() = bto;
-                        result.addList() = bcarrier;
-                        Carrier* carrier = Carriers::chooseCarrier(route.getCarrierName());
-                        if (carrier->isConnectionless()) {
-                            STANZA_INT(bconnectionless, "connectionless", 1);
-                            result.addList() = bconnectionless;
-                        }
-                        if (!carrier->isPush()) {
-                            STANZA_INT(breverse, "push", 0);
-                            result.addList() = breverse;
-                        }
-                        delete carrier;
-                    }
-                }
-            }
-            m_stateSemaphore.post();
+        result = handleAdminListCmd(direction, target);
         } break;
-        case PortCoreConnectionDirection::Out: {
-            // Return a list of all output connections.
-            m_stateSemaphore.wait();
-            for (auto unit : m_units) {
-                if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
-                    Route route = unit->getRoute();
-                    if (target.empty()) {
-                        result.addString(route.getToName());
-                    } else if (route.getToName() == target) {
-                        STANZA(bfrom, "from", route.getFromName());
-                        STANZA(bto, "to", route.getToName());
-                        STANZA(bcarrier, "carrier", route.getCarrierName());
-                        result.addList() = bfrom;
-                        result.addList() = bto;
-                        result.addList() = bcarrier;
-                        Carrier* carrier = Carriers::chooseCarrier(route.getCarrierName());
-                        if (carrier->isConnectionless()) {
-                            STANZA_INT(bconnectionless, "connectionless", 1);
-                            result.addList() = bconnectionless;
-                        }
-                        if (!carrier->isPush()) {
-                            STANZA_INT(breverse, "push", 0);
-                            result.addList() = breverse;
-                        }
-                        delete carrier;
-                    }
-                }
-            }
-            m_stateSemaphore.post();
-        } break;
-        case PortCoreConnectionDirection::Error:
-            // Should never happen
-            yAssert(false);
-            break;
-        }
-    } break;
     case PortCoreCommand::Set: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
         const std::string target = cmd.get(2).asString();
