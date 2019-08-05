@@ -1994,6 +1994,85 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
+    auto handleAdminGetInCmd = [this](const std::string& target) {
+        Bottle result;
+        // Get carrier parameters for a given input connection.
+        m_stateSemaphore.wait();
+        if (target.empty()) {
+            result.addInt32(-1);
+            result.addString("target port is not specified.\r\n");
+        } else if (target == getName()) {
+            yarp::os::Property property;
+            std::string errMsg;
+            if (!getParamPortMonitor(property, false, errMsg)) {
+                result.addVocab(Vocab::encode("fail"));
+                result.addString(errMsg);
+            } else {
+                result.addDict() = property;
+            }
+        } else {
+            for (auto unit : m_units) {
+                if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
+                    Route route = unit->getRoute();
+                    if (route.getFromName() == target) {
+                        yarp::os::Property property;
+                        unit->getCarrierParams(property);
+                        result.addDict() = property;
+                        break;
+                    }
+                }
+            }
+            if (result.size() == 0) {
+                result.addInt32(-1);
+                std::string msg = "Could not find an incoming connection from ";
+                msg += target;
+                msg += "\r\n";
+                result.addString(msg);
+            }
+        }
+        m_stateSemaphore.post();
+    return result;
+    };
+
+    auto handleAdminGetOutCmd = [this](const std::string& target) {
+        Bottle result;
+         // Get carrier parameters for a given output connection.
+        m_stateSemaphore.wait();
+        if (target.empty()) {
+            result.addInt32(-1);
+            result.addString("target port is not specified.\r\n");
+        } else if (target == getName()) {
+            yarp::os::Property property;
+            std::string errMsg;
+            if (!getParamPortMonitor(property, true, errMsg)) {
+                result.addVocab(Vocab::encode("fail"));
+                result.addString(errMsg);
+            } else {
+                result.addDict() = property;
+            }
+        } else {
+            for (auto unit : m_units) {
+                if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
+                    Route route = unit->getRoute();
+                    if (route.getToName() == target) {
+                        yarp::os::Property property;
+                        unit->getCarrierParams(property);
+                        result.addDict() = property;
+                        break;
+                    }
+                }
+            }
+            if (result.size() == 0) {
+                result.addInt32(-1);
+                std::string msg = "Could not find an incoming connection to ";
+                msg += target;
+                msg += "\r\n";
+                result.addString(msg);
+            }
+        }
+        m_stateSemaphore.post();
+        return result;
+    };
 
     const PortCoreCommand command = parseCommand(cmd.get(0));
     switch (command) {
@@ -2047,92 +2126,17 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
         const std::string target = cmd.get(2).asString();
         switch (direction) {
-        case PortCoreConnectionDirection::In: {
-            // Get carrier parameters for a given input connection.
-            m_stateSemaphore.wait();
-            if (target.empty()) {
-                result.addInt32(-1);
-                result.addString("target port is not specified.\r\n");
-            } else if (target == getName()) {
-                yarp::os::Property property;
-                std::string errMsg;
-                if (!getParamPortMonitor(property, false, errMsg)) {
-                    result.clear();
-                    result.addVocab(Vocab::encode("fail"));
-                    result.addString(errMsg);
-                } else {
-                    result.clear();
-                    result.addDict() = property;
-                }
-            } else {
-                for (auto unit : m_units) {
-                    if ((unit != nullptr) && unit->isInput() && !unit->isFinished()) {
-                        Route route = unit->getRoute();
-                        if (route.getFromName() == target) {
-                            yarp::os::Property property;
-                            unit->getCarrierParams(property);
-                            result.addDict() = property;
-                            break;
-                        }
-                    }
-                }
-                if (result.size() == 0) {
-                    result.addInt32(-1);
-                    std::string msg = "Could not find an incoming connection from ";
-                    msg += target;
-                    msg += "\r\n";
-                    result.addString(msg);
-                }
-            }
-            m_stateSemaphore.post();
-        } break;
-        case PortCoreConnectionDirection::Out: {
-            // Get carrier parameters for a given output connection.
-            m_stateSemaphore.wait();
-            if (target.empty()) {
-                result.addInt32(-1);
-                result.addString("target port is not specified.\r\n");
-            } else if (target == getName()) {
-                yarp::os::Property property;
-                std::string errMsg;
-                if (!getParamPortMonitor(property, true, errMsg)) {
-                    result.clear();
-                    result.addVocab(Vocab::encode("fail"));
-                    result.addString(errMsg);
-                } else {
-                    result.clear();
-                    result.addDict() = property;
-                }
-            } else {
-                for (auto unit : m_units) {
-                    if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
-                        Route route = unit->getRoute();
-                        if (route.getToName() == target) {
-                            yarp::os::Property property;
-                            property.fromString(cmd.toString());
-                            unit->getCarrierParams(property);
-                            result.addDict() = property;
-                            break;
-                        }
-                    }
-                }
-                if (result.size() == 0) {
-                    result.addInt32(-1);
-                    std::string msg = "Could not find an incoming connection to ";
-                    msg += target;
-                    msg += "\r\n";
-                    result.addString(msg);
-                }
-            }
-            m_stateSemaphore.post();
-        } break;
+        case PortCoreConnectionDirection::In:
+            result = handleAdminGetInCmd(target);
+            break;
+        case PortCoreConnectionDirection::Out:
+            result = handleAdminGetOutCmd(target);
+            break;
         case PortCoreConnectionDirection::Error:
-            // Should never happen
-            yAssert(false);
+            yAssert(false); // Should never happen (error is out)
             break;
         }
-    } break;
-
+        } break;
     case PortCoreCommand::RosPublisherUpdate: {
         // When running against a ROS name server, we need to
         // support ROS-style callbacks for connecting publishers
