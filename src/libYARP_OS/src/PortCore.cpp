@@ -2440,6 +2440,26 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
+    auto handleAdminUnknownCmd = [this](const Bottle& cmd) {
+        Bottle result;
+        bool ok = false;
+        if (m_adminReader != nullptr) {
+            DummyConnector con;
+            cmd.write(con.getWriter());
+            lockCallback();
+            ok = m_adminReader->read(con.getReader());
+            unlockCallback();
+            if (ok) {
+                result.read(con.getReader());
+            }
+        }
+        if (!ok) {
+            result.addVocab(Vocab::encode("fail"));
+            result.addString("send [help] for list of valid commands");
+        }
+        return result;
+    };
+
     const PortCoreCommand command = parseCommand(cmd.get(0));
     switch (command) {
     case PortCoreCommand::Help:
@@ -2550,23 +2570,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result = handleAdminRosGetBusInfoCmd();
         reader.requestDrop(); // ROS likes to close down.
         break;
-    case PortCoreCommand::Unknown: {
-        bool ok = false;
-        if (m_adminReader != nullptr) {
-            DummyConnector con;
-            cmd.write(con.getWriter());
-            lockCallback();
-            ok = m_adminReader->read(con.getReader());
-            unlockCallback();
-            if (ok) {
-                result.read(con.getReader());
-            }
-        }
-        if (!ok) {
-            result.addVocab(Vocab::encode("fail"));
-            result.addString("send [help] for list of valid commands");
-        }
-    } break;
+    case PortCoreCommand::Unknown:
+        result = handleAdminUnknownCmd(cmd);
+        break;
     }
 
     ConnectionWriter* writer = reader.getWriter();
