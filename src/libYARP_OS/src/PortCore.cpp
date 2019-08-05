@@ -2179,6 +2179,20 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
+    auto handleAdminRosRequestTopicCmd = [this]() {
+        // ROS-style query for topics.
+        Bottle result;
+        result.addInt32(1);
+        NestedContact nc(getName());
+        result.addString(nc.getNodeName());
+        Bottle& lst = result.addList();
+        Contact addr = getAddress();
+        lst.addString("TCPROS");
+        lst.addString(addr.getHost());
+        lst.addInt32(addr.getPort());
+        return result;
+    };
+
     const PortCoreCommand command = parseCommand(cmd.get(0));
     switch (command) {
     case PortCoreCommand::Help:
@@ -2250,19 +2264,14 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result = handleAdminRosPublisherUpdateCmd(topic, pubs);
         reader.requestDrop(); // ROS needs us to close down.
         } break;
-    case PortCoreCommand::RosRequestTopic: {
-        // ROS-style query for topics.
+    case PortCoreCommand::RosRequestTopic:
         YARP_SPRINTF1(m_log, debug, "requestTopic! --> %s", cmd.toString().c_str());
-        result.addInt32(1);
-        NestedContact nc(getName());
-        result.addString(nc.getNodeName());
-        Bottle& lst = result.addList();
-        Contact addr = getAddress();
-        lst.addString("TCPROS");
-        lst.addString(addr.getHost());
-        lst.addInt32(addr.getPort());
+        // std::string caller_id = cmd.get(1).asString(); // Currently unused
+        // std::string topic = RosNameSpace::fromRosName(cmd.get(2).asString()); // Currently unused
+        // Bottle protocols = cmd.get(3).asList(); // Currently unused
+        result = handleAdminRosRequestTopicCmd();
         reader.requestDrop(); // ROS likes to close down.
-    } break;
+        break;
     case PortCoreCommand::RosGetPid: {
         // ROS-style query for PID.
         result.addInt32(1);
