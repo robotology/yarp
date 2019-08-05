@@ -82,9 +82,9 @@ class Property::Private
 {
 public:
     std::map<std::string, PropertyItem> data;
-    Property& owner;
+    Property* owner;
 
-    Private(Property& owner, int hash_size) :
+    explicit Private(Property* owner) :
             owner(owner)
     {
     }
@@ -154,14 +154,6 @@ public:
         return *(p->backing);
     }
 
-    bool check(const std::string& key, Value*& output) const
-    {
-        YARP_UNUSED(output);
-        PropertyItem* p = getPropNoCreate(key);
-
-        return p != nullptr;
-    }
-
     void unput(const std::string& key)
     {
         data.erase(key);
@@ -170,11 +162,11 @@ public:
     bool check(const std::string& key) const
     {
         PropertyItem* p = getPropNoCreate(key);
-        if (owner.getMonitor() != nullptr) {
+        if (owner->getMonitor() != nullptr) {
             SearchReport report;
             report.key = key;
             report.isFound = (p != nullptr);
-            owner.reportToMonitor(report);
+            owner->reportToMonitor(report);
         }
         return p != nullptr;
     }
@@ -185,19 +177,19 @@ public:
         PropertyItem* p = getPropNoCreate(key);
         if (p != nullptr) {
             p->flush();
-            if (owner.getMonitor() != nullptr) {
+            if (owner->getMonitor() != nullptr) {
                 SearchReport report;
                 report.key = key;
                 report.isFound = true;
                 report.value = p->bot.get(1).toString();
-                owner.reportToMonitor(report);
+                owner->reportToMonitor(report);
             }
             return p->bot.get(1);
         }
-        if (owner.getMonitor() != nullptr) {
+        if (owner->getMonitor() != nullptr) {
             SearchReport report;
             report.key = key;
-            owner.reportToMonitor(report);
+            owner->reportToMonitor(report);
         }
         return Value::getNullValue();
     }
@@ -324,7 +316,7 @@ public:
                 } else {
                     key = "";
                 }
-                Bottle& result = (cursor != nullptr) ? (cursor->findGroup(base)) : owner.findGroup(base);
+                Bottle& result = (cursor != nullptr) ? (cursor->findGroup(base)) : owner->findGroup(base);
                 if (result.isNull()) {
                     if (cursor == nullptr) {
                         cursor = &putBottle((base).c_str());
@@ -553,7 +545,7 @@ public:
                 }
 
                 // expand any environment references
-                buf = expand(buf.c_str(), env, owner);
+                buf = expand(buf.c_str(), env, *owner);
 
                 if (buf.length() > 0 && buf[0] == '[') {
                     size_t stop = buf.find(']');
@@ -909,158 +901,146 @@ public:
     }
 };
 
-
-Property::Property(int hash_size) :
+Property::Property() :
         Searchable(),
         Portable(),
-        hash_size(hash_size),
-        mPriv(nullptr)
+        mPriv(new Private(this))
 {
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+Property::Property(int hash_size) :
+        Searchable(),
+        Portable(),
+        mPriv(new Private(this))
+{
+    YARP_UNUSED(hash_size);
+}
+#endif
 
 Property::Property(const char* str) :
         Searchable(),
         Portable(),
-        hash_size(0),
-        mPriv(new Private(*this, 0))
+        mPriv(new Private(this))
 {
     fromString(str);
 }
 
-
 Property::Property(const Property& prop) :
-        Searchable(prop),
-        Portable(),
-        hash_size(0),
-        mPriv(new Private(*this, 0))
+        Searchable(static_cast<const Searchable&>(prop)),
+        Portable(static_cast<const Portable&>(prop)),
+        mPriv(new Private(this))
 {
     fromString(prop.toString());
+}
+
+Property::Property(Property&& prop) noexcept :
+        Searchable(std::move(static_cast<Searchable&>(prop))),
+        Portable(std::move(static_cast<Portable&>(prop))),
+        mPriv(prop.mPriv)
+{
+    mPriv->owner = this;
+
+    prop.mPriv = nullptr;
 }
 
 Property::Property(std::initializer_list<std::pair<std::string, yarp::os::Value>> values) :
         Searchable(),
         Portable(),
-        hash_size(0),
-        mPriv(new Private(*this, 0))
+        mPriv(new Private(this))
 {
     for (const auto& val : values) {
         put(val.first, val.second);
     }
 }
 
-void Property::summon()
-{
-    if (check()) {
-        return;
-    }
-    mPriv = new Private(*this, hash_size);
-}
-
-
-bool Property::check() const
-{
-    return mPriv != nullptr;
-}
-
-
 Property::~Property()
 {
     delete mPriv;
 }
 
-
-const Property& Property::operator=(const Property& rhs)
+Property& Property::operator=(const Property& rhs)
 {
     if (&rhs != this) {
-        summon();
-        fromString(rhs.toString());
+        Searchable::operator=(static_cast<const Searchable&>(rhs));
+        Portable::operator=(static_cast<const Portable&>(rhs));
+        mPriv->data = rhs.mPriv->data;
+        mPriv->owner = this;
     }
     return *this;
 }
 
+Property& Property::operator=(Property&& rhs) noexcept
+{
+    Searchable::operator=(std::move(static_cast<Searchable&>(rhs)));
+    Portable::operator=(std::move(static_cast<Portable&>(rhs)));
+    std::swap(mPriv, rhs.mPriv);
+    mPriv->owner = this;
+    rhs.mPriv->owner = &rhs;
+    return *this;
+}
 
 void Property::put(const std::string& key, const std::string& value)
 {
-    summon();
     mPriv->put(key, value);
 }
 
 void Property::put(const std::string& key, const Value& value)
 {
-    summon();
     mPriv->put(key, value);
 }
 
 
 void Property::put(const std::string& key, Value* value)
 {
-    summon();
     mPriv->put(key, value);
 }
 
 void Property::put(const std::string& key, int value)
 {
-    summon();
     put(key, Value::makeInt32(value));
 }
 
 void Property::put(const std::string& key, double value)
 {
-    summon();
     put(key, Value::makeFloat64(value));
 }
 
 bool Property::check(const std::string& key) const
 {
-    if (!check()) {
-        return false;
-    }
     return mPriv->check(key);
 }
 
-
 void Property::unput(const std::string& key)
 {
-    summon();
     mPriv->unput(key);
 }
 
-
 Value& Property::find(const std::string& key) const
 {
-    if (!check()) {
-        return Value::getNullValue();
-    }
     return mPriv->get(key);
 }
 
 
 void Property::clear()
 {
-    summon();
     mPriv->clear();
 }
 
 
 void Property::fromString(const std::string& txt, bool wipe)
 {
-    summon();
     mPriv->fromString(txt, wipe);
 }
 
 
 std::string Property::toString() const
 {
-    if (!check()) {
-        return {};
-    }
     return mPriv->toString();
 }
 
 void Property::fromCommand(int argc, char* argv[], bool skipFirst, bool wipe)
 {
-    summon();
     if (skipFirst) {
         argc--;
         argv++;
@@ -1070,25 +1050,21 @@ void Property::fromCommand(int argc, char* argv[], bool skipFirst, bool wipe)
 
 void Property::fromCommand(int argc, const char* argv[], bool skipFirst, bool wipe)
 {
-    summon();
     fromCommand(argc, (char**)argv, skipFirst, wipe);
 }
 
 void Property::fromArguments(const char* arguments, bool wipe)
 {
-    summon();
     mPriv->fromArguments(arguments, wipe);
 }
 
 bool Property::fromConfigDir(const std::string& dirname, const std::string& section, bool wipe)
 {
-    summon();
     return mPriv->fromConfigDir(dirname, section, wipe);
 }
 
 bool Property::fromConfigFile(const std::string& fname, bool wipe)
 {
-    summon();
     Property p;
     return fromConfigFile(fname, p, wipe);
 }
@@ -1096,20 +1072,17 @@ bool Property::fromConfigFile(const std::string& fname, bool wipe)
 
 bool Property::fromConfigFile(const std::string& fname, Searchable& env, bool wipe)
 {
-    summon();
     return mPriv->fromConfigFile(fname, env, wipe);
 }
 
 void Property::fromConfig(const char* txt, bool wipe)
 {
-    summon();
     Property p;
     fromConfig(txt, p, wipe);
 }
 
 void Property::fromConfig(const char* txt, Searchable& env, bool wipe)
 {
-    summon();
     mPriv->fromConfig(txt, env, wipe);
 }
 
@@ -1136,9 +1109,6 @@ bool Property::write(ConnectionWriter& writer) const
 
 Bottle& Property::findGroup(const std::string& key) const
 {
-    if (!check()) {
-        return Bottle::getNullBottle();
-    }
     Bottle* result = mPriv->getBottle(key);
     if (getMonitor() != nullptr) {
         SearchReport report;
@@ -1167,7 +1137,6 @@ Bottle& Property::findGroup(const std::string& key) const
 
 void Property::fromQuery(const char* url, bool wipe)
 {
-    summon();
     if (wipe) {
         clear();
     }
@@ -1230,6 +1199,5 @@ void Property::fromQuery(const char* url, bool wipe)
 
 Property& yarp::os::Property::addGroup(const std::string& key)
 {
-    summon();
     return mPriv->addGroup(key);
 }
