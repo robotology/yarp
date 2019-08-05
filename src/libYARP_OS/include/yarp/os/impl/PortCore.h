@@ -233,11 +233,9 @@ public:
      * Process an administrative message.
      * @param reader source of data
      * @param id opaque identifier of connection providing data
-     * @param os stream to write error messages on
      */
     bool adminBlock(ConnectionReader& reader,
-                    void* id,
-                    yarp::os::OutputStream* os);
+                    void* id);
 
     /**
      * Set the name of this port.

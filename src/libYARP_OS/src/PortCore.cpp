@@ -1696,10 +1696,8 @@ PortCorePropertyAction parsePropertyAction(yarp::conf::vocab32_t v)
 } // namespace
 
 bool PortCore::adminBlock(ConnectionReader& reader,
-                          void* id,
-                          OutputStream* os)
+                          void* id)
 {
-    YARP_UNUSED(os);
     Bottle cmd;
     Bottle result;
 
