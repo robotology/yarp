@@ -1534,16 +1534,6 @@ bool PortCore::getEnvelope(PortReader& envelope)
     return envelope.read(sbr);
 }
 
-// Shorthand to create a nested (tag, val) pair to add to a message.
-#define STANZA(name, tag, val) \
-    Bottle name;               \
-    (name).addString(tag);     \
-    (name).addString(val);
-#define STANZA_INT(name, tag, val) \
-    Bottle name;                   \
-    (name).addString(tag);         \
-    (name).addInt32(val);
-
 // Make an RPC connection to talk to a ROS API, send a message, get reply.
 // NOTE: ROS support can now be moved out of here, once all documentation
 // of older ways to interoperate with it are purged and people stop
@@ -1695,20 +1685,28 @@ PortCorePropertyAction parsePropertyAction(yarp::conf::vocab32_t v)
 
 void describeRoute(const Route& route, Bottle& result)
 {
-    STANZA(bfrom, "from", route.getFromName());
-    STANZA(bto, "to", route.getToName());
-    STANZA(bcarrier, "carrier", route.getCarrierName());
-    result.addList() = bfrom;
-    result.addList() = bto;
-    result.addList() = bcarrier;
+    Bottle& bfrom = result.addList();
+    bfrom.addString("from");
+    bfrom.addString(route.getFromName());
+
+    Bottle& bto = result.addList();
+    bto.addString("to");
+    bto.addString(route.getToName());
+
+    Bottle& bcarrier = result.addList();
+    bcarrier.addString("carrier");
+    bcarrier.addString(route.getCarrierName());
+
     Carrier* carrier = Carriers::chooseCarrier(route.getCarrierName());
     if (carrier->isConnectionless()) {
-        STANZA_INT(bconnectionless, "connectionless", 1);
-        result.addList() = bconnectionless;
+        Bottle& bconnectionless = result.addList();
+        bconnectionless.addString("connectionless");
+        bconnectionless.addInt32(1);
     }
     if (!carrier->isPush()) {
-        STANZA_INT(breverse, "push", 0);
-        result.addList() = breverse;
+        Bottle& breverse = result.addList();
+        breverse.addString("push");
+        breverse.addInt32(0);
     }
     delete carrier;
 }
