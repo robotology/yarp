@@ -78,9 +78,29 @@ public:
     explicit Searchable();
 
     /**
+     * Copy constructor
+     */
+    Searchable(const Searchable& rhs) = default;
+
+    /**
+     * Move constructor
+     */
+    Searchable(Searchable&& rhs) noexcept = default;
+
+    /**
      * Destructor.
      */
     virtual ~Searchable();
+
+    /**
+     * Copy assignment operator.
+     */
+    Searchable& operator=(const Searchable& rhs) = default;
+
+    /**
+     * Move assignment operator.
+     */
+    Searchable& operator=(Searchable&& rhs) noexcept = default;
 
     /**
      * Check if there exists a property of the given name
