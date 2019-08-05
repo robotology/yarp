@@ -2074,70 +2074,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
-    const PortCoreCommand command = parseCommand(cmd.get(0));
-    switch (command) {
-    case PortCoreCommand::Help:
-        result = handleAdminHelpCmd();
-        break;
-    case PortCoreCommand::Ver:
-        result = handleAdminVerCmd();
-        break;
-    case PortCoreCommand::Add: {
-        std::string output = cmd.get(1).asString();
-        std::string carrier = cmd.get(2).asString();
-        result = handleAdminAddCmd(std::move(output), carrier);
-        } break;
-    case PortCoreCommand::Del: {
-        const std::string dest = cmd.get(1).asString();
-        result = handleAdminDelCmd(dest);
-        } break;
-    case PortCoreCommand::Atch: {
-        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
-        Property prop(cmd.get(2).asString().c_str());
-        result = handleAdminAtchCmd(direction, std::move(prop));
-        } break;
-    case PortCoreCommand::Dtch: {
-        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
-        result = handleAdminDtchCmd(direction);
-        } break;
-    case PortCoreCommand::List: {
-        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
-        const std::string target = cmd.get(2).asString();
-        result = handleAdminListCmd(direction, target);
-        } break;
-    case PortCoreCommand::Set: {
-        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
-        const std::string target = cmd.get(2).asString();
-        yarp::os::Property property;
-        property.fromString(cmd.toString());
-        switch (direction) {
-        case PortCoreConnectionDirection::In:
-            result = handleAdminSetInCmd(target, property);
-            break;
-        case PortCoreConnectionDirection::Out:
-            result = handleAdminSetOutCmd(target, property);
-            break;
-        case PortCoreConnectionDirection::Error:
-            yAssert(false); // Should never happen (error is out)
-            break;
-        }
-        } break;
-    case PortCoreCommand::Get: {
-        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
-        const std::string target = cmd.get(2).asString();
-        switch (direction) {
-        case PortCoreConnectionDirection::In:
-            result = handleAdminGetInCmd(target);
-            break;
-        case PortCoreConnectionDirection::Out:
-            result = handleAdminGetOutCmd(target);
-            break;
-        case PortCoreConnectionDirection::Error:
-            yAssert(false); // Should never happen (error is out)
-            break;
-        }
-        } break;
-    case PortCoreCommand::RosPublisherUpdate: {
+    // NOTE: YARP partially supports the ROS Slave API https://wiki.ros.org/ROS/Slave_API
+
+    auto handleAdminRosPublisherUpdateCmd = [this](const std::string& topic, Bottle* pubs) {
         // When running against a ROS name server, we need to
         // support ROS-style callbacks for connecting publishers
         // with subscribers.  Note: this should not be necessary
@@ -2145,9 +2084,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         // has been implemented, but is still needed for older
         // ways of interfacing with ROS without using dedicated
         // node ports.
-        YARP_SPRINTF1(m_log, debug, "publisherUpdate! --> %s", cmd.toString().c_str());
-        std::string topic = RosNameSpace::fromRosName(cmd.get(2).asString());
-        Bottle* pubs = cmd.get(3).asList();
+        Bottle result;
         if (pubs != nullptr) {
             Property listed;
             for (size_t i = 0; i < pubs->size(); i++) {
@@ -2239,8 +2176,80 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
         result.addInt32(1);
         result.addString("ok");
+        return result;
+    };
+
+    const PortCoreCommand command = parseCommand(cmd.get(0));
+    switch (command) {
+    case PortCoreCommand::Help:
+        result = handleAdminHelpCmd();
+        break;
+    case PortCoreCommand::Ver:
+        result = handleAdminVerCmd();
+        break;
+    case PortCoreCommand::Add: {
+        std::string output = cmd.get(1).asString();
+        std::string carrier = cmd.get(2).asString();
+        result = handleAdminAddCmd(std::move(output), carrier);
+        } break;
+    case PortCoreCommand::Del: {
+        const std::string dest = cmd.get(1).asString();
+        result = handleAdminDelCmd(dest);
+        } break;
+    case PortCoreCommand::Atch: {
+        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
+        Property prop(cmd.get(2).asString().c_str());
+        result = handleAdminAtchCmd(direction, std::move(prop));
+        } break;
+    case PortCoreCommand::Dtch: {
+        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
+        result = handleAdminDtchCmd(direction);
+        } break;
+    case PortCoreCommand::List: {
+        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
+        const std::string target = cmd.get(2).asString();
+        result = handleAdminListCmd(direction, target);
+        } break;
+    case PortCoreCommand::Set: {
+        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
+        const std::string target = cmd.get(2).asString();
+        yarp::os::Property property;
+        property.fromString(cmd.toString());
+        switch (direction) {
+        case PortCoreConnectionDirection::In:
+            result = handleAdminSetInCmd(target, property);
+            break;
+        case PortCoreConnectionDirection::Out:
+            result = handleAdminSetOutCmd(target, property);
+            break;
+        case PortCoreConnectionDirection::Error:
+            yAssert(false); // Should never happen (error is out)
+            break;
+        }
+        } break;
+    case PortCoreCommand::Get: {
+        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
+        const std::string target = cmd.get(2).asString();
+        switch (direction) {
+        case PortCoreConnectionDirection::In:
+            result = handleAdminGetInCmd(target);
+            break;
+        case PortCoreConnectionDirection::Out:
+            result = handleAdminGetOutCmd(target);
+            break;
+        case PortCoreConnectionDirection::Error:
+            yAssert(false); // Should never happen (error is out)
+            break;
+        }
+        } break;
+    case PortCoreCommand::RosPublisherUpdate: {
+        YARP_SPRINTF1(m_log, debug, "publisherUpdate! --> %s", cmd.toString().c_str());
+        // std::string caller_id = cmd.get(1).asString(); // Currently unused
+        std::string topic = RosNameSpace::fromRosName(cmd.get(2).asString());
+        Bottle* pubs = cmd.get(3).asList();
+        result = handleAdminRosPublisherUpdateCmd(topic, pubs);
         reader.requestDrop(); // ROS needs us to close down.
-    } break;
+        } break;
     case PortCoreCommand::RosRequestTopic: {
         // ROS-style query for topics.
         YARP_SPRINTF1(m_log, debug, "requestTopic! --> %s", cmd.toString().c_str());
