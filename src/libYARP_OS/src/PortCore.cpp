@@ -1765,6 +1765,27 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
+    auto handleAdminDelCmd = [this, id](const std::string& dest) {
+        // Delete any inputs or outputs involving the named port.
+        Bottle result;
+        StringOutputStream cache;
+        removeOutput(dest, id, &cache);
+        std::string r1 = cache.toString();
+        cache.reset();
+        removeInput(dest, id, &cache);
+        std::string r2 = cache.toString();
+        int v = (r1[0] == 'R' || r2[0] == 'R') ? 0 : -1;
+        result.addInt32(v);
+        if (r1[0] == 'R' && r2[0] != 'R') {
+            result.addString(r1);
+        } else if (r1[0] != 'R' && r2[0] == 'R') {
+            result.addString(r2);
+        } else {
+            result.addString(r1 + r2);
+        }
+        return result;
+    };
+
     const PortCoreCommand command = parseCommand(cmd.get(0));
     switch (command) {
     case PortCoreCommand::Help:
@@ -1777,6 +1798,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         std::string output = cmd.get(1).asString();
         std::string carrier = cmd.get(2).asString();
         result = handleAdminAddCmd(std::move(output), carrier);
+        } break;
+    case PortCoreCommand::Del: {
+        const std::string dest = cmd.get(1).asString();
+        result = handleAdminDelCmd(dest);
         } break;
    case PortCoreCommand::Atch: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
@@ -1832,25 +1857,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             result.addVocab(Vocab::encode("fail"));
             result.addString("detach command must be followd by [out] or [in]");
         };
-    } break;
-    case PortCoreCommand::Del: {
-        const std::string dest = cmd.get(1).asString();
-        // Delete any inputs or outputs involving the named port.
-        StringOutputStream cache;
-        removeOutput(dest, id, &cache);
-        std::string r1 = cache.toString();
-        cache.reset();
-        removeInput(dest, id, &cache);
-        std::string r2 = cache.toString();
-        int v = (r1[0] == 'R' || r2[0] == 'R') ? 0 : -1;
-        result.addInt32(v);
-        if (r1[0] == 'R' && r2[0] != 'R') {
-            result.addString(r1);
-        } else if (r1[0] != 'R' && r2[0] == 'R') {
-            result.addString(r2);
-        } else {
-            result.addString(r1 + r2);
-        }
     } break;
     case PortCoreCommand::List: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
