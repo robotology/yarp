@@ -1786,6 +1786,35 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
+    auto handleAdminAtchCmd = [this](PortCoreConnectionDirection direction,
+                                     Property prop) {
+        Bottle result;
+        switch (direction) {
+        case PortCoreConnectionDirection::Out: {
+            std::string errMsg;
+            if (!attachPortMonitor(prop, true, errMsg)) {
+                result.addVocab(Vocab::encode("fail"));
+                result.addString(errMsg);
+            } else {
+                result.addVocab(Vocab::encode("ok"));
+            }
+        } break;
+        case PortCoreConnectionDirection::In: {
+            std::string errMsg;
+            if (!attachPortMonitor(prop, false, errMsg)) {
+                result.addVocab(Vocab::encode("fail"));
+                result.addString(errMsg);
+            } else {
+                result.addVocab(Vocab::encode("ok"));
+            }
+        } break;
+        case PortCoreConnectionDirection::Error:
+            result.addVocab(Vocab::encode("fail"));
+            result.addString("attach command must be followd by [out] or [in]");
+        };
+        return result;
+    };
+
     const PortCoreCommand command = parseCommand(cmd.get(0));
     switch (command) {
     case PortCoreCommand::Help:
@@ -1803,38 +1832,11 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         const std::string dest = cmd.get(1).asString();
         result = handleAdminDelCmd(dest);
         } break;
-   case PortCoreCommand::Atch: {
+    case PortCoreCommand::Atch: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
         Property prop(cmd.get(2).asString().c_str());
-        switch (direction) {
-        case PortCoreConnectionDirection::Out: {
-            std::string errMsg;
-            if (!attachPortMonitor(prop, true, errMsg)) {
-                result.clear();
-                result.addVocab(Vocab::encode("fail"));
-                result.addString(errMsg);
-            } else {
-                result.clear();
-                result.addVocab(Vocab::encode("ok"));
-            }
+        result = handleAdminAtchCmd(direction, std::move(prop));
         } break;
-        case PortCoreConnectionDirection::In: {
-            std::string errMsg;
-            if (!attachPortMonitor(prop, false, errMsg)) {
-                result.clear();
-                result.addVocab(Vocab::encode("fail"));
-                result.addString(errMsg);
-            } else {
-                result.clear();
-                result.addVocab(Vocab::encode("ok"));
-            }
-        } break;
-        case PortCoreConnectionDirection::Error:
-            result.clear();
-            result.addVocab(Vocab::encode("fail"));
-            result.addString("attach command must be followd by [out] or [in]");
-        };
-    } break;
     case PortCoreCommand::Dtch: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
         switch (direction) {
