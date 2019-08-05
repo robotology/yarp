@@ -2193,6 +2193,15 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
+    auto handleAdminRosGetPidCmd = []() {
+        // ROS-style query for PID.
+        Bottle result;
+        result.addInt32(1);
+        result.addString("");
+        result.addInt32(yarp::os::impl::getpid());
+        return result;
+    };
+
     const PortCoreCommand command = parseCommand(cmd.get(0));
     switch (command) {
     case PortCoreCommand::Help:
@@ -2272,13 +2281,11 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result = handleAdminRosRequestTopicCmd();
         reader.requestDrop(); // ROS likes to close down.
         break;
-    case PortCoreCommand::RosGetPid: {
-        // ROS-style query for PID.
-        result.addInt32(1);
-        result.addString("");
-        result.addInt32(yarp::os::impl::getpid());
+    case PortCoreCommand::RosGetPid:
+        // std::string caller_id = cmd.get(1).asString(); // Currently unused
+        result = handleAdminRosGetPidCmd();
         reader.requestDrop(); // ROS likes to close down.
-    } break;
+        break;
     case PortCoreCommand::RosGetBusInfo: {
         // ROS-style query for bus information - we support this
         // in yarp::os::Node but not otherwise.
