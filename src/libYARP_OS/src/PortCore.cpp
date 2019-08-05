@@ -2202,6 +2202,16 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
+    auto handleAdminRosGetBusInfoCmd = []() {
+        // ROS-style query for bus information - we support this
+        // in yarp::os::Node but not otherwise.
+        Bottle result;
+        result.addInt32(1);
+        result.addString("");
+        result.addList().addList();
+        return result;
+    };
+
     const PortCoreCommand command = parseCommand(cmd.get(0));
     switch (command) {
     case PortCoreCommand::Help:
@@ -2286,14 +2296,11 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result = handleAdminRosGetPidCmd();
         reader.requestDrop(); // ROS likes to close down.
         break;
-    case PortCoreCommand::RosGetBusInfo: {
-        // ROS-style query for bus information - we support this
-        // in yarp::os::Node but not otherwise.
-        result.addInt32(1);
-        result.addString("");
-        result.addList().addList();
+    case PortCoreCommand::RosGetBusInfo:
+        // std::string caller_id = cmd.get(1).asString(); // Currently unused
+        result = handleAdminRosGetBusInfoCmd();
         reader.requestDrop(); // ROS likes to close down.
-    } break;
+        break;
     case PortCoreCommand::Prop: {
         PortCorePropertyAction action = parsePropertyAction(cmd.get(1).asVocab());
         // Set/get arbitrary properties on a port.
