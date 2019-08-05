@@ -1749,6 +1749,22 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
+    auto handleAdminAddCmd = [this, id](std::string output,
+                                        const std::string& carrier) {
+        // Add an output to the port.
+        Bottle result;
+        StringOutputStream cache;
+        if (!carrier.empty()) {
+            output = carrier + ":/" + output;
+        }
+        addOutput(output, id, &cache, false);
+        std::string r = cache.toString();
+        int v = (r[0] == 'A') ? 0 : -1;
+        result.addInt32(v);
+        result.addString(r);
+        return result;
+    };
+
     const PortCoreCommand command = parseCommand(cmd.get(0));
     switch (command) {
     case PortCoreCommand::Help:
@@ -1760,18 +1776,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     case PortCoreCommand::Add: {
         std::string output = cmd.get(1).asString();
         std::string carrier = cmd.get(2).asString();
-        // Add an output to the port.
-        StringOutputStream cache;
-        if (!carrier.empty()) {
-            output = carrier + ":/" + output;
-        }
-        addOutput(output, id, &cache, false);
-        std::string r = cache.toString();
-        int v = (r[0] == 'A') ? 0 : -1;
-        result.addInt32(v);
-        result.addString(r);
-    } break;
-    case PortCoreCommand::Atch: {
+        result = handleAdminAddCmd(std::move(output), carrier);
+        } break;
+   case PortCoreCommand::Atch: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
         Property prop(cmd.get(2).asString().c_str());
         switch (direction) {
