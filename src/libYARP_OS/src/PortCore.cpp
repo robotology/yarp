@@ -1709,9 +1709,8 @@ bool PortCore::adminBlock(ConnectionReader& reader,
 
     YARP_SPRINTF2(m_log, debug, "Port %s received command %s", getName().c_str(), cmd.toString().c_str());
 
-    const PortCoreCommand command = parseCommand(cmd.get(0));
-    switch (command) {
-    case PortCoreCommand::Help:
+    auto handleAdminHelpCmd = []() {
+        Bottle result;
         // We give a list of the most useful administrative commands.
         result.addVocab(yarp::os::createVocab('m', 'a', 'n', 'y'));
         result.addString("[help]                  # give this help");
@@ -1736,6 +1735,13 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addString("[dtch] [in]             # detach portmonitor plug-in from the port's input");
         //result.addString("[atch] $portname $prop  # attach a portmonitor plug-in to the connection to/from $portname");
         //result.addString("[dtch] $portname        # detach any portmonitor plug-in from the connection to/from $portname");
+        return result;
+    };
+
+    const PortCoreCommand command = parseCommand(cmd.get(0));
+    switch (command) {
+    case PortCoreCommand::Help:
+        result = handleAdminHelpCmd();
         break;
     case PortCoreCommand::Ver:
         // Gives a version number for the administrative commands.
