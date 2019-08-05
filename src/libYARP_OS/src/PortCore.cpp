@@ -2626,7 +2626,7 @@ bool PortCore::dettachPortMonitor(bool isOutput)
     return true;
 }
 
-bool PortCore::setParamPortMonitor(yarp::os::Property& param,
+bool PortCore::setParamPortMonitor(const yarp::os::Property& param,
                                    bool isOutput,
                                    std::string& errMsg)
 {

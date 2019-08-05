@@ -569,7 +569,7 @@ private:
     bool dettachPortMonitor(bool isOutput);
 
     // set the parameter for the portmonitor of the port (if any)
-    bool setParamPortMonitor(yarp::os::Property& param, bool isOutput, std::string& errMsg);
+    bool setParamPortMonitor(const yarp::os::Property& param, bool isOutput, std::string& errMsg);
 
     // get the parameters from the portmonitor of the port (if any)
     bool getParamPortMonitor(yarp::os::Property& param, bool isOutput, std::string& errMsg);
