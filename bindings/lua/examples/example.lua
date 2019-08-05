@@ -36,7 +36,7 @@ for i=1,100 do
     wb:addInt32(100)
     print(string.format("Sending: %s", wb:toString()))
     port:write()
-    yarp.Time_delay(0.5)
+    yarp.delay(0.5)
 end
 
 -- close the port
