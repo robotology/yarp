@@ -1738,18 +1738,24 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         return result;
     };
 
+    auto handleAdminVerCmd = []() {
+        // Gives a version number for the administrative commands.
+        // It is distinct from YARP library versioning.
+        Bottle result;
+        result.addVocab(Vocab::encode("ver"));
+        result.addInt32(1);
+        result.addInt32(2);
+        result.addInt32(3);
+        return result;
+    };
+
     const PortCoreCommand command = parseCommand(cmd.get(0));
     switch (command) {
     case PortCoreCommand::Help:
         result = handleAdminHelpCmd();
         break;
     case PortCoreCommand::Ver:
-        // Gives a version number for the administrative commands.
-        // It is distinct from YARP library versioning.
-        result.addVocab(Vocab::encode("ver"));
-        result.addInt32(1);
-        result.addInt32(2);
-        result.addInt32(3);
+        result = handleAdminVerCmd();
         break;
     case PortCoreCommand::Add: {
         std::string output = cmd.get(1).asString();
