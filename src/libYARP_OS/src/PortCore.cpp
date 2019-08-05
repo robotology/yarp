@@ -1711,8 +1711,6 @@ bool PortCore::adminBlock(ConnectionReader& reader,
 
     YARP_SPRINTF2(m_log, debug, "Port %s received command %s", getName().c_str(), cmd.toString().c_str());
 
-    StringOutputStream cache;
-
     const PortCoreCommand command = parseCommand(cmd.get(0));
     switch (command) {
     case PortCoreCommand::Help:
@@ -1753,6 +1751,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         std::string output = cmd.get(1).asString();
         std::string carrier = cmd.get(2).asString();
         // Add an output to the port.
+        StringOutputStream cache;
         if (!carrier.empty()) {
             output = carrier + ":/" + output;
         }
@@ -1820,6 +1819,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     case PortCoreCommand::Del: {
         const std::string dest = cmd.get(1).asString();
         // Delete any inputs or outputs involving the named port.
+        StringOutputStream cache;
         removeOutput(dest, id, &cache);
         std::string r1 = cache.toString();
         cache.reset();
