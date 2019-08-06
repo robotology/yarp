@@ -220,11 +220,14 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Bytes.cpp
                  src/Carrier.cpp
                  src/Carriers.cpp
+                 src/Clock.cpp
                  src/Connection.cpp
                  src/ConnectionReader.cpp
                  src/ConnectionRecorder.cpp
+                 src/ConnectionState.cpp
                  src/ConnectionWriter.cpp
                  src/Contactable.cpp
+                 src/Contactables.cpp
                  src/Contact.cpp
                  src/ContactStyle.cpp
                  src/DgramTwoWayStream.cpp

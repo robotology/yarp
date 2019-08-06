@@ -34,7 +34,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~ConnectionState() = default;
+    virtual ~ConnectionState();
 
     /**
      * Get the route associated with this connection. A route is
