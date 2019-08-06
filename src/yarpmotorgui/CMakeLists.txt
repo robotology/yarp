@@ -61,7 +61,7 @@ if(YARP_COMPILE_yarpmotorgui)
                                      ${yarpmotorgui_UI_FILES}
                                      ${yarpmotorgui_UI_GEN_SRCS})
 
-  target_link_libraries(yarpmotorgui YARP::YARP_OS
+  target_link_libraries(yarpmotorgui YARP::YARP_os
                                      YARP::YARP_init
                                      YARP::YARP_sig
                                      YARP::YARP_dev

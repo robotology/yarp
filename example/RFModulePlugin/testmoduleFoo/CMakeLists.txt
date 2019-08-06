@@ -15,9 +15,9 @@ yarp_prepare_plugin(myModuleFoo
 
 if(ENABLE_myModules_myModuleFoo)
   yarp_add_plugin(module_Foo ${HDRS})
-  target_link_libraries(module_Foo YARP::YARP_OS)
+  target_link_libraries(module_Foo YARP::YARP_os)
 endif()
 
 #create the executable target
 add_executable(myModuleFooExe main.cpp ${SRC} ${HDRS})
-target_link_libraries(myModuleFooExe YARP::YARP_OS YARP::YARP_init)
+target_link_libraries(myModuleFooExe YARP::YARP_os YARP::YARP_init)

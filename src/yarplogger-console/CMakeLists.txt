@@ -6,7 +6,7 @@
 
 if(YARP_COMPILE_yarplogger)
   add_executable(yarplogger-console main.cpp)
-  target_link_libraries(yarplogger-console YARP::YARP_OS
+  target_link_libraries(yarplogger-console YARP::YARP_os
                                            YARP::YARP_init
                                            YARP::YARP_logger)
 

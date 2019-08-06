@@ -39,9 +39,9 @@ if(YARP_COMPILE_yarplogger)
                                   ${yarplogger_UI_FILES}
                                   ${yarplogger_UI_GEN_SRCS})
 
-  target_link_libraries(yarplogger YARP_OS
-                                   YARP_init
-                                   YARP_logger
+  target_link_libraries(yarplogger YARP::YARP_os
+                                   YARP::YARP_init
+                                   YARP::YARP_logger
                                    Qt5::Widgets
                                    Qt5::Gui)
 

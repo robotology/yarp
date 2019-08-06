@@ -46,7 +46,7 @@ our computational needs for controlling various humanoid robots.
 
 The components of YARP can be broken down into:
 
-\li \link yarp_os libYARP_OS \endlink - interfacing with the operating system(s) to support
+\li \link yarp_os YARP_os \endlink - interfacing with the operating system(s) to support
 easy streaming of data across many threads across many
 machines. YARP is written to be OS neutral, and has been used
 on Linux, Microsoft Windows, Apple macOS and iOS, Solaris, and Android.
@@ -63,7 +63,7 @@ commonly used libraries, for example OpenCV.
 framegrabbers, digital cameras, motor control boards, etc.
 
 These components are maintained separately. The core component
-is libYARP_OS, which must be available before the other
+is YARP_os, which must be available before the other
 components can be used.
 
 

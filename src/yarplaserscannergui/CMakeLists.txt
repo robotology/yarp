@@ -41,7 +41,7 @@ if(YARP_COMPILE_yarplaserscannergui)
                                            ${yarplaserscannergui_UI_FILES}
                                            ${yarplaserscannergui_UI_GEN_SRCS})
 
-  target_link_libraries(yarplaserscannergui YARP::YARP_OS
+  target_link_libraries(yarplaserscannergui YARP::YARP_os
                                             YARP::YARP_init
                                             YARP::YARP_sig
                                             YARP::YARP_dev

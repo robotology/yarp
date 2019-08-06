@@ -17,7 +17,7 @@ add_executable(harness_dev AnalogWrapperTest.cpp
                            TestFrameGrabberTest.cpp)
 
 target_link_libraries(harness_dev PRIVATE YARP_harness
-                                          YARP::YARP_OS
+                                          YARP::YARP_os
                                           YARP::YARP_sig
                                           YARP::YARP_dev)
 

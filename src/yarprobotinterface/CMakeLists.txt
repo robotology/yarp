@@ -50,7 +50,7 @@ if(YARP_COMPILE_yarprobotinterface)
                                     ${yarprobotinterface_IDLS_HDRS})
 
   target_link_libraries(yarprobotinterface
-                        YARP::YARP_OS
+                        YARP::YARP_os
                         YARP::YARP_dev
                         YARP::YARP_init
                         ${TinyXML_LIBRARIES})

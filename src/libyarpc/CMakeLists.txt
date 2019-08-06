@@ -60,7 +60,7 @@ if(CREATE_YARPC)
   target_link_libraries(yarpc PRIVATE ACE::ACE)
 
   if(NOT CREATE_YARPC_STANDALONE)
-    target_link_libraries(yarpc PRIVATE YARP::YARP_OS
+    target_link_libraries(yarpc PRIVATE YARP::YARP_os
                                         YARP::YARP_init)
     if(YARP_LINK_PLUGINS)
       if(YARP_COMPILE_CARRIER_PLUGINS)

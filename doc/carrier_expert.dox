@@ -158,7 +158,7 @@ So there isn't much to it to just insert a call to
 Carriers::addCarrierPrototype in there.  Otherwise, to put
 the new carrier in the YARP library proper, do a little pattern-matching
 in the constructor for the yarp::os::Carriers class
-at src/libYARP_OS/src/Carriers.cpp.
+at `src/libYARP_os/src/yarp/os/Carriers.cpp`.
 
 
 \section carrier_expert_custom Customizing behavior

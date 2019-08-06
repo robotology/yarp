@@ -43,11 +43,11 @@ target_include_directories(YARP_serversql PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRE
                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(YARP_serversql PUBLIC YARP::YARP_conf
-                                            YARP::YARP_OS
+                                            YARP::YARP_os
                                      PRIVATE YARP::YARP_name
                                              YARP::YARP_init)
 list(APPEND YARP_serversql_PUBLIC_DEPS YARP_conf
-                                       YARP_OS)
+                                       YARP_os)
 list(APPEND YARP_serversql_PRIVATE_DEPS YARP_name)
 
 target_include_directories(YARP_serversql SYSTEM PRIVATE ${SQLite_INCLUDE_DIRS})

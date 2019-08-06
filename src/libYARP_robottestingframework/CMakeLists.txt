@@ -30,12 +30,12 @@ target_include_directories(YARP_robottestingframework PUBLIC $<BUILD_INTERFACE:$
                                                              $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(YARP_robottestingframework PUBLIC YARP::YARP_conf
-                                                        YARP::YARP_OS
+                                                        YARP::YARP_os
                                                         YARP::YARP_sig
                                                         YARP::YARP_dev
                                                  PRIVATE YARP::YARP_init)
 list(APPEND YARP_robottestingframework_PUBLIC_DEPS YARP_conf
-                                                   YARP_OS
+                                                   YARP_os
                                                    YARP_sig
                                                    YARP_dev)
 

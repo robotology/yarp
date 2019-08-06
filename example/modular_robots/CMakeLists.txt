@@ -7,10 +7,10 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-find_package(YARP COMPONENTS OS name math REQUIRED)
+find_package(YARP COMPONENTS os name math REQUIRED)
 
 add_executable(yarpwide main.cpp)
-target_link_libraries(yarpwide YARP::YARP_OS
+target_link_libraries(yarpwide YARP::YARP_os
                                YARP::YARP_init
                                YARP::YARP_name
                                YARP::YARP_math)

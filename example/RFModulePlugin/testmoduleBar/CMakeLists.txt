@@ -15,9 +15,9 @@ yarp_prepare_plugin(myModuleBar
 
 if(ENABLE_myModules_myModuleBar)
   yarp_add_plugin(module_Bar ${HDRS})
-  target_link_libraries(module_Bar YARP::YARP_OS)
+  target_link_libraries(module_Bar YARP::YARP_os)
 endif()
 
 #create the executable target
 add_executable(myModuleBarExe main.cpp ${SRC} ${HDRS})
-target_link_libraries(myModuleBarExe YARP::YARP_OS YARP::YARP_init)
+target_link_libraries(myModuleBarExe YARP::YARP_os YARP::YARP_init)

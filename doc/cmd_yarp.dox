@@ -641,7 +641,7 @@ linked.  Normally, there are separate programs called "harness_os",
   harness_os regression
 \endverbatim
 
-will run all tests related to libYARP_OS.  The main
+will run all tests related to YARP_os.  The main
 YARP executable "yarp" does not usually have any tests linked.
 
 

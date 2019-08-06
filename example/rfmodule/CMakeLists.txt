@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(module)
 
-find_package(YARP COMPONENTS OS REQUIRED)
+find_package(YARP COMPONENTS os REQUIRED)
 
 add_executable(module main.cpp)
-target_link_libraries(module PRIVATE YARP::YARP_OS YARP::YARP_init)
+target_link_libraries(module PRIVATE YARP::YARP_os YARP::YARP_init)

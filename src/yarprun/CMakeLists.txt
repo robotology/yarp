@@ -6,7 +6,7 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 add_executable(yarprun yarprun.cpp)
-target_link_libraries(yarprun YARP::YARP_OS
+target_link_libraries(yarprun YARP::YARP_os
                               YARP::YARP_init
                               YARP::YARP_run)
 

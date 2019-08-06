@@ -55,8 +55,8 @@ add_library(YARP_rosmsg INTERFACE)
 add_library(YARP::YARP_rosmsg ALIAS YARP_rosmsg)
 target_include_directories(YARP_rosmsg INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_link_libraries(YARP_rosmsg INTERFACE YARP::YARP_OS)
-list(APPEND YARP_rosmsg_PUBLIC_DEPS YARP_OS)
+target_link_libraries(YARP_rosmsg INTERFACE YARP::YARP_os)
+list(APPEND YARP_rosmsg_PUBLIC_DEPS YARP_os)
 
 add_dependencies(YARP_rosmsg YARP_rosmsg_gen_all)
 
@@ -73,8 +73,8 @@ add_library(YARP_rosmsg_native INTERFACE)
 add_library(YARP::YARP_rosmsg_native ALIAS YARP_rosmsg_native)
 target_include_directories(YARP_rosmsg_native INTERFACE $<BUILD_INTERFACE:${native_MSG_BUILD_INTERFACE_INCLUDE_DIRS}>
                                                         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_link_libraries(YARP_rosmsg_native INTERFACE YARP::YARP_OS)
-list(APPEND YARP_rosmsg_native_PUBLIC_DEPS YARP_OS)
+target_link_libraries(YARP_rosmsg_native INTERFACE YARP::YARP_os)
+list(APPEND YARP_rosmsg_native_PUBLIC_DEPS YARP_os)
 
 add_dependencies(YARP_rosmsg_gen_all YARP_rosmsg_gen_native)
 target_link_libraries(YARP_rosmsg INTERFACE YARP::YARP_rosmsg_native)
@@ -125,9 +125,9 @@ foreach(_pkg ${ROS_MSG_PACKAGES})
   target_include_directories(YARP_rosmsg_${_pkg} INTERFACE $<BUILD_INTERFACE:${${_pkg}_MSG_BUILD_INTERFACE_INCLUDE_DIRS}>
                                                            $<BUILD_INTERFACE:${${_pkg}_SRV_BUILD_INTERFACE_INCLUDE_DIRS}>
                                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-  target_link_libraries(YARP_rosmsg_${_pkg} INTERFACE YARP::YARP_OS
+  target_link_libraries(YARP_rosmsg_${_pkg} INTERFACE YARP::YARP_os
                                                       YARP::YARP_rosmsg_native)
-  list(APPEND YARP_rosmsg_${_pkg}_PUBLIC_DEPS YARP_OS
+  list(APPEND YARP_rosmsg_${_pkg}_PUBLIC_DEPS YARP_os
                                               YARP_rosmsg_native)
 
   # YARP_rosmsg depends on all the packages

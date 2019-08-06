@@ -7,7 +7,7 @@
 add_executable(harness_carriers mjpeg.cpp)
 
 target_link_libraries(harness_carriers PRIVATE YARP_harness
-                                               YARP::YARP_OS
+                                               YARP::YARP_os
                                                YARP::YARP_sig)
 
 set_property(TARGET harness_carriers PROPERTY FOLDER "Test")

@@ -24,8 +24,8 @@ if(NOT SKIP_shmem)
                              ShmemOutputStream.cpp
                              ShmemOutputStream.h
                              ShmemTypes.h)
-  target_link_libraries(yarp_shmem PRIVATE YARP::YARP_OS)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS)
+  target_link_libraries(yarp_shmem PRIVATE YARP::YARP_os)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)
 
   target_compile_definitions(yarp_shmem PRIVATE YARP_HAS_ACE)
   target_link_libraries(yarp_shmem PRIVATE ACE::ACE)

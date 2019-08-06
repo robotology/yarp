@@ -6,5 +6,5 @@
 
 set(SRC main.cpp)
 add_executable(moduleLoader ${SRC})
-target_link_libraries(moduleLoader YARP::YARP_OS
+target_link_libraries(moduleLoader YARP::YARP_os
                                    YARP::YARP_init)

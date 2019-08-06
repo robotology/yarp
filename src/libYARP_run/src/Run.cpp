@@ -94,7 +94,7 @@ void sigstdio_handler(int sig)
 ////////////////////////////////////
 
 static char slash = yarp::os::NetworkBase::getDirectorySeparator()[0];
-////// adapted from libYARP_OS: ResourceFinder.cpp
+////// adapted from YARP_os: ResourceFinder.cpp
 static yarp::os::Bottle parsePaths(const std::string& txt) {
     char slash = yarp::os::NetworkBase::getDirectorySeparator()[0];
     char sep = yarp::os::NetworkBase::getPathSeparator()[0];

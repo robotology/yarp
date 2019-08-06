@@ -21,7 +21,7 @@ using namespace std;
 
 static char slash = NetworkBase::getDirectorySeparator()[0];
 
-////// adapted from libYARP_OS: ResourceFinder.cpp
+////// adapted from YARP_os: ResourceFinder.cpp
 static Bottle parsePaths(const std::string& txt) {
     char slash = NetworkBase::getDirectorySeparator()[0];
     char sep = NetworkBase::getPathSeparator()[0];

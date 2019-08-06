@@ -64,11 +64,11 @@ target_include_directories(YARP_sig PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOU
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(YARP_sig PUBLIC YARP::YARP_conf
-                                      YARP::YARP_OS)
+                                      YARP::YARP_os)
 list(APPEND YARP_sig_PUBLIC_DEPS YARP_conf
-                                 YARP_OS)
+                                 YARP_os)
 
-# YARP_sig library uses headers from YARP_OS impl, and therefore ACE headers
+# YARP_sig library uses headers from YARP_os impl, and therefore ACE headers
 # are also required.
 if(YARP_HAS_ACE)
   target_compile_definitions(YARP_sig PRIVATE YARP_HAS_ACE)

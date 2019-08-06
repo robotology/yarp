@@ -40,8 +40,8 @@ add_library(YARP::YARP_run ALIAS YARP_run)
 target_include_directories(YARP_run PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-target_link_libraries(YARP_run PRIVATE YARP::YARP_OS)
-list(APPEND YARP_run_PRIVATE_DEPS YARP_OS)
+target_link_libraries(YARP_run PRIVATE YARP::YARP_os)
+list(APPEND YARP_run_PRIVATE_DEPS YARP_os)
 
 if(YARP_HAS_ACE)
   target_compile_definitions(YARP_run PRIVATE YARP_HAS_ACE)

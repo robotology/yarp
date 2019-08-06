@@ -25,19 +25,19 @@ it is better not to try enumerating them here.  Given that, the
 recommended usage of this header within YARP is:
 //
 #include <yarp/conf/api.h>
-#ifndef YARP_OS_API
-#  ifdef YARP_OS_EXPORTS
-#    define YARP_OS_API YARP_EXPORT
-#    define YARP_OS_EXTERN YARP_EXPORT_EXTERN
+#ifndef YARP_os_API
+#  ifdef YARP_os_EXPORTS
+#    define YARP_os_API YARP_EXPORT
+#    define YARP_os_EXTERN YARP_EXPORT_EXTERN
 #  else
-#    define YARP_OS_API YARP_IMPORT
-#    define YARP_OS_EXTERN YARP_IMPORT_EXTERN
+#    define YARP_os_API YARP_IMPORT
+#    define YARP_os_EXTERN YARP_IMPORT_EXTERN
 #  endif
-#  define YARP_OS_DEPRECATED_API YARP_DEPRECATED_API
-#  define YARP_OS_DEPRECATED_API_MSG(X) YARP_DEPRECATED_API_MSG(X)
+#  define YARP_os_DEPRECATED_API YARP_DEPRECATED_API
+#  define YARP_os_DEPRECATED_API_MSG(X) YARP_DEPRECATED_API_MSG(X)
 #endif
 
-(replace YARP_OS with CMake target name for library)
+(replace YARP_os with CMake target name for library)
 
 */
 
@@ -127,8 +127,8 @@ recommended usage of this header within YARP is:
 #  define YARP_DEPRECATED_API YARP_DEPRECATED
 #  define YARP_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG(X)
 #else
-#  define YARP_DEPRECATED_API YARP_DEPRECATED_COMPILER_SPECIFIC YARP_OS_API
-#  define YARP_DEPRECATED_API_MSG(X) YARP_DEPRECATED_COMPILER_SPECIFIC_MSG(X) YARP_OS_API
+#  define YARP_DEPRECATED_API YARP_DEPRECATED_COMPILER_SPECIFIC YARP_os_API
+#  define YARP_DEPRECATED_API_MSG(X) YARP_DEPRECATED_COMPILER_SPECIFIC_MSG(X) YARP_os_API
 #endif
 
 #ifdef BUILDING_YARP

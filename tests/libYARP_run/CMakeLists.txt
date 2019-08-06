@@ -7,7 +7,7 @@
 add_executable(harness_run RunTest.cpp)
 
 target_link_libraries(harness_run PRIVATE YARP_harness
-                                          YARP::YARP_OS
+                                          YARP::YARP_os
                                           YARP::YARP_run)
 
 set_property(TARGET harness_run PROPERTY FOLDER "Test")
@@ -23,5 +23,5 @@ endforeach()
 # Test module started by the unit tests
 add_executable(testModule module.cpp)
 target_link_libraries(testModule YARP::YARP_init
-                                 YARP::YARP_OS)
+                                 YARP::YARP_os)
 set_property(TARGET testModule PROPERTY FOLDER "Test")

@@ -28,10 +28,10 @@ if(NOT SKIP_mjpeg)
                   MjpegStream.cpp
                   MjpegDecompression.h
                   MjpegDecompression.cpp)
-  target_link_libraries(yarp_mjpeg PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_mjpeg PRIVATE YARP::YARP_os
                                            YARP::YARP_sig
                                            YARP::YARP_wire_rep_utils)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_wire_rep_utils)
 

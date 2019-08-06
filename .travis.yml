@@ -118,7 +118,7 @@ git:
 
 .export_cmake_options_skip_ace_cmd_definition: &export_cmake_options_skip_ace_cmd |-
   # export_cmake_options_skip_ace_cmd_definition
-  export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE:BOOL=ON -DYARP_TEST_HEAP:BOOL=ON"
+  export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE:BOOL=ON"
 
 .export_cmake_options_skip_math_cmd_definition: &export_cmake_options_skip_math_cmd |-
   # export_cmake_options_skip_math_cmd

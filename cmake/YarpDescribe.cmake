@@ -13,7 +13,7 @@ set(YARP_BINDINGS "${CMAKE_SOURCE_DIR}/bindings")
 set(YARP_CMAKECONFIG_DIR "${CMAKE_BINARY_DIR}")
 set(YARP_YCM_MODULE_DIR "${CMAKE_SOURCE_DIR}/extern/ycm/ycm-${YCM_REQUIRED_VERSION}")
 
-set(YARP_DEFAULT_FIND_COMPONENTS OS
+set(YARP_DEFAULT_FIND_COMPONENTS os
                                  sig
                                  dev)
 if(TARGET YARP::YARP_math)

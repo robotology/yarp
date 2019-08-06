@@ -23,7 +23,7 @@ add_executable(YARP::yarpidl_rosmsg ALIAS yarpidl_rosmsg)
 
 target_include_directories(yarpidl_rosmsg SYSTEM PRIVATE "${md5_ROOT}")
 target_link_libraries(yarpidl_rosmsg PRIVATE YARP::YARP_init
-                                             YARP::YARP_OS)
+                                             YARP::YARP_os)
 if(YARP_HAS_ACE)
   target_compile_definitions(yarpidl_rosmsg PRIVATE YARP_HAS_ACE)
   target_link_libraries(yarpidl_rosmsg PRIVATE ACE::ACE)

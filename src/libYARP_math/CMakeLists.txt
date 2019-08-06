@@ -53,11 +53,11 @@ if (YARP_COMPILE_libYARP_math)
                                               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
   target_link_libraries(YARP_math PUBLIC YARP::YARP_conf
-                                         YARP::YARP_OS
+                                         YARP::YARP_os
                                          YARP::YARP_sig
                                   PRIVATE YARP::YARP_eigen)
   list(APPEND YARP_math_PUBLIC_DEPS YARP_conf
-                                    YARP_OS
+                                    YARP_os
                                     YARP_sig)
   list(APPEND YARP_math_PRIVATE_DEPS YARP_eigen)
 

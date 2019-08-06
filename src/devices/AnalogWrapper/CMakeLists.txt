@@ -15,12 +15,12 @@ if(NOT SKIP_analogServer)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   yarp_add_plugin(yarp_analogServer AnalogWrapper.cpp
-                                          AnalogWrapper.h)
-  target_link_libraries(yarp_analogServer PRIVATE YARP::YARP_OS
-                                                        YARP::YARP_sig
-                                                        YARP::YARP_dev
-                                                        YARP::YARP_rosmsg)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+                                    AnalogWrapper.h)
+  target_link_libraries(yarp_analogServer PRIVATE YARP::YARP_os
+                                                   YARP::YARP_sig
+                                                   YARP::YARP_dev
+                                                   YARP::YARP_rosmsg)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
                                                       YARP_rosmsg)

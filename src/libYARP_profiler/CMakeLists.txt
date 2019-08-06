@@ -31,9 +31,9 @@ if(YARP_COMPILE_libYARP_profiler)
   target_include_directories(YARP_profiler PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                                   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-  target_link_libraries(YARP_profiler PUBLIC YARP::YARP_OS
+  target_link_libraries(YARP_profiler PUBLIC YARP::YARP_os
                                       PRIVATE YARP::YARP_companion)
-  list(APPEND YARP_profiler_PUBLIC_DEPS YARP_OS)
+  list(APPEND YARP_profiler_PUBLIC_DEPS YARP_os)
   list(APPEND YARP_profiler_PRIVATE_DEPS YARP_companion)
 
   target_compile_features(YARP_profiler PUBLIC cxx_override)

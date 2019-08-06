@@ -38,7 +38,7 @@ add_library(QtYARPViewPlugin MODULE ${QtYARPViewPlugin_SRCS}
                                     ${QtYARPViewPlugin_QRC_FILES}
                                     ${QtYARPViewPlugin_QRC_GEN_SRCS}
                                     ${QtYARPViewPlugin_QML_FILES})
-target_link_libraries(QtYARPViewPlugin YARP::YARP_OS
+target_link_libraries(QtYARPViewPlugin YARP::YARP_os
                                        YARP::YARP_init
                                        YARP::YARP_sig
                                        Qt5::Widgets

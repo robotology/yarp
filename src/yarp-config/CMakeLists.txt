@@ -17,7 +17,7 @@ set(yarp_config_HDRS yarpcontext.h
 add_executable(yarp-config ${yarp_config_SRCS}
                            ${yarp_config_HDRS})
 target_include_directories(yarp-config SYSTEM PRIVATE ${diff_match_patch_INCLUDE_DIRS})
-target_link_libraries(yarp-config PRIVATE YARP::YARP_OS
+target_link_libraries(yarp-config PRIVATE YARP::YARP_os
                                           YARP::YARP_init)
 
 if(YARP_HAS_ACE)

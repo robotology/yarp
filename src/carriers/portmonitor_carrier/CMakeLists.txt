@@ -30,8 +30,8 @@ if (NOT SKIP_portmonitor)
                   ${portmonitor_LUA_SRCS})
 
   target_include_directories(yarp_portmonitor PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dll)
-  target_link_libraries(yarp_portmonitor PRIVATE YARP::YARP_OS)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS)
+  target_link_libraries(yarp_portmonitor PRIVATE YARP::YARP_os)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)
 
   if(YARP_HAS_Lua)
     target_include_directories(yarp_portmonitor PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lua)

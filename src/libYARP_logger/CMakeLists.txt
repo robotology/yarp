@@ -31,9 +31,9 @@ add_library(YARP::YARP_logger ALIAS YARP_logger)
 target_include_directories(YARP_logger PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-target_link_libraries(YARP_logger PUBLIC YARP::YARP_OS
+target_link_libraries(YARP_logger PUBLIC YARP::YARP_os
                                   PRIVATE YARP::YARP_sig)
-list(APPEND YARP_logger_PUBLIC_DEPS YARP_OS)
+list(APPEND YARP_logger_PUBLIC_DEPS YARP_os)
 list(APPEND YARP_logger_PRIVATE_DEPS YARP_sig)
 
 target_compile_features(YARP_logger PUBLIC cxx_override)

@@ -14,7 +14,7 @@ add_executable(harness_math MathTest.cpp
                             RandTest.cpp)
 
 target_link_libraries(harness_math PRIVATE YARP_harness
-                                           YARP::YARP_OS
+                                           YARP::YARP_os
                                            YARP::YARP_sig
                                            YARP::YARP_math)
 

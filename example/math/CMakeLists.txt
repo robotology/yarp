@@ -8,10 +8,10 @@
 cmake_minimum_required(VERSION 3.5)
 project(math_examples)
 
-find_package(YARP COMPONENTS OS sig math REQUIRED)
+find_package(YARP COMPONENTS os sig math REQUIRED)
 
 add_executable(benchmark benchmark.cpp)
-target_link_libraries(benchmark YARP::YARP_OS
+target_link_libraries(benchmark YARP::YARP_os
                                 YARP::YARP_init
                                 YARP::YARP_sig
                                 YARP::YARP_math)

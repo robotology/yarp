@@ -52,7 +52,7 @@ add_executable(yarpviz WIN32 ${yarpviz_qt_SRCS}
                              ${yarpviz_qt_UI_FILES})
 
 
-target_link_libraries(yarpviz YARP::YARP_OS
+target_link_libraries(yarpviz YARP::YARP_os
                               YARP::YARP_init
                               YARP::YARP_profiler
                               ${QGVCore_LIBRARIES}
