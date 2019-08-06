@@ -237,8 +237,7 @@ void PortCore::run()
     while (!shouldStop) {
 
         // Block and wait for a connection
-        InputProtocol* ip = nullptr;
-        ip = m_face->read();
+        InputProtocol* ip = m_face->read();
 
         m_stateSemaphore.wait();
 
