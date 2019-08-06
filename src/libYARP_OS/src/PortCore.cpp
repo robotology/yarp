@@ -435,7 +435,7 @@ void PortCore::closeMain()
         std::string removeName;
         m_stateSemaphore.wait();
         for (auto unit : m_units) {
-            if ((unit != nullptr) && unit->isInput() &&!unit->isDoomed()) {
+            if ((unit != nullptr) && unit->isInput() && !unit->isDoomed()) {
                 Route r = unit->getRoute();
                 std::string s = r.getFromName();
                 if (s.length() >= 1 && s[0] == '/' && s != getName() && s != prevName) {
@@ -1877,7 +1877,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 }
             }
             m_stateSemaphore.post();
-            } break;
+        } break;
         case PortCoreConnectionDirection::Out: {
             // Return a list of all output connections.
             m_stateSemaphore.wait();
@@ -1892,7 +1892,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 }
             }
             m_stateSemaphore.post();
-            } break;
+        } break;
         case PortCoreConnectionDirection::Error:
             // Should never happen
             yAssert(false);
@@ -2028,12 +2028,12 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             }
         }
         m_stateSemaphore.post();
-    return result;
+        return result;
     };
 
     auto handleAdminGetOutCmd = [this](const std::string& target) {
         Bottle result;
-         // Get carrier parameters for a given output connection.
+        // Get carrier parameters for a given output connection.
         m_stateSemaphore.wait();
         if (target.empty()) {
             result.addInt32(-1);
@@ -2469,25 +2469,25 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         std::string output = cmd.get(1).asString();
         std::string carrier = cmd.get(2).asString();
         result = handleAdminAddCmd(std::move(output), carrier);
-        } break;
+    } break;
     case PortCoreCommand::Del: {
         const std::string dest = cmd.get(1).asString();
         result = handleAdminDelCmd(dest);
-        } break;
+    } break;
     case PortCoreCommand::Atch: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
         Property prop(cmd.get(2).asString().c_str());
         result = handleAdminAtchCmd(direction, std::move(prop));
-        } break;
+    } break;
     case PortCoreCommand::Dtch: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
         result = handleAdminDtchCmd(direction);
-        } break;
+    } break;
     case PortCoreCommand::List: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
         const std::string target = cmd.get(2).asString();
         result = handleAdminListCmd(direction, target);
-        } break;
+    } break;
     case PortCoreCommand::Set: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
         const std::string target = cmd.get(2).asString();
@@ -2504,7 +2504,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             yAssert(false); // Should never happen (error is out)
             break;
         }
-        } break;
+    } break;
     case PortCoreCommand::Get: {
         const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
         const std::string target = cmd.get(2).asString();
@@ -2519,7 +2519,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             yAssert(false); // Should never happen (error is out)
             break;
         }
-        } break;
+    } break;
     case PortCoreCommand::Prop: {
         PortCorePropertyAction action = parsePropertyAction(cmd.get(1).asVocab());
         const std::string key = cmd.get(2).asString();
@@ -2534,13 +2534,13 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             const Bottle& sched = cmd.findGroup("sched");
             const Bottle& qos = cmd.findGroup("qos");
             result = handleAdminPropSetCmd(key, value, process, sched, qos);
-            } break;
+        } break;
         case PortCorePropertyAction::Error:
             result.addVocab(Vocab::encode("fail"));
             result.addString("property action not known");
             break;
         }
-        } break;
+    } break;
     case PortCoreCommand::RosPublisherUpdate: {
         YARP_SPRINTF1(m_log, debug, "publisherUpdate! --> %s", cmd.toString().c_str());
         // std::string caller_id = cmd.get(1).asString(); // Currently unused
@@ -2548,7 +2548,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         Bottle* pubs = cmd.get(3).asList();
         result = handleAdminRosPublisherUpdateCmd(topic, pubs);
         reader.requestDrop(); // ROS needs us to close down.
-        } break;
+    } break;
     case PortCoreCommand::RosRequestTopic:
         YARP_SPRINTF1(m_log, debug, "requestTopic! --> %s", cmd.toString().c_str());
         // std::string caller_id = cmd.get(1).asString(); // Currently unused
