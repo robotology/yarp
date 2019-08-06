@@ -134,21 +134,21 @@ public:
     bool                    stepfromCmd;
 
     using Moment = std::chrono::time_point<std::chrono::high_resolution_clock>;
-    
-    void Initialize();
-    
-    void Tick();
-    
+
+    void initialize();
+
+    void tick();
+
     float diff_seconds() const { return dtSeconds; }
     float framesPerSecond() const { return fps; }
-    
+
     QMainWindow* wnd;
 
     /**
      * Master thread class
      */
     MasterThread(Utilities *utilities, int numPart, QMainWindow *gui, QObject *parent = NULL);
-    
+
     bool threadInit() override;
     /**
      * Thread release

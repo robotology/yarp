@@ -285,13 +285,13 @@ bool MasterThread::threadInit()
     
     LOG("virtual time is %lf\n", virtualTime);
     
-    Initialize();
+    initialize();
     
     return true;
 }
 
 /**********************************************************/
-void MasterThread::Initialize()
+void MasterThread::initialize()
 {
     lastUpdate = std::chrono::high_resolution_clock::now();
     dtSeconds = 0.f;
@@ -299,7 +299,7 @@ void MasterThread::Initialize()
 }
 
 /**********************************************************/
-void MasterThread::Tick()
+void MasterThread::tick()
 {
     Moment now = std::chrono::high_resolution_clock::now();
 
@@ -387,7 +387,7 @@ void MasterThread::runNormally()
     
     virtualTime += diff_seconds();
 
-    Tick();
+    tick();
 
     initTime++;
 }
