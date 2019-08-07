@@ -10,7 +10,7 @@
 #define MONITOREVENT_INC
 
 #include <string>
-#include <yarp/os/Mutex.h>
+#include <mutex>
 #include <yarp/os/Time.h>
 #include <vector>
 
@@ -102,7 +102,7 @@ private:
 
 private:
     vector_type events;
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
 
 };
 
