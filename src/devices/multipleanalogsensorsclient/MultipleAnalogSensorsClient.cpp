@@ -11,8 +11,6 @@
 #include "SensorStreamingData.h"
 #include "MultipleAnalogSensorsMetadata.h"
 
-#include <yarp/os/LockGuard.h>
-
 
 void SensorStreamingDataInputPort::onRead(SensorStreamingData& v)
 {

@@ -10,7 +10,6 @@
 
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
 
 #include <algorithm>
 #include <iostream>
