@@ -7,7 +7,10 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #include <yarp/os/RateThread.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+
 #include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os;

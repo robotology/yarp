@@ -8,7 +8,12 @@
  */
 
 #include <yarp/os/PeriodicThread.h>
+#ifndef YARP_NO_DEPRECATED
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #include <yarp/os/RateThread.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#endif // YARP_NO_DEPRECATED
+
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
