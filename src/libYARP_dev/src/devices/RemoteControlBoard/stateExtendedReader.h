@@ -10,8 +10,6 @@
 #define YARP_DEV_REMOTECONTROLBOARD_STATEEXTENDEDREADER_H
 
 
-#include <cstring>
-
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
@@ -19,7 +17,6 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/Log.h>
 
 #include <yarp/sig/Vector.h>
@@ -32,6 +29,8 @@
 
 #include <yarp/dev/impl/jointData.h>
 
+#include <cstring>
+#include <mutex>
 
 // encoders should arrive at least every 0.5s to be considered valide
 // getEncoders will return false otherwise.
@@ -43,7 +42,7 @@ using namespace yarp::sig;
 class StateExtendedInputPort:public yarp::os::BufferedPort<yarp::dev::impl::jointData>
 {
     yarp::dev::impl::jointData last;
-    Mutex mutex;
+    std::mutex mutex;
     Stamp lastStamp;
     double deltaT;
     double deltaTMax;
