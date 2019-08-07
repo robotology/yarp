@@ -13,7 +13,7 @@
 #include <yarp/name/NameServerConnectionHandler.h>
 
 #include <yarp/os/PortReaderCreator.h>
-#include <yarp/os/Mutex.h>
+#include <mutex>
 #include <yarp/os/Port.h>
 
 
@@ -33,7 +33,7 @@ class yarp::name::NameServerManager : public NameService,
 private:
     NameService& ns;
     yarp::os::Port *port;
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
 public:
     NameServerManager(NameService& ns,
                       yarp::os::Port *port = NULL) : ns(ns),
