@@ -25,9 +25,9 @@
 
 
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/dev/Wrapper.h>
 
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -146,7 +146,7 @@ public:
 class ControlBoardRemapperBuffers
 {
 public:
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
     std::vector<int> controlBoardModes;
     std::vector<double> dummyBuffer;
     yarp::os::Stamp stamp;
@@ -223,7 +223,7 @@ public:
     /**
      * Mutex to grab to use this class.
      */
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
 
     // Buffer to be used in MultiJoint version of the
     int m_nrOfControlledAxesInRemappedCtrlBrd;
@@ -335,7 +335,7 @@ public:
     /**
      * Mutex to grab to use this class.
      */
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
 
     // Total number of axes in the remapped controlboard
     int m_nrOfControlledAxesInRemappedCtrlBrd;
