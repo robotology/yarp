@@ -21,12 +21,12 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
 #include <yarp/os/ResourceFinder.h>
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
 #include <limits>
+#include <mutex>
 
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
@@ -221,7 +221,7 @@ bool RpLidar2::close()
 
 bool RpLidar2::getDistanceRange(double& min, double& max)
 {
-    LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     min = m_min_distance;
     max = m_max_distance;
     return true;
@@ -229,7 +229,7 @@ bool RpLidar2::getDistanceRange(double& min, double& max)
 
 bool RpLidar2::setDistanceRange(double min, double max)
 {
-    LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     m_min_distance = min;
     m_max_distance = max;
     return true;
@@ -237,7 +237,7 @@ bool RpLidar2::setDistanceRange(double min, double max)
 
 bool RpLidar2::getScanLimits(double& min, double& max)
 {
-    LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     min = m_min_angle;
     max = m_max_angle;
     return true;
@@ -245,7 +245,7 @@ bool RpLidar2::getScanLimits(double& min, double& max)
 
 bool RpLidar2::setScanLimits(double min, double max)
 {
-    LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     m_min_angle = min;
     m_max_angle = max;
     return true;
@@ -253,28 +253,28 @@ bool RpLidar2::setScanLimits(double min, double max)
 
 bool RpLidar2::getHorizontalResolution(double& step)
 {
-    LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     step = m_resolution;
     return true;
 }
 
 bool RpLidar2::setHorizontalResolution(double step)
 {
-    LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     m_resolution = step;
     return true;
 }
 
 bool RpLidar2::getScanRate(double& rate)
 {
-    LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yWarning("getScanRate not yet implemented");
     return true;
 }
 
 bool RpLidar2::setScanRate(double rate)
 {
-    LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yWarning("setScanRate not yet implemented");
     return false;
 }
@@ -282,7 +282,7 @@ bool RpLidar2::setScanRate(double rate)
 
 bool RpLidar2::getRawData(yarp::sig::Vector &out)
 {
-    LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     out           = m_laser_data;
     m_device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
     return true;
@@ -290,7 +290,7 @@ bool RpLidar2::getRawData(yarp::sig::Vector &out)
 
 bool RpLidar2::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 {
-    LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     size_t size = m_laser_data.size();
     data.resize(size);
 
@@ -309,7 +309,7 @@ bool RpLidar2::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 }
 bool RpLidar2::getDeviceStatus(Device_status &status)
 {
-    LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     status = m_device_status;
     return true;
 }
@@ -505,7 +505,7 @@ std::string RpLidar2::deviceinfo()
 
 bool RpLidar2::getDeviceInfo(std::string &device_info)
 {
-    LockGuard guard(m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     device_info = m_info;
     return true;
 }
