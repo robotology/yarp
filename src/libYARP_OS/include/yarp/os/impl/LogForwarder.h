@@ -11,9 +11,9 @@
 
 #include <yarp/os/api.h>
 
-#include <yarp/os/Mutex.h>
 #include <yarp/os/Port.h>
 
+#include <mutex>
 #include <string>
 
 namespace yarp {
@@ -34,7 +34,7 @@ private:
     LogForwarder(LogForwarder const&) = delete;
     LogForwarder& operator=(LogForwarder const&) = delete;
 
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
     yarp::os::Port outputPort;
     static bool started;
 };
