@@ -11,10 +11,10 @@
 #define YARP_OS_IMPL_DGRAMTWOWAYSTREAM_H
 
 #include <yarp/os/ManagedBytes.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/TwoWayStream.h>
 
 #include <cstdlib>
+#include <mutex>
 
 #ifdef YARP_HAS_ACE
 #    include <ace/SOCK_Dgram.h>
@@ -174,7 +174,7 @@ private:
 #endif
     Contact localAddress, remoteAddress, restrictInterfaceIp;
     yarp::os::ManagedBytes readBuffer, writeBuffer;
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
     yarp::conf::ssize_t readAt, readAvail, writeAvail;
     int pct;
     bool happy;
