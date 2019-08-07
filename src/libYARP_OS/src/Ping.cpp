@@ -11,7 +11,6 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Log.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
@@ -19,6 +18,7 @@
 
 #include <cmath>
 #include <cstdio>
+#include <mutex>
 
 using namespace yarp::os;
 
@@ -200,7 +200,7 @@ std::string Ping::renderTime(double t, int space, int decimal)
 class PingSampler : public PortReader
 {
 public:
-    Mutex mutex;
+    std::mutex mutex;
     int ct{0};
     double lastTime{0};
     Stat period;
