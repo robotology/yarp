@@ -13,12 +13,12 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Log.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Thread.h>
 
 #include <deque>
 #include <list>
+#include <mutex>
 
 using namespace yarp::os;
 
@@ -41,7 +41,7 @@ class MessageStackHelper
 private:
     std::list<MessageStackThread*> threads;
     std::deque<Bottle> msgs;
-    Mutex mutex;
+    std::mutex mutex;
     Semaphore produce;
     size_t max_threads;
     int available_threads;
