@@ -8,7 +8,6 @@
  */
 
 #include <yarp/os/BufferedPort.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/PortInfo.h>
 #include <yarp/os/ResourceFinder.h>
@@ -24,6 +23,7 @@
 #include <string>
 #include <deque>
 #include <utility>
+#include <mutex>
 
 #ifdef ADD_VIDEO
     #include <opencv2/opencv.hpp>
@@ -202,7 +202,7 @@ struct DumpItem
 class DumpQueue : public deque<DumpItem>
 {
 private:
-    Mutex mutex;
+    std::mutex mutex;
 
 public:
     void lock()   { mutex.lock();   }
