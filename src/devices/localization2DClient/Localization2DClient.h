@@ -29,7 +29,7 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Port.h>
-#include <yarp/os/Mutex.h>
+#include <mutex>
 #include <string>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Map2DLocation.h>
@@ -54,7 +54,7 @@ class Localization2DClient :
         public yarp::dev::ILocalization2D
 {
 protected:
-    yarp::os::Mutex               m_mutex;
+    std::mutex               m_mutex;
     yarp::os::Port                m_rpc_port_localization_server;
     std::string         m_local_name;
     std::string         m_remote_name;
