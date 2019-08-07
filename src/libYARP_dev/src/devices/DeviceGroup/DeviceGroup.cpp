@@ -12,12 +12,12 @@
 #include <cstdio>
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/DriverLinkCreator.h>
 
 #include <yarp/dev/AudioVisualInterfaces.h>
 
+#include <mutex>
 #include <vector>
 
 using namespace yarp::os;
@@ -40,7 +40,7 @@ private:
     std::vector<PolyDriver *> drivers;
     std::vector<std::string> names;
     std::vector<bool> needDrive;
-    Mutex mutex;
+    std::mutex mutex;
 public:
     bool needDriveSummary;
 
