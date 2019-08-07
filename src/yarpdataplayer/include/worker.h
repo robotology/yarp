@@ -31,6 +31,8 @@
 #include <yarp/os/Time.h>
 #include <QMainWindow>
 
+#include <chrono>
+
 #ifdef HAS_OPENCV
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -130,15 +132,23 @@ public:
     int                     numThreads;
     double                  timePassed, initTime, virtualTime;
     bool                    stepfromCmd;
+
+    using Moment = std::chrono::time_point<std::chrono::high_resolution_clock>;
+
+    void initialize();
+
+    void tick();
+
+    float diff_seconds() const { return dtSeconds; }
+    float framesPerSecond() const { return fps; }
+
     QMainWindow* wnd;
 
     /**
      * Master thread class
      */
     MasterThread(Utilities *utilities, int numPart, QMainWindow *gui, QObject *parent = NULL);
-    /**
-     * Thread init
-     */
+
     bool threadInit() override;
     /**
      * Thread release
@@ -175,6 +185,9 @@ public:
 
     void goToPercentage(int value);
 
+private:
+    Moment lastUpdate;
+    float dtSeconds, fps;
 
 };
 
