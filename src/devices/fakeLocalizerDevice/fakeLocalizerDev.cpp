@@ -20,8 +20,6 @@
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Port.h>
-#include <yarp/os/Mutex.h>
-#include <yarp/os/LockGuard.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Node.h>
 #include <yarp/dev/PolyDriver.h>
@@ -31,6 +29,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <math.h>
 #include <random>
+#include <mutex>
 #include <chrono>
 #include "fakeLocalizerDev.h"
 
@@ -114,7 +113,7 @@ void fakeLocalizerThread::run()
         m_last_statistics_printed = yarp::os::Time::now();
     }
 
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     yarp::sig::Vector loc(3);
     loc[0] = 0.0;
     loc[1] = 0.0;
@@ -147,7 +146,7 @@ void fakeLocalizerThread::run()
 bool fakeLocalizerThread::initializeLocalization(const yarp::dev::Map2DLocation& loc)
 {
     yInfo() << "fakeLocalizer: Localization init request: (" << loc.map_id << ")";
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_initial_loc.map_id = loc.map_id;
     m_initial_loc.x = loc.x;
     m_initial_loc.y = loc.y;
@@ -170,7 +169,7 @@ bool fakeLocalizerThread::initializeLocalization(const yarp::dev::Map2DLocation&
 
 bool fakeLocalizerThread::getCurrentLoc(yarp::dev::Map2DLocation& loc)
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     loc = m_current_loc;
     return true;
 }
