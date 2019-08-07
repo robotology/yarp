@@ -10,10 +10,11 @@
 #define YARP_DEVICE_FAKE_ANALOGSENSOR
 
 #include <yarp/os/PeriodicThread.h>
-#include <yarp/os/Mutex.h>
 
 #include <yarp/dev/all.h>
 #include <yarp/dev/IAnalogSensor.h>
+
+#include <mutex>
 
 /**
 *
@@ -33,7 +34,7 @@ class FakeAnalogSensor :
 {
 private:
 
-    yarp::os::Mutex         mutex;
+    std::mutex         mutex;
 
     std::string   name;    // device name
     unsigned int            channelsNum;
