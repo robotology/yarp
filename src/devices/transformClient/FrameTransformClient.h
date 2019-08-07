@@ -31,8 +31,8 @@
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/math/FrameTransform.h>
-#include <yarp/os/RecursiveMutex.h>
 #include <yarp/os/PeriodicThread.h>
+#include <mutex>
 
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
@@ -57,7 +57,7 @@ private:
     std::vector <yarp::math::FrameTransform> m_transforms;
 
 public:
-    yarp::os::RecursiveMutex  m_mutex;
+    std::recursive_mutex  m_mutex;
     size_t   size();
     yarp::math::FrameTransform& operator[]   (std::size_t idx);
     void clear();
@@ -106,7 +106,7 @@ protected:
     std::string         m_remote_name;
     Transforms_client_storage*    m_transform_storage;
     double                        m_period;
-    yarp::os::Mutex               m_rpc_mutex;
+    std::mutex               m_rpc_mutex;
     struct broadcast_port_t
     {
         std::string format;
