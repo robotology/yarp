@@ -45,7 +45,7 @@
 #include <iostream>
 #include <yarp/os/Time.h>
 
-#include <yarp/os/Mutex.h>
+#include <mutex>
 
 #define MOTION_COMPLETION_TOLERANCE 3
 
@@ -148,7 +148,7 @@ private:
 
     ErrorCode checkAnswerPacket(unsigned char* packet, const char*& message);
 
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
 
     unsigned char *jointNumbers;
 
