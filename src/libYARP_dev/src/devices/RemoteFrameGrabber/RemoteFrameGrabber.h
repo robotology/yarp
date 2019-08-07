@@ -13,11 +13,12 @@
 #include <cstring>          // for memcpy
 
 #include <yarp/os/Network.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/FrameGrabberControlImpl.h>
 #include <yarp/dev/IVisualParamsImpl.h>
 #include <yarp/dev/GenericVocabs.h>
+
+#include <mutex>
 
 namespace yarp{
     namespace dev {
@@ -585,7 +586,7 @@ private:
     yarp::os::Port port;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string remote);
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string local);
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
     int lastHeight;
     int lastWidth;
     bool no_stream;
