@@ -12,12 +12,12 @@
 
 #include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/InputStream.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/TwoWayStream.h>
 
+#include <mutex>
 
 namespace yarp {
 namespace os {
@@ -39,8 +39,8 @@ public:
     void revoke(LocalCarrier* carrier);
 
 private:
-    yarp::os::Mutex senderMutex;
-    yarp::os::Mutex receiverMutex;
+    std::mutex senderMutex;
+    std::mutex receiverMutex;
     yarp::os::Semaphore received;
     LocalCarrier *sender, *receiver;
 };
@@ -122,7 +122,7 @@ protected:
     bool doomed;
     yarp::os::Portable* ref;
     LocalCarrier* peer;
-    yarp::os::Mutex peerMutex;
+    std::mutex peerMutex;
     yarp::os::Semaphore sent;
     yarp::os::Semaphore received;
     std::string portName;
