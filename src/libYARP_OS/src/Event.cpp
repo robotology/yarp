@@ -8,9 +8,9 @@
  */
 
 #include <yarp/os/Event.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/Semaphore.h>
 
+#include <mutex>
 
 class yarp::os::Event::Private
 {
@@ -66,7 +66,7 @@ private:
     bool autoReset;
     bool signalled;
     int waiters;
-    Mutex stateMutex;
+    std::mutex stateMutex;
     Semaphore action;
 };
 
