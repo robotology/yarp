@@ -28,7 +28,6 @@
 #include "include/mainwindow.h"
 #include "include/log.h"
 
-
 using namespace yarp::sig;
 using namespace yarp::sig::file;
 using namespace yarp::os;
@@ -144,7 +143,6 @@ double WorkerClass::getFrameRate()
     frameRate = frameRate*1000;
     return frameRate;
 }
-
 
 /**********************************************************/
 double WorkerClass::getTimeTaken()
@@ -285,7 +283,31 @@ bool MasterThread::threadInit()
     //virtualTime = utilities->partDetails[0].timestamp[ utilities->partDetails[0].currFrame ];
     virtualTime = utilities->minTimeStamp;
     
+    LOG("virtual time is %lf\n", virtualTime);
+    
+    initialize();
+    
     return true;
+}
+
+/**********************************************************/
+void MasterThread::initialize()
+{
+    lastUpdate = std::chrono::high_resolution_clock::now();
+    dtSeconds = 0.f;
+    fps = 0.f;
+}
+
+/**********************************************************/
+void MasterThread::tick()
+{
+    Moment now = std::chrono::high_resolution_clock::now();
+
+    const unsigned diff = std::chrono::duration_cast<std::chrono::microseconds>(now - lastUpdate).count();
+    lastUpdate = now;
+
+    dtSeconds = diff / (1000.f * 1000.f); // micro-seconds -> seconds
+    fps = 1.f / dtSeconds;
 }
 
 /**********************************************************/
@@ -322,7 +344,7 @@ void MasterThread::stepFromCmd()
 /**********************************************************/
 void MasterThread::runNormally()
 {
-    int static tmp = 0;
+    
     for (int i=0; i < numPart; i++){
         bool isActive  = ((MainWindow*)wnd)->getPartActivation(utilities->partDetails[i].name.c_str());
         if ( utilities->partDetails[i].currFrame <= utilities->partDetails[i].maxFrame ){
@@ -342,7 +364,7 @@ void MasterThread::runNormally()
                 utilities->partDetails[i].worker->init();
             } else {
                 if ( !utilities->partDetails[i].hasNotified ) {
-                    LOG("partID: %d has finished \n",i);
+                    LOG("partID: %d has finished \n", i);
                     utilities->partDetails[i].hasNotified = true;
                 }
 
@@ -363,16 +385,11 @@ void MasterThread::runNormally()
         }
     }
     
-    this->setPeriod( (2 / utilities->speed) / 1000.0 );
-    for (int i=0; i < numPart; i++){
-       // virtualTime += utilities->partDetails[i].worker->getFrameRate()/4.16;//0.0024;
-    }
-    
-    virtualTime += 0.0024;//utilities->partDetails[i].worker->getFrameRate()/4.16;//0.0024;
-    
+    virtualTime += diff_seconds();
+
+    tick();
+
     initTime++;
-    
-    tmp++;
 }
 
 /**********************************************************/
@@ -401,7 +418,7 @@ void MasterThread::forward(int steps)
 {
     int selectedFrame = 0;
     for (int i=0; i < numPart; i++){
-        selectedFrame = (int)( (utilities->partDetails[i].maxFrame * steps) /100 );
+        selectedFrame = (int)( (utilities->partDetails[i].maxFrame * steps) / 100 );
         if ( utilities->partDetails[i].currFrame < utilities->partDetails[i].maxFrame - selectedFrame){
             utilities->partDetails[i].currFrame += selectedFrame;
             if (i == 0){
