@@ -10,11 +10,12 @@
 #ifndef YARP_OS_IMPL_PORTCOREOUTPUTUNIT_H
 #define YARP_OS_IMPL_PORTCOREOUTPUTUNIT_H
 
-#include <yarp/os/Mutex.h>
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/PortCoreUnit.h>
+
+#include <mutex>
 
 namespace yarp {
 namespace os {
@@ -114,7 +115,7 @@ private:
     bool sending;       ///< are we sending something right now
     yarp::os::Semaphore phase;        ///< let main thread kick sending thread
     yarp::os::Semaphore activate;     ///< signal when we have a new tracker
-    yarp::os::Mutex trackerMutex; ///< protect the tracker during outside access
+    std::mutex trackerMutex; ///< protect the tracker during outside access
     const yarp::os::PortWriter* cachedWriter;   ///< the message the send
     yarp::os::PortReader *cachedReader;   ///< where to put a reply
     const yarp::os::PortWriter* cachedCallback; ///< where to sent commencement and
