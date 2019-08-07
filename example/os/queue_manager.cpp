@@ -21,12 +21,14 @@
 
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
-#include <stdio.h>
-using namespace yarp::os;
-using namespace yarp::dev;
 
 #include <deque>
 #include <string>
+#include <cstdio>
+#include <mutex>
+
+using namespace yarp::os;
+using namespace yarp::dev;
 using namespace std;
 
 class Entry {
@@ -38,7 +40,7 @@ class QueueManager : public DeviceResponder {
 private:
     BufferedPort<Bottle> port;
     deque<Entry> q;
-    Mutex mutex;
+    std::mutex mutex;
 
     bool removeName(const char *name) {
         bool acted = false;

@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <random>
+#include <mutex>
 
 #include <yarp/os/all.h>
 
@@ -206,7 +207,7 @@ public:
 
     double prev;
     double now;
-    Mutex mutex;
+    std::mutex mutex;
 };
 
 int main(int argc, char **argv)

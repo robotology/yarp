@@ -37,7 +37,7 @@ public:
 
 class WideNameService : public yarp::name::NameService {
 private:
-  yarp::os::Mutex mutex;
+  std::mutex mutex;
   map<string,Entry> names;
   map<int,int> numbers;
   int lastNumber;

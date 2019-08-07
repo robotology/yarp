@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include <yarp/os/Mutex.h>
+#include <mutex>
 #include <yarp/os/Time.h>
 
 #include "Thing.h"
@@ -38,7 +38,7 @@ public:
     Matrix game_matrix;
     DMatrix transient_matrix;
     Things game_things;
-    yarp::os::Mutex game_mutex;
+    std::mutex game_mutex;
 
     GameHelper() : game_mutex() {
     }

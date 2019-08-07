@@ -12,7 +12,7 @@
 
 #include <stdlib.h>
 
-#include <yarp/os/Mutex.h>
+#include <mutex>
 #include "Thing.h"
 #include "Login.h"
 
@@ -95,7 +95,7 @@ public:
 private:
   
     Replier *replier;
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
 
     ID id;
     Login login;

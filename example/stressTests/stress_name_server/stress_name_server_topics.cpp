@@ -8,6 +8,7 @@
  */
 
 #include <yarp/os/all.h>
+#include <mutex>
 
 using namespace yarp::os;
 
@@ -17,7 +18,7 @@ using namespace yarp::os;
 class Count {
 public:
     int counts[R];
-    Mutex mutex;
+    std::mutex mutex;
 
     Count() : mutex() {
         for (int i=0; i<R; i++) { counts[i] = 0; }

@@ -9,7 +9,7 @@
 
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/Mutex.h>
+#include <mutex>
 #include <yarp/os/Time.h>
 
 #include <catch.hpp>
@@ -41,7 +41,7 @@ public:
     double delay;
     bool hold;
     bool active{true};
-    Mutex mutex;
+    std::mutex mutex;
 
     ThreadDelay(double delay = 0.5, bool hold = false) :
             delay(delay),
@@ -123,7 +123,7 @@ public:
     }
 
 private:
-    Mutex mutex;
+    std::mutex mutex;
     bool finished{false};
 };
 
@@ -198,7 +198,7 @@ class Thread5: public Thread
 public:
     int state{0};
     bool fail{false};
-    Mutex mutex;
+    std::mutex mutex;
 
     void threadWillFail(bool f)
     {

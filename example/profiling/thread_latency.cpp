@@ -7,9 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <stdio.h>
 #include <yarp/os/all.h>
-using namespace yarp::os;
 
 // Thread latency, basic test.
 // Thread A is periodic. Thread B is 
@@ -22,7 +20,10 @@ using namespace yarp::os;
 
 #include <string>
 #include <vector>
+#include <mutex>
+#include <cstdio>
 
+using namespace yarp::os;
 using namespace std;
 
 #ifdef USE_PARALLEL_PORT
@@ -34,7 +35,7 @@ const double THREAD_PERIOD=0.020;
 
 class ThreadB: public Thread
 {
-    Mutex mutex;
+    std::mutex mutex;
     int iterations;
     double stamp;
     vector<double> measures;

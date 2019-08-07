@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 #include <yarp/os/Network.h>
-#include <yarp/os/Mutex.h>
+#include <mutex>
 #include <yarp/os/Property.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/BufferedPort.h>
@@ -21,29 +21,29 @@ using namespace yarp::os;
 class Callback:public BufferedPort<Bottle>
 {
 private:
-	Mutex mutex;
-	Bottle Datum;
+    std::mutex mutex;
+    Bottle Datum;
 
 public:
-	Callback()
-	{
+    Callback()
+    {
         Datum.clear();
         Datum.addString("null bottle");
-	}
+    }
 
-  	void onRead(Bottle &v)
-	{
-        mutex.lock(); 
+    void onRead(Bottle &v)
+    {
+        mutex.lock();
         Datum=v;
         //Time::delay(5);
         mutex.unlock();
         fprintf(stderr, "Callback got: %s\n",Datum.toString().c_str());
     }
 
-	void lock()
-	{
-		mutex.lock();
-	}
+    void lock()
+    {
+        mutex.lock();
+    }
 
     void unlock()
     {
@@ -79,8 +79,8 @@ int main(int argc, char **argv)
         if (b.get(0).asString()=="quit")
             done=true;
     }
-    
-    
+
+
     fprintf(stderr, "Closing the port...\n");
     cback.close();
     fprintf(stderr, "done\n");

@@ -11,6 +11,7 @@
 #include <string.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <mutex>
 
 #include <yarp/os/all.h>
 using namespace yarp::os;
@@ -22,7 +23,7 @@ using namespace yarp;
 static String dir = "right";
 static String msg = "";
 static int mode = 0;
-static Mutex mutex();
+static std::mutex mutex();
 
 String getPreparation() {
     mutex.lock();
