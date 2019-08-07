@@ -11,9 +11,9 @@
 #define YARP_OS_ELECTION_H
 
 #include <yarp/os/Log.h>
-#include <yarp/os/Mutex.h>
 
 #include <map>
+#include <mutex>
 #include <string>
 
 namespace yarp {
@@ -65,7 +65,7 @@ class ElectionOf
 private:
     typedef void* voidPtr;
 
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
 
     typedef typename std::map<std::string, PR> map_type;
     map_type nameMap;
