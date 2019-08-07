@@ -24,7 +24,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
+#include <mutex>
 #include <cstdlib>
 
 using namespace yarp::sig;
@@ -40,7 +40,7 @@ using namespace std;
 
 bool Transforms_server_storage::delete_transform(int id)
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (id >= 0 && (size_t)id < m_transforms.size())
     {
         m_transforms.erase(m_transforms.begin() + id);
@@ -51,7 +51,7 @@ bool Transforms_server_storage::delete_transform(int id)
 
 bool Transforms_server_storage::set_transform(const FrameTransform& t)
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     for (auto& m_transform : m_transforms)
     {
        //@@@ this linear search requires optimization!
@@ -70,7 +70,7 @@ bool Transforms_server_storage::set_transform(const FrameTransform& t)
 
 bool Transforms_server_storage::delete_transform(string t1, string t2)
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     for (size_t i = 0; i < m_transforms.size(); i++)
     {
         if ((m_transforms[i].dst_frame_id == t1 && m_transforms[i].src_frame_id == t2) ||
@@ -85,7 +85,7 @@ bool Transforms_server_storage::delete_transform(string t1, string t2)
 
 void Transforms_server_storage::clear()
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_transforms.clear();
 }
 
@@ -175,7 +175,7 @@ void FrameTransformServer::list_response(yarp::os::Bottle& out)
 
 bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     yarp::os::Bottle in;
     yarp::os::Bottle out;
     bool ok = in.read(connection);
@@ -597,7 +597,7 @@ void FrameTransformServer::threadRelease()
 
 void FrameTransformServer::run()
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (true)
     {
         double current_time = yarp::os::Time::now();
