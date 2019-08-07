@@ -16,7 +16,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Mutex.h>
+#include <mutex>
 #include <yarp/os/Time.h>
 #include <string>
 #include <yarp/dev/PolyDriver.h>
@@ -47,8 +47,8 @@ class yarp::dev::RobotDescriptionServer : public DeviceDriver, public yarp::os::
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
 
-    yarp::os::Mutex                m_external_mutex;
-    yarp::os::Mutex                m_internal_mutex;
+    std::mutex                m_external_mutex;
+    std::mutex                m_internal_mutex;
     yarp::os::Port                 m_rpc_port;
     std::string          m_local_name;
     std::vector<DeviceDescription> m_robot_devices;
