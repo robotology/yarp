@@ -15,7 +15,6 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Carriers.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/Name.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
@@ -47,6 +46,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <mutex>
 #include <string>
 
 
@@ -2221,7 +2221,7 @@ class CompanionMergeInput : public TypedReaderCallback<Bottle> {
 public:
     Contactable *port{nullptr};
     Semaphore *sema{nullptr};
-    Mutex mutex;
+    std::mutex mutex;
 
     Bottle value;
     Stamp stamp;
