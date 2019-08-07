@@ -20,7 +20,9 @@
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/TcpFace.h>
+
 #include <cstdio>
+#include <mutex>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -508,7 +510,7 @@ NameServer& NameClient::getServer()
 
 void NameClient::setup()
 {
-    static yarp::os::Mutex mutex;
+    static std::mutex mutex;
     mutex.lock();
     if ((!fake) && (!isSetup)) {
         if (!updateAddress()) {
