@@ -17,9 +17,10 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
+
+#include <mutex>
 
 namespace yarp {
     namespace dev {
@@ -36,7 +37,7 @@ const int ANALOG_TIMEOUT=100; //ms
 class InputPortProcessor : public yarp::os::BufferedPort<yarp::sig::Vector>
 {
     yarp::sig::Vector lastVector;
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
     yarp::os::Stamp lastStamp;
     double deltaT;
     double deltaTMax;
