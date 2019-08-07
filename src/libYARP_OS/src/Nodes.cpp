@@ -9,11 +9,11 @@
 #include <yarp/os/Nodes.h>
 
 #include <yarp/os/Log.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/Node.h>
 
 #include <map>
+#include <mutex>
 
 using namespace yarp::os;
 
@@ -45,7 +45,7 @@ public:
     // true = is external
     std::map<std::string, std::pair<Node*, bool>> nodes_map;
 
-    Mutex mutex;
+    std::mutex mutex;
     bool active{false};
     std::string active_name;
     Node* dummy{nullptr};
