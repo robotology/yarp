@@ -20,7 +20,7 @@
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
+#include <mutex>
 #include <cmath>
 
 /*! \file Navigation2DClient.cpp */
