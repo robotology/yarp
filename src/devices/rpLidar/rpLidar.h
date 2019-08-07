@@ -19,7 +19,6 @@
 #ifndef RPLIDAR_H
 #define RPLIDAR_H
 
-#include <string>
 
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
@@ -28,6 +27,9 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/SerialInterfaces.h>
+
+#include <mutex>
+#include <string>
 #include <vector>
 
 using namespace yarp::os;
@@ -176,7 +178,7 @@ protected:
     PolyDriver driver;
     ISerialDevice *pSerial;
 
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
     rpLidarCircularBuffer * buffer;
 
     int sensorsNum;
