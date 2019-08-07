@@ -21,7 +21,7 @@
 
 #include <GL/glew.h>
 #include <OVR_Math.h>
-#include <yarp/os/Mutex.h>
+#include <mutex>
 #include <yarp/sig/Image.h>
 
 
@@ -63,7 +63,7 @@ public:
 
     GLubyte* ptr;
     bool dataReady;
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
 
     unsigned int missingFrames;
 
