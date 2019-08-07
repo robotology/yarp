@@ -23,7 +23,7 @@
 #include <string>
 
 #include <yarp/os/PeriodicThread.h>
-#include <yarp/os/Mutex.h>
+#include <mutex>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/PolyDriver.h>
@@ -39,7 +39,7 @@ protected:
     PolyDriver driver;
     ISerialDevice *pSerial;
 
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
 
     int cardId;
     double period;
