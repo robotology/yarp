@@ -38,7 +38,7 @@ extern "C" {
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <yarp/os/LockGuard.h>
+#include <mutex>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/math/Math.h>
@@ -685,7 +685,7 @@ void BoschIMU::run()
 
     // Protect only this section in order to avoid slow race conditions when gathering this data
     {
-        LockGuard guard(mutex);
+        std::lock_guard<std::mutex> guard(mutex);
         data       = data_tmp;
         quaternion = quaternion_tmp;
     }
@@ -705,7 +705,7 @@ void BoschIMU::run()
 
 bool BoschIMU::read(yarp::sig::Vector &out)
 {
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     out.resize(nChannels);
     out.zero();
 
@@ -803,7 +803,7 @@ bool BoschIMU::getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::s
     }
 
     out.resize(3);
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     out[0] = data[3];
     out[1] = data[4];
     out[2] = data[5];
@@ -843,7 +843,7 @@ bool BoschIMU::getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector
     }
 
     out.resize(3);
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     out[0] = data[6];
     out[1] = data[7];
     out[2] = data[8];
@@ -881,7 +881,7 @@ bool BoschIMU::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp
     }
 
     rpy.resize(3);
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     rpy[0] = data[0];
     rpy[1] = data[1];
     rpy[2] = data[2];
@@ -919,7 +919,7 @@ bool BoschIMU::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vec
     }
 
     out.resize(3);
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     // The unit measure of Bosch BNO055 is uT
     out[0] = data[9] / 1000000;
     out[1] = data[10]/ 1000000;
