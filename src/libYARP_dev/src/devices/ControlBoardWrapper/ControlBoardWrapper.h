@@ -28,9 +28,9 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/dev/Wrapper.h>
 
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -293,7 +293,7 @@ private:
     yarp::os::Port inputRPCPort;                // Input RPC port for set/get remote calls
     yarp::os::Stamp time;                       // envelope to attach to the state port
     yarp::sig::Vector times;                    // time for each joint
-    yarp::os::Mutex timeMutex;
+    std::mutex timeMutex;
 
     // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated
     // from the YARP .thrift file
@@ -316,7 +316,7 @@ private:
 
 
     // RPC calls are concurrent from multiple clients, data used inside the calls has to be protected
-    yarp::os::Mutex                                 rpcDataMutex;                   // mutex to avoid concurrency between more clients using rppc port
+    std::mutex                                 rpcDataMutex;                   // mutex to avoid concurrency between more clients using rppc port
     yarp::dev::impl::MultiJointData                 rpcData;                        // Structure used to re-arrange data from "multiple_joints" calls.
 
     std::string         partName;               // to open ports and print more detailed debug messages

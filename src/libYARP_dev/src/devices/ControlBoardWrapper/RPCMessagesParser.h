@@ -24,9 +24,9 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/dev/Wrapper.h>
 
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -96,7 +96,7 @@ protected:
     yarp::dev::IPWMControl              *rpc_IPWM;
     yarp::sig::Vector                   tmpVect;
     yarp::os::Stamp                     lastRpcStamp;
-    yarp::os::Mutex                     mutex;
+    std::mutex                          mutex;
     int                                 controlledJoints;
 
 public:
