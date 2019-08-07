@@ -26,6 +26,7 @@
 #include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/dev/CircularAudioBuffer.h>
 #include <portaudio.h>
+#include <mutex>
 
 #define DEFAULT_SAMPLE_RATE  (44100)
 #define DEFAULT_NUM_CHANNELS    (2)
@@ -54,7 +55,7 @@ private:
     PaError             m_err;
     yarp::dev::CircularAudioBuffer_16t*  m_recDataBuffer;
     PortAudioRecorderDeviceDriverSettings m_config;
-    yarp::os::Mutex     m_mutex;
+    std::mutex     m_mutex;
     bool                m_isRecording;
 
 public:

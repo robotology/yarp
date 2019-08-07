@@ -28,7 +28,7 @@
 
 #include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
+#include <mutex>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -260,7 +260,7 @@ bool PortAudioRecorderDeviceDriver::close()
 bool PortAudioRecorderDeviceDriver::startRecording()
 {
     if (m_isRecording == true) return true;
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_isRecording = true;
 #ifdef BUFFER_AUTOCLEAR
     this->m_recDataBuffer->clear();
@@ -274,7 +274,7 @@ bool PortAudioRecorderDeviceDriver::startRecording()
 bool PortAudioRecorderDeviceDriver::stopRecording()
 {
     if (m_isRecording == false) return true;
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_isRecording = false;
 #ifdef BUFFER_AUTOCLEAR
     this->m_recDataBuffer->clear();
@@ -309,7 +309,7 @@ bool PortAudioRecorderDeviceDriver::getSound(yarp::sig::Sound& sound, size_t min
     }
 
     //prevents simultaneous start/stop/reset etc.
-    //LockGuard lock(m_mutex);  //This must be used carefully
+    //std::lock_guard<std::mutex> lock(m_mutex);  //This must be used carefully
 
     //check on input parameters
     if (max_number_of_samples < min_number_of_samples)
@@ -418,7 +418,7 @@ bool PortAudioRecorderDeviceDriver::getRecordingAudioBufferMaxSize(yarp::dev::Au
 
 bool PortAudioRecorderDeviceDriver::resetRecordingAudioBuffer()
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     this->m_recDataBuffer->clear();
     yDebug() << "PortAudioRecorderDeviceDriver::resetRecordingAudioBuffer";
     return true;
