@@ -17,13 +17,14 @@
  */
 
 #include "Module.h"
-#include <yarp/os/LogStream.h>
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
+
 #include <yarp/dev/Drivers.h>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     yarp::os::Network yarp; //initialize network, this goes before everything
 
@@ -31,7 +32,7 @@ int main(int argc, char *argv[])
         yFatal() << "Sorry YARP network does not seem to be available, is the yarp server available?";
     }
 
-    yarp::os::ResourceFinder &rf(yarp::os::ResourceFinder::getResourceFinderSingleton());
+    yarp::os::ResourceFinder& rf(yarp::os::ResourceFinder::getResourceFinderSingleton());
     rf.setVerbose();
     rf.setDefaultConfigFile("yarprobotinterface.ini");
     rf.configure(argc, argv);
