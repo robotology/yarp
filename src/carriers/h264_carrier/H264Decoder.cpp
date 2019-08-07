@@ -17,6 +17,7 @@
 #include <gst/app/gstappsink.h>
 #include <cstdio>
 #include <cstring>
+#include <mutex>
 
 //#define debug_time 1
 
@@ -33,7 +34,7 @@ struct data_for_gst_callback
 {
     data_for_gst_callback() = default;
 
-    Mutex *m{nullptr};
+    std::mutex *m{nullptr};
     ImageOf<PixelRgb> *img{nullptr};
     bool isNew{false};
     Semaphore *s{nullptr};
@@ -297,7 +298,7 @@ public:
 
     ImageOf<PixelRgb> myframe;
 
-    H264DecoderHelper(Mutex* m_ptr, Semaphore* s_ptr) :
+    H264DecoderHelper(std::mutex* m_ptr, Semaphore* s_ptr) :
         pipeline(nullptr),
         source(nullptr),
         sink(nullptr),

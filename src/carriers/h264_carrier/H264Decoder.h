@@ -9,7 +9,7 @@
 #ifndef H264DECODER_INC
 #define H264DECODER_INC
 
-#include <yarp/os/Mutex.h>
+#include <mutex>
 #include <yarp/sig/Image.h>
 #include <yarp/os/Semaphore.h>
 
@@ -43,7 +43,7 @@ private:
     h264Decoder_cfgParamters cfg;
 
 public:
-    yarp::os::Mutex mutex ; //==>create functions to work with it
+    std::mutex mutex ; //==>create functions to work with it
     yarp::os::Semaphore semaphore;
 
     H264Decoder(h264Decoder_cfgParamters &config);
