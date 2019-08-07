@@ -10,6 +10,8 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
+#include <mutex>
+
 //-----Openable and JoyPort are for comfortable loop managing of ports
 namespace yarp
 {
@@ -96,7 +98,7 @@ struct yarp::dev::JoypadControl::JoyPort : public  yarp::dev::JoypadControl::Loo
 
     double          now;
     T               storage;
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
 
     JoyPort() : now(yarp::os::Time::now())
     {
