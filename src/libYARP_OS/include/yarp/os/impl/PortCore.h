@@ -26,6 +26,7 @@
 #include <yarp/os/impl/PortCorePackets.h>
 #include <yarp/os/impl/ThreadImpl.h>
 
+#include <mutex>
 #include <vector>
 
 namespace yarp {
@@ -137,8 +138,8 @@ public:
 public:
     yarp::os::Carrier* outputModifier;
     yarp::os::Carrier* inputModifier;
-    yarp::os::Mutex outputMutex;
-    yarp::os::Mutex inputMutex;
+    std::mutex outputMutex;
+    std::mutex inputMutex;
 };
 
 class YARP_OS_impl_API PortCore :
@@ -505,7 +506,7 @@ private:
     // main internal PortCore state and operations
     std::vector<PortCoreUnit *> m_units;  ///< list of connections
     yarp::os::Semaphore m_stateSemaphore;       ///< control access to essential port state
-    yarp::os::Mutex m_packetMutex;      ///< control access to message cache
+    std::mutex m_packetMutex;      ///< control access to message cache
     yarp::os::Semaphore m_connectionChangeSemaphore; ///< signal changes in connections
     Logger m_log;  ///< message logger
     Face *m_face;  ///< network server
@@ -545,7 +546,7 @@ private:
     bool m_mutexOwned;        ///< do we own the optional callback lock
     BufferedConnectionWriter m_envelopeWriter; ///< storage area for envelope, if present
 
-    yarp::os::Mutex m_typeMutex;        ///< control access to type
+    std::mutex m_typeMutex; ///< control access to type
     bool m_checkedType;
     Type m_type;
 
