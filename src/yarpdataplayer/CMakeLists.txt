@@ -7,7 +7,7 @@
 if(YARP_COMPILE_yarpdataplayer)
 
   include(YarpUseQt5)
-  include(YarpOSXUtilities)
+  include(YarpMacOSUtilities)
 
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
@@ -101,8 +101,8 @@ if(YARP_COMPILE_yarpdataplayer)
 
   set_property(TARGET yarpdataplayer PROPERTY FOLDER "Graphical User Interfaces")
 
-  yarp_osx_duplicate_and_add_bundle(TARGET yarpdataplayer
-                                    INSTALL_COMPONENT utilities
-                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+  yarp_macos_duplicate_and_add_bundle(TARGET yarpdataplayer
+                                      INSTALL_COMPONENT utilities
+                                      INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 endif()

@@ -7,7 +7,7 @@
 if(YARP_COMPILE_yarpbatterygui)
 
   include(YarpUseQt5)
-  include(YarpOSXUtilities)
+  include(YarpMacOSUtilities)
 
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
@@ -52,8 +52,8 @@ if(YARP_COMPILE_yarpbatterygui)
 
   set_property(TARGET yarpbatterygui PROPERTY FOLDER "Graphical User Interfaces")
 
-  yarp_osx_duplicate_and_add_bundle(TARGET yarpbatterygui
-                                    INSTALL_COMPONENT utilities
-                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+  yarp_macos_duplicate_and_add_bundle(TARGET yarpbatterygui
+                                      INSTALL_COMPONENT utilities
+                                      INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 endif()

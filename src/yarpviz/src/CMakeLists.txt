@@ -66,6 +66,6 @@ install(TARGETS yarpviz
 
 set_property(TARGET yarpviz PROPERTY FOLDER "Graphical User Interfaces")
 
-yarp_osx_duplicate_and_add_bundle(TARGET yarpviz
-                                  INSTALL_COMPONENT utilities
-                                  INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+yarp_macos_duplicate_and_add_bundle(TARGET yarpviz
+                                    INSTALL_COMPONENT utilities
+                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")

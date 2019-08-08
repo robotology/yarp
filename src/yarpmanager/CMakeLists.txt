@@ -7,7 +7,7 @@
 if(YARP_COMPILE_yarpmanager)
 
   include(YarpUseQt5)
-  include(YarpOSXUtilities)
+  include(YarpMacOSUtilities)
 
   include_directories("${CMAKE_CURRENT_LIST_DIR}/src-builder"
                       "${CMAKE_CURRENT_LIST_DIR}/src-manager")
@@ -147,9 +147,9 @@ if(YARP_COMPILE_yarpmanager)
 
   set_property(TARGET yarpmanager PROPERTY FOLDER "Graphical User Interfaces")
 
-  yarp_osx_duplicate_and_add_bundle(TARGET yarpmanager
-                                    APP_ICON Resources/AppIcon.icns
-                                    INSTALL_COMPONENT utilities
-                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+  yarp_macos_duplicate_and_add_bundle(TARGET yarpmanager
+                                      APP_ICON Resources/AppIcon.icns
+                                      INSTALL_COMPONENT utilities
+                                      INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 endif()

@@ -12,13 +12,16 @@ if(POLICY CMP0054)
 endif()
 
 if(APPLE)
-  option(YARP_DISABLE_OSX_BUNDLES "Disable macOS bundles" OFF)
-  mark_as_advanced(YARP_DISABLE_OSX_BUNDLES)
+  option(YARP_DISABLE_MACOS_BUNDLES "Disable macOS bundles" OFF)
+  mark_as_advanced(YARP_DISABLE_MACOS_BUNDLES)
+
+  include(YarpRenamedOption)
+  yarp_renamed_option(YARP_DISABLE_OSX_BUNDLES YARP_DISABLE_MACOS_BUNDLES)
 endif()
 
-function(YARP_OSX_DUPLICATE_AND_ADD_BUNDLE)
+function(YARP_MACOS_DUPLICATE_AND_ADD_BUNDLE)
 
-  if(APPLE AND NOT YARP_DISABLE_OSX_BUNDLES)
+  if(APPLE AND NOT YARP_DISABLE_MACOS_BUNDLES)
     set(_options )
     set(_oneValueArgs TARGET
                       APP_ICON

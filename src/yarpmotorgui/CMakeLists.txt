@@ -7,7 +7,7 @@
 if(YARP_COMPILE_yarpmotorgui)
 
   include(YarpUseQt5)
-  include(YarpOSXUtilities)
+  include(YarpMacOSUtilities)
 
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
@@ -72,9 +72,9 @@ if(YARP_COMPILE_yarpmotorgui)
 
   set_property(TARGET yarpmotorgui PROPERTY FOLDER "Graphical User Interfaces")
 
-  yarp_osx_duplicate_and_add_bundle(TARGET yarpmotorgui
-                                    INSTALL_COMPONENT utilities
-                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+  yarp_macos_duplicate_and_add_bundle(TARGET yarpmotorgui
+                                      INSTALL_COMPONENT utilities
+                                      INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
   yarp_install(FILES yarpmotorgui.xml
                DESTINATION ${YARP_MODULES_INSTALL_DIR})

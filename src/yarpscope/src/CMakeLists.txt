@@ -4,7 +4,7 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-include(YarpOSXUtilities)
+include(YarpMacOSUtilities)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qtquick2applicationviewer)
 
@@ -44,11 +44,11 @@ install(TARGETS yarpscope
 
 set_property(TARGET yarpscope PROPERTY FOLDER "Graphical User Interfaces")
 
-yarp_osx_duplicate_and_add_bundle(TARGET yarpscope
-                                  INSTALL_COMPONENT utilities
-                                  INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+yarp_macos_duplicate_and_add_bundle(TARGET yarpscope
+                                    INSTALL_COMPONENT utilities
+                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
-if(APPLE  AND NOT YARP_DISABLE_OSX_BUNDLES)
+if(APPLE AND NOT YARP_DISABLE_MACOS_BUNDLES)
   add_dependencies(yarpscope.app QtYARPScopePlugin)
   add_custom_command(TARGET yarpscope.app POST_BUILD
                      COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:QtYARPScopePlugin>"

@@ -9,7 +9,7 @@ if(YARP_COMPILE_yarpviz)
   project(yarpviz)
 
   include(YarpUseQt5)
-  include(YarpOSXUtilities)
+  include(YarpMacOSUtilities)
 
   add_subdirectory(src)
   add_subdirectory(app)

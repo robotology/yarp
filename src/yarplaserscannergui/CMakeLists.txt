@@ -7,7 +7,7 @@
 if(YARP_COMPILE_yarplaserscannergui)
 
   include(YarpUseQt5)
-  include(YarpOSXUtilities)
+  include(YarpMacOSUtilities)
 
   include_directories(${OpenCV_INCLUDE_DIRS})
 
@@ -54,8 +54,8 @@ if(YARP_COMPILE_yarplaserscannergui)
 
   set_property(TARGET yarplaserscannergui PROPERTY FOLDER "Graphical User Interfaces")
 
-  yarp_osx_duplicate_and_add_bundle(TARGET yarplaserscannergui
-                                    INSTALL_COMPONENT utilities
-                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+  yarp_macos_duplicate_and_add_bundle(TARGET yarplaserscannergui
+                                      INSTALL_COMPONENT utilities
+                                      INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 endif()
