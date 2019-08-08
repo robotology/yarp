@@ -173,7 +173,6 @@ public:
 
     Value& get(const std::string& key) const
     {
-        std::string out;
         PropertyItem* p = getPropNoCreate(key);
         if (p != nullptr) {
             p->flush();
