@@ -185,6 +185,11 @@ bool yarp::os::AbstractContactable::setCallbackLock(yarp::os::Mutex* mutex)
     return asPort().setCallbackLock(mutex);
 }
 
+bool yarp::os::AbstractContactable::setCallbackLock(std::mutex* mutex)
+{
+    return asPort().setCallbackLock(mutex);
+}
+
 bool yarp::os::AbstractContactable::removeCallbackLock()
 {
     return asPort().removeCallbackLock();

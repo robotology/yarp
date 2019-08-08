@@ -16,6 +16,8 @@
 #include <yarp/os/PortReport.h>
 #include <yarp/os/PortWriter.h>
 
+#include <mutex>
+
 // Forward declarations:
 namespace yarp {
 namespace os {
@@ -322,7 +324,20 @@ public:
      * @param mutex the lock to use. If nullptr, a mutex will be allocated
      * internally by the port, and destroyed with the port.
      */
-    virtual bool setCallbackLock(yarp::os::Mutex* mutex = nullptr) = 0;
+    virtual bool setCallbackLock(yarp::os::Mutex* mutex) = 0;
+
+    /**
+     * Add a lock to use when invoking callbacks.
+     *
+     * mutex.lock() will be called before and mutex.unlock() will be called
+     * after the callback.
+     * This applies at least to callbacks set by setReader and setAdminReader,
+     * and in future may apply to other callbacks.
+     *
+     * @param mutex the lock to use. If nullptr, a mutex will be allocated
+     * internally by the port, and destroyed with the port.
+     */
+    virtual bool setCallbackLock(std::mutex* mutex = nullptr) = 0;
 
     /**
      * Remove a lock on callbacks added with setCallbackLock()

@@ -286,6 +286,9 @@ public:
     bool setCallbackLock(yarp::os::Mutex* mutex) override;
 
     // documented in Contactable
+    bool setCallbackLock(std::mutex* mutex) override;
+
+    // documented in Contactable
     bool removeCallbackLock() override;
 
     // documented in Contactable

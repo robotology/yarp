@@ -54,7 +54,8 @@ public:
     bool commitToWrite;
     bool commitToRpc;
     bool active;
-    Mutex* recCallbackLock;
+    std::mutex* recCallbackLock;
+    yarp::os::Mutex* old_recCallbackLock;
     bool haveCallbackLock;
 
     PortCoreAdapter(Port& owner);
@@ -76,6 +77,7 @@ public:
     void configReadCreator(PortReaderCreator& creator);
     void configWaitAfterSend(bool waitAfterSend);
     bool configCallbackLock(Mutex* lock);
+    bool configCallbackLock(std::mutex* lock);
     bool unconfigCallbackLock();
     PortReader* checkPortReader();
     PortReader* checkAdminPortReader();

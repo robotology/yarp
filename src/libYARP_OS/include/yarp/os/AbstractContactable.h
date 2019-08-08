@@ -141,7 +141,10 @@ public:
     void includeNodeInName(bool flag) override;
 
     // Documented in Contactable
-    bool setCallbackLock(yarp::os::Mutex* mutex = nullptr) override;
+    bool setCallbackLock(yarp::os::Mutex* mutex) override;
+
+    // Documented in Contactable
+    bool setCallbackLock(std::mutex* mutex = nullptr) override;
 
     // Documented in Contactable
     bool removeCallbackLock() override;

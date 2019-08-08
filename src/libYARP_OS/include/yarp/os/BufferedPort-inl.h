@@ -352,6 +352,12 @@ bool yarp::os::BufferedPort<T>::setCallbackLock(yarp::os::Mutex* mutex)
 }
 
 template <typename T>
+bool yarp::os::BufferedPort<T>::setCallbackLock(std::mutex* mutex)
+{
+    return port.setCallbackLock(mutex);
+}
+
+template <typename T>
 bool yarp::os::BufferedPort<T>::removeCallbackLock()
 {
     return port.removeCallbackLock();

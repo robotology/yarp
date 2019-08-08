@@ -483,7 +483,9 @@ public:
     Property* acquireProperties(bool readOnly);
     void releaseProperties(Property* prop);
 
-    bool setCallbackLock(yarp::os::Mutex* mutex = nullptr);
+    bool setCallbackLock(yarp::os::Mutex* mutex);
+
+    bool setCallbackLock(std::mutex* mutex = nullptr);
 
     bool removeCallbackLock();
 
@@ -541,7 +543,8 @@ private:
     int m_counter;    ///< port-unique ids for connections
     yarp::os::Property *m_prop;  ///< optional unstructured properties associated with port
     yarp::os::Contactable *m_contactable;  ///< user-facing object that contains this PortCore
-    yarp::os::Mutex *m_mutex; ///< callback optional access control lock
+    std::mutex* m_mutex;        ///< callback optional access control lock
+    yarp::os::Mutex* m_old_mutex;
     bool m_mutexOwned;        ///< do we own the optional callback lock
     BufferedConnectionWriter m_envelopeWriter; ///< storage area for envelope, if present
 

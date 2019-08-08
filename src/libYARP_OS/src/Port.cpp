@@ -673,6 +673,11 @@ bool Port::setCallbackLock(yarp::os::Mutex* mutex)
     return IMPL().configCallbackLock(mutex);
 }
 
+bool Port::setCallbackLock(std::mutex* mutex)
+{
+    return IMPL().configCallbackLock(mutex);
+}
+
 bool Port::removeCallbackLock()
 {
     return IMPL().unconfigCallbackLock();

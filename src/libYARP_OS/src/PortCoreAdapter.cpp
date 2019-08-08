@@ -38,6 +38,7 @@ yarp::os::impl::PortCoreAdapter::PortCoreAdapter(Port& owner) :
         commitToRpc(false),
         active(false),
         recCallbackLock(nullptr),
+        old_recCallbackLock(nullptr),
         haveCallbackLock(false)
 {
     setContactable(&owner);
@@ -290,7 +291,16 @@ void yarp::os::impl::PortCoreAdapter::configWaitAfterSend(bool waitAfterSend)
 
 bool yarp::os::impl::PortCoreAdapter::configCallbackLock(Mutex* lock)
 {
+    recCallbackLock = nullptr;
+    old_recCallbackLock = lock;
+    haveCallbackLock = true;
+    return setCallbackLock(lock);
+}
+
+bool yarp::os::impl::PortCoreAdapter::configCallbackLock(std::mutex* lock)
+{
     recCallbackLock = lock;
+    old_recCallbackLock = nullptr;
     haveCallbackLock = true;
     return setCallbackLock(lock);
 }
@@ -298,6 +308,7 @@ bool yarp::os::impl::PortCoreAdapter::configCallbackLock(Mutex* lock)
 bool yarp::os::impl::PortCoreAdapter::unconfigCallbackLock()
 {
     recCallbackLock = nullptr;
+    old_recCallbackLock = nullptr;
     haveCallbackLock = false;
     return removeCallbackLock();
 }
