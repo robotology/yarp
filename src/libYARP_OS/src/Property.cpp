@@ -558,14 +558,11 @@ public:
                                 if (bot.get(0).toString() == "include") {
                                     including = true;
                                     // close an open group if an [include something] tag is found
-                                    if (bot.size() > 1) {
-                                        if (!tag.empty()) {
-                                            if (accum.size() >= 1) {
-                                                putBottleCompat(tag.c_str(),
-                                                                accum);
-                                            }
-                                            tag = "";
+                                    if (!tag.empty()) {
+                                        if (accum.size() >= 1) {
+                                            putBottleCompat(tag.c_str(), accum);
                                         }
+                                        tag = "";
                                     }
                                     if (bot.size() > 2) {
                                         std::string subName;
