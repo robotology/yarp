@@ -9,7 +9,8 @@ yarp_prepare_plugin(grabber
                     TYPE ServerFrameGrabber
                     INCLUDE ServerFrameGrabber.h
                     EXTRA_CONFIG WRAPPER=grabber
-                    DEFAULT ON)
+                    DEFAULT OFF
+                    DEPENDS "NOT YARP_NO_DEPRECATED") # DEPRECATED Since YARP 3.3
 
 if(NOT SKIP_grabber)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

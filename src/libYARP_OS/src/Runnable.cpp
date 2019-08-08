@@ -7,8 +7,12 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #include <yarp/os/Runnable.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
 
 yarp::os::Runnable::~Runnable() = default;
 
@@ -37,3 +41,5 @@ bool yarp::os::Runnable::threadInit()
 void yarp::os::Runnable::threadRelease()
 {
 }
+
+YARP_WARNING_POP

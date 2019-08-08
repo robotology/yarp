@@ -7,8 +7,16 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_OS_RUNNABLE_H
-#define YARP_OS_OS_RUNNABLE_H
+#ifndef YARP_OS_RUNNABLE_H
+#define YARP_OS_RUNNABLE_H
+
+#include <yarp/conf/system.h>
+
+#if !defined(YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE)
+YARP_COMPILER_WARNING("<yarp/os/Runnable.h> file is deprecated")
+#endif
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
 
 #include <yarp/os/api.h>
 
@@ -17,8 +25,10 @@ namespace os {
 
 /**
  * A class that can be managed by another thread.
+ *
+ * @deprecated since YARP 3.3
  */
-class YARP_OS_API Runnable
+class YARP_OS_DEPRECATED_API Runnable
 {
 public:
     /**
@@ -74,4 +84,6 @@ public:
 } // namespace os
 } // namespace yarp
 
-#endif // YARP_OS_OS_RUNNABLE_H
+#endif // YARP_NO_DEPRECATED
+
+#endif // YARP_OS_RUNNABLE_H

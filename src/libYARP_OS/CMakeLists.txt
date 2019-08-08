@@ -90,7 +90,6 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Property.h
                  include/yarp/os/Publisher.h
                  include/yarp/os/Random.h
-                 include/yarp/os/RateThread.h
                  include/yarp/os/RecursiveMutex.h
                  include/yarp/os/ResourceFinder.h
                  include/yarp/os/ResourceFinderOptions.h
@@ -100,7 +99,6 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Route.h
                  include/yarp/os/RpcClient.h
                  include/yarp/os/RpcServer.h
-                 include/yarp/os/Runnable.h
                  include/yarp/os/Searchable.h
                  include/yarp/os/Semaphore.h
                  include/yarp/os/SharedLibraryClassApi.h
@@ -298,7 +296,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Property.cpp
                  src/Protocol.cpp
                  src/Random.cpp
-                 src/RateThread.cpp
                  src/ResourceFinder.cpp
                  src/ResourceFinderOptions.cpp
                  src/RFModule.cpp
@@ -308,7 +305,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Route.cpp
                  src/RpcClient.cpp
                  src/RpcServer.cpp
-                 src/Runnable.cpp
                  src/Searchable.cpp
                  src/Semaphore.cpp
                  src/SharedLibrary.cpp
@@ -348,10 +344,14 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/QosStyle.cpp)
 
 if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
-  list(APPEND YARP_OS_HDRS include/yarp/os/ConstString.h)
+  list(APPEND YARP_OS_HDRS include/yarp/os/ConstString.h
+                           include/yarp/os/RateThread.h
+                           include/yarp/os/Runnable.h)
 
   list(APPEND YARP_OS_SRCS src/Mutex.cpp
-                           src/RecursiveMutex.cpp)
+                           src/RateThread.cpp
+                           src/RecursiveMutex.cpp
+                           src/Runnable.cpp)
 endif()
 
 

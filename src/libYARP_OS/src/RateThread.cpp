@@ -11,11 +11,12 @@
 #include <yarp/os/RateThread.h>
 #undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+
 #include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os;
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 
 RateThread::RateThread(int period) :
         PeriodicThread(period / 1000.0)
@@ -159,8 +160,6 @@ bool SystemRateThread::stepSystem()
     return true;
 }
 
-#endif
-
 RateThreadWrapper::RateThreadWrapper() :
         PeriodicThread(0)
 {
@@ -280,3 +279,5 @@ Runnable* RateThreadWrapper::getAttachment() const
 {
     return helper;
 }
+
+YARP_WARNING_POP

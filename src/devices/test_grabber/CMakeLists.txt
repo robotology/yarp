@@ -8,7 +8,7 @@ yarp_prepare_plugin(test_grabber
                     CATEGORY device
                     TYPE TestFrameGrabber
                     INCLUDE TestFrameGrabber.h
-                    EXTRA_CONFIG WRAPPER=grabber
+                    EXTRA_CONFIG WRAPPER=grabberDual
                     DEFAULT ON)
 
 if(ENABLE_test_grabber)

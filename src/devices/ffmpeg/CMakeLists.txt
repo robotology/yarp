@@ -9,7 +9,7 @@ yarp_prepare_plugin(ffmpeg_grabber
                     CATEGORY device
                     TYPE FfmpegGrabber
                     INCLUDE FfmpegGrabber.h
-                    EXTRA_CONFIG WRAPPER=grabber
+                    EXTRA_CONFIG WRAPPER=grabberDual
                     DEPENDS "YARP_HAS_FFMPEG")
 yarp_prepare_plugin(ffmpeg_writer
                     CATEGORY device

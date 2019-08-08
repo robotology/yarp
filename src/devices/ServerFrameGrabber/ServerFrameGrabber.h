@@ -12,7 +12,6 @@
 
 #include <cstdio>
 
-#include <yarp/dev/DataSource.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/FrameGrabberControlImpl.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
@@ -28,8 +27,11 @@
 
 #define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #include <yarp/os/RateThread.h>
+#include <yarp/dev/DataSource.h>
 #undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
 
 /**
  * @ingroup dev_impl_wrapper
@@ -75,7 +77,7 @@
  *
  */
 class ServerFrameGrabber :
-        public yarp::dev::DeviceDriver,
+        public yarp::dev::DeprecatedDeviceDriver,
         public yarp::dev::DeviceResponder,
         public yarp::dev::IFrameGrabberImage,
         public yarp::dev::IAudioVisualGrabber,
@@ -90,7 +92,10 @@ private:
     yarp::dev::IRgbVisualParams* rgbVis_p{nullptr};
     yarp::os::Port p;
     yarp::os::Port *p2{nullptr};
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     yarp::os::RateThreadWrapper thread;
+YARP_WARNING_POP
     yarp::dev::PolyDriver poly;
     yarp::dev::IFrameGrabberImage *fgImage{nullptr};
     yarp::dev::IFrameGrabberImageRaw *fgImageRaw{nullptr};
@@ -158,5 +163,7 @@ public:
 
     bool updateService() override;
 };
+
+YARP_WARNING_POP
 
 #endif // YARP_DEV_SERVERFRAMEGRABBER_H

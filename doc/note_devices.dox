@@ -315,7 +315,7 @@ we do:
 Once we've reached this point, some fun things become possible.
 For example:
 \code
-  Property config("(device grabber) (subdevice fakey) (w 640) (h 480)");
+  Property config("(device grabberDual) (subdevice fakey) (w 640) (h 480)");
   PolyDriver dd(config);
   ...
 \endcode
