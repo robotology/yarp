@@ -33,7 +33,16 @@ public:
 
     PrivateImpl(const TimerSettings& sett,
                 TimerCallback call,
-                yarp::os::Mutex* mutex = nullptr) :
+                yarp::os::Mutex* mutex) :
+            m_settings(sett),
+            m_callback(std::move(call)),
+            m_old_mutex(mutex)
+    {
+    }
+
+    PrivateImpl(const TimerSettings& sett,
+                TimerCallback call,
+                std::mutex* mutex = nullptr) :
             m_settings(sett),
             m_callback(std::move(call)),
             m_mutex(mutex)
@@ -55,15 +64,22 @@ public:
     TimerCallback m_callback;
     double m_startStamp{0.0};
     double m_lastReal{0.0};
-    yarp::os::Mutex* m_mutex;
+    std::mutex* m_mutex{nullptr};
+    yarp::os::Mutex* m_old_mutex{nullptr};
 };
 
 class MonoThreadTimer : public yarp::os::Timer::PrivateImpl
 {
 public:
+
     MonoThreadTimer(const TimerSettings& sett,
                     const TimerCallback& call,
-                    yarp::os::Mutex* mutex = nullptr);
+                    yarp::os::Mutex* mutex);
+
+    MonoThreadTimer(const TimerSettings& sett,
+                    const TimerCallback& call,
+                    std::mutex* mutex = nullptr);
+
     ~MonoThreadTimer() override;
     bool m_active{false};
     unsigned int m_runTimes{1};
@@ -163,6 +179,18 @@ MonoThreadTimer::MonoThreadTimer(const TimerSettings& sett,
     }
 }
 
+MonoThreadTimer::MonoThreadTimer(const TimerSettings& sett,
+                                 const TimerCallback& call,
+                                 std::mutex* mutex) :
+        PrivateImpl(sett, call, mutex)
+{
+    TimerSingleton& singlInstance = TimerSingleton::self();
+    m_id = singlInstance.addTimer(this);
+    if (!singlInstance.isRunning()) {
+        singlInstance.start();
+    }
+}
+
 MonoThreadTimer::~MonoThreadTimer()
 {
     TimerSingleton& singlInstance = TimerSingleton::self();
@@ -198,7 +226,15 @@ class ThreadedTimer :
 public:
     ThreadedTimer(const TimerSettings& sett,
                   const TimerCallback& call,
-                  yarp::os::Mutex* mutex = nullptr) :
+                  yarp::os::Mutex* mutex) :
+            PrivateImpl(sett, call, mutex),
+            PeriodicThread(sett.period)
+    {
+    }
+
+    ThreadedTimer(const TimerSettings& sett,
+                  const TimerCallback& call,
+                  std::mutex* mutex = nullptr) :
             PrivateImpl(sett, call, mutex),
             PeriodicThread(sett.period)
     {
@@ -247,6 +283,14 @@ Timer::Timer(const TimerSettings& settings, const TimerCallback& callback, bool 
 {
 }
 
+//the newThread parameter is not in the settings for it to be unmutable and only checked by the constructor
+Timer::Timer(const TimerSettings& settings, const TimerCallback& callback, bool newThread, std::mutex* mutex) :
+        //added cast for incompatible operand error
+        impl(newThread ? dynamic_cast<PrivateImpl*>(new ThreadedTimer(settings, callback, mutex))
+                       : dynamic_cast<PrivateImpl*>(new MonoThreadTimer(settings, callback, mutex)))
+{
+}
+
 bool Timer::start()
 {
 
@@ -282,7 +326,15 @@ bool yarp::os::Timer::PrivateImpl::runTimer(unsigned int iteration, YarpTimerEve
         m_mutex->lock();
     }
 
+    if (m_old_mutex != nullptr) {
+        m_old_mutex->lock();
+    }
+
     bool ret = m_callback(event);
+
+    if (m_old_mutex != nullptr) {
+        m_old_mutex->unlock();
+    }
 
     if (m_mutex != nullptr) {
         m_mutex->unlock();
