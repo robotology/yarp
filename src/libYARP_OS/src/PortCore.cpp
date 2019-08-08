@@ -2079,8 +2079,8 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                 result.fromString(p->toString());
             } else {
                 // request: "prop get /portname"
-                bool bFound = false;
                 if (key[0] == '/') {
+                    bool bFound = false;
                     // check for their own name
                     if (key == getName()) {
                         bFound = true;
