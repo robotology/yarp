@@ -37,7 +37,6 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/InputProtocol.h
                  include/yarp/os/InputStream.h
                  include/yarp/os/LocalReader.h
-                 include/yarp/os/LockGuard.h
                  include/yarp/os/Log.h
                  include/yarp/os/LogStream.h
                  include/yarp/os/ManagedBytes.h
@@ -45,7 +44,6 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/ModifyingCarrier.h
                  include/yarp/os/MonitorObject.h
                  include/yarp/os/MultiNameSpace.h
-                 include/yarp/os/Mutex.h
                  include/yarp/os/Name.h
                  include/yarp/os/NameSpace.h
                  include/yarp/os/NameStore.h
@@ -90,7 +88,6 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Property.h
                  include/yarp/os/Publisher.h
                  include/yarp/os/Random.h
-                 include/yarp/os/RecursiveMutex.h
                  include/yarp/os/ResourceFinder.h
                  include/yarp/os/ResourceFinderOptions.h
                  include/yarp/os/RFModule.h
@@ -343,15 +340,18 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/WireWriter.cpp
                  src/QosStyle.cpp)
 
-if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
-  list(APPEND YARP_OS_HDRS include/yarp/os/ConstString.h
-                           include/yarp/os/RateThread.h
-                           include/yarp/os/Runnable.h)
+if(NOT YARP_NO_DEPRECATED)
+  list(APPEND YARP_OS_HDRS include/yarp/os/ConstString.h      # DEPRECATED since YARP 3.0.0
+                           include/yarp/os/LockGuard.h        # DEPRECATED since YARP 3.3.0
+                           include/yarp/os/Mutex.h            # DEPRECATED since YARP 3.3.0
+                           include/yarp/os/RateThread.h       # DEPRECATED since YARP 3.3.0
+                           include/yarp/os/RecursiveMutex.h   # DEPRECATED since YARP 3.3.0
+                           include/yarp/os/Runnable.h)        # DEPRECATED since YARP 3.3.0
 
-  list(APPEND YARP_OS_SRCS src/Mutex.cpp
-                           src/RateThread.cpp
-                           src/RecursiveMutex.cpp
-                           src/Runnable.cpp)
+  list(APPEND YARP_OS_SRCS src/Mutex.cpp                      # DEPRECATED since YARP 3.3.0
+                           src/RateThread.cpp                 # DEPRECATED since YARP 3.3.0
+                           src/RecursiveMutex.cpp             # DEPRECATED since YARP 3.3.0
+                           src/Runnable.cpp)                  # DEPRECATED since YARP 3.3.0
 endif()
 
 

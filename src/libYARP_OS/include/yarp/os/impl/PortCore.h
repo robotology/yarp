@@ -14,7 +14,6 @@
 #include <yarp/os/Contact.h>
 #include <yarp/os/Contactable.h>
 #include <yarp/os/ModifyingCarrier.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortReaderCreator.h>
 #include <yarp/os/PortReport.h>
@@ -26,6 +25,12 @@
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/PortCorePackets.h>
 #include <yarp/os/impl/ThreadImpl.h>
+
+#ifndef YARP_NO_DEPRECATED // since YARP 3.3
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#include <yarp/os/Mutex.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#endif
 
 #include <mutex>
 #include <vector>
@@ -483,7 +488,12 @@ public:
     Property* acquireProperties(bool readOnly);
     void releaseProperties(Property* prop);
 
-    bool setCallbackLock(yarp::os::Mutex* mutex);
+#ifndef YARP_NO_DEPRECATED // since YARP 3.3
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+    bool YARP_DEPRECATED setCallbackLock(yarp::os::Mutex* mutex);
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
 
     bool setCallbackLock(std::mutex* mutex = nullptr);
 
@@ -544,7 +554,12 @@ private:
     yarp::os::Property *m_prop;  ///< optional unstructured properties associated with port
     yarp::os::Contactable *m_contactable;  ///< user-facing object that contains this PortCore
     std::mutex* m_mutex;        ///< callback optional access control lock
+#ifndef YARP_NO_DEPRECATED // since YARP 3.3
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     yarp::os::Mutex* m_old_mutex;
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
     bool m_mutexOwned;        ///< do we own the optional callback lock
     BufferedConnectionWriter m_envelopeWriter; ///< storage area for envelope, if present
 

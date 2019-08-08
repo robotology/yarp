@@ -10,10 +10,15 @@
 #ifndef YARP_OS_IMPL_PORTCOREADAPTER_H
 #define YARP_OS_IMPL_PORTCOREADAPTER_H
 
-#include <yarp/os/Mutex.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/impl/PortCore.h>
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#include <yarp/os/Mutex.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#endif // YARP_NO_DEPRECATED
 
 #include <mutex>
 
@@ -55,7 +60,12 @@ public:
     bool commitToRpc;
     bool active;
     std::mutex* recCallbackLock;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     yarp::os::Mutex* old_recCallbackLock;
+YARP_WARNING_POP
+#endif
     bool haveCallbackLock;
 
     PortCoreAdapter(Port& owner);
@@ -76,7 +86,12 @@ public:
     void configAdminReader(PortReader& reader);
     void configReadCreator(PortReaderCreator& creator);
     void configWaitAfterSend(bool waitAfterSend);
-    bool configCallbackLock(Mutex* lock);
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+    bool YARP_DEPRECATED configCallbackLock(Mutex* lock);
+YARP_WARNING_POP
+#endif
     bool configCallbackLock(std::mutex* lock);
     bool unconfigCallbackLock();
     PortReader* checkPortReader();

@@ -22,11 +22,9 @@
 #include <yarp/os/Contactable.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Event.h>
-#include <yarp/os/LockGuard.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/MessageStack.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/NetFloat32.h>
 #include <yarp/os/NetFloat64.h>
 #include <yarp/os/NetInt16.h>
@@ -55,7 +53,6 @@
 #include <yarp/os/Publisher.h>
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Random.h>
-#include <yarp/os/RecursiveMutex.h>
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Searchable.h>
@@ -73,10 +70,15 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/WireLink.h>
 
-#ifndef YARP_NO_DEPRECATED // since YARP 3.0.0
+#ifndef YARP_NO_DEPRECATED
 #define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+     // since YARP 3.0.0
 #    include <yarp/os/ConstString.h>
 #    include <yarp/os/RateThread.h>
+     // since YARP 3.3
+#    include <yarp/os/LockGuard.h>
+#    include <yarp/os/Mutex.h>
+#    include <yarp/os/RecursiveMutex.h>
 #undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #endif // YARP_NO_DEPRECATED
 

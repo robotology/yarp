@@ -11,10 +11,15 @@
 #define YARP_OS_CONTACTABLE_H
 
 #include <yarp/os/Contact.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortReport.h>
 #include <yarp/os/PortWriter.h>
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#  include <yarp/os/Mutex.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#endif
 
 #include <mutex>
 
@@ -313,6 +318,9 @@ public:
      */
     void setRpcClient();
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     /**
      * Add a lock to use when invoking callbacks.
      *
@@ -323,8 +331,13 @@ public:
      *
      * @param mutex the lock to use. If nullptr, a mutex will be allocated
      * internally by the port, and destroyed with the port.
+     *
+     * @deprecated since YARP 3.3
      */
+    YARP_DEPRECATED_MSG("Use setCallbackLock with std::mutex instead")
     virtual bool setCallbackLock(yarp::os::Mutex* mutex) = 0;
+YARP_WARNING_POP
+#endif
 
     /**
      * Add a lock to use when invoking callbacks.
