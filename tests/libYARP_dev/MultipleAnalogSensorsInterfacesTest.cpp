@@ -30,6 +30,10 @@ TEST_CASE("dev::MultipleAnalogSensorsInterfacesTest", "[yarp::dev]")
     YARP_REQUIRE_PLUGIN("multipleanalogsensorsserver", "device");
     YARP_REQUIRE_PLUGIN("multipleanalogsensorsclient", "device");
 
+#if defined(DISABLE_FAILING_TESTS)
+    YARP_SKIP_TEST("Skipping failing tests")
+#endif
+
     Network::setLocalMode(true);
 
     SECTION("Test the multiple analog sensors device on a single IMU")
