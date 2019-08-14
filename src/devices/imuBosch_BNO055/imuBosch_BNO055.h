@@ -160,7 +160,7 @@ protected:
     yarp::math::Quaternion      quaternion;           ///< orientation in quaternion representation
     yarp::math::Quaternion      quaternion_tmp;       ///< orientation in quaternion representation
     yarp::sig::Vector           RPY_angle;            ///< orientation in Euler angle representation
-    double                      timeStamp;            ///< device timestamp
+    double                      m_timeStamp;          ///< device timestamp
     double                      timeLastReport;       ///< timestamp of last reported data
     mutable yarp::os::Mutex             mutex;        ///< mutex to avoid resource clash
     bool                        i2c_flag;             ///< flag to check if device connected through i2c commununication
