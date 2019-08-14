@@ -57,7 +57,7 @@ BoschIMU::BoschIMU() : PeriodicThread(0.02),
     verbose(false),
     status(0),
     nChannels(12),
-    timeStamp(0.0),
+    m_timeStamp(0.0),
     timeLastReport(0.0),
     i2c_flag(false),
     checkError(false),
@@ -610,7 +610,7 @@ bool BoschIMU::threadInit()
 
 void BoschIMU::run()
 {
-    timeStamp = yarp::os::SystemClock::nowSystem();
+    m_timeStamp = yarp::os::SystemClock::nowSystem();
 
     int16_t raw_data[16];
 
@@ -690,7 +690,7 @@ void BoschIMU::run()
         quaternion = quaternion_tmp;
     }
 
-    if (timeStamp > timeLastReport + TIME_REPORT_INTERVAL) {
+    if (m_timeStamp > timeLastReport + TIME_REPORT_INTERVAL) {
         // if almost 1 errors occourred in last interval, then print report
         if(errs != 0)
         {
@@ -699,7 +699,7 @@ void BoschIMU::run()
         }
 
         errs = 0;
-        timeLastReport=timeStamp;
+        timeLastReport=m_timeStamp;
     }
 }
 
@@ -808,7 +808,7 @@ bool BoschIMU::getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::s
     out[1] = data[4];
     out[2] = data[5];
 
-    timestamp = timeLastReport;
+    timestamp = m_timeStamp;
     return true;
 }
 
@@ -848,7 +848,7 @@ bool BoschIMU::getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector
     out[1] = data[7];
     out[2] = data[8];
 
-    timestamp = timeLastReport;
+    timestamp = m_timeStamp;
     return true;
 }
 
@@ -886,7 +886,7 @@ bool BoschIMU::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp
     rpy[1] = data[1];
     rpy[2] = data[2];
 
-    timestamp = timeLastReport;
+    timestamp = m_timeStamp;
     return true;
 }
 
@@ -925,7 +925,7 @@ bool BoschIMU::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vec
     out[1] = data[10]/ 1000000;
     out[2] = data[11]/ 1000000;
 
-    timestamp = timeLastReport;
+    timestamp = m_timeStamp;
     return true;
 }
 
