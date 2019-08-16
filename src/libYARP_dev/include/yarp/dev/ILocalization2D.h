@@ -90,5 +90,6 @@ constexpr yarp::conf::vocab32_t VOCAB_NAV_RENAME_X              = yarp::os::crea
 constexpr yarp::conf::vocab32_t VOCAB_NAV_STORE_X               = yarp::os::createVocab('s','t','o','r');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_AREA                  = yarp::os::createVocab('a','r','e','a');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_LOCATION              = yarp::os::createVocab('l','o','c');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_PATH                  = yarp::os::createVocab('p','a','t','h');
 
 #endif // YARP_DEV_ILOCALIZATION2D_H

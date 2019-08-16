@@ -26,6 +26,9 @@ namespace yarp
     {
         class YARP_dev_API Map2DArea : public yarp::os::Portable
         {
+            private:
+            yarp::dev::Map2DLocation helper_tmp_location;
+
             public:
             /**
             * Constructor
@@ -91,6 +94,18 @@ namespace yarp
             * @return true if the Location was successfully generated (the Map2DArea must be valid)
             */
             bool getRandomLocation(yarp::dev::Map2DLocation& loc);
+
+            /**
+            * Returns a vertex of the area
+            * @param index: the vertex index
+            * @return the vertex
+            */
+            yarp::math::Vec2D<double>& operator[](size_t index);
+
+            /**
+            * Remove all elements from the path
+            */
+            void clear();
 
             public:
             std::string map_id;

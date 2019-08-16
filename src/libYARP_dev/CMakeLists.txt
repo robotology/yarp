@@ -118,6 +118,7 @@ if(TARGET YARP::YARP_math)
                             include/yarp/dev/INavigation2D.h
                             include/yarp/dev/Map2DLocation.h
                             include/yarp/dev/Map2DArea.h
+                            include/yarp/dev/Map2DPath.h
                             include/yarp/dev/MapGrid2D.h)
 endif()
 
@@ -192,13 +193,16 @@ if(TARGET YARP::YARP_math)
                             src/IMap2D.cpp
                             src/INavigation2D.cpp
                             src/MapGrid2D.cpp
-                            src/Map2DArea.cpp)
+                            src/Map2DArea.cpp
+                            src/Map2DPath.cpp)
 endif()
 
 # Handle the YARP thrift messages
 include(YarpIDL)
 yarp_idl_to_dir(INPUT_FILES idl/stateExt.thrift
                             idl/audioBufferSizeData.thrift
+                            idl/Map2DPathData.thrift
+                VERBOSE
                 OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
                 SOURCES_VAR YARP_dev_idl_SRCS
                 HEADERS_VAR YARP_dev_idl_all_HDRS

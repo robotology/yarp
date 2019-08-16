@@ -322,6 +322,95 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
             ret = imap->clearAllAreas();  CHECK(ret);
         }
 
+        //////////"Checking IMap2D methods which involve usage of classes Map2DPath/Map2DLocation"
+        {
+            std::vector <Map2DPath>      paths;
+            std::vector <Map2DLocation>  locs;
+            std::vector <std::string>    loc_names;
+            std::vector <std::string>    path_names;
+            Map2DLocation loc;
+            Map2DPath     path;
+            bool ret;
+            bool b1;
+            ret = imap->clearAllLocations();   CHECK(ret);
+            ret = imap->clearAllPaths();       CHECK(ret);
+            ret = imap->getPathsList(path_names);   CHECK(ret);
+            b1 = (path_names.size() == 0);
+            CHECK(b1);
+            ret = imap->getLocationsList(loc_names);   CHECK(ret);
+            b1 = (loc_names.size() == 0);
+            CHECK(b1);
+
+            ret = imap->storeLocation("loc1", Map2DLocation("map1", 1, 2, 3));  CHECK(ret);
+            ret = imap->storeLocation("loc2", Map2DLocation("map2", 4, 5, 6));  CHECK(ret);
+
+            std::vector<Map2DLocation> vec1, vec2, vec3;
+            yarp::dev::Map2DLocation v;
+            v.x = 1.1; v.y = 1.1; vec1.push_back(v);
+            v.x = 1.2; v.y = 1.2; vec1.push_back(v);
+            v.x = 1.3; v.y = 1.3; vec1.push_back(v);
+            ret = imap->storePath("path1", Map2DPath(vec1));  CHECK(ret);
+            v.x = 2.1; v.y = 2.1; vec2 = vec1;  vec2.push_back(v);
+            ret = imap->storePath("path2", Map2DPath(vec2));  CHECK(ret);
+            v.x = 3.1; v.y = 3.1; vec3 = vec2;  vec3.push_back(v);
+            ret = imap->storePath("path3", Map2DPath(vec3));  CHECK(ret);
+
+            ret = imap->getPathsList(path_names);   CHECK(ret);
+            b1 = (path_names.size() == 3);
+            CHECK(b1);
+            ret = imap->getLocationsList(loc_names);  CHECK(ret);
+            b1 = (loc_names.size() == 2);
+            CHECK(b1);
+
+            ret = imap->getPath("path1", path);   CHECK(ret);
+            b1 = (path == Map2DPath(vec1));
+            CHECK(b1);
+            ret = imap->getPath("path_err", path);   CHECK(ret == false);
+
+            ret = imap->getLocation("loc1", loc);  CHECK(ret);
+            b1 = (loc == Map2DLocation("map1", 1, 2, 3));
+            CHECK(b1);
+            ret = imap->getLocation("loc_err", loc);   CHECK(ret == false);
+
+            ret = imap->deletePath("path1");       CHECK(ret);
+            ret = imap->deleteLocation("loc1");  CHECK(ret);
+            ret = imap->deletePath("path_err");       CHECK(ret == false);
+            ret = imap->deleteLocation("loc_err");  CHECK(ret == false);
+            ret = imap->getPath("path1", path);    CHECK(ret == false);
+            ret = imap->getLocation("loc1", loc);  CHECK(ret == false);
+
+            ret = imap->getPath("path2", path);  CHECK(ret);
+            b1 = (path == Map2DPath(vec2));
+            CHECK(b1);
+            ret = imap->getLocation("loc2", loc);   CHECK(ret);
+            b1 = (loc == Map2DLocation("map2", 4, 5, 6));
+            CHECK(b1);
+
+            ret = imap->clearAllLocations();  CHECK(ret);
+            ret = imap->clearAllPaths();  CHECK(ret);
+            ret = imap->getPathsList(path_names);  CHECK(ret);
+            b1 = (path_names.size() == 0);
+            CHECK(b1);
+            imap->getLocationsList(loc_names);
+            b1 = (loc_names.size() == 0);
+            CHECK(b1);
+
+            ret = imap->storePath("path", Map2DPath(vec1));  CHECK(ret);
+            ret = imap->storeLocation("loc", Map2DLocation("map2", 4, 5, 6));  CHECK(ret);
+            ret = imap->renamePath("path_fail", "path_new");  CHECK(ret == false);
+            ret = imap->renameLocation("loc_fail", "loc_new");  CHECK(ret == false);
+            ret = imap->renamePath("path", "path_new");  CHECK(ret);
+            ret = imap->renameLocation("loc", "loc_new");  CHECK(ret);
+            ret = imap->getPath("path", path);         CHECK(ret == false);
+            ret = imap->getPath("path_new", path);      CHECK(ret);
+            ret = imap->getLocation("loc", loc);       CHECK(ret == false);
+            ret = imap->getLocation("loc_new", loc);    CHECK(ret);
+
+            //final cleanup, already tested        
+            ret = imap->clearAllLocations();  CHECK(ret);
+            ret = imap->clearAllPaths();  CHECK(ret);
+        }
+
         //////////"Checking IMap2D methods which involve usage of classes MapGrid2D"
         {
             MapGrid2D test_store_map1;

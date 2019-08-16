@@ -12,7 +12,9 @@
 #include <sstream>
 #include <string>
 
+#include <yarp/math/Vec2D.h>
 #include <yarp/dev/api.h>
+#include <yarp/dev/Map2DLocationData.h>
 
 /**
 * \file Map2DLocation.h contains the definition of a Map2DLocation type
@@ -21,7 +23,7 @@ namespace yarp
 {
     namespace dev
     {
-        struct YARP_dev_API Map2DLocation
+        struct YARP_dev_API Map2DLocation : public Map2DLocationData
         {
             /**
             * Constructor
@@ -36,6 +38,22 @@ namespace yarp
                 x = inX;
                 y = inY;
                 theta = inT;
+            }
+
+            /**
+            * A constructor which accepts a yarp::math::Vec2D, defining the location by its x,y coordinates.
+            * The orientation is set to 0 by default.
+            * @param map_name: the name of the map the location refers to.
+            * @param inX: location coordinates w.r.t. map reference frame (expressed in meters)
+            * @param inY: location coordinates w.r.t. map reference frame (expressed in meters)
+            * @param inT: location orientation w.r.t. map reference frame (expressed in degrees)
+            */
+            Map2DLocation(const std::string& map_name, yarp::math::Vec2D<double> location)
+            {
+                map_id = map_name;
+                x = location.x;
+                y = location.y;
+                theta = 0;
             }
 
             /**
@@ -98,10 +116,10 @@ namespace yarp
                 return false;
             }
 
-            std::string map_id;
-            double x;
-            double y;
-            double theta;
+            bool read(yarp::os::idl::WireReader& reader) override { return Map2DLocationData::read(reader); }
+            bool write(const yarp::os::idl::WireWriter& writer) const override { return Map2DLocationData::write(writer); }
+            bool read(yarp::os::ConnectionReader& reader) override { return Map2DLocationData::read(reader); }
+            bool write(yarp::os::ConnectionWriter& writer) const override { return Map2DLocationData::write(writer); }
         };
     }
 }
