@@ -41,13 +41,23 @@ public:
 
     /**
      * Constructor.
+     */
+    Property();
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+    /**
+     * Constructor.
      *
      * @param hash_size a scalar controlling efficiency of the
      * hash map storing the data.  Set to 0 for default size.
      * The bigger this number, the more memory used, but the
      * more efficient the map.
+     *
+     * @deprecated Since YARP 3.3
      */
-    Property(int hash_size = 0);
+    YARP_DEPRECATED_MSG("Use default constructor instead")
+    Property(int hash_size);
+#endif
 
     /**
      * Initialize from a string, using fromString().
@@ -61,6 +71,11 @@ public:
     Property(const Property& rhs);
 
     /**
+     * Move constructor
+     */
+    Property(Property&& rhs) noexcept;
+
+    /**
      * @brief Initializer list constructor.
      * @param[in] values, list of std::pair with which initialize the Property.
      */
@@ -68,12 +83,17 @@ public:
     /**
      * Destructor.
      */
-    virtual ~Property();
+    ~Property() override;
 
     /**
-     * Assignment operator.
+     * Copy assignment operator.
      */
-    const Property& operator=(const Property& prop);
+    Property& operator=(const Property& prop);
+
+    /**
+     * Move assignment operator.
+     */
+    Property& operator=(Property&& prop) noexcept;
 
     // documented in Searchable
     bool check(const std::string& key) const override;
@@ -432,12 +452,6 @@ public:
 
     // documented in Portable
     bool write(ConnectionWriter& writer) const override;
-
-private:
-    int hash_size;
-
-    void summon();
-    bool check() const;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
