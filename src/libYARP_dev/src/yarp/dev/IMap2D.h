@@ -15,6 +15,7 @@
 #include <yarp/dev/MapGrid2D.h>
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DArea.h>
+#include <yarp/dev/Map2DPath.h>
 #include <vector>
 #include <string>
 
@@ -75,7 +76,7 @@ public:
     * @param loc the location of the robot
     * @return true/false
     */
-    virtual bool storeLocation(std::string location_name, Map2DLocation loc) = 0;
+    virtual bool storeLocation(std::string location_name, yarp::dev::Map2DLocation loc) = 0;
 
     /**
     * Store an area
@@ -83,7 +84,15 @@ public:
     * @param area the area
     * @return true/false
     */
-    virtual bool storeArea(std::string area_name, Map2DArea area) = 0;
+    virtual bool storeArea(std::string area_name, yarp::dev::Map2DArea area) = 0;
+
+    /**
+    * Store a path
+    * @param path_name the name of the path
+    * @param path the path
+    * @return true/false
+    */
+    virtual bool storePath(std::string path_name, yarp::dev::Map2DPath path) = 0;
 
     /**
     * Retrieves a location specified by the user in the world reference frame
@@ -91,7 +100,7 @@ public:
     * @param loc the location
     * @return true/false
     */
-    virtual bool getLocation(std::string location_name, Map2DLocation& loc) = 0;
+    virtual bool getLocation(std::string location_name, yarp::dev::Map2DLocation& loc) = 0;
 
     /**
     * Retrieves an area
@@ -99,7 +108,15 @@ public:
     * @param area the area
     * @return true/false
     */
-    virtual bool getArea(std::string area_name, Map2DArea& area) = 0;
+    virtual bool getArea(std::string area_name, yarp::dev::Map2DArea& area) = 0;
+
+    /**
+    * Retrieves a path
+    * @param path_name the name of the path
+    * @param path the path
+    * @return true/false
+    */
+    virtual bool getPath(std::string path_name, yarp::dev::Map2DPath& path) = 0;
 
     /**
     * Get a list of all stored locations
@@ -114,6 +131,13 @@ public:
     * @return true/false
     */
     virtual bool getAreasList(std::vector<std::string>& areas) = 0;
+
+    /**
+    * Get a list of all stored paths
+    * @param the returned list of paths
+    * @return true/false
+    */
+    virtual bool getPathsList(std::vector<std::string>& paths) = 0;
 
     /**
     * Searches for a location and renames it
@@ -131,12 +155,27 @@ public:
     virtual bool deleteLocation(std::string location_name) = 0;
 
     /**
+    * Delete a path
+    * @param path_name the name of the path
+    * @return true/false
+    */
+    virtual bool deletePath(std::string path_name) = 0;
+
+    /**
     * Searches for an area and renames it
     * @param original_name the name of the area
     * @param new_name the new name of the area
     * @return true/false
     */
     virtual bool renameArea(std::string original_name, std::string new_name) = 0;
+
+    /**
+    * Searches for a path and renames it
+    * @param original_name the name of the path
+    * @param new_name the new name of the path
+    * @return true/false
+    */
+    virtual bool renamePath(std::string original_name, std::string new_name) = 0;
 
     /**
     * Delete an area
@@ -156,6 +195,12 @@ public:
     * @return true/false
     */
     virtual bool clearAllAreas() = 0;
+
+    /**
+    * Delete all stored paths
+    * @return true/false
+    */
+    virtual bool clearAllPaths() = 0;
 };
 
 constexpr yarp::conf::vocab32_t VOCAB_IMAP                    = yarp::os::createVocab('i','m','a','p');

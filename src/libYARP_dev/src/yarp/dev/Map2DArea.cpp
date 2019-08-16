@@ -233,3 +233,17 @@ bool  Map2DArea::getRandomLocation(yarp::dev::Map2DLocation& loc)
 
     return true;
 }
+
+void Map2DArea::clear()
+{
+    this->map_id = "";
+    this->points.clear();
+}
+
+yarp::math::Vec2D<double>& Map2DArea::operator[](size_t index)
+{
+    //std::vector::at() function performs bound check, throwing exception.
+    //[] operator, instead, not.
+    return points.at(index);
+}
+
