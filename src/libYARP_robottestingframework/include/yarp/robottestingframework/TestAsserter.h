@@ -41,14 +41,14 @@ public:
      *                      checking equality of corresponding elements of the
      *                      left and right vectors. It specifies the upper bound
      *                      of the interval.
-     * @param lenght: specifies the lengths of all vectors
+     * @param length: specifies the lengths of all vectors
      * @return: the result of the comparison
      */
     static bool isApproxEqual(const double *left,
                               const double *right,
                               const double *l_thresholds,
                               const double *h_thresholds,
-                              int lenght);
+                              int length);
 
     /**
      * Element-wise compare two vectors to determine if they are approximately
@@ -59,13 +59,13 @@ public:
      * @param thresholds: a vector of thresholds whose elements are used when
      *                    checking equality of corresponding elements of the
      *                    left and right vectors
-     * @param lenght: specifies the lengths of all vectors
+     * @param length: specifies the lengths of all vectors
      * @return: the result of comparison
      */
     static bool isApproxEqual(const double *left,
                               const double *right,
                               const double *thresholds,
-                              int lenght);
+                              int length);
 
     /**
      * Element-wise compare two vectors to determine if they are approximately

@@ -29,19 +29,19 @@ yarp::robottestingframework::TestAsserter::~TestAsserter()
 bool yarp::robottestingframework::TestAsserter::isApproxEqual(const double *left,
                                             const double *right,
                                             const double *thresholds,
-                                            int lenght)
+                                            int length)
 {
-    return isApproxEqual(left, right, thresholds, thresholds, lenght);
+    return isApproxEqual(left, right, thresholds, thresholds, length);
 }
 
 bool yarp::robottestingframework::TestAsserter::isApproxEqual(const double *left,
                                             const double *right,
                                             const double *l_thresholds,
                                             const double *h_thresholds,
-                                            int lenght)
+                                            int length)
 {
     bool reached = true;
-    for(int j = 0; j < lenght; j++)
+    for(int j = 0; j < length; j++)
     {
         if (left[j]<(right[j]-fabs(l_thresholds[j])) || left[j]>(right[j]+fabs(h_thresholds[j]))) {
             reached=false;

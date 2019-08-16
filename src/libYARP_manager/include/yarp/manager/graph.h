@@ -102,9 +102,9 @@ private:
 
 
 /*                if( ! *((bool*)list_get_at(&l.marks, i)) )\
-            printf("\033[31m%s\033[0m, ", ((vertex*)list_get_at(&l.nodes, i))->lable);\
+            printf("\033[31m%s\033[0m, ", ((vertex*)list_get_at(&l.nodes, i))->label);\
     else\
-            printf("%s, ", ((vertex*)list_get_at(&l.nodes, i))->lable);\
+            printf("%s, ", ((vertex*)list_get_at(&l.nodes, i))->label);\
 */
 
 } // namespace yarp
