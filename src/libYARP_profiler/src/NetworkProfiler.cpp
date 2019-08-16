@@ -292,9 +292,9 @@ bool NetworkProfiler::creatSimpleModuleGraph(yarp::profiler::graph::Graph& graph
             for(peitr = pouts.begin(); peitr!=pouts.end(); peitr++) {
                 const Vertex& p2 = (*peitr).second();
                 Property prop((*peitr).property);
-                string lable = p1.property.find("name").asString();
-                lable.append(" - ").append(p2.property.find("name").asString());
-                prop.put("lable", lable);
+                string label = p1.property.find("name").asString();
+                label.append(" - ").append(p2.property.find("name").asString());
+                prop.put("label", label);
                 subgraph.insertEdge(*v1, p2.outEdges()[0].second(), prop);
             }
         }
@@ -353,7 +353,7 @@ bool NetworkProfiler::updateConnectionQosStatus(yarp::profiler::graph::Graph& gr
             const Vertex &v2 = edge.second();
             if(!v1.property.check("hidden") && !v2.property.check("hidden")) {
                 if(edge.property.find("type").asString() == "connection") {
-                    //yInfo()<<v1.property.find("name").asString()<<"->"<<v2.property.find("name").asString()<<lable;
+                    //yInfo()<<v1.property.find("name").asString()<<"->"<<v2.property.find("name").asString()<<label;
                     yarp::os::QosStyle fromStyle, toStyle;
                     if(yarp::os::NetworkBase::getConnectionQos(v1.property.find("name").asString(),
                                                                v2.property.find("name").asString(), fromStyle, toStyle)) {

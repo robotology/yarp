@@ -869,7 +869,7 @@ int diffList(folderType fType, bool verbose)
             }
             catch (...)
             {
-                printf("Excpetion occurred during call to diffList() on path \"%s\"\n", userPath.c_str());
+                printf("Exception occurred during call to diffList() on path \"%s\"\n", userPath.c_str());
             }
         }
     }

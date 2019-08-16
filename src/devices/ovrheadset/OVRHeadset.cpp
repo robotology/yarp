@@ -415,7 +415,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
         {
             if (!cfg.check(p.first) || !(cfg.find(p.first).*isFunctionMap[p.second])())
             {
-                std::string err_type = err_msgs.find(p.second) == err_msgs.end() ? "[unknow type]" : err_msgs[p.second];
+                std::string err_type = err_msgs.find(p.second) == err_msgs.end() ? "[unknown type]" : err_msgs[p.second];
                 yError() << "ovrHeadset: parameter" << p.first << "not found or not" << err_type << "in configuration file";
                 return false;
             }

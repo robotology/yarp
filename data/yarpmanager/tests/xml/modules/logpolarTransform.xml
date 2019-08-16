@@ -8,7 +8,7 @@
     <arguments>
         <param desc="specifies the configuration file"> from </param>
         <param desc="specifies the sub-path from $ICUB_ROOT/app to the configuration file"> context </param>
-        <param default="CARTESIAN2LOGPOLAR" desc="specifies the direction of the tranform; the alternative direction is LOGPOLAR2CARTESIAN">direction</param>
+        <param default="CARTESIAN2LOGPOLAR" desc="specifies the direction of the transform; the alternative direction is LOGPOLAR2CARTESIAN">direction</param>
         <param default="252" desc="specifies the number of receptive fields per ring (i.e. the number of samples in the theta/angular dimension); required for CARTESIAN2LOGPOLAR transform direction">angles</param>
         <param default="152" desc="specifies the number of rings (i.e. the number of samples in the r dimension); required for CARTESIAN2LOGPOLAR transform direction">rings</param>
         <param default="320" desc="specifies the number of samples in the X dimension; required for LOGPOLAR2CARTESIAN transform direction">xsize </param>
