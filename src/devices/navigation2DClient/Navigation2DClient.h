@@ -24,10 +24,11 @@
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
-#include <string>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/INavigation2D.h>
 
+#include <mutex>
+#include <string>
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 
@@ -53,7 +54,7 @@ class Navigation2DClient:
         public yarp::os::PortReader
 {
 protected:
-    yarp::os::Mutex               m_mutex;
+    std::mutex               m_mutex;
     yarp::os::Port                m_rpc_port_navigation_server;
     yarp::os::Port                m_rpc_port_map_locations_server;
     yarp::os::Port                m_rpc_port_localization_server;

@@ -10,7 +10,7 @@
 #include "RobotDescriptionServer.h"
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
+#include <mutex>
 
 /*! \file RobotDescriptionServer.cpp */
 
@@ -47,7 +47,7 @@ bool yarp::dev::RobotDescriptionServer::open(yarp::os::Searchable &config)
 
 bool yarp::dev::RobotDescriptionServer::attachAll(const PolyDriverList &p)
 {
-    LockGuard guard(m_external_mutex);
+    std::lock_guard<std::mutex> guard(m_external_mutex);
     for (int i = 0; i < p.size(); i++)
     {
         //yDebug() << "***************" << p[i]->poly->getOptions().toString();
@@ -67,7 +67,7 @@ bool yarp::dev::RobotDescriptionServer::attachAll(const PolyDriverList &p)
 
 bool yarp::dev::RobotDescriptionServer::detachAll()
 {
-    LockGuard guard(m_external_mutex);
+    std::lock_guard<std::mutex> guard(m_external_mutex);
     m_robot_devices.clear();
     return true;
 }
@@ -80,7 +80,7 @@ bool yarp::dev::RobotDescriptionServer::close()
 
 bool yarp::dev::RobotDescriptionServer::add_device(DeviceDescription dev)
 {
-    LockGuard guard(m_internal_mutex);
+    std::lock_guard<std::mutex> guard(m_internal_mutex);
     for (auto& m_robot_device : m_robot_devices)
     {
         if (dev.device_name == m_robot_device.device_name)
@@ -95,7 +95,7 @@ bool yarp::dev::RobotDescriptionServer::add_device(DeviceDescription dev)
 
 bool yarp::dev::RobotDescriptionServer::remove_device(DeviceDescription dev)
 {
-    LockGuard guard(m_internal_mutex);
+    std::lock_guard<std::mutex> guard(m_internal_mutex);
     for (auto it = m_robot_devices.begin(); it != m_robot_devices.end(); it++)
     {
         if (dev.device_name == it->device_name)
@@ -109,7 +109,7 @@ bool yarp::dev::RobotDescriptionServer::remove_device(DeviceDescription dev)
 
 bool yarp::dev::RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
 {
-    LockGuard guard(m_external_mutex);
+    std::lock_guard<std::mutex> guard(m_external_mutex);
     yarp::os::Bottle in;
     yarp::os::Bottle out;
     bool             ret;

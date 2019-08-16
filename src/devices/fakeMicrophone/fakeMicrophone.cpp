@@ -6,15 +6,17 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <string>
+#include "fakeMicrophone.h"
+
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
 
-#include <fakeMicrophone.h>
+#include <mutex>
+#include <string>
+
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -142,7 +144,7 @@ void fakeMicrophone::run()
 
 bool fakeMicrophone::startRecording()
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_isRecording = true;
 #ifdef BUFFER_AUTOCLEAR
     this->m_recDataBuffer->clear();
@@ -154,7 +156,7 @@ bool fakeMicrophone::startRecording()
 
 bool fakeMicrophone::stopRecording()
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_isRecording = false;
 #ifdef BUFFER_AUTOCLEAR
     this->m_recDataBuffer->clear();
@@ -182,7 +184,7 @@ bool fakeMicrophone::getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSi
 
 bool fakeMicrophone::resetRecordingAudioBuffer()
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_inputBuffer->clear();
     yDebug() << "PortAudioRecorderDeviceDriver::resetRecordingAudioBuffer";
     return true;
@@ -212,7 +214,7 @@ bool fakeMicrophone::getSound(yarp::sig::Sound& sound, size_t min_number_of_samp
     }
 
     //prevents simultaneous start/stop/reset etc.
-    //LockGuard lock(m_mutex); //This must be used carefully
+    //std::lock_guard<std::mutex> lock(m_mutex); //This must be used carefully
 
     //check on input parameters
     if (max_number_of_samples < min_number_of_samples)

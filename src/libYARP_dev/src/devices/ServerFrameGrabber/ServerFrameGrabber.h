@@ -22,10 +22,14 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/RateThread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/dev/IVisualParamsImpl.h>
+
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#include <yarp/os/RateThread.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+
 namespace yarp {
     namespace dev {
         class ServerFrameGrabber;

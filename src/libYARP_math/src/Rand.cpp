@@ -7,11 +7,12 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/Mutex.h>
 #include <yarp/math/Rand.h>
+
 #include <ctime>
 #include <cstdio>
 #include <cmath>
+#include <mutex>
 
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -26,7 +27,7 @@ using namespace yarp::math::impl;
 */
 class ThreadSafeRandScalar : public RandScalar
 {
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
 public:
     ThreadSafeRandScalar(): RandScalar()
     {

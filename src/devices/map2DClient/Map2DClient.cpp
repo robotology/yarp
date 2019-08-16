@@ -21,7 +21,7 @@
 #include "Map2DClient.h"
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
+#include <mutex>
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/dev/GenericVocabs.h>
 

@@ -11,7 +11,6 @@
 #include <yarp/conf/numeric.h>
 #include <yarp/conf/system.h>
 
-#include <yarp/os/Mutex.h>
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Network.h>
@@ -25,6 +24,7 @@
 
 #include <cstring>
 #include <list>
+#include <mutex>
 #include <utility>
 
 
@@ -46,8 +46,8 @@ public:
     Waiters* waiters;
     Port port;
 
-    Mutex listMutex;
-    Mutex timeMutex;
+    std::mutex listMutex;
+    std::mutex timeMutex;
 
     std::int32_t sec{0};
     std::int32_t nsec{0};

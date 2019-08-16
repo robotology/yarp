@@ -10,7 +10,6 @@
 
 #include <yarp/conf/compiler.h>
 
-#include <yarp/os/Mutex.h>
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
@@ -27,6 +26,7 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <mutex>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -182,7 +182,7 @@ public:
     Port port;
     Node* owner{nullptr};
 
-    Mutex mutex;
+    std::mutex mutex;
     std::string name;
     std::string prev_name;
     bool has_prev_name{false};

@@ -25,7 +25,7 @@
 #include <yarp/math/Math.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
+#include <mutex>
 #include <cstdlib>
 #include <fstream>
 #include <yarp/os/Publisher.h>
@@ -580,7 +580,7 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
 
 bool Map2DServer::read(yarp::os::ConnectionReader& connection)
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     yarp::os::Bottle in;
     yarp::os::Bottle out;
     bool ok = in.read(connection);

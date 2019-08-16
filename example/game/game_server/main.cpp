@@ -24,14 +24,12 @@
 #include "Player.h"
 
 #include <yarp/os/all.h>
+#include <mutex>
 #include <string>
 
 using namespace yarp::os;
 
-typedef std::string String;
-
-
-Mutex clientMutex();
+std::mutex clientMutex;
 static int clientCount = 0;
 
 
@@ -40,7 +38,7 @@ public:
     int id;
     bool loggedOn;
     Player player;
-    String result;
+    std::string result;
     ConnectionWriter *writer;
     Replier& broadcaster;
 
@@ -70,7 +68,7 @@ public:
                connection.getRemoteContact().getName().c_str());
         if (!loggedOn) {
             printf("Completing login...\n");
-            String cmd = "connect ";
+            std::string cmd = "connect ";
             cmd += connection.getRemoteContact().getName().c_str();
             player.apply(cmd.c_str());
             loggedOn = true;
@@ -81,7 +79,7 @@ public:
         if (writer!=NULL) {
             // just send the same thing back
             std::string str = receive.get(0).asString();
-            String ask = str.c_str();
+            std::string ask = str.c_str();
             for (int i=1; i<receive.size(); i++) {
                 ask += " ";
                 ask += receive.get(i).asString().c_str();

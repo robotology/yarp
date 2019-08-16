@@ -20,7 +20,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~Clock() = default;
+    virtual ~Clock();
 
     /**
      * Return the current time in seconds, relative to an arbitrary

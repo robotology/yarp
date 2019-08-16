@@ -23,7 +23,7 @@ namespace os {
 class YARP_OS_API Contactables
 {
 public:
-    virtual ~Contactables() {}
+    virtual ~Contactables();
 
     /**
      * add a Contactable to the container.

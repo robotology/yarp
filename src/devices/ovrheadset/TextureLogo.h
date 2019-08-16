@@ -21,7 +21,6 @@
 
 #include <GL/glew.h>
 #include <OVR_Math.h>
-#include <yarp/os/Mutex.h>
 
 
 class TextureLogo

@@ -11,11 +11,11 @@
 
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
 
 #include <algorithm>
 #include <iostream>
 #include <map>
+#include <mutex>
 #include <cassert>
 
 using namespace yarp::os;
@@ -496,7 +496,7 @@ void ControlBoardRemapper::configureBuffers()
 
 bool ControlBoardRemapper::setControlModeAllAxes(const int cm)
 {
-    LockGuard guard(buffers.mutex);
+    std::lock_guard<std::mutex> lock(buffers.mutex);
 
     for(int j=0; j < controlledJoints; j++)
     {
@@ -1022,7 +1022,7 @@ bool ControlBoardRemapper::positionMove(int j, double ref)
 bool ControlBoardRemapper::positionMove(const double *refs)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(refs,remappedControlBoards);
 
@@ -1042,7 +1042,7 @@ bool ControlBoardRemapper::positionMove(const double *refs)
 bool ControlBoardRemapper::positionMove(const int n_joints, const int *joints, const double *refs)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(refs,n_joints,joints,remappedControlBoards);
 
@@ -1083,7 +1083,7 @@ bool ControlBoardRemapper::getTargetPosition(const int j, double* ref)
 bool ControlBoardRemapper::getTargetPositions(double *spds)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
@@ -1114,7 +1114,7 @@ bool ControlBoardRemapper::getTargetPositions(double *spds)
 bool ControlBoardRemapper::getTargetPositions(const int n_joints, const int *joints, double *targets)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     // Resize the input buffers
     selectedJointsBuffers.resizeSubControlBoardBuffers(n_joints,joints,remappedControlBoards);
@@ -1167,7 +1167,7 @@ bool ControlBoardRemapper::relativeMove(int j, double delta)
 bool ControlBoardRemapper::relativeMove(const double *deltas)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(deltas,remappedControlBoards);
 
@@ -1187,7 +1187,7 @@ bool ControlBoardRemapper::relativeMove(const double *deltas)
 bool ControlBoardRemapper::relativeMove(const int n_joints, const int *joints, const double *deltas)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(deltas,n_joints,joints,remappedControlBoards);
 
@@ -1314,7 +1314,7 @@ bool ControlBoardRemapper::setRefSpeed(int j, double sp)
 bool ControlBoardRemapper::setRefSpeeds(const double *spds)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(spds,remappedControlBoards);
 
@@ -1334,7 +1334,7 @@ bool ControlBoardRemapper::setRefSpeeds(const double *spds)
 bool ControlBoardRemapper::setRefSpeeds(const int n_joints, const int *joints, const double *spds)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(spds,n_joints,joints,remappedControlBoards);
 
@@ -1374,7 +1374,7 @@ bool ControlBoardRemapper::setRefAcceleration(int j, double acc)
 bool ControlBoardRemapper::setRefAccelerations(const double *accs)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(accs,remappedControlBoards);
 
@@ -1394,7 +1394,7 @@ bool ControlBoardRemapper::setRefAccelerations(const double *accs)
 bool ControlBoardRemapper::setRefAccelerations(const int n_joints, const int *joints, const double *accs)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(accs,n_joints,joints,remappedControlBoards);
 
@@ -1434,7 +1434,7 @@ bool ControlBoardRemapper::getRefSpeed(int j, double *ref)
 bool ControlBoardRemapper::getRefSpeeds(double *spds)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
@@ -1465,7 +1465,7 @@ bool ControlBoardRemapper::getRefSpeeds(double *spds)
 bool ControlBoardRemapper::getRefSpeeds(const int n_joints, const int *joints, double *spds)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     // Resize the input buffers
     selectedJointsBuffers.resizeSubControlBoardBuffers(n_joints,joints,remappedControlBoards);
@@ -1518,7 +1518,7 @@ bool ControlBoardRemapper::getRefAcceleration(int j, double *acc)
 bool ControlBoardRemapper::getRefAccelerations(double *accs)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
@@ -1548,7 +1548,7 @@ bool ControlBoardRemapper::getRefAccelerations(double *accs)
 bool ControlBoardRemapper::getRefAccelerations(const int n_joints, const int *joints, double *accs)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     // Resize the input buffers
     selectedJointsBuffers.resizeSubControlBoardBuffers(n_joints,joints,remappedControlBoards);
@@ -1601,7 +1601,7 @@ bool ControlBoardRemapper::stop(int j)
 bool ControlBoardRemapper::stop()
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
@@ -1621,8 +1621,8 @@ bool ControlBoardRemapper::stop()
 bool ControlBoardRemapper::stop(const int n_joints, const int *joints)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
-    yarp::os::LockGuard(buffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock2(buffers.mutex);
 
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(buffers.dummyBuffer.data(),n_joints,joints,remappedControlBoards);
@@ -1665,7 +1665,7 @@ bool ControlBoardRemapper::velocityMove(int j, double v)
 bool ControlBoardRemapper::velocityMove(const double *v)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(v,remappedControlBoards);
 
@@ -3256,7 +3256,7 @@ bool ControlBoardRemapper::getRefTorque(int j, double *t)
 bool ControlBoardRemapper::setRefTorques(const double *t)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(t,remappedControlBoards);
 
@@ -3304,7 +3304,7 @@ bool ControlBoardRemapper::setRefTorque(int j, double t)
 bool ControlBoardRemapper::setRefTorques(const int n_joints, const int *joints, const double *t)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(t,n_joints,joints,remappedControlBoards);
 
@@ -3576,7 +3576,7 @@ bool ControlBoardRemapper::getControlMode(int j, int *mode)
 bool ControlBoardRemapper::getControlModes(int *modes)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
@@ -3607,7 +3607,7 @@ bool ControlBoardRemapper::getControlModes(int *modes)
 bool ControlBoardRemapper::getControlModes(const int n_joints, const int *joints, int *modes)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     // Resize the input buffers
     selectedJointsBuffers.resizeSubControlBoardBuffers(n_joints,joints,remappedControlBoards);
@@ -3659,7 +3659,7 @@ bool ControlBoardRemapper::setControlMode(const int j, const int mode)
 bool ControlBoardRemapper::setControlModes(const int n_joints, const int *joints, int *modes)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(modes,n_joints,joints,remappedControlBoards);
 
@@ -3679,7 +3679,7 @@ bool ControlBoardRemapper::setControlModes(const int n_joints, const int *joints
 bool ControlBoardRemapper::setControlModes(int *modes)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(modes,remappedControlBoards);
 
@@ -3719,7 +3719,7 @@ bool ControlBoardRemapper::setPosition(int j, double ref)
 bool ControlBoardRemapper::setPositions(const int n_joints, const int *joints, const double *dpos)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(dpos,n_joints,joints,remappedControlBoards);
 
@@ -3739,7 +3739,7 @@ bool ControlBoardRemapper::setPositions(const int n_joints, const int *joints, c
 bool ControlBoardRemapper::setPositions(const double *refs)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(refs,remappedControlBoards);
 
@@ -3780,7 +3780,7 @@ yarp::os::Stamp ControlBoardRemapper::getLastInputStamp()
     }
 
 
-    yarp::os::LockGuard(buffers.mutex);
+    std::lock_guard<std::mutex> lock(buffers.mutex);
 
     if( collectedTimestamps > 0 )
     {
@@ -3818,7 +3818,7 @@ bool ControlBoardRemapper::getRefPosition(const int j, double* ref)
 bool ControlBoardRemapper::getRefPositions(double *spds)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
@@ -3849,7 +3849,7 @@ bool ControlBoardRemapper::getRefPositions(double *spds)
 bool ControlBoardRemapper::getRefPositions(const int n_joints, const int *joints, double *targets)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     // Resize the input buffers
     selectedJointsBuffers.resizeSubControlBoardBuffers(n_joints,joints,remappedControlBoards);
@@ -3886,7 +3886,7 @@ bool ControlBoardRemapper::getRefPositions(const int n_joints, const int *joints
 bool ControlBoardRemapper::velocityMove(const int n_joints, const int *joints, const double *spds)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(spds,n_joints,joints,remappedControlBoards);
 
@@ -3928,7 +3928,7 @@ bool ControlBoardRemapper::getRefVelocity(const int j, double* vel)
 bool ControlBoardRemapper::getRefVelocities(double* vels)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
@@ -3958,7 +3958,7 @@ bool ControlBoardRemapper::getRefVelocities(double* vels)
 bool ControlBoardRemapper::getRefVelocities(const int n_joints, const int* joints, double* vels)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     // Resize the input buffers
     selectedJointsBuffers.resizeSubControlBoardBuffers(n_joints,joints,remappedControlBoards);
@@ -4011,7 +4011,7 @@ bool ControlBoardRemapper::getInteractionMode(int j, yarp::dev::InteractionModeE
 bool ControlBoardRemapper::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     // Resize the input buffers
     selectedJointsBuffers.resizeSubControlBoardBuffers(n_joints,joints,remappedControlBoards);
@@ -4044,7 +4044,7 @@ bool ControlBoardRemapper::getInteractionModes(int n_joints, int *joints, yarp::
 bool ControlBoardRemapper::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
@@ -4094,7 +4094,7 @@ bool ControlBoardRemapper::setInteractionMode(int j, yarp::dev::InteractionModeE
 bool ControlBoardRemapper::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(modes,n_joints,joints,remappedControlBoards);
 
@@ -4114,7 +4114,7 @@ bool ControlBoardRemapper::setInteractionModes(int n_joints, int *joints, yarp::
 bool ControlBoardRemapper::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(modes,remappedControlBoards);
 
@@ -4386,7 +4386,7 @@ bool ControlBoardRemapper::setRefCurrent(int m, double curr)
 bool ControlBoardRemapper::setRefCurrents(const int n_motor, const int* motors, const double* currs)
 {
     bool ret=true;
-    yarp::os::LockGuard(selectedJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(selectedJointsBuffers.mutex);
 
     selectedJointsBuffers.fillSubControlBoardBuffersFromArbitraryJointVector(currs,n_motor,motors,remappedControlBoards);
 
@@ -4412,7 +4412,7 @@ bool ControlBoardRemapper::setRefCurrents(const int n_motor, const int* motors, 
 bool ControlBoardRemapper::setRefCurrents(const double* currs)
 {
     bool ret=true;
-    yarp::os::LockGuard(allJointsBuffers.mutex);
+    std::lock_guard<std::mutex> lock(allJointsBuffers.mutex);
 
     allJointsBuffers.fillSubControlBoardBuffersFromCompleteJointVector(currs,remappedControlBoards);
 

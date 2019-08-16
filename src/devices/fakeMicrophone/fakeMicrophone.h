@@ -6,7 +6,6 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <string>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/GenericSensorInterfaces.h>
@@ -15,6 +14,8 @@
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
 
+#include <string>
+#include <mutex>
 
 #define DEFAULT_PERIOD 0.01   //s
 
@@ -52,7 +53,7 @@ private:
     void run() override;
 
     bool m_isRecording;
-    yarp::os::Mutex  m_mutex;
+    std::mutex  m_mutex;
     yarp::sig::Sound m_audioFile;
 
     size_t m_cfg_numSamples;

@@ -26,7 +26,7 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/BufferedPort.h>
-#include <yarp/os/Mutex.h>
+#include <mutex>
 #include <yarp/sig/Image.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcClient.h>
@@ -39,7 +39,7 @@ class QMainWindow;
 struct partsData
     {
         WorkerClass             *worker;                            //personal rate thread
-        yarp::os::Mutex         mutex;                              //mutex
+        std::mutex         mutex;                              //mutex
         std::string             name;                               //string containing the name of the part
         std::string             infoFile;                           //string containing the path of the infoFile
         std::string             logFile;                            //string containing the path of the logFile

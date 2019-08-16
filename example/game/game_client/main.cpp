@@ -11,6 +11,7 @@
 #include <string.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <mutex>
 
 #include <yarp/os/all.h>
 #include <yarp/Logger.h>
@@ -35,7 +36,7 @@ String pad(const String& src, int len = 70) {
 	return result;
 }
 
-Mutex broadcastMutex();
+std::mutex broadcastMutex();
 String broadcast = "";
 
 class BroadcastHandler : public TypedReaderCallback<Bottle> {
@@ -54,7 +55,7 @@ public:
     Port p;
     String name;
     PortReaderBuffer<Bottle> reader;
-    Mutex mutex;
+    std::mutex mutex;
 
     UpdateThread() : mutex() {
     }

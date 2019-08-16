@@ -11,7 +11,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/Mutex.h>
+#include <mutex>
 
 #include <catch.hpp>
 #include <harness.h>
@@ -23,7 +23,7 @@ class MessageStackWorker : public PortReader
 public:
     Semaphore go;
     Semaphore gone;
-    Mutex mutex;
+    std::mutex mutex;
     Bottle last;
 
     MessageStackWorker() :

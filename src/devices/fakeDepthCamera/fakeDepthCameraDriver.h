@@ -12,7 +12,6 @@
 #include <iostream>
 #include <string>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/os/RateThread.h>
 #include <yarp/sig/all.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/os/Stamp.h>

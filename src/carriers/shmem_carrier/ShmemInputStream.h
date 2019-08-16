@@ -13,10 +13,11 @@
 #include "ShmemTypes.h"
 
 #include <yarp/os/InputStream.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/Logger.h>
+
+#include <mutex>
 
 #include <ace/config.h>
 #include <ace/Mutex.h>
@@ -64,7 +65,7 @@ protected:
     ACE_Process_Mutex* m_pWaitDataMutex;
 #endif
 
-    yarp::os::Mutex m_ReadSerializerMutex;
+    std::mutex m_ReadSerializerMutex;
 
     ACE_Shared_Memory* m_pMap;
     char* m_pData;

@@ -243,7 +243,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
 
         std::string str = snd1.toString();
         yDebug("sound snd1.toSring():");
-        yDebug(str.c_str());
+        yDebug("%s", str.c_str());
     }
 
     SECTION("check sound transmission.")

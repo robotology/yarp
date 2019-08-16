@@ -12,7 +12,6 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/Dispatcher.h>
@@ -20,6 +19,7 @@
 #include <yarp/os/impl/SplitString.h>
 
 #include <map>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -482,7 +482,7 @@ protected:
     int basePort;
 
 private:
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
 };
 
 } // namespace impl

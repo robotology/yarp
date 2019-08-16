@@ -28,7 +28,7 @@
 
 #include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
+#include <mutex>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -350,7 +350,7 @@ bool PortAudioPlayerDeviceDriver::immediateSound(const yarp::sig::Sound& sound)
 bool PortAudioPlayerDeviceDriver::renderSound(const yarp::sig::Sound& sound)
 {
     //prevents simultaneous start/stop/reset etc.
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
 
     size_t freq  = sound.getFrequency();
     size_t chans = sound.getChannels();
@@ -427,21 +427,21 @@ bool PortAudioPlayerDeviceDriver::getPlaybackAudioBufferMaxSize(yarp::dev::Audio
 
 bool PortAudioPlayerDeviceDriver::resetPlaybackAudioBuffer()
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     this->m_playDataBuffer->clear();
     return true;
 }
 
 bool PortAudioPlayerDeviceDriver::startPlayback()
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_pThread.something_to_play = true;
     return true;
 }
 
 bool PortAudioPlayerDeviceDriver::stopPlayback()
 {
-    LockGuard lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_pThread.something_to_play = false;
     return true;
 }

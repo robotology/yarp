@@ -12,9 +12,9 @@
 #include <yarp/os/api.h>
 
 #include <yarp/os/Bottle.h>
-#include <yarp/os/LockGuard.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/Property.h>
+
+#include <mutex>
 
 namespace yarp {
 namespace os {
@@ -32,7 +32,7 @@ private:
     Bottle plugins;
     Bottle search_path;
     Property config;
-    mutable yarp::os::Mutex mutex;
+    mutable std::mutex mutex;
 
 public:
     /**
@@ -64,7 +64,7 @@ public:
      */
     Bottle getSelectedPlugins() const
     {
-        yarp::os::LockGuard guard(mutex);
+        std::lock_guard<std::mutex> guard(mutex);
         return plugins;
     }
 
@@ -74,7 +74,7 @@ public:
      */
     Bottle getSearchPath() const
     {
-        yarp::os::LockGuard lock(mutex);
+        std::lock_guard<std::mutex> guard(mutex);
         return search_path;
     }
 

@@ -18,11 +18,11 @@
 
 #include "depthCameraDriver.h"
 
-#include <yarp/os/LockGuard.h>
 #include <yarp/os/Value.h>
 
 #include <algorithm>
 #include <cmath>
+#include <mutex>
 
 using namespace yarp::dev;
 using namespace yarp::sig;
@@ -60,7 +60,7 @@ class streamFrameListener : public openni::VideoStream::NewFrameListener
 public:
 
     //Properties
-    yarp::os::Mutex         mutex;
+    std::mutex         mutex;
     yarp::os::Stamp         stamp;
     yarp::sig::FlexImage    image;
     openni::PixelFormat     pixF{openni::PixelFormat::PIXEL_FORMAT_DEPTH_1_MM};
@@ -75,13 +75,13 @@ public:
     void destroy(){frameRef.release();}
     bool getImage(FlexImage& inputImage)
     {
-        LockGuard guard(mutex);
+        std::lock_guard<std::mutex> guard(mutex);
         return inputImage.copy(image);
     }
 
     yarp::os::Stamp getStamp()
     {
-        LockGuard guard(mutex);
+        std::lock_guard<std::mutex> guard(mutex);
         return stamp;
     }
 
@@ -97,7 +97,7 @@ streamFrameListener::streamFrameListener()
 
 void streamFrameListener::onNewFrame(openni::VideoStream& stream)
 {
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     stream.readFrame(&frameRef);
 
     if (!frameRef.isValid() || !frameRef.getData())
@@ -820,7 +820,7 @@ bool depthCameraDriver::getImage(FlexImage& Frame, Stamp* Stamp, streamFrameList
 
 bool depthCameraDriver::getImage(ImageOf<PixelFloat>& Frame, Stamp* Stamp, streamFrameListener* sourceFrame)
 {
-    LockGuard guard(sourceFrame->mutex);
+    std::lock_guard<std::mutex> guard(sourceFrame->mutex);
     if (!sourceFrame->isReady)
     {
         yError() << "device not ready";

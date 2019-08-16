@@ -10,10 +10,8 @@
 #ifndef FAKE_LASER_H
 #define FAKE_LASER_H
 
-#include <string>
 
 #include <yarp/os/PeriodicThread.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/ILocalization2D.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -21,7 +19,10 @@
 #include <yarp/dev/MapGrid2D.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
+
+#include <mutex>
 #include <random>
+#include <string>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -68,7 +69,7 @@ protected:
     PolyDriver driver;
     test_mode_t m_test_mode;
     localization_mode_t m_loc_mode;
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
 
     double period;
     int sensorsNum;

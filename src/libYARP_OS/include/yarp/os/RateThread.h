@@ -10,6 +10,12 @@
 #ifndef YARP_OS_RATETHREAD_H
 #define YARP_OS_RATETHREAD_H
 
+#include <yarp/conf/system.h>
+
+#if !defined(YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE)
+YARP_COMPILER_WARNING("<yarp/os/RateThread.h> file is deprecated")
+#endif
+
 #include <yarp/os/api.h>
 
 #include <yarp/os/PeriodicThread.h>

@@ -15,26 +15,26 @@ static int __custom_yarp_is_initialized = 0;
 
 // customizable initialization and shutdown functions
 
-#ifdef PLUGIN_INIT_FUNCTION
-extern "C" YARP_IMPORT void PLUGIN_INIT_FUNCTION();
+#ifdef yarpcar_INIT_FUNCTION
+extern "C" YARP_IMPORT void yarpcar_INIT_FUNCTION();
 #endif
 
-#ifdef PLUGIN_INIT_FUNCTION2
-extern "C" YARP_IMPORT void PLUGIN_INIT_FUNCTION2();
+#ifdef yarpmod_INIT_FUNCTION
+extern "C" YARP_IMPORT void yarpmod_INIT_FUNCTION();
 #endif
-#ifdef PLUGIN_INIT_FUNCTION3
-extern "C" YARP_IMPORT void PLUGIN_INIT_FUNCTION3();
+#ifdef yarprfmod_INIT_FUNCTION
+extern "C" YARP_IMPORT void yarprfmod_INIT_FUNCTION();
 #endif
 
 extern "C" void yarpCustomInit() {
-#ifdef PLUGIN_INIT_FUNCTION
-  PLUGIN_INIT_FUNCTION();
+#ifdef yarpcar_INIT_FUNCTION
+  yarpcar_INIT_FUNCTION();
 #endif
-#ifdef PLUGIN_INIT_FUNCTION2
-  PLUGIN_INIT_FUNCTION2();
+#ifdef yarpmod_INIT_FUNCTION
+  yarpmod_INIT_FUNCTION();
 #endif
-#ifdef PLUGIN_INIT_FUNCTION3
-  PLUGIN_INIT_FUNCTION3();
+#ifdef yarprfmod_INIT_FUNCTION
+  yarprfmod_INIT_FUNCTION();
 #endif
 }
 

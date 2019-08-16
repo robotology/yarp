@@ -21,7 +21,6 @@
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/LockGuard.h>
 
 #include <OVR_CAPI_GL.h>
 

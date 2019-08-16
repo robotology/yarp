@@ -26,6 +26,7 @@
 #include <yarp/os/impl/PortCorePackets.h>
 #include <yarp/os/impl/ThreadImpl.h>
 
+#include <mutex>
 #include <vector>
 
 namespace yarp {
@@ -137,8 +138,8 @@ public:
 public:
     yarp::os::Carrier* outputModifier;
     yarp::os::Carrier* inputModifier;
-    yarp::os::Mutex outputMutex;
-    yarp::os::Mutex inputMutex;
+    std::mutex outputMutex;
+    std::mutex inputMutex;
 };
 
 class YARP_OS_impl_API PortCore :
@@ -289,12 +290,12 @@ public:
      */
     void setFlags(int flags)
     {
-        this->flags = flags;
+        this->m_flags = flags;
     }
 
     void setContactable(Contactable* contactable)
     {
-        this->contactable = contactable;
+        this->m_contactable = contactable;
     }
 
     /**
@@ -302,7 +303,7 @@ public:
      */
     int getFlags()
     {
-        return flags;
+        return m_flags;
     }
 
     /**
@@ -346,7 +347,7 @@ public:
      */
     void setWaitBeforeSend(bool waitBeforeSend)
     {
-        this->waitBeforeSend = waitBeforeSend;
+        this->m_waitBeforeSend = waitBeforeSend;
     }
 
     /**
@@ -355,7 +356,7 @@ public:
      */
     void setWaitAfterSend(bool waitAfterSend)
     {
-        this->waitAfterSend = waitAfterSend;
+        this->m_waitAfterSend = waitAfterSend;
     }
 
     /**
@@ -503,54 +504,54 @@ public:
 
 private:
     // main internal PortCore state and operations
-    std::vector<PortCoreUnit *> units;  ///< list of connections
-    yarp::os::Semaphore stateSema;       ///< control access to essential port state
-    yarp::os::Mutex packetMutex;      ///< control access to message cache
-    yarp::os::Semaphore connectionChange; ///< signal changes in connections
-    Logger log;  ///< message logger
-    Face *face;  ///< network server
-    std::string name; ///< name of port
-    yarp::os::Contact address;    ///< network address of port
-    yarp::os::PortReader *reader; ///< where to send read events
-    yarp::os::PortReader *adminReader; ///< where to send admin read events
-    yarp::os::PortReaderCreator *readableCreator; ///< factory for readers
-    yarp::os::PortReport *eventReporter; ///< where to send general events
-    bool listening; ///< is the port server listening on the network?
-    bool running;   ///< is the port server thread running?
-    bool starting;  ///< is the port in its startup phase?
-    bool closing;   ///< is the port in its closing phase?
-    bool finished;  ///< is the port server thread finished running?
-    bool finishing; ///< is the port server thread trying to finish?
-    bool waitBeforeSend; ///< should we wait for all current writes to complete before writing more?
-    bool waitAfterSend;  ///< should we wait for writes to complete immediately after we start them?
-    bool controlRegistration;  ///< should the port unregister its name when shutting down?
-    bool interruptible;  ///< is the port in an interruptible state?
-    bool interrupted;    ///< is the port interrupted?
-    bool manual;    ///< is the port operating without a server?
-    int events;     ///< count of events that have occurred on the port
-    int connectionListeners;  ///< how many threads need notification of connection changes
-    int inputCount; ///< how many input connections do we have
-    int outputCount;///< how many output connections do we have
-    int dataOutputCount; ///< how many regular data output connections do we have
-    int flags;      ///< binary flags encoding restrictions on port
-    int verbosity;  ///< threshold on what warnings or debug messages are shown
-    bool logNeeded; ///< port needs to monitor message content
-    PortCorePackets packets; ///< a pool for tracking messages currently being sent
-    std::string envelope;///< user-defined wrapping data
-    float timeout;  ///< a timeout to apply to all network operations
-    int counter;    ///< port-unique ids for connections
-    yarp::os::Property *prop;  ///< optional unstructured properties associated with port
-    yarp::os::Contactable *contactable;  ///< user-facing object that contains this PortCore
-    yarp::os::Mutex *mutex; ///< callback optional access control lock
-    bool mutexOwned;        ///< do we own the optional callback lock
-    BufferedConnectionWriter envelopeWriter; ///< storage area for envelope, if present
+    std::vector<PortCoreUnit *> m_units;  ///< list of connections
+    yarp::os::Semaphore m_stateSemaphore;       ///< control access to essential port state
+    std::mutex m_packetMutex;      ///< control access to message cache
+    yarp::os::Semaphore m_connectionChangeSemaphore; ///< signal changes in connections
+    Logger m_log;  ///< message logger
+    Face *m_face;  ///< network server
+    std::string m_name; ///< name of port
+    yarp::os::Contact m_address;    ///< network address of port
+    yarp::os::PortReader *m_reader; ///< where to send read events
+    yarp::os::PortReader *m_adminReader; ///< where to send admin read events
+    yarp::os::PortReaderCreator *m_readableCreator; ///< factory for readers
+    yarp::os::PortReport *m_eventReporter; ///< where to send general events
+    bool m_listening; ///< is the port server listening on the network?
+    bool m_running;   ///< is the port server thread running?
+    bool m_starting;  ///< is the port in its startup phase?
+    bool m_closing;   ///< is the port in its closing phase?
+    bool m_finished;  ///< is the port server thread finished running?
+    bool m_finishing; ///< is the port server thread trying to finish?
+    bool m_waitBeforeSend; ///< should we wait for all current writes to complete before writing more?
+    bool m_waitAfterSend;  ///< should we wait for writes to complete immediately after we start them?
+    bool m_controlRegistration;  ///< should the port unregister its name when shutting down?
+    bool m_interruptible;  ///< is the port in an interruptible state?
+    bool m_interrupted;    ///< is the port interrupted?
+    bool m_manual;    ///< is the port operating without a server?
+    int m_events;     ///< count of events that have occurred on the port
+    int m_connectionListeners;  ///< how many threads need notification of connection changes
+    int m_inputCount; ///< how many input connections do we have
+    int m_outputCount;///< how many output connections do we have
+    int m_dataOutputCount; ///< how many regular data output connections do we have
+    int m_flags;      ///< binary flags encoding restrictions on port
+    int m_verbosity;  ///< threshold on what warnings or debug messages are shown
+    bool m_logNeeded; ///< port needs to monitor message content
+    PortCorePackets m_packets; ///< a pool for tracking messages currently being sent
+    std::string m_envelope;///< user-defined wrapping data
+    float m_timeout;  ///< a timeout to apply to all network operations
+    int m_counter;    ///< port-unique ids for connections
+    yarp::os::Property *m_prop;  ///< optional unstructured properties associated with port
+    yarp::os::Contactable *m_contactable;  ///< user-facing object that contains this PortCore
+    yarp::os::Mutex *m_mutex; ///< callback optional access control lock
+    bool m_mutexOwned;        ///< do we own the optional callback lock
+    BufferedConnectionWriter m_envelopeWriter; ///< storage area for envelope, if present
 
-    yarp::os::Mutex typeMutex;        ///< control access to type
-    bool checkedType;
-    Type typ;
+    std::mutex m_typeMutex; ///< control access to type
+    bool m_checkedType;
+    Type m_type;
 
     // port data modifier
-    yarp::os::impl::PortDataModifier modifier;
+    yarp::os::impl::PortDataModifier m_modifier;
 
     // set IP packet TOS
     bool setTypeOfService(PortCoreUnit* unit, int tos);

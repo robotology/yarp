@@ -34,12 +34,12 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Time.h>
 #include <yarp/sig/Image.h>
-#include <yarp/os/LockGuard.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/SystemClock.h>
 #include <yarp/math/FrameTransform.h>
 
 #include <cmath>
+#include <mutex>
 #include <unordered_map>
 #include <OVR_CAPI_Util.h>
 #include <OVR_Math.h>
@@ -1524,7 +1524,7 @@ bool yarp::dev::OVRHeadset::getStickDoF(unsigned int stick_id, unsigned int& DoF
 bool yarp::dev::OVRHeadset::getButton(unsigned int button_id, float& value)
 {
     if (inputStateError) return false;
-    yarp::os::LockGuard lock(inputStateMutex);
+    std::lock_guard<std::mutex> lock(inputStateMutex);
     if (button_id > buttonIdToOvrButton.size() - 1)
     {
         yError() << "OVRHeadset: button id out of bound";
@@ -1542,7 +1542,7 @@ bool yarp::dev::OVRHeadset::getTrackball(unsigned int trackball_id, yarp::sig::V
 bool yarp::dev::OVRHeadset::getHat(unsigned int hat_id, unsigned char& value)
 {
     if (inputStateError) return false;
-    yarp::os::LockGuard lock(inputStateMutex);
+    std::lock_guard<std::mutex> lock(inputStateMutex);
     if (hat_id > 0)
     {
         yError() << "OVRHeadset: hat id out of bound";
@@ -1557,7 +1557,7 @@ bool yarp::dev::OVRHeadset::getHat(unsigned int hat_id, unsigned char& value)
 
 bool yarp::dev::OVRHeadset::getAxis(unsigned int axis_id, double& value)
 {
-    yarp::os::LockGuard lock(inputStateMutex);
+    std::lock_guard<std::mutex> lock(inputStateMutex);
     if (axis_id > axisIdToValue.size())
     {
         yError() << "OVRHeadset: axis id out of bound";
@@ -1571,7 +1571,7 @@ bool yarp::dev::OVRHeadset::getAxis(unsigned int axis_id, double& value)
 bool yarp::dev::OVRHeadset::getStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode)
 {
     if (inputStateError) return false;
-    yarp::os::LockGuard lock(inputStateMutex);
+    std::lock_guard<std::mutex> lock(inputStateMutex);
     if (getStickAsAxis)
     {
         return false;

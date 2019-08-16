@@ -7,10 +7,9 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/Mutex.h>
+#include <mutex>
 #include <yarp/os/Time.h>
 
 #include <catch.hpp>
@@ -31,7 +30,7 @@ namespace {
 class ThreadImmediateReturn : public Thread
 {
     public:
-        virtual void run() override
+        void run() override
         {
         }
 };
@@ -42,7 +41,7 @@ public:
     double delay;
     bool hold;
     bool active{true};
-    Mutex mutex;
+    std::mutex mutex;
 
     ThreadDelay(double delay = 0.5, bool hold = false) :
             delay(delay),
@@ -50,7 +49,7 @@ public:
     {
     }
 
-    virtual void run() override
+    void run() override
     {
         bool h;
         do {
@@ -66,16 +65,16 @@ public:
 class Thread0: public Thread
 {
 public:
-    virtual void run() override
+    void run() override
     {
         Time::delay(0.01);
     }
 };
 
-class Thread1 : public Runnable
+class Thread1 : public Thread
 {
 public:
-    virtual void run() override
+    void run() override
     {
         for (int i=0; i<5; i++) {
             //printf("tick %d\n", i);
@@ -88,10 +87,10 @@ public:
     }
 };
 
-class Thread2 : public ThreadImpl
+class Thread2 : public Thread
 {
 public:
-    virtual void run() override
+    void run() override
     {
         bool done = false;
         while (!done) {
@@ -112,7 +111,7 @@ public:
         //printf("done\n");
     }
 
-    virtual void close() override
+    void onStop() override
     {
         mutex.lock();
         finished = true;
@@ -124,7 +123,7 @@ public:
     }
 
 private:
-    Mutex mutex;
+    std::mutex mutex;
     bool finished{false};
 };
 
@@ -134,25 +133,25 @@ public:
     bool onStopCalled{false};
     int state{-1};
 
-    virtual bool threadInit() override
+    bool threadInit() override
     {
         onStopCalled=false;
         state=0;
         return true;
     }
 
-    virtual void run() override
+    void run() override
     {
         Time::delay(0.5);
         state++;
     }
 
-    virtual void threadRelease() override
+    void threadRelease() override
     {
         state++;
     }
 
-    virtual void onStop() override
+    void onStop() override
     {
         onStopCalled=true;
     }
@@ -164,7 +163,7 @@ public:
     int state{-1};
     bool fail{false};
 
-    virtual bool threadInit() override
+    bool threadInit() override
     {
         state=0;
         return !fail;
@@ -177,17 +176,18 @@ public:
 
     void afterStart(bool s) override
     {
-        if (!s)
-        {state=-1;}
+        if (!s) {
+            state=-1;
+        }
     }
 
-    virtual void run() override
+    void run() override
     {
         Time::delay(1);
         state++;
     }
 
-    virtual void threadRelease() override
+    void threadRelease() override
     {
         state++;
     }
@@ -198,7 +198,7 @@ class Thread5: public Thread
 public:
     int state{0};
     bool fail{false};
-    Mutex mutex;
+    std::mutex mutex;
 
     void threadWillFail(bool f)
     {
@@ -208,7 +208,7 @@ public:
         mutex.unlock();
     }
 
-    virtual bool threadInit() override
+    bool threadInit() override
     {
         Time::delay(0.5);
         mutex.lock();
@@ -217,7 +217,7 @@ public:
         return !fail;
     }
 
-    virtual void afterStart(bool s) override
+    void afterStart(bool s) override
     {
         mutex.lock();
         if(!s)
@@ -225,11 +225,11 @@ public:
         mutex.unlock();
     }
 
-    virtual void run() override
+    void run() override
     {
     }
 
-    virtual void threadRelease() override
+    void threadRelease() override
     {
         Time::delay(0.5);
         mutex.lock();
@@ -244,46 +244,10 @@ public:
     long int dynamicId{-1};
     long int staticId{-1};
 
-    virtual void run() override
+    void run() override
     {
         dynamicId = getKey();
         staticId = Thread::getKeyOfCaller();
-    }
-};
-
-class Runnable1: public Runnable
-{
-public:
-    bool initCalled{false};
-    bool notified{false};
-    bool releaseCalled{false};
-    bool executed{false};
-    bool onStopCalled{false};
-    bool closeCalled{false};
-
-    virtual bool threadInit() override
-    {
-        initCalled=true;
-        onStopCalled=false;
-        return true;
-    }
-
-    void afterStart(bool s) override
-    {   notified=true;}
-
-    virtual void run() override {
-        Time::delay(0.5);
-        executed=true;
-    }
-
-    virtual void close() override
-    {
-        closeCalled = true;
-    }
-
-    virtual void threadRelease() override
-    {
-        releaseCalled=true;
     }
 };
 } // namespace
@@ -302,22 +266,20 @@ TEST_CASE("OS::ThreadTest", "[yarp::os]")
 
     SECTION("testing cross-thread synchronization...")
     {
-        int tct = ThreadImpl::getCount();
-        Thread1    bozo;
-        Thread1    bozo2;
+        int tct = Thread::getCount();
+        Thread1    t1;
+        Thread1    t2;
         Thread2    burper;
-        ThreadImpl t1(&bozo);
-        ThreadImpl t2(&bozo2);
         INFO("starting threads ...");
         burper.start();
         t1.start();
         Time::delay(0.05);
         t2.start();
-        CHECK(ThreadImpl::getCount() == tct+3); // thread count
-        CHECK(t1.join() == 0); // thread t1 joined succesfully
-        CHECK(t2.join() == 0); // thread t1 joined succesfully
-        burper.close();
-        CHECK(burper.join() == 0); // thread burper joined succesfully
+        CHECK(Thread::getCount() == tct+3); // thread count
+        CHECK(t1.join()); // thread t1 joined succesfully
+        CHECK(t2.join()); // thread t2 joined succesfully
+        burper.stop();
+        CHECK(burper.join()); // thread burper joined succesfully
         INFO("... done threads");
         CHECK(expectCount == gotCount); // thread event counts
         CHECK(expectCount==11); // thread event counts
@@ -385,25 +347,6 @@ TEST_CASE("OS::ThreadTest", "[yarp::os]")
         CHECK(2 == t.state); // Start synchronized on failed init
         t.mutex.unlock();
 
-        INFO("done");
-    }
-
-    SECTION("Checking runnable")
-    {
-        Runnable1 foo;
-        ThreadImpl t(&foo);
-        INFO("Starting thread");
-        t.start();
-        INFO("Stopping thread");
-        t.close();
-
-        Time::delay(1.0);
-
-        CHECK(foo.initCalled); // threadInit was called
-        CHECK(foo.notified); // afterStart() was called
-        CHECK(foo.executed); // thread main function was executed
-        CHECK(foo.releaseCalled); // threadRelease was called
-        CHECK(foo.closeCalled); // close was called
         INFO("done");
     }
 

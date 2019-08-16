@@ -11,6 +11,7 @@
 
 #include <cstdio>
 #include <cmath>
+#include <mutex>
 
 #include <yarp/os/Log.h>
 
@@ -33,7 +34,7 @@ private:
     PolyDriver poly;
     IAudioRender *iAudioplay;
     BufferedPort<Sound> port;
-    Mutex mutex;
+    std::mutex mutex;
     bool muted;
     bool saving;
     std::deque<Sound> sounds;

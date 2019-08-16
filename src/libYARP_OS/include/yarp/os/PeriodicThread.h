@@ -10,8 +10,9 @@
 #ifndef YARP_OS_PERIODICTHREAD_H
 #define YARP_OS_PERIODICTHREAD_H
 
-#include <yarp/os/Runnable.h>
+#include <yarp/os/api.h>
 #include <yarp/os/Time.h>
+
 namespace yarp {
 namespace os {
 

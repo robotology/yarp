@@ -15,9 +15,9 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Vocab.h>
-#include <yarp/os/Mutex.h>
 
 #include <list>
+#include <mutex>
 
 
 namespace yarp {
@@ -29,13 +29,13 @@ public:
     bool needed;
     bool positive;
     int ct;
-    yarp::os::Mutex& mutex;
+    std::mutex& mutex;
 
     //yarp::os::Contact src;
     std::string src;
     std::string dest;
 
-    ConnectThread(yarp::os::Mutex& mutex) : mutex(mutex) {
+    ConnectThread(std::mutex& mutex) : mutex(mutex) {
         needed = true;
         ct = 0;
         positive = true;
@@ -79,7 +79,7 @@ public:
 class ConnectManager {
 private:
     std::list<ConnectThread *> con;
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
 public:
 
     ConnectManager() : mutex() {

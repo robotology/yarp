@@ -16,7 +16,6 @@
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/QosStyle.h>
 
@@ -28,6 +27,7 @@
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/dev/PreciselyTimed.h>
 
+#include <mutex>
 
 #include "stateExtendedReader.h"
 
@@ -171,7 +171,7 @@ protected:
     // from the YARP .thrift file
 //  yarp::os::PortReaderBuffer<jointData>           extendedInputState_buffer;  // Buffer storing new data
     StateExtendedInputPort                          extendedIntputStatePort;  // Buffered port storing new data
-    Mutex extendedPortMutex;
+    std::mutex extendedPortMutex;
     yarp::dev::impl::jointData last_singleJoint;     // tmp to store last received data for a particular joint
 //    yarp::os::Port extendedIntputStatePort;         // Port /stateExt:i reading the state of the joints
     yarp::dev::impl::jointData last_wholePart;         // tmp to store last received data for whole part
@@ -179,7 +179,6 @@ protected:
     std::string remote;
     std::string local;
     mutable Stamp lastStamp;  //this is shared among all calls that read encoders
-    // Mutex mutex;
     int nj{0};
     bool njIsKnown{false};
 

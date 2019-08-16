@@ -23,7 +23,6 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <SDL.h>
 #include <vector>
-#include <yarp/os/RateThread.h>
 
 
 

@@ -9,8 +9,6 @@
 
 #include <yarp/os/Carriers.h>
 
-#include <yarp/os/LockGuard.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/YarpPlugin.h>
 #include <yarp/os/impl/FakeFace.h>
 #include <yarp/os/impl/HttpCarrier.h>
@@ -25,6 +23,7 @@
 #include <yarp/os/impl/UdpCarrier.h>
 
 #include <vector>
+#include <mutex>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -54,7 +53,7 @@ std::string bytes_to_string(const Bytes& header)
 class Carriers::Private : public YarpPluginSelector
 {
 public:
-    static yarp::os::Mutex mutex;
+    static std::mutex mutex;
 
     std::vector<Carrier*> delegates;
 
@@ -71,7 +70,7 @@ public:
     bool select(Searchable& options) override;
 };
 
-yarp::os::Mutex Carriers::Private::mutex{};
+std::mutex Carriers::Private::mutex{};
 
 Carrier* Carriers::Private::chooseCarrier(const std::string& name,
                                           bool load_if_needed,
@@ -323,7 +322,7 @@ Carriers& Carriers::getInstance()
 Bottle Carriers::listCarriers()
 {
     Carriers& instance = getInstance();
-    yarp::os::LockGuard guard(Private::mutex);
+    std::lock_guard<std::mutex> guard(Private::mutex);
 
     Bottle lst;
     Property done;

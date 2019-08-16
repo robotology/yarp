@@ -20,8 +20,6 @@
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Port.h>
-#include <yarp/os/Mutex.h>
-#include <yarp/os/LockGuard.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Node.h>
 #include <yarp/dev/PolyDriver.h>
@@ -31,6 +29,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/PeriodicThread.h>
 #include <math.h>
+#include <mutex>
 
 using namespace yarp::os;
 
@@ -46,7 +45,7 @@ protected:
     yarp::dev::Map2DLocation     m_initial_odom;
     yarp::dev::Map2DLocation     m_current_loc;
     yarp::dev::Map2DLocation     m_current_odom;
-    yarp::os::Mutex              m_mutex;
+    std::mutex              m_mutex;
     yarp::os::Searchable&        m_cfg;
     std::string                  m_local_name;
 

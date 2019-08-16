@@ -23,6 +23,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <mutex>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
@@ -45,7 +46,6 @@
 #include <yarp/os/Subscriber.h>
 #include <yarp/os/Node.h>
 #include <yarp/dev/IFrameTransform.h>
-#include <string>
 
 #include <yarp/math/FrameTransform.h>
 
@@ -62,7 +62,7 @@ class Transforms_server_storage
 {
 private:
     std::vector <yarp::math::FrameTransform> m_transforms;
-    yarp::os::Mutex  m_mutex;
+    std::mutex  m_mutex;
 
 public:
      Transforms_server_storage()      {}
@@ -93,7 +93,7 @@ public:
     void run() override;
 
 private:
-    yarp::os::Mutex              m_mutex;
+    std::mutex              m_mutex;
     std::string        m_streamingPortName;
     std::string        m_rpcPortName;
     yarp::os::Stamp              m_lastStateStamp;

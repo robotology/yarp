@@ -12,7 +12,7 @@
 
 #include <yarp/serversql/impl/Subscriber.h>
 
-#include <yarp/os/Mutex.h>
+#include <mutex>
 
 
 namespace yarp {
@@ -96,7 +96,7 @@ public:
 private:
     void *implementation;
     bool verbose;
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
 };
 
 } // namespace impl

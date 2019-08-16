@@ -9,8 +9,6 @@
 #ifndef YARP_OS_FIXEDSIZEBUFFERSMANAGER_H
 #define YARP_OS_FIXEDSIZEBUFFERSMANAGER_H
 
-#include <yarp/os/Mutex.h>
-
 #include <vector>
 #include <mutex>
 
@@ -134,7 +132,7 @@ public:
     void printBuffers(void);
 
 private:
-    yarp::os::Mutex m_mutex;
+    std::mutex m_mutex;
     std::vector<T*> m_buffers;
     std::vector<bool> m_usedBuffers;
     std::size_t m_numElem;

@@ -12,13 +12,13 @@
 
 #include <cstdio>
 
-#include <yarp/dev/DataSource.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/FrameGrabberControlImpl.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/ServiceInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/PreciselyTimed.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>

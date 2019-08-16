@@ -31,7 +31,6 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/os/RecursiveMutex.h>
 
 
 /**

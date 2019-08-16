@@ -14,10 +14,10 @@
 #include <yarp/serversql/impl/TripleSource.h>
 #include <yarp/serversql/impl/Allocator.h>
 #include <yarp/serversql/impl/Subscriber.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/os/NameStore.h>
 #include <yarp/os/Semaphore.h>
 
+#include <mutex>
 
 namespace yarp {
 namespace serversql {
@@ -68,7 +68,7 @@ private:
     Subscriber *subscriber;
     std::string lastRegister;
     yarp::os::Contact serverContact;
-    yarp::os::Mutex mutex;
+    std::mutex mutex;
     yarp::os::Semaphore access;
     bool gonePublic;
     bool silent;

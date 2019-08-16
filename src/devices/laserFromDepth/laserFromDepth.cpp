@@ -23,7 +23,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
+#include <mutex>
 #include <yarp/os/ResourceFinder.h>
 #include <iostream>
 #include <cstring>
@@ -150,7 +150,7 @@ bool LaserFromDepth::close()
 
 bool LaserFromDepth::getDistanceRange(double& min, double& max)
 {
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     min = m_min_distance;
     max = m_max_distance;
     return true;
@@ -158,7 +158,7 @@ bool LaserFromDepth::getDistanceRange(double& min, double& max)
 
 bool LaserFromDepth::setDistanceRange(double min, double max)
 {
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     m_min_distance = min;
     m_max_distance = max;
     return true;
@@ -166,7 +166,7 @@ bool LaserFromDepth::setDistanceRange(double min, double max)
 
 bool LaserFromDepth::getScanLimits(double& min, double& max)
 {
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     min = m_min_angle;
     max = m_max_angle;
     return true;
@@ -174,35 +174,35 @@ bool LaserFromDepth::getScanLimits(double& min, double& max)
 
 bool LaserFromDepth::setScanLimits(double min, double max)
 {
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     yWarning("setScanLimits not yet implemented");
     return true;
 }
 
 bool LaserFromDepth::getHorizontalResolution(double& step)
 {
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     step = m_resolution;
     return true;
 }
 
 bool LaserFromDepth::setHorizontalResolution(double step)
 {
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     yWarning("setHorizontalResolution not yet implemented");
     return true;
 }
 
 bool LaserFromDepth::getScanRate(double& rate)
 {
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     yWarning("getScanRate not yet implemented");
     return true;
 }
 
 bool LaserFromDepth::setScanRate(double rate)
 {
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     yWarning("setScanRate not yet implemented");
     return false;
 }
@@ -210,7 +210,7 @@ bool LaserFromDepth::setScanRate(double rate)
 
 bool LaserFromDepth::getRawData(yarp::sig::Vector &out)
 {
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     out = m_laser_data;
     m_device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
     return true;
@@ -218,7 +218,7 @@ bool LaserFromDepth::getRawData(yarp::sig::Vector &out)
 
 bool LaserFromDepth::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 {
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
 #ifdef LASER_DEBUG
         //yDebug("data: %s\n", laser_data.toString().c_str());
 #endif
@@ -236,7 +236,7 @@ bool LaserFromDepth::getLaserMeasurement(std::vector<LaserMeasurementData> &data
 }
 bool LaserFromDepth::getDeviceStatus(Device_status &status)
 {
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     status = m_device_status;
     return true;
 }
@@ -256,7 +256,7 @@ void LaserFromDepth::run()
 #ifdef DEBUG_TIMING
     double t1 = yarp::os::Time::now();
 #endif
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
 
     iRGBD->getDepthImage(m_depth_image);
     if (m_depth_image.getRawImage()==nullptr)
@@ -328,7 +328,7 @@ void LaserFromDepth::threadRelease()
 
 bool LaserFromDepth::getDeviceInfo(std::string &device_info)
 {
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
     device_info = m_info;
     return true;
 }

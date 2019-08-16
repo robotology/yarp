@@ -23,6 +23,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <mutex>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
@@ -46,7 +47,6 @@
 #include <yarp/os/Publisher.h>
 #include <yarp/os/Subscriber.h>
 #include <yarp/os/Node.h>
-#include <string>
 #include <yarp/rosmsg/visualization_msgs/MarkerArray.h>
 #include <yarp/rosmsg/nav_msgs/MapMetaData.h>
 #include <yarp/rosmsg/nav_msgs/OccupancyGrid.h>
@@ -93,7 +93,7 @@ public:
 
 private:
     yarp::os::ResourceFinder     m_rf_mapCollection;
-    yarp::os::Mutex              m_mutex;
+    std::mutex              m_mutex;
     std::string        m_rpcPortName;
     yarp::os::Node*              m_rosNode;
     bool                         m_enable_publish_ros_map;

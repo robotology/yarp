@@ -659,18 +659,7 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
 
     if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
       set_property(TARGET ${YARP_PLUGIN_MASTER} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)
-
-      # If we are building YARP with an old CMake we need to link to the alias
-      # targets or targets linking to yarpcar and yarpmod will not be able to
-      # link properly
-      if(TARGET YARP_OS AND CMAKE_VERSION VERSION_LESS 3.5)
-        foreach(lib ${libs})
-          target_link_libraries(${YARP_PLUGIN_MASTER} PRIVATE YARP::${lib})
-        endforeach()
-      else()
-        target_link_libraries(${YARP_PLUGIN_MASTER} PRIVATE ${libs})
-      endif()
-
+      target_link_libraries(${YARP_PLUGIN_MASTER} PRIVATE ${libs})
     endif()
     # give user access to a list of all the plugin libraries
     set(${YARP_PLUGIN_MASTER}_LIBRARIES ${libs})

@@ -28,7 +28,7 @@
 #include <yarp/dev/GenericSensorInterfaces.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/math/Quaternion.h>
-#include <yarp/os/Mutex.h>
+#include <mutex>
 
 
 /* Serial protocol description
@@ -162,7 +162,7 @@ protected:
     yarp::sig::Vector           RPY_angle;            ///< orientation in Euler angle representation
     double                      m_timeStamp;          ///< device timestamp
     double                      timeLastReport;       ///< timestamp of last reported data
-    mutable yarp::os::Mutex             mutex;        ///< mutex to avoid resource clash
+    mutable std::mutex             mutex;        ///< mutex to avoid resource clash
     bool                        i2c_flag;             ///< flag to check if device connected through i2c commununication
 
     bool                        checkError;           ///< flag to check read error of sensor data

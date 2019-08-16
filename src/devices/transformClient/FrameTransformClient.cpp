@@ -19,7 +19,7 @@
 #include "FrameTransformClient.h"
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
+#include <mutex>
 
 /*! \file FrameTransformClient.cpp */
 
@@ -33,13 +33,13 @@ using namespace yarp::math;
 
 inline void Transforms_client_storage::resetStat()
 {
-    RecursiveLockGuard l(m_mutex);
+    std::lock_guard<std::recursive_mutex> l(m_mutex);
 }
 
 void Transforms_client_storage::onRead(yarp::os::Bottle &b)
 {
     m_now = Time::now();
-    RecursiveLockGuard guard(m_mutex);
+    std::lock_guard<std::recursive_mutex> guard(m_mutex);
 
     if (m_count>0)
     {
@@ -112,7 +112,7 @@ void Transforms_client_storage::onRead(yarp::os::Bottle &b)
 
 inline int Transforms_client_storage::getLast(yarp::os::Bottle &data, Stamp &stmp)
 {
-    RecursiveLockGuard guard(m_mutex);
+    std::lock_guard<std::recursive_mutex> guard(m_mutex);
 
     int ret = m_state;
     if (ret != IFrameTransform::TRANSFORM_GENERAL_ERROR)
@@ -126,7 +126,7 @@ inline int Transforms_client_storage::getLast(yarp::os::Bottle &data, Stamp &stm
 
 inline int Transforms_client_storage::getIterations()
 {
-    RecursiveLockGuard guard(m_mutex);
+    std::lock_guard<std::recursive_mutex> guard(m_mutex);
     int ret = m_count;
     return ret;
 }
@@ -134,7 +134,7 @@ inline int Transforms_client_storage::getIterations()
 // time is in ms
 void Transforms_client_storage::getEstFrequency(int &ite, double &av, double &min, double &max)
 {
-    RecursiveLockGuard guard(m_mutex);
+    std::lock_guard<std::recursive_mutex> guard(m_mutex);
     ite=m_count;
     min=m_deltaTMin*1000;
     max=m_deltaTMax*1000;
@@ -151,7 +151,7 @@ void Transforms_client_storage::getEstFrequency(int &ite, double &av, double &mi
 
 void Transforms_client_storage::clear()
 {
-    RecursiveLockGuard l(m_mutex);
+    std::lock_guard<std::recursive_mutex> l(m_mutex);
     m_transforms.clear();
 }
 
@@ -179,20 +179,20 @@ Transforms_client_storage::~Transforms_client_storage()
 
 size_t   Transforms_client_storage::size()
 {
-    RecursiveLockGuard l(m_mutex);
+    std::lock_guard<std::recursive_mutex> l(m_mutex);
     return m_transforms.size();
 }
 
 yarp::math::FrameTransform& Transforms_client_storage::operator[]   (std::size_t idx)
 {
-    RecursiveLockGuard l(m_mutex);
+    std::lock_guard<std::recursive_mutex> l(m_mutex);
     return m_transforms[idx];
 };
 
 //------------------------------------------------------------------------------------------------------------------------------
 bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
 {
-    LockGuard lock (m_rpc_mutex);
+    std::lock_guard<std::mutex> lock (m_rpc_mutex);
     yarp::os::Bottle in;
     yarp::os::Bottle out;
     bool ok = in.read(connection);
@@ -464,7 +464,7 @@ FrameTransformClient::ConnectionType FrameTransformClient::getConnectionType(con
     std::vector<std::string>   src2root_vec;
     std::string                ancestor, child;
     child = target_frame;
-    RecursiveLockGuard l(tfVec.m_mutex);
+    std::lock_guard<std::recursive_mutex> l(tfVec.m_mutex);
     while(getParent(child, ancestor))
     {
         if(ancestor == source_frame)
@@ -591,7 +591,7 @@ bool FrameTransformClient::canExplicitTransform(const std::string& target_frame_
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t                     i, tfVec_size;
-    RecursiveLockGuard         l(tfVec.m_mutex);
+    std::lock_guard<std::recursive_mutex>         l(tfVec.m_mutex);
 
     tfVec_size = tfVec.size();
     for (i = 0; i < tfVec_size; i++)
@@ -608,7 +608,7 @@ bool FrameTransformClient::getChainedTransform(const std::string& target_frame_i
 {
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t                     i, tfVec_size;
-    RecursiveLockGuard         l(tfVec.m_mutex);
+    std::lock_guard<std::recursive_mutex>         l(tfVec.m_mutex);
 
     tfVec_size = tfVec.size();
     for (i = 0; i < tfVec_size; i++)
@@ -901,7 +901,7 @@ void     FrameTransformClient::threadRelease()
 
 void     FrameTransformClient::run()
 {
-    LockGuard lock (m_rpc_mutex);
+    std::lock_guard<std::mutex> lock (m_rpc_mutex);
     if (m_array_of_ports.size()==0)
     {
         return;

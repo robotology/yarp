@@ -158,7 +158,7 @@ void YarpPluginSettings::reportFailure() const
 void YarpPluginSelector::scan()
 {
     // This method needs to be accessed by one thread only
-    LockGuard guard(mutex);
+    std::lock_guard<std::mutex> guard(mutex);
 
     // If it was scanned in the last 5 seconds, there is no need to scan again
     bool need_scan = true;

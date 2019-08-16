@@ -8,9 +8,9 @@
 
 #include "JoypadControlClient.h"
 #include <yarp/os/LogStream.h>
-#include <yarp/os/LockGuard.h>
 #include <tuple>
 #include <yarp/dev/DriverLinkCreator.h>
+
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
@@ -289,7 +289,7 @@ bool JoypadControlClient::getRawButton(unsigned int button_id, float& value)
     }
     else
     {
-        LockGuard l(m_buttonsPort.mutex);
+        std::lock_guard<std::mutex> l(m_buttonsPort.mutex);
         if(button_id < m_buttonsPort.storage.size())
         {
             value = m_buttonsPort.storage[button_id];
@@ -329,7 +329,7 @@ bool JoypadControlClient::getRawTrackball(unsigned int trackball_id, yarp::sig::
     }
     else
     {
-        LockGuard l(m_trackballPort.mutex);
+        std::lock_guard<std::mutex> l(m_trackballPort.mutex);
         if(trackball_id < m_trackballPort.storage.size() / 2)
         {
             value.push_back(m_trackballPort.storage[trackball_id * 2]);
@@ -367,7 +367,7 @@ bool JoypadControlClient::getRawHat(unsigned int hat_id, unsigned char& value)
     }
     else
     {
-        LockGuard l(m_hatsPort.mutex);
+        std::lock_guard<std::mutex> l(m_hatsPort.mutex);
         if(hat_id < m_hatsPort.storage.size())
         {
             value = m_hatsPort.storage[hat_id];
@@ -405,7 +405,7 @@ bool JoypadControlClient::getRawAxis(unsigned int axis_id, double& value)
     }
     else
     {
-        LockGuard l(m_axisPort.mutex);
+        std::lock_guard<std::mutex> l(m_axisPort.mutex);
         if(axis_id < m_axisPort.storage.size())
         {
             value = m_axisPort.storage[axis_id];
@@ -472,7 +472,7 @@ bool JoypadControlClient::getRawStick(unsigned int stick_id, yarp::sig::Vector& 
     }
     else
     {
-        LockGuard l(m_stickPort.mutex);
+        std::lock_guard<std::mutex> l(m_stickPort.mutex);
         int offset = 0;
 
         unsigned int i;
@@ -521,7 +521,7 @@ bool JoypadControlClient::getRawTouch(unsigned int touch_id, yarp::sig::Vector& 
     }
     else
     {
-        LockGuard l(m_touchPort.mutex);
+        std::lock_guard<std::mutex> l(m_touchPort.mutex);
         if(touch_id < m_touchPort.storage.size()/2)
         {
             value.push_back(m_touchPort.storage[touch_id * 2]);

@@ -24,11 +24,11 @@
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/Mutex.h>
 #include <yarp/dev/Wrapper.h>
 
 #include <yarp/dev/IVirtualAnalogSensor.h>
 
+#include <mutex>
 #include <string>
 #include <vector>
 #include <cstdarg>
@@ -104,7 +104,7 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
-    yarp::os::Mutex mMutex;
+    std::mutex mMutex;
 
     bool mIsVerbose;
 

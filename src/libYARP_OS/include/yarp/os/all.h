@@ -74,9 +74,12 @@
 #include <yarp/os/WireLink.h>
 
 #ifndef YARP_NO_DEPRECATED // since YARP 3.0.0
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #    include <yarp/os/ConstString.h>
 #    include <yarp/os/RateThread.h>
-#endif
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#endif // YARP_NO_DEPRECATED
+
 
 /**
  * @namespace yarp
