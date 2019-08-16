@@ -329,7 +329,7 @@ void PortCoreInputUnit::run()
             }
         } break;
         case 'a': {
-            man.adminBlock(br, id, os);
+            man.adminBlock(br, id);
         } break;
         case 'r':
             /*

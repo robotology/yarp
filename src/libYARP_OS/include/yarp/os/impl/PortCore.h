@@ -22,6 +22,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Type.h>
+#include <yarp/os/Vocab.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/PortCorePackets.h>
 #include <yarp/os/impl/ThreadImpl.h>
@@ -232,11 +233,9 @@ public:
      * Process an administrative message.
      * @param reader source of data
      * @param id opaque identifier of connection providing data
-     * @param os stream to write error messages on
      */
     bool adminBlock(ConnectionReader& reader,
-                    void* id,
-                    yarp::os::OutputStream* os);
+                    void* id);
 
     /**
      * Set the name of this port.
@@ -288,7 +287,7 @@ public:
     /**
      * Configure the port to meet certain restrictions in behavior.
      */
-    void setFlags(int flags)
+    void setFlags(unsigned int flags)
     {
         this->m_flags = flags;
     }
@@ -301,7 +300,7 @@ public:
     /**
      * Check current configuration of port.
      */
-    int getFlags()
+    unsigned int getFlags()
     {
         return m_flags;
     }
@@ -533,7 +532,7 @@ private:
     int m_inputCount; ///< how many input connections do we have
     int m_outputCount;///< how many output connections do we have
     int m_dataOutputCount; ///< how many regular data output connections do we have
-    int m_flags;      ///< binary flags encoding restrictions on port
+    unsigned int m_flags;      ///< binary flags encoding restrictions on port
     int m_verbosity;  ///< threshold on what warnings or debug messages are shown
     bool m_logNeeded; ///< port needs to monitor message content
     PortCorePackets m_packets; ///< a pool for tracking messages currently being sent
@@ -570,7 +569,7 @@ private:
     bool dettachPortMonitor(bool isOutput);
 
     // set the parameter for the portmonitor of the port (if any)
-    bool setParamPortMonitor(yarp::os::Property& param, bool isOutput, std::string& errMsg);
+    bool setParamPortMonitor(const yarp::os::Property& param, bool isOutput, std::string& errMsg);
 
     // get the parameters from the portmonitor of the port (if any)
     bool getParamPortMonitor(yarp::os::Property& param, bool isOutput, std::string& errMsg);
