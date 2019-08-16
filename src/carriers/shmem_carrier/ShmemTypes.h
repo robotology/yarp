@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_IMPL_SHMEMTYPES_H
-#define YARP_OS_IMPL_SHMEMTYPES_H
+#ifndef YARP_SHMEM_SHMEMTYPES_H
+#define YARP_SHMEM_SHMEMTYPES_H
 
 #define SHMEM_DEFAULT_SIZE 4096
 
@@ -32,4 +32,4 @@ struct ShmemPacket_t
     int size;
 };
 
-#endif // YARP_OS_IMPL_SHMEMTYPES_H
+#endif // YARP_SHMEM_SHMEMTYPES_H

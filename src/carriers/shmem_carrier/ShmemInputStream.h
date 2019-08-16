@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_IMPL_SHMEMINPUTSTREAM_H
-#define YARP_OS_IMPL_SHMEMINPUTSTREAM_H
+#ifndef YARP_SHMEM_SHMEMINPUTSTREAM_H
+#define YARP_SHMEM_SHMEMINPUTSTREAM_H
 
 #include "ShmemTypes.h"
 

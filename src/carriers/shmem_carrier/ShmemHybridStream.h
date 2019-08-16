@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_IMPL_SHMEMHYBRIDSTREAM_H
-#define YARP_OS_IMPL_SHMEMHYBRIDSTREAM_H
+#ifndef YARP_SHMEM_SHMEMHYBRIDSTREAM_H
+#define YARP_SHMEM_SHMEMHYBRIDSTREAM_H
 
 #include <yarp/os/InputStream.h>
 #include <yarp/os/NetType.h>
@@ -83,4 +83,4 @@ private:
     int connect(const ACE_INET_Addr& ace_address);
 };
 
-#endif // YARP_OS_IMPL_SHMEMHYBRIDSTREAM_H
+#endif // YARP_SHMEM_SHMEMHYBRIDSTREAM_H

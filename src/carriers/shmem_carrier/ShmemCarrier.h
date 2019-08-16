@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_IMPL_SHMEMCARRIER_H
-#define YARP_OS_IMPL_SHMEMCARRIER_H
+#ifndef YARP_SHMEM_SHMEMCARRIER_H
+#define YARP_SHMEM_SHMEMCARRIER_H
 
 #include <yarp/os/AbstractCarrier.h>
 
@@ -40,4 +40,4 @@ private:
     bool becomeShmem(yarp::os::ConnectionState& proto, bool sender);
 };
 
-#endif // YARP_OS_IMPL_SHMEMCARRIER_H
+#endif // YARP_SHMEM_SHMEMCARRIER_H
