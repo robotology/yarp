@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_IMPL_RUNREADWRITE_H
-#define YARP_OS_IMPL_RUNREADWRITE_H
+#ifndef YARP_RUN_IMPL_RUNREADWRITE_H
+#define YARP_RUN_IMPL_RUNREADWRITE_H
 
 #include <string>
 #include <yarp/os/Port.h>
@@ -298,4 +298,4 @@ protected:
     yarp::os::Port fPort;
 };
 
-#endif // YARP_OS_IMPL_RUNREADWRITE_H
+#endif // YARP_RUN_IMPL_RUNREADWRITE_H

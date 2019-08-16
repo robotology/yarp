@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_FIXEDSIZEBUFFERSMANAGER_H
-#define YARP_OS_FIXEDSIZEBUFFERSMANAGER_H
+#ifndef YARP_DEV_IMPL_FIXEDSIZEBUFFERSMANAGER_H
+#define YARP_DEV_IMPL_FIXEDSIZEBUFFERSMANAGER_H
 
 #include <vector>
 #include <mutex>
@@ -146,4 +146,4 @@ private:
 
 #include "FixedSizeBuffersManager-inl.h"
 
-#endif // YARP_OS_FIXEDSIZEBUFFERSMANAGER_H
+#endif // YARP_DEV_IMPL_FIXEDSIZEBUFFERSMANAGER_H

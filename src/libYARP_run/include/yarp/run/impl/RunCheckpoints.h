@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_IMPL_RUNCHECKPOINTS_H
-#define YARP_OS_IMPL_RUNCHECKPOINTS_H
+#ifndef YARP_RUN_IMPL_RUNCHECKPOINTS_H
+#define YARP_RUN_IMPL_RUNCHECKPOINTS_H
 
 #include <string>
 #include <list>
@@ -35,4 +35,4 @@ private:
 # define RUNLOG(msg)
 #endif
 
-#endif // YARP_OS_IMPL_RUNCHECKPOINTS_H
+#endif // YARP_RUN_IMPL_RUNCHECKPOINTS_H

@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_IMPL_PLATFORMSYSPRCTL_H
-#define YARP_OS_IMPL_PLATFORMSYSPRCTL_H
+#ifndef YARP_RUN_IMPL_PLATFORMSYSPRCTL_H
+#define YARP_RUN_IMPL_PLATFORMSYSPRCTL_H
 
 #include <yarp/conf/system.h>
 #if defined(YARP_HAS_SYS_PRCTL_H)
@@ -26,4 +26,4 @@ namespace impl {
 } // namespace os
 } // namespace yarp
 
-#endif // YARP_OS_IMPL_PLATFORMSYSPRCTL_H
+#endif // YARP_RUN_IMPL_PLATFORMSYSPRCTL_H

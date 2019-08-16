@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_RUN_H
-#define YARP_OS_RUN_H
+#ifndef YARP_RUN_RUN_H
+#define YARP_RUN_RUN_H
 
 #include <yarp/conf/system.h>
 
@@ -24,4 +24,4 @@ namespace os {
 } // namespace yarp
 
 
-#endif // YARP_OS_RUN_H
+#endif // YARP_RUN_RUN_H
