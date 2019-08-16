@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_IMPL_RUNPROCMANAGER_H
-#define YARP_OS_IMPL_RUNPROCMANAGER_H
+#ifndef YARP_RUN_IMPL_RUNPROCMANAGER_H
+#define YARP_RUN_IMPL_RUNPROCMANAGER_H
 
 #if defined(_WIN32)
 #  if !defined(WIN32_LEAN_AND_MEAN)
@@ -316,4 +316,4 @@ inline std::string int2String(int x)
     return std::string(buff);
 }
 
-#endif // YARP_OS_IMPL_RUNPROCMANAGER_H
+#endif // YARP_RUN_IMPL_RUNPROCMANAGER_H
