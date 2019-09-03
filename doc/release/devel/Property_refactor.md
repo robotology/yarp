@@ -7,6 +7,9 @@ Property_refactor {#devel}
 
 * Added move constructor and assignment operator.
 
+#### `Bottle`
+
+* Added move constructor and assignment operator.
 
 #### `Property`
 
