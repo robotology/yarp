@@ -186,7 +186,7 @@ This is an example of workflow involving:
   feature and print an error that is easy to understand when that feature is not
   available (i.e. in CMake `find_package(YARP 3.1.101 REQUIRED)`)
 
-![YARP Workflow](workflow.png)
+![YARP Workflow](git-workflow.png)
 
 
 ### Terminology
