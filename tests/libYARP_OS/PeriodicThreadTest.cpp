@@ -39,11 +39,11 @@ public:
         done = false;
     }
 
-    virtual double now() override {
+    double now() override {
         return t;
     }
 
-    virtual void delay(double seconds) override {
+    void delay(double seconds) override {
         double target = t+seconds;
         SystemClock c;
         while (t<target && !done) {
@@ -51,7 +51,7 @@ public:
         }
     }
 
-    virtual bool isValid() const override {
+    bool isValid() const override {
         return true;
     }
 };
@@ -68,7 +68,7 @@ public:
 
     PeriodicThread1(double r): PeriodicThread(r){}
 
-    virtual bool threadInit() override
+    bool threadInit() override
     {
         n=0;
         t1=0;
@@ -78,7 +78,7 @@ public:
         return true;
     }
 
-    virtual void run() override
+    void run() override
     {
         t2=Time::now();
 
@@ -90,7 +90,7 @@ public:
         t1=t2;
     }
 
-    virtual void threadRelease() override
+    void threadRelease() override
     {
         if (n>0)
             period=average/(n-1);
@@ -118,24 +118,24 @@ public:
         fail = f;
     }
 
-    virtual bool threadInit() override
+    bool threadInit() override
     {
         state = -1;
         return !fail;
     }
 
-    virtual void afterStart(bool s) override
+    void afterStart(bool s) override
     {
         if (s) {
             state=0;
         }
     }
 
-    virtual void run() override
+    void run() override
     {
     }
 
-    virtual void threadRelease() override
+    void threadRelease() override
     {
         state++;
     }
@@ -156,14 +156,14 @@ public:
         state=-1;
     }
 
-    virtual bool threadInit() override
+    bool threadInit() override
     {
         Time::delay(0.5);
         state++;
         return !fail;
     }
 
-    virtual void afterStart(bool s) override
+    void afterStart(bool s) override
     {
         if (s)
             state++;
@@ -171,10 +171,10 @@ public:
             state=-2;
     }
 
-    virtual void run() override
+    void run() override
     {}
 
-    virtual void threadRelease() override
+    void threadRelease() override
     {
         Time::delay(0.5);
         state++;
@@ -188,7 +188,7 @@ public:
 
     PeriodicThread4(double r): PeriodicThread(r), count(10){}
 
-    virtual void run() override
+    void run() override
     {
             count--;
 
@@ -206,7 +206,7 @@ public:
 
     PeriodicThread5(double r): PeriodicThread(r), count(0){}
 
-    virtual void run() override {
+    void run() override {
         count++;
     }
 };
@@ -224,7 +224,7 @@ public:
 
     BusyThread(double r): PeriodicThread(r), count(0){}
 
-    virtual void run() override {
+    void run() override {
         printf("BusyThread running ...\n");
         SystemClock::delaySystem(1);
     }
@@ -246,41 +246,6 @@ public:
         done =false;
     }
 };
-
-class Runnable1:public Runnable
-{
-public:
-    bool initCalled;
-    bool releaseCalled;
-    bool runExecuted;
-    bool initNotified;
-
-    Runnable1(): initCalled(false),
-                    releaseCalled(false),
-                    runExecuted(false),
-                    initNotified(false){}
-
-    virtual bool threadInit() override
-    {
-        initCalled=true;
-        return true;
-    }
-
-    virtual void threadRelease() override
-    {
-        releaseCalled=true;
-    }
-
-    virtual void run() override
-    {}
-
-    virtual void afterStart(bool s) override
-    {
-        initNotified=true;
-    }
-
-};
-
 
 double test(double period, double delay)
 {
@@ -414,22 +379,6 @@ TEST_CASE("OS::PeriodicThreadTest", "[yarp::os]")
         busy.stop();
         CHECK(true); // Negative delay on reteThread is safe.
     }
-
-    SECTION("Testing runnable")
-    {
-        Runnable1 foo;
-        RateThreadWrapper t;
-        t.setPeriod(0.1);
-        t.attach(foo);
-        t.start();
-        CHECK(t.isRunning()); // thread is running
-        t.close();
-        CHECK(!t.isRunning()); // thread was stopped
-        CHECK(foo.initCalled); // init was called
-        CHECK(foo.initNotified); // afterStart() was called
-        CHECK(foo.releaseCalled); // release was called
-    }
-
 
     SECTION("Testing simulated time")
     {
