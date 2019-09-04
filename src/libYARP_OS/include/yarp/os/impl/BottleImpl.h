@@ -42,7 +42,7 @@ public:
     BottleImpl(Searchable* parent);
     virtual ~BottleImpl();
 
-    Searchable* const parent;
+    Searchable* parent;
 
     bool isInt8(int index);
     bool isInt16(int index);

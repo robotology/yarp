@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <cstring>
 #include <map>
+#include <memory>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -31,24 +32,41 @@ class PropertyItem
 {
 public:
     Bottle bot;
-    Property* backing;
-    bool singleton;
+    std::unique_ptr<Property> backing;
+    bool singleton{false};
 
-    PropertyItem()
+    PropertyItem() = default;
+
+    PropertyItem(const PropertyItem& rhs) :
+        bot(rhs.bot),
+        backing(nullptr),
+        singleton(rhs.singleton)
     {
-        singleton = false;
-        backing = nullptr;
+        if (rhs.backing) {
+            backing.reset(new Property(*(rhs.backing))); // FIXME: std::make_unique
+        }
     }
 
-    ~PropertyItem()
+    PropertyItem& operator=(const PropertyItem& rhs)
     {
-        clear();
+        if (&rhs != this) {
+            bot = rhs.bot;
+            if (rhs.backing) {
+                backing.reset(new Property(*(rhs.backing))); // FIXME: std::make_unique
+            }
+            singleton = rhs.singleton;
+        }
+        return *this;
     }
+
+    PropertyItem(PropertyItem&& rhs) noexcept = default;
+    PropertyItem& operator=(PropertyItem&& rhs) noexcept = default;
+
+    ~PropertyItem() = default;
 
     void clear()
     {
-        delete backing;
-        backing = nullptr;
+        backing.reset();
     }
 
     /*
@@ -64,7 +82,7 @@ public:
 
     void flush()
     {
-        if (backing != nullptr) {
+        if (backing) {
             Bottle flatten(backing->toString());
             bot.append(flatten);
             clear();
@@ -149,8 +167,7 @@ public:
         p->clear();
         p->bot.clear();
         p->bot.addString(key);
-        p->backing = new Property();
-        yAssert(p->backing);
+        p->backing.reset(new Property()); // FIXME: std::make_unique
         return *(p->backing);
     }
 

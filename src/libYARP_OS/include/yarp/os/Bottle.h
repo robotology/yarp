@@ -103,9 +103,16 @@ public:
     /**
      * Copy constructor.
      *
-     * @param bottle The object to copy.
+     * @param rhs The object to copy.
      */
     Bottle(const Bottle& rhs);
+
+    /**
+     * Move constructor.
+     *
+     * @param rhs The object to move.
+     */
+    Bottle(Bottle&& rhs) noexcept;
 
     /**
      * @brief Initializer list constructor.
@@ -114,12 +121,20 @@ public:
     Bottle(std::initializer_list<yarp::os::Value> values);
 
     /**
-     * Assignment operator.
+     * Copy assignment operator.
      *
-     * @param bottle The object to copy.
+     * @param rhs The object to copy.
      * @return the Bottle itself.
      */
-    Bottle& operator=(const Bottle& bottle);
+    Bottle& operator=(const Bottle& rhs);
+
+    /**
+     * Move assignment operator.
+     *
+     * @param rhs The object to move.
+     * @return the Bottle itself.
+     */
+    Bottle& operator=(Bottle&& rhs) noexcept;
 
     /**
      * Destructor.
@@ -463,7 +478,7 @@ private:
     friend class yarp::os::impl::Storable;
     friend class yarp::os::impl::StoreList;
     friend class yarp::os::impl::BottleImpl;
-    yarp::os::impl::BottleImpl* const implementation;
+    yarp::os::impl::BottleImpl* implementation;
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 

@@ -61,15 +61,24 @@ Bottle::Bottle(const std::string& text) :
     fromString(text);
 }
 
-Bottle::Bottle(const Bottle& bottle) :
+Bottle::Bottle(const Bottle& rhs) :
         Portable(),
-        Searchable(bottle),
+        Searchable(rhs),
         implementation(new BottleImpl(this))
 {
     yAssert(implementation != nullptr);
     implementation->invalid = false;
     implementation->ro = false;
-    copy(bottle);
+    copy(rhs);
+}
+
+Bottle::Bottle(Bottle&& rhs) noexcept :
+        Portable(std::move(static_cast<Portable&>(rhs))),
+        Searchable(std::move(static_cast<Searchable&>(rhs))),
+        implementation(rhs.implementation)
+{
+    implementation->parent = this;
+    rhs.implementation = new BottleImpl(&rhs);
 }
 
 Bottle::Bottle(std::initializer_list<Value> values) :
@@ -92,6 +101,14 @@ Bottle& Bottle::operator=(const Bottle& rhs)
         implementation->edit();
         copy(rhs);
     }
+    return *this;
+}
+
+Bottle& Bottle::operator=(Bottle&& rhs) noexcept
+{
+    std::swap(implementation, rhs.implementation);
+    implementation->parent = this;
+    rhs.implementation->parent = &rhs;
     return *this;
 }
 
