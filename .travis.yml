@@ -32,6 +32,10 @@ env:
     # See also https://travis-ci.community/t/port-10010-is-used-by-docker-containerd/3865
     - YARP_PORT_RANGE=20000
 
+git:
+  depth: 100
+  quiet: true
+
 .linux_system_info_definition: &linux_system_info_cmd |-
   # Print some more system information after installing all build tools
   uname -a
@@ -292,8 +296,6 @@ env:
   os: linux
   dist: bionic
   language: generic
-  git:
-    depth: 1
   services:
     - docker
   before_install:
@@ -320,8 +322,6 @@ env:
   compiler: gcc
   cache:
     ccache: true
-  git:
-    depth: 1
   install: skip
   script:
     - *build_yarp_cmd
@@ -404,8 +404,6 @@ env:
     ccache: true
     directories:
       - $HOME/Library/Caches/Homebrew
-  git:
-    depth: 1
   addons:
     homebrew:
       <<: *addons_homebrew_base
@@ -448,8 +446,6 @@ matrix:
       os: linux
       dist: bionic
       language: generic
-      git:
-        depth: 1
       addons:
         apt:
           packages:
