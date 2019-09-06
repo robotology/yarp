@@ -17,11 +17,9 @@ namespace yarp {
 namespace os {
 
 /**
- *
  * A port specialized for reading data of a constant type published on a topic.
  *
  * \sa yarp::os::Publisher
- *
  */
 template <class T>
 class Subscriber : public AbstractContactable, public TypedReaderCallback<T>
@@ -30,11 +28,9 @@ public:
     using AbstractContactable::read;
 
     /**
-     *
      * Constructor.
      *
      * @param name optional topic name to publish to.
-     *
      */
     Subscriber(const std::string& name = "")
     {
@@ -51,9 +47,7 @@ public:
     }
 
     /**
-     *
      * Destructor.
-     *
      */
     virtual ~Subscriber()
     {
@@ -61,13 +55,11 @@ public:
     }
 
     /**
-     *
      * Set topic to subscribe to
      *
      * @param name topic name
      *
      * @return true on success
-     *
      */
     bool topic(const std::string& name)
     {
@@ -114,13 +106,11 @@ public:
     }
 
     /**
-     *
      * Read a message from the port.  Waits by default.
      * May return nullptr if the port status has changed.
      *
      * @param shouldWait false if the call should return immediately if no message is available
      * @return a message, or nullptr
-     *
      */
     T* read(bool shouldWait = true)
     {

@@ -17,11 +17,9 @@ namespace yarp {
 namespace os {
 
 /**
- *
  * A port specialized for publishing data of a constant type on a topic.
  *
  * \sa yarp::os::Subscriber
- *
  */
 template <class T>
 class Publisher : public AbstractContactable
@@ -50,9 +48,7 @@ public:
     }
 
     /**
-     *
      * Destructor.
-     *
      */
     virtual ~Publisher()
     {
@@ -60,13 +56,11 @@ public:
     }
 
     /**
-     *
      * Set topic to publish to
      *
      * @param name topic name
      *
      * @return true on success
-     *
      */
     bool topic(const std::string& name)
     {
@@ -152,7 +146,6 @@ public:
      * @param forceStrict If this is true, wait until any previous sends
      * are complete.  If false, the current object will not be sent on
      * connections that are currently busy.
-     *
      */
     void write(bool forceStrict = false)
     {
@@ -160,9 +153,7 @@ public:
     }
 
     /**
-     *
      * Wait for any pending writes to complete.
-     *
      */
     void waitForWrite()
     {
