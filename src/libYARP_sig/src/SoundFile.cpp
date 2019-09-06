@@ -58,44 +58,127 @@ YARP_END_PACK
 
 bool PcmWavHeader::parse_from_file(FILE *fp)
 {
-    fread(&wavHeader,sizeof(wavHeader),1,fp);
-    fread(&wavLength,sizeof(wavLength),1,fp);
-    fread(&formatHeader1,sizeof(formatHeader1),1,fp);
+    printf("bool PcmWavHeader::parse_from_file(FILE *fp)\n");
 
-    fread(&formatHeader2,sizeof(formatHeader2),1,fp);
-    fread(&formatLength,sizeof(formatLength),1,fp);
+    size_t ret;
 
-    fread(&pcm.pcmFormatTag,sizeof(pcm.pcmFormatTag),1,fp);
-    fread(&pcm.pcmChannels,sizeof(pcm.pcmChannels),1,fp);
-    fread(&pcm.pcmSamplesPerSecond,sizeof(pcm.pcmSamplesPerSecond),1,fp);
-    fread(&pcm.pcmBytesPerSecond,sizeof(pcm.pcmBytesPerSecond),1,fp);
-    fread(&pcm.pcmBlockAlign,sizeof(pcm.pcmBlockAlign),1,fp);
-    fread(&pcm.pcmBitsPerSample,sizeof(pcm.pcmBitsPerSample),1,fp);
-    if (pcm.pcmBitsPerSample!=16)
+    ret = fread(&wavHeader, sizeof(wavHeader), 1, fp);
+    if (ret != 1) {
+        printf("failed to read wav file");
+        return false;
+    }
+
+    ret = fread(&wavLength, sizeof(wavLength), 1, fp);
+    if (ret != 1) {
+        printf("failed to read wav file");
+        return false;
+    }
+
+    ret = fread(&formatHeader1, sizeof(formatHeader1), 1, fp);
+    if (ret != 1) {
+        printf("failed to read wav file");
+        return false;
+    }
+
+    ret = fread(&formatHeader2, sizeof(formatHeader2), 1, fp);
+    if (ret != 1) {
+        printf("failed to read wav file");
+        return false;
+    }
+
+    ret = fread(&formatLength, sizeof(formatLength), 1, fp);
+    if (ret != 1) {
+        printf("failed to read wav file");
+        return false;
+    }
+
+    ret = fread(&pcm.pcmFormatTag, sizeof(pcm.pcmFormatTag), 1, fp);
+    if (ret != 1) {
+        printf("failed to read wav file");
+        return false;
+    }
+
+    ret = fread(&pcm.pcmChannels, sizeof(pcm.pcmChannels), 1, fp);
+    if (ret != 1) {
+        printf("failed to read wav file");
+        return false;
+    }
+
+    ret = fread(&pcm.pcmSamplesPerSecond, sizeof(pcm.pcmSamplesPerSecond), 1, fp);
+    if (ret != 1) {
+        printf("failed to read wav file");
+        return false;
+    }
+
+    ret = fread(&pcm.pcmBytesPerSecond, sizeof(pcm.pcmBytesPerSecond), 1, fp);
+    if (ret != 1) {
+        printf("failed to read wav file");
+        return false;
+    }
+
+    ret = fread(&pcm.pcmBlockAlign, sizeof(pcm.pcmBlockAlign), 1, fp);
+    if (ret != 1) {
+        printf("failed to read wav file");
+        return false;
+    }
+
+    ret = fread(&pcm.pcmBitsPerSample, sizeof(pcm.pcmBitsPerSample), 1, fp);
+    if (ret != 1) {
+        printf("failed to read wav file");
+        return false;
+    }
+    if (pcm.pcmBitsPerSample != 16)
     {
         printf("sorry, lousy wav read code only does 16-bit ints\n");
         return false;
     }
 
     //extra bytes in pcm chuck
-    int extra_size = formatLength-sizeof(pcm);
-    pcmExtraData.allocate(extra_size);
-    fread(&pcmExtraData,extra_size,1,fp);
-
-    //extra chunks
-    fread(&dummyHeader,sizeof(dummyHeader),1,fp);
-
-    while (dummyHeader!=yarp::os::createVocab('d','a','t','a'))
-    {
-        fread(&dummyLength,sizeof(dummyLength),1,fp);
-        dummyData.clear();
-        dummyData.allocate(dummyLength);
-        fread(&dummyData,dummyLength,1,fp);
-        fread(&dummyHeader,sizeof(dummyHeader),1,fp);
+    int extra_size = formatLength - sizeof(pcm);
+    if (extra_size != 0) {
+        printf("extra_size = %d\n", extra_size);
+        pcmExtraData.allocate(extra_size);
+        ret = fread(&pcmExtraData, extra_size, 1, fp);
+        if (ret != 1) {
+            printf("failed to read wav file");
+            return false;
+        }
     }
 
-    dataHeader=dummyHeader;
-    fread(&dataLength,sizeof(dataLength),1,fp);
+    //extra chunks
+    ret = fread(&dummyHeader, sizeof(dummyHeader), 1, fp);
+    if (ret != 1) {
+        printf("failed to read wav file");
+        return false;
+    }
+
+    while (dummyHeader != yarp::os::createVocab('d', 'a', 't', 'a'))
+    {
+        fread(&dummyLength, sizeof(dummyLength), 1, fp);
+        if (ret != 1) {
+            printf("failed to read wav file");
+            return false;
+        }
+        dummyData.clear();
+        dummyData.allocate(dummyLength);
+        fread(&dummyData, dummyLength, 1, fp);
+        if (ret != 1) {
+            printf("failed to read wav file");
+            return false;
+        }
+        fread(&dummyHeader, sizeof(dummyHeader), 1, fp);
+        if (ret != 1) {
+            printf("failed to read wav file");
+            return false;
+        }
+    }
+
+    dataHeader = dummyHeader;
+    fread(&dataLength, sizeof(dataLength), 1, fp);
+    if (ret != 1) {
+        printf("failed to read wav file");
+        return false;
+    }
 
     return true;
 }
