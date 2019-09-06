@@ -41,7 +41,8 @@ public:
         port.setOutputMode(false);
         port.setRpcMode(false);
         if (name != "") {
-            yAssert(topic(name));
+            bool ret = topic(name);
+            yAssert(ret);
         }
         isStrict = false;
     }
@@ -175,7 +176,6 @@ private:
             if (isStrict) {
                 buffered_port->setStrict(isStrict);
             }
-            yAssert(buffered_port);
         }
         return *buffered_port;
     }

@@ -43,7 +43,8 @@ public:
         port.setOutputMode(true);
         port.setRpcMode(false);
         if (name != "") {
-            yAssert(topic(name));
+            bool ret = topic(name);
+            yAssert(ret);
         }
     }
 
@@ -192,7 +193,6 @@ private:
     {
         if (!buffered_port) {
             buffered_port = new BufferedPort<T>(port);
-            yAssert(buffered_port);
         }
         return *buffered_port;
     }
