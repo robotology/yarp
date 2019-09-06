@@ -531,8 +531,7 @@ protected:
             if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
-            int njs = l.size();
-            yAssert (nj == njs);
+            yAssert(nj == l.size());
             for (i = 0; i < nj; i++)
                 val[i] = l.get(i).asFloat64();
             getTimeStamp(response, lastStamp);
@@ -762,9 +761,7 @@ protected:
             if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
-
-            int njs = l.size();
-            yAssert (nj == njs);
+            yAssert(nj == l.size());
             for (i = 0; i < nj; i++)
                 val[i] = l.get(i).asInt32();
 
@@ -793,9 +790,7 @@ protected:
             if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
-
-            int njs = l.size();
-            yAssert (nj == njs);
+            yAssert(nj == l.size());
             for (i = 0; i < nj; i++)
                 val[i] = l.get(i).asFloat64();
 
@@ -825,9 +820,7 @@ protected:
             if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
-
-            int njs = l.size();
-            yAssert (nj == njs);
+            yAssert(nj == l.size());
             for (i = 0; i < nj; i++)
                 val[i] = l.get(i).asFloat64();
 
@@ -858,9 +851,7 @@ protected:
             if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
-
-            int njs = l.size();
-            yAssert (nj == njs);
+            yAssert(nj == l.size());
             for (i = 0; i < nj; i++)
                 val[i] = l.get(i).asFloat64();
 
@@ -1322,11 +1313,11 @@ public:
             Bottle* lp = response.get(2).asList();
             if (lp == nullptr)
                 return false;
-            const int njs = lp->size();
-            yAssert (njs == nj);
+            Bottle& l = *lp;
+            yAssert(nj == l.size());
             for (i = 0; i < nj; i++)
             {
-                Bottle* mp = lp->get(i).asList();
+                Bottle* mp = l.get(i).asList();
                 if (mp == nullptr)
                     return false;
                 pids[i].kp = mp->get(0).asFloat64();
