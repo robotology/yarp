@@ -13,8 +13,6 @@
 #include <yarp/os/Log.h>
 #include <yarp/sig/impl/IplImage.h>
 
-static int implemented_yet = 1;
-
 // this was from iplUtil.cpp
 bool compareHeader(IplImage* A, IplImage* B)
 {
@@ -490,7 +488,7 @@ IPLAPIIMPL(void, iplConvolveSep2DFP,(IplImage* srcImage,
   IplFilter filter))
   {
   // NOT IMPLEMENTED YET.
-  yAssert(implemented_yet == 0);
+  yAssert(false);
   return -1;
   }
 */
@@ -1339,7 +1337,7 @@ IPLAPIIMPL(IplROI *,iplCreateROI,(int coi,    int xOffset, int   yOffset,
                                   int width, int height ))
 {
     // NOT IMPLEMENTED YET.
-    yAssert(implemented_yet == 0);
+    yAssert(false);
     return nullptr;
 }
 
@@ -1347,7 +1345,7 @@ IPLAPIIMPL(void, iplSetROI,(IplROI*   roi,      int coi,
                             int       xOffset,  int yOffset,
                             int width,          int height))
 {
-    yAssert(implemented_yet == 0);
+    yAssert(false);
 }
 
 // LATER: image types are not checked.
@@ -1453,14 +1451,14 @@ IPLAPIIMPL(void, iplRGB2HSV,(IplImage* rgbImage, IplImage* hsvImage))
 IPLAPIIMPL(void, iplHSV2RGB,(IplImage* hsvImage, IplImage* rgbImage))
 {
     // NOT IMPLEMENTED YET.
-    yAssert(implemented_yet == 0);
+    yAssert(false);
 }
 
 IPLAPIIMPL(void, iplXorS,(IplImage* srcImage, IplImage* dstImage,
                           unsigned int value))
 {
-    // NOT IMPLEMENTED YET.s
-    yAssert(1 == 0);
+    // NOT IMPLEMENTED YET.
+    yAssert(false);
 }
 
 // computes the number of pad bytes (end of line) give the line len and

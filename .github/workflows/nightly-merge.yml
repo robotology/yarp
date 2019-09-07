@@ -14,10 +14,11 @@ jobs:
       uses: actions/checkout@v1
 
     - name: Nightly Merge
-      uses: robotology/gh-action-nightly-merge@v1.0.3
+      uses: robotology/gh-action-nightly-merge@v1.1.0
       with:
-        stable_branch: 'master'
-        development_branch: 'devel'
-        allow_ff: false
+        user_name: 'Daniele E. Domenichelli (Nightly Merge Action)'
+        user_email: 'daniele.domenichelli@iit.it'
+        push_token: 'NIGHTLY_MERGE_PUSH_TOKEN'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NIGHTLY_MERGE_PUSH_TOKEN: ${{ secrets.NIGHTLY_MERGE_PUSH_TOKEN }}
