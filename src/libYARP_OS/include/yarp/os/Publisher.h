@@ -45,6 +45,7 @@ public:
         if (name != "") {
             bool ret = topic(name);
             yAssert(ret);
+            YARP_UNUSED(ret); // FIXME [[maybe-unused]]
         }
     }
 
