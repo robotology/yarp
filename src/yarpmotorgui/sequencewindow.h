@@ -178,14 +178,6 @@ public:
         return speedsList;
     }
 
-    SequenceItem &operator =(const SequenceItem &other){
-        sequenceNumber = other.sequenceNumber;
-        timing = other.timing;
-        positionsList = other.positionsList;
-        speedsList = other.speedsList;
-        return *this;
-    }
-
 private:
 
     int sequenceNumber;
