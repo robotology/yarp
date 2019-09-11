@@ -48,7 +48,7 @@ endif()
 # TODO This might no longer be necessary with some updated UseSWIG.cmake version
 foreach(_component IN LISTS _components)
   get_property(_include_dirs TARGET YARP::YARP_${_component} PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
-  foreach(_dir _include_dirs)
+  foreach(_dir IN LISTS _include_dirs)
     if("${_dir}" MATCHES "\\\$<BUILD_INTERFACE:(.+)>$")
       include_directories("${CMAKE_MATCH_1}")
     elseif("${_dir}" MATCHES "\\\$<INSTALL_INTERFACE:(.+)>$")
