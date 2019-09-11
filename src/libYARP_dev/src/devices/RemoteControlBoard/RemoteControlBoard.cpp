@@ -179,7 +179,7 @@ protected:
     std::string remote;
     std::string local;
     mutable Stamp lastStamp;  //this is shared among all calls that read encoders
-    int nj{0};
+    size_t nj{0};
     bool njIsKnown{false};
 
     ProtocolVersion protocolVersion;
@@ -188,8 +188,10 @@ protected:
     // This is to allow for delayed connection to the remote control board.
     bool isLive() {
         if (!njIsKnown) {
-            bool ok = get1V1I(VOCAB_AXES, nj);
-            if (nj!=0 && ok) {
+            int axes = 0;
+            bool ok = get1V1I(VOCAB_AXES, axes);
+            if (axes >= 0 && ok) {
+                nj = axes;
                 njIsKnown = true;
             }
         }
@@ -400,8 +402,7 @@ protected:
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(v);
         Bottle& l = cmd.addList();
-        int i;
-        for (i = 0; i < nj; i++)
+        for (size_t i = 0; i < nj; i++)
             l.addFloat64(val[i]);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
@@ -414,8 +415,7 @@ protected:
         cmd.addVocab(v1);
         cmd.addVocab(v2);
         Bottle& l = cmd.addList();
-        int i;
-        for (i = 0; i < nj; i++)
+        for (size_t i = 0; i < nj; i++)
             l.addFloat64(val[i]);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
@@ -427,12 +427,11 @@ protected:
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(v1);
         cmd.addVocab(v2);
-        int i;
         Bottle& l1 = cmd.addList();
-        for (i = 0; i < nj; i++)
+        for (size_t i = 0; i < nj; i++)
             l1.addFloat64(val1[i]);
         Bottle& l2 = cmd.addList();
-        for (i = 0; i < nj; i++)
+        for (size_t i = 0; i < nj; i++)
             l2.addFloat64(val2[i]);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
@@ -489,8 +488,7 @@ protected:
         cmd.addVocab(voc);
         cmd.addVocab(type);
         Bottle& l = cmd.addList();
-        int i;
-        for (i = 0; i < nj; i++)
+        for (size_t i = 0; i < nj; i++)
             l.addFloat64(val_arr[i]);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
@@ -526,13 +524,12 @@ protected:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response))
         {
-            int i;
             Bottle* lp = response.get(2).asList();
             if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
             yAssert(nj == l.size());
-            for (i = 0; i < nj; i++)
+            for (size_t i = 0; i < nj; i++)
                 val[i] = l.get(i).asFloat64();
             getTimeStamp(response, lastStamp);
             return true;
@@ -756,13 +753,12 @@ protected:
         cmd.addVocab(v);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            int i;
             Bottle* lp = response.get(2).asList();
             if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
             yAssert(nj == l.size());
-            for (i = 0; i < nj; i++)
+            for (size_t i = 0; i < nj; i++)
                 val[i] = l.get(i).asInt32();
 
             getTimeStamp(response, lastStamp);
@@ -785,13 +781,12 @@ protected:
         cmd.addVocab(v);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            int i;
             Bottle* lp = response.get(2).asList();
             if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
             yAssert(nj == l.size());
-            for (i = 0; i < nj; i++)
+            for (size_t i = 0; i < nj; i++)
                 val[i] = l.get(i).asFloat64();
 
             getTimeStamp(response, lastStamp);
@@ -815,13 +810,12 @@ protected:
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
-            int i;
             Bottle* lp = response.get(2).asList();
             if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
             yAssert(nj == l.size());
-            for (i = 0; i < nj; i++)
+            for (size_t i = 0; i < nj; i++)
                 val[i] = l.get(i).asFloat64();
 
             getTimeStamp(response, lastStamp);
@@ -846,13 +840,12 @@ protected:
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
-            int i;
             Bottle* lp = response.get(2).asList();
             if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
             yAssert(nj == l.size());
-            for (i = 0; i < nj; i++)
+            for (size_t i = 0; i < nj; i++)
                 val[i] = l.get(i).asFloat64();
 
             getTimeStamp(response, lastStamp);
@@ -869,7 +862,6 @@ protected:
         cmd.addVocab(v2);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            int i;
             Bottle* lp1 = response.get(2).asList();
             if (lp1 == nullptr)
                 return false;
@@ -879,14 +871,14 @@ protected:
                 return false;
             Bottle& l2 = *lp2;
 
-            int nj1 = l1.size();
-            int nj2 = l2.size();
+            size_t nj1 = l1.size();
+            size_t nj2 = l2.size();
            // yAssert(nj == nj1);
            // yAssert(nj == nj2);
 
-            for (i = 0; i < nj1; i++)
+            for (size_t i = 0; i < nj1; i++)
                 val1[i] = l1.get(i).asFloat64();
-            for (i = 0; i < nj2; i++)
+            for (size_t i = 0; i < nj2; i++)
                 val2[i] = l2.get(i).asFloat64();
 
             getTimeStamp(response, lastStamp);
@@ -926,19 +918,18 @@ protected:
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
-            int i;
             Bottle* lp2 = response.get(2).asList();
             if (lp2 == nullptr)
                 return false;
             Bottle& l2 = *lp2;
 
-            int nj2 = l2.size();
-            if(nj2 != len)
+            size_t nj2 = l2.size();
+            if(nj2 != (unsigned)len)
             {
                 yError("received an answer with an unexpected number of entries!\n");
                 return false;
             }
-            for (i = 0; i < nj2; i++)
+            for (size_t i = 0; i < nj2; i++)
                 val2[i] = l2.get(i).asFloat64();
 
             getTimeStamp(response, lastStamp);
@@ -1227,8 +1218,7 @@ public:
         cmd.addVocab(VOCAB_PIDS);
         cmd.addVocab(pidtype);
         Bottle& l = cmd.addList();
-        int i;
-        for (i = 0; i < nj; i++) {
+        for (size_t i = 0; i < nj; i++) {
             Bottle& m = l.addList();
             m.addFloat64(pids[i].kp);
             m.addFloat64(pids[i].kd);
@@ -1309,13 +1299,12 @@ public:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response))
         {
-            int i;
             Bottle* lp = response.get(2).asList();
             if (lp == nullptr)
                 return false;
             Bottle& l = *lp;
             yAssert(nj == l.size());
-            for (i = 0; i < nj; i++)
+            for (size_t i = 0; i < nj; i++)
             {
                 Bottle* mp = l.get(i).asList();
                 if (mp == nullptr)
@@ -2776,9 +2765,8 @@ public:
         cmd.addVocab(VOCAB_ICONTROLMODE);
         cmd.addVocab(VOCAB_CM_CONTROL_MODES);
 
-        int i;
         Bottle& l2 = cmd.addList();
-        for (i = 0; i < nj; i++)
+        for (size_t i = 0; i < nj; i++)
             l2.addVocab(modes[i]);
 
         bool ok = rpc_p.write(cmd, response);
@@ -2965,7 +2953,7 @@ public:
         cmd.addVocab(VOCAB_INTERACTION_MODES);
 
         Bottle& l1 = cmd.addList();
-        for (int i = 0; i < nj; i++)
+        for (size_t i = 0; i < nj; i++)
             l1.addVocab(modes[i]);
 
         bool ok = rpc_p.write(cmd, response);
