@@ -892,7 +892,7 @@
 /**
  * @def YARP_THREAD_LOCAL
  *
- * Expands to either the standard `thread_loca` attribute, to a
+ * Expands to either the standard `thread_local` attribute, to a
  * compiler-specific decorator such as `__thread` used by GNU compilers, or
  * defined empty if not supported by the current c++ compiler and build flags
  * combination.
