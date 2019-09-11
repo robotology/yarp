@@ -54,7 +54,7 @@ bool ShmemInputStreamImpl::open(int port, ACE_SOCK_Stream* pSock, int size)
 
     m_Port = port;
 
-    char obj_name[1024];
+    char obj_name[2048];
     char temp_dir_path[1024];
 
     if (ACE::get_temp_dir(temp_dir_path, 1024) == -1) {
@@ -64,7 +64,7 @@ bool ShmemInputStreamImpl::open(int port, ACE_SOCK_Stream* pSock, int size)
 
 #ifdef ACE_LACKS_SYSV_SHMEM
 
-    sprintf(obj_name, "%sSHMEM_FILE_%d_%d", temp_dir_path, port, 0);
+    snprintf(obj_name, 2048, "%sSHMEM_FILE_%d_%d", temp_dir_path, port, 0);
 
     m_pMap = new ACE_Shared_Memory_MM(obj_name, //const ACE_TCHAR *filename,
                                       size + sizeof(ShmemHeader_t), //int len = -1,
@@ -83,14 +83,14 @@ bool ShmemInputStreamImpl::open(int port, ACE_SOCK_Stream* pSock, int size)
     m_pData = (char*)(m_pHeader + 1);
 
 #ifdef _ACE_USE_SV_SEM
-    sprintf(obj_name, "%sSHMEM_ACCESS_MUTEX_%d", temp_dir_path, port);
+    snprintf(obj_name, 2048, "%sSHMEM_ACCESS_MUTEX_%d", temp_dir_path, port);
     m_pAccessMutex = new ACE_Mutex(USYNC_PROCESS, obj_name);
-    sprintf(obj_name, "%sSHMEM_WAITDATA_MUTEX_%d", temp_dir_path, port);
+    snprintf(obj_name, 2048, "%sSHMEM_WAITDATA_MUTEX_%d", temp_dir_path, port);
     m_pWaitDataMutex = new ACE_Mutex(USYNC_PROCESS, obj_name);
 #else
-    sprintf(obj_name, "SHMEM_ACCESS_MUTEX_%d", port);
+    snprintf(obj_name, 2048, "SHMEM_ACCESS_MUTEX_%d", port);
     m_pAccessMutex = new ACE_Process_Mutex(obj_name);
-    sprintf(obj_name, "SHMEM_WAITDATA_MUTEX_%d", port);
+    snprintf(obj_name, 2048, "SHMEM_WAITDATA_MUTEX_%d", port);
     m_pWaitDataMutex = new ACE_Process_Mutex(obj_name);
 #endif
 
@@ -118,8 +118,8 @@ bool ShmemInputStreamImpl::Resize()
         return false;
     }
 
-    char file_name[1024];
-    sprintf(file_name, "%sSHMEM_FILE_%d_%d", file_path, m_Port, m_ResizeNum);
+    char file_name[2048];
+    snprintf(file_name, 2048, "%sSHMEM_FILE_%d_%d", file_path, m_Port, m_ResizeNum);
 
     pNewMap = new ACE_Shared_Memory_MM(file_name, //const ACE_TCHAR *filename,
                                        m_pHeader->newsize + sizeof(ShmemHeader_t), //int len = -1,
