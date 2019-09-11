@@ -193,7 +193,7 @@ NameServer::NameRecord* NameServer::getNameRecord(const std::string& name,
         if (!create) {
             return nullptr;
         }
-        nameMap[name] = NameRecord();
+        nameMap.emplace(name, NameRecord());
         entry = nameMap.find(name);
     }
     yAssert(entry != nameMap.end());
