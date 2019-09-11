@@ -71,7 +71,6 @@ class GraphIterator: public std::iterator<std::input_iterator_tag, Node*>
 public:
     GraphIterator(void){}
     virtual ~GraphIterator(){}
-    GraphIterator(const GraphIterator& mit) : itr(mit.itr) {}
     GraphIterator& operator++() {++itr;return *this;}
     GraphIterator operator++(int) {GraphIterator tmp(*this); operator++(); return tmp;}
     bool operator==(const GraphIterator& rhs) const {return itr==rhs.itr;}

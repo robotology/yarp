@@ -21,7 +21,6 @@ class GenericResource : public Node
 {
 public:
     GenericResource(const char* szTypeName);
-    GenericResource(const GenericResource &res);
     virtual ~GenericResource();
 
     void setAvailability(bool flag) { bAvailable = flag; }

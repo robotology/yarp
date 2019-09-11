@@ -27,12 +27,6 @@ Platform::Platform(const char* szName) : GenericResource("Platform")
     setName(szName);
 }
 
-Platform::Platform(const Platform &resource) : GenericResource(resource)
-{
-    strDistrib = resource.strDistrib;
-    strRelease = resource.strRelease;
-}
-
 Node* Platform::clone()
 {
     auto* resource = new Platform(*this);
@@ -76,14 +70,6 @@ ResYarpPort::ResYarpPort(const char* szName) : GenericResource("ResYarpPort")
 {
     timeout = 0;
     setName(szName);
-}
-
-ResYarpPort::ResYarpPort(const ResYarpPort &resource) : GenericResource(resource)
-{
-    timeout = resource.timeout;
-    strPort = resource.strPort;
-    strRequest = resource.strRequest;
-    strReply = resource.strReply;
 }
 
 Node* ResYarpPort::clone()

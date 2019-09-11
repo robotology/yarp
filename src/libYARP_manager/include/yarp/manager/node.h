@@ -81,7 +81,7 @@ public:
         model = NULL;
         if(szLabel) label = szLabel;
     }
-    Node(const Node &node);
+
     virtual ~Node() { model = NULL; }
 
     void setSatisfied(bool sat) { bSatisfied = sat; }

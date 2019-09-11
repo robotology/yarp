@@ -24,18 +24,6 @@ GenericResource::GenericResource(const char* szTypeName) : Node(RESOURCE)
         strTypeName = szTypeName;
 }
 
-
-GenericResource::GenericResource(const GenericResource &resource) : Node(resource)
-{
-    bAvailable = resource.bAvailable;
-    bDisabled = resource.bDisabled;
-    strName = resource.strName;
-    strTypeName = resource.strTypeName;
-    strDescription = resource.strDescription;
-    modOwner = resource.modOwner;
-    strXmlFile = resource.strXmlFile;
-}
-
 GenericResource::~GenericResource() = default;
 
 

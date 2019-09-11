@@ -31,13 +31,6 @@ Memory::Memory(const char* szName) : GenericResource("Memory")
     freeSpace = (Capacity)0;
 }
 
-
-Memory::Memory(const Memory &resource) : GenericResource(resource)
-{
-    totalSpace = resource.totalSpace;
-    freeSpace = resource.freeSpace;
-}
-
 bool Memory::satisfy(GenericResource* resource)
 {
     if(!getAvailability() || getDisable())
@@ -78,13 +71,6 @@ Storage::Storage(const char* szName) : GenericResource("Storage")
     freeSpace = (Capacity)0;
 }
 
-
-Storage::Storage(const Storage &resource) : GenericResource(resource)
-{
-    totalSpace = resource.totalSpace;
-    freeSpace = resource.freeSpace;
-}
-
 bool Storage::satisfy(GenericResource* resource)
 {
     if(!getAvailability() || getDisable())
@@ -119,14 +105,6 @@ Network::Network() : GenericResource("Network")
 Network::Network(const char* szName) : GenericResource("Network")
 {
     setName(szName);
-}
-
-
-Network::Network(const Network &resource) : GenericResource(resource)
-{
-    strIP4 = resource.strIP4;
-    strIP6 = resource.strIP6;
-    strMAC = resource.strMAC;
 }
 
 bool Network::satisfy(GenericResource* resource)
@@ -179,17 +157,6 @@ Processor::Processor(const char* szName) : GenericResource("Processor")
     cpuload.loadAverage5 = (double)0.0;
     cpuload.loadAverage15 = (double)0.0;
     cpuload.loadAverageInstant = (double)0.0;
-}
-
-
-Processor::Processor(const Processor &resource) : GenericResource(resource)
-{
-    strArchitecure = resource.strArchitecure;
-    strModel = resource.strModel;
-    cores = resource.cores;
-    siblings = resource.siblings;
-    frequency = resource.frequency;
-    cpuload = resource.cpuload;
 }
 
 bool Processor::satisfy(GenericResource* resource)

@@ -24,7 +24,6 @@ class Platform : public GenericResource
 public:
     Platform(void);
     Platform(const char* szName);
-    Platform(const Platform &res);
     virtual ~Platform();
     Node* clone(void) override;
     bool satisfy(GenericResource* resource) override;
@@ -49,7 +48,6 @@ class ResYarpPort : public GenericResource
 public:
     ResYarpPort(void);
     ResYarpPort(const char* szName);
-    ResYarpPort(const ResYarpPort &res);
     virtual ~ResYarpPort();
     void setPort(const char* szPort) { if(szPort) strPort = szPort; }
     const char* getPort(void) { return strPort.c_str(); }

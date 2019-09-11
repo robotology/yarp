@@ -28,7 +28,6 @@ class Memory : public GenericResource {
 public:
     Memory(void);
     Memory(const char* szName);
-    Memory(const Memory &res);
     virtual ~Memory();
     Node* clone(void) override;
     bool satisfy(GenericResource* resource) override;
@@ -54,7 +53,6 @@ class Storage : public GenericResource {
 public:
     Storage(void);
     Storage(const char* szName);
-    Storage(const Storage &res);
     virtual ~Storage();
     Node* clone(void) override;
     bool satisfy(GenericResource* resource) override;
@@ -79,7 +77,6 @@ class Network : public GenericResource {
 public:
     Network(void);
     Network(const char* szName);
-    Network(const Network &res);
     virtual ~Network();
     Node* clone(void) override;
     bool satisfy(GenericResource* resource) override;
@@ -115,7 +112,6 @@ class Processor : public GenericResource {
 public:
     Processor(void);
     Processor(const char* szName);
-    Processor(const Processor &res);
     virtual ~Processor();
     Node* clone(void) override;
     bool satisfy(GenericResource* resource) override;
