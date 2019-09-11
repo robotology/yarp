@@ -72,7 +72,6 @@ public:
     //operators
     yarp::math::Vec2D<T>& operator+=(const yarp::math::Vec2D<T>& rhs);
     yarp::math::Vec2D<T>& operator-=(const yarp::math::Vec2D<T>& rhs);
-    yarp::math::Vec2D<T>& operator =(const yarp::math::Vec2D<T>& rhs);
     bool operator == (const yarp::math::Vec2D<T>& rhs) const;
     bool operator != (const yarp::math::Vec2D<T>& rhs) const;
 };
