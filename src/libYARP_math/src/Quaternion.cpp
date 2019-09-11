@@ -42,14 +42,6 @@ Quaternion::Quaternion(double x, double y, double z, double w)
     internal_data[3] = z;
 }
 
-Quaternion::Quaternion(const Quaternion &l)
-{
-    internal_data[0] = l.w();
-    internal_data[1] = l.x();
-    internal_data[2] = l.y();
-    internal_data[3] = l.z();
-}
-
 const double* Quaternion::data() const
 {
     return internal_data;

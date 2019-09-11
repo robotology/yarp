@@ -29,7 +29,6 @@ class YARP_math_API yarp::math::Quaternion : public yarp::os::Portable
 
 public:
     Quaternion();
-    Quaternion(const Quaternion &l);
     Quaternion(double x, double y, double z, double w);
     double* data();
     const double* data() const;
