@@ -1609,62 +1609,50 @@ enum class PortCorePropertyAction : yarp::conf::vocab32_t
 
 PortCoreCommand parseCommand(const yarp::os::Value& v)
 {
-    yarp::conf::vocab32_t vocab = v.asVocab();
     if (v.isString()) {
         // We support ROS client API these days.  Here we recode some long ROS
         // command names, just for convenience.
         std::string cmd = v.asString();
         if (cmd == "publisherUpdate") {
-            vocab = yarp::os::createVocab('r', 'p', 'u', 'p');
+            return PortCoreCommand::RosPublisherUpdate;
         } else if (cmd == "requestTopic") {
-            vocab = yarp::os::createVocab('r', 't', 'o', 'p');
+            return PortCoreCommand::RosRequestTopic;
         } else if (cmd == "getPid") {
-            vocab = yarp::os::createVocab('p', 'i', 'd');
+            return PortCoreCommand::RosGetPid;
         } else if (cmd == "getBusInfo") {
-            vocab = yarp::os::createVocab('b', 'u', 's');
+            return PortCoreCommand::RosGetBusInfo;
         }
     }
-    switch (vocab) {
-    case yarp::os::createVocab('h', 'e', 'l', 'p'):
-        return PortCoreCommand::Help;
-    case yarp::os::createVocab('v', 'e', 'r'):
-        return PortCoreCommand::Ver;
-    case yarp::os::createVocab('a', 'd', 'd'):
-        return PortCoreCommand::Add;
-    case yarp::os::createVocab('d', 'e', 'l'):
-        return PortCoreCommand::Del;
-    case yarp::os::createVocab('a', 't', 'c', 'h'):
-        return PortCoreCommand::Atch;
-    case yarp::os::createVocab('d', 't', 'c', 'h'):
-        return PortCoreCommand::Dtch;
-    case yarp::os::createVocab('l', 'i', 's', 't'):
-        return PortCoreCommand::List;
-    case yarp::os::createVocab('s', 'e', 't'):
-        return PortCoreCommand::Set;
-    case yarp::os::createVocab('g', 'e', 't'):
-        return PortCoreCommand::Get;
-    case yarp::os::createVocab('p', 'r', 'o', 'p'):
-        return PortCoreCommand::Prop;
-    case yarp::os::createVocab('r', 'p', 'u', 'p'):
-        return PortCoreCommand::RosPublisherUpdate;
-    case yarp::os::createVocab('r', 't', 'o', 'p'):
-        return PortCoreCommand::RosRequestTopic;
-    case yarp::os::createVocab('p', 'i', 'd'):
-        return PortCoreCommand::RosGetPid;
-    case yarp::os::createVocab('b', 'u', 's'):
-        return PortCoreCommand::RosGetBusInfo;
-    }
 
-    return PortCoreCommand::Unknown;
+    PortCoreCommand cmd = static_cast<PortCoreCommand>(v.asVocab());
+    switch (cmd) {
+    case PortCoreCommand::Help:
+    case PortCoreCommand::Ver:
+    case PortCoreCommand::Add:
+    case PortCoreCommand::Del:
+    case PortCoreCommand::Atch:
+    case PortCoreCommand::Dtch:
+    case PortCoreCommand::List:
+    case PortCoreCommand::Set:
+    case PortCoreCommand::Get:
+    case PortCoreCommand::Prop:
+    case PortCoreCommand::RosPublisherUpdate:
+    case PortCoreCommand::RosRequestTopic:
+    case PortCoreCommand::RosGetPid:
+    case PortCoreCommand::RosGetBusInfo:
+        return cmd;
+    default:
+        return PortCoreCommand::Unknown;
+    }
 }
 
 PortCoreConnectionDirection parseConnectionDirection(yarp::conf::vocab32_t v, bool errorIsOut = false)
 {
-    switch (v) {
-    case yarp::os::createVocab('i', 'n'):
-        return PortCoreConnectionDirection::In;
-    case yarp::os::createVocab('o', 'u', 't'):
-        return PortCoreConnectionDirection::Out;
+    PortCoreConnectionDirection dir = static_cast<PortCoreConnectionDirection>(v);
+    switch (dir) {
+    case PortCoreConnectionDirection::In:
+    case PortCoreConnectionDirection::Out:
+        return dir;
     default:
         return errorIsOut ? PortCoreConnectionDirection::Out : PortCoreConnectionDirection::Error;
     }
@@ -1672,11 +1660,11 @@ PortCoreConnectionDirection parseConnectionDirection(yarp::conf::vocab32_t v, bo
 
 PortCorePropertyAction parsePropertyAction(yarp::conf::vocab32_t v)
 {
-    switch (v) {
-    case yarp::os::createVocab('g', 'e', 't'):
-        return PortCorePropertyAction::Get;
-    case yarp::os::createVocab('s', 'e', 't'):
-        return PortCorePropertyAction::Set;
+    PortCorePropertyAction action = static_cast<PortCorePropertyAction>(v);
+    switch (action) {
+    case PortCorePropertyAction::Get:
+    case PortCorePropertyAction::Set:
+        return action;
     default:
         return PortCorePropertyAction::Error;
     }
