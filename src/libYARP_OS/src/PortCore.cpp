@@ -1615,7 +1615,7 @@ PortCoreCommand parseCommand(const yarp::os::Value& v)
         // command names, just for convenience.
         std::string cmd = v.asString();
         if (cmd == "publisherUpdate") {
-            vocab = yarp::os::createVocab('p', 'r', 'o', 'p');
+            vocab = yarp::os::createVocab('r', 'p', 'u', 'p');
         } else if (cmd == "requestTopic") {
             vocab = yarp::os::createVocab('r', 't', 'o', 'p');
         } else if (cmd == "getPid") {
