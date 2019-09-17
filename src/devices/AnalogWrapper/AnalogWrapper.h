@@ -43,20 +43,6 @@
 #include <yarp/rosmsg/impl/yarpRosHelper.h>
 
 
-/* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
- * name conflicts
- */
-
-namespace yarp{
-    namespace dev{
-        class AnalogWrapper;
-        namespace impl{
-            class AnalogServerHandler;
-            class AnalogPortEntry;
-        }
-    }
-}
-
 #define DEFAULT_THREAD_PERIOD 20 //ms
 
 /**
@@ -198,16 +184,24 @@ namespace yarp{
  * */
 
 
+class AnalogServerHandler;
+class AnalogPortEntry;
 
-class yarp::dev::AnalogWrapper: public yarp::os::PeriodicThread,
-                                public yarp::dev::DeviceDriver,
-                                public yarp::dev::IMultipleWrapper
+
+class AnalogWrapper :
+        public yarp::os::PeriodicThread,
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IMultipleWrapper
 {
 public:
-    // Constructor used by yarp factory
     AnalogWrapper();
 
-    ~AnalogWrapper();
+    AnalogWrapper(const AnalogWrapper&) = delete;
+    AnalogWrapper(AnalogWrapper&&) = delete;
+    AnalogWrapper& operator=(const AnalogWrapper&) = delete;
+    AnalogWrapper& operator=(AnalogWrapper&&) = delete;
+
+    ~AnalogWrapper() override;
 
     bool open(yarp::os::Searchable &params) override;
     bool close() override;
@@ -219,7 +213,7 @@ public:
     /**
       * Specify which analog sensor this thread has to read from.
       */
-    bool attachAll(const PolyDriverList &p) override;
+    bool attachAll(const yarp::dev::PolyDriverList &p) override;
     bool detachAll() override;
 
     void attach(yarp::dev::IAnalogSensor *s);
@@ -230,28 +224,27 @@ public:
     void run() override;
 
 private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     std::string streamingPortName;
     std::string rpcPortName;
-    yarp::dev::IAnalogSensor *analogSensor_p;   // the analog sensor to read from
-    std::vector<yarp::dev::impl::AnalogPortEntry> analogPorts;   // the list of output ports
-    std::vector<yarp::dev::impl::AnalogServerHandler*> handlers; // the list of rpc port handlers
+    yarp::dev::IAnalogSensor *analogSensor_p{nullptr};   // the analog sensor to read from
+    std::vector<AnalogPortEntry> analogPorts;   // the list of output ports
+    std::vector<AnalogServerHandler*> handlers; // the list of rpc port handlers
     yarp::os::Stamp lastStateStamp;             // the last reading time stamp
     yarp::sig::Vector lastDataRead;             // the last vector of data read from the attached IAnalogSensor
-    int _rate;
+    int _rate{DEFAULT_THREAD_PERIOD};
     std::string sensorId;
 
     // ROS state publisher
-    ROSTopicUsageType                                        useROS;                     // decide if open ROS topic or not
-    std::vector<std::string>                                 frame_idVec;                   // name of the reference frame the measures are referred to
+    ROSTopicUsageType                                        useROS{ROS_disabled};       // decide if open ROS topic or not
+    std::vector<std::string>                                 frame_idVec;                // name of the reference frame the measures are referred to
     std::vector<std::string>                                 ros_joint_names;
     std::string                                              rosMsgType;                 // ros message type
-    std::string                                              rosNodeName;                // name of the rosNode
-    std::vector<std::string>                                 rosTopicNamesVec;               // names of the rosTopics
-    yarp::os::Node                                           *rosNode;                   // add a ROS node
-    std::vector<yarp::os::NetUint32>                         rosMsgCounterVec;              // incremental counter in the ROS message
-    int                                                      rosOffset;                  // offset to be ignored from the analog sensor data
-    int                                                      rosPadding;                 // padding to be ignored from the analog sensor data
+    std::string                                              rosNodeName{""};            // name of the rosNode
+    std::vector<std::string>                                 rosTopicNamesVec;           // names of the rosTopics
+    yarp::os::Node*                                          rosNode{nullptr};           // add a ROS node
+    std::vector<yarp::os::NetUint32>                         rosMsgCounterVec;           // incremental counter in the ROS message
+    int                                                      rosOffset{0};               // offset to be ignored from the analog sensor data
+    int                                                      rosPadding{0};              // padding to be ignored from the analog sensor data
 
     // TODO: in the future, in order to support multiple ROS msgs this should be a pointer allocated dynamically depending on the msg maybe (??)
     //  yarp::os::PortWriterBuffer<yarp::rosmsg::geometry_msgs::WrenchStamped> rosOutputWrench_buffer; // Buffer associated to the ROS topic
@@ -261,13 +254,13 @@ private:
     yarp::os::Publisher<yarp::rosmsg::sensor_msgs::JointState> rosPublisherJointPort; // Dedicated ROS topic publisher
 
 
-    bool ownDevices;
+    bool ownDevices{false};
     // Open the wrapper only, the attach method needs to be called before using it
     bool openDeferredAttach(yarp::os::Searchable &prop);
 
     // For the simulator, if a subdevice parameter is given to the wrapper, it will
     // open it and attach to it immediately.
-    yarp::dev::PolyDriver *subDeviceOwned;
+    yarp::dev::PolyDriver *subDeviceOwned{nullptr};
     bool openAndAttachSubDevice(yarp::os::Searchable &prop);
 
     bool checkROSParams(yarp::os::Searchable &config);
@@ -280,52 +273,8 @@ private:
     // Function used when there is only one output port
     bool createPort(const char* name, int rate=20);
     // Function used when one or more output ports are specified
-    bool createPorts(const std::vector<yarp::dev::impl::AnalogPortEntry>& _analogPorts, int rate=20);
+    bool createPorts(const std::vector<AnalogPortEntry>& _analogPorts, int rate=20);
     bool checkForDeprecatedParams(yarp::os::Searchable &params);
-#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
-
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-/**
-  * Handler of the rpc port related to an analog sensor.
-  * Manage the calibration command received on the rpc port.
- **/
-class yarp::dev::impl::AnalogServerHandler: public yarp::os::PortReader
-{
-    yarp::dev::IAnalogSensor* is;   // analog sensor to calibrate, when required
-    yarp::os::Port rpcPort;         // rpc port related to the analog sensor
-
-public:
-    AnalogServerHandler(const char* n);
-    ~AnalogServerHandler();
-
-    void setInterface(yarp::dev::IAnalogSensor *is);
-
-    bool _handleIAnalog(yarp::os::Bottle &cmd, yarp::os::Bottle &reply);
-
-    bool read(yarp::os::ConnectionReader& connection) override;
-};
-
-
-/**
-  * A yarp port that output data read from an analog sensor.
-  * It contains information about which data of the analog sensor are sent
-  * on the port, i.e. an offset and a length.
-  */
-class yarp::dev::impl::AnalogPortEntry
-{
-public:
-    yarp::os::BufferedPort<yarp::sig::Vector> port;
-    std::string port_name;      // the complete name of the port
-    int offset;                 // an offset, the port is mapped starting from this taxel
-    int length;                 // length of the output vector of the port (-1 for max length)
-    AnalogPortEntry();
-    AnalogPortEntry(const AnalogPortEntry &alt);
-    AnalogPortEntry &operator =(const AnalogPortEntry &alt);
-};
-#endif // DOXYGEN_SHOULD_SKIP_THIS
-
 
 #endif // YARP_DEV_ANALOGWRAPPER_ANALOGWRAPPER_H

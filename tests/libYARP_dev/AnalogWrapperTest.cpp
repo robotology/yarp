@@ -19,6 +19,7 @@ using namespace yarp::dev;
 TEST_CASE("dev::AnalogWrapperTest", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("fakeAnalogSensor", "device");
+    YARP_REQUIRE_PLUGIN("analogServer", "device");
 
     Network::setLocalMode(true);
 

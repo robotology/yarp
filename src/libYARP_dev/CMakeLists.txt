@@ -177,8 +177,7 @@ if(TARGET YARP::YARP_math)
                             src/Map2DArea.cpp)
 endif()
 
-set(YARP_dev_devices_SRCS src/devices/AnalogWrapper/AnalogWrapper.cpp 
-                          src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
+set(YARP_dev_devices_SRCS src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
                           src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
                           src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
                           src/devices/ControlBoardWrapper/ControlBoardWrapper.cpp
@@ -196,8 +195,7 @@ set(YARP_dev_devices_SRCS src/devices/AnalogWrapper/AnalogWrapper.cpp
                           src/devices/ServerInertial/ServerInertial.cpp
                           src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
 
-set(YARP_dev_devices_HDRS src/devices/AnalogWrapper/AnalogWrapper.h
-                          src/devices/ControlBoardRemapper/ControlBoardRemapper.h
+set(YARP_dev_devices_HDRS src/devices/ControlBoardRemapper/ControlBoardRemapper.h
                           src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
                           src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h
                           src/devices/ControlBoardWrapper/ControlBoardWrapper.h

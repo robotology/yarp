@@ -18,7 +18,6 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-extern DriverCreator* createAnalogWrapper();
 extern DriverCreator* createControlBoardWrapper();
 extern DriverCreator* createVirtualAnalogWrapper();
 extern DriverCreator* createServerInertial();
@@ -35,7 +34,6 @@ extern DriverCreator* createJoypadControlServer();
 void Drivers::init() {
     add(createServerInertial());
     add(createControlBoardWrapper());
-    add(createAnalogWrapper());
     add(createVirtualAnalogWrapper());
     add(createRGBDSensorWrapper());
     add(createRGBDSensorClient());

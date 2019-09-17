@@ -17,14 +17,46 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
-using namespace yarp::dev::impl;
 
-// needed for the driver factory.
-yarp::dev::DriverCreator *createAnalogWrapper() {
-    return new DriverCreatorOf<yarp::dev::AnalogWrapper>("analogServer",
-        "analogServer",
-        "yarp::dev::AnalogWrapper");
-}
+
+/**
+  * Handler of the rpc port related to an analog sensor.
+  * Manage the calibration command received on the rpc port.
+ **/
+class AnalogServerHandler :
+        public yarp::os::PortReader
+{
+    yarp::dev::IAnalogSensor* is;   // analog sensor to calibrate, when required
+    yarp::os::Port rpcPort;         // rpc port related to the analog sensor
+
+public:
+    AnalogServerHandler(const char* n);
+    ~AnalogServerHandler();
+
+    void setInterface(yarp::dev::IAnalogSensor *is);
+
+    bool _handleIAnalog(yarp::os::Bottle &cmd, yarp::os::Bottle &reply);
+
+    bool read(yarp::os::ConnectionReader& connection) override;
+};
+
+
+/**
+  * A yarp port that output data read from an analog sensor.
+  * It contains information about which data of the analog sensor are sent
+  * on the port, i.e. an offset and a length.
+  */
+class AnalogPortEntry
+{
+public:
+    yarp::os::BufferedPort<yarp::sig::Vector> port;
+    std::string port_name;      // the complete name of the port
+    int offset;                 // an offset, the port is mapped starting from this taxel
+    int length;                 // length of the output vector of the port (-1 for max length)
+    AnalogPortEntry();
+    AnalogPortEntry(const AnalogPortEntry &alt);
+    AnalogPortEntry &operator =(const AnalogPortEntry &alt);
+};
 
 
 /**
@@ -180,25 +212,15 @@ bool AnalogWrapper::createPorts(const std::vector<AnalogPortEntry>& _analogPorts
 }
 
 AnalogWrapper::AnalogWrapper() :
-        PeriodicThread(DEFAULT_THREAD_PERIOD / 1000.0),
-        ownDevices(false),
-        subDeviceOwned(nullptr)
+        PeriodicThread(DEFAULT_THREAD_PERIOD / 1000.0)
 {
-    _rate = DEFAULT_THREAD_PERIOD;
-    analogSensor_p = nullptr;
-
     // init ROS struct
-    useROS                 = ROS_disabled;
     frame_idVec.resize(1);
     frame_idVec.at(0)      = "";
-    rosNodeName            = "";
     rosTopicNamesVec.resize(1);
     rosTopicNamesVec.at(0) = "";
-    rosNode                = nullptr;
     rosMsgCounterVec.resize(1);
     rosMsgCounterVec.at(0) = 0;
-    rosOffset              = 0;
-    rosPadding             = 0;
 }
 
 AnalogWrapper::~AnalogWrapper()
