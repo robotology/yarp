@@ -21,7 +21,6 @@ using namespace yarp::dev;
 extern DriverCreator* createControlBoardWrapper();
 extern DriverCreator* createServerInertial();
 extern DriverCreator* createRGBDSensorWrapper();
-extern DriverCreator* createRGBDSensorClient();
 extern DriverCreator* createControlBoardRemapper();
 extern DriverCreator* createRemoteControlBoardRemapper();
 extern DriverCreator* createRobotDescriptionServer();
@@ -34,7 +33,6 @@ void Drivers::init() {
     add(createServerInertial());
     add(createControlBoardWrapper());
     add(createRGBDSensorWrapper());
-    add(createRGBDSensorClient());
     add(createControlBoardRemapper());
     add(createRemoteControlBoardRemapper());
     add(createRobotDescriptionServer());

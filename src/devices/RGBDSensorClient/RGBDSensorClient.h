@@ -25,17 +25,7 @@
 #define RGBDSENSOR_TIMEOUT_DEFAULT  100   //ms
 
 
-
-namespace yarp {
-    namespace dev {
-        class RGBDSensorClient;
-        namespace impl {
-            class RGBDSensor_StreamingMsgParser;
-        }
-    }
-}
-
-
+class RGBDSensor_StreamingMsgParser;
 
 
 /**
@@ -87,14 +77,16 @@ namespace yarp {
  *
  */
 
-class yarp::dev::RGBDSensorClient:  public DeviceDriver,
-                                    public FrameGrabberControls_Sender,
-                                    public IRGBDSensor
+class RGBDSensorClient :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::FrameGrabberControls_Sender,
+        public yarp::dev::IRGBDSensor
 {
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    yarp::dev::Implement_RgbVisualParams_Sender*   RgbMsgSender;
-    yarp::dev::Implement_DepthVisualParams_Sender* DepthMsgSender;
+protected:
+    yarp::os::Port rpcPort;
+private:
+    yarp::dev::Implement_RgbVisualParams_Sender* RgbMsgSender{nullptr};
+    yarp::dev::Implement_DepthVisualParams_Sender* DepthMsgSender{nullptr};
 protected:
     std::string local_colorFrame_StreamingPort_name;
     std::string local_depthFrame_StreamingPort_name;
@@ -106,8 +98,6 @@ protected:
     // Use a single RPC port for now
     std::string local_rpcPort_name;
     std::string remote_rpcPort_name;
-    yarp::os::Port        rpcPort;
-
 
     /*
      * In case the client has to connect to 2 different wrappers/server because the rgb
@@ -129,11 +119,11 @@ protected:
 
     // Image data specs
     std::string sensorId;
-    yarp::dev::IRGBDSensor *sensor_p;
-    IRGBDSensor::RGBDSensor_status sensorStatus;
-    int verbose;
+    yarp::dev::IRGBDSensor *sensor_p{nullptr};
+    IRGBDSensor::RGBDSensor_status sensorStatus{IRGBDSensor::RGBD_SENSOR_NOT_READY};
+    int verbose{2};
 
-    bool use_ROS;  // if false (default) read from YARP port, if true read from ROS topic instead (Both at the same time is not possible).
+    bool use_ROS{false};  // if false (default) read from YARP port, if true read from ROS topic instead (Both at the same time is not possible).
     bool initialize_YARP(yarp::os::Searchable &config);
     bool initialize_ROS(yarp::os::Searchable &config);
 
@@ -142,20 +132,20 @@ protected:
 
 
     // This is gonna be superseded by the synchronized when it'll be ready
-    impl::RGBDSensor_StreamingMsgParser *streamingReader;
+    RGBDSensor_StreamingMsgParser *streamingReader{nullptr};
     bool fromConfig(yarp::os::Searchable &config);
 
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
-
 public:
-
     RGBDSensorClient();
-    ~RGBDSensorClient();
-
+    RGBDSensorClient(const RGBDSensorClient&) = delete;
+    RGBDSensorClient(RGBDSensorClient&&) = delete;
+    RGBDSensorClient& operator=(const RGBDSensorClient&) = delete;
+    RGBDSensorClient& operator=(RGBDSensorClient&&) = delete;
+    ~RGBDSensorClient() override;
 
     int  getRgbHeight() override;
     int  getRgbWidth() override;
-    bool getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations) override;
+    bool getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig> &configurations) override;
     bool getRgbResolution(int &width, int &height) override;
     bool setRgbResolution(int width, int height) override;
     bool getRgbFOV(double &horizontalFov, double &verticalFov) override;

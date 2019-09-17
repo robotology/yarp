@@ -10,7 +10,6 @@
 #include "RGBDSensorClient_StreamingMsgParser.h"
 
 using namespace yarp::dev;
-using namespace yarp::dev::impl;
 
 // Callback reader for rgb
 RgbImageReader_Impl::RgbImageReader_Impl() = default;

@@ -188,8 +188,6 @@ set(YARP_dev_devices_SRCS src/devices/ControlBoardRemapper/ControlBoardRemapper.
                           src/devices/JoypadControlServer/JoypadControlServer.cpp
                           src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
                           src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
-                          src/devices/RGBDSensorClient/RGBDSensorClient.cpp
-                          src/devices/RGBDSensorClient/RGBDSensorClient_StreamingMsgParser.cpp
                           src/devices/RGBDSensorWrapper/RGBDSensorWrapper.cpp
                           src/devices/ServerGrabber/ServerGrabber.cpp
                           src/devices/ServerInertial/ServerInertial.cpp)
@@ -206,8 +204,6 @@ set(YARP_dev_devices_HDRS src/devices/ControlBoardRemapper/ControlBoardRemapper.
                           src/devices/JoypadControlServer/JoypadControlServer.h
                           src/devices/RobotDescriptionClient/RobotDescriptionClient.h
                           src/devices/RobotDescriptionServer/RobotDescriptionServer.h
-                          src/devices/RGBDSensorClient/RGBDSensorClient.h
-                          src/devices/RGBDSensorClient/RGBDSensorClient_StreamingMsgParser.h
                           src/devices/RGBDSensorWrapper/RGBDSensorWrapper.h
                           src/devices/ServerGrabber/ServerGrabber.h
                           src/devices/ServerInertial/ServerInertial.h)

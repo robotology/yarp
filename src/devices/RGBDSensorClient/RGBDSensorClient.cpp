@@ -15,28 +15,16 @@
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
-using namespace yarp::dev::impl;
 
 #define RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR 1
 #define RGBD_INTERFACE_PROTOCOL_VERSION_MINOR 0
 
-// needed for the driver factory.
-yarp::dev::DriverCreator *createRGBDSensorClient()
+RGBDSensorClient::RGBDSensorClient() :
+        FrameGrabberControls_Sender(rpcPort),
+        RgbMsgSender(new Implement_RgbVisualParams_Sender(rpcPort)),
+        DepthMsgSender(new Implement_DepthVisualParams_Sender(rpcPort)),
+        streamingReader(new RGBDSensor_StreamingMsgParser)
 {
-    return new DriverCreatorOf<yarp::dev::RGBDSensorClient>("RGBDSensorClient",
-        "RGBDSensorClient",
-        "yarp::dev::RGBDSensorClient");
-}
-
-RGBDSensorClient::RGBDSensorClient() : FrameGrabberControls_Sender(rpcPort)
-{
-    sensor_p       = nullptr;
-    use_ROS        = false;
-    verbose        = 2;
-    sensorStatus   = IRGBDSensor::RGBD_SENSOR_NOT_READY;
-    RgbMsgSender   = new Implement_RgbVisualParams_Sender(rpcPort);
-    DepthMsgSender = new Implement_DepthVisualParams_Sender(rpcPort);
-    streamingReader = new RGBDSensor_StreamingMsgParser;
 }
 
 RGBDSensorClient::~RGBDSensorClient()
