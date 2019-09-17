@@ -192,8 +192,7 @@ set(YARP_dev_devices_SRCS src/devices/ControlBoardRemapper/ControlBoardRemapper.
                           src/devices/RGBDSensorClient/RGBDSensorClient_StreamingMsgParser.cpp
                           src/devices/RGBDSensorWrapper/RGBDSensorWrapper.cpp
                           src/devices/ServerGrabber/ServerGrabber.cpp
-                          src/devices/ServerInertial/ServerInertial.cpp
-                          src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
+                          src/devices/ServerInertial/ServerInertial.cpp)
 
 set(YARP_dev_devices_HDRS src/devices/ControlBoardRemapper/ControlBoardRemapper.h
                           src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
@@ -211,8 +210,7 @@ set(YARP_dev_devices_HDRS src/devices/ControlBoardRemapper/ControlBoardRemapper.
                           src/devices/RGBDSensorClient/RGBDSensorClient_StreamingMsgParser.h
                           src/devices/RGBDSensorWrapper/RGBDSensorWrapper.h
                           src/devices/ServerGrabber/ServerGrabber.h
-                          src/devices/ServerInertial/ServerInertial.h
-                          src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
+                          src/devices/ServerInertial/ServerInertial.h)
 
 # Handle the YARP thrift messages
 include(YarpIDL)

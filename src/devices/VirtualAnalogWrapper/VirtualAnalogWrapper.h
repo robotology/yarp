@@ -42,21 +42,11 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
-/* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
- * name conflicts
- */
-
-namespace yarp{
-    namespace dev{
-        class VirtualAnalogWrapper;
-        namespace impl {
-            class AnalogSubDevice;
-        }
-    }
-}
-
 ///////////////////////////////////////////////////
 // TODO add IVirtualAnalogSensor interface to have Channels number and status??
+
+
+class AnalogSubDevice;
 
 /**
  *  @ingroup dev_impl_wrapper
@@ -69,18 +59,19 @@ namespace yarp{
  * This virtual wrapper will open a port and accept the incoming estimated measurement and send them to
  * the real robot using the attached device.
  */
-class yarp::dev::VirtualAnalogWrapper : public yarp::dev::DeviceDriver, public yarp::os::Thread, public yarp::dev::IMultipleWrapper
+class VirtualAnalogWrapper :
+        public yarp::dev::DeviceDriver,
+        public yarp::os::Thread,
+        public yarp::dev::IMultipleWrapper
 {
 public:
-    VirtualAnalogWrapper() : mMutex()
-    {
-        lastRecv = 0;
-        mIsVerbose=false;
-        mNSubdevs=0;
-        first_check = false;
-    }
+    VirtualAnalogWrapper() = default;
+    VirtualAnalogWrapper(const VirtualAnalogWrapper&) = delete;
+    VirtualAnalogWrapper(VirtualAnalogWrapper&&) = delete;
+    VirtualAnalogWrapper& operator=(const VirtualAnalogWrapper&) = delete;
+    VirtualAnalogWrapper& operator=(VirtualAnalogWrapper&&) = delete;
 
-    ~VirtualAnalogWrapper()
+    ~VirtualAnalogWrapper() override
     {
         close();
     }
@@ -102,27 +93,24 @@ public:
     // Utility
     bool perform_first_check(int elems);
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
     std::mutex mMutex;
 
-    bool mIsVerbose;
+    bool mIsVerbose{false};
 
-    int mNSubdevs;
+    int mNSubdevs{0};
 
     std::vector<int> mChan2Board;
     std::vector<int> mChan2BAddr;
-    double lastRecv;
-    bool first_check;
+    double lastRecv{0.0};
+    bool first_check{false};
 
-    std::vector<yarp::dev::impl::AnalogSubDevice> mSubdevices;
+    std::vector<AnalogSubDevice> mSubdevices;
     yarp::os::BufferedPort<yarp::os::Bottle> mPortInputTorques;
-#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-class yarp::dev::impl::AnalogSubDevice
+class AnalogSubDevice
 {
 public:
     AnalogSubDevice();
@@ -163,11 +151,10 @@ protected:
 
     bool mIsConfigured;
     bool mIsAttached;
-    double lastRecvMsg;
+    double lastRecvMsg{0.0};
     yarp::dev::PolyDriver            *mpDevice;
     yarp::dev::IVirtualAnalogSensor  *mpSensor;
 };
 
-#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 #endif // YARP_DEV_VIRTUALANALOGWRAPPER_VIRTUALANALOGWRAPPER_H

@@ -73,6 +73,7 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(RemoteControlBoard)
   add_subdirectory(AnalogSensorClient)
   add_subdirectory(AnalogWrapper)
+  add_subdirectory(VirtualAnalogWrapper)
 
 
   # We can also suck in other device libraries built the same way.

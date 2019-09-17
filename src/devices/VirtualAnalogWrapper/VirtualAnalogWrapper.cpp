@@ -13,19 +13,10 @@
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
-using namespace yarp::dev::impl;
 
 #define MAX_ENTRIES 255
 
-// needed for the driver factory.
-yarp::dev::DriverCreator *createVirtualAnalogWrapper() {
-    return new DriverCreatorOf<yarp::dev::VirtualAnalogWrapper>("virtualAnalogServer",
-        "virtualAnalogServer",
-        "yarp::dev::VirtualAnalogWrapper");
-}
-
-
-AnalogSubDevice::AnalogSubDevice() : lastRecvMsg(0)
+AnalogSubDevice::AnalogSubDevice()
 {
     detach();
 }
