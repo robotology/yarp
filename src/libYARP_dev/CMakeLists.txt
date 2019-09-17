@@ -177,8 +177,7 @@ if(TARGET YARP::YARP_math)
                             src/Map2DArea.cpp)
 endif()
 
-set(YARP_dev_devices_SRCS src/devices/AnalogSensorClient/AnalogSensorClient.cpp
-                          src/devices/AnalogWrapper/AnalogWrapper.cpp
+set(YARP_dev_devices_SRCS src/devices/AnalogWrapper/AnalogWrapper.cpp 
                           src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
                           src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
                           src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
@@ -197,8 +196,7 @@ set(YARP_dev_devices_SRCS src/devices/AnalogSensorClient/AnalogSensorClient.cpp
                           src/devices/ServerInertial/ServerInertial.cpp
                           src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
 
-set(YARP_dev_devices_HDRS src/devices/AnalogSensorClient/AnalogSensorClient.h
-                          src/devices/AnalogWrapper/AnalogWrapper.h
+set(YARP_dev_devices_HDRS src/devices/AnalogWrapper/AnalogWrapper.h
                           src/devices/ControlBoardRemapper/ControlBoardRemapper.h
                           src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
                           src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h
@@ -265,8 +263,7 @@ target_include_directories(YARP_dev PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOU
                                            $<BUILD_INTERFACE:${YARP_dev_idl_INCLUDE_DIRS}>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-target_include_directories(YARP_dev PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/AnalogSensorClient
-                                            ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/JoypadControlServer)
+target_include_directories(YARP_dev PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/JoypadControlServer)
 
 target_link_libraries(YARP_dev PUBLIC YARP::YARP_conf
                                       YARP::YARP_OS

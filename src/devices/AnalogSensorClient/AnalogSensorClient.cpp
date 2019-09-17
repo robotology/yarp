@@ -155,7 +155,7 @@ int InputPortProcessor::getChannels()
     }
 }
 
-void  yarp::dev::AnalogSensorClient::removeLeadingTrailingSlashesOnly(std::string &name)
+void  AnalogSensorClient::removeLeadingTrailingSlashesOnly(std::string &name)
 {
     bool done = false;
     while(!done)
@@ -182,7 +182,7 @@ void  yarp::dev::AnalogSensorClient::removeLeadingTrailingSlashesOnly(std::strin
     yDebug() << name;
 }
 
-bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
+bool AnalogSensorClient::open(yarp::os::Searchable &config)
 {
     std::string carrier = config.check("carrier", Value("udp"), "default carrier for streaming robot state").asString();
 
@@ -238,30 +238,30 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool yarp::dev::AnalogSensorClient::close()
+bool AnalogSensorClient::close()
 {
     rpcPort.close();
     inputPort.close();
     return true;
 }
 
-int yarp::dev::AnalogSensorClient::read(yarp::sig::Vector &out)
+int AnalogSensorClient::read(yarp::sig::Vector &out)
 {
     return inputPort.getLast(out, lastTs);
 }
 
-int yarp::dev::AnalogSensorClient::getState(int ch)
+int AnalogSensorClient::getState(int ch)
 {
     //not implemented yet
     return AS_OK;
 }
 
-int yarp::dev::AnalogSensorClient::getChannels()
+int AnalogSensorClient::getChannels()
 {
     return inputPort.getChannels();
 }
 
-int yarp::dev::AnalogSensorClient::calibrateSensor()
+int AnalogSensorClient::calibrateSensor()
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_IANALOG);
@@ -270,7 +270,7 @@ int yarp::dev::AnalogSensorClient::calibrateSensor()
     return checkResponse(ok, response);
 }
 
-int yarp::dev::AnalogSensorClient::calibrateSensor(const yarp::sig::Vector& value)
+int AnalogSensorClient::calibrateSensor(const yarp::sig::Vector& value)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_IANALOG);
@@ -282,7 +282,7 @@ int yarp::dev::AnalogSensorClient::calibrateSensor(const yarp::sig::Vector& valu
     return checkResponse(ok, response);
 }
 
-int yarp::dev::AnalogSensorClient::calibrateChannel(int ch)
+int AnalogSensorClient::calibrateChannel(int ch)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_IANALOG);
@@ -292,7 +292,7 @@ int yarp::dev::AnalogSensorClient::calibrateChannel(int ch)
     return checkResponse(ok, response);
 }
 
-int yarp::dev::AnalogSensorClient::calibrateChannel(int ch, double value)
+int AnalogSensorClient::calibrateChannel(int ch, double value)
 {
     Bottle cmd, response;
     cmd.addVocab(VOCAB_IANALOG);
@@ -303,13 +303,7 @@ int yarp::dev::AnalogSensorClient::calibrateChannel(int ch, double value)
     return checkResponse(ok, response);
 }
 
-Stamp yarp::dev::AnalogSensorClient::getLastInputStamp()
+Stamp AnalogSensorClient::getLastInputStamp()
 {
     return lastTs;
-}
-
-yarp::dev::DriverCreator *createAnalogSensorClient() {
-    return new DriverCreatorOf<AnalogSensorClient>("analogsensorclient",
-        "",
-        "AnalogSensorClient");
 }

@@ -22,14 +22,6 @@
 
 #include <mutex>
 
-namespace yarp {
-    namespace dev {
-        class AnalogSensorClient;
-    }
-}
-
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 const int ANALOG_TIMEOUT=100; //ms
 
@@ -74,7 +66,6 @@ public:
  * The client side of any IAnalogSensor capable device.
  * Still single thread! concurrent access is unsafe.
  */
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 /**
 * @ingroup dev_impl_network_clients
@@ -96,11 +87,11 @@ public:
 * ex: <b> /myModule/left_arm/ForceTorque </b>, and will connect to a port called <b> /icub/left_arm/ForceTorque<b>.
 *
 **/
-class yarp::dev::AnalogSensorClient:    public DeviceDriver,
-                                        public IPreciselyTimed,
-                                        public IAnalogSensor
+class AnalogSensorClient :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IPreciselyTimed,
+        public yarp::dev::IAnalogSensor
 {
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
     InputPortProcessor inputPort;
     yarp::os::Port rpcPort;
@@ -113,9 +104,14 @@ protected:
     std::string portPrefix;
 
     void  removeLeadingTrailingSlashesOnly(std::string &name);
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
+    AnalogSensorClient() = default;
+    AnalogSensorClient(const AnalogSensorClient&) = delete;
+    AnalogSensorClient(AnalogSensorClient&&) = delete;
+    AnalogSensorClient& operator=(const AnalogSensorClient&) = delete;
+    AnalogSensorClient& operator=(AnalogSensorClient&&) = delete;
+    ~AnalogSensorClient() override = default;
 
     /* DeviceDriver methods */
     bool open(yarp::os::Searchable& config) override;
