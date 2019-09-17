@@ -29,21 +29,16 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 
 
-namespace yarp
-{
-    namespace dev
-    {
-        class ServerSerial;
-        class ImplementCallbackHelper2;
-    }
-}
+class ServerSerial;
 
 /**
  * Callback implementation after buffered input.
  */
-class YARP_dev_API yarp::dev::ImplementCallbackHelper2 : public TypedReaderCallback<Bottle> {
+class ImplementCallbackHelper2 :
+        public yarp::os::TypedReaderCallback<yarp::os::Bottle>
+{
 protected:
-    ISerialDevice *ser;
+    yarp::dev::ISerialDevice* ser{nullptr};
 
 public:
     /**
@@ -51,7 +46,7 @@ public:
      * @param x is the instance of the container class using the callback.
      */
     ImplementCallbackHelper2();
-    ImplementCallbackHelper2(yarp::dev::ServerSerial *x);
+    ImplementCallbackHelper2(ServerSerial *x);
 
     using yarp::os::TypedReaderCallback<Bottle>::onRead;
     /**
@@ -72,24 +67,26 @@ public:
  * The output port streams out whatever information it gets in the
  * serial port as text bottles.
  */
-class YARP_dev_API yarp::dev::ServerSerial : public DeviceDriver,
-                                             public ISerialDevice,
-                                             private Thread
+class ServerSerial :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::ISerialDevice,
+        private yarp::os::Thread
 {
 private:
-    bool verb;
-    PolyDriver poly;
-    Port toDevice;
-    Port fromDevice;
+    bool verb{false};
+    yarp::dev::PolyDriver poly;
+    yarp::os::Port toDevice;
+    yarp::os::Port fromDevice;
 
-    PortWriterBuffer <Bottle> reply_buffer;
-    PortReaderBuffer <Bottle> command_buffer;
+    yarp::os::PortWriterBuffer <yarp::os::Bottle> reply_buffer;
+    yarp::os::PortReaderBuffer <yarp::os::Bottle> command_buffer;
 
-    ISerialDevice *serial;
-    yarp::dev::ImplementCallbackHelper2 callback_impl;
+    yarp::dev::ISerialDevice *serial{nullptr};
+    ImplementCallbackHelper2 callback_impl{this};
 
 
-    bool closeMain() {
+    bool closeMain()
+    {
         if (Thread::isRunning()) {
             Thread::stop();
         }
@@ -101,12 +98,12 @@ private:
     }
 
 public:
-    /**
-     * Constructor.
-     */
-    ServerSerial();
-
-    virtual ~ServerSerial();
+    ServerSerial() = default;
+    ServerSerial(const ServerSerial&) = delete;
+    ServerSerial(ServerSerial&&) = delete;
+    ServerSerial& operator=(const ServerSerial&) = delete;
+    ServerSerial& operator=(ServerSerial&&) = delete;
+    ~ServerSerial() override;
 
     bool send(const Bottle& msg) override;
     bool send(char *msg, size_t size) override;
@@ -118,15 +115,15 @@ public:
     bool setDTR(bool enable) override;
 
     /**
-    * Default open() method.
-    * @return always false since initialization requires certain parameters.
-    */
+     * Default open() method.
+     * @return always false since initialization requires certain parameters.
+     */
     virtual bool open();
 
     /**
-    * Close the device driver by deallocating all resources and closing ports.
-    * @return true if successful or false otherwise.
-    */
+     * Close the device driver by deallocating all resources and closing ports.
+     * @return true if successful or false otherwise.
+     */
     bool close() override;
 
     /**

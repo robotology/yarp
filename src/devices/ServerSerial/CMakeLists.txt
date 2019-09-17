@@ -4,26 +4,26 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-yarp_prepare_plugin(test_motor
+yarp_prepare_plugin(serial
                     CATEGORY device
-                    TYPE TestMotor
-                    INCLUDE TestMotor.h
-                    EXTRA_CONFIG WRAPPER=controlboard
+                    TYPE ServerSerial
+                    INCLUDE ServerSerial.h
+                    EXTRA_CONFIG WRAPPER=serial
                     DEFAULT ON)
 
-if(NOT SKIP_test_motor)
+if(NOT SKIP_serial)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_test_motor TestMotor.cpp
-                                  TestMotor.h)
-  target_link_libraries(yarp_test_motor PRIVATE YARP::YARP_OS
+  yarp_add_plugin(yarp_serial ServerSerial.cpp
+                                  ServerSerial.h)
+  target_link_libraries(yarp_serial PRIVATE YARP::YARP_OS
                                                 YARP::YARP_sig
                                                 YARP::YARP_dev)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
                                                       YARP_sig
                                                       YARP_dev)
 
-  yarp_install(TARGETS yarp_test_motor
+  yarp_install(TARGETS yarp_serial
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -32,5 +32,5 @@ if(NOT SKIP_test_motor)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_test_motor PROPERTY FOLDER "Plugins/Device/Fake")
+  set_property(TARGET yarp_serial PROPERTY FOLDER "Plugins/Device")
 endif()

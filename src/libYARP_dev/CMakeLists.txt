@@ -199,7 +199,6 @@ set(YARP_dev_devices_SRCS src/devices/AnalogSensorClient/AnalogSensorClient.cpp
                           src/devices/ServerFrameGrabber/ServerFrameGrabber.cpp
                           src/devices/ServerGrabber/ServerGrabber.cpp
                           src/devices/ServerInertial/ServerInertial.cpp
-                          src/devices/ServerSerial/ServerSerial.cpp
                           src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
 
 set(YARP_dev_devices_HDRS src/devices/AnalogSensorClient/AnalogSensorClient.h
@@ -225,7 +224,6 @@ set(YARP_dev_devices_HDRS src/devices/AnalogSensorClient/AnalogSensorClient.h
                           src/devices/ServerFrameGrabber/ServerFrameGrabber.h
                           src/devices/ServerGrabber/ServerGrabber.h
                           src/devices/ServerInertial/ServerInertial.h
-                          src/devices/ServerSerial/ServerSerial.h
                           src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
 
 # Handle the YARP thrift messages

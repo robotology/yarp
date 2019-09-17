@@ -13,20 +13,6 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/Os.h>
 
-// needed for the driver factory.
-yarp::dev::DriverCreator *createServerSerial() {
-    return new yarp::dev::DriverCreatorOf<yarp::dev::ServerSerial>("serial",
-                                                                   "serial",
-                                                                   "yarp::dev::ServerSerial");
-}
-
-ServerSerial::ServerSerial() :
-        verb(false),
-        serial(nullptr),
-        callback_impl(this)
-{
-}
-
 
 ServerSerial::~ServerSerial()
 {
@@ -202,7 +188,8 @@ void ServerSerial::run() {
 // ImplementCallbackHelper class.
 
 
-yarp::dev::ImplementCallbackHelper2::ImplementCallbackHelper2(yarp::dev::ServerSerial *x) {
+ImplementCallbackHelper2::ImplementCallbackHelper2(ServerSerial *x)
+{
     ser = dynamic_cast<yarp::dev::ISerialDevice *> (x);
     //yAssert(ser != 0);
     if (ser==nullptr) {
@@ -213,10 +200,11 @@ yarp::dev::ImplementCallbackHelper2::ImplementCallbackHelper2(yarp::dev::ServerS
 
 }
 
-void yarp::dev::ImplementCallbackHelper2::onRead(Bottle &b) {
+void ImplementCallbackHelper2::onRead(Bottle &b)
+{
     //printf("Data received on the control channel of size: %d\n", v.body.size());
     //    int i;
-   if (ser) {
+    if (ser) {
         bool ok = ser->send(b);
         if (!ok)
             yError("Problems while trying to send data\n");
