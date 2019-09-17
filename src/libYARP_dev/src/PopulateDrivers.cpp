@@ -18,8 +18,6 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-extern DriverCreator* createRemoteFrameGrabber();
-extern DriverCreator* createServerFrameGrabber();
 extern DriverCreator* createRemoteControlBoard();
 extern DriverCreator* createAnalogSensorClient();
 extern DriverCreator* createAnalogWrapper();
@@ -37,8 +35,6 @@ extern DriverCreator* createJoypadControlClient();
 extern DriverCreator* createJoypadControlServer();
 
 void Drivers::init() {
-    add(createRemoteFrameGrabber());
-    add(createServerFrameGrabber());
     add(createRemoteControlBoard());
     add(createServerInertial());
     add(createControlBoardWrapper());

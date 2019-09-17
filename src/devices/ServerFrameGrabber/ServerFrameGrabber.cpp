@@ -9,7 +9,6 @@
 
 #include "ServerFrameGrabber.h"
 
-#include <yarp/dev/Drivers.h>
 #include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
@@ -17,31 +16,8 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 
 
-// needed for the driver factory.
-yarp::dev::DriverCreator *createServerFrameGrabber() {
-    return new yarp::dev::DriverCreatorOf<yarp::dev::ServerFrameGrabber>("grabber",
-                                                                         "grabber",
-                                                                         "yarp::dev::ServerFrameGrabber");
-}
-
-
-ServerFrameGrabber::ServerFrameGrabber() {
-    rgbVis_p = nullptr;
-    fgImage = nullptr;
-    fgImageRaw = nullptr;
-    fgSound = nullptr;
-    fgAv = nullptr;
-    fgCtrl = nullptr;
-    fgTimed = nullptr;
-    spoke = false;
-    canDrop = true;
-    addStamp = false;
-    active = false;
-    singleThreaded = false;
-    p2 = nullptr;
-}
-
-bool ServerFrameGrabber::close() {
+bool ServerFrameGrabber::close()
+{
     if (!active) {
         return false;
     }
@@ -54,7 +30,8 @@ bool ServerFrameGrabber::close() {
     return true;
 }
 
-bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
+bool ServerFrameGrabber::open(yarp::os::Searchable& config)
+{
     if (active) {
         yError("Did you just try to open the same ServerFrameGrabber twice?\n");
         return false;
@@ -210,7 +187,8 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
 }
 
 bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
-                                 yarp::os::Bottle& response) {
+                                 yarp::os::Bottle& response)
+{
     int code = cmd.get(0).asVocab();
 
     auto* fgCtrlDC1394=dynamic_cast<IFrameGrabberControlsDC1394*>(fgCtrl);
@@ -350,7 +328,8 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 }
 
 /*
-bool ServerFrameGrabber::read(ConnectionReader& connection) {
+bool ServerFrameGrabber::read(ConnectionReader& connection)
+{
     yarp::os::Bottle cmd, response;
     if (!cmd.read(connection)) { return false; }
     yDebug("command received: %s\n", cmd.toString().c_str());
@@ -436,56 +415,67 @@ bool ServerFrameGrabber::read(ConnectionReader& connection) {
 }
 */
 
-bool ServerFrameGrabber::getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+bool ServerFrameGrabber::getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
+{
     return getImage(image);
 }
 
-bool ServerFrameGrabber::getDatum(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
+bool ServerFrameGrabber::getDatum(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
+{
     return getImage(image);
 }
 
-bool ServerFrameGrabber::getDatum(ImageRgbSound& imageSound) {
+bool ServerFrameGrabber::getDatum(ImageRgbSound& imageSound)
+{
     return getDatum(imageSound.head,imageSound.body);
 }
 
 bool ServerFrameGrabber::getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
-                      yarp::sig::Sound& sound) {
+                                  yarp::sig::Sound& sound)
+{
     return getAudioVisual(image,sound);
 }
 
-bool ServerFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+bool ServerFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
+{
     if (fgImage==nullptr) { return false; }
     return fgImage->getImage(image);
 }
 
-bool ServerFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
+bool ServerFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
+{
     if (fgImageRaw==nullptr) { return false; }
     return fgImageRaw->getImage(image);
 }
 
 bool ServerFrameGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
-                            yarp::sig::Sound& sound) {
+                                        yarp::sig::Sound& sound)
+{
     if (fgAv==nullptr) { return false; }
     return fgAv->getAudioVisual(image,sound);
 }
 
-int ServerFrameGrabber::height() const {
+int ServerFrameGrabber::height() const
+{
     if (fgImage) { return fgImage->height(); }
     if (fgImageRaw) { return fgImageRaw->height(); }
     return 0;
 }
 
-int ServerFrameGrabber::width() const {
+int ServerFrameGrabber::width() const
+{
     if (fgImage) { return fgImage->width(); }
     if (fgImageRaw) { return fgImageRaw->width(); }
     return 0;
 }
 
-bool ServerFrameGrabber::stopService() {
+bool ServerFrameGrabber::stopService()
+{
     return close();
 }
 
-bool ServerFrameGrabber::startService() {
+bool ServerFrameGrabber::startService()
+{
     if (singleThreaded) {
         return false;
     }
@@ -493,7 +483,8 @@ bool ServerFrameGrabber::startService() {
 }
 
 
-bool ServerFrameGrabber::updateService() {
+bool ServerFrameGrabber::updateService()
+{
     if (singleThreaded) {
         if (active) {
             thread.step();

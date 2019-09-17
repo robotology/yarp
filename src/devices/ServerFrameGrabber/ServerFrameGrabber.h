@@ -30,14 +30,6 @@
 #include <yarp/os/RateThread.h>
 #undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 
-namespace yarp {
-    namespace dev {
-        class ServerFrameGrabber;
-    }
-}
-
-
-
 
 /**
  * @ingroup dev_impl_wrapper
@@ -82,42 +74,45 @@ namespace yarp {
  * </TABLE>
  *
  */
-class YARP_dev_API yarp::dev::ServerFrameGrabber : public DeviceDriver,
-            public DeviceResponder,
-            public IFrameGrabberImage,
-            public IAudioVisualGrabber,
-            public IService,
-            public DataSource<yarp::sig::ImageOf<yarp::sig::PixelRgb> >,
-            public DataSource<yarp::sig::ImageOf<yarp::sig::PixelMono> >,
-            public DataSource<ImageRgbSound>,
-            public DataSource2<yarp::sig::ImageOf<yarp::sig::PixelRgb>,yarp::sig::Sound>
+class ServerFrameGrabber :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::DeviceResponder,
+        public yarp::dev::IFrameGrabberImage,
+        public yarp::dev::IAudioVisualGrabber,
+        public yarp::dev::IService,
+        public yarp::dev::DataSource<yarp::sig::ImageOf<yarp::sig::PixelRgb>>,
+        public yarp::dev::DataSource<yarp::sig::ImageOf<yarp::sig::PixelMono>>,
+        public yarp::dev::DataSource<yarp::dev::ImageRgbSound>,
+        public yarp::dev::DataSource2<yarp::sig::ImageOf<yarp::sig::PixelRgb>,yarp::sig::Sound>
 {
 private:
     yarp::dev::Implement_RgbVisualParams_Parser  rgbParser;
-    yarp::dev::IRgbVisualParams* rgbVis_p;
+    yarp::dev::IRgbVisualParams* rgbVis_p{nullptr};
     yarp::os::Port p;
-    yarp::os::Port *p2;
+    yarp::os::Port *p2{nullptr};
     yarp::os::RateThreadWrapper thread;
-    PolyDriver poly;
-    IFrameGrabberImage *fgImage;
-    IFrameGrabberImageRaw *fgImageRaw;
-    IAudioGrabberSound *fgSound;
-    IAudioVisualGrabber *fgAv;
-    IFrameGrabberControls  *fgCtrl;
-    IPreciselyTimed *fgTimed;
-    bool spoke; // location of this variable tickles bug on Solaris/gcc3.2
-    bool canDrop;
-    bool addStamp;
-    bool active;
-    bool singleThreaded;
+    yarp::dev::PolyDriver poly;
+    yarp::dev::IFrameGrabberImage *fgImage{nullptr};
+    yarp::dev::IFrameGrabberImageRaw *fgImageRaw{nullptr};
+    yarp::dev::IAudioGrabberSound *fgSound{nullptr};
+    yarp::dev::IAudioVisualGrabber *fgAv{nullptr};
+    yarp::dev::IFrameGrabberControls  *fgCtrl{nullptr};
+    yarp::dev::IPreciselyTimed *fgTimed{nullptr};
+    bool spoke{false}; // location of this variable tickles bug on Solaris/gcc3.2
+    bool canDrop{false};
+    bool addStamp{false};
+    bool active{false};
+    bool singleThreaded{false};
 
-    FrameGrabberControls_Parser ifgCtrl_Parser;
+    yarp::dev::FrameGrabberControls_Parser ifgCtrl_Parser;
 
 public:
-    /**
-     * Constructor.
-     */
-    ServerFrameGrabber();
+    ServerFrameGrabber() = default;
+    ServerFrameGrabber(const ServerFrameGrabber&) = delete;
+    ServerFrameGrabber(ServerFrameGrabber&&) = delete;
+    ServerFrameGrabber& operator=(const ServerFrameGrabber&) = delete;
+    ServerFrameGrabber& operator=(ServerFrameGrabber&&) = delete;
+    ~ServerFrameGrabber() override = default;
 
     bool close() override;
     /**
@@ -141,7 +136,7 @@ public:
 
     bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
 
-    bool getDatum(ImageRgbSound& imageSound) override;
+    bool getDatum(yarp::dev::ImageRgbSound& imageSound) override;
 
     virtual bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                           yarp::sig::Sound& sound) override;

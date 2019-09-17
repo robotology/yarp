@@ -3,7 +3,7 @@
  *
  * \defgroup grabber_basic Example for grabber (grabber_basic)
 
-Instantiates \ref cmd_device_grabber "grabber" device implemented by yarp::dev::ServerFrameGrabber.
+Instantiates \ref cmd_device_grabber "grabber" device implemented by ServerFrameGrabber.
 \verbatim
 # start up a network wrapper around a test_grabber
 device grabber
@@ -67,6 +67,6 @@ So this is just an example
 <tr><td>framerate</td><td>maximum rate in Hz to read from subdevice</td><td>0</td></tr>
 </table>
 
-\sa yarp::dev::ServerFrameGrabber
+\sa ServerFrameGrabber
 
  */

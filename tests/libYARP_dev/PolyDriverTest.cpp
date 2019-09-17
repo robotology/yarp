@@ -113,8 +113,7 @@ TEST_CASE("dev::PolyDriverTest", "[yarp::dev]")
     SECTION("test monitoring")
     {
         Property p;
-        p.put("device","grabber");
-        p.put("subdevice","devicedrivertest");
+        p.put("device","devicedrivertest");
         p.put("verbose",1);
         p.put("wrapped",1);
         PolyDriver dd(p);
@@ -127,8 +126,7 @@ TEST_CASE("dev::PolyDriverTest", "[yarp::dev]")
     SECTION("test Property bug")
     {
         Property p;
-        p.put("device","grabber");
-        p.put("subdevice","devicedrivertest");
+        p.put("device","devicedrivertest");
         p.put("verbose",1);
         p.put("wrapped",1);
         for (int i=0; i<5; i++) {

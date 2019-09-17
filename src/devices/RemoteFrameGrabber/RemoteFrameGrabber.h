@@ -20,28 +20,22 @@
 
 #include <mutex>
 
-namespace yarp{
-    namespace dev {
-        class RemoteFrameGrabber;
-        class RemoteFrameGrabberDC1394;
-        class ImplementDC1394;
-    }
-}
 
-
-class YARP_dev_API yarp::dev::ImplementDC1394 : public IFrameGrabberControlsDC1394
+class ImplementDC1394 :
+        public yarp::dev::IFrameGrabberControlsDC1394
 {
 private:
-    yarp::os::Port *_port;
+    yarp::os::Port* _port{nullptr};
 
 public:
-    ImplementDC1394():_port(nullptr) {}
-    virtual ~ImplementDC1394() { _port = nullptr; }
-
-    void init(yarp::os::Port *__port) { _port = __port;}
+    void init(yarp::os::Port *__port)
+    {
+        _port = __port;
+    }
 
 private:
-    bool setCommand(int code, double v) {
+    bool setCommand(int code, double v)
+    {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_SET);
@@ -51,7 +45,8 @@ private:
         return true;
     }
 
-    bool setCommand(int code, double b, double r) {
+    bool setCommand(int code, double b, double r)
+    {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_SET);
@@ -62,7 +57,8 @@ private:
         return true;
     }
 
-    double getCommand(int code) const {
+    double getCommand(int code) const
+    {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL_DC1394);
         cmd.addVocab(VOCAB_GET);
@@ -376,28 +372,25 @@ public:
  * \section remoteFrameGrabber
  * Connect to a ServerFrameGrabber.  See ServerFrameGrabber for
  * the network protocol used.
- *
  */
-class YARP_dev_API yarp::dev::RemoteFrameGrabber :  public IFrameGrabberImage,
-                                                    public FrameGrabberControls_Sender,
-                                                    public ImplementDC1394,
-                                                    public Implement_RgbVisualParams_Sender,
-                                                    public DeviceDriver
+class RemoteFrameGrabber :
+        public yarp::dev::IFrameGrabberImage,
+        public yarp::dev::FrameGrabberControls_Sender,
+        public ImplementDC1394,
+        public yarp::dev::Implement_RgbVisualParams_Sender,
+        public yarp::dev::DeviceDriver
 {
 public:
-    virtual ~RemoteFrameGrabber() {}
-    /**
-     * Constructor.
-     */
-    RemoteFrameGrabber() : FrameGrabberControls_Sender(port), Implement_RgbVisualParams_Sender(port),
-        mutex(),
-        lastHeight(0),
-        lastWidth(0),
-        no_stream(false),
-        Ifirewire(nullptr)
-    {}
+    RemoteFrameGrabber();
+    RemoteFrameGrabber(const RemoteFrameGrabber&) = delete;
+    RemoteFrameGrabber(RemoteFrameGrabber&&) = delete;
+    RemoteFrameGrabber& operator=(const RemoteFrameGrabber&) = delete;
+    RemoteFrameGrabber& operator=(RemoteFrameGrabber&&) = delete;
+    ~RemoteFrameGrabber() override = default;
 
-    bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override {
+
+    bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override
+    {
         mutex.lock();
         if(no_stream == true)
         {
@@ -450,11 +443,13 @@ public:
     }
 
     // this is bad!
-    int height() const override {
+    int height() const override
+    {
         return lastHeight;
     }
 
-    int width() const override {
+    int width() const override
+    {
         return lastWidth;
     }
 
@@ -468,7 +463,8 @@ public:
      * @param config The options to use
      * @return true iff the object could be configured.
      */
-    bool open(yarp::os::Searchable& config) override {
+    bool open(yarp::os::Searchable& config) override
+    {
         yTrace();
         yDebug() << "config is " << config.toString();
 
@@ -502,30 +498,37 @@ public:
         return true;
     }
 
-    bool close() override {
+    bool close() override
+    {
         port.close();
 //        mutex.lock();   // why does it need this?
         return true;
     }
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-    bool setBrightness(double v) override {
+    bool setBrightness(double v) override
+    {
         return setCommand(VOCAB_BRIGHTNESS, v);
     }
-    double getBrightness() override {
+    double getBrightness() override
+    {
         return getCommand(VOCAB_BRIGHTNESS);
     }
-    bool setExposure(double v) override {
+    bool setExposure(double v) override
+    {
         return setCommand(VOCAB_EXPOSURE, v);
     }
-    double getExposure() override {
+    double getExposure() override
+    {
         return getCommand(VOCAB_EXPOSURE);
     }
 
-    bool setSharpness(double v) override {
+    bool setSharpness(double v) override
+    {
         return setCommand(VOCAB_SHARPNESS, v);
     }
-    double getSharpness() override {
+    double getSharpness() override
+    {
         return getCommand(VOCAB_SHARPNESS);
     }
 
@@ -538,45 +541,57 @@ public:
         return getCommand(VOCAB_WHITE, blue, red);
     }
 
-    bool setHue(double v) override {
+    bool setHue(double v) override
+    {
         return setCommand(VOCAB_HUE,v);
     }
-    double getHue() override {
+    double getHue() override
+    {
         return getCommand(VOCAB_HUE);
     }
 
-    bool setSaturation(double v) override {
+    bool setSaturation(double v) override
+    {
         return setCommand(VOCAB_SATURATION,v);
     }
-    double getSaturation() override {
+    double getSaturation() override
+    {
         return getCommand(VOCAB_SATURATION);
     }
 
-    bool setGamma(double v) override {
+    bool setGamma(double v) override
+    {
         return setCommand(VOCAB_GAMMA,v);
     }
-    double getGamma() override {
+    double getGamma() override
+    {
         return getCommand(VOCAB_GAMMA);
     }
 
-    bool setShutter(double v) override {
+    bool setShutter(double v) override
+    {
         return setCommand(VOCAB_SHUTTER,v);
     }
-    double getShutter() override {
+    double getShutter() override
+    {
         return getCommand(VOCAB_SHUTTER);
     }
 
-    bool setGain(double v) override {
+    bool setGain(double v) override
+    {
         return setCommand(VOCAB_GAIN,v);
     }
-    double getGain() override {
+    double getGain() override
+    {
         return getCommand(VOCAB_GAIN);
     }
 
-    bool setIris(double v) override {
+    bool setIris(double v) override
+    {
         return setCommand(VOCAB_IRIS,v);
     }
-    double getIris() override {
+    double getIris() override
+    {
         return getCommand(VOCAB_IRIS);
     }
 #endif
@@ -584,18 +599,19 @@ public:
 private:
     yarp::os::PortReaderBuffer<yarp::sig::ImageOf<yarp::sig::PixelRgb> > reader;
     yarp::os::Port port;
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string remote);
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string local);
+    std::string remote;
+    std::string local;
     std::mutex mutex;
-    int lastHeight;
-    int lastWidth;
-    bool no_stream;
+    int lastHeight{0};
+    int lastWidth{0};
+    bool no_stream{false};
 
 protected:
 
-    IFrameGrabberControlsDC1394 *Ifirewire;
+    IFrameGrabberControlsDC1394 *Ifirewire{nullptr};
 
-    bool setCommand(int code, double v) {
+    bool setCommand(int code, double v)
+    {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
         cmd.addVocab(VOCAB_SET);
@@ -605,7 +621,8 @@ protected:
         return true;
     }
 
-    bool setCommand(int code, double b, double r) {
+    bool setCommand(int code, double b, double r)
+    {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
         cmd.addVocab(VOCAB_SET);
@@ -639,16 +656,5 @@ protected:
         return true;
     }
 };
-
-class YARP_dev_API yarp::dev::RemoteFrameGrabberDC1394 : public yarp::dev::RemoteFrameGrabber
-{
-    virtual ~RemoteFrameGrabberDC1394() {}
-    RemoteFrameGrabberDC1394() {}
-};
-
-#ifdef _MSC_VER
-    /* Re-anable warning 4251*/
-    #pragma warning(pop)
-#endif
 
 #endif // YARP_DEV_REMOTEFRAMEGRABBER_H
