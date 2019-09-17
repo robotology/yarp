@@ -36,6 +36,7 @@
 
 using namespace yarp::sig;
 using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 using namespace yarp::os;
 using namespace std;
 
@@ -217,7 +218,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             out.addVocab(VOCAB_OK);
             Bottle& l = out.addList();
 
-            std::map<std::string, yarp::dev::Map2DPath>::iterator it;
+            std::map<std::string, Map2DPath>::iterator it;
             for (it = m_paths_storage.begin(); it != m_paths_storage.end(); ++it)
             {
                 l.addString(it->first);
@@ -513,7 +514,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             Value& b = in.get(4);
             if (Property::copyPortable(b, path))
             {
-                m_paths_storage.insert(std::pair<std::string, yarp::dev::Map2DPath>(path_name, path));
+                m_paths_storage.insert(std::pair<std::string, Map2DPath>(path_name, path));
                 yInfo() << "Added path " << path_name << "at " << path.toString();
                 out.addVocab(VOCAB_OK);
             }
@@ -633,7 +634,7 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
     }
     else if (in.get(0).asString() == "load_map" && in.get(1).isString())
     {
-        yarp::dev::MapGrid2D map;
+        MapGrid2D map;
         bool r = map.loadFromFile(in.get(1).asString());
         if(r)
         {
@@ -791,7 +792,7 @@ bool Map2DServer::loadMaps(std::string mapsfile)
             string option;
             iss >> option;
             string mapfilenameWithPath = m_rf_mapCollection.findFile(mapfilename);
-            yarp::dev::MapGrid2D map;
+            MapGrid2D map;
             bool r = map.loadFromFile(mapfilenameWithPath);
             if (r)
             {
@@ -998,7 +999,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
     {
         yInfo() << "Received map for ROS";
         string map_name = "ros_map";
-        yarp::dev::MapGrid2D map;
+        MapGrid2D map;
         map.setSize_in_cells(map_ros->info.width,map_ros->info.height);
         map.setResolution( map_ros->info.resolution);
         map.setMapName(map_name);
@@ -1013,7 +1014,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
         for (size_t y=0; y< map_ros->info.height; y++)
             for (size_t x=0; x< map_ros->info.width; x++)
             {
-               MapGrid2D::XYCell cell(x,map_ros->info.height-1-y);
+               XYCell cell(x,map_ros->info.height-1-y);
                double occ = map_ros->data[x+y*map_ros->info.width];
                map.setOccupancyData(cell,occ);
 
@@ -1292,7 +1293,7 @@ bool Map2DServer::save_locations_and_areas(std::string locations_file)
 
     {
         file << "Paths: \n";
-        std::map<std::string, yarp::dev::Map2DPath>::iterator it3;
+        std::map<std::string, Map2DPath>::iterator it3;
         for (it3 = m_paths_storage.begin(); it3 != m_paths_storage.end(); ++it3)
         {
             file << it3->first; // the name of the path

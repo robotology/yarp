@@ -50,13 +50,13 @@ public:
     Stores a map into the map server.
     * @return true/false
     */
-    virtual bool     store_map(const yarp::dev::MapGrid2D& map) = 0;
+    virtual bool     store_map(const yarp::dev::Nav2D::MapGrid2D& map) = 0;
 
     /**
     Gets a map from the map server.
     * @return true/false
     */
-    virtual bool     get_map(std::string map_name, yarp::dev::MapGrid2D& map) = 0;
+    virtual bool     get_map(std::string map_name, yarp::dev::Nav2D::MapGrid2D& map) = 0;
 
     /**
     Gets a list containing the names of all registered maps.
@@ -76,7 +76,7 @@ public:
     * @param loc the location of the robot
     * @return true/false
     */
-    virtual bool storeLocation(std::string location_name, yarp::dev::Map2DLocation loc) = 0;
+    virtual bool storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc) = 0;
 
     /**
     * Store an area
@@ -84,7 +84,7 @@ public:
     * @param area the area
     * @return true/false
     */
-    virtual bool storeArea(std::string area_name, yarp::dev::Map2DArea area) = 0;
+    virtual bool storeArea(std::string area_name, yarp::dev::Nav2D::Map2DArea area) = 0;
 
     /**
     * Store a path
@@ -92,7 +92,7 @@ public:
     * @param path the path
     * @return true/false
     */
-    virtual bool storePath(std::string path_name, yarp::dev::Map2DPath path) = 0;
+    virtual bool storePath(std::string path_name, yarp::dev::Nav2D::Map2DPath path) = 0;
 
     /**
     * Retrieves a location specified by the user in the world reference frame
@@ -100,7 +100,7 @@ public:
     * @param loc the location
     * @return true/false
     */
-    virtual bool getLocation(std::string location_name, yarp::dev::Map2DLocation& loc) = 0;
+    virtual bool getLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation& loc) = 0;
 
     /**
     * Retrieves an area
@@ -108,7 +108,7 @@ public:
     * @param area the area
     * @return true/false
     */
-    virtual bool getArea(std::string area_name, yarp::dev::Map2DArea& area) = 0;
+    virtual bool getArea(std::string area_name, yarp::dev::Nav2D::Map2DArea& area) = 0;
 
     /**
     * Retrieves a path
@@ -116,7 +116,7 @@ public:
     * @param path the path
     * @return true/false
     */
-    virtual bool getPath(std::string path_name, yarp::dev::Map2DPath& path) = 0;
+    virtual bool getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path) = 0;
 
     /**
     * Get a list of all stored locations

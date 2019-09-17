@@ -17,20 +17,21 @@
 #include <harness.h>
 
 using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 using namespace yarp::sig;
 using namespace yarp::os;
 
-static void ReadMapfromString(MapGrid2D& m, std::string s)
+static void ReadMapfromString(Nav2D::MapGrid2D& m, std::string s)
 {
-    yarp::dev::MapGrid2D::XYCell cell;
+    yarp::dev::Nav2D::XYCell cell;
     for (unsigned int i = 0; i < s.length(); i++)
     {
         if (s.at(i) == '\n') { cell.x = 0; cell.y++; continue; }
-        yarp::dev::MapGrid2D::map_flags flag;
-        if (s.at(i) == '*') flag = yarp::dev::MapGrid2D::map_flags::MAP_CELL_UNKNOWN;
-        else if (s.at(i) == '.') flag = yarp::dev::MapGrid2D::map_flags::MAP_CELL_FREE;
-        else if (s.at(i) == '#') flag = yarp::dev::MapGrid2D::map_flags::MAP_CELL_WALL;
-        else flag = yarp::dev::MapGrid2D::map_flags::MAP_CELL_UNKNOWN;
+        yarp::dev::Nav2D::MapGrid2D::map_flags flag;
+        if (s.at(i) == '*') flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_UNKNOWN;
+        else if (s.at(i) == '.') flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_FREE;
+        else if (s.at(i) == '#') flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL;
+        else flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_UNKNOWN;
         m.setMapFlag(cell, flag);
         cell.x++;
     }
@@ -45,7 +46,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
 
     SECTION("Test data type MapGrid2D")
     {
-        MapGrid2D test_map;
+        Nav2D::MapGrid2D test_map;
         test_map.setResolution(1.0);
         test_map.setSize_in_meters(11, 11);
         test_map.setOrigin(-3, -7, 0);
@@ -67,27 +68,27 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
             "*##########\n");
         ReadMapfromString(test_map, mapstring);
 
-        MapGrid2D test_cnvutils_map1 = test_map;
-        yarp::dev::MapGrid2D::XYCell cell1;
-        yarp::dev::MapGrid2D::XYCell cell1_test(6, 4);
-        yarp::dev::MapGrid2D::XYWorld world1(3, -1);
+        Nav2D::MapGrid2D test_cnvutils_map1 = test_map;
+        yarp::dev::Nav2D::XYCell cell1;
+        yarp::dev::Nav2D::XYCell cell1_test(6, 4);
+        yarp::dev::Nav2D::XYWorld world1(3, -1);
         cell1 = test_cnvutils_map1.world2Cell(world1);
         CHECK(cell1 == cell1_test); // IMap2D world2Cell() operation successful
 
-        MapGrid2D test_cnvutils_map2 = test_map;
-        yarp::dev::MapGrid2D::XYCell cell2(6, 4);
-        yarp::dev::MapGrid2D::XYWorld world2;
-        yarp::dev::MapGrid2D::XYWorld world2_test(3, -1);
+        Nav2D::MapGrid2D test_cnvutils_map2 = test_map;
+        yarp::dev::Nav2D::XYCell cell2(6, 4);
+        yarp::dev::Nav2D::XYWorld world2;
+        yarp::dev::Nav2D::XYWorld world2_test(3, -1);
         world2 = test_cnvutils_map2.cell2World(cell2);
         CHECK(world2 == world2_test); // IMap2D cell2World() operation successful
 
-        MapGrid2D test_cnvutils_map3 = test_map;
-        yarp::dev::MapGrid2D::XYCell cell3_ok(0, 0);
-        yarp::dev::MapGrid2D::XYWorld world3_ok(-1, -1);
-        yarp::dev::MapGrid2D::XYCell cell4_err(11, 11);
-        yarp::dev::MapGrid2D::XYWorld world4_err(100, 100);
-        yarp::dev::MapGrid2D::XYCell cell5_err(-1, -1);
-        yarp::dev::MapGrid2D::XYWorld world5_err(-100, -100);
+        Nav2D::MapGrid2D test_cnvutils_map3 = test_map;
+        yarp::dev::Nav2D::XYCell cell3_ok(0, 0);
+        yarp::dev::Nav2D::XYWorld world3_ok(-1, -1);
+        yarp::dev::Nav2D::XYCell cell4_err(11, 11);
+        yarp::dev::Nav2D::XYWorld world4_err(100, 100);
+        yarp::dev::Nav2D::XYCell cell5_err(-1, -1);
+        yarp::dev::Nav2D::XYWorld world5_err(-100, -100);
         CHECK(test_cnvutils_map3.isInsideMap(cell3_ok));
         CHECK(test_cnvutils_map3.isInsideMap(world3_ok));
         CHECK_FALSE(test_cnvutils_map3.isInsideMap(cell4_err));
@@ -102,7 +103,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
         bool b;
         bool b2;
 
-        yarp::dev::Map2DArea area1;
+        Map2DArea area1;
         area1.map_id = "maptest";
         area1.points.push_back(yarp::math::Vec2D<double>(-1, -1));
         area1.points.push_back(yarp::math::Vec2D<double>(-1,  1));
@@ -111,14 +112,14 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
         b = area1.isValid(); //box area
         CHECK(b);
 
-        yarp::dev::Map2DArea area_err;
+        Map2DArea area_err;
         area_err.map_id = "maptest";
         area_err.points.push_back(yarp::math::Vec2D<double>(-1, -1));
         area_err.points.push_back(yarp::math::Vec2D<double>(-1, 1));
         b = area_err.isValid(); //incomplete area
         CHECK(b==false);
 
-        yarp::dev::Map2DArea area2;
+        Map2DArea area2;
         area2.map_id = "maptest";
         area2.points.push_back(yarp::math::Vec2D<double>(-1, -1));
         area2.points.push_back(yarp::math::Vec2D<double>(-1, 1));
@@ -126,7 +127,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
         b = area2.isValid(); //triangular area
         CHECK(b);
 
-        yarp::dev::Map2DArea area3;
+        Map2DArea area3;
         area3.map_id = "maptest";
         area3.points.push_back(yarp::math::Vec2D<double>(-1, -1));
         area3.points.push_back(yarp::math::Vec2D<double>(-1, 1));
@@ -136,8 +137,8 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
         b = area3.isValid(); //concave polygon
         CHECK(b);
 
-        yarp::dev::Map2DLocation t1;
-        yarp::dev::Map2DLocation t2;
+        Map2DLocation t1;
+        Map2DLocation t2;
         b = area1.findAreaBounds(t1, t2);   CHECK(b);
         CHECK(t1 == Map2DLocation("maptest", -1, -1, 0));
         CHECK(t2 == Map2DLocation("maptest",  1,  1, 0));
@@ -152,7 +153,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
 
         for (size_t i = 0; i < 100; i++)
         {
-            yarp::dev::Map2DLocation rnd;
+            Map2DLocation rnd;
             b = area1.getRandomLocation(rnd);
             if (b)
             {
@@ -166,7 +167,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
 
         for (size_t i = 0; i < 100; i++)
         {
-            yarp::dev::Map2DLocation rnd;
+            Map2DLocation rnd;
             b = area2.getRandomLocation(rnd);
             if (b)
             {
@@ -180,7 +181,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
 
         for (size_t i = 0; i < 100; i++)
         {
-            yarp::dev::Map2DLocation rnd;
+            Map2DLocation rnd;
             b = area3.getRandomLocation(rnd);
             if (b)
             {
@@ -256,7 +257,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
             ret = imap->storeLocation("loc2", Map2DLocation("map2", 4, 5, 6));  CHECK(ret);
 
             std::vector<Map2DLocation> vec1, vec2, vec3;
-            yarp::dev::Map2DLocation v;
+            Map2DLocation v;
             v.x = 1.1; v.y = 1.1; vec1.push_back(v);
             v.x = 1.2; v.y = 1.2; vec1.push_back(v);
             v.x = 1.3; v.y = 1.3; vec1.push_back(v);
@@ -345,7 +346,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
             ret = imap->storeLocation("loc2", Map2DLocation("map2", 4, 5, 6));  CHECK(ret);
 
             std::vector<Map2DLocation> vec1, vec2, vec3;
-            yarp::dev::Map2DLocation v;
+            Map2DLocation v;
             v.x = 1.1; v.y = 1.1; vec1.push_back(v);
             v.x = 1.2; v.y = 1.2; vec1.push_back(v);
             v.x = 1.3; v.y = 1.3; vec1.push_back(v);
@@ -413,9 +414,9 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
 
         //////////"Checking IMap2D methods which involve usage of classes MapGrid2D"
         {
-            MapGrid2D test_store_map1;
-            MapGrid2D test_store_map2;
-            MapGrid2D test_get_map;
+            Nav2D::MapGrid2D test_store_map1;
+            Nav2D::MapGrid2D test_store_map2;
+            Nav2D::MapGrid2D test_get_map;
 
             test_store_map1.setMapName("test_map1");
             test_store_map2.setMapName("test_map2");

@@ -16,6 +16,7 @@
 #include <functional>
 
 using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace yarp::math;
@@ -58,7 +59,7 @@ void Map2DPath::clear()
     this->waypoints.clear();
 }
 
-Map2DPath::Map2DPath(const std::vector<yarp::dev::Map2DLocation> map_waypoints)
+Map2DPath::Map2DPath(const std::vector<Map2DLocation> map_waypoints)
 {
     for (auto it = map_waypoints.begin(); it != map_waypoints.end(); it++)
     {
@@ -70,7 +71,7 @@ Map2DPath::Map2DPath()
 {
 }
 
-yarp::dev::Map2DLocation &Map2DPath::operator[](size_t index)
+Map2DLocation &Map2DPath::operator[](size_t index)
 {
     if (index >= this->waypoints.size())
     {
@@ -78,9 +79,9 @@ yarp::dev::Map2DLocation &Map2DPath::operator[](size_t index)
         yFatal();// return yarp::dev::Map2DLocation();
     }
     Map2DLocationData a;
-    auto b = reinterpret_cast<yarp::dev::Map2DLocation&> (a);
+    auto b = reinterpret_cast<Map2DLocation&> (a);
     
-    yarp::dev::Map2DLocation ret_val;
+    Map2DLocation ret_val;
 
   //  yarp::dev::Map2DLocation& ret_val = dynamic_cast<yarp::dev::Map2DLocation&> (waypoints[index]);
 

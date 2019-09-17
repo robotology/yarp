@@ -35,6 +35,7 @@
 
 using namespace yarp::os;
 using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 using namespace std;
 
 #define DEFAULT_THREAD_PERIOD 0.01
@@ -72,7 +73,7 @@ bool Localization2DServer::attachAll(const PolyDriverList &device2attach)
     //initialize m_current_position and m_current_status, if available
     bool ret = true;
     yarp::dev::LocalizationStatusEnum status;
-    yarp::dev::Map2DLocation loc;
+    Map2DLocation loc;
     ret &= iLoc->getLocalizationStatus(status);
     ret &= iLoc->getCurrentPosition(loc);
     if (ret)
@@ -258,7 +259,7 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
             }
             else if (request == VOCAB_NAV_SET_INITIAL_POS)
             {
-                yarp::dev::Map2DLocation init_loc;
+                Map2DLocation init_loc;
                 init_loc.map_id = command.get(2).asString();
                 init_loc.x = command.get(3).asFloat64();
                 init_loc.y = command.get(4).asFloat64();
@@ -284,7 +285,7 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
             }
             else if (request == VOCAB_NAV_GET_LOCALIZER_POSES)
             {
-                std::vector<yarp::dev::Map2DLocation> poses;
+                std::vector<Map2DLocation> poses;
                 iLoc->getEstimatedPoses(poses);
                 reply.addVocab(VOCAB_OK);
                 reply.addInt32(poses.size());
@@ -317,14 +318,14 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
     }
     else if (command.get(0).isString() && command.get(0).asString() == "getLoc")
     {
-        yarp::dev::Map2DLocation curr_loc;
+        Map2DLocation curr_loc;
         iLoc->getCurrentPosition(curr_loc);
         std::string s = std::string("Current Location is: ") + curr_loc.toString();
         reply.addString(s);
     }
     else if (command.get(0).isString() && command.get(0).asString() == "initLoc")
     {
-        yarp::dev::Map2DLocation init_loc;
+        Map2DLocation init_loc;
         init_loc.map_id = command.get(1).asString();
         init_loc.x = command.get(2).asFloat64();
         init_loc.y = command.get(3).asFloat64();
@@ -392,7 +393,7 @@ void Localization2DServer::run()
         }
         else
         {
-            yarp::dev::Map2DLocation curr_loc;
+            Map2DLocation curr_loc;
             curr_loc.x = std::nan("");
             curr_loc.y = std::nan("");
             curr_loc.theta = std::nan("");

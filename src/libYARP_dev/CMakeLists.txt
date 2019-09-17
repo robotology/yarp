@@ -119,7 +119,8 @@ if(TARGET YARP::YARP_math)
                             include/yarp/dev/Map2DLocation.h
                             include/yarp/dev/Map2DArea.h
                             include/yarp/dev/Map2DPath.h
-                            include/yarp/dev/MapGrid2D.h)
+                            include/yarp/dev/MapGrid2D.h
+                            include/yarp/dev/MapGrid2DInfo.h)
 endif()
 
 if(NOT YARP_NO_DEPRECATED) # Since YARP 3.3.0
@@ -193,6 +194,7 @@ if(TARGET YARP::YARP_math)
                             src/IMap2D.cpp
                             src/INavigation2D.cpp
                             src/MapGrid2D.cpp
+                            src/MapGrid2DInfo.cpp
                             src/Map2DArea.cpp
                             src/Map2DPath.cpp)
 endif()

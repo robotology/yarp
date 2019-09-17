@@ -25,6 +25,7 @@
 /*! \file Localization2DClient.cpp */
 
 using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 using namespace yarp::os;
 using namespace yarp::sig;
 
@@ -151,7 +152,7 @@ bool  Localization2DClient::getCurrentPosition(Map2DLocation& loc)
     return true;
 }
 
-bool  Localization2DClient::getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses)
+bool  Localization2DClient::getEstimatedPoses(std::vector<Map2DLocation>& poses)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -173,7 +174,7 @@ bool  Localization2DClient::getEstimatedPoses(std::vector<yarp::dev::Map2DLocati
             poses.clear();
             for (int i = 0; i < nposes; i++)
             {
-                yarp::dev::Map2DLocation loc;
+                Map2DLocation loc;
                 Bottle* b = resp.get(2 + i).asList();
                 if (b)
                 {

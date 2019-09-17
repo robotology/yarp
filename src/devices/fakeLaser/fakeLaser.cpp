@@ -26,6 +26,9 @@
 #endif
 
 using namespace std;
+using namespace yarp::os;
+using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 
 // see FakeLaser.h for device documentation
 
@@ -349,7 +352,7 @@ void FakeLaser::run()
         }
         else if (m_loc_mode == LOC_FROM_CLIENT)
         {
-            yarp::dev::Map2DLocation loc;
+            Map2DLocation loc;
             if (m_iLoc->getCurrentPosition(loc))
             {
                 m_loc_x = loc.x;
@@ -374,11 +377,11 @@ void FakeLaser::run()
             double robot_curr_y = max_distance * sin(robot_curr_t*DEG2RAD);
 
             //transforms the ray from the robot to the world reference frame
-            MapGrid2D::XYWorld ray_world;
+            XYWorld ray_world;
             ray_world.x = robot_curr_x*cos(m_loc_t*DEG2RAD) - robot_curr_y*sin(m_loc_t*DEG2RAD) + m_loc_x;
             ray_world.y = robot_curr_x*sin(m_loc_t*DEG2RAD) + robot_curr_y*cos(m_loc_t*DEG2RAD) + m_loc_y;
-            MapGrid2D::XYCell src = m_map.world2Cell(MapGrid2D::XYWorld(m_loc_x, m_loc_y));
-            MapGrid2D::XYCell dst = m_map.world2Cell(ray_world);
+            XYCell src = m_map.world2Cell(XYWorld(m_loc_x, m_loc_y));
+            XYCell dst = m_map.world2Cell(ray_world);
             double distance = checkStraightLine(src,dst);
             laser_data.push_back(distance + (*m_dis)(*m_gen));
         }
@@ -388,9 +391,9 @@ void FakeLaser::run()
     return;
 }
 
-double FakeLaser::checkStraightLine(MapGrid2D::XYCell src, MapGrid2D::XYCell dst)
+double FakeLaser::checkStraightLine(XYCell src, XYCell dst)
 {
-    MapGrid2D::XYCell src_final = src;
+    XYCell src_final = src;
 
     //here using the fast Bresenham algorithm
     int dx = abs(dst.x - src.x);
@@ -407,8 +410,8 @@ double FakeLaser::checkStraightLine(MapGrid2D::XYCell src, MapGrid2D::XYCell dst
         //if (m_map.isFree(src) == false)
         if (m_map.isWall(src))
         {
-            yarp::dev::MapGrid2D::XYWorld world_start =  m_map.cell2World(src);
-            yarp::dev::MapGrid2D::XYWorld world_end =  m_map.cell2World(src_final);
+            XYWorld world_start =  m_map.cell2World(src);
+            XYWorld world_end =  m_map.cell2World(src_final);
             return sqrt(pow(world_start.x - world_end.x, 2) + pow(world_start.y - world_end.y, 2));
         }
         if (src.x == dst.x && src.y == dst.y) break;

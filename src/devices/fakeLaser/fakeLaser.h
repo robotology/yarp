@@ -24,9 +24,6 @@
 #include <random>
 #include <string>
 
-using namespace yarp::os;
-using namespace yarp::dev;
-
 /**
 * @ingroup dev_impl_media
 *
@@ -60,13 +57,13 @@ using namespace yarp::dev;
 * yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient
 */
 
-class FakeLaser : public PeriodicThread, public yarp::dev::IRangefinder2D, public DeviceDriver
+class FakeLaser : public yarp::os::PeriodicThread, public yarp::dev::IRangefinder2D, public yarp::dev::DeviceDriver
 {
 protected:
     enum test_mode_t { NO_OBSTACLES = 0, USE_PATTERN =1, USE_MAPFILE =2 };
     enum localization_mode_t { LOC_NOT_SET=0, LOC_FROM_PORT = 1, LOC_FROM_CLIENT = 2 };
 
-    PolyDriver driver;
+    yarp::dev::PolyDriver driver;
     test_mode_t m_test_mode;
     localization_mode_t m_loc_mode;
     std::mutex mutex;
@@ -80,10 +77,10 @@ protected:
     double max_distance;
     double resolution;
 
-    yarp::dev::MapGrid2D   m_map;
+    yarp::dev::Nav2D::MapGrid2D   m_map;
     yarp::os::BufferedPort<yarp::os::Bottle>* m_loc_port;
-    PolyDriver*      m_pLoc;
-    ILocalization2D* m_iLoc;
+    yarp::dev::PolyDriver*      m_pLoc;
+    yarp::dev::ILocalization2D* m_iLoc;
     double m_loc_x;
     double m_loc_y;
     double m_loc_t;
@@ -149,12 +146,12 @@ public:
     void run() override;
 
 private:
-    double checkStraightLine(MapGrid2D::XYCell src, MapGrid2D::XYCell dst);
+    double checkStraightLine(yarp::dev::Nav2D::XYCell src, yarp::dev::Nav2D::XYCell dst);
 
 public:
     //IRangefinder2D interface
     bool getRawData(yarp::sig::Vector &out) override;
-    bool getLaserMeasurement(std::vector<LaserMeasurementData> &data) override;
+    bool getLaserMeasurement(std::vector<yarp::dev::LaserMeasurementData> &data) override;
     bool getDeviceStatus     (Device_status &status) override;
     bool getDeviceInfo       (std::string &device_info) override;
     bool getDistanceRange    (double& min, double& max) override;
