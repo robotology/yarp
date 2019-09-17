@@ -35,6 +35,7 @@
 
 using namespace yarp::os;
 using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -50,10 +51,10 @@ bool   fakeLocalizer::getLocalizationStatus(yarp::dev::LocalizationStatusEnum& s
     return true;
 }
 
-bool   fakeLocalizer::getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses)
+bool   fakeLocalizer::getEstimatedPoses(std::vector<Map2DLocation>& poses)
 {
     poses.clear();
-    yarp::dev::Map2DLocation loc;
+    Map2DLocation loc;
     locThread->getCurrentLoc(loc);
     poses.push_back(loc);
 #if 0
@@ -78,13 +79,13 @@ bool   fakeLocalizer::getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& p
     return true;
 }
 
-bool   fakeLocalizer::getCurrentPosition(yarp::dev::Map2DLocation& loc)
+bool   fakeLocalizer::getCurrentPosition(Map2DLocation& loc)
 {
     locThread->getCurrentLoc(loc);
     return true;
 }
 
-bool   fakeLocalizer::setInitialPose(const yarp::dev::Map2DLocation& loc)
+bool   fakeLocalizer::setInitialPose(const Map2DLocation& loc)
 {
     locThread->initializeLocalization(loc);
     return true;
@@ -143,7 +144,7 @@ void fakeLocalizerThread::run()
     }
 }
 
-bool fakeLocalizerThread::initializeLocalization(const yarp::dev::Map2DLocation& loc)
+bool fakeLocalizerThread::initializeLocalization(const Map2DLocation& loc)
 {
     yInfo() << "fakeLocalizer: Localization init request: (" << loc.map_id << ")";
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -167,7 +168,7 @@ bool fakeLocalizerThread::initializeLocalization(const yarp::dev::Map2DLocation&
     return true;
 }
 
-bool fakeLocalizerThread::getCurrentLoc(yarp::dev::Map2DLocation& loc)
+bool fakeLocalizerThread::getCurrentLoc(Map2DLocation& loc)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     loc = m_current_loc;
@@ -176,7 +177,7 @@ bool fakeLocalizerThread::getCurrentLoc(yarp::dev::Map2DLocation& loc)
 
 bool fakeLocalizerThread::threadInit()
 {
-   yarp::dev::Map2DLocation loc;
+   Map2DLocation loc;
    loc.map_id="test";
    loc.x = 0;
    loc.y = 0;

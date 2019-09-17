@@ -17,6 +17,7 @@
 #include <harness.h>
 
 using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 using namespace yarp::sig;
 using namespace yarp::os;
 
@@ -80,10 +81,10 @@ TEST_CASE("dev::Navigation2DClientTest", "[yarp::dev]")
             Map2DLocation loc_test = Map2DLocation("map_1", 10.0, 20.0, 15);
             Map2DLocation my_current_loc = Map2DLocation("map_1", 10.2, 20.1, 15.5);
             Map2DLocation loc_to_be_tested;
-            Map2DArea area_test("map_1", std::vector<yarp::dev::Map2DLocation> {yarp::dev::Map2DLocation("map_1", -10, -10, 0),
-                yarp::dev::Map2DLocation("map_1", -10, +10, 0),
-                yarp::dev::Map2DLocation("map_1", +10, +10, 0),
-                yarp::dev::Map2DLocation("map_1", +10, -10, 0)});
+            Map2DArea area_test("map_1", std::vector<Map2DLocation> {Map2DLocation("map_1", -10, -10, 0),
+                Map2DLocation("map_1", -10, +10, 0),
+                Map2DLocation("map_1", +10, +10, 0),
+                Map2DLocation("map_1", +10, -10, 0)});
             bool b0, b1;
             b0 = imap->storeArea("area_test", area_test); CHECK(b0);
             b0 = imap->storeLocation("loc_test", loc_test); CHECK(b0);

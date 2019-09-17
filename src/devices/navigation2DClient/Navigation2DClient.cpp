@@ -26,6 +26,7 @@
 /*! \file Navigation2DClient.cpp */
 
 using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 using namespace yarp::os;
 using namespace yarp::sig;
 
@@ -223,7 +224,7 @@ bool Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, y
     }
     else if (command.get(0).asString() == "gotoAbs")
     {
-        yarp::dev::Map2DLocation loc;
+        Map2DLocation loc;
         loc.map_id = command.get(1).asString();
         loc.x = command.get(2).asFloat64();
         loc.y = command.get(3).asFloat64();
@@ -304,7 +305,7 @@ bool Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, y
     }
     else if (command.get(0).isString() && command.get(0).asString() == "get_current_loc")
     {
-        yarp::dev::Map2DLocation curr_loc;
+        Map2DLocation curr_loc;
         bool ret = this->getCurrentPosition(curr_loc);
         if (ret)
         {
@@ -318,7 +319,7 @@ bool Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, y
     }
     else if (command.get(0).isString() && command.get(0).asString() == "initLoc")
     {
-        yarp::dev::Map2DLocation init_loc;
+        Map2DLocation init_loc;
         init_loc.map_id = command.get(1).asString();
         init_loc.x = command.get(2).asFloat64();
         init_loc.y = command.get(3).asFloat64();
@@ -1222,7 +1223,7 @@ bool Navigation2DClient::resumeNavigation()
     return true;
 }
 
-bool   Navigation2DClient::getAllNavigationWaypoints(std::vector<yarp::dev::Map2DLocation>& waypoints)
+bool   Navigation2DClient::getAllNavigationWaypoints(std::vector<Map2DLocation>& waypoints)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1247,7 +1248,7 @@ bool   Navigation2DClient::getAllNavigationWaypoints(std::vector<yarp::dev::Map2
             {
                 Bottle* the_waypoint = waypoints_bottle->get(i).asList();
                 if (the_waypoint == 0) { yError() << "getNavigationWaypoints parsing error"; return false; }
-                yarp::dev::Map2DLocation loc;
+                Map2DLocation loc;
                 loc.map_id = the_waypoint->get(0).asString();
                 loc.x = the_waypoint->get(1).asFloat64();
                 loc.y = the_waypoint->get(2).asFloat64();
@@ -1271,7 +1272,7 @@ bool   Navigation2DClient::getAllNavigationWaypoints(std::vector<yarp::dev::Map2
     return true;
 }
 
-bool   Navigation2DClient::getCurrentNavigationWaypoint(yarp::dev::Map2DLocation& curr_waypoint)
+bool   Navigation2DClient::getCurrentNavigationWaypoint(Map2DLocation& curr_waypoint)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1313,7 +1314,7 @@ bool   Navigation2DClient::getCurrentNavigationWaypoint(yarp::dev::Map2DLocation
     return true;
 }
 
-bool Navigation2DClient::getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type, yarp::dev::MapGrid2D& map)
+bool Navigation2DClient::getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type,MapGrid2D& map)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1413,7 +1414,7 @@ bool  Navigation2DClient::applyVelocityCommand(double x_vel, double y_vel, doubl
     return true;
 }
 
-bool  Navigation2DClient::getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses)
+bool  Navigation2DClient::getEstimatedPoses(std::vector<Map2DLocation>& poses)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1435,7 +1436,7 @@ bool  Navigation2DClient::getEstimatedPoses(std::vector<yarp::dev::Map2DLocation
             poses.clear();
             for (int i = 0; i < nposes; i++)
             {
-                yarp::dev::Map2DLocation loc;
+                Map2DLocation loc;
                 Bottle* b = resp.get(2 + i).asList();
                 if (b)
                 {

@@ -73,8 +73,8 @@ private:
 
 private: //math stuff
     double                        normalize_angle(double angle);
-    bool                          locations_are_similar(yarp::dev::Map2DLocation loc1,
-                                                        yarp::dev::Map2DLocation loc2,
+    bool                          locations_are_similar(yarp::dev::Nav2D::Map2DLocation loc1,
+                                                        yarp::dev::Nav2D::Map2DLocation loc2,
                                                         double lin_tol,
                                                         double ang_tol);
 
@@ -90,31 +90,31 @@ public:
     virtual bool read(yarp::os::ConnectionReader& connection) override;
 
     /* The following methods belong to INavigation2D interface */
-    virtual bool checkInsideArea(yarp::dev::Map2DArea area) override;
+    virtual bool checkInsideArea(yarp::dev::Nav2D::Map2DArea area) override;
     virtual bool checkInsideArea(std::string area_name)  override;
-    virtual bool checkNearToLocation(yarp::dev::Map2DLocation loc, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
+    virtual bool checkNearToLocation(yarp::dev::Nav2D::Map2DLocation loc, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
     virtual bool checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance = std::numeric_limits<double>::infinity()) override;
 
-    bool   gotoTargetByAbsoluteLocation(yarp::dev::Map2DLocation loc) override;
+    bool   gotoTargetByAbsoluteLocation(yarp::dev::Nav2D::Map2DLocation loc) override;
     bool   gotoTargetByLocationName(std::string location_name) override;
     bool   gotoTargetByRelativeLocation(double x, double y, double theta) override;
     bool   gotoTargetByRelativeLocation(double x, double y) override;
     bool   applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
     bool   recomputeCurrentNavigationPath() override;
 
-    bool   getAbsoluteLocationOfCurrentTarget(yarp::dev::Map2DLocation& loc) override;
+    bool   getAbsoluteLocationOfCurrentTarget(yarp::dev::Nav2D::Map2DLocation& loc) override;
     bool   getNameOfCurrentTarget(std::string& location_name) override;
     bool   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;
 
-    bool   getCurrentPosition(yarp::dev::Map2DLocation &loc) override;
-    bool   setInitialPose(const yarp::dev::Map2DLocation& loc) override;
+    bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation &loc) override;
+    bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc) override;
     bool   getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status) override;
-    bool   getEstimatedPoses(std::vector<yarp::dev::Map2DLocation>& poses) override;
+    bool   getEstimatedPoses(std::vector<yarp::dev::Nav2D::Map2DLocation>& poses) override;
 
     bool   storeCurrentPosition(std::string location_name) override;
-    bool   storeLocation(std::string location_name, yarp::dev::Map2DLocation loc) override;
-    bool   getLocation(std::string location_name, yarp::dev::Map2DLocation& loc) override;
-    bool   getArea(std::string area_name, yarp::dev::Map2DArea& area) override;
+    bool   storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc) override;
+    bool   getLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation& loc) override;
+    bool   getArea(std::string area_name, yarp::dev::Nav2D::Map2DArea& area) override;
     bool   deleteLocation(std::string location_name) override;
     bool   getLocationsList(std::vector<std::string>& locations) override;
 
@@ -123,9 +123,9 @@ public:
     bool   stopNavigation() override;
     bool   suspendNavigation(const double time_s) override;
     bool   resumeNavigation() override;
-    bool   getAllNavigationWaypoints(std::vector<yarp::dev::Map2DLocation>& waypoints) override;
-    bool   getCurrentNavigationWaypoint(yarp::dev::Map2DLocation& curr_waypoint) override;
-    bool   getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type, yarp::dev::MapGrid2D& map) override;
+    bool   getAllNavigationWaypoints(std::vector<yarp::dev::Nav2D::Map2DLocation>& waypoints) override;
+    bool   getCurrentNavigationWaypoint(yarp::dev::Nav2D::Map2DLocation& curr_waypoint) override;
+    bool   getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type, yarp::dev::Nav2D::MapGrid2D& map) override;
 };
 
 #endif // YARP_DEV_NAVIGATION2DCLIENT_H

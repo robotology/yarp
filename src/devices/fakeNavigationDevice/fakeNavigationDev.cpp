@@ -27,6 +27,7 @@
 #include <cmath>
 
 using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 
 bool fakeNavigation :: open(yarp::os::Searchable& config)
 {
@@ -80,7 +81,7 @@ bool fakeNavigation:: close()
     return true;
 }
 
-bool fakeNavigation::gotoTargetByAbsoluteLocation(yarp::dev::Map2DLocation loc)
+bool fakeNavigation::gotoTargetByAbsoluteLocation(Map2DLocation loc)
 {
     yInfo() << "gotoTargetByAbsoluteLocation not yet implemented";
     return true;
@@ -122,19 +123,19 @@ bool fakeNavigation::resumeNavigation()
     return true;
 }
 
-bool fakeNavigation::getAllNavigationWaypoints(std::vector<yarp::dev::Map2DLocation>& waypoints)
+bool fakeNavigation::getAllNavigationWaypoints(std::vector<Map2DLocation>& waypoints)
 {
     yInfo() << "getAllNavigationWaypoints not yet implemented";
     return true;
 }
 
-bool fakeNavigation::getCurrentNavigationWaypoint(yarp::dev::Map2DLocation& curr_waypoint)
+bool fakeNavigation::getCurrentNavigationWaypoint(Map2DLocation& curr_waypoint)
 {
     yInfo() << "getCurrentNavigationWaypoint not yet implemented";
     return true;
 }
 
-bool fakeNavigation::getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type, yarp::dev::MapGrid2D& map)
+bool fakeNavigation::getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type, MapGrid2D& map)
 {
     yInfo() << "getCurrentNavigationMap not yet implemented";
     return true;
@@ -146,7 +147,7 @@ bool fakeNavigation::getNavigationStatus(yarp::dev::NavigationStatusEnum& status
     return true;
 }
 
-bool fakeNavigation::getAbsoluteLocationOfCurrentTarget(yarp::dev::Map2DLocation& target)
+bool fakeNavigation::getAbsoluteLocationOfCurrentTarget(Map2DLocation& target)
 {
     yInfo() << "getAbsoluteLocationOfCurrentTarget not yet implemented";
     return true;

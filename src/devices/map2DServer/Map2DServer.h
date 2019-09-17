@@ -75,10 +75,10 @@ class Map2DServer :
         public yarp::os::PortReader
 {
 private:
-    std::map<std::string, yarp::dev::MapGrid2D>     m_maps_storage;
-    std::map<std::string, yarp::dev::Map2DLocation> m_locations_storage;
-    std::map<std::string, yarp::dev::Map2DPath>     m_paths_storage;
-    std::map<std::string, yarp::dev::Map2DArea>     m_areas_storage;
+    std::map<std::string, yarp::dev::Nav2D::MapGrid2D>     m_maps_storage;
+    std::map<std::string, yarp::dev::Nav2D::Map2DLocation> m_locations_storage;
+    std::map<std::string, yarp::dev::Nav2D::Map2DPath>     m_paths_storage;
+    std::map<std::string, yarp::dev::Nav2D::Map2DArea>     m_areas_storage;
 
 public:
     Map2DServer();

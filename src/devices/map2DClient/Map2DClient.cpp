@@ -26,6 +26,7 @@
 #include <yarp/dev/GenericVocabs.h>
 
 using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 using namespace yarp::os;
 using namespace yarp::sig;
 

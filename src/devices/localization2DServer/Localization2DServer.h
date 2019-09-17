@@ -65,7 +65,7 @@ protected:
     double                                  m_stats_time_last;
     double                                  m_period;
     bool                                    m_getdata_using_periodic_thread;
-    yarp::dev::Map2DLocation                m_current_position;
+    yarp::dev::Nav2D::Map2DLocation         m_current_position;
     yarp::dev::LocalizationStatusEnum       m_current_status;
 
 public:

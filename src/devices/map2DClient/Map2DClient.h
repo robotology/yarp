@@ -64,17 +64,17 @@ public:
     /* The following methods belong to IMap2D interface */
     bool     clearAllMaps  () override;
     bool     remove_map (std::string map_name) override;
-    bool     store_map  (const yarp::dev::MapGrid2D& map) override;
-    bool     get_map    (std::string map_name, yarp::dev::MapGrid2D& map) override;
+    bool     store_map  (const yarp::dev::Nav2D::MapGrid2D& map) override;
+    bool     get_map    (std::string map_name, yarp::dev::Nav2D::MapGrid2D& map) override;
     bool     get_map_names(std::vector<std::string>& map_names) override;
 
-    bool     storeLocation(std::string location_name, yarp::dev::Map2DLocation loc) override;
-    bool     storeArea(std::string location_name, yarp::dev::Map2DArea area) override;
-    bool     storePath(std::string path_name, yarp::dev::Map2DPath path) override;
+    bool     storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc) override;
+    bool     storeArea(std::string location_name, yarp::dev::Nav2D::Map2DArea area) override;
+    bool     storePath(std::string path_name, yarp::dev::Nav2D::Map2DPath path) override;
 
-    bool     getLocation(std::string location_name, yarp::dev::Map2DLocation& loc) override;
-    bool     getArea(std::string location_name, yarp::dev::Map2DArea& area) override;
-    bool     getPath(std::string path_name, yarp::dev::Map2DPath& path) override;
+    bool     getLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation& loc) override;
+    bool     getArea(std::string location_name, yarp::dev::Nav2D::Map2DArea& area) override;
+    bool     getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path) override;
 
     bool     renameLocation(std::string original_name, std::string new_name) override;
     bool     renameArea(std::string original_name, std::string new_name) override;
