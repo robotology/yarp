@@ -6,8 +6,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/CalibratorInterfaces.h>
+#include <yarp/dev/IRemoteCalibrator.h>
 
 using namespace yarp::dev;
 

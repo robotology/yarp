@@ -14,7 +14,10 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardPid.h>
-#include <yarp/dev/CalibratorInterfaces.h>
+
+#include <yarp/dev/ICalibrator.h>
+#include <yarp/dev/IRemoteCalibrator.h>
+#include <yarp/dev/CalibratorVocabs.h>
 
 /*! \file ControlBoardInterfaces.h define control board standard interfaces*/
 
