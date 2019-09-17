@@ -22,6 +22,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ControlBoardInterfaces.h
                   include/yarp/dev/ControlBoardInterfacesImpl.h
                   include/yarp/dev/ControlBoardPid.h
+                  include/yarp/dev/ControlBoardVocabs.h
                   include/yarp/dev/DataSource.h
                   include/yarp/dev/DeviceDriver.h
                   include/yarp/dev/DriverLinkCreator.h
