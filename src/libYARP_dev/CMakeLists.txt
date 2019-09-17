@@ -188,8 +188,6 @@ set(YARP_dev_devices_SRCS src/devices/AnalogSensorClient/AnalogSensorClient.cpp
                           src/devices/ControlBoardWrapper/SubDevice.cpp
                           src/devices/JoypadControlClient/JoypadControlClient.cpp
                           src/devices/JoypadControlServer/JoypadControlServer.cpp
-                          src/devices/RemoteControlBoard/RemoteControlBoard.cpp
-                          src/devices/RemoteControlBoard/stateExtendedReader.cpp
                           src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
                           src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
                           src/devices/RGBDSensorClient/RGBDSensorClient.cpp
@@ -211,8 +209,6 @@ set(YARP_dev_devices_HDRS src/devices/AnalogSensorClient/AnalogSensorClient.h
                           src/devices/JoypadControlClient/JoypadControlClient.h
                           src/devices/JoypadControlServer/JoypadControlNetUtils.h
                           src/devices/JoypadControlServer/JoypadControlServer.h
-                          src/devices/RemoteControlBoard/RemoteControlBoard.h
-                          src/devices/RemoteControlBoard/stateExtendedReader.h
                           src/devices/RobotDescriptionClient/RobotDescriptionClient.h
                           src/devices/RobotDescriptionServer/RobotDescriptionServer.h
                           src/devices/RGBDSensorClient/RGBDSensorClient.h

@@ -39,7 +39,8 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
-class StateExtendedInputPort:public yarp::os::BufferedPort<yarp::dev::impl::jointData>
+class StateExtendedInputPort :
+        public yarp::os::BufferedPort<yarp::dev::impl::jointData>
 {
     yarp::dev::impl::jointData last;
     std::mutex mutex;
